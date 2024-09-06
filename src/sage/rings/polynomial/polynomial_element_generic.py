@@ -80,7 +80,6 @@ class Polynomial_generic_sparse(Polynomial):
         s + Tbar
         sage: (s + T)**2
         s^2 + 2*Tbar*s + 4
-
     """
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
         """
@@ -569,7 +568,6 @@ class Polynomial_generic_sparse(Polynomial):
             -3/2
             sage: f.quo_rem(1+2*x)
             (4*x^2 + 4*x + 5/2, -3/2)
-
         """
         P = self.parent()
         if P is parent(right):
@@ -801,10 +799,10 @@ class Polynomial_generic_sparse(Polynomial):
         Return the quotient and remainder of the Euclidean division of
         ``self`` and ``other``.
 
-        Raises :class:`ZeroDivisionError` if ``other`` is zero.
+        Raises :exc:`ZeroDivisionError` if ``other`` is zero.
 
-        Raises :class:`ArithmeticError` if ``other`` has a nonunit leading coefficient
-        and this causes the Euclidean division to fail.
+        Raises :exc:`ArithmeticError` if ``other`` has a nonunit leading
+        coefficient and this causes the Euclidean division to fail.
 
         EXAMPLES::
 
@@ -906,26 +904,26 @@ class Polynomial_generic_sparse(Polynomial):
         return (quo,rem)
 
     @coerce_binop
-    def gcd(self,other,algorithm=None):
+    def gcd(self, other, algorithm=None):
         r"""
-        Return the gcd of this polynomial and ``other``
+        Return the gcd of this polynomial and ``other``.
 
         INPUT:
 
         - ``other`` -- a polynomial defined over the same ring as this
-          polynomial.
+          polynomial
 
         ALGORITHM:
 
         Two algorithms are provided:
 
-        - ``generic`` -- Uses the generic implementation, which depends on the
-          base ring being a UFD or a field.
-        - ``dense`` -- The polynomials are converted to the dense representation,
-          their gcd is computed and is converted back to the sparse
-          representation.
+        - ``'generic'`` -- uses the generic implementation, which depends on the
+          base ring being a UFD or a field
+        - ``'dense'`` -- the polynomials are converted to the dense
+          representation, their gcd is computed and is converted back to the
+          sparse representation
 
-        Default is ``dense`` for polynomials over `\ZZ` and ``generic`` in the
+        Default is ``'dense'`` for polynomials over `\ZZ` and ``'generic'`` in the
         other cases.
 
         EXAMPLES::
@@ -935,11 +933,11 @@ class Polynomial_generic_sparse(Polynomial):
             sage: q = 2*x^4 - x^3 - 2*x^2 - 4*x - 1
             sage: gcd(p, q)
             x^2 + x + 1
-            sage: gcd(p, q, algorithm="dense")
+            sage: gcd(p, q, algorithm='dense')
             x^2 + x + 1
-            sage: gcd(p, q, algorithm="generic")
+            sage: gcd(p, q, algorithm='generic')
             x^2 + x + 1
-            sage: gcd(p, q, algorithm="foobar")
+            sage: gcd(p, q, algorithm='foobar')
             Traceback (most recent call last):
             ...
             ValueError: Unknown algorithm 'foobar'
@@ -1352,8 +1350,8 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         """
         INPUT:
 
-        -  ``slope`` -- a rational number (default: the first slope
-           in the Newton polygon of ``self``)
+        - ``slope`` -- a rational number (default: the first slope
+          in the Newton polygon of ``self``)
 
         OUTPUT:
 
@@ -1494,17 +1492,15 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         INPUT:
 
-        - ``secure`` -- a boolean; whether we raise an error or
+        - ``secure`` -- boolean; whether we raise an error or
           not in case of multiple roots
 
-        - ``minval`` -- an integer
+        - ``minval`` -- integer
 
-        - ``hint`` -- a list or ``None``; if given, it must be the
+        - ``hint`` -- list or ``None``; if given, it must be the
           list of roots of the residual polynomial of slope ``minval``
 
-        OUTPUT:
-
-        A list of pairs ``(root, multiplicity)``
+        OUTPUT: list of pairs ``(root, multiplicity)``
 
         TESTS::
 
@@ -1513,13 +1509,12 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             sage: S.<x> = R[]
             sage: P = (x-1) * (x-2) * (x-4) * (x-8) * (x-16)
             sage: Q = P^2
-            sage: Q.roots(algorithm="sage")  # indirect doctest
+            sage: Q.roots(algorithm='sage')  # indirect doctest
             [(2^4 + O(2^14), 2),
              (2^3 + O(2^13), 2),
              (2^2 + O(2^12), 2),
              (2 + O(2^11), 2),
              (1 + O(2^10), 2)]
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         K = self.base_ring()

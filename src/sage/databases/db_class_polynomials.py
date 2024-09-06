@@ -106,6 +106,7 @@ class HilbertClassPolynomialDatabase(ClassPolynomialDatabase):
 # None of the following are implemented yet.
 ######################################################
 
+
 class AtkinClassPolynomialDatabase(ClassPolynomialDatabase):
     """
     The database of Atkin class polynomials.

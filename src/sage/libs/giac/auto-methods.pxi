@@ -14,10 +14,9 @@ cdef class GiacMethods_base:
         Help for Airy_Ai:
         Airy_Ai(Real)
         Returns the value of Ai the Airy function solution of w''-xw=0. Ai(x)=Ai(0)f(z)+Ai'(0)g(z)(f and g are taylor's series sol of w''-xw=0).
-        See also: 1/ Airy_Bi 
+        See also: 1/ Airy_Bi
         Ex1:Airy_Ai(0)
         Ex2:Airy_Ai(1.5)
-        
         '''
         return GiacMethods['Airy_Ai'](self,*args)
 
@@ -26,10 +25,9 @@ cdef class GiacMethods_base:
         Help for Airy_Bi:
         Airy_Bi(Real)
         Returns the value of Ai the Airy function solution of w''-xw=0. Bi(x)=sqrt(3)(Bi(0)f(z)-Bi'(0)g(z))(f and g are taylor's series sol of w''-xw=0).
-        See also: 1/ Airy_Ai 
+        See also: 1/ Airy_Ai
         Ex1:Airy_Bi(1.5)
         Ex2:Airy_Bi(0)
-        
         '''
         return GiacMethods['Airy_Bi'](self,*args)
 
@@ -38,9 +36,8 @@ cdef class GiacMethods_base:
         Help for Archive:
         Archive(SeqVar)
         Protects the variables given as argument in an archive file.
-        See also: 1/ Unarchiv 2/ archive 3/ unarchive 
+        See also: 1/ Unarchiv 2/ archive 3/ unarchive
         Ex1:Archive(a,b)
-        
         '''
         return GiacMethods['Archive'](self,*args)
 
@@ -49,10 +46,9 @@ cdef class GiacMethods_base:
         Help for BesselJ:
         BesselJ(Int(p),Real(x))
         BesselJ(p,x) returns the Bessel function of the first kind Jp(x).
-        See also: 1/ besselJ 2/ BesselY 3/ besselY 
+        See also: 1/ besselJ 2/ BesselY 3/ besselY
         Ex1:BesselJ(2,sqrt(2))
         Ex2:BesselJ(-2,sqrt(2))
-        
         '''
         return GiacMethods['BesselJ'](self,*args)
 
@@ -61,10 +57,9 @@ cdef class GiacMethods_base:
         Help for BesselY:
         BesselY(Int(p),Real(x))
         BesselY(p,x) returns the Bessel function of the second kind Yp(x).
-        See also: 1/ besselY 2/ BesselJ 3/ besselJ 
+        See also: 1/ besselY 2/ BesselJ 3/ besselJ
         Ex1:BesselY(BesselJ(2,sqrt(2)))
         Ex2:BesselY(BesselJ(-2,sqrt(2)))
-        
         '''
         return GiacMethods['BesselY'](self,*args)
 
@@ -73,12 +68,11 @@ cdef class GiacMethods_base:
         Help for Beta:
         Beta(Expr,Expr,[Expr],[1])
         Beta(a,b)=int(t^(a-1)*(1-t)^(b-1),t=0..1), Beta(a,b,p)=int(t^(a-1)*(1-t)^(b-1),t=0..p), Beta(a,b,p,1)=Beta(a,b,p)/Beta(a,b).(Beta(x,y) returns Gamma(x)*Gamma(y)/Gamma(x+y)).
-        See also: 1/ Gamma 2/ igamma 
+        See also: 1/ Gamma 2/ igamma
         Ex1:Beta(x,y)
         Ex2:Beta(3,2)
         Ex3:Beta(3,2,0.5)
         Ex4:Beta(3,2,0.5,1)
-        
         '''
         return GiacMethods['Beta'](self,*args)
 
@@ -87,10 +81,9 @@ cdef class GiacMethods_base:
         Help for BlockDiagonal:
         BlockDiagonal(Lst(l)||Mtrx(A))
         Returns either the diagonal matrix with diagonal l or the diagonal of A.
-        See also: 1/ identity 2/ diag  
+        See also: 1/ identity 2/ diag
         Ex1:BlockDiagonal([[1,2],[3,4]])
         Ex2:BlockDiagonal([1,2,3])
-        
         '''
         return GiacMethods['BlockDiagonal'](self,*args)
 
@@ -99,9 +92,8 @@ cdef class GiacMethods_base:
         Help for Ci:
         Ci(Expr)
         Cosine integral int(cos(t)/t,t=-inf..x).
-        See also: 1/ Ei 2/ Si 3/ Li 
+        See also: 1/ Ei 2/ Si 3/ Li
         Ex1:Ci(1.0)
-        
         '''
         return GiacMethods['Ci'](self,*args)
 
@@ -110,11 +102,10 @@ cdef class GiacMethods_base:
         Help for Circle:
         Circle(Real(xc),Real(yc),Real(r),[Intg(option)])
         Draws the circle with center (xc,yc) and radius r (by default option=1 and option=0 is to remove this circle).
-        See also: 1/ circle 
+        See also: 1/ circle
         Ex1:Circle(0,1,1)
         Ex2:Circle(0,1,1,0)
         Ex3:Circle(0,1,1,1)
-        
         '''
         return GiacMethods['Circle'](self,*args)
 
@@ -123,9 +114,8 @@ cdef class GiacMethods_base:
         Help for Col:
         Col(NULL)
         Returns the index of the column of the lightened cell in the matrixwriter.
-        See also: 1/ Row 
+        See also: 1/ Row
         Ex1:Col()
-        
         '''
         return GiacMethods['Col'](self,*args)
 
@@ -134,9 +124,8 @@ cdef class GiacMethods_base:
         Help for CopyVar:
         CopyVar(Var(var1),Var(var2))
         Copies the storage without evaluation of var1 into var2.
-        See also: 1/  
+        See also: 1/
         Ex1:CopyVar(A,B)
-        
         '''
         return GiacMethods['CopyVar'](self,*args)
 
@@ -145,11 +134,10 @@ cdef class GiacMethods_base:
         Help for Dirac:
         Dirac(Real)
         Function derivative of Heaviside.
-        See also: 1/ Heaviside 
+        See also: 1/ Heaviside
         Ex1:Dirac(1)
         Ex2:Dirac(-1)
         Ex3: int(Dirac(x)*(x-1)^2,x,-1,2)
-        
         '''
         return GiacMethods['Dirac'](self,*args)
 
@@ -158,9 +146,8 @@ cdef class GiacMethods_base:
         Help for Ei:
         Ei(Expr)
         Exponential integral int(exp(t)/t,t=-inf..x).
-        See also: 1/ Si 2/ Ci 3/ Li 
+        See also: 1/ Si 2/ Ci 3/ Li
         Ex1:Ei(1.0)
-        
         '''
         return GiacMethods['Ei'](self,*args)
 
@@ -169,10 +156,9 @@ cdef class GiacMethods_base:
         Help for Factor:
         Factor(Expr)
         Factors a polynomial without evaluation.
-        See also: 1/ factor 2/ ifactor 3/ normal 
+        See also: 1/ factor 2/ ifactor 3/ normal
         Ex1:Factor(x^4-1)
         Ex2:Factor(x^4+12*x^3+54*x^2+108*x+81)
-        
         '''
         return GiacMethods['Factor'](self,*args)
 
@@ -187,7 +173,6 @@ cdef class GiacMethods_base:
         Ex4:GF(2,w^8+w^7+w^5+w+1)
         Ex5:GF(2,8,['a','G'])
         Ex6: G:=GF(2,a^8+a^6+a^3+a^2+1,['a','G'],undef)
-        
         '''
         return GiacMethods['GF'](self,*args)
 
@@ -196,12 +181,11 @@ cdef class GiacMethods_base:
         Help for Gamma:
         Gamma(Real(a),[Real(b)])
         Calculates Gamma at a point a (Gamma(n+1)=n! for n integer) if a>0, Gamma(a)=int(e^{-t}*t^{a-1},t=0..inf)) and Gamma(a)=Gamma(a+1)/a and Gamma(a,b)=ugamma(a,b).
-        See also: 1/ Psi 2/ Beta 3/ ugamma 4/ igamma 
+        See also: 1/ Psi 2/ Beta 3/ ugamma 4/ igamma
         Ex1:Gamma(5)
         Ex2:Gamma(1/2)
         Ex3:Gamma(gamma(-5.1))
         Ex4:Gamma(-5.1,2.1)
-        
         '''
         return GiacMethods['Gamma'](self,*args)
 
@@ -210,11 +194,10 @@ cdef class GiacMethods_base:
         Help for Heaviside:
         Heaviside(Real)
         Function equal to 0 if x<0 and 1 if x>=0.
-        See also: 1/ Dirac 2/ laplace 
+        See also: 1/ Dirac 2/ laplace
         Ex1:Heaviside(1)
         Ex2:Heaviside(-1)
         Ex3:Heaviside(0)
-        
         '''
         return GiacMethods['Heaviside'](self,*args)
 
@@ -223,9 +206,8 @@ cdef class GiacMethods_base:
         Help for JordanBlock:
         JordanBlock(Expr(a),Intg(n))
         Returns an n*n matrix with a on the diagonal, 1 above and 0 everywhere else.
-        See also: 1/ jordan 
+        See also: 1/ jordan
         Ex1:JordanBlock(7,3)
-        
         '''
         return GiacMethods['JordanBlock'](self,*args)
 
@@ -234,10 +216,9 @@ cdef class GiacMethods_base:
         Help for LU:
         LU(Mtrx(A),Var(L),Var(U),Var(P))
         For a numerical matrix A, stores in L a lower triangular matrix, in U an upper triangular  matrix and in P a permutation matrix such that P*A=L*U.
-        See also: 1/ lu 2/ QR 
+        See also: 1/ lu 2/ QR
         Ex1:LU([[1,2],[3,4]],L,U,P)
         Ex2:LU([[6,12,18],[5,14,31],[3,8,18]],L,U,P)
-        
         '''
         return GiacMethods['LU'](self,*args)
 
@@ -249,7 +230,6 @@ cdef class GiacMethods_base:
         Ex1:LambertW(1.0)
         Ex2:LambertW(ln(4))
         Ex3:LambertW(-0.1,-1)
-        
         '''
         return GiacMethods['LambertW'](self,*args)
 
@@ -258,9 +238,8 @@ cdef class GiacMethods_base:
         Help for Li:
         Li(Expr)
         Logarithm integral Li(x)=Ei(ln(x)) primitive of 1/ln(x).
-        See also: 1/ Si 2/ Ci 3/ Ei 
+        See also: 1/ Si 2/ Ci 3/ Ei
         Ex1:Li(2.0)
-        
         '''
         return GiacMethods['Li'](self,*args)
 
@@ -269,9 +248,8 @@ cdef class GiacMethods_base:
         Help for Line:
         Line(Expr(a),Expr(b),Expr(c),Expr(d))
         Draws the segment [a+i*b,c+i*d].
-        See also: 1/ segment 
+        See also: 1/ segment
         Ex1:Line(-1,-2,1,2)
-        
         '''
         return GiacMethods['Line'](self,*args)
 
@@ -280,9 +258,8 @@ cdef class GiacMethods_base:
         Help for LineHorz:
         LineHorz(Expr(a))
         Draws the horizontal line y=a.
-        See also: 1/ Line 2/ LineVert 
+        See also: 1/ Line 2/ LineVert
         Ex1:LineHorz(-1)
-        
         '''
         return GiacMethods['LineHorz'](self,*args)
 
@@ -291,13 +268,12 @@ cdef class GiacMethods_base:
         Help for LineTan:
         LineTan(Expr(f(x)),[Var],Expr(a))
         Draws the tangent to y=f(x) at x=a. Do not use parentheses or put the parenthesis around the entire expression.
-        See also: 1/ tangent 2/ droite_tangente 
+        See also: 1/ tangent 2/ droite_tangente
         Ex1: LineTan sin(x),pi/4
         Ex2: LineTan sin(t),t=pi/4)
         Ex3: LineTan sin(t),t,pi/4
         Ex4: LineTan x^2-x,1
         Ex5: (LineTan sin(t),t,pi/4)
-        
         '''
         return GiacMethods['LineTan'](self,*args)
 
@@ -306,9 +282,8 @@ cdef class GiacMethods_base:
         Help for LineVert:
         LineVert(Expr(a))
         Draws the vertical line x=a.
-        See also: 1/ Line 2/ LineHorz 
+        See also: 1/ Line 2/ LineHorz
         Ex1:LineVert(2)
-        
         '''
         return GiacMethods['LineVert'](self,*args)
 
@@ -317,10 +292,9 @@ cdef class GiacMethods_base:
         Help for Phi:
         Phi(Intg(n))
         Euler's function (euler(n)=card({p<n,gcd(n,p)=1})).
-        See also: 1/ gcd 
+        See also: 1/ gcd
         Ex1:Phi(11)
         Ex2:Phi(6)
-        
         '''
         return GiacMethods['Phi'](self,*args)
 
@@ -329,12 +303,11 @@ cdef class GiacMethods_base:
         Help for Pi:
         Pi()
         pi.
-        See also: 1/ e 2/ i 
+        See also: 1/ e 2/ i
         Ex1: pi/4
         Ex2: Pi/4
         Ex3: evalf(pi)
         Ex4: evalf(Pi)
-        
         '''
         return GiacMethods['Pi'](self,*args)
 
@@ -343,9 +316,8 @@ cdef class GiacMethods_base:
         Help for Psi:
         Psi(Real(a),Intg(n))
         Psi(a,n)=n-th derivative of the function DiGamma (=ln@Gamma) at point a (Psi(a,0)=Psi(a)).
-        See also: 1/ Gamma 
+        See also: 1/ Gamma
         Ex1:Psi(3,1)
-        
         '''
         return GiacMethods['Psi'](self,*args)
 
@@ -354,9 +326,8 @@ cdef class GiacMethods_base:
         Help for QR:
         QR(Mtrx,Var(Q),Var(R),[Real(eps)])
         For a numerical matrix A, stores in Q a orthogonal matrix and in U a lower triangular matrix such that A=Q*R [replacing by 0 the elements such that abs(el)<eps].
-        See also: 1/ qr 2/ LU 
+        See also: 1/ qr 2/ LU
         Ex1:QR([[1,2],[3,4]],Q,R)
-        
         '''
         return GiacMethods['QR'](self,*args)
 
@@ -365,9 +336,8 @@ cdef class GiacMethods_base:
         Help for RandSeed:
         RandSeed(Intg)
         Initializes random numbers.
-        See also: 1/ srand 
+        See also: 1/ srand
         Ex1:RandSeed(321)
-        
         '''
         return GiacMethods['RandSeed'](self,*args)
 
@@ -376,9 +346,8 @@ cdef class GiacMethods_base:
         Help for Row:
         Row(NULL)
         Returns the index of the row of the lightened cell in the matrixwriter.
-        See also: 1/ Col 
+        See also: 1/ Col
         Ex1:Row()
-        
         '''
         return GiacMethods['Row'](self,*args)
 
@@ -387,12 +356,11 @@ cdef class GiacMethods_base:
         Help for SortA:
         SortA(LstReal||Seq||Mtrx)
         Sorts the lists in increasing order (like TI).
-        See also: 1/ SortD 2/ sorta 3/ sort 
+        See also: 1/ SortD 2/ sorta 3/ sort
         Ex1: SortA [3,4,2]
         Ex2: SortA 3,4,2
         Ex3: SortA [3,4,2],[6,4,5]
         Ex4: SortA [[3,4,2],[6,4,5]]
-        
         '''
         return GiacMethods['SortA'](self,*args)
 
@@ -401,12 +369,11 @@ cdef class GiacMethods_base:
         Help for SortD:
         SortD(LstReal||Seq||Mtrx)
         Sorts the list in decreasing order (like TI).
-        See also: 1/ SortA 2/ sortd 3/ sort 
+        See also: 1/ SortA 2/ sortd 3/ sort
         Ex1: SortD [3,4,2]
         Ex2: SortD 3,4,2
         Ex3: SortD [[3,4,2],[6,4,5]]
         Ex4: SortD [3,4,2],[6,4,5]
-        
         '''
         return GiacMethods['SortD'](self,*args)
 
@@ -415,10 +382,9 @@ cdef class GiacMethods_base:
         Help for UTPC:
         UTPC(Intg(n),Real(x0))
         Returns the probability that a Chisquare random variable is greater than x0 (n is the number of degrees of freedom).
-        See also: 1/ chisquare_cdf 2/ chisquare_icdf 
+        See also: 1/ chisquare_cdf 2/ chisquare_icdf
         Ex1:UTPC(2,6.1)
         Ex2:UTPC(4,6.1)
-        
         '''
         return GiacMethods['UTPC'](self,*args)
 
@@ -427,10 +393,9 @@ cdef class GiacMethods_base:
         Help for UTPF:
         UTPF(Intg(n),Intg(d),Real(x0))
         Returns the probability that a Fisher-Snedecor random variable is greater than x0 (n and d are the numbers of degrees of freedom).
-        See also: 1/ fisher_cdf 2/ fisher_icdf 
+        See also: 1/ fisher_cdf 2/ fisher_icdf
         Ex1:UTPF(4,10,3.5)
         Ex2:UTPF(4,4,2.1)
-        
         '''
         return GiacMethods['UTPF'](self,*args)
 
@@ -439,10 +404,9 @@ cdef class GiacMethods_base:
         Help for UTPN:
         UTPN(Real(mu),Real(v),Real(x0))
         Returns the probability that a Normal random variable is greater than x0 (mu is the mean and v the variance).
-        See also: 1/ normal_cdf 2/ normal_icdf 
+        See also: 1/ normal_cdf 2/ normal_icdf
         Ex1:UTPN(1.96)
         Ex2:UTPN(1,4,2.96)+normal_cdf(1,2,2.96)
-        
         '''
         return GiacMethods['UTPN'](self,*args)
 
@@ -451,10 +415,9 @@ cdef class GiacMethods_base:
         Help for UTPT:
         UTPT(Intg(n),Real(x0))
         Returns the probability that a Student random variable is greater than x0 (n is the number of degrees of freedom).
-        See also: 1/ student_cdf 2/ student_icdf 
+        See also: 1/ student_cdf 2/ student_icdf
         Ex1:UTPT(3,2.35)
         Ex2:UTPT(3,-2.35)
-        
         '''
         return GiacMethods['UTPT'](self,*args)
 
@@ -463,9 +426,8 @@ cdef class GiacMethods_base:
         Help for VARS:
         VARS(NULL)
         List of the variables and folders of the current directory.
-        See also: 1/ lvar 
+        See also: 1/ lvar
         Ex1:VARS()
-        
         '''
         return GiacMethods['VARS'](self,*args)
 
@@ -474,9 +436,8 @@ cdef class GiacMethods_base:
         Help for VAS:
         VAS(Poly(P))
         Returns a list of intervals containing the real roots of P. Vincent-Akritas-Strzebonski's method (VAS) is used.
-        See also: 1/ VAS_positive 2/ sturmab 3/ realroot 
+        See also: 1/ VAS_positive 2/ sturmab 3/ realroot
         Ex1:VAS(x^3-7*x+7)
-        
         '''
         return GiacMethods['VAS'](self,*args)
 
@@ -485,9 +446,8 @@ cdef class GiacMethods_base:
         Help for VAS_positive:
         VAS_positive(Poly(P))
         Returns a list of intervals containing the positive roots of P. Vincent-Akritas-Strzebonski's method (VAS) is used.
-        See also: 1/ poslbdLMQ 2/ posubLMQ 3/ VAS 4/ realroot 
+        See also: 1/ poslbdLMQ 2/ posubLMQ 3/ VAS 4/ realroot
         Ex1:VAS_positive(x^3-7*x+7)
-        
         '''
         return GiacMethods['VAS_positive'](self,*args)
 
@@ -496,9 +456,8 @@ cdef class GiacMethods_base:
         Help for Zeta:
         Zeta(Real(a))
         Returns if a>1 sum(1/n^a,n,1,+infinity).
-        See also: 1/ sum 
+        See also: 1/ sum
         Ex1:Zeta(2)
-        
         '''
         return GiacMethods['Zeta'](self,*args)
 
@@ -507,10 +466,9 @@ cdef class GiacMethods_base:
         Help for a2q:
         a2q(Mtrx,VectVar)
         a2q(A,X)=the quadratic form q associated to A, X=vector of variables.
-        See also: 1/ q2a 
+        See also: 1/ q2a
         Ex1:a2q([[1,2],[4,4]],[x,y])
         Ex2:a2q([[1,3],[3,4]],[x,y])
-        
         '''
         return GiacMethods['a2q'](self,*args)
 
@@ -519,13 +477,12 @@ cdef class GiacMethods_base:
         Help for abcuv:
         abcuv(Poly(a),Poly(b),Poly(c),[Var])
         Returns [u,v] such that au+bv=c for 3 polynomials a,b,c.
-        See also: 1/ egcd 2/ iabcuv 
+        See also: 1/ egcd 2/ iabcuv
         Ex1:abcuv(x^2+2*x+1,x^2-1,x+1)
         Ex2:abcuv(X^2+2*X+1,X^2-1,X+1,X)
         Ex3:abcuv(x^2+2*x+1,x^2-1,x^3+1)
         Ex4:abcuv(X^2+2*X+1,X^2-1,X^3+1,X)
         Ex5:abcuv([1,2,1],[1,0,-1],[1,0,0,1])
-        
         '''
         return GiacMethods['abcuv'](self,*args)
 
@@ -534,10 +491,9 @@ cdef class GiacMethods_base:
         Help for about:
         about(Var(a))
         Returns the hypothesis made with assume on the variable a.
-        See also: 1/ assume 2/ purge 
+        See also: 1/ assume 2/ purge
         Ex1:about(a)
         Ex2:about(n)
-        
         '''
         return GiacMethods['about'](self,*args)
 
@@ -546,12 +502,11 @@ cdef class GiacMethods_base:
         Help for abs:
         abs(Cplx||LstCplx)
         Returns the absolute value or the norm of its argument.
-        See also: 1/ arg 
+        See also: 1/ arg
         Ex1:abs(-4)
         Ex2:abs(1+2*i)
         Ex3:abs((1+2*i)^2)
         Ex4:abs([-2,1+i,-4])
-        
         '''
         return GiacMethods['abs'](self,*args)
 
@@ -560,12 +515,11 @@ cdef class GiacMethods_base:
         Help for abscissa:
         abscissa(Pnt or Vect)
         Returns the abscissa of a point or a vector.
-        See also: 1/ ordinate 2/ affix 3/ cote 4/ coordinates 
+        See also: 1/ ordinate 2/ affix 3/ cote 4/ coordinates
         Ex1:abscissa(point(1+2*i))
         Ex2:abscissa(point(i)-point(1+2*i))
         Ex3:abscissa(-1-i)
         Ex4:abscissa(point(1,2,3))
-        
         '''
         return GiacMethods['abscissa'](self,*args)
 
@@ -574,9 +528,8 @@ cdef class GiacMethods_base:
         Help for accumulate_head_tail:
         accumulate_head_tail(Lst(l),Intg(p),Intg(q))
         Returns the list where the first p and the last q elements of l are replaced by their sum.
-        See also: 1/  
+        See also: 1/
         Ex1:accumulate_head_tail([0,1,2,3,4,5,6,7,8,9],3,2)
-        
         '''
         return GiacMethods['accumulate_head_tail'](self,*args)
 
@@ -585,9 +538,8 @@ cdef class GiacMethods_base:
         Help for acos:
         acos(Expr)
         Arccosine.
-        See also: 1/ cos 2/ acosh 
+        See also: 1/ cos 2/ acosh
         Ex1:acos(0)
-        
         '''
         return GiacMethods['acos'](self,*args)
 
@@ -596,10 +548,9 @@ cdef class GiacMethods_base:
         Help for acos2asin:
         acos2asin(Expr)
         Replaces arccos(x) by pi/2-arcsin(x) in the argument.
-        See also: 1/ acos2atan 
+        See also: 1/ acos2atan
         Ex1:acos2asin(acos(x)+asin(x))
         Ex2:acos2asin(2*acos(x))
-        
         '''
         return GiacMethods['acos2asin'](self,*args)
 
@@ -608,10 +559,9 @@ cdef class GiacMethods_base:
         Help for acos2atan:
         acos2atan(Expr)
         Replaces arccos(x) by pi/2-arctan(x/sqrt(1-x^2)) in the argument.
-        See also: 1/ acos2asin 
+        See also: 1/ acos2asin
         Ex1:acos2atan(2*acos(x))
         Ex2:acos2atan(acos(sqrt(1-x^2))+acos(x))
-        
         '''
         return GiacMethods['acos2atan'](self,*args)
 
@@ -620,9 +570,8 @@ cdef class GiacMethods_base:
         Help for acosh:
         acosh(Expr)
         Hyperbolic arccosine.
-        See also: 1/ cosh 2/ acos 
+        See also: 1/ cosh 2/ acos
         Ex1:acosh(1)
-        
         '''
         return GiacMethods['acosh'](self,*args)
 
@@ -631,9 +580,8 @@ cdef class GiacMethods_base:
         Help for acot:
         acot(Expr)
         Arccotangent.
-        See also: 1/ atan 2/ arccos 
+        See also: 1/ atan 2/ arccos
         Ex1:acot(0)
-        
         '''
         return GiacMethods['acot'](self,*args)
 
@@ -642,10 +590,9 @@ cdef class GiacMethods_base:
         Help for acsc:
         acsc(Expr)
         Arccosecant: acsc(x)=asin(1/x).
-        See also: 1/ asin 2/ csc 
+        See also: 1/ asin 2/ csc
         Ex1:acsc(1)
         Ex2:acsc(2)
-        
         '''
         return GiacMethods['acsc'](self,*args)
 
@@ -654,8 +601,7 @@ cdef class GiacMethods_base:
         Help for acyclic:
         acyclic(Opt)
         Option for the random_network command.
-        See also: 1/ random_network 
-        
+        See also: 1/ random_network
         '''
         return GiacMethods['acyclic'](self,*args)
 
@@ -664,7 +610,7 @@ cdef class GiacMethods_base:
         Help for add:
         add(Expr,Var,VarMin(a),VarMax(b),[VarStep(p)])
         Discrete sum (with 2 or 4 arguments return then sum from a to b if a<=b or of the opposite of the sum from b+1 to a-1 if a>b+1 or 0 if a=b+1) or the discrete primitive or sum of the elements of a list or a sequence.
-        See also: 1/ + 
+        See also: 1/ +
         Ex1:add(1/n^2,n,1,17)
         Ex2:add(1/n^2,n=1..17)
         Ex3:add(1/n^2,n,17,1)
@@ -675,7 +621,6 @@ cdef class GiacMethods_base:
         Ex8:add([[1,2,3,4,5,6,7,8,9],[1,2,3,4,5,6,7,8,9]])
         Ex9:add(1/(x*(x+1)),x)
         Ex10:add(cos(n*x),n)
-        
         '''
         return GiacMethods['add'](self,*args)
 
@@ -684,9 +629,8 @@ cdef class GiacMethods_base:
         Help for add_arc:
         add_arc(Graph(G),Edge(e)||Trail(T)||Lst(E))
         Returns a modified copy of digraph G with added arc e (or trail T or list of arcs E).
-        See also: 1/ add_edge 2/ delete_arc 3/ digraph 4/ edges 5/ has_arc 6/ trail 
+        See also: 1/ add_edge 2/ delete_arc 3/ digraph 4/ edges 5/ has_arc 6/ trail
         Ex1:add_arc(digraph(trail(1,2,3,4,5,1)),[[1,3],[2,4]])
-        
         '''
         return GiacMethods['add_arc'](self,*args)
 
@@ -695,9 +639,8 @@ cdef class GiacMethods_base:
         Help for add_edge:
         add_edge(Graph(G),Edge(e)||Trail(T)||Lst(E))
         Returns a modified copy of undirected graph G with added edge e (or trail T or list of edges E).
-        See also: 1/ add_arc 2/ delete_edge 3/ edges 4/ graph 5/ has_edge 6/ trail 
+        See also: 1/ add_arc 2/ delete_edge 3/ edges 4/ graph 5/ has_edge 6/ trail
         Ex1:add_edge(graph(trail(1,2,3,4)),[4,1])
-        
         '''
         return GiacMethods['add_edge'](self,*args)
 
@@ -706,9 +649,8 @@ cdef class GiacMethods_base:
         Help for add_vertex:
         add_vertex(Graph(G),Vrtx(v)||Lst(V))
         Returns a modified copy of G with added vertex v [or vertices from list V].
-        See also: 1/ add_arc 2/ add_edge 3/ delete_vertex 
+        See also: 1/ add_arc 2/ add_edge 3/ delete_vertex
         Ex1:add_vertex(cycle_graph(5),["a","b"])
-        
         '''
         return GiacMethods['add_vertex'](self,*args)
 
@@ -717,10 +659,9 @@ cdef class GiacMethods_base:
         Help for additionally:
         additionally(Expr)
         Makes an additionally assumption on a variable.
-        See also: 1/ purge 2/ about 3/ assume 
+        See also: 1/ purge 2/ about 3/ assume
         Ex1: assume(n,integer);additionally(n>5)
         Ex2: assume(n,integer);assume(n>=2,additionally)
-        
         '''
         return GiacMethods['additionally'](self,*args)
 
@@ -729,9 +670,8 @@ cdef class GiacMethods_base:
         Help for addtable:
         addtable(fourier||laplace,f(x),F(s),Var(x),Var(s))
         Stores an unknown Fourier/Laplace transform pair (f,F).
-        See also: 1/ fourier 2/ laplace 
+        See also: 1/ fourier 2/ laplace
         Ex1:addtable(fourier,y(x),Y(s),x,s)
-        
         '''
         return GiacMethods['addtable'](self,*args)
 
@@ -740,9 +680,8 @@ cdef class GiacMethods_base:
         Help for adjacency_matrix:
         adjacency_matrix(Graph(G))
         Returns the adjacency matrix of G (rows and columns are indexed by the vertices).
-        See also: 1/ neighbors 
+        See also: 1/ neighbors
         Ex1:adjacency_matrix(graph(trail(1,2,3,4,2,5,1,3)))
-        
         '''
         return GiacMethods['adjacency_matrix'](self,*args)
 
@@ -751,9 +690,8 @@ cdef class GiacMethods_base:
         Help for adjoint_matrix:
         adjoint_matrix(Mtrx)
         Returns the characteristic polynomial of A and the comatrix of A-xI.
-        See also: 1/ pcar 
+        See also: 1/ pcar
         Ex1:adjoint_matrix([[1,i],[2,3]])
-        
         '''
         return GiacMethods['adjoint_matrix'](self,*args)
 
@@ -762,11 +700,10 @@ cdef class GiacMethods_base:
         Help for affix:
         affix(Pnt||Vect)
         Complex number equal to the affix of a point or of a vector.
-        See also: 1/ point 2/ vector 
+        See also: 1/ point 2/ vector
         Ex1:affix(point(i))
         Ex2:affix(point(i)-point(1+2*i))
         Ex3:affix([1,2])
-        
         '''
         return GiacMethods['affix'](self,*args)
 
@@ -775,11 +712,10 @@ cdef class GiacMethods_base:
         Help for algsubs:
         algsubs(Equal(Xpr1=Xpr2),Expr(Xpr))
         Substitutes in the expression Xpr, the algebraic expression Xpr1 by the algebraic expression Xpr2.
-        See also: 1/ subst 2/ subs 
+        See also: 1/ subst 2/ subs
         Ex1:algsubs(x^2=u,1+x^2+x^4)
         Ex2:algsubs(a*b/c=d, 2*a*b^2/c)
         Ex3:algsubs(2a=p^2-q^2,algsubs(2c=p^2+q^2,c^2-a^2))
-        
         '''
         return GiacMethods['algsubs'](self,*args)
 
@@ -788,9 +724,8 @@ cdef class GiacMethods_base:
         Help for algvar:
         algvar(Expr)
         List of the variables by ascending algebraic extension order.
-        See also: 1/ lvar 2/ lname 
+        See also: 1/ lvar 2/ lname
         Ex1:algvar(sqrt(x)+y)
-        
         '''
         return GiacMethods['algvar'](self,*args)
 
@@ -799,10 +734,9 @@ cdef class GiacMethods_base:
         Help for all_trig_solutions:
         all_trig_solutions(:=Intg(0 or 1))
         Pseudo-variable to return the general solution (all_trig_solutions:=1) or principal solution (all_trig_solutions:=0).
-        See also: 1/ cas_setup 
+        See also: 1/ cas_setup
         Ex1: all_trig_solutions:=1
         Ex2: all_trig_solutions:=0
-        
         '''
         return GiacMethods['all_trig_solutions'](self,*args)
 
@@ -811,9 +745,8 @@ cdef class GiacMethods_base:
         Help for allpairs_distance:
         allpairs_distance(Graph(G))
         Returns a square matrix D of order equal to the number of vertices in G such that D(i,j) is the distance between i-th and j-th vertex of the (weighted) graph G.
-        See also: 1/ dijkstra 2/ graph_diameter 3/ vertex_distance 
+        See also: 1/ dijkstra 2/ graph_diameter 3/ vertex_distance
         Ex1:allpairs_distance(graph(%{[1,2],[1,3],[1,4],[1,5],[2,3],[3,4],[4,5],[5,2]%}))
-        
         '''
         return GiacMethods['allpairs_distance'](self,*args)
 
@@ -822,9 +755,8 @@ cdef class GiacMethods_base:
         Help for alog10:
         alog10(Expr)
         Function x->10^x.
-        See also: 1/ log10 
+        See also: 1/ log10
         Ex1:alog10(3)
-        
         '''
         return GiacMethods['alog10'](self,*args)
 
@@ -833,9 +765,8 @@ cdef class GiacMethods_base:
         Help for altitude:
         altitude((Pnt or Cplx),(Pnt or Cplx),(Pnt or Cplx))
         altitude(A,B,C) draws the altitude through A of the triangle ABC.
-        See also: 1/ perpendicular 2/ orthogonal 3/ orthocenter 4/ common_perpendicular 
+        See also: 1/ perpendicular 2/ orthogonal 3/ orthocenter 4/ common_perpendicular
         Ex1:altitude(-1,1-i,i)
-        
         '''
         return GiacMethods['altitude'](self,*args)
 
@@ -844,13 +775,12 @@ cdef class GiacMethods_base:
         Help for angle:
         angle((Pnt or Cplx),(Pnt or Cplx),(Pnt or Cplx))
         angle(A,B,C) is the value of the measure of the angle (AB,AC).
-        See also: 1/ triangle 2/ bissector 3/ legend 4/ labels 5/ angleat 6/ angleatraw 
+        See also: 1/ triangle 2/ bissector 3/ legend 4/ labels 5/ angleat 6/ angleatraw
         Ex1:angle(point(0),point(i),point(1))
         Ex2:angle(0,1,i)
         Ex3:angle(0,1,i,"")
         Ex4:angle(0,1,i,"a")
         Ex5:angle(i,1,1+i,"b")
-        
         '''
         return GiacMethods['angle'](self,*args)
 
@@ -859,10 +789,9 @@ cdef class GiacMethods_base:
         Help for angle_radian:
         angle_radian(:=Intg(0 or 1))
         Pseudo-variable to work with radians (angle_radian:=1) or degrees (angle_radian:=0).
-        See also: 1/ cas_setup 
+        See also: 1/ cas_setup
         Ex1: angle_radian:=1
         Ex2: angle_radian:=0
-        
         '''
         return GiacMethods['angle_radian'](self,*args)
 
@@ -871,9 +800,8 @@ cdef class GiacMethods_base:
         Help for angleat:
         angleat(Pnt(A),Pnt(B),Pnt(C),(Pnt or Cplx(z0)))
         angleat(A,B,C,z0) displays at point(z0) with a legend, the value of the measure of the angle (AB,AC).
-        See also: 1/ angle 2/ angleatraw 3/ legend 
+        See also: 1/ angle 2/ angleatraw 3/ legend
         Ex1: A:=point(0);B:=point(1);C:=point(i);angleat(A,B,C,-2-i)
-        
         '''
         return GiacMethods['angleat'](self,*args)
 
@@ -882,9 +810,8 @@ cdef class GiacMethods_base:
         Help for angleatraw:
         angleatraw(Pnt(A)),Pnt(B),Pnt(C),(Pnt or Cplx(z0)))
         angleatraw(A,B,C,z0) displays at point(z0), the value of the measure of the angle (AB,AC).
-        See also: 1/ angle 2/ angleat 
+        See also: 1/ angle 2/ angleat
         Ex1: A:=point(0);B:=point(1);C:=point(i);angleatraw(A,B,C,-2-i)
-        
         '''
         return GiacMethods['angleatraw'](self,*args)
 
@@ -893,11 +820,10 @@ cdef class GiacMethods_base:
         Help for ans:
         ans(Intg(n))
         Returns the (n+1)th answer of the command history if n>=0 or, the (-n)th previous answer if n<0 (by default n=-1 for the previous answer).
-        See also: 1/ quest 
+        See also: 1/ quest
         Ex1:ans()
         Ex2:ans(2)
         Ex3:ans(-2)
-        
         '''
         return GiacMethods['ans'](self,*args)
 
@@ -906,9 +832,8 @@ cdef class GiacMethods_base:
         Help for antiprism_graph:
         antiprism_graph(Intg(n))
         Returns the antiprism graph of order n.
-        See also: 1/ prism_graph 
+        See also: 1/ prism_graph
         Ex1:antiprism_graph(5)
-        
         '''
         return GiacMethods['antiprism_graph'](self,*args)
 
@@ -917,14 +842,13 @@ cdef class GiacMethods_base:
         Help for append:
         append((Lst||Set||Str(L),Elem))
         Append an element to a set or at the end of a list or of a string (L:=append(L,a) or L.append(a)).
-        See also: 1/ concat 2/ prepend 
+        See also: 1/ concat 2/ prepend
         Ex1:append([1,2,4],6)
         Ex2:append(%{1,2,4%},6)
         Ex3: L:=[1,2,4];L:=append(L,6)
         Ex4: L:=[1,2,4];L.append(6)
         Ex5: S:=set[1,2,4];S:=append(S,6)
         Ex6: S:=set[1,2,4];S.append(6)
-        
         '''
         return GiacMethods['append'](self,*args)
 
@@ -933,10 +857,9 @@ cdef class GiacMethods_base:
         Help for apply:
         apply(Fnc(f),Lst(l))
         Applies the function f at the elements of the list l (option matrix for a matrix).
-        See also: 1/ map 2/ unapply 3/ matrix 
+        See also: 1/ map 2/ unapply 3/ matrix
         Ex1:apply(x->x^3,[1,2,3])
         Ex2:apply(x->x+1,[[1,2,3],[1,2,3]],matrix)
-        
         '''
         return GiacMethods['apply'](self,*args)
 
@@ -945,14 +868,13 @@ cdef class GiacMethods_base:
         Help for approx:
         approx(Expr,[Int])
         Numerical evaluation of the first argument (we can give the number of digits as second argument).
-        See also: 1/ evalb 2/ eval 
+        See also: 1/ evalb 2/ eval
         Ex1:approx(2/3)
         Ex2:approx(2/3,2)
         Ex3:approx(2*sin(1))
         Ex4:approx(2*sin(1),40)
         Ex5:approx(sqrt(2)+pi)
         Ex6:approx(sqrt(2)+pi,30)
-        
         '''
         return GiacMethods['approx'](self,*args)
 
@@ -961,12 +883,11 @@ cdef class GiacMethods_base:
         Help for arc:
         arc(Pnt, Pnt, Real,[Var(C)],[Var(r)],[Opt(segment)])
         Draws a circular arc given by 2 vertices and the central angle [Xcas will put the center in C and the radius in r].
-        See also: 1/ circle 2/ segment 3/ plotparam 
+        See also: 1/ circle 2/ segment 3/ plotparam
         Ex1:arc(0,1,pi/4)
         Ex2:arc(i,1,pi/4,C,r)
         Ex3:arc(i,1,pi/4,segment)
         Ex4:arc(i,1,pi/4,segment,affichage=1+rempli)
-        
         '''
         return GiacMethods['arc'](self,*args)
 
@@ -975,11 +896,10 @@ cdef class GiacMethods_base:
         Help for arcLen:
         arcLen(Expr(Xpr) or Lst([Xpr1,Xpr2]),Var,Real(a),Real(b))
         Returns the length of the arc of the curve defined by y=Xpr(or by x=Xpr1,y=Xpr2) when the parameter values are between a and b.
-        See also: 1/ int 
+        See also: 1/ int
         Ex1:arcLen(t^2,t,1,2)
         Ex2:arcLen([t,t^2],t,1,2)
         Ex3:arcLen([cos(t),sin(t)],t,1,2)
-        
         '''
         return GiacMethods['arcLen'](self,*args)
 
@@ -988,9 +908,8 @@ cdef class GiacMethods_base:
         Help for arccos:
         arccos(Expr)
         Arccosine.
-        See also: 1/ cos 2/ acosh 
+        See also: 1/ cos 2/ acosh
         Ex1:arccos(0)
-        
         '''
         return GiacMethods['arccos'](self,*args)
 
@@ -999,9 +918,8 @@ cdef class GiacMethods_base:
         Help for arccosh:
         arccosh(Expr)
         Hyperbolic arccosine.
-        See also: 1/ cosh 2/ acos 
+        See also: 1/ cosh 2/ acos
         Ex1:arccosh(1)
-        
         '''
         return GiacMethods['arccosh'](self,*args)
 
@@ -1010,11 +928,10 @@ cdef class GiacMethods_base:
         Help for arclen:
         arclen(Expr(Xpr) or Lst([Xpr1,Xpr2]),Var,Real(a),Real(b))
         Returns the length of the arc of the curve defined by y=Xpr(or by x=Xpr1,y=Xpr2) when the parameter values are between a and b.
-        See also: 1/ int 
+        See also: 1/ int
         Ex1:arclen(t^2,t,1,2)
         Ex2:arclen([t,t^2],t,1,2)
         Ex3:arclen([cos(t),sin(t)],t,1,2)
-        
         '''
         return GiacMethods['arclen'](self,*args)
 
@@ -1023,9 +940,8 @@ cdef class GiacMethods_base:
         Help for arcsin:
         arcsin(Expr)
         Arcsine.
-        See also: 1/ sin 
+        See also: 1/ sin
         Ex1:arcsin(0)
-        
         '''
         return GiacMethods['arcsin'](self,*args)
 
@@ -1034,9 +950,8 @@ cdef class GiacMethods_base:
         Help for arcsinh:
         arcsinh(Expr)
         Hyperbolic arcsine.
-        See also: 1/ sinh 2/ asin 
+        See also: 1/ sinh 2/ asin
         Ex1:arcsinh(0)
-        
         '''
         return GiacMethods['arcsinh'](self,*args)
 
@@ -1045,9 +960,8 @@ cdef class GiacMethods_base:
         Help for arctan:
         arctan(Expr)
         Arctangent.
-        See also: 1/ tan 2/ atanh 
+        See also: 1/ tan 2/ atanh
         Ex1:arctan(0)
-        
         '''
         return GiacMethods['arctan'](self,*args)
 
@@ -1056,9 +970,8 @@ cdef class GiacMethods_base:
         Help for arctanh:
         arctanh(Expr)
         Hyperbolic arctangent.
-        See also: 1/ atan 2/ tanh 
+        See also: 1/ atan 2/ tanh
         Ex1:arctanh(0)
-        
         '''
         return GiacMethods['arctanh'](self,*args)
 
@@ -1067,7 +980,7 @@ cdef class GiacMethods_base:
         Help for area:
         area(Polygone || Expr,x=a..b,[n],[Method])
         Algebraic area of a circle, a circular arc or of a (star) polygon (e.g. triangle, square, ...) or of the area below a curve, optionally with a quadrature method (trapezoid,left_rectangle,right_rectangle,middle_point,simpson,rombergt,rombergm).
-        See also: 1/ trapezoid 2/ perimeter 3/ areaatraw 4/ areaat 5/ areaplot 
+        See also: 1/ trapezoid 2/ perimeter 3/ areaatraw 4/ areaat 5/ areaplot
         Ex1:area(triangle(0,1,i))
         Ex2:area(square(0,2))
         Ex3:area(circle(0,2))
@@ -1075,7 +988,6 @@ cdef class GiacMethods_base:
         Ex5:area(x^2,x=0..1,5,trapezoid)
         Ex6:area(x^2,x=0..1,5,simpson)
         Ex7:area(x^2,x=0..1,5,rombergm)
-        
         '''
         return GiacMethods['area'](self,*args)
 
@@ -1084,13 +996,12 @@ cdef class GiacMethods_base:
         Help for areaat:
         areaat(Polygone, Pnt||Cplx(z0))
         Displays at point(z0), with a legend, the algebraic area of a circle or of a (star) polygon (e.g. triangle, square, ...)
-        See also: 1/ area 2/ areaatraw 3/ polygon 4/ perimeteratraw 5/ areaplot 
+        See also: 1/ area 2/ areaatraw 3/ polygon 4/ perimeteratraw 5/ areaplot
         Ex1: t:=triangle(0,1,i);areaat(t,(1+i)/2)
         Ex2: c:=square(0,2);areaat(c,1+i)
         Ex3: c2:=circle(0,2);areaat(c2,1+i)
         Ex4: p:=polygon(0,1,i);areaat(p,1+i)
         Ex5: A:=point(0);B:=point(1+i);c:=carre(A,B);areaat(c,i)
-        
         '''
         return GiacMethods['areaat'](self,*args)
 
@@ -1099,13 +1010,12 @@ cdef class GiacMethods_base:
         Help for areaatraw:
         areaatraw(Polygone, Pnt||Cplx(z0))
         Displays at point(z0), the algebraic area of a circle or of a (star-)polygon (e.g. triangle, square, ...)
-        See also: 1/ area 2/ areaat 3/ polygon 4/ perimeteratraw 5/ areaplot 
+        See also: 1/ area 2/ areaat 3/ polygon 4/ perimeteratraw 5/ areaplot
         Ex1:areaatraw(triangle(0,1,i),(1+i)/2)
         Ex2:areaatraw(square(0,2),1+i)
         Ex3:areaatraw(circle(0,2),1+i)
         Ex4:areaatraw(polygon(0,1,i),1+i)
         Ex5: A:=point(0);B:=point(1+i);c:=carre(A,B);areaatraw(c,i)
-        
         '''
         return GiacMethods['areaatraw'](self,*args)
 
@@ -1114,11 +1024,10 @@ cdef class GiacMethods_base:
         Help for areaplot:
         areaplot(Expr,x=a..b,[n],[Method])
         Displays the area below a curve, optionally with a quadrature method (trapezoid,left_rectangle,right_rectangle,middle_point).
-        See also: 1/ integrate 2/ plot 3/ area 4/ areaat 5/ areaatraw 
+        See also: 1/ integrate 2/ plot 3/ area 4/ areaat 5/ areaatraw
         Ex1:areaplot(sin(x),x=0..pi)
         Ex2:areaplot(x^2,x=0..1,5,trapezoid)
         Ex3:areaplot(x^2,x=0..1,5,middle_point)
-        
         '''
         return GiacMethods['areaplot'](self,*args)
 
@@ -1127,11 +1036,10 @@ cdef class GiacMethods_base:
         Help for arg:
         arg(Expr)
         Returns the argument of a complex number.
-        See also: 1/ abs 
+        See also: 1/ abs
         Ex1:arg(1+i)
         Ex2:arg(1+2*i)
         Ex3:arg((1+2*i)^2)
-        
         '''
         return GiacMethods['arg'](self,*args)
 
@@ -1140,10 +1048,9 @@ cdef class GiacMethods_base:
         Help for array:
         array(Opt)
         Option for convert for definitions of sparse matrices.
-        See also: 1/ convert 2/ table 
+        See also: 1/ convert 2/ table
         Ex1: A[0..2,0..2]:=1;A[0..1,1..2]:=2;convert(A,array)
         Ex2: B[0..1,1..2]:=1;B[2,2]:=2;convert(B,array)
-        
         '''
         return GiacMethods['array'](self,*args)
 
@@ -1152,9 +1059,8 @@ cdef class GiacMethods_base:
         Help for arrivals:
         arrivals(Graph(G),[Vrtx(v)])
         Returns the list of vertices in digraph G which are connected by v with arcs such that heads are in v. If v is omitted, a list of arrivals is computed for every vertex in G.
-        See also: 1/ in_degree 
+        See also: 1/ in_degree
         Ex1:arrivals(digraph(%{[1,2],[1,3],[2,3]%}),1)
-        
         '''
         return GiacMethods['arrivals'](self,*args)
 
@@ -1163,10 +1069,9 @@ cdef class GiacMethods_base:
         Help for articulation_points:
         articulation_points(Graph(G))
         Returns the list of articulation points (cut vertices) of G.
-        See also: 1/ biconnected_components 2/ is_biconnected 3/ is_connected 4/ is_triconnected 
+        See also: 1/ biconnected_components 2/ is_biconnected 3/ is_connected 4/ is_triconnected
         Ex1:articulation_points(path_graph(5))
         Ex2:articulation_points(cycle_graph(5))
-        
         '''
         return GiacMethods['articulation_points'](self,*args)
 
@@ -1175,9 +1080,8 @@ cdef class GiacMethods_base:
         Help for asin:
         asin(Expr)
         Arcsine.
-        See also: 1/ sin 
+        See also: 1/ sin
         Ex1:asin(0)
-        
         '''
         return GiacMethods['asin'](self,*args)
 
@@ -1186,10 +1090,9 @@ cdef class GiacMethods_base:
         Help for asin2acos:
         asin2acos(Expr)
         Replaces arcsin(x) by pi/2-arccos(x) in the argument.
-        See also: 1/ asin2atan 
+        See also: 1/ asin2atan
         Ex1:asin2acos(acos(x)+asin(x))
         Ex2:asin2acos(2*asin(x))
-        
         '''
         return GiacMethods['asin2acos'](self,*args)
 
@@ -1198,10 +1101,9 @@ cdef class GiacMethods_base:
         Help for asin2atan:
         asin2atan(Expr)
         Replaces arcsin(x) by arctan(x/sqrt(1-x^2)) in the argument.
-        See also: 1/ asin2acos 
+        See also: 1/ asin2acos
         Ex1:asin2atan(2*asin(x))
         Ex2:asin2atan(asin(sqrt(1-x^2))+asin(x))
-        
         '''
         return GiacMethods['asin2atan'](self,*args)
 
@@ -1210,9 +1112,8 @@ cdef class GiacMethods_base:
         Help for asinh:
         asinh(Expr)
         Hyperbolic arcsine.
-        See also: 1/ sinh 2/ asin 
+        See also: 1/ sinh 2/ asin
         Ex1:asinh(0)
-        
         '''
         return GiacMethods['asinh'](self,*args)
 
@@ -1221,10 +1122,9 @@ cdef class GiacMethods_base:
         Help for assign_edge_weights:
         assign_edge_weights(Graph(G),Seq(m,n)||Intrv(a..b))
         Assigns random edge weights to the edges of G and returns a modified copy of G. If integers n and m such that n>=m are specified, weights are integers randomly chosen in [m,n]. If an interval a..b is specified, weights are uniformly distributed in the interval [a,b).
-        See also: 1/ set_edge_weight 2/ get_edge_weight 3/ weight_matrix 4/ random_digraph 5/ random_tournament 
+        See also: 1/ set_edge_weight 2/ get_edge_weight 3/ weight_matrix 4/ random_digraph 5/ random_tournament
         Ex1:assign_edge_weights(digraph(trail(1,2,3,4,1)),1,9)
         Ex2:assign_edge_weights(digraph(trail(1,2,3,4,1)),0..1)
-        
         '''
         return GiacMethods['assign_edge_weights'](self,*args)
 
@@ -1233,7 +1133,7 @@ cdef class GiacMethods_base:
         Help for assume:
         assume(Expr)
         Makes an assumption on a variable.
-        See also: 1/ purge 2/ about 3/ additionally 
+        See also: 1/ purge 2/ about 3/ additionally
         Ex1:assume(a>0)
         Ex2:assume(a=0.3)
         Ex3:assume(a:=[pi/4,0,pi/2])
@@ -1244,7 +1144,6 @@ cdef class GiacMethods_base:
         Ex8:assume((a>=2 and a<4) or a>6)
         Ex9:assume(a>=2);additionally(a<6)
         Ex10:assume(a)
-        
         '''
         return GiacMethods['assume'](self,*args)
 
@@ -1253,10 +1152,9 @@ cdef class GiacMethods_base:
         Help for at:
         at(Lst(l)||Mtrx(m),Index(j)||Lst([j,k]))
         at(l,j) (or at(m,[j,k])) is the element of the list l (or matrix m) for index=j (or for index j,k).
-        See also: 1/ of 
+        See also: 1/ of
         Ex1:at([10,11,12],1)
         Ex2:at([[1,2],[3,4]],[1,0])
-        
         '''
         return GiacMethods['at'](self,*args)
 
@@ -1265,9 +1163,8 @@ cdef class GiacMethods_base:
         Help for atan:
         atan(Expr)
         Arctangent.
-        See also: 1/ tan 2/ atanh 
+        See also: 1/ tan 2/ atanh
         Ex1:atan(0)
-        
         '''
         return GiacMethods['atan'](self,*args)
 
@@ -1276,8 +1173,7 @@ cdef class GiacMethods_base:
         Help for atan2acos:
         atan2acos(Expr)
         Replaces arctan(x) by pi/2-arccos(x/sqrt(1+x^2)) in the argument.
-        See also: 1/ atan2acos(atan(x)) 
-        
+        See also: 1/ atan2acos(atan(x))
         '''
         return GiacMethods['atan2acos'](self,*args)
 
@@ -1286,8 +1182,7 @@ cdef class GiacMethods_base:
         Help for atan2asin:
         atan2asin(Expr)
         Replaces arctan(x) by arcsin(x/sqrt(1+x^2)) in the argument.
-        See also: 1/ atan2asin(atan(x)) 
-        
+        See also: 1/ atan2asin(atan(x))
         '''
         return GiacMethods['atan2asin'](self,*args)
 
@@ -1296,9 +1191,8 @@ cdef class GiacMethods_base:
         Help for atanh:
         atanh(Expr)
         Hyperbolic arctangent.
-        See also: 1/ atan 2/ tanh 
+        See also: 1/ atan 2/ tanh
         Ex1:atanh(0)
-        
         '''
         return GiacMethods['atanh'](self,*args)
 
@@ -1307,11 +1201,10 @@ cdef class GiacMethods_base:
         Help for atrig2ln:
         atrig2ln(Expr)
         Rewrites the expression containing inverse trigonometric functions into logarithmic functions.
-        See also: 1/ trig2exp 2/ exp2trig 
+        See also: 1/ trig2exp 2/ exp2trig
         Ex1:atrig2ln(atan(x))
         Ex2:atrig2ln(asin(x))
         Ex3:atrig2ln(acos(x))
-        
         '''
         return GiacMethods['atrig2ln'](self,*args)
 
@@ -1320,13 +1213,12 @@ cdef class GiacMethods_base:
         Help for augment:
         augment(Lst,Lst||Seq,Seq||Str,Str||Mtrx,Mtrx)
         Concatenates two lists or two strings or two sequences or 2 matrices; L:=concat(L,L1) or L.concat(L1).
-        See also: 1/ append 2/ cat 3/ semi_augment 4/ border 5/ + 
+        See also: 1/ append 2/ cat 3/ semi_augment 4/ border 5/ +
         Ex1:augment([1,2],[3,4,5])
         Ex2:augment("bon","jour")
         Ex3:augment([[1,2],[3,4]],[[4,5,6],[6,7,8]])
         Ex4: L:=[1,2];L.concat([3,4,5])
         Ex5: S:="abcd";S.concat("efghi")
-        
         '''
         return GiacMethods['augment'](self,*args)
 
@@ -1335,9 +1227,8 @@ cdef class GiacMethods_base:
         Help for auto_correlation:
         auto_correlation(Lst)
         Returns the cross-correlation of the given signal with itself.
-        See also: 1/ cross_correlation 2/ correlation 
+        See also: 1/ cross_correlation 2/ correlation
         Ex1:auto_correlation([1,-1,0,2,1])
-        
         '''
         return GiacMethods['auto_correlation'](self,*args)
 
@@ -1346,14 +1237,13 @@ cdef class GiacMethods_base:
         Help for autosimplify:
         autosimplify(Cmds)
         The argument is a command that Xcas will use to rewrite answers (initial value is regroup and for no simplification it is nop or 0).
-        See also: 1/ simplify 2/ factor 3/ regroup 
+        See also: 1/ simplify 2/ factor 3/ regroup
         Ex1:autosimplify(nop)
         Ex2:autosimplify(0)
         Ex3:autosimplify(regroup)
         Ex4:autosimplify(1)
         Ex5:autosimplify(factor)
         Ex6:autosimplify(simplify)
-        
         '''
         return GiacMethods['autosimplify'](self,*args)
 
@@ -1362,10 +1252,9 @@ cdef class GiacMethods_base:
         Help for avance:
         avance(NULL or Real(n))
         The turtle takes n steps forward (by default n=10).
-        See also: 1/ recule 2/ saute 
+        See also: 1/ recule 2/ saute
         Ex1: avance 30
         Ex2:avance(30)
-        
         '''
         return GiacMethods['avance'](self,*args)
 
@@ -1374,11 +1263,10 @@ cdef class GiacMethods_base:
         Help for avgRC:
         avgRC(Expr(Xpr),Var(Var),[Real(h)])
         Returns (Xpr(var+h)-Xpr(Var))/h (by default h=0.001).
-        See also: 1/ nDeriv 
+        See also: 1/ nDeriv
         Ex1:avgRC(f(x),x,h)
         Ex2:avgRC(x^2,x,0.1)
         Ex3:avgRC(x^2,x)
-        
         '''
         return GiacMethods['avgRC'](self,*args)
 
@@ -1387,10 +1275,9 @@ cdef class GiacMethods_base:
         Help for axes:
         axes(Opt)
         Global option (Maple compatibility) of a graphic command to put or not the axes.
-        See also: 1/ line_width 2/ gl_showaxes 3/ switch_axes 
+        See also: 1/ line_width 2/ gl_showaxes 3/ switch_axes
         Ex1: axes=0;segment(0,point(1,1))
         Ex2: axes=1;segment(0,point(1,1),epaisseur=5)
-        
         '''
         return GiacMethods['axes'](self,*args)
 
@@ -1400,7 +1287,6 @@ cdef class GiacMethods_base:
         axis(xmin,xmax,ymin,ymax,[zmin,zmaz])
         Defines the graphic display
         Ex1:axis(-2,4,-1,6)
-        
         '''
         return GiacMethods['axis'](self,*args)
 
@@ -1409,11 +1295,10 @@ cdef class GiacMethods_base:
         Help for back:
         back(Vect or Seq or Str)
         Returns the last element of a vector or a sequence or a string.
-        See also: 1/ inter 2/ head 3/ mid 4/ left 5/ right 
+        See also: 1/ inter 2/ head 3/ mid 4/ left 5/ right
         Ex1:back(1,2,3)
         Ex2:back([1,2,3])
         Ex3:back("bonjour")
-        
         '''
         return GiacMethods['back'](self,*args)
 
@@ -1422,10 +1307,9 @@ cdef class GiacMethods_base:
         Help for backward:
         backward(NULL or Real(n))
         The turtle takes n steps back (by default n=10).
-        See also: 1/ avance 2/ saute 
+        See also: 1/ avance 2/ saute
         Ex1: recule 30
         Ex2:backward(30)
-        
         '''
         return GiacMethods['backward'](self,*args)
 
@@ -1434,9 +1318,8 @@ cdef class GiacMethods_base:
         Help for baisse_crayon:
         baisse_crayon(NULL)
         Presses the pencil down so that the turtle move with traces.
-        See also: 1/ leve_crayon 2/ crayon 
+        See also: 1/ leve_crayon 2/ crayon
         Ex1:baisse_crayon()
-        
         '''
         return GiacMethods['baisse_crayon'](self,*args)
 
@@ -1445,8 +1328,7 @@ cdef class GiacMethods_base:
         Help for bandwidth:
         bandwidth(Opt)
         Option for the kernel_density command.
-        See also: 1/ kernel_density 2/ bins 
-        
+        See also: 1/ kernel_density 2/ bins
         '''
         return GiacMethods['bandwidth'](self,*args)
 
@@ -1455,11 +1337,10 @@ cdef class GiacMethods_base:
         Help for bar_plot:
         bar_plot(Mtrx)
         Draws a barplot of a one variable statistical series.
-        See also: 1/ camembert 2/ histogram 3/ frequencies 
+        See also: 1/ camembert 2/ histogram 3/ frequencies
         Ex1:bar_plot([["France",6],["Allemagne",12],["Suisse",5]])
         Ex2:bar_plot([3/2,2/3,5/4,4/5,7/6,6/7,9/8,8/9,11/10])
         Ex3:bar_plot([[2,"xyz","abc"],["A",2,5],["B",5,6],["C",7,7]])
-        
         '''
         return GiacMethods['bar_plot'](self,*args)
 
@@ -1468,11 +1349,10 @@ cdef class GiacMethods_base:
         Help for barplot:
         barplot(Mtrx)
         Draws a barplot of a one variable statistical series.
-        See also: 1/ camembert 2/ histogram 3/ frequencies 
+        See also: 1/ camembert 2/ histogram 3/ frequencies
         Ex1:barplot([["France",6],["Allemagne",12],["Suisse",5]])
         Ex2:barplot([3/2,2/3,5/4,4/5,7/6,6/7,9/8,8/9,11/10])
         Ex3:barplot([[2,"xyz","abc"],["A",2,5],["B",5,6],["C",7,7]])
-        
         '''
         return GiacMethods['barplot'](self,*args)
 
@@ -1481,9 +1361,8 @@ cdef class GiacMethods_base:
         Help for bartlett_hann_window:
         bartlett_hann_window(Lst,[Interval(n1..n2)])
         Applies the Bartlett-Hann windowing function to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(bartlett_hann_window(randvector(1000,0..1)))
-        
         '''
         return GiacMethods['bartlett_hann_window'](self,*args)
 
@@ -1492,11 +1371,10 @@ cdef class GiacMethods_base:
         Help for barycenter:
         barycenter([Pnt,Real],[Pnt,Real],[Pnt,Real])
         barycenter([point1,coeff1],...) draws the barycenter of point1 with weight coeff1...
-        See also: 1/ isobarycenter 2/ midpoint 
+        See also: 1/ isobarycenter 2/ midpoint
         Ex1:barycenter([point(-1),1],[point(1+i),2],[point(1-i),1])
         Ex2:barycenter([[point(-1),1],[point(1+i),2],[point(1-i),1]])
         Ex3:barycenter([point(-1),point(1+i),point(1-i)],[1,2,1])
-        
         '''
         return GiacMethods['barycenter'](self,*args)
 
@@ -1505,11 +1383,10 @@ cdef class GiacMethods_base:
         Help for base:
         base(Opt)
         Option for convert : convert(p,base,b)= [a0,a1,..an] or convert([a0,a1,..an],base,b)=p with p=a0+a1*b+....an*b^(n-1).
-        See also: 1/ convert 2/ horner 3/ revlist 
+        See also: 1/ convert 2/ horner 3/ revlist
         Ex1: convert(123,base,8)
         Ex2: convert([3,7,1],base,8)
         Ex3: horner(revlist([3,7,1]),8)
-        
         '''
         return GiacMethods['base'](self,*args)
 
@@ -1518,9 +1395,8 @@ cdef class GiacMethods_base:
         Help for basis:
         basis(Lst(vector1,..,vectorn))
         Extracts a basis from a spanning set of vectors.
-        See also: 1/ ker 2/ ibasis 
+        See also: 1/ ker 2/ ibasis
         Ex1:basis([[1,2,3],[4,5,6],[7,8,9],[10,11,12]])
-        
         '''
         return GiacMethods['basis'](self,*args)
 
@@ -1529,11 +1405,10 @@ cdef class GiacMethods_base:
         Help for batons:
         batons(Mtrx)
         Draws for k=0..nrows, the segments (xk,0)-(xk,yk) where xk=element row k column 0 and yk=element row k column j (j=1..ncols).
-        See also: 1/ polygonplot 2/ scatterplot 3/ listplot 
+        See also: 1/ polygonplot 2/ scatterplot 3/ listplot
         Ex1:batons([1,3],[2,5],[3,2])
         Ex2:batons([[1,3],[2,5],[3,2]])
         Ex3:batons([1,2,3],[3,5,2])
-        
         '''
         return GiacMethods['batons'](self,*args)
 
@@ -1542,9 +1417,8 @@ cdef class GiacMethods_base:
         Help for bellman_ford:
         bellman_ford(Graph(G),Vrtx(s),Vrtx(t)||Lst(T))
         Returns the length of the shortest path resp. paths from s to vertex t resp. vertices in T in weighted graph G.
-        See also: 1/ dijkstra 2/ shortest_path 
+        See also: 1/ dijkstra 2/ shortest_path
         Ex1:bellman_ford(graph(%{[[1,2],-1],[[2,3],-3],[[3,4],-7],[[4,5],-3],[[5,6],-3],[[1,6],-3]%}),1,4)
-        
         '''
         return GiacMethods['bellman_ford'](self,*args)
 
@@ -1553,10 +1427,9 @@ cdef class GiacMethods_base:
         Help for bernoulli:
         bernoulli(Intg||(Intg,Var))
         bernoulli(n) is the n-th number of Bernoulli and bernoulli(n,x) is the n-th polynomial of Bernoulli and the second argument is the variable.
-        See also: 1/  
+        See also: 1/
         Ex1:bernoulli(6)
         Ex2:bernoulli(6,x)
-        
         '''
         return GiacMethods['bernoulli'](self,*args)
 
@@ -1565,10 +1438,9 @@ cdef class GiacMethods_base:
         Help for besselJ:
         besselJ(Real(x),Int(p))
         besselJ(x,p) returns the Bessel function of the first kind Jp(x).
-        See also: 1/ BesselJ 2/ BesselY 3/ besselY 
+        See also: 1/ BesselJ 2/ BesselY 3/ besselY
         Ex1:besselJ(sqrt(2),2)
         Ex2:besselJ(sqrt(2),-2)
-        
         '''
         return GiacMethods['besselJ'](self,*args)
 
@@ -1577,10 +1449,9 @@ cdef class GiacMethods_base:
         Help for besselY:
         besselY(Real(x),Int(p))
         besselY(x,p) returns the Bessel function of the second kind Yp(x).
-        See also: 1/ BesselY 2/ BesselJ 3/ besselJ 
+        See also: 1/ BesselY 2/ BesselJ 3/ besselJ
         Ex1:besselY(sqrt(2),2)
         Ex2:besselY(sqrt(2),-2)
-        
         '''
         return GiacMethods['besselY'](self,*args)
 
@@ -1589,9 +1460,8 @@ cdef class GiacMethods_base:
         Help for betad:
         betad(Real(a>0),Real(b>0),Real(0<=x<=1))
         Returns the probability density of the Beta law (=Gamma(a+b)*x^(a-1)*(1-x)^(b-1)/(Gamma(a)*Gamma(b))).
-        See also: 1/ betad_cdf 2/ betad_icdf 
+        See also: 1/ betad_cdf 2/ betad_icdf
         Ex1:betad(2.2,1.5,0.8)
-        
         '''
         return GiacMethods['betad'](self,*args)
 
@@ -1600,10 +1470,9 @@ cdef class GiacMethods_base:
         Help for betad_cdf:
         betad_cdf(Real(a>0),Real(b>0),Real(0<=x0<=1),[Real(0<=y0<=1)])
         Returns the probability that a Beta random variable (with a and b as parameters) is less than x0 or between x0 and y0.
-        See also: 1/ betad 2/ betad_icdf 
+        See also: 1/ betad 2/ betad_icdf
         Ex1:betad_cdf(2,1,0.2)
         Ex2:betad_cdf(2,1,0.1,0.3)
-        
         '''
         return GiacMethods['betad_cdf'](self,*args)
 
@@ -1612,10 +1481,9 @@ cdef class GiacMethods_base:
         Help for betad_icdf:
         betad_icdf(Real(a>0),Real(b>0),Real(0<=p<=1))
         Returns h such that the probability that a Beta random variable is less than h is p (0<=p<=1).
-        See also: 1/ betad_cdf 2/ betad 
+        See also: 1/ betad_cdf 2/ betad
         Ex1:betad_icdf(2,1,0.95)
         Ex2:betad_icdf(2,1,0.5)
-        
         '''
         return GiacMethods['betad_icdf'](self,*args)
 
@@ -1624,10 +1492,9 @@ cdef class GiacMethods_base:
         Help for betavariate:
         betavariate(Real(a),Real(b))
         Returns a random real according to the Beta distribution with parameters a>0 and b>0.
-        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector 
+        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector
         Ex1:betavariate(1,2)
         Ex2:betavariate(1.5,4)
-        
         '''
         return GiacMethods['betavariate'](self,*args)
 
@@ -1636,12 +1503,11 @@ cdef class GiacMethods_base:
         Help for bezier:
         bezier(Lst,[plot])
         Bezier curve defined by control points.
-        See also: 1/ parameq 
+        See also: 1/ parameq
         Ex1:bezier(1,1+i,2+i,3-i,plot)
         Ex2:bezier(point([0,0,0]),point([1,1,0]),point([0,1,1]),plot)
         Ex3: parameq(bezier(1,1+i,2+i,3-i))
         Ex4: parameq(bezier(point([0,0,0]),point([1,1,0]),point([0,1,1])))
-        
         '''
         return GiacMethods['bezier'](self,*args)
 
@@ -1650,11 +1516,10 @@ cdef class GiacMethods_base:
         Help for bezout_entiers:
         bezout_entiers(Intg,Intg)
         Extended greatest common divisor of 2 integers.
-        See also: 1/ gcd 2/ iabcuv 3/ egcd 
+        See also: 1/ gcd 2/ iabcuv 3/ egcd
         Ex1:bezout_entiers(45,75)
         Ex2:bezout_entiers(21,28)
         Ex3:bezout_entiers(30,49)
-        
         '''
         return GiacMethods['bezout_entiers'](self,*args)
 
@@ -1663,9 +1528,8 @@ cdef class GiacMethods_base:
         Help for biconnected_components:
         biconnected_components(Graph(G))
         Returns the biconnected components of G as a list of lists of vertices.
-        See also: 1/ articulation_points 2/ is_biconnected 3/ is_connected 4/ trail 
+        See also: 1/ articulation_points 2/ is_biconnected 3/ is_connected 4/ trail
         Ex1:biconnected_components(graph(trail(1,2,3,4,2),trail(4,5,6,7,5)))
-        
         '''
         return GiacMethods['biconnected_components'](self,*args)
 
@@ -1674,7 +1538,7 @@ cdef class GiacMethods_base:
         Help for binomial:
         binomial(Intg(n),Intg(k),[Real(p in 0..1)])
         Returns comb(n,k)*p^k*(1-p)^(n-k) or comb(n,k) if no 3rd argument.
-        See also: 1/ binomial_cdf 2/ binomial_icdf 3/ multinomial 4/ randvector 5/ ranm 
+        See also: 1/ binomial_cdf 2/ binomial_icdf 3/ multinomial 4/ randvector 5/ ranm
         Ex1:binomial(4,2)
         Ex2:binomial(4,0,0.5)
         Ex3:binomial(4,2,0.5)
@@ -1682,7 +1546,6 @@ cdef class GiacMethods_base:
         Ex5: assume(p>=0 and p<=1);binomial(4,p,2)
         Ex6: randvector(6,binomial,4,0.2)
         Ex7: ranm(4,6,binomial,4,0.7)
-        
         '''
         return GiacMethods['binomial'](self,*args)
 
@@ -1691,11 +1554,10 @@ cdef class GiacMethods_base:
         Help for binomial_cdf:
         binomial_cdf(Intg(n),Real(p),Real(x),[Real(y)])
         Returns Proba(X<=x) or Proba(x<=X<=y) when X follows the B(n,p) law.
-        See also: 1/ binomial 2/ binomial_icdf 
+        See also: 1/ binomial 2/ binomial_icdf
         Ex1:binomial_cdf(4,0.5,2)
         Ex2:binomial_cdf(4,0.1,2)
         Ex3:binomial_cdf(4,0.5,2,3)
-        
         '''
         return GiacMethods['binomial_cdf'](self,*args)
 
@@ -1704,10 +1566,9 @@ cdef class GiacMethods_base:
         Help for binomial_icdf:
         binomial_icdf(Intg(n),Real(p),Real(t))
         Returns h such as Proba(X<=h)=t when X follows the B(n,p) law.
-        See also: 1/ binomial 2/ binomial_cdf 
+        See also: 1/ binomial 2/ binomial_cdf
         Ex1:binomial_icdf(4,0.5,0.68)
         Ex2:binomial_icdf(4,0.1,0.95)
-        
         '''
         return GiacMethods['binomial_icdf'](self,*args)
 
@@ -1716,8 +1577,7 @@ cdef class GiacMethods_base:
         Help for bins:
         bins(Opt)
         Option for the kernel_density command.
-        See also: 1/ kernel_density 2/ bandwidth 
-        
+        See also: 1/ kernel_density 2/ bandwidth
         '''
         return GiacMethods['bins'](self,*args)
 
@@ -1726,8 +1586,7 @@ cdef class GiacMethods_base:
         Help for bipartite:
         bipartite(Opt)
         Option for the draw_graph command
-        See also: 1/ draw_graph 
-        
+        See also: 1/ draw_graph
         '''
         return GiacMethods['bipartite'](self,*args)
 
@@ -1736,9 +1595,8 @@ cdef class GiacMethods_base:
         Help for bipartite_matching:
         bipartite_matching(Graph(G))
         Returns the list of edges in a maximum matching of the undirected unweighted bipartite graph G.
-        See also: 1/ is_bipartite 2/ maximum_matching 
+        See also: 1/ is_bipartite 2/ maximum_matching
         Ex1:bipartite_matching(graph("desargues"))
-        
         '''
         return GiacMethods['bipartite_matching'](self,*args)
 
@@ -1747,14 +1605,13 @@ cdef class GiacMethods_base:
         Help for bisection_solver:
         bisection_solver(Opt)
         Argument for fsolve giving the method for solving a numerical equation.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve(cos(x)=x,x,0..1,bisection_solver)
         Ex2: fsolve(cos(x)=x,x,0..1,brent_solver)
         Ex3: fsolve(cos(x)=x,x,0..1,falsepos_solver)
         Ex4: fsolve(cos(x)=x,x,0,newton_solver)
         Ex5: fsolve(cos(x)=x,x,0,secant_solver)
         Ex6: fsolve(cos(x)=x,x,0,steffenson_solver)
-        
         '''
         return GiacMethods['bisection_solver'](self,*args)
 
@@ -1763,9 +1620,8 @@ cdef class GiacMethods_base:
         Help for bisector:
         bisector((Pnt(A) or Cplx),(Pnt(B) or Cplx),(Pnt(C) or Cplx))
         Draws the bisector of the angle (AB,AC) given by 3 points A,B,C.
-        See also: 1/ angle 2/ exbisector 
+        See also: 1/ angle 2/ exbisector
         Ex1:bisector(0,1,i)
-        
         '''
         return GiacMethods['bisector'](self,*args)
 
@@ -1774,9 +1630,8 @@ cdef class GiacMethods_base:
         Help for bit_depth:
         bit_depth(Lst(clip))
         Returns the bit depth of an audio clip.
-        See also: 1/ channels 2/ channel_data 3/ duration 4/ samplerate 
+        See also: 1/ channels 2/ channel_data 3/ duration 4/ samplerate
         Ex1:bit_depth(readwav("/some/file"))
-        
         '''
         return GiacMethods['bit_depth'](self,*args)
 
@@ -1785,9 +1640,8 @@ cdef class GiacMethods_base:
         Help for bitand:
         bitand(Intg,Intg)
         Logical bit and.
-        See also: 1/ bitxor 2/ bitor 
+        See also: 1/ bitxor 2/ bitor
         Ex1:bitand(0x12,0x38)
-        
         '''
         return GiacMethods['bitand'](self,*args)
 
@@ -1796,9 +1650,8 @@ cdef class GiacMethods_base:
         Help for bitor:
         bitor(Intg,Intg)
         Inclusive logical bit or.
-        See also: 1/ bitxor 2/ bitand 
+        See also: 1/ bitxor 2/ bitand
         Ex1:bitor(0x12,0x38)
-        
         '''
         return GiacMethods['bitor'](self,*args)
 
@@ -1807,9 +1660,8 @@ cdef class GiacMethods_base:
         Help for bitxor:
         bitxor(Intg,Intg)
         Exclusive logical bit or.
-        See also: 1/ bitor 2/ bitand 
+        See also: 1/ bitor 2/ bitand
         Ex1:bitxor(0x12,0x38)
-        
         '''
         return GiacMethods['bitxor'](self,*args)
 
@@ -1818,9 +1670,8 @@ cdef class GiacMethods_base:
         Help for blackman_harris_window:
         blackman_harris_window(Lst,[Interval(n1..n2)])
         Applies the Blackman-Harris windowing function to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ bartlett_hann_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ bartlett_hann_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(blackman_harris_window(randvector(1000,0..1)))
-        
         '''
         return GiacMethods['blackman_harris_window'](self,*args)
 
@@ -1829,9 +1680,8 @@ cdef class GiacMethods_base:
         Help for blackman_window:
         blackman_window(Lst,[Real(a)],[Interval(n1..n2)])
         Applies the Blackman windowing function with parameter a (by default a=0.16) to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ bartlett_harris_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ bartlett_harris_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(blackman_window(randvector(1000,0..1)))
-        
         '''
         return GiacMethods['blackman_window'](self,*args)
 
@@ -1840,10 +1690,9 @@ cdef class GiacMethods_base:
         Help for blockmatrix:
         blockmatrix(Intg(n),Intg(m),Lst)
         Returns the matrix obtained from the list divided into n lists of dimension m.
-        See also: 1/ list2mat 
+        See also: 1/ list2mat
         Ex1:blockmatrix(2,3,[idn(2),idn(2),idn(2),idn(2),idn(2),idn(2)])
         Ex2:blockmatrix(2,2,[idn(2),newMat(2,3),newMat(3,2),idn(3)])
-        
         '''
         return GiacMethods['blockmatrix'](self,*args)
 
@@ -1852,9 +1701,8 @@ cdef class GiacMethods_base:
         Help for bohman_window:
         bohman_window(Lst,[Interval(n1..n2)])
         Applies the Bohman windowing function to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bartlett_hann_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bartlett_hann_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(bohman_window(randvector(1000,0..1)))
-        
         '''
         return GiacMethods['bohman_window'](self,*args)
 
@@ -1863,10 +1711,9 @@ cdef class GiacMethods_base:
         Help for border:
         border(Mtrx(A),Lst(b))
         Returns the matrix obtained by augmenting A with b as the last column, if nrows(A)=size(b), border(A,b)=tran(append(tran(A),b)).
-        See also: 1/ tran 2/ append 3/ augment 
+        See also: 1/ tran 2/ append 3/ augment
         Ex1:border([[1,2,3,4],[4,5,6,8],[7,8,9,10]],[1,3,5])
         Ex2:border([[1,2,3],[4,5,6],[7,8,9]],[1,0,1])
-        
         '''
         return GiacMethods['border'](self,*args)
 
@@ -1875,9 +1722,8 @@ cdef class GiacMethods_base:
         Help for boxcar:
         boxcar(Real(a),Real(b),Expr(x))
         Returns the value at x of the boxcar function corresponding to a and b.
-        See also: 1/ rect 2/ Heaviside 
+        See also: 1/ rect 2/ Heaviside
         Ex1:boxcar(1,2,x)
-        
         '''
         return GiacMethods['boxcar'](self,*args)
 
@@ -1886,12 +1732,11 @@ cdef class GiacMethods_base:
         Help for boxwhisker:
         boxwhisker(Lst,[Lst],[x=a..b||y=a..b])
         Box and Whisker plot for a statistical series.
-        See also: 1/ quartiles 
+        See also: 1/ quartiles
         Ex1:boxwhisker([-1,1,2,2.2,3,4,-2,5])
         Ex2:boxwhisker([1,2,3,5,10,4],x=1..2)
         Ex3:boxwhisker([1,2,3,5,10,4],[1,2,3,1,2,3])
         Ex4:boxwhisker([[6,0,1,3,4,2,5],[0,1,3,4,2,5,6],[1,3,4,2,5,6,0],[3,4,2,5,6,0,1],[4,2,5,6,0,1,3],[2,5,6,0,1,3,4]])
-        
         '''
         return GiacMethods['boxwhisker'](self,*args)
 
@@ -1900,14 +1745,13 @@ cdef class GiacMethods_base:
         Help for brent_solver:
         brent_solver(Opt)
         Argument for fsolve giving the method for solving a numerical equation.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve(cos(x)=x,x,0..1,bisection_solver)
         Ex2: fsolve(cos(x)=x,x,0..1,brent_solver)
         Ex3: fsolve(cos(x)=x,x,0..1,falsepos_solver)
         Ex4: fsolve(cos(x)=x,x,0,newton_solver)
         Ex5: fsolve(cos(x)=x,x,0,secant_solver)
         Ex6: fsolve(cos(x)=x,x,0,steffenson_solver)
-        
         '''
         return GiacMethods['brent_solver'](self,*args)
 
@@ -1916,10 +1760,9 @@ cdef class GiacMethods_base:
         Help for bvpsolve:
         bvpsolve(Expr(f(x,y,y')),Lst(x=a..b,y),Lst(y(a),y(b),[y'(1)]),[options])
         Returns an approximation of the function y (and optionally of y') on the interval a..b.
-        See also: 1/ odesolve 
+        See also: 1/ odesolve
         Ex1:bvpsolve((32+2x^3-y*diff(y(x),x))/8,[x=1..3,y],[17,43/3],20)
         Ex2:bvpsolve((x^2*diff(y(x),x)^2-9y^2+4x^6)/x^5,[x=1..2,y],[0,ln(256),1],10,output=spline)
-        
         '''
         return GiacMethods['bvpsolve'](self,*args)
 
@@ -1928,11 +1771,10 @@ cdef class GiacMethods_base:
         Help for cFactor:
         cFactor(Expr)
         Factorization of the expression in ℂ (on the Gaussian integers if there are more than 2 variables).
-        See also: 1/ factor 
+        See also: 1/ factor
         Ex1:cFactor(x^2*y+y)
         Ex2:cFactor(x^2*y^2+y^2+4*x^2+4)
         Ex3:cFactor(x^2*y^2+y^2+2*x^2+2)
-        
         '''
         return GiacMethods['cFactor'](self,*args)
 
@@ -1941,12 +1783,11 @@ cdef class GiacMethods_base:
         Help for cSolve:
         cSolve(LstEq,LstVar)
         Returns the list of complex solutions of an equation or a matrix where the rows are ℂ-solutions of a system of polynomial equations.
-        See also: 1/ cZeros 2/ solve 3/ fslove 
+        See also: 1/ cZeros 2/ solve 3/ fslove
         Ex1:cSolve(x^4-1,x)
         Ex2:cSolve(x^4-y^4 and x+y=2,[x,y])
         Ex3:cSolve(x^4-y^4 and x+y=0 and x^2=2*x,[x,y])
         Ex4:cSolve(u*v-u=v and v^2=u,[u,v])
-        
         '''
         return GiacMethods['cSolve'](self,*args)
 
@@ -1955,10 +1796,9 @@ cdef class GiacMethods_base:
         Help for cZeros:
         cZeros(Expr(Xpr)||LstExpr, [Var||LstVar])
         Returns the list of complex solutions of Xpr=0 or the matrix where the rows are the solutions of the system : Xpr1=0,Xpr2=0...
-        See also: 1/ solve 
+        See also: 1/ solve
         Ex1:cZeros(x^2-1)
         Ex2:cZeros([x^2-1,x^2-y^2],[x,y])
-        
         '''
         return GiacMethods['cZeros'](self,*args)
 
@@ -1967,11 +1807,10 @@ cdef class GiacMethods_base:
         Help for camembert:
         camembert(Mtrx)
         Draws pie chart of a one variable statistical series.
-        See also: 1/ bar_plot 
+        See also: 1/ bar_plot
         Ex1:camembert([["France",6],["Allemagne",12],["Suisse",5]])
         Ex2:camembert([3/2,2/3,5/4,4/5,7/6,6/7,9/8,8/9,11/10])
         Ex3:camembert([[2,"xyz","abc"],["A",2,5],["B",5,6],["C",7,7]])
-        
         '''
         return GiacMethods['camembert'](self,*args)
 
@@ -1980,10 +1819,9 @@ cdef class GiacMethods_base:
         Help for canonical_form:
         canonical_form(Trinom(a*x^2+b*x+c),[Var])
         Canonical_form of a 2nd degree polynomial.
-        See also: 1/  
+        See also: 1/
         Ex1:canonical_form(2*x^2-12*x+1)
         Ex2:canonical_form(2*a^2-12*a+1,a)
-        
         '''
         return GiacMethods['canonical_form'](self,*args)
 
@@ -1992,9 +1830,8 @@ cdef class GiacMethods_base:
         Help for canonical_labeling:
         canonical_labeling(Graph(G))
         Returns the permutation representing the canonical labeling of G.
-        See also: 1/ isomorphic_copy 2/ relabel_vertices 
+        See also: 1/ isomorphic_copy 2/ relabel_vertices
         Ex1:canonical_labeling(graph("petersen"))
-        
         '''
         return GiacMethods['canonical_labeling'](self,*args)
 
@@ -2003,9 +1840,8 @@ cdef class GiacMethods_base:
         Help for cartesian_product:
         cartesian_product(Seq(G1,G2,..))
         Returns the Cartesian product of graphs G1, G2, ... with vertices labelled as "u:v:..." where u, v, ... are vertices from G1, G2, ..., respectively.
-        See also: 1/ tensor_product 
+        See also: 1/ tensor_product
         Ex1:cartesian_product(graph(trail(1,2,3,4,5,2)),star_graph(3))
-        
         '''
         return GiacMethods['cartesian_product'](self,*args)
 
@@ -2014,9 +1850,8 @@ cdef class GiacMethods_base:
         Help for cauchy:
         cauchy(Real(x0),Real(a),Real(x))
         Returns the density of probability at x of the Cauchy law with parameters x0 and a (by default x0=0 and a=1).
-        See also: 1/ cauchy_cdf 2/ cauchy_icdf 
+        See also: 1/ cauchy_cdf 2/ cauchy_icdf
         Ex1:cauchy(0.0,2.0,1.0)
-        
         '''
         return GiacMethods['cauchy'](self,*args)
 
@@ -2025,10 +1860,9 @@ cdef class GiacMethods_base:
         Help for cauchy_cdf:
         cauchy_cdf(Real(x0),Real(a),Real(x),[Real(y)])
         Returns the probability that a Cauchy random variable is less than x.
-        See also: 1/ cauchyd 2/ cauchy_icdf 
+        See also: 1/ cauchyd 2/ cauchy_icdf
         Ex1:cauchy_cdf(0.0,2.0,2.1)
         Ex2:cauchy_cdf(2,3,-1.9,1.4)
-        
         '''
         return GiacMethods['cauchy_cdf'](self,*args)
 
@@ -2037,9 +1871,8 @@ cdef class GiacMethods_base:
         Help for cauchy_icdf:
         cauchy_icdf(Real(x0),Real(a),Real(p))
         Returns h such that the probability that a Cauchy random variable is less than h is p (0<=p<=1).
-        See also: 1/ cauchy_cdf 2/ cauchy 
+        See also: 1/ cauchy_cdf 2/ cauchy
         Ex1:cauchy_icdf(0.0,2.0,0.95)
-        
         '''
         return GiacMethods['cauchy_icdf'](self,*args)
 
@@ -2048,9 +1881,8 @@ cdef class GiacMethods_base:
         Help for cauchyd:
         cauchyd(Real(x0),Real(a),Real(x))
         Returns the density of probability at x of the Cauchy law with parameters x0 and a (by default x0=0 and a=1).
-        See also: 1/ cauchy_cdf 2/ cauchy_icdf 
+        See also: 1/ cauchy_cdf 2/ cauchy_icdf
         Ex1:cauchyd(0.0,2.0,1.0)
-        
         '''
         return GiacMethods['cauchyd'](self,*args)
 
@@ -2059,10 +1891,9 @@ cdef class GiacMethods_base:
         Help for cauchyd_cdf:
         cauchyd_cdf(Real(x0),Real(a),Real(x),[Real(y)])
         Returns the probability that a Cauchy random variable is less than x.
-        See also: 1/ cauchyd 2/ cauchy_icdf 
+        See also: 1/ cauchyd 2/ cauchy_icdf
         Ex1:cauchyd_cdf(0.0,2.0,2.1)
         Ex2:cauchyd_cdf(2,3,-1.9,1.4)
-        
         '''
         return GiacMethods['cauchyd_cdf'](self,*args)
 
@@ -2071,9 +1902,8 @@ cdef class GiacMethods_base:
         Help for cauchyd_icdf:
         cauchyd_icdf(Real(x0),Real(a),Real(p))
         Returns h such that the probability that a Cauchy random variable is less than h is p (0<=p<=1).
-        See also: 1/ cauchy_cdf 2/ cauchy 
+        See also: 1/ cauchy_cdf 2/ cauchy
         Ex1:cauchyd_icdf(0.0,2.0,0.95)
-        
         '''
         return GiacMethods['cauchyd_icdf'](self,*args)
 
@@ -2082,12 +1912,11 @@ cdef class GiacMethods_base:
         Help for cdf:
         cdf(Func,FuncParams)
         Cumulative distribution function.
-        See also: 1/ icdf 2/ binomial_cdf 3/ normald_cdf 4/ plotcdf 
+        See also: 1/ icdf 2/ binomial_cdf 3/ normald_cdf 4/ plotcdf
         Ex1:cdf(binomial,10,0.5,4)
         Ex2:cdf(normald,0.0,1.0,2.0)
         Ex3:cdf([1,3,4,3,5,6],4)
         Ex4:cdf([1,3,4,3,5,6],plot)
-        
         '''
         return GiacMethods['cdf'](self,*args)
 
@@ -2096,10 +1925,9 @@ cdef class GiacMethods_base:
         Help for ceil:
         ceil(Real or Cplx)
         Returns the smallest integer >= to the argument.
-        See also: 1/ floor 2/ round 
+        See also: 1/ floor 2/ round
         Ex1:ceil(-4.2)
         Ex2:ceil(4.3+2.4*i)
-        
         '''
         return GiacMethods['ceil'](self,*args)
 
@@ -2108,10 +1936,9 @@ cdef class GiacMethods_base:
         Help for ceiling:
         ceiling(Real or Cplx)
         Returns the smallest integer >= to the argument.
-        See also: 1/ floor 2/ round 
+        See also: 1/ floor 2/ round
         Ex1:ceiling(-4.2)
         Ex2:ceiling(4.3+2.4*i)
-        
         '''
         return GiacMethods['ceiling'](self,*args)
 
@@ -2120,10 +1947,9 @@ cdef class GiacMethods_base:
         Help for center:
         center(Crcle)
         Shows the center of a circle.
-        See also: 1/ circle 2/ radius 
+        See also: 1/ circle 2/ radius
         Ex1:center(circle(1+i,2))
         Ex2:center(circumcircle(0,1,1+i))
-        
         '''
         return GiacMethods['center'](self,*args)
 
@@ -2132,10 +1958,9 @@ cdef class GiacMethods_base:
         Help for center2interval:
         center2interval(LstVal(l),[Real(a0)])
         Returns the list of intervals beginning with a0 and with l as centers.
-        See also: 1/ interval2center 
+        See also: 1/ interval2center
         Ex1:center2interval([2,5,9],1)
         Ex2:center2interval([2,5,8])
-        
         '''
         return GiacMethods['center2interval'](self,*args)
 
@@ -2144,10 +1969,9 @@ cdef class GiacMethods_base:
         Help for centered_cube:
         centered_cube(Pnt(A),Pnt(B),Pnt(C))
         Draws the direct cube with center A, vertex B and such that the plane ABC contains an axis of symmetry of the cube.
-        See also: 1/ parallelepiped 2/ cube 3/ icosahedron 4/ dodecahedron 5/ octahedron 6/ centered_tetrahedron 
+        See also: 1/ parallelepiped 2/ cube 3/ icosahedron 4/ dodecahedron 5/ octahedron 6/ centered_tetrahedron
         Ex1:centered_cube([0,0,0],[3,0,0],[0,0,1])
         Ex2:centered_cube(evalf([0,0,0],[3,2,4],[1,1,0]))
-        
         '''
         return GiacMethods['centered_cube'](self,*args)
 
@@ -2156,10 +1980,9 @@ cdef class GiacMethods_base:
         Help for centered_tetrahedron:
         centered_tetrahedron(Pnt(A),Pnt(B),Pnt(C))
         Draws the regular direct pyramid with center A, vertex B and a vertex in the plane (A,B,C).
-        See also: 1/ cube 2/ tetrahedron 3/ icosahedron 4/ dodecahedron 5/ octahedron 
+        See also: 1/ cube 2/ tetrahedron 3/ icosahedron 4/ dodecahedron 5/ octahedron
         Ex1:centered_tetrahedron([0,0,0],[3,0,0],[0,1,0])
         Ex2:centered_tetrahedron(evalf([0,0,0],[3,2,4],[1,1,0]))
-        
         '''
         return GiacMethods['centered_tetrahedron'](self,*args)
 
@@ -2168,11 +1991,10 @@ cdef class GiacMethods_base:
         Help for cfactor:
         cfactor(Expr)
         Factorization of the expression in ℂ (on the Gaussian integers if there are more than 2 variables).
-        See also: 1/ factor 
+        See also: 1/ factor
         Ex1:cfactor(x^2*y+y)
         Ex2:cfactor(x^2*y^2+y^2+4*x^2+4)
         Ex3:cfactor(x^2*y^2+y^2+2*x^2+2)
-        
         '''
         return GiacMethods['cfactor'](self,*args)
 
@@ -2181,10 +2003,9 @@ cdef class GiacMethods_base:
         Help for cfsolve:
         cfsolve(Expr,Var,[Guess or Interval],[Method])
         Numerical solution of an equation or a system of equations on ℂ.
-        See also: 1/ fsolve 2/ nSolve 3/ csolve 4/ solve 
+        See also: 1/ fsolve 2/ nSolve 3/ csolve 4/ solve
         Ex1:cfsolve(cos(x)=2)
         Ex2:cfsolve([x^2+y+2,x+y^2+2],[x,y])
-        
         '''
         return GiacMethods['cfsolve'](self,*args)
 
@@ -2193,10 +2014,9 @@ cdef class GiacMethods_base:
         Help for changebase:
         changebase(Mtrx(A),Mtrx(P))
         Returns the matrix B=inv(P)*A*P.
-        See also: 1/  
+        See also: 1/
         Ex1:changebase([[1,2],[1,3]],[[1,1],[0,1]])
         Ex2:changebase([[1,2],[1,3]],[[1,0],[1,1]])
-        
         '''
         return GiacMethods['changebase'](self,*args)
 
@@ -2205,12 +2025,11 @@ cdef class GiacMethods_base:
         Help for channel_data:
         channel_data(Lst(clip),[Intg(chn) or matrix],[range=a..b])
         Extracts the data from an audio clip (optionally specifying the channel and range).
-        See also: 1/ bit_depth 2/ channels 3/ duration 4/ samplerate 
+        See also: 1/ bit_depth 2/ channels 3/ duration 4/ samplerate
         Ex1:channel_data(readwav("/some/file"))
         Ex2:channel_data(readwav("/some/file"),matrix)
         Ex3:channel_data(readwav("/some/file"),2)
         Ex4:channel_data(readwav("/some/file"),matrix,range=1.0..2.5)
-        
         '''
         return GiacMethods['channel_data'](self,*args)
 
@@ -2219,9 +2038,8 @@ cdef class GiacMethods_base:
         Help for channels:
         channels(Lst(clip))
         Returns the number of channels in audio clip.
-        See also: 1/ bit_depth 2/ channel_data 3/ duration 4/ samplerate 
+        See also: 1/ bit_depth 2/ channel_data 3/ duration 4/ samplerate
         Ex1:channels(readwav("/some/file"))
-        
         '''
         return GiacMethods['channels'](self,*args)
 
@@ -2230,10 +2048,9 @@ cdef class GiacMethods_base:
         Help for char:
         char(Intg or Lst(Intg))
         Returns the string corresponding to the character code of the argument.
-        See also: 1/ asc 2/ ord 
+        See also: 1/ asc 2/ ord
         Ex1:char(65)
         Ex2:char([65,66,67])
-        
         '''
         return GiacMethods['char'](self,*args)
 
@@ -2242,12 +2059,11 @@ cdef class GiacMethods_base:
         Help for charpoly:
         charpoly(Mtrx,[Var])
         List of the coefficients of the characteristic polynomial of a matrix or characteristic polynomial of a matrix with the second argument as variable.
-        See also: 1/ jordan 2/ egv 3/ egvl 4/ companion 5/ rat_jordan 6/ pmin 7/ adjoint_matrix  
+        See also: 1/ jordan 2/ egv 3/ egvl 4/ companion 5/ rat_jordan 6/ pmin 7/ adjoint_matrix
         Ex1:charpoly([[1,2],[3,4]])
         Ex2:charpoly([[1,2],[3,4]],x)
         Ex3:charpoly([[1,2,3],[1,3,6],[2,5,7]])
         Ex4:charpoly([[1,2,3],[1,3,6],[2,5,7]],z)
-        
         '''
         return GiacMethods['charpoly'](self,*args)
 
@@ -2256,10 +2072,9 @@ cdef class GiacMethods_base:
         Help for chinrem:
         chinrem([Lst||Expr,Lst||Expr],[Lst||Expr,Lst||Expr])
         Chinese remainder for polynomials written as lists or no.
-        See also: 1/ ichinrem 
+        See also: 1/ ichinrem
         Ex1:chinrem([x+2,x^2+1],[x+1,x^2+x+1])
         Ex2:chinrem([[1,2],[1,0,1]],[[1,1],[1,1,1]])
-        
         '''
         return GiacMethods['chinrem'](self,*args)
 
@@ -2268,12 +2083,11 @@ cdef class GiacMethods_base:
         Help for chisquare:
         chisquare(Intg(n),Real(x0))
         Returns the probability density of the Chi^2 law at x0 (n is the number of degrees of freedom).
-        See also: 1/ chisquare_cdf 2/ chisquare_icdf 3/ randvector 4/ ranm 
+        See also: 1/ chisquare_cdf 2/ chisquare_icdf 3/ randvector 4/ ranm
         Ex1:chisquare(2,3.2)
         Ex2:chisquare(4,10.5)
         Ex3: randvector(3,chisquare,2)
         Ex4: ranm(4,3,chisquare,2)
-        
         '''
         return GiacMethods['chisquare'](self,*args)
 
@@ -2282,10 +2096,9 @@ cdef class GiacMethods_base:
         Help for chisquare_cdf:
         chisquare_cdf(Intg(n),Real(x0))
         Returns the probability that a Chi^2 random variable is less than x0 (n is the number of degrees of freedom).
-        See also: 1/ UTPC 2/ chisquare_icdf 3/ chisquared 
+        See also: 1/ UTPC 2/ chisquare_icdf 3/ chisquared
         Ex1:chisquare_cdf(2,6.1)
         Ex2:chisquare_cdf(4,6.1)
-        
         '''
         return GiacMethods['chisquare_cdf'](self,*args)
 
@@ -2294,10 +2107,9 @@ cdef class GiacMethods_base:
         Help for chisquare_icdf:
         chisquare_icdf(Intg(n),Real(p))
         Returns h such as the probability that a Chi^2 random variable is less than h is p (n is the number of degrees of freedom and 0<=p<=1).
-        See also: 1/ chisquare_cdf 2/ chisquared 
+        See also: 1/ chisquare_cdf 2/ chisquared
         Ex1:chisquare_icdf(2,0.95)
         Ex2:chisquare_icdf(4,0.05)
-        
         '''
         return GiacMethods['chisquare_icdf'](self,*args)
 
@@ -2306,12 +2118,11 @@ cdef class GiacMethods_base:
         Help for chisquared:
         chisquared(Intg(n),Real(x0))
         Returns the probability density of the Chi^2 law at x0 (n is the number of degrees of freedom).
-        See also: 1/ chisquare_cdf 2/ chisquare_icdf 3/ randvector 4/ ranm 
+        See also: 1/ chisquare_cdf 2/ chisquare_icdf 3/ randvector 4/ ranm
         Ex1:chisquared(2,3.2)
         Ex2:chisquared(4,10.5)
         Ex3: randvector(3,chisquare,2)
         Ex4: ranm(4,3,chisquare,2)
-        
         '''
         return GiacMethods['chisquared'](self,*args)
 
@@ -2320,10 +2131,9 @@ cdef class GiacMethods_base:
         Help for chisquared_cdf:
         chisquared_cdf(Intg(n),Real(x0))
         Returns the probability that a Chi^2 random variable is less than x0 (n is the number of degrees of freedom).
-        See also: 1/ UTPC 2/ chisquare_icdf 3/ chisquared 
+        See also: 1/ UTPC 2/ chisquare_icdf 3/ chisquared
         Ex1:chisquared_cdf(2,6.1)
         Ex2:chisquared_cdf(4,6.1)
-        
         '''
         return GiacMethods['chisquared_cdf'](self,*args)
 
@@ -2332,10 +2142,9 @@ cdef class GiacMethods_base:
         Help for chisquared_icdf:
         chisquared_icdf(Intg(n),Real(p))
         Returns h such as the probability that a Chi^2 random variable is less than h is p (n is the number of degrees of freedom and 0<=p<=1).
-        See also: 1/ chisquare_cdf 2/ chisquared 
+        See also: 1/ chisquare_cdf 2/ chisquared
         Ex1:chisquared_icdf(2,0.95)
         Ex2:chisquared_icdf(4,0.05)
-        
         '''
         return GiacMethods['chisquared_icdf'](self,*args)
 
@@ -2344,7 +2153,7 @@ cdef class GiacMethods_base:
         Help for chisquaret:
         chisquaret(Data,[Func],[FuncParams])
         Chi^2 test : fitness between 2 (or n) samples or between 1 sample and a distribution law (multinomial or given by a law).
-        See also: 1/ normalt 2/ studentt 3/ kolmogorovt 
+        See also: 1/ normalt 2/ studentt 3/ kolmogorovt
         Ex1:chisquaret([57,54])
         Ex2:chisquaret([1,1,1,1,1,0,0,1,0,0,1,1,1,0,1,1,0,1,1,0,0,0,0],[.4,.6])
         Ex3:chisquaret([57,30],[.6,.4])
@@ -2354,7 +2163,6 @@ cdef class GiacMethods_base:
         Ex7:chisquaret(ranv(1000,normald,0,.2),normald)
         Ex8:chisquaret([11,16,17,22,14,10],[1/6,1/6,1/6,1/6,1/6,1/6])
         Ex9:chisquaret([11,16,17,22,14,10],[(1/6)$6])
-        
         '''
         return GiacMethods['chisquaret'](self,*args)
 
@@ -2363,12 +2171,11 @@ cdef class GiacMethods_base:
         Help for choice:
         choice(Lst(L))
         choice(L)=rand(L)=one extracted element of L.
-        See also: 1/ rand  2/ sample 
+        See also: 1/ rand  2/ sample
         Ex1:choice([1,2,3,4,5,6])
         Ex2:choice(["r","r","r","b","n"])
         Ex3: L:=[1,2,3,4,5,6];L:=choice(L)
         Ex4: L:=[1,2,3,4,5,6];L.choice()
-        
         '''
         return GiacMethods['choice'](self,*args)
 
@@ -2377,9 +2184,8 @@ cdef class GiacMethods_base:
         Help for cholesky:
         cholesky(Mtrx)
         For a numerical symmetric matrix A, returns L matrix such that A=L*tran(L).
-        See also: 1/ lu 2/ qr 3/ gauss 
+        See also: 1/ lu 2/ qr 3/ gauss
         Ex1:cholesky([[3,1],[1,4]])
-        
         '''
         return GiacMethods['cholesky'](self,*args)
 
@@ -2388,10 +2194,9 @@ cdef class GiacMethods_base:
         Help for chr:
         chr(Intg or Lst(Intg))
         Returns the string corresponding to the character code of the argument.
-        See also: 1/ asc 2/ ord 
+        See also: 1/ asc 2/ ord
         Ex1:chr(65)
         Ex2:chr([65,66,67])
-        
         '''
         return GiacMethods['chr'](self,*args)
 
@@ -2400,13 +2205,12 @@ cdef class GiacMethods_base:
         Help for chrem:
         chrem(LstIntg(a,b,c....),LstIntg(p,q,r,....))
         Chinese remainders for integers or for polynomials.
-        See also: 1/ gcd 2/ fracmod 3/ chinrem 4/ ichinrem 
+        See also: 1/ gcd 2/ fracmod 3/ chinrem 4/ ichinrem
         Ex1:chrem(symbolique.)
         Ex2:chrem([2,3],[7,5])
         Ex3:chrem([2,4,6],[3,5,7])
         Ex4:chrem([2,4,6,7],[3,5,7,11])
         Ex5:chrem([2*x+1,4*x+2,6*x-1,x+1],[3,5,7,11])
-        
         '''
         return GiacMethods['chrem'](self,*args)
 
@@ -2415,10 +2219,9 @@ cdef class GiacMethods_base:
         Help for chromatic_index:
         chromatic_index(Graph(G),[Lst(cols)])
         Returns the number of colors in the minimal edge coloring of G. If an unassigned identifier cols is given, the coloring is stored to it.
-        See also: 1/ minimal_edge_coloring 2/ chromatic_number 
+        See also: 1/ minimal_edge_coloring 2/ chromatic_number
         Ex1:chromatic_index(graph("petersen"))
         Ex2:chromatic_index(graph("dodecahedron"),colors)
-        
         '''
         return GiacMethods['chromatic_index'](self,*args)
 
@@ -2428,7 +2231,6 @@ cdef class GiacMethods_base:
         chromatic_number(Graph(G))
         Returns the chromatic number of G.
         Ex1:chromatic_number(graph("petersen"))
-        
         '''
         return GiacMethods['chromatic_number'](self,*args)
 
@@ -2437,10 +2239,9 @@ cdef class GiacMethods_base:
         Help for chromatic_polynomial:
         chromatic_polynomial(Graph(G),[Var(t)])
         Returns the chromatic polynomial [or its value at point t] of undirected unweighted graph G.
-        See also: 1/ flow_polynomial 2/ reliability_polynomial 3/ tutte_polynomial 
+        See also: 1/ flow_polynomial 2/ reliability_polynomial 3/ tutte_polynomial
         Ex1:chromatic_polynomial(graph("petersen"))
         Ex2:chromatic_polynomial(graph("petersen"),3)
-        
         '''
         return GiacMethods['chromatic_polynomial'](self,*args)
 
@@ -2449,7 +2250,7 @@ cdef class GiacMethods_base:
         Help for circle:
         circle((Pnt(M) or Cplx(M),(Pnt(N) or Cplx(zN)),[Real(a)],[Real(b)],[Var(A)],[Var(B)])
         Define for 2-d a circle with a diameter MN (arg1=M or zM,arg2=N) or  with center and radius (arg1=M or zM,arg2=zN) and (center=M and radius=abs(zN)) [or the arc AB, A angle a, B angle b, (MN=angle 0) or M(M+zN)=angle 0] or by its equation and for 3-d with a diameter and a third point.
-        See also: 1/ circumcircle 2/ incircle 3/ excircle 4/ center 5/ radius 6/ sphere 7/ Circle 
+        See also: 1/ circumcircle 2/ incircle 3/ excircle 4/ center 5/ radius 6/ sphere 7/ Circle
         Ex1:circle(0,point(2*i))
         Ex2:circle(i,i)
         Ex3:circle(i,1)
@@ -2458,7 +2259,6 @@ cdef class GiacMethods_base:
         Ex6:circle(x^2+y^2-x-y)
         Ex7:circle(cercle(point([-1,0,0]),point([1,0,0]),point([0,2,0])))
         Ex8:circle(cercle([-1,0,0],point([1,0,0]),[0,2,0]))
-        
         '''
         return GiacMethods['circle'](self,*args)
 
@@ -2467,9 +2267,8 @@ cdef class GiacMethods_base:
         Help for circumcircle:
         circumcircle((Pnt or Cplx),(Pnt or Cplx),((Pnt or Cplx))
         circumcircle(A,B,C)=circumcircle of the triangle ABC.
-        See also: 1/ circle 2/ incircle 3/ excircle 
+        See also: 1/ circle 2/ incircle 3/ excircle
         Ex1:circumcircle(0,1,1+i)
-        
         '''
         return GiacMethods['circumcircle'](self,*args)
 
@@ -2478,13 +2277,12 @@ cdef class GiacMethods_base:
         Help for classes:
         classes(Lst(l),[ClassMin],[ClassSize||Lst(Center)])
         Returns the matrix [[class,number],...] obtained with class_min and class_size: see init of geo or argument 2 and 3 or with the list of centers.
-        See also: 1/ histogram 2/ cumulated_frequencies 3/ bar_plot 4/ frequencies 
+        See also: 1/ histogram 2/ cumulated_frequencies 3/ bar_plot 4/ frequencies
         Ex1:classes([1,1.2,1.4,1.6,1.8,2,2.5])
         Ex2:classes([1,1.2,1.4,1.6,1.8,2,2.5],1.2,0.5)
         Ex3:classes([1,1.2,1.4,1.6,1.8,2,2.5],1,[1.2,1.6,2,2.4])
         Ex4:classes([1,1.2,1.4,1.6,1.8,2,2.5],1,[1.2,1.6,2.2])
         Ex5:classes([0,0.5,1,1.5,2,2.5,3,3.5,4],[0..2,2..4,4..6])
-        
         '''
         return GiacMethods['classes'](self,*args)
 
@@ -2493,9 +2291,8 @@ cdef class GiacMethods_base:
         Help for clear:
         clear(NULL)
         Clears the list of pixels.
-        See also: 1/ set_pixel 2/ show_pixels 
+        See also: 1/ set_pixel 2/ show_pixels
         Ex1:clear()
-        
         '''
         return GiacMethods['clear'](self,*args)
 
@@ -2504,11 +2301,10 @@ cdef class GiacMethods_base:
         Help for clique_cover:
         clique_cover(Graph(G),[Intg(k)])
         Returns a clique vertex cover of G [containing at most k cliques].
-        See also: 1/ clique_cover_number 2/ maximal_cliques 
+        See also: 1/ clique_cover_number 2/ maximal_cliques
         Ex1:clique_cover(graph("petersen"))
         Ex2:clique_cover(cycle_graph(5))
         Ex3:clique_cover(graph_complement(complete_graph(3,4)))
-        
         '''
         return GiacMethods['clique_cover'](self,*args)
 
@@ -2517,11 +2313,10 @@ cdef class GiacMethods_base:
         Help for clique_cover_number:
         clique_cover_number(Graph(G))
         Returns the clique cover number of G.
-        See also: 1/ clique_cover 3/ maximal_cliques 
+        See also: 1/ clique_cover 3/ maximal_cliques
         Ex1:clique_cover_number(graph("petersen"))
         Ex2:clique_cover_number(cycle_graph(5))
         Ex3:clique_cover_number(graph_complement(complete_graph(3,4)))
-        
         '''
         return GiacMethods['clique_cover_number'](self,*args)
 
@@ -2530,9 +2325,8 @@ cdef class GiacMethods_base:
         Help for clique_number:
         clique_number(Graph(G))
         Returns the clique number of G, which is equal to the size of a maximum clique in G.
-        See also: 1/ maximum_clique 
+        See also: 1/ maximum_clique
         Ex1:clique_number(graph_complement(complete_graph(3,4)))
-        
         '''
         return GiacMethods['clique_number'](self,*args)
 
@@ -2541,11 +2335,10 @@ cdef class GiacMethods_base:
         Help for clique_stats:
         clique_stats(Graph(G),[Intg(k)||Intrv(m..n)])
         Returns the list of numbers of maximal cliques of size s in G for each s. If parameter k is given, the number of k-cliques is returned. If an interval m..n is given, only cliques with size between m and n (inclusive) are counted (m also may be +infinity).
-        See also: 1/ maximum_clique 2/ clique_cover 
+        See also: 1/ maximum_clique 2/ clique_cover
         Ex1:clique_stats(random_graph(50,0.5))
         Ex2:clique_stats(random_graph(50,0.5),5)
         Ex3:clique_stats(random_graph(50,0.5),3..5)
-        
         '''
         return GiacMethods['clique_stats'](self,*args)
 
@@ -2554,10 +2347,9 @@ cdef class GiacMethods_base:
         Help for clustering_coefficient:
         clustering_coefficient(Graph(G),[Vrtx(v)])
         Returns the average clustering coefficient of undirected graph G, or the local clustering coefficient of the vertex v in G.
-        See also: 1/ network_transitivity 2/ number_of_triangles 
+        See also: 1/ network_transitivity 2/ number_of_triangles
         Ex1:clustering_coefficient(graph(%{[1,2],[2,3],[2,4],[3,4],[4,1]%}))
         Ex2:clustering_coefficient(graph(%{[1,2],[2,3],[2,4],[3,4],[4,1]%}),2)
-        
         '''
         return GiacMethods['clustering_coefficient'](self,*args)
 
@@ -2566,11 +2358,10 @@ cdef class GiacMethods_base:
         Help for coeff:
         coeff(Expr(P),[Var])
         Returns the list of coefficients of a polynomial with respect to the 2nd argument or the coefficient of degree the 3rd argument.
-        See also: 1/ pcoeff 2/ fcoeff 
+        See also: 1/ pcoeff 2/ fcoeff
         Ex1:coeff(x*3+2)
         Ex2:coeff(5*y^2-3,y)
         Ex3:coeff(5*y^2-3,y,2)
-        
         '''
         return GiacMethods['coeff'](self,*args)
 
@@ -2579,11 +2370,10 @@ cdef class GiacMethods_base:
         Help for coeffs:
         coeffs(Expr(P),[Var])
         Returns the list of coefficients of a polynomial with respect to the 2nd argument or the coefficient of degree the 3rd argument.
-        See also: 1/ pcoeff 2/ fcoeff 
+        See also: 1/ pcoeff 2/ fcoeff
         Ex1:coeffs(x*3+2)
         Ex2:coeffs(5*y^2-3,y)
         Ex3:coeffs(5*y^2-3,y,2)
-        
         '''
         return GiacMethods['coeffs'](self,*args)
 
@@ -2592,11 +2382,10 @@ cdef class GiacMethods_base:
         Help for col:
         col(Mtrx(A),Intg(n)||Interval(n1..n2))
         Returns column n or the sequence of the columns n1..n2 of the matrix A, or optional argument of count,count_eq,count_inf,count_sup.
-        See also: 1/ row 2/ count 3/ count_eq 4/ count_inf 5/ count_sup 
+        See also: 1/ row 2/ count 3/ count_eq 4/ count_inf 5/ count_sup
         Ex1:col([[1,2,3],[4,5,6],[7,8,9]],1)
         Ex2:col([[1,2,3],[4,5,6],[7,8,9]],0..1)
         Ex3: count_eq(3,[[3,2,3],[4,3,2],[3,2,1]],col)
-        
         '''
         return GiacMethods['col'](self,*args)
 
@@ -2605,10 +2394,9 @@ cdef class GiacMethods_base:
         Help for colDim:
         colDim(Mtrx)
         Number of columns of a matrix.
-        See also: 1/ rowdim 
+        See also: 1/ rowdim
         Ex1:colDim([[1,2,3],[4,5,6]])
         Ex2:colDim([[1,2],[3,4],[5,6]])
-        
         '''
         return GiacMethods['colDim'](self,*args)
 
@@ -2617,10 +2405,9 @@ cdef class GiacMethods_base:
         Help for colNorm:
         colNorm(Vect or Mtrx)
         Returns the max of the l1_norm of the columns of a matrix: colNorm(a_{j,k})=max_k(sum_j(|a_{j,k}|)).
-        See also: 1/ norm 
+        See also: 1/ norm
         Ex1:colNorm([[1,2],[3,-4]])
         Ex2:colNorm([[1,2,3,-4],[-5,3,2,1]])
-        
         '''
         return GiacMethods['colNorm'](self,*args)
 
@@ -2629,9 +2416,8 @@ cdef class GiacMethods_base:
         Help for colSwap:
         colSwap(Mtrx(A),Intg(n1),Intg(n2))
         Returns the matrix obtained from A by swapping the n1-th column and the n2-th column.
-        See also: 1/ rowSwap 
+        See also: 1/ rowSwap
         Ex1:colSwap([[1,2],[3,4],[5,6]],0,1)
-        
         '''
         return GiacMethods['colSwap'](self,*args)
 
@@ -2640,10 +2426,9 @@ cdef class GiacMethods_base:
         Help for coldim:
         coldim(Mtrx)
         Number of columns of a matrix.
-        See also: 1/ rowdim 
+        See also: 1/ rowdim
         Ex1:coldim([[1,2,3],[4,5,6]])
         Ex2:coldim([[1,2],[3,4],[5,6]])
-        
         '''
         return GiacMethods['coldim'](self,*args)
 
@@ -2652,11 +2437,10 @@ cdef class GiacMethods_base:
         Help for collect:
         collect(Poly or LstPoly)
         Integer factorization of a polynomial (or of a list of poly).
-        See also: 1/ factor 2/ factors 
+        See also: 1/ factor 2/ factors
         Ex1:collect(x^2-4)
         Ex2:collect(x^2-2)
         Ex3:collect([x^2-2,x^2-4])
-        
         '''
         return GiacMethods['collect'](self,*args)
 
@@ -2665,10 +2449,9 @@ cdef class GiacMethods_base:
         Help for colnorm:
         colnorm(Vect or Mtrx)
         Returns the max of the l1_norm of the columns of a matrix: colNorm(a_{j,k})=max_k(sum_j(|a_{j,k}|)).
-        See also: 1/ norm 
+        See also: 1/ norm
         Ex1:colnorm([[1,2],[3,-4]])
         Ex2:colnorm([[1,2,3,-4],[-5,3,2,1]])
-        
         '''
         return GiacMethods['colnorm'](self,*args)
 
@@ -2677,7 +2460,7 @@ cdef class GiacMethods_base:
         Help for color:
         color([GeoObj or legende],Intg)
         Draws a geometrical object with colors black=0 red=1 green=2 yellow=3 blue=4, filled with the color in the interior of a closed curve,line_width_n (0<n<8) is for the width of the line and dash_line is for dotted line.
-        See also: 1/ -< 2/ legende 
+        See also: 1/ -< 2/ legende
         Ex1:color(A,1)
         Ex2:color(F:=point(2+1.5*i),2)
         Ex3:color(point(2+1.5*i),2)
@@ -2688,7 +2471,6 @@ cdef class GiacMethods_base:
         Ex8:color(line(y=x),green+dash_line+line_width_2)
         Ex9:color(red);square(0,1);
         Ex10:color(red+filled);square(0,1);
-        
         '''
         return GiacMethods['color'](self,*args)
 
@@ -2697,10 +2479,9 @@ cdef class GiacMethods_base:
         Help for colspace:
         colspace(Mtrx(A), [Var(d)])
         Returns a matrix where the columns are a basis of the vector space generated by the columns of the matrix A [d is the dimension of this space].
-        See also: 1/ rowspace 
+        See also: 1/ rowspace
         Ex1:colspace([[1,2,3],[1,2,3],[1,2,4],[1,2,5]])
         Ex2:colspace([[1,2,3],[1,3,6],[2,5,9]],d)
-        
         '''
         return GiacMethods['colspace'](self,*args)
 
@@ -2709,9 +2490,8 @@ cdef class GiacMethods_base:
         Help for colswap:
         colswap(Mtrx(A),Intg(n1),Intg(n2))
         Returns the matrix obtained from A by swapping the n1-th column and the n2-th column.
-        See also: 1/ rowSwap 
+        See also: 1/ rowSwap
         Ex1:colswap([[1,2],[3,4],[5,6]],0,1)
-        
         '''
         return GiacMethods['colswap'](self,*args)
 
@@ -2720,11 +2500,10 @@ cdef class GiacMethods_base:
         Help for comDenom:
         comDenom(Expr,[Var(Var)])
         Returns the expression after reduction to the same denominator : the numerator and the denominator are developed [according to the powers of the variable var].
-        See also: 1/ normal 
+        See also: 1/ normal
         Ex1:comDenom(1/x+1/y^2+1)
         Ex2:comDenom(1/x+1/y^2+1,y)
         Ex3:comDenom(1/x+1/y^2+1,x)
-        
         '''
         return GiacMethods['comDenom'](self,*args)
 
@@ -2733,9 +2512,8 @@ cdef class GiacMethods_base:
         Help for comb:
         comb(Intg(n),Intg(r))
         comb(n,r)=number of combinations of r objects taken among n : n!/(r!(n-r)!) (If n<0 comb(n,r)=n(n-1)..(n-r+1)/r!).
-        See also: 1/ factorial 2/ perm 
+        See also: 1/ factorial 2/ perm
         Ex1:comb(4,2)
-        
         '''
         return GiacMethods['comb'](self,*args)
 
@@ -2744,11 +2522,10 @@ cdef class GiacMethods_base:
         Help for combine:
         combine(Expr(Xpr),Fnc(f).)
         Combines terms in Xpr according to a [class of] function f (2nd argument).
-        See also: 1/ lncollect 2/ lin 3/ tlin 4/ tcollect 
+        See also: 1/ lncollect 2/ lin 3/ tlin 4/ tcollect
         Ex1:combine(exp(x)*exp(y),exp)
         Ex2:combine(sin(x)*cos(x),trig)
         Ex3:combine(ln(x)+ln(y),ln)
-        
         '''
         return GiacMethods['combine'](self,*args)
 
@@ -2757,9 +2534,8 @@ cdef class GiacMethods_base:
         Help for comment:
         comment(Expr)
         Comment in a program.
-        See also: 1/  
+        See also: 1/
         Ex1:comment("my_comment")
-        
         '''
         return GiacMethods['comment'](self,*args)
 
@@ -2768,9 +2544,8 @@ cdef class GiacMethods_base:
         Help for common_perpendicular:
         common_perpendicular(Line(D1),Line(D2))
         Draws the common perpendicular of the lines D1 and D2.
-        See also: 1/ altitude 2/ perpendicular 
+        See also: 1/ altitude 2/ perpendicular
         Ex1:common_perpendicular(line([0,0,0],[0,5,5]),line([5,0,0],[0,0,5]))
-        
         '''
         return GiacMethods['common_perpendicular'](self,*args)
 
@@ -2779,10 +2554,9 @@ cdef class GiacMethods_base:
         Help for companion:
         companion(Poly,Var)
         Companion matrix of a polynomial (an=1).
-        See also: 1/ pcar 2/ rat_jordan 
+        See also: 1/ pcar 2/ rat_jordan
         Ex1:companion(x^2+5x-7,x)
         Ex2:companion(-pcar([[1,0,1],[0,2,-1],[1,-1,1]],x),x)
-        
         '''
         return GiacMethods['companion'](self,*args)
 
@@ -2791,11 +2565,10 @@ cdef class GiacMethods_base:
         Help for compare:
         compare(Obj(arg1),Obj(arg2))
         Returns 1 if type(arg1)<type(arg2) or if type(arg1)=type(arg2) and arg1<arg2, else returns 0.
-        See also: 1/ type 
+        See also: 1/ type
         Ex1:compare(1,2)
         Ex2:compare(1.0,2)
         Ex3:compare("ab","cd")
-        
         '''
         return GiacMethods['compare'](self,*args)
 
@@ -2804,9 +2577,8 @@ cdef class GiacMethods_base:
         Help for complete_binary_tree:
         complete_binary_tree(Intg(n))
         Returns the complete binary tree with depth n.
-        See also: 1/ complete_kary_tree 2/ is_tree 3/ random_tree 
+        See also: 1/ complete_kary_tree 2/ is_tree 3/ random_tree
         Ex1:complete_binary_tree(3)
-        
         '''
         return GiacMethods['complete_binary_tree'](self,*args)
 
@@ -2815,11 +2587,10 @@ cdef class GiacMethods_base:
         Help for complete_graph:
         complete_graph(Intg(n)||Lst(V)||Seq(n1,n2,...,nk))
         Returns a complete graph with vertices from list V or enumerated with first n integers or, when two or more positive integers n1,n2,...,nk are given, a complete k-partite graph with partition sizes n1,n2,...,nk.
-        See also: 1/ edges 
+        See also: 1/ edges
         Ex1:complete_graph(4)
         Ex2:complete_graph(["one","two","three"])
         Ex3:complete_graph(2,3,4)
-        
         '''
         return GiacMethods['complete_graph'](self,*args)
 
@@ -2828,9 +2599,8 @@ cdef class GiacMethods_base:
         Help for complete_kary_tree:
         complete_kary_tree(Intg(n))
         Returns the complete k-ary tree with depth n.
-        See also: 1/ complete_binary_tree 2/ is_tree 3/ random_tree 
+        See also: 1/ complete_binary_tree 2/ is_tree 3/ random_tree
         Ex1:complete_kary_tree(3,3)
-        
         '''
         return GiacMethods['complete_kary_tree'](self,*args)
 
@@ -2839,11 +2609,10 @@ cdef class GiacMethods_base:
         Help for complex:
         complex(Opt)
         DOM_COMPLEX or complex is the type of a complex or of a complex variable, as returned by the type command. It is also an option of the assume command.
-        See also: 1/ type 2/ assume 3/ DOM_INT 4/ DOM_FLOAT 
+        See also: 1/ type 2/ assume 3/ DOM_INT 4/ DOM_FLOAT
         Ex1: assume(a,complex)
         Ex2: assume(a,DOM_COMPLEX)
         Ex3: a:=1+i;type(a)
-        
         '''
         return GiacMethods['complex'](self,*args)
 
@@ -2852,10 +2621,9 @@ cdef class GiacMethods_base:
         Help for complex_variables:
         complex_variables(:=Intg(0 or 1))
         Pseudo-variable to work with complex variables (complex_variables:=1) or with real variables (complex_variables:=0).
-        See also: 1/ cas_setup 
+        See also: 1/ cas_setup
         Ex1: complex_variables:=1
         Ex2: complex_variables:=0
-        
         '''
         return GiacMethods['complex_variables'](self,*args)
 
@@ -2864,12 +2632,11 @@ cdef class GiacMethods_base:
         Help for complexroot:
         complexroot(Poly(P),Real(l),[Cplx(a)],[Cplx(b)])
         Returns the list of complex intervals of size<=l containing the roots of P (for example i[1.1,1.2]+i[2,2.4]*i pour [1.1,1.2]x[2,2.4] with optionally a=1+2*i,b=2+3*i) with multiplicities.
-        See also: 1/ proot 2/ froot 3/ realroot 4/ rationalroot 5/ crationalroot 
+        See also: 1/ proot 2/ froot 3/ realroot 4/ rationalroot 5/ crationalroot
         Ex1:complexroot(x^4+1,1e-50,0.7+i*0.7,0.8+i*0.8)
         Ex2:complexroot(x^5-2*x^4+x^3+i,0.1)
         Ex3:complexroot(x^3+8,1e-5,0,2+2*i)
         Ex4:complexroot(x^5-2*x^4+x^3+i,0.1,1+0.5*i,1.1+0.7*i)
-        
         '''
         return GiacMethods['complexroot'](self,*args)
 
@@ -2878,13 +2645,12 @@ cdef class GiacMethods_base:
         Help for concat:
         concat(Lst,Lst||Seq,Seq||Str,Str||Mtrx,Mtrx)
         Concatenates two lists or two strings or two sequences or 2 matrices; L:=concat(L,L1) or L.concat(L1).
-        See also: 1/ append 2/ cat 3/ semi_augment 4/ border 5/ + 
+        See also: 1/ append 2/ cat 3/ semi_augment 4/ border 5/ +
         Ex1:concat([1,2],[3,4,5])
         Ex2:concat("bon","jour")
         Ex3:concat([[1,2],[3,4]],[[4,5,6],[6,7,8]])
         Ex4: L:=[1,2];L.concat([3,4,5])
         Ex5: S:="abcd";S.concat("efghi")
-        
         '''
         return GiacMethods['concat'](self,*args)
 
@@ -2893,12 +2659,11 @@ cdef class GiacMethods_base:
         Help for cond:
         cond(Mtrx,[2]||[inf])
         Condition number of a matrix, use COND(.,1) for l1, COND(.,2) for l2 norm and COND(.,inf) for linf (1 by default).
-        See also: 1/ SVL 
+        See also: 1/ SVL
         Ex1:cond([[1,2],[1,4]])
         Ex2:cond([[1,2],[1,4]],1)
         Ex3:cond([[1,2],[1,4]],2)
         Ex4:cond([[1,2],[1,4]],inf)
-        
         '''
         return GiacMethods['cond'](self,*args)
 
@@ -2907,9 +2672,8 @@ cdef class GiacMethods_base:
         Help for condensation:
         condensation(Graph(G))
         Returns the graph obtained by contracting strongly connected components of the digraph G to single vertices.
-        See also: 1/ strongly_connected_components 
+        See also: 1/ strongly_connected_components
         Ex1:condensation(digraph(%{[1,2],[1,3],[3,1],[1,4],[2,3],[4,3],[4,5],[5,3],[5,6],[7,6],[8,6],[8,7]%}))
-        
         '''
         return GiacMethods['condensation'](self,*args)
 
@@ -2918,10 +2682,9 @@ cdef class GiacMethods_base:
         Help for cone:
         cone(Pnt(A),Vect(v),Real(t),[Real(h)])
         Draws a cone with vertex A, direction v, and with half_angle t [and with altitudes h and -h].
-        See also: 1/ half_cone 2/ cylinder 
+        See also: 1/ half_cone 2/ cylinder
         Ex1:cone([0,0,0],[0,0,1],pi/6)
         Ex2:cone([0,0,0],[0,1,1],pi/6,4)
-        
         '''
         return GiacMethods['cone'](self,*args)
 
@@ -2930,9 +2693,8 @@ cdef class GiacMethods_base:
         Help for confrac:
         confrac(Opt)
         Option of the convert or convertir command (ex id L:=dfc(sqrt(2),1e-10)).
-        See also: 1/ convert 
+        See also: 1/ convert
         Ex1: convert(sqrt(2),confrac,'L'),L
-        
         '''
         return GiacMethods['confrac'](self,*args)
 
@@ -2941,12 +2703,11 @@ cdef class GiacMethods_base:
         Help for conic:
         conic(Expr,[LstVar])
         Defines a conic by its equation with x,y as default variables and draws it.
-        See also: 1/ circle 2/ ellipse 3/ hyperbola 4/ parabola 5/ reduced_conic 
+        See also: 1/ circle 2/ ellipse 3/ hyperbola 4/ parabola 5/ reduced_conic
         Ex1:conic(x^2+y^2-x*y-3)
         Ex2:conic(x^2+2*y^2-x*y-3,x,y)
         Ex3:conic(u^2-2*v^2-2*u*v-1,[u,v])
         Ex4:conic(y^2-x*y+3,[x,y])
-        
         '''
         return GiacMethods['conic'](self,*args)
 
@@ -2955,12 +2716,11 @@ cdef class GiacMethods_base:
         Help for conj:
         conj(Cplx)
         Returns the conjugate of a complex number.
-        See also: 1/ re 2/ im 3/ tran 
+        See also: 1/ re 2/ im 3/ tran
         Ex1:conj(1+i)
         Ex2:conj(1+2*i)
         Ex3:conj((1+2*i)^2)
         Ex4:conj([[1+i,2,3],[1,3,6],[2,5,9-i]])
-        
         '''
         return GiacMethods['conj'](self,*args)
 
@@ -2969,9 +2729,8 @@ cdef class GiacMethods_base:
         Help for conjugate_equation:
         conjugate_equation(Expr(y0),Lst(P),Lst(V),Var(x),Real(a))
         Returns the expression which is zero for a point x1 conjugate to x (a is the left or the right bound for x) with respect to the function y0 depending on two parameters in P with values in V.
-        See also: 1/ jacobi_equation 2/ euler_lagrange 
+        See also: 1/ jacobi_equation 2/ euler_lagrange
         Ex1:conjugate_equation(A*sin(t)+B*cos(t),[A,B],[1,0],t,0)
-        
         '''
         return GiacMethods['conjugate_equation'](self,*args)
 
@@ -2980,12 +2739,11 @@ cdef class GiacMethods_base:
         Help for conjugate_gradient:
         conjugate_gradient(Mtrx(A),Vect(y),[Vect(x0),Real(eps)])
         Conjugate gradient algorithm to solve A*x=y approximately (precision eps) where A is a symmetric positive definite matrix, x0 an optional initial guess.
-        See also: 1/ linsolve 
+        See also: 1/ linsolve
         Ex1:conjugate_gradient([[2,1],[1,5]],[1,0])
         Ex2:conjugate_gradient([[4,1+i],[1-i,5]],[1,0])
         Ex3:conjugate_gradient([[2,1],[1,5]],[1,0],[0.55,-0.11],1e-2)
         Ex4:conjugate_gradient([[2,1],[1,5]],[1,0],[0.55,-0.11],1e-10)
-        
         '''
         return GiacMethods['conjugate_gradient'](self,*args)
 
@@ -2994,8 +2752,7 @@ cdef class GiacMethods_base:
         Help for connected:
         connected(Opt)
         Option for the random_regular_graph command.
-        See also: 1/ directed 2/ weighted 3/ random_regular_graph 
-        
+        See also: 1/ directed 2/ weighted 3/ random_regular_graph
         '''
         return GiacMethods['connected'](self,*args)
 
@@ -3004,9 +2761,8 @@ cdef class GiacMethods_base:
         Help for connected_components:
         connected_components(Graph(G))
         Returns a list of lists of vertices, each sublist representing a connected component of G.
-        See also: 1/ articulation_points 2/ is_biconnected 3/ is_strongly_connected 4/ strongly_connected_components 5/ underlying_graph 
+        See also: 1/ articulation_points 2/ is_biconnected 3/ is_strongly_connected 4/ strongly_connected_components 5/ underlying_graph
         Ex1:connected_components(graph_complement(cycle_graph(4)))
-        
         '''
         return GiacMethods['connected_components'](self,*args)
 
@@ -3015,9 +2771,8 @@ cdef class GiacMethods_base:
         Help for cont:
         cont(NULL)
         Continues execution of a stopped program.
-        See also: 1/ continue 
+        See also: 1/ continue
         Ex1:cont()
-        
         '''
         return GiacMethods['cont'](self,*args)
 
@@ -3026,11 +2781,10 @@ cdef class GiacMethods_base:
         Help for contains:
         contains((Lst(l) or Set(l)),Elem(e))
         Tests if a set contains an expression (returns the index+1 or 1 for intervals or 0).
-        See also: 1/ inString 2/ member 3/ est_element 
+        See also: 1/ inString 2/ member 3/ est_element
         Ex1:contains(%{0,1,2,3%},2)
         Ex2:contains([0,1,2,3],4)
         Ex3:contains([1..2],1.5)
-        
         '''
         return GiacMethods['contains'](self,*args)
 
@@ -3039,11 +2793,10 @@ cdef class GiacMethods_base:
         Help for content:
         content(Poly(P),[Var])
         Returns the gcd of the coefficients of the polynomial P given as argument.
-        See also: 1/ primpart 2/ lgcd 
+        See also: 1/ primpart 2/ lgcd
         Ex1:content(2*x^2+10*x+6)
         Ex2:content([2,10,6])
         Ex3:content(2*t^2+10*t+6,t)
-        
         '''
         return GiacMethods['content'](self,*args)
 
@@ -3052,12 +2805,11 @@ cdef class GiacMethods_base:
         Help for contourplot:
         contourplot(Expr(Xpr),[LstVar],[LstVal])
         Draws 11 equirepartited contour-lines z=z_min,,...z=z_max of the surface z=Xpr, or the contour-lines defined by the 3-rd argument.
-        See also: 1/ plotdensity 2/ plotimplicit 
+        See also: 1/ plotdensity 2/ plotimplicit
         Ex1:contourplot(x^2+y^2)
         Ex2:contourplot(x^2+y^2,[x,y])
         Ex3:contourplot(x^2+2*y^2-2,[x,y],[1.0,2.0,3.0])
         Ex4:contourplot(x^2-y^2,[x=-4..4,y=-4..4],seq(k,k,-11,11,3),xstep=0.1,ystep=0.1)
-        
         '''
         return GiacMethods['contourplot'](self,*args)
 
@@ -3066,9 +2818,8 @@ cdef class GiacMethods_base:
         Help for contract_edge:
         contract_edge(Graph(G),Edge(e))
         Returns a modified copy of undirected graph G with edge e contracted (to contract more edges apply the foldl command).
-        See also: 1/ delete_edge 2/ delete_vertex 3/ foldl 
+        See also: 1/ delete_edge 2/ delete_vertex 3/ foldl
         Ex1:contract_edge(complete_graph(4),[1,3])
-        
         '''
         return GiacMethods['contract_edge'](self,*args)
 
@@ -3077,7 +2828,7 @@ cdef class GiacMethods_base:
         Help for convert:
         convert(Expr(Xpr),Cmd(cmd))
         Returns the value of cmd(Xpr), cmd is the name of a command specified by the 2nd argument (for ex option sin=command trigsin).
-        See also: 1/ mksa 2/ list 3/ polynom 4/ table 
+        See also: 1/ mksa 2/ list 3/ polynom 4/ table
         Ex1:convert(cos(x)^2,sin)
         Ex2:convert(exp(i*x),sincos)
         Ex3:convert(1/(x^4-1),parfrac)
@@ -3095,7 +2846,6 @@ cdef class GiacMethods_base:
         Ex15:convert(pi,interval,20)
         Ex16: A[2,1]:=1;convert(A,array)
         Ex17: B[0..1,1..2]:=1;B[2,2]:=2;convert(B,array)
-        
         '''
         return GiacMethods['convert'](self,*args)
 
@@ -3104,7 +2854,7 @@ cdef class GiacMethods_base:
         Help for convertir:
         convertir(Expr(Xpr),Cmd(cmd))
         Returns the value of cmd(Xpr), cmd is the name of a command specified by the 2nd argument (for ex option sin=command trigsin).
-        See also: 1/ mksa 2/ list 3/ polynom 4/ table 
+        See also: 1/ mksa 2/ list 3/ polynom 4/ table
         Ex1:convertir(cos(x)^2,sin)
         Ex2:convertir(exp(i*x),sincos)
         Ex3:convertir(1/(x^4-1),parfrac)
@@ -3122,7 +2872,6 @@ cdef class GiacMethods_base:
         Ex15:convertir(pi,interval,20)
         Ex16: A[2,1]:=1;convert(A,array)
         Ex17: B[0..1,1..2]:=1;B[2,2]:=2;convert(B,array)
-        
         '''
         return GiacMethods['convertir'](self,*args)
 
@@ -3131,7 +2880,7 @@ cdef class GiacMethods_base:
         Help for convex:
         convex(Expr(f),Lst(x,y,..))
         Returns a list of conditions under which f(x,y,..) is convex.
-        See also: 1/ hessian 
+        See also: 1/ hessian
         Ex1:convex(-2x+y+x^2-2x*y+y^2,[x,y])
         Ex2:convex(3*exp(x)+5x^4-ln(x),x)
         Ex3:convex(x+y-exp(x)-exp(x+y),[x,y])
@@ -3141,7 +2890,6 @@ cdef class GiacMethods_base:
         Ex7:convex(exp(x1)+exp(x2)+x1*x2,[x1,x2])
         Ex8:convex(sqrt((1+cos(x)^2)/sin(x)),x)
         Ex9:convex(sqrt((1+(u')^2)/(2*g*u)),u(t))
-        
         '''
         return GiacMethods['convex'](self,*args)
 
@@ -3150,11 +2898,10 @@ cdef class GiacMethods_base:
         Help for convexhull:
         convexhull(Lst)
         Convex hull of a list of 2-d points.
-        See also: 1/ polygon 
+        See also: 1/ polygon
         Ex1:convexhull(0,1,1+i,1+2i,-1-i,1-3i,-2+i)
         Ex2:convexhull([0,1,1+i,1+2i,-1-i,1-3i,-2+i])
         Ex3: polygon(convexhull(0,1,1+i,1+2i,-1-i,1-3i,-2+i))
-        
         '''
         return GiacMethods['convexhull'](self,*args)
 
@@ -3163,10 +2910,9 @@ cdef class GiacMethods_base:
         Help for convolution:
         convolution(Lst(u),Lst(v))
         Returns the convolution of two signals or causal functions u and v.
-        See also: 1/ fft 2/ cross_correlation 
+        See also: 1/ fft 2/ cross_correlation
         Ex1:convolution([1,2,3],[1,-1,1,-1])
         Ex2:convolution(25*exp(2*x),x*exp(-3*x),x)
-        
         '''
         return GiacMethods['convolution'](self,*args)
 
@@ -3175,7 +2921,7 @@ cdef class GiacMethods_base:
         Help for coordinates:
         coordinates(Pnt or Cplx or Vect)
         Returns the list (resp matrix) of the abscissa and of the ordinate of a point or a vector (resp of points or vectors).
-        See also: 1/ abscissa 2/ ordinate 3/ cote 4/ vecteur 
+        See also: 1/ abscissa 2/ ordinate 3/ cote 4/ vecteur
         Ex1:coordinates(point(1+2*i))
         Ex2:coordinates(1+2*i)
         Ex3:coordinates(point(i),point(1+2*i))
@@ -3184,7 +2930,6 @@ cdef class GiacMethods_base:
         Ex6:coordinates(-1-i)
         Ex7:coordinates(point(1,2,3))
         Ex8:coordinates(vecteur([1,2,3],[4,5,6]))
-        
         '''
         return GiacMethods['coordinates'](self,*args)
 
@@ -3193,9 +2938,8 @@ cdef class GiacMethods_base:
         Help for copy:
         copy(Mtrx,Var)
         A:=copy(B) clones the list or matrix B into A.
-        See also: 1/ =< 
+        See also: 1/ =<
         Ex1: A:=copy(B)
-        
         '''
         return GiacMethods['copy'](self,*args)
 
@@ -3204,9 +2948,8 @@ cdef class GiacMethods_base:
         Help for correlation:
         correlation(Lst||Mtrx,[Lst])
         Returns the correlation of the elements of its argument.
-        See also: 1/ covariance 2/ covariance_correlation 
+        See also: 1/ covariance 2/ covariance_correlation
         Ex1:correlation([[1,2],[1,1],[4,7]])
-        
         '''
         return GiacMethods['correlation'](self,*args)
 
@@ -3215,10 +2958,9 @@ cdef class GiacMethods_base:
         Help for cos:
         cos(Expr or Opt)
         Cosine or option of the convert or convertir command (id trigcos).
-        See also: 1/ acos 2/ convert 3/ trigsin 
+        See also: 1/ acos 2/ convert 3/ trigsin
         Ex1:cos(0)
         Ex2: convert(cos(x)^4+sin(x)^2,cos)
-        
         '''
         return GiacMethods['cos'](self,*args)
 
@@ -3227,9 +2969,8 @@ cdef class GiacMethods_base:
         Help for cos2sintan:
         cos2sintan(Expr)
         Replaces cos(x) by sin(x)/tan(x) in the argument.
-        See also: 1/ tan2sincos 2/ sin2costan 3/ tan2sincos2 4/ tan2cossin2 
+        See also: 1/ tan2sincos 2/ sin2costan 3/ tan2sincos2 4/ tan2cossin2
         Ex1:cos2sintan(cos(x))
-        
         '''
         return GiacMethods['cos2sintan'](self,*args)
 
@@ -3238,9 +2979,8 @@ cdef class GiacMethods_base:
         Help for cosh:
         cosh(Expr)
         Hyperbolic cosine.
-        See also: 1/ acosh 
+        See also: 1/ acosh
         Ex1:cosh(0)
-        
         '''
         return GiacMethods['cosh'](self,*args)
 
@@ -3249,9 +2989,8 @@ cdef class GiacMethods_base:
         Help for cosine_window:
         cosine_window(Lst,[Real(a)],[Interval(n1..n2)])
         Applies the cosine windowing function with parameter a>0 (by default a=1 for sine window) to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ bartlett_hann_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ bartlett_hann_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(cosine_window(randvector(1000,0..1),1.5))
-        
         '''
         return GiacMethods['cosine_window'](self,*args)
 
@@ -3260,9 +2999,8 @@ cdef class GiacMethods_base:
         Help for cot:
         cot(Expr)
         Cotangent.
-        See also: 1/ acot 2/ tan 
+        See also: 1/ acot 2/ tan
         Ex1:cot(pi/2)
-        
         '''
         return GiacMethods['cot'](self,*args)
 
@@ -3271,10 +3009,9 @@ cdef class GiacMethods_base:
         Help for cote:
         cote(Vect)
         Third coordinate (z) of a 3-d point.
-        See also: 1/ abscissa 2/ ordinate 3/ coordinates 
+        See also: 1/ abscissa 2/ ordinate 3/ coordinates
         Ex1:cote(point[1,2,3])
         Ex2:cote(point(1,2,3))
-        
         '''
         return GiacMethods['cote'](self,*args)
 
@@ -3283,7 +3020,7 @@ cdef class GiacMethods_base:
         Help for count:
         count(Fnc(f)||LstIntg,(Lst||Mtrx)(l),[Opt(row||col)])
         Returns f(l[0])+f(l[1])+...+f(l[size(l)-1]) or counts the number of occurrences if the argument is a vector of integers.
-        See also: 1/ count_eq 2/ count_inf 3/ count_sup 
+        See also: 1/ count_eq 2/ count_inf 3/ count_sup
         Ex1:count(id,[-2/5,-1,0,1,2,3/5])
         Ex2:count(1,[-2,-1,0,1,2,3])
         Ex3:count([1,3,1,1,2,10,3])
@@ -3294,7 +3031,6 @@ cdef class GiacMethods_base:
         Ex8:count((x)->x>2,[[3,5/2],[4,1]],col)
         Ex9:count((x)->x>2 && x<4,[[3,9/2],[4,1]])
         Ex10:count((x)->x<2 || x>4,[[3,9/2],[4,1]])
-        
         '''
         return GiacMethods['count'](self,*args)
 
@@ -3303,12 +3039,11 @@ cdef class GiacMethods_base:
         Help for count_eq:
         count_eq(Real(a),(Lst||Mtrx)(L),[Opt(row||col)])
         Returns the number of elements of L equal to a.
-        See also: 1/ count 2/ count_inf 3/ count_sup 
+        See also: 1/ count 2/ count_inf 3/ count_sup
         Ex1:count_eq(1,[-2,1,0,1,2,-3])
         Ex2:count_eq(4,[[3,4],[4,1]])
         Ex3:count_eq(4,[[3,4],[4,1]],row)
         Ex4:count_eq(4,[[3,4],[4,1]],col)
-        
         '''
         return GiacMethods['count_eq'](self,*args)
 
@@ -3317,12 +3052,11 @@ cdef class GiacMethods_base:
         Help for count_inf:
         count_inf(Real(a),(Lst||Mtrx)(L),[Opt(row||col)])
         Returns the number of elements of L strictly less than a.
-        See also: 1/ count 2/ count_eq 3/ count_sup 
+        See also: 1/ count 2/ count_eq 3/ count_sup
         Ex1:count_inf(1,[-2,-1,0,1,2,3])
         Ex2:count_inf(4,[[3,5],[4,1]])
         Ex3:count_inf(4,[[3,5],[4,1]],row)
         Ex4:count_inf(4,[[3,5],[4,1]],col)
-        
         '''
         return GiacMethods['count_inf'](self,*args)
 
@@ -3331,12 +3065,11 @@ cdef class GiacMethods_base:
         Help for count_sup:
         count_sup(Real(a),(Lst||Mtrx)(L),[Opt(row||col)])
         Returns the number of elements of L strictly greater than a.
-        See also: 1/ count 2/ count_inf 3/ count_eq 
+        See also: 1/ count 2/ count_inf 3/ count_eq
         Ex1:count_sup(1,[-2,-1,0,1,2,3])
         Ex2:count_sup(3,[[3,5],[4,1]])
         Ex3:count_sup(3,[[3,5],[4,1]],row)
         Ex4:count_sup(3,[[3,5],[4,1]],col)
-        
         '''
         return GiacMethods['count_sup'](self,*args)
 
@@ -3345,7 +3078,7 @@ cdef class GiacMethods_base:
         Help for courbe_parametrique:
         courbe_parametrique(Cplx||Lst,Var||Lst(Var))
         plotparam(a(x)+i*b(x),x=x0..x1) draws the curve X=a(x),Y=b(x) x=x0..x1 or plotparam([a(u,v),b(u,v),c(u,v)],[u=u0..u1,v=v0..v1]) draws the surface X=a(u,v),Y=b(u,v),Z=c(u,v) u=u0..u1 and v=v0..v1.
-        See also: 1/ plotfunc 2/ plotpolar 3/ arc 
+        See also: 1/ plotfunc 2/ plotpolar 3/ arc
         Ex1:courbe_parametrique(sin(t)+i*cos(t),t)
         Ex2:courbe_parametrique(exp(i*t),t=0..pi/2,affichage=1)
         Ex3:courbe_parametrique(exp(i*t),t=0..pi/2,affichage=1+rempli)
@@ -3354,7 +3087,6 @@ cdef class GiacMethods_base:
         Ex6:courbe_parametrique(sin(x)+i*cos(x),x=0..1,tstep=0.01)
         Ex7:courbe_parametrique([v*cos(u),v*sin(u),v],[u,v])
         Ex8:courbe_parametrique([v*cos(u),v*sin(u),v],[u=0..pi,v=0..3],ustep=0.1,vstep=0.2)
-        
         '''
         return GiacMethods['courbe_parametrique'](self,*args)
 
@@ -3363,10 +3095,9 @@ cdef class GiacMethods_base:
         Help for courbe_polaire:
         courbe_polaire(Expr,Var,VarMin,VarMax)
         plotpolar(f(x),x,a,b) draws the polar curve r=f(x) for x in [a,b].
-        See also: 1/ plotparam 2/ plotfunc 3/ plotpolar 
+        See also: 1/ plotparam 2/ plotfunc 3/ plotpolar
         Ex1:courbe_polaire(sin(2*x),x,0,pi)
         Ex2:courbe_polaire(sin(2*x),x,0,pi,tstep=0.1)
-        
         '''
         return GiacMethods['courbe_polaire'](self,*args)
 
@@ -3375,9 +3106,8 @@ cdef class GiacMethods_base:
         Help for covariance:
         covariance(Lst||Mtrx,[Lst])
         Returns the covariance of the elements of its argument.
-        See also: 1/ correlation 2/ covariance_correlation 
+        See also: 1/ correlation 2/ covariance_correlation
         Ex1:covariance([[1,2],[1,1],[4,7]])
-        
         '''
         return GiacMethods['covariance'](self,*args)
 
@@ -3386,9 +3116,8 @@ cdef class GiacMethods_base:
         Help for covariance_correlation:
         covariance_correlation(Lst||Mtrx,[Lst])
         Returns the list of the covariance and the correlation of the elements of its argument.
-        See also: 1/ covariance 2/ correlation 
+        See also: 1/ covariance 2/ correlation
         Ex1:covariance_correlation([[1,2],[1,1],[4,7]])
-        
         '''
         return GiacMethods['covariance_correlation'](self,*args)
 
@@ -3397,11 +3126,10 @@ cdef class GiacMethods_base:
         Help for cpartfrac:
         cpartfrac(RatFrac)
         Performs partial fraction decomposition in ℂ of a fraction.
-        See also: 1/ factor 2/ normal 
+        See also: 1/ factor 2/ normal
         Ex1:cpartfrac((x)/(4-x^2))
         Ex2:cpartfrac((x^2-2*x+3)/(x^2-3*x+2))
         Ex3:cpartfrac(a/(z*(z-b)),z)
-        
         '''
         return GiacMethods['cpartfrac'](self,*args)
 
@@ -3410,9 +3138,8 @@ cdef class GiacMethods_base:
         Help for crationalroot:
         crationalroot(Poly(P))
         Returns the list of complex rational roots of P without indicating the multiplicity.
-        See also: 1/ proot 2/ froot 3/ complexroot 4/ rationalroot 5/ realroot 
+        See also: 1/ proot 2/ froot 3/ complexroot 4/ rationalroot 5/ realroot
         Ex1:crationalroot(2*x^3+(-5-7*i)*x^2+(-4+14*i)*x+8-4*i)
-        
         '''
         return GiacMethods['crationalroot'](self,*args)
 
@@ -3421,12 +3148,11 @@ cdef class GiacMethods_base:
         Help for crayon:
         crayon(Color)
         Changes the color of the pencil (without parameter, returns the current color).
-        See also: 1/ leve_crayon 2/ baisse_crayon 
+        See also: 1/ leve_crayon 2/ baisse_crayon
         Ex1: crayon vert
         Ex2:crayon(rouge)
         Ex3:crayon(5)
         Ex4:crayon(gomme)
-        
         '''
         return GiacMethods['crayon'](self,*args)
 
@@ -3435,13 +3161,12 @@ cdef class GiacMethods_base:
         Help for createwav:
         createwav(Lst(data),[opts])
         Returns an audio clip from data, optionally setting channel count, bit depth, sample rate, duration and normalization level.
-        See also: 1/ readwav 2/ writewav 3/ playsnd 
+        See also: 1/ readwav 2/ writewav 3/ playsnd
         Ex1:createwav(duration=3.5)
         Ex2:createwav(sin(2*pi*440*soundsec(2)),samplerate=48000)
         Ex3:createwav(sin(2*pi*440*soundsec(2)),bit_depth=8)
         Ex4:createwav(10*sin(2*pi*440*soundsec(2)),normalize=-3)
         Ex5: t:=soundsec(3):;L,R:=sin(2*pi*440*t),sin(2*pi*445*t):;createwav([L,R])
-        
         '''
         return GiacMethods['createwav'](self,*args)
 
@@ -3450,10 +3175,9 @@ cdef class GiacMethods_base:
         Help for cross:
         cross(Vect(v1),Vect(v2))
         Wedge product.
-        See also: 1/ dot 
+        See also: 1/ dot
         Ex1:cross([1,2],[3,4])
         Ex2:cross([1,2,3],[4,5,6])
-        
         '''
         return GiacMethods['cross'](self,*args)
 
@@ -3462,10 +3186,9 @@ cdef class GiacMethods_base:
         Help for crossP:
         crossP(Vect(v1),Vect(v2))
         Wedge product.
-        See also: 1/ dot 
+        See also: 1/ dot
         Ex1:crossP([1,2],[3,4])
         Ex2:crossP([1,2,3],[4,5,6])
-        
         '''
         return GiacMethods['crossP'](self,*args)
 
@@ -3474,9 +3197,8 @@ cdef class GiacMethods_base:
         Help for cross_correlation:
         cross_correlation(cross_correlation(Lst(u),Lst(v)))
         Returns the cross_correlation of two signals u and v.
-        See also: 1/ auto_correlation 2/ correlation 
+        See also: 1/ auto_correlation 2/ correlation
         Ex1:cross_correlation([1,2],[3,4,5])
-        
         '''
         return GiacMethods['cross_correlation'](self,*args)
 
@@ -3485,10 +3207,9 @@ cdef class GiacMethods_base:
         Help for cross_point:
         cross_point(Opt)
         Option of the display command for a point.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: F:=display(point(2+1.5*i),point_point)
         Ex2: F:=display(point(2+1.5*i),rhombus_point)
-        
         '''
         return GiacMethods['cross_point'](self,*args)
 
@@ -3497,11 +3218,10 @@ cdef class GiacMethods_base:
         Help for cross_ratio:
         cross_ratio(Pnt or Cplx(a),Pnt or Cplx(b),Pnt or Cplx(c),Pnt or Cplx(d))
         Returns the complex number equal to ((c-a)/(c-b))/((d-a)/(d-b)).
-        See also: 1/ harmonic_conjugate 2/ is_conjugate 
+        See also: 1/ harmonic_conjugate 2/ is_conjugate
         Ex1:cross_ratio(i,2+i,3/2+i,3+i)
         Ex2:cross_ratio(0,1+i,1,i)
         Ex3:cross_ratio(0,1,2,3)
-        
         '''
         return GiacMethods['cross_ratio'](self,*args)
 
@@ -3510,10 +3230,9 @@ cdef class GiacMethods_base:
         Help for crossproduct:
         crossproduct(Vect(v1),Vect(v2))
         Wedge product.
-        See also: 1/ dot 
+        See also: 1/ dot
         Ex1:crossproduct([1,2],[3,4])
         Ex2:crossproduct([1,2,3],[4,5,6])
-        
         '''
         return GiacMethods['crossproduct'](self,*args)
 
@@ -3522,9 +3241,8 @@ cdef class GiacMethods_base:
         Help for csc:
         csc(Expr)
         Cosecant: csc(x)=1/sin(x).
-        See also: 1/ sin 2/ acsc 
+        See also: 1/ sin 2/ acsc
         Ex1:csc(pi/2)
-        
         '''
         return GiacMethods['csc'](self,*args)
 
@@ -3533,12 +3251,11 @@ cdef class GiacMethods_base:
         Help for csolve:
         csolve(LstEq,LstVar)
         Returns the list of complex solutions of an equation or a matrix where the rows are ℂ-solutions of a system of polynomial equations.
-        See also: 1/ cZeros 2/ solve 3/ fslove 
+        See also: 1/ cZeros 2/ solve 3/ fslove
         Ex1:csolve(x^4-1,x)
         Ex2:csolve(x^4-y^4 and x+y=2,[x,y])
         Ex3:csolve(x^4-y^4 and x+y=0 and x^2=2*x,[x,y])
         Ex4:csolve(u*v-u=v and v^2=u,[u,v])
-        
         '''
         return GiacMethods['csolve'](self,*args)
 
@@ -3547,9 +3264,8 @@ cdef class GiacMethods_base:
         Help for csv2gen:
         csv2gen(Strng(filename),Strng(sep),Strng(nl),Strng(decsep),Strng(eof),[string])
         Reads a file (or string) in CSV format.
-        See also: 1/ read 
+        See also: 1/ read
         Ex1:csv2gen("mat.txt",",",char(10),".")
-        
         '''
         return GiacMethods['csv2gen'](self,*args)
 
@@ -3558,13 +3274,12 @@ cdef class GiacMethods_base:
         Help for cube:
         cube(Pnt(A),Pnt(B),Pnt(C))
         Draws the direct cube with vertices A,B with a face in the plane (A,B,C).
-        See also: 1/ parallelepiped 2/ cylinder 3/ icosahedron 4/ dodecahedron 5/ octahedron 6/ tetrahedron 7/ centered_cube 
-        Ex1:cube([0,0,0],[3,0,0],[0,0,1]) 
-        Ex2: A,B,C:=point(1,0,0),point(1,1,0),point(0,1,0);c:=cube(A,B,C);A,B,C,D,E,F,G,H:=sommets(c); 
-        Ex3: A,B,K:=point(1,0,0),point(1,1,0),point(0,2,0);c:=cube(A,B,C);A,B,C,D,E,F,G,H:=sommets(c); 
-        Ex4: c:=cube([0,0,0],[1,0,0],[0,1,0]);c1,c2,c4,c3,c5,c6,c7,c8:=sommets(c); 
-        Ex5: c:=cube([0,0,0],[0,2,0],[0,0,1]);c1,c2,c4,c3,c5,c6,c7,c8:=sommets(c); 
-        
+        See also: 1/ parallelepiped 2/ cylinder 3/ icosahedron 4/ dodecahedron 5/ octahedron 6/ tetrahedron 7/ centered_cube
+        Ex1: cube([0,0,0],[3,0,0],[0,0,1])
+        Ex2: A,B,C:=point(1,0,0),point(1,1,0),point(0,1,0);c:=cube(A,B,C);A,B,C,D,E,F,G,H:=sommets(c);
+        Ex3: A,B,K:=point(1,0,0),point(1,1,0),point(0,2,0);c:=cube(A,B,C);A,B,C,D,E,F,G,H:=sommets(c);
+        Ex4: c:=cube([0,0,0],[1,0,0],[0,1,0]);c1,c2,c4,c3,c5,c6,c7,c8:=sommets(c);
+        Ex5: c:=cube([0,0,0],[0,2,0],[0,0,1]);c1,c2,c4,c3,c5,c6,c7,c8:=sommets(c);
         '''
         return GiacMethods['cube'](self,*args)
 
@@ -3573,11 +3288,10 @@ cdef class GiacMethods_base:
         Help for cumSum:
         cumSum(Lst(l)||Seq||Str)
         Returns the list (or the sequence or the string) lr where the elements are the cumulative sum of the list l: lr[k]=sum(l[j],j=0..k) (or lr=sum(l[j],j=0..k)$(k=0..size(l)-1)).
-        See also: 1/ sum 
+        See also: 1/ sum
         Ex1:cumSum([0,1,2,3,4])
         Ex2:cumSum(1.2,3,4.5,6)
         Ex3:cumSum("a","b","c","d")
-        
         '''
         return GiacMethods['cumSum'](self,*args)
 
@@ -3586,11 +3300,10 @@ cdef class GiacMethods_base:
         Help for cumsum:
         cumsum(Lst(l)||Seq||Str)
         Returns the list (or the sequence or the string) lr where the elements are the cumulative sum of the list l: lr[k]=sum(l[j],j=0..k) (or lr=sum(l[j],j=0..k)$(k=0..size(l)-1)).
-        See also: 1/ sum 
+        See also: 1/ sum
         Ex1:cumsum([0,1,2,3,4])
         Ex2:cumsum(1.2,3,4.5,6)
         Ex3:cumsum("a","b","c","d")
-        
         '''
         return GiacMethods['cumsum'](self,*args)
 
@@ -3599,13 +3312,12 @@ cdef class GiacMethods_base:
         Help for cumulated_frequencies:
         cumulated_frequencies(Lst || Mtrx)
         Draws the diagram of the cumulated frequencies (rows=[value,frequencies])
-        See also: 1/ histogram 2/ classes 3/ bar_plot 
+        See also: 1/ histogram 2/ classes 3/ bar_plot
         Ex1:cumulated_frequencies([1,2,1,1,2,1,2,4,3,3])
         Ex2:cumulated_frequencies([(rand(6)+1)$(k=1..100)])
         Ex3:cumulated_frequencies([[1,0.3],[2,0.5],[3,0.2]])
         Ex4:cumulated_frequencies([[1..2,0.3],[2..3,0.5],[3..4,0.2]])
         Ex5:cumulated_frequencies([[1..2,0.3,0.5],[2..3,0.5,0.2],[3..4,0.2,0.3]])
-        
         '''
         return GiacMethods['cumulated_frequencies'](self,*args)
 
@@ -3614,9 +3326,8 @@ cdef class GiacMethods_base:
         Help for curl:
         curl(Lst(A,B,C),Lst(x,y,z))
         curl([A,B,C],[x,y,z])=[dC/dy-dB/dz,dA/dz-dC/dx,dB/dx-dA/dy].
-        See also: 1/ derive 2/ divergence 
+        See also: 1/ derive 2/ divergence
         Ex1:curl([2*x*y,x*z,y*z],[x,y,z])
-        
         '''
         return GiacMethods['curl'](self,*args)
 
@@ -3627,7 +3338,6 @@ cdef class GiacMethods_base:
         Content of the matrix editor or spreadsheet.
         Ex1:current_sheet(1,2)
         Ex2:current_sheet(A1..A5,B,G)
-        
         '''
         return GiacMethods['current_sheet'](self,*args)
 
@@ -3636,7 +3346,7 @@ cdef class GiacMethods_base:
         Help for curvature:
         curvature(Curve,Point)
         Curvature of curve C at point M.
-        See also: 1/ osculating_circle 2/ evolute 
+        See also: 1/ osculating_circle 2/ evolute
         Ex1:curvature(plot(x^2),point(1,1))
         Ex2:curvature([5*cos(t),5*sin(t)],t)
         Ex3:curvature([t,t^2],t)
@@ -3644,7 +3354,6 @@ cdef class GiacMethods_base:
         Ex5:curvature([3*exp(t/2)*cos(t),3*exp(t/2)*sin(t)],t)
         Ex6:curvature([3*exp(t/2)*cos(t),3*exp(t/2)*sin(t)],t,7)
         Ex7: trigcos(curvature([2*cos(t),2*sin(t),3*t],t))
-        
         '''
         return GiacMethods['curvature'](self,*args)
 
@@ -3653,8 +3362,7 @@ cdef class GiacMethods_base:
         Help for curve:
         curve(Expr)
         Reserved word.
-        See also: 1/  
-        
+        See also: 1/
         '''
         return GiacMethods['curve'](self,*args)
 
@@ -3663,10 +3371,9 @@ cdef class GiacMethods_base:
         Help for cyan:
         cyan(Opt)
         Option of the display command to display with color.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: F:=display(point(2+1.5*i),red)
         Ex2: F:=display(point(2+1.5*i),point_point+green)
-        
         '''
         return GiacMethods['cyan'](self,*args)
 
@@ -3675,9 +3382,8 @@ cdef class GiacMethods_base:
         Help for cycle2perm:
         cycle2perm(Cycle)
         Converts the cycle c to a permutation.
-        See also: 1/ cycles2permu 2/ permu2cycles 
+        See also: 1/ cycles2permu 2/ permu2cycles
         Ex1:cycle2perm([1,3,5])
-        
         '''
         return GiacMethods['cycle2perm'](self,*args)
 
@@ -3686,10 +3392,9 @@ cdef class GiacMethods_base:
         Help for cycle_graph:
         cycle_graph(Intg(n)||Lst(V))
         Returns a cyclic graph with n vertices (or with vertices from list V).
-        See also: 1/ graph 2/ path_graph 
+        See also: 1/ graph 2/ path_graph
         Ex1:cycle_graph(4)
         Ex2:cycle_graph(["one","two","three","four","five"])
-        
         '''
         return GiacMethods['cycle_graph'](self,*args)
 
@@ -3698,9 +3403,8 @@ cdef class GiacMethods_base:
         Help for cycleinv:
         cycleinv(Cycle(c))
         Returns the inverse cycle of the cycle c.
-        See also: 1/ perminv 
+        See also: 1/ perminv
         Ex1:cycleinv([1,3,5])
-        
         '''
         return GiacMethods['cycleinv'](self,*args)
 
@@ -3709,9 +3413,8 @@ cdef class GiacMethods_base:
         Help for cycles2permu:
         cycles2permu(Lst(Cycle))
         Converts a product of cycles into a permutation.
-        See also: 1/ permu2cycles 2/ cycle2perm 
+        See also: 1/ permu2cycles 2/ cycle2perm
         Ex1:cycles2permu([[1,3,5],[3,4]])
-        
         '''
         return GiacMethods['cycles2permu'](self,*args)
 
@@ -3720,9 +3423,8 @@ cdef class GiacMethods_base:
         Help for cyclotomic:
         cyclotomic(Expr)
         N-th cyclotomic polynomial.
-        See also: 1/ none 
+        See also: 1/ none
         Ex1:cyclotomic(20)
-        
         '''
         return GiacMethods['cyclotomic'](self,*args)
 
@@ -3731,10 +3433,9 @@ cdef class GiacMethods_base:
         Help for cylinder:
         cylinder(Pnt(A),Vect(v),Real(r),[Real(h)])
         Draws a cylinder with axis (A,v), with radius r [and with altitude h].
-        See also: 1/ half_cone 2/ cone 
+        See also: 1/ half_cone 2/ cone
         Ex1:cylinder([0,0,0],[0,1,0],2)
         Ex2:cylinder([0,0,0],[0,1,0],2,-3)
-        
         '''
         return GiacMethods['cylinder'](self,*args)
 
@@ -3743,10 +3444,9 @@ cdef class GiacMethods_base:
         Help for dash_line:
         dash_line(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['dash_line'](self,*args)
 
@@ -3755,10 +3455,9 @@ cdef class GiacMethods_base:
         Help for dashdot_line:
         dashdot_line(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['dashdot_line'](self,*args)
 
@@ -3767,10 +3466,9 @@ cdef class GiacMethods_base:
         Help for dashdotdot_line:
         dashdotdot_line(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['dashdotdot_line'](self,*args)
 
@@ -3781,7 +3479,6 @@ cdef class GiacMethods_base:
         dayofweek(d,m,y) returns the day of the given date (day,month,year) : 0 for sunday, 1 for monday ...6 for saturday.
         Ex1:dayofweek(21,4,2014)
         Ex2:dayofweek(15,10,1582)
-        
         '''
         return GiacMethods['dayofweek'](self,*args)
 
@@ -3790,12 +3487,12 @@ cdef class GiacMethods_base:
         Help for deSolve:
         deSolve(Eq,[TimeVar],FncVar)
         Solves a differential equation or a differential linear system with constant coefficients.
-        See also: 1/ integrate 2/ diff 3/ odesolve 4/ plotode 5/ plotfiefd 
+        See also: 1/ integrate 2/ diff 3/ odesolve 4/ plotode 5/ plotfiefd
         Ex1:deSolve(y'+x*y=0)
         Ex2:deSolve(y'+x*y=0,y)
         Ex3:deSolve(y'+x*y=0,[0,1])
         Ex4:deSolve([y'+x*y=0,y(0)=1],y)
-        Ex5:deSolve([y'=[[1,2],[2,1]]*y+[x,x+1],y(0)=[1,2]]) 
+        Ex5:deSolve([y'=[[1,2],[2,1]]*y+[x,x+1],y(0)=[1,2]])
         Ex6:deSolve(y''+y=0,y)
         Ex7:deSolve([y''+y=sin(x),y(0)=1,y'(0)=2],y)
         Ex8:deSolve([y''+y=sin(x),y(0)=1,y'(0)=2],x,y)
@@ -3807,7 +3504,6 @@ cdef class GiacMethods_base:
         Ex14:deSolve([z''+2*z'+z,z(0)=1,z'(0)=0],z(u))
         Ex15:deSolve([z'=[[1,2],[2,1]]*z+[t,t+1],z(0)=[1,2]],t,z)
         Ex16:deSolve([z'=[[1,2],[2,1]]*z+[t,t+1],z(0)=[1,2]],z(t))
-        
         '''
         return GiacMethods['deSolve'](self,*args)
 
@@ -3816,10 +3512,9 @@ cdef class GiacMethods_base:
         Help for debut_enregistrement:
         debut_enregistrement(Var(nom_du_dessin))
         Begins recording the commands making up the drawing; the name of the resulting procedure is the argument.
-        See also: 1/ fin_enregistrement 
+        See also: 1/ fin_enregistrement
         Ex1:debut_enregistrement(maison)
         Ex2:debut_enregistrement(arbre)
-        
         '''
         return GiacMethods['debut_enregistrement'](self,*args)
 
@@ -3828,11 +3523,10 @@ cdef class GiacMethods_base:
         Help for degree:
         degree(Poly(P),Var(Var))
         Degree of the polynomial P with respect to the second argument.
-        See also: 1/ valuation 2/ size 3/ total_degree 
+        See also: 1/ valuation 2/ size 3/ total_degree
         Ex1:degree(x^3+x)
         Ex2:degree([1,0,1,0])
         Ex3:degree(x^3+x*y,y)
-        
         '''
         return GiacMethods['degree'](self,*args)
 
@@ -3841,9 +3535,8 @@ cdef class GiacMethods_base:
         Help for degree_sequence:
         degree_sequence(Graph(G))
         Returns the list of degrees of vertices of G (arc directions are ignored).
-        See also: 1/ is_graphic_sequence 2/ is_regular 2/ sequence_graph 3/ vertex_degree 
+        See also: 1/ is_graphic_sequence 2/ is_regular 2/ sequence_graph 3/ vertex_degree
         Ex1:degree_sequence(graph(trail(1,2,3,4,2)))
-        
         '''
         return GiacMethods['degree_sequence'](self,*args)
 
@@ -3852,11 +3545,10 @@ cdef class GiacMethods_base:
         Help for delcols:
         delcols(Mtrx(A),Interval(n1..n2)||n1)
         Returns the matrix where the columns n1..n2 (or n1) of the matrix A are deleted.
-        See also: 1/ delrows 
+        See also: 1/ delrows
         Ex1:delcols([[1,2,3],[4,5,6],[7,8,9]],1..1)
         Ex2:delcols([[1,2,3],[4,5,6],[7,8,9]],0..1)
         Ex3:delcols([[1,2,3],[4,5,6],[7,8,9]],1)
-        
         '''
         return GiacMethods['delcols'](self,*args)
 
@@ -3865,9 +3557,8 @@ cdef class GiacMethods_base:
         Help for delete_arc:
         delete_arc(Graph(G),Edge(e)||Trail(T)||Lst(E))
         Returns a modified copy of digraph G with arc e (or trail T or list of arcs E) removed.
-        See also: 1/ add_arc 2/ delete_edge 3/ digraph 4/ edges 5/ has_arc 6/ trail 
+        See also: 1/ add_arc 2/ delete_edge 3/ digraph 4/ edges 5/ has_arc 6/ trail
         Ex1:delete_arc(digraph(trail(1,2,3,4,5,1)),[5,1])
-        
         '''
         return GiacMethods['delete_arc'](self,*args)
 
@@ -3876,9 +3567,8 @@ cdef class GiacMethods_base:
         Help for delete_edge:
         delete_edge(Graph(G),Edge(e)||Trail(T)||Lst(E))
         Returns a modified copy of undirected graph G with edge e (or trail T or list of edges E) removed.
-        See also: 1/ add_edge 2/ delete_arc 3/ edges 4/ graph 5/ has_edge 6/ trail 
+        See also: 1/ add_edge 2/ delete_arc 3/ edges 4/ graph 5/ has_edge 6/ trail
         Ex1:delete_edge(cycle_graph(4),[1,2])
-        
         '''
         return GiacMethods['delete_edge'](self,*args)
 
@@ -3887,9 +3577,8 @@ cdef class GiacMethods_base:
         Help for delete_vertex:
         delete_vertex(Graph(G),Vrtx(v)||Lst(V))
         Returns a modified copy of G with vertex v (or vertices from V) removed.
-        See also: 1/ add_vertex 2/ induced_subgraph 
+        See also: 1/ add_vertex 2/ induced_subgraph
         Ex1:delete_vertex(cycle_graph(5),[1,4])
-        
         '''
         return GiacMethods['delete_vertex'](self,*args)
 
@@ -3898,11 +3587,10 @@ cdef class GiacMethods_base:
         Help for delrows:
         delrows(Mtrx(A),Interval(n1..n2)||n1)
         Returns the matrix where the rows n1..n2 (or n1) of the matrix A are deleted.
-        See also: 1/ delcols 
+        See also: 1/ delcols
         Ex1:delrows([[1,2,3],[4,5,6],[7,8,9]],1..1)
         Ex2:delrows([[1,2,3],[4,5,6],[7,8,9]],0..1)
         Ex3:delrows([[1,2,3],[4,5,6],[7,8,9]],1)
-        
         '''
         return GiacMethods['delrows'](self,*args)
 
@@ -3911,10 +3599,9 @@ cdef class GiacMethods_base:
         Help for deltalist:
         deltalist(Lst)
         Returns the list of the differences of two terms in succession.
-        See also: 1/  
+        See also: 1/
         Ex1:deltalist([1,4,8,9])
         Ex2:deltalist([1,8,4,9])
-        
         '''
         return GiacMethods['deltalist'](self,*args)
 
@@ -3923,11 +3610,10 @@ cdef class GiacMethods_base:
         Help for denom:
         denom(Frac(a/b) or RatFrac)
         Returns the denominator of the simplified fraction.
-        See also: 1/ getDenom 2/ getNum 3/ numer 4/ f2nd 
+        See also: 1/ getDenom 2/ getNum 3/ numer 4/ f2nd
         Ex1:denom(25/15)
         Ex2:denom((x^3-1)/(x^2-1))
         Ex3:denom(1+(x^3-1)/x^2)
-        
         '''
         return GiacMethods['denom'](self,*args)
 
@@ -3936,10 +3622,9 @@ cdef class GiacMethods_base:
         Help for densityplot:
         densityplot(Expr,[x=xrange,y=yrange],[z],[xstep],[ystep])
         Shows in the plane with colors the graph of an expression of 2 variables.
-        See also: 1/ plotfunc 2/ plotcontour 
+        See also: 1/ plotfunc 2/ plotcontour
         Ex1:densityplot(x^2-y^2,[x=-2..2,y=-2..2],xstep=0.1,ystep=0.1)
         Ex2:densityplot(x^2-y^2,[x=-2..2,y=-2..2],z=-2..2,xstep=0.1,ystep=0.1)
-        
         '''
         return GiacMethods['densityplot'](self,*args)
 
@@ -3948,9 +3633,8 @@ cdef class GiacMethods_base:
         Help for departures:
         departures(Graph(G),[Vrtx(v)])
         Returns the list of vertices of digraph G which are connected by v with arcs such that tails are in v. If v is omitted, a list of departures is computed for every vertex in G.
-        See also: 1/ out_degree 
+        See also: 1/ out_degree
         Ex1:departures(digraph(%{[1,2],[1,3],[2,3]%}),1)
-        
         '''
         return GiacMethods['departures'](self,*args)
 
@@ -3959,7 +3643,7 @@ cdef class GiacMethods_base:
         Help for derive:
         derive(Expr or Fnc,[SeqVar or LstVar],[n])
         Returns the derivative with respect to the 2nd argument.
-        See also: 1/ ' 2/ function_diff 3/ integrate 4/ taux_accroissement 5/ implicitdiff 
+        See also: 1/ ' 2/ function_diff 3/ integrate 4/ taux_accroissement 5/ implicitdiff
         Ex1:derive(x^3-x)
         Ex2:derive(x^3-x,x,3)
         Ex3:derive(x^3-x,quote(x)$3)
@@ -3968,7 +3652,6 @@ cdef class GiacMethods_base:
         Ex6:derive(x*y+z*y,y,z)
         Ex7:derive(x*y+z*y,[y,z])
         Ex8: f(x):=sin(2x);g:=diff(f);h:=diff(diff(f))
-        
         '''
         return GiacMethods['derive'](self,*args)
 
@@ -3977,7 +3660,7 @@ cdef class GiacMethods_base:
         Help for deriver:
         deriver(Expr or Fnc,[SeqVar or LstVar],[n])
         Returns the derivative with respect to the 2nd argument.
-        See also: 1/ ' 2/ function_diff 3/ integrate 4/ taux_accroissement 5/ implicitdiff 
+        See also: 1/ ' 2/ function_diff 3/ integrate 4/ taux_accroissement 5/ implicitdiff
         Ex1:deriver(x^3-x)
         Ex2:deriver(x^3-x,x,3)
         Ex3:deriver(x^3-x,quote(x)$3)
@@ -3986,7 +3669,6 @@ cdef class GiacMethods_base:
         Ex6:deriver(x*y+z*y,y,z)
         Ex7:deriver(x*y+z*y,[y,z])
         Ex8: f(x):=sin(2x);g:=diff(f);h:=diff(diff(f))
-        
         '''
         return GiacMethods['deriver'](self,*args)
 
@@ -3995,12 +3677,12 @@ cdef class GiacMethods_base:
         Help for desolve:
         desolve(Eq,[TimeVar],FncVar)
         Solves a differential equation or a differential linear system with constant coefficients.
-        See also: 1/ integrate 2/ diff 3/ odesolve 4/ plotode 5/ plotfiefd 
+        See also: 1/ integrate 2/ diff 3/ odesolve 4/ plotode 5/ plotfiefd
         Ex1:desolve(y'+x*y=0)
         Ex2:desolve(y'+x*y=0,y)
         Ex3:desolve(y'+x*y=0,[0,1])
         Ex4:desolve([y'+x*y=0,y(0)=1],y)
-        Ex5:desolve([y'=[[1,2],[2,1]]*y+[x,x+1],y(0)=[1,2]]) 
+        Ex5:desolve([y'=[[1,2],[2,1]]*y+[x,x+1],y(0)=[1,2]])
         Ex6:desolve(y''+y=0,y)
         Ex7:desolve([y''+y=sin(x),y(0)=1,y'(0)=2],y)
         Ex8:desolve([y''+y=sin(x),y(0)=1,y'(0)=2],x,y)
@@ -4012,7 +3694,6 @@ cdef class GiacMethods_base:
         Ex14:desolve([z''+2*z'+z,z(0)=1,z'(0)=0],z(u))
         Ex15:desolve([z'=[[1,2],[2,1]]*z+[t,t+1],z(0)=[1,2]],t,z)
         Ex16:desolve([z'=[[1,2],[2,1]]*z+[t,t+1],z(0)=[1,2]],z(t))
-        
         '''
         return GiacMethods['desolve'](self,*args)
 
@@ -4021,11 +3702,10 @@ cdef class GiacMethods_base:
         Help for dessine_tortue:
         dessine_tortue([Intg(n)])
         Draws the full (or not full if n=1) triangle representing the turtle.
-        See also: 1/ crayon 
+        See also: 1/ crayon
         Ex1:dessine_tortue()
         Ex2:dessine_tortue(0)
         Ex3:dessine_tortue(1)
-        
         '''
         return GiacMethods['dessine_tortue'](self,*args)
 
@@ -4034,10 +3714,9 @@ cdef class GiacMethods_base:
         Help for det:
         det(Mtrx)
         Determinant of a square matrix M.
-        See also: 1/ rref 2/ det_minor 3/ Det 
+        See also: 1/ rref 2/ det_minor 3/ Det
         Ex1:det([[1,2],[3,4]])
         Ex2:det([[1,2,3],[1,3,6],[2,5,7]])
-        
         '''
         return GiacMethods['det'](self,*args)
 
@@ -4046,9 +3725,8 @@ cdef class GiacMethods_base:
         Help for det_minor:
         det_minor(Mtrx(A))
         Returns the determinant calculated with the calculus of minors.
-        See also: 1/ det 
+        See also: 1/ det
         Ex1:det_minor([[1,2],[3,4]])
-        
         '''
         return GiacMethods['det_minor'](self,*args)
 
@@ -4057,13 +3735,12 @@ cdef class GiacMethods_base:
         Help for developper:
         developper(Expr)
         Full distribution of * and / over + and -.
-        See also: 1/ texpand 2/ normal 3/ simplify 4/ ratnormal 
+        See also: 1/ texpand 2/ normal 3/ simplify 4/ ratnormal
         Ex1:developper((x+y)*(z+1))
         Ex2:developper((a+b+c)/d)
         Ex3:developper((y+x)*(z+y)*(x+z))
         Ex4:developper((x+3)^4)
         Ex5:developper((2*x-2*1)*(x^2-3*x+2)+(x^2-2*x+3)*(2*x-3*1))
-        
         '''
         return GiacMethods['developper'](self,*args)
 
@@ -4072,11 +3749,10 @@ cdef class GiacMethods_base:
         Help for developper_transcendant:
         developper_transcendant(Expr)
         Expands transcendental expressions.
-        See also: 1/ tcollect 2/ tlin 3/ lin 4/ trigexpand 
+        See also: 1/ tcollect 2/ tlin 3/ lin 4/ trigexpand
         Ex1:developper_transcendant(sin(2*x)+exp(x+y))
         Ex2:developper_transcendant(cos(x+y))
         Ex3:developper_transcendant(cos(3*x))
-        
         '''
         return GiacMethods['developper_transcendant'](self,*args)
 
@@ -4085,13 +3761,12 @@ cdef class GiacMethods_base:
         Help for dfc:
         dfc(Real(x0),Int(n)||Real(eps))
         Returns the continued fraction development at x0 of order n or with precision eps.
-        See also: 1/ dfc2f 2/ convert 
+        See also: 1/ dfc2f 2/ convert
         Ex1:dfc(sqrt(2),5)
         Ex2:dfc(pi,4)
         Ex3:dfc(evalf(pi),1e-09)
         Ex4: convert(sqrt(2),confrac,'dev');dev
         Ex5: convert(9976/6961,confrac,'l');l
-        
         '''
         return GiacMethods['dfc'](self,*args)
 
@@ -4100,10 +3775,9 @@ cdef class GiacMethods_base:
         Help for dfc2f:
         dfc2f(LstFrac_Cont))
         Converts a continued fraction into a real.
-        See also: 1/ dfc 2/ convert 
+        See also: 1/ dfc 2/ convert
         Ex1:dfc2f([1,1,1])
         Ex2:dfc2f([1,2,[2]])
-        
         '''
         return GiacMethods['dfc2f'](self,*args)
 
@@ -4112,14 +3786,13 @@ cdef class GiacMethods_base:
         Help for diag:
         diag(Lst(l)||(Mtrx(A),[left||right||lu])||Lst(l),Lst(d),Lst(u))
         With 1 argument returns either the diagonal matrix with diagonal l or the diagonal of A, with 2 arguments returns the large left (lower) triangular part of A or the large right (upper) triangular part of A or factors A into 3 parts : strict left (lower) triangular, diagonal, strict right (upper) triangular and with 3 arguments returns the tridiagonal matrix with diagonals l,d,u.
-        See also: 1/ identity 2/ lu 3/ BlockDiagonal 4/ upper 5/ lower 
+        See also: 1/ identity 2/ lu 3/ BlockDiagonal 4/ upper 5/ lower
         Ex1:diag([[1,2],[3,4]])
         Ex2:diag([1,2,3])
         Ex3:diag([[1,2],[3,4]],left)
         Ex4:diag([[1,2],[3,4]],right)
         Ex5:diag([[1,2],[3,4]],lu)
         Ex6:diag([1,2],[3,4,5],[6,7])
-        
         '''
         return GiacMethods['diag'](self,*args)
 
@@ -4128,7 +3801,7 @@ cdef class GiacMethods_base:
         Help for diff:
         diff(Expr or Fnc,[SeqVar or LstVar],[n])
         Returns the derivative with respect to the 2nd argument.
-        See also: 1/ ' 2/ function_diff 3/ integrate 4/ taux_accroissement 5/ implicitdiff 
+        See also: 1/ ' 2/ function_diff 3/ integrate 4/ taux_accroissement 5/ implicitdiff
         Ex1:diff(x^3-x)
         Ex2:diff(x^3-x,x,3)
         Ex3:diff(x^3-x,quote(x)$3)
@@ -4137,7 +3810,6 @@ cdef class GiacMethods_base:
         Ex6:diff(x*y+z*y,y,z)
         Ex7:diff(x*y+z*y,[y,z])
         Ex8: f(x):=sin(2x);g:=diff(f);h:=diff(diff(f))
-        
         '''
         return GiacMethods['diff'](self,*args)
 
@@ -4146,10 +3818,9 @@ cdef class GiacMethods_base:
         Help for digraph:
         digraph([Lst(V)],[Set(E)],[Mtrx(A)],[options])
         Create a directed (un)weighted graph from vertices V, edges E and/or adjacency or weight matrix A. All parameters are optional.
-        See also: 1/ graph 2/ trail 
+        See also: 1/ graph 2/ trail
         Ex1:digraph(%{[1,2],[2,3],[3,4],[4,1]%})
         Ex2:digraph([a,b,c,d],%{[[a,b],1.0],[[a,c],2.3],[[b,d],3.1],[[c,d],4]%})
-        
         '''
         return GiacMethods['digraph'](self,*args)
 
@@ -4158,9 +3829,8 @@ cdef class GiacMethods_base:
         Help for dijkstra:
         dijkstra(Graph(G),Vrtx(v),[Vrtx(w)||Lst(W)])
         Returns the cheapest weighted path from vertex v to w (or to vertices from W) in undirected graph G. Output is in the form [[v1,v2,...,vk],d] (or list of these) where v1,v2,...,vk are vertices along each path and d is the weight of the path.
-        See also: 1/ allpairs_distance 2/ shortest_path 
+        See also: 1/ allpairs_distance 2/ shortest_path
         Ex1:dijkstra(graph(%{[[1,2],1],[[2,3],3],[[3,4],7],[[4,5],3],[[5,6],3],[[1,6],3]%}),1,4)
-        
         '''
         return GiacMethods['dijkstra'](self,*args)
 
@@ -4169,9 +3839,8 @@ cdef class GiacMethods_base:
         Help for dim:
         dim(Mtrx)
         Returns the list which gives the dimension of the matrix specified as argument.
-        See also: 1/ rowdim 2/ coldim 3/ sizes 4/ size 
+        See also: 1/ rowdim 2/ coldim 3/ sizes 4/ size
         Ex1:dim([[1,2,3],[4,5,6]])
-        
         '''
         return GiacMethods['dim'](self,*args)
 
@@ -4180,8 +3849,7 @@ cdef class GiacMethods_base:
         Help for directed:
         directed(Opt)
         Option for graph and digraph commands.
-        See also: 1/ weighted 2/ graph 3/ digraph 
-        
+        See also: 1/ weighted 2/ graph 3/ digraph
         '''
         return GiacMethods['directed'](self,*args)
 
@@ -4190,9 +3858,8 @@ cdef class GiacMethods_base:
         Help for discard_edge_attribute:
         discard_edge_attribute(Graph(G),Edge(e),Seq(tag1=value1,tag2=value2,..))
         Discards the attributes with tags tag1, tag2, ... assigned to edge e in G and returns the modified copy of G.
-        See also: 1/ get_edge_attribute 2/ set_edge_attribute 3/ list_edge_attributes 
+        See also: 1/ get_edge_attribute 2/ set_edge_attribute 3/ list_edge_attributes
         Ex1:discard_edge_attribute(cycle_graph(3),[1,2],"cost")
-        
         '''
         return GiacMethods['discard_edge_attribute'](self,*args)
 
@@ -4201,9 +3868,8 @@ cdef class GiacMethods_base:
         Help for discard_graph_attribute:
         discard_graph_attribute(Graph(G),Seq(tag1=value1,tag2=value2,..))
         Discards the graph attributes with tags tag1, tag2, ... and returns the modified copy of G.
-        See also: 1/ get_graph_attribute 2/ set_graph_attribute 3/ list_graph_attributes 
+        See also: 1/ get_graph_attribute 2/ set_graph_attribute 3/ list_graph_attributes
         Ex1:discard_graph_attribute(cycle_graph(3),"name")
-        
         '''
         return GiacMethods['discard_graph_attribute'](self,*args)
 
@@ -4212,9 +3878,8 @@ cdef class GiacMethods_base:
         Help for discard_vertex_attribute:
         discard_vertex_attribute(Graph(G),Vrtx(v),Seq(tag1=value1,tag2=value2,..))
         Discards the attributes with tags tag1, tag2, ... assigned to vertex v in G and returns the modified copy of G.
-        See also: 1/ get_vertex_attribute 2/ set_vertex_attribute 3/ list_vertex_attributes 
+        See also: 1/ get_vertex_attribute 2/ set_vertex_attribute 3/ list_vertex_attributes
         Ex1:discard_vertex_attribute(cycle_graph(3),1,"supply")
-        
         '''
         return GiacMethods['discard_vertex_attribute'](self,*args)
 
@@ -4223,9 +3888,8 @@ cdef class GiacMethods_base:
         Help for disjoint_union:
         disjoint_union(Seq(G1,G2,...))
         Returns the disjoint union of the graphs G1, G2, ... Vertices in the resulting graph are labelled with "k:v", where k is index of the corresponding k-th graph Gk and v is vertex in Gk.
-        See also: 1/ graph_join 2/ graph_union 
+        See also: 1/ graph_join 2/ graph_union
         Ex1:disjoint_union(is_connected(disjoint_union(cycle_graph(5),path_graph(4))))
-        
         '''
         return GiacMethods['disjoint_union'](self,*args)
 
@@ -4234,7 +3898,7 @@ cdef class GiacMethods_base:
         Help for display:
         display([GeoObj or legende],Intg)
         Draws a geometrical object with colors black=0 red=1 green=2 yellow=3 blue=4, filled with the color in the interior of a closed curve,line_width_n (0<n<8) is for the width of the line and dash_line is for dotted line.
-        See also: 1/ -< 2/ legende 
+        See also: 1/ -< 2/ legende
         Ex1:display(A,1)
         Ex2:display(F:=point(2+1.5*i),2)
         Ex3:display(point(2+1.5*i),2)
@@ -4245,7 +3909,6 @@ cdef class GiacMethods_base:
         Ex8:display(line(y=x),green+dash_line+line_width_2)
         Ex9:display(red);square(0,1);
         Ex10:display(red+filled);square(0,1);
-        
         '''
         return GiacMethods['display'](self,*args)
 
@@ -4254,12 +3917,11 @@ cdef class GiacMethods_base:
         Help for disque:
         disque(Real(r),[Real(a)],[Real(b)])
         Draws a disk with radius r (resp a sector with angle (0,a) or (a,b)), tangent at the turtle position.
-        See also: 1/ rond 
+        See also: 1/ rond
         Ex1: disque 30
         Ex2:disque(40)
         Ex3:disque(40,90)
         Ex4:disque(40,10,100)
-        
         '''
         return GiacMethods['disque'](self,*args)
 
@@ -4268,12 +3930,11 @@ cdef class GiacMethods_base:
         Help for disque_centre:
         disque_centre(Real(r),[Real(a)],[Real(b)])
         Draws a disk with radius r (resp a sector with angle (0,a) or (a,b)) with center at the turtle position.
-        See also: 1/ rond 
+        See also: 1/ rond
         Ex1: disque_centre 30
         Ex2:disque_centre(40)
         Ex3:disque_centre(40,90)
         Ex4:disque_centre(40,10,100)
-        
         '''
         return GiacMethods['disque_centre'](self,*args)
 
@@ -4282,11 +3943,10 @@ cdef class GiacMethods_base:
         Help for distance:
         distance((Pnt or Cplx),(Pnt or Cplx or Curve))
         Calculates the distance between 2 points or a point and a curve.
-        See also: 1/ distance2 2/ distanceat 3/ distanceatraw 
+        See also: 1/ distance2 2/ distanceat 3/ distanceatraw
         Ex1:distance(point(0),point(1+i))
         Ex2:distance(1+i,segment(1-i,i))
         Ex3:distance(0,1+i)
-        
         '''
         return GiacMethods['distance'](self,*args)
 
@@ -4295,11 +3955,10 @@ cdef class GiacMethods_base:
         Help for distance2:
         distance2((Pnt or Cplx),(Pnt or Cplx or Curve))
         Calculates the square of the distance between 2 points or a point and a curve.
-        See also: 1/ distance 
+        See also: 1/ distance
         Ex1:distance2(point(0),point(1+i))
         Ex2:distance2(1+i,segment(1-i,i))
         Ex3:distance2(0,1+i)
-        
         '''
         return GiacMethods['distance2'](self,*args)
 
@@ -4308,10 +3967,9 @@ cdef class GiacMethods_base:
         Help for distanceat:
         distanceat(GeoObj(A),GeoObj(B),(Pnt or Cplx))
         distanceat(A,B,z0) displays at point(z0), with a legend, the distance between 2 geometrical objects
-        See also: 1/ distance 2/ distanceatraw 
+        See also: 1/ distance 2/ distanceatraw
         Ex1: A:=point(0);B:=point(1+i);distanceat(A,B,(1+i)/2)
         Ex2: A:=point(0);s:=segment(1-i,i);distanceat(A,s,1)
-        
         '''
         return GiacMethods['distanceat'](self,*args)
 
@@ -4320,10 +3978,9 @@ cdef class GiacMethods_base:
         Help for distanceatraw:
         distanceatraw(GeoObj(A),GeoObj(B),(Pnt or Cplx(z0)))
         distanceatraw(A,B,z0) displays at the point(z0), the distance between 2 geometrical objects.
-        See also: 1/ distance 2/ distanceat 
+        See also: 1/ distance 2/ distanceat
         Ex1: A:=point(0);B:=point(1+i);distanceatraw(A,B,(1+i)/2)
         Ex2: A:=point(0);s:=segment(1-i,i);distanceatraw(A,s,1)
-        
         '''
         return GiacMethods['distanceatraw'](self,*args)
 
@@ -4332,9 +3989,8 @@ cdef class GiacMethods_base:
         Help for divergence:
         divergence(Lst(A,B,C),Lst(x,y,z))
         divergence([A,B,C],[x,y,z])=dA/dx+dB/dy+dC/dz.
-        See also: 1/ derive 2/ curl 
+        See also: 1/ derive 2/ curl
         Ex1:divergence([x^2+y,x+z+y,z^3+x^2],[x,y,z])
-        
         '''
         return GiacMethods['divergence'](self,*args)
 
@@ -4343,12 +3999,11 @@ cdef class GiacMethods_base:
         Help for divide:
         divide((Vect or Poly),(Vect or Poly),[Var])
         Euclidean quotient and remainder of 2 polynomials.
-        See also: 1/ rem 2/ quo 3/ iquorem 
+        See also: 1/ rem 2/ quo 3/ iquorem
         Ex1:divide([1,2,3,4],[-1,2])
         Ex2:divide(x^3+2x^2+3x+4,-x+2)
         Ex3:divide(t^3+2t^2+3t+4,-t+2,t)
         Ex4:divide(t^4-1,(t+1)^2,t)
-        
         '''
         return GiacMethods['divide'](self,*args)
 
@@ -4357,14 +4012,13 @@ cdef class GiacMethods_base:
         Help for divis:
         divis(Poly(P) or LstPoly)
         Returns the list of divisors of a polynomial.
-        See also: 1/ idivis 2/ factors 3/ poly2symb 
+        See also: 1/ idivis 2/ factors 3/ poly2symb
         Ex1:divis(x^2-1)
         Ex2:divis(x^4-1)
         Ex3:divis(t^4-1)
         Ex4:divis([x^4-1,x^2-1])
         Ex5:divis([x^4-1,t^2-1])
         Ex6:divis(poly2symb([1,0,0,0,-1],x))
-        
         '''
         return GiacMethods['divis'](self,*args)
 
@@ -4373,10 +4027,9 @@ cdef class GiacMethods_base:
         Help for division_point:
         division_point(Pnt or Cplx(a),Pnt or Cplx(b),Cplx(k))
         Returns the point M such that (z-a)=k*(z-b) and z=affix of M (MA=k*MB).
-        See also: 1/ harmonic_conjugate 2/ is_conjugate 
+        See also: 1/ harmonic_conjugate 2/ is_conjugate
         Ex1:division_point(i,2+i,3+i)
         Ex2:division_point(i,2+i,3)
-        
         '''
         return GiacMethods['division_point'](self,*args)
 
@@ -4385,10 +4038,9 @@ cdef class GiacMethods_base:
         Help for divisors:
         divisors(Intg(a) or LstIntg)
         Returns the list of divisors of an integer.
-        See also: 1/ divis 2/ ifactors 
+        See also: 1/ divis 2/ ifactors
         Ex1:divisors(36)
         Ex2:divisors([36,49])
-        
         '''
         return GiacMethods['divisors'](self,*args)
 
@@ -4397,11 +4049,10 @@ cdef class GiacMethods_base:
         Help for divmod:
         divmod(Intg(a),Intg(b))
         Euclidean quotient and remainder of 2 integers.
-        See also: 1/ irem 2/ iquo 3/ quorem 
+        See also: 1/ irem 2/ iquo 3/ quorem
         Ex1:divmod(125,15)
         Ex2:divmod(125,41)
         Ex3:divmod(25+12*i,5+7*i)
-        
         '''
         return GiacMethods['divmod'](self,*args)
 
@@ -4410,9 +4061,8 @@ cdef class GiacMethods_base:
         Help for divpc:
         divpc(Poly,Poly,Intg(n))
         nth-degree Taylor-poly for the quotient of 2 polynomials.
-        See also: 1/ series 2/ quorem 
+        See also: 1/ series 2/ quorem
         Ex1:divpc(x^4+x+2,x^2+1,5)
-        
         '''
         return GiacMethods['divpc'](self,*args)
 
@@ -4421,14 +4071,13 @@ cdef class GiacMethods_base:
         Help for dnewton_solver:
         dnewton_solver(Opt)
         Argument for fsolve giving the method for solving a system of numerical equations.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],dnewton_solver)
         Ex2: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrid_solver)
         Ex3: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrids_solver)
         Ex4: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridj_solver)
         Ex5: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridsj_solver)
         Ex6: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],newtonj_solver)
-        
         '''
         return GiacMethods['dnewton_solver'](self,*args)
 
@@ -4437,10 +4086,9 @@ cdef class GiacMethods_base:
         Help for dodecahedron:
         dodecahedron(Pnt(A),Pnt(B),Pnt(C))
         Draws a dodecahedron with center A, vertex B and such that the plane ABC contains an axis of symmetry of the dodecahedron.
-        See also: 1/ icosahedron 2/ octahedron 3/ cube 4/ tetrahedron 
+        See also: 1/ icosahedron 2/ octahedron 3/ cube 4/ tetrahedron
         Ex1:dodecahedron([0,0,0],[0,2,sqrt(5)/2+3/2],[0,0,1])
         Ex2:dodecahedron(evalf([0,0,0],[3,2,4],[1,1,0]))
-        
         '''
         return GiacMethods['dodecahedron'](self,*args)
 
@@ -4451,7 +4099,6 @@ cdef class GiacMethods_base:
         Returns the definition domain of an expression.
         Ex1:domain(log(x+1))
         Ex2:domain(log(x)+asin(x))
-        
         '''
         return GiacMethods['domain'](self,*args)
 
@@ -4460,11 +4107,10 @@ cdef class GiacMethods_base:
         Help for dot:
         dot(Vect(v1),Vect(v2))
         Scalar product.
-        See also: 1/ * 2/ cross 3/ .* 4/ hadamard 
+        See also: 1/ * 2/ cross 3/ .* 4/ hadamard
         Ex1:dot([1,2],[3,4])
         Ex2:dot([3,2,4],[3,2,4])
         Ex3:dot([[1,2],[3,4]],[[3,2],[4,5]])
-        
         '''
         return GiacMethods['dot'](self,*args)
 
@@ -4473,11 +4119,10 @@ cdef class GiacMethods_base:
         Help for dotP:
         dotP(Vect(v1),Vect(v2))
         Scalar product.
-        See also: 1/ * 2/ cross 3/ .* 4/ hadamard 
+        See also: 1/ * 2/ cross 3/ .* 4/ hadamard
         Ex1:dotP([1,2],[3,4])
         Ex2:dotP([3,2,4],[3,2,4])
         Ex3:dotP([[1,2],[3,4]],[[3,2],[4,5]])
-        
         '''
         return GiacMethods['dotP'](self,*args)
 
@@ -4489,7 +4134,6 @@ cdef class GiacMethods_base:
         Ex1:dot_paper(1,pi/3,sqrt(3)/2)
         Ex2:dot_paper(1,pi/3,sqrt(3)/2,x=-1..4,y=-2..2)
         Ex3:dot_paper(0.5,3*pi/4,0.5)
-        
         '''
         return GiacMethods['dot_paper'](self,*args)
 
@@ -4498,11 +4142,10 @@ cdef class GiacMethods_base:
         Help for dotprod:
         dotprod(Vect(v1),Vect(v2))
         Scalar product.
-        See also: 1/ * 2/ cross 3/ .* 4/ hadamard 
+        See also: 1/ * 2/ cross 3/ .* 4/ hadamard
         Ex1:dotprod([1,2],[3,4])
         Ex2:dotprod([3,2,4],[3,2,4])
         Ex3:dotprod([[1,2],[3,4]],[[3,2],[4,5]])
-        
         '''
         return GiacMethods['dotprod'](self,*args)
 
@@ -4511,9 +4154,8 @@ cdef class GiacMethods_base:
         Help for draw_arc:
         draw_arc(Intg(x),Intg(y),Intg(rx),Intg(ry),Real(theta1),Real(theta2),Intg(col))
         Pixelised ellipsis arc.
-        See also: 1/ draw_pixel 2/ draw_circle 
+        See also: 1/ draw_pixel 2/ draw_circle
         Ex1: clear(); draw_arc(100,80,40,20,0,pi,blue); show_pixels();
-        
         '''
         return GiacMethods['draw_arc'](self,*args)
 
@@ -4522,10 +4164,9 @@ cdef class GiacMethods_base:
         Help for draw_circle:
         draw_circle(Intg(x),Intg(y),Intg(r),Intg(col))
         Pixelised circle, add filled to the color to fill the circle.
-        See also: 1/ draw_pixel 2/ draw_arc 
+        See also: 1/ draw_pixel 2/ draw_arc
         Ex1: clear(); draw_circle(100,60,20,blue); show_pixels();
         Ex2: clear(); draw_circle(100,60,20,blue+filled); show_pixels();
-        
         '''
         return GiacMethods['draw_circle'](self,*args)
 
@@ -4534,13 +4175,12 @@ cdef class GiacMethods_base:
         Help for draw_graph:
         draw_graph(Graph(G),[opts])
         Returns the graphic representation of G obtained by using various algorithms (which can optionally be fine tuned by appending a sequence of options after the first argument).
-        See also: 1/ highlight_edges 2/ highlight_subgraph 3/ highlight_trail 4/ highlight_vertex 5/ set_vertex_positions 6/ get_vertex_positions 
+        See also: 1/ highlight_edges 2/ highlight_subgraph 3/ highlight_trail 4/ highlight_vertex 5/ set_vertex_positions 6/ get_vertex_positions
         Ex1:draw_graph(graph("petersen"))
         Ex2:draw_graph(graph("petersen"),spring)
         Ex3:draw_graph(random_tree(30))
         Ex4:draw_graph(sierpinski_graph(5,3,at_triangle))
         Ex5:draw_graph(graph("soccerball"))
-        
         '''
         return GiacMethods['draw_graph'](self,*args)
 
@@ -4549,9 +4189,8 @@ cdef class GiacMethods_base:
         Help for draw_line:
         draw_line(Intg(x1),Intg(y1),Intg(x2),Intg(y2),Intg(col))
         Pixelised segment.
-        See also: 1/ draw_pixel 2/ draw_rectangle 3/ draw_polygon 
+        See also: 1/ draw_pixel 2/ draw_rectangle 3/ draw_polygon
         Ex1: clear(); draw_line(10,10,60,60,blue); show_pixels();
-        
         '''
         return GiacMethods['draw_line'](self,*args)
 
@@ -4560,9 +4199,8 @@ cdef class GiacMethods_base:
         Help for draw_pixel:
         draw_pixel(Intg(x),Intg(y),Intg(col))
         Pixel on and adds to the list of pixels. Run show_pixels() to display
-        See also: 1/ clear 2/ show_pixels 3/ draw_line 4/ draw_rectangle 5/ draw_polygon 
+        See also: 1/ clear 2/ show_pixels 3/ draw_line 4/ draw_rectangle 5/ draw_polygon
         Ex1: clear(); set_pixel(4); draw_pixel(1,2,red); show_pixels();
-        
         '''
         return GiacMethods['draw_pixel'](self,*args)
 
@@ -4571,10 +4209,9 @@ cdef class GiacMethods_base:
         Help for draw_polygon:
         draw_polygon(Lst(l),Intg(col))
         Pixelised polygon, add filled to the color to fill the rectangle.
-        See also: 1/ draw_pixel 2/ draw_line 3/ draw_rectangle 
+        See also: 1/ draw_pixel 2/ draw_line 3/ draw_rectangle
         Ex1: clear(); draw_polygon([[50,30],[100,10],[20,70]],red); show_pixels();
         Ex2: clear(); draw_polygon([[50,30],[100,10],[20,70]],red+filled); show_pixels();
-        
         '''
         return GiacMethods['draw_polygon'](self,*args)
 
@@ -4583,10 +4220,9 @@ cdef class GiacMethods_base:
         Help for draw_rectangle:
         draw_rectangle(Intg(x),Intg(y),Intg(w),Intg(h),Intg(col))
         Pixelised rectangle, add filled to the color to fill the rectangle.
-        See also: 1/ draw_pixel 2/ draw_line 3/ draw_polygon 
+        See also: 1/ draw_pixel 2/ draw_line 3/ draw_polygon
         Ex1: clear(); draw_rectangle(10,20,30,40,red); show_pixels();
         Ex2: clear(); draw_rectangle(10,20,30,40,red+filled); show_pixels();
-        
         '''
         return GiacMethods['draw_rectangle'](self,*args)
 
@@ -4595,12 +4231,11 @@ cdef class GiacMethods_base:
         Help for droit:
         droit(Equal(a=b) or Interval(a..b) or Str,Intg)
         Returns the right part of an equality, of an interval, of a list or of a string.
-        See also: 1/ left 2/ mid 3/ tail 4/ head 
+        See also: 1/ left 2/ mid 3/ tail 4/ head
         Ex1:droit(a=b)
         Ex2:droit(x^2+1=5)
         Ex3:droit(1..5)
         Ex4:droit("abcdefg",3)
-        
         '''
         return GiacMethods['droit'](self,*args)
 
@@ -4609,12 +4244,11 @@ cdef class GiacMethods_base:
         Help for droite_tangente:
         droite_tangente(Expr(f(x)),[Var],Expr(a))
         Draws the tangent to y=f(x) at x=a.
-        See also: 1/ tangent 2/ LineTan 
+        See also: 1/ tangent 2/ LineTan
         Ex1:droite_tangente(sin(x),pi/4)
         Ex2:droite_tangente(sin(t),t=pi/4)
         Ex3:droite_tangente(sin(t),t,pi/4)
         Ex4:droite_tangente(x^2-x,1)
-        
         '''
         return GiacMethods['droite_tangente'](self,*args)
 
@@ -4623,12 +4257,12 @@ cdef class GiacMethods_base:
         Help for dsolve:
         dsolve(Eq,[TimeVar],FncVar)
         Solves a differential equation or a differential linear system with constant coefficients.
-        See also: 1/ integrate 2/ diff 3/ odesolve 4/ plotode 5/ plotfiefd 
+        See also: 1/ integrate 2/ diff 3/ odesolve 4/ plotode 5/ plotfiefd
         Ex1:dsolve(y'+x*y=0)
         Ex2:dsolve(y'+x*y=0,y)
         Ex3:dsolve(y'+x*y=0,[0,1])
         Ex4:dsolve([y'+x*y=0,y(0)=1],y)
-        Ex5:dsolve([y'=[[1,2],[2,1]]*y+[x,x+1],y(0)=[1,2]]) 
+        Ex5:dsolve([y'=[[1,2],[2,1]]*y+[x,x+1],y(0)=[1,2]])
         Ex6:dsolve(y''+y=0,y)
         Ex7:dsolve([y''+y=sin(x),y(0)=1,y'(0)=2],y)
         Ex8:dsolve([y''+y=sin(x),y(0)=1,y'(0)=2],x,y)
@@ -4640,7 +4274,6 @@ cdef class GiacMethods_base:
         Ex14:dsolve([z''+2*z'+z,z(0)=1,z'(0)=0],z(u))
         Ex15:dsolve([z'=[[1,2],[2,1]]*z+[t,t+1],z(0)=[1,2]],t,z)
         Ex16:dsolve([z'=[[1,2],[2,1]]*z+[t,t+1],z(0)=[1,2]],z(t))
-        
         '''
         return GiacMethods['dsolve'](self,*args)
 
@@ -4649,9 +4282,8 @@ cdef class GiacMethods_base:
         Help for duration:
         duration(Lst(clip))
         Returns the duration of an audio clip, in seconds.
-        See also: 1/ bit_depth 2/ channels 3/ channel_data 4/ samplerate 
+        See also: 1/ bit_depth 2/ channels 3/ channel_data 4/ samplerate
         Ex1:duration(readwav("/some/file"))
-        
         '''
         return GiacMethods['duration'](self,*args)
 
@@ -4660,9 +4292,8 @@ cdef class GiacMethods_base:
         Help for e:
         e()
         exp(1).
-        See also: 1/ i 2/ pi 
+        See also: 1/ i 2/ pi
         Ex1: evalf(e)
-        
         '''
         return GiacMethods['e'](self,*args)
 
@@ -4671,14 +4302,13 @@ cdef class GiacMethods_base:
         Help for e2r:
         e2r(Expr, LstVar or [Var])
         Returns the coefficients of a polynomial with respect to the 2nd argument or if the second argument is a list the internal format of the polynomial.
-        See also: 1/ poly2symb 2/ r2e 
+        See also: 1/ poly2symb 2/ r2e
         Ex1:e2r(x*3+2.1)
         Ex2:e2r(3*x*y+2*y+1,y)
         Ex3:e2r(3*x*y+2*y+1,x,y)
         Ex4:e2r(3*x*y+2*y+1,[x,y])
         Ex5:e2r(-x^4+x*3*y+2+y^2*z,[x,y,z])
         Ex6:e2r(-x^4+x*3*y+2+y^2*z,[x,y,z])
-        
         '''
         return GiacMethods['e2r'](self,*args)
 
@@ -4687,11 +4317,10 @@ cdef class GiacMethods_base:
         Help for ecart_type:
         ecart_type(Lst||Mtrx,[Lst])
         Returns the standard deviation of the elements of its argument with an optional second argument as weight or the list of standard deviations of the columns of a matrix.
-        See also: 1/ mean 2/ variance 3/ stddevp 
+        See also: 1/ mean 2/ variance 3/ stddevp
         Ex1:ecart_type([1,2,3])
         Ex2:ecart_type([1,2,3],[1,2,1])
         Ex3:ecart_type([[1,2,3],[5,6,7]])
-        
         '''
         return GiacMethods['ecart_type'](self,*args)
 
@@ -4700,11 +4329,10 @@ cdef class GiacMethods_base:
         Help for ecart_type_population:
         ecart_type_population(Lst||Mtrx,[Lst])
         Returns an unbiased estimate of the population standard deviation of the sample (first argument) with an optional list of weight as second argument.
-        See also: 1/ mean 2/ stddev 
+        See also: 1/ mean 2/ stddev
         Ex1:ecart_type_population([1,2,3])
         Ex2:ecart_type_population([1,2,3],[1,2,1])
         Ex3:ecart_type_population([[1,2,3],[5,6,7]])
-        
         '''
         return GiacMethods['ecart_type_population'](self,*args)
 
@@ -4714,7 +4342,6 @@ cdef class GiacMethods_base:
         ecm_factor(Intg(a),[Intg(B1)])
         Factorization of integer n by the Elliptic Curve Method algorithm, B1 smoothness optional parameter.
         Ex1:ecm_factor(1000000000000000003000000000000000000000000000000000031000000000000000093)
-        
         '''
         return GiacMethods['ecm_factor'](self,*args)
 
@@ -4723,11 +4350,10 @@ cdef class GiacMethods_base:
         Help for edge_connectivity:
         edge_connectivity(graph(G))
         Returns the largest integer k for which G is k-edge connected, meaning that G remains connected after fewer than k edges are removed.
-        See also: 1/ is_two_edge_connected 2/ is_edge_cut 3/ vertex_connectivity 
+        See also: 1/ is_two_edge_connected 2/ is_edge_cut 3/ vertex_connectivity
         Ex1:edge_connectivity(graph("petersen"))
         Ex2:edge_connectivity(graph("clebsch"))
         Ex3:edge_connectivity(complete_graph(5))
-        
         '''
         return GiacMethods['edge_connectivity'](self,*args)
 
@@ -4736,9 +4362,8 @@ cdef class GiacMethods_base:
         Help for edges:
         edges(Graph(G),[weights])
         Return the list of edges in G [including weights].
-        See also: 1/ add_edge 2/ incident_edges 3/ set_edge_weight 4/ get_edge_weight 
+        See also: 1/ add_edge 2/ incident_edges 3/ set_edge_weight 4/ get_edge_weight
         Ex1:edges(complete_graph(4))
-        
         '''
         return GiacMethods['edges'](self,*args)
 
@@ -4747,12 +4372,11 @@ cdef class GiacMethods_base:
         Help for egcd:
         egcd((Poly or Lst),(Poly or Lst),[Var])
         Extended greatest common divisor of 2 polynomials.
-        See also: 1/ gcd 2/ iegcd 
+        See also: 1/ gcd 2/ iegcd
         Ex1:egcd((x-1)^2,x^3-1)
         Ex2:egcd((X-1)^2,X^3-1,X)
         Ex3:egcd([1,-2,1],[1,0,0,-1])
         Ex4:egcd([1,-2,1],[1,-1,2])
-        
         '''
         return GiacMethods['egcd'](self,*args)
 
@@ -4761,10 +4385,9 @@ cdef class GiacMethods_base:
         Help for egv:
         egv(Mtrx)
         Computes the eigenvectors of a diagonalizable matrix.
-        See also: 1/ egvl 2/ jordan 
+        See also: 1/ egvl 2/ jordan
         Ex1:egv([[-2,-2,1],[-2,1,-2],[1,-2,-2]])
         Ex2:egv([[1,1,3],[1,3,1],[3,1,1]])
-        
         '''
         return GiacMethods['egv'](self,*args)
 
@@ -4773,11 +4396,10 @@ cdef class GiacMethods_base:
         Help for egvl:
         egvl(Mtrx(A))
         Returns the Jordan matrix associated to A when the eigenvalues are calculable.
-        See also: 1/ egv 2/ jordan 
+        See also: 1/ egv 2/ jordan
         Ex1:egvl([[4,1],[-4,0]])
         Ex2:egvl([[-2,-2,1],[-2,1,-2],[1,-2,-2]])
         Ex3:egvl([[1,1,3],[1,3,1],[3,1,1]])
-        
         '''
         return GiacMethods['egvl'](self,*args)
 
@@ -4786,10 +4408,9 @@ cdef class GiacMethods_base:
         Help for eigVc:
         eigVc(Mtrx)
         Computes the eigenvectors of a diagonalizable matrix.
-        See also: 1/ egvl 2/ jordan 
+        See also: 1/ egvl 2/ jordan
         Ex1:eigVc([[-2,-2,1],[-2,1,-2],[1,-2,-2]])
         Ex2:eigVc([[1,1,3],[1,3,1],[3,1,1]])
-        
         '''
         return GiacMethods['eigVc'](self,*args)
 
@@ -4798,11 +4419,10 @@ cdef class GiacMethods_base:
         Help for eigVl:
         eigVl(Mtrx(A))
         Returns the Jordan matrix associated to A when the eigenvalues are calculable.
-        See also: 1/ egv 2/ jordan 
+        See also: 1/ egv 2/ jordan
         Ex1:eigVl([[4,1],[-4,0]])
         Ex2:eigVl([[-2,-2,1],[-2,1,-2],[1,-2,-2]])
         Ex3:eigVl([[1,1,3],[1,3,1],[3,1,1]])
-        
         '''
         return GiacMethods['eigVl'](self,*args)
 
@@ -4811,11 +4431,10 @@ cdef class GiacMethods_base:
         Help for eigenvals:
         eigenvals(Mtrx)
         Returns the sequence of the (calculable) eigenvalues of a matrix.
-        See also: 1/ egv 2/ jordan 
+        See also: 1/ egv 2/ jordan
         Ex1:eigenvals([[-2,-2,1],[-2,1,-2],[1,-2,-2]])
         Ex2:eigenvals([[1,1,3],[1,3,1],[3,1,1]])
         Ex3:eigenvals([[4,1],[-4,0]])
-        
         '''
         return GiacMethods['eigenvals'](self,*args)
 
@@ -4824,11 +4443,10 @@ cdef class GiacMethods_base:
         Help for eigenvalues:
         eigenvalues(Mtrx)
         Returns the sequence of the (calculable) eigenvalues of a matrix.
-        See also: 1/ egv 2/ jordan 
+        See also: 1/ egv 2/ jordan
         Ex1:eigenvalues([[-2,-2,1],[-2,1,-2],[1,-2,-2]])
         Ex2:eigenvalues([[1,1,3],[1,3,1],[3,1,1]])
         Ex3:eigenvalues([[4,1],[-4,0]])
-        
         '''
         return GiacMethods['eigenvalues'](self,*args)
 
@@ -4837,10 +4455,9 @@ cdef class GiacMethods_base:
         Help for eigenvectors:
         eigenvectors(Mtrx)
         Computes the eigenvectors of a diagonalizable matrix.
-        See also: 1/ egvl 2/ jordan 
+        See also: 1/ egvl 2/ jordan
         Ex1:eigenvectors([[-2,-2,1],[-2,1,-2],[1,-2,-2]])
         Ex2:eigenvectors([[1,1,3],[1,3,1],[3,1,1]])
-        
         '''
         return GiacMethods['eigenvectors'](self,*args)
 
@@ -4849,10 +4466,9 @@ cdef class GiacMethods_base:
         Help for eigenvects:
         eigenvects(Mtrx)
         Computes the eigenvectors of a diagonalizable matrix.
-        See also: 1/ egvl 2/ jordan 
+        See also: 1/ egvl 2/ jordan
         Ex1:eigenvects([[-2,-2,1],[-2,1,-2],[1,-2,-2]])
         Ex2:eigenvects([[1,1,3],[1,3,1],[3,1,1]])
-        
         '''
         return GiacMethods['eigenvects'](self,*args)
 
@@ -4861,14 +4477,13 @@ cdef class GiacMethods_base:
         Help for element:
         element((Curve or Real_interval),[Val])
         Shows a point chosen on a curve or a real chosen in an interval
-        See also: 1/ is_element 
+        See also: 1/ is_element
         Ex1: t:=element(0..1)
         Ex2: t:=element(0..1,0.3)
         Ex3: t:=element(0..1,0.3,0.02)
         Ex4: P:=element(circle(i,1),t)
         Ex5: M:=element(circle(i,1))
         Ex6: N:=element(circle(i,1),pi/2)
-        
         '''
         return GiacMethods['element'](self,*args)
 
@@ -4879,7 +4494,6 @@ cdef class GiacMethods_base:
         Eliminates the variables vars in a list of algebraic equations.
         Ex1:eliminate([x=v0*t,y=y0-g*t^2],t)
         Ex2:eliminate([x+y+z+t-2,x*y*t=1,x^2+t^2=z^2],[x,z])
-        
         '''
         return GiacMethods['eliminate'](self,*args)
 
@@ -4888,13 +4502,12 @@ cdef class GiacMethods_base:
         Help for ellipse:
         ellipse(Pnt(F1),Pnt(F2),(Pnt(M) or Real(a)))
         ellipse(F1,F2,M)=ellipse with foci F1,F2 through M or such that MF1+MF2=2*a (geo2d) and ellipse(p(x,y)) draws the conic if deg(p)=2.
-        See also: 1/ hyperbola 2/ parabola 
+        See also: 1/ hyperbola 2/ parabola
         Ex1:ellipse(-1,1,point(1+i))
         Ex2:ellipse(-1,1,1+sqrt(5))
         Ex3:ellipse(2x^2+3y^2-x*y-10)
         Ex4:ellipse(point(-1,0,0),point(1,0,0),point(1,1,1))
         Ex5:ellipse(x^2+2y^2-y-2)
-        
         '''
         return GiacMethods['ellipse'](self,*args)
 
@@ -4903,11 +4516,10 @@ cdef class GiacMethods_base:
         Help for entry:
         entry(Intg(n))
         Returns the (n+1)th question of the command history if n>=0 or, the (-n)th previous question if n<0 (by default n=-1 for the previous question).
-        See also: 1/ ans 
+        See also: 1/ ans
         Ex1:entry()
         Ex2:entry(2)
         Ex3:entry(-2)
-        
         '''
         return GiacMethods['entry'](self,*args)
 
@@ -4916,10 +4528,9 @@ cdef class GiacMethods_base:
         Help for envelope:
         envelope(Expr(Xpr),Var(t)||[x,y,t])
         Returns the envelope of the curves with equation Xpr=0 as t varies.
-        See also: 1/ tangent 2/ locus 
+        See also: 1/ tangent 2/ locus
         Ex1:envelope(y+x*tan(t)-2*sin(t),t)
         Ex2:envelope(v+u*tan(t)-3*sin(t),[u,v,t])
-        
         '''
         return GiacMethods['envelope'](self,*args)
 
@@ -4928,9 +4539,8 @@ cdef class GiacMethods_base:
         Help for epsilon:
         epsilon(NULL)
         Returns the value of epsilon of the CAS configuration.
-        See also: 1/  epsilon2zero 
+        See also: 1/  epsilon2zero
         Ex1:epsilon()
-        
         '''
         return GiacMethods['epsilon'](self,*args)
 
@@ -4939,9 +4549,8 @@ cdef class GiacMethods_base:
         Help for epsilon2zero:
         epsilon2zero(Expr)
         Values < epsilon are replaced by zero.
-        See also: 1/ evalf 
+        See also: 1/ evalf
         Ex1:epsilon2zero(1e-13+x+5)
-        
         '''
         return GiacMethods['epsilon2zero'](self,*args)
 
@@ -4950,11 +4559,10 @@ cdef class GiacMethods_base:
         Help for equal:
         equal(Expr,Expr)
         Prefixed version of =.
-        See also: 1/ = 2/ equal2diff 3/ equal2list 4/ left 5/ right 
+        See also: 1/ = 2/ equal2diff 3/ equal2list 4/ left 5/ right
         Ex1: 2*x=4
         Ex2:equal(2*x,4)
         Ex3:equal(x^2-3x+2,0)
-        
         '''
         return GiacMethods['equal'](self,*args)
 
@@ -4963,10 +4571,9 @@ cdef class GiacMethods_base:
         Help for equal2diff:
         equal2diff(Equal)
         A=B or equal(A,B) is converted into the difference A-B.
-        See also: 1/ left 2/ right 3/ equal2list 4/ equal 5/ = 
+        See also: 1/ left 2/ right 3/ equal2list 4/ equal 5/ =
         Ex1:equal2diff(x=2)
         Ex2:equal2diff(equal(x,2))
-        
         '''
         return GiacMethods['equal2diff'](self,*args)
 
@@ -4975,10 +4582,9 @@ cdef class GiacMethods_base:
         Help for equal2list:
         equal2list(Equal)
         A=B or equal(A,B) is converted into the list [A,B].
-        See also: 1/ left 2/ right 3/ equal2diff 4/ equal 5/ = 
+        See also: 1/ left 2/ right 3/ equal2diff 4/ equal 5/ =
         Ex1:equal2list(x=2)
         Ex2:equal2list(equal(x,2))
-        
         '''
         return GiacMethods['equal2list'](self,*args)
 
@@ -4987,9 +4593,8 @@ cdef class GiacMethods_base:
         Help for equation:
         equation(GeoObj, VectParam)
         equation returns the cartesian equation of a curve.
-        See also: 1/ parameq 
+        See also: 1/ parameq
         Ex1:equation(line(1-i,i),[x,y])
-        
         '''
         return GiacMethods['equation'](self,*args)
 
@@ -4998,12 +4603,11 @@ cdef class GiacMethods_base:
         Help for equilateral_triangle:
         equilateral_triangle((Pnt(A) or Cplx),(Pnt(B) or Cplx),[Pnt(P)],[Var(C)])
         equilateral_triangle(A,B) (resp equilateral_triangle(A,B,P)) draws the direct equilateral triangle ABC with side AB (resp in the half-plane ABP).
-        See also: 1/ triangle 
+        See also: 1/ triangle
         Ex1:equilateral_triangle(point(1+i),0)
         Ex2:equilateral_triangle(0,1+i,C)
         Ex3:equilateral_triangle(point(0,0,0),point(3,3,3),point(0,0,3))
         Ex4:equilateral_triangle(point(0,0,0),point(3,3,3),point(0,0,3),C)
-        
         '''
         return GiacMethods['equilateral_triangle'](self,*args)
 
@@ -5012,10 +4616,9 @@ cdef class GiacMethods_base:
         Help for erf:
         erf(Real(x0))
         Returns the approximate value of 2/sqrt(pi)*int(exp(-t^2),t,0,x0).
-        See also: 1/ erfc 
+        See also: 1/ erfc
         Ex1:erf(1)
         Ex2:erf(1/(sqrt(2)))*1/2
-        
         '''
         return GiacMethods['erf'](self,*args)
 
@@ -5024,10 +4627,9 @@ cdef class GiacMethods_base:
         Help for erfc:
         erfc(Real(x0))
         Returns the approximate value of 2/sqrt(pi)*int(exp(-t^2),t,x0,+infinity).
-        See also: 1/ erf 
+        See also: 1/ erf
         Ex1:erfc(1)
         Ex2:erfc(1/(sqrt(2)))*1/2
-        
         '''
         return GiacMethods['erfc'](self,*args)
 
@@ -5036,10 +4638,9 @@ cdef class GiacMethods_base:
         Help for error:
         error(Str)
         Generates the display of an error in a program.
-        See also: 1/ try 2/ catch 
+        See also: 1/ try 2/ catch
         Ex1:error("Argument should be integer")
         Ex2:error("je provoque une erreur")
-        
         '''
         return GiacMethods['error'](self,*args)
 
@@ -5048,10 +4649,9 @@ cdef class GiacMethods_base:
         Help for est_permu:
         est_permu(Lst)
         Returns 1 if the argument is a permutation and 0 otherwise.
-        See also: 1/ is_cycle 2/ permu2cycles 
+        See also: 1/ is_cycle 2/ permu2cycles
         Ex1:est_permu([4,2,3,1])
         Ex2:est_permu([4,2,3,1,0])
-        
         '''
         return GiacMethods['est_permu'](self,*args)
 
@@ -5060,10 +4660,9 @@ cdef class GiacMethods_base:
         Help for euler:
         euler(Intg(n))
         Euler's function (euler(n)=card({p<n,gcd(n,p)=1})).
-        See also: 1/ gcd 
+        See also: 1/ gcd
         Ex1:euler(11)
         Ex2:euler(6)
-        
         '''
         return GiacMethods['euler'](self,*args)
 
@@ -5073,7 +4672,6 @@ cdef class GiacMethods_base:
         euler_gamma()
         Euler's constant=euler_gamma=limit(sum(1/k,k,1,n)-ln(n),n,+infinity).
         Ex1: evalf(euler_gamma)
-        
         '''
         return GiacMethods['euler_gamma'](self,*args)
 
@@ -5082,11 +4680,10 @@ cdef class GiacMethods_base:
         Help for euler_lagrange:
         euler_lagrange(Expr(f),[(Var(x),[Var||Lst(y)]) || y(x) || Lst(y(x))])
         Returns the (system of) Euler-Lagrange equation(s) for the functional F=int(f,x=a..b).
-        See also: 1/ dsolve 2/ bvpsolve 3/ convex 
+        See also: 1/ dsolve 2/ bvpsolve 3/ convex
         Ex1:euler_lagrange(x^2*y'^2+y^2)
         Ex2:euler_lagrange(sqrt(x'^2+y'^2),[x(t),y(t)])
         Ex3: assume(y>=0):; euler_lagrange(sqrt((1+y'^2)/y),t,y)
-        
         '''
         return GiacMethods['euler_lagrange'](self,*args)
 
@@ -5100,7 +4697,6 @@ cdef class GiacMethods_base:
         Ex3: purge(a,b,c);eval_level(1);a:=b+1; b:=c+1;c:=3;
         Ex4: purge(a,b,c);eval_level(2);a:=b+1; b:=c+1;c:=3;
         Ex5: purge(a,b,c);eval_level(3);a:=b+1; b:=c+1;c:=3;
-        
         '''
         return GiacMethods['eval_level'](self,*args)
 
@@ -5109,11 +4705,10 @@ cdef class GiacMethods_base:
         Help for evala:
         evala(Expr)
         Simplifies the expression.
-        See also: 1/ simplify 
+        See also: 1/ simplify
         Ex1:evala(2*x+y=1)
         Ex2:evala(2*x*2)
         Ex3:evala((2*x+1)^2)
-        
         '''
         return GiacMethods['evala'](self,*args)
 
@@ -5122,10 +4717,9 @@ cdef class GiacMethods_base:
         Help for evalb:
         evalb(Expr)
         Boolean evaluation of the argument.
-        See also: 1/ evalf 2/ eval 
+        See also: 1/ evalf 2/ eval
         Ex1:evalb(a==2)
         Ex2:evalb(sqrt(2)+pi>a)
-        
         '''
         return GiacMethods['evalb'](self,*args)
 
@@ -5134,10 +4728,9 @@ cdef class GiacMethods_base:
         Help for evalc:
         evalc(Expr)
         Returns a complex expression simplified to the format real+i*imag.
-        See also: 1/ normal 
+        See also: 1/ normal
         Ex1:evalc(-3+4*i+exp(i))
         Ex2:evalc(1/(x+y*i))
-        
         '''
         return GiacMethods['evalc'](self,*args)
 
@@ -5146,14 +4739,13 @@ cdef class GiacMethods_base:
         Help for evalf:
         evalf(Expr,[Int])
         Numerical evaluation of the first argument (we can give the number of digits as second argument).
-        See also: 1/ evalb 2/ eval 
+        See also: 1/ evalb 2/ eval
         Ex1:evalf(2/3)
         Ex2:evalf(2/3,2)
         Ex3:evalf(2*sin(1))
         Ex4:evalf(2*sin(1),40)
         Ex5:evalf(sqrt(2)+pi)
         Ex6:evalf(sqrt(2)+pi,30)
-        
         '''
         return GiacMethods['evalf'](self,*args)
 
@@ -5162,9 +4754,8 @@ cdef class GiacMethods_base:
         Help for evalm:
         evalm(Expr)
         Evaluates its argument.
-        See also: 1/ evalf 
+        See also: 1/ evalf
         Ex1:evalm(2*sin(pi))
-        
         '''
         return GiacMethods['evalm'](self,*args)
 
@@ -5173,10 +4764,9 @@ cdef class GiacMethods_base:
         Help for even:
         even(Intg(n))
         Returns 1 if the integer is even, else returns 0.
-        See also: 1/ odd 
+        See also: 1/ odd
         Ex1:even(6)
         Ex2:even(1251)
-        
         '''
         return GiacMethods['even'](self,*args)
 
@@ -5185,11 +4775,10 @@ cdef class GiacMethods_base:
         Help for evolute:
         evolute(Curve)
         Evolute of a curve C.
-        See also: 1/ curvature 2/ osculating_circle 
+        See also: 1/ curvature 2/ osculating_circle
         Ex1:evolute(plot(x^2))
         Ex2:evolute([t,t^2],t)
         Ex3:evolute([3*exp(t/2)*cos(t),3*exp(t/2)*sin(t)],t)
-        
         '''
         return GiacMethods['evolute'](self,*args)
 
@@ -5198,12 +4787,11 @@ cdef class GiacMethods_base:
         Help for exact:
         exact(Expr)
         Converts the expression to a rational or real expression.
-        See also: 1/  
+        See also: 1/
         Ex1:exact(-2)
         Ex2:exact(1.5)
         Ex3:exact(1.4141)
         Ex4:exact(0.156381102937)
-        
         '''
         return GiacMethods['exact'](self,*args)
 
@@ -5212,9 +4800,8 @@ cdef class GiacMethods_base:
         Help for exbisector:
         exbisector((Pnt(A) or Cplx),(Pnt(B) or Cplx),(Pnt(C) or Cplx))
         Draws the exterior bisector of the angle (AB,AC) given by 3 points A,B,C.
-        See also: 1/ angle 2/ bisector 
+        See also: 1/ angle 2/ bisector
         Ex1:exbisector(0,1,i)
-        
         '''
         return GiacMethods['exbisector'](self,*args)
 
@@ -5223,9 +4810,8 @@ cdef class GiacMethods_base:
         Help for excircle:
         excircle((Pnt or Cplx),(Pnt or Cplx),(Pnt or Cplx))
         excircle(A,B,C) draws the A-excircle of the triangle ABC.
-        See also: 1/ incircle 2/ circumcircle 
+        See also: 1/ incircle 2/ circumcircle
         Ex1:excircle(0,1,1+i)
-        
         '''
         return GiacMethods['excircle'](self,*args)
 
@@ -5234,12 +4820,11 @@ cdef class GiacMethods_base:
         Help for execute:
         execute(Str)
         Instruction transforming a string into a command or into a number.
-        See also: 1/ string 
+        See also: 1/ string
         Ex1:execute("ifactor(54)")
         Ex2:execute("123")
         Ex3:execute("0123")
         Ex4:execute(sin,x)
-        
         '''
         return GiacMethods['execute'](self,*args)
 
@@ -5248,10 +4833,9 @@ cdef class GiacMethods_base:
         Help for exp:
         exp(Expr or Opt)
         Exponential or option of the convert or convertir command (id trig2exp).
-        See also: 1/ ln 2/ convert 3/ trig2exp 
+        See also: 1/ ln 2/ convert 3/ trig2exp
         Ex1:exp(0)
         Ex2: convert(cos(x),exp)
-        
         '''
         return GiacMethods['exp'](self,*args)
 
@@ -5260,10 +4844,9 @@ cdef class GiacMethods_base:
         Help for exp2list:
         exp2list(Expr)
         Returns the list made with the righthand member of (var=expr0 or var=expr1), to be used after solve in TI mode.
-        See also: 1/ list2exp 
+        See also: 1/ list2exp
         Ex1:exp2list((x=2) or (x=0))
         Ex2:exp2list((x=3 and y=9) or (x=-1 and y=1) )
-        
         '''
         return GiacMethods['exp2list'](self,*args)
 
@@ -5272,10 +4855,9 @@ cdef class GiacMethods_base:
         Help for exp2pow:
         exp2pow(Expr)
         Transforms exp(n*ln(x)) to x^n.
-        See also: 1/ pow2exp 
+        See also: 1/ pow2exp
         Ex1:exp2pow(exp(3*ln(x)))
         Ex2:exp2pow(exp(x*ln(x)))
-        
         '''
         return GiacMethods['exp2pow'](self,*args)
 
@@ -5284,10 +4866,9 @@ cdef class GiacMethods_base:
         Help for exp2trig:
         exp2trig(Expr)
         Transforms the complex exponential into sine and cosine.
-        See also: 1/ trig2exp 2/ atrig2ln 
+        See also: 1/ trig2exp 2/ atrig2ln
         Ex1:exp2trig(exp(i*x))
         Ex2:exp2trig(exp(-i*x))
-        
         '''
         return GiacMethods['exp2trig'](self,*args)
 
@@ -5296,13 +4877,12 @@ cdef class GiacMethods_base:
         Help for expand:
         expand(Expr)
         Full distribution of * and / over + and -.
-        See also: 1/ texpand 2/ normal 3/ simplify 4/ ratnormal 
+        See also: 1/ texpand 2/ normal 3/ simplify 4/ ratnormal
         Ex1:expand((x+y)*(z+1))
         Ex2:expand((a+b+c)/d)
         Ex3:expand((y+x)*(z+y)*(x+z))
         Ex4:expand((x+3)^4)
         Ex5:expand((2*x-2*1)*(x^2-3*x+2)+(x^2-2*x+3)*(2*x-3*1))
-        
         '''
         return GiacMethods['expand'](self,*args)
 
@@ -5311,9 +4891,8 @@ cdef class GiacMethods_base:
         Help for expexpand:
         expexpand(Expr)
         Expands exponentials.
-        See also: 1/ texpand 2/ lnexpand 3/ trigexpand 
+        See also: 1/ texpand 2/ lnexpand 3/ trigexpand
         Ex1:expexpand(exp(3*x))
-        
         '''
         return GiacMethods['expexpand'](self,*args)
 
@@ -5322,9 +4901,8 @@ cdef class GiacMethods_base:
         Help for expln:
         expln(Opt)
         Option of the convert or convertir command (id trig2exp).
-        See also: 1/ exp 2/ ln 3/ convert 4/ trig2exp 
+        See also: 1/ exp 2/ ln 3/ convert 4/ trig2exp
         Ex1: convert(cos(x),expln)
-        
         '''
         return GiacMethods['expln'](self,*args)
 
@@ -5333,12 +4911,11 @@ cdef class GiacMethods_base:
         Help for exponential:
         exponential(Real(lambda),Real(x))
         Returns the probability density at x of the exponential law of parameter lambda.
-        See also: 1/ exponential_cdf 2/ exponential_icdf 3/ randvector 4/ ranm 
+        See also: 1/ exponential_cdf 2/ exponential_icdf 3/ randvector 4/ ranm
         Ex1:exponential(2.1,3.5)
         Ex2:exponential(2.1,0.5)
         Ex3: randvector(3,exponential,1.2)
         Ex4: ranm(4,3,exponential,1.2)
-        
         '''
         return GiacMethods['exponential'](self,*args)
 
@@ -5347,10 +4924,9 @@ cdef class GiacMethods_base:
         Help for exponential_cdf:
         exponential_cdf(Real(lambda),Real(x0),[Real(y0)])
         Returns the probability that a exponential random variable of parameter lambda is less than x0 (or between x0 and y0).
-        See also: 1/ exponentiald 2/ exponential_icdf 
+        See also: 1/ exponentiald 2/ exponential_icdf
         Ex1:exponential_cdf(4.2,2.1)
         Ex2:exponential_cdf(4.2,2.1,3.2)
-        
         '''
         return GiacMethods['exponential_cdf'](self,*args)
 
@@ -5359,10 +4935,9 @@ cdef class GiacMethods_base:
         Help for exponential_icdf:
         exponential_icdf(Real(lambda),Real(x0),Real(p))
         Returns h such that the probability that a exponential random variable of parameter lambda is less than h is p (0<=p<=1).
-        See also: 1/ exponential_cdf 2/ exponentiald 
+        See also: 1/ exponential_cdf 2/ exponentiald
         Ex1:exponential_icdf(4.2,0.95)
         Ex2:exponential_icdf(4.2,0.6)
-        
         '''
         return GiacMethods['exponential_icdf'](self,*args)
 
@@ -5371,10 +4946,9 @@ cdef class GiacMethods_base:
         Help for exponential_regression:
         exponential_regression(Lst||Mtrx(A),[Lst])
         Returns the coefficients (a,b) of y=b*a^x : it is the best exponential which approx the points where the coordinates are the rows of A (or the 2 lists).
-        See also: 1/ logarithmic_regression 
+        See also: 1/ logarithmic_regression
         Ex1:exponential_regression([[1.0,2.0],[0.0,1.0],[4.0,7.0]])
         Ex2:exponential_regression([1.0,0.0,4.0],[2.0,1.0,7.0])
-        
         '''
         return GiacMethods['exponential_regression'](self,*args)
 
@@ -5383,10 +4957,9 @@ cdef class GiacMethods_base:
         Help for exponential_regression_plot:
         exponential_regression_plot(Lst||Mtrx(A),[Lst])
         Returns the plot of y=b*a^x : it is the best exponential which approx the points where the coordinates are the rows of A (or the 2 lists).
-        See also: 1/ logarithmic_regression_plot 
+        See also: 1/ logarithmic_regression_plot
         Ex1:exponential_regression_plot([[1.0,2.0],[0.0,1.0],[4.0,7.0]])
         Ex2:exponential_regression_plot([1.0,0.0,4.0],[2.0,1.0,7.0])
-        
         '''
         return GiacMethods['exponential_regression_plot'](self,*args)
 
@@ -5395,12 +4968,11 @@ cdef class GiacMethods_base:
         Help for exponentiald:
         exponentiald(Real(lambda),Real(x))
         Returns the probability density at x of the exponential law of parameter lambda.
-        See also: 1/ exponential_cdf 2/ exponential_icdf 3/ randvector 4/ ranm 
+        See also: 1/ exponential_cdf 2/ exponential_icdf 3/ randvector 4/ ranm
         Ex1:exponentiald(2.1,3.5)
         Ex2:exponentiald(2.1,0.5)
         Ex3: randvector(3,exponential,1.2)
         Ex4: ranm(4,3,exponential,1.2)
-        
         '''
         return GiacMethods['exponentiald'](self,*args)
 
@@ -5409,10 +4981,9 @@ cdef class GiacMethods_base:
         Help for exponentiald_cdf:
         exponentiald_cdf(Real(lambda),Real(x0),[Real(y0)])
         Returns the probability that a exponential random variable of parameter lambda is less than x0 (or between x0 and y0).
-        See also: 1/ exponentiald 2/ exponential_icdf 
+        See also: 1/ exponentiald 2/ exponential_icdf
         Ex1:exponentiald_cdf(4.2,2.1)
         Ex2:exponentiald_cdf(4.2,2.1,3.2)
-        
         '''
         return GiacMethods['exponentiald_cdf'](self,*args)
 
@@ -5421,10 +4992,9 @@ cdef class GiacMethods_base:
         Help for exponentiald_icdf:
         exponentiald_icdf(Real(lambda),Real(x0),Real(p))
         Returns h such that the probability that a exponential random variable of parameter lambda is less than h is p (0<=p<=1).
-        See also: 1/ exponential_cdf 2/ exponentiald 
+        See also: 1/ exponential_cdf 2/ exponentiald
         Ex1:exponentiald_icdf(4.2,0.95)
         Ex2:exponentiald_icdf(4.2,0.6)
-        
         '''
         return GiacMethods['exponentiald_icdf'](self,*args)
 
@@ -5433,9 +5003,8 @@ cdef class GiacMethods_base:
         Help for export_graph:
         export_graph(Graph(G),Str("path/to/graphname"))
         Writes G to the file 'graphname.dot' in directory 'path/to' in dot format, returns 1 on success and 0 on failure.
-        See also: 1/ import_graph 
+        See also: 1/ import_graph
         Ex1:export_graph(complete_graph(5),"K5")
-        
         '''
         return GiacMethods['export_graph'](self,*args)
 
@@ -5444,11 +5013,10 @@ cdef class GiacMethods_base:
         Help for export_mathml:
         export_mathml(Expr,[display||content])
         Converts an expression to presentation or content MathML block.
-        See also: 1/ mathml 2/ latex 
+        See also: 1/ mathml 2/ latex
         Ex1:export_mathml(a+2*b)
         Ex2:export_mathml(a+2*b,display)
         Ex3:export_mathml(a+2*b,content)
-        
         '''
         return GiacMethods['export_mathml'](self,*args)
 
@@ -5457,10 +5025,9 @@ cdef class GiacMethods_base:
         Help for expovariate:
         expovariate(Real(a))
         Returns a random real according to the exponential distribution with parameter a>0.
-        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector 
+        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector
         Ex1:expovariate(1)
         Ex2:expovariate(2)
-        
         '''
         return GiacMethods['expovariate'](self,*args)
 
@@ -5469,12 +5036,11 @@ cdef class GiacMethods_base:
         Help for expr:
         expr(Str)
         Instruction transforming a string into a command or into a number.
-        See also: 1/ string 
+        See also: 1/ string
         Ex1:expr("ifactor(54)")
         Ex2:expr("123")
         Ex3:expr("0123")
         Ex4:expr(sin,x)
-        
         '''
         return GiacMethods['expr'](self,*args)
 
@@ -5483,13 +5049,12 @@ cdef class GiacMethods_base:
         Help for extend:
         extend(Lst,Lst||Seq,Seq||Str,Str||Mtrx,Mtrx)
         Concatenates two lists or two strings or two sequences or 2 matrices; L:=concat(L,L1) or L.concat(L1).
-        See also: 1/ append 2/ cat 3/ semi_augment 4/ border 5/ + 
+        See also: 1/ append 2/ cat 3/ semi_augment 4/ border 5/ +
         Ex1:extend([1,2],[3,4,5])
         Ex2:extend("bon","jour")
         Ex3:extend([[1,2],[3,4]],[[4,5,6],[6,7,8]])
         Ex4: L:=[1,2];L.concat([3,4,5])
         Ex5: S:="abcd";S.concat("efghi")
-        
         '''
         return GiacMethods['extend'](self,*args)
 
@@ -5498,11 +5063,10 @@ cdef class GiacMethods_base:
         Help for extract_measure:
         extract_measure(Var)
         extract_measure gives as answer the value calculated by the argument.
-        See also: 1/ angleatraw 2/ distanceatraw 3/ angleat 4/ distanceat 5/ slopeatraw 6/ areaatraw 7/ perimeteratraw 8/ slopeat 5/ areaat 10/ perimeterat 
+        See also: 1/ angleatraw 2/ distanceatraw 3/ angleat 4/ distanceat 5/ slopeatraw 6/ areaatraw 7/ perimeteratraw 8/ slopeat 5/ areaat 10/ perimeterat
         Ex1:extract_measure(distanceatraw(0,1+i,(1+i)/2))
         Ex2:extract_measure(angleatraw(0,1,1+i,1))
         Ex3: A:=point(0);B:=point(1+i);a:=distanceatraw(A,B,(1+i)/2);extract_measure(a)
-        
         '''
         return GiacMethods['extract_measure'](self,*args)
 
@@ -5556,7 +5120,7 @@ cdef class GiacMethods_base:
         Ex43:extrema(4x*y-x^4-y^4,[x,y])
         Ex44:extrema(x*sin(y),[x,y])
         Ex45:extrema(x^4+y^4,[x,y])
-        Ex46:extrema(x^3*y-x*y^3,[x,y])  
+        Ex46:extrema(x^3*y-x*y^3,[x,y])
         Ex47:extrema(x^2+y^2+z^2,x^4+y^4+z^4=1,[x,y,z])
         Ex48:extrema(3x+3y+8z,[x^2+z^2=1,y^2+z^2=1],[x,y,z])
         Ex49:extrema(2x^2+y^2,x^4-x^2+y^2=5,[x,y])
@@ -5565,10 +5129,9 @@ cdef class GiacMethods_base:
         Ex52:extrema(ln(x)+2*ln(y)+3*ln(z)+4*ln(u)+5*ln(v),x+y+z+u+v=1,[x,y,z,u,v])
         Ex53:extrema(x*y*z,-2x^3+15x^2*y+11y^3-24y=0,[x,y,z])
         Ex54:extrema(x+y-exp(x)-exp(y)-exp(x+y),[x,y])
-        Ex55:extrema(x^2*sin(y)-4*x,[x,y])    
+        Ex55:extrema(x^2*sin(y)-4*x,[x,y])
         Ex56:extrema((1+y*sinh(x))/(1+y^2+tanh(x)^2),[x,y])
         Ex57:extrema((1+y*sinh(x))/(1+y^2+tanh(x)^2),y=x^2,[x,y])
-        
         '''
         return GiacMethods['extrema'](self,*args)
 
@@ -5577,11 +5140,10 @@ cdef class GiacMethods_base:
         Help for ezgcd:
         ezgcd(Poly,Poly)
         GCD of 2 polynomials with at least 2 variables, with the ezgcd algorithm.
-        See also: 1/ gcd 2/ modgcd 3/ heugcd 4/ psrgcd 
+        See also: 1/ gcd 2/ modgcd 3/ heugcd 4/ psrgcd
         Ex1:ezgcd(x^2-2*xy+y^2-1,x-y)
         Ex2:ezgcd((x+1)^4-y^4,(x+1-y)^2)
         Ex3:ezgcd((x+y-1)*(x+y+1),(x+y+1)^2)
-        
         '''
         return GiacMethods['ezgcd'](self,*args)
 
@@ -5590,10 +5152,9 @@ cdef class GiacMethods_base:
         Help for f2nd:
         f2nd(Frac or RatFrac)
         Returns the list built with the numerator and the denominator of the simplified fraction.
-        See also: 1/ simp2 2/ numer 3/ denom 4/ getNum 5/ getDenom 
+        See also: 1/ simp2 2/ numer 3/ denom 4/ getNum 5/ getDenom
         Ex1:f2nd(42/12)
         Ex2:f2nd((x^2+2*x+1)/(x^2-1))
-        
         '''
         return GiacMethods['f2nd'](self,*args)
 
@@ -5602,10 +5163,9 @@ cdef class GiacMethods_base:
         Help for fMax:
         fMax(Expr,[Var])
         Returns the abscissa of the maximum of the expression.
-        See also: 1/ fMin 
+        See also: 1/ fMin
         Ex1:fMax(-x^2+2*x+1,x)
         Ex2:fMax(-x^2+2*x+1,x=1..2)
-        
         '''
         return GiacMethods['fMax'](self,*args)
 
@@ -5614,12 +5174,11 @@ cdef class GiacMethods_base:
         Help for fMin:
         fMin(Expr,[Var])
         Returns the abscissa of the minimum of the expression.
-        See also: 1/ fMax 
+        See also: 1/ fMax
         Ex1:fMin(x^2-2*x+1,x)
         Ex2:fMin(x^2-2*x+1,x=1..2)
         Ex3:fMin((x-3)^2+(y-5)^2+1,[],[x,y],[1,1])
         Ex4:fMin((x-3)^2+(y-5)^2+1,[x+y^2=1],[x,y],[1,1])
-        
         '''
         return GiacMethods['fMin'](self,*args)
 
@@ -5628,13 +5187,12 @@ cdef class GiacMethods_base:
         Help for fPart:
         fPart(Real||LstReal)
         Returns the fractional part (if x<0 then frac(x)+floor(x)+1=x else frac(x)+floor(x)=x).
-        See also: 1/ floor 2/ iPart 3/ trunc 
+        See also: 1/ floor 2/ iPart 3/ trunc
         Ex1:fPart(1/2)
         Ex2:fPart(-1/2)
         Ex3:fPart(1.2)
         Ex4:fPart(-1.2)
         Ex5:fPart([3.4,sqrt(2)])
-        
         '''
         return GiacMethods['fPart'](self,*args)
 
@@ -5643,10 +5201,9 @@ cdef class GiacMethods_base:
         Help for faces:
         faces(Polygon or Polyedr(P))
         Returns the list of the faces (1 face=matrix(n,3) where the n rows are the n vertices of the face) of the polyhedron P.
-        See also: 1/ polyhedron 
+        See also: 1/ polyhedron
         Ex1:faces(polyhedron([0,0,0],[0,5,0],[0,0,5],[1,2,6]))
         Ex2:faces(polyhedron([0,0,0],[0,5,0],[0,0,5],[1,2,6]))[2]
-        
         '''
         return GiacMethods['faces'](self,*args)
 
@@ -5655,10 +5212,9 @@ cdef class GiacMethods_base:
         Help for facteurs_premiers:
         facteurs_premiers(Intg(a) or LstIntg)
         Returns the list of prime factors of an integer (each factor is followed by its multiplicity).
-        See also: 1/ ifactor 2/ factors 
+        See also: 1/ ifactor 2/ factors
         Ex1:facteurs_premiers(36)
         Ex2:facteurs_premiers([36,52])
-        
         '''
         return GiacMethods['facteurs_premiers'](self,*args)
 
@@ -5667,11 +5223,10 @@ cdef class GiacMethods_base:
         Help for factor:
         factor(Expr)
         Factors a polynomial.
-        See also: 1/ ifactor 2/ cfactor 3/ partfrac 4/ normal 
+        See also: 1/ ifactor 2/ cfactor 3/ partfrac 4/ normal
         Ex1:factor(x^4-1)
         Ex2:factor(x^4-4,sqrt(2))
         Ex3:factor(x^4+12*x^3+54*x^2+108*x+81)
-        
         '''
         return GiacMethods['factor'](self,*args)
 
@@ -5680,10 +5235,9 @@ cdef class GiacMethods_base:
         Help for factor_xn:
         factor_xn(Poly(P))
         Factors x^n in P (n=degree of polynomial P).
-        See also: 1/ ifactor 2/ partfrac 3/ normal 
+        See also: 1/ ifactor 2/ partfrac 3/ normal
         Ex1:factor_xn(x^4-1)
         Ex2:factor_xn(x^4+12*x^3+54*x^2+108*x+81)
-        
         '''
         return GiacMethods['factor_xn'](self,*args)
 
@@ -5692,10 +5246,9 @@ cdef class GiacMethods_base:
         Help for factorial:
         factorial(Intg(n)|| Real(a))
         factorial(n)=n!. For non-integers, factorial(a)=a! = G(a + 1). This calculates the Gamma function.
-        See also: 1/ comb 2/ perm 
+        See also: 1/ comb 2/ perm
         Ex1:factorial(4)
         Ex2:factorial(1.2)
-        
         '''
         return GiacMethods['factorial'](self,*args)
 
@@ -5704,11 +5257,10 @@ cdef class GiacMethods_base:
         Help for factoriser:
         factoriser(Expr)
         Factors a polynomial.
-        See also: 1/ ifactor 2/ cfactor 3/ partfrac 4/ normal 
+        See also: 1/ ifactor 2/ cfactor 3/ partfrac 4/ normal
         Ex1:factoriser(x^4-1)
         Ex2:factoriser(x^4-4,sqrt(2))
         Ex3:factoriser(x^4+12*x^3+54*x^2+108*x+81)
-        
         '''
         return GiacMethods['factoriser'](self,*args)
 
@@ -5717,10 +5269,9 @@ cdef class GiacMethods_base:
         Help for factoriser_entier:
         factoriser_entier(Intg(a))
         Factorization of an integer into prime factors.
-        See also: 1/ factor 2/ ecm_factor 
+        See also: 1/ factor 2/ ecm_factor
         Ex1:factoriser_entier(50)
         Ex2:factoriser_entier(123456789)
-        
         '''
         return GiacMethods['factoriser_entier'](self,*args)
 
@@ -5729,11 +5280,10 @@ cdef class GiacMethods_base:
         Help for factoriser_sur_C:
         factoriser_sur_C(Expr)
         Factorization of the expression in ℂ (on the Gaussian integers if there are more than 2 variables).
-        See also: 1/ factor 
+        See also: 1/ factor
         Ex1:factoriser_sur_C(x^2*y+y)
         Ex2:factoriser_sur_C(x^2*y^2+y^2+4*x^2+4)
         Ex3:factoriser_sur_C(x^2*y^2+y^2+2*x^2+2)
-        
         '''
         return GiacMethods['factoriser_sur_C'](self,*args)
 
@@ -5742,10 +5292,9 @@ cdef class GiacMethods_base:
         Help for factors:
         factors(Poly or LstPoly)
         Returns the list of prime factors of a polynomial (each factor is followed by its multiplicity).
-        See also: 1/ factor 2/ ifactors 
+        See also: 1/ factor 2/ ifactors
         Ex1:factors(x^4-1)
         Ex2:factors([x^2,x^2-1])
-        
         '''
         return GiacMethods['factors'](self,*args)
 
@@ -5754,9 +5303,8 @@ cdef class GiacMethods_base:
         Help for fadeev:
         fadeev(Opt)
         Option of the pcar or charpoly command to specify the algorithm.
-        See also: 1/ pcar 
+        See also: 1/ pcar
         Ex1: pcar([[4,1,-2],[1,2,-1],[2,1,0]],fadeev)
-        
         '''
         return GiacMethods['fadeev'](self,*args)
 
@@ -5765,9 +5313,8 @@ cdef class GiacMethods_base:
         Help for false:
         false()
         Boolean equal to false or 0.
-        See also: 1/ true 
+        See also: 1/ true
         Ex1: a:=false
-        
         '''
         return GiacMethods['false'](self,*args)
 
@@ -5776,14 +5323,13 @@ cdef class GiacMethods_base:
         Help for falsepos_solver:
         falsepos_solver(Opt)
         Argument for fsolve giving the method for solving a numerical equation.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve(cos(x)=x,x,0..1,bisection_solver)
         Ex2: fsolve(cos(x)=x,x,0..1,brent_solver)
         Ex3: fsolve(cos(x)=x,x,0..1,falsepos_solver)
         Ex4: fsolve(cos(x)=x,x,0,newton_solver)
         Ex5: fsolve(cos(x)=x,x,0,secant_solver)
         Ex6: fsolve(cos(x)=x,x,0,steffenson_solver)
-        
         '''
         return GiacMethods['falsepos_solver'](self,*args)
 
@@ -5792,9 +5338,8 @@ cdef class GiacMethods_base:
         Help for fclose:
         fclose(File(f))
         Closes the file f.
-        See also: 1/ fprint 2/ fopen 
+        See also: 1/ fprint 2/ fopen
         Ex1:fclose(f)
-        
         '''
         return GiacMethods['fclose'](self,*args)
 
@@ -5803,9 +5348,8 @@ cdef class GiacMethods_base:
         Help for fcoeff:
         fcoeff(Lst(root||pole,order))
         Returns the polynomial described by the list (root or pole, order).
-        See also: 1/ pcoeff 2/ froot 3/ proot 
+        See also: 1/ pcoeff 2/ froot 3/ proot
         Ex1:fcoeff([1,2,0,1,3,-1])
-        
         '''
         return GiacMethods['fcoeff'](self,*args)
 
@@ -5814,13 +5358,12 @@ cdef class GiacMethods_base:
         Help for fdistrib:
         fdistrib(Expr)
         Full distribution of * and / over + and -.
-        See also: 1/ texpand 2/ normal 3/ simplify 4/ ratnormal 
+        See also: 1/ texpand 2/ normal 3/ simplify 4/ ratnormal
         Ex1:fdistrib((x+y)*(z+1))
         Ex2:fdistrib((a+b+c)/d)
         Ex3:fdistrib((y+x)*(z+y)*(x+z))
         Ex4:fdistrib((x+3)^4)
         Ex5:fdistrib((2*x-2*1)*(x^2-3*x+2)+(x^2-2*x+3)*(2*x-3*1))
-        
         '''
         return GiacMethods['fdistrib'](self,*args)
 
@@ -5829,10 +5372,9 @@ cdef class GiacMethods_base:
         Help for fft:
         fft(Vect or (Vect(L),Intg(a),Intg(p))
         Fast Fourier Transform in ℝ or in the field ℤ/pℤ, with a as primitive n-th root of 1 (n=size(L)).
-        See also: 1/ ifft 
+        See also: 1/ ifft
         Ex1:fft([1,2,3,4,0,0,0,0])
         Ex2:fft(ranm(128),22798,35969)
-        
         '''
         return GiacMethods['fft'](self,*args)
 
@@ -5841,13 +5383,12 @@ cdef class GiacMethods_base:
         Help for fieldplot:
         fieldplot(Expr,VectVar,[Opt])
         fieldplot(f(t,y),[t,y]) draws the plotfield of the diff equation y'=f(t,y).
-        See also: 1/ interactive_plotode 2/ odeplot 3/ odesolve 4/ desolve 
+        See also: 1/ interactive_plotode 2/ odeplot 3/ odesolve 4/ desolve
         Ex1:fieldplot(sin(t*y),[t=-5..5,y=-3..3],xstep=0.5,ystep=0.5)
         Ex2:fieldplot(-t*y,[t,y])
         Ex3:fieldplot(-t*y,[t,y],normalize)
         Ex4:fieldplot(-t*y,[t,y],normalize,xstep=0.5,ystep=0.5)
         Ex5:fieldplot(-t*y,[t=-6.868..6.868,y=-6.868..6.868],normalize)
-        
         '''
         return GiacMethods['fieldplot'](self,*args)
 
@@ -5856,13 +5397,12 @@ cdef class GiacMethods_base:
         Help for find:
         find(Expr,Vect)
         List of positions of an object in a list, a string or a set.
-        See also: 1/ index 2/ member 
+        See also: 1/ index 2/ member
         Ex1:find(1,[3,x,1,2,1,3])
         Ex2:find(2,[0,1,3,2,4,2,5])[0]
         Ex3:find("a","abracadabrant")
         Ex4:find("ab","abracadabrant")
         Ex5:find(1,%{4,3,1,2%})
-        
         '''
         return GiacMethods['find'](self,*args)
 
@@ -5871,11 +5411,10 @@ cdef class GiacMethods_base:
         Help for find_cycles:
         find_cycles(Graph(G,[length=k||l..u]))
         Returns the list of elementary cycles of the digraph G. If option "length" is specified, only cycles of length k resp. of length between l and u are returned.
-        See also: 1/ is_acyclic 
+        See also: 1/ is_acyclic
         Ex1:find_cycles(digraph(%{[1,2],[1,3],[3,1],[1,4],[2,3],[4,3],[4,5],[5,3],[5,6],[7,6],[8,6],[8,7]%}))
         Ex2:find_cycles(digraph(%{[1,2],[1,3],[3,1],[1,4],[2,3],[4,3],[4,5],[5,3],[5,6],[7,6],[8,6],[8,7]%}),length=3)
         Ex3:find_cycles(digraph(%{[1,2],[1,3],[3,1],[1,4],[2,3],[4,3],[4,5],[5,3],[5,6],[7,6],[8,6],[8,7]%}),length=3..4)
-        
         '''
         return GiacMethods['find_cycles'](self,*args)
 
@@ -5884,9 +5423,8 @@ cdef class GiacMethods_base:
         Help for findhelp:
         findhelp(Cmd)
         Returns help about the command (if ? is infixed see when) .
-        See also: 1/ ifte 2/ when 
+        See also: 1/ ifte 2/ when
         Ex1:findhelp(ifactor)
-        
         '''
         return GiacMethods['findhelp'](self,*args)
 
@@ -5895,12 +5433,11 @@ cdef class GiacMethods_base:
         Help for fisher:
         fisher(Intg(n),Intg(m),Real(x0))
         Returns the probability density of the Fisher-Snedecor law (n and m are the numbers of degrees of freedom).
-        See also: 1/ fisher_cdf 2/ fisher_icdf 3/ randvector 4/ ranm 
+        See also: 1/ fisher_cdf 2/ fisher_icdf 3/ randvector 4/ ranm
         Ex1:fisher(4,10,2.1)
         Ex2:fisher(4,4,2.1)
         Ex3: randvector(5,fisher,4,6)
         Ex4: ranm(2,3,fisher,4,6)
-        
         '''
         return GiacMethods['fisher'](self,*args)
 
@@ -5909,10 +5446,9 @@ cdef class GiacMethods_base:
         Help for fisher_cdf:
         fisher_cdf(Intg(n),Intg(m),Real(x0))
         Returns the probability that a Fisher-Snedecor random variable is less than x0 (n and m are the numbers of degrees of freedom).
-        See also: 1/ UTPF 2/ fisher_icdf 3/ fisherd 
+        See also: 1/ UTPF 2/ fisher_icdf 3/ fisherd
         Ex1:fisher_cdf(4,4,2.1)
         Ex2:fisher_cdf(4,10,3.5)
-        
         '''
         return GiacMethods['fisher_cdf'](self,*args)
 
@@ -5921,10 +5457,9 @@ cdef class GiacMethods_base:
         Help for fisher_icdf:
         fisher_icdf(Intg(n),Intg(m),Real(p))
         Returns h such as the probability that a Fisher-Snedecor random variable is less than h is p (n and m are the numbers of degrees of freedom and 0<=p<=1).
-        See also: 1/ fisher_cdf 2/ fisherd 
+        See also: 1/ fisher_cdf 2/ fisherd
         Ex1:fisher_icdf(4,10,0.95)
         Ex2:fisher_icdf(4,10,0.05)
-        
         '''
         return GiacMethods['fisher_icdf'](self,*args)
 
@@ -5933,12 +5468,11 @@ cdef class GiacMethods_base:
         Help for fisherd:
         fisherd(Intg(n),Intg(m),Real(x0))
         Returns the probability density of the Fisher-Snedecor law (n and m are the numbers of degrees of freedom).
-        See also: 1/ fisher_cdf 2/ fisher_icdf 3/ randvector 4/ ranm 
+        See also: 1/ fisher_cdf 2/ fisher_icdf 3/ randvector 4/ ranm
         Ex1:fisherd(4,10,2.1)
         Ex2:fisherd(4,4,2.1)
         Ex3: randvector(5,fisher,4,6)
         Ex4: ranm(2,3,fisher,4,6)
-        
         '''
         return GiacMethods['fisherd'](self,*args)
 
@@ -5947,10 +5481,9 @@ cdef class GiacMethods_base:
         Help for fisherd_cdf:
         fisherd_cdf(Intg(n),Intg(m),Real(x0))
         Returns the probability that a Fisher-Snedecor random variable is less than x0 (n and m are the numbers of degrees of freedom).
-        See also: 1/ UTPF 2/ fisher_icdf 3/ fisherd 
+        See also: 1/ UTPF 2/ fisher_icdf 3/ fisherd
         Ex1:fisherd_cdf(4,4,2.1)
         Ex2:fisherd_cdf(4,10,3.5)
-        
         '''
         return GiacMethods['fisherd_cdf'](self,*args)
 
@@ -5959,10 +5492,9 @@ cdef class GiacMethods_base:
         Help for fisherd_icdf:
         fisherd_icdf(Intg(n),Intg(m),Real(p))
         Returns h such as the probability that a Fisher-Snedecor random variable is less than h is p (n and m are the numbers of degrees of freedom and 0<=p<=1).
-        See also: 1/ fisher_cdf 2/ fisherd 
+        See also: 1/ fisher_cdf 2/ fisherd
         Ex1:fisherd_icdf(4,10,0.95)
         Ex2:fisherd_icdf(4,10,0.05)
-        
         '''
         return GiacMethods['fisherd_icdf'](self,*args)
 
@@ -5971,11 +5503,10 @@ cdef class GiacMethods_base:
         Help for fitdistr:
         fitdistr(Lst(L),Fnc(D))
         Returns the distribution of type D which fits most closely to the i.i.d. samples in the list L.
-        See also: 1/ normald 2/ poisson 3/ exponentiald 4/ geometric 5/ gammad 6/ betad 7/ cauchyd 8/ weibulld 9/ sample 10/ randvector 11/ randvar 
+        See also: 1/ normald 2/ poisson 3/ exponentiald 4/ geometric 5/ gammad 6/ betad 7/ cauchyd 8/ weibulld 9/ sample 10/ randvector 11/ randvar
         Ex1:fitdistr(randvector(1000,weibulld,1/2,1),weibull)
         Ex2: X:=randvar(normal,stddev=9.5):;Y:=randvar(normal,stddev=1.5):;S:=sample(eval(X/Y,0),1000):;Z:=fitdistr(S,cauchy)
         Ex3: X:=randvar(normal,mean=5,variance=2):;S:=sample(exp(X),1000):;fitdistr(log(S),normal)
-        
         '''
         return GiacMethods['fitdistr'](self,*args)
 
@@ -5984,9 +5515,8 @@ cdef class GiacMethods_base:
         Help for flatten:
         flatten(Lst)
         Recursively flatten a list containing lists.
-        See also: 1/ mat2list 
+        See also: 1/ mat2list
         Ex1:flatten([[1,[2,3],4],[5,6]])
-        
         '''
         return GiacMethods['flatten'](self,*args)
 
@@ -5995,12 +5525,11 @@ cdef class GiacMethods_base:
         Help for float2rational:
         float2rational(Expr)
         Converts the expression to a rational or real expression.
-        See also: 1/  
+        See also: 1/
         Ex1:float2rational(-2)
         Ex2:float2rational(1.5)
         Ex3:float2rational(1.4141)
         Ex4:float2rational(0.156381102937)
-        
         '''
         return GiacMethods['float2rational'](self,*args)
 
@@ -6009,10 +5538,9 @@ cdef class GiacMethods_base:
         Help for floor:
         floor(Real or Cplx)
         Returns the greatest integer <= to the argument.
-        See also: 1/ round 2/ ceil 3/ iPart 4/ trunc 
+        See also: 1/ round 2/ ceil 3/ iPart 4/ trunc
         Ex1:floor(-2.5)
         Ex2:floor(2.5-4.2*i)
-        
         '''
         return GiacMethods['floor'](self,*args)
 
@@ -6021,10 +5549,9 @@ cdef class GiacMethods_base:
         Help for flow_polynomial:
         flow_polynomial(Graph(G),[Var(x)])
         Returns the flow polynomial [or its value at point x] of undirected unweighted graph G.
-        See also: 1/ chromatic_polynomial 2/ reliability_polynomial 3/ tutte_polynomial 
+        See also: 1/ chromatic_polynomial 2/ reliability_polynomial 3/ tutte_polynomial
         Ex1:flow_polynomial(graph("tetrahedron"))
         Ex2:flow_polynomial(graph("tetrahedron"),5)
-        
         '''
         return GiacMethods['flow_polynomial'](self,*args)
 
@@ -6034,7 +5561,6 @@ cdef class GiacMethods_base:
         fmod(Real(a),Real(b))
         Returns a mod b for a and b floats.
         Ex1:fmod(10.0,pi)
-        
         '''
         return GiacMethods['fmod'](self,*args)
 
@@ -6043,9 +5569,8 @@ cdef class GiacMethods_base:
         Help for foldl:
         foldl(op,id,Seq(r1,r2,...))
         Returns the composition of the binary operator or function op, with an identity or initial value id onto its arguments r1, r2, ..., associating from the left.
-        See also: 1/ apply 2/ foldr 3/ map 
+        See also: 1/ apply 2/ foldr 3/ map
         Ex1:foldl(F,init,a,b,c)
-        
         '''
         return GiacMethods['foldl'](self,*args)
 
@@ -6054,9 +5579,8 @@ cdef class GiacMethods_base:
         Help for foldr:
         foldr(op,id,Seq(r1,r2,...))
         Returns the composition of the binary operator or function op, with an identity or initial value id onto its arguments r1, r2, ..., associating from the right.
-        See also: 1/ apply 2/ foldl 3/ map 
+        See also: 1/ apply 2/ foldl 3/ map
         Ex1:foldr(F,init,a,b,c)
-        
         '''
         return GiacMethods['foldr'](self,*args)
 
@@ -6065,13 +5589,12 @@ cdef class GiacMethods_base:
         Help for fonction_derivee:
         fonction_derivee(Fnc(f))
         Returns the derivative function of the function f.
-        See also: 1/ diff 2/ ' 3/ @ 
+        See also: 1/ diff 2/ ' 3/ @
         Ex1:fonction_derivee(sin+id)
         Ex2:fonction_derivee(sq@sin+id)
         Ex3:fonction_derivee(ln)(x,y)
         Ex4:fonction_derivee(ln)([x,y])
-        Ex5: (function_diff @@3)(ln)('x') 
-        
+        Ex5: (function_diff @@3)(ln)('x')
         '''
         return GiacMethods['fonction_derivee'](self,*args)
 
@@ -6080,10 +5603,9 @@ cdef class GiacMethods_base:
         Help for forward:
         forward(NULL or Real(n))
         The turtle takes n steps forward (by default n=10).
-        See also: 1/ recule 2/ saute 
+        See also: 1/ recule 2/ saute
         Ex1: avance 30
         Ex2:forward(30)
-        
         '''
         return GiacMethods['forward'](self,*args)
 
@@ -6092,7 +5614,7 @@ cdef class GiacMethods_base:
         Help for fourier:
         fourier(Expr(f(x)),[Var(x),[Var(s)]])
         Returns the Fourier transform F(s) of f(x).
-        See also: 1/ ifourier 2/ fourier_cn 3/ fft 
+        See also: 1/ ifourier 2/ fourier_cn 3/ fft
         Ex1:fourier(x/(x^3-19x+30),x,s)
         Ex2:fourier((x^2+1)/(x^2-1),x,s)
         Ex3:fourier(3x^2+2x+1,x,s)
@@ -6109,7 +5631,6 @@ cdef class GiacMethods_base:
         Ex14:fourier(Gamma(1+i*x/3),x,s)
         Ex15:fourier(atan(x/4)/x,x,s)
         Ex16:fourier(piecewise(x<=-1,exp(x+1),x<=1,1,exp(2-2x)),x,s)
-        
         '''
         return GiacMethods['fourier'](self,*args)
 
@@ -6118,10 +5639,9 @@ cdef class GiacMethods_base:
         Help for fourier_an:
         fourier_an(Expr(f(x)),Var(x),Period(T),Intg(n),Real(a))
         Returns the n-th Fourier coefficient an=2/T*integrate(f(x)*cos(2*pi*n*x/T),a,a+T).
-        See also: 1/ fourier_cn 2/ fourier_bn 3/ assume 
+        See also: 1/ fourier_cn 2/ fourier_bn 3/ assume
         Ex1:fourier_an(x^2,x,2,0,-1)
         Ex2:fourier_an(x^2,x,2,n,-1)
-        
         '''
         return GiacMethods['fourier_an'](self,*args)
 
@@ -6130,10 +5650,9 @@ cdef class GiacMethods_base:
         Help for fourier_bn:
         fourier_bn(Expr(f(x)),Var(x),Period(T),Intg(n),Real(a))
         Returns the n-th Fourier coefficient bn=2/T*integrate(f(x)*sin(2*pi*n*x/T),a,a+T).
-        See also: 1/ fourier_cn 2/ fourier_an 3/ assume 
+        See also: 1/ fourier_cn 2/ fourier_an 3/ assume
         Ex1:fourier_bn(x^2,x,2,0,-1)
         Ex2:fourier_bn(x^2,x,2,n,-1)
-        
         '''
         return GiacMethods['fourier_bn'](self,*args)
 
@@ -6142,10 +5661,9 @@ cdef class GiacMethods_base:
         Help for fourier_cn:
         fourier_cn(Expr(f(x)),Var(x),Period(T),Intg(n),Real(a))
         Returns the n-th Fourier coefficient cn=1/T*integrate(f(x)*exp(-2*i*pi*n*x/T),a,a+T).
-        See also: 1/ fourier_an 2/ fourier_bn 3/ assume 
+        See also: 1/ fourier_an 2/ fourier_bn 3/ assume
         Ex1:fourier_cn(x^2,x,2,0,-1)
         Ex2:fourier_cn(x^2,x,2,n,-1)
-        
         '''
         return GiacMethods['fourier_cn'](self,*args)
 
@@ -6154,11 +5672,10 @@ cdef class GiacMethods_base:
         Help for fprint:
         fprint(File(f),Var,[Var,Var...])
         Writes in the file f some data.
-        See also: 1/ fopen 2/ fclose 
+        See also: 1/ fopen 2/ fclose
         Ex1:fprint(f,x+1,"2")
         Ex2:fprint(f,"blabla")
         Ex3:fprint(f,Unquoted,"blabla")
-        
         '''
         return GiacMethods['fprint'](self,*args)
 
@@ -6167,13 +5684,12 @@ cdef class GiacMethods_base:
         Help for frac:
         frac(Real||LstReal)
         Returns the fractional part (if x<0 then frac(x)+floor(x)+1=x else frac(x)+floor(x)=x).
-        See also: 1/ floor 2/ iPart 3/ trunc 
+        See also: 1/ floor 2/ iPart 3/ trunc
         Ex1:frac(1/2)
         Ex2:frac(-1/2)
         Ex3:frac(1.2)
         Ex4:frac(-1.2)
         Ex5:frac([3.4,sqrt(2)])
-        
         '''
         return GiacMethods['frac'](self,*args)
 
@@ -6182,9 +5698,8 @@ cdef class GiacMethods_base:
         Help for fracmod:
         fracmod(Expr(Xpr),Intg(n))
         Returns the fraction a/b such as b*Xpr=a mod n, -sqrt(n)/2<a<=sqrt(n)/2 and 0<=b<sqrt(n)/2.
-        See also: 1/ mod 2/ smod 
+        See also: 1/ mod 2/ smod
         Ex1:fracmod(41,121)
-        
         '''
         return GiacMethods['fracmod'](self,*args)
 
@@ -6193,9 +5708,8 @@ cdef class GiacMethods_base:
         Help for frame_2d:
         frame_2d(NULL)
         frame_2d() draws the axes of the 2-d graphic-screen.
-        See also: 1/ frame_3d 2/ Ox_2d_unit_vector 3/ Oy_2d_unit_vector 
+        See also: 1/ frame_3d 2/ Ox_2d_unit_vector 3/ Oy_2d_unit_vector
         Ex1:frame_2d()
-        
         '''
         return GiacMethods['frame_2d'](self,*args)
 
@@ -6204,10 +5718,9 @@ cdef class GiacMethods_base:
         Help for frequencies:
         frequencies(Lst)
         Returns the frequencies of a list of values.
-        See also: 1/ histogram 2/ cumulated_frequencies 3/ bar_plot 4/ classes 
+        See also: 1/ histogram 2/ cumulated_frequencies 3/ bar_plot 4/ classes
         Ex1:frequencies([1,2,1,1,2,1,2,4,3,3])
         Ex2:frequencies([(rand(6)+1)$(k=1..100)])
-        
         '''
         return GiacMethods['frequencies'](self,*args)
 
@@ -6216,9 +5729,8 @@ cdef class GiacMethods_base:
         Help for frobenius_norm:
         frobenius_norm(Mtrx)
         Frobenius norm of a matrix A (=sqrt(sum |aij|^2)).
-        See also: 1/ l1norm 2/ l2 norm 3/ linfnorm 4/ matrix_norm 
+        See also: 1/ l1norm 2/ l2 norm 3/ linfnorm 4/ matrix_norm
         Ex1:frobenius_norm([[1,2,3],[3,-9,6],[4,5,6]])
-        
         '''
         return GiacMethods['frobenius_norm'](self,*args)
 
@@ -6227,10 +5739,9 @@ cdef class GiacMethods_base:
         Help for froot:
         froot(RatPoly(F))
         Returns the list of roots and poles of F with their multiplicity.
-        See also: 1/ proot 2/ fcoeff 3/ pcoeff 4/ realroot 5/ complexroot 6/ rationalroot 7/ crationalroot 
+        See also: 1/ proot 2/ fcoeff 3/ pcoeff 4/ realroot 5/ complexroot 6/ rationalroot 7/ crationalroot
         Ex1:froot((x^5-2*x^4+x^3)/(x-3))
         Ex2:froot((x^5-2*x^4+x^3)/(x-1))
-        
         '''
         return GiacMethods['froot'](self,*args)
 
@@ -6239,12 +5750,11 @@ cdef class GiacMethods_base:
         Help for fsolve:
         fsolve(Expr,Var,[Guess or Interval],[Method])
         Numerical solution of an equation or a system of equations.
-        See also: 1/ cfsolve 2/ nSolve 3/ solve 4/ csolve 5/ lpsolve 6/ nlpsolve 
+        See also: 1/ cfsolve 2/ nSolve 3/ solve 4/ csolve 5/ lpsolve 6/ nlpsolve
         Ex1:fsolve(cos(x)=x,x,-1..1,bisection_solver)
         Ex2:fsolve(cos(x)=x,x,0,newton_solver)
         Ex3:fsolve([x^2+y-2,x+y^2-2],[x,y],[0,0],newtonj_solver)
         Ex4:fsolve([x^2+y-2,x+y^2-2],[x,y])
-        
         '''
         return GiacMethods['fsolve'](self,*args)
 
@@ -6253,10 +5763,9 @@ cdef class GiacMethods_base:
         Help for fullparfrac:
         fullparfrac(Opt)
         Option of the convert or convertir command (id at the option partfrac).
-        See also: 1/ convert 
+        See also: 1/ convert
         Ex1: convert(1/(x^2-1),parfrac)
         Ex2: convert(1/(x^2-1),fullparfrac)
-        
         '''
         return GiacMethods['fullparfrac'](self,*args)
 
@@ -6265,13 +5774,12 @@ cdef class GiacMethods_base:
         Help for funcplot:
         funcplot(Expr,[Var(x) or VectVar] ,[Intg(color)])
         Plots a 1 variable or 2 variables expression with superposition.
-        See also: 1/ plot 2/ plot3d 3/ plotparam 4/ animate 5/ animate3d 6/ plotdensity 
+        See also: 1/ plot 2/ plot3d 3/ plotparam 4/ animate 5/ animate3d 6/ plotdensity
         Ex1:funcplot(-2*x+1,x=1..2,color=red)
         Ex2:funcplot([-2*x+1,x^2-2],x=-2..2,color=[red,yellow],xstep=0.2)
         Ex3:funcplot(x^2-y^2,[x,y],xstep=0.5,ystep=0.3)
         Ex4:funcplot(x^2+y^2,[x=-1..1,y=-2..2],nstep=900)
         Ex5:funcplot((x+i*y)^2,[x=-1..1,y=-2..2],nstep=900,affichage=rempli)
-        
         '''
         return GiacMethods['funcplot'](self,*args)
 
@@ -6280,13 +5788,12 @@ cdef class GiacMethods_base:
         Help for function_diff:
         function_diff(Fnc(f))
         Returns the derivative function of the function f.
-        See also: 1/ diff 2/ ' 3/ @ 
+        See also: 1/ diff 2/ ' 3/ @
         Ex1:function_diff(sin+id)
         Ex2:function_diff(sq@sin+id)
         Ex3:function_diff(ln)(x,y)
         Ex4:function_diff(ln)([x,y])
-        Ex5: (function_diff @@3)(ln)('x') 
-        
+        Ex5: (function_diff @@3)(ln)('x')
         '''
         return GiacMethods['function_diff'](self,*args)
 
@@ -6295,10 +5802,9 @@ cdef class GiacMethods_base:
         Help for fxnd:
         fxnd(Frac or RatFrac)
         Returns the list built with the numerator and the denominator of the simplified fraction.
-        See also: 1/ simp2 2/ numer 3/ denom 4/ getNum 5/ getDenom 
+        See also: 1/ simp2 2/ numer 3/ denom 4/ getNum 5/ getDenom
         Ex1:fxnd(42/12)
         Ex2:fxnd((x^2+2*x+1)/(x^2-1))
-        
         '''
         return GiacMethods['fxnd'](self,*args)
 
@@ -6307,9 +5813,8 @@ cdef class GiacMethods_base:
         Help for gammad:
         gammad(Real(a>0),Real(b>0),Real(x>=0))
         Returns the probability density of the Gamma law (=x^(a-1)*exp(-b*x)*b^a/Gamma(a)).
-        See also: 1/ gammad_cdf; 2/ gammad_icdf 
+        See also: 1/ gammad_cdf; 2/ gammad_icdf
         Ex1:gammad(2.2,1.5,0.8)
-        
         '''
         return GiacMethods['gammad'](self,*args)
 
@@ -6318,10 +5823,9 @@ cdef class GiacMethods_base:
         Help for gammad_cdf:
         gammad_cdf(Real(a>0),Real(b>0),Real(x0>=0),[Real(y0>=0)])
         Returns the probability that a Gamma random variable (with a and b as parameters) is less than x0 or between x0 and y0.
-        See also: 1/ gammad 2/ gammad_icdf 
+        See also: 1/ gammad 2/ gammad_icdf
         Ex1:gammad_cdf(2,1,2.96)
         Ex2:gammad_cdf(2,1,1.4,2.96)
-        
         '''
         return GiacMethods['gammad_cdf'](self,*args)
 
@@ -6330,10 +5834,9 @@ cdef class GiacMethods_base:
         Help for gammad_icdf:
         gammad_icdf(Real(a>0),Real(b>0),Real(0<=p<=1))
         Returns h such that the probability that a Gamma random variable is less than h is p (0<=p<=1).
-        See also: 1/ gammad_cdf 2/ gammad 
+        See also: 1/ gammad_cdf 2/ gammad
         Ex1:gammad_icdf(2,1,0.95)
         Ex2:gammad_icdf(2,1,0.5)
-        
         '''
         return GiacMethods['gammad_icdf'](self,*args)
 
@@ -6342,10 +5845,9 @@ cdef class GiacMethods_base:
         Help for gammavariate:
         gammavariate(Real(a),Real(b))
         Returns a random real according to the Gamma distribution with parameters a>0 and b>0.
-        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector 
+        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector
         Ex1:gammavariate(1,2)
         Ex2:gammavariate(1.5,4)
-        
         '''
         return GiacMethods['gammavariate'](self,*args)
 
@@ -6354,9 +5856,8 @@ cdef class GiacMethods_base:
         Help for gauss:
         gauss(Expr,VectVar)
         Splits a quadratic form as a sum/difference of squares.
-        See also: 1/ cholesky 
+        See also: 1/ cholesky
         Ex1:gauss(x^2+2*a*x*y,[x,y])
-        
         '''
         return GiacMethods['gauss'](self,*args)
 
@@ -6365,12 +5866,11 @@ cdef class GiacMethods_base:
         Help for gauss15:
         gauss15(Opt)
         Option of the area command.
-        See also: 1/ area 
+        See also: 1/ area
         Ex1: area(x^2,x=0..1,5,simpson)
         Ex2: area(x^2,x=0..1,5,rombergt)
         Ex3: area(x^2,x=0..1,5,rombergm)
         Ex4:gauss15(area(x^2,x=0..1,5,gauss15))
-        
         '''
         return GiacMethods['gauss15'](self,*args)
 
@@ -6379,12 +5879,11 @@ cdef class GiacMethods_base:
         Help for gauss_seidel_linsolve:
         gauss_seidel_linsolve([Real(omega)],Mtrx(A),Vect(b),Real(eps),[Int(maxiter)])
         Resolution of a linear system A*X=b by the iterative Gauss-Seidel method (by defaut omega=1) or by relaxation method, with eps as error margin and a number of iterations less than maxiter.
-        See also: 1/ jacobi_linsolve 2/ linsolve 
+        See also: 1/ jacobi_linsolve 2/ linsolve
         Ex1: a:=[[100,2],[2,100]];gauss_seidel_linsolve(a,[0,1],1e-12);
-        Ex2: a:=[[100,2],[2,100]];gauss_seidel_linsolve(table(a),[0,1],1e-12); 
+        Ex2: a:=[[100,2],[2,100]];gauss_seidel_linsolve(table(a),[0,1],1e-12);
         Ex3: a:=[[100,2],[2,100]];gauss_seidel_linsolve(1.5,a,[0,1],1e-12);
-        Ex4: a:=[[100,2],[2,100]];gauss_seidel_linsolve(1.5,table(a),[0,1],1e-12); 
-        
+        Ex4: a:=[[100,2],[2,100]];gauss_seidel_linsolve(1.5,table(a),[0,1],1e-12);
         '''
         return GiacMethods['gauss_seidel_linsolve'](self,*args)
 
@@ -6393,9 +5892,8 @@ cdef class GiacMethods_base:
         Help for gaussian_window:
         gaussian_window(Lst,[Real(a)],[Interval(n1..n2)])
         Applies the Gaussian windowing function with parameter 0<a<=0.5 (by default a=0.1) to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ bartlett_hann_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ bartlett_hann_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(gaussian_window(randvector(1000,0..1),0.4))
-        
         '''
         return GiacMethods['gaussian_window'](self,*args)
 
@@ -6404,12 +5902,11 @@ cdef class GiacMethods_base:
         Help for gaussjord:
         gaussjord(Mtrx(M),[Intg(k)]||Opt)
         Row reduction to echelon form of AX=b (M=A|(-b)) [Reduction on columns 0..k-1].
-        See also: 1/ ker 2/ image 3/ det 4/ Rref 5/ pivot 6/ ref 7/ keep_pivot 
+        See also: 1/ ker 2/ image 3/ det 4/ Rref 5/ pivot 6/ ref 7/ keep_pivot
         Ex1:gaussjord([[3,1,-2],[3,2,2]])
         Ex2:gaussjord([[2,1,1,-1],[1,1,2,-1],[1,2,1,-4]])
         Ex3:gaussjord([[2,1,1,-1],[1,1,2,-1],[1,2,1,-4]],2)
         Ex4:gaussjord([[1,1,0,0,-a1],[0,1,1,0,-a2],[0,0,1,1,-a3],[1,0,0,1,-a4]],keep_pivot)
-        
         '''
         return GiacMethods['gaussjord'](self,*args)
 
@@ -6418,11 +5915,10 @@ cdef class GiacMethods_base:
         Help for gaussquad:
         gaussquad(Expr(f(x)),Var(x),Real(a),Real(b))
         Returns the approximate value of integrate(f(x),x,a,b) by adaptive Gaussian quadratures with 15 points.
-        See also: 1/ integrate 2/ romberg 
+        See also: 1/ integrate 2/ romberg
         Ex1:gaussquad(exp(x^2),x,0,1)
         Ex2:gaussquad(x^2,x,0,1)
         Ex3:gaussquad(exp(-x^2),x,-1,1)
-        
         '''
         return GiacMethods['gaussquad'](self,*args)
 
@@ -6431,13 +5927,12 @@ cdef class GiacMethods_base:
         Help for gbasis:
         gbasis(LstPoly,LstVar,[order])
         Groebner basis of the ideal spanned by the list of polynomials.
-        See also: 1/ greduce 2/ gbasis_max_pairs 3/ gbasis_simult_primes 
+        See also: 1/ greduce 2/ gbasis_max_pairs 3/ gbasis_simult_primes
         Ex1:gbasis([x^2-y^3,x+y^2],[x,y])
         Ex2:gbasis([x1+x2+x3,x1*x2+x1*x3+x2*x3,x1*x2*x3-1],[x1,x2,x3])
         Ex3:gbasis([x1+x2+x3,x1*x2+x1*x3+x2*x3,x1*x2*x3-1],[x1,x2,x3],tdeg)
         Ex4:gbasis([x1+x2+x3,x1*x2+x1*x3+x2*x3,x1*x2*x3-1],[x1,x2,x3],plex)
         Ex5:gbasis([x1+x2+x3,x1*x2+x1*x3+x2*x3,x1*x2*x3-1] mod 29,[x1,x2,x3])
-        
         '''
         return GiacMethods['gbasis'](self,*args)
 
@@ -6446,10 +5941,9 @@ cdef class GiacMethods_base:
         Help for gbasis_max_pairs:
         gbasis_max_pairs(Intg)
         Gbasis fine-tuning: maximal number of S-pairs to be reduced simultaneously inside F4 algorithm (default 32768, 0 means no limit). Set it to a smaller value if short in memory.
-        See also: 1/ gbasis 2/ gbasis_simult_primes 3/ gbasis_reinject 
+        See also: 1/ gbasis 2/ gbasis_simult_primes 3/ gbasis_reinject
         Ex1:gbasis_max_pairs(4096)
         Ex2:gbasis_max_pairs(0)
-        
         '''
         return GiacMethods['gbasis_max_pairs'](self,*args)
 
@@ -6458,10 +5952,9 @@ cdef class GiacMethods_base:
         Help for gbasis_reinject:
         gbasis_reinject(Real(a),[Real(b)])
         Gbasis fine-tuning: in the modular algorithm of a gbasis over Q, adds a partial reconstruction of the basis if the ratio of new elements is greater than a and the speed ratio of the 2nd run/1st run is >= b (default a=0.2 and b=1/6.)
-        See also: 1/ gbasis 2/ gbasis_max_pairs 3/ gbasis_reinject  
+        See also: 1/ gbasis 2/ gbasis_max_pairs 3/ gbasis_reinject
         Ex1:gbasis_reinject(0.1)
         Ex2:gbasis_reinject(0.1,0.05)
-        
         '''
         return GiacMethods['gbasis_reinject'](self,*args)
 
@@ -6470,9 +5963,8 @@ cdef class GiacMethods_base:
         Help for gbasis_simult_primes:
         gbasis_simult_primes(Intg)
         Gbasis fine-tuning: maximal number of Groebner basis modulo a prime that are computed simultaneously to rebuild a Groebner basis over Q (default 16). Set it to a smaller value if short in memory.
-        See also: 1/ gbasis 2/ gbasis_max_pairs 3/ gbasis_reinject  
+        See also: 1/ gbasis 2/ gbasis_max_pairs 3/ gbasis_reinject
         Ex1:gbasis_simult_primes(3)
-        
         '''
         return GiacMethods['gbasis_simult_primes'](self,*args)
 
@@ -6481,13 +5973,12 @@ cdef class GiacMethods_base:
         Help for gcd:
         gcd((Intg(a) or Poly),(Intg(b) or Poly))
         Returns the greatest common divisor of 2 polynomials of several variables or of 2 integers or of 2 rationals.
-        See also: 1/ lcm 2/ euler 2/ modgcd 3/ ezgcd 4/ psrgcd 5/ heugcd 6/ Gcd 
+        See also: 1/ lcm 2/ euler 2/ modgcd 3/ ezgcd 4/ psrgcd 5/ heugcd 6/ Gcd
         Ex1:gcd(45,75)
         Ex2:gcd(15/7,50/9)
         Ex3:gcd(x^2-2*x+1,x^3-1)
         Ex4:gcd(t^2-2*t+1,t^2+t-2)
         Ex5:gcd((x^2-1)*(y^2-1)*z^2,x^3*y^3*z+(-(y^3))*z+x^3*z-z)
-        
         '''
         return GiacMethods['gcd'](self,*args)
 
@@ -6496,12 +5987,11 @@ cdef class GiacMethods_base:
         Help for gcdex:
         gcdex((Poly or Lst),(Poly or Lst),[Var])
         Extended greatest common divisor of 2 polynomials.
-        See also: 1/ gcd 2/ iegcd 
+        See also: 1/ gcd 2/ iegcd
         Ex1:gcdex((x-1)^2,x^3-1)
         Ex2:gcdex((X-1)^2,X^3-1,X)
         Ex3:gcdex([1,-2,1],[1,0,0,-1])
         Ex4:gcdex([1,-2,1],[1,-1,2])
-        
         '''
         return GiacMethods['gcdex'](self,*args)
 
@@ -6510,11 +6000,10 @@ cdef class GiacMethods_base:
         Help for genpoly:
         genpoly(Poly(P),Intg(b),Var)
         Returns the reconstruction of a n-variables polynomial Q(-b/2<=coef<=b/2) from an (n-1)-variable polynomial P and a base b (subst(Q,var=b)=P).
-        See also: 1/  
+        See also: 1/
         Ex1:genpoly(15,4,x)
         Ex2:genpoly(7*y+5,6,x)
         Ex3:genpoly(7*y-5*z,10,x)
-        
         '''
         return GiacMethods['genpoly'](self,*args)
 
@@ -6523,12 +6012,11 @@ cdef class GiacMethods_base:
         Help for geometric:
         geometric(Real(p),Intg(k))
         Returns the value at k of the geometric law with parameter p (0<p<1).
-        See also: 1/ geometric_cdf 2/ geometric_icdf 3/ randvector 4/ ranm 
+        See also: 1/ geometric_cdf 2/ geometric_icdf 3/ randvector 4/ ranm
         Ex1:geometric(0.3,4)
         Ex2:geometric(0.5,5)
         Ex3: randvector(3,geometric,0.3)
         Ex4: ranm(4,3,geometric,0.3)
-        
         '''
         return GiacMethods['geometric'](self,*args)
 
@@ -6537,10 +6025,9 @@ cdef class GiacMethods_base:
         Help for geometric_cdf:
         geometric_cdf(Real(p),Intg(k),[Intg(m)])
         Returns the probability that a geometric random variable of parameter p (0<p<1) is less than k (or between k and m).
-        See also: 1/ geometric 2/ geometric_icdf 
+        See also: 1/ geometric 2/ geometric_icdf
         Ex1:geometric_cdf(0.3,4)
         Ex2:geometric_cdf(0.3,4,5)
-        
         '''
         return GiacMethods['geometric_cdf'](self,*args)
 
@@ -6549,9 +6036,8 @@ cdef class GiacMethods_base:
         Help for geometric_icdf:
         geometric_icdf(Real(p),Real(x))
         Returns h such that the probability that a geometric random variable with parameter p (0<p<1) is less than h is x (0<=x<=1).
-        See also: 1/ geometric_cdf 2/ geometric 
+        See also: 1/ geometric_cdf 2/ geometric
         Ex1:geometric_icdf(0.3,0.95)
-        
         '''
         return GiacMethods['geometric_icdf'](self,*args)
 
@@ -6560,11 +6046,10 @@ cdef class GiacMethods_base:
         Help for getDenom:
         getDenom(Expr)
         Returns the denominator of the unsimplified expression (except for rational number).
-        See also: 1/ denom 2/ getNum 3/ numer 4/ f2nd 
+        See also: 1/ denom 2/ getNum 3/ numer 4/ f2nd
         Ex1:getDenom(25/15)
         Ex2:getDenom((x^3-1)/(x^2-1))
         Ex3:getDenom(1+(x^3-1)/x^2)
-        
         '''
         return GiacMethods['getDenom'](self,*args)
 
@@ -6573,9 +6058,8 @@ cdef class GiacMethods_base:
         Help for getKey:
         getKey(NULL)
         Instruction in a program, returns 0 if no key is pressed and otherwise returns the ascii code of the pressed key.
-        See also: 1/ getType 
+        See also: 1/ getType
         Ex1:getKey()
-        
         '''
         return GiacMethods['getKey'](self,*args)
 
@@ -6584,11 +6068,10 @@ cdef class GiacMethods_base:
         Help for getNum:
         getNum(Expr)
         Returns the numerator of the unsimplified expression (except for rational number).
-        See also: 1/ numer 2/ denom 3/ getDenom 4/ f2nd 
+        See also: 1/ numer 2/ denom 3/ getDenom 4/ f2nd
         Ex1:getNum(25/15)
         Ex2:getNum((x^3-1)/(x^2-1))
         Ex3:getNum(1+(x^3-1)/x^2)
-        
         '''
         return GiacMethods['getNum'](self,*args)
 
@@ -6597,12 +6080,11 @@ cdef class GiacMethods_base:
         Help for getType:
         getType(Expr)
         Returns the type of the argument (STR,EXPR,FUNC,NUM,LIST,MAT,VAR,NONE,PIC...).
-        See also: 1/ getKey 
+        See also: 1/ getKey
         Ex1:getType("aze")
         Ex2:getType(2+i)
         Ex3:getType(x->cos(2*x))
         Ex4:getType(1.414)
-        
         '''
         return GiacMethods['getType'](self,*args)
 
@@ -6611,9 +6093,8 @@ cdef class GiacMethods_base:
         Help for get_edge_attribute:
         get_edge_attribute(Graph(G),Edge(e),Seq(tag1=value1,tag2=value2,..))
         Returns the attributes tag1, tag2, ... assigned to edge e in G as a sequence of the corresponding values.
-        See also: 1/ discard_edge_attribute 2/ set_edge_attribute 3/ list_edge_attributes 
+        See also: 1/ discard_edge_attribute 2/ set_edge_attribute 3/ list_edge_attributes
         Ex1:get_edge_attribute(cycle_graph(3),[1,2],"cost")
-        
         '''
         return GiacMethods['get_edge_attribute'](self,*args)
 
@@ -6622,9 +6103,8 @@ cdef class GiacMethods_base:
         Help for get_edge_weight:
         get_edge_weight(Graph(G),Edge(e))
         Returns the weight of the edge e in the weighted graph G.
-        See also: 1/ is_weighted 2/ make_weighted 3/ set_edge_weight 4/ weight_matrix 
+        See also: 1/ is_weighted 2/ make_weighted 3/ set_edge_weight 4/ weight_matrix
         Ex1:get_edge_weight(graph(%{[[1,2],5],[[2,3],6]%}),[1,2])
-        
         '''
         return GiacMethods['get_edge_weight'](self,*args)
 
@@ -6633,9 +6113,8 @@ cdef class GiacMethods_base:
         Help for get_graph_attribute:
         get_graph_attribute(Graph(G),Seq(tag1=value1,tag2=value2,..))
         Return the graph attributes tag1, tag2, ..., as a sequence of the corresponding values.
-        See also: 1/ discard_graph_attribute 2/ set_graph_attribute 3/ list_graph_attributes 
+        See also: 1/ discard_graph_attribute 2/ set_graph_attribute 3/ list_graph_attributes
         Ex1:get_graph_attribute(cycle_graph(3),"name")
-        
         '''
         return GiacMethods['get_graph_attribute'](self,*args)
 
@@ -6644,9 +6123,8 @@ cdef class GiacMethods_base:
         Help for get_vertex_attribute:
         get_vertex_attribute(Graph(G),Vrtx(v),Seq(tag1=value1,tag2=value2,..))
         Returns the attributes tag1, tag2, ... assigned to vertex v in G as a sequence of the corresponding values.
-        See also: 1/ discard_vertex_attribute 2/ set_vertex_attribute 3/ list_vertex_attributes 
+        See also: 1/ discard_vertex_attribute 2/ set_vertex_attribute 3/ list_vertex_attributes
         Ex1:get_vertex_attribute(cycle_graph(3),1,"supply")
-        
         '''
         return GiacMethods['get_vertex_attribute'](self,*args)
 
@@ -6655,10 +6133,9 @@ cdef class GiacMethods_base:
         Help for girth:
         girth(Graph(G))
         Returns the length of the shortest cycle in the undirected unweighted graph G.
-        See also: 1/ odd_girth 
+        See also: 1/ odd_girth
         Ex1:girth(graph("petersen"))
         Ex2:girth(hypercube_graph(3))
-        
         '''
         return GiacMethods['girth'](self,*args)
 
@@ -6667,10 +6144,9 @@ cdef class GiacMethods_base:
         Help for gl_showaxes:
         gl_showaxes(Opt=Boolean)
         Option that shows or hides axes.
-        See also: 1/ switch_axes 2/ axes 
+        See also: 1/ switch_axes 2/ axes
         Ex1: gl_showaxes=true;plot(sin(x))
-        Ex2: gl_showaxes=false;plot(sin(x)) 
-        
+        Ex2: gl_showaxes=false;plot(sin(x))
         '''
         return GiacMethods['gl_showaxes'](self,*args)
 
@@ -6679,9 +6155,8 @@ cdef class GiacMethods_base:
         Help for grad:
         grad(Expr(Xpr),LstVar)
         Returns the gradient of the expression Xpr.
-        See also: 1/ hessian 
+        See also: 1/ hessian
         Ex1:grad(2*x^2*y-x*z^3,[x,y,z])
-        
         '''
         return GiacMethods['grad'](self,*args)
 
@@ -6690,10 +6165,9 @@ cdef class GiacMethods_base:
         Help for gramschmidt:
         gramschmidt(Basis(B),ScalarProd(Sp))
         Returns an orthonormal basis of E with basis B for the scalar product Sp.
-        See also: 1/  
+        See also: 1/
         Ex1:gramschmidt(-2)
         Ex2:gramschmidt([1,1+x],(p,q)->integrate(p*q,x,-1,1))
-        
         '''
         return GiacMethods['gramschmidt'](self,*args)
 
@@ -6702,7 +6176,7 @@ cdef class GiacMethods_base:
         Help for graph:
         graph([Lst(V)],[Set(E)],[Mtrx(A)],[options])
         Create an (un)directed (un)weighted graph from vertices V, edges E, and/or adjacency or weight matrix A. All parameters are optional.
-        See also: 1/ digraph 2/ trail 
+        See also: 1/ digraph 2/ trail
         Ex1:graph(5)
         Ex2:graph([a,b,c])
         Ex3:graph([1,2,3],%{[1,2],[2,3],[3,1]%})
@@ -6710,7 +6184,6 @@ cdef class GiacMethods_base:
         Ex5:graph([a,b,c],[[0,2,0],[2,0,3],[0,3,0]])
         Ex6:graph("petersen")
         Ex7:graph([[0,1,1,0],[1,0,0,1],[1,0,0,0],[0,1,0,0]])
-        
         '''
         return GiacMethods['graph'](self,*args)
 
@@ -6719,9 +6192,8 @@ cdef class GiacMethods_base:
         Help for graph_automorphisms:
         graph_automorphisms(Graph(G))
         Returns the sequence of generators of Aut(G), the automorphism group of G. Each element is a permutation in the form of list of disjoint cycles.
-        See also: 1/ cycles2permu 2/ isomorphic_copy 3/ permute_vertices 
+        See also: 1/ cycles2permu 2/ isomorphic_copy 3/ permute_vertices
         Ex1:graph_automorphisms(graph("petersen"))
-        
         '''
         return GiacMethods['graph_automorphisms'](self,*args)
 
@@ -6730,10 +6202,9 @@ cdef class GiacMethods_base:
         Help for graph_charpoly:
         graph_charpoly(Graph(G),[Var(x)])
         Returns the value p(x) of the characteristic polynomial p of G. If x is omitted, a list of coefficients of p is returned.
-        See also: 1/ graph_spectrum 2/ charpoly 
+        See also: 1/ graph_spectrum 2/ charpoly
         Ex1:graph_charpoly(graph(%{[1,2],[2,3]%}))
         Ex2:graph_charpoly(graph("shrikhande"))
-        
         '''
         return GiacMethods['graph_charpoly'](self,*args)
 
@@ -6742,9 +6213,8 @@ cdef class GiacMethods_base:
         Help for graph_complement:
         graph_complement(Graph(G))
         Return the graph with the same vertex set as G, but whose edge (arc) set consists of the edges (arcs) not present in G.
-        See also: 1/ edges 
+        See also: 1/ edges
         Ex1:graph_complement(cycle_graph(5))
-        
         '''
         return GiacMethods['graph_complement'](self,*args)
 
@@ -6753,9 +6223,8 @@ cdef class GiacMethods_base:
         Help for graph_diameter:
         graph_diameter(Graph(G))
         Returns the maximum distance between a pair of vertices in G or +infinity if G is disconnected.
-        See also: 1/ allpairs_distance 2/ dijkstra 3/ shortest_path 4/ vertex_distance 
+        See also: 1/ allpairs_distance 2/ dijkstra 3/ shortest_path 4/ vertex_distance
         Ex1:graph_diameter(graph("petersen"))
-        
         '''
         return GiacMethods['graph_diameter'](self,*args)
 
@@ -6764,9 +6233,8 @@ cdef class GiacMethods_base:
         Help for graph_equal:
         graph_equal(Graph(G1),Graph(G2))
         Returns true iff the input graphs G1 and G2 are equal, that is when the sets of vertices and edges of G1 and G2, as well as the orderings of vertices in both graphs, mutually coincide. If the graphs are weighted (they must both be (un)weighted and (un)directed), weights given to the same edge in two graphs must be equal.
-        See also: 1/ edges 2/ graph_vertices 
+        See also: 1/ edges 2/ graph_vertices
         Ex1:graph_equal(graph([1,2,3],%{[1,2],[2,3],[3,1]%}),graph(trail(1,2,3,1)))
-        
         '''
         return GiacMethods['graph_equal'](self,*args)
 
@@ -6775,9 +6243,8 @@ cdef class GiacMethods_base:
         Help for graph_join:
         graph_join(Graph(G),Graph(H))
         Returns the graph obtained by connecting every vertex from G with every vertex from H. The vertex labels in the resulting graph are strings of form "1:u" and "2:v" where u and v are vertices from G and H, respectively.
-        See also: 1/ disjoint_union 2/ graph_union 
+        See also: 1/ disjoint_union 2/ graph_union
         Ex1:graph_join(edges(graph_join(cycle_graph(3),graph(2))))
-        
         '''
         return GiacMethods['graph_join'](self,*args)
 
@@ -6786,9 +6253,8 @@ cdef class GiacMethods_base:
         Help for graph_power:
         graph_power(Graph(G),Intg(k))
         Returns the k-th power of G, where two vertices are connected iff there exists a path of length at most k in the original graph.
-        See also: 1/ adjacency matrix 2/ graph_diameter 3/ shortest_path 
+        See also: 1/ adjacency matrix 2/ graph_diameter 3/ shortest_path
         Ex1:graph_power(edges(graph_power(path_graph(5),3)))
-        
         '''
         return GiacMethods['graph_power'](self,*args)
 
@@ -6797,10 +6263,9 @@ cdef class GiacMethods_base:
         Help for graph_rank:
         graph_rank(Graph(G),[Lst(E)])
         Returns the graph rank of G. If optional set E of edges is given, the rank of the spanning subgraph of G with edge set E is returned.
-        See also: 1/ connected_components 2/ number_of_vertices 
+        See also: 1/ connected_components 2/ number_of_vertices
         Ex1:graph_rank(graph(%{[1,2],[3,4],[4,5]%}))
         Ex2:graph_rank(graph(%{[1,2],[3,4],[4,5]%}),[[1,2],[3,4])
-        
         '''
         return GiacMethods['graph_rank'](self,*args)
 
@@ -6809,9 +6274,8 @@ cdef class GiacMethods_base:
         Help for graph_spectrum:
         graph_spectrum(Graph(G))
         Returns the graph spectrum of G as a list of lists with two elements, each containing an eigenvalue and its multiplicity.
-        See also: 1/ graph_charpoly 2/ seidel_spectrum 3/ is_integer_graph 
+        See also: 1/ graph_charpoly 2/ seidel_spectrum 3/ is_integer_graph
         Ex1:graph_spectrum(cycle_graph(5))
-        
         '''
         return GiacMethods['graph_spectrum'](self,*args)
 
@@ -6820,9 +6284,8 @@ cdef class GiacMethods_base:
         Help for graph_union:
         graph_union(Seq(G1,G2,...))
         Returns the union of the graphs G1, G2, ... The set of vertices of the resulting graph is the union of the sets of vertices of the input graphs and the set of edges of the resulting graph is the union of sets of edges of the input graphs. If the input graphs are weighted, the weight of any common edge is the sum of the weights of that edge in G1, G2, ...
-        See also: 1/ disjoint_union 2/ graph_join 
+        See also: 1/ disjoint_union 2/ graph_join
         Ex1:graph_union(edges(graph_union(cycle_graph(4),path_graph(5))))
-        
         '''
         return GiacMethods['graph_union'](self,*args)
 
@@ -6831,9 +6294,8 @@ cdef class GiacMethods_base:
         Help for graph_vertices:
         graph_vertices(Graph(G))
         Return the list of vertices in G.
-        See also: 1/ add_vertex 2/ graph 3/ neighbors 4/ permute_vertices 5/ relabel_vertices 
+        See also: 1/ add_vertex 2/ graph 3/ neighbors 4/ permute_vertices 5/ relabel_vertices
         Ex1:graph_vertices(graph(%{[a,c],[b,c],[a,b]%}))
-        
         '''
         return GiacMethods['graph_vertices'](self,*args)
 
@@ -6842,11 +6304,10 @@ cdef class GiacMethods_base:
         Help for greduce:
         greduce(Poly,LstPoly,LstVar,[order])
         Returns the remainder of the division of a polynomial by a Groebner basis.
-        See also: 1/ gbasis 
+        See also: 1/ gbasis
         Ex1:greduce(x*y-1,[x^2-y^2,2*x*y-y^2,y^3],[x,y])
         Ex2:greduce(x1^2*x3^2,[x3^3-1,-x2^2-x2*x3-x3^2,x1+x2+x3],[x1,x2,x3],tdeg)
         Ex3:greduce(x1^2*x3^2-x2,[x3^3-1,-x2^2-x2*x3-x3^2,x1+x2+x3],[x1,x2,x3])
-        
         '''
         return GiacMethods['greduce'](self,*args)
 
@@ -6855,9 +6316,8 @@ cdef class GiacMethods_base:
         Help for greedy_color:
         greedy_color(Graph(G),[Permu(p)])
         Returns the list of vertex colors (positive integers) obtained by coloring vertices one at a time [in the order given by permutation p], assigning to it the smallest available color.
-        See also: 1/ is_vertex_colorable 2/ chromatic_number 
+        See also: 1/ is_vertex_colorable 2/ chromatic_number
         Ex1:greedy_color(graph("petersen"))
-        
         '''
         return GiacMethods['greedy_color'](self,*args)
 
@@ -6866,9 +6326,8 @@ cdef class GiacMethods_base:
         Help for grid_graph:
         grid_graph(Intg(m),Intg(n),[triangle])
         Returns a [triangular] grid graph on m*n vertices, where m,n>=2.
-        See also: 1/ torus_grid_graph 
+        See also: 1/ torus_grid_graph
         Ex1:grid_graph(5,8)
-        
         '''
         return GiacMethods['grid_graph'](self,*args)
 
@@ -6877,9 +6336,8 @@ cdef class GiacMethods_base:
         Help for groupermu:
         groupermu(Permut(a),Permut(b))
         Returns the group of permutations generated by a and b.
-        See also: 1/  
+        See also: 1/
         Ex1:groupermu([1,2,0],[3,1,2,0])
-        
         '''
         return GiacMethods['groupermu'](self,*args)
 
@@ -6888,10 +6346,9 @@ cdef class GiacMethods_base:
         Help for hadamard:
         hadamard(Mtrx,Mtrx)
         Hadamard bound of a matrix or element by element multiplication of 2 matrices.
-        See also: 1/ .* 2/ * 
+        See also: 1/ .* 2/ *
         Ex1:hadamard([[1,2],[3,4]])
         Ex2:hadamard([[1,2],[3,4]],[[3,4],[5,6]])
-        
         '''
         return GiacMethods['hadamard'](self,*args)
 
@@ -6900,10 +6357,9 @@ cdef class GiacMethods_base:
         Help for half_cone:
         half_cone(Pnt(A),Vect(v),Real(t),[Real(h)])
         Draws a half-cone with vertex A, direction v and with half_angle=t [and with altitude h].
-        See also: 1/ cone 2/ cylinder 
+        See also: 1/ cone 2/ cylinder
         Ex1:half_cone([0,0,0],[0,0,1],pi/6)
         Ex2:half_cone([0,0,0],[0,1,1],pi/6,-4)
-        
         '''
         return GiacMethods['half_cone'](self,*args)
 
@@ -6912,10 +6368,9 @@ cdef class GiacMethods_base:
         Help for half_line:
         half_line((Pnt or Cplx),(Pnt or Cplx))
         half_line(A,B) draws the half-line AB with A as origin.
-        See also: 1/ line 
+        See also: 1/ line
         Ex1:half_line(i,1+i)
         Ex2:half_line(point(i),point(1+i))
-        
         '''
         return GiacMethods['half_line'](self,*args)
 
@@ -6927,7 +6382,6 @@ cdef class GiacMethods_base:
         Ex1:halftan(sin(x))
         Ex2:halftan(cos(x))
         Ex3:halftan(tan(x))
-        
         '''
         return GiacMethods['halftan'](self,*args)
 
@@ -6936,9 +6390,8 @@ cdef class GiacMethods_base:
         Help for halftan_hyp2exp:
         halftan_hyp2exp(ExprTrig)
         Transforms the trigonometric functions in tan(x/2) and hyperbolic functions to exp.
-        See also: 1/ hyp2exp 2/ halftan 
+        See also: 1/ hyp2exp 2/ halftan
         Ex1:halftan_hyp2exp(sin(x)+sinh(x))
-        
         '''
         return GiacMethods['halftan_hyp2exp'](self,*args)
 
@@ -6947,9 +6400,8 @@ cdef class GiacMethods_base:
         Help for halt:
         halt(NULL)
         Puts a program in step-by-step debug mode.
-        See also: 1/  
+        See also: 1/
         Ex1:halt()
-        
         '''
         return GiacMethods['halt'](self,*args)
 
@@ -6959,7 +6411,6 @@ cdef class GiacMethods_base:
         hamdist(Intg,Intg)
         Bitwise Hamming distance.
         Ex1:hamdist(0x12,0x38)
-        
         '''
         return GiacMethods['hamdist'](self,*args)
 
@@ -6968,9 +6419,8 @@ cdef class GiacMethods_base:
         Help for hamming_window:
         hamming_window(Lst,[Interval(n1..n2)])
         Applies the Hamming windowing function to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ bartlett_hann_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ bartlett_hann_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(hamming_window(randvector(1000,0..1)))
-        
         '''
         return GiacMethods['hamming_window'](self,*args)
 
@@ -6979,9 +6429,8 @@ cdef class GiacMethods_base:
         Help for hann_poisson_window:
         hann_poisson_window(Lst,[Interval(n1..n2)])
         Applies the Hann-Poisson windowing function with parameter a (by default a=1) to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ bartlett_hann_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ bartlett_hann_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(hann_poisson_window(randvector(1000,0..1),2))
-        
         '''
         return GiacMethods['hann_poisson_window'](self,*args)
 
@@ -6990,9 +6439,8 @@ cdef class GiacMethods_base:
         Help for hann_window:
         hann_window(Lst,[Interval(n1..n2)])
         Applies the Hann windowing function to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ bartlett_hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ bartlett_hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(hann_window(randvector(1000,0..1)))
-        
         '''
         return GiacMethods['hann_window'](self,*args)
 
@@ -7001,12 +6449,11 @@ cdef class GiacMethods_base:
         Help for harmonic_conjugate:
         harmonic_conjugate(Line or Pnt(A),Line or Pnt(B),Line or Pnt(C))
         Returns the harmonic conjugate C with respect to A and B of 3 points or of 3 parallel or concurrent lines or the line of conjugates of a point with respect to 2 lines.
-        See also: 1/ is_harmonic 2/ harmonic_division 
+        See also: 1/ is_harmonic 2/ harmonic_division
         Ex1:harmonic_conjugate(0,2,3/2)
         Ex2:harmonic_conjugate(0,1+i,2+2*i)
         Ex3:harmonic_conjugate(line(0,1+i),line(0,3+i),line(0,i))
         Ex4:harmonic_conjugate(line(0,1+i),line(0,3+i),point(3/2+i))
-        
         '''
         return GiacMethods['harmonic_conjugate'](self,*args)
 
@@ -7015,12 +6462,11 @@ cdef class GiacMethods_base:
         Help for harmonic_division:
         harmonic_division(Pnt or Line,Pnt or Line,Pnt or Line,Var)
         Returns 4 points (resp lines) and affects the last argument, such that the 4 points (resp lines) are in a harmonic division and assigns the fourth point to the variable name.
-        See also: 1/ harmonic_conjugate 2/ is_harmonic 
+        See also: 1/ harmonic_conjugate 2/ is_harmonic
         Ex1:harmonic_division(0,2,3/2,D)
         Ex2:harmonic_division(0,1+i,2+2*i,D)
         Ex3:harmonic_division(line(i,0),line(i,1+i),line(i,3+2*i),D)
         Ex4:harmonic_division(line(0,1+i),line(0,3+i),line(0,i),D)
-        
         '''
         return GiacMethods['harmonic_division'](self,*args)
 
@@ -7029,10 +6475,9 @@ cdef class GiacMethods_base:
         Help for has:
         has(Expr,Var)
         Checks if a variable is in an expression.
-        See also: 1/ lname 2/ lvar 
+        See also: 1/ lname 2/ lvar
         Ex1:has(x+y,x)
         Ex2:has(x+y,n)
-        
         '''
         return GiacMethods['has'](self,*args)
 
@@ -7041,10 +6486,9 @@ cdef class GiacMethods_base:
         Help for has_arc:
         has_arc(Graph(G),Edge(e))
         Returns true iff the arc e=[i,j] is contained in digraph G or, if e={i,j} is a set, iff G has both edges [i,j] and [j,i].
-        See also: 1/ edges 2/ has_edge 
+        See also: 1/ edges 2/ has_edge
         Ex1:has_arc(digraph(trail(1,2,3,4,1)),[4,2])
         Ex2:has_arc(digraph(trail(1,2,3,4,1)),%{4,2%})
-        
         '''
         return GiacMethods['has_arc'](self,*args)
 
@@ -7053,9 +6497,8 @@ cdef class GiacMethods_base:
         Help for has_edge:
         has_edge(Graph(G),Edge(e))
         Returns true iff the edge e=[i,j] is contained in undirected graph G.
-        See also: 1/ edges 2/ has_arc 
+        See also: 1/ edges 2/ has_arc
         Ex1:has_edge(graph(trail(1,2,3,4,1)),[2,4])
-        
         '''
         return GiacMethods['has_edge'](self,*args)
 
@@ -7064,7 +6507,7 @@ cdef class GiacMethods_base:
         Help for hasard:
         hasard(Intg(n) or Interval(p..n) or NULL,[Intg(b1) or Lst(L)],[Intg(b2)])
         (hasard n)=a random integer (resp (hasard p,n)=a real or hasard(p..n)=a real function) with uniform distribution in 0..n-1 (resp in [p;n])(hasard= (hasard 0,1)=a random real in [0,1[) or hasard(n,b1,b2)=n integers between b1 and b2 or hasard(n,L)=n elements of L. If hasard has only one argument, () are not necessary (compatibility with turtle language).
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ srand 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ srand
         Ex1: hasard 4
         Ex2: hasard(4)
         Ex3:hasard(0,2)
@@ -7072,7 +6515,6 @@ cdef class GiacMethods_base:
         Ex5: f:=hasard 0..2
         Ex6:hasard(3,1,10)
         Ex7:hasard(3,["r","r","r","b","n"])
-        
         '''
         return GiacMethods['hasard'](self,*args)
 
@@ -7081,11 +6523,10 @@ cdef class GiacMethods_base:
         Help for head:
         head(Vect or Seq or Str)
         Shows the first element of a vector or a sequence or a string.
-        See also: 1/ back 2/ tail 3/ mid 4/ left 5/ right 
+        See also: 1/ back 2/ tail 3/ mid 4/ left 5/ right
         Ex1:head(1,2,3)
         Ex2:head([1,2,3])
         Ex3:head("bonjour")
-        
         '''
         return GiacMethods['head'](self,*args)
 
@@ -7094,11 +6535,10 @@ cdef class GiacMethods_base:
         Help for heading:
         heading(NULL or Real)
         Returns the turtle cap in degrees or turns the turtle in the direction given by the argument.
-        See also: 1/ position 2/ initialise 
+        See also: 1/ position 2/ initialise
         Ex1: cap
         Ex2:heading()
         Ex3:heading(cap 90)
-        
         '''
         return GiacMethods['heading'](self,*args)
 
@@ -7107,8 +6547,7 @@ cdef class GiacMethods_base:
         Help for heapify:
         heapify(List)
         Partial ordering of a list as a heap.
-        See also: 1/ heappush 2/ heappop 
-        
+        See also: 1/ heappush 2/ heappop
         '''
         return GiacMethods['heapify'](self,*args)
 
@@ -7117,8 +6556,7 @@ cdef class GiacMethods_base:
         Help for heappop:
         heappop(List)
         Removes and returns the root node of a heap.
-        See also: 1/ heapify 2/ heappush 
-        
+        See also: 1/ heapify 2/ heappush
         '''
         return GiacMethods['heappop'](self,*args)
 
@@ -7127,8 +6565,7 @@ cdef class GiacMethods_base:
         Help for heappush:
         heappush(List,Object)
         Adds an object in a heap.
-        See also: 1/ heapify 2/ heappop 
-        
+        See also: 1/ heapify 2/ heappop
         '''
         return GiacMethods['heappush'](self,*args)
 
@@ -7137,10 +6574,9 @@ cdef class GiacMethods_base:
         Help for hermite:
         hermite(Intg(n)||Matr(A))
         Returns the Hermite polynomial of degree n or the Hermite normal form for a matrix with polynomial coefficients (I,U such that I*A=U).
-        See also: 1/ legendre 2/ laguerre 3/ smith 4/ ihermite 5/ ismith 
+        See also: 1/ legendre 2/ laguerre 3/ smith 4/ ihermite 5/ ismith
         Ex1:hermite(3)
         Ex2: n:=5; a:=ranm(n,n) % 17; l,u:=hermite(x-a);normal(l*(x-a)-u);
-        
         '''
         return GiacMethods['hermite'](self,*args)
 
@@ -7149,13 +6585,12 @@ cdef class GiacMethods_base:
         Help for hessenberg:
         hessenberg(Mtrx(A),[Intg(n)])
         Matrix reduction to Hessenberg form. Returns [P,B] such that B=inv(P)*A*P, by default n=0 the result is exact else the result is numeric. For n=-1 B is triangular, n=-2 P is orthogonal and if n is prime the result is mod n.
-        See also: 1/ SCHUR 
+        See also: 1/ SCHUR
         Ex1:hessenberg([[1,2,3],[4,5,6],[7,8,1]])
         Ex2:hessenberg([[1,2,3,4],[4,5,6,7],[7,8,9,0],[0,1,2,3]])
         Ex3:hessenberg([[1,2,3],[4,5,6],[7,8,1]],-1)
         Ex4:hessenberg([[1,2,3],[4,5,6],[7,8,1]],-2)
         Ex5:hessenberg([[1,2,3],[4,5,6],[7,8,1]],3)
-        
         '''
         return GiacMethods['hessenberg'](self,*args)
 
@@ -7164,9 +6599,8 @@ cdef class GiacMethods_base:
         Help for hessian:
         hessian(Expr(Xpr),LstVar)
         Returns the hessian of the expression Xpr.
-        See also: 1/ grad 
+        See also: 1/ grad
         Ex1:hessian(2*x^2*y-x*z,[x,y,z])
-        
         '''
         return GiacMethods['hessian'](self,*args)
 
@@ -7175,9 +6609,8 @@ cdef class GiacMethods_base:
         Help for heugcd:
         heugcd(Poly,Poly)
         GCD of 2 polynomials, with the algorithm called heuristic pgcd.
-        See also: 1/ gcd 2/ modgcd 3/ ezgcd 4/ psrgcd 
+        See also: 1/ gcd 2/ modgcd 3/ ezgcd 4/ psrgcd
         Ex1:heugcd(x^4-1,(x-1)^2)
-        
         '''
         return GiacMethods['heugcd'](self,*args)
 
@@ -7186,12 +6619,11 @@ cdef class GiacMethods_base:
         Help for hexagon:
         hexagon(Pnt(A)||Cplx,Pnt(B)||Cplx,[Pnt(P)],[Var(C)],[Var(D)],[Var(E)],[Var(F)])
         Returns and draws the hexagon of side AB (ABCDEF is direct) (in the plane ABP).
-        See also: 1/ isopolygon 2/ polygon 
+        See also: 1/ isopolygon 2/ polygon
         Ex1:hexagon(i,1+i)
         Ex2:hexagon(i,1+i,C,D,E,F)
         Ex3:hexagon(point(0,0,0),point(3,3,3),point(0,0,3))
         Ex4:hexagon(point(0,0,0),point(3,3,3),point(0,0,3),C,D,E,F)
-        
         '''
         return GiacMethods['hexagon'](self,*args)
 
@@ -7200,9 +6632,8 @@ cdef class GiacMethods_base:
         Help for highlight_edges:
         highlight_edges(Graph(G),Edge(e)||Lst(E),[Color(c)||Lst(C)])
         Changes color of edge e resp. colors of edges in E of the input graph V to c resp C (by default red) and returns the modified copy of G.
-        See also: 1/ highlight_vertex 2/ highlight_subgraph 3/ highlight_trail 
+        See also: 1/ highlight_vertex 2/ highlight_subgraph 3/ highlight_trail
         Ex1: draw_graph(highlight_edges(cycle_graph(3),[1,2]))
-        
         '''
         return GiacMethods['highlight_edges'](self,*args)
 
@@ -7211,9 +6642,8 @@ cdef class GiacMethods_base:
         Help for highlight_subgraph:
         highlight_subgraph(Graph(G),Graph(S)||Lst(S1,S2,..),Seq(c1,c2))
         Changes colors of edges and vertices from the sugbraph S or list of subgraphs S1, S2, ... of G to c1 and c2, respectively (red and green by default), and returns the modified copy of G.
-        See also: 1/ highlight_edges 2/ highlight_vertex 3/ highlight_trail 
+        See also: 1/ highlight_edges 2/ highlight_vertex 3/ highlight_trail
         Ex1: draw_graph(highlight_subgraph(cycle_graph(5),path_graph(3)))
-        
         '''
         return GiacMethods['highlight_subgraph'](self,*args)
 
@@ -7222,9 +6652,8 @@ cdef class GiacMethods_base:
         Help for highlight_trail:
         highlight_trail(Graph(G),Trail(t)||Lst(T),[Color(c)||Lst(C)])
         Changes colors of edges in G which lie along the trail t resp. trails in T to c resp. C (by default red) and returns the modified copy of G.
-        See also: 1/ highlight_edges 2/ highlight_subgraph 3/ highlight_vertex 
+        See also: 1/ highlight_edges 2/ highlight_subgraph 3/ highlight_vertex
         Ex1: draw_graph(highlight_trail(cycle_graph(5),trail(1,2,3),green)
-        
         '''
         return GiacMethods['highlight_trail'](self,*args)
 
@@ -7233,9 +6662,8 @@ cdef class GiacMethods_base:
         Help for highlight_vertex:
         highlight_vertex(Graph(G),Vrtx(v)||Lst(V),[Color(c)||Lst(C)])
         Changes the color of vertex v resp. colors of vertices from V in G to c resp. C (green by default) and returns the modified copy of G.
-        See also: 1/ highlight_edges 2/ highlight_subgraph 3/ highlight_trail 
+        See also: 1/ highlight_edges 2/ highlight_subgraph 3/ highlight_trail
         Ex1: draw_graph(highlight_vertex(cycle_graph(3),1))
-        
         '''
         return GiacMethods['highlight_vertex'](self,*args)
 
@@ -7244,9 +6672,8 @@ cdef class GiacMethods_base:
         Help for highpass:
         highpass(Lst(s),Real(c),[Intg(samplerate)])
         Returns the result of applying a simple first-order highpass RC filter with cutoff frequency c (the default samplerate is 44100) to the given signal s.
-        See also: 1/ lowpass 2/ moving_average 
+        See also: 1/ lowpass 2/ moving_average
         Ex1: f:=unapply(periodic(sign(x),x,-1/880,1/880),x):;s:=createwav(apply(f,soundsec(1))):;playsnd(highpass(s,5000))
-        
         '''
         return GiacMethods['highpass'](self,*args)
 
@@ -7255,9 +6682,8 @@ cdef class GiacMethods_base:
         Help for hilbert:
         hilbert(Intg(n))
         Returns the order n Hilbert matrix : Hjk=1/(j+k+1) j,k=1..n.
-        See also: 1/  
+        See also: 1/
         Ex1:hilbert(4)
-        
         '''
         return GiacMethods['hilbert'](self,*args)
 
@@ -7266,7 +6692,7 @@ cdef class GiacMethods_base:
         Help for histogram:
         histogram(Lst(data),[Lst(eff) || Intg(nc) || Real(classmin)],[Real(classsize)])
         Draws the histogram of data, optional arguments are eff (number of data for each data element) or nc the number of classes or the classes minimum and size.
-        See also: 1/ cumulated_frequencies 2/ classes 3/ bar_plot 4/ frequencies 
+        See also: 1/ cumulated_frequencies 2/ classes 3/ bar_plot 4/ frequencies
         Ex1:histogram([1,2,1,1,2,1,2,4,3,3])
         Ex2:histogram([1,2,1,1,2,1,2,4,3,3],0.5,1)
         Ex3:histogram(seq(rand(1000),k,0,100),0,100)
@@ -7275,7 +6701,6 @@ cdef class GiacMethods_base:
         Ex6:histogram([[1.5..1.65,50],[1.65..1.7,20],[1.7..1.8,30]])
         Ex7:histogram(seq(rand(1000),k,0,100),0,100)
         Ex8:histogram(seq(rand(1000),k,0,100),10)
-        
         '''
         return GiacMethods['histogram'](self,*args)
 
@@ -7284,11 +6709,10 @@ cdef class GiacMethods_base:
         Help for hold:
         hold(Expr)
         Returns its argument unevaluated (and also a:=quote(a) purges a).
-        See also: 1/  
+        See also: 1/
         Ex1:hold(1+2)
         Ex2:hold(1/x+1/(x-1))
         Ex3:hold((x+1)*(x-1))
-        
         '''
         return GiacMethods['hold'](self,*args)
 
@@ -7299,7 +6723,6 @@ cdef class GiacMethods_base:
         Make P homogeneous by adding a variable (by default t)
         Ex1:homogeneize(x^2-1)
         Ex2:homogeneize(x^2-y,z)
-        
         '''
         return GiacMethods['homogeneize'](self,*args)
 
@@ -7308,12 +6731,11 @@ cdef class GiacMethods_base:
         Help for homothety:
         homothety(Pnt(C),Real(k),Pnt(A))
         homothety(C,k,A)=point A1 such as vect(C,A1)=k*vect(C,A) i.e in 2d it is the similarity with center C, coeff abs(k) and angle arg(k).
-        See also: 1/ similarity 2/ inversion 
+        See also: 1/ similarity 2/ inversion
         Ex1:homothety(1+i,1/3,i)
         Ex2:homothety(point(1,1,1),1/3,point(0,1,0))
         Ex3: h:=homothety(1+i,1/3);h(i)
         Ex4: h:=homothety(point(1,1,1),1/3);h(point(0,1,0))
-        
         '''
         return GiacMethods['homothety'](self,*args)
 
@@ -7322,12 +6744,11 @@ cdef class GiacMethods_base:
         Help for horner:
         horner(Poly(P),Real(a))
         Returns the value of P(a) calculated with Horner's method. With horner(list_alpha_i,list_x_i,x), evals an interpolation polynomial from the divided differences of x.
-        See also: 1/ convert 2/ base 3/ revlist 
+        See also: 1/ convert 2/ base 3/ revlist
         Ex1:horner(x^2+1,2)
         Ex2:horner([1,0,1],2)
         Ex3:horner(x^2+y*x+y^3-1,2,y)
         Ex4: X:=[0.0,1.0,2.0]; A:=lagrange(X,exp,lagrange); horner(A,X,1.5);
-        
         '''
         return GiacMethods['horner'](self,*args)
 
@@ -7336,14 +6757,13 @@ cdef class GiacMethods_base:
         Help for hybrid_solver:
         hybrid_solver(Opt)
         Argument for fsolve giving the method for solving a system of numerical equations.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],dnewton_solver)
         Ex2: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrid_solver)
         Ex3: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrids_solver)
         Ex4: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridj_solver)
         Ex5: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridsj_solver)
         Ex6: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],newtonj_solver)
-        
         '''
         return GiacMethods['hybrid_solver'](self,*args)
 
@@ -7352,14 +6772,13 @@ cdef class GiacMethods_base:
         Help for hybridj_solver:
         hybridj_solver(Opt)
         Argument for fsolve giving the method for solving a system of numerical equations.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],dnewton_solver)
         Ex2: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrid_solver)
         Ex3: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrids_solver)
         Ex4: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridj_solver)
         Ex5: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridsj_solver)
         Ex6: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],newtonj_solver)
-        
         '''
         return GiacMethods['hybridj_solver'](self,*args)
 
@@ -7368,14 +6787,13 @@ cdef class GiacMethods_base:
         Help for hybrids_solver:
         hybrids_solver(Opt)
         Argument for fsolve giving the method for solving a system of numerical equations.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],dnewton_solver)
         Ex2: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrid_solver)
         Ex3: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrids_solver)
         Ex4: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridj_solver)
         Ex5: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridsj_solver)
         Ex6: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],newtonj_solver)
-        
         '''
         return GiacMethods['hybrids_solver'](self,*args)
 
@@ -7384,14 +6802,13 @@ cdef class GiacMethods_base:
         Help for hybridsj_solver:
         hybridsj_solver(Opt)
         Argument for fsolve giving the method for solving a system of numerical equations.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],dnewton_solver)
         Ex2: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrid_solver)
         Ex3: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrids_solver)
         Ex4: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridj_solver)
         Ex5: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridsj_solver)
         Ex6: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],newtonj_solver)
-        
         '''
         return GiacMethods['hybridsj_solver'](self,*args)
 
@@ -7400,9 +6817,8 @@ cdef class GiacMethods_base:
         Help for hyp2exp:
         hyp2exp(ExprHyperb)
         Transforms the hyperbolic functions to the exponential function.
-        See also: 1/ halftan_hyp2exp 
+        See also: 1/ halftan_hyp2exp
         Ex1:hyp2exp(cosh(x))
-        
         '''
         return GiacMethods['hyp2exp'](self,*args)
 
@@ -7411,12 +6827,11 @@ cdef class GiacMethods_base:
         Help for hyperbola:
         hyperbola(Focus(F1),Focus(F2),(Pnt(M) or Real(a)))
         hyperbola(F1,F2,M)=hyperbola with foci F1,F2 through M or (|MF1-MF2|=2*a geo2d) and hyperbola(p(x,y)) draws the conic if deg(p)=2.
-        See also: 1/ ellipse 2/ parabola 
+        See also: 1/ ellipse 2/ parabola
         Ex1:hyperbola(-1,1,point(1+i))
         Ex2:hyperbola(-1,1,sqrt(5)-1)
         Ex3:hyperbola(point(-1,0,0),point(1,0,0),point(1,1,1))
         Ex4:hyperbola(x^2-y^2+y+2)
-        
         '''
         return GiacMethods['hyperbola'](self,*args)
 
@@ -7425,9 +6840,8 @@ cdef class GiacMethods_base:
         Help for hypercube_graph:
         hypercube_graph(Intg(n))
         Constructs and returns the hypercube graph in dimension n (with 2^n vertices).
-        See also: 1/ graph 
+        See also: 1/ graph
         Ex1:hypercube_graph(3)
-        
         '''
         return GiacMethods['hypercube_graph'](self,*args)
 
@@ -7436,11 +6850,10 @@ cdef class GiacMethods_base:
         Help for iPart:
         iPart(Real||LstReal)
         Returns the argument without its fractional part (type=DOM_FLOAT).
-        See also: 1/ fPart 2/ floor 3/ trunc 
+        See also: 1/ fPart 2/ floor 3/ trunc
         Ex1:iPart(4.3)
         Ex2:iPart(sqrt(2))
         Ex3:iPart(4.3,sqrt(2))
-        
         '''
         return GiacMethods['iPart'](self,*args)
 
@@ -7449,11 +6862,10 @@ cdef class GiacMethods_base:
         Help for iabcuv:
         iabcuv(Intg(a),Intg(b),Intg(c))
         Returns [u,v] such that au+bv=c for 3 integers a,b,c.
-        See also: 1/ iegcd 2/ abcuv 
+        See also: 1/ iegcd 2/ abcuv
         Ex1:iabcuv(21,28,7)
         Ex2:iabcuv(21,28,14)
         Ex3:iabcuv(21,28,1)
-        
         '''
         return GiacMethods['iabcuv'](self,*args)
 
@@ -7462,9 +6874,8 @@ cdef class GiacMethods_base:
         Help for ibasis:
         ibasis(Lst(Vect,..,Vect),Lst(Vect,..,Vect))
         Basis of the intersection of two vector spaces.
-        See also: 1/ basis 
+        See also: 1/ basis
         Ex1:ibasis([[1,0,0],[0,1,0]],[[1,1,1],[0,0,1]])
-        
         '''
         return GiacMethods['ibasis'](self,*args)
 
@@ -7473,13 +6884,12 @@ cdef class GiacMethods_base:
         Help for ibpdv:
         ibpdv(Expr(f(x)),Expr(v(x)),[Var(x)],[Real(a)],[Real(b)])
         Integration by parts of f(x)=u(x)*v'(x) with f(x) as 1st argument and v(x) (or 0) as 2nd argument. You can specify a variable of integration and also calculate the integral (bounds a and b).
-        See also: 1/ ibpu 2/ int 
+        See also: 1/ ibpu 2/ int
         Ex1:ibpdv(ln(x),x)
         Ex2:ibpdv(ln(x),x,x,1,3)
         Ex3:ibpdv(x*ln(x),x^2/2)
         Ex4:ibpdv([x*ln(x),-1],0)
         Ex5:ibpdv(ibpdv(ln(x),x,x,2,3),0,x,2,3)
-        
         '''
         return GiacMethods['ibpdv'](self,*args)
 
@@ -7488,13 +6898,12 @@ cdef class GiacMethods_base:
         Help for ibpu:
         ibpu(Expr(f(x)),Expr(u(x)),[Var(x)],[Real(a)],[Real(b)])
         Integration by parts of f(x)=u(x)*v'(x) with f(x) as 1st argument and u(x) (or 0) as 2nd argument. You can specify a variable of integration and also calculate the integral (bounds a and b).
-        See also: 1/ ibpdv 2/ int 
+        See also: 1/ ibpdv 2/ int
         Ex1:ibpu(ln(x),ln(x))
         Ex2:ibpu(ln(x),ln(x),x,1,3)
         Ex3:ibpu(x*ln(x),ln(x))
         Ex4:ibpu([x*ln(x),-1],0)
         Ex5:ibpu(ibpu(ln(x),ln(x),x,2,3),0,x,2,3)
-        
         '''
         return GiacMethods['ibpu'](self,*args)
 
@@ -7503,10 +6912,9 @@ cdef class GiacMethods_base:
         Help for icdf:
         icdf(Func,FuncParams)
         Inverse cumulative distribution function.
-        See also: 1/ cdf 2/ binomial_icdf 3/ normald_icdf 
+        See also: 1/ cdf 2/ binomial_icdf 3/ normald_icdf
         Ex1:icdf(binomial,10,0.5,0.6)
         Ex2:icdf(normald,0.0,1.0,0.975)
-        
         '''
         return GiacMethods['icdf'](self,*args)
 
@@ -7515,12 +6923,11 @@ cdef class GiacMethods_base:
         Help for ichinrem:
         ichinrem(LstIntg(a,p),LstIntg(b,q))
         Chinese remainders for integers.
-        See also: 1/ gcd 2/ fracmod 3/ chinrem 4/ chrem 
+        See also: 1/ gcd 2/ fracmod 3/ chinrem 4/ chrem
         Ex1:ichinrem([2,7],[3,5])
         Ex2:ichinrem([2%7,3%5])
         Ex3:ichinrem([2%7,3%5,1%9])
         Ex4:ichinrem([(x+1)%2,(x+2)%3,(3*x-1)%5])
-        
         '''
         return GiacMethods['ichinrem'](self,*args)
 
@@ -7529,12 +6936,11 @@ cdef class GiacMethods_base:
         Help for ichrem:
         ichrem(LstIntg(a,p),LstIntg(b,q))
         Chinese remainders for integers.
-        See also: 1/ gcd 2/ fracmod 3/ chinrem 4/ chrem 
+        See also: 1/ gcd 2/ fracmod 3/ chinrem 4/ chrem
         Ex1:ichrem([2,7],[3,5])
         Ex2:ichrem([2%7,3%5])
         Ex3:ichrem([2%7,3%5,1%9])
         Ex4:ichrem([(x+1)%2,(x+2)%3,(3*x-1)%5])
-        
         '''
         return GiacMethods['ichrem'](self,*args)
 
@@ -7543,10 +6949,9 @@ cdef class GiacMethods_base:
         Help for icomp:
         icomp(Intg(n),Intg(k),[zeros=true||false])
         Returns the list of compositions of n into k parts.
-        See also: 1/ sum 
+        See also: 1/ sum
         Ex1:icomp(4,2)
         Ex2:icomp(6,3,zeros=false)
-        
         '''
         return GiacMethods['icomp'](self,*args)
 
@@ -7555,10 +6960,9 @@ cdef class GiacMethods_base:
         Help for icontent:
         icontent(Poly,[Var])
         GCD of the integer coefficients of a polynomial.
-        See also: 1/  
+        See also: 1/
         Ex1:icontent(24x^3+6x^2-12x+18)
         Ex2:icontent(24t^3+6t^2-12t+18,t)
-        
         '''
         return GiacMethods['icontent'](self,*args)
 
@@ -7567,10 +6971,9 @@ cdef class GiacMethods_base:
         Help for icosahedron:
         icosahedron(Pnt(A),Pnt(B),Pnt(C))
         Draws an icosahedron with center A, vertex B and such that the plane ABC contains one vertex among the 5 nearest vertices from B.
-        See also: 1/ octahedron 2/ dodecahedron 3/ cube 4/ tetrahedron 
+        See also: 1/ octahedron 2/ dodecahedron 3/ cube 4/ tetrahedron
         Ex1:icosahedron([0,0,0],[sqrt(5),0,0],[1,2,0])
         Ex2:icosahedron(evalf([0,0,0],[3,2,4],[1,1,0]))
-        
         '''
         return GiacMethods['icosahedron'](self,*args)
 
@@ -7579,9 +6982,8 @@ cdef class GiacMethods_base:
         Help for id:
         id(Seq)
         The name of the identity function (ℝ^n -> ℝ^n).
-        See also: 1/ sq 2/ sqrt 
+        See also: 1/ sq 2/ sqrt
         Ex1:id(1,2,3)
-        
         '''
         return GiacMethods['id'](self,*args)
 
@@ -7590,10 +6992,9 @@ cdef class GiacMethods_base:
         Help for identity:
         identity(Intg(n))
         Returns the identity matrix of specified dimension n.
-        See also: 1/ ranm 
+        See also: 1/ ranm
         Ex1:identity(3)
         Ex2:identity(5)
-        
         '''
         return GiacMethods['identity'](self,*args)
 
@@ -7602,10 +7003,9 @@ cdef class GiacMethods_base:
         Help for idivis:
         idivis(Intg(a) or LstIntg)
         Returns the list of divisors of an integer.
-        See also: 1/ divis 2/ ifactors 
+        See also: 1/ divis 2/ ifactors
         Ex1:idivis(36)
         Ex2:idivis([36,49])
-        
         '''
         return GiacMethods['idivis'](self,*args)
 
@@ -7614,10 +7014,9 @@ cdef class GiacMethods_base:
         Help for idn:
         idn(Intg(n))
         Returns the identity matrix of specified dimension n.
-        See also: 1/ ranm 
+        See also: 1/ ranm
         Ex1:idn(3)
         Ex2:idn(5)
-        
         '''
         return GiacMethods['idn'](self,*args)
 
@@ -7626,11 +7025,10 @@ cdef class GiacMethods_base:
         Help for iegcd:
         iegcd(Intg,Intg)
         Extended greatest common divisor of 2 integers.
-        See also: 1/ gcd 2/ iabcuv 3/ egcd 
+        See also: 1/ gcd 2/ iabcuv 3/ egcd
         Ex1:iegcd(45,75)
         Ex2:iegcd(21,28)
         Ex3:iegcd(30,49)
-        
         '''
         return GiacMethods['iegcd'](self,*args)
 
@@ -7639,10 +7037,9 @@ cdef class GiacMethods_base:
         Help for ifactor:
         ifactor(Intg(a))
         Factorization of an integer into prime factors.
-        See also: 1/ factor 2/ ecm_factor 
+        See also: 1/ factor 2/ ecm_factor
         Ex1:ifactor(50)
         Ex2:ifactor(123456789)
-        
         '''
         return GiacMethods['ifactor'](self,*args)
 
@@ -7651,10 +7048,9 @@ cdef class GiacMethods_base:
         Help for ifactors:
         ifactors(Intg(a) or LstIntg)
         Returns the list of prime factors of an integer (each factor is followed by its multiplicity).
-        See also: 1/ ifactor 2/ factors 
+        See also: 1/ ifactor 2/ factors
         Ex1:ifactors(36)
         Ex2:ifactors([36,52])
-        
         '''
         return GiacMethods['ifactors'](self,*args)
 
@@ -7663,7 +7059,7 @@ cdef class GiacMethods_base:
         Help for ifourier:
         ifourier(Expr(F(s)),[Var(s),[Var(x)]])
         Returns the inverse Fourier transform f(x) of F(s).
-        See also: 1/ fourier 2/ fourier_cn 3/ ifft 
+        See also: 1/ fourier 2/ fourier_cn 3/ ifft
         Ex1:ifourier(2*pi*(Dirac(s)-sign(s)*sin(s)),s,x)
         Ex2:ifourier(-2/(s^2-1),s,x)
         Ex3:ifourier(pi/(exp(pi*s/4)+exp(-pi*s/4)),s,x)
@@ -7671,7 +7067,6 @@ cdef class GiacMethods_base:
         Ex5:ifourier(pi*ugamma(0,4*abs(s)),s,x)
         Ex6:ifourier(fourier(exp(-abs(x)),x,s)^2,s,x)
         Ex7:ifourier(sinc(s),s,x)
-        
         '''
         return GiacMethods['ifourier'](self,*args)
 
@@ -7680,11 +7075,10 @@ cdef class GiacMethods_base:
         Help for igamma:
         igamma(Real(a),Real(x),[1])
         Calculates of gamma at a point (a,x). If a and x>0, igamma(a,x)=int(e^{-t}*t^{a-1},t=0..x), (igamma(a,x,1)=igamma(a,x)/Gamma(a)).
-        See also: 1/ Psi 2/ Beta 3/ Gamma 3/ ugamma 
+        See also: 1/ Psi 2/ Beta 3/ Gamma 3/ ugamma
         Ex1:igamma(5.0,2.0)
         Ex2:igamma(-5.1,2.1)
         Ex3:igamma(5.0,2.0,1)
-        
         '''
         return GiacMethods['igamma'](self,*args)
 
@@ -7693,13 +7087,12 @@ cdef class GiacMethods_base:
         Help for igcd:
         igcd((Intg(a) or Poly),(Intg(b) or Poly))
         Returns the greatest common divisor of 2 polynomials of several variables or of 2 integers or of 2 rationals.
-        See also: 1/ lcm 2/ euler 2/ modgcd 3/ ezgcd 4/ psrgcd 5/ heugcd 6/ Gcd 
+        See also: 1/ lcm 2/ euler 2/ modgcd 3/ ezgcd 4/ psrgcd 5/ heugcd 6/ Gcd
         Ex1:igcd(45,75)
         Ex2:igcd(15/7,50/9)
         Ex3:igcd(x^2-2*x+1,x^3-1)
         Ex4:igcd(t^2-2*t+1,t^2+t-2)
         Ex5:igcd((x^2-1)*(y^2-1)*z^2,x^3*y^3*z+(-(y^3))*z+x^3*z-z)
-        
         '''
         return GiacMethods['igcd'](self,*args)
 
@@ -7708,11 +7101,10 @@ cdef class GiacMethods_base:
         Help for igcdex:
         igcdex(Intg,Intg)
         Extended greatest common divisor of 2 integers.
-        See also: 1/ gcd 2/ iabcuv 3/ egcd 
+        See also: 1/ gcd 2/ iabcuv 3/ egcd
         Ex1:igcdex(45,75)
         Ex2:igcdex(21,28)
         Ex3:igcdex(30,49)
-        
         '''
         return GiacMethods['igcdex'](self,*args)
 
@@ -7721,10 +7113,9 @@ cdef class GiacMethods_base:
         Help for ihermite:
         ihermite(Mtrx(A))
         Hermite normal form of a matrix with coefficients in ℤ : returns L,U such that L is invertible in ℤ, U is upper triangular and U=L*A.
-        See also: 1/ ismith 
+        See also: 1/ ismith
         Ex1:ihermite([[9,-36,30], [-36,192,-180], [30,-180,180]])
         Ex2:ihermite([[1,2,3],[4,5,6],[7,8,9]])
-        
         '''
         return GiacMethods['ihermite'](self,*args)
 
@@ -7733,11 +7124,10 @@ cdef class GiacMethods_base:
         Help for ilaplace:
         ilaplace(Expr,[Var],[IlapVar])
         Inverse Laplace transform of a rational fraction.
-        See also: 1/ laplace 2/ ztrans 3/ invztrans 4/ Heaviside 
+        See also: 1/ laplace 2/ ztrans 3/ invztrans 4/ Heaviside
         Ex1:ilaplace(1/(x^2+1)^2)
         Ex2:ilaplace(s/(s^4-1),s,x)
         Ex3:ilaplace(exp(-s)/s,s,x)
-        
         '''
         return GiacMethods['ilaplace'](self,*args)
 
@@ -7746,11 +7136,10 @@ cdef class GiacMethods_base:
         Help for im:
         im(Cplx)
         Returns the imaginary part of a complex number.
-        See also: 1/ re 2/ conj 
+        See also: 1/ re 2/ conj
         Ex1:im(1+2*i)
         Ex2:im((1+2*i)^2)
         Ex3:im([1+2*i,(1+2*i)^2])
-        
         '''
         return GiacMethods['im'](self,*args)
 
@@ -7759,11 +7148,10 @@ cdef class GiacMethods_base:
         Help for imag:
         imag(Cplx)
         Returns the imaginary part of a complex number.
-        See also: 1/ re 2/ conj 
+        See also: 1/ re 2/ conj
         Ex1:imag(1+2*i)
         Ex2:imag((1+2*i)^2)
         Ex3:imag([1+2*i,(1+2*i)^2])
-        
         '''
         return GiacMethods['imag'](self,*args)
 
@@ -7772,10 +7160,9 @@ cdef class GiacMethods_base:
         Help for image:
         image(Mtrx(M))
         Image of a linear map with matrix M.
-        See also: 1/ ker 2/ rref 
+        See also: 1/ ker 2/ rref
         Ex1:image([[1,2],[3,6]])
         Ex2:image([[1,2,3],[1,3,6],[2,5,9]])
-        
         '''
         return GiacMethods['image'](self,*args)
 
@@ -7784,7 +7171,7 @@ cdef class GiacMethods_base:
         Help for implicitdiff:
         implicitdiff(constr,[depvars],y,diffvars)
         Implicit differentiation.
-        See also: 1/ diff 
+        See also: 1/ diff
         Ex1:implicitdiff(x^2*y+y^2=1,y,x)
         Ex2:implicitdiff(R=P*V/T,P,T)
         Ex3:implicitdiff([x^2+y=z,x+y*z=1],[y(x),z(x)],y,x)
@@ -7803,7 +7190,6 @@ cdef class GiacMethods_base:
         Ex16:implicitdiff(x*y*z,-2x^3+15x^2*y+11y^3-24y=0,[x,z,y],order=1)
         Ex17:implicitdiff(x*y*z,-2x^3+15x^2*y+11y^3-24y=0,[x,z,y],order=2,[1,-1,0])
         Ex18: pd:=implicitdiff(x*y*z,-2x^3+15x^2*y+11y^3-24y=0,[x,z,y],order=4,[0,z,0]);pd[4,0,0]
-        
         '''
         return GiacMethods['implicitdiff'](self,*args)
 
@@ -7812,7 +7198,7 @@ cdef class GiacMethods_base:
         Help for implicitplot:
         implicitplot(Expr,Var1,Var2)
         plotimplicit(f(x,y),x,y) or plotimplicit(f(x,y),[x,y]) draws graph of f(x,y)=0.
-        See also: 1/ plotcontour 2/ unfactored 3/ plotinequation 
+        See also: 1/ plotcontour 2/ unfactored 3/ plotinequation
         Ex1:implicitplot(x^2+y^2-1,x,y)
         Ex2:implicitplot(x^4+y^4=x^2-y^2)
         Ex3:implicitplot(x^2+y^2-1,x,y,unfactored)
@@ -7822,7 +7208,6 @@ cdef class GiacMethods_base:
         Ex7:implicitplot(y^3=x^3-x^2,[x,y],xstep=0.1,ystep=0.1)
         Ex8:implicitplot((x+5)^2+(y+4)^2-1,x=-6..-4,y=-5..-3)
         Ex9:implicitplot((x+5)^2+(y+4)^2-1,[x=-6..-4,y=-5..-3])
-        
         '''
         return GiacMethods['implicitplot'](self,*args)
 
@@ -7832,7 +7217,6 @@ cdef class GiacMethods_base:
         import_graph(Str("path/to/graphname[.dot]"))
         Returns the graph constructed from instructions in the file 'path/to/graphname.dot' (in dot format), or "undef" on failure.
         Ex1:import_graph("K5.dot")
-        
         '''
         return GiacMethods['import_graph'](self,*args)
 
@@ -7841,10 +7225,9 @@ cdef class GiacMethods_base:
         Help for inString:
         inString(Str(l),Elem(e))
         Tests if e is in the string l (returns -1 or k if l[k]=e).
-        See also: 1/ contains 
+        See also: 1/ contains
         Ex1:inString("abcd","b")
         Ex2:inString("abcd","e")
-        
         '''
         return GiacMethods['inString'](self,*args)
 
@@ -7853,10 +7236,9 @@ cdef class GiacMethods_base:
         Help for in_ideal:
         in_ideal(Poly,Lst,LstVar,[order])
         Checks whether a polynomial or list of polynomials belongs to an ideal given by a Grobner basis (2nd argument) with respect to a variable list.
-        See also: 1/ gbasis 2/ greduce 
+        See also: 1/ gbasis 2/ greduce
         Ex1:in_ideal((x+y)^2,[y^2,x^2+2*x*y],[x,y])
         Ex2:in_ideal(x+y,[y^2,x^2+2*x*y],[x,y])
-        
         '''
         return GiacMethods['in_ideal'](self,*args)
 
@@ -7865,9 +7247,8 @@ cdef class GiacMethods_base:
         Help for incidence_matrix:
         incidence_matrix(Graph(G))
         Returns the incidence matrix of G whose rows are indexed by the vertices and columns by the edges (in order defined by the command 'edges').
-        See also: 1/ incident_edges 
+        See also: 1/ incident_edges
         Ex1:incidence_matrix(graph("tetrahedron"))
-        
         '''
         return GiacMethods['incidence_matrix'](self,*args)
 
@@ -7876,9 +7257,8 @@ cdef class GiacMethods_base:
         Help for incident_edges:
         incident_edges(Graph(G),Vrtx(v))
         Returns the list of all edges incident to the vertex v of G (or to the vertices in the list v).
-        See also: 1/ adjacency_matrix 2/ vertex_degree 3/ incidence_matrix 4/ neighbors 
+        See also: 1/ adjacency_matrix 2/ vertex_degree 3/ incidence_matrix 4/ neighbors
         Ex1:incident_edges(cycle_graph(8),[1,5,7])
-        
         '''
         return GiacMethods['incident_edges'](self,*args)
 
@@ -7887,9 +7267,8 @@ cdef class GiacMethods_base:
         Help for incircle:
         incircle((Pnt or Cplx),(Pnt or Cplx),(Pnt or Cplx))
         incircle(A,B,C) draws the incircle of the triangle ABC.
-        See also: 1/ excircle 2/ circumcircle 
+        See also: 1/ excircle 2/ circumcircle
         Ex1:incircle(0,1,1+i)
-        
         '''
         return GiacMethods['incircle'](self,*args)
 
@@ -7898,10 +7277,9 @@ cdef class GiacMethods_base:
         Help for increasing_power:
         increasing_power(:=Intg(0 or 1))
         Pseudo-variable to control the display of polynomials.
-        See also: 1/ cas_setup 
+        See also: 1/ cas_setup
         Ex1: increasing_power:=1
         Ex2: increasing_power:=0
-        
         '''
         return GiacMethods['increasing_power'](self,*args)
 
@@ -7910,9 +7288,8 @@ cdef class GiacMethods_base:
         Help for independence_number:
         independence_number(Graph(G))
         Returns the independence number of G.
-        See also: 1/ clique_number 2/ graph_complement 3/ maximum_clique 4/ maximum_independent_set 
+        See also: 1/ clique_number 2/ graph_complement 3/ maximum_clique 4/ maximum_independent_set
         Ex1:independence_number(complete_graph(3,4))
-        
         '''
         return GiacMethods['independence_number'](self,*args)
 
@@ -7921,9 +7298,8 @@ cdef class GiacMethods_base:
         Help for indets:
         indets(Expr)
         List of variables in the expression.
-        See also: 1/ has 2/ lvar 
+        See also: 1/ has 2/ lvar
         Ex1:indets(exp(x)*2*sin(y))
-        
         '''
         return GiacMethods['indets'](self,*args)
 
@@ -7932,12 +7308,11 @@ cdef class GiacMethods_base:
         Help for index:
         index(Vect,Expr)
         Index of the first position of an object in a list, a string or a set or returns an error message.
-        See also: 1/ find 2/ member 
+        See also: 1/ find 2/ member
         Ex1:index([3,x,1,2,1,3],1)
         Ex2:index([0,1,3,2,4,2,5],2)
         Ex3:index(%{4,3,1,2%},1)
         Ex4:index("abracadabrant","c")
-        
         '''
         return GiacMethods['index'](self,*args)
 
@@ -7946,9 +7321,8 @@ cdef class GiacMethods_base:
         Help for induced_subgraph:
         induced_subgraph(Graph(G),Lst(V))
         Returns the subgraph of G induced by the vertices in list V.
-        See also: 1/ subgraph 
+        See also: 1/ subgraph
         Ex1:induced_subgraph(cycle_graph(6),[1,2,6])
-        
         '''
         return GiacMethods['induced_subgraph'](self,*args)
 
@@ -7957,12 +7331,11 @@ cdef class GiacMethods_base:
         Help for inequationplot:
         inequationplot(Expr,[x=xrange,y=yrange],[xstep],[ystep])
         Shows the graph of the solutions of inequalities with 2 variables.
-        See also: 1/ plotfunc 2/ plotcontour 3/ plotdensity 4/ plotimplicit 
+        See also: 1/ plotfunc 2/ plotcontour 3/ plotdensity 4/ plotimplicit
         Ex1:inequationplot(x^2-y^2<3)
         Ex2:inequationplot(x^2-y^2<3,[x=-2..2,y=-2..2],xstep=0.1,ystep=0.1)
         Ex3:inequationplot(3-(x^2-y^2),[x=-2..2,y=-2..2],xstep=0.1,ystep=0.1)
         Ex4:inequationplot([x+y>3,x^2<y],[x,y],xstep=0.2,ystep=0.2)
-        
         '''
         return GiacMethods['inequationplot'](self,*args)
 
@@ -7971,8 +7344,7 @@ cdef class GiacMethods_base:
         Help for inf:
         inf()
         Plus infinity.
-        See also: 1/ infinity 2/ -infinity 
-        
+        See also: 1/ infinity 2/ -infinity
         '''
         return GiacMethods['inf'](self,*args)
 
@@ -7981,8 +7353,7 @@ cdef class GiacMethods_base:
         Help for infinity:
         infinity()
         Unsigned infinity.
-        See also: 1/ +infinity 2/ -infinity 
-        
+        See also: 1/ +infinity 2/ -infinity
         '''
         return GiacMethods['infinity'](self,*args)
 
@@ -7991,10 +7362,9 @@ cdef class GiacMethods_base:
         Help for insert:
         insert(Vect(l)||Str(l),Intg(n),Val(b))
         Returns l where the element b is of index n.
-        See also: 1/ tail 2/ mid 3/ remove 4/ suppress 
+        See also: 1/ tail 2/ mid 3/ remove 4/ suppress
         Ex1:insert([0,1,2,3],2,5)
         Ex2:insert("0123",2,"5")
-        
         '''
         return GiacMethods['insert'](self,*args)
 
@@ -8003,9 +7373,8 @@ cdef class GiacMethods_base:
         Help for insmod:
         insmod(Str(pwd))
         Installs a dynamic module (by entering the pwd of this file), creates the commands that are, for example, in the file libprogfr
-        See also: 1/ rmmod 2/ lsmod 
+        See also: 1/ rmmod 2/ lsmod
         Ex1:insmod("/home/parisse/giac/src/libprogfr.so")
-        
         '''
         return GiacMethods['insmod'](self,*args)
 
@@ -8014,11 +7383,10 @@ cdef class GiacMethods_base:
         Help for int:
         int(Expr,[Var(x)],[Real(a)],[Real(b)])
         Indefinite integral, you can specify a variable of integration or calculate the integral (bounds a and b).
-        See also: 1/ Int 2/ diff 3/ plotarea 4/ romberg 5/ gaussquad 
+        See also: 1/ Int 2/ diff 3/ plotarea 4/ romberg 5/ gaussquad
         Ex1:int(1/x)
         Ex2:int(1/(4+t^2),t)
         Ex3:int(1/(1-x^4),x,2,3)
-        
         '''
         return GiacMethods['int'](self,*args)
 
@@ -8027,12 +7395,11 @@ cdef class GiacMethods_base:
         Help for intDiv:
         intDiv(Intg(a),Intg(b))
         Euclidean quotient of 2 integers.
-        See also: 1/ irem 2/ smod 3/ quo 
+        See also: 1/ irem 2/ smod 3/ quo
         Ex1:intDiv(125,15)
         Ex2:intDiv(125,41)
         Ex3:intDiv(-7,3)
         Ex4:intDiv(25+12*i,5+7*i)
-        
         '''
         return GiacMethods['intDiv'](self,*args)
 
@@ -8041,13 +7408,12 @@ cdef class GiacMethods_base:
         Help for integer:
         integer(Opt)
         DOM_INT or integer or DOM_int is an integer which is the type of an integer variable, it is the value of the type command. DOM_INT is used for integers < 2^31. It is also an option of the assume command.
-        See also: 1/ type 2/ assume 3/ DOM_FLOAT 4/ DOM_SYMBOLIC 
+        See also: 1/ type 2/ assume 3/ DOM_FLOAT 4/ DOM_SYMBOLIC
         Ex1: type(2^31)
         Ex2: DOM_INT+0
         Ex3: assume(a,DOM_INT)
         Ex4: assume(a,integer)
         Ex5: a:=2;type(a)
-        
         '''
         return GiacMethods['integer'](self,*args)
 
@@ -8056,11 +7422,10 @@ cdef class GiacMethods_base:
         Help for integrate:
         integrate(Expr,[Var(x)],[Real(a)],[Real(b)])
         Indefinite integral, you can specify a variable of integration or calculate the integral (bounds a and b).
-        See also: 1/ Int 2/ diff 3/ plotarea 4/ romberg 5/ gaussquad 
+        See also: 1/ Int 2/ diff 3/ plotarea 4/ romberg 5/ gaussquad
         Ex1:integrate(1/x)
         Ex2:integrate(1/(4+t^2),t)
         Ex3:integrate(1/(1-x^4),x,2,3)
-        
         '''
         return GiacMethods['integrate'](self,*args)
 
@@ -8069,11 +7434,10 @@ cdef class GiacMethods_base:
         Help for integrer:
         integrer(Expr,[Var(x)],[Real(a)],[Real(b)])
         Indefinite integral, you can specify a variable of integration or calculate the integral (bounds a and b).
-        See also: 1/ Int 2/ diff 3/ plotarea 4/ romberg 5/ gaussquad 
+        See also: 1/ Int 2/ diff 3/ plotarea 4/ romberg 5/ gaussquad
         Ex1:integrer(1/x)
         Ex2:integrer(1/(4+t^2),t)
         Ex3:integrer(1/(1-x^4),x,2,3)
-        
         '''
         return GiacMethods['integrer'](self,*args)
 
@@ -8082,13 +7446,12 @@ cdef class GiacMethods_base:
         Help for inter:
         inter(Curve,Curve,[Pnt])
         With 2 arguments (resp 3 arguments) gives the intersection of 2 curves or surfaces as a vector (resp a point close to the point given as third argument).
-        See also: 1/ intersect 2/ head 
+        See also: 1/ intersect 2/ head
         Ex1:inter(line(i,1-i),circle(0,1))
         Ex2:inter(line(i,1-i),circle(0,1),point(-i))
         Ex3:inter(plane(x=y+3),cone([0,0,0],[0,0,1],pi/6))
         Ex4:inter(plane(x=y+3),cone([0,0,0],[0,0,1],pi/6))
         Ex5:inter(line(i,1-i),circle(0,1))[0]
-        
         '''
         return GiacMethods['inter'](self,*args)
 
@@ -8097,10 +7460,9 @@ cdef class GiacMethods_base:
         Help for interactive_odeplot:
         interactive_odeplot(Expr,VectVar)
         Draws (in DispG) a solution for each point t0+i*y0 clicked with the mouse (Esc=halt).
-        See also: 1/ odeplot 2/ plotfield 3/ odesolve 4/ desolve 
+        See also: 1/ odeplot 2/ plotfield 3/ odesolve 4/ desolve
         Ex1:interactive_odeplot(sin(t*y),[t,y])
         Ex2:interactive_odeplot(-t*y,[t,y])
-        
         '''
         return GiacMethods['interactive_odeplot'](self,*args)
 
@@ -8109,10 +7471,9 @@ cdef class GiacMethods_base:
         Help for interactive_plotode:
         interactive_plotode(Expr,VectVar)
         Draws (in DispG) a solution for each point t0+i*y0 clicked with the mouse (Esc=halt).
-        See also: 1/ odeplot 2/ plotfield 3/ odesolve 4/ desolve 
+        See also: 1/ odeplot 2/ plotfield 3/ odesolve 4/ desolve
         Ex1:interactive_plotode(sin(t*y),[t,y])
         Ex2:interactive_plotode(-t*y,[t,y])
-        
         '''
         return GiacMethods['interactive_plotode'](self,*args)
 
@@ -8121,7 +7482,7 @@ cdef class GiacMethods_base:
         Help for interp:
         interp((Lst_xk,Lst_yk)||Mtrx_2*n||(Lst_xk,Fnc(f)),[Var||[]||lagrange])
         Returns the polynomial of degree n-1 such that P(xk)=yk=f(x_k) k=0..n-1 or the list of divided differences if the last argument is lagrange.
-        See also: 1/ spline 
+        See also: 1/ spline
         Ex1:interp([1,3,4],[0,1,2])
         Ex2:interp([1,3,4],[0,1,2],t)
         Ex3: f(x):=exp(-x); lagrange([1,3,4],f)
@@ -8133,7 +7494,6 @@ cdef class GiacMethods_base:
         Ex9: f(x):=exp(x)-1;lagrange([-1,0,1],f)
         Ex10:interp([0,1,2],[1,exp(1),exp(2)],lagrange)
         Ex11:interp([0,1,2],exp,lagrange)
-        
         '''
         return GiacMethods['interp'](self,*args)
 
@@ -8142,11 +7502,10 @@ cdef class GiacMethods_base:
         Help for interval:
         interval(Opt)
         Option of the convert or convertir command.
-        See also: 1/ interval 
+        See also: 1/ interval
         Ex1: convert(sqrt(2),interval)
         Ex2: convert(sqrt(2),interval,20)
         Ex3: convert(sqrt(2)*sin(2)+sqrt(2)*cos(2),interval,20)
-        
         '''
         return GiacMethods['interval'](self,*args)
 
@@ -8155,10 +7514,9 @@ cdef class GiacMethods_base:
         Help for interval2center:
         interval2center(Interval or Real)
         Returns the center of the interval or the object.
-        See also: 1/ center2interval 
+        See also: 1/ center2interval
         Ex1:interval2center(2..5)
         Ex2:interval2center(3)
-        
         '''
         return GiacMethods['interval2center'](self,*args)
 
@@ -8167,9 +7525,8 @@ cdef class GiacMethods_base:
         Help for interval_graph:
         interval_graph(Seq||Lst(a..b,c..d,...))
         Returns the interval graph with respect to intervals a..b, c..d, ... on the real line. It has one vertex per interval and two vertices are connected iff the corresponding intervals intersect.
-        See also: 1/ graph 2/ kneser_graph 
+        See also: 1/ graph 2/ kneser_graph
         Ex1:interval_graph([0..8,1..pi,exp(1)..20,7..18,11..14,17..24,23..25])
-        
         '''
         return GiacMethods['interval_graph'](self,*args)
 
@@ -8178,10 +7535,9 @@ cdef class GiacMethods_base:
         Help for inv:
         inv(Expr||Mtrx)
         Returns the inverse of an expression or matrix.
-        See also: 1/ Inv 
+        See also: 1/ Inv
         Ex1:inv(9/5)
         Ex2:inv([[1,2],[3,4]])
-        
         '''
         return GiacMethods['inv'](self,*args)
 
@@ -8190,10 +7546,9 @@ cdef class GiacMethods_base:
         Help for inverse:
         inverse(Expr||Mtrx)
         Returns the inverse of an expression or matrix.
-        See also: 1/ Inv 
+        See also: 1/ Inv
         Ex1:inverse(9/5)
         Ex2:inverse([[1,2],[3,4]])
-        
         '''
         return GiacMethods['inverse'](self,*args)
 
@@ -8202,12 +7557,11 @@ cdef class GiacMethods_base:
         Help for inversion:
         inversion(Pnt(C),Real(k),Pnt(A))
         inversion(C,k,A)=point A1 such that A1 is on line(C,A) and algebraic mesure of (CA1*CA)=k.
-        See also: 1/ homothety 
+        See also: 1/ homothety
         Ex1:inversion(i,1/2,1+i)
         Ex2:inversion([1,1,1],-1/2,point(-1,-1,-1))
         Ex3: inver:=inversion(i,1/2);inver(i)
         Ex4: inver:=inversion([1,1,1],-1/2);inver(point(-1,-1,-1))
-        
         '''
         return GiacMethods['inversion'](self,*args)
 
@@ -8216,10 +7570,9 @@ cdef class GiacMethods_base:
         Help for invisible_point:
         invisible_point(Opt)
         Option of the display command for a point.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: F:=display(point(2+1.5*i),point_point)
         Ex2: F:=display(point(2+1.5*i),rhombus_point)
-        
         '''
         return GiacMethods['invisible_point'](self,*args)
 
@@ -8228,11 +7581,10 @@ cdef class GiacMethods_base:
         Help for invlaplace:
         invlaplace(Expr,[Var],[IlapVar])
         Inverse Laplace transform of a rational fraction.
-        See also: 1/ laplace 2/ ztrans 3/ invztrans 4/ Heaviside 
+        See also: 1/ laplace 2/ ztrans 3/ invztrans 4/ Heaviside
         Ex1:invlaplace(1/(x^2+1)^2)
         Ex2:invlaplace(s/(s^4-1),s,x)
         Ex3:invlaplace(exp(-s)/s,s,x)
-        
         '''
         return GiacMethods['invlaplace'](self,*args)
 
@@ -8241,10 +7593,9 @@ cdef class GiacMethods_base:
         Help for invztrans:
         invztrans(Expr,[Var],[InvZtransVar])
         Inverse z transform of a rational fraction.
-        See also: 1/ ztrans 2/ laplace 3/ invlaplace 
+        See also: 1/ ztrans 2/ laplace 3/ invlaplace
         Ex1:invztrans(1/(x^2+1)^2)
         Ex2:invztrans(z/(z^4-1),z,n)
-        
         '''
         return GiacMethods['invztrans'](self,*args)
 
@@ -8253,12 +7604,11 @@ cdef class GiacMethods_base:
         Help for iquo:
         iquo(Intg(a),Intg(b))
         Euclidean quotient of 2 integers.
-        See also: 1/ irem 2/ smod 3/ quo 
+        See also: 1/ irem 2/ smod 3/ quo
         Ex1:iquo(125,15)
         Ex2:iquo(125,41)
         Ex3:iquo(-7,3)
         Ex4:iquo(25+12*i,5+7*i)
-        
         '''
         return GiacMethods['iquo'](self,*args)
 
@@ -8267,11 +7617,10 @@ cdef class GiacMethods_base:
         Help for iquorem:
         iquorem(Intg(a),Intg(b))
         Euclidean quotient and remainder of 2 integers.
-        See also: 1/ irem 2/ iquo 3/ quorem 
+        See also: 1/ irem 2/ iquo 3/ quorem
         Ex1:iquorem(125,15)
         Ex2:iquorem(125,41)
         Ex3:iquorem(25+12*i,5+7*i)
-        
         '''
         return GiacMethods['iquorem'](self,*args)
 
@@ -8280,9 +7629,8 @@ cdef class GiacMethods_base:
         Help for iratrecon:
         iratrecon(Expr(Xpr),Intg(n))
         Returns the fraction a/b such as b*Xpr=a mod n, -sqrt(n)/2<a<=sqrt(n)/2 and 0<=b<sqrt(n)/2.
-        See also: 1/ mod 2/ smod 
+        See also: 1/ mod 2/ smod
         Ex1:iratrecon(41,121)
-        
         '''
         return GiacMethods['iratrecon'](self,*args)
 
@@ -8291,12 +7639,11 @@ cdef class GiacMethods_base:
         Help for irem:
         irem(Intg(a),Intg(b))
         Euclidean remainder of 2 integers.
-        See also: 1/ iquo 2/ smod 3/ rem 4/ mod 
+        See also: 1/ iquo 2/ smod 3/ rem 4/ mod
         Ex1:irem(125,15)
         Ex2:irem(125,41)
         Ex3:irem(-7,3)
         Ex4:irem(25+12*i,5+7*i)
-        
         '''
         return GiacMethods['irem'](self,*args)
 
@@ -8305,11 +7652,10 @@ cdef class GiacMethods_base:
         Help for isPrime:
         isPrime(Intg(a))
         Primality testing (=true or false).
-        See also: 1/ prevprime 2/ nextprime 3/ is_prime 4/ is_pseudoprime 
+        See also: 1/ prevprime 2/ nextprime 3/ is_prime 4/ is_pseudoprime
         Ex1:isPrime(1999)
         Ex2:isPrime(9856989898997)
         Ex3:isPrime(9856989898997789789)
-        
         '''
         return GiacMethods['isPrime'](self,*args)
 
@@ -8318,9 +7664,8 @@ cdef class GiacMethods_base:
         Help for is_acyclic:
         is_acyclic(Graph(G))
         Returns true iff digraph G has no topological ordering.
-        See also: 1/ topologic_sort 2/ topological_sort 
+        See also: 1/ topologic_sort 2/ topological_sort
         Ex1:is_acyclic(digraph(%{[c,a],[c,b],[c,d],[a,d],[b,d],[a,b]%}))
-        
         '''
         return GiacMethods['is_acyclic'](self,*args)
 
@@ -8329,10 +7674,9 @@ cdef class GiacMethods_base:
         Help for is_arborescence:
         is_arborescence(Graph(G))
         Returns true iff the directed and unweighted graph G is an arborescence.
-        See also: 1/ is_acyclic 2/ is_forest 3/ is_tree 
+        See also: 1/ is_acyclic 2/ is_forest 3/ is_tree
         Ex1:is_arborescence(digraph(%{[1,2],[1,3]%}))
         Ex2:is_arborescence(digraph(%{[1,2],[2,3],[3,1]%}))
-        
         '''
         return GiacMethods['is_arborescence'](self,*args)
 
@@ -8341,11 +7685,10 @@ cdef class GiacMethods_base:
         Help for is_biconnected:
         is_biconnected(Graph(G))
         Returns true iff G is biconnected.
-        See also: 1/ biconnected_components 2/ is_connected 3/ is_triconnected 
+        See also: 1/ biconnected_components 2/ is_connected 3/ is_triconnected
         Ex1:is_biconnected(path_graph(5))
         Ex2:is_biconnected(cycle_graph(5))
         Ex3:is_biconnected(graph("petersen"))
-        
         '''
         return GiacMethods['is_biconnected'](self,*args)
 
@@ -8354,9 +7697,8 @@ cdef class GiacMethods_base:
         Help for is_bipartite:
         is_bipartite(Graph(G),[Var(P)])
         Returns true iff G is bipartite graph [and assign to P the list of partitions represented as lists of vertices].
-        See also: 1/ random_bipartite_graph 2/ draw_graph 
+        See also: 1/ random_bipartite_graph 2/ draw_graph
         Ex1:is_bipartite(graph("desargues"))
-        
         '''
         return GiacMethods['is_bipartite'](self,*args)
 
@@ -8365,9 +7707,8 @@ cdef class GiacMethods_base:
         Help for is_clique:
         is_clique(Graph(G))
         Returns true iff undirected graph G is a clique (a complete graph).
-        See also: 1/ clique_number 2/ induced_subgraph 3/ maximum_clique 
+        See also: 1/ clique_number 2/ induced_subgraph 3/ maximum_clique
         Ex1:is_clique(complete_graph(3))
-        
         '''
         return GiacMethods['is_clique'](self,*args)
 
@@ -8376,11 +7717,10 @@ cdef class GiacMethods_base:
         Help for is_collinear:
         is_collinear(LstPnt)
         Returns 1 if the points are aligned, 2 if the points are the same and 0 otherwise.
-        See also: 1/ is_concyclic 
+        See also: 1/ is_concyclic
         Ex1:is_collinear(0,i,1+i,2*i)
         Ex2:is_collinear(point(0),point(1+i),point(2,2),point(-1-i))
         Ex3:is_collinear(point(0,0,0),point(1,1,0),point(2,2,0),point(-1,-1,1))
-        
         '''
         return GiacMethods['is_collinear'](self,*args)
 
@@ -8389,10 +7729,9 @@ cdef class GiacMethods_base:
         Help for is_concyclic:
         is_concyclic(LstPnt)
         Returns 1 if the points are on a circle and 0 otherwise.
-        See also: 1/ is_collinear 
+        See also: 1/ is_collinear
         Ex1:is_concyclic(0,i,1+i,1,1/2+i*(1/2+sqrt(2)/2))
         Ex2:is_concyclic(1,-1,i,-i,1+i,-1-i)
-        
         '''
         return GiacMethods['is_concyclic'](self,*args)
 
@@ -8401,7 +7740,7 @@ cdef class GiacMethods_base:
         Help for is_conjugate:
         is_conjugate(Crcle||Line,Pnt||Line,Pnt||Line,[Pnt||Line])
         Returns 1 if the 3 (resp 4) arguments are conjugate with respect to the circle (resp 2 lines) and 0 otherwise.
-        See also: 1/ harmonic_conjugate 2/ pole 3/ polar 
+        See also: 1/ harmonic_conjugate 2/ pole 3/ polar
         Ex1:is_conjugate(circle(0,1+i),point(1-i),point(3+i))
         Ex2:is_conjugate(circle(0,1),point((1+i)/2),line(1+i,2))
         Ex3:is_conjugate(circle(0,1),line(1+i,2),point((1+i)/2))
@@ -8412,7 +7751,6 @@ cdef class GiacMethods_base:
         Ex8:is_conjugate(line(0,1+i),line(0,3+i),line(0,i),point(3/2+i))
         Ex9:is_conjugate(line(0,1+i),line(0,3+i),point(3/2+i),line(0,i))
         Ex10:is_conjugate(line(0,1+i),line(0,3+i),point(i),point(3/2+i))
-        
         '''
         return GiacMethods['is_conjugate'](self,*args)
 
@@ -8421,11 +7759,10 @@ cdef class GiacMethods_base:
         Help for is_connected:
         is_connected(Graph(G))
         Returns true iff G is connected.
-        See also: 1/ connected_components 2/ is_biconnected 3/ is_triconnected 
+        See also: 1/ connected_components 2/ is_biconnected 3/ is_triconnected
         Ex1:is_connected(path_graph(5))
         Ex2:is_connected(cycle_graph(5))
         Ex3:is_connected(graph_complement(complete_graph(3,4)))
-        
         '''
         return GiacMethods['is_connected'](self,*args)
 
@@ -8435,7 +7772,6 @@ cdef class GiacMethods_base:
         is_coplanar(Pnt,Pnt,Pnt,Pnt)
         Test if 4 points are in the same plane.
         Ex1:is_coplanar([0,0,0],[1,2,-3],[1,1,-2],[2,1,-3])
-        
         '''
         return GiacMethods['is_coplanar'](self,*args)
 
@@ -8445,7 +7781,6 @@ cdef class GiacMethods_base:
         is_cospherical(Pnt,Pnt,Pnt,Pnt)
         Test if 5 points are on the same sphere.
         Ex1:is_cospherical([-1,0,0],[1,0,0],[0,1,0],[0,-1,0],[0,0,1])
-        
         '''
         return GiacMethods['is_cospherical'](self,*args)
 
@@ -8454,9 +7789,8 @@ cdef class GiacMethods_base:
         Help for is_cut_set:
         is_cut_set(Graph(G),Lst(E))
         Returns true if removing edges in the list E from G increases the number of connected components of G, else returns false.
-        See also: 1/ connected_components 2/ delete_edge 
+        See also: 1/ connected_components 2/ delete_edge
         Ex1:is_cut_set(graph(trail(1,2,3,4,5,6,4,1,3)),[[1,4],[3,4]])
-        
         '''
         return GiacMethods['is_cut_set'](self,*args)
 
@@ -8465,10 +7799,9 @@ cdef class GiacMethods_base:
         Help for is_cycle:
         is_cycle(Lst)
         Returns 1 if the argument is a cycle and 0 otherwise.
-        See also: 1/ is_permu 2/ cycle2perm 3/ cycles2permu 
+        See also: 1/ is_permu 2/ cycle2perm 3/ cycles2permu
         Ex1:is_cycle([1,0,5])
         Ex2:is_cycle([1,0,5,1])
-        
         '''
         return GiacMethods['is_cycle'](self,*args)
 
@@ -8477,9 +7810,8 @@ cdef class GiacMethods_base:
         Help for is_directed:
         is_directed(Graph(G))
         Returns true iff G is directed.
-        See also: 1/ is_weighted 2/ digraph 3/ make_directed 
+        See also: 1/ is_weighted 2/ digraph 3/ make_directed
         Ex1:is_directed(digraph(3))
-        
         '''
         return GiacMethods['is_directed'](self,*args)
 
@@ -8488,10 +7820,9 @@ cdef class GiacMethods_base:
         Help for is_element:
         is_element(Pnt,GeoObj)
         Returns 1 if the point is on the geometric object and 0 otherwise.
-        See also: 1/ element 2/ member 3/ contains 
+        See also: 1/ element 2/ member 3/ contains
         Ex1:is_element(point(i),square(0,1))
         Ex2:is_element(point(i),circle(point(0),point(2)))
-        
         '''
         return GiacMethods['is_element'](self,*args)
 
@@ -8500,11 +7831,10 @@ cdef class GiacMethods_base:
         Help for is_equilateral:
         is_equilateral(Pnt||Cplx,Pnt||Cplx,Pnt||Cplx)
         Returns 1 if the 3 points (or the object) form an equilateral triangle and 0 otherwise.
-        See also: 1/ is_isosceles 2/ is_rectangle 
+        See also: 1/ is_isosceles 2/ is_rectangle
         Ex1:is_equilateral(0,2,1+i*sqrt(3))
         Ex2:is_equilateral(point(0),point(1+i),point(2,2))
         Ex3:is_equilateral(triangle(0,2,1+i*sqrt(3)))
-        
         '''
         return GiacMethods['is_equilateral'](self,*args)
 
@@ -8513,12 +7843,11 @@ cdef class GiacMethods_base:
         Help for is_eulerian:
         is_eulerian(Graph(G),[Var(T)])
         Returns true iff G is eulerian [and writes the corresponding eulerian trail to T].
-        See also: 1/ path_graph 2/ trail 
+        See also: 1/ path_graph 2/ trail
         Ex1:is_eulerian(complete_graph(4))
         Ex2:is_eulerian(complete_graph(5))
         Ex3:is_eulerian(graph(trail(1,2,3,1,4,3,5,4)),T)
         Ex4:is_eulerian(digraph(%{[1,4],[1,3],[2,1],[3,2],[4,5],[5,1]%}))
-        
         '''
         return GiacMethods['is_eulerian'](self,*args)
 
@@ -8527,9 +7856,8 @@ cdef class GiacMethods_base:
         Help for is_forest:
         is_forest(Graph(G))
         Returns true iff G is a forest (disjoint union of trees).
-        See also: 1/ is_tree 
+        See also: 1/ is_tree
         Ex1:is_forest(graph(trail(1,2,3,4),trail(5,2,6,7),trail(8,9,10)))
-        
         '''
         return GiacMethods['is_forest'](self,*args)
 
@@ -8538,9 +7866,8 @@ cdef class GiacMethods_base:
         Help for is_graphic_sequence:
         is_graphic_sequence(Lst(L))
         Returns true iff there exists a graph with degree sequence equal to the list L.
-        See also: 1/ degree_sequence 2/ sequence_graph 
+        See also: 1/ degree_sequence 2/ sequence_graph
         Ex1:is_graphic_sequence([3,2,4,2,3,4,5,7])
-        
         '''
         return GiacMethods['is_graphic_sequence'](self,*args)
 
@@ -8549,11 +7876,10 @@ cdef class GiacMethods_base:
         Help for is_hamiltonian:
         is_hamiltonian(Graph(G),[Var(hc)])
         Returns true if G is a Hamiltonian graph (and stores the Hamiltonian circuit in hc if unassigned identifier is given), else returns false.
-        See also: 1/ traveling_salesman 
+        See also: 1/ traveling_salesman
         Ex1:is_hamiltonian(graph("petersen"))
         Ex2:is_hamiltonian(hypercube_graph(5),C)
         Ex3:is_hamiltonian(digraph(%{[1,2],[1,3],[2,3],[2,4],[3,2],[3,4],[4,1]%}))
-        
         '''
         return GiacMethods['is_hamiltonian'](self,*args)
 
@@ -8562,10 +7888,9 @@ cdef class GiacMethods_base:
         Help for is_harmonic:
         is_harmonic(Pnt or Cplx,Pnt or Cplx,Pnt or Cplx,Pnt or Cplx)
         Returns 1 if the 4 points are in a harmonic division and 0 otherwise.
-        See also: 1/ is_conjugate 
+        See also: 1/ is_conjugate
         Ex1:is_harmonic(0,2,3/2,3)
         Ex2:is_harmonic(0,1+i,1,i)
-        
         '''
         return GiacMethods['is_harmonic'](self,*args)
 
@@ -8574,10 +7899,9 @@ cdef class GiacMethods_base:
         Help for is_harmonic_circle_bundle:
         is_harmonic_circle_bundle(Lst(Crcle))
         Returns 1 if the circles have a common point, 2 if they have the same center, 3 if they are the same and 0 otherwise.
-        See also: 1/ is_harmonic_line_bundle 
+        See also: 1/ is_harmonic_line_bundle
         Ex1:is_harmonic_circle_bundle([circle(0,i),circle(4,i),circle(0,point(1/2))])
         Ex2:is_harmonic_circle_bundle([circle(0,1+i),circle(2,1+i),circle(1+i,point(1-i))])
-        
         '''
         return GiacMethods['is_harmonic_circle_bundle'](self,*args)
 
@@ -8586,10 +7910,9 @@ cdef class GiacMethods_base:
         Help for is_harmonic_line_bundle:
         is_harmonic_line_bundle(Lst(Line))
         Returns 1 if the lines have a common point, 2 if they are parallels, 3 if they are the same and 0 otherwise.
-        See also: 1/ is_harmonic_circle_bundle 
+        See also: 1/ is_harmonic_circle_bundle
         Ex1:is_harmonic_line_bundle([line(0,1+i),line(0,2+i),line(0,1),line(0,3+i)])
         Ex2:is_harmonic_line_bundle([line(0,1+i),line(2,3+i),line(3,4+i),line(-1,i)])
-        
         '''
         return GiacMethods['is_harmonic_line_bundle'](self,*args)
 
@@ -8598,10 +7921,9 @@ cdef class GiacMethods_base:
         Help for is_inside:
         is_inside(Pnt,Polygon or Circle)
         Checks whether a point is inside a polygon or a circle.
-        See also: 1/ is_element 
+        See also: 1/ is_element
         Ex1:is_inside(point(0),circle(-1,1))
         Ex2:is_inside(point(1-i),triangle([1,2-i,3+i]))
-        
         '''
         return GiacMethods['is_inside'](self,*args)
 
@@ -8610,9 +7932,8 @@ cdef class GiacMethods_base:
         Help for is_integer_graph:
         is_integer_graph(Graph(G))
         Returns true iff the spectrum of G consists only of integers.
-        See also: 1/ graph_spectrum 
+        See also: 1/ graph_spectrum
         Ex1:is_integer_graph(graph("levi"))
-        
         '''
         return GiacMethods['is_integer_graph'](self,*args)
 
@@ -8621,9 +7942,8 @@ cdef class GiacMethods_base:
         Help for is_isomorphic:
         is_isomorphic(Graph(G1),Graph(G2),[Var(I)])
         Returns true if the input graphs G1 and G2 are isomorphic, else returns false. If an unassigned identifier 'I' is given, the isomorphism is stored to it in form of a list.
-        See also: 1/ isomorphic_copy 2/ permute_vertices 
+        See also: 1/ isomorphic_copy 2/ permute_vertices
         Ex1: G1:=graph("petersen"); G2:=kneser_graph(5,2); is_isomorphic(G1,G2,I)
-        
         '''
         return GiacMethods['is_isomorphic'](self,*args)
 
@@ -8632,11 +7952,10 @@ cdef class GiacMethods_base:
         Help for is_isosceles:
         is_isosceles(Pnt or Cplx,Pnt or Cplx,Pnt or Cplx)
         Returns 1, 2 or 3 if the 3 points (or the object) form an isosceles triangle with equal sides at vertex 1, 2, or 3, returns 4 if the 3 points (or the object) form an equilateral triangle and 0 otherwise.
-        See also: 1/ is_equilateral 2/ is_right_triangle 
+        See also: 1/ is_equilateral 2/ is_right_triangle
         Ex1:is_isosceles(0,i,1+i)
         Ex2:is_isosceles(point(0),point(1+i),point(2,2))
         Ex3:is_isosceles(triangle(0,i,1+i))
-        
         '''
         return GiacMethods['is_isosceles'](self,*args)
 
@@ -8645,11 +7964,10 @@ cdef class GiacMethods_base:
         Help for is_network:
         is_network(Graph(G),[Vrtx(s),Vrtx(t)])
         Returns true if G is a network with the source s and sink t, else returns false. If s,t are not given, the output is a sequence of two sets of vertices: sources and sinks.
-        See also: 1/ random_network 2/ maxflow 
+        See also: 1/ random_network 2/ maxflow
         Ex1:is_network(digraph(trail(1,2,3,4,5,6,4,7)))
         Ex2:is_network(digraph(trail(1,2,3,4,5,6,4,7)),1,7)
         Ex3:is_network(digraph(trail(1,2,3,4,5,6,4,1)))
-        
         '''
         return GiacMethods['is_network'](self,*args)
 
@@ -8658,11 +7976,10 @@ cdef class GiacMethods_base:
         Help for is_orthogonal:
         is_orthogonal(Line||Crcle,Line||Crcle)
         Returns 1 if the 2 circles are orthogonal (orthogonal tangents at a point of intersection) or if the 2 lines are orthogonal and 0 otherwise.
-        See also: 1/ is_parallel 2/ is_perpendicular 
+        See also: 1/ is_parallel 2/ is_perpendicular
         Ex1:is_orthogonal(line(0,1+i),line(1,i))
         Ex2:is_orthogonal(circle(0,1+i),circle(2,1+i))
         Ex3:is_orthogonal(line([2,3,-2],[-1,-1,-1]),line([1,0,0],[1,2,8]))
-        
         '''
         return GiacMethods['is_orthogonal'](self,*args)
 
@@ -8671,11 +7988,10 @@ cdef class GiacMethods_base:
         Help for is_parallel:
         is_parallel(Line or Plan ,Line or Plan)
         Returns 1 if 2 lines are parallel and 0 otherwise.
-        See also: 1/ is_perpendicular 
+        See also: 1/ is_perpendicular
         Ex1:is_parallel(line(0,i),line(1,1+i))
         Ex2:is_parallel(line([2,3,-2],[-1,-1,-1]),plane([-1,-1,-1],[1,2,-3],[0,0,0]))
         Ex3:is_parallel(line([0,0,0],[-1,-1,-1]),line([2,3,-2],[-1,-1,-1]))
-        
         '''
         return GiacMethods['is_parallel'](self,*args)
 
@@ -8684,11 +8000,10 @@ cdef class GiacMethods_base:
         Help for is_parallelogram:
         is_parallelogram(Pnt or Cplx,Pnt or Cplx,Pnt or Cplx,Pnt or Cplx)
         Returns 1,2,3 or 4 if the 4 points (or the object) form a parallelogram, (2 for a rhombus, 3 for a rectangle, 4 for a square) and 0 otherwise.
-        See also: 1/ est_rectangle 2/ is_square 3/ is_rhombus 
+        See also: 1/ est_rectangle 2/ is_square 3/ is_rhombus
         Ex1:is_parallelogram(0,i,1+i,1)
         Ex2:is_parallelogram(1,-1,i,-i)
         Ex3:is_parallelogram(sommets(parallelogram(1,-1,-i,C)))
-        
         '''
         return GiacMethods['is_parallelogram'](self,*args)
 
@@ -8697,10 +8012,9 @@ cdef class GiacMethods_base:
         Help for is_permu:
         is_permu(Lst)
         Returns 1 if the argument is a permutation and 0 otherwise.
-        See also: 1/ is_cycle 2/ permu2cycles 
+        See also: 1/ is_cycle 2/ permu2cycles
         Ex1:is_permu([4,2,3,1])
         Ex2:is_permu([4,2,3,1,0])
-        
         '''
         return GiacMethods['is_permu'](self,*args)
 
@@ -8709,12 +8023,11 @@ cdef class GiacMethods_base:
         Help for is_perpendicular:
         is_perpendicular(Line or Plan,Line or Plan)
         Returns 1 if 2 lines are perpendicular.
-        See also: 1/ is_parallel 2/ is_orthogonal 
+        See also: 1/ is_parallel 2/ is_orthogonal
         Ex1:is_perpendicular(line(0,i),line(1,1+i))
         Ex2:is_perpendicular(line([2,3,-2],[-1,-1,-1]),line([1,0,0],[1,2,8]))
         Ex3:is_perpendicular(plane([0,0,0],[1,2,-3],[1,1,-2]),plane([-1,-1,-1],[1,2,-3],[0,0,0]))
         Ex4:is_perpendicular(line([2,3,-2],[-1,-1,-1]),plane([0,0,0],[1,2,-3],[1,1,-2]))
-        
         '''
         return GiacMethods['is_perpendicular'](self,*args)
 
@@ -8723,10 +8036,9 @@ cdef class GiacMethods_base:
         Help for is_planar:
         is_planar(Graph(G))
         Returns true iff G is planar.
-        See also: 1/ draw_graph 2/ random_planar 
+        See also: 1/ draw_graph 2/ random_planar
         Ex1:is_planar(complete_graph(4))
         Ex2:is_planar(complete_graph(5))
-        
         '''
         return GiacMethods['is_planar'](self,*args)
 
@@ -8735,12 +8047,11 @@ cdef class GiacMethods_base:
         Help for is_prime:
         is_prime(Intg,[1 || 2])
         Mixed or "p-1" Pocklington [1] or APRCL test [2] (returns the coefficients for a proof of primality, 1 or 0).
-        See also: 1/ prevprime 2/ nextprime 3/ is_pseudoprime 4/ isprime 
+        See also: 1/ prevprime 2/ nextprime 3/ is_pseudoprime 4/ isprime
         Ex1:is_prime(1999)
         Ex2:is_prime(9856989898997)
         Ex3:is_prime(9856989898997789789)
         Ex4:is_prime(9856989898997789789,1)
-        
         '''
         return GiacMethods['is_prime'](self,*args)
 
@@ -8749,11 +8060,10 @@ cdef class GiacMethods_base:
         Help for is_pseudoprime:
         is_pseudoprime(Intg)
         Pseudo-prime test (0 not prime, 1 probably prime, 2 prime).
-        See also: 1/ prevprime 2/ nextprime 3/ is_prime 
+        See also: 1/ prevprime 2/ nextprime 3/ is_prime
         Ex1:is_pseudoprime(1999)
         Ex2:is_pseudoprime(9856989898997)
         Ex3:is_pseudoprime(9856989898997789789)
-        
         '''
         return GiacMethods['is_pseudoprime'](self,*args)
 
@@ -8762,14 +8072,13 @@ cdef class GiacMethods_base:
         Help for is_rectangle:
         is_rectangle(Pnt||Cplx,Pnt||Cplx,Pnt||Cplx,[Pnt||Cplx])
         Returns 1, 2 or 3 if the 3 points (or the object) form a right triangle with right angle at vertex 1, 2 or 3 and 0 otherwise [or 1 if the 4 points (or the object) form a rectangle, 2 if the 4 points (or the object) form a square and 0 otherwise].
-        See also: 1/ is_equilateral 2/ is_isosceles 3/ is_parallelogram 4/ is_rhombus 5/ is_square 
+        See also: 1/ is_equilateral 2/ is_isosceles 3/ is_parallelogram 4/ is_rhombus 5/ is_square
         Ex1:is_rectangle(0,i,1+i)
         Ex2:is_rectangle(point(0),point(1+i),point(2,2))
         Ex3:is_rectangle(triangle(0,i,1+i))
         Ex4:is_rectangle(point(0),point(2,2),point(1,3),point(-1,1))
         Ex5:is_rectangle(rectangle(point(0),point(2,2),1/2))
         Ex6:is_rectangle(sommets(rectangle(point(0),point(2,2),1/2)))
-        
         '''
         return GiacMethods['is_rectangle'](self,*args)
 
@@ -8778,9 +8087,8 @@ cdef class GiacMethods_base:
         Help for is_regular:
         is_regular(Graph(G))
         Returns true iff max and min degrees of G are equal (if G is directed then out- and in-degrees must be equal for each vertex of G).
-        See also: 1/ degree_sequence 2/ maximum_degree 3/ minimum_degree 4/ random_regular_graph 5/ vertex_degree 
+        See also: 1/ degree_sequence 2/ maximum_degree 3/ minimum_degree 4/ random_regular_graph 5/ vertex_degree
         Ex1:is_regular(complete_graph(5))
-        
         '''
         return GiacMethods['is_regular'](self,*args)
 
@@ -8789,11 +8097,10 @@ cdef class GiacMethods_base:
         Help for is_rhombus:
         is_rhombus(Pnt or Cplx,Pnt or Cplx,Pnt or Cplx,Pnt or Cplx)
         Returns 1 or 2 if the 4 points (or the object) form a rhombus (2 for a square) and 0 otherwise.
-        See also: 1/ est_rectangle 2/ is_parallelogram 3/ is_square 
+        See also: 1/ est_rectangle 2/ is_parallelogram 3/ is_square
         Ex1:is_rhombus(0,i,1+i,1)
         Ex2:is_rhombus(1,-1,i,-i)
         Ex3:is_rhombus(sommets(rhombus(1,-1,pi/4,C,D)))
-        
         '''
         return GiacMethods['is_rhombus'](self,*args)
 
@@ -8802,11 +8109,10 @@ cdef class GiacMethods_base:
         Help for is_square:
         is_square(Pnt,Pnt,Pnt,Pnt)
         Returns 1 if the 4 points form a square and 0 otherwise.
-        See also: 1/ est_rectangle 2/ is_parallelogram 3/ is_rhombus 
+        See also: 1/ est_rectangle 2/ is_parallelogram 3/ is_rhombus
         Ex1:is_square(0,i,1+i,1)
         Ex2:is_square(1,-1,i,-i)
         Ex3:is_square(sommets(square(0,i,C,D)))
-        
         '''
         return GiacMethods['is_square'](self,*args)
 
@@ -8815,9 +8121,8 @@ cdef class GiacMethods_base:
         Help for is_strongly_connected:
         is_strongly_connected(Graph(G))
         Returns true iff digraph G is strongly connected.
-        See also: 1/ connected_components 2/ is_connected 3/ strongly_connected_components 
+        See also: 1/ connected_components 2/ is_connected 3/ strongly_connected_components
         Ex1:is_strongly_connected(digraph([1,2,3],%{[1,2],[1,3],[2,3],[3,2]%}))
-        
         '''
         return GiacMethods['is_strongly_connected'](self,*args)
 
@@ -8826,10 +8131,9 @@ cdef class GiacMethods_base:
         Help for is_strongly_regular:
         is_strongly_regular(Graph(G),[Var(srg)])
         Returns true iff G is strongly regular and optionally outputs srg=[k,l,m] where k is the vertex degree and l resp. m is the number of common neighbors for adjacent resp. non-adjacent vertices.
-        See also: 1/ is_regular 2/ adjacency_matrix 3/ seidel_spectrum 
+        See also: 1/ is_regular 2/ adjacency_matrix 3/ seidel_spectrum
         Ex1:is_strongly_regular(graph("clebsch"))
         Ex2:is_strongly_regular(graph("shrikhande"),s); s
-        
         '''
         return GiacMethods['is_strongly_regular'](self,*args)
 
@@ -8838,9 +8142,8 @@ cdef class GiacMethods_base:
         Help for is_tournament:
         is_tournament(Graph(G))
         Returns true iff G is a tournament.
-        See also: 1/ has_edge 2/ random_tournament 
+        See also: 1/ has_edge 2/ random_tournament
         Ex1:is_tournament(digraph(%{[1,2],[2,3],[3,1]%}))
-        
         '''
         return GiacMethods['is_tournament'](self,*args)
 
@@ -8849,11 +8152,10 @@ cdef class GiacMethods_base:
         Help for is_tree:
         is_tree(Graph(G))
         Returns true iff G is a tree.
-        See also: 1/ is_forest 2/ random_tree 3/ tree_height 
+        See also: 1/ is_forest 2/ random_tree 3/ tree_height
         Ex1:is_tree(random_tree(15))
         Ex2:is_tree(path_graph(4))
         Ex3:is_tree(cycle_graph(5))
-        
         '''
         return GiacMethods['is_tree'](self,*args)
 
@@ -8862,11 +8164,10 @@ cdef class GiacMethods_base:
         Help for is_triconnected:
         is_triconnected(Graph(G))
         Returns true iff G is triconnected.
-        See also: 1/ is_connected 2/ is_biconnected 
+        See also: 1/ is_connected 2/ is_biconnected
         Ex1:is_triconnected(graph("soccerball"))
         Ex2:is_triconnected(graph("petersen"))
         Ex3:is_triconnected(cycle_graph(5))
-        
         '''
         return GiacMethods['is_triconnected'](self,*args)
 
@@ -8875,10 +8176,9 @@ cdef class GiacMethods_base:
         Help for is_two_edge_connected:
         is_two_edge_connected(Graph(G))
         Returns true iff undirected graph G is two-edge-connected (has no bridges).
-        See also: 1/ two_edge_connected_components 2/ edge_connectivity 
+        See also: 1/ two_edge_connected_components 2/ edge_connectivity
         Ex1:is_two_edge_connected(cycle_graph(4))
         Ex2:is_two_edge_connected(path_graph(4))
-        
         '''
         return GiacMethods['is_two_edge_connected'](self,*args)
 
@@ -8887,10 +8187,9 @@ cdef class GiacMethods_base:
         Help for is_vertex_colorable:
         is_vertex_colorable(Graph(G),Intg(k),[Var(col)])
         Returns true iff the vertices of G can be colored by using at most k colors. If true is returned and an identifier col is given, the colors of the vertices are stored in it.
-        See also: 1/ greedy_color 2/ chromatic_number 
+        See also: 1/ greedy_color 2/ chromatic_number
         Ex1:is_vertex_colorable(graph("petersen"),2)
         Ex2:is_vertex_colorable(graph("petersen"),3,cols)
-        
         '''
         return GiacMethods['is_vertex_colorable'](self,*args)
 
@@ -8899,10 +8198,9 @@ cdef class GiacMethods_base:
         Help for is_weighted:
         is_weighted(Graph(G))
         Returns true iff G is weighted.
-        See also: 1/ get_edge_weight 2/ make_weighted 3/ set_edge_weight 4/ weight_matrix 
+        See also: 1/ get_edge_weight 2/ make_weighted 3/ set_edge_weight 4/ weight_matrix
         Ex1:is_weighted(graph(%{[a,b],[b,c]%})
         Ex2:is_weighted(graph(%{[[a,b],2],[[b,c],3]%})
-        
         '''
         return GiacMethods['is_weighted'](self,*args)
 
@@ -8911,10 +8209,9 @@ cdef class GiacMethods_base:
         Help for ismith:
         ismith(Mtrx(A))
         Smith normal form of a matrix with coefficients in ℤ : returns U,B,V such that U and V are invertible in ℤ, B is diagonal, B[j,j] divides B[j+1,j+1] and B=U*A*V.
-        See also: 1/ ihermite 2/ smith 
+        See also: 1/ ihermite 2/ smith
         Ex1:ismith([[9,-36,30],[-36,192,-180],[30,-180,180]])
         Ex2:ismith([[1,2,3],[4,5,6],[7,8,9]])
-        
         '''
         return GiacMethods['ismith'](self,*args)
 
@@ -8923,9 +8220,8 @@ cdef class GiacMethods_base:
         Help for isobarycenter:
         isobarycenter((Pnt or Cplx),(Pnt or Cplx),(Pnt or Cplx))
         isobarycenter(A,B,C,...) draws the isobarycenter of the n points A,B,C,...
-        See also: 1/ barycenter 2/ midpoint 
+        See also: 1/ barycenter 2/ midpoint
         Ex1:isobarycenter(-1,1-i,i)
-        
         '''
         return GiacMethods['isobarycenter'](self,*args)
 
@@ -8934,9 +8230,8 @@ cdef class GiacMethods_base:
         Help for isom:
         isom(Mtrx)
         Finds elements of a 2-d or 3-d isometry.
-        See also: 1/ mkisom 
+        See also: 1/ mkisom
         Ex1:isom([[0,1],[1,0]])
-        
         '''
         return GiacMethods['isom'](self,*args)
 
@@ -8945,9 +8240,8 @@ cdef class GiacMethods_base:
         Help for isomorphic_copy:
         isomorphic_copy(Graph(G),Permu(sigma))
         Returns a copy of G with neighbors structure reordered according to sigma.
-        See also: 1/ graph_vertices 2/ permute_vertices 3/ relabel_vertices 
+        See also: 1/ graph_vertices 2/ permute_vertices 3/ relabel_vertices
         Ex1:isomorphic_copy(cycle_graph(5),randperm(5))
-        
         '''
         return GiacMethods['isomorphic_copy'](self,*args)
 
@@ -8956,12 +8250,11 @@ cdef class GiacMethods_base:
         Help for isopolygon:
         isopolygon(Pnt,Pnt,[Pnt],Intg(n))
         Draws a regular polygon having abs(n) vertices, given by 2 vertices (or 2 vertices and 1 point of the plane) if n<0 by its center and 1 vertex (or its center, 1 vertex and 1 point of the plane) if n<0.
-        See also: 1/ polygon 2/ hexagon 
+        See also: 1/ polygon 2/ hexagon
         Ex1:isopolygon(0,1,5)
         Ex2:isopolygon(0,1,-5)
         Ex3:isopolygon(point(0,0,0),point(3,3,3),point(0,0,3),5)
         Ex4:isopolygon(point(0,0,0),point(3,3,3),point(0,0,3),-5)
-        
         '''
         return GiacMethods['isopolygon'](self,*args)
 
@@ -8970,12 +8263,11 @@ cdef class GiacMethods_base:
         Help for isosceles_triangle:
         isosceles_triangle((Pnt(A) or Cplx),(Pnt(B) or Cplx),(Angle(t) or Pnt(P) or Lst(P,t)),[Var(C)])
         Draws the isosceles triangle ABC AB=AC and angle(AB,AC)=t (or in the plane ABP angle(AB,AC)=angle(AB,AP) or angle(AB,AC)=t).
-        See also: 1/ triangle 
+        See also: 1/ triangle
         Ex1:isosceles_triangle(i,1,pi/4)
         Ex2:isosceles_triangle(1,i,pi/4,C)
         Ex3:isosceles_triangle(point(0,0,0),point(3,3,3),point(0,0,3))
         Ex4:isosceles_triangle(point(0,0,0),point(3,3,3),[point(0,0,3),pi/4],C)
-        
         '''
         return GiacMethods['isosceles_triangle'](self,*args)
 
@@ -8984,11 +8276,10 @@ cdef class GiacMethods_base:
         Help for isprime:
         isprime(Intg(a))
         Primality testing (=true or false).
-        See also: 1/ prevprime 2/ nextprime 3/ is_prime 4/ is_pseudoprime 
+        See also: 1/ prevprime 2/ nextprime 3/ is_prime 4/ is_pseudoprime
         Ex1:isprime(1999)
         Ex2:isprime(9856989898997)
         Ex3:isprime(9856989898997789789)
-        
         '''
         return GiacMethods['isprime'](self,*args)
 
@@ -8997,10 +8288,9 @@ cdef class GiacMethods_base:
         Help for ithprime:
         ithprime(Intg(n))
         Returns the n-th prime number less than 2*10^8.
-        See also: 1/ nextprime 2/ prevprime 
+        See also: 1/ nextprime 2/ prevprime
         Ex1:ithprime(1229)
         Ex2:ithprime(1000)
-        
         '''
         return GiacMethods['ithprime'](self,*args)
 
@@ -9009,9 +8299,8 @@ cdef class GiacMethods_base:
         Help for jacobi_equation:
         jacobi_equation(Expr(f),Var(x),Var(y),Expr(y0),Var(h),Real(a))
         Returns the Jacobi equation for stationary function y0(x) in a problem of minimizing the functional int(f(x,y,y'),x=a..b).
-        See also: 1/ conjugate_equation 2/ euler_lagrange 
+        See also: 1/ conjugate_equation 2/ euler_lagrange
         Ex1:jacobi_equation(-1/2*y'(t)^2+y(t)^2/2,t,y,sin(t),h,0)
-        
         '''
         return GiacMethods['jacobi_equation'](self,*args)
 
@@ -9020,10 +8309,9 @@ cdef class GiacMethods_base:
         Help for jacobi_linsolve:
         jacobi_linsolve(Mtrx(A),Vect(b),Real(eps),[Int(maxiter)])
         Resolution of a linear system A*X=b by the iterative Jacobi method with eps as error margin and a number of iterations less than maxiter.
-        See also: 1/ gauss_seidel_linsolve 2/ linsolve 
+        See also: 1/ gauss_seidel_linsolve 2/ linsolve
         Ex1: a:=[[100,2],[2,100]];jacobi_linsolve(a,[0,1],1e-12);
-        Ex2: a:=[[100,2],[2,100]];jacobi_linsolve(table(a),[0,1],1e-12); 
-        
+        Ex2: a:=[[100,2],[2,100]];jacobi_linsolve(table(a),[0,1],1e-12);
         '''
         return GiacMethods['jacobi_linsolve'](self,*args)
 
@@ -9032,10 +8320,9 @@ cdef class GiacMethods_base:
         Help for jacobi_symbol:
         jacobi_symbol(Intg,Intg)
         Jacobi symbol.
-        See also: 1/ legendre_symbol 
+        See also: 1/ legendre_symbol
         Ex1:jacobi_symbol(132,5)
         Ex2:jacobi_symbol(132,25)
-        
         '''
         return GiacMethods['jacobi_symbol'](self,*args)
 
@@ -9044,11 +8331,10 @@ cdef class GiacMethods_base:
         Help for jordan:
         jordan(Mtrx)
         Returns the list made by the transition matrix and the Jordan form of a matrix.
-        See also: 1/ egv 2/ egvl 3/ rat_jordan 
+        See also: 1/ egv 2/ egvl 3/ rat_jordan
         Ex1:jordan([[0,2],[1,0]])
         Ex2:jordan([[-2,-2,1],[-2,1,-2],[1,-2,-2]])
         Ex3:jordan([[1,1,-1,2,-1],[2,0,1,-4,-1],[0,1,1,1,1],[0,1,2,0,1],[0,0,-3,3,-1]])
-        
         '''
         return GiacMethods['jordan'](self,*args)
 
@@ -9057,11 +8343,10 @@ cdef class GiacMethods_base:
         Help for kde:
         kde(Lst(L),[options])
         Estimates the probability density function from which the (presumably independent) samples in list L are drawn.
-        See also: 1/ random_variable 2/ sample 
+        See also: 1/ random_variable 2/ sample
         Ex1:kde([1,2,3,2],bandwidth=1/4,exact)
         Ex2: X:=randvar(gammad,mean=5,stddev=2):;kernel_density(sample(X,500),bins=50)
         Ex3: Y:=randvar(normal,mean=5,stddev=1.5):;plot(kernel_density(sample(Y,1000),bins=50,piecewise),x=0..10)
-        
         '''
         return GiacMethods['kde'](self,*args)
 
@@ -9070,9 +8355,8 @@ cdef class GiacMethods_base:
         Help for keep_pivot:
         keep_pivot(Opt)
         Option of the rref command.
-        See also: 1/ rref 
+        See also: 1/ rref
         Ex1: rref([[1,1,0,0,-a1],[0,1,1,0,-a2],[0,0,1,1,-a3],[1,0,0,1,-a4]],keep_pivot)
-        
         '''
         return GiacMethods['keep_pivot'](self,*args)
 
@@ -9081,10 +8365,9 @@ cdef class GiacMethods_base:
         Help for ker:
         ker(Mtrx)
         Kernel of a linear map with matrix M.
-        See also: 1/ image 2/ rref 3/ Nullspace 
+        See also: 1/ image 2/ rref 3/ Nullspace
         Ex1:ker([[1,2],[3,6]])
         Ex2:ker([[1,2,3],[1,3,6],[2,5,9]])
-        
         '''
         return GiacMethods['ker'](self,*args)
 
@@ -9093,10 +8376,9 @@ cdef class GiacMethods_base:
         Help for kernel:
         kernel(Mtrx)
         Kernel of a linear map with matrix M.
-        See also: 1/ image 2/ rref 3/ Nullspace 
+        See also: 1/ image 2/ rref 3/ Nullspace
         Ex1:kernel([[1,2],[3,6]])
         Ex2:kernel([[1,2,3],[1,3,6],[2,5,9]])
-        
         '''
         return GiacMethods['kernel'](self,*args)
 
@@ -9105,11 +8387,10 @@ cdef class GiacMethods_base:
         Help for kernel_density:
         kernel_density(Lst(L),[options])
         Estimates the probability density function from which the (presumably independent) samples in list L are drawn.
-        See also: 1/ random_variable 2/ sample 
+        See also: 1/ random_variable 2/ sample
         Ex1:kernel_density([1,2,3,2],bandwidth=1/4,exact)
         Ex2: X:=randvar(gammad,mean=5,stddev=2):;kernel_density(sample(X,500),bins=50)
         Ex3: Y:=randvar(normal,mean=5,stddev=1.5):;plot(kernel_density(sample(Y,1000),bins=50,piecewise),x=0..10)
-        
         '''
         return GiacMethods['kernel_density'](self,*args)
 
@@ -9118,9 +8399,8 @@ cdef class GiacMethods_base:
         Help for kneser_graph:
         kneser_graph(Intg(n),Intg(k))
         Returns the Kneser graph K(n,k) with comb(n,k) vertices (n<=20).
-        See also: 1/ odd_graph 
+        See also: 1/ odd_graph
         Ex1:kneser_graph(5,2)
-        
         '''
         return GiacMethods['kneser_graph'](self,*args)
 
@@ -9130,7 +8410,6 @@ cdef class GiacMethods_base:
         kolmogorovd(Real(x))
         Kolmogorov-Smirnov distribution, 1-2*sum((-1)^(k-1)*exp(-k^2*x^2),k,1,inf).
         Ex1:kolmogorovd(1.36)
-        
         '''
         return GiacMethods['kolmogorovd'](self,*args)
 
@@ -9139,12 +8418,11 @@ cdef class GiacMethods_base:
         Help for kolmogorovt:
         kolmogorovt(Lst(l1),Lst(l2) || DistribLaw(s))
         Kolmogorov-Smirnov fitness test to a continuous distribution law, between 2 samples l1 l2 (unknown law) or between a sample l1 and a distribution law s.
-        See also: 1/ chisquaret 2/ normalt 3/ studentt 
+        See also: 1/ chisquaret 2/ normalt 3/ studentt
         Ex1:kolmogorovt(randvector(100,normald,0,1),randvector(100,normald,0,1))
         Ex2:kolmogorovt(randvector(100,normald,0,1),randvector(100,normald,3,1))
         Ex3:kolmogorovt(randvector(100,normald,0,1),normald(0,1))
         Ex4:kolmogorovt(randvector(100,normald,0,1),student(2))
-        
         '''
         return GiacMethods['kolmogorovt'](self,*args)
 
@@ -9153,7 +8431,7 @@ cdef class GiacMethods_base:
         Help for kovacicsols:
         kovacicsols(Expr||Lst(eq),[Var(x),[Var(y)]])
         Solves a linear homogeneous second-order ODE eq for y(x) with rational coefficients in variable x.
-        See also: 1/ desolve 
+        See also: 1/ desolve
         Ex1:kovacicsols(y''=y*(1/x-3/16/x^2))
         Ex2:kovacicsols(y''-y*27/(36*(x-1)^2),x,y)
         Ex3:kovacicsols(x''+3*(t^2-t+1)/(16*(t-1)^2*t^2)*x,t,x)
@@ -9161,7 +8439,6 @@ cdef class GiacMethods_base:
         Ex5:kovacicsols(y''+(19-x^2)*y=0,x,y)
         Ex6:kovacicsols((1+x^2)^2*y''+3y=0,x,y)
         Ex7:kovacicsols([48t*(t+1)*(5t-4),8*(25t+16)*(t-2),-(5t+68)],t)
-        
         '''
         return GiacMethods['kovacicsols'](self,*args)
 
@@ -9170,10 +8447,9 @@ cdef class GiacMethods_base:
         Help for kspaths:
         kspaths(Graph(G),Vrtx(s),Vrtx(t),Intg(k))
         Returns a list of k shortest paths from s to t in the (weighted) (di)graph G.
-        See also: 1/ dijkstra 2/ shortest_path 
+        See also: 1/ dijkstra 2/ shortest_path
         Ex1:kspaths(digraph(%{[["C","D"],3],[["C","E"],2],[["D","F"],4],[["E","D"],1],[["E","F"],2],[["E","G"],3],[["F","G"],2],[["F","H"],1],[["G","H"],2]%}),"C","H",5)
         Ex2:kspaths(graph("soccerball"),3,33,4)
-        
         '''
         return GiacMethods['kspaths'](self,*args)
 
@@ -9182,11 +8458,10 @@ cdef class GiacMethods_base:
         Help for l1norm:
         l1norm(Vect)
         Returns the l1 norm of the vector=sum of the absolute values of its coordinates or matrix norm according to l1.
-        See also: 1/ l2norm 2/ maxnorm 3/ matrix_norm 
+        See also: 1/ l2norm 2/ maxnorm 3/ matrix_norm
         Ex1:l1norm(ou triple norme d'une matrice selon l1.)
         Ex2:l1norm([3,-4,2])
         Ex3:l1norm([[1,2,3],[3,-9,6],[4,5,6]])
-        
         '''
         return GiacMethods['l1norm'](self,*args)
 
@@ -9195,12 +8470,11 @@ cdef class GiacMethods_base:
         Help for l2norm:
         l2norm(Vect or Mtrx)
         Returns the l2 norm of a vector = sqrt(x1^2+x2^2+...xn^2) or matrix norm induced by l2 norm.
-        See also: 1/ maxnorm 2/ l1norm 
+        See also: 1/ maxnorm 2/ l1norm
         Ex1:l2norm([1,2])
         Ex2:l2norm([1,2,3,-4])
         Ex3:l2norm([[1,2],[3,-4]])
         Ex4:l2norm([[1,2,3],[3,-9,6],[4,5,6]])
-        
         '''
         return GiacMethods['l2norm'](self,*args)
 
@@ -9209,7 +8483,7 @@ cdef class GiacMethods_base:
         Help for lagrange:
         lagrange((Lst_xk,Lst_yk)||Mtrx_2*n||(Lst_xk,Fnc(f)),[Var||[]||lagrange])
         Returns the polynomial of degree n-1 such that P(xk)=yk=f(x_k) k=0..n-1 or the list of divided differences if the last argument is lagrange.
-        See also: 1/ spline 
+        See also: 1/ spline
         Ex1:lagrange([1,3,4],[0,1,2])
         Ex2:lagrange([1,3,4],[0,1,2],t)
         Ex3: f(x):=exp(-x); lagrange([1,3,4],f)
@@ -9221,7 +8495,6 @@ cdef class GiacMethods_base:
         Ex9: f(x):=exp(x)-1;lagrange([-1,0,1],f)
         Ex10:lagrange([0,1,2],[1,exp(1),exp(2)],lagrange)
         Ex11:lagrange([0,1,2],exp,lagrange)
-        
         '''
         return GiacMethods['lagrange'](self,*args)
 
@@ -9230,9 +8503,8 @@ cdef class GiacMethods_base:
         Help for laguerre:
         laguerre(Intg(n))
         Returns the n-th Laguerre polynomial.
-        See also: 1/ legendre 2/ hermite 
+        See also: 1/ legendre 2/ hermite
         Ex1:laguerre(4)
-        
         '''
         return GiacMethods['laguerre'](self,*args)
 
@@ -9241,11 +8513,10 @@ cdef class GiacMethods_base:
         Help for laplace:
         laplace(Expr,[Var],[LapVar])
         Laplace transform.
-        See also: 1/ invlaplace 2/ ztrans 3/ invztrans 4/ Heaviside 
+        See also: 1/ invlaplace 2/ ztrans 3/ invztrans 4/ Heaviside
         Ex1:laplace(exp(x)*sin(x))
         Ex2:laplace(sin(x)^2,x,s)
         Ex3:laplace(Heaviside(x-1),x,s)
-        
         '''
         return GiacMethods['laplace'](self,*args)
 
@@ -9254,12 +8525,11 @@ cdef class GiacMethods_base:
         Help for laplacian:
         laplacian(Expr(Xpr),LstVar)
         Returns the Laplacian of the expression Xpr with respect to the list of variables and laplacian(n) for integer n returns the matrix of size n of the discrete laplacian in dimension 1.
-        See also: 1/  
+        See also: 1/
         Ex1:laplacian(-2)
         Ex2:laplacian(exp(z)*cos(x*y),[x,y,z])
         Ex3:laplacian(3)
         Ex4:laplacian(3.0)
-        
         '''
         return GiacMethods['laplacian'](self,*args)
 
@@ -9268,10 +8538,9 @@ cdef class GiacMethods_base:
         Help for laplacian_matrix:
         laplacian_matrix(Graph(G),[normal])
         Returns the Laplacian matrix L=D-A of undirected graph G where D resp. A is the degree matrix resp. the adjacency matrix of G.
-        See also: 1/ adjacency_matrix 2/ degree_sequence 3/ number_of_spanning_trees 
+        See also: 1/ adjacency_matrix 2/ degree_sequence 3/ number_of_spanning_trees
         Ex1:laplacian_matrix(graph(trail(1,2,3,4,5,2)))
         Ex2:laplacian_matrix(graph(trail(1,2,3,4,5,2)),normal)
-        
         '''
         return GiacMethods['laplacian_matrix'](self,*args)
 
@@ -9280,10 +8549,9 @@ cdef class GiacMethods_base:
         Help for latex:
         latex(Expr)
         Returns the evaluated expression written in latex.
-        See also: 1/ mathml 
+        See also: 1/ mathml
         Ex1:latex(1/2)
         Ex2:latex((x^4-1)/(x^2+3))
-        
         '''
         return GiacMethods['latex'](self,*args)
 
@@ -9292,9 +8560,8 @@ cdef class GiacMethods_base:
         Help for lcf_graph:
         lcf_graph(Lst(J),[Intg(k)])
         Returns the graph constructed from LCF notation J[^k] given the list of integers J [and a positive integer k, by default 1].
-        See also: 1/ graph 
+        See also: 1/ graph
         Ex1:lcf_graph([-3,3],4)
-        
         '''
         return GiacMethods['lcf_graph'](self,*args)
 
@@ -9303,14 +8570,13 @@ cdef class GiacMethods_base:
         Help for lcm:
         lcm((Intg or Poly),(Intg or Poly))
         Returns the lowest common multiple of 2 polynomials of several variables or of 2 integers or of 2 rationals.
-        See also: 1/ gcd 
+        See also: 1/ gcd
         Ex1:lcm(6,4)
         Ex2:lcm(1251,123)
         Ex3:lcm(5/7,50/9)
         Ex4:lcm(x^2-2*x+1,x^3-1)
         Ex5:lcm(t^2-2*t+1,t^2+t-2)
         Ex6:lcm((x^2-1)*(y^2-1)*z^2,x^3*y^3*z+(-(y^3))*z+x^3*z-z)
-        
         '''
         return GiacMethods['lcm'](self,*args)
 
@@ -9319,10 +8585,9 @@ cdef class GiacMethods_base:
         Help for lcoeff:
         lcoeff(Poly||Lst)
         Returns the coefficient of the term of highest degree of a polynomial (l=leading).
-        See also: 1/ tcoeff 
+        See also: 1/ tcoeff
         Ex1:lcoeff(-2*x^3+x^2+7*x)
         Ex2:lcoeff([-2,1,7,0])
-        
         '''
         return GiacMethods['lcoeff'](self,*args)
 
@@ -9331,12 +8596,11 @@ cdef class GiacMethods_base:
         Help for ldegree:
         ldegree(Poly(P))
         Returns the valuation (degree of the term of lowest degree) of the polynomial P.
-        See also: 1/ degree 2/ tcoeff 
+        See also: 1/ degree 2/ tcoeff
         Ex1:ldegree(x^4+x^3)
         Ex2:ldegree([1,1,0,0,0])
         Ex3:ldegree(x^5+3*x^2)
         Ex4:ldegree([5,0,0,3,0,0])
-        
         '''
         return GiacMethods['ldegree'](self,*args)
 
@@ -9345,12 +8609,11 @@ cdef class GiacMethods_base:
         Help for left:
         left(Equal(a=b) or Interval(a..b) or Str,Intg)
         Returns the left part of an equality, of an interval, of a list or of a string.
-        See also: 1/ right 2/ mid 3/ tail 4/ head 
+        See also: 1/ right 2/ mid 3/ tail 4/ head
         Ex1:left(a=b)
         Ex2:left(x^2+1=5)
         Ex3:left(1..5)
         Ex4:left("abcdefg",3)
-        
         '''
         return GiacMethods['left'](self,*args)
 
@@ -9359,14 +8622,13 @@ cdef class GiacMethods_base:
         Help for left_rectangle:
         left_rectangle(Opt)
         Option of the plotarea command and of the area command.
-        See also: 1/ plotarea 2/ area 
+        See also: 1/ plotarea 2/ area
         Ex1: plotarea(x^2,x=0..1,5,trapezoid)
         Ex2: plotarea(x^2,x=0..1,5,middle_point)
         Ex3: plotarea(x^2,x=0..1,5,right_rectangle)
         Ex4: plotarea(x^2,x=0..1,5,left_rectangle)
         Ex5: area(x^2,x=0..1,5,middle_point)
         Ex6: area(x^2,x=0..1,5,trapezoid)
-        
         '''
         return GiacMethods['left_rectangle'](self,*args)
 
@@ -9375,7 +8637,7 @@ cdef class GiacMethods_base:
         Help for legend:
         legend(Cplx or Lst,Str)
         legend(za,"here") (or legend([20,60],"here")) "here" is written at the point of affix za (or at the pixel position [20,60]) and legend=["m","s"] writes "m","s" as units on the axis.
-        See also: 1/ labels 2/ angle 
+        See also: 1/ labels 2/ angle
         Ex1:legend(1+i,"Hello")
         Ex2:legend(point([0,2,3],"Hello")
         Ex3:legend(point(0,1),"Hello",vert)
@@ -9389,7 +8651,6 @@ cdef class GiacMethods_base:
         Ex11: point(2+i,legend="2+i",display=quadrant2+red)
         Ex12: point([2,2*i],legend="1+i",display=quadrant2+red)
         Ex13: polygon(2,1,i,2*i,legend="1+i",display=quadrant2+red)
-        
         '''
         return GiacMethods['legend'](self,*args)
 
@@ -9398,9 +8659,8 @@ cdef class GiacMethods_base:
         Help for legendre:
         legendre(Intg(n))
         Returns the n-th Legendre polynomial.
-        See also: 1/  
+        See also: 1/
         Ex1:legendre(4)
-        
         '''
         return GiacMethods['legendre'](self,*args)
 
@@ -9409,10 +8669,9 @@ cdef class GiacMethods_base:
         Help for legendre_symbol:
         legendre_symbol(Intg,Intg)
         Legendre symbol.
-        See also: 1/ jacobi_symbol 
+        See also: 1/ jacobi_symbol
         Ex1:legendre_symbol(132,5)
         Ex2:legendre_symbol(132,25)
-        
         '''
         return GiacMethods['legendre_symbol'](self,*args)
 
@@ -9421,11 +8680,10 @@ cdef class GiacMethods_base:
         Help for length:
         length(Lst or Str or Seq)
         Returns the size of a list, a string or a sequence.
-        See also: 1/ sizes 2/ dim 3/ degree 
+        See also: 1/ sizes 2/ dim 3/ degree
         Ex1:length([1,2,3])
         Ex2:length("bonjour")
         Ex3:length(1,2,3)
-        
         '''
         return GiacMethods['length'](self,*args)
 
@@ -9434,11 +8692,10 @@ cdef class GiacMethods_base:
         Help for lgcd:
         lgcd(Seq or Lst)
         Returns the greatest common divisor of a list of polynomials or of integers.
-        See also: 1/ gcd 2/ lcm 3/ euler 4/ content 
+        See also: 1/ gcd 2/ lcm 3/ euler 4/ content
         Ex1:lgcd([45,75,20,15])
         Ex2:lgcd([x^2-2*x+1,x^3-1,x-1])
         Ex3:lgcd(x^2-2*x+1,x^3-1,x-1)
-        
         '''
         return GiacMethods['lgcd'](self,*args)
 
@@ -9447,12 +8704,11 @@ cdef class GiacMethods_base:
         Help for lhs:
         lhs(Equal(a=b) or Interval(a..b) or Str,Intg)
         Returns the left part of an equality, of an interval, of a list or of a string.
-        See also: 1/ right 2/ mid 3/ tail 4/ head 
+        See also: 1/ right 2/ mid 3/ tail 4/ head
         Ex1:lhs(a=b)
         Ex2:lhs(x^2+1=5)
         Ex3:lhs(1..5)
         Ex4:lhs("abcdefg",3)
-        
         '''
         return GiacMethods['lhs'](self,*args)
 
@@ -9461,10 +8717,9 @@ cdef class GiacMethods_base:
         Help for ligne_chapeau_carre:
         ligne_chapeau_carre(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['ligne_chapeau_carre'](self,*args)
 
@@ -9473,10 +8728,9 @@ cdef class GiacMethods_base:
         Help for ligne_chapeau_plat:
         ligne_chapeau_plat(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['ligne_chapeau_plat'](self,*args)
 
@@ -9485,10 +8739,9 @@ cdef class GiacMethods_base:
         Help for ligne_chapeau_rond:
         ligne_chapeau_rond(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['ligne_chapeau_rond'](self,*args)
 
@@ -9497,9 +8750,8 @@ cdef class GiacMethods_base:
         Help for ligne_polygonale:
         ligne_polygonale(Mtrx)
         Draws the polygons joining for j fixed and for k=0..nrows, the points (xk,yk) where xk=element row k column 0 and yk=element row k column j, after the xk are sorted (we obtain ncols-1 polygons).
-        See also: 1/ scatterplot 2/ listplot 3/ polygonscatterplot 
+        See also: 1/ scatterplot 2/ listplot 3/ polygonscatterplot
         Ex1:ligne_polygonale([[1,2,3],[2,0,1],[-1,2,3]])
-        
         '''
         return GiacMethods['ligne_polygonale'](self,*args)
 
@@ -9508,9 +8760,8 @@ cdef class GiacMethods_base:
         Help for ligne_polygonale_pointee:
         ligne_polygonale_pointee(Mtrx)
         Draws the points (xk,yk) and the polygons joining for j fixed and for k=0..nrows, the points (xk,yk) where xk=element row k column 0 et yk=element row k column j, after the xk are sorted (we obtain ncols-1 polygons).
-        See also: 1/ scatterplot 2/ polygonplot 3/ listplot 
+        See also: 1/ scatterplot 2/ polygonplot 3/ listplot
         Ex1:ligne_polygonale_pointee([[1,2,3],[2,0,1],[-1,2,3]])
-        
         '''
         return GiacMethods['ligne_polygonale_pointee'](self,*args)
 
@@ -9519,10 +8770,9 @@ cdef class GiacMethods_base:
         Help for ligne_tiret:
         ligne_tiret(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['ligne_tiret'](self,*args)
 
@@ -9531,10 +8781,9 @@ cdef class GiacMethods_base:
         Help for ligne_tiret_point:
         ligne_tiret_point(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['ligne_tiret_point'](self,*args)
 
@@ -9543,10 +8792,9 @@ cdef class GiacMethods_base:
         Help for ligne_tiret_pointpoint:
         ligne_tiret_pointpoint(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['ligne_tiret_pointpoint'](self,*args)
 
@@ -9555,10 +8803,9 @@ cdef class GiacMethods_base:
         Help for ligne_trait_plein:
         ligne_trait_plein(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['ligne_trait_plein'](self,*args)
 
@@ -9567,14 +8814,13 @@ cdef class GiacMethods_base:
         Help for limit:
         limit(Expr,Var,Val,[Dir(d)])
         Limit of an expression at a limit point (a or +/-infinity) (d=-1 for limit from below and +1 for limit from above).
-        See also: 1/ series 2/ taylor 3/ taux_accroissement 
+        See also: 1/ series 2/ taylor 3/ taux_accroissement
         Ex1:limit((n*tan(x)-tan(n*x))/(sin(n*x)-n*sin(x)),x,0)
         Ex2:limit(sin(x)/(x^2-3*x),x,0)
         Ex3:limit((2*x-1)/exp(1/(x-1)),x,+infinity)
         Ex4:limit(exp(1/x),x,0,1)
         Ex5:limit(exp(1/x),x,0,-1)
         Ex6:limit(taux_accroissement(x^n,1,1+h),h,0)
-        
         '''
         return GiacMethods['limit'](self,*args)
 
@@ -9583,14 +8829,13 @@ cdef class GiacMethods_base:
         Help for limite:
         limite(Expr,Var,Val,[Dir(d)])
         Limit of an expression at a limit point (a or +/-infinity) (d=-1 for limit from below and +1 for limit from above).
-        See also: 1/ series 2/ taylor 3/ taux_accroissement 
+        See also: 1/ series 2/ taylor 3/ taux_accroissement
         Ex1:limite((n*tan(x)-tan(n*x))/(sin(n*x)-n*sin(x)),x,0)
         Ex2:limite(sin(x)/(x^2-3*x),x,0)
         Ex3:limite((2*x-1)/exp(1/(x-1)),x,+infinity)
         Ex4:limite(exp(1/x),x,0,1)
         Ex5:limite(exp(1/x),x,0,-1)
         Ex6:limite(taux_accroissement(x^n,1,1+h),h,0)
-        
         '''
         return GiacMethods['limite'](self,*args)
 
@@ -9599,10 +8844,9 @@ cdef class GiacMethods_base:
         Help for lin:
         lin(Expr)
         Linearization of exponentials.
-        See also: 1/ tlin 2/ texpand 
+        See also: 1/ tlin 2/ texpand
         Ex1:lin(exp(x)^n)
         Ex2:lin((exp(x)^3+exp(x))^2)
-        
         '''
         return GiacMethods['lin'](self,*args)
 
@@ -9611,7 +8855,7 @@ cdef class GiacMethods_base:
         Help for line:
         line(Pnt||Cplx||Eq,[Pnt||slope||Var])
         line(A,B) (resp line(A,slope=m) or line(A,[1,m]) or line(a*x+b*y+c=0) or line(a*x+b*y+c*z+d=0,aa*x+bb*y+cc*z+dd=0) or line(A,u)) draws the line AB (resp the line going through A with slope m or with direction vector u or of equation the argument) in the plane or in the 3D space.
-        See also: 1/ point 2/ plane 3/ slope 
+        See also: 1/ point 2/ plane 3/ slope
         Ex1:line(i,1+i)
         Ex2:line(point(-i),point(1+i))
         Ex3:line(1+i,slope=2)
@@ -9621,7 +8865,6 @@ cdef class GiacMethods_base:
         Ex7:line([1+t,-1+t],t)
         Ex8:line([1+t,2-t,-1+3*t],t)
         Ex9:line(1-i,slope=slope(line(1,2i)))
-        
         '''
         return GiacMethods['line'](self,*args)
 
@@ -9630,9 +8873,8 @@ cdef class GiacMethods_base:
         Help for line_graph:
         line_graph(Graph(G))
         Returns the line graph of undirected graph G.
-        See also: 1/ plane_dual 
+        See also: 1/ plane_dual
         Ex1:line_graph(hypercube_graph(3))
-        
         '''
         return GiacMethods['line_graph'](self,*args)
 
@@ -9641,7 +8883,7 @@ cdef class GiacMethods_base:
         Help for line_inter:
         line_inter(Curve,Curve,[Pnt(A)||LstPnt(L)])
         Gives one of the points of intersection of 2 curves or surfaces (or the intersection near A or not in L).
-        See also: 1/ intersect 2/ head 
+        See also: 1/ intersect 2/ head
         Ex1:line_inter(line(i,1-i),line(0,1))
         Ex2:line_inter(line(i,1-i),circle(0,1))
         Ex3:line_inter(line(i,1+2*i),circle(0,1),[point(i)])
@@ -9649,7 +8891,6 @@ cdef class GiacMethods_base:
         Ex5:line_inter(circle(1,sqrt(2)),circle(0,1))
         Ex6:line_inter(plane(x=y),plane(y=z))
         Ex7:line_inter(line(x=y+1,y=2*z),plane(y=z))
-        
         '''
         return GiacMethods['line_inter'](self,*args)
 
@@ -9661,7 +8902,6 @@ cdef class GiacMethods_base:
         Ex1:line_paper(0.4,pi/3)
         Ex2:line_paper(0.4,pi/3,x=-1..4,y=-2..2)
         Ex3:line_paper(0.5,3*pi/4)
-        
         '''
         return GiacMethods['line_paper'](self,*args)
 
@@ -9670,10 +8910,9 @@ cdef class GiacMethods_base:
         Help for line_segments:
         line_segments(Polygon or Polyedr(P))
         Returns the list of the line_segments (1 line=segment) of the polyhedron P.
-        See also: 1/ polyhedron 
+        See also: 1/ polyhedron
         Ex1:line_segments(polyhedron([0,0,0],[0,5,0],[0,0,5],[1,2,6]))
         Ex2:line_segments(polyhedron([0,0,0],[0,5,0],[0,0,5],[1,2,6]))[2]
-        
         '''
         return GiacMethods['line_segments'](self,*args)
 
@@ -9682,9 +8921,8 @@ cdef class GiacMethods_base:
         Help for linear_interpolate:
         linear_interpolate(Mtrx,xmin,xmax,xstep)
         Makes a regular sample from a polygonal line defined by a 2 row matrix.
-        See also: 1/ polygonplot 
+        See also: 1/ polygonplot
         Ex1:linear_interpolate([[1,2,6,9],[3,4,6,7]],1,9,1)
-        
         '''
         return GiacMethods['linear_interpolate'](self,*args)
 
@@ -9693,10 +8931,9 @@ cdef class GiacMethods_base:
         Help for linear_regression:
         linear_regression(Lst||Mtrx(A),[Lst])
         Returns the coefficients a and b of y=a*x+b ; it is the best line approx the points where the coordinates are the rows of A (or the 2 lists).
-        See also: 1/ polynomial_regression 2/ power_regression 3/ logistic_regression 
+        See also: 1/ polynomial_regression 2/ power_regression 3/ logistic_regression
         Ex1:linear_regression([[0.0,0.0],[1.0,1.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]])
         Ex2:linear_regression([0.0,1.0,2.0,3.0,4.0],[0.0,1.0,4.0,9.0,16.0])
-        
         '''
         return GiacMethods['linear_regression'](self,*args)
 
@@ -9705,10 +8942,9 @@ cdef class GiacMethods_base:
         Help for linear_regression_plot:
         linear_regression_plot(Lst||Mtrx(A),[Lst])
         Returns the plot of y=a*x+b ;it is the best line approx the points where the coordinates are the rows of A (or the 2 lists).
-        See also: 1/ polynomial_regression_plot 2/ power_regression_plot 
+        See also: 1/ polynomial_regression_plot 2/ power_regression_plot
         Ex1:linear_regression_plot([[0.0,0.0],[1.0,1.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]])
         Ex2:linear_regression_plot([0.0,1.0,2.0,3.0,4.0],[0.0,1.0,4.0,9.0,16.0])
-        
         '''
         return GiacMethods['linear_regression_plot'](self,*args)
 
@@ -9717,10 +8953,9 @@ cdef class GiacMethods_base:
         Help for lineariser:
         lineariser(Expr)
         Linearization of exponentials.
-        See also: 1/ tlin 2/ texpand 
+        See also: 1/ tlin 2/ texpand
         Ex1:lineariser(exp(x)^n)
         Ex2:lineariser((exp(x)^3+exp(x))^2)
-        
         '''
         return GiacMethods['lineariser'](self,*args)
 
@@ -9729,10 +8964,9 @@ cdef class GiacMethods_base:
         Help for lineariser_trigo:
         lineariser_trigo(ExprTrig)
         Trigonometric linearization.
-        See also: 1/ texpand 2/ lin 
+        See also: 1/ texpand 2/ lin
         Ex1:lineariser_trigo(sin(x)^3)
         Ex2:lineariser_trigo(cos(x)*cos(y))
-        
         '''
         return GiacMethods['lineariser_trigo'](self,*args)
 
@@ -9741,9 +8975,8 @@ cdef class GiacMethods_base:
         Help for linfnorm:
         linfnorm(Mtrx)
         Matrix norm induced by linfinity norm.
-        See also: 1/ l1norm 2/ l2norm 3/ matrix_norm 4/ frobenius_norm 
+        See also: 1/ l1norm 2/ l2norm 3/ matrix_norm 4/ frobenius_norm
         Ex1:linfnorm([[1,2,3],[3,-9,6],[4,5,6]])
-        
         '''
         return GiacMethods['linfnorm'](self,*args)
 
@@ -9752,17 +8985,16 @@ cdef class GiacMethods_base:
         Help for linsolve:
         linsolve(LstLinEq,LstVar)
         Linear equations system solver.
-        See also: 1/ solve 2/ proot 3/ simult 4/ gaussjord 5/ pivot 6/ ref 7/ conjugate_gradient 
+        See also: 1/ solve 2/ proot 3/ simult 4/ gaussjord 5/ pivot 6/ ref 7/ conjugate_gradient
         Ex1:linsolve([x+y+z=1,x-y=2,2*x-z=3],[x,y,z])
         Ex2:linsolve([m*x+y=a,x+m*y=b],[x,y])
         Ex3:linsolve([x+y-z-1,x-y+1,x-y-z-1]%2,[x,y,z])
         Ex4:linsolve([[3,4],[1,2]],[0,1])
-        Ex5: p,l,u:=lu([[3,4],[1,2]]); linsolve(p,l,u,[0,1]) 
+        Ex5: p,l,u:=lu([[3,4],[1,2]]); linsolve(p,l,u,[0,1])
         Ex6:linsolve([2*x+y+z=1,x+y+2*z=1,x+2*y+z=4],[x,y,z])
         Ex7:linsolve([[2,1,1],[1,1,2],[1,2,1]],[1,1,4])
         Ex8: p,l,u:=lu([[2,1,1],[1,1,2],[1,2,1]]);linsolve(p,l,u,[1,1,4])
         Ex9: a:=[[100,2],[2,100]];linsolve(evalf(a),[0,1]);
-        
         '''
         return GiacMethods['linsolve'](self,*args)
 
@@ -9772,7 +9004,6 @@ cdef class GiacMethods_base:
         linspace(Real(a),Real(b),[Int(n)])
         linspace(a,b,n) creates a list of n elements at regular intervals between a and b, by default n=100 (compatibility with scilab).
         Ex1:linspace(0,1,11)
-        
         '''
         return GiacMethods['linspace'](self,*args)
 
@@ -9781,9 +9012,8 @@ cdef class GiacMethods_base:
         Help for lis_phrase:
         lis_phrase([Str],Var(Var))
         Instruction in a program so that a string expression can be input and stored in var.
-        See also: 1/ input 
+        See also: 1/ input
         Ex1:lis_phrase("nom?",N)
-        
         '''
         return GiacMethods['lis_phrase'](self,*args)
 
@@ -9792,10 +9022,9 @@ cdef class GiacMethods_base:
         Help for list2exp:
         list2exp(List)
         Inverse of exp2list.
-        See also: 1/ exp2list 
+        See also: 1/ exp2list
         Ex1:list2exp([[3,9],[- 1,1]],[x, y])
         Ex2:list2exp(solve(x^2-1=0),x)
-        
         '''
         return GiacMethods['list2exp'](self,*args)
 
@@ -9804,10 +9033,9 @@ cdef class GiacMethods_base:
         Help for list2mat:
         list2mat(Lst(l),Intg(n))
         Returns the matrix with n columns and where terms are the list l completed eventually by 0.
-        See also: 1/ mat2list 
+        See also: 1/ mat2list
         Ex1:list2mat([1,8,4,9],1)
         Ex2:list2mat([1,8,4,9],2)
-        
         '''
         return GiacMethods['list2mat'](self,*args)
 
@@ -9816,8 +9044,7 @@ cdef class GiacMethods_base:
         Help for list_edge_attributes:
         list_edge_attributes(Graph(G),Edge(e))
         Returns the list of attributes assigned to edge e of G in form tag=value.
-        See also: 1/ set_edge_attribute 2/ get_edge_attribute 3/ discard_edge_attribute 
-        
+        See also: 1/ set_edge_attribute 2/ get_edge_attribute 3/ discard_edge_attribute
         '''
         return GiacMethods['list_edge_attributes'](self,*args)
 
@@ -9826,8 +9053,7 @@ cdef class GiacMethods_base:
         Help for list_graph_attributes:
         list_graph_attributes(Graph(G))
         Returns the list of graph attributes of G in form tag=value.
-        See also: 1/ set_graph_attribute 2/ get_graph_attribute 3/ discard_graph_attribute 
-        
+        See also: 1/ set_graph_attribute 2/ get_graph_attribute 3/ discard_graph_attribute
         '''
         return GiacMethods['list_graph_attributes'](self,*args)
 
@@ -9836,8 +9062,7 @@ cdef class GiacMethods_base:
         Help for list_vertex_attributes:
         list_vertex_attributes(Graph(G),Vrtx(v))
         Returns the list of attributes assigned to vertex v of G in form tag=value.
-        See also: 1/ set_vertex_attribute 2/ get_vertex_attribute 3/ discard_vertex_attribute 
-        
+        See also: 1/ set_vertex_attribute 2/ get_vertex_attribute 3/ discard_vertex_attribute
         '''
         return GiacMethods['list_vertex_attributes'](self,*args)
 
@@ -9846,11 +9071,10 @@ cdef class GiacMethods_base:
         Help for listplot:
         listplot(Lst(l)||Mtrx(M))
         Draws the polygonal line through the points with abscissas 0,...,n and ordinates l=[y0,...,yn] or the line through the points with abscissas the first column of M and ordinates the second column.
-        See also: 1/ polygonplot 2/ scatterplot 3/ polygonscatterplot 
+        See also: 1/ polygonplot 2/ scatterplot 3/ polygonscatterplot
         Ex1:listplot([13,10,15,16])
         Ex2:listplot([1,13],[2,10],[3,15],[4,16])
         Ex3:listplot([[0,13],[2,10],[4,15]])
-        
         '''
         return GiacMethods['listplot'](self,*args)
 
@@ -9860,7 +9084,6 @@ cdef class GiacMethods_base:
         lll(Mtrx)
         (S,A,L,O):=lll(M), short basis of a lattice (L*O=A*M=S).
         Ex1:lll([[1234,3452,4521],[3425,2241,1543],[5643,3425,8721]])
-        
         '''
         return GiacMethods['lll'](self,*args)
 
@@ -9869,11 +9092,10 @@ cdef class GiacMethods_base:
         Help for ln:
         ln(Expr or Opt)
         Natural logarithm or option of the convert or convertir command (id trig2exp).
-        See also: 1/ exp 2/ convert 3/ trig2exp 4/ log10 
+        See also: 1/ exp 2/ convert 3/ trig2exp 4/ log10
         Ex1:ln(1)
         Ex2:ln(e)
         Ex3: convert(cos(x),ln)
-        
         '''
         return GiacMethods['ln'](self,*args)
 
@@ -9882,9 +9104,8 @@ cdef class GiacMethods_base:
         Help for lname:
         lname(Expr)
         List of variables in the expression.
-        See also: 1/ has 2/ lvar 
+        See also: 1/ has 2/ lvar
         Ex1:lname(exp(x)*2*sin(y))
-        
         '''
         return GiacMethods['lname'](self,*args)
 
@@ -9893,9 +9114,8 @@ cdef class GiacMethods_base:
         Help for lncollect:
         lncollect(Expr)
         Collects logarithms. Applies ln(a)+n*ln(b)->ln(a*b^n) for integers n.
-        See also: 1/ texpand 
+        See also: 1/ texpand
         Ex1:lncollect(ln(x)+2*ln(y))
-        
         '''
         return GiacMethods['lncollect'](self,*args)
 
@@ -9904,9 +9124,8 @@ cdef class GiacMethods_base:
         Help for lnexpand:
         lnexpand(Expr)
         Expands logarithms.
-        See also: 1/ texpand 2/ expexpand 3/ trigexpand 
+        See also: 1/ texpand 2/ expexpand 3/ trigexpand
         Ex1:lnexpand(ln(3*x))
-        
         '''
         return GiacMethods['lnexpand'](self,*args)
 
@@ -9915,10 +9134,9 @@ cdef class GiacMethods_base:
         Help for locus:
         locus(Pnt,Elem)
         locus(M,A) draws the locus of M (or locus(d,A) draws the envelope of d) when A:=element(C) (C is a curve). The example instructions below must be written in a geometric level on different lines.
-        See also: 1/ envelope 2/ trace 
+        See also: 1/ envelope 2/ trace
         Ex1: A:=element(circle(i,1+i));M:=homothety(0,2,A);locus(M,A)
         Ex2: A:=element(line(x=0));d:=perpen_bisector(1,A);locus(d,A)
-        
         '''
         return GiacMethods['locus'](self,*args)
 
@@ -9927,11 +9145,10 @@ cdef class GiacMethods_base:
         Help for log:
         log(Expr or Opt)
         Natural logarithm or option of the convert or convertir command (id trig2exp).
-        See also: 1/ exp 2/ convert 3/ trig2exp 4/ log10 
+        See also: 1/ exp 2/ convert 3/ trig2exp 4/ log10
         Ex1:log(1)
         Ex2:log(e)
         Ex3: convert(cos(x),ln)
-        
         '''
         return GiacMethods['log'](self,*args)
 
@@ -9940,9 +9157,8 @@ cdef class GiacMethods_base:
         Help for log10:
         log10(Expr)
         Common logarithm (base 10).
-        See also: 1/ alog10 2/ ln 
+        See also: 1/ alog10 2/ ln
         Ex1:log10(10)
-        
         '''
         return GiacMethods['log10'](self,*args)
 
@@ -9951,10 +9167,9 @@ cdef class GiacMethods_base:
         Help for logarithmic_regression:
         logarithmic_regression(Lst||Mtrx(A),[Lst])
         Returns the coefficients a and b of y=a*ln(x)+b : it is the best logarithm which approx the points where the coordinates are the rows of A (or the 2 lists).
-        See also: 1/ exponential_regression 
+        See also: 1/ exponential_regression
         Ex1:logarithmic_regression([[1.0,1.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]])
         Ex2:logarithmic_regression([1.0,2.0,3.0,4.0],[1.0,4.0,9.0,16.0])
-        
         '''
         return GiacMethods['logarithmic_regression'](self,*args)
 
@@ -9963,10 +9178,9 @@ cdef class GiacMethods_base:
         Help for logarithmic_regression_plot:
         logarithmic_regression_plot(Lst||Mtrx(A),[Lst])
         Returns the plot of y=a*ln(x)+b : it is the best logarithm which approx the points where the coordinates are the rows of A (or the 2 lists).
-        See also: 1/ exponential_regression_plot 
+        See also: 1/ exponential_regression_plot
         Ex1:logarithmic_regression_plot([[1.0,1.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]])
         Ex2:logarithmic_regression_plot([1.0,2.0,3.0,4.0],[1.0,4.0,9.0,16.0])
-        
         '''
         return GiacMethods['logarithmic_regression_plot'](self,*args)
 
@@ -9975,10 +9189,9 @@ cdef class GiacMethods_base:
         Help for logb:
         logb(Real)
         Logarithm with base b.
-        See also: 1/ log 2/ log10 
+        See also: 1/ log 2/ log10
         Ex1:logb(5,2)
         Ex2:logb(7,10)
-        
         '''
         return GiacMethods['logb'](self,*args)
 
@@ -9987,10 +9200,9 @@ cdef class GiacMethods_base:
         Help for logistic_regression:
         logistic_regression(Lst(L),Real(x0),Real(y0))
         Returns y,y',C,y'max,xmax,R : y is a logistic function (sol of y'/y=a*y+b), such that y(x0)=y0 and where [y'(x0),y'(x0+1)...] is the best approximation of L.
-        See also: 1/ polynomial_regression 2/ power_regression 3/ linear_regression 
+        See also: 1/ polynomial_regression 2/ power_regression 3/ linear_regression
         Ex1:logistic_regression(evalf([1,2,4,6,8,7,5]),1,2)
         Ex2:logistic_regression([0.0,1.0,2.0,3.0,4.0],0.0,1.0)
-        
         '''
         return GiacMethods['logistic_regression'](self,*args)
 
@@ -9999,10 +9211,9 @@ cdef class GiacMethods_base:
         Help for logistic_regression_plot:
         logistic_regression_plot(Lst(L),Real(x0),Real(y0))
         Returns the plot of a logistic function y such that y(x0)=y0 and where [y'(x0),y'(x0+1)...] is the best approximation of L.
-        See also: 1/ polynomial_regression_plot 2/ power_regression_plot 3/ linear_regression_plot 
+        See also: 1/ polynomial_regression_plot 2/ power_regression_plot 3/ linear_regression_plot
         Ex1:logistic_regression_plot(evalf([1,2,4,6,8,7,5]),1,2)
         Ex2:logistic_regression_plot([0.0,1.0,2.0,3.0,4.0],0.0,1.0)
-        
         '''
         return GiacMethods['logistic_regression_plot'](self,*args)
 
@@ -10011,10 +9222,9 @@ cdef class GiacMethods_base:
         Help for lower:
         lower(Mtrx||Strng)
         Returns the lower triangular matrix (under the diagonal, included) or writes a string in lowercase.
-        See also: 1/ diag 2/ upper 
+        See also: 1/ diag 2/ upper
         Ex1:lower([[1,2,3],[4,5,6],[7,8,9]])
         Ex2:lower("HELLO")
-        
         '''
         return GiacMethods['lower'](self,*args)
 
@@ -10023,10 +9233,9 @@ cdef class GiacMethods_base:
         Help for lowest_common_ancestor:
         lowest_common_ancestor(Graph(T),Vrtx(r),Seq(u,v)||Lst([u1,v1],[u2,v2],...))
         Returns the lowest common ancestor of nodes u and v in the tree graph T with root r, or the list of lowest common ancestors of all pairs [uk,vk].
-        See also: 1/ is_tree 2/ tree_height 
+        See also: 1/ is_tree 2/ tree_height
         Ex1: T:=random_tree(30); lowest_common_ancestor(T,15,10,20)
         Ex2: T:=random_tree(30); lowest_common_ancestor(T,15,[[10,20],[11,19]])
-        
         '''
         return GiacMethods['lowest_common_ancestor'](self,*args)
 
@@ -10035,9 +9244,8 @@ cdef class GiacMethods_base:
         Help for lowpass:
         lowpass(Lst(s),Real(c),[Intg(samplerate)])
         Returns the result of applying a simple first-order lowpass RC filter with cutoff frequency c (the default samplerate is 44100) to the given signal s.
-        See also: 1/ highpass 2/ moving_average 
+        See also: 1/ highpass 2/ moving_average
         Ex1: f:=unapply(periodic(sign(x),x,-1/880,1/880),x):;s:=createwav(apply(f,soundsec(1))):;playsnd(lowpass(s,1000))
-        
         '''
         return GiacMethods['lowpass'](self,*args)
 
@@ -10046,8 +9254,7 @@ cdef class GiacMethods_base:
         Help for lp_assume:
         lp_assume(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_assume'](self,*args)
 
@@ -10056,8 +9263,7 @@ cdef class GiacMethods_base:
         Help for lp_bestprojection:
         lp_bestprojection(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_bestprojection'](self,*args)
 
@@ -10066,8 +9272,7 @@ cdef class GiacMethods_base:
         Help for lp_binary:
         lp_binary(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_binary'](self,*args)
 
@@ -10076,8 +9281,7 @@ cdef class GiacMethods_base:
         Help for lp_binaryvariables:
         lp_binaryvariables(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_binaryvariables'](self,*args)
 
@@ -10086,8 +9290,7 @@ cdef class GiacMethods_base:
         Help for lp_breadthfirst:
         lp_breadthfirst(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_breadthfirst'](self,*args)
 
@@ -10096,8 +9299,7 @@ cdef class GiacMethods_base:
         Help for lp_depthfirst:
         lp_depthfirst(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_depthfirst'](self,*args)
 
@@ -10106,8 +9308,7 @@ cdef class GiacMethods_base:
         Help for lp_depthlimit:
         lp_depthlimit(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_depthlimit'](self,*args)
 
@@ -10116,8 +9317,7 @@ cdef class GiacMethods_base:
         Help for lp_firstfractional:
         lp_firstfractional(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_firstfractional'](self,*args)
 
@@ -10126,8 +9326,7 @@ cdef class GiacMethods_base:
         Help for lp_gaptolerance:
         lp_gaptolerance(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_gaptolerance'](self,*args)
 
@@ -10136,8 +9335,7 @@ cdef class GiacMethods_base:
         Help for lp_hybrid:
         lp_hybrid(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_hybrid'](self,*args)
 
@@ -10146,8 +9344,7 @@ cdef class GiacMethods_base:
         Help for lp_initialpoint:
         lp_initialpoint(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_initialpoint'](self,*args)
 
@@ -10156,8 +9353,7 @@ cdef class GiacMethods_base:
         Help for lp_integer:
         lp_integer(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_integer'](self,*args)
 
@@ -10166,8 +9362,7 @@ cdef class GiacMethods_base:
         Help for lp_integertolerance:
         lp_integertolerance(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_integertolerance'](self,*args)
 
@@ -10176,8 +9371,7 @@ cdef class GiacMethods_base:
         Help for lp_integervariables:
         lp_integervariables(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_integervariables'](self,*args)
 
@@ -10186,8 +9380,7 @@ cdef class GiacMethods_base:
         Help for lp_interiorpoint:
         lp_interiorpoint(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_interiorpoint'](self,*args)
 
@@ -10196,8 +9389,7 @@ cdef class GiacMethods_base:
         Help for lp_iterationlimit:
         lp_iterationlimit(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_iterationlimit'](self,*args)
 
@@ -10206,8 +9398,7 @@ cdef class GiacMethods_base:
         Help for lp_lastfractional:
         lp_lastfractional(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_lastfractional'](self,*args)
 
@@ -10216,8 +9407,7 @@ cdef class GiacMethods_base:
         Help for lp_maxcuts:
         lp_maxcuts(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_maxcuts'](self,*args)
 
@@ -10226,8 +9416,7 @@ cdef class GiacMethods_base:
         Help for lp_maximize:
         lp_maximize(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_maximize'](self,*args)
 
@@ -10236,8 +9425,7 @@ cdef class GiacMethods_base:
         Help for lp_method:
         lp_method(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_method'](self,*args)
 
@@ -10246,8 +9434,7 @@ cdef class GiacMethods_base:
         Help for lp_mostfractional:
         lp_mostfractional(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_mostfractional'](self,*args)
 
@@ -10256,8 +9443,7 @@ cdef class GiacMethods_base:
         Help for lp_nodelimit:
         lp_nodelimit(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_nodelimit'](self,*args)
 
@@ -10266,8 +9452,7 @@ cdef class GiacMethods_base:
         Help for lp_nodeselect:
         lp_nodeselect(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_nodeselect'](self,*args)
 
@@ -10276,8 +9461,7 @@ cdef class GiacMethods_base:
         Help for lp_nonnegative:
         lp_nonnegative(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_nonnegative'](self,*args)
 
@@ -10286,8 +9470,7 @@ cdef class GiacMethods_base:
         Help for lp_nonnegint:
         lp_nonnegint(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_nonnegint'](self,*args)
 
@@ -10296,8 +9479,7 @@ cdef class GiacMethods_base:
         Help for lp_pseudocost:
         lp_pseudocost(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_pseudocost'](self,*args)
 
@@ -10306,8 +9488,7 @@ cdef class GiacMethods_base:
         Help for lp_simplex:
         lp_simplex(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_simplex'](self,*args)
 
@@ -10316,8 +9497,7 @@ cdef class GiacMethods_base:
         Help for lp_timelimit:
         lp_timelimit(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_timelimit'](self,*args)
 
@@ -10326,8 +9506,7 @@ cdef class GiacMethods_base:
         Help for lp_variables:
         lp_variables(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_variables'](self,*args)
 
@@ -10336,8 +9515,7 @@ cdef class GiacMethods_base:
         Help for lp_varselect:
         lp_varselect(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_varselect'](self,*args)
 
@@ -10346,8 +9524,7 @@ cdef class GiacMethods_base:
         Help for lp_verbose:
         lp_verbose(Opt)
         Options for lpsolve command.
-        See also: 1/ lpsolve 
-        
+        See also: 1/ lpsolve
         '''
         return GiacMethods['lp_verbose'](self,*args)
 
@@ -10356,7 +9533,7 @@ cdef class GiacMethods_base:
         Help for lpsolve:
         lpsolve(Expr(o),[List(c)],[bounds],[options])
         Solves a (mixed integer/binary) LP problem in general form.
-        See also: 1/ nlpsolve 2/ fsolve 
+        See also: 1/ nlpsolve 2/ fsolve
         Ex1:lpsolve(2x+y-z+4,[x<=1,y>=2,x+3y-z=2,2x-y+z<=8,-x+y<=5])
         Ex2:lpsolve(-4x-5y,[x+2y<=6,5x+4y<=20,0<=x,0<=y])
         Ex3:lpsolve(-7x+2y,[4x-12y<=20,-x+3y<=3],x=-5..5,y=0..inf,lp_maximize=true)
@@ -10372,7 +9549,6 @@ cdef class GiacMethods_base:
         Ex13:lpsolve(x1+x2,[2x1+5x2<=16,6x1+5x2<=30],assume=nonnegint,lp_maximize)
         Ex14:lpsolve(8x1+11x2+6x3+4x4,[5x1+7x2+4x3+3x4<=14],assume=lp_binary,lp_maximize)
         Ex15:lpsolve(x1+x2,[1867x1+1913x2=3618894],assume=nonnegint,lp_verbose=true)
-        
         '''
         return GiacMethods['lpsolve'](self,*args)
 
@@ -10381,9 +9557,8 @@ cdef class GiacMethods_base:
         Help for lsmod:
         lsmod(NULL)
         Displays the installed dynamic libraries.
-        See also: 1/ insmod 2/ rmmod 
+        See also: 1/ insmod 2/ rmmod
         Ex1:lsmod()
-        
         '''
         return GiacMethods['lsmod'](self,*args)
 
@@ -10392,10 +9567,9 @@ cdef class GiacMethods_base:
         Help for lsq:
         lsq(Mtrx(A),(Mtrx || Vect)(B))
         Returns the vector (resp matrix) X which is the minimum of the euclidean (resp Frobenius) norm of A*X-B corresponding to the linear system A*X=B when B is a vector (resp matrix).
-        See also: 1/ lu 2/ QR 
+        See also: 1/ lu 2/ QR
         Ex1:lsq([[1,2],[3,4]],[5,11])
         Ex2:lsq([[1,2],[3,4]],[[5,-1],[11,-1]])
-        
         '''
         return GiacMethods['lsq'](self,*args)
 
@@ -10404,10 +9578,9 @@ cdef class GiacMethods_base:
         Help for lu:
         lu(Mtrx)
         For a numerical matrix A, returns p permutation, L and U such that PA=LU (P=permu2mat(p)).
-        See also: 1/ qr 2/ cholesky 3/ LU 
+        See also: 1/ qr 2/ cholesky 3/ LU
         Ex1:lu([[1,2],[3,4]])
         Ex2:lu([[6,12,18],[5,14,31],[3,8,18]])
-        
         '''
         return GiacMethods['lu'](self,*args)
 
@@ -10416,10 +9589,9 @@ cdef class GiacMethods_base:
         Help for lvar:
         lvar(Expr)
         List of variables of an object (with rational dependence).
-        See also: 1/ lname 2/ has 
+        See also: 1/ lname 2/ has
         Ex1:lvar(exp(x)*2*sin(y))
         Ex2:lvar(exp(x)*2*sin(y)+ln(x))
-        
         '''
         return GiacMethods['lvar'](self,*args)
 
@@ -10428,9 +9600,8 @@ cdef class GiacMethods_base:
         Help for mRow:
         mRow(Expr(Xpr),Mtrx(A),Intg(n1))
         Multiplies row n1 of the matrix A by Xpr.
-        See also: 1/ rowAdd 2/ mRowAdd 
+        See also: 1/ rowAdd 2/ mRowAdd
         Ex1:mRow(12,[[1,2],[3,4],[5,6]],0)
-        
         '''
         return GiacMethods['mRow'](self,*args)
 
@@ -10439,9 +9610,8 @@ cdef class GiacMethods_base:
         Help for mRowAdd:
         mRowAdd(Expr(Xpr),Mtrx(A),Intg(n1),Intg(n2))
         Multiplies row n1 of the matrix A by Xpr, then adds it to the row n2.
-        See also: 1/ rowAdd 2/ mRow 
+        See also: 1/ rowAdd 2/ mRow
         Ex1:mRowAdd(12,[[1,2],[3,4],[5,6]],0,2)
-        
         '''
         return GiacMethods['mRowAdd'](self,*args)
 
@@ -10450,10 +9620,9 @@ cdef class GiacMethods_base:
         Help for magenta:
         magenta(Opt)
         Option of the display command to display with color.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: F:=display(point(2+1.5*i),red)
         Ex2: F:=display(point(2+1.5*i),point_point+green)
-        
         '''
         return GiacMethods['magenta'](self,*args)
 
@@ -10462,9 +9631,8 @@ cdef class GiacMethods_base:
         Help for make_directed:
         make_directed(Graph(G),[Mrtx(A)])
         Returns the copy of undirected graph G in which every edge is converted to a pair of arcs [and with weights specified by matrix A].
-        See also: 1/ is_directed 2/ make_weighted 3/ underlying_graph 
+        See also: 1/ is_directed 2/ make_weighted 3/ underlying_graph
         Ex1:make_directed(cycle_graph(4),[[0,0,0,1],[2,0,1,3],[0,1,0,4],[5,0,4,0]])
-        
         '''
         return GiacMethods['make_directed'](self,*args)
 
@@ -10473,9 +9641,8 @@ cdef class GiacMethods_base:
         Help for make_weighted:
         make_weighted(Graph(G),[Mrtx(M)])
         Returns a copy of G with edge/arc weights set as specified by matrix M. If M is omitted, a square matrix of ones is used. If G is undirected, M is assumed to be symmetric.
-        See also: 1/ get_edge_weight 2/ is_weighted 3/ make_directed 4/ set_edge_weight 5/ underlying_graph 6/ weight_matrix 
+        See also: 1/ get_edge_weight 2/ is_weighted 3/ make_directed 4/ set_edge_weight 5/ underlying_graph 6/ weight_matrix
         Ex1:make_weighted(cycle_graph(3),[[0,2,3],[2,0,1],[3,1,0]])
-        
         '''
         return GiacMethods['make_weighted'](self,*args)
 
@@ -10484,12 +9651,11 @@ cdef class GiacMethods_base:
         Help for makelist:
         makelist(Fnc,InitVal,FinalVal,StepVal)
         Returns a list made with a function or with a constant.
-        See also: 1/ seq 2/ range 3/ makemat 4/ $ 
+        See also: 1/ seq 2/ range 3/ makemat 4/ $
         Ex1:makelist(x->x^2,1,10,2)
         Ex2:makelist(4,1,10)
         Ex3:makelist(4,5,10)
         Ex4:makelist(x->ifte(x<5,"A","B"),1,10)
-        
         '''
         return GiacMethods['makelist'](self,*args)
 
@@ -10498,11 +9664,10 @@ cdef class GiacMethods_base:
         Help for makemat:
         makemat(Fnct(f),RowsNumb,ColsNumb)
         Creates a matrix.
-        See also: 1/ matrix 
+        See also: 1/ matrix
         Ex1:makemat((j,k)->j+k,3,2)
         Ex2:makemat((j,k)->1/(j+k+1),2,3)
         Ex3:makemat(sqrt(2),2,3)
-        
         '''
         return GiacMethods['makemat'](self,*args)
 
@@ -10511,9 +9676,8 @@ cdef class GiacMethods_base:
         Help for makesuite:
         makesuite(Vect||Lst)
         Returns a sequence made with a vector.
-        See also: 1/ makevector 2/ op 
+        See also: 1/ makevector 2/ op
         Ex1:makesuite([1,2,3])
-        
         '''
         return GiacMethods['makesuite'](self,*args)
 
@@ -10522,9 +9686,8 @@ cdef class GiacMethods_base:
         Help for makevector:
         makevector(Seq)
         Returns a vector made with a sequence.
-        See also: 1/ makesuite 
+        See also: 1/ makesuite
         Ex1:makevector(1,2,3)
-        
         '''
         return GiacMethods['makevector'](self,*args)
 
@@ -10533,11 +9696,10 @@ cdef class GiacMethods_base:
         Help for map:
         map(Lst(l),Fnc(f))
         Applies the function f at the elements of the list l or at a polynomial of internal format.
-        See also: 1/ apply 2/ set 3/ unapply 
+        See also: 1/ apply 2/ set 3/ unapply
         Ex1:map([1,2,3],x->x^3)
         Ex2:map([1,2,3],unapply(x^3,x))
         Ex3:map(%%%{1,[2,0]%%%}+%%%{2,[1,1]%%%},(a,b,c)->a*(b+2*c))
-        
         '''
         return GiacMethods['map'](self,*args)
 
@@ -10546,8 +9708,7 @@ cdef class GiacMethods_base:
         Help for maple2mupad:
         maple2mupad(Str("Name_Maplefile"),Str("Name_Mupadfile"))
         maple2mupad("file1","file2") translates file1(Maple) to file2(MuPAD).
-        See also: 1/ maple2xcas 
-        
+        See also: 1/ maple2xcas
         '''
         return GiacMethods['maple2mupad'](self,*args)
 
@@ -10556,8 +9717,7 @@ cdef class GiacMethods_base:
         Help for maple2xcas:
         maple2xcas(Str("NameMapleFile"),Str("NameXcasFile"))
         maple2xcas("file1","file2") translates file1(Maple) to file2(Xcas).
-        See also: 1/ maple2mupad 
-        
+        See also: 1/ maple2mupad
         '''
         return GiacMethods['maple2xcas'](self,*args)
 
@@ -10566,9 +9726,8 @@ cdef class GiacMethods_base:
         Help for maple_ifactors:
         maple_ifactors(Intg(n))
         Returns 1 or -1 for the sign and the prime factors with their multiplicity of n in a matrix, such as ifactors in Maple.
-        See also: 1/ ifactors 
+        See also: 1/ ifactors
         Ex1:maple_ifactors(120)
-        
         '''
         return GiacMethods['maple_ifactors'](self,*args)
 
@@ -10577,10 +9736,9 @@ cdef class GiacMethods_base:
         Help for maple_mode:
         maple_mode(Intg(0) or 1 or 2 or 3)
         Switches to mode Xcas (0), Maple (1), Mupad (2), TI89 (3).
-        See also: 1/ python_compat 
+        See also: 1/ python_compat
         Ex1:maple_mode(1)
         Ex2:maple_mode(0)
-        
         '''
         return GiacMethods['maple_mode'](self,*args)
 
@@ -10589,9 +9747,8 @@ cdef class GiacMethods_base:
         Help for markov:
         markov(Mtrx(M),[Real(eps)])
         Computation of the proper elements of a Markov chain transition matrix M, returns the list of sequence of positive recurrent states, the list of corresponding invariant probabilities, the list of other strongly connected components, the list of probabilities to end up in the sequence of recurrent states.
-        See also: 1/ randmarkov 2/ plotproba 
+        See also: 1/ randmarkov 2/ plotproba
         Ex1:markov([[0,0,1/2,0,1/2],[0,0,1,0,0],[1/4,1/4,0,1/4,1/4],[0,0,1/2,0,1/2],[0,0,0,0,1]])
-        
         '''
         return GiacMethods['markov'](self,*args)
 
@@ -10600,9 +9757,8 @@ cdef class GiacMethods_base:
         Help for mat2list:
         mat2list(Mtrx)
         Returns the list of the terms of the matrix.
-        See also: 1/ list2mat 2/ flatten 
+        See also: 1/ list2mat 2/ flatten
         Ex1:mat2list([[1,8],[4,9]])
-        
         '''
         return GiacMethods['mat2list'](self,*args)
 
@@ -10611,9 +9767,8 @@ cdef class GiacMethods_base:
         Help for mathml:
         mathml(Expr)
         Converts the expression into a string to display maths for the web.
-        See also: 1/ export_mathml 2/ latex 
+        See also: 1/ export_mathml 2/ latex
         Ex1:mathml(1/2)
-        
         '''
         return GiacMethods['mathml'](self,*args)
 
@@ -10622,9 +9777,8 @@ cdef class GiacMethods_base:
         Help for matpow:
         matpow(Mtrx,Intg(n))
         Calculates the nth power of a matrix by jordanization.
-        See also: 1/ &^ 2/ ^ 
+        See also: 1/ &^ 2/ ^
         Ex1:matpow([[1,2],[3,4]],n)
-        
         '''
         return GiacMethods['matpow'](self,*args)
 
@@ -10633,12 +9787,11 @@ cdef class GiacMethods_base:
         Help for matrix:
         matrix(Intg(p),Intg(q),(Fnc(f) or Val(a)))
         Makes a matrix m(j,k) with p rows and q cols, m(j,k)=f(j,k) or m(j,k)=a : the index start at 0 or 1 according to the mode (Xcas or Maple) (or option of apply) or make a matrix with a table.
-        See also: 1/ makemat 2/ makelist 3/ apply 
+        See also: 1/ makemat 2/ makelist 3/ apply
         Ex1:matrix(2,3,(j,k)->1/(j+k+1))
         Ex2:matrix(3,2,(j,k)->j+k)
         Ex3:matrix(2,3,4)
-        Ex4:  A[0..2,0..2]:=1;A[0..1,1..2]:=2;a:=matrix(A) 
-        
+        Ex4:  A[0..2,0..2]:=1;A[0..1,1..2]:=2;a:=matrix(A)
         '''
         return GiacMethods['matrix'](self,*args)
 
@@ -10647,12 +9800,11 @@ cdef class GiacMethods_base:
         Help for matrix_norm:
         matrix_norm(Mtrx,[2]||[inf])
         Matrix norm induced by l1norm or by l2norm or by linfinty norm.
-        See also: 1/ l1norm 2/ l2 norm 3/ linfnorm 4/ frobenius_norm 
+        See also: 1/ l1norm 2/ l2 norm 3/ linfnorm 4/ frobenius_norm
         Ex1:matrix_norm([[1,2,3],[3,-9,6],[4,5,6]])
         Ex2:matrix_norm([[1,2,3],[3,-9,6],[4,5,6]],1)
         Ex3:matrix_norm([[1,2,3],[3,-9,6],[4,5,6]],2)
         Ex4:matrix_norm([[1,2,3],[3,-9,6],[4,5,6]],inf)
-        
         '''
         return GiacMethods['matrix_norm'](self,*args)
 
@@ -10661,9 +9813,8 @@ cdef class GiacMethods_base:
         Help for max:
         max(Seq||Lst)
         Maximum of elements of a sequence or a list of reals.
-        See also: 1/ min 
+        See also: 1/ min
         Ex1:max(25,35)
-        
         '''
         return GiacMethods['max'](self,*args)
 
@@ -10672,9 +9823,8 @@ cdef class GiacMethods_base:
         Help for maxflow:
         maxflow(Graph(G),Vrtx(s),Vrtx(t))
         Returns the optimal value for the max flow problem for network G with the source s and sink t along with an optimal flow (as a matrix).
-        See also: 1/ minimum_cut 
+        See also: 1/ minimum_cut
         Ex1:maxflow(digraph(%{[[1,2],2],[[2,3],4],[[3,4],3],[[1,5],3],[[5,2],1],[[5,4],2]%}),1,4)
-        
         '''
         return GiacMethods['maxflow'](self,*args)
 
@@ -10683,9 +9833,8 @@ cdef class GiacMethods_base:
         Help for maximal_independent_set:
         maximal_independent_set(Graph(G))
         Returns a maximal set of mutually independent (non-adjacent) vertices in G.
-        See also: 1/ maximum_independent_set 
+        See also: 1/ maximum_independent_set
         Ex1:maximal_independent_set(graph("petersen"))
-        
         '''
         return GiacMethods['maximal_independent_set'](self,*args)
 
@@ -10702,7 +9851,6 @@ cdef class GiacMethods_base:
         Ex6:maximize(sqrt(x^2+y^2)-z,[x^2+y^2<=16,x+y+z=10],[x,y,z])
         Ex7:maximize((1+x^2+3y+5x-4*x*y)/(1+x^2+y^2),x^2/4+y^2/3=9,[x,y])
         Ex8:maximize(cos(x)^2+cos(y)^2,x+y=pi/4,[x,y],locus)
-        
         '''
         return GiacMethods['maximize'](self,*args)
 
@@ -10711,9 +9859,8 @@ cdef class GiacMethods_base:
         Help for maximum_clique:
         maximum_clique(Graph(G))
         Returns the maximum clique of undirected graph G as a list of vertices.
-        See also: 1/ clique_number 2/ is_clique 3/ maximum_independent_set 
+        See also: 1/ clique_number 2/ is_clique 3/ maximum_independent_set
         Ex1:maximum_clique(graph_complement(complete_graph(3,4)))
-        
         '''
         return GiacMethods['maximum_clique'](self,*args)
 
@@ -10722,9 +9869,8 @@ cdef class GiacMethods_base:
         Help for maximum_degree:
         maximum_degree(Graph(G))
         Returns the largest degree among the vertices of G.
-        See also: 1/ minimum_degree 2/ vertex_degree 
+        See also: 1/ minimum_degree 2/ vertex_degree
         Ex1:maximum_degree(digraph(trail(1,2,3,4,5,6,4,7,8,2)))
-        
         '''
         return GiacMethods['maximum_degree'](self,*args)
 
@@ -10733,9 +9879,8 @@ cdef class GiacMethods_base:
         Help for maximum_independent_set:
         maximum_independent_set(Graph(G))
         Returns the maximum independent vertex set of G.
-        See also: 1/ clique_number 2/ graph_complement 3/ independence_number 4/ maximum_clique 
+        See also: 1/ clique_number 2/ graph_complement 3/ independence_number 4/ maximum_clique
         Ex1:maximum_independent_set(complete_graph(3,4))
-        
         '''
         return GiacMethods['maximum_independent_set'](self,*args)
 
@@ -10744,9 +9889,8 @@ cdef class GiacMethods_base:
         Help for maximum_matching:
         maximum_matching(Graph(G))
         Returns the list of edges representing maximum matching in G.
-        See also: 1/ maximum_independent_set 
+        See also: 1/ maximum_independent_set
         Ex1: G:=graph("soccerball"); draw_graph(highlight_edges(G,maximum_matching(G)))
-        
         '''
         return GiacMethods['maximum_matching'](self,*args)
 
@@ -10755,11 +9899,10 @@ cdef class GiacMethods_base:
         Help for maxnorm:
         maxnorm(Vect or Mtrx)
         Norm with the max of a vector (or of a matrix): maxnorm([x1,x2,..,xn])=max(|x1|,..,|xn|).
-        See also: 1/ l2norm 2/ l1norm 
+        See also: 1/ l2norm 2/ l1norm
         Ex1:maxnorm([1,2])
         Ex2:maxnorm([1,2,3,-4])
         Ex3:maxnorm([[1,2],[3,-4]])
-        
         '''
         return GiacMethods['maxnorm'](self,*args)
 
@@ -10768,11 +9911,10 @@ cdef class GiacMethods_base:
         Help for mean:
         mean(Lst||Mtrx,[Lst])
         Mean of a list with the second argument as weight or of the columns of a matrix.
-        See also: 1/ stddev 
+        See also: 1/ stddev
         Ex1:mean([1,2,3])
         Ex2:mean([1,2,3],[1,2,3])
         Ex3:mean([[1,2,3],[1,2,3]])
-        
         '''
         return GiacMethods['mean'](self,*args)
 
@@ -10781,10 +9923,9 @@ cdef class GiacMethods_base:
         Help for median:
         median(Lst||Mtrx,[Lst])
         Returns the median of a list with the second argument as weight or of the columns of a matrix.
-        See also: 1/ quartiles 
+        See also: 1/ quartiles
         Ex1:median([1,2,3,5,10,4])
         Ex2:median([1,2,3,5,10,4],[1,2,3,1,2,3])
-        
         '''
         return GiacMethods['median'](self,*args)
 
@@ -10793,9 +9934,8 @@ cdef class GiacMethods_base:
         Help for median_line:
         median_line((Pnt or Cplx),(Pnt or Cplx),(Pnt or Cplx))
         median_line(A,B,C) draws the median-line through A of the triangle ABC.
-        See also: 1/ midpoint 2/ perpen_bisector 
+        See also: 1/ midpoint 2/ perpen_bisector
         Ex1:median_line(-1,1-i,i)
-        
         '''
         return GiacMethods['median_line'](self,*args)
 
@@ -10804,10 +9944,9 @@ cdef class GiacMethods_base:
         Help for member:
         member(Elem(e),(Lst(l) or Set(l)))
         Tests if e is in the list or set l (=0, or k+1 with l[k]=e).
-        See also: 1/ contains 2/ est_element 3/ find 4/ index 
+        See also: 1/ contains 2/ est_element 3/ find 4/ index
         Ex1:member(1,[4,3,1,2])
         Ex2:member(1,%{4,3,1,2%})
-        
         '''
         return GiacMethods['member'](self,*args)
 
@@ -10819,7 +9958,6 @@ cdef class GiacMethods_base:
         Ex1:mgf(normald,1,0)
         Ex2:mgf(poisson,5)
         Ex3:mgf(binomial,n,p)
-        
         '''
         return GiacMethods['mgf'](self,*args)
 
@@ -10828,13 +9966,12 @@ cdef class GiacMethods_base:
         Help for mid:
         mid(Lst(l) or Str(l),Intg(d),Intg(n))
         Returns the extracted list of l with n elements (by default n=size(l)-d) and beginning at index d.
-        See also: 1/ head 2/ tail 3/ left 4/ right 5/ subMat 
+        See also: 1/ head 2/ tail 3/ left 4/ right 5/ subMat
         Ex1:mid([0,1,2,3,4,5,6],2,3)
         Ex2:mid([0,1,2,3,4,5,6],2)
         Ex3:mid("azertyuiop",2,4)
         Ex4:mid("azertyuiop",2)
         Ex5:mid([[1,2],[3,4],[5,6]],1)
-        
         '''
         return GiacMethods['mid'](self,*args)
 
@@ -10843,14 +9980,13 @@ cdef class GiacMethods_base:
         Help for middle_point:
         middle_point(Opt)
         Option of the plotarea command and of the area command.
-        See also: 1/ plotarea 2/ area 
+        See also: 1/ plotarea 2/ area
         Ex1: plotarea(x^2,x=0..1,5,trapezoid)
         Ex2: plotarea(x^2,x=0..1,5,middle_point)
         Ex3: plotarea(x^2,x=0..1,5,right_rectangle)
         Ex4: plotarea(x^2,x=0..1,5,left_rectangle)
         Ex5: area(x^2,x=0..1,5,middle_point)
         Ex6: area(x^2,x=0..1,5,trapezoid)
-        
         '''
         return GiacMethods['middle_point'](self,*args)
 
@@ -10859,9 +9995,8 @@ cdef class GiacMethods_base:
         Help for midpoint:
         midpoint((Pnt or Cplx),(Pnt or Cplx))
         midpoint(A,B) draws the midpoint of the segment AB.
-        See also: 1/ median_line 2/ perpen_bisector 
+        See also: 1/ median_line 2/ perpen_bisector
         Ex1:midpoint(-2,2i)
-        
         '''
         return GiacMethods['midpoint'](self,*args)
 
@@ -10870,9 +10005,8 @@ cdef class GiacMethods_base:
         Help for min:
         min(Seq||Lst)
         Minimum of elements of a sequence or a list of reals.
-        See also: 1/ max 
+        See also: 1/ max
         Ex1:min(25,35)
-        
         '''
         return GiacMethods['min'](self,*args)
 
@@ -10881,10 +10015,9 @@ cdef class GiacMethods_base:
         Help for minimal_edge_coloring:
         minimal_edge_coloring(Graph(G),[sto])
         Finds the minimal edge coloring of G and returns the sequence n,L where n is the class of G (1 for D colors and 2 for D+1 colors) and L is the list of colors of edges of G as returned by the edges command, or a copy of G with colored edges if the option 'sto' is specified.
-        See also: 1/ chromatic_index 2/ minimal_vertex_coloring 3/ edges 
+        See also: 1/ chromatic_index 2/ minimal_vertex_coloring 3/ edges
         Ex1:minimal_edge_coloring(graph("petersen"))
         Ex2: G:=minimal_edge_coloring(graph("dodecahedron"),sto); draw_graph(G)
-        
         '''
         return GiacMethods['minimal_edge_coloring'](self,*args)
 
@@ -10893,9 +10026,8 @@ cdef class GiacMethods_base:
         Help for minimal_spanning_tree:
         minimal_spanning_tree(Graph(G))
         Returns the minimal spanning tree of undirected graph G.
-        See also: 1/ spanning_tree 
+        See also: 1/ spanning_tree
         Ex1:minimal_spanning_tree(graph([[0,1,0,4,0,0],[1,0,1,0,4,0],[0,1,0,3,0,1],[4,0,3,0,1,0],[0,4,0,1,0,4],[0,0,1,0,4,0]]))
-        
         '''
         return GiacMethods['minimal_spanning_tree'](self,*args)
 
@@ -10904,10 +10036,9 @@ cdef class GiacMethods_base:
         Help for minimal_vertex_coloring:
         minimal_vertex_coloring(Graph(G),[sto])
         Computes the minimal vertex coloring for G and returns the colors in the order of vertices. If optional parameter "sto" is given, the colors are assigned to vertices and the modified copy of G is returned.
-        See also: 1/ chromatic_number 2/ is_vertex_colorable 
+        See also: 1/ chromatic_number 2/ is_vertex_colorable
         Ex1:minimal_vertex_coloring(graph("petersen"))
         Ex2: draw_graph(minimal_vertex_coloring(graph("petersen"),sto))
-        
         '''
         return GiacMethods['minimal_vertex_coloring'](self,*args)
 
@@ -10926,7 +10057,6 @@ cdef class GiacMethods_base:
         Ex8:minimax(abs(x)*sqrt(abs(x)),x=-2..2,15)
         Ex9:minimax(min(1/cosh(3*sin(x)),sin(9x/10)),x=-3..4,30)
         Ex10:minimax(when(x==0,0,exp(-1/x^2)),x=-1..1,25)
-        
         '''
         return GiacMethods['minimax'](self,*args)
 
@@ -10943,7 +10073,6 @@ cdef class GiacMethods_base:
         Ex6:minimize(sqrt(x^2+y^2)-z,[x^2+y^2<=16,x+y+z=10],[x,y,z])
         Ex7:minimize((1+x^2+3y+5x-4*x*y)/(1+x^2+y^2),x^2/4+y^2/3=9,[x,y])
         Ex8:minimize(cos(x)^2+cos(y)^2,x+y=pi/4,[x,y],locus)
-        
         '''
         return GiacMethods['minimize'](self,*args)
 
@@ -10952,9 +10081,8 @@ cdef class GiacMethods_base:
         Help for minimum_cut:
         minimum_cut(Graph(G),Vrtx(s),Vrtx(t))
         Returns the list of edges forming a minimum cut in a directed graph G with the source s and sink t.
-        See also: 1/ maxflow 
+        See also: 1/ maxflow
         Ex1:minimum_cut(digraph(%{[[1,2],2],[[2,3],4],[[3,4],3],[[1,5],3],[[5,2],1],[[5,4],2]%}),1,4)
-        
         '''
         return GiacMethods['minimum_cut'](self,*args)
 
@@ -10963,9 +10091,8 @@ cdef class GiacMethods_base:
         Help for minimum_degree:
         minimum_degree(Graph(G))
         Returns the smallest degree among the vertices of G.
-        See also: 1/ maximum_degree 2/ vertex_degree 
+        See also: 1/ maximum_degree 2/ vertex_degree
         Ex1:minimum_degree(digraph(trail(1,2,3,4,5,6,4,7,8,2)))
-        
         '''
         return GiacMethods['minimum_degree'](self,*args)
 
@@ -10974,11 +10101,10 @@ cdef class GiacMethods_base:
         Help for mkisom:
         mkisom(Vect,(Sign(1) or -1))
         Matrix of an isometry given by its proper elements.
-        See also: 1/ isom 
+        See also: 1/ isom
         Ex1:mkisom([1,2],1)
         Ex2:mkisom([[1,0,0],pi/3],-1)
         Ex3:mkisom(pi,1)
-        
         '''
         return GiacMethods['mkisom'](self,*args)
 
@@ -10987,9 +10113,8 @@ cdef class GiacMethods_base:
         Help for mksa:
         mksa(Unit)
         Converts units to the MKSA international unit system.
-        See also: 1/ convert 2/ ufactor 
+        See also: 1/ convert 2/ ufactor
         Ex1:mksa(1_N)
-        
         '''
         return GiacMethods['mksa'](self,*args)
 
@@ -10998,9 +10123,8 @@ cdef class GiacMethods_base:
         Help for modgcd:
         modgcd(Poly,Poly)
         GCD of 2 polynomials, with the modular algorithm.
-        See also: 1/ gcd 2/ heugcd 3/ ezgcd 4/ psrgcd 
+        See also: 1/ gcd 2/ heugcd 3/ ezgcd 4/ psrgcd
         Ex1:modgcd(x^4-1,(x-1)^2)
-        
         '''
         return GiacMethods['modgcd'](self,*args)
 
@@ -11009,11 +10133,10 @@ cdef class GiacMethods_base:
         Help for mods:
         mods(Intg,Intg)
         Returns the Euclidean symmetric remainder of two integers.
-        See also: 1/ irem 2/ iquo 3/ mod 4/ fracmod 
+        See also: 1/ irem 2/ iquo 3/ mod 4/ fracmod
         Ex1:mods(8,3)
         Ex2:mods(10,4)
         Ex3:mods(11,7)
-        
         '''
         return GiacMethods['mods'](self,*args)
 
@@ -11023,7 +10146,6 @@ cdef class GiacMethods_base:
         monotonic()
         Returns a real that increases as time passes
         Ex1:monotonic()
-        
         '''
         return GiacMethods['monotonic'](self,*args)
 
@@ -11032,9 +10154,8 @@ cdef class GiacMethods_base:
         Help for montre_tortue:
         montre_tortue(NULL)
         Shows the turtle.
-        See also: 1/ cache_tortue 
+        See also: 1/ cache_tortue
         Ex1:montre_tortue()
-        
         '''
         return GiacMethods['montre_tortue'](self,*args)
 
@@ -11043,12 +10164,11 @@ cdef class GiacMethods_base:
         Help for moustache:
         moustache(Lst,[Lst],[x=a..b||y=a..b])
         Box and Whisker plot for a statistical series.
-        See also: 1/ quartiles 
+        See also: 1/ quartiles
         Ex1:moustache([-1,1,2,2.2,3,4,-2,5])
         Ex2:moustache([1,2,3,5,10,4],x=1..2)
         Ex3:moustache([1,2,3,5,10,4],[1,2,3,1,2,3])
         Ex4:moustache([[6,0,1,3,4,2,5],[0,1,3,4,2,5,6],[1,3,4,2,5,6,0],[3,4,2,5,6,0,1],[4,2,5,6,0,1,3],[2,5,6,0,1,3,4]])
-        
         '''
         return GiacMethods['moustache'](self,*args)
 
@@ -11057,9 +10177,8 @@ cdef class GiacMethods_base:
         Help for moving_average:
         moving_average(Lst(A),Intg(n))
         Applies a moving average filter of length n to a signal sample A, and returns its result as an array of length nops(A)-n+1.
-        See also: 1/ lowpass 
+        See also: 1/ lowpass
         Ex1: snd:=soundsec(2):;data:=0.5*threshold(3*sin(2*pi*220*snd),[-1.0,1.0])+randvector(length(snd),normald,0,0.05):;moving_average(data,25)
-        
         '''
         return GiacMethods['moving_average'](self,*args)
 
@@ -11068,9 +10187,8 @@ cdef class GiacMethods_base:
         Help for moyal:
         moyal(Expr,Expr,VectVar)
         Moyal product of 2 symbols.
-        See also: 1/  
+        See also: 1/
         Ex1:moyal(x^2+y^4,x^4-y^2,[x,y],5)
-        
         '''
         return GiacMethods['moyal'](self,*args)
 
@@ -11079,11 +10197,10 @@ cdef class GiacMethods_base:
         Help for moyenne:
         moyenne(Lst||Mtrx,[Lst])
         Mean of a list with the second argument as weight or of the columns of a matrix.
-        See also: 1/ stddev 
+        See also: 1/ stddev
         Ex1:moyenne([1,2,3])
         Ex2:moyenne([1,2,3],[1,2,3])
         Ex3:moyenne([[1,2,3],[1,2,3]])
-        
         '''
         return GiacMethods['moyenne'](self,*args)
 
@@ -11092,7 +10209,7 @@ cdef class GiacMethods_base:
         Help for mul:
         mul(Expr||Lst,[Var||Lst],[Intg(a)],[Intg(b)],[Intg(p)])
         Multiplies the values of the expression when the variable go from a to b with a step p (product(expression,var,begin,end,step) by default p=1) or product of the elements of a list or product element by element of 2 lists or matrices.
-        See also: 1/ sum 
+        See also: 1/ sum
         Ex1:mul(n,n,1,10,2)
         Ex2:mul(1/n,n,1,10)
         Ex3:mul(1/n,n,11,1)
@@ -11100,7 +10217,6 @@ cdef class GiacMethods_base:
         Ex5:mul([2,3,4,5])
         Ex6:mul([2,3,4],[5,6,7])
         Ex7:mul([[2,3,4],[5,6,7]],[[2,3,4],[5,6,7]])
-        
         '''
         return GiacMethods['mul'](self,*args)
 
@@ -11109,10 +10225,9 @@ cdef class GiacMethods_base:
         Help for mult_c_conjugate:
         mult_c_conjugate(Expr)
         Returns the expression after multiplication by the complex conjugate of the denominator (or of the numerator if no denominator).
-        See also: 1/ mult_conjugate 
+        See also: 1/ mult_conjugate
         Ex1:mult_c_conjugate(1/(3+i*2))
         Ex2:mult_c_conjugate(3+i*2)
-        
         '''
         return GiacMethods['mult_c_conjugate'](self,*args)
 
@@ -11121,10 +10236,9 @@ cdef class GiacMethods_base:
         Help for mult_conjugate:
         mult_conjugate(Expr)
         Returns the expression after multiplication by the conjugate of the denominator (or of the numerator if no denominator).
-        See also: 1/ mult_c_conjugate 
+        See also: 1/ mult_c_conjugate
         Ex1:mult_conjugate(sqrt(3)-sqrt(2))
         Ex2:mult_conjugate(1/(sqrt(3)-sqrt(2)))
-        
         '''
         return GiacMethods['mult_conjugate'](self,*args)
 
@@ -11133,12 +10247,11 @@ cdef class GiacMethods_base:
         Help for multinomial:
         multinomial(Intg(n),Vect(p),Vect(k))
         Returns n!/(k0!*k1!*..;kj!)*(p0^k0*p1^k1..*pj^kj) (sum(p)=1 and sum(k)=n).
-        See also: 1/ binomial 2/ randvector 3/ ranm 
+        See also: 1/ binomial 2/ randvector 3/ ranm
         Ex1:multinomial(10,[0.5,0.5],[3,7])
         Ex2:multinomial(10,[0.2,0.3,0.5],[1,3,6])
         Ex3: randvector(3,multinomial,[1/2,1/3,1/6])
         Ex4: ranm(4,3,multinomial,[1/2,1/3,1/6])
-        
         '''
         return GiacMethods['multinomial'](self,*args)
 
@@ -11147,10 +10260,9 @@ cdef class GiacMethods_base:
         Help for multiplier_conjugue:
         multiplier_conjugue(Expr)
         Returns the expression after multiplication by the conjugate of the denominator (or of the numerator if no denominator).
-        See also: 1/ mult_c_conjugate 
+        See also: 1/ mult_c_conjugate
         Ex1:multiplier_conjugue(sqrt(3)-sqrt(2))
         Ex2:multiplier_conjugue(1/(sqrt(3)-sqrt(2)))
-        
         '''
         return GiacMethods['multiplier_conjugue'](self,*args)
 
@@ -11159,10 +10271,9 @@ cdef class GiacMethods_base:
         Help for multiplier_conjugue_complexe:
         multiplier_conjugue_complexe(Expr)
         Returns the expression after multiplication by the complex conjugate of the denominator (or of the numerator if no denominator).
-        See also: 1/ mult_conjugate 
+        See also: 1/ mult_conjugate
         Ex1:multiplier_conjugue_complexe(1/(3+i*2))
         Ex2:multiplier_conjugue_complexe(3+i*2)
-        
         '''
         return GiacMethods['multiplier_conjugue_complexe'](self,*args)
 
@@ -11171,11 +10282,10 @@ cdef class GiacMethods_base:
         Help for multiply:
         multiply(Intg or Lst, Intg or Lst)
         Returns the product of the 2 arguments.
-        See also: 1/ * 
+        See also: 1/ *
         Ex1:multiply(41,-4)
         Ex2:multiply([4,1],[-4,2])
         Ex3:multiply([[4,1],[-4,1]],[[4,1],[-4,1]])
-        
         '''
         return GiacMethods['multiply'](self,*args)
 
@@ -11184,8 +10294,7 @@ cdef class GiacMethods_base:
         Help for mupad2maple:
         mupad2maple(Str("NameMupadFile"),Str("NameMapleFile"))
         mupad2maple("file1","file2") translates file1(MuPAD) to file2(Maple).
-        See also: 1/ mupad2xcas 
-        
+        See also: 1/ mupad2xcas
         '''
         return GiacMethods['mupad2maple'](self,*args)
 
@@ -11194,8 +10303,7 @@ cdef class GiacMethods_base:
         Help for mupad2xcas:
         mupad2xcas(Str("NameMupadFile"),Str("NameXcasFile"))
         mupad2xcas("file1","file2") translates file1(MuPAD) to file2(Xcas).
-        See also: 1/ mupad2maple 
-        
+        See also: 1/ mupad2maple
         '''
         return GiacMethods['mupad2xcas'](self,*args)
 
@@ -11204,10 +10312,9 @@ cdef class GiacMethods_base:
         Help for mycielski:
         mycielski(Graph(G))
         Returns the Mycielskian of undirected graph G.
-        See also: 1/ chromatic_number 2/ number_of_triangles 
+        See also: 1/ chromatic_number 2/ number_of_triangles
         Ex1:mycielski(graph("petersen"))
         Ex2: is_isomorphic(mycielski(mycielski(path_graph(2))),graph("grotzsch"))
-        
         '''
         return GiacMethods['mycielski'](self,*args)
 
@@ -11216,9 +10323,8 @@ cdef class GiacMethods_base:
         Help for nCr:
         nCr(Intg(n),Intg(r))
         comb(n,r)=number of combinations of r objects taken among n : n!/(r!(n-r)!) (If n<0 comb(n,r)=n(n-1)..(n-r+1)/r!).
-        See also: 1/ factorial 2/ perm 
+        See also: 1/ factorial 2/ perm
         Ex1:nCr(4,2)
-        
         '''
         return GiacMethods['nCr'](self,*args)
 
@@ -11227,11 +10333,10 @@ cdef class GiacMethods_base:
         Help for nDeriv:
         nDeriv(Expr(Xpr),Var(Var),[Real(h)])
         Returns an approximation of the derivative number at a point: (Xpr(var+h)-Xpr(var-h))/(2*h) (by default h=0.001).
-        See also: 1/ avgRC 
+        See also: 1/ avgRC
         Ex1:nDeriv(f(x),x,h)
         Ex2:nDeriv(x^2,x,0.1)
         Ex3:nDeriv(x^2,x)
-        
         '''
         return GiacMethods['nDeriv'](self,*args)
 
@@ -11240,11 +10345,10 @@ cdef class GiacMethods_base:
         Help for nInt:
         nInt(Expr(f(x)),Var(x),Real(a),Real(b))
         Returns the approximate value of integrate(f(x),x,a,b) by Romberg's method.
-        See also: 1/ integrate 2/ gaussquad 
+        See also: 1/ integrate 2/ gaussquad
         Ex1:nInt(exp(x^2),x,0,1)
         Ex2:nInt(x^2,x,0,1)
         Ex3:nInt(exp(-x^2),x,-1,1)
-        
         '''
         return GiacMethods['nInt'](self,*args)
 
@@ -11253,9 +10357,8 @@ cdef class GiacMethods_base:
         Help for nPr:
         nPr(Intg(n),Intg(p))
         perm(n,p)=number of arrangements of p objects taken among n : n!/(n-p)!
-        See also: 1/ comb 2/ factorial 
+        See also: 1/ comb 2/ factorial
         Ex1:nPr(4,2)
-        
         '''
         return GiacMethods['nPr'](self,*args)
 
@@ -11264,10 +10367,9 @@ cdef class GiacMethods_base:
         Help for nSolve:
         nSolve(Expr,Var,[Guess or Interval],[Method])
         Numerical solution of an equation or a system of equations.
-        See also: 1/ solve 2/ fsolve 3/ csolve 
+        See also: 1/ solve 2/ fsolve 3/ csolve
         Ex1:nSolve(cos(x)=x,x)
         Ex2:nSolve(cos(x)=x,x=1.3)
-        
         '''
         return GiacMethods['nSolve'](self,*args)
 
@@ -11276,10 +10378,9 @@ cdef class GiacMethods_base:
         Help for ncols:
         ncols(Mtrx)
         Number of columns of a matrix.
-        See also: 1/ rowdim 
+        See also: 1/ rowdim
         Ex1:ncols([[1,2,3],[4,5,6]])
         Ex2:ncols([[1,2],[3,4],[5,6]])
-        
         '''
         return GiacMethods['ncols'](self,*args)
 
@@ -11288,11 +10389,10 @@ cdef class GiacMethods_base:
         Help for negbinomial:
         negbinomial(Intg(n),Intg(k),Real(p in 0..1))
         Returns comb(n+k-1,k)*p^k*(1-p)^n.
-        See also: 1/ negbinomial_cdf 2/ negbinomial_icdf 3/ binomial 
+        See also: 1/ negbinomial_cdf 2/ negbinomial_icdf 3/ binomial
         Ex1:negbinomial(4,0,0.5)
         Ex2:negbinomial(4,2,0.6)
         Ex3:negbinomial(4,6,0.3)
-        
         '''
         return GiacMethods['negbinomial'](self,*args)
 
@@ -11301,11 +10401,10 @@ cdef class GiacMethods_base:
         Help for negbinomial_cdf:
         negbinomial_cdf(Intg(n),Real(p),Real(x),[Real(y)])
         Returns Proba(X<=x) or Proba(x<=X<=y) when X follows the negbinomial(n,p) law.
-        See also: 1/ negbinomial 2/ negbinomial_icdf 
+        See also: 1/ negbinomial 2/ negbinomial_icdf
         Ex1:negbinomial_cdf(4,0.5,2)
         Ex2:negbinomial_cdf(4,0.1,2)
         Ex3:negbinomial_cdf(4,0.5,2,3)
-        
         '''
         return GiacMethods['negbinomial_cdf'](self,*args)
 
@@ -11314,10 +10413,9 @@ cdef class GiacMethods_base:
         Help for negbinomial_icdf:
         negbinomial_icdf(Intg(n),Real(p),Real(t))
         Returns h such as Proba(X<=h)=t when X follows the negbinomial(n,p) law.
-        See also: 1/ negbinomial 2/ negbinomial_cdf 
+        See also: 1/ negbinomial 2/ negbinomial_cdf
         Ex1:negbinomial_icdf(4,0.5,0.68)
         Ex2:negbinomial_icdf(4,0.1,0.95)
-        
         '''
         return GiacMethods['negbinomial_icdf'](self,*args)
 
@@ -11326,9 +10424,8 @@ cdef class GiacMethods_base:
         Help for neighbors:
         neighbors(Graph(G),[Vrtx(v)])
         Returns the list of vertices adjacent to vertex v of G. If v is omitted, a list of adjacency lists of all vertices in G is returned.
-        See also: 1/ adjacency_matrix 2/ vertex_degree 3/ in_degree 3/ out_degree 
+        See also: 1/ adjacency_matrix 2/ vertex_degree 3/ in_degree 3/ out_degree
         Ex1:neighbors(digraph(trail(1,2,3,4,5,6,4,7,8,2)),4)
-        
         '''
         return GiacMethods['neighbors'](self,*args)
 
@@ -11337,9 +10434,8 @@ cdef class GiacMethods_base:
         Help for network_transitivity:
         network_transitivity(Graph(G))
         Returns the transitivity (also called triangle density or global clustering coefficient) of G.
-        See also: 1/ clustering_coefficient 2/ number_of_triangles 
+        See also: 1/ clustering_coefficient 2/ number_of_triangles
         Ex1:network_transitivity(graph(%{[1,2],[2,3],[2,4],[3,4],[4,1]%}))
-        
         '''
         return GiacMethods['network_transitivity'](self,*args)
 
@@ -11348,9 +10444,8 @@ cdef class GiacMethods_base:
         Help for newList:
         newList(Intg(n))
         Returns the list made with n zeros.
-        See also: 1/ newMat 2/ makelist 
+        See also: 1/ newMat 2/ makelist
         Ex1:newList(4)
-        
         '''
         return GiacMethods['newList'](self,*args)
 
@@ -11359,9 +10454,8 @@ cdef class GiacMethods_base:
         Help for newMat:
         newMat(Intg(n),Intg(p))
         Returns the list with n rows and p columns, made with zeros.
-        See also: 1/ newList 2/ makemat 
+        See also: 1/ newList 2/ makemat
         Ex1:newMat(2,3)
-        
         '''
         return GiacMethods['newMat'](self,*args)
 
@@ -11370,12 +10464,11 @@ cdef class GiacMethods_base:
         Help for newton:
         newton(Expr(f(x)),Var(x),[ApproxVal(a),NumIter(p)])
         newton(f(x),x,a,p)=one root of f(x) by Newton method beginning with a and p iterations (by default p=20).
-        See also: 1/ rootof 
+        See also: 1/ rootof
         Ex1:newton(x^2-2,x)
         Ex2:newton(x^2-2,x,2)
         Ex3:newton(x^2-2,x,-2)
         Ex4:newton(x^2-2,x,2,5,1e-7)
-        
         '''
         return GiacMethods['newton'](self,*args)
 
@@ -11384,14 +10477,13 @@ cdef class GiacMethods_base:
         Help for newton_solver:
         newton_solver(Opt)
         Argument for fsolve giving the method for solving a numerical equation.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve(cos(x)=x,x,0..1,bisection_solver)
         Ex2: fsolve(cos(x)=x,x,0..1,brent_solver)
         Ex3: fsolve(cos(x)=x,x,0..1,falsepos_solver)
         Ex4: fsolve(cos(x)=x,x,0,newton_solver)
         Ex5: fsolve(cos(x)=x,x,0,secant_solver)
         Ex6: fsolve(cos(x)=x,x,0,steffenson_solver)
-        
         '''
         return GiacMethods['newton_solver'](self,*args)
 
@@ -11400,14 +10492,13 @@ cdef class GiacMethods_base:
         Help for newtonj_solver:
         newtonj_solver(Opt)
         Argument for fsolve giving the method for solving a system of numerical equations.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],dnewton_solver)
         Ex2: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrid_solver)
         Ex3: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybrids_solver)
         Ex4: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridj_solver)
         Ex5: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],hybridsj_solver)
         Ex6: fsolve([x^2+y-2,x+y^2-2],[x,y],[2,2],newtonj_solver)
-        
         '''
         return GiacMethods['newtonj_solver'](self,*args)
 
@@ -11416,10 +10507,9 @@ cdef class GiacMethods_base:
         Help for nextperm:
         nextperm(Intg(n))
         Returns the next permutation with the lexicographic order.
-        See also: 1/ prevperm 2/ is_permu 
+        See also: 1/ prevperm 2/ is_permu
         Ex1:nextperm([0,2,1,3])
         Ex2:nextperm([0,3,2,1])
-        
         '''
         return GiacMethods['nextperm'](self,*args)
 
@@ -11428,10 +10518,9 @@ cdef class GiacMethods_base:
         Help for nextprime:
         nextprime(Intg(a))
         Next prime or pseudo-prime after a given integer.
-        See also: 1/ prevprime 2/ is_prime 3/ ithprime 
+        See also: 1/ prevprime 2/ is_prime 3/ ithprime
         Ex1:nextprime(9856989898990)
         Ex2:nextprime(97160249868928888261606009)
-        
         '''
         return GiacMethods['nextprime'](self,*args)
 
@@ -11440,7 +10529,7 @@ cdef class GiacMethods_base:
         Help for nlpsolve:
         nlpsolve(objective, [constr], [bd], [opts])
         Solves a nonlinear programming problem of optimizing the objective obj under constraints constr (list of equations and/or inequations) and within bounds bd (sequence of x=a..b) with optional options (for example setting an initial point).
-        See also: 1/ lpsolve 2/ fsolve 3/ fMin 4/ fMax 
+        See also: 1/ lpsolve 2/ fsolve 3/ fMin 4/ fMax
         Ex1:nlpsolve((x1-10)^3+(x2-20)^3,[(x1-5)^2+(x2-5)^2>=100,(x2-5)^2+(x1-6)^2<=82.81],nlp_initialpoint=[x1=20.1,x2=5.84])
         Ex2:nlpsolve(sin(x1+x2)+(x1-x2)^2-1.5x1+2.5x2+1,x1=-1.5..4,x2=-3..3)
         Ex3:nlpsolve(ln(1+x1^2)-x2,[(1+x1^2)^2+x2^2=4])
@@ -11448,10 +10537,9 @@ cdef class GiacMethods_base:
         Ex5:nlpsolve(-x1*x2*x3,[72-x1-2x2-2x3>=0],x1=0..20,x2=0..11,x3=0..42)
         Ex6:nlpsolve(2-1/120*x1*x2*x3*x4*x5,[x1<=1,x2<=2,x3<=3,x4<=4,x5<=5],assume=nlp_nonnegative)
         Ex7:nlpsolve(sin(x)/x,x=1..30)
-        Ex8:nlpsolve(x^3+2x*y-2y^2,x=-10..10,y=-10..10,nlp_initialpoint=[x=3,y=4],maximize) 
+        Ex8:nlpsolve(x^3+2x*y-2y^2,x=-10..10,y=-10..10,nlp_initialpoint=[x=3,y=4],maximize)
         Ex9:nlpsolve(w^3*(v-w)^2+(w-x-1)^2+(x-y-2)^2+(y-z-3)^2,[w+x+y+z<=5,3z+2v=3],assume=nlp_nonnegative)
         Ex10:nlpsolve(sin(x)*Psi(x),x=1..20,nlp_initialpoint=[x=16])
-        
         '''
         return GiacMethods['nlpsolve'](self,*args)
 
@@ -11461,7 +10549,6 @@ cdef class GiacMethods_base:
         nodisp(Expr)
         Displays Done in place of a value.
         Ex1:nodisp(A:=ranm(50,50))
-        
         '''
         return GiacMethods['nodisp'](self,*args)
 
@@ -11470,10 +10557,9 @@ cdef class GiacMethods_base:
         Help for non_recursive_normal:
         non_recursive_normal(Expr)
         Simplifies the expressions, but without simplification inside of non-rational expressions.
-        See also: 1/ normal 
+        See also: 1/ normal
         Ex1:non_recursive_normal(sin(x+x)+sin(2*x)+x+x)
         Ex2:non_recursive_normal(sin(2*x)+sin(2*x)+x+x)
-        
         '''
         return GiacMethods['non_recursive_normal'](self,*args)
 
@@ -11482,9 +10568,8 @@ cdef class GiacMethods_base:
         Help for nop:
         nop(NULL)
         No OPeration instruction.
-        See also: 1/  
+        See also: 1/
         Ex1:nop()
-        
         '''
         return GiacMethods['nop'](self,*args)
 
@@ -11493,11 +10578,10 @@ cdef class GiacMethods_base:
         Help for nops:
         nops(Lst or Str or Seq)
         Returns the size of a list, a string or a sequence.
-        See also: 1/ sizes 2/ dim 3/ degree 
+        See also: 1/ sizes 2/ dim 3/ degree
         Ex1:nops([1,2,3])
         Ex2:nops("bonjour")
         Ex3:nops(1,2,3)
-        
         '''
         return GiacMethods['nops'](self,*args)
 
@@ -11506,12 +10590,11 @@ cdef class GiacMethods_base:
         Help for norm:
         norm(Vect or Mtrx)
         Returns the l2 norm of a vector = sqrt(x1^2+x2^2+...xn^2) or matrix norm induced by l2 norm.
-        See also: 1/ maxnorm 2/ l1norm 
+        See also: 1/ maxnorm 2/ l1norm
         Ex1:norm([1,2])
         Ex2:norm([1,2,3,-4])
         Ex3:norm([[1,2],[3,-4]])
         Ex4:norm([[1,2,3],[3,-9,6],[4,5,6]])
-        
         '''
         return GiacMethods['norm'](self,*args)
 
@@ -11520,11 +10603,10 @@ cdef class GiacMethods_base:
         Help for normal:
         normal(Expr)
         Simplifies the expression.
-        See also: 1/ simplify 
+        See also: 1/ simplify
         Ex1:normal(2*x+y=1)
         Ex2:normal(2*x*2)
         Ex3:normal((2*x+1)^2)
-        
         '''
         return GiacMethods['normal'](self,*args)
 
@@ -11533,11 +10615,10 @@ cdef class GiacMethods_base:
         Help for normal_cdf:
         normal_cdf(Real(mu),Real(sigma),Real(x0),[Real(y0)])
         Returns the probability that a Normal random variable is less than x0 or between x0 and y0 (mu is the mean and sigma the standard deviation).
-        See also: 1/ UTPN 2/ normal_icdf 3/ normald 
+        See also: 1/ UTPN 2/ normal_icdf 3/ normald
         Ex1:normal_cdf(1.96)
         Ex2:normal_cdf(1,2,2.96*sqrt(2))
         Ex3:normal_cdf(1,2,1.4*sqrt(2),2.96*sqrt(2))
-        
         '''
         return GiacMethods['normal_cdf'](self,*args)
 
@@ -11546,10 +10627,9 @@ cdef class GiacMethods_base:
         Help for normal_icdf:
         normal_icdf(Real(mu),Real(sigma),Real(p))
         Returns h such as the probability that a Normal random variable is less than h is p (mu is the mean and sigma the standard deviation and 0<=p<=1).
-        See also: 1/ normal_cdf 2/ normald 
+        See also: 1/ normal_cdf 2/ normald
         Ex1:normal_icdf(0.95)
         Ex2:normal_icdf(1,2,0.95)
-        
         '''
         return GiacMethods['normal_icdf'](self,*args)
 
@@ -11558,12 +10638,11 @@ cdef class GiacMethods_base:
         Help for normald:
         normald(Real(mu),Real(sigma),Real(x0))
         Returns the probability density of the Normal law (mu is the mean and sigma the standard deviation).
-        See also: 1/ normal_cdf 2/ normal_icdf 3/ randvector 4/ ranm 
+        See also: 1/ normal_cdf 2/ normal_icdf 3/ randvector 4/ ranm
         Ex1:normald(1)
         Ex2:normald(1,2,3.5)
         Ex3: randvector(3,normald,1,0.5)
         Ex4: ranm(4,3,normald,1,0.5)
-        
         '''
         return GiacMethods['normald'](self,*args)
 
@@ -11572,11 +10651,10 @@ cdef class GiacMethods_base:
         Help for normald_cdf:
         normald_cdf(Real(mu),Real(sigma),Real(x0),[Real(y0)])
         Returns the probability that a Normal random variable is less than x0 or between x0 and y0 (mu is the mean and sigma the standard deviation).
-        See also: 1/ UTPN 2/ normal_icdf 3/ normald 
+        See also: 1/ UTPN 2/ normal_icdf 3/ normald
         Ex1:normald_cdf(1.96)
         Ex2:normald_cdf(1,2,2.96*sqrt(2))
         Ex3:normald_cdf(1,2,1.4*sqrt(2),2.96*sqrt(2))
-        
         '''
         return GiacMethods['normald_cdf'](self,*args)
 
@@ -11585,10 +10663,9 @@ cdef class GiacMethods_base:
         Help for normald_icdf:
         normald_icdf(Real(mu),Real(sigma),Real(p))
         Returns h such as the probability that a Normal random variable is less than h is p (mu is the mean and sigma the standard deviation and 0<=p<=1).
-        See also: 1/ normal_cdf 2/ normald 
+        See also: 1/ normal_cdf 2/ normald
         Ex1:normald_icdf(0.95)
         Ex2:normald_icdf(1,2,0.95)
-        
         '''
         return GiacMethods['normald_icdf'](self,*args)
 
@@ -11597,12 +10674,11 @@ cdef class GiacMethods_base:
         Help for normalize:
         normalize(Lst||Cplx)
         Returns the vector divided by its l2norm. It is also an option for plotfield.
-        See also: 1/ l2norm 
+        See also: 1/ l2norm
         Ex1:normalize(3+4*i)
         Ex2:normalize([3,4])
         Ex3: fieldplot(-t*y,[t,y],normalize)
         Ex4: fieldplot(-t*y,[t,y],normalize,xstep=0.5,ystep=0.5)
-        
         '''
         return GiacMethods['normalize'](self,*args)
 
@@ -11611,10 +10687,9 @@ cdef class GiacMethods_base:
         Help for normalt:
         normalt(Lst,Real,[Real],Fnc,[Real])
         Z-Test/normal law: arg1=[success,trial] or [mean,sample size] or data, arg2=proportion or data, arg3 optional if data=sigma, arg4 alternative '!=' or '>' or '<', arg5 optional alpha confidence level.
-        See also: 1/ studentt 2/ chisquaret 3/ kolmogorovt 
+        See also: 1/ studentt 2/ chisquaret 3/ kolmogorovt
         Ex1:normalt([10,30],.5,.02,'!=',0.1)
         Ex2:normalt([0.48,50],0.5,0.1,'<')
-        
         '''
         return GiacMethods['normalt'](self,*args)
 
@@ -11623,10 +10698,9 @@ cdef class GiacMethods_base:
         Help for normalvariate:
         normalvariate(Real(mu),Real(sigma))
         Returns a random real with normal distribution N(mu,sigma).
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randpoisson 8/ randgeometric 9/ randmultinomial 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randpoisson 8/ randgeometric 9/ randmultinomial
         Ex1:normalvariate(0,1)
         Ex2:normalvariate(2,1)
-        
         '''
         return GiacMethods['normalvariate'](self,*args)
 
@@ -11635,9 +10709,8 @@ cdef class GiacMethods_base:
         Help for nprimes:
         nprimes(Intg(n))
         Counts the number of primes less than n.
-        See also: 1/ ithprime 2/ prevprime 3/ nextprime 4/ isprime 
+        See also: 1/ ithprime 2/ prevprime 3/ nextprime 4/ isprime
         Ex1:nprimes(20)
-        
         '''
         return GiacMethods['nprimes'](self,*args)
 
@@ -11646,10 +10719,9 @@ cdef class GiacMethods_base:
         Help for nrows:
         nrows(Mtrx)
         Number of rows of a matrix.
-        See also: 1/ ncols 
+        See also: 1/ ncols
         Ex1:nrows([[1,2,3],[4,5,6]])
         Ex2:nrows([[1,2],[3,4],[5,6]])
-        
         '''
         return GiacMethods['nrows'](self,*args)
 
@@ -11658,9 +10730,8 @@ cdef class GiacMethods_base:
         Help for nuage_points:
         nuage_points(Mtrx)
         Draws for k=0..nrows, the points (xk,yk) where xk=element row k column 0 and yk=element row k column j (j=1..ncols).
-        See also: 1/ polygonplot 2/ polygonscatterplot 3/ listplot 
+        See also: 1/ polygonplot 2/ polygonscatterplot 3/ listplot
         Ex1:nuage_points([[1,2,3],[2,0,1],[-1,2,3]])
-        
         '''
         return GiacMethods['nuage_points'](self,*args)
 
@@ -11669,10 +10740,9 @@ cdef class GiacMethods_base:
         Help for nullspace:
         nullspace(Mtrx)
         Kernel of a linear map with matrix M.
-        See also: 1/ image 2/ rref 3/ Nullspace 
+        See also: 1/ image 2/ rref 3/ Nullspace
         Ex1:nullspace([[1,2],[3,6]])
         Ex2:nullspace([[1,2,3],[1,3,6],[2,5,9]])
-        
         '''
         return GiacMethods['nullspace'](self,*args)
 
@@ -11681,9 +10751,8 @@ cdef class GiacMethods_base:
         Help for number_of_edges:
         number_of_edges(Graph(G))
         Returns the number of edges/arcs of G.
-        See also: 1/ edges 2/ number_of_vertices 
+        See also: 1/ edges 2/ number_of_vertices
         Ex1:number_of_edges(complete_graph(5))
-        
         '''
         return GiacMethods['number_of_edges'](self,*args)
 
@@ -11692,10 +10761,9 @@ cdef class GiacMethods_base:
         Help for number_of_spanning_trees:
         number_of_spanning_trees(Graph(G))
         Returns the number of spanning trees in undirected graph G.
-        See also: 1/ spanning_tree 
+        See also: 1/ spanning_tree
         Ex1:number_of_spanning_trees(complete_graph(4))
         Ex2:number_of_spanning_trees(graph(trail(1,2,3,4,1,3)))
-        
         '''
         return GiacMethods['number_of_spanning_trees'](self,*args)
 
@@ -11704,9 +10772,8 @@ cdef class GiacMethods_base:
         Help for number_of_triangles:
         number_of_triangles(Graph(G))
         Returns the number of 3-cliques if G is undirected resp. the number of directed cycles on 3 vertices if G is directed.
-        See also: 1/ is_clique 2/ maximal_clique 
+        See also: 1/ is_clique 2/ maximal_clique
         Ex1:number_of_triangles(graph("tetrahedron"))
-        
         '''
         return GiacMethods['number_of_triangles'](self,*args)
 
@@ -11715,9 +10782,8 @@ cdef class GiacMethods_base:
         Help for number_of_vertices:
         number_of_vertices(Graph(G))
         Returns the number of vertices of G.
-        See also: 1/ graph_vertices 2/ number_of_edges 
+        See also: 1/ graph_vertices 2/ number_of_edges
         Ex1:number_of_vertices(graph("petersen"))
-        
         '''
         return GiacMethods['number_of_vertices'](self,*args)
 
@@ -11726,11 +10792,10 @@ cdef class GiacMethods_base:
         Help for numer:
         numer(Frac(a/b) or RatFrac)
         Returns the numerator of the simplified fraction.
-        See also: 1/ getNum 2/ getDenom 3/ denom 4/ f2nd 
+        See also: 1/ getNum 2/ getDenom 3/ denom 4/ f2nd
         Ex1:numer(25/15)
         Ex2:numer((x^3-1)/(x^2-1))
         Ex3:numer(1+(x^3-1)/x^2)
-        
         '''
         return GiacMethods['numer'](self,*args)
 
@@ -11739,10 +10804,9 @@ cdef class GiacMethods_base:
         Help for octahedron:
         octahedron(Pnt(A),Pnt(B),Pnt(C))
         Draws an octahedron with center A, vertex B and such that the plane ABC contains 4 vertices.
-        See also: 1/ icosahedron 2/ dodecahedron 3/ cube 4/ tetrahedron 
+        See also: 1/ icosahedron 2/ dodecahedron 3/ cube 4/ tetrahedron
         Ex1:octahedron([0,0,0],[0,0,5],[0,5,0])
         Ex2:octahedron(evalf([0,0,0],[3,2,4],[1,1,0]))
-        
         '''
         return GiacMethods['octahedron'](self,*args)
 
@@ -11751,10 +10815,9 @@ cdef class GiacMethods_base:
         Help for odd:
         odd(Intg(n))
         Returns 1 if the integer is odd, else returns 0.
-        See also: 1/ even 
+        See also: 1/ even
         Ex1:odd(6)
         Ex2:odd(1251)
-        
         '''
         return GiacMethods['odd'](self,*args)
 
@@ -11763,10 +10826,9 @@ cdef class GiacMethods_base:
         Help for odd_girth:
         odd_girth(Graph(G))
         Returns the length of the shortest odd cycle in the undirected unweighted graph G.
-        See also: 1/ girth 
+        See also: 1/ girth
         Ex1:odd_girth(graph("petersen"))
         Ex2:odd_girth(hypercube_graph(3))
-        
         '''
         return GiacMethods['odd_girth'](self,*args)
 
@@ -11775,9 +10837,8 @@ cdef class GiacMethods_base:
         Help for odd_graph:
         odd_graph(Intg(n))
         Returns the odd graph of order n as Kneser graph K(2n-1,n-1), where n<=8.
-        See also: 1/ kneser_graph 
+        See also: 1/ kneser_graph
         Ex1:odd_graph(3)
-        
         '''
         return GiacMethods['odd_graph'](self,*args)
 
@@ -11786,7 +10847,7 @@ cdef class GiacMethods_base:
         Help for odeplot:
         odeplot(Expr,VectVar,VectInitCond)
         odeplot(f(t,y),[t,y],[t0,y0]) draws the solution of y'=f(t,y) and y(t0)=y0 or of the system [x'=g(t,x,y),y'=h(t,x,y)] with x(t0)=x0 and y(t0)=y0.
-        See also: 1/ interactive_plotode 2/ fieldplot 3/ odesolve 4/ desolve 
+        See also: 1/ interactive_plotode 2/ fieldplot 3/ odesolve 4/ desolve
         Ex1:odeplot(sin(t*y),[t,y],[0,1])
         Ex2:odeplot(sin(t*y),[t=-10..10,y],[0,1])
         Ex3:odeplot(sin(t*y),[t=-3..3,y],[0,1],tstep=0.1,color=vert)
@@ -11794,7 +10855,6 @@ cdef class GiacMethods_base:
         Ex5:odeplot([x-0.3*x*y, 0.3*x*y-y], [t,x,y],[0,0.3,0.7],plan)
         Ex6:odeplot([-y+b,-1+(x-a)^2+(y-b)^2],[t=-3..3,x,y],[0,a+1,b+0.5],plan)
         Ex7:odeplot(5*[-y,x],[t=0..1,x,y],[0,0.3,0.7],tstep=0.05,plan)
-        
         '''
         return GiacMethods['odeplot'](self,*args)
 
@@ -11803,13 +10863,12 @@ cdef class GiacMethods_base:
         Help for odesolve:
         odesolve(Expr,VectVar,VectInitCond,FinalVal,[tstep=Val,curve])
         odesolve(f(t,y),[t,y],[t0,y0],t1)=odesolve(t0..t1,f,y0)=y(t1) for y approx sol of y'=f(t,y) and y(t0)=y0 with y=vector for systems.
-        See also: 1/ plotode 2/ plotfield 3/ interactive_plotode 4/ desolve 
+        See also: 1/ plotode 2/ plotfield 3/ interactive_plotode 4/ desolve
         Ex1:odesolve(sin(t*y),[t,y],[0,1],2)
         Ex2:odesolve(0..2,(t,y)->sin(t*y),1)
         Ex3:odesolve(0..pi,(t,v)->{[-v[1],v[0]]},[0,1])
         Ex4:odesolve(sin(t*y),t=0..2,y,1,tstep=0.5)
         Ex5:odesolve(sin(t*y),t=0..2,y,1,tstep=0.5,curve)
-        
         '''
         return GiacMethods['odesolve'](self,*args)
 
@@ -11818,13 +10877,12 @@ cdef class GiacMethods_base:
         Help for op:
         op(Op or Fnc)
         Returns the arguments of an operator as a sequence.
-        See also: 1/ sommet 2/ quote 3/ makesuite 
+        See also: 1/ sommet 2/ quote 3/ makesuite
         Ex1:op(quote(gcd(45,126)))
         Ex2:op('gcd(45,126)')
         Ex3:op('1+2')[1]
         Ex4:op([1,2,3])
         Ex5:op(set[1,2,3])
-        
         '''
         return GiacMethods['op'](self,*args)
 
@@ -11833,10 +10891,9 @@ cdef class GiacMethods_base:
         Help for open_polygon:
         open_polygon(LstPnt||LstCplx)
         Returns and draws the polygonal line where its vertices are the element of l.
-        See also: 1/ isopolygon 2/ quadrilateral 
+        See also: 1/ isopolygon 2/ quadrilateral
         Ex1:open_polygon(i,1+i,2-i,-1,-1+i/2)
         Ex2:open_polygon(point(0,0,0),point(3,3,3),point(0,0,3),point(3,0,0))
-        
         '''
         return GiacMethods['open_polygon'](self,*args)
 
@@ -11845,11 +10902,10 @@ cdef class GiacMethods_base:
         Help for ord:
         ord(Char||LstChar)
         Returns the ASCII code of a character or of the first character of a string.
-        See also: 1/ asc 2/ char 
+        See also: 1/ asc 2/ char
         Ex1:ord("A")
         Ex2:ord("ABC")
         Ex3:ord(["a","b","c"])
-        
         '''
         return GiacMethods['ord'](self,*args)
 
@@ -11860,7 +10916,6 @@ cdef class GiacMethods_base:
         Returns element order of g in (Z/nZ)^* or in a finite field.
         Ex1:order(3 % 7)
         Ex2: GF(3,5,g); order(g^2+g+1);
-        
         '''
         return GiacMethods['order'](self,*args)
 
@@ -11869,10 +10924,9 @@ cdef class GiacMethods_base:
         Help for order_size:
         order_size(Expr)
         Remainder (O term) of a series expansion: limit(x^a*order_size(x),x=0)=0 if a>0.
-        See also: 1/ series 
+        See also: 1/ series
         Ex1:order_size(x)
         Ex2: limit(sqrt(x)*order_size(x),x=0)
-        
         '''
         return GiacMethods['order_size'](self,*args)
 
@@ -11881,12 +10935,11 @@ cdef class GiacMethods_base:
         Help for ordinate:
         ordinate(Pnt or Vect)
         Returns the ordinate of a point or a vector.
-        See also: 1/ abscissa 2/ affix 3/ cote 4/ coordinates 
+        See also: 1/ abscissa 2/ affix 3/ cote 4/ coordinates
         Ex1:ordinate(point(1+2*i))
         Ex2:ordinate(point(i)-point(1+2*i))
         Ex3:ordinate(-1-i)
         Ex4:ordinate(point(1,2,3))
-        
         '''
         return GiacMethods['ordinate'](self,*args)
 
@@ -11895,11 +10948,10 @@ cdef class GiacMethods_base:
         Help for orthocenter:
         orthocenter((Pnt or Cplx),(Pnt or Cplx),(Pnt or Cplx))
         Shows the orthocenter of a triangle or of the triangle made with 3 points.
-        See also: 1/ altitude 2/ triangle 
+        See also: 1/ altitude 2/ triangle
         Ex1:orthocenter(1+i,2,i)
         Ex2:orthocenter(point(1+i),point(2),point(i))
         Ex3:orthocenter(triangle(0,1,1+i))
-        
         '''
         return GiacMethods['orthocenter'](self,*args)
 
@@ -11908,10 +10960,9 @@ cdef class GiacMethods_base:
         Help for orthogonal:
         orthogonal((Pnt),(Line or Plan))
         orthogonal(A,line(B,C)) draws the orthogonal plane of line BC through A and orthogonal(A,plane(B,C,D)) draws the orthogonal line of plane(B,C,D) through A.
-        See also: 1/ altitude 2/ perpendicular 
+        See also: 1/ altitude 2/ perpendicular
         Ex1:orthogonal(point(0,0,0),line(point(1,0,0),point(0,1,0)))
         Ex2:orthogonal(point(0,0,0),plane(point(1,0,0),point(0,1,0),point(0,0,1)))
-        
         '''
         return GiacMethods['orthogonal'](self,*args)
 
@@ -11920,14 +10971,13 @@ cdef class GiacMethods_base:
         Help for osculating_circle:
         osculating_circle(Curve,Point)
         Osculating circle at point M to the curve C.
-        See also: 1/ curvature 2/ evolute 
+        See also: 1/ curvature 2/ evolute
         Ex1:osculating_circle(plot(x^2),point(1,1))
         Ex2:osculating_circle([5*cos(t),5*sin(t)],t,0)
         Ex3:osculating_circle([t,t^2],t)
         Ex4:osculating_circle([t,t^2],t,1)
         Ex5:osculating_circle([3*exp(t/2)*cos(t),3*exp(t/2)*sin(t)],t)
         Ex6:osculating_circle([3*exp(t/2)*cos(t),3*exp(t/2)*sin(t)],t,7)
-        
         '''
         return GiacMethods['osculating_circle'](self,*args)
 
@@ -11936,9 +10986,8 @@ cdef class GiacMethods_base:
         Help for p1oc2:
         p1oc2(Permut,Cycle)
         Returns the permutation product of p1 and c2.
-        See also: 1/ c1op2 2/ p1op2 
+        See also: 1/ c1op2 2/ p1op2
         Ex1:p1oc2([0,2,1],[2,1,3])
-        
         '''
         return GiacMethods['p1oc2'](self,*args)
 
@@ -11947,9 +10996,8 @@ cdef class GiacMethods_base:
         Help for p1op2:
         p1op2(Permut,Permut)
         Returns the permutation product of p1 and p2.
-        See also: 1/ c1op2 2/ p1oc2 
+        See also: 1/ c1op2 2/ p1oc2
         Ex1:p1op2([0,2,1],[1,0,3,2])
-        
         '''
         return GiacMethods['p1op2'](self,*args)
 
@@ -11961,7 +11009,6 @@ cdef class GiacMethods_base:
         Ex1:pa2b2(17)
         Ex2:pa2b2(209)
         Ex3:pa2b2(229)
-        
         '''
         return GiacMethods['pa2b2'](self,*args)
 
@@ -11970,9 +11017,8 @@ cdef class GiacMethods_base:
         Help for pade:
         pade(Expr(Xpr), Var(x), (Intg(n) || Poly(N)), Intg(p))
         Pade approximation P/Q=Xpr mod x^(n+1) or mod N with degree(P)<p.
-        See also: 1/ taylor 2/ series 
+        See also: 1/ taylor 2/ series
         Ex1:pade(exp(x),x,10,6)
-        
         '''
         return GiacMethods['pade'](self,*args)
 
@@ -11981,12 +11027,11 @@ cdef class GiacMethods_base:
         Help for parabola:
         parabola(Pnt(F)||Pnt(xA+i*yA),Pnt(A)||Real(c),[Pnt(P)])
         parabola(F,A)=focus F, top A (in the plane ABP) or (parabola(A,c) of equa. y=yA+c*(x-xA)^2 c=1/(2*p) and FA=p/2 geo2d) and parabola(P(x,y)) draws the conic if deg(P)=2.
-        See also: 1/ ellipse 2/ hyperbola 
+        See also: 1/ ellipse 2/ hyperbola
         Ex1:parabola(point(0),point(2))
         Ex2:parabola(0,2)
         Ex3:parabola(point(0,0,0),point(1,0,0),point(1,1,1))
         Ex4:parabola(x-y^2+y-2)
-        
         '''
         return GiacMethods['parabola'](self,*args)
 
@@ -11995,7 +11040,7 @@ cdef class GiacMethods_base:
         Help for parallel:
         parallel(Pnt or Line,Line or Plan,[Line])
         parallel(A,D) (resp parallel(A,P) or parallel(A,D,DD)) draws the line (resp plane) through A parallel to the line D (resp parallel to the plane P or to the lines D,DD) and parallel(d,D) draws the plane through d parallel to the line D.
-        See also: 1/  
+        See also: 1/
         Ex1:parallel(1+i,line(1-i,i))
         Ex2:parallel(1+i,segment(1-i,i))
         Ex3:parallel(point([1,1,1]),line(x=0,y=0))
@@ -12003,7 +11048,6 @@ cdef class GiacMethods_base:
         Ex5:parallel([1,1,1],plane(x=0))
         Ex6:parallel([1,0,0],line(x=0,y=0),line(x=y,y=z))
         Ex7:parallel(line(x=y,y=z),line(x=0,y=0))
-        
         '''
         return GiacMethods['parallel'](self,*args)
 
@@ -12012,10 +11056,9 @@ cdef class GiacMethods_base:
         Help for parallelepiped:
         parallelepiped(Pnt(A),Pnt(B),Pnt(C),Pnt(D))
         Draws a parallelepiped with sides AB,AC,AD (the faces are parallelograms).
-        See also: 1/ cube 2/ polyhedron 
+        See also: 1/ cube 2/ polyhedron
         Ex1:parallelepiped([0,0,0],[2,0,0],[0,1,0],[0,0,3])
         Ex2: p:=parallelepiped([0,0,0],[5,0,0],[0,3,0],[0,0,2]);c1,c2,c3,c4,c5,c6,c7,c8:=sommets(p);
-        
         '''
         return GiacMethods['parallelepiped'](self,*args)
 
@@ -12024,12 +11067,11 @@ cdef class GiacMethods_base:
         Help for parallelogram:
         parallelogram(Pnt(A)||Cplx,Pnt(B)||Cplx,Pnt(C)||Cplx,[Var(D)])
         Returns and draws the parallelogram ABCD such that vector(AB)+vector(AD)=vector(AC).
-        See also: 1/ quadrilateral 2/ rhombus 
+        See also: 1/ quadrilateral 2/ rhombus
         Ex1:parallelogram(0,1,2+i)
         Ex2:parallelogram(1,0,2+i,D)
         Ex3:parallelogram(point(0,0,0),point(3,3,3),point(0,0,3))
         Ex4:parallelogram(point(0,0,0),point(3,3,3),point(0,0,3),D)
-        
         '''
         return GiacMethods['parallelogram'](self,*args)
 
@@ -12038,10 +11080,9 @@ cdef class GiacMethods_base:
         Help for parameq:
         parameq(GeoObj)
         parameq(C) returns the complex number=parametric equation of the curve C.
-        See also: 1/ equation 
+        See also: 1/ equation
         Ex1:parameq(circle(0,1))
         Ex2:parameq(line(i,1-i))
-        
         '''
         return GiacMethods['parameq'](self,*args)
 
@@ -12050,8 +11091,7 @@ cdef class GiacMethods_base:
         Help for parameter:
         parameter()
         Reserved word.
-        See also: 1/  
-        
+        See also: 1/
         '''
         return GiacMethods['parameter'](self,*args)
 
@@ -12060,7 +11100,7 @@ cdef class GiacMethods_base:
         Help for paramplot:
         paramplot(Cplx||Lst,Var||Lst(Var))
         plotparam(a(x)+i*b(x),x=x0..x1) draws the curve X=a(x),Y=b(x) x=x0..x1 or plotparam([a(u,v),b(u,v),c(u,v)],[u=u0..u1,v=v0..v1]) draws the surface X=a(u,v),Y=b(u,v),Z=c(u,v) u=u0..u1 and v=v0..v1.
-        See also: 1/ plotfunc 2/ plotpolar 3/ arc 
+        See also: 1/ plotfunc 2/ plotpolar 3/ arc
         Ex1:paramplot(sin(t)+i*cos(t),t)
         Ex2:paramplot(exp(i*t),t=0..pi/2,affichage=1)
         Ex3:paramplot(exp(i*t),t=0..pi/2,affichage=1+rempli)
@@ -12069,7 +11109,6 @@ cdef class GiacMethods_base:
         Ex6:paramplot(sin(x)+i*cos(x),x=0..1,tstep=0.01)
         Ex7:paramplot([v*cos(u),v*sin(u),v],[u,v])
         Ex8:paramplot([v*cos(u),v*sin(u),v],[u=0..pi,v=0..3],ustep=0.1,vstep=0.2)
-        
         '''
         return GiacMethods['paramplot'](self,*args)
 
@@ -12078,10 +11117,9 @@ cdef class GiacMethods_base:
         Help for parfrac:
         parfrac(Opt)
         Option of the convert or convertir command (id at the option partfrac).
-        See also: 1/ convert 
+        See also: 1/ convert
         Ex1: convert(1/(x^2-1),parfrac)
         Ex2: convert(1/(x^2-1),fullparfrac)
-        
         '''
         return GiacMethods['parfrac'](self,*args)
 
@@ -12090,7 +11128,7 @@ cdef class GiacMethods_base:
         Help for pari:
         pari(Str,arguments)
         Executes a PARI/GP command or exports all PARI/GP commands.
-        See also: 1/ gcd 2/ lgcd 3/ is_prime 
+        See also: 1/ gcd 2/ lgcd 3/ is_prime
         Ex1:pari()
         Ex2:pari("gcd",15,50)
         Ex3:pari("gcd",5/7,50/9)
@@ -12099,7 +11137,6 @@ cdef class GiacMethods_base:
         Ex6:pari("content",[25,15,50,75])
         Ex7:pari("isprime",9856989898997789789,1)
         Ex8:pari("isprime",9856989898997789789,2)
-        
         '''
         return GiacMethods['pari'](self,*args)
 
@@ -12108,12 +11145,11 @@ cdef class GiacMethods_base:
         Help for part:
         part(Expr, Intg(n))
         Returns the n-th subexpression of the expression.
-        See also: 1/  
+        See also: 1/
         Ex1:part(sin(x)+cos(x),1)
         Ex2:part(sin(x)+cos(x),2)
         Ex3:part(exp(x)*sin(x),1)
         Ex4:part(part(exp(x)*sin(x)+cos(x),1),1)
-        
         '''
         return GiacMethods['part'](self,*args)
 
@@ -12122,12 +11158,11 @@ cdef class GiacMethods_base:
         Help for partfrac:
         partfrac(RatFrac or Opt)
         Performs partial fraction decomposition on a fraction or option of the convert or convertir command (id at the option parfrac).
-        See also: 1/ factor 2/ normal 3/ convert 4/ propfrac 
+        See also: 1/ factor 2/ normal 3/ convert 4/ propfrac
         Ex1:partfrac(x/(4-x^2))
         Ex2:partfrac((x^2-2*x+3)/(x^2-3*x+2))
         Ex3:partfrac(a/(z*(z-b)),z)
         Ex4: convert(x/(4-x^2),partfrac)
-        
         '''
         return GiacMethods['partfrac'](self,*args)
 
@@ -12136,9 +11171,8 @@ cdef class GiacMethods_base:
         Help for parzen_window:
         parzen_window(Lst,[Interval(n1..n2)])
         Applies the Parzen windowing function to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ bartlett_hann_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ bartlett_hann_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(parzen_window(randvector(1000,0..1)))
-        
         '''
         return GiacMethods['parzen_window'](self,*args)
 
@@ -12147,10 +11181,9 @@ cdef class GiacMethods_base:
         Help for pas_de_cote:
         pas_de_cote(NULL or Real(n))
         The turtle does n side-steps to the left (-n steps to the right if n negative) without trace (by default n=10).
-        See also: 1/ saute 2/ tourne_droite 3/ tourne_gauche 
+        See also: 1/ saute 2/ tourne_droite 3/ tourne_gauche
         Ex1: pas_de_cote 30
         Ex2:pas_de_cote(30)
-        
         '''
         return GiacMethods['pas_de_cote'](self,*args)
 
@@ -12159,9 +11192,8 @@ cdef class GiacMethods_base:
         Help for path_graph:
         path_graph(Intg(n)||Lst(V))
         Returns a path graph on n vertices [with labels from V].
-        See also: 1/ cycle_graph 2/ graph 3/ trail 
+        See also: 1/ cycle_graph 2/ graph 3/ trail
         Ex1:path_graph(5)
-        
         '''
         return GiacMethods['path_graph'](self,*args)
 
@@ -12170,12 +11202,11 @@ cdef class GiacMethods_base:
         Help for pcar:
         pcar(Mtrx,[Var])
         List of the coefficients of the characteristic polynomial of a matrix or characteristic polynomial of a matrix with the second argument as variable.
-        See also: 1/ jordan 2/ egv 3/ egvl 4/ companion 5/ rat_jordan 6/ pmin 7/ adjoint_matrix  
+        See also: 1/ jordan 2/ egv 3/ egvl 4/ companion 5/ rat_jordan 6/ pmin 7/ adjoint_matrix
         Ex1:pcar([[1,2],[3,4]])
         Ex2:pcar([[1,2],[3,4]],x)
         Ex3:pcar([[1,2,3],[1,3,6],[2,5,7]])
         Ex4:pcar([[1,2,3],[1,3,6],[2,5,7]],z)
-        
         '''
         return GiacMethods['pcar'](self,*args)
 
@@ -12184,11 +11215,10 @@ cdef class GiacMethods_base:
         Help for pcar_hessenberg:
         pcar_hessenberg(Mtrx,[Var])
         Characteristic polynomial of a matrix by the Hessenberg method (if the coefficients are in a finite field).
-        See also: 1/ jordan 2/ pcar 3/ egvl 
+        See also: 1/ jordan 2/ pcar 3/ egvl
         Ex1:pcar_hessenberg([[1,2],[3,4]])
         Ex2:pcar_hessenberg([[1,2],[3,4]],x)
         Ex3:pcar_hessenberg([[1,2,3],[1,3,6],[2,5,7]])
-        
         '''
         return GiacMethods['pcar_hessenberg'](self,*args)
 
@@ -12197,10 +11227,9 @@ cdef class GiacMethods_base:
         Help for pcoef:
         pcoef(Vect)
         Returns the polynomial coefficients having the roots specified as argument.
-        See also: 1/ proot 2/ peval 
+        See also: 1/ proot 2/ peval
         Ex1:pcoef([1,0,0,0,1])
         Ex2:pcoef([1,0,-2])
-        
         '''
         return GiacMethods['pcoef'](self,*args)
 
@@ -12209,10 +11238,9 @@ cdef class GiacMethods_base:
         Help for pcoeff:
         pcoeff(Vect)
         Returns the polynomial coefficients having the roots specified as argument.
-        See also: 1/ proot 2/ peval 
+        See also: 1/ proot 2/ peval
         Ex1:pcoeff([1,0,0,0,1])
         Ex2:pcoeff([1,0,-2])
-        
         '''
         return GiacMethods['pcoeff'](self,*args)
 
@@ -12221,12 +11249,11 @@ cdef class GiacMethods_base:
         Help for pencolor:
         pencolor(Color)
         Changes the color of the pencil (without parameter, returns the current color).
-        See also: 1/ leve_crayon 2/ baisse_crayon 
+        See also: 1/ leve_crayon 2/ baisse_crayon
         Ex1: crayon vert
         Ex2:pencolor(rouge)
         Ex3:pencolor(5)
         Ex4:pencolor(gomme)
-        
         '''
         return GiacMethods['pencolor'](self,*args)
 
@@ -12235,9 +11262,8 @@ cdef class GiacMethods_base:
         Help for pendown:
         pendown(NULL)
         Presses the pencil down so that the turtle move with traces.
-        See also: 1/ leve_crayon 2/ crayon 
+        See also: 1/ leve_crayon 2/ crayon
         Ex1:pendown()
-        
         '''
         return GiacMethods['pendown'](self,*args)
 
@@ -12246,9 +11272,8 @@ cdef class GiacMethods_base:
         Help for penup:
         penup(NULL)
         Lifts the pencil up so that the turtle moves without traces.
-        See also: 1/ baisse_crayon 2/ crayon 
+        See also: 1/ baisse_crayon 2/ crayon
         Ex1:penup()
-        
         '''
         return GiacMethods['penup'](self,*args)
 
@@ -12257,12 +11282,11 @@ cdef class GiacMethods_base:
         Help for perimeter:
         perimeter(Polygone)
         Perimeter of a polygon (e.g. triangle, square, ...)
-        See also: 1/ polygon 2/ area 3/ perimeteratraw 4/ perimeterat 
+        See also: 1/ polygon 2/ area 3/ perimeteratraw 4/ perimeterat
         Ex1:perimeter(triangle(0,1,i))
         Ex2:perimeter(square(0,2))
         Ex3:perimeter(circle(0,2))
         Ex4:perimeter(0,1,i)
-        
         '''
         return GiacMethods['perimeter'](self,*args)
 
@@ -12271,13 +11295,12 @@ cdef class GiacMethods_base:
         Help for perimeterat:
         perimeterat(Polygone, Pnt||Cplx(z0))
         Displays at point(z0), with a legend, the perimeter of a circle or of a polygon (e.g. triangle, square, ...)
-        See also: 1/ perimeter 2/ perimeteratraw 2/ polygon 3/ areaatraw 
+        See also: 1/ perimeter 2/ perimeteratraw 2/ polygon 3/ areaatraw
         Ex1: t:=triangle(0,1,i);perimeterat(t,1+i)
         Ex2: c:=square(0,2);perimeterat(c,1+i)
         Ex3: c2:=circle(0,2);perimeterat(c2,1+i)
         Ex4: p:=polygon(0,1,i);perimeterat(p,1+i)
         Ex5: A:=point(0);B:=point(1+i);c:=carre(A,B);perimeterat(c,i)
-        
         '''
         return GiacMethods['perimeterat'](self,*args)
 
@@ -12286,13 +11309,12 @@ cdef class GiacMethods_base:
         Help for perimeteratraw:
         perimeteratraw(Polygone, Pnt||Cplx(z0))
         Displays at point(z0), the perimeter of a circle or of a polygon (e.g. triangle, square, ...)
-        See also: 1/ perimeter 2/ perimeterat 3/ polygon 4/ areaatraw 
+        See also: 1/ perimeter 2/ perimeterat 3/ polygon 4/ areaatraw
         Ex1:perimeteratraw(triangle(0,1,i),1+i)
         Ex2:perimeteratraw(square(0,2),1+i)
         Ex3:perimeteratraw(circle(0,2),1+i)
         Ex4:perimeteratraw(polygon(0,1,i),1+i)
         Ex5: A:=point(0);B:=point(1+i);c:=carre(A,B);perimeteratraw(c,i)
-        
         '''
         return GiacMethods['perimeteratraw'](self,*args)
 
@@ -12302,7 +11324,6 @@ cdef class GiacMethods_base:
         periodic(Expr,Var,a,b)
         Makes a periodic expression equal to Expr on a..b, period b-a.
         Ex1:periodic(x^2,x,-1,1)
-        
         '''
         return GiacMethods['periodic'](self,*args)
 
@@ -12311,9 +11332,8 @@ cdef class GiacMethods_base:
         Help for perm:
         perm(Intg(n),Intg(p))
         perm(n,p)=number of arrangements of p objects taken among n : n!/(n-p)!
-        See also: 1/ comb 2/ factorial 
+        See also: 1/ comb 2/ factorial
         Ex1:perm(4,2)
-        
         '''
         return GiacMethods['perm'](self,*args)
 
@@ -12322,9 +11342,8 @@ cdef class GiacMethods_base:
         Help for perminv:
         perminv(Permut(a))
         Returns the inverse permutation of the permutation a.
-        See also: 1/ cycleinv 
+        See also: 1/ cycleinv
         Ex1:perminv([1,3,2,4,0])
-        
         '''
         return GiacMethods['perminv'](self,*args)
 
@@ -12333,10 +11352,9 @@ cdef class GiacMethods_base:
         Help for permu2cycles:
         permu2cycles(Permut)
         Converts a permutation to a product of disjoint cycles.
-        See also: 1/  cycles2permu 2/ cycle2perm 
+        See also: 1/  cycles2permu 2/ cycle2perm
         Ex1:permu2cycles([0,2,1,3,5,4])
         Ex2:permu2cycles([0,2,1,4,3,5])
-        
         '''
         return GiacMethods['permu2cycles'](self,*args)
 
@@ -12345,9 +11363,8 @@ cdef class GiacMethods_base:
         Help for permu2mat:
         permu2mat(Permut(p))
         Returns the matrix where the lines of the identity matrix are permuted with the permutation p.
-        See also: 1/  
+        See also: 1/
         Ex1:permu2mat([1,3,2,4,0])
-        
         '''
         return GiacMethods['permu2mat'](self,*args)
 
@@ -12356,9 +11373,8 @@ cdef class GiacMethods_base:
         Help for permuorder:
         permuorder(Permut(a))
         Returns the order of the permutation a.
-        See also: 1/ cycles2permu 
+        See also: 1/ cycles2permu
         Ex1:permuorder([1,3,2,4,0])
-        
         '''
         return GiacMethods['permuorder'](self,*args)
 
@@ -12367,9 +11383,8 @@ cdef class GiacMethods_base:
         Help for permute_vertices:
         permute_vertices(Graph(G),Lst(V))
         Returns a copy of G with vertices reordered according to the order in the list V.
-        See also: 1/ graph_vertices 2/ isomorphic_copy 3/ relabel_vertices 
+        See also: 1/ graph_vertices 2/ isomorphic_copy 3/ relabel_vertices
         Ex1:permute_vertices(graph([a,b,c]),[a,c,b])
-        
         '''
         return GiacMethods['permute_vertices'](self,*args)
 
@@ -12378,10 +11393,9 @@ cdef class GiacMethods_base:
         Help for perpen_bisector:
         perpen_bisector((Pnt or Cplx),(Pnt or Cplx))
         perpen_bisector(A,B) draws the bisector (line or plane) of the segment AB.
-        See also: 1/ midpoint 2/ median_line 
+        See also: 1/ midpoint 2/ median_line
         Ex1:perpen_bisector(1-i,i)
         Ex2:perpen_bisector([0,0,0],[5,5,0])
-        
         '''
         return GiacMethods['perpen_bisector'](self,*args)
 
@@ -12390,12 +11404,11 @@ cdef class GiacMethods_base:
         Help for perpendicular:
         perpendicular((Pnt or Line),(Line or Plan))
         perpendicular(A,line(B,C)) or perpendicular(A,B,C) draws the orthogonal line of line BC through A and perpendicular(d,plane(B,C,D)) draws the orthogonal plane of plane(B,C,D) through the line d.
-        See also: 1/ altitude 2/ orthogonal 
+        See also: 1/ altitude 2/ orthogonal
         Ex1:perpendicular(1,line(1,i))
         Ex2:perpendicular(1,0,1+i)
         Ex3:perpendicular([0,0,0],line(x=y,y=z))
         Ex4:perpendicular(line([0,0,0],[1,1,0]),plane(x+y+z=1))
-        
         '''
         return GiacMethods['perpendicular'](self,*args)
 
@@ -12404,11 +11417,10 @@ cdef class GiacMethods_base:
         Help for petersen_graph:
         petersen_graph(Intg(n),[Intg(k)])
         Returns the generalized Petersen graph G(n,k), where n and k are positive integers (k defaults to 2).
-        See also: 1/ graph 
+        See also: 1/ graph
         Ex1:petersen_graph(5,2)
         Ex2:petersen_graph(6,3)
         Ex3:petersen_graph(10,2)
-        
         '''
         return GiacMethods['petersen_graph'](self,*args)
 
@@ -12417,10 +11429,9 @@ cdef class GiacMethods_base:
         Help for peval:
         peval(Vect,Real(x0))
         Evaluates at a point x0, a polynomial given by its coefficients.
-        See also: 1/ proot 2/ pcoeff 
+        See also: 1/ proot 2/ pcoeff
         Ex1:peval([1,0,-2],1)
         Ex2:peval([1,2,-25,-26,120],8)
-        
         '''
         return GiacMethods['peval'](self,*args)
 
@@ -12429,12 +11440,11 @@ cdef class GiacMethods_base:
         Help for pi:
         pi()
         pi.
-        See also: 1/ e 2/ i 
+        See also: 1/ e 2/ i
         Ex1: pi/4
         Ex2: Pi/4
         Ex3: evalf(pi)
         Ex4: evalf(Pi)
-        
         '''
         return GiacMethods['pi'](self,*args)
 
@@ -12443,11 +11453,10 @@ cdef class GiacMethods_base:
         Help for pie:
         pie(Mtrx)
         Draws pie chart of a one variable statistical series.
-        See also: 1/ bar_plot 
+        See also: 1/ bar_plot
         Ex1:pie([["France",6],["Allemagne",12],["Suisse",5]])
         Ex2:pie([3/2,2/3,5/4,4/5,7/6,6/7,9/8,8/9,11/10])
         Ex3:pie([[2,"xyz","abc"],["A",2,5],["B",5,6],["C",7,7]])
-        
         '''
         return GiacMethods['pie'](self,*args)
 
@@ -12456,10 +11465,9 @@ cdef class GiacMethods_base:
         Help for piecewise:
         piecewise(Cond1,Expr1,..,Cond2p,Expr2p,[Expr2p+1])
         If condition1 returns expr1 else...if condition2p returns expr2p else returns expr2p+1.
-        See also: 1/ if 2/ then 3/ else 4/ ifte 5/ switch 
+        See also: 1/ if 2/ then 3/ else 4/ ifte 5/ switch
         Ex1:piecewise(x<=-pi,x+2*pi,x<=pi,x,x+2*pi)
         Ex2:piecewise(x<-2,-2,x<-1,3x+4,x<0,1,x+1)
-        
         '''
         return GiacMethods['piecewise'](self,*args)
 
@@ -12468,10 +11476,9 @@ cdef class GiacMethods_base:
         Help for pivot:
         pivot(Mtrx(A),Intg(nl),Intg(nc))
         Returns the matrix obtained from A by creating zeros in the column nc, by the method of Gauss-Jordan with the element A[nl,nc] as pivot.
-        See also: 1/ gaussjord 2/ linsolve 
+        See also: 1/ gaussjord 2/ linsolve
         Ex1:pivot([[1,2],[3,4],[5,6]],0,1)
         Ex2:pivot([[1,2],[3,4],[5,6]],1,1)
-        
         '''
         return GiacMethods['pivot'](self,*args)
 
@@ -12480,9 +11487,8 @@ cdef class GiacMethods_base:
         Help for pixoff:
         pixoff(Real(x),Real(y))
         Pixel off.
-        See also: 1/ set_pixel 2/ pixon 
+        See also: 1/ set_pixel 2/ pixon
         Ex1:pixoff(1,2)
-        
         '''
         return GiacMethods['pixoff'](self,*args)
 
@@ -12491,9 +11497,8 @@ cdef class GiacMethods_base:
         Help for pixon:
         pixon(Real(x),Real(y))
         Pixel on.
-        See also: 1/ set_pixel 2/ pixoff 
+        See also: 1/ set_pixel 2/ pixoff
         Ex1:pixon(1,2)
-        
         '''
         return GiacMethods['pixon'](self,*args)
 
@@ -12502,8 +11507,7 @@ cdef class GiacMethods_base:
         Help for planar:
         planar(Opt)
         Option for the draw_graph command.
-        See also: 1/ spring 2/ tree 3/ draw_graph 
-        
+        See also: 1/ spring 2/ tree 3/ draw_graph
         '''
         return GiacMethods['planar'](self,*args)
 
@@ -12512,12 +11516,11 @@ cdef class GiacMethods_base:
         Help for plane:
         plane(Pnt or Eq, [Pnt or Line],[Pnt])
         plane(A,B,C) or plane(A,line(B,C)) (resp plane(a*x+b*y+c*z+d=0)) draws the plane ABC (resp of equation a*x+b*y+c*z+d=0) in 3D space.
-        See also: 1/ line 
+        See also: 1/ line
         Ex1:plane([0,0,0],[1,1,1],[1,0,0])
         Ex2:plane([0,0,0],line([1,0,0],[1,1,1]))
         Ex3:plane(x+y+z=0)
         Ex4:plane(2*x+y-2*z-1)
-        
         '''
         return GiacMethods['plane'](self,*args)
 
@@ -12526,9 +11529,8 @@ cdef class GiacMethods_base:
         Help for plane_dual:
         plane_dual(Graph(G)||Lst(F))
         Returns the plane dual of the biconnected planar graph G or constructed from the list of faces F.
-        See also: 1/ is_planar 
+        See also: 1/ is_planar
         Ex1:plane_dual(hypercube_graph(3))
-        
         '''
         return GiacMethods['plane_dual'](self,*args)
 
@@ -12537,9 +11539,8 @@ cdef class GiacMethods_base:
         Help for playsnd:
         playsnd(Vect)
         Plays a sound data.
-        See also: 1/ readwav 2/ writewav 3/ soundsec 
+        See also: 1/ readwav 2/ writewav 3/ soundsec
         Ex1:playsnd(2^14*(sin(2*pi*440*soundsec(1)))
-        
         '''
         return GiacMethods['playsnd'](self,*args)
 
@@ -12548,8 +11549,7 @@ cdef class GiacMethods_base:
         Help for plex:
         plex(Opt)
         Option of the gbasis or greduce command to specify an order for monomials (=default order=pure lexicographic).
-        See also: 1/ gbasis 2/ greduce 
-        
+        See also: 1/ gbasis 2/ greduce
         '''
         return GiacMethods['plex'](self,*args)
 
@@ -12558,7 +11558,7 @@ cdef class GiacMethods_base:
         Help for plot:
         plot((Expr or LstExpr),Var[=VarMin..VarMax],[color=LstColor])
         Plots a one-variable expression (or list of expressions).
-        See also: 1/ plotfunc 2/ plotparam 3/ animate 4/ animate3d 5/ plotarea 
+        See also: 1/ plotfunc 2/ plotparam 3/ animate 4/ animate3d 5/ plotarea
         Ex1:plot(x-1/6*x^3,x)
         Ex2:plot([2*x-1,sin(x)],x=1..2)
         Ex3:plot(sin(x),x=-2..2,color=green,xstep=0.1)
@@ -12566,7 +11566,6 @@ cdef class GiacMethods_base:
         Ex5:plot(exponentiald(2))
         Ex6:plot(normald)
         Ex7:plot(normald(-1,2))
-        
         '''
         return GiacMethods['plot'](self,*args)
 
@@ -12575,13 +11574,12 @@ cdef class GiacMethods_base:
         Help for plot3d:
         plot3d(Expr||Lst(3*Expr),Var,Var)
         Erases and plots a 2 variable expression or of a surface defined with a list of the 3 functions or of 3 expression of 2 variables.
-        See also: 1/ plotfunc 2/ animate3d 
+        See also: 1/ plotfunc 2/ animate3d
         Ex1:plot3d(x^2+y^2+1,x,y)
         Ex2:plot3d(x^2+y^2,x=-1..1,y=-2..2)
         Ex3:plot3d([u+1,2*v,u^2+v^2],u=-1..1,v=-2..2)
         Ex4:plot3d(f,-1..1,-2..2)
         Ex5:plot3d([f,g,h],-1..1,-2..2)
-        
         '''
         return GiacMethods['plot3d'](self,*args)
 
@@ -12590,11 +11588,10 @@ cdef class GiacMethods_base:
         Help for plotarea:
         plotarea(Expr,x=a..b,[n],[Method])
         Displays the area below a curve, optionally with a quadrature method (trapezoid,left_rectangle,right_rectangle,middle_point).
-        See also: 1/ integrate 2/ plot 3/ area 4/ areaat 5/ areaatraw 
+        See also: 1/ integrate 2/ plot 3/ area 4/ areaat 5/ areaatraw
         Ex1:plotarea(sin(x),x=0..pi)
         Ex2:plotarea(x^2,x=0..1,5,trapezoid)
         Ex3:plotarea(x^2,x=0..1,5,middle_point)
-        
         '''
         return GiacMethods['plotarea'](self,*args)
 
@@ -12603,11 +11600,10 @@ cdef class GiacMethods_base:
         Help for plotcdf:
         plotcdf(Func,FuncParams)
         Graphic representation of a cumulative distribution function.
-        See also: 1/ icdf 2/ binomial_cdf 3/ normald_cdf 4/ cdf 
+        See also: 1/ icdf 2/ binomial_cdf 3/ normald_cdf 4/ cdf
         Ex1:plotcdf(binomial,10,0.5)
         Ex2:plotcdf(normald,0.0,1.0)
         Ex3:plotcdf([1,3,4,3,5,6])
-        
         '''
         return GiacMethods['plotcdf'](self,*args)
 
@@ -12616,12 +11612,11 @@ cdef class GiacMethods_base:
         Help for plotcontour:
         plotcontour(Expr(Xpr),[LstVar],[LstVal])
         Draws 11 equirepartited contour-lines z=z_min,,...z=z_max of the surface z=Xpr, or the contour-lines defined by the 3-rd argument.
-        See also: 1/ plotdensity 2/ plotimplicit 
+        See also: 1/ plotdensity 2/ plotimplicit
         Ex1:plotcontour(x^2+y^2)
         Ex2:plotcontour(x^2+y^2,[x,y])
         Ex3:plotcontour(x^2+2*y^2-2,[x,y],[1.0,2.0,3.0])
         Ex4:plotcontour(x^2-y^2,[x=-4..4,y=-4..4],seq(k,k,-11,11,3),xstep=0.1,ystep=0.1)
-        
         '''
         return GiacMethods['plotcontour'](self,*args)
 
@@ -12630,10 +11625,9 @@ cdef class GiacMethods_base:
         Help for plotdensity:
         plotdensity(Expr,[x=xrange,y=yrange],[z],[xstep],[ystep])
         Shows in the plane with colors the graph of an expression of 2 variables.
-        See also: 1/ plotfunc 2/ plotcontour 
+        See also: 1/ plotfunc 2/ plotcontour
         Ex1:plotdensity(x^2-y^2,[x=-2..2,y=-2..2],xstep=0.1,ystep=0.1)
         Ex2:plotdensity(x^2-y^2,[x=-2..2,y=-2..2],z=-2..2,xstep=0.1,ystep=0.1)
-        
         '''
         return GiacMethods['plotdensity'](self,*args)
 
@@ -12642,13 +11636,12 @@ cdef class GiacMethods_base:
         Help for plotfield:
         plotfield(Expr,VectVar,[Opt])
         fieldplot(f(t,y),[t,y]) draws the plotfield of the diff equation y'=f(t,y).
-        See also: 1/ interactive_plotode 2/ odeplot 3/ odesolve 4/ desolve 
+        See also: 1/ interactive_plotode 2/ odeplot 3/ odesolve 4/ desolve
         Ex1:plotfield(sin(t*y),[t=-5..5,y=-3..3],xstep=0.5,ystep=0.5)
         Ex2:plotfield(-t*y,[t,y])
         Ex3:plotfield(-t*y,[t,y],normalize)
         Ex4:plotfield(-t*y,[t,y],normalize,xstep=0.5,ystep=0.5)
         Ex5:plotfield(-t*y,[t=-6.868..6.868,y=-6.868..6.868],normalize)
-        
         '''
         return GiacMethods['plotfield'](self,*args)
 
@@ -12657,13 +11650,12 @@ cdef class GiacMethods_base:
         Help for plotfunc:
         plotfunc(Expr,[Var(x) or VectVar] ,[Intg(color)])
         Plots a 1 variable or 2 variables expression with superposition.
-        See also: 1/ plot 2/ plot3d 3/ plotparam 4/ animate 5/ animate3d 6/ plotdensity 
+        See also: 1/ plot 2/ plot3d 3/ plotparam 4/ animate 5/ animate3d 6/ plotdensity
         Ex1:plotfunc(-2*x+1,x=1..2,color=red)
         Ex2:plotfunc([-2*x+1,x^2-2],x=-2..2,color=[red,yellow],xstep=0.2)
         Ex3:plotfunc(x^2-y^2,[x,y],xstep=0.5,ystep=0.3)
         Ex4:plotfunc(x^2+y^2,[x=-1..1,y=-2..2],nstep=900)
         Ex5:plotfunc((x+i*y)^2,[x=-1..1,y=-2..2],nstep=900,affichage=rempli)
-        
         '''
         return GiacMethods['plotfunc'](self,*args)
 
@@ -12672,7 +11664,7 @@ cdef class GiacMethods_base:
         Help for plotimplicit:
         plotimplicit(Expr,Var1,Var2)
         plotimplicit(f(x,y),x,y) or plotimplicit(f(x,y),[x,y]) draws graph of f(x,y)=0.
-        See also: 1/ plotcontour 2/ unfactored 3/ plotinequation 
+        See also: 1/ plotcontour 2/ unfactored 3/ plotinequation
         Ex1:plotimplicit(x^2+y^2-1,x,y)
         Ex2:plotimplicit(x^4+y^4=x^2-y^2)
         Ex3:plotimplicit(x^2+y^2-1,x,y,unfactored)
@@ -12682,7 +11674,6 @@ cdef class GiacMethods_base:
         Ex7:plotimplicit(y^3=x^3-x^2,[x,y],xstep=0.1,ystep=0.1)
         Ex8:plotimplicit((x+5)^2+(y+4)^2-1,x=-6..-4,y=-5..-3)
         Ex9:plotimplicit((x+5)^2+(y+4)^2-1,[x=-6..-4,y=-5..-3])
-        
         '''
         return GiacMethods['plotimplicit'](self,*args)
 
@@ -12691,12 +11682,11 @@ cdef class GiacMethods_base:
         Help for plotinequation:
         plotinequation(Expr,[x=xrange,y=yrange],[xstep],[ystep])
         Shows the graph of the solutions of inequalities with 2 variables.
-        See also: 1/ plotfunc 2/ plotcontour 3/ plotdensity 4/ plotimplicit 
+        See also: 1/ plotfunc 2/ plotcontour 3/ plotdensity 4/ plotimplicit
         Ex1:plotinequation(x^2-y^2<3)
         Ex2:plotinequation(x^2-y^2<3,[x=-2..2,y=-2..2],xstep=0.1,ystep=0.1)
         Ex3:plotinequation(3-(x^2-y^2),[x=-2..2,y=-2..2],xstep=0.1,ystep=0.1)
         Ex4:plotinequation([x+y>3,x^2<y],[x,y],xstep=0.2,ystep=0.2)
-        
         '''
         return GiacMethods['plotinequation'](self,*args)
 
@@ -12705,11 +11695,10 @@ cdef class GiacMethods_base:
         Help for plotlist:
         plotlist(Lst(l)||Mtrx(M))
         Draws the polygonal line through the points with abscissas 0,...,n and ordinates l=[y0,...,yn] or the line through the points with abscissas the first column of M and ordinates the second column.
-        See also: 1/ polygonplot 2/ scatterplot 3/ polygonscatterplot 
+        See also: 1/ polygonplot 2/ scatterplot 3/ polygonscatterplot
         Ex1:plotlist([13,10,15,16])
         Ex2:plotlist([1,13],[2,10],[3,15],[4,16])
         Ex3:plotlist([[0,13],[2,10],[4,15]])
-        
         '''
         return GiacMethods['plotlist'](self,*args)
 
@@ -12718,7 +11707,7 @@ cdef class GiacMethods_base:
         Help for plotode:
         plotode(Expr,VectVar,VectInitCond)
         odeplot(f(t,y),[t,y],[t0,y0]) draws the solution of y'=f(t,y) and y(t0)=y0 or of the system [x'=g(t,x,y),y'=h(t,x,y)] with x(t0)=x0 and y(t0)=y0.
-        See also: 1/ interactive_plotode 2/ fieldplot 3/ odesolve 4/ desolve 
+        See also: 1/ interactive_plotode 2/ fieldplot 3/ odesolve 4/ desolve
         Ex1:plotode(sin(t*y),[t,y],[0,1])
         Ex2:plotode(sin(t*y),[t=-10..10,y],[0,1])
         Ex3:plotode(sin(t*y),[t=-3..3,y],[0,1],tstep=0.1,color=vert)
@@ -12726,7 +11715,6 @@ cdef class GiacMethods_base:
         Ex5:plotode([x-0.3*x*y, 0.3*x*y-y], [t,x,y],[0,0.3,0.7],plan)
         Ex6:plotode([-y+b,-1+(x-a)^2+(y-b)^2],[t=-3..3,x,y],[0,a+1,b+0.5],plan)
         Ex7:plotode(5*[-y,x],[t=0..1,x,y],[0,0.3,0.7],tstep=0.05,plan)
-        
         '''
         return GiacMethods['plotode'](self,*args)
 
@@ -12735,7 +11723,7 @@ cdef class GiacMethods_base:
         Help for plotparam:
         plotparam(Cplx||Lst,Var||Lst(Var))
         plotparam(a(x)+i*b(x),x=x0..x1) draws the curve X=a(x),Y=b(x) x=x0..x1 or plotparam([a(u,v),b(u,v),c(u,v)],[u=u0..u1,v=v0..v1]) draws the surface X=a(u,v),Y=b(u,v),Z=c(u,v) u=u0..u1 and v=v0..v1.
-        See also: 1/ plotfunc 2/ plotpolar 3/ arc 
+        See also: 1/ plotfunc 2/ plotpolar 3/ arc
         Ex1:plotparam(sin(t)+i*cos(t),t)
         Ex2:plotparam(exp(i*t),t=0..pi/2,affichage=1)
         Ex3:plotparam(exp(i*t),t=0..pi/2,affichage=1+rempli)
@@ -12744,7 +11732,6 @@ cdef class GiacMethods_base:
         Ex6:plotparam(sin(x)+i*cos(x),x=0..1,tstep=0.01)
         Ex7:plotparam([v*cos(u),v*sin(u),v],[u,v])
         Ex8:plotparam([v*cos(u),v*sin(u),v],[u=0..pi,v=0..3],ustep=0.1,vstep=0.2)
-        
         '''
         return GiacMethods['plotparam'](self,*args)
 
@@ -12753,10 +11740,9 @@ cdef class GiacMethods_base:
         Help for plotpolar:
         plotpolar(Expr,Var,VarMin,VarMax)
         plotpolar(f(x),x,a,b) draws the polar curve r=f(x) for x in [a,b].
-        See also: 1/ plotparam 2/ plotfunc 3/ plotpolar 
+        See also: 1/ plotparam 2/ plotfunc 3/ plotpolar
         Ex1:plotpolar(sin(2*x),x,0,pi)
         Ex2:plotpolar(sin(2*x),x,0,pi,tstep=0.1)
-        
         '''
         return GiacMethods['plotpolar'](self,*args)
 
@@ -12765,11 +11751,10 @@ cdef class GiacMethods_base:
         Help for plotproba:
         plotproba(Matrix,[Vector])
         Graph of a transition matrix with at most 7x7 entries (optionally with list of vertex positions).
-        See also: 1/ markov 2/ randmarkov 
+        See also: 1/ markov 2/ randmarkov
         Ex1:plotproba([[1/2,1/3,1/12,1/12],[1/3,1/2,1/6,0],[0,0,1/2,1/2],[1/4,1/4,1/4,1/4],["xy",b,"state",d]])
         Ex2:plotproba([[1/2,1/3,1/12,1/12],[1/3,1/2,1/6,0],[0,0,1/2,1/2],[1/4,1/4,1/4,1/4]],[0,1,i,1/3+2/3*i])
         Ex3: L:=point(1):;C:=point(0.5+0.3*i):;G:=point(0.5+0.8*i):;plotproba([[1/2,1/3,1/12],[1/3,1/2,1/6],[0,0,1/2]],[L,C,G])
-        
         '''
         return GiacMethods['plotproba'](self,*args)
 
@@ -12778,11 +11763,10 @@ cdef class GiacMethods_base:
         Help for plotseq:
         plotseq(Expr(f(Var)),Var=[a,xm,xM],Intg(p))
         For seeing the pth terms of the sequence u(0)=a,u(n)=f(u(n-1)).
-        See also: 1/ seqsolve 2/ rsolve 
+        See also: 1/ seqsolve 2/ rsolve
         Ex1:plotseq(sqrt(2+x),6,5)
         Ex2:plotseq(sqrt(2+t),t=6,5)
         Ex3:plotseq(sqrt(2+x),x=[6,1,7],5,affichage=epaisseur_ligne_2)
-        
         '''
         return GiacMethods['plotseq'](self,*args)
 
@@ -12791,10 +11775,9 @@ cdef class GiacMethods_base:
         Help for plotspectrum:
         plotspectrum(Lst(clip),[range=a..b])
         Plots the power spectrum of an audio clip (on the specified frequency range).
-        See also: 1/ plotwav 
+        See also: 1/ plotwav
         Ex1:plotspectrum(readwav("/some/file"))
         Ex2:plotspectrum(readwav("/some/file"),range=100..1000)
-        
         '''
         return GiacMethods['plotspectrum'](self,*args)
 
@@ -12803,11 +11786,10 @@ cdef class GiacMethods_base:
         Help for plotwav:
         plotwav(Lst(clip),[range=a..b])
         Plots the waveform of an audio clip (optionally at the specified range).
-        See also: 1/ plotspectrum 
+        See also: 1/ plotspectrum
         Ex1:plotwav(readwav("/some/file"))
         Ex2:plotwav(readwav("/some/file"),range=1.0..2.5) // range in seconds
         Ex3:plotwav(readwav("/some/file"),range=[10000,22000]) // range in samples
-        
         '''
         return GiacMethods['plotwav'](self,*args)
 
@@ -12816,10 +11798,9 @@ cdef class GiacMethods_base:
         Help for plus_point:
         plus_point(Opt)
         Option of the display command for a point.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: F:=display(point(2+1.5*i),point_point)
         Ex2: F:=display(point(2+1.5*i),rhombus_point)
-        
         '''
         return GiacMethods['plus_point'](self,*args)
 
@@ -12828,13 +11809,12 @@ cdef class GiacMethods_base:
         Help for pmin:
         pmin(Mtrx(A)||Real(a),[Var])
         Returns the minimal polynomial of the matrix A or the minimal polynomial of the algebraic number a.
-        See also: 1/ pcar 2/ jordan 
+        See also: 1/ pcar 2/ jordan
         Ex1:pmin((αλγεβρική αριθμού).)
         Ex2:pmin([[1,0],[0,1]])
         Ex3:pmin([[1,0],[0,1]],x)
         Ex4:pmin(sqrt(2)+sqrt(3))
         Ex5:pmin(sqrt(2)+sqrt(3),x)
-        
         '''
         return GiacMethods['pmin'](self,*args)
 
@@ -12843,7 +11823,7 @@ cdef class GiacMethods_base:
         Help for point:
         point(Cplx(za)||Vect)
         A:=point(za) or A:=point(a,b) (resp A:=point([a,b,c])) draws a point with affix za=a+ib (resp of coordinates (a,b,c)) with the legend A.
-        See also: 1/ pixon 2/ line 3/ point2d 4/ point3d 5/ polar_point 
+        See also: 1/ pixon 2/ line 3/ point2d 4/ point3d 5/ polar_point
         Ex1:point(1+2i)
         Ex2:point(1,2)
         Ex3:point(1,2,3)
@@ -12852,7 +11832,6 @@ cdef class GiacMethods_base:
         Ex6: B:=point(1,-1)
         Ex7: B:=point(1,0,0)
         Ex8: B:=point([1,0,0])
-        
         '''
         return GiacMethods['point'](self,*args)
 
@@ -12861,9 +11840,8 @@ cdef class GiacMethods_base:
         Help for point2d:
         point2d(SeqVar(A,B,C...))
         Defines at random, the coordinates (between -5 and +5) of the 2d points given as argument.
-        See also: 1/ point3d 2/ point 
+        See also: 1/ point3d 2/ point
         Ex1:point2d(A,B,C,D)
-        
         '''
         return GiacMethods['point2d'](self,*args)
 
@@ -12872,9 +11850,8 @@ cdef class GiacMethods_base:
         Help for point3d:
         point3d(SeqVar(A,B,C...))
         Defines at random, the coordinates (between -5 and +5) of the 3d points given as argument.
-        See also: 1/ point2d 2/ point 
+        See also: 1/ point2d 2/ point
         Ex1:point3d(A,B,C,D)
-        
         '''
         return GiacMethods['point3d'](self,*args)
 
@@ -12883,12 +11860,11 @@ cdef class GiacMethods_base:
         Help for poisson:
         poisson(Real(mu),Intg(k))
         Returns exp(-mu)*mu^k/k!
-        See also: 1/ poisson_cdf 2/ poisson_icdf 3/ randvector 4/ ranm 
+        See also: 1/ poisson_cdf 2/ poisson_icdf 3/ randvector 4/ ranm
         Ex1:poisson(0.5,2)
         Ex2:poisson(4.0,2)
         Ex3: randvector(3,poisson,0.5)
         Ex4: ranm(4,3,poisson,0.5)
-        
         '''
         return GiacMethods['poisson'](self,*args)
 
@@ -12897,10 +11873,9 @@ cdef class GiacMethods_base:
         Help for poisson_cdf:
         poisson_cdf(Real(mu),Real(x))
         Returns Proba(X<=x) when X follows the Poisson law with mu as mean.
-        See also: 1/ poisson 2/ poisson_icdf 
+        See also: 1/ poisson 2/ poisson_icdf
         Ex1:poisson_cdf(4.0,7)
         Ex2:poisson_cdf(poisson_cpdf(2.5,4))
-        
         '''
         return GiacMethods['poisson_cdf'](self,*args)
 
@@ -12909,10 +11884,9 @@ cdef class GiacMethods_base:
         Help for poisson_icdf:
         poisson_icdf(Real(mu),Real(p))
         Returns h such as Proba(X<=h)=p when X follows the Poisson law with mu as parameter.
-        See also: 1/ poisson 2/ poisson_cdf 
+        See also: 1/ poisson 2/ poisson_cdf
         Ex1:poisson_icdf(4.0,0.95)
         Ex2:poisson_icdf(2.5,0.9)
-        
         '''
         return GiacMethods['poisson_icdf'](self,*args)
 
@@ -12921,9 +11895,8 @@ cdef class GiacMethods_base:
         Help for poisson_window:
         poisson_window(Lst,[Real(a)],[Interval(n1..n2)])
         Applies the Poisson windowing function with parameter a>0 (by default a=1) to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ bartlett_hann_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ bartlett_hann_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(poisson_window(randvector(1000,0..1),0.5))
-        
         '''
         return GiacMethods['poisson_window'](self,*args)
 
@@ -12932,10 +11905,9 @@ cdef class GiacMethods_base:
         Help for polar:
         polar(Crcle,Pnt or Cplxe(A))
         Returns the line of the conjugated points of A with respect to the circle.
-        See also: 1/ pole 2/ is_conjugate 
+        See also: 1/ pole 2/ is_conjugate
         Ex1:polar(circle(0,1),point(1+i)/2)
         Ex2:polar(circle(0,1),point(1+i))
-        
         '''
         return GiacMethods['polar'](self,*args)
 
@@ -12944,12 +11916,11 @@ cdef class GiacMethods_base:
         Help for polar_coordinates:
         polar_coordinates(Pnt or Cplx or LstRectCoord)
         Returns the list of the norm and of the argument of the affix of a point (for 2D) or of a complex number or of the list of rectangular coordinates.
-        See also: 1/ abscissapoint 2/ ordinate 3/ rectangular_coordinates 4/ polar_point 
+        See also: 1/ abscissapoint 2/ ordinate 3/ rectangular_coordinates 4/ polar_point
         Ex1:polar_coordinates(point(1+2*i))
         Ex2:polar_coordinates(-1-i)
         Ex3:polar_coordinates([-1,2])
         Ex4:polar_coordinates(point(1+2*i)-point(-1+i))
-        
         '''
         return GiacMethods['polar_coordinates'](self,*args)
 
@@ -12958,10 +11929,9 @@ cdef class GiacMethods_base:
         Help for polar_point:
         polar_point(Real(r),Real(t))
         Returns the point (for 2D) with the arguments r and t as polar coordinates (i.e. with r*exp(i*t) as affix).
-        See also: 1/ abscissa 2/ ordinate 3/ polar_coordinates 4/ rectangular_coordinates 5/ point 
+        See also: 1/ abscissa 2/ ordinate 3/ polar_coordinates 4/ rectangular_coordinates 5/ point
         Ex1:polar_point(1,pi/4)
         Ex2:polar_point(2,-pi/3)
-        
         '''
         return GiacMethods['polar_point'](self,*args)
 
@@ -12970,10 +11940,9 @@ cdef class GiacMethods_base:
         Help for polarplot:
         polarplot(Expr,Var,VarMin,VarMax)
         plotpolar(f(x),x,a,b) draws the polar curve r=f(x) for x in [a,b].
-        See also: 1/ plotparam 2/ plotfunc 3/ plotpolar 
+        See also: 1/ plotparam 2/ plotfunc 3/ plotpolar
         Ex1:polarplot(sin(2*x),x,0,pi)
         Ex2:polarplot(sin(2*x),x,0,pi,tstep=0.1)
-        
         '''
         return GiacMethods['polarplot'](self,*args)
 
@@ -12982,10 +11951,9 @@ cdef class GiacMethods_base:
         Help for pole:
         pole(Crcle,Line)
         Returns the point having the line as polar with respect to the circle .
-        See also: 1/ polar 2/ is_conjugate 
+        See also: 1/ polar 2/ is_conjugate
         Ex1:pole(circle(0,1),line(i,1))
         Ex2:pole(circle(0,1),line((1+i),2))
-        
         '''
         return GiacMethods['pole'](self,*args)
 
@@ -12994,12 +11962,11 @@ cdef class GiacMethods_base:
         Help for poly2symb:
         poly2symb(Lst,Var)
         Gives the polynomial (or its value) : the first argument is the vector of coefficients and the second argument is the variable (by default x).
-        See also: 1/ e2r 2/ symb2poly 
+        See also: 1/ e2r 2/ symb2poly
         Ex1:poly2symb([1,2,3])
         Ex2:poly2symb([1,2,3],x)
         Ex3:poly2symb([1,2,3],-1)
         Ex4:poly2symb([1,2,-1],y)
-        
         '''
         return GiacMethods['poly2symb'](self,*args)
 
@@ -13008,10 +11975,9 @@ cdef class GiacMethods_base:
         Help for polyEval:
         polyEval(Vect,Real(x0))
         Evaluates at a point x0, a polynomial given by its coefficients.
-        See also: 1/ proot 2/ pcoeff 
+        See also: 1/ proot 2/ pcoeff
         Ex1:polyEval([1,0,-2],1)
         Ex2:polyEval([1,2,-25,-26,120],8)
-        
         '''
         return GiacMethods['polyEval'](self,*args)
 
@@ -13020,10 +11986,9 @@ cdef class GiacMethods_base:
         Help for polygon:
         polygon(LstPnt||LstCplx)
         Returns and draws the polygon where its vertices are the elements of l.
-        See also: 1/ isopolygon 2/ quadrilateral 3/ convexhull 4/ hexagon 
+        See also: 1/ isopolygon 2/ quadrilateral 3/ convexhull 4/ hexagon
         Ex1:polygon(i,1+i,2-i,-1,-1+i/2)
         Ex2:polygon(point(0,0,0),point(3,3,3),point(0,0,3),point(3,0,0))
-        
         '''
         return GiacMethods['polygon'](self,*args)
 
@@ -13032,11 +11997,10 @@ cdef class GiacMethods_base:
         Help for polygone_rempli:
         polygone_rempli(Intg(n))
         The argument is an integer <-1 which gives the number of previous turtle positions drawing a polygon and created this full polygon.
-        See also: 1/  
+        See also: 1/
         Ex1: repete(4,avance 40,tourne_droite);polygone_rempli -8
         Ex2: repete(3,avance 40,tourne_droite 120);polygone_rempli -6
         Ex3: repete(3,avance 40,avance 40,tourne_droite 120);polygone_rempli -9
-        
         '''
         return GiacMethods['polygone_rempli'](self,*args)
 
@@ -13045,9 +12009,8 @@ cdef class GiacMethods_base:
         Help for polygonplot:
         polygonplot(Mtrx)
         Draws the polygons joining for j fixed and for k=0..nrows, the points (xk,yk) where xk=element row k column 0 and yk=element row k column j, after the xk are sorted (we obtain ncols-1 polygons).
-        See also: 1/ scatterplot 2/ listplot 3/ polygonscatterplot 
+        See also: 1/ scatterplot 2/ listplot 3/ polygonscatterplot
         Ex1:polygonplot([[1,2,3],[2,0,1],[-1,2,3]])
-        
         '''
         return GiacMethods['polygonplot'](self,*args)
 
@@ -13056,9 +12019,8 @@ cdef class GiacMethods_base:
         Help for polygonscatterplot:
         polygonscatterplot(Mtrx)
         Draws the points (xk,yk) and the polygons joining for j fixed and for k=0..nrows, the points (xk,yk) where xk=element row k column 0 et yk=element row k column j, after the xk are sorted (we obtain ncols-1 polygons).
-        See also: 1/ scatterplot 2/ polygonplot 3/ listplot 
+        See also: 1/ scatterplot 2/ polygonplot 3/ listplot
         Ex1:polygonscatterplot([[1,2,3],[2,0,1],[-1,2,3]])
-        
         '''
         return GiacMethods['polygonscatterplot'](self,*args)
 
@@ -13067,9 +12029,8 @@ cdef class GiacMethods_base:
         Help for polyhedron:
         polyhedron(SeqPnt(A,B,C...))
         Draws a convex polyhedron with vertices among the arguments.
-        See also: 1/ cube 2/ parallelepiped 
+        See also: 1/ cube 2/ parallelepiped
         Ex1:polyhedron([0,0,0],[0,5,0],[0,0,5],[1,2,6])
-        
         '''
         return GiacMethods['polyhedron'](self,*args)
 
@@ -13078,13 +12039,12 @@ cdef class GiacMethods_base:
         Help for polynom:
         polynom(Opt)
         Option of the convert or convertir command and of the taylor and series commands (list=>n-poly or series=>poly).
-        See also: 1/ poly2symb 2/ taylor 3/ series 4/ convert 
+        See also: 1/ poly2symb 2/ taylor 3/ series 4/ convert
         Ex1: convert([[10,[3,1]],[12,[2,2]]],polynom)
         Ex2: convert(taylor(sin(x)),polynom)
         Ex3: convert(series(sin(x),x=0,6),polynom)
         Ex4: taylor(sin(x),x=0,5,polynom)
         Ex5: series(sin(x),x=0,6,,polynom)
-        
         '''
         return GiacMethods['polynom'](self,*args)
 
@@ -13093,11 +12053,10 @@ cdef class GiacMethods_base:
         Help for polynomial_regression:
         polynomial_regression(Lst||Mtrx(A),[Lst],Intg(n))
         Returns the coefficients (an,...a1,a0) of y=an*x^n+..a1x+a0 : it is the best polynomial which approx the points where the coordinates are the rows of A (or the 2 lists) (n is the 2nd argument).
-        See also: 1/ linear_regression 2/ power_regression 
+        See also: 1/ linear_regression 2/ power_regression
         Ex1:polynomial_regression([[1.0,1.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]],3)
         Ex2:polynomial_regression([[0.0,1.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]],3)
         Ex3:polynomial_regression([0.0,2.0,3.0,4.0],[1.0,4.0,9.0,16.0],3)
-        
         '''
         return GiacMethods['polynomial_regression'](self,*args)
 
@@ -13106,11 +12065,10 @@ cdef class GiacMethods_base:
         Help for polynomial_regression_plot:
         polynomial_regression_plot(Lst||Mtrx(A),[Lst],Intg(n))
         Returns the plot of y=an*x^n+..a1x+a0 : it is the best polynomial which approx the points where the coordinates are the rows of A (or the 2 lists) (n is the 2nd argument).
-        See also: 1/ linear_regression_plot 2/ power_regression_plot 
+        See also: 1/ linear_regression_plot 2/ power_regression_plot
         Ex1:polynomial_regression_plot([[1.0,1.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]],3)
         Ex2:polynomial_regression_plot([[0.0,1.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]],3)
         Ex3:polynomial_regression_plot([0.0,2.0,3.0,4.0],[1.0,4.0,9.0,16.0],3)
-        
         '''
         return GiacMethods['polynomial_regression_plot'](self,*args)
 
@@ -13119,11 +12077,10 @@ cdef class GiacMethods_base:
         Help for position:
         position(NULL or LstCoord)
         Returns the turtle position in pixels or puts the turtle at the position given by the argument with the same direction.
-        See also: 1/ cap 2/ initialise 
+        See also: 1/ cap 2/ initialise
         Ex1:position()
         Ex2:position(50,70)
         Ex3:position([50,70])
-        
         '''
         return GiacMethods['position'](self,*args)
 
@@ -13132,9 +12089,8 @@ cdef class GiacMethods_base:
         Help for poslbdLMQ:
         poslbdLMQ(Poly(P))
         Returns a lower bound on the values of the positive roots of P. Akritas-Strzebonski-Vigklas' Local Max Quadratic (LMQ) method is used.
-        See also: 1/ posubLMQ 2/ VAS_positive 3/ realroot 
+        See also: 1/ posubLMQ 2/ VAS_positive 3/ realroot
         Ex1:poslbdLMQ(x^3-7*x+7)
-        
         '''
         return GiacMethods['poslbdLMQ'](self,*args)
 
@@ -13143,9 +12099,8 @@ cdef class GiacMethods_base:
         Help for posubLMQ:
         posubLMQ(Poly(P))
         Returns an upper bound on the values of the positive roots of P. Akritas-Strzebonski-Vigklas' Local Max Quadratic (LMQ) method is used.
-        See also: 1/ poslbdLMQ 2/ VAS_positive 3/ realroot 
+        See also: 1/ poslbdLMQ 2/ VAS_positive 3/ realroot
         Ex1:posubLMQ(x^3-7*x+7)
-        
         '''
         return GiacMethods['posubLMQ'](self,*args)
 
@@ -13154,9 +12109,8 @@ cdef class GiacMethods_base:
         Help for potential:
         potential(Vect(V),VectVar)
         Returns U such that derive(U,Vector_of_variable)=V.
-        See also: 1/ derive 2/ vpotential 
+        See also: 1/ derive 2/ vpotential
         Ex1:potential([2*x*y+3,x^2-4*z,-4*y],[x,y,z])
-        
         '''
         return GiacMethods['potential'](self,*args)
 
@@ -13165,9 +12119,8 @@ cdef class GiacMethods_base:
         Help for pow2exp:
         pow2exp(Expr)
         Converts powers to exponentials.
-        See also: 1/ exp2pow 
+        See also: 1/ exp2pow
         Ex1:pow2exp(a^b)
-        
         '''
         return GiacMethods['pow2exp'](self,*args)
 
@@ -13176,11 +12129,10 @@ cdef class GiacMethods_base:
         Help for power_regression:
         power_regression(Lst|Mtrx(A),[Lst])
         Returns the coefficients (m,b) of y=b*x^m : it is the best monomial which approx the points where the coordinates are the rows of A (or the 2 lists).
-        See also: 1/ polynomial_regression 2/ linear_regressiont 
+        See also: 1/ polynomial_regression 2/ linear_regressiont
         Ex1:power_regression([[1.0,1.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]])
         Ex2:power_regression([[1.0,2.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]])
         Ex3:power_regression([1.0,2.0,3.0,4.0],[2.0,4.0,9.0,16.0])
-        
         '''
         return GiacMethods['power_regression'](self,*args)
 
@@ -13189,11 +12141,10 @@ cdef class GiacMethods_base:
         Help for power_regression_plot:
         power_regression_plot(Lst||Mtrx(A),[Lst])
         Returns the plot of y=b*x^m : it is the best monomial which approx the points where the coordinates are the rows of A (or the 2 lists).
-        See also: 1/ polynomial_regression_plot 2/ linear_regression_plot 
+        See also: 1/ polynomial_regression_plot 2/ linear_regression_plot
         Ex1:power_regression_plot([[1.0,1.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]])
         Ex2:power_regression_plot([[1.0,2.0],[2.0,4.0],[3.0,9.0],[4.0,16.0]])
         Ex3:power_regression_plot([1.0,2.0,3.0,4.0],[2.0,4.0,9.0,16.0])
-        
         '''
         return GiacMethods['power_regression_plot'](self,*args)
 
@@ -13202,10 +12153,9 @@ cdef class GiacMethods_base:
         Help for powermod:
         powermod(Intg(a),Intg(n),Intg(p),[Expr(P(x))],[Var])
         Computes a^n modulo p or modulo p,P(x) (fast algorithm).
-        See also: 1/ pow 2/ ^ 
+        See also: 1/ pow 2/ ^
         Ex1:powermod(17,452,19)
         Ex2:powermod(x+1,452,19,x^4+x+1,x)
-        
         '''
         return GiacMethods['powermod'](self,*args)
 
@@ -13214,10 +12164,9 @@ cdef class GiacMethods_base:
         Help for powerpc:
         powerpc(Cercle,Pnt or Cplx)
         Returns the real number d^2-R^2 (d=distance between point and center, R=radius).
-        See also: 1/ radical_axis 
+        See also: 1/ radical_axis
         Ex1:powerpc(circle(0,1+i),3+i)
         Ex2:powerpc(circle(0,point(1+i)),3+i)
-        
         '''
         return GiacMethods['powerpc'](self,*args)
 
@@ -13226,10 +12175,9 @@ cdef class GiacMethods_base:
         Help for powexpand:
         powexpand(Expr)
         Expands the expression as a function of the exponent.
-        See also: 1/  
+        See also: 1/
         Ex1:powexpand(2^(x+y))
         Ex2:powexpand(3^(2*x))
-        
         '''
         return GiacMethods['powexpand'](self,*args)
 
@@ -13238,10 +12186,9 @@ cdef class GiacMethods_base:
         Help for powmod:
         powmod(Intg(a),Intg(n),Intg(p),[Expr(P(x))],[Var])
         Computes a^n modulo p or modulo p,P(x) (fast algorithm).
-        See also: 1/ pow 2/ ^ 
+        See also: 1/ pow 2/ ^
         Ex1:powmod(17,452,19)
         Ex2:powmod(x+1,452,19,x^4+x+1,x)
-        
         '''
         return GiacMethods['powmod'](self,*args)
 
@@ -13250,14 +12197,13 @@ cdef class GiacMethods_base:
         Help for prepend:
         prepend(Lst||Set||Str(L),Elem(n))
         Adds an element to a set or at the beginning of a list or of a string (L:=prepend(L,a) or L.prepend(a)).
-        See also: 1/ append 2/ concat 
+        See also: 1/ append 2/ concat
         Ex1:prepend([1,2],3)
         Ex2:prepend(set[1,2],3)
         Ex3: L:=[1,2];L:=prepend(L,3)
-        Ex4: L:=[1,2];L.prepend(L,3) 
+        Ex4: L:=[1,2];L.prepend(L,3)
         Ex5: S:=set[1,2];S:=prepend(L,3)
         Ex6: S:=set[1,2];S.prepend(L,3)
-        
         '''
         return GiacMethods['prepend'](self,*args)
 
@@ -13266,12 +12212,11 @@ cdef class GiacMethods_base:
         Help for preval:
         preval(Expr(F(Var)),Real(a),Real(b),[Var])
         Returns F(b)-F(a).
-        See also: 1/ subst 2/ int 
+        See also: 1/ subst 2/ int
         Ex1:preval(x^2-2,2,3)
         Ex2:preval(y^2-2,2,3,y)
         Ex3:preval(int(x),0,1)
         Ex4:preval(int(y,y),0,1,y)
-        
         '''
         return GiacMethods['preval'](self,*args)
 
@@ -13280,10 +12225,9 @@ cdef class GiacMethods_base:
         Help for prevperm:
         prevperm(Intg(n))
         Returns the previous permutation with the lexicographic order.
-        See also: 1/ nextperm 2/ is_permu 
+        See also: 1/ nextperm 2/ is_permu
         Ex1:prevperm([0,1,3,2])
         Ex2:prevperm([0,1,2,3])
-        
         '''
         return GiacMethods['prevperm'](self,*args)
 
@@ -13292,10 +12236,9 @@ cdef class GiacMethods_base:
         Help for prevprime:
         prevprime(Intg(a))
         Previous prime or pseudo-prime before a given integer a.
-        See also: 1/ nextprime 2/ is_prime 3/ ithprime 
+        See also: 1/ nextprime 2/ is_prime 3/ ithprime
         Ex1:prevprime(9856989898999)
         Ex2:prevprime(97160249868928888261606009)
-        
         '''
         return GiacMethods['prevprime'](self,*args)
 
@@ -13304,10 +12247,9 @@ cdef class GiacMethods_base:
         Help for primpart:
         primpart(Poly(P),[Var])
         Returns the polynomial P divided by the gcd of its coefficients.
-        See also: 1/ content 
+        See also: 1/ content
         Ex1:primpart(2x^2+10x+6)
         Ex2:primpart(2t^2+10t+6,t)
-        
         '''
         return GiacMethods['primpart'](self,*args)
 
@@ -13316,10 +12258,9 @@ cdef class GiacMethods_base:
         Help for printf:
         printf(Expr)
         2d printing.
-        See also: 1/ print 
+        See also: 1/ print
         Ex1:printf(sqrt(2))
         Ex2:printf("%gen+%gen=%gen",a,b,a+b)
-        
         '''
         return GiacMethods['printf'](self,*args)
 
@@ -13328,9 +12269,8 @@ cdef class GiacMethods_base:
         Help for prism:
         prism(LstPnt([A,B,C,D]),Pnt(A1))
         Draws a prism with plane base ABCD...and with edges parallel to AA1 (the faces are parallelograms).
-        See also: 1/ cube 2/ polyhedron 
+        See also: 1/ cube 2/ polyhedron
         Ex1:prism([[0,0,0],[5,0,0],[0,5,0],[-5,5,0]],[0,0,5])
-        
         '''
         return GiacMethods['prism'](self,*args)
 
@@ -13339,9 +12279,8 @@ cdef class GiacMethods_base:
         Help for prism_graph:
         prism_graph(Intg(n))
         Returns the generalized Petersen graph GP(n,1).
-        See also: 1/ antiprism_graph 2/ web_graph 
+        See also: 1/ antiprism_graph 2/ web_graph
         Ex1:prism_graph(5)
-        
         '''
         return GiacMethods['prism_graph'](self,*args)
 
@@ -13350,7 +12289,7 @@ cdef class GiacMethods_base:
         Help for product:
         product(Expr||Lst,[Var||Lst],[Intg(a)],[Intg(b)],[Intg(p)])
         Multiplies the values of the expression when the variable go from a to b with a step p (product(expression,var,begin,end,step) by default p=1) or product of the elements of a list or product element by element of 2 lists or matrices.
-        See also: 1/ sum 
+        See also: 1/ sum
         Ex1:product(n,n,1,10,2)
         Ex2:product(1/n,n,1,10)
         Ex3:product(1/n,n,11,1)
@@ -13358,7 +12297,6 @@ cdef class GiacMethods_base:
         Ex5:product([2,3,4,5])
         Ex6:product([2,3,4],[5,6,7])
         Ex7:product([[2,3,4],[5,6,7]],[[2,3,4],[5,6,7]])
-        
         '''
         return GiacMethods['product'](self,*args)
 
@@ -13367,11 +12305,10 @@ cdef class GiacMethods_base:
         Help for projection:
         projection(Curve,Pnt)
         projection(C,A) is the orthogonal projection of A on the curve C.
-        See also: 1/ perpendicular 
+        See also: 1/ perpendicular
         Ex1: H:=projection(line(i,1-i),1+i)
         Ex2: K:=projection(circle(0,1),1+i)
         Ex3: J:=projection(circle(0,1),point(1+2*i))
-        
         '''
         return GiacMethods['projection'](self,*args)
 
@@ -13380,12 +12317,11 @@ cdef class GiacMethods_base:
         Help for proot:
         proot(Vect||Poly,[Intg(n)])
         Returns all computed roots of a polynomial given by its coefficients (may not work if roots are not simple).
-        See also: 1/ pcoeff 2/ peval 3/ realroot 4/ complexroot 5/ rationalroot 6/ crationalroot 
+        See also: 1/ pcoeff 2/ peval 3/ realroot 4/ complexroot 5/ rationalroot 6/ crationalroot
         Ex1:proot([1,0,-2])
         Ex2:proot(x^2-2)
         Ex3:proot([1,2,-25,-26,120])
         Ex4:proot(x^4+5x-3,30)
-        
         '''
         return GiacMethods['proot'](self,*args)
 
@@ -13394,10 +12330,9 @@ cdef class GiacMethods_base:
         Help for propFrac:
         propFrac(Frac or RatFrac)
         Simplifies and writes the fraction (or rational fraction) A/B as Q+R/B with R<B (or deg(R)<deg(B)).
-        See also: 1/ partfrac 
+        See also: 1/ partfrac
         Ex1:propFrac(28/12)
         Ex2:propFrac((x^2+2*x-1)/(x+1))
-        
         '''
         return GiacMethods['propFrac'](self,*args)
 
@@ -13406,10 +12341,9 @@ cdef class GiacMethods_base:
         Help for propfrac:
         propfrac(Frac or RatFrac)
         Simplifies and writes the fraction (or rational fraction) A/B as Q+R/B with R<B (or deg(R)<deg(B)).
-        See also: 1/ partfrac 
+        See also: 1/ partfrac
         Ex1:propfrac(28/12)
         Ex2:propfrac((x^2+2*x-1)/(x+1))
-        
         '''
         return GiacMethods['propfrac'](self,*args)
 
@@ -13418,9 +12352,8 @@ cdef class GiacMethods_base:
         Help for psrgcd:
         psrgcd(Poly,Poly)
         GCD of 2 polynomials, with the sub resultant algorithm.
-        See also: 1/ gcd 2/ modgcd 3/ ezgcd 4/ heugcd 
+        See also: 1/ gcd 2/ modgcd 3/ ezgcd 4/ heugcd
         Ex1:psrgcd(x^4-1,(x-1)^2)
-        
         '''
         return GiacMethods['psrgcd'](self,*args)
 
@@ -13429,14 +12362,13 @@ cdef class GiacMethods_base:
         Help for ptayl:
         ptayl(Expr||Poly(P(Var)),Var=Real || Real(a),[Order || Var])
         Returns the Taylor polynomial of the expression at the given point and order or a polynomial Q such that P(x)=Q(x-a).
-        See also: 1/ series 2/ taylor 
+        See also: 1/ series 2/ taylor
         Ex1:ptayl(sin(x),x=0,5)
         Ex2:ptayl(x^2+2*x+1,1)
         Ex3:ptayl(x^2+2*x+1,-1)
         Ex4:ptayl(y^2+2*y+1,1.1,y)
         Ex5:ptayl(y^3+y^2+2*y+1,2,y)
         Ex6: subst(ptayl(y^3+y^2+2*y+1,2,y),y,y-2)
-        
         '''
         return GiacMethods['ptayl'](self,*args)
 
@@ -13445,10 +12377,9 @@ cdef class GiacMethods_base:
         Help for purge:
         purge(Var)
         purge(varname) unassigns the variable varname.
-        See also: 1/ sto 2/ restart 3/ assume 4/ about 
+        See also: 1/ sto 2/ restart 3/ assume 4/ about
         Ex1:purge(t)
         Ex2:purge(C)
-        
         '''
         return GiacMethods['purge'](self,*args)
 
@@ -13457,9 +12388,8 @@ cdef class GiacMethods_base:
         Help for pwd:
         pwd(NULL)
         Current working directory.
-        See also: 1/ cd 
+        See also: 1/ cd
         Ex1:pwd()
-        
         '''
         return GiacMethods['pwd'](self,*args)
 
@@ -13468,10 +12398,9 @@ cdef class GiacMethods_base:
         Help for pyramid:
         pyramid(Pnt(A),Pnt(B),Pnt(C),[Pnt(D)])
         Draws the regular direct pyramid ABCD with vertices A,B and a face in the plane (A,B,C) when there is 3 arguments and the pyramid ABCD when there are 4 arguments.
-        See also: 1/ cube 2/ cylinder 3/ icosahedron 4/ dodecahedron 5/ octahedron 
+        See also: 1/ cube 2/ cylinder 3/ icosahedron 4/ dodecahedron 5/ octahedron
         Ex1:pyramid([0,0,0],[3,0,0],[0,1,0])
         Ex2:pyramid([0,0,0],[3,0,0],[0,3,0],[0,0,4])
-        
         '''
         return GiacMethods['pyramid'](self,*args)
 
@@ -13480,10 +12409,9 @@ cdef class GiacMethods_base:
         Help for python_compat:
         python_compat(Intg(0) or 1)
         Sets Python-syntax compatibility (1) or not (0).
-        See also: 1/ xcas_mode 
+        See also: 1/ xcas_mode
         Ex1:python_compat()
         Ex2:python_compat(1)
-        
         '''
         return GiacMethods['python_compat'](self,*args)
 
@@ -13492,9 +12420,8 @@ cdef class GiacMethods_base:
         Help for q2a:
         q2a(QuadraForm, VectVar)
         q2a(q(x,y),[x,y])=the symmetric matrix associated to the quadratic form q.
-        See also: 1/ a2q 
+        See also: 1/ a2q
         Ex1:q2a(x^2+2*x*y+2*y^2,[x,y])
-        
         '''
         return GiacMethods['q2a'](self,*args)
 
@@ -13503,9 +12430,8 @@ cdef class GiacMethods_base:
         Help for qr:
         qr(Mtrx)
         For a numerical matrix A, returns R (right) such that A=QR and Q orthogonal.
-        See also: 1/ lu 
+        See also: 1/ lu
         Ex1:qr([[1,2],[3,4]])
-        
         '''
         return GiacMethods['qr'](self,*args)
 
@@ -13514,12 +12440,11 @@ cdef class GiacMethods_base:
         Help for quadric:
         quadric(Expr,[Lst(Var)])
         Defines a quadric by its cartesian equation with x,y,z as default variables and draws it.
-        See also: 1/ reduced_quadric 
+        See also: 1/ reduced_quadric
         Ex1:quadric(4*x^2+y^2+z^2-4*x*y+4*x*z-2*y*z+8*x-4*y+4*z+2)
         Ex2:quadric(x^2+3*y^2-3*z^2-8*y*z+2*z*x-4*x*y-1,x,y,z,affichage=vert+rempli)
         Ex3:quadric((u+v)*(v-w)+3*u-5*v,[u,v,w],affichage=cyan)
         Ex4:quadric(7*x^2+4*y^2+4*z^2+4*x*y-4*x*z-2*y*z-4*x+5*y+4*z-18,[x,y,z])
-        
         '''
         return GiacMethods['quadric'](self,*args)
 
@@ -13528,10 +12453,9 @@ cdef class GiacMethods_base:
         Help for quadrilateral:
         quadrilateral(Pnt(A)||Cplx,Pnt(B)||Cplx,Pnt(C)||Cplx,Pnt(D)||Cplx)
         Returns and draws the quadrilateral ABCD.
-        See also: 1/ polygon 2/ square 
+        See also: 1/ polygon 2/ square
         Ex1:quadrilateral(i,1+i,2-i,-1)
         Ex2:quadrilateral(point(0,0,0),point(3,3,3),point(0,0,3),point(3,0,0))
-        
         '''
         return GiacMethods['quadrilateral'](self,*args)
 
@@ -13540,10 +12464,9 @@ cdef class GiacMethods_base:
         Help for quantile:
         quantile(Lst(l),Real(p))
         Returns the quantile of the elements of l corresponding to p (0<p<1).
-        See also: 1/ quartile1 2/ median 3/ quartile3 
+        See also: 1/ quartile1 2/ median 3/ quartile3
         Ex1:quantile([0,1,3,4,2,5,6],0.25)
         Ex2:quantile([0,1,3,4,2,5,6],0.75)
-        
         '''
         return GiacMethods['quantile'](self,*args)
 
@@ -13552,11 +12475,10 @@ cdef class GiacMethods_base:
         Help for quartile1:
         quartile1(Lst||Mtrx,[Lst])
         Returns the 1st quartile of the elements (or of the columns) of its argument.
-        See also: 1/ quantile 2/ quartiles 
+        See also: 1/ quantile 2/ quartiles
         Ex1:quartile1([1,2,3,5,10,4])
         Ex2:quartile1([1,2,3,5,10,4],[1,2,3,1,2,3])
         Ex3:quartile1([[1,2],[5,4],[3,6],[7,8]])
-        
         '''
         return GiacMethods['quartile1'](self,*args)
 
@@ -13565,11 +12487,10 @@ cdef class GiacMethods_base:
         Help for quartile3:
         quartile3(Lst||Mtrx,[Lst])
         Returns the 3rd quartile of the elements (or of the columns) of its argument.
-        See also: 1/ quartiles 2/ quantile 
+        See also: 1/ quartiles 2/ quantile
         Ex1:quartile3([1,2,3,5,10,4])
         Ex2:quartile3([[1,2,3,5,10,4],[2,3,4,4,5,6],[7,6,5,8,9,1]])
         Ex3:quartile3([[1,2],[5,4],[3,6],[7,8]])
-        
         '''
         return GiacMethods['quartile3'](self,*args)
 
@@ -13578,11 +12499,10 @@ cdef class GiacMethods_base:
         Help for quartiles:
         quartiles(Lst||Mtrx,[Lst])
         Min,1st quartile,the median,3rd quartile, max of the elements (or of the columns) of its argument.
-        See also: 1/ boxwhisker 2/ quantile 3/ mean 
+        See also: 1/ boxwhisker 2/ quantile 3/ mean
         Ex1:quartiles([1,2,3,5,10,4])
         Ex2:quartiles([1,2,3,5,10,4],[1,2,3,5,10,4])
         Ex3:quartiles([[1,2],[5,4],[3,6],[7,8]])
-        
         '''
         return GiacMethods['quartiles'](self,*args)
 
@@ -13591,11 +12511,10 @@ cdef class GiacMethods_base:
         Help for quest:
         quest(Intg(n))
         Returns the (n+1)th question of the command history if n>=0 or, the (-n)th previous question if n<0 (by default n=-1 for the previous question).
-        See also: 1/ ans 
+        See also: 1/ ans
         Ex1:quest()
         Ex2:quest(2)
         Ex3:quest(-2)
-        
         '''
         return GiacMethods['quest'](self,*args)
 
@@ -13604,11 +12523,10 @@ cdef class GiacMethods_base:
         Help for quo:
         quo((Vect or Poly),(Vect or Poly),[Var])
         Euclidean quotient of 2 polynomials.
-        See also: 1/ rem 2/ quorem 3/ Quo 4/ iquo 
+        See also: 1/ rem 2/ quorem 3/ Quo 4/ iquo
         Ex1:quo([1,2,3,4],[-1,2])
         Ex2:quo(x^3+2x^2+3x+4,-x+2)
         Ex3:quo(t^3+2t^2+3t+4,-t+2,t)
-        
         '''
         return GiacMethods['quo'](self,*args)
 
@@ -13617,12 +12535,11 @@ cdef class GiacMethods_base:
         Help for quorem:
         quorem((Vect or Poly),(Vect or Poly),[Var])
         Euclidean quotient and remainder of 2 polynomials.
-        See also: 1/ rem 2/ quo 3/ iquorem 
+        See also: 1/ rem 2/ quo 3/ iquorem
         Ex1:quorem([1,2,3,4],[-1,2])
         Ex2:quorem(x^3+2x^2+3x+4,-x+2)
         Ex3:quorem(t^3+2t^2+3t+4,-t+2,t)
         Ex4:quorem(t^4-1,(t+1)^2,t)
-        
         '''
         return GiacMethods['quorem'](self,*args)
 
@@ -13631,11 +12548,10 @@ cdef class GiacMethods_base:
         Help for quote:
         quote(Expr)
         Returns its argument unevaluated (and also a:=quote(a) purges a).
-        See also: 1/  
+        See also: 1/
         Ex1:quote(1+2)
         Ex2:quote(1/x+1/(x-1))
         Ex3:quote((x+1)*(x-1))
-        
         '''
         return GiacMethods['quote'](self,*args)
 
@@ -13644,12 +12560,11 @@ cdef class GiacMethods_base:
         Help for r2e:
         r2e(Lst,Var)
         Gives the polynomial (or its value) : the first argument is the vector of coefficients and the second argument is the variable (by default x).
-        See also: 1/ e2r 2/ symb2poly 
+        See also: 1/ e2r 2/ symb2poly
         Ex1:r2e([1,2,3])
         Ex2:r2e([1,2,3],x)
         Ex3:r2e([1,2,3],-1)
         Ex4:r2e([1,2,-1],y)
-        
         '''
         return GiacMethods['r2e'](self,*args)
 
@@ -13658,10 +12573,9 @@ cdef class GiacMethods_base:
         Help for radical_axis:
         radical_axis(Crcle,Crcle)
         Returns the line of points with same powerpc with respect to the 2 circles.
-        See also: 1/ powerpc 
+        See also: 1/ powerpc
         Ex1:radical_axis(circle(0,1+i),circle(1,1+i))
         Ex2:radical_axis(circle(0,point(1+i)),circle(1,point(1+i)))
-        
         '''
         return GiacMethods['radical_axis'](self,*args)
 
@@ -13670,9 +12584,8 @@ cdef class GiacMethods_base:
         Help for radius:
         radius(Crcle)
         radius(C) gives the radius of the circle C.
-        See also: 1/ center 2/ circle 
+        See also: 1/ center 2/ circle
         Ex1:radius(incircle(-1,1-i,i))
-        
         '''
         return GiacMethods['radius'](self,*args)
 
@@ -13681,9 +12594,8 @@ cdef class GiacMethods_base:
         Help for ramene:
         ramene(Str(fich_name))
         Reads variables and their values from the file fich_name.
-        See also: 1/ write 2/ readrgb 3/ readwav 4/ csv2gen 
+        See also: 1/ write 2/ readrgb 3/ readwav 4/ csv2gen
         Ex1:ramene("toto")
-        
         '''
         return GiacMethods['ramene'](self,*args)
 
@@ -13692,7 +12604,7 @@ cdef class GiacMethods_base:
         Help for rand:
         rand(Intg(n) or Interval(p..n) or NULL,[Intg(b1) or Lst(L)],[Intg(b2)])
         rand(n)=a random integer (resp rand(p,n)=a real or rand(p..n)=a real function) with uniform distribution in 0..n-1 (resp in [p;n])(rand()=rand(0,1)=a real in [0,1[) or rand(n,b1,b2)=n integers between b1 and b2 or rand(n,L)=list of n elements of L.
-        See also: 1/ srand 2/ randpoly 3/ ranm 4/ randvector 5/ hasard 
+        See also: 1/ srand 2/ randpoly 3/ ranm 4/ randvector 5/ hasard
         Ex1:rand(4)
         Ex2:rand()
         Ex3:rand(0,2)
@@ -13704,7 +12616,6 @@ cdef class GiacMethods_base:
         Ex9: L:=["r","r","r","b","n"];L3:=L.rand(3)
         Ex10: L:=["r","r","r","b","n"];a:=rand(L)
         Ex11: L:=["r","r","r","b","n"];a:=L.rand()
-        
         '''
         return GiacMethods['rand'](self,*args)
 
@@ -13713,7 +12624,7 @@ cdef class GiacMethods_base:
         Help for randMat:
         randMat(Intg(n), [Intg(m)],[Interval or quote(DistribLaw)])
         Returns a list of size n or an n*m matrix that contains random integers in the range -99 through 99 with uniform distribution or contains random numbers according to the law put between quotes.
-        See also: 1/ idn 2/ randPoly 3/ rand 4/ randvector 
+        See also: 1/ idn 2/ randPoly 3/ rand 4/ randvector
         Ex1:randMat(3)
         Ex2:randMat(3,2)
         Ex3:randMat(3,2,6)
@@ -13727,7 +12638,6 @@ cdef class GiacMethods_base:
         Ex11:randMat(3,2,1..2)
         Ex12:randMat(3,5,multinomial,[1/2,1/3,1/6],["R","V","B"])
         Ex13: GF(2,8,g);ranm(3,3,g)
-        
         '''
         return GiacMethods['randMat'](self,*args)
 
@@ -13736,10 +12646,9 @@ cdef class GiacMethods_base:
         Help for randNorm:
         randNorm(Real(mu),Real(sigma))
         Returns a random real with normal distribution N(mu,sigma).
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randpoisson 8/ randgeometric 9/ randmultinomial 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randpoisson 8/ randgeometric 9/ randmultinomial
         Ex1:randNorm(0,1)
         Ex2:randNorm(2,1)
-        
         '''
         return GiacMethods['randNorm'](self,*args)
 
@@ -13748,14 +12657,13 @@ cdef class GiacMethods_base:
         Help for randPoly:
         randPoly([Var(Var)],Intg(n),[law])
         Returns a polynomial with variable var (or x), of degree n and where the coefficients are random integers in the range -99 through 99 with uniform distribution or according to a law.
-        See also: 1/ ranm 2/ randvector 
+        See also: 1/ ranm 2/ randvector
         Ex1:randPoly(5)
         Ex2:randPoly(t,8)
         Ex3:randPoly(t,8,-1..1)
         Ex4:randPoly([x,y],[10,3])
         Ex5:randPoly([x,y],[10,3],1 mod 7)
         Ex6: GF(2,8,g);randpoly(t,8,g);randpoly([x,y],[2,3],g)
-        
         '''
         return GiacMethods['randPoly'](self,*args)
 
@@ -13764,10 +12672,9 @@ cdef class GiacMethods_base:
         Help for randbetad:
         randbetad(Real(a),Real(b))
         Returns a random real according to the Beta distribution with parameters a>0 and b>0.
-        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector 
+        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector
         Ex1:randbetad(1,2)
         Ex2:randbetad(1.5,4)
-        
         '''
         return GiacMethods['randbetad'](self,*args)
 
@@ -13776,10 +12683,9 @@ cdef class GiacMethods_base:
         Help for randbinomial:
         randbinomial(Intg(n),Real(p))
         Returns a random integer with binomial distribution B(n,p) i.e. the number of successes in n independant tests where for each test, the success of probability is p.
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randnorm 7/ randpoisson 8/ randgeometric 9/ randmultinomial 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randnorm 7/ randpoisson 8/ randgeometric 9/ randmultinomial
         Ex1:randbinomial(10,0.4)
         Ex2:randbinomial(100,0.8)
-        
         '''
         return GiacMethods['randbinomial'](self,*args)
 
@@ -13788,10 +12694,9 @@ cdef class GiacMethods_base:
         Help for randchisquare:
         randchisquare(Intg(n))
         Returns a random integer with chi^2 distribution, χ^2(n).
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randnorm 8/ randgeometric 9/ randmultinomial 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randnorm 8/ randgeometric 9/ randmultinomial
         Ex1:randchisquare(5)
         Ex2:randchisquare(2)
-        
         '''
         return GiacMethods['randchisquare'](self,*args)
 
@@ -13800,10 +12705,9 @@ cdef class GiacMethods_base:
         Help for randexp:
         randexp(Real(a))
         Returns a random real according to the exponential distribution with parameter a>0.
-        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector 
+        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector
         Ex1:randexp(1)
         Ex2:randexp(2)
-        
         '''
         return GiacMethods['randexp'](self,*args)
 
@@ -13812,10 +12716,9 @@ cdef class GiacMethods_base:
         Help for randfisher:
         randfisher(Intg(n),Intg(m))
         Returns a random integer with Fisher-Snedecor distribution F(n,m).
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randnorm 8/ randgeometric 9/ randmultinomial 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randnorm 8/ randgeometric 9/ randmultinomial
         Ex1:randfisher(5,2)
         Ex2:randfisher(2,4)
-        
         '''
         return GiacMethods['randfisher'](self,*args)
 
@@ -13824,10 +12727,9 @@ cdef class GiacMethods_base:
         Help for randgammad:
         randgammad(Real(a),Real(b))
         Returns a random real according to the Gamma distribution with parameters a>0 and b>0.
-        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector 
+        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector
         Ex1:randgammad(1,2)
         Ex2:randgammad(1.5,4)
-        
         '''
         return GiacMethods['randgammad'](self,*args)
 
@@ -13836,9 +12738,8 @@ cdef class GiacMethods_base:
         Help for randgeometric:
         randgeometric(Real(p))
         Returns a random integer following the geometric distribution with parameter p.
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randnorm 7/ randpoisson 8/ randbinomial 9/ randmultinomial 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randnorm 7/ randpoisson 8/ randbinomial 9/ randmultinomial
         Ex1:randgeometric(0.4)
-        
         '''
         return GiacMethods['randgeometric'](self,*args)
 
@@ -13847,10 +12748,9 @@ cdef class GiacMethods_base:
         Help for randint:
         randint(Intg(n1),Intg(n2))
         randint(n1,n2)=an integer in [n1, n2] or [n2,n1].
-        See also: 1/ rand  
+        See also: 1/ rand
         Ex1:randint(1,10)
         Ex2:randint(-1,-10)
-        
         '''
         return GiacMethods['randint'](self,*args)
 
@@ -13859,10 +12759,9 @@ cdef class GiacMethods_base:
         Help for randmarkov:
         randmarkov(Mtrx(M) || Vctr(v),Intg(i0),[Intg(n)])
         Returns a random sequence of n states (Markov chain) starting from i0, with probability transition matrix M, or returns a stochastic matrix with p recurrent loops v=[n1,..,np] and i0 transient states.
-        See also: 1/ markov 2/ plotproba 
+        See also: 1/ markov 2/ plotproba
         Ex1:randmarkov([[0,0,1/2,0,1/2],[0,0,1,0,0],[1/4,1/4,0,1/4,1/4],[0,0,1/2,0,1/2],[0,0,0,0,1]],2,20)
         Ex2:randmarkov([1,2,1,3],4)
-        
         '''
         return GiacMethods['randmarkov'](self,*args)
 
@@ -13871,7 +12770,7 @@ cdef class GiacMethods_base:
         Help for randmatrix:
         randmatrix(Intg(n), [Intg(m)],[Interval or quote(DistribLaw)])
         Returns a list of size n or an n*m matrix that contains random integers in the range -99 through 99 with uniform distribution or contains random numbers according to the law put between quotes.
-        See also: 1/ idn 2/ randPoly 3/ rand 4/ randvector 
+        See also: 1/ idn 2/ randPoly 3/ rand 4/ randvector
         Ex1:randmatrix(3)
         Ex2:randmatrix(3,2)
         Ex3:randmatrix(3,2,6)
@@ -13885,7 +12784,6 @@ cdef class GiacMethods_base:
         Ex11:randmatrix(3,2,1..2)
         Ex12:randmatrix(3,5,multinomial,[1/2,1/3,1/6],["R","V","B"])
         Ex13: GF(2,8,g);ranm(3,3,g)
-        
         '''
         return GiacMethods['randmatrix'](self,*args)
 
@@ -13894,10 +12792,9 @@ cdef class GiacMethods_base:
         Help for randmultinomial:
         randmultinomial(List(P),[List(K)])
         Returns a random index or list element according to a multinomial distribution probability list P.
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randnorm 7/ randpoisson 8/ randgeometric 9/ randbinomial 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randnorm 7/ randpoisson 8/ randgeometric 9/ randbinomial
         Ex1:randmultinomial([1/2,1/3,1/6])
         Ex2:randmultinomial([1/2,1/3,1/6],["R","V","B"])
-        
         '''
         return GiacMethods['randmultinomial'](self,*args)
 
@@ -13906,10 +12803,9 @@ cdef class GiacMethods_base:
         Help for randnorm:
         randnorm(Real(mu),Real(sigma))
         Returns a random real with normal distribution N(mu,sigma).
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randpoisson 8/ randgeometric 9/ randmultinomial 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randpoisson 8/ randgeometric 9/ randmultinomial
         Ex1:randnorm(0,1)
         Ex2:randnorm(2,1)
-        
         '''
         return GiacMethods['randnorm'](self,*args)
 
@@ -13918,7 +12814,7 @@ cdef class GiacMethods_base:
         Help for random:
         random(Intg(n) or Interval(p..n) or NULL,[Intg(b1) or Lst(L)],[Intg(b2)])
         rand(n)=a random integer (resp rand(p,n)=a real or rand(p..n)=a real function) with uniform distribution in 0..n-1 (resp in [p;n])(rand()=rand(0,1)=a real in [0,1[) or rand(n,b1,b2)=n integers between b1 and b2 or rand(n,L)=list of n elements of L.
-        See also: 1/ srand 2/ randpoly 3/ ranm 4/ randvector 5/ hasard 
+        See also: 1/ srand 2/ randpoly 3/ ranm 4/ randvector 5/ hasard
         Ex1:random(4)
         Ex2:random()
         Ex3:random(0,2)
@@ -13930,7 +12826,6 @@ cdef class GiacMethods_base:
         Ex9: L:=["r","r","r","b","n"];L3:=L.rand(3)
         Ex10: L:=["r","r","r","b","n"];a:=rand(L)
         Ex11: L:=["r","r","r","b","n"];a:=L.rand()
-        
         '''
         return GiacMethods['random'](self,*args)
 
@@ -13939,10 +12834,9 @@ cdef class GiacMethods_base:
         Help for random_bipartite_graph:
         random_bipartite_graph(Intg(n)||Lst(a,b),Real(p)||Intg(m))
         Returns a random undirected unweighted bipartite graph with n vertices where each possible edge is present with probability p or where m edges are created at random. When the first argument is list [a,b] of integers, two groups of vertices with sizes a and b are created.
-        See also: 1/ random_digraph 2/ random_graph 3/ random_planar_graph 4/ random_regular_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree 
+        See also: 1/ random_digraph 2/ random_graph 3/ random_planar_graph 4/ random_regular_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree
         Ex1:random_bipartite_graph(10,0.5)
         Ex2:random_bipartite_graph([2,3],1.0)
-        
         '''
         return GiacMethods['random_bipartite_graph'](self,*args)
 
@@ -13951,10 +12845,9 @@ cdef class GiacMethods_base:
         Help for random_digraph:
         random_digraph(Intg(n)||Lst(V),Real(p)||Intg(m))
         Returns a random directed unweighted graph with n vertices (list V of labels may me specified) where two vertices are connected with probability p or where m edges are created at random.
-        See also: 1/ random_bipartite_graph 2/ random_graph 3/ random_planar_graph 4/ random_regular_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree 
+        See also: 1/ random_bipartite_graph 2/ random_graph 3/ random_planar_graph 4/ random_regular_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree
         Ex1:random_digraph(8,0.5)
         Ex2:random_digraph(8,10)
-        
         '''
         return GiacMethods['random_digraph'](self,*args)
 
@@ -13963,10 +12856,9 @@ cdef class GiacMethods_base:
         Help for random_graph:
         random_graph(Intg(n)||Lst(V),Real(p)||Intg(m))
         Returns a random undirected unweighted graph with n vertices (list V of labels may be specified) where two vertices are connected with probability p or where m edges are created at random.
-        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_planar_graph 4/ random_regular_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree 
+        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_planar_graph 4/ random_regular_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree
         Ex1:random_graph(8,0.5)
         Ex2:random_graph(8,10)
-        
         '''
         return GiacMethods['random_graph'](self,*args)
 
@@ -13975,11 +12867,10 @@ cdef class GiacMethods_base:
         Help for random_network:
         random_network(Intg(a),Intg(b),[Real(p)],[opts])
         Returns a random network with b grid frames of size a*a in which every edge appears with the probability p (by default 0.5).
-        See also: 1/ is_network 2/ maxflow 
+        See also: 1/ is_network 2/ maxflow
         Ex1:random_network(3,3)
         Ex2:random_network(3,3,acyclic)
         Ex3:random_network(3,4,0.75)
-        
         '''
         return GiacMethods['random_network'](self,*args)
 
@@ -13988,8 +12879,7 @@ cdef class GiacMethods_base:
         Help for random_planar_graph:
         random_planar_graph(Intg(n)||Lst(V),Real(p),[Intg(c)])
         Returns a random planar graph with n vertices, which can also be specified as a list V of their labels, obtained by trying to remove each edge of a random triangulated graph with probability 0<=p<1 [c is connectivity level : 0 - any, 1 - connected, 2 - biconnected, 3 - triconnected (by default, c=1)].
-        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_graph 4/ random_regular_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree 
-        
+        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_graph 4/ random_regular_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree
         '''
         return GiacMethods['random_planar_graph'](self,*args)
 
@@ -13998,9 +12888,8 @@ cdef class GiacMethods_base:
         Help for random_regular_graph:
         random_regular_graph(Intg(n)||Lst(V),Intg(d),[connected])
         Returns a random d-regular graph with n vertices, which may be specified as list V of their labels.
-        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_graph 4/ random_planar_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree 
+        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_graph 4/ random_planar_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree
         Ex1:random_regular_graph(100,80,connected)
-        
         '''
         return GiacMethods['random_regular_graph'](self,*args)
 
@@ -14009,9 +12898,8 @@ cdef class GiacMethods_base:
         Help for random_sequence_graph:
         random_sequence_graph(Lst(L))
         Returns a random undirected graph with degree sequence L.
-        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_graph 4/ random_planar_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree 
+        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_graph 4/ random_planar_graph 5/ random_sequence_graph 6/ random_tournament 7/ random_tree
         Ex1:random_sequence_graph([1,3,3,2,1,2,2,2,3,3])
-        
         '''
         return GiacMethods['random_sequence_graph'](self,*args)
 
@@ -14020,9 +12908,8 @@ cdef class GiacMethods_base:
         Help for random_tournament:
         random_tournament(Intg(n)||Lst(V))
         Returns a random tournament graph with n vertices, which may be specified as list V of their labels.
-        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_graph 4/ random_planar_graph 5/ random_regular_graph 6/ random_sequence_graph 7/ random_tree 
+        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_graph 4/ random_planar_graph 5/ random_regular_graph 6/ random_sequence_graph 7/ random_tree
         Ex1:random_tournament(5)
-        
         '''
         return GiacMethods['random_tournament'](self,*args)
 
@@ -14031,8 +12918,7 @@ cdef class GiacMethods_base:
         Help for random_tree:
         random_tree(Intg(n)||Lst(V),[Intg(d)||root[=Vrtx(v)]])
         Returns a random tree graph with n vertices, which may be specified as list V of their labels [with the upper bound d (positive integer) for the degree of graph or 'root' for rooted trees].
-        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_graph 4/ random_planar_graph 5/ random_regular_graph 6/ random_sequence_graph 7/ random_tournament 
-        
+        See also: 1/ random_bipartite_graph 2/ random_digraph 3/ random_graph 4/ random_planar_graph 5/ random_regular_graph 6/ random_sequence_graph 7/ random_tournament
         '''
         return GiacMethods['random_tree'](self,*args)
 
@@ -14041,7 +12927,7 @@ cdef class GiacMethods_base:
         Help for random_variable:
         random_variable(Lst(W)||Mtrx(M)||Fnc(f),[params])
         Returns a random variable from a probability density function f or from list of weights (discrete variable).
-        See also: 1/ randvector 2/ randmatrix 3/ rand 
+        See also: 1/ randvector 2/ randmatrix 3/ rand
         Ex1:random_variable(fisher,2,3)
         Ex2:random_variable([["apple",1/3],["orange",1/4],["pear",1/5],["plum",13/60]])
         Ex3:random_variable(k->1-(k/10)^2,range=-10..10)
@@ -14052,7 +12938,6 @@ cdef class GiacMethods_base:
         Ex8:random_variable(weibull,mean=12.5,variance=1)
         Ex9:random_variable(uniform,mean=10,stddev=2)
         Ex10:random_variable(uniform,e..pi)
-        
         '''
         return GiacMethods['random_variable'](self,*args)
 
@@ -14061,13 +12946,12 @@ cdef class GiacMethods_base:
         Help for randperm:
         randperm(Intg(n)||Lst(L))
         Returns a random permutation of [0,1,2,..,n-1] or of the list L.
-        See also: 1/ permu2cycles 2/ is_permu 3/ permu2mat 
+        See also: 1/ permu2cycles 2/ is_permu 3/ permu2mat
         Ex1:randperm(4)
         Ex2:randperm(7)
         Ex3:randperm([1,3,5,7,9])
         Ex4: L:=[1,3,5,7,9];L:=randperm(L)
         Ex5: L:=[1,3,5,7,9];L.randperm()
-        
         '''
         return GiacMethods['randperm'](self,*args)
 
@@ -14076,10 +12960,9 @@ cdef class GiacMethods_base:
         Help for randpoisson:
         randpoisson(Real(λ))
         Returns a random integer with poisson distribution P(λ).
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randnorm 8/ randgeometric 9/ randmultinomial 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randnorm 8/ randgeometric 9/ randmultinomial
         Ex1:randpoisson(5.4)
         Ex2:randpoisson(2.8)
-        
         '''
         return GiacMethods['randpoisson'](self,*args)
 
@@ -14088,14 +12971,13 @@ cdef class GiacMethods_base:
         Help for randpoly:
         randpoly([Var(Var)],Intg(n),[law])
         Returns a polynomial with variable var (or x), of degree n and where the coefficients are random integers in the range -99 through 99 with uniform distribution or according to a law.
-        See also: 1/ ranm 2/ randvector 
+        See also: 1/ ranm 2/ randvector
         Ex1:randpoly(5)
         Ex2:randpoly(t,8)
         Ex3:randpoly(t,8,-1..1)
         Ex4:randpoly([x,y],[10,3])
         Ex5:randpoly([x,y],[10,3],1 mod 7)
         Ex6: GF(2,8,g);randpoly(t,8,g);randpoly([x,y],[2,3],g)
-        
         '''
         return GiacMethods['randpoly'](self,*args)
 
@@ -14104,10 +12986,9 @@ cdef class GiacMethods_base:
         Help for randseed:
         randseed()
         srand returns an integer and initializes the sequence of random numbers.
-        See also: 1/ RandSeed 
+        See also: 1/ RandSeed
         Ex1:randseed(12)
         Ex2: srand
-        
         '''
         return GiacMethods['randseed'](self,*args)
 
@@ -14116,10 +12997,9 @@ cdef class GiacMethods_base:
         Help for randstudent:
         randstudent(Intg(n))
         Returns a random integer with Student distribution S(n).
-        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randnorm 8/ randgeometric 9/ randmultinomial 
+        See also: 1/ rand 2/ randpoly 3/ ranm 4/ randvector 5/ randexp 6/ randbinomial 7/ randnorm 8/ randgeometric 9/ randmultinomial
         Ex1:randstudent(5)
         Ex2:randstudent(2)
-        
         '''
         return GiacMethods['randstudent'](self,*args)
 
@@ -14128,7 +13008,7 @@ cdef class GiacMethods_base:
         Help for randvar:
         randvar(Lst(W)||Mtrx(M)||Fnc(f),[params])
         Returns a random variable from a probability density function f or from list of weights (discrete variable).
-        See also: 1/ randvector 2/ randmatrix 3/ rand 
+        See also: 1/ randvector 2/ randmatrix 3/ rand
         Ex1:randvar(fisher,2,3)
         Ex2:randvar([["apple",1/3],["orange",1/4],["pear",1/5],["plum",13/60]])
         Ex3:randvar(k->1-(k/10)^2,range=-10..10)
@@ -14139,7 +13019,6 @@ cdef class GiacMethods_base:
         Ex8:randvar(weibull,mean=12.5,variance=1)
         Ex9:randvar(uniform,mean=10,stddev=2)
         Ex10:randvar(uniform,e..pi)
-        
         '''
         return GiacMethods['randvar'](self,*args)
 
@@ -14148,7 +13027,7 @@ cdef class GiacMethods_base:
         Help for randvector:
         randvector(Intg(n), [Intg(m)],[Interval or quote(DistribLaw)])
         Returns a list of size n that contains random integers in the range -99 through 99 (or in 0..m-1) with uniform distribution or contains random numbers according to the law put between quotes.
-        See also: 1/ idn 2/ randPoly 3/ rand 4/ ranm 
+        See also: 1/ idn 2/ randPoly 3/ rand 4/ ranm
         Ex1:randvector(3)
         Ex2:randvector(3,6)
         Ex3:randvector(3,normald,0,1)
@@ -14159,7 +13038,6 @@ cdef class GiacMethods_base:
         Ex8:randvector(3,'rand(3)')
         Ex9:randvector(3,1..2)
         Ex10: GF(2,8,g);randvector(3,g)
-        
         '''
         return GiacMethods['randvector'](self,*args)
 
@@ -14168,10 +13046,9 @@ cdef class GiacMethods_base:
         Help for randweibulld:
         randweibulld(Real(a),Real(b))
         Returns a random real according to the Weibull distribution with parameters a>0 and b>0.
-        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector 
+        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector
         Ex1:randweibulld(1,2)
         Ex2:randweibulld(1.5,4)
-        
         '''
         return GiacMethods['randweibulld'](self,*args)
 
@@ -14180,10 +13057,9 @@ cdef class GiacMethods_base:
         Help for rank:
         rank(Mtrx)
         Returns the rank of the matrix.
-        See also: 1/ det 2/ image 
+        See also: 1/ det 2/ image
         Ex1:rank([[1,1,2],[2,1,3],[3,1,4]])
         Ex2:rank([[1,1,2],[2,1,3],[3,1,5]])
-        
         '''
         return GiacMethods['rank'](self,*args)
 
@@ -14192,7 +13068,7 @@ cdef class GiacMethods_base:
         Help for ranm:
         ranm(Intg(n), [Intg(m)],[Interval or quote(DistribLaw)])
         Returns a list of size n or an n*m matrix that contains random integers in the range -99 through 99 with uniform distribution or contains random numbers according to the law put between quotes.
-        See also: 1/ idn 2/ randPoly 3/ rand 4/ randvector 
+        See also: 1/ idn 2/ randPoly 3/ rand 4/ randvector
         Ex1:ranm(3)
         Ex2:ranm(3,2)
         Ex3:ranm(3,2,6)
@@ -14206,7 +13082,6 @@ cdef class GiacMethods_base:
         Ex11:ranm(3,2,1..2)
         Ex12:ranm(3,5,multinomial,[1/2,1/3,1/6],["R","V","B"])
         Ex13: GF(2,8,g);ranm(3,3,g)
-        
         '''
         return GiacMethods['ranm'](self,*args)
 
@@ -14215,7 +13090,7 @@ cdef class GiacMethods_base:
         Help for ranv:
         ranv(Intg(n), [Intg(m)],[Interval or quote(DistribLaw)])
         Returns a list of size n that contains random integers in the range -99 through 99 (or in 0..m-1) with uniform distribution or contains random numbers according to the law put between quotes.
-        See also: 1/ idn 2/ randPoly 3/ rand 4/ ranm 
+        See also: 1/ idn 2/ randPoly 3/ rand 4/ ranm
         Ex1:ranv(3)
         Ex2:ranv(3,6)
         Ex3:ranv(3,normald,0,1)
@@ -14226,7 +13101,6 @@ cdef class GiacMethods_base:
         Ex8:ranv(3,'rand(3)')
         Ex9:ranv(3,1..2)
         Ex10: GF(2,8,g);randvector(3,g)
-        
         '''
         return GiacMethods['ranv'](self,*args)
 
@@ -14235,9 +13109,8 @@ cdef class GiacMethods_base:
         Help for rassembler_trigo:
         rassembler_trigo(Expr)
         Collects trigonometric expressions.
-        See also: 1/ texpand 2/ tlin 
+        See also: 1/ texpand 2/ tlin
         Ex1:rassembler_trigo(sin(x)+cos(x))
-        
         '''
         return GiacMethods['rassembler_trigo'](self,*args)
 
@@ -14246,11 +13119,10 @@ cdef class GiacMethods_base:
         Help for rat_jordan:
         rat_jordan(Mtrx)
         Returns the list made by the transition matrix and the rational Jordan form of a matrix.
-        See also: 1/ egv 2/ egvl 3/ jordan 4/ companion 
+        See also: 1/ egv 2/ egvl 3/ jordan 4/ companion
         Ex1:rat_jordan([[0,2],[1,0]])
         Ex2:rat_jordan([[-2,-2,1],[-2,1,-2],[1,-2,-2]])
         Ex3:rat_jordan([[1,1,-1,2,-1],[2,0,1,-4,-1],[0,1,1,1,1],[0,1,2,0,1],[0,0,-3,3,-1]])
-        
         '''
         return GiacMethods['rat_jordan'](self,*args)
 
@@ -14259,11 +13131,10 @@ cdef class GiacMethods_base:
         Help for rational:
         rational(Opt)
         DOM_RAT or rational is the type of a rational, as returned by the type command. It is also an option of the assume command.
-        See also: 1/ type 2/ assume 3/ DOM_INT 4/ DOM_FLOAT 
+        See also: 1/ type 2/ assume 3/ DOM_INT 4/ DOM_FLOAT
         Ex1: assume(a,rational)
         Ex2: assume(a,DOM_RAT)
         Ex3: a:=1/2;type(a)
-        
         '''
         return GiacMethods['rational'](self,*args)
 
@@ -14272,9 +13143,8 @@ cdef class GiacMethods_base:
         Help for rationalroot:
         rationalroot(Poly(P))
         Returns the list of rational roots of P without indicating the multiplicity.
-        See also: 1/ proot 2/ froot 3/ complexroot 4/ realroot 5/ crationalroot 
+        See also: 1/ proot 2/ froot 3/ complexroot 4/ realroot 5/ crationalroot
         Ex1:rationalroot(2*x^3-9*x^2+13*x-6)
-        
         '''
         return GiacMethods['rationalroot'](self,*args)
 
@@ -14283,11 +13153,10 @@ cdef class GiacMethods_base:
         Help for ratnormal:
         ratnormal(Expr)
         Rewrites as an irreducible rational fraction.
-        See also: 1/ normal 2/ simplify 3/ factor 4/ expand 
+        See also: 1/ normal 2/ simplify 3/ factor 4/ expand
         Ex1:ratnormal((x^2-1)/(x^3-1))
         Ex2:ratnormal(c/d+b/d+a/d)
         Ex3:ratnormal((x^2-1)/(x^3-1)+(x-1)/(x^3-1)+1)
-        
         '''
         return GiacMethods['ratnormal'](self,*args)
 
@@ -14296,10 +13165,9 @@ cdef class GiacMethods_base:
         Help for rdiv:
         rdiv(Expr(a),Expr(b))
         Division of a by b (prefixed version of /).
-        See also: 1/ / 
+        See also: 1/ /
         Ex1:rdiv(3,5)
         Ex2:rdiv(3.2,5.4)
-        
         '''
         return GiacMethods['rdiv'](self,*args)
 
@@ -14308,11 +13176,10 @@ cdef class GiacMethods_base:
         Help for re:
         re(Cplx or LstCplx)
         Returns the real part of a complex number.
-        See also: 1/ im 2/ conj 
+        See also: 1/ im 2/ conj
         Ex1:re(1+2*i)
         Ex2:re((1+2*i)^2)
         Ex3:re([1+2*i,(1+2*i)^2])
-        
         '''
         return GiacMethods['re'](self,*args)
 
@@ -14321,9 +13188,8 @@ cdef class GiacMethods_base:
         Help for read:
         read(Str(fich_name))
         Reads variables and their values from the file fich_name.
-        See also: 1/ write 2/ readrgb 3/ readwav 4/ csv2gen 
+        See also: 1/ write 2/ readrgb 3/ readwav 4/ csv2gen
         Ex1:read("toto")
-        
         '''
         return GiacMethods['read'](self,*args)
 
@@ -14332,10 +13198,9 @@ cdef class GiacMethods_base:
         Help for readrgb:
         readrgb(Str(s),[Intg(w)],[Intg(h)])
         Reads a picture file, using it's natural dimensions, or using specified dimensions.
-        See also: 1/ writergb 2/ readwav 
+        See also: 1/ writergb 2/ readwav
         Ex1:readrgb("image.png")
         Ex2:readrgb("image.png",50,50)
-        
         '''
         return GiacMethods['readrgb'](self,*args)
 
@@ -14344,9 +13209,8 @@ cdef class GiacMethods_base:
         Help for readwav:
         readwav(Str(s))
         Reads a WAV sound file.
-        See also: 1/ writewav 2/ readrgb 
+        See also: 1/ writewav 2/ readrgb
         Ex1:readwav("pop.wav")
-        
         '''
         return GiacMethods['readwav'](self,*args)
 
@@ -14355,11 +13219,10 @@ cdef class GiacMethods_base:
         Help for real:
         real(Cplx or LstCplx)
         Returns the real part of a complex number.
-        See also: 1/ im 2/ conj 
+        See also: 1/ im 2/ conj
         Ex1:real(1+2*i)
         Ex2:real((1+2*i)^2)
         Ex3:real([1+2*i,(1+2*i)^2])
-        
         '''
         return GiacMethods['real'](self,*args)
 
@@ -14368,14 +13231,13 @@ cdef class GiacMethods_base:
         Help for realroot:
         realroot([sturm],Poly(P),[Real(l)],[Cplx(a)],[Cplx(b)])
         Returns the list of intervals of length <=l containing the real roots of P inside a..b with their multiplicity. By default the Vincent-Akritas-Strzebonski (VAS) method is used. realroot(sturm,P) uses Sturm's method.
-        See also: 1/ proot 2/ froot 3/ complexroot 4/ rationalroot 5/ crationalroot 6/ sturmab 7/ VAS 
+        See also: 1/ proot 2/ froot 3/ complexroot 4/ rationalroot 5/ crationalroot 6/ sturmab 7/ VAS
         Ex1:realroot(x^3+7,0.1)
         Ex2:realroot(x^3-7*x+7)
         Ex3:realroot(sturm,x^3-7*x+7)
         Ex4:realroot(x^5-2*x^4+x^3+1)
         Ex5:realroot(x^5-2*x^4+x^3+1,0.1)
         Ex6:realroot(x^3+x+8,1e-5,-4,4)
-        
         '''
         return GiacMethods['realroot'](self,*args)
 
@@ -14384,10 +13246,9 @@ cdef class GiacMethods_base:
         Help for reciprocation:
         reciprocation(Crcle,Lst(Pnt,Line))
         Returns the list where the points (resp lines) are replaced with their polars (resp poles) with respect to the circle C.
-        See also: 1/ pole 2/ polar 
+        See also: 1/ pole 2/ polar
         Ex1:reciprocation(circle(0,1),[point((1+i)/2), line(1,-1+i)])
         Ex2:reciprocation(circle(0,1),[line(1+i,2),point(1+i*2)])
-        
         '''
         return GiacMethods['reciprocation'](self,*args)
 
@@ -14396,9 +13257,8 @@ cdef class GiacMethods_base:
         Help for rect:
         rect(Expr(x))
         Returns the value of the rectangle function at x.
-        See also: 1/ boxcar 2/ tri 3/ Heaviside 
+        See also: 1/ boxcar 2/ tri 3/ Heaviside
         Ex1:rect(x/2)
-        
         '''
         return GiacMethods['rect'](self,*args)
 
@@ -14407,12 +13267,11 @@ cdef class GiacMethods_base:
         Help for rectangle:
         rectangle(Pnt(A)||Cplx,Pnt(B)||Cplx,Real(k)||Pnt(P)||Lst(P,k),[Var(D)],[Var(C)])
         Returns and draws the rectangle ABCD, AD=k*AB; if k>0 ABCD is direct else indirect (in the plane ABP AD=AP or AD=k*AB).
-        See also: 1/ quadrilateral 2/ square 
+        See also: 1/ quadrilateral 2/ square
         Ex1:rectangle(-i,1,2)
         Ex2:rectangle(-i,1,-2,D,C)
         Ex3:rectangle(point(0,0,0),point(3,3,3),point(0,0,3),D,C)
         Ex4:rectangle(point(0,0,0),point(3,3,3),2,D,C)
-        
         '''
         return GiacMethods['rectangle'](self,*args)
 
@@ -14421,14 +13280,13 @@ cdef class GiacMethods_base:
         Help for rectangle_droit:
         rectangle_droit(Opt)
         Option of the plotarea command and of the area command.
-        See also: 1/ plotarea 2/ area 
+        See also: 1/ plotarea 2/ area
         Ex1: plotarea(x^2,x=0..1,5,trapezoid)
         Ex2: plotarea(x^2,x=0..1,5,middle_point)
         Ex3: plotarea(x^2,x=0..1,5,right_rectangle)
         Ex4: plotarea(x^2,x=0..1,5,left_rectangle)
         Ex5: area(x^2,x=0..1,5,middle_point)
         Ex6: area(x^2,x=0..1,5,trapezoid)
-        
         '''
         return GiacMethods['rectangle_droit'](self,*args)
 
@@ -14437,14 +13295,13 @@ cdef class GiacMethods_base:
         Help for rectangle_gauche:
         rectangle_gauche(Opt)
         Option of the plotarea command and of the area command.
-        See also: 1/ plotarea 2/ area 
+        See also: 1/ plotarea 2/ area
         Ex1: plotarea(x^2,x=0..1,5,trapezoid)
         Ex2: plotarea(x^2,x=0..1,5,middle_point)
         Ex3: plotarea(x^2,x=0..1,5,right_rectangle)
         Ex4: plotarea(x^2,x=0..1,5,left_rectangle)
         Ex5: area(x^2,x=0..1,5,middle_point)
         Ex6: area(x^2,x=0..1,5,trapezoid)
-        
         '''
         return GiacMethods['rectangle_gauche'](self,*args)
 
@@ -14453,11 +13310,10 @@ cdef class GiacMethods_base:
         Help for rectangle_plein:
         rectangle_plein(Real(a),[Real(b)])
         Draws a full direct rectangle (resp square) with sides a,b (resp a) from the turtle position and on the left (by default b=a).
-        See also: 1/ triangle_plein 
+        See also: 1/ triangle_plein
         Ex1: rectangle_plein 20
         Ex2:rectangle_plein(20)
         Ex3:rectangle_plein(20,40)
-        
         '''
         return GiacMethods['rectangle_plein'](self,*args)
 
@@ -14466,10 +13322,9 @@ cdef class GiacMethods_base:
         Help for rectangular_coordinates:
         rectangular_coordinates(LstPolCoord)
         Returns the list of the abscissa and of the ordinate of a point given by the list of its polar coordinates.
-        See also: 1/ abscissa 2/ ordinate 3/ rectangular_coordinates 4/ polar_point 
+        See also: 1/ abscissa 2/ ordinate 3/ rectangular_coordinates 4/ polar_point
         Ex1:rectangular_coordinates([1,pi/4])
         Ex2:rectangular_coordinates(polar_point(1,pi/4))
-        
         '''
         return GiacMethods['rectangular_coordinates'](self,*args)
 
@@ -14478,10 +13333,9 @@ cdef class GiacMethods_base:
         Help for recule:
         recule(NULL or Real(n))
         The turtle takes n steps back (by default n=10).
-        See also: 1/ avance 2/ saute 
+        See also: 1/ avance 2/ saute
         Ex1: recule 30
         Ex2:recule(30)
-        
         '''
         return GiacMethods['recule'](self,*args)
 
@@ -14490,10 +13344,9 @@ cdef class GiacMethods_base:
         Help for red:
         red(Opt)
         Option of the display command to display with color.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: F:=display(point(2+1.5*i),red)
         Ex2: F:=display(point(2+1.5*i),point_point+green)
-        
         '''
         return GiacMethods['red'](self,*args)
 
@@ -14502,12 +13355,11 @@ cdef class GiacMethods_base:
         Help for reduced_conic:
         reduced_conic(Expr,[LstVar])
         Returns the origin and the matrix of a base in which the conic given by its equation is reduced, 0 or 1 (0 if the conic is degenerate) and the equation of the conic in this base and also its parametric equation.
-        See also: 1/ gauss 2/ conic 
+        See also: 1/ gauss 2/ conic
         Ex1:reduced_conic(x^2+2*x-2*y+1)
         Ex2:reduced_conic(a*x^2-2*x*y+a*y^2-2*x+2*y+3,[x,y])
         Ex3:reduced_conic(2*u^2+2*u*v+2*v^2+5*u+3,[u,v])
         Ex4:reduced_conic((x+y)^2-2*x+1,x,y)
-        
         '''
         return GiacMethods['reduced_conic'](self,*args)
 
@@ -14516,12 +13368,11 @@ cdef class GiacMethods_base:
         Help for reduced_quadric:
         reduced_quadric(Expr, [LstVar])
         Returns the origin and the matrix of a basis in which the quadric (given by its equation) is reduced, the list of its eigenvalues, the equation of the quadric in this basis and its parametric equation.
-        See also: 1/ gauss 2/ quadric 
+        See also: 1/ gauss 2/ quadric
         Ex1:reduced_quadric(4*x^2+y^2+z^2-4*x*y+4*x*z-2*y*z+8*x-4*y+4*z+2)
         Ex2:reduced_quadric(x^2+3*y^2-3*z^2-8*y*z+2*z*x-4*x*y-1,x,y,z)
         Ex3:reduced_quadric((u+v)*(v-w)+3*u-5*v,[u,v,w])
         Ex4:reduced_quadric(7*x^2+4*y^2+4*z^2+4*x*y-4*x*z-2*y*z-4*x+5*y+4*z-18,[x,y,z])
-        
         '''
         return GiacMethods['reduced_quadric'](self,*args)
 
@@ -14530,10 +13381,9 @@ cdef class GiacMethods_base:
         Help for ref:
         ref(Mtrx(M))
         Gaussian reduction of AX=b (M=A|(-b)).
-        See also: 1/ rref 2/ det 
+        See also: 1/ rref 2/ det
         Ex1:ref([[3,1,-2],[3,2,2]])
         Ex2:ref([[2,1,1,-1],[1,1,2,-1],[1,2,1,-4]])
-        
         '''
         return GiacMethods['ref'](self,*args)
 
@@ -14542,11 +13392,10 @@ cdef class GiacMethods_base:
         Help for reflection:
         reflection((Pnt(A) or Line(D)),(Pnt(C) or Curve(C)))
         reflection(D,C) (or reflection(A,C))=symmetry of C with the symmetry-line D (or sym-point A).
-        See also: 1/ rotation 2/ translation 
+        See also: 1/ rotation 2/ translation
         Ex1:reflection(line(0,1+i),A)
         Ex2:reflection(B,A)
         Ex3:reflection(line(0,1+i),circle(i,1+i))
-        
         '''
         return GiacMethods['reflection'](self,*args)
 
@@ -14555,9 +13404,8 @@ cdef class GiacMethods_base:
         Help for regroup:
         regroup(Expr)
         Collects terms in an expression.
-        See also: 1/ simplify 2/ normal 
+        See also: 1/ simplify 2/ normal
         Ex1:regroup(x+3*x+5*4/x)
-        
         '''
         return GiacMethods['regroup'](self,*args)
 
@@ -14566,9 +13414,8 @@ cdef class GiacMethods_base:
         Help for relabel_vertices:
         relabel_vertices(Graph(G),Lst(L))
         Returns a copy of G with vertex labels changed to those in the list L.
-        See also: 1/ graph_vertices 2/ isomorphic_copy 3/ permute_vertices 
+        See also: 1/ graph_vertices 2/ isomorphic_copy 3/ permute_vertices
         Ex1:relabel_vertices(graph([a,b,c]),["first","second","third"])
-        
         '''
         return GiacMethods['relabel_vertices'](self,*args)
 
@@ -14577,10 +13424,9 @@ cdef class GiacMethods_base:
         Help for reliability_polynomial:
         reliability_polynomial(Graph(G),[Var(p)])
         Returns the reliability polynomial [or its value at point p] of undirected graph G. If G is weighted, all weights must be positive integers and are interpreted as edge multiplicities.
-        See also: 1/ chromatic_polynomial 2/ flow_polynomial 3/ tutte_polynomial 
+        See also: 1/ chromatic_polynomial 2/ flow_polynomial 3/ tutte_polynomial
         Ex1:reliability_polynomial(graph("petersen"))
         Ex2:reliability_polynomial(graph("petersen"),0.5)
-        
         '''
         return GiacMethods['reliability_polynomial'](self,*args)
 
@@ -14589,11 +13435,10 @@ cdef class GiacMethods_base:
         Help for rem:
         rem((Vect or Poly),(Vect or Poly),[Var])
         Euclidean remainder of 2 polynomials.
-        See also: 1/ quo 2/ quorem 3/ Rem 4/ irem 
+        See also: 1/ quo 2/ quorem 3/ Rem 4/ irem
         Ex1:rem([1,2,3,4],[-1,2])
         Ex2:rem(x^3+2x^2+3x+4,-x+2)
         Ex3:rem(t^3+2t^2+3t+4,-t+2,t)
-        
         '''
         return GiacMethods['rem'](self,*args)
 
@@ -14602,12 +13447,11 @@ cdef class GiacMethods_base:
         Help for remain:
         remain(Intg(a),Intg(b))
         Euclidean remainder of 2 integers.
-        See also: 1/ iquo 2/ smod 3/ rem 4/ mod 
+        See also: 1/ iquo 2/ smod 3/ rem 4/ mod
         Ex1:remain(125,15)
         Ex2:remain(125,41)
         Ex3:remain(-7,3)
         Ex4:remain(25+12*i,5+7*i)
-        
         '''
         return GiacMethods['remain'](self,*args)
 
@@ -14616,10 +13460,9 @@ cdef class GiacMethods_base:
         Help for remove:
         remove(FncBool(f)||a,Lst(l))
         Remove the occurrences a of l or the elements a such that f(a)=true.
-        See also: 1/ select 2/ suppress 
+        See also: 1/ select 2/ suppress
         Ex1:remove(x->x>=5,[1,2,6,7])
         Ex2:remove(5,[1,2,5,6,7,5])
-        
         '''
         return GiacMethods['remove'](self,*args)
 
@@ -14628,10 +13471,9 @@ cdef class GiacMethods_base:
         Help for reorder:
         reorder(Expr, LstVar)
         Reorders the variables in E according to the order of the 2nd argument.
-        See also: 1/  
+        See also: 1/
         Ex1:reorder(-2)
         Ex2:reorder(x^2+2*x+y^2,[y,x])
-        
         '''
         return GiacMethods['reorder'](self,*args)
 
@@ -14640,10 +13482,9 @@ cdef class GiacMethods_base:
         Help for resample:
         resample(Lst(clip),[Intg(s),[Intg(q)]])
         Returns a copy of the input audio clip resampled to the rate s (by default 44100), optionally with quality level q (from 0 to 4, by default 2).
-        See also: 1/ samplerate 2/ playsnd 3/ readwav 4/ writewav 
+        See also: 1/ samplerate 2/ playsnd 3/ readwav 4/ writewav
         Ex1:resample(readwav("/some/file"),48000)
         Ex2:resample(readwav("/some/file"),48000,3)
-        
         '''
         return GiacMethods['resample'](self,*args)
 
@@ -14652,12 +13493,11 @@ cdef class GiacMethods_base:
         Help for residue:
         residue(Expr,Var(v),Cplx(a))
         Returns the residue in a of the expression with v as variable.
-        See also: 1/ series 
+        See also: 1/ series
         Ex1:residue(1/z,z,0)
         Ex2:residue(5/z,z=0)
         Ex3:residue(cos(z)/(z*(z-b)),z,0)
         Ex4:residue(c/(z*(z-b)),z=b)
-        
         '''
         return GiacMethods['residue'](self,*args)
 
@@ -14666,12 +13506,11 @@ cdef class GiacMethods_base:
         Help for resoudre:
         resoudre(Expr,[Var])
         Solves a (or a set of) polynomial equation.
-        See also: 1/ linsolve 2/ proot 3/ fsolve 4/ csolve 5/ nSolve 
+        See also: 1/ linsolve 2/ proot 3/ fsolve 4/ csolve 5/ nSolve
         Ex1:resoudre(x^2-3=1)
         Ex2:resoudre(x^3-3*y,y)
         Ex3:resoudre([y-z=0,z-x=0,x-y=0,x-1+y+z=0],[x,y,z])
         Ex4:resoudre([x^2-y^2=0,x^2-z^2=0],[x,y,z])
-        
         '''
         return GiacMethods['resoudre'](self,*args)
 
@@ -14680,12 +13519,11 @@ cdef class GiacMethods_base:
         Help for resoudre_dans_C:
         resoudre_dans_C(LstEq,LstVar)
         Returns the list of complex solutions of an equation or a matrix where the rows are ℂ-solutions of a system of polynomial equations.
-        See also: 1/ cZeros 2/ solve 3/ fslove 
+        See also: 1/ cZeros 2/ solve 3/ fslove
         Ex1:resoudre_dans_C(x^4-1,x)
         Ex2:resoudre_dans_C(x^4-y^4 and x+y=2,[x,y])
         Ex3:resoudre_dans_C(x^4-y^4 and x+y=0 and x^2=2*x,[x,y])
         Ex4:resoudre_dans_C(u*v-u=v and v^2=u,[u,v])
-        
         '''
         return GiacMethods['resoudre_dans_C'](self,*args)
 
@@ -14694,17 +13532,16 @@ cdef class GiacMethods_base:
         Help for resoudre_systeme_lineaire:
         resoudre_systeme_lineaire(LstLinEq,LstVar)
         Linear equations system solver.
-        See also: 1/ solve 2/ proot 3/ simult 4/ gaussjord 5/ pivot 6/ ref 7/ conjugate_gradient 
+        See also: 1/ solve 2/ proot 3/ simult 4/ gaussjord 5/ pivot 6/ ref 7/ conjugate_gradient
         Ex1:resoudre_systeme_lineaire([x+y+z=1,x-y=2,2*x-z=3],[x,y,z])
         Ex2:resoudre_systeme_lineaire([m*x+y=a,x+m*y=b],[x,y])
         Ex3:resoudre_systeme_lineaire([x+y-z-1,x-y+1,x-y-z-1]%2,[x,y,z])
         Ex4:resoudre_systeme_lineaire([[3,4],[1,2]],[0,1])
-        Ex5: p,l,u:=lu([[3,4],[1,2]]); linsolve(p,l,u,[0,1]) 
+        Ex5: p,l,u:=lu([[3,4],[1,2]]); linsolve(p,l,u,[0,1])
         Ex6:resoudre_systeme_lineaire([2*x+y+z=1,x+y+2*z=1,x+2*y+z=4],[x,y,z])
         Ex7:resoudre_systeme_lineaire([[2,1,1],[1,1,2],[1,2,1]],[1,1,4])
         Ex8: p,l,u:=lu([[2,1,1],[1,1,2],[1,2,1]]);linsolve(p,l,u,[1,1,4])
         Ex9: a:=[[100,2],[2,100]];linsolve(evalf(a),[0,1]);
-        
         '''
         return GiacMethods['resoudre_systeme_lineaire'](self,*args)
 
@@ -14713,10 +13550,9 @@ cdef class GiacMethods_base:
         Help for resultant:
         resultant(Poly,Poly,Var)
         Resultant of two polynomials.
-        See also: 1/ sylvester 2/ gcd 
+        See also: 1/ sylvester 2/ gcd
         Ex1:resultant(x^2-1,x^3-1,x)
         Ex2:resultant(x^3-p*x+q,3*x^2-p,x)
-        
         '''
         return GiacMethods['resultant'](self,*args)
 
@@ -14729,7 +13565,6 @@ cdef class GiacMethods_base:
         Ex2: L:=[1,2,3,4];L:=revlist(L)
         Ex3: L:=[1,2,3,4];L.revlist()
         Ex4: L:=[1,2,3,4];L.reverse()
-        
         '''
         return GiacMethods['reverse'](self,*args)
 
@@ -14738,9 +13573,8 @@ cdef class GiacMethods_base:
         Help for reverse_graph:
         reverse_graph(Graph(G))
         Returns the copy of G with the directions of all edges reversed.
-        See also: 1/ digraph 
+        See also: 1/ digraph
         Ex1:reverse_graph(digraph(%{[1,2],[1,3],[2,3]%}))
-        
         '''
         return GiacMethods['reverse_graph'](self,*args)
 
@@ -14749,9 +13583,8 @@ cdef class GiacMethods_base:
         Help for reverse_rsolve:
         reverse_rsolve(Vect(v))
         If v=[v_0 ... v_(2n-1)], returns [b_n,...,b_0] such that b_n*v_{n+k}+...+b_0*v_k=0 for k=0..n-1.
-        See also: 1/ rsolve 
+        See also: 1/ rsolve
         Ex1:reverse_rsolve([1,-1,3,3])
-        
         '''
         return GiacMethods['reverse_rsolve'](self,*args)
 
@@ -14760,9 +13593,8 @@ cdef class GiacMethods_base:
         Help for revert:
         revert(Expr)
         Returns the inverse expansion of a series expansion at 0.
-        See also: 1/ series 
+        See also: 1/ series
         Ex1:revert(x+x^2+x^4)
-        
         '''
         return GiacMethods['revert'](self,*args)
 
@@ -14771,8 +13603,7 @@ cdef class GiacMethods_base:
         Help for revlex:
         revlex(Opt)
         Option of the gbasis or greduce command to specify an order for monomials (complete degree then inverse lexicographic order).
-        See also: 1/ gbasis 2/ greduce 
-        
+        See also: 1/ gbasis 2/ greduce
         '''
         return GiacMethods['revlex'](self,*args)
 
@@ -14785,7 +13616,6 @@ cdef class GiacMethods_base:
         Ex2: L:=[1,2,3,4];L:=revlist(L)
         Ex3: L:=[1,2,3,4];L.revlist()
         Ex4: L:=[1,2,3,4];L.reverse()
-        
         '''
         return GiacMethods['revlist'](self,*args)
 
@@ -14794,14 +13624,13 @@ cdef class GiacMethods_base:
         Help for rgb:
         rgb(Opt)
         Option of the display (or affichage) command to defined colors RGB.
-        See also: 1/ display 2/ filled 
+        See also: 1/ display 2/ filled
         Ex1: redcolor:=rgb(0.99,0,0);display(square(0,2+i),filled+redcolor)
         Ex2: greencolor:=rgb(0,0.99,0);display(square(0,2+i),filled+greencolor)
         Ex3: bluecolor:=rgb(0,0,0.99);display(square(0,2+i),filled+bluecolor)
         Ex4: greycolor:=rgb(0.5,0.5,0.5);display(square(0,2+i),filled+greycolor)
         Ex5: F:=display(square(0,2+i),filled+rgb(rand(),rand(),rand()))
         Ex6: L:=rand(),rand(),rand();affichage(square(0,2+i),rgb(L)+rempli);legend(0.2,[L])
-        
         '''
         return GiacMethods['rgb'](self,*args)
 
@@ -14810,13 +13639,12 @@ cdef class GiacMethods_base:
         Help for rhombus:
         rhombus(Pnt(A)||Cplx,Pnt(B)||Cplx,Angle(a)||Pnt(P)||Lst(P,a)),[Var(C)],[Var(D)])
         Returns and draws the rhombus ABCD such that the angle (AB,AD)=a (or in the plane ABP angle(AB,AD)=angle(AB,AP) or such that angle(AB,AD)=a).
-        See also: 1/ square 2/ quadrilateral 
+        See also: 1/ square 2/ quadrilateral
         Ex1:rhombus(i,1+i,pi/4)
         Ex2:rhombus(i,1+i,pi/4,C,D)
         Ex3:rhombus(point(0,0,0),point(3,3,3),[point(0,0,3),pi/4])
         Ex4:rhombus(point(0,0,0),point(3,3,3),point(0,0,3),C,D)
         Ex5:rhombus(point(0,0,0),point(3,3,3),[point(0,0,3),pi/4],C,D)
-        
         '''
         return GiacMethods['rhombus'](self,*args)
 
@@ -14825,10 +13653,9 @@ cdef class GiacMethods_base:
         Help for rhombus_point:
         rhombus_point(Opt)
         Option of the display command for a point.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: F:=display(point(2+1.5*i),point_point)
         Ex2: F:=display(point(2+1.5*i),rhombus_point)
-        
         '''
         return GiacMethods['rhombus_point'](self,*args)
 
@@ -14837,12 +13664,11 @@ cdef class GiacMethods_base:
         Help for rhs:
         rhs(Equal(a=b) or Interval(a..b) or Str,Intg)
         Returns the right part of an equality, of an interval, of a list or of a string.
-        See also: 1/ left 2/ mid 3/ tail 4/ head 
+        See also: 1/ left 2/ mid 3/ tail 4/ head
         Ex1:rhs(a=b)
         Ex2:rhs(x^2+1=5)
         Ex3:rhs(1..5)
         Ex4:rhs("abcdefg",3)
-        
         '''
         return GiacMethods['rhs'](self,*args)
 
@@ -14851,9 +13677,8 @@ cdef class GiacMethods_base:
         Help for riemann_window:
         riemann_window(Lst,[Interval(n1..n2)])
         Applies the Riemann windowing function to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ bartlett_hann_window 12/ triangle_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ bartlett_hann_window 12/ triangle_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(riemann_window(randvector(1000,0..1)))
-        
         '''
         return GiacMethods['riemann_window'](self,*args)
 
@@ -14862,12 +13687,11 @@ cdef class GiacMethods_base:
         Help for right:
         right(Equal(a=b) or Interval(a..b) or Str,Intg)
         Returns the right part of an equality, of an interval, of a list or of a string.
-        See also: 1/ left 2/ mid 3/ tail 4/ head 
+        See also: 1/ left 2/ mid 3/ tail 4/ head
         Ex1:right(a=b)
         Ex2:right(x^2+1=5)
         Ex3:right(1..5)
         Ex4:right("abcdefg",3)
-        
         '''
         return GiacMethods['right'](self,*args)
 
@@ -14876,14 +13700,13 @@ cdef class GiacMethods_base:
         Help for right_rectangle:
         right_rectangle(Opt)
         Option of the plotarea command and of the area command.
-        See also: 1/ plotarea 2/ area 
+        See also: 1/ plotarea 2/ area
         Ex1: plotarea(x^2,x=0..1,5,trapezoid)
         Ex2: plotarea(x^2,x=0..1,5,middle_point)
         Ex3: plotarea(x^2,x=0..1,5,right_rectangle)
         Ex4: plotarea(x^2,x=0..1,5,left_rectangle)
         Ex5: area(x^2,x=0..1,5,middle_point)
         Ex6: area(x^2,x=0..1,5,trapezoid)
-        
         '''
         return GiacMethods['right_rectangle'](self,*args)
 
@@ -14892,13 +13715,12 @@ cdef class GiacMethods_base:
         Help for right_triangle:
         right_triangle((Pnt(A) or Cplx),(Pnt(B) or Cplx),(Real(k) or Pnt(P) or Lst(P,k)),[Var(C)])
         Draws the A_rectangular triangle ABC with AC=k*AB (or in the plane ABP AC=AP or AC=k*AB).
-        See also: 1/ triangle 
+        See also: 1/ triangle
         Ex1:right_triangle(1,i,tan(pi/3))
         Ex2:right_triangle(1,i,1/2,C)
         Ex3:right_triangle(point(0,0,0),point(3,3,3),point(0,0,3))
         Ex4:right_triangle(point(0,0,0),point(3,3,3),[point(0,0,3),1/2],C)
         Ex5:right_triangle(point(0,0,0),point(3,3,3),[point(0,0,3),1/2],C)
-        
         '''
         return GiacMethods['right_triangle'](self,*args)
 
@@ -14907,11 +13729,10 @@ cdef class GiacMethods_base:
         Help for risch:
         risch(Expr,[Var])
         Returns a primitive of the expression calculated with the Risch algorithm.
-        See also: 1/ int 
+        See also: 1/ int
         Ex1:risch(ln(x),x)
         Ex2:risch(ln(x))
         Ex3:risch(exp(x^2),x)
-        
         '''
         return GiacMethods['risch'](self,*args)
 
@@ -14920,9 +13741,8 @@ cdef class GiacMethods_base:
         Help for rm_a_z:
         rm_a_z(NULL)
         Erases all the variable name made up of only one lowercase a..z character.
-        See also: 1/ rm_all_vars 
+        See also: 1/ rm_all_vars
         Ex1:rm_a_z()
-        
         '''
         return GiacMethods['rm_a_z'](self,*args)
 
@@ -14931,9 +13751,8 @@ cdef class GiacMethods_base:
         Help for rm_all_vars:
         rm_all_vars(NULL)
         Erases all the variable names.
-        See also: 1/ rm_a_z 
+        See also: 1/ rm_a_z
         Ex1:rm_all_vars()
-        
         '''
         return GiacMethods['rm_all_vars'](self,*args)
 
@@ -14942,9 +13761,8 @@ cdef class GiacMethods_base:
         Help for rmbreakpoint:
         rmbreakpoint(Intg)
         Removes a breakpoint.
-        See also: 1/ breakpoint 
+        See also: 1/ breakpoint
         Ex1:rmbreakpoint(1)
-        
         '''
         return GiacMethods['rmbreakpoint'](self,*args)
 
@@ -14953,9 +13771,8 @@ cdef class GiacMethods_base:
         Help for rmmod:
         rmmod(Str(pwd))
         Removes the installed dynamic libraries.
-        See also: 1/ lsmod 2/ insmod 
+        See also: 1/ lsmod 2/ insmod
         Ex1:rmmod("/home/parisse/giac/src/libprogfr.so")
-        
         '''
         return GiacMethods['rmmod'](self,*args)
 
@@ -14964,9 +13781,8 @@ cdef class GiacMethods_base:
         Help for rmwatch:
         rmwatch(Var)
         Clears a variables from the table of displayed variables in step/step.
-        See also: 1/ watch 
+        See also: 1/ watch
         Ex1:rmwatch(a)
-        
         '''
         return GiacMethods['rmwatch'](self,*args)
 
@@ -14975,11 +13791,10 @@ cdef class GiacMethods_base:
         Help for romberg:
         romberg(Expr(f(x)),Var(x),Real(a),Real(b))
         Returns the approximate value of integrate(f(x),x,a,b) by Romberg's method.
-        See also: 1/ integrate 2/ gaussquad 
+        See also: 1/ integrate 2/ gaussquad
         Ex1:romberg(exp(x^2),x,0,1)
         Ex2:romberg(x^2,x,0,1)
         Ex3:romberg(exp(-x^2),x,-1,1)
-        
         '''
         return GiacMethods['romberg'](self,*args)
 
@@ -14988,12 +13803,11 @@ cdef class GiacMethods_base:
         Help for rombergm:
         rombergm(Opt)
         Option of the area command.
-        See also: 1/ area 
+        See also: 1/ area
         Ex1: area(x^2,x=0..1,5,simpson)
         Ex2: area(x^2,x=0..1,5,rombergt)
         Ex3: area(x^2,x=0..1,5,rombergm)
         Ex4:rombergm(area(x^2,x=0..1,5,gauss15))
-        
         '''
         return GiacMethods['rombergm'](self,*args)
 
@@ -15002,12 +13816,11 @@ cdef class GiacMethods_base:
         Help for rombergt:
         rombergt(Opt)
         Option of the area command.
-        See also: 1/ area 
+        See also: 1/ area
         Ex1: area(x^2,x=0..1,5,simpson)
         Ex2: area(x^2,x=0..1,5,rombergt)
         Ex3: area(x^2,x=0..1,5,rombergm)
         Ex4:rombergt(area(x^2,x=0..1,5,gauss15))
-        
         '''
         return GiacMethods['rombergt'](self,*args)
 
@@ -15016,12 +13829,11 @@ cdef class GiacMethods_base:
         Help for rond:
         rond(Real(r),[Real(a)],[Real(b)])
         Draws a circle (resp a arc) with radius r (resp and with angle (0,a) or (a,b)), tangent at the turtle position.
-        See also: 1/ disque 
+        See also: 1/ disque
         Ex1: rond 30
         Ex2:rond(40)
         Ex3:rond(40,90)
         Ex4:rond(40,10,100)
-        
         '''
         return GiacMethods['rond'](self,*args)
 
@@ -15030,12 +13842,11 @@ cdef class GiacMethods_base:
         Help for root:
         root(Expr(a),Expr(b))
         Returns b^(1/a) (root(2,3)=sqrt(3)).
-        See also: 1/  
+        See also: 1/
         Ex1:root(3,2)
         Ex2:root(1/3,2)
         Ex3:root(3,1.2)
         Ex4:root(3.2,1.2)
-        
         '''
         return GiacMethods['root'](self,*args)
 
@@ -15044,11 +13855,10 @@ cdef class GiacMethods_base:
         Help for rootof:
         rootof(LstPoly(P),LstPoly(Q))
         Polynomial in terms of a root of an irreducible polynomial on Q. Returns P(a) with a the greatest root of Q.
-        See also: 1/  
+        See also: 1/
         Ex1: normal(1/rootof([1,0],[1,0,10,0,1]))
         Ex2: normal(1/rootof([1,0,0],[1,1,0,-1]))
-        Ex3: rootof(x^4+x+1):='j'; normal(j^5); 
-        
+        Ex3: rootof(x^4+x+1):='j'; normal(j^5);
         '''
         return GiacMethods['rootof'](self,*args)
 
@@ -15057,10 +13867,9 @@ cdef class GiacMethods_base:
         Help for roots:
         roots(Poly,[Var])
         Returns a matrix having 2 columns and where the rows are the roots of the polynomial with their multiplicity (for 1 variable).
-        See also: 1/ proot 2/ cZeros 
+        See also: 1/ proot 2/ cZeros
         Ex1:roots(t^3-1,t)
         Ex2:roots(x^5-2*x^4+x^3)
-        
         '''
         return GiacMethods['roots'](self,*args)
 
@@ -15069,7 +13878,7 @@ cdef class GiacMethods_base:
         Help for rotate:
         rotate(Lst||Str(L),[Intg(n)])
         Returns the list where the last element [or the tail beginning with the n-th element] is moved to the first element (by default n=-1);L:=rotate(L,n) or L.rotate(n).
-        See also: 1/ tail 2/ mid 3/ shift 
+        See also: 1/ tail 2/ mid 3/ shift
         Ex1:rotate([0,1,2,3],2)
         Ex2:rotate([[1,2,3],[4,5,6],[7,8,9]])
         Ex3:rotate([0,1,2,3,4])
@@ -15078,7 +13887,6 @@ cdef class GiacMethods_base:
         Ex6: L:=[0,1,2,3,4];L.rotate()
         Ex7: L:=[0,1,2,3];L:=rotate([0,1,2,3],2)
         Ex8: L:=[0,1,2,3];L.rotate(2)
-        
         '''
         return GiacMethods['rotate'](self,*args)
 
@@ -15087,13 +13895,12 @@ cdef class GiacMethods_base:
         Help for rotation:
         rotation((Pnt(B) or Cplx or Dr3),Angle(a1),(Pnt(A) or Curve))
         rotation(B,a1,A) (resp rotation(d,a1,A)) is the transformation of A by rotation with center B (resp of axis d) and angle a1.
-        See also: 1/ translation 2/ reflection 
+        See also: 1/ translation 2/ reflection
         Ex1:rotation(point(1+i),pi/2,point(i))
         Ex2:rotation(1+i,pi/3,line(i,1))
         Ex3:rotation(line(x=y,y=z),pi/2,point(1,-1,2))
         Ex4: r:=rotation(1+i,pi/2);r(i)
         Ex5: r:=rotation(line(x=y,y=z),pi/2);r(point(1,-1,2))
-        
         '''
         return GiacMethods['rotation'](self,*args)
 
@@ -15102,13 +13909,12 @@ cdef class GiacMethods_base:
         Help for round:
         round(Real or Cplx,[Intg(n)])
         Rounds the real or complex to the nearest integer (resp the nearest decimal number) or to the nearest element of ℤ[i], (resp with n decimals).
-        See also: 1/ floor 2/ ceil 
+        See also: 1/ floor 2/ ceil
         Ex1:round(2.5)
         Ex2:round(-2.4)
         Ex3:round(-2.5+i*2.4)
         Ex4:round(1.237,2)
         Ex5:round(sqrt(2)+i*sqrt(5),4)
-        
         '''
         return GiacMethods['round'](self,*args)
 
@@ -15117,11 +13923,10 @@ cdef class GiacMethods_base:
         Help for row:
         row(Mtrx(A),Intg(n)||Interval(n1..n2))
         Returns row n or the sequence of the rows n1..n2 of the matrix A, or optional argument of count,count_eq,count_inf,count_sup.
-        See also: 1/ col 2/ count 3/ count_eq 4/ count_inf 5/ count_sup 
+        See also: 1/ col 2/ count 3/ count_eq 4/ count_inf 5/ count_sup
         Ex1:row([[1,2,3],[4,5,6],[7,8,9]],1)
         Ex2:row([[1,2,3],[4,5,6],[7,8,9]],0..1)
         Ex3: count_eq(3,[[1,2,3],[4,3,2],[3,2,1]],row)
-        
         '''
         return GiacMethods['row'](self,*args)
 
@@ -15130,9 +13935,8 @@ cdef class GiacMethods_base:
         Help for rowAdd:
         rowAdd(Mtrx(A),Intg(n1),Intg(n2))
         Returns the matrix obtained from A by replacing the n2-th row by the sum of the n1-th and n2-th rows.
-        See also: 1/ rowSwap 
+        See also: 1/ rowSwap
         Ex1:rowAdd([[1,2],[3,4],[5,6]],1,2)
-        
         '''
         return GiacMethods['rowAdd'](self,*args)
 
@@ -15141,10 +13945,9 @@ cdef class GiacMethods_base:
         Help for rowDim:
         rowDim(Mtrx)
         Number of rows of a matrix.
-        See also: 1/ ncols 
+        See also: 1/ ncols
         Ex1:rowDim([[1,2,3],[4,5,6]])
         Ex2:rowDim([[1,2],[3,4],[5,6]])
-        
         '''
         return GiacMethods['rowDim'](self,*args)
 
@@ -15153,10 +13956,9 @@ cdef class GiacMethods_base:
         Help for rowNorm:
         rowNorm(Vect or Mtrx)
         Returns the max of the l1_norm of the rows of a matrix: rowNorm(a_{j,k})=max_j(sum_k(|a_{j,k}|)).
-        See also: 1/ norm 
+        See also: 1/ norm
         Ex1:rowNorm([[1,2],[3,-4]])
         Ex2:rowNorm([[1,2,3,-4],[-5,3,2,1]])
-        
         '''
         return GiacMethods['rowNorm'](self,*args)
 
@@ -15165,9 +13967,8 @@ cdef class GiacMethods_base:
         Help for rowSwap:
         rowSwap(Mtrx(A),Intg(n1),Intg(n2))
         Returns the matrix obtained from A by swapping the n1-th row and the n2-th row.
-        See also: 1/ rowAdd 2/ colSwap 
+        See also: 1/ rowAdd 2/ colSwap
         Ex1:rowSwap([[1,2],[3,4],[5,6]],1,2)
-        
         '''
         return GiacMethods['rowSwap'](self,*args)
 
@@ -15176,10 +13977,9 @@ cdef class GiacMethods_base:
         Help for rowdim:
         rowdim(Mtrx)
         Number of rows of a matrix.
-        See also: 1/ ncols 
+        See also: 1/ ncols
         Ex1:rowdim([[1,2,3],[4,5,6]])
         Ex2:rowdim([[1,2],[3,4],[5,6]])
-        
         '''
         return GiacMethods['rowdim'](self,*args)
 
@@ -15188,10 +13988,9 @@ cdef class GiacMethods_base:
         Help for rownorm:
         rownorm(Vect or Mtrx)
         Returns the max of the l1_norm of the rows of a matrix: rowNorm(a_{j,k})=max_j(sum_k(|a_{j,k}|)).
-        See also: 1/ norm 
+        See also: 1/ norm
         Ex1:rownorm([[1,2],[3,-4]])
         Ex2:rownorm([[1,2,3,-4],[-5,3,2,1]])
-        
         '''
         return GiacMethods['rownorm'](self,*args)
 
@@ -15200,10 +13999,9 @@ cdef class GiacMethods_base:
         Help for rowspace:
         rowspace(Mtrx(A), [Var(d)])
         Returns a matrix where the rows are a basis of the vector space generated by the rows of the matrix A [d is the dimension of this space].
-        See also: 1/ colspace 
+        See also: 1/ colspace
         Ex1:rowspace([[1,2,3],[1,2,3],[1,2,4],[1,2,5]])
         Ex2:rowspace([[1,2,3],[1,3,6],[2,5,9]],d)
-        
         '''
         return GiacMethods['rowspace'](self,*args)
 
@@ -15212,9 +14010,8 @@ cdef class GiacMethods_base:
         Help for rowswap:
         rowswap(Mtrx(A),Intg(n1),Intg(n2))
         Returns the matrix obtained from A by swapping the n1-th row and the n2-th row.
-        See also: 1/ rowAdd 2/ colSwap 
+        See also: 1/ rowAdd 2/ colSwap
         Ex1:rowswap([[1,2],[3,4],[5,6]],1,2)
-        
         '''
         return GiacMethods['rowswap'](self,*args)
 
@@ -15223,12 +14020,11 @@ cdef class GiacMethods_base:
         Help for rref:
         rref(Mtrx(M),[Intg(k)]||Opt)
         Row reduction to echelon form of AX=b (M=A|(-b)) [Reduction on columns 0..k-1].
-        See also: 1/ ker 2/ image 3/ det 4/ Rref 5/ pivot 6/ ref 7/ keep_pivot 
+        See also: 1/ ker 2/ image 3/ det 4/ Rref 5/ pivot 6/ ref 7/ keep_pivot
         Ex1:rref([[3,1,-2],[3,2,2]])
         Ex2:rref([[2,1,1,-1],[1,1,2,-1],[1,2,1,-4]])
         Ex3:rref([[2,1,1,-1],[1,1,2,-1],[1,2,1,-4]],2)
         Ex4:rref([[1,1,0,0,-a1],[0,1,1,0,-a2],[0,0,1,1,-a3],[1,0,0,1,-a4]],keep_pivot)
-        
         '''
         return GiacMethods['rref'](self,*args)
 
@@ -15237,13 +14033,12 @@ cdef class GiacMethods_base:
         Help for rsolve:
         rsolve((Expr or LstExpr),(Var or LstVar),(InitVal or LstInitVal))
         Gives the value of a recurrent sequence or of a system of recurrent sequences.
-        See also: 1/ seqsolve 2/ plotseq 3/ tableseq 4/ reverse_rsolve 
+        See also: 1/ seqsolve 2/ plotseq 3/ tableseq 4/ reverse_rsolve
         Ex1:rsolve(u(n+1)=2*u(n)+n,u(n),u(0)=1)
         Ex2:rsolve(u(n+1)=2*u(n)+n,u(n),u(1)^2=1)
         Ex3:rsolve(u(n+1)=(u(n)-1)/(u(n)-2),u(n),u(0)=4)
         Ex4:rsolve(u(n+2)=u(n)+2*u(n+1)+n+1,u(n),[u(0)=0,u(1)=1])
         Ex5:rsolve([u(n+1)=3*v(n)+u(n),v(n+1)=v(n)+u(n)],[u(n),v(n)],[u(0)=1,v(0)=2])
-        
         '''
         return GiacMethods['rsolve'](self,*args)
 
@@ -15252,10 +14047,9 @@ cdef class GiacMethods_base:
         Help for same:
         same(Expr,Expr)
         Equality test.
-        See also: 1/  
+        See also: 1/
         Ex1:same(a,b)
         Ex2:same((2-1)^2,2^2-2*2+1)
-        
         '''
         return GiacMethods['same'](self,*args)
 
@@ -15264,14 +14058,13 @@ cdef class GiacMethods_base:
         Help for sample:
         sample(Lst(L),Intg(n))
         sample(L,n)= rand(n,L)=list of the n extracted elements of L without replacement.
-        See also: 1/ rand  
+        See also: 1/ rand
         Ex1:sample([1,2,3,4,5,6],6)
         Ex2:sample([1,2,3,4,5,6],3)
         Ex3:sample(["r","r","r","b","n"],3)
         Ex4: L:=[1,2,3,4,5,6];L:=sample(L,3)
         Ex5: L:=[1,2,3,4,5,6];L.sample(3)
-        Ex6: 
-        
+        Ex6:
         '''
         return GiacMethods['sample'](self,*args)
 
@@ -15280,9 +14073,8 @@ cdef class GiacMethods_base:
         Help for samplerate:
         samplerate(Lst(clip))
         Returns the sampling rate of an audio clip, in Hertz.
-        See also: 1/ bit_depth 2/ channels 3/ channel_data 4/ duration 
+        See also: 1/ bit_depth 2/ channels 3/ channel_data 4/ duration
         Ex1:samplerate(readwav("/some/file"))
-        
         '''
         return GiacMethods['samplerate'](self,*args)
 
@@ -15291,13 +14083,12 @@ cdef class GiacMethods_base:
         Help for sans_factoriser:
         sans_factoriser(Opt.)
         Option of the plotimplicit command.
-        See also: 1/ plotimplicit 
+        See also: 1/ plotimplicit
         Ex1: plotimplicit(x^2+y^2-1,x,y,unfactored)
         Ex2: plotimplicit(x^2+y^2-1,[x,y],unfactored)
         Ex3: plotimplicit(x^2+y^2+z^2-1,x,y,z,xstep=0.2,ystep=0.2,zstep=0.2,unfactored)
         Ex4: plotimplicit(x^2+y^2+z^2-1,[x,y,z],xstep=0.2,ystep=0.2,zstep=0.2,unfactored)
         Ex5: plotimplicit(x^2+y^2+z^2-1,x=0..1,y=0..1,z=0..1,xstep=0.2,ystep=0.2,zstep=0.2,unfactored)
-        
         '''
         return GiacMethods['sans_factoriser'](self,*args)
 
@@ -15306,10 +14097,9 @@ cdef class GiacMethods_base:
         Help for saute:
         saute(NULL or Real(n))
         The turtle takes n steps forward without traces (by default n=10).
-        See also: 1/ avance 2/ recule 
+        See also: 1/ avance 2/ recule
         Ex1: saute 30
         Ex2:saute(30)
-        
         '''
         return GiacMethods['saute'](self,*args)
 
@@ -15318,11 +14108,10 @@ cdef class GiacMethods_base:
         Help for scalarProduct:
         scalarProduct(Vect(v1),Vect(v2))
         Scalar product.
-        See also: 1/ * 2/ cross 3/ .* 4/ hadamard 
+        See also: 1/ * 2/ cross 3/ .* 4/ hadamard
         Ex1:scalarProduct([1,2],[3,4])
         Ex2:scalarProduct([3,2,4],[3,2,4])
         Ex3:scalarProduct([[1,2],[3,4]],[[3,2],[4,5]])
-        
         '''
         return GiacMethods['scalarProduct'](self,*args)
 
@@ -15331,11 +14120,10 @@ cdef class GiacMethods_base:
         Help for scalar_product:
         scalar_product(Vect(v1),Vect(v2))
         Scalar product.
-        See also: 1/ * 2/ cross 3/ .* 4/ hadamard 
+        See also: 1/ * 2/ cross 3/ .* 4/ hadamard
         Ex1:scalar_product([1,2],[3,4])
         Ex2:scalar_product([3,2,4],[3,2,4])
         Ex3:scalar_product([[1,2],[3,4]],[[3,2],[4,5]])
-        
         '''
         return GiacMethods['scalar_product'](self,*args)
 
@@ -15344,9 +14132,8 @@ cdef class GiacMethods_base:
         Help for scatterplot:
         scatterplot(Mtrx)
         Draws for k=0..nrows, the points (xk,yk) where xk=element row k column 0 and yk=element row k column j (j=1..ncols).
-        See also: 1/ polygonplot 2/ polygonscatterplot 3/ listplot 
+        See also: 1/ polygonplot 2/ polygonscatterplot 3/ listplot
         Ex1:scatterplot([[1,2,3],[2,0,1],[-1,2,3]])
-        
         '''
         return GiacMethods['scatterplot'](self,*args)
 
@@ -15355,10 +14142,9 @@ cdef class GiacMethods_base:
         Help for schur:
         schur(Mtrx(A))
         Matrix reduction to Hessenberg form. Returns [P,B] such that B=inv(P)*A*P:SCHUR(A)=hessenberg(A,-1).
-        See also: 1/ hessenberg 
+        See also: 1/ hessenberg
         Ex1:schur([[1,2,3],[4,5,6],[7,8,1]])
         Ex2:schur([[1,2,3,4],[4,5,6,7],[7,8,9,0],[0,1,2,3]])
-        
         '''
         return GiacMethods['schur'](self,*args)
 
@@ -15367,9 +14153,8 @@ cdef class GiacMethods_base:
         Help for sec:
         sec(Expr)
         Secant: sec(x)=1/cos(x).
-        See also: 1/ cos 2/ asec 
+        See also: 1/ cos 2/ asec
         Ex1:sec(pi/3)
-        
         '''
         return GiacMethods['sec'](self,*args)
 
@@ -15378,14 +14163,13 @@ cdef class GiacMethods_base:
         Help for secant_solver:
         secant_solver(Opt)
         Argument for fsolve giving the method for solving a numerical equation.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve(cos(x)=x,x,0..1,bisection_solver)
         Ex2: fsolve(cos(x)=x,x,0..1,brent_solver)
         Ex3: fsolve(cos(x)=x,x,0..1,falsepos_solver)
         Ex4: fsolve(cos(x)=x,x,0,newton_solver)
         Ex5: fsolve(cos(x)=x,x,0,secant_solver)
         Ex6: fsolve(cos(x)=x,x,0,steffenson_solver)
-        
         '''
         return GiacMethods['secant_solver'](self,*args)
 
@@ -15394,7 +14178,7 @@ cdef class GiacMethods_base:
         Help for segment:
         segment((Pnt or Cplx or Lst([xM,yM])),(Pnt or Cplx or Lst([xN,yN]),[Var],[Var] or Opt)
         segment(A,B) draws the segment AB and segment([xM,yM],[xN,yN]) draws the vector as origin [xM,yM], of coordinates [xN,yN] (i.e draws segment(M,point(M+N)) or Option of the arc command.
-        See also: 1/ line 2/ arc 
+        See also: 1/ line 2/ arc
         Ex1:segment(i,1+i)
         Ex2:segment(point(i),point(1+i))
         Ex3:segment(point(i),point(1+i),A,B)
@@ -15402,7 +14186,6 @@ cdef class GiacMethods_base:
         Ex5:segment([-1,0],point([-1,0]+[2,1]))
         Ex6: arc(i,1,pi/4,segment)
         Ex7: affichage( arc(i,1,pi/4,segment),1+rempli)
-        
         '''
         return GiacMethods['segment'](self,*args)
 
@@ -15411,9 +14194,8 @@ cdef class GiacMethods_base:
         Help for seidel_spectrum:
         seidel_spectrum(Graph(G))
         Returns the Seidel spectrum of G as a list of lists with two elements, each containing an eigenvalue and its multiplicity.
-        See also: 1/ graph_spectrum 
+        See also: 1/ graph_spectrum
         Ex1:seidel_spectrum(graph("clebsch"))
-        
         '''
         return GiacMethods['seidel_spectrum'](self,*args)
 
@@ -15422,9 +14204,8 @@ cdef class GiacMethods_base:
         Help for seidel_switch:
         seidel_switch(Graph(G),Lst(V))
         Returns a copy of G in which the edges between vertices in list V and vertices not in V are inverted (replaced with a set of edges from V to other vertices which are not present in G).
-        See also: 1/ neighbors 2/ graph_complement 
+        See also: 1/ neighbors 2/ graph_complement
         Ex1:seidel_switch(cycle_graph(5),[1,2])
-        
         '''
         return GiacMethods['seidel_switch'](self,*args)
 
@@ -15433,10 +14214,9 @@ cdef class GiacMethods_base:
         Help for select:
         select(FncBool(f),Lst(l))
         Selects the elements e of l such that f(e)=true.
-        See also: 1/ remove 2/ range 
+        See also: 1/ remove 2/ range
         Ex1:select(x->x>=5,[1,2,6,7])
         Ex2:select(x->isprime(x),range(20)).^2
-        
         '''
         return GiacMethods['select'](self,*args)
 
@@ -15445,9 +14225,8 @@ cdef class GiacMethods_base:
         Help for semi_augment:
         semi_augment(Mtrx(A),Mtrx(B))
         Returns a matrix made with A and B, with n1+n2 rows and p columns if dim(A)=[n1,p] and dim(B)=[n2,p].
-        See also: 1/ augment 
+        See also: 1/ augment
         Ex1:semi_augment([[68,-21],[56,59],[1,2]],[[68,-21],[56,59]])
-        
         '''
         return GiacMethods['semi_augment'](self,*args)
 
@@ -15455,8 +14234,8 @@ cdef class GiacMethods_base:
         r'''From Giac's documentation:
         Help for seq:
         seq(Expr(Xpr),Var(Var)=Int(a..b),[Real(p)]||Expr(Xpr),Var(Var),Real(a),Real(b),[Real(p)])
-        Returns the sequence (2 or 3 arg) or the list (4 or 5 arg) obtained when var goes from a to b (step p) in Xpr (or the Xpr is repeated n times or returns the sequence of reals from a to b (step p)).  And also seq(expression,variable,list) is equivalent to map(list,unapply(expression,variable)) 
-        See also: 1/ $ 2/ makelist 3/ range 4/ map 5/ unapply 
+        Returns the sequence (2 or 3 arg) or the list (4 or 5 arg) obtained when var goes from a to b (step p) in Xpr (or the Xpr is repeated n times or returns the sequence of reals from a to b (step p)).  And also seq(expression,variable,list) is equivalent to map(list,unapply(expression,variable))
+        See also: 1/ $ 2/ makelist 3/ range 4/ map 5/ unapply
         Ex1:seq(0.3,4)
         Ex2:seq(t,4)
         Ex3:seq(0,0)
@@ -15466,9 +14245,8 @@ cdef class GiacMethods_base:
         Ex7:seq(2^k,k,0,8)
         Ex8:seq(2^k,k,0,8,2)
         Ex9:seq(x^3,x,[1,2,3])
-        Ex10: [seq(0.3..2,0.2)] 
+        Ex10: [seq(0.3..2,0.2)]
         Ex11: a:=(1,2,3);eval(seq(a,4))
-        
         '''
         return GiacMethods['seq'](self,*args)
 
@@ -15477,11 +14255,10 @@ cdef class GiacMethods_base:
         Help for seqplot:
         seqplot(Expr(f(Var)),Var=[a,xm,xM],Intg(p))
         For seeing the pth terms of the sequence u(0)=a,u(n)=f(u(n-1)).
-        See also: 1/ seqsolve 2/ rsolve 
+        See also: 1/ seqsolve 2/ rsolve
         Ex1:seqplot(sqrt(2+x),6,5)
         Ex2:seqplot(sqrt(2+t),t=6,5)
         Ex3:seqplot(sqrt(2+x),x=[6,1,7],5,affichage=epaisseur_ligne_2)
-        
         '''
         return GiacMethods['seqplot'](self,*args)
 
@@ -15490,14 +14267,13 @@ cdef class GiacMethods_base:
         Help for seqsolve:
         seqsolve((Expr or LstExpr),(Var or LstVar),(InitVal or LstInitVal))
         Gives the value of a recurrent sequence (u_{n+1}=f(u_n) or u_{n+k}=f(u_n,u_{n+1}...u_{n+k-1})) or of a system of recurrent sequences.
-        See also: 1/ rsolve 2/ plotseq 3/ tableseq 
+        See also: 1/ rsolve 2/ plotseq 3/ tableseq
         Ex1:seqsolve(2x+n,[x,n],1)
         Ex2:seqsolve(2x+n*3^n,[x,n],1)
         Ex3:seqsolve(x+y,[x,y,n],[1,1])
         Ex4:seqsolve(x+2*y+n+1,[x,y,n],[0,1])
         Ex5:seqsolve([x+2*y,n+1+x],[x,y,n],[0,1])
         Ex6:seqsolve([x+2*y+n+1,x],[x,y,n],[0,1])
-        
         '''
         return GiacMethods['seqsolve'](self,*args)
 
@@ -15506,9 +14282,8 @@ cdef class GiacMethods_base:
         Help for sequence_graph:
         sequence_graph(Lst(L))
         Returns an undirected graph with the degree sequence equal to the list L.
-        See also: 1/ degree_sequence 2/ is_graphic_sequence 
+        See also: 1/ degree_sequence 2/ is_graphic_sequence
         Ex1:sequence_graph(degree_sequence(sequence_graph([3,2,4,2,3,4,5,7])))
-        
         '''
         return GiacMethods['sequence_graph'](self,*args)
 
@@ -15517,13 +14292,13 @@ cdef class GiacMethods_base:
         Help for series:
         series(Expr,Equal(var=limit_point),[Order],[Dir(1,0,-1)])
         Series expansion at finite or infinite points.
-        See also: 1/ limit 2/ taylor 3/ pad 4/ polynom 5/ truncate 
+        See also: 1/ limit 2/ taylor 3/ pad 4/ polynom 5/ truncate
         Ex1:series(sin(x)/x,x=0)
         Ex2:series(sin(x),x=0,6,polynom)
         Ex3:series(ln(x+x^2)-ln(x),x=0,1)
         Ex4:series((x^4+x+2)/(x^2+1),x=0,5)
         Ex5: series("h",8); ln(1+h);
-        Ex6:series(1/(1+x+y),[x,y],[0,0],5) 
+        Ex6:series(1/(1+x+y),[x,y],[0,0],5)
         Ex7:series(sin(x*y),[x,y],[1,pi/2],3)
         Ex8:series(sin((1+h*t)*(pi/2+k*t)),t=0,3,polynom)(t=1)
         Ex9:series(y^2/x^3,[x,y],[1,-1],3)
@@ -15531,7 +14306,6 @@ cdef class GiacMethods_base:
         Ex11:series(subst(sin(x+y)+cos(y*x),[x,y],h*[x,y]),h=0,6,polynom)
         Ex12:series(subst(sin(x+y)+cos(y*x),[x,y],h*[x,y]),h=0,6,polynom)(h=1)
         Ex13: truncate(series(sin(x),x=0,6),6)
-        
         '''
         return GiacMethods['series'](self,*args)
 
@@ -15540,9 +14314,8 @@ cdef class GiacMethods_base:
         Help for set_edge_attribute:
         set_edge_attribute(Graph(G),Edge(e),Seq(tag1=value1,tag2=value2,..))
         Stores the attributes to edge e and returns the modified copy of G.
-        See also: 1/ discard_edge_attribute 2/ get_edge_attribute 3/ list_edge_attributes 
+        See also: 1/ discard_edge_attribute 2/ get_edge_attribute 3/ list_edge_attributes
         Ex1:set_edge_attribute(cycle_graph(3),[1,2],"cost"=12.4)
-        
         '''
         return GiacMethods['set_edge_attribute'](self,*args)
 
@@ -15551,9 +14324,8 @@ cdef class GiacMethods_base:
         Help for set_edge_weight:
         set_edge_weight(Graph(G),Edge(e),Real(w))
         Sets the weight of the edge e in the weighted graph G to w and returns the modified copy of G.
-        See also: 1/ is_weighted 2/ get_edge_weight 3/ make_weighted 4/ weight_matrix 
+        See also: 1/ is_weighted 2/ get_edge_weight 3/ make_weighted 4/ weight_matrix
         Ex1:set_edge_weight(graph(%{[1,2],[2,3]%}),[1,2],5)
-        
         '''
         return GiacMethods['set_edge_weight'](self,*args)
 
@@ -15562,9 +14334,8 @@ cdef class GiacMethods_base:
         Help for set_graph_attribute:
         set_graph_attribute(Graph(G),Seq(tag1=value1,tag2=value2,..))
         Stores the attributes where each tag is a string, and returns the modified copy of G.
-        See also: 1/ discard_graph_attribute 2/ get_graph_attribute 3/ list_graph_attributes 
+        See also: 1/ discard_graph_attribute 2/ get_graph_attribute 3/ list_graph_attributes
         Ex1:set_graph_attribute(cycle_graph(3),"name"="cycle graph")
-        
         '''
         return GiacMethods['set_graph_attribute'](self,*args)
 
@@ -15573,9 +14344,8 @@ cdef class GiacMethods_base:
         Help for set_pixel:
         set_pixel(Intg(x),Intg(y),Intg(col))
         Pixel on and adds to the list of pixels. Run show_pixels() to display
-        See also: 1/ clear 2/ show_pixels 3/ draw_line 4/ draw_rectangle 5/ draw_polygon 
+        See also: 1/ clear 2/ show_pixels 3/ draw_line 4/ draw_rectangle 5/ draw_polygon
         Ex1: clear(); set_pixel(4); draw_pixel(1,2,red); show_pixels();
-        
         '''
         return GiacMethods['set_pixel'](self,*args)
 
@@ -15584,9 +14354,8 @@ cdef class GiacMethods_base:
         Help for set_vertex_attribute:
         set_vertex_attribute(Graph(G),Vrtx(v),Seq(tag1=value1,tag2=value2,..))
         Stores the attributes to vertex v and returns the modified copy of G.
-        See also: 1/ discard_vertex_attribute 2/ get_vertex_attribute 3/ list_vertex_attributes 
+        See also: 1/ discard_vertex_attribute 2/ get_vertex_attribute 3/ list_vertex_attributes
         Ex1:set_vertex_attribute(cycle_graph(3),1,"supply"=27)
-        
         '''
         return GiacMethods['set_vertex_attribute'](self,*args)
 
@@ -15595,9 +14364,8 @@ cdef class GiacMethods_base:
         Help for set_vertex_positions:
         set_vertex_positions(Graph(G),Lst(vp))
         Sets the coordinates, given in the list vp, to the vertices of G and returns the modified copy of G.
-        See also: 1/ draw_graph 
+        See also: 1/ draw_graph
         Ex1: G:=graph([1,2,3,4,5,6],%{[1,2],[1,4],[4,5],[2,5],[2,3],[3,6],[5,6]%}); G:=set_vertex_positions(G,[[0,0],[0.5,0],[1,0],[0,0.5],[0.5,0.5],[1,0.5]])
-        
         '''
         return GiacMethods['set_vertex_positions'](self,*args)
 
@@ -15606,13 +14374,12 @@ cdef class GiacMethods_base:
         Help for shift:
         shift(Lst,[Intg(n)])
         Returns the list where the last element [or the tail beginning with the n-th element] is moved to the first element and then completed with 0s (by default n=-1);L:=shift(L,2) o L.shift(2).
-        See also: 1/ rotate 2/ tail 
+        See also: 1/ rotate 2/ tail
         Ex1:shift([0,1,2,3],2)
         Ex2:shift([0,1,2,3])
         Ex3:shift([0,1,2,3,4])
         Ex4: L:=[0,1,2,3];L:=shift(L,2)
         Ex5: L:=[0,1,2,3];L.shift(2)
-        
         '''
         return GiacMethods['shift'](self,*args)
 
@@ -15621,14 +14388,13 @@ cdef class GiacMethods_base:
         Help for shift_phase:
         shift_phase(Expr)
         shift_phase returns the expressions where the phase of the evaluated trigonometric expressions is increased by pi/2.
-        See also: 1/ series 
+        See also: 1/ series
         Ex1:shift_phase(sin(x))
         Ex2:shift_phase('sin(x+pi/2)')
         Ex3:shift_phase(x+sin(x))
         Ex4:shift_phase(x+sin(x))
         Ex5:shift_phase(cos(t))
         Ex6:shift_phase(tan(u))
-        
         '''
         return GiacMethods['shift_phase'](self,*args)
 
@@ -15637,9 +14403,8 @@ cdef class GiacMethods_base:
         Help for shortest_path:
         shortest_path(Graph(G),Vrtx(s),Vrtx(t)||Lst(T))
         Returns the shortest path from vertex s to vertex t in G. If such path does not exist, returns an empty list. If vector T of vertices from G is given, the list of shortest paths from s to each t int T is returned.
-        See also: 1/ dijkstra 2/ vertex_distance 
+        See also: 1/ dijkstra 2/ vertex_distance
         Ex1:shortest_path(cycle_graph(6),1,5)
-        
         '''
         return GiacMethods['shortest_path'](self,*args)
 
@@ -15648,9 +14413,8 @@ cdef class GiacMethods_base:
         Help for show_pixels:
         show_pixels(NULL)
         Displays the list of pixels.
-        See also: 1/ set_pixel 2/ clear 
+        See also: 1/ set_pixel 2/ clear
         Ex1:show_pixels()
-        
         '''
         return GiacMethods['show_pixels'](self,*args)
 
@@ -15659,13 +14423,12 @@ cdef class GiacMethods_base:
         Help for shuffle:
         shuffle(Intg(n)||Lst(L))
         Returns a random permutation of [0,1,2,..,n-1] or of the list L.
-        See also: 1/ permu2cycles 2/ is_permu 3/ permu2mat 
+        See also: 1/ permu2cycles 2/ is_permu 3/ permu2mat
         Ex1:shuffle(4)
         Ex2:shuffle(7)
         Ex3:shuffle([1,3,5,7,9])
         Ex4: L:=[1,3,5,7,9];L:=randperm(L)
         Ex5: L:=[1,3,5,7,9];L.randperm()
-        
         '''
         return GiacMethods['shuffle'](self,*args)
 
@@ -15674,13 +14437,12 @@ cdef class GiacMethods_base:
         Help for sierpinski_graph:
         sierpinski_graph(Intg(n),Intg(k),[triangle])
         Returns Sierpiński (triangle) graph S(n,k) (resp. ST(n,k)).
-        See also: 1/ graph 
+        See also: 1/ graph
         Ex1:sierpinski_graph(2,4)
         Ex2:sierpinski_graph(4,3)
         Ex3:sierpinski_graph(3,4)
         Ex4:sierpinski_graph(3,2)
         Ex5:sierpinski_graph(3,3,at_triangle)
-        
         '''
         return GiacMethods['sierpinski_graph'](self,*args)
 
@@ -15689,10 +14451,9 @@ cdef class GiacMethods_base:
         Help for sign:
         sign(Expr)
         Returns the sign (-1,0,+1) of its argument.
-        See also: 1/ abs 
+        See also: 1/ abs
         Ex1:sign(-4)
         Ex2:sign(4-5)
-        
         '''
         return GiacMethods['sign'](self,*args)
 
@@ -15701,9 +14462,8 @@ cdef class GiacMethods_base:
         Help for signature:
         signature(Permut)
         Returns the signature of a permutation.
-        See also: 1/ permu2cycles 2/ is_permu 
+        See also: 1/ permu2cycles 2/ is_permu
         Ex1:signature([1,0,3,4,2])
-        
         '''
         return GiacMethods['signature'](self,*args)
 
@@ -15712,10 +14472,9 @@ cdef class GiacMethods_base:
         Help for signe:
         signe(Str(s))
         Writes the string s with the font 20 at the point [10,10].
-        See also: 1/ ecris 
+        See also: 1/ ecris
         Ex1:signe("Thomas")
         Ex2:signe(Thomas)
-        
         '''
         return GiacMethods['signe'](self,*args)
 
@@ -15724,12 +14483,11 @@ cdef class GiacMethods_base:
         Help for similarity:
         similarity(Pnt or Dr3,Real,Angle,Pnt)
         similarity(B,k,a1,A)=transformation of A in the similarity (center B or axis d, coeff k,angle a1) (or also homothety(B,k*exp(i*a1),A)).
-        See also: 1/ homothety 
+        See also: 1/ homothety
         Ex1:similarity(1+i,2,pi/3,i)
         Ex2:similarity(line(x=y,y=z),2,pi/3,point(-1,2,1))
         Ex3: s:=similarity(1+i,2,pi/3);s(i)
         Ex4: s:=similarity(line(x=y,y=z),2,pi/3),s(point(-1,2,1))
-        
         '''
         return GiacMethods['similarity'](self,*args)
 
@@ -15738,10 +14496,9 @@ cdef class GiacMethods_base:
         Help for simp2:
         simp2(Intg(A) or Poly(A),Intg(B) or Poly(B))
         Returns the list [A/gcd(A,B),B/gcd(A,B)].
-        See also: 1/ gcd 
+        See also: 1/ gcd
         Ex1:simp2(12,18)
         Ex2:simp2(x^3-1,x^2-1)
-        
         '''
         return GiacMethods['simp2'](self,*args)
 
@@ -15755,7 +14512,6 @@ cdef class GiacMethods_base:
         Ex3:simplex_reduce([[-3,2],[1,1]],[3,4],[1,2])
         Ex4:simplex_reduce([[-3,2,1,0,3],[1,1,0,1,4],[-1,-2,0,0,0]])
         Ex5:simplex_reduce([[2,1,1,1,0,0,2],[1,2,3,0,1,0,5],[2,2,1,0,0,1,6],[-3,-1,-3,1,-1,2,0]])
-        
         '''
         return GiacMethods['simplex_reduce'](self,*args)
 
@@ -15764,11 +14520,10 @@ cdef class GiacMethods_base:
         Help for simplifier:
         simplifier(Expr)
         Simplifies an expression.
-        See also: 1/ normal 
+        See also: 1/ normal
         Ex1:simplifier(4*atan(1/5)-atan(1/239))
         Ex2:simplifier(texpand((sin(3*x)+sin(7*x))/sin(5*x)))
         Ex3:simplifier(texpand((cos(3*x)+cos(7*x))/cos(5*x)))
-        
         '''
         return GiacMethods['simplifier'](self,*args)
 
@@ -15777,11 +14532,10 @@ cdef class GiacMethods_base:
         Help for simplify:
         simplify(Expr)
         Simplifies an expression.
-        See also: 1/ normal 
+        See also: 1/ normal
         Ex1:simplify(4*atan(1/5)-atan(1/239))
         Ex2:simplify(texpand((sin(3*x)+sin(7*x))/sin(5*x)))
         Ex3:simplify(texpand((cos(3*x)+cos(7*x))/cos(5*x)))
-        
         '''
         return GiacMethods['simplify'](self,*args)
 
@@ -15790,12 +14544,11 @@ cdef class GiacMethods_base:
         Help for simpson:
         simpson(Opt)
         Option of the area command.
-        See also: 1/ area 
+        See also: 1/ area
         Ex1: area(x^2,x=0..1,5,simpson)
         Ex2: area(x^2,x=0..1,5,rombergt)
         Ex3: area(x^2,x=0..1,5,rombergm)
         Ex4:simpson(area(x^2,x=0..1,5,gauss15))
-        
         '''
         return GiacMethods['simpson'](self,*args)
 
@@ -15804,10 +14557,9 @@ cdef class GiacMethods_base:
         Help for simult:
         simult(Mtrx(A),Mtrx(B))
         Returns the matrix where the column of index k is solution of A*X=column of index k of B (=B[0..nr-1,k..k] with nr=number of rows of B).
-        See also: 1/ rref 2/ linsolve 
+        See also: 1/ rref 2/ linsolve
         Ex1:simult([[3,1],[3,2]],[[-2],[2]])
         Ex2:simult([[3,1],[3,2]],[[-2,1],[2,-1]])
-        
         '''
         return GiacMethods['simult'](self,*args)
 
@@ -15816,10 +14568,9 @@ cdef class GiacMethods_base:
         Help for sin:
         sin(Expr or Opt)
         Sine or option of the convert or convertir command (id trigsin).
-        See also: 1/ asin 2/ convert 3/ trigsin 
+        See also: 1/ asin 2/ convert 3/ trigsin
         Ex1:sin(0)
         Ex2: convert(cos(x)^4+sin(x)^2,sin)
-        
         '''
         return GiacMethods['sin'](self,*args)
 
@@ -15828,9 +14579,8 @@ cdef class GiacMethods_base:
         Help for sin2costan:
         sin2costan(Expr)
         Replaces sin(x) by cos(x)*tan(x) in the argument.
-        See also: 1/ tan2sincos 2/ cos2sintan 3/ tan2sincos2 4/ tan2cossin2 
+        See also: 1/ tan2sincos 2/ cos2sintan 3/ tan2sincos2 4/ tan2cossin2
         Ex1:sin2costan(sin(x))
-        
         '''
         return GiacMethods['sin2costan'](self,*args)
 
@@ -15839,9 +14589,8 @@ cdef class GiacMethods_base:
         Help for sinc:
         sinc(Expr(x))
         Returns the value of the cardinal sine function at x.
-        See also: 1/ sin 
+        See also: 1/ sin
         Ex1:sinc(pi*x)
-        
         '''
         return GiacMethods['sinc'](self,*args)
 
@@ -15850,11 +14599,10 @@ cdef class GiacMethods_base:
         Help for sincos:
         sincos(Expr or Opt)
         Transforms the complex exponential into sine and cosine (id exp2trig) or option of the convert or convertir command (id sincos).
-        See also: 1/ trig2trig 2/ trig2exp 3/ atrig2ln 4/ convert 
+        See also: 1/ trig2trig 2/ trig2exp 3/ atrig2ln 4/ convert
         Ex1:sincos(exp(i*x))
         Ex2:sincos(exp(-i*x))
         Ex3: convert(exp(i*x),sincos)
-        
         '''
         return GiacMethods['sincos'](self,*args)
 
@@ -15863,7 +14611,7 @@ cdef class GiacMethods_base:
         Help for single_inter:
         single_inter(Curve,Curve,[Pnt(A)||LstPnt(L)])
         Gives one of the points of intersection of 2 curves or surfaces (or the intersection near A or not in L).
-        See also: 1/ intersect 2/ head 
+        See also: 1/ intersect 2/ head
         Ex1:single_inter(line(i,1-i),line(0,1))
         Ex2:single_inter(line(i,1-i),circle(0,1))
         Ex3:single_inter(line(i,1+2*i),circle(0,1),[point(i)])
@@ -15871,7 +14619,6 @@ cdef class GiacMethods_base:
         Ex5:single_inter(circle(1,sqrt(2)),circle(0,1))
         Ex6:single_inter(plane(x=y),plane(y=z))
         Ex7:single_inter(line(x=y+1,y=2*z),plane(y=z))
-        
         '''
         return GiacMethods['single_inter'](self,*args)
 
@@ -15880,9 +14627,8 @@ cdef class GiacMethods_base:
         Help for sinh:
         sinh(Expr)
         Hyperbolic sine.
-        See also: 1/ asinh 
+        See also: 1/ asinh
         Ex1:sinh(0)
-        
         '''
         return GiacMethods['sinh'](self,*args)
 
@@ -15891,9 +14637,8 @@ cdef class GiacMethods_base:
         Help for sizes:
         sizes(Lst or Str or Seq)
         Returns the list of sizes of a list of lists.
-        See also: 1/ size 2/ dim 
+        See also: 1/ size 2/ dim
         Ex1:sizes([[1,2,3],[1,2],[1]])
-        
         '''
         return GiacMethods['sizes'](self,*args)
 
@@ -15902,7 +14647,7 @@ cdef class GiacMethods_base:
         Help for slope:
         slope(Line||Pnt||Cplx,[Pnt||Cplx])
         Returns the slope of the line defined in the argument or is an attribute of line.
-        See also: 1/ line 2/ tangent 3/ LinTan 4/ slopeatraw 5/ slopeat 
+        See also: 1/ line 2/ tangent 3/ LinTan 4/ slopeatraw 5/ slopeat
         Ex1:slope(line(1,2i))
         Ex2:slope(segment(1,2i))
         Ex3:slope(1,2i)
@@ -15911,7 +14656,6 @@ cdef class GiacMethods_base:
         Ex6:slope(tangent(plotfunc(sin(x)),pi/4))
         Ex7:slope(LineTan(sin(x),pi/4))
         Ex8: line(point(1,2),slope=-1)
-        
         '''
         return GiacMethods['slope'](self,*args)
 
@@ -15920,11 +14664,10 @@ cdef class GiacMethods_base:
         Help for slopeat:
         slopeat(Line, Pnt||Cplx(z0))
         slopeat(d,z0) displays at the point(z0), with a legend, the value of the slope of the line or segment d.
-        See also: 1/ slope 2/ slopeatraw 
+        See also: 1/ slope 2/ slopeatraw
         Ex1: A:=point(0);B:=point(1+i);slopeat(droite(A,B),(1+i)/2)
         Ex2: s:=segment(1-i,i);slopeat(s,point(0.4))
         Ex3: t:=tangent(plotfunc(sin(x)),pi/4);slopeat(t,0)
-        
         '''
         return GiacMethods['slopeat'](self,*args)
 
@@ -15933,12 +14676,11 @@ cdef class GiacMethods_base:
         Help for slopeatraw:
         slopeatraw(Line, Pnt||Cplx(z0))
         slopeatraw(d,z0) displays at point(z0), the value of the slope of the line or segment d.
-        See also: 1/ slope 2/ slopeat 
+        See also: 1/ slope 2/ slopeat
         Ex1: A:=point(0);B:=point(1+i);slopeatraw(droite(A,B),(1+i)/2)
         Ex2: s:=segment(1-i,i);slopeatraw(s,point(0.4))
         Ex3:slopeatraw(tangent(plotfunc(sin(x)),pi/4),0)
         Ex4:slopeatraw((LineTan sin(x),pi/4),i)
-        
         '''
         return GiacMethods['slopeatraw'](self,*args)
 
@@ -15947,10 +14689,9 @@ cdef class GiacMethods_base:
         Help for smith:
         smith(Mtrx(A))
         Smith normal form of a matrix with polynomial coefficients : returns U,D,V such that U and V are invertible, D is diagonal, and U*A*V=D.
-        See also: 1/ hermite 2/ ismith 3/ ihermite 
+        See also: 1/ hermite 2/ ismith 3/ ihermite
         Ex1: n:=10; A:=ranm(n,n) % 17; U,D,V:=smith(x*idn(n)-A);normal(U*(x*idn(n)-A)*V-D); diag(D);
         Ex2: GF(3,5,g); n:=3; A:=ranm(n,n,g); U,D,V:=smith(x*idn(n)-A);normal(U*(x*idn(n)-A)*V-D); diag(D);
-        
         '''
         return GiacMethods['smith'](self,*args)
 
@@ -15959,11 +14700,10 @@ cdef class GiacMethods_base:
         Help for smod:
         smod(Intg,Intg)
         Returns the Euclidean symmetric remainder of two integers.
-        See also: 1/ irem 2/ iquo 3/ mod 4/ fracmod 
+        See also: 1/ irem 2/ iquo 3/ mod 4/ fracmod
         Ex1:smod(8,3)
         Ex2:smod(10,4)
         Ex3:smod(11,7)
-        
         '''
         return GiacMethods['smod'](self,*args)
 
@@ -15972,12 +14712,11 @@ cdef class GiacMethods_base:
         Help for snedecor:
         snedecor(Intg(n),Intg(m),Real(x0))
         Returns the probability density of the Fisher-Snedecor law (n and m are the numbers of degrees of freedom).
-        See also: 1/ fisher_cdf 2/ fisher_icdf 3/ randvector 4/ ranm 
+        See also: 1/ fisher_cdf 2/ fisher_icdf 3/ randvector 4/ ranm
         Ex1:snedecor(4,10,2.1)
         Ex2:snedecor(4,4,2.1)
         Ex3: randvector(5,fisher,4,6)
         Ex4: ranm(2,3,fisher,4,6)
-        
         '''
         return GiacMethods['snedecor'](self,*args)
 
@@ -15986,10 +14725,9 @@ cdef class GiacMethods_base:
         Help for snedecor_cdf:
         snedecor_cdf(Intg(n),Intg(m),Real(x0))
         Returns the probability that a Fisher-Snedecor random variable is less than x0 (n and m are the numbers of degrees of freedom).
-        See also: 1/ UTPF 2/ fisher_icdf 3/ fisherd 
+        See also: 1/ UTPF 2/ fisher_icdf 3/ fisherd
         Ex1:snedecor_cdf(4,4,2.1)
         Ex2:snedecor_cdf(4,10,3.5)
-        
         '''
         return GiacMethods['snedecor_cdf'](self,*args)
 
@@ -15998,10 +14736,9 @@ cdef class GiacMethods_base:
         Help for snedecor_icdf:
         snedecor_icdf(Intg(n),Intg(m),Real(p))
         Returns h such as the probability that a Fisher-Snedecor random variable is less than h is p (n and m are the numbers of degrees of freedom and 0<=p<=1).
-        See also: 1/ fisher_cdf 2/ fisherd 
+        See also: 1/ fisher_cdf 2/ fisherd
         Ex1:snedecor_icdf(4,10,0.95)
         Ex2:snedecor_icdf(4,10,0.05)
-        
         '''
         return GiacMethods['snedecor_icdf'](self,*args)
 
@@ -16010,12 +14747,11 @@ cdef class GiacMethods_base:
         Help for snedecord:
         snedecord(Intg(n),Intg(m),Real(x0))
         Returns the probability density of the Fisher-Snedecor law (n and m are the numbers of degrees of freedom).
-        See also: 1/ fisher_cdf 2/ fisher_icdf 3/ randvector 4/ ranm 
+        See also: 1/ fisher_cdf 2/ fisher_icdf 3/ randvector 4/ ranm
         Ex1:snedecord(4,10,2.1)
         Ex2:snedecord(4,4,2.1)
         Ex3: randvector(5,fisher,4,6)
         Ex4: ranm(2,3,fisher,4,6)
-        
         '''
         return GiacMethods['snedecord'](self,*args)
 
@@ -16024,10 +14760,9 @@ cdef class GiacMethods_base:
         Help for snedecord_cdf:
         snedecord_cdf(Intg(n),Intg(m),Real(x0))
         Returns the probability that a Fisher-Snedecor random variable is less than x0 (n and m are the numbers of degrees of freedom).
-        See also: 1/ UTPF 2/ fisher_icdf 3/ fisherd 
+        See also: 1/ UTPF 2/ fisher_icdf 3/ fisherd
         Ex1:snedecord_cdf(4,4,2.1)
         Ex2:snedecord_cdf(4,10,3.5)
-        
         '''
         return GiacMethods['snedecord_cdf'](self,*args)
 
@@ -16036,10 +14771,9 @@ cdef class GiacMethods_base:
         Help for snedecord_icdf:
         snedecord_icdf(Intg(n),Intg(m),Real(p))
         Returns h such as the probability that a Fisher-Snedecor random variable is less than h is p (n and m are the numbers of degrees of freedom and 0<=p<=1).
-        See also: 1/ fisher_cdf 2/ fisherd 
+        See also: 1/ fisher_cdf 2/ fisherd
         Ex1:snedecord_icdf(4,10,0.95)
         Ex2:snedecord_icdf(4,10,0.05)
-        
         '''
         return GiacMethods['snedecord_icdf'](self,*args)
 
@@ -16048,10 +14782,9 @@ cdef class GiacMethods_base:
         Help for solid_line:
         solid_line(Opt)
         Option of the display command for a line.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: display(line(y=x),green+dash_line+line_width_2)
         Ex2: d:=display(line(2+i,1),cap_round_line)
-        
         '''
         return GiacMethods['solid_line'](self,*args)
 
@@ -16060,12 +14793,11 @@ cdef class GiacMethods_base:
         Help for solve:
         solve(Expr,[Var])
         Solves a (or a set of) polynomial equation.
-        See also: 1/ linsolve 2/ proot 3/ fsolve 4/ csolve 5/ nSolve 
+        See also: 1/ linsolve 2/ proot 3/ fsolve 4/ csolve 5/ nSolve
         Ex1:solve(x^2-3=1)
         Ex2:solve(x^3-3*y,y)
         Ex3:solve([y-z=0,z-x=0,x-y=0,x-1+y+z=0],[x,y,z])
         Ex4:solve([x^2-y^2=0,x^2-z^2=0],[x,y,z])
-        
         '''
         return GiacMethods['solve'](self,*args)
 
@@ -16074,7 +14806,7 @@ cdef class GiacMethods_base:
         Help for somme:
         somme(Expr,Var,VarMin(a),VarMax(b),[VarStep(p)])
         Discrete sum (with 2 or 4 arguments return then sum from a to b if a<=b or of the opposite of the sum from b+1 to a-1 if a>b+1 or 0 if a=b+1) or the discrete primitive or sum of the elements of a list or a sequence.
-        See also: 1/ + 
+        See also: 1/ +
         Ex1:somme(1/n^2,n,1,17)
         Ex2:somme(1/n^2,n=1..17)
         Ex3:somme(1/n^2,n,17,1)
@@ -16085,7 +14817,6 @@ cdef class GiacMethods_base:
         Ex8:somme([[1,2,3,4,5,6,7,8,9],[1,2,3,4,5,6,7,8,9]])
         Ex9:somme(1/(x*(x+1)),x)
         Ex10:somme(cos(n*x),n)
-        
         '''
         return GiacMethods['somme'](self,*args)
 
@@ -16094,10 +14825,9 @@ cdef class GiacMethods_base:
         Help for sommet:
         sommet(Op or Fnct)
         Returns the top of an operator.
-        See also: 1/ feuille 2/ quote 
+        See also: 1/ feuille 2/ quote
         Ex1:sommet(quote(gcd(45,123)))
         Ex2:sommet('gcd(45,123)')
-        
         '''
         return GiacMethods['sommet'](self,*args)
 
@@ -16106,13 +14836,12 @@ cdef class GiacMethods_base:
         Help for sort:
         sort(LstReal or Seq [Fnc])
         Returns the sorted list (or sequence) with increasing order according to the second argument which defines a weak strict ordering or sorts and collects equal terms in sums and products.
-        See also: 1/ SortA 2/ SortD 
+        See also: 1/ SortA 2/ SortD
         Ex1:sort([3,2,2,4,1,0])
         Ex2:sort(3,2.1,2,4,1,0)
         Ex3:sort([3,4,2],(x,y)->x>y)
         Ex4:sort([[1,2],[2,3],[4,3]],(x,y)->when(x[1]==y[1],x[0]>y[0],x[1]>y[1]))
         Ex5:sort(y*x*2+x*y)
-        
         '''
         return GiacMethods['sort'](self,*args)
 
@@ -16121,11 +14850,10 @@ cdef class GiacMethods_base:
         Help for sorta:
         sorta(LstReal||Seq×||Mtrx)
         Sorts the list in increasing order or sorts the columns of the matrix so the first row is in increasing order.
-        See also: 1/ SortA 2/ sortd 3/ sort 
+        See also: 1/ SortA 2/ sortd 3/ sort
         Ex1:sorta(3,4,2)
         Ex2:sorta([3,4,2])
         Ex3:sorta([[3,4,2],[6,4,5]])
-        
         '''
         return GiacMethods['sorta'](self,*args)
 
@@ -16134,11 +14862,10 @@ cdef class GiacMethods_base:
         Help for sortd:
         sortd(LstReal||Seq||Mtrx)
         Sorts the list in decreasing order or sorts the columns of the matrix so the first row is in decreasing order.
-        See also: 1/ SortD 2/ sorta 3/ sort 
+        See also: 1/ SortD 2/ sorta 3/ sort
         Ex1:sortd(3,4,2)
         Ex2:sortd([3,4,2])
         Ex3:sortd([[3,4,2],[6,4,5]])
-        
         '''
         return GiacMethods['sortd'](self,*args)
 
@@ -16147,13 +14874,12 @@ cdef class GiacMethods_base:
         Help for sorted:
         sorted(LstReal or Seq [Fnc])
         Returns the sorted list (or sequence) with increasing order according to the second argument which defines a weak strict ordering or sorts and collects equal terms in sums and products.
-        See also: 1/ SortA 2/ SortD 
+        See also: 1/ SortA 2/ SortD
         Ex1:sorted([3,2,2,4,1,0])
         Ex2:sorted(3,2.1,2,4,1,0)
         Ex3:sorted([3,4,2],(x,y)->x>y)
         Ex4:sorted([[1,2],[2,3],[4,3]],(x,y)->when(x[1]==y[1],x[0]>y[0],x[1]>y[1]))
         Ex5:sorted(y*x*2+x*y)
-        
         '''
         return GiacMethods['sorted'](self,*args)
 
@@ -16162,10 +14888,9 @@ cdef class GiacMethods_base:
         Help for soundsec:
         soundsec(Intg(n),[Intg(N)])
         Generates a vector coding n seconds of time/N (default N=44100).
-        See also: 1/ readwav 2/ writewav 3/ playsnd 
+        See also: 1/ readwav 2/ writewav 3/ playsnd
         Ex1:soundsec(1)
         Ex2:soundsec(1,22100)
-        
         '''
         return GiacMethods['soundsec'](self,*args)
 
@@ -16174,10 +14899,9 @@ cdef class GiacMethods_base:
         Help for spanning_tree:
         spanning_tree(Graph(G),[Vrtx(r)])
         Returns a spanning tree of undirected graph G [with the vertex r as the root node].
-        See also: 1/ number_of_spanning_trees 2/ minimal_spanning_tree 
+        See also: 1/ number_of_spanning_trees 2/ minimal_spanning_tree
         Ex1:spanning_tree(graph("petersen"))
         Ex2:spanning_tree(graph("petersen"),5)
-        
         '''
         return GiacMethods['spanning_tree'](self,*args)
 
@@ -16186,10 +14910,9 @@ cdef class GiacMethods_base:
         Help for sphere:
         sphere((Pnt or Vect),(Pnt or Real))
         sphere(A,B) (resp sphere(A,r)) draws the sphere with diameter AB (resp center A and radius r) in 3D space.
-        See also: 1/ circle 
+        See also: 1/ circle
         Ex1:sphere([0,0,0],[2,2,2])
         Ex2:sphere([1,1,1],1)
-        
         '''
         return GiacMethods['sphere'](self,*args)
 
@@ -16198,9 +14921,8 @@ cdef class GiacMethods_base:
         Help for spline:
         spline(Lst(lx),Lst(ly),Var(x),Intg(d))
         Natural spline through the points given by the lx and ly lists, variable x, degree d.
-        See also: 1/ lagrange 
+        See also: 1/ lagrange
         Ex1:spline([0,1,2],[1,3,0],x,3)
-        
         '''
         return GiacMethods['spline'](self,*args)
 
@@ -16209,10 +14931,9 @@ cdef class GiacMethods_base:
         Help for split:
         split(Expr(Xpr),Lst(var1,var2))
         Splits the two variables var1,var2 of the expression Xpr (without denominator) or returns [0].
-        See also: 1/ factor 
+        See also: 1/ factor
         Ex1:split(x^3*y^2-y^2+x^3-1,[x,y])
         Ex2:split(x^3*y^2-y^2+x^3+1,[x,y])
-        
         '''
         return GiacMethods['split'](self,*args)
 
@@ -16221,8 +14942,7 @@ cdef class GiacMethods_base:
         Help for spring:
         spring(Opt)
         Option for the draw_graph command.
-        See also: 1/ planar 2/ tree 3/ draw_graph 
-        
+        See also: 1/ planar 2/ tree 3/ draw_graph
         '''
         return GiacMethods['spring'](self,*args)
 
@@ -16231,10 +14951,9 @@ cdef class GiacMethods_base:
         Help for sq:
         sq(Seq)
         Is the name of the function (ℝ^n -> ℝ)=sum of the squares of the arguments.
-        See also: 1/ sqrt 
+        See also: 1/ sqrt
         Ex1:sq(5)
         Ex2:sq(1,2,3)
-        
         '''
         return GiacMethods['sq'](self,*args)
 
@@ -16243,10 +14962,9 @@ cdef class GiacMethods_base:
         Help for sqrfree:
         sqrfree(Expr)
         Factorization of the its argument gathering the terms with the same exponent.
-        See also: 1/ factor 
+        See also: 1/ factor
         Ex1:sqrfree(x^4-2*x^2+1)
         Ex2:sqrfree((x-2)^7*(x+2)^7*(x^4-2*x^2+1))
-        
         '''
         return GiacMethods['sqrfree'](self,*args)
 
@@ -16255,10 +14973,9 @@ cdef class GiacMethods_base:
         Help for sqrt:
         sqrt(Expr)
         Square root.
-        See also: 1/ surd 2/ ^ 
+        See also: 1/ surd 2/ ^
         Ex1:sqrt(50)
         Ex2:sqrt(x^2)
-        
         '''
         return GiacMethods['sqrt'](self,*args)
 
@@ -16267,12 +14984,11 @@ cdef class GiacMethods_base:
         Help for square:
         square((Pnt(A) or Cplx),(Pnt(B) or Cplx),[Pnt(P),Var(C),Var(D)])
         Returns and draws the square of side AB (ABCD is direct) (in the plane ABP).
-        See also: 1/ rhombus 2/ quadrilateral 
+        See also: 1/ rhombus 2/ quadrilateral
         Ex1:square(i,1+i)
         Ex2:square(i,1+i,C,D)
         Ex3:square(point(0,0,0),point(3,3,3),point(0,0,3))
         Ex4:square(point(0,0,0),point(3,3,3),point(0,0,3),C,D)
-        
         '''
         return GiacMethods['square'](self,*args)
 
@@ -16281,10 +14997,9 @@ cdef class GiacMethods_base:
         Help for square_point:
         square_point(Opt)
         Option of the display command for a point.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: F:=display(point(2+1.5*i),point_point)
         Ex2: F:=display(point(2+1.5*i),rhombus_point)
-        
         '''
         return GiacMethods['square_point'](self,*args)
 
@@ -16293,10 +15008,9 @@ cdef class GiacMethods_base:
         Help for srand:
         srand()
         srand returns an integer and initializes the sequence of random numbers.
-        See also: 1/ RandSeed 
+        See also: 1/ RandSeed
         Ex1:srand(12)
         Ex2: srand
-        
         '''
         return GiacMethods['srand'](self,*args)
 
@@ -16305,9 +15019,8 @@ cdef class GiacMethods_base:
         Help for sst:
         sst(NULL)
         Steps 1 instruction.
-        See also: 1/  
+        See also: 1/
         Ex1:sst()
-        
         '''
         return GiacMethods['sst'](self,*args)
 
@@ -16316,9 +15029,8 @@ cdef class GiacMethods_base:
         Help for sst_in:
         sst_in(NULL)
         Enters into a function in step-by-step mode.
-        See also: 1/  
+        See also: 1/
         Ex1:sst_in()
-        
         '''
         return GiacMethods['sst_in'](self,*args)
 
@@ -16327,9 +15039,8 @@ cdef class GiacMethods_base:
         Help for st_ordering:
         st_ordering(Graph(G),Vrtx(s),Vrtx(t))
         Returns ST numbering for the biconnected graph G with source s and sink (target) t.
-        See also: 1/ is_biconnected 
+        See also: 1/ is_biconnected
         Ex1:st_ordering(graph("petersen"),1,2)
-        
         '''
         return GiacMethods['st_ordering'](self,*args)
 
@@ -16338,9 +15049,8 @@ cdef class GiacMethods_base:
         Help for star_graph:
         star_graph(Intg(n))
         Returns the complete bipartite graph complete_graph(1,n).
-        See also: 1/ complete_graph 2/ wheel_graph 
+        See also: 1/ complete_graph 2/ wheel_graph
         Ex1:star_graph(5)
-        
         '''
         return GiacMethods['star_graph'](self,*args)
 
@@ -16349,10 +15059,9 @@ cdef class GiacMethods_base:
         Help for star_point:
         star_point(Opt)
         Option of the display command for a point.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: F:=display(point(2+1.5*i),point_point)
         Ex2: F:=display(point(2+1.5*i),rhombus_point)
-        
         '''
         return GiacMethods['star_point'](self,*args)
 
@@ -16361,11 +15070,10 @@ cdef class GiacMethods_base:
         Help for stdDev:
         stdDev(Lst||Mtrx,[Lst])
         Returns an unbiased estimate of the population standard deviation of the sample (first argument) with an optional list of weight as second argument.
-        See also: 1/ mean 2/ stddev 
+        See also: 1/ mean 2/ stddev
         Ex1:stdDev([1,2,3])
         Ex2:stdDev([1,2,3],[1,2,1])
         Ex3:stdDev([[1,2,3],[5,6,7]])
-        
         '''
         return GiacMethods['stdDev'](self,*args)
 
@@ -16374,11 +15082,10 @@ cdef class GiacMethods_base:
         Help for stddev:
         stddev(Lst||Mtrx,[Lst])
         Returns the standard deviation of the elements of its argument with an optional second argument as weight or the list of standard deviations of the columns of a matrix.
-        See also: 1/ mean 2/ variance 3/ stddevp 
+        See also: 1/ mean 2/ variance 3/ stddevp
         Ex1:stddev([1,2,3])
         Ex2:stddev([1,2,3],[1,2,1])
         Ex3:stddev([[1,2,3],[5,6,7]])
-        
         '''
         return GiacMethods['stddev'](self,*args)
 
@@ -16387,11 +15094,10 @@ cdef class GiacMethods_base:
         Help for stddevp:
         stddevp(Lst||Mtrx,[Lst])
         Returns an unbiased estimate of the population standard deviation of the sample (first argument) with an optional list of weight as second argument.
-        See also: 1/ mean 2/ stddev 
+        See also: 1/ mean 2/ stddev
         Ex1:stddevp([1,2,3])
         Ex2:stddevp([1,2,3],[1,2,1])
         Ex3:stddevp([[1,2,3],[5,6,7]])
-        
         '''
         return GiacMethods['stddevp'](self,*args)
 
@@ -16400,14 +15106,13 @@ cdef class GiacMethods_base:
         Help for steffenson_solver:
         steffenson_solver(Opt)
         Argument for fsolve giving the method for solving a numerical equation.
-        See also: 1/ fsolve 
+        See also: 1/ fsolve
         Ex1: fsolve(cos(x)=x,x,0..1,bisection_solver)
         Ex2: fsolve(cos(x)=x,x,0..1,brent_solver)
         Ex3: fsolve(cos(x)=x,x,0..1,falsepos_solver)
         Ex4: fsolve(cos(x)=x,x,0,newton_solver)
         Ex5: fsolve(cos(x)=x,x,0,secant_solver)
         Ex6: fsolve(cos(x)=x,x,0,steffenson_solver)
-        
         '''
         return GiacMethods['steffenson_solver'](self,*args)
 
@@ -16416,9 +15121,8 @@ cdef class GiacMethods_base:
         Help for stereo2mono:
         stereo2mono(Lst(clip))
         Returns an audio clip with all channels in the input clip downmixed to a single one.
-        See also: 1/ channel_data 2/ mean 3/ createwav 
+        See also: 1/ channel_data 2/ mean 3/ createwav
         Ex1:stereo2mono(readwav("/some/file"))
-        
         '''
         return GiacMethods['stereo2mono'](self,*args)
 
@@ -16427,12 +15131,11 @@ cdef class GiacMethods_base:
         Help for str:
         str(Expr or Opt)
         Returns the evaluated expression as a string or is an option of the convert or convertir command (id string).
-        See also: 1/ expr 2/ format 3/ convert 
+        See also: 1/ expr 2/ format 3/ convert
         Ex1:str(1.23)
         Ex2:str(a:=12)
         Ex3:str(quote(a:=12))
         Ex4: convert(quote(a:=12),string)
-        
         '''
         return GiacMethods['str'](self,*args)
 
@@ -16441,9 +15144,8 @@ cdef class GiacMethods_base:
         Help for strongly_connected_components:
         strongly_connected_components(Graph(G))
         Returns the list of strongly connected components in digraph G.
-        See also: 1/ connected_components 2/ is_connected 3/ is_strongly_connected 
+        See also: 1/ connected_components 2/ is_connected 3/ is_strongly_connected
         Ex1:strongly_connected_components(digraph([1,2,3],%{[1,2],[1,3],[2,3],[3,2]%}))
-        
         '''
         return GiacMethods['strongly_connected_components'](self,*args)
 
@@ -16452,10 +15154,9 @@ cdef class GiacMethods_base:
         Help for student:
         student(Intg(n),Real(x0))
         Returns the probability density of the Student law (n is the number of degrees of freedom).
-        See also: 1/ student_cdf 2/ student_icdf 
+        See also: 1/ student_cdf 2/ student_icdf
         Ex1:student(3,5.2)
         Ex2:student(1,5.2)
-        
         '''
         return GiacMethods['student'](self,*args)
 
@@ -16464,10 +15165,9 @@ cdef class GiacMethods_base:
         Help for student_cdf:
         student_cdf(Intg(n),Real(x0))
         Returns the probability that a Student random variable is less than x0 (n is the number of degrees of freedom).
-        See also: 1/ UTPT 2/ student_icdf 3/ studentd 
+        See also: 1/ UTPT 2/ student_icdf 3/ studentd
         Ex1:student_cdf(3,2.35)
         Ex2:student_cdf(3,-3.2)
-        
         '''
         return GiacMethods['student_cdf'](self,*args)
 
@@ -16476,10 +15176,9 @@ cdef class GiacMethods_base:
         Help for student_icdf:
         student_icdf(Intg(n),Real(p))
         Returns h such as the probability that a Student random variable is less than h is p (n is the number of degrees of freedom and 0<=p<=1).
-        See also: 1/ student_cdf 2/ studentd 
+        See also: 1/ student_cdf 2/ studentd
         Ex1:student_icdf(3,0.95)
         Ex2:student_icdf(3,0.05)
-        
         '''
         return GiacMethods['student_icdf'](self,*args)
 
@@ -16488,10 +15187,9 @@ cdef class GiacMethods_base:
         Help for studentd:
         studentd(Intg(n),Real(x0))
         Returns the probability density of the Student law (n is the number of degrees of freedom).
-        See also: 1/ student_cdf 2/ student_icdf 
+        See also: 1/ student_cdf 2/ student_icdf
         Ex1:studentd(3,5.2)
         Ex2:studentd(1,5.2)
-        
         '''
         return GiacMethods['studentd'](self,*args)
 
@@ -16500,10 +15198,9 @@ cdef class GiacMethods_base:
         Help for studentt:
         studentt(Lst,Real,[Real],Fnc,[Real])
         T-Test/Student law: arg1=[success,trial] or [mean,sample size] or data, arg2=proportion or data, arg3 optional if data=sigma, arg4 alternative '!=' or '>' or '<', arg5 optional alpha confidence level.
-        See also: 1/ normalt 2/ chisquaret 3/ kolmogorovt 
+        See also: 1/ normalt 2/ chisquaret 3/ kolmogorovt
         Ex1:studentt([10,20],.5,.02,'!=',0.1)
         Ex2:studentt([0.48,20],0.5,0.1,'<')
-        
         '''
         return GiacMethods['studentt'](self,*args)
 
@@ -16512,13 +15209,12 @@ cdef class GiacMethods_base:
         Help for sturm:
         sturm(Poly,[Var],[Cplx(a)],[Cplx(b)])
         Sturm sequence corresponding to a polynomial or number of sign changes of this polynomial in ]a;b].
-        See also: 1/ sturmseq 2/ sturmab 
+        See also: 1/ sturmseq 2/ sturmab
         Ex1:sturm(x^3-1,x)
         Ex2:sturm(x^5-x^3,x)
         Ex3:sturm((x^5-x^3)/(x+2),x)
         Ex4:sturm(x^5-x^3,x,-2,5)
         Ex5:sturm(x^3-1,x,-2-i,5+3i)
-        
         '''
         return GiacMethods['sturm'](self,*args)
 
@@ -16527,10 +15223,9 @@ cdef class GiacMethods_base:
         Help for sturmab:
         sturmab(Poly,Var,Cplx(a),Cplx(b))
         Number of sign changes of a polynomial in ]a;b] or of complex roots in a..b if a or b is non-real.
-        See also: 1/ sturm 2/ sturmseq 3/ realroot 
+        See also: 1/ sturm 2/ sturmseq 3/ realroot
         Ex1:sturmab(x^3-1,x,-2,5)
         Ex2:sturmab(x^3-1,x,-2-i,5+3i)
-        
         '''
         return GiacMethods['sturmab'](self,*args)
 
@@ -16539,11 +15234,10 @@ cdef class GiacMethods_base:
         Help for sturmseq:
         sturmseq(Poly,[Var])
         Sturm sequence corresponding to a polynomial or to a rational fraction.
-        See also: 1/ sturm 2/ sturmab 
+        See also: 1/ sturm 2/ sturmab
         Ex1:sturmseq(x^3-1,x)
         Ex2:sturmseq(x^5-x^3,x)
         Ex3:sturmseq((x^5-x^3)/(x+2),x)
-        
         '''
         return GiacMethods['sturmseq'](self,*args)
 
@@ -16552,10 +15246,9 @@ cdef class GiacMethods_base:
         Help for style:
         style(Opt)
         Local option (Maple compatibility) of a graphic command to plot a line with dots with style=point.
-        See also: 1/ line_width 
+        See also: 1/ line_width
         Ex1: segment(0,point(1,1),style=point)
         Ex2: line(y=x,style=point,display=green+line_width_2)
-        
         '''
         return GiacMethods['style'](self,*args)
 
@@ -16564,9 +15257,8 @@ cdef class GiacMethods_base:
         Help for subMat:
         subMat(Mtrx(A),Intg(n1),Intg(n2),Intg(n3),Intg(n4).)
         Extracts a sub matrix with first element=A[n1,n2] and last element=A[n3,n4].
-        See also: 1/ mid 
+        See also: 1/ mid
         Ex1:subMat([[1,2],[3,4],[5,6]],1,0,2,1)
-        
         '''
         return GiacMethods['subMat'](self,*args)
 
@@ -16575,9 +15267,8 @@ cdef class GiacMethods_base:
         Help for subdivide_edges:
         subdivide_edges(Graph(G),Lst(E),[Intg(r)])
         Inserts r (by default 1) new vertices to each edge/arc in G contained in the list E (which may be a single edge/arc) and returns the modified copy of G. New vertices are labelled with smallest available integers.
-        See also: 1/ edges 
+        See also: 1/ edges
         Ex1:subdivide_edges(complete_graph(2,3),[[1,3],[1,4]],2)
-        
         '''
         return GiacMethods['subdivide_edges'](self,*args)
 
@@ -16586,9 +15277,8 @@ cdef class GiacMethods_base:
         Help for subgraph:
         subgraph(Graph(G),Lst(E))
         Returns the subgraph of G defined by the edges in list E.
-        See also: 1/ induced_subgraph 2/ highlight_subgraph 
+        See also: 1/ induced_subgraph 2/ highlight_subgraph
         Ex1:subgraph(complete_graph(5),[[1,2],[2,3],[3,4],[4,1]])
-        
         '''
         return GiacMethods['subgraph'](self,*args)
 
@@ -16597,11 +15287,10 @@ cdef class GiacMethods_base:
         Help for subs:
         subs(Expr or Var=value,Var=value or Expr)
         Equivalent of subst except in maple_mode where the arguments are switched over, in maple_mode choose the second example.
-        See also: 1/ subst 2/ maple_mode 3/ algsubs 4/ () 
+        See also: 1/ subst 2/ maple_mode 3/ algsubs 4/ ()
         Ex1:subs(1/(4+x^2),x=2)
         Ex2:subs(x=2,1/(4+x^2))
         Ex3: f:=1/(4+x^2);f(x=2)
-        
         '''
         return GiacMethods['subs'](self,*args)
 
@@ -16614,7 +15303,6 @@ cdef class GiacMethods_base:
         Ex2:subsop([[1,2],[3,4]],[1,1]=5)
         Ex3:subsop([[1,2],[3,4]],1=[10,8])
         Ex4:subsop([0,1,2,3],'1=NULL')
-        
         '''
         return GiacMethods['subsop'](self,*args)
 
@@ -16623,7 +15311,7 @@ cdef class GiacMethods_base:
         Help for subst:
         subst(Expr,Var(v)=value(a))
         Substitutes a value for a variable in an expression.
-        See also: 1/ eval 2/ algsubs 3/ subs 4/ () 
+        See also: 1/ eval 2/ algsubs 3/ subs 4/ ()
         Ex1:subst(1/(4+x^2),x=2)
         Ex2:subst(1/(x^2+y^2),x=2,y=3)
         Ex3:subst(1/(x^2+y^2+z^2),[x=2,y=3,z=1])
@@ -16631,7 +15319,6 @@ cdef class GiacMethods_base:
         Ex5:subst('integrate(sin(x^2)*x,x)',x=sqrt(t))
         Ex6:subst('sum(x^(n+1)/((n+p+1)*(n+1)),n,0,inf)',n=k-1)
         Ex7: f:=1/(x^2+y^2;f(x=2,y=3)
-        
         '''
         return GiacMethods['subst'](self,*args)
 
@@ -16640,7 +15327,7 @@ cdef class GiacMethods_base:
         Help for substituer:
         substituer(Expr,Var(v)=value(a))
         Substitutes a value for a variable in an expression.
-        See also: 1/ eval 2/ algsubs 3/ subs 4/ () 
+        See also: 1/ eval 2/ algsubs 3/ subs 4/ ()
         Ex1:substituer(1/(4+x^2),x=2)
         Ex2:substituer(1/(x^2+y^2),x=2,y=3)
         Ex3:substituer(1/(x^2+y^2+z^2),[x=2,y=3,z=1])
@@ -16648,7 +15335,6 @@ cdef class GiacMethods_base:
         Ex5:substituer('integrate(sin(x^2)*x,x)',x=sqrt(t))
         Ex6:substituer('sum(x^(n+1)/((n+p+1)*(n+1)),n,0,inf)',n=k-1)
         Ex7: f:=1/(x^2+y^2;f(x=2,y=3)
-        
         '''
         return GiacMethods['substituer'](self,*args)
 
@@ -16657,12 +15343,11 @@ cdef class GiacMethods_base:
         Help for subtype:
         subtype(Expr)
         Returns 1 for a sequence,2 for a set, 10 for a polynomial and 0 otherwise.
-        See also: 1/ DOM_LIST 2/ type 
+        See also: 1/ DOM_LIST 2/ type
         Ex1:subtype(1,2,3)
         Ex2:subtype(set[1,2,3])
         Ex3:subtype(poly1[1,2,3])
         Ex4:subtype([1,2,3])
-        
         '''
         return GiacMethods['subtype'](self,*args)
 
@@ -16671,7 +15356,7 @@ cdef class GiacMethods_base:
         Help for sum:
         sum(Expr,Var,VarMin(a),VarMax(b),[VarStep(p)])
         Discrete sum (with 2 or 4 arguments return then sum from a to b if a<=b or of the opposite of the sum from b+1 to a-1 if a>b+1 or 0 if a=b+1) or the discrete primitive or sum of the elements of a list or a sequence.
-        See also: 1/ + 
+        See also: 1/ +
         Ex1:sum(1/n^2,n,1,17)
         Ex2:sum(1/n^2,n=1..17)
         Ex3:sum(1/n^2,n,17,1)
@@ -16682,7 +15367,6 @@ cdef class GiacMethods_base:
         Ex8:sum([[1,2,3,4,5,6,7,8,9],[1,2,3,4,5,6,7,8,9]])
         Ex9:sum(1/(x*(x+1)),x)
         Ex10:sum(cos(n*x),n)
-        
         '''
         return GiacMethods['sum'](self,*args)
 
@@ -16691,11 +15375,10 @@ cdef class GiacMethods_base:
         Help for sum_riemann:
         sum_riemann(Expr(Xpr),Lst(var1,var2))
         Returns an equivalent when var1=+infinity of the sum of Xpr(var1,var2) for var2 from 1 to var1 when the sum is a Riemann sum.
-        See also: 1/  
+        See also: 1/
         Ex1:sum_riemann(1/(n+k),[n,k])
         Ex2:sum_riemann(n/(n^2+k),[n,k])
         Ex3:sum_riemann(n/(n^2+k^2),[n,k])
-        
         '''
         return GiacMethods['sum_riemann'](self,*args)
 
@@ -16704,12 +15387,11 @@ cdef class GiacMethods_base:
         Help for suppress:
         suppress(Vect(L)||Str(l),Intg(n))
         Returns L without the element of index n; L:=suppress(L,n) or L.suppress(n).
-        See also: 1/ tail 2/ mid 3/ remove 4/ insert 
+        See also: 1/ tail 2/ mid 3/ remove 4/ insert
         Ex1:suppress([0,1,2,3],2)
         Ex2:suppress("0123",2)
         Ex3: L:=[0,1,2,3];L:=suppress(L,2)
         Ex4: L:=[0,1,2,3];L.suppress(2)
-        
         '''
         return GiacMethods['suppress'](self,*args)
 
@@ -16718,10 +15400,9 @@ cdef class GiacMethods_base:
         Help for surd:
         surd(Expr,Intg(n))
         Power 1/n.
-        See also: 1/ sqrt 2/ ^ 
+        See also: 1/ sqrt 2/ ^
         Ex1:surd(8,3)
         Ex2:surd(-8,3)
-        
         '''
         return GiacMethods['surd'](self,*args)
 
@@ -16731,7 +15412,6 @@ cdef class GiacMethods_base:
         svd(Mtrx(A))
         For a square numerical real matrix A, returns U orthogonal, S vector of singular values, Q orthogonal such that A=U*diag(S)*tran(Q).
         Ex1:svd([[1,2],[3,4]])
-        
         '''
         return GiacMethods['svd'](self,*args)
 
@@ -16740,9 +15420,8 @@ cdef class GiacMethods_base:
         Help for swapcol:
         swapcol(Mtrx(A),Intg(n1),Intg(n2))
         Returns the matrix obtained from A by swapping the n1-th column and the n2-th column.
-        See also: 1/ rowSwap 
+        See also: 1/ rowSwap
         Ex1:swapcol([[1,2],[3,4],[5,6]],0,1)
-        
         '''
         return GiacMethods['swapcol'](self,*args)
 
@@ -16751,9 +15430,8 @@ cdef class GiacMethods_base:
         Help for swaprow:
         swaprow(Mtrx(A),Intg(n1),Intg(n2))
         Returns the matrix obtained from A by swapping the n1-th row and the n2-th row.
-        See also: 1/ rowAdd 2/ colSwap 
+        See also: 1/ rowAdd 2/ colSwap
         Ex1:swaprow([[1,2],[3,4],[5,6]],1,2)
-        
         '''
         return GiacMethods['swaprow'](self,*args)
 
@@ -16762,11 +15440,10 @@ cdef class GiacMethods_base:
         Help for switch_axes:
         switch_axes([Intg(0 or 1)])
         switch_axes() puts or erases the axes of the graphic-screen.
-        See also: 1/ gl_showaxes 2/ axes 
+        See also: 1/ gl_showaxes 2/ axes
         Ex1:switch_axes()
         Ex2:switch_axes(0)
         Ex3:switch_axes(1)
-        
         '''
         return GiacMethods['switch_axes'](self,*args)
 
@@ -16775,10 +15452,9 @@ cdef class GiacMethods_base:
         Help for sylvester:
         sylvester(Poly,Poly,Var)
         Sylvester matrix of two polynomials.
-        See also: 1/ resultant 
+        See also: 1/ resultant
         Ex1:sylvester(x^2-1,x^3-1,x)
         Ex2:sylvester(x^3-p*x+q,3*x^2-p,x)
-        
         '''
         return GiacMethods['sylvester'](self,*args)
 
@@ -16787,14 +15463,13 @@ cdef class GiacMethods_base:
         Help for symb2poly:
         symb2poly(Expr, LstVar or [Var])
         Returns the coefficients of a polynomial with respect to the 2nd argument or if the second argument is a list the internal format of the polynomial.
-        See also: 1/ poly2symb 2/ r2e 
+        See also: 1/ poly2symb 2/ r2e
         Ex1:symb2poly(x*3+2.1)
         Ex2:symb2poly(3*x*y+2*y+1,y)
         Ex3:symb2poly(3*x*y+2*y+1,x,y)
         Ex4:symb2poly(3*x*y+2*y+1,[x,y])
         Ex5:symb2poly(-x^4+x*3*y+2+y^2*z,[x,y,z])
         Ex6:symb2poly(-x^4+x*3*y+2+y^2*z,[x,y,z])
-        
         '''
         return GiacMethods['symb2poly'](self,*args)
 
@@ -16803,12 +15478,11 @@ cdef class GiacMethods_base:
         Help for symbol:
         symbol(Opt)
         DOM_SYMBOLIC or symbol is the type of a symbolic variable, as returned by the type command. It is also an option of the assume command.
-        See also: 1/ type 2/ assume 3/ DOM_INT 4/ DOM_FLOAT 
+        See also: 1/ type 2/ assume 3/ DOM_INT 4/ DOM_FLOAT
         Ex1: assume(a,symbol)
         Ex2: assume(a,DOM_SYMBOLIC)
         Ex3: a:=sqrt(2);type(a)
         Ex4: type(2x+1)
-        
         '''
         return GiacMethods['symbol'](self,*args)
 
@@ -16817,9 +15491,8 @@ cdef class GiacMethods_base:
         Help for syst2mat:
         syst2mat(LstLinEq,LstVar)
         Returns the matrix M=A|(-b) associate to the system Y=AX+b.
-        See also: 1/ linsolve 2/ rref 
+        See also: 1/ linsolve 2/ rref
         Ex1:syst2mat([x-y=1,x+2*y],[x,y])
-        
         '''
         return GiacMethods['syst2mat'](self,*args)
 
@@ -16828,9 +15501,8 @@ cdef class GiacMethods_base:
         Help for tCollect:
         tCollect(Expr)
         Collects trigonometric expressions.
-        See also: 1/ texpand 2/ tlin 
+        See also: 1/ texpand 2/ tlin
         Ex1:tCollect(sin(x)+cos(x))
-        
         '''
         return GiacMethods['tCollect'](self,*args)
 
@@ -16839,11 +15511,10 @@ cdef class GiacMethods_base:
         Help for tExpand:
         tExpand(Expr)
         Expands transcendental expressions.
-        See also: 1/ tcollect 2/ tlin 3/ lin 4/ trigexpand 
+        See also: 1/ tcollect 2/ tlin 3/ lin 4/ trigexpand
         Ex1:tExpand(sin(2*x)+exp(x+y))
         Ex2:tExpand(cos(x+y))
         Ex3:tExpand(cos(3*x))
-        
         '''
         return GiacMethods['tExpand'](self,*args)
 
@@ -16852,11 +15523,10 @@ cdef class GiacMethods_base:
         Help for table:
         table(SeqEqual(index=value))
         Defines an array where the indices are strings or real numbers or defines a table with a matrix.
-        See also: 1/ matrix 2/ convert 3/ array 
+        See also: 1/ matrix 2/ convert 3/ array
         Ex1:table(3=-10,"a"=10,"b"=20,"c"=30,"d"=40)
-        Ex2: A:=[[0,1],[2,3]];table(A)  
+        Ex2: A:=[[0,1],[2,3]];table(A)
         Ex3: B:=table([1,2]=12,[2,5]=25);matrix(B)
-        
         '''
         return GiacMethods['table'](self,*args)
 
@@ -16865,10 +15535,9 @@ cdef class GiacMethods_base:
         Help for tablefunc:
         tablefunc(Expr,Var)
         Table of values of a function : you must be in a spreadsheet.
-        See also: 1/ tabvar 2/ tableseq 
+        See also: 1/ tabvar 2/ tableseq
         Ex1:tablefunc(sin(x),x)
         Ex2:tablefunc(x^2-x-2,x)
-        
         '''
         return GiacMethods['tablefunc'](self,*args)
 
@@ -16877,10 +15546,9 @@ cdef class GiacMethods_base:
         Help for tableseq:
         tableseq(Expr,(Var or LstVar),(InitVal or LstInitVal))
         Table of values of a sequence (in a spreadsheet.)
-        See also: 1/ tablefunc 
+        See also: 1/ tablefunc
         Ex1:tableseq(cos(x),x,0.0)
         Ex2:tableseq(x+y,[x,y],[1,1])
-        
         '''
         return GiacMethods['tableseq'](self,*args)
 
@@ -16889,11 +15557,10 @@ cdef class GiacMethods_base:
         Help for tabsign:
         tabsign(Expr,Var)
         Table of signs of a function.
-        See also: 1/ tablefunc 2/ tabvar 
+        See also: 1/ tablefunc 2/ tabvar
         Ex1:tabsign(x^2-x,x)
         Ex2:tabsign(x^2,x,-3,5)
         Ex3:tabsign(sin(x),x)
-        
         '''
         return GiacMethods['tabsign'](self,*args)
 
@@ -16902,13 +15569,12 @@ cdef class GiacMethods_base:
         Help for tabvar:
         tabvar(Expr,Var)
         Table of variations of a function with its graph on DispG.
-        See also: 1/ tablefunc 2/ tabsign 
+        See also: 1/ tablefunc 2/ tabsign
         Ex1:tabvar(sin(x),x)
         Ex2:tabvar(1/ln(x^2-1),x,diff=1)
         Ex3:tabvar(x^2+x+1,x)
         Ex4:tabvar(x^2,x,-3,5)
         Ex5:tabvar([sin(2t),cos(3t)])
-        
         '''
         return GiacMethods['tabvar'](self,*args)
 
@@ -16917,11 +15583,10 @@ cdef class GiacMethods_base:
         Help for tail:
         tail(Lst or Seq or Str)
         Returns the list (or sequence or string) without its first element.
-        See also: 1/ head 2/ mid 3/ left 4/ right 5/ back 
+        See also: 1/ head 2/ mid 3/ left 4/ right 5/ back
         Ex1:tail([3,2,4,1,0])
         Ex2:tail(3,2,4,1,0)
         Ex3:tail("bonjour")
-        
         '''
         return GiacMethods['tail'](self,*args)
 
@@ -16930,11 +15595,10 @@ cdef class GiacMethods_base:
         Help for tan:
         tan(Expr)
         Tangent or option of the convert or convertir command (id halftan).
-        See also: 1/ atan or Opt 2/ convert 3/ halftan 
+        See also: 1/ atan or Opt 2/ convert 3/ halftan
         Ex1:tan(0)
         Ex2:tan(pi/4)
         Ex3: convert(tan(x),tan)
-        
         '''
         return GiacMethods['tan'](self,*args)
 
@@ -16943,9 +15607,8 @@ cdef class GiacMethods_base:
         Help for tan2cossin2:
         tan2cossin2(Expr)
         Replaces tan(x) by (1-cos(2*x))/sin(2*x) in the argument.
-        See also: 1/ tan2sincos2 2/ tan2sincos 3/ sin2costan 4/ cos2sintan 
+        See also: 1/ tan2sincos2 2/ tan2sincos 3/ sin2costan 4/ cos2sintan
         Ex1:tan2cossin2(tan(x))
-        
         '''
         return GiacMethods['tan2cossin2'](self,*args)
 
@@ -16954,9 +15617,8 @@ cdef class GiacMethods_base:
         Help for tan2sincos:
         tan2sincos(Expr)
         Replaces tan(x) by sin(x)/cos(x) in the argument.
-        See also: 1/ sin2costan 2/ cos2sintan 3/ tan2sincos2 4/ tan2cossin2 
+        See also: 1/ sin2costan 2/ cos2sintan 3/ tan2sincos2 4/ tan2cossin2
         Ex1:tan2sincos(tan(x))
-        
         '''
         return GiacMethods['tan2sincos'](self,*args)
 
@@ -16965,9 +15627,8 @@ cdef class GiacMethods_base:
         Help for tan2sincos2:
         tan2sincos2(Expr)
         Replaces tan(x) by sin(2*x)/(1+cos(2*x)) in the argument.
-        See also: 1/ tan2cossin2 2/ tan2sincos 3/ sin2costan 4/ cos2sintan 
+        See also: 1/ tan2cossin2 2/ tan2sincos 3/ sin2costan 4/ cos2sintan
         Ex1:tan2sincos2(tan(x))
-        
         '''
         return GiacMethods['tan2sincos2'](self,*args)
 
@@ -16976,7 +15637,7 @@ cdef class GiacMethods_base:
         Help for tangent:
         tangent(Curve(C),Pnt(A))
         tangent(C,A) draws the tangents (line or plane) to C through A.
-        See also: 1/ LineTan 2/ droite_tangente 
+        See also: 1/ LineTan 2/ droite_tangente
         Ex1:tangent(circle(i,1+i),A)
         Ex2:tangent(plotfunc(sin(x)),3*pi/4)
         Ex3:tangent(plotfunc(sin(x)),point(3*pi/4+i*sqrt(2)/2))
@@ -16985,7 +15646,6 @@ cdef class GiacMethods_base:
         Ex6:tangent(plotparam(3*exp(t/2)*exp(i*t),t),7)
         Ex7:tangent(plotpolar(3*exp(t/2),t),7)
         Ex8: equation(tangente([2*cos(t),2*sin(t),3*t],t))
-        
         '''
         return GiacMethods['tangent'](self,*args)
 
@@ -16994,7 +15654,7 @@ cdef class GiacMethods_base:
         Help for tangente:
         tangente(Curve(C),Pnt(A))
         tangent(C,A) draws the tangents (line or plane) to C through A.
-        See also: 1/ LineTan 2/ droite_tangente 
+        See also: 1/ LineTan 2/ droite_tangente
         Ex1:tangente(circle(i,1+i),A)
         Ex2:tangente(plotfunc(sin(x)),3*pi/4)
         Ex3:tangente(plotfunc(sin(x)),point(3*pi/4+i*sqrt(2)/2))
@@ -17003,7 +15663,6 @@ cdef class GiacMethods_base:
         Ex6:tangente(plotparam(3*exp(t/2)*exp(i*t),t),7)
         Ex7:tangente(plotpolar(3*exp(t/2),t),7)
         Ex8: equation(tangente([2*cos(t),2*sin(t),3*t],t))
-        
         '''
         return GiacMethods['tangente'](self,*args)
 
@@ -17012,10 +15671,9 @@ cdef class GiacMethods_base:
         Help for tanh:
         tanh(Expr)
         Hyperbolic tangent.
-        See also: 1/ atanh 2/ hyp2exp 
+        See also: 1/ atanh 2/ hyp2exp
         Ex1:tanh(0)
         Ex2:tanh(hyp2exp(tanh(1)))
-        
         '''
         return GiacMethods['tanh'](self,*args)
 
@@ -17024,11 +15682,10 @@ cdef class GiacMethods_base:
         Help for taux_accroissement:
         taux_accroissement(Expr,Var,Val1,(Val1+Var or Val2))
         Returns the rate of change of an expression when the variable goes from Val1 to Val2 (by default Var=x).
-        See also: 1/ diff 2/ limit 
+        See also: 1/ diff 2/ limit
         Ex1:taux_accroissement(x^2,1,1+h)
         Ex2:taux_accroissement(x^2,1,2)
         Ex3:taux_accroissement(a^2,a,1,1+h)
-        
         '''
         return GiacMethods['taux_accroissement'](self,*args)
 
@@ -17037,7 +15694,7 @@ cdef class GiacMethods_base:
         Help for taylor:
         taylor(Expr,[Var=limit_point],[Order])
         Series expansion at finite or infinite points (by default x=0, and relative order=5).
-        See also: 1/ series 2/ limit 3/ pade 4/ polynom 
+        See also: 1/ series 2/ limit 3/ pade 4/ polynom
         Ex1:taylor(sin(x)/x,x,0)
         Ex2:taylor(sin(x),x=0,5,polynom)
         Ex3:taylor(ln(y+y^2)-ln(y),y)
@@ -17045,10 +15702,9 @@ cdef class GiacMethods_base:
         Ex5:taylor(ln(x+x^2)-ln(x),x=0,2)
         Ex6:taylor(ln(x+x^2)-ln(x),x=1,2)
         Ex7:taylor((x^4+x+2)/(x^2+1),x,5)
-        Ex8:taylor(sin(t*x+t*y)+cos(t*x*t*y),t=0,6,polynom)(h=1) 
+        Ex8:taylor(sin(t*x+t*y)+cos(t*x*t*y),t=0,6,polynom)(h=1)
         Ex9:taylor(sin((1+h*t)*(pi/2+k*t)),t=0,3,polynom)(t=1)
         Ex10:taylor((-1+k*t)^2/(1+h*t)^3,t=0,3,polynom)(t=1)
-        
         '''
         return GiacMethods['taylor'](self,*args)
 
@@ -17057,9 +15713,8 @@ cdef class GiacMethods_base:
         Help for tchebyshev1:
         tchebyshev1(Intg(n))
         Returns the n-th Tchebyshev polynomial of first kind.
-        See also: 1/ tchebyshev2 2/ hermite 
+        See also: 1/ tchebyshev2 2/ hermite
         Ex1:tchebyshev1(3)
-        
         '''
         return GiacMethods['tchebyshev1'](self,*args)
 
@@ -17068,9 +15723,8 @@ cdef class GiacMethods_base:
         Help for tchebyshev2:
         tchebyshev2(Intg(n))
         Returns the nt-h Tchebyshev polynomial of second kind.
-        See also: 1/ tchebyshev1 2/ hermite 
+        See also: 1/ tchebyshev1 2/ hermite
         Ex1:tchebyshev2(3)
-        
         '''
         return GiacMethods['tchebyshev2'](self,*args)
 
@@ -17079,10 +15733,9 @@ cdef class GiacMethods_base:
         Help for tcoeff:
         tcoeff(Poly||Lst)
         Returns the coefficient of the term of lowest degree of a polynomial (t=trailing).
-        See also: 1/ lcoeff 
+        See also: 1/ lcoeff
         Ex1:tcoeff(-2*x^3+x^2+7*x)
         Ex2:tcoeff([-2,1,7,0])
-        
         '''
         return GiacMethods['tcoeff'](self,*args)
 
@@ -17091,9 +15744,8 @@ cdef class GiacMethods_base:
         Help for tcollect:
         tcollect(Expr)
         Collects trigonometric expressions.
-        See also: 1/ texpand 2/ tlin 
+        See also: 1/ texpand 2/ tlin
         Ex1:tcollect(sin(x)+cos(x))
-        
         '''
         return GiacMethods['tcollect'](self,*args)
 
@@ -17102,8 +15754,7 @@ cdef class GiacMethods_base:
         Help for tdeg:
         tdeg(Opt)
         Option of the gbasis or greduce command to specify an order for monomials (complete degree then lexicographic order).
-        See also: 1/ gbasis 2/ greduce 
-        
+        See also: 1/ gbasis 2/ greduce
         '''
         return GiacMethods['tdeg'](self,*args)
 
@@ -17112,9 +15763,8 @@ cdef class GiacMethods_base:
         Help for tensor_product:
         tensor_product(Seq(G1,G2,..))
         Returns the tensor product of the input graphs G1, G2, ... with vertices labelled as "u:v:..." where u, v, ... are vertices from G1, G2, ..., respectively.
-        See also: 1/ cartesian_product 
+        See also: 1/ cartesian_product
         Ex1:tensor_product(graph(trail(1,2,3,4,5,2)),star_graph(3))
-        
         '''
         return GiacMethods['tensor_product'](self,*args)
 
@@ -17123,10 +15773,9 @@ cdef class GiacMethods_base:
         Help for tetrahedron:
         tetrahedron(Pnt(A),Pnt(B),Pnt(C),[Pnt(D)])
         Draws the regular direct pyramid ABCD with vertices A,B and a face in the plane (A,B,C) when there is 3 arguments and the pyramid ABCD when there are 4 arguments.
-        See also: 1/ cube 2/ cylinder 3/ icosahedron 4/ dodecahedron 5/ octahedron 
+        See also: 1/ cube 2/ cylinder 3/ icosahedron 4/ dodecahedron 5/ octahedron
         Ex1:tetrahedron([0,0,0],[3,0,0],[0,1,0])
         Ex2:tetrahedron([0,0,0],[3,0,0],[0,3,0],[0,0,4])
-        
         '''
         return GiacMethods['tetrahedron'](self,*args)
 
@@ -17135,11 +15784,10 @@ cdef class GiacMethods_base:
         Help for texpand:
         texpand(Expr)
         Expands transcendental expressions.
-        See also: 1/ tcollect 2/ tlin 3/ lin 4/ trigexpand 
+        See also: 1/ tcollect 2/ tlin 3/ lin 4/ trigexpand
         Ex1:texpand(sin(2*x)+exp(x+y))
         Ex2:texpand(cos(x+y))
         Ex3:texpand(cos(3*x))
-        
         '''
         return GiacMethods['texpand'](self,*args)
 
@@ -17148,10 +15796,9 @@ cdef class GiacMethods_base:
         Help for thickness:
         thickness(Opt)
         Option (Maple compatibility) of a graphic command to define the thickness of lines.
-        See also: 1/ line_width 
+        See also: 1/ line_width
         Ex1: segment(0,point(1,1),thickness=5)
         Ex2: segment(0,point(1,1),epaisseur=5)
-        
         '''
         return GiacMethods['thickness'](self,*args)
 
@@ -17160,10 +15807,9 @@ cdef class GiacMethods_base:
         Help for threshold:
         threshold(Lst,Real(bound)[=Expr(repl)] or Lst[Real(lower)[=Expr(rl)],Real(upper)[=Expr(ru)]],[Fnc(compare)],[abs[=true or false]])
         Performs thresholding operations on a list of real or complex numbers.
-        See also: 1/ max 2/ min 
+        See also: 1/ max 2/ min
         Ex1:threshold([1,3,2,4,5,4,3,2,3,1],3,'>=')
         Ex2:threshold([-10,-5,0,5,10],7=a,abs=true)
-        
         '''
         return GiacMethods['threshold'](self,*args)
 
@@ -17172,10 +15818,9 @@ cdef class GiacMethods_base:
         Help for throw:
         throw(Str)
         Generates the display of an error in a program.
-        See also: 1/ try 2/ catch 
+        See also: 1/ try 2/ catch
         Ex1:throw("Argument should be integer")
         Ex2:throw("je provoque une erreur")
-        
         '''
         return GiacMethods['throw'](self,*args)
 
@@ -17184,10 +15829,9 @@ cdef class GiacMethods_base:
         Help for title:
         title(Opt)
         Global option of a graphic command to put a title in a graphic.
-        See also: 1/ line_width 
+        See also: 1/ line_width
         Ex1: title="segment";segment(0,point(1,1),epaisseur=5)
         Ex2: titre="segment";segment(0,point(1,1),epaisseur=5)
-        
         '''
         return GiacMethods['title'](self,*args)
 
@@ -17196,10 +15840,9 @@ cdef class GiacMethods_base:
         Help for titre:
         titre(Opt)
         Global option of a graphic command to put a title in a graphic.
-        See also: 1/ line_width 
+        See also: 1/ line_width
         Ex1: title="segment";segment(0,point(1,1),epaisseur=5)
         Ex2: titre="segment";segment(0,point(1,1),epaisseur=5)
-        
         '''
         return GiacMethods['titre'](self,*args)
 
@@ -17208,10 +15851,9 @@ cdef class GiacMethods_base:
         Help for tlin:
         tlin(ExprTrig)
         Trigonometric linearization.
-        See also: 1/ texpand 2/ lin 
+        See also: 1/ texpand 2/ lin
         Ex1:tlin(sin(x)^3)
         Ex2:tlin(cos(x)*cos(y))
-        
         '''
         return GiacMethods['tlin'](self,*args)
 
@@ -17220,10 +15862,9 @@ cdef class GiacMethods_base:
         Help for tonnetz:
         tonnetz(Intg(a),Intg(b),Intg(c),[Intg(d)])
         Returns the graph corresponding to the [a,b,c] resp. [a,b,c,d] tone network (tonnetz) used in neo-Riemannian music theory.
-        See also: 1/ is_regular 2/ clique_stats 
+        See also: 1/ is_regular 2/ clique_stats
         Ex1:tonnetz(3,4,5)
         Ex2:tonnetz(2,3,3,4)
-        
         '''
         return GiacMethods['tonnetz'](self,*args)
 
@@ -17232,9 +15873,8 @@ cdef class GiacMethods_base:
         Help for topologic_sort:
         topologic_sort(Graph(G))
         Returns the list of vertices sorted according to the topological ordering in the directed acyclic graph G.
-        See also: 1/ digraph 2/ is_acyclic 
+        See also: 1/ digraph 2/ is_acyclic
         Ex1:topologic_sort(digraph(%{[c,a],[c,b],[c,d],[a,d],[b,d],[a,b]%}))
-        
         '''
         return GiacMethods['topologic_sort'](self,*args)
 
@@ -17243,9 +15883,8 @@ cdef class GiacMethods_base:
         Help for topological_sort:
         topological_sort(Graph(G))
         Returns the list of vertices sorted according to the topological ordering in the directed acyclic graph G.
-        See also: 1/ digraph 2/ is_acyclic 
+        See also: 1/ digraph 2/ is_acyclic
         Ex1:topological_sort(digraph(%{[c,a],[c,b],[c,d],[a,d],[b,d],[a,b]%}))
-        
         '''
         return GiacMethods['topological_sort'](self,*args)
 
@@ -17254,9 +15893,8 @@ cdef class GiacMethods_base:
         Help for torus_grid_graph:
         torus_grid_graph(Intg(m),Intg(n))
         Returns a torus grid graph on m*n vertices, where m,n>=3.
-        See also: 1/ grid_graph 
+        See also: 1/ grid_graph
         Ex1:torus_grid_graph(6,12)
-        
         '''
         return GiacMethods['torus_grid_graph'](self,*args)
 
@@ -17265,9 +15903,8 @@ cdef class GiacMethods_base:
         Help for total_degree:
         total_degree(Poly(P),Lst(Vars))
         Total degree of the polynomial P with respect to the second argument.
-        See also: 1/ valuation 2/ size 3/ degree 
+        See also: 1/ valuation 2/ size 3/ degree
         Ex1:total_degree(x^3*y+x*y,[x,y])
-        
         '''
         return GiacMethods['total_degree'](self,*args)
 
@@ -17276,10 +15913,9 @@ cdef class GiacMethods_base:
         Help for tourne_droite:
         tourne_droite(NULL or Real(n))
         The turtle turns right by n degrees (by default n=90).
-        See also: 1/ tourne_gauche 2/ pas_de_cote 
+        See also: 1/ tourne_gauche 2/ pas_de_cote
         Ex1: tourne_droite 60
         Ex2:tourne_droite(60)
-        
         '''
         return GiacMethods['tourne_droite'](self,*args)
 
@@ -17288,10 +15924,9 @@ cdef class GiacMethods_base:
         Help for tourne_gauche:
         tourne_gauche(NULL or Real(n))
         The turtle turns left by n degrees (by defaults n=90).
-        See also: 1/ tourne_droite 
+        See also: 1/ tourne_droite
         Ex1: tourne_gauche 60
         Ex2:tourne_gauche(60)
-        
         '''
         return GiacMethods['tourne_gauche'](self,*args)
 
@@ -17304,7 +15939,6 @@ cdef class GiacMethods_base:
         Ex2:tpsolve([7,10,8,8,9,6],[9,6,12,8,10],[[36,40,32,43,29],[28,27,29,40,38],[34,35,41,29,31],[41,42,35,27,36],[25,28,40,34,38],[31,30,43,38,40]])
         Ex3:tpsolve([95,70,165,165],[195,150,30,45,75],[[15,M,45,M,0],[12,40,M,M,0],[0,15,25,25,0],[M,0,M,12,0]])
         Ex4:tpsolve([1,1,1,1],[1,1,1,1],[[10,12,9,11],[5,10,7,8],[12,14,13,11],[8,15,11,9]])
-        
         '''
         return GiacMethods['tpsolve'](self,*args)
 
@@ -17313,12 +15947,11 @@ cdef class GiacMethods_base:
         Help for trace:
         trace(Mtrx or GeoObj)
         Returns the trace of a square matrix or draws the trace of a geometric object when the parameter changes (see Trace in Menu button of a geometric level and write only one instruction on each line).
-        See also: 1/ det 2/ lieu 
+        See also: 1/ det 2/ lieu
         Ex1:trace([[1,2,3],[1,3,6],[2,5,7]])
         Ex2:trace([[1+i,2,3],[1,3,6],[2,5,9-i]])
         Ex3: assume(a=[0.7,-5,5,0.1]);trace(point(a-i*a))
         Ex4: assume(a=[0.7,-5,5,0.1]);trace(inter_unique(droite(y=a*x+a),droite(y=2*a*x+1)))
-        
         '''
         return GiacMethods['trace'](self,*args)
 
@@ -17327,9 +15960,8 @@ cdef class GiacMethods_base:
         Help for trail:
         trail(Seq(V))
         Returns a trail of vertices from V (inert command).
-        See also: 1/ graph 2/ digraph 
+        See also: 1/ graph 2/ digraph
         Ex1:trail(1,2,3,4,1)
-        
         '''
         return GiacMethods['trail'](self,*args)
 
@@ -17338,10 +15970,9 @@ cdef class GiacMethods_base:
         Help for trail2edges:
         trail2edges(Trail(T))
         Converts a trail T to the list of its edges.
-        See also: 1/ subgraph 2/ trail 
+        See also: 1/ subgraph 2/ trail
         Ex1:trail2edges(trail(1,2,3,4,1,3))
         Ex2:trail2edges([1,2,3,4,1,3])
-        
         '''
         return GiacMethods['trail2edges'](self,*args)
 
@@ -17350,10 +15981,9 @@ cdef class GiacMethods_base:
         Help for trames:
         trames(Opt)
         Option of animate and animate3d commands to give the number of pictures.
-        See also: 1/ animate 2/ animate3d 
+        See also: 1/ animate 2/ animate3d
         Ex1: animate(sin(x*t),x=-pi..pi,t=-3..3,frames=30)
         Ex2: animate3d(x^2+t*y^2,[x=-2..2,y=-2..2],t=-3..3,frames=10)
-        
         '''
         return GiacMethods['trames'](self,*args)
 
@@ -17362,11 +15992,10 @@ cdef class GiacMethods_base:
         Help for tran:
         tran(Mtrx)
         Transposes a matrix (without conjugation).
-        See also: 1/ conj 2/ trn 
+        See also: 1/ conj 2/ trn
         Ex1:tran([[1,2,3],[1,3,6],[2,5,7]])
         Ex2:tran([[1+i,2,3],[1,3,6],[2,5,9-i]])
         Ex3:tran(conj([[1+i,2,3],[1,3,6],[2,5,9-i]]))
-        
         '''
         return GiacMethods['tran'](self,*args)
 
@@ -17375,9 +16004,8 @@ cdef class GiacMethods_base:
         Help for transitive_closure:
         transitive_closure(Graph(G),[weighted[=true||false]])
         Returns the [weighted, by default false] transitive closure of G.
-        See also: 1/ allpairs_distance 2/ is_connected 3/ shortest_path 4/ vertex_distance 
+        See also: 1/ allpairs_distance 2/ is_connected 3/ shortest_path 4/ vertex_distance
         Ex1:transitive_closure(digraph([1,2,3,4,5,6],%{[1,2],[2,3],[2,4],[4,5],[3,5]%}),weighted)
-        
         '''
         return GiacMethods['transitive_closure'](self,*args)
 
@@ -17386,12 +16014,11 @@ cdef class GiacMethods_base:
         Help for translation:
         translation(Vect, Pnt(C))
         translation(B-A,C) (resp translation([a,b,c],C)) is the translation of C in the translation of vector AB (resp [a,b,c]).
-        See also: 1/ rotation 2/ reflection 
+        See also: 1/ rotation 2/ reflection
         Ex1:translation(1+i,i)
         Ex2:translation([1,1,1],point([1,2,3]))
         Ex3: t:=translation(1+i);t(i)
         Ex4: t:=translation([1,1,1]);t(point([1,2,3]))
-        
         '''
         return GiacMethods['translation'](self,*args)
 
@@ -17400,11 +16027,10 @@ cdef class GiacMethods_base:
         Help for transpose:
         transpose(Mtrx)
         Transposes a matrix (without conjugation).
-        See also: 1/ conj 2/ trn 
+        See also: 1/ conj 2/ trn
         Ex1:transpose([[1,2,3],[1,3,6],[2,5,7]])
         Ex2:transpose([[1+i,2,3],[1,3,6],[2,5,9-i]])
         Ex3:transpose(conj([[1+i,2,3],[1,3,6],[2,5,9-i]]))
-        
         '''
         return GiacMethods['transpose'](self,*args)
 
@@ -17413,14 +16039,13 @@ cdef class GiacMethods_base:
         Help for trapeze:
         trapeze(Opt)
         Option of the plotarea command and of the area command.
-        See also: 1/ plotarea 2/ area 
+        See also: 1/ plotarea 2/ area
         Ex1: plotarea(x^2,x=0..1,5,trapezoid)
         Ex2: plotarea(x^2,x=0..1,5,middle_point)
         Ex3: plotarea(x^2,x=0..1,5,right_rectangle)
         Ex4: plotarea(x^2,x=0..1,5,left_rectangle)
         Ex5: area(x^2,x=0..1,5,middle_point)
         Ex6: area(x^2,x=0..1,5,trapezoid)
-        
         '''
         return GiacMethods['trapeze'](self,*args)
 
@@ -17429,14 +16054,13 @@ cdef class GiacMethods_base:
         Help for trapezoid:
         trapezoid(Opt)
         Option of the plotarea command and of the area command.
-        See also: 1/ plotarea 2/ area 
+        See also: 1/ plotarea 2/ area
         Ex1: plotarea(x^2,x=0..1,5,trapezoid)
         Ex2: plotarea(x^2,x=0..1,5,middle_point)
         Ex3: plotarea(x^2,x=0..1,5,right_rectangle)
         Ex4: plotarea(x^2,x=0..1,5,left_rectangle)
         Ex5: area(x^2,x=0..1,5,middle_point)
         Ex6: area(x^2,x=0..1,5,trapezoid)
-        
         '''
         return GiacMethods['trapezoid'](self,*args)
 
@@ -17445,13 +16069,12 @@ cdef class GiacMethods_base:
         Help for traveling_salesman:
         traveling_salesman(Graph(G),[Mtrx(M)],[opts])
         Returns a Hamiltonian cycle in an unweighted graph G or solves traveling salesman problem if G is weighted (matrix M can be used for edge weights), returning a sequence containing the minimal cost and the corresponding Hamiltonian cycle.
-        See also: 1/ is_hamiltonian 
+        See also: 1/ is_hamiltonian
         Ex1:traveling_salesman(hypercube_graph(5))
         Ex2:traveling_salesman(digraph(%{[[1,2],1],[[1,3],2],[[2,3],2],[[2,4],3],[[3,2],3],[[3,4],2],[[4,1],1]%}))
         Ex3: M:=randmatrix(4,4,99); traveling_salesman(graph("tetrahedron"),M)
         Ex4: G:=set_vertex_positions(complete_graph(42),[randvector(2,1000)$(k=1..42)]); traveling_salesman(G,vertex_distance)
         Ex5: G:=set_vertex_positions(complete_graph(120),[randvector(2,1000)$(k=1..120)]); c,T:=traveling_salesman(G,vertex_distance,approx)
-        
         '''
         return GiacMethods['traveling_salesman'](self,*args)
 
@@ -17460,8 +16083,7 @@ cdef class GiacMethods_base:
         Help for tree:
         tree(Opt)
         Option for the draw_graph command.
-        See also: 1/ planar 2/ spring 3/ draw_graph 
-        
+        See also: 1/ planar 2/ spring 3/ draw_graph
         '''
         return GiacMethods['tree'](self,*args)
 
@@ -17470,9 +16092,8 @@ cdef class GiacMethods_base:
         Help for tree_height:
         tree_height(Graph(T),Vrtx(r))
         Returns the height of the tree graph T with r as the root node.
-        See also: 1/ is_tree 2/ random_tree 
+        See also: 1/ is_tree 2/ random_tree
         Ex1:tree_height(graph(%{[1,2],[2,3],[2,4],[4,5]%}),1)
-        
         '''
         return GiacMethods['tree_height'](self,*args)
 
@@ -17481,9 +16102,8 @@ cdef class GiacMethods_base:
         Help for tri:
         tri(Expr(x))
         Returns the value of the triangle function at x.
-        See also: 1/ rect 2/ Heaviside 
+        See also: 1/ rect 2/ Heaviside
         Ex1:tri(x-1)
-        
         '''
         return GiacMethods['tri'](self,*args)
 
@@ -17492,11 +16112,10 @@ cdef class GiacMethods_base:
         Help for triangle:
         triangle((Pnt or Cplx),(Pnt or Cplx),(Pnt or Cplx))
         triangle(A,B,C) draws the triangle ABC.
-        See also: 1/ equilateral_triangle 2/ isosceles_triangle 3/ right_triangle 
+        See also: 1/ equilateral_triangle 2/ isosceles_triangle 3/ right_triangle
         Ex1:triangle(point(1+i),1,0)
         Ex2:triangle(0,1,1+i)
         Ex3:triangle(point(0,0,0),point(3,3,3),point(0,3,3))
-        
         '''
         return GiacMethods['triangle'](self,*args)
 
@@ -17509,7 +16128,6 @@ cdef class GiacMethods_base:
         Ex2:triangle_paper(1,pi/3,sqrt(3)/2,x=-1..4,y=-2..2)
         Ex3:triangle_paper(papier_triangule(1,pi/3,sqrt(3)/2,x=-2..6,y=-4*sqrt(3)..4*sqrt(3)))
         Ex4:triangle_paper(0.5,3*pi/4,0.5)
-        
         '''
         return GiacMethods['triangle_paper'](self,*args)
 
@@ -17518,12 +16136,11 @@ cdef class GiacMethods_base:
         Help for triangle_plein:
         triangle_plein(Real(a),[Real(b)],[Real(t)])
         Draws a full direct triangle with sides a,b and with angle t, from the turtle position (by default t=90 or (b=a and t=60)).
-        See also: 1/ rectangle_plein 
+        See also: 1/ rectangle_plein
         Ex1: triangle_plein 30
         Ex2:triangle_plein(30)
         Ex3:triangle_plein(30,40)
         Ex4:triangle_plein(30,40,60)
-        
         '''
         return GiacMethods['triangle_plein'](self,*args)
 
@@ -17532,10 +16149,9 @@ cdef class GiacMethods_base:
         Help for triangle_point:
         triangle_point(Opt)
         Option of the display command for a point.
-        See also: 1/ display 
+        See also: 1/ display
         Ex1: F:=display(point(2+1.5*i),point_point)
         Ex2: F:=display(point(2+1.5*i),rhombus_point)
-        
         '''
         return GiacMethods['triangle_point'](self,*args)
 
@@ -17544,9 +16160,8 @@ cdef class GiacMethods_base:
         Help for triangle_window:
         triangle_window(Lst,[Intg(d)],[Interval(n1..n2)])
         Applies the triangular windowing function with parameter d in {-1,0,1} (by default L=0) to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ bartlett_hann_window 13/ tukey_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ bartlett_hann_window 13/ tukey_window 14/ welch_window
         Ex1: scatterplot(triangle_window(randvector(1000,0..1),1))
-        
         '''
         return GiacMethods['triangle_window'](self,*args)
 
@@ -17555,9 +16170,8 @@ cdef class GiacMethods_base:
         Help for trig2exp:
         trig2exp(Expr)
         Replaces in the argument the trigonometric functions by complex exponentials without linearisation.
-        See also: 1/ exp2trig 2/ atrig2ln 
+        See also: 1/ exp2trig 2/ atrig2ln
         Ex1:trig2exp(sin(x))
-        
         '''
         return GiacMethods['trig2exp'](self,*args)
 
@@ -17566,9 +16180,8 @@ cdef class GiacMethods_base:
         Help for trigcos:
         trigcos(Expr)
         Simplifies the argument with the formulas sin(x)^2+cos(x)^2=1 and tan(x)=sin(x)/cos(x) privileging cosine.
-        See also: 1/ trigsin 2/ trigtan 
+        See also: 1/ trigsin 2/ trigtan
         Ex1:trigcos(sin(x)^4+sin(x)^2)
-        
         '''
         return GiacMethods['trigcos'](self,*args)
 
@@ -17577,9 +16190,8 @@ cdef class GiacMethods_base:
         Help for trigexpand:
         trigexpand(Expr)
         Expands trigonometric functions.
-        See also: 1/ texpand 2/ lnexpand 3/ expexpand 
+        See also: 1/ texpand 2/ lnexpand 3/ expexpand
         Ex1:trigexpand(sin(3*x))
-        
         '''
         return GiacMethods['trigexpand'](self,*args)
 
@@ -17588,10 +16200,9 @@ cdef class GiacMethods_base:
         Help for triginterp:
         triginterp(List,Var=xmin..xmax)
         Returns a trigonometric polynomial interpolation (with respect to variable x) of the points with ordinate given in list y and the abscissa equally spaced between a and b.
-        See also: 1/ lagrange 2/ thiele 
+        See also: 1/ lagrange 2/ thiele
         Ex1:triginterp([11,10,17,24,32,26,23,19],x=0..21)
         Ex2:triginterp([11,10,17,24,32,26,23,19],0,21,x)
-        
         '''
         return GiacMethods['triginterp'](self,*args)
 
@@ -17600,9 +16211,8 @@ cdef class GiacMethods_base:
         Help for trigsimplify:
         trigsimplify(Expr)
         Simplifies a trigonometric expression.
-        See also: 1/ simplify 
+        See also: 1/ simplify
         Ex1:trigsimplify(3*sin(x)-4*sin(x)^3)
-        
         '''
         return GiacMethods['trigsimplify'](self,*args)
 
@@ -17611,9 +16221,8 @@ cdef class GiacMethods_base:
         Help for trigsin:
         trigsin(Expr)
         Simplifies the argument with the formulas sin(x)^2+cos(x)^2=1 and tan(x)=sin(x)/cos(x) privileging sine.
-        See also: 1/ trigcos 2/ trigtan 
+        See also: 1/ trigcos 2/ trigtan
         Ex1:trigsin(cos(x)^4+sin(x)^2)
-        
         '''
         return GiacMethods['trigsin'](self,*args)
 
@@ -17622,9 +16231,8 @@ cdef class GiacMethods_base:
         Help for trigtan:
         trigtan(Expr)
         Simplifies the argument with the formulas sin(x)^2+cos(x)^2=1 and tan(x)=sin(x)/cos(x) privileging tangent.
-        See also: 1/ trigsin 2/ trigcos 
+        See also: 1/ trigsin 2/ trigcos
         Ex1:trigtan(cos(x)^4+sin(x)^2)
-        
         '''
         return GiacMethods['trigtan'](self,*args)
 
@@ -17633,9 +16241,8 @@ cdef class GiacMethods_base:
         Help for trn:
         trn(Mtrx)
         Returns the adjoint matrix of A =tran(conj(A)).
-        See also: 1/ tran 2/ conj 
+        See also: 1/ tran 2/ conj
         Ex1:trn([[1,2+i],[3,4]])
-        
         '''
         return GiacMethods['trn'](self,*args)
 
@@ -17644,9 +16251,8 @@ cdef class GiacMethods_base:
         Help for true:
         true()
         Boolean equal to true or 1.
-        See also: 1/ false 
+        See also: 1/ false
         Ex1: a:=true
-        
         '''
         return GiacMethods['true'](self,*args)
 
@@ -17655,13 +16261,12 @@ cdef class GiacMethods_base:
         Help for trunc:
         trunc(Real||LstReal,Int(n))
         Truncates value to n decimal places (by default n=0). Accepts complex numbers.(type=DOM_COMPLEX or DOM_FLOAT).
-        See also: 1/ fPart 2/ floor 3/ iPart 
+        See also: 1/ fPart 2/ floor 3/ iPart
         Ex1:trunc(4.3)
         Ex2:trunc(sqrt(2),3)
         Ex3:trunc([4.3333,sqrt(2)])
         Ex4:trunc([4.3333,sqrt(2)],2)
         Ex5:trunc(sqrt(2)+i*sqrt(5),4)
-        
         '''
         return GiacMethods['trunc'](self,*args)
 
@@ -17670,9 +16275,8 @@ cdef class GiacMethods_base:
         Help for truncate:
         truncate(Poly(P),Intg(n))
         Truncates the polynomial P at order n.
-        See also: 1/ series 
+        See also: 1/ series
         Ex1:truncate((x^2+x)^2,3)
-        
         '''
         return GiacMethods['truncate'](self,*args)
 
@@ -17681,9 +16285,8 @@ cdef class GiacMethods_base:
         Help for truncate_graph:
         truncate_graph(Graph(G))
         Returns the graph obtained by truncating the biconnected planar graph G.
-        See also: 1/ is_biconnected 2/ is_planar 3/ plane_dual 
+        See also: 1/ is_biconnected 2/ is_planar 3/ plane_dual
         Ex1:truncate_graph(graph("tetrahedron"))
-        
         '''
         return GiacMethods['truncate_graph'](self,*args)
 
@@ -17692,9 +16295,8 @@ cdef class GiacMethods_base:
         Help for tsimplify:
         tsimplify(Expr)
         Lowers the number of non rational variables.
-        See also: 1/ simplify 
+        See also: 1/ simplify
         Ex1:tsimplify(exp(2*x)+exp(x))
-        
         '''
         return GiacMethods['tsimplify'](self,*args)
 
@@ -17703,9 +16305,8 @@ cdef class GiacMethods_base:
         Help for tuer:
         tuer(NULL)
         Stop step-by-step execution of a program (with debug).
-        See also: 1/  
+        See also: 1/
         Ex1:tuer()
-        
         '''
         return GiacMethods['tuer'](self,*args)
 
@@ -17714,9 +16315,8 @@ cdef class GiacMethods_base:
         Help for tukey_window:
         tukey_window(Lst,[Real(a)],[Interval(n1..n2)])
         Applies the Tukey windowing function with parameter a in [0,1] (by default a=0.5) to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ bartlett_hann_window 14/ welch_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ bartlett_hann_window 14/ welch_window
         Ex1: scatterplot(tukey_window(randvector(1000,0..1),0.4))
-        
         '''
         return GiacMethods['tukey_window'](self,*args)
 
@@ -17725,10 +16325,9 @@ cdef class GiacMethods_base:
         Help for tutte_polynomial:
         tutte_polynomial(Graph(G),[Var(x),Var(y)])
         Returns the Tutte polynomial [or its value at point (x,y)] of undirected graph G. If G is weighted, all weights must be positive integers and are interpreted as edge multiplicities.
-        See also: 1/ chromatic_polynomial 2/ flow_polynomial 3/ reliability_polynomial 4/ delete_edge 5/ contract_edge 
+        See also: 1/ chromatic_polynomial 2/ flow_polynomial 3/ reliability_polynomial 4/ delete_edge 5/ contract_edge
         Ex1:tutte_polynomial(graph("tetrahedron"))
         Ex2:tutte_polynomial(graph("tetrahedron"),1,1)
-        
         '''
         return GiacMethods['tutte_polynomial'](self,*args)
 
@@ -17737,9 +16336,8 @@ cdef class GiacMethods_base:
         Help for two_edge_connected_components:
         two_edge_connected_components(Graph(G))
         Returns the list of two-edge-connected components of undirected graph G, each of them represented by the list of its vertices.
-        See also: 1/ is_two_edge_connected 2/ connected_components 
+        See also: 1/ is_two_edge_connected 2/ connected_components
         Ex1:two_edge_connected_components(graph(trail(1,2,3,4,5,3,1),trail(5,6,7,8,6)))
-        
         '''
         return GiacMethods['two_edge_connected_components'](self,*args)
 
@@ -17748,9 +16346,8 @@ cdef class GiacMethods_base:
         Help for ufactor:
         ufactor(Unit,Unit)
         Factors a unit in a unit object.
-        See also: 1/ convert 2/ mksa 3/ usimplify 
+        See also: 1/ convert 2/ mksa 3/ usimplify
         Ex1:ufactor(100_C,1_A)
-        
         '''
         return GiacMethods['ufactor'](self,*args)
 
@@ -17759,10 +16356,9 @@ cdef class GiacMethods_base:
         Help for ugamma:
         ugamma(Real(a),Real(x),[1])
         Calculates ugamma function at a point (a,x):if a and x>=0 ugamma(a,x)=int(e^{-t}*t^{a-1},t=x..inf),(ugamma(a,x)+igamma(a,x)=Gamma(a)).
-        See also: 1/ Psi 2/ Beta 3/ Gamma 4/ igamma 
+        See also: 1/ Psi 2/ Beta 3/ Gamma 4/ igamma
         Ex1:ugamma(5.0,2.0)
         Ex2:ugamma(-5.1,2.1)
-        
         '''
         return GiacMethods['ugamma'](self,*args)
 
@@ -17771,10 +16367,9 @@ cdef class GiacMethods_base:
         Help for unapply:
         unapply(Expr,Var)
         Returns a function defined by an expression.
-        See also: 1/ apply 
+        See also: 1/ apply
         Ex1:unapply(2*x^2,x)
         Ex2: f(x):=x*exp(x);g:=unapply(diff(f(x),x),x)
-        
         '''
         return GiacMethods['unapply'](self,*args)
 
@@ -17783,10 +16378,9 @@ cdef class GiacMethods_base:
         Help for unarchive:
         unarchive(Str(namefich),Seq(Var))
         Reads the value of a variable or of a list of variables which are in the file given as argument (file created with archive).
-        See also: 1/ archive 2/ Archive 3/ Unarchiv 
+        See also: 1/ archive 2/ Archive 3/ Unarchiv
         Ex1:unarchive("toto")
         Ex2:unarchive("aa.txt")
-        
         '''
         return GiacMethods['unarchive'](self,*args)
 
@@ -17795,9 +16389,8 @@ cdef class GiacMethods_base:
         Help for underlying_graph:
         underlying_graph(Graph(G))
         Returns the graph obtained by stripping directions and weights from arcs (pairs of arcs connecting the same vertices are merged to a single edge).
-        See also: 1/ is_directed 2/ is_weighted 3/ make_directed 4/ make_weighted 
+        See also: 1/ is_directed 2/ is_weighted 3/ make_directed 4/ make_weighted
         Ex1:underlying_graph(digraph(trail(1,2,3,4,1)))
-        
         '''
         return GiacMethods['underlying_graph'](self,*args)
 
@@ -17806,13 +16399,12 @@ cdef class GiacMethods_base:
         Help for unfactored:
         unfactored(Opt.)
         Option of the plotimplicit command.
-        See also: 1/ plotimplicit 
+        See also: 1/ plotimplicit
         Ex1: plotimplicit(x^2+y^2-1,x,y,unfactored)
         Ex2: plotimplicit(x^2+y^2-1,[x,y],unfactored)
         Ex3: plotimplicit(x^2+y^2+z^2-1,x,y,z,xstep=0.2,ystep=0.2,zstep=0.2,unfactored)
         Ex4: plotimplicit(x^2+y^2+z^2-1,[x,y,z],xstep=0.2,ystep=0.2,zstep=0.2,unfactored)
         Ex5: plotimplicit(x^2+y^2+z^2-1,x=0..1,y=0..1,z=0..1,xstep=0.2,ystep=0.2,zstep=0.2,unfactored)
-        
         '''
         return GiacMethods['unfactored'](self,*args)
 
@@ -17821,12 +16413,11 @@ cdef class GiacMethods_base:
         Help for uniform:
         uniform(Real(a),Real(b),Real(x))
         Returns the probability density at x of the uniform law on [a,b].
-        See also: 1/ uniform_cdf 2/ uniform_icdf 3/ randvector 4/ ranm 
+        See also: 1/ uniform_cdf 2/ uniform_icdf 3/ randvector 4/ ranm
         Ex1:uniform(2,5,4)
         Ex2:uniform(1.2,3.5,3)
         Ex3: randvector(3,uniform,1.2,3.5)
         Ex4: ranm(4,3,uniform,1.2,3.5)
-        
         '''
         return GiacMethods['uniform'](self,*args)
 
@@ -17835,10 +16426,9 @@ cdef class GiacMethods_base:
         Help for uniform_cdf:
         uniform_cdf(Real(a),Real(b),Real(x0),[Real(y0)])
         Returns the probability that a uniform random variable on [a,b] is less than x0 (or between x0 and y0).
-        See also: 1/ uniformd 2/ uniform_icdf 
+        See also: 1/ uniformd 2/ uniform_icdf
         Ex1:uniform_cdf(3.2,5.7,4.4)
         Ex2:uniform_cdf(3.2,5.7,4.4,5.4)
-        
         '''
         return GiacMethods['uniform_cdf'](self,*args)
 
@@ -17847,10 +16437,9 @@ cdef class GiacMethods_base:
         Help for uniform_icdf:
         uniform_icdf(Real(a),Real(b),Real(p))
         Returns h such that the probability that a uniform random variable on [a,b] is less than h is p (0<=p<=1).
-        See also: 1/ uniform_cdf 2/ uniformd 
+        See also: 1/ uniform_cdf 2/ uniformd
         Ex1:uniform_icdf(4.2,10.3,0.95)
         Ex2:uniform_icdf(3.2,5.7,0.48)
-        
         '''
         return GiacMethods['uniform_icdf'](self,*args)
 
@@ -17859,12 +16448,11 @@ cdef class GiacMethods_base:
         Help for uniformd:
         uniformd(Real(a),Real(b),Real(x))
         Returns the probability density at x of the uniform law on [a,b].
-        See also: 1/ uniform_cdf 2/ uniform_icdf 3/ randvector 4/ ranm 
+        See also: 1/ uniform_cdf 2/ uniform_icdf 3/ randvector 4/ ranm
         Ex1:uniformd(2,5,4)
         Ex2:uniformd(1.2,3.5,3)
         Ex3: randvector(3,uniform,1.2,3.5)
         Ex4: ranm(4,3,uniform,1.2,3.5)
-        
         '''
         return GiacMethods['uniformd'](self,*args)
 
@@ -17873,10 +16461,9 @@ cdef class GiacMethods_base:
         Help for uniformd_cdf:
         uniformd_cdf(Real(a),Real(b),Real(x0),[Real(y0)])
         Returns the probability that a uniform random variable on [a,b] is less than x0 (or between x0 and y0).
-        See also: 1/ uniformd 2/ uniform_icdf 
+        See also: 1/ uniformd 2/ uniform_icdf
         Ex1:uniformd_cdf(3.2,5.7,4.4)
         Ex2:uniformd_cdf(3.2,5.7,4.4,5.4)
-        
         '''
         return GiacMethods['uniformd_cdf'](self,*args)
 
@@ -17885,10 +16472,9 @@ cdef class GiacMethods_base:
         Help for uniformd_icdf:
         uniformd_icdf(Real(a),Real(b),Real(p))
         Returns h such that the probability that a uniform random variable on [a,b] is less than h is p (0<=p<=1).
-        See also: 1/ uniform_cdf 2/ uniformd 
+        See also: 1/ uniform_cdf 2/ uniformd
         Ex1:uniformd_icdf(4.2,10.3,0.95)
         Ex2:uniformd_icdf(3.2,5.7,0.48)
-        
         '''
         return GiacMethods['uniformd_icdf'](self,*args)
 
@@ -17897,12 +16483,11 @@ cdef class GiacMethods_base:
         Help for unitV:
         unitV(Lst||Cplx)
         Returns the vector divided by its l2norm. It is also an option for plotfield.
-        See also: 1/ l2norm 
+        See also: 1/ l2norm
         Ex1:unitV(3+4*i)
         Ex2:unitV([3,4])
         Ex3: fieldplot(-t*y,[t,y],normalize)
         Ex4: fieldplot(-t*y,[t,y],normalize,xstep=0.5,ystep=0.5)
-        
         '''
         return GiacMethods['unitV'](self,*args)
 
@@ -17911,9 +16496,8 @@ cdef class GiacMethods_base:
         Help for unquote:
         unquote(Expr)
         Evaluates a quoted expression (for example purge(c);a:=c;unquote(a):=3; put 3 in the variables a and c).
-        See also: 1/ quote 
+        See also: 1/ quote
         Ex1:unquote(a)
-        
         '''
         return GiacMethods['unquote'](self,*args)
 
@@ -17922,10 +16506,9 @@ cdef class GiacMethods_base:
         Help for upper:
         upper(Mtrx||Strng)
         Returns the upper triangular matrix (over the diagonal, included) or writes a string in uppercase.
-        See also: 1/ diag 2/ lower 
+        See also: 1/ diag 2/ lower
         Ex1:upper([[1,2,3],[4,5,6],[7,8,9]])
         Ex2:upper("hello")
-        
         '''
         return GiacMethods['upper'](self,*args)
 
@@ -17934,10 +16517,9 @@ cdef class GiacMethods_base:
         Help for user_operator:
         user_operator(Str(R),Fnc(f),Opt(Binary||Unary||Delete))
         Defines a binary operator and returns 0 (failure) or 1(success).
-        See also: 1/  
+        See also: 1/
         Ex1:user_operator("R",(x,y)->x*y+x+y,Binary)
         Ex2:user_operator("R",(x,y)->x*y+x+y,Delete)
-        
         '''
         return GiacMethods['user_operator'](self,*args)
 
@@ -17946,9 +16528,8 @@ cdef class GiacMethods_base:
         Help for usimplify:
         usimplify(Unit)
         Simplifies a unit in a unit object.
-        See also: 1/ convert 2/ mksa 3/ ufactor 
+        See also: 1/ convert 2/ mksa 3/ ufactor
         Ex1:usimplify(100_(W*s))
-        
         '''
         return GiacMethods['usimplify'](self,*args)
 
@@ -17957,12 +16538,11 @@ cdef class GiacMethods_base:
         Help for valuation:
         valuation(Poly(P))
         Returns the valuation (degree of the term of lowest degree) of the polynomial P.
-        See also: 1/ degree 2/ tcoeff 
+        See also: 1/ degree 2/ tcoeff
         Ex1:valuation(x^4+x^3)
         Ex2:valuation([1,1,0,0,0])
         Ex3:valuation(x^5+3*x^2)
         Ex4:valuation([5,0,0,3,0,0])
-        
         '''
         return GiacMethods['valuation'](self,*args)
 
@@ -17971,9 +16551,8 @@ cdef class GiacMethods_base:
         Help for vandermonde:
         vandermonde(Vect(V))
         Returns the Vandermonde matrix=[V^0,V^1,..].
-        See also: 1/ det 
+        See also: 1/ det
         Ex1:vandermonde([1,2,a])
-        
         '''
         return GiacMethods['vandermonde'](self,*args)
 
@@ -17982,10 +16561,9 @@ cdef class GiacMethods_base:
         Help for variables_are_files:
         variables_are_files(:=Intg(0 or 1))
         Pseudo-variable to specify if you want to save the variables as file "nameofthevariable.cas".
-        See also: 1/ cas_setup 
+        See also: 1/ cas_setup
         Ex1: variables_are_files:=1
         Ex2: variables_are_files:=0
-        
         '''
         return GiacMethods['variables_are_files'](self,*args)
 
@@ -17994,11 +16572,10 @@ cdef class GiacMethods_base:
         Help for variance:
         variance(Lst||Mtrx,[Lst])
         Returns the variance of a list with the second argument as weights or the list of variances of the columns of a matrix.
-        See also: 1/ stddev 2/ mean 
+        See also: 1/ stddev 2/ mean
         Ex1:variance([3,4,2])
         Ex2:variance([1,2,3],[1,2,1])
         Ex3:variance([[1,2,3],[5,6,7]])
-        
         '''
         return GiacMethods['variance'](self,*args)
 
@@ -18007,9 +16584,8 @@ cdef class GiacMethods_base:
         Help for version:
         version(NULL)
         Returns the giac version number; for example, you are using : giac 0.4.0
-        See also: 1/  
+        See also: 1/
         Ex1:version()
-        
         '''
         return GiacMethods['version'](self,*args)
 
@@ -18018,11 +16594,10 @@ cdef class GiacMethods_base:
         Help for vertex_connectivity:
         vertex_connectivity(Graph(G))
         Returns the largest integer k such that undirected connected graph G remains connected when fewer than k vertices are removed.
-        See also: 1/ edge_connectivity 2/ is_connected 
+        See also: 1/ edge_connectivity 2/ is_connected
         Ex1:vertex_connectivity(graph("petersen"))
         Ex2:vertex_connectivity(graph("clebsch"))
         Ex3:vertex_connectivity(complete_graph(5))
-        
         '''
         return GiacMethods['vertex_connectivity'](self,*args)
 
@@ -18031,9 +16606,8 @@ cdef class GiacMethods_base:
         Help for vertex_degree:
         vertex_degree(Graph(G),Vrtx(v))
         Returns the degree of the vertex v in G (i.e. the number of edges incident to v).
-        See also: 1/ degree_sequence 2/ is_regular 3/ maximum_degree 4/ minimum_degree 5/ vertex_in_degree 6/ vertex_out_degree 
+        See also: 1/ degree_sequence 2/ is_regular 3/ maximum_degree 4/ minimum_degree 5/ vertex_in_degree 6/ vertex_out_degree
         Ex1:vertex_degree(digraph(trail(1,2,3,4,2)),2)
-        
         '''
         return GiacMethods['vertex_degree'](self,*args)
 
@@ -18042,10 +16616,9 @@ cdef class GiacMethods_base:
         Help for vertex_distance:
         vertex_distance(Graph(G),Vrtx(s),Vrtx(t)||Lst(T))
         Returns the number of edges in the shortest path from vertex s to vertex t in G. If such path does not exist, returns +infinity. For vector T of vertices from G returns the list of distances from s to each vertex t in T.
-        See also: 1/ allpairs_distance 2/ graph_diameter 3/ dijkstra 4/ shortest_path 
+        See also: 1/ allpairs_distance 2/ graph_diameter 3/ dijkstra 4/ shortest_path
         Ex1:vertex_distance(graph("petersen"),1,4)
         Ex2:vertex_distance(graph("petersen"),1,[2,4])
-        
         '''
         return GiacMethods['vertex_distance'](self,*args)
 
@@ -18054,9 +16627,8 @@ cdef class GiacMethods_base:
         Help for vertex_in_degree:
         vertex_in_degree(Graph(G),Vrtx(v))
         Returns the number of arcs in G entering the vertex v.
-        See also: 1/ degree_sequence 2/ is_regular 3/ maximum_degree 4/ minimum_degree 5/ vertex_degree 6/ vertex_out_degree 
+        See also: 1/ degree_sequence 2/ is_regular 3/ maximum_degree 4/ minimum_degree 5/ vertex_degree 6/ vertex_out_degree
         Ex1:vertex_in_degree(digraph(trail(1,2,3,4,2)),2)
-        
         '''
         return GiacMethods['vertex_in_degree'](self,*args)
 
@@ -18065,9 +16637,8 @@ cdef class GiacMethods_base:
         Help for vertex_out_degree:
         vertex_out_degree(Graph(G),Vrtx(v))
         Returns the number of arcs in G emanating from the vertex v.
-        See also: 1/ degree_sequence 2/ is_regular 3/ maximum_degree 4/ minimum_degree 5/ vertex_degree 6/ vertex_in_degree 
+        See also: 1/ degree_sequence 2/ is_regular 3/ maximum_degree 4/ minimum_degree 5/ vertex_degree 6/ vertex_in_degree
         Ex1:vertex_out_degree(digraph(trail(1,2,3,4,2)),2)
-        
         '''
         return GiacMethods['vertex_out_degree'](self,*args)
 
@@ -18076,11 +16647,10 @@ cdef class GiacMethods_base:
         Help for vertices:
         vertices(Polygon or Polyedr(P))
         Returns the list of the vertices of the polygon or polyhedron P.
-        See also: 1/ isosceles_triangle 2/ polyhedron 
+        See also: 1/ isosceles_triangle 2/ polyhedron
         Ex1:vertices(isosceles_triangle(0,1,pi/4))
         Ex2:vertices(polyhedron([0,0,0],[0,5,0],[0,0,5],[1,2,6]))
         Ex3:vertices(isosceles_triangle(0,1,pi/4))[2]
-        
         '''
         return GiacMethods['vertices'](self,*args)
 
@@ -18089,11 +16659,10 @@ cdef class GiacMethods_base:
         Help for vertices_abc:
         vertices_abc(Polygon or Polyedr(P))
         Returns the list of the vertices of the polygon or polyhedron P.
-        See also: 1/ isosceles_triangle 2/ polyhedron 
+        See also: 1/ isosceles_triangle 2/ polyhedron
         Ex1:vertices_abc(isosceles_triangle(0,1,pi/4))
         Ex2:vertices_abc(polyhedron([0,0,0],[0,5,0],[0,0,5],[1,2,6]))
         Ex3:vertices_abc(isosceles_triangle(0,1,pi/4))[2]
-        
         '''
         return GiacMethods['vertices_abc'](self,*args)
 
@@ -18102,11 +16671,10 @@ cdef class GiacMethods_base:
         Help for vertices_abca:
         vertices_abca(Polygon or Polyedr(P))
         Returns the closed list [A,B,...A] of the vertices of the polygon or polyhedron P.
-        See also: 1/ isosceles_triangle 2/ polyhedron 
+        See also: 1/ isosceles_triangle 2/ polyhedron
         Ex1:vertices_abca(isosceles_triangle(0,1,pi/4))
         Ex2:vertices_abca(polyhedron([0,0,0],[0,5,0],[0,0,5],[1,2,6]))
         Ex3:vertices_abca(isosceles_triangle(0,1,pi/4))[2]
-        
         '''
         return GiacMethods['vertices_abca'](self,*args)
 
@@ -18115,9 +16683,8 @@ cdef class GiacMethods_base:
         Help for vpotential:
         vpotential(Vect(V),LstVar)
         Returns U such that curl(U)=V.
-        See also: 1/ curl 2/ potential 
+        See also: 1/ curl 2/ potential
         Ex1:vpotential([2*x*y+3,x^2-4*z,-2*y*z],[x,y,z])
-        
         '''
         return GiacMethods['vpotential'](self,*args)
 
@@ -18126,9 +16693,8 @@ cdef class GiacMethods_base:
         Help for web_graph:
         web_graph(Intg(a),Intg(b))
         Returns a web graph on a*b vertices, where a>=3 and b>=2.
-        See also: 1/ prism_graph 2/ wheel_graph 
+        See also: 1/ prism_graph 2/ wheel_graph
         Ex1:web_graph(5,3)
-        
         '''
         return GiacMethods['web_graph'](self,*args)
 
@@ -18137,11 +16703,10 @@ cdef class GiacMethods_base:
         Help for weibull:
         weibull(Real(k),Real(lambda),Real(theta),Real(x))
         Returns the density of probability at x of the Weibull law with parameters k, lambda, theta (by default theta=0).
-        See also: 1/ weibull_cdf 2/ weibull_icdf 
+        See also: 1/ weibull_cdf 2/ weibull_icdf
         Ex1:weibull(2.1,1.2,1.3)
         Ex2:weibull(2.1,1.2,0.0,1.3)
         Ex3:weibull(2.1,1.2,0.5,1.8)
-        
         '''
         return GiacMethods['weibull'](self,*args)
 
@@ -18150,13 +16715,12 @@ cdef class GiacMethods_base:
         Help for weibull_cdf:
         weibull_cdf(Real(k),Real(lambda),Real(theta),Real(x0))
         Returns the probability that a Weibull random variable of parameters k, lambda, theta is less than x0.
-        See also: 1/ weibulld 2/ weibull_icdf 
+        See also: 1/ weibulld 2/ weibull_icdf
         Ex1:weibull_cdf(2.1,1.2,1.9)
         Ex2:weibull_cdf(2.1,1.2,0.0,1.9)
         Ex3:weibull_cdf(2.2,1.5,0.4,1.9)
         Ex4:weibull_cdf(2.2,1.5,0.4,1.2)
         Ex5:weibull_cdf(2.2,1.5,0.4,1.2,1.9)
-        
         '''
         return GiacMethods['weibull_cdf'](self,*args)
 
@@ -18165,10 +16729,9 @@ cdef class GiacMethods_base:
         Help for weibull_icdf:
         weibull_icdf(Real(k),Real(lambda),Real(theta),Real(p))
         Returns h such that the probability that a Weibull random variable of parameters k, lambda, theta is less than h is p (0<=p<=1).
-        See also: 1/ weibull_cdf 2/ weibull 
+        See also: 1/ weibull_cdf 2/ weibull
         Ex1:weibull_icdf(4.2,1.3,0.0,0.95)
         Ex2:weibull_icdf(2.2,1.5,0.4,0.632)
-        
         '''
         return GiacMethods['weibull_icdf'](self,*args)
 
@@ -18177,11 +16740,10 @@ cdef class GiacMethods_base:
         Help for weibulld:
         weibulld(Real(k),Real(lambda),Real(theta),Real(x))
         Returns the density of probability at x of the Weibull law with parameters k, lambda, theta (by default theta=0).
-        See also: 1/ weibull_cdf 2/ weibull_icdf 
+        See also: 1/ weibull_cdf 2/ weibull_icdf
         Ex1:weibulld(2.1,1.2,1.3)
         Ex2:weibulld(2.1,1.2,0.0,1.3)
         Ex3:weibulld(2.1,1.2,0.5,1.8)
-        
         '''
         return GiacMethods['weibulld'](self,*args)
 
@@ -18190,13 +16752,12 @@ cdef class GiacMethods_base:
         Help for weibulld_cdf:
         weibulld_cdf(Real(k),Real(lambda),Real(theta),Real(x0))
         Returns the probability that a Weibull random variable of parameters k, lambda, theta is less than x0.
-        See also: 1/ weibulld 2/ weibull_icdf 
+        See also: 1/ weibulld 2/ weibull_icdf
         Ex1:weibulld_cdf(2.1,1.2,1.9)
         Ex2:weibulld_cdf(2.1,1.2,0.0,1.9)
         Ex3:weibulld_cdf(2.2,1.5,0.4,1.9)
         Ex4:weibulld_cdf(2.2,1.5,0.4,1.2)
         Ex5:weibulld_cdf(2.2,1.5,0.4,1.2,1.9)
-        
         '''
         return GiacMethods['weibulld_cdf'](self,*args)
 
@@ -18205,10 +16766,9 @@ cdef class GiacMethods_base:
         Help for weibulld_icdf:
         weibulld_icdf(Real(k),Real(lambda),Real(theta),Real(p))
         Returns h such that the probability that a Weibull random variable of parameters k, lambda, theta is less than h is p (0<=p<=1).
-        See also: 1/ weibull_cdf 2/ weibull 
+        See also: 1/ weibull_cdf 2/ weibull
         Ex1:weibulld_icdf(4.2,1.3,0.0,0.95)
         Ex2:weibulld_icdf(2.2,1.5,0.4,0.632)
-        
         '''
         return GiacMethods['weibulld_icdf'](self,*args)
 
@@ -18217,10 +16777,9 @@ cdef class GiacMethods_base:
         Help for weibullvariate:
         weibullvariate(Real(a),Real(b))
         Returns a random real according to the Weibull distribution with parameters a>0 and b>0.
-        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector 
+        See also: 1/ rand 2/ randpoly 3/ randnorm 4/ randvector
         Ex1:weibullvariate(1,2)
         Ex2:weibullvariate(1.5,4)
-        
         '''
         return GiacMethods['weibullvariate'](self,*args)
 
@@ -18229,9 +16788,8 @@ cdef class GiacMethods_base:
         Help for weight_matrix:
         weight_matrix(Graph(G))
         Returns the weight matrix of G.
-        See also: 1/ set_edge_weight 2/ get_edge_weights 3/ is_weighted 4/ make_weighted 5/ assign_edge_weights 
+        See also: 1/ set_edge_weight 2/ get_edge_weights 3/ is_weighted 4/ make_weighted 5/ assign_edge_weights
         Ex1:weight_matrix(graph(%{[[1,2],2],[[2,3],1]%})
-        
         '''
         return GiacMethods['weight_matrix'](self,*args)
 
@@ -18240,8 +16798,7 @@ cdef class GiacMethods_base:
         Help for weighted:
         weighted(Opt)
         Option for graph and digraph commands.
-        See also: 1/ directed 2/ graph 3/ digraph 
-        
+        See also: 1/ directed 2/ graph 3/ digraph
         '''
         return GiacMethods['weighted'](self,*args)
 
@@ -18250,8 +16807,7 @@ cdef class GiacMethods_base:
         Help for weights:
         weights(Opt)
         Option for the edges command.
-        See also: 1/ edges 
-        
+        See also: 1/ edges
         '''
         return GiacMethods['weights'](self,*args)
 
@@ -18260,9 +16816,8 @@ cdef class GiacMethods_base:
         Help for welch_window:
         welch_window(Lst,[Interval(n1..n2)])
         Applies the Welch windowing function to the given signal u (or to the elements with indices between n1 and n2) and returns the result in a new list.
-        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ bartlett_hann_window 
+        See also: 1/ blackman_harris_window 2/ blackman_window 3/ bohman_window 4/ cosine_window 5/ gaussian_window 6/ hamming_window 7/ hann_poisson_window 8/ hann_window 9/ parzen_window 10/ poisson_window 11/ riemann_window 12/ triangle_window 13/ tukey_window 14/ bartlett_hann_window
         Ex1: scatterplot(welch_window(randvector(1000,0..1)))
-        
         '''
         return GiacMethods['welch_window'](self,*args)
 
@@ -18271,9 +16826,8 @@ cdef class GiacMethods_base:
         Help for wheel_graph:
         wheel_graph(Intg(n))
         Returns a wheel graph with n+1 vertices.
-        See also: 1/ star_graph 2/ web_graph 
+        See also: 1/ star_graph 2/ web_graph
         Ex1:wheel_graph(5)
-        
         '''
         return GiacMethods['wheel_graph'](self,*args)
 
@@ -18282,11 +16836,10 @@ cdef class GiacMethods_base:
         Help for widget_size:
         widget_size(Intg(n))
         Changes the character sizes of the display on the xcas screen (size=n) and with more parameters define the general configuration.
-        See also: 1/ cas_setup 
+        See also: 1/ cas_setup
         Ex1:widget_size(20)
         Ex2:widget_size(8)
         Ex3:widget_size(20,58,49,697,563,1,1,0)
-        
         '''
         return GiacMethods['widget_size'](self,*args)
 
@@ -18295,10 +16848,9 @@ cdef class GiacMethods_base:
         Help for wilcoxonp:
         wilcoxonp(Intg,[Intg])
         Distribution of the Wilcoxon or Mann-Whitney test for one or two samples.
-        See also: 1/ wilcoxont 2/ wilcoxons 
+        See also: 1/ wilcoxont 2/ wilcoxons
         Ex1:wilcoxonp(4)
         Ex2:wilcoxonp(7,5)
-        
         '''
         return GiacMethods['wilcoxonp'](self,*args)
 
@@ -18307,10 +16859,9 @@ cdef class GiacMethods_base:
         Help for wilcoxons:
         wilcoxons(List,List || Real)
         Rank statistic of Wilcoxon or Mann-Whitney for 1 sample and one median or 2 samples.
-        See also: 1/ wilcoxont 2/ wilcoxonp 
+        See also: 1/ wilcoxont 2/ wilcoxonp
         Ex1:wilcoxons([1, 3, 4, 5, 7, 8, 8, 12, 15, 17] , [2, 6, 10, 11, 13, 14, 15, 18, 19, 20])
         Ex2:wilcoxons([1, 3, 4, 5, 7, 8, 8, 12, 15, 17] , 10)
-        
         '''
         return GiacMethods['wilcoxons'](self,*args)
 
@@ -18319,12 +16870,11 @@ cdef class GiacMethods_base:
         Help for wilcoxont:
         wilcoxont(List,List || Real,[Func],[Real])
         Wilcoxon or Mann-Whitney test for one sample and a median or 2 samples.
-        See also: 1/ wilcoxonp 2/ wilcoxons 3/ studentt 4/ normalt 
+        See also: 1/ wilcoxonp 2/ wilcoxons 3/ studentt 4/ normalt
         Ex1:wilcoxont([1, 3, 4, 5, 7, 8, 8, 12, 15, 17] , [2, 6, 10, 11, 13, 14, 15, 18, 19, 20])
         Ex2:wilcoxont([1, 3, 4, 5, 7, 8, 8, 12, 15, 17] , [2, 6, 10, 11, 13, 14, 15, 18, 19, 20],0.01)
         Ex3:wilcoxont([1, 3, 4, 5, 7, 8, 8, 12, 15, 17] , 10,'>')
         Ex4:wilcoxont([1, 3, 4, 5, 7, 8, 8, 12, 15, 17] , 10,'>',0.05)
-        
         '''
         return GiacMethods['wilcoxont'](self,*args)
 
@@ -18333,11 +16883,10 @@ cdef class GiacMethods_base:
         Help for writergb:
         writergb(Str(s),Lst)
         Write a PNG picture file named s either from a list [[number_channels,width,height],red,green,alpha,blue] where red,green,alpha,blue are matrices of pixels color or from a matrix of grey pixels or from 3 matrices of RGB colored pixels.
-        See also: 1/ readrgb 
+        See also: 1/ readrgb
         Ex1:writergb("image.png",[[255,0],[0,255]])
         Ex2:writergb("image.png",[[255,0],[0,0]],[[0,255],[0,0]],[[0,0],[255,0]])
         Ex3: a:=readrgb("rgb_image.png");writergb("brg_image.png",[a[0],a[4],a[1],a[3],a[2]])
-        
         '''
         return GiacMethods['writergb'](self,*args)
 
@@ -18346,10 +16895,9 @@ cdef class GiacMethods_base:
         Help for writewav:
         writewav(Str(s),Lst(l))
         Writes a WAV sound file.
-        See also: 1/ readwav 
+        See also: 1/ readwav
         Ex1:writewav("la.wav",2^14*(sin(2*pi*440*soundsec(1))))
         Ex2:writewav("beep.wav",[[1,16,44100,80000],[65000$10000,0$10000,65000$10000,0$10000]])
-        
         '''
         return GiacMethods['writewav'](self,*args)
 
@@ -18358,10 +16906,9 @@ cdef class GiacMethods_base:
         Help for xcas_mode:
         xcas_mode(Intg(0) or 1 or 2 or 3)
         Switches to mode Xcas (0), Maple (1), Mupad (2), TI89 (3).
-        See also: 1/ python_compat 
+        See also: 1/ python_compat
         Ex1:xcas_mode(1)
         Ex2:xcas_mode(0)
-        
         '''
         return GiacMethods['xcas_mode'](self,*args)
 
@@ -18370,9 +16917,8 @@ cdef class GiacMethods_base:
         Help for xml_print:
         xml_print(Str)
         Indents a XML code given in a string (pretty print).
-        See also: 1/ export_mathml 
+        See also: 1/ export_mathml
         Ex1:xml_print(export_mathml(a+2*b))
-        
         '''
         return GiacMethods['xml_print'](self,*args)
 
@@ -18382,7 +16928,6 @@ cdef class GiacMethods_base:
         xyztrange(SeqReal)
         xyztrange puts or erases the axes on the graphic-screen (cf button Cfg).
         Ex1:xyztrange(-5.0,5.0,-5.0,2.0,-10.0,10.0,-1.0,6.0,-5.0,5.0,-1.2384,2.0,1,0.0,1.0)
-        
         '''
         return GiacMethods['xyztrange'](self,*args)
 
@@ -18391,12 +16936,11 @@ cdef class GiacMethods_base:
         Help for zeros:
         zeros(Expr,[Var])
         Returns the zeros (real or complex according to the mode) of the expression (or the matrix where the lines are the solutions of the system : expression1=0,expression2=0...).
-        See also: 1/  
+        See also: 1/
         Ex1:zeros(x^2+4)
         Ex2:zeros(ln(x)^2-4)
         Ex3:zeros(ln(y)^2-2,y)
         Ex4:zeros([x^2-1,x^2-y^2],[x,y])
-        
         '''
         return GiacMethods['zeros'](self,*args)
 
@@ -18405,10 +16949,9 @@ cdef class GiacMethods_base:
         Help for ztrans:
         ztrans(Expr,[Var],[ZtransVar])
         z transform of a sequence.
-        See also: 1/ invztrans 2/ laplace 3/ invlaplace 
+        See also: 1/ invztrans 2/ laplace 3/ invlaplace
         Ex1:ztrans(a^x)
         Ex2:ztrans(a^n,n,z)
-        
         '''
         return GiacMethods['ztrans'](self,*args)
 
@@ -18417,10 +16960,9 @@ cdef class GiacMethods_base:
         Help for type:
         type(Expr)
         Returns n in [1..12] that defines the type of the argument.
-        See also: 1/ DOM_FLOAT 2/ DOM_INT 3/ DOM_COMPLEX 4/ DOM_IDENT 5/ DOM_LIST 6/ DOM_SYMBOLIC 7/ DOM_RAT 8/ DOM_STRING 9/ DOM_FUNC 10/ subtype 
+        See also: 1/ DOM_FLOAT 2/ DOM_INT 3/ DOM_COMPLEX 4/ DOM_IDENT 5/ DOM_LIST 6/ DOM_SYMBOLIC 7/ DOM_RAT 8/ DOM_STRING 9/ DOM_FUNC 10/ subtype
         Ex1:type("abc")
         Ex2:type([1,2,3])
-        
         '''
         return GiacMethods['type'](self,*args)
 
@@ -18429,12 +16971,11 @@ cdef class GiacMethods_base:
         Help for zip:
         zip(Fnc2d(f),Lst(l1),Lst(l2),[Val(default)])
         Returns a list whose j-th entry is f(l1[j],l2[j]): without default value its length is the minimum of the lengths of the two input lists and otherwise the shorter list is padded with the default value.
-        See also: 1/  
+        See also: 1/
         Ex1:zip('+',[a,b,c,d], [1,2,3,4])
         Ex2:zip('+',[a,b,c,d], [1,2,3])
         Ex3:zip('+',[a,b,c,d], [1,2,3],5)
         Ex4:zip(sum,[a,b,c,d], [1,2,3,4])
-        
         '''
         return GiacMethods['zip'](self,*args)
 

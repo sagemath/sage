@@ -152,13 +152,13 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
         INPUT:
 
-        - ``arg1`` (optional) -- either the integers 0, 1 or an element of ``self``
+        - ``arg1`` -- (optional) either the integers 0, 1 or an element of ``self``
 
-        - ``v`` (optional) -- a vector of length ``self.degree()``
+        - ``v`` -- (optional) a vector of length ``self.degree()``
 
-        - ``perm`` (optional) -- a permutation of degree ``self.degree()``
+        - ``perm`` -- (optional) a permutation of degree ``self.degree()``
 
-        - ``autom`` (optional) -- an automorphism of the ring
+        - ``autom`` -- (optional) an automorphism of the ring
 
         EXAMPLES::
 

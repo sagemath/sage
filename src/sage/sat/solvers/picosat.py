@@ -21,9 +21,9 @@ AUTHORS:
 from .satsolver import SatSolver
 
 from sage.misc.lazy_import import lazy_import
-from sage.features import PythonModule
-lazy_import('pycosat', ['solve'],
-            feature=PythonModule('pycosat', spkg='pycosat'))
+from sage.features.sat import Pycosat
+
+lazy_import('pycosat', ['solve'], feature=Pycosat())
 
 
 class PicoSAT(SatSolver):
@@ -32,9 +32,9 @@ class PicoSAT(SatSolver):
 
     INPUT:
 
-    - ``verbosity`` -- an integer between 0 and 2 (default: 0); verbosity
+    - ``verbosity`` -- integer between 0 and 2 (default: 0)
 
-    - ``prop_limit`` -- an integer (default: 0); the propagation limit
+    - ``prop_limit`` -- integer (default: 0); the propagation limit
 
     EXAMPLES::
 
@@ -112,7 +112,7 @@ class PicoSAT(SatSolver):
 
         INPUT:
 
-        - ``lits`` -- a tuple of nonzero integers
+        - ``lits`` -- tuple of nonzero integers
 
         .. NOTE::
 

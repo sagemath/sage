@@ -212,17 +212,17 @@ def ModularSymbols(group=1,
 
     INPUT:
 
-    - ``group`` -- A congruence subgroup or a Dirichlet character eps.
-    - ``weight`` -- int, the weight, which must be >= 2.
-    - ``sign`` -- int, The sign of the involution on modular symbols
+    - ``group`` -- a congruence subgroup or a Dirichlet character eps
+    - ``weight`` -- integer; the weight, which must be >= 2
+    - ``sign`` -- integer; the sign of the involution on modular symbols
       induced by complex conjugation. The default is 0, which means
       "no sign", i.e., take the whole space.
     - ``base_ring`` -- the base ring. Defaults to `\QQ` if no character
       is given, or to the minimal extension of `\QQ` containing the
       values of the character.
-    - ``custom_init`` -- a function that is called with self as input
+    - ``custom_init`` -- a function that is called with ``self`` as input
       before any computations are done using self; this could be used
-      to set a custom modular symbols presentation.  If self is
+      to set a custom modular symbols presentation.  If ``self`` is
       already in the cache and use_cache=True, then this function is
       not called.
 

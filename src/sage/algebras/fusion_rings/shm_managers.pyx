@@ -54,9 +54,9 @@ cdef class KSHandler:
 
     - ``n_slots`` -- the total number of F-symbols
     - ``field`` -- F-matrix's base cyclotomic field
-    - ``use_mp`` -- a boolean indicating whether to construct a shared
-      memory block to back ``self``.
-    - ``init_data`` -- a dictionary or :class:`KSHandler` object containing
+    - ``use_mp`` -- boolean indicating whether to construct a shared
+      memory block to back ``self``
+    - ``init_data`` -- dictionary or :class:`KSHandler` object containing
       known squares for initialization, e.g., from a solver checkpoint
     - ``name`` -- the name of a shared memory object (used by child processes
         for attaching)
@@ -177,7 +177,7 @@ cdef class KSHandler:
 
     cpdef update(self, list eqns):
         r"""
-        Update ```self``'s ``shared_memory``-backed dictionary of known
+        Update ``self``'s ``shared_memory``-backed dictionary of known
         squares. Keys are variable indices and corresponding values
         are the squares.
 
@@ -301,7 +301,7 @@ cdef class KSHandler:
 
     def __reduce__(self):
         r"""
-        Provide pickling / unpickling support for ``self.``
+        Provide pickling / unpickling support for ``self``.
 
         TESTS::
 
@@ -396,11 +396,11 @@ cdef class FvarsHandler:
     - ``field`` -- base field for polynomial ring
     - ``idx_to_sextuple`` -- map relating a single integer index to a sextuple
       of ``FusionRing`` elements
-    - ``init_data`` -- a dictionary or :class:`FvarsHandler` object containing
+    - ``init_data`` -- dictionary or :class:`FvarsHandler` object containing
       known squares for initialization, e.g., from a solver checkpoint
-    - ``use_mp`` -- an integer indicating the number of child processes
-      used for multiprocessing; if running serially, use 0.
-    - ``pids_name`` -- the name of a ``ShareableList`` contaning the
+    - ``use_mp`` -- integer indicating the number of child processes
+      used for multiprocessing; if running serially, use 0
+    - ``pids_name`` -- the name of a ``ShareableList`` containing the
       process ``pid``'s for every process in the pool (including the
       parent process)
     - ``name`` -- the name of a shared memory object
@@ -418,7 +418,7 @@ cdef class FvarsHandler:
 
     .. NOTE::
 
-        If you ever encounter an :class:`OverflowError` when running the
+        If you ever encounter an :exc:`OverflowError` when running the
         :meth:`FMatrix.find_orthogonal_solution` solver, consider
         increasing the parameter ``n_bytes``.
 
@@ -468,7 +468,7 @@ cdef class FvarsHandler:
             sage: n_proc = f.pool._processes
             sage: pids_name = f._pid_list.shm.name
             sage: fvars = FvarsHandler(8, f._field, f._idx_to_sextuple, use_mp=n_proc, pids_name=pids_name)
-            sage: TestSuite(fvars).run(skip="_test_pickling")
+            sage: TestSuite(fvars).run(skip='_test_pickling')
             sage: fvars.shm.unlink()
             sage: f.shutdown_worker_pool()
         """
@@ -710,7 +710,7 @@ cdef class FvarsHandler:
 
     def __reduce__(self):
         r"""
-        Provide pickling / unpickling support for ``self.``
+        Provide pickling / unpickling support for ``self``.
 
         TESTS::
 
@@ -734,7 +734,7 @@ cdef class FvarsHandler:
 
     def items(self):
         r"""
-        Iterates through key-value pairs in the data structure as if it
+        Iterate through key-value pairs in the data structure as if it
         were a Python dict.
 
         As in a Python dict, the key-value pairs are yielded in no particular

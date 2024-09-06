@@ -1,1 +1,1 @@
-python-sphinx
+python3-sphinx

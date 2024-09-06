@@ -64,11 +64,9 @@ def is_Polyhedron(X):
 
     INPUT:
 
-    - ``X`` -- anything.
+    - ``X`` -- anything
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -90,24 +88,24 @@ def is_Polyhedron(X):
 #########################################################################
 class Polyhedron_base(Polyhedron_base7):
     """
-    Base class for Polyhedron objects
+    Base class for Polyhedron objects.
 
     INPUT:
 
     - ``parent`` -- the parent, an instance of
-      :class:`~sage.geometry.polyhedron.parent.Polyhedra`.
+      :class:`~sage.geometry.polyhedron.parent.Polyhedra`
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``. The
-      V-representation of the polyhedron. If ``None``, the polyhedron
-      is determined by the H-representation.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``. The
+      V-representation of the polyhedron; if ``None``, the polyhedron
+      is determined by the H-representation
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``. The
-      H-representation of the polyhedron. If ``None``, the polyhedron
-      is determined by the V-representation.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``. The
+      H-representation of the polyhedron; if ``None``, the polyhedron
+      is determined by the V-representation
 
-    - ``Vrep_minimal`` (optional) -- see below
+    - ``Vrep_minimal`` -- (optional) see below
 
-    - ``Hrep_minimal`` (optional) -- see below
+    - ``Hrep_minimal`` -- (optional) see below
 
     - ``pref_rep`` -- string (default: ``None``);
       one of ``Vrep`` or ``Hrep`` to pick this in case the backend
@@ -199,7 +197,7 @@ class Polyhedron_base(Polyhedron_base7):
         - ``solver`` -- select a solver (MIP backend). See the documentation
           of for :class:`MixedIntegerLinearProgram`. Set to ``None`` by default.
 
-        - ``return_variable`` -- (default: ``False``) If ``True``, return a tuple
+        - ``return_variable`` -- boolean (default: ``False``); if ``True``, return a tuple
           ``(p, x)``, where ``p`` is the :class:`MixedIntegerLinearProgram` object
           and ``x`` is the vector-valued MIP variable in this problem, indexed
           from 0.  If ``False``, only return ``p``.
@@ -382,7 +380,7 @@ class Polyhedron_base(Polyhedron_base7):
         OUTPUT:
 
         The center of the polyhedron. All rays and lines are
-        ignored. Raises a ``ZeroDivisionError`` for the empty
+        ignored. Raises a :exc:`ZeroDivisionError` for the empty
         polytope.
 
         EXAMPLES::
@@ -459,12 +457,10 @@ class Polyhedron_base(Polyhedron_base7):
 
         INPUT:
 
-        - ``certificate`` -- (default: ``False``) boolean; specifies whether to
-          return the circumcenter, if found.
+        - ``certificate`` -- boolean (default: ``False``); specifies whether to
+          return the circumcenter, if found
 
-        OUTPUT:
-
-        If ``certificate`` is true, returns a tuple containing:
+        OUTPUT: if ``certificate`` is true, returns a tuple containing:
 
         1. Boolean.
         2. The circumcenter of the polytope or None.
@@ -798,10 +794,8 @@ class Polyhedron_base(Polyhedron_base7):
 
         See :meth:`~sage.geometry.polyhedron.base5.Polyhedron_base5.minkowski_sum`.
 
-        OUTPUT:
-
-        Boolean. Whether there exists another polyhedron `Z` such that
-        ``self`` can be written as `Y\oplus Z`.
+        OUTPUT: boolean; whether there exists another polyhedron `Z` such that
+        ``self`` can be written as `Y\oplus Z`
 
         EXAMPLES::
 
@@ -849,9 +843,7 @@ class Polyhedron_base(Polyhedron_base7):
           the value should be smaller than `\frac{1}{2}`. The subdivision is
           computed on the polar polyhedron.
 
-        OUTPUT:
-
-        A Polyhedron object, subdivided as described above.
+        OUTPUT: a Polyhedron object, subdivided as described above
 
         EXAMPLES::
 
@@ -958,13 +950,13 @@ class Polyhedron_base(Polyhedron_base7):
 
         INPUT:
 
-        - ``conj_class_reps`` -- list. A list of representatives of the
-          conjugacy classes of the ``acting_group``.
+        - ``conj_class_reps`` -- list; a list of representatives of the
+          conjugacy classes of the ``acting_group``
 
         - ``acting_group`` -- a subgroup of polytope's
-          :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`.
+          :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`
 
-        - ``additional_elts`` -- list (default=None). A subset of the
+        - ``additional_elts`` -- list (default: ``None``); a subset of the
           :meth:`~sage.geometry.polyhedron.base4.Polyhedron_base4.restricted_automorphism_group`
           of the polytope expressed as permutations.
 
@@ -1052,12 +1044,12 @@ class Polyhedron_base(Polyhedron_base7):
 
         INPUT:
 
-        - ``integral`` -- Boolean (default: ``False``). Whether to
-          only allow integral coordinates in the bounding box.
+        - ``integral`` -- boolean (default: ``False``); whether to
+          only allow integral coordinates in the bounding box
 
-        - ``integral_hull`` -- Boolean (default: ``False``). If ``True``, return a
+        - ``integral_hull`` -- boolean (default: ``False``); if ``True``, return a
           box containing the integral points of the polytope, or ``None, None`` if it
-          is known that the polytope has no integral points.
+          is known that the polytope has no integral points
 
         OUTPUT:
 
@@ -1192,7 +1184,6 @@ class Polyhedron_base(Polyhedron_base7):
             Polytope<Float>[...]
             sage: sorted(PP.VERTICES[:], key=repr)[0]
             1 -0.472135955 0 -1.236067978
-
         """
         from sage.interfaces.polymake import polymake
         polymake_field = polymake(self.base_ring().fraction_field())

@@ -27,11 +27,12 @@ import sphinx
 import sphinx.ext.intersphinx as intersphinx
 from sphinx import highlighting
 from sphinx.transforms import SphinxTransform
+from sphinx.util.docutils import SphinxDirective
 from IPython.lib.lexers import IPythonConsoleLexer, IPyLexer
 from sage.misc.sagedoc import extlinks
 from sage.env import SAGE_DOC_SRC, SAGE_DOC, PPLPY_DOCS, MATHJAX_DIR
 from sage.misc.latex_macros import sage_mathjax_macros
-from sage.features import PythonModule
+from sage.features.sphinx import JupyterSphinx
 from sage.features.all import all_features
 import sage.version
 
@@ -56,12 +57,15 @@ extensions = [
     'sphinx_inline_tabs',
     'IPython.sphinxext.ipython_directive',
     'matplotlib.sphinxext.plot_directive',
-    'jupyter_sphinx',
 ]
+
+if JupyterSphinx().is_present():
+    extensions.append('jupyter_sphinx')
 
 jupyter_execute_default_kernel = 'sagemath'
 
 if SAGE_LIVE_DOC == 'yes':
+    JupyterSphinx().require()
     SAGE_JUPYTER_SERVER = os.environ.get('SAGE_JUPYTER_SERVER', 'binder')
     if SAGE_JUPYTER_SERVER.startswith('binder'):
         # format: "binder" or
@@ -441,26 +445,28 @@ html_theme_options = {
     # "source_directory" is defined in conf.py customized for the doc
 }
 
-if not version.split('.')[-1].isnumeric():  # develop version
+# Check the condition for announcement banner
+github_ref = os.environ.get('GITHUB_REF', '')
+if github_ref:
+    match = re.search(r'refs/pull/(\d+)/merge', github_ref)
+    if match:
+        pr_number = match.group(1)
+is_for_develop = github_ref.startswith('refs/heads/develop')
+is_for_github_pr = github_ref and match and pr_number
+is_stable_release = version.split('.')[-1].isnumeric()
+
+if is_for_develop or is_for_github_pr or not is_stable_release:  # condition for announcement banner
     # This URL is hardcoded in the file .github/workflows/doc-publish.yml.
     # See NETLIFY_ALIAS of the "Deploy to Netlify" step.
     ver = f'<a href="https://doc-develop--sagemath.netlify.app/html/en/index.html">{version}</a>'
-    github_ref = os.environ.get('GITHUB_REF', '')
-    if github_ref:
-        match = re.search(r'refs/pull/(\d+)/merge', github_ref)
-        if match:
-            # As this doc is built for a GitHub PR, we plant links
-            # to the PR in the announcement banner.
-            pr_number = match.group(1)
-            pr_url = f'https://github.com/sagemath/sage/pull/{pr_number}'
-            pr_sha = os.environ.get('PR_SHA', '')
-            pr_commit = pr_url + f'/commits/{pr_sha}'
-            ver += f' built with GitHub PR <a href="{pr_url}">#{pr_number}</a>' \
-                   f' on <a href="{pr_commit}">{pr_sha[:7]}</a>' \
-                   f' [<a href="/changes.html">changes</a>]'
-    banner = f'This is documentation for Sage development version {ver}. ' \
-              'Documentation for the latest stable version is ' \
-              '<a href="https://doc.sagemath.org/html/en/index.html">here</a>.'
+    if is_for_github_pr:
+        pr_url = f'https://github.com/sagemath/sage/pull/{pr_number}'
+        pr_sha = os.environ.get('PR_SHA', '')
+        pr_commit = pr_url + f'/commits/{pr_sha}'
+        ver += f' built with GitHub PR <a href="{pr_url}">#{pr_number}</a>' \
+               f' on <a href="{pr_commit}">{pr_sha[:7]}</a>' \
+               f' [<a href="/changes.html">changes</a>]'
+    banner = f'This is documentation for Sage version {ver} for development purpose.'
     html_theme_options.update({ "announcement": banner })
 
 # The name of the Pygments (syntax highlighting) style to use. This
@@ -473,6 +479,7 @@ html_sidebars = {
     "**": [
         "sidebar/scroll-start.html",
         "sidebar/brand.html",
+        "sidebar/version-selector.html",
         "sidebar/search.html",
         "sidebar/home.html",
         "sidebar/navigation.html",
@@ -679,7 +686,7 @@ def add_page_context(app, pagename, templatename, context, doctree):
     path2 = os.path.join(SAGE_DOC, 'html', 'en')
     relpath = os.path.relpath(path2, path1)
     context['release'] = release
-    context['documentation_title'] = 'Sage {}'.format(release) + ' Documentation'
+    context['documentation_title'] = f'Version {release} Documentation'
     context['documentation_root'] = os.path.join(relpath, 'index.html')
     if 'website' in path1:
         context['title'] = 'Documentation'
@@ -688,12 +695,12 @@ def add_page_context(app, pagename, templatename, context, doctree):
     if 'reference' in path1 and not path1.endswith('reference'):
         path2 = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
         relpath = os.path.relpath(path2, path1)
-        context['reference_title'] = 'Sage {}'.format(release) + ' Reference Manual'
+        context['reference_title'] = f'Version {release} Reference Manual'
         context['reference_root'] = os.path.join(relpath, 'index.html')
         context['refsub'] = True
         if pagename.startswith('sage/'):
-            # This is for adding small edit button using Furo's feature:
-            # https://pradyunsg.me/furo/customisation/edit-button/#adding-an-edit-button
+            # This is for adding small view/edit buttons using Furo's feature:
+            # https://pradyunsg.me/furo/customisation/top-of-page-buttons/
             # This works well if the source file is '.rst' file. But the '.rst'
             # files in the directory 'sage/' are generated by the Sphinx
             # autodoc from the Python or Cython source files. Hence we tweak
@@ -701,7 +708,8 @@ def add_page_context(app, pagename, templatename, context, doctree):
             # source files are generated.
             suffix = '.py' if importlib.import_module(pagename.replace('/','.')).__file__.endswith('.py') else '.pyx'
             context['page_source_suffix'] = suffix
-            context['theme_source_edit_link'] = os.path.join(source_repository, f'blob/develop/src', '{filename}')
+            context['theme_source_view_link'] = os.path.join(source_repository, f'blob/develop/src', '{filename}')
+            context['theme_source_edit_link'] = os.path.join(source_repository, f'edit/develop/src', '{filename}')
 
 
 dangling_debug = False
@@ -1033,6 +1041,14 @@ class SagecodeTransform(SphinxTransform):
                         parent.insert(index + 1, container)
 
 
+class Ignore(SphinxDirective):
+
+    has_content = True
+
+    def run(self):
+        return []
+
+
 # This replaces the setup() in sage.misc.sagedoc_conf
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_cython)
@@ -1046,6 +1062,12 @@ def setup(app):
     app.add_transform(SagemathTransform)
     if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
         app.add_transform(SagecodeTransform)
+    if not JupyterSphinx().is_present():
+        app.add_directive("jupyter-execute", Ignore)
+        app.add_directive("jupyter-kernel", Ignore)
+        app.add_directive("jupyter-input", Ignore)
+        app.add_directive("jupyter-output", Ignore)
+        app.add_directive("thebe-button", Ignore)
 
     # When building the standard docs, app.srcdir is set to SAGE_DOC_SRC +
     # 'LANGUAGE/DOCNAME'.
@@ -1067,12 +1089,7 @@ def setup(app):
 # https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#conf-tags
 # https://github.com/readthedocs/readthedocs.org/issues/4603#issuecomment-1411594800
-# Workaround to allow importing this file from other confs
-if 'tags' not in locals():
-    class Tags(set):
-        has = set.__contains__
-    tags = Tags()
-
-
-for feature in all_features():
-    tags.add('feature_' + feature.name.replace('.', '_'))
+def feature_tags():
+    for feature in all_features():
+        if feature.is_present():
+            yield 'feature_' + feature.name.replace('.', '_')

@@ -332,11 +332,11 @@ def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
 
     INPUT:
 
-    -  ``n`` -- the number of rounds (default: 1)
-    -  ``r`` -- the number of rows in the state array (default: 1)
-    -  ``c`` -- the number of columns in the state array (default: 1)
-    -  ``e`` -- the exponent of the finite extension field (default: 4)
-    -  ``star`` -- determines if SR\* or SR should be constructed (default: ``False``)
+    - ``n`` -- the number of rounds (default: 1)
+    - ``r`` -- the number of rows in the state array (default: 1)
+    - ``c`` -- the number of columns in the state array (default: 1)
+    - ``e`` -- the exponent of the finite extension field (default: 4)
+    - ``star`` -- determines if SR\* or SR should be constructed (default: ``False``)
     - ``aes_mode`` -- as the SR key schedule specification differs
       slightly from the AES key schedule, this parameter controls
       which schedule to use (default: ``True``)
@@ -344,17 +344,16 @@ def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
       over `\GF{2^e}` (default: ``False``)
     - ``polybori`` -- use the ``BooleanPolynomialRing`` as polynomial
       representation (default: ``True``, `\GF{2}` only)
-    - ``order`` -- a string to specify the term ordering of the
+    - ``order`` -- string to specify the term ordering of the
       variables (default: ``deglex``)
-    - ``postfix`` -- a string which is appended after the variable name
-      (default: '')
-    - ``allow_zero_inversions`` -- a boolean to control whether zero
+    - ``postfix`` -- string which is appended after the variable name
+      (default: ``''``)
+    - ``allow_zero_inversions`` -- boolean to control whether zero
       inversions raise an exception (default: ``False``)
     - ``correct_only`` -- only include correct inversion polynomials
       (default: ``False``, `\GF{2}` only)
     - ``biaffine_only`` -- only include bilinear and biaffine inversion
       polynomials (default: ``True``, `\GF{2}` only)
-
 
     EXAMPLES::
 
@@ -602,7 +601,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
     def base_ring(self):
         r"""
-        Return the base field of self as determined by
+        Return the base field of ``self`` as determined by
         ``self.e``.
 
         EXAMPLES::
@@ -672,7 +671,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``d`` -- state array or something coercible to a state array
+        - ``d`` -- state array or something coercible to a state array
 
         EXAMPLES::
 
@@ -697,8 +696,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``b`` -- an element in ``self.base_ring()``
-
+        - ``b`` -- an element in ``self.base_ring()``
 
         EXAMPLES:
 
@@ -919,10 +917,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
-        -  ``d`` -- state array or something coercible to a
-           state array
-
+        - ``d`` -- state array or something coercible to a state array
 
         EXAMPLES::
 
@@ -969,13 +964,9 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
+        - ``d`` -- state array or something coercible to a state array
 
-        -  ``d`` -- state array or something coercible to a
-           state array
-
-        -  ``key`` -- state array or something coercible to a
-           state array
-
+        - ``key`` -- state array or something coercible to a state array
 
         EXAMPLES::
 
@@ -996,9 +987,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
-        -  ``d`` -- a matrix, a list, or a tuple (default: ``None``)
-
+        - ``d`` -- a matrix, a list, or a tuple (default: ``None``)
 
         EXAMPLES::
 
@@ -1077,30 +1066,27 @@ class SR_generic(MPolynomialSystemGenerator):
     def random_vector(self, *args, **kwds):
         r"""
         Return a random vector as it might appear in the algebraic
-        expression of self.
+        expression of ``self``.
 
         EXAMPLES::
 
             sage: mq.SR(2, 2, 2, 4).random_vector().parent()
             Full MatrixSpace of 16 by 1 dense matrices over Finite Field in a of size 2^4
 
-        .. note::
+        .. NOTE::
 
            `\phi` was already applied to the result.
         """
         return self.vector(self.random_state_array(*args, **kwds))
 
-    def random_element(self, elem_type="vector", *args, **kwds):
+    def random_element(self, elem_type='vector', *args, **kwds):
         """
-        Return a random element for self.  Other arguments and keywords are
+        Return a random element for ``self``.  Other arguments and keywords are
         passed to random_* methods.
 
         INPUT:
 
-
-        -  ``elem_type`` -- either 'vector' or 'state array'
-           (default: ``'vector'``)
-
+        - ``elem_type`` -- either 'vector' or 'state array' (default: ``'vector'``)
 
         EXAMPLES::
 
@@ -1373,18 +1359,16 @@ class SR_generic(MPolynomialSystemGenerator):
 
         return _type(P)
 
-    def hex_str(self, M, typ="matrix"):
+    def hex_str(self, M, typ='matrix'):
         r"""
         Return a hex string for the provided AES state array/matrix.
 
         INPUT:
 
+        - ``M`` -- state array
 
-        -  ``M`` -- state array
-
-        -  ``typ`` -- controls what to return, either 'matrix'
-           or 'vector' (default: ``'matrix'``)
-
+        - ``typ`` -- controls what to return, either 'matrix'
+          or 'vector' (default: ``'matrix'``)
 
         EXAMPLES::
 
@@ -1414,9 +1398,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
-        -  ``M`` -- an AES state array
-
+        - ``M`` -- an AES state array
 
         EXAMPLES::
 
@@ -1445,9 +1427,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-
-        -  ``M`` -- an AES state array
-
+        - ``M`` -- an AES state array
 
         EXAMPLES::
 
@@ -1474,15 +1454,13 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
+        - ``dst`` -- a matrix
 
-        -  ``dst`` -- a matrix
+        - ``src`` -- a matrix
 
-        -  ``src`` -- a matrix
+        - ``row`` -- offset row
 
-        -  ``row`` -- offset row
-
-        -  ``col`` -- offset columns
-
+        - ``col`` -- offset columns
 
         EXAMPLES::
 
@@ -1518,11 +1496,10 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``name`` -- name of the variable
-        -  ``n`` -- number of rounds (default: ``None``)
-        -  ``rc`` -- number of rows \* number of cols (default: ``None``)
-        -  ``e`` -- exponent of base field (default: ``None``)
-
+        - ``name`` -- name of the variable
+        - ``n`` -- number of rounds (default: ``None``)
+        - ``rc`` -- number of rows \* number of cols (default: ``None``)
+        - ``e`` -- exponent of base field (default: ``None``)
 
         EXAMPLES::
 
@@ -1584,7 +1561,6 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr = mq.SR(10, 1, 2, 4)
             sage: sr.varstrs('x', 2)
             ('x200', 'x201', 'x202', 'x203', 'x210', 'x211', 'x212', 'x213')
-
         """
         if rc is None:
             rc = self.r * self.c
@@ -1614,7 +1590,6 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr = mq.SR(10, 1, 2, 4)
             sage: sr.vars('x', 2)
             (x200, x201, x202, x203, x210, x211, x212, x213)
-
         """
         gd = self.variable_dict()
         return tuple([gd[s] for s in self.varstrs(name, nr, rc, e)])
@@ -1671,7 +1646,6 @@ class SR_generic(MPolynomialSystemGenerator):
              'x101': x101,
              'x102': x102,
              'x103': x103}
-
         """
         try:
             R,gd = self._variable_dict
@@ -1688,7 +1662,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
     def block_order(self):
         """
-        Return a block order for self where each round is a block.
+        Return a block order for ``self`` where each round is a block.
 
         EXAMPLES::
 
@@ -1821,15 +1795,11 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
+        - ``i`` -- round number
 
-        -  ``i`` -- round number
+        - ``plaintext`` -- plaintext (optional, mandatory in first round)
 
-        -  ``plaintext`` -- optional plaintext (mandatory in
-           first round)
-
-        -  ``ciphertext`` -- optional ciphertext (mandatory in
-           last round)
-
+        - ``ciphertext`` -- ciphertext (optional, mandatory in last round)
 
         OUTPUT: tuple
 
@@ -1891,19 +1861,19 @@ class SR_generic(MPolynomialSystemGenerator):
 
         INPUT:
 
-        -  ``i`` -- round (`0 \leq i \leq n`)
+        - ``i`` -- round (`0 \leq i \leq n`)
 
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=False)
 
-        The 0-th subkey is the user provided key, so only conjugacy
+        The `0`-th subkey is the user provided key, so only conjugacy
         relations or field polynomials are added.::
 
             sage: sr.key_schedule_polynomials(0)
             (k000^2 + k000, k001^2 + k001, k002^2 + k002, k003^2 + k003)
 
-        The 1-th subkey is derived from the user provided key according to
+        The 1st subkey is derived from the user provided key according to
         the key schedule which is non-linear.::
 
             sage: sr.key_schedule_polynomials(1)
@@ -2138,12 +2108,13 @@ class SR_gf2n(SR_generic):
     """
     def vector(self, d=None):
         """
-        Constructs a vector suitable for the algebraic representation of
+        Construct a vector suitable for the algebraic representation of
         SR, i.e. BES.
 
         INPUT:
 
-        -  ``d`` -- values for vector, must be understood by ``self.phi`` (default:``None``)
+        - ``d`` -- values for vector, must be understood by ``self.phi``
+          (default: ``None``)
 
         EXAMPLES::
 
@@ -2192,13 +2163,13 @@ class SR_gf2n(SR_generic):
 
     def phi(self, l):
         r"""
-        The operation `\phi` from [MR2002]_
+        The operation `\phi` from [MR2002]_.
 
         Projects state arrays to their algebraic representation.
 
         INPUT:
 
-        -  ``l`` -- element to perform `\phi` on.
+        - ``l`` -- element to perform `\phi` on
 
         EXAMPLES::
 
@@ -2296,8 +2267,7 @@ class SR_gf2n(SR_generic):
 
         INPUT:
 
-        -  ``length`` -- length of state space (default: ``None``)
-
+        - ``length`` -- length of state space (default: ``None``)
 
         EXAMPLES::
 
@@ -2420,13 +2390,11 @@ class SR_gf2n(SR_generic):
 
         INPUT:
 
+        - ``xi`` -- output variables
 
-        -  ``xi`` -- output variables
+        - ``wi`` -- input variables
 
-        -  ``wi`` -- input variables
-
-        -  ``length`` -- length of both lists
-
+        - ``length`` -- length of both lists
 
         EXAMPLES::
 
@@ -2453,9 +2421,9 @@ class SR_gf2n(SR_generic):
 
         INPUT:
 
-        -  ``name`` -- variable name
-        -  ``i`` -- round number
-        -  ``l`` -- r\*c (default: ``None``)
+        - ``name`` -- variable name
+        - ``i`` -- round number
+        - ``l`` -- r\*c (default: ``None``)
 
         EXAMPLES::
 
@@ -2478,7 +2446,8 @@ class SR_gf2n(SR_generic):
             l = r*c
 
         _vars = self.vars(name, i, l, e)
-        return [_vars[e*j+k]**2 - _vars[e*j+(k+1) % e]   for j in range(l)  for k in range(e)]
+        return [_vars[e*j+k]**2 - _vars[e*j+(k+1) % e] for j in range(l) for k in range(e)]
+
 
 class SR_gf2(SR_generic):
     def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -2498,13 +2467,12 @@ class SR_gf2(SR_generic):
 
     def vector(self, d=None):
         """
-        Constructs a vector suitable for the algebraic representation of
+        Construct a vector suitable for the algebraic representation of
         SR.
 
         INPUT:
 
-        -  ``d`` -- values for vector (default: ``None``)
-
+        - ``d`` -- values for vector (default: ``None``)
 
         EXAMPLES::
 
@@ -2548,9 +2516,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-
-        -  ``d`` -- matrix
-
+        - ``d`` -- matrix
 
         EXAMPLES::
 
@@ -2572,14 +2538,14 @@ class SR_gf2(SR_generic):
 
     def phi(self, l, diffusion_matrix=False):
         r"""
-        The operation `\phi` from [MR2002]_
+        The operation `\phi` from [MR2002]_.
 
         Given a list/matrix of elements in `\GF{2^e}`, return a
         matching list/matrix of elements in `\GF{2}`.
 
         INPUT:
 
-        -  ``l`` -- element to perform `\phi` on.
+        - ``l`` -- element to perform `\phi` on
         - ``diffusion_matrix`` -- if ``True``, the given matrix ``l`` is
           transformed to a matrix which performs the same operation
           over `\GF{2}` as ``l`` over `\GF{2^n}` (default: ``False``).
@@ -2740,8 +2706,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        -  ``length`` -- length of state space (default: ``None``)
-
+        - ``length`` -- length of state space (default: ``None``)
 
         EXAMPLES::
 
@@ -2788,9 +2753,7 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-
-        -  ``x`` -- an element in self.base_ring()
-
+        - ``x`` -- an element in self.base_ring()
 
         EXAMPLES::
 
@@ -3135,13 +3098,11 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
+        - ``xi`` -- output variables
 
-        -  ``xi`` -- output variables
+        - ``wi`` -- input variables
 
-        -  ``wi`` -- input variables
-
-        -  ``length`` -- length of both lists
-
+        - ``length`` -- length of both lists
 
         EXAMPLES::
 
@@ -3171,9 +3132,9 @@ class SR_gf2(SR_generic):
 
         INPUT:
 
-        -  ``name`` -- variable name
-        -  ``i`` -- round number
-        -  ``l`` -- length of variable list (default: ``None`` = r\*c)
+        - ``name`` -- variable name
+        - ``i`` -- round number
+        - ``l`` -- length of variable list (default: ``None`` = r\*c)
 
         EXAMPLES::
 
@@ -3200,7 +3161,8 @@ class SR_gf2(SR_generic):
         if self._polybori:
             return []
         _vars = self.vars(name, i, l, e)
-        return [_vars[e*j+k]**2 - _vars[e*j+k]   for j in range(l)  for k in range(e)]
+        return [_vars[e*j+k]**2 - _vars[e*j+k] for j in range(l) for k in range(e)]
+
 
 class SR_gf2_2(SR_gf2):
     """
@@ -3219,7 +3181,7 @@ class SR_gf2_2(SR_gf2):
         - ``w`` -- input variables  (default: ``None``)
         - ``biaffine_only`` -- ignored (always ``False``)
         - ``correct_only`` -- ignored (always ``True``)
-        - ``groebner`` -- precompute the Groebner basis for this S-Box (default: ``False``).
+        - ``groebner`` -- precompute the Groebner basis for this S-Box (default: ``False``)
 
         EXAMPLES::
 
@@ -3273,7 +3235,6 @@ class SR_gf2_2(SR_gf2):
             sage: l = sr.inversion_polynomials_single_sbox()                            # needs sage.libs.singular
             sage: l == sr.inversion_polynomials_single_sbox(biaffine_only=True, correct_only=False)                     # needs sage.libs.singular
             True
-
         """
         e = self.e
         if x is None and w is None:
@@ -3286,6 +3247,7 @@ class SR_gf2_2(SR_gf2):
         S = self.sbox(inversion_only=True)
         F = S.polynomials(w, x, degree=e-2, groebner=groebner)
         return F
+
 
 class AllowZeroInversionsContext:
     """
@@ -3334,6 +3296,7 @@ class AllowZeroInversionsContext:
             False
         """
         self.sr._allow_zero_inversions = self.allow_zero_inversions
+
 
 def test_consistency(max_n=2, **kwargs):
     r"""

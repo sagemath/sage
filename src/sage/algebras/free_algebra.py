@@ -298,7 +298,6 @@ class FreeAlgebraFactory(UniqueFactory):
             sage: FreeAlgebra.create_key(GF(5),3,'xyz',
             ....:                        implementation='letterplace', degrees=[1,2,3])
             ((1, 2, 3), Multivariate Polynomial Ring in x, y, z, x_ over Finite Field of size 5)
-
         """
         if arg1 is None and arg2 is None and names is None:
             # this is used for pickling
@@ -411,7 +410,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
     INPUT:
 
     - ``R`` -- a ring
-    - ``n`` -- an integer
+    - ``n`` -- integer
     - ``names`` -- the generator names
     - ``degrees`` -- (optional) a tuple or list specifying the
       degrees of all the generators, if omitted, the algebra is not
@@ -751,6 +750,29 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
 
         return self.base_ring().has_coerce_map_from(R)
 
+    def _is_valid_homomorphism_(self, other, im_gens, base_map=None):
+        """
+        Check that the number of given images is correct.
+
+        EXAMPLES::
+
+            sage: ring = algebras.Free(QQ, ['a', 'b'])
+            sage: a, b = ring.gens()
+            sage: A = matrix(QQ, 2, 2, [1, 5, 1, 5])
+            sage: B = matrix(QQ, 2, 2, [1, 4, 9, 2])
+            sage: C = matrix(QQ, 2, 2, [1, 7, 8, 9])
+            sage: f = ring.hom([A, B])
+            sage: f(a*b+1)
+            [47 14]
+            [46 15]
+
+            sage: ring.hom([A, B, C])
+            Traceback (most recent call last):
+            ...
+            ValueError: number of images must equal number of generators
+        """
+        return len(im_gens) == self.__ngens
+
     def gen(self, i):
         """
         The ``i``-th generator of the algebra.
@@ -892,7 +914,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         """
         The `G`-Algebra derived from this algebra by relations.
 
-        By default is assumed, that two variables commute.
+        By default it is assumed that any two variables commute.
 
         .. TODO::
 
@@ -935,6 +957,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
             (-t)*x*y + t*y + (t + 1)
         """
         from sage.matrix.constructor import Matrix
+        commutative = not relations
 
         base_ring = self.base_ring()
         polynomial_ring = PolynomialRing(base_ring, self.gens())
@@ -970,7 +993,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
         from sage.rings.polynomial.plural import g_Algebra
         return g_Algebra(base_ring, cmat, dmat,
                          names=names or self.variable_names(),
-                         order=order, check=check)
+                         order=order, check=check, commutative=commutative)
 
     def poincare_birkhoff_witt_basis(self):
         """

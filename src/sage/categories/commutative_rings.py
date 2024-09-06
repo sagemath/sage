@@ -19,7 +19,7 @@ from sage.structure.sequence import Sequence
 
 class CommutativeRings(CategoryWithAxiom):
     """
-    The category of commutative rings
+    The category of commutative rings.
 
     commutative rings with unity, i.e. rings with commutative * and
     a multiplicative identity
@@ -46,7 +46,6 @@ class CommutativeRings(CategoryWithAxiom):
 
         sage: GroupAlgebra(CyclicPermutationGroup(3), QQ) in CommutativeRings()     # not implemented, needs sage.groups sage.modules
         True
-
     """
     class ParentMethods:
         def is_commutative(self) -> bool:
@@ -149,14 +148,14 @@ class CommutativeRings(CategoryWithAxiom):
               morphism
 
             - ``gen`` -- a generator of this extension (over its base) or ``None``
-              (default: ``None``);
+              (default: ``None``)
 
-            - ``gens`` -- a list of generators of this extension (over its base)
-              or ``None`` (default: ``None``);
+            - ``gens`` -- list of generators of this extension (over its base)
+              or ``None`` (default: ``None``)
 
             - ``name`` -- a variable name or ``None`` (default: ``None``)
 
-            - ``names`` -- a list or a tuple of variable names or ``None``
+            - ``names`` -- list or a tuple of variable names or ``None``
               (default: ``None``)
 
             EXAMPLES:
@@ -307,7 +306,7 @@ class CommutativeRings(CategoryWithAxiom):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer (default: 1)
+            - ``n`` -- nonnegative integer (default: 1)
 
             OUTPUT:
 
@@ -423,7 +422,6 @@ class CommutativeRings(CategoryWithAxiom):
             .. SEEALSO::
 
                 :meth:`derivation`
-
             """
             from sage.rings.derivation import RingDerivationModule
             if codomain is None:
@@ -493,7 +491,6 @@ class CommutativeRings(CategoryWithAxiom):
                 [x |--> x^2, y |--> y^2, z |--> z^2] - id
                 sage: R.derivation(x, twist=theta)                                          # needs sage.modules
                 x*([x |--> x^2, y |--> y^2, z |--> z^2] - id)
-
             """
             if isinstance(arg, (list, tuple)):
                 codomain = Sequence([self(0)] + list(arg)).universe()
@@ -566,9 +563,7 @@ class CommutativeRings(CategoryWithAxiom):
                   provided, the function only return the list of cosets that
                   contain some element from ``cosets``.
 
-                OUTPUT:
-
-                A list of lists.
+                OUTPUT: list of lists
 
                 EXAMPLES::
 
