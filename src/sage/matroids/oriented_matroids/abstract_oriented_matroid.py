@@ -68,7 +68,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
     @abstract_method
     def is_valid(self) -> bool:
         r"""
-        Return whether satisfies oriented matroid axioms.
+        Return whether ``self`` satisfies the oriented matroid axioms.
 
         Given a set of objects, this method tests against
         a provided set of axioms for a given representation
@@ -106,7 +106,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: M = OrientedMatroid([[1],[-1]],key='circuit')
+            sage: M = OrientedMatroid([[1], [-1]], key='circuit')
             sage: M.circuits()
             [+: 0
              -:
@@ -151,7 +151,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: M = OrientedMatroid([[1],[-1],[0]], key='vector')
+            sage: M = OrientedMatroid([[1], [-1], [0]], key='vector')
             sage: M.convert_to('circuit')
             Circuit oriented matroid of rank 0
             sage: M.convert_to()
@@ -224,8 +224,10 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: D = DiGraph({'v1':{'v2':1,'v3':2,'v4':3},'v2':{'v3':4,'v4':5},'v3':{'v4':6}})
-            sage: M = OrientedMatroid(D,key="circuit")
+            sage: D = DiGraph({'v1': {'v2': 1, 'v3': 2, 'v4': 3},
+            ....:              'v2': {'v3': 4, 'v4': 5},
+            ....:              'v3': {'v4': 6}})
+            sage: M = OrientedMatroid(D, key="circuit")
             sage: M.an_element() in M.circuits()
             True
         """
@@ -238,16 +240,16 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         r"""
         Return the (big) face poset.
 
-        The *(big) face poset* is the poset on covectors such that `X \leq Y`
-        if and only if `S(X,Y) = \emptyset` and
+        The *(big) face poset* is the poset on covectors such that `X \leq Y```self`` `
+        the if and only if `S(X,Y) = \emptyset` and
         `\underline{Y} \subseteq \underline{X}`.
 
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [ [1,1,1], [1,1,0],[1,1,-1],[1,0,-1],[1,-1,-1],[0,-1,-1],
-            ....: [-1,-1,-1],[0,1,1],[-1,1,1],[-1,0,1],[-1,-1,1],[-1,-1,0],
-            ....: [0,0,0]]
+            sage: C = [[1,1,1], [1,1,0], [1,1,-1], [1,0,-1], [1,-1,-1],
+            ....:      [0,-1,-1], [-1,-1,-1], [0,1,1], [-1,1,1],
+            ....:      [-1,0,1], [-1,-1,1], [-1,-1,0], [0,0,0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: M.face_poset()
             Finite meet-semilattice containing 13 elements
@@ -272,9 +274,9 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [ [1,1,1], [1,1,0],[1,1,-1],[1,0,-1],[1,-1,-1],[0,-1,-1],
-            ....: [-1,-1,-1],[0,1,1],[-1,1,1],[-1,0,1],[-1,-1,1],[-1,-1,0],
-            ....: [0,0,0]]
+            sage: C = [[1,1,1], [1,1,0], [1,1,-1], [1,0,-1], [1,-1,-1],
+            ....:      [0,-1,-1], [-1,-1,-1], [0,1,1], [-1,1,1],
+            ....:      [-1,0,1], [-1,-1,1], [-1,-1,0], [0,0,0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: M.face_lattice()
             Finite lattice containing 14 elements

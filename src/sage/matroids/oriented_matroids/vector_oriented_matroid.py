@@ -45,8 +45,8 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
 
     INPUT:
 
-    - ``data`` -- a tuple containing SignedSubsetElement elements or data
-      that can be used to construct :class:`SignedSubsetElement` elements
+    - ``data`` -- a tuple containing :class:`SignedSubsetElement` elements or
+      data that can be used to construct :class:`SignedSubsetElement` elements
     - ``groundset`` -- (default: ``None``) the groundset for the data; if not
       provided, we grab the data from the signed subsets
 
@@ -116,19 +116,19 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: V2 = [[1,1]]
+            sage: V2 = [[1, 1]]
             sage: OrientedMatroid(V2, key='vector')
             Traceback (most recent call last):
             ...
             ValueError: every element needs an opposite
 
-            sage: V3 = [[1,1],[-1,-1],[0,-1],[0,1],[-1,0],[1,0]]
+            sage: V3 = [[1,1], [-1,-1], [0,-1], [0,1], [-1,0], [1,0]]
             sage: OrientedMatroid(V3, key='vector')
             Traceback (most recent call last):
             ...
             ValueError: composition must be in vectors
 
-            sage: V4 = [[1,1],[-1,-1]]
+            sage: V4 = [[1,1], [-1,-1]]
             sage: OrientedMatroid(V4, key='vector')
             Traceback (most recent call last):
             ...
@@ -184,7 +184,7 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: V = [[1,1],[-1,-1],[0,0]]
+            sage: V = [[1,1], [-1,-1], [0,0]]
             sage: M = OrientedMatroid(V, key='vector'); M
             Vector oriented matroid of rank 1
         """
@@ -225,7 +225,7 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: M = OrientedMatroid([[1],[-1],[0]], key='vector')
+            sage: M = OrientedMatroid([[1], [-1], [0]], key='vector')
             sage: M.circuits()
             [+: 0
              -:
