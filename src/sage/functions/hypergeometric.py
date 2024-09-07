@@ -124,7 +124,7 @@ Conversions::
     sage: maxima(hypergeometric([1, 1, 1], [3, 3, 3], x))                               # needs sage.symbolic
     hypergeometric([1,1,1],[3,3,3],_SAGE_VAR_x)
     sage: hypergeometric((5, 4), (4, 4), 3)._sympy_()                                   # needs sympy sage.symbolic
-    hyper((5, 4), (4, 4), 3)
+    hyper((5,), (4,), 3)
     sage: hypergeometric((5, 4), (4, 4), 3)._mathematica_init_()                        # needs sage.symbolic
     'HypergeometricPFQ[{5,4},{4,4},3]'
 
@@ -274,9 +274,9 @@ class Hypergeometric(BuiltinFunction):
 
         INPUT:
 
-        - ``a`` -- a list or tuple of parameters
-        - ``b`` -- a list or tuple of parameters
-        - ``z`` -- a number or symbolic expression
+        - ``a`` -- list or tuple of parameters
+        - ``b`` -- list or tuple of parameters
+        - ``z`` -- number or symbolic expression
 
         EXAMPLES::
 
@@ -307,7 +307,6 @@ class Hypergeometric(BuiltinFunction):
 
             sage: latex(hypergeometric([1, 1], [2], -1))                                # needs sage.symbolic
             \,_2F_1\left(\begin{matrix} 1,1 \\ 2 \end{matrix} ; -1 \right)
-
         """
         aa = ",".join(latex(c) for c in a)
         bb = ",".join(latex(c) for c in b)
@@ -370,7 +369,6 @@ class Hypergeometric(BuiltinFunction):
             0.693147180559945
             sage: hypergeometric([], [], RealField(100)(1))                             # needs sage.rings.real_mpfr sage.symbolic
             2.7182818284590452353602874714
-
         """
         if not isinstance(a, tuple) or not isinstance(b, tuple):
             raise TypeError("The first two parameters must be of type list")
@@ -1038,7 +1036,6 @@ class Hypergeometric_M(BuiltinFunction):
                 (a, b, z)
                 sage: hypergeometric_M(a, b, z).generalized()                           # needs sage.symbolic
                 hypergeometric((a,), (b,), z)
-
             """
             return hypergeometric([a], [b], z)
 
@@ -1150,7 +1147,6 @@ class Hypergeometric_U(BuiltinFunction):
                 2*hypergeometric((1, -1), (), -2)
                 sage: hypergeometric_U(3, I, 2).generalized()
                 1/8*hypergeometric((3, -I + 4), (), -1/2)
-
             """
             return z ** (-a) * hypergeometric([a, a - b + 1], [], -z ** (-1))
 

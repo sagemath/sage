@@ -32,9 +32,9 @@ class FFmpeg(Executable):
             sage: isinstance(FFmpeg(), FFmpeg)
             True
         """
-        Executable.__init__(self, "ffmpeg", executable="ffmpeg",
-                            spkg="ffmpeg",
-                            url="https://www.ffmpeg.org/")
+        Executable.__init__(self, 'ffmpeg', executable='ffmpeg',
+                            spkg='ffmpeg',
+                            url='https://www.ffmpeg.org/')
 
     def is_functional(self):
         r"""
@@ -45,7 +45,6 @@ class FFmpeg(Executable):
             sage: from sage.features.ffmpeg import FFmpeg
             sage: FFmpeg().is_functional()   # optional - ffmpeg
             FeatureTestResult('ffmpeg', True)
-
         """
         # Create the content of 1-pixel png file
         content = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x00\x00\x00\x00:~\x9bU\x00\x00\x00\nIDATx\x9cc`\x00\x00\x00\x02\x00\x01H\xaf\xa4q\x00\x00\x00\x00IEND\xaeB`\x82'
@@ -103,7 +102,7 @@ class FFmpeg(Executable):
             # If an error occurred, return False
             if result.returncode:
                 return FeatureTestResult(self, False, reason='Running command "{}" '
-                            'returned non-zero exit status "{}" with stderr '
+                            'returned nonzero exit status "{}" with stderr '
                             '"{}" and stdout "{}".'.format(result.args,
                                                             result.returncode,
                                                             result.stderr.strip(),

@@ -62,11 +62,11 @@ lazy_import('mpmath', ['airyai', 'airybi'],
 class FunctionAiryAiGeneral(BuiltinFunction):
     def __init__(self):
         r"""
-        The generalized derivative of the Airy Ai function
+        The generalized derivative of the Airy Ai function.
 
         INPUT:
 
-        - ``alpha`` -- Return the `\alpha`-th order fractional derivative with
+        - ``alpha`` -- return the `\alpha`-th order fractional derivative with
           respect to `z`.
           For `\alpha = n = 1,2,3,\ldots` this gives the derivative
           `\operatorname{Ai}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
@@ -78,7 +78,7 @@ class FunctionAiryAiGeneral(BuiltinFunction):
 
             f_n(z) = \int_0^z f_{n-1}(t) dt
 
-        - ``x`` -- The argument of the function
+        - ``x`` -- the argument of the function
 
         EXAMPLES::
 
@@ -365,7 +365,7 @@ airy_ai_prime = FunctionAiryAiPrime()
 
 def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
     r"""
-    The Airy Ai function
+    The Airy Ai function.
 
     The Airy Ai function `\operatorname{Ai}(x)` is (along with
     `\operatorname{Bi}(x)`) one of the two linearly independent standard
@@ -387,7 +387,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
 
     INPUT:
 
-    - ``alpha`` -- Return the `\alpha`-th order fractional derivative with
+    - ``alpha`` -- return the `\alpha`-th order fractional derivative with
       respect to `z`.
       For `\alpha = n = 1,2,3,\ldots` this gives the derivative
       `\operatorname{Ai}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
@@ -399,9 +399,9 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
 
         f_n(z) = \int_0^z f_{n-1}(t) dt
 
-    - ``x`` -- The argument of the function
+    - ``x`` -- the argument of the function
 
-    - ``hold_derivative`` -- Whether or not to stop from returning higher
+    - ``hold_derivative`` -- whether or not to stop from returning higher
       derivatives in terms of `\operatorname{Ai}(x)` and
       `\operatorname{Ai}'(x)`
 
@@ -504,7 +504,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
 
         INPUT:
 
-        - ``alpha`` -- Return the `\alpha`-th order fractional derivative with
+        - ``alpha`` -- return the `\alpha`-th order fractional derivative with
           respect to `z`.
           For `\alpha = n = 1,2,3,\ldots` this gives the derivative
           `\operatorname{Bi}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
@@ -516,7 +516,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
 
             f_n(z) = \int_0^z f_{n-1}(t) dt
 
-        - ``x`` -- The argument of the function
+        - ``x`` -- the argument of the function
 
         EXAMPLES::
 
@@ -581,7 +581,6 @@ class FunctionAiryBiGeneral(BuiltinFunction):
             sage: from sage.functions.airy import airy_bi_general
             sage: airy_bi_general(-2, 1.0)                                              # needs mpmath
             0.388621540699059
-
         """
         parent = kwargs.get('parent')
         import mpmath
@@ -807,7 +806,7 @@ airy_bi_prime = FunctionAiryBiPrime()
 
 def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
     r"""
-    The Airy Bi function
+    The Airy Bi function.
 
     The Airy Bi function `\operatorname{Bi}(x)` is (along with
     `\operatorname{Ai}(x)`) one of the two linearly independent standard
@@ -830,7 +829,7 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
 
     INPUT:
 
-    - ``alpha`` -- Return the `\alpha`-th order fractional derivative with
+    - ``alpha`` -- return the `\alpha`-th order fractional derivative with
       respect to `z`.
       For `\alpha = n = 1,2,3,\ldots` this gives the derivative
       `\operatorname{Bi}^{(n)}(z)`, and for `\alpha = -n = -1,-2,-3,\ldots`
@@ -842,11 +841,11 @@ def airy_bi(alpha, x=None, hold_derivative=True, **kwds):
 
         f_n(z) = \int_0^z f_{n-1}(t) dt
 
-    - ``x`` -- The argument of the function
+    - ``x`` -- the argument of the function
 
-    - ``hold_derivative`` -- Whether or not to stop from returning higher
-      derivatives in terms of `\operatorname{Bi}(x)` and
-      `\operatorname{Bi}'(x)`
+    - ``hold_derivative`` -- boolean (default: ``True``); whether or not to
+      stop from returning higher derivatives in terms of `\operatorname{Bi}(x)`
+      and `\operatorname{Bi}'(x)`
 
     .. SEEALSO:: :func:`airy_ai`
 

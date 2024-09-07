@@ -450,7 +450,7 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client; do
+    for pkg in notebook nbconvert beautifulsoup4 sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi argon2_cffi_bindings webencodings tinycss2 ipympl soupsieve fastjsonschema anyio arrow async_lru fqdn isoduration json5 jsonpointer jsonschema_specifications jupyter_events jupyter_lsp jupyter_server jupyter_server_terminals jupyterlab jupyterlab_server jupyterlab_pygments jupyterlab_mathjax2 jupyter_sphinx notebook_shim overrides python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator sniffio types_python_dateutil uri_template webcolors websocket_client; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -537,6 +537,19 @@ AC_CONFIG_COMMANDS(mkdirs,
             AC_MSG_NOTICE([[creating symbolic link lib64 -> lib]])
             ln -s lib "$SAGE_LOCAL/lib64"
         fi
+        dnl Check that the file system is sufficiently functional
+        if test -z "$SAGE_BUILD_DIR"; then
+            SAGE_BUILD_DIR="$SAGE_LOCAL/var/tmp/sage/build"
+        fi
+        AC_MSG_NOTICE([creating directory $SAGE_BUILD_DIR])
+        mkdir -p "$SAGE_BUILD_DIR" || AC_MSG_ERROR([error creating directory $SAGE_BUILD_DIR (SAGE_BUILD_DIR)])
+        rm -f "$SAGE_BUILD_DIR"/conftest
+        touch "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error creating a file in $SAGE_BUILD_DIR])
+        chmod +x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions +x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([file permissions +x did not persist in $SAGE_BUILD_DIR])
+        chmod -x "$SAGE_BUILD_DIR"/conftest || AC_MSG_ERROR([error setting file permissions -x in $SAGE_BUILD_DIR])
+        test -x "$SAGE_BUILD_DIR"/conftest && AC_MSG_ERROR([file permissions -x did not persist in $SAGE_BUILD_DIR])
+        rm -f "$SAGE_BUILD_DIR"/conftest
     ],
     [
         SAGE_LOGS="$SAGE_ROOT/logs/pkgs"

@@ -149,14 +149,14 @@ class NumberField_relative(NumberField_generic):
     - ``base`` -- the base field
 
     - ``polynomial`` -- a polynomial which must be defined in the ring `K[x]`,
-      where `K` is the base field.
+      where `K` is the base field
 
-    - ``name`` -- a string, the variable name
+    - ``name`` -- string; the variable name
 
-    - ``latex_name`` -- a string or ``None`` (default: ``None``), variable name
+    - ``latex_name`` -- string or ``None`` (default: ``None``); variable name
       for latex printing
 
-    - ``check`` -- a boolean (default: ``True``), whether to check
+    - ``check`` -- boolean (default: ``True``); whether to check
       irreducibility of ``polynomial``
 
     - ``embedding`` -- currently not supported, must be ``None``
@@ -349,7 +349,7 @@ class NumberField_relative(NumberField_generic):
 
         Also, ``K.structure()`` returns ``from_K`` and ``to_K``, where
         ``from_K`` is an isomorphism from `K` to ``self`` and ``to_K`` is an
-        isomorphism from self to `K`.
+        isomorphism from ``self`` to `K`.
 
         EXAMPLES::
 
@@ -513,7 +513,6 @@ class NumberField_relative(NumberField_generic):
             (a0, 0)
             sage: NumberField([x, x^2 - 3], 'a').gens()
             (0, a1)
-
         """
         return ((self._gen_relative(),) +
                 tuple(map(self, self.base_field().gens())))
@@ -564,7 +563,7 @@ class NumberField_relative(NumberField_generic):
 
     def gen(self, n=0):
         """
-        Return the `n`'th generator of this relative number field.
+        Return the `n`-th generator of this relative number field.
 
         EXAMPLES::
 
@@ -612,18 +611,17 @@ class NumberField_relative(NumberField_generic):
 
         - ``names`` -- generator name for composite fields
 
-        - ``both_maps`` -- (default: ``False``)  if ``True``, return quadruples
-          (`F`, ``self_into_F, ``other_into_F``, `k`) such that ``self_into_F`` maps ``self`` into
-          `F`, ``other_into_F`` maps ``other`` into `F`.  For relative number fields, `k` is
-          always ``None``.
+        - ``both_maps`` -- boolean (default: ``False``);  if ``True``, return
+          quadruples (`F`, ``self_into_F, ``other_into_F``, `k`) such that
+          ``self_into_F`` maps ``self`` into `F`, ``other_into_F`` maps
+          ``other`` into `F`.  For relative number fields, `k` is always
+          ``None``.
 
-        - ``preserve_embedding`` -- (default: ``True``) has no effect, but is kept
-          for compatibility with the absolute version of this method.  In every
-          case the list of all possible compositums is returned.
+        - ``preserve_embedding`` -- boolean (default: ``True``); has no effect,
+          but is kept for compatibility with the absolute version of this,
+          method. In every case the list of all possible compositums is returned.
 
-        OUTPUT:
-
-        list of the composite fields, possibly with maps.
+        OUTPUT: list of the composite fields, possibly with maps
 
         EXAMPLES::
 
@@ -700,7 +698,7 @@ class NumberField_relative(NumberField_generic):
 
     def relative_degree(self):
         r"""
-        Returns the relative degree of this relative number field.
+        Return the relative degree of this relative number field.
 
         EXAMPLES::
 
@@ -732,7 +730,7 @@ class NumberField_relative(NumberField_generic):
     @cached_method
     def _maximal_order(self, v=(), assume_maximal='non-maximal-non-unique'):
         """
-        Implements :meth:`NumberField_generic.maximal_order` for relative
+        Implement :meth:`NumberField_generic.maximal_order` for relative
         number fields.
 
         EXAMPLES::
@@ -741,7 +739,6 @@ class NumberField_relative(NumberField_generic):
             sage: K.<a> = NumberFieldTower([x^2 - 17, x^3 - 2])
             sage: K.maximal_order() is K.maximal_order()  # indirect doctest
             True
-
         """
         absolute_order = self.absolute_field('z').maximal_order(v=v, assume_maximal=assume_maximal)
 
@@ -847,7 +844,7 @@ class NumberField_relative(NumberField_generic):
         INPUT:
 
         - ``x`` -- a non number field element, e.g., a list,
-          integer, rational, or polynomial.
+          integer, rational, or polynomial
 
         EXAMPLES::
 
@@ -1156,8 +1153,8 @@ class NumberField_relative(NumberField_generic):
 
         INPUT:
 
-        - ``proof`` (bool, default: ``True``) -- if True, certify
-          correctness of calculations (not assuming GRH).
+        - ``proof`` -- boolean (default: ``True``); if ``True``, certify
+          correctness of calculations (not assuming GRH)
 
         EXAMPLES::
 
@@ -1247,7 +1244,6 @@ class NumberField_relative(NumberField_generic):
             sage: y = polygen(K); L.<b> = K.extension(y^2 - a)
             sage: L.is_galois_absolute()                                                # needs sage.groups
             False
-
         """
         f = self.absolute_polynomial()
         return f.galois_group(pari_group=True).order() == self.absolute_degree()
@@ -1300,7 +1296,8 @@ class NumberField_relative(NumberField_generic):
             sage: L2.is_isomorphic_relative(L1cyc, base_isom=phi2)
             True
 
-        Omitting ``base_isom`` raises a :class:`ValueError` when the base fields are not identical::
+        Omitting ``base_isom`` raises a :exc:`ValueError` when the base fields
+        are not identical::
 
             sage: L1.is_isomorphic_relative(L1cyc)
             Traceback (most recent call last):
@@ -1369,7 +1366,6 @@ class NumberField_relative(NumberField_generic):
             False
             sage: K.is_CM()
             True
-
         """
 
         try:
@@ -1399,7 +1395,8 @@ class NumberField_relative(NumberField_generic):
 
         - ``basis`` -- (optional) a list of elements giving a basis over the subfield
 
-        - ``map`` -- (default ``True``) whether to return isomorphisms to and from the vector space
+        - ``map`` -- (default: ``True``) whether to return isomorphisms to and
+          from the vector space
 
         EXAMPLES::
 
@@ -1517,7 +1514,6 @@ class NumberField_relative(NumberField_generic):
             ...
             NotImplementedError: For a relative number field L you must use either
             L.relative_vector_space() or L.absolute_vector_space() as appropriate
-
         """
         raise NotImplementedError("For a relative number field L you must use either L.relative_vector_space() or L.absolute_vector_space() as appropriate")
 
@@ -1611,7 +1607,7 @@ class NumberField_relative(NumberField_generic):
         field, and let `f` be the defining polynomial of `L` over `K`.
         This method returns a triple ``(g, alpha, beta)``, where
 
-        - ``g`` is the defining relative polynomial of the PARI
+        - ``g`` -- the defining relative polynomial of the PARI
           ``rnf`` structure (see :meth:`pari_rnf`);
 
         - ``alpha`` is the image of `x \bmod f` under some isomorphism
@@ -1838,9 +1834,7 @@ class NumberField_relative(NumberField_generic):
 
         - ``names`` -- string; name of generator of the absolute field
 
-        OUTPUT:
-
-        An absolute number field `K` that is isomorphic to this field.
+        OUTPUT: an absolute number field `K` that is isomorphic to this field
 
         Also, ``K.structure()`` returns ``from_K`` and ``to_K``, where
         ``from_K`` is an isomorphism from `K` to ``self`` and ``to_K``
@@ -2046,7 +2040,7 @@ class NumberField_relative(NumberField_generic):
         e.g., it could be the complex numbers). This will return an
         identical result when given `K` as input again.
 
-        If possible, the most natural embedding of self into `K`
+        If possible, the most natural embedding of ``self`` into `K`
         is put first in the list.
 
         INPUT:
@@ -2190,11 +2184,9 @@ class NumberField_relative(NumberField_generic):
 
         INPUT:
 
-        - ``prec`` -- desired floating point precision.
+        - ``prec`` -- desired floating point precision
 
-        OUTPUT:
-
-        the morphism of ``self`` under the logarithmic embedding in the category Set.
+        OUTPUT: the morphism of ``self`` under the logarithmic embedding in the category Set
 
         EXAMPLES::
 
@@ -2358,9 +2350,9 @@ class NumberField_relative(NumberField_generic):
 
         INPUT:
 
-        - ``v`` (optional) -- list of element of this relative number field.
+        - ``v`` -- (optional) list of element of this relative number field
 
-        OUTPUT: Integer if ``v`` is omitted, and Rational otherwise.
+        OUTPUT: integer if ``v`` is omitted, and Rational otherwise
 
         EXAMPLES::
 
@@ -2460,22 +2452,23 @@ class NumberField_relative(NumberField_generic):
 
         - ``gens`` -- list of elements of ``self``; if no generators are given, just
           returns the cardinality of this number field (`\infty`) for consistency.
-        - ``check_is_integral`` -- bool (default: ``True``), whether to check that each
-          generator is integral.
-        - ``check_rank`` -- bool (default: ``True``), whether to check that the ring
-          generated by ``gens`` is of full rank.
-        - ``allow_subfield`` -- bool (default: ``False``), if ``True`` and the generators
-          do not generate an order, i.e., they generate a subring of smaller
-          rank, instead of raising an error, return an order in a smaller
-          number field.
+        - ``check_is_integral`` -- boolean (default: ``True``); whether to
+          check that each generator is integral
+        - ``check_rank`` -- boolean (default: ``True``); whether to check that
+          the ring generated by ``gens`` is of full rank
+        - ``allow_subfield`` -- boolean (default: ``False``); if ``True`` and
+          the generators do not generate an order, i.e., they generate a
+          subring of smaller rank, instead of raising an error, return an order
+          in a smaller number field.
 
         The ``check_is_integral`` and ``check_rank`` inputs must be given as
         explicit keyword arguments.
 
         EXAMPLES::
 
-            sage: P.<a,b,c> = QQ[2^(1/2), 2^(1/3), 3^(1/2)]                             # needs sage.symbolic
-            sage: R = P.order([a,b,c]); R                                               # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: P3.<a,b,c> = QQ[2^(1/2), 2^(1/3), 3^(1/2)]
+            sage: R = P3.order([a,b,c]); R                                              # not tested (83s, 2GB memory)
             Relative Order generated by
              [((-36372*sqrt3 + 371270)*a^2 + (-89082*sqrt3 + 384161)*a - 422504*sqrt3 - 46595)*sqrt2 + (303148*sqrt3 - 89080)*a^2 + (313664*sqrt3 - 218211)*a - 38053*sqrt3 - 1034933,
               ((-65954*sqrt3 + 323491)*a^2 + (-110591*sqrt3 + 350011)*a - 351557*sqrt3 + 77507)*sqrt2 + (264138*sqrt3 - 161552)*a^2 + (285784*sqrt3 - 270906)*a + 63287*sqrt3 - 861151,
@@ -2484,7 +2477,12 @@ class NumberField_relative(NumberField_generic):
               ((-73815*sqrt3 + 257278)*a^2 + (-102896*sqrt3 + 298046)*a - 277080*sqrt3 + 123726)*sqrt2 + (210072*sqrt3 - 180812)*a^2 + (243357*sqrt3 - 252052)*a + 101026*sqrt3 - 678718]
              in Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
-        The base ring of an order in a relative extension is still `\ZZ`.::
+            sage: P2.<u,v> = QQ[2^(1/2), 2^(1/3)]                                       # needs sage.symbolic
+            sage: R = P2.order([u,v]); R                                                # needs sage.symbolic
+            Relative Order generated by [(6*a^2 - a - 1)*sqrt2 + 4*a^2 - 6*a - 9, sqrt2 - a]
+             in Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
+
+        The base ring of an order in a relative extension is still `\ZZ`::
 
             sage: R.base_ring()                                                         # needs sage.symbolic
             Integer Ring
@@ -2492,7 +2490,7 @@ class NumberField_relative(NumberField_generic):
         One must give enough generators to generate a ring of finite index
         in the maximal order::
 
-            sage: P.order([a, b])                                                       # needs sage.symbolic
+            sage: P3.order([a, b])                                                      # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: the rank of the span of gens is wrong
@@ -2512,7 +2510,7 @@ class NumberField_relative(NumberField_generic):
 
         INPUT:
 
-        - ``proof`` -- default: ``True``
+        - ``proof`` -- (default: ``True``)
 
         EXAMPLES::
 
@@ -2553,7 +2551,7 @@ class NumberField_relative(NumberField_generic):
     def lift_to_base(self, element):
         """
         Lift an element of this extension into the base field if possible,
-        or raise a :class:`ValueError` if it is not possible.
+        or raise a :exc:`ValueError` if it is not possible.
 
         EXAMPLES::
 
@@ -2611,7 +2609,7 @@ class NumberField_relative(NumberField_generic):
         INPUT:
 
         - ``alpha`` -- an element of ``self``, or an embedding of a subfield into ``self``
-        - ``names`` -- name of generator for output field `K`.
+        - ``names`` -- name of generator for output field `K`
 
         OUTPUT: `K` -- a relative number field
 
@@ -2697,23 +2695,23 @@ class NumberField_relative(NumberField_generic):
         L = K.relativize(beta, names)
         return K.relativize(beta, names, structure=structure.RelativeFromRelative(L))
 
-    def uniformizer(self, P, others="positive"):
+    def uniformizer(self, P, others='positive'):
         """
-        Returns an element of ``self`` with valuation 1 at the prime ideal `P`.
+        Return an element of ``self`` with valuation 1 at the prime ideal `P`.
 
         INPUT:
 
-        -  ``self`` -- a number field
+        - ``self`` -- a number field
 
-        -  ``P`` -- a prime ideal of ``self``
+        - ``P`` -- a prime ideal of ``self``
 
-        -  ``others`` -- either ``"positive"`` (default), in which
-           case the element will have non-negative valuation at all other
-           primes of ``self``, or ``"negative"``, in which case the element will have
-           non-positive valuation at all other primes of ``self``.
+        - ``others`` -- either ``'positive'`` (default), in which case the
+          element will have nonnegative valuation at all other primes of
+          ``self``, or ``'negative'``, in which case the element will have
+          nonpositive valuation at all other primes of ``self``
 
 
-        .. note::
+        .. NOTE::
 
            When `P` is principal (e.g., always when ``self`` has class number
            one), the result may or may not be a generator of `P`!

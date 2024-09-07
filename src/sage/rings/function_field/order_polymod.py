@@ -17,6 +17,7 @@ Orders of function fields: extension
 # ****************************************************************************
 
 from sage.arith.functions import lcm
+from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -248,8 +249,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
         - ``d`` -- (default: 1) a nonzero element of the polynomial ring
 
-        - ``check`` -- boolean (default: ``True``); if ``True``, compute the real
-          denominator of the vectors, possibly different from ``d``.
+        - ``check`` -- boolean (default: ``True``); if ``True``, compute the
+          real denominator of the vectors, possibly different from ``d``
 
         EXAMPLES::
 
@@ -617,7 +618,6 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
 
             Use Kummer's theorem to shortcut this code if possible, like as
             done in :meth:`FunctionFieldMaximalOrder_global.decomposition()`
-
         """
         from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra
         from sage.matrix.constructor import matrix
@@ -649,7 +649,10 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         # matrices_reduced give the multiplication matrices used to form the
         # algebra O mod pO.
         matrices_reduced = list(map(lambda M: M.mod(p), matrices))
-        A = FiniteDimensionalAlgebra(k, matrices_reduced)
+        cat = CommutativeAlgebras(k).FiniteDimensional().WithBasis()
+        A = FiniteDimensionalAlgebra(k, matrices_reduced,
+                                     assume_associative=True,
+                                     category=cat)
 
         # Each prime ideal of the algebra A corresponds to a prime ideal of O,
         # and since the algebra is an Artinian ring, all of its prime ideals
@@ -680,7 +683,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
                 # not be in pO. To ensure that beta*P is in pO, multiplying
                 # beta by each of P's generators must produce a vector whose
                 # elements are multiples of p. We can ensure that all this
-                # occurs by constructing a matrix in k, and finding a non-zero
+                # occurs by constructing a matrix in k, and finding a nonzero
                 # vector in the kernel of the matrix.
 
                 m = []

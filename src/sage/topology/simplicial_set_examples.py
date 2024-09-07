@@ -717,7 +717,7 @@ def simplicial_data_from_kenzo_output(filename):
 
 def HopfMap():
     r"""
-    Return a simplicial model of the Hopf map `S^3 \to S^2`
+    Return a simplicial model of the Hopf map `S^3 \to S^2`.
 
     This is taken from Exemple II.1.19 in the thesis of Clemens Berger
     [Ber1991]_.
@@ -813,7 +813,7 @@ def PresentationComplex(G):
 
     INPUT:
 
-    - "G" -- a finitely presented group
+    - ``G`` -- a finitely presented group
 
     EXAMPLES::
 

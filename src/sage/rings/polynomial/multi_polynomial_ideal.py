@@ -313,7 +313,7 @@ def is_MPolynomialIdeal(x) -> bool:
 
     INPUT:
 
-    -  ``x`` -- an arbitrary object
+    - ``x`` -- an arbitrary object
 
     EXAMPLES::
 
@@ -326,6 +326,10 @@ def is_MPolynomialIdeal(x) -> bool:
     but matches Magma's behavior. ::
 
         sage: is_MPolynomialIdeal(I)
+        doctest:warning...
+        DeprecationWarning: The function is_MPolynomialIdeal is deprecated;
+        use 'isinstance(..., MPolynomialIdeal)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         False
 
     ::
@@ -334,6 +338,10 @@ def is_MPolynomialIdeal(x) -> bool:
         sage: is_MPolynomialIdeal(I)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_MPolynomialIdeal is deprecated; "
+                "use 'isinstance(..., MPolynomialIdeal)' instead.")
     return isinstance(x, MPolynomialIdeal)
 
 
@@ -345,7 +353,7 @@ class MPolynomialIdeal_magma_repr:
 
         INPUT:
 
-        -  ``magma`` -- Magma instance
+        - ``magma`` -- Magma instance
 
         EXAMPLES::
 
@@ -371,19 +379,17 @@ class MPolynomialIdeal_magma_repr:
     @magma_gb_standard_options
     def _groebner_basis_magma(self, deg_bound=None, prot=False, magma=magma_default):
         """
-        Computes a Groebner Basis for this ideal using Magma if
+        Compute a Groebner Basis for this ideal using Magma if
         available.
 
         INPUT:
 
         - ``deg_bound`` -- only compute to degree ``deg_bound``, that
-          is, ignore all S-polynomials of higher degree. (default:
-          ``None``)
+          is, ignore all S-polynomials of higher degree (default: ``None``)
 
-        - ``prot`` -- if ``True`` Magma's protocol is printed to
-          stdout.
+        - ``prot`` -- if ``True`` Magma's protocol is printed to stdout
 
-        -  ``magma`` -- Magma instance or None (default instance) (default: None)
+        - ``magma`` -- Magma instance or ``None`` (default instance) (default: ``None``)
 
         EXAMPLES::
 
@@ -448,7 +454,7 @@ class MPolynomialIdeal_singular_base_repr:
     @require_field
     def syzygy_module(self):
         r"""
-        Computes the first syzygy (i.e., the module of relations of the
+        Compute the first syzygy (i.e., the module of relations of the
         given generators) of the ideal.
 
         EXAMPLES::
@@ -476,7 +482,7 @@ class MPolynomialIdeal_singular_base_repr:
         return matrix(self.ring(), S)
 
     @libsingular_gb_standard_options
-    def _groebner_basis_libsingular(self, algorithm="groebner", *args, **kwds):
+    def _groebner_basis_libsingular(self, algorithm='groebner', *args, **kwds):
         """
         Return the reduced Groebner basis of this ideal.
 
@@ -487,8 +493,8 @@ class MPolynomialIdeal_singular_base_repr:
         INPUT:
 
         - ``algorithm`` -- see below for available algorithms
-        - ``redsb`` -- (default: ``True``) return a reduced Groebner basis
-        - ``red_tail`` -- (default: ``True``) perform tail reduction
+        - ``redsb`` -- boolean (default: ``True``); return a reduced Groebner basis
+        - ``red_tail`` -- boolean (default: ``True``); perform tail reduction
 
         ALGORITHMS:
 
@@ -592,12 +598,11 @@ class MPolynomialIdeal_singular_base_repr:
             [[1], [1], [[[(2*a + 3)], [[1]]]]]]
         """
         from sage.rings.fraction_field import FractionField_generic
-        from sage.rings.polynomial.multi_polynomial_ring_base import \
-            is_MPolynomialRing
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+        from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         F = self.base_ring()
         if (not isinstance(F, FractionField_generic) or
-            (not is_MPolynomialRing(F.ring()) and not is_PolynomialRing(F.ring()))):
+            not isinstance(F.ring(), (MPolynomialRing_base, PolynomialRing_general))):
             raise TypeError("the base ring must be a field with parameters")
         from sage.arith.functions import lcm
         from sage.libs.singular.function import lib, singular_function
@@ -682,10 +687,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-
-        -  ``self`` -- must be a principal ideal in 2 or 3 vars
-           over `\QQ`.
-
+        - ``self`` -- must be a principal ideal in 2 or 3 vars over `\QQ`
 
         EXAMPLES:
 
@@ -732,7 +734,7 @@ class MPolynomialIdeal_singular_repr(
     @require_field
     @cached_method
     @libsingular_gb_standard_options
-    def complete_primary_decomposition(self, algorithm="sy"):
+    def complete_primary_decomposition(self, algorithm='sy'):
         r"""
         Return a list of primary ideals such that their intersection
         is ``self``, together with the associated prime ideals.
@@ -759,7 +761,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
 
           - ``'sy'`` -- (default) use the Shimoyama-Yokoyama
             algorithm
@@ -821,7 +823,6 @@ class MPolynomialIdeal_singular_repr(
             []
             sage: I.is_prime()
             False
-
         """
 
         # Avoid a bug in Singular (see #15745).
@@ -872,7 +873,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
 
           - ``'sy'`` -- (default) use the Shimoyama-Yokoyama
             algorithm
@@ -933,28 +934,26 @@ class MPolynomialIdeal_singular_repr(
         If `I` is a proper ideal of the ring `R` then there
         exists a decomposition in primary ideals `Q_i` such that
 
-        -  their intersection is `I`
+        - their intersection is `I`
 
-        -  none of the `Q_i` contains the intersection of the
-           rest, and
+        - none of the `Q_i` contains the intersection of the
+          rest, and
 
-        -  the associated prime ideals of `Q_i` are pairwise
-           different.
+        - the associated prime ideals of `Q_i` are pairwise
+          different.
 
 
         This method returns the associated primes of the `Q_i`.
 
         INPUT:
 
-
-        - ``algorithm`` -- string:
+        - ``algorithm`` -- string; one of
 
           - ``'sy'`` -- (default) use the Shimoyama-Yokoyama algorithm
 
           - ``'gtz'`` -- use the Gianni-Trager-Zacharias algorithm
 
-
-        OUTPUT: a list of associated primes
+        OUTPUT: list of associated primes
 
         EXAMPLES::
 
@@ -1041,22 +1040,22 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        -  ``algorithm`` -- string or None (default: None)
+        - ``algorithm`` -- string or ``None`` (default: ``None``)
 
         ALGORITHMS:
 
-        - ``"singular:triangL"`` -- decomposition of ``self`` into triangular
-          systems (Lazard).
+        - ``'singular:triangL'`` -- decomposition of ``self`` into triangular
+          systems (Lazard)
 
-        - ``"singular:triangLfak"`` -- decomposition of ``self`` into triangular systems
-          plus factorization.
+        - ``'singular:triangLfak'`` -- decomposition of ``self`` into triangular systems
+          plus factorization
 
-        - ``"singular:triangM"`` -- decomposition of ``self`` into
-          triangular systems (Moeller).
+        - ``'singular:triangM'`` -- decomposition of ``self`` into
+          triangular systems (Moeller)
 
-        OUTPUT: a list `T` of lists `t` such that the variety of
+        OUTPUT: list `T` of lists `t` such that the variety of
         ``self`` is the union of the varieties of `t` in `L` and each
-        `t` is in triangular form.
+        `t` is in triangular form
 
         EXAMPLES::
 
@@ -1178,10 +1177,16 @@ class MPolynomialIdeal_singular_repr(
 
         If the ideal is the total ring, the dimension is `-1` by convention.
 
+        ALGORITHM:
+
+        For principal ideals, Theorem 3.5.1 of [Ger2008]_ is used. Otherwise
+        Singular is used, unless the characteristic is too large. This requires
+        computation of a Groebner basis, which can be very expensive.
+
         For polynomials over a finite field of order too large for Singular,
-        this falls back on a toy implementation of Buchberger to compute
-        the Groebner basis, then uses the algorithm described in Chapter 9,
-        Section 1 of Cox, Little, and O'Shea's "Ideals, Varieties, and Algorithms".
+        this falls back on a toy implementation of Buchberger to compute the
+        Groebner basis, then uses the algorithm described in Chapter 9, Section
+        1 of Cox, Little, and O'Shea's "Ideals, Varieties, and Algorithms".
 
         EXAMPLES::
 
@@ -1202,12 +1207,7 @@ class MPolynomialIdeal_singular_repr(
             sage: R.<x,y> = PolynomialRing(GF(2147483659^2), order='lex')
             sage: I = R.ideal(0)
             sage: I.dimension()
-            verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             2
-
-        ALGORITHM:
-
-        Uses Singular, unless the characteristic is too large.
 
         TESTS:
 
@@ -1217,16 +1217,21 @@ class MPolynomialIdeal_singular_repr(
             sage: I = ideal(x^2-y, x^3-QQbar(-1))                                       # needs sage.rings.number_field
             sage: I.dimension()                                                         # needs sage.rings.number_field
             1
-
-        .. NOTE::
-
-            Requires computation of a Groebner basis, which can be a
-            very expensive operation.
-
         """
         try:
             return self.__dimension
         except AttributeError:
+            if not self.base_ring().is_field():
+                raise NotImplementedError("implemented only over fields")
+            if self.ngens() == 1:
+                g = self.gen(0)
+                if g.is_unit():
+                    self.__dimension = Integer(-1)
+                elif g:
+                    self.__dimension = Integer(self.ring().ngens() - 1)
+                else:
+                    self.__dimension = Integer(self.ring().ngens())
+                return self.__dimension
             try:
                 from sage.libs.singular.function_factory import ff
                 dim = ff.dim
@@ -1237,57 +1242,55 @@ class MPolynomialIdeal_singular_repr(
                     v = self._groebner_basis_singular_raw()
                     self.__dimension = Integer(v.dim())
                 except TypeError:
-                    if not self.base_ring().is_field():
-                        raise NotImplementedError("dimension() is implemented only over fields.")
-                    if self.ring().term_order().is_global():
-                        verbose("Warning: falling back to very slow toy implementation.", level=0)
-                        # See Chapter 9, Section 1 of Cox, Little, O'Shea's "Ideals, Varieties,
-                        # and Algorithms".
-                        from sage.sets.set import Set
-                        gb = toy_buchberger.buchberger_improved(self)
-                        if self.ring().one() in gb:
-                            return Integer(-1)
-                        ring_vars = self.ring().gens()
-                        n = len(ring_vars)
-                        lms = [each.lm() for each in gb]
-                        # compute M_j, denoted by var_lms
-                        var_lms = [Set([]) for _ in lms]
-                        for j in range(len(ring_vars)):
-                            for i in range(len(lms)):
-                                if lms[i].degree(ring_vars[j]) > 0:
-                                    var_lms[i] += Set([j+1])
-                        # compute intersections of M_j and J
-                        # we assume that the iterator starts with the empty set,
-                        # then iterates through all subsets of order 1,
-                        # then through all subsets of order 2, etc...
-                        # the way Sage currently operates
-                        all_J = Set([each + 1 for each in range(n)]).subsets()
-                        min_dimension = -1
-                        all_J = iter(all_J)
-                        while min_dimension == -1:
-                            try:
-                                J = next(all_J)
-                            except StopIteration:
-                                min_dimension = n
-                                break
-                            J_intersects_all = True
-                            i = 0
-                            while J_intersects_all and i < len(var_lms):
-                                J_intersects_all = J.intersection(var_lms[i]) != Set([])
-                                i += 1
-                            if J_intersects_all:
-                                min_dimension = len(J)
-                        return Integer(n - min_dimension)
-                    else:
-                        raise TypeError("Local/unknown orderings not supported by 'toy_buchberger' implementation.")
-        return self.__dimension
+                    verbose("Warning: falling back to very slow toy implementation.", level=0)
+                    if not self.ring().term_order().is_global():
+                        raise TypeError("local/unknown ordering is not supported by the toy implementation")
+                    # See Chapter 9, Section 1 of Cox, Little, O'Shea's
+                    # "Ideals, Varieties, and Algorithms"
+                    from sage.sets.set import Set
+                    gb = toy_buchberger.buchberger_improved(self)
+                    if self.ring().one() in gb:
+                        self.__dimension = Integer(-1)
+                        return self.__dimension
+                    ring_vars = self.ring().gens()
+                    n = len(ring_vars)
+                    lms = [each.lm() for each in gb]
+                    # compute M_j, denoted by var_lms
+                    var_lms = [Set([]) for _ in lms]
+                    for j in range(len(ring_vars)):
+                        for i in range(len(lms)):
+                            if lms[i].degree(ring_vars[j]) > 0:
+                                var_lms[i] += Set([j+1])
+                    # compute intersections of M_j and J
+                    # we assume that the iterator starts with the empty set,
+                    # then iterates through all subsets of order 1,
+                    # then through all subsets of order 2, etc...
+                    # the way Sage currently operates
+                    all_J = Set([each + 1 for each in range(n)]).subsets()
+                    min_dimension = -1
+                    all_J = iter(all_J)
+                    while min_dimension == -1:
+                        try:
+                            J = next(all_J)
+                        except StopIteration:
+                            min_dimension = n
+                            break
+                        J_intersects_all = True
+                        i = 0
+                        while J_intersects_all and i < len(var_lms):
+                            J_intersects_all = J.intersection(var_lms[i]) != Set([])
+                            i += 1
+                        if J_intersects_all:
+                            min_dimension = len(J)
+                    self.__dimension = Integer(n - min_dimension)
+            return self.__dimension
 
     @require_field
     @handle_AA_and_QQbar
     def vector_space_dimension(self):
         """
         Return the vector space dimension of the ring modulo this ideal. If
-        the ideal is not zero-dimensional, a :class:`TypeError` is raised.
+        the ideal is not zero-dimensional, a :exc:`TypeError` is raised.
 
         ALGORITHM:
 
@@ -1329,7 +1332,6 @@ class MPolynomialIdeal_singular_repr(
             0
             sage: I.vector_space_dimension()
             3
-
         """
         R = self.ring()
         gb = R.ideal(self.groebner_basis())
@@ -1345,18 +1347,19 @@ class MPolynomialIdeal_singular_repr(
             return vd
 
     @require_field
-    def _groebner_basis_ginv(self, algorithm="TQ", criteria='CritPartially', division_interface="Janet"):
+    def _groebner_basis_ginv(self, algorithm='TQ', criteria='CritPartially', division_interface='Janet'):
         r"""
         Compute a Groebner basis using GINV.
 
         INPUT:
 
-        - ``algorithm`` -- "TQ", "TQBlockHigh", "TQBlockLow" or "TQDegree"
-        - ``criteria``  -- "Without" (without any criteria)
-                        -- "C1", "CritPartially" (partial involutive criteria)
-                        -- "C1C2C3", "C1C2C3C4" (full involutive criteria)
+        - ``algorithm`` -- ``'TQ'``, ``'TQBlockHigh'``, ``'TQBlockLow'``, or
+          ``'TQDegree'``
+        - ``criteria`` -- ``'Without'`` (without any criteria),
+          ``'C1'``, ``'CritPartially'`` (partial involutive criteria),
+          ``'C1C2C3'``, ``'C1C2C3C4'`` (full involutive criteria)
 
-        - ``division_interface`` -- either "Janet" or "JanetLike"
+        - ``division_interface`` -- either ``'Janet'`` or ``'JanetLike'``
 
         EXAMPLES:
 
@@ -1413,7 +1416,7 @@ class MPolynomialIdeal_singular_repr(
         return G
 
     @singular_gb_standard_options
-    def _groebner_basis_singular(self, algorithm="groebner", *args, **kwds):
+    def _groebner_basis_singular(self, algorithm='groebner', *args, **kwds):
         """
         Return the reduced Groebner basis of this ideal. If the
         Groebner basis for this ideal has been calculated before, the
@@ -1422,8 +1425,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        -  ``algorithm`` -- see below for available algorithms
-
+        - ``algorithm`` -- see below for available algorithms
 
         ALGORITHMS:
 
@@ -1480,7 +1482,7 @@ class MPolynomialIdeal_singular_repr(
         return S
 
     @cached_method
-    def _groebner_basis_singular_raw(self, algorithm="groebner", singular=None, *args, **kwds):
+    def _groebner_basis_singular_raw(self, algorithm='groebner', singular=None, *args, **kwds):
         r"""
         Return a Groebner basis in Singular format.
 
@@ -1710,9 +1712,7 @@ class MPolynomialIdeal_singular_repr(
     @libsingular_gb_standard_options
     def minimal_associated_primes(self):
         """
-        OUTPUT:
-
-        -  ``list`` -- a list of prime ideals
+        OUTPUT: list of prime ideals
 
         EXAMPLES::
 
@@ -1837,7 +1837,7 @@ class MPolynomialIdeal_singular_repr(
     @handle_AA_and_QQbar
     def syzygy_module(self):
         r"""
-        Computes the first syzygy (i.e., the module of relations of the
+        Compute the first syzygy (i.e., the module of relations of the
         given generators) of the ideal.
 
         EXAMPLES::
@@ -1979,7 +1979,6 @@ class MPolynomialIdeal_singular_repr(
           `\{g_1,...,g_{i-1},g_{i+1},...,g_s\}`
 
         - `LC(g_i) = 1` for all `i` if the coefficient ring is a field.
-
 
         EXAMPLES::
 
@@ -2174,13 +2173,13 @@ class MPolynomialIdeal_singular_repr(
     @handle_AA_and_QQbar
     @singular_gb_standard_options
     @libsingular_gb_standard_options
-    def transformed_basis(self, algorithm="gwalk", other_ring=None, singular=None):
+    def transformed_basis(self, algorithm='gwalk', other_ring=None, singular=None):
         """
         Return a lex or ``other_ring`` Groebner Basis for this ideal.
 
         INPUT:
 
-        - ``algorithm`` -- see below for options.
+        - ``algorithm`` -- see below for options
 
         - ``other_ring`` -- only valid for ``algorithm='fglm'``; if
           provided, conversion will be performed to this
@@ -2189,18 +2188,18 @@ class MPolynomialIdeal_singular_repr(
 
         ALGORITHMS:
 
-        - ``"fglm"`` -- FGLM algorithm. The input ideal must be given with a reduced
+        - ``'fglm'`` -- FGLM algorithm. The input ideal must be given with a reduced
           Groebner Basis of a zero-dimensional ideal
 
-        - ``"gwalk"`` -- Groebner Walk algorithm (*default*)
+        - ``'gwalk'`` -- Groebner Walk algorithm (*default*)
 
-        - ``"awalk1"`` -- 'first alternative' algorithm
+        - ``'awalk1'`` -- 'first alternative' algorithm
 
-        - ``"awalk2"`` -- 'second alternative' algorithm
+        - ``'awalk2'`` -- 'second alternative' algorithm
 
-        - ``"twalk"`` -- Tran algorithm
+        - ``'twalk'`` -- Tran algorithm
 
-        - ``"fwalk"`` -- Fractal Walk algorithm
+        - ``'fwalk'`` -- Fractal Walk algorithm
 
         EXAMPLES::
 
@@ -2287,10 +2286,10 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        - ``variables`` -- a list or tuple of variables in ``self.ring()``
+        - ``variables`` -- list or tuple of variables in ``self.ring()``
 
         - ``algorithm`` -- determines the algorithm to use, see below
-          for available algorithms.
+          for available algorithms
 
         ALGORITHMS:
 
@@ -2312,7 +2311,7 @@ class MPolynomialIdeal_singular_repr(
 
         You can use Giac to compute the elimination ideal::
 
-            sage: print("possible output from giac", flush=True); I.elimination_ideal([t, s], algorithm="giac") == J
+            sage: print("possible output from giac", flush=True); I.elimination_ideal([t, s], algorithm='giac') == J
             possible output...
             True
 
@@ -2338,7 +2337,7 @@ class MPolynomialIdeal_singular_repr(
             sage: J = I.elimination_ideal([t, s]); J
             Ideal (y^2 - x*z, x*y - z, x^2 - y) of Multivariate
             Polynomial Ring in x, y, t, s, z over Algebraic Field
-            sage: print("possible output from giac", flush=True); I.elimination_ideal([t, s], algorithm="giac") == J
+            sage: print("possible output from giac", flush=True); I.elimination_ideal([t, s], algorithm='giac') == J
             possible output...
             True
 
@@ -2404,7 +2403,7 @@ class MPolynomialIdeal_singular_repr(
 
         INPUT:
 
-        -  ``J`` -- multivariate polynomial ideal
+        - ``J`` -- multivariate polynomial ideal
 
         EXAMPLES::
 
@@ -2467,7 +2466,8 @@ class MPolynomialIdeal_singular_repr(
     @handle_AA_and_QQbar
     def saturation(self, other):
         r"""
-        Return the saturation (and saturation exponent) of the ideal ``self`` with respect to the ideal ``other``
+        Return the saturation (and saturation exponent) of the ideal ``self``
+        with respect to the ideal ``other``.
 
         INPUT:
 
@@ -2506,7 +2506,7 @@ class MPolynomialIdeal_singular_repr(
         return (R.ideal(ideal), ZZ(expo))
 
     @require_field
-    def variety(self, ring=None, *, algorithm="triangular_decomposition", proof=True):
+    def variety(self, ring=None, *, algorithm='triangular_decomposition', proof=True):
         r"""
         Return the variety of this ideal.
 
@@ -2690,11 +2690,11 @@ class MPolynomialIdeal_singular_repr(
 
         ALGORITHM:
 
-        - With ``algorithm`` = ``"triangular_decomposition"`` (default),
+        - With ``algorithm`` = ``'triangular_decomposition'`` (default),
           uses triangular decomposition, via Singular if possible, falling back
           on a toy implementation otherwise.
 
-        - With ``algorithm`` = ``"msolve"``, uses the
+        - With ``algorithm`` = ``'msolve'``, uses the
           :ref:`optional package msolve <spkg_msolve>`.
           Note that msolve uses heuristics and therefore
           requires setting the ``proof`` flag to ``False``. See
@@ -2815,7 +2815,6 @@ class MPolynomialIdeal_singular_repr(
             sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
             sage: len(I.variety())
             4
-
         """
 
         def _variety(T, V, v=None):
@@ -2854,7 +2853,7 @@ class MPolynomialIdeal_singular_repr(
             return []
 
         if isinstance(self.base_ring(), sage.rings.abc.ComplexField):
-            verbose("Warning: computations in the complex field are inexact; variety may be computed partially or incorrectly.", level=0, caller_name="variety")
+            verbose("Warning: computations in the complex field are inexact; variety may be computed partially or incorrectly.", level=0, caller_name='variety')
         P = self.ring()
         if ring is not None:
             P = P.change_ring(ring)
@@ -2863,7 +2862,7 @@ class MPolynomialIdeal_singular_repr(
             T = [list(each.gens()) for each in TI]
         except TypeError:  # conversion to Singular not supported
             if self.ring().term_order().is_global():
-                verbose("Warning: falling back to very slow toy implementation.", level=0, caller_name="variety")
+                verbose("Warning: falling back to very slow toy implementation.", level=0, caller_name='variety')
                 T = toy_variety.triangular_factorization(self.groebner_basis())
             else:
                 raise TypeError("Local/unknown orderings not supported by 'toy_buchberger' implementation.")
@@ -3185,7 +3184,6 @@ class MPolynomialIdeal_singular_repr(
             sage: n2 = I.hilbert_numerator(algorithm='singular')
             sage: n1 == n2
             True
-
         """
         if not self.is_homogeneous():
             raise TypeError("Ideal must be homogeneous.")
@@ -3295,12 +3293,12 @@ class MPolynomialIdeal_singular_repr(
 
         - ``degree`` -- integer (default: ``None``)
 
-        - ``algorithm`` -- string (default: ``"libsingular"``); if not the
+        - ``algorithm`` -- string (default: ``'libsingular'``); if not the
           default, this will use the ``kbase()`` or ``weightKB()`` command from
           Singular
 
         - ``singular`` -- the singular interpreter to use when ``algorithm`` is
-          not ``"libsingular"`` (default: the default instance)
+          not ``'libsingular'`` (default: the default instance)
 
         OUTPUT:
 
@@ -3413,7 +3411,7 @@ class MPolynomialIdeal_macaulay2_repr:
         INPUT:
 
         - ``strategy`` -- (default: ``'gb'``) argument specifying the strategy
-          to be used by Macaulay2; possibilities: ``'f4'``, ``'gb'``, ``'mgb'``.
+          to be used by Macaulay2; possibilities: ``'f4'``, ``'gb'``, ``'mgb'``
 
         EXAMPLES::
 
@@ -3495,19 +3493,18 @@ class MPolynomialIdeal_macaulay2_repr:
         return R(k)
 
 class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
-    def __init__(self, ring, gens, coerce=True, side="left"):
+    def __init__(self, ring, gens, coerce=True, side='left'):
         r"""
-        Creates a non-commutative polynomial ideal.
+        Create a non-commutative polynomial ideal.
 
         INPUT:
 
-        - ``ring`` - the g-algebra to which this ideal belongs
-        - ``gens`` - the generators of this ideal
-        - ``coerce`` (optional - default: ``True``) - generators are
+        - ``ring`` -- the g-algebra to which this ideal belongs
+        - ``gens`` -- the generators of this ideal
+        - ``coerce`` -- boolean (default: ``True``); generators are
           coerced into the ring before creating the ideal
-        - ``side`` -- optional string, either ``"left"`` (default)
-          or ``"twosided"``; defines whether this ideal is left
-          of two-sided.
+        - ``side`` -- (optional) string; either ``'left'`` (default)
+          or ``'twosided'``. Defines whether this ideal is left or two-sided.
 
         EXAMPLES::
 
@@ -3524,18 +3521,17 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
             sage: sorted(I.gens(), key=str)
             [x^2, y^2, z^2 - 1]
-            sage: H.ideal([y^2, x^2, z^2 - H.one()], side="twosided")  # random
+            sage: H.ideal([y^2, x^2, z^2 - H.one()], side='twosided')  # random
             Twosided Ideal (y^2, x^2, z^2 - 1) of
              Noncommutative Multivariate Polynomial Ring in x, y, z over Rational Field,
              nc-relations: {z*x: x*z + 2*x, z*y: y*z - 2*y, y*x: x*y - z}
-            sage: sorted(H.ideal([y^2, x^2, z^2 - H.one()], side="twosided").gens(),
+            sage: sorted(H.ideal([y^2, x^2, z^2 - H.one()], side='twosided').gens(),
             ....:        key=str)
             [x^2, y^2, z^2 - 1]
-            sage: H.ideal([y^2, x^2, z^2 - H.one()], side="right")
+            sage: H.ideal([y^2, x^2, z^2 - H.one()], side='right')
             Traceback (most recent call last):
             ...
             ValueError: Only left and two-sided ideals are allowed.
-
         """
         if side == "right":
             raise ValueError("Only left and two-sided ideals are allowed.")
@@ -3548,11 +3544,9 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
         INPUT:
 
         - ``cmd`` - string, representing a Singular function
-        - ``arg`` (Default: None) - arguments for which cmd is called
+        - ``arg`` -- (default: ``None``) arguments for which cmd is called
 
-        OUTPUT:
-
-        - result of the Singular function call
+        OUTPUT: result of the Singular function call
 
         EXAMPLES::
 
@@ -3761,7 +3755,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
             sage: I.reduce(z^2)                                                         # needs sage.combinat sage.modules
             1
-
         """
         return self._groebner_strategy().normal_form(p)
 
@@ -3793,7 +3786,6 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
             False
             sage: x*y^2-y*z in JT                                                       # needs sage.combinat sage.modules
             True
-
         """
         return self.reduce(p).is_zero()
 
@@ -3894,7 +3886,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         - ``ring`` -- the ring the ideal is defined in
 
-        - ``gens`` -- a list of generators for the ideal
+        - ``gens`` -- list of generators for the ideal
 
         - ``coerce`` -- whether to coerce elements to the ring ``ring``
 
@@ -3912,7 +3904,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
     def __hash__(self):
         r"""
-        Stupid constant hash function!
+        Stupid constant hash function.
 
         TESTS::
 
@@ -3951,7 +3943,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
            sage: I = Ideal([x, y + 1])
            sage: I.basis
            [x, y + 1]
-
         """
         return self.gens()
 
@@ -3963,15 +3954,13 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         - ``other`` -- a polynomial ideal
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         ALGORITHM:
 
         Comparison for ``==`` and ``!=`` compares two Groebner bases.
 
-        Comparison for ``<=` and ``>=`` tests the inclusion of ideals
+        Comparison for ``<=`` and ``>=`` tests the inclusion of ideals
         using the usual ideal membership test, namely all generators
         of one ideal must reduce to zero in the other ideal's Groebner
         basis.
@@ -4143,7 +4132,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                     o, r = next(iter(other_new._gb_by_ordering.items()))
                     l = self.change_ring(R.change_ring(order=o)).gens()
                 else: # use easy GB otherwise
-                    newR = R.change_ring(order="degrevlex")
+                    newR = R.change_ring(order='degrevlex')
                     l = self.change_ring(newR).gens()
                     r = other_new.change_ring(newR).groebner_basis()
                     # remember this Groebner basis for future reference
@@ -4162,7 +4151,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
                     l = self.groebner_basis()
                     r = other_new.groebner_basis()
                 else: # use easy GB otherwise
-                    newR = R.change_ring(order="degrevlex")
+                    newR = R.change_ring(order='degrevlex')
                     l = self.change_ring(newR).groebner_basis()
                     r = other_new.change_ring(newR).groebner_basis()
             except AttributeError: # e.g. quotient rings
@@ -4194,16 +4183,15 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         INPUT:
 
+        - ``is_groebner_basis`` -- boolean (default: ``False``); if
+          ``True``, then ``I.gens()`` must be a Groebner basis with respect to
+          the standard degree lexicographic term order
 
-        -  ``is_groebner_basis`` -- bool (default: ``False``). if
-           True, then I.gens() must be a Groebner basis with respect to the
-           standard degree lexicographic term order.
+        - ``symmetry`` -- (default: ``None``) if not ``None``, describes
+          symmetries of the ideal
 
-        -  ``symmetry`` -- default: None; if not None, describes
-           symmetries of the ideal
-
-        -  ``verbose`` -- default: ``False``; if True, printout
-           useful info during computations
+        - ``verbose`` -- (default: ``False``) if ``True``, printout
+          useful info during computations
         """
         import sage.rings.polynomial.groebner_fan as groebner_fan
         return groebner_fan.GroebnerFan(self, is_groebner_basis=is_groebner_basis,
@@ -4229,7 +4217,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         INPUT:
 
         - ``algorithm`` -- determines the algorithm to use, see below
-          for available algorithms.
+          for available algorithms
 
         - ``deg_bound`` -- only compute to degree ``deg_bound``, that
           is, ignore all S-polynomials of higher degree. (default:
@@ -4832,15 +4820,12 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
     def change_ring(self, P):
         r"""
-        Return the ideal ``I`` in ``P`` spanned by
-        the generators `g_1, ..., g_n` of self as returned by
-        ``self.gens()``.
+        Return the ideal ``I`` in ``P`` spanned by the generators
+        `g_1, ..., g_n` of ``self`` as returned by ``self.gens()``.
 
         INPUT:
 
-
-        -  ``P`` -- a multivariate polynomial ring
-
+        - ``P`` -- a multivariate polynomial ring
 
         EXAMPLES::
 
@@ -4892,7 +4877,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         OUTPUT:
 
         A new ideal with modified generators. If possible, in the same
-        polynomial ring. Raises a :class:`TypeError` if no common
+        polynomial ring. Raises a :exc:`TypeError` if no common
         polynomial ring of the substituted generators can be found.
 
         EXAMPLES::
@@ -5016,10 +5001,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         INPUT:
 
-
-        -  ``h`` -- variable name or variable in cover ring
-           (default: 'h')
-
+        - ``h`` -- variable name or variable in cover ring (default: ``'h'``)
 
         EXAMPLES::
 
@@ -5111,7 +5093,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         The degree of regularity of a semi-regular sequence
         `f_1, ...,f_m` of respective degrees `d_1,...,d_m` is given by the
-        index of the first non-positive coefficient of:
+        index of the first nonpositive coefficient of:
 
             `\sum c_k z^k = \frac{\prod (1 - z^{d_i})}{(1-z)^n}`
 
@@ -5199,9 +5181,9 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         - ``self`` -- a principal ideal in 2 variables
 
         - ``algorithm`` -- set this to 'surf' if you want 'surf' to
-          plot the ideal (default: None)
+          plot the ideal (default: ``None``)
 
-        - ``*args`` -- optional tuples ``(variable, minimum, maximum)``
+        - ``*args`` -- (optional) tuples ``(variable, minimum, maximum)``
           for plotting dimensions
 
         - ``**kwds`` -- optional keyword arguments passed on to
@@ -5253,7 +5235,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: I = R.ideal([-x^2*y + 1])
             sage: I.plot()                         # blow up                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
-
         """
         from sage.plot.all import implicit_plot
         from sage.rings.real_mpfr import RR
@@ -5394,7 +5375,6 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: set_random_seed(5)
             sage: I.random_element(degree=2)
             -2*x^2 + 2*y^2
-
         """
         if compute_gb:
             gens = self.groebner_basis()
@@ -5684,9 +5664,7 @@ class MPolynomialIdeal_quotient(MPolynomialIdeal):
 
         - ``other`` -- an ideal in a quotient of a polynomial ring
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         TESTS::
 

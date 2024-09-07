@@ -54,9 +54,9 @@ class FMatrix(SageObject):
       (see :meth:`FusionRing.fusion_labels`)
     - ``var_prefix`` -- (optional) a string indicating the desired prefix
       for variables denoting F-symbols to be solved
-    - ``inject_variables`` -- (default: ``False``) a boolean indicating
-      whether to inject variables (:class:`FusionRing` basis element
-      labels and F-symbols) into the global namespace
+    - ``inject_variables`` -- boolean (default: ``False``); whether to inject
+      variables (:class:`FusionRing` basis element labels and F-symbols) into
+      the global namespace
 
     The :class:`FusionRing` or Verlinde algebra is the
     Grothendieck ring of a modular tensor category [BaKi2001]_.
@@ -189,7 +189,7 @@ class FMatrix(SageObject):
         sage: f.f_from(s, s, s, s), f.f_to(s, s, s, s)
         ([i0, p], [i0, p])
 
-    The last two statments show that the possible values of
+    The last two statements show that the possible values of
     `X` and `Y` when `A = B = C = D = s` are `i_0` and `p`.
 
     The F-matrix is computed by solving the so-called
@@ -263,14 +263,14 @@ class FMatrix(SageObject):
         sage: f.field()                                 # long time
         Algebraic Field
     """
-    def __init__(self, fusion_ring, fusion_label="f", var_prefix='fx', inject_variables=False):
+    def __init__(self, fusion_ring, fusion_label='f', var_prefix='fx', inject_variables=False):
         r"""
         Initialize ``self``.
 
         EXAMPLES::
 
             sage: f = FusionRing("B3", 2).get_fmatrix()
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
         """
         self._FR = fusion_ring
         if inject_variables and (self._FR._fusion_labels is None):
@@ -472,7 +472,7 @@ class FMatrix(SageObject):
 
         EXAMPLES::
 
-            sage: fr = FusionRing("A1", 2, fusion_labels="c", inject_variables=True)
+            sage: fr = FusionRing("A1", 2, fusion_labels='c', inject_variables=True)
             sage: f = fr.get_fmatrix(new=True)
             sage: f.fmatrix(c1, c1, c1, c1)
             [fx0 fx1]
@@ -606,7 +606,7 @@ class FMatrix(SageObject):
 
         EXAMPLES::
 
-            sage: fr = FusionRing("A1", 3, fusion_labels="a", inject_variables=True)
+            sage: fr = FusionRing("A1", 3, fusion_labels='a', inject_variables=True)
             sage: f = fr.get_fmatrix()
             sage: f.fmatrix(a1, a1, a2, a2)
             [fx6 fx7]
@@ -739,7 +739,7 @@ class FMatrix(SageObject):
         EXAMPLES::
 
             sage: fr = FusionRing("G2", 1)
-            sage: f = fr.get_fmatrix(fusion_label="g", inject_variables=True, new=True)
+            sage: f = fr.get_fmatrix(fusion_label='g', inject_variables=True, new=True)
             creating variables fx1..fx5
             Defining fx0, fx1, fx2, fx3, fx4
             sage: f.find_orthogonal_solution()
@@ -822,7 +822,7 @@ class FMatrix(SageObject):
         EXAMPLES::
 
             sage: fr = FusionRing("G2", 1)
-            sage: f = fr.get_fmatrix(fusion_label="g", inject_variables=True, new=True)
+            sage: f = fr.get_fmatrix(fusion_label='g', inject_variables=True, new=True)
             creating variables fx1..fx5
             Defining fx0, fx1, fx2, fx3, fx4
             sage: f.find_orthogonal_solution(verbose=False)
@@ -919,7 +919,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - `n` -- a positive integer
+        - ``n`` -- positive integer
         - ``indices`` -- boolean (default: ``False``)
 
         If ``indices`` is ``False`` (default),
@@ -974,7 +974,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``filename`` -- a string specifying the name of the pickle file
+        - ``filename`` -- string specifying the name of the pickle file
           to be used
 
         The current directory is used unless an absolute path to a file in
@@ -1087,7 +1087,7 @@ class FMatrix(SageObject):
             Checkpoint 2 reached!
             sage: del f
             sage: f = FusionRing("A1", 3).get_fmatrix(new=True)
-            sage: f.find_orthogonal_solution(warm_start="fmatrix_solver_checkpoint_A13.pickle")
+            sage: f.find_orthogonal_solution(warm_start='fmatrix_solver_checkpoint_A13.pickle')
             Computing F-symbols for The Fusion Ring of Type A1 and level 3 with Integer Ring coefficients with 71 variables...
             Set up 121 reduced pentagons...
             Elimination epoch completed... 18 eqns remain in ideal basis
@@ -1123,7 +1123,7 @@ class FMatrix(SageObject):
             Checkpoint 4 reached!
             sage: del f
             sage: f = FusionRing("A1", 2).get_fmatrix(new=True)
-            sage: f.find_orthogonal_solution(warm_start="fmatrix_solver_checkpoint_A12.pickle")
+            sage: f.find_orthogonal_solution(warm_start='fmatrix_solver_checkpoint_A12.pickle')
             Computing F-symbols for The Fusion Ring of Type A1 and level 2 with Integer Ring coefficients with 14 variables...
             Partitioned 0 equations into 0 components of size:
             []
@@ -1189,10 +1189,10 @@ class FMatrix(SageObject):
         TESTS::
 
             sage: f = FusionRing("A1", 3).get_fmatrix(new=True)
-            sage: f.find_orthogonal_solution(save_results="test.pickle", verbose=False)   # long time
+            sage: f.find_orthogonal_solution(save_results='test.pickle', verbose=False)   # long time
             sage: del f
             sage: f = FusionRing("A1", 3).get_fmatrix(new=True)
-            sage: f.find_orthogonal_solution(warm_start="test.pickle")                   # long time
+            sage: f.find_orthogonal_solution(warm_start='test.pickle')                   # long time
             sage: f._chkpt_status == 7                                                   # long time
             True
             sage: os.remove("test.pickle")                                               # long time
@@ -1227,14 +1227,11 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``processes`` -- an integer indicating the number of workers
-          in the pool; if left unspecified, the number of workers is
+        - ``processes`` -- integer indicating the number of workers
+          in the pool; if left unspecified, the number of workers
           equals the number of processors available
 
-        OUTPUT:
-
-        This method returns a boolean indicating whether a worker pool
-        was successfully initialized.
+        OUTPUT: boolean; whether a worker pool was successfully initialized
 
         EXAMPLES::
 
@@ -1399,7 +1396,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``output`` -- a boolean
+        - ``output`` -- boolean
 
         OUTPUT:
 
@@ -1445,7 +1442,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``option`` -- a string determining equations to be set up:
+        - ``option`` -- string determining equations to be set up:
 
           * ``'hexagons'`` -- get equations imposed on the F-matrix by
             the hexagon relations in the definition of a braided category
@@ -1453,7 +1450,7 @@ class FMatrix(SageObject):
           * ``'pentagons'`` -- get equations imposed on the F-matrix by
             the pentagon relations in the definition of a monoidal category
 
-        - ``output`` -- (default: ``True``) a boolean indicating whether
+        - ``output`` -- boolean (default: ``True``); whether
           results should be returned, where the equations will be polynomials.
           Otherwise, the constraints are appended to ``self.ideal_basis``.
           Constraints are stored in the internal tuple representation. The
@@ -1621,7 +1618,7 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``eqns`` -- a list of polynomials
+        - ``eqns`` -- list of polynomials
 
         Each polynomial is either an object in the ring returned by
         :meth:`get_poly_ring` or it is a tuple of pairs representing
@@ -1727,7 +1724,7 @@ class FMatrix(SageObject):
             print(graph.connected_components_sizes())
         return partition
 
-    def _par_graph_gb(self, eqns=None, term_order="degrevlex", largest_comp=45, verbose=True):
+    def _par_graph_gb(self, eqns=None, term_order='degrevlex', largest_comp=45, verbose=True):
         r"""
         Compute a Groebner basis for a list of equations partitioned
         according to their corresponding graph.
@@ -1783,8 +1780,8 @@ class FMatrix(SageObject):
 
         INPUT:
 
-        - ``var`` -- a list of variable indices
-        - ``eqns`` -- a list of polynomial equations in the internal
+        - ``var`` -- list of variable indices
+        - ``eqns`` -- list of polynomial equations in the internal
           tuple of pairs representation
 
         EXAMPLES::
@@ -1992,14 +1989,14 @@ class FMatrix(SageObject):
         if self._FR._basecoer:
             self._FR.r_matrix.clear_cache()
 
-    def find_orthogonal_solution(self, checkpoint=False, save_results="", warm_start="", use_mp=True, verbose=True):
+    def find_orthogonal_solution(self, checkpoint=False, save_results='', warm_start='', use_mp=True, verbose=True):
         r"""
         Solve the the hexagon and pentagon relations, along with
         orthogonality constraints, to evaluate an orthogonal F-matrix.
 
         INPUT:
 
-        - ``checkpoint`` -- (default: ``False``) a boolean indicating whether
+        - ``checkpoint`` -- boolean (default: ``False``); whether
           the computation should be checkpointed. Depending on the associated
           ``CartanType``, the computation may take hours to complete. For
           large examples, checkpoints are recommended. This method supports
@@ -2029,13 +2026,13 @@ class FMatrix(SageObject):
 
           If no file name is provided, the calculation begins from scratch.
 
-        - ``use_mp`` -- (default: ``True``) a boolean indicating whether to use
+        - ``use_mp`` -- boolean (default: ``True``); whether to use
           multiprocessing to speed up calculation. The default value
           ``True`` is highly recommended, since parallel processing yields
           results much more quickly.
 
-        - ``verbose`` -- (default: ``True``) a boolean indicating whether the
-          solver should print out intermediate progress reports.
+        - ``verbose`` -- boolean (default: ``True``); whether the
+          solver should print out intermediate progress reports
 
         OUTPUT:
 
@@ -2045,7 +2042,7 @@ class FMatrix(SageObject):
 
         EXAMPLES::
 
-            sage: f = FusionRing("B5", 1).get_fmatrix(fusion_label="b", inject_variables=True)
+            sage: f = FusionRing("B5", 1).get_fmatrix(fusion_label='b', inject_variables=True)
             creating variables fx1..fx14
             Defining fx0, fx1, fx2, fx3, fx4, fx5, fx6, fx7, fx8, fx9, fx10, fx11, fx12, fx13
             sage: f.find_orthogonal_solution()
@@ -2150,7 +2147,7 @@ class FMatrix(SageObject):
 
         # Set up new equations graph and compute variety for each component
         if self._chkpt_status < 5:
-            self.ideal_basis = self._par_graph_gb(term_order="lex", verbose=verbose)
+            self.ideal_basis = self._par_graph_gb(term_order='lex', verbose=verbose)
             self.ideal_basis.sort(key=poly_tup_sortkey)
             self._triangular_elim(verbose=verbose)
         self._checkpoint(checkpoint, 5, verbose=verbose)
@@ -2271,7 +2268,7 @@ class FMatrix(SageObject):
         self.ideal_basis = {eq.subs(special_values) for eq in self.ideal_basis}
         self.ideal_basis.discard(0)
 
-    def find_cyclotomic_solution(self, equations=None, algorithm="", verbose=True, output=False):
+    def find_cyclotomic_solution(self, equations=None, algorithm='', verbose=True, output=False):
         r"""
         Solve the hexagon and pentagon relations to evaluate the F-matrix.
 
@@ -2286,14 +2283,14 @@ class FMatrix(SageObject):
         - ``equations`` -- (optional) a set of equations to be
           solved; defaults to the hexagon and pentagon equations
         - ``algorithm`` -- (optional) algorithm to compute Groebner Basis
-        - ``output`` -- (default: ``False``) output a dictionary of
+        - ``output`` -- boolean (default: ``False``); output a dictionary of
           F-matrix values; this may be useful to see but may be omitted
           since this information will be available afterwards via the
           :meth:`fmatrix` and :meth:`fmat` methods.
 
         EXAMPLES::
 
-            sage: fr = FusionRing("A2", 1, fusion_labels="a", inject_variables=True)
+            sage: fr = FusionRing("A2", 1, fusion_labels='a', inject_variables=True)
             sage: f = fr.get_fmatrix(inject_variables=True)
             creating variables fx1..fx8
             Defining fx0, fx1, fx2, fx3, fx4, fx5, fx6, fx7
@@ -2427,7 +2424,7 @@ class FMatrix(SageObject):
             Partitioned 6 equations into 6 components of size:
             [1, 1, 1, 1, 1, 1]
             Computing appropriate NumberField...
-            sage: f.certify_pentagons()  is None      # not tested (long time ~1.5s, cypari issue in doctesting framework)
+            sage: f.certify_pentagons()  is None      # not tested (cypari issue in doctesting framework), long time (~1.5s)
             True
         """
         fvars_copy = deepcopy(self._fvars)

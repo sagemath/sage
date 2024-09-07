@@ -17,9 +17,9 @@ of its reduction modulo `\pi`) and propagate the carry accordingly.
 Our API is based on two template types (which have to be instantiated in
 implementations):
 
-- ``cdigit``: the type of a digit
+- ``cdigit`` -- the type of a digit
 
-- ``celement``: the type of an element (which is then a polynomial whose
+- ``celement`` -- the type of an element (which is then a polynomial whose
   coefficients are elements of type ``cdigit``)
 
 The remainder of the file gives the function signatures.
@@ -100,7 +100,7 @@ cdef inline void digit_set_ui(cdigit a, long b):
     INPUT:
 
     - ``a`` -- the ``cdigit`` to set up
-    - ``b`` -- an integer, the value of assign
+    - ``b`` -- integer; the value of assign
     """
     pass
 
@@ -134,12 +134,12 @@ cdef inline bint digit_equal(cdigit a, cdigit b):
 
 cdef inline bint digit_equal_ui(cdigit a, long b):
     r"""
-    Comparison of a digit and an integer
+    Comparison of a digit and an integer.
 
     INPUT:
 
     - ``a`` -- a ``cdigit``
-    - ``b`` -- an integer
+    - ``b`` -- integer
 
     OUTPUT:
 
@@ -149,7 +149,7 @@ cdef inline bint digit_equal_ui(cdigit a, long b):
 
 cdef inline bint digit_is_zero(cdigit a):
     r"""
-    Comparison to zero
+    Comparison to zero.
 
     INPUT:
 
@@ -163,7 +163,7 @@ cdef inline bint digit_is_zero(cdigit a):
 
 cdef inline void digit_random_init(randgen generator, long seed):
     r"""
-    Initialize the random generator with a new seed
+    Initialize the random generator with a new seed.
 
     INPUT:
 
@@ -326,7 +326,7 @@ cdef inline Element element_get_sage(celement x, PowComputer_class prime_pow):
 
 cdef inline void element_set(celement x, celement y):
     r"""
-    Set an element
+    Set an element.
 
     INPUT:
 
@@ -344,7 +344,7 @@ cdef inline cdigit element_get_digit(celement x, long i):
     INPUT:
 
     - ``x`` -- a ``celement``
-    - ``i`` -- an integer
+    - ``i`` -- integer
     """
     pass
 
@@ -356,8 +356,8 @@ cdef inline void element_get_slice(celement res, celement x, long start, long le
 
     - ``res`` -- a ``celement`` to store the slice
     - ``x`` -- a ``celement``, the element from which the slice is extracted
-    - ``start`` -- an integer, the start position of the slice
-    - ``length`` -- an integer, the length of the slice
+    - ``start`` -- integer; the start position of the slice
+    - ``length`` -- integer; the length of the slice
 
     .. NOTE::
 
@@ -375,7 +375,7 @@ cdef inline void element_set_digit(celement x, cdigit a, long i):
 
     - ``x`` -- a ``celement``
     - ``a`` -- a ``cdigit``
-    - ``i`` -- an integer
+    - ``i`` -- integer
     """
     pass
 
@@ -386,8 +386,8 @@ cdef inline void element_set_digit_ui(celement x, long a, long i):
     INPUT:
 
     - ``x`` -- a ``celement``
-    - ``a`` -- an integer
-    - ``i`` -- an integer
+    - ``a`` -- integer
+    - ``i`` -- integer
     """
     pass
 
@@ -399,7 +399,7 @@ cdef inline void element_set_digit_sage(celement x, Element a, long i):
 
     - ``x`` -- a ``celement``
     - ``a`` -- a Sage element
-    - ``i`` -- an integer
+    - ``i`` -- integer
     """
     pass
 
@@ -414,7 +414,7 @@ cdef inline void element_iadd_digit(celement x, cdigit a, long i):
 
     - ``x`` -- a ``celement``
     - ``a`` -- a ``cdigit``
-    - ``i`` -- an integer
+    - ``i`` -- integer
     """
     pass
 
@@ -427,7 +427,7 @@ cdef inline void element_isub_digit(celement x, cdigit a, long i):
 
     - ``x`` -- a ``celement``
     - ``a`` -- a ``cdigit``
-    - ``i`` -- an integer
+    - ``i`` -- integer
     """
     pass
 
@@ -475,7 +475,7 @@ cdef inline void element_reduce_digit(celement x, long i, PowComputer_class prim
     INPUT:
 
     - ``x`` -- a ``celement``, the element to update
-    - ``i`` -- an integer
+    - ``i`` -- integer
     - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
@@ -488,7 +488,7 @@ cdef inline void element_reducesmall_digit(fmpz_poly_t x, long i, PowComputer_fl
     INPUT:
 
     - ``x`` -- a ``celement``, the element to update
-    - ``i`` -- an integer
+    - ``i`` -- integer
     - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
@@ -501,7 +501,7 @@ cdef inline void element_reduceneg_digit(fmpz_poly_t x, long i, PowComputer_flin
     INPUT:
 
     - ``x`` -- a ``celement``, the element to update
-    - ``i`` -- an integer
+    - ``i`` -- integer
     - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
