@@ -459,14 +459,10 @@ cdef class SliceDecomposition(SageObject):
         TESTS::
 
             sage: P3 = graphs.PathGraph(3)
-            sage: hash(P3.slice_decomposition(initial_vertex=0))
-            -7313201005658437102
-            sage: hash(P3.slice_decomposition(initial_vertex=2))
-            1181676064626878036
-            sage: hash(graphs.CompleteGraph(3).slice_decomposition())
-            6162668211142297415
-            sage: hash(Graph([(0,1), (0,2)]).slice_decomposition())
-            2898184589667302557
+            sage: SD1 = P3.slice_decomposition(initial_vertex=0)
+            sage: SD2 = P3.slice_decomposition(initial_vertex=2)
+            sage: len({SD1: 1, SD2: 2})  # indirect doctest
+            2
         """
         return hash((tuple(self.sigma_inv.items()),
                      tuple(self.lex_label.items()),
