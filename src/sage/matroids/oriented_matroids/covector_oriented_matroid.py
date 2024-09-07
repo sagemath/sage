@@ -43,15 +43,15 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
 
     INPUT:
 
-    - ``data`` -- a tuple containing SignedSubsetElement elements or data
-      that can be used to construct :class:`SignedSubsetElement` elements
-    - ``goundset`` -- (default: ``None``) is the groundset for the
-      data. If not provided, we grab the data from the signed subsets.
+    - ``data`` -- a tuple containing :class:`SignedSubsetElement` elements or
+      data that can be used to construct :class:`SignedSubsetElement` elements
+    - ``groundset`` -- (default: ``None``) the groundset for the data; if not
+      provided, we grab the data from the signed subsets
 
     EXAMPLES::
 
         sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-        sage: M = OrientedMatroid([[1],[-1],[0]], groundset=['e'], key='covector')
+        sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
         sage: M
         Covector oriented matroid of rank 1
         sage: M.groundset()
@@ -86,7 +86,7 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
 
     def __init__(self, data, groundset=None, category=None):
         """
-        Initialize ``self``
+        Initialize ``self``.
         """
         AbstractOrientedMatroid.__init__(self, category=category)
 
@@ -128,7 +128,7 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: M = OrientedMatroid([[1],[-1],[0]], groundset=['e'], key='covector')
+            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
             sage: M
             Covector oriented matroid of rank 1
 
@@ -189,7 +189,7 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
 
     def matroid(self):
         r"""
-        Returns the underlying matroid.
+        Return the underlying matroid.
 
         Given a covector oriented matroid, the *underlying matroid* is the
         (flat) matroid whose collection of flats is given by the set of

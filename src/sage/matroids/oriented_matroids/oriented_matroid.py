@@ -5,9 +5,9 @@ Theory
 ======
 
 Oriented matroids are a generalization of directed graphs, central hyperplane
-arrangements, vector arrangements and other mathematical objects. There are
+arrangements, vector arrangements, and other mathematical objects. There are
 many cryptomorphic definitions of oriented matroids. Precise definitions
-for each type can be found in that classes directory.
+for each type can be found in that class's directory.
 
 See :wikipedia:`Oriented_matroid` for more details.
 
@@ -15,7 +15,7 @@ See :wikipedia:`Oriented_matroid` for more details.
 Built-in oriented matroids
 ==========================
 
-The current defined types of oriented matroids implemented into sage are:
+The types of oriented matroids currently implemented into sage are:
     - Circuit Oriented Matroids
     - Covector Oriented Matroids
     - Vector Oriented Matroids
@@ -25,9 +25,9 @@ Constructing oriented matroids
 ==============================
 
 To define your own oriented matroid, you can call the function
-`OrientedMatroids(data, key)` where `data` is the data of the oriented matroid
-and the `key` is the type of oriented matroid you are constructing. In the case
-you pass in an object for the data (such as a hyperplane arrangement, digraph,
+`OrientedMatroid(data, key)` where `data` is the data of the oriented matroid
+and the `key` is the type of oriented matroid you are constructing. In case you
+pass an object as the data (such as a hyperplane arrangement, digraph,
 etc.) the code will try and create an oriented matroid for you.
 
 
@@ -48,10 +48,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.geometry.hyperplane_arrangement.arrangement \
-    import HyperplaneArrangementElement
-from sage.geometry.triangulation.point_configuration \
-    import PointConfiguration
+from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangementElement
+from sage.geometry.triangulation.point_configuration import PointConfiguration
 from sage.graphs.digraph import DiGraph
 from sage.structure.element import Matrix
 from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
@@ -62,16 +60,16 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
     r"""
     Construct an oriented matroid.
 
-    The implementation of the oriented matroid differentiates which
-    axiom set that will be used.
+    The implementation of the oriented matroid determines which axiom set will
+    be used.
 
     INPUT:
 
-    - ``groundset`` -- (default: ``None``) is the groundset that will be
-      used for the oriented matroid.
+    - ``groundset`` -- (default: ``None``) the groundset of the oriented
+      matroid
 
-    - ``data`` -- (default: ``None``) the data that will be used to define
-      the oriented matroids. It can be one of the following:
+    - ``data`` -- (default: ``None``) the data that defines the oriented
+      matroid. It can be one of the following:
 
       + Objects
 
@@ -85,22 +83,19 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
           + :class:`SignedSubsetElement`
           + A tuple with positive, negative, and zero sets.
 
-    - ``key`` -- (default: ``None``) is the representation of the
-      oriented matroid. It can be one of the following:
+    - ``key`` -- (default: ``None``) the representation of the oriented
+      matroid. It can be one of the following:
 
       + ``'covector'`` - uses covector axioms with covectors
       + ``'vector'`` - uses vector axioms with signed subsets
       + ``'circuit'`` - uses circuit axioms with signed subsets
       + ``None`` - try and guess key.
 
-    Further options:
-
-
     EXAMPLES::
 
         sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-        sage: from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
-
+        sage: from sage.matroids.oriented_matroids.abstract_oriented_matroid \
+        ....:      import AbstractOrientedMatroid
         sage: A = hyperplane_arrangements.braid(3)
         sage: M = OrientedMatroid(A); M
         Hyperplane arrangement oriented matroid of rank 2
@@ -124,21 +119,24 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
          (-1,1,-1),
          (-1,-1,-1)]
 
-        sage: D = DiGraph({'v1':{'v2':1,'v3':2,'v4':3},'v2':{'v3':4,'v4':5},'v3':{'v4':6}})
-        sage: M = OrientedMatroid(D,key="circuit"); M
+        sage: D = DiGraph({'v1': {'v2': 1, 'v3': 2,'v4': 3},
+        ....:              'v2': {'v3': 4, 'v4': 5},
+        ....:              'v3': {'v4': 6}})
+        sage: M = OrientedMatroid(D, key="circuit"); M
         Circuit oriented matroid of rank 3
         sage: len(M.circuits())
         14
 
-        sage: PC = PointConfiguration([[1,0,0],[0,1,0],[0,0,1],[1/2,1/2,0],[0,1/2,1/2],[1/3,1/3,1/3]])
+        sage: PC = PointConfiguration([[1, 0, 0], [0, 1, 0], [0, 0, 1],
+        ....:                          [1/2, 1/2, 0], [0, 1/2, 1/2], [1/3, 1/3, 1/3]])
         sage: M = OrientedMatroid(PC); M
         Circuit oriented matroid of rank 3
         sage: M.matroid()
         Matroid of rank 3 on 6 elements with 7 circuits
 
-        sage: OrientedMatroid([[0]],key='covector')
+        sage: OrientedMatroid([[0]], key='covector')
         Covector oriented matroid of rank 0
-        sage: OrientedMatroid([[0]],key='circuit')
+        sage: OrientedMatroid([[0]], key='circuit')
         Traceback (most recent call last):
         ...
         ValueError: empty set not allowed
@@ -157,10 +155,8 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
 
     REFERENCES:
 
-    For more information see [BLSWZ1999]_ .
-
+    For more information see [BLSWZ1999]_.
     """
-
     # Instantiate oriented matroid
     OM = None
 

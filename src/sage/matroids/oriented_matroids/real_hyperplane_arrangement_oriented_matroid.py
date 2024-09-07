@@ -32,9 +32,8 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
     INPUT:
 
     - ``data`` -- a :class:`HyperplaneArrangementElement` element.
-    - ``goundset`` -- (default: ``None``) is the groundset for the
-      data. If not provided, we grab the data from the hyperplane
-      arrangement
+    - ``groundset`` -- (default: ``None``) the groundset for the data; if not
+      provided, we grab the data from the hyperplane arrangement
 
     EXAMPLES::
 
@@ -43,7 +42,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         sage: M = OrientedMatroid(A); M
         Hyperplane arrangement oriented matroid of rank 2
         sage: A = hyperplane_arrangements.braid(5)
-        sage: M = OrientedMatroid(A); M
+        sage: M = OrientedMatroid(A); M  # long time
         Hyperplane arrangement oriented matroid of rank 4
         sage: A = hyperplane_arrangements.Catalan(3)
         sage: M = OrientedMatroid(A); M
@@ -54,7 +53,6 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         sage: A = hyperplane_arrangements.graphical(G)
         sage: M = OrientedMatroid(A); M
         Hyperplane arrangement oriented matroid of rank 3
-
 
     .. SEEALSO::
 
@@ -132,6 +130,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
             sage: G = Graph({1: [2,4], 2: [3,4,5], 3: [4,6,8], 4: [7], 5: [8]})
             sage: A = hyperplane_arrangements.graphical(G)
             sage: H = [A.hyperplanes()[i] for i in range(2, 5)]
+            sage: # long time
             sage: M = OrientedMatroid(A); M
             Hyperplane arrangement oriented matroid of rank 7
             sage: M2 = M.deletion(H); M2

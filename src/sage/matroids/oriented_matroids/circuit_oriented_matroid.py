@@ -28,35 +28,35 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
 
     This implements an oriented matroid using the circuit axioms. For this
     let `\mathcal{C}` be a set of signed subsets and `E` a groundset. Then
-    a pair `M = (E,\mathcal{C})` is an oriented matroid using the circuit
+    a pair `M = (E, \mathcal{C})` is an oriented matroid using the circuit
     axioms if (see Definition 3.2.1 in [BLSWZ1999]_):
 
         - `\emptyset \notin \mathcal{C}`
         - `\mathcal{C} = -\mathcal{C}`
-        - For all `X,Y \in \mathcal{C}`, if the support of `X` is contained
+        - For all `X, Y \in \mathcal{C}`, if the support of `X` is contained
           in the support of `Y` then `X = Y` or `X = -Y`
-        - For all `X,Y \in \mathcal{C}`, `X \neq -Y`, and
+        - For all `X, Y \in \mathcal{C}`, `X \neq -Y`, and
           `e \in X^+ \cap Y^-` there exists a `Z \in \mathcal{C}` such that
           `Z^+ \subseteq (X^+ \cup Y^+) \backslash \left\{e\right\}` and
           `Z^- \subseteq (X^- \cup Y^-) \backslash \left\{e\right\}`.
 
     INPUT:
 
-    - ``data`` -- a tuple containing SignedSubsetElement elements or data
-      that can be used to construct :class:`SignedSubsetElement` elements
-    - ``goundset`` -- (default: ``None``) is the groundset for the
-      data. If not provided, we grab the data from the signed subsets.
+    - ``data`` -- a tuple containing :class:`SignedSubsetElement` elements or
+      data that can be used to construct :class:`SignedSubsetElement` elements
+    - ``groundset`` -- (default: ``None``) the groundset for the data; if not
+      provided, we grab the data from the signed subsets
 
     EXAMPLES::
 
         sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-        sage: M = OrientedMatroid([[1],[-1]], key='circuit'); M
+        sage: M = OrientedMatroid([[1], [-1]], key='circuit'); M
         Circuit oriented matroid of rank 0
         sage: M.groundset()
         (0,)
 
         sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
-        sage: M = OrientedMatroid(C,key='circuit'); M
+        sage: M = OrientedMatroid(C, key='circuit'); M
         Circuit oriented matroid of rank 3
         sage: M.groundset()
         (1, 2, 3, 4)
@@ -122,30 +122,30 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
-            sage: M = OrientedMatroid(C,key='circuit')
+            sage: M = OrientedMatroid(C, key='circuit')
             sage: M.is_valid()
             True
             sage: C2 = [((1,4),(2,3)), ((1,3),(2,4)), ((2,3),(1,4))]
-            sage: OrientedMatroid(C2,key='circuit')
+            sage: OrientedMatroid(C2, key='circuit')
             Traceback (most recent call last):
             ...
             ValueError: only same/opposites can have same support
 
             sage: C3 = [((),()), ((1,4),(2,3)), ((2,3),(1,4))]
-            sage: OrientedMatroid(C3,key='circuit',groundset=[1,2,3,4])
+            sage: OrientedMatroid(C3, key='circuit', groundset=[1,2,3,4])
             Traceback (most recent call last):
             ...
             ValueError: empty set not allowed
 
             sage: C4= [((1,),()), ((1,4),(2,3)), ((2,3),(1,4))]
-            sage: OrientedMatroid(C4,key='circuit',groundset=[1,2,3,4])
+            sage: OrientedMatroid(C4, key='circuit', groundset=[1,2,3,4])
             Traceback (most recent call last):
             ...
             ValueError: every element needs an opposite
 
             sage: C5 = [((1,),(3,),(2,)), ((1,2),(3,),(4,)),
             ....:       ((3,),(1,),(2,)), ((3,),(1,2),(4,))]
-            sage: OrientedMatroid(C5,key='circuit')
+            sage: OrientedMatroid(C5, key='circuit')
             Traceback (most recent call last):
             ...
             ValueError: groundsets must be the same
