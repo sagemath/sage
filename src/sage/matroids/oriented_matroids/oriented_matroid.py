@@ -96,7 +96,6 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
         sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
         sage: from sage.matroids.oriented_matroids.abstract_oriented_matroid \
         ....:      import AbstractOrientedMatroid
-
         sage: A = hyperplane_arrangements.braid(3)
         sage: M = OrientedMatroid(A); M
         Hyperplane arrangement oriented matroid of rank 2

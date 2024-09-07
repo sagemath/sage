@@ -107,6 +107,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: M = OrientedMatroid([[1], [-1]], key='circuit')
+
             sage: M.circuits()
             [+: 0
              -:
