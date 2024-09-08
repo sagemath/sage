@@ -788,7 +788,7 @@ class DiGraphGenerators:
 
         EXAMPLES::
 
-            sage: gen = digraphs.nauty_posetg("5 o q")
+            sage: gen = digraphs.nauty_posetg("5 o")
             sage: len(list(gen))
             63
 
