@@ -28,6 +28,7 @@ build by typing ``digraphs.`` in Sage and then hitting :kbd:`Tab`.
     :meth:`~DiGraphGenerators.ImaseItoh`           | Return the digraph of Imase and Itoh of order `n` and degree `d`.
     :meth:`~DiGraphGenerators.Kautz`               | Return the Kautz digraph of degree `d` and diameter `D`.
     :meth:`~DiGraphGenerators.nauty_directg`       | Return an iterator yielding digraphs using nauty's ``directg`` program.
+    :meth:`~DiGraphGenerators.nauty_posetg`        | Return an iterator yielding Hasse diagrams of posets using nauty's ``genposetg`` program.
     :meth:`~DiGraphGenerators.Paley`               | Return a Paley digraph on `q` vertices.
     :meth:`~DiGraphGenerators.Path`                | Return a directed path on `n` vertices.
     :meth:`~DiGraphGenerators.RandomDirectedAcyclicGraph` | Return a random (weighted) directed acyclic graph of order `n`.
@@ -757,6 +758,64 @@ class DiGraphGenerators:
             # http://users.cecs.anu.edu.au/~bdm/data/formats.txt
             if line and line[0] == '&':
                 yield DiGraph(line[1:], format='dig6')
+
+    def nauty_posetg(self, options='', debug=False):
+        r"""
+        Return a generator which creates all posets using ``nauty``.
+
+        Here a poset is seen through its Hasse diagram, which is
+        an acyclic and transitively reduced digraph.
+
+        INPUT:
+
+        - ``options`` -- string (default: ``""``); a string passed to
+          ``genposetg`` as if it was run at a system command line.
+          At a minimum, you *must* pass the number of vertices you desire
+        and a choice between ``o`` and ``t``` for the output order.
+
+        - ``debug`` -- boolean (default: ``False``); if ``True`` the first line
+          of ``genposetg``'s output to standard error is captured and the first
+          call to the generator's ``next()`` function will return this line as a
+          string. A line leading with ">A" indicates a successful initiation of
+          the program with some information on the arguments, while a line
+          beginning with ">E" indicates an error with the input.
+
+        The possible options, obtained as output of ``genposetg --help``::
+
+                 n: the number of vertices
+                 o: digraph6 output in arbitrary order
+                 t: digraph6 output in topological order
+                 q: supresses statistics except for the final count
+
+        EXAMPLES::
+
+            sage: gen = digraphs.nauty_posetg("5 o q")
+            sage: len(list(gen))
+            63
+
+        This coincides with :oeis:`A000112`.
+        """
+        import shlex
+        from sage.features.nauty import NautyExecutable
+        geng_path = NautyExecutable("genposetg").absolute_filename()
+        sp = subprocess.Popen(shlex.quote(geng_path) + f" {options}", shell=True,
+                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, close_fds=True,
+                              encoding='latin-1')
+        msg = sp.stderr.readline()
+        if debug:
+            yield msg
+        elif msg.startswith('>E'):
+            raise ValueError('wrong format of parameter option')
+        gen = sp.stdout
+        while True:
+            try:
+                s = next(gen)
+            except StopIteration:
+                # Exhausted list of graphs from nauty genposetg
+                return
+            G = DiGraph(s[1:-1], format='dig6')
+            yield G
 
     def Complete(self, n, loops=False):
         r"""
