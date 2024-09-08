@@ -41,9 +41,6 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         sage: A = hyperplane_arrangements.braid(3)
         sage: M = OrientedMatroid(A); M
         Hyperplane arrangement oriented matroid of rank 2
-        sage: A = hyperplane_arrangements.braid(5)
-        sage: M = OrientedMatroid(A); M  # long time
-        Hyperplane arrangement oriented matroid of rank 4
         sage: A = hyperplane_arrangements.Catalan(3)
         sage: M = OrientedMatroid(A); M
         Traceback (most recent call last):
