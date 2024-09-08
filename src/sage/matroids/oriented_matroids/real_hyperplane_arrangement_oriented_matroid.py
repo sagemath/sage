@@ -124,14 +124,14 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: G = Graph({1: [2,4], 2: [3,4,5], 3: [4,6,8], 4: [7], 5: [8]})
+            sage: G = Graph({1: [2,4], 2: [3,4], 3: [4], 4:[]})
             sage: A = hyperplane_arrangements.graphical(G)
             sage: H = [A.hyperplanes()[i] for i in range(2, 5)]
             sage: # long time
             sage: M = OrientedMatroid(A); M
-            Hyperplane arrangement oriented matroid of rank 7
+            Hyperplane arrangement oriented matroid of rank 3
             sage: M2 = M.deletion(H); M2
-            Hyperplane arrangement oriented matroid of rank 6
+            Hyperplane arrangement oriented matroid of rank 2
         """
         A = self.arrangement()
         if isinstance(hyperplanes, list) or isinstance(hyperplanes, tuple):
