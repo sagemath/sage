@@ -782,10 +782,9 @@ class DiGraphGenerators:
 
         The possible options, obtained as output of ``genposetg --help``::
 
-            n: the number of vertices
+            n: the number of vertices, between 0 and 16
             o: digraph6 output in arbitrary order
             t: digraph6 output in topological order
-            q: supresses statistics except for the final count
 
         EXAMPLES::
 
@@ -1545,7 +1544,9 @@ class DiGraphGenerators:
             sage: D.num_verts()
             10
             sage: D.loops()
-            [(0, 0, None), (1, 1, None), (2, 2, None), (3, 3, None), (4, 4, None), (5, 5, None), (6, 6, None), (7, 7, None), (8, 8, None), (9, 9, None)]
+            [(0, 0, None), (1, 1, None), (2, 2, None), (3, 3, None),
+             (4, 4, None), (5, 5, None), (6, 6, None), (7, 7, None),
+             (8, 8, None), (9, 9, None)]
 
         TESTS::
 
