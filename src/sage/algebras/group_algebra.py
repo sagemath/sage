@@ -226,4 +226,4 @@ class GroupAlgebra_class(CombinatorialFreeModule):
 
 
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.algebras.group_algebras', 'GroupAlgebra',  GroupAlgebra_class)
+register_unpickle_override('sage.algebras.group_algebras', 'GroupAlgebra', GroupAlgebra_class)

@@ -382,4 +382,6 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_F', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_F',
+                           'ambient_space',
+                           AmbientSpace)
