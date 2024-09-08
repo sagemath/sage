@@ -1081,9 +1081,525 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         second_submat = second_mat.matrix_from_rows_and_columns(range(1, m2), range(n2))
 
         return Matrix_cmr_chr_sparse.three_sum_cmr(first_submat, second_submat,
-                                                   m1 - 2, m1 -1,
+                                                   m1 - 2, m1 - 1,
                                                    0, 1,
                                                    three_sum_strategy="concentrated_rank")
+
+    def is_three_sum_wide_wide(first_mat, second_mat, three_sum_mat,
+                               first_row_index=-1,
+                               first_columns_index=[-2, -1],
+                               second_row_index=0,
+                               second_columns_index=[0, 1],
+                               sign_verify=True):
+        r"""
+        Check whether ``first_mat`` and ``second_mat`` form ``three_sum_mat``
+        via the 3-sum operation.
+        Assume that ``three_sum_strategy="distributed_ranks"`` or ``"Wide_Wide"``.
+        If ``sign_verify=True``, also check whether the 3-sum satisfies that
+        ``three_sum_mat`` is totally unimodular, if and only if,
+        ``first_mat`` and ``second_mat`` are both totally unimodular.
+
+        The first matrix is
+        `M_1=\begin{bmatrix} A & a_2 & a_2\\ a_1^T & 0 & \epsilon_2\end{bmatrix}`
+        and the second matrix is
+        `M_2=\begin{bmatrix} \epsilon_1 & 0 & b_2^T\\ b_1 & b_1 & B\end{bmatrix}`,
+        where `\epsilon_1`, `\epsilon_2` are `1` or `-1`.
+        Then the Seymour/Schrijver 3-sum is the matrix
+        `M_1 \oplus_3 M_2 = \begin{bmatrix} A & a_2 b_2^T \\ b_1 a_1^T & B\end{bmatrix}`.
+
+        The terminology "3-sum" is used in the context of Seymour's decomposition
+        of totally unimodular matrices and regular matroids, see [Sch1986]_, Ch. 19.4.
+
+        The signs of `\epsilon_1` (`\epsilon_2`) are determined by
+        a shortest path between two sets of vertices in the bipartite graph,
+        where the sets of vertices corresponding to the nonzero
+        row and column indices of `a_1^T, a_2` (`b_2^T, b_1`),
+        and the bipartite graph consists of vertices corresponding to the rows
+        and columns of `M`, and edges corresponding to the nonzero entry.
+        between the rows and columns of `M`, see [Sch1986]_, Ch. 20.3.
+
+        .. SEEALSO:: :meth:`three_sum_wide_wide`, :meth:`is_three_sum_mixed_mixed`
+                     :meth:`is_totally_unimodular`
+
+        INPUT:
+
+        - ``first_mat`` -- the first integer matrix `M_1`
+        - ``second_mat`` -- the second integer matrix `M_2`
+        - ``first_row_index`` -- the row index of `a_1^T` in `M_1`
+        - ``first_columns_index`` -- the column indices of `a_2` in `M_1`
+        - ``second_row_index`` -- the row index of `b_2^T` in `M_2`
+        - ``second_columns_index`` -- the column indices of `b_1`  in `M_2`
+        - ``sign_verify`` -- boolean (default:``True``)
+          Whether to check the sign correctness of `\epsilon_1` and `\epsilon_2`.
+
+        OUTPUT: boolean, or (boolean, string)
+
+          If it is False only because of the sign, then also output the correct sign.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1, 1, 0, 0, 0, 0],
+            ....:                             [0,-1, 0,-1, 1, 1],
+            ....:                             [0, 0, 1, 0,-1,-1],
+            ....:                             [0, 1, 0, 1, 1, 1],
+            ....:                             [1, 0,-1, 1, 0, 1],]); M1
+            [ 1  1  0  0  0  0]
+            [ 0 -1  0 -1  1  1]
+            [ 0  0  1  0 -1 -1]
+            [ 0  1  0  1  1  1]
+            [ 1  0 -1  1  0  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[ 1, 0, 1, 1, 1,-1],
+            ....:                             [-1,-1, 1, 1, 0, 0],
+            ....:                             [ 0, 0, 0,-1, 0, 1],
+            ....:                             [ 0, 0, 1, 0,-1, 0],
+            ....:                             [ 1, 1, 0, 0, 0, 1]]); M2
+            [ 1  0  1  1  1 -1]
+            [-1 -1  1  1  0  0]
+            [ 0  0  0 -1  0  1]
+            [ 0  0  1  0 -1  0]
+            [ 1  1  0  0  0  1]
+            sage: M = Matrix_cmr_chr_sparse.three_sum_wide_wide(M1, M2); M
+            [ 1  1  0  0  0  0  0  0]
+            [ 0 -1  0 -1  1  1  1 -1]
+            [ 0  0  1  0 -1 -1 -1  1]
+            [ 0  1  0  1  1  1  1 -1]
+            [-1  0  1 -1  1  1  0  0]
+            [ 0  0  0  0  0 -1  0  1]
+            [ 0  0  0  0  1  0 -1  0]
+            [ 1  0 -1  1  0  0  0  1]
+            sage: Matrix_cmr_chr_sparse.is_three_sum_wide_wide(M1, M2, M)
+            (False,
+             'sign_1 in second_mat should be -1. sign_2 in first_mat should be -1. ')
+
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
+            ....:                            [[ 0, 0, 1,-1,-1],
+            ....:                             [ 1, 1, 1, 0, 0],
+            ....:                             [ 0, 1, 0, 1, 1],
+            ....:                             [-1, 0,-1, 0, 1]]); M1
+            [ 0  0  1 -1 -1]
+            [ 1  1  1  0  0]
+            [ 0  1  0  1  1]
+            [-1  0 -1  0  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
+            ....:                            [[ 1, 0, 1,-1, 0],
+            ....:                             [ 0, 0, 1, 0, 1],
+            ....:                             [-1,-1, 0, 1, 1],
+            ....:                             [-1,-1, 0, 0, 1]]); M2
+            [ 1  0  1 -1  0]
+            [ 0  0  1  0  1]
+            [-1 -1  0  1  1]
+            [-1 -1  0  0  1]
+            sage: M = Matrix_cmr_chr_sparse.three_sum_wide_wide(M1, M2); M
+            [ 0  0  1 -1  1  0]
+            [ 1  1  1  0  0  0]
+            [ 0  1  0  1 -1  0]
+            [ 0  0  0  1  0  1]
+            [ 1  0  1  0  1  1]
+            [ 1  0  1  0  0  1]
+            sage: Matrix_cmr_chr_sparse.is_three_sum_wide_wide(M1, M2, M)
+            True
+        """
+        if not isinstance(first_columns_index, (list, tuple)) or len(first_columns_index) != 2:
+            raise ValueError('The index of two columns needs to be given!')
+        if not isinstance(second_columns_index, (list, tuple)) or len(second_columns_index) != 2:
+            raise ValueError('The index of two columns needs to be given!')
+
+        m1 = first_mat.nrows()
+        n1 = first_mat.ncols()
+        m2 = second_mat.nrows()
+        n2 = second_mat.ncols()
+        m = three_sum_mat.nrows()
+        n = three_sum_mat.ncols()
+        if m != (m1 + m2 - 2): # The number of rows should match
+            return False
+        if n != (n1 + n2 - 4): # The number of columns should match
+            return False
+
+        # Check the extra two columns for a2 and b1
+        j1 = first_columns_index[0]
+        j2 = first_columns_index[1]
+        j1 = j1 if j1 >= 0 else n1 + j1
+        j2 = j2 if j2 >= 0 else n1 + j2
+        i1 = first_row_index
+        i1 = i1 if i1 >= 0 else m1 + i1
+        row_index_1 = [i for i in range(m1) if i != i1]
+        for i in row_index_1:
+            if first_mat[i, j1] != first_mat[i, j2]:
+                return False
+        sign_2 = first_mat[i1, j2] if first_mat[i1, j1] == 0 else first_mat[i1, j1]
+        if sign_2 == 0:
+            return False
+
+        k1 = second_columns_index[0]
+        k2 = second_columns_index[1]
+        k1 = k1 if k1 >= 0 else n2 + k1
+        k2 = k2 if k2 >= 0 else n2 + k2
+        i2 = second_row_index
+        i2 = i2 if i2 >= 0 else m2 + i2
+        row_index_2 = [i for i in range(m2) if i != i2]
+        for i in row_index_2:
+            if second_mat[i, k1] != second_mat[i, k2]:
+                return False
+        sign_1 = second_mat[i2, k2] if second_mat[i2, k1] == 0 else second_mat[i2, k1]
+        if sign_1 == 0:
+            return False
+
+        # Check whether the result comes from the three sum
+        column_index_1 = [j for j in range(n1) if j != j1 and j != j2]
+        for i in range(m1 - 1):
+            for j in range(n1 - 2):
+                if first_mat[row_index_1[i], column_index_1[j]] != three_sum_mat[i, j]:
+                    return False
+        column_index_2 = [j for j in range(n2) if j != k1 and j != k2]
+        for i in range(m2 - 1):
+            for j in range(n2 - 2):
+                if second_mat[row_index_2[i], column_index_2[j]] != three_sum_mat[m1 - 1 + i, n1 - 2 + j]:
+                    return False
+        for i in range(m1 - 1):
+            for j in range(n2 - 2):
+                rank1_entry = first_mat[row_index_1[i], j1] * second_mat[i2, column_index_2[j]]
+                if rank1_entry != three_sum_mat[i, n1 - 2 + j]:
+                    return False
+        for i in range(m2 - 1):
+            for j in range(n1 - 2):
+                rank1_entry = first_mat[i1, column_index_1[j]] * second_mat[row_index_2[i], k1]
+                if rank1_entry != three_sum_mat[m1 - 1 + i, j]:
+                    return False
+
+        if sign_verify is not True:
+            return True
+        # Check the sign
+
+        from sage.graphs.graph import Graph
+        G = Graph()
+
+        rows = ['r' + str(i) for i in range(m)]
+        cols = ['c' + str(j) for j in range(n)]
+        G.add_vertices(rows + cols)
+
+        for i in range(m):
+            for j in range(n):
+                if three_sum_mat[i, j] != 0:
+                    G.add_edge('r' + str(i), 'c' + str(j))
+        dist_dict = G.distance_all_pairs()
+
+        R1 = ['r'+str(i) for i in range(m1 - 1) if first_mat[row_index_1[i], j1] != 0]
+        K1 = ['c'+str(j) for j in range(n1 - 2) if first_mat[i1, column_index_1[j]] != 0]
+
+        min_distance = float('inf')
+        min_pair = None
+        for v1 in R1:
+            for v2 in K1:
+                if v2 in dist_dict[v1]:
+                    if dist_dict[v1][v2] < min_distance:
+                        min_distance = dist_dict[v1][v2]
+                        min_pair = (v1, v2)
+        path_1 = G.shortest_path(min_pair[0], min_pair[1])
+        path_1_num = [int(v[1:]) for v in path_1]
+        path_1_len = 0
+        for i in range(len(path_1) - 1):
+            if path_1[i][0] == 'r':
+                r = path_1_num[i]
+                c = path_1_num[i + 1]
+            if path_1[i][0] == 'c':
+                c = path_1_num[i]
+                r = path_1_num[i + 1]
+            path_1_len += three_sum_mat[r, c] * first_mat[row_index_1[r], j1] * first_mat[i1, column_index_1[c]]
+
+        R2 = ['r'+str(m1 - 1 + i) for i in range(m2 - 1) if second_mat[row_index_2[i], k1] != 0]
+        K2 = ['c'+str(n1 - 2 + j) for j in range(n2 - 2) if second_mat[i2, column_index_2[j]] != 0]
+
+        min_distance = float('inf')
+        min_pair = None
+        for v1 in R2:
+            for v2 in K2:
+                if v2 in dist_dict[v1]:
+                    if dist_dict[v1][v2] < min_distance:
+                        min_distance = dist_dict[v1][v2]
+                        min_pair = (v1, v2)
+        path_2 = G.shortest_path(min_pair[0], min_pair[1])
+        path_2_num = [int(v[1:]) for v in path_2]
+        path_2_len = 0
+        for i in range(len(path_2) - 1):
+            if path_2[i][0] == 'r':
+                r = path_2_num[i]
+                c = path_2_num[i + 1]
+            if path_2[i][0] == 'c':
+                c = path_2_num[i]
+                r = path_2_num[i + 1]
+            path_2_len += three_sum_mat[r, c] * second_mat[row_index_2[r - m1 + 1], k1] * second_mat[i2, column_index_2[c - n1 + 2]]
+
+        msg = ""
+        if (sign_1 - path_1_len) % 4 != 0:
+            msg += f'sign_1 in second_mat should be {-sign_1}. '
+        if (sign_2 - path_2_len) % 4 != 0:
+            msg += f'sign_2 in first_mat should be {-sign_2}. '
+        if msg:
+            return False, msg
+        return True
+
+    def is_three_sum_mixed_mixed(first_mat, second_mat, three_sum_mat,
+                               first_rows_index=[-2, -1],
+                               first_column_index=-1,
+                               second_row_index=0,
+                               second_columns_index=[0, 1],
+                               sign_verify=True):
+        r"""
+        Check whether ``first_mat`` and ``second_mat`` form ``three_sum_mat``
+        via the 3-sum operation.
+        Assume that ``three_sum_strategy="concentrated_ranks"`` or ``"Mixed_Mixed"``.
+        If ``sign_verify=True``, also check whether the 3-sum satisfies that
+        ``three_sum_mat`` is totally unimodular, if and only if,
+        ``first_mat`` and ``second_mat`` are both totally unimodular.
+
+        The first matrix is
+        `M_1=\begin{bmatrix} A & 0 \\ a_1^T & 1\\ a_2^T & \epsilon_2\end{bmatrix}`
+        and the second matrix is
+        `M_2=\begin{bmatrix} \epsilon_1 & 1 & 0\\ b_1 & b_2 & B\end{bmatrix}`,
+        where `\epsilon_1`, `\epsilon_2` are `1` or `-1`.
+        Then the Truemper 3-sum is the matrix
+        `M_1 \oplus_3 M_2 = \begin{bmatrix} A & 0 \\ b_1 a_1^T + b_2 a_2^T & B\end{bmatrix}`.
+
+        The terminology "3-sum" is used in the context of Seymour's decomposition
+        of totally unimodular matrices and regular matroids, see [Sch1986]_, Ch. 19.4.
+
+        .. SEEALSO:: :meth:`is_three_sum_wide_wide`, :meth:`three_sum_mixed_mixed`
+                     :meth:`is_totally_unimodular`
+
+        INPUT:
+
+        - ``first_mat`` -- the first integer matrix `M_1`
+        - ``second_mat`` -- the second integer matrix `M_2`
+        - ``first_rows_index`` -- the indices of rows `a_1^T` and `a_2^T` in `M_1`
+        - ``first_column_index`` -- the index of the column with `\epsilon_2` in `M_1`
+        - ``second_row_index`` -- the index of the row with `\epsilon_1` in `M_2`
+        - ``second_columns_index`` -- the indices of columns `b_1` and `b_2`  in `M_2`
+        - ``sign_verify`` -- boolean (default:``True``)
+          Whether to check the sign correctness of `\epsilon_1` and `\epsilon_2`.
+
+        OUTPUT: boolean, or (boolean, string)
+
+          If it is False only because of the sign, then also output the correct sign.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1, 1, 0, 0, 0, 0],
+            ....:                             [0, 0,-1, 1, 0, 0],
+            ....:                             [0, 1, 1, 0, 1, 0],
+            ....:                             [1, 0, 1,-1, 1, 1],
+            ....:                             [0,-1, 1, 0,-1, 1]]); M1
+            [ 1  1  0  0  0  0]
+            [ 0  0 -1  1  0  0]
+            [ 0  1  1  0  1  0]
+            [ 1  0  1 -1  1  1]
+            [ 0 -1  1  0 -1  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 5, sparse=True),
+            ....:                            [[ 1, 1, 0, 0, 0],
+            ....:                             [ 1, 0, 1,-1, 0],
+            ....:                             [ 1,-1, 1, 1, 1],
+            ....:                             [-1, 1, 0, 0, 0],
+            ....:                             [ 0, 0, 1, 0,-1],
+            ....:                             [ 0, 1, 0, 1, 0]]); M2
+            [ 1  1  0  0  0]
+            [ 1  0  1 -1  0]
+            [ 1 -1  1  1  1]
+            [-1  1  0  0  0]
+            [ 0  0  1  0 -1]
+            [ 0  1  0  1  0]
+            sage: M = Matrix_cmr_chr_sparse.three_sum_mixed_mixed(M1, M2); M
+            [ 1  1  0  0  0  0  0  0]
+            [ 0  0 -1  1  0  0  0  0]
+            [ 0  1  1  0  1  0  0  0]
+            [ 1  0  1 -1  1  1 -1  0]
+            [ 1  1  0 -1  2  1  1  1]
+            [-1 -1  0  1 -2  0  0  0]
+            [ 0  0  0  0  0  1  0 -1]
+            [ 0 -1  1  0 -1  0  1  0]
+            sage: Matrix_cmr_chr_sparse.is_three_sum_mixed_mixed(M1, M2, M, sign_verify=False)
+            True
+            sage: Matrix_cmr_chr_sparse.is_three_sum_mixed_mixed(M1, M2, M)
+            True
+
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
+            ....:                            [[ 1, 0, 1, 1, 0],
+            ....:                             [ 0, 1, 1, 1, 0],
+            ....:                             [ 1, 0, 1, 0, 1],
+            ....:                             [ 0,-1, 0,-1, 1]]); M1
+            [ 1  0  1  1  0]
+            [ 0  1  1  1  0]
+            [ 1  0  1  0  1]
+            [ 0 -1  0 -1  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 4, sparse=True),
+            ....:                            [[ 1, 1, 0, 0],
+            ....:                             [ 1, 0, 1, 1],
+            ....:                             [ 0,-1, 1, 1],
+            ....:                             [ 1, 0, 1, 0],
+            ....:                             [ 0,-1, 0, 1]]); M2
+            [ 1  1  0  0]
+            [ 1  0  1  1]
+            [ 0 -1  1  1]
+            [ 1  0  1  0]
+            [ 0 -1  0  1]
+            sage: M = Matrix_cmr_chr_sparse.three_sum_mixed_mixed(M1, M2); M
+            [1 0 1 1 0 0]
+            [0 1 1 1 0 0]
+            [1 0 1 0 1 1]
+            [0 1 0 1 1 1]
+            [1 0 1 0 1 0]
+            [0 1 0 1 0 1]
+            sage: Matrix_cmr_chr_sparse.is_three_sum_mixed_mixed(M1, M2, M)
+            True
+        """
+        if not isinstance(first_rows_index, (list, tuple)) or len(first_rows_index) != 2:
+            raise ValueError('The index of two columns needs to be given!')
+        if not isinstance(second_columns_index, (list, tuple)) or len(second_columns_index) != 2:
+            raise ValueError('The index of two columns needs to be given!')
+
+        m1 = first_mat.nrows()
+        n1 = first_mat.ncols()
+        m2 = second_mat.nrows()
+        n2 = second_mat.ncols()
+        m = three_sum_mat.nrows()
+        n = three_sum_mat.ncols()
+        if m != (m1 + m2 - 3): # The number of rows should match
+            return False
+        if n != (n1 + n2 - 3): # The number of columns should match
+            return False
+
+        # Check whether the extra column of M1 is zero except the two extra rows
+        j1 = first_rows_index[0]
+        j2 = first_rows_index[1]
+        j1 = j1 if j1 >= 0 else m1 + j1
+        j2 = j2 if j2 >= 0 else m1 + j2
+        i1 = first_column_index
+        i1 = i1 if i1 >= 0 else n1 + i1
+        row_index_1 = [i for i in range(m1) if i != j1 and i != j2]
+        for i in row_index_1:
+            if first_mat[i, i1] != 0:
+                return False
+        if first_mat[j1, i1] == 0 or first_mat[j2, i1] == 0:
+            return False
+        # Check whether the extra row of M2 is zero except the two extra columns
+        k1 = second_columns_index[0]
+        k2 = second_columns_index[1]
+        k1 = k1 if k1 >= 0 else n2 + k1
+        k2 = k2 if k2 >= 0 else n2 + k2
+        i2 = second_row_index
+        i2 = i2 if i2 >= 0 else m2 + i2
+        column_index_2 = [j for j in range(n2) if j != k1 and j != k2]
+        for j in column_index_2:
+            if second_mat[i2, j] != 0:
+                return False
+        if second_mat[i2, k1] == 0 or second_mat[i2, k2] == 0:
+            return False
+
+        # Check whether the result comes from the three sum
+        column_index_1 = [j for j in range(n1) if j != i1]
+        for i in range(m1 - 2):
+            for j in range(n1 - 1):
+                if first_mat[row_index_1[i], column_index_1[j]] != three_sum_mat[i, j]:
+                    return False
+        row_index_2 = [i for i in range(m2) if i != i2]
+        for i in range(m2 - 1):
+            for j in range(n2 - 2):
+                if second_mat[row_index_2[i], column_index_2[j]] != three_sum_mat[m1 - 2 + i, n1 - 1 + j]:
+                    return False
+        for i in range(m1 - 2):
+            for j in range(n2 - 2):
+                if three_sum_mat[i, n1 - 1 + j] != 0:
+                    return False
+        for i in range(m2 - 1):
+            for j in range(n1 - 1):
+                rank2_entry = first_mat[j1, column_index_1[j]] * second_mat[row_index_2[i], k1] + first_mat[j2, column_index_1[j]] * second_mat[row_index_2[i], k2]
+                if rank2_entry != three_sum_mat[m1 - 2 + i, j]:
+                    return False
+
+        if sign_verify is not True:
+            return True
+        # Check the sign
+        sign_2 = first_mat[j1, i1] * first_mat[j2, i1]
+        sign_1 = second_mat[i2, k1] * second_mat[i2, k2]
+
+        from sage.graphs.graph import Graph
+        G = Graph()
+
+        rows = ['r' + str(i) for i in range(m)]
+        cols = ['c' + str(j) for j in range(n)]
+        G.add_vertices(rows + cols)
+
+        for i in range(m):
+            for j in range(n):
+                if three_sum_mat[i, j] != 0:
+                    G.add_edge('r' + str(i), 'c' + str(j))
+        dist_dict = G.distance_all_pairs()
+
+        K1 = []
+        K2 = []
+        b1 = second_mat.matrix_from_rows_and_columns(row_index_2, [k1])
+        b2 = second_mat.matrix_from_rows_and_columns(row_index_2, [k2])
+        for j in range(n1 - 1):
+            bb = three_sum_mat.matrix_from_rows_and_columns(range(m1 - 2, m), [j])
+            if bb == b1 or bb == -b1:
+                K1.append('c'+str(j))
+            elif bb == b2 or bb == -b2:
+                K2.append('c'+str(j))
+
+        min_distance = float('inf')
+        min_pair = None
+        for v1 in K1:
+            for v2 in K2:
+                if v2 in dist_dict[v1]:
+                    if dist_dict[v1][v2] < min_distance:
+                        min_distance = dist_dict[v1][v2]
+                        min_pair = (v1, v2)
+        path_1 = G.shortest_path(min_pair[0], min_pair[1])
+        path_1_num = [int(v[1:]) for v in path_1]
+        q = (len(path_1) + 1)/2
+        path_1_len = (-1)**q
+        for i in range(q - 1):
+            path_1_len *= three_sum_mat[path_1_num[2*i + 1], path_1_num[2*i]]
+            path_1_len *= three_sum_mat[path_1_num[2*i + 1], path_1_num[2*i + 2]]
+
+        R1 = []
+        R2 = []
+        a1 = first_mat.matrix_from_rows_and_columns([j1], column_index_1)
+        a2 = first_mat.matrix_from_rows_and_columns([j2], column_index_1)
+        for i in range(m2 - 1):
+            aa = three_sum_mat.matrix_from_rows_and_columns([m1 - 2 + i], range(n1 - 1))
+            if aa == a1 or aa == -a1:
+                R1.append('r'+str(i))
+            elif aa == a2 or aa == -a2:
+                R2.append('r'+str(i))
+
+        min_distance = float('inf')
+        min_pair = None
+        for v1 in R1:
+            for v2 in R2:
+                if v2 in dist_dict[v1]:
+                    if dist_dict[v1][v2] < min_distance:
+                        min_distance = dist_dict[v1][v2]
+                        min_pair = (v1, v2)
+        path_2 = G.shortest_path(min_pair[0], min_pair[1])
+        path_2_num = [int(v[1:]) for v in path_2]
+        p = (len(path_2) + 1)/2
+        path_2_len = (-1)**p
+        for i in range(p - 1):
+            path_2_len *= three_sum_mat[path_2_num[2*i], path_2_num[2*i + 1]]
+            path_2_len *= three_sum_mat[path_2_num[2*i + 2], path_2_num[2*i + 1]]
+
+        msg = ""
+        if (sign_1 - path_1_len) % 4 != 0:
+            msg += f'sign_1 in second_mat should be {-sign_1}. '
+        if (sign_2 - path_2_len) % 4 != 0:
+            msg += f'sign_2 in first_mat should be {-sign_2}. '
+        if msg:
+            return False, msg
+        return True
 
     def three_sum(first_mat, second_mat, first_col_index1, first_col_index2, second_col_index1, second_col_index2):
         r"""
