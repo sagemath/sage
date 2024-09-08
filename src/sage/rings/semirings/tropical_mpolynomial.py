@@ -387,6 +387,86 @@ class TropicalMPolynomial(MPolynomial_polydict):
         if self.parent().ngens() == 3:
             return TropicalSurface(self)
         return TropicalVariety(self)
+    
+    def dual_subdivision(self):
+        """
+        Return the dual subdivision of ``self``.
+
+        Dual subdivision refers to a specific decomposition of the
+        Newton polygon of a tropical polynomial. This Newton polygon
+        is the convex hull of all the points corresponding to the
+        exponents of the terms of the tropical polynomial. The term
+        "dual" is used in the sense that the combinatorial structure
+        of the tropical variety is reflected in the dual subdivision.
+        Vertices of the dual subdivision correspond to the intersection
+        of multiple components. Edges of the dual subdivision correspond
+        to the individual components.
+
+        OUTPUT: :class:`sage.geometry.polyhedral_complex.PolyhedralComplex`
+
+        EXAMPLES:
+
+        Dual subdivision of a tropical curve::
+
+            sage: T = TropicalSemiring(QQ, use_min=False)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = R(3) + R(2)*x + R(2)*y + R(3)*x*y + x^2 + y^2
+            sage: p1.dual_subdivision()
+            Polyhedral complex with 4 maximal cells
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ,  use_min=False)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p1 = R(3) + R(2)*x + R(2)*y + R(3)*x*y + x**2 + y**2
+            tv = p1.tropical_variety()
+            pc = tv.dual_subdivision()
+            sphinx_plot(pc.plot())
+
+        Dual subdivision of a tropical surface::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x + y + z + x^2 + R(1)
+            sage: p1.dual_subdivision()
+            Polyhedral complex with 5 maximal cells
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ,  use_min=False)
+            R = PolynomialRing(T, ('x,y,z'))
+            x, y, z = R.gen(), R.gen(1), R.gen(2)
+            p1 = x + y + z + x**2 + R(1)
+            tv = p1.tropical_variety()
+            pc = tv.dual_subdivision()
+            sphinx_plot(pc.plot())
+
+        Dual subdivision of a tropical hypersurface::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<a,b,c,d> = PolynomialRing(T)
+            sage: p1 = a^2 + b^2 + c^2 + d^2 + a*b*c*d
+            sage: p1.dual_subdivision()
+            Polyhedral complex with 6 maximal cells
+        """
+        from sage.graphs.graph import Graph
+        from sage.geometry.polyhedron.constructor import Polyhedron
+        from sage.geometry.polyhedral_complex import PolyhedralComplex
+
+        TV = self.tropical_variety()
+        G = Graph()
+        edges = [e for e in TV._keys]
+        G.add_edges(edges)
+
+        polyhedron_lst = []
+        for cycle in G.cycle_basis():
+            polyhedron = Polyhedron(vertices=cycle)
+            polyhedron_lst.append(polyhedron)
+        pc = PolyhedralComplex(polyhedron_lst)
+        return pc
 
     def _repr_(self):
         r"""
