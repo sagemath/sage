@@ -771,7 +771,7 @@ class DiGraphGenerators:
         - ``options`` -- string (default: ``""``); a string passed to
           ``genposetg`` as if it was run at a system command line.
           At a minimum, you *must* pass the number of vertices you desire
-        and a choice between ``o`` and ``t``` for the output order.
+          and a choice between ``o`` and ``t``` for the output order.
 
         - ``debug`` -- boolean (default: ``False``); if ``True`` the first line
           of ``genposetg``'s output to standard error is captured and the first
@@ -782,10 +782,10 @@ class DiGraphGenerators:
 
         The possible options, obtained as output of ``genposetg --help``::
 
-                 n: the number of vertices
-                 o: digraph6 output in arbitrary order
-                 t: digraph6 output in topological order
-                 q: supresses statistics except for the final count
+            n: the number of vertices
+            o: digraph6 output in arbitrary order
+            t: digraph6 output in topological order
+            q: supresses statistics except for the final count
 
         EXAMPLES::
 
