@@ -192,22 +192,15 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
         Return the underlying matroid.
 
         Given a covector oriented matroid, the *underlying matroid* is the
-        (flat) matroid whose collection of flats is given by the set of
-        zeros of all signed vectors.
-
-        *Note* that matroids as defined through flats are not defined in sage
-        version 9.2 and therefore it must be translated to another one of the
-        definitions.
-
-        Instead, we order our flats by inclusion; giving us a rank function and
-        use the rank function definition of matroid.
+        matroid whose collection of flats is given by the set of zeros of all
+        signed vectors.
 
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,1,1], [1,1,0], [1,1,-1], [1,0,-1], [1,-1,-1], [0,-1,-1],
-            ....:      [-1,-1,-1], [0,1,1], [-1,1,1], [-1,0,1], [-1,-1,1], [-1,-1,0],
-            ....:      [0,0,0]]
+            sage: C = [[1,1,1], [1,1,0], [1,1,-1], [1,0,-1], [1,-1,-1],
+            ....:      [0,-1,-1], [-1,-1,-1], [0,1,1], [-1,1,1], [-1,0,1],
+            ....:      [-1,-1,1], [-1,-1,0], [0,0,0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: M.matroid()
             Matroid of rank 2 on 3 elements with 5 flats

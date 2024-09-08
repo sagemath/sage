@@ -185,7 +185,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
             sage: M = OrientedMatroid(A)
             sage: m = M.matroid()
             sage: m.dual()
-            Dual of 'Matroid of rank 2 on 3 elements'
+            Dual of 'Matroid of rank 2 on 3 elements with 5 flats'
             sage: m.dual() is m
             False
         """
