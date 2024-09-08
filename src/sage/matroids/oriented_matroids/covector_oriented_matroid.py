@@ -210,10 +210,9 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
             ....:      [0,0,0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: M.matroid()
-            Matroid of rank 2 on 3 elements
+            Matroid of rank 2 on 3 elements with 5 flats
         """
         from sage.matroids.constructor import Matroid
-        from sage.combinat.posets.posets import Poset
+        from sage.matroids.flats_matroid import FlatsMatroid
         flats = list(set([frozenset(X.zeros()) for X in self.elements()]))
-        rf = Poset((flats, lambda a, b: a.issubset(b))).rank_function()
-        return Matroid(groundset=self.groundset(), rank_function=rf)
+        return FlatsMatroid(groundset=self.groundset(), flats=flats)
