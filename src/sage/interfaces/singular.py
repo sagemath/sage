@@ -1719,7 +1719,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
 
     def sage_poly(self, R=None, kcache=None):
         """
-        Return a Sage polynomial in the ring r matching the provided poly
+        Return a Sage polynomial in the ring R matching the provided poly
         which is a singular polynomial.
 
         INPUT:
@@ -1829,7 +1829,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         k = R.base_ring()
 
         P = self.parent()
-        variable_prod = P("*".join(R.variable_names()))
+        variable_prod = "*".join(R.variable_names())
 
         # The output of self.coef is a Singular matrix. When iterating over
         # this matrix, each term is a pair (monomial, coefficient)
