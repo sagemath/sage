@@ -387,20 +387,69 @@ class TropicalMPolynomial(MPolynomial_polydict):
         if self.parent().ngens() == 3:
             return TropicalSurface(self)
         return TropicalVariety(self)
-    
+
+    def polytope(self):
+        """
+        Return the Newton polytope of ``self``.
+
+        The Newton polytope is the convex hull of all the points
+        corresponding to the exponents of the monomials of tropical
+        polynomial.
+
+        OUTPUT: :class:`sage.geometry.polyhedron.constructor.Polyhedron`
+
+        EXAMPLES:
+
+        Newton polytope for two variable tropical polynomial::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y> = PolynomialRing(T)
+            sage: p1 = x + y
+            sage: p1.polytope()
+            A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p1 = x + y
+            sphinx_plot(p1.polytope().plot())
+
+        Newton polytope in three dimension::
+
+            sage: T = TropicalSemiring(QQ)
+            sage: R.<x,y,z> = PolynomialRing(T)
+            sage: p1 = x^2 + x*y*z + x + y + z + R(0)
+            sage: p1.polytope()
+            A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 5 vertices
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ)
+            R = PolynomialRing(T, ('x,y,z'))
+            x, y, z = R.gen(), R.gen(1), R.gen(2)
+            p1 = x**2 + x*y*z + x + y + z + R(0)
+            sphinx_plot(p1.polytope().plot())
+        """
+        from sage.geometry.polyhedron.constructor import Polyhedron
+
+        exponents = self.exponents()
+        return Polyhedron(exponents)
+
     def dual_subdivision(self):
         """
         Return the dual subdivision of ``self``.
 
         Dual subdivision refers to a specific decomposition of the
-        Newton polygon of a tropical polynomial. This Newton polygon
-        is the convex hull of all the points corresponding to the
-        exponents of the terms of the tropical polynomial. The term
-        "dual" is used in the sense that the combinatorial structure
-        of the tropical variety is reflected in the dual subdivision.
-        Vertices of the dual subdivision correspond to the intersection
-        of multiple components. Edges of the dual subdivision correspond
-        to the individual components.
+        Newton polytope of a tropical polynomial. The term "dual" is
+        used in the sense that the combinatorial structure of the
+        tropical variety is reflected in the dual subdivision.
+        Specifically, vertices of the dual subdivision correspond to
+        the intersection of multiple components. Edges of the dual
+        subdivision correspond to the individual components.
 
         OUTPUT: :class:`sage.geometry.polyhedral_complex.PolyhedralComplex`
 
