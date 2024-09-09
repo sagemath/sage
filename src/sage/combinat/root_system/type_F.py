@@ -365,7 +365,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             4   3   2   1
             F4 relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
         """
-        return self.relabel({1:4, 2:3, 3:2, 4:1})
+        return self.relabel({1: 4, 2: 3, 3: 2, 4: 1})
 
     def _default_folded_cartan_type(self):
         """
@@ -383,5 +383,4 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_F',
-                           'ambient_space',
-                           AmbientSpace)
+                           'ambient_space', AmbientSpace)

@@ -351,12 +351,11 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
         ret = (4*(n-3))*" "+"{} {}\n".format(node(label(n)), label(n))
         ret += ((4*(n-3))*" " + "|\n")*2
         ret += "---".join(node(label(i)) for i in range(1, n)) + "\n"
-        ret += "".join("{!s:4}".format(label(i)) for i in range(1,n))
+        ret += "".join("{!s:4}".format(label(i)) for i in range(1, n))
         return ret
 
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.combinat.root_system.type_D',
-                           'ambient_space',
-                           AmbientSpace)
+                           'ambient_space', AmbientSpace)
