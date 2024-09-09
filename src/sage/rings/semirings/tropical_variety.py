@@ -598,8 +598,7 @@ class TropicalSurface(TropicalVariety):
             for eqn in self._hypersurface[0][0]:
                 for op in eqn.operands():
                     if op.is_numeric():
-                        if op > bound:
-                            bound = op
+                        bound = max(op, bound)
             return [[-bound, bound]] * 3
 
         u_set = set()
@@ -668,10 +667,8 @@ class TropicalSurface(TropicalVariety):
                             zmin = z
                             zmax = z
                         else:
-                            if z < zmin:
-                                zmin = z
-                            if z > zmax:
-                                zmax = z
+                            zmin = min(z, zmin)
+                            zmax = max(z, zmax)
         axes.append([zmin, zmax])
         return axes
 
@@ -952,8 +949,7 @@ class TropicalCurve(TropicalVariety):
                         temp_operands += eq.operands()
                 for op in temp_operands:
                     if op.is_numeric():
-                        if abs(op) > bound:
-                            bound = abs(op)
+                        bound = max(abs(op), bound)
             return [[-bound, bound]] * 2
 
         verts = self.vertices()
