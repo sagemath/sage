@@ -33,6 +33,8 @@ AUTHORS:
 - Kwankyu Lee (2024-02-14): rebased on Sphinx 7.2.6
 
 - François Bissey (2024-08-24): rebased on Sphinx 8.0.2
+
+- François Bissey (2024-09-10): Tweaks to support python 3.9 (and older sphinx) as well
 """
 
 from __future__ import annotations
@@ -1577,8 +1579,14 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
     def can_document_member(
         cls: type[Documenter], member: Any, membername: str, isattr: bool, parent: Any,
     ) -> bool:
-        return isinstance(member, type) or (
-            isattr and (inspect.isNewType(member) or isinstance(member, TypeVar)))
+        # support both sphinx 8 and py3.9/older sphinx
+        try:
+            result_bool = isinstance(member, type) or (
+                isattr and isinstance(member, NewType | TypeVar))
+        except:
+            result_bool = isinstance(member, type) or (
+                isattr and (inspect.isNewType(member) or isinstance(member, TypeVar)))
+        return result_bool
 
     def import_object(self, raiseerror: bool = False) -> bool:
         ret = super().import_object(raiseerror)
@@ -1651,7 +1659,12 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             # -------------------------------------------------------------------
             else:
                 self.doc_as_attr = True
-            if inspect.isNewType(self.object) or isinstance(self.object, TypeVar):
+            # support both sphinx 8 and py3.9/older sphinx
+            try:
+                test_bool = isinstance(self.object, NewType | TypeVar)
+            except:
+                test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
+            if test_bool:
                 modname = getattr(self.object, '__module__', self.modname)
                 if modname != self.modname and self.modname.startswith(modname):
                     bases = self.modname[len(modname):].strip('.').split('.')
@@ -1660,7 +1673,12 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         return ret
 
     def _get_signature(self) -> tuple[Any | None, str | None, Signature | None]:
-        if inspect.isNewType(self.object) or isinstance(self.object, TypeVar):
+        # support both sphinx 8 and py3.9/older sphinx
+        try:
+            test_bool = isinstance(self.object, NewType | TypeVar)
+        except:
+            test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
+        if test_bool:
             # Suppress signature
             return None, None, None
 
@@ -1845,14 +1863,24 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             self.directivetype = 'attribute'
         super().add_directive_header(sig)
 
-        if inspect.isNewType(self.object) or isinstance(self.object, TypeVar):
+        # support both sphinx 8 and py3.9/older sphinx
+        try:
+            test_bool = isinstance(self.object, NewType | TypeVar)
+        except:
+            test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
+        if test_bool:
             return
 
         if self.analyzer and '.'.join(self.objpath) in self.analyzer.finals:
             self.add_line('   :final:', sourcename)
 
         canonical_fullname = self.get_canonical_fullname()
-        if (not self.doc_as_attr and not inspect.isNewType(self.object)
+        # support both sphinx 8 and py3.9/older sphinx
+        try:
+            newtype_test = isinstance(self.object, NewType)
+        except:
+            newtype_test = inspect.isNewType(self.object)
+        if (not self.doc_as_attr and not newtype_test
                 and canonical_fullname and self.fullname != canonical_fullname):
             self.add_line('   :canonical: %s' % canonical_fullname, sourcename)
 
@@ -1989,7 +2017,12 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             return None
 
     def add_content(self, more_content: StringList | None) -> None:
-        if inspect.isNewType(self.object):
+        # support both sphinx 8 and py3.9/older sphinx
+        try:
+            newtype_test = isinstance(self.object, NewType)
+        except:
+            newtype_test = inspect.isNewType(self.object)
+        if newtype_test:
             if self.config.autodoc_typehints_format == "short":
                 supertype = restify(self.object.__supertype__, "smart")
             else:
