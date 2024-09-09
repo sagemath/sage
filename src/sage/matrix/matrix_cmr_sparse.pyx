@@ -538,6 +538,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         - ``summands`` -- integer matrices or data from which integer matrices can be
           constructed
 
+        OUTPUT: A :class:`Matrix_cmr_chr_sparse`
+
         The terminology "1-sum" is used in the context of Seymour's decomposition
         of totally unimodular matrices and regular matroids, see [Sch1986]_.
 
@@ -642,6 +644,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
           ``second_index`` is the column index of the second integer matrix.
           The outer product of the corresponding row and column
           form the nonzero bottom left block of the 2-sum matrix.
+
+        OUTPUT: A :class:`Matrix_cmr_chr_sparse`
 
         EXAMPLES::
 
@@ -790,7 +794,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sum.set_immutable()
         return sum
 
-    def three_sum_cmr(first_mat, second_mat,
+    def _three_sum_cmr(first_mat, second_mat,
                   first_index1, first_index2, second_index1, second_index2,
                   three_sum_strategy="distributed_ranks"):
         r"""
@@ -827,7 +831,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         The terminology "3-sum" is used in the context of Seymour's decomposition
         of totally unimodular matrices and regular matroids, see [Sch1986]_, Ch. 19.4.
 
-        .. SEEALSO:: :meth:`one_sum`, :meth:`two_sum`, 
+        .. SEEALSO:: :meth:`one_sum`, :meth:`two_sum`, :meth:`three_sum`,
                      :meth:`three_sum_wide_wide`, :meth:`three_sum_mixed_mixed`
 
         INPUT:
@@ -840,6 +844,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         - ``second_index2`` -- the row/column index of the second integer matrix
         - ``three_sum_strategy`` -- either ``"distributed_ranks"`` (default)
           or ``"concentrated_rank"``.
+
+        OUTPUT: A :class:`Matrix_cmr_chr_sparse`
 
         EXAMPLES::
 
@@ -866,7 +872,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  0 -1  0  1]
             [ 1  0  0 -1  0]
             [ 0  1  0  0  1]
-            sage: M1.three_sum_cmr(M2, 1, 2, 2, 4, three_sum_strategy="concentrated_rank")
+            sage: M1._three_sum_cmr(M2, 1, 2, 2, 4, three_sum_strategy="concentrated_rank")
             [ 1  1  0  0  0  0  0  0]
             [ 0  0 -1  1  0  0  0  0]
             [ 0  1  1  0  1  0  0  0]
@@ -875,7 +881,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [-1 -1  0  1 -2  0  0  0]
             [ 0  0  0  0  0  1  0 -1]
             [ 0 -1  1  0 -1  0  1  0]
-            sage: M1.three_sum_cmr(M2, 1, 2, 1, 1)
+            sage: M1._three_sum_cmr(M2, 1, 2, 1, 1)
             [ 1  1  0  0  0  0  0  0]
             [ 0 -1  0 -1  1  1  1 -1]
             [ 0  0  1  0 -1 -1 -1  1]
@@ -942,7 +948,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat)
         return sum
 
-    def three_sum_wide_wide(first_mat, second_mat):
+    def three_sum_wide_wide(first_mat, second_mat,
+                            first_row_index=-1,
+                            first_columns_index=[-2, -1],
+                            second_row_index=0,
+                            second_columns_index=[0, 1],
+                            algorithm="cmr",
+                            verify=True,
+                            sign_verify=False):
         r"""
         Return the 3-sum matrix constructed from the given matrices ``first_mat`` and
         ``second_mat``, assume that ``three_sum_strategy="distributed_ranks"``.
@@ -955,6 +968,30 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         The terminology "3-sum" is used in the context of Seymour's decomposition
         of totally unimodular matrices and regular matroids, see [Sch1986]_, Ch. 19.4.
+
+        .. SEEALSO:: :meth:`three_sum`, :meth:`is_three_sum`,
+                     :meth:`three_sum_mixed_mixed`
+
+        INPUT:
+
+        - ``first_mat`` -- the first integer matrix `M_1`
+        - ``second_mat`` -- the second integer matrix `M_2`
+        - ``first_row_index`` -- the row index of `a_1^T` in `M_1`
+        - ``first_columns_index`` -- the column indices of `a_2` in `M_1`
+        - ``second_row_index`` -- the row index of `b_2^T` in `M_2`
+        - ``second_columns_index`` -- the column indices of `b_1`  in `M_2`
+        - ``algorithm`` -- ``"cmr"`` or ``"direct"``
+          If ``algorithm="cmr"``, then use :meth:`_three_sum_cmr`;
+          If ``algorithm="direct"``, then construct three sum directly.
+        - ``verify`` -- boolean (default:``True``)
+          Whether to check the give two matrices and the related indices
+          satisfying the requirements of 3-sum
+          by calling :meth:`is_three_sum_wide_wide`.
+        - ``sign_verify`` -- boolean (default:``False``)
+          Whether to check the sign correctness.
+          See :meth:`is_three_sum_wide_wide`.
+
+        OUTPUT: A :class:`Matrix_cmr_chr_sparse`
 
         EXAMPLES::
 
@@ -990,39 +1027,147 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  0  0  0  0 -1  0  1]
             [ 0  0  0  0  1  0 -1  0]
             [ 1  0 -1  1  0  0  0  1]
+
+        Three sum can be computed for any row and column indices:
+
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1, 1, 0, 0, 0, 0],
+            ....:                             [1, 0, 1,-1, 1, 0],
+            ....:                             [0,-1, 1, 0,-1, 1],
+            ....:                             [0, 0,-1, 1, 0,-1],
+            ....:                             [0, 1, 1, 0, 1, 1]]); M1
+            [ 1  1  0  0  0  0]
+            [ 1  0  1 -1  1  0]
+            [ 0 -1  1  0 -1  1]
+            [ 0  0 -1  1  0 -1]
+            [ 0  1  1  0  1  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1,-1, 1, 0, 0,-1],
+            ....:                             [1, 1, 1, 1,-1, 0],
+            ....:                             [0, 0,-1, 0, 1, 0],
+            ....:                             [1, 0, 0,-1, 0, 0],
+            ....:                             [0, 1, 0, 0, 1, 1]]); M2
+            [ 1 -1  1  0  0 -1]
+            [ 1  1  1  1 -1  0]
+            [ 0  0 -1  0  1  0]
+            [ 1  0  0 -1  0  0]
+            [ 0  1  0  0  1  1]
+            sage: M = M1.three_sum_wide_wide(M2, 1, [2,-1], 1, [1, -1]); M
+            [ 1  1  0  0  0  0  0  0]
+            [ 0 -1  0 -1  1  1  1 -1]
+            [ 0  0  1  0 -1 -1 -1  1]
+            [ 0  1  0  1  1  1  1 -1]
+            [-1  0  1 -1  1  1  0  0]
+            [ 0  0  0  0  0 -1  0  1]
+            [ 0  0  0  0  1  0 -1  0]
+            [ 1  0 -1  1  0  0  0  1]
+            sage: N = M1.three_sum_wide_wide(M2, 1, [2,-1], 1, [1, -1], algorithm="direct")
+            sage: M == N
+            True
+
+            sage: M1.three_sum_wide_wide(M2, 1, [2, 3], 1, [1, -1])
+            Traceback (most recent call last):
+            ...
+            ValueError: The given two matrices and related indices do not satisfy the rule for three sum!
+            sage: M1.three_sum_wide_wide(M2, 1, [2, 3], 1, [1, -1], verify=False)
+            [ 1  1  0  0  0  0  0  0]
+            [ 0 -1 -1  1  1  1  1 -1]
+            [ 0  0  0 -1 -1 -1 -1  1]
+            [ 0  1  1  1  1  1  1 -1]
+            [-1  0 -1  0  1  1  0  0]
+            [ 0  0  0  0  0 -1  0  1]
+            [ 0  0  0  0  1  0 -1  0]
+            [ 1  0  1  0  0  0  0  1]
         """
         m1 = first_mat.nrows()
         n1 = first_mat.ncols()
         m2 = second_mat.nrows()
         n2 = second_mat.ncols()
-        first_subcol = first_mat.matrix_from_rows_and_columns(range(m1 - 1), [n1 - 1])
-        second_subcol = second_mat.matrix_from_rows_and_columns(range(1, m2), [0])
+        j1 = first_columns_index[0]
+        j2 = first_columns_index[1]
+        j1 = j1 if j1 >= 0 else n1 + j1
+        j2 = j2 if j2 >= 0 else n1 + j2
+        i1 = first_row_index
+        i1 = i1 if i1 >= 0 else m1 + i1
+        k1 = second_columns_index[0]
+        k2 = second_columns_index[1]
+        k1 = k1 if k1 >= 0 else n2 + k1
+        k2 = k2 if k2 >= 0 else n2 + k2
+        i2 = second_row_index
+        i2 = i2 if i2 >= 0 else m2 + i2
+        if j1 > j2:
+            j2, j1 = j1, j2
+        if k1 > k2:
+            k2, k1 = k1, k2
 
-        first_row = first_mat.matrix_from_rows_and_columns([m1 - 1], range(n1 - 2))
-        second_row = second_mat.matrix_from_rows_and_columns([0], range(2, n2))
+        if algorithm not in ["cmr", "direct"]:
+            raise ValueError("Unknown algorithm", algorithm)
 
-        first_submat = first_mat.matrix_from_rows_and_columns(range(m1 - 1), range(n1 - 2))
-        second_submat = second_mat.matrix_from_rows_and_columns(range(1, m2), range(2, n2))
+        if algorithm == "cmr":
+            column_index_1 = [j for j in range(n1) if j != j2]
+            column_index_2 = [j for j in range(n2) if j != k2]
+            first_submat = first_mat.matrix_from_rows_and_columns(range(m1), column_index_1)
+            second_submat = second_mat.matrix_from_rows_and_columns(range(m2), column_index_2)
+            M = Matrix_cmr_chr_sparse._three_sum_cmr(first_submat, second_submat,
+                                                     i1, j1,
+                                                     i2, k1,
+                                                     three_sum_strategy="distributed_ranks")
+        if algorithm == "direct":
+            row_index_1 = [i for i in range(m1) if i != i1]
+            column_index_1 = [j for j in range(n1) if j != j1 and j != j2]
+            row_index_2 = [i for i in range(m2) if i != i2]
+            column_index_2 = [j for j in range(n2) if j != k1 and j != k2]
+            a2 = first_mat.matrix_from_rows_and_columns(row_index_1, [j1])
+            b1 = second_mat.matrix_from_rows_and_columns(row_index_2, [k1])
 
-        first_subrows = first_submat.rows()
-        second_subrows = second_submat.rows()
-        upper_right_rows = first_subcol.tensor_product(second_row).rows()
-        lower_left_rows = second_subcol.tensor_product(first_row).rows()
+            a1 = first_mat.matrix_from_rows_and_columns([i1], column_index_1)
+            b2 = second_mat.matrix_from_rows_and_columns([i2], column_index_2)
 
-        row_list = []
-        for i in range(m1 - 1):
-            r = list(first_subrows[i])
-            u = list(upper_right_rows[i])
-            r.extend(u)
-            row_list.append(r)
-        for i in range(m2 - 1):
-            r = list(lower_left_rows[i])
-            u = list(second_subrows[i])
-            r.extend(u)
-            row_list.append(r)
-        return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
+            A = first_mat.matrix_from_rows_and_columns(row_index_1, column_index_1)
+            B = second_mat.matrix_from_rows_and_columns(row_index_2, column_index_2)
 
-    def three_sum_mixed_mixed(first_mat, second_mat):
+            first_subrows = A.rows()
+            second_subrows = B.rows()
+            upper_right_rows = a2.tensor_product(b2).rows()
+            lower_left_rows = b1.tensor_product(a1).rows()
+
+            row_list = []
+            for i in range(m1 - 1):
+                r = list(first_subrows[i])
+                u = list(upper_right_rows[i])
+                r.extend(u)
+                row_list.append(r)
+            for i in range(m2 - 1):
+                r = list(lower_left_rows[i])
+                u = list(second_subrows[i])
+                r.extend(u)
+                row_list.append(r)
+            M = Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
+
+        if not verify:
+            return M
+        result = M.is_three_sum_wide_wide(first_mat, second_mat,
+                                          first_row_index=first_row_index,
+                                          first_columns_index=first_columns_index,
+                                          second_row_index=second_row_index,
+                                          second_columns_index=second_columns_index,
+                                          sign_verify=sign_verify)
+        if result is True:
+            return M
+        elif result is False:
+            raise ValueError('The given two matrices and related indices '
+                             'do not satisfy the rule for three sum!')
+        else:
+            return result[1]
+
+    def three_sum_mixed_mixed(first_mat, second_mat,
+                              first_rows_index=[-2, -1],
+                              first_column_index=-1,
+                              second_row_index=0,
+                              second_columns_index=[0, 1],
+                              algorithm="cmr",
+                              verify=True,
+                              sign_verify=False):
         r"""
         Return the 3-sum matrix constructed from the given matrices ``first_mat`` and
         ``second_mat``, assume that ``three_sum_strategy="concentrated_rank"``.
@@ -1035,6 +1180,30 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         The terminology "3-sum" is used in the context of Seymour's decomposition
         of totally unimodular matrices and regular matroids, see [Sch1986]_, Ch. 19.4.
+
+        .. SEEALSO:: :meth:`three_sum`, :meth:`is_three_sum`,
+                     :meth:`three_sum_mixed_mixed`
+
+        INPUT:
+
+        - ``first_mat`` -- the first integer matrix `M_1`
+        - ``second_mat`` -- the second integer matrix `M_2`
+        - ``first_rows_index`` -- the indices of rows `a_1^T` and `a_2^T` in `M_1`
+        - ``first_column_index`` -- the index of the extra column in `M_1`
+        - ``second_row_index`` -- the index of the extra row in `M_2`
+        - ``second_columns_index`` -- the indices of columns `b_1` and `b_2`  in `M_2`
+        - ``algorithm`` -- ``"cmr"`` or ``"direct"``
+          If ``algorithm="cmr"``, then use :meth:`_three_sum_cmr`;
+          If ``algorithm="direct"``, then construct three sum directly.
+        - ``verify`` -- boolean (default:``True``)
+          Whether to check the give two matrices and the related indices
+          satisfying the requirements of 3-sum
+          by calling :meth:`is_three_sum_mixed_mixed`.
+        - ``sign_verify`` -- boolean (default:``False``)
+          Whether to check the sign correctness.
+          See :meth:`is_three_sum_mixed_mixed`.
+
+        OUTPUT: A :class:`Matrix_cmr_chr_sparse`
 
         EXAMPLES::
 
@@ -1072,20 +1241,347 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [-1 -1  0  1 -2  0  0  0]
             [ 0  0  0  0  0  1  0 -1]
             [ 0 -1  1  0 -1  0  1  0]
+
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1, 1, 0, 0, 0, 0],
+            ....:                             [1, 0, 1,-1, 1, 1],
+            ....:                             [0,-1, 1, 0,-1, 1],
+            ....:                             [0, 0,-1, 1, 0, 0],
+            ....:                             [0, 1, 1, 0, 1, 0]]); M1
+            [ 1  1  0  0  0  0]
+            [ 1  0  1 -1  1  1]
+            [ 0 -1  1  0 -1  1]
+            [ 0  0 -1  1  0  0]
+            [ 0  1  1  0  1  0]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 5, sparse=True),
+            ....:                            [[0, 0, 1, 0, 1],
+            ....:                             [1,-1, 1, 0, 0],
+            ....:                             [1, 1, 1, 1,-1],
+            ....:                             [0, 0,-1, 0, 1],
+            ....:                             [1, 0, 0,-1, 0],
+            ....:                             [0, 1, 0, 0, 1]]); M2
+            [ 0  0  1  0  1]
+            [ 1 -1  1  0  0]
+            [ 1  1  1  1 -1]
+            [ 0  0 -1  0  1]
+            [ 1  0  0 -1  0]
+            [ 0  1  0  0  1]
+            sage: M = M1.three_sum_mixed_mixed(M2, first_rows_index=[1, 2],
+            ....:                  second_columns_index=[2, 4]); M
+            [ 1  1  0  0  0  0  0  0]
+            [ 0  0 -1  1  0  0  0  0]
+            [ 0  1  1  0  1  0  0  0]
+            [ 1  0  1 -1  1  1 -1  0]
+            [ 1  1  0 -1  2  1  1  1]
+            [-1 -1  0  1 -2  0  0  0]
+            [ 0  0  0  0  0  1  0 -1]
+            [ 0 -1  1  0 -1  0  1  0]
+            sage: N = M1.three_sum_mixed_mixed(M2, first_rows_index=[1, 2],
+            ....:                  second_columns_index=[2, 4], algorithm="direct")
+            sage: M == N
+            True
+            sage: M1.three_sum_mixed_mixed(M2, first_rows_index=[1, 2],
+            ....:                  first_column_index=1,
+            ....:                  second_columns_index=[2, 4])
+            Traceback (most recent call last):
+            ...
+            ValueError: The given two matrices and related indices do not satisfy the rule for three sum!
+            sage: M1.three_sum_mixed_mixed(M2, first_rows_index=[1, 2],
+            ....:                  first_column_index=1,
+            ....:                  second_columns_index=[2, 4], verify=False)
+            [ 1  0  0  0  0  0  0  0]
+            [ 0 -1  1  0  0  0  0  0]
+            [ 0  1  0  1  0  0  0  0]
+            [ 1  1 -1  1  1  1 -1  0]
+            [ 1  0 -1  2  0  1  1  1]
+            [-1  0  1 -2  0  0  0  0]
+            [ 0  0  0  0  0  1  0 -1]
+            [ 0  1  0 -1  1  0  1  0]
         """
         m1 = first_mat.nrows()
         n1 = first_mat.ncols()
         m2 = second_mat.nrows()
         n2 = second_mat.ncols()
-        first_submat = first_mat.matrix_from_rows_and_columns(range(m1), range(n1 - 1))
-        second_submat = second_mat.matrix_from_rows_and_columns(range(1, m2), range(n2))
+        j1 = first_rows_index[0]
+        j2 = first_rows_index[1]
+        j1 = j1 if j1 >= 0 else m1 + j1
+        j2 = j2 if j2 >= 0 else m1 + j2
+        i1 = first_column_index
+        i1 = i1 if i1 >= 0 else n1 + i1
+        k1 = second_columns_index[0]
+        k2 = second_columns_index[1]
+        k1 = k1 if k1 >= 0 else n2 + k1
+        k2 = k2 if k2 >= 0 else n2 + k2
+        i2 = second_row_index
+        i2 = i2 if i2 >= 0 else m2 + i2
+        if j1 > j2:
+            j2, j1 = j1, j2
+        if k1 > k2:
+            k2, k1 = k1, k2
 
-        return Matrix_cmr_chr_sparse.three_sum_cmr(first_submat, second_submat,
-                                                   m1 - 2, m1 - 1,
-                                                   0, 1,
-                                                   three_sum_strategy="concentrated_rank")
+        if algorithm not in ["cmr", "direct"]:
+            raise ValueError("Unknown algorithm", algorithm)
 
-    def is_three_sum_wide_wide(first_mat, second_mat, three_sum_mat,
+        if algorithm == "cmr":
+            column_index_1 = [j for j in range(n1) if j != i1]
+            row_index_2 = [i for i in range(m2) if i != i2]
+            first_submat = first_mat.matrix_from_rows_and_columns(range(m1), column_index_1)
+            second_submat = second_mat.matrix_from_rows_and_columns(row_index_2, range(n2))
+
+            M = Matrix_cmr_chr_sparse._three_sum_cmr(first_submat, second_submat,
+                                                     j1, j2,
+                                                     k1, k2,
+                                                     three_sum_strategy="concentrated_rank")
+        if algorithm == "direct":
+            row_index_1 = [i for i in range(m1) if i != j1 and i != j2]
+            column_index_1 = [j for j in range(n1) if j != i1]
+            row_index_2 = [i for i in range(m2) if i != i2]
+            column_index_2 = [j for j in range(n2) if j != k1 and j != k2]
+            a1 = first_mat.matrix_from_rows_and_columns([j1], column_index_1)
+            a2 = first_mat.matrix_from_rows_and_columns([j2], column_index_1)
+            b1 = second_mat.matrix_from_rows_and_columns(row_index_2, [k1])
+            b2 = second_mat.matrix_from_rows_and_columns(row_index_2, [k2])
+
+            A = first_mat.matrix_from_rows_and_columns(row_index_1, column_index_1)
+            B = second_mat.matrix_from_rows_and_columns(row_index_2, column_index_2)
+
+            first_subrows = A.rows()
+            second_subrows = B.rows()
+            lower_left_rows = (b1.tensor_product(a1) + b2.tensor_product(a2)).rows()
+
+            row_list = []
+            for i in range(m1 - 2):
+                r = list(first_subrows[i])
+                u = [0 for j in range(n2 - 2)]
+                r.extend(u)
+                row_list.append(r)
+            for i in range(m2 - 1):
+                r = list(lower_left_rows[i])
+                u = list(second_subrows[i])
+                r.extend(u)
+                row_list.append(r)
+            M = Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
+
+        if not verify:
+            return M
+        result = M.is_three_sum_mixed_mixed(first_mat, second_mat,
+                                            first_rows_index=first_rows_index,
+                                            first_column_index=first_column_index,
+                                            second_row_index=second_row_index,
+                                            second_columns_index=second_columns_index,
+                                            sign_verify=sign_verify)
+        if result is True:
+            return M
+        elif result is False:
+            raise ValueError('The given two matrices and related indices '
+                             'do not satisfy the rule for three sum!')
+        else:
+            return result[1]
+
+    def three_sum(first_mat, second_mat,
+                  first_one_index=-1,
+                  first_two_indices=[-2, -1],
+                  second_one_index=0,
+                  second_two_indices=[0, 1],
+                  three_sum_strategy="distributed_ranks",
+                  algorithm="cmr",
+                  verify=True,
+                  sign_verify=False):
+        r"""
+        Return the 3-sum matrix constructed from the given matrices
+        ``first_mat`` and ``second_mat``.
+
+        .. SEEALSO:: :meth:`three_sum_wide_wide`,
+                     :meth:`three_sum_mixed_mixed`
+
+        INPUT:
+
+        - ``first_mat`` -- the first integer matrix `M_1`
+        - ``second_mat`` -- the second integer matrix `M_2`
+        - ``first_one_index`` -- the index of one extra row/column in `M_1`
+        - ``first_two_indices`` -- the indices of two extra rows/columns in `M_1`
+        - ``second_one_index`` -- the index of one extra row/column in `M_2`
+        - ``second_two_indices`` -- the indices of two extra rows/columns in `M_2`
+        - ``three_sum_strategy`` -- ``"distributed_ranks"`` or ``"Wide_Wide"`` or
+          ``concentrated_rank`` or ``"Mixed_Mixed"``
+        - ``algorithm`` -- ``"cmr"`` or ``"direct"``
+          If ``algorithm="cmr"``, then use :meth:`_three_sum_cmr`;
+          If ``algorithm="direct"``, then construct three sum directly.
+        - ``verify`` -- boolean (default:``True``)
+          Whether to check the give two matrices and the related indices
+          satisfying the requirements of 3-sum
+          by calling :meth:`is_three_sum_wide_wide` or
+          :meth:`is_three_sum_mixed_mixed`.
+        - ``sign_verify`` -- boolean (default:``False``)
+          Whether to check the sign correctness.
+          See :meth:`is_three_sum`.
+
+        OUTPUT: A :class:`Matrix_cmr_chr_sparse`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1, 1, 0, 0, 0, 0],
+            ....:                             [0,-1, 0,-1, 1, 1],
+            ....:                             [0, 0, 1, 0,-1,-1],
+            ....:                             [0, 1, 0, 1, 1, 1],
+            ....:                             [1, 0,-1, 1, 0, 1],]); M1
+            [ 1  1  0  0  0  0]
+            [ 0 -1  0 -1  1  1]
+            [ 0  0  1  0 -1 -1]
+            [ 0  1  0  1  1  1]
+            [ 1  0 -1  1  0  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[ 1, 0, 1, 1, 1,-1],
+            ....:                             [-1,-1, 1, 1, 0, 0],
+            ....:                             [ 0, 0, 0,-1, 0, 1],
+            ....:                             [ 0, 0, 1, 0,-1, 0],
+            ....:                             [ 1, 1, 0, 0, 0, 1]]); M2
+            [ 1  0  1  1  1 -1]
+            [-1 -1  1  1  0  0]
+            [ 0  0  0 -1  0  1]
+            [ 0  0  1  0 -1  0]
+            [ 1  1  0  0  0  1]
+            sage: M = Matrix_cmr_chr_sparse.three_sum(M1, M2); M
+            [ 1  1  0  0  0  0  0  0]
+            [ 0 -1  0 -1  1  1  1 -1]
+            [ 0  0  1  0 -1 -1 -1  1]
+            [ 0  1  0  1  1  1  1 -1]
+            [-1  0  1 -1  1  1  0  0]
+            [ 0  0  0  0  0 -1  0  1]
+            [ 0  0  0  0  1  0 -1  0]
+            [ 1  0 -1  1  0  0  0  1]
+            sage: M = Matrix_cmr_chr_sparse.three_sum(M1, M2)
+
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1, 1, 0, 0, 0, 0],
+            ....:                             [0, 0,-1, 1, 0, 0],
+            ....:                             [0, 1, 1, 0, 1, 0],
+            ....:                             [1, 0, 1,-1, 1, 1],
+            ....:                             [0,-1, 1, 0,-1, 1]]); M1
+            [ 1  1  0  0  0  0]
+            [ 0  0 -1  1  0  0]
+            [ 0  1  1  0  1  0]
+            [ 1  0  1 -1  1  1]
+            [ 0 -1  1  0 -1  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 5, sparse=True),
+            ....:                            [[ 1, 1, 0, 0, 0],
+            ....:                             [ 1, 0, 1,-1, 0],
+            ....:                             [ 1,-1, 1, 1, 1],
+            ....:                             [-1, 1, 0, 0, 0],
+            ....:                             [ 0, 0, 1, 0,-1],
+            ....:                             [ 0, 1, 0, 1, 0]]); M2
+            [ 1  1  0  0  0]
+            [ 1  0  1 -1  0]
+            [ 1 -1  1  1  1]
+            [-1  1  0  0  0]
+            [ 0  0  1  0 -1]
+            [ 0  1  0  1  0]
+            sage: M = Matrix_cmr_chr_sparse.three_sum(M1, M2, three_sum_strategy="Mixed_Mixed"); M
+            [ 1  1  0  0  0  0  0  0]
+            [ 0  0 -1  1  0  0  0  0]
+            [ 0  1  1  0  1  0  0  0]
+            [ 1  0  1 -1  1  1 -1  0]
+            [ 1  1  0 -1  2  1  1  1]
+            [-1 -1  0  1 -2  0  0  0]
+            [ 0  0  0  0  0  1  0 -1]
+            [ 0 -1  1  0 -1  0  1  0]
+
+            sage: M1.three_sum(M2, three_sum_strategy="Wide_Mixed")
+            Traceback (most recent call last):
+            ...
+            ValueError: ('Unknown three sum mode', 'Wide_Mixed')
+
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1, 1, 0, 0, 0, 0],
+            ....:                             [1, 0, 1,-1, 1, 1],
+            ....:                             [0,-1, 1, 0,-1, 1],
+            ....:                             [0, 0,-1, 1, 0, 0],
+            ....:                             [0, 1, 1, 0, 1, 0]]); M1
+            [ 1  1  0  0  0  0]
+            [ 1  0  1 -1  1  1]
+            [ 0 -1  1  0 -1  1]
+            [ 0  0 -1  1  0  0]
+            [ 0  1  1  0  1  0]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 5, sparse=True),
+            ....:                            [[0, 0, 1, 0, 1],
+            ....:                             [1,-1, 1, 0, 0],
+            ....:                             [1, 1, 1, 1,-1],
+            ....:                             [0, 0,-1, 0, 1],
+            ....:                             [1, 0, 0,-1, 0],
+            ....:                             [0, 1, 0, 0, 1]]); M2
+            [ 0  0  1  0  1]
+            [ 1 -1  1  0  0]
+            [ 1  1  1  1 -1]
+            [ 0  0 -1  0  1]
+            [ 1  0  0 -1  0]
+            [ 0  1  0  0  1]
+            sage: M1.three_sum(M2, first_two_indices=[1, 2],
+            ....:                  second_two_indices=[2, 4],
+            ....:                  three_sum_strategy="concentrated_rank")
+            [ 1  1  0  0  0  0  0  0]
+            [ 0  0 -1  1  0  0  0  0]
+            [ 0  1  1  0  1  0  0  0]
+            [ 1  0  1 -1  1  1 -1  0]
+            [ 1  1  0 -1  2  1  1  1]
+            [-1 -1  0  1 -2  0  0  0]
+            [ 0  0  0  0  0  1  0 -1]
+            [ 0 -1  1  0 -1  0  1  0]
+
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1, 1, 0, 0, 0, 0],
+            ....:                             [1, 0, 1,-1, 1, 0],
+            ....:                             [0,-1, 1, 0,-1, 1],
+            ....:                             [0, 0,-1, 1, 0,-1],
+            ....:                             [0, 1, 1, 0, 1, 1]]); M1
+            [ 1  1  0  0  0  0]
+            [ 1  0  1 -1  1  0]
+            [ 0 -1  1  0 -1  1]
+            [ 0  0 -1  1  0 -1]
+            [ 0  1  1  0  1  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1,-1, 1, 0, 0,-1],
+            ....:                             [1, 1, 1, 1,-1, 0],
+            ....:                             [0, 0,-1, 0, 1, 0],
+            ....:                             [1, 0, 0,-1, 0, 0],
+            ....:                             [0, 1, 0, 0, 1, 1]]); M2
+            [ 1 -1  1  0  0 -1]
+            [ 1  1  1  1 -1  0]
+            [ 0  0 -1  0  1  0]
+            [ 1  0  0 -1  0  0]
+            [ 0  1  0  0  1  1]
+            sage: M1.three_sum(M2, 1, [2,-1], 1, [1, -1])
+            [ 1  1  0  0  0  0  0  0]
+            [ 0 -1  0 -1  1  1  1 -1]
+            [ 0  0  1  0 -1 -1 -1  1]
+            [ 0  1  0  1  1  1  1 -1]
+            [-1  0  1 -1  1  1  0  0]
+            [ 0  0  0  0  0 -1  0  1]
+            [ 0  0  0  0  1  0 -1  0]
+            [ 1  0 -1  1  0  0  0  1]
+        """
+        if three_sum_strategy in ["distributed_ranks", "Wide_Wide"]:
+            return first_mat.three_sum_wide_wide(second_mat,
+                                 first_row_index=first_one_index,
+                                 first_columns_index=first_two_indices,
+                                 second_row_index=second_one_index,
+                                 second_columns_index=second_two_indices,
+                                 algorithm=algorithm,
+                                 verify=verify,
+                                 sign_verify=sign_verify)
+        if three_sum_strategy in ["concentrated_rank", "Mixed_Mixed"]:
+            return first_mat.three_sum_mixed_mixed(second_mat,
+                                 first_rows_index=first_two_indices,
+                                 first_column_index=first_one_index,
+                                 second_row_index=second_one_index,
+                                 second_columns_index=second_two_indices,
+                                 algorithm=algorithm,
+                                 verify=verify,
+                                 sign_verify=sign_verify)
+        raise ValueError("Unknown three sum mode", three_sum_strategy)
+
+    def is_three_sum_wide_wide(three_sum_mat, first_mat, second_mat,
                                first_row_index=-1,
                                first_columns_index=[-2, -1],
                                second_row_index=0,
@@ -1123,6 +1619,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         INPUT:
 
+        - ``three_sum_mat`` -- the large integer matrix `M`
         - ``first_mat`` -- the first integer matrix `M_1`
         - ``second_mat`` -- the second integer matrix `M_2`
         - ``first_row_index`` -- the row index of `a_1^T` in `M_1`
@@ -1170,7 +1667,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  0  0  0  0 -1  0  1]
             [ 0  0  0  0  1  0 -1  0]
             [ 1  0 -1  1  0  0  0  1]
-            sage: Matrix_cmr_chr_sparse.is_three_sum_wide_wide(M1, M2, M)
+            sage: M.is_three_sum_wide_wide(M1, M2, sign_verify=False)
+            True
+            sage: M.is_three_sum_wide_wide(M1, M2)
             (False,
              'sign_1 in second_mat should be -1. sign_2 in first_mat should be -1. ')
 
@@ -1199,7 +1698,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  0  0  1  0  1]
             [ 1  0  1  0  1  1]
             [ 1  0  1  0  0  1]
-            sage: Matrix_cmr_chr_sparse.is_three_sum_wide_wide(M1, M2, M)
+            sage: Matrix_cmr_chr_sparse.is_three_sum_wide_wide(M, M1, M2)
             True
         """
         if not isinstance(first_columns_index, (list, tuple)) or len(first_columns_index) != 2:
@@ -1341,12 +1840,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             return False, msg
         return True
 
-    def is_three_sum_mixed_mixed(first_mat, second_mat, three_sum_mat,
-                               first_rows_index=[-2, -1],
-                               first_column_index=-1,
-                               second_row_index=0,
-                               second_columns_index=[0, 1],
-                               sign_verify=True):
+    def is_three_sum_mixed_mixed(three_sum_mat, first_mat, second_mat,
+                                 first_rows_index=[-2, -1],
+                                 first_column_index=-1,
+                                 second_row_index=0,
+                                 second_columns_index=[0, 1],
+                                 sign_verify=True):
         r"""
         Check whether ``first_mat`` and ``second_mat`` form ``three_sum_mat``
         via the 3-sum operation.
@@ -1371,6 +1870,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         INPUT:
 
+        - ``three_sum_mat`` -- the large integer matrix `M`
         - ``first_mat`` -- the first integer matrix `M_1`
         - ``second_mat`` -- the second integer matrix `M_2`
         - ``first_rows_index`` -- the indices of rows `a_1^T` and `a_2^T` in `M_1`
@@ -1420,9 +1920,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [-1 -1  0  1 -2  0  0  0]
             [ 0  0  0  0  0  1  0 -1]
             [ 0 -1  1  0 -1  0  1  0]
-            sage: Matrix_cmr_chr_sparse.is_three_sum_mixed_mixed(M1, M2, M, sign_verify=False)
+            sage: M.is_three_sum_mixed_mixed(M1, M2, sign_verify=False)
             True
-            sage: Matrix_cmr_chr_sparse.is_three_sum_mixed_mixed(M1, M2, M)
+            sage: M.is_three_sum_mixed_mixed(M1, M2)
             True
 
             sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
@@ -1452,7 +1952,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [0 1 0 1 1 1]
             [1 0 1 0 1 0]
             [0 1 0 1 0 1]
-            sage: Matrix_cmr_chr_sparse.is_three_sum_mixed_mixed(M1, M2, M)
+            sage: Matrix_cmr_chr_sparse.is_three_sum_mixed_mixed(M, M1, M2)
             True
         """
         if not isinstance(first_rows_index, (list, tuple)) or len(first_rows_index) != 2:
@@ -1601,7 +2101,141 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             return False, msg
         return True
 
-    def three_sum(first_mat, second_mat, first_col_index1, first_col_index2, second_col_index1, second_col_index2):
+    def is_three_sum(three_sum_mat, first_mat, second_mat,
+                     three_sum_strategy="distributed_ranks",
+                     first_one_index=-1,
+                     first_two_indices=[-2, -1],
+                     second_one_index=0,
+                     second_two_indices=[0, 1],
+                     sign_verify=True):
+        r"""
+        Check whether ``first_mat`` and ``second_mat`` form ``three_sum_mat``
+        via the 3-sum operation.
+        If ``sign_verify=True``, also check whether the 3-sum satisfies that
+        ``three_sum_mat`` is totally unimodular, if and only if,
+        ``first_mat`` and ``second_mat`` are both totally unimodular.
+
+        .. SEEALSO:: :meth:`is_three_sum_wide_wide`,
+                     :meth:`is_three_sum_mixed_mixed`
+
+        INPUT:
+
+        - ``three_sum_mat`` -- the large integer matrix `M`
+        - ``first_mat`` -- the first integer matrix `M_1`
+        - ``second_mat`` -- the second integer matrix `M_2`
+        - ``three_sum_strategy`` -- ``"distributed_ranks"`` or ``"Wide_Wide"`` or
+          ``concentrated_rank`` or ``"Mixed_Mixed"``
+        - ``first_one_index`` -- the index of one extra row/column in `M_1`
+        - ``first_two_indices`` -- the indices of two extra rows/columns in `M_1`
+        - ``second_one_index`` -- the index of one extra row/column in `M_2`
+        - ``second_two_indices`` -- the indices of two extra rows/columns in `M_2`
+        - ``sign_verify`` -- boolean (default:``True``)
+          Whether to check the sign correctness.
+
+        OUTPUT: boolean, or (boolean, string)
+
+          If it is False only because of the sign, then also output the correct sign.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1, 1, 0, 0, 0, 0],
+            ....:                             [0,-1, 0,-1, 1, 1],
+            ....:                             [0, 0, 1, 0,-1,-1],
+            ....:                             [0, 1, 0, 1, 1, 1],
+            ....:                             [1, 0,-1, 1, 0, 1],]); M1
+            [ 1  1  0  0  0  0]
+            [ 0 -1  0 -1  1  1]
+            [ 0  0  1  0 -1 -1]
+            [ 0  1  0  1  1  1]
+            [ 1  0 -1  1  0  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[ 1, 0, 1, 1, 1,-1],
+            ....:                             [-1,-1, 1, 1, 0, 0],
+            ....:                             [ 0, 0, 0,-1, 0, 1],
+            ....:                             [ 0, 0, 1, 0,-1, 0],
+            ....:                             [ 1, 1, 0, 0, 0, 1]]); M2
+            [ 1  0  1  1  1 -1]
+            [-1 -1  1  1  0  0]
+            [ 0  0  0 -1  0  1]
+            [ 0  0  1  0 -1  0]
+            [ 1  1  0  0  0  1]
+            sage: M = Matrix_cmr_chr_sparse.three_sum_wide_wide(M1, M2); M
+            [ 1  1  0  0  0  0  0  0]
+            [ 0 -1  0 -1  1  1  1 -1]
+            [ 0  0  1  0 -1 -1 -1  1]
+            [ 0  1  0  1  1  1  1 -1]
+            [-1  0  1 -1  1  1  0  0]
+            [ 0  0  0  0  0 -1  0  1]
+            [ 0  0  0  0  1  0 -1  0]
+            [ 1  0 -1  1  0  0  0  1]
+            sage: M.is_three_sum(M1, M2, sign_verify=False)
+            True
+            sage: M.is_three_sum(M1, M2)
+            (False,
+             'sign_1 in second_mat should be -1. sign_2 in first_mat should be -1. ')
+
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
+            ....:                            [[1, 1, 0, 0, 0, 0],
+            ....:                             [0, 0,-1, 1, 0, 0],
+            ....:                             [0, 1, 1, 0, 1, 0],
+            ....:                             [1, 0, 1,-1, 1, 1],
+            ....:                             [0,-1, 1, 0,-1, 1]]); M1
+            [ 1  1  0  0  0  0]
+            [ 0  0 -1  1  0  0]
+            [ 0  1  1  0  1  0]
+            [ 1  0  1 -1  1  1]
+            [ 0 -1  1  0 -1  1]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 5, sparse=True),
+            ....:                            [[ 1, 1, 0, 0, 0],
+            ....:                             [ 1, 0, 1,-1, 0],
+            ....:                             [ 1,-1, 1, 1, 1],
+            ....:                             [-1, 1, 0, 0, 0],
+            ....:                             [ 0, 0, 1, 0,-1],
+            ....:                             [ 0, 1, 0, 1, 0]]); M2
+            [ 1  1  0  0  0]
+            [ 1  0  1 -1  0]
+            [ 1 -1  1  1  1]
+            [-1  1  0  0  0]
+            [ 0  0  1  0 -1]
+            [ 0  1  0  1  0]
+            sage: M = Matrix_cmr_chr_sparse.three_sum_mixed_mixed(M1, M2); M
+            [ 1  1  0  0  0  0  0  0]
+            [ 0  0 -1  1  0  0  0  0]
+            [ 0  1  1  0  1  0  0  0]
+            [ 1  0  1 -1  1  1 -1  0]
+            [ 1  1  0 -1  2  1  1  1]
+            [-1 -1  0  1 -2  0  0  0]
+            [ 0  0  0  0  0  1  0 -1]
+            [ 0 -1  1  0 -1  0  1  0]
+            sage: M.is_three_sum(M1, M2, three_sum_strategy="Mixed_Mixed", sign_verify=False)
+            True
+            sage: M.is_three_sum(M1, M2, three_sum_strategy="Mixed_Mixed")
+            True
+
+            sage: M.is_three_sum(M1, M2, three_sum_strategy="Wide_Mixed")
+            Traceback (most recent call last):
+            ...
+            ValueError: ('Unknown three sum mode', 'Wide_Mixed')
+        """
+        if three_sum_strategy in ["distributed_ranks", "Wide_Wide"]:
+            return three_sum_mat.is_three_sum_wide_wide(first_mat, second_mat,
+                                 first_row_index=first_one_index,
+                                 first_columns_index=first_two_indices,
+                                 second_row_index=second_one_index,
+                                 second_columns_index=second_two_indices,
+                                 sign_verify=sign_verify)
+        if three_sum_strategy in ["concentrated_rank", "Mixed_Mixed"]:
+            return three_sum_mat.is_three_sum_mixed_mixed(first_mat, second_mat,
+                                 first_rows_index=first_two_indices,
+                                 first_column_index=first_one_index,
+                                 second_row_index=second_one_index,
+                                 second_columns_index=second_two_indices,
+                                 sign_verify=sign_verify)
+        raise ValueError("Unknown three sum mode", three_sum_strategy)
+
+    def _three_sum(first_mat, second_mat, first_col_index1, first_col_index2, second_col_index1, second_col_index2):
         r"""
         Return the 3-sum matrix constructed from the given matrices ``first_mat`` and
         ``second_mat``, with ``first_col_index1`` and ``first_col_index2`` being the
@@ -1644,7 +2278,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [1 0 1 1 0]
             [0 0 0 1 1]
             [1 1 0 0 1]
-            sage: M3 = Matrix_cmr_chr_sparse.three_sum(M, M, 0, 1, 0, 1); M3
+            sage: M3 = Matrix_cmr_chr_sparse._three_sum(M, M, 0, 1, 0, 1); M3
             [1 1 1 1 1 0]
             [1 0 0 1 1 0]
             [0 1 1 0 0 0]
@@ -1722,12 +2356,18 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
 
     def delete_rows(self, indices):
+        r"""
+        Delete rows of the matrices ``self``.
+        """
         rows = self.rows()
         n = len(rows)
         row_list = [rows[i] for i in range(n) if i not in indices]
         return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
 
     def delete_columns(self, indices):
+        r"""
+        Delete columns of the matrices ``self``.
+        """
         rows = self.rows()
         n = self.ncols()
         row_list = []
