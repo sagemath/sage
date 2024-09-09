@@ -36,9 +36,59 @@ cdef class DecompositionNode(SageObject):
     """
 
     def __cinit__(self, *args, **kwds):
+        r"""
+        Initialize the internal decomposition, a ``CMR_SEYMOUR_NODE``.
+        """
         self._dec = NULL
 
     def __init__(self, matrix=None, row_keys=None, column_keys=None, base_ring=None):
+        r"""
+        Create a node in Seymour's decomposition.
+
+        INPUT:
+
+        - ``matrix`` -- the internal matrix representing the node.
+        Convert to a :class:`Matrix_cmr_chr_sparse`.
+
+        - ``row_keys`` -- a finite or enumerated family of arbitrary objects
+        that index the rows of the matrix
+
+        - ``column_keys`` -- a finite or enumerated family of arbitrary objects
+        that index the columns of the matrix
+
+        - ``base_ring`` -- the base ring of ``matrix`` representing the node.
+        For Seymour decomposition node, the base ring is `\GF{2}` or `\GF{3}` or ``ZZ``.
+        If the base ring is `\GF{2}`, the node and the matrix deal with
+        the underlying binary linear matroid;
+        if the base ring is `\GF(3)` or ``ZZ``, the node deals with
+        the matrix decomposition.
+
+        A :class:DecompositionNode is usually created with an internal decomposition,
+        ``self._dec``, see :meth:create_DecompositionNode
+        Such decomposition comes from the certificate of the
+        totally unimodularity test, see
+        :meth:`matrix_cmr_sparse.Matrix_cmr_chr_sparse.is_totally_unimodular`
+
+        Another usage is to create a :class:UnknownNode from a matrix.
+        A root dummy decomposition is created before completing
+        the decomposition, see :meth:_set_root_dec, :meth:complete_decomposition
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode (3×2))
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode([[1, 1], [0, 1]]); node
+            UnknownNode (2×2)
+        """
         if matrix is None:
             self._matrix = None
         elif isinstance(matrix, Matrix_cmr_chr_sparse):
@@ -67,6 +117,10 @@ cdef class DecompositionNode(SageObject):
         self._base_ring = base_ring
 
     cdef _set_dec(self, CMR_SEYMOUR_NODE *dec):
+        r"""
+        Set the decomposition ``self._dec`` to ``dec``.
+        If the value was previously set, then free it first.
+        """
         if self._dec != NULL:
             # We own it, so we have to free it.
             CMR_CALL(CMRseymourRelease(cmr, &self._dec))
@@ -75,6 +129,10 @@ cdef class DecompositionNode(SageObject):
         self._dec = dec
 
     cdef _set_root_dec(self):
+        r"""
+        Set the decomposition by creating a root ``CMR_SEYMOUR_NODE``
+        based on the internal matrix representation ``self._matrix``.
+        """
         cdef CMR_SEYMOUR_NODE *root
         cdef Matrix_cmr_chr_sparse matrix
         try:
@@ -125,12 +183,45 @@ cdef class DecompositionNode(SageObject):
         self._column_keys = column_keys
 
     def __dealloc__(self):
+        """
+        Frees all the memory allocated for this node.
+        """
         self._set_dec(NULL)
 
     def __hash__(self):
+        """
+        Return a hash of this node. It is the hash of the decomposition.
+        """
         return <int>self._dec
 
     def nrows(self):
+        r"""
+        Return the number of rows of the internal matrix representing this node.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode (3×2))
+            sage: certificate.nrows()
+            3
+            sage: certificate.ncols()
+            2
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode([[1, 1], [0, 1]]); node
+            UnknownNode (2×2)
+            sage: node.nrows()
+            2
+            sage: node.ncols()
+            2
+        """
         if self._row_keys is not None:
             return len(self._row_keys)
         if self._dec != NULL:
@@ -140,6 +231,33 @@ cdef class DecompositionNode(SageObject):
         raise RuntimeError('nrows undefined')
 
     def ncols(self):
+        r"""
+        Return the number of columns of the internal matrix representing this node.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode (3×2))
+            sage: certificate.nrows()
+            3
+            sage: certificate.ncols()
+            2
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode([[1, 1], [0, 1]]); node
+            UnknownNode (2×2)
+            sage: node.nrows()
+            2
+            sage: node.ncols()
+            2
+        """
         if self._column_keys is not None:
             return len(self._column_keys)
         if self._dec != NULL:
@@ -149,9 +267,35 @@ cdef class DecompositionNode(SageObject):
         raise RuntimeError('ncols undefined')
 
     def dimensions(self):
+        r"""
+        Return the number of rows and columns of this node.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode (3×2))
+            sage: certificate.dimensions()
+            (3, 2)
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode([[1, 1], [0, 1]]); node
+            UnknownNode (2×2)
+            sage: node.dimensions()
+            (2, 2)
+        """
         return self.nrows(), self.ncols()
 
     def base_ring(self):
+        r"""
+        Return the base ring of the matrix representing the node.
+        """
         return self._base_ring
 
     def matrix(self):
@@ -173,6 +317,13 @@ cdef class DecompositionNode(SageObject):
             [ 1  0]
             [-1  1]
             [ 0  1]
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode([[1, 1], [0, 1]]); node
+            UnknownNode (2×2)
+            sage: node.matrix()
+            [1 1]
+            [0 1]
         """
         if self._matrix is not None:
             return self._matrix
@@ -200,6 +351,11 @@ cdef class DecompositionNode(SageObject):
         return self._column_keys
 
     def set_default_keys(self):
+        r"""
+        Set default row and column keys.
+
+        .. SEEALSO:: :class:ElementKey
+        """
         row_keys = self.row_keys()
         column_keys = self.column_keys()
         if row_keys is None or column_keys is None:
@@ -214,7 +370,25 @@ cdef class DecompositionNode(SageObject):
     @cached_method
     def morphism(self):
         r"""
+        Create the matrix in the distinguished bases of the domain and codomain
+        to build the module morphism.
 
+        See also: :class:`sage.modules.with_basis.morphism.ModuleMorphismFromMatrix`.
+
+        EXAMPLES::
+
+        sage: from sage.matrix.seymour_decomposition import UnknownNode
+        sage: node = UnknownNode(matrix(ZZ, [[1, 0, 1], [0, 1, 1]]),
+        ....:                    row_keys='ab',
+        ....:                    column_keys=range(3)); node
+        UnknownNode (2×3)
+        sage: node.matrix()
+        [1 0 1]
+        [0 1 1]
+        sage: node.morphism()._unicode_art_matrix()
+          0 1 2
+        a⎛1 0 1⎞
+        b⎝0 1 1⎠
         """
         return Matrix(self.matrix(),
                       row_keys=self.row_keys(),
@@ -2118,6 +2292,9 @@ cdef class ElementKey:
         return self._key
 
     def __hash__(self):
+        """
+        Return a hash of this element key
+        """
         return hash(self._key)
 
     def __eq__(self, other):
