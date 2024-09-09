@@ -1343,6 +1343,87 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         """
         return not is_j_supersingular(self.j_invariant(), proof=proof)
 
+    def has_order(self, value, num_checks=8):
+        r"""
+        Return ``True`` if the curve has order ``value``.
+
+        INPUT:
+
+        - ``value`` -- integer in the Hasse-Weil range for this curve
+
+        - ``num_checks``-- integer (default: `8`); the number of times to check
+          whether ``value`` times a random point on this curve equals the
+          identity
+
+        .. NOTE::
+
+            Since the method is probabilistic, there is a possibility for the
+            method to yield false positives (i.e. returning ``True`` even when
+            the result is ``False``). Even worse, it is possible for this to
+            happen even when ``num_checks`` is increased arbitrarily. See below
+            for an example and :issue:`38617` for an open discussion.
+
+        EXAMPLES:
+
+        For curves over small finite fields, the order is computed and compared
+        directly::
+
+            sage: E = EllipticCurve(GF(7), [0, 1])
+            sage: E.order()
+            12
+            sage: E.has_order(12, num_checks=0)
+            True
+            sage: E.has_order(11, num_checks=0)
+            False
+            sage: E.has_order(13, num_checks=0)
+            False
+
+        This tests the method on a random curve::
+
+            sage: # long time (10s)
+            sage: p = random_prime(2**128, lbound=2**127)
+            sage: K = GF((p, 2), name="a")
+            sage: E = EllipticCurve(K, [K.random_element() for _ in range(2)])
+            sage: N = E.order()
+            sage: E.has_order(N, num_checks=20)
+            True
+            sage: E.has_order(N + 1)
+            False
+
+        This demonstrates the bug mentioned in the NOTE above. The return value
+        should be ``False`` after :issue:`38617` is fixed::
+
+            sage: E = EllipticCurve(GF(127), [0, 1])
+            sage: E.order()
+            108
+            sage: E.has_order(126)
+            True
+
+        AUTHORS:
+
+         - Mariah Lenox (2011-02-16): Initial implementation
+
+         - Gareth Ma (2024-01-21): Fix bug for small curves
+        """
+        # This method does *not* use the cached value of `_order` even when available
+        q = self.base_field().order()
+        a, b = Hasse_bounds(q, 1)
+        if not a <= value <= b:
+            return False
+
+        # For really small values, the random tests are too weak to detect wrong orders
+        # So we go with computing directly instead.
+        if q <= 100:
+            return self.order() == value
+
+        # Is value * random == identity?
+        for _ in range(num_checks):
+            G = self.random_point()
+            if not (value * G).is_zero():
+                return False
+
+        return True
+
     def set_order(self, value, *, check=True, num_checks=8):
         r"""
         Set the value of ``self._order`` to ``value``.
@@ -1357,7 +1438,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         - ``check``-- boolean (default: ``True``); whether or
           not to run sanity checks on the input
 
-        - ``num_checks``-- integer (default: 8); if ``check`` is
+        - ``num_checks``-- integer (default: `8`); if ``check`` is
           ``True``, the number of times to check whether ``value``
           times a random point on this curve equals the identity
 
@@ -1403,11 +1484,11 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.set_order(0)
             Traceback (most recent call last):
             ...
-            ValueError: Value 0 illegal (not an integer in the Hasse range)
+            ValueError: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 does not have order 0
             sage: E.set_order(1000)
             Traceback (most recent call last):
             ...
-            ValueError: Value 1000 illegal (not an integer in the Hasse range)
+            ValueError: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 does not have order 1000
 
         It is also very likely an error to pass a value which is not
         the actual order of this curve. How unlikely is determined by
@@ -1418,7 +1499,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.set_order(947)
             Traceback (most recent call last):
             ...
-            ValueError: Value 947 illegal (multiple of random point not the identity)
+            ValueError: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 1009 does not have order 947
 
         For curves over small finite fields, the order is cheap to compute, so it is computed
         directly and compared::
@@ -1427,7 +1508,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.set_order(11)
             Traceback (most recent call last):
             ...
-            ValueError: Value 11 illegal (correct order is 12)
+            ValueError: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 does not have order 11
 
         TESTS:
 
@@ -1438,7 +1519,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.set_order(3)
             Traceback (most recent call last):
             ...
-            ValueError: Value 3 illegal (correct order is 1)
+            ValueError: Elliptic Curve defined by y^2 + y = x^3 + x + 1 over Finite Field of size 2 does not have order 3
 
         ::
 
@@ -1446,7 +1527,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.set_order(4, num_checks=0)
             Traceback (most recent call last):
             ...
-            ValueError: Value 4 illegal (correct order is 12)
+            ValueError: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 does not have order 4
             sage: E.order()
             12
 
@@ -1461,24 +1542,8 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         """
         value = Integer(value)
 
-        if check:
-            # Is value in the Hasse range?
-            q = self.base_field().order()
-            a,b = Hasse_bounds(q,1)
-            if not a <= value <= b:
-                raise ValueError(f"Value {value} illegal (not an integer in the Hasse range)")
-
-            # For really small values, the random tests are too weak to detect wrong orders
-            # So we go with computing directly instead.
-            if q <= 100:
-                if self.order() != value:
-                    raise ValueError(f"Value {value} illegal (correct order is {self.order()})")
-
-            # Is value*random == identity?
-            for _ in range(num_checks):
-                G = self.random_point()
-                if value * G != self(0):
-                    raise ValueError(f"Value {value} illegal (multiple of random point not the identity)")
+        if check and not self.has_order(value, num_checks=num_checks):
+            raise ValueError(f"{self} does not have order {value}")
 
         # TODO: It might help some of PARI's algorithms if we
         # could copy this over to the .pari_curve() as well.
@@ -2678,7 +2743,7 @@ def EllipticCurve_with_order(m, *, D=None):
     Return an iterator for elliptic curves over finite fields with the given order. The curves are
     computed using the Complex Multiplication (CM) method.
 
-    A `:sage:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
+    A :sage:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
     the algorithm is more efficient.
 
     If ``D`` is specified, it is used as the discriminant.
