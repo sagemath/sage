@@ -1140,6 +1140,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: M = P._indices
                 sage: M.one()._compose_with_singletons(ZZ, "X", [[1]])
                 1
+
+                sage: P = PolynomialSpecies(ZZ, "X")
+                sage: M = P._indices
+                sage: F = M(SymmetricGroup(1)) * M(SymmetricGroup(2))
+                sage: F._compose_with_singletons(QQ,["T","S"],[[2,1]])
+                E_2(T)*S + T^2*S
+                sage: F._compose_with_singletons(QQ,["T","S"],[[1,2]])
+                T*S^2 + T*E_2(S)
             """
             # TODO: No checks are performed right now, must be added.
             # Checks: all args in Compositions, sums must match cardinalities.
@@ -1159,7 +1167,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             taus = libgap.DoubleCosetRepsAndSizes(S_up, S_down, G)
             # Sum over double coset representatives.
             for tau, _ in taus:
-                H = libgap.Intersection(libgap.ConjugateGroup(G, tau), S_down)
+                H = libgap.Intersection(libgap.ConjugateGroup(G, tau ** -1), S_down)
                 grp = PermutationGroup(gap_group=H, domain=self.domain())
                 res += Pn(grp, dpart)
             return res
