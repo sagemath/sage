@@ -1416,9 +1416,17 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         if q <= 100:
             return self.order() == value
 
+        # This might be slow
+        # if value.is_prime():
+        #     num_checks = 1
+
         # Is value * random == identity?
         for _ in range(num_checks):
-            G = self.random_point()
+            while True:
+                G = self.random_point()
+                if not G.is_zero():
+                    break
+
             if not (value * G).is_zero():
                 return False
 
@@ -2887,16 +2895,49 @@ def EllipticCurve_with_prime_order(N):
     It works for large primes::
 
         sage: N = 0x6cbc824032974516623e732462f4b74b56c4ffbd984380d9
-        sage: E = next(EllipticCurve_with_prime_order(N))
+        sage: E = next(EllipticCurve_with_prime_order(N)); E
+        Elliptic Curve defined by y^2 = x^3 + 2666207849820848272386538889427721639173508298483739490459*x
+         + 77986137112576 over Finite Field of size 2666207849820848272386538889427721639173508298487130585243
         sage: E.order() == N
         True
 
-    But the execution time largely depends on the input::
+    The execution time largely depends on the input, specifically the smallest
+    discriminant ``D`` for which we can apply CM method on. Here it takes
+    slightly longer, though still within `1` second::
 
         sage: N = 200396817641911230625970463749415493753
-        sage: E = next(EllipticCurve_with_prime_order(N))
+        sage: E = next(EllipticCurve_with_prime_order(N)); E
         sage: E.order() == N
         True
+
+    Note that the iterator does *not* return all curves with the given order::
+
+        sage: any(E.base_ring() is GF(7) for E in EllipticCurve_with_prime_order(7))
+        False
+        sage: EllipticCurve(GF(7), [0, 5]).order()
+        7
+
+    However, experimentally it returns many of them. Here it returns all of them::
+
+        sage: N = 23
+        sage: curves = list(EllipticCurve_with_prime_order(N)); curves
+        [Elliptic Curve defined by y^2 = x^3 + 20*x + 20 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + 10*x + 16 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + 14*x + 14 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + 16*x + 25 over Finite Field of size 31,
+         Elliptic Curve defined by y^2 = x^3 + 13*x + 6 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 24*x + 3 over Finite Field of size 29]
+        sage: import itertools
+        sage: # These are the only primes, by the Weil-Hasse bound
+        sage: for q in prime_range(17, 35):
+        ....:     K = GF(q)
+        ....:     for u in itertools.product(range(q), repeat=2):
+        ....:         try: E = EllipticCurve(GF(q), u)
+        ....:         except ArithmeticError: continue
+        ....:         if E.order() == N:
+        ....:             assert any(E.is_isomorphic(E_) for E_ in curves)
+
+
 
     TESTS::
 
@@ -2944,41 +2985,62 @@ def EllipticCurve_with_prime_order(N):
 
     ALGORITHM: [BS2007]_, Algorithm 2.2
     """
+    import itertools
+    from sage.misc.verbose import verbose
+    from sage.combinat import gray_codes
+    from sage.sets.primes import Primes
     from sage.arith.misc import is_prime, legendre_symbol
-    from sage.combinat.subset import powerset
-    from sage.functions.other import ceil
-    from sage.misc.functional import symbolic_prod as product, log
     from sage.quadratic_forms.binary_qf import BinaryQF
-    from sage.rings.fast_arith import prime_range
     from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
 
     if not is_prime(N):
         raise ValueError("input order is not prime")
 
-    # The algorithm consists of multiple "search rounds" for a suitable
-    # discriminant `D`, `r` defines the number of rounds. We expect this
-    # algorithm to terminate after a number of rounds that is polynomial in
-    # loglog N.
-    r = 0
-    prime_start = 3
-    prime_end = ceil((r + 1) * log(N))
+    if N < 1000:
+        # Log how long this algorithm will take
+        from sage.rings.fast_arith import prime_range
+        num = sum(1 for p in prime_range(3, 4 * N) if legendre_symbol(N, p) == 1)
+        verbose(f"Total work to enumerate curves with order {N}: 2^{num}", level=2)
+
+    # The algorithm considers smooth discriminants `D`, sorted by their largest
+    # prime factor. We expect this algorithm to terminate after a number of
+    # rounds that is polynomial in loglog N.
     S = []
 
-    while True:
-        # Iterating over the odd primes by chunks of size log(`N`).
-        for p in prime_range(prime_start, prime_end):
-            if legendre_symbol(N, p) == 1:
-                # Equivalent to p* = (-1)^((p - 1) / 2) * p in [BS2007]_ page 5.
-                S.append(-p if p >> 1 & 1 else p)
+    for p in Primes():
+        if p == 2:
+            continue
 
-        # Every possible products of distinct elements of `S`.
-        # There probably is a more optimal way to compute all possible products
-        # of elements of S than using a powerset. Here many multiplications are
-        # done multiple times.
-        for e in powerset(S):
-            D = product(e)
-            if D % 8 != 5 or D >= 0:
+        if legendre_symbol(N, p) != 1:
+            continue
+
+        verbose(f"Considering {len(S) + 1}th valid prime {p}", level=3)
+
+        # Equivalent to p* = (-1)^((p - 1) / 2) * p in [BS2007]_ page 5.
+        p_star = -p if p >> 1 & 1 else p
+
+        # later we need x^2 + (-D)y^2 = 4N, and since y = 0 has no solution, we need
+        # p = |p_star| <= |-D| <= 4N
+        if p > 4 * N:
+            break
+
+        # Although this is O(2^n) instead of O(n2^n), it misses out on the optimisation where
+        # when D becomes too large (see -D > 4 * N below), one can cut the branch entirely
+        # so perhaps this is slower
+        D = p_star
+        for idx, dx in itertools.chain([(None, 1)], gray_codes.product([2] * len(S))):
+            assert abs(dx) == 1, f"hmm, gray codes shouldn't do that. file a bug report"
+
+            if idx is not None:
+                if dx == 1:
+                    D *= S[idx]
+                else:
+                    D //= S[idx]
+
+            if D % 8 != 5 or D >= 0 or -D > 4 * N:
                 continue
+
+            verbose(f"Testing {D=}", level=3)
 
             Q = BinaryQF([1, 0, -D])
             sol = Q.solve_integer(4 * N, algorithm='cornacchia')
@@ -2989,19 +3051,13 @@ def EllipticCurve_with_prime_order(N):
             for p_i in [N + 1 - x, N + 1 + x]:
                 if is_prime(p_i):
                     H = hilbert_class_polynomial(D)
-                    for j0 in H.roots(ring=GF(p_i), multiplicities=False):
-                        E = EllipticCurve(j=j0)
+                    K = GF(p_i)
+                    for j0 in H.roots(ring=K, multiplicities=False):
+                        E = EllipticCurve(K, j=j0)
                         # `E.twists()` also contains E.
                         for Et in E.twists():
-                            if Et.order() == N:
+                            # num_checks=1 is sufficient for prime order
+                            if Et.has_order(N, num_checks=1):
                                 yield Et
 
-        # At this point, no discriminant has been found, moving to next round
-        # and extending the prime list.
-        r += 1
-
-        # For small `N`, the value `(r+1)log(N)` can be less than 3. When that's
-        # the case, we don't need to worry about prime duplicates in `S` since
-        # it will be empty.
-        prime_start = max(3, prime_end)
-        prime_end = ceil((r + 1) * log(N))
+        S.append(p_star)
