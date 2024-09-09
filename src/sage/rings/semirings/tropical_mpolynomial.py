@@ -478,7 +478,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: p1 = x + y + z + x^2 + R(1)
             sage: p1.dual_subdivision()
-            Polyhedral complex with 5 maximal cells
+            Polyhedral complex with 7 maximal cells
 
         .. PLOT::
             :width: 300 px
@@ -495,7 +495,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: R.<a,b,c,d> = PolynomialRing(T)
             sage: p1 = a^2 + b^2 + c^2 + d^2 + a*b*c*d
             sage: p1.dual_subdivision()
-            Polyhedral complex with 6 maximal cells
+            Polyhedral complex with 10 maximal cells
         """
         from sage.graphs.graph import Graph
         from sage.geometry.polyhedron.constructor import Polyhedron
@@ -506,8 +506,33 @@ class TropicalMPolynomial(MPolynomial_polydict):
         edges = [e for e in TV._keys]
         G.add_edges(edges)
 
+        # Recursive function to find all cycles that partition the graph
+        # to its dual subdivision
+        def search(cycle, next, adj):
+            min_cycle = False
+            for n in next:
+                new_cycle = [i for i in cycle]
+                new_cycle.append(n)
+                if vertex in G.neighbors(n):
+                    all_cycles.append(new_cycle)
+                    min_cycle = True
+            if not min_cycle:
+                for n in next:
+                    new_cycle = [i for i in cycle]
+                    new_cycle.append(n)
+                    new_next = [v for v in G.neighbors(n) if v != adj]
+                    search(new_cycle, new_next, n)
+
+        all_cycles = []
+        for vertex in G.vertices():
+            for adj in G.neighbors(vertex):
+                cycle = [vertex]
+                cycle.append(adj)
+                next = [v for v in G.neighbors(adj) if v != vertex]
+                search(cycle, next, adj)
+        
         polyhedron_lst = []
-        for cycle in G.cycle_basis():
+        for cycle in all_cycles:
             polyhedron = Polyhedron(vertices=cycle)
             polyhedron_lst.append(polyhedron)
         pc = PolyhedralComplex(polyhedron_lst)
