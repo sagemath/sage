@@ -290,7 +290,7 @@ class ECM(SageObject):
             sage: ecm._B1_table_value(33)
             35
         """
-        factor_digits = min(min_val, factor_digits)
+        factor_digits = max(factor_digits, min_val)
         if factor_digits > max_val:
             raise ValueError('too many digits')
         step = 5
