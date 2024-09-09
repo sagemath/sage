@@ -139,7 +139,7 @@ cdef class FunctionFieldElement(FieldElement):
 
     cdef FunctionFieldElement _new_c(self):
         cdef type t = type(self)
-        cdef FunctionFieldElement x = <FunctionFieldElement > t.__new__(t)
+        cdef FunctionFieldElement x = <FunctionFieldElement>t.__new__(t)
         x._parent = self._parent
         return x
 
