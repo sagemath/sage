@@ -2862,7 +2862,7 @@ def EllipticCurve_with_order(m, *, D=None):
                     except ValueError:
                         pass
 
-def EllipticCurve_with_prime_order(N):
+def EllipticCurve_with_prime_order(N, max_D=10**8):
     r"""
     Given a prime number ``N``, find another prime number `p` and construct an
     elliptic curve `E` defined over `\mathbb F_p` such that
@@ -2877,15 +2877,24 @@ def EllipticCurve_with_prime_order(N):
 
     EXAMPLES::
 
-        sage: N = next_prime(int(b'sagemath'.hex(), 16))
+        sage: N = next_prime(int.from_bytes(b'sagemath', 'big'))
         sage: E = next(EllipticCurve_with_prime_order(N))
         sage: E
-        Elliptic Curve defined by y^2 = x^3 + 4757897140353078952*x +
-        1841350074072114366 over Finite Field of size 8314040074357871443
+        Elliptic Curve defined by y^2 = x^3 + 4757897140353078952*x + 1841350074072114366
+         over Finite Field of size 8314040074357871443
         sage: E.order() == N
         True
 
-    You can directly iterate over the function call; here only on the first 10
+    The returned curves are sometimes random because
+    :meth:`~sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.twists` is
+    not deterministic. However, it's always isomorphic::
+
+        sage: E = next(EllipticCurve_with_prime_order(23)); E                           # random
+        Elliptic Curve defined by y^2 = x^3 + 12*x + 11 over Finite Field of size 17
+        sage: E.is_isomorphic(EllipticCurve(GF(17), [3, 5]))
+        True
+
+    You can directly iterate over the iterator; here only on the first 10
     curves::
 
         sage: N = 54675917
@@ -2920,13 +2929,12 @@ def EllipticCurve_with_prime_order(N):
     However, experimentally it returns many of them. Here it returns all of them::
 
         sage: N = 23
+        sage: set_random_seed(1337)  # as the function returns random twists of curves
         sage: curves = list(EllipticCurve_with_prime_order(N)); curves
-        [Elliptic Curve defined by y^2 = x^3 + 20*x + 20 over Finite Field of size 23,
-         Elliptic Curve defined by y^2 = x^3 + 10*x + 16 over Finite Field of size 23,
-         Elliptic Curve defined by y^2 = x^3 + 14*x + 14 over Finite Field of size 17,
-         Elliptic Curve defined by y^2 = x^3 + 16*x + 25 over Finite Field of size 31,
-         Elliptic Curve defined by y^2 = x^3 + 13*x + 6 over Finite Field of size 19,
-         Elliptic Curve defined by y^2 = x^3 + 24*x + 3 over Finite Field of size 29]
+        [Elliptic Curve defined by y^2 = x^3 + 3*x + 5 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + 19*x + 14 over Finite Field of size 31,
+         Elliptic Curve defined by y^2 = x^3 + 2*x + 9 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 7*x + 18 over Finite Field of size 29]
         sage: import itertools
         sage: # These are the only primes, by the Weil-Hasse bound
         sage: for q in prime_range(17, 35):
@@ -2937,7 +2945,43 @@ def EllipticCurve_with_prime_order(N):
         ....:         if E.order() == N:
         ....:             assert any(E.is_isomorphic(E_) for E_ in curves)
 
+    The algorithm is efficient for small ``N`` due to the low number of
+    suitable discriminants (see the ``recur`` internal function of the code for
+    details). The following runs in less than a second::
 
+        sage: len(list(EllipticCurve_with_prime_order(next_prime(5000))))
+        402
+
+    There is different verbose data for level `2` and `3`. Note that if you try
+    to compute the 5th curve in the iterator, the algorithm takes a long time
+    to run, as it is trying to compute a large Hilbert class polynomial, as
+    noted in the verbose log::
+
+        sage: set_random_seed(1337)  # as the function returns random twists of curves
+        sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
+        ....:     print(E)
+        Elliptic Curve defined by y^2 = x^3 + 703734957*x + 232615553 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 278352808*x + 442354703 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 22138181*x + 343211325 over Finite Field of size 999969307
+        sage: from sage.misc.verbose import set_verbose
+        sage: set_verbose(2)
+        sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
+        ....:     print(E)
+        verbose 2 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
+        Elliptic Curve defined by y^2 = x^3 + 276281332*x + 798205466 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 515293837*x + 588191363 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 684893162*x + 679980762 over Finite Field of size 999969307
+        sage: set_verbose(3)
+        sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
+        ....:     print(E)
+        verbose 3 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Considering 1th valid prime 19
+        verbose 3 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Considering 2th valid prime 23
+        verbose 3 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Considering 3th valid prime 29
+        verbose 3 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-667
+        verbose 2 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
+        Elliptic Curve defined by y^2 = x^3 + 620755650*x + 816246309 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 651416562*x + 875284469 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 149283707*x + 72132991 over Finite Field of size 999969307
 
     TESTS::
 
@@ -2986,6 +3030,7 @@ def EllipticCurve_with_prime_order(N):
     ALGORITHM: [BS2007]_, Algorithm 2.2
     """
     import itertools
+    from sage.misc.misc_c import prod
     from sage.misc.verbose import verbose
     from sage.combinat import gray_codes
     from sage.sets.primes import Primes
@@ -2996,16 +3041,32 @@ def EllipticCurve_with_prime_order(N):
     if not is_prime(N):
         raise ValueError("input order is not prime")
 
-    if N < 1000:
-        # Log how long this algorithm will take
-        from sage.rings.fast_arith import prime_range
-        num = sum(1 for p in prime_range(3, 4 * N) if legendre_symbol(N, p) == 1)
-        verbose(f"Total work to enumerate curves with order {N}: 2^{num}", level=2)
+    # if N < 1000:
+    #     # Log how long this algorithm will take
+    #     from sage.rings.fast_arith import prime_range
+    #     num = sum(1 for p in prime_range(3, 4 * N) if legendre_symbol(N, p) == 1)
+    #     verbose(f"Total work to enumerate curves with order {N}: 2^{num}", level=2)
 
     # The algorithm considers smooth discriminants `D`, sorted by their largest
     # prime factor. We expect this algorithm to terminate after a number of
     # rounds that is polynomial in loglog N.
     S = []
+
+    def recur(idx, bound):
+        """
+        This function returns all subsets of S[idx:] (at the time of running)
+        with product of absolute value <= bound. It's extremely quick since S
+        is basically prime_range(N) while bound is basically 4 * N.
+        """
+        if idx >= len(S):
+            return
+        yield []
+        for nxt in range(idx + 1, len(S)):
+            if abs(S[nxt]) <= bound:
+                for r in recur(nxt, bound // abs(S[nxt])):
+                    yield [S[nxt]] + r
+            else:
+                break
 
     for p in Primes():
         if p == 2:
@@ -3024,20 +3085,11 @@ def EllipticCurve_with_prime_order(N):
         if p > 4 * N:
             break
 
-        # Although this is O(2^n) instead of O(n2^n), it misses out on the optimisation where
-        # when D becomes too large (see -D > 4 * N below), one can cut the branch entirely
-        # so perhaps this is slower
-        D = p_star
-        for idx, dx in itertools.chain([(None, 1)], gray_codes.product([2] * len(S))):
-            assert abs(dx) == 1, f"hmm, gray codes shouldn't do that. file a bug report"
+        for e in recur(0, 4 * N // p):
+            D = p_star * prod(e)
+            assert abs(D) <= 4 * N
 
-            if idx is not None:
-                if dx == 1:
-                    D *= S[idx]
-                else:
-                    D //= S[idx]
-
-            if D % 8 != 5 or D >= 0 or -D > 4 * N:
+            if D % 8 != 5 or D >= 0:
                 continue
 
             verbose(f"Testing {D=}", level=3)
@@ -3050,6 +3102,7 @@ def EllipticCurve_with_prime_order(N):
             x, _ = sol
             for p_i in [N + 1 - x, N + 1 + x]:
                 if is_prime(p_i):
+                    verbose(f"Computing the Hilbert class polynomial H_{D}", level=2)
                     H = hilbert_class_polynomial(D)
                     K = GF(p_i)
                     for j0 in H.roots(ring=K, multiplicities=False):
