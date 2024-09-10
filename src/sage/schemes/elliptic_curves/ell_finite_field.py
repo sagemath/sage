@@ -16,7 +16,7 @@ AUTHORS:
 
 - Lorenz Panny (2023): ``special_supersingular_curve()``
 
-- Martin Grenouilloux (2024): ``EllipticCurve_with_prime_order()``
+- Martin Grenouilloux, Gareth Ma (2024-09): ``EllipticCurve_with_prime_order()``
 """
 
 # ****************************************************************************
@@ -2923,7 +2923,7 @@ def EllipticCurve_with_prime_order(N):
     ::
 
         sage: N = next_prime(2^256)
-        sage: E = next(EllipticCurve_with_prime_order(N)); E  # random
+        sage: E = next(EllipticCurve_with_prime_order(N)); E                            # random
         Elliptic Curve defined by y^2 = x^3 + 6056521267553273205988520276135607487700943205131813669424576873701361709521*x
          + 86942739955486781674010637133214195706465136689012129911736706024465988573567 over Finite Field of size
          115792089237316195423570985008687907853847329310253429036565151476471048389761
@@ -2966,7 +2966,9 @@ def EllipticCurve_with_prime_order(N):
     for details). The following runs in less than a second::
 
         sage: len(list(EllipticCurve_with_prime_order(next_prime(5000))))
-        945
+        534
+        sage: len(list(EllipticCurve_with_prime_order(next_prime(50000))))              # long time (6s)
+        3841
 
     There is different verbose data for level `2` to `4`, though level `3`
     rarely logs anything (it logs when a new prime `p` is added to the
@@ -3006,6 +3008,11 @@ def EllipticCurve_with_prime_order(N):
 
     TESTS::
 
+        sage: list(EllipticCurve_with_prime_order(2))
+        [Elliptic Curve defined by y^2 + x*y + y = x^3 + 1 over Finite Field of size 2,
+         Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2 over Finite Field of size 3,
+         Elliptic Curve defined by y^2 = x^3 + 2*x over Finite Field of size 5]
+
         sage: set_verbose(0)
         sage: for N in prime_range(3, 100):
         ....:     E = next(EllipticCurve_with_prime_order(N))
@@ -3025,26 +3032,25 @@ def EllipticCurve_with_prime_order(N):
         sage: E.has_order(N)
         True
 
-        sage: E = next(EllipticCurve_with_prime_order(2))
-        Traceback (most recent call last):
-        ...
-        ValueError: input order is not an odd prime
-
         sage: N = 123456789
         sage: E = next(EllipticCurve_with_prime_order(N))
         Traceback (most recent call last):
         ...
-        ValueError: input order is not an odd prime
+        ValueError: input order is not a prime
 
         sage: E = next(EllipticCurve_with_prime_order(0))
         Traceback (most recent call last):
         ...
-        ValueError: input order is not an odd prime
+        ValueError: input order is not a prime
 
         sage: E = next(EllipticCurve_with_prime_order(-7))
         Traceback (most recent call last):
         ...
-        ValueError: input order is not an odd prime
+        ValueError: input order is not a prime
+
+    AUTHORS:
+
+    - Martin Grenouilloux, Gareth Ma (2024-09): initial implementation
     """
     import itertools
     from sage.arith.misc import is_prime, legendre_symbol
@@ -3054,16 +3060,22 @@ def EllipticCurve_with_prime_order(N):
     from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
     from sage.sets.primes import Primes
 
-    if not is_prime(N) or N < 3:
-        raise ValueError("input order is not an odd prime")
+    if not is_prime(N):
+        raise ValueError("input order is not a prime")
 
-    # The algorithm considers smooth discriminants `D`, sorted by their largest
-    # prime factor. We expect this algorithm to terminate after a number of
-    # rounds that is polynomial in loglog N.
-    # We start with small primes directly to accelerate the search.
-    # Note: 1000 is a magic constant, it's just fast enough to compute without
+    if N == 2:
+        yield from [
+            EllipticCurve(GF(2), [1, 0, 1, 0, 1]),
+            EllipticCurve(GF(3), [0, 2, 0, 0, 2]),
+            EllipticCurve(GF(5), [2, 0])
+        ]
+        return
+
+    # We start with small primes directly to accelerate the search. Note that
+    # 1000 is a magic constant, it's just fast enough to compute without
     # sacrificing much speed.
-    S = [(-p if p >> 1 & 1 else p) for p in prime_range(3, min(1000, 4 * N))
+    # The if-then-else term is (-1)^((p - 1) / 2) * p in [BS2007]_ page 5.
+    S = [(-p if p % 4 == 3 else p) for p in prime_range(3, min(1000, 4 * N))
          if legendre_symbol(N, p) == 1]
 
     def abs_products_under(bound):
@@ -3085,26 +3097,26 @@ def EllipticCurve_with_prime_order(N):
 
     # We add p = 1 to process the small primes.
     for p in itertools.chain([1], Primes()):
-        if p == 2: continue
         if p != 1:
-            if p < S[-1]:
+            if p < abs(S[-1]):
                 continue
 
             if legendre_symbol(N, p) != 1:
                 continue
 
-            # Later we need x^2 + (-D)y^2 = 4N, and since y = 0 has no solution,
-            # we need p = |p_star| <= |-D| <= 4N. This is a stopping condition
-            # for the algorithm.
+            # Later we need x^2 + (-D)y^2 = 4N, and since y = 0 has no
+            # solution, we need p = |p_star| <= |-D| <= 4N. This is a stopping
+            # condition for the algorithm.
             if p > 4 * N:
                 break
 
             verbose(f"Considering {len(S) + 1}th valid prime {p}", level=3)
 
-        # Equivalent to p_star = (-1)^((p - 1) / 2) * p in [BS2007]_ page 5.
-        p_star = -p if p >> 1 & 1 else p
+        p_star = -p if p % 4 == 3 else p
 
         for e in abs_products_under(4 * N // p):
+            # According to the paper, the expected minimum D to work is
+            # O(log(N)^2)
             D = p_star * e
             assert abs(D) <= 4 * N
 
@@ -3133,5 +3145,6 @@ def EllipticCurve_with_prime_order(N):
                             if Et.has_order(N, num_checks=1):
                                 yield Et
 
-        # Extending our prime list and continuing onto the next round.
-        S.append(p_star)
+        if p != 1:
+            # Extending our prime list and continuing onto the next round.
+            S.append(p_star)
