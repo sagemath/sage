@@ -9,11 +9,10 @@ AUTHORS:
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.matroids.utilities import cmp_elements_key
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.sets.set import Set
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 from sage.misc.abstract_method import abstract_method
-from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.subset import Subsets
+from functools import reduce
 
 class ChowRingIdeal(MPolynomialIdeal):
     @abstract_method
@@ -233,29 +232,53 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         if frozenset() not in flats:
             flats.append(frozenset())
 
+        def d(F, G):
+            lattice_flats = self._matroid.lattice_of_flats()
+            B = lattice_flats.bottom()
+            atoms = [x for x in B if B.is_cover(B, x)]
+            subsets = Subsets(atoms)
+            n = 0
+            i = 0
+            while (F != G):
+                if i == len(subsets):
+                    break
+                l = []
+                for j in list(subsets)[i]:
+                    l.append(j)
+                l.append(F)
+                F = lattice_flats.join(l)
+                n += len(list(subsets)[i])
+                i += 1
+            return n
+              
         ranks = {F:self._matroid.rank(F) for F in flats}
-            
-        P = LatticePoset(flats)
+        flats_gen = self._flats_generator
+        flats_gen[frozenset()] = R.zero()
         subsets = Subsets(flats)
         for subset in subsets:
-            if not P.subposet(subset).is_chain():
+            flag = True
+            for i in range (len(subset)):
+                if i != 0 & len(subset[i]) == len(subset[i-1]):
+                    flag = False
+
+            if not flag:
                 term = R.one()
                 for x in subset:
-                    term *= self._flats_generator[x]
+                    term *= flats_gen[x]
                 gb.append(term)
             
-            else:
+            elif list(subset) != []:
                 for F in flats:
-                    if F > P.join(list(subset)): 
+                    if F > reduce(lambda a, b: a.union(b), list(subset)): 
                         term = R.one()
                         for x in subset:
-                            term *= self._flats_generator[x]
+                            term *= flats_gen[x]
                         term1 = R.zero()
                         for G in flats:
                             if G >= F:
-                                term1 += self._flats_generator[G]
+                                term1 += flats_gen[G]
                         if term1 != R.zero():
-                            gb.append(term*(term1**()))
+                            gb.append(term*(term1**(d(list(subset)[len(list(subset)) - 1], F))))
             
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
