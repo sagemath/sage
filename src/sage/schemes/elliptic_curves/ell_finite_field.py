@@ -3061,6 +3061,8 @@ def EllipticCurve_with_prime_order(N):
     # prime factor. We expect this algorithm to terminate after a number of
     # rounds that is polynomial in loglog N.
     # We start with small primes directly to accelerate the search
+    # Note: 1000 is a magic constant, it's just fast enough to compute without
+    # sacrificing much speed
     S = [(-p if p >> 1 & 1 else p) for p in prime_range(3, min(1000, 4 * N))
          if legendre_symbol(N, p) == 1]
 
