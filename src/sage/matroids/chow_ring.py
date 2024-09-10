@@ -13,6 +13,7 @@ from sage.categories.commutative_rings import CommutativeRings
 from sage.sets.set import Set
 from sage.combinat.posets.posets import Poset
 from sage.combinat.subset import Subsets
+from itertools import product
 
 class ChowRing(QuotientRing_generic):
     r"""
@@ -177,7 +178,7 @@ class ChowRing(QuotientRing_generic):
             sage: ch = matroids.Wheel(3).chow_ring(ZZ, False)
             [A0*A013, 1]
         """
-        flats = [X for i in range(1, self._matroid.rank())
+        flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         flats.append(frozenset())
         maximum_rank = max(self._matroid.rank(F) for F in flats)
@@ -242,57 +243,30 @@ class ChowRing(QuotientRing_generic):
                         generate_combinations(current_combination, 0, max_powers, x_dict)
                 
 
-        else:
-            def generate_combinations(current_combination, index, max_powers, x_dict):
-                # Base case: If index equals the length of max_powers, print the current combination
-                if index == len(max_powers):
-                    expression_terms = [x_dict[i+1] if current_combination[i] == 1 
-                                        else x_dict[i+1]**{current_combination[i]}
-                                        for i in range(len(current_combination)) if current_combination[i] != 0]
-                    if expression_terms:
-                        term = R.one()
-                        for t in expression_terms:
-                            term *= t
-                            monomial_basis.append(term)
-                    else:
-                        monomial_basis.append(R.one())
-                    return
-    
-                # Recursive case: Iterate over the range for the current index
-                for power in range(max_powers[index]):
-                    current_combination[index] = power
-                    generate_combinations(current_combination, index + 1, max_powers, x_dict)
-            
+        else: 
             R = self._ideal.ring()
             lattice_flats = self._matroid.lattice_of_flats()
             chains = lattice_flats.chains()
             for chain in chains:
-                print(chain)
-            for chain in chains:
-                print(chain)
-                print(subset)
-                flag = False
-                for i in range(len(subset)):
-                    if len(subset) != 1:
-                        if (i != 0) & ((len(subset[i]) == len(subset[i-1]))):
-                            flag = True
-                            break
-                if flag is True:
-                    break
                 max_powers = []
                 x_dict = dict()
-                for i in range(len(subset)):
-                    if subset[i] == frozenset():
+                for i in range(len(chain)):
+                    if chain[i] == frozenset():
                         max_powers.append(0)
-                        x_dict[subset[i]] = 1
+                        x_dict[chain[i]] = 1
+                    elif i == 0:
+                        max_powers.append(ranks[chain[i]])
+                        x_dict[chain[i]] = flats_gen[chain[i]]
                     else:
-                        max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
-                        x_dict[subset[i]] = flats_gen[subset[i]]
-                k = len(subset)
-                current_combination = [0] * k
-                generate_combinations(current_combination, 0, max_powers, x_dict)
+                        max_powers.append(ranks[chain[i]] - ranks[chain[i-1]])
+                        x_dict[chain[i]] = flats_gen[chain[i]]
+                k = len(chain)
+                for combination in product(*(range(p) for p in max_powers)):
+                    expression = R.one()
+                    for i in range(k):
+                        expression *= x_dict[chain[i]]**combination[i] 
+                    monomial_basis.append(expression)
 
-        print(monomial_basis)
         from sage.sets.family import Family
         return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
 
