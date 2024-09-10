@@ -122,13 +122,13 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             sage: TestSuite(I).run(skip="_test_category")
         """
         self._matroid = M
-        flats = [X for i in range(1, self._matroid.rank())
+        flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
         try:
             poly_ring = PolynomialRing(R, names) #self.ring
         except ValueError: # variables are not proper names
-            poly_ring = PolynomialRing(R, 'A', len(self.flats))
+            poly_ring = PolynomialRing(R, 'A', len(flats))
         gens = poly_ring.gens()
         self._flats_generator = dict(zip(flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
@@ -233,18 +233,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         if frozenset() not in flats:
             flats.append(frozenset())
 
-        ranks = [self._matroid.rank(F) for F in flats]
-
-        def m_n(i):
-            if flats[i] == frozenset():
-                return 0
-            else:
-                sum1 = 0
-                for j in range(len(flats)):
-                    if flats[j] < flats[i]:
-                        sum1 += m_n(j)
-
-                return ranks[i] - sum1
+        ranks = {F:self._matroid.rank(F) for F in flats}
             
         P = LatticePoset(flats)
         subsets = Subsets(flats)
@@ -266,7 +255,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                             if G >= F:
                                 term1 += self._flats_generator[G]
                         if term1 != R.zero():
-                            gb.append(term*(term1**m_n(flats.index(subset))))
+                            gb.append(term*(term1**()))
             
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
@@ -338,7 +327,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             sage: TestSuite(I).run(skip="_test_category")
         """
         self._matroid = M
-        self._flats = [X for i in range(1, self._matroid.rank())
+        self._flats = [X for i in range(1, self._matroid.rank() + 1)
                 for X in self._matroid.flats(i)]
         E = list(self._matroid.groundset())
         self._flats_generator = dict()
@@ -536,7 +525,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: TestSuite(I).run(skip="_test_category")
         """
         self._matroid = M
-        self._flats = [X for i in range(1, self._matroid.rank())
+        self._flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         
         E = list(self._matroid.groundset())
@@ -630,7 +619,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             True
         """
         gb = []
-        flats = [X for i in range(1, self._matroid.rank())
+        flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         poly_ring = self.ring()
         if frozenset() in flats:
