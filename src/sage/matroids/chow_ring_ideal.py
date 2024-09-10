@@ -231,25 +231,6 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         R = self.ring() 
         if frozenset() not in flats:
             flats.append(frozenset())
-
-        def d(F, G):
-            lattice_flats = self._matroid.lattice_of_flats()
-            B = lattice_flats.bottom()
-            atoms = [x for x in B if B.is_cover(B, x)]
-            subsets = Subsets(atoms)
-            n = 0
-            i = 0
-            while (F != G):
-                if i == len(subsets):
-                    break
-                l = []
-                for j in list(subsets)[i]:
-                    l.append(j)
-                l.append(F)
-                F = lattice_flats.join(l)
-                n += len(list(subsets)[i])
-                i += 1
-            return n
               
         ranks = {F:self._matroid.rank(F) for F in flats}
         flats_gen = self._flats_generator
@@ -260,6 +241,8 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             for i in range (len(subset)):
                 if i != 0 & len(subset[i]) == len(subset[i-1]):
                     flag = False
+                    break
+            
 
             if not flag:
                 term = R.one()
@@ -278,7 +261,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                             if G >= F:
                                 term1 += flats_gen[G]
                         if term1 != R.zero():
-                            gb.append(term*(term1**(d(list(subset)[len(list(subset)) - 1], F))))
+                            gb.append(term*(term1**(ranks[F] - ranks[list(subset)[len(subset) - 1]])))
             
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
