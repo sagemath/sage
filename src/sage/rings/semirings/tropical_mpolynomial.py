@@ -493,46 +493,36 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<a,b,c,d> = PolynomialRing(T)
-            sage: p1 = a^2 + b^2 + c^2 + d^2 + a*b*c*d
+            sage: p1 = R(2)*a*b + R(3)*a*c + R(-1)*c^2 + R(-1/3)*a*d
             sage: p1.dual_subdivision()
-            Polyhedral complex with 10 maximal cells
+            Polyhedral complex with 4 maximal cells
         """
-        from sage.graphs.graph import Graph
         from sage.geometry.polyhedron.constructor import Polyhedron
         from sage.geometry.polyhedral_complex import PolyhedralComplex
 
         TV = self.tropical_variety()
-        G = Graph()
-        edges = [e for e in TV._keys]
-        G.add_edges(edges)
+        cycles = []
 
-        # Recursive function to find all cycles that partition the graph
-        # to its dual subdivision
-        def search(cycle, next, adj):
-            min_cycle = False
-            for n in next:
-                new_cycle = [i for i in cycle]
-                new_cycle.append(n)
-                if vertex in G.neighbors(n):
-                    all_cycles.append(new_cycle)
-                    min_cycle = True
-            if not min_cycle:
-                for n in next:
-                    new_cycle = [i for i in cycle]
-                    new_cycle.append(n)
-                    new_next = [v for v in G.neighbors(n) if v != adj]
-                    search(new_cycle, new_next, n)
+        if TV.dimension() == 2:
+            for indices in TV._vertices_components().values():
+                cycle = []
+                for index in indices:
+                    vertices = TV._keys[index[0]]
+                    for v in vertices:
+                        cycle.append(v)
+                cycles.append(cycle)
+        else:
+            line_comps = TV.weight_vectors()[1]
+            for indices in line_comps.values():
+                cycle = []
+                for index in indices:
+                    vertices = TV._keys[index]
+                    for v in vertices:
+                        cycle.append(v)
+                cycles.append(cycle)
 
-        all_cycles = []
-        for vertex in G.vertices():
-            for adj in G.neighbors(vertex):
-                cycle = [vertex]
-                cycle.append(adj)
-                next = [v for v in G.neighbors(adj) if v != vertex]
-                search(cycle, next, adj)
-        
         polyhedron_lst = []
-        for cycle in all_cycles:
+        for cycle in cycles:
             polyhedron = Polyhedron(vertices=cycle)
             polyhedron_lst.append(polyhedron)
         pc = PolyhedralComplex(polyhedron_lst)

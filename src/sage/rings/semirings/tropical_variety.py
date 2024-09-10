@@ -561,9 +561,10 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
         OUTPUT:
 
-        A tuple of two dictionaries. The first dictionary contains
+        A tuple of three dictionaries. The first dictionary contains
         equations representing the intersections. The second dictionary
-        contains lists of vectors.
+        contains indices of components that contains the intersection.
+        The third dictionary contains lists of vectors.
 
         EXAMPLES:
 
@@ -578,10 +579,11 @@ class TropicalVariety(UniqueRepresentation, SageObject):
               1: ((1/2, 2, u2), {1 <= u2}),
               2: ((1/2, u2, 1), {2 <= u2}),
               3: ((u1, 2, 1), {(1/2) <= u1})},
-            {0: [(1, 2, -5/2), (1, -5/2, 2), (-2, 1/2, 1/2)],
-             1: [(-1, -2, 0), (0, 2, 0), (1, 0, 0)],
-             2: [(1, 0, 2), (0, 0, -2), (-1, 0, 0)],
-             3: [(0, 1, 1), (0, 0, -1), (0, -1, 0)]})
+             {0: [0, 1, 3], 1: [0, 2, 4], 2: [1, 2, 5], 3: [3, 4, 5]},
+             {0: [(1, 2, -5/2), (1, -5/2, 2), (-2, 1/2, 1/2)],
+              1: [(-1, -2, 0), (0, 2, 0), (1, 0, 0)],
+              2: [(1, 0, 2), (0, 0, -2), (-1, 0, 0)],
+              3: [(0, 1, 1), (0, 0, -1), (0, -1, 0)]})
 
         Weight vectors of tropical hypersurface::
 
@@ -594,10 +596,11 @@ class TropicalVariety(UniqueRepresentation, SageObject):
               1: ((u2 - 4, u2 + 1, u2, u3), {u2 <= u3 - 10/3}),
               2: ((2*u1 - u3 - 2/3, u3 - 7/3, u1, u3), {u3 - 10/3 <= u1}),
               3: ((u3 - 22/3, u2, u3 - 10/3, u3), {u3 - 7/3 <= u2})},
-            {0: [(0, -1, -1, 2), (0, -1, 2, -1), (0, 2, -1, -1)],
-             1: [(2, -1, -1, 0), (-3, 3, 0, 0), (1, -2, 1, 0)],
-             2: [(1, -5, -2, 6), (-2, -1, 4, -1), (1, 6, -2, -5)],
-             3: [(1, 0, 1, -2), (2, 0, -1, -1), (-3, 0, 0, 3)]})
+             {0: [0, 2, 4], 1: [0, 1, 3], 2: [1, 2, 5], 3: [3, 4, 5]},
+             {0: [(0, -1, -1, 2), (0, -1, 2, -1), (0, 2, -1, -1)],
+              1: [(2, -1, -1, 0), (-3, 3, 0, 0), (1, -2, 1, 0)],
+              2: [(1, -5, -2, 6), (-2, -1, 4, -1), (1, 6, -2, -5)],
+              3: [(1, 0, 1, -2), (2, 0, -1, -1), (-3, 0, 0, 3)]})
         """
         from sage.symbolic.ring import SR
         from sage.symbolic.relation import solve
@@ -735,7 +738,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                     WV[k] = test_vectors
                     break
 
-        return index_line, WV
+        return index_line, line_comps, WV
 
 
 class TropicalSurface(TropicalVariety):
