@@ -287,6 +287,7 @@ def is_HCP(f, check_monic_irreducible=True):
             return zero
         return D if f == hilbert_class_polynomial(D) else zero
 
+
 def OrderClassNumber(D0,h0,f):
     r"""
     Return the class number h(f**2 * D0), given h(D0)=h0.
@@ -652,6 +653,7 @@ def largest_fundamental_disc_with_class_number(h):
     except KeyError:
         raise NotImplementedError("largest fundamental discriminant not available for class number %s" % h)
 
+
 def largest_disc_with_class_number(h):
     r"""
     Return largest absolute value of any negative discriminant with
@@ -722,6 +724,7 @@ def largest_disc_with_class_number(h):
 hDf_dict = {ZZ(1): [(ZZ(D), ZZ(h)) for D,h in
                     [(-3, 1), (-3, 2), (-3, 3), (-4, 1), (-4, 2), (-7, 1), (-7, 2),
                      (-8, 1), (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]]}
+
 
 def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     r"""Return a dictionary with keys class numbers `h\le hmax` and values the

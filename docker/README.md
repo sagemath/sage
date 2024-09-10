@@ -49,7 +49,7 @@ Have a look at `.gitlab-ci.yml` if you want to setup GitLab CI for your own fork
 
 # Report bugs and issues
 
-Please tell us of any bugs or omissions at our [Issue Tracker](https://trac.sagemath.org) or contact us through the [sage-support](https://groups.google.com/forum/#!forum/sage-support) or the [sage-devel](https://groups.google.com/forum/#!forum/sage-devel) mailing lists.
+Please tell us of any bugs or omissions at our [Issue Tracker](https://github.com/sagemath/sage/issues) or contact us through the [sage-support](https://groups.google.com/forum/#!forum/sage-support) or the [sage-devel](https://groups.google.com/forum/#!forum/sage-devel) mailing lists.
 
 # License
 
