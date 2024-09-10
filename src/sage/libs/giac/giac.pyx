@@ -216,7 +216,7 @@ def _giac(s):
         sage: (x+2*y).cos().texpand()
         cos(x)*(2*cos(y)^2-1)-sin(x)*2*cos(y)*sin(y)
 
-    Coercion, Pygen and internal giac variables: The most usefull objects will
+    Coercion, Pygen and internal giac variables: The most useful objects will
     be the Python object of type Pygen.::
 
         sage: x,y,z = libgiac('x,y,z')
@@ -296,7 +296,7 @@ def _giac(s):
         sage: A
         [[44,2],[3,4]]
 
-    Sparse Matrices are avaible via the table function:
+    Sparse Matrices are available via the table function:
 
     ::
 
@@ -517,7 +517,7 @@ def _giac(s):
            ``q2a``, ``isom``, ``mkisom``
 
 
-   - *Finite Fieds*
+   - *Finite Fields*
 
          * ``%``, ``% 0``, ``mod``, ``GF``, ``powmod``
 
@@ -1287,7 +1287,7 @@ cdef class Pygen(GiacMethods_base):
 
     # def htmlhelp(self, str lang='en'):
     #     """
-    #     Open the giac  html  detailled help about ``self`` in an external  browser
+    #     Open the giac html detailed help about ``self`` in an external  browser
 
     #     There are currently 3 supported languages: 'en', 'fr', 'el'
 
@@ -1920,7 +1920,7 @@ class GiacFunction(Pygen):
         # a class to evaluate args before call
     """
     A Subclass of Pygen to create functions with evaluating all the args
-    before call so that they are substitued by their value.
+    before call so that they are substituted by their value.
 
     EXAMPLES::
 
@@ -1986,8 +1986,9 @@ for i in mostkeywords+moremethods:
     GiacMethods[i].__doc__ = eval("Pygen."+i+".__doc__")
 
 # To avoid conflicts we export only these few ones.  Most giac keywords will be
-# avaible through: libgiac.keywordname
-__all__=['Pygen','giacsettings','libgiac','loadgiacgen','GiacFunction','GiacMethods','GiacMethods_base']
+# available through: libgiac.keywordname
+__all__ = ['Pygen', 'giacsettings', 'libgiac', 'loadgiacgen', 'GiacFunction',
+           'GiacMethods', 'GiacMethods_base']
 
 
 def loadgiacgen(str filename):

@@ -23,6 +23,7 @@ from sage.misc.misc_c import prod
 
 from sage.structure.element import parent
 from sage.structure.coerce import py_scalar_to_element
+from sage.structure.sequence import Sequence
 
 from sage.rings.integer import Integer, GCD_list
 from sage.rings.integer_ring import ZZ
@@ -1937,25 +1938,43 @@ def xlcm(m, n):
     return (l, m, n)
 
 
-def xgcd(a, b):
+def xgcd(a, b=None):
     r"""
-    Return a triple ``(g,s,t)`` such that `g = s\cdot a+t\cdot b = \gcd(a,b)`.
+    Return the greatest common divisor and the Bézout coefficients of the input arguments.
+
+    When both ``a`` and ``b`` are given, then return a triple ``(g,s,t)``
+    such that `g = s\cdot a+t\cdot b = \gcd(a,b)`.
+    When only ``a`` is given, then return a tuple ``r`` of length ``len(a) + 1``
+    such that `r_0 = \sum_{i = 0}^{len(a) - 1} r_{i + 1}a_i = gcd(a_0, \dots, a_{len(a) - 1})`
 
     .. NOTE::
 
-       One exception is if `a` and `b` are not in a principal ideal domain (see
+       One exception is if the elements are not in a principal ideal domain (see
        :wikipedia:`Principal_ideal_domain`), e.g., they are both polynomials
        over the integers. Then this function can't in general return ``(g,s,t)``
-       as above, since they need not exist.  Instead, over the integers, we
-       first multiply `g` by a divisor of the resultant of `a/g` and `b/g`, up
-       to sign.
+       or ``r`` as above, since they need not exist. Instead, over the integers,
+       when ``a`` and ``b`` are given, we first multiply `g` by a divisor of the
+       resultant of `a/g` and `b/g`, up to sign.
 
     INPUT:
 
-    - ``a``, ``b`` -- integers or more generally, element of a ring for which
-      the xgcd make sense (e.g. a field or univariate polynomials)
+    One of the following:
 
-    OUTPUT: ``g``, ``s``, ``t`` -- such that `g = s\cdot a + t\cdot b`
+    -  ``a, b`` -- integers or more generally, element of a ring for which the
+       xgcd make sense (e.g. a field or univariate polynomials).
+
+    -  ``a`` -- a list or tuple of at least two integers or more generally, elements
+       of a ring which the xgcd make sense.
+
+    OUTPUT:
+
+    One of the following:
+
+    -  ``g, s, t`` -- when two inputs ``a, b`` are given. They satisfy `g = s\cdot a + t\cdot b`.
+
+    -  ``r`` -- a tuple, when only ``a`` is given (and ``b = None``). Its first entry ``r[0]`` is the gcd of the inputs,
+       and has length one longer than the length of ``a``.
+       Its entries satisfy `r_0 = \sum_{i = 0}^{len(a) - 1} r_{i + 1}a_i`.
 
     .. NOTE::
 
@@ -1968,6 +1987,16 @@ def xgcd(a, b):
         (4, 4, -5)
         sage: 4*56 + (-5)*44
         4
+        sage: xgcd([56, 44])
+        (4, 4, -5)
+        sage: r = xgcd([30, 105, 70, 42]); r
+        (1, -255, 85, -17, -2)
+        sage: (-255)*30 + 85*105 + (-17)*70 + (-2)*42
+        1
+        sage: xgcd([])
+        (0,)
+        sage: xgcd([42])
+        (42, 1)
 
         sage: g, a, b = xgcd(5/1, 7/1); g, a, b
         (1, 3, -2)
@@ -1977,6 +2006,10 @@ def xgcd(a, b):
         sage: x = polygen(QQ)
         sage: xgcd(x^3 - 1, x^2 - 1)
         (x - 1, 1, -x)
+        sage: g, a, b, c = xgcd([x^4 - x, x^6 - 1, x^4 - 1]); g, a, b, c
+        (x - 1, x^3, -x, 1)
+        sage: a*(x^4 - x) + b*(x^6 - 1) + c*(x^4 - 1) == g
+        True
 
         sage: K.<g> = NumberField(x^2 - 3)                                              # needs sage.rings.number_field
         sage: g.xgcd(g + 2)                                                             # needs sage.rings.number_field
@@ -2008,11 +2041,15 @@ def xgcd(a, b):
         (4, 1, 0)
         sage: xgcd(int8(4), int8(8))                                                    # needs numpy
         (4, 1, 0)
+        sage: xgcd([int8(4), int8(8), int(10)])                                         # needs numpy
+        (2, -2, 0, 1)
         sage: from gmpy2 import mpz
         sage: xgcd(mpz(4), mpz(8))
         (4, 1, 0)
         sage: xgcd(4, mpz(8))
         (4, 1, 0)
+        sage: xgcd([4, mpz(8), mpz(10)])
+        (2, -2, 0, 1)
 
     TESTS:
 
@@ -2024,18 +2061,47 @@ def xgcd(a, b):
         sage: S.<y> = R.fraction_field()[]
         sage: xgcd(y^2, a*h*y + b)
         (1, 7*a^2/b^2, (((-h)*a)/b^2)*y + 1/b)
+
+    Tests with randomly generated integers::
+
+        sage: import numpy as np
+        sage: N, M = 1000, 10000
+        sage: a = np.random.randint(M, size=N) * np.random.randint(M)
+        sage: r = xgcd(a)
+        sage: len(r) == len(a) + 1
+        True
+        sage: r[0] == gcd(a)
+        True
+        sage: sum(c * x for c, x in zip(r[1:], a)) == gcd(a)
+        True
     """
-    try:
+    if b is not None:
+        # xgcd of two elements
+        try:
+            return a.xgcd(b)
+        except AttributeError:
+            a = py_scalar_to_element(a)
+            b = py_scalar_to_element(b)
+        except TypeError:
+            b = py_scalar_to_element(b)
         return a.xgcd(b)
-    except AttributeError:
-        a = py_scalar_to_element(a)
-        b = py_scalar_to_element(b)
-    except TypeError:
-        b = py_scalar_to_element(b)
-    return a.xgcd(b)
+
+    # xgcd for several elements (possibly more than one)
+    if len(a) == 0:
+        return (ZZ(0),)
+    a = Sequence(a, use_sage_types=True)
+    res = [a.universe().zero()]
+    for b in a:
+        g, s, t = xgcd(res[0], b)
+        res[0] = g
+        for i in range(1, len(res)):
+            res[i] *= s
+        res.append(t)
+    return tuple(res)
 
 
 XGCD = xgcd
+
 
 # def XGCD_python(a, b):
 #     """
@@ -6161,8 +6227,8 @@ def dedekind_sum(p, q, algorithm='default'):
         return flint_dedekind_sum(p, q)
 
     if algorithm == 'pari':
-        import sage.interfaces.gp
-        x = sage.interfaces.gp.gp('sumdedekind(%s,%s)' % (p, q))
+        from sage.libs.pari import pari
+        x = pari.sumdedekind(p, q)
         return Rational(x)
 
     raise ValueError('unknown algorithm')
@@ -6308,3 +6374,75 @@ def dedekind_psi(N):
     """
     N = Integer(N)
     return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
+
+def smooth_part(x, base):
+    r"""
+    Given an element ``x`` of a Euclidean domain and a factor base ``base``,
+    return a :class:`~sage.structure.factorization.Factorization` object
+    corresponding to the largest divisor of ``x`` that splits completely
+    over ``base``.
+
+    The factor base can be specified in the following ways:
+
+    - A sequence of elements.
+
+    - A :class:`~sage.rings.generic.ProductTree` built from such a sequence.
+      (Caching the tree in the caller will speed things up if this function
+      is called multiple times with the same factor base.)
+
+    EXAMPLES::
+
+        sage: from sage.arith.misc import smooth_part
+        sage: from sage.rings.generic import ProductTree
+        sage: smooth_part(10^77+1, primes(1000))
+        11^2 * 23 * 463
+        sage: tree = ProductTree(primes(1000))
+        sage: smooth_part(10^77+1, tree)
+        11^2 * 23 * 463
+        sage: smooth_part(10^99+1, tree)
+        7 * 11^2 * 13 * 19 * 23
+    """
+    from sage.rings.generic import ProductTree
+    if isinstance(base, ProductTree):
+        tree = base
+    else:
+        tree = ProductTree(base)
+    fs = []
+    rems = tree.remainders(x)
+    for j,(p,r) in enumerate(zip(tree, rems)):
+        if not r:
+            x //= p
+            v = 1
+            while True:
+                y,r = divmod(x, p)
+                if r:
+                    break
+                x = y
+                v += 1
+            fs.append((p,v))
+    from sage.structure.factorization import Factorization
+    return Factorization(fs)
+
+def coprime_part(x, base):
+    r"""
+    Given an element ``x`` of a Euclidean domain and a factor base ``base``,
+    return the largest divisor of ``x`` that is not divisible by any element
+    of ``base``.
+
+    ALGORITHM: Divide `x` by the :func:`smooth_part`.
+
+    EXAMPLES::
+
+        sage: from sage.arith.misc import coprime_part, smooth_part
+        sage: from sage.rings.generic import ProductTree
+        sage: coprime_part(10^77+1, primes(10000))
+        2159827213801295896328509719222460043196544298056155507343412527
+        sage: tree = ProductTree(primes(10000))
+        sage: coprime_part(10^55+1, tree)
+        6426667196963538873896485804232411
+        sage: coprime_part(10^55+1, tree).factor()
+        20163494891 * 318727841165674579776721
+        sage: prod(smooth_part(10^55+1, tree)) * coprime_part(10^55+1, tree)
+        10000000000000000000000000000000000000000000000000000001
+    """
+    return x // prod(smooth_part(x, base))

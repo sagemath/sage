@@ -134,6 +134,7 @@ import sage.schemes.affine
 from . import ambient_space
 from . import scheme
 
+
 def is_AlgebraicScheme(x):
     """
     Test whether ``x`` is an algebraic scheme.

@@ -10,6 +10,7 @@ can be expected to be slower than when using
 from .satsolver import SatSolver
 from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
 
+
 class SatLP(SatSolver):
     def __init__(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""

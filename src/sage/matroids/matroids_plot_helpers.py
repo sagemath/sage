@@ -168,11 +168,13 @@ def it(M, B1, nB1, lps):
             # loop over L1,L2,L3
             cc = interval*j
             pts[i[j-1]] = (cc*pt1[0]+(1-cc)*pt2[0], cc*pt1[1]+(1-cc)*pt2[1])
-    trilines = [list(set(x)) for x in lines if len(x) >= 3]
-    curvedlines = [list(set(list(x)).difference(set(lps)))
-                   for x in M.flats(2) if set(list(x)) not in trilines if
-                   len(list(x)) >= 3]
-    nontripts = [i for i in nB1 if i not in pts.keys()]
+    trilines = [set(x) for x in lines if len(x) >= 3]
+    set_lps = set(lps)
+    curvedlines = [list(sx.difference(set_lps))
+                   for x in M.flats(2) if (sx := set(x)) not in trilines
+                   and len(list(x)) >= 3]
+    nontripts = [i for i in nB1 if i not in pts]
+    trilines = [list(s) for s in trilines]
     return pts, trilines, nontripts, curvedlines
 
 
@@ -206,12 +208,12 @@ def trigrid(tripts):
             This method does NOT do any checks.
     """
     pairs = [[0, 1], [1, 2], [0, 2]]
-    cpt = list((float(tripts[0][0]+tripts[1][0]+tripts[2][0])/3,
-               float(tripts[0][1]+tripts[1][1]+tripts[2][1])/3))
+    cpt = [float(tripts[0][0] + tripts[1][0] + tripts[2][0]) / 3,
+           float(tripts[0][1] + tripts[1][1] + tripts[2][1]) / 3]
     grid = [cpt]
-    for p in pairs:
-        pt = list((float(tripts[p[0]][0]+tripts[p[1]][0]+cpt[0])/3,
-                  float(tripts[p[0]][1]+tripts[p[1]][1]+cpt[1])/3))
+    for p, q in pairs:
+        pt = [float(tripts[p][0] + tripts[q][0] + cpt[0]) / 3,
+              float(tripts[p][1] + tripts[q][1] + cpt[1]) / 3]
         grid.append(pt)
     return grid
 
@@ -852,9 +854,8 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
             trilines.extend(curvedlines)
         else:
             pts2 = M._cached_info['plot_positions']
-            trilines = [list(set(list(x)).difference(L | P))
-                        for x in M1.flats(2)
-                        if len(list(x)) >= 3]
+            trilines = [list(set(x).difference(L | P))
+                        for x in M1.flats(2) if len(list(x)) >= 3]
         pl = [list(x) for x in pts2.values()]
         lims = tracklims([None, None, None, None], [pt[0] for pt in pl],
                          [pt[1] for pt in pl])

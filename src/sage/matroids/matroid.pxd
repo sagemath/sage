@@ -9,28 +9,28 @@ cdef class Matroid(SageObject):
 
     # virtual methods
     cpdef frozenset groundset(self)
-    cpdef int _rank(self, frozenset X)
+    cpdef int _rank(self, frozenset X) except? -1
 
     # internal methods, assuming verified input
     cpdef frozenset _max_independent(self, frozenset X)
     cpdef frozenset _circuit(self, frozenset X)
     cpdef frozenset _fundamental_circuit(self, frozenset B, e)
     cpdef frozenset _closure(self, frozenset X)
-    cpdef int _corank(self, frozenset X)
+    cpdef int _corank(self, frozenset X) noexcept
     cpdef frozenset _max_coindependent(self, frozenset X)
     cpdef frozenset _cocircuit(self, frozenset X)
     cpdef frozenset _fundamental_cocircuit(self, frozenset B, e)
     cpdef frozenset _coclosure(self, frozenset X)
     cpdef frozenset _augment(self, frozenset X, frozenset Y)
 
-    cpdef bint _is_independent(self, frozenset X)
-    cpdef bint _is_basis(self, frozenset X)
-    cpdef bint _is_circuit(self, frozenset X)
-    cpdef bint _is_closed(self, frozenset X)
-    cpdef bint _is_coindependent(self, frozenset X)
-    cpdef bint _is_cobasis(self, frozenset X)
-    cpdef bint _is_cocircuit(self, frozenset X)
-    cpdef bint _is_coclosed(self, frozenset X)
+    cpdef bint _is_independent(self, frozenset X) noexcept
+    cpdef bint _is_basis(self, frozenset X) noexcept
+    cpdef bint _is_circuit(self, frozenset X) noexcept
+    cpdef bint _is_closed(self, frozenset X) noexcept
+    cpdef bint _is_coindependent(self, frozenset X) noexcept
+    cpdef bint _is_cobasis(self, frozenset X) noexcept
+    cpdef bint _is_cocircuit(self, frozenset X) noexcept
+    cpdef bint _is_coclosed(self, frozenset X) noexcept
 
     cpdef _minor(self, contractions, deletions)
     cpdef _has_minor(self, N, bint certificate=*)
@@ -105,7 +105,7 @@ cdef class Matroid(SageObject):
     cpdef is_coclosed(self, X)
 
     # verification
-    cpdef bint is_valid(self)
+    cpdef bint is_valid(self) noexcept
 
     # enumeration
     cpdef SetSystem circuits(self, k=*)
@@ -184,8 +184,8 @@ cdef class Matroid(SageObject):
     cpdef _is_3connected_CE(self, certificate=*)
     cpdef _is_3connected_BC(self, certificate=*)
     cpdef _is_3connected_BC_recursion(self, basis, fund_cocircuits)
-    cpdef bint is_paving(self)
-    cpdef bint is_sparse_paving(self)
+    cpdef bint is_paving(self) noexcept
+    cpdef bint is_sparse_paving(self) noexcept
     cpdef girth(self)
 
     # representability
@@ -195,8 +195,8 @@ cdef class Matroid(SageObject):
     cpdef _local_ternary_matroid(self, basis=*)
     cpdef ternary_matroid(self, randomized_tests=*, verify=*)
     cpdef is_ternary(self, randomized_tests=*)
-    cpdef bint is_regular(self)
-    cpdef bint is_graphic(self)
+    cpdef bint is_regular(self) noexcept
+    cpdef bint is_graphic(self) noexcept
 
     # matroid k-closed
     cpdef is_k_closed(self, int k)

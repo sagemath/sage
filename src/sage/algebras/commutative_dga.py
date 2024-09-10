@@ -2543,7 +2543,7 @@ class DifferentialGCAlgebra(GCAlgebra):
           or the partial result computed up to that point is returned, deppending
           on the ``partial_result`` flag.
 
-        - ``partial_result`` -- boolean (default: ``False``); wether to return
+        - ``partial_result`` -- boolean (default: ``False``); whether to return
           the partial result if the ``max_iterations`` limit is reached
 
         OUTPUT:
