@@ -3084,7 +3084,7 @@ def EllipticCurve_with_prime_order(N):
     for p in itertools.chain([1], Primes()):
         # We add p = 1 to process the small primes
         if p != 1:
-            if p < 1000:
+            if p < S[-1]:
                 continue
 
             if legendre_symbol(N, p) != 1:
@@ -3098,7 +3098,7 @@ def EllipticCurve_with_prime_order(N):
             verbose(f"Considering {len(S) + 1}th valid prime {p}", level=3)
 
         # Equivalent to p* = (-1)^((p - 1) / 2) * p in [BS2007]_ page 5.
-        p_star = -p if p >> 1 & 1 else p
+        p_star = -p if p % 4 == 3 else p
 
         for e in recur(4 * N // p):
             D = p_star * e
