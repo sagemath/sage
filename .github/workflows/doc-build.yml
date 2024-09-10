@@ -267,6 +267,8 @@ jobs:
         id: buildlivedoc
         if: startsWith(github.ref, 'refs/tags/')
         run: |
+          # Avoid running out of disk space
+          rm -rf upstream
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           export PATH="build/bin:$PATH"
           eval $(sage-print-system-package-command auto update)
