@@ -23,11 +23,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import io
+import atexit
 import os
 import tempfile
-
-import atexit
 
 # Until tmp_dir() and tmp_filename() are removed, we use this directory
 # as the parent for all temporary files & directories created by them.
@@ -41,7 +39,7 @@ atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 # temporary directory
 #################################################################
 
-def tmp_dir(name='dir_', ext=''):
+def tmp_dir(name='dir_', ext='') -> str:
     r"""
     Create and return a temporary directory in
     ``$HOME/.sage/temp/hostname/pid/``
@@ -84,7 +82,7 @@ def tmp_dir(name='dir_', ext=''):
 # temporary filename
 #################################################################
 
-def tmp_filename(name='tmp_', ext=''):
+def tmp_filename(name='tmp_', ext='') -> str:
     r"""
     Create and return a temporary file in
     ``$HOME/.sage/temp/hostname/pid/``
@@ -163,8 +161,8 @@ class atomic_write:
       mode bits of the file were changed manually). (Not to be confused with
       the file opening mode.)
 
-    - ``binary`` -- boolean (default: ``True`` on Python 2, ``False`` on Python
-      3); the underlying file is opened in binary mode.  If ``False`` then it is
+    - ``binary`` -- boolean (default: ``False``);
+      the underlying file is opened in binary mode.  If ``False`` then it is
       opened in text mode and an encoding with which to write the file may be
       supplied.
 
@@ -299,7 +297,7 @@ class atomic_write:
         False
     """
     def __init__(self, target_filename, append=False, mode=0o666,
-                 binary=None, **kwargs):
+                 binary=False, **kwargs) -> None:
         """
         TESTS::
 
@@ -320,13 +318,11 @@ class atomic_write:
         os.umask(umask)
         self.mode = mode & (~umask)
 
-        # 'binary' mode is the default on Python 2, whereas 'text' mode is the
-        # default on Python 3--this reflects consistent handling of the default
-        # str type on the two platforms
-        self.binary = False if binary is None else binary
+        # 'text' mode is the default on Python 3
+        self.binary = binary
         self.kwargs = kwargs
 
-    def __enter__(self):
+    def __enter__(self) -> str:
         """
         Create and return a temporary file in ``self.tmpdir`` (normally
         the same directory as the target file).
@@ -372,7 +368,7 @@ class atomic_write:
 
         return self.tempfile
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """
         If the ``with`` block was successful, move the temporary file
         to the target file. Otherwise, delete the temporary file.
@@ -457,7 +453,7 @@ class atomic_dir:
         ....:     h.read()
         'Second'
     """
-    def __init__(self, target_directory):
+    def __init__(self, target_directory) -> None:
         r"""
         TESTS::
 
@@ -473,7 +469,7 @@ class atomic_dir:
         self.target = os.path.realpath(target_directory)
         self.tmpdir = os.path.dirname(self.target)
 
-    def __enter__(self):
+    def __enter__(self) -> str:
         r"""
         Create and return a temporary directory in ``self.tmpdir`` (normally
         the same directory as the target file).
@@ -492,7 +488,7 @@ class atomic_dir:
         self.tempname = os.path.abspath(tdir.name)
         return tdir
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """
         If the ``with`` block was successful, move the temporary directory
         to the target directory. Otherwise, delete the temporary directory.
@@ -518,7 +514,8 @@ class atomic_dir:
             try:
                 os.rename(self.tempname, self.target)
             except OSError:
-                # Race: Another thread or process must have created the directory
+                # Race: Another thread or process must have created
+                # the directory
                 pass
         else:
             # Failure: delete temporary file
@@ -528,7 +525,7 @@ class atomic_dir:
 _spyx_tmp = None
 
 
-def spyx_tmp():
+def spyx_tmp() -> str:
     r"""
     The temporary directory used to store pyx files.
 
