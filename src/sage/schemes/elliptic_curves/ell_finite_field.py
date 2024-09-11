@@ -2875,7 +2875,7 @@ def EllipticCurve_with_prime_order(N):
     - ``N`` -- integer; the order for which we seek an elliptic curve. Must be a
       prime number.
 
-    OUTPUT: an iterator of elliptic curves `E/\mathbb F_p` of order ``N``
+    OUTPUT: an iterator of (some) elliptic curves `E/\mathbb F_p` of order ``N``
 
     ALGORITHM:
 
@@ -2892,6 +2892,7 @@ def EllipticCurve_with_prime_order(N):
     to be fast for many purposes, and for most `N` we tested we are able to
     find a suitable small `D` without increasing the size of `S`.
 
+<<<<<<< HEAD
     The paper also doesn't specify how to enumerate such `D`s, which recall
     should be product of distinct values in the table `S`. We implement this
     with a priority queue (min heap), which also allows us to search for the
@@ -2907,9 +2908,11 @@ def EllipticCurve_with_prime_order(N):
     that bound. This makes the iterator return all curves it can find in finite
     time :)
 
+    ALGORITHM: Based on [BS2007]_, Algorithm 2.2
+
     EXAMPLES::
 
-        sage: N = next_prime(int.from_bytes(b'sagemath', 'big'))
+        sage: N = 8314040072427107567
         sage: E = next(EllipticCurve_with_prime_order(N))
         sage: E
         Elliptic Curve defined by y^2 = x^3 + 4757897140353078952*x + 1841350074072114366
@@ -2935,7 +2938,7 @@ def EllipticCurve_with_prime_order(N):
 
     It works for large primes::
 
-        sage: N = 0x6cbc824032974516623e732462f4b74b56c4ffbd984380d9
+        sage: N = 2666207849820848272386538889527600954292544013630953455833
         sage: E = next(EllipticCurve_with_prime_order(N)); E
         Elliptic Curve defined by y^2 = x^3 + 2666207849820848272386538889427721639173508298483739490459*x
          + 77986137112576 over Finite Field of size 2666207849820848272386538889427721639173508298487130585243
