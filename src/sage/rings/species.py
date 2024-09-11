@@ -23,24 +23,6 @@ from sage.structure.element import Element, parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
-GAP_FAIL = libgap.eval('fail')
-
-
-def _is_conjugate(G, H1, H2):
-    r"""
-    Test if ``H1`` and ``H2`` are conjugate subgroups in ``G``.
-
-    EXAMPLES::
-
-        sage: G = SymmetricGroup(3)
-        sage: H1 = PermutationGroup([(1,2)])
-        sage: H2 = PermutationGroup([(2,3)])
-        sage: from sage.rings.species import _is_conjugate
-        sage: _is_conjugate(G, H1, H2)
-        True
-    """
-    return GAP_FAIL != libgap.RepresentativeAction(G, H1, H2)
-
 
 class ElementCache():
     def __init__(self):
@@ -195,10 +177,9 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
             True
         """
         return (isinstance(other, ConjugacyClassOfDirectlyIndecomposableSubgroups)
-                and self._C.degree() == other._C.degree()
+                and (d := self._C.degree()) == other._C.degree()
                 and (self._C == other._C
-                     or _is_conjugate(SymmetricGroup(self._C.degree()),
-                                      self._C, other._C)))
+                     or SymmetricGroup(d).are_conjugate(self._C, other._C)))
 
 
 class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Parent, ElementCache):
