@@ -26,6 +26,7 @@ AUTHORS:
 import atexit
 import os
 import tempfile
+from typing import IO
 
 # Until tmp_dir() and tmp_filename() are removed, we use this directory
 # as the parent for all temporary files & directories created by them.
@@ -322,7 +323,7 @@ class atomic_write:
         self.binary = binary
         self.kwargs = kwargs
 
-    def __enter__(self) -> str:
+    def __enter__(self) -> IO:
         """
         Create and return a temporary file in ``self.tmpdir`` (normally
         the same directory as the target file).
@@ -469,7 +470,7 @@ class atomic_dir:
         self.target = os.path.realpath(target_directory)
         self.tmpdir = os.path.dirname(self.target)
 
-    def __enter__(self) -> str:
+    def __enter__(self):
         r"""
         Create and return a temporary directory in ``self.tmpdir`` (normally
         the same directory as the target file).
