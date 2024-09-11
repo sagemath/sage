@@ -1436,6 +1436,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             if not (value * G).is_zero():
                 return False
 
+        self._order = value
         return True
 
     def set_order(self, value, *, check=True, num_checks=8):
@@ -2859,7 +2860,6 @@ def EllipticCurve_with_order(m, *, D=None):
                         continue
                     # This tests whether the curve has given order
                     if Et.has_order(m_val):
-                        Et.set_order(m_val, check=False)
                         seen.add(Et)
                         yield Et
 
@@ -2891,7 +2891,6 @@ def EllipticCurve_with_prime_order(N):
     to be fast for many purposes, and for most `N` we tested we are able to
     find a suitable small `D` without increasing the size of `S`.
 
-<<<<<<< HEAD
     The paper also doesn't specify how to enumerate such `D`s, which recall
     should be product of distinct values in the table `S`. We implement this
     with a priority queue (min heap), which also allows us to search for the
@@ -2905,7 +2904,7 @@ def EllipticCurve_with_prime_order(N):
     (-D)y^2 = 4N` with `D < 0` and `N` prime, we actually need `|D| \leq 4N`,
     so we terminate the algorithm when the primes in the table are larger than
     that bound. This makes the iterator return all curves it can find in finite
-    time :)
+    time.
 
     ALGORITHM: Based on [BS2007]_, Algorithm 2.2
 
@@ -3167,7 +3166,6 @@ def EllipticCurve_with_prime_order(N):
                         for Et in E.twists():
                             # `num_checks=1` is sufficient for prime order.
                             if Et.has_order(N, num_checks=1):
-                                Et.set_order(N, check=False)
                                 yield Et
 
         if p != 1:
