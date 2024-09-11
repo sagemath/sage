@@ -44,11 +44,11 @@ manager activated by the magic function: ``%display ascii_art``::
     sage: shell.run_cell('%display ascii_art')
     sage: shell.run_cell("i = var('i')")                                                # needs sage.symbolic
     sage: shell.run_cell('sum(factorial(i)*x^i, i, 0, 10)')                             # needs sage.symbolic
-             10           9          8         7        6        5       4      3  >
-    3628800*x   + 362880*x  + 40320*x  + 5040*x  + 720*x  + 120*x  + 24*x  + 6*x   >
+             10           9          8         7        6        5       4      3  ...
+    3628800*x   + 362880*x  + 40320*x  + 5040*x  + 720*x  + 120*x  + 24*x  + 6*x   ...
     <BLANKLINE>
-    >      2
-    > + 2*x  + x + 1
+    ...      2
+    ... + 2*x  + x + 1
 
     sage: shell.run_cell('3/(7*x)')                                                     # needs sage.symbolic
      3
