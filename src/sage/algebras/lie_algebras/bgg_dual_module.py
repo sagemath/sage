@@ -202,16 +202,18 @@ class BGGDualModule(CombinatorialFreeModule):
             sage: M = g.verma_module(La[1] + La[4] - 1/3*La[5])
             sage: Mc = M.dual()
             sage: elt = Mc.an_element(); elt
-            f[-alpha[2]]^2*f[-alpha[5]]^2*f[-alpha[3]]^3*v[Lambda[1]
-             + Lambda[4] - 1/3*Lambda[5]]^* + 2*f[-alpha[2]]*v[Lambda[1]
-             + Lambda[4] - 1/3*Lambda[5]]^* + 3*f[-alpha[5]]*v[Lambda[1]
-             + Lambda[4] - 1/3*Lambda[5]]^* + v[Lambda[1] + Lambda[4]
-             - 1/3*Lambda[5]]^*
+            f[-alpha[2]]^2*f[-alpha[5]]^2*f[-alpha[3]]^3*v[Lambda[1]  # 64-bit
+             + Lambda[4] - 1/3*Lambda[5]]^* + 2*f[-alpha[2]]*v[Lambda[1]  # 64-bit
+             + Lambda[4] - 1/3*Lambda[5]]^* + 3*f[-alpha[5]]*v[Lambda[1]  # 64-bit
+             + Lambda[4] - 1/3*Lambda[5]]^* + v[Lambda[1] + Lambda[4]  # 64-bit
+             - 1/3*Lambda[5]]^*  # 64-bit
+             ...  # 32-bit
             sage: [M.degree_on_basis(m) for m in elt.support()]
-            [3*Lambda[1] - Lambda[2] - 2*Lambda[3] + 4*Lambda[4] - 4/3*Lambda[5],
-             Lambda[1] + Lambda[4] - 1/3*Lambda[5],
-             2*Lambda[1] - 2*Lambda[2] + Lambda[3] + Lambda[4] - 1/3*Lambda[5],
-             Lambda[1] + Lambda[3] + Lambda[4] - 7/3*Lambda[5]]
+            [3*Lambda[1] - Lambda[2] - 2*Lambda[3] + 4*Lambda[4] - 4/3*Lambda[5],  # 64-bit
+             Lambda[1] + Lambda[4] - 1/3*Lambda[5],  # 64-bit
+             2*Lambda[1] - 2*Lambda[2] + Lambda[3] + Lambda[4] - 1/3*Lambda[5], # 64-bit
+             Lambda[1] + Lambda[3] + Lambda[4] - 7/3*Lambda[5]]  # 64-bit
+             ...  # 32-bit
         """
         return self._module.degree_on_basis(m)
 
@@ -897,24 +899,27 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
             sage: g = LieAlgebra(QQ, cartan_type=['G', 2])
             sage: La = g.cartan_type().root_system().weight_lattice().fundamental_weights()
             sage: L = g.simple_module(La[1])
-            sage: [L.lift(b) for b in L.basis()]  # long time
+            sage: sorted([L.lift(b) for b in L.basis()])  # long time
             [v[Lambda[1]]^*,
-             f[-alpha[1]]*v[Lambda[1]]^*,
-             f[-alpha[2]]*f[-alpha[1]]*v[Lambda[1]]^* - f[-alpha[1] - alpha[2]]*v[Lambda[1]]^*,
-             f[-alpha[1]]*f[-alpha[1] - alpha[2]]*v[Lambda[1]]^*
-              + f[-2*alpha[1] - alpha[2]]*v[Lambda[1]]^*,
+             f[-alpha[2]]*f[-alpha[1]]^2*f[-alpha[1] - alpha[2]]*v[Lambda[1]]^*
+              + f[-alpha[2]]*f[-alpha[1]]*f[-2*alpha[1]
+              - alpha[2]]*v[Lambda[1]]^* + 1/2*f[-alpha[2]]*f[-3*alpha[1]
+              - alpha[2]]*v[Lambda[1]]^* - f[-alpha[1]
+              - alpha[2]]*f[-2*alpha[1] - alpha[2]]*v[Lambda[1]]^*
+              + 1/2*f[-3*alpha[1] - 2*alpha[2]]*v[Lambda[1]]^*,
              f[-alpha[1]]^2*f[-alpha[1] - alpha[2]]*v[Lambda[1]]^*
               + f[-alpha[1]]*f[-2*alpha[1] - alpha[2]]*v[Lambda[1]]^*
               + 1/2*f[-3*alpha[1] - alpha[2]]*v[Lambda[1]]^*,
-             f[-alpha[2]]*f[-alpha[1]]^2*f[-alpha[1] - alpha[2]]*v[Lambda[1]]^*
-              + f[-alpha[2]]*f[-alpha[1]]*f[-2*alpha[1] - alpha[2]]*v[Lambda[1]]^*
-              + 1/2*f[-alpha[2]]*f[-3*alpha[1] - alpha[2]]*v[Lambda[1]]^*
-              - f[-alpha[1] - alpha[2]]*f[-2*alpha[1] - alpha[2]]*v[Lambda[1]]^*
-              + 1/2*f[-3*alpha[1] - 2*alpha[2]]*v[Lambda[1]]^*,
-             f[-alpha[1]]*f[-alpha[1] - alpha[2]]*f[-2*alpha[1] - alpha[2]]*v[Lambda[1]]^*
-              - 1/2*f[-alpha[1]]*f[-3*alpha[1] - 2*alpha[2]]*v[Lambda[1]]^*
-              - 1/2*f[-alpha[1] - alpha[2]]*f[-3*alpha[1] - alpha[2]]*v[Lambda[1]]^*
-              + f[-2*alpha[1] - alpha[2]]^2*v[Lambda[1]]^*]
+             f[-alpha[1]]*f[-alpha[1] - alpha[2]]*v[Lambda[1]]^*
+              + f[-2*alpha[1] - alpha[2]]*v[Lambda[1]]^*,
+             f[-alpha[1]]*f[-alpha[1] - alpha[2]]*f[-2*alpha[1]
+              - alpha[2]]*v[Lambda[1]]^* - 1/2*f[-alpha[1]]*f[-3*alpha[1]
+              - 2*alpha[2]]*v[Lambda[1]]^* - 1/2*f[-alpha[1]
+              - alpha[2]]*f[-3*alpha[1] - alpha[2]]*v[Lambda[1]]^*
+              + f[-2*alpha[1] - alpha[2]]^2*v[Lambda[1]]^*,
+             f[-alpha[1]]*v[Lambda[1]]^*,
+             f[-alpha[2]]*f[-alpha[1]]*v[Lambda[1]]^*
+              - f[-alpha[1] - alpha[2]]*v[Lambda[1]]^*]
         """
         return self.module_morphism(self._lift_on_basis, codomain=self._ambient, unitriangular="upper")
 
