@@ -609,13 +609,13 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
             1 True
             f[-alpha[1]] True
             f[-alpha[1] - alpha[2]] True
-            sage: gens = list(I.gens()); gens
-            [f[-alpha[2]],
+            sage: gens = list(sorted(I.gens())); gens
+            [f[-3*alpha[1] - 2*alpha[2]],
+             f[-3*alpha[1] - alpha[2]],
+             f[-2*alpha[1] - alpha[2]],
              f[-alpha[1]],
              f[-alpha[1] - alpha[2]],
-             f[-2*alpha[1] - alpha[2]],
-             f[-3*alpha[1] - alpha[2]],
-             f[-3*alpha[1] - 2*alpha[2]]]
+             f[-alpha[2]]]
             sage: gens[1] in I
             True
             sage: gens[0] * gens[1] in I
