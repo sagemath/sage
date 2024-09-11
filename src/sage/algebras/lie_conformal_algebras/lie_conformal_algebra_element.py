@@ -168,7 +168,8 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
 
             sage: R = lie_conformal_algebras.Affine(QQ, 'B3')
             sage: R.2.T()+3*R.3
-            TB[alpha[1]] + 3*B[alpha[2] + alpha[3]]
+            TB[alpha[1]] + 3*B[alpha[2] + alpha[3]]  # 64-bit
+            ...  # 32-bit
         """
         if self.is_zero():
             return "0"

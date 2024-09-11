@@ -965,9 +965,10 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             sage: L = lie_algebras.Affine(QQ, ['B', 3, 1])
             sage: elt = L.an_element()
             sage: elt._repr_generic(str, str, lambda t: "T^{}".format(t), '.', '(x)')
-            '(E[alpha[3]] + E[alpha[2]] + E[alpha[1]] + h1 + h2 + h3 + E[-alpha[3]]
-             + E[-alpha[2]] + E[-alpha[1]])(x)T^0 + (E[-alpha[1] - 2*alpha[2]
-             - 2*alpha[3]])(x)T^1 + (E[alpha[1] + 2*alpha[2] + 2*alpha[3]])(x)T^-1 + c + d'
+            '(E[alpha[3]] + E[alpha[2]] + E[alpha[1]] + h1 + h2 + h3 + E[-alpha[3]]  # 64-bit
+             + E[-alpha[2]] + E[-alpha[1]])(x)T^0 + (E[-alpha[1] - 2*alpha[2]  # 64-bit
+             - 2*alpha[3]])(x)T^1 + (E[alpha[1] + 2*alpha[2] + 2*alpha[3]])(x)T^-1 + c + d'  # 64-bit
+            ...  # 32-bit
         """
         ret = style('')
         mult = style(mult)

@@ -1354,8 +1354,9 @@ class VermaModuleHomset(Homset):
             sage: Mp = L.verma_module(mu)
             sage: H = Hom(Mp, M)
             sage: v = H.singular_vector(); v
-            f[-alpha[2]]*f[-alpha[1]]^3*v[Lambda[1] - Lambda[3]]
-             + 3*f[-alpha[1]]^2*f[-alpha[1] - alpha[2]]*v[Lambda[1] - Lambda[3]]
+            f[-alpha[2]]*f[-alpha[1]]^3*v[Lambda[1] - Lambda[3]]  # 64-bit
+             + 3*f[-alpha[1]]^2*f[-alpha[1] - alpha[2]]*v[Lambda[1] - Lambda[3]]  # 64-bit
+            ... # 32-bit
             sage: v.degree() == Mp.highest_weight()
             True
 

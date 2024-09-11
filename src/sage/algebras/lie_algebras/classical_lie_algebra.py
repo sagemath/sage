@@ -1996,14 +1996,11 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         EXAMPLES::
 
             sage: L = LieAlgebra(QQ, cartan_type=['G', 2])
-            sage: [L.degree_on_basis(m) for m in L.basis().keys()]
-            [alpha[2], alpha[1], alpha[1] + alpha[2],
-             2*alpha[1] + alpha[2], 3*alpha[1] + alpha[2],
-             3*alpha[1] + 2*alpha[2],
-             0, 0,
-             -alpha[2], -alpha[1], -alpha[1] - alpha[2],
-             -2*alpha[1] - alpha[2], -3*alpha[1] - alpha[2],
-             -3*alpha[1] - 2*alpha[2]]
+            sage: sorted([L.degree_on_basis(m) for m in L.basis().keys()])
+            [0, 0, -3*alpha[1] - 2*alpha[2], -3*alpha[1] - alpha[2],
+             -2*alpha[1] - alpha[2], -alpha[1], -alpha[1] - alpha[2], alpha[1],
+             alpha[1] + alpha[2], 2*alpha[1] + alpha[2], 3*alpha[1] + alpha[2],
+             3*alpha[1] + 2*alpha[2], -alpha[2], alpha[2]]
         """
         if m.parent() is self._Q:
             return m
