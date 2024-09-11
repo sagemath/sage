@@ -1390,13 +1390,16 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.has_order(N + 1)
             False
 
-        This demonstrates the bug mentioned in the NOTE above. The return value
-        should be ``False`` after :issue:`38617` is fixed::
+        This demonstrates the bug mentioned in the NOTE above. The last return
+        value should be ``False`` after :issue:`38617` is fixed::
 
-            sage: E = EllipticCurve(GF(127), [0, 1])
-            sage: E.order()
-            108
-            sage: E.has_order(126)
+            sage: E = EllipticCurve(GF(5443568676570036275321323), [0, 13])
+            sage: N = 2333145661241
+            sage: E.order() == N^2
+            True
+            sage: E.has_order(N^2)
+            True
+            sage: E.has_order(N^2 + N)
             True
 
         AUTHORS:
@@ -2837,7 +2840,7 @@ def EllipticCurve_with_order(m, *, D=None):
         m_val = m
 
     if D is None:
-        Ds = (D for D in range(-4 * m_val, 0) if D % 4 in [0, 1])
+        Ds = (D for D in range(-1, -4 * m_val - 1, -1) if D % 4 in [0, 1])
     else:
         assert D < 0 and D % 4 in [0, 1]
         Ds = [D]
@@ -2849,20 +2852,16 @@ def EllipticCurve_with_order(m, *, D=None):
                 continue
 
             H = hilbert_class_polynomial(D)
-            K = GF(q)
-            roots = H.roots(ring=K)
-            for j0, _ in roots:
+            for j0 in H.roots(ring=GF(q), multiplicities=False):
                 E = EllipticCurve(j=j0)
                 for Et in E.twists():
                     if any(Et.is_isomorphic(E) for E in seen):
                         continue
-                    try:
-                        # This tests whether the curve has given order
-                        Et.set_order(m_val)
+                    # This tests whether the curve has given order
+                    if Et.has_order(m_val):
+                        Et.set_order(m_val, check=False)
                         seen.add(Et)
                         yield Et
-                    except ValueError:
-                        pass
 
 def EllipticCurve_with_prime_order(N):
     r"""
@@ -3168,6 +3167,7 @@ def EllipticCurve_with_prime_order(N):
                         for Et in E.twists():
                             # `num_checks=1` is sufficient for prime order.
                             if Et.has_order(N, num_checks=1):
+                                Et.set_order(N, check=False)
                                 yield Et
 
         if p != 1:
