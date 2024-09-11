@@ -2863,6 +2863,8 @@ def EllipticCurve_with_order(m, *, D=None):
                         continue
                     # This tests whether the curve has given order
                     if Et.has_order(m_val):
+                        # TODO: remove after 38617
+                        Et.set_order(m_val, check=False)
                         seen.add(Et)
                         yield Et
 
@@ -3167,8 +3169,10 @@ def EllipticCurve_with_prime_order(N):
                         E = EllipticCurve(K, j=j0)
                         # `E.twists()` also contains E.
                         for Et in E.twists():
-                            # `num_checks=1` is sufficient for prime order.
+                            # `num_checks=1` is sufficient for prime order
                             if Et.has_order(N, num_checks=1):
+                                # TODO: remove after 38617
+                                Et.set_order(N, check=False)
                                 yield Et
 
         if p != 1:
