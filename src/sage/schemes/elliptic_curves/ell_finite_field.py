@@ -3003,32 +3003,32 @@ def EllipticCurve_with_prime_order(N):
         sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
         ....:     print(E)
         Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
-        Elliptic Curve defined by y^2 = x^3 + 665393686*x + 948152000 over Finite Field of size 999969307
-        Elliptic Curve defined by y^2 = x^3 + 572311614*x + 178583984 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 689795416*x + 188156157 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 999178436*x + 900579394 over Finite Field of size 999969307
         sage: set_verbose(2)
         sage: set_random_seed(1337)
         sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
         ....:     print(E)
-        verbose 2 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
+        verbose 2 (2866: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
         Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
-        verbose 2 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
-        Elliptic Curve defined by y^2 = x^3 + 665393686*x + 948152000 over Finite Field of size 999969307
-        Elliptic Curve defined by y^2 = x^3 + 572311614*x + 178583984 over Finite Field of size 999969307
+        verbose 2 (2866: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
+        Elliptic Curve defined by y^2 = x^3 + 689795416*x + 188156157 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 999178436*x + 900579394 over Finite Field of size 999969307
         sage: set_verbose(4)
         sage: set_random_seed(1337)
         sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
         ....:     print(E)
-        verbose 4 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-19
+        verbose 4 (2866: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-19
         ...
-        verbose 4 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-163
-        verbose 2 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
+        verbose 4 (2866: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-163
+        verbose 2 (2866: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
         Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
-        verbose 4 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-179
+        verbose 4 (2866: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-179
         ...
-        verbose 4 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-667
-        verbose 2 (2865: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
-        Elliptic Curve defined by y^2 = x^3 + 665393686*x + 948152000 over Finite Field of size 999969307
-        Elliptic Curve defined by y^2 = x^3 + 572311614*x + 178583984 over Finite Field of size 999969307
+        verbose 4 (2866: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-667
+        verbose 2 (2866: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
+        Elliptic Curve defined by y^2 = x^3 + 689795416*x + 188156157 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 999178436*x + 900579394 over Finite Field of size 999969307
 
     TESTS::
 
