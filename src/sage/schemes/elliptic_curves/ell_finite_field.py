@@ -2753,7 +2753,7 @@ def EllipticCurve_with_order(m, *, D=None):
     Return an iterator for elliptic curves over finite fields with the given order. The curves are
     computed using the Complex Multiplication (CM) method.
 
-    A :sage:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
+    A :class:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
     the algorithm is more efficient.
 
     If ``D`` is specified, it is used as the discriminant.
