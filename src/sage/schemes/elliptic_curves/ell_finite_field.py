@@ -1437,7 +1437,9 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             if not (value * G).is_zero():
                 return False
 
-        self._order = value
+        # TODO: uncomment this and remove the line in `set_order` after 38617 is fixed.
+        # self._order = value
+
         return True
 
     def set_order(self, value, *, check=True, num_checks=8):
