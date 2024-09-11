@@ -1,5 +1,4 @@
 from itertools import accumulate, chain
-
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.monoids import Monoids
@@ -13,7 +12,6 @@ from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_ge
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
 from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement,
                                               IndexedMonoid)
@@ -828,6 +826,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             sage: type(m)
             <class 'sage.rings.species.MolecularSpecies_with_category.element_class'>
 
+            sage: P = PolynomialSpecies(ZZ, ["X"])
+            sage: M = P._indices
+            sage: A = AtomicSpecies("X")
+            sage: a = A(CyclicPermutationGroup(4))
+            sage: M.gen(a)
+            C_4
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: M = P._indices
             sage: m = M(SymmetricGroup(6).young_subgroup([2, 2, 2]), {1: [1,2], 2: [3,4,5,6]})
             sage: list(m)
@@ -1155,8 +1161,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
 
         def __call__(self, *args):
             r"""
-            Substitute M_1...M_k into self.
-            M_i must all have same arity and must be molecular.
+            Substitute `M_1,\dots, M_k` into ``self``.
+
+            The arguments must all have the same parent and must all
+            be molecular.  The number of arguments must be equal to
+            the arity of ``self``.
+
+            The result is a molecular species, whose parent is the
+            same as those of the arguments.
 
             EXAMPLES::
 
@@ -1187,13 +1199,21 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: Y = M2(SymmetricGroup(1), {2: [1]})
                 sage: C3(X*Y)
                 {((1,2,3)(4,5,6),): ({1, 2, 3}, {4, 5, 6})}
+
+            TESTS::
+
+                sage: P = PolynomialSpecies(QQ, ["X"])
+                sage: P.one()()
+                Traceback (most recent call last):
+                ...
+                ValueError: number of args must match arity of self
             """
             if len(args) != self.parent()._arity:
                 raise ValueError("number of args must match arity of self")
+            if len(set(arg.parent() for arg in args)) > 1:
+                raise ValueError("all args must have the same parent")
             if not all(isinstance(arg, MolecularSpecies.Element) for arg in args):
                 raise ValueError("all args must be molecular species")
-            if len(set(arg.parent()._arity for arg in args)) > 1:
-                raise ValueError("all args must have same arity")
 
             gens = []
 
@@ -1461,7 +1481,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P = PolynomialSpecies(QQ, ["X"])
             sage: P.exponential([1], [0]).parent()
             Polynomial species in X over Rational Field
-
         """
         def stretch(c, k):
             r"""
@@ -1484,8 +1503,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
                                         * self.powersum(s, k) for k in mu)
                             for mu in Partitions(d))
 
-        return prod(factor(s+1, multiplicities[s], degrees[s])
-                    for s in range(self._arity))
+        return self.prod(factor(s+1, multiplicities[s], degrees[s])
+                         for s in range(self._arity))
 
     class Element(CombinatorialFreeModule.Element):
         def is_constant(self):
@@ -1502,8 +1521,32 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 True
                 sage: P(0).is_constant()
                 True
+                sage: (1 + X).is_constant()
+                False
             """
-            return self.is_zero() or not self.degree()
+            return self.is_zero() or not self.maximal_degree()
+
+        def homogeneous_degree(self):
+            """
+
+            ..TODO::
+
+               This implementation should not be necessary.
+
+            EXAMPLES::
+
+                sage: P = PolynomialSpecies(ZZ, ["X"])
+                sage: C3 = P(CyclicPermutationGroup(3))
+                sage: X = P(SymmetricGroup(1))
+                sage: E2 = P(SymmetricGroup(2))
+                sage: (E2*X + C3).homogeneous_degree()
+                3
+            """
+            if not self.support():
+                raise ValueError("the zero element does not have a well-defined degree")
+            if not self.is_homogeneous():
+                raise ValueError("element is not homogeneous")
+            return self.parent().degree_on_basis(self.support()[0])
 
         def is_virtual(self):
             r"""
@@ -1716,15 +1759,20 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             """
             P = self.parent()
-            if not self.support():
-                return P.zero()
+            if len(args) != P._arity:
+                raise ValueError("number of args must match arity of self")
+            if len(set(arg.parent() for arg in args)) > 1:
+                raise ValueError("all args must have the same parent")
+
             P0 = args[0].parent()
-            assert all(P0 == arg.parent() for arg in args), "all parents must be the same"
-            args = [sorted(g, key=lambda x: x[0]._mc)
-                    for g in args]
+            if not self.support():
+                return P0.zero()
+
+            args = [sorted(g, key=lambda x: x[0]._mc) for g in args]
             multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
             molecules = list(chain.from_iterable([[M for M, _ in g] for g in args]))
             F_degrees = sorted(set(M._mc for M, _ in self))
+            names = ["X%s" % i for i in range(sum(len(arg) for arg in args))]
 
             result = P0.zero()
             for n in F_degrees:
@@ -1732,7 +1780,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 for degrees in cartesian_product([IntegerVectors(n_i, length=len(arg))
                                                   for n_i, arg in zip(n, args)]):
                     # each degree is a weak composition of the degree of F in sort i
-                    names = ["X%s" % i for i in range(sum(len(arg) for arg in args))]
                     FX = F._compose_with_weighted_singletons(names,
                                                              multiplicities,
                                                              degrees)
