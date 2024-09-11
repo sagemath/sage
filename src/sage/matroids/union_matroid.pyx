@@ -66,7 +66,7 @@ cdef class MatroidUnion(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X) except -1:
+    cpdef int _rank(self, frozenset X) except? -1:
         r"""
         Return the rank of a set ``X``.
 
@@ -195,7 +195,7 @@ cdef class MatroidSum(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X) except -1:
+    cpdef int _rank(self, frozenset X) except? -1:
         r"""
         Return the rank of a set ``X``.
 
@@ -290,7 +290,7 @@ cdef class PartitionMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X) except -1:
+    cpdef int _rank(self, frozenset X) except? -1:
         r"""
         Return the rank of a set ``X``.
 

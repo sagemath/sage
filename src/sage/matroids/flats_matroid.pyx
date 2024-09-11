@@ -114,7 +114,7 @@ cdef class FlatsMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X) except -1:
+    cpdef int _rank(self, frozenset X) except? -1:
         """
         Return the rank of a set ``X``.
 
@@ -579,7 +579,7 @@ cdef class FlatsMatroid(Matroid):
             True
             sage: Matroid(flats=['', 'a', 'b', 'ab']).is_valid()
             True
-            sage: M = Matroid(flats=['',  # missing an extention of flat ['5'] by '6'
+            sage: M = Matroid(flats=['',  # missing an extension of flat ['5'] by '6'
             ....:                    '0','1','2','3','4','5','6','7','8','9','a','b','c',
             ....:                    '45','46','47','4c','57','5c','67','6c','7c',
             ....:                    '048','149','24a','34b','059','15a','25b','358',
@@ -619,7 +619,7 @@ cdef class FlatsMatroid(Matroid):
             False
             sage: Matroid(flats={0: [[]], 1: [[0, 1], [2]], 2: [[0], [1], [0, 1, 2]]}).is_valid()
             False
-            sage: M = Matroid(flats={0: [''],  # missing an extention of flat ['5'] by '6'
+            sage: M = Matroid(flats={0: [''],  # missing an extension of flat ['5'] by '6'
             ....:                    1: ['0','1','2','3','4','5','6','7','8','9','a','b','c'],
             ....:                    2: ['45','46','47','4c','57','5c','67','6c','7c',
             ....:                        '048','149','24a','34b','059','15a','25b','358',

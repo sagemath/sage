@@ -652,7 +652,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__max_independent(self._output, self._input)
         return self.__unpack(self._output)
 
-    cpdef int _rank(self, frozenset F) except -1:
+    cpdef int _rank(self, frozenset F) except? -1:
         """
         Compute the rank of a subset of the groundset.
 

@@ -7,7 +7,7 @@ cdef class GraphicMatroid(Matroid):
     cdef dict _vertex_map
     cdef dict _groundset_edge_map
     cpdef frozenset groundset(self)
-    cpdef int _rank(self, frozenset X) except -1
+    cpdef int _rank(self, frozenset X) except? -1
     cpdef _vertex_stars(self)
     cpdef _minor(self, contractions, deletions)
     cpdef _has_minor(self, N, bint certificate=*)

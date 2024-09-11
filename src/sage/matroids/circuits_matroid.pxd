@@ -9,7 +9,7 @@ cdef class CircuitsMatroid(Matroid):
     cdef list _sorted_C_lens
     cdef bint _nsc_defined
     cpdef frozenset groundset(self)
-    cpdef int _rank(self, frozenset X) except -1
+    cpdef int _rank(self, frozenset X) except? -1
     cpdef full_rank(self)
     cpdef bint _is_independent(self, frozenset X) noexcept
     cpdef frozenset _max_independent(self, frozenset X)

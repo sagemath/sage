@@ -238,7 +238,7 @@ cdef class GraphicMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X) except -1:
+    cpdef int _rank(self, frozenset X) except? -1:
         """
         Return the rank of a set ``X``.
 

@@ -46,7 +46,7 @@ cdef class BasisExchangeMatroid(Matroid):
     cpdef _move_current_basis(self, X, Y)
 
     cpdef frozenset _max_independent(self, frozenset F)
-    cpdef int _rank(self, frozenset F) except -1
+    cpdef int _rank(self, frozenset F) except? -1
     cpdef frozenset _circuit(self, frozenset F)
     cpdef frozenset _fundamental_circuit(self, frozenset B, e)
     cpdef frozenset _closure(self, frozenset F)
