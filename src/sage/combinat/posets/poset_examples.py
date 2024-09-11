@@ -1488,7 +1488,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: P = posets.YoungsLatticePrincipalOrderIdeal(Partition([2,2]))
             sage: P
             Finite lattice containing 6 elements
-            sage: P.cover_relations()
+            sage: sorted(P.cover_relations())
             [[[], [1]],
              [[1], [1, 1]],
              [[1], [2]],
