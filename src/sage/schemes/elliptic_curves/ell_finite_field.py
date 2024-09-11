@@ -1414,7 +1414,9 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         # For really small values, the random tests are too weak to detect wrong
         # orders So we go with computing directly instead.
-        if q <= 100:
+        # In #38341, the bound has been increased to a large value (2^64), but
+        # it should be decreased (to ~100) after bug #38617 is fixed.
+        if q <= 2**64:
             return self.order() == value
 
         # This might be slow
@@ -2875,15 +2877,35 @@ def EllipticCurve_with_prime_order(N):
 
     OUTPUT: an iterator of elliptic curves `E/\mathbb F_p` of order ``N``
 
-    .. NOTE::
+    ALGORITHM:
 
-        Depending on the input, this function may run for a *very* long time.
-        This algorithm consists of multiple "search rounds" for a suitable
-        discriminant `D`. We expect this algorithm to terminate after a number
-        of rounds that is polynomial in `\log\log N`. In practice (cf. Section
-        5), this number is usually 1.
+    Our algorithm is based on [BS2007]_, Algorithm 2.2, but we deviate for
+    several key steps. Firstly, the authors in the paper perform the search for
+    a suitable `D` *incrementally*, by enlarging the table `S` by `log(N)`-size
+    interval of primes `p` and testing all products of distinct primes `p` (or
+    rather `p^*`). We find this difficult to implement without testing
+    duplicate `D`s, so we instead enlarge the table one prime at a time
+    (effectively replacing `[r\log(N), (r + 1)\log(N)]` in the paper by `[r,
+    r]`). To compensate for the speed loss, we begin the algorithm by
+    prefilling `S` with the primes below `1000` (satisfying quadratic
+    reciprocity properties). The constant `1000` is determined experimentally
+    to be fast for many purposes, and for most `N` we tested we are able to
+    find a suitable small `D` without increasing the size of `S`.
 
-    ALGORITHM: [BS2007]_, Algorithm 2.2
+    The paper also doesn't specify how to enumerate such `D`s, which recall
+    should be product of distinct values in the table `S`. We implement this
+    with a priority queue (min heap), which also allows us to search for the
+    suitable `D`s in increasing (absolute value) order. This is suitable for
+    the algorithm because smaller `D` means the Hilbert class polynomial is
+    computed quicker.
+
+    Finally, to avoid repeatedly testing the same `D`s, we require the latest
+    prime to be added to the table to be included as a factor of `D` (see code
+    for more explanation). As we need to find integers `x, y` such that `x^2 +
+    (-D)y^2 = 4N` with `D < 0` and `N` prime, we actually need `|D| \leq 4N`,
+    so we terminate the algorithm when the primes in the table are larger than
+    that bound. This makes the iterator return all curves it can find in finite
+    time :)
 
     EXAMPLES::
 
@@ -2963,7 +2985,7 @@ def EllipticCurve_with_prime_order(N):
 
     The algorithm is efficient for small ``N`` due to the low number of suitable
     discriminants (see the ``abs_products_under`` internal function of the code
-    for details). The following runs in less than a second::
+    for details)::
 
         sage: len(list(EllipticCurve_with_prime_order(next_prime(5000))))
         534
