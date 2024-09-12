@@ -960,11 +960,34 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             EXAMPLES::
 
                 sage: from sage.rings.species import MolecularSpecies
-                sage: M = MolecularSpecies(AtomicSpecies("X,Y"), prefix='', bracket=False)
+                sage: M = MolecularSpecies("X,Y")
                 sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
                 sage: F = M(G, {1: [5,6], 2: [1,2,3,4]})
+                sage: F.group()
+                Permutation Group with generators [(1,2)(3,4), (5,6)]
             """
-            pass
+            factors = list(self)
+            if not factors:
+                return SymmetricGroup(0)
+
+            if len(factors) == 1:
+                A, n = factors[0]
+                if n == 1:
+                    return list(A._monomial)[0]._dis._C
+
+                if n % 2 == 1:
+                    f_gap = libgap.DirectProduct(list(A._monomial)[0]._dis._C,
+                                                 (A ** (n-1)).group())
+                else:
+                    f1 = (A ** (n // 2)).group()
+                    f_gap = libgap.DirectProduct(f1, f1)
+
+                f = PermutationGroup(gap_group=f_gap)
+                return f
+
+            f_gap = libgap.DirectProduct(*[(A ** n).group() for A, n in factors])
+            f = PermutationGroup(gap_group=f_gap)
+            return f
 
         def _assign_group_info(self, other):
             r"""
