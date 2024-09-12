@@ -213,8 +213,6 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sequence import Sequence
-from sage.categories.morphism import Morphism
-from sage.matrix.constructor import matrix
 
 
 ###############################################################################
