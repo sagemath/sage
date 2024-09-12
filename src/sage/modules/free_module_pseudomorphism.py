@@ -3,11 +3,12 @@ Pseudomorphisms of free modules
 
 AUTHORS:
 
-    - Yossef Musleh (2024-02): initial version
+    - Xavier Caruso, Yossef Musleh (2024-09): initial version
 
 """
-####################################################################################
-#       Copyright (C) 2024 Yossef Musleh <jbobicus@gmail.com>
+# ****************************************************************************
+#  Copyright (C) 2024 Xavier Caruso <xavier.caruso@normalesup.org>
+#                     Yossef Musleh <specialholonomy@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -21,243 +22,432 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ####################################################################################
 
-import sage.modules.free_module as free_module
 from sage.categories.morphism import Morphism
-from sage.modules import free_module_homspace, matrix_morphism
 from sage.structure.richcmp import rich_to_bool, richcmp
-from sage.structure.sequence import Sequence
-from sage.structure.all import parent
-from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_morphism import FreeModuleMorphism
-from sage.modules.free_module_homspace import FreeModuleHomspace, is_FreeModuleHomspace
-from sage.matrix.constructor import matrix
-from sage.matrix.matrix_space import MatrixSpace
 
-lazy_import('sage.rings.derivation', 'RingDerivation')
 
 class FreeModulePseudoMorphism(Morphism):
     r"""
-    Let `M, M'` be free modules over a ring `R`, `\theta: R \to R` a ring
-    homomorphism, and `\delta: R \to R` a `\theta`-derivation, which is a map
-    such that:
+    Let `M, M'` be modules over a ring `R`, `\theta: R \to R` a
+    ring homomorphism, and `\delta: R \to R` a `\theta`-derivation,
+    which is a map such that:
 
-    `\delta(xy) = \theta(x)\delta(y) + \delta(x)y`.
+    .. MATH:
 
-    Then a pseudomorphism `f : M to M` is a map such that
+        \delta(xy) = \theta(x)\delta(y) + \delta(x)y.
 
-    `f(x + y) = f(x) + f(y)`
-    `f(\lambda x) = `\theta(\lambda)f(x) + \delta(\lambda)x`
+    A pseudomorphism `f : M \to M` is an additive map such that
 
-    The pair `(\theta, \delta)` may be referred to as the *twist* of
-    the morphism.
+    .. MATH:
+
+        f(\lambda x) = \theta(\lambda)f(x) + \delta(\lambda) x
+
+    The map `\theta` (resp. `\delta`) is referred to as the
+    twisting endomorphism (resp. the twisting derivation) of `f`.
 
     TESTS::
 
-        sage: V = ZZ^2
-        sage: f = V.pseudohom([V.1, -2*V.0]); f
-        Free module pseudomorphism defined by the matrix
-        [ 0  1]
-        [-2  0]
-        Domain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
-        Codomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
-        sage: f(V((1, 2)))
-        (-4, 1)
-
-    ::
-
-        sage: P.<x> = ZZ[]; deriv = P.derivation()
+        sage: P.<x> = ZZ[]
+        sage: d = P.derivation()
         sage: M = P^2
-        sage: f = M.pseudohom([[1, 2*x], [x, 1]], deriv, side="right"); f
-        Free module pseudomorphism defined as left-multiplication by the matrix
+        sage: f = M.pseudohom([[1, 2*x], [x, 1]], d); f
+        Free module pseudomorphism (twisted by d/dx) defined by the matrix
         [  1 2*x]
         [  x   1]
-        twisted by the derivation d/dx
         Domain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
         Codomain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
         sage: e = M((2*x^2 + 3*x + 1, x^3 + 7*x + 4))
         sage: f(e)
-        (2*x^4 + 16*x^2 + 15*x + 4, 3*x^3 + 6*x^2 + 8*x + 11)
-        sage: f = M.pseudohom([[1, 2], [1, 1]], deriv)
+        (x^4 + 9*x^2 + 11*x + 4, 5*x^3 + 9*x^2 + 9*x + 11)
+        sage: f = M.pseudohom([[1, 2], [1, 1]], d)
         sage: f(e)
         (x^3 + 2*x^2 + 14*x + 8, x^3 + 7*x^2 + 13*x + 13)
 
     ::
 
-        sage: Fq = GF(343); M = Fq^3; N = Fq^2; frob = Fq.frobenius_endomorphism(); z = Fq.gen()
-        sage: phi = M.pseudohom([[2, 3, 1], [1, 4, 6]], frob, N, side="right"); phi
-        Free module pseudomorphism defined as left-multiplication by the matrix
+        sage: Fq.<z> = GF(7^3)
+        sage: Frob = Fq.frobenius_endomorphism()
+        sage: M = Fq^3
+        sage: N = Fq^2
+        sage: phi = M.pseudohom([[2, 3, 1], [1, 4, 6]], Frob, codomain=N, side="right")
+        sage: phi
+        Free module pseudomorphism (twisted by z |--> z^7) defined as left-multiplication by the matrix
         [2 3 1]
         [1 4 6]
-        twisted by the morphism Frobenius endomorphism z3 |--> z3^7 on Finite Field in z3 of size 7^3
-        Domain: Vector space of dimension 3 over Finite Field in z3 of size 7^3
-        Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
-        sage: elem = (4*z^2 + 4*z + 3, 2, z + 5)
-        sage: phi(elem)
-        (2*z3 + 1, 6*z3^2 + 4*z3 + 5)
+        Domain: Vector space of dimension 3 over Finite Field in z of size 7^3
+        Codomain: Vector space of dimension 2 over Finite Field in z of size 7^3
+        sage: v = (4*z^2 + 4*z + 3, 2, z + 5)
+        sage: phi(v)
+        (2*z + 1, 6*z^2 + 4*z + 5)
+
     """
-    def __init__(self, pseudohomspace, base_morphism, side="left"):
+    def __init__(self, parent, f, side):
         """
         Constructs a pseudomorphism of free modules.
 
         INPUT:
-            -  ``pseudohomspace`` - the parent space of pseudomorphisms,
-                                    containing
 
-            -  ``base_morphism`` - either a morphism or a matrix defining a
-                                   morphism
+        - ``parent`` -- the parent space of pseudomorphisms
 
-            - side -- side of the vectors acted on by the matrix
-                      (default: ``"left"``)
+        - ``f`` -- a pseudomorphism or a matrix defining this
+          pseudomorphism
 
-        EXAMPLES::
-
-            sage: F = GF(25); M = F^3; twist = F.frobenius_endomorphism(5)
-            sage: phi = M.pseudohom(matrix(F,3,[1..9]), twist)
-            sage: type(phi)
-            <class 'sage.modules.free_module_pseudomorphism.FreeModulePseudoMorphism'>
-
-        ::
-
-            sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
-            sage: morph = M.hom(matrix([[1,2],[0,1]]))
-            sage: phi = M.pseudohom(morph, twist, side="right"); phi
-            Free module pseudomorphism defined as left-multiplication by the matrix
-            [1 2]
-            [0 1]
-            twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
-            Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
-            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
-        """
-        Morphism.__init__(self, pseudohomspace)
-        dom = pseudohomspace.domain()
-        codom = pseudohomspace.codomain()
-        rows = dom.dimension()
-        cols = codom.dimension()
-        if side == "right":
-            rows = codom.dimension()
-            cols = dom.dimension()
-        matrix_space = MatrixSpace(dom.coordinate_ring(), rows, cols)
-        if isinstance(base_morphism, FreeModuleMorphism):
-            self._base_matrix = matrix_space(base_morphism.matrix())
-        else:
-            self._base_matrix = matrix_space(base_morphism)
-        self.derivation = pseudohomspace.derivation
-        self.twist_morphism = pseudohomspace.twist_morphism
-        self.side = side
-
-    def _call_(self, x):
-        r"""
-        Return the result of applying a pseudomorphism to an element of the
-        free module.
+        - ``side`` -- side of the vectors acted on by the matrix
 
         TESTS::
 
-            sage: Fq = GF(343); M = Fq^3; frob = Fq.frobenius_endomorphism()
-            sage: ph = M.pseudohom([[1, Fq.gen(), 3], [0, 1, 1], [2, 1, 1]], frob, side="right")
-            sage: e = M((3*Fq.gen()^2 + 5*Fq.gen() + 2, 6*Fq.gen()^2 + 2*Fq.gen() + 2, Fq.gen() + 4))
-            sage: ph(e)
-            (z3^2 + 6*z3 + 2, z3^2 + 2*z3 + 1, 2*z3^2 + 4*z3)
+            sage: F.<z> = GF(5^3)
+            sage: Frob = F.frobenius_endomorphism()
+            sage: M = F^2
+            sage: H = M.PseudoHom(Frob)
+            sage: H
+            Set of Pseudoendomorphisms (twisted by z |--> z^5) of Vector space of dimension 2 over Finite Field in z of size 5^3
+
+        The attribute ``f`` can be a matrix::
+
+            sage: mat = matrix(F, 2, [1, z, z^2, z^3])
+            sage: f = H(mat)
+            sage: f
+            Free module pseudomorphism (twisted by z |--> z^5) defined by the matrix
+            [      1       z]
+            [    z^2 2*z + 2]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 5^3
+
+            sage: type(f)
+            <class 'sage.modules.free_module_pseudohomspace.FreeModulePseudoHomspace_with_category.element_class'>
+
+        or a pseudomorphism with the same parent::
+
+            sage: H(f)
+            Free module pseudomorphism (twisted by z |--> z^5) defined by the matrix
+            [      1       z]
+            [    z^2 2*z + 2]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 5^3
+
+        When the twisting morphism and the twisting derivation are both trivial,
+        pseudomorphisms are just linear applications and coercion between those
+        works::
+
+            sage: id = End(F).identity()
+            sage: g = M.hom(mat)
+            sage: M.PseudoHom(id)(g)
+            Free module pseudomorphism (untwisted) defined by the matrix
+            [      1       z]
+            [    z^2 2*z + 2]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 5^3
+
+        An example with ``side=right``:
+
+            sage: M.pseudohom(mat, Frob, side="right")
+            Free module pseudomorphism (twisted by z |--> z^5) defined as left-multiplication by the matrix
+            [      1       z]
+            [    z^2 2*z + 2]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 5^3
+
+        ::
+
+            sage: M.pseudohom(mat, Frob, side="middle")
+            Traceback (most recent call last):
+            ...
+            ValueError: the side must be either 'left' or 'right'
+
         """
-        if self.domain().is_ambient():
+        Morphism.__init__(self, parent)
+        dom = parent.domain()
+        codom = parent.codomain()
+        if side != "left" and side != "right":
+            raise ValueError("the side must be either 'left' or 'right'")
+        matrix_space = parent.matrix_space()
+        if ((isinstance(f, FreeModulePseudoMorphism) and f.parent() is parent)
+         or (isinstance(f, FreeModuleMorphism)
+          and f.domain() is dom and f.codomain() is codom
+          and parent._morphism is None and parent._derivation is None)):
+            if f.side() == 'right':
+                self._matrix = f.matrix().transpose()
+            else:
+                self._matrix = f.matrix()
+        else:
+            if side == "right":
+                self._matrix = matrix_space.transposed(f).transpose()
+            else:
+                self._matrix = matrix_space(f)
+        self._morphism = parent._morphism
+        self._derivation = parent._derivation
+        self._side = side
+
+    def _call_(self, x):
+        r"""
+        Return the result of applying this pseudomorphism to ``x``.
+
+        TESTS::
+
+            sage: Fq.<z> = GF(7^3)
+            sage: M = Fq^3
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: f = M.pseudohom([[1, z, 3], [0, 1, 1], [2, 1, 1]], Frob)
+            sage: e = M((3*z^2 + 5*z + 2, 6*z^2 + 2*z + 2, z + 4))
+            sage: f(e)
+            (3*z^2 + 4*z + 4, 6*z^2 + 5*z + 6, 6*z^2 + 5*z + 3)
+
+        ::
+
+            sage: g = M.pseudohom([[1, z, 3], [0, 1, 1], [2, 1, 1]], Frob, side="right")
+            sage: g(e)
+            (z^2 + 6*z + 2, z^2 + 2*z + 1, 2*z^2 + 4*z)
+
+        """
+        D = self.domain()
+        C = self.codomain()
+        if D.is_ambient():
             x = x.element()
         else:
-            x = self.domain().coordinate_vector(x)
-        C = self.codomain()
-        if self.twist_morphism is None:
+            x = D.coordinate_vector(x)
+        if self._morphism is None:
             x_twist = x
         else:
-            x_twist = self.domain()(list(map(self.twist_morphism, x)))
-        if self.side == "left":
-            v = x_twist * self._base_matrix
-        else:
-            v = self._base_matrix * x_twist
-        if self.derivation is not None:
-            v += self.domain()(list(map(self.derivation, x)))
+            x_twist = D(list(map(self._morphism, x)))
+        v = x_twist * self._matrix
+        if self._derivation is not None:
+            v += D(list(map(self._derivation, x)))
         if not C.is_ambient():
             v = C.linear_combination_of_basis(v)
         return C._element_constructor_(v)
 
-    def __repr__(self):
+    def _repr_(self):
         r"""
         Return the string representation of a pseudomorphism.
 
         TESTS::
 
-            sage: Fq = GF(343); M = Fq^3; frob = Fq.frobenius_endomorphism()
-            sage: ph = M.pseudohom([[1,1,1],[2,2,2],[3,3,3]], frob); ph
-            Free module pseudomorphism defined by the matrix
+            sage: Fq.<z> = GF(7^3)
+            sage: M = Fq^3
+            sage: Frob = Fq.frobenius_endomorphism()
+
+            sage: f = M.pseudohom([[1,1,1], [2,2,2], [3,3,3]], Frob)
+            sage: f  # indirect doctest
+            Free module pseudomorphism (twisted by z |--> z^7) defined by the matrix
             [1 1 1]
             [2 2 2]
             [3 3 3]
-            twisted by the morphism Frobenius endomorphism z3 |--> z3^7 on Finite Field in z3 of size 7^3
-            Domain: Vector space of dimension 3 over Finite Field in z3 of size 7^3
-            Codomain: Vector space of dimension 3 over Finite Field in z3 of size 7^3
+            Domain: Vector space of dimension 3 over Finite Field in z of size 7^3
+            Codomain: Vector space of dimension 3 over Finite Field in z of size 7^3
+
+            sage: g = M.pseudohom([[1,1,1], [2,2,2], [3,3,3]], Frob, side="right")
+            sage: g  # indirect doctest
+            Free module pseudomorphism (twisted by z |--> z^7) defined as left-multiplication by the matrix
+            [1 1 1]
+            [2 2 2]
+            [3 3 3]
+            Domain: Vector space of dimension 3 over Finite Field in z of size 7^3
+            Codomain: Vector space of dimension 3 over Finite Field in z of size 7^3
         """
-        r = "Free module pseudomorphism defined {}by the "\
-        "matrix\n{!r}{}{}\nDomain: {}\nCodomain: {}"
-        act = ""
-        if self.side == "right":
-            act = "as left-multiplication "
-        morph = ""
-        if self.twist_morphism is not None:
-            morph = "\ntwisted by the morphism {}"
-            morph = morph.format(self.twist_morphism.__repr__())
-        deriv = ""
-        if self.derivation is not None:
-            deriv = "\ntwisted by the derivation {}"
-            deriv = deriv.format(self.derivation.__repr__())
-        return r.format(act, self.matrix(), morph, deriv,
-                        self.domain(), self.codomain())
+        twist = self.parent()._repr_twist()
+        s = "Free module pseudomorphism (%s) defined " % twist
+        if self._side == "right":
+            s += "as left-multiplication "
+        s += "by the matrix\n%s\n" % self.matrix()
+        s += "Domain: %s\n" % self.domain()
+        s += "Codomain: %s" % self.codomain()
+        return s
 
     def matrix(self):
         r"""
-        Return the underlying matrix of a pseudomorphism.
+        Return the underlying matrix of this pseudomorphism.
 
-        If a pseudomorphism `f` on free module `M` has matrix m acting on
-        the left on elements `v \in M`, with twisting morphism `\theta`.
-        Then we have
-
-        `f(v) = m*\theta(v)`
-
-        where `\theta` acts of the coefficients of `v` in terms of the basis
-        for `m`.
+        It is defined as the matrix `M` whose lines (resp. columns if
+        ``side`` is ``right``) are the coordinates of the images of
+        the distinguished basis of the domain.
 
         EXAMPLES::
 
-            sage: Fq = GF(343); M = Fq^3; frob = Fq.frobenius_endomorphism()
-            sage: ph = M.pseudohom([[1, 2, 3], [0, 1, 1], [2, 1, 1]], frob, side="right")
-            sage: e = M((3*Fq.gen()^2 + 5*Fq.gen() + 2, 6*Fq.gen()^2 + 2*Fq.gen() + 2, Fq.gen() + 4))
-            sage: ph.matrix()
-            [1 2 3]
-            [0 1 1]
-            [2 1 1]
-            sage: ph(e) == ph.matrix()*vector([frob(c) for c in e])
+            sage: Fq.<z> = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: M = Fq^3
+            sage: f = M.pseudohom([[1, z, 3], [0, 1, z^2], [z+1, 1, 1]], Frob)
+            sage: f.matrix()
+            [    1     z     3]
+            [    0     1   z^2]
+            [z + 1     1     1]
+
+            sage: e1, e2, e3 = M.basis()
+            sage: f(e1)
+            (1, z, 3)
+            sage: f(e2)
+            (0, 1, z^2)
+            sage: f(e3)
+            (z + 1, 1, 1)
+
+        TESTS::
+
+            sage: v = M.random_element()
+            sage: f(v) == vector([Frob(c) for c in v]) * f.matrix()
             True
+
         """
-        return self._base_matrix
+        if self._side == "left":
+            return self._matrix
+        else:
+            return self._matrix.transpose()
 
     def twisting_derivation(self):
         r"""
-        Return the twisting derivation of the pseudomorphism.
+        Return the twisting derivation of the pseudomorphism
+        (or ``None`` if the twisting derivation is zero).
 
         EXAMPLES::
 
-            sage: P.<x> = ZZ[]; deriv = P.derivation(); M = P^2
-            sage: f = M.pseudohom([[1, 2*x], [x, 1]], deriv, side="right")
+            sage: P.<x> = ZZ[]
+            sage: d = P.derivation()
+            sage: M = P^2
+            sage: f = M.pseudohom([[1, 2*x], [x, 1]], d)
             sage: f.twisting_derivation()
             d/dx
+
+        ::
+
+            sage: Fq.<z> = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: f = V.pseudohom([[1, z], [0, z^2]], Frob)
+            sage: f.twisting_derivation()
+
         """
-        return self.derivation
+        return self._derivation
 
     def twisting_morphism(self):
         r"""
-        Return the twisting homomorphism of the pseudomorphism.
+        Return the twisting morphism of the pseudomorphism
+        (or ``None`` if the twisting morphism is the identity).
 
         EXAMPLES::
 
-            sage: Fq = GF(343); M = Fq^3; frob = Fq.frobenius_endomorphism()
-            sage: ph = M.pseudohom([[1, 2, 3], [0, 1, 1], [2, 1, 1]], frob, side="right")
-            sage: ph.twisting_morphism()
-            Frobenius endomorphism z3 |--> z3^7 on Finite Field in z3 of size 7^3
+            sage: Fq.<z> = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: f = V.pseudohom([[1, z], [0, z^2]], Frob)
+            sage: f.twisting_morphism()
+            Frobenius endomorphism z |--> z^7 on Finite Field in z of size 7^3
+
+        ::
+
+            sage: P.<x> = ZZ[]
+            sage: d = P.derivation()
+            sage: M = P^2
+            sage: f = M.pseudohom([[1, 2*x], [x, 1]], d)
+            sage: f.twisting_morphism()
+
         """
-        return self.twist_morphism
+        return self._morphism
+
+    def side(self):
+        """
+        Return the side of vectors acted on, relative to the matrix.
+
+        EXAMPLES::
+
+            sage: Fq.<z> = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+
+            sage: m = matrix(2, [1, z, z^2, z^3])
+            sage: h1 = V.pseudohom(m, Frob)
+            sage: h1.side()
+            'left'
+            sage: h1([1, 0])
+            (1, z)
+
+            sage: h2 = V.pseudohom(m, Frob, side="right")
+            sage: h2.side()
+            'right'
+            sage: h2([1, 0])
+            (1, z^2)
+        """
+
+        return self._side
+
+    def side_switch(self):
+        """
+        Return the same morphism, acting on vectors on the opposite side.
+
+        EXAMPLES::
+
+            sage: Fq.<z> = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+
+            sage: m = matrix(2, [1, z, z^2, z^3])
+            sage: h1 = V.pseudohom(m, Frob)
+            sage: h1
+            Free module pseudomorphism (twisted by z |--> z^7) defined by the matrix
+            [      1       z]
+            [    z^2 z^2 + 3]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 7^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 7^3
+
+            sage: h2 = h1.side_switch()
+            sage: h2
+            Free module pseudomorphism (twisted by z |--> z^7) defined as left-multiplication by the matrix
+            [      1     z^2]
+            [      z z^2 + 3]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 7^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 7^3
+
+        We check that ``h1`` and ``h2`` are the same::
+
+            sage: v = V.random_element()
+            sage: h1(v) == h2(v)
+            True
+
+        """
+        if self._side == "left":
+            side = "right"
+            mat = self._matrix.transpose()
+        else:
+            side = "left"
+            mat = self._matrix
+        return self.parent()(mat, side)
+
+
+    def __eq__(self, other):
+        r"""
+        Compare this morphism with ``other``.
+
+        TESTS::
+
+            sage: Fq.<z> = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: m = random_matrix(Fq, 2)
+
+            sage: f = V.pseudohom(m, Frob)
+            sage: g = V.pseudohom(m.transpose(), Frob, side="right")
+            sage: f == g
+            True
+
+            sage: g = V.pseudohom(m.transpose(), Frob)
+            sage: f == g
+            False
+
+            sage: g = V.pseudohom(m, Frob^2)
+            sage: f == g
+            False
+
+            sage: g = V.pseudohom(m, Frob^3)
+            sage: h = V.hom(m)
+            sage: g == h
+            True
+
+        """
+        if isinstance(other, FreeModuleMorphism):
+            try:
+                other = self.parent()(other)
+            except ValueError:
+                return False
+        if isinstance(other, FreeModulePseudoMorphism):
+            return self.parent() is other.parent() and self._matrix == other._matrix
+

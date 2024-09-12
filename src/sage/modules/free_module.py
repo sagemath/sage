@@ -3112,40 +3112,122 @@ class FreeModule_generic(Module_free_ambient):
             codomain = R**n
         return super().hom(im_gens, codomain, **kwds)
 
-    def PseudoHom(self, twist=None, codomain=None):
+    def PseudoHom(self, twist, codomain=None):
         r"""
-        Create the Pseudo Hom space corresponding to given twist data.
+        Return the Pseudo Hom space corresponding to given data.
+
+        INPUT:
+
+        - ``twist`` -- the twisting morphism or the twisting derivation
+
+        - ``codomain`` (default: ``None``) -- the codomain of the pseudo
+          morphisms; if ``None``, the codomain is the same than the domain
 
         EXAMPLES::
 
-            sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism()
-            sage: PHS = M.PseudoHom(twist); PHS
-            Set of Pseudomorphisms from Vector space of dimension 2 over Finite Field in z2 of size 5^2 to Vector space of dimension 2 over Finite Field in z2 of size 5^2
-            Twisted by the morphism Frobenius endomorphism z2 |--> z2^5 on Finite Field in z2 of size 5^2
+            sage: F = GF(25)
+            sage: Frob = F.frobenius_endomorphism()
+            sage: M = F^2
+            sage: M.PseudoHom(Frob)
+            Set of Pseudoendomorphisms (twisted by z2 |--> z2^5) of Vector space of dimension 2 over Finite Field in z2 of size 5^2
 
+        .. SEEALSO::
+
+            :meth:`pseudohom`
         """
         from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
-        return FreeModulePseudoHomspace(self, codomain=codomain, twist=twist)
+        if codomain is None:
+            codomain = self
+        return FreeModulePseudoHomspace(self, codomain, twist)
 
-    def pseudohom(self, morphism, twist=None, codomain=None, **kwds):
+    def pseudohom(self, f, twist, codomain=None, side="left"):
         r"""
-        Create a pseudomorphism defined by a given morphism and twist.
-        Let A be a ring and M a free module over A. Let \theta: A \to A
+        Return the pseudohomomorphism corresponding to the given data.
+
+        We recall that, given two `R`-modules `M` and `M'` together with
+        a ring homomorphism `\theta: R \to R` and a `\theta`-derivation,
+        `\delta: R \to R` (that is, a map such that:
+        `\delta(xy) = \theta(x)\delta(y) + \delta(x)y`), a
+        pseudomorphism `f : M \to M'` is a additive map such that
+
+        .. MATH:
+
+            f(\lambda x) = \theta(\lambda) f(x) + \delta(\lambda) x
+
+        When `\delta` is nonzero, this requires that `M` coerces into `M'`.
+
+        INPUT:
+
+        - ``f`` -- a matrix (or any other data) defining the
+          pseudomorphism
+
+        - ``twist`` -- the twisting morphism or the twisting derivation
+
+        - ``codomain`` (default: ``None``) -- the codomain of the pseudo
+          morphisms; if ``None``, the codomain is the same than the domain
+
+        - ``side`` (default: ``left``) -- side of the vectors acted on by
+          the matrix
 
         EXAMPLES::
 
-            sage: F = GF(25); M = F^2; twist = F.frobenius_endomorphism()
-            sage: ph = M.pseudohom([[1, 2], [0, 1]], twist, side="right"); ph
-            Free module pseudomorphism defined as left-multiplication by the matrix
-            [1 2]
-            [0 1]
-            twisted by the morphism Frobenius endomorphism z2 |--> z2^5 on Finite Field in z2 of size 5^2
-            Domain: Vector space of dimension 2 over Finite Field in z2 of size 5^2
-            Codomain: Vector space of dimension 2 over Finite Field in z2 of size 5^2
+            sage: K.<z> = GF(5^5)
+            sage: Frob = K.frobenius_endomorphism()
+            sage: V = K^2; W = K^3
+            sage: f = V.pseudohom([[1, z, z^2], [1, z^2, z^4]], Frob, codomain=W)
+            sage: f
+            Free module pseudomorphism (twisted by z |--> z^5) defined by the matrix
+            [  1   z z^2]
+            [  1 z^2 z^4]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 5^5
+            Codomain: Vector space of dimension 3 over Finite Field in z of size 5^5
+
+        We check that `f` is indeed semi-linear::
+
+            sage: v = V([z+1, z+2])
+            sage: f(z*v)
+            (2*z^2 + z + 4, z^4 + 2*z^3 + 3*z^2 + z, 4*z^4 + 2*z^2 + 3*z + 2)
+            sage: z^5 * f(v)
+            (2*z^2 + z + 4, z^4 + 2*z^3 + 3*z^2 + z, 4*z^4 + 2*z^2 + 3*z + 2)
+
+        An example with a derivation::
+
+            sage: R.<t> = ZZ[]
+            sage: d = R.derivation()
+            sage: M = R^2
+            sage: Nabla = M.pseudohom([[1, t], [t^2, t^3]], d, side='right')
+            sage: Nabla
+            Free module pseudomorphism (twisted by d/dt) defined as left-multiplication by the matrix
+            [  1   t]
+            [t^2 t^3]
+            Domain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in t over Integer Ring
+            Codomain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in t over Integer Ring
+
+            sage: v = M([1,1])
+            sage: Nabla(v)
+            (t + 1, t^3 + t^2)
+            sage: Nabla(t*v)
+            (t^2 + t + 1, t^4 + t^3 + 1)
+            sage: Nabla(t*v) == t * Nabla(v) + v
+            True
+
+        If the twisting derivation is not zero, the domain must
+        coerce into the codomain
+
+            sage: N = R^3
+            sage: M.pseudohom([[1, t, t^2], [1, t^2, t^4]], d, codomain=N)
+            Traceback (most recent call last):
+            ...
+            ValueError: the domain does not coerce into the codomain
+
+        .. SEEALSO::
+
+            :meth:`PseudoHom`
         """
         from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
-        side = kwds.get("side", "left")
-        return FreeModulePseudoMorphism(self.PseudoHom(twist=twist, codomain=codomain), morphism, side)
+        parent = self.PseudoHom(twist, codomain)
+        return FreeModulePseudoMorphism(parent, f, side)
+
 
     def inner_product_matrix(self):
         """
