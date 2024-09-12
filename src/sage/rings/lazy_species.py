@@ -208,11 +208,11 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                                 P._laurent_poly_ring._indices._indices.variable_names())
         if P._arity == 1:
             def coefficient(n):
-                return sum(c / M._group.cardinality()
+                return sum(c / M.group_and_partition()[0].cardinality()
                            for M, c in self[n].monomial_coefficients().items())
         else:
             def coefficient(n):
-                return sum(c / M._group.cardinality()
+                return sum(c / M.group_and_partition()[0].cardinality()
                            * P.base_ring().prod(v ** d for v, d in zip(L.gens(), M.grade()))
                            for M, c in self[n].monomial_coefficients().items())
         return L(coefficient)
@@ -240,7 +240,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         if P._arity == 1:
             L = LazySymmetricFunctions(p)
             def coefficient(n):
-                return sum(c * M._group.cycle_index()
+                return sum(c * M.group_and_partition()[0].cycle_index()
                            for M, c in self[n].monomial_coefficients().items())
         else:
             raise NotImplementedError
@@ -353,7 +353,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             if c < 0:
                 raise NotImplementedError("only implemented for proper non-virtual species")
             types = [tuple(S(rep)._act_on_list_on_position(l))[::-1]
-                     for rep in libgap.RightTransversal(S, M._group)]
+                     for rep in libgap.RightTransversal(S, M.group_and_partition()[0])]
             if c == 1:
                 for s in types:
                     yield s, M
@@ -537,14 +537,14 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                 return R.zero()
             args_flat = [[(M, c) for i in range(n+1) for M, c in g[i]]
                          for g in args]
-            weights = [[M._tc for i in range(n+1) for M, _ in g[i]]
+            weights = [[sum(M.grade()) for i in range(n+1) for M, _ in g[i]]
                        for g in args]
             result = R.zero()
             for i in range(n // gv + 1):
                 # compute homogeneous components
                 lF = defaultdict(R)
                 for M, c in self[i]:
-                    lF[M._mc] += R._from_dict({M: c})
+                    lF[M.grade()] += R._from_dict({M: c})
                 for mc, F in lF.items():
                     for degrees in weighted_vector_compositions(mc, n, weights):
                         multiplicities = [c for alpha, g_flat in zip(degrees, args_flat)
