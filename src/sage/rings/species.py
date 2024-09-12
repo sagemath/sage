@@ -21,24 +21,6 @@ from sage.structure.element import Element, parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
-GAP_FAIL = libgap.eval('fail')
-
-
-def _is_conjugate(G, H1, H2):
-    r"""
-    Test if ``H1`` and ``H2`` are conjugate subgroups in ``G``.
-
-    EXAMPLES::
-
-        sage: G = SymmetricGroup(3)
-        sage: H1 = PermutationGroup([(1,2)])
-        sage: H2 = PermutationGroup([(2,3)])
-        sage: from sage.rings.species import _is_conjugate
-        sage: _is_conjugate(G, H1, H2)
-        True
-    """
-    return GAP_FAIL != libgap.RepresentativeAction(G, H1, H2)
-
 
 class ElementCache():
     def __init__(self):
@@ -193,10 +175,9 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
             True
         """
         return (isinstance(other, ConjugacyClassOfDirectlyIndecomposableSubgroups)
-                and self._C.degree() == other._C.degree()
+                and (d := self._C.degree()) == other._C.degree()
                 and (self._C == other._C
-                     or _is_conjugate(SymmetricGroup(self._C.degree()),
-                                      self._C, other._C)))
+                     or SymmetricGroup(d).are_conjugate(self._C, other._C)))
 
 
 class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Parent, ElementCache):
@@ -501,7 +482,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
         INPUT:
 
-        - ``names`` -- an iterable of ``k`` strings
+        - ``names`` -- an iterable of ``k`` strings for the sorts of the species
 
         TESTS::
 
@@ -514,8 +495,19 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         Parent.__init__(self, names=names, category=category)
         ElementCache.__init__(self)
         self._arity = len(names)
-        self._grading_set = IntegerVectors(length=self._arity)
         self._renamed = set()  # the degrees that have been renamed already
+
+    def grading_set(self):
+        r"""
+        Return the set of non-negative integer vectors, whose length is
+        the arity of ``self``.
+
+        EXAMPLES::
+
+            sage: AtomicSpecies(["X"]).grading_set()
+            Integer vectors of length 1
+        """
+        return IntegerVectors(length=self._arity)
 
     @cached_method
     def an_element(self):
@@ -694,29 +686,89 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
 
 class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
+    """
+    The set of (multivariate) molecular species.
+    """
     @staticmethod
-    def __classcall__(cls, indices, prefix=None, **kwds):
-        return super(IndexedMonoid, cls).__classcall__(cls, indices, prefix, **kwds)
+    def __classcall__(cls, *args, **kwds):
+        """
+        Normalize the arguments.
+        """
+        if isinstance(args[0], AtomicSpecies):
+            indices = args[0]
+        else:
+            assert "names" not in kwds or kwds["names"] is None
+            indices = AtomicSpecies(args[0])
+        category = Monoids().Commutative() & SetsWithGrading().Infinite()
+        return super().__classcall__(cls, indices,
+                                     prefix='', bracket=False,
+                                     category=category)
 
-    def __init__(self, indices, prefix=None, **kwds):
+    def __init__(self, *args, **kwds):
         r"""
-        Infinite set of multivariate molecular species.
+        Initialize the class of (multivariate) molecular species.
 
         INPUT:
 
-        - ``indices`` -- the underlying set of atomic species indexing the monoid
+        - ``names`` -- an iterable of ``k`` strings for the sorts of
+          the species
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: M = MolecularSpecies("X,Y")
+            sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
+            sage: M(G, {1: [5,6], 2: [1,2,3,4]})
+            {((1,2)(3,4),): ({}, {1, 2, 3, 4})}*E_2(X)
 
         TESTS::
 
-            sage: P1 = PolynomialSpecies(ZZ, "X")
-            sage: P2 = PolynomialSpecies(ZZ, ["X", "Y"])
-            sage: TestSuite(P1._indices).run(skip="_test_graded_components")
-            sage: TestSuite(P2._indices).run(skip="_test_graded_components")
+            sage: M1 = MolecularSpecies("X")
+            sage: TestSuite(M1).run(skip="_test_graded_components")
+            sage: M2 = MolecularSpecies(["X", "Y"])
+            sage: TestSuite(M2).run(skip="_test_graded_components")
         """
-        category = Monoids() & SetsWithGrading().Infinite()
-        IndexedFreeAbelianMonoid.__init__(self, indices, prefix=prefix, category=category, **kwds)
+        IndexedFreeAbelianMonoid.__init__(self, *args, **kwds)
         ElementCache.__init__(self)
-        self._arity = indices._arity
+        self._arity = args[0]._arity
+
+    def grading_set(self):
+        r"""
+        Return the set of non-negative integer vectors, whose length is
+        the arity of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: MolecularSpecies(["X", "Y"]).grading_set()
+            Integer vectors of length 2
+        """
+        return IntegerVectors(length=self._arity)
+
+    def graded_component(self, grade):
+        """
+        Return the set of molecular species with given multicardinality.
+
+        The default implementation just calls the method :meth:`subset()`
+        with the first argument ``grade``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: M = MolecularSpecies(["X", "Y"])
+            sage: M.graded_component([3,2])  # random
+            {E_3(X)*Y^2, X^3*Y^2, X*E_2(X)*E_2(Y), X^3*E_2(Y),
+             {((1,2,3), (1,3)(4,5)): ({1, 2, 3}, {4, 5})},
+             X*{((1,2)(3,4),): ({1, 2}, {3, 4})}, X*E_2(X)*Y^2, E_3(X)*E_2(Y),
+             C_3(X)*Y^2, C_3(X)*E_2(Y)}
+        """
+        from sage.sets.set import Set
+        assert len(grade) == self._arity
+        n = sum(grade)
+        S = SymmetricGroup(n).young_subgroup(grade)
+        dom = S.domain()
+        dom_part = {i+1: dom[sum(grade[:i]): sum(grade[:i+1])] for i in range(len(grade))}
+        return Set([self(G, dom_part) for G in S.conjugacy_classes_subgroups()])
 
     def _project(self, G, pi, part):
         r"""
@@ -805,7 +857,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
         if len(H.orbits()) > 1:
             # Then it is not transitive
             raise ValueError("Action is not transitive")
-        stabG = PermutationGroup([g for g in S.gens() if a(g, H.orbits()[0][0]) == H.orbits()[0][0]], domain=S.domain())
+        stabG = PermutationGroup([g for g in S.gens()
+                                  if a(g, H.orbits()[0][0]) == H.orbits()[0][0]],
+                                 domain=S.domain())
         return self(stabG, pi)
 
     @cached_method
@@ -897,6 +951,43 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
             self._dompart = None
             self._mc = None
             self._tc = None
+
+        @cached_method
+        def group(self):
+            """
+            Return the (transitive) permutation group corresponding to ``self``.
+
+            EXAMPLES::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X,Y")
+                sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
+                sage: F = M(G, {1: [5,6], 2: [1,2,3,4]})
+                sage: F.group()
+                Permutation Group with generators [(1,2)(3,4), (5,6)]
+            """
+            factors = list(self)
+            if not factors:
+                return SymmetricGroup(0)
+
+            if len(factors) == 1:
+                A, n = factors[0]
+                if n == 1:
+                    return list(A._monomial)[0]._dis._C
+
+                if n % 2 == 1:
+                    f_gap = libgap.DirectProduct(list(A._monomial)[0]._dis._C,
+                                                 (A ** (n-1)).group())
+                else:
+                    f1 = (A ** (n // 2)).group()
+                    f_gap = libgap.DirectProduct(f1, f1)
+
+                f = PermutationGroup(gap_group=f_gap)
+                return f
+
+            f_gap = libgap.DirectProduct(*[(A ** n).group() for A, n in factors])
+            f = PermutationGroup(gap_group=f_gap)
+            return f
 
         def _assign_group_info(self, other):
             r"""
@@ -1088,9 +1179,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid, ElementCache):
                 sage: A = M(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
                 {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
                 sage: A.grade()
-                (4, 6)
+                [4, 6]
             """
-            return self._mc
+            return self.parent().grading_set()(self._mc)
 
         def domain(self):
             r"""
@@ -1293,11 +1384,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: TestSuite(P2).run()
         """
         # should we pass a category to basis_keys?
-        A = AtomicSpecies(names)
-        basis_keys = MolecularSpecies(A, prefix='', bracket=False)
         category = GradedAlgebrasWithBasis(base_ring).Commutative()
         CombinatorialFreeModule.__init__(self, base_ring,
-                                         basis_keys=basis_keys,
+                                         basis_keys=MolecularSpecies(names),
                                          category=category,
                                          element_class=self.Element,
                                          prefix='', bracket=False)
