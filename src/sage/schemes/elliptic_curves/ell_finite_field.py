@@ -1353,7 +1353,9 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         - ``num_checks``-- integer (default: `8`); the number of times to check
           whether ``value`` times a random point on this curve equals the
-          identity
+          identity. If ``value`` is a prime and the curve is over a field of
+          order at least `5`, it is sufficient to pass in ``num_checks=1`` -
+          see the examples below.
 
         .. NOTE::
 
@@ -1403,14 +1405,20 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.has_order(N^2 + N)
             True
 
+        Due to the nature of the algorithm (testing multiple of points) and the Hasse-Weil bound, we see that for testing prime orders, ``num_checks=1`` is sufficient::
+
+            sage: p = random_prime(1000)
+            sage: E = EllipticCurve(GF(p), j=randrange(p))
+            sage: q = random_prime(p + 20, lbound=p - 20)
+            sage: E.has_order(q, num_checks=20) == E.has_order(q, num_checks=1)
+            True
+
         AUTHORS:
 
          - Mariah Lenox (2011-02-16): Initial implementation
 
          - Gareth Ma (2024-01-21): Fix bug for small curves
         """
-        # This method does *not* use the cached value of `_order` even when
-        # available.
         q = self.base_field().order()
         a, b = Hasse_bounds(q, 1)
         if not a <= value <= b:
@@ -2980,7 +2988,7 @@ def EllipticCurve_with_prime_order(N):
          Elliptic Curve defined by y^2 = x^3 + 20*x + 20 over Finite Field of size 23,
          Elliptic Curve defined by y^2 = x^3 + 10*x + 16 over Finite Field of size 23]
         sage: import itertools
-        sage: # These are the only primes, by the Weil-Hasse bound
+        sage: # These are the only primes, by the Hasse-Weil bound
         sage: for q in prime_range(17, 35):
         ....:     K = GF(q)
         ....:     for u in itertools.product(range(q), repeat=2):
