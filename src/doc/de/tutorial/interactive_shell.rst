@@ -358,7 +358,7 @@ dem man nachgehen sollte.
     Wall time: 0.11
     sage: gap(0)
     0
-    sage: time g = gap.eval('1938^99484;;')
+    sage: time g = libgap.eval('1938^99484;')
     CPU times: user 0.00 s, sys: 0.00 s, total: 0.00 s
     Wall time: 1.02
 

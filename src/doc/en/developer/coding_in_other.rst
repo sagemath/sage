@@ -180,9 +180,8 @@ is available in GAP using the commands:
 
 In Sage, one can access these commands by typing::
 
-    sage: L = gap.SimpleLieAlgebra('"G"', 2, 'Rationals'); L
-    Algebra( Rationals, [ v.1, v.2, v.3, v.4, v.5, v.6, v.7, v.8, v.9, v.10,
-      v.11, v.12, v.13, v.14 ] )
+    sage: L = libgap.SimpleLieAlgebra("G", 2, QQ); L
+    <Lie algebra of dimension 14 over Rationals>
     sage: R = L.RootSystem(); R
     <root system of rank 2>
     sage: R.CartanMatrix()
@@ -227,7 +226,7 @@ object.
             [ 2 -1]
             [-3  2]
         """
-        L = gap.SimpleLieAlgebra('"%s"' % type, rank, 'Rationals')
+        L = libgap.SimpleLieAlgebra('"%s"' % type, rank, 'Rationals')
         R = L.RootSystem()
         sM = R.CartanMatrix()
         ans = eval(str(sM))
@@ -242,7 +241,7 @@ with this:
 
 .. CODE-BLOCK:: python
 
-        L = gap.new('SimpleLieAlgebra("%s", %s, Rationals);'%(type, rank))
+        L = libgap.new('SimpleLieAlgebra("%s", %s, Rationals);' % (type, rank))
 
 Defining "easy" and "hard" is subjective, but here is one definition.
 Wrapping a GAP function is "easy" if there is already a corresponding
