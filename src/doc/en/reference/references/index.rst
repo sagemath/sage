@@ -1326,6 +1326,9 @@ REFERENCES:
             no. 1 (2003): 97-111,
             http://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf.
 
+.. [BS2007] \R. Bröker and P. Stevenhagen. *Constructing elliptic curves of
+            prime order*. [math.NT] (2007), :arXiv:`0712.2022`.
+
 .. [BS2010] \P. Baseilhac and K. Shigechi. *A new current algebra and the
             reflection equation*. Lett. Math. Phys. **92** (2010),
             pp. 47-65. :arxiv:`0906.1482`.
