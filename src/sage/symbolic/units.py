@@ -1377,7 +1377,7 @@ def base_units(unit):
         sage: sage.symbolic.units.base_units(units.volume.liter)
         1/1000*meter^3
 
-    Returns variable if 'unit' is not a unit::
+    Returns variable if ``unit`` is not a unit::
 
         sage: sage.symbolic.units.base_units(var('x'))
         x
@@ -1385,21 +1385,21 @@ def base_units(unit):
     from sage.misc.sage_eval import sage_eval
     if str(unit) not in unit_to_type:
         return unit
-    elif unit_to_type[str(unit)] == 'si_prefixes' or unit_to_type[str(unit)] == 'unit_multipliers':
+    if unit_to_type[str(unit)] in ['si_prefixes', 'unit_multipliers']:
         number = unitdict[unit_to_type[str(unit)]][str(unit)]
         return (number if number in QQ else sage_eval(number))
+
+    v = SR.var(unit_to_type[str(unit)])
+    if str(v) in unit_derivations:
+        base = unit_derivations_expr(v)
+        for i in base.variables():
+            base = base.subs({i: SR.var(value_to_unit[str(i)][1])})
+        number = unitdict[str(v)][str(unit)]
+        return base * (number if number in QQ else sage_eval(number))
     else:
-        v = SR.var(unit_to_type[str(unit)])
-        if str(v) in unit_derivations:
-            base = unit_derivations_expr(v)
-            for i in base.variables():
-                base = base.subs({i: SR.var(value_to_unit[str(i)][1])})
-            number = unitdict[str(v)][str(unit)]
-            return base * (number if number in QQ else sage_eval(number))
-        else:
-            base = SR.var(value_to_unit[str(v)][1])
-            number = unitdict[str(v)][str(unit)]
-            return base * (number if number in QQ else sage_eval(number))
+        base = SR.var(value_to_unit[str(v)][1])
+        number = unitdict[str(v)][str(unit)]
+        return base * (number if number in QQ else sage_eval(number))
 
 
 def convert_temperature(expr, target):
@@ -1421,7 +1421,7 @@ def convert_temperature(expr, target):
         sage: t.convert(units.temperature.kelvin)
         273.150000000000*kelvin
 
-    If target is None then it defaults to kelvin::
+    If target is ``None`` then it defaults to kelvin::
 
         sage: t.convert()
         273.150000000000*kelvin
