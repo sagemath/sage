@@ -10,8 +10,9 @@ from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.matroids.utilities import cmp_elements_key
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+from sage.sets.set import Set
 from sage.misc.abstract_method import abstract_method
-from sage.combinat.subset import Subsets
+from itertools import combinations
 from functools import reduce
 
 class ChowRingIdeal(MPolynomialIdeal):
@@ -229,39 +230,50 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         flats = list(self._flats_generator)
         gb = list()
         R = self.ring() 
-        if frozenset() not in flats:
-            flats.append(frozenset())
+        if frozenset() in flats:
+            flats.remove(frozenset())
               
         ranks = {F:self._matroid.rank(F) for F in flats}
+
         flats_gen = self._flats_generator
-        flats_gen[frozenset()] = R.zero()
-        subsets = Subsets(flats)
+        subsets = []
+        # Generate all subsets of the frozenset using combinations
+        for r in range(len(flats) + 1):  # r is the size of the subset
+            subsets.extend(list(subset) for subset in combinations(flats, r))
+
         for subset in subsets:
             flag = True
-            for i in range (len(subset)):
-                if i != 0 & len(subset[i]) == len(subset[i-1]):
+            sorted_list = sorted(subset, key=len)
+            for i in range (len(sorted_list)):
+                if (i != 0) & (len(sorted_list[i]) == len(sorted_list[i-1])):
                     flag = False
                     break
-            
 
-            if not flag:
+            if flag is False:
                 term = R.one()
                 for x in subset:
                     term *= flats_gen[x]
                 gb.append(term)
             
-            elif list(subset) != []:
-                for F in flats:
-                    if F > reduce(lambda a, b: a.union(b), list(subset)): 
-                        term = R.one()
-                        for x in subset:
-                            term *= flats_gen[x]
-                        term1 = R.zero()
-                        for G in flats:
-                            if G >= F:
-                                term1 += flats_gen[G]
-                        if term1 != R.zero():
-                            gb.append(term*(term1**(ranks[F] - ranks[list(subset)[len(subset) - 1]])))
+            elif sorted_list != []:
+                for j in range(len(subset)):
+                    for k in range(j+1, len(subset)):
+                        if (sorted_list[j] != sorted_list[k]) & (sorted_list[j].issubset(sorted_list[k])):
+                            flag = False
+                            break
+
+                if flag is True:
+                    for F in flats:
+                        if F > reduce(lambda a, b: a.union(b), sorted_list): 
+                            term = R.one()
+                            for x in subset:
+                                term *= flats_gen[x]
+                            term1 = R.zero()
+                            for G in flats:
+                                if G >= F:
+                                    term1 += flats_gen[G]
+                            if term1 != R.zero():
+                                gb.append(term*(term1**(ranks[F] - ranks[sorted_list[len(subset) - 1]])))
             
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
