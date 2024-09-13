@@ -558,14 +558,14 @@ class DiGraphGenerators:
           ``None`` (default), then the min/max out-degree is not constrained
 
         - ``debug`` -- boolean (default: ``False``); if ``True`` the first line
-          of genbg's output to standard error is captured and the first call to
-          the generator's ``next()`` function will return this line as a string.
-          A line leading with ">A" indicates a successful initiation of the
-          program with some information on the arguments, while a line beginning
-          with ">E" indicates an error with the input.
+          of gentourng's output to standard error is captured and the first call
+          to the generator's ``next()`` function will return this line as a
+          string.  A line leading with ">A" indicates a successful initiation of
+          the program with some information on the arguments, while a line
+          beginning with ">E" indicates an error with the input.
 
         - ``options`` -- string; anything else that should be forwarded as input
-          to Nauty's genbg. See its documentation for more information :
+          to Nauty's gentourng. See its documentation for more information :
           `<https://pallini.di.uniroma1.it>`_.
 
         EXAMPLES::
