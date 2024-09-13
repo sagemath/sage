@@ -28,7 +28,7 @@ available_integrators['maxima'] = external.maxima_integrator
 available_integrators['sympy'] = external.sympy_integrator
 available_integrators['mathematica_free'] = external.mma_free_integrator
 available_integrators['fricas'] = external.fricas_integrator
-available_integrators['giac'] = external.giac_integrator
+available_integrators['giac'] = external.libgiac_integrator
 available_integrators['libgiac'] = external.libgiac_integrator
 
 ######################################################
@@ -474,9 +474,9 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
       - ``'fricas'`` -- use FriCAS (the optional fricas spkg has to be installed)
 
-      - ``'giac'`` -- use Giac
+      - ``'giac'`` -- use libgiac
 
-      - ``'libgiac'`` -- use libgiac
+      - ``'libgiac'`` -- use libgiac (alias for ``'giac'``)
 
     To prevent automatic evaluation, use the ``hold`` argument.
 
