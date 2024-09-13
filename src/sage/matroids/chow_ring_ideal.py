@@ -255,25 +255,34 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                     term *= flats_gen[x]
                 gb.append(term)
             
-            elif sorted_list != []:
-                for j in range(len(subset)):
-                    for k in range(j+1, len(subset)):
-                        if (sorted_list[j] != sorted_list[k]) & (sorted_list[j].issubset(sorted_list[k])):
-                            flag = False
-                            break
-
-                if flag is True:
+            else:
+                if subset == []:
                     for F in flats:
-                        if F > reduce(lambda a, b: a.union(b), sorted_list): 
-                            term = R.one()
-                            for x in subset:
-                                term *= flats_gen[x]
-                            term1 = R.zero()
-                            for G in flats:
-                                if G >= F:
-                                    term1 += flats_gen[G]
-                            if term1 != R.zero():
-                                gb.append(term*(term1**(ranks[F] - ranks[sorted_list[len(subset) - 1]])))
+                        term = R.zero()
+                        for G in flats:
+                            if G >= F:
+                                term += flats_gen[G]
+                        gb.append((term)**(ranks[F]))
+
+                else:
+                    for j in range(len(subset)):
+                        for k in range(j+1, len(subset)):
+                            if (sorted_list[j] != sorted_list[k]) & (sorted_list[j].issubset(sorted_list[k])):
+                                flag = False
+                                break
+
+                    if flag is True:
+                        for F in flats:
+                            if F > reduce(lambda a, b: a.union(b), sorted_list): 
+                                term = R.one()
+                                for x in subset:
+                                    term *= flats_gen[x]
+                                term1 = R.zero()
+                                for G in flats:
+                                    if G >= F:
+                                        term1 += flats_gen[G]
+                                if term1 != R.zero():
+                                    gb.append(term*(term1**(ranks[F] - ranks[sorted_list[len(subset) - 1]])))
             
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
