@@ -40,7 +40,7 @@ Calling the convert function with no target returns base SI units::
     sage: t.convert()
     1/100000*kilogram*meter/second^2
 
-Giving improper units to convert to raises a ValueError::
+Giving improper units to convert to raises a :exc:`ValueError`::
 
     sage: t.convert(units.charge.coulomb)
     Traceback (most recent call last):
@@ -55,7 +55,7 @@ Converting temperatures works as well::
     sage: s.convert()
     293.150000000000*kelvin
 
-Trying to multiply temperatures by another unit then converting raises a ValueError::
+Trying to multiply temperatures by another unit then converting raises a :exc:`ValueError`::
 
     sage: wrong = 50*units.temperature.celsius*units.length.foot
     sage: wrong.convert()
@@ -1215,7 +1215,7 @@ def unitdocs(unit):
         sage: sage.symbolic.units.unitdocs('amu')
         'Abbreviation for atomic mass unit.\nApproximately equal to 1.660538782*10^-27 kilograms.'
 
-    Units not in the list unit_docs will raise a ValueError::
+    Units not in the list unit_docs will raise a :exc:`ValueError`::
 
         sage: sage.symbolic.units.unitdocs('earth')
         Traceback (most recent call last):
@@ -1278,7 +1278,7 @@ def convert(expr, target):
         sage: sage.symbolic.units.convert(units.mass.kilogram, units.mass.pound)
         100000000/45359237*pound
 
-    Raises :exc:`ValueError` if expr and target are not convertible::
+    This raises :exc:`ValueError` if expr and target are not convertible::
 
         sage: sage.symbolic.units.convert(units.mass.kilogram, units.length.foot)
         Traceback (most recent call last):
@@ -1426,7 +1426,7 @@ def convert_temperature(expr, target):
         sage: t.convert()
         273.150000000000*kelvin
 
-    Raises :exc:`ValueError` when either input is not a unit of temperature::
+    This raises :exc:`ValueError` when either input is not a unit of temperature::
 
         sage: t.convert(units.length.foot)
         Traceback (most recent call last):
