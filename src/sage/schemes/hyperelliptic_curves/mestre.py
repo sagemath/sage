@@ -32,32 +32,30 @@ from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
 def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
                                        algorithm='default'):
     r"""
-    Returns a hyperelliptic curve with the given Igusa-Clebsch invariants up to
+    Return a hyperelliptic curve with the given Igusa-Clebsch invariants up to
     scaling.
 
     The output is a curve over the field in which the Igusa-Clebsch invariants
     are given. The output curve is unique up to isomorphism over the algebraic
     closure. If no such curve exists over the given field, then raise a
-    ValueError.
+    :exc:`ValueError`.
 
     INPUT:
 
     - ``i`` -- list or tuple of length 4 containing the four Igusa-Clebsch
-      invariants: I2,I4,I6,I10.
-    - ``reduced`` -- Boolean (default = True) If True, tries to reduce the
-      polynomial defining the hyperelliptic curve using the function
+      invariants: I2,I4,I6,I10
+    - ``reduced`` -- boolean (default: ``True``); if ``True``, tries to reduce
+      the polynomial defining the hyperelliptic curve using the function
       :func:`reduce_polynomial` (see the :func:`reduce_polynomial`
       documentation for more details).
-    - ``precision`` -- integer (default = None) Which precision for real and
+    - ``precision`` -- integer (default: ``None``); which precision for real and
       complex numbers should the reduction use. This only affects the
-      reduction, not the correctness. If None, the algorithm uses the default
+      reduction, not the correctness. If ``None``, the algorithm uses the default
       53 bit precision.
     - ``algorithm`` -- ``'default'`` or ``'magma'``. If set to ``'magma'``, uses
-      Magma to parameterize Mestre's conic (needs Magma to be installed).
+      Magma to parameterize Mestre's conic (needs Magma to be installed)
 
-    OUTPUT:
-
-    A hyperelliptic curve object.
+    OUTPUT: a hyperelliptic curve object
 
     EXAMPLES:
 
@@ -228,13 +226,11 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     - ``i`` -- list or tuple of length 4 containing the four Igusa-Clebsch
       invariants: I2, I4, I6, I10
-    - ``xyz`` -- Boolean (default: ``False``) if ``True``, the algorithm also
+    - ``xyz`` -- boolean (default: ``False``); if ``True``, the algorithm also
       returns three invariants `x`,`y`,`z` used in Mestre's algorithm
-    - ``names`` (default: ``'u,v,w'``) -- the variable names for the conic
+    - ``names`` -- (default: ``'u,v,w'``) the variable names for the conic
 
-    OUTPUT:
-
-    A Conic object
+    OUTPUT: a Conic object
 
     EXAMPLES:
 
@@ -276,7 +272,6 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
     321 and 332 of [Mes1991]_.
 
     See the code or [LY2001]_ for the detailed formulae defining x, y, z and L.
-
     """
     from sage.structure.sequence import Sequence
     k = Sequence(i).universe()

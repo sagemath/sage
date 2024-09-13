@@ -1,7 +1,7 @@
 """
 Relative extensions of `p`-adic rings
 
-We represent general extensions of p-adic rings as a two-step extension:
+We represent general extensions of `p`-adic rings as a two-step extension:
 first an unramified extension of Qp, followed by an Eisenstein extension
 of the result.
 
@@ -28,6 +28,7 @@ from .relative_ramified_CR import RelativeRamifiedCappedRelativeElement
 from .relative_ramified_FP import RelativeRamifiedFloatingPointElement
 from .pow_computer_relative import PowComputer_relative_maker
 
+
 class pAdicRelativeBaseringInjection(Morphism):
     """
     The injection of the unramified base into the two-step extension.
@@ -35,7 +36,7 @@ class pAdicRelativeBaseringInjection(Morphism):
     INPUT:
 
     - ``R`` -- an unramified `p`-adic ring or field
-    - ``S`` -- an eisenstein extension of ``R``.
+    - ``S`` -- an eisenstein extension of ``R``
 
     EXAMPLES::
 
@@ -123,6 +124,7 @@ class pAdicRelativeBaseringInjection(Morphism):
         """
         return pAdicRelativeBaseringSection(self.codomain(), self.domain())
 
+
 class pAdicRelativeBaseringSection(Morphism):
     """
     The map from a two-step extension back to its maximal unramified subextension.
@@ -193,6 +195,7 @@ class pAdicRelativeBaseringSection(Morphism):
         """
         return self.codomain()(self._call_(x), *args, **kwds)
 
+
 class RelativeRamifiedExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModRingGeneric):
     """
     Two-step extension ring with fixed-mod precision.
@@ -229,6 +232,7 @@ class RelativeRamifiedExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFix
         self.register_coercion(pAdicCoercion_ZZ_FM(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
         self.register_conversion(pAdicConvert_QQ_FM(self))
+
 
 class RelativeRamifiedExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCappedAbsoluteRingGeneric):
     """
@@ -267,6 +271,7 @@ class RelativeRamifiedExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pA
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
         self.register_conversion(pAdicConvert_QQ_CA(self))
 
+
 class RelativeRamifiedExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCappedRelativeRingGeneric):
     """
     Two-step extension ring with capped relative precision.
@@ -303,6 +308,7 @@ class RelativeRamifiedExtensionRingCappedRelative(EisensteinExtensionGeneric, pA
         self.register_coercion(pAdicCoercion_ZZ_CR(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
         self.register_conversion(pAdicConvert_QQ_CR(self))
+
 
 class RelativeRamifiedExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCappedRelativeFieldGeneric):
     """
@@ -343,6 +349,7 @@ class RelativeRamifiedExtensionFieldCappedRelative(EisensteinExtensionGeneric, p
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring().integer_ring(), self))
         self.register_coercion(pAdicCoercion_QQ_CR(self))
 
+
 class RelativeRamifiedExtensionRingFloatingPoint(EisensteinExtensionGeneric, pAdicFloatingPointRingGeneric):
     """
     Two-step extension ring with floating point precision.
@@ -379,6 +386,7 @@ class RelativeRamifiedExtensionRingFloatingPoint(EisensteinExtensionGeneric, pAd
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
         self.register_conversion(pAdicConvert_QQ_FP(self))
+
 
 class RelativeRamifiedExtensionFieldFloatingPoint(EisensteinExtensionGeneric, pAdicFloatingPointFieldGeneric):
     """

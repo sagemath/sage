@@ -91,7 +91,6 @@ cdef class FiniteField(Field):
             True
             sage: hash(F) == object.__hash__(F)
             True
-
         """
         # This is the default hash function in Python's object.c:
         cdef long x
@@ -150,7 +149,6 @@ cdef class FiniteField(Field):
 
             sage: GF(2).is_perfect()
             True
-
         """
         return True
 
@@ -183,7 +181,7 @@ cdef class FiniteField(Field):
 
     def _latex_(self):
         r"""
-        Returns a string denoting the name of the field in LaTeX.
+        Return a string denoting the name of the field in LaTeX.
 
         The :func:`~sage.misc.latex.latex` function calls the
         ``_latex_`` attribute when available.
@@ -318,14 +316,14 @@ cdef class FiniteField(Field):
 
         EXAMPLES::
 
-            sage: k.<a> = FiniteField(9, impl="pari")
+            sage: k.<a> = FiniteField(9, impl='pari')
             sage: list(k)
             [0, 1, 2, a, a + 1, a + 2, 2*a, 2*a + 1, 2*a + 2]
 
         Partial iteration of a very large finite field::
 
             sage: p = next_prime(2^64)
-            sage: k.<a> = FiniteField(p^2, impl="pari")
+            sage: k.<a> = FiniteField(p^2, impl='pari')
             sage: it = iter(k); it
             <...generator object at ...>
             sage: [next(it) for i in range(10)]
@@ -337,11 +335,11 @@ cdef class FiniteField(Field):
 
             sage: L = []
             sage: from sage.rings.finite_rings.finite_field_base import FiniteField
-            sage: print(list(FiniteField.__iter__(GF(8, impl="givaro", names="z"))))    # needs sage.libs.linbox
+            sage: print(list(FiniteField.__iter__(GF(8, impl='givaro', names='z'))))    # needs sage.libs.linbox
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-            sage: print(list(FiniteField.__iter__(GF(8, impl="pari", names="z"))))
+            sage: print(list(FiniteField.__iter__(GF(8, impl='pari', names='z'))))
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
-            sage: print(list(FiniteField.__iter__(GF(8, impl="ntl", names="z"))))       # needs sage.libs.ntl
+            sage: print(list(FiniteField.__iter__(GF(8, impl='ntl', names='z'))))       # needs sage.libs.ntl
             [0, 1, z, z + 1, z^2, z^2 + 1, z^2 + z, z^2 + z + 1]
         """
         cdef Py_ssize_t n = self.degree()
@@ -419,7 +417,7 @@ cdef class FiniteField(Field):
 
         INPUT:
 
-        - `n` -- integer between `0` and the cardinality of this field minus `1`.
+        - ``n`` -- integer between `0` and the cardinality of this field minus `1`
 
         EXAMPLES::
 
@@ -463,7 +461,7 @@ cdef class FiniteField(Field):
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
-        Return ``True`` if the map from self to codomain sending
+        Return ``True`` if the map from ``self`` to codomain sending
         ``self.0`` to the unique element of ``im_gens`` is a valid field
         homomorphism. Otherwise, return ``False``.
 
@@ -546,7 +544,7 @@ cdef class FiniteField(Field):
 
         INPUT:
 
-        - ``f`` -- a univariate non-zero polynomial over this field
+        - ``f`` -- a univariate nonzero polynomial over this field
 
         ALGORITHM: [Coh1993]_, Algorithm 3.4.2 which is basically the algorithm
         in [Yun1976]_ with special treatment for powers divisible by `p`.
@@ -586,7 +584,6 @@ cdef class FiniteField(Field):
             sage: R.<x> = PolynomialRing(GF(65537), sparse=True)
             sage: (x^65537 + 2).squarefree_decomposition()
             (x + 2)^65537
-
         """
         from sage.structure.factorization import Factorization
         if f.degree() == 0:
@@ -647,7 +644,7 @@ cdef class FiniteField(Field):
     def gen(self):
         r"""
         Return a generator of this field (over its prime field). As this is an
-        abstract base class, this just raises a ``NotImplementedError``.
+        abstract base class, this just raises a :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -677,7 +674,7 @@ cdef class FiniteField(Field):
     def zeta(self, n=None):
         """
         Return an element of multiplicative order ``n`` in this finite
-        field. If there is no such element, raise ``ValueError``.
+        field. If there is no such element, raise :exc:`ValueError`.
 
         .. WARNING::
 
@@ -851,7 +848,7 @@ cdef class FiniteField(Field):
 
     def is_field(self, proof = True):
         """
-        Returns whether or not the finite field is a field, i.e.,
+        Return whether or not the finite field is a field, i.e.,
         always returns ``True``.
 
         EXAMPLES::
@@ -878,7 +875,7 @@ cdef class FiniteField(Field):
     @cached_method
     def factored_order(self):
         """
-        Returns the factored order of this field.  For compatibility with
+        Return the factored order of this field.  For compatibility with
         :mod:`~sage.rings.finite_rings.integer_mod_ring`.
 
         EXAMPLES::
@@ -892,7 +889,7 @@ cdef class FiniteField(Field):
     @cached_method
     def factored_unit_order(self):
         """
-        Returns the factorization of ``self.order()-1``, as a 1-tuple.
+        Return the factorization of ``self.order()-1``, as a 1-tuple.
 
         The format is for compatibility with
         :mod:`~sage.rings.finite_rings.integer_mod_ring`.
@@ -960,9 +957,7 @@ cdef class FiniteField(Field):
         coefficients in the base field that has `a` as a root. In
         finite field extensions, `\GF{p^n}`, the base field is `\GF{p}`.
 
-        OUTPUT:
-
-        - a monic polynomial over `\GF{p}` in the variable `x`.
+        OUTPUT: a monic polynomial over `\GF{p}` in the variable `x`
 
         EXAMPLES::
 
@@ -1011,7 +1006,7 @@ cdef class FiniteField(Field):
 
         The given modulus is always made monic::
 
-            sage: k.<a> = GF(7^2, modulus=2*x^2 - 3, impl="pari_ffelt")
+            sage: k.<a> = GF(7^2, modulus=2*x^2 - 3, impl='pari_ffelt')
             sage: k.modulus()
             x^2 + 2
 
@@ -1019,21 +1014,21 @@ cdef class FiniteField(Field):
 
         We test the various finite field implementations::
 
-            sage: GF(2, impl="modn").modulus()
+            sage: GF(2, impl='modn').modulus()
             x + 1
-            sage: GF(2, impl="givaro").modulus()                                        # needs sage.libs.linbox
+            sage: GF(2, impl='givaro').modulus()                                        # needs sage.libs.linbox
             x + 1
-            sage: GF(2, impl="ntl").modulus()                                           # needs sage.libs.ntl
+            sage: GF(2, impl='ntl').modulus()                                           # needs sage.libs.ntl
             x + 1
-            sage: GF(2, impl="modn", modulus=x).modulus()
+            sage: GF(2, impl='modn', modulus=x).modulus()
             x
-            sage: GF(2, impl="givaro", modulus=x).modulus()                             # needs sage.libs.linbox
+            sage: GF(2, impl='givaro', modulus=x).modulus()                             # needs sage.libs.linbox
             x
-            sage: GF(2, impl="ntl", modulus=x).modulus()                                # needs sage.libs.ntl
+            sage: GF(2, impl='ntl', modulus=x).modulus()                                # needs sage.libs.ntl
             x
-            sage: GF(13^2, 'a', impl="givaro", modulus=x^2 + 2).modulus()               # needs sage.libs.linbox
+            sage: GF(13^2, 'a', impl='givaro', modulus=x^2 + 2).modulus()               # needs sage.libs.linbox
             x^2 + 2
-            sage: GF(13^2, 'a', impl="pari_ffelt", modulus=x^2 + 2).modulus()           # needs sage.libs.pari
+            sage: GF(13^2, 'a', impl='pari_ffelt', modulus=x^2 + 2).modulus()           # needs sage.libs.pari
             x^2 + 2
         """
         # Normally, this is set by the constructor of the implementation
@@ -1058,9 +1053,7 @@ cdef class FiniteField(Field):
         - ``name`` -- a variable name to use for the polynomial. By
           default, use the name given when constructing this field.
 
-        OUTPUT:
-
-        - a monic polynomial over `\GF{p}` in the variable ``name``.
+        OUTPUT: a monic polynomial over `\GF{p}` in the variable ``name``
 
         .. SEEALSO::
 
@@ -1128,7 +1121,6 @@ cdef class FiniteField(Field):
 
             sage: k.random_element(prob=0)                                              # needs sage.modules
             0
-
         """
         if self.degree() == 1:
             return self(randrange(self.order()))
@@ -1137,7 +1129,7 @@ cdef class FiniteField(Field):
 
     def some_elements(self):
         """
-        Returns a collection of elements of this finite field for use in unit
+        Return a collection of elements of this finite field for use in unit
         testing.
 
         EXAMPLES::
@@ -1150,7 +1142,7 @@ cdef class FiniteField(Field):
 
     def polynomial_ring(self, variable_name=None):
         """
-        Returns the polynomial ring over the prime subfield in the
+        Return the polynomial ring over the prime subfield in the
         same variable as this finite field.
 
         EXAMPLES::
@@ -1186,7 +1178,7 @@ cdef class FiniteField(Field):
           over the subfield. If not given, one is chosen automatically.
 
         - ``map`` -- boolean (default: ``True``); if ``True``, isomorphisms
-          from and to the vector space are also returned.
+          from and to the vector space are also returned
 
         The ``basis`` maps to the standard basis of the vector space
         by the isomorphisms.
@@ -1388,7 +1380,7 @@ cdef class FiniteField(Field):
 
     cpdef _convert_map_from_(self, R):
         """
-        Conversion from p-adic fields.
+        Conversion from `p`-adic fields.
 
         EXAMPLES::
 
@@ -1430,7 +1422,6 @@ cdef class FiniteField(Field):
             sage: F, R = k.construction()
             sage: F(R) is k
             True
-
         """
         from sage.categories.pushout import AlgebraicExtensionFunctor
         try:
@@ -1459,22 +1450,22 @@ cdef class FiniteField(Field):
         INPUT:
 
         - ``modulus`` -- a polynomial with coefficients in ``self``,
-          or an integer.
+          or an integer
 
-        - ``name`` or ``names`` -- string: the name of the generator
+        - ``name`` or ``names`` -- string; the name of the generator
           in the new extension
 
-        - ``latex_name`` or ``latex_names`` -- string: latex name of
+        - ``latex_name`` or ``latex_names`` -- string; latex name of
           the generator in the new extension
 
-        - ``map`` -- boolean (default: ``False``): if ``False``,
-          return just the extension `E`; if ``True``, return a pair
+        - ``map`` -- boolean (default: ``False``); if ``False``,
+          return just the extension `E`. If ``True``, return a pair
           `(E, f)`, where `f` is an embedding of ``self`` into `E`.
 
         - ``embedding`` -- currently not used; for compatibility with
-          other ``AlgebraicExtensionFunctor`` calls.
+          other ``AlgebraicExtensionFunctor`` calls
 
-        - ``**kwds``: further keywords, passed to the finite field
+        - ``**kwds`` -- further keywords, passed to the finite field
           constructor.
 
         OUTPUT:
@@ -1654,7 +1645,7 @@ cdef class FiniteField(Field):
 
         - ``name`` -- string; name of the generator of the subfield
 
-        - ``map`` -- boolean (default ``False``); whether to also return the inclusion map
+        - ``map`` -- boolean (default: ``False``); whether to also return the inclusion map
 
         EXAMPLES::
 
@@ -1764,9 +1755,9 @@ cdef class FiniteField(Field):
 
         INPUT:
 
-        - ``degree`` -- (default: `0`) an integer
+        - ``degree`` -- integer (default: `0`)
 
-        - ``name`` -- a string, a dictionary or ``None``:
+        - ``name`` -- string; a dictionary or ``None``:
 
           - If ``degree`` is nonzero, then ``name`` must be a string
             (or ``None``, if this is a pseudo-Conway extension),
@@ -1841,10 +1832,10 @@ cdef class FiniteField(Field):
 
         INPUT:
 
-        - ``name`` -- string (default: 'z'): prefix to use for
+        - ``name`` -- string (default: ``'z'``); prefix to use for
           variable names of subfields
 
-        - ``implementation`` -- string (optional): specifies how to
+        - ``implementation`` -- string (optional); specifies how to
           construct the algebraic closure.  The only value supported
           at the moment is ``'pseudo_conway'``.  For more details, see
           :mod:`~sage.rings.algebraic_closure_finite_field`.
@@ -1912,7 +1903,7 @@ cdef class FiniteField(Field):
     @cached_method
     def is_conway(self):
         """
-        Return ``True`` if self is defined by a Conway polynomial.
+        Return ``True`` if ``self`` is defined by a Conway polynomial.
 
         EXAMPLES::
 
@@ -1933,7 +1924,7 @@ cdef class FiniteField(Field):
         """
         INPUT:
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         OUTPUT:
 
@@ -2008,14 +1999,14 @@ cdef class FiniteField(Field):
 
         INPUT:
 
-        - ``basis`` -- (default: ``None``): a basis of the finite field
+        - ``basis`` -- (default: ``None``); a basis of the finite field
           ``self``, `\GF{p^n}`, as a vector space over the base field
           `\GF{p}`. Uses the power basis `\{x^i : 0 \leq i \leq n-1\}` as
           input if no basis is supplied, where `x` is the generator of
           ``self``.
 
-        - ``check`` -- (default: ``True``): verifies that ``basis`` is
-          a valid basis of ``self``.
+        - ``check`` -- (default: ``True``); verifies that ``basis`` is
+          a valid basis of ``self``
 
         ALGORITHM:
 
@@ -2114,7 +2105,7 @@ cdef class FiniteField(Field):
         return [sum(x * y for x, y in zip(col, basis))
                 for col in B.columns()]
 
-    def from_bytes(self, input_bytes, byteorder="big"):
+    def from_bytes(self, input_bytes, byteorder='big'):
         r"""
         Return the integer represented by the given array of bytes.
 
@@ -2123,8 +2114,8 @@ cdef class FiniteField(Field):
         INPUT:
 
         - ``input_bytes`` -- a bytes-like object or iterable producing bytes
-        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
-          ``input_bytes``; can only be ``"big"`` or ``"little"``
+        - ``byteorder`` -- string (default: ``'big'``); determines the byte order of
+          ``input_bytes`` (can only be ``'big'`` or ``'little'``)
 
         EXAMPLES::
 
@@ -2132,7 +2123,7 @@ cdef class FiniteField(Field):
             sage: F = GF(2**127 - 1)
             sage: F.from_bytes(input_bytes)
             545127616933790290830707
-            sage: a = F.from_bytes(input_bytes, byteorder="little"); a
+            sage: a = F.from_bytes(input_bytes, byteorder='little'); a
             544943659528996309004147
             sage: type(a)
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
@@ -2143,7 +2134,7 @@ cdef class FiniteField(Field):
             sage: F_ext = GF(65537**5)
             sage: F_ext.from_bytes(input_bytes)
             29549*z5^4 + 40876*z5^3 + 52171*z5^2 + 13604*z5 + 20843
-            sage: F_ext.from_bytes(input_bytes, byteorder="little")
+            sage: F_ext.from_bytes(input_bytes, byteorder='little')
             29539*z5^4 + 42728*z5^3 + 47440*z5^2 + 12423*z5 + 27473
 
         TESTS::

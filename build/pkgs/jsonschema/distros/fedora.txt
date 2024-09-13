@@ -1,1 +1,1 @@
-python-jsonschema
+python3-jsonschema

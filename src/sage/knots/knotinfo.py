@@ -252,8 +252,8 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
 
     INPUT:
 
-    - ``string``  -- string that gives a value of some database entry
-    - ``locals``      -- dictionary of locals passed to ``sage_eval``
+    - ``string`` -- string that gives a value of some database entry
+    - ``locals`` -- dictionary of locals passed to ``sage_eval``
 
     EXAMPLES::
 
@@ -314,7 +314,7 @@ def knotinfo_bool(string):
 
     INPUT:
 
-    - ``string``  -- string that gives a value of some database entry
+    - ``string`` -- string that gives a value of some database entry
 
     EXAMPLES::
 
@@ -634,7 +634,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -676,7 +676,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -719,12 +719,8 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
-
-        OUTPUT:
-
-        Python list of
 
         EXAMPLES::
 
@@ -753,7 +749,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -833,7 +829,6 @@ class KnotInfoBase(Enum):
             Traceback (most recent call last):
             ...
             NotImplementedError: this integer is not provided by the database
-
         """
         if self.is_knot():
             return knotinfo_int(self[self.items.braid_index])
@@ -1107,13 +1102,11 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``positive`` -- boolean (default: ``False``) whether to check
+        - ``positive`` -- boolean (default: ``False``); whether to check
           if ``self`` is positive or negative amphicheiral (see documentation
           of :meth:`symmetry_type`)
 
-        OUTPUT:
-
-        Boolean or ``None`` if this cannot be determined.
+        OUTPUT: boolean or ``None`` if this cannot be determined
 
         ``True`` if ``self`` is fully or negative amphicheiral per default. If
         ``positive`` is set to ``True`` than fully and positive amphicheiral
@@ -1335,9 +1328,9 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``var1`` -- string (default ``v``) for the name of the first variable
-        - ``var2`` -- string (default ``z``) for the name of the second variable
-        - ``original`` -- boolean (default ``False``) if set to
+        - ``var1`` -- string (default: ``'v'``); for the name of the first variable
+        - ``var2`` -- string (default: ``'z'``); for the name of the second variable
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1441,7 +1434,7 @@ class KnotInfoBase(Enum):
 
         - ``var1`` -- (default: ``'a'``) the first variable
         - ``var2`` -- (default: ``'z'``) the second variable
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -1523,17 +1516,17 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``variab`` -- variable (default: ``None``) used according to :meth:`Link.jones_polynomial`
-        - ``skein_normalization`` -- boolean (default: ``False``) used according
-          to :meth:`Link.jones_polynomial`
-        - ``puiseux`` -- boolean (default ``True``) only used in case
+        - ``variab`` -- variable (default: ``None``); used according to
+          :meth:`Link.jones_polynomial`
+        - ``skein_normalization`` -- boolean (default: ``False``); used
+          according to :meth:`Link.jones_polynomial`
+        - ``puiseux`` -- boolean (default: ``True``); only used in case
           ``skein_normalization=False``. If set to ``True`` instead of an element
           of the symbolic ring an instance of :class:`~sage.rings.puiseux_series_ring_element.PuiseuxSeries`
           is returned
-        - ``original`` -- boolean (default ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
-        - ``use_sqrt`` -- boolean (default ``False``) see the note below
-
+        - ``use_sqrt`` -- boolean (default: ``False``); see the note below
 
         OUTPUT:
 
@@ -1713,9 +1706,9 @@ class KnotInfoBase(Enum):
         INPUT:
 
         - ``var`` -- (default: ``'t'``) the variable
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
-        - ``laurent_poly`` -- boolean (default ``False``) see the note below
+        - ``laurent_poly`` -- boolean (default: ``False``); see the note below
 
         OUTPUT:
 
@@ -1803,7 +1796,7 @@ class KnotInfoBase(Enum):
         INPUT:
 
         - ``var`` -- (default: ``'t'``) the variable
-        - ``original`` -- boolean (default: ``False``) if set to
+        - ``original`` -- boolean (default: ``False``); if set to
           ``True`` the original table entry is returned as a string
 
         OUTPUT:
@@ -2059,11 +2052,11 @@ class KnotInfoBase(Enum):
           - ``self.items.dt_notation``    (only for knots and ``snappy=False``)
           - ``self.items.gauss_notation`` (only for knots and ``snappy=False``)
 
-        - ``snappy`` boolean (default ``False``) if set to ``True``
+        - ``snappy`` -- boolean (default: ``False``); if set to ``True``
           the target of the conversion is the ``pip`` installable
           package `SnapPy <https://snappy.math.uic.edu/index.html>`__
           (explicitely, ``spherogram.links.invariants.Link``).
-          If SnapPy is not installed an :class:`ImportError` is raised. To
+          If SnapPy is not installed an :exc:`ImportError` is raised. To
           install SnapPy use ``sage -pip install snappy``.
 
         .. NOTE::
@@ -2192,9 +2185,7 @@ class KnotInfoBase(Enum):
         r"""
         Return whether there is no other isotopic link in the database or not.
 
-        OUTPUT:
-
-        Boolean or ``None`` if this cannot be determined.
+        OUTPUT: boolean or ``None`` if this cannot be determined
 
         EXAMPLES::
 
@@ -2246,7 +2237,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``unique`` -- boolean (default: ``True``) if set to ``False``
+        - ``unique`` -- boolean (default: ``True``); if set to ``False``
           it is only checked if ``self`` is among the recovered items
 
         EXAMPLES::
@@ -2322,7 +2313,7 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default: ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``); whether to suppress
           the message printed on the invocation
 
         EXAMPLES::
@@ -2345,11 +2336,11 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``oriented`` -- boolean (default: ``False``) it only affects proper links.
-          By default the items of the series will be again series of links
-          collecting all orientation mutants of an unoriented name. To obtain
-          the series of the individual links this keyword has to be set to
-          ``True``.
+        - ``oriented`` -- boolean (default: ``False``); it only affects proper
+          links. By default the items of the series will be again series of
+          links collecting all orientation mutants of an unoriented name. To
+          obtain the series of the individual links this keyword has to be set
+          to ``True``.
 
         EXAMPLES::
 
@@ -2379,11 +2370,11 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``single`` -- boolean (default ``False``) if set to ``True`` only one
-          diagram is shown.
-        - ``new`` -- ``int`` according to :func:`open` of :mod:`webbrowser`
+        - ``single`` -- boolean (default: ``False``); if set to ``True`` only one
+          diagram is shown
+        - ``new`` -- integer according to :func:`open` of :mod:`webbrowser`
           (``0`` default, ``1`` new window, ``2`` new tab)
-        - ``autoraise`` -- boolean (default ``True``)
+        - ``autoraise`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -2410,9 +2401,9 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``new`` -- ``int`` according to :func:`open` of :mod:`webbrowser`
+        - ``new`` -- integer according to :func:`open` of :mod:`webbrowser`
           (``0`` default, ``1`` new window, ``2`` new tab)
-        - ``autoraise`` -- boolean (default ``True``)
+        - ``autoraise`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -2429,9 +2420,9 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``new`` -- ``int`` according to :func:`open` of :mod:`webbrowser`
+        - ``new`` -- integer according to :func:`open` of :mod:`webbrowser`
           (``0`` default, ``1`` new window, ``2`` new tab)
-        - ``autoraise`` -- boolean (default ``True``)
+        - ``autoraise`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -2453,11 +2444,11 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
     INPUT:
 
-    - ``crossing_number`` -- integer giving the crossing numer of this series
+    - ``crossing_number`` -- integer giving the crossing number of this series
       of links
-    - ``is_knot``         -- boolean whether this series is a series of knots
+    - ``is_knot`` -- boolean; whether this series is a series of knots
       or proper links
-    - ``is_alternating``  -- boolean whether this series is restriced to
+    - ``is_alternating`` -- boolean; whether this series is restricted to
       alternating links or not
       This is not relevant for knots with less than 11 crossings
     - ``name_unoriented`` -- string restricting the series to all links with
@@ -2508,24 +2499,24 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``oriented`` -- boolean (default: ``False``) it only affects
+        - ``oriented`` -- boolean (default: ``False``); it only affects
           series of proper links. By default the list items of a series of proper
           links are again series of links collecting all orientation types of an
           unoriented name. To obtain the list of the individual links this
-          keyword has to be set to ``True``
+          keyword has to be set to ``True``.
 
-        - ``comp`` (default: ``None``) if given an integer for this
+        - ``comp`` -- (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according number
-          of components. This keyword implies ``oriented=True``
+          of components. This keyword implies ``oriented=True``.
 
-        - ``det`` (default: ``None``) if given an integer for this
+        - ``det`` -- (default: ``None``) if given an integer for this
           keyword the list is restriced to links having the according value
-          for its determinant. This keyword implies ``oriented=True``
+          for its determinant. This keyword implies ``oriented=True``.
 
-        - ``homfly`` (default: ``None``) if given a HOMFLY-PT polynomial
+        - ``homfly`` -- (default: ``None``) if given a HOMFLY-PT polynomial
           having ``normalization='vz'`` for this keyword the list is restriced to
           links having the according value for its HOMFLY-PT polynomial. This
-          keyword implies ``oriented=True``
+          keyword implies ``oriented=True``.
 
         EXAMPLES::
 
@@ -2600,16 +2591,16 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``oriented`` -- boolean (default: ``False``) see the
+        - ``oriented`` -- boolean (default: ``False``); see the
           description for :meth:`list`
 
-        - ``comp`` (default: ``None``) see the description for
+        - ``comp`` -- (default: ``None``) see the description for
           :meth:`list`
 
-        - ``det`` (default: ``None``) see the description for
+        - ``det`` -- (default: ``None``) see the description for
           :meth:`list`
 
-        - ``homfly`` (default: ``None``) see the description for
+        - ``homfly`` -- (default: ``None``) see the description for
           :meth:`list`
 
         EXAMPLES::
@@ -2672,7 +2663,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         l = self.list()
         max_item = len(l)
         if item < 0 or item > max_item:
-            raise ValueError('item must be non negative and smaller than %s' % (max_item))
+            raise ValueError('item must be nonnegative and smaller than %s' % (max_item))
 
         return l[item]
 
@@ -2759,10 +2750,10 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``unique`` -- boolean (default: ``True``) see
+        - ``unique`` -- boolean (default: ``True``); see
           :meth:`KnotInfoBase.is_recoverable`
-        - ``max_samples`` -- non negative integer or ``infinity`` (optional,
-          default ``8``) limits the number of items to check (random sample).
+        - ``max_samples`` -- nonnegative integer or ``infinity``
+          (default: `8`); limits the number of items to check (random sample).
           If set to ``infinity`` then no limit is set.
 
         EXAMPLES::
@@ -2820,7 +2811,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``verbose`` -- boolean (default: ``True``) to suppress
+        - ``verbose`` -- boolean (default: ``True``); to suppress
           the message printed on the invocation
 
         EXAMPLES::

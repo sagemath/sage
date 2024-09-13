@@ -251,7 +251,7 @@ Among other things, this supports the flexible ``edge_options`` option
 here we color in red all edges touching the vertex ``0``::
 
     sage: g = graphs.PetersenGraph()
-    sage: g.set_latex_options(format="dot2tex", edge_options=lambda u_v_label: {"color": "red"} if u_v_label[0] == 0 else {})
+    sage: g.set_latex_options(format='dot2tex', edge_options=lambda u_v_label: {"color": "red"} if u_v_label[0] == 0 else {})
     sage: latex(g)  # optional - dot2tex graphviz
     \begin{tikzpicture}[>=latex,line join=bevel,]
     ...
@@ -622,19 +622,19 @@ class GraphLatex(SageObject):
 
         INPUT:
 
-        - ``option_name`` -- a string for a latex option contained in the list
-          ``sage.graphs.graph_latex.GraphLatex.__graphlatex_options``.
-          A :class:`ValueError` is raised if the option is not allowed.
+        - ``option_name`` -- string for a latex option contained in the list
+          ``sage.graphs.graph_latex.GraphLatex.__graphlatex_options``;
+          a :exc:`ValueError` is raised if the option is not allowed
 
-        - ``option_value`` -- a value for the option.  If omitted, or set to
-          ``None``, the option will use the default value.
+        - ``option_value`` -- a value for the option; if omitted, or set to
+          ``None``, the option will use the default value
 
         The output can be either handled internally by ``Sage``, or delegated to
         the external software ``dot2tex`` and ``graphviz``. This is controlled
         by the option ``format``:
 
         - ``format`` -- string (default: ``'tkz_graph'``); either ``'dot2tex'``
-          or ``'tkz_graph'``.
+          or ``'tkz_graph'``
 
         If format is ``'dot2tex'``, then all the LaTeX generation will be
         delegated to ``dot2tex`` (which must be installed).
@@ -652,17 +652,17 @@ class GraphLatex(SageObject):
           effort. For a custom appearance set this to ``'Custom'`` and use the
           options described below to override the default values.
 
-        - ``units`` -- string (default: ``'cm'``) -- a natural unit of
+        - ``units`` -- string (default: ``'cm'``); a natural unit of
           measurement used for all dimensions.  Possible values are: ``'in'``,
           ``'mm'``, ``'cm'``, ``'pt'``, ``'em'``, ``'ex'``.
 
-        - ``scale`` -- float (default: ``1.0``); a dimensionless number that
+        - ``scale`` -- float (default: `1.0`); a dimensionless number that
           multiplies every linear dimension. So you can design at sizes you are
           accustomed to, then shrink or expand to meet other needs. Though fonts
           do not scale.
 
         - ``graphic_size`` -- tuple (default: ``(5, 5)``); overall dimensions
-          (width, length) of the bounding box around the entire graphic image.
+          (width, length) of the bounding box around the entire graphic image
 
         - ``margins`` -- 4-tuple (default: ``(0, 0, 0, 0)``); portion of graphic
           given over to a plain border as a tuple of four numbers: (left, right,
@@ -677,7 +677,7 @@ class GraphLatex(SageObject):
         pre-built style and modify it (other than editing the latex string by
         hand after the fact).
 
-        - ``vertex_color`` -- (default: ``'black'``); a single color to use as
+        - ``vertex_color`` -- (default: ``'black'``) a single color to use as
           the default for outline of vertices. For the ``sphere`` shape this
           color is used for the entire vertex, which is drawn with a 3D shading.
           Colors must be specified as a string recognized by the matplotlib
@@ -687,19 +687,19 @@ class GraphLatex(SageObject):
           These color specifications are consistent throughout the options for
           a ``tikzpicture``.
 
-        - ``vertex_colors`` -- a dictionary whose keys are vertices of the graph
+        - ``vertex_colors`` -- dictionary whose keys are vertices of the graph
           and whose values are colors. These will be used to color the outline
           of vertices. See the explanation above for the ``vertex_color`` option
           to see possible values. These values need only be specified for a
           proper subset of the vertices. Specified values will supersede a
           default value.
 
-        - ``vertex_fill_color`` -- (default: ``'white'``); a single color to use
+        - ``vertex_fill_color`` -- (default: ``'white'``) a single color to use
           as the default for the fill color of vertices. See the explanation
           above for the ``vertex_color`` option to see possible values. This
           color is ignored for the ``sphere`` vertex shape.
 
-        - ``vertex_fill_colors`` -- a dictionary whose keys are vertices of the
+        - ``vertex_fill_colors`` -- dictionary whose keys are vertices of the
           graph and whose values are colors. These will be used to fill the
           interior of vertices. See the explanation above for the
           ``vertex_color`` option to see possible values. These values need only
@@ -713,7 +713,7 @@ class GraphLatex(SageObject):
           ``vertex_color`` and ``vertex_colors``, which are normally used for
           the outline of the vertex.
 
-        - ``vertex_shapes`` -- a dictionary whose keys are vertices of the graph
+        - ``vertex_shapes`` -- dictionary whose keys are vertices of the graph
           and whose values are shapes. See ``vertex_shape`` for the allowable
           possibilities.
 
@@ -724,7 +724,7 @@ class GraphLatex(SageObject):
           parameter), while still containing labels. However, if labels are not
           of a uniform size, then the vertices will not be either.
 
-        - ``vertex_sizes`` -- a dictionary of sizes for some of the vertices.
+        - ``vertex_sizes`` -- dictionary of sizes for some of the vertices
 
         - ``vertex_labels`` -- boolean (default: ``True``); determine whether or
           not to display the vertex labels.  If ``False`` subsequent options
@@ -738,33 +738,33 @@ class GraphLatex(SageObject):
           representation according to the ``_repr`` method. Support for
           arbitrarily-complicated mathematics is not especially robust.
 
-        - ``vertex_label_color`` -- (default: ``'black'``); a single color to
+        - ``vertex_label_color`` -- (default: ``'black'``) a single color to
           use as the default for labels of vertices. See the explanation above
           for the ``vertex_color`` option to see possible values.
 
-        - ``vertex_label_colors`` -- a dictionary whose keys are vertices of the
+        - ``vertex_label_colors`` -- dictionary whose keys are vertices of the
           graph and whose values are colors. These will be used for the text of
           the labels of vertices. See the explanation above for the
           ``vertex_color`` option to see possible values. These values need only
           be specified for a proper subset of the vertices. Specified values
           will supersede a default value.
 
-        - ``vertex_label_placement`` -- (default: ``'center'``); if ``'center'``
+        - ``vertex_label_placement`` -- (default: ``'center'``) if ``'center'``
           the label is centered in the interior of the vertex and the vertex
           will expand to contain the label. Giving instead a pair of numbers
           will place the label exterior to the vertex at a certain distance from
           the edge, and at an angle to the positive x-axis, similar in spirit to
           polar coordinates.
 
-        - ``vertex_label_placements`` -- a dictionary of placements indexed by
+        - ``vertex_label_placements`` -- dictionary of placements indexed by
           the vertices. See the explanation for ``vertex_label_placement`` for
           the possible values.
 
-        - ``edge_color`` -- (default: ``'black'``); a single color to use as the
+        - ``edge_color`` -- (default: ``'black'``) a single color to use as the
           default for an edge. See the explanation above for the
           ``vertex_color`` option to see possible values.
 
-        - ``edge_colors`` -- a dictionary whose keys are edges of the graph and
+        - ``edge_colors`` -- dictionary whose keys are edges of the graph and
           whose values are colors. These will be used to color the edges. See
           the explanation above for the ``vertex_color`` option to see possible
           values. These values need only be specified for a proper subset of the
@@ -774,13 +774,13 @@ class GraphLatex(SageObject):
           second color running down the middle. This can be a useful effect for
           highlighting edge crossings.
 
-        - ``edge_fill_color`` -- (default: ``'black'``); a single color to use
+        - ``edge_fill_color`` -- (default: ``'black'``) a single color to use
           as the default for the fill color of an edge. The boolean switch
-          ``edge_fills`` must be set to True for this to have an effect. See
+          ``edge_fills`` must be set to ``True`` for this to have an effect. See
           the explanation above for the ``vertex_color`` option to see possible
           values.
 
-        - ``edge_fill_colors`` -- a dictionary whose keys are edges of the graph
+        - ``edge_fill_colors`` -- dictionary whose keys are edges of the graph
           and whose values are colors. See the explanation above for the
           ``vertex_color`` option to see possible values. These values need
           only be specified for a proper subset of the vertices. Specified
@@ -790,7 +790,7 @@ class GraphLatex(SageObject):
           edges. Note that ``tkz-graph`` does not interpret this number for
           loops.
 
-        - ``edge_thicknesses`` -- a dictionary of thicknesses for some of the
+        - ``edge_thicknesses`` -- dictionary of thicknesses for some of the
           edges of a graph. These values need only be specified for a proper
           subset of the vertices. Specified values will supersede a default
           value.
@@ -804,11 +804,11 @@ class GraphLatex(SageObject):
           ``vertex_labels_math`` option, which behaves identically.  Support for
           arbitrarily-complicated mathematics is not especially robust.
 
-        - ``edge_label_color`` -- (default: ``'black'``); a single color to use
+        - ``edge_label_color`` -- (default: ``'black'``) a single color to use
           as the default for labels of edges. See the explanation above for the
           ``vertex_color`` option to see possible values.
 
-        - ``edge_label_colors`` -- a dictionary whose keys are edges of the
+        - ``edge_label_colors`` -- dictionary whose keys are edges of the
           graph and whose values are colors. These will be used for the text of
           the labels of edges. See the explanation above for the
           ``vertex_color`` option to see possible values. These values need only
@@ -822,11 +822,11 @@ class GraphLatex(SageObject):
           ``True`` means the label is rotated to follow the direction of the
           edge it labels.
 
-        - ``edge_label_slopes`` -- a dictionary of booleans, indexed by some
+        - ``edge_label_slopes`` -- dictionary of booleans, indexed by some
           subset of the edges.  See the ``edge_label_sloped`` option for a
           description of sloped edge labels.
 
-        - ``edge_label_placement`` -- (default: 0.50); either a number between
+        - ``edge_label_placement`` -- (default: 0.50) either a number between
           0.0 and 1.0, or one of: ``'above'``, ``'below'``, ``'left'``,
           ``'right'``. These adjust the location of an edge label along an
           edge. A number specifies how far along the edge the label is located.
@@ -835,7 +835,7 @@ class GraphLatex(SageObject):
           the midpoint of the edge. The default value of ``0.50`` places the
           label on the midpoint of the edge.
 
-        - ``edge_label_placements`` -- a dictionary of edge placements, indexed
+        - ``edge_label_placements`` -- dictionary of edge placements, indexed
           by the edges.  See the ``edge_label_placement`` option for a
           description of the allowable values.
 
@@ -845,7 +845,7 @@ class GraphLatex(SageObject):
           specifying a compass point (North, South, East, West) as one of
           ``'NO'``, ``'SO'``, ``'EA'``, ``'WE'``.
 
-        - ``loop_placements`` -- a dictionary of loop placements.  See the
+        - ``loop_placements`` -- dictionary of loop placements.  See the
           ``loop_placements`` option for the allowable values.  While loops are
           technically edges, this dictionary is indexed by vertices.
 
@@ -857,10 +857,10 @@ class GraphLatex(SageObject):
           ``'dot'``, ``'neato'``, ``'twopi'``, ``'circo'`` or ``'fdp'``.
 
         - ``edge_labels`` -- boolean (default: ``False)``; whether to display
-          the labels on edges.
+          the labels on edges
 
         - ``edge_colors`` -- a color; can be used to set a global color to the
-          edge of the graph.
+          edge of the graph
 
         - ``color_by_label`` -- boolean (default: ``False``); colors the edges
           according to their labels
@@ -870,9 +870,7 @@ class GraphLatex(SageObject):
           same cluster subgraph are drawn together, with the entire drawing of
           the cluster contained within a bounding rectangle.
 
-        OUTPUT:
-
-        There are none. Success happens silently.
+        OUTPUT: none; success happens silently
 
         EXAMPLES:
 
@@ -1350,7 +1348,6 @@ class GraphLatex(SageObject):
             \end{scope}
             ...
             \end{tikzpicture}
-
         """
         format = self.get_option('format')
         if format == "tkz_graph":
@@ -1434,7 +1431,7 @@ class GraphLatex(SageObject):
                     new_edge_colors[col] = [edge]
             options['edge_colors'] = new_edge_colors
 
-        dotdata = self._graph.graphviz_string(labels="latex", **options)
+        dotdata = self._graph.graphviz_string(labels='latex', **options)
         import dot2tex
         return dot2tex.dot2tex(dotdata,
                                format='tikz',

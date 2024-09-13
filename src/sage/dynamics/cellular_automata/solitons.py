@@ -755,7 +755,7 @@ class SolitonCellularAutomata(SageObject):
         - ``num`` -- (default: the current state) the state to print
         - ``vacuum_letter`` -- (default: ``'.'``) the letter to print
           for the vacuum
-        - ``remove_trailing_vacuums`` -- (default: ``False``) if ``True``
+        - ``remove_trailing_vacuums`` -- boolean (default: ``False``); if ``True``
           then this does not print the vacuum letters at the right end
           of the state
 
@@ -964,9 +964,9 @@ class SolitonCellularAutomata(SageObject):
         INPUT:
 
         - ``num`` -- the number of states
-        - ``as_array`` (default: ``True``) if ``True``, then the states are
-          placed inside of an array; if ``False``, then the states are
-          given as a word
+        - ``as_array`` -- boolean (default: ``True``); if ``True``, then the
+          states are placed inside of an array; if ``False``, then the states
+          are given as a word
         - ``box_width`` -- (default: ``'5pt'``) the width of the ``.`` used
           to represent the vacuum state when ``as_array`` is ``True``
 

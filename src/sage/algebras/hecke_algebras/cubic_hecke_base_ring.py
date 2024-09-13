@@ -34,9 +34,9 @@ from sage.rings.localization import Localization
 from sage.algebras.splitting_algebra import solve_with_extension, SplittingAlgebra
 
 
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # local helper functions
-# ---------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 def normalize_names_markov(names, markov_trace_version):
     r"""
     Return a tuple of strings of variable names of length 3 resp. 4 (if
@@ -103,15 +103,15 @@ def register_ring_hom(ring_hom):
         try:
             codomain.register_conversion(ring_hom)
         except ValueError:
-            verbose('\nthe map:\n%s\ncannot be registerd as conversion\n' % ring_hom)
+            verbose('\nthe map:\n%s\ncannot be registered as conversion\n' % ring_hom)
 
     return
 
 
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # class for the Galois Group action on the generic extension ring corresponding
 # to the cubic equation
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 class GaloisGroupAction(Action):
     r"""
     Action on a multivariate polynomial ring by permuting the generators.
@@ -156,15 +156,15 @@ class GaloisGroupAction(Action):
         return self.domain()(pol_dict)
 
 
-################################################################################
+###############################################################################
 # EXTENSION RING
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Definition of the generic extension ring for the cubic Hecke algebra as
 # Laurent polynomial ring in 3 indeterminates over the cyclotomic field of a
 # third root of unity This is the most general ring over which the cubic Hecke
 # algebra is semi-simple. In opposite to the generic base ring class, this class
 # does not inherits from UniqueRepresentation since _test_pickling fails
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
     r"""
     The generic splitting algebra for the irreducible representations of
@@ -194,7 +194,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
       realized as splitting ring via the ``as_splitting_algebra`` method
     - ``third_unity_root_name`` -- string (default: ``'e3'``); for setting the
       name of the third root if unity of ``self``
-    - ``markov_trace_version`` -- boolean (default: ``False``) if this is
+    - ``markov_trace_version`` -- boolean (default: ``False``); if this is
       set to ``True`` then ``self`` contains one invertible indeterminate in
       addition which is meant to represent the writhe factor of a Markov trace
       on the cubic Hecke algebra and which default name is ``s``
@@ -261,7 +261,6 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
         # Init of data used on demand
         # ----------------------------------------------------------------------
         self._mirror = None
-        return
 
     ############################################################################
     # overloaded inherited methods
@@ -318,7 +317,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
     def _coerce_map_from_(self, R):
         r"""
         The rings that canonically coerce to ``self`` ar the ones from
-        inheritence and the base ring of definition of the cubic Hecke algebra.
+        inheritance and the base ring of definition of the cubic Hecke algebra.
 
         EXAMPLES::
 
@@ -386,7 +385,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
             return super().hom(im_remain, codomain=codomain, check=check, base_map=hom_cycl_gen)
         else:
             if base_map is None:
-                raise ValueError('number of images must be four (inculding a '
+                raise ValueError('number of images must be four (including a '
                                  'third root of unity at first position) or a '
                                  'base_map (on %s) must be given' % self.base_ring())
             return super().hom(im_gens, codomain=codomain, check=check, base_map=base_map)
@@ -410,12 +409,12 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
         s = self.one()
         if rem:
             s = rem[0]
-        return b**2/c+a*e3/s
+        return b**2/c + a*e3/s
 
     ############################################################################
     # local methods
     ############################################################################
-    def _is_markov_trace_version(self):
+    def _is_markov_trace_version(self) -> bool:
         r"""
         Return whether ``self`` is the version containing the writhe parameter
         ``s`` for the Markov trace.
@@ -437,39 +436,31 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
     # --------------------------------------------------------------------------
     def _convert_from_gap3_mvp(self, mvp_expression):
         r"""
-        Convert a string produced via ``GAP3`` interface and containing Jean
+        Convert an element of ``GAP3`` interface containing Jean
         Michel's ``MVP`` (multivariate polynomials) to an element of ``self``.
 
         INPUT:
 
-        - ``string``  -- string produced via GAP3 interface and containing
+        - ``mvp_expression``  -- element of ``GAP3`` interface containing
           Jean Michel's ``MVP`` (multivariate polynomials)
 
         EXAMPLES::
 
+            sage: # optional - gap3
             sage: from sage.algebras.hecke_algebras import cubic_hecke_base_ring as chbr
+            sage: CHA3 = algebras.CubicHecke(3)
+            sage: sch7 = CHA3.chevie().SchurElements()[7]
             sage: ER = chbr.CubicHeckeExtensionRing('a, b, c')
-            sage: gap3_string = '2+a^-2bc+a^-1b^-1c^2+a^-1b^2c^-1+ab^-2E3c'
-            sage: ER._convert_from_gap3_mvp(gap3_string)
-            a^-1*b^2*c^-1 + 2 + e3*a*b^-2*c + a^-2*b*c + a^-1*b^-1*c^2
+            sage: ER._convert_from_gap3_mvp(sch7)
+            a*b*c^-2 + a^2*b^-1*c^-1 + a^-1*b^2*c^-1 + 2 + a*b^-2*c + a^-2*b*c + a^-1*b^-1*c^2
         """
+        from sage.misc.sage_eval import sage_eval
         E3 = self.cyclotomic_generator()
         a, b, c, *rem = self.gens()
         na, nb, nc = self.variable_names()
-        lc = {na: a, nb: b, nc: c, 'e': E3}
-        var_names = list(lc.keys())
-
-        from sage.repl.preparse import implicit_mul
-        # since implicit_mul does not know about the choice of variable names
-        # we have to insert * between them separately
-        string = str(mvp_expression)
-        string = string.replace('E3', 'e')
-        for i in var_names:
-            for j in var_names:
-                string = string.replace('%s%s' % (i, j), '%s*%s' % (i, j))
-        sage_expression = implicit_mul(string)
-        from sage.misc.sage_eval import sage_eval
-        return sage_eval(sage_expression, locals=lc)
+        lc = {na: a, nb: b, nc: c, 'E3': E3}
+        sage_expr = str(mvp_expression.FormatMaple())[1:-1]
+        return sage_eval(sage_expr, locals=lc)
 
     ############################################################################
     # global methods
@@ -545,9 +536,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
            considered as `\ZZ`-algebra. The base ring elements are transformed
            by this automorphism.
 
-        OUTPUT:
-
-        The involution as automorphism of ``self``.
+        OUTPUT: the involution as automorphism of ``self``
 
         EXAMPLES::
 
@@ -592,7 +581,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
     def create_specialization(self, im_cubic_equation_roots, im_writhe_parameter=None, var='T', third_unity_root_name='E3'):
         r"""
         Return an appropriate ring containing the elements from the list
-        ``im_cubic_equation_roots`` defining a conversion map from self mapping
+        ``im_cubic_equation_roots`` defining a conversion map from ``self`` mapping
         the cubic equation roots of ``self`` to ``im_cubic_equation_roots``.
 
         INPUT:
@@ -806,7 +795,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
 
         INPUT:
 
-        - ``characteristic`` -- integer (default: ``0``); the characteristic
+        - ``characteristic`` -- integer (default: `0`); the characteristic
           of the field
 
         EXAMPLES::
@@ -941,7 +930,7 @@ class CubicHeckeRingOfDefinition(Localization):
     - ``ring_of_definition`` -- (optional) a :class:`CubicHeckeRingOfDefinition`
       to specify the generic cubic Hecke base ring over which ``self`` may be
       realized as splitting ring via the ``as_splitting_algebra`` method
-    - ``markov_trace_version`` -- boolean (default: ``False``) if this is
+    - ``markov_trace_version`` -- boolean (default: ``False``); if this is
       set to ``True`` then ``self`` contains one invertible indeterminate in
       addition which is meant to represent the writhe factor of a Markov trace
       on the cubic Hecke algebra and which default name is ``s``
@@ -1062,7 +1051,7 @@ class CubicHeckeRingOfDefinition(Localization):
     ############################################################################
     # Local Methods
     ############################################################################
-    def _is_markov_trace_version(self):
+    def _is_markov_trace_version(self) -> bool:
         r"""
         Return whether ``self`` is the version containing the writhe parameter
         ``s`` for the Markov trace.
@@ -1133,9 +1122,7 @@ class CubicHeckeRingOfDefinition(Localization):
            considered as `\ZZ`-algebra. The base ring elements are transformed
            by this automorphism.
 
-        OUTPUT:
-
-        The involution as automorphism of ``self``.
+        OUTPUT: the involution as automorphism of ``self``
 
         EXAMPLES::
 

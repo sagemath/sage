@@ -103,7 +103,7 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
     Build the CremonaDatabase with given name from scratch
     using the data_tgz tarball.
 
-    .. note::
+    .. NOTE::
 
            For data up to level 350000, this function takes about
            3m40s.  The resulting database occupies 426MB disk space.
@@ -144,23 +144,23 @@ def build(name, data_tgz, largest_conductor=0, mini=False, decompress=True):
 
 def is_optimal_id(id):
     """
-    Return True if the Cremona id refers to an optimal curve, and
-    false otherwise.
+    Return ``True`` if the Cremona id refers to an optimal curve, and
+    ``False`` otherwise.
 
     The curve is optimal if the id, which is of the
     form [letter code][number] has number 1.
 
-    .. note::
+    .. NOTE::
 
        990h3 is the optimal curve in that class, so doesn't obey
        this rule.
 
     INPUT:
 
-    -  ``id`` -- str of form letter code followed by an
-       integer, e.g., a3, bb5, etc.
+    - ``id`` -- string of form letter code followed by an
+      integer, e.g., a3, bb5, etc.
 
-    OUTPUT: bool
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -183,7 +183,7 @@ def cremona_letter_code(n):
 
     For example, 0 - a 25 - z 26 - ba 51 - bz 52 - ca 53 - cb etc.
 
-    .. note::
+    .. NOTE::
 
        This is just the base 26 representation of n, where a=0, b=1,
        ..., z=25. This extends the old Cremona notation (counting from
@@ -192,9 +192,9 @@ def cremona_letter_code(n):
 
     INPUT:
 
-    -  ``n`` (int) -- a non-negative integer
+    - ``n`` -- nonnegative integer
 
-    OUTPUT: str
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -217,19 +217,19 @@ def cremona_letter_code(n):
         sage: cremona_letter_code(QQ)
         Traceback (most recent call last):
         ...
-        ValueError: Cremona letter codes are only defined for non-negative integers
+        ValueError: Cremona letter codes are only defined for nonnegative integers
         sage: cremona_letter_code(x)                                                    # needs sage.symbolic
         Traceback (most recent call last):
         ...
-        ValueError: Cremona letter codes are only defined for non-negative integers
+        ValueError: Cremona letter codes are only defined for nonnegative integers
         sage: cremona_letter_code(-1)
         Traceback (most recent call last):
         ...
-        ValueError: Cremona letter codes are only defined for non-negative integers
+        ValueError: Cremona letter codes are only defined for nonnegative integers
         sage: cremona_letter_code(3.14159)
         Traceback (most recent call last):
         ...
-        ValueError: Cremona letter codes are only defined for non-negative integers
+        ValueError: Cremona letter codes are only defined for nonnegative integers
     """
     try:
         m = int(n)
@@ -241,7 +241,7 @@ def cremona_letter_code(n):
         n = -1
 
     if n < 0:
-        raise ValueError("Cremona letter codes are only defined for non-negative integers")
+        raise ValueError("Cremona letter codes are only defined for nonnegative integers")
 
     if n == 0:
         return "a"
@@ -267,9 +267,9 @@ def old_cremona_letter_code(n):
 
     INPUT:
 
-    -  ``n`` -- int
+    - ``n`` -- integer
 
-    OUTPUT: str
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -314,17 +314,17 @@ def parse_cremona_label(label, numerical_class_code=False):
 
     INPUT:
 
-    -  ``label`` (string) -- a valid Cremona elliptic curve label
+    - ``label`` -- string; a valid Cremona elliptic curve label
 
-    - ``numerical_class_code`` (boolean, default: ``False``) -- if ``True``,
-       convert the isogeny class label from a letter code in base 26
-       to an integer;  this is useful for sorting
+    - ``numerical_class_code`` -- boolean (default: ``False``); if ``True``,
+      convert the isogeny class label from a letter code in base 26
+      to an integer.  This is useful for sorting.
 
     OUTPUT:
 
-    -  ``int`` -- the conductor
-    -  ``str`` or ``int`` -- the isogeny class label
-    -  ``int`` -- the number
+    -  integer; the conductor
+    -  string or integer; the isogeny class label
+    -  integer; the number
 
     EXAMPLES::
 
@@ -364,7 +364,6 @@ def parse_cremona_label(label, numerical_class_code=False):
         Traceback (most recent call last):
         ...
         ValueError: x11 is not a valid Cremona label
-
     """
     m = cremona_label_regex.match(str(label))
     if m is None:
@@ -399,11 +398,11 @@ def parse_lmfdb_label(label, numerical_class_code=False):
     or 37.b3, parse the label and return the conductor, isogeny class
     label, and number.
 
-    The LMFDB label (named after the L-functions and modular forms
+    The LMFDB label (named after the `L`-functions and modular forms
     database), is determined by the following two orders:
 
     - Isogeny classes with the same conductor are ordered
-      lexicographically by the coefficients in the q-expansion of the
+      lexicographically by the coefficients in the `q`-expansion of the
       associated modular form.
 
     - Curves within the same isogeny class are ordered
@@ -420,17 +419,17 @@ def parse_lmfdb_label(label, numerical_class_code=False):
 
     INPUT:
 
-    -  ``label`` -- str
+    - ``label`` -- str
 
-    - ``numerical_class_code`` (boolean, default: ``False``) -- if ``True``,
-       convert the isogeny class label from a letter code in base 26
-       to an integer;  this is useful for sorting
+    - ``numerical_class_code`` -- boolean (default: ``False``); if ``True``,
+      convert the isogeny class label from a letter code in base 26
+      to an integer.  This is useful for sorting.
 
     OUTPUT:
 
-    -  ``int`` -- the conductor
-    -  ``str`` or ``int`` -- the isogeny class label
-    -  ``int`` -- the number
+    - ``int`` -- the conductor
+    - ``str`` or ``int`` -- the isogeny class label
+    - ``int`` -- the number
 
     EXAMPLES::
 
@@ -515,7 +514,7 @@ def sort_key(key1):
     """
     Comparison key for curve id strings.
 
-    .. note::
+    .. NOTE::
 
        Not the same as standard lexicographic order!
 
@@ -538,15 +537,12 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
 
     INPUT:
 
-    - ``cremona_label`` -- a string, the Cremona label of a curve.
-      This can be the label of a curve (e.g. '990j1') or of an isogeny
-      class (e.g. '990j')
+    - ``cremona_label`` -- string, the Cremona label of a curve; this can be
+      the label of a curve (e.g. '990j1') or of an isogeny class (e.g. '990j')
     - ``CDB`` -- the Cremona database in which to look up the isogeny
-      classes of the same conductor.
+      classes of the same conductor
 
-    OUTPUT:
-
-    - ``lmfdb_label`` -- a string, the corresponding LMFDB label.
+    OUTPUT: ``lmfdb_label``; string, the corresponding LMFDB label
 
     EXAMPLES::
 
@@ -598,15 +594,12 @@ def lmfdb_to_cremona(lmfdb_label, CDB=None):
 
     INPUT:
 
-    - ``lmfdb_label`` -- a string, the LMFDB label of a curve.
-      This can be the label of a curve (e.g. '990.j1') or of an isogeny
-      class (e.g. '990.j')
+    - ``lmfdb_label`` -- string, the LMFDB label of a curve; this can be the
+      label of a curve (e.g. '990.j1') or of an isogeny class (e.g. '990.j')
     - ``CDB`` -- the Cremona database in which to look up the isogeny
-      classes of the same conductor.
+      classes of the same conductor
 
-    OUTPUT:
-
-    - ``cremona_label`` -- a string, the corresponding Cremona label.
+    OUTPUT: ``cremona_label``; a string, the corresponding Cremona label
 
     EXAMPLES::
 
@@ -708,15 +701,16 @@ class MiniCremonaDatabase(SQLDatabase):
 
     def __getitem__(self, N):
         """
-        If N is an integer, return all data about level N in the database.
-        If N is a string it must be a Cremona label, in which case return
+        If `N` is an integer, return all data about level `N` in the database.
+        If `N` is a string it must be a Cremona label, in which case return
         the corresponding elliptic curve, if it is in the database.
 
         INPUT:
 
-        -  ``N`` -- int or str
+        - ``N`` -- integer or string
 
-        OUTPUT: dict (if N is an int) or EllipticCurve (if N is a str)
+        OUTPUT: dictionary (if `N` is an integer) or EllipticCurve (if `N` is
+        a string)
 
         TESTS::
 
@@ -765,11 +759,9 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        -  ``N`` -- int, the conductor
+        - ``N`` -- integer; the conductor
 
-        OUTPUT:
-
-        -  ``dict`` -- id:[ainvs, rank, tor], ...
+        OUTPUT: dictionary; id:[ainvs, rank, tor], ...
 
         EXAMPLES::
 
@@ -795,11 +787,9 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        -  ``N`` -- int, the conductor
+        - ``N`` -- integer; the conductor
 
-        OUTPUT:
-
-        -  ``dict`` -- id:[ainvs, rank, tor], ...
+        OUTPUT: dictionary; id:[ainvs, rank, tor], ...
 
         EXAMPLES:
 
@@ -956,12 +946,12 @@ class MiniCremonaDatabase(SQLDatabase):
         Return the elliptic curve in the database of with minimal ``ainvs``
         if it exists.
 
-        This raises a :class:`RuntimeError` exception otherwise.
+        This raises a :exc:`RuntimeError` exception otherwise.
 
         INPUT:
 
-        -  ``ainvs`` -- list (5-tuple of int's); the minimal
-           Weierstrass model for an elliptic curve
+        - ``ainvs`` -- list (5-tuple of int's); the minimal
+          Weierstrass model for an elliptic curve
 
         OUTPUT: EllipticCurve
 
@@ -995,13 +985,11 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        -  ``label`` -- str (Cremona or LMFDB label)
+        - ``label`` -- string (Cremona or LMFDB label)
 
-        OUTPUT:
+        OUTPUT: an :class:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field`
 
-        - an :class:`sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field`
-
-        .. note::
+        .. NOTE::
 
             For more details on LMFDB labels see :func:`parse_lmfdb_label`.
 
@@ -1032,9 +1020,9 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        -  ``conductors`` -- list or generator of ints
+        - ``conductors`` -- list or generator of ints
 
-        OUTPUT: generator that iterates over EllipticCurve objects.
+        OUTPUT: generator that iterates over EllipticCurve objects
 
         EXAMPLES::
 
@@ -1088,11 +1076,9 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        -  ``label`` -- string
+        - ``label`` -- string
 
-        OUTPUT:
-
-        -  ``list`` -- list of EllipticCurve objects.
+        OUTPUT: list of EllipticCurve objects
 
         EXAMPLES::
 
@@ -1118,9 +1104,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         - ``conductors`` -- list or generator of ints
 
-        OUTPUT:
-
-        generator that iterates over EllipticCurve objects.
+        OUTPUT: generator that iterates over EllipticCurve objects
 
         EXAMPLES:
 
@@ -1156,9 +1140,7 @@ class MiniCremonaDatabase(SQLDatabase):
 
         - ``conductors`` -- list or generator of ints
 
-        OUTPUT:
-
-        - list of EllipticCurve objects.
+        OUTPUT: list of EllipticCurve objects
 
         EXAMPLES::
 
@@ -1176,12 +1158,10 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        -  ``conductors`` -- list or generator of ints
-            list of EllipticCurve objects.
+        - ``conductors`` -- list or generator of ints list of EllipticCurve
+          objects
 
-        OUTPUT:
-
-        list of EllipticCurve objects.
+        OUTPUT: list of EllipticCurve objects
 
         EXAMPLES::
 
@@ -1195,9 +1175,7 @@ class MiniCremonaDatabase(SQLDatabase):
         """
         The largest conductor for which the database is complete.
 
-        OUTPUT:
-
-        -  ``int`` -- largest conductor
+        OUTPUT: integer; largest conductor
 
         EXAMPLES::
 
@@ -1216,11 +1194,9 @@ class MiniCremonaDatabase(SQLDatabase):
         """
         The smallest conductor for which the database is complete: always 1.
 
-        OUTPUT:
+        OUTPUT: integer; smallest conductor
 
-        -  ``int`` -- smallest conductor
-
-        .. note::
+        .. NOTE::
 
             This always returns the integer 1, since that is the
             smallest conductor for which the database is complete,
@@ -1252,18 +1228,18 @@ class MiniCremonaDatabase(SQLDatabase):
     def number_of_curves(self,  N=0, i=0):
         """
         Return the number of curves stored in the database with conductor
-        N. If N = 0, returns the total number of curves in the database.
+        `N`. If `N = 0`, returns the total number of curves in the database.
 
-        If i is nonzero, returns the number of curves in the i-th isogeny
-        class. If i is a Cremona letter code, e.g., 'a' or 'bc', it is
+        If `i` is nonzero, returns the number of curves in the `i`-th isogeny
+        class. If `i` is a Cremona letter code, e.g., 'a' or 'bc', it is
         converted to the corresponding number.
 
         INPUT:
 
-        -  ``N`` -- int
-        -  ``i`` -- int or str
+        - ``N`` -- integer
+        - ``i`` -- integer or string
 
-        OUTPUT: int
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1302,9 +1278,9 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        -  ``N`` -- int
+        - ``N`` -- integer
 
-        OUTPUT: int
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1368,7 +1344,6 @@ class MiniCremonaDatabase(SQLDatabase):
 
             sage: d = sage.databases.cremona.MiniCremonaDatabase(name='cremona', read_only=False, rebuild=True)   # not tested
             sage: d._init_from_ftpdata('/home/jec/ecdata')                                                        # not tested
-
         """
         if self.__read_only__:
             raise RuntimeError("The database must not be read_only.")
@@ -1408,15 +1383,15 @@ class MiniCremonaDatabase(SQLDatabase):
 
         INPUT:
 
-        - `ftpdata` (string) -- the name of the directory in which the data is
+        - ``ftpdata`` -- string; the name of the directory in which the data is
 
-        -  ``largest_conductor`` -- int (default: 0), if 0,
-           then only include data up to that conductor.
+        - ``largest_conductor`` -- integer (default: 0); if 0,
+          then only include data up to that conductor
 
         OUTPUT:
 
-        -  ``int`` -- number_of_curves
-        -  ``int`` -- number_of_isogeny_classes
+        -  integer; number_of_curves
+        -  integer; number_of_isogeny_classes
 
         EXAMPLES::
 
@@ -1485,9 +1460,9 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 
         INPUT:
 
-        -  ``N`` -- int, the conductor
+        - ``N`` -- integer; the conductor
 
-        OUTPUT: dict containing the allbsd table for each isogeny class
+        OUTPUT: dictionary containing the allbsd table for each isogeny class
         in conductor N
 
         EXAMPLES::
@@ -1514,11 +1489,9 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 
         INPUT:
 
-        -  ``N`` -- int, the conductor
+        - ``N`` -- integer; the conductor
 
-        OUTPUT:
-
-        -  ``dict`` -- id:[points, ...], ...
+        OUTPUT: dictionary; id:[points, ...], ...
 
         EXAMPLES::
 
@@ -1543,11 +1516,9 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
 
         INPUT:
 
-        -  ``N`` -- int, the conductor
+        - ``N`` -- integer; the conductor
 
-        OUTPUT:
-
-        -  ``dict`` -- id:degphi, ...
+        OUTPUT: dictionary; id:degphi, ...
 
         EXAMPLES::
 
@@ -1681,7 +1652,7 @@ _db = None
 
 def CremonaDatabase(name=None,mini=None,set_global=None):
     """
-    Initializes the Cremona database with name ``name``. If ``name`` is
+    Initialize the Cremona database with name ``name``. If ``name`` is
     ``None`` it instead initializes large Cremona database (named 'cremona'),
     if available or default mini Cremona database (named 'cremona mini').
 

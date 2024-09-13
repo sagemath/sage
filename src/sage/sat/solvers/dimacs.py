@@ -6,7 +6,7 @@ infrastructure to make it easy to add new such interfaces and some example inter
 
 Currently, interfaces to **RSat** and **Glucose** are included by default.
 
-.. note::
+.. NOTE::
 
     Our SAT solver interfaces are 1-based, i.e., literals start at 1. This is consistent with the
     popular DIMACS format for SAT solving but not with Pythion's 0-based convention. However, this
@@ -42,7 +42,7 @@ class DIMACS(SatSolver):
     """
     Generic DIMACS Solver.
 
-    .. note::
+    .. NOTE::
 
         Usually, users won't have to use this class directly but some
         class which inherits from this class.
@@ -73,8 +73,7 @@ class DIMACS(SatSolver):
         - ``verbosity`` -- a verbosity level, where zero means silent
           and anything else means verbose output. (default: ``0``)
 
-        - ``**kwds`` -- accepted for compatibility with other solves,
-          ignored.
+        - ``**kwds`` -- accepted for compatibility with other solvers; ignored
 
         TESTS::
 
@@ -148,7 +147,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``decision`` -- accepted for compatibility with other solvers, ignored.
+        - ``decision`` -- accepted for compatibility with other solvers; ignored
 
         EXAMPLES::
 
@@ -183,9 +182,9 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``lits`` -- a tuple of integers != 0
+        - ``lits`` -- tuple of nonzero integers
 
-        .. note::
+        .. NOTE::
 
             If any element ``e`` in ``lits`` has ``abs(e)`` greater
             than the number of variables generated so far, then new
@@ -326,7 +325,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``clauses`` -- a list of clauses, either in simple format as a list of
+        - ``clauses`` -- list of clauses, either in simple format as a list of
           literals or in extended format for CryptoMiniSat: a tuple of literals,
           ``is_xor`` and ``rhs``.
 
@@ -520,7 +519,6 @@ class DIMACS(SatSolver):
             ....:     except ZeroDivisionError:
             ....:         pass
             sage: solve_sat(F, solver=sage.sat.solvers.RSat)    # optional - rsat, needs sage.rings.finite_rings sage.rings.polynomial.pbori
-
         """
         if assumptions is not None:
             raise NotImplementedError("Assumptions are not supported for DIMACS based solvers.")
@@ -543,6 +541,7 @@ class DIMACS(SatSolver):
             return (None,) + tuple(int(e) > 0 for e in L[:-1])
         else:
             raise ValueError("When parsing the output(={}), no line starts with letter v or s".format(self._output))
+
 
 class RSat(DIMACS):
     """
@@ -576,7 +575,6 @@ class RSat(DIMACS):
         sage: solver.add_clause((-1,-2))
         sage: solver()                            # optional - rsat
         False
-
     """
     command = "rsat {input} -v -s"
 
@@ -642,9 +640,9 @@ class Glucose(DIMACS):
         c...
         s SATISFIABLE
         v -1 -2 ... 100 0
-
     """
     command = "glucose -verb=0 -model {input}"
+
 
 class GlucoseSyrup(DIMACS):
     """
@@ -706,13 +704,13 @@ class GlucoseSyrup(DIMACS):
         c...
         s SATISFIABLE
         v -1 -2 ... 100 0
-
     """
     command = "glucose-syrup -model -verb=0 {input}"
 
+
 class Kissat(DIMACS):
     """
-    An instance of the Kissat SAT solver
+    An instance of the Kissat SAT solver.
 
     For information on Kissat see: http://fmv.jku.at/kissat/
 
@@ -770,7 +768,6 @@ class Kissat(DIMACS):
         v ...
         v ...
         v ... 100 0
-
     """
 
     command = "kissat -q {input}"

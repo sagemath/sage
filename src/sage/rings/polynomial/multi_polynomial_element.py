@@ -123,8 +123,7 @@ class MPolynomial_element(MPolynomial):
         Evaluate this multi-variate polynomial at `x`, where
         `x` is either the tuple of values to substitute in, or one
         can use functional notation `f(a_0,a_1,a_2, \ldots)` to
-        evaluate `f` with the ith variable replaced by
-        `a_i`.
+        evaluate `f` with the `i`-th variable replaced by `a_i`.
 
         EXAMPLES::
 
@@ -177,9 +176,14 @@ class MPolynomial_element(MPolynomial):
             K = x[0].parent()
         except AttributeError:
             K = self.parent().base_ring()
-        y = K(0)
+        try:
+            y = K.zero()
+            one = K.one()
+        except (AttributeError, RuntimeError):
+            y = K(0)
+            one = K(1)
         for m, c in self.element().dict().items():
-            y += c * prod(v ** e for v, e in zip(x, m) if e)
+            y += c * prod((v ** e for v, e in zip(x, m) if e), one)
         return y
 
     def _richcmp_(self, right, op):
@@ -246,7 +250,7 @@ class MPolynomial_element(MPolynomial):
 
     def number_of_terms(self):
         """
-        Return the number of non-zero coefficients of this polynomial.
+        Return the number of nonzero coefficients of this polynomial.
 
         This is also called weight, :meth:`hamming_weight` or sparsity.
 
@@ -330,7 +334,7 @@ class MPolynomial_element(MPolynomial):
 
     def _lmul_(self, a):
         """
-        Left Scalar Multiplication
+        Left Scalar Multiplication.
 
         EXAMPLES:
 
@@ -351,7 +355,7 @@ class MPolynomial_element(MPolynomial):
 
     def _rmul_(self, a):
         """
-        Right Scalar Multiplication
+        Right Scalar Multiplication.
 
         EXAMPLES:
 
@@ -447,7 +451,6 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: R.<x,y> = QQ['t'][]
             sage: x._new_constant_poly(R.base_ring()(2),R)
             2
-
         """
         return MPolynomial_polydict(P, {P._zero_tuple:x})
 
@@ -537,7 +540,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def degrees(self):
         r"""
-        Returns a tuple (precisely - an ``ETuple``) with the
+        Return a tuple (precisely - an ``ETuple``) with the
         degree of each variable in this polynomial. The list of degrees is,
         of course, ordered by the order of the generators.
 
@@ -748,8 +751,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``mon`` -- a monomial
-
+        - ``mon`` -- a monomial
 
         OUTPUT: coefficient in base ring
 
@@ -855,8 +857,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``x`` -- a tuple or, in case of a single-variable
-           MPolynomial ring x can also be an integer
+        - ``x`` -- tuple or, in case of a single-variable
+          MPolynomial ring, ``x`` can also be an integer
 
         EXAMPLES::
 
@@ -897,8 +899,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``as_ETuples`` -- (default: ``True``) if ``True`` iterate over
-          pairs whose first element is an ETuple, otherwise as a tuples
+        - ``as_ETuples`` -- boolean (default: ``True``); if ``True`` iterate
+          over pairs whose first element is an ETuple, otherwise as a tuples
 
         EXAMPLES::
 
@@ -934,16 +936,14 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
+        - ``degrees`` -- can be any of:
 
-        -  ``degrees`` -- Can be any of:
+          - a dictionary of degree restrictions
 
-           -  a dictionary of degree restrictions
+          - a list of degree restrictions (with ``None`` in
+            the unrestricted variables)
 
-           -  a list of degree restrictions (with None in
-              the unrestricted variables)
-
-           -  a monomial (very fast, but not as flexible)
-
+          - a monomial (very fast, but not as flexible)
 
         OUTPUT: element of the parent of ``self``
 
@@ -1022,9 +1022,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision).
+          default :class:`RealField` precision)
 
-        OUTPUT: a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1099,12 +1099,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT: a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1149,12 +1149,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``i`` -- an integer.
+        - ``i`` -- integer
 
         - ``prec`` -- desired floating point precision (default:
-          default :class:`RealField` precision).
+          default :class:`RealField` precision)
 
-        OUTPUT: a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1214,12 +1214,10 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        - ``as_ETuples`` -- (default: ``True``): return the list of
+        - ``as_ETuples`` -- (default: ``True``) return the list of
           exponents as a list of ETuples
 
-        OUTPUT:
-
-        The list of exponents as a list of ETuples or tuples.
+        OUTPUT: the list of exponents as a list of ETuples or tuples
 
         EXAMPLES::
 
@@ -1303,10 +1301,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-
-        -  ``var`` -- an integer indicating which variable to
-           use to homogenize (0 <= var < parent(self).ngens())
-
+        - ``var`` -- integer indicating which variable to
+          use to homogenize (``0 <= var < parent(self).ngens()``)
 
         OUTPUT: a multivariate polynomial
 
@@ -1421,10 +1417,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``fixed`` -- (optional) dictionary of inputs
+        - ``fixed`` -- (optional) dictionary of inputs
 
-        -  ``**kwds`` -- named parameters
-
+        - ``**kwds`` -- named parameters
 
         OUTPUT: new :class:`MPolynomial`
 
@@ -1506,7 +1501,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
     def is_univariate(self):
         """
         Return ``True`` if this multivariate polynomial is univariate and
-        False otherwise.
+        ``False`` otherwise.
 
         EXAMPLES::
 
@@ -1537,17 +1532,16 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def univariate_polynomial(self, R=None):
         """
-        Returns a univariate polynomial associated to this multivariate
+        Return a univariate polynomial associated to this multivariate
         polynomial.
 
         INPUT:
 
-
-        -  ``R`` -- (default: None) :class:`PolynomialRing`
+        - ``R`` -- (default: ``None``) :class:`PolynomialRing`
 
 
         If this polynomial is not in at most one variable, then a
-        :class:`ValueError` exception is raised. This is checked using the
+        :exc:`ValueError` exception is raised. This is checked using the
         method :meth:`is_univariate`. The new :class:`Polynomial` is over the same base
         ring as the given :class:`MPolynomial`.
 
@@ -1615,7 +1609,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def variables(self):
         """
-        Returns the tuple of variables occurring in this polynomial.
+        Return the tuple of variables occurring in this polynomial.
 
         EXAMPLES::
 
@@ -1728,7 +1722,6 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = x + y
             sage: f.lm()
             x
-
         """
         try:
             return self.__lm
@@ -1743,8 +1736,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def lc(self):
         """
-        Returns the leading coefficient of ``self``, i.e.,
-        ``self.coefficient(self.lm())``
+        Return the leading coefficient of ``self``, i.e.,
+        ``self.coefficient(self.lm())``.
 
         EXAMPLES::
 
@@ -1776,7 +1769,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = 3*x^2 - y^2 - x*y
             sage: f.lt()
             3*x^2
-            sage: R.<x,y,z> = PolynomialRing(QQbar, order="invlex")
+            sage: R.<x,y,z> = PolynomialRing(QQbar, order='invlex')
             sage: f = 3*x^2 - y^2 - x*y
             sage: f.lt()
             -y^2
@@ -1821,9 +1814,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def __bool__(self):
         """
-        Return ``True`` if self != 0
+        Return ``True`` if ``self != 0``.
 
-        .. note::
+        .. NOTE::
 
            This is much faster than actually writing ``self == 0``.
         """
@@ -1831,9 +1824,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
     def _floordiv_(self, right):
         r"""
-        Quotient of division of ``self`` by other. This is denoted //.
+        Quotient of division of ``self`` by ``other``. This is denoted ``//``.
 
-        .. note::
+        .. NOTE::
 
            It's not clear to me that this is well-defined if
            ``self`` is not exactly divisible by other.
@@ -2025,7 +2018,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         INPUT:
 
         - ``proof`` -- insist on provably correct results (default: ``True``
-          unless explicitly disabled for the ``"polynomial"`` subsystem with
+          unless explicitly disabled for the ``'polynomial'`` subsystem with
           :class:`sage.structure.proof.proof.WithProof`.)
 
         TESTS:
@@ -2128,7 +2121,6 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = y^3 + x^3 + (u + 1)*x
             sage: f.factor()
             x^3 + y^3 + (u + 1)*x
-
         """
         R = self.parent()
 
@@ -2163,7 +2155,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         if proof is None:
             from sage.structure.proof.proof import get_flag
-            proof = get_flag(subsystem="polynomial")
+            proof = get_flag(subsystem='polynomial')
         if proof:
             raise NotImplementedError("Provably correct factorization not implemented. Disable this error by wrapping your code in a `with proof.WithProof('polynomial', False):` block.")
 
@@ -2226,7 +2218,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
     @handle_AA_and_QQbar
     def quo_rem(self, right):
         """
-        Returns quotient and remainder of ``self`` and ``right``.
+        Return quotient and remainder of ``self`` and ``right``.
 
         EXAMPLES::
 
@@ -2361,7 +2353,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         - ``other`` -- a polynomial
 
-        OUTPUT: a list of polynomials in the same ring as ``self``
+        OUTPUT: list of polynomials in the same ring as ``self``
 
         EXAMPLES::
 
@@ -2375,7 +2367,6 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: p.subresultants(q, x)
             [2*y^6 + (-22)*y^5 + 102*y^4 + (-274)*y^3 + 488*y^2 + (-552)*y + 288,
              x*y^2 + y^3 + (-5)*x*y + (-6)*y^2 + 6*x + 11*y - 6]
-
         """
         R = self.parent()
         if variable is None:
@@ -2392,7 +2383,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-        -  ``I`` -- a list of polynomials or an ideal
+        - ``I`` -- list of polynomials or an ideal
 
         EXAMPLES::
 
@@ -2494,7 +2485,7 @@ def degree_lowest_rational_function(r, x):
 
     - ``x`` -- a multivariate polynomial ring generator
 
-    OUTPUT: integer -- the difference `val_x(p) - val_x(q)` where `r = p/q`
+    OUTPUT: integer; the difference `val_x(p) - val_x(q)` where `r = p/q`
 
     .. NOTE::
 

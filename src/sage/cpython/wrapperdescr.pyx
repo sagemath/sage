@@ -44,13 +44,13 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
 
     INPUT:
 
-    - ``slotwrapper`` -- a slot wrapper (for example ``int.__add__``).
+    - ``slotwrapper`` -- a slot wrapper (for example ``int.__add__``)
 
     - ``self`` -- the first positional argument. Normally, this should
       be of the correct type (an ``int`` when calling ``int.__add__``).
       However, this check is skipped: you can pass an arbitrary object.
 
-    - ``*args``, ``**kwds`` -- further arguments.
+    - ``*args``, ``**kwds`` -- further arguments
 
     .. WARNING::
 
