@@ -362,7 +362,7 @@ view the graph in two dimensions via matplotlib with ``show()``. ::
     sage: G = graphs.RandomGNP(15,.3)
     sage: G.show()                                                                      # needs sage.plot
 
-And you can view it in three dimensions via jmol with ``show3d()``. ::
+And you can view it in three dimensions with ``show3d()``. ::
 
     sage: G.show3d()                                                                    # needs sage.plot
 
