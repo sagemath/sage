@@ -136,7 +136,8 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
 
         sage: OrientedMatroid([[0]], key='covector')
         Covector oriented matroid of rank 0
-        sage: OrientedMatroid([[0]], key='circuit')
+        sage: M = OrientedMatroid([[0]], key='circuit')
+        sage: M.is_valid()
         Traceback (most recent call last):
         ...
         ValueError: empty set not allowed
@@ -257,10 +258,7 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
         raise NotImplementedError(
             f"oriented matroid of type {key} is not implemented")
 
-    if OM.is_valid():
-        return OM
-
-    raise ValueError("oriented matroid is not valid")
+    return OM
 
 
 def deep_tupler(obj):

@@ -117,19 +117,22 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: V2 = [[1, 1]]
-            sage: OrientedMatroid(V2, key='vector')
+            sage: M = OrientedMatroid(V2, key='vector')
+            sage: M.is_valid()
             Traceback (most recent call last):
             ...
             ValueError: every element needs an opposite
 
             sage: V3 = [[1,1], [-1,-1], [0,-1], [0,1], [-1,0], [1,0]]
-            sage: OrientedMatroid(V3, key='vector')
+            sage: M = OrientedMatroid(V3, key='vector')
+            sage: M.is_valid()
             Traceback (most recent call last):
             ...
             ValueError: composition must be in vectors
 
             sage: V4 = [[1,1], [-1,-1]]
-            sage: OrientedMatroid(V4, key='vector')
+            sage: M = OrientedMatroid(V4, key='vector')
+            sage: M.is_valid()
             Traceback (most recent call last):
             ...
             ValueError: vector elimination failed

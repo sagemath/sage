@@ -128,25 +128,27 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
-            sage: M
+            sage: OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
             Covector oriented matroid of rank 1
 
             sage: C2 = [[0,0], [1,1]]
-            sage: OrientedMatroid(C2, key='covector')
+            sage: M = OrientedMatroid(C2, key='covector')
+            sage: M.is_valid()
             Traceback (most recent call last):
             ...
             ValueError: every element needs an opposite
 
             sage: C3 = [[1,1], [-1,-1], [0,1], [1,0], [-1,0], [0,-1]]
-            sage: OrientedMatroid(C3, key='covector')
+            sage: M = OrientedMatroid(C3, key='covector')
+            sage: M.is_valid()
             Traceback (most recent call last):
             ...
             ValueError: composition must be in vectors
 
 
             sage: C4 = [[0,0], [1,1], [-1,-1], [1,-1], [-1,1]]
-            sage: M = OrientedMatroid(C4, key='covector'); M
+            sage: M = OrientedMatroid(C4, key='covector')
+            sage: M.is_valid()
             Traceback (most recent call last):
             ...
             ValueError: weak elimination failed
