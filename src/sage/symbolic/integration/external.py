@@ -214,53 +214,13 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
     return result
 
 
-def giac_integrator(expression, v, a=None, b=None):
-    r"""
-    Integration using Giac.
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.integration.external import giac_integrator
-        sage: giac_integrator(sin(x), x)
-        -cos(x)
-        sage: giac_integrator(1/(x^2+6), x, -oo, oo)
-        1/6*sqrt(6)*pi
-
-    TESTS::
-
-        sage: giac_integrator(e^(-x^2)*log(x), x)
-        integrate(e^(-x^2)*log(x), x)
-
-    Check that :issue:`30133` is fixed::
-
-        sage: ee = SR.var('e')
-        sage: giac_integrator(ee^x, x)
-        e^x/log(e)
-        sage: y = SR.var('π')
-        sage: giac_integrator(cos(y), y)
-        sin(π)
-
-    Check that :issue:`29966` is fixed::
-
-        sage: giac_integrator(sqrt(x + sqrt(x)), x)
-        1/12*(2*sqrt(x)*(4*sqrt(x) + 1) - 3)*sqrt(x + sqrt(x))...
-    """
-    ex = expression._giac_()
-    if a is None:
-        result = ex.integrate(v._giac_())
-    else:
-        result = ex.integrate(v._giac_(), a._giac_(), b._giac_())
-    if 'integrate' in format(result) or 'integration' in format(result):
-        return expression.integrate(v, a, b, hold=True)
-    return result._sage_()
-
-
 def libgiac_integrator(expression, v, a=None, b=None):
     r"""
     Integration using libgiac.
 
     EXAMPLES::
 
+        sage: # needs sage.libs.giac
         sage: import sage.libs.giac
         ...
         sage: from sage.symbolic.integration.external import libgiac_integrator
@@ -272,12 +232,14 @@ def libgiac_integrator(expression, v, a=None, b=None):
 
     TESTS::
 
+        sage: # needs sage.libs.giac
         sage: libgiac_integrator(e^(-x^2)*log(x), x)
         integrate(e^(-x^2)*log(x), x)
 
     The following integral fails with the Giac Pexpect interface, but works
     with libgiac (:issue:`31873`)::
 
+        sage: # needs sage.libs.giac
         sage: a, x = var('a,x')
         sage: f = sec(2*a*x)
         sage: F = libgiac_integrator(f, x)
