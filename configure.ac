@@ -463,6 +463,12 @@ AC_ARG_ENABLE([r],
     done
   ])
 
+AC_ARG_ENABLE([sagetex],
+  AS_HELP_STRING([--disable-sagetex],
+                 [don't build SageTeX]), [
+    AS_VAR_SET([SAGE_ENABLE_sagetex], [$enableval])
+  ])
+
 AC_ARG_ENABLE([doc],
   AS_HELP_STRING([--disable-doc],
                  [disable build of the Sage documentation and packages depending on it]), [
