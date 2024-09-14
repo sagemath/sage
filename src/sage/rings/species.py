@@ -1,4 +1,5 @@
 from itertools import accumulate, chain
+
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.monoids import Monoids
@@ -12,30 +13,34 @@ from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_ge
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method
+from sage.modules.free_module_element import vector
 from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement)
 from sage.rings.integer_ring import ZZ
+from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, parent
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.modules.free_module_element import vector
 
 
 class ElementCache():
     def __init__(self):
         r"""
-        Class for caching elements.
+        A class for caching elements.
         """
         self._cache = dict()
 
     def _cache_get(self, elm):
         r"""
-        Return the cached element, or add it
-        if it doesn't exist.
+        Return the cached element, or add it if it doesn't exist.
 
-        ``elm`` must implement the following methods:
-            - ``_element_key`` - hashable type for dict lookup.
-            - ``__eq__`` - to compare two elements.
+        INPUT:
+
+        - ``elm``, an element of a class which implements the
+          following methods::
+
+            - ``_element_key`` - hashable type for dict lookup,
+            - ``__eq__`` - to compare two elements,
             - ``_canonicalize`` - to preprocess the element.
 
         TESTS::
@@ -43,9 +48,9 @@ class ElementCache():
             sage: A = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
-            sage: a = A(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); a
+            sage: a = A(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]}); a
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
-            sage: b = A(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]}); b
+            sage: b = A(G, {0: [1,2,5,6], 1: [3,4,7,8,9,10]}); b
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
             sage: a is b
             True
@@ -53,6 +58,7 @@ class ElementCache():
             sage: E = ElementCache()
             sage: E._cache_get(a)
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
+
         """
         # TODO: Make _canonicalize optional.
         # Possibly the following works:
@@ -230,7 +236,7 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             mapping = {v: i for i, v in enumerate(x.domain(), 1)}
             normalized_gens = [[tuple(mapping[x] for x in cyc)
                                 for cyc in gen.cycle_tuples()]
-                            for gen in x.gens()]
+                               for gen in x.gens()]
             P = PermutationGroup(gens=normalized_gens)
             # Fix for SymmetricGroup(0)
             if x.degree() == 0:
@@ -335,7 +341,7 @@ class AtomicSpeciesElement(Element):
 
             sage: A = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]])
-            sage: a = A(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
+            sage: a = A(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]})
             sage: a.grade()
             [4, 6]
         """
@@ -351,7 +357,7 @@ class AtomicSpeciesElement(Element):
             sage: A = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
-            sage: a = A(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); a
+            sage: a = A(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]}); a
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
             sage: a._element_key()
             ((4, 6), ((1,2,3,4)(5,6)(7,8)(9,10),))
@@ -369,9 +375,9 @@ class AtomicSpeciesElement(Element):
             sage: A = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
-            sage: f = A(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); f
+            sage: f = A(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]}); f
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
-            sage: A(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]}) is f  # indirect doctest
+            sage: A(G, {0: [1,2,5,6], 1: [3,4,7,8,9,10]}) is f  # indirect doctest
             True
         """
         # The canonicalization is done in the element constructor.
@@ -388,11 +394,11 @@ class AtomicSpeciesElement(Element):
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
             Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
-            sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); A
+            sage: A = At(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]}); A
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
-            sage: B = At(H, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); B
+            sage: B = At(H, {0: [1,2,3,4], 1: [5,6,7,8,9,10]}); B
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({1, 2, 3, 4}, {5, 6, 7, 8, 9, 10})}
-            sage: C = At(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]}); C
+            sage: C = At(G, {0: [1,2,5,6], 1: [3,4,7,8,9,10]}); C
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
             sage: hash(A) == hash(B)
             True
@@ -413,9 +419,9 @@ class AtomicSpeciesElement(Element):
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
             sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
             Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
-            sage: A = At(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
-            sage: B = At(H, {1: [1,2,3,4], 2: [5,6,7,8,9,10]})
-            sage: C = At(G, {1: [1,2,5,6], 2: [3,4,7,8,9,10]})
+            sage: A = At(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]})
+            sage: B = At(H, {0: [1,2,3,4], 1: [5,6,7,8,9,10]})
+            sage: C = At(G, {0: [1,2,5,6], 1: [3,4,7,8,9,10]})
             sage: A != B
             True
             sage: A == C
@@ -448,15 +454,15 @@ class AtomicSpeciesElement(Element):
             sage: A = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
-            sage: a = A(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); a
+            sage: a = A(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]}); a
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
-            sage: a = A(G, {2: [1,2,3,4,5,6,7,8,9,10]}); a
+            sage: a = A(G, {1: [1,2,3,4,5,6,7,8,9,10]}); a
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})}
         """
         if self.parent()._arity == 1:
             return "{" + f"{self._dis}" + "}"
         dompart = ', '.join("{" + repr(sorted(b))[1:-1] + "}"
-                           for b in self._dompart)
+                            for b in self._dompart)
         return "{" + f"{self._dis}: ({dompart})" + "}"
 
 
@@ -477,7 +483,6 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             sage: A3 is A4
             True
         """
-        from sage.structure.category_object import normalize_names
         names = normalize_names(-1, names)
         return super().__classcall__(cls, names)
 
@@ -521,15 +526,20 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
         TESTS::
 
-            sage: At1 = AtomicSpecies("X")
-            sage: At2 = AtomicSpecies("X, Y")
-            sage: At1.an_element()
+            sage: A = AtomicSpecies("X")
+            sage: A.an_element()
             E_2
-            sage: At2.an_element()
+
+            sage: A = AtomicSpecies("X, Y")
+            sage: a = A.an_element(); a
             {((1,2)(3,4),): ({1, 2}, {3, 4})}
+
+            sage: a.rename("E_2(XY)")
+            sage: a
+            E_2(XY)
         """
-        G = PermutationGroup([[(2 * i - 1, 2 * i) for i in range(1, self._arity + 1)]])
-        m = {i: [2 * i - 1, 2 * i] for i in range(1, self._arity + 1)}
+        G = PermutationGroup([[(2 * i + 1, 2 * i + 2) for i in range(self._arity)]])
+        m = {i: [2 * i + 1, 2 * i + 2] for i in range(self._arity)}
         return self._element_constructor_(G, m)
 
     def _element_constructor_(self, G, pi=None):
@@ -540,19 +550,29 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
         - ``G`` - an element of ``self`` (in this case pi must be ``None``)
           or a permutation group.
-        - ``pi`` - a dict mapping sorts to iterables whose union is the domain.
-          If `k=1`, `pi` can be omitted.
 
+        - ``pi`` - a `k`-tuple or list of iterables or a dict mapping
+          sorts to iterables whose union is the domain.  If `k=1`,
+          `pi` can be omitted.
 
         EXAMPLES::
 
             sage: A = AtomicSpecies("X, Y")
-            sage: A(DihedralGroup(5), {1: [1,2,3,4,5]})
+            sage: A(DihedralGroup(5), {0: [1,2,3,4,5]})
             P_5(X)
 
             sage: G = PermutationGroup([[(1,2),(3,4,5,6)]])
-            sage: a = A(G, {1: [1,2], 2: [3,4,5,6]}); a
+            sage: A(G, {0: [1,2], 1: [3,4,5,6]})
             {((1,2,3,4)(5,6),): ({5, 6}, {1, 2, 3, 4})}
+
+            sage: A(G, ([1,2], [3,4,5,6]))
+            {((1,2,3,4)(5,6),): ({5, 6}, {1, 2, 3, 4})}
+
+        TESTS::
+
+            sage: G = PermutationGroup([[(1,3),(5,7)]], domain=[1,3,5,7])
+            sage: A(G, ([1,3], [5,7]))
+            E_2(XY)
         """
         if parent(G) == self:
             if pi is not None:
@@ -562,11 +582,13 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
             raise ValueError(f"{G} must be a permutation group")
         if pi is None:
             if self._arity == 1:
-                pi = {1: G.domain()}
+                pi = {0: G.domain()}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
-        if not set(pi.keys()).issubset(range(1, self._arity + 1)):
-            raise ValueError(f"keys of pi (={pi.keys()}) must be in the range [1, {self._arity}]")
+        elif not isinstance(pi, dict):
+            pi = {i: v for i, v in enumerate(pi)}
+        if not set(pi.keys()).issubset(range(self._arity)):
+            raise ValueError(f"keys of pi (={pi.keys()}) must be in range({self._arity})")
         if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
             raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
         for orbit in G.orbits():
@@ -574,12 +596,11 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
                 raise ValueError(f"All elements of orbit {orbit} must have the same sort")
         dis_elm = ConjugacyClassesOfDirectlyIndecomposableSubgroups()(G)
         mapping = {v: i for i, v in enumerate(G.domain(), 1)}
-        mapping2 = PermutationGroupElement([mapping[e] for o in sorted(G.orbits(), key=len, reverse=True)
-                                            for e in o]).inverse()
-        dpart = [frozenset() for _ in range(self._arity)]
-        for k, v in pi.items():
-            dpart[k - 1] = frozenset(mapping2(mapping[x]) for x in v)
-        elm = self._cache_get(self.element_class(self, dis_elm, tuple(dpart)))
+        O = sorted(G.orbits(), key=len, reverse=True)
+        mapping2 = PermutationGroupElement([mapping[e] for o in O for e in o]).inverse()
+        dompart = [frozenset(mapping2(mapping[x]) for x in pi.get(k, []))
+                   for k in range(self._arity)]
+        elm = self._cache_get(self.element_class(self, dis_elm, tuple(dompart)))
         if elm._tc not in self._renamed:
             self._rename(elm._tc)
         return elm
@@ -591,21 +612,21 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         EXAMPLES::
 
             sage: A = AtomicSpecies(["X", "Y"])
-            sage: A(SymmetricGroup(4), {1: range(1, 5)})  # indirect doctest
+            sage: A(SymmetricGroup(4), {0: range(1, 5)})  # indirect doctest
             E_4(X)
-            sage: A(SymmetricGroup(4), {2: range(1, 5)})
+            sage: A(SymmetricGroup(4), {1: range(1, 5)})
             E_4(Y)
-            sage: A(CyclicPermutationGroup(4), {1: range(1, 5)})
+            sage: A(CyclicPermutationGroup(4), {0: range(1, 5)})
             C_4(X)
-            sage: A(CyclicPermutationGroup(4), {2: range(1, 5)})
+            sage: A(CyclicPermutationGroup(4), {1: range(1, 5)})
             C_4(Y)
-            sage: A(DihedralGroup(4), {1: range(1, 5)})
+            sage: A(DihedralGroup(4), {0: range(1, 5)})
             P_4(X)
-            sage: A(DihedralGroup(4), {2: range(1, 5)})
+            sage: A(DihedralGroup(4), {1: range(1, 5)})
             P_4(Y)
-            sage: A(AlternatingGroup(4), {1: range(1, 5)})
+            sage: A(AlternatingGroup(4), {0: range(1, 5)})
             Eo_4(X)
-            sage: A(AlternatingGroup(4), {2: range(1, 5)})
+            sage: A(AlternatingGroup(4), {1: range(1, 5)})
             Eo_4(Y)
         """
         from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -618,7 +639,7 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         self._renamed.add(n)
         for i in range(self._arity):
             if n == 1:
-                self(SymmetricGroup(1), {i+1: [1]}).rename(self._names[i])
+                self(SymmetricGroup(1), {i: [1]}).rename(self._names[i])
 
             if self._arity == 1:
                 sort = ""
@@ -627,25 +648,25 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
 
             if n >= 2:
                 self(SymmetricGroup(n),
-                    {i+1: range(1, n+1)}).rename(f"E_{n}" + sort)
+                     {i: range(1, n+1)}).rename(f"E_{n}" + sort)
 
             if n >= 3:
                 self(CyclicPermutationGroup(n),
-                    {i+1: range(1, n+1)}).rename(f"C_{n}" + sort)
+                     {i: range(1, n+1)}).rename(f"C_{n}" + sort)
 
             if n >= 4:
                 self(DihedralGroup(n),
-                    {i+1: range(1, n+1)}).rename(f"P_{n}" + sort)
+                     {i: range(1, n+1)}).rename(f"P_{n}" + sort)
 
             if n >= 4:
                 self(AlternatingGroup(n),
-                    {i+1: range(1, n+1)}).rename(f"Eo_{n}" + sort)
+                     {i: range(1, n+1)}).rename(f"Eo_{n}" + sort)
 
             if n >= 4 and not n % 2:
                 gens = [[(i, n-i+1) for i in range(1, n//2 + 1)],
                         [(i, i+1) for i in range(1, n, 2)]]
                 self(PermutationGroup(gens),
-                    {i+1: range(1, n+1)}).rename(f"Pb_{n}" + sort)
+                     {i: range(1, n+1)}).rename(f"Pb_{n}" + sort)
 
     def __contains__(self, x):
         r"""
@@ -667,15 +688,15 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         if isinstance(x, PermutationGroup_generic):
             if self._arity == 1:
                 G = x
-                pi = {1: G.domain()}
+                pi = {0: G.domain()}
             else:
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
         else:
             G, pi = x
         if not isinstance(G, PermutationGroup_generic):
             raise ValueError(f"{G} must be a permutation group")
-        if not set(pi.keys()).issubset(range(1, self._arity + 1)):
-            raise ValueError(f"keys of pi (={pi.keys()}) must be in the range [1, {self._arity}]")
+        if not set(pi.keys()).issubset(range(self._arity)):
+            raise ValueError(f"keys of pi (={pi.keys()}) must be in range({self._arity})")
         if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
             raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
         for orbit in G.orbits():
@@ -699,6 +720,65 @@ class AtomicSpecies(UniqueRepresentation, Parent, ElementCache):
         return f"Atomic species in {', '.join(self._names)}"
 
     Element = AtomicSpeciesElement
+
+
+def _stabilizer_subgroups(G, X, a):
+    r"""
+    Return subgroups conjugate to the stabilizer subgroups of the
+    given (left) group action.
+
+    INPUT:
+
+    - ``G``, the acting group
+    - ``X``, the set ``G`` is acting on
+    - ``a``, the (left) action
+
+    EXAMPLES::
+
+        sage: from sage.rings.species import _stabilizer_subgroups
+        sage: S = SymmetricGroup(4)
+        sage: X = SetPartitions(S.degree(), [2,2])
+        sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
+        sage: _stabilizer_subgroups(S, X, a)
+        [Permutation Group with generators [(1,2), (1,3)(2,4)]]
+
+        sage: S = SymmetricGroup(8)
+        sage: X = SetPartitions(S.degree(), [3,3,2])
+        sage: _stabilizer_subgroups(S, X, a)
+        [Permutation Group with generators [(7,8), (6,7), (4,5), (1,3)(2,6)(4,7)(5,8), (1,3)]]
+
+        sage: S = SymmetricGroup(4)
+        sage: X = SetPartitions(S.degree(), 2)
+        sage: _stabilizer_subgroups(S, X, a)
+        [Permutation Group with generators [(1,4), (1,3,4)],
+         Permutation Group with generators [(1,3)(2,4), (1,4)]]
+
+    Let us keep 3 and 6 in separate blocks, and check that the
+    returned subgroups have the proper domains::
+
+        sage: S = SymmetricGroup([1,2,4,5,3,6]).young_subgroup([4, 2])
+        sage: X = [pi for pi in SetPartitions(6, [3,3]) if all(sum(1 for e in b if e % 3) == 2 for b in pi)]
+        sage: _stabilizer_subgroups(S, X, a)
+        [Permutation Group with generators [(1,2), (4,5), (1,4)(2,5)(3,6)]]
+
+    """
+    from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
+    to_gap = {x: i for i, x in enumerate(X, 1)}
+
+    g_orbits = [orbit_decomposition(list(to_gap), lambda x: a(g, x))
+                for g in G.gens()]
+
+    gens = [PermutationGroupElement(gen) for g_orbit in g_orbits
+            if (gen := [tuple([to_gap[x] for x in o])
+                        for o in g_orbit if len(o) > 1])]
+    result = []
+    M = set(range(1, len(to_gap) + 1))
+    while M:
+        p = M.pop()
+        OS = libgap.OrbitStabilizer(G, p, G.gens(), gens)
+        result.append(PermutationGroup(gap_group=OS["stabilizer"], domain=G.domain()))
+        M.difference_update(OS["orbit"].sage())
+    return result
 
 
 class MolecularSpecies(IndexedFreeAbelianMonoid):
@@ -743,7 +823,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: from sage.rings.species import MolecularSpecies
             sage: M = MolecularSpecies("X,Y")
             sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
-            sage: M(G, {1: [5,6], 2: [1,2,3,4]})
+            sage: M(G, {0: [5,6], 1: [1,2,3,4]})
             {((1,2)(3,4),): ({}, {1, 2, 3, 4})}*E_2(X)
 
         TESTS::
@@ -791,38 +871,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         n = sum(grade)
         S = SymmetricGroup(n).young_subgroup(grade)
         dom = S.domain()
-        dom_part = {i+1: dom[sum(grade[:i]): sum(grade[:i+1])] for i in range(len(grade))}
-        return Set([self(G, dom_part) for G in S.conjugacy_classes_subgroups()])
-
-    def _project(self, G, pi, part):
-        r"""
-        Project `G` onto a subset ``part`` of its domain.
-
-        ``part`` must be a union of cycles, but this is not checked.
-
-        TESTS::
-
-            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-            sage: M = P._indices
-            sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]]); G
-            Permutation Group with generators [(5,6), (1,2)(3,4)]
-            sage: parts = G.disjoint_direct_product_decomposition(); parts
-            {{1, 2, 3, 4}, {5, 6}}
-            sage: pi = {1: [1,2,3,4], 2: [5,6]}
-            sage: M._project(G, pi, parts[0])
-            (Permutation Group with generators [(1,2)(3,4)], {1: [1, 2, 3, 4]})
-            sage: M._project(G, pi, parts[1])
-            (Permutation Group with generators [(5,6)], {2: [5, 6]})
-        """
-        restricted_gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in part]
-                           for gen in G.gens()]
-        restricted_gens = [gen for gen in restricted_gens if gen]
-        mapping = dict()
-        for k, v in pi.items():
-            es = [e for e in v if e in part]
-            if es:
-                mapping[k] = es
-        return PermutationGroup(gens=restricted_gens, domain=part), mapping
+        dompart = {i: dom[sum(grade[:i]): sum(grade[:i+1])] for i in range(len(grade))}
+        return Set([self(G, dompart) for G in S.conjugacy_classes_subgroups()])
 
     def _element_constructor_(self, G, pi=None):
         r"""
@@ -832,13 +882,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
         - ``G`` - an element of ``self`` (in this case pi must be ``None``)
           or a permutation group, or a pair ``(X, a)`` consisting of a
-          finite set and an action.
+          finite set and a transitive action.
         - ``pi`` - a dict mapping sorts to iterables whose union is the
           domain of ``G`` (if ``G`` is a permutation group) or `X` (if ``G``)
           is a pair ``(X, a)``. If `k=1`, `pi` can be omitted.
-
-        If `G = (X, a)`, then `X` should be a finite set and `a` a transitive
-        action of `G` on `X`.
 
         EXAMPLES:
 
@@ -847,19 +894,43 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: from sage.rings.species import MolecularSpecies
             sage: M = MolecularSpecies(["X", "Y"])
             sage: G = PermutationGroup([[(1,2)], [(3,4)]])
-            sage: M(G, {1: [1,2], 2: [3,4]})
+            sage: M(G, {0: [1,2], 1: [3,4]})
             E_2(X)*E_2(Y)
+
+        Create a molecular species given an action::
+
+            sage: M = MolecularSpecies("X")
+            sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
+            sage: X = SetPartitions(4, [2, 2])
+            sage: M((X, a), {0: X.base_set()})
+            P_4
+
+            sage: X = SetPartitions(8, [4, 2, 2])
+            sage: M((X, a), {0: X.base_set()})
+            P_4*E_4
 
         TESTS::
 
-            sage: M(CyclicPermutationGroup(4), {1: [1,2], 2: [3,4]})
+            sage: M = MolecularSpecies(["X", "Y"])
+            sage: M(CyclicPermutationGroup(4), {0: [1,2], 1: [3,4]})
             Traceback (most recent call last):
             ...
             ValueError: All elements of orbit (1, 2, 3, 4) must have the same sort
 
             sage: G = PermutationGroup([[(2,3),(4,5)]], domain=[2,3,4,5])
-            sage: M(G, {1:[2, 3], 2:[4,5]})
-            {((1,2)(3,4),): ({1, 2}, {3, 4})}
+            sage: M(G, {0: [2, 3], 1: [4, 5]})
+            E_2(XY)
+
+            sage: X = SetPartitions(4, 2)
+            sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
+            sage: M((X, a), {0: [1,2], 1: [3,4]})
+            Traceback (most recent call last):
+            ...
+            ValueError: Action is not transitive
+
+            sage: G = PermutationGroup([[(1,3),(5,7)]], domain=[1,3,5,7])
+            sage: M(G, ([1,3], [5,7]))
+            E_2(XY)
         """
         if parent(G) == self:
             if pi is not None:
@@ -869,84 +940,35 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         if isinstance(G, PermutationGroup_generic):
             if pi is None:
                 if self._arity == 1:
-                    pi = {1: G.domain()}
+                    pi = {0: G.domain()}
                 else:
                     raise ValueError("the assignment of sorts to the domain elements must be provided")
+            elif not isinstance(pi, dict):
+                pi = {i: v for i, v in enumerate(pi)}
             domain = [e for p in pi.values() for e in p]
             if len(domain) != len(set(domain)):
                 raise ValueError("each domain element must have exactly one sort")
             if set(G.domain()) != set(domain):
                 raise ValueError("each element of the domain of the group must have one sort")
-            domain_partition = G.disjoint_direct_product_decomposition()
+            components = G.disjoint_direct_product_decomposition()
             elm = self.one()
-            for part in domain_partition:
-                elm *= self.gen(self._project(G, pi, part))
+            for component in components:
+                gens = [[cyc for cyc in gen.cycle_tuples() if cyc[0] in component]
+                        for gen in G.gens()]
+                H = PermutationGroup([gen for gen in gens if gen],
+                                     domain=component)
+                dompart = {k: [e for e in v if e in component]
+                           for k, v in pi.items()}
+                elm *= self.gen(self._indices(H, dompart))
             return elm
 
-        # Assume G is a tuple (X, a)
         X, a = G
-        if pi is None:
-            if self._arity == 1:
-                pi = {1: X}
-            else:
-                raise ValueError("the assignment of sorts to the domain elements must be provided")
-        L = [None for _ in range(self._arity)]
-        for k, v in pi.items():
-            L[k - 1] = list(v)
-        # Create group
-        # TODO: Is this correct?
-        S = SymmetricGroup(list(chain.from_iterable(L))).young_subgroup([len(v) for v in L])
-        H = PermutationGroup(S.gens(), action=a, domain=X)
-        if len(H.orbits()) > 1:
-            # Then it is not transitive
+        L = [len(pi.get(i, [])) for i in range(self._arity)]
+        S = SymmetricGroup(sum(L)).young_subgroup(L)
+        H = _stabilizer_subgroups(S, X, a)
+        if len(H) > 1:
             raise ValueError("Action is not transitive")
-        stabG = PermutationGroup([g for g in S.gens()
-                                  if a(g, H.orbits()[0][0]) == H.orbits()[0][0]],
-                                 domain=S.domain())
-        return self(stabG, pi)
-
-    def gen(self, x):
-        r"""
-        The molecular species given by an atomic species.
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import MolecularSpecies
-            sage: M = MolecularSpecies("X, Y")
-
-            sage: P = PolynomialSpecies(ZZ, "X, Y")
-            sage: At = AtomicSpecies("X, Y")
-            sage: G = PermutationGroup([[(1,2),(3,4)]]); G
-            Permutation Group with generators [(1,2)(3,4)]
-            sage: pi = {1: [1,2], 2: [3,4]}
-            sage: E2XY = At(G, pi)
-            sage: At(G, pi).rename("E_2(XY)"); E2XY
-            E_2(XY)
-            sage: m = P._indices.gen((G, pi)); m
-            E_2(XY)
-            sage: type(m)
-            <class 'sage.rings.species.MolecularSpecies_with_category.element_class'>
-
-            sage: P = PolynomialSpecies(ZZ, ["X"])
-            sage: M = P._indices
-            sage: A = AtomicSpecies("X")
-            sage: a = A(CyclicPermutationGroup(4))
-            sage: M.gen(a)
-            C_4
-
-            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-            sage: M = P._indices
-            sage: m = M(SymmetricGroup(6).young_subgroup([2, 2, 2]), {1: [1,2], 2: [3,4,5,6]})
-            sage: list(m)
-            [(E_2(X), 1), (E_2(Y), 2)]
-        """
-        if x not in self._indices:
-            raise IndexError(f"{x} is not in the index set")
-        if isinstance(x, (PermutationGroup_generic, AtomicSpecies.Element)):
-            at = self._indices(x)
-        else:
-            at = self._indices(x[0], x[1])
-        return self.element_class(self, {at: ZZ.one()})
+        return self(H[0], pi)
 
     def _repr_(self):
         r"""
@@ -992,14 +1014,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: from sage.rings.species import MolecularSpecies
                 sage: M = MolecularSpecies("X,Y")
                 sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
-                sage: A = M(G, {1: [5,6], 2: [1,2,3,4]})
+                sage: A = M(G, {0: [5,6], 1: [1,2,3,4]})
                 sage: A.group_and_partition()
                 (Permutation Group with generators [(5,6), (1,2)(3,4)],
                  (frozenset({5, 6}), frozenset({1, 2, 3, 4})))
 
             TESTS::
 
-                sage: B = M(PermutationGroup([(1,2,3)]), {1: [1,2,3]})
+                sage: B = M(PermutationGroup([(1,2,3)]), {0: [1,2,3]})
                 sage: B.group_and_partition()
                 (Permutation Group with generators [(1,2,3)],
                  (frozenset({1, 2, 3}), frozenset()))
@@ -1008,7 +1030,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 (Permutation Group with generators [(7,8,9), (5,6), (1,2)(3,4)],
                  (frozenset({5, 6, 7, 8, 9}), frozenset({1, 2, 3, 4})))
 
-                sage: C = M(PermutationGroup([(2,3)]), {1: [1], 2: [2,3]})
+                sage: C = M(PermutationGroup([(2,3)]), {0: [1], 1: [2,3]})
                 sage: C.group_and_partition()
                 (Permutation Group with generators [(2,3)],
                  (frozenset({1}), frozenset({2, 3})))
@@ -1043,7 +1065,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                     return a._dis._C, a._dompart
 
                 if n % 2 == 1:
-                    a = list(A._monomial)[0] # as atomic species
+                    a = list(A._monomial)[0]  # as atomic species
                     b, b_dompart = (A ** (n-1)).group_and_partition()
                     gens = a._dis._C.gens() + shift_gens(b.gens(), a._tc)
                     new_dompart = tuple([frozenset(list(p_a) + [a._tc + e for e in p_b])
@@ -1085,7 +1107,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: M = MolecularSpecies("X, Y")
                 sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
                 Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
-                sage: a = M(G, {1: [1,2,3,4], 2: [5,6,7,8,9,10]}); a
+                sage: a = M(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]}); a
                 {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
                 sage: a.grade()
                 [4, 6]
@@ -1133,7 +1155,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 E_2(XY) + X^2*Y^2
 
                 sage: M = MolecularSpecies(["X", "Y"])
-                sage: F = M(PermutationGroup([[(1,2,3), (4,5,6)]]), {1: [1,2,3], 2: [4,5,6]})
+                sage: F = M(PermutationGroup([[(1,2,3), (4,5,6)]]), {0: [1,2,3], 1: [4,5,6]})
                 sage: F
                 {((1,2,3)(4,5,6),): ({1, 2, 3}, {4, 5, 6})}
                 sage: F._compose_with_singletons(ZZ, "X1, X2, X3, Y1, Y2", [[1, 1, 1], [2, 1]])
@@ -1162,7 +1184,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             G = libgap.ConjugateGroup(G, conj)
 
             comp = list(chain.from_iterable(args))
-            dpart = {i + 1: range(x - comp[i] + 1, x + 1) for i, x in enumerate(accumulate(comp))}
+            dompart = {i: range(x - comp[i] + 1, x + 1) for i, x in enumerate(accumulate(comp))}
             # Create the double coset representatives.
             S_down = SymmetricGroup(sum(comp)).young_subgroup(comp)
             mc = self.grade()
@@ -1174,8 +1196,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             res = Pn.zero()
             for tau, _ in taus:
                 H = libgap.Intersection(libgap.ConjugateGroup(G, tau ** -1), S_down)
-                grp = PermutationGroup(gap_group=H, domain=range(1, tc + 1))
-                res += Pn(grp, dpart)
+                K = PermutationGroup(gap_group=H, domain=range(1, tc + 1))
+                res += Pn(K, dompart)
             return res
 
         def __call__(self, *args):
@@ -1203,8 +1225,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 P_4
 
                 sage: M = MolecularSpecies(["X","Y"])
-                sage: X = M(SymmetricGroup(1), {1:[1]})
-                sage: Y = M(SymmetricGroup(1), {2:[1]})
+                sage: X = M(SymmetricGroup(1), {0: [1]})
+                sage: Y = M(SymmetricGroup(1), {1: [1]})
                 sage: (X*Y)(X, Y^2)
                 X*Y^2
 
@@ -1213,8 +1235,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: M1 = MolecularSpecies("X")
                 sage: M2 = MolecularSpecies("X, Y")
                 sage: C3 = M1(CyclicPermutationGroup(3))
-                sage: X = M2(SymmetricGroup(1), {1: [1]})
-                sage: Y = M2(SymmetricGroup(1), {2: [1]})
+                sage: X = M2(SymmetricGroup(1), {0: [1]})
+                sage: Y = M2(SymmetricGroup(1), {1: [1]})
                 sage: C3(X*Y)
                 {((1,2,3)(4,5,6),): ({1, 2, 3}, {4, 5, 6})}
 
@@ -1253,17 +1275,17 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             # gens from M_i and dompart
             P = args[0].parent()
-            dpart = {i: [] for i in range(1, P._arity + 1)}
+            dompart = {i: [] for i in range(P._arity)}
             for start, M in zip(starts, Mlist):
-                K, dompart = M.group_and_partition()
-                for i, v in enumerate(dompart, 1):
-                    dpart[i].extend([start + k for k in v])
+                K, K_dompart = M.group_and_partition()
+                for i, v in enumerate(K_dompart):
+                    dompart[i].extend([start + k for k in v])
                 for gen in K.gens():
                     gens.append([tuple(start + k for k in cyc)
                                  for cyc in gen.cycle_tuples()])
 
             return P(PermutationGroup(gens,
-                                      domain=range(1, starts[-1] + 1)), dpart)
+                                      domain=range(1, starts[-1] + 1)), dompart)
 
 
 class PolynomialSpecies(CombinatorialFreeModule):
@@ -1312,9 +1334,9 @@ class PolynomialSpecies(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-            sage: E4X = P(SymmetricGroup(4), {1: range(1, 5)}); E4X
+            sage: E4X = P(SymmetricGroup(4), {0: range(1, 5)}); E4X
             E_4(X)
-            sage: E4Y = P(SymmetricGroup(4), {2: range(1, 5)}); E4Y
+            sage: E4Y = P(SymmetricGroup(4), {1: range(1, 5)}); E4Y
             E_4(Y)
             sage: P.degree_on_basis(E4X.support()[0])
             4
@@ -1340,13 +1362,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-            sage: P(SymmetricGroup(4).young_subgroup([2, 2]), {1: [1,2], 2: [3,4]})
+            sage: P(SymmetricGroup(4).young_subgroup([2, 2]), ([1,2], [3,4]))
             E_2(X)*E_2(Y)
 
             sage: X = SetPartitions(4, 2)
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
-            sage: P((X, a), {1: [1,2], 2: [3,4]})
-            X^2*E_2(Y) + X^2*Y^2 + E_2(X)*Y^2 + E_2(X)*E_2(Y)
+            sage: P((X, a), {0: [1,2], 1: [3,4]})
+            X^2*E_2(Y) + E_2(XY) + E_2(X)*Y^2 + E_2(X)*E_2(Y)
+
+            sage: P = PolynomialSpecies(ZZ, ["X"])
+            sage: X = SetPartitions(4, 2)
+            sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
+            sage: P((X, a), {0: [1,2,3,4]})
+            E_3*X + P_4
         """
         if parent(G) == self:
             if pi is not None:
@@ -1357,26 +1385,16 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 if self._arity == 1:
                     return self._from_dict({self._indices(G): ZZ.one()})
                 raise ValueError("the assignment of sorts to the domain elements must be provided")
+            elif not isinstance(pi, dict):
+                pi = {i: v for i, v in enumerate(pi)}
             return self._from_dict({self._indices(G, pi): ZZ.one()})
-        # Assume G is a tuple (X, a)
+
         X, a = G
-        if pi is None:
-            if self._arity == 1:
-                pi = {1: X}
-            else:
-                raise ValueError("the assignment of sorts to the domain elements must be provided")
-        # Make iteration over values of pi deterministic
-        L = [None for _ in range(self._arity)]
-        for k, v in pi.items():
-            L[k - 1] = list(v)
-        # Create group
-        # TODO: Is this correct?
-        S = SymmetricGroup(list(chain.from_iterable(L))).young_subgroup([len(v) for v in L])
-        H = PermutationGroup(S.gens(), action=a, domain=X)
-        res = self.zero()
-        for orbit in H.orbits():
-            stabG = PermutationGroup([g for g in S.gens() if a(g, orbit[0]) == orbit[0]], domain=S.domain())
-            res += self._from_dict({self._indices(stabG, pi): ZZ.one()})
+        X, a = G
+        L = [len(pi.get(i, [])) for i in range(self._arity)]
+        S = SymmetricGroup(sum(L)).young_subgroup(L)
+        Hs = _stabilizer_subgroups(S, X, a)
+        res = self._from_dict({self._indices(H, pi): ZZ.one() for H in Hs})
         return res
 
     @cached_method
@@ -1456,7 +1474,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: P = PolynomialSpecies(ZZ, "X")
-            sage: P.powersum(1, 4)
+            sage: P.powersum(0, 4)
             4*E_4 - 4*X*E_3 + 4*X^2*E_2 - X^4 - 2*E_2^2
         """
         assert n in ZZ and n > 0
@@ -1544,7 +1562,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                                         * self.powersum(s, k) for k in mu)
                             for mu in Partitions(d))
 
-        return self.prod(factor(s+1, multiplicities[s], degrees[s])
+        return self.prod(factor(s, multiplicities[s], degrees[s])
                          for s in range(self._arity))
 
     class Element(CombinatorialFreeModule.Element):
@@ -1555,7 +1573,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-                sage: X = P(SymmetricGroup(1), {1: [1]})
+                sage: X = P(SymmetricGroup(1), {0: [1]})
                 sage: X.is_constant()
                 False
                 sage: (3*P.one()).is_constant()
@@ -1596,8 +1614,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
             TESTS::
 
                 sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-                sage: X = P(SymmetricGroup(1), {1: [1]})
-                sage: Y = P(SymmetricGroup(1), {2: [1]})
+                sage: X = P(SymmetricGroup(1), {0: [1]})
+                sage: Y = P(SymmetricGroup(1), {1: [1]})
                 sage: V = 2 * X - 3 * Y; V
                 2*X - 3*Y
                 sage: V.is_virtual()
@@ -1614,8 +1632,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
             TESTS::
 
                 sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-                sage: X = P(SymmetricGroup(1), {1: [1]})
-                sage: Y = P(SymmetricGroup(1), {2: [1]})
+                sage: X = P(SymmetricGroup(1), {0: [1]})
+                sage: Y = P(SymmetricGroup(1), {1: [1]})
                 sage: V = 2 * X - 3 * Y; V
                 2*X - 3*Y
                 sage: V.is_molecular()
@@ -1634,8 +1652,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
             TESTS::
 
                 sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-                sage: X = P(SymmetricGroup(1), {1: [1]})
-                sage: Y = P(SymmetricGroup(1), {2: [1]})
+                sage: X = P(SymmetricGroup(1), {0: [1]})
+                sage: Y = P(SymmetricGroup(1), {1: [1]})
                 sage: V = 2 * X - 3 * Y; V
                 2*X - 3*Y
                 sage: V.is_atomic()
@@ -1688,8 +1706,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 g = list(chain.from_iterable(dompart))
                 conj_L = PermutationGroupElement(g).inverse()
                 G = libgap.ConjugateGroup(G, conj_L)
-                dpart = {i + 1: range(x - mc[i] + 1, x + 1)
-                         for i, x in enumerate(accumulate(mc))}
+                dompart = {i: range(x - mc[i] + 1, x + 1)
+                           for i, x in enumerate(accumulate(mc))}
                 for R, d in other:
                     if mc != R.grade():
                         continue
@@ -1703,7 +1721,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                     for tau, _ in taus:
                         F = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
                         new += P(PermutationGroup(gap_group=F, domain=range(1, tc + 1)),
-                                 dpart)
+                                 dompart)
                     res += c * d * new
 
             return res
@@ -1791,8 +1809,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 E_2 + X^3 + {((1,2)(3,4),)}
 
                 sage: P2 = PolynomialSpecies(QQ, ["X", "Y"])
-                sage: X = P2(SymmetricGroup(1), {1:[1]})
-                sage: Y = P2(SymmetricGroup(1), {2:[1]})
+                sage: X = P2(SymmetricGroup(1), {0: [1]})
+                sage: Y = P2(SymmetricGroup(1), {1: [1]})
                 sage: E2(X + Y)
                 E_2(Y) + Y*X + E_2(X)
 
