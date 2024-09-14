@@ -140,8 +140,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: L2 = LazySpecies(QQ, "X, Y")
             sage: P2 = PolynomialSpecies(QQ, "X, Y")
-            sage: X = L2(P2(SymmetricGroup(1), {1: [1]}))
-            sage: Y = L2(P2(SymmetricGroup(1), {2: [1]}))
+            sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
+            sage: Y = L2(P2(SymmetricGroup(1), {1: [1]}))
             sage: E(X + Y).isotype_generating_series()
             1 + (X+Y) + (X^2+X*Y+Y^2) + (X^3+X^2*Y+X*Y^2+Y^3)
             + (X^4+X^3*Y+X^2*Y^2+X*Y^3+Y^4)
@@ -186,8 +186,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: L2 = LazySpecies(QQ, "X, Y")
             sage: P2 = PolynomialSpecies(QQ, "X, Y")
-            sage: X = L2(P2(SymmetricGroup(1), {1: [1]}))
-            sage: Y = L2(P2(SymmetricGroup(1), {2: [1]}))
+            sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
+            sage: Y = L2(P2(SymmetricGroup(1), {1: [1]}))
             sage: E(X + Y).generating_series()
             1 + (X+Y) + (1/2*X^2+X*Y+1/2*Y^2)
             + (1/6*X^3+1/2*X^2*Y+1/2*X*Y^2+1/6*Y^3)
@@ -330,8 +330,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: L2 = LazySpecies(QQ, "X, Y")
             sage: P2 = PolynomialSpecies(QQ, "X, Y")
-            sage: X = L2(P2(SymmetricGroup(1), {1: [1]}))
-            sage: Y = L2(P2(SymmetricGroup(1), {2: [1]}))
+            sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
+            sage: Y = L2(P2(SymmetricGroup(1), {1: [1]}))
             sage: list((X*Y).structures([1],[2]))
             [((1, 2), X*Y)]
 
@@ -479,15 +479,15 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: L = LazySpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
-            sage: X = L(P(SymmetricGroup(1), {1: [1]}))
-            sage: Y = L(P(SymmetricGroup(1), {2: [1]}))
+            sage: X = L(P(SymmetricGroup(1), {0: [1]}))
+            sage: Y = L(P(SymmetricGroup(1), {1: [1]}))
             sage: X(Y, 0)
             Y + O^8
 
             sage: L1 = LazySpecies(QQ, "X")
             sage: L = LazySpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
-            sage: X = L(P(SymmetricGroup(1), {1:[1]}))
+            sage: X = L(P(SymmetricGroup(1), {0: [1]}))
             sage: E = L1(lambda n: SymmetricGroup(n))
             sage: E(X)
             1 + X + E_2(X) + E_3(X) + E_4(X) + E_5(X) + E_6(X) + O^7
