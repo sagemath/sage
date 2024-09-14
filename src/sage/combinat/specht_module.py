@@ -37,6 +37,7 @@ from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModu
 from sage.modules.free_module_element import vector
 from sage.categories.modules_with_basis import ModulesWithBasis
 
+
 class SymmetricGroupRepresentation(Representation_abstract):
     """
     Mixin class for symmetric group (algebra) representations.
@@ -920,9 +921,9 @@ class SpechtModuleTableauxBasis(SpechtModule):
         G = self._semigroup
 
         def t(i, j):
-            ret = [i for i in range(1, SGA.n+1)]
-            ret[i-1] = j
-            ret[j-1] = i
+            ret = list(range(1, SGA.n + 1))
+            ret[i - 1] = j
+            ret[j - 1] = i
             return SGA(G(ret))
 
         # Construct the hyperplanes

@@ -1472,6 +1472,46 @@ cdef class ntl_ZZ_pX():
         #ZZ_pX_preallocate_space(&self.x, n)
         sig_off()
 
+    def compose_mod(self, ntl_ZZ_pX other, ntl_ZZ_pX modulus):
+        r"""
+        Compute `f(g) \bmod h`.
+
+        To be precise about the order fo compostion, given ``self``, ``other``
+        and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \bmod h(x)`.
+
+        INPUT:
+
+        - ``other`` -- a polynomial `g(x)`
+        - ``modulus`` -- a polynomial `h(x)`
+
+        EXAMPLES::
+
+            sage: c = ntl.ZZ_pContext(17)
+            sage: f = ntl.ZZ_pX([1,2,3],c)
+            sage: g = ntl.ZZ_pX([3,2,1],c)
+            sage: h = ntl.ZZ_pX([1,0,1],c)
+            sage: f.compose_mod(g, h)
+            [5 11]
+
+        AUTHORS:
+
+        - Giacomo Pope (2024-08) initial implementation
+        """
+        cdef ntl_ZZ_pX r = self._new()
+        cdef ZZ_pX_Modulus_c mod
+
+        sig_on()
+        # NTL requires that g is reduced
+        other = other % modulus
+
+        # Build the modulus type
+        ZZ_pX_Modulus_build(mod, modulus.x)
+
+        # Compute f(g) % h
+        ZZ_pX_CompMod(r.x, self.x, other.x, mod)
+        sig_off()
+        return r
+
 cdef class ntl_ZZ_pX_Modulus():
     """
     Thin holder for ZZ_pX_Moduli.

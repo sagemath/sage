@@ -18,5 +18,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+
 class PrecisionError(ArithmeticError):
     pass

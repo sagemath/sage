@@ -32,7 +32,7 @@ lazy_import('sage.symbolic.expression_conversion_sympy', ['SympyConverter', 'sym
 lazy_import('sage.symbolic.expression_conversion_algebraic', ['AlgebraicConverter', 'algebraic'])
 
 
-class FakeExpression():
+class FakeExpression:
     r"""
     Pynac represents `x/y` as `xy^{-1}`.  Often, tree-walkers would prefer
     to see divisions instead of multiplications and negative exponents.
@@ -130,7 +130,7 @@ class FakeExpression():
         return fast_callable(self, etb)
 
 
-class Converter():
+class Converter:
     def __init__(self, use_fake_div=False):
         """
         If use_fake_div is set to True, then the converter will try to
@@ -1414,7 +1414,7 @@ class RingConverter(Converter):
             from sage.rings.rational import Rational
             base, expt = operands
 
-            if expt == Rational(((1, 2))):
+            if expt == Rational((1, 2)):
                 from sage.misc.functional import sqrt
                 return sqrt(self(base))
             try:
@@ -1649,13 +1649,13 @@ class Exponentialize(ExpressionTreeWalker):
     # Implementation note: this code is executed once at first
     # reference in the code using it, therefore avoiding rebuilding
     # the same canned results dictionary at each call.
+    from sage.calculus.var import function
     from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
     from sage.functions.log import exp
     from sage.functions.trig import sin, cos, sec, csc, tan, cot
-    from sage.symbolic.constants import e, I
     from sage.rings.integer import Integer
+    from sage.symbolic.constants import e, I
     from sage.symbolic.ring import SR
-    from sage.calculus.var import function
     half = Integer(1) / Integer(2)
     two = Integer(2)
     x = SR.var("x")
@@ -1673,7 +1673,7 @@ class Exponentialize(ExpressionTreeWalker):
         tanh: (-(exp(-x) - exp(x))/(exp(x) + exp(-x))).function(x),
         coth: (-(exp(-x) + exp(x))/(exp(-x) - exp(x))).function(x)
     }
-    Circs = list(CircDict.keys())
+    Circs = list(CircDict)
 
     def __init__(self, ex):
         """
@@ -1773,6 +1773,75 @@ class DeMoivre(ExpressionTreeWalker):
         return exp(arg)
 
 
+# Half_angle transformation. Sometimes useful in integration
+
+class HalfAngle(ExpressionTreeWalker):
+    """
+    A class that walks a symbolic expression tree, replacing each
+    occurrence of a trigonometric or hyperbolic function by its
+    expression as a rational fraction in the (hyperbolic) tangent
+    of half the original argument.
+    """
+    # Code executed once at first class reference: create canned formulae.
+    from sage.calculus.var import function
+    from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
+    from sage.functions.trig import sin, cos, sec, csc, tan, cot
+    from sage.rings.integer import Integer
+    from sage.symbolic.ring import SR
+    x = SR.var("x")
+    one = Integer(1)
+    two = Integer(2)
+    half = one / two
+    halfx = half * x
+    HalvesDict = {
+        sin: two * tan(halfx) / (tan(halfx)**2 + one).function(x),
+        cos: -(tan(halfx)**2 - one) / (tan(halfx)**2 + one).function(x),
+        tan: -two * tan(halfx) / (tan(halfx)**2 - one).function(x),
+        csc: half * (tan(halfx)**2 + one) / tan(halfx).function(x),
+        sec: -(tan(halfx)**2 + one) / (tan(halfx)**2 - one).function(x),
+        cot: -half * (tan(halfx)**2 - one) / tan(halfx).function(x),
+        sinh: -two * tanh(halfx) / (tanh(halfx)**2 - one).function(x),
+        cosh: -(tanh(halfx)**2 + one) / (tanh(halfx)**2 - one).function(x),
+        tanh: two * tanh(halfx) / (tanh(halfx)**2 + one).function(x),
+        csch: -half * (tanh(halfx)**2 - one) / tanh(halfx).function(x),
+        sech: -(tanh(halfx)**2 - one) / (tanh(halfx)**2 + one).function(x),
+        coth: half * (tanh(halfx)**2 + one) / tanh(halfx).function(x)
+    }
+    Halves = list(HalvesDict)
+
+    def __init__(self, ex):
+        """
+        A class that walks a symbolic expression tree, replacing each
+        occurrence of a trigonometric or hyperbolic function by its
+        expression as a rational fraction in the (hyperbolic) tangent
+        of half the original argument.
+
+        EXAMPLES::
+
+            sage: a, b = SR.var("a, b")
+            sage: from sage.symbolic.expression_conversions import HalfAngle
+            sage: HalfAngle(tan(a))(tan(a)+4)
+            -2*tan(1/2*a)/(tan(1/2*a)^2 - 1) + 4
+        """
+        self.ex = ex
+
+    def composition(self, ex, op):
+        """
+        Compose.
+
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression_conversions import HalfAngle
+            sage: x, t = SR.var("x, t")
+            sage: a = HalfAngle(cos(3*x)/(4-cos(x)).trig_expand())()
+            sage: a.subs(tan(x/2) == t).simplify_full()
+            (2*(t^2 + 1)*cos(3/2*x)^2 - t^2 - 1)/(5*t^2 + 3)
+        """
+        if op in self.Halves:
+            return self.HalvesDict.get(op)(*[self(x) for x in ex.operands()])
+        return super().composition(ex, op)
+
+
 class HoldRemover(ExpressionTreeWalker):
     def __init__(self, ex, exclude=None):
         """
@@ -1817,8 +1886,8 @@ class HoldRemover(ExpressionTreeWalker):
             sage: h()
             0
         """
-        from sage.functions.other import Function_sum, Function_prod
         from sage.calculus.calculus import symbolic_sum, symbolic_product
+        from sage.functions.other import Function_sum, Function_prod
         if not operator:
             return self
         if isinstance(operator, Function_sum):
