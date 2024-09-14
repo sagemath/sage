@@ -21,7 +21,7 @@ The implemented methods are listed below:
     :meth:`~is_matching_covered` | Check if the graph is matching covered
     :meth:`~matching` | Return a maximum weighted matching of the graph represented by the list of its edges
     :meth:`~perfect_matchings` | Return an iterator over all perfect matchings of the graph
-    :meth:`~M_alternating_even_mark` | Return the set of vertices reachable from the provided vertex via an even alternating path starting with a non-matching edge
+    :meth:`~M_alternating_even_mark` | Return the vertices reachable from the provided vertex via an even alternating path starting with a non-matching edge
 
 AUTHORS:
 
@@ -230,7 +230,7 @@ def is_bicritical(self, matching=None, algorithm='Edmonds', coNP_certificate=Fal
 
     EXAMPLES:
 
-    Petersen graph is bicritical::
+    The Petersen graph is bicritical::
 
         sage: G = graphs.PetersenGraph()
         sage: G.is_bicritical()
@@ -251,15 +251,16 @@ def is_bicritical(self, matching=None, algorithm='Edmonds', coNP_certificate=Fal
         sage: G.is_bicritical()
         True
 
-    The graph obtained by splicing two bicritical graph is also bicritical::
+    The graph obtained by splicing two bicritical graph is also bicritical.
+    For instance, `K_4` with one extra (multiple) edge (say `G := K_4^+`) is
+    bicritical. Let `H := K_4^+ \odot K_4^+` such that `H` is free of multiple
+    edge. The graph `H` is also bicritical::
 
-        sage: # K(4) with one extra edge (say K(4)+) is bicritical
         sage: G = graphs.CompleteGraph(4)
         sage: G.allow_multiple_edges(True)
         sage: G.add_edge(0, 1)
         sage: G.is_bicritical()
         True
-        sage: # Let H := K(4)+ ☉ #K(4)+ such that H has no multiple egde
         sage: H = Graph()
         sage: H.add_edges([
         ....:    (0, 1), (0, 2), (0, 3), (0, 4), (1, 2),
@@ -409,7 +410,7 @@ def is_bicritical(self, matching=None, algorithm='Edmonds', coNP_certificate=Fal
 
     # The graph must have an even number of vertices
     if self.order() % 2:
-        return (False, set(self.vertices()[:2])) if coNP_certificate else False
+        return (False, set(list(self)[:2])) if coNP_certificate else False
 
     # The graph must be connected
     if not self.is_connected():
@@ -432,7 +433,7 @@ def is_bicritical(self, matching=None, algorithm='Edmonds', coNP_certificate=Fal
         u, v = None, None
 
         for component in components:
-            if len(component) % 2 == 0 and u is not None:
+            if u is not None and not len(component) % 2:
                 v = component[0]
                 return (False, set([u, v]))
             elif len(component) == 1:
@@ -458,7 +459,7 @@ def is_bicritical(self, matching=None, algorithm='Edmonds', coNP_certificate=Fal
         M = Graph(matching)
         if any(d != 1 for d in M.degree()):
             raise ValueError("the input is not a matching")
-        if not M.is_subgraph(G, induced=False):
+        if any(not G.has_edge(edge) for edge in M.edge_iterator()):
             raise ValueError("the input is not a matching of the graph")
         if (G.order() != M.order()) or (G.order() != 2*M.size()):
             raise ValueError("the input is not a perfect matching of the graph")
@@ -469,7 +470,8 @@ def is_bicritical(self, matching=None, algorithm='Edmonds', coNP_certificate=Fal
 
         # It must be a perfect matching
         if G.order() != M.order():
-            return (False, set([M.edges()[0][0], M.edges()[0][1]])) if coNP_certificate else False
+            u, v = next(M.edge_iterator(labels=False))
+            return (False, set([u, v])) if coNP_certificate else False
 
     # G is bicritical if and only if for each vertex u with its M-matched neighbor being v,
     # every vertex of the graph distinct from v must be reachable from u through an even length
@@ -505,7 +507,7 @@ def is_factor_critical(self, matching=None, algorithm='Edmonds', solver=None, ve
 
     INPUT:
 
-    - ``matching`` -- (default: ``None``) a near perfect matching of the
+    - ``matching`` -- (default: ``None``); a near perfect matching of the
       graph, that is a matching such that all vertices of the graph but one
       are incident to an edge of the matching. It can be given using any
       valid input format of :class:`~sage.graphs.graph.Graph`.
@@ -772,7 +774,7 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
 
     EXAMPLES:
 
-    Petersen graph is matching covered::
+    The Petersen graph is matching covered::
 
         sage: G = graphs.PetersenGraph()
         sage: G.is_matching_covered()
@@ -821,7 +823,7 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
         sage: P.is_bipartite()
         True
         sage: M = Graph(P.matching())
-        sage: set(P.vertices()) == set(M.vertices())
+        sage: set(P) == set(M)
         True
         sage: P.is_matching_covered()
         False
@@ -842,7 +844,7 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
         sage: b = random.choice(list(B))
         sage: G.delete_vertices([a, b])
         sage: M = Graph(G.matching())
-        sage: set(M.vertices()) == set(G.vertices())
+        sage: set(M) == set(G)
         True
         sage: cycle1 = graphs.CycleGraph(4)
         sage: cycle2 = graphs.CycleGraph(6)
@@ -856,7 +858,7 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
         False
         sage: H.delete_vertices([3, 4])
         sage: N = Graph(H.matching())
-        sage: set(N.vertices()) == set(H.vertices())
+        sage: set(N) == set(H)
         False
 
     One may specify a matching::
@@ -970,7 +972,7 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
 
     # The graph must have an even order
     if self.order() % 2:
-        return (False, self.edges()[0]) if coNP_certificate else False
+        return (False, next(self.edge_iterator())) if coNP_certificate else False
 
     # If the underlying simple graph is a complete graph of order two,
     # the graph is matching covered
@@ -986,7 +988,7 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
         M = Graph(matching)
         if any(d != 1 for d in M.degree()):
             raise ValueError("the input is not a matching")
-        if not M.is_subgraph(G, induced=False):
+        if any(not G.has_edge(edge) for edge in M.edge_iterator()):
             raise ValueError("the input is not a matching of the graph")
         if (G.order() != M.order()) or (G.order() != 2*M.size()):
             raise ValueError("the input is not a perfect matching of the graph")
@@ -997,7 +999,7 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
 
         # It must be a perfect matching
         if G.order() != M.order():
-            return (False, M.edges()[0]) if coNP_certificate else False
+            return (False, next(M.edge_iterator())) if coNP_certificate else False
 
     # Biparite graph:
     #
@@ -1017,52 +1019,49 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
         from sage.graphs.digraph import DiGraph
         H = DiGraph()
 
-        for edge in G.edges():
-            u, v = edge[0], edge[1]
-
+        for u, v in G.edge_iterator(labels=False):
             if color[u] == 1:
                 u, v = v, u
 
-            if M.has_edge(edge):
+            if M.has_edge(u, v):
                 H.add_edge(u, v)
             else:
                 H.add_edge(v, u)
 
+
         # Check if H is strongly connected using Kosaraju's algorithm
-        def dfs(J, v, visited, p, parent, orientation):
-            stack = [(v, p)] # a stack of (vertex, parent)
+        def dfs(J, v, visited, orientation):
+            stack = [v] # a stack of vertices
 
             while stack:
-                v, p = stack.pop()
+                v = stack.pop()
 
-                if not visited[v]:
+                if v not in visited:
                     visited[v] = True
-                    parent[v] = p
 
                 if orientation == 'in':
                     for u in J.neighbors_out(v):
-                        if not visited[u]:
-                            stack.append((u, v))
+                        if u not in visited:
+                            stack.append(u)
 
                 elif orientation == 'out':
                     for u in J.neighbors_in(v):
-                        if not visited[u]:
-                            stack.append((u, v))
+                        if u not in visited:
+                            stack.append(u)
                 else:
                     raise ValueError('Unknown orientation')
 
         root = next(H.vertex_iterator())
 
         visited_in = {v: False for v in H}
-        parent_in = {v: None for v in H}
-        dfs(H, root, visited_in, None, parent_in, 'in')
+        dfs(H, root, visited_in, 'in')
 
         visited_out = {v: False for v in H}
-        parent_out = {v: None for v in H}
-        dfs(H, root, visited_out, None, parent_out, 'out')
+        dfs(H, root, visited_out, 'out')
 
-        for edge in H.edges():
-            if (not visited_in[edge[0]]) or (not visited_out[edge[1]]):
+        for edge in H.edge_iterator():
+            u, v, _ = edge
+            if (u not in visited_in) or (v not in visited_out):
                 if not M.has_edge(edge):
                     return (False, edge) if coNP_certificate else False
 
@@ -1401,9 +1400,8 @@ def perfect_matchings(self, labels=False):
 
 def M_alternating_even_mark(self, vertex, matching):
     r"""
-    Return the set of vertices each of which is reachable from the provided
-    vertex through an (even length matching-alternating) path starting with
-    an edge not in the matching and ending with an edge in the matching
+    Return the vertices reachable from ``vertex`` via an even alternating path
+    starting with a non-matching edge
 
     This method implements the algorithm proposed in [LR2004]_. Note that
     the complexity of the algorithm is linear in number of edges.
@@ -1453,12 +1451,11 @@ def M_alternating_even_mark(self, vertex, matching):
         sage: T
         {0, 1, 2}
 
-    For a factor critical graph `G` with a near perfect matching `M` and
-    `u` being the (unique) `M`-exposed vertex, each vertex in `G` is
-    reachable from `u` through an even length `M`-alternating path as
-    described above::
+    For a factor critical graph `G` (for instance, a wheel graph of an odd
+    order) with a near perfect matching `M` and `u` being the (unique)
+    `M`-exposed vertex, each vertex in `G` is reachable from `u` through an
+    even length `M`-alternating path as described above::
 
-        sage: # A wheel graph of an odd order is factor critical
         sage: G = graphs.WheelGraph(11)
         sage: M = Graph(G.matching())
         sage: G.is_factor_critical(M)
@@ -1468,15 +1465,14 @@ def M_alternating_even_mark(self, vertex, matching):
         ....:          break
         ....:
         sage: S = G.M_alternating_even_mark(v, M)
-        sage: S == set(G.vertices())
+        sage: S == set(G)
         True
 
-    For a matching covered graph `G` with a perfect matching `M` and for
-    some vertex `u` with `v` being its `M`-matched neighbor, each neighbor
-    of `v` is reachable from `u` through an even length `M`-alternating
-    path as described above::
+    For a matching covered graph `G` (for instance, `K_4 \odot K_{3,3}`) with a
+    perfect matching `M` and for some vertex `u` with `v` being its `M`-matched
+    neighbor, each neighbor of `v` is reachable from `u` through an even length
+    `M`-alternating path as described above::
 
-        sage: # K(4) ☉ K(3, 3) is matching covered
         sage: G = Graph()
         sage: G.add_edges([
         ....:    (0, 2), (0, 3), (0, 4), (1, 2),
@@ -1492,21 +1488,20 @@ def M_alternating_even_mark(self, vertex, matching):
         sage: (set(G.neighbor_iterator(v))).issubset(S)
         True
 
-    For a bicritical graph `G` with a perfect matching `M` and for some
-    vertex `u` with its `M`-matched neighbor being `v`, each vertex of the
-    graph distinct from `v` is reachable from `u` through an even length
-    `M`-alternating path as described above::
+    For a bicritical graph `G` (for instance, the Petersen graph) with a
+    perfect matching `M` and for some vertex `u` with its `M`-matched neighbor
+    being `v`, each vertex of the graph distinct from `v` is reachable from `u`
+    through an even length `M`-alternating path as described above::
 
-        sage: # Petersen graph is bicritical
         sage: G = graphs.PetersenGraph()
         sage: M = Graph(G.matching())
         sage: G.is_bicritical(M)
         True
         sage: import random
-        sage: u = random.choice(G.vertices())                                       # needs random
+        sage: u = random.choice(list(G))                                            # needs random
         sage: v = next(M.neighbor_iterator(u))
         sage: S = G.M_alternating_even_mark(u, M)
-        sage: S == (set(G.vertices()) - {v})
+        sage: S == (set(G) - {v})
         True
 
     TESTS:
@@ -1564,7 +1559,7 @@ def M_alternating_even_mark(self, vertex, matching):
     M = Graph(matching)
     if any(d != 1 for d in M.degree()):
         raise ValueError("the input is not a matching")
-    if not M.is_subgraph(G, induced=False):
+    if any(not G.has_edge(edge) for edge in M.edge_iterator()):
         raise ValueError("the input is not a matching of the graph")
 
     # Build an M-alternating tree T rooted at vertex
