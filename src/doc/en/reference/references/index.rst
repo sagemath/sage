@@ -1330,6 +1330,9 @@ REFERENCES:
             no. 1 (2003): 97-111,
             http://www.moi.math.bas.bg/moiuser/~iliya/pdf_site/gf5srev.pdf.
 
+.. [BS2007] \R. Bröker and P. Stevenhagen. *Constructing elliptic curves of
+            prime order*. [math.NT] (2007), :arXiv:`0712.2022`.
+
 .. [BS2010] \P. Baseilhac and K. Shigechi. *A new current algebra and the
             reflection equation*. Lett. Math. Phys. **92** (2010),
             pp. 47-65. :arxiv:`0906.1482`.
@@ -6409,7 +6412,7 @@ REFERENCES:
 
 .. [TCHP2008] Marc Tedder, Derek Corneil, Michel Habib and Christophe Paul,
               *Simple, linear-time modular decomposition*, 2008.
-              :arxiv:`0710.3901`.
+              :arxiv:`0710.3901v3`.
 
 .. [Tee1997] Tee, Garry J. "Continuous branches of inverses of the 12
              Jacobi elliptic functions for real

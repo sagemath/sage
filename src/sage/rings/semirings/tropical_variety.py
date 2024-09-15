@@ -29,6 +29,7 @@ from sage.structure.sage_object import SageObject
 from sage.rings.infinity import infinity
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class TropicalVariety(UniqueRepresentation, SageObject):
     r"""
     A tropical variety in `\RR^n`.
@@ -195,9 +196,8 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         self._poly = poly
         self._hypersurface = []
         tropical_roots = []
-        variables = []
-        for name in poly.parent().variable_names():
-            variables.append(SR.var(name))
+        variables = [SR.var(name)
+                     for name in poly.parent().variable_names()]
 
         # Convert each term to its linear function
         linear_eq = {}
@@ -214,9 +214,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             sol = solve(linear_eq[keys[0]] == linear_eq[keys[1]], variables)
 
             # Parametric solution of the chosen two terms
-            final_sol = []
-            for s in sol[0]:
-                final_sol.append(s.right())
+            final_sol = [s.right() for s in sol[0]]
             xy_interval = []
             xy_interval.append(tuple(final_sol))
 
@@ -257,9 +255,8 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                     xy_interval.append(parameter_solution[0])
                     tropical_roots.append(xy_interval)
                     # Calculate the order
-                    index_diff = []
-                    for i in range(len(keys[0])):
-                        index_diff.append(abs(keys[0][i] - keys[1][i]))
+                    index_diff = [abs(ai - bi)
+                                  for ai, bi in zip(keys[0], keys[1])]
                     order = gcd(index_diff)
                     temp_order.append(order)
                     temp_keys.append(keys)
@@ -270,7 +267,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         dim_param = 0
         if tropical_roots:
             dim_param = len(tropical_roots[0][0]) - 1
-        vars = [SR.var('t{}'.format(i)) for i in range(1, dim_param+1)]
+        vars = [SR.var(f't{i}') for i in range(1, dim_param + 1)]
         for arg in tropical_roots:
             subs_dict = {}
             index_vars = 0
@@ -450,7 +447,6 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         import operator
         from sage.functions.min_max import max_symbolic, min_symbolic
         from sage.symbolic.relation import solve
-        from sage.symbolic.expression import Expression
         from sage.sets.set import Set
 
         def update_result(result):
@@ -480,7 +476,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
             # Checking there are no conditions with the same variables
             # that use the <= and >= operators simultaneously
             unique_sol_param = set()
-            temp = [s for s in sol_param_sim]
+            temp = list(sol_param_sim)
             op_temp = {i: set(temp[i].operands()) for i in range(len(temp))}
             for s_value in op_temp.values():
                 match_keys = [k for k, v in op_temp.items() if v == s_value]
@@ -598,8 +594,7 @@ class TropicalSurface(TropicalVariety):
             for eqn in self._hypersurface[0][0]:
                 for op in eqn.operands():
                     if op.is_numeric():
-                        if op > bound:
-                            bound = op
+                        bound = max(op, bound)
             return [[-bound, bound]] * 3
 
         u_set = set()
@@ -668,10 +663,8 @@ class TropicalSurface(TropicalVariety):
                             zmin = z
                             zmax = z
                         else:
-                            if z < zmin:
-                                zmin = z
-                            if z > zmax:
-                                zmax = z
+                            zmin = min(z, zmin)
+                            zmax = max(z, zmax)
         axes.append([zmin, zmax])
         return axes
 
@@ -783,8 +776,8 @@ class TropicalSurface(TropicalVariety):
 
         # Find the interval of parameter for outer vertex
         for index in range(len(comps)):
-            interval1 = RealSet(-infinity,infinity)  # represent t1
-            interval2 = RealSet(-infinity,infinity)  # represent t2
+            interval1 = RealSet(-infinity, infinity)  # represent t1
+            interval2 = RealSet(-infinity, infinity)  # represent t2
             is_doublevar = False
             for i, point in enumerate(comps[index][0]):
                 pv = point.variables()
@@ -952,8 +945,7 @@ class TropicalCurve(TropicalVariety):
                         temp_operands += eq.operands()
                 for op in temp_operands:
                     if op.is_numeric():
-                        if abs(op) > bound:
-                            bound = abs(op)
+                        bound = max(abs(op), bound)
             return [[-bound, bound]] * 2
 
         verts = self.vertices()
@@ -1002,11 +994,11 @@ class TropicalCurve(TropicalVariety):
             if lower != -infinity:
                 x = parametric_function[0].subs(**{str(var): lower})
                 y = parametric_function[1].subs(**{str(var): lower})
-                vertices.add((x,y))
+                vertices.add((x, y))
             if upper != infinity:
                 x = parametric_function[0].subs(**{str(var): upper})
                 y = parametric_function[1].subs(**{str(var): upper})
-                vertices.add((x,y))
+                vertices.add((x, y))
         return vertices
 
     def _parameter_intervals(self):
