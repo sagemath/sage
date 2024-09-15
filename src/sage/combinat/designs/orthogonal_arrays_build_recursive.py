@@ -537,9 +537,9 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
 
     # Add rows, extended with p1 and p2
     p1 = q**2
-    p2 = p1+1
-    TD.extend([[ii*q+i for ii in range(q)]+[p1] for i in range(1,q)])
-    TD.append( [ii*q   for ii in range(q)]+[p1,p2])
+    p2 = p1 + 1
+    TD.extend(([ii*q + i for ii in range(q)] + [p1] for i in range(1, q)))
+    TD.append([ii*q for ii in range(q)] + [p1, p2])
 
     # Add Columns. We do not add some columns which would have size 1 after we
     # delete points.
@@ -1453,9 +1453,9 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
         else:
             partition_of_blocks_of_size_t[plane-t].append([relabel[xx] for xx in B if xx % m < t])
 
-    ###############################################################################
+    ###########################################################################
     # Separable design built !
-    #-------------------------
+    # ------------------------
     #
     # At this point we have a PBD on t*(q**2+q+1) points. Its blocks are
     # split into:
@@ -1466,7 +1466,7 @@ def brouwer_separable_design(k,t,q,x,check=False,verbose=False,explain_construct
     # - blocks_of_size_q_plus_t : contains all t*(q**2+q+1)blocks of size q+t,
     #                             covering the same number of points: it is a
     #                             symmetric design.
-    ###############################################################################
+    ###########################################################################
 
     ##############################################
     # Part 2: Build an OA on t(q^2+q+1)+x points #
