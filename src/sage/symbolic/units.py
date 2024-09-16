@@ -99,11 +99,13 @@ from sage.rings.rational_field import QQ
 ###############################################################################
 # Unit conversions dictionary.
 ###############################################################################
+one = QQ.one()
+
 
 unitdict = {
 'acceleration':
-        {'gal': '1/100',
-        'galileo': '1/100',
+        {'gal': one / 100,
+        'galileo': one / 100,
         'gravity': '9.80665000000000'},
 
 'amount_of_substance':
@@ -122,7 +124,7 @@ unitdict = {
 'area':
         {'acre': '316160658/78125',
         'are': 100,
-        'barn': '1/10000000000000000000000000000',
+        'barn': one / 10000000000000000000000000000,
         'hectare': 10000,
         'rood': '158080329/156250',
         'section': '40468564224/15625',
@@ -140,8 +142,8 @@ unitdict = {
         'coulomb': 1,
         'elementary_charge': '1.60217646200000e-19',
         'faraday': '96485.3399000000',
-        'franklin': '1/2997924580',
-        'statcoulomb': '1/2997924580'},
+        'franklin': one / 2997924580,
+        'statcoulomb': one / 2997924580},
 
 'conductance':
         {'abmho': 1000000000,
@@ -153,10 +155,10 @@ unitdict = {
         'amp': 1,
         'ampere': 1,
         'biot': 10,
-        'statampere': '1/2997924580'},
+        'statampere': one / 2997924580},
 
 'electric_potential':
-        {'abvolt': '1/100000000',
+        {'abvolt': one / 100000000,
         'statvolt': '149896229/500000',
         'volt': 1},
 
@@ -165,18 +167,18 @@ unitdict = {
         'btu': '52752792631/50000000',
         'calorie': '10467/2500',
         'electron_volt': '1.60217733000000e-19',
-        'erg': '1/10000000',
+        'erg': one / 10000000,
         'ev': '1.60217733000000e-19',
         'joule': 1,
         'rydberg': '2.17987200000000e-18',
         'therm': '52752792631/500'},
 
 'fiber_linear_mass_density':
-        {'denier': '1/9000000',
-        'tex': '1/1000000'},
+        {'denier': one / 9000000,
+        'tex': one / 1000000},
 
 'force':
-        {'dyne': '1/100000',
+        {'dyne': one / 100000,
         'gram_weight': '196133/20000000',
         'kilogram_force': '196133/20000',
         'kilogram_weight': '196133/20000',
@@ -196,7 +198,7 @@ unitdict = {
         'phot': 10000},
 
 'inductance':
-        {'abhenry': '1/1000000000',
+        {'abhenry': one / 1000000000,
         'henry': 1,
         'stathenry': '22468879468420441/25000'},
 
@@ -213,13 +215,13 @@ unitdict = {
         'kayser': 100},
 
 'length':
-        {'angstrom': '1/10000000000',
+        {'angstrom': one / 10000000000,
         'astronomical_unit': '149597870691',
         'bolt': '4572/125',
         'cable_international': '926/5',
         'cable_us': '27432/125',
         'caliber': '127/500000',
-        'centimeter': '1/100',
+        'centimeter': one / 100,
         'chain': '12573/625',
         'cicero': '125/27706',
         'cubit': '1143/2500',
@@ -228,19 +230,19 @@ unitdict = {
         'ell': '1143/1000',
         'fathom': '1143/625',
         'feet': '381/1250',
-        'fermi': '1/1000000000000000',
+        'fermi': one / 1000000000000000,
         'foot': '381/1250',
         'furlong': '25146/125',
         'hand': '127/1250',
         'inch': '127/5000',
         'kilometer': 1000,
         'league': '603504/125',
-        'light_year': '9460730472580800',
+        'light_year': 9460730472580800,
         'link': '12573/62500',
         'meter': 1,
-        'micron': '1/1000000',
+        'micron': one / 1000000,
         'mil': '127/5000000',
-        'millimeter': '1/1000',
+        'millimeter': one / 1000,
         'mile': '201168/125',
         'nautical_mile': 1852,
         'parsec': '3.08570000000000e16',
@@ -277,11 +279,11 @@ unitdict = {
         'hefnerkerze': '1019/1128'},
 
 'magnetic_field':
-        {'gauss': '1/10000',
+        {'gauss': one / 10000,
         'tesla': 1},
 
 'magnetic_flux':
-        {'maxwell': '1/100000000',
+        {'maxwell': one / 100000000,
         'weber': 1},
 
 'magnetic_intensity':
@@ -302,13 +304,13 @@ unitdict = {
         'avoirdupois_ounce': '45359237/1600000000',
         'avoirdupois_pound': '45359237/100000000',
         'bale': '45359237/200000',
-        'carat': '1/5000',
+        'carat': one / 5000,
         'cental': '45359237/1000000',
         'dalton': '1.66053878200000e-27',
         'drachma': "(0.00429234000000000, {'greek':1})",
         'geepound': '14593903/1000000',
         'grain': '6479891/100000000000',
-        'gram': '1/1000',
+        'gram': one / 1000,
         'gross_hundredweight': '317514659/6250000',
         'hundredweight': '317514659/6250000',
         'kilogram': 1,
@@ -361,37 +363,37 @@ unitdict = {
 
 'radiation_absorbed':
         {'gray': 1,
-        'rad': '1/100'},
+        'rad': one / 100},
 
 'radiation_ionizing':
         {'roentgen': '0.000258000000000000',
         'rontgen': '0.000258000000000000'},
 
 'resistance':
-        {'abohm': '1/1000000000',
+        {'abohm': one / 1000000000,
         'ohm': 1,
         'statohm': '22468879468420441/25000'},
 
 'si_prefixes':
-        {'atto': '1/1000000000000000000',
-        'centi': '1/100',
+        {'atto': one / 1000000000000000000,
+        'centi': one / 100,
         'deca': 10,
         'deci': QQ((1, 10)),
         'exa': '1000000000000000000',
-        'femto': '1/1000000000000000',
+        'femto': one / 1000000000000000,
         'giga': '1000000000',
         'hecto': 100,
         'kilo': 1000,
         'mega': 1000000,
-        'micro': '1/1000000',
-        'milli': '1/1000',
-        'nano': '1/1000000000',
+        'micro': one / 1000000,
+        'milli': one / 1000,
+        'nano': one / 1000000000,
         'peta': '1000000000000000',
-        'pico': '1/1000000000000',
+        'pico': one / 1000000000000,
         'tera': 1000000000000,
-        'yocto': '1/1000000000000000000000000',
+        'yocto': one / 1000000000000000000000000,
         'yotta': '1000000000000000000000000',
-        'zepto': '1/1000000000000000000000',
+        'zepto': one / 1000000000000000000000,
         'zetta': '1000000000000000000000'},
 
 'solid_angle':
@@ -425,7 +427,7 @@ unitdict = {
         {'bakers_dozen': 13,
         'dozen': 12,
         'gross': 144,
-        'percent': '1/100'},
+        'percent': one / 100},
 
 'velocity':
         {'knot': '463/900'},
@@ -435,7 +437,7 @@ unitdict = {
         'reyn': '8896443230521/1290320000'},
 
 'viscosity_kinematic':
-        {'stokes': '1/10000'},
+        {'stokes': one / 10000},
 
 'viscosity_other':
         {'rhes': 10},
@@ -462,7 +464,7 @@ unitdict = {
         'imperial_pint': '454609/800000000',
         'jeroboam': '473176473/156250000000',
         'jigger': '1419529419/32000000000000',
-        'liter': '1/1000',
+        'liter': one / 1000,
         'magnum': '473176473/250000000000',
         'minim': '157725491/2560000000000000',
         'noggin': '473176473/4000000000000',
@@ -1387,7 +1389,7 @@ def base_units(unit):
         return unit
     if unit_to_type[str(unit)] in ['si_prefixes', 'unit_multipliers']:
         number = unitdict[unit_to_type[str(unit)]][str(unit)]
-        return (number if number in QQ else sage_eval(number))
+        return (sage_eval(number) if isinstance(number, str) else number)
 
     v = SR.var(unit_to_type[str(unit)])
     if str(v) in unit_derivations:
@@ -1395,11 +1397,11 @@ def base_units(unit):
         for i in base.variables():
             base = base.subs({i: SR.var(value_to_unit[str(i)][1])})
         number = unitdict[str(v)][str(unit)]
-        return base * (number if number in QQ else sage_eval(number))
+        return base * (sage_eval(number) if isinstance(number, str) else number)
     else:
         base = SR.var(value_to_unit[str(v)][1])
         number = unitdict[str(v)][str(unit)]
-        return base * (number if number in QQ else sage_eval(number))
+        return base * (sage_eval(number) if isinstance(number, str) else number)
 
 
 def convert_temperature(expr, target):
