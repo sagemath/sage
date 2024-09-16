@@ -376,9 +376,8 @@ cdef class FunctionFieldElement(FieldElement):
             sage: f.subs({K.gen(): 2, L.gen(): 1})
             1
         """
-        # Helper method to do the recursion through base fields.
-
         def sub_recurse(self, sub_dict):
+            # Helper method to do the recursion through base fields.
             ff = self.parent()
             if ff.base_field() == ff:
                 return ff(self._x.subs({ff.gen(): sub_dict[ff.gen()]}))
@@ -416,16 +415,16 @@ cdef class FunctionFieldElement(FieldElement):
                 if strg not in kwds:
                     continue
                 v = kwds[strg]
-                        sub_dict[g] = v
-                        if used_kwds[k]:
-                            raise TypeError('multiple generators have the '
-                                            'same name, making substitution '
-                                            'ambiguous. Rename generators '
-                                            'or pass substitution values in '
-                                            'using dictionary format')
-                        used_kwds[k] = True
-                        if g != v:
-                            made_substitution = True
+                sub_dict[g] = v
+                if used_kwds[k]:
+                    raise TypeError('multiple generators have the '
+                                    'same name, making substitution '
+                                    'ambiguous. Rename generators '
+                                    'or pass substitution values in '
+                                    'using dictionary format')
+                used_kwds[k] = True
+                if g != v:
+                    made_substitution = True
 
         if made_substitution:
             return sub_recurse(self, sub_dict)
