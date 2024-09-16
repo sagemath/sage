@@ -340,13 +340,37 @@ cdef class DecompositionNode(SageObject):
 
     def row_keys(self):
         r"""
+        Return the row keys of this node.
+
         OUTPUT: a tuple or ``None``
+
+        EXAMPLES::
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode(matrix(ZZ, [[1, 0, 1], [0, 1, 1]]),
+            ....:                    row_keys='ab',
+            ....:                    column_keys=range(3)); node
+            UnknownNode (2×3)
+            sage: node.row_keys()
+            ('a', 'b')
         """
         return self._row_keys
 
     def column_keys(self):
         r"""
+        Return the column keys of this node.
+
         OUTPUT: a tuple or ``None``
+
+        EXAMPLES::
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode(matrix(ZZ, [[1, 0, 1], [0, 1, 1]]),
+            ....:                    row_keys='ab',
+            ....:                    column_keys=range(3)); node
+            UnknownNode (2×3)
+            sage: node.column_keys()
+            (0, 1, 2)
         """
         return self._column_keys
 
@@ -355,6 +379,23 @@ cdef class DecompositionNode(SageObject):
         Set default row and column keys.
 
         .. SEEALSO:: :class:ElementKey
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode (3×2))
+            sage: certificate.row_keys() is None
+            True
+            sage: certificate.set_default_keys()
+            sage: certificate.row_keys()
+            (r0, r1, r2)
         """
         row_keys = self.row_keys()
         column_keys = self.column_keys()
@@ -377,18 +418,18 @@ cdef class DecompositionNode(SageObject):
 
         EXAMPLES::
 
-        sage: from sage.matrix.seymour_decomposition import UnknownNode
-        sage: node = UnknownNode(matrix(ZZ, [[1, 0, 1], [0, 1, 1]]),
-        ....:                    row_keys='ab',
-        ....:                    column_keys=range(3)); node
-        UnknownNode (2×3)
-        sage: node.matrix()
-        [1 0 1]
-        [0 1 1]
-        sage: node.morphism()._unicode_art_matrix()
-          0 1 2
-        a⎛1 0 1⎞
-        b⎝0 1 1⎠
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode(matrix(ZZ, [[1, 0, 1], [0, 1, 1]]),
+            ....:                    row_keys='ab',
+            ....:                    column_keys=range(3)); node
+            UnknownNode (2×3)
+            sage: node.matrix()
+            [1 0 1]
+            [0 1 1]
+            sage: node.morphism()._unicode_art_matrix()
+            0 1 2
+            a⎛1 0 1⎞
+            b⎝0 1 1⎠
         """
         return Matrix(self.matrix(),
                       row_keys=self.row_keys(),
@@ -396,6 +437,8 @@ cdef class DecompositionNode(SageObject):
 
     def as_ordered_tree(self):
         r"""
+        Return the decomposition tree rooted at ``self``.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -440,12 +483,51 @@ cdef class DecompositionNode(SageObject):
     def is_ternary(self):
         r"""
         Returns true iff the decomposition is over `\mathbb{F}_3`.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode (3×2))
+            sage: certificate.is_ternary()
+            True
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [1, 1], [0, 1]]); M
+            [1  0]
+            [1  1]
+            [0  1]
+            sage: result, certificate = M._is_binary_linear_matroid_regular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode (3×2))
+            sage: certificate.is_ternary()
+            False
         """
         return <bint> CMRseymourIsTernary(self._dec)
 
     def nchildren(self):
         r"""
         Return the number of children of the node.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode (3×2))
+            sage: certificate.nchildren()
+            0
         """
         if self._child_nodes is not None:
             return len(self._child_nodes)
@@ -454,6 +536,10 @@ cdef class DecompositionNode(SageObject):
         return CMRseymourNumChildren(self._dec)
 
     cdef _CMRelement_to_key(self, CMR_ELEMENT element):
+        r"""
+        Transform a ``CMRelement`` (row or column index implemented in cmr)
+        to a row key or a column key.
+        """
         if not CMRelementIsValid(element):
             raise ValueError('CMRelement index not valid. Extra row or column is detected.')
         if self.row_keys() is None or self.column_keys() is None:
@@ -464,6 +550,12 @@ cdef class DecompositionNode(SageObject):
             return self.column_keys()[CMRelementToColumnIndex(element)]
 
     def _create_child_node(self, index):
+        r"""
+        Return the child node of ``self`` corresponding to the ``index``,
+        and the corresponding row and column keys in the parent node.
+
+        OUTPUT: a tuple of (child node, child row keys, child column keys)
+        """
         row_keys = self.row_keys()
         column_keys = self.column_keys()
         cdef CMR_SEYMOUR_NODE *child_dec = CMRseymourChild(self._dec, index)
@@ -501,6 +593,11 @@ cdef class DecompositionNode(SageObject):
         return child, child_row_keys, child_column_keys
 
     def _children(self):
+        r"""
+        Return a tuple of the tuples of children and their row and column keys.
+        The underlying implementation of :meth:`child_nodes`
+        and :meth:`child_indices`.
+        """
         if self._child_nodes is not None:
             return self._child_nodes
         children_tuple = tuple(self._create_child_node(index)
@@ -551,6 +648,13 @@ cdef class DecompositionNode(SageObject):
 
     def child_indices(self):
         r"""
+        Return a tuple of the tuples of the row and column keys of children
+        in the parent node.
+
+        OUTPUT: a tuple of (row keys, column keys)
+
+        If the number of children is 1, then output (row keys, column keys).
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -603,6 +707,15 @@ cdef class DecompositionNode(SageObject):
             ThreeSumNode (9×12) with 2 children
             sage: certificate.child_indices()
             ((r1, i, r3, r4, r5, r6, r7, r8, r9), (a, b, c, d, e, f, g, h, r2, j, k, l))
+
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 2, sparse=True),
+            ....:                            [[1, 1], [-1, 0]]); M2
+            [ 1  1]
+            [-1  0]
+            sage: result, certificate = M2.is_totally_unimodular(certificate=True); certificate
+            GraphicNode (2×2)
+            sage: certificate.child_indices()
+            ()
         """
         if self.nchildren() == 1:
             child = self._children()[0]
@@ -610,13 +723,69 @@ cdef class DecompositionNode(SageObject):
         return tuple((child[1], child[2]) for child in self._children())
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 6, sparse=True),
+            ....: [[1,0,1,1,0,0],[0,1,1,1,0,0],[1,0,1,0,1,1],
+            ....: [0,-1,0,-1,1,1],[1,0,1,0,1,0],[0,-1,0,-1,0,1]])
+            sage: result, certificate = R12.is_totally_unimodular(certificate=True,
+            ....:                           three_sum_strategy="Wide_Wide",
+            ....:                           row_keys=range(6),
+            ....:                           column_keys='abcdef')
+            sage: print(certificate)
+            PivotsNode (6×6)
+        """
         nrows, ncols = self.dimensions()
         return f'{self.__class__.__name__} ({nrows}×{ncols})'
 
     def _unicode_art_(self):
+        r"""
+        Return a unicode art representation of the decomposition tree rooted at ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 6, sparse=True),
+            ....: [[1,0,1,1,0,0],[0,1,1,1,0,0],[1,0,1,0,1,1],
+            ....: [0,-1,0,-1,1,1],[1,0,1,0,1,0],[0,-1,0,-1,0,1]])
+            sage: result, certificate = R12.is_totally_unimodular(certificate=True,
+            ....:                           three_sum_strategy="Wide_Wide",
+            ....:                           row_keys=range(6),
+            ....:                           column_keys='abcdef')
+            sage: unicode_art(certificate)
+                    PivotsNode (6×6)
+                    │
+            ╭─────────────ThreeSumNode (6×6) with 2 children
+            │                   │
+            CographicNode (4×5) GraphicNode (4×5)
+        """
         return self.as_ordered_tree()._unicode_art_()
 
     def _ascii_art_(self):
+        r"""
+        Return a ascii art representation of the decomposition tree rooted at ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 6, sparse=True),
+            ....: [[1,0,1,1,0,0],[0,1,1,1,0,0],[1,0,1,0,1,1],
+            ....: [0,-1,0,-1,1,1],[1,0,1,0,1,0],[0,-1,0,-1,0,1]])
+            sage: result, certificate = R12.is_totally_unimodular(certificate=True,
+            ....:                           three_sum_strategy="Wide_Wide",
+            ....:                           row_keys=range(6),
+            ....:                           column_keys='abcdef')
+            sage: ascii_art(certificate)
+                               PivotsNode (6×6)
+                               |
+                      _________ThreeSumNode (6×6) with 2 children
+                     /                   /
+                    CographicNode (4×5) GraphicNode (4×5)
+        """
         return self.as_ordered_tree()._ascii_art_()
 
     def one_sum(*summands, **kwds):
