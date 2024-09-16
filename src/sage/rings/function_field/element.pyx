@@ -377,7 +377,7 @@ cdef class FunctionFieldElement(FieldElement):
             1
         """
         def sub_recurse(self, sub_dict):
-            # Helper method to do the recursion through base fields.
+            # Helper method to recurse through base fields.
             ff = self.parent()
             if ff.base_field() == ff:
                 return ff(self._x.subs({ff.gen(): sub_dict[ff.gen()]}))
