@@ -124,7 +124,6 @@ cdef class FunctionFieldElement(FieldElement):
         sage: isinstance(t, sage.rings.function_field.element.FunctionFieldElement)
         True
     """
-
     def __reduce__(self):
         """
         EXAMPLES::
@@ -180,7 +179,7 @@ cdef class FunctionFieldElement(FieldElement):
 
     def subs(self, in_dict=None, **kwds):
         r"""
-        Substitutes given generators with given values while not touching
+        Substitute the given generators with given values while not touching
         other generators.
 
         INPUT:
@@ -383,11 +382,10 @@ cdef class FunctionFieldElement(FieldElement):
             ff = self.parent()
             if ff.base_field() == ff:
                 return ff(self._x.subs({ff.gen(): sub_dict[ff.gen()]}))
-            else:
-                total = ff.zero()
-                for i, v in enumerate(list(self._x)):
-                    total += sub_recurse(v, sub_dict) * sub_dict[ff.gen()]**i
-                return ff(total)
+            total = ff.zero()
+            for i, v in enumerate(list(self._x)):
+                total += sub_recurse(v, sub_dict) * sub_dict[ff.gen()]**i
+            return ff(total)
 
         if in_dict is None and kwds is None:
             return self
@@ -415,8 +413,10 @@ cdef class FunctionFieldElement(FieldElement):
         else:
             used_kwds = {k: False for k in kwds}
             for g in sub_dict:
-                for k, v in kwds.items():
-                    if str(g) == k:
+                strg = str(g)
+                if strg not in kwds:
+                    continue
+                v = kwds[strg]
                         sub_dict[g] = v
                         if used_kwds[k]:
                             raise TypeError('multiple generators have the '
