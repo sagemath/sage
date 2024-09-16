@@ -1146,18 +1146,12 @@ def _to_diagram(D):
     if isinstance(D, Diagram):
         return D
     if D in _Partitions:
-        D = _Partitions(D).cells()
-    elif D in SkewPartitions():
-        D = SkewPartitions()(D).cells()
-    elif D in IntegerVectors():
-        cells = []
-        for i, row in enumerate(D):
-            for j in range(row):
-                cells.append((i, j))
-        D = cells
-    else:
-        D = [tuple(cell) for cell in D]
-    return D
+        return _Partitions(D).cells()
+    if D in SkewPartitions():
+        return SkewPartitions()(D).cells()
+    if D in IntegerVectors():
+        return [(i, j) for i, row in enumerate(D) for j in range(row)]
+    return [tuple(cell) for cell in D]
 
 
 def specht_module_spanning_set(D, SGA=None):

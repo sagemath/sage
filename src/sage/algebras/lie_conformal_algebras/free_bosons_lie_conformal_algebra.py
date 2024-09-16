@@ -134,7 +134,7 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
         names,index_set = standardize_names_index_set(names=names,
                                                       index_set=index_set,
                                                       ngens=ngens)
-        bosondict = { (i,j): {1: {('K',0): gram_matrix[index_set.rank(i),
+        bosondict = {(i,j): {1: {('K',0): gram_matrix[index_set.rank(i),
                     index_set.rank(j)]}} for i in index_set for j in index_set}
 
         GradedLieConformalAlgebra.__init__(self,R,bosondict,names=names,

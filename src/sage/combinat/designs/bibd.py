@@ -1355,10 +1355,10 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
        :doi:`10.1016/S0021-9800(69)80095-5`
     """
     q = (n-1)//(k-1)-1
-    if (k % 2                 or
-        q % 2                 or
-        q <= k                or
-        n != (k-1)*(q+1)+1    or
+    if (k % 2 or
+        q % 2 or
+        q <= k or
+        n != (k-1)*(q+1)+1 or
         not is_prime_power(k) or
         not is_prime_power(q)):
         if existence:
@@ -1391,12 +1391,10 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
     # [Denniston69] is the set of all elements of K of degree < log_n
     # (seeing elements of K as polynomials in 'a')
 
-    K_iter = list(K) # faster iterations
-    log_n = is_prime_power(n,get_data=True)[1]
-    C = [(x,y,one)
-         for x in K_iter
-         for y in K_iter
-         if Q(x,y).polynomial().degree() < log_n]
+    K_iter = list(K)  # faster iterations
+    log_n = is_prime_power(n, get_data=True)[1]
+    C = [(x, y, one) for x in K_iter for y in K_iter
+         if Q(x, y).polynomial().degree() < log_n]
 
     from sage.combinat.designs.block_design import DesarguesianProjectivePlaneDesign
     return DesarguesianProjectivePlaneDesign(q).trace(C)._blocks

@@ -70,7 +70,7 @@ class TwoGraph(IncidenceStructure):
     :mod:`~sage.combinat.designs.twographs` module.
     """
     def __init__(self, points=None, blocks=None, incidence_matrix=None,
-            name=None, check=False, copy=True):
+                 name=None, check=False, copy=True):
         r"""
         Constructor of the class.
 

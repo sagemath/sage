@@ -292,7 +292,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return len(m)
 
-    ## Multiplication
+    # Multiplication
 
     def product_on_basis(self, a, b):
         r"""
