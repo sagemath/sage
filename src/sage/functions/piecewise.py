@@ -828,9 +828,9 @@ class PiecewiseFunction(BuiltinFunction):
             Check that the algorithm keyword can be used::
 
                 sage: ex = piecewise([([0, 1], 1), ((1, oo), 1/x**2)])
-                sage: integral(ex, x, 0, 100, algorithm='giac')
+                sage: integral(ex, x, 0, 100, algorithm='sympy')
                 199/100
-                sage: integral(ex, x, algorithm='giac')
+                sage: integral(ex, x, algorithm='sympy')
                 piecewise(x|-->x on [0, 1], x|-->-1/x + 2 on (1, +oo); x)
             """
             if a is not None and b is not None:
