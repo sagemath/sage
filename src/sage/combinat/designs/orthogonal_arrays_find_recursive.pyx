@@ -194,15 +194,13 @@ cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n):
         if u == 0 or (u>1 and k >= u+2):
             continue
 
-        m = n/r
+        m = n // r
         # If there exists a TD(k,m) then k<m+2
         if k >= m+2:
             break
 
-        if (is_available(k  ,m  ) and
-            is_available(k  ,m+1) and
-            is_available(k+1,r  ) and
-            is_available(k  ,u  )):
+        if (is_available(k, m) and is_available(k, m + 1) and
+            is_available(k + 1, r) and is_available(k, u)):
             from sage.combinat.designs.orthogonal_arrays import wilson_construction
             return wilson_construction, (None,k,r,m,(u,),False)
 
@@ -294,22 +292,20 @@ cpdef find_construction_3_3(int k,int n):
         sage: find_construction_3_3(12,11)
     """
     cdef int mm,nn,i
-    for mm in range(k-1,n/2+1):
-        if (not is_available(k ,mm  ) or
-            not is_available(k ,mm+1)):
+    for mm in range(k-1, n//2+1):
+        if not(is_available(k, mm) and is_available(k, mm + 1)):
             continue
 
-        for nn in range(2,n/mm+1):
+        for nn in range(2,n//mm+1):
             i = n-nn*mm
-            if i<=0:
+            if i <= 0:
                 continue
 
-            if (is_available(k+i, nn  ) and
-                is_available(k  , mm+i)):
+            if is_available(k + i, nn) and is_available(k, mm + i):
                 from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_3
-                return construction_3_3, (k,nn,mm,i)
+                return construction_3_3, (k, nn, mm, i)
 
-cpdef find_construction_3_4(int k,int n):
+cpdef find_construction_3_4(int k, int n):
     r"""
     Find a decomposition for construction 3.4 from [AC07]_.
 
@@ -346,13 +342,13 @@ cpdef find_construction_3_4(int k,int n):
 
             for s in range(1,min(i,nn)):
                 r = i-s
-                if (is_available(k+r+1,nn) and
-                    is_available(k    , s) and
-                    (is_available(k,mm+r) or is_available(k,mm+r+1))):
+                if (is_available(k + r + 1, nn) and
+                    is_available(k, s) and
+                    (is_available(k, mm + r) or is_available(k, mm + r + 1))):
                     from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_4
-                    return construction_3_4, (k,nn,mm,r,s)
+                    return construction_3_4, (k, nn, mm, r, s)
 
-cpdef find_construction_3_5(int k,int n):
+cpdef find_construction_3_5(int k, int n):
     r"""
     Find a decomposition for construction 3.5 from [AC07]_.
 

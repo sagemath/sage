@@ -5137,7 +5137,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             T_i_i = T_rows[i][i]
             T_j_i = T_rows[j][i]
-            d = ai.c_xgcd_int(T_i_i , T_j_i, &u, &v)
+            d = ai.c_xgcd_int(T_i_i, T_j_i, &u, &v)
             if d != T_i_i:
                 for k from i <= k < ncols:
                     B[k] = ((<int64_t>u)*T_rows[i][k] + (<int64_t>v)*T_rows[j][k])%R
@@ -5697,12 +5697,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [4|1]
             [3|0]
         """
-        nr , nc = (self._nrows, self._ncols)
+        nr, nc = (self._nrows, self._ncols)
 
         cdef Matrix_integer_dense A
         A = self._new(nc,nr)
-        cdef Py_ssize_t i,j
-        cdef Py_ssize_t ri,rj # reversed i and j
+        cdef Py_ssize_t i, j
+        cdef Py_ssize_t ri, rj # reversed i and j
         sig_on()
         ri = nr
         for i from 0 <= i < nr:
@@ -5710,7 +5710,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ri =  ri-1
             for j from 0 <= j < nc:
                 rj = rj-1
-                fmpz_init_set(fmpz_mat_entry(A._matrix,rj,ri),fmpz_mat_entry(self._matrix,i,j))
+                fmpz_init_set(fmpz_mat_entry(A._matrix, rj, ri),
+                              fmpz_mat_entry(self._matrix, i, j))
         sig_off()
 
         if self._subdivisions is not None:
