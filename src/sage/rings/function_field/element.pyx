@@ -404,12 +404,11 @@ cdef class FunctionFieldElement(FieldElement):
         made_substitution = False
         if in_dict is not None:
             for k, v in in_dict.items():
-                if k in sub_dict:
-                    sub_dict[k] = v
-                    if v != k:
-                        made_substitution = True
-                else:
+                if k not in sub_dict:
                     raise TypeError('key does not match any field generators')
+                sub_dict[k] = v
+                if v != k:
+                    made_substitution = True
         else:
             used_kwds = {k: False for k in kwds}
             for g in sub_dict:
