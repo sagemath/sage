@@ -1,19 +1,19 @@
 """
 Generic Asymptotically Fast Strassen Algorithms
 
-Sage implements asymptotically fast echelon form and matrix
+This implements asymptotically fast echelon form and matrix
 multiplication algorithms.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005, 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.matrix.matrix_window cimport MatrixWindow
 
@@ -27,11 +27,13 @@ def strassen_window_multiply(C, A,B, cutoff):
     multiplied, and that C is the correct size to receive the product,
     and that they are all defined over the same ring.
 
-    Uses strassen multiplication at high levels and then uses
-    MatrixWindow methods at low levels. EXAMPLES: The following matrix
+    Uses Strassen multiplication at high levels and then uses
+    MatrixWindow methods at low levels.
+
+    EXAMPLES: The following matrix
     dimensions are chosen especially to exercise the eight possible
     parity combinations that could occur while subdividing the matrix
-    in the strassen recursion. The base case in both cases will be a
+    in the Strassen recursion. The base case in both cases will be a
     (4x5) matrix times a (5x6) matrix.
 
     ::
@@ -248,7 +250,9 @@ cdef subtract_strassen_product(MatrixWindow result, MatrixWindow A, MatrixWindow
 def strassen_echelon(MatrixWindow A, cutoff):
     """
     Compute echelon form, in place. Internal function, call with
-    M.echelonize(algorithm='strassen') Based on work of Robert Bradshaw
+    M.echelonize(algorithm='strassen')
+
+    Based on work of Robert Bradshaw
     and David Harvey at MSRI workshop in 2006.
 
     INPUT:
@@ -324,13 +328,13 @@ cdef strassen_echelon_c(MatrixWindow A, Py_ssize_t cutoff, Py_ssize_t mul_cutoff
     nrows = A.nrows()
     ncols = A.ncols()
 
-    if (nrows <= cutoff or ncols <= cutoff):
+    if nrows <= cutoff or ncols <= cutoff:
         return list(A.echelon_in_place())
 
     cdef Py_ssize_t top_h, bottom_cut, bottom_h, bottom_start, top_cut
     cdef Py_ssize_t prev_pivot_count
     cdef Py_ssize_t split
-    split = nrows / 2
+    split = nrows // 2
 
     cdef MatrixWindow top, bottom, top_left, top_right, bottom_left, bottom_right, clear
 
@@ -485,7 +489,7 @@ class int_range:
 
         Repetitions are not considered.
 
-    Useful class for dealing with pivots in the strassen echelon, could
+    Useful class for dealing with pivots in the Strassen echelon, could
     have much more general application
 
     INPUT:
@@ -555,7 +559,7 @@ class int_range:
         if indices is None:
             self._intervals = []
             return
-        elif range is not None:
+        if range is not None:
             self._intervals = [(int(indices), int(range))]
         else:
             self._intervals = []
@@ -629,11 +633,8 @@ class int_range:
             sage: I.to_list()
             [1, 2, 3]
         """
-        all = []
-        for iv in self._intervals:
-            for i in range(iv[0], iv[0]+iv[1]):
-                all.append(i)
-        return all
+        return [i for iv0, iv1 in self._intervals
+                for i in range(iv0, iv0 + iv1)]
 
     def __iter__(self):
         r"""
@@ -676,10 +677,7 @@ class int_range:
             sage: len(I)
             3
         """
-        len = 0
-        for iv in self._intervals:
-            len = len + iv[1]
-        return int(len)
+        return sum(iv1 for _, iv1 in self._intervals)
 
     def __add__(self, right):
         r"""
@@ -705,9 +703,9 @@ class int_range:
             sage: I + J
             [(1, 6), (20, 4)]
         """
-        all = self.to_list()
-        all.extend(right.to_list())
-        return int_range(all)
+        full_list = self.to_list()
+        full_list.extend(right.to_list())
+        return int_range(full_list)
 
     def __sub__(self, right):
         r"""
@@ -733,11 +731,9 @@ class int_range:
             sage: J - I
             [(6, 1), (20, 4)]
         """
-        all = self.to_list()
-        for i in right.to_list():
-            if i in all:
-                all.remove(i)
-        return int_range(all)
+        right_list = set(right.to_list())
+        diff = [i for i in self.to_list() if i not in right_list]
+        return int_range(diff)
 
     def __mul__(self, right):
         r"""
@@ -757,17 +753,16 @@ class int_range:
             sage: J * I
             [(4, 2)]
         """
-        intersection = []
-        all = self.to_list()
-        for i in right.to_list():
-            if i in all:
-                intersection.append(i)
+        self_list = set(self.to_list())
+        intersection = [i for i in right.to_list() if i in self_list]
         return int_range(intersection)
 
 
 # Useful test code:
 def test(n, m, R, c=2):
     r"""
+    Test code for the Strassen algorithm.
+
     INPUT:
 
     - ``n`` -- integer
@@ -799,56 +794,57 @@ def test(n, m, R, c=2):
 # below aren't callable now without using Pyrex.
 
 
-##     todo: doc cutoff parameter as soon as I work out what it really means
+#     todo: doc cutoff parameter as soon as I work out what it really means
 
-##     EXAMPLES:
-##         The following matrix dimensions are chosen especially to exercise the
-##         eight possible parity combinations that could occur while subdividing
-##         the matrix in the strassen recursion. The base case in both cases will
-##         be a (4x5) matrix times a (5x6) matrix.
+#     EXAMPLES:
 
-##         TODO -- the doctests below are currently not
-##         tested/enabled/working -- enable them when linear algebra
-##         restructuring gets going.
+#         The following matrix dimensions are chosen especially to exercise the
+#         eight possible parity combinations that could occur while subdividing
+#         the matrix in the strassen recursion. The base case in both cases will
+#         be a (4x5) matrix times a (5x6) matrix.
 
-##         sage: dim1 = 64; dim2 = 83; dim3 = 101
-##         sage: R = MatrixSpace(QQ, dim1, dim2)
-##         sage: S = MatrixSpace(QQ, dim2, dim3)
-##         sage: T = MatrixSpace(QQ, dim1, dim3)
+#         TODO -- the doctests below are currently not
+#         tested/enabled/working -- enable them when linear algebra
+#         restructing gets going.
+
+#         sage: dim1 = 64; dim2 = 83; dim3 = 101
+#         sage: R = MatrixSpace(QQ, dim1, dim2)
+#         sage: S = MatrixSpace(QQ, dim2, dim3)
+#         sage: T = MatrixSpace(QQ, dim1, dim3)
 
 
-##         sage: A = R.random_element(range(-30, 30))
-##         sage: B = S.random_element(range(-30, 30))
-##         sage: C = T(0)
-##         sage: D = T(0)
+#         sage: A = R.random_element(range(-30, 30))
+#         sage: B = S.random_element(range(-30, 30))
+#         sage: C = T(0)
+#         sage: D = T(0)
 
-##         sage: A_window = A.matrix_window(0, 0, dim1, dim2)
-##         sage: B_window = B.matrix_window(0, 0, dim2, dim3)
-##         sage: C_window = C.matrix_window(0, 0, dim1, dim3)
-##         sage: D_window = D.matrix_window(0, 0, dim1, dim3)
+#         sage: A_window = A.matrix_window(0, 0, dim1, dim2)
+#         sage: B_window = B.matrix_window(0, 0, dim2, dim3)
+#         sage: C_window = C.matrix_window(0, 0, dim1, dim3)
+#         sage: D_window = D.matrix_window(0, 0, dim1, dim3)
 
-##         sage: from sage.matrix.strassen import strassen_window_multiply
-##         sage: strassen_window_multiply(C_window, A_window, B_window, 2)   # use strassen method
-##         sage: D_window.set_to_prod(A_window, B_window)             # use naive method
-##         sage: C_window == D_window
-##         True
+#         sage: from sage.matrix.strassen import strassen_window_multiply
+#         sage: strassen_window_multiply(C_window, A_window, B_window, 2)   # use strassen method
+#         sage: D_window.set_to_prod(A_window, B_window)             # use naive method
+#         sage: C_window == D_window
+#         True
 
-##         sage: dim1 = 79; dim2 = 83; dim3 = 101
-##         sage: R = MatrixSpace(QQ, dim1, dim2)
-##         sage: S = MatrixSpace(QQ, dim2, dim3)
-##         sage: T = MatrixSpace(QQ, dim1, dim3)
+#         sage: dim1 = 79; dim2 = 83; dim3 = 101
+#         sage: R = MatrixSpace(QQ, dim1, dim2)
+#         sage: S = MatrixSpace(QQ, dim2, dim3)
+#         sage: T = MatrixSpace(QQ, dim1, dim3)
 
-##         sage: A = R.random_element(range(30))
-##         sage: B = S.random_element(range(30))
-##         sage: C = T(0)
-##         sage: D = T(0)
+#         sage: A = R.random_element(range(30))
+#         sage: B = S.random_element(range(30))
+#         sage: C = T(0)
+#         sage: D = T(0)
 
-##         sage: A_window = A.matrix_window(0, 0, dim1, dim2)
-##         sage: B_window = B.matrix_window(0, 0, dim2, dim3)
-##         sage: C_window = C.matrix_window(0, 0, dim1, dim3)
+#         sage: A_window = A.matrix_window(0, 0, dim1, dim2)
+#         sage: B_window = B.matrix_window(0, 0, dim2, dim3)
+#         sage: C_window = C.matrix_window(0, 0, dim1, dim3)
 
-##         sage: strassen_window_multiply(C, A, B, 2)   # use strassen method
-##         sage: D.set_to_prod(A, B)                    # use naive method
+#         sage: strassen_window_multiply(C, A, B, 2)   # use strassen method
+#         sage: D.set_to_prod(A, B)                    # use naive method
 
-##         sage: C == D
-##         True
+#         sage: C == D
+#         True
