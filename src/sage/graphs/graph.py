@@ -4122,6 +4122,90 @@ class Graph(GenericGraph):
             ret += M.term(sigma.to_composition(), t**asc(sigma))
         return ret
 
+    @doc_index("Coloring")
+    def tutte_symmetric_function(self, R=None, t=None):
+        r"""
+        Return the Tutte symmetric function of ``self``.
+
+        Let `G` be a graph. The Tutte symmetric function `XB_G` of the graph `G` was introduced in [Sta1998]_. We present
+        the equivalent definition given in [CS2022]_.
+
+        .. MATH::
+
+            XB_G = \sum_{\pi \vdash V} (1+t)^{e(\pi)} \tilde{m}_{\lambda(\pi)},
+
+        where the sum ranges over all set-partitions `\pi` of the vertex set `V`, `\lambda(pi)` is the
+        partition determined by the sizes of the blocks of `\pi`, and `e(pi)` is the number of edges whose endpoints
+        lie in the same block of `\pi`. In particular, the coefficients of `XB_G`
+        when expanded in terms of augmented monomial symmetric functions are polynomials in `t` with
+        non-negative integer coefficients.
+
+        For an integer partition `\lambda = 1^{r_1}2^{r_2}\cdots` expressed in the exponential notation, the augmented monomial symmetric function is defined as
+
+        .. MATH::
+
+            \tilde{m}_{\lambda} = \(\prod_{i} r_i!\) m_{\lambda}.
+
+
+        INPUT:
+
+        - ``R`` -- (optional) the base ring for the symmetric functions;
+            this uses `\ZZ` by default
+
+        - ``t`` -- (optional) the parameter `t`; uses the variable `t` in
+            `\ZZ[t]` by default
+
+        EXAMPLES:
+
+            sage: p = SymmetricFunctions(ZZ).p()                                        # needs sage.combinat sage.modules
+            sage: G = Graph([[1,2],[2,3],[3,4],[4,1],[1,3]])
+            sage: XB_G = G.tutte_symmetric_function(); XB_G                             # needs sage.combinat sage.modules
+            24*m[1, 1, 1, 1] + (10*t+12)*m[2, 1, 1] + (4*t^2+10*t+6)*m[2, 2] + (2*t^3+8*t^2+10*t+4)*m[3, 1] + (t^5+5*t^4+10*t^3+10*t^2+5*t+1)*m[4]
+            sage: p(XB_G)                                                               # needs sage.combinat sage.modules
+            p[1, 1, 1, 1] + 5*t*p[2, 1, 1] + 2*t^2*p[2, 2] + (2*t^3+8*t^2)*p[3, 1] + (t^5+5*t^4+8*t^3)*p[4]
+
+        Graphs are allowed to have multiedges and loops::
+
+            sage: G = Graph([[1,2],[2,3],[2,3]], multiedges = True)
+            sage: XB_G = G.tutte_symmetric_function(); XB_G                             # needs sage.combinat sage.modules
+            6*m[1, 1, 1] + (t^2+3*t+3)*m[2, 1] + (t^3+3*t^2+3*t+1)*m[3]
+
+
+        We check that at `t = -1`, we recover the usual chromatic symmetric function::
+
+            sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,5]], multiedges=True)
+            sage: XB_G = G.tutte_symmetric_function(t=-1); XB_G                         # needs sage.combinat sage.modules
+            120*m[1, 1, 1, 1, 1] + 36*m[2, 1, 1, 1] + 12*m[2, 2, 1] + 2*m[3, 1, 1] + m[3, 2]
+            sage: X_G = G.chromatic_symmetric_function(); X_G                           # needs sage.combinat sage.modules
+            p[1, 1, 1, 1, 1] - 4*p[2, 1, 1, 1] + 3*p[2, 2, 1] + 3*p[3, 1, 1] - 2*p[3, 2] - 2*p[4, 1] + p[5]
+            sage: XB_G == X_G                                                           # needs sage.combinat sage.modules
+            True
+
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        from sage.combinat.set_partition import SetPartitions
+        from sage.misc.misc_c import prod
+        from sage.arith.misc import factorial
+        if t is None:
+            t = ZZ['t'].gen()
+        if R is None:
+            R = t.parent()
+        m = SymmetricFunctions(R).m()
+        ret = m.zero()
+        V = self.vertices()
+        E = list(self.edges(labels=False))
+
+        def mono(pi):
+            arcs = 0
+            for s in pi:
+                for u in s:
+                    arcs += sum(E.count((u, v)) for v in s if self.has_edge(u, v))
+            return arcs
+
+        for pi in SetPartitions(V):
+            ret += prod([factorial(i) for i in pi.to_partition().to_exp()])*m[pi.to_partition()]*(1+t)**mono(pi)
+        return ret
+
     @doc_index("Leftovers")
     def matching(self, value_only=False, algorithm='Edmonds',
                  use_edge_labels=False, solver=None, verbose=0,
