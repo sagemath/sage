@@ -826,7 +826,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         and the second matrix is
         `M_2=\begin{bmatrix} b_1 & b_2 & B\end{bmatrix}`.
         Then the Truemper 3-sum is the matrix
-        `M_1 \oplus_3 M_2 = \begin{bmatrix} A & 0 \\ b_1 a_1^T + b_2 a_2^T & B\end{bmatrix}`.
+        `M_1 \oplus_3 M_2 = \begin{bmatrix} A & 0 \\ C & B\end{bmatrix}`,
+        where `\begin{bmatrix}a_1^T \\ a_2^T\end{bmatrix}=\begin{bmatrix} C_1 & \bar{C}\end{bmatrix}`,
+        `\begin{bmatrix}b_1 & b_2\end{bmatrix}=\begin{bmatrix} \bar{C}\\ C_2\end{bmatrix}`,
+        `C_12 = C_2 \bar{C}^{-1} C_1`,
+        `C=\begin{bmatrix} C_1 & \bar{C} \\ C_{12} & C_2\end{bmatrix}`, i.e.,
+        `C=\begin{bmatrix}b_1 & b_2\end{bmatrix}\bar{C}^{-1}\begin{bmatrix}a_1^T\\ a_2^T\end{bmatrix}`
 
         The terminology "3-sum" is used in the context of Seymour's decomposition
         of totally unimodular matrices and regular matroids, see [Sch1986]_, Ch. 19.4.
@@ -1176,7 +1181,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         and the second matrix is
         `M_2=\begin{bmatrix} 1 & 1 & 0\\ b_1 & b_2 & B\end{bmatrix}`.
         Then the Truemper 3-sum is the matrix
-        `M_1 \oplus_3 M_2 = \begin{bmatrix} A & 0 \\ b_1 a_1^T + b_2 a_2^T & B\end{bmatrix}`.
+        `M_1 \oplus_3 M_2 = \begin{bmatrix} A & 0 \\ C & B\end{bmatrix}`,
+        where `\begin{bmatrix}a_1^T \\ a_2^T\end{bmatrix}=\begin{bmatrix} C_1 & \bar{C}\end{bmatrix}`,
+        `\begin{bmatrix}b_1 & b_2\end{bmatrix}=\begin{bmatrix} \bar{C}\\ C_2\end{bmatrix}`,
+        `C_12 = C_2 \bar{C}^{-1} C_1`,
+        `C=\begin{bmatrix} C_1 & \bar{C} \\ C_{12} & C_2\end{bmatrix}`, i.e.,
+        `C=\begin{bmatrix}b_1 & b_2\end{bmatrix}\bar{C}^{-1}\begin{bmatrix}a_1^T\\ a_2^T\end{bmatrix}`
 
         The terminology "3-sum" is used in the context of Seymour's decomposition
         of totally unimodular matrices and regular matroids, see [Sch1986]_, Ch. 19.4.
@@ -1860,7 +1870,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         `M_2=\begin{bmatrix} \epsilon_1 & 1 & 0\\ b_1 & b_2 & B\end{bmatrix}`,
         where `\epsilon_1`, `\epsilon_2` are `1` or `-1`.
         Then the Truemper 3-sum is the matrix
-        `M_1 \oplus_3 M_2 = \begin{bmatrix} A & 0 \\ b_1 a_1^T + b_2 a_2^T & B\end{bmatrix}`.
+        `M_1 \oplus_3 M_2 = \begin{bmatrix} A & 0 \\ C & B\end{bmatrix}`,
+        where `\begin{bmatrix}a_1^T \\ a_2^T\end{bmatrix}=\begin{bmatrix} C_1 & \bar{C}\end{bmatrix}`,
+        `\begin{bmatrix}b_1 & b_2\end{bmatrix}=\begin{bmatrix} \bar{C}\\ C_2\end{bmatrix}`,
+        `C_12 = C_2 \bar{C}^{-1} C_1`,
+        `C=\begin{bmatrix} C_1 & \bar{C} \\ C_{12} & C_2\end{bmatrix}`, i.e.,
+        `C=\begin{bmatrix}b_1 & b_2\end{bmatrix}\bar{C}^{-1}\begin{bmatrix}a_1^T\\ a_2^T\end{bmatrix}`
 
         The terminology "3-sum" is used in the context of Seymour's decomposition
         of totally unimodular matrices and regular matroids, see [Sch1986]_, Ch. 19.4.

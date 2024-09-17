@@ -2298,6 +2298,52 @@ cdef class ThreeSumNode(SumNode):
         return <bint> CMRseymourThreeSumDistributedRanks(self._dec)
 
     def is_concentrated_rank(self):
+        r"""
+        Check whether the three sum node ``self`` is formed with
+        ``three_sum_strategy="concentrated_rank"`` or ``"Mixed_Mixed"``.
+
+        The matrix representing the first child is
+        `M_1=\begin{bmatrix} A & 0 \\ a_1^T & 1\\ a_2^T & \epsilon_2\end{bmatrix}`
+        and the matrix representing the second child is
+        `M_2=\begin{bmatrix} \epsilon_1 & 1 & 0\\ b_1 & b_2 & B\end{bmatrix}`,
+        where `\epsilon_1`, `\epsilon_2` are `1` or `-1`.
+        And the matrix representing ``self`` is a permutation of
+        `M_1 \oplus_3 M_2 = \begin{bmatrix} A & 0 \\ C & B\end{bmatrix}`,
+        where `\begin{bmatrix}a_1^T \\ a_2^T\end{bmatrix}=\begin{bmatrix} C_1 & \bar{C}\end{bmatrix}`,
+        `\begin{bmatrix}b_1 & b_2\end{bmatrix}=\begin{bmatrix} \bar{C}\\ C_2\end{bmatrix}`,
+        `C_12 = C_2 \bar{C}^{-1} C_1`,
+        `C=\begin{bmatrix} C_1 & \bar{C} \\ C_{12} & C_2\end{bmatrix}`, i.e.,
+        `C=\begin{bmatrix}b_1 & b_2\end{bmatrix}\bar{C}^{-1}\begin{bmatrix}a_1^T\\ a_2^T\end{bmatrix}`
+
+        ``concentrated_rank`` is named after the rank 2 off-diagonal block.
+        ``Mixed_Mixed`` is named after the structure of the two children.
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse.three_sum_mixed_mixed`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R12_large = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
+            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
+            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            sage: result, certificate = R12_large.is_totally_unimodular(certificate=True,
+            ....:                                 three_sum_strategy="Mixed_Mixed")
+            sage: C = certificate; C
+            ThreeSumNode (9×12) with 2 children
+            sage: C.is_distributed_ranks()
+            False
+            sage: C.is_concentrated_rank()
+            True
+        """
         return <bint> CMRseymourThreeSumConcentratedRank(self._dec)
 
     def block_matrix_form(self):
@@ -2341,11 +2387,45 @@ cdef class ThreeSumNode(SumNode):
             [ 0  0  0  1  0  1]
             [ 1  0  1  0  1  1]
             [ 1  0  1  0  0  1]
+
+            sage: result, certificate = R12.is_totally_unimodular(certificate=True,
+            ....:                           three_sum_strategy="Mixed_Mixed")
+            sage: C = certificate; C
+            ThreeSumNode (6×6) with 2 children
+            sage: C.matrix()
+            [ 1  0  1  1  0  0]
+            [ 0  1  1  1  0  0]
+            [ 1  0  1  0  1  1]
+            [ 0 -1  0 -1  1  1]
+            [ 1  0  1  0  1  0]
+            [ 0 -1  0 -1  0  1]
+            sage: C.summand_matrices()
+            (
+            [ 1  1  0  0]
+            [ 1  0  1  1  0]  [ 1  0  1  1]
+            [ 0  1  1  1  0]  [ 0 -1  1  1]
+            [ 1  0  1  0  1]  [ 1  0  1  0]
+            [ 0 -1  0 -1  1], [ 0 -1  0  1]
+            )
+            sage: C.child_indices()
+            (((r0, r1, r2, r3), (c0, c1, c2, c3, +r2+r3)),
+            ((+c0+c3, r2, r3, r4, r5), (c0, c3, c4, c5)))
+            sage: C.block_matrix_form()
+            [ 1  0  1  1  0  0]
+            [ 0  1  1  1  0  0]
+            [ 1  0  1  0  1  1]
+            [ 0 -1  0 -1  1  1]
+            [ 1  0  1  0  1  0]
+            [ 0 -1  0 -1  0  1]
         """
         M1, M2 = self.summand_matrices()
-        x = M1.ncols()
-        # return Matrix_cmr_chr_sparse.three_sum(M1, M2, x - 2, x - 1, 0, 1)
-        return Matrix_cmr_chr_sparse.three_sum_wide_wide(M1, M2)
+        if self.is_distributed_ranks():
+            three_sum_strategy = 'distributed_ranks'
+        else:
+            three_sum_strategy = 'concentrated_rank'
+        return Matrix_cmr_chr_sparse.three_sum(M1, M2,
+                                               three_sum_strategy=three_sum_strategy,
+                                               sign_verify=True)
 
 
 cdef class BaseGraphicNode(DecompositionNode):
