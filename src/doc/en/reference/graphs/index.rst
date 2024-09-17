@@ -99,6 +99,7 @@ Libraries of algorithms
    sage/graphs/graph_decompositions/bandwidth
    sage/graphs/graph_decompositions/cutwidth
    sage/graphs/graph_decompositions/graph_products
+   sage/graphs/graph_decompositions/slice_decomposition
    sage/graphs/graph_decompositions/modular_decomposition
    sage/graphs/graph_decompositions/clique_separators
    sage/graphs/convexity_properties

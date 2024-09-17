@@ -362,7 +362,7 @@ view the graph in two dimensions via matplotlib with ``show()``. ::
     sage: G = graphs.RandomGNP(15,.3)
     sage: G.show()                                                                      # needs sage.plot
 
-And you can view it in three dimensions via jmol with ``show3d()``. ::
+And you can view it in three dimensions with ``show3d()``. ::
 
     sage: G.show3d()                                                                    # needs sage.plot
 
@@ -9583,6 +9583,7 @@ class Graph(GenericGraph):
     from sage.graphs.graph_decompositions.clique_separators import atoms_and_clique_separators
     from sage.graphs.graph_decompositions.bandwidth import bandwidth
     from sage.graphs.graph_decompositions.cutwidth import cutwidth
+    from sage.graphs.graph_decompositions.slice_decomposition import slice_decomposition
     matching_polynomial = LazyImport('sage.graphs.matchpoly', 'matching_polynomial', at_startup=True)
     complete_poly = LazyImport('sage.graphs.matchpoly', 'complete_poly', at_startup=True)
     from sage.graphs.cliquer import all_max_clique as cliques_maximum
