@@ -1020,14 +1020,13 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
         H = DiGraph()
 
         for u, v in G.edge_iterator(labels=False):
-            if color[u] == 1:
+            if color[u]:
                 u, v = v, u
 
             if M.has_edge(u, v):
                 H.add_edge(u, v)
             else:
                 H.add_edge(v, u)
-
 
         # Check if H is strongly connected using Kosaraju's algorithm
         def dfs(J, v, visited, orientation):
@@ -1053,10 +1052,10 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
 
         root = next(H.vertex_iterator())
 
-        visited_in = {v: False for v in H}
+        visited_in = dict()
         dfs(H, root, visited_in, 'in')
 
-        visited_out = {v: False for v in H}
+        visited_out = dict()
         dfs(H, root, visited_out, 'out')
 
         for edge in H.edge_iterator():
