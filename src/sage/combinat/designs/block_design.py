@@ -42,7 +42,7 @@ Functions and methods
 ---------------------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Peter Dobcsanyi <peter@designtheory.org>
 #       Copyright (C) 2007 David Joyner <wdjoyner@gmail.com>
 #
@@ -51,7 +51,7 @@ Functions and methods
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 from sage.arith.misc import binomial, integer_floor, is_prime_power
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.lazy_import import lazy_import
@@ -69,7 +69,7 @@ lazy_import('sage.rings.finite_rings.finite_field_constructor', 'FiniteField')
 
 BlockDesign = IncidenceStructure
 
-###  utility functions  -------------------------------------------------------
+#  utility functions  -----------------------------------------------------
 
 
 def tdesign_params(t, v, k, L):
@@ -338,9 +338,10 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
     """
     K = FiniteField(n, 'a')
     n2 = n**2
-    relabel = {x:i for i,x in enumerate(K)}
-    Kiter = relabel  # it is much faster to iterate through a dict than through
-                     # the finite field K
+    relabel = {x: i for i, x in enumerate(K)}
+    Kiter = relabel
+    # it is much faster to iterate through a dict than through
+    # the finite field K
 
     # we decompose the (equivalence class) of points [x:y:z] of the projective
     # plane into an affine plane, an affine line and a point. At the same time,
@@ -996,14 +997,14 @@ def HadamardDesign(n):
     """
     from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
     from sage.matrix.constructor import matrix
-    H = hadamard_matrix(n+1) #assumed to be normalised.
+    H = hadamard_matrix(n + 1)  # assumed to be normalised.
     H1 = H.matrix_from_columns(range(1,n+1))
     H2 = H1.matrix_from_rows(range(1,n+1))
     J = matrix(ZZ,n,n,[1]*n*n)
     MS = J.parent()
-    A = MS((H2+J)/2) # convert -1's to 0's; coerce entries to ZZ
+    A = MS((H2+J)/2)  # convert -1's to 0's; coerce entries to ZZ
     # A is the incidence matrix of the block design
-    return IncidenceStructure(incidence_matrix=A,name='HadamardDesign')
+    return IncidenceStructure(incidence_matrix=A, name='HadamardDesign')
 
 
 def Hadamard3Design(n):
@@ -1060,10 +1061,10 @@ def Hadamard3Design(n):
         raise ValueError("The Hadamard design with n = %s does not extend to a three design." % n)
     from sage.combinat.matrices.hadamard_matrix import hadamard_matrix
     from sage.matrix.constructor import matrix, block_matrix
-    H = hadamard_matrix(n) #assumed to be normalised.
+    H = hadamard_matrix(n)  # assumed to be normalised.
     H1 = H.matrix_from_columns(range(1, n))
     J = matrix(ZZ, n, n-1, [1]*(n-1)*n)
-    A1 = (H1+J)/2
-    A2 = (J-H1)/2
-    A = block_matrix(1, 2, [A1, A2]) #the incidence matrix of the design.
+    A1 = (H1 + J) / 2
+    A2 = (J - H1) / 2
+    A = block_matrix(1, 2, [A1, A2])  # the incidence matrix of the design.
     return IncidenceStructure(incidence_matrix=A, name='HadamardThreeDesign')
