@@ -503,6 +503,12 @@ class Order(IntegralDomain, sage.rings.abc.Order):
         """
         Return the integral ideal with given generators.
 
+        .. NOTE::
+
+            This method constructs an ideal of this (not necessarily maximal) order.
+            To construct a fractional ideal in the ambient number field, use
+            :meth:`~sage.rings.number_field.number_field.NumberField_generic.fractional_ideal`.
+
         EXAMPLES::
 
             sage: x = polygen(ZZ, 'x')
@@ -534,28 +540,15 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             sage: R.ideal(0)
             Ideal (0) of Number Field in a with defining polynomial x^2 + 2
         """
-        if kwds.get('future', False) or not self.is_maximal():
-            if 'future' in kwds:
-                del kwds['future']
-            from sage.rings.number_field.order_ideal import NumberFieldOrderIdeal
-            return NumberFieldOrderIdeal(self, *args, **kwds)
-        if kwds.get('warn', True):
-            if 'warn' in kwds:
-                del kwds['warn']
-            from sage.misc.superseded import deprecation
-            deprecation(34198, 'In the future, constructing an ideal of the ring of '
-                               'integers of a number field will use an implementation '
-                               'compatible with ideals of other (non-maximal) orders, '
-                               'rather than returning an integral fractional ideal of '
-                               'its containing number field. Use .fractional_ideal(), '
-                               'together with an .is_integral() check if desired, to '
-                               'emulate the current behavior.\nSet warn=0 to silence '
-                               'this warning, and future=1 to activate the upcoming '
-                               'behavior already.')
-        I = self.number_field().ideal(*args, **kwds)
-        if not I.is_integral():
-            raise ValueError("ideal must be integral; use fractional_ideal to create a non-integral ideal.")
-        return I
+        # these keyword arguments are ignored since there used to be optional
+        # arguments with these names for controlling deprecated/future behavior;
+        # see #34806 and #35762
+        if 'warn' in kwds:
+            del kwds['warn']
+        if 'future' in kwds:
+            del kwds['future']
+        from sage.rings.number_field.order_ideal import NumberFieldOrderIdeal
+        return NumberFieldOrderIdeal(self, *args, **kwds)
 
     def _coerce_map_from_(self, R):
         """
