@@ -790,6 +790,123 @@ cdef class DecompositionNode(SageObject):
 
     def one_sum(*summands, **kwds):
         r"""
+        Return a :class:OneSumNode constructed from the given nodes (summands).
+
+        INPUT:
+
+        - ``summands`` -- decomposition nodes :class:DecompositionNode
+
+        - ``summand_ids`` -- a tuple or list of ids for summands
+
+        - ``row_keys`` -- a finite or enumerated family of arbitrary objects
+          that index the rows of the result.
+          Must be consistent with the row keys of the summands
+
+        - ``column_keys`` -- a finite or enumerated family of arbitrary objects
+          that index the columns of the result.
+          Must be consistent with the column keys of the summands
+
+        Note that ``row_keys``, ``column_keys`` of ``summands`` are disjoint
+
+        OUTPUT: A :class:`OneSumNode`
+
+        The terminology "1-sum" is used in the context of Seymour's decomposition
+        of totally unimodular matrices and regular matroids, see [Sch1986]_.
+
+        .. SEEALSO:: :meth:`two_sum`, :meth:`three_sum`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: from sage.matrix.seymour_decomposition import DecompositionNode
+            sage: M2 = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]],
+            ....:                                    [[1, 1], [-1, 0]])
+            sage: result, certificate = M2.is_totally_unimodular(certificate=True,
+            ....:                                                row_keys=range(4),
+            ....:                                                column_keys='abcd')
+            sage: certificate
+            OneSumNode (4×4) with 2 children
+            sage: certificate.summand_matrices()
+            (
+            [ 1  0]  [ 1  1]
+            [-1  1], [-1  0]
+            )
+            sage: certificate.child_indices()
+            (((0, 1), ('a', 'b')), ((2, 3), ('c', 'd')))
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+            sage: node.summand_matrices()
+            (
+            [ 1  0]  [ 1  1]
+            [-1  1], [-1  0]
+            )
+            sage: node.child_indices()
+            (((0, 1), ('a', 'b')), ((2, 3), ('c', 'd')))
+
+            sage: M3 = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]],
+            ....:                                    [[1]], [[-1]])
+            sage: result, certificate = M3.is_totally_unimodular(certificate=True,
+            ....:                                                row_keys=range(4),
+            ....:                                                column_keys='abcd')
+            sage: certificate
+            OneSumNode (4×4) with 3 children
+            sage: certificate.summand_matrices()
+            (
+            [ 1  0]
+            [-1  1], [1], [-1]
+            )
+            sage: certificate.child_indices()
+            (((0, 1), ('a', 'b')), ((2,), ('c',)), ((3,), ('d',)))
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+            sage: node.summand_matrices()
+            (
+            [ 1  0]
+            [-1  1], [1], [-1]
+            )
+            sage: node.child_indices()
+            (((0, 1), ('a', 'b')), ((2,), ('c',)), ((3,), ('d',)))
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode(matrix(ZZ, [[1, 0, 1], [0, 1, 1]]),
+            ....:                    row_keys='ab',
+            ....:                    column_keys=range(3)); node
+            UnknownNode (2×3)
+            sage: node = DecompositionNode.one_sum(certificate, node, summand_ids=range(2))
+            sage: node.summand_matrices()
+            (
+            [ 1  0| 0| 0]
+            [-1  1| 0| 0]
+            [-----+--+--]
+            [ 0  0| 1| 0]
+            [-----+--+--]  [1 0 1]
+            [ 0  0| 0|-1], [0 1 1]
+            )
+            sage: node.child_indices()
+            ((((0, 0), (0, 1), (0, 2), (0, 3)), ((0, 'a'), (0, 'b'), (0, 'c'), (0, 'd'))),
+            (((1, 'a'), (1, 'b')), ((1, 0), (1, 1), (1, 2))))
+
+        ``row_keys``, ``column_keys`` of ``summands`` are disjoint:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: from sage.matrix.seymour_decomposition import DecompositionNode
+            sage: M2 = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]],
+            ....:                                    [[1, 1], [-1, 0]])
+            sage: result, certificate = M2.is_totally_unimodular(certificate=True,
+            ....:                                                row_keys='aefg',
+            ....:                                                column_keys='abcd')
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+            Traceback (most recent call last):
+            ...
+            ValueError: keys must be disjoint, got summand_row_keys=('a', 'e'), summand_column_keys=('a', 'b')
+
+            sage: result, certificate = M2.is_totally_unimodular(certificate=True,
+            ....:                                                row_keys=range(4),
+            ....:                                                column_keys='abcd')
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes(),
+            ....:                                  row_keys=range(4),
+            ....:                                  column_keys='abce')
+            Traceback (most recent call last):
+            ...
+            ValueError: inconsistent column_keys, got column_keys=('a', 'b', 'c', 'e'), should be a permutation of ['a', 'b', 'c', 'd']
         """
         summand_ids = kwds.pop('summand_ids', None)
         row_keys = kwds.pop('row_keys', None)
@@ -1585,6 +1702,20 @@ cdef class SumNode(DecompositionNode):
     """
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M2 = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]],
+            ....:                                    [[1, 1], [-1, 0]])
+            sage: result, certificate = M2.is_totally_unimodular(certificate=True,
+            ....:                                                row_keys=range(4),
+            ....:                                                column_keys='abcd')
+            sage: print(certificate)
+            OneSumNode (4×4) with 2 children
+        """
         result = super()._repr_()
         result += f' with {self.nchildren()} children'
         return result
@@ -1596,6 +1727,23 @@ cdef class SumNode(DecompositionNode):
     summands = DecompositionNode.child_nodes
 
     def summand_matrices(self):
+        r"""
+        Return a tuple of matrices representing the child nodes.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M2 = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]],
+            ....:                                    [[1, 1], [-1, 0]])
+            sage: result, certificate = M2.is_totally_unimodular(certificate=True,
+            ....:                                                row_keys=range(4),
+            ....:                                                column_keys='abcd')
+            sage: certificate.summand_matrices()
+            (
+            [ 1  0]  [ 1  1]
+            [-1  1], [-1  0]
+            )
+        """
         return tuple(s.matrix() for s in self.summands())
 
 
@@ -1603,6 +1751,8 @@ cdef class OneSumNode(SumNode):
 
     def block_matrix_form(self):
         r"""
+        Return the block matrix representing the one sum node.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1701,6 +1851,8 @@ cdef class TwoSumNode(SumNode):
 
     def block_matrix_form(self):
         r"""
+        Return the block matrix representing the two sum node.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1815,6 +1967,13 @@ cdef class ThreeSumNode(SumNode):
 
     def _children(self):
         r"""
+        Return a tuple of the tuples of the two children
+        and their row and column keys.
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse.three_sum`
+
         TESTS:
 
         This is test ``WideWideR12`` and ``MixedMixedR12`` in CMR's ``test_tu.cpp``::
@@ -2097,6 +2256,24 @@ cdef class ThreeSumNode(SumNode):
 
     def is_distributed_ranks(self):
         r"""
+        Check whether the three sum node ``self`` is formed with
+        ``three_sum_strategy="distributed_ranks"`` or ``"Wide_Wide"``.
+
+        The matrix representing the first child is
+        `M_1=\begin{bmatrix} A & a_2 & a_2\\ a_1^T & 0 & \epsilon_2\end{bmatrix}`
+        and the matrix representing the second child is
+        `M_2=\begin{bmatrix} \epsilon_1 & 0 & b_2^T\\ b_1 & b_1 & B\end{bmatrix}`,
+        where `\epsilon_1`, `\epsilon_2` are `1` or `-1`.
+        And the matrix representing ``self`` is a permutation of
+        `M_1 \oplus_3 M_2 = \begin{bmatrix} A & a_2 b_2^T \\ b_1 a_1^T & B\end{bmatrix}`.
+
+        ``distributed_ranks`` is named after the two rank 1 off-diagonal blocks.
+        ``Wide_Wide`` is named after the structure of the two children.
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse.three_sum_wide_wide`
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -2125,6 +2302,8 @@ cdef class ThreeSumNode(SumNode):
 
     def block_matrix_form(self):
         r"""
+        Return the block matrix constructed from the three sum of children.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -2341,11 +2520,35 @@ cdef class R10Node(DecompositionNode):
 cdef class PivotsNode(DecompositionNode):
 
     def npivots(self):
+        r"""
+        Return the number of pivots in ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
+            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
+            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            sage: result, certificate = R12.is_totally_unimodular(certificate=True)
+            sage: certificate
+            PivotsNode (9×12)
+            sage: certificate.npivots()
+            1
+        """
         return CMRseymourNumPivots(self._dec)
 
     @cached_method
     def pivot_rows_and_columns(self):
         r"""
+        Return a tuple of the row and column indices of all pivot entries.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -2372,6 +2575,34 @@ cdef class PivotsNode(DecompositionNode):
 
     def _children(self):
         r"""
+        Return a tuple of the tuples of children and their row and column keys.
+        The underlying implementation of :meth:`child_nodes`
+        and :meth:`child_indices`.
+
+        If row and column keys are not given, set the default keys.
+        See alse :meth:set_default_keys
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
+            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
+            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            sage: result, certificate = R12.is_totally_unimodular(certificate=True)
+            sage: certificate
+            PivotsNode (9×12)
+            sage: certificate.row_keys()
+            sage: certificate.child_nodes()
+            (ThreeSumNode (9×12) with 2 children,)
+            sage: certificate.row_keys()
+            (r0, r1, r2, r3, r4, r5, r6, r7, r8)
         """
         if self._child_nodes is not None:
             return self._child_nodes
@@ -2415,6 +2646,16 @@ cdef class SymbolicNode(DecompositionNode):
         self._symbol = symbol
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.seymour_decomposition import SymbolicNode
+            sage: X = SymbolicNode('X', row_keys='abc', column_keys=range(6))
+            sage: print(X)
+            SymbolicNode X (3×6)
+        """
         nrows, ncols = self.dimensions()
         symbol = self.symbol()
         return f'{self.__class__.__name__} {symbol} ({nrows}×{ncols})'
@@ -2473,6 +2714,7 @@ cdef class ElementKey:
 
     def __repr__(self):
         """
+        Return a string representation of ``self``.
         The composition key is sorted by the string of keys.
         """
         if self._composition:
@@ -2483,6 +2725,13 @@ cdef class ElementKey:
 
 
 cdef _class(CMR_SEYMOUR_NODE *dec):
+    r"""
+    Return the class of the decomposition `CMR_SEYMOUR_NODE`.
+
+    INPUT:
+
+    - ``dec`` -- a ``CMR_SEYMOUR_NODE``
+    """
     cdef CMR_SEYMOUR_NODE_TYPE typ = CMRseymourType(dec)
 
     if typ == CMR_SEYMOUR_NODE_TYPE_ONE_SUM:
