@@ -133,7 +133,7 @@ cdef inline int bs_get(uint64_t * bitset, int index) noexcept:
     r"""
     Return a bit of a bitset
     """
-    return (bitset[index/64]>>(index%64))&1
+    return (bitset[index//64]>>(index%64))&1
 
 cdef inline void bs_set(uint64_t * bitset, int index, int bit) noexcept:
     r"""
@@ -142,8 +142,8 @@ cdef inline void bs_set(uint64_t * bitset, int index, int bit) noexcept:
     "bit" *MUST* be equal to either 0 or to 1. The code does not involve any
     "if".
     """
-    bitset[index/64] &= ~((<uint64_t> 1)<<index%64)
-    bitset[index/64] |= (<uint64_t> bit)<<index%64
+    bitset[index//64] &= ~((<uint64_t> 1)<<index%64)
+    bitset[index//64] |= (<uint64_t> bit)<<index%64
 
 cdef inline int bs_issubset64(uint64_t * b1, uint64_t b2, int limbs) noexcept:
     r"""
@@ -180,7 +180,7 @@ cdef hypergraph h_init(int n,list H) noexcept:
     cdef hypergraph h
     h.n          = n
     h.m          = len(H)
-    h.limbs      = (n+63)/64 # =ceil(n/64)
+    h.limbs      = (n+63) // 64  # =ceil(n/64)
     h.names      = <int *>  sig_malloc(sizeof(int)*n)
     h.sets       = <uint64_t **> sig_malloc(h.m*sizeof(uint64_t *))
     h.set_space  = <uint64_t *>  sig_calloc(h.m*(h.limbs+1),sizeof(uint64_t))

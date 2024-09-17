@@ -95,7 +95,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           # push and load may not be set together at the moment
           push:       true
@@ -204,9 +204,10 @@ jobs:
                                                   -e 's;#L[0-9]*";";' \
              && git commit -a -m 'wipe-out')
             # Since HEAD is at commit 'wipe-out', HEAD~1 is commit 'new' (new doc), HEAD~2 is commit 'old' (old doc)
-            .ci/create-changes-html.sh $(cd doc && git rev-parse HEAD~2) doc
-            # Restore the new doc with changes made in create-changes-html.sh but dropping changes by "wipe out"
-            (cd doc && git stash -q && git checkout -q -f HEAD~1 && git stash pop -q)
+            (cd doc && git diff $(git rev-parse HEAD~2) -- "*.html") > diff.txt
+            # Restore the new doc dropping changes by "wipe out"
+            (cd doc && git checkout -q -f HEAD~1)
+            .ci/create-changes-html.sh diff.txt doc
             # Sometimes rm -rf .git errors out because of some diehard hidden files
             # So we simply move it out of the doc directory
             (cd doc && mv .git ../git && mv .gitattributes ../gitattributes)

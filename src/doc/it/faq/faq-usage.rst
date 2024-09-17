@@ -469,37 +469,6 @@ Ci sono parecchie possibilità. Puoi usare i programmi a riga di comando
 ``screen``, ``nohup`` o ``disown``.
 
 
-Il comando show (mostra) per la visualizzazione di oggetti 3D non funziona.
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-La visualizzazione 3D in tempo reale per Sage dalla versione 6.4 in
-avanti usa il pacchetto `Jmol/JSmol <http://jmol.sourceforge.net>`_.
-Dalla linea di comando viene utilizzata l'applicazione Java Jmol,
-mentre per la visualizzazione dal browser viene usato puro javascript
-oppure una Java applet. In genere nei browser è usato javascript puro
-per evitare problemi con quei browser che non supportano i plugin per
-le applet Java (ad esempio Chrome). In ogni worksheet su browser c'è
-una casella da spuntare prima di generare una vista tridimensionale
-qualora l'utente voglia usare l'applet Java (essa è un po' più veloce
-con viste complicate).
-
-La ragione più probabile di un malfunzionamento è che non hai
-installato l'ambiente runtime di Java (JRE) o che è più vecchio della
-versione 1.7. Se le cose funzionano dalla riga di comando,
-un'altra possibilità è che il tuo browser non abbia il plugin giusto
-per supportare le Java applet (al momento, nel 2014, tali plugin non
-lavorano con la maggior parte delle versioni di Chrome). Assicurati di
-aver installato il plugin IcedTea (su Linux vedi il tuo gestore dei
-pacchetti) o il plugin di Oracle Java
-(vedi: `IcedTea <http://icedtea.classpath.org/wiki/IcedTea-Web>`_
-e `Java <https://java.com/en/download/help/index_installing.xml>`_).
-
-Se stai usando un server Sage sul web e anche la visualizzazione
-tramite javascript non funziona, potresti avere un problema con la
-funzionalità javascript del tuo browser, o potresti aver disabilitato
-javascript.
-
-
 Posso usare gli strumenti di Sage in un ambiente commerciale?
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 

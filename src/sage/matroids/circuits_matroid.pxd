@@ -9,9 +9,9 @@ cdef class CircuitsMatroid(Matroid):
     cdef list _sorted_C_lens
     cdef bint _nsc_defined
     cpdef frozenset groundset(self)
-    cpdef int _rank(self, frozenset X)
+    cpdef int _rank(self, frozenset X) except? -1
     cpdef full_rank(self)
-    cpdef bint _is_independent(self, frozenset X)
+    cpdef bint _is_independent(self, frozenset X) noexcept
     cpdef frozenset _max_independent(self, frozenset X)
     cpdef frozenset _circuit(self, frozenset X)
     cpdef frozenset _closure(self, frozenset X)
@@ -27,11 +27,11 @@ cdef class CircuitsMatroid(Matroid):
 
     # properties
     cpdef girth(self)
-    cpdef bint is_paving(self)
+    cpdef bint is_paving(self) noexcept
 
     # isomorphism and relabeling
     cpdef _is_isomorphic(self, other, certificate=*)
     cpdef relabel(self, mapping)
 
     # verification
-    cpdef bint is_valid(self)
+    cpdef bint is_valid(self) noexcept

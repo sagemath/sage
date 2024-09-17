@@ -1011,12 +1011,12 @@ class GraphGenerators:
 
     def nauty_genbg(self, options='', debug=False):
         r"""
-        Return a generator which creates bipartite graphs from nauty's ``genbg``
+        Return a generator which creates bipartite graphs from nauty's ``genbgL``
         program.
 
         INPUT:
 
-        - ``options`` -- string (default: ``""``); a string passed to ``genbg``
+        - ``options`` -- string (default: ``""``); a string passed to ``genbgL``
           as if it was run at a system command line. At a minimum, you *must*
           pass the number of vertices you desire in each side. Sage expects the
           bipartite graphs to be in nauty's "graph6" format, do not set an
@@ -1029,12 +1029,12 @@ class GraphGenerators:
           the program with some information on the arguments, while a line
           beginning with ">E" indicates an error with the input.
 
-        The possible options, obtained as output of ``genbg --help``::
+        The possible options, obtained as output of ``genbgL --help``::
 
                 n1       : the number of vertices in the first class.
-                           We must have n1=1..24.
+                           We must have n1=1..30.
                 n2       : the number of vertices in the second class.
-                           We must have n2=0..32 and n1+n2=1..32.
+                           We must have n2=0..64 and n1+n2=1..64.
             mine:maxe    : <int>:<int> a range for the number of edges
                             <int>:0 means '<int> or more' except in the case 0:0
               res/mod    : only generate subset res out of subsets 0..mod-1
@@ -1062,8 +1062,8 @@ class GraphGenerators:
                 -v       : display counts by number of edges to stderr
                 -l       : canonically label output graphs
 
-        Options which cause ``genbg`` to use an output format different than the
-        ``graph6`` format are not listed above (``-s``, ``-a``) as they will
+        Options which cause ``genbgL`` to use an output format different than
+        the ``graph6`` format are not listed above (``-s``, ``-a``) as they will
         confuse the creation of a Sage graph. Option ``-q`` which suppress
         auxiliary output (except from ``-v``) should never be used as we are
         unable to recover the partition of the vertices of the bipartite graph
@@ -1117,16 +1117,16 @@ class GraphGenerators:
             sage: len(list(gen))
             17
 
-        The ``debug`` switch can be used to examine ``genbg``'s reaction to the
+        The ``debug`` switch can be used to examine ``genbgL``'s reaction to the
         input in the ``options`` string. A message starting with ">A" indicates
         success and a message starting with ">E" indicates a failure::
 
             sage: gen = graphs.nauty_genbg("2 3", debug=True)
             sage: print(next(gen))
-            >A ...genbg n=2+3 e=0:6 d=0:0 D=3:2
+            >A ...genbg... n=2+3 e=0:6 d=0:0 D=3:2
             sage: gen = graphs.nauty_genbg("-c2 3", debug=True)
             sage: next(gen)
-            '>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
+            '>E Usage: ...genbg... [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
 
         Check that the partition of the bipartite graph is consistent::
 
@@ -1145,34 +1145,35 @@ class GraphGenerators:
             ...
             ValueError: wrong format of parameter options
             sage: list(graphs.nauty_genbg("-c1 2", debug=True))
-            ['>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
+            ['>E Usage: ...genbg... [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
             sage: list(graphs.nauty_genbg("-c 1 2", debug=True))
-            ['>A ...genbg n=1+2 e=2:2 d=1:1 D=2:1 c...\n', Bipartite graph on 3 vertices]
+            ['>A ...genbg... n=1+2 e=2:2 d=1:1 D=2:1 c...\n', Bipartite graph on 3 vertices]
 
-        We must have n1=1..24, n2=0..32 and n1+n2=1..32 (:issue:`34179`)::
+        We must have n1=1..30, n2=0..64 and n1+n2=1..64 (:issue:`34179`,
+        :issue:`38618`)::
 
-            sage: next(graphs.nauty_genbg("25 1", debug=False))
+            sage: next(graphs.nauty_genbg("31 1", debug=False))
             Traceback (most recent call last):
             ...
             ValueError: wrong format of parameter options
-            sage: next(graphs.nauty_genbg("25 1", debug=True))
-            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
-            sage: next(graphs.nauty_genbg("24 9", debug=True))
-            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
-            sage: next(graphs.nauty_genbg("1 31", debug=False))
-            Bipartite graph on 32 vertices
-            sage: next(graphs.nauty_genbg("1 32", debug=True))
-            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
-            sage: next(graphs.nauty_genbg("0 32", debug=True))
-            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
+            sage: next(graphs.nauty_genbg("31 1", debug=True))
+            '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
+            sage: next(graphs.nauty_genbg("30 40", debug=True))
+            '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
+            sage: next(graphs.nauty_genbg("1 63", debug=False))
+            Bipartite graph on 64 vertices
+            sage: next(graphs.nauty_genbg("1 64", debug=True))
+            '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
+            sage: next(graphs.nauty_genbg("0 2", debug=True))
+            '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
             sage: next(graphs.nauty_genbg("2 0", debug=False))
             Bipartite graph on 2 vertices
             sage: next(graphs.nauty_genbg("2 -1", debug=True))
-            '>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
+            '>E Usage: ...genbg... [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
         """
         import shlex
         from sage.features.nauty import NautyExecutable
-        genbg_path = NautyExecutable("genbg").absolute_filename()
+        genbg_path = NautyExecutable("genbgL").absolute_filename()
         sp = subprocess.Popen(shlex.quote(genbg_path) + " {0}".format(options), shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True,
@@ -1204,7 +1205,7 @@ class GraphGenerators:
             try:
                 s = next(gen)
             except StopIteration:
-                # Exhausted list of bipartite graphs from nauty genbg
+                # Exhausted list of bipartite graphs from nauty genbgL
                 return
             G = BipartiteGraph(s[:-1], format='graph6', partition=partition)
             yield G

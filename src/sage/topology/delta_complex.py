@@ -1388,10 +1388,10 @@ class DeltaComplex(GenericCellComplex):
         simplex_cells = simplex.cells()
         self_cells = self.cells()
         if dim > 0:
-            map = {dim: {tuple(simplex_cells[dim][0]): idx}}
+            mapping = {dim: {tuple(simplex_cells[dim][0]): idx}}
         else:
-            map = {dim: {(0,): idx}}
-        faces_dict = map[dim]
+            mapping = {dim: {(0,): idx}}
+        faces_dict = mapping[dim]
         for n in range(dim, 0, -1):
             n_cells = faces_dict
             faces_dict = {}
@@ -1407,8 +1407,8 @@ class DeltaComplex(GenericCellComplex):
                 for j in one_cell:
                     if j not in faces_dict:
                         faces_dict[j] = one_cell[j]
-            map[n-1] = faces_dict
-        return map
+            mapping[n-1] = faces_dict
+        return mapping
 
     def _is_glued(self, idx=-1, dim=None):
         r"""

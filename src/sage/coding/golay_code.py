@@ -32,6 +32,7 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from .linear_code import (AbstractLinearCode,
                           LinearCodeGeneratorMatrixEncoder)
 
+
 class GolayCode(AbstractLinearCode):
     r"""
     Representation of a Golay Code.
