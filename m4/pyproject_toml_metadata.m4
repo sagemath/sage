@@ -17,5 +17,10 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
-urls = {Homepage = "https://www.sagemath.org"}
+urls = {download = "https://doc.sagemath.org/html/en/installation/index.html",
+        "release notes" = "https://github.com/sagemath/sage/releases",
+        source = "https://github.com/sagemath/sage",
+        documentation = "https://doc.sagemath.org",
+        homepage = "https://www.sagemath.org",
+        tracker = "https://github.com/sagemath/sage/issues"}
 requires-python = ">=3.9, <3.13"

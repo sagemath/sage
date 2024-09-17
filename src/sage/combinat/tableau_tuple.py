@@ -1084,10 +1084,8 @@ class TableauTuple(CombinatorialElement):
         # tableau, by including the identity permutation on the set [1..n].
         n = max(self.entries())
         gens = [list(range(1, n + 1))]
-        for t in self:
-            for i in range(len(t)):
-                for j in range(len(t[i]) - 1):
-                    gens.append((t[i][j], t[i][j + 1]))
+        gens.extend((ti[j], ti[j + 1]) for t in self
+                    for ti in t for j in range(len(ti) - 1))
         return PermutationGroup(gens)
 
     def column_stabilizer(self):
@@ -2644,11 +2642,10 @@ class TableauTuples_level_size(TableauTuples):
             ([[1, 2]], [], [])
         """
         if self.size() == 0:
-            return self.element_class(self, [[] for _ in range(self.level())])
+            return self.element_class(self, [[]] * self.level())
 
         tab = [[list(range(1, self.size() + 1))]]
-        for _ in range(self.level() - 1):
-            tab.append([])
+        tab.extend([] for _ in range(self.level() - 1))
         return self.element_class(self, tab)
 
 

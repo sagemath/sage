@@ -1043,10 +1043,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
             - :meth:`central_orthogonal_idempotent`
         """
-        out = []
-        for key in sorted(self._blocks_dictionary, reverse=True):
-            out.append(self.central_orthogonal_idempotent(key))
-        return out
+        return [self.central_orthogonal_idempotent(key)
+                for key in sorted(self._blocks_dictionary, reverse=True)]
 
     def central_orthogonal_idempotent(self, la, block=True):
         r"""
@@ -2016,9 +2014,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         basis = []
         for part in Partitions_n(self.n):
             stp = StandardTableaux_shape(part)
-            for t1 in stp:
-                for t2 in stp:
-                    basis.append(self.epsilon_ik(t1, t2, mult=mult))
+            basis.extend(self.epsilon_ik(t1, t2, mult=mult)
+                         for t1 in stp
+                         for t2 in stp)
         return basis
 
     def dft(self, form=None, mult='l2r'):

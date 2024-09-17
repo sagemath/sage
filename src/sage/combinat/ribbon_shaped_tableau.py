@@ -350,18 +350,17 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
              [[1, 2], [3]],
              [[1], [2], [3]]]
         """
-        if p == []:
+        if not p:
             return self.element_class(self, [])
 
         comp = p.descents()
 
-        if comp == []:
+        if not comp:
             return self.element_class(self, [p[:]])
 
-        r = []
-        r.append([p[j] for j in range(comp[0])])
-        for i in range(len(comp) - 1):
-            r.append([p[j] for j in range(comp[i], comp[i + 1])])
+        r = [[p[j] for j in range(comp[0])]]
+        r.extend([p[j] for j in range(comp[i], comp[i + 1])]
+                 for i in range(len(comp) - 1))
         r.append([p[j] for j in range(comp[-1], len(p))])
         r.reverse()
         return self.element_class(self, r)

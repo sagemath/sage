@@ -1113,7 +1113,7 @@ class FusionRing(WeylCharacterRing):
             return k <= 2
 
     ###################################
-    ### Braid group representations ###
+    #   Braid group representations   #
     ###################################
 
     def get_computational_basis(self, a, b, n_strands):
