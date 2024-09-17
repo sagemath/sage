@@ -1052,10 +1052,10 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
 
         root = next(H.vertex_iterator())
 
-        visited_in = dict()
+        visited_in = {}
         dfs(H, root, visited_in, 'in')
 
-        visited_out = dict()
+        visited_out = {}
         dfs(H, root, visited_out, 'out')
 
         for edge in H.edge_iterator():
