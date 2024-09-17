@@ -312,9 +312,9 @@ def milnor_multiplication(r,s):
                     else:
                         sum = sum + M[i][j] * 2**j
                 else:
-                        sum = sum + M[i][j] * 2**j
-                j = j + 1
-            i = i + 1
+                    sum = sum + M[i][j] * 2**j
+                j += 1
+            i += 1
     return result
 
 
@@ -784,7 +784,7 @@ def adem(a, b, c=0, p=2, generic=None):
         return result
     # p odd
     if a == 0 and b == 0:
-            return {(c,): 1}
+        return {(c,): 1}
     if c == 0:
         bockstein = 0
         A = a
