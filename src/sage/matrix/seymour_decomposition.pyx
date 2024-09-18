@@ -2864,6 +2864,78 @@ cdef class SeriesParallelReductionNode(DecompositionNode):
 
 
 cdef class R10Node(DecompositionNode):
+    r"""
+    Special R10 Node.
+
+    EXAMPLES::
+
+        sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+        sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+        ....:                            [[1, 0, 0, 1, 1],
+        ....:                             [1, 1, 0, 0, 1],
+        ....:                             [0, 1, 1, 0, 1],
+        ....:                             [0, 0, 1, 1, 1],
+        ....:                             [1, 1, 1, 1, 1]]); R10
+        [1 0 0 1 1]
+        [1 1 0 0 1]
+        [0 1 1 0 1]
+        [0 0 1 1 1]
+        [1 1 1 1 1]
+        sage: result, certificate = R10.is_totally_unimodular(certificate=True)
+        sage: result
+        True
+        sage: R10.is_network_matrix()
+        False
+        sage: R10.is_conetwork_matrix()
+        False
+        sage: result, certificate = R10._is_binary_linear_matroid_regular(certificate=True)
+        sage: result
+        True
+        sage: certificate._is_binary_linear_matroid_graphic()
+        False
+        sage: certificate._is_binary_linear_matroid_cographic()
+        False
+
+        sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+        ....:                            [[1, 1, 0, 0, 1],
+        ....:                             [1, 1,-1, 0, 0],
+        ....:                             [0, 1,-1,-1, 0],
+        ....:                             [0, 0, 1, 1, 1],
+        ....:                             [1, 0, 0, 1, 1]]); R10
+        [ 1  1  0  0  1]
+        [ 1  1 -1  0  0]
+        [ 0  1 -1 -1  0]
+        [ 0  0  1  1  1]
+        [ 1  0  0  1  1]
+        sage: result, certificate = R10.is_totally_unimodular(certificate=True)
+        sage: result
+        True
+        sage: R10.is_network_matrix()
+        False
+        sage: R10.is_conetwork_matrix()
+        False
+
+        sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(GF(2), 5, 5, sparse=True),
+        ....:                            [[1, 1, 0, 0, 1],
+        ....:                             [1, 1,-1, 0, 0],
+        ....:                             [0, 1,-1,-1, 0],
+        ....:                             [0, 0, 1, 1, 1],
+        ....:                             [1, 0, 0, 1, 1]]); R10
+        [1 1 0 0 1]
+        [1 1 1 0 0]
+        [0 1 1 1 0]
+        [0 0 1 1 1]
+        [1 0 0 1 1]
+        sage: result, certificate = R10._is_binary_linear_matroid_regular(certificate=True)
+        sage: result
+        True
+        sage: certificate
+        R10Node (5×5) isomorphic to a minor of R10: Regular matroid of rank 5 on 10 elements with 162 bases
+        sage: certificate._is_binary_linear_matroid_graphic()
+        False
+        sage: certificate._is_binary_linear_matroid_cographic()
+        False
+    """
 
     @cached_method
     def _matroid(self):
@@ -2878,17 +2950,9 @@ cdef class R10Node(DecompositionNode):
         assert False, 'special leaf node with unknown type'
 
     def _repr_(self):
-        return f'Isomorphic to a minor of {self._matroid()}'
-
-    def rep_matrix(self):
-        r"""
-        WIP
-        """
-        assert NotImplementedError
-
-        # cdef int representation_matrix
-        # cdef CMR_SEYMOUR_NODE_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
-        # return Matrix_cmr_chr_sparse._from_data(representation_matrix, immutable=False)
+        result = super()._repr_()
+        result += f' isomorphic to a minor of {self._matroid()}'
+        return result
 
 
 cdef class PivotsNode(DecompositionNode):
