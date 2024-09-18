@@ -104,7 +104,7 @@ class Asir(Expect):
         """
         EXAMPLES::
 
-            sage: asir.__reduce__()
+            sage: Asir().__reduce__()
             (<function reduce_load_Asir at 0x...>, ())
         """
         return reduce_load_Asir, tuple()
