@@ -327,6 +327,10 @@ cdef class DecompositionNode(SageObject):
         """
         if self._matrix is not None:
             return self._matrix
+        if self._dec is NULL:
+            if isinstance(self, SumNode):
+                return self.block_matrix_form()
+            raise ValueError('Matrix and decomposition are both missing')
         cdef Matrix_cmr_chr_sparse result
         cdef CMR_CHRMAT *mat = CMRseymourGetMatrix(self._dec)
         if mat == NULL:
@@ -966,26 +970,108 @@ cdef class DecompositionNode(SageObject):
         return result
 
     def _regularity(self):
-        cdef int8_t regularity = CMRseymourRegularity(self._dec)
-        if regularity:
-            return regularity > 0
+        r"""
+        Return whether the decomposition node is regular (binary) or TU (ternary).
+        If it is not determined, raise ValueError.
+        """
+        cdef int8_t regularity
+        if self._dec != NULL:
+            regularity = CMRseymourRegularity(self._dec)
+            if regularity:
+                return regularity > 0
         raise ValueError('It is not determined whether the decomposition node is regular/TU')
 
     def _graphicness(self):
-        cdef int8_t graphicness = CMRseymourGraphicness(self._dec)
-        if graphicness:
-            return graphicness > 0
+        r"""
+        Return whether the decomposition node is graphic (binary) or network (ternary).
+        If it is not determined, raise ValueError.
+        """
+        cdef int8_t graphicness
+        if self._dec != NULL:
+            graphicness = CMRseymourGraphicness(self._dec)
+            if graphicness:
+                return graphicness > 0
         raise ValueError('It is not determined whether the decomposition node is graphic/network')
 
     def _cographicness(self):
-        cdef int8_t cographicness = CMRseymourCographicness(self._dec)
-        if cographicness:
-            return cographicness > 0
+        r"""
+        Return whether the decomposition node is cographic (binary) or conetwork (ternary).
+        If it is not determined, raise ValueError.
+        """
+        cdef int8_t cographicness
+        if self._dec != NULL:
+            cographicness = CMRseymourCographicness(self._dec)
+            if cographicness:
+                return cographicness > 0
         raise ValueError('It is not determined whether the decomposition node is cographic/conetwork')
 
     def _is_binary_linear_matroid_graphic(self, *, decomposition=False, **kwds):
         r"""
+        Return whether the linear matroid of ``self`` over `\GF{2}` is graphic.
+        If there is some entry not in `\{0, 1\}`, return ``False``.
 
+        This method is based on Seymour's decomposition.
+        The decomposition will stop once nongraphicness is detected.
+        For direct graphicness check,
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse._is_binary_linear_matroid_graphic`
+            :meth:`UnknownNode._is_binary_linear_matroid_graphic`
+            :meth:`_binary_linear_matroid_complete_decomposition`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: from sage.matrix.seymour_decomposition import DecompositionNode
+            sage: M2 = Matrix_cmr_chr_sparse.one_sum([[1, 0], [1, 1], [0, 1]],
+            ....:                                    [[1, 1, 0], [0, 1, 1]])
+            sage: result, certificate = M2.is_totally_unimodular(certificate=True,
+            ....:                                                row_keys=range(5),
+            ....:                                                column_keys='abcde')
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+            sage: node._graphicness()
+            Traceback (most recent call last):
+            ...
+            ValueError: It is not determined whether the decomposition node is graphic/network
+            sage: result, decomposition = node._is_binary_linear_matroid_graphic(decomposition=True)
+            sage: result
+            True
+            sage: unicode_art(decomposition)
+            ╭──────────OneSumNode (5×5) with 2 children
+            │                │
+            PlanarNode (3×2) PlanarNode (2×3)
+            sage: decomposition._graphicness()
+            True
+            sage: node._is_binary_linear_matroid_graphic(certificate=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(GF(2), 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
+            sage: result, certificate = M._is_binary_linear_matroid_regular(certificate=True,
+            ....:                         row_keys=[f'r{i}' for i in range(9)],
+            ....:                         column_keys=[f'c{i}' for i in range(9)])
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+            sage: result, decomposition = node._is_binary_linear_matroid_graphic(decomposition=True)
+            sage: result
+            False
+            sage: unicode_art(decomposition)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+            sage: decomposition.child_nodes()[1]._graphicness()
+            False
         """
         certificate = kwds.get('certificate', False)
         try:
@@ -1009,7 +1095,69 @@ cdef class DecompositionNode(SageObject):
 
     def _is_binary_linear_matroid_cographic(self, *, decomposition=False, **kwds):
         r"""
+        Return whether the linear matroid of ``self`` over `\GF{2}` is cographic.
+        If there is some entry not in `\{0, 1\}`, return ``False``.
 
+        This method is based on Seymour's decomposition.
+        The decomposition will stop once noncographicness is detected.
+        For direct cographicness check,
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse._is_binary_linear_matroid_cographic`
+            :meth:`UnknownNode._is_binary_linear_matroid_cographic`
+            :meth:`_binary_linear_matroid_complete_decomposition`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: from sage.matrix.seymour_decomposition import DecompositionNode
+            sage: M2 = Matrix_cmr_chr_sparse.one_sum([[1, 0], [1, 1], [0, 1]],
+            ....:                                    [[1, 1, 0], [0, 1, 1]])
+            sage: result, certificate = M2.is_totally_unimodular(certificate=True,
+            ....:                                                row_keys=range(5),
+            ....:                                                column_keys='abcde')
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+            sage: node._graphicness()
+            Traceback (most recent call last):
+            ...
+            ValueError: It is not determined whether the decomposition node is graphic/network
+            sage: result, decomposition = node._is_binary_linear_matroid_cographic(decomposition=True)
+            sage: result
+            True
+            sage: unicode_art(decomposition)
+            ╭──────────OneSumNode (5×5) with 2 children
+            │                │
+            PlanarNode (3×2) PlanarNode (2×3)
+            sage: decomposition._cographicness()
+            True
+            sage: node._is_binary_linear_matroid_cographic(certificate=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(GF(2), 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
+            sage: result, certificate = M._is_binary_linear_matroid_regular(certificate=True,
+            ....:                         row_keys=[f'r{i}' for i in range(9)],
+            ....:                         column_keys=[f'c{i}' for i in range(9)])
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+            sage: result, decomposition = node._is_binary_linear_matroid_cographic(decomposition=True)
+            sage: result
+            False
+            sage: unicode_art(decomposition)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
         """
         certificate = kwds.get('certificate', False)
         try:
@@ -1033,6 +1181,15 @@ cdef class DecompositionNode(SageObject):
 
     def _is_binary_linear_matroid_regular(self, *, decomposition=False, **kwds):
         r"""
+        Return whether the linear matroid of ``self`` over `\GF{2}` is regular.
+        If there is some entry not in `\{0, 1\}`, return ``False``.
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse._is_binary_linear_matroid_regular`
+            :meth:`_binary_linear_matroid_complete_decomposition`
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1048,6 +1205,12 @@ cdef class DecompositionNode(SageObject):
             ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
             sage: from sage.matrix.seymour_decomposition import UnknownNode
             sage: node = UnknownNode(M)
+            sage: node._regularity()
+            Traceback (most recent call last):
+            ...
+            ValueError: It is not determined whether the decomposition node is regular/TU
+            sage: node._is_binary_linear_matroid_regular()
+            True
             sage: C0 = node._binary_linear_matroid_complete_decomposition()
             sage: C0
             OneSumNode (9×9) with 2 children
@@ -1114,6 +1277,26 @@ cdef class DecompositionNode(SageObject):
                                         construct_leaf_graphs=False,
                                         construct_all_graphs=False):
         r"""
+        Complete the Seymour's decomposition of ``self`` over `\GF{2}`.
+
+        INPUT:
+
+        - ``stop_when_irregular`` -- boolean
+        Whether to stop decomposing once irregularity is determined.
+
+        - ``stop_when_nongraphic`` -- boolean
+        Whether to stop decomposing once non-graphicness is determined.
+
+        - ``stop_when_noncographic`` -- boolean
+        Whether to stop decomposing once non-cographicness is determined.
+
+        - ``stop_when_nongraphic_and_noncographic`` -- boolean
+        Whether to stop decomposing once non-graphicness and non-cographicness
+        is determined.
+
+          For a description of other parameters, see
+          :meth:`sage.matrix.matrix_cmr_sparse._set_cmr_seymour_parameters`
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1222,7 +1405,10 @@ cdef class DecompositionNode(SageObject):
 
         if self._dec == NULL:
             base_ring = self.base_ring()
-            if base_ring.characteristic() != 2:
+            if base_ring is None:
+                from sage.rings.finite_rings.finite_field_constructor import GF
+                self._base_ring = GF(2)
+            elif base_ring.characteristic() != 2:
                 raise ValueError(f'only defined over binary, got {base_ring}')
             self._set_root_dec()
 
@@ -1320,13 +1506,45 @@ cdef class DecompositionNode(SageObject):
         return CMRseymourNumMinors(self._dec)
 
     def _create_minor(self, index):
+        r"""
+        A minor of a represented matroid is another one obtained
+        by deleting or contracting elements. In the reduced matrix representation,
+        an element associated with a row (resp. column) can be contracted (resp. deleted)
+        by removing the corresponding matrix row (resp. column).
+        In order to delete a row element or contract a column element,
+        one must first pivot such that the element type (row/column) is changed.
+
+        A minor of a matroid represented by matrix `M` is represented
+        by means of a ``CMR_MINOR`` object.
+        It consists of a (potentially empty) array of pivots and a ``CMR_SUBMAT`` object
+        indicating a submatrix `M'` of the matrix obtained from `M` after applying the pivots.
+        Moreover, the type field indicates a certain structure of `M'`:
+
+        - A determinant ``CMR_MINOR_TYPE_DETERMINANT``
+          indicates that `M'` is a submatrix of `M` with `|\det(M')| \geq 2`.
+          In particular, no pivots are applied.
+        - A Fano ``CMR_MINOR_TYPE_FANO``
+          indicates that `M'` represents the Fano matroid `F_7`.
+        - A Fano-dual ``CMR_MINOR_TYPE_FANO_DUAL``
+          indicates that `M'` represents the dual `F_7^\star` of the Fano matroid.
+        - A K5 ``CMR_MINOR_TYPE_K5``
+          indicates that `M'` represents the graphic matroid `M(K_5)` of the complete graph `K_5`.
+        - A K5-dual ``CMR_MINOR_TYPE_K5_DUAL``
+          indicates that `M'` represents the dual matroid `M(K_5)^\star` of the complete graph `K_5`.
+        - A K33 ``CMR_MINOR_TYPE_K33``
+          indicates that `M'` represents the graphic matroid `M(K_{3,3})`
+          of the complete bipartite graph `K_{3,3}`.
+        - A K33-dual ``CMR_MINOR_TYPE_K33_DUAL``
+          indicates that `M'` represents the dual matroid `M(K_{3,3})^\star`
+          of the complete bipartite graph `K_{3,3}`.
+        """
         cdef CMR_MINOR * minor = CMRseymourMinor(self._dec, index)
         cdef CMR_MINOR_TYPE typ = CMRminorType(minor)
         cdef size_t npivots = CMRminorNumPivots(minor)
         cdef size_t *pivot_rows = CMRminorPivotRows(minor)
         cdef size_t *pivot_columns = CMRminorPivotColumns(minor)
         cdef CMR_SUBMAT *submat = CMRminorSubmatrix(minor)
-
+        # TODO: consider the pivots information and the corresponding keys?
         pivots_tuple = tuple((pivot_rows[i], pivot_columns[i]) for i in range(npivots))
         submat_tuple = (tuple(submat.rows[i] for i in range(submat.numRows)),
                             tuple(submat.columns[i] for i in range(submat.numColumns)))
@@ -1357,6 +1575,10 @@ cdef class DecompositionNode(SageObject):
 
     def minors(self):
         r"""
+        Return a tuple of minors of ``self``.
+
+        Currently, it only handles determinant 2 submatrix.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1399,6 +1621,26 @@ cdef class DecompositionNode(SageObject):
                                construct_leaf_graphs=False,
                                construct_all_graphs=False):
         r"""
+        Complete the Seymour's decomposition of ``self`` over `\GF{3}` or `\ZZ`.
+
+        INPUT:
+
+        - ``stop_when_nonTU`` -- boolean
+        Whether to stop decomposing once being non-TU is determined.
+
+        - ``stop_when_nonnetwork`` -- boolean
+        Whether to stop decomposing once being non-network is determined.
+
+        - ``stop_when_nonconetwork`` -- boolean
+        Whether to stop decomposing once being non-conetwork is determined.
+
+        - ``stop_when_nonnetwork_and_nonconetwork`` -- boolean
+        Whether to stop decomposing once not being network
+        and not being conetwork is determined.
+
+          For a description of other parameters, see
+          :meth:`sage.matrix.matrix_cmr_sparse._set_cmr_seymour_parameters`
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1539,15 +1781,26 @@ cdef class UnknownNode(DecompositionNode):
 
     def _is_binary_linear_matroid_graphic(self, *, decomposition=False, certificate=False, **kwds):
         r"""
+        Return whether the linear matroid of ``self`` over `\GF{2}` is graphic.
+        If there is some entry not in `\{0, 1\}`, return ``False``.
+
+        This is an internal method because it should really be exposed
+        as a method of :class:`Matroid`.
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse._is_binary_linear_matroid_graphic`
+
         EXAMPLES::
 
             sage: from sage.matrix.seymour_decomposition import UnknownNode
-            sage: node = UnknownNode([[1, 0], [-1, 1], [0, -1]]); node
+            sage: node = UnknownNode([[1, 0], [1, 1], [0, 1]]); node
             UnknownNode (3×2)
             sage: node.matrix()
-            [ 1  0]
-            [-1  1]
-            [ 0 -1]
+            [1 0]
+            [1 1]
+            [0 1]
             sage: node._is_binary_linear_matroid_graphic()
             True
             sage: result, certificate = node._is_binary_linear_matroid_graphic(certificate=True)
@@ -1578,14 +1831,25 @@ cdef class UnknownNode(DecompositionNode):
 
     def _is_binary_linear_matroid_cographic(self, *, decomposition=False, certificate=False, **kwds):
         r"""
+        Return whether the linear matroid of ``self`` over `\GF{2}` is cographic.
+        If there is some entry not in `\{0, 1\}`, return ``False``.
+
+        This is an internal method because it should really be exposed
+        as a method of :class:`Matroid`.
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse._is_binary_linear_matroid_cographic`
+
         EXAMPLES::
 
             sage: from sage.matrix.seymour_decomposition import UnknownNode
-            sage: node = UnknownNode([[1, -1, 0], [0, 1, -1]]); node
+            sage: node = UnknownNode([[1, 1, 0], [0, 1, 1]]); node
             UnknownNode (2×3)
             sage: node.matrix()
-            [ 1 -1  0]
-            [ 0  1 -1]
+            [1 1 0]
+            [0 1 1]
             sage: node._is_binary_linear_matroid_cographic()
             True
             sage: result, certificate = node._is_binary_linear_matroid_cographic(certificate=True)
@@ -1616,6 +1880,14 @@ cdef class UnknownNode(DecompositionNode):
 
     def is_network_matrix(self, *, decomposition=False, certificate=False, **kwds):
         r"""
+        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a network matrix.
+        If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse.is_network_matrix`
+
         EXAMPLES::
 
             sage: from sage.matrix.seymour_decomposition import UnknownNode
@@ -1657,6 +1929,14 @@ cdef class UnknownNode(DecompositionNode):
 
     def is_conetwork_matrix(self, *, decomposition=False, certificate=False, **kwds):
         r"""
+        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a conetwork matrix.
+        If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse.is_conetwork_matrix`
+
         EXAMPLES::
 
             sage: from sage.matrix.seymour_decomposition import UnknownNode
@@ -2483,16 +2763,16 @@ cdef class BaseGraphicNode(DecompositionNode):
         Starting with a morphism::
 
             sage: from sage.matrix.seymour_decomposition import UnknownNode
-            sage: phi = matrix(ZZ, [[1, 0], [-1, 1], [0, 1]],
+            sage: phi = matrix(ZZ, [[1, 0], [1, 1], [0, 1]],
             ....:              row_keys=['a', 'b', 'c'], column_keys=['v', 'w'])
             sage: phi; phi._unicode_art_matrix()
             Generic morphism:
             From: Free module generated by {'v', 'w'} over Integer Ring
             To:   Free module generated by {'a', 'b', 'c'} over Integer Ring
-               v  w
-            a⎛ 1  0⎞
-            b⎜-1  1⎟
-            c⎝ 0  1⎠
+              v w
+            a⎛1 0⎞
+            b⎜1 1⎟
+            c⎝0 1⎠
             sage: phi_node = UnknownNode(phi)
             sage: is_graphic, rephined_node = phi_node._is_binary_linear_matroid_graphic(decomposition=True)
             sage: is_graphic, rephined_node
@@ -2537,6 +2817,9 @@ cdef class CographicNode(BaseGraphicNode):
 cdef class PlanarNode(BaseGraphicNode):
     @cached_method
     def cograph(self):
+        r"""
+        Return the cograph of matrix.
+        """
         return _sage_graph(CMRseymourCograph(self._dec))
 
 
@@ -2544,6 +2827,17 @@ cdef class SeriesParallelReductionNode(DecompositionNode):
 
     def core(self):
         r"""
+        Return the core of ``self``.
+
+        A :class:SeriesParallelReductionNode indicates that `M`
+        arises from a smaller matrix `M'` (called the core)
+        by successively adding zero rows/columns,
+        unit rows/columns or duplicates of existing rows/columns
+        (potentially scaled with `-1`).
+
+        Note that such series-parallel reductions preserve total unimodularity
+        and binary regularity.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse

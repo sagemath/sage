@@ -2951,6 +2951,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                    row_keys=None, column_keys=None):
         r"""
         Return whether the linear matroid of ``self`` over `\GF{2}` is graphic.
+        If there is some entry not in `\{0, 1\}`, return ``False``.
 
         This is an internal method because it should really be exposed
         as a method of :class:`Matroid`.
@@ -2970,6 +2971,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 1  0]
             [-1  1]
             [ 0 -1]
+            sage: M._is_binary_linear_matroid_graphic()
+            False
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [1, 1], [0, 1]]); M
+            [1 0]
+            [1 1]
+            [0 1]
             sage: M._is_binary_linear_matroid_graphic()
             True
             sage: result, certificate = M._is_binary_linear_matroid_graphic(certificate=True)
@@ -3058,6 +3066,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                      row_keys=None, column_keys=None):
         r"""
         Return whether the linear matroid of ``self`` over `\GF{2}` is cographic.
+        If there is some entry not in `\{0, 1\}`, return ``False``.
 
         This is an internal method because it should really be exposed
         as a method of :class:`Matroid`.
@@ -3074,6 +3083,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  1  0  0  0  1 -1  1  0]
             [ 0  0  1  0  0  0  1 -1  1]
             [ 0  0  0  1  1  0  0  1 -1]
+            sage: M._is_binary_linear_matroid_cographic()
+            False
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(GF(2), 4, 9, sparse=True),
+            ....:                           M); M
+            [1 0 0 0 1 1 1 0 0]
+            [0 1 0 0 0 1 1 1 0]
+            [0 0 1 0 0 0 1 1 1]
+            [0 0 0 1 1 0 0 1 1]
             sage: M._is_binary_linear_matroid_cographic()
             True
             sage: C3 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),
@@ -3133,6 +3150,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                           row_keys=None, column_keys=None):
         r"""
         Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a network matrix.
+        If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
 
         Let `D = (V,A)` be a digraph and let `T` be an (arbitrarily) directed
         spanning forest of the underlying undirected graph.
@@ -3158,6 +3176,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         EXAMPLES:
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [2, 1], [0, -1]]); M
+            [ 1  0]
+            [ 2  1]
+            [ 0 -1]
+            sage: M.is_network_matrix()
+            False
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
             ....:                           [[1, 0], [-1, 1], [0, -1]]); M
             [ 1  0]
@@ -3260,7 +3285,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     def is_conetwork_matrix(self, *, time_limit=60.0, certificate=False,
                                row_keys=None, column_keys=None):
         r"""
-        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a network matrix.
+        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a conetwork matrix.
+        If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
+
+        A matrix is conetwork if and only if its transpose is network.
 
         .. SEEALSO:: :meth:`is_network_matrix`,
 
@@ -3356,6 +3384,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                           column_keys=None):
         r"""
         Return whether the linear matroid of ``self`` over `\GF{2}` is regular.
+        If there is some entry not in `\{0, 1\}`, return ``False``.
 
         This is an internal method because it should really be exposed
         as a method of :class:`Matroid`.
@@ -3387,7 +3416,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
-            ....:                           [[1, 0], [1, 1], [0, 1]]); M
+            ....:                           [[1, 0], [-1, 1], [0, -1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0 -1]
+            sage: M._is_binary_linear_matroid_regular()
+            False
+            sage: M = Matrix_cmr_chr_sparse(M.parent().change_ring(GF(2)),
+            ....:                           M); M
             [1 0]
             [1 1]
             [0 1]
@@ -3579,6 +3615,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [2, 1], [0, 1]]); M
+            [1 0]
+            [2 1]
+            [0 1]
+            sage: M.is_totally_unimodular()
+            False
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
             ....:                           [[1, 0], [-1, 1], [0, 1]]); M
             [ 1  0]
