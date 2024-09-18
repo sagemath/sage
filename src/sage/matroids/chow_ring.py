@@ -10,10 +10,8 @@ from sage.matroids.chow_ring_ideal import ChowRingIdeal_nonaug, AugmentedChowRin
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.commutative_rings import CommutativeRings
-from sage.sets.set import Set
 from sage.combinat.posets.posets import Poset
-from sage.combinat.subset import Subsets
-from itertools import product
+from itertools import product, combinations
 
 class ChowRing(QuotientRing_generic):
     r"""
@@ -111,7 +109,7 @@ class ChowRing(QuotientRing_generic):
             elif presentation == 'atom-free':
                 self._ideal = AugmentedChowRingIdeal_atom_free(M, R)
         else:
-            self._ideal = ChowRingIdeal_nonaug(M, R) #check method to get ring
+            self._ideal = ChowRingIdeal_nonaug(M, R)
         C = CommutativeRings().Quotients() & GradedAlgebrasWithBasis(R).FiniteDimensional()
         QuotientRing_generic.__init__(self, R=self._ideal.ring(), I=self._ideal, names=self._ideal.ring().variable_names(), category=C)
 
@@ -178,10 +176,9 @@ class ChowRing(QuotientRing_generic):
             sage: ch = matroids.Wheel(3).chow_ring(ZZ, False)
             [A0*A013, 1]
         """
-        flats = [X for i in range(1, self._matroid.rank() + 1)
+        flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
         flats.append(frozenset())
-        maximum_rank = max(self._matroid.rank(F) for F in flats)
         flats_gen = self._ideal.flats_generator()
         R = self._ideal.ring()
         flats = sorted(flats, key=lambda X: (len(X), sorted(X)))
@@ -189,18 +186,22 @@ class ChowRing(QuotientRing_generic):
         monomial_basis = []
         if self._augmented is True:
             if self._presentation == 'fy':
-                for i in range(maximum_rank):
-                    term = self._ideal.ring().one()
-                    for j in range(len(flats)):
-                        if j == 0:
-                            if i <= ranks[0]:
-                                if flats[j] in flats_gen:
-                                    term *= flats_gen[flats[j]]**(i + 1)
-                        else:
-                            if i < ranks[j] - ranks[j-1]:
-                                if flats[j] in flats_gen:
-                                    term *= flats_gen[flats[j]]**(i + 1)
-                    monomial_basis.append(term)
+                flats.remove(frozenset())
+                max_powers = []
+                max_powers[0] = ranks[flats[0]]
+                for i in range(1, len(flats)):
+                    max_powers = ranks[flats[i]] - ranks[flats[i-1]]
+                for combination in product(*(range(p) for p in max_powers)):
+                        expression = R.one()
+                        for i in range(k):
+                            expression *= flats_gen[subset[i]]**combination[i] 
+                        monomial_basis.append(expression)
+                max_powers.remove(ranks[flats[0]])
+                for combination in product(*(range(p) for p in max_powers)):
+                        expression = flats_gen[flats[0]]**ranks[flats[0]]
+                        for i in range(k):
+                            expression *= flats_gen[subset[i]]**combination[i] 
+                        monomial_basis.append(expression)
                 
             elif self._presentation == 'atom-free': #all double equals need spacing
                 first_rank = self._matroid.rank(flats[len(flats) - 1])
@@ -245,27 +246,37 @@ class ChowRing(QuotientRing_generic):
 
         else: 
             R = self._ideal.ring()
-            lattice_flats = self._matroid.lattice_of_flats()
-            chains = lattice_flats.chains()
-            for chain in chains:
-                max_powers = []
-                x_dict = dict()
-                for i in range(len(chain)):
-                    if chain[i] == frozenset():
-                        max_powers.append(0)
-                        x_dict[chain[i]] = 1
-                    elif i == 0:
-                        max_powers.append(ranks[chain[i]])
-                        x_dict[chain[i]] = flats_gen[chain[i]]
-                    else:
-                        max_powers.append(ranks[chain[i]] - ranks[chain[i-1]])
-                        x_dict[chain[i]] = flats_gen[chain[i]]
-                k = len(chain)
-                for combination in product(*(range(p) for p in max_powers)):
-                    expression = R.one()
-                    for i in range(k):
-                        expression *= x_dict[chain[i]]**combination[i] 
-                    monomial_basis.append(expression)
+            subsets = []
+        # Generate all subsets of the frozenset using combinations
+            for r in range(len(flats) + 1):  # r is the size of the subset
+                subsets.extend(list(subset) for subset in combinations(flats, r))
+            for subset in subsets:
+                flag = True
+                sorted_list = sorted(subset, key=len)
+                for i in range (len(sorted_list)):
+                    if (i != 0) & (len(sorted_list[i]) == len(sorted_list[i-1])):
+                        flag = False
+                        break
+
+                if flag is True:
+                    max_powers = []
+                    x_dict = dict()
+                    for i in range(len(subset)):
+                        if subset[i] == frozenset():
+                            max_powers.append(0)
+                            x_dict[subset[i]] = 1
+                        elif i == 0:
+                            max_powers.append(ranks[subset[i]])
+                            x_dict[subset[i]] = flats_gen[subset[i]]
+                        else:
+                            max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
+                            x_dict[subset[i]] = flats_gen[subset[i]]
+                    k = len(subset)
+                    for combination in product(*(range(p) for p in max_powers)):
+                        expression = R.one()
+                        for i in range(k):
+                            expression *= x_dict[subset[i]]**combination[i] 
+                        monomial_basis.append(expression)
 
         from sage.sets.family import Family
         return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
