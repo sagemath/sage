@@ -162,7 +162,7 @@ class Profiler(SageObject):
         self._previous_sigprof_handler = self._libc().signal(SIGPROF, SIG_DFL)
         profiler = self._libprofiler()
         self._t_start = time.time()
-        rc = profiler.ProfilerStart(self.filename())
+        rc = profiler.ProfilerStart(str.encode(self.filename()))
         if rc < 0:
             raise ValueError('profiler failed to start')
 
