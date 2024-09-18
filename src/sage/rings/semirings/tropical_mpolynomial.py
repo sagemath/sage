@@ -148,6 +148,23 @@ class TropicalMPolynomial(MPolynomial_polydict):
         p1 = R(3)*a*b + a + R(-1)*b
         sphinx_plot(p1.plot3d())
 
+    Another way to represent tropical curve is through dual subdivision,
+    which is a subdivision of Newton polytope of tropical polynomial::
+
+        sage: p1.Newton_polytope()
+        A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
+        sage: p1.dual_subdivision()
+        Polyhedral complex with 1 maximal cell
+
+    .. PLOT::
+        :width: 300 px
+
+        T = TropicalSemiring(QQ, use_min=False)
+        R = PolynomialRing(T, ('a,b'))
+        a, b = R.gen(), R.gen(1)
+        p1 = R(3)*a*b + a + R(-1)*b
+        sphinx_plot(p1.dual_subdivision().plot())    
+
     TESTS:
 
     There is no subtraction defined for tropical polynomials::
@@ -388,7 +405,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             return TropicalSurface(self)
         return TropicalVariety(self)
 
-    def polytope(self):
+    def Newton_polytope(self):
         """
         Return the Newton polytope of ``self``.
 
@@ -400,12 +417,12 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         EXAMPLES:
 
-        Newton polytope for two variable tropical polynomial::
+        Newton polytope for a two-variable tropical polynomial::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: p1 = x + y
-            sage: p1.polytope()
+            sage: p1.Newton_polytope()
             A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices
 
         .. PLOT::
@@ -415,14 +432,14 @@ class TropicalMPolynomial(MPolynomial_polydict):
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
             p1 = x + y
-            sphinx_plot(p1.polytope().plot())
+            sphinx_plot(p1.Newton_polytope().plot())
 
         Newton polytope in three dimension::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: p1 = x^2 + x*y*z + x + y + z + R(0)
-            sage: p1.polytope()
+            sage: p1.Newton_polytope()
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 5 vertices
 
         .. PLOT::
@@ -432,7 +449,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             R = PolynomialRing(T, ('x,y,z'))
             x, y, z = R.gen(), R.gen(1), R.gen(2)
             p1 = x**2 + x*y*z + x + y + z + R(0)
-            sphinx_plot(p1.polytope().plot())
+            sphinx_plot(p1.Newton_polytope().plot())
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
 
@@ -471,6 +488,40 @@ class TropicalMPolynomial(MPolynomial_polydict):
             x, y = R.gen(), R.gen(1)
             p1 = R(3) + R(2)*x + R(2)*y + R(3)*x*y + x**2 + y**2
             sphinx_plot(p1.dual_subdivision().plot())
+
+        A subdivision of a pentagonal Newton polytope::
+
+            sage: p2 = R(3) + x^2 + R(-2)*y + R(1/2)*x^2*y + R(2)*x*y^3 + R(-1)*x^3*y^4
+            sage: p2.dual_subdivision()
+            Polyhedral complex with 5 maximal cells
+        
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ,  use_min=False)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p2 = R(3) + x**2 + R(-2)*y + R(1/2)*x**2*y + R(2)*x*y**3 + R(-1)*x**3*y**4
+            sphinx_plot(p2.dual_subdivision().plot())
+        
+        A subdivision with many faces, not all of which are triangles::
+
+            sage: p3 = R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2 \
+            ....:     + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4 \
+            ....:     + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4
+            sage: p3.dual_subdivision().plot()
+            Graphics object consisting of 10 graphics primitives
+
+        .. PLOT::
+            :width: 300 px
+
+            T = TropicalSemiring(QQ,  use_min=False)
+            R = PolynomialRing(T, ('x,y'))
+            x, y = R.gen(), R.gen(1)
+            p3 = R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2 \
+                 + R(2)*x**3 + x**2*y + x*y**2 + R(4)*y**3 + R(8)*x**4 \
+                 + R(4)*x**3*y + x**2*y**2 + R(2)*x*y**3 + y**4
+            sphinx_plot(p3.dual_subdivision().plot())
 
         Dual subdivision of a tropical surface::
 
