@@ -364,9 +364,7 @@ class SetPartitionsSk_k(SetPartitionsAk_k):
             True
         """
         for p in Permutations(self.k):
-            res = []
-            for i in range(self.k):
-                res.append(Set([i + 1, -p[i]]))
+            res = [Set([i, -pi]) for i, pi in enumerate(p, start=1)]
             yield self.element_class(self, res)
 
 
@@ -433,10 +431,7 @@ class SetPartitionsSkhalf_k(SetPartitionsAkhalf_k):
              {{1, -3}, {2, -2}, {4, -4}, {3, -1}}]
         """
         for p in Permutations(self.k):
-            res = []
-            for i in range(self.k):
-                res.append(Set([i + 1, -p[i]]))
-
+            res = [Set([i, -pi]) for i, pi in enumerate(p, start=1)]
             res.append(Set([self.k + 1, -self.k - 1]))
             yield self.element_class(self, res)
 
@@ -1941,8 +1936,8 @@ def to_set_partition(l, k=None):
         to_be_added -= spart
         sp.append(spart)
 
-    for singleton in to_be_added:
-        sp.append(Set([singleton]))
+    sp.extend(Set([singleton])
+              for singleton in to_be_added)
 
     return Set(sp)
 

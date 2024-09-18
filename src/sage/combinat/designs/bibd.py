@@ -362,6 +362,7 @@ def balanced_incomplete_block_design(v, k, lambd=1, existence=False, use_LJCR=Fa
     else:
         raise NotImplementedError("I don't know how to build a ({},{},{})-BIBD!".format(v, k, lambd))
 
+
 def BruckRyserChowla_check(v, k, lambd):
     r"""
     Check whether the parameters passed satisfy the Bruck-Ryser-Chowla theorem.
@@ -432,6 +433,7 @@ def BruckRyserChowla_check(v, k, lambd):
     (flag, sol) = C.has_rational_point(point=True)
 
     return flag
+
 
 def steiner_triple_system(n):
     r"""
@@ -746,6 +748,7 @@ def BIBD_from_difference_family(G, D, lambd=None, check=True):
 # (v,4,1)-BIBD #
 ################
 
+
 def v_4_1_BIBD(v, check=True):
     r"""
     Return a `(v,4,1)`-BIBD.
@@ -890,6 +893,7 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
 
     return bibd
 
+
 def _relabel_bibd(B,n,p=None):
     r"""
     Relabel the BIBD on `n` points and blocks of size k such that
@@ -1015,6 +1019,7 @@ def PBD_4_5_8_9_12(v, check=True):
         assert is_pairwise_balanced_design(PBD,v,[4,5,8,9,12])
 
     return PBD
+
 
 def _PBD_4_5_8_9_12_closure(B):
     r"""
@@ -1175,6 +1180,7 @@ def v_5_1_BIBD(v, check=True):
 
     return bibd
 
+
 def _get_r_s_t_u(v):
     r"""
     Implement the table from [ClaytonSmith]_.
@@ -1246,6 +1252,7 @@ def PBD_from_TD(k,t,u):
     if u >= 2:
         TD.append(list(range(k*t,k*t+u)))
     return TD
+
 
 def BIBD_5q_5_for_q_prime_power(q):
     r"""
@@ -1348,10 +1355,10 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
        :doi:`10.1016/S0021-9800(69)80095-5`
     """
     q = (n-1)//(k-1)-1
-    if (k % 2                 or
-        q % 2                 or
-        q <= k                or
-        n != (k-1)*(q+1)+1    or
+    if (k % 2 or
+        q % 2 or
+        q <= k or
+        n != (k-1)*(q+1)+1 or
         not is_prime_power(k) or
         not is_prime_power(q)):
         if existence:
@@ -1384,15 +1391,14 @@ def BIBD_from_arc_in_desarguesian_projective_plane(n,k,existence=False):
     # [Denniston69] is the set of all elements of K of degree < log_n
     # (seeing elements of K as polynomials in 'a')
 
-    K_iter = list(K) # faster iterations
-    log_n = is_prime_power(n,get_data=True)[1]
-    C = [(x,y,one)
-         for x in K_iter
-         for y in K_iter
-         if Q(x,y).polynomial().degree() < log_n]
+    K_iter = list(K)  # faster iterations
+    log_n = is_prime_power(n, get_data=True)[1]
+    C = [(x, y, one) for x in K_iter for y in K_iter
+         if Q(x, y).polynomial().degree() < log_n]
 
     from sage.combinat.designs.block_design import DesarguesianProjectivePlaneDesign
     return DesarguesianProjectivePlaneDesign(q).trace(C)._blocks
+
 
 class PairwiseBalancedDesign(GroupDivisibleDesign):
     r"""

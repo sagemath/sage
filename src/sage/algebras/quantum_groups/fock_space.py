@@ -749,7 +749,7 @@ class FockSpace(Parent, UniqueRepresentation):
                     return (sum(1 for y in P._addable(la, i) if P._above(x, y))
                             - sum(1 for y in P._removable(la, i) if P._above(x, y)))
                 q = P.realization_of()._q
-                return P.sum_of_terms(( la.remove_cell(*x), c * q**(-N_left(la, x, i)) )
+                return P.sum_of_terms((la.remove_cell(*x), c * q**(-N_left(la, x, i)))
                                       for la,c in self for x in P._removable(la, i))
 
             def e(self, *data):
@@ -845,8 +845,8 @@ class FockSpace(Parent, UniqueRepresentation):
                     return (sum(1 for y in P._addable(la, i) if P._above(y, x))
                             - sum(1 for y in P._removable(la, i) if P._above(y, x)))
                 q = P.realization_of()._q
-                return P.sum_of_terms( (la.add_cell(*x), c * q**N_right(la, x, i))
-                                       for la,c in self for x in P._addable(la, i) )
+                return P.sum_of_terms((la.add_cell(*x), c * q**N_right(la, x, i))
+                                       for la,c in self for x in P._addable(la, i))
 
             def f(self, *data):
                 r"""
@@ -1384,7 +1384,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
 
 ###############################################################################
-## Bases Category
+# Bases Category
 
 class FockSpaceBases(Category_realization_of_parent):
     r"""
@@ -1605,7 +1605,7 @@ class FockSpaceBases(Category_realization_of_parent):
             return self.monomial(i)
 
 ###############################################################################
-## Truncated Fock space
+# Truncated Fock space
 
 
 class FockSpaceTruncated(FockSpace):
@@ -2178,7 +2178,7 @@ class FockSpaceTruncated(FockSpace):
                     mu = _Partitions([p - x for p in la])
 
                     def add_cols(nu):
-                        return _Partitions([ v + x for v in list(nu) + [0]*(k - len(nu)) ])
+                        return _Partitions([v + x for v in list(nu) + [0]*(k - len(nu))])
                     return fock.sum_of_terms((add_cols(nu), c) for nu,c in self._G_to_fock_basis(mu))
 
                 # For critical partitions
