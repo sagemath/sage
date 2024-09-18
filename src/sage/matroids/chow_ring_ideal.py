@@ -202,7 +202,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         """
         return "Chow ring ideal of {}".format(self._matroid)
 
-    def groebner_basis(self):
+    def groebner_basis(self, algorithm='constructed'):
         r"""
         Returns the Groebner basis of the Chow ring ideal.
         Return type - ``PolynomialSequence``.
@@ -228,66 +228,69 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             sage: ch.groebner_basis().is_groebner()
             True
         """
+        if algorithm == 'constructed':
+            flats = list(self._flats_generator)
+            gb = list()
+            R = self.ring() 
+            if frozenset() in flats:
+                flats.remove(frozenset()) #Non-empty proper flats needed
+                
+            ranks = {F:self._matroid.rank(F) for F in flats}
 
-        flats = list(self._flats_generator)
-        gb = list()
-        R = self.ring() 
-        if frozenset() in flats:
-            flats.remove(frozenset()) #Non-empty proper flats needed
-              
-        ranks = {F:self._matroid.rank(F) for F in flats}
+            flats_gen = self._flats_generator
+            subsets = []
+            # Generate all subsets of flats using combinations
+            for r in range(len(flats) + 1):  # r is the size of the subset
+                subsets.extend(list(subset) for subset in combinations(flats, r))
 
-        flats_gen = self._flats_generator
-        subsets = []
-        # Generate all subsets of flats using combinations
-        for r in range(len(flats) + 1):  # r is the size of the subset
-            subsets.extend(list(subset) for subset in combinations(flats, r))
+            for subset in subsets:
+                flag = True
+                sorted_list = sorted(subset, key=len)
+                for i in range (len(sorted_list)): #Checking whether the subset is a chain
+                    if (i != 0) & (len(sorted_list[i]) == len(sorted_list[i-1])):
+                        flag = False
+                        break
 
-        for subset in subsets:
-            flag = True
-            sorted_list = sorted(subset, key=len)
-            for i in range (len(sorted_list)): #Checking whether the subset is a chain
-                if (i != 0) & (len(sorted_list[i]) == len(sorted_list[i-1])):
-                    flag = False
-                    break
-
-            if flag is False: 
-                term = R.one()
-                for x in subset:
-                    term *= flats_gen[x]
-                gb.append(term)
-            
-            else:
-                if subset == []:
-                    for F in flats:
-                        term = R.zero()
-                        for G in flats:
-                            if G >= F:
-                                term += flats_gen[G]
-                        gb.append((term)**(ranks[F]))
-
+                if flag is False: 
+                    term = R.one()
+                    for x in subset:
+                        term *= flats_gen[x]
+                    gb.append(term)
+                
                 else:
-                    for j in range(len(subset)):
-                        for k in range(j+1, len(subset)): #Checking if every element in the chain is maximal
-                            if (sorted_list[j] != sorted_list[k]) & (sorted_list[j].issubset(sorted_list[k])):
-                                flag = False
-                                break
-
-                    if flag is True:
+                    if subset == []:
                         for F in flats:
-                            if F > reduce(lambda a, b: a.union(b), sorted_list): 
-                                term = R.one()
-                                for x in subset:
-                                    term *= flats_gen[x]
-                                term1 = R.zero()
-                                for G in flats:
-                                    if G >= F:
-                                        term1 += flats_gen[G]
-                                if term1 != R.zero():
-                                    gb.append(term*(term1**(ranks[F] - ranks[sorted_list[len(subset) - 1]])))
-            
-        g_basis = PolynomialSequence(R, [gb])
-        return g_basis
+                            term = R.zero()
+                            for G in flats:
+                                if G >= F:
+                                    term += flats_gen[G]
+                            gb.append((term)**(ranks[F]))
+
+                    else:
+                        for j in range(len(subset)):
+                            for k in range(j+1, len(subset)): #Checking if every element in the chain is maximal
+                                if (sorted_list[j] != sorted_list[k]) & (sorted_list[j].issubset(sorted_list[k])):
+                                    flag = False
+                                    break
+
+                        if flag is True:
+                            for F in flats:
+                                if F > reduce(lambda a, b: a.union(b), sorted_list): 
+                                    term = R.one()
+                                    for x in subset:
+                                        term *= flats_gen[x]
+                                    term1 = R.zero()
+                                    for G in flats:
+                                        if G >= F:
+                                            term1 += flats_gen[G]
+                                    if term1 != R.zero():
+                                        gb.append(term*(term1**(ranks[F] - ranks[sorted_list[len(subset) - 1]])))
+                
+            g_basis = PolynomialSequence(R, [gb])
+            return g_basis
+        
+        elif algorithm == 'generic':
+            super().groebner_basis()
 
     
 class AugmentedChowRingIdeal_fy(ChowRingIdeal):
@@ -440,7 +443,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         """
         return "Augmented Chow ring ideal of {} of Feitchner-Yuzvinsky presentation".format(self._matroid)
     
-    def groebner_basis(self):
+    def groebner_basis(self, algorithm='constructed'):
         r"""
         Returns the Groebner basis of the augmented Chow ring ideal.
         Return type - ``PolynomialSequence``.
@@ -455,38 +458,41 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             sage: ch.defining_ideal().basis_is_groebner()
             True
         """
-        gb = []
-        E = list(self._matroid.groundset())
-        poly_ring = self.ring()
-        for F in self._flats:
-            for G in self._flats:
-                if not (F < G or G < F): #Non-nested flats
-                        gb.append(self._flats_generator[F]*self._flats_generator[G])
-                for i in E:
-                    term = poly_ring.zero()
-                    term1 = poly_ring.zero()
-                    for H in self._flats:
-                        if i in H:
-                            term += self._flats_generator[H]
-                        if H > G:
-                            term1 += self._flats_generator[H]
-                    if term != poly_ring.zero():
-                        gb.append(self._flats_generator[i] + term) #5.7
-                    if term1 != poly_ring.zero():
-                        gb.append(term1**(self._matroid.rank(G)) + 1) #5.6
-
-                    if i in G: #if element in flat
+        if algorithm == 'constructed':
+            gb = []
+            E = list(self._matroid.groundset())
+            poly_ring = self.ring()
+            for F in self._flats:
+                for G in self._flats:
+                    if not (F < G or G < F): #Non-nested flats
+                            gb.append(self._flats_generator[F]*self._flats_generator[G])
+                    for i in E:
+                        term = poly_ring.zero()
+                        term1 = poly_ring.zero()
+                        for H in self._flats:
+                            if i in H:
+                                term += self._flats_generator[H]
+                            if H > G:
+                                term1 += self._flats_generator[H]
+                        if term != poly_ring.zero():
+                            gb.append(self._flats_generator[i] + term) #5.7
                         if term1 != poly_ring.zero():
-                            gb.append(self._flats_generator[i]*((term1)**self._matroid.rank(G)))
-            
-                    elif not i in G: #if element not in flat
-                        gb.append(self._flats_generator[i]*self._flats_generator[F])
-                    
-                    elif G < F: #nested flats
-                        gb.append(self._flats_generator[G]*term1**(self._matroid.rank(F)-self._matroid.rank(G)))
+                            gb.append(term1**(self._matroid.rank(G)) + 1) #5.6
 
-        g_basis = PolynomialSequence(poly_ring, [gb])
-        return g_basis
+                        if i in G: #if element in flat
+                            if term1 != poly_ring.zero():
+                                gb.append(self._flats_generator[i]*((term1)**self._matroid.rank(G)))
+                
+                        elif not i in G: #if element not in flat
+                            gb.append(self._flats_generator[i]*self._flats_generator[F])
+                        
+                        elif G < F: #nested flats
+                            gb.append(self._flats_generator[G]*term1**(self._matroid.rank(F)-self._matroid.rank(G)))
+
+            g_basis = PolynomialSequence(poly_ring, [gb])
+            return g_basis
+        elif algorithm == 'generic':
+            super().groebner_basis()
 
 class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
     r"""
@@ -633,7 +639,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         """
         return "Augmented Chow ring ideal of {} of atom-free presentation".format(self._matroid)
     
-    def groebner_basis(self):
+    def groebner_basis(self, algorithm='constructed'):
         """
         Returns the Groebner basis of the augmented Chow ring ideal.
         Return type - ``PolynomialSequence``.
@@ -651,27 +657,31 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: ch.defining_ideal().basis_is_groebner()
             True
         """
-        gb = []
-        flats = [X for i in range(1, self._matroid.rank())
-                 for X in self._matroid.flats(i)]
-        poly_ring = self.ring()
-        if frozenset() in flats: #Non empty proper flats
-            flats.remove(frozenset())
-        for F in flats:
-            for G in flats:
-                if not (F > G or G > F): #Non nested flats
-                    gb.append(self._flats_generator[F]*self._flats_generator[G])
-                elif F < G: #Nested flats
-                    term = poly_ring.zero()
-                    for H in flats:
-                        if H < F:
-                            term += self._flats_generator[H]
-                    if term != poly_ring.zero():
-                        gb.append(self._flats_generator[F]*(term**self._matroid.rank(G))*
-                            (term**(self._matroid.rank(G)-self._matroid.rank(F))))
+        if algorithm == 'constructed':
+            gb = []
+            flats = [X for i in range(1, self._matroid.rank())
+                    for X in self._matroid.flats(i)]
+            poly_ring = self.ring()
+            if frozenset() in flats: #Non empty proper flats
+                flats.remove(frozenset())
+            for F in flats:
+                for G in flats:
+                    if not (F > G or G > F): #Non nested flats
+                        gb.append(self._flats_generator[F]*self._flats_generator[G])
+                    elif F < G: #Nested flats
+                        term = poly_ring.zero()
+                        for H in flats:
+                            if H < F:
+                                term += self._flats_generator[H]
+                        if term != poly_ring.zero():
+                            gb.append(self._flats_generator[F]*(term**self._matroid.rank(G))*
+                                (term**(self._matroid.rank(G)-self._matroid.rank(F))))
 
-        g_basis = PolynomialSequence(poly_ring, [gb])
-        return g_basis
+            g_basis = PolynomialSequence(poly_ring, [gb])
+            return g_basis
+        
+        elif algorithm == 'generic':
+            super().groebner_basis()
 
             
 
