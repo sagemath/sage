@@ -100,28 +100,6 @@ class Profiler(SageObject):
         """
         return 'Profiler logging to {0}'.format(self.filename())
 
-    def _libc(self):
-        """
-        Return libc.
-
-        OUTPUT: a ctypes shared library handle
-
-        EXAMPLES::
-
-            sage: from sage.misc.gperftools import Profiler
-            sage: Profiler()._libc()
-            <CDLL '...', handle ... at ...>
-        """
-        global libc
-        if libc is not None:
-            return libc
-        name = find_library('c')
-        if name:
-            libc = ctypes.CDLL(name)
-            return libc
-        else:
-            raise ImportError('failed to open libc')
-
     def _libprofiler(self):
         """
         Return libprofiler.
@@ -159,7 +137,8 @@ class Profiler(SageObject):
             PROFILE: interrupts/evictions/bytes = ...
         """
         from signal import SIGPROF, SIG_DFL
-        self._previous_sigprof_handler = self._libc().signal(SIGPROF, SIG_DFL)
+        from cysignals.pysignals import setossignal
+        self._previous_sigprof_handler = setossignal(SIGPROF, SIG_DFL)
         profiler = self._libprofiler()
         self._t_start = time.time()
         rc = profiler.ProfilerStart(str.encode(self.filename()))
