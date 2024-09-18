@@ -243,7 +243,8 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`~GenericGraph.blocks_and_cut_vertices` | Compute the blocks and cut vertices of the graph.
     :meth:`~GenericGraph.blocks_and_cuts_tree` | Compute the blocks-and-cuts tree of the graph.
-    :meth:`~GenericGraph.is_cut_edge` | Return ``True`` if the input edge is a cut-edge or a bridge.
+    :meth:`~GenericGraph.is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
+    :meth:`~GenericGraph.`is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`~GenericGraph.is_cut_vertex` | Return ``True`` if the input vertex is a cut-vertex.
     :meth:`~GenericGraph.edge_cut` | Return a minimum edge cut between vertices `s` and `t`
     :meth:`~GenericGraph.vertex_cut` | Return a minimum vertex cut between non-adjacent vertices `s` and `t`
@@ -25000,6 +25001,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.connectivity import blocks_and_cut_vertices
     from sage.graphs.connectivity import blocks_and_cuts_tree
     from sage.graphs.connectivity import is_cut_edge
+    from sage.graphs.connectivity import is_edge_cut
     from sage.graphs.connectivity import is_cut_vertex
     from sage.graphs.connectivity import edge_connectivity
     from sage.graphs.connectivity import vertex_connectivity
