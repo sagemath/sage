@@ -140,7 +140,7 @@ class FreeModulePseudoMorphism(Morphism):
             Domain: Vector space of dimension 2 over Finite Field in z of size 5^3
             Codomain: Vector space of dimension 2 over Finite Field in z of size 5^3
 
-        An example with ``side=right``:
+        An example with ``side=right``::
 
             sage: M.pseudohom(mat, Frob, side="right")
             Free module pseudomorphism (twisted by z |--> z^5) defined as left-multiplication by the matrix

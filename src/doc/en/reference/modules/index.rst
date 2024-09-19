@@ -92,6 +92,15 @@ Morphisms
 
    sage/modules/matrix_morphism
 
+Pseudomorphisms
+---------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/modules/free_module_pseudohomspace
+   sage/modules/free_module_pseudomorphism
+
 Vectors
 -------
 
