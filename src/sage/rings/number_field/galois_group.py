@@ -573,9 +573,8 @@ class GaloisGroup_v2(GaloisGroup_perm):
         """
         if self._gc_numbering:
             # PARI computes all the elements of self anyway, so we might as well store them
-            return sorted([self(x, check=False) for x in self._pari_data[5]])
-        else:
-            return sorted(list(self.iteration()))
+            return sorted(self(x, check=False) for x in self._pari_data[5])
+        return sorted(self.iteration())
 
     @lazy_attribute
     def _gens(self):
@@ -1026,6 +1025,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
             raise ValueError("%s is ramified" % P)
         return t[0]
 
+
 class GaloisGroup_subgroup(GaloisSubgroup_perm):
     r"""
     A subgroup of a Galois group, as returned by functions such as
@@ -1188,6 +1188,7 @@ class GaloisGroup_subgroup(GaloisSubgroup_perm):
         if name is None:
             name = G._field.variable_name() + '0'
         return L.subfield(x, name=name)
+
 
 class GaloisGroupElement(PermutationGroupElement):
     r"""

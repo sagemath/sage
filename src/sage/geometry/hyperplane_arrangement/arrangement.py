@@ -1808,7 +1808,7 @@ class HyperplaneArrangementElement(Element):
         return v
 
     @cached_method
-    def _parallel_hyperplanes(self):
+    def _parallel_hyperplanes(self) -> tuple:
         """
         Return the hyperplanes grouped into parallel sets.
 
@@ -1845,7 +1845,7 @@ class HyperplaneArrangementElement(Element):
              (Hyperplane t0 + 0*t1 - t2 + 0, (1, 0, -1), 0)))
         """
         V = self.parent().ambient_space()
-        parallels = dict()
+        parallels = {}
         for hyperplane in self:
             through_origin = V([list(hyperplane.A()), 0]).primitive(signed=False)
             parallel_planes = parallels.get(through_origin, [])
@@ -1853,10 +1853,9 @@ class HyperplaneArrangementElement(Element):
             b = hyperplane.b() * (A / hyperplane.A())
             parallel_planes.append([b, (hyperplane, A, b)])
             parallels[through_origin] = parallel_planes
-        parallels = [tuple(tuple(hyperplane[1]
-                           for hyperplane in sorted(parallels[key])))
-                     for key in parallels.keys()]
-        return tuple(sorted(parallels))
+        parallels = sorted(tuple(hyperplane[1] for hyperplane in sorted(value))
+                           for key, value in parallels.items())
+        return tuple(parallels)
 
     def vertices(self, exclude_sandwiched=False):
         """

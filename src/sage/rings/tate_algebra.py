@@ -870,13 +870,13 @@ class TateAlgebra_generic(Parent):
             else:
                 return A.integer_ring()
 
-    def _ideal_class_(self, n):
+    def _ideal_class_(self, n=0):
         r"""
         Return the class that handles ideals in this Tate algebra.
 
         INPUT:
 
-        - ``n`` -- number of generators
+        - ``n`` -- integer (default: ``0``); the number of generators
 
         EXAMPLES::
 

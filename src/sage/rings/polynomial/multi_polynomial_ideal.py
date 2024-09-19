@@ -1177,10 +1177,16 @@ class MPolynomialIdeal_singular_repr(
 
         If the ideal is the total ring, the dimension is `-1` by convention.
 
+        ALGORITHM:
+
+        For principal ideals, Theorem 3.5.1 of [Ger2008]_ is used. Otherwise
+        Singular is used, unless the characteristic is too large. This requires
+        computation of a Groebner basis, which can be very expensive.
+
         For polynomials over a finite field of order too large for Singular,
-        this falls back on a toy implementation of Buchberger to compute
-        the Groebner basis, then uses the algorithm described in Chapter 9,
-        Section 1 of Cox, Little, and O'Shea's "Ideals, Varieties, and Algorithms".
+        this falls back on a toy implementation of Buchberger to compute the
+        Groebner basis, then uses the algorithm described in Chapter 9, Section
+        1 of Cox, Little, and O'Shea's "Ideals, Varieties, and Algorithms".
 
         EXAMPLES::
 
@@ -1201,12 +1207,7 @@ class MPolynomialIdeal_singular_repr(
             sage: R.<x,y> = PolynomialRing(GF(2147483659^2), order='lex')
             sage: I = R.ideal(0)
             sage: I.dimension()
-            verbose 0 (...: multi_polynomial_ideal.py, dimension) Warning: falling back to very slow toy implementation.
             2
-
-        ALGORITHM:
-
-        Uses Singular, unless the characteristic is too large.
 
         TESTS:
 
@@ -1216,15 +1217,21 @@ class MPolynomialIdeal_singular_repr(
             sage: I = ideal(x^2-y, x^3-QQbar(-1))                                       # needs sage.rings.number_field
             sage: I.dimension()                                                         # needs sage.rings.number_field
             1
-
-        .. NOTE::
-
-            Requires computation of a Groebner basis, which can be a
-            very expensive operation.
         """
         try:
             return self.__dimension
         except AttributeError:
+            if not self.base_ring().is_field():
+                raise NotImplementedError("implemented only over fields")
+            if self.ngens() == 1:
+                g = self.gen(0)
+                if g.is_unit():
+                    self.__dimension = Integer(-1)
+                elif g:
+                    self.__dimension = Integer(self.ring().ngens() - 1)
+                else:
+                    self.__dimension = Integer(self.ring().ngens())
+                return self.__dimension
             try:
                 from sage.libs.singular.function_factory import ff
                 dim = ff.dim
@@ -1235,50 +1242,48 @@ class MPolynomialIdeal_singular_repr(
                     v = self._groebner_basis_singular_raw()
                     self.__dimension = Integer(v.dim())
                 except TypeError:
-                    if not self.base_ring().is_field():
-                        raise NotImplementedError("dimension() is implemented only over fields.")
-                    if self.ring().term_order().is_global():
-                        verbose("Warning: falling back to very slow toy implementation.", level=0)
-                        # See Chapter 9, Section 1 of Cox, Little, O'Shea's "Ideals, Varieties,
-                        # and Algorithms".
-                        from sage.sets.set import Set
-                        gb = toy_buchberger.buchberger_improved(self)
-                        if self.ring().one() in gb:
-                            return Integer(-1)
-                        ring_vars = self.ring().gens()
-                        n = len(ring_vars)
-                        lms = [each.lm() for each in gb]
-                        # compute M_j, denoted by var_lms
-                        var_lms = [Set([]) for _ in lms]
-                        for j in range(len(ring_vars)):
-                            for i in range(len(lms)):
-                                if lms[i].degree(ring_vars[j]) > 0:
-                                    var_lms[i] += Set([j+1])
-                        # compute intersections of M_j and J
-                        # we assume that the iterator starts with the empty set,
-                        # then iterates through all subsets of order 1,
-                        # then through all subsets of order 2, etc...
-                        # the way Sage currently operates
-                        all_J = Set([each + 1 for each in range(n)]).subsets()
-                        min_dimension = -1
-                        all_J = iter(all_J)
-                        while min_dimension == -1:
-                            try:
-                                J = next(all_J)
-                            except StopIteration:
-                                min_dimension = n
-                                break
-                            J_intersects_all = True
-                            i = 0
-                            while J_intersects_all and i < len(var_lms):
-                                J_intersects_all = J.intersection(var_lms[i]) != Set([])
-                                i += 1
-                            if J_intersects_all:
-                                min_dimension = len(J)
-                        return Integer(n - min_dimension)
-                    else:
-                        raise TypeError("Local/unknown orderings not supported by 'toy_buchberger' implementation.")
-        return self.__dimension
+                    verbose("Warning: falling back to very slow toy implementation.", level=0)
+                    if not self.ring().term_order().is_global():
+                        raise TypeError("local/unknown ordering is not supported by the toy implementation")
+                    # See Chapter 9, Section 1 of Cox, Little, O'Shea's
+                    # "Ideals, Varieties, and Algorithms"
+                    from sage.sets.set import Set
+                    gb = toy_buchberger.buchberger_improved(self)
+                    if self.ring().one() in gb:
+                        self.__dimension = Integer(-1)
+                        return self.__dimension
+                    ring_vars = self.ring().gens()
+                    n = len(ring_vars)
+                    lms = [each.lm() for each in gb]
+                    # compute M_j, denoted by var_lms
+                    var_lms = [Set([]) for _ in lms]
+                    for j in range(len(ring_vars)):
+                        for i in range(len(lms)):
+                            if lms[i].degree(ring_vars[j]) > 0:
+                                var_lms[i] += Set([j+1])
+                    # compute intersections of M_j and J
+                    # we assume that the iterator starts with the empty set,
+                    # then iterates through all subsets of order 1,
+                    # then through all subsets of order 2, etc...
+                    # the way Sage currently operates
+                    all_J = Set([each + 1 for each in range(n)]).subsets()
+                    min_dimension = -1
+                    all_J = iter(all_J)
+                    while min_dimension == -1:
+                        try:
+                            J = next(all_J)
+                        except StopIteration:
+                            min_dimension = n
+                            break
+                        J_intersects_all = True
+                        i = 0
+                        while J_intersects_all and i < len(var_lms):
+                            J_intersects_all = J.intersection(var_lms[i]) != Set([])
+                            i += 1
+                        if J_intersects_all:
+                            min_dimension = len(J)
+                    self.__dimension = Integer(n - min_dimension)
+            return self.__dimension
 
     @require_field
     @handle_AA_and_QQbar

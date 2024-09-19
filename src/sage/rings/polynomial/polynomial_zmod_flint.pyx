@@ -989,3 +989,48 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         from sage.rings.polynomial.polynomial_ring_constructor import _single_variate
         R = _single_variate(parent.base_ring(), name=name, implementation='NTL')
         return parent(R(self % other).minpoly_mod(R(other)))
+
+    def compose_mod(self, other, modulus):
+        r"""
+        Compute `f(g) \bmod h`.
+
+        To be precise about the order fo compostion, given ``self``, ``other``
+        and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \bmod h(x)`.
+
+        INPUT:
+
+        - ``other`` -- a polynomial `g(x)`
+        - ``modulus`` -- a polynomial `h(x)`
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(163)[]
+            sage: f = R.random_element()
+            sage: g = R.random_element()
+            sage: g.compose_mod(g, f) == g(g) % f
+            True
+
+            sage: f = R([i for i in range(100)])
+            sage: g = R([i**2 for i in range(100)])
+            sage: h = 1 + x + x**5
+            sage: f.compose_mod(g, h)
+            82*x^4 + 56*x^3 + 45*x^2 + 60*x + 127
+            sage: f.compose_mod(g, h) == f(g) % h
+            True
+
+        AUTHORS:
+
+        - Giacomo Pope (2024-08) initial implementation
+        """
+        cdef Polynomial_zmod_flint res = self._new()
+
+        sig_on()
+        nmod_poly_compose_mod(&res.x, &(<Polynomial_zmod_flint>self).x, &(<Polynomial_zmod_flint>other).x, &(<Polynomial_zmod_flint>modulus).x)
+        sig_off()
+
+        return res
+
+    # compose_mod is the natural name from the Flint bindings, but
+    # polynomial_gf2x has modular_composition as the method name so here we
+    # allow both
+    modular_composition = compose_mod

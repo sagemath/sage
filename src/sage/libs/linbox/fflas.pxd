@@ -28,7 +28,6 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFLAS":
         FflasNoTrans
         FflasTrans
 
-
     ctypedef enum FFLAS_SIDE:
         FflasRight
 

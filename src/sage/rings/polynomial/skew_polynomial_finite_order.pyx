@@ -518,7 +518,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             return center(self._optbound)
         return self.reduced_norm()
 
-
     def optimal_bound(self):
         r"""
         Return the optimal bound of this skew polynomial (i.e.
