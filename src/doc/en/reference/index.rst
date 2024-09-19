@@ -51,6 +51,7 @@ Linear Algebra
 * :doc:`Matrices and Spaces of Matrices <matrices/index>`
 * :doc:`Vectors and Modules <modules/index>`
 * :doc:`Tensors on Free Modules of Finite Rank <tensor_free_modules/index>`
+* :doc:`Modules over Ore rings<modules/ore>`
 
 Calculus and Analysis
 ---------------------
