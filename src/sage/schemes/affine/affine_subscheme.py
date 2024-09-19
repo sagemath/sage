@@ -23,6 +23,7 @@ from sage.categories.fields import Fields
 from sage.libs.singular.function import (singular_function,
                                          lib as singular_lib,
                                          get_printlevel, set_printlevel)
+from sage.libs.singular.option import opt_verb
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
 from .affine_morphism import SchemeMorphism_polynomial_affine_subscheme_field
@@ -424,6 +425,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         hilb = singular_function("hilb")
         saved_printlevel = get_printlevel()
         set_printlevel(-1)
+        opt_verb['not_warn_sb'] = True
         i = 0
         s = 0
         t = sum(hilb(std(Tor(i, Iloc, Jloc)), 2))
@@ -431,6 +433,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             s += (-1)**i * t
             i += 1
             t = sum(hilb(std(Tor(i, Iloc, Jloc)), 2))
+        opt_verb.reset_default()
         set_printlevel(saved_printlevel)
         return s
 
@@ -509,7 +512,9 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         mult = singular_function("mult")
         saved_printlevel = get_printlevel()
         set_printlevel(-1)
+        opt_verb['not_warn_sb'] = True
         result = mult(std(I))
+        opt_verb.reset_default()
         set_printlevel(saved_printlevel)
         return result
 
