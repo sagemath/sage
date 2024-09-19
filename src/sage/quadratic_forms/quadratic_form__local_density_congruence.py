@@ -13,7 +13,7 @@ from sage.rings.rational_field import QQ
 from sage.arith.misc import valuation
 from sage.misc.verbose import verbose
 
-from sage.quadratic_forms.count_local_2 import count_modp__by_gauss_sum
+from sage.quadratic_forms.count_local_2 import count_modp__by_gauss_sum, CountAllLocalGoodTypesNormalForm
 
 
 def count_modp_solutions__by_Gauss_sum(self, p, m):
@@ -296,7 +296,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
     # Take cases on the existence of additional nonzero congruence conditions (mod 2)
     if NZvec is None:
         total = (4 ** len(Z_Is8)) * (8 ** len(Is8_minus_Z)) \
-            * Q_Not8.count_congruence_solutions__good_type(2, 3, m, list(Z_Not8), None)
+            * CountAllLocalGoodTypesNormalForm(Q_Not8,2, 3, m, list(Z_Not8), None)
     else:
         ZNZ = Z + Set(NZvec)
         ZNZ_Not8 = Not8.intersection(ZNZ)
@@ -310,9 +310,9 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
         verbose("Is8_minus_ZNZ = " + str(Is8_minus_ZNZ))
 
         total = (4 ** len(Z_Is8)) * (8 ** len(Is8_minus_Z)) \
-            * Q_Not8.count_congruence_solutions__good_type(2, 3, m, list(Z_Not8), None) \
+            * CountAllLocalGoodTypesNormalForm(Q_Not8, 2, 3, m, list(Z_Not8), None) \
             - (4 ** len(ZNZ_Is8)) * (8 ** len(Is8_minus_ZNZ)) \
-            * Q_Not8.count_congruence_solutions__good_type(2, 3, m, list(ZNZ_Not8), None)
+            * CountAllLocalGoodTypesNormalForm(Q_Not8, 2, 3, m, list(ZNZ_Not8), None)
 
     # DIAGNOSTIC
     verbose("total = " + str(total))

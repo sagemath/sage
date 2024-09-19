@@ -72,14 +72,14 @@ def count_modp__by_gauss_sum(n, p, m, Qdet):
     neg1 = -1
     if not m % p:
         if n % 2:
-            count = p**(n-1)
+            count = p**(n - 1)
         else:
-            count = p**(n-1) + (p-1) * (p**((n-2)//2)) * kronecker_symbol(((neg1**(n//2)) * Qdet) % p, p)
+            count = p**(n - 1) + (p - 1) * (p**((n - 2) // 2)) * kronecker_symbol(((neg1**(n // 2)) * Qdet) % p, p)
     else:
         if n % 2:
-            count = p**(n-1) + p**((n-1)//2) * kronecker_symbol(((neg1**((n-1)//2)) * Qdet * m) % p, p)
+            count = p**(n - 1) + p**((n - 1) // 2) * kronecker_symbol(((neg1**((n - 1) // 2)) * Qdet * m) % p, p)
         else:
-            count = p**(n-1) - p**((n-2)//2) * kronecker_symbol(((neg1**(n//2)) * Qdet) % p, p)
+            count = p**(n - 1) - p**((n - 2) // 2) * kronecker_symbol(((neg1**(n // 2)) * Qdet) % p, p)
 
     # Return the result
     return count
@@ -115,13 +115,13 @@ cdef CountAllLocalTypesNaive_cdef(Q, p, k, m, zvec, nzvec):
 
         # Perform a carry (when value = R-1) until we can increment freely
         ptr = len(v)
-        while ((ptr > 0) and (v[ptr-1] == R-1)):
-            v[ptr-1] += 1
+        while ((ptr > 0) and (v[ptr - 1] == R - 1)):
+            v[ptr - 1] += 1
             ptr += -1
 
         # Only increment if we're not already at the zero vector =)
         if ptr > 0:
-            v[ptr-1] += 1
+            v[ptr - 1] += 1
 
         # Evaluate Q(v) quickly
         tmp_val = Mod(0, R)
@@ -208,7 +208,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     # print("IsLocalSolutionType: Finished the Zero congruence condition test \n")
 
     if not zero_flag:
-        return <long> 0
+        return < long > 0
 
     # DIAGNOSTIC
     # print("IsLocalSolutionType: Passed the Zero congruence condition test \n")
@@ -228,7 +228,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
             i += 1
 
     if not nonzero_flag:
-        return <long> 0
+        return < long > 0
 
     # Check if the solution has the appropriate (local) type:
     # -------------------------------------------------------
@@ -236,11 +236,11 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     # 1: Check Good-type
     for i in range(n):
         if w[i] % p and Q[i, i] % p:
-            return <long> 1
+            return < long > 1
     if p == 2:
         for i in range(n - 1):
-            if Q[i, i+1] % p and (w[i] % p or w[i+1] % p):
-                return <long> 1
+            if Q[i, i + 1] % p and (w[i] % p or w[i + 1] % p):
+                return < long > 1
 
     # 2: Check Zero-type
     Zero_flag = True
@@ -248,7 +248,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
         if w[i] % p:
             Zero_flag = False
     if Zero_flag:
-        return <long> 2
+        return < long > 2
 
     # Check if wS1 is zero or not
     wS1_nonzero_flag = False
@@ -257,11 +257,11 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
         # Compute the valuation of each index, allowing for off-diagonal terms
         if Q[i, i] == 0:
             if i == 0:
-                val = valuation(Q[i, i+1], p)   # Look at the term to the right
+                val = valuation(Q[i, i + 1], p)   # Look at the term to the right
             elif i == n - 1:
-                val = valuation(Q[i-1, i], p)   # Look at the term above
+                val = valuation(Q[i - 1, i], p)   # Look at the term above
             else:
-                val = valuation(Q[i, i+1] + Q[i-1, i], p)  # Finds the valuation of the off-diagonal term since only one isn't zero
+                val = valuation(Q[i, i + 1] + Q[i - 1, i], p)  # Finds the valuation of the off-diagonal term since only one isn't zero
         else:
             val = valuation(Q[i, i], p)
 
@@ -271,13 +271,93 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
 
     # 4: Check Bad-type I
     if wS1_nonzero_flag:
-        return <long> 4
+        return < long > 4
 
     # 5: Check Bad-type II
     if not wS1_nonzero_flag:
-        return <long> 5
+        return < long > 5
 
     # Error if we get here! =o
     print("   Solution vector is " + str(w))
     print("   and Q is \n" + str(Q) + "\n")
     raise RuntimeError("Error in IsLocalSolutionType: Should not execute this line... =( \n")
+
+
+def CountAllLocalGoodTypesNormalForm(Q, p, k, m, zvec, nzvec):
+    r"""
+    This is an internal routine, which is called by
+    :meth:`sage.quadratic_forms.quadratic_form.QuadraticForm.local_good_density_congruence_even
+    QuadraticForm.local_good_density_congruence_even`. See the documentation of
+    that method for more details.
+
+    INPUT:
+
+    - ``Q`` -- quadratic form over `\ZZ` in local normal form at p with no zero blocks mod m_range
+    - ``p`` -- prime number > 0
+    - ``k`` -- integer > 0
+    - ``m`` -- integer >= 0 (depending only on mod `p^k`)
+    - ``zvec``, ``nzvec`` -- list of integers in ``range(Q.dim())``, or ``None``
+
+    OUTPUT:
+
+    an integer '\ge 0' representing the solutions of Good type.
+
+    EXAMPLES::
+
+        sage: from sage.quadratic_forms.count_local_2 import CountAllLocalGoodTypesNormalForm
+        sage: Q = DiagonalQuadraticForm(ZZ, [1,2,3])
+        sage: Q_local_at2 = Q.local_normal_form(2)
+        sage: Q_local_at3 = Q.local_normal_form(3)
+        sage: CountAllLocalGoodTypesNormalForm(Q_local_at2, 2, 3, 3, None, None)
+        64
+        sage: CountAllLocalGoodTypesNormalForm(Q_local_at2, 2, 3, 3, [0], None)
+        32
+        sage: CountAllLocalGoodTypesNormalForm(Q_local_at3, 3, 2, 1, None, None)
+        54
+    """
+    n = Q.dim()
+    if n == 0:
+        return 0
+
+    m_range = p**k
+    if zvec is None:
+        zvec = []
+    if nzvec is None:
+        nzvec = []
+
+    # determine local blocks
+    blocks = []
+    i = 0
+    while i < n - 1:
+        if Q[i, i + 1] != 0:
+            blocks += [(i, i + 1)]
+            i += 2
+        else:
+            blocks += [(i,)]
+            i += 1
+    if i < n:
+        blocks += [(i,)]
+
+    solutions = [[0, 0] for _ in range(m_range)]  # [good, not good]
+    solutions[0][1] = 1
+    for b in blocks:
+        Q_part = Q.extract_variables(b)
+        zvec_local = range(len(b)) if (b[0] in zvec) else None
+        nzvec_local = range(len(b)) if (b[0] in nzvec) else None
+
+        solutions_part = [[0, 0] for _ in range(m_range)]
+        for m_part in range(m_range):
+            cnt = CountAllLocalTypesNaive(Q_part, p, k, m_part, zvec_local, nzvec_local)
+            solutions_part[m_part][0] = cnt[1]
+            solutions_part[m_part][1] = cnt[0] - cnt[1]
+
+        # compute convolution of counts
+        solutions_new = [[0, 0] for _ in range(m_range)]
+        for m1 in range(m_range):
+            for m2 in range(m_range):
+                total = (solutions[m1][0] + solutions[m1][1]) * (solutions_part[m2][0] + solutions_part[m2][1])
+                good = total - solutions[m1][1] * solutions_part[m2][1]
+                solutions_new[(m1 + m2) % m_range][0] += good
+                solutions_new[(m1 + m2) % m_range][1] += total - good
+        solutions = solutions_new
+    return solutions[m % m_range][0]
