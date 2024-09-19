@@ -1030,7 +1030,7 @@ def is_matching_covered(self, matching=None, algorithm='Edmonds', coNP_certifica
 
         # Check if H is strongly connected using Kosaraju's algorithm
         def dfs(J, v, visited, orientation):
-            stack = [v] # a stack of vertices
+            stack = [v]  # a stack of vertices
 
             while stack:
                 v = stack.pop()
