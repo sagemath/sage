@@ -670,7 +670,7 @@ cdef class Matrix(Matrix0):
             entries = [[sib(v, 2) for v in row] for row in self.rows()]
             return sib.name('matrix')(self.base_ring(), entries)
 
-    def numpy(self, dtype=None):
+    def numpy(self, dtype=None, copy=None):
         """
         Return the Numpy matrix associated to this matrix.
 
@@ -731,7 +731,7 @@ cdef class Matrix(Matrix0):
             (3, 4)
         """
         import numpy
-        A = numpy.matrix(self.list(), dtype=dtype)
+        A = numpy.matrix(self.list(), dtype=dtype, copy=copy)
         return numpy.resize(A,(self.nrows(), self.ncols()))
 
     # Define the magic "__array__" function so that numpy.array(m) can convert
