@@ -812,7 +812,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         `M_1=\begin{bmatrix} A & a_2 \\ a_1^T & *\end{bmatrix}`
         and the second matrix is
         `M_2=\begin{bmatrix} * & b_2^T\\ b_1 & B\end{bmatrix}`,
-        where the entry `*` is not relavant in the construction.
+        where the entry `*` is not relevant in the construction.
         Then the Seymour/Schrijver 3-sum is the matrix
         `M_1 \oplus_3 M_2 = \begin{bmatrix} A & a_2 b_2^T \\ b_1 a_1^T & B\end{bmatrix}`.
 

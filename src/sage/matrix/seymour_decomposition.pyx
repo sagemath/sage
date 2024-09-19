@@ -2866,6 +2866,7 @@ cdef class SeriesParallelReductionNode(DecompositionNode):
 cdef class R10Node(DecompositionNode):
     r"""
     Special R10 Node.
+    Only two possible 5 by 5 matrices up to row and column permutations and negations.
 
     EXAMPLES::
 
@@ -2894,6 +2895,25 @@ cdef class R10Node(DecompositionNode):
         sage: certificate._is_binary_linear_matroid_graphic()
         False
         sage: certificate._is_binary_linear_matroid_cographic()
+        False
+
+        sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+        ....:                            [[ 1,-1, 0, 0,-1],
+        ....:                             [-1, 1,-1, 0, 0],
+        ....:                             [ 0,-1, 1,-1, 0],
+        ....:                             [ 0, 0,-1, 1,-1],
+        ....:                             [-1, 0, 0,-1, 1]]); R10
+        [ 1 -1  0  0 -1]
+        [-1  1 -1  0  0]
+        [ 0 -1  1 -1  0]
+        [ 0  0 -1  1 -1]
+        [-1  0  0 -1  1]
+        sage: result, certificate = R10.is_totally_unimodular(certificate=True)
+        sage: result
+        True
+        sage: R10.is_network_matrix()
+        False
+        sage: R10.is_conetwork_matrix()
         False
 
         sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
@@ -2930,7 +2950,7 @@ cdef class R10Node(DecompositionNode):
         sage: result
         True
         sage: certificate
-        R10Node (5×5) isomorphic to a minor of R10: Regular matroid of rank 5 on 10 elements with 162 bases
+        R10Node (5×5) a reduced matrix representation of R10 matroid
         sage: certificate._is_binary_linear_matroid_graphic()
         False
         sage: certificate._is_binary_linear_matroid_cographic()
@@ -2940,18 +2960,109 @@ cdef class R10Node(DecompositionNode):
     @cached_method
     def _matroid(self):
         r"""
+        Return the R10 matroid represented by ``self``.
+        ``self.matrix()`` is the reduced matrix representation of the matroid.
 
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+            ....:                            [[1, 1, 1, 1, 1],
+            ....:                             [1, 1, 1, 0, 0],
+            ....:                             [1, 0, 1, 1, 0],
+            ....:                             [1, 0, 0, 1, 1],
+            ....:                             [1, 1, 0, 0, 1]]); R10
+            [1 1 1 1 1]
+            [1 1 1 0 0]
+            [1 0 1 1 0]
+            [1 0 0 1 1]
+            [1 1 0 0 1]
+            sage: result, certificate = R10.is_totally_unimodular(certificate=True,
+            ....:                                                 row_keys=range(5),
+            ....:                                                 column_keys='abcde')
+            sage: certificate._matroid()
+            R10: Regular matroid of rank 5 on 10 elements with 162 bases
+            sage: certificate._isomorphism()
+            {'a': 0,
+            'b': 1,
+            'c': 2,
+            'd': 'a',
+            'e': 'b',
+            'f': 4,
+            'g': 'c',
+            'h': 'e',
+            'i': 3,
+            'j': 'd'}
+            sage: result, certificate = R10.is_totally_unimodular(certificate=True)
+            sage: certificate._matroid()
+            R10: Regular matroid of rank 5 on 10 elements with 162 bases
+            sage: certificate._isomorphism()
+            {'a': 0,
+            'b': 1,
+            'c': 2,
+            'd': 5,
+            'e': 6,
+            'f': 4,
+            'g': 7,
+            'h': 9,
+            'i': 3,
+            'j': 8}
+
+            sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
+            ....:                            [[ 1,-1, 0, 0,-1],
+            ....:                             [-1, 1,-1, 0, 0],
+            ....:                             [ 0,-1, 1,-1, 0],
+            ....:                             [ 0, 0,-1, 1,-1],
+            ....:                             [-1, 0, 0,-1, 1]]); R10
+            [ 1 -1  0  0 -1]
+            [-1  1 -1  0  0]
+            [ 0 -1  1 -1  0]
+            [ 0  0 -1  1 -1]
+            [-1  0  0 -1  1]
+            sage: result, certificate = R10.is_totally_unimodular(certificate=True,
+            ....:                                                 row_keys=range(5),
+            ....:                                                 column_keys='abcde')
+            sage: certificate._matroid()
+            R10: Regular matroid of rank 5 on 10 elements with 162 bases
+            sage: certificate._isomorphism() # The isomorphism is not unique
+            {'a': 0,
+            'b': 1,
+            'c': 2,
+            'd': 'c',
+            'e': 'a',
+            'f': 4,
+            'g': 'b',
+            'h': 3,
+            'i': 'e',
+            'j': 'd'}
         """
-        cdef CMR_SEYMOUR_NODE_TYPE typ = CMRseymourType(self._dec)
-        import sage.matroids.matroids_catalog as matroids
+        from sage.matroids.constructor import Matroid
+        if self.row_keys() is None or self.column_keys() is None:
+            M = Matroid(reduced_matrix=self.matrix(), regular=True)
+        else:
+            M = Matroid(reduced_morphism=self.morphism(), regular=True)
+        M.rename("R10: " + repr(M))
+        return M
 
-        if typ == CMR_SEYMOUR_NODE_TYPE_R10:
-            return matroids.catalog.R10()
-        assert False, 'special leaf node with unknown type'
+    def _isomorphism(self):
+        r"""
+        Return one isomorphism between the R10 matroid
+        and ``self._matroid()``.
+        """
+        import sage.matroids.matroids_catalog as matroids
+        M0 = matroids.catalog.R10()
+        result, isomorphism = M0.is_isomorphic(self._matroid(), certificate=True)
+        if result is False:
+            raise ValueError("This is not a R10 node")
+        else:
+            return isomorphism
 
     def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+        """
         result = super()._repr_()
-        result += f' isomorphic to a minor of {self._matroid()}'
+        result += f' a reduced matrix representation of R10 matroid'
         return result
 
 
