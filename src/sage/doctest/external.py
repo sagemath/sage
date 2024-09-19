@@ -388,7 +388,8 @@ class AvailableSoftware():
 
         sage: from sage.doctest.external import external_software, available_software
         sage: external_software
-        ['cplex',
+        ['asir',
+         'cplex',
          'dvips',
          'ffmpeg',
          'gurobi',
