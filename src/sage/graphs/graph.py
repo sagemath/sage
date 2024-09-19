@@ -4186,6 +4186,8 @@ class Graph(GenericGraph):
         from sage.combinat.set_partition import SetPartitions
         from sage.misc.misc_c import prod
         from sage.arith.misc import factorial
+        from collections import Counter
+
         if t is None:
             t = ZZ['t'].gen()
         if R is None:
@@ -4194,16 +4196,18 @@ class Graph(GenericGraph):
         ret = m.zero()
         V = self.vertices()
         E = list(self.edges(labels=False))
-
+        M = Counter(E)
+        fact = [factorial(i) for i in range(len(V)+1)]
         def mono(pi):
             arcs = 0
             for s in pi:
                 for u in s:
-                    arcs += sum(E.count((u, v)) for v in s if self.has_edge(u, v))
+                    arcs += sum(M[(u, v)] for v in s if self.has_edge(u, v))
             return arcs
 
         for pi in SetPartitions(V):
-            ret += prod([factorial(i) for i in pi.to_partition().to_exp()])*m[pi.to_partition()]*(1+t)**mono(pi)
+            pa = pi.to_partition()
+            ret += prod([fact[i] for i in pa.to_exp()])*m[pa]*(1+t)**mono(pi)
         return ret
 
     @doc_index("Leftovers")
