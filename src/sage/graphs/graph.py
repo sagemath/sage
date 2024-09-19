@@ -4198,6 +4198,7 @@ class Graph(GenericGraph):
         E = list(self.edges(labels=False))
         M = Counter(E)
         fact = [factorial(i) for i in range(len(V)+1)]
+
         def mono(pi):
             arcs = 0
             for s in pi:
