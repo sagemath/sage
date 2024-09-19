@@ -505,6 +505,16 @@ class Interface(WithEqualityById, ParentWithBase):
         self._available_vars.append(var)
 
     def _default_var_name(self):
+        """
+        Return the default prefix that is used for variable names.
+
+        Some interfaces need to change this value.
+
+        EXAMPLES::
+
+            sage: maxima._default_var_name()
+            'sage'
+        """
         return "sage"
 
     def _next_var_name(self):
