@@ -59,6 +59,7 @@ class IndefiniteIntegral(BuiltinFunction):
 
         Check for :issue:`28913`::
 
+            sage: # needs sage.libs.giac
             sage: Ex = (1-2*x^(1/3))^(3/4)/x
             sage: integrate(Ex, x, algorithm='giac')  # long time
             4*(-2*x^(1/3) + 1)^(3/4) + 6*arctan((-2*x^(1/3) + 1)^(1/4)) - 3*log((-2*x^(1/3) + 1)^(1/4) + 1) + 3*log(abs((-2*x^(1/3) + 1)^(1/4) - 1))
@@ -207,6 +208,7 @@ class DefiniteIntegral(BuiltinFunction):
 
         Check for :issue:`32354`::
 
+            sage: # needs sage.libs.giac
             sage: ex = 1/max_symbolic(x, 1)**2
             sage: integral(ex, x, 0, 2, algorithm='giac')
             3/2
@@ -697,6 +699,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     Using Giac to integrate the absolute value of a trigonometric expression::
 
+        sage: # needs sage.libs.giac
         sage: integrate(abs(cos(x)), x, 0, 2*pi, algorithm='giac')
         4
         sage: result = integrate(abs(cos(x)), x, 0, 2*pi)
