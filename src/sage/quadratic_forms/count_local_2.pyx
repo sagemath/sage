@@ -283,7 +283,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     raise RuntimeError("Error in IsLocalSolutionType: Should not execute this line... =( \n")
 
 
-def CountAllLocalGoodTypesNormalForm(Q, p, k, m, zvec, nzvec):
+def count_all_local_good_types_normal_form(Q, p, k, m, zvec, nzvec):
     r"""
     This is an internal routine, which is called by
     :meth:`sage.quadratic_forms.quadratic_form.QuadraticForm.local_good_density_congruence_even
@@ -304,15 +304,15 @@ def CountAllLocalGoodTypesNormalForm(Q, p, k, m, zvec, nzvec):
 
     EXAMPLES::
 
-        sage: from sage.quadratic_forms.count_local_2 import CountAllLocalGoodTypesNormalForm
+        sage: from sage.quadratic_forms.count_local_2 import count_all_local_good_types_normal_form
         sage: Q = DiagonalQuadraticForm(ZZ, [1,2,3])
         sage: Q_local_at2 = Q.local_normal_form(2)
         sage: Q_local_at3 = Q.local_normal_form(3)
-        sage: CountAllLocalGoodTypesNormalForm(Q_local_at2, 2, 3, 3, None, None)
+        sage: count_all_local_good_types_normal_form(Q_local_at2, 2, 3, 3, None, None)
         64
-        sage: CountAllLocalGoodTypesNormalForm(Q_local_at2, 2, 3, 3, [0], None)
+        sage: count_all_local_good_types_normal_form(Q_local_at2, 2, 3, 3, [0], None)
         32
-        sage: CountAllLocalGoodTypesNormalForm(Q_local_at3, 3, 2, 1, None, None)
+        sage: count_all_local_good_types_normal_form(Q_local_at3, 3, 2, 1, None, None)
         54
     """
     n = Q.dim()
