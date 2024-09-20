@@ -208,7 +208,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     # print("IsLocalSolutionType: Finished the Zero congruence condition test \n")
 
     if not zero_flag:
-        return < long > 0
+        return <long> 0
 
     # DIAGNOSTIC
     # print("IsLocalSolutionType: Passed the Zero congruence condition test \n")
@@ -228,7 +228,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
             i += 1
 
     if not nonzero_flag:
-        return < long > 0
+        return <long> 0
 
     # Check if the solution has the appropriate (local) type:
     # -------------------------------------------------------
@@ -236,11 +236,11 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
     # 1: Check Good-type
     for i in range(n):
         if w[i] % p and Q[i, i] % p:
-            return < long > 1
+            return <long> 1
     if p == 2:
         for i in range(n - 1):
             if Q[i, i + 1] % p and (w[i] % p or w[i + 1] % p):
-                return < long > 1
+                return <long> 1
 
     # 2: Check Zero-type
     Zero_flag = True
@@ -248,7 +248,7 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
         if w[i] % p:
             Zero_flag = False
     if Zero_flag:
-        return < long > 2
+        return <long> 2
 
     # Check if wS1 is zero or not
     wS1_nonzero_flag = False
@@ -271,11 +271,11 @@ cdef local_solution_type_cdef(Q, p, w, zvec, nzvec):
 
     # 4: Check Bad-type I
     if wS1_nonzero_flag:
-        return < long > 4
+        return <long> 4
 
     # 5: Check Bad-type II
     if not wS1_nonzero_flag:
-        return < long > 5
+        return <long> 5
 
     # Error if we get here! =o
     print("   Solution vector is " + str(w))
