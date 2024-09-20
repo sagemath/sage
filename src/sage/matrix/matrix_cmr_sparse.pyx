@@ -2956,6 +2956,22 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         This is an internal method because it should really be exposed
         as a method of :class:`Matroid`.
 
+        Equivalently, we also define the graphic matrix as follows.
+
+        Let `G = (V,E)` be a graph and let `T` be a spanning forest.
+        The matrix `M(G,T) \in \{0,1\}^{T \times (E \setminus T)}` defined via
+        `
+        M(D,T)_{e, f} := \begin{cases}
+            1 & \text{if $e$ is contained in the unique cycle of $T\cup\{f\}$}, \\
+            0  & \text{otherwise}
+        \end{cases}
+        `
+        is called the graphic matrix of `G` with respect to `T`.
+        A binary matrix `M` is called graphic if there exists a graph `G`
+        with a spanning forest `T` such that `M = M(G,T)`.
+        Moreover, `M` is called cographic if `M^T` is graphic, and
+        it is called planar if it is graphic and cographic.
+
         .. SEEALSO::
 
             :meth:`M._is_graphic_cmr() <sage.matroids.linear_matroid.
@@ -3567,7 +3583,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         result = <bint> result_bool
         if not certificate:
             return result
-        node = create_DecompositionNode(dec, self, row_keys, column_keys)
+        node = create_DecompositionNode(dec, self, row_keys, column_keys, base_ring=GF2)
 
         if result:
             return result, node
@@ -3771,7 +3787,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         result = <bint> result_bool
         if not certificate:
             return result
-        node = create_DecompositionNode(dec, self, row_keys, column_keys)
+        node = create_DecompositionNode(dec, self, row_keys, column_keys, base_ring=ZZ)
 
         if result:
             return result, node

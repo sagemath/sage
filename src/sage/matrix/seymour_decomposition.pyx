@@ -27,6 +27,7 @@ from sage.structure.sage_object cimport SageObject
 
 from .constructor import Matrix
 from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_edges, _sage_graph, _set_cmr_seymour_parameters
+from .matrix_cmr_sparse cimport _sage_arcs, _sage_digraph
 from .matrix_space import MatrixSpace
 
 
@@ -1119,10 +1120,10 @@ cdef class DecompositionNode(SageObject):
             ....:                                                row_keys=range(5),
             ....:                                                column_keys='abcde')
             sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
-            sage: node._graphicness()
+            sage: node._cographicness()
             Traceback (most recent call last):
             ...
-            ValueError: It is not determined whether the decomposition node is graphic/network
+            ValueError: It is not determined whether the decomposition node is cographic/conetwork
             sage: result, decomposition = node._is_binary_linear_matroid_cographic(decomposition=True)
             sage: result
             True
@@ -1440,7 +1441,71 @@ cdef class DecompositionNode(SageObject):
 
     def is_network_matrix(self, *, decomposition=False, **kwds):
         r"""
+        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a network matrix.
+        If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
 
+        This method is based on Seymour's decomposition.
+        The decomposition will stop once being nonnetwork is detected.
+        For direct network matrix check,
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse.is_network_matrix`
+            :meth:`UnknownNode.is_network_matrix`
+            :meth:`complete_decomposition`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: from sage.matrix.seymour_decomposition import DecompositionNode
+            sage: A = matrix(ZZ, [[-1, 0, 0, 0, 1,-1, 0],
+            ....:                 [ 1, 0, 0, 1,-1, 1, 0],
+            ....:                 [ 0,-1, 0,-1, 1,-1, 0],
+            ....:                 [ 0, 1, 0, 0, 0, 0, 1],
+            ....:                 [ 0, 0, 1,-1, 1, 0, 1],
+            ....:                 [ 0, 0,-1, 1,-1, 0, 0]])
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 7, sparse=True), A)
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 7, 6, sparse=True), A.transpose())
+            sage: M = Matrix_cmr_chr_sparse.one_sum(M1, M2)
+            sage: result, certificate = M.is_totally_unimodular(certificate=True,
+            ....:                         row_keys=[f'r{i}' for i in range(13)],
+            ....:                         column_keys=[f'c{i}' for i in range(13)])
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+
+            sage: result, decomposition = node.is_network_matrix(decomposition=True)
+            sage: unicode_art(decomposition)
+            ╭─────────OneSumNode (13×13) with 2 children
+            │                │
+            PlanarNode (6×7) PlanarNode (7×6)
+            sage: node._graphicness()
+            Traceback (most recent call last):
+            ...
+            ValueError: It is not determined whether the decomposition node is graphic/network
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [-1,-1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1,-1,-1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1,-1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1,-1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0,-1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1,-1, 1]])
+            sage: result, certificate = M.is_totally_unimodular(certificate=True,
+            ....:                         row_keys=[f'r{i}' for i in range(9)],
+            ....:                         column_keys=[f'c{i}' for i in range(9)])
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+            sage: result, decomposition = node.is_network_matrix(decomposition=True)
+            sage: result
+            False
+            sage: unicode_art(decomposition)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+            sage: decomposition.child_nodes()[1]._graphicness()
+            False
         """
         certificate = kwds.get('certificate', False)
         try:
@@ -1455,11 +1520,82 @@ cdef class DecompositionNode(SageObject):
             return result
         except ValueError:
             # compute it... wait for CMR functions
-            raise NotImplementedError("Network Not Determined")
+            full_dec = self.complete_decomposition(
+                                        stop_when_nonnetwork=True,
+                                        check_graphic_minors_planar=True)
+            return full_dec.is_network_matrix(
+                                       decomposition=decomposition,
+                                       certificate=certificate)
 
     def is_conetwork_matrix(self, *, decomposition=False, **kwds):
         r"""
+        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a conetwork matrix.
+        If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
 
+        This method is based on Seymour's decomposition.
+        The decomposition will stop once being nonconetwork is detected.
+        For direct conetwork matrix check,
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse.is_conetwork_matrix`
+            :meth:`UnknownNode.is_conetwork_matrix`
+            :meth:`complete_decomposition`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: from sage.matrix.seymour_decomposition import DecompositionNode
+            sage: A = matrix(ZZ, [[-1, 0, 0, 0, 1,-1, 0],
+            ....:                 [ 1, 0, 0, 1,-1, 1, 0],
+            ....:                 [ 0,-1, 0,-1, 1,-1, 0],
+            ....:                 [ 0, 1, 0, 0, 0, 0, 1],
+            ....:                 [ 0, 0, 1,-1, 1, 0, 1],
+            ....:                 [ 0, 0,-1, 1,-1, 0, 0]])
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 7, sparse=True), A)
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 7, 6, sparse=True), A.transpose())
+            sage: M = Matrix_cmr_chr_sparse.one_sum(M1, M2)
+            sage: result, certificate = M.is_totally_unimodular(certificate=True,
+            ....:                         row_keys=[f'r{i}' for i in range(13)],
+            ....:                         column_keys=[f'c{i}' for i in range(13)])
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+
+            sage: result, decomposition = node.is_conetwork_matrix(decomposition=True)
+            sage: unicode_art(decomposition)
+            ╭─────────OneSumNode (13×13) with 2 children
+            │                │
+            PlanarNode (6×7) PlanarNode (7×6)
+            sage: node._cographicness()
+            Traceback (most recent call last):
+            ...
+            ValueError: It is not determined whether the decomposition node is cographic/conetwork
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [-1,-1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1,-1,-1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1,-1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1,-1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0,-1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1,-1, 1]])
+            sage: result, certificate = M.is_totally_unimodular(certificate=True,
+            ....:                         row_keys=[f'r{i}' for i in range(9)],
+            ....:                         column_keys=[f'c{i}' for i in range(9)])
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+            sage: result, decomposition = node.is_conetwork_matrix(decomposition=True)
+            sage: result
+            False
+            sage: unicode_art(decomposition)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+            sage: decomposition.child_nodes()[1]._graphicness()
+            Traceback (most recent call last):
+            ...
+            ValueError: It is not determined whether the decomposition node is graphic/network
         """
         certificate = kwds.get('certificate', False)
         try:
@@ -1474,11 +1610,74 @@ cdef class DecompositionNode(SageObject):
             return result
         except ValueError:
             # compute it... wait for CMR functions
-            raise NotImplementedError("Conetwork Not Determined")
+            full_dec = self.complete_decomposition(
+                                        stop_when_nonconetwork=True,
+                                        check_graphic_minors_planar=True)
+            return full_dec.is_conetwork_matrix(
+                                       decomposition=decomposition,
+                                       certificate=certificate)
 
     def is_totally_unimodular(self, *, decomposition=False, **kwds):
         r"""
+        Return whether ``self`` is a totally unimodular matrix.
 
+        A matrix is totally unimodular if every subdeterminant is `0`, `1`, or `-1`.
+
+        .. SEEALSO::
+
+            :meth:`sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse.is_totally_unimodular`
+            :meth:`complete_decomposition`
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: from sage.matrix.seymour_decomposition import DecompositionNode
+            sage: A = matrix(ZZ, [[-1, 0, 0, 0, 1,-1, 0],
+            ....:                 [ 1, 0, 0, 1,-1, 1, 0],
+            ....:                 [ 0,-1, 0,-1, 1,-1, 0],
+            ....:                 [ 0, 1, 0, 0, 0, 0, 1],
+            ....:                 [ 0, 0, 1,-1, 1, 0, 1],
+            ....:                 [ 0, 0,-1, 1,-1, 0, 0]])
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 7, sparse=True), A)
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 7, 6, sparse=True), A.transpose())
+            sage: M = Matrix_cmr_chr_sparse.one_sum(M1, M2)
+            sage: result, certificate = M.is_totally_unimodular(certificate=True,
+            ....:                         row_keys=[f'r{i}' for i in range(13)],
+            ....:                         column_keys=[f'c{i}' for i in range(13)])
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+
+            sage: result, decomposition = node.is_totally_unimodular(decomposition=True)
+            sage: unicode_art(decomposition)
+            ╭─────────OneSumNode (13×13) with 2 children
+            │                │
+            PlanarNode (6×7) PlanarNode (7×6)
+            sage: node._regularity()
+            Traceback (most recent call last):
+            ...
+            ValueError: It is not determined whether the decomposition node is regular/TU
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [-1,-1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1,-1,-1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1,-1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1,-1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0,-1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1,-1, 1]])
+            sage: result, certificate = M.is_totally_unimodular(certificate=True,
+            ....:                         row_keys=[f'r{i}' for i in range(9)],
+            ....:                         column_keys=[f'c{i}' for i in range(9)])
+            sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
+            sage: result, decomposition = node.is_totally_unimodular(decomposition=True)
+            sage: result
+            True
+            sage: unicode_art(decomposition)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) CographicNode (4×5)
         """
         certificate = kwds.get('certificate', False)
         try:
@@ -1493,7 +1692,12 @@ cdef class DecompositionNode(SageObject):
             return result
         except ValueError:
             # compute it... wait for CMR functions
-            raise NotImplementedError("TU Not Determined")
+            full_dec = self.complete_decomposition(
+                                        stop_when_nonTU=True,
+                                        check_graphic_minors_planar=True)
+            return full_dec.is_totally_unimodular(
+                                       decomposition=decomposition,
+                                       certificate=certificate)
 
     def nminors(self):
         r"""
@@ -1701,6 +1905,8 @@ cdef class DecompositionNode(SageObject):
         cdef CMR_SEYMOUR_NODE **pclone = &clone
 
         if self._dec == NULL:
+            if self.base_ring() is None:
+                self._base_ring = ZZ
             self._set_root_dec()
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
@@ -2713,6 +2919,32 @@ cdef class BaseGraphicNode(DecompositionNode):
     def __init__(self, matrix=None,
                  graph=None, forest_edges=None, coforest_edges=None,
                  row_keys=None, column_keys=None, base_ring=None):
+        r"""
+        Base class for :class:GraphicNode, :class:CographicNode, and :class:PlanarNode
+
+        If ``base_ring`` is `\GF{2}`, then it represents a graphic/cographic/planar matroid.
+
+        Suppose that ``self.matrix()`` is a graphic matrix of a graph `G`
+        with respect to `T`, a spanning forest of the graph `G`.
+
+        - ``self._graph`` is the graph `G = (V,E)`.
+
+        - ``self._forest_edges`` is the edges of `T`.
+
+        - ``self._coforest_edges`` is the edges of `E \setminus T`.
+
+        If ``base_ring`` is `\GF{3}` or `\ZZ`, then it represents a network/conetwork
+        or a both network and conetwork matrix.
+
+        Suppose that ``self.matrix()`` is a network matrix of a digraph `D`
+        with respect to `T`, a directed spanning forest of the underlying undirected graph.
+
+        - ``self._graph`` is the digraph `D = (V,A)`.
+
+        - ``self._forest_edges`` is the arcs of `T`.
+
+        - ``self._coforest_edges`` is the arcs of `A \setminus T`.
+        """
         super().__init__(matrix=matrix, row_keys=row_keys, column_keys=column_keys,
                          base_ring=base_ring)
         self._graph = graph
@@ -2721,15 +2953,22 @@ cdef class BaseGraphicNode(DecompositionNode):
 
     def graph(self):
         r"""
+        Return the graph representing ``self``.
+
+        If ``self.base_ring()`` is `\GF{2}`, then return an undirected graph.
+        If ``self.base_ring()`` is `\GF{3}` or `\ZZ`, then return directed graph.
+
         EXAMPLES::
+
+        Undirected graph:
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
-            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
-            [ 1  0]
-            [-1  1]
-            [ 0  1]
-            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            ....:                           [[1, 0], [1, 1], [0,1]]); M
+            [1 0]
+            [1 1]
+            [0 1]
+            sage: result, certificate = M._is_binary_linear_matroid_regular(certificate=True)
             sage: result, certificate
             (True, GraphicNode (3×2))
             sage: G = certificate.graph(); G
@@ -2738,27 +2977,75 @@ cdef class BaseGraphicNode(DecompositionNode):
             [1, 2, 7, 12]
             sage: G.edges(sort=True)
             [(1, 2, None), (1, 7, None), (1, 12, None), (2, 7, None), (7, 12, None)]
+
+        Directed graph:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0,-1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0 -1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode (3×2))
+            sage: G = certificate.graph(); G
+            Digraph on 4 vertices
+            sage: G.vertices(sort=True)
+            [1, 2, 7, 12]
+            sage: G.edges(sort=True)
+            [(2, 1, None), (2, 7, None), (7, 1, None), (7, 12, None), (12, 1, None)]
         """
         if self._graph is not None:
             return self._graph
-        self._graph = _sage_graph(CMRseymourGraph(self._dec))
+        base_ring = self.base_ring()
+        if base_ring.characteristic() == 2:
+            self._graph = _sage_graph(CMRseymourGraph(self._dec))
+        else:
+            self._graph = _sage_digraph(CMRseymourGraph(self._dec),
+                                        CMRseymourGraphArcsReversed(self._dec))
         return self._graph
 
     def forest_edges(self):
         r"""
+        Return the forest edges of ``self``.
+
+        If ``self.base_ring()`` is `\GF{2}`, then return edges.
+        If ``self.base_ring()`` is `\GF{3}` or `\ZZ`, then arcs.
+
         EXAMPLES::
+
+        Undirected graph:
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
-            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
-            [ 1  0]
-            [-1  1]
-            [ 0  1]
-            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            ....:                           [[1, 0], [1, 1], [0,1]]); M
+            [1 0]
+            [1 1]
+            [0 1]
+            sage: result, certificate = M._is_binary_linear_matroid_regular(certificate=True)
             sage: result, certificate
             (True, GraphicNode (3×2))
             sage: certificate.forest_edges()
             ((1, 2), (7, 1), (12, 7))
+            sage: certificate.coforest_edges()
+            ((2, 7), (1, 12))
+
+        Directed graph:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0,-1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0 -1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, GraphicNode (3×2))
+            sage: certificate.forest_edges()
+            ((2, 1), (7, 1), (7, 12))
+            sage: certificate.coforest_edges()
+            ((2, 7), (12, 1))
 
         Starting with a morphism::
 
@@ -2787,16 +3074,61 @@ cdef class BaseGraphicNode(DecompositionNode):
         cdef CMR_GRAPH *graph = CMRseymourGraph(self._dec)
         cdef size_t num_edges = CMRseymourGraphSizeForest(self._dec)
         cdef CMR_GRAPH_EDGE *edges = CMRseymourGraphForest(self._dec)
-        self._forest_edges = _sage_edges(graph, edges, num_edges, self.row_keys())
+        cdef bool *arcs_reversed
+        base_ring = self.base_ring()
+        if base_ring.characteristic() == 2:
+            self._forest_edges = _sage_edges(graph, edges, num_edges, self.row_keys())
+        else:
+            arcs_reversed = CMRseymourGraphArcsReversed(self._dec)
+            self._forest_edges = _sage_arcs(graph, edges, arcs_reversed, num_edges, self.row_keys())
         return self._forest_edges
 
     def coforest_edges(self):
+        r"""
+        Return the forest edges of ``self``.
+
+        If ``self.base_ring()`` is `\GF{2}`, then return edges.
+        If ``self.base_ring()`` is `\GF{3}` or `\ZZ`, then arcs.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 7, sparse=True),
+            ....:                           [[-1,  0,  0,  0,  1, -1,  0],
+            ....:                            [ 1,  0,  0,  1, -1,  1,  0],
+            ....:                            [ 0, -1,  0, -1,  1, -1,  0],
+            ....:                            [ 0,  1,  0,  0,  0,  0,  1],
+            ....:                            [ 0,  0,  1, -1,  1,  0,  1],
+            ....:                            [ 0,  0, -1,  1, -1,  0,  0]])
+            sage: M.is_network_matrix()
+            True
+            sage: result, certificate = M.is_network_matrix(certificate=True)
+            sage: result, certificate
+            (True,
+             (Digraph on 7 vertices,
+              ((9, 8), (3, 8), (3, 4), (5, 4), (4, 6), (0, 6)),
+              ((3, 9), (5, 3), (4, 0), (0, 8), (9, 0), (4, 9), (5, 6))))
+            sage: digraph, forest_arcs, coforest_arcs = certificate
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: certificate.graph() == digraph
+            True
+            sage: certificate.forest_edges() == forest_arcs
+            True
+            sage: certificate.coforest_edges() == coforest_arcs
+            True
+        """
         if self._coforest_edges is not None:
             return self._coforest_edges
         cdef CMR_GRAPH *graph = CMRseymourGraph(self._dec)
         cdef size_t num_edges = CMRseymourGraphSizeCoforest(self._dec)
         cdef CMR_GRAPH_EDGE *edges = CMRseymourGraphCoforest(self._dec)
-        self._coforest_edges = _sage_edges(graph, edges, num_edges, self.column_keys())
+        cdef bool *arcs_reversed
+        base_ring = self.base_ring()
+        if base_ring.characteristic() == 2:
+            self._coforest_edges = _sage_edges(graph, edges, num_edges, self.column_keys())
+        else:
+            arcs_reversed = CMRseymourGraphArcsReversed(self._dec)
+            self._coforest_edges = _sage_arcs(graph, edges, arcs_reversed, num_edges, self.column_keys())
         return self._coforest_edges
 
 
@@ -2810,8 +3142,144 @@ cdef class CographicNode(BaseGraphicNode):
     def graph(self):
         r"""
         Actually the cograph of matrix, in the case where it is not graphic.
+
+        EXAMPLES::
+
+        Undirected graph:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
+            ....:                           [[1, 1, 1, 0, 0],
+            ....:                            [0, 1, 1, 1, 0],
+            ....:                            [0, 0, 1, 1, 1],
+            ....:                            [1, 0, 0, 1, 1]]); M
+            [1 1 1 0 0]
+            [0 1 1 1 0]
+            [0 0 1 1 1]
+            [1 0 0 1 1]
+            sage: result, certificate = M._is_binary_linear_matroid_regular(certificate=True)
+            sage: certificate
+            CographicNode (4×5)
+            sage: certificate.base_ring()
+            Finite Field of size 2
+            sage: G = certificate.graph(); G
+            Graph on 6 vertices
+            sage: G.vertices(sort=True)
+            [0, 1, 2, 5, 7, 8]
+            sage: G.edges(sort=True)
+            [(0, 2, None), (0, 5, None), (0, 7, None), (1, 2, None), (1, 5, None), (1, 7, None), (2, 8, None), (5, 8, None), (7, 8, None)]
+
+        Directed graph:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
+            ....:                           [[1, -1, 1, 0, 0],
+            ....:                            [0, 1, -1, 1, 0],
+            ....:                            [0, 0, 1, -1, 1],
+            ....:                            [1, 0, 0, 1, -1]]); M
+            [ 1 -1  1  0  0]
+            [ 0  1 -1  1  0]
+            [ 0  0  1 -1  1]
+            [ 1  0  0  1 -1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: certificate
+            CographicNode (4×5)
+            sage: G = certificate.graph(); G
+            Digraph on 6 vertices
+            sage: G.vertices(sort=True)
+            [0, 1, 2, 5, 7, 8]
+            sage: G.edges(sort=True)
+            [(0, 2, None), (0, 5, None), (0, 7, None), (1, 2, None), (1, 5, None), (1, 7, None), (2, 8, None), (5, 8, None), (7, 8, None)]
         """
-        return _sage_graph(CMRseymourCograph(self._dec))
+        if self._graph is not None:
+            return self._graph
+        base_ring = self.base_ring()
+        if base_ring.characteristic() == 2:
+            self._graph = _sage_graph(CMRseymourCograph(self._dec))
+        else:
+            self._graph = _sage_digraph(CMRseymourCograph(self._dec),
+                                        CMRseymourCographArcsReversed(self._dec))
+        return self._graph
+
+    @cached_method
+    def forest_edges(self):
+        r"""
+        Return the forest edges of the cograph of ``self``.
+
+        EXAMPLES::
+
+        Undirected graph:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
+            ....:                           [[1, 1, 1, 0, 0],
+            ....:                            [0, 1, 1, 1, 0],
+            ....:                            [0, 0, 1, 1, 1],
+            ....:                            [1, 0, 0, 1, 1]]); M
+            [1 1 1 0 0]
+            [0 1 1 1 0]
+            [0 0 1 1 1]
+            [1 0 0 1 1]
+            sage: result, certificate = M._is_binary_linear_matroid_regular(certificate=True)
+            sage: result, certificate
+            (True, CographicNode (4×5))
+            sage: certificate.forest_edges()
+            ((7, 8), (5, 0), (0, 7), (1, 7), (2, 1))
+            sage: certificate.coforest_edges()
+            ((5, 8), (5, 1), (0, 2), (2, 8))
+
+        Directed graph:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
+            ....:                           [[1, -1, 1, 0, 0],
+            ....:                            [0, 1, -1, 1, 0],
+            ....:                            [0, 0, 1, -1, 1],
+            ....:                            [1, 0, 0, 1, -1]]); M
+            [ 1 -1  1  0  0]
+            [ 0  1 -1  1  0]
+            [ 0  0  1 -1  1]
+            [ 1  0  0  1 -1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, CographicNode (4×5))
+            sage: certificate.forest_edges()
+            ((7, 8), (0, 5), (0, 7), (1, 7), (1, 2))
+            sage: certificate.coforest_edges()
+            ((5, 8), (1, 5), (0, 2), (2, 8))
+        """
+        if self._forest_edges is not None:
+            return self._forest_edges
+        cdef CMR_GRAPH *graph = CMRseymourCograph(self._dec)
+        cdef size_t num_edges = CMRseymourCographSizeForest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRseymourCographForest(self._dec)
+        cdef bool *arcs_reversed
+        base_ring = self.base_ring()
+        if base_ring.characteristic() == 2:
+            self._forest_edges = _sage_edges(graph, edges, num_edges, self.row_keys())
+        else:
+            arcs_reversed = CMRseymourCographArcsReversed(self._dec)
+            self._forest_edges = _sage_arcs(graph, edges, arcs_reversed, num_edges, self.row_keys())
+        return self._forest_edges
+
+    @cached_method
+    def coforest_edges(self):
+        r"""
+        Return the forest edges of the cograph of ``self``.
+        """
+        if self._coforest_edges is not None:
+            return self._coforest_edges
+        cdef CMR_GRAPH *graph = CMRseymourCograph(self._dec)
+        cdef size_t num_edges = CMRseymourCographSizeCoforest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRseymourCographCoforest(self._dec)
+        cdef bool *arcs_reversed
+        base_ring = self.base_ring()
+        if base_ring.characteristic() == 2:
+            self._coforest_edges = _sage_edges(graph, edges, num_edges, self.column_keys())
+        else:
+            arcs_reversed = CMRseymourCographArcsReversed(self._dec)
+            self._coforest_edges = _sage_arcs(graph, edges, arcs_reversed, num_edges, self.column_keys())
+        return self._coforest_edges
 
 
 cdef class PlanarNode(BaseGraphicNode):
@@ -2819,8 +3287,102 @@ cdef class PlanarNode(BaseGraphicNode):
     def cograph(self):
         r"""
         Return the cograph of matrix.
+
+        EXAMPLES::
+
+        Undirected graph:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [1, 1], [0,1]]); M
+            [1 0]
+            [1 1]
+            [0 1]
+            sage: result, certificate = M._is_binary_linear_matroid_regular(certificate=True,
+            ....:                                           check_graphic_minors_planar=True)
+            sage: result, certificate
+            (True, PlanarNode (3×2))
+            sage: G = certificate.cograph(); G
+            Graph on 3 vertices
+            sage: G.vertices(sort=True)
+            [1, 2, 7]
+            sage: G.edges(sort=True)
+            [(1, 2, None), (1, 7, None), (2, 7, None)]
+            sage: certificate.cograph_forest_edges()
+            ((1, 2), (7, 1))
+            sage: certificate.cograph_coforest_edges()
+            ((1, 2), (2, 7), (7, 1))
+
+        Directed graph:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0,-1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0 -1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True,
+            ....:                               check_graphic_minors_planar=True)
+            sage: result, certificate
+            (True, PlanarNode (3×2))
+            sage: G = certificate.cograph(); G
+            Digraph on 3 vertices
+            sage: G.vertices(sort=True)
+            [1, 2, 7]
+            sage: G.edges(sort=True)
+            [(1, 2, None), (1, 7, None), (2, 7, None), (7, 1, None)]
+            sage: certificate.cograph_forest_edges()
+            ((1, 2), (1, 7))
+            sage: certificate.cograph_coforest_edges()
+            ((1, 2), (2, 7), (7, 1))
         """
-        return _sage_graph(CMRseymourCograph(self._dec))
+        if self._cograph is not None:
+            return self._cograph
+        base_ring = self.base_ring()
+        if base_ring.characteristic() == 2:
+            self._cograph = _sage_graph(CMRseymourCograph(self._dec))
+        else:
+            self._cograph = _sage_digraph(CMRseymourCograph(self._dec),
+                                        CMRseymourCographArcsReversed(self._dec))
+        return self._cograph
+
+    @cached_method
+    def cograph_forest_edges(self):
+        r"""
+        Return the forest edges of the cograph of ``self``.
+        """
+        if self._cograph_forest_edges is not None:
+            return self._cograph_forest_edges
+        cdef CMR_GRAPH *cograph = CMRseymourCograph(self._dec)
+        cdef size_t num_edges = CMRseymourCographSizeForest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRseymourCographForest(self._dec)
+        cdef bool *arcs_reversed
+        base_ring = self.base_ring()
+        if base_ring.characteristic() == 2:
+            self._cograph_forest_edges = _sage_edges(cograph, edges, num_edges, self.row_keys())
+        else:
+            arcs_reversed = CMRseymourCographArcsReversed(self._dec)
+            self._cograph_forest_edges = _sage_arcs(cograph, edges, arcs_reversed, num_edges, self.row_keys())
+        return self._cograph_forest_edges
+
+    @cached_method
+    def cograph_coforest_edges(self):
+        r"""
+        Return the forest edges of the cograph of ``self``.
+        """
+        if self._cograph_coforest_edges is not None:
+            return self._cograph_coforest_edges
+        cdef CMR_GRAPH *cograph = CMRseymourCograph(self._dec)
+        cdef size_t num_edges = CMRseymourCographSizeCoforest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRseymourCographCoforest(self._dec)
+        cdef bool *arcs_reversed
+        base_ring = self.base_ring()
+        if base_ring.characteristic() == 2:
+            self._cograph_coforest_edges = _sage_edges(cograph, edges, num_edges, self.column_keys())
+        else:
+            arcs_reversed = CMRseymourCographArcsReversed(self._dec)
+            self._cograph_coforest_edges = _sage_arcs(cograph, edges, arcs_reversed, num_edges, self.column_keys())
+        return self._cograph_coforest_edges
 
 
 cdef class SeriesParallelReductionNode(DecompositionNode):
@@ -3024,17 +3586,6 @@ cdef class R10Node(DecompositionNode):
             ....:                                                 column_keys='abcde')
             sage: certificate._matroid()
             R10: Regular matroid of rank 5 on 10 elements with 162 bases
-            sage: certificate._isomorphism() # The isomorphism is not unique
-            {'a': 0,
-            'b': 1,
-            'c': 2,
-            'd': 'c',
-            'e': 'a',
-            'f': 4,
-            'g': 'b',
-            'h': 3,
-            'i': 'e',
-            'j': 'd'}
         """
         from sage.matroids.constructor import Matroid
         if self.row_keys() is None or self.column_keys() is None:

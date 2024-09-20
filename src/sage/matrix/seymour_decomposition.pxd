@@ -35,7 +35,9 @@ cdef class CographicNode(BaseGraphicNode):
 
 
 cdef class PlanarNode(BaseGraphicNode):
-    pass
+    cdef object _cograph
+    cdef object _cograph_forest_edges
+    cdef object _cograph_coforest_edges
 
 
 cdef class SymbolicNode(DecompositionNode):
