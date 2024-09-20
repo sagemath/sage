@@ -210,17 +210,12 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
         [ * * * 20 ]
         sage: Q.theta_series(20)                                                        # needs sage.libs.pari
         1 + 2*q^5 + 2*q^10 + 2*q^14 + 2*q^15 + 2*q^16 + 2*q^18 + O(q^20)
-        sage: Q.local_normal_form(2)                                                    # needs sage.libs.pari sage.rings.padics
-        Quadratic form in 4 variables over Integer Ring with coefficients:
-        [ 0 1 0 0 ]
-        [ * 0 0 0 ]
-        [ * * 0 1 ]
-        [ * * * 0 ]
-        sage: Q.local_good_density_congruence_even(1, None, None)
+        sage: Q_local = Q.local_normal_form(2)                                          # needs sage.libs.pari sage.rings.padics
+        sage: Q_local.local_good_density_congruence_even(1, None, None)                 # needs sage.libs.pari sage.rings.padics
         3/4
-        sage: Q.local_good_density_congruence_even(2, None, None)
-        1
-        sage: Q.local_good_density_congruence_even(5, None, None)
+        sage: Q_local.local_good_density_congruence_even(2, None, None)                 # needs sage.libs.pari sage.rings.padics
+        9/8
+        sage: Q_local.local_good_density_congruence_even(5, None, None)                 # needs sage.libs.pari sage.rings.padics
         3/4
     """
     n = self.dim()
