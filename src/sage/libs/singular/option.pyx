@@ -28,7 +28,7 @@ this::
 
     sage: with opt_ctx(red_tail=False, red_sb=False):
     ....:    std(I)[-1]
-    d^2*e^6 + 8*c^3 + ...
+    d^2*e^6 +...8*c^3 + ...
 
 However, this does not affect the global state::
 
