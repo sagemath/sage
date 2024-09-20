@@ -680,6 +680,10 @@ cdef class Matrix(Matrix0):
           then the type will be determined as the minimum type required
           to hold the objects in the sequence.
 
+        - ``copy`` -- if `self` is already an `ndarray`, then this flag
+          determines whether the data is copied (the default), or whether
+          a view is constructed.
+
         EXAMPLES::
 
             sage: # needs numpy
