@@ -790,7 +790,7 @@ cdef class Pygen(GiacMethods_base):
         #NB: the  != here gives problems with  the __richcmp__ function
         #if (s!=None):
         # so it's better to use isinstance
-        if (isinstance(s,None.__class__)):
+        if (isinstance(s, None.__class__)):
             # Do NOT replace with: self=GIACNULL  (cf the doctest in __repr__
             sig_on()
             self.gptr = new gen ((<Pygen>GIACNULL).gptr[0])
@@ -959,13 +959,13 @@ cdef class Pygen(GiacMethods_base):
                 else:
                     raise IndexError('list index %s out of range'%(i))
             else:
-                if isinstance(i,slice):
+                if isinstance(i, slice):
                     sig_on()
                     result = gen(_getgiacslice(self,i),<short int>self._subtype)
                     sig_off()
                     return _wrap_gen(result)
                 # add support for multi indexes
-                elif isinstance(i,tuple):
+                elif isinstance(i, tuple):
                     if(len(i)==2):
                         return self[i[0]][i[1]]
                     elif(len(i)==1):
@@ -1526,7 +1526,7 @@ cdef class Pygen(GiacMethods_base):
             sage: libgiac.integrate(cos(y), y).sage()
             sin(π)
         """
-        if isinstance(R,SR.__class__):
+        if isinstance(R, SR.__class__):
             # Try to convert some functions names to the symbolic ring
             lsymbols = symbol_table['giac'].copy()
             #lsymbols.update(locals)
@@ -1594,7 +1594,7 @@ cdef class Pygen(GiacMethods_base):
             sage: vector(v+v/3,QQ)
             (0, 4/3, 8/3, 4, 16/3, 20/3, 8, 28/3, 32/3, 12)
         """
-        if(isinstance(R, None.__class__)):
+        if isinstance(R, None.__class__):
             R=ZZ
 
         v = self.dim()
@@ -1780,9 +1780,9 @@ cdef  vecteur _wrap_pylist(L) except +:
     cdef vecteur  * V
     cdef int i
 
-    if isinstance(L, (tuple, list, range):
-        n=len(L)
-        V=new vecteur()
+    if isinstance(L, (tuple, list, range)):
+        n = len(L)
+        V = new vecteur()
 
         sig_on()
         for i in range(n):
