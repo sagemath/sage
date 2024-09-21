@@ -256,8 +256,8 @@ cdef class Matrix_dense(matrix.Matrix):
         prod = self.new_matrix(nr, nc, copy=False, coerce=False)
         for r in range(nr):
             for c in range(nc):
-                entry = self.get_unsafe(r, c)*other.get_unsafe(r,c)
-                prod.set_unsafe(r,c,entry)
+                entry = self.get_unsafe(r, c)*other.get_unsafe(r, c)
+                prod.set_unsafe(r, c, entry)
         return prod
 
     def _derivative(self, var=None, R=None):
