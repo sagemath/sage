@@ -426,6 +426,50 @@ class SymmetricGroup(PermutationGroup_symalt):
         """
         return self([(i, self._domain[self._domain.index(i)+1])], check=False)
 
+    @cached_method
+    def reflection_index_set(self):
+        r"""
+        Return the index set of the reflections of ``self``.
+
+        .. SEEALSO::
+
+            - :meth:`reflection`
+            - :meth:`reflections`
+
+        EXAMPLES::
+
+            sage: S5 = SymmetricGroup(5)
+            sage: S5.reflection_index_set()
+            (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+        """
+        return tuple(range(len(self.reflections())))
+
+    def reflection(self, i):
+        r"""
+        Return the `i`-th reflection of ``self``.
+
+        For `i` in `1,\dots,N`, this gives the `i`-th reflection of
+        ``self``.
+
+        .. SEEALSO::
+
+            - :meth:`reflections_index_set`
+            - :meth:`reflections`
+
+        EXAMPLES::
+
+            sage: S4 = SymmetricGroup(4)
+            sage: for i in S4.reflection_index_set():
+            ....:     print('%s %s'%(i, S4.reflection(i)))
+            0 (1,2)
+            1 (1,3)
+            2 (1,4)
+            3 (2,3)
+            4 (2,4)
+            5 (3,4)
+        """
+        return self.reflections()[i]
+
     def reflections(self):
         """
         Return the list of all reflections in ``self``.
