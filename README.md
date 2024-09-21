@@ -43,11 +43,13 @@ for you. This includes building from source, obtaining Sage from a package
 manager of your platform, installing in conda environment, or using Sage in the cloud.
 
 This **README** contains general instructions for building Sage from the source
-code in the [GitHub git repository](https://github.com/sagemath/sage). If you
-encounter any difficulties or need further explanations while following the
-instructions below, please refer to the detailed guide in the section
-[_Installation from Source_](https://doc.sagemath.org/html/en/installation/source.html)
-of the Sage Installation Guide.
+code in the [GitHub git repository](https://github.com/sagemath/sage) for users
+installing Sage on their personal computers with internet connection.
+
+If you encounter any difficulties or need further explanations while following
+the instructions below, please refer to the detailed guide in the section
+[_Install from Source Code_](https://doc.sagemath.org/html/en/installation/source.html) of the Sage
+Installation Guide.
 
 Instructions to Build from Source
 ---------------------------------
@@ -57,8 +59,8 @@ Instructions to Build from Source
 Sage supports all major Linux distributions, recent versions of macOS, and
 Windows through Windows Subsystem for Linux (WSL).  Detailed information on the
 supported platforms for a specific version of Sage can be found in the section
-[_Availability and installation help_](https://github.com/sagemath/sage/releases)
-of the Release Tour for that version.
+_Availability and installation help_ of the
+[Release Tour](https://github.com/sagemath/sage/releases) for that version.
 
 Instead of your local platform, you may use online free platforms
 
