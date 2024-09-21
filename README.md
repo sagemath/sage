@@ -239,7 +239,7 @@ out. For example
     sage: nth_prime(100)
     541
 
-Type <kbd>Ctrl</kbd>+<kbd>D</kbd> or `quit` to quit Sage.
+Type <kbd>Ctrl</kbd>+<kbd>d</kbd> or `quit` to quit Sage.
 
 If you want to be able to start Sage by typing `sage` anywhere, create a symlink to
 the `SAGE_ROOT/sage` script in some directory, typically `/usr/local/bin`, specified in your
