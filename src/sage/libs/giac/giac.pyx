@@ -170,15 +170,8 @@ from sage.interfaces.giac import giac
 
 
 # Python3 compatibility ############################
-def decstring23(s):
-    return s.decode()
-
-
 def encstring23(s):
     return bytes(s, 'UTF-8')
-
-
-listrange = list, range
 # End of Python3 compatibility #####################
 
 
@@ -848,7 +841,7 @@ cdef class Pygen(GiacMethods_base):
             self.gptr = new gen((<Pygen>s).gptr[0])
             sig_off()
 
-        elif isinstance(s, listrange):
+        elif isinstance(s, (list, range)):
             sig_on()
             self.gptr = new gen(_wrap_pylist(<list>s),<short int>0)
             sig_off()
@@ -866,7 +859,7 @@ cdef class Pygen(GiacMethods_base):
                     s = s._giac_init_()
                 except AttributeError:
                     s = SRexpressiontoGiac(s)
-            if not(isinstance(s, str)):  #modif python3
+            if not isinstance(s, str):
                 s = s.__str__()
             sig_on()
             self.gptr = new gen(<string>encstring23(s),context_ptr)
@@ -882,7 +875,7 @@ cdef class Pygen(GiacMethods_base):
         sig_off()
         if t < 6000:
             sig_on()
-            result = decstring23(GIAC_print(self.gptr[0], context_ptr).c_str()) #python3
+            result = GIAC_print(self.gptr[0], context_ptr).c_str().decode()
             sig_off()
             return result
         else:
@@ -895,7 +888,7 @@ cdef class Pygen(GiacMethods_base):
         #if self.gptr == NULL:
         #  return ''
         sig_on()
-        result = decstring23(GIAC_print(self.gptr[0], context_ptr).c_str())
+        result = GIAC_print(self.gptr[0], context_ptr).c_str().decode()
         sig_off()
         return result
 
@@ -926,7 +919,7 @@ cdef class Pygen(GiacMethods_base):
         TESTS::
 
            sage: from sage.libs.giac.giac import libgiac
-           sage: l=libgiac(list(range(10^6)));l[5]   #python3
+           sage: l=libgiac(list(range(10^6)));l[5]
            5
            sage: l[35:50:7]
            [35,42,49]
@@ -1156,7 +1149,7 @@ cdef class Pygen(GiacMethods_base):
         sig_off()
         return _wrap_gen(result)
 
-#PB / in python3 is truediv
+    # PB / in python3 is truediv
     def __div__(self, right):
         """
         TESTS::
@@ -1296,8 +1289,8 @@ cdef class Pygen(GiacMethods_base):
     #     if (not lang in ['en', 'fr', 'el']):
     #       lang='en'
     #     try:
-    #       url=decstring23(browser_help(self.gptr[0],l[lang])) #python3
-    #       giacbasedir=decstring23(GIAC_giac_aide_dir())  # python3
+    #       url=browser_help(self.gptr[0],l[lang]).decode()
+    #       giacbasedir=GIAC_giac_aide_dir().decode()
     #     except:
     #       raise RuntimeError('giac docs dir not found')
     #     print(url)
@@ -1338,7 +1331,7 @@ cdef class Pygen(GiacMethods_base):
             \frac{...x^{4}...-...y...}{...y^{2}-3...x...}
         """
         sig_on()
-        result = decstring23(GIAC_gen2tex(self.gptr[0], context_ptr).c_str())
+        result = GIAC_gen2tex(self.gptr[0], context_ptr).c_str().decode()
         sig_off()
         return result
 
@@ -1787,7 +1780,7 @@ cdef  vecteur _wrap_pylist(L) except +:
     cdef vecteur  * V
     cdef int i
 
-    if (isinstance(L, tuple) or isinstance(L, listrange)):
+    if isinstance(L, (tuple, list, range):
         n=len(L)
         V=new vecteur()
 
@@ -1807,14 +1800,14 @@ cdef  vecteur _getgiacslice(Pygen L,slice sl) except +:
     cdef vecteur  * V
     cdef int u
 
-    if (L.type()=="DOM_LIST"):
+    if L.type()=="DOM_LIST":
         n=len(L)
         V=new vecteur()
 
         sig_on()
 #      for u in range(n)[sl]:   #pb python3
-        (b,e,st)=sl.indices(n)
-        for u in range(b,e,st):
+        b, e, st = sl.indices(n)
+        for u in range(b, e, st):
             V.push_back((L.gptr[0])[u])
         sig_off()
         return V[0]
