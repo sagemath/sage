@@ -145,7 +145,7 @@ cpdef find_product_decomposition(int k,int n):
         sage: _ = f(*args)
     """
     cdef int n1,n2
-    for n1 in range(2,n):
+    for n1 in range(2, n):
         n2 = n/n1  # n2 is decreasing along the loop
         if n2 < n1:
             break
@@ -296,7 +296,7 @@ cpdef find_construction_3_3(int k,int n):
         if not(is_available(k, mm) and is_available(k, mm + 1)):
             continue
 
-        for nn in range(2,n//mm+1):
+        for nn in range(2, n//mm+1):
             i = n-nn*mm
             if i <= 0:
                 continue
@@ -335,7 +335,7 @@ cpdef find_construction_3_4(int k, int n):
             not is_available(k,mm+2)):
             continue
 
-        for nn in range(2,n/mm+1):
+        for nn in range(2, n//mm+1):
             i = n-nn*mm
             if i<=0:
                 continue
@@ -372,14 +372,14 @@ cpdef find_construction_3_5(int k, int n):
         sage: find_construction_3_5(9,24)
     """
     cdef int mm,i,nn,r,s,t
-    for mm in range(2,n/2+1):
+    for mm in range(2, n//2+1):
         if (mm+3 >= n or
             not is_available(k,mm+1) or
             not is_available(k,mm+2) or
             not is_available(k,mm+3)):
             continue
 
-        for nn in range(2,n/mm+1):
+        for nn in range(2, n//mm+1):
             i = n-nn*mm
             if i<=0:
                 continue
@@ -429,7 +429,7 @@ cpdef find_construction_3_6(int k,int n):
             not is_available(k,mm+2)):
             continue
 
-        for nn in range(2,n/mm+1):
+        for nn in range(2, n//mm+1):
             i = n-nn*mm
             if i<=0:
                 continue
@@ -909,7 +909,7 @@ cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n):
     cdef tuple values
 
     # We write n=rm+remainder
-    for m in range(2,n//2):
+    for m in range(2, n//2):
         if not is_available(k,m):
             continue
 
@@ -931,7 +931,7 @@ cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n):
             continue
 
         max_multiplier = max(available_multipliers)
-        for r in range(2,n//m+1):
+        for r in range(2, n//m+1):
             remainder = n-r*m
             if (remainder > r*max_multiplier or
                 not is_available(k+1,r) or

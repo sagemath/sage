@@ -5697,12 +5697,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [4|1]
             [3|0]
         """
-        nr, nc = (self._nrows, self._ncols)
+        nr, nc = self._nrows, self._ncols
 
         cdef Matrix_integer_dense A
         A = self._new(nc,nr)
         cdef Py_ssize_t i, j
-        cdef Py_ssize_t ri, rj # reversed i and j
+        cdef Py_ssize_t ri, rj  # reversed i and j
         sig_on()
         ri = nr
         for i from 0 <= i < nr:

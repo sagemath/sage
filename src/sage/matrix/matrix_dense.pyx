@@ -171,7 +171,7 @@ cdef class Matrix_dense(matrix.Matrix):
             [4|1]
             [3|0]
         """
-        nc, nr = (self.ncols(), self.nrows())
+        nc, nr = self.ncols(), self.nrows()
         cdef Matrix_dense atrans
         atrans = self.new_matrix(nrows=nc, ncols=nr,
                                  copy=False, coerce=False)
@@ -256,7 +256,7 @@ cdef class Matrix_dense(matrix.Matrix):
         prod = self.new_matrix(nr, nc, copy=False, coerce=False)
         for r in range(nr):
             for c in range(nc):
-                entry = self.get_unsafe(r,c)*other.get_unsafe(r,c)
+                entry = self.get_unsafe(r, c)*other.get_unsafe(r,c)
                 prod.set_unsafe(r,c,entry)
         return prod
 
