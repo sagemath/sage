@@ -9585,7 +9585,6 @@ class Graph(GenericGraph):
     from sage.graphs.graph_decompositions.cutwidth import cutwidth
     from sage.graphs.graph_decompositions.slice_decomposition import slice_decomposition
     matching_polynomial = LazyImport('sage.graphs.matchpoly', 'matching_polynomial', at_startup=True)
-    complete_poly = LazyImport('sage.graphs.matchpoly', 'complete_poly', at_startup=True)
     from sage.graphs.cliquer import all_max_clique as cliques_maximum
     from sage.graphs.cliquer import all_cliques
     from sage.graphs.spanning_tree import random_spanning_tree
@@ -9613,13 +9612,6 @@ class Graph(GenericGraph):
     from sage.graphs.graph_coloring import fractional_chromatic_number
     from sage.graphs.graph_coloring import fractional_chromatic_index
     from sage.graphs.hyperbolicity import hyperbolicity
-    has_perfect_matching = LazyImport('sage.graphs.matching', 'has_perfect_matching', at_startup=True)
-    is_bicritical = LazyImport('sage.graphs.matching', 'is_bicritical', at_startup=True)
-    is_factor_critical = LazyImport('sage.graphs.matching', 'is_factor_critical', at_startup=True)
-    is_matching_covered = LazyImport('sage.graphs.matching', 'is_matching_covered', at_startup=True)
-    matching = LazyImport('sage.graphs.matching', 'matching', at_startup=True)
-    perfect_matchings = LazyImport('sage.graphs.matching', 'perfect_matchings', at_startup=True)
-    M_alternating_even_mark = LazyImport('sage.graphs.matching', 'M_alternating_even_mark', at_startup=True)
 
 
 _additional_categories = {
@@ -9632,6 +9624,7 @@ _additional_categories = {
     "treewidth"                 : "Algorithmically hard stuff",
     "pathwidth"                 : "Algorithmically hard stuff",
     "treelength"                : "Algorithmically hard stuff",
+    "matching_polynomial"       : "Algorithmically hard stuff",
     "all_max_clique"            : "Clique-related methods",
     "cliques_maximum"           : "Clique-related methods",
     "all_cliques"               : "Clique-related methods",
@@ -9667,16 +9660,7 @@ _additional_categories = {
     "fractional_chromatic_number" : "Coloring",
     "fractional_chromatic_index" : "Coloring",
     "geodetic_closure"          : "Leftovers",
-    "hyperbolicity"             : "Distances",
-    "matching_polynomial"       : "Matching",
-    "complete_poly"             : "Matching",
-    "has_perfect_matching"      : "Matching",
-    "is_bicritical"             : "Matching",
-    "is_factor_critical"        : "Matching",
-    "is_matching_covered"       : "Matching",
-    "matching"                  : "Matching",
-    "perfect_matchings"         : "Matching",
-    "M_alternating_even_mark"   : "Matching"
+    "hyperbolicity"             : "Distances"
     }
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))
