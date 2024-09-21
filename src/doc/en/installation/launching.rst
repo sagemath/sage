@@ -275,8 +275,8 @@ You can check the presence of some of these packages using the command
     plot3d(lambda u,v:(u^2+v^2)/4-2,(-2,2),(-2,2)).show(viewer="jmol")
 
 
-Using Jupyter notebook through Visual Studio Code (VS Code) in WSL
-------------------------------------------------------------------
+Using Jupyter notebook through Visual Studio Code in WSL
+--------------------------------------------------------
 
 If you have installed Sage on Windows using Windows Subsystem for
 Linux (WSL), it is convenient to use Visual Studio Code (VS Code)
