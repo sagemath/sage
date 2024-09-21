@@ -25,7 +25,7 @@ from sage.libs.flint.fmpz_poly_sage cimport Fmpz_poly
 
 cpdef Fmpz_poly chain_poly(list positions):
     r"""
-    Compute the chain polynomial of a poset.
+    Return the chain polynomial of a poset.
 
     INPUT:
 
