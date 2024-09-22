@@ -2434,14 +2434,15 @@ cdef class ModuleElement(Element):
         Scalar multiplication for module elements with the module
         element on the left and the scalar on the right.
 
-        Returning None indicates that this action is not implemented here.
+        Returning ``None`` indicates that this action is not implemented here.
         """
         return None
 
     ##################################################
     # Other properties
     ##################################################
-    def order(self):              ### DO NOT OVERRIDE THIS!!! Instead, override additive_order.
+    def order(self):   
+        # DO NOT OVERRIDE THIS!!! Instead, override additive_order.
         """
         Return the additive order of ``self``.
         """

@@ -628,7 +628,7 @@ def C3_merge(list lists):
             O = heads[i]
             # Does O appear in none of the tails?  ``all(O not in tail for tail in tailsets)``
             next_item_found = True
-            for j in range(nbheads): #from 0 <= j < nbheads:
+            for j in range(nbheads):  # from 0 <= j < nbheads:
                 if j == i:
                     continue
                 tailset = tailsets[j]
@@ -860,7 +860,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
         # Find the position of the largest head which will become the next item
         max_i   = 0
         max_key = key(heads[0])
-        for i in range(1, nbheads): #from 1 <= i < nbheads:
+        for i in range(1, nbheads):  # from 1 <= i < nbheads:
             O = heads[i]
             O_key = key(O)
             if O_key > max_key:
@@ -870,7 +870,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
 
         # Find all the bad choices
         max_bad = None
-        for i in range(max_i): #from 0 <= i < max_i:
+        for i in range(max_i):  # from 0 <= i < max_i:
             O = heads[i]
             # Does O appear in none of the tails?
             O_key = key(O)
@@ -936,7 +936,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
         # Clear O from other heads, removing the line altogether
         # if the tail is already empty.
         # j goes down so that ``del heads[j]`` does not screw up the numbering
-        for j in range(nbheads-1, -1, -1):#from nbheads > j >= 0:
+        for j in range(nbheads-1, -1, -1):  # from nbheads > j >= 0:
             if heads[j] == max_value:
                 tail = tails[j]
                 if tail:

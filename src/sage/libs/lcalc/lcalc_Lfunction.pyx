@@ -491,7 +491,7 @@ cdef class Lfunction_I(Lfunction):
     cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         cdef int N = len(dirichlet_coeff)
         cdef Integer tmpi
-        cdef int * coeffs = new_ints(N+1) #lcalc ignores 0the coefficient
+        cdef int * coeffs = new_ints(N+1)  # lcalc ignores 0the coefficient
         for i from 0 <= i< N by 1:
             tmpi=Integer(dirichlet_coeff[i])
             coeffs[i+1] = mpz_get_si(tmpi.value)
@@ -628,9 +628,9 @@ cdef class Lfunction_D(Lfunction):
         cdef int i
         cdef RealNumber tmpr
         cdef int N = len(dirichlet_coeff)
-        cdef double * coeffs = new_doubles(N+1)#lcalc ignores 0th position
-        for i from 0 <= i< N by 1:
-            tmpr=RRR(dirichlet_coeff[i])
+        cdef double * coeffs = new_doubles(N+1)  # lcalc ignores 0th position
+        for i in range(N):
+            tmpr = RRR(dirichlet_coeff[i])
             coeffs[i+1] = mpfr_get_d(tmpr.value, MPFR_RNDN)
         self.thisptr=new_c_Lfunction_D(NAME, what_type,  N, coeffs, Period, q,  w,  A, g, l, n_poles, p, r)
         del_doubles(coeffs)
