@@ -273,7 +273,7 @@ class ECM(SageObject):
                             65: 850000000,
                             70: 2900000000}
 
-    def _B1_table_value(self, factor_digits, min=15, max=70):
+    def _B1_table_value(self, factor_digits, min_val=15, max_val=70):
         """
         Return key in ``_recommended_B1_list``.
 
@@ -290,9 +290,8 @@ class ECM(SageObject):
             sage: ecm._B1_table_value(33)
             35
         """
-        if factor_digits < min:
-            factor_digits = min
-        if factor_digits > max:
+        factor_digits = max(factor_digits, min_val)
+        if factor_digits > max_val:
             raise ValueError('too many digits')
         step = 5
         return ((factor_digits + step - 1) // step) * step

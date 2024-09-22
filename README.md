@@ -69,7 +69,7 @@ virtualization).
 
 Detailed information on supported platforms for a specific version of Sage
 can be found in the section _Availability and installation help_ of the
-[release tour](https://wiki.sagemath.org/ReleaseTours) for this version.
+[release tour for this version](https://github.com/sagemath/sage/releases).
 
 We highly appreciate contributions to Sage that fix portability bugs
 and help port Sage to new platforms; let us know at the [sage-devel
@@ -489,8 +489,8 @@ Troubleshooting
 ---------------
 
 If you have problems building Sage, check the Sage Installation Guide,
-as well as the version-specific Sage Installation FAQ in the [Sage Release
-Tour](https://wiki.sagemath.org/ReleaseTours) corresponding to the
+as well as the version-specific installation help in the [release
+tour](https://github.com/sagemath/sage/releases) corresponding to the
 version that you are installing.
 
 Please do not hesitate to ask for help in the [SageMath forum

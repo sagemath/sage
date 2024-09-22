@@ -442,8 +442,11 @@ jobs:
         if: (success() || failure()) && steps.container.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
+          # The path .coverage is a directory that contains the combined coverage
+          # data file .coverage, which is a hidden file because of the leading dot
           name: coverage-${{ steps.copy-coverage.outputs.tests_id }}
           path: .coverage
+          include-hidden-files: true
 
   coverage-report:
     runs-on: ubuntu-latest
@@ -530,11 +533,11 @@ jobs:
       # Combining
 
       - name: Download coverage artifacts
+        if: (success() || failure()) && steps.container.outcome == 'success'
         uses: actions/download-artifact@v4
         with:
           path: .coverage
           pattern: coverage-*
-        if: (success() || failure()) && steps.container.outcome == 'success'
 
       - name: Coverage report
         if: (success() || failure()) && steps.container.outcome == 'success'

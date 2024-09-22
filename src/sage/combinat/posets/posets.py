@@ -7682,18 +7682,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: R.chain_polynomial()
             q + 1
         """
-        hasse = self._hasse_diagram
-        q = polygen(ZZ, 'q')
-        one = q.parent().one()
-        hasse_size = hasse.cardinality()
-        chain_polys = [0] * hasse_size
-        # chain_polys[i] will be the generating function for the
-        # chains with topmost vertex i (in the labelling of the
-        # Hasse diagram).
-        for i in range(hasse_size):
-            chain_polys[i] = q + sum(q * chain_polys[j]
-                                     for j in hasse.principal_order_ideal(i))
-        return one + sum(chain_polys)
+        return self._hasse_diagram.chain_polynomial()
 
     def order_polynomial(self):
         r"""
