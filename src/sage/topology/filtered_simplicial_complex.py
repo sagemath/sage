@@ -620,8 +620,7 @@ class FilteredSimplicialComplex(SageObject):
         currmax = -1
         for s, x_s in d:
             j = self._index_of_simplex[s]
-            if j > currmax:
-                currmax = j
+            currmax = max(j, currmax)
         return currmax
 
     def persistence_intervals(self, dimension, field=2, strict=True, verbose=None):
