@@ -9612,6 +9612,8 @@ class Graph(GenericGraph):
     from sage.graphs.graph_coloring import fractional_chromatic_number
     from sage.graphs.graph_coloring import fractional_chromatic_index
     from sage.graphs.hyperbolicity import hyperbolicity
+    from sage.graphs.matching import (has_perfect_matching, matching,
+                                      is_factor_critical, perfect_matchings)
 
 
 _additional_categories = {
