@@ -6367,7 +6367,7 @@ class Graph(GenericGraph):
                 T.append([x, y, z])
 
         T = TwoGraph(T)
-        T.relabel({i: v for i, v in enumerate(self)})
+        T.relabel(dict(enumerate(self)))
 
         return T
 

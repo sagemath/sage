@@ -1325,8 +1325,8 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
             def liftb(Ib):
                 m = [vector([fr(e) for e in v]) for v in Ib]
-                m += [v for v in pO._hnf]
-                return self._ideal_from_vectors_and_denominator(m,1)
+                m.append(list(pO._hnf))
+                return self._ideal_from_vectors_and_denominator(m, 1)
 
             def cut_last_zero_rows(h):
                 i = h.nrows()
@@ -1344,7 +1344,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
             def pow(v, r): # r > 0
                 m = v
                 while r > 1:
-                    m = mul_vec(m,v)
+                    m = mul_vec(m, v)
                     r -= 1
                 return m
 
