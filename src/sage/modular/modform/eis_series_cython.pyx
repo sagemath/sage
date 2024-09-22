@@ -184,7 +184,7 @@ cpdef eisenstein_series_poly(int k, int prec=10):
     a0 = -bernoulli(k) / (2*k)
 
     cdef long p, ppow
-    for p in primes(1, prec) :
+    for p in primes(1, prec):
         ppow = p
 
         mpz_set_si(mult, p)

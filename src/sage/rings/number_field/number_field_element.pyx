@@ -1155,7 +1155,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             mpfi_set_prec(a, mpfi_get_prec(v.value))
             ZZX_evaluation_mpfi(a, self._numerator, v.value)
             mpfi_div_z(a, a, den)
-            mpfr_floor(&a.left ,&a.left)
+            mpfr_floor(&a.left, &a.left)
             mpfr_floor(&a.right, &a.right)
 
         ans = PY_NEW(Integer)
