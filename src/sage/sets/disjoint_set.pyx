@@ -104,14 +104,13 @@ cpdef DisjointSet(arg):
         sage: DisjointSet(['yi', 45, 'cheval'])
         {{'cheval'}, {'yi'}, {45}}
 
-    From a set partition::
+    From a set partition (see :issue:`38693`)::
 
         sage: SP = SetPartition(DisjointSet(5))
         sage: DisjointSet(SP)
         {{0}, {1}, {2}, {3}, {4}}
         sage: DisjointSet(SP) == DisjointSet(5)
         True
-
 
     TESTS::
 
