@@ -150,15 +150,13 @@ def init_sage(controller=None):
         sage: from sympy.printing.pretty.pretty import PrettyPrinter
         sage: s = sympify('+x^'.join(str(i) for i in range(30)))
         sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))
-         29    28    27    26    25    24    23    22    21    20    19    18    17    ↪
-        x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   +  ↪
+         29    28    27    26    25    24    23    22    21    20    19    18    17...
+        x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x...
         <BLANKLINE>
-        ↪  16    15    14    13    12    11    10    9    8    7    6    5    4    3   ↪
-        ↪ x   + x   + x   + x   + x   + x   + x   + x  + x  + x  + x  + x  + x  + x  + ↪
+        ... 16    15    14    13    12    11    10    9    8    7    6    5    4    3...
+        ...x   + x   + x   + x   + x   + x   + x   + x  + x  + x  + x  + x  + x  + x...
         <BLANKLINE>
-        ↪   2
-        ↪  x  + x
-
+        ...
 
     The displayhook sorts dictionary keys to simplify doctesting of
     dictionary output::
