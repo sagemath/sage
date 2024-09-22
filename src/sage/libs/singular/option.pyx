@@ -20,15 +20,17 @@ By default, tail reductions are performed::
     sage: from sage.libs.singular.option import opt, opt_ctx
     sage: opt['red_tail']
     True
-    sage: std(I)[-1]
+    sage: red = std(I)[-1]; red
     d^2*e^6 + 28*b*c*d + ...
 
 If we don't want this, we can create an option context, which disables
 this::
 
-    sage: with opt_ctx(red_tail=False, red_sb=False):
-    ....:    std(I)[-1]
-    d^2*e^6 +...8*c^3 + ...
+    sage: with opt_ctx(red_tail=False, red_sb=False): # random - depends on singular version
+    ....:    notred = std(I)[-1]; notred
+    d^2*e^6 + 8*c^3 + ...
+    sage: len(list(red)) < len(list(notred))
+    True
 
 However, this does not affect the global state::
 
