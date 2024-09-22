@@ -95,18 +95,18 @@ Sage depends on many system packages. Install them by executing
     sudo apt-get install bc binutils bzip2 ca-certificates cliquer cmake curl \
         ecl eclib-tools fflas-ffpack g++ gap gcc gengetopt gfan gfortran \
         glpk-utils gmp-ecm lcalc libatomic-ops-dev libboost-dev \
-        libbraiding-dev libbrial-dev libbrial-groebner-dev libbz2-dev \
+        libbraiding-dev libbz2-dev \
         libcdd-dev libcdd-tools libcliquer-dev libcurl4-openssl-dev libec-dev \
         libecm-dev libffi-dev libflint-dev libfplll-dev libfreetype-dev \
         libgap-dev libgc-dev libgd-dev libgf2x-dev libgiac-dev libgivaro-dev \
         libglpk-dev libgmp-dev libgsl-dev libhomfly-dev libiml-dev \
         liblfunction-dev liblinbox-dev liblrcalc-dev liblzma-dev libm4ri-dev \
-        libm4rie-dev libmpc-dev libmpfi-dev libmpfr-dev libncurses5-dev \
+        libm4rie-dev libmpc-dev libmpfi-dev libmpfr-dev libncurses-dev \
         libntl-dev libopenblas-dev libpari-dev libplanarity-dev libppl-dev \
         libprimesieve-dev libpython3-dev libqhull-dev \
         libreadline-dev librw-dev libsingular4-dev libsqlite3-dev libssl-dev \
         libsuitesparse-dev libsymmetrica2-dev zlib1g-dev libzmq3-dev m4 make \
-        maxima maxima-sage meson nauty ninja-build openssl palp pari-doc \
+        maxima meson nauty ninja-build openssl palp pari-doc \
         pari-elldata pari-galdata pari-galpol pari-gp2c pari-seadata patch \
         patchelf perl pkg-config planarity ppl-dev python3 python3-setuptools \
         python3-venv qhull-bin singular singular-doc sqlite3 sympow tachyon \
