@@ -62,6 +62,7 @@ from sage.rings.integer cimport Integer
 from sage.structure.sage_object cimport SageObject
 from cpython.object cimport PyObject_RichCompare
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
+from sage.combinat.set_partition import SetPartition
 
 cpdef DisjointSet(arg):
     r"""
@@ -102,6 +103,15 @@ cpdef DisjointSet(arg):
         {{0}, {1}, {2}, {3}, {4}, {5}}
         sage: DisjointSet(['yi', 45, 'cheval'])
         {{'cheval'}, {'yi'}, {45}}
+
+    From a set partition::
+
+        sage: SP = SetPartition(DisjointSet(5))
+        sage: DisjointSet(SP)
+        {{0}, {1}, {2}, {3}, {4}}
+        sage: DisjointSet(SP) == DisjointSet(5)
+        True
+
 
     TESTS::
 
