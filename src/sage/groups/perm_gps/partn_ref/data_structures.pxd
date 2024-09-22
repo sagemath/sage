@@ -142,9 +142,7 @@ cdef inline void OP_make_set(OrbitPartition *OP) noexcept:
     cdef int *new_parent, *new_rank, *new_mcr, *new_size
 
     cdef int *int_array = <int *> sig_malloc( 4*(n+1) * sizeof(int) )
-    if int_array is NULL:
-        sig_free(int_array)
-    else :
+    if not int_array is NULL:
         OP.degree = n + 1
         OP.num_cells = OP.num_cells + 1
         new_parent = int_array
