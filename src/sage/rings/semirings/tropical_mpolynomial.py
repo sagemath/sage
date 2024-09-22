@@ -164,7 +164,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         R = PolynomialRing(T, ('a,b'))
         a, b = R.gen(), R.gen(1)
         p1 = R(3)*a*b + a + R(-1)*b
-        sphinx_plot(p1.dual_subdivision().plot())    
+        sphinx_plot(p1.dual_subdivision().plot())
 
     TESTS:
 
@@ -494,7 +494,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: p2 = R(3) + x^2 + R(-2)*y + R(1/2)*x^2*y + R(2)*x*y^3 + R(-1)*x^3*y^4
             sage: p2.dual_subdivision()
             Polyhedral complex with 5 maximal cells
-        
+
         .. PLOT::
             :width: 300 px
 
@@ -503,7 +503,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             x, y = R.gen(), R.gen(1)
             p2 = R(3) + x**2 + R(-2)*y + R(1/2)*x**2*y + R(2)*x*y**3 + R(-1)*x**3*y**4
             sphinx_plot(p2.dual_subdivision().plot())
-        
+
         A subdivision with many faces, not all of which are triangles::
 
             sage: p3 = R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2 \
