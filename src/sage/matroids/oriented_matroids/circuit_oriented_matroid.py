@@ -65,6 +65,13 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
         sage: M.elements() == M.circuits()
         True
 
+        sage: C5 = [((1,),(3,),(2,)), ((1,2),(3,),(4,)),
+        ....:       ((3,),(1,),(2,)), ((3,),(1,2),(4,))]
+        sage: OrientedMatroid(C5, key='circuit')
+        Traceback (most recent call last):
+        ...
+        ValueError: groundsets must be the same
+
     .. SEEALSO::
 
         :class:`oriented_matroids.oriented_matroid.OrientedMatroid`
@@ -114,7 +121,7 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
         else:
             self._groundset = tuple(groundset)
 
-    def is_valid(self) -> bool:
+    def is_valid(self, with_errors=False) -> bool | tuple[bool, str]:
         """
         Return whether our circuits satisfy the circuit axioms.
 
@@ -123,48 +130,52 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
             sage: M = OrientedMatroid(C, key='circuit')
+            sage: M.is_valid(with_errors=True)
+            (True, '')
             sage: M.is_valid()
             True
+
             sage: C2 = [((1,4),(2,3)), ((1,3),(2,4)), ((2,3),(1,4))]
-            sage: OrientedMatroid(C2, key='circuit')
-            Traceback (most recent call last):
-            ...
-            ValueError: only same/opposites can have same support
+            sage: M2 = OrientedMatroid(C2, key='circuit')
+            sage: M2.is_valid(with_errors=True)
+            (False, 'only same/opposites can have same support')
+            sage: M2.is_valid()
+            False
 
             sage: C3 = [((),()), ((1,4),(2,3)), ((2,3),(1,4))]
-            sage: OrientedMatroid(C3, key='circuit', groundset=[1,2,3,4])
-            Traceback (most recent call last):
-            ...
-            ValueError: empty set not allowed
+            sage: M3 = OrientedMatroid(C3, key='circuit', groundset=[1,2,3,4])
+            sage: M3.is_valid(with_errors=True)
+            (False, 'empty set not allowed')
 
             sage: C4= [((1,),()), ((1,4),(2,3)), ((2,3),(1,4))]
-            sage: OrientedMatroid(C4, key='circuit', groundset=[1,2,3,4])
-            Traceback (most recent call last):
-            ...
-            ValueError: every element needs an opposite
+            sage: M4 = OrientedMatroid(C4, key='circuit', groundset=[1,2,3,4])
+            sage: M4.is_valid(with_errors=True)
+            (False, 'every element needs an opposite')
 
-            sage: C5 = [((1,),(3,),(2,)), ((1,2),(3,),(4,)),
-            ....:       ((3,),(1,),(2,)), ((3,),(1,2),(4,))]
-            sage: OrientedMatroid(C5, key='circuit')
-            Traceback (most recent call last):
-            ...
-            ValueError: groundsets must be the same
         """
         circuits = self.circuits()
 
         for X in circuits:
             # Axiom 1: Make sure empty is not present
             if X.is_zero():
-                raise ValueError("empty set not allowed")
+                if with_errors:
+                    return (False, "empty set not allowed")
+                return False
             # Axiom 2: (symmetry) Make sure negative exists
             if -X not in circuits:
-                raise ValueError("every element needs an opposite")
+                if with_errors:
+                    return (False, "every element needs an opposite")
+                return False
             for Y in circuits:
                 # Axiom 3: (incomparability) supports must not be contained
                 if X.support().issubset(Y.support()):
                     if X != Y and X != -Y:
-                        raise ValueError(
-                            "only same/opposites can have same support")
+                        if with_errors:
+                            return (
+                                False,
+                                "only same/opposites can have same support"
+                            )
+                        return False
                 # Axiom 4: Weak elimination
                 if X != -Y:
                     E = X.positives().intersection(Y.negatives())
@@ -180,8 +191,11 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
                             if Z.positives().issubset(p) and Z.negatives().issubset(n):
                                 found = True
                         if not found:
-                            raise ValueError("weak elimination failed")
-
+                            if with_errors:
+                                return (False, "weak elimination failed")
+                            return False
+        if with_errors:
+            return (True, "")
         return True
 
     def _repr_(self) -> str:

@@ -121,7 +121,7 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
             rep = "Covector oriented matroid"
         return rep
 
-    def is_valid(self) -> bool:
+    def is_valid(self, with_errors=False) -> bool | tuple[bool, str]:
         """
         Return whether our covectors satisfy the covector axioms.
 
@@ -133,23 +133,19 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
             Covector oriented matroid of rank 1
 
             sage: C2 = [[0,0], [1,1]]
-            sage: OrientedMatroid(C2, key='covector')
-            Traceback (most recent call last):
-            ...
-            ValueError: every element needs an opposite
+            sage: M2 = OrientedMatroid(C2, key='covector')
+            sage: M2.is_valid(with_errors=True)
+            (False, 'every element needs an opposite')
 
             sage: C3 = [[1,1], [-1,-1], [0,1], [1,0], [-1,0], [0,-1]]
-            sage: OrientedMatroid(C3, key='covector')
-            Traceback (most recent call last):
-            ...
-            ValueError: composition must be in vectors
-
+            sage: M3 = OrientedMatroid(C3, key='covector')
+            sage: M3.is_valid(with_errors=True)
+            (False, 'composition must be in vectors')
 
             sage: C4 = [[0,0], [1,1], [-1,-1], [1,-1], [-1,1]]
-            sage: M = OrientedMatroid(C4, key='covector'); M
-            Traceback (most recent call last):
-            ...
-            ValueError: weak elimination failed
+            sage: M4 = OrientedMatroid(C4, key='covector')
+            sage: M4.is_valid(with_errors=True)
+            (False, 'weak elimination failed')
         """
         covectors = self.covectors()
 
@@ -160,11 +156,15 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
                 zero_found = True
             # Axiom 2: Make sure negative exists
             if -X not in covectors:
-                raise ValueError("every element needs an opposite")
+                if with_errors:
+                    return (False, "every element needs an opposite")
+                return False
             for Y in covectors:
                 # Axiom 3: Closed under composition
                 if X.composition(Y) not in covectors:
-                    raise ValueError("composition must be in vectors")
+                    if with_errors:
+                        return (False, "composition must be in vectors")
+                    return False
                 # Axiom 4: Weak elimination axiom
                 E = X.separation_set(Y)
                 ze = set(self.groundset()).difference(E)
@@ -180,11 +180,17 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
                                 if Z(f) != xy(f):
                                     found = False
                     if not found:
-                        raise ValueError("weak elimination failed")
+                        if with_errors:
+                            return (False, "weak elimination failed")
+                        return False
 
         if not zero_found:
-            raise ValueError("all zero covector is required")
+            if with_errors:
+                return (False, "all zero covector is required")
+            return False
 
+        if with_errors:
+            return (True, "")
         return True
 
     def matroid(self):

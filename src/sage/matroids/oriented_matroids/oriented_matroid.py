@@ -91,6 +91,9 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
       + ``'circuit'`` - uses circuit axioms with signed subsets
       + ``None`` - try and guess key.
 
+    - ``throw_warnings`` -- (default: ``False``) whether to throw a warning
+    on why an oriented matroid can't be constructed.
+
     EXAMPLES::
 
         sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -136,10 +139,9 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
 
         sage: OrientedMatroid([[0]], key='covector')
         Covector oriented matroid of rank 0
-        sage: OrientedMatroid([[0]], key='circuit')
-        Traceback (most recent call last):
-        ...
-        ValueError: empty set not allowed
+        sage: M = OrientedMatroid([[0]], key='circuit')
+        sage: M.is_valid(with_errors=True)
+        (False, 'empty set not allowed')
 
     OUTPUT:
 
@@ -257,10 +259,7 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
         raise NotImplementedError(
             f"oriented matroid of type {key} is not implemented")
 
-    if OM.is_valid():
-        return OM
-
-    raise ValueError("oriented matroid is not valid")
+    return OM
 
 
 def deep_tupler(obj):

@@ -41,11 +41,12 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         sage: A = hyperplane_arrangements.braid(3)
         sage: M = OrientedMatroid(A); M
         Hyperplane arrangement oriented matroid of rank 2
+
         sage: A = hyperplane_arrangements.Catalan(3)
-        sage: M = OrientedMatroid(A); M
-        Traceback (most recent call last):
-        ...
-        ValueError: hyperplane arrangements must be central to be an oriented matroid
+        sage: M = OrientedMatroid(A)
+        sage: M.is_valid(with_errors=True)
+        (False, 'hyperplane arrangements must be central to be an oriented matroid')
+
         sage: G = Graph({1: [2,4], 2: [3,4]})
         sage: A = hyperplane_arrangements.graphical(G)
         sage: M = OrientedMatroid(A); M
@@ -92,13 +93,20 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
             rep = "Hyperplane arrangement oriented matroid"
         return rep
 
-    def is_valid(self) -> bool:
+    def is_valid(self, with_errors=False) -> bool | tuple[bool, str]:
         """
         Return whether or not the arrangement is an oriented matroid.
         """
         if not self.arrangement().is_central():
-            raise ValueError("hyperplane arrangements must be central to be an oriented matroid")
+            if with_errors:
+                return (
+                    False,
+                    "hyperplane arrangements must be central to be an oriented matroid"
+                )
+            return False
 
+        if with_errors:
+            return (True, "")
         return True
 
     def arrangement(self):
