@@ -491,7 +491,7 @@ cdef class Lfunction_I(Lfunction):
     cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         cdef int N = len(dirichlet_coeff)
         cdef Integer tmpi
-        cdef int * coeffs = new_ints(N+1)  # lcalc ignores 0the coefficient
+        cdef int * coeffs = new_ints(N+1)  # lcalc ignores 0th coefficient
         for i from 0 <= i< N by 1:
             tmpi=Integer(dirichlet_coeff[i])
             coeffs[i+1] = mpz_get_si(tmpi.value)
