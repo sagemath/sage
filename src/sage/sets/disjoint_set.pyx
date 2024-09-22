@@ -137,6 +137,8 @@ cpdef DisjointSet(arg):
         if arg < 0:
             raise ValueError('arg must be a nonnegative integer (%s given)' % arg)
         return DisjointSet_of_integers(arg)
+    elif isinstance(arg, SetPartition):
+        return DisjointSet(arg.base_set())
     else:
         return DisjointSet_of_hashables(arg)
 
