@@ -150,10 +150,10 @@ cdef inline void OP_make_set(OrbitPartition *OP) noexcept:
         new_mcr = int_array + (2*n + 2)
         new_size = int_array + (3 * n + 3)
 
-        memcpy(new_parent, OP.parent, 4 * n * sizeof(int) )
-        memcpy(new_rank, OP.rank, 4 * n * sizeof(int) )
-        memcpy(new_mcr, OP.mcr, 4 * n * sizeof(int) )
-        memcpy(new_size, OP.size, 4 * n * sizeof(int) )
+        memcpy(new_parent, OP.parent, n * sizeof(int) )
+        memcpy(new_rank, OP.rank, n * sizeof(int) )
+        memcpy(new_mcr, OP.mcr, n * sizeof(int) )
+        memcpy(new_size, OP.size, n * sizeof(int) )
 
         new_parent[n] = n
         new_rank[n] = 0
