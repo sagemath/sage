@@ -643,12 +643,12 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         # the basis of this order, construct the n n-by-n matrices that show
         # how to multiply by each of the basis elements.
         matrices = [matrix(o, [self.coordinate_vector(b1*b2) for b1 in self.basis()])
-                            for b2 in self.basis()]
+                    for b2 in self.basis()]
 
         # Let O denote the maximal order self. When reduced modulo p,
         # matrices_reduced give the multiplication matrices used to form the
         # algebra O mod pO.
-        matrices_reduced = list(map(lambda M: M.mod(p), matrices))
+        matrices_reduced = [M.mod(p) for M in matrices]
         cat = CommutativeAlgebras(k).FiniteDimensional().WithBasis()
         A = FiniteDimensionalAlgebra(k, matrices_reduced,
                                      assume_associative=True,
