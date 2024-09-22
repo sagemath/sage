@@ -625,7 +625,7 @@ cdef class Element(SageObject):
             D = self.__dict__
         except AttributeError:
             return res
-        for k,v in D.iteritems():
+        for k, v in D.iteritems():
             try:
                 setattr(res, k, v)
             except AttributeError:
@@ -711,7 +711,7 @@ cdef class Element(SageObject):
             AssertionError: self.an_element() is not in self
         """
         tester = self._tester(**options)
-        SageObject._test_category(self, tester = tester)
+        SageObject._test_category(self, tester=tester)
         category = self.category()
         # Tests that self inherits methods from the categories
         if can_assign_class(self):
@@ -760,13 +760,13 @@ cdef class Element(SageObject):
         # 100% sure we indeed call the operators == and !=, whatever
         # the version of Python is (see #11236)
         tester.assertTrue(self == self,
-                   LazyFormat("broken equality: %s == itself is False")%self)
+                   LazyFormat("broken equality: %s == itself is False") % self)
         tester.assertFalse(self == None,
-                   LazyFormat("broken equality: %s == None")%self)
+                   LazyFormat("broken equality: %s == None") % self)
         tester.assertFalse(self != self,
-                           LazyFormat("broken non-equality: %s != itself")%self)
+                           LazyFormat("broken non-equality: %s != itself") % self)
         tester.assertTrue(self != None,
-                          LazyFormat("broken non-equality: %s is not != None")%self)
+                          LazyFormat("broken non-equality: %s is not != None") % self)
 
     def parent(self, x=None):
         """
@@ -959,9 +959,9 @@ cdef class Element(SageObject):
         if self._is_atomic():
             s = repr(self)
         else:
-            s = "(%s)"%repr(self)
+            s = "(%s)" % repr(self)
         if no_space:
-            return s.replace(' ','')
+            return s.replace(' ', '')
         return s
 
     def _latex_coeff_repr(self):
@@ -972,7 +972,7 @@ cdef class Element(SageObject):
         if self._is_atomic():
             return s
         else:
-            return "\\left(%s\\right)"%s
+            return "\\left(%s\\right)" % s
 
     def _is_atomic(self):
         """
@@ -1032,7 +1032,7 @@ cdef class Element(SageObject):
         try:
             zero = self._parent.zero()
         except Exception:
-            return True # by convention
+            return True  # by convention
 
         return self != zero
 
@@ -2441,7 +2441,7 @@ cdef class ModuleElement(Element):
     ##################################################
     # Other properties
     ##################################################
-    def order(self):   
+    def order(self):
         # DO NOT OVERRIDE THIS!!! Instead, override additive_order.
         """
         Return the additive order of ``self``.
@@ -3102,26 +3102,27 @@ cdef class CommutativeRingElement(RingElement):
             # First we test some generic conditions:
             try:
                 if x.is_zero():
-                    return True # everything divides 0
+                    return True  # everything divides 0
             except (AttributeError, NotImplementedError):
                 pass
 
             try:
                 if self.is_zero():
-                    return False # 0 divides nothing else
+                    return False  # 0 divides nothing else
             except (AttributeError, NotImplementedError):
                 pass
 
             try:
                 if self.is_unit():
-                    return True # units divide everything
+                    return True  # units divide everything
             except (AttributeError, NotImplementedError):
                 pass
 
             try:
                 if self.is_one():
-                    return True # 1 divides everything
-                                # (is_unit() may not be implemented)
+                    return True
+                # 1 divides everything
+                # (is_unit() may not be implemented)
             except (AttributeError, NotImplementedError):
                 pass
 
@@ -3133,7 +3134,7 @@ cdef class CommutativeRingElement(RingElement):
             raise NotImplementedError
 
         else:
-            #Different parents, use coercion
+            # Different parents, use coercion
             a, b = coercion_model.canonical_coercion(self, x)
             return a.divides(b)
 
@@ -3206,7 +3207,6 @@ cdef class CommutativeRingElement(RingElement):
         from sage.rings.ideal import Ideal_generic
         if not isinstance(I, Ideal_generic) or not I.ring() is self._parent:
             I = self._parent.ideal(I)
-            #raise TypeError, "I = %s must be an ideal in %s"%(I, self.parent())
         return I.reduce(self)
 
     ##################################################
@@ -3354,8 +3354,8 @@ cdef class CommutativeRingElement(RingElement):
             ...
             ValueError: trying to take square root of non-square 1/(x^2 - 3) with extend = False
         """
-        #This code is very general, it works for all integral domains that have the
-        #is_square(root = True) option
+        # This code is very general, it works for all integral domains that have the
+        # is_square(root = True) option
 
         from sage.categories.integral_domains import IntegralDomains
         P = self._parent
@@ -3365,15 +3365,15 @@ cdef class CommutativeRingElement(RingElement):
                 if P not in IntegralDomains():
                     raise NotImplementedError('sqrt() with all=True is only implemented for integral domains, not for %s' % P)
                 if P.characteristic()==2 or sq_rt==0:
-                    #0 has only one square root, and in characteristic 2 everything also has only 1 root
-                    return [ sq_rt ]
-                return [ sq_rt, -sq_rt ]
+                    # 0 has only one square root, and in characteristic 2 everything also has only 1 root
+                    return [sq_rt]
+                return [sq_rt, -sq_rt]
             return sq_rt
-        #from now on we know that self is not a square
+        # from now on we know that self is not a square
         if P not in IntegralDomains():
             raise NotImplementedError('sqrt() of non squares is only implemented for integral domains, not for %s' % P)
         if not extend:
-            #all square roots of a non-square should be an empty list
+            # all square roots of a non-square should be an empty list
             if all:
                 return []
             raise ValueError('trying to take square root of non-square %s with extend = False' % self)
@@ -3386,8 +3386,8 @@ cdef class CommutativeRingElement(RingElement):
         sq_rt = PY.quotient(y**2-self, names = name)(y)
         if all:
             if P.characteristic() == 2:
-                return [ sq_rt ]
-            return [ sq_rt, -sq_rt ]
+                return [sq_rt]
+            return [sq_rt, -sq_rt]
         return sq_rt
 
     ##############################################
@@ -3704,7 +3704,7 @@ cdef class Vector(ModuleElementWithMutability):
         raise bin_op_exception('*', left, right)
 
     cpdef _pairwise_product_(Vector left, Vector right):
-        raise TypeError("unsupported operation for '%s' and '%s'"%(parent(left), parent(right)))
+        raise TypeError("unsupported operation for '%s' and '%s'" % (parent(left), parent(right)))
 
     def __truediv__(self, right):
         """
@@ -3780,7 +3780,7 @@ cdef class Vector(ModuleElementWithMutability):
         """
         V = magma(self._parent)
         v = [x._magma_init_(magma) for x in self.list()]
-        return '%s![%s]'%(V.name(), ','.join(v))
+        return '%s![%s]' % (V.name(), ','.join(v))
 
 
 def is_Vector(x):
@@ -4577,7 +4577,7 @@ cpdef canonical_coercion(x, y):
         [1 0], [0 1]
         )
     """
-    return coercion_model.canonical_coercion(x,y)
+    return coercion_model.canonical_coercion(x, y)
 
 
 cpdef bin_op(x, y, op):
