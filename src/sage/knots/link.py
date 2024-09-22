@@ -4003,8 +4003,7 @@ class Link(SageObject):
         # set the limits for the KnotInfoSeries
         if cr > 11 and co > 1:
             cr = 11
-        if cr > 13:
-            cr = 13
+        cr = min(cr, 13)
 
         Hp = self.homfly_polynomial(normalization='vz')
 

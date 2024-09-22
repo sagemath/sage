@@ -1986,7 +1986,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         V = self.ambient_vector_space()
         r_iter = iter(self._rays)
-        p = V(0)
+        p = V.zero()
         yield p
         for i in range(5):
             try:
@@ -1995,7 +1995,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                 return
             yield p
 
-    def _sort_faces(self,  faces):
+    def _sort_faces(self, faces):
         r"""
         Return sorted (if necessary) ``faces`` as a tuple.
 
@@ -2109,7 +2109,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         if superfaces:
             for superface in superfaces:
                 for facet in facets:
-                    adjacent.update(L.open_interval(facet,  superface))
+                    adjacent.update(L.open_interval(facet, superface))
             if adjacent:
                 adjacent.remove(L(self))
             return self._sort_faces(adjacent)

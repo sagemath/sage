@@ -336,12 +336,9 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
 
         lr = r'\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}'
 
-        array = []
-        for i in range(self._n_rows):
-            row = []
-            for j in range(self._n_cols):
-                row.append("\\phantom{x}" if (i, j) in self else None)
-            array.append(row)
+        array = [[("\\phantom{x}" if (i, j) in self else None)
+                  for j in range(self._n_cols)]
+                 for i in range(self._n_rows)]
 
         def end_line(r):
             # give the line ending to row ``r``

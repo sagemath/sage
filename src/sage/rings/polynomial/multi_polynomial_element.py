@@ -1290,8 +1290,17 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             False
             sage: (x^2*y + y^2*x).is_homogeneous()
             True
+
+        The weight of the parent ring is respected::
+
+            sage: term_order = TermOrder("wdegrevlex", [1, 3])
+            sage: R.<x, y> = PolynomialRing(Qp(5), order=term_order)
+            sage: (x + y).is_homogeneous()
+            False
+            sage: (x^3 + y).is_homogeneous()
+            True
         """
-        return self.element().is_homogeneous()
+        return self.element().is_homogeneous(self.parent().term_order().weights())
 
     def _homogenize(self, var):
         r"""

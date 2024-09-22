@@ -19,7 +19,7 @@ from sage.modular.arithgroup.all import CongruenceSubgroupBase, Gamma0
 from sage.modular.modsym.space import ModularSymbolsSpace
 from .abvar_newform import ModularAbelianVariety_newform
 import sage.modular.modform.element
-from . import abvar
+from sage.modular.abvar import abvar
 
 _cache = {}
 

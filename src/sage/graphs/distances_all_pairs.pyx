@@ -304,8 +304,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
     # Copying the whole graph to obtain the list of neighbors quicker than by
     # calling out_neighbors
     cdef short_digraph sd
-    init_short_digraph(sd, gg, edge_labelled=False, vertex_list=int_to_vertex,
-                       sort_neighbors=False)
+    init_short_digraph(sd, gg, edge_labelled=False, vertex_list=int_to_vertex)
 
     c_all_pairs_shortest_path_BFS(sd, predecessors, distances, eccentricity)
 
@@ -1057,8 +1056,7 @@ def eccentricity(G, algorithm='standard', vertex_list=None):
         ecc = c_eccentricity(G, vertex_list=int_to_vertex)
 
     else:
-        init_short_digraph(sd, G, edge_labelled=False, vertex_list=vertex_list,
-                           sort_neighbors=False)
+        init_short_digraph(sd, G, edge_labelled=False, vertex_list=vertex_list)
 
         if algorithm == "DHV":
             ecc = c_eccentricity_DHV(sd)
@@ -1836,8 +1834,7 @@ def diameter(G, algorithm=None, source=None):
     # module sage.graphs.base.static_sparse_graph
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
-                       sort_neighbors=False)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
     cdef short_digraph rev_sd  # to store copy of sd with edges reversed
 
     # and we map the source to an int in [0,n-1]
@@ -1939,8 +1936,7 @@ def radius_DHV(G):
 
     cdef list int_to_vertex = list(G)
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
-                       sort_neighbors=False)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     cdef uint32_t source, ecc_source
     cdef uint32_t antipode, ecc_antipode
@@ -2057,8 +2053,7 @@ def wiener_index(G):
     # calling out_neighbors.  This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G),
-                       sort_neighbors=False)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
 
     # allocated some data structures
     cdef bitset_t seen
@@ -2280,14 +2275,6 @@ def szeged_index(G, algorithm=None):
       By default (``None``), the ``'low'`` algorithm is used for graphs and the
       ``'high'`` algorithm for digraphs.
 
-    .. NOTE::
-        As the graph is converted to a short_digraph, the complexity for the
-        case ``algorithm == "high"`` has an extra `O(m+n)` for ``SparseGraph``
-        and `O(n^2)` for ``DenseGraph``. If ``algorithm  == "low"``, the extra
-        complexity is `O(n + m\log{m})` for ``SparseGraph`` and `O(n^2\log{m})`
-        for ``DenseGraph`` (because ``init_short_digraph`` is called with
-        ``sort_neighbors=True``).
-
     EXAMPLES:
 
     True for any connected graph [KRG1996]_::
@@ -2378,13 +2365,12 @@ def szeged_index(G, algorithm=None):
         return 0
 
     cdef short_digraph sd
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
     cdef uint64_t s
 
     if algorithm == "low":
-        init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G), sort_neighbors=True)
         s = c_szeged_index_low_memory(sd)
     else:
-        init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G), sort_neighbors=False)
         s = c_szeged_index_high_memory(sd)
 
     free_short_digraph(sd)
