@@ -838,7 +838,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
                 constant = R(str(ext_rep.pop(2 * i)))  # Pop the coefficient
                 break
         # To reconstruct, we need the following
-        F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(self._libgap))
+        F = self._libgap.FamilyObj().ElementsFamily()
         elt = F.ObjByExtRep(ext_rep)
         co = self._libgap.CounitMap()
         return R(str(co(elt))) + constant
@@ -2330,7 +2330,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
             sage: B._construct_monomial((3,0,1))
             F[a1]^(3)*F[a2]
         """
-        F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(self._libgap))
+        F = self._libgap.FamilyObj().ElementsFamily()
         one = self._libgap_base.One()
         data = []
         for i, val in enumerate(k):
@@ -2684,7 +2684,7 @@ def _unpickle_generic_element(parent, data):
         sage: loads(dumps(x)) == x  # indirect doctest
         True
     """
-    F = libgap.eval('ElementsFamily')(libgap.eval('FamilyObj')(parent._libgap))
+    F = parent._libgap.FamilyObj().ElementsFamily()
     ret = []
     # We need to multiply by this to get the right type in GAP
     one = parent._libgap_base.One()

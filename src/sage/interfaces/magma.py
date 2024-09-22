@@ -2906,8 +2906,7 @@ class MagmaGBLogPrettyPrinter:
                 pol_curr, col_curr = map(int, match.groups())
 
                 if pol_curr != 0:
-                    if self.max_deg < self.curr_deg:
-                        self.max_deg = self.curr_deg
+                    self.max_deg = max(self.max_deg, self.curr_deg)
 
                     if style == "sage" and verbosity >= 1:
                         print("Leading term degree: %2d. Critical pairs: %d." %
