@@ -136,6 +136,37 @@ cdef inline void OP_join(OrbitPartition *OP, int m, int n) noexcept:
     if m_root != n_root:
         OP.num_cells -= 1
 
+
+cdef inline void OP_make_set(OrbitPartition *OP) noexcept:
+    cdef int i, n = OP.degree
+    cdef int *new_parent, *new_rank, *new_mcr, *new_size
+
+    cdef int *int_array = <int *> sig_malloc( 4*(n+1) * sizeof(int) )
+    if int_array is NULL:
+        sig_free(int_array)
+    else :
+        OP.degree = n + 1
+        OP.num_cells = OP.num_cells + 1
+        new_parent = int_array
+        new_rank = int_array + (n + 1)
+        new_mcr = int_array + (2*n + 2)
+        new_size = int_array + (3 * n + 3)
+        for i from 0 <= i < n:
+            new_parent[i] = OP.parent[i]
+            new_rank[i] = OP.rank[i]
+            new_mcr[i] = OP.mcr[i]
+            new_size[i] = OP.size[i]
+
+        new_parent[n] = n
+        new_rank[n] = 0
+        new_mcr[n] = n
+        new_size[n] = 1
+
+        OP.parent = new_parent
+        OP.rank   = new_rank
+        OP.mcr    = new_mcr
+        OP.size   = new_size
+
 cdef inline int OP_merge_list_perm(OrbitPartition *OP, int *gamma) noexcept:
     """
     Joins the cells of OP which intersect the same orbit of gamma.
