@@ -916,8 +916,8 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
         if self._inner_group.rank < 2:
             return True
 
-        lower = iter(self._matrix[ : self._inner_group.rank].columns())
-        upper = iter(self._matrix[self._inner_group.rank : ].columns())
+        lower = iter(self._matrix[:self._inner_group.rank].columns())
+        upper = iter(self._matrix[self._inner_group.rank:].columns())
 
         for i in range(self._n):
             l = next(lower)
