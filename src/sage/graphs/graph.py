@@ -9612,8 +9612,12 @@ class Graph(GenericGraph):
     from sage.graphs.graph_coloring import fractional_chromatic_number
     from sage.graphs.graph_coloring import fractional_chromatic_index
     from sage.graphs.hyperbolicity import hyperbolicity
-    from sage.graphs.matching import (has_perfect_matching, matching,
-                                      is_factor_critical, perfect_matchings)
+    from sage.graphs.matching import has_perfect_matching
+    from sage.graphs.matching import is_bicritical
+    from sage.graphs.matching import is_factor_critical
+    from sage.graphs.matching import is_matching_covered
+    from sage.graphs.matching import matching
+    from sage.graphs.matching import perfect_matchings
 
 
 _additional_categories = {
@@ -9662,7 +9666,13 @@ _additional_categories = {
     "fractional_chromatic_number" : "Coloring",
     "fractional_chromatic_index" : "Coloring",
     "geodetic_closure"          : "Leftovers",
-    "hyperbolicity"             : "Distances"
+    "hyperbolicity"             : "Distances",
+    "has_perfect_matching"      : "Matching",
+    "is_bicritical"             : "Matching",
+    "is_factor_critical"        : "Matching",
+    "is_matching_covered"       : "Matching",
+    "matching"                  : "Matching",
+    "perfect_matchings"         : "Matching"
     }
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))

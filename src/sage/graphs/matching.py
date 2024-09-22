@@ -453,6 +453,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     # simple graph is bicritical
     G_simple = G.to_simple()
 
+    from sage.graphs.graph import Graph
     if matching:
         # The input matching must be a valid perfect matching of the graph
         M = Graph(matching)
@@ -479,7 +480,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     for u in G_simple:
         v = next(M.neighbor_iterator(u))
 
-        even = G_simple.M_alternating_even_mark(u, M)
+        even = M_alternating_even_mark(G_simple, u, M)
 
         for w in G_simple:
             if w != v and w not in even:
@@ -614,6 +615,7 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
             list(G.bridges()) or G.is_bipartite()):
         return False
 
+    from sage.graphs.graph import Graph
     if matching:
         # We check that the input matching is a valid near perfect matching
         # of the graph.
@@ -982,6 +984,7 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
     # underlying simple graph is matching covered
     G_simple = G.to_simple()
 
+    from sage.graphs.graph import Graph
     if matching:
         # The input matching must be a valid perfect matching of the graph
         M = Graph(matching)
@@ -1075,7 +1078,7 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
     for u in G_simple:
         v = next(M.neighbor_iterator(u))
 
-        even = G_simple.M_alternating_even_mark(u, M)
+        even = M_alternating_even_mark(G_simple, u, M)
 
         for w in G_simple.neighbor_iterator(v):
             if w != u and w not in even:
@@ -1250,6 +1253,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
                 return sum(W[frozenset(e)] for e in d)
             return Integer(len(d))
 
+        from sage.graphs.graph import Graph
         return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in d],
                                 format='list_of_edges'))
 
@@ -1277,6 +1281,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
                 return sum(w for fe, w in W.items() if b[fe])
             return Integer(sum(1 for fe in L if b[fe]))
 
+        from sage.graphs.graph import Graph
         return EdgesView(Graph([(u, v, L[frozenset((u, v))])
                                 for u, v in L if b[frozenset((u, v))]],
                                 format='list_of_edges'))
@@ -1427,10 +1432,11 @@ def M_alternating_even_mark(G, vertex, matching):
         sage: M = G.matching()
         sage: M
         [(0, 2, None)]
-        sage: S0 = G.M_alternating_even_mark(0, M)
+        sage: from sage.graphs.matching import M_alternating_even_mark
+        sage: S0 = M_alternating_even_mark(G, 0, M)
         sage: S0
         {0}
-        sage: S1 = G.M_alternating_even_mark(1, M)
+        sage: S1 = M_alternating_even_mark(G, 1, M)
         sage: S1
         {0, 1, 2}
 
@@ -1442,10 +1448,11 @@ def M_alternating_even_mark(G, vertex, matching):
         sage: G.add_edge(0, 3)
         sage: M = G.matching()
         sage: u = 0
-        sage: S = G.M_alternating_even_mark(u, M)
+        sage: from sage.graphs.matching import M_alternating_even_mark
+        sage: S = M_alternating_even_mark(G, u, M)
         sage: S
         {0, 1, 2}
-        sage: T = (G.to_simple()).M_alternating_even_mark(u, M)
+        sage: T = M_alternating_even_mark(G.to_simple(), u, M)
         sage: T
         {0, 1, 2}
 
@@ -1462,7 +1469,8 @@ def M_alternating_even_mark(G, vertex, matching):
         ....:     if v not in M:
         ....:          break
         ....:
-        sage: S = G.M_alternating_even_mark(v, M)
+        sage: from sage.graphs.matching import M_alternating_even_mark
+        sage: S = M_alternating_even_mark(G, v, M)
         sage: S == set(G)
         True
 
@@ -1482,7 +1490,8 @@ def M_alternating_even_mark(G, vertex, matching):
         True
         sage: u = 0
         sage: v = next(M.neighbor_iterator(u))
-        sage: S = G.M_alternating_even_mark(u, M)
+        sage: from sage.graphs.matching import M_alternating_even_mark
+        sage: S = M_alternating_even_mark(G, u, M)
         sage: (set(G.neighbor_iterator(v))).issubset(S)
         True
 
@@ -1498,7 +1507,8 @@ def M_alternating_even_mark(G, vertex, matching):
         sage: import random
         sage: u = random.choice(list(G))                                            # needs random
         sage: v = next(M.neighbor_iterator(u))
-        sage: S = G.M_alternating_even_mark(u, M)
+        sage: from sage.graphs.matching import M_alternating_even_mark
+        sage: S = M_alternating_even_mark(G, u, M)
         sage: S == (set(G) - {v})
         True
 
@@ -1509,24 +1519,26 @@ def M_alternating_even_mark(G, vertex, matching):
         sage: G = graphs.HexahedralGraph()
         sage: M = G.matching()
         sage: u = G.order()
-        sage: S = G.M_alternating_even_mark(u, M)
+        sage: from sage.graphs.matching import M_alternating_even_mark
+        sage: S = M_alternating_even_mark(G, u, M)
         Traceback (most recent call last):
         ...
         ValueError: '8' is not a vertex of the graph
 
     Giving a wrong matching::
 
+        sage: from sage.graphs.matching import M_alternating_even_mark
         sage: G = graphs.CompleteGraph(6)
         sage: M = [(0, 1), (0, 2)]
         sage: u = 0
-        sage: S = G.M_alternating_even_mark(u, M)
+        sage: S = M_alternating_even_mark(G, u, M)
         Traceback (most recent call last):
         ...
         ValueError: the input is not a matching
         sage: G = graphs.CompleteBipartiteGraph(3, 3)
         sage: M = [(2*i, 2*i + 1) for i in range(4)]
         sage: u = 0
-        sage: S = G.M_alternating_even_mark(u, M)
+        sage: S = M_alternating_even_mark(G, u, M)
         Traceback (most recent call last):
         ...
         ValueError: the input is not a matching of the graph
@@ -1554,6 +1566,7 @@ def M_alternating_even_mark(G, vertex, matching):
     G_simple = G.to_simple()
 
     # The input matching must be a valid matching of the graph
+    from sage.graphs.graph import Graph
     M = Graph(matching)
     if any(d != 1 for d in M.degree()):
         raise ValueError("the input is not a matching")
