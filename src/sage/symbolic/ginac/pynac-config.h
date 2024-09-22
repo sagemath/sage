@@ -7,8 +7,5 @@
 /* Current GiNaC archive file version number */
 #define PYNAC_ARCHIVE_VERSION 3
 
-/* Define if you have libgiac */
-/* #undef PYNAC_HAVE_LIBGIAC */
-
 /* once: _PYNAC_CONFIG_H */
 #endif
