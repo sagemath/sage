@@ -26,9 +26,9 @@ By default, tail reductions are performed::
 If we don't want this, we can create an option context, which disables
 this::
 
-    sage: with opt_ctx(red_tail=False, red_sb=False): # random - depends on singular version
+    sage: with opt_ctx(red_tail=False, red_sb=False):
     ....:    notred = std(I)[-1]; notred
-    d^2*e^6 + 8*c^3 + ...
+    d^2*e^6 + ...
     sage: len(list(red)) < len(list(notred))
     True
 
