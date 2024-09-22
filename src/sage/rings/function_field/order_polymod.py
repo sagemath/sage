@@ -74,9 +74,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         n = len(basis)
         self._mtable = []
         for i in range(n):
-            row = []
-            for j in range(n):
-                row.append(self._coordinate_vector(basis[i] * basis[j]))
+            row = [self._coordinate_vector(basis[i] * basis[j])
+                   for j in range(n)]
             self._mtable.append(row)
 
         zero = vector(R._ring, n * [0])
@@ -1316,7 +1315,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
             Ip = self.p_radical(ideal)
             Ob = matrix.identity(Fp, n)
 
-            def bar(I): # transfer to O/pO
+            def bar(I):  # transfer to O/pO
                 m = []
                 for v in I._hnf:
                     m.append([to(e) for e in v])
@@ -1325,7 +1324,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
 
             def liftb(Ib):
                 m = [vector([fr(e) for e in v]) for v in Ib]
-                m.append(list(pO._hnf))
+                m.extend(pO._hnf)
                 return self._ideal_from_vectors_and_denominator(m, 1)
 
             def cut_last_zero_rows(h):
@@ -1334,14 +1333,14 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                     i -= 1
                 return h[:i]
 
-            def mul_vec(v1,v2):
+            def mul_vec(v1, v2):
                 s = 0
                 for i in range(n):
                     for j in range(n):
                         s += v1[i] * v2[j] * mtable[i][j]
                 return s
 
-            def pow(v, r): # r > 0
+            def pow(v, r):  # r > 0
                 m = v
                 while r > 1:
                     m = mul_vec(m, v)
