@@ -281,8 +281,7 @@ def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
 
             # Condition (i): Check that their (unit) ratio is a square (but it suffices to check at most mod 8).
             modulus = norm_list[i] * norm_list[i+1] / (scale_list[i] ** 2)
-            if modulus > 8:
-                modulus = 8
+            modulus = min(modulus, 8)
             if (modulus > 1) and (((self_chain_det_list[i] / other_chain_det_list[i]) % modulus) != 1):
                 return False
 

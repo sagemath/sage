@@ -1300,8 +1300,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         except AttributeError:
             pass
         else:
-            if prec < cur:
-                prec = cur
+            prec = max(prec, cur)
         B = self.q_expansion_basis(prec)
         eps = self.character()
         if eps is None:
