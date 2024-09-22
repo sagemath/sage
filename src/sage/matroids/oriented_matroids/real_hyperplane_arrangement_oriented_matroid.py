@@ -45,7 +45,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         sage: A = hyperplane_arrangements.Catalan(3)
         sage: M = OrientedMatroid(A)
         sage: M.is_valid(with_errors=True)
-        (False, 'hyperplane arrangements must be central to be an oriented matroid')
+        (False, 'hyperplane arrangement must be central')
 
         sage: G = Graph({1: [2,4], 2: [3,4]})
         sage: A = hyperplane_arrangements.graphical(G)
@@ -101,7 +101,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
             if with_errors:
                 return (
                     False,
-                    "hyperplane arrangements must be central to be an oriented matroid"
+                    "hyperplane arrangement must be central"
                 )
             return False
 
