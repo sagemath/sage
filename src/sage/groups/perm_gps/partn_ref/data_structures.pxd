@@ -149,7 +149,7 @@ cdef inline void OP_make_set(OrbitPartition *OP) noexcept:
         new_rank = int_array + (n + 1)
         new_mcr = int_array + (2*n + 2)
         new_size = int_array + (3 * n + 3)
-        for i from 0 <= i < n:
+        for i in range(n):
             new_parent[i] = OP.parent[i]
             new_rank[i] = OP.rank[i]
             new_mcr[i] = OP.mcr[i]
