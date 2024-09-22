@@ -1255,7 +1255,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
         # This **must** match the name of the class in order for
         #   specialize_to() to work
-        _basis_name = None
+        _basis_name = 'B'
 
         def _repr_term(self, t):
             r"""

@@ -670,7 +670,7 @@ cdef class Matrix(Matrix0):
             entries = [[sib(v, 2) for v in row] for row in self.rows()]
             return sib.name('matrix')(self.base_ring(), entries)
 
-    def numpy(self, dtype=None):
+    def numpy(self, dtype=None, copy=True):
         """
         Return the Numpy matrix associated to this matrix.
 
@@ -679,6 +679,10 @@ cdef class Matrix(Matrix0):
         - ``dtype`` -- the desired data-type for the array. If not given,
           then the type will be determined as the minimum type required
           to hold the objects in the sequence.
+
+        - ``copy`` -- if `self` is already an `ndarray`, then this flag
+          determines whether the data is copied (the default), or whether
+          a view is constructed.
 
         EXAMPLES::
 
@@ -731,7 +735,7 @@ cdef class Matrix(Matrix0):
             (3, 4)
         """
         import numpy
-        A = numpy.matrix(self.list(), dtype=dtype)
+        A = numpy.matrix(self.list(), dtype=dtype, copy=copy)
         return numpy.resize(A,(self.nrows(), self.ncols()))
 
     # Define the magic "__array__" function so that numpy.array(m) can convert

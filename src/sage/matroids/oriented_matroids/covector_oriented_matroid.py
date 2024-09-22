@@ -128,27 +128,25 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
+            sage: M = OrientedMatroid([[1], [-1], [0]], groundset=['e'], key='covector')
+            sage: M
             Covector oriented matroid of rank 1
 
             sage: C2 = [[0,0], [1,1]]
-            sage: M = OrientedMatroid(C2, key='covector')
-            sage: M.is_valid()
+            sage: OrientedMatroid(C2, key='covector')
             Traceback (most recent call last):
             ...
             ValueError: every element needs an opposite
 
             sage: C3 = [[1,1], [-1,-1], [0,1], [1,0], [-1,0], [0,-1]]
-            sage: M = OrientedMatroid(C3, key='covector')
-            sage: M.is_valid()
+            sage: OrientedMatroid(C3, key='covector')
             Traceback (most recent call last):
             ...
             ValueError: composition must be in vectors
 
 
             sage: C4 = [[0,0], [1,1], [-1,-1], [1,-1], [-1,1]]
-            sage: M = OrientedMatroid(C4, key='covector')
-            sage: M.is_valid()
+            sage: M = OrientedMatroid(C4, key='covector'); M
             Traceback (most recent call last):
             ...
             ValueError: weak elimination failed
@@ -194,15 +192,22 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
         Return the underlying matroid.
 
         Given a covector oriented matroid, the *underlying matroid* is the
-        matroid whose collection of flats is given by the set of zeros of all
-        signed vectors.
+        (flat) matroid whose collection of flats is given by the set of
+        zeros of all signed vectors.
+
+        *Note* that matroids as defined through flats are not defined in sage
+        version 9.2 and therefore it must be translated to another one of the
+        definitions.
+
+        Instead, we order our flats by inclusion; giving us a rank function and
+        use the rank function definition of matroid.
 
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: C = [[1,1,1], [1,1,0], [1,1,-1], [1,0,-1], [1,-1,-1],
-            ....:      [0,-1,-1], [-1,-1,-1], [0,1,1], [-1,1,1], [-1,0,1],
-            ....:      [-1,-1,1], [-1,-1,0], [0,0,0]]
+            sage: C = [[1,1,1], [1,1,0], [1,1,-1], [1,0,-1], [1,-1,-1], [0,-1,-1],
+            ....:      [-1,-1,-1], [0,1,1], [-1,1,1], [-1,0,1], [-1,-1,1], [-1,-1,0],
+            ....:      [0,0,0]]
             sage: M = OrientedMatroid(C, key='covector')
             sage: M.matroid()
             Matroid of rank 2 on 3 elements with 5 flats

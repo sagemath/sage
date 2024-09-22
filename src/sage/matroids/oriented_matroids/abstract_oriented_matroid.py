@@ -91,7 +91,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
 
     def elements(self):
         """
-        Return all elements.
+        Return elements.
 
         The elements of an oriented matroid are the "defining" elements of
         the oriented matroid. For example, covectors are the elements of
@@ -197,6 +197,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         """
         pass
 
+    # @cached_method
     def rank(self):
         r"""
         Return the rank.
@@ -467,7 +468,8 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         """
         gs = set(self.groundset()).difference(set(self.loops()))
         if e not in gs or f not in gs:
-            raise ValueError("elements must be in groundset and must not be loops")
+            raise ValueError(
+                "Elements must be in groundset and must not be loops")
         for i in self.elements():
             if i(e) == 0 and i(f) != 0:
                 return False

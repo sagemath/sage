@@ -1383,8 +1383,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         prec = Integer(prec)
         if prec < 1:
             raise ValueError("prec (=%s) must be >= 1" % prec)
-        if d >= prec - 1:
-            d = prec - 1
+        d = min(prec - 1, d)
         K = self.base_ring()
 
         A = VectorSpace(K, prec - 1)

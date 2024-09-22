@@ -535,7 +535,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
 
             ieqs, repr_rhss = zip(*[(ieq(a, b), ieq_repr_rhs(a, b))
                                     for a, b in zip(pi[:-1], pi[1:])])
-            return Polyhedron(ieqs=ieqs),  ieqs_repr_lhs(pi) + ''.join(repr_rhss)
+            return Polyhedron(ieqs=ieqs), ieqs_repr_lhs(pi) + ''.join(repr_rhss)
 
         split = (polyhedron_from_permutation(pi) for pi in Permutations(d))
         parts = ZZ(d).factorial()

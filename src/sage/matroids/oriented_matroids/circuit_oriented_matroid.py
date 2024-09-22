@@ -126,22 +126,19 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
             sage: M.is_valid()
             True
             sage: C2 = [((1,4),(2,3)), ((1,3),(2,4)), ((2,3),(1,4))]
-            sage: M = OrientedMatroid(C2, key='circuit')
-            sage: M.is_valid()
+            sage: OrientedMatroid(C2, key='circuit')
             Traceback (most recent call last):
             ...
             ValueError: only same/opposites can have same support
 
             sage: C3 = [((),()), ((1,4),(2,3)), ((2,3),(1,4))]
-            sage: M = OrientedMatroid(C3, key='circuit', groundset=[1,2,3,4])
-            sage: M.is_valid()
+            sage: OrientedMatroid(C3, key='circuit', groundset=[1,2,3,4])
             Traceback (most recent call last):
             ...
             ValueError: empty set not allowed
 
             sage: C4= [((1,),()), ((1,4),(2,3)), ((2,3),(1,4))]
-            sage: M = OrientedMatroid(C4, key='circuit', groundset=[1,2,3,4])
-            sage: M.is_valid()
+            sage: OrientedMatroid(C4, key='circuit', groundset=[1,2,3,4])
             Traceback (most recent call last):
             ...
             ValueError: every element needs an opposite
@@ -166,7 +163,8 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
                 # Axiom 3: (incomparability) supports must not be contained
                 if X.support().issubset(Y.support()):
                     if X != Y and X != -Y:
-                        raise ValueError("only same/opposites can have same support")
+                        raise ValueError(
+                            "only same/opposites can have same support")
                 # Axiom 4: Weak elimination
                 if X != -Y:
                     E = X.positives().intersection(Y.negatives())
