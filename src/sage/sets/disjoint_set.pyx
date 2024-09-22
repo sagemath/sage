@@ -854,7 +854,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         cdef int j = <int> self._el_to_int[f]
         OP_join(self._nodes, i, j)
 
-    def make_set(self, new_elt):
+    def make_set(self, new_elt = None):
         r"""
         Return a new disjoint set with an additional item.
 
@@ -864,7 +864,8 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
         INPUT:
 
-        - ``new_elt`` -- element to add.
+        - ``new_elt`` -- (optional) element to add. If `None`, then an integer
+        is added.
 
         EXAMPLES::
 
@@ -879,7 +880,11 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             {{'a'}, {'b', 'f'}, {'c', 'd', 'e'}}
             sage: e.make_set('e'); e
             {{'a'}, {'b', 'f'}, {'c', 'd', 'e'}}
+            sage: e.make_set(); e
+            {{'a'}, {'b', 'f'}, {'c', 'd', 'e'}, {6}}
         """
+        if new_elt is None:
+            new_elt = self._nodes.degree
         if not new_elt in self._int_to_el:
             d = self._nodes.degree
             self._int_to_el.append(new_elt)
