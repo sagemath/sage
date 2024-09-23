@@ -203,9 +203,11 @@ register_unpickle_override('sage.categories.category_types', 'Fields',
                            Fields)
 register_unpickle_override('sage.categories.category_types', 'VectorSpaces',
                            VectorSpaces)
-register_unpickle_override('sage.categories.category_types', 'Schemes_over_base',
+register_unpickle_override('sage.categories.category_types',
+                           'Schemes_over_base',
                            sage.categories.schemes.Schemes_over_base)
-register_unpickle_override('sage.categories.category_types', 'ModularAbelianVarieties',
+register_unpickle_override('sage.categories.category_types',
+                           'ModularAbelianVarieties',
                            ModularAbelianVarieties)
 register_unpickle_override('sage.libs.pari.gen_py', 'pari', pari)
 
@@ -213,7 +215,7 @@ register_unpickle_override('sage.libs.pari.gen_py', 'pari', pari)
 sage.misc.lazy_import.save_cache_file()
 
 
-# Debugging for Singular, see trac #10903
+# ##### Debugging for Singular, see issue #10903
 # from sage.libs.singular.ring import poison_currRing
 # sys.settrace(poison_currRing)
 
