@@ -885,7 +885,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         """
         if new_elt is None:
             new_elt = self._nodes.degree
-        if not new_elt in self._int_to_el:
+        if new_elt not in self._int_to_el:
             d = self._nodes.degree
             self._int_to_el.append(new_elt)
             self._el_to_int[new_elt] = d
