@@ -6304,8 +6304,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             c1_LLL = -R.one()
             for i in range(n):
                 tmp = R(b1_norm/(m_gram.row(i).norm()))
-                if tmp > c1_LLL:
-                    c1_LLL = tmp
+                c1_LLL = max(tmp, c1_LLL)
 
             if c1_LLL < 0:
                 raise RuntimeError('Unexpected intermediate result. Please try another Mordell-Weil base')
@@ -6630,8 +6629,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             c1_LLL = -R.one()
             for i in range(n):
                 tmp = R(b1_norm/(m_gram.row(i).norm()))
-                if tmp > c1_LLL:
-                    c1_LLL = tmp
+                c1_LLL = max(tmp, c1_LLL)
             if c1_LLL < 0:
                 raise RuntimeError('Unexpected intermediate result. Please try another Mordell-Weil base')
             d_L_0 = R(b1_norm**2 / c1_LLL)
@@ -6978,8 +6976,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             c1_LLL = -R.one()
             for i in range(n):
                 tmp = R(b1_norm/(m_gram.row(i).norm()))
-                if tmp > c1_LLL:
-                    c1_LLL = tmp
+                c1_LLL = max(tmp, c1_LLL)
             if c1_LLL < 0:
                 raise RuntimeError('Unexpected intermediate result. Please try another Mordell-Weil base')
             d_L_0 = R(b1_norm**2 / c1_LLL)

@@ -963,8 +963,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
                 prec = self._prec_cap_absolute
             x = ZZ.random_element(p**prec)
             relcap = x.valuation(p) + self._prec_cap_relative
-            if relcap < prec:
-                prec = relcap
+            prec = min(relcap, prec)
             return self._element_class(self, x, prec=prec)
         else:
             if prec is None:
@@ -1111,8 +1110,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
         p = self.prime()
         x = ZZ.random_element(p**prec)
         relcap = x.valuation(p) + self._prec_cap_relative
-        if relcap < prec:
-            prec = relcap
+        prec = min(relcap, prec)
         return self._element_class(self, x*(p**val), prec=prec)
 
 # Relaxed
