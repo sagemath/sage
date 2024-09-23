@@ -1372,6 +1372,8 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         """
         return len(self._intervals)
 
+    __len__ = n_components
+
     def cardinality(self):
         r"""
         Return the cardinality of the subset of the real line.
