@@ -1227,8 +1227,7 @@ class FiniteWords(AbstractLanguage):
             TypeError: codomain (=a) must be an instance of FiniteWords
         """
         n = self.alphabet().cardinality()
-        if min_length < 0:
-            min_length = 0
+        min_length = max(min_length, 0)
         # create an iterable of compositions (all "compositions" if arg is
         # None, or [arg] otherwise)
         if arg is None:
