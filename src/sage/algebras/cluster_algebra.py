@@ -355,6 +355,7 @@ mutating at the initial seed::
 # ****************************************************************************
 
 from copy import copy
+from typing import Any
 
 from sage.arith.misc import binomial
 from sage.categories.homset import Hom
@@ -562,7 +563,7 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
         """
         deg_matrix = block_matrix([[identity_matrix(self.parent().rank()),
                                     -self.parent().b_matrix()]])
-        components = {}
+        components: dict[tuple, Any] = {}
         x = self.lift()
         monomials = x.monomials()
         for m in monomials:
@@ -1432,11 +1433,11 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
              and coefficients y0, y1 over Integer Ring
         """
         var_names = self.initial_cluster_variable_names()
-        var_names = (" " if len(var_names) == 1 else "s ") + ", ".join(var_names)
+        var_names_str = (" " if len(var_names) == 1 else "s ") + ", ".join(var_names)
         coeff_names = self.coefficient_names()
         coeff_prefix = " and" + (" " if len(coeff_names) > 0 else " no ") + "coefficient"
         coeff = coeff_prefix + (" " if len(coeff_names) == 1 else "s ") + ", ".join(coeff_names) + (" " if len(coeff_names) > 0 else "")
-        return "A Cluster Algebra with cluster variable" + var_names + coeff + "over " + repr(self.scalars())
+        return "A Cluster Algebra with cluster variable" + var_names_str + coeff + "over " + repr(self.scalars())
 
     def _an_element_(self):
         r"""

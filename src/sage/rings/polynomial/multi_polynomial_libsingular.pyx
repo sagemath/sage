@@ -899,7 +899,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
                             if not c:
                                 continue
                             mon = p_Init(_ring)
-                            p_SetCoeff(mon, sa2si(c , _ring), _ring)
+                            p_SetCoeff(mon, sa2si(c, _ring), _ring)
                             for pos in m.nonzero_positions():
                                 overflow_check(m[pos], _ring)
                                 p_SetExp(mon, ind_map[pos], m[pos], _ring)
@@ -929,7 +929,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
                         if not c:
                             continue
                         mon = p_Init(_ring)
-                        p_SetCoeff(mon, sa2si(c , _ring), _ring)
+                        p_SetCoeff(mon, sa2si(c, _ring), _ring)
                         if len(m) != self.ngens():
                             raise TypeError("tuple key must have same length as ngens")
                         for pos from 0 <= pos < len(m):
@@ -1616,7 +1616,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         res = pMDivide(f._poly, g._poly)
         if coeff:
             if r.cf.type == n_unknown or r.cf.cfDivBy(p_GetCoeff(f._poly, r), p_GetCoeff(g._poly, r), r.cf):
-                n = r.cf.cfDiv( p_GetCoeff(f._poly, r) , p_GetCoeff(g._poly, r), r.cf)
+                n = r.cf.cfDiv(p_GetCoeff(f._poly, r), p_GetCoeff(g._poly, r), r.cf)
                 p_SetCoeff0(res, n, r)
             else:
                 raise ArithmeticError("Cannot divide these coefficients.")
@@ -4158,7 +4158,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                         quo = p_Add_q(quo, temp, r)
                     p = pNext(p)
                 return new_MP(parent, quo)
-            if r.cf.type == n_Znm or r.cf.type == n_Zn or r.cf.type == n_Z2m :
+            if r.cf.type == n_Znm or r.cf.type == n_Zn or r.cf.type == n_Z2m:
                 raise NotImplementedError("Division of multivariate polynomials over non fields by non-monomials not implemented.")
 
         count = singular_polynomial_length_bounded(self._poly, 15)
@@ -4468,23 +4468,25 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
         # I make a temporary copy of the poly in self because singclap_factorize appears to modify it's parameter
-        ptemp = p_Copy(self._poly,_ring)
+        ptemp = p_Copy(self._poly, _ring)
         iv = NULL
         sig_on()
-        if _ring!=currRing: rChangeCurrRing(_ring)   # singclap_factorize
-        I = singclap_factorize ( ptemp, &iv , 0, _ring)
+        if _ring != currRing:
+            rChangeCurrRing(_ring)   # singclap_factorize
+        I = singclap_factorize(ptemp, &iv, 0, _ring)
         sig_off()
 
         ivv = iv.ivGetVec()
-        v = [(new_MP(parent, p_Copy(I.m[i],_ring)) , ivv[i])   for i in range(1,I.ncols)]
-        v = [(f,m) for f,m in v if f!=0] # we might have zero in there
-        unit = new_MP(parent, p_Copy(I.m[0],_ring))
+        v = [(new_MP(parent, p_Copy(I.m[i], _ring)), ivv[i])
+             for i in range(1, I.ncols)]
+        v = [(f, m) for f, m in v if f != 0]  # we might have zero in there
+        unit = new_MP(parent, p_Copy(I.m[0], _ring))
 
-        F = Factorization(v,unit)
+        F = Factorization(v, unit)
         F.sort()
 
         del iv
-        id_Delete(&I,_ring)
+        id_Delete(&I, _ring)
 
         return F
 
@@ -4572,20 +4574,21 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 try:
                     f = parent.coerce(f)
                 except TypeError as msg:
-                    id_Delete(&fI,r)
-                    id_Delete(&_I,r)
+                    id_Delete(&fI, r)
+                    id_Delete(&_I, r)
                     raise TypeError(msg)
 
             _I.m[i] = p_Copy((<MPolynomial_libsingular>f)._poly, r)
-            i+=1
+            i += 1
 
-        fI.m[0]= p_Copy(self._poly, r)
+        fI.m[0] = p_Copy(self._poly, r)
 
-        if r!=currRing: rChangeCurrRing(r)  # idLift
+        if r != currRing:
+            rChangeCurrRing(r)  # idLift
         sig_on()
         res = idLift(_I, fI, NULL, 0, 0, 0)
         sig_off()
-        if errorreported != 0 :
+        if errorreported != 0:
             errorcode = errorreported
             errorreported = 0
             if errorcode == 1:
@@ -4602,7 +4605,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         id_Delete(&res, r)
         return Sequence(l, check=False, immutable=True)
 
-    def reduce(self,I):
+    def reduce(self, I):
         r"""
         Return a remainder of this polynomial modulo the
         polynomials in ``I``.
@@ -4858,7 +4861,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             return right
 
         if _ring.cf.type != n_unknown:
-            if _ring.cf.type == n_Znm or _ring.cf.type == n_Zn or _ring.cf.type == n_Z2m :
+            if _ring.cf.type == n_Znm or _ring.cf.type == n_Zn or _ring.cf.type == n_Z2m:
                 raise NotImplementedError("GCD over rings not implemented.")
 
         if n_GetChar(_ring.cf) > 1<<29:
@@ -4929,7 +4932,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if _ring!=currRing: rChangeCurrRing(_ring)
 
         if _ring.cf.type != n_unknown:
-            if _ring.cf.type == n_Znm or _ring.cf.type == n_Zn or _ring.cf.type == n_Z2m :
+            if _ring.cf.type == n_Znm or _ring.cf.type == n_Zn or _ring.cf.type == n_Z2m:
                 raise TypeError("LCM over non-integral domains not available.")
 
         if self._parent is not g._parent:
@@ -4944,7 +4947,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             + singular_polynomial_length_bounded(_g._poly,20)
         if count >= 20:
             sig_on()
-        if _ring!=currRing: rChangeCurrRing(_ring)  # singclap_gcd
+        if _ring != currRing:
+            rChangeCurrRing(_ring)  # singclap_gcd
         gcd = singclap_gcd(p_Copy(self._poly, _ring), p_Copy(_g._poly, _ring), _ring )
         prod = pp_Mult_qq(self._poly, _g._poly, _ring)
         ret = p_Divide(prod, gcd, _ring)
@@ -5476,12 +5480,15 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         elif not self._parent._base.is_field():
             raise ValueError("Resultants require base fields or integer base ring.")
 
-        cdef int count = singular_polynomial_length_bounded(self._poly,20) \
+        cdef int count = singular_polynomial_length_bounded(self._poly, 20) \
             + singular_polynomial_length_bounded(other._poly,20)
         if count >= 20:
             sig_on()
         if _ring != currRing: rChangeCurrRing(_ring)   # singclap_resultant
-        rt =  singclap_resultant(p_Copy(self._poly, _ring), p_Copy(other._poly, _ring), p_Copy((<MPolynomial_libsingular>variable)._poly , _ring ), _ring)
+        rt =  singclap_resultant(p_Copy(self._poly, _ring),
+                                 p_Copy(other._poly, _ring),
+                                 p_Copy((<MPolynomial_libsingular>variable)._poly, _ring ),
+                                 _ring)
         if count >= 20:
             sig_off()
         return new_MP(self._parent, rt)

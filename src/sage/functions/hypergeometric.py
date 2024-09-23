@@ -123,7 +123,7 @@ Conversions::
 
     sage: maxima(hypergeometric([1, 1, 1], [3, 3, 3], x))                               # needs sage.symbolic
     hypergeometric([1,1,1],[3,3,3],_SAGE_VAR_x)
-    sage: hypergeometric((5, 4), (4, 4), 3)._sympy_()                                   # needs sympy sage.symbolic
+    sage: hypergeometric((5,), (4,), 3)._sympy_()                                   # needs sympy sage.symbolic
     hyper((5,), (4,), 3)
     sage: hypergeometric((5, 4), (4, 4), 3)._mathematica_init_()                        # needs sage.symbolic
     'HypergeometricPFQ[{5,4},{4,4},3]'
@@ -295,6 +295,11 @@ class Hypergeometric(BuiltinFunction):
         The only simplification that is done automatically is returning 1
         if ``z`` is 0. For other simplifications use the
         ``simplify_hypergeometric`` method.
+
+        TESTS::
+
+            sage: hypergeometric([2, 3, 4], [4, 1], 1)
+            hypergeometric((2, 3, 4), (4, 1), 1)
         """
         return BuiltinFunction.__call__(self,
                                         SR._force_pyobject(a),
@@ -458,23 +463,21 @@ class Hypergeometric(BuiltinFunction):
             """
             aa = list(a)  # tuples are immutable
             bb = list(b)
-            p = pp = len(aa)
             q = qq = len(bb)
             i = 0
             while i < qq and aa:
-                bbb = bb[i]
-                if bbb in aa:
-                    aa.remove(bbb)
-                    bb.remove(bbb)
-                    pp -= 1
+                bbi = bb[i]
+                if bbi in aa:
+                    aa.remove(bbi)
+                    bb.remove(bbi)
                     qq -= 1
                 else:
                     i += 1
-            if (pp, qq) != (p, q):
+            if qq != q:
                 return hypergeometric(aa, bb, z)
             return self
 
-        def is_termwise_finite(self, a, b, z):
+        def is_termwise_finite(self, a, b, z) -> bool:
             """
             Determine whether all terms of ``self`` are finite.
 
@@ -514,8 +517,6 @@ class Hypergeometric(BuiltinFunction):
             """
             if z == 0:
                 return 0 not in b
-            if abs(z) == Infinity:
-                return False
             if abs(z) == Infinity:
                 return False
             for bb in b:
