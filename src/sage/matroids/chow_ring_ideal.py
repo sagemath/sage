@@ -23,7 +23,7 @@ class ChowRingIdeal(MPolynomialIdeal):
         EXAMPLES::
             
             sage: ch = matroids.Uniform(3,6).chow_ring(QQ, False)
-            sage: ch.matroid()
+            sage: ch.defining_ideal().matroid()
             U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
             {3: {{0, 1, 2, 3, 4, 5}}}
         """
@@ -38,7 +38,7 @@ class ChowRingIdeal(MPolynomialIdeal):
         EXAMPLES::
 
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
-            sage: ch.flats_generator()
+            sage: ch.defining_ideal().flats_generator()
             {frozenset({'a'}): Aa, frozenset({'b'}): Ab, frozenset({'c'}): Ac,
             frozenset({'d'}): Ad, frozenset({'e'}): Ae, frozenset({'f'}): Af,
             frozenset({'g'}): Ag, frozenset({'b', 'a', 'f'}): Aabf,
