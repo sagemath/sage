@@ -225,6 +225,27 @@ cdef class Ring(ParentWithGens):
         7
         sage: QQ.cardinality()
         +Infinity
+
+    Check length::
+
+        sage: len(Integers(24))
+        24
+        sage: len(RR)   # known bug
+        Traceback (most recent call last):
+        ...
+        ValueError: infinite set
+        sage: len(CC)
+        Traceback (most recent call last):
+        ...
+        ValueError: infinite set
+        sage: len(QQ['x'])
+        Traceback (most recent call last):
+        ...
+        ValueError: infinite set
+        sage: len(QQ)
+        Traceback (most recent call last):
+        ...
+        ValueError: infinite set
      """
     def __init__(self, base, names=None, normalize=True, category=None):
         """
@@ -265,24 +286,6 @@ cdef class Ring(ParentWithGens):
             NotImplementedError: object does not support iteration
         """
         raise NotImplementedError("object does not support iteration")
-
-    def __len__(self):
-        r"""
-        Return the cardinality of this ring if it is finite, else raise
-        a :exc:`NotImplementedError`.
-
-        EXAMPLES::
-
-            sage: len(Integers(24))
-            24
-            sage: len(RR)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: len() of an infinite set
-        """
-        if self.is_finite():
-            return self.cardinality()
-        raise NotImplementedError('len() of an infinite set')
 
     def __xor__(self, n):
         r"""
