@@ -2,12 +2,16 @@ from itertools import accumulate, chain
 
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.modules import Modules
 from sage.categories.monoids import Monoids
 from sage.categories.sets_cat import cartesian_product
 from sage.categories.sets_with_grading import SetsWithGrading
+from sage.categories.tensor import tensor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_vector import IntegerVectors
-from sage.combinat.partition import Partitions
+from sage.combinat.partition import Partitions, _Partitions
+from sage.combinat.sf.sf import SymmetricFunctions
+from sage.rings.integer_ring import ZZ
 from sage.groups.perm_gps.constructor import PermutationGroupElement
 from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -16,6 +20,7 @@ from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
 from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement)
+from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, parent
@@ -1021,6 +1026,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             TESTS::
 
+                sage: M = MolecularSpecies("X,Y")
                 sage: B = M(PermutationGroup([(1,2,3)]), {0: [1,2,3]})
                 sage: B.group_and_partition()
                 (Permutation Group with generators [(1,2,3)],
@@ -1043,6 +1049,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: F = M(SymmetricGroup(1)) * M(SymmetricGroup(2))
                 sage: F.group_and_partition()
                 (Permutation Group with generators [(2,3)], (frozenset({1, 2, 3}),))
+
+                sage: F = M(PermutationGroup([(1,2),(3,)]))
+                sage: F.group_and_partition()[0].domain()
+                {1, 2, 3}
             """
             def shift_gens(gens, n):
                 """
@@ -1089,12 +1099,50 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             gens = [gen
                     for f, tc in zip(f_list, tc_list)
                     for gen in shift_gens(f.gens(), tc) if gen]  # gen is a tuple
-            G = PermutationGroup(gens)
+            G = PermutationGroup(gens, domain=range(1, tc_list[-1]+1))
             new_dompart = tuple([frozenset(chain(*[[tc + e for e in p]
                                                    for p, tc in zip(f_dompart, tc_list)]))
                                  for f_dompart in zip(*dompart_list)])
 
             return G, new_dompart
+
+        def cycle_index(self, parent=None):
+            r"""
+            Return the cycle index of ``self``.
+
+            EXAMPLES::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X,Y")
+                sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
+                sage: A = M(G, {0: [5,6], 1: [1,2,3,4]})
+                sage: A.cycle_index()
+                1/4*p[1, 1] # p[1, 1, 1, 1] + 1/4*p[1, 1] # p[2, 2] + 1/4*p[2] # p[1, 1, 1, 1] + 1/4*p[2] # p[2, 2]
+            """
+            k = self.parent()._arity
+            if parent is None:
+                p = SymmetricFunctions(QQ).powersum()
+                parent = tensor([p]*k)
+            elif parent not in Modules.WithBasis:
+                raise ValueError("`parent` should be a module with basis indexed by partitions")
+            base_ring = parent.base_ring()
+            G, dompart = self.group_and_partition()
+            dompart_dict = {}
+            for i, s in enumerate(dompart):
+                dompart_dict.update({e: i for e in s})
+
+            def cycle_type(pi):
+                tuples = pi.cycle_tuples(singletons=True)
+                cycle_type = [[] for _ in range(k)]
+                for c in tuples:
+                    cycle_type[dompart_dict[c[0]]].append(len(c))
+                return tuple(_Partitions(sorted(c, reverse=True))
+                             for c in cycle_type)
+
+            return (parent.sum_of_terms([cycle_type(C.an_element()),
+                                         base_ring(C.cardinality())]
+                                        for C in G.conjugacy_classes())
+                    / G.cardinality())
 
         @cached_method
         def grade(self):
