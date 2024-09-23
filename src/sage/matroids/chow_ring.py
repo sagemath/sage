@@ -30,7 +30,7 @@ class ChowRing(QuotientRing_generic):
 
     ..MATH::
 
-        A(M)_R := R[y_{e_1}, \ldots, y_{e_n}, x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M)
+        A(M)_R := R[y_{e_1}, \ldots, y_{e_n}, x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M),
 
     where `(I_M + J_M)` is the augmented Chow ring ideal of matroid `M`
     of Feitchner-Yuzvinsky presentation.
@@ -39,9 +39,10 @@ class ChowRing(QuotientRing_generic):
 
     ..MATH::
 
-        A(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / I_{af}M
+        A(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / I_M^{af}
 
-    where `I_{af}M` is the augmented Chow ring ideal of matroid `M` of atom-free presentation.
+    where `I_M^{af}` is the augmented Chow ring ideal of matroid `M` in the
+    atom-free presentation.
 
     .. SEEALSO::
 
@@ -91,7 +92,10 @@ class ChowRing(QuotientRing_generic):
         else:
             self._ideal = ChowRingIdeal_nonaug(M, R)
         C = CommutativeRings().Quotients() & GradedAlgebrasWithBasis(R).FiniteDimensional()
-        QuotientRing_generic.__init__(self, R=self._ideal.ring(), I=self._ideal, names=self._ideal.ring().variable_names(), category=C)
+        QuotientRing_generic.__init__(self, R=self._ideal.ring(),
+                                      I=self._ideal,
+                                      names=self._ideal.ring().variable_names(),
+                                      category=C)
 
     def _repr_(self):
         r"""
@@ -127,15 +131,14 @@ class ChowRing(QuotientRing_generic):
             \Bold{Q}[A_{0}, A_{1}, A_{2}, B_{0}, B_{1}, B_{2}]
 
         """
-        import sage.misc.latex as latex
-        return "%s/%s" % (latex.latex(self._ideal.ring()), latex.latex(self._ideal))
+        from sage.misc.latex import latex
+        return "{} / {}".format(latex(self._ideal.ring()), latex(self._ideal))
 
     def _coerce_map_from_base_ring(self):
         r"""
         Disable the coercion from the base ring from the category.
 
         TESTS::
-
 
             sage: ch = matroids.Wheel(3).chow_ring(QQ, False)
             sage: ch._coerce_map_from_base_ring() is None
@@ -149,7 +152,6 @@ class ChowRing(QuotientRing_generic):
         
         EXAMPLES::
 
-
             sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
             sage: ch.basis()
             [B0*B01, 1]
@@ -161,9 +163,9 @@ class ChowRing(QuotientRing_generic):
         flats_gen = self._ideal.flats_generator()
         R = self._ideal.ring()
         flats = sorted(flats, key=lambda X: (len(X), sorted(X)))
-        ranks = {F:self._matroid.rank(F) for F in flats}
+        ranks = {F: self._matroid.rank(F) for F in flats}
         monomial_basis = []
-        if self._augmented is True:
+        if self._augmented:
             if self._presentation == 'fy':
                 flats.remove(frozenset()) #Non empty proper flats
                 max_powers = []
