@@ -6,6 +6,7 @@ from sage.data_structures.stream import (Stream_zero,
 from sage.rings.species import PolynomialSpecies
 from sage.libs.gap.libgap import libgap
 from sage.categories.sets_cat import cartesian_product
+from sage.categories.tensor import tensor
 from sage.combinat.integer_vector import IntegerVectors
 from sage.structure.element import parent
 import itertools
@@ -234,6 +235,18 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
             sage: s(C.cycle_index_series()[5])
             s[1, 1, 1, 1, 1] + s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[5]
+
+            sage: L = LazySpecies(ZZ, "X")
+            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: L2 = LazySpecies(QQ, "X, Y")
+            sage: P2 = PolynomialSpecies(QQ, "X, Y")
+            sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
+            sage: Y = L2(P2(SymmetricGroup(1), {1: [1]}))
+            sage: E(X + Y).cycle_index_series()[3]
+            1/6*p[] # p[1, 1, 1] + 1/2*p[] # p[2, 1] + 1/3*p[] # p[3]
+            + 1/2*p[1] # p[1, 1] + 1/2*p[1] # p[2] + 1/2*p[1, 1] # p[1]
+            + 1/6*p[1, 1, 1] # p[] + 1/2*p[2] # p[1] + 1/2*p[2, 1] # p[]
+            + 1/3*p[3] # p[]
         """
         P = self.parent()
         p = SymmetricFunctions(P.base_ring().fraction_field()).p()
@@ -243,7 +256,10 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                 return sum(c * M.group_and_partition()[0].cycle_index()
                            for M, c in self[n].monomial_coefficients().items())
         else:
-            raise NotImplementedError
+            L = LazySymmetricFunctions(tensor([p for _ in range(P._arity)]))
+            def coefficient(n):
+                return sum(c * M.cycle_index()
+                           for M, c in self[n].monomial_coefficients().items())
         return L(coefficient)
 
     def _add_(self, other):
