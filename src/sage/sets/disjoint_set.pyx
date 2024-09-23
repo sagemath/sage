@@ -854,18 +854,18 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         cdef int j = <int> self._el_to_int[f]
         OP_join(self._nodes, i, j)
 
-    def make_set(self, new_elt = None):
+    def make_set(self, new_elt=None):
         r"""
         Add a new element into a new set containing only the new element.
 
-        According to :wikipedia:`Disjoint-set_data_structure#Making_new_sets` the
-        `make_set` operation adds a new element into a new set containing only
-        the new element. The new set is added at the end of `self`.
+        According to :wikipedia:`Disjoint-set_data_structure#Making_new_sets`
+        the `make_set` operation adds a new element into a new set containing
+        only the new element. The new set is added at the end of `self`.
 
         INPUT:
 
         - ``new_elt`` -- (optional) element to add. If `None`, then an integer
-        is added.
+          is added.
 
         EXAMPLES::
 
