@@ -414,7 +414,6 @@ class FreeModulePseudoMorphism(Morphism):
             mat = self._matrix
         return self.parent()(mat, side)
 
-
     def __eq__(self, other):
         r"""
         Compare this morphism with ``other``.
@@ -452,4 +451,3 @@ class FreeModulePseudoMorphism(Morphism):
                 return False
         if isinstance(other, FreeModulePseudoMorphism):
             return self.parent() is other.parent() and self._matrix == other._matrix
-

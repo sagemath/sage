@@ -85,7 +85,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             if ore.base_ring() is not ring:
                 raise ValueError("base rings do not match")
         else:
-            ore = OrePolynomialRing(ring, twist, names='x')
+            ore = OrePolynomialRing(ring, twist, names='x', polcast=False)
         if isinstance(ore, OrePolynomialRing) and ore._derivation is not None:
             if not codomain.has_coerce_map_from(domain):
                 raise ValueError("the domain does not coerce into the codomain")
