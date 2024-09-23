@@ -2039,7 +2039,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                         return P.zero()
                     else:
                         return x[i-1]**comp[-1] * on_basis(comp[:-1], i-1) + \
-                                                  on_basis(comp,      i-1)
+                                                  on_basis(comp, i-1)
                 return M._apply_module_morphism(self, lambda comp: on_basis(comp,n),
                                                 codomain=P)
 

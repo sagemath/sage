@@ -2365,7 +2365,7 @@ cdef class ElementWithCachedMethod(Element):
             attr = getattr_from_other_class(self,
                                         self._parent.category().element_class,
                                         name)
-            self._cached_methods = {name : attr}
+            self._cached_methods = {name: attr}
             return attr
 
 

@@ -41,6 +41,7 @@ from sage.categories.fields import Fields
 from sage.categories.modular_abelian_varieties import ModularAbelianVarieties
 from sage.matrix.constructor import matrix
 from sage.matrix.special import block_diagonal_matrix, identity_matrix
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
@@ -69,8 +70,7 @@ lazy_import('sage.databases.cremona',
             ['cremona_letter_code', 'CremonaDatabase'])
 
 
-from . import homspace
-from . import lseries
+from sage.modular.abvar import homspace, lseries
 from .morphism import HeckeOperator, Morphism, DegeneracyMap
 from .torsion_subgroup import RationalTorsionSubgroup, QQbarTorsionSubgroup
 from .finite_subgroup import (FiniteSubgroup_lattice, FiniteSubgroup,
@@ -1728,6 +1728,7 @@ class ModularAbelianVariety_abstract(Parent):
             self.__ambient_morphism = phi
             return phi
 
+    @cached_method
     def is_ambient(self) -> bool:
         """
         Return ``True`` if ``self`` equals the ambient product Jacobian.
@@ -1746,13 +1747,8 @@ class ModularAbelianVariety_abstract(Parent):
             sage: (A+B+C).is_ambient()
             True
         """
-        try:
-            return self.__is_ambient
-        except AttributeError:
-            pass
         L = self.lattice()
-        self.__is_ambient = (self.lattice() == ZZ**L.degree())
-        return self.__is_ambient
+        return self.lattice() == ZZ**L.degree()
 
     def dimension(self):
         """
@@ -1890,6 +1886,7 @@ class ModularAbelianVariety_abstract(Parent):
             self.__sturm_bound = B
             return B
 
+    @cached_method
     def is_hecke_stable(self) -> bool:
         """
         Return ``True`` if ``self`` is stable under the Hecke operators of its
@@ -1908,11 +1905,6 @@ class ModularAbelianVariety_abstract(Parent):
             sage: (J0(33)[0] + J0(33)[1]).is_hecke_stable()
             True
         """
-        try:
-            return self._is_hecke_stable
-        except AttributeError:
-            pass
-
         # b = self.modular_symbols().sturm_bound()
         b = max([m.sturm_bound()
                  for m in self._ambient_modular_symbols_spaces()])
@@ -1924,10 +1916,8 @@ class ModularAbelianVariety_abstract(Parent):
             Tn_matrix = J.hecke_operator(n).matrix()
             for v in B:
                 if v * Tn_matrix not in L:
-                    self._is_hecke_stable = False
                     return False
 
-        self._is_hecke_stable = True
         return True
 
     def is_subvariety(self, other) -> bool:
@@ -2467,7 +2457,7 @@ class ModularAbelianVariety_abstract(Parent):
             sage: J0(389).homology(ZZ)
             Integral Homology of Abelian variety J0(389) of dimension 32
         """
-        from . import homology
+        from sage.modular.abvar import homology
         try:
             return self._homology[base_ring]
         except AttributeError:
