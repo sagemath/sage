@@ -140,7 +140,7 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
         sage: OrientedMatroid([[0]], key='covector')
         Covector oriented matroid of rank 0
         sage: M = OrientedMatroid([[0]], key='circuit')
-        sage: M.is_valid(with_errors=True)
+        sage: M.is_valid(certificate=True)
         (False, 'empty set not allowed')
 
     OUTPUT:

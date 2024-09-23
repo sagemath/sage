@@ -66,7 +66,7 @@ class AbstractOrientedMatroid(UniqueRepresentation, Parent):
         Parent.__init__(self, category=category)
 
     @abstract_method
-    def is_valid(self, with_errors=False) -> bool | tuple[bool, str]:
+    def is_valid(self, certificate=False) -> bool | tuple[bool, str]:
         r"""
         Return whether ``self`` satisfies the oriented matroid axioms.
 

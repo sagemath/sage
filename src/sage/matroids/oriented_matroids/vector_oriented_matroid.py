@@ -109,7 +109,7 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
         else:
             self._groundset = tuple(groundset)
 
-    def is_valid(self, with_errors=False) -> bool | tuple[bool, str]:
+    def is_valid(self, certificate=False) -> bool | tuple[bool, str]:
         """
         Return whether our vectors satisfy the vector axioms.
 
@@ -118,17 +118,17 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: V2 = [[1, 1]]
             sage: M2 = OrientedMatroid(V2, key='vector')
-            sage: M2.is_valid(with_errors=True)
+            sage: M2.is_valid(certificate=True)
             (False, 'every element needs an opposite')
 
             sage: V3 = [[1,1], [-1,-1], [0,-1], [0,1], [-1,0], [1,0]]
             sage: M3 = OrientedMatroid(V3, key='vector')
-            sage: M3.is_valid(with_errors=True)
+            sage: M3.is_valid(certificate=True)
             (False, 'composition must be in vectors')
 
             sage: V4 = [[1,1], [-1,-1]]
             sage: M4 = OrientedMatroid(V4, key='vector')
-            sage: M4.is_valid(with_errors=True)
+            sage: M4.is_valid(certificate=True)
             (False, 'vector elimination failed')
         """
         vectors = self.vectors()
@@ -140,13 +140,13 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
                 zero_found = True
             # Axiom 2: Make sure negative exists
             if -X not in vectors:
-                if with_errors:
+                if certificate:
                     return (False, "every element needs an opposite")
                 return False
             for Y in vectors:
                 # Axiom 3: Closed under composition
                 if X.composition(Y) not in vectors:
-                    if with_errors:
+                    if certificate:
                         return (False, "composition must be in vectors")
                     return False
                 # Axiom 4: Vector elimination
@@ -171,16 +171,16 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
                                 and ze.issubset(Z.support()):
                             found = True
                     if not found:
-                        if with_errors:
+                        if certificate:
                             return (False, "vector elimination failed")
                         return False
 
         if not zero_found:
-            if with_errors:
+            if certificate:
                 return (False, "empty set is required")
             return False
 
-        if with_errors:
+        if certificate:
             return (True, "")
         return True
 

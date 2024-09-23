@@ -121,7 +121,7 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
             rep = "Covector oriented matroid"
         return rep
 
-    def is_valid(self, with_errors=False) -> bool | tuple[bool, str]:
+    def is_valid(self, certificate=False) -> bool | tuple[bool, str]:
         """
         Return whether our covectors satisfy the covector axioms.
 
@@ -134,17 +134,17 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
 
             sage: C2 = [[0,0], [1,1]]
             sage: M2 = OrientedMatroid(C2, key='covector')
-            sage: M2.is_valid(with_errors=True)
+            sage: M2.is_valid(certificate=True)
             (False, 'every element needs an opposite')
 
             sage: C3 = [[1,1], [-1,-1], [0,1], [1,0], [-1,0], [0,-1]]
             sage: M3 = OrientedMatroid(C3, key='covector')
-            sage: M3.is_valid(with_errors=True)
+            sage: M3.is_valid(certificate=True)
             (False, 'composition must be in vectors')
 
             sage: C4 = [[0,0], [1,1], [-1,-1], [1,-1], [-1,1]]
             sage: M4 = OrientedMatroid(C4, key='covector')
-            sage: M4.is_valid(with_errors=True)
+            sage: M4.is_valid(certificate=True)
             (False, 'weak elimination failed')
         """
         covectors = self.covectors()
@@ -156,13 +156,13 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
                 zero_found = True
             # Axiom 2: Make sure negative exists
             if -X not in covectors:
-                if with_errors:
+                if certificate:
                     return (False, "every element needs an opposite")
                 return False
             for Y in covectors:
                 # Axiom 3: Closed under composition
                 if X.composition(Y) not in covectors:
-                    if with_errors:
+                    if certificate:
                         return (False, "composition must be in vectors")
                     return False
                 # Axiom 4: Weak elimination axiom
@@ -180,16 +180,16 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
                                 if Z(f) != xy(f):
                                     found = False
                     if not found:
-                        if with_errors:
+                        if certificate:
                             return (False, "weak elimination failed")
                         return False
 
         if not zero_found:
-            if with_errors:
+            if certificate:
                 return (False, "all zero covector is required")
             return False
 
-        if with_errors:
+        if certificate:
             return (True, "")
         return True
 

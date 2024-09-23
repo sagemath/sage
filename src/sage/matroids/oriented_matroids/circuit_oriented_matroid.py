@@ -121,7 +121,7 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
         else:
             self._groundset = tuple(groundset)
 
-    def is_valid(self, with_errors=False) -> bool | tuple[bool, str]:
+    def is_valid(self, certificate=False) -> bool | tuple[bool, str]:
         """
         Return whether our circuits satisfy the circuit axioms.
 
@@ -130,26 +130,26 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
             sage: C = [((1,4),(2,3)), ((2,3),(1,4))]
             sage: M = OrientedMatroid(C, key='circuit')
-            sage: M.is_valid(with_errors=True)
+            sage: M.is_valid(certificate=True)
             (True, '')
             sage: M.is_valid()
             True
 
             sage: C2 = [((1,4),(2,3)), ((1,3),(2,4)), ((2,3),(1,4))]
             sage: M2 = OrientedMatroid(C2, key='circuit')
-            sage: M2.is_valid(with_errors=True)
+            sage: M2.is_valid(certificate=True)
             (False, 'only same/opposites can have same support')
             sage: M2.is_valid()
             False
 
             sage: C3 = [((),()), ((1,4),(2,3)), ((2,3),(1,4))]
             sage: M3 = OrientedMatroid(C3, key='circuit', groundset=[1,2,3,4])
-            sage: M3.is_valid(with_errors=True)
+            sage: M3.is_valid(certificate=True)
             (False, 'empty set not allowed')
 
             sage: C4= [((1,),()), ((1,4),(2,3)), ((2,3),(1,4))]
             sage: M4 = OrientedMatroid(C4, key='circuit', groundset=[1,2,3,4])
-            sage: M4.is_valid(with_errors=True)
+            sage: M4.is_valid(certificate=True)
             (False, 'every element needs an opposite')
 
         """
@@ -158,19 +158,19 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
         for X in circuits:
             # Axiom 1: Make sure empty is not present
             if X.is_zero():
-                if with_errors:
+                if certificate:
                     return (False, "empty set not allowed")
                 return False
             # Axiom 2: (symmetry) Make sure negative exists
             if -X not in circuits:
-                if with_errors:
+                if certificate:
                     return (False, "every element needs an opposite")
                 return False
             for Y in circuits:
                 # Axiom 3: (incomparability) supports must not be contained
                 if X.support().issubset(Y.support()):
                     if X != Y and X != -Y:
-                        if with_errors:
+                        if certificate:
                             return (
                                 False,
                                 "only same/opposites can have same support"
@@ -191,10 +191,10 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
                             if Z.positives().issubset(p) and Z.negatives().issubset(n):
                                 found = True
                         if not found:
-                            if with_errors:
+                            if certificate:
                                 return (False, "weak elimination failed")
                             return False
-        if with_errors:
+        if certificate:
             return (True, "")
         return True
 
