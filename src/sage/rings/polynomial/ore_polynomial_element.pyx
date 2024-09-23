@@ -36,6 +36,7 @@ from cysignals.signals cimport sig_check
 from sage.structure.element import coerce_binop
 
 from sage.rings.infinity import infinity
+from sage.matrix.special import companion_matrix
 from sage.structure.element cimport Element, RingElement, AlgebraElement
 from sage.structure.parent cimport Parent
 from sage.categories.homset import Hom
@@ -2956,6 +2957,26 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             Xi = X * Xi
             ans += self[i] * Xi
         return ans
+
+    def quotient_module(self, names=None):
+        r"""
+        Return the quotient ring `A/AP` as a module over `A`
+        where `A` denotes the underlying Ore polynomial ring
+        and `P` denotes this Ore polynomial.
+
+        INPUT:
+
+        - ``names`` (default: ``None``) -- a string or a list
+          of string, the names of the vector of the canonical
+          basis
+
+        EXAMPLES::
+
+        """
+        from sage.modules.ore_module import OreModule
+        coeffs = self.right_monic().list()
+        f = companion_matrix(coeffs, format='bottom')
+        return OreModule(f, self.parent(), names=names)
 
 
 cdef class ConstantOrePolynomialSection(Map):

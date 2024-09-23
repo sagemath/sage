@@ -4,7 +4,7 @@ class OreModule_element(FreeModuleElement_generic_dense):
     def _repr_(self):
         parent = self.parent()
         if parent._names is None:
-            return FreeModuleElement_generic_dense._repr_(self)
+            return self.parent()._repr_element(self)
         else:
             rank = parent.rank()
             names = parent._names
@@ -21,6 +21,11 @@ class OreModule_element(FreeModuleElement_generic_dense):
                 return "0"
             else:
                 return s[3:]
+
+    def vector(self):
+        M = self.parent()
+        V = M.base_ring() ** M.rank()
+        return V(self)
 
     def image(self):
         return self.parent()._pseudohom(self)
