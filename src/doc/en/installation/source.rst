@@ -44,8 +44,6 @@ already must be installed on your system:
 
 - `fundamental system packages required for installing from source <../reference/spkg/_prereq.html>`_
 
-- `C/C++ compilers <../reference/spkg/gcc.html>`_
-
 If you have sufficient privileges (for example, on Linux you can
 use ``sudo`` to become the ``root`` user), then you can install these packages
 using the commands for your platform indicated in the pages linked above.
@@ -54,6 +52,8 @@ do this for you.
 
 In addition to these minimal prerequisites, we strongly recommend to use system
 installations of the following:
+
+- `C/C++ compilers <../reference/spkg/gcc.html>`_
 
 - `Fortran compiler <../reference/spkg/gfortran.html>`_
 
@@ -723,12 +723,12 @@ To start Sage, you can now simply type from Sage's home directory::
 
     $ ./sage
 
-You should see the Sage prompt, which will look something like this::
+You should see the Sage banner and prompt, which will look something like this::
 
-    $ sage
+    $ ./sage
     ┌────────────────────────────────────────────────────────────────────┐
-    │ SageMath version 8.8, Release Date: 2019-06-26                     │
-    │ Using Python 3.10.4. Type "help()" for help.                       │
+    │ SageMath version 10.4, Release Date: 2024-07-19                    │
+    │ Using Python 3.9.6. Type "help()" for help.                        │
     └────────────────────────────────────────────────────────────────────┘
     sage:
 
@@ -737,27 +737,21 @@ time, but can take several minutes if the file system is slow or busy.
 Since Sage opens a lot of files, it is preferable to install Sage on a fast
 filesystem if possible.
 
-Just starting successfully tests that many of the components built
-correctly.
-Note that this should have been already automatically tested during the
-build process.
-If the above is not displayed (e.g., if you get a massive traceback), please
-report the problem, e.g., at https://groups.google.com/group/sage-support.
+Just starting successfully tests that many of the components built correctly.
+Note that this should have been already automatically tested during the build
+process.
 
-After Sage has started, try a simple command:
+After Sage has started, try a few simple commands:
 
 .. CODE-BLOCK:: ipycon
 
     sage: 2 + 2
     4
-
-Or something slightly more complicated:
-
-.. CODE-BLOCK:: ipycon
-
     sage: factor(2005)
     5 * 401
 
+If there is any problem, for example, the banner is not displayed or you get a massive traceback,
+please report it to https://groups.google.com/group/sage-support.
 
 Running tests
 ^^^^^^^^^^^^^
