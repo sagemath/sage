@@ -214,9 +214,11 @@ class FreeModulePseudoMorphism(Morphism):
         v = x_twist * self._matrix
         if self._derivation is not None:
             v += D(list(map(self._derivation, x)))
-        if not C.is_ambient():
+        if C.is_ambient():
+            v = v.list()
+        else:
             v = C.linear_combination_of_basis(v)
-        return C._element_constructor_(v)
+        return C(v)
 
     def _repr_(self):
         r"""
@@ -246,7 +248,7 @@ class FreeModulePseudoMorphism(Morphism):
             Domain: Vector space of dimension 3 over Finite Field in z of size 7^3
             Codomain: Vector space of dimension 3 over Finite Field in z of size 7^3
         """
-        twist = self.parent()._repr_twist()
+        twist = self.parent()._ore._repr_twist()
         s = "Free module pseudomorphism (%s) defined " % twist
         if self._side == "right":
             s += "as left-multiplication "
@@ -290,7 +292,7 @@ class FreeModulePseudoMorphism(Morphism):
 
         """
         if self._side == "left":
-            return self._matrix
+            return self._matrix.__copy__()
         else:
             return self._matrix.transpose()
 
@@ -412,7 +414,6 @@ class FreeModulePseudoMorphism(Morphism):
             mat = self._matrix
         return self.parent()(mat, side)
 
-
     def __eq__(self, other):
         r"""
         Compare this morphism with ``other``.
@@ -450,4 +451,3 @@ class FreeModulePseudoMorphism(Morphism):
                 return False
         if isinstance(other, FreeModulePseudoMorphism):
             return self.parent() is other.parent() and self._matrix == other._matrix
-

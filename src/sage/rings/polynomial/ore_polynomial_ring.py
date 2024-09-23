@@ -317,7 +317,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             Univariate Polynomial Ring in x over Finite Field in a of size 5^2
             sage: S.<x> = OrePolynomialRing(k, Frob, polcast=False)
             sage: S
-            Ore Polynomial Ring in x over Finite Field in a of size 5^2 twisted by Identity
+            Ore Polynomial Ring in x over Finite Field in a of size 5^2 untwisted
         """
         if base_ring not in CommutativeRings():
             raise TypeError('base_ring must be a commutative ring')
@@ -325,7 +325,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             if (twist.domain() is not base_ring
              or twist.codomain() is not base_ring):
                 raise TypeError("the twisting morphism must be an endomorphism of base_ring (=%s)" % base_ring)
-            if twist.is_identity() and polcast:
+            if twist.is_identity():
                 morphism = None
             else:
                 morphism = twist
@@ -596,6 +596,38 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             if P.variable_name() == self.variable_name():
                 return base_ring.has_coerce_map_from(P.base_ring())
 
+    def _repr_twist(self):
+        r"""
+        Return a string representation of the twisting morphisms.
+
+        This is a helper method.
+
+        TESTS::
+
+            sage: F.<z> = GF(5^3)
+            sage: Frob = F.frobenius_endomorphism()
+
+            sage: S.<x> = OrePolynomialRing(F, Frob)
+            sage: S._repr_twist()
+            'twisted by z |--> z^5'
+
+            sage: T.<y> = OrePolynomialRing(F, Frob^3, polcast=False)
+            sage: T._repr_twist()
+            'untwisted'
+
+        """
+        s = ""
+        if self._morphism is not None:
+            s += self._morphism._repr_short()
+        if self._derivation is not None:
+            if s != "":
+                s += " and "
+            s += self._derivation._repr_()
+        if s == "":
+            return "untwisted"
+        else:
+            return "twisted by " + s
+
     def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
@@ -613,13 +645,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             sage: T
             Ore Polynomial Ring in d over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
         """
-        s = "Ore Polynomial Ring in %s over %s twisted by " % (self.variable_name(), self.base_ring())
-        if self._derivation is None:
-            s += self._morphism._repr_short()
-        else:
-            if self._morphism is not None:
-                s += "%s and " % self._morphism._repr_short()
-            s += self._derivation._repr_()
+        s = "Ore Polynomial Ring in %s over %s %s" % (self.variable_name(), self.base_ring(), self._repr_twist())
         if self.is_sparse():
             s = "Sparse " + s
         return s

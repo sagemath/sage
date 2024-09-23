@@ -63,7 +63,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
 
         -  ``codomain`` -- a free module, the codomain of this pseudomorphism
 
-        -  ``twist`` -- a twisting morphism or a twisting derivation
+        -  ``twist`` -- a twisting morphism/derivation or a Ore polynomial ring
 
         TESTS::
 
@@ -80,7 +80,12 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         ring = domain.base_ring()
         if codomain.base_ring() is not ring:
             raise ValueError("the domain and the codomain must be defined over the same ring")
-        ore = OrePolynomialRing(ring, twist, names='x')
+        if isinstance(twist, OrePolynomialRing):
+            ore = twist
+            if ore.base_ring() is not ring:
+                raise ValueError("base rings do not match")
+        else:
+            ore = OrePolynomialRing(ring, twist, names='x', polcast=False)
         if isinstance(ore, OrePolynomialRing) and ore._derivation is not None:
             if not codomain.has_coerce_map_from(domain):
                 raise ValueError("the domain does not coerce into the codomain")
@@ -158,37 +163,6 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             twist = self._derivation
         return FreeModulePseudoHomspace, (self.domain(), self.codomain(), twist)
 
-    def _repr_twist(self):
-        r"""
-        Return a string representation of the twisting morphisms.
-
-        This is a helper method.
-
-        TESTS::
-
-            sage: F.<z> = GF(5^3)
-            sage: Frob = F.frobenius_endomorphism()
-            sage: M = F^2
-
-            sage: M.PseudoHom(Frob)._repr_twist()
-            'twisted by z |--> z^5'
-
-            sage: M.PseudoHom(Frob^3)._repr_twist()
-            'untwisted'
-
-        """
-        s = ""
-        if self._morphism is not None:
-            s += self._morphism._repr_short()
-        if self._derivation is not None:
-            if s != "":
-                s += " and "
-            s += self._derivation._repr_()
-        if s == "":
-            return "untwisted"
-        else:
-            return "twisted by " + s
-
     def _repr_(self):
         r"""
         Returns a string representation of this pseudomorphism space.
@@ -215,7 +189,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             Set of Pseudoendomorphisms (twisted by d/dt) of Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
 
         """
-        twist = self._repr_twist()
+        twist = self._ore._repr_twist()
         if self.domain() is self.codomain():
             return "Set of Pseudoendomorphisms (%s) of %s" % (twist, self.domain())
         else:
