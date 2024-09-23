@@ -588,7 +588,6 @@ cdef class Polynomial_template(Polynomial):
             return -2
         return result
 
-
     def __pow__(self, ee, modulus):
         """
         EXAMPLES::

@@ -308,8 +308,9 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
     """
     @staticmethod
     def __classcall_private__(cls, R=None, arg0=None, index_set=None,
-        central_elements=None, category=None, prefix=None,
-        names=None, latex_names=None, parity=None, weights=None, **kwds):
+                              central_elements=None, category=None,
+                              prefix=None, names=None, latex_names=None,
+                              parity=None, weights=None, **kwds):
         """
         Lie conformal algebra factory.
 

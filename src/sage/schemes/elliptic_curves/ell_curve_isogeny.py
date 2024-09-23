@@ -3433,8 +3433,7 @@ def compute_isogeny_bmss(E1, E2, l):
     sprec = 8
     while sprec < 4 * l:
         assert sprec % 2 == 0
-        if sprec > 2 * l:
-            sprec = 2 * l
+        sprec = min(sprec, 2 * l)
         # s1 => s1 + x^k s2
         # 2 s1' s2' - dG/dS(x, s1) s2 = G(x, s1) - s1'2
         s1 = S
