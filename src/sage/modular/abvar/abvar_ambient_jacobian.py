@@ -20,7 +20,7 @@ from sage.rings.rational_field import QQ
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modform.constructor import Newforms
 from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class
-from . import morphism
+from sage.modular.abvar import morphism
 
 
 _cache = {}

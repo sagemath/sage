@@ -2919,7 +2919,7 @@ def _solve_linear_de(R, N, L, a, b, f0):
     product = (term1 * term2).list()
 
     # todo: perhaps next loop could be made more efficient
-    c = b[L2 : L]
+    c = b[L2:L]
     for j in range(L2 - 1, min(L-1, len(product))):
         c[j - (L2-1)] = c[j - (L2-1)] + product[j]
 
