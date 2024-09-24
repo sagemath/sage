@@ -10,3 +10,12 @@ with connexions.
 
    sage/modules/ore_module
    sage/modules/ore_module_element
+
+Morphisms
+---------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/modules/ore_module_homspace
+   sage/modules/ore_module_morphism

@@ -1,10 +1,27 @@
+r"""
+Space of morphisms between Ore modules
+
+AUTHOR:
+
+- Xavier Caruso (2024-10)
+"""
+
+# ***************************************************************************
+#    Copyright (C) 2024 Xavier Caruso <xavier.caruso@normalesup.org>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 2 of the License, or
+#    (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.homset import HomsetWithBase
 from sage.matrix.matrix_space import MatrixSpace
 
 from sage.modules.ore_module import OreModule
 from sage.modules.ore_module_morphism import OreModule_morphism
-
 
 class OreModule_homspace(UniqueRepresentation, HomsetWithBase):
     Element = OreModule_morphism
