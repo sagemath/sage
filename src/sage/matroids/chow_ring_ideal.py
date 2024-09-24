@@ -227,6 +227,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                 subsets.extend(list(subset) for subset in combinations(flats, r))
 
             for subset in subsets:
+                k = len(subset)
                 flag = True
                 sorted_list = sorted(subset, key=len)
                 for i in range (len(sorted_list)): #Checking whether the subset is a chain
@@ -235,13 +236,14 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                         break
 
                 if not flag: 
-                    term = R.one()
-                    for x in subset:
-                        term *= flats_gen[x]
-                    gb.append(term)
+                    if k == 2: #Taking only antichains of length 2
+                        term = R.one()
+                        for x in subset:
+                            term *= flats_gen[x]
+                        gb.append(term)
                 
                 else:
-                    if subset == []:
+                    if k == 0:
                         for F in flats:
                             term = R.zero()
                             for G in flats:
@@ -250,7 +252,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                             gb.append((term)**(ranks[F]))
 
                     else:
-                        for j in range(len(subset)):
+                        for i in range(len(subset)):
                             for k in range(j+1, len(subset)): #Checking if every element in the chain is maximal
                                 if (sorted_list[j] != sorted_list[k]) & (sorted_list[j].issubset(sorted_list[k])):
                                     flag = False
