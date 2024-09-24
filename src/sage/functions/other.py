@@ -14,6 +14,7 @@ Check that gamma function imports are deprecated (:issue:`24411`)::
 """
 
 import math
+import operator
 
 from sage.arith.misc import binomial as arith_binomial
 from sage.functions.trig import arctan2
@@ -2289,13 +2290,6 @@ class Function_elementof(BuiltinFunction):
 
 
 element_of = Function_elementof()
-
-
-
-
-from sage.libs.pynac.pynac import symbol_table, register_symbol
-import operator
-
 
 symbol_table['functions']['equal'] = operator.eq
 symbol_table['functions']['notequal'] = operator.ne

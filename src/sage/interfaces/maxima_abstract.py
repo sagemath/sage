@@ -840,9 +840,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'], [1,1,1])
-            y=3*x-2*%e^(x-1)
+            y = 3*x-2*%e^(x-1)
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'])
-            y=%k1*%e^x+%k2*%e^-x+3*x
+            y = %k1*%e^x+%k2*%e^-x+3*x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'])
             y = (%c-3*(...-x...-1)*%e^-x)*%e^x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'],[1,1])
@@ -885,14 +885,14 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
             sage: maxima.clear('x'); maxima.clear('f')
             sage: maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"], [0,1,2])
-            f(x)=x*%e^x+%e^x
+            f(x) = x*%e^x+%e^x
 
         ::
 
             sage: maxima.clear('x'); maxima.clear('f')
             sage: f = maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"])
             sage: f
-            f(x)=x*%e^x*('at('diff(f(x),x,1),x=0))-f(0)*x*%e^x+f(0)*%e^x
+            f(x) = x*%e^x*('at('diff(f(x),x,1),x = 0))-f(0)*x*%e^x+f(0)*%e^x
             sage: print(f)
                                                !
                                    x  d        !                  x          x
@@ -932,7 +932,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: eqns = ["x + z = y","2*a*x - y = 2*a^2","y - 2*z = 2"]
             sage: vars = ["x","y","z"]
             sage: maxima.solve_linear(eqns, vars)
-            [x=a+1,y=2*a,z=a-1]
+            [x = a+1,y = 2*a,z = a-1]
         """
         eqs = "["
         for i in range(len(eqns)):
@@ -1202,18 +1202,18 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: b = a._sage_(); b
             sqrt(2) + 2.5
             sage: type(b)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         We illustrate an automatic coercion::
 
             sage: c = b + sqrt(3); c
             sqrt(3) + sqrt(2) + 2.5
             sage: type(c)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: d = sqrt(3) + b; d
             sqrt(3) + sqrt(2) + 2.5
             sage: type(d)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
             sage: a = sage.calculus.calculus.maxima('x^(sqrt(y)+%pi) + sin(%e + %pi)')
             sage: a._sage_()

@@ -2274,7 +2274,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
         True
         sage: sefms("x # 3") == SR(x != 3)
         True
-        sage: solve([x != 5], x) in [[[x - 5 != 0]], [[x < 5], [5 < x]]]
+        sage: solve([x != 5], x) in [[[x != 5]], [[x - 5 != 0]], [[x < 5], [5 < x]]]
         True
         sage: solve([2*x==3, x != 5], x)
         [[x == (3/2)...
