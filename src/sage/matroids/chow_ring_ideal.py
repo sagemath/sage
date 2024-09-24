@@ -207,7 +207,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
                                                   for g in self.gens()),
                                         latex(self.ring()))
 
-    def groebner_basis(self, algorithm='constructed'): #can you reduce it? - consider every antichain of size 2, and chains?
+    def groebner_basis(self, algorithm='constructed', *args, **kwargs): #can you reduce it? - consider every antichain of size 2, and chains?
         r"""
         Returns the Groebner basis of `self`.
 
@@ -295,8 +295,8 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             g_basis = PolynomialSequence(R, [gb])
             return g_basis
         
-        elif algorithm == 'constructed': #*args **kwds
-            super().groebner_basis()
+        elif algorithm == 'constructed':
+            super().groebner_basis(*args, **kwargs)
 
     
 class AugmentedChowRingIdeal_fy(ChowRingIdeal):
@@ -462,7 +462,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
                                                   for g in self.gens()),
                                         latex(self.ring()))
     
-    def groebner_basis(self, algorithm='constructed'):
+    def groebner_basis(self, algorithm='constructed', *args, **kwargs):
         r"""
         Returns the Groebner basis of `self`.
 
@@ -508,7 +508,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             g_basis = PolynomialSequence(poly_ring, [gb])
             return g_basis
         elif algorithm == 'constructed':
-            super().groebner_basis()
+            super().groebner_basis(*args, **kwargs)
 
 class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
     r"""
@@ -675,7 +675,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                                                   for g in self.gens()),
                                         latex(self.ring()))
     
-    def groebner_basis(self, algorithm='constructed'):
+    def groebner_basis(self, algorithm='constructed', *args, **kwargs):
         """
         Returns the Groebner basis of `self`.
 
@@ -714,7 +714,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             return g_basis
         
         elif algorithm == 'constructed':
-            super().groebner_basis()
+            super().groebner_basis(*args, **kwargs)
 
             
 
