@@ -69,6 +69,7 @@ from sage.libs.ntl.ZZX cimport *
 
 from sage.rings.polynomial.evaluation_ntl cimport ZZX_evaluation_mpfr, ZZX_evaluation_mpfi
 
+
 cdef class Polynomial_integer_dense_ntl(Polynomial):
     r"""
     A dense polynomial over the integers, implemented via NTL.
@@ -82,7 +83,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         x._parent = self._parent
         x._is_gen = 0
         return x
-
 
     def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
         r"""
@@ -235,7 +235,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
                     a = ZZ(a)
                 mpz_to_ZZ(&y, (<Integer>a).value)
                 ZZX_SetCoeff(self._poly, i, y)
-
 
     def content(self):
         r"""
@@ -445,7 +444,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
                 (<Polynomial_integer_dense_ntl>right)._poly)
         return x
 
-
     cpdef _sub_(self, right):
         r"""
         Return ``self`` minus ``right``.
@@ -463,7 +461,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
                 (<Polynomial_integer_dense_ntl>right)._poly)
         return x
 
-
     cpdef _neg_(self):
         r"""
         Return negative of ``self``.
@@ -478,7 +475,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         cdef Polynomial_integer_dense_ntl x = self._new()
         ZZX_negate(x._poly, self._poly)
         return x
-
 
     @coerce_binop
     def quo_rem(self, right):
@@ -565,7 +561,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         return qq, rr
 
-
     @coerce_binop
     def gcd(self, right):
         r"""
@@ -586,7 +581,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         x._poly = temp[0]
         del temp
         return x
-
 
     @coerce_binop
     def lcm(self, right):
@@ -677,7 +671,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             S = self.parent()
             return S(rr), ss, tt
 
-
     cpdef _mul_(self, right):
         r"""
         Return ``self`` multiplied by ``right``.
@@ -733,7 +726,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         ZZX_mul_ZZ(x._poly, self._poly, _right)
         return x
 
-
     def __floordiv__(self, right):
         """
         EXAMPLES::
@@ -785,7 +777,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         mpz_to_ZZ(&y, (<Integer>value).value)
         ZZX_SetCoeff(self._poly, n, y)
 
-
     def real_root_intervals(self):
         """
         Return isolating intervals for the real roots of this polynomial.
@@ -803,11 +794,10 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         return real_roots(self)
 
-##     def __copy__(self):
-##         f = Polynomial_integer_dense(self.parent())
-##         f._poly = self._poly.copy()
-##         return f
-
+    #     def __copy__(self):
+    #         f = Polynomial_integer_dense(self.parent())
+    #         f._poly = self._poly.copy()
+    #         return f
 
     def degree(self, gen=None):
         """
@@ -855,7 +845,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         del temp
         return x
 
-
     def __pari__(self, variable=None):
         """
         EXAMPLES::
@@ -868,7 +857,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
         if variable is None:
             variable = self.parent().variable_name()
         return pari(self.list()).Polrev(variable)
-
 
     def squarefree_decomposition(self):
         """
@@ -1100,7 +1088,6 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
             []
         """
         return [self.get_unsafe(i) for i in range(self.degree()+1)]
-
 
     @coerce_binop
     def resultant(self, other, proof=True):

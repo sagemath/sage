@@ -5394,7 +5394,7 @@ cdef class Matroid(SageObject):
         E = set(self.groundset())
         Q = set(list(E)[:m])
         E = E-Q
-        for r in range(len(Q)/2 + 1):
+        for r in range(len(Q) // 2 + 1):
             R = set(list(E)[:r])
             for Q1 in map(set, combinations(Q, r)):
                 Q2 = Q-Q1

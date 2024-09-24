@@ -1109,7 +1109,7 @@ def OA_10_205():
     baer_subplane_size = 4**2+4+1
 
     B = [0, 1, 22, 33, 83, 122, 135, 141, 145, 159, 175, 200, 226, 229, 231, 238, 246]
-    pplane = [[(xx+i) % pplane_size for xx in B]  for i in range(pplane_size)]
+    pplane = [[(xx+i) % pplane_size for xx in B] for i in range(pplane_size)]
     baer_subplane = set([i*pplane_size/baer_subplane_size for i in range(baer_subplane_size)])
 
     p = list(baer_subplane)[0]
@@ -1284,7 +1284,7 @@ def OA_11_254():
 
     # Base block of a PG(2,19)
     B = (0,1,19,28,96,118,151,153,176,202,240,254,290,296,300,307,337,361,366,369)
-    BIBD = [[(x+i) % 381 for x in B]  for i in range(381)]
+    BIBD = [[(x+i) % 381 for x in B] for i in range(381)]
 
     # We only keep points congruent to 0,1 mod 3 and relabel the PBD. The result is
     # a (254,{11,13,16})-PBD
@@ -1708,7 +1708,7 @@ def OA_10_469():
          731,824,837,848,932,1002,1051,1055,1089,1105,1145,1165,1196,1217,1226,
          1274,1281,1309,1405)
 
-    BIBD = [[(x+i) % 1407 for x in B]  for i in range(1407)]
+    BIBD = [[(x+i) % 1407 for x in B] for i in range(1407)]
 
     # Only keep points v congruent to 0 mod 3 and relabel
     PBD = [[x//3 for x in B if x % 3 == 0] for B in BIBD]
@@ -4171,7 +4171,7 @@ def RBIBD_120_8_1():
 
     # A (precomputed) set that every block of the BIBD intersects on 0 or 2 points
     hyperoval = [128, 192, 194, 4, 262, 140, 175, 48, 81, 180, 245, 271, 119, 212, 249, 189, 62, 255]
-    #for B in BIBD:
+    # for B in BIBD:
     #    len_trace = sum(x in hyperoval for x in B)
     #    assert len_trace == 0 or len_trace == 2
 
@@ -4577,13 +4577,9 @@ def HigmanSimsDesign():
     from sage.combinat.designs.block_design import WittDesign
     from .incidence_structures import IncidenceStructure
     W = WittDesign(24)
-    a,b = 0,1
-    Wa = [set(B) for B in W
-          if (a     in B and
-              b not in B)]
-    Wb = [set(B) for B in W
-          if (b     in B and
-              a not in B)]
+    a, b = 0, 1
+    Wa = [set(B) for B in W if a in B and b not in B]
+    Wb = [set(B) for B in W if b in B and a not in B]
 
     H = [[i for i, A in enumerate(Wa) if len(A & B) != 2]
          for B in Wb]
