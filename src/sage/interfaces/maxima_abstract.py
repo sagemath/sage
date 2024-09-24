@@ -695,7 +695,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         The eps file is saved in the current directory.
         """
-        self('plot2d(%s)'%(','.join([str(x) for x in args])))
+        self('plot2d(%s)' % (','.join(str(x) for x in args)))
 
     def plot2d_parametric(self, r, var, trange, nticks=50, options=None):
         r"""
@@ -766,7 +766,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         The eps file is saved in the current working directory.
         """
-        self('plot3d(%s)'%(','.join([str(x) for x in args])))
+        self('plot3d(%s)' % (','.join(str(x) for x in args)))
 
     def plot3d_parametric(self, r, vars, urange, vrange, options=None):
         r"""
