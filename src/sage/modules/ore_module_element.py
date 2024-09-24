@@ -23,9 +23,8 @@ class OreModule_element(FreeModuleElement_generic_dense):
                 return s[3:]
 
     def vector(self):
-        M = self.parent()
-        V = M.base_ring() ** M.rank()
-        return V(self)
+        V = self.parent().module()
+        return V(self.list())
 
     def image(self):
         return self.parent()._pseudohom(self)
