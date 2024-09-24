@@ -2306,7 +2306,7 @@ cdef class Matroid(SageObject):
 
     # verification
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -2320,7 +2320,7 @@ cdef class Matroid(SageObject):
 
         Certain subclasses may check other axioms instead.
 
-        OUTPUT: boolean
+        OUTPUT: boolean, or (boolean, dictionary)
 
         EXAMPLES::
 
@@ -2351,16 +2351,24 @@ cdef class Matroid(SageObject):
                 X = frozenset(Xt)
                 rX = self._rank(X)
                 if rX > i or rX < 0:
+                    if certificate:
+                        return False, {"error": "the rank must be between 0 and the set's cardinality", "set": X}
                     return False
                 for j in range(i, len(E) + 1):
                     for Yt in combinations(E, j):
                         Y = frozenset(Yt)
                         rY = self._rank(Y)
                         if X.issubset(Y) and rX > rY:
+                            if certificate:
+                                return False, {"error": "the rank function must be monotonic", "set 1": X, "set 2": Y}
                             return False
                         if (self._rank(X.union(Y)) +
                            self._rank(X.intersection(Y)) > rX + rY):
+                            if certificate:
+                                return False, {"error": "the rank function must be submodular", "set 1": X, "set 2": Y}
                             return False
+        if certificate:
+            return True, {}
         return True
 
     # enumeration

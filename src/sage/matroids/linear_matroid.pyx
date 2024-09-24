@@ -2614,7 +2614,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         cochains = self.linear_coextension_cochains(F, cosimple=cosimple, fundamentals=fundamentals)
         return self._linear_coextensions(element, cochains)
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data represent an actual matroid.
 
@@ -3862,14 +3862,14 @@ cdef class BinaryMatroid(LinearMatroid):
         # now self is graphic iff there is a binary vector x so that M*x = 0 and x_0 = 1, so:
         return BinaryMatroid(m).corank(frozenset([0])) > 0
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
         Since this is a linear matroid over the field `\GF{2}`, this is always
         the case.
 
-        OUTPUT: ``True``
+        OUTPUT: ``True``, or (True, {})
 
         EXAMPLES::
 
@@ -3877,6 +3877,8 @@ cdef class BinaryMatroid(LinearMatroid):
             sage: M.is_valid()
             True
         """
+        if certificate:
+            return True, {}
         return True
 
     # representability
@@ -4724,14 +4726,14 @@ cdef class TernaryMatroid(LinearMatroid):
                              basis=bas,
                              keep_initial_representation=False)
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
         Since this is a linear matroid over the field `\GF{3}`, this is always
         the case.
 
-        OUTPUT: ``True``
+        OUTPUT: ``True``, or (True, {})
 
         EXAMPLES::
 
@@ -4739,6 +4741,8 @@ cdef class TernaryMatroid(LinearMatroid):
             sage: M.is_valid()
             True
         """
+        if certificate:
+            return True, {}
         return True
 
     # representability
@@ -5488,14 +5492,14 @@ cdef class QuaternaryMatroid(LinearMatroid):
                              basis=bas,
                              keep_initial_representation=False)
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
         Since this is a linear matroid over the field `\GF{4}`, this is always
         the case.
 
-        OUTPUT: ``True``
+        OUTPUT: ``True``, or (True, {})
 
         EXAMPLES::
 
@@ -5503,6 +5507,8 @@ cdef class QuaternaryMatroid(LinearMatroid):
             sage: M.is_valid()                                                          # needs sage.rings.finite_rings
             True
         """
+        if certificate:
+            return True, {}
         return True
 
     def __reduce__(self):
@@ -6270,7 +6276,7 @@ cdef class RegularMatroid(LinearMatroid):
         """
         return BinaryMatroid(reduced_matrix=self._reduced_representation()).is_graphic()
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 

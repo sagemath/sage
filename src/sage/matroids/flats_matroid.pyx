@@ -539,7 +539,7 @@ cdef class FlatsMatroid(Matroid):
 
     # verification
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if ``self`` obeys the matroid axioms.
 
@@ -644,6 +644,12 @@ cdef class FlatsMatroid(Matroid):
             True
         """
         if self._L is not None:  # if the lattice of flats is available
+            if certificate:
+                if not self._is_closed(self._groundset):
+                    return False, {"error": "groundset is not a closed set"}
+                if not self._L.is_geometric():
+                    return False, {"error": "the lattice of flats is not geometric"}
+                return True, {}
             return self._is_closed(self._groundset) and self._L.is_geometric()
 
         cdef int i, j, k
@@ -654,13 +660,19 @@ cdef class FlatsMatroid(Matroid):
         # check flats dictionary for invalid ranks and repeated flats
         ranks = list(self._F)
         if ranks != list(range(len(ranks))):
+            if certificate:
+                False, {"error": "flats dictionary has invalid ranks"}
             return False
         flats_lst = [F for i in self._F for F in self._F[i]]
         if len(flats_lst) != len(set(flats_lst)):
+            if certificate:
+                False, {"error": "flats dictionary has repeated flats"}
             return False
 
         # the groundset must be a flat
         if not self._is_closed(self._groundset):
+            if certificate:
+                return False, {"error": "the groundset must be a flat"}
             return False
 
         # a single element extension of a flat must be a subset of exactly one flat
@@ -671,6 +683,8 @@ cdef class FlatsMatroid(Matroid):
                     if F2 >= F1:
                         cover.extend(F1 ^ F2)
                 if len(cover) != len(F1 ^ self._groundset) or set(cover) != F1 ^ self._groundset:
+                    if certificate:
+                        False, {"error": "a single element extension of a flat must be a subset of exactly one flat", "flat": F1}
                     return False
 
         # the intersection of two flats must be a flat
@@ -688,6 +702,10 @@ cdef class FlatsMatroid(Matroid):
                                 if flag:
                                     break
                         if not flag:
+                            if certificate:
+                                False, {"error": "the intersection of two flats must be a flat", "flat 1": F1, "flat 2": F2}
                             return False
 
+        if certificate:
+            return True, {}
         return True

@@ -869,7 +869,7 @@ cdef class CircuitsMatroid(Matroid):
 
     # verification
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if ``self`` obeys the matroid axioms.
 
@@ -911,6 +911,8 @@ cdef class CircuitsMatroid(Matroid):
             # loop through all circuit length pairs (i, j) with i <= j
             for C1 in self._k_C[i]:
                 if not C1:  # the empty set can't be a circuit
+                    if certificate:
+                        return False, {"error": "the empty set can't be a circuit"}
                     return False
                 for C2 in self._k_C[j]:
                     I12 = C1 & C2
@@ -920,10 +922,16 @@ cdef class CircuitsMatroid(Matroid):
                         if len(C1) == len(C2):  # they are the same circuit
                             break
                         # C1 < C2; a circuit can't be a subset of another circuit
+                        if certificate:
+                            return False, {"error": "a circuit can't be a subset of another circuit", "circuit 1": C1, "circuit 2": C2}
                         return False
                     # check circuit elimination axiom
                     U12 = C1 | C2
                     for e in I12:
                         if self._is_independent(U12 - {e}):
+                            if certificate:
+                                return False, {"error": "elimination axiom failed", "circuit 1": C1, "circuit 2": C2, "element": e}
                             return False
+        if certificate:
+            return True, {}
         return True

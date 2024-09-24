@@ -545,7 +545,7 @@ class DualMatroid(Matroid):
         M = self._matroid.relabel(mapping).dual()
         return M
 
-    def is_valid(self):
+    def is_valid(self, certificate=False):
         """
         Test if ``self`` obeys the matroid axioms.
 
@@ -564,4 +564,11 @@ class DualMatroid(Matroid):
             sage: M.dual().is_valid()
             False
         """
+        if certificate:
+            v, c = self._matroid.is_valid(certificate)
+            if v:
+                return True, {}
+            else:
+                c["error"] = "the dual matroid is not valid: " + c["error"]
+                return v, c
         return self._matroid.is_valid()

@@ -2231,7 +2231,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         return self._characteristic_setsystem()._isomorphism(other._characteristic_setsystem(), PS, PO) is not None
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -2278,6 +2278,8 @@ cdef class BasisExchangeMatroid(Matroid):
                 if not bitset_eq(self._current_basis, BB._subsets[pointerY]):
                     # We failed to set the current basis to Y through basis exchanges.
                     # Therefore, the exchange axioms are violated!
+                    if certificate:
+                        return False, {"error": "exchange axiom failed"}
                     return False
                 bitset_difference(self._input, BB._subsets[pointerX], BB._subsets[pointerY])
                 bitset_difference(self._input2, BB._subsets[pointerY], BB._subsets[pointerX])
@@ -2292,10 +2294,14 @@ cdef class BasisExchangeMatroid(Matroid):
                         else:
                             y = bitset_next(self._input2, y + 1)
                     if not foundpair:
+                        if certificate:
+                            return False, {"error": "exchange axiom failed"}
                         return False
                     x = bitset_next(self._input, x + 1)
                 pointerY += 1
             pointerX += 1
+        if certificate:
+            return True, {}
         return True
 
 cdef bint nxksrd(bitset_s* b, long n, long k, bint succ) noexcept:
