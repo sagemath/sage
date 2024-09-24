@@ -537,7 +537,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             p = -numpy.inf
         elif p == 'frob':
             p = 'fro'
-        elif p == 'sv' :
+        elif p == 'sv':
             p = None
         else:
             try:

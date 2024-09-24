@@ -496,8 +496,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         if end is None:
             end = start
             start = 1
-        if start < 1:
-            start = 1
+        start = max(start, 1)
         for height in ZZ.range(start, end):
             if height == 1:
                 yield self(0)
