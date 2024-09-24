@@ -253,8 +253,8 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
                     else:
                         for i in range(len(subset)):
-                            for k in range(j+1, len(subset)): #Checking if every element in the chain is maximal
-                                if (sorted_list[j] != sorted_list[k]) & (sorted_list[j].issubset(sorted_list[k])):
+                            for j in range(i+1, len(subset)): #Checking if every element in the chain is maximal
+                                if (sorted_list[i] != sorted_list[j]) & (sorted_list[i].issubset(sorted_list[j])):
                                     flag = False
                                     break
 
