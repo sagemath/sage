@@ -185,6 +185,27 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
         """
         return "Chow ring ideal of {}- non augmented".format(self._matroid)
+    
+    def _latex_(self):
+        r"""
+        Return the LaTeX output of the ring and generators of `self`.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.basis_matroid import BasisMatroid
+            
+            sage: M1 = BasisMatroid(groundset='abcd', bases=['ab','ad', 'bc'])
+            sage: ch = M1.chow_ring(QQ, False)
+            sage: ch.defining_ideal()._latex_()
+            '\\left(\\mathit{Aac} \\mathit{Abd}, 0,
+            \\mathit{Aac} - \\mathit{Abd}, \\mathit{Aac} - \\mathit{Abd},
+            \\mathit{Aac} - \\mathit{Abd}, \\mathit{Aac} - \\mathit{Abd},
+            0\\right)\\Bold{Q}[\\mathit{Aac}, \\mathit{Abd}]'
+        """
+        from sage.misc.latex import latex
+        return '\\left(%s\\right)%s' % (", ".join(latex(g)
+                                                  for g in self.gens()),
+                                        latex(self.ring()))
 
     def groebner_basis(self, algorithm='constructed'): #can you reduce it? - consider every antichain of size 2, and chains?
         r"""
@@ -418,6 +439,29 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         """
         return "Augmented Chow ring ideal of {} of Feitchner-Yuzvinsky presentation".format(self._matroid)
     
+    def _latex_(self):
+        r"""
+        Return the LaTeX output of the ring and generators of `self`.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.basis_matroid import BasisMatroid
+            
+            sage: M1 = BasisMatroid(groundset='abcd', bases=['ab','ad', 'bc'])
+            sage: ch = M1.chow_ring(QQ, True, 'fy')
+            sage: ch.defining_ideal()._latex_()
+            '\\left(\\mathit{Bac}^{2}, \\mathit{Bac} \\mathit{Bbd},
+            \\mathit{Bac} \\mathit{Bbd}, \\mathit{Bbd}^{2},
+            \\mathit{Ad} - \\mathit{Bac}, \\mathit{Ab} - \\mathit{Bac},
+            \\mathit{Aa} - \\mathit{Bbd}, \\mathit{Ac} - \\mathit{Bbd}\\right)
+            \\Bold{Q}[\\mathit{Ad}, \\mathit{Ab}, \\mathit{Aa}, \\mathit{Ac},
+            \\mathit{Bac}, \\mathit{Bbd}]'
+        """
+        from sage.misc.latex import latex
+        return '\\left(%s\\right)%s' % (", ".join(latex(g)
+                                                  for g in self.gens()),
+                                        latex(self.ring()))
+    
     def groebner_basis(self, algorithm='constructed'):
         r"""
         Returns the Groebner basis of `self`.
@@ -601,6 +645,35 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             6 elements with 16 bases of atom-free presentation
         """
         return "Augmented Chow ring ideal of {} in the atom-free presentation".format(self._matroid)
+    
+    def _latex_(self):
+        r"""
+        Return the LaTeX output of the ring and generators of `self`.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.basis_matroid import BasisMatroid
+            
+            sage: M1 = BasisMatroid(groundset='abcd', bases=['ab','ad', 'bc'])
+            sage: ch = M1.chow_ring(QQ, True, 'atom-free')
+            sage: ch.defining_ideal()._latex_()
+            '\\left(\\mathit{Aac}^{2}, \\mathit{Abd}^{2},
+            \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2},
+            \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac}^{2},
+            \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2},
+            \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2},
+            \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac}^{2},
+            \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2},
+            \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2},
+            \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2},
+            \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd},
+            \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}\\right)
+            \\Bold{Q}[\\mathit{Aac}, \\mathit{Abd}]'
+        """
+        from sage.misc.latex import latex
+        return '\\left(%s\\right)%s' % (", ".join(latex(g)
+                                                  for g in self.gens()),
+                                        latex(self.ring()))
     
     def groebner_basis(self, algorithm='constructed'):
         """
