@@ -259,10 +259,12 @@ class PiecewiseFunction(BuiltinFunction):
             False
         """
         def is_piecewise(ex):
-            result = ex.operator() is piecewise
+            if ex.operator() is piecewise:
+                return True
             for op in ex.operands():
-                result = result or is_piecewise(op)
-            return result
+                if is_piecewise(op):
+                    return True
+            return False
         return is_piecewise(ex)
 
     @staticmethod
