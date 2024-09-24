@@ -177,10 +177,10 @@ class PiecewiseFunction(BuiltinFunction):
             'piecewise(x|-->-x on (-2, 0), x|-->x on [0, 4]; x)'
         """
         s = 'piecewise('
-        args = []
-        for domain, func in parameters:
-            args.append('{0}|-->{1} on {2}'.format(str(variable), str(func), str(domain)))
-        s += ', '.join(args) + '; {0})'.format(str(variable))
+        # NOTE : could use ⟼ instead of |-->
+        args = (f'{variable}|-->{func} on {domain}'
+                for domain, func in parameters)
+        s += ', '.join(args) + f'; {variable})'
         return s
 
     def _subs_(self, subs_map, options, parameters, x):
@@ -618,12 +618,10 @@ class PiecewiseFunction(BuiltinFunction):
                 (piecewise(x|-->-x on (-1, 0); x),
                  piecewise(x|-->x on [0, 1]; x))
             """
-            result = []
-            for domain, func in parameters:
-                result.append(piecewise([(domain, func)], var=variable))
-            return tuple(result)
+            return tuple(piecewise([(domain, func)], var=variable)
+                         for domain, func in parameters)
 
-        def end_points(self, parameters, variable):
+        def end_points(self, parameters, variable) -> list:
             """
             Return a list of all interval endpoints for this function.
 
@@ -998,11 +996,11 @@ class PiecewiseFunction(BuiltinFunction):
             from sage.symbolic.integration.integral import definite_integral
             f = self
             g = other
-            if len(f.end_points())*len(g.end_points()) == 0:
+            if not f.end_points() or not g.end_points():
                 raise ValueError('one of the piecewise functions is nowhere defined')
             fd, f0 = parameters[0]
             gd, g0 = next(other.items())
-            if len(f) == 1 and len(g) == 1:
+            if len(f) == 1 == len(g):
                 f = f.unextend_zero()
                 g = g.unextend_zero()
                 a1 = fd[0].lower()
