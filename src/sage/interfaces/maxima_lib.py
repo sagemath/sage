@@ -252,6 +252,7 @@ meval = EclObject("MEVAL")
 msetq = EclObject("MSETQ")
 mlist = EclObject("MLIST")
 mequal = EclObject("MEQUAL")
+mnotequal = EclObject("MNOTEQUAL")
 cadadr = EclObject("CADADR")
 
 max_integrate = EclObject("$INTEGRATE")
@@ -1249,6 +1250,10 @@ max_op_dict = dict([(sage_op_dict[k], k) for k in sage_op_dict])
 
 
 # Here we correct the dictionaries for some simple operators
+
+max_op_dict[mequal] = sage.symbolic.expression.operator.eq
+max_op_dict[mnotequal] = sage.symbolic.expression.operator.ne
+
 
 def sage_rat(x, y):
     r"""

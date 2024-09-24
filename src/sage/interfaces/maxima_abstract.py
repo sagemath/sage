@@ -288,7 +288,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         # https://sourceforge.net/p/maxima/bugs/3643/
         cmd_list = self._eval_line('apropos("%s")' % s, error_check=False)
         cmd_list = cmd_list.replace(' ', '').replace('\n', '').replace('\\ - ', '-').replace('\\-', '-')
-        cmd_list = [x for x in cmd_list[1:-1].split(',') if x[0] != '?' and not x.endswith('-impl')]
+        cmd_list = [x for x in cmd_list[1:-1].split(',')
+                    if x[0] != '?' and not x.endswith('-impl')]
         return [x for x in cmd_list if x.find(s) == 0]
 
     def _commands(self, verbose=True):
@@ -485,6 +486,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the equality symbol in Maxima.
 
+        This is only used for
+        :meth:`~sage.symbolic.expression.Expression.__maxima_init_solve_`,
+        not for any normal expression conversion by
+        :class:`sage.symbolic.expression_conversions.MaximaConverter`.
+
         OUTPUT: string
 
         EXAMPLES::
@@ -493,8 +499,10 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
              '='
              sage: var('x y')
              (x, y)
-             sage: maxima(x == y)
-             _SAGE_VAR_x = _SAGE_VAR_y
+             sage: (x == y)._maxima_init_solve_()
+             '(_SAGE_VAR_x)=(_SAGE_VAR_y)'
+             sage: (x == y)._maxima_init_()
+             'equal(_SAGE_VAR_x, _SAGE_VAR_y)'
         """
         return '='
 
@@ -502,14 +510,21 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Return the inequality symbol in Maxima.
 
+        This is only used for
+        :meth:`~sage.symbolic.expression.Expression.__maxima_init_solve_`,
+        not for any normal expression conversion by
+        :class:`sage.symbolic.expression_conversions.MaximaConverter`.
+
         OUTPUT: string
 
         EXAMPLES::
 
              sage: maxima._inequality_symbol()
              '#'
-             sage: maxima((x != 1))
-             _SAGE_VAR_x # 1
+             sage: (x != 1)._maxima_init_solve_()
+             '(_SAGE_VAR_x)#(1)'
+             sage: (x != 1)._maxima_init_()
+             'notequal(_SAGE_VAR_x, 1)'
         """
         return '#'
 
@@ -680,7 +695,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         The eps file is saved in the current directory.
         """
-        self('plot2d(%s)' % (','.join(str(x) for x in args)))
+        self('plot2d(%s)'%(','.join([str(x) for x in args])))
 
     def plot2d_parametric(self, r, var, trange, nticks=50, options=None):
         r"""
@@ -751,7 +766,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
         The eps file is saved in the current working directory.
         """
-        self('plot3d(%s)' % (','.join(str(x) for x in args)))
+        self('plot3d(%s)'%(','.join([str(x) for x in args])))
 
     def plot3d_parametric(self, r, vars, urange, vrange, options=None):
         r"""
@@ -825,9 +840,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'], [1,1,1])
-            y = 3*x-2*%e^(x-1)
+            y=3*x-2*%e^(x-1)
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'])
-            y = %k1*%e^x+%k2*%e^-x+3*x
+            y=%k1*%e^x+%k2*%e^-x+3*x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'])
             y = (%c-3*(...-x...-1)*%e^-x)*%e^x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'],[1,1])
@@ -870,14 +885,14 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
             sage: maxima.clear('x'); maxima.clear('f')
             sage: maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"], [0,1,2])
-            f(x) = x*%e^x+%e^x
+            f(x)=x*%e^x+%e^x
 
         ::
 
             sage: maxima.clear('x'); maxima.clear('f')
             sage: f = maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"])
             sage: f
-            f(x) = x*%e^x*('at('diff(f(x),x,1),x = 0))-f(0)*x*%e^x+f(0)*%e^x
+            f(x)=x*%e^x*('at('diff(f(x),x,1),x=0))-f(0)*x*%e^x+f(0)*%e^x
             sage: print(f)
                                                !
                                    x  d        !                  x          x
@@ -917,7 +932,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: eqns = ["x + z = y","2*a*x - y = 2*a^2","y - 2*z = 2"]
             sage: vars = ["x","y","z"]
             sage: maxima.solve_linear(eqns, vars)
-            [x = a+1,y = 2*a,z = a-1]
+            [x=a+1,y=2*a,z=a-1]
         """
         eqs = "["
         for i in range(len(eqns)):
@@ -954,7 +969,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: u.parent()
             Number Field in a with defining polynomial x^2 - 13 with a = 3.605551275463990?
         """
-        from sage.rings.integer import Integer
+        from sage.rings.all import Integer
         from sage.rings.number_field.number_field import QuadraticField
         # Take square-free part so sqrt(n) doesn't get simplified
         # further by maxima
@@ -1187,18 +1202,18 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: b = a._sage_(); b
             sqrt(2) + 2.5
             sage: type(b)
-            <class 'sage.symbolic.expression.Expression'>
+            <type 'sage.symbolic.expression.Expression'>
 
         We illustrate an automatic coercion::
 
             sage: c = b + sqrt(3); c
             sqrt(3) + sqrt(2) + 2.5
             sage: type(c)
-            <class 'sage.symbolic.expression.Expression'>
+            <type 'sage.symbolic.expression.Expression'>
             sage: d = sqrt(3) + b; d
             sqrt(3) + sqrt(2) + 2.5
             sage: type(d)
-            <class 'sage.symbolic.expression.Expression'>
+            <type 'sage.symbolic.expression.Expression'>
 
             sage: a = sage.calculus.calculus.maxima('x^(sqrt(y)+%pi) + sin(%e + %pi)')
             sage: a._sage_()
@@ -1495,7 +1510,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: gp('intnum(x=0,1,exp(-sqrt(x)))')
             0.52848223531423071361790491935415653021675547587292866196865279321015401702040079
         """
-        from sage.rings.integer import Integer
+        from sage.rings.all import Integer
         v = self.quad_qags(var, a, b, epsrel=desired_relative_error,
                            limit=maximum_num_subintervals)
         return v[0], v[1], Integer(v[2]), Integer(v[3])

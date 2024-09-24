@@ -918,7 +918,7 @@ class PiecewiseFunction(BuiltinFunction):
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
-                    for root in maxima.allroots(SR(f).diff(x) == 0):
+                    for root in maxima.allroots((SR(f).diff(x) == 0)._maxima_init_solve_()):
                         root = float(root.rhs())
                         if a < root < b:
                             crit_pts.append(root)
