@@ -14,6 +14,8 @@ from libc.string cimport memcpy
 from libc.stdlib cimport rand
 from sage.libs.gmp.mpz cimport *
 
+from cysignals.memory cimport sig_free
+
 
 cdef enum:
     # The following is for the automorphism group computation, says what the
@@ -161,6 +163,8 @@ cdef inline void OP_make_set(OrbitPartition *OP) noexcept:
     new_rank[n] = 0
     new_mcr[n] = n
     new_size[n] = 1
+
+    sig_free(OP.parent)
 
     OP.parent = new_parent
     OP.rank = new_rank
