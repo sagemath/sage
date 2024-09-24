@@ -423,7 +423,7 @@ class BGGDualModule(CombinatorialFreeModule):
 
 
 #####################################################################
-## Simple modules
+# Simple modules
 
 
 # This is an abuse as the monoid is not free.

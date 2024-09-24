@@ -49,7 +49,7 @@ class Coalgebras(Category_over_base_ring):
         """
         return [Modules(self.base_ring())]
 
-    WithBasis = LazyImport('sage.categories.coalgebras_with_basis',  'CoalgebrasWithBasis')
+    WithBasis = LazyImport('sage.categories.coalgebras_with_basis', 'CoalgebrasWithBasis')
     Graded = LazyImport('sage.categories.graded_coalgebras', 'GradedCoalgebras')
 
     class ParentMethods:
