@@ -764,7 +764,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             for ii, Zgroup in enumerate(Zs):
                 Z = None
                 for Zjj in Zgroup:
-                    if test and min(Zjj.eigenvalues())<0:
+                    if test and (not Zjj.is_positive_semidefinite()):
                         print("Construction based Z matrix for {} is not semidef: {}".format(ftype, min(Zjj.eigenvalues())))
                     if Z==None:
                         Z = Zjj
@@ -881,9 +881,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         - ``construction`` -- a list or a single element of 
             `FlagAlgebraElement`s; to consider in the kernel
         - ``exact`` -- boolean; to round the result or not
-        - ``ftype_pairs`` -- a list of pairs (type size, flag size)
-            to use in the multiplication table. If not provided
-            automatically generates all possible pairs
 
         OUTPUT: A bound for the optimization problem. If 
             certificate is requested then returns the entire
@@ -910,7 +907,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         import time
 
         #
-        # initial setup
+        # Initial setup
         #
 
         if target_size not in self.sizes():
@@ -922,7 +919,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         target_vector_exact = (target_element.project()*(mult)<<(target_size - target_element.size())).values()
 
         #
-        # create the table data
+        # Create the table data
         #
 
         plausible_sizes = []
@@ -984,7 +981,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         print("Tables finished")
 
         #
-        # add constraints data
+        # Add constraints data
         #
         
         if positives == None:
@@ -1023,7 +1020,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         print("Constraints finished")
         
         #
-        # if no y value provided, run the optimizer first, only to get the y values
+        # If no y value provided, run the optimizer first, only to get the y values
         #
         if construction==None:
             mat_inds, mat_vals, block_sizes = sdp_data
@@ -1033,13 +1030,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             time.sleep(float(0.1))
             initial_sol = solve_sdp(block_sizes, list(target_vector_exact), mat_inds, mat_vals)
             time.sleep(float(0.1))
-			
+
             if (not exact):
                 res = initial_sol['primal'] * (-1 if maximize else 1)
                 return res if (not certificate) else (res, initial_sol)
 
             phi_vector_original = initial_sol['y']
-            phi_vector_rounded = _round_adaptive(initial_sol['y'], one_vector.values())
+            phi_vector_rounded = _round_adaptive(initial_sol['y'], one_vector)
             alg = FlagAlgebra(QQ, self)
             phipr = str(alg(target_size, phi_vector_rounded))
             if len(phipr)<1000:
@@ -1052,7 +1049,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 phi_vectors_exact = [xx.values() for xx in construction]
 
         #
-        # adjust the table to consider the kernel from y_rounded
+        # Adjust the table to consider the kernel from y_rounded
         #
 
         print("Adjusting table with kernels from construction")
@@ -1075,7 +1072,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         print("Starting the rounding of the result.")
         rounded = self._round_sdp_solution(final_sdp, table_constructor, block_sizes, target_vector_exact, phi_vectors_exact, positives_matrix_exact, denom=denom)
 
-        res = rounded[0] * (-1 if maximize else 1)
+        res = rounded[0] * mult
         return res if (not certificate) else (res, rounded)
 
     def _round_sdp_solution(self, sdp_result, table_constructor, block_sizes, target_vector_exact, phi_vectors_exact, positives_matrix_exact, denom=1024):
@@ -1187,48 +1184,151 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if len(e_vector_corr)>0 and min(e_vector_corr)<0:
             rounding_successful = False
             print("Linear coefficient is negative: {}".format(min(e_vector_corr)))
-
-        X_matrix_corr = []
-        for ii, block_dim in enumerate(block_sizes):
-            if block_dim<0:
-                break
-            X_matrix_ii_corr, x_vector_corr = _unflatten_matrix(x_vector_corr, block_dim)
-            X_matrix_corr.append(matrix(X_matrix_ii_corr))
-            if min(X_matrix_ii_corr.eigenvalues())<0:
-                rounding_successful = False
-                print("Rounded X matrix is not semidefinite: {}".format(min(X_matrix_ii_corr.eigenvalues())))
-        X_matrix_corr.append(e_vector_corr)
-
-
-        #
-        # Verify the bound and semidefiniteness
-        #
-
+        
+        X_final = []
         block_index = 0
-        slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
-
         for params in table_constructor.keys():
             ns, ftype, target_size = params
-            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
-
+            X_ii = None
             for plus_index, base in enumerate(table_constructor[params]):
-                X_flat_vector_corr = vector(_flatten_matrix(X_matrix_corr[block_index + plus_index].rows()))
-
-                for gg, morig in enumerate(table):
-                    mm = base * morig * base.T
-                    M_flat_vector_exact = vector(_flatten_matrix((base * morig * base.T).rows(), doubled=True))
-                    slacks[gg] -= M_flat_vector_exact*X_flat_vector_corr
-
+                block_dim = block_sizes[block_index + plus_index]
+                X_ii_small, x_vector_corr = _unflatten_matrix(x_vector_corr, block_dim)
+                X_ii_small = matrix(X_ii_small)
+                # verify semidefiniteness
+                if not X_ii_small.is_positive_semidefinite():
+                    rounding_successful = False
+                    print("Rounded X matrix is not semidefinite: {}".format(min(X_ii_small.eigenvalues())))
+                if X_ii == None:
+                    X_ii = base.T * X_ii_small * base
+                else:
+                    X_ii += base.T * X_ii_small * base
             block_index += len(table_constructor[params])
+            X_final.append(X_ii)
+        X_final.append(e_vector_corr)
+
+
+        #
+        # Verify the bound
+        #
+
+        slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
+
+        for ii, params in enumerate(table_constructor.keys()):
+            ns, ftype, target_size = params
+            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
+            
+            for gg, morig in enumerate(table):
+                M_flat_vector_exact = vector(_flatten_matrix(morig.rows(), doubled=True))
+                slacks[gg] -= M_flat_vector_exact*vector(_flatten_matrix(X_final[ii].rows(), doubled=False))
 
         if rounding_successful:
             print("The exact value after rounding is {}".format(_fraction_print(-min(slacks))))
         else:
             print("The rounding was unsuccessful, otherwise the result would be {}".format(_fraction_print(-min(slacks))))
 
-        return min(slacks), X_matrix_corr, slacks
+        return min(slacks), X_final, slacks
     
     optimize = optimize_problem
+    
+    def verify_solution(self, solution, target_element, target_size, maximize=True, positives=None, construction=None):
+        #
+        # Checking eigenvalues and positivity constraints
+        #
+
+        if len(solution)==2 and solution[0] in QQ:
+            solution = solution[1]
+        if len(solution)==3 and solution[0] in QQ:
+            solution = solution[1]
+
+        if len(solution[-1])>0 and min(solution[-1])<0:
+            print("Solution is not valid!")
+            print("Linear constraint's coefficient is negative {}".format(min(solution[-1])))
+            return -1
+
+        for ii,X in enumerate(solution[:-1]):
+            if not X.is_positive_semidefinite():
+                print("Solution is not valid!")
+                print("Matrix {} is not semidefinite".format(ii))
+                return -1
+
+        print("Solution matrices are all semidefinite, linear coefficients are all non-negative")
+
+        #
+        # Initial setup
+        #
+
+        mult = -1 if maximize else 1
+        base_flags = self.generate_flags(target_size)
+        target_vector_exact = (target_element.project()*(mult)<<(target_size - target_element.size())).values()
+        if target_element.ftype().size()==0:
+            one_vector = vector([1]*len(base_flags))
+        else:
+            one_vector = (target_element.ftype().project()<<(target_size - target_element.ftype().size())).values()
+
+        #
+        # Create the types used in the calculation
+        #
+
+        ftype_data = []
+        for fs in range(target_size-2, 1, -2):
+            for fl in self.generate_flags(fs):
+                ftype = fl.subflag(ftype_points=list(range(fs)))
+                ns = (target_size + fs)/2
+                ftype_data.append((ns, ftype, target_size))
+        ftype_data.sort()
+
+        print("Done calculating types relevant for the calculation")
+
+        #
+        # Create the semidefinite matrix data
+        #
+
+        table_list = []
+        for ii, dat in enumerate(ftype_data):
+            ns, ftype, target_size = dat
+            #calculate the table
+            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
+            if table!=None:
+                table_list.append(table)
+            print("Done with mult table for {}".format(ftype))
+
+        print("Done calculating semidefinite constraints")
+
+        #
+        # Create the data from linear constraints
+        #
+
+        positives_list_exact = []
+        if positives != None:
+            for ii, fv in enumerate(positives):
+                if isinstance(fv, Flag):
+                    continue
+                nf = fv.size()
+                df = target_size + fv.ftype().size() - nf
+                mult_table = self.mul_project_table(nf, df, fv.ftype(), ftype_inj=[], target_size=target_size)
+                fvvals = fv.values()
+                m = matrix(QQ, [vector(fvvals*mat) for mat in mult_table])
+                positives_list_exact += list(m.T)
+                print("Done with positivity constraint {}".format(ii))
+        positives_matrix_exact = matrix(QQ, len(positives_list_exact), len(base_flags), positives_list_exact)
+
+        print("Done calculating linear constraints")
+
+        #
+        # Calculate the bound the solution provides
+        #
+
+        slacks = target_vector_exact - positives_matrix_exact.T*solution[-1]
+        for ii, table in enumerate(table_list):
+            for gg, mat_gg in enumerate(table):
+                slacks[gg] -= sum([mat_gg.rows()[jj]*solution[ii][jj] for jj in range(mat_gg.nrows())])
+        res = min(slacks)*mult
+
+        print("The solution is valid, it proves the bound {}".format(res))
+
+        return res
+    
+    verify = verify_solution
     
     def _gfe(self, excluded, n, ftype):
         r"""
