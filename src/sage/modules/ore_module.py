@@ -16,6 +16,8 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+from sage.misc.cachefunc import cached_method
+
 from sage.categories.fields import Fields
 from sage.categories.ore_modules import OreModules
 
@@ -26,8 +28,11 @@ from sage.modules.free_module import FreeModule_ambient
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
 from sage.modules.ore_module_element import OreModule_element
 
+# Generic class for Ore modules
+###############################
 
 class OreModule(FreeModule_ambient):
+    # TODO: ensure uniqueness of parents
     Element = OreModule_element
 
     def __init__(self, f, twist=None, names=None, category=None):
@@ -46,7 +51,7 @@ class OreModule(FreeModule_ambient):
             pass
         elif isinstance(names, (list, tuple)):
             if rank != len(names):
-                 raise ValueError
+                raise ValueError
             names = [str(name) for name in names]
         elif isinstance(names, str):
             names = [ names + str(i) for i in range(rank) ]
@@ -83,7 +88,8 @@ class OreModule(FreeModule_ambient):
             if f.codomain() is not codomain:
                 f = codomain._hom_change_codomain(f)
             return f
-        return H(f)
+        else:
+            return H(f)
 
     def pseudohom(self):
         return self._pseudohom
@@ -118,16 +124,24 @@ class OreModule(FreeModule_ambient):
         return self.base_ring() ** self.rank()
 
     def _span(self, gens):
-        if not isinstance(gens, (list, tuple)):
-            raise ValueError("not a list of generators")
-        f = self._pseudohom
+        base = self.base_ring()
         rank = self.rank()
-        d = len(gens)
-        M = matrix(self.base_ring(), max(d, 2*rank), rank)
-        for i in range(d):
-            v = gens[i].list()
-            for j in range(rank):
-                M[i,j] = v[j]
+        f = self._pseudohom
+        if not isinstance(gens, (list, tuple)):
+            gens = [gens]
+        rows = []
+        for gen in gens:
+            if isinstance(gen, OreModule):
+                incl = self.coerce_map_from(gen)
+                if incl is None:
+                    raise ValueError("not canonically a submodule")
+                rows += incl._matrix.rows()
+            elif isinstance(gen, OreModule_element):
+                rows.append(self(gen).list())
+        if len(rows) < 2*rank:
+            zero = rank * [base.zero()]
+            rows += (2*rank - len(rows)) * [rank*[0]]
+        M = matrix(base, rows)
         M.echelonize()
         oldr = 0
         r = M.rank()
@@ -151,12 +165,7 @@ class OreModule(FreeModule_ambient):
         return self._submodule_class(self, gens, names=names)
 
     def quotient(self, sub, names=None, check=True):
-        if isinstance(sub, OreSubmodule):
-            if sub._M is not self:
-                raise ValueError("not a submodule")
-            gens = sub._basis
-        else:
-            gens = self._span(sub)
+        gens = self._span(sub)
         return self._quotientModule_class(self, gens, names=names)
 
     quo = quotient
@@ -167,6 +176,8 @@ class OreModule(FreeModule_ambient):
     def __hash__(self):
         return id(self)
 
+# Submodules
+############
 
 class OreSubmodule(OreModule):
     def __init__(self, M, gens, names):
@@ -208,7 +219,8 @@ class OreSubmodule(OreModule):
         rows = [basis.solve_left(y) for y in f._matrix.rows()]
         return f.domain().hom(rows, codomain=self)
 
-
+# Quotients
+###########
 
 class OreQuotientModule(OreModule):
     def __init__(self, M, gens, names):
@@ -252,7 +264,7 @@ class OreQuotientModule(OreModule):
     def dividend(self):
         return self._M
 
-    #@cached_method
+    @cached_method
     def divisor(self, names=None):
         return self._submodule_class(self._M, self._ker, names=names)
 
