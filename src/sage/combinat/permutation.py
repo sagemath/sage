@@ -3582,9 +3582,7 @@ class Permutation(CombinatorialElement):
 
         .. TODO::
 
-            This docstring needs to be fixed. First, the definition
-            does not match the implementation (or the examples).
-            Second, this doesn't seem to be defined in [GS1984]_
+            This docstring needs to be fixed. This is not defined in [GS1984]_
             (the descent monomial in their (7.23) is different).
         """
         p = self
