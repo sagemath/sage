@@ -11,14 +11,24 @@ class OreModule_element(FreeModuleElement_generic_dense):
             s = ""
             for i in range(rank):
                 c = self[i]
-                if c == 0:
+                sc = str(c)
+                if sc == "0":
                     continue
-                if c == 1:
+                if sc == "1":
                     s += " + %s" % names[i]
+                elif sc == "-1":
+                    s += " - %s" % names[i]
+                elif c._is_atomic():
+                    if sc[0] == "-":
+                        s += " - %s*%s" % (-c, names[i])
+                    else:
+                        s += " + %s*%s" % (sc, names[i])
                 else:
                     s += " + (%s)*%s" % (c, names[i])
             if s == "":
                 return "0"
+            elif s[1] == '-':
+                return '-' + s[3:]
             else:
                 return s[3:]
 
