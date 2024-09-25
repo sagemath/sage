@@ -16,29 +16,29 @@ class ChowRing(QuotientRing_generic):
     r"""
     The Chow ring of a matroid.
 
-    The *Chow ring of a matroid* `M` is defined as the quotient ring:
+    The *Chow ring of a matroid* `M` is defined as the quotient ring
 
     .. MATH::
 
-        A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (Q_M + L_M)
+        A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (Q_M + L_M),
 
     where `(Q_M + L_M)` is the Chow ring ideal of matroid `M`.
 
     The *augmented Chow ring of matroid* `M` in the Feitchner-Yuzvinsky presentation
-    is the quotient ring:
+    is the quotient ring
 
-    ..MATH::
+    .. MATH::
 
         A(M)_R := R[y_{e_1}, \ldots, y_{e_n}, x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M),
 
     where `(I_M + J_M)` is the augmented Chow ring ideal of matroid `M`
     of Feitchner-Yuzvinsky presentation.
 
-    The *augmented Chow ring of atom-free presentation* is the quotient ring:
+    The *augmented Chow ring of atom-free presentation* is the quotient ring
 
-    ..MATH::
+    .. MATH::
 
-        A(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / I_M^{af}
+        A(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / I_M^{af},
 
     where `I_M^{af}` is the augmented Chow ring ideal of matroid `M` in the
     atom-free presentation.
@@ -49,15 +49,14 @@ class ChowRing(QuotientRing_generic):
     
     INPUT:
 
-    - `M` -- a matroid
-    - `R` -- a commutative ring
+    - ``M`` -- matroid
+    - ``R`` -- commutative ring
     - ``augmented`` -- boolean; when ``True``, this is the augmented
-        Chow ring and if ``False``, this is the non-augmented Chow ring
+      Chow ring and if ``False``, this is the non-augmented Chow ring
     - ``presentation`` -- string (default: ``None``); one of the following:
     
-      * ``"fy"`` - Feitchner-Yuzvinsky presentation*
-      * ``"atom-free" - Atom-free presentation*
-
+      * ``"fy"`` - the Feitchner-Yuzvinsky presentation
+      * ``"atom-free" - the atom-free presentation
 
     REFERENCES:
 
@@ -295,7 +294,6 @@ class ChowRing(QuotientRing_generic):
                 sage: v = ch.an_element(); v
                 A0
                 sage: v.to_vector()
-
             """
             P = self.parent()
             B = P.basis()
@@ -315,7 +313,6 @@ class ChowRing(QuotientRing_generic):
                 sage: v = ch.an_element(); v
                 0
                 sage: v.monomial_coefficients()
-
             """
             B = self.parent().basis()
             f = self.lift()
