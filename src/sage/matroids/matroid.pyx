@@ -8030,14 +8030,12 @@ cdef class Matroid(SageObject):
 
     def chow_ring(self, R, augmented=False, presentation=None):
         r"""
-        Return the Chow ring of ``self`` over ``R``.
-        Return the augmented Chow ring of `self` over `R`of `presentation`
-        if `augmented` is `True`.
+        Return the (augmented) Chow ring of ``self`` over ``R``.
 
         .. SEEALSO::
 
-            :mod: sage.matroids.chow_ring_ideal
-            :mod: sage.matroids.chow_ring
+            - :mod:`sage.matroids.chow_ring_ideal`
+            - :mod:`sage.matroids.chow_ring`
 
         EXAMPLES::
 
@@ -8058,7 +8056,7 @@ cdef class Matroid(SageObject):
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
              type (3, 0) over Rational Field.
 
-        The augmented Chow ring can also be instantiated with the
+        The augmented Chow ring can also be constructed with the
         Feitchner-Yuzvinsky and atom-free presentation::
 
             sage: M = matroids.Wheel(3)
@@ -8069,7 +8067,6 @@ cdef class Matroid(SageObject):
             sage: ch = M.chow_ring(QQ, augmented=True, presentation='atom-free')
             Augmented Chow ring of U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
             {3: {{0, 1, 2, 3, 4, 5}}} of atom-free presentation
-
         """
         from sage.matroids.chow_ring import ChowRing
         return ChowRing(M=self, R=R, augmented=augmented, presentation=presentation)
