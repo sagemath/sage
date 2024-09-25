@@ -4152,23 +4152,22 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``R`` -- (optional) the base ring for the symmetric functions;
-            this uses `\ZZ` by default
+        - ``R`` -- (default: the parent of ``t``) the base ring for the symmetric 
+          functions
 
-        - ``t`` -- (optional) the parameter `t`; uses the variable `t` in
-            `\ZZ[t]` by default
+        - ``t`` -- (default: `t` in `\ZZ[t]`) the parameter `t`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: p = SymmetricFunctions(ZZ).p()                                        # needs sage.combinat sage.modules
             sage: G = Graph([[1,2],[2,3],[3,4],[4,1],[1,3]])
             sage: XB_G = G.tutte_symmetric_function(); XB_G                             # needs sage.combinat sage.modules
             24*m[1, 1, 1, 1] + (10*t+12)*m[2, 1, 1] + (4*t^2+10*t+6)*m[2, 2]
-            + (2*t^3+8*t^2+10*t+4)*m[3, 1]
-            + (t^5+5*t^4+10*t^3+10*t^2+5*t+1)*m[4]
+             + (2*t^3+8*t^2+10*t+4)*m[3, 1]
+             + (t^5+5*t^4+10*t^3+10*t^2+5*t+1)*m[4]
             sage: p(XB_G)                                                               # needs sage.combinat sage.modules
             p[1, 1, 1, 1] + 5*t*p[2, 1, 1] + 2*t^2*p[2, 2]
-            + (2*t^3+8*t^2)*p[3, 1] + (t^5+5*t^4+8*t^3)*p[4]
+             + (2*t^3+8*t^2)*p[3, 1] + (t^5+5*t^4+8*t^3)*p[4]
 
         Graphs are allowed to have multiedges and loops::
 
@@ -4176,20 +4175,18 @@ class Graph(GenericGraph):
             sage: XB_G = G.tutte_symmetric_function(); XB_G                             # needs sage.combinat sage.modules
             6*m[1, 1, 1] + (t^2+3*t+3)*m[2, 1] + (t^3+3*t^2+3*t+1)*m[3]
 
-
         We check that at `t = -1`, we recover the usual chromatic symmetric
         function::
 
             sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,5]], multiedges=True)
             sage: XB_G = G.tutte_symmetric_function(t=-1); XB_G                         # needs sage.combinat sage.modules
             120*m[1, 1, 1, 1, 1] + 36*m[2, 1, 1, 1] + 12*m[2, 2, 1]
-            + 2*m[3, 1, 1] + m[3, 2]
+             + 2*m[3, 1, 1] + m[3, 2]
             sage: X_G = G.chromatic_symmetric_function(); X_G                           # needs sage.combinat sage.modules
             p[1, 1, 1, 1, 1] - 4*p[2, 1, 1, 1] + 3*p[2, 2, 1] + 3*p[3, 1, 1]
-            - 2*p[3, 2] - 2*p[4, 1] + p[5]
+             - 2*p[3, 2] - 2*p[4, 1] + p[5]
             sage: XB_G == X_G                                                           # needs sage.combinat sage.modules
             True
-
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.combinat.set_partition import SetPartitions
@@ -4205,7 +4202,8 @@ class Graph(GenericGraph):
         ret = m.zero()
         V = self.vertices()
         M = Counter(list(self.edges(labels=False)))
-        fact = [factorial(i) for i in range(len(V)+1)]
+        fact = [1]
+        fact.extend(fact[-1] * i for i in range(1, len(V)+1))
 
         def mono(pi):
             arcs = 0
@@ -4216,7 +4214,7 @@ class Graph(GenericGraph):
 
         for pi in SetPartitions(V):
             pa = pi.to_partition()
-            ret += prod([fact[i] for i in pa.to_exp()])*m[pa]*(1+t)**mono(pi)
+            ret += prod(fact[i] for i in pa.to_exp()) * m[pa] * (1+t)**mono(pi)
         return ret
 
     @doc_index("Leftovers")
