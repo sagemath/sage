@@ -233,7 +233,6 @@ save () {
 	src/Pipfile \
 	src/pyproject.toml \
 	src/requirements.txt \
-	src/setup.cfg \
 	build/pkgs/cypari/version_requirements.txt \
 	build/pkgs/cysignals/version_requirements.txt \
 	build/pkgs/cython/version_requirements.txt \
