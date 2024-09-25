@@ -32,6 +32,7 @@ AUTHORS:
 # ***************************************************************************
 
 import re
+import operator
 from cysignals.signals cimport sig_check
 from sage.structure.element import coerce_binop
 
@@ -2973,11 +2974,13 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         EXAMPLES::
 
         """
-        from sage.modules.ore_module import OreModule
+        from sage.modules.ore_module import OreModule, OreAction
+        S = self.parent()
         coeffs = self.right_monic().list()
         f = companion_matrix(coeffs, format='bottom')
-        return OreModule(f, self.parent(), names=names)
-
+        M = OreModule(f, S, names=names)
+        M.register_action(OreAction(S, M, True, operator.mul))
+        return M
 
 cdef class ConstantOrePolynomialSection(Map):
     r"""

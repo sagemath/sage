@@ -53,9 +53,6 @@ class OreModules(Category_over_base_ring):
 
     class ParentMethods:
 
-        def ore_ring(self, var='x'):
-            return self.category().ore_ring(var)
-
         def twisting_morphism(self):
             return self.category().twisting_morphism()
 

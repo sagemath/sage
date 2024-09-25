@@ -27,7 +27,7 @@ class OreModule_morphism(Morphism):
         self._matrix = parent.matrix_space()(matrix)
         for x in parent.domain().basis():
             if self._call_(x.image()) != self._call_(x).image():
-                raise ValueError("does not commute with Ore action")
+                raise ValueError("does not define a morphism of Ore modules")
 
     def _repr_type(self):
         return "Ore module"
@@ -40,6 +40,20 @@ class OreModule_morphism(Morphism):
 
     def is_identity(self):
         return self.domain() is self.codmain() and self._matrix.is_one()
+
+    def determinant(self):
+        if self.domain() is not self.codomain():
+            raise ValueError("determinants are only defined for endomorphisms")
+        return self._matrix.determinant()
+
+    det = determinant
+
+    def characteristic_polynomial(self, var='x'):
+        if self.domain() is not self.codomain():
+            raise ValueError("characteristic polynomials are only defined for endomorphisms")
+        return self._matrix.charpoly(var)
+
+    charpoly = characteristic_polynomial
 
     def is_injective(self):
         return self._matrix.rank() == self.domain().rank()

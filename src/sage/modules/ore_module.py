@@ -16,24 +16,45 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+import operator
 from sage.misc.cachefunc import cached_method
+from sage.structure.sequence import Sequence
 
+from sage.categories.action import Action
 from sage.categories.fields import Fields
 from sage.categories.ore_modules import OreModules
 
 from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 
+from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.modules.free_module import FreeModule_ambient
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
-from sage.modules.ore_module_element import OreModule_element
+from sage.modules.ore_module_element import OreModuleElement
+
+# Action of Ore polynomials on Ore modules
+##########################################
+
+class OreAction(Action):
+    def _act_(self, P, x):
+        M = x.parent()
+        ans = P[0]*x
+        y = x
+        for i in range(1, P.degree() + 1):
+            y = y.image()
+            ans += y._rmul_(P[i])
+        return ans
+
+class ScalarAction(Action):
+    def _act_(self, a, x):
+        return x._rmul_(a)
 
 # Generic class for Ore modules
 ###############################
 
 class OreModule(FreeModule_ambient):
     # TODO: ensure uniqueness of parents
-    Element = OreModule_element
+    Element = OreModuleElement
 
     def __init__(self, f, twist=None, names=None, category=None):
         base = f.base_ring()
@@ -45,6 +66,7 @@ class OreModule(FreeModule_ambient):
         if f.ncols() != rank:
             raise ValueError("matrix must be square")
         FreeModule_ambient.__init__(self, base, rank, category=category)
+        self.register_action(ScalarAction(base, self, True, operator.mul))
         self._ore = category._ore
         self._pseudohom = FreeModule_ambient.pseudohom(self, f, self._ore, codomain=self)
         if names is None:
@@ -73,26 +95,15 @@ class OreModule(FreeModule_ambient):
     def _repr_element(self, x):
         return FreeModuleElement_generic_dense._repr_(x)
 
-    def _Hom_(self, codomain, category):
-        from sage.modules.ore_module_homspace import OreModule_homspace
-        return OreModule_homspace(self, codomain)
-
-    def hom(self, f, codomain=None):
-        from sage.modules.ore_module_morphism import OreModule_morphism
-        if codomain is None:
-            codomain = self
-        H = self.Hom(codomain)
-        if isinstance(f, OreModule_morphism):
-            if f.domain() is not self:
-                f = self._hom_change_domain(f)
-            if f.codomain() is not codomain:
-                f = codomain._hom_change_codomain(f)
-            return f
-        else:
-            return H(f)
-
     def pseudohom(self):
         return self._pseudohom
+
+    def ore_ring(self, names='x', action=True):
+        S = self.category().ore_ring(names)
+        if action:
+            self._unset_coercions_used()
+            self.register_action(OreAction(S, self, True, operator.mul))
+        return S
 
     def matrix(self):
         return self._pseudohom.matrix()
@@ -105,7 +116,7 @@ class OreModule(FreeModule_ambient):
         B = [ ]
         for i in range(rank):
             coeffs[i] = one
-            B.append(self.element_class(self, coeffs))
+            B.append(self(coeffs))
             coeffs[i] = zero
         return B
 
@@ -118,10 +129,94 @@ class OreModule(FreeModule_ambient):
         one = self.base_ring().one()
         coeffs = [zero] * rank
         coeffs[i] = one
-        return self.element_class(self, coeffs)
+        return self(coeffs)
 
     def module(self):
         return self.base_ring() ** self.rank()
+
+    def _Hom_(self, codomain, category):
+        from sage.modules.ore_module_homspace import OreModule_homspace
+        return OreModule_homspace(self, codomain)
+
+    def hom(self, im_gens, codomain=None):
+        from sage.modules.ore_module_morphism import OreModule_morphism
+        if codomain is None:
+            if isinstance(im_gens, Matrix):
+                codomain = self
+            elif isinstance(im_gens, OreModule_morphism):
+                codomain = im_gens.codomain()
+            elif isinstance(im_gens, (list, tuple)):
+                codomain = Sequence(im_gens).universe()
+            elif isinstance(im_gens, dict):
+                codomain = Sequence(im_gens.values()).universe()
+            else:
+                raise ValueError("im_gens must be a list, a tuple, a dictionary, a matrix or a Ore module morphism")
+        H = self.Hom(codomain)
+        if isinstance(im_gens, Matrix):
+            return H(im_gens)
+        elif isinstance(im_gens, OreModule_morphism):
+            f = im_gens
+            if f.domain() is not self:
+                f = self._hom_change_domain(f)
+            if f.codomain() is not codomain:
+                f = codomain._hom_change_codomain(f)
+            return f
+        elif isinstance(im_gens, (list, tuple)):
+            if len(im_gens) != self.rank():
+                raise ValueError("wrong number of generators")
+            M = matrix([codomain(v).list() for v in im_gens])
+            return H(M)
+        elif isinstance(im_gens, dict):
+            zero = self.base_ring().zero()
+            dimd = self.rank()
+            dimc = codomain.rank()
+            d = dimc + dimd
+            vs = [self(x).list() + codomain(y).list() for x, y in im_gens.items()]
+            if len(vs) < 2*d:
+                vs += (2*d - len(vs)) * [d * [zero]]
+            M = matrix(vs)
+            M.echelonize()
+            oldr = 0
+            r = M.rank()
+            iter = 1
+            fd = self._pseudohom
+            fc = codomain._pseudohom
+            while r > oldr:
+                for i in range(r):
+                    row = M.row(i).list()
+                    x = row[:dimd]
+                    y = row[dimd:]
+                    for _ in range(iter):
+                        x = fd(x)
+                        y = fc(y)
+                    v = x.list() + y.list()
+                    for j in range(d):
+                        M[i+r,j] = v[j]
+                M.echelonize()
+                oldr = r
+                r = M.rank()
+                iter *= 2
+            if list(M.pivots()) != list(range(dimd)):
+                raise ValueError("does not define a morphism of Ore modules")
+            M = M.submatrix(0, dimd, dimd, dimc)
+            return H(M)
+        else:
+            raise ValueError("im_gens must be a list, a tuple, a dictionary, a matrix or a Ore module morphism")
+
+    def multiplication_map(self, P):
+        if isinstance(P, OrePolynomial):
+            S = P.parent()
+            ore = self.category()._ore
+            if S._morphism != ore._morphism or S._derivation != ore._derivation:
+                raise ValueError("twist does not match")
+            action = OreAction(S, self, True, operator.mul)
+            M = matrix([action._act_(P, x).list() for x in self.basis()])
+        else:
+            P = self.base_ring()(P)
+            r = self.rank()
+            M = matrix(r, r, P)
+        H = self.Hom(self)
+        return H(M)
 
     def _span(self, gens):
         base = self.base_ring()
@@ -136,7 +231,7 @@ class OreModule(FreeModule_ambient):
                 if incl is None:
                     raise ValueError("not canonically a submodule")
                 rows += incl._matrix.rows()
-            elif isinstance(gen, OreModule_element):
+            elif isinstance(gen, OreModuleElement):
                 rows.append(self(gen).list())
         if len(rows) < 2*rank:
             zero = rank * [base.zero()]
@@ -192,7 +287,7 @@ class OreSubmodule(OreModule):
         if basis.nrows() != rank:
             basis = basis.matrix_from_rows(range(rank))
         rows = [basis.solve_left(M(x).image()) for x in basis.rows()]
-        OreModule.__init__(self, matrix(base, rows), M.ore_ring(), names)
+        OreModule.__init__(self, matrix(base, rows), M.ore_ring(action=False), names)
         self._inject = coerce = self.hom(basis, codomain=M)
         self._basis = basis
         M.register_coercion(coerce)
@@ -247,7 +342,7 @@ class OreQuotientModule(OreModule):
             for j in range(d-r):
                 coerce[pivots[i],j] = -basis[i,indices[j]]
         rows = [M.gen(i).image() * coerce for i in indices]
-        OreModule.__init__(self, matrix(base, rows), M.ore_ring(), names)
+        OreModule.__init__(self, matrix(base, rows), M.ore_ring(action=False), names)
         self._indices = indices
         self._project = coerce = M.hom(coerce, codomain=self)
         self.register_coercion(coerce)

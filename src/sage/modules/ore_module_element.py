@@ -18,7 +18,7 @@ AUTHOR:
 
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
 
-class OreModule_element(FreeModuleElement_generic_dense):
+class OreModuleElement(FreeModuleElement_generic_dense):
     def _repr_(self):
         parent = self.parent()
         if parent._names is None:
@@ -49,6 +49,15 @@ class OreModule_element(FreeModuleElement_generic_dense):
                 return '-' + s[3:]
             else:
                 return s[3:]
+
+    def is_mutable(self):
+        return False
+
+    def __hash__(self):
+        return hash(tuple(self))
+
+    def __setitem__(self, i, v):
+        raise ValueError("vectors in Ore modules are immutable")
 
     def vector(self):
         V = self.parent().module()
