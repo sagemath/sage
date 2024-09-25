@@ -548,7 +548,11 @@ cdef class FlatsMatroid(Matroid):
         If the lattice of flats has already been computed, we instead perform
         the equivalent check of whether it forms a geometric lattice.
 
-        OUTPUT: boolean
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: boolean, or (boolean, dictionary)
 
         EXAMPLES::
 
@@ -586,8 +590,8 @@ cdef class FlatsMatroid(Matroid):
             ....:                    '06a','16b','268','369','07b','178','279','37a',
             ....:                    '0123c','89abc',
             ....:                    '0123456789abc'])
-            sage: M.is_valid()
-            False
+            sage: M.is_valid(certificate=True)
+            (False, {'error': 'the lattice of flats is not geometric'})
             sage: Matroid(matroids.catalog.Fano().lattice_of_flats()).is_valid()
             True
 
@@ -609,16 +613,21 @@ cdef class FlatsMatroid(Matroid):
 
         TESTS::
 
-            sage: Matroid(flats={0: [], 1: [[0], [1]], 2: [[0, 1]]}).is_valid()  # missing an intersection
-            False
-            sage: Matroid(flats={0: [[]], 2: [[0], [1]], 3: [[0, 1]]}).is_valid()  # invalid ranks
-            False
-            sage: Matroid(flats={0: [[]], 1: [[0], [1]], 2: [[0], [0, 1]]}).is_valid()  # duplicates
-            False
-            sage: Matroid(flats={0: [[]], 1: [[0], [1], [0, 1]]}).is_valid()
-            False
-            sage: Matroid(flats={0: [[]], 1: [[0, 1], [2]], 2: [[0], [1], [0, 1, 2]]}).is_valid()
-            False
+            sage: Matroid(flats={0: [], 1: [[0], [1]], 2: [[0, 1]]}).is_valid(certificate=True)  # missing an intersection
+            (False, {'error': 'flats dictionary has invalid ranks'})
+            sage: Matroid(flats={0: [[]], 2: [[0], [1]], 3: [[0, 1]]}).is_valid(certificate=True)  # invalid ranks
+            (False, {'error': 'flats dictionary has invalid ranks'})
+            sage: Matroid(flats={0: [[]], 1: [[0], [1]], 2: [[0], [0, 1]]}).is_valid(certificate=True)  # duplicates
+            (False, {'error': 'flats dictionary has repeated flats'})
+            sage: Matroid(flats={0: [[]], 1: [[0], [1], [0, 1]]}).is_valid(certificate=True)
+            (False,
+             {'error': 'a single element extension of a flat must be a subset of exactly one flat',
+              'flat': frozenset()})
+            sage: Matroid(flats={0: [[]], 1: [[0, 1], [2]], 2: [[0], [1], [0, 1, 2]]}).is_valid(certificate=True)
+            (False,
+             {'error': 'the intersection of two flats must be a flat',
+              'flat 1': frozenset({0, 1}),
+              'flat 2': frozenset({1})})
             sage: M = Matroid(flats={0: [''],  # missing an extension of flat ['5'] by '6'
             ....:                    1: ['0','1','2','3','4','5','6','7','8','9','a','b','c'],
             ....:                    2: ['45','46','47','4c','57','5c','67','6c','7c',
@@ -626,13 +635,15 @@ cdef class FlatsMatroid(Matroid):
             ....:                        '06a','16b','268','369','07b','178','279','37a',
             ....:                        '0123c','89abc'],
             ....:                    3: ['0123456789abc']})
-            sage: M.is_valid()
-            False
+            sage: M.is_valid(certificate=True)
+            (False,
+             {'error': 'a single element extension of a flat must be a subset of exactly one flat',
+              'flat': frozenset({'...'})})
             sage: M = Matroid(flats=[[], [0], [1], [0], [0, 1]])  # duplicates are ignored
             sage: M.lattice_of_flats()
             Finite lattice containing 4 elements
-            sage: M.is_valid()
-            True
+            sage: M.is_valid(certificate=True)
+            (True, {})
             sage: M = Matroid(flats=['',
             ....:                    '0','1','2','3','4','5','6','7','8','9','a','b','c',
             ....:                    '45','46','47','4c','56','57','5c','67','6c','7c',
@@ -640,13 +651,13 @@ cdef class FlatsMatroid(Matroid):
             ....:                    '06a','16b','268','369','07b','178','279','37a',
             ....:                    '0123c','89abc',
             ....:                    '0123456789abc'])
-            sage: M.is_valid()
-            True
+            sage: M.is_valid(certificate=True)
+            (True, {})
         """
         if self._L is not None:  # if the lattice of flats is available
             if certificate:
                 if not self._is_closed(self._groundset):
-                    return False, {"error": "groundset is not a closed set"}
+                    return False, {"error": "the groundset must be a flat"}
                 if not self._L.is_geometric():
                     return False, {"error": "the lattice of flats is not geometric"}
                 return True, {}
@@ -660,20 +671,14 @@ cdef class FlatsMatroid(Matroid):
         # check flats dictionary for invalid ranks and repeated flats
         ranks = list(self._F)
         if ranks != list(range(len(ranks))):
-            if certificate:
-                False, {"error": "flats dictionary has invalid ranks"}
-            return False
+            return False if not certificate else (False, {"error": "flats dictionary has invalid ranks"})
         flats_lst = [F for i in self._F for F in self._F[i]]
         if len(flats_lst) != len(set(flats_lst)):
-            if certificate:
-                False, {"error": "flats dictionary has repeated flats"}
-            return False
+            return False if not certificate else (False, {"error": "flats dictionary has repeated flats"})
 
         # the groundset must be a flat
         if not self._is_closed(self._groundset):
-            if certificate:
-                return False, {"error": "the groundset must be a flat"}
-            return False
+            return False if not certificate else (False, {"error": "the groundset must be a flat"})
 
         # a single element extension of a flat must be a subset of exactly one flat
         for i in ranks[:-1]:
@@ -683,9 +688,7 @@ cdef class FlatsMatroid(Matroid):
                     if F2 >= F1:
                         cover.extend(F1 ^ F2)
                 if len(cover) != len(F1 ^ self._groundset) or set(cover) != F1 ^ self._groundset:
-                    if certificate:
-                        False, {"error": "a single element extension of a flat must be a subset of exactly one flat", "flat": F1}
-                    return False
+                    return False if not certificate else (False, {"error": "a single element extension of a flat must be a subset of exactly one flat", "flat": F1})
 
         # the intersection of two flats must be a flat
         for i in ranks:
@@ -702,10 +705,6 @@ cdef class FlatsMatroid(Matroid):
                                 if flag:
                                     break
                         if not flag:
-                            if certificate:
-                                False, {"error": "the intersection of two flats must be a flat", "flat 1": F1, "flat 2": F2}
-                            return False
+                            return False if not certificate else (False, {"error": "the intersection of two flats must be a flat", "flat 1": F1, "flat 2": F2})
 
-        if certificate:
-            return True, {}
-        return True
+        return True if not certificate else (True, {})

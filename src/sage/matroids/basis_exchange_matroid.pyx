@@ -2242,7 +2242,11 @@ cdef class BasisExchangeMatroid(Matroid):
         * if `X` and `Y` are in `B`, and `x` is in `X - Y`, then there is a
           `y` in `Y - X` such that `(X - x) + y` is again a member of `B`.
 
-        OUTPUT: boolean
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: boolean, or (boolean, dictionary)
 
         EXAMPLES::
 
@@ -2251,8 +2255,8 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: M.is_valid()
             True
             sage: M = Matroid(groundset='abcd', bases=['ab', 'cd'])
-            sage: M.is_valid()
-            False
+            sage: M.is_valid(certificate=True)
+            (False, {'error': 'exchange axiom failed'})
 
         TESTS:
 
@@ -2278,9 +2282,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 if not bitset_eq(self._current_basis, BB._subsets[pointerY]):
                     # We failed to set the current basis to Y through basis exchanges.
                     # Therefore, the exchange axioms are violated!
-                    if certificate:
-                        return False, {"error": "exchange axiom failed"}
-                    return False
+                    return False if not certificate else (False, {"error": "exchange axiom failed"})
                 bitset_difference(self._input, BB._subsets[pointerX], BB._subsets[pointerY])
                 bitset_difference(self._input2, BB._subsets[pointerY], BB._subsets[pointerX])
                 x = bitset_first(self._input)
@@ -2294,15 +2296,11 @@ cdef class BasisExchangeMatroid(Matroid):
                         else:
                             y = bitset_next(self._input2, y + 1)
                     if not foundpair:
-                        if certificate:
-                            return False, {"error": "exchange axiom failed"}
-                        return False
+                        return False if not certificate else (False, {"error": "exchange axiom failed"})
                     x = bitset_next(self._input, x + 1)
                 pointerY += 1
             pointerX += 1
-        if certificate:
-            return True, {}
-        return True
+        return True if not certificate else (True, {})
 
 cdef bint nxksrd(bitset_s* b, long n, long k, bint succ) noexcept:
     """

@@ -551,7 +551,11 @@ class DualMatroid(Matroid):
 
         For a :class:`DualMatroid`, we check its dual.
 
-        OUTPUT: boolean
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: boolean, or (boolean, dictionary)
 
         EXAMPLES::
 

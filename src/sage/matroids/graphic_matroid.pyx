@@ -1099,7 +1099,11 @@ cdef class GraphicMatroid(Matroid):
 
         Since a graph is used for the data, this is always the case.
 
-        OUTPUT: ``True``, or (True, {})
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: ``True``, or ``(True, {})``
 
         EXAMPLES::
 
@@ -1108,9 +1112,7 @@ cdef class GraphicMatroid(Matroid):
             sage: M.is_valid()
             True
         """
-        if certificate:
-            return True, {}
-        return True
+        return True if not certificate else (True, {})
 
     cpdef bint is_graphic(self) noexcept:
         r"""
