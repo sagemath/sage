@@ -151,7 +151,6 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element):
             sage: hash(C(G)) == hash((8, 8, (2, 2, 4)))
             True
         """
-        assert self._C.degree() == sum(tuple(sorted(len(orbit) for orbit in self._C.orbits())))
         return hash((self._C.degree(),
                      self._C.cardinality(),
                      tuple(sorted(len(orbit) for orbit in self._C.orbits()))))
