@@ -4,6 +4,7 @@ Feature for testing the presence of ``giac``
 """
 
 from . import Executable, FeatureTestResult
+from sage.env import SAGE_GIAC_ENABLED
 
 class Giac(Executable):
     r"""
@@ -23,7 +24,11 @@ class Giac(Executable):
             sage: isinstance(Giac(), Giac)
             True
         """
-        Executable.__init__(self, 'giac', executable='giac',
+        if SAGE_GIAC_ENABLED == "no":
+            giac_exe = 'fofobar42barfoo'
+        else:
+            giac_exe = 'giac'
+        Executable.__init__(self, 'giac', executable=giac_exe,
                             spkg='giac', type='optional')
 
 def all_features():
