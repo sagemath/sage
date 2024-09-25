@@ -18,10 +18,176 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "sagemath-standard"
+description = "Sage: Open Source Mathematics Software: Standard Python Library"
+dependencies = [
+    'six >=1.15.0',
+    # From build/pkgs/sagelib/dependencies
+    'conway-polynomials >=0.8',
+    'cypari2 >=2.1.1',
+    'cysignals >=1.10.2',
+    'cython >=3.0, != 3.0.3, <4.0',
+    'gmpy2 ~=2.1.b999',
+    'importlib_metadata >=4.13; python_version<"3.11"',
+    'importlib_resources >= 5.7; python_version<"3.11"',
+    'lrcalc ~=2.1',
+    'memory_allocator',
+    'numpy >=1.19',
+    'pkgconfig',
+    'pplpy',
+    'primecountpy',
+    'requests >=2.13.0',
+    'typing_extensions >= 4.4.0; python_version<"3.11"',
+    # From Makefile.in: SAGERUNTIME
+    'ipython >=7.13.0',
+    'pexpect >=4.8.0',
+    # From Makefile.in: DOC_DEPENDENCIES
+    'sphinx >=5.2, <9'
+    'networkx >=2.4',
+    'scipy >=1.5',
+    'sympy >=1.6, <2.0',
+    'matplotlib >=3.5.1',
+    'pillow >=7.2.0',
+    'mpmath >=1.1.0',
+    'ipykernel >=5.2.1',
+    'jupyter-client',
+    'ipywidgets >=7.5.1',
+    'fpylll >=0.5.9',
+    'ptyprocess > 0.5',
+]
+dynamic = ["version"]
+# duplicated from m4/pyproject_toml_metadata.m4
+license = {text = "GNU General Public License (GPL) v2 or later"}
+authors = [{name = "The Sage Developers", email = "sage-support@googlegroups.com"}]
+classifiers = [
+    "Development Status :: 6 - Mature",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS :: MacOS X",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+urls = {Homepage = "https://www.sagemath.org"}
+requires-python = ">=3.9, <3.13"
+
+[project.optional-dependencies]
+R = [
+    'rpy2 >=3.3',
+]
+bliss = [
+    'sagemath-bliss',
+]
+coxeter3 = [
+    'sagemath-coxeter3',
+]
+mcqd = [
+    'sagemath-mcqd',
+]
+meataxe = [
+    'sagemath-meataxe',
+]
+sirocco = [
+    'sagemath-sirocco',
+]
+tdlib    = [
+    'sagemath-tdlib',
+]
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
 [tool.conda-lock]
 platforms = [
     'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
 ]
+
+[tool.setuptools]
+script-files = [
+    # The sage script
+    "bin/sage",
+    # Other scripts that should be in the path also for OS packaging of sage:
+    "bin/sage-eval",
+    # Included because it is useful for doctesting/coverage testing user scripts too:
+    "bin/sage-runtests",
+    "bin/sage-fixdoctests",
+    "bin/sage-coverage",
+    # The following is deprecated but might still be used in user package install scripts
+    "bin/sage-cython",
+    # Helper scripts invoked by sage script
+    # (they would actually belong to something like libexec)
+    "bin/sage-cachegrind",
+    "bin/sage-callgrind",
+    "bin/sage-massif",
+    "bin/sage-omega",
+    "bin/sage-valgrind",
+    "bin/sage-venv-config",
+    "bin/sage-version.sh",
+    "bin/sage-cleaner",
+    # Only makes sense in sage-the-distribution. TODO: Move to another installation script.
+    "bin/sage-list-packages",
+    # Uncategorized scripts in alphabetical order
+    "bin/math-readline",
+    "bin/sage-env",
+    # sage-env-config -- installed by sage_conf
+    # sage-env-config.in -- not to be installed
+    "bin/sage-grep",
+    "bin/sage-grepdoc",
+    "bin/sage-inline-fortran",
+    "bin/sage-ipynb2rst",
+    "bin/sage-ipython",
+    "bin/sage-notebook",
+    "bin/sage-num-threads.py",
+    "bin/sage-preparse",
+    "bin/sage-python",
+    "bin/sage-run",
+    "bin/sage-run-cython",
+    "bin/sage-startuptime.py",
+    "bin/sage-update-version",
+]
+license-files = ["LICENSE.txt"]
+include-package-data = false
+
+[tool.setuptools.package-data]
+"sage.libs.gap" = ["sage.gaprc"]
+"sage.interfaces" = ["sage-maxima.lisp"]
+"sage.doctest" = ["tests/*"]
+"sage.repl.rich_output" = ["example*"]
+sage = [
+    "ext_data/*",
+    "ext_data/kenzo/*",
+    "ext_data/singular/*",
+    "ext_data/singular/function_field/*",
+    "ext_data/images/*",
+    "ext_data/doctest/*",
+    "ext_data/doctest/invalid/*",
+    "ext_data/gap/*",
+    "ext_data/gap/joyner/*",
+    "ext_data/mwrank/*",
+    "ext_data/notebook-ipython/*",
+    "ext_data/nbconvert/*",
+    "ext_data/graphs/*",
+    "ext_data/pari/*",
+    "ext_data/pari/dokchitser/*",
+    "ext_data/pari/buzzard/*",
+    "ext_data/pari/simon/*",
+    "ext_data/magma/*",
+    "ext_data/magma/latex/*",
+    "ext_data/magma/sage/*",
+    "ext_data/valgrind/*",
+    "ext_data/threejs/*",
+]
+
+[tool.setuptools.dynamic]
+version = {file = ["VERSION.txt"]}
 
 [external]
 # External dependencies in the format proposed by https://peps.python.org/pep-0725
