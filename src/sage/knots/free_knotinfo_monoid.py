@@ -27,7 +27,7 @@ AUTHORS:
 from sage.knots.knotinfo import SymmetryMutant
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid, IndexedFreeAbelianMonoidElement
 from sage.misc.cachefunc import cached_method
-from sage.misc.fast_methods import Singleton
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class FreeKnotInfoMonoidElement(IndexedFreeAbelianMonoidElement):
@@ -89,7 +89,7 @@ class FreeKnotInfoMonoidElement(IndexedFreeAbelianMonoidElement):
         return [P._index_dict[w] for w in wl]
 
 
-class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid, Singleton):
+class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
 
     Element = FreeKnotInfoMonoidElement
 
@@ -106,12 +106,15 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid, Singleton):
             sage: FreeKnotInfoMonoid(5)
             Free abelian monoid of knots with at most 5 crossings
         """
-        return super().__classcall__(cls, max_crossing_number, prefix=prefix, **kwds)
+        if not prefix:
+            prefix = 'KnotInfo'
+        # We skip the IndexedMonoid__classcall__
+        return UniqueRepresentation.__classcall__(cls, max_crossing_number, prefix=prefix, **kwds)
 
     def __init__(self, max_crossing_number, category=None, prefix=None, **kwds):
         r"""
-        Init this monoid with generators belonging to prime knots with at most
-        ``max_crossing_number`` crossings.
+        Initialize ``self`` with generators belonging to prime knots with
+        at most ``max_crossing_number`` crossings.
 
         TESTS:
 
@@ -125,8 +128,6 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid, Singleton):
         self._set_index_dictionary(max_crossing_number=max_crossing_number)
         from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
         indices = FiniteEnumeratedSet(self._index_dict)
-        if not prefix or prefix == 'F':
-            prefix = 'KnotInfo'
         super().__init__(indices, prefix)
 
     def _from_knotinfo(self, knotinfo, symmetry_mutant):
