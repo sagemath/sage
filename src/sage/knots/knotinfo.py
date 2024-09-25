@@ -506,7 +506,7 @@ class KnotInfoBase(Enum):
             True
         """
         if self.__class__ is other.__class__:
-            tups = (not self.is_knot(),  self.crossing_number(),  self.value)
+            tups = (not self.is_knot(), self.crossing_number(), self.value)
             tupo = (not other.is_knot(), other.crossing_number(), other.value)
             return tups > tupo
         return NotImplemented
@@ -1491,7 +1491,7 @@ class KnotInfoBase(Enum):
             return R.one()
 
         a, z = R.gens()
-        lc = {'a':  a, 'z': z}
+        lc = {'a': a, 'z': z}
         return R(eval_knotinfo(kauffman_polynomial, locals=lc))
 
     @cached_method
@@ -1664,24 +1664,24 @@ class KnotInfoBase(Enum):
                 R = SR
 
         if not jones_polynomial and self.crossing_number() == 0:
-            return R(1)
+            return R.one()
 
         t = R(variab)
         if skein_normalization:
             if self.is_knot():
-                lc = {'t':  t**4}
+                lc = {'t': t**4}
             else:
-                lc = {'x':  t**2}
+                lc = {'x': t**2}
         else:
             if self.is_knot():
-                lc = {'t':  t}
+                lc = {'t': t}
             elif puiseux:
-                lc = {'x':  t**(1/2)}
+                lc = {'x': t**(1/2)}
             elif use_sqrt:
                 from sage.misc.functional import sqrt
-                lc = {'x':  sqrt(t)}
+                lc = {'x': sqrt(t)}
             else:
-                lc = {'x':  t}
+                lc = {'x': t}
 
         return R(eval_knotinfo(jones_polynomial, locals=lc))
 
@@ -1767,7 +1767,7 @@ class KnotInfoBase(Enum):
             return R.one()
 
         t, = R.gens()
-        lc = {'t':  t}
+        lc = {'t': t}
         ap = R(eval_knotinfo(alexander_polynomial, locals=lc))
         if not laurent_poly or ap.is_constant():
             return ap
@@ -1838,7 +1838,7 @@ class KnotInfoBase(Enum):
             return R.one()
 
         t, = R.gens()
-        lc = {'z':  t}
+        lc = {'z': t}
         return R(eval_knotinfo(conway_polynomial, locals=lc))
 
     @cached_method

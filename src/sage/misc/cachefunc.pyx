@@ -2096,7 +2096,7 @@ cdef class CachedMethodCaller(CachedFunction):
             pass
         try:
             if inst._cached_methods is None:
-                inst._cached_methods = {self._cachedmethod._cachedfunc.__name__ : Caller}
+                inst._cached_methods = {self._cachedmethod._cachedfunc.__name__: Caller}
             else:
                 (<dict>inst._cached_methods)[self._cachedmethod._cachedfunc.__name__] = Caller
         except AttributeError:
@@ -2471,7 +2471,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             pass
         try:
             if inst._cached_methods is None:
-                inst._cached_methods = {self.__name__ : Caller}
+                inst._cached_methods = {self.__name__: Caller}
             else:
                 (<dict>inst._cached_methods)[self.__name__] = Caller
         except AttributeError:
@@ -2852,7 +2852,7 @@ cdef class CachedMethod():
             pass
         try:
             if inst._cached_methods is None:
-                inst._cached_methods = {name : Caller}
+                inst._cached_methods = {name: Caller}
             else:
                 (<dict>inst._cached_methods)[name] = Caller
         except AttributeError:
