@@ -7722,6 +7722,52 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         g[i] = i
         return self.element_class(self, g, check=False)
 
+    @cached_method
+    def reflection_index_set(self):
+        r"""
+        Return the index set of the reflections of ``self``.
+
+        .. SEEALSO::
+
+            - :meth:`reflection`
+            - :meth:`reflections`
+
+        EXAMPLES::
+
+            sage: P = Permutations(4)
+            sage: P.reflection_index_set()
+            ((1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4))
+        """
+        return tuple([tuple(c) for c in itertools.combinations(range(1, self.n+1), 2)])
+
+    def reflection(self, i):
+        r"""
+        Return the reflection indexed by ``i`` of ``self``.
+
+        This returns the permutation with cycle `i = (a, b)`.
+
+        .. SEEALSO::
+
+            - :meth:`reflections_index_set`
+            - :meth:`reflections`
+
+        EXAMPLES::
+
+            sage: P = Permutations(4)
+            sage: for i in P.reflection_index_set():
+            ....:     print('%s %s'%(i, P.reflection(i)))
+            (1, 2) [2, 1, 3, 4]
+            (1, 3) [3, 2, 1, 4]
+            (1, 4) [4, 2, 3, 1]
+            (2, 3) [1, 3, 2, 4]
+            (2, 4) [1, 4, 3, 2]
+            (3, 4) [1, 2, 4, 3]
+        """
+        data = list(range(1, self.n+1))
+        data[i[0]-1] = i[1]
+        data[i[1]-1] = i[0]
+        return self.element_class(self, data, check=False)
+
     class Element(Permutation):
         def has_left_descent(self, i, mult=None):
             r"""

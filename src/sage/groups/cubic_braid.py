@@ -1200,7 +1200,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             def transvec2mat(v, bas=bas, bform=bform, fact=1):
                 t = [x + fact*(x * bform * v) * v for x in bas]
-                return matrix(bform.base_ring(),  t)
+                return matrix(bform.base_ring(), t)
 
             # ------------------------------------------------------------------------------
             # setting the centralizing matrix for the case of projective group realization

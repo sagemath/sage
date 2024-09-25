@@ -1168,8 +1168,7 @@ def plot3d_adaptive(f, x_range, y_range, color='automatic',
         x, y = var('x,y')
         sphinx_plot(plot3d_adaptive(sin(x*y), (x,-pi,pi), (y,-pi,pi), initial_depth=5))
     """
-    if initial_depth >= max_depth:
-        max_depth = initial_depth
+    max_depth = max(max_depth, initial_depth)
 
     from sage.plot.misc import setup_for_eval_on_grid
     g, ranges = setup_for_eval_on_grid(f, [x_range,y_range], plot_points=2)
