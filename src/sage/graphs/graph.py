@@ -4148,7 +4148,7 @@ class Graph(GenericGraph):
 
         .. MATH::
 
-            \tilde{m}_{\lambda} = \(\prod_{i} r_i!\) m_{\lambda}.
+            \tilde{m}_{\lambda} = \left(\prod_{i} r_i! \right) m_{\lambda}.
 
         INPUT:
 
