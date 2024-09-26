@@ -3226,7 +3226,6 @@ class FreeModule_generic(Module_free_ambient):
         parent = self.PseudoHom(twist, codomain)
         return FreeModulePseudoMorphism(parent, f, side)
 
-
     def inner_product_matrix(self):
         """
         Return the default identity inner product matrix associated to this
