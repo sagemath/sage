@@ -1518,6 +1518,19 @@ class PolynomialSpecies(CombinatorialFreeModule):
                          for s in range(self._arity))
 
     class Element(CombinatorialFreeModule.Element):
+        r"""
+        Multivariate polynomial (virtual) species.
+
+        TESTS::
+
+            sage: P = PolynomialSpecies(ZZ, ["X"])
+            sage: C3 = P(CyclicPermutationGroup(3))
+            sage: X = P(SymmetricGroup(1))
+            sage: E2 = P(SymmetricGroup(2))
+            sage: (E2*X + C3).homogeneous_degree()
+            3
+        """
+
         def is_constant(self):
             """
             Return ``True`` if this is a constant polynomial species.
@@ -1536,28 +1549,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
                 False
             """
             return self.is_zero() or not self.maximal_degree()
-
-        def homogeneous_degree(self):
-            """
-
-            ..TODO::
-
-               This implementation should not be necessary.
-
-            EXAMPLES::
-
-                sage: P = PolynomialSpecies(ZZ, ["X"])
-                sage: C3 = P(CyclicPermutationGroup(3))
-                sage: X = P(SymmetricGroup(1))
-                sage: E2 = P(SymmetricGroup(2))
-                sage: (E2*X + C3).homogeneous_degree()
-                3
-            """
-            if not self.support():
-                raise ValueError("the zero element does not have a well-defined degree")
-            if not self.is_homogeneous():
-                raise ValueError("element is not homogeneous")
-            return self.parent().degree_on_basis(self.support()[0])
 
         def is_virtual(self):
             r"""
