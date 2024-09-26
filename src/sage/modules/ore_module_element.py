@@ -16,6 +16,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+from sage.misc.latex import latex
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
 
 class OreModuleElement(FreeModuleElement_generic_dense):
@@ -47,6 +48,37 @@ class OreModuleElement(FreeModuleElement_generic_dense):
                 return "0"
             elif s[1] == '-':
                 return '-' + s[3:]
+            else:
+                return s[3:]
+
+    def _latex_(self):
+        parent = self.parent()
+        if parent._names is None:
+            return self.parent()._latex_element(self)
+        else:
+            rank = parent.rank()
+            names = parent._latex_names
+            s = ""
+            for i in range(rank):
+                c = self[i]
+                sc = str(c)
+                if sc == "0":
+                    continue
+                if sc == "1":
+                    s += " + %s" % names[i]
+                elif sc == "-1":
+                    s += " - %s" % names[i]
+                elif c._is_atomic():
+                    if sc[0] == "-":
+                        s += " - %s %s" % (latex(-c), names[i])
+                    else:
+                        s += " + %s %s" % (latex(c), names[i])
+                else:
+                    s += " + \\left(%s\\right) %s" % (latex(c), names[i])
+            if s == "":
+                return "0"
+            elif s[1] == '-':
+                return s[1:]
             else:
                 return s[3:]
 

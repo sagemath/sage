@@ -17,6 +17,8 @@ AUTHOR:
 # ***************************************************************************
 
 import operator
+from sage.misc.latex import latex
+from sage.misc.latex import latex_variable_name
 from sage.misc.cachefunc import cached_method
 from sage.structure.sequence import Sequence
 
@@ -80,6 +82,8 @@ class OreModule(FreeModule_ambient):
         else:
             raise ValueError
         self._names = names
+        if names is not None:
+            self._latex_names = [latex_variable_name(name) for name in names]
         self._submodule_class = OreSubmodule
         self._quotientModule_class = OreQuotientModule
 
@@ -92,8 +96,29 @@ class OreModule(FreeModule_ambient):
         s += "over %s %s" % (self.base_ring(), self._ore._repr_twist())
         return s
 
+    def _latex_(self):
+        if self._names is None:
+            s = "\\texttt{Ore module of rank } %s" % self.rank()
+            s += "\\texttt{ over } %s" % latex(self.base_ring())
+            twist = self._ore._latex_twist()
+            if twist == "":
+                s += "\\texttt{ untwisted}"
+            else:
+                s += "\\texttt{ twisted by }" + twist
+        else:
+            s = "\\left<" + ", ".join(self._latex_names) + "\\right>"
+            s += "_{%s" % latex(self.base_ring())
+            twist = self._ore._latex_twist()
+            if twist != "":
+                s += "," + twist
+            s += "}"
+        return s
+
     def _repr_element(self, x):
         return FreeModuleElement_generic_dense._repr_(x)
+
+    def _latex_element(self, x):
+        return FreeModuleElement_generic_dense._latex_(x)
 
     def pseudohom(self):
         return self._pseudohom
@@ -130,6 +155,12 @@ class OreModule(FreeModule_ambient):
         coeffs = [zero] * rank
         coeffs[i] = one
         return self(coeffs)
+
+    def random_element(self, *args, **kwds):
+        K = self.base_ring()
+        r = self.rank()
+        vs = [K.random_element(*args, **kwds) for _ in range(r)]
+        return self(vs)
 
     def module(self):
         return self.base_ring() ** self.rank()
@@ -295,6 +326,9 @@ class OreSubmodule(OreModule):
     def _repr_element(self, x):
         return self._M(x)._repr_()
 
+    def _latex_element(self, x):
+        return self._M(x)._latex_()
+
     def ambient(self):
         return self._M
 
@@ -355,6 +389,15 @@ class OreQuotientModule(OreModule):
         for i in range(self.rank()):
             coords[indices[i]] = x[i]
         return M(coords)._repr_()
+
+    def _latex_element(self, x):
+        M = self._M
+        indices = self._indices
+        base = self.base_ring()
+        coords = M.rank() * [base.zero()]
+        for i in range(self.rank()):
+            coords[indices[i]] = x[i]
+        return M(coords)._latex_()
 
     def dividend(self):
         return self._M

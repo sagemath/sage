@@ -16,8 +16,8 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
+from sage.misc.latex import latex
 from sage.matrix.constructor import matrix
-
 from sage.categories.morphism import Morphism
 from sage.modules.ore_module import OreModule, OreSubmodule, OreQuotientModule
 
@@ -31,6 +31,14 @@ class OreModule_morphism(Morphism):
 
     def _repr_type(self):
         return "Ore module"
+
+    def _latex_(self):
+        s = "\\begin{array}{l}\n"
+        s += "\\text{\\texttt{%s morphism:}} \\\\\n" % self._repr_type()
+        s += "\\text{\\texttt{{ }{ }From:}}\\hspace{1ex} %s \\\\\n" % latex(self.domain())
+        s += "\\text{\\texttt{{ }{ }To:}}\\hspace{3ex} %s \n" % latex(self.codomain())
+        s += "\\end{array}"
+        return s
 
     def matrix(self):
         return self._matrix.__copy__()

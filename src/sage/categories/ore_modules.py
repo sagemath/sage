@@ -31,8 +31,6 @@ class OreModules(Category_over_base_ring):
     def Homsets(self):
         return Homsets()
 
-
-
     class SubcategoryMethods:
 
         @lazy_attribute
@@ -49,7 +47,6 @@ class OreModules(Category_over_base_ring):
 
         def twisting_derivation(self):
             return self._ore.twisting_derivation()
-
 
     class ParentMethods:
 

@@ -628,6 +628,35 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         else:
             return "twisted by " + s
 
+    def _latex_twist(self):
+        r"""
+        Return a LaTeX representation of the twisting morphisms.
+
+        This is a helper method.
+
+        TESTS::
+
+            sage: F.<z> = GF(5^3)
+            sage: Frob = F.frobenius_endomorphism()
+
+            sage: S.<x> = OrePolynomialRing(F, Frob)
+            sage: S._latex_twist()
+
+            sage: T.<y> = OrePolynomialRing(F, Frob^3, polcast=False)
+            sage: T._latex_twist()
+            ''
+
+        """
+        from sage.misc.latex import latex
+        s = ""
+        if self._morphism is not None:
+            s += latex(self._morphism)
+        if self._derivation is not None:
+            if s != "":
+                s += ", "
+            s += latex(self._derivation)
+        return s
+
     def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
@@ -671,12 +700,9 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         """
         from sage.misc.latex import latex
         s = "%s\\left[%s" % (latex(self.base_ring()), self.latex_variable_names()[0])
-        sep = ";"
-        if self._morphism is not None:
-            s += sep + latex(self._morphism)
-            sep = ","
-        if self._derivation is not None:
-            s += sep + latex(self._derivation)
+        twist = self._latex_twist()
+        if twist != "":
+            s += ";" + twist
         return s + "\\right]"
 
     def change_var(self, var):
