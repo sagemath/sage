@@ -789,7 +789,7 @@ and for describing the affine Weyl group.
 In particular, the hyperplane for the reflection `r_0`, used in generating
 the affine Weyl group, is translated off the origin (so it becomes an affine
 hyperplane). Now the root system is not described as linear transformations
-on an Euclidean space, but instead by *affine* transformations. Thus the
+on a Euclidean space, but instead by *affine* transformations. Thus the
 dominant chamber has finite volume and tiles the Eucledian space. Moreover,
 each such tile corresponds to a unique element in the affine Weyl group.
 
