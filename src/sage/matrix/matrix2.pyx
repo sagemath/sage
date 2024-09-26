@@ -16342,7 +16342,7 @@ cdef class Matrix(Matrix1):
         Transform the matrix in place to hermite normal form and optionally
         return the transformation matrix.
 
-        The matrix is assumed to be over an Euclidean domain. In particular,
+        The matrix is assumed to be over a Euclidean domain. In particular,
         ``xgcd()`` method should be available for the elements of the domain.
 
         INPUT:
