@@ -848,7 +848,7 @@ the twisting procedure defined in [Kac]_. It has the following properties:
 Further Generalizations
 -----------------------
 
-If a root system (on an Euclidean space) has only the angles
+If a root system (on a Euclidean space) has only the angles
 `\pi/2, 2\pi/3, 3\pi/4, 5\pi/6` between its roots, then we call the
 root system *crystallographic* (on :wikipedia:`Root_system`, this
 condition is called integrality since for any two roots we have
