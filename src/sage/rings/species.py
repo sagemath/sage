@@ -139,20 +139,6 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
         Parent.__init__(self, category=InfiniteEnumeratedSets())
         self._cache = dict()
 
-    @cached_method
-    def an_element(self):
-        r"""
-        Return an element of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: C.an_element()
-            ((),)
-        """
-        return self._element_constructor_(SymmetricGroup(1))
-
     def _element_constructor_(self, x):
         r"""
         Construct a conjugacy class from ``x``.
@@ -180,6 +166,18 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
                 raise ValueError(f"{x} is not directly indecomposable")
             return self.element_class(self, x)
         raise ValueError(f"unable to convert {x} to {self}")
+
+    def _repr_(self):
+        r"""
+        Return the string representation for ``self``.
+
+        TESTS::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups(); C
+            Infinite set of conjugacy classes of directly indecomposable subgroups
+        """
+        return "Infinite set of conjugacy classes of directly indecomposable subgroups"
 
     def __iter__(self):
         r"""
@@ -225,17 +223,19 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             return True
         return len(G.disjoint_direct_product_decomposition()) <= 1
 
-    def _repr_(self):
+    @cached_method
+    def an_element(self):
         r"""
-        Return the string representation for ``self``.
+        Return an element of ``self``.
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups(); C
-            Infinite set of conjugacy classes of directly indecomposable subgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: C.an_element()
+            ((),)
         """
-        return "Infinite set of conjugacy classes of directly indecomposable subgroups"
+        return self._element_constructor_(SymmetricGroup(1))
 
     Element = ConjugacyClassOfDirectlyIndecomposableSubgroups
 
@@ -335,21 +335,6 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
         self._mc = tuple(len(v) for v in self._dompart)
         self._tc = sum(self._mc)
 
-    def grade(self):
-        r"""
-        Return the grade of ``self``.
-
-        EXAMPLES::
-
-            sage: A = AtomicSpecies("X, Y")
-            sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]])
-            sage: a = A(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]})
-            sage: a.grade()
-            [4, 6]
-        """
-        S = self.parent().grading_set()
-        return S(self._mc)
-
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
@@ -369,6 +354,21 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
         dompart = ', '.join("{" + repr(sorted(b))[1:-1] + "}"
                             for b in self._dompart)
         return "{" + f"{self._dis}: ({dompart})" + "}"
+
+    def grade(self):
+        r"""
+        Return the grade of ``self``.
+
+        EXAMPLES::
+
+            sage: A = AtomicSpecies("X, Y")
+            sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]])
+            sage: a = A(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]})
+            sage: a.grade()
+            [4, 6]
+        """
+        S = self.parent().grading_set()
+        return S(self._mc)
 
 
 class AtomicSpecies(UniqueRepresentation, Parent):
@@ -415,40 +415,20 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         self._cache = dict()
         self._renamed = set()  # the degrees that have been renamed already
 
-    def grading_set(self):
+    def _repr_(self):
         r"""
-        Return the set of non-negative integer vectors, whose length is
-        the arity of ``self``.
-
-        EXAMPLES::
-
-            sage: AtomicSpecies(["X"]).grading_set()
-            Integer vectors of length 1
-        """
-        return IntegerVectors(length=self._arity)
-
-    @cached_method
-    def an_element(self):
-        """
-        Return an element of ``self``.
+        Return a string representation of ``self``.
 
         TESTS::
 
-            sage: A = AtomicSpecies("X")
-            sage: A.an_element()
-            E_2
-
-            sage: A = AtomicSpecies("X, Y")
-            sage: a = A.an_element(); a
-            {((1,2)(3,4),): ({1, 2}, {3, 4})}
-
-            sage: a.rename("E_2(XY)")
-            sage: a
-            E_2(XY)
+            sage: AtomicSpecies("X")
+            Atomic species in X
+            sage: AtomicSpecies("X, Y")
+            Atomic species in X, Y
         """
-        G = PermutationGroup([[(2 * i + 1, 2 * i + 2) for i in range(self._arity)]])
-        m = {i: [2 * i + 1, 2 * i + 2] for i in range(self._arity)}
-        return self._element_constructor_(G, m)
+        if len(self._names) == 1:
+            return f"Atomic species in {self._names[0]}"
+        return f"Atomic species in {', '.join(self._names)}"
 
     def _element_constructor_(self, G, pi=None):
         r"""
@@ -480,7 +460,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
             sage: G = PermutationGroup([[(1,3),(5,7)]], domain=[1,3,5,7])
             sage: A(G, ([1,3], [5,7]))
-            E_2(XY)
+            {((1,2)(3,4),): ({1, 2}, {3, 4})}
         """
         if parent(G) == self:
             if pi is not None:
@@ -613,20 +593,40 @@ class AtomicSpecies(UniqueRepresentation, Parent):
                 raise ValueError(f"All elements of orbit {orbit} must have the same sort")
         return len(G.disjoint_direct_product_decomposition()) <= 1
 
-    def _repr_(self):
+    def grading_set(self):
         r"""
-        Return a string representation of ``self``.
+        Return the set of non-negative integer vectors, whose length is
+        the arity of ``self``.
+
+        EXAMPLES::
+
+            sage: AtomicSpecies(["X"]).grading_set()
+            Integer vectors of length 1
+        """
+        return IntegerVectors(length=self._arity)
+
+    @cached_method
+    def an_element(self):
+        """
+        Return an element of ``self``.
 
         TESTS::
 
-            sage: AtomicSpecies("X")
-            Atomic species in X
-            sage: AtomicSpecies("X, Y")
-            Atomic species in X, Y
+            sage: A = AtomicSpecies("X")
+            sage: A.an_element()
+            E_2
+
+            sage: A = AtomicSpecies("X, Y")
+            sage: a = A.an_element(); a
+            {((1,2)(3,4),): ({1, 2}, {3, 4})}
+
+            sage: a.rename("E_2(XY)")
+            sage: a
+            E_2(XY)
         """
-        if len(self._names) == 1:
-            return f"Atomic species in {self._names[0]}"
-        return f"Atomic species in {', '.join(self._names)}"
+        G = PermutationGroup([[(2 * i + 1, 2 * i + 2) for i in range(self._arity)]])
+        m = {i: [2 * i + 1, 2 * i + 2] for i in range(self._arity)}
+        return self._element_constructor_(G, m)
 
     Element = AtomicSpeciesElement
 
@@ -745,43 +745,21 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         IndexedFreeAbelianMonoid.__init__(self, *args, **kwds)
         self._arity = args[0]._arity
 
-    def grading_set(self):
+    def _repr_(self):
         r"""
-        Return the set of non-negative integer vectors, whose length is
-        the arity of ``self``.
+        Return a string representation of ``self``.
 
-        EXAMPLES::
-
-            sage: from sage.rings.species import MolecularSpecies
-            sage: MolecularSpecies(["X", "Y"]).grading_set()
-            Integer vectors of length 2
-        """
-        return IntegerVectors(length=self._arity)
-
-    def graded_component(self, grade):
-        """
-        Return the set of molecular species with given multicardinality.
-
-        The default implementation just calls the method :meth:`subset()`
-        with the first argument ``grade``.
-
-        EXAMPLES::
+        TESTS::
 
             sage: from sage.rings.species import MolecularSpecies
-            sage: M = MolecularSpecies(["X", "Y"])
-            sage: M.graded_component([3,2])  # random
-            {E_3(X)*Y^2, X^3*Y^2, X*E_2(X)*E_2(Y), X^3*E_2(Y),
-             {((1,2,3), (1,3)(4,5)): ({1, 2, 3}, {4, 5})},
-             X*{((1,2)(3,4),): ({1, 2}, {3, 4})}, X*E_2(X)*Y^2, E_3(X)*E_2(Y),
-             C_3(X)*Y^2, C_3(X)*E_2(Y)}
+            sage: MolecularSpecies("X")
+            Molecular species in X
+            sage: MolecularSpecies("A, B")
+            Molecular species in A, B
         """
-        from sage.sets.set import Set
-        assert len(grade) == self._arity
-        n = sum(grade)
-        S = SymmetricGroup(n).young_subgroup(grade)
-        dom = S.domain()
-        dompart = {i: dom[sum(grade[:i]): sum(grade[:i+1])] for i in range(len(grade))}
-        return Set([self(G, dompart) for G in S.conjugacy_classes_subgroups()])
+        if len(self._indices._names) == 1:
+            return f"Molecular species in {self._indices._names[0]}"
+        return f"Molecular species in {', '.join(self._indices._names)}"
 
     def _element_constructor_(self, G, pi=None):
         r"""
@@ -879,21 +857,43 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             raise ValueError("Action is not transitive")
         return self(H[0], pi)
 
-    def _repr_(self):
+    def grading_set(self):
         r"""
-        Return a string representation of ``self``.
+        Return the set of non-negative integer vectors, whose length is
+        the arity of ``self``.
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.rings.species import MolecularSpecies
-            sage: MolecularSpecies("X")
-            Molecular species in X
-            sage: MolecularSpecies("A, B")
-            Molecular species in A, B
+            sage: MolecularSpecies(["X", "Y"]).grading_set()
+            Integer vectors of length 2
         """
-        if len(self._indices._names) == 1:
-            return f"Molecular species in {self._indices._names[0]}"
-        return f"Molecular species in {', '.join(self._indices._names)}"
+        return IntegerVectors(length=self._arity)
+
+    def graded_component(self, grade):
+        """
+        Return the set of molecular species with given multicardinality.
+
+        The default implementation just calls the method :meth:`subset()`
+        with the first argument ``grade``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: M = MolecularSpecies(["X", "Y"])
+            sage: M.graded_component([3,2])  # random
+            {E_3(X)*Y^2, X^3*Y^2, X*E_2(X)*E_2(Y), X^3*E_2(Y),
+             {((1,2,3), (1,3)(4,5)): ({1, 2, 3}, {4, 5})},
+             X*{((1,2)(3,4),): ({1, 2}, {3, 4})}, X*E_2(X)*Y^2, E_3(X)*E_2(Y),
+             C_3(X)*Y^2, C_3(X)*E_2(Y)}
+        """
+        from sage.sets.set import Set
+        assert len(grade) == self._arity
+        n = sum(grade)
+        S = SymmetricGroup(n).young_subgroup(grade)
+        dom = S.domain()
+        dompart = {i: dom[sum(grade[:i]): sum(grade[:i+1])] for i in range(len(grade))}
+        return Set([self(G, dompart) for G in S.conjugacy_classes_subgroups()])
 
     class Element(IndexedFreeAbelianMonoidElement):
         def __init__(self, parent, x):
@@ -912,6 +912,35 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 C_3
             """
             super().__init__(parent, x)
+
+        @cached_method
+        def grade(self):
+            r"""
+            Return the grade of ``self``.
+
+            EXAMPLES::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X, Y")
+                sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
+                Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
+                sage: a = M(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]}); a
+                {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
+                sage: a.grade()
+                [4, 6]
+
+            TESTS::
+
+                sage: M.one().grade()
+                [0, 0]
+            """
+            P = self.parent()
+            S = P.grading_set()
+            mons = self._monomial
+            if not mons:
+                return S([0] * P._arity)
+            mc = sum(n * vector(a._mc) for a, n in mons.items())
+            return S(mc)
 
         @cached_method
         def group_and_partition(self):
@@ -1048,110 +1077,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                                         for C in G.conjugacy_classes())
                     / G.cardinality())
 
-        @cached_method
-        def grade(self):
-            r"""
-            Return the grade of ``self``.
-
-            EXAMPLES::
-
-                sage: from sage.rings.species import MolecularSpecies
-                sage: M = MolecularSpecies("X, Y")
-                sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
-                Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
-                sage: a = M(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]}); a
-                {((1,2,3,4)(5,6)(7,8)(9,10),): ({5, 6, 7, 8}, {1, 2, 3, 4, 9, 10})}
-                sage: a.grade()
-                [4, 6]
-
-            TESTS::
-
-                sage: M.one().grade()
-                [0, 0]
-            """
-            P = self.parent()
-            S = P.grading_set()
-            mons = self._monomial
-            if not mons:
-                return S([0] * P._arity)
-            mc = sum(n * vector(a._mc) for a, n in mons.items())
-            return S(mc)
-
-        def _compose_with_singletons(self, base_ring, names, args):
-            r"""
-            Return the inner sum of Exercise 2.6.16 in [BLL1998]_,
-            generalized to the case of arbitrary arity.
-
-            INPUT:
-
-                - ``base_ring``, the base ring of the result
-
-                - ``names``, the (flat) list of names of the result
-
-                - ``args``, the sequence of `k` compositions, each of
-                  which sums to the corresponding cardinality of
-                  ``self``, where `k` is the arity of ``self``.
-
-            OUTPUT:
-
-            - the polynomial species
-              `self(X_1 + \dots + X_{m_1}, Y_1 + \dots + Y_{m_2}, \dots)`,
-              where `m_i` is the number of parts of the `i`-th composition.
-
-            EXAMPLES::
-
-                sage: from sage.rings.species import MolecularSpecies
-                sage: M = MolecularSpecies("X")
-                sage: C4 = M(CyclicPermutationGroup(4))
-                sage: C4._compose_with_singletons(ZZ, "X, Y", [[2, 2]]) # X^2Y^2 + C2(XY)
-                X^2*Y^2 + E_2(XY)
-
-                sage: M = MolecularSpecies(["X", "Y"])
-                sage: F = M(PermutationGroup([[(1,2,3), (4,5,6)]]), {0: [1,2,3], 1: [4,5,6]})
-                sage: F
-                {((1,2,3)(4,5,6),): ({1, 2, 3}, {4, 5, 6})}
-                sage: F._compose_with_singletons(ZZ, "X1, X2, X3, Y1, Y2", [[1, 1, 1], [2, 1]])
-                6*X1*X2*X3*Y1^2*Y2
-
-            TESTS::
-
-                sage: M = MolecularSpecies("X")
-                sage: O = M.one()
-                sage: O._compose_with_singletons(ZZ, "X", [[]])
-                1
-
-                sage: F = M(SymmetricGroup(1)) * M(SymmetricGroup(2))
-                sage: F._compose_with_singletons(QQ, ["T", "S"], [[2, 1]])
-                T^2*S + E_2(T)*S
-                sage: F._compose_with_singletons(QQ, ["T", "S"], [[1, 2]])
-                T*E_2(S) + T*S^2
-            """
-            # TODO: No checks are performed right now, must be added.
-            # Checks: all args in Compositions, sums must match cardinalities.
-
-            # Create group of the composition
-            # conjugate self.group() so that [1..k] is sort 1, [k+1,..] is sort 2, so on
-            G, dompart = self.group_and_partition()
-            conj = PermutationGroupElement(list(chain.from_iterable(dompart))).inverse()
-            G = libgap.ConjugateGroup(G, conj)
-
-            comp = list(chain.from_iterable(args))
-            dompart = {i: range(x - comp[i] + 1, x + 1) for i, x in enumerate(accumulate(comp))}
-            # Create the double coset representatives.
-            S_down = SymmetricGroup(sum(comp)).young_subgroup(comp)
-            mc = self.grade()
-            tc = sum(mc)
-            S_up = SymmetricGroup(tc).young_subgroup(mc)
-            taus = libgap.DoubleCosetRepsAndSizes(S_up, S_down, G)
-            # sum over double coset representatives.
-            Pn = PolynomialSpecies(base_ring, names)
-            res = Pn.zero()
-            for tau, _ in taus:
-                H = libgap.Intersection(libgap.ConjugateGroup(G, tau ** -1), S_down)
-                K = PermutationGroup(gap_group=H, domain=range(1, tc + 1))
-                res += Pn(K, dompart)
-            return res
-
         def __call__(self, *args):
             r"""
             Substitute `M_1,\dots, M_k` into ``self``.
@@ -1236,8 +1161,366 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                     gens.append([tuple(start + k for k in cyc)
                                  for cyc in gen.cycle_tuples()])
 
-            return P(PermutationGroup(gens,
-                                      domain=range(1, starts[-1] + 1)), dompart)
+            return P(PermutationGroup(gens, domain=range(1, starts[-1] + 1)),
+                     dompart)
+
+
+class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
+    r"""
+    Multivariate polynomial (virtual) species.
+
+    TESTS::
+
+        sage: P = PolynomialSpecies(ZZ, ["X"])
+        sage: C3 = P(CyclicPermutationGroup(3))
+        sage: X = P(SymmetricGroup(1))
+        sage: E2 = P(SymmetricGroup(2))
+        sage: (E2*X + C3).homogeneous_degree()
+        3
+    """
+    def is_constant(self):
+        """
+        Return ``True`` if this is a constant polynomial species.
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: X = P(SymmetricGroup(1), {0: [1]})
+            sage: X.is_constant()
+            False
+            sage: (3*P.one()).is_constant()
+            True
+            sage: P(0).is_constant()
+            True
+            sage: (1 + X).is_constant()
+            False
+        """
+        return self.is_zero() or not self.maximal_degree()
+
+    def is_virtual(self):
+        r"""
+        Return if ``self`` is a virtual species.
+
+        TESTS::
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: X = P(SymmetricGroup(1), {0: [1]})
+            sage: Y = P(SymmetricGroup(1), {1: [1]})
+            sage: V = 2 * X - 3 * Y; V
+            2*X - 3*Y
+            sage: V.is_virtual()
+            True
+            sage: (X * Y).is_virtual()
+            False
+        """
+        return any(x < 0 for x in self.coefficients(sort=False))
+
+    def is_molecular(self):
+        r"""
+        Return if ``self`` is a molecular species.
+
+        TESTS::
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: X = P(SymmetricGroup(1), {0: [1]})
+            sage: Y = P(SymmetricGroup(1), {1: [1]})
+            sage: V = 2 * X - 3 * Y; V
+            2*X - 3*Y
+            sage: V.is_molecular()
+            False
+            sage: (2 * X).is_molecular()
+            False
+            sage: (X * Y).is_molecular()
+            True
+        """
+        return len(self.coefficients(sort=False)) == 1 and self.coefficients(sort=False)[0] == 1
+
+    def is_atomic(self):
+        r"""
+        Return if ``self`` is an atomic species.
+
+        TESTS::
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: X = P(SymmetricGroup(1), {0: [1]})
+            sage: Y = P(SymmetricGroup(1), {1: [1]})
+            sage: V = 2 * X - 3 * Y; V
+            2*X - 3*Y
+            sage: V.is_atomic()
+            False
+            sage: (2 * X).is_atomic()
+            False
+            sage: (X * Y).is_atomic()
+            False
+            sage: Y.is_atomic()
+            True
+        """
+        return self.is_molecular() and len(self.support()[0]) == 1
+
+    def hadamard_product(self, other):
+        r"""
+        Compute the hadamard product of ``self`` and ``other``.
+
+        EXAMPLES:
+
+        Exercise 2.1.9 from [BLL1998]_::
+
+            sage: P = PolynomialSpecies(ZZ, ["X"])
+            sage: C3 = P(CyclicPermutationGroup(3))
+            sage: X = P(SymmetricGroup(1))
+            sage: E2 = P(SymmetricGroup(2))
+            sage: C3.hadamard_product(C3)
+            2*C_3
+            sage: (X^3).hadamard_product(C3)
+            2*X^3
+            sage: (X*E2).hadamard_product(X*E2)
+            X*E_2 + X^3
+
+        TESTS::
+
+            sage: C3.hadamard_product(-C3)
+            -2*C_3
+        """
+        P = self.parent()
+        if P is not other.parent():
+            raise ValueError("the factors of a Hadamard product must have the same parent")
+
+        result = P.zero()
+        # we should first collect matching multicardinalities.
+        for L, c in self:
+            mc = L.grade()
+            tc = sum(mc)
+            S = SymmetricGroup(tc).young_subgroup(mc)
+            # conjugate L and R to match S
+            G, dompart = L.group_and_partition()
+            g = list(chain.from_iterable(dompart))
+            conj_L = PermutationGroupElement(g).inverse()
+            G = libgap.ConjugateGroup(G, conj_L)
+            dompart = {i: range(x - mc[i] + 1, x + 1)
+                       for i, x in enumerate(accumulate(mc))}
+            for R, d in other:
+                if mc != R.grade():
+                    continue
+                G_R, dompart_R = R.group_and_partition()
+                g = list(chain.from_iterable(dompart_R))
+                conj_R = PermutationGroupElement(g).inverse()
+                H = libgap.ConjugateGroup(G_R, conj_R)
+                taus = libgap.DoubleCosetRepsAndSizes(S, G, H)
+                # loop over representatives
+                new = P.zero()
+                for tau, _ in taus:
+                    F = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
+                    new += P(PermutationGroup(gap_group=F, domain=range(1, tc + 1)),
+                             dompart)
+                result += c * d * new
+
+        return result
+
+    def _compose_with_singletons(self, names, args):
+        r"""
+        Return the inner sum of Exercise 2.6.16 in [BLL1998]_,
+        generalized to the case of arbitrary arity.
+
+        The `k`-sort species ``self`` should be homogeneous.
+
+        INPUT:
+
+            - ``names``, the (flat) list of names of the result
+
+            - ``args``, the sequence of `k` compositions, each of
+              which sums to the corresponding degree of ``self``,
+              where `k` is the arity of ``self``.
+
+        OUTPUT:
+
+        - the polynomial species `self(X_1 + \dots + X_{m_1}, Y_1
+          + \dots + Y_{m_2}, \dots)`, where `m_i` is the number
+          of parts of the `i`-th composition, restricted to the
+          degrees given by ``args``.
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(ZZ, "X")
+            sage: C4 = P(CyclicPermutationGroup(4))
+            sage: C4._compose_with_singletons("X, Y", [[2, 2]])
+            X^2*Y^2 + E_2(XY)
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: F = P(PermutationGroup([[(1,2,3), (4,5,6)]]), {0: [1,2,3], 1: [4,5,6]})
+            sage: F
+            {((1,2,3)(4,5,6),): ({1, 2, 3}, {4, 5, 6})}
+            sage: F._compose_with_singletons("X1, X2, X3, Y1, Y2", [[1, 1, 1], [2, 1]])
+            6*X1*X2*X3*Y1^2*Y2
+
+        TESTS::
+
+            sage: P = PolynomialSpecies(ZZ, "X")
+            sage: O = P.one()
+            sage: O._compose_with_singletons("X", [[]])
+            1
+
+            sage: F = P(SymmetricGroup(1)) * P(SymmetricGroup(2))
+            sage: F._compose_with_singletons(["T", "S"], [[2, 1]])
+            T^2*S + E_2(T)*S
+            sage: F._compose_with_singletons(["T", "S"], [[1, 2]])
+            T*E_2(S) + T*S^2
+
+        """
+        # TODO: possibly check that all args are compositions,
+        # and that sums match cardinalities
+        comp = list(chain.from_iterable(args))
+        result_dompart = {i: range(x - comp[i] + 1, x + 1)
+                          for i, x in enumerate(accumulate(comp))}
+        S_down = SymmetricGroup(sum(comp)).young_subgroup(comp)
+
+        Pn = PolynomialSpecies(self.parent().base_ring(), names)
+        result = Pn.zero()
+        for M, c in self:
+            # Create group of the composition
+            # conjugate self.group() so that [1..k] is sort 1, [k+1,..] is sort 2, so on
+            G, dompart = M.group_and_partition()
+            conj = PermutationGroupElement(list(chain.from_iterable(dompart))).inverse()
+            G = libgap.ConjugateGroup(G, conj)
+
+            mc = M.grade()
+            tc = sum(mc)
+            S_up = SymmetricGroup(tc).young_subgroup(mc)
+            taus = libgap.DoubleCosetRepsAndSizes(S_up, S_down, G)
+
+            # sum over double coset representatives.
+            summand = Pn.zero()
+            for tau, _ in taus:
+                H = libgap.Intersection(libgap.ConjugateGroup(G, tau.Inverse()),
+                                        S_down)
+                K = PermutationGroup(gap_group=H, domain=range(1, tc + 1))
+                summand += Pn(K, result_dompart)
+            result += c*summand
+        return result
+
+    def _compose_with_weighted_singletons(self, names, multiplicities, degrees):
+        r"""
+        Compute the composition with
+        `(\sum_j m_{1,j} X_{1,j}, \sum_j m_{2,j} X_{2,j}, \dots)`
+        in the specified degrees.
+
+        The `k`-sort species ``self`` should be homogeneous.
+
+        INPUT:
+
+            - ``names``, the (flat) list of names of the result
+
+            - ``multiplicities``, a (flat) list of constants
+
+            - ``degrees``, a `k`-tuple of compositions `c_1,
+              \dots, c_k`, such that the size of `c_i` is the
+              degree of self in sort `i`.
+
+        EXAMPLES:
+
+        Equation (2.5.41) in [BLL1998]_::
+
+            sage: P = PolynomialSpecies(QQ, ["X"])
+            sage: E2 = P(SymmetricGroup(2))
+            sage: E2._compose_with_weighted_singletons(["X"], [-1], [[2]])
+            -E_2 + X^2
+
+            sage: C4 = P(CyclicPermutationGroup(4))
+            sage: C4._compose_with_weighted_singletons(["X"], [-1], [[4]])
+            -C_4 + {((1,2)(3,4),)}
+
+        Exercise (2.5.17) in [BLL1998]_::
+
+            sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[2, 2]])
+            X^2*Y^2 + E_2(XY)
+            sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[3, 1]])
+            X^3*Y
+            sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[4, 0]])
+            C_4(X)
+
+        Auger et al., Equation (4.60)::
+
+            sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, -1], [[2, 2]])
+            2*X^2*Y^2 - E_2(XY)
+
+        TESTS::
+
+            sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
+            -C_4 + {((1,2)(3,4),)} + E_2^2 - 2*X^2*E_2 + X^4
+
+        """
+        P = self.parent()
+        if not self.support():
+            return P.zero()
+        if not self.is_homogeneous():
+            raise ValueError("element is not homogeneous")
+
+        left = self._compose_with_singletons(names, degrees)
+        Pn = left.parent()
+        right = Pn.exponential(multiplicities,
+                               list(chain.from_iterable(degrees)))
+        return left.hadamard_product(right)
+
+    def __call__(self, *args):
+        """
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(QQ, ["X"])
+            sage: X = P(SymmetricGroup(1))
+            sage: E2 = P(SymmetricGroup(2))
+            sage: E2(-X)
+            -E_2 + X^2
+            sage: E2(X^2)
+            {((1,2)(3,4),)}
+
+            sage: E2(X + X^2)
+            E_2 + X^3 + {((1,2)(3,4),)}
+
+            sage: P2 = PolynomialSpecies(QQ, ["X", "Y"])
+            sage: X = P2(SymmetricGroup(1), {0: [1]})
+            sage: Y = P2(SymmetricGroup(1), {1: [1]})
+            sage: E2(X + Y)
+            E_2(Y) + Y*X + E_2(X)
+
+            sage: E2(X*Y)(E2(X), E2(Y))
+            {((7,8), (5,6), (3,4), (1,2), (1,3)(2,4)(5,7)(6,8)): ({1, 2, 3, 4}, {5, 6, 7, 8})}
+
+            sage: R.<q> = QQ[]
+            sage: P = PolynomialSpecies(R, ["X"])
+            sage: X = P(SymmetricGroup(1))
+            sage: E2 = P(SymmetricGroup(2))
+            sage: E2(q*X)
+            q^2*E_2
+
+        """
+        P = self.parent()
+        if len(args) != P._arity:
+            raise ValueError("number of args must match arity of self")
+        if len(set(arg.parent() for arg in args)) > 1:
+            raise ValueError("all args must have the same parent")
+
+        P0 = args[0].parent()
+        if not self.support():
+            return P0.zero()
+
+        args = [sorted(g, key=lambda x: x[0].grade()) for g in args]
+        multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
+        molecules = list(chain.from_iterable([[M for M, _ in g] for g in args]))
+        F_degrees = sorted(set(M.grade() for M, _ in self))
+        names = ["X%s" % i for i in range(sum(len(arg) for arg in args))]
+
+        result = P0.zero()
+        for n in F_degrees:
+            F = P.sum_of_terms((M, c) for M, c in self if M.grade() == n)
+            for degrees in cartesian_product([IntegerVectors(n_i, length=len(arg))
+                                              for n_i, arg in zip(n, args)]):
+                # each degree is a weak composition of the degree of F in sort i
+                FX = F._compose_with_weighted_singletons(names,
+                                                         multiplicities,
+                                                         degrees)
+                FG = [(M(*molecules), c) for M, c in FX]
+                result += P0.sum_of_terms(FG)
+        return result
 
 
 class PolynomialSpecies(CombinatorialFreeModule):
@@ -1279,23 +1562,21 @@ class PolynomialSpecies(CombinatorialFreeModule):
                                          prefix='', bracket=False)
         self._arity = len(names)
 
-    def degree_on_basis(self, m):
+    def _repr_(self):
         r"""
-        Return the degree of the molecular species indexed by ``m``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
-            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-            sage: E4X = P(SymmetricGroup(4), {0: range(1, 5)}); E4X
-            E_4(X)
-            sage: E4Y = P(SymmetricGroup(4), {1: range(1, 5)}); E4Y
-            E_4(Y)
-            sage: P.degree_on_basis(E4X.support()[0])
-            4
-            sage: P.degree_on_basis(E4Y.support()[0])
-            4
+            sage: PolynomialSpecies(ZZ, "X")
+            Polynomial species in X over Integer Ring
+            sage: PolynomialSpecies(ZZ, "X, Y")
+            Polynomial species in X, Y over Integer Ring
         """
-        return sum(m.grade())
+        names = self._indices._indices._names
+        if len(names) == 1:
+            return f"Polynomial species in {names[0]} over {self.base_ring()}"
+        return f"Polynomial species in {', '.join(names)} over {self.base_ring()}"
 
     def _element_constructor_(self, G, pi=None):
         r"""
@@ -1346,8 +1627,25 @@ class PolynomialSpecies(CombinatorialFreeModule):
         L = [len(pi.get(i, [])) for i in range(self._arity)]
         S = SymmetricGroup(sum(L)).young_subgroup(L)
         Hs = _stabilizer_subgroups(S, X, a)
-        res = self._from_dict({self._indices(H, pi): ZZ.one() for H in Hs})
-        return res
+        return self._from_dict({self._indices(H, pi): ZZ.one() for H in Hs})
+
+    def degree_on_basis(self, m):
+        r"""
+        Return the degree of the molecular species indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: E4X = P(SymmetricGroup(4), {0: range(1, 5)}); E4X
+            E_4(X)
+            sage: E4Y = P(SymmetricGroup(4), {1: range(1, 5)}); E4Y
+            E_4(Y)
+            sage: P.degree_on_basis(E4X.support()[0])
+            4
+            sage: P.degree_on_basis(E4Y.support()[0])
+            4
+        """
+        return sum(m.grade())
 
     @cached_method
     def one_basis(self):
@@ -1401,22 +1699,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
             <class 'sage.rings.integer.Integer'>
         """
         return self._from_dict({H * K: ZZ(1)})
-
-    def _repr_(self):
-        r"""
-        Return a string representation of ``self``.
-
-        EXAMPLES::
-
-            sage: PolynomialSpecies(ZZ, "X")
-            Polynomial species in X over Integer Ring
-            sage: PolynomialSpecies(ZZ, "X, Y")
-            Polynomial species in X, Y over Integer Ring
-        """
-        names = self._indices._indices._names
-        if len(names) == 1:
-            return f"Polynomial species in {names[0]} over {self.base_ring()}"
-        return f"Polynomial species in {', '.join(names)} over {self.base_ring()}"
 
     @cached_method
     def powersum(self, s, n):
@@ -1497,282 +1779,4 @@ class PolynomialSpecies(CombinatorialFreeModule):
         return self.prod(factor(s, multiplicities[s], degrees[s])
                          for s in range(self._arity))
 
-    class Element(CombinatorialFreeModule.Element):
-        r"""
-        Multivariate polynomial (virtual) species.
-
-        TESTS::
-
-            sage: P = PolynomialSpecies(ZZ, ["X"])
-            sage: C3 = P(CyclicPermutationGroup(3))
-            sage: X = P(SymmetricGroup(1))
-            sage: E2 = P(SymmetricGroup(2))
-            sage: (E2*X + C3).homogeneous_degree()
-            3
-        """
-
-        def is_constant(self):
-            """
-            Return ``True`` if this is a constant polynomial species.
-
-            EXAMPLES::
-
-                sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-                sage: X = P(SymmetricGroup(1), {0: [1]})
-                sage: X.is_constant()
-                False
-                sage: (3*P.one()).is_constant()
-                True
-                sage: P(0).is_constant()
-                True
-                sage: (1 + X).is_constant()
-                False
-            """
-            return self.is_zero() or not self.maximal_degree()
-
-        def is_virtual(self):
-            r"""
-            Return if ``self`` is a virtual species.
-
-            TESTS::
-
-                sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-                sage: X = P(SymmetricGroup(1), {0: [1]})
-                sage: Y = P(SymmetricGroup(1), {1: [1]})
-                sage: V = 2 * X - 3 * Y; V
-                2*X - 3*Y
-                sage: V.is_virtual()
-                True
-                sage: (X * Y).is_virtual()
-                False
-            """
-            return any(x < 0 for x in self.coefficients(sort=False))
-
-        def is_molecular(self):
-            r"""
-            Return if ``self`` is a molecular species.
-
-            TESTS::
-
-                sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-                sage: X = P(SymmetricGroup(1), {0: [1]})
-                sage: Y = P(SymmetricGroup(1), {1: [1]})
-                sage: V = 2 * X - 3 * Y; V
-                2*X - 3*Y
-                sage: V.is_molecular()
-                False
-                sage: (2 * X).is_molecular()
-                False
-                sage: (X * Y).is_molecular()
-                True
-            """
-            return len(self.coefficients(sort=False)) == 1 and self.coefficients(sort=False)[0] == 1
-
-        def is_atomic(self):
-            r"""
-            Return if ``self`` is an atomic species.
-
-            TESTS::
-
-                sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
-                sage: X = P(SymmetricGroup(1), {0: [1]})
-                sage: Y = P(SymmetricGroup(1), {1: [1]})
-                sage: V = 2 * X - 3 * Y; V
-                2*X - 3*Y
-                sage: V.is_atomic()
-                False
-                sage: (2 * X).is_atomic()
-                False
-                sage: (X * Y).is_atomic()
-                False
-                sage: Y.is_atomic()
-                True
-            """
-            return self.is_molecular() and len(self.support()[0]) == 1
-
-        def hadamard_product(self, other):
-            r"""
-            Compute the hadamard product of ``self`` and ``other``.
-
-            EXAMPLES:
-
-            Exercise 2.1.9 from [BLL1998]_::
-
-                sage: P = PolynomialSpecies(ZZ, ["X"])
-                sage: C3 = P(CyclicPermutationGroup(3))
-                sage: X = P(SymmetricGroup(1))
-                sage: E2 = P(SymmetricGroup(2))
-                sage: C3.hadamard_product(C3)
-                2*C_3
-                sage: (X^3).hadamard_product(C3)
-                2*X^3
-                sage: (X*E2).hadamard_product(X*E2)
-                X*E_2 + X^3
-
-            TESTS::
-
-                sage: C3.hadamard_product(-C3)
-                -2*C_3
-            """
-            P = self.parent()
-            if P is not other.parent():
-                raise ValueError("the factors of a Hadamard product must have the same parent")
-
-            res = P.zero()
-            # we should first collect matching multicardinalities.
-            for L, c in self:
-                mc = L.grade()
-                tc = sum(mc)
-                S = SymmetricGroup(tc).young_subgroup(mc)
-                # conjugate L and R to match S
-                G, dompart = L.group_and_partition()
-                g = list(chain.from_iterable(dompart))
-                conj_L = PermutationGroupElement(g).inverse()
-                G = libgap.ConjugateGroup(G, conj_L)
-                dompart = {i: range(x - mc[i] + 1, x + 1)
-                           for i, x in enumerate(accumulate(mc))}
-                for R, d in other:
-                    if mc != R.grade():
-                        continue
-                    G_R, dompart_R = R.group_and_partition()
-                    g = list(chain.from_iterable(dompart_R))
-                    conj_R = PermutationGroupElement(g).inverse()
-                    H = libgap.ConjugateGroup(G_R, conj_R)
-                    taus = libgap.DoubleCosetRepsAndSizes(S, G, H)
-                    # loop over representatives
-                    new = P.zero()
-                    for tau, _ in taus:
-                        F = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
-                        new += P(PermutationGroup(gap_group=F, domain=range(1, tc + 1)),
-                                 dompart)
-                    res += c * d * new
-
-            return res
-
-        def _compose_with_weighted_singletons(self, names, multiplicities, degrees):
-            r"""
-            Compute the composition with
-            `(\sum_j m_{1,j} X_{1,j}, \sum_j m_{2,j} X_{2,j}, \dots)`
-            in the specified degrees.
-
-            The `k`-sort species ``self`` should be homogeneous.
-
-            INPUT:
-
-                - ``names``, the (flat) list of names of the result
-
-                - ``multiplicities``, a (flat) list of constants
-
-                - ``degrees``, a `k`-tuple of compositions `c_1,
-                  \dots, c_k`, such that the size of `c_i` is the
-                  degree of self in sort `i`.
-
-            EXAMPLES:
-
-            Equation (2.5.41) in [BLL1998]_::
-
-                sage: P = PolynomialSpecies(QQ, ["X"])
-                sage: E2 = P(SymmetricGroup(2))
-                sage: E2._compose_with_weighted_singletons(["X"], [-1], [[2]])
-                -E_2 + X^2
-
-                sage: C4 = P(CyclicPermutationGroup(4))
-                sage: C4._compose_with_weighted_singletons(["X"], [-1], [[4]])
-                -C_4 + {((1,2)(3,4),)}
-
-            Exercise (2.5.17) in [BLL1998]_::
-
-                sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[2, 2]])
-                X^2*Y^2 + E_2(XY)
-                sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[3, 1]])
-                X^3*Y
-                sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[4, 0]])
-                C_4(X)
-
-            Auger et al., Equation (4.60)::
-
-                sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, -1], [[2, 2]])
-                2*X^2*Y^2 - E_2(XY)
-
-            TESTS::
-
-                sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
-                -C_4 + {((1,2)(3,4),)} + E_2^2 - 2*X^2*E_2 + X^4
-
-            """
-            P = self.parent()
-            if not self.support():
-                return P.zero()
-            if not self.is_homogeneous():
-                raise ValueError("element is not homogeneous")
-
-            left = sum(c * M._compose_with_singletons(P.base_ring(),
-                                                      names,
-                                                      degrees)
-                       for M, c in self)
-            P = left.parent()
-            right = P.exponential(multiplicities,
-                                  list(chain.from_iterable(degrees)))
-            return left.hadamard_product(right)
-
-        def __call__(self, *args):
-            """
-
-            EXAMPLES::
-
-                sage: P = PolynomialSpecies(QQ, ["X"])
-                sage: X = P(SymmetricGroup(1))
-                sage: E2 = P(SymmetricGroup(2))
-                sage: E2(-X)
-                -E_2 + X^2
-                sage: E2(X^2)
-                {((1,2)(3,4),)}
-
-                sage: E2(X + X^2)
-                E_2 + X^3 + {((1,2)(3,4),)}
-
-                sage: P2 = PolynomialSpecies(QQ, ["X", "Y"])
-                sage: X = P2(SymmetricGroup(1), {0: [1]})
-                sage: Y = P2(SymmetricGroup(1), {1: [1]})
-                sage: E2(X + Y)
-                E_2(Y) + Y*X + E_2(X)
-
-                sage: E2(X*Y)(E2(X), E2(Y))
-                {((7,8), (5,6), (3,4), (1,2), (1,3)(2,4)(5,7)(6,8)): ({1, 2, 3, 4}, {5, 6, 7, 8})}
-
-                sage: R.<q> = QQ[]
-                sage: P = PolynomialSpecies(R, ["X"])
-                sage: X = P(SymmetricGroup(1))
-                sage: E2 = P(SymmetricGroup(2))
-                sage: E2(q*X)
-                q^2*E_2
-
-            """
-            P = self.parent()
-            if len(args) != P._arity:
-                raise ValueError("number of args must match arity of self")
-            if len(set(arg.parent() for arg in args)) > 1:
-                raise ValueError("all args must have the same parent")
-
-            P0 = args[0].parent()
-            if not self.support():
-                return P0.zero()
-
-            args = [sorted(g, key=lambda x: x[0].grade()) for g in args]
-            multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
-            molecules = list(chain.from_iterable([[M for M, _ in g] for g in args]))
-            F_degrees = sorted(set(M.grade() for M, _ in self))
-            names = ["X%s" % i for i in range(sum(len(arg) for arg in args))]
-
-            result = P0.zero()
-            for n in F_degrees:
-                F = P.sum_of_terms((M, c) for M, c in self if M.grade() == n)
-                for degrees in cartesian_product([IntegerVectors(n_i, length=len(arg))
-                                                  for n_i, arg in zip(n, args)]):
-                    # each degree is a weak composition of the degree of F in sort i
-                    FX = F._compose_with_weighted_singletons(names,
-                                                             multiplicities,
-                                                             degrees)
-                    FG = [(M(*molecules), c) for M, c in FX]
-                    result += P0.sum_of_terms(FG)
-            return result
+    Element = PolynomialSpeciesElement
