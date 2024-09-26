@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-environment
+# sage.doctest: optional - giac
 r"""
 Feature for testing the presence of ``giac``
 """
