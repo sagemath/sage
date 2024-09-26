@@ -4152,7 +4152,7 @@ class Graph(GenericGraph):
 
         INPUT:
 
-        - ``R`` -- (default: the parent of ``t``) the base ring for the symmetric 
+        - ``R`` -- (default: the parent of ``t``) the base ring for the symmetric
           functions
 
         - ``t`` -- (default: `t` in `\ZZ[t]`) the parameter `t`
