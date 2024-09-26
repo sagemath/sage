@@ -3948,7 +3948,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def euclidean_degree(self):
         r"""
-        Return the degree of this element as an element of an Euclidean domain.
+        Return the degree of this element as an element of a Euclidean domain.
 
         If this polynomial is defined over a field, this is simply its :meth:`degree`.
 
