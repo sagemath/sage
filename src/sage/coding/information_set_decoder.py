@@ -68,6 +68,7 @@ def _format_decoding_interval(decoding_interval):
         return "exactly {0}".format(decoding_interval[0])
     return "between {0} and {1}".format(decoding_interval[0], decoding_interval[1])
 
+
 class InformationSetAlgorithm(SageObject):
     r"""
     Abstract class for algorithms for

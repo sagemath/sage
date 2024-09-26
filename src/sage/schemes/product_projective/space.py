@@ -1080,6 +1080,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
 
         return phi
 
+
 class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
     def _point(self, *args, **kwds):
         """
@@ -1219,6 +1220,7 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
                 for j in range(dim[i]):
                     P[dim_prefix[i] + j] = pt[j]
                 i += 1
+
 
 class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
     def _point(self, *args, **kwds):

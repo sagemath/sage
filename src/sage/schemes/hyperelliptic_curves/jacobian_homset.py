@@ -112,30 +112,40 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             (x + 2, y)
             sage: D1 + D2
             (x^2 + 2*x + 2, y + 2*x + 1)
+
+        TESTS:
+
+        Test :issue:`38459`::
+
+            sage: K.<u> = QQ[]
+            sage: C = HyperellipticCurve(u^5 - 1)
+            sage: J = C.jacobian()
+            sage: J(u - 1, 0)
+            (x - 1, y)
         """
         if isinstance(P, (Integer, int)) and P == 0:
-            R = PolynomialRing(self.value_ring(), 'x')
+            R = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring())
             return JacobianMorphism_divisor_class_field(self,
                                                         (R.one(), R.zero()))
         elif isinstance(P, (list, tuple)):
             if len(P) == 1 and P[0] == 0:
-                R = PolynomialRing(self.value_ring(), 'x')
+                R = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring())
                 return JacobianMorphism_divisor_class_field(self,
                                                             (R.one(), R.zero()))
             elif len(P) == 2:
                 P1 = P[0]
                 P2 = P[1]
                 if isinstance(P1, Integer) and isinstance(P2, Integer):
-                    R = PolynomialRing(self.value_ring(), 'x')
+                    R = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring())
                     P1 = R(P1)
                     P2 = R(P2)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
                 if isinstance(P1, Integer) and isinstance(P2, Polynomial):
-                    R = PolynomialRing(self.value_ring(), 'x')
+                    R = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring())
                     P1 = R(P1)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
                 if isinstance(P2, Integer) and isinstance(P1, Polynomial):
-                    R = PolynomialRing(self.value_ring(), 'x')
+                    R = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring())
                     P2 = R(P2)
                     return JacobianMorphism_divisor_class_field(self, (P1, P2))
                 if isinstance(P1, Polynomial) and isinstance(P2, Polynomial):
@@ -148,7 +158,7 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
         elif isinstance(P, SchemeMorphism):
             x0 = P[0]
             y0 = P[1]
-            R, x = PolynomialRing(self.value_ring(), 'x').objgen()
+            R, x = self.curve().hyperelliptic_polynomials()[0].parent().change_ring(self.value_ring()).objgen()
             return self((x - x0, R(y0)))
         raise TypeError("argument P (= %s) does not determine a divisor class" % P)
 

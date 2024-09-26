@@ -537,7 +537,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             p = -numpy.inf
         elif p == 'frob':
             p = 'fro'
-        elif p == 'sv' :
+        elif p == 'sv':
             p = None
         else:
             try:
@@ -1286,7 +1286,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         from sage.rings.real_double import RDF
         from sage.rings.complex_double import CDF
         if isinstance(other, str):
-            # for backward compatibilty, allow algorithm to be passed as first
+            # for backward compatibility, allow algorithm to be passed as first
             # positional argument and tol as second positional argument
             from sage.misc.superseded import deprecation
             deprecation(29243, '"algorithm" and "tol" should be used as '

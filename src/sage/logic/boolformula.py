@@ -565,15 +565,12 @@ class BooleanFormula:
             exponential time function requiring `O(2^n)` time, where
             `n` is the number of variables in the expression.
         """
-        max = 2 ** len(self.__vars_order)
+        maximum = 2 ** len(self.__vars_order)
         if end < 0:
-            end = max
-        if end > max:
-            end = max
-        if start < 0:
-            start = 0
-        if start > max:
-            start = max
+            end = maximum
+        end = min(end, maximum)
+        start = max(start, 0)
+        start = min(start, maximum)
         keys, table = [], []
         vars = {}
         for var in self.__vars_order:
