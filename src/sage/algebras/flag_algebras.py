@@ -773,7 +773,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 Zk = Z.kernel()
                 Zkern = Zk.basis_matrix()
                 if Zkern.nrows()>0:
-                    new_bases.append(Zkern * table_constructor[param][ii])
+                    new_bases.append(matrix(QQ, Zkern * table_constructor[param][ii], sparse=True))
             table_constructor[param] = new_bases
 
         return table_constructor
@@ -799,11 +799,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         Helper to transform the data from the multiplication tables to an SDP input
         """
         if prev_data==None:
+            block_sizes = []
+            target = []
             mat_inds = []
             mat_vals = []
-            block_sizes = []
         else:
-            mat_inds, mat_vals, block_sizes = prev_data
+            block_sizes, target, mat_inds, mat_vals = prev_data
         block_index = len(block_sizes) + 1
         for params in table_constructor.keys():
             ns, ftype, target_size = params
@@ -824,23 +825,22 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                                 mat_inds.extend([gg+1, block_index + plus_index, iinds[cc]+1, jinds[cc]+1])
                                 mat_vals.append(values[cc])
             block_index += len(table_constructor[params])
-        return mat_inds, mat_vals, block_sizes
-
+        return block_sizes, target, mat_inds, mat_vals
     
-    def _constraints_to_sdp_data(self, flag_num, constraints_vals, constraints_flags_vec, prev_data=None):
+    def _constraints_to_sdp_data(self, constraints_data, prev_data=None):
         r"""
-        Helper to transform the data from the constraints to an SDP input
+        Helper to transform the data from the constraints to an SDP input data
         """
         if prev_data==None:
+            block_sizes = []
+            target = []
             mat_inds = []
             mat_vals = []
-            block_sizes = []
         else:
-            mat_inds, mat_vals, block_sizes = prev_data
+            block_sizes, target, mat_inds, mat_vals = prev_data
+        flag_num, constraints_vals, constraints_flags_vec, one_vector = constraints_data
         block_index = len(block_sizes) + 1
-        
         constr_num = len(constraints_vals)
-        
         for ii in range(constr_num):
             mat_inds.extend([0, block_index+1, 1+ii, 1+ii])
             mat_vals.append(constraints_vals[ii])
@@ -852,76 +852,21 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 mat_inds.extend([gg+1, block_index+1, ii+1, ii+1])
                 mat_vals.append(constraints_flags_vec[ii][gg])
         block_sizes += [-flag_num, -constr_num]
-
-        return mat_inds, mat_vals, block_sizes
+        return block_sizes, target, mat_inds, mat_vals
     
-    
-    
-    def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
-                         construction=None, certificate=False, exact=False, denom=1024):
+    def _target_to_sdp_data(self, target, prev_data=None):
         r"""
-        Try to maximize or minimize the value of `target_element`
-        
-        The algorithm calculates the multiplication tables and 
-        sends the SDP problem to CSDPY.
-        
-        INPUT:
-
-        - ``target_element`` -- Flag or FlagAlgebraElement; 
-            the target whose density this function tries to
-            maximize or minimize in large structures.
-        - ``target_size`` -- integer; The program evaluates
-            flags and the relations between them up to this
-            size.
-        - ``maximize`` -- boolean (default: `True`); 
-        - ``certificate`` -- boolean (default: `False`);
-        - ``positives`` -- list of flag algebra elements, 
-            optimizer will assume those are positive, can
-            have different types
-        - ``construction`` -- a list or a single element of 
-            `FlagAlgebraElement`s; to consider in the kernel
-        - ``exact`` -- boolean; to round the result or not
-
-        OUTPUT: A bound for the optimization problem. If 
-            certificate is requested then returns the entire
-            output of the solver as the second argument.
-        
-        .. NOTE::
-
-            If `target_size` is too large, the calculation might take a 
-            really long time. On a personal computer the following 
-            maximum target_size values are recommended:
-            -GraphTheory: 8
-            -ThreeGraphTheory: 6
-            -DiGraphTheory: 5
-            -TournamentTheory: 9
-            -PermutationTheory: 8
-            -RamseyGraphTheory: 8
-            -OVGraphTheory: 5
-            -OEGraphTheory: 4
+        Helper to transform the target to an SDP input data
         """
-        from csdpy import solve_sdp
-        from tqdm import tqdm
-        import sys
-        import io
-        import time
-
-        #
-        # Initial setup
-        #
-
-        if target_size not in self.sizes():
-            raise ValueError("For theory {}, size {} is not allowed.".format(self._name, target_size))
-
-        base_flags = self.generate_flags(target_size)
-        print("Base flags generated, their number is {}".format(len(base_flags)))
-        mult = -1 if maximize else 1
-        target_vector_exact = (target_element.project()*(mult)<<(target_size - target_element.size())).values()
-
-        #
-        # Create the table data
-        #
-
+        if prev_data==None:
+            return [], list(target), [], []
+        prev_data[1] = list(target)
+        return prev_data
+    
+    def _get_relevant_ftypes(self, target_size):
+        r"""
+        Returns the ftypes useful for optimizing up to `target_size`
+        """
         plausible_sizes = []
         for fs in self.sizes():
             if fs>=target_size:
@@ -950,14 +895,18 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             for xx in ftypes:
                 ftype_data.append((ns, xx, target_size))
         ftype_data.sort()
-
-        print("The relevant ftypes are constructed, their number is {}".format(len(ftype_data)))
-
-        flags = [self.generate_flags(dat[0], dat[1]) for dat in ftype_data]
-        flag_sizes = [len(xx) for xx in flags]
-
-        print("Block sizes before symmetric/asymmetric change is applied: {}".format(flag_sizes))
-
+        return ftype_data
+    
+    def _create_table_constructor(self, ftype_data, target_size):
+        r"""
+        Table constructor is a dictionary that holds the data to construct
+        all the multiplication tables. 
+        
+        For each ftype and base change it provides the data to create the multiplication table.
+        Also pre-computes the multiplication tables if they are not calculated yet.
+        """
+        from tqdm import tqdm
+        
         sym_asym_mats = [self.sym_asym_bases(dat[0], dat[1]) for dat in ftype_data]
 
         table_constructor = {}
@@ -976,13 +925,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 bases.append(asym_base)
             table_constructor[dat] = bases
             pbar.set_description("Done with mult table for {}".format(ftype))
-
-        sdp_data = self._tables_to_sdp_data(table_constructor)
-        print("Tables finished")
-
-        #
-        # Add constraints data
-        #
+        return table_constructor
+    
+    def _create_constraints_data(self, positives, target_element, target_size):
+        r"""
+        Creates the data that holds the linear constraints
+        """
+        
+        from tqdm import tqdm
+        
+        base_flags = self.generate_flags(target_size)
         
         if positives == None:
             positives_list_exact = []
@@ -1009,78 +961,67 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 positives_list_exact += list(m.T)
                 pbar.set_description("Done with positivity constraint {}".format(ii))
             constraints_vals = [0]*len(positives_list_exact)
+        
+        # The one vector is also calculated here and is a linear constraint
         if target_element.ftype().size()==0:
             one_vector = vector([1]*len(base_flags))
         else:
             one_vector = (target_element.ftype().project()<<(target_size - target_element.ftype().size())).values()
         positives_list_exact.extend([one_vector, one_vector*(-1)])
         constraints_vals.extend([1, -1])
-        positives_matrix_exact = matrix(positives_list_exact)
-        sdp_data = self._constraints_to_sdp_data(len(base_flags), constraints_vals, positives_list_exact, sdp_data)
-        print("Constraints finished")
         
-        #
-        # If no y value provided, run the optimizer first, only to get the y values
-        #
-        if construction==None:
-            mat_inds, mat_vals, block_sizes = sdp_data
-            print("Running sdp without construction. Used block sizes are {}".format(block_sizes))
+        return len(base_flags), constraints_vals, positives_list_exact, one_vector
+    
+    
+    def _round_sdp_solution_no_phi(self, sdp_result, sdp_data, table_constructor, \
+                                   constraints_data, denom=1024):
+        #unpack variables
+        block_sizes, target_list_exact, mat_inds, mat_vals = sdp_data
+        target_vector_exact = vector(target_list_exact)
+        flags_num, constraints_vals, positives_list_exact, one_vector = constraints_data
+        positives_matrix_exact = matrix(QQ, len(positives_list_exact), flags_num, positives_list_exact)
+        
+        positives_matrix_exact = positives_matrix_exact[:-2, :] # remove the equality constraints
 
+        flags_num = -block_sizes[-2] # same as |F_n|
 
-            time.sleep(float(0.1))
-            initial_sol = solve_sdp(block_sizes, list(target_vector_exact), mat_inds, mat_vals)
-            time.sleep(float(0.1))
+        X_matrices_approx = sdp_result['X'][:-2]
+        X_matrices_rounded = [_round_ldl(X, method=0, denom=denom) for X in X_matrices_approx]
+        X_matrices_flat = [vector(_flatten_matrix(X.rows(), doubled=False)) for X in X_matrices_rounded]
+        
+        e_vector_approx = sdp_result['X'][-1][:-2]
+        e_vector_rounded = vector(_round_list(e_vector_approx, force_pos=True, method=0, denom=denom))
+        
+        slacks = target_vector_exact - positives_matrix_exact.T*e_vector_rounded
+        block_index = 0
+        for params in table_constructor.keys():
+            ns, ftype, target_size = params
+            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
+            for gg, morig in enumerate(table):
+                for plus_index, base in enumerate(table_constructor[params]):
+                    block_dim = block_sizes[block_index + plus_index]
+                    X_flat = X_matrices_flat[block_index + plus_index]
+                    M = base * morig * base.T
+                    M_flat_vector_exact = vector(_flatten_matrix(M.rows(), doubled=True))
+                    slacks[gg] -= M_flat_vector_exact*X_flat
+            block_index += len(table_constructor[params])
 
-            if (not exact):
-                res = initial_sol['primal'] * (-1 if maximize else 1)
-                return res if (not certificate) else (res, initial_sol)
-
-            phi_vector_original = initial_sol['y']
-            phi_vector_rounded = _round_adaptive(initial_sol['y'], one_vector)
-            alg = FlagAlgebra(QQ, self)
-            phipr = str(alg(target_size, phi_vector_rounded))
-            if len(phipr)<1000:
-                print("rounded phi vector is: \n{}".format(phipr))
-            phi_vectors_exact = [phi_vector_rounded]
-        else:
-            if isinstance(construction, FlagAlgebraElement):
-                phi_vectors_exact = [construction.values()]
-            else:
-                phi_vectors_exact = [xx.values() for xx in construction]
-
-        #
-        # Adjust the table to consider the kernel from y_rounded
-        #
-
-        print("Adjusting table with kernels from construction")
-        table_constructor = self._adjust_table_phi(table_constructor, phi_vectors_exact)
-
-        sdp_data = self._tables_to_sdp_data(table_constructor)
-        sdp_data = self._constraints_to_sdp_data(len(base_flags), constraints_vals, positives_list_exact, sdp_data)
-        mat_inds, mat_vals, block_sizes = sdp_data
-
-        print("Running SDP after kernel correction. Used block sizes are {}".format(block_sizes))
-
-        time.sleep(float(0.1))
-        final_sdp = solve_sdp(block_sizes, list(target_vector_exact), mat_inds, mat_vals)
-        time.sleep(float(0.1))
-
-        if (not exact):
-            res = final_sdp['primal'] * (-1 if maximize else 1)
-            return res if (not certificate) else (res, final_sdp)
-
-        print("Starting the rounding of the result.")
-        rounded = self._round_sdp_solution(final_sdp, table_constructor, block_sizes, target_vector_exact, phi_vectors_exact, positives_matrix_exact, denom=denom)
-
-        res = rounded[0] * mult
-        return res if (not certificate) else (res, rounded)
-
-    def _round_sdp_solution(self, sdp_result, table_constructor, block_sizes, target_vector_exact, phi_vectors_exact, positives_matrix_exact, denom=1024):
+        return min(slacks), X_matrices_rounded, e_vector_rounded, slacks, []
+    
+    def _round_sdp_solution(self, sdp_result, sdp_data, table_constructor, \
+                            constraints_data, phi_vectors_exact, denom=1024):
         r"""
         Round the SDP results output to get something exact.
         """
-
-        phi_vector_exact = phi_vectors_exact[0] if len(phi_vectors_exact)!=0 else vector([0]*positives_matrix_exact.ncols())
+        
+        #unpack variables
+        block_sizes, target_list_exact, mat_inds, mat_vals = sdp_data
+        target_vector_exact = vector(target_list_exact)
+        flags_num, constraints_vals, positives_list_exact, one_vector = constraints_data
+        positives_matrix_exact = matrix(QQ, len(positives_list_exact), flags_num, positives_list_exact)
+        
+        no_constr = len(phi_vectors_exact)==0
+        phi_vector_exact = vector([0]*positives_matrix_exact.ncols()) if no_constr else phi_vectors_exact[0]
 
         positives_matrix_exact = positives_matrix_exact[:-2, :] # remove the equality constraints
 
@@ -1108,18 +1049,17 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
 
 
-        if len(phi_vectors_exact)==0: # the u value, the bound we want to prove
-            bound_exact = _round(sdp_result['primal']-1e-4, method=0, denom=denom)
-        else:
-            bound_exact = target_vector_exact*phi_vector_exact 
+        bound_exact = target_vector_exact*phi_vector_exact 
         # the constraints for the flags that are exact
         corrected_target_relevant_exact = vector([target_vector_exact[FF] - bound_exact for FF in c_zero_inds])
         # the d^f_F matrix, but only the relevant parts for the rounding
         # so F where c_F = 0 and f where e_f != 0
-        positives_matrix_relevant_exact = matrix(QQ, len(e_nonzero_inds), len(c_zero_inds), [[positives_matrix_exact[ff][FF] for FF in c_zero_inds] for ff in e_nonzero_inds])
+        positives_matrix_relevant_exact = matrix(QQ, len(e_nonzero_inds), len(c_zero_inds), \
+                                                 [[positives_matrix_exact[ff][FF] for FF in c_zero_inds] for ff in e_nonzero_inds])
         # the e vector, but only the nonzero entries
         e_nonzero_list_rounded = [e_vector_rounded[ff] for ff in e_nonzero_inds]
-
+        
+        
         
         # 
         # Flatten the matrices relevant for the rounding
@@ -1167,85 +1107,316 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         x_vector_final = vector(X_flat_vector_rounded+e_nonzero_list_rounded)
 
 
-        # correct the values of the x vector, based on the minimal L_2 norm
+        # Correct the values of the x vector, based on the minimal L_2 norm
         x_vector_corr = x_vector_final - M_matrix_final.T * \
         (M_matrix_final * M_matrix_final.T).pseudoinverse() * \
-        (M_matrix_final*x_vector_final - corrected_target_relevant_exact)
+        (M_matrix_final*x_vector_final - corrected_target_relevant_exact) 
         
         #
         # Recover the X matrices and e vector from the corrected x
         #
 
-        rounding_successful = True
-
         e_nonzero_vector_corr = x_vector_corr[-len(e_nonzero_inds):]
         e_vector_corr = vector(QQ, positives_num, dict(zip(e_nonzero_inds, e_nonzero_vector_corr)))
-
         if len(e_vector_corr)>0 and min(e_vector_corr)<0:
-            rounding_successful = False
             print("Linear coefficient is negative: {}".format(min(e_vector_corr)))
+            return None
         
         X_final = []
+        slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
+        block_index = 0
+        for params in table_constructor.keys():
+            ns, ftype, target_size = params
+            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
+            for plus_index, base in enumerate(table_constructor[params]):
+                block_dim = block_sizes[block_index + plus_index]
+                X_ii_small, x_vector_corr = _unflatten_matrix(x_vector_corr, block_dim)
+                X_ii_small = matrix(X_ii_small)
+                
+                # verify semidefiniteness
+                if not X_ii_small.is_positive_semidefinite():
+                    print("Rounded X matrix {} is not semidefinite: {}".format(block_index+plus_index, min(X_ii_small.eigenvalues())))
+                    return None
+                
+                # update slacks
+                for gg, morig in enumerate(table):
+                    M = base * morig * base.T
+                    M_flat_vector_exact = vector(_flatten_matrix(M.rows(), doubled=True))
+                    slacks[gg] -= M_flat_vector_exact*vector(_flatten_matrix(X_ii_small.rows(), doubled=False))
+                
+                X_final.append(X_ii_small)
+            block_index += len(table_constructor[params])
+
+        return min(slacks), X_final, e_vector_corr, slacks, phi_vectors_exact
+    
+    
+    def _fix_X_bases(self, table_constructor, X_original):
+        r"""
+        Transforms the X matrices to a base that agrees with the original list of flags
+        
+        Basically undoes the sym/asym changes and the reductions by the constructions' kernels.
+        """
+        if X_original==None:
+            return None
+        X_transformed = []
         block_index = 0
         for params in table_constructor.keys():
             ns, ftype, target_size = params
             X_ii = None
             for plus_index, base in enumerate(table_constructor[params]):
-                block_dim = block_sizes[block_index + plus_index]
-                X_ii_small, x_vector_corr = _unflatten_matrix(x_vector_corr, block_dim)
-                X_ii_small = matrix(X_ii_small)
-                # verify semidefiniteness
-                if not X_ii_small.is_positive_semidefinite():
-                    rounding_successful = False
-                    print("Rounded X matrix is not semidefinite: {}".format(min(X_ii_small.eigenvalues())))
                 if X_ii == None:
-                    X_ii = base.T * X_ii_small * base
+                    X_ii = base.T * X_original[block_index + plus_index] * base
                 else:
-                    X_ii += base.T * X_ii_small * base
+                    X_ii += base.T * X_original[block_index + plus_index] * base
             block_index += len(table_constructor[params])
-            X_final.append(X_ii)
-        X_final.append(e_vector_corr)
-
-
-        #
-        # Verify the bound
-        #
-
-        slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
-
-        for ii, params in enumerate(table_constructor.keys()):
+            X_transformed.append(X_ii)
+        return X_transformed
+    
+    def _format_optimizer_output(self, table_constructor, mult=1, sdp_output=None, rounding_output=None):
+        r"""
+        Formats the outputs to a nice certificate
+        
+        The result contains: the final bound, the X matrices, the linear coefficients, the slacks,
+                            a guess or exact construction, the list of base flags, the list of used (typed) flags
+        """
+        
+        target_size = 0
+        typed_flags = {}
+        for params in table_constructor.keys():
             ns, ftype, target_size = params
-            table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
+            typed_flags[(ns, ftype)] = self.generate_flags(ns, ftype)
+        base_flags = self.generate_flags(target_size)
+        
+        result = None
+        X_original = None
+        e_vector = None
+        slacks = None
+        phi_vec = None
+        
+        if sdp_output!=None:
+            result = sdp_output['primal'] * mult
+            X_original = [matrix(QQ, dat) for dat in sdp_output['X'][:-2]]
+            e_vector = vector(sdp_output['X'][-1])
+            slacks = vector(sdp_output['X'][-2])
+            phi_vec = matrix([sdp_output['y']])
+        elif rounding_output!=None:
+            result, X_original, e_vector, slacks, phi_vec = rounding_output
+            result *= mult
+        
+        X_final = self._fix_X_bases(table_constructor, X_original)
+        
+        return {"result": result, 
+                "X": X_final,
+                "e": e_vector,
+                "slacks": slacks, 
+                "phi": phi_vec,
+                "base flags": base_flags,
+                "typed flags": typed_flags
+               }
+    
+    def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
+                         construction=None, certificate=False, exact=False, denom=1024):
+        r"""
+        Try to maximize or minimize the value of `target_element`
+        
+        The algorithm calculates the multiplication tables and 
+        sends the SDP problem to CSDPY.
+        
+        INPUT:
+
+        - ``target_element`` -- Flag or FlagAlgebraElement; 
+            the target whose density this function tries to
+            maximize or minimize in large structures.
+        - ``target_size`` -- integer; The program evaluates
+            flags and the relations between them up to this
+            size.
+        - ``maximize`` -- boolean (default: `True`); 
+        - ``certificate`` -- boolean (default: `False`);
+        - ``positives`` -- list of flag algebra elements, 
+            optimizer will assume those are positive, can
+            have different types
+        - ``construction`` -- a list or a single element of 
+            `FlagAlgebraElement`s; to consider in the kernel
+            `None` by default, in this case the construction
+            is guessed from a preliminary run.
+        - ``exact`` -- boolean; to round the result or not
+
+        OUTPUT: A bound for the optimization problem. If 
+            certificate is requested then returns the entire
+            output of the solver as the second argument.
+        
+        .. NOTE::
+
+            If `target_size` is too large, the calculation might take a 
+            really long time. On a personal computer the following 
+            maximum target_size values are recommended:
+            -GraphTheory: 8
+            -ThreeGraphTheory: 6
+            -DiGraphTheory: 5
+            -TournamentTheory: 9
+            -PermutationTheory: 8
+            -RamseyGraphTheory: 8
+            -OVGraphTheory: 5
+            -OEGraphTheory: 4
+        """
+        from csdpy import solve_sdp
+        from tqdm import tqdm
+        import sys
+        import io
+        import time
+
+        #
+        # Initial setup
+        #
+
+        if target_size not in self.sizes():
+            raise ValueError("For theory {}, size {} is not allowed.".format(self._name, target_size))
+
+        base_flags = self.generate_flags(target_size)
+        print("Base flags generated, their number is {}".format(len(base_flags)))
+        mult = -1 if maximize else 1
+        target_vector_exact = (target_element.project()*(mult)<<(target_size - target_element.size())).values()
+        sdp_data = self._target_to_sdp_data(target_vector_exact)
+        
+        #
+        # Create the relevant ftypes
+        #
+        
+        ftype_data = self._get_relevant_ftypes(target_size)
+        print("The relevant ftypes are constructed, their number is {}".format(len(ftype_data)))
+        flags = [self.generate_flags(dat[0], dat[1]) for dat in ftype_data]
+        flag_sizes = [len(xx) for xx in flags]
+        print("Block sizes before symmetric/asymmetric change is applied: {}".format(flag_sizes))
+        
+        #
+        # Create the table constructor and add it to sdp_data
+        #
+        
+        table_constructor = self._create_table_constructor(ftype_data, target_size)
+        sdp_data = self._tables_to_sdp_data(table_constructor, prev_data=sdp_data)
+        print("Tables finished")
+
+        #
+        # Add constraints data and add it to sdp_data
+        #
+        
+        constraints_data = self._create_constraints_data(positives, target_element, target_size)
+        sdp_data = self._constraints_to_sdp_data(constraints_data, prev_data=sdp_data)
+        print("Constraints finished")
+        
+        #
+        # If construction is None or [] then run the optimizer without any construction
+        #
+        
+        if construction==None or construction==[]:
+            print("Running sdp without construction. Used block sizes are {}".format(sdp_data[0]))
             
-            for gg, morig in enumerate(table):
-                M_flat_vector_exact = vector(_flatten_matrix(morig.rows(), doubled=True))
-                slacks[gg] -= M_flat_vector_exact*vector(_flatten_matrix(X_final[ii].rows(), doubled=False))
-
-        if rounding_successful:
-            print("The exact value after rounding is {}".format(_fraction_print(-min(slacks))))
+            time.sleep(float(0.1))
+            initial_sol = solve_sdp(*sdp_data)
+            time.sleep(float(0.1))
+            
+            # Format the result and return it if floating point values are fine
+            if (not exact):
+                if not certificate:
+                    return initial_sol['primal'] * mult
+                return self._format_optimizer_output(table_constructor, mult=mult, sdp_output=initial_sol)
+            
+            # Guess the construction in this case
+            if construction==None:
+                one_vector = constraints_data[-1]
+                phi_vector_original = initial_sol['y']
+                phi_vector_rounded, error_coeff = _round_adaptive(initial_sol['y'], one_vector)
+                if error_coeff<1e-6:
+                    alg = FlagAlgebra(QQ, self)
+                    construction = alg(target_size, phi_vector_rounded)
+                    phipr = str(construction)
+                    print("The initial run gave an accurate looking construction")
+                    if len(phipr)<1000:
+                        print("Rounded construction vector is: \n{}".format(phipr))
+                else:
+                    print("The initial run didn't provide an accurate construction")
+                    construction = []
+            
+            # If nothing was provided or the guess failed, then round the current solution
+            if construction==[]:
+                rounding_output = self._round_sdp_solution_no_phi(initial_sol, sdp_data, table_constructor, \
+                                                                 constraints_data, denom=denom)
+                if not certificate:
+                    return rounding_output[0] * mult
+                return self._format_optimizer_output(table_constructor, mult=mult, rounding_output=rounding_output)
+        
+        
+        #
+        # Run the optimizer (again if a construction was guessed) with the construction
+        #
+        
+        if isinstance(construction, FlagAlgebraElement):
+            phi_vectors_exact = [construction.values()]
         else:
-            print("The rounding was unsuccessful, otherwise the result would be {}".format(_fraction_print(-min(slacks))))
+            phi_vectors_exact = [xx.values() for xx in construction]
 
-        return min(slacks), X_final, slacks
+        #
+        # Adjust the table to consider the kernel from y_rounded
+        #
+
+        print("Adjusting table with kernels from construction")
+        table_constructor = self._adjust_table_phi(table_constructor, phi_vectors_exact)
+        sdp_data = self._target_to_sdp_data(target_vector_exact)
+        sdp_data = self._tables_to_sdp_data(table_constructor, prev_data=sdp_data)
+        sdp_data = self._constraints_to_sdp_data(constraints_data, prev_data=sdp_data)
+        
+        #
+        # Then run the optimizer
+        #
+        
+        print("Running SDP after kernel correction. Used block sizes are {}".format(sdp_data[0]))
+        time.sleep(float(0.1))
+        final_sol = solve_sdp(*sdp_data)
+        time.sleep(float(0.1))
+
+        # Quickly deal with the case when no rounding is needed
+        if (not exact):
+            if not certificate:
+                return final_sol['primal'] * mult
+            return self._format_optimizer_output(table_constructor, mult=mult, sdp_output=final_sol)
+        
+        
+        print("Starting the rounding of the result")
+        rounding_output = self._round_sdp_solution_construction(final_sol, sdp_data, table_constructor, \
+                                                                         constraints_data, phi_vectors_exact, denom=denom)
+        if rounding_output==None:
+            print("Rounding based on construction was unsuccessful")
+            rounding_output = self._round_sdp_solution_no_phi(final_sol, sdp_data, table_constructor, \
+                                                            constraints_data, denom=denom)
+        
+        print("Final rounded bound is {}".format(rounding_output[0]*mult))
+        
+        if not certificate:
+            return rounding_output[0] * mult
+        return self._format_optimizer_output(table_constructor, mult=mult, rounding_output=rounding_output)
+    
     
     optimize = optimize_problem
     
-    def verify_solution(self, solution, target_element, target_size, maximize=True, positives=None, construction=None):
+    
+    def verify_certificate(self, certificate, target_element, target_size, maximize=True, positives=None, construction=None):
+        r"""
+        Verifies the certificate provided by the optimizer when `certificate=True` is set.
+        """
         #
         # Checking eigenvalues and positivity constraints
         #
+        
+        res = certificate['result']
+        Xs = certificate['X']
+        e_values = vector(certificate['e'])
 
-        if len(solution)==2 and solution[0] in QQ:
-            solution = solution[1]
-        if len(solution)==3 and solution[0] in QQ:
-            solution = solution[1]
-
-        if len(solution[-1])>0 and min(solution[-1])<0:
+        if len(e_values)>0 and min(e_values)<0:
             print("Solution is not valid!")
-            print("Linear constraint's coefficient is negative {}".format(min(solution[-1])))
+            print("Linear constraint's coefficient is negative {}".format(min(e_values)))
             return -1
 
-        for ii,X in enumerate(solution[:-1]):
+        for ii,X in enumerate(Xs):
             if not X.is_positive_semidefinite():
                 print("Solution is not valid!")
                 print("Matrix {} is not semidefinite".format(ii))
@@ -1318,17 +1489,16 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # Calculate the bound the solution provides
         #
 
-        slacks = target_vector_exact - positives_matrix_exact.T*solution[-1]
+        slacks = target_vector_exact - positives_matrix_exact.T*e_values
         for ii, table in enumerate(table_list):
             for gg, mat_gg in enumerate(table):
-                slacks[gg] -= sum([mat_gg.rows()[jj]*solution[ii][jj] for jj in range(mat_gg.nrows())])
+                slacks[gg] -= sum([mat_gg.rows()[jj]*Xs[ii][jj] for jj in range(mat_gg.nrows())])
         res = min(slacks)*mult
-
         print("The solution is valid, it proves the bound {}".format(res))
 
         return res
     
-    verify = verify_solution
+    verify = verify_certificate
     
     def _gfe(self, excluded, n, ftype):
         r"""
@@ -1630,12 +1800,13 @@ def _round_matrix(mat, method=1, quotient_bound=7, denom_bound=9, denom=1024):
     return matrix(QQ, [_round_list(xx, False, method, quotient_bound, denom_bound, denom) for xx in mat])
 
 def _round_ldl(mat, method=1, quotient_bound=7, denom_bound=9, denom=1024):
+    from sage.matrix.special import diagonal_matrix
     r"""
     Helper function, to round a matrix using ldl decomposition
     """
     mat_ldl = matrix(mat).block_ldlt()
     P = matrix(QQ, mat_ldl[0])
-    L = matrix(QQ, _round_matrix(mat_ldl[1]), method, quotient_bound, denom_bound, denom)
+    L = matrix(QQ, _round_matrix(mat_ldl[1], method, quotient_bound, denom_bound, denom))
     D = diagonal_matrix(QQ, _round_list(mat_ldl[2].diagonal(), True, method, quotient_bound, denom_bound, denom))
     pl = P*L
     return pl*D*pl.T
@@ -1654,7 +1825,7 @@ def _round_adaptive(ls, onevec, denom=1024):
     orig = vector(ls)
     for resol1 in range(5, 20):
         resol2 = round(resol1*1.5)
-        rls = vector([_round(xx, quotient_bound=resol1, denom_bound=resol2) for xx in ls])
+        rls = vector([_round(xx, quotient_bound=resol1, denom_bound=resol2) for xx in orig])
         ip = rls*onevec
         if ip != 0 and abs(ip - 1)<best_error:
             if ip.as_integer_ratio()[1] > best_lcm**1.5 and ip != 1:
@@ -1665,7 +1836,7 @@ def _round_adaptive(ls, onevec, denom=1024):
     if best_vec==None:
         rvec = vector(QQ, _round_list(ls, True, method=0, denom=denom))
         best_vec = rvec/(rvec*onevec)
-    return best_vec
+    return best_vec, ((best_vec-orig)/(len(orig)**0.5)).norm()
 
 def _fraction_print(val, thr=20):
     r"""
