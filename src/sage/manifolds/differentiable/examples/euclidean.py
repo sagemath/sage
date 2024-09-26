@@ -1686,7 +1686,7 @@ class Euclidean3dimSpace(EuclideanSpace):
                  symbols=None, metric_name='g', metric_latex_name=None,
                  start_index=1, base_manifold=None, category=None, unique_tag=None):
         r"""
-        Construct an Euclidean 3-space.
+        Construct a Euclidean 3-space.
 
         TESTS::
 
@@ -2439,7 +2439,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         Return the scalar triple product operator, as a 3-form.
 
         The *scalar triple product* (also called *mixed product*) of three
-        vector fields `u`, `v` and `w` defined on an Euclidean space `E`
+        vector fields `u`, `v` and `w` defined on a Euclidean space `E`
         is the scalar field
 
         .. MATH::
