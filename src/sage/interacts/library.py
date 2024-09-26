@@ -1486,7 +1486,7 @@ def riemann_sum(
             ["$i$", "$[x_{i-1},x_i]$", r"$\eta_i$", r"$f(\eta_i)$", "$x_{i}-x_{i-1}$"]
         ] + [
             [i+1,[division[i],division[i+1]],xs[i],ys[i],delka_intervalu[i]] for i in range(n)
-        ],  header_row=True))
+        ], header_row=True))
 
     html(r'Riemann sum: $\displaystyle\sum_{i=1}^{%s} f(\eta_i)(x_i-x_{i-1})=%s$ ' %
          (latex(n),latex(sum([ys[i]*delka_intervalu[i] for i in range(n)]))))

@@ -4492,6 +4492,26 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         """
         return number_field_elements_from_algebraics(self, minimal=minimal, embedded=embedded, prec=prec)
 
+    def is_integral(self):
+        r"""
+        Check if this number is an algebraic integer.
+
+        EXAMPLES::
+
+            sage: QQbar(sqrt(-23)).is_integral()
+            True
+            sage: AA(sqrt(23/2)).is_integral()
+            False
+
+        TESTS:
+
+        Method should return the same value as :meth:`NumberFieldElement.is_integral`::
+
+             sage: for a in [QQbar(2^(1/3)), AA(2^(1/3)), QQbar(sqrt(1/2)), AA(1/2), AA(2), QQbar(1/2)]:
+             ....:    assert a.as_number_field_element()[1].is_integral() == a.is_integral()
+        """
+        return all(a in ZZ for a in self.minpoly())
+
     def exactify(self):
         """
         Compute an exact representation for this number.

@@ -56,6 +56,7 @@ DEFAULT_THRESHOLD_DELETION = 50
 # The number of additional digits used for internal computations
 STARTING_ADDITIONAL_PREC = 5
 
+
 class pRational:
     r"""
     This class implements rational numbers viewed as elements of ``Qp``.
@@ -1673,8 +1674,7 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
                     col[i] = col[i].reduce(prec)
                     col[i].normalize()
                     dval = col[i].valuation() - prec
-                    if dval < diffval[i-index]:
-                        diffval[i-index] = dval
+                    diffval[i-index] = min(dval, diffval[i-index])
             # We update history
             if self._history is not None:
                 self._history.append(('partial reduce', index, walltime(tme)))
@@ -2123,8 +2123,7 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
             col = self._matrix[ref]
             row = [ x.value() for x in col ]
             valcol = min([ x.valuation() for x in col ])
-            if valcol < val:
-                val = valcol
+            val = min(valcol, val)
             row += (n-len(row)) * [ZZ(0)]
             rows.append(row)
         from sage.matrix.constructor import matrix
@@ -2718,8 +2717,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
             col = self._matrix[ref]
             row = [ x.value() for x in col ]
             valcol = min([ x.valuation() for x in col ])
-            if valcol < val:
-                val = valcol
+            val = min(valcol, val)
             row += (n-len(row)) * [ZZ(0)]
             rows.append(row)
         from sage.matrix.constructor import matrix
@@ -2739,6 +2737,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
         if val < 0:
             M *= self._p ** val
         return M
+
 
 class pAdicLatticeElementWeakProxy():
     r"""
@@ -2850,6 +2849,7 @@ class pAdicLatticeElementWeakProxy():
             [WeakProxy#...]
         """
         return "WeakProxy#%s" % (self._id,)
+
 
 def list_of_padics(elements):
     r"""

@@ -103,6 +103,8 @@ from sage.schemes.elliptic_curves.weierstrass_morphism \
 # Private function for parsing input to determine the type of
 # algorithm
 #
+
+
 def _isogeny_determine_algorithm(E, kernel):
     r"""
     Helper function to infer the algorithm to be used from the
@@ -171,6 +173,7 @@ def _isogeny_determine_algorithm(E, kernel):
 
     raise ValueError("invalid parameters to EllipticCurveIsogeny constructor")
 
+
 def isogeny_codomain_from_kernel(E, kernel):
     r"""
     Compute the isogeny codomain given a kernel.
@@ -223,6 +226,7 @@ def isogeny_codomain_from_kernel(E, kernel):
 
     raise NotImplementedError
 
+
 def compute_codomain_formula(E, v, w):
     r"""
     Compute the codomain curve given parameters `v` and `w` (as in
@@ -263,6 +267,7 @@ def compute_codomain_formula(E, v, w):
 
     return EllipticCurve([a1, a2, a3, A4, A6])
 
+
 def compute_vw_kohel_even_deg1(x0, y0, a1, a2, a4):
     r"""
     Compute Vélu's `(v,w)` using Kohel's formulas for isogenies of
@@ -297,6 +302,7 @@ def compute_vw_kohel_even_deg1(x0, y0, a1, a2, a4):
     v = 3*x0**2 + 2*a2*x0 + a4 - a1*y0
     w = x0 * v
     return v, w
+
 
 def compute_vw_kohel_even_deg3(b2, b4, s1, s2, s3):
     r"""
@@ -335,6 +341,7 @@ def compute_vw_kohel_even_deg3(b2, b4, s1, s2, s3):
     w = 3*(s1**3 - 3*s1*s2 + 3*s3) + (b2*temp1 + b4*s1)/2
     return v, w
 
+
 def compute_vw_kohel_odd(b2, b4, b6, s1, s2, s3, n):
     r"""
     Compute Vélu's `(v,w)` using Kohel's formulas for isogenies of odd
@@ -372,6 +379,7 @@ def compute_vw_kohel_odd(b2, b4, b6, s1, s2, s3, n):
     v = 6*(s1**2 - 2*s2) + b2*s1 + n*b4
     w = 10*(s1**3 - 3*s1*s2 + 3*s3) + 2*b2*(s1**2 - 2*s2) + 3*b4*s1 + n*b6
     return v, w
+
 
 def compute_codomain_kohel(E, kernel):
     r"""
@@ -479,6 +487,7 @@ def compute_codomain_kohel(E, kernel):
         v, w = compute_vw_kohel_odd(b2, b4, b6, s1, s2, s3, n)
 
     return compute_codomain_formula(E, v, w)
+
 
 def two_torsion_part(E, psi):
     r"""
@@ -3424,8 +3433,7 @@ def compute_isogeny_bmss(E1, E2, l):
     sprec = 8
     while sprec < 4 * l:
         assert sprec % 2 == 0
-        if sprec > 2 * l:
-            sprec = 2 * l
+        sprec = min(sprec, 2 * l)
         # s1 => s1 + x^k s2
         # 2 s1' s2' - dG/dS(x, s1) s2 = G(x, s1) - s1'2
         s1 = S
@@ -3455,6 +3463,7 @@ def compute_isogeny_bmss(E1, E2, l):
     Q = Q.sqrt()
     ker = Rx(Q).reverse(degree=l//2)
     return ker.monic()
+
 
 def compute_isogeny_stark(E1, E2, ell):
     r"""
@@ -3659,6 +3668,7 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
 
     raise NotImplementedError(f'unknown algorithm {algorithm}')
 
+
 def compute_intermediate_curves(E1, E2):
     r"""
     Return intermediate curves and isomorphisms.
@@ -3754,6 +3764,7 @@ def compute_intermediate_curves(E1, E2):
     urst = [w for w in _isomorphisms(E2w, E2) if w[0] == 1][0]
     post_iso = WeierstrassIsomorphism(E2w, urst, E2)
     return E1w, E2w, pre_iso, post_iso
+
 
 def compute_sequence_of_maps(E1, E2, ell):
     r"""
@@ -3854,6 +3865,7 @@ def compute_sequence_of_maps(E1, E2, ell):
 
 # Utility functions for manipulating isogeny degree matrices
 
+
 def fill_isogeny_matrix(M):
     """
     Return a filled isogeny matrix giving all degrees from one giving only prime degrees.
@@ -3912,6 +3924,7 @@ def fill_isogeny_matrix(M):
         M1 = M2
         M2 = pr(M0, M1)
     return M1
+
 
 def unfill_isogeny_matrix(M):
     """

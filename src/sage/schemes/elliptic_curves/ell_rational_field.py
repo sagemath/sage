@@ -157,6 +157,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         TESTS:
 
+        Passing unexpected keyword arguments will raise an error::
+
+            sage: EllipticCurve.create_object(0, (QQ, (1, 2, 0, 1, 2)), base=QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: unexpected keyword arguments: {'base': Rational Field}
+
         When constructing a curve from the large database using a
         label, we must be careful that the copied generators have the
         right curve (see :issue:`10999`: the following used not to work when
@@ -181,21 +188,23 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EllipticCurve_number_field.__init__(self, Q, ainvs)
 
         if 'conductor' in kwds:
-            self._set_conductor(kwds['conductor'])
+            self._set_conductor(kwds.pop('conductor'))
         if 'cremona_label' in kwds:
-            self._set_cremona_label(kwds['cremona_label'])
+            self._set_cremona_label(kwds.pop('cremona_label'))
         if 'gens' in kwds:
-            self._set_gens(kwds['gens'])
+            self._set_gens(kwds.pop('gens'))
         if 'lmfdb_label' in kwds:
-            self._lmfdb_label = kwds['lmfdb_label']
+            self._lmfdb_label = kwds.pop('lmfdb_label')
         if 'modular_degree' in kwds:
-            self._set_modular_degree(kwds['modular_degree'])
+            self._set_modular_degree(kwds.pop('modular_degree'))
         if 'rank' in kwds:
-            self._set_rank(kwds['rank'])
+            self._set_rank(kwds.pop('rank'))
         if 'regulator' in kwds:
-            self.__regulator = (kwds['regulator'], True)
+            self.__regulator = (kwds.pop('regulator'), True)
         if 'torsion_order' in kwds:
-            self._set_torsion_order(kwds['torsion_order'])
+            self._set_torsion_order(kwds.pop('torsion_order'))
+        if kwds:
+            raise TypeError(f"unexpected keyword arguments: {kwds}")
 
     def _set_rank(self, r):
         r"""
@@ -6295,8 +6304,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             c1_LLL = -R.one()
             for i in range(n):
                 tmp = R(b1_norm/(m_gram.row(i).norm()))
-                if tmp > c1_LLL:
-                    c1_LLL = tmp
+                c1_LLL = max(tmp, c1_LLL)
 
             if c1_LLL < 0:
                 raise RuntimeError('Unexpected intermediate result. Please try another Mordell-Weil base')
@@ -6621,8 +6629,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             c1_LLL = -R.one()
             for i in range(n):
                 tmp = R(b1_norm/(m_gram.row(i).norm()))
-                if tmp > c1_LLL:
-                    c1_LLL = tmp
+                c1_LLL = max(tmp, c1_LLL)
             if c1_LLL < 0:
                 raise RuntimeError('Unexpected intermediate result. Please try another Mordell-Weil base')
             d_L_0 = R(b1_norm**2 / c1_LLL)
@@ -6969,8 +6976,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             c1_LLL = -R.one()
             for i in range(n):
                 tmp = R(b1_norm/(m_gram.row(i).norm()))
-                if tmp > c1_LLL:
-                    c1_LLL = tmp
+                c1_LLL = max(tmp, c1_LLL)
             if c1_LLL < 0:
                 raise RuntimeError('Unexpected intermediate result. Please try another Mordell-Weil base')
             d_L_0 = R(b1_norm**2 / c1_LLL)
@@ -7097,6 +7103,7 @@ def cremona_curves(conductors):
         conductors = [conductors]
     return sage.databases.cremona.CremonaDatabase().iter(conductors)
 
+
 def cremona_optimal_curves(conductors):
     r"""
     Return iterator over all known optimal curves (in database) with
@@ -7122,6 +7129,7 @@ def cremona_optimal_curves(conductors):
     if isinstance(conductors, (RingElement, int)):
         conductors = [conductors]
     return sage.databases.cremona.CremonaDatabase().iter_optimal(conductors)
+
 
 def integral_points_with_bounded_mw_coeffs(E, mw_base, N, x_bound):
     r"""

@@ -1571,6 +1571,7 @@ class CombinatorialElement(CombinatorialObject, Element,
 #####################################################
 # combinatorial sets/lists
 
+
 def tuples(S, k, algorithm='itertools'):
     r"""
     Return a list of all `k`-tuples of elements of a given set ``S``.
