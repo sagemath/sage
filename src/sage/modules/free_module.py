@@ -3110,7 +3110,7 @@ class FreeModule_generic(Module_free_ambient):
             codomain = R**n
         return super().hom(im_gens, codomain, **kwds)
 
-    def PseudoHom(self, twist, codomain=None):
+    def pseudoHom(self, twist, codomain=None):
         r"""
         Return the Pseudo Hom space corresponding to given data.
 
@@ -3126,17 +3126,17 @@ class FreeModule_generic(Module_free_ambient):
             sage: F = GF(25)
             sage: Frob = F.frobenius_endomorphism()
             sage: M = F^2
-            sage: M.PseudoHom(Frob)
+            sage: M.pseudoHom(Frob)
             Set of Pseudoendomorphisms (twisted by z2 |--> z2^5) of Vector space of dimension 2 over Finite Field in z2 of size 5^2
 
         .. SEEALSO::
 
             :meth:`pseudohom`
         """
-        from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
+        from sage.modules.free_module_pseudohomspace import FreeModulepseudoHomspace
         if codomain is None:
             codomain = self
-        return FreeModulePseudoHomspace(self, codomain, twist)
+        return FreeModulepseudoHomspace(self, codomain, twist)
 
     def pseudohom(self, f, twist, codomain=None, side="left"):
         r"""
@@ -3220,10 +3220,10 @@ class FreeModule_generic(Module_free_ambient):
 
         .. SEEALSO::
 
-            :meth:`PseudoHom`
+            :meth:`pseudoHom`
         """
         from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
-        parent = self.PseudoHom(twist, codomain)
+        parent = self.pseudoHom(twist, codomain)
         return FreeModulePseudoMorphism(parent, f, side)
 
     def inner_product_matrix(self):

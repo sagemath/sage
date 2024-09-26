@@ -31,7 +31,7 @@ from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
 
 
-class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
+class FreeModulepseudoHomspace(UniqueRepresentation, HomsetWithBase):
     Element = FreeModulePseudoMorphism
 
     r"""
@@ -45,7 +45,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
         sage: F = GF(125)
         sage: M = F^2
         sage: Frob = F.frobenius_endomorphism()
-        sage: PHS = M.PseudoHom(Frob)
+        sage: PHS = M.pseudoHom(Frob)
         sage: h = PHS([[1, 2], [1, 1]])
         sage: e = M((4*F.gen()^2 + F.gen() + 2, 4*F.gen()^2 + 4*F.gen() + 4))
         sage: h(e)
@@ -70,9 +70,9 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: F = GF(125)
             sage: Frob = F.frobenius_endomorphism()
             sage: M = F^2
-            sage: H = M.PseudoHom(Frob)
+            sage: H = M.pseudoHom(Frob)
             sage: type(H)
-            <class 'sage.modules.free_module_pseudohomspace.FreeModulePseudoHomspace_with_category'>
+            <class 'sage.modules.free_module_pseudohomspace.FreeModulepseudoHomspace_with_category'>
 
             sage: # Testsuite(H).run()
 
@@ -108,7 +108,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: F = GF(125)
             sage: Frob = F.frobenius_endomorphism()
             sage: M = F^2
-            sage: M.PseudoHom(Frob)
+            sage: M.pseudoHom(Frob)
             Set of Pseudoendomorphisms (twisted by z3 |--> z3^5) of Vector space of dimension 2 over Finite Field in z3 of size 5^3
 
         """
@@ -134,7 +134,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: F.<z> = GF(5^3)
             sage: Frob = F.frobenius_endomorphism()
             sage: V = F^2
-            sage: H = V.PseudoHom(Frob)
+            sage: H = V.pseudoHom(Frob)
 
             sage: H([[1, z], [z, z^2]])
             Free module pseudomorphism (twisted by z |--> z^5) defined by the matrix
@@ -153,7 +153,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: F = GF(125)
             sage: Frob = F.frobenius_endomorphism()
             sage: M = F^2
-            sage: H = M.PseudoHom(Frob)
+            sage: H = M.pseudoHom(Frob)
             sage: loads(dumps(M)) is M
             True
         """
@@ -161,7 +161,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             twist = self._morphism
         else:
             twist = self._derivation
-        return FreeModulePseudoHomspace, (self.domain(), self.codomain(), twist)
+        return FreeModulepseudoHomspace, (self.domain(), self.codomain(), twist)
 
     def _repr_(self):
         r"""
@@ -172,12 +172,12 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: Fq = GF(7^3)
             sage: Frob = Fq.frobenius_endomorphism()
             sage: V = Fq^2
-            sage: V.PseudoHom(Frob)  # indirect doctest
+            sage: V.pseudoHom(Frob)  # indirect doctest
             Set of Pseudoendomorphisms (twisted by z3 |--> z3^7) of Vector space of dimension 2 over Finite Field in z3 of size 7^3
 
         ::
 
-            sage: V.PseudoHom(Frob, codomain=Fq^3)  # indirect doctest
+            sage: V.pseudoHom(Frob, codomain=Fq^3)  # indirect doctest
             Set of Pseudomorphism (twisted by z3 |--> z3^7) from Vector space of dimension 2 over Finite Field in z3 of size 7^3 to Vector space of dimension 3 over Finite Field in z3 of size 7^3
 
         ::
@@ -185,7 +185,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: A.<t> = QQ[]
             sage: d = A.derivation()
             sage: M = A^3
-            sage: M.PseudoHom(d)
+            sage: M.pseudoHom(d)
             Set of Pseudoendomorphisms (twisted by d/dt) of Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
 
         """
@@ -209,7 +209,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: Fq.<z> = GF(7^3)
             sage: Frob = Fq.frobenius_endomorphism()
             sage: V = Fq^2
-            sage: H = V.PseudoHom(Frob)
+            sage: H = V.pseudoHom(Frob)
 
             sage: H.ore_ring()
             Ore Polynomial Ring in x over Finite Field in z of size 7^3 twisted by z |--> z^7
@@ -231,7 +231,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: Frob = Fq.frobenius_endomorphism()
             sage: V = Fq^2
             sage: W = Fq^3
-            sage: H = V.PseudoHom(Frob, codomain=W)
+            sage: H = V.pseudoHom(Frob, codomain=W)
             sage: H.matrix_space()
             Full MatrixSpace of 2 by 3 dense matrices over Finite Field in z of size 7^3
 
@@ -247,7 +247,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: Fq = GF(7^3)
             sage: Frob = Fq.frobenius_endomorphism()
             sage: V = Fq^2
-            sage: PHS = V.PseudoHom(Frob)
+            sage: PHS = V.pseudoHom(Frob)
             sage: PHS.basis()
             [Free module pseudomorphism (twisted by z3 |--> z3^7) defined by the matrix
             [1 0]
