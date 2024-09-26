@@ -166,7 +166,5 @@ from sage.rings.continued_fraction import (continued_fraction,
 # asymptotic ring
 from sage.rings.asymptotic.all import *
 
-lazy_import('sage.rings.species', ['PolynomialSpecies', 'AtomicSpecies'])
-
 # Register classes in numbers abc
 from sage.rings import numbers_abc
