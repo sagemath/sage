@@ -21,10 +21,10 @@ from sage.categories.homset import HomsetWithBase
 from sage.matrix.matrix_space import MatrixSpace
 
 from sage.modules.ore_module import OreModule
-from sage.modules.ore_module_morphism import OreModule_morphism
+from sage.modules.ore_module_morphism import OreModuleMorphism
 
 class OreModule_homspace(UniqueRepresentation, HomsetWithBase):
-    Element = OreModule_morphism
+    Element = OreModuleMorphism
 
     def __init__(self, domain, codomain, category=None):
         if not isinstance(domain, OreModule):

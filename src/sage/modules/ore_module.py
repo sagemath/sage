@@ -1,5 +1,243 @@
 r"""
-Ore modules
+Ore modules.
+
+Let `R` be a commutative ring, `\theta : K \to K` by a ring
+endomorphism and `\partial : K \to K` be a `\theta`-derivation,
+that is an additive map satisfying the following axiom
+
+.. MATH::
+
+    \partial(x y) = \theta(x) \partial(y) + \partial(x) y
+
+A Ore module over `(R, \theta, \partial)` is a `R`-module `M`
+equipped with a additive `f : M \to M` such that
+
+.. MATH::
+
+    f(a x) = \theta(a) f(x) + \partial(a) x
+
+Such a map `f` is called a pseudomorphism.
+
+Equivalently, a Ore module is a module over the (noncommutative)
+Ore polynomial ring `\mathcal S = R[X; \theta, \partial]`.
+
+.. RUBRIC:: Defining Ore modules
+
+SageMath provides support for creating and manipulating Ore
+modules that are finite free over the base ring `R`.
+
+To start with, the method :meth:`quotient_module` creates the
+quotient `\mathcal S/ \mathcal S P`, endowed with its structure
+of `\mathcal S`-module, that is its structure of Ore module::
+
+    sage: K.<z> = GF(5^3)
+    sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+    sage: M = S.quotient_module(X^2 + z)
+    sage: M
+    Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+Classical methods are available and we can work with elements in
+`M` as we do usually for vectors in finite free modules::
+
+    sage: M.basis()
+    [(1, 0), (0, 1)]
+
+    sage: v = M((z, z^2)); v
+    (z, z^2)
+    sage: z*v
+    (z^2, 2*z + 2)
+
+The Ore action (or equivalently the structure of `mathcal A`-module)
+is also easily accessible)::
+
+    sage: X*v
+    (3*z^2 + 2*z, 2*z^2 + 4*z + 4)
+
+The method :meth:`pseudohom` returns the map `f` defining the action
+of `X`::
+
+    sage: M.pseudohom()
+    Free module pseudomorphism (twisted by z |--> z^5) defined by the matrix
+    [  0   1]
+    [4*z   0]
+    Domain: Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+    Codomain: Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+A useful feature is the possibility to give chosen names to the vectors
+of the canonical basis. This is easily done as follows:
+
+    sage: N.<u,v,w> = S.quotient_module(X^3 + z*X + 1)
+    sage: N
+    Ore module <u, v, w> over Finite Field in z of size 5^3 twisted by z |--> z^5
+    sage: N.basis()
+    [u, v, w]
+
+Alternatively, one can pass in the argument ``names``; this could be
+useful in particular when we want to name them `e_0, e_1, \ldots`::
+
+    sage: A = S.quotient_module(X^11 + z, names='e')
+    sage: A
+    Ore module <e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10> over Finite Field in z of size 5^3 twisted by z |--> z^5
+    sage: A.basis()
+    [e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10]
+
+Do not forget to use the method :meth:`inject_variables` to get the
+`e_i` in your namespace::
+
+    sage: e0
+    Traceback (most recent call last):
+    ...
+    NameError: name 'e0' is not defined
+    sage: A.inject_variables()
+    Defining e0, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10
+    sage: e0
+    e0
+
+.. RUBRIC:: Submodules and quotients
+
+SageMath provides facilities for creating submodules and quotient
+modules of Ore modules.
+First of all, we define the Ore module `\mathcal S/\mathcal S P^2`
+(for some Ore polynomials `P`), which is obviously not simple::
+
+    sage: P = X^2 + z*X + 1
+    sage: U = S.quotient_module(P^2, names='u')
+    sage: U.inject_variables()
+    Defining u0, u1, u2, u3
+
+We now build the submodule `\mathcal S Q / \mathcal S PQ` using
+the method :meth:`span`::
+
+    sage: V = U.span(P*u0)
+    sage: V
+    Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+    sage: V.basis()
+    [u0 + (z^2 + 2*z + 2)*u2 + 4*z*u3,
+     u1 + (2*z^2 + 4*z + 4)*u2 + u3]
+
+We underline that the span is really the `\mathcal S`-span and
+not the `R`-span (as otherwise, it will not be a Ore module).
+
+As before, one can use the attributes ``names`` to give explicit
+names to the basis vectors::
+
+    sage: V = U.span(P*u0, names='v')
+    sage: V
+    Ore module <v0, v1> over Finite Field in z of size 5^3 twisted by z |--> z^5
+    sage: V.inject_variables()
+    Defining v0, v1
+    sage: v0
+    v0
+    sage: U(v0)
+    u0 + (z^2 + 2*z + 2)*u2 + 4*z*u3
+
+A coercion map from `V` to `U` is automatically created and set up.
+Hence, we can safely combine vectors in `V` and vectors in `U` in a
+single expression::
+
+    sage: v0 - u0
+    (z^2 + 2*z + 2)*u2 + 4*z*u3
+
+We can create the quotient `U/V` using a similar syntax::
+
+    sage: W = U.quo(P*u0)
+    sage: W
+    Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+    sage: W.basis()
+    [u2, u3]
+
+We see that SageMath reuses by default the names of the representatives
+to denote the vectors in the quotient `U/V`. This behaviour can be overrided
+by providing explicit names using the attributes ``names``.
+
+Shortcuts for creating quotients are also available::
+
+    sage: U / (P*u0)
+    Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+    sage: U/V
+    Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+.. RUBRIC:: Morphisms of Ore modules
+
+By definition, a morphism of Ore module is a `R`-linear morphism
+commuting with the Ore action, or equivalenty a `\mathcal S`-linear
+map.
+
+There are several ways for creating Ore modules morphisms in SageMath.
+First of all, one can use the method :meth:`hom`, passing in to it the
+matrix (in the canonical bases) of the morphism we want to build::
+
+    sage: mat = matrix(2, 2, [3*z^2 + z + 2, 2*z,
+    ....:                     3*z^2 + z + 1, 4])
+    sage: f = V.hom(mat, codomain=W)
+    sage: f
+    Ore module morphism:
+      From: Ore module <v0, v1> over Finite Field in z of size 5^3 twisted by z |--> z^5
+      To:   Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+Clearly, this method is not optimal: typing all the entries of the
+defining matrix is long and is a potential source of errors.
+Instead, one can use a dictionary encoding the values taken by the
+morphism on a set of generators; the morphism is automatically
+prolonged by `\mathcal S`-linearity::
+
+    sage: g = V.hom({P*u0: W(u0)})
+    sage: g
+    Ore module morphism:
+      From: Ore module <v0, v1> over Finite Field in z of size 5^3 twisted by z |--> z^5
+      To:   Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+One can then recover the matrix of `g` by using the method :meth:`matrix`::
+
+    sage: g.matrix()
+    [3*z^2 + z + 2           2*z]
+    [3*z^2 + z + 1             4]
+
+The method :meth:`multiplication_map` can also be used to define
+scalar endomorphisms::
+
+    sage: h = U.multiplication_map(2)
+    sage: h
+    Ore module endomorphism of Ore module <u0, u1, u2, u3> over Finite Field in z of size 5^3 twisted by z |--> z^5
+    sage: h.matrix()
+    [2 0 0 0]
+    [0 2 0 0]
+    [0 0 2 0]
+    [0 0 0 2]
+
+Be careful that scalar multiplications do not always properly
+define a morphism of Ore modules::
+
+    sage: U.multiplication_map(z)
+    Traceback (most recent call last):
+    ...
+    ValueError: does not define a morphism of Ore modules
+
+The method :meth:`multiplication_map` also accepts a Ore
+polynomial::
+
+    sage: h = U.multiplication_map(X^3)
+    sage: h
+    Ore module endomorphism of Ore module <u0, u1, u2, u3> over Finite Field in z of size 5^3 twisted by z |--> z^5
+    sage: h.matrix()
+    [              0               0               0               1]
+    [              4             3*z   z^2 + 2*z + 4 2*z^2 + 4*z + 4]
+    [      2*z^2 + 4           z + 2         2*z + 3               3]
+    [              2             3*z               3               3]
+
+For endomorphisms, one can compute classical invariants as
+determinants and characteristic polynomials::
+
+    sage: h.det()
+    1
+    sage: h.charpoly()
+    x^4 + 4*x^3 + x^2 + 4*x + 1
+
+One can check that the latter is the same than the reduced
+norm of `P^2`::
+
+    sage: (P^2).reduced_norm()
+    z^4 + 4*z^3 + z^2 + 4*z + 1
 
 AUTHOR:
 
@@ -28,6 +266,7 @@ from sage.categories.ore_modules import OreModules
 
 from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
+from sage.matrix.special import identity_matrix
 
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.modules.free_module import FreeModule_ambient
@@ -58,19 +297,44 @@ class OreModule(FreeModule_ambient):
     # TODO: ensure uniqueness of parents
     Element = OreModuleElement
 
-    def __init__(self, f, twist=None, names=None, category=None):
-        base = f.base_ring()
+    def __init__(self, mat, twist, names=None, category=None):
+        r"""
+        Initialize this Ore module.
+
+        INPUT:
+
+        - ``mat`` -- the matrix defining the action of the Ore variable
+
+        - ``twist`` -- the twisting morphism/derivation
+
+        - ``names`` (default: ``None``) -- a string of a list of stings,
+          the names of the vector of the canonical basis; if ``None``,
+          elements are represented as vectors in `K^d`
+
+        - ``category`` (default: ``None``) -- the category of this
+          Ore module
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)  # indirect doctest
+            sage: type(M)
+            <class 'sage.modules.ore_module.OreModule_with_category'>
+
+        """
+        base = mat.base_ring()
         if category is None:
             category = OreModules(base, twist)
         if base not in Fields():
             raise NotImplementedError("Ore modules are only implemented over fields")
-        rank = f.nrows()
-        if f.ncols() != rank:
+        rank = mat.nrows()
+        if mat.ncols() != rank:
             raise ValueError("matrix must be square")
         FreeModule_ambient.__init__(self, base, rank, category=category)
         self.register_action(ScalarAction(base, self, True, operator.mul))
         self._ore = category._ore
-        self._pseudohom = FreeModule_ambient.pseudohom(self, f, self._ore, codomain=self)
+        self._pseudohom = FreeModule_ambient.pseudohom(self, mat, self._ore, codomain=self)
         if names is None:
             pass
         elif isinstance(names, (list, tuple)):
@@ -170,11 +434,11 @@ class OreModule(FreeModule_ambient):
         return OreModule_homspace(self, codomain)
 
     def hom(self, im_gens, codomain=None):
-        from sage.modules.ore_module_morphism import OreModule_morphism
+        from sage.modules.ore_module_morphism import OreModuleMorphism
         if codomain is None:
             if isinstance(im_gens, Matrix):
                 codomain = self
-            elif isinstance(im_gens, OreModule_morphism):
+            elif isinstance(im_gens, OreModuleMorphism):
                 codomain = im_gens.codomain()
             elif isinstance(im_gens, (list, tuple)):
                 codomain = Sequence(im_gens).universe()
@@ -185,7 +449,7 @@ class OreModule(FreeModule_ambient):
         H = self.Hom(codomain)
         if isinstance(im_gens, Matrix):
             return H(im_gens)
-        elif isinstance(im_gens, OreModule_morphism):
+        elif isinstance(im_gens, OreModuleMorphism):
             f = im_gens
             if f.domain() is not self:
                 f = self._hom_change_domain(f)
@@ -249,6 +513,11 @@ class OreModule(FreeModule_ambient):
         H = self.Hom(self)
         return H(M)
 
+    def identity_morphism(self):
+        H = self.Hom(self)
+        M = identity_matrix(self.base_ring(), self.rank())
+        return H(M)
+
     def _span(self, gens):
         base = self.base_ring()
         rank = self.rank()
@@ -307,6 +576,7 @@ class OreModule(FreeModule_ambient):
 
 class OreSubmodule(OreModule):
     def __init__(self, M, gens, names):
+        from sage.modules.ore_module_morphism import OreModuleRetraction
         self._M = M
         base = M.base_ring()
         if isinstance(gens, Matrix):
@@ -322,6 +592,7 @@ class OreSubmodule(OreModule):
         self._inject = coerce = self.hom(basis, codomain=M)
         self._basis = basis
         M.register_coercion(coerce)
+        self.register_conversion(OreModuleRetraction(M, self))
 
     def _repr_element(self, x):
         return self._M(x)._repr_()

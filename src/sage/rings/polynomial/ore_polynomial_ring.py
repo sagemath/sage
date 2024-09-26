@@ -641,6 +641,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
             sage: S.<x> = OrePolynomialRing(F, Frob)
             sage: S._latex_twist()
+            z \mapsto z^{5}
 
             sage: T.<y> = OrePolynomialRing(F, Frob^3, polcast=False)
             sage: T._latex_twist()
@@ -653,7 +654,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             s += latex(self._morphism)
         if self._derivation is not None:
             if s != "":
-                s += ", "
+                s += ","
             s += latex(self._derivation)
         return s
 

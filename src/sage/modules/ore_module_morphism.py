@@ -18,10 +18,11 @@ AUTHOR:
 
 from sage.misc.latex import latex
 from sage.matrix.constructor import matrix
+from sage.categories.map import Map
 from sage.categories.morphism import Morphism
 from sage.modules.ore_module import OreModule, OreSubmodule, OreQuotientModule
 
-class OreModule_morphism(Morphism):
+class OreModuleMorphism(Morphism):
     def __init__(self, parent, matrix):
         Morphism.__init__(self, parent)
         self._matrix = parent.matrix_space()(matrix)
@@ -79,7 +80,7 @@ class OreModule_morphism(Morphism):
         return self.codomain()(x * self._matrix)
 
     def _composition_(self, other, homset):
-        if not isinstance(other, OreModule_morphism):
+        if not isinstance(other, OreModuleMorphism):
             raise ValueError
         return homset(other._matrix * self._matrix)
 
@@ -96,3 +97,9 @@ class OreModule_morphism(Morphism):
     def coimage(self, names=None):
         ker = self._matrix.left_kernel_matrix()
         return OreQuotientModule(self.domain(), ker, names)
+
+class OreModuleRetraction(Map):
+    def _call_(self, y):
+        X = self.codomain()
+        xs = X._basis.solve_left(y)
+        return X(xs)
