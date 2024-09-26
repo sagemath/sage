@@ -100,7 +100,7 @@ class FreeModulePseudoMorphism(Morphism):
             sage: F.<z> = GF(5^3)
             sage: Frob = F.frobenius_endomorphism()
             sage: M = F^2
-            sage: H = M.PseudoHom(Frob)
+            sage: H = M.pseudoHom(Frob)
             sage: H
             Set of Pseudoendomorphisms (twisted by z |--> z^5) of Vector space of dimension 2 over Finite Field in z of size 5^3
 
@@ -116,7 +116,7 @@ class FreeModulePseudoMorphism(Morphism):
             Codomain: Vector space of dimension 2 over Finite Field in z of size 5^3
 
             sage: type(f)
-            <class 'sage.modules.free_module_pseudohomspace.FreeModulePseudoHomspace_with_category.element_class'>
+            <class 'sage.modules.free_module_pseudohomspace.FreeModulepseudoHomspace_with_category.element_class'>
 
         or a pseudomorphism with the same parent::
 
@@ -133,7 +133,7 @@ class FreeModulePseudoMorphism(Morphism):
 
             sage: id = End(F).identity()
             sage: g = M.hom(mat)
-            sage: M.PseudoHom(id)(g)
+            sage: M.pseudoHom(id)(g)
             Free module pseudomorphism (untwisted) defined by the matrix
             [      1       z]
             [    z^2 2*z + 2]
