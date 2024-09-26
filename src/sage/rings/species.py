@@ -256,13 +256,27 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
 
         TESTS::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: A = AtomicSpecies("X, Y")
 
         Check that the domain is irrelevant::
 
             sage: G = PermutationGroup([[("a", "b", "c", "d"), ("e", "f")]])
-            sage: A(G, {0: "abcd", 1: "ef"})
+            sage: a = A(G, {0: "abcd", 1: "ef"}); a
             {((1,2,3,4)(5,6),): ({1, 2, 3, 4}, {5, 6})}
+            sage: H = PermutationGroup([[(1,2,3,4), (5,6)]])
+            sage: a is A(H, {0: [1,2,3,4], 1: [5,6]})
+            True
+
+        The advantage of the unique representation is that we can
+        rename the species::
+
+            sage: a.rename("CD(X,Y)"); a
+            CD(X,Y)
+
+        We create two different atomic species `a` and `b` with the
+        same multicardinality and the same underlying permutation
+        group::
 
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
@@ -278,6 +292,7 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
             False
             sage: a is c
             True
+
         """
         mc = tuple(len(v) for v in domain_partition)
         domain = list(chain(*map(sorted, domain_partition)))
@@ -322,6 +337,7 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
 
         TESTS::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: A = AtomicSpecies("X")
             sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
             sage: TestSuite(A(G)).run()
@@ -341,6 +357,7 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
 
         TESTS::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: A = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
             Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
@@ -361,6 +378,7 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
 
         EXAMPLES::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: A = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]])
             sage: a = A(G, {0: [1,2,3,4], 1: [5,6,7,8,9,10]})
@@ -382,11 +400,12 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         TESTS::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: A1 = AtomicSpecies("X")
             sage: A2 = AtomicSpecies("Y")
             sage: A3 = AtomicSpecies("X, Y")
             sage: A4 = AtomicSpecies(["X", "Y"])
-            sage: A1 is A2
+            sage: A1 == A2
             False
             sage: A3 is A4
             True
@@ -404,6 +423,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         TESTS::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: A1 = AtomicSpecies(["X"])
             sage: A2 = AtomicSpecies(["X", "Y"])
             sage: TestSuite(A1).run(skip="_test_graded_components")
@@ -421,6 +441,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         TESTS::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: AtomicSpecies("X")
             Atomic species in X
             sage: AtomicSpecies("X, Y")
@@ -445,6 +466,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: A = AtomicSpecies("X, Y")
             sage: A(DihedralGroup(5), {0: [1,2,3,4,5]})
             P_5(X)
@@ -500,6 +522,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: A = AtomicSpecies(["X", "Y"])
             sage: A(SymmetricGroup(4), {0: range(1, 5)})  # indirect doctest
             E_4(X)
@@ -563,6 +586,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         TESTS::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: A = AtomicSpecies("X")
             sage: G = PermutationGroup([[(1,2)], [(3,4)]]); G
             Permutation Group with generators [(3,4), (1,2)]
@@ -573,7 +597,6 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         """
         if parent(x) == self:
             return True
-        G, pi = None, None
         if isinstance(x, PermutationGroup_generic):
             if self._arity == 1:
                 G = x
@@ -600,6 +623,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: AtomicSpecies(["X"]).grading_set()
             Integer vectors of length 1
         """
@@ -612,6 +636,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         TESTS::
 
+            sage: from sage.rings.species import AtomicSpecies
             sage: A = AtomicSpecies("X")
             sage: A.an_element()
             E_2
@@ -1171,6 +1196,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
     TESTS::
 
+        sage: from sage.rings.species import PolynomialSpecies
         sage: P = PolynomialSpecies(ZZ, ["X"])
         sage: C3 = P(CyclicPermutationGroup(3))
         sage: X = P(SymmetricGroup(1))
@@ -1184,6 +1210,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: X = P(SymmetricGroup(1), {0: [1]})
             sage: X.is_constant()
@@ -1203,6 +1230,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         TESTS::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: X = P(SymmetricGroup(1), {0: [1]})
             sage: Y = P(SymmetricGroup(1), {1: [1]})
@@ -1221,6 +1249,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         TESTS::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: X = P(SymmetricGroup(1), {0: [1]})
             sage: Y = P(SymmetricGroup(1), {1: [1]})
@@ -1241,6 +1270,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         TESTS::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: X = P(SymmetricGroup(1), {0: [1]})
             sage: Y = P(SymmetricGroup(1), {1: [1]})
@@ -1265,6 +1295,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         Exercise 2.1.9 from [BLL1998]_::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, ["X"])
             sage: C3 = P(CyclicPermutationGroup(3))
             sage: X = P(SymmetricGroup(1))
@@ -1340,6 +1371,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, "X")
             sage: C4 = P(CyclicPermutationGroup(4))
             sage: C4._compose_with_singletons("X, Y", [[2, 2]])
@@ -1419,6 +1451,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         Equation (2.5.41) in [BLL1998]_::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(QQ, ["X"])
             sage: E2 = P(SymmetricGroup(2))
             sage: E2._compose_with_weighted_singletons(["X"], [-1], [[2]])
@@ -1437,7 +1470,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[4, 0]])
             C_4(X)
 
-        Auger et al., Equation (4.60)::
+        Equation (4.60) in [ALL2002]_::
 
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, -1], [[2, 2]])
             2*X^2*Y^2 - E_2(XY)
@@ -1465,6 +1498,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(QQ, ["X"])
             sage: X = P(SymmetricGroup(1))
             sage: E2 = P(SymmetricGroup(2))
@@ -1530,12 +1564,13 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         TESTS::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P1 = PolynomialSpecies(ZZ, "X, Y")
             sage: P2 = PolynomialSpecies(ZZ, "X, Y")
             sage: P3 = PolynomialSpecies(ZZ, ["X", "Z"])
             sage: P1 is P2
             True
-            sage: P1 is P3
+            sage: P1 == P3
             False
         """
         from sage.structure.category_object import normalize_names
@@ -1548,6 +1583,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         TESTS::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, "X")
             sage: TestSuite(P).run()
             sage: P2 = PolynomialSpecies(ZZ, "X, Y")
@@ -1568,6 +1604,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: PolynomialSpecies(ZZ, "X")
             Polynomial species in X over Integer Ring
             sage: PolynomialSpecies(ZZ, "X, Y")
@@ -1594,6 +1631,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: P(SymmetricGroup(4).young_subgroup([2, 2]), ([1,2], [3,4]))
             E_2(X)*E_2(Y)
@@ -1635,6 +1673,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: E4X = P(SymmetricGroup(4), {0: range(1, 5)}); E4X
             E_4(X)
@@ -1655,6 +1694,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, "X")
             sage: P.one_basis()
             1
@@ -1669,6 +1709,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         """
         Return an element of ``self``.
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, "X")
             sage: P.an_element()
             1
@@ -1684,6 +1725,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, "X")
             sage: L1 = [P(H) for H in SymmetricGroup(3).conjugacy_classes_subgroups()]
             sage: L2 = [P(H) for H in SymmetricGroup(2).conjugacy_classes_subgroups()]
@@ -1703,10 +1745,15 @@ class PolynomialSpecies(CombinatorialFreeModule):
     @cached_method
     def powersum(self, s, n):
         r"""
-        Return `P_n(X_s)`.
+        Return the combinatorial powersum species `P_n(X_s)`.
+
+        The species `P_n(X)` is introduced in [Labelle2008]_ as the
+        coefficient of `t^n/n` in `\log E(tX)`, where `E` is the
+        species of sets.
 
         EXAMPLES::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, "X")
             sage: P.powersum(0, 4)
             4*E_4 - 4*X*E_3 + 4*X^2*E_2 - X^4 - 2*E_2^2
@@ -1725,6 +1772,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         EXAMPLES::
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(QQ, ["X"])
             sage: P.exponential([3/2], [7])  # random
             3/2*E_7 + 3/4*X*E_6 - 3/16*X^2*E_5 + 3/32*X^3*E_4 - 15/256*E_3*X^4
@@ -1768,8 +1816,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             r"""
             Return `E(c X_s)_d`.
 
-            We use Proposition 2 in Labelle, New combinatorial
-            computational methods arising from pseudo-singletons.
+            We use Proposition 2 in [Labelle2008]_.
             """
             return self.sum(~ mu.centralizer_size()
                             * self.prod(stretch(c, k)
