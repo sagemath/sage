@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Base class for old-style parent objects with a base ring
 """
@@ -14,7 +15,7 @@ Base class for old-style parent objects with a base ring
 cimport sage.structure.parent as parent
 from sage.structure.coerce_exceptions import CoercionException
 
-cdef inline check_old_coerce(parent.Parent p) noexcept:
+cdef inline check_old_coerce(parent.Parent p):
     if p._element_constructor is not None:
         raise RuntimeError("%s still using old coercion framework" % p)
 
@@ -27,7 +28,7 @@ cdef class ParentWithBase(Parent_old):
         Parent_old.__init__(self, *args, **kwds)
         self._base = base
 
-    cdef _coerce_c_impl(self,x) noexcept:
+    cdef _coerce_c_impl(self,x):
         check_old_coerce(self)
         from sage.misc.superseded import deprecation
         deprecation(33497, "_coerce_c_impl is deprecated, use coerce instead")

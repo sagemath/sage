@@ -1,7 +1,18 @@
-imagesize: Parser for image file metadata
-=========================================
+imagesize: Getting image size from png/jpeg/jpeg2000/gif file
+=============================================================
 
 Description
 -----------
 
-It parses image files' header and return image size.
+Getting image size from png/jpeg/jpeg2000/gif file
+
+License
+-------
+
+MIT
+
+Upstream Contact
+----------------
+
+https://pypi.org/project/imagesize/
+

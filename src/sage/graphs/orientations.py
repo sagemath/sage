@@ -41,6 +41,260 @@ from copy import copy
 from sage.graphs.digraph import DiGraph
 
 
+def acyclic_orientations(G):
+    r"""
+    Return an iterator over all acyclic orientations of an undirected graph `G`.
+
+    ALGORITHM:
+
+    The algorithm is based on [Sq1998]_.
+    It presents an efficient algorithm for listing the acyclic orientations of a
+    graph. The algorithm is shown to require O(n) time per acyclic orientation
+    generated, making it the most efficient known algorithm for generating acyclic
+    orientations.
+
+    The function uses a recursive approach to generate acyclic orientations of the
+    graph. It reorders the vertices and edges of the graph, creating a new graph
+    with updated labels. Then, it iteratively generates acyclic orientations by
+    considering subsets of edges and checking whether they form upsets in a
+    corresponding poset.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
+    OUTPUT: an iterator over all acyclic orientations of the input graph
+
+    .. NOTE::
+
+        The function assumes that the input graph is undirected and the edges are unlabelled.
+
+    EXAMPLES:
+
+    To count number acyclic orientations for a graph::
+
+        sage: g = Graph([(0, 3), (0, 4), (3, 4), (1, 3), (1, 2), (2, 3), (2, 4)])
+        sage: it = g.acyclic_orientations()
+        sage: len(list(it))
+        54
+
+    Test for arbitrary vertex labels::
+
+        sage: g_str = Graph([('abc', 'def'), ('ghi', 'def'), ('xyz', 'abc'), ('xyz', 'uvw'), ('uvw', 'abc'), ('uvw', 'ghi')])
+        sage: it = g_str.acyclic_orientations()
+        sage: len(list(it))
+        42
+
+    TESTS:
+
+    To count the number of acyclic orientations for a graph with 0 vertices::
+
+        sage: list(Graph().acyclic_orientations())
+        []
+
+    To count the number of acyclic orientations for a graph with 1 vertex::
+
+        sage: list(Graph(1).acyclic_orientations())
+        []
+
+    To count the number of acyclic orientations for a graph with 2 vertices::
+
+        sage: list(Graph(2).acyclic_orientations())
+        []
+
+    Acyclic orientations of a complete graph::
+
+        sage: g = graphs.CompleteGraph(5)
+        sage: it = g.acyclic_orientations()
+        sage: len(list(it))
+        120
+
+    Graph with one edge::
+
+        sage: list(Graph([(0, 1)]).acyclic_orientations())
+        [Digraph on 2 vertices, Digraph on 2 vertices]
+
+    Graph with two edges::
+
+        sage: len(list(Graph([(0, 1), (1, 2)]).acyclic_orientations()))
+        4
+
+    Cycle graph::
+
+        sage: len(list(Graph([(0, 1), (1, 2), (2, 0)]).acyclic_orientations()))
+        6
+    """
+    if not G.size():
+        # A graph without edge cannot be oriented
+        return
+
+    from sage.rings.infinity import Infinity
+    from sage.combinat.subset import Subsets
+
+    def reorder_vertices(G):
+        n = G.order()
+        ko = n
+        k = n
+        G_copy = G.copy()
+        vertex_labels = {v: None for v in G_copy.vertices()}
+
+        while G_copy.size() > 0:
+            min_val = float('inf')
+            uv = None
+            for u, v, _ in G_copy.edges():
+                du = G_copy.degree(u)
+                dv = G_copy.degree(v)
+                val = (du + dv) / (du * dv)
+                if val < min_val:
+                    min_val = val
+                    uv = (u, v)
+
+            if uv:
+                u, v = uv
+                vertex_labels[u] = ko
+                vertex_labels[v] = ko - 1
+                G_copy.delete_vertex(u)
+                G_copy.delete_vertex(v)
+                ko -= 2
+
+            if G_copy.size() == 0:
+                break
+
+        for vertex, label in vertex_labels.items():
+            if label is None:
+                vertex_labels[vertex] = ko
+                ko -= 1
+
+        return vertex_labels
+
+    def order_edges(G, vertex_labels):
+        n = len(vertex_labels)
+        m = 1
+        edge_labels = {}
+
+        for j in range(2, n + 1):
+            for i in range(1, j):
+                if G.has_edge(i, j):
+                    edge_labels[(i, j)] = m
+                    m += 1
+
+        return edge_labels
+
+    def is_upset_of_poset(Poset, subset, keys):
+        for (u, v) in subset:
+            for (w, x) in keys:
+                if (Poset[(u, v), (w, x)] == 1 and (w, x) not in subset):
+                    return False
+        return True
+
+    def generate_orientations(globO, starting_of_Ek, m, k, keys):
+        # Creating a poset
+        Poset = {}
+        for i in range(starting_of_Ek, m - 1):
+            for j in range(starting_of_Ek, m - 1):
+                u, v = keys[i]
+                w, x = keys[j]
+                Poset[(u, v), (w, x)] = 0
+
+        # Create a new graph to determine reachable vertices
+        new_G = DiGraph()
+
+        # Process vertices up to starting_of_Ek
+        new_G.add_edges([(v, u) if globO[(u, v)] == 1 else (u, v) for u, v in keys[:starting_of_Ek]])
+
+        # Process vertices starting from starting_of_Ek
+        new_G.add_vertices([u for u, _ in keys[starting_of_Ek:]] + [v for _, v in keys[starting_of_Ek:]])
+
+        if (globO[(k-1, k)] == 1):
+            new_G.add_edge(k, k - 1)
+        else:
+            new_G.add_edge(k-1, k)
+
+        for i in range(starting_of_Ek, m - 1):
+            for j in range(starting_of_Ek, m - 1):
+                u, v = keys[i]
+                w, x = keys[j]
+                # w should be reachable from u and v should be reachable from x
+                if w in new_G.depth_first_search(u) and v in new_G.depth_first_search(x):
+                    Poset[(u, v), (w, x)] = 1
+
+        # For each subset of the base set of E_k, check if it is an upset or not
+        upsets = []
+        for subset in Subsets(keys[starting_of_Ek:m-1]):
+            if (is_upset_of_poset(Poset, subset, keys[starting_of_Ek:m-1])):
+                upsets.append(list(subset))
+
+        for upset in upsets:
+            for i in range(starting_of_Ek, m - 1):
+                u, v = keys[i]
+                if (u, v) in upset:
+                    globO[(u, v)] = 1
+                else:
+                    globO[(u, v)] = 0
+
+            yield globO.copy()
+
+    def helper(G, globO, m, k):
+        keys = list(globO.keys())
+        keys = keys[0:m]
+
+        if m <= 0:
+            yield {}
+            return
+
+        starting_of_Ek = 0
+        for (u, v) in keys:
+            if u >= k - 1 or v >= k - 1:
+                break
+            else:
+                starting_of_Ek += 1
+
+        # s is the size of E_k
+        s = m - 1 - starting_of_Ek
+
+        # Recursively generate acyclic orientations
+        orientations_G_small = helper(G, globO, starting_of_Ek, k - 2)
+
+        # For each orientation of G_k-2, yield acyclic orientations
+        for alpha in orientations_G_small:
+            for (u, v) in alpha:
+                globO[(u, v)] = alpha[(u, v)]
+
+            # Orienting H_k as 1
+            globO[(k-1, k)] = 1
+            yield from generate_orientations(globO, starting_of_Ek, m, k, keys)
+
+            # Orienting H_k as 0
+            globO[(k-1, k)] = 0
+            yield from generate_orientations(globO, starting_of_Ek, m, k, keys)
+
+    # Reorder vertices based on the logic in reorder_vertices function
+    vertex_labels = reorder_vertices(G)
+
+    # Create a new graph with updated vertex labels using SageMath, Assuming the graph edges are unlabelled
+    new_G = G.relabel(perm=vertex_labels, inplace=False)
+
+    G = new_G
+
+    # Order the edges based on the logic in order_edges function
+    edge_labels = order_edges(G, vertex_labels)
+
+    # Create globO array
+    globO = {uv: 0 for uv in edge_labels}
+
+    m = len(edge_labels)
+    k = len(vertex_labels)
+    orientations = helper(G, globO, m, k)
+
+    # Create a mapping between original and new vertex labels
+    reverse_vertex_labels = {label: vertex for vertex, label in vertex_labels.items()}
+
+    # Iterate over acyclic orientations and create relabeled graphs
+    for orientation in orientations:
+        relabeled_graph = DiGraph([(reverse_vertex_labels[u], reverse_vertex_labels[v], label) for (u, v), label in orientation.items()])
+        yield relabeled_graph
+
+
 def strong_orientations_iterator(G):
     r"""
     Return an iterator over all strong orientations of a graph `G`.
@@ -69,11 +323,9 @@ def strong_orientations_iterator(G):
 
     INPUT:
 
-    - ``G`` -- an undirected graph.
+    - ``G`` -- an undirected graph
 
-    OUTPUT:
-
-    - an iterator which will produce all strong orientations of this graph.
+    OUTPUT: an iterator which will produce all strong orientations of this graph
 
     .. NOTE::
 
@@ -190,17 +442,15 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
 
     INPUT:
 
-    - ``Dg`` -- the mixed graph. The undirected edges are doubly oriented.
+    - ``Dg`` -- the mixed graph. The undirected edges are doubly oriented
 
     - ``V`` -- the set of vertices
 
     - ``E`` -- the set of undirected edges (they are oriented in both ways);
-      No labels are allowed.
+      no labels are allowed
 
-    OUTPUT:
-
-    - an iterator which will produce all strong orientations of the input
-      partially directed graph.
+    OUTPUT: an iterator which will produce all strong orientations of the input
+    partially directed graph
 
     EXAMPLES::
 
@@ -267,7 +517,7 @@ def random_orientation(G):
 
     INPUT:
 
-    - ``G`` -- a Graph.
+    - ``G`` -- a Graph
 
     EXAMPLES::
 

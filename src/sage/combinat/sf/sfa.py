@@ -161,30 +161,31 @@ Here are further examples::
 
 TESTS:
 
-Check that we can handle large integers properly (:trac:`13413`)::
+Check that we can handle large integers properly (:issue:`13413`)::
 
     sage: s = SymmetricFunctions(QQ).s()
     sage: p = SymmetricFunctions(QQ).p()
     sage: max(s(p([1]*36)).coefficients())  # long time (4s on sage.math, 2013)
     40971642983700000000
 
-BACKWARD INCOMPATIBLE CHANGES (:trac:`5457`):
+BACKWARD INCOMPATIBLE CHANGES (:issue:`5457`):
 
-The symmetric functions code has been refactored to take
-advantage of the coercion systems. This introduced a couple of glitches:
+The symmetric functions code has been refactored to take advantage of
+the coercion systems. This introduced a couple of glitches, in
+particular, on some bases changes, coefficients in Jack polynomials
+are not normalized
 
-- On some bases changes, coefficients in Jack polynomials are not normalized
+However, conversions and coercions are now also defined between
+symmetric functions over different coefficient rings::
 
-- Except in a few cases, conversions and coercions are only defined
-  between symmetric functions over the same coefficient ring. E.g.
-  the following does not work anymore::
+      sage: S  = SymmetricFunctions(QQ)
+      sage: S2 = SymmetricFunctions(QQ['t'])
+      sage: S3 = SymmetricFunctions(ZZ)
+      sage: S.m()[1] + S2.m()[2]
+      m[1] + m[2]
 
-      sage: s  = SymmetricFunctions(QQ)
-      sage: s2 = SymmetricFunctions(QQ['t'])
-      sage: s([1]) + s2([2]) # todo: not implemented
-
-  This feature will probably come back at some point through
-  improvements to the Sage coercion system.
+      sage: S.m()(S3.sp()[2,1])
+      -m[1] + 2*m[1, 1, 1] + m[2, 1]
 
 Backward compatibility should be essentially retained.
 
@@ -194,7 +195,6 @@ AUTHORS:
 - Nicolas M. Thiery (partial refactoring)
 - Mike Zabrocki, Anne Schilling (2012)
 - Darij Grinberg (2013) Sym over rings that are not characteristic 0
-
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
@@ -239,12 +239,16 @@ from sage.misc.superseded import deprecated_function_alias
 
 def is_SymmetricFunctionAlgebra(x):
     """
-    Checks whether ``x`` is a symmetric function algebra.
+    Check whether ``x`` is a symmetric function algebra.
 
     EXAMPLES::
 
         sage: from sage.combinat.sf.sfa import is_SymmetricFunctionAlgebra
         sage: is_SymmetricFunctionAlgebra(5)
+        doctest:warning...
+        DeprecationWarning: the function is_SymmetricFunctionAlgebra is deprecated;
+        use 'isinstance(..., SymmetricFunctionAlgebra_generic)' instead
+        See https://github.com/sagemath/sage/issues/37896 for details.
         False
         sage: is_SymmetricFunctionAlgebra(ZZ)
         False
@@ -257,6 +261,8 @@ def is_SymmetricFunctionAlgebra(x):
         sage: is_SymmetricFunctionAlgebra(SymmetricFunctions(FractionField(QQ['q','t'])).macdonald().P())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37896, "the function is_SymmetricFunctionAlgebra is deprecated; use 'isinstance(..., SymmetricFunctionAlgebra_generic)' instead")
     return isinstance(x, SymmetricFunctionAlgebra_generic)
 
 
@@ -271,7 +277,7 @@ def zee(part):
 
     INPUT:
 
-    - ``part`` -- an integer partition (for example, ``[2,1,1]``)
+    - ``part`` -- integer partition (for example, ``[2,1,1]``)
 
     OUTPUT:
 
@@ -291,19 +297,27 @@ def zee(part):
 
 def is_SymmetricFunction(x):
     r"""
-    Checks whether ``x`` is a symmetric function.
+    Check whether ``x`` is a symmetric function.
 
     EXAMPLES::
 
         sage: from sage.combinat.sf.sfa import is_SymmetricFunction
         sage: s = SymmetricFunctions(QQ).s()
         sage: is_SymmetricFunction(2)
+        doctest:warning...
+        DeprecationWarning: The function is_SymmetricFunction is deprecated;
+        use 'isinstance(..., SymmetricFunctionAlgebra_generic.Element)' instead.
+        See https://github.com/sagemath/sage/issues/38279 for details.
         False
         sage: is_SymmetricFunction(s(2))
         True
         sage: is_SymmetricFunction(s([2,1]))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38279,
+                "The function is_SymmetricFunction is deprecated; "
+                "use 'isinstance(..., SymmetricFunctionAlgebra_generic.Element)' instead.")
     return isinstance(x, SymmetricFunctionAlgebra_generic.Element)
 
 #####################################################################
@@ -397,7 +411,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             INPUT:
 
             - ``self`` -- a basis of the symmetric functions
-            - ``proof`` -- an optional argument (default value: ``True``)
+            - ``proof`` -- an optional argument (default: value: ``True``)
 
             EXAMPLES::
 
@@ -411,6 +425,22 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             """
             return self.base_ring().is_integral_domain()
 
+        @cached_method
+        def fraction_field(self):
+            r"""
+            Return the fraction field of ``self``.
+
+            EXAMPLES::
+
+                sage: s = SymmetricFunctions(QQ).s()
+                sage: s.fraction_field()
+                Fraction Field of Symmetric Functions over Rational Field in the Schur basis
+            """
+            if not self.is_integral_domain():
+                raise TypeError("self must be an integral domain")
+            from sage.rings.fraction_field import FractionField_generic
+            return FractionField_generic(self)
+
         def is_field(self, proof=True):
             """
             Return whether ``self`` is a field. (It is not.)
@@ -418,7 +448,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             INPUT:
 
             - ``self`` -- a basis of the symmetric functions
-            - ``proof`` -- an optional argument (default value: ``True``)
+            - ``proof`` -- an optional argument (default: value: ``True``)
 
             EXAMPLES::
 
@@ -428,7 +458,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             """
             return False
 
-        def is_commutative(self):
+        def is_commutative(self) -> bool:
             """
             Return whether this symmetric function algebra is commutative.
 
@@ -442,11 +472,11 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: s.is_commutative()
                 True
             """
-            return self.base_ring().is_commutative()
+            return self.base_ring() in CommutativeRings()
 
         def _repr_(self):
             """
-            Text representation of this basis of symmetric functions
+            Text representation of this basis of symmetric functions.
 
             INPUT:
 
@@ -461,7 +491,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
             In the following examples, we rename {{{Sym}}} for brevity::
 
-                sage: Sym.rename("Sym"); Sym
+                sage: Sym.rename('Sym'); Sym
                 Sym
 
             Classical bases::
@@ -567,7 +597,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
         @cached_method
         def one_basis(self):
             r"""
-            Return the empty partition, as per ``AlgebrasWithBasis.ParentMethods.one_basis``
+            Return the empty partition, as per ``AlgebrasWithBasis.ParentMethods.one_basis``.
 
             INPUT:
 
@@ -624,6 +654,11 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: Sym = SymmetricFunctions(QQ)
                 sage: m = Sym.monomial()
                 sage: m.corresponding_basis_over(ZZ)
+                doctest:warning
+                ...
+                DeprecationWarning: S.corresponding_basis_over(R) is deprecated.
+                Use S.change_ring(R) instead.
+                See https://github.com/sagemath/sage/issues/37220 for details.
                 Symmetric Functions over Integer Ring in the monomial basis
 
                 sage: Sym = SymmetricFunctions(CyclotomicField())
@@ -634,7 +669,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: P = ZZ['q','t']
                 sage: Sym = SymmetricFunctions(P)
                 sage: mj = Sym.macdonald().J()
-                sage: mj.corresponding_basis_over(Integers(13))
+                sage: mj.corresponding_basis_over(Integers(13)['q','t'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over
+                 Ring of integers modulo 13 in the Macdonald J basis
 
             TESTS:
 
@@ -643,43 +680,64 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: P = QQ['q','t']
                 sage: Sym = SymmetricFunctions(P)
                 sage: Q = CyclotomicField()['q','t']
-                sage: Sym.s().corresponding_basis_over(CyclotomicField())
+                sage: Sym.s().change_ring(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the Schur basis
-                sage: Sym.p().corresponding_basis_over(CyclotomicField())
+                sage: Sym.p().change_ring(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the powersum basis
-                sage: Sym.m().corresponding_basis_over(CyclotomicField())
+                sage: Sym.m().change_ring(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the monomial basis
-                sage: Sym.e().corresponding_basis_over(CyclotomicField())
+                sage: Sym.e().change_ring(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the elementary basis
-                sage: Sym.h().corresponding_basis_over(CyclotomicField())
+                sage: Sym.h().change_ring(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the homogeneous basis
-                sage: Sym.f().corresponding_basis_over(CyclotomicField())
+                sage: Sym.f().change_ring(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the forgotten basis
-                sage: Sym.w().corresponding_basis_over(CyclotomicField())
+                sage: Sym.w().change_ring(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the Witt basis
-                sage: Sym.macdonald().P().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald().Q().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald().J().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald().H().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald().Ht().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald().S().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald(q=1).S().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald(q=1,t=3).P().corresponding_basis_over(CyclotomicField())
-                sage: Sym.hall_littlewood().P().corresponding_basis_over(CyclotomicField())
-                sage: Sym.hall_littlewood().Q().corresponding_basis_over(CyclotomicField())
-                sage: Sym.hall_littlewood().Qp().corresponding_basis_over(CyclotomicField())
-                sage: Sym.hall_littlewood(t=1).P().corresponding_basis_over(CyclotomicField())
-                sage: Sym.jack().J().corresponding_basis_over(CyclotomicField())
-                sage: Sym.jack().P().corresponding_basis_over(CyclotomicField())
-                sage: Sym.jack().Q().corresponding_basis_over(CyclotomicField())
-                sage: Sym.jack().Qp().corresponding_basis_over(CyclotomicField())
-                sage: Sym.jack(t=1).J().corresponding_basis_over(CyclotomicField())
-                sage: Sym.zonal().corresponding_basis_over(CyclotomicField())
+                sage: Sym.macdonald().P().change_ring(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald P basis
+                sage: Sym.macdonald().Q().change_ring(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald Q basis
+                sage: Sym.macdonald().J().change_ring(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald J basis
+                sage: Sym.macdonald().H().change_ring(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald H basis
+                sage: Sym.macdonald().Ht().change_ring(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald Ht basis
+                sage: Sym.macdonald().S().change_ring(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald S basis
+                sage: Sym.macdonald(q=1).S().change_ring(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Macdonald S with q=1 basis
+                sage: Sym.macdonald(q=1,t=3).P().change_ring(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the Macdonald P with q=1 and t=3 basis
+                sage: Sym.hall_littlewood().P().change_ring(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Hall-Littlewood P basis
+                sage: Sym.hall_littlewood().Q().change_ring(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Hall-Littlewood Q basis
+                sage: Sym.hall_littlewood().Qp().change_ring(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Hall-Littlewood Qp basis
+                sage: Sym.hall_littlewood(t=1).P().change_ring(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the Hall-Littlewood P with t=1 basis
+                sage: Sym.jack().J().change_ring(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Jack J basis
+                sage: Sym.jack().P().change_ring(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Jack P basis
+                sage: Sym.jack().Q().change_ring(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Jack Q basis
+                sage: Sym.jack().Qp().change_ring(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Jack Qp basis
+                sage: Sym.jack(t=1).J().change_ring(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the Jack J with t=1 basis
+                sage: Sym.zonal().change_ring(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the zonal basis
-                sage: Sym.llt(3).hspin().corresponding_basis_over(CyclotomicField())
-                sage: Sym.llt(3).hcospin().corresponding_basis_over(CyclotomicField())
-                sage: Sym.llt(3, t=1).hspin().corresponding_basis_over(CyclotomicField())
-                sage: Sym.llt(3, t=1).hcospin().corresponding_basis_over(CyclotomicField())
+                sage: Sym.llt(3).hspin().change_ring(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the level 3 LLT spin basis
+                sage: Sym.llt(3).hcospin().change_ring(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the level 3 LLT cospin basis
+                sage: Sym.llt(3, t=1).hspin().change_ring(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the level 3 LLT spin with t=1 basis
+                sage: Sym.llt(3, t=1).hcospin().change_ring(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the level 3 LLT cospin with t=1 basis
 
             .. TODO::
 
@@ -687,26 +745,13 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 rewritten as soon as the bases of ``SymmetricFunctions`` are
                 put on a more robust and systematic footing.
             """
-            from sage.combinat.sf.sf import SymmetricFunctions
-            from sage.misc.call import attrcall
+            from sage.misc.superseded import deprecation
+            deprecation(37220, 'S.corresponding_basis_over(R) is deprecated.'
+                        ' Use S.change_ring(R) instead.')
             try:
-                return attrcall(self._basis)(SymmetricFunctions(R))
-            except AttributeError:   # or except (AttributeError, ValueError):
+                return self.change_ring(R)
+            except NotImplementedError:
                 return None
-            #Alternative code proposed by Florent Hivert, which sadly fails for the
-            #forgotten basis (which reduces differently than the other ones):
-            #try:
-            #    parentred1 = self._reduction
-            #    parentred2 = parentred1[1][0]._reduction
-            #    parentred2prime = tuple([parentred2[0], tuple([R]), parentred2[2]])
-            #    from sage.structure.unique_representation import unreduce
-            #    parent2 = unreduce(*parentred2prime)
-            #    parentred1prime = tuple([parentred1[0], tuple([parent2]), parentred1[2]])
-            #    return unreduce(*parentred1prime)
-            #except (AttributeError, ValueError):
-            #    return None
-            #This code relied heavily on the construction of bases of
-            #``SymmetricFunctions`` and on their reduction.
 
         def skew_schur(self, x):
             """
@@ -1033,8 +1078,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             # Now let's try to find out what basis self is in, and
             # construct the corresponding basis of symmetric functions
             # over QQ.
-            corresponding_parent_over_QQ = self.corresponding_basis_over(QQ)
-            if corresponding_parent_over_QQ is None:
+            try:
+                corresponding_parent_over_QQ = self.change_ring(QQ)
+            except (NotImplementedError, TypeError):
                 # This is the case where the corresponding basis
                 # over QQ cannot be found. This can have two reasons:
                 # Either the basis depends on variables (like the
@@ -1204,8 +1250,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             # Now let's try to find out what basis self is in, and
             # construct the corresponding basis of symmetric functions
             # over QQ.
-            corresponding_parent_over_QQ = self.corresponding_basis_over(QQ)
-            if corresponding_parent_over_QQ is None:
+            try:
+                corresponding_parent_over_QQ = self.change_ring(QQ)
+            except (NotImplementedError, TypeError):
                 # This is the case where the corresponding basis
                 # over QQ cannot be found. This can have two reasons:
                 # Either the basis depends on variables (like the
@@ -1290,13 +1337,13 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
-            - ``d`` -- a nonnegative integer
+            - ``d`` -- nonnegative integer
 
-            - ``s`` -- a nonnegative integer
+            - ``s`` -- nonnegative integer
 
-            - ``comparison`` (default: ``None``) -- a variable
+            - ``comparison`` -- (default: ``None``) a variable
               which can take the forms ``None``, ``-1``, ``0``
               and ``1``
 
@@ -1787,17 +1834,16 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         sage: s(m([2,1]))
         -2*s[1, 1, 1] + s[2, 1]
     """
-
     def __init__(self, Sym, basis_name=None, prefix=None, graded=True):
         r"""
-        Initializes the symmetric function algebra.
+        Initialize the symmetric function algebra.
 
         INPUT:
 
         - ``Sym`` -- the ring of symmetric functions
         - ``basis_name`` -- name of basis (default: ``None``)
         - ``prefix`` -- prefix used to display basis
-        - ``graded`` -- (default: ``True``) if ``True``, then the basis is
+        - ``graded`` -- boolean (default: ``True``); if ``True``, then the basis is
           considered to be graded, otherwise the basis is filtered
 
         TESTS::
@@ -1817,8 +1863,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         except (TypeError, ValueError):
             raise ValueError("R must have a unit element")
 
-        if basis_name is not None:
-            self._basis = basis_name
+        self._basis_name = basis_name
         if prefix is not None:
             self._prefix = prefix
         self._sym = Sym
@@ -1828,7 +1873,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             cat = FilteredSymmetricFunctionsBases(Sym)
         CombinatorialFreeModule.__init__(self, Sym.base_ring(), _Partitions,
                                          category=cat,
-                                         bracket="", prefix=prefix)
+                                         bracket='', prefix=prefix)
 
     _print_style = 'lex'
 
@@ -1840,7 +1885,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``c`` -- a list, list of lists, or partition
+        - ``c`` -- list, list of lists, or partition
 
         .. TODO::
 
@@ -1885,9 +1930,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         - ``function`` -- a function which takes in a partition
           and returns a scalar
 
-        OUTPUT:
-
-        A symmetric function in ``self`` which is a scaled version of ``x``.
+        OUTPUT: a symmetric function in ``self`` which is a scaled version of ``x``
 
         EXAMPLES::
 
@@ -1913,14 +1956,12 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         - ``x`` -- a symmetric function
         - ``expr`` -- an expression used in the plethysm
-        - ``deg_one`` -- a list (or iterable) specifying the degree one
+        - ``deg_one`` -- list (or iterable) specifying the degree one
           variables (that is, the terms to be treated as degree-one
           elements when encountered in ``x``; they will be taken to the
           appropriate powers when computing the plethysm)
 
-        OUTPUT:
-
-        The plethysm of ``x`` by ``expr``.
+        OUTPUT: the plethysm of ``x`` by ``expr``
 
         EXAMPLES::
 
@@ -1962,7 +2003,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         - ``f`` -- a function that takes in two partitions
           (basis elements) and returns an element of the target domain
         - ``orthogonal`` -- if orthogonal is set to ``True``, then
-          ``f(part1, part2)`` is assumed to be 0 if ``part1 != part2``.
+          ``f(part1, part2)`` is assumed to be 0 if ``part1 != part2``
 
         EXAMPLES::
 
@@ -2034,31 +2075,31 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``element`` -- an element of a realization `M` of the ring of
-           symmetric functions. Note that `M` can be a different realization
-           than the one in which ``self`` is written, and does not have to
-           be specified. It is assumed that the basis of ``self`` is indexed
-           by partitions, and the degree of a basis element is the size of
-           the partition indexing it.
+        - ``element`` -- an element of a realization `M` of the ring of
+          symmetric functions. Note that `M` can be a different realization
+          than the one in which ``self`` is written, and does not have to
+          be specified. It is assumed that the basis of ``self`` is indexed
+          by partitions, and the degree of a basis element is the size of
+          the partition indexing it.
 
-        -  ``cache_function`` -- a function which accepts an
-           integer `n` as its input and creates the cache for that homogeneous
-           component (saving it in ``cache_dict``).
+        - ``cache_function`` -- a function which accepts an
+          integer `n` as its input and creates the cache for that homogeneous
+          component (saving it in ``cache_dict``).
 
-        -  ``cache_dict`` -- a dictionary storing a cache.
-           It should be indexed by the positive integers `n`. Its values
-           are dictionaries indexed by the partitions of size `n`. The values
-           of those latter dictionaries are, again, dictionaries indexed by
-           partitions of size `n`. Altogether, ``cache_dict`` should be
-           understood to encode a graded linear map from `M` to the
-           realization ``self`` of the ring of symmetric functions; the
-           encoding is done in such a way that, for any `n` and any partitions
-           ``lam`` and ``mu`` of `n`, the ``self[mu]``-coordinate of the image
-           of ``M[lam]`` under this linear map (in the basis ``self``) is
-           ``cache_dict[lam][mu]``.
+        - ``cache_dict`` -- dictionary storing a cache.
+          It should be indexed by the positive integers `n`. Its values
+          are dictionaries indexed by the partitions of size `n`. The values
+          of those latter dictionaries are, again, dictionaries indexed by
+          partitions of size `n`. Altogether, ``cache_dict`` should be
+          understood to encode a graded linear map from `M` to the
+          realization ``self`` of the ring of symmetric functions; the
+          encoding is done in such a way that, for any `n` and any partitions
+          ``lam`` and ``mu`` of `n`, the ``self[mu]``-coordinate of the image
+          of ``M[lam]`` under this linear map (in the basis ``self``) is
+          ``cache_dict[lam][mu]``.
 
-        -  ``subs_dict`` -- (optional) a dictionary for any substitutions
-           to make after the value is extracted from ``cache_dict``.
+        - ``subs_dict`` -- (optional) a dictionary for any substitutions
+          to make after the value is extracted from ``cache_dict``
 
         EXAMPLES::
 
@@ -2115,35 +2156,35 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``n`` -- an integer, the homogeneous component of
-           symmetric functions for which we want to a morphism's inverse
+        - ``n`` -- integer, the homogeneous component of
+          symmetric functions for which we want to a morphism's inverse
 
-        -  ``base_ring`` -- the base ring being worked over
+        - ``base_ring`` -- the base ring being worked over
 
-        -  ``self_to_other_cache`` -- a dictionary which
-           stores the transition from ``self`` to ``other``
+        - ``self_to_other_cache`` -- dictionary which
+          stores the transition from ``self`` to ``other``
 
-        -  ``other_to_self_cache`` -- a dictionary which
-           stores the transition from ``other`` to ``self``
+        - ``other_to_self_cache`` -- dictionary which
+          stores the transition from ``other`` to ``self``
 
-        -  ``to_other_function`` -- a function which takes in
-           a partition and returns a function which gives the coefficients of
-           ``self(part)`` in the ``other`` basis
+        - ``to_other_function`` -- a function which takes in
+          a partition and returns a function which gives the coefficients of
+          ``self(part)`` in the ``other`` basis
 
-        -  ``to_self_function`` -- a function which takes in a
-           partition and returns a function which gives the coefficients of
-           ``other(part)`` in ``self``
+        - ``to_self_function`` -- a function which takes in a
+          partition and returns a function which gives the coefficients of
+          ``other(part)`` in ``self``
 
-        -  ``upper_triangular`` -- a boolean, if ``True``, the
-           inverse will be computed by back substitution
+        - ``upper_triangular`` -- boolean; if ``True``, the
+          inverse will be computed by back substitution
 
-        -  ``lower_triangular`` -- a boolean, if ``True``, the
-           inverse will be computed by forward substitution
+        - ``lower_triangular`` -- boolean; if ``True``, the
+          inverse will be computed by forward substitution
 
-        -  ``ones_on_diagonal`` -- a boolean, if ``True``, the
-           entries on the diagonal of the morphism (and inverse) matrix are
-           assumed to be ones. This is used to remove divisions from the
-           forward and back substitute algorithms.
+        - ``ones_on_diagonal`` -- boolean; if ``True``, the
+          entries on the diagonal of the morphism (and inverse) matrix are
+          assumed to be ones. This is used to remove divisions from the
+          forward and back substitute algorithms.
 
         OUTPUT:
 
@@ -2366,9 +2407,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         Return the family of symmetric functions associated to the
         basis ``self``.
 
-        OUTPUT:
-
-        - returns an instance of the ring of symmetric functions
+        OUTPUT: an instance of the ring of symmetric functions
 
         EXAMPLES::
 
@@ -2403,13 +2442,12 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         INPUT:
 
         - ``basis`` -- a basis of the ring of symmetric functions
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT:
 
-        - a matrix of coefficients giving the expansion of the
-          homogeneous degree-`n` elements of ``self`` in the
-          degree-`n` elements of ``basis``
+        A matrix of coefficients giving the expansion of the homogeneous
+        degree-`n` elements of ``self`` in the degree-`n` elements of ``basis``.
 
         EXAMPLES::
 
@@ -2618,12 +2656,12 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        -  ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
-        -  ``g`` -- a symmetric function in the power sum basis
+        - ``g`` -- a symmetric function in the power sum basis
 
-        -  ``cache`` -- a dictionary whose keys are (k, g) pairs
-           and values are the cached output of this function
+        - ``cache`` -- dictionary whose keys are (k, g) pairs
+          and values are the cached output of this function
 
         EXAMPLES::
 
@@ -2686,9 +2724,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         Note that the order of the arguments is somewhat strange in order
         to facilitate partial function application.
 
-        OUTPUT:
-
-        - an element of the basis ``self``
+        OUTPUT: an element of the basis ``self``
 
         EXAMPLES::
 
@@ -2724,7 +2760,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
     def _dual_basis_default(self):
         """
-        Return the default value for ``self.dual_basis()``
+        Return the default value for ``self.dual_basis()``.
 
         .. SEEALSO:: :meth:`dual_basis`
 
@@ -2755,14 +2791,14 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         """
         return self.dual_basis(scalar=zee, scalar_name="Hall scalar product")
 
-    def dual_basis(self, scalar=None, scalar_name="", basis_name=None, prefix=None):
+    def dual_basis(self, scalar=None, scalar_name='', basis_name=None, prefix=None):
         r"""
         Return the dual basis of ``self`` with respect to the scalar
         product ``scalar``.
 
         INPUT:
 
-        - ``scalar`` -- A function ``zee`` from partitions to the base ring
+        - ``scalar`` -- a function ``zee`` from partitions to the base ring
           which specifies the scalar product by `\langle p_{\lambda},
           p_{\lambda} \rangle = \mathrm{zee}(\lambda)`. (Independently on the
           function chosen, the power sum basis will always be orthogonal;
@@ -2844,7 +2880,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             sage: f.basis_name()
             'forgotten'
         """
-        return self._basis
+        return self._basis_name
 
     def get_print_style(self):
         r"""
@@ -2868,7 +2904,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``ps`` -- a string specifying the printing style
+        - ``ps`` -- string specifying the printing style
 
         EXAMPLES::
 
@@ -2925,7 +2961,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         INPUT:
 
         - ``poly`` -- a symmetric polynomial
-        - ``check`` -- (default: ``True``) boolean, specifies whether
+        - ``check`` -- boolean (default: ``True``); specifies whether
           the computation checks that the polynomial is indeed symmetric
 
         EXAMPLES::
@@ -2953,9 +2989,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
         - ``left``, ``right`` -- instances of this basis
 
-        OUTPUT:
-
-        - the product of ``left`` and ``right`` expressed in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expressed in the basis ``self``
 
         EXAMPLES::
 
@@ -3014,6 +3048,36 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         return self.tensor_square().sum(coeff * tensor([self(s[x]), self(s[y])])
                                         for ((x,y), coeff) in s(elt).coproduct())
 
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: s.construction()
+            (SymmetricFunctionsFunctor[Schur], Integer Ring)
+        """
+        return (SymmetricFunctionsFunctor(self, self.basis_name()),
+                self.base_ring())
+
+    def change_ring(self, R):
+        r"""
+        Return the base change of ``self`` to `R`.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: s.change_ring(QQ)
+            Symmetric Functions over Rational Field in the Schur basis
+        """
+        if R is self.base_ring():
+            return self
+        functor, _ = self.construction()
+        return functor(R)
+
 
 class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
     r"""
@@ -3034,6 +3098,39 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         m[1, 1, 1] + m[2, 1] + m[3]
         sage: m.set_print_style('lex')
     """
+    def __truediv__(self, x):
+        r"""
+        Return the quotient of ``self`` by ``other``.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s[1]/(1+s[1])
+            s[1]/(s[] + s[1])
+
+            sage: s[1]/2
+            1/2*s[1]
+
+        TESTS::
+
+            sage: (s[1]/2).parent()
+            Symmetric Functions over Rational Field in the Schur basis
+        """
+        from sage.categories.modules import _Fields
+        B = self.base_ring()
+        try:
+            bx = B(x)
+        except TypeError:
+            f = self.parent().fraction_field()
+            return f(self, x)
+        F = self.parent()
+        D = self._monomial_coefficients
+
+        if B not in _Fields:
+            return type(self)(F, {k: c._divide_if_possible(x)
+                                  for k, c in D.items()})
+
+        return ~bx * self
 
     def factor(self):
         """
@@ -3078,7 +3175,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: factor(6*s[1])
             2*s[] * 3*s[] * s[1]
-
         """
         from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
         L = self.parent()
@@ -3090,7 +3186,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         poly = _to_polynomials([self], self.base_ring())[0]
         factors = poly.factor()
-        unit = factors.unit()
+        unit = self.base_ring()(factors.unit())
         if factors.universe() == self.base_ring():
             return Factorization(factors, unit=unit)
         factors = [(_from_polynomial(factor, M), exponent)
@@ -3106,7 +3202,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``right`` - something coercible to a symmetric function in
+        - ``right`` -- something coercible to a symmetric function in
           ``self.parent()``
 
         EXAMPLES::
@@ -3124,7 +3220,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: s(6) // s(2)
             3*s[]
-
         """
         from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
         # we can assume that the parents of self and other are the same
@@ -3175,7 +3270,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: gcd(s(9), s(6))
             3*s[]
-
         """
         from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
         L = self.parent()
@@ -3208,12 +3302,12 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        -  ``x`` -- a symmetric function over the same base ring as
-           ``self``
-        -  ``include`` -- a list of variables to be treated as
-           degree one elements instead of the default degree one elements
-        -  ``exclude`` -- a list of variables to be excluded
-           from the default degree one elements
+        - ``x`` -- a symmetric function over the same base ring as
+          ``self``
+        - ``include`` -- list of variables to be treated as
+          degree one elements instead of the default degree one elements
+        - ``exclude`` -- list of variables to be excluded
+          from the default degree one elements
 
         OUTPUT:
 
@@ -3379,7 +3473,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         tHA = HopfAlgebrasWithBasis(R).TensorProducts()
         tensorflag = Px in tHA
-        if not is_SymmetricFunction(x):
+        if not isinstance(x, SymmetricFunctionAlgebra_generic.Element):
             if R.has_coerce_map_from(Px) or x in R:
                 x = R(x)
                 Px = R
@@ -3548,9 +3642,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         - ``x`` -- element of the ring of symmetric functions over the same
           base ring as ``self``
 
-        OUTPUT:
-
-        - an element of symmetric functions in the parent of ``self``
+        OUTPUT: an element of symmetric functions in the parent of ``self``
 
         EXAMPLES::
 
@@ -4086,8 +4178,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             # Now let's try to find out what basis self is in, and
             # construct the corresponding basis of symmetric functions
             # over QQ.
-            corresponding_parent_over_QQ = parent.corresponding_basis_over(QQ)
-            if corresponding_parent_over_QQ is None:
+            try:
+                corresponding_parent_over_QQ = parent.change_ring(QQ)
+            except (NotImplementedError, TypeError):
                 # This is the case where the corresponding basis
                 # over QQ cannot be found. This can have two reasons:
                 # Either the basis depends on variables (like the
@@ -4285,7 +4378,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         comp_x = comp_parent(x)
         # Now, comp_self and comp_x are the same as self and x, but in the
         # Schur basis, which we call comp_parent.
-        schur_Q = comp_parent.corresponding_basis_over(QQ)
+        schur_Q = comp_parent.change_ring(QQ)
         # schur_Q is the Schur basis of the symmetric functions over QQ.
         result = comp_parent.zero()
         for lam, a in comp_self:
@@ -4727,8 +4820,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             return parent(p._apply_multi_module_morphism(p(self),p(x),f))
         comp_parent = parent
         comp_self = self
-        corresponding_parent_over_QQ = parent.corresponding_basis_over(QQ)
-        if corresponding_parent_over_QQ is None:
+        try:
+            corresponding_parent_over_QQ = parent.change_ring(QQ)
+        except (NotImplementedError, TypeError):
             comp_parent = parent.realization_of().schur()
             comp_self = comp_parent(self)
             from sage.combinat.sf.sf import SymmetricFunctions
@@ -4754,8 +4848,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``q``, ``t`` -- optional parameters (default: ``None``, in which
-          case ``q`` and ``t`` are used)
+        - ``q``, ``t`` -- parameters (default: ``None``, in which case ``q``
+          and ``t`` are used)
         - ``power`` -- (default: ``1``) an integer indicating how many times to
           apply the operator `\nabla`.  Negative values of ``power``
           indicate powers of `\nabla^{-1}`.
@@ -4815,7 +4909,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         - ``zee`` -- an optional function on partitions giving
           the value for the scalar product between `p_{\mu}` and `p_{\mu}`
-          (default is to use the standard :meth:`~sage.combinat.sf.sfa.zee` function)
+          (default: the standard :meth:`~sage.combinat.sf.sfa.zee` function)
 
         This is the default implementation that converts both ``self`` and
         ``x`` into either Schur functions (if ``zee`` is not specified) or
@@ -5113,7 +5207,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT:
 
@@ -5278,7 +5372,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT:
 
@@ -5477,7 +5571,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
           selecting only certain terms (namely, only the items failing
           the condition are being expanded)
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -5624,9 +5718,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
           exactly ``d``, otherwise returns all terms of degree less than
           or equal to ``d``
 
-        OUTPUT:
-
-        - the homogeneous component of ``self`` of degree ``d``
+        OUTPUT: the homogeneous component of ``self`` of degree ``d``
 
         EXAMPLES::
 
@@ -5712,7 +5804,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -5917,11 +6009,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``rho`` -- a partition or a list of non-negative integers
+        - ``rho`` -- a partition or a list of nonnegative integers
 
-        OUTPUT:
-
-        - an element of the base ring
+        OUTPUT: an element of the base ring
 
         EXAMPLES::
 
@@ -5960,12 +6050,10 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer to interpret ``self`` as
+        - ``n`` -- nonnegative integer to interpret ``self`` as
           a character of `GL_n`
 
-        OUTPUT:
-
-        - a symmetric function of degree ``n``
+        OUTPUT: a symmetric function of degree ``n``
 
         EXAMPLES::
 
@@ -6012,12 +6100,12 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``n`` (default: ``infinity``) -- a nonnegative integer or
+        - ``n`` -- (default: ``infinity``) a nonnegative integer or
           ``infinity``, specifying whether to compute the principal
           specialization of order ``n`` or the stable principal
           specialization.
 
-        - ``q`` (default: ``None``) -- the value to use for `q`; the
+        - ``q`` -- (default: ``None``) the value to use for `q`; the
           default is to create a ring of polynomials in ``q``
           (or a field of rational functions in ``q``) over the
           given coefficient ring.
@@ -6087,7 +6175,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             1
 
         Check that the stable principal specialization at `q = 1`
-        raises a :class:`ValueError`:
+        raises a :exc:`ValueError`:
 
             sage: def test_error(x):
             ....:     message = "the stable principal specialization of %s at q=1 should raise a ValueError"
@@ -6211,7 +6299,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             {1}
             sage: set(b.one().principal_specialization(q=q) for b in B)
             {1}
-
         """
         # heuristically, it seems fastest to fall back to the
         # elementary basis - using the powersum basis would
@@ -6266,10 +6353,10 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         INPUT:
 
-        - ``t`` (default: ``None``) -- the value to use for `t`;
-          the default is to create a ring of polynomials in ``t``.
+        - ``t`` -- (default: ``None``) the value to use for `t`;
+          the default is to create a ring of polynomials in ``t``
 
-        - ``q`` (default: `1`) -- the value to use for `q`.  If
+        - ``q`` -- (default: `1`) the value to use for `q`.  If
           ``q`` is ``None``, then a ring (or fraction field) of
           polynomials in ``q`` is created.
 
@@ -6377,6 +6464,252 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
 
 SymmetricFunctionAlgebra_generic.Element = SymmetricFunctionAlgebra_generic_Element
+
+from sage.categories.pushout import ConstructionFunctor
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.functor import Functor
+
+
+class SymmetricFunctionsFunctor(ConstructionFunctor):
+    """
+    A constructor for algebras of symmetric functions.
+
+    EXAMPLES::
+
+        sage: s = SymmetricFunctions(QQ).s()
+        sage: s.construction()
+        (SymmetricFunctionsFunctor[Schur], Rational Field)
+    """
+    rank = 9
+
+    def __init__(self, basis, name, *args):
+        r"""
+        Initialize the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the symmetric function algebra
+        - ``name`` -- the name of the basis
+        - ``args`` -- any further arguments necessary to initialize the basis
+
+        .. WARNING:
+
+            Strictly speaking, this is not necessarily a functor on
+            :class:`CommutativeRings`, but rather a functor on
+            commutative rings with some distinguished elements.  For
+            example, for the Macdonald polynomials, we have to
+            specify `q` and `t` in the ring.  Apart from that, the
+            codomain of this functor could actually be
+            :class:`CommutativeAlgebras` over the given ring, but
+            parameterized functors are currently not available.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+            sage: R.<q> = ZZ[]
+            sage: qbar = SymmetricFunctions(R).hecke_character()
+            sage: SymmetricFunctionsFunctor(qbar, qbar.basis_name(), q)
+            SymmetricFunctionsFunctor[Hecke character with q=q]
+        """
+        self._basis = basis.__class__.__base__
+        self._name = name
+        self._args = args
+        Functor.__init__(self, CommutativeRings(), CommutativeRings())
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: qbar = Sym.qbar(q=1/2)
+            sage: F, R = qbar.construction()  # indirect doctest
+            sage: F(QQbar)
+            Symmetric Functions over Algebraic Field in the Hecke character
+             with q=1/2 basis
+
+        TESTS::
+
+            sage: F(ZZ)
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        return self._basis(SymmetricFunctions(R), *self._args)
+
+    def _apply_functor_to_morphism(self, f):
+        """
+        Apply the functor ``self`` to the ring morphism `f`.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: F, R = s.construction()
+            sage: F(ZZ.hom(GF(3)))  # indirect doctest
+            Generic morphism:
+              From: Symmetric Functions over Integer Ring in the Schur basis
+              To:   Symmetric Functions over Finite Field of size 3 in the Schur basis
+
+            sage: R.<t> = ZZ[]
+            sage: P = SymmetricFunctions(R).jack().P()
+            sage: F, R = P.construction()
+            sage: F(ZZ["t"].hom(GF(3)["t"]))
+            Generic morphism:
+              From: Symmetric Functions over Univariate Polynomial Ring in t over Integer Ring in the Jack P basis
+              To:   Symmetric Functions over Univariate Polynomial Ring in t over Finite Field of size 3 in the Jack P basis
+
+            sage: R.<q, t> = ZZ[]
+            sage: H = SymmetricFunctions(R).macdonald().H()
+            sage: F, R = H.construction()
+            sage: F(ZZ["q", "t"].hom(GF(3)["q", "t"]))  # known bug
+        """
+        dom = self(f.domain())
+        codom = self(f.codomain())
+
+        def action(x):
+            return codom._from_dict({a: f(b)
+                                     for a, b in x.monomial_coefficients().items()})
+        return dom.module_morphism(function=action, codomain=codom)
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: qbar1 = Sym.qbar(q=1/2)
+            sage: qbar2 = Sym.qbar(q=1)
+            sage: qbar1.construction()[0] == qbar2.construction()[0]
+            False
+        """
+        if not isinstance(other, type(self)):
+            return False
+        return (self._basis == other._basis
+                and self._name == other._name
+                and self._args == other._args)
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: F1 = Sym.qbar(q=1/2).construction()[0]
+            sage: F2 = Sym.qbar(q=1).construction()[0]
+            sage: hash(F1) == hash(F2)
+            False
+        """
+        return hash(repr(self))
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: w = SymmetricFunctions(ZZ).witt()
+            sage: F, R = w.construction()
+            sage: F
+            SymmetricFunctionsFunctor[Witt]
+
+            sage: R.<q, t> = ZZ[]
+            sage: H = SymmetricFunctions(R).macdonald().H()
+            sage: F, R = H.construction()
+            sage: F
+            SymmetricFunctionsFunctor[Macdonald H]
+        """
+        return "SymmetricFunctionsFunctor[" + self._name + "]"
+
+
+class SymmetricFunctionsFamilyFunctor(SymmetricFunctionsFunctor):
+    def __init__(self, basis, family, name, *args):
+        r"""
+        Initialize the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the symmetric function algebra
+
+        .. WARNING:
+
+            Strictly speaking, this is not necessarily a functor on
+            :class:`CommutativeRings`, but rather a functor on
+            commutative rings with some distinguished elements.  For
+            example, for the Macdonald polynomials, we have to
+            specify `q` and `t` in the ring.  Apart from that, the
+            codomain of this functor could actually be
+            :class:`CommutativeAlgebras` over the given ring, but
+            parameterized functors are currently not available.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.sfa import SymmetricFunctionsFamilyFunctor
+            sage: R.<t> = ZZ[]
+            sage: basis = SymmetricFunctions(R).macdonald(q=1).H()
+            sage: family = sage.combinat.sf.macdonald.Macdonald
+            sage: name = basis.basis_name()
+            sage: SymmetricFunctionsFamilyFunctor(basis, family, name, 1, t)
+            SymmetricFunctionsFunctor[Macdonald H with q=1]
+        """
+        super().__init__(basis, name, *args)
+        self._family = family
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ['q','t'])
+            sage: P = Sym.macdonald(q=1/2).P()
+            sage: F, R = P.construction()  # indirect doctest
+            sage: F(QQ['t'])
+            Symmetric Functions over Univariate Polynomial Ring in t
+             over Rational Field in the Macdonald P with q=1/2 basis
+
+        TESTS::
+
+            sage: F(QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: t is not a constant polynomial
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        return self._basis(self._family(SymmetricFunctions(R), *self._args))
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: R.<t> = ZZ[]
+            sage: S.<t> = QQ[]
+            sage: T.<s> = QQ[]
+            sage: PR = SymmetricFunctions(R).jack().P()
+            sage: PS = SymmetricFunctions(S).jack().P()
+            sage: PT = SymmetricFunctions(T).jack(t=s).P()
+            sage: PR.construction()[0] == PS.construction()[0]
+            True
+            sage: PR.construction()[0] == PT.construction()[0]
+            False
+        """
+        return super().__eq__(other) and self._family == other._family
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: P1 = SymmetricFunctions(QQ['q','t']).macdonald(q=1).P()
+            sage: F1 = P1.construction()[0]
+            sage: P2 = SymmetricFunctions(ZZ['t']).macdonald(q=1).P()
+            sage: F2 = P2.construction()[0]
+            sage: hash(F1) == hash(F2)
+            True
+        """
+        return hash(repr(self))
 
 
 ###################
@@ -6513,7 +6846,7 @@ def _to_polynomials(lf, R):
 
     INPUT:
 
-    - ``lf`` -- a list of symmetric functions
+    - ``lf`` -- list of symmetric functions
     - ``R`` -- the base ring
 
     .. SEEALSO::
@@ -6543,7 +6876,7 @@ def _to_polynomials(lf, R):
 def _from_polynomial(p, f):
     """
     Return the polynomial as a symmetric function in the given
-    basis , where the `n`th variable corresponds to the symmetric
+    basis , where the `n`-th variable corresponds to the symmetric
     function`f[n]`.
 
     INPUT:

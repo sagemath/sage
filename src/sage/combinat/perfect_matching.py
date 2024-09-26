@@ -61,10 +61,12 @@ from sage.sets.set import Set
 from sage.structure.list_clone import ClonableArray
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
-from sage.matrix.constructor import matrix
+from sage.misc.lazy_import import lazy_import
 from sage.combinat.set_partition import SetPartition, SetPartitions_set
 from sage.combinat.combinat_cython import perfect_matchings_iterator
 from sage.rings.infinity import infinity
+
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 class PerfectMatching(SetPartition):
@@ -130,7 +132,7 @@ class PerfectMatching(SetPartition):
         The function checks that the given list or permutation is
         a valid perfect matching (i.e. a list of pairs with pairwise
         disjoint elements or a fix point free involution) and raises
-        a :class:`ValueError` otherwise::
+        a :exc:`ValueError` otherwise::
 
             sage: PerfectMatching([(1, 2, 3), (4, 5)])
             Traceback (most recent call last):
@@ -263,7 +265,6 @@ class PerfectMatching(SetPartition):
             sage: n = PerfectMatching([('c','b'),('d','f'),('e','a')])
             sage: n.standardization()
             [(1, 5), (2, 3), (4, 6)]
-
         """
         P = PerfectMatchings(2 * len(self))
         return P(SetPartition.standardization(self))
@@ -295,7 +296,7 @@ class PerfectMatching(SetPartition):
 
         INPUT:
 
-        - ``other`` -- a perfect matching of the same set of ``self``.
+        - ``other`` -- a perfect matching of the same set of ``self``
           (if the second argument is empty, the method :meth:`an_element` is
           called on the parent of the first)
 
@@ -344,7 +345,7 @@ class PerfectMatching(SetPartition):
 
         INPUT:
 
-        - ``other`` -- a perfect matching of the same set of ``self``.
+        - ``other`` -- a perfect matching of the same set of ``self``
           (if the second argument is empty, the method :meth:`an_element` is
           called on the parent of the first)
 
@@ -393,7 +394,7 @@ class PerfectMatching(SetPartition):
 
         INPUT:
 
-        - ``other`` -- a perfect matching of the same set of ``self``.
+        - ``other`` -- a perfect matching of the same set of ``self``
           (if the second argument is empty, the method :meth:`an_element` is
           called on the parent of the first)
 
@@ -426,7 +427,7 @@ class PerfectMatching(SetPartition):
 
         INPUT:
 
-        - ``other`` -- a perfect matching of the same set of ``self``.
+        - ``other`` -- a perfect matching of the same set of ``self``
           (if the second argument is empty, the method :meth:`an_element` is
           called on the parent of the first)
 
@@ -471,9 +472,7 @@ class PerfectMatching(SetPartition):
         r"""
         Return the graph corresponding to the perfect matching.
 
-        OUTPUT:
-
-        The realization of ``self`` as a graph.
+        OUTPUT: the realization of ``self`` as a graph
 
         EXAMPLES::
 
@@ -495,9 +494,7 @@ class PerfectMatching(SetPartition):
         corresponding to the perfect matching if the perfect matching is
         noncrossing, and otherwise gives an error.
 
-        OUTPUT:
-
-        The realization of ``self`` as a noncrossing set partition.
+        OUTPUT: the realization of ``self`` as a noncrossing set partition
 
         EXAMPLES::
 

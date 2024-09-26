@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
 Gosper iterator for homographic transformations
 
@@ -36,6 +35,7 @@ For more information on the underlying algorithm, see [Gos1972]_.
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 
+
 class gosper_iterator():
     r"""
     Iterable for the partial quotients of `(a*x+b)/(c*x+d)`, where `a, b, c, d`
@@ -47,7 +47,7 @@ class gosper_iterator():
 
         INPUT:
 
-        - ``a, b, c, d`` -- integer coefficients of the transformation
+        - ``a``, ``b``, ``c``, ``d`` -- integer coefficients of the transformation
 
         - ``x`` -- a continued fraction
 
@@ -61,7 +61,7 @@ class gosper_iterator():
             sage: preperiod_length = i.output_preperiod_length
             sage: preperiod = l[:preperiod_length]
             sage: period = l[preperiod_length:]
-            sage: c == d == 0 or continued_fraction((preperiod, period), x.value()) == continued_fraction((a*x.value()+b)/(c*x.value()+d))  # not tested, known bug (see :trac:`32127`)
+            sage: c == d == 0 or continued_fraction((preperiod, period), x.value()) == continued_fraction((a*x.value()+b)/(c*x.value()+d))  # not tested, known bug (see :issue:`32127`)
             True
 
         Infinity::

@@ -1,13 +1,11 @@
-# -*- coding: utf-8 -*-
 """
 `L`-functions from PARI
 
-This is a wrapper around the general PARI L-functions functionality.
+This is a wrapper around the general PARI `L`-functions functionality.
 
 AUTHORS:
 
 - Frédéric Chapoton (2018) interface
-
 """
 # ****************************************************************************
 #       Copyright (C) 2018 Frédéric Chapoton <chapoton@unistra.fr>
@@ -38,22 +36,22 @@ class lfun_generic():
 
     where
 
-    - ``conductor`` -- integer, the conductor
+    - ``conductor`` -- integer; the conductor
 
     - ``gammaV`` -- list of Gamma-factor parameters, e.g. [0] for
-      Riemann zeta, [0,1] for ell.curves, (see examples).
+      Riemann zeta, [0,1] for ell.curves, (see examples)
 
     - ``weight`` -- positive real number, usually an integer e.g. 1 for
       Riemann zeta, 2 for `H^1` of curves/`\QQ`
 
     - ``eps`` -- complex number; sign in functional equation
 
-    - ``poles`` -- (default: []) list of points where `L^*(s)` has
+    - ``poles`` -- (default: ``[]``) list of points where `L^*(s)` has
       (simple) poles; only poles with `Re(s)>weight/2` should be
       included
 
     - ``residues`` -- vector of residues of `L^*(s)` in those poles or
-      set residues='automatic' (default value)
+      set ``residues='automatic'`` (default)
 
     - ``init`` -- list of coefficients
 
@@ -65,7 +63,7 @@ class lfun_generic():
         sage: lf = lfun_generic(conductor=1, gammaV=[0], weight=1, eps=1, poles=[1], residues=[1])
         sage: lf.init_coeffs([1]*2000)
 
-    Now we can wrap this PARI L-function into one Sage L-function::
+    Now we can wrap this PARI `L`-function into one Sage `L`-function::
 
         sage: L = LFunction(lf); L
         L-series of conductor 1 and weight 1
@@ -120,11 +118,11 @@ class lfun_generic():
 
         INPUT:
 
-        -  ``v`` -- list of complex numbers or unary function
+        - ``v`` -- list of complex numbers or unary function
 
-        -  ``cutoff`` -- unused
+        - ``cutoff`` -- unused
 
-        -  ``w`` --  list of complex numbers or unary function
+        - ``w`` -- list of complex numbers or unary function
 
         EXAMPLES::
 
@@ -133,8 +131,8 @@ class lfun_generic():
             sage: pari_coeffs = pari('k->vector(k,n,(5*sigma(n,3)+7*sigma(n,5))*n/12 - 35*sum(k=1,n-1,(6*k-4*(n-k))*sigma(k,3)*sigma(n-k,5)))')
             sage: lf.init_coeffs(pari_coeffs)
 
-        Evaluate the resulting L-function at a point, and compare with
-        the answer that one gets "by definition" (of L-function
+        Evaluate the resulting `L`-function at a point, and compare with
+        the answer that one gets "by definition" (of `L`-function
         attached to a modular form)::
 
             sage: L = LFunction(lf)
@@ -145,7 +143,7 @@ class lfun_generic():
             0.9985830631627461
 
         Illustrate that one can give a list of complex numbers for v
-        (see :trac:`10937`)::
+        (see :issue:`10937`)::
 
             sage: l2 = lfun_generic(conductor=1, gammaV=[0, 1], weight=12, eps=1)
             sage: l2.init_coeffs(list(delta_qexp(1000))[1:])
@@ -156,7 +154,7 @@ class lfun_generic():
         TESTS:
 
         Verify that setting the `w` parameter does not raise an error
-        (see :trac:`10937`)::
+        (see :issue:`10937`)::
 
             sage: L2 = lfun_generic(conductor=1, gammaV=[0, 1], weight=12, eps=1)
             sage: L2.init_coeffs(list(delta_qexp(1000))[1:], w=[1..1000])
@@ -184,7 +182,7 @@ class lfun_generic():
 
     def __pari__(self):
         """
-        Return the PARI L-function object.
+        Return the PARI `L`-function object.
 
         EXAMPLES::
 
@@ -207,14 +205,12 @@ class lfun_generic():
 
 def lfun_character(chi):
     """
-    Create the L-function of a primitive Dirichlet character.
+    Create the `L`-function of a primitive Dirichlet character.
 
     If the given character is not primitive, it is replaced by its
     associated primitive character.
 
-    OUTPUT:
-
-    one :pari:`lfun` object
+    OUTPUT: one :pari:`lfun` object
 
     EXAMPLES::
 
@@ -258,11 +254,9 @@ def lfun_character(chi):
 
 def lfun_hgm(motif, t):
     """
-    Create the L-function of an hypergeometric motive.
+    Create the `L`-function of an hypergeometric motive.
 
-    OUTPUT:
-
-    one :pari:`lfun` object
+    OUTPUT: one :pari:`lfun` object
 
     EXAMPLES::
 
@@ -280,11 +274,9 @@ def lfun_hgm(motif, t):
 
 def lfun_elliptic_curve(E):
     """
-    Create the L-function of an elliptic curve.
+    Create the `L`-function of an elliptic curve.
 
-    OUTPUT:
-
-    one :pari:`lfun` object
+    OUTPUT: one :pari:`lfun` object
 
     EXAMPLES::
 
@@ -311,9 +303,7 @@ def lfun_number_field(K):
     """
     Create the Dedekind zeta function of a number field.
 
-    OUTPUT:
-
-    one :pari:`lfun` object
+    OUTPUT: one :pari:`lfun` object
 
     EXAMPLES::
 
@@ -335,15 +325,15 @@ def lfun_number_field(K):
 
 def lfun_eta_quotient(scalings, exponents):
     """
-    Return the L-function of an eta-quotient.
+    Return the `L`-function of an eta-quotient.
 
     This uses :pari:`lfunetaquo`.
 
     INPUT:
 
-    - scalings -- a list of integers, the scaling factors
+    - ``scalings`` -- list of integers; the scaling factors
 
-    - exponents -- a list of integers, the exponents
+    - ``exponents`` -- list of integers; the exponents
 
     EXAMPLES::
 
@@ -370,7 +360,7 @@ def lfun_eta_quotient(scalings, exponents):
 
 def lfun_delta():
     """
-    Return the L-function of Ramanujan's Delta modular form.
+    Return the `L`-function of Ramanujan's Delta modular form.
 
     EXAMPLES::
 
@@ -384,7 +374,7 @@ def lfun_delta():
 
 def lfun_quadratic_form(qf):
     """
-    Return the L-function of a positive definite quadratic form.
+    Return the `L`-function of a positive definite quadratic form.
 
     This uses :pari:`lfunqf`.
 
@@ -403,7 +393,7 @@ def lfun_quadratic_form(qf):
 
 def lfun_genus2(C):
     """
-    Return the L-function of a curve of genus 2.
+    Return the `L`-function of a curve of genus 2.
 
     INPUT:
 
@@ -446,14 +436,14 @@ def lfun_genus2(C):
 
 class LFunction(SageObject):
     r"""
-    Build the L-function from a PARI L-function.
+    Build the `L`-function from a PARI `L`-function.
 
     .. RUBRIC:: Rank 1 elliptic curve
 
     We compute with the `L`-series of a rank `1` curve. ::
 
         sage: E = EllipticCurve('37a')
-        sage: L = E.lseries().dokchitser(algorithm="pari"); L
+        sage: L = E.lseries().dokchitser(algorithm='pari'); L
         PARI L-function associated to Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
         sage: L(1)
         0.000000000000000
@@ -474,7 +464,7 @@ class LFunction(SageObject):
     `L`-series of a rank `2` elliptic curve::
 
         sage: E = EllipticCurve('389a')
-        sage: L = E.lseries().dokchitser(algorithm="pari")
+        sage: L = E.lseries().dokchitser(algorithm='pari')
         sage: L.num_coeffs()
         163
         sage: L.derivative(1, E.rank())
@@ -488,7 +478,7 @@ class LFunction(SageObject):
 
         sage: x = var('x')
         sage: K = NumberField(x**4 - x**2 - 1,'a')
-        sage: L = K.zeta_function(algorithm="pari")
+        sage: L = K.zeta_function(algorithm='pari')
         sage: L.conductor
         400
         sage: L.num_coeffs()
@@ -517,12 +507,12 @@ class LFunction(SageObject):
     """
     def __init__(self, lfun, prec=None):
         """
-        Initialization of the L-function from a PARI L-function.
+        Initialization of the `L`-function from a PARI `L`-function.
 
         INPUT:
 
-        - lfun -- a PARI :pari:`lfun` object or an instance of :class:`lfun_generic`
-        - prec -- integer (default: 53) number of *bits* of precision
+        - ``lfun`` -- a PARI :pari:`lfun` object or an instance of :class:`lfun_generic`
+        - ``prec`` -- integer (default: 53); number of *bits* of precision
 
         EXAMPLES::
 
@@ -594,11 +584,11 @@ class LFunction(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('11a')
-            sage: L = E.lseries().dokchitser(algorithm="pari")
+            sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.num_coeffs()
             27
             sage: E = EllipticCurve('5077a')
-            sage: L = E.lseries().dokchitser(algorithm="pari")
+            sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.num_coeffs()
             591
 
@@ -614,7 +604,7 @@ class LFunction(SageObject):
 
     def Lambda(self, s):
         """
-        Evaluate the completed L-function at s.
+        Evaluate the completed `L`-function at s.
 
         EXAMPLES::
 
@@ -655,13 +645,13 @@ class LFunction(SageObject):
 
     def derivative(self, s, D=1):
         """
-        Return the derivative of the L-function at point s and order D.
+        Return the derivative of the `L`-function at point s and order D.
 
         INPUT:
 
-        -  ``s`` -- complex number
+        - ``s`` -- complex number
 
-        - ``D`` -- optional integer (default 1)
+        - ``D`` -- integer (default: 1)
 
         EXAMPLES::
 
@@ -683,13 +673,11 @@ class LFunction(SageObject):
 
         INPUT:
 
-        -  ``s`` -- complex number; point about which to expand
+        - ``s`` -- complex number; point about which to expand
 
-        -  ``k`` -- optional integer (default: 6), series is
-           `O(``var``^k)`
+        - ``k`` -- integer (default: 6); series is `O(``var``^k)`
 
-        -  ``var`` -- optional string (default: 'z'), variable of power
-           series
+        - ``var`` -- string (default: ``'z'``); variable of power series
 
         EXAMPLES::
 
@@ -699,7 +687,7 @@ class LFunction(SageObject):
             sage: L.taylor_series(2, 3)
             1.64493406684823 - 0.937548254315844*z + 0.994640117149451*z^2 + O(z^3)
             sage: E = EllipticCurve('37a')
-            sage: L = E.lseries().dokchitser(algorithm="pari")
+            sage: L = E.lseries().dokchitser(algorithm='pari')
             sage: L.taylor_series(1)
             0.000000000000000 + 0.305999773834052*z + 0.186547797268162*z^2 - 0.136791463097188*z^3 + 0.0161066468496401*z^4 + 0.0185955175398802*z^5 + O(z^6)
 
@@ -707,11 +695,11 @@ class LFunction(SageObject):
         precision::
 
             sage: E = EllipticCurve('389a')
-            sage: L = E.lseries().dokchitser(200,algorithm="pari")
+            sage: L = E.lseries().dokchitser(200,algorithm='pari')
             sage: L.taylor_series(1, 3)
             2...e-63 + (...e-63)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
 
-        Check that :trac:`25402` is fixed::
+        Check that :issue:`25402` is fixed::
 
             sage: L = EllipticCurve("24a1").modular_form().lseries()
             sage: L.taylor_series(-1, 3)
@@ -753,11 +741,11 @@ class LFunction(SageObject):
 
     def __call__(self, s):
         r"""
-        Return the value of the L-function at point ``s``.
+        Return the value of the `L`-function at point ``s``.
 
         INPUT:
 
-        -  ``s`` -- complex number
+        - ``s`` -- complex number
 
         .. NOTE::
 
@@ -768,7 +756,7 @@ class LFunction(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('5077a')
-            sage: L = E.lseries().dokchitser(100, algorithm="pari")
+            sage: L = E.lseries().dokchitser(100, algorithm='pari')
             sage: L(1)
             0.00000000000000000000000000000
             sage: L(1 + I)

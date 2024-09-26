@@ -7,11 +7,11 @@ from memory_allocator cimport MemoryAllocator
 
 def mcqd(G):
     """
-    Computes the max clique using MCQD
+    Compute the max clique using MCQD.
 
     INPUT:
 
-    - ``G`` -- A graph
+    - ``G`` -- a graph
 
     TESTS::
 

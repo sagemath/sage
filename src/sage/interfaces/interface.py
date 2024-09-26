@@ -24,7 +24,7 @@ AUTHORS:
 - Simon King (2015): Improve pickling for InterfaceElement
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -37,7 +37,7 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import operator
 
@@ -179,7 +179,7 @@ class Interface(WithEqualityById, ParentWithBase):
         Press :kbd:`Ctrl` + :kbd:`D` or type 'quit' or 'exit' to exit and
         return to Sage.
 
-        .. note::
+        .. NOTE::
 
            This is completely different than the console() member
            function. The console function opens a new copy of the
@@ -273,7 +273,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         TESTS:
 
-        Check conversion of Booleans (:trac:`28705`)::
+        Check conversion of Booleans (:issue:`28705`)::
 
             sage: giac(True)
             true
@@ -282,14 +282,14 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         cls = self._object_class()
 
-        #Handle the case when x is an object
-        #in some interface.
+        # Handle the case when x is an object
+        # in some interface.
         if isinstance(x, InterfaceElement):
             if x.parent() is self:
                 return x
 
-            #We convert x into an object in this
-            #interface by first going through Sage.
+            # We convert x into an object in this
+            # interface by first going through Sage.
             try:
                 return self(x._sage_())
             except (NotImplementedError, TypeError):
@@ -320,10 +320,10 @@ class Interface(WithEqualityById, ParentWithBase):
 
     def _coerce_from_special_method(self, x):
         """
-        Tries to coerce to self by calling a special underscore method.
+        Try to coerce to ``self`` by calling a special underscore method.
 
-        If no such method is defined, raises an AttributeError instead of a
-        TypeError.
+        If no such method is defined, raises an :exc:`AttributeError` instead
+        of a :exc:`TypeError`.
         """
         s = '_%s_' % self.name()
         if s == '_maxima_lib_':
@@ -341,7 +341,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         TESTS:
 
-        Check that python type ``complex`` can be converted (:trac:`31775`)::
+        Check that python type ``complex`` can be converted (:issue:`31775`)::
 
             sage: giac(complex(I))**2  # should not return `j^2`
             -1
@@ -434,7 +434,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
     def _relation_symbols(self):
         """
-        Returns a dictionary with operators as the keys and their
+        Return a dictionary with operators as the keys and their
         string representation as the values.
 
         EXAMPLES::
@@ -450,7 +450,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
     def _exponent_symbol(self):
         """
-        Return the symbol used to denote ``*10^`` in floats, e.g 'e' in 1.5e6
+        Return the symbol used to denote ``*10^`` in floats, e.g 'e' in 1.5e6.
 
         EXAMPLES::
 
@@ -471,7 +471,7 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s%s%s;' % (var,self._assign_symbol(), value)
+        cmd = '%s%s%s;' % (var, self._assign_symbol(), value)
         self.eval(cmd)
 
     def get(self, var):
@@ -549,7 +549,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
     def _convert_args_kwds(self, args=None, kwds=None):
         """
-        Converts all of the args and kwds to be elements of this
+        Convert all of the ``args`` and ``kwds`` to be elements of this
         interface.
 
         EXAMPLES::
@@ -579,7 +579,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
     def _check_valid_function_name(self, function):
         """
-        Checks to see if function is a valid function name in this
+        Check to see if function is a valid function name in this
         interface. If it is not, an exception is raised. Otherwise, nothing
         is done.
 
@@ -613,12 +613,12 @@ class Interface(WithEqualityById, ParentWithBase):
         self._check_valid_function_name(function)
         s = self._function_call_string(function,
                                        [s.name() for s in args],
-                                       ['%s=%s' % (key,value.name()) for key, value in kwds.items()])
+                                       ['%s=%s' % (key, value.name()) for key, value in kwds.items()])
         return self.new(s)
 
     def _function_call_string(self, function, args, kwds):
         """
-        Returns the string used to make function calls.
+        Return the string used to make function calls.
 
         EXAMPLES::
 
@@ -638,6 +638,7 @@ class Interface(WithEqualityById, ParentWithBase):
         TESTS::
 
             sage: from sage.structure.parent_base import ParentWithBase
+            sage: from sage.interfaces.singular import singular
             sage: ParentWithBase.__getattribute__(singular, '_coerce_map_from_')
             <bound method Singular._coerce_map_from_ of Singular>
         """
@@ -712,7 +713,7 @@ class InterfaceFunctionElement(SageObject):
 
 def is_InterfaceElement(x):
     """
-    Return True if ``x`` is of type :class:`InterfaceElement`.
+    Return ``True`` if ``x`` is of type :class:`InterfaceElement`.
 
     EXAMPLES::
 
@@ -788,7 +789,7 @@ class InterfaceElement(Element):
 
     def __reduce__(self):
         """
-        The default linearisation is to return self's parent,
+        The default linearisation is to return ``self``'s parent,
         which will then get the items returned by :meth:`_reduce`
         as arguments to reconstruct the element.
 
@@ -842,7 +843,6 @@ class InterfaceElement(Element):
             Traceback (most recent call last):
             ...
             TypeError: unable to make sense of Maxima expression '"abc"' in Sage
-
         """
         return self.parent(), (self._reduce(),)
 
@@ -850,11 +850,11 @@ class InterfaceElement(Element):
         """
         Helper for pickling.
 
-        By default, if self is a string, then the representation of
+        By default, if ``self`` is a string, then the representation of
         that string is returned (not the string itself). Otherwise,
         it is attempted to return the corresponding Sage object.
-        If this fails with a NotImplementedError, the string
-        representation of self is returned instead.
+        If this fails with a :exc:`NotImplementedError`, the string
+        representation of ``self`` is returned instead.
 
         EXAMPLES::
 
@@ -889,7 +889,6 @@ class InterfaceElement(Element):
             ....:                    # does not accidentally lead to success
             sage: loads(b)
             [1] "abc"
-
         """
         if self.is_string():
             return repr(self.sage())
@@ -920,8 +919,8 @@ class InterfaceElement(Element):
 
     def __hash__(self):
         """
-        Returns the hash of self. This is a default implementation of hash
-        which just takes the hash of the string of self.
+        Return the hash of ``self``. This is a default implementation of hash
+        which just takes the hash of the string of ``self``.
         """
         return hash('%s' % self)
 
@@ -955,12 +954,11 @@ class InterfaceElement(Element):
 
         Here, GAP fails to compare, and so ``False`` is returned.
         In previous Sage versions, this example actually resulted
-        in an error; compare :trac:`5962`.
+        in an error; compare :issue:`5962`.
         ::
 
             sage: gap('DihedralGroup(8)')==gap('DihedralGroup(8)')
             False
-
         """
         P = self._check_valid()
         try:
@@ -1016,7 +1014,7 @@ class InterfaceElement(Element):
             self._check_valid()
         except ValueError:
             return
-        if hasattr(self,'_name'):
+        if hasattr(self, '_name'):
             P = self.parent()
             if P is not None:
                 P.clear(self._name)
@@ -1053,9 +1051,9 @@ class InterfaceElement(Element):
 
         - Felix Lawrence (2009-08-21)
         """
-        #TO DO: this could use file transfers when self.is_remote()
+        # TO DO: this could use file transfers when self.is_remote()
 
-        string = repr(self).replace('\n',' ').replace('\r', '')
+        string = repr(self).replace('\n', ' ').replace('\r', '')
         # Translate the external program's function notation to Sage's
         lfd = self.parent()._left_func_delim()
         if '(' != lfd:
@@ -1160,7 +1158,6 @@ class InterfaceElement(Element):
             sage: singular.quit()
             sage: s
             (invalid Singular object -- The singular session in which this object was defined is no longer running.)
-
         """
         try:
             self._check_valid()
@@ -1187,7 +1184,7 @@ class InterfaceElement(Element):
 
         TESTS:
 
-        In :trac:`22501`, several string representation methods have been
+        In :issue:`22501`, several string representation methods have been
         removed in favour of using the default implementation. The corresponding
         tests have been moved here::
 
@@ -1216,7 +1213,6 @@ class InterfaceElement(Element):
             sage: mupad.package('"MuPAD-Combinat"')  # optional - mupad-Combinat
             sage: S = mupad.examples.SymmetricFunctions(); S # optional - mupad-Combinat
             examples::SymmetricFunctions(Dom::ExpressionField())
-
         """
         P = self.parent()
         try:
@@ -1237,7 +1233,7 @@ class InterfaceElement(Element):
     def get_using_file(self):
         """
         Return this element's string representation using a file. Use this
-        if self has a huge string representation. It'll be way faster.
+        if ``self`` has a huge string representation. It'll be way faster.
 
         EXAMPLES::
 
@@ -1253,7 +1249,7 @@ class InterfaceElement(Element):
 
     def hasattr(self, attrname):
         """
-        Returns whether the given attribute is already defined by this
+        Return whether the given attribute is already defined by this
         object, and in particular is not dynamically generated.
 
         EXAMPLES::
@@ -1317,7 +1313,6 @@ class InterfaceElement(Element):
             False
             sage: singular(1).bool()
             True
-
         """
         return bool(self)
 
@@ -1341,7 +1336,7 @@ class InterfaceElement(Element):
         TESTS:
 
         By default this returns ``True`` for elements that are considered to be
-        not ``False`` by the interface (:trac:`28705`)::
+        not ``False`` by the interface (:issue:`28705`)::
 
             sage: bool(giac('"a"'))
             True
@@ -1395,9 +1390,9 @@ class InterfaceElement(Element):
 
     def name(self, new_name=None):
         """
-        Returns the name of self. If new_name is passed in, then this
-        function returns a new object identical to self whose name is
-        new_name.
+        Return the name of ``self``. If ``new_name`` is passed in, then this
+        function returns a new object identical to ``self`` whose name is
+        ``new_name``.
 
         Note that this can overwrite existing variables in the system.
 
@@ -1446,11 +1441,11 @@ class InterfaceElement(Element):
 
         INPUT:
 
-        - ``operation`` -- a string representing the operation
-          being performed. For example, '*', or '1/'.
+        - ``operation`` -- string representing the operation
+          being performed; for example, '*', or '1/'
 
-        - ``other`` -- the other operand. If ``other`` is ``None``,
-          then the operation is assumed to be unary rather than binary.
+        - ``other`` -- the other operand; if ``other`` is ``None``,
+          then the operation is assumed to be unary rather than binary
 
         OUTPUT: an interface element
 

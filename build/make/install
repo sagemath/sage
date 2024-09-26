@@ -43,7 +43,7 @@ fi
 
 # Make the special target _clean-broken-gcc before trying to build any other
 # packages.  This is necessary if configure detected a broken GCC installed
-# in Sage; Trac #25011
+# in Sage; Issue #25011
 $MAKE _clean-broken-gcc
 
 # If "make" doesn't understand the -q option (although we require
@@ -103,7 +103,7 @@ EOF
 ###############################################################################
 # NOW do the actual build:
 ###############################################################################
-time $MAKE "$@"
+$MAKE "$@"
 if [ $? -ne 0 ]; then
     cat >&2 <<EOF
 ***************************************************************

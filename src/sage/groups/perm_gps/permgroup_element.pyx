@@ -10,9 +10,9 @@ AUTHORS:
 - Robert Bradshaw (2007-11): convert to Cython
 
 - Sebastian Oehms (2018-11): Added :meth:`gap` as synonym to
-  :meth:`_gap_` (compatibility to libgap framework, see :trac:`26750`)
+  :meth:`_gap_` (compatibility to libgap framework, see :issue:`26750`)
 
-- Sebastian Oehms (2019-02): Implemented :meth:`gap` properly (:trac:`27234`)
+- Sebastian Oehms (2019-02): Implemented :meth:`gap` properly (:issue:`27234`)
 
 There are several ways to define a permutation group element:
 
@@ -89,7 +89,7 @@ We create element of a permutation group of large degree::
 
 TESTS:
 
-Check that :trac:`13569` is fixed::
+Check that :issue:`13569` is fixed::
 
     sage: [g*h for g in SymmetricGroup(3) for h in AlternatingGroup(3)]
     [(), (1,2,3), (1,3,2), (1,3,2), (), (1,2,3), (1,2,3), (1,3,2), (), (2,3),
@@ -128,7 +128,7 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.structure.coerce cimport coercion_model
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 import sage.interfaces.abc
@@ -152,6 +152,7 @@ cdef extern from *:
 cdef int etuple_index_cmp(const void * a, const void * b) noexcept nogil:
     return ((<int *> a)[0] > (<int *> b)[0]) - ((<int *> a)[0] < (<int *> b)[0])
 
+
 def make_permgroup_element(G, x):
     r"""
     Return a :class:`PermutationGroupElement` given the permutation group
@@ -171,6 +172,7 @@ def make_permgroup_element(G, x):
     """
     domain = FiniteEnumeratedSet(range(1, len(x)+1))
     return make_permgroup_element_v2(G, x, domain)
+
 
 def make_permgroup_element_v2(G, x, domain):
     r"""
@@ -199,6 +201,7 @@ def make_permgroup_element_v2(G, x, domain):
     G._domain_from_gap = {i+1: key for i, key in enumerate(domain)}
     return G.element_class(x, G, check=False)
 
+
 def is_PermutationGroupElement(x):
     r"""
     Return ``True`` if ``x`` is a :class:`PermutationGroupElement`.
@@ -208,9 +211,18 @@ def is_PermutationGroupElement(x):
         sage: p = PermutationGroupElement([(1,2),(3,4,5)])
         sage: from sage.groups.perm_gps.permgroup_element import is_PermutationGroupElement
         sage: is_PermutationGroupElement(p)
+        doctest:warning...
+        DeprecationWarning: The function is_PermutationGroupElement is deprecated;
+        use 'isinstance(..., PermutationGroupElement)' instead.
+        See https://github.com/sagemath/sage/issues/38184 for details.
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38184,
+                       "The function is_PermutationGroupElement is deprecated; "
+                       "use 'isinstance(..., PermutationGroupElement)' instead.")
     return isinstance(x, PermutationGroupElement)
+
 
 cdef class PermutationGroupElement(MultiplicativeGroupElement):
     r"""
@@ -276,14 +288,13 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        -  ``g`` -- defines element
+        - ``g`` -- defines element
 
-        -  ``parent`` -- defines parent group (``g`` must be in
-           parent if specified, or a :class:`TypeError` is raised)
+        - ``parent`` -- defines parent group (``g`` must be in
+          parent if specified, or a :exc:`TypeError` is raised)
 
-        -  ``check`` -- bool (default: ``True``); if ``False`` assumes ``g``
-           is a gap element in parent (if specified)
-
+        - ``check`` -- boolean (default: ``True``); if ``False`` assumes ``g``
+          is a gap element in parent (if specified)
 
         EXAMPLES:
 
@@ -424,7 +435,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: PermutationGroupElement([()])
             ()
 
-        We check that :trac:`16678` is fixed::
+        We check that :issue:`16678` is fixed::
 
             sage: Permutations.options.display='cycle'
             sage: p = Permutation((1,2))
@@ -513,7 +524,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             if p not in P:
                 raise ValueError('permutation %s not in %s' % (g, parent))
 
-    cpdef _set_identity(self) noexcept:
+    cpdef _set_identity(self):
         r"""
         TESTS::
 
@@ -532,7 +543,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         for i in range(self.n):
             self.perm[i] = i
 
-    cpdef _set_list_images(self, v, bint convert) noexcept:
+    cpdef _set_list_images(self, v, bint convert):
         r"""
         TESTS::
 
@@ -566,7 +577,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         for i in range(vn, self.n):
             self.perm[i] = i
 
-    cpdef _set_libgap(self, GapElement p) noexcept:
+    cpdef _set_libgap(self, GapElement p):
         r"""
         TESTS::
 
@@ -585,8 +596,8 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             ...
             ValueError: invalid data to initialize a permutation
         """
-        cdef UInt2* p2
-        cdef UInt4* p4
+        cdef const UInt2* p2
+        cdef const UInt4* p4
         cdef int i
         cdef UInt d
 
@@ -615,7 +626,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         self._libgap = p
 
-    cpdef _set_permutation_group_element(self, PermutationGroupElement p, bint convert) noexcept:
+    cpdef _set_permutation_group_element(self, PermutationGroupElement p, bint convert):
         r"""
         TESTS::
 
@@ -669,7 +680,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 for i in range(p.n, self.n):
                     self.perm[i] = i
 
-    cpdef _set_list_cycles(self, c, bint convert) noexcept:
+    cpdef _set_list_cycles(self, c, bint convert):
         r"""
         TESTS::
 
@@ -716,7 +727,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                     raise ValueError("invalid list of cycles to initialize a permutation")
                 self.perm[j] = t[0] - 1
 
-    cpdef _set_string(self, str s) noexcept:
+    cpdef _set_string(self, str s):
         r"""
         TESTS::
 
@@ -791,10 +802,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
             i = j + 1
 
-
     def __reduce__(self):
         r"""
-        Returns a function and its arguments needed to create this
+        Return a function and its arguments needed to create this
         permutation group element.  This is used in pickling.
 
         EXAMPLES::
@@ -807,7 +817,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         """
         return make_permgroup_element_v2, (self._parent, self.domain(), self._parent.domain())
 
-    cdef _alloc(self, int n) noexcept:
+    cdef _alloc(self, int n):
         if n < 16 and self.perm == NULL:
             self.perm = self.perm_buf
         elif self.perm == NULL:
@@ -817,7 +827,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         self.n = n
 
-    cdef PermutationGroupElement _new_c(self) noexcept:
+    cdef PermutationGroupElement _new_c(self):
         cdef type t = type(self)
         cdef PermutationGroupElement other = t.__new__(t)
         if HAS_DICTIONARY(self):
@@ -899,7 +909,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     def _gap_init_(self):
         r"""
-        Returns a GAP string representation for this
+        Return a GAP string representation for this
         PermutationGroupElement.
 
         EXAMPLES::
@@ -948,19 +958,24 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: S = SymmetricGroup(['a', 'b'])
             sage: latex(S.gens())
             \left((\text{\texttt{a}},\text{\texttt{b}})\right)
+            sage: latex(S.one())
+            1
         """
+        cycle_tuples = self.cycle_tuples()
+        if not cycle_tuples:
+            return '1'
         from sage.misc.latex import latex
         return "".join(("(" + ",".join(latex(x) for x in cycle) + ")")
-                       for cycle in self.cycle_tuples())
+                       for cycle in cycle_tuples)
 
     def __getitem__(self, i):
         r"""
         Return the ``i``-th permutation cycle in the disjoint cycle
-        representation of self.
+        representation of ``self``.
 
         INPUT:
 
-        -  ``i`` - integer
+        - ``i`` -- integer
 
         OUTPUT: a permutation group element
 
@@ -975,7 +990,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         """
         return self.cycles()[i]
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare group elements ``self`` and ``other``.
 
@@ -1003,7 +1018,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         TESTS:
 
-        Verify that we fixed bug :trac:`5537`::
+        Verify that we fixed bug :issue:`5537`::
 
             sage: h = PermutationGroupElement('(1,3,2)')
             sage: k = PermutationGroupElement('(1,2,3)(4,5)')
@@ -1023,9 +1038,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     def __call__(self, i):
         r"""
-        Returns the image of the integer i under this permutation.
-        Alternately, if i is a list, tuple or string, returns the result of
-        self acting on i.
+        Return the image of the integer `i` under this permutation.
+        Alternately, if `i` is a list, tuple or string, returns the result of
+        ``self`` acting on `i`.
 
         EXAMPLES::
 
@@ -1084,9 +1099,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             else:
                 return from_gap[i]
 
-    cpdef list _act_on_list_on_position(self, list x) noexcept:
+    cpdef list _act_on_list_on_position(self, list x):
         r"""
-        Returns the right action of ``self`` on the list ``x``. This is the
+        Return the right action of ``self`` on the list ``x``. This is the
         action on positions.
 
         EXAMPLES::
@@ -1112,9 +1127,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         assert len(x) == self.n, '%s and %s should have the same length'%(self, x)
         return [ x[self.perm[i]] for i in range(self.n) ]
 
-    cpdef ClonableIntArray _act_on_array_on_position(self, ClonableIntArray x) noexcept:
+    cpdef ClonableIntArray _act_on_array_on_position(self, ClonableIntArray x):
         r"""
-        Returns the right action of ``self`` on the ClonableIntArray
+        Return the right action of ``self`` on the :class:`ClonableIntArray`
         ``x``. This is the action on positions.
 
         EXAMPLES::
@@ -1136,7 +1151,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         y.set_immutable()
         return y
 
-    cpdef ETuple _act_on_etuple_on_position(self, ETuple x) noexcept:
+    cpdef ETuple _act_on_etuple_on_position(self, ETuple x):
         r"""
         Return the right action of this permutation on the ETuple ``x``.
 
@@ -1176,7 +1191,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         qsort(result._data, result._nonzero, 2 * sizeof(int), etuple_index_cmp)
         return result
 
-    cpdef _act_on_(self, x, bint self_on_left) noexcept:
+    cpdef _act_on_(self, x, bint self_on_left):
         r"""
         Return the result of the action of ``self`` on ``x``.
 
@@ -1241,12 +1256,11 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                     raise TypeError("%s does not act on %s" % (self,
                                                                left.parent()))
                 return left(tuple(sigma_x))
-            elif is_Matrix(left):
+            elif isinstance(left, Matrix):
                 return left.with_permuted_columns(~self)
         else:
-            if is_Matrix(x):
+            if isinstance(x, Matrix):
                 return x.with_permuted_rows(self)
-
 
     def __mul__(left, right):
         r"""
@@ -1296,7 +1310,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         return coercion_model.bin_op(left, right, operator.mul)
 
-    cpdef PermutationGroupElement _transpose_left(self, j, k) noexcept:
+    cpdef PermutationGroupElement _transpose_left(self, j, k):
         r"""
         Return the product of the transposition `(j, k)` with ``self``.
 
@@ -1329,7 +1343,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         prod.perm[j - 1], prod.perm[k - 1] = self.perm[k - 1], self.perm[j - 1]
         return prod
 
-    cpdef _mul_(left, _right) noexcept:
+    cpdef _mul_(left, _right):
         r"""
         EXAMPLES::
 
@@ -1346,7 +1360,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             prod.perm[i] = right.perm[left.perm[i]]
         return prod
 
-    cpdef PermutationGroupElement _generate_new(self, list v) noexcept:
+    cpdef PermutationGroupElement _generate_new(self, list v):
         r"""
         Generate a new permutation group element with the same parent
         as ``self`` from ``v``.
@@ -1364,7 +1378,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         new._set_list_images(v, False)
         return new
 
-    cpdef PermutationGroupElement _generate_new_GAP(self, lst_in) noexcept:
+    cpdef PermutationGroupElement _generate_new_GAP(self, lst_in):
         r"""
         Generate a new permutation group element with the same parent
         as ``self`` from the GAP list ``lst_in``.
@@ -1415,9 +1429,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             inv.perm[self.perm[i]] = i
         return inv
 
-    cpdef _gap_list(self) noexcept:
+    cpdef _gap_list(self):
         r"""
-        Returns this permutation in list notation compatible with the
+        Return this permutation in list notation compatible with the
         GAP numbering.
 
         EXAMPLES::
@@ -1441,7 +1455,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     def _gap_cycle_string(self):
         r"""
-        Returns a cycle string for this permutation compatible with
+        Return a cycle string for this permutation compatible with
         the GAP numbering.
 
         EXAMPLES::
@@ -1463,7 +1477,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         from sage.combinat.permutation import Permutation
         return Permutation(self._gap_list()).cycle_string()
 
-    cpdef domain(self) noexcept:
+    cpdef domain(self):
         r"""
         Return the domain of ``self``.
 
@@ -1673,7 +1687,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sign(sigma) = (-1)^{\sum_c len(c)-1}
 
 
-        where the sum is over cycles in self.
+        where the sum is over cycles in ``self``.
         """
         cdef int cycle_len_sum = 0
         cdef int i, k
@@ -1690,7 +1704,6 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 cycle_len_sum += 1
         sig_free(seen)
         return 1 - 2*(cycle_len_sum % 2) # == (-1)^cycle_len
-
 
     def orbit(self, n, bint sorted=True):
         r"""
@@ -1778,7 +1791,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``singletons`` -- boolean (default: ``False``) whether or not consider the
+        - ``singletons`` -- boolean (default: ``False``); whether or not consider the
           cycle that correspond to fixed point
 
         EXAMPLES::
@@ -1859,17 +1872,15 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         - ``g`` -- an element of the permutation group ``self.parent()``
 
-        - ``singletons`` -- ``True`` or ``False`` depending on whether or not
+        - ``singletons`` -- boolean depending on whether or not
           trivial cycles should be counted (default: ``True``)
 
-        - ``as_list`` -- ``True`` or ``False`` depending on whether the cycle
+        - ``as_list`` -- boolean depending on whether the cycle
           type should be returned as a :class:`list` or as a :class:`Partition`
           (default: ``False``)
 
-        OUTPUT:
-
-        A :class:`Partition`, or :class:`list` if ``is_list`` is ``True``,
-        giving the cycle type of ``self``
+        OUTPUT: a :class:`Partition`, or :class:`list` if ``is_list`` is
+        ``True``, giving the cycle type of ``self``
 
         If speed is a concern, then ``as_list=True`` should be used.
 
@@ -1898,15 +1909,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             from sage.combinat.partition import _Partitions
             return _Partitions(cycle_type)
 
-    def has_descent(self, i, side="right", positive=False):
+    def has_descent(self, i, side='right', positive=False):
         r"""
-        INPUT:
-
-        - ``i`` -- an element of the index set
-        - ``side`` -- ``"left"`` or ``"right"`` (default: ``"right"``)
-        - ``positive`` -- a boolean (default: ``False``)
-
-        Returns whether ``self`` has a left (resp. right) descent at
+        Return whether ``self`` has a left (resp. right) descent at
         position ``i``. If ``positive`` is ``True``, then test for a non
         descent instead.
 
@@ -1914,6 +1919,12 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         meaning of descents is the reverse of the usual
         convention. Hence, ``self`` has a left descent at position
         ``i`` if ``self(i) > self(i+1)``.
+
+        INPUT:
+
+        - ``i`` -- an element of the index set
+        - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
+        - ``positive`` -- boolean (default: ``False``)
 
         EXAMPLES::
 
@@ -1924,13 +1935,13 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             False
             sage: s = S.simple_reflections()
             sage: x = s[1]*s[2]
-            sage: x.has_descent(1, side="right")
+            sage: x.has_descent(1, side='right')
             False
-            sage: x.has_descent(2, side="right")
+            sage: x.has_descent(2, side='right')
             True
-            sage: x.has_descent(1, side="left")
+            sage: x.has_descent(1, side='left')
             True
-            sage: x.has_descent(2, side="left")
+            sage: x.has_descent(2, side='left')
             False
             sage: S._test_has_descent()
 
@@ -1986,13 +1997,13 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``words`` -- a list of elements of the ambient group, generating
+        - ``words`` -- list of elements of the ambient group, generating
           a subgroup
 
-        - ``display`` -- boolean (default ``True``) whether to display
+        - ``display`` -- boolean (default: ``True``); whether to display
           additional information
 
-        - ``as_list`` -- boolean (default ``False``) whether to return
+        - ``as_list`` -- boolean (default: ``False``); whether to return
           the result as a list of pairs (generator, exponent)
 
         OUTPUT:
@@ -2034,7 +2045,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         TESTS:
 
-        Check for :trac:`28556`::
+        Check for :issue:`28556`::
 
             sage: G = SymmetricGroup(6)
             sage: g = G('(1,2,3)')
@@ -2119,10 +2130,10 @@ cdef class SymmetricGroupElement(PermutationGroupElement):
 
 cdef bint is_valid_permutation(int* perm, int n) noexcept:
     r"""
-    This is used in the __init__ method.
+    This is used in the ``__init__`` method.
 
-    Returns True iff the first n elements of perm are literally a
-    permutation of [0, ..., n-1].
+    Return ``True`` iff the first ``n`` elements of perm are literally a
+    permutation of ``[0, ..., n-1]``.
 
     TESTS::
 

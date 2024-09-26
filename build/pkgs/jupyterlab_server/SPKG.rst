@@ -1,10 +1,10 @@
-jupyterlab_server: A set of server components for JupyterLab and JupyterLab like applications.
-==============================================================================================
+jupyterlab_server: Set of server components for JupyterLab and JupyterLab like applications
+===========================================================================================
 
 Description
 -----------
 
-A set of server components for JupyterLab and JupyterLab like applications.
+Set of server components for JupyterLab and JupyterLab like applications
 
 License
 -------

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fixing pickle for nested classes
 
@@ -10,15 +11,15 @@ incompatible with the pickling of such classes (pickling by name)::
     sage: A.B.__name__
     'B'
 
-instead of more natural ``"A.B"``. Furthermore upon pickling *and* unpickling a
-class with name ``"A.B"`` in a module ``mod``, the standard cPickle module
-searches for ``"A.B"`` in ``mod.__dict__`` instead of looking up ``"A"`` and
-then ``"B"`` in the result. See: https://groups.google.com/forum/#!topic/sage-devel/bHBV9KWAt64
+instead of more natural ``'A.B'``. Furthermore upon pickling *and* unpickling a
+class with name ``'A.B'`` in a module ``mod``, the standard cPickle module
+searches for ``'A.B'`` in ``mod.__dict__`` instead of looking up ``'A'`` and
+then ``'B'`` in the result. See: https://groups.google.com/forum/#!topic/sage-devel/bHBV9KWAt64
 
 This module provides two utilities to workaround this issue:
 
 - :func:`nested_pickle` "fixes" recursively the name of the subclasses of a
-  class and inserts their fullname ``"A.B"`` in ``mod.__dict__``
+  class and inserts their fullname ``'A.B'`` in ``mod.__dict__``
 
 - :class:`NestedClassMetaclass` is a metaclass ensuring that
   :func:`nested_pickle` is called on a class upon creation.
@@ -29,8 +30,8 @@ See also :mod:`sage.misc.test_nested_class`.
 
     In Python 3, nested classes, like any class for that matter, have
     ``__qualname__`` and the standard pickle module uses it for pickling and
-    unpickling. Thus the pickle module searches for ``"A.B"`` first by looking
-    up ``"A"`` in ``mod``, and then ``"B"`` in the result. So there is no
+    unpickling. Thus the pickle module searches for ``'A.B'`` first by looking
+    up ``'A'`` in ``mod``, and then ``'B'`` in the result. So there is no
     pickling problem for nested classes in Python 3, and the two utilities are
     not really necessary. However, :class:`NestedClassMetaclass` is used widely
     in Sage and affects behaviors of Sage objects in other respects than in
@@ -80,7 +81,7 @@ All of this is not perfect. In the following scenario::
     sage: B1.A2
     <class '__main__.A1.A2'>
 
-The name for ``"A1.A2"`` could potentially be set to ``"B1.A2"``. But that will work anyway.
+The name for ``'A1.A2'`` could potentially be set to ``'B1.A2'``. But that will work anyway.
 """
 
 import sys
@@ -93,7 +94,7 @@ __all__ = ['modify_for_nested_pickle', 'nested_pickle',
            #, 'SubClass', 'CopiedClass', 'A1'
            ]
 
-cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True) noexcept:
+cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
     r"""
     Modify the subclasses of the given class to be picklable, by
     giving them a mangled name and putting the mangled name in the
@@ -107,7 +108,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True) noe
 
     - ``module`` -- the module object to modify with the mangled name
 
-    - ``first_run`` -- optional bool (default ``True``): whether or not
+    - ``first_run`` -- boolean (default: ``True``); whether or not
       this function is run for the first time on ``cls``
 
     NOTE:
@@ -152,7 +153,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True) noe
     TESTS:
 
     The following is a real life example, that was enabled by the internal
-    use of the``first_run`` in :trac:`9107`::
+    use of the``first_run`` in :issue:`9107`::
 
         sage: cython_code = [
         ....:  "from sage.structure.unique_representation import UniqueRepresentation",
@@ -164,7 +165,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True) noe
         sage: import os
         sage: cython(os.linesep.join(cython_code))                                      # needs sage.misc.cython
 
-    Before :trac:`9107`, the name of ``A1.B1.C1`` would have been wrong::
+    Before :issue:`9107`, the name of ``A1.B1.C1`` would have been wrong::
 
         sage: # needs sage.misc.cython
         sage: A1.B1.C1.__name__
@@ -176,7 +177,6 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True) noe
         'A1.B1.C1'
         sage: getattr(A_module, 'A1.B2.C2', 'Not found').__name__
         'A1.B2.C2'
-
     """
     cdef str name, dotted_name
     cdef str mod_name = module.__name__
@@ -227,8 +227,8 @@ def nested_pickle(cls):
         sage: nested_pickle(A)
         <class '__main__.A'>
 
-    then the name of class ``"B"`` will be modified to ``"A.B"``, and the ``"A.B"``
-    attribute of the module will be set to class ``"B"``::
+    then the name of class ``'B'`` will be modified to ``'A.B'``, and the ``'A.B'``
+    attribute of the module will be set to class ``'B'``::
 
         sage: A.B.__name__
         'A.B'
@@ -340,9 +340,9 @@ class MainClass(object, metaclass=NestedClassMetaclass):
                                     A dummy method to demonstrate the embedding of
                                     method signature for nested classes.
                     ...
-
                 """
                 pass
+
 
 class SubClass(MainClass):
     r"""
@@ -358,10 +358,13 @@ class SubClass(MainClass):
     """
     pass
 
+
 nested_pickle(SubClass)
+
 
 def _provide_SubClass():
     return SubClass
+
 
 class CopiedClass():
     r"""
@@ -379,7 +382,9 @@ class CopiedClass():
     NestedSubClass = MainClass.NestedClass.NestedSubClass
     SubClass = _provide_SubClass()
 
+
 nested_pickle(CopiedClass)
+
 
 # Further classes for recursive tests
 

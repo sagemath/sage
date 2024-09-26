@@ -229,7 +229,6 @@ class FunctionFieldDerivation_inseparable(FunctionFieldDerivation):
             1
             sage: d(y^2)
             0
-
         """
         if x.is_zero():
             return self.codomain().zero()

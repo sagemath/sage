@@ -1,7 +1,6 @@
+# sage_setup: distribution = sagemath-objects
 """
 Lazy import cache
-
-This is a pure Python file with no dependencies so it can be used in setup.py.
 """
 import os
 import hashlib

@@ -26,9 +26,11 @@ from sage.symbolic.operators import arithmetic_operators
 #########
 # Sympy #
 #########
+
+
 class SympyConverter(Converter):
     """
-    Converts any expression to SymPy.
+    Convert any expression to SymPy.
 
     EXAMPLES::
 
@@ -46,13 +48,12 @@ class SympyConverter(Converter):
 
     TESTS:
 
-    Make sure we can convert I (:trac:`6424`)::
+    Make sure we can convert I (:issue:`6424`)::
 
         sage: bool(I._sympy_() == I)
         True
         sage: (x+I)._sympy_()
         x + I
-
     """
     def __init__(self):
         """
@@ -60,7 +61,7 @@ class SympyConverter(Converter):
 
             sage: from sage.symbolic.expression_conversions import SympyConverter
             sage: s = SympyConverter()  # indirect doctest
-            sage: TestSuite(s).run(skip="_test_pickling")
+            sage: TestSuite(s).run(skip='_test_pickling')
         """
         from sage.interfaces.sympy import sympy_init
         sympy_init()
@@ -244,7 +245,7 @@ class SympyConverter(Converter):
             sage: df_sympy == f_sympy.diff(x, 2, y, 1)
             True
 
-        Check that :trac:`28964` is fixed::
+        Check that :issue:`28964` is fixed::
 
             sage: f = function('f')
             sage: _ = var('x,t')
@@ -252,7 +253,7 @@ class SympyConverter(Converter):
             (Derivative(f(x, t), x), Derivative(f(x, t), t))
 
         Check differentiating by variables with multiple occurrences
-        (:trac:`28964`)::
+        (:issue:`28964`)::
 
             sage: f = function('f')
             sage: _ = var('x1,x2,x3,x,t')

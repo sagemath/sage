@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Commutative additive monoids
 """
@@ -11,6 +12,7 @@ Commutative additive monoids
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.additive_monoids import AdditiveMonoids
+
 
 class CommutativeAdditiveMonoids(CategoryWithAxiom):
     """

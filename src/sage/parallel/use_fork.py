@@ -27,11 +27,11 @@ class WorkerData():
 
     This just stores three attributes:
 
-    - ``input``: the input value used by this worker
+    - ``input`` -- the input value used by this worker
 
-    - ``starttime``: the walltime when this worker started
+    - ``starttime`` -- the walltime when this worker started
 
-    - ``failure``: an optional message indicating the kind of failure
+    - ``failure`` -- an optional message indicating the kind of failure
 
     EXAMPLES::
 
@@ -61,15 +61,13 @@ class p_iter_fork():
 
     INPUT:
 
-    - ``ncpus`` -- the maximal number of simultaneous
-        subprocesses to spawn
-    - ``timeout`` -- (float, default: 0) wall time in seconds until
-        a subprocess is automatically killed
-    - ``verbose`` -- (default: False) whether to print
-        anything about what the iterator does (e.g., killing
-        subprocesses)
-    - ``reset_interfaces`` -- (default: True) whether to reset
-        all pexpect interfaces
+    - ``ncpus`` -- the maximal number of simultaneous subprocesses to spawn
+    - ``timeout`` -- float (default: 0); wall time in seconds until a
+      subprocess is automatically killed
+    - ``verbose`` -- boolean (default: ``False``); whether to print anything
+      about what the iterator does (e.g., killing subprocesses)
+    - ``reset_interfaces`` -- boolean (default: ``True``); whether to reset all
+      pexpect interfaces
 
     EXAMPLES::
 
@@ -114,11 +112,9 @@ class p_iter_fork():
 
         - ``f`` -- a function (or more general, any callable)
 
-        - ``inputs`` -- a list of pairs ``(args, kwds)`` to be used as
+        - ``inputs`` -- list of pairs ``(args, kwds)`` to be used as
           arguments to ``f``, where ``args`` is a tuple and ``kwds`` is
-          a dictionary.
-
-        OUTPUT:
+          a dictionary
 
         EXAMPLES::
 
@@ -263,7 +259,7 @@ class p_iter_fork():
 
         - ``dir`` -- name of a directory
 
-        - ``args`` -- a tuple with positional arguments for ``f``
+        - ``args`` -- tuple with positional arguments for ``f``
 
         - ``kwds`` -- (optional) a dict with keyword arguments for ``f``
 

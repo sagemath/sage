@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Test the doctesting framework
 
@@ -13,7 +14,7 @@ EXAMPLES::
     sage: tests_dir = os.path.join(SAGE_SRC, 'sage', 'doctest', 'tests')
     sage: tests_env = dict(os.environ)
 
-Unset :envvar:`TERM` when running doctests, see :trac:`14370`::
+Unset :envvar:`TERM` when running doctests, see :issue:`14370`::
 
     sage: try:
     ....:     del tests_env['TERM']
@@ -21,7 +22,7 @@ Unset :envvar:`TERM` when running doctests, see :trac:`14370`::
     ....:     pass
     sage: kwds = {'cwd': tests_dir, 'env':tests_env}
 
-Check that :trac:`2235` has been fixed::
+Check that :issue:`2235` has been fixed::
 
     sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
     ....:       "--random-seed=0", "--optional=sage", "longtime.rst"], **kwds)
@@ -172,7 +173,7 @@ Test the ``--exitfirst`` option::
 
 Test a timeout using the ``SAGE_TIMEOUT`` environment variable.  Also set
 ``CYSIGNALS_CRASH_NDEBUG`` to help ensure the test times out in a timely
-manner (:trac:`26912`)::
+manner (:issue:`26912`)::
 
     sage: from copy import deepcopy
     sage: kwds2 = deepcopy(kwds)
@@ -265,7 +266,7 @@ after the ``die_timeout`` given above (10 seconds)::
 
 If the child process is dead and removed, the last output should be as above.
 However, the child process interrupted its parent process (see
-``"interrupt_diehard.rst"``), and became an orphan process. Depending on the
+``'interrupt_diehard.rst'``), and became an orphan process. Depending on the
 system, an orphan process may eventually become a zombie process instead of
 being removed, and then the last output would just be a blank. Hence the ``#
 random`` tag.
@@ -344,7 +345,7 @@ Test that ``sig_on_count`` is checked correctly::
     ...
     1
 
-Test logfiles in serial and parallel mode (see :trac:`19271`)::
+Test logfiles in serial and parallel mode (see :issue:`19271`)::
 
     sage: t = tmp_filename()
     sage: subprocess.call(["sage", "-t", "--serial", "--warn-long", "0",    # long time

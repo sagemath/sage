@@ -13,7 +13,7 @@ AUTHORS:
 
 - Golam Mortuza Hossain (2009-06-22): _laplace_latex(), _inverse_laplace_latex()
 
-- Tom Coates (2010-06-11): fixed :trac:`9217`
+- Tom Coates (2010-06-11): fixed :issue:`9217`
 
 EXAMPLES:
 
@@ -137,7 +137,7 @@ including exponentiation::
     [  1/2*(e^(2*sqrt(x)) - 1)*e^(x - sqrt(x))/x^(3/2)           1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x))]
 
 Complex exponentiation works, but may require a patched version of
-maxima (:trac:`32898`) for now::
+maxima (:issue:`32898`) for now::
 
     sage: M = i*matrix([[pi]])
     sage: e^M  # not tested, requires patched maxima
@@ -351,48 +351,48 @@ maxima used by the calculus package is different than the one in
 the interactive interpreter.
 
 Check to see that the problem with the variables method mentioned
-in :trac:`3779` is actually fixed::
+in :issue:`3779` is actually fixed::
 
     sage: f = function('F')(x)
     sage: diff(f*SR(1),x)
     diff(F(x), x)
 
-Doubly ensure that :trac:`7479` is working::
+Doubly ensure that :issue:`7479` is working::
 
     sage: f(x)=x
     sage: integrate(f,x,0,1)
     1/2
 
 Check that the problem with Taylor expansions of the gamma function
-(:trac:`9217`) is fixed::
+(:issue:`9217`) is fixed::
 
     sage: taylor(gamma(1/3+x),x,0,3)
     -1/432*((72*euler_gamma^3 + 36*euler_gamma^2*(sqrt(3)*pi + 9*log(3)) + ...
     sage: [f[0].n() for f in _.coefficients()]  # numerical coefficients to make comparison easier; Maple 12 gives same answer
     [2.6789385347..., -8.3905259853..., 26.662447494..., -80.683148377...]
 
-Ensure that :trac:`8582` is fixed::
+Ensure that :issue:`8582` is fixed::
 
     sage: k = var("k")
     sage: sum(1/(1+k^2), k, -oo, oo)
     -1/2*I*psi(I + 1) + 1/2*I*psi(-I + 1) - 1/2*I*psi(I) + 1/2*I*psi(-I)
 
-Ensure that :trac:`8624` is fixed::
+Ensure that :issue:`8624` is fixed::
 
     sage: integrate(abs(cos(x)) * sin(x), x, pi/2, pi)
     1/2
     sage: integrate(sqrt(cos(x)^2 + sin(x)^2), x, 0, 2*pi)
     2*pi
 
-Ensure that :trac:`25626` is fixed. As the form of the answer is dependent of
-the giac version, we simplify it (see :trac:`34037`). ::
+Ensure that :issue:`25626` is fixed. As the form of the answer is dependent of
+the giac version, we simplify it (see :issue:`34037`). ::
 
     sage: t = SR.var('t')
-    sage: integrate(exp(t)/(t + 1)^2, t, algorithm="giac").full_simplify()
+    sage: integrate(exp(t)/(t + 1)^2, t, algorithm='giac').full_simplify()
     ((t + 1)*Ei(t + 1) - e^(t + 1))/(t*e + e)
 
 Check if maxima has redundant variables defined after initialization,
-see :trac:`9538`::
+see :issue:`9538`::
 
     sage: maxima = sage.interfaces.maxima.maxima
     sage: maxima('f1')
@@ -400,7 +400,7 @@ see :trac:`9538`::
     sage: sage.calculus.calculus.maxima('f1')
     f1
 
-To check that :trac:`14821` is fixed::
+To check that :issue:`14821` is fixed::
 
     sage: H = exp(-1.0 * x)
     sage: H.integral(x, 0, 1)
@@ -410,7 +410,7 @@ To check that :trac:`14821` is fixed::
     sage: result
     4.62770039817000e-9
 
-To check that :trac:`27092` is fixed::
+To check that :issue:`27092` is fixed::
 
     sage: n = var('n')
     sage: sum(binomial(1, n), n, 0, oo)
@@ -468,7 +468,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
       - ``'sympy'`` -- use SymPy
 
-    - ``hold`` -- (default: ``False``) if ``True``, don't evaluate
+    - ``hold`` -- boolean (default: ``False``); if ``True``, don't evaluate
 
     EXAMPLES::
 
@@ -577,7 +577,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
         pi/tanh(pi)
 
     SymPy and Maxima 5.39.0 can do the following (see
-    :trac:`22005`)::
+    :issue:`22005`)::
 
         sage: sum(1/((2*n+1)^2-4)^2, n, 0, Infinity, algorithm='sympy')
         1/64*pi^2
@@ -604,12 +604,12 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
     TESTS:
 
-    :trac:`10564` is fixed::
+    :issue:`10564` is fixed::
 
         sage: sum (n^3 * x^n, n, 0, infinity)
         (x^3 + 4*x^2 + x)/(x^4 - 4*x^3 + 6*x^2 - 4*x + 1)
 
-    .. note::
+    .. NOTE::
 
        Sage can currently only understand a subset of the output of Maxima,
        Maple and Mathematica, so even if the chosen backend can perform
@@ -700,9 +700,7 @@ def nintegral(ex, x, a, b,
     - ``maximum_num_subintervals`` -- (default: 200)
       maximal number of subintervals
 
-    OUTPUT:
-
-    - float: approximation to the integral
+    OUTPUT: float; approximation to the integral
 
     - float: estimated absolute error of the
       approximation
@@ -851,7 +849,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
       - ``'mathematica'`` -- (optional) use Mathematica
 
-    - ``hold`` - (default: ``False``) if ``True``, don't evaluate
+    - ``hold`` -- boolean (default: ``False``); if ``True``, don't evaluate
 
     EXAMPLES::
 
@@ -876,11 +874,10 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
     TESTS:
 
-    Verify that :trac:`30520` is fixed::
+    Verify that :issue:`30520` is fixed::
 
         sage: symbolic_product(-x^2,x,1,n)
         (-1)^n*factorial(n)^2
-
     """
     if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
@@ -941,7 +938,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
     INPUT:
 
-    - ``var`` -- polynomial variable name (default 'x')
+    - ``var`` -- polynomial variable name (default: ``'x'``)
 
     - ``algorithm`` -- ``'algebraic'`` or ``'numerical'`` (default
       both, but with numerical first)
@@ -952,7 +949,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
     - ``degree`` -- the expected algebraic degree
 
     - ``epsilon`` -- return without error as long as
-      f(self) epsilon, in the case that the result cannot be proven.
+      f(self) epsilon, in the case that the result cannot be proven
 
       All of the above parameters are optional, with epsilon=0, ``bits`` and
       ``degree`` tested up to 1000 and 24 by default respectively. The
@@ -960,16 +957,15 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
       explicitly. The algebraic algorithm ignores the last three
       parameters.
 
-
-    OUTPUT: The minimal polynomial of ``self``. If the numerical algorithm
+    OUTPUT: the minimal polynomial of ``self``. If the numerical algorithm
     is used, then it is proved symbolically when ``epsilon=0`` (default).
 
     If the minimal polynomial could not be found, two distinct kinds of
     errors are raised. If no reasonable candidate was found with the
-    given ``bits``/``degree`` parameters, a :class:`ValueError` will be
+    given ``bits``/``degree`` parameters, a :exc:`ValueError` will be
     raised. If a reasonable candidate was found but (perhaps due to
     limits in the underlying symbolic package) was unable to be proved
-    correct, a :class:`NotImplementedError` will be raised.
+    correct, a :exc:`NotImplementedError` will be raised.
 
     ALGORITHM: Two distinct algorithms are used, depending on the
     algorithm parameter. By default, the numerical algorithm is
@@ -988,11 +984,11 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
     minpoly `f`. If `f(\mathtt{self})`,
     evaluated to a higher precision, is close enough to 0 then evaluate
     `f(\mathtt{self})` symbolically, attempting to prove
-    vanishing. If this fails, and ``epsilon`` is non-zero,
+    vanishing. If this fails, and ``epsilon`` is nonzero,
     return `f` if and only if
     `f(\mathtt{self}) < \mathtt{epsilon}`.
-    Otherwise raise a :class:`ValueError` (if no suitable
-    candidate was found) or a :class:`NotImplementedError` (if a
+    Otherwise raise a :exc:`ValueError` (if no suitable
+    candidate was found) or a :exc:`NotImplementedError` (if a
     likely candidate was found but could not be proved correct).
 
     EXAMPLES: First some simple examples::
@@ -1103,7 +1099,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
         ...
         ValueError: Could not find minimal polynomial (1000 bits, degree 24).
 
-    .. note::
+    .. NOTE::
 
        Of course, failure to produce a minimal polynomial does not
        necessarily indicate that this number is transcendental.
@@ -1171,18 +1167,18 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
     INPUT:
 
-    - ``dir`` -- (default: ``None``); may have the value
+    - ``dir`` -- (default: ``None``) may have the value
       ``'plus'`` (or ``'+'`` or ``'right'`` or ``'above'``) for a limit from above,
       ``'minus'`` (or ``'-'`` or ``'left'`` or ``'below'``) for a limit from below, or may be omitted
       (implying a two-sided limit is to be computed).
 
-    - ``taylor`` -- (default: ``False``); if ``True``, use Taylor
+    - ``taylor`` -- (default: ``False``) if ``True``, use Taylor
       series, which allows more limits to be computed (but may also
       crash in some obscure cases due to bugs in Maxima).
 
-    - ``**argv`` - 1 named parameter
+    - ``**argv`` -- 1 named parameter
 
-    .. note::
+    .. NOTE::
 
         The output may also use ``und`` (undefined), ``ind``
         (indefinite but bounded), and ``infinity`` (complex
@@ -1337,7 +1333,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         ...
         ValueError: Unknown algorithm: nugget
 
-    We check that :trac:`3718` is fixed, so that
+    We check that :issue:`3718` is fixed, so that
     Maxima gives correct limits for the floor function::
 
         sage: limit(floor(x), x=0, dir='-')
@@ -1348,7 +1344,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         ...nd
 
     Maxima gives the right answer here, too, showing
-    that :trac:`4142` is fixed::
+    that :issue:`4142` is fixed::
 
         sage: f = sqrt(1 - x^2)
         sage: g = diff(f, x); g
@@ -1365,7 +1361,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         sage: limit(1/x, x=0, dir='-')
         -Infinity
 
-    Check that :trac:`8942` is fixed::
+    Check that :issue:`8942` is fixed::
 
         sage: f(x) = (cos(pi/4 - x) - tan(x)) / (1 - sin(pi/4 + x))
         sage: limit(f(x), x=pi/4, dir='minus')
@@ -1375,12 +1371,12 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         sage: limit(f(x), x=pi/4)
         Infinity
 
-    Check that :trac:`12708` is fixed::
+    Check that :issue:`12708` is fixed::
 
         sage: limit(tanh(x), x=0)
         0
 
-    Check that :trac:`15386` is fixed::
+    Check that :issue:`15386` is fixed::
 
         sage: n = var('n')
         sage: assume(n>0)
@@ -1388,12 +1384,12 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         sage: limit(sequence, n=infinity)
         0
 
-    Check if :trac:`23048` is fixed::
+    Check if :issue:`23048` is fixed::
 
         sage: (1/(x-3)).limit(x=3, dir='below')
         -Infinity
 
-    From :trac:`14677`::
+    From :issue:`14677`::
 
         sage: f = (x^x - sin(x)^sin(x)) / (x^3*log(x))
         sage: limit(f, x=0, algorithm='fricas')                                 # optional - fricas
@@ -1402,14 +1398,14 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         sage: limit(f, x=0, dir='right', algorithm='fricas')                    # optional - fricas
         1/6
 
-    From :trac:`26497`::
+    From :issue:`26497`::
 
         sage: mu, y, sigma = var("mu, y, sigma")
         sage: f = 1/2*sqrt(2)*e^(-1/2*(mu - log(y))^2/sigma^2)/(sqrt(pi)*sigma*y)
         sage: limit(f, y=0, algorithm='fricas')                                 # optional - fricas
         0
 
-    From :trac:`26060`::
+    From :issue:`26060`::
 
         sage: limit(x / (x + 2^x + cos(x)), x=-infinity)
         1
@@ -1497,7 +1493,7 @@ def mma_free_limit(expression, v, a, dir=None):
     - ``expression`` -- symbolic expression
     - ``v`` -- variable
     - ``a`` -- value where the variable goes to
-    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (optional, default: ``None``)
+    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (default: ``None``)
 
     EXAMPLES::
 
@@ -1642,7 +1638,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         sage: p1 = plot(xt, 0, 1/2, rgbcolor=(1,0,0))                                   # needs sage.plot
         sage: p2 = plot(yt, 0, 1/2, rgbcolor=(0,1,0))                                   # needs sage.plot
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                     # needs sage.plot
         ....:     (p1 + p2).save(f.name)
 
     Another example::
@@ -1701,7 +1697,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         5*(s*cos(4)*e^(-2*s) - 3*e^(-2*s)*sin(4))/(s^2 + 9)
 
     Check unevaluated expression from Giac (it is locale-dependent, see
-    :trac:`22833`)::
+    :issue:`22833`)::
 
         sage: var('n')
         n
@@ -1721,7 +1717,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         sage: laplace(t^n, t, s, algorithm='maxima')
         s^(-n - 1)*gamma(n + 1)
 
-    Check that :trac:`24212` is fixed::
+    Check that :issue:`24212` is fixed::
 
         sage: F, a, cond = laplace(cos(t^2), t, s, algorithm='sympy')
         sage: a, cond
@@ -1996,7 +1992,7 @@ def at(ex, *args, **kwds):
         s^2*laplace(f(t), t, s) - s*f(0) - D[0](f)(0)
 
     We can also accept a non-keyword list of expression substitutions,
-    like Maxima does (:trac:`12796`)::
+    like Maxima does (:issue:`12796`)::
 
         sage: from sage.calculus.calculus import at
         sage: f = function('f')
@@ -2019,7 +2015,6 @@ def at(ex, *args, **kwds):
         sage: from sage.calculus.calculus import at
         sage: at(int(1), x=1)
         1
-
     """
     if not isinstance(ex, (Expression, Function)):
         ex = SR(ex)
@@ -2114,7 +2109,7 @@ def dummy_inverse_laplace(*args):
 
 def dummy_pochhammer(*args):
     """
-    This function is called to create formal wrappers of Pochhammer symbols
+    This function is called to create formal wrappers of Pochhammer symbols.
 
     EXAMPLES::
 
@@ -2148,7 +2143,6 @@ def _laplace_latex_(self, *args):
         '\\mathcal{L}\\left(f\\left(t\\right), t, s\\right)'
         sage: latex(laplace(f, t, s))
         \mathcal{L}\left(f\left(t\right), t, s\right)
-
     """
     return "\\mathcal{L}\\left(%s\\right)" % (', '.join(latex(x) for x in args))
 
@@ -2213,7 +2207,7 @@ def _is_function(v):
         sage: _is_function(sin)
         True
 
-    Check that :trac:`31756` is fixed::
+    Check that :issue:`31756` is fixed::
 
         sage: from sage.symbolic.expression import symbol_table
         sage: _is_function(symbol_table['mathematica'][('Gamma', 1)])
@@ -2236,13 +2230,13 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
 
     INPUT:
 
-    - ``x`` -- a string
+    - ``x`` -- string
 
-    - ``equals_sub`` -- (default: ``False``) if ``True``, replace
+    - ``equals_sub`` -- boolean (default: ``False``); if ``True``, replace
       '=' by '==' in self
 
     - ``maxima`` -- (default: the calculus package's copy of
-      Maxima) the Maxima interpreter to use.
+      Maxima) the Maxima interpreter to use
 
     EXAMPLES::
 
@@ -2259,12 +2253,12 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
 
     TESTS:
 
-    :trac:`8459` fixed::
+    :issue:`8459` fixed::
 
         sage: maxima('3*li[2](u)+8*li[33](exp(u))').sage()
         3*dilog(u) + 8*polylog(33, e^u)
 
-    Check if :trac:`8345` is fixed::
+    Check if :issue:`8345` is fixed::
 
         sage: assume(x,'complex')
         sage: t = x.conjugate()
@@ -2273,7 +2267,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
         sage: latex(t._maxima_()._sage_())
         \overline{x}
 
-    Check that we can understand maxima's not-equals (:trac:`8969`)::
+    Check that we can understand maxima's not-equals (:issue:`8969`)::
 
         sage: from sage.calculus.calculus import symbolic_expression_from_maxima_string as sefms
         sage: sefms("x!=3") == (factorial(x) == 3)
@@ -2285,20 +2279,20 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
         sage: solve([2*x==3, x != 5], x)
         [[x == (3/2)...
 
-    Make sure that we don't accidentally pick up variables in the maxima namespace (:trac:`8734`)::
+    Make sure that we don't accidentally pick up variables in the maxima namespace (:issue:`8734`)::
 
         sage: sage.calculus.calculus.maxima('my_new_var : 2')
         2
         sage: var('my_new_var').full_simplify()
         my_new_var
 
-    ODE solution constants are treated differently (:trac:`16007`)::
+    ODE solution constants are treated differently (:issue:`16007`)::
 
         sage: from sage.calculus.calculus import symbolic_expression_from_maxima_string as sefms
         sage: sefms('%k1*x + %k2*y + %c')
         _K1*x + _K2*y + _C
 
-    Check that some hypothetical variables don't end up as special constants (:trac:`6882`)::
+    Check that some hypothetical variables don't end up as special constants (:issue:`6882`)::
 
         sage: from sage.calculus.calculus import symbolic_expression_from_maxima_string as sefms
         sage: sefms('%i')^2
@@ -2429,7 +2423,7 @@ def mapped_opts(v):
 
     - ``v`` -- an object
 
-    OUTPUT: a string.
+    OUTPUT: string
 
     The main use of this is to turn Python bools into lower case
     strings.
@@ -2560,13 +2554,13 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
 
     INPUT:
 
-    - ``s`` -- a string
+    - ``s`` -- string
 
     - ``syms`` -- (default: ``{}``) dictionary of
       strings to be regarded as symbols or functions;
       keys are pairs (string, number of arguments)
 
-    - ``accept_sequence`` -- (default: ``False``) controls whether
+    - ``accept_sequence`` -- boolean (default: ``False``); controls whether
       to allow a (possibly nested) set of lists and tuples
       as input
 
@@ -2582,14 +2576,14 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
 
     TESTS:
 
-    Check that the precision is preserved (:trac:`28814`)::
+    Check that the precision is preserved (:issue:`28814`)::
 
         sage: symbolic_expression_from_string(str(RealField(100)(1/3)))
         0.3333333333333333333333333333
         sage: symbolic_expression_from_string(str(RealField(100)(10^-500/3)))
         3.333333333333333333333333333e-501
 
-    The Giac interface uses a different parser (:trac:`30133`)::
+    The Giac interface uses a different parser (:issue:`30133`)::
 
         sage: from sage.calculus.calculus import SR_parser_giac
         sage: symbolic_expression_from_string(repr(giac(SR.var('e'))), parser=SR_parser_giac)

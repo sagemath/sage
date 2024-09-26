@@ -41,13 +41,11 @@ class PathAlgebra(CombinatorialFreeModule):
 
     - ``P`` -- the path semigroup of a quiver `Q`
 
-    - ``order`` -- optional string, one of "negdegrevlex" (default),
-      "degrevlex", "negdeglex" or "deglex", defining the monomial order to be
-      used.
+    - ``order`` -- string; one of ``'negdegrevlex'`` (default),
+      ``'degrevlex'``, ``'negdeglex'`` or ``'deglex'``, defining the monomial
+      order to be used
 
-    OUTPUT:
-
-    - the path algebra `kP` with the given monomial order
+    OUTPUT: the path algebra `kP` with the given monomial order
 
     .. NOTE::
 
@@ -67,7 +65,7 @@ class PathAlgebra(CombinatorialFreeModule):
 
         sage: A is P.algebra(GF(7))
         True
-        sage: A is P.algebra(GF(7), order="degrevlex")
+        sage: A is P.algebra(GF(7), order='degrevlex')
         False
         sage: A is P.algebra(RR)
         False
@@ -132,7 +130,7 @@ class PathAlgebra(CombinatorialFreeModule):
     #                                                                         #
     ###########################################################################
 
-    def __init__(self, k, P, order="negdegrevlex"):
+    def __init__(self, k, P, order='negdegrevlex'):
         """
         Create a :class:`PathAlgebra` object.
 
@@ -179,9 +177,9 @@ class PathAlgebra(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: P1 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'))
-            sage: P2 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
-            sage: P3 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="negdeglex")
-            sage: P4 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="deglex")
+            sage: P2 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
+            sage: P3 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='negdeglex')
+            sage: P4 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='deglex')
             sage: P1.order_string()
             'negdegrevlex'
             sage: P2.order_string()
@@ -190,7 +188,6 @@ class PathAlgebra(CombinatorialFreeModule):
             'negdeglex'
             sage: P4.order_string()
             'deglex'
-
         """
         return self._ordstr
 
@@ -277,7 +274,6 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: A = P.algebra(GF(5))
             sage: A.ngens()
             7
-
         """
         return self._semigroup.ngens()
 
@@ -300,7 +296,6 @@ class PathAlgebra(CombinatorialFreeModule):
             2*e_0 + 2*e_1 + 2*e_2 + 2*e_3
             sage: B([(0,1,'a'),(1,2,'c')])  # indirect doctest
             a*c
-
         """
         from sage.quivers.paths import QuiverPath
         # If it's an element of another path algebra, do a linear combination
@@ -399,7 +394,6 @@ class PathAlgebra(CombinatorialFreeModule):
             2*e_0 + 2*e_1 + 2*e_2 + 2*e_3
             sage: B(2)*x*B(3)  # indirect doctest
             e_2 + b + e_3
-
         """
         if isinstance(other, PathAlgebra) and self._base.has_coerce_map_from(other._base):
             OQ = other._quiver
@@ -430,8 +424,8 @@ class PathAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        A list providing the indices of the path algebra generators occurring
-        in the monomial.
+        - ``data`` -- list providing the indices of the path algebra
+          generators occurring in the monomial
 
         EXAMPLES::
 
@@ -439,7 +433,6 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: X = sage_eval('a+2*b+3*c+5*e_0+3*e_2', A.gens_dict())
             sage: X         # indirect doctest
             5*e_0 + a + 2*b + 3*c + 3*e_2
-
         """
         # m is [list, pos, mid], where the list gives the nb of arrows, pos
         # gives the component in the module, and mid gives the length of the
@@ -453,8 +446,8 @@ class PathAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        A list providing the indices of the path algebra generators occurring
-        in the monomial.
+        - ``data`` -- list providing the indices of the path algebra
+          generators occurring in the monomial
 
         EXAMPLES::
 
@@ -462,7 +455,6 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: X = sage_eval('a+2*b+3*c+5*e_0+3*e_2', A.gens_dict())
             sage: latex(X)  # indirect doctest
             5 e_0 + a + 2 b + 3 c + 3 e_2
-
         """
         arrows = self.variable_names()
         return '\\cdot '.join(arrows[n] for n in data)
@@ -496,9 +488,7 @@ class PathAlgebra(CombinatorialFreeModule):
         """
         Return the quiver from which the algebra ``self`` was formed.
 
-        OUTPUT:
-
-        - :class:`DiGraph`, the quiver of the algebra
+        OUTPUT: :class:`DiGraph`; the quiver of the algebra
 
         EXAMPLES::
 
@@ -563,11 +553,11 @@ class PathAlgebra(CombinatorialFreeModule):
 
     def sum(self, iter_of_elements):
         """
-        Return the sum of all elements in ``iter_of_elements``
+        Return the sum of all elements in ``iter_of_elements``.
 
         INPUT:
 
-        - ``iter_of_elements``: iterator of elements of ``self``
+        - ``iter_of_elements`` -- iterator of elements of ``self``
 
         .. NOTE::
 
@@ -586,6 +576,48 @@ class PathAlgebra(CombinatorialFreeModule):
             5*e_0 + a - a*d + 2*b + 3*e_2
         """
         return sum(iter_of_elements, self.zero())
+
+    def linear_combination(self, iter_of_elements_coeff, factor_on_left=True):
+        r"""
+        Return the linear combination `\lambda_1 v_1 + \cdots +
+        \lambda_k v_k` (resp.  the linear combination `v_1 \lambda_1 +
+        \cdots + v_k \lambda_k`) where ``iter_of_elements_coeff`` iterates
+        through the sequence `((v_1, \lambda_1), ..., (v_k, \lambda_k))`.
+
+        INPUT:
+
+        - ``iter_of_elements_coeff`` -- iterator of pairs ``(element, coeff)``
+          with ``element`` in ``self`` and ``coeff`` in ``self.base_ring()``
+
+        - ``factor_on_left`` -- (optional) if ``True``, the coefficients are
+          multiplied from the left if ``False``, the coefficients are
+          multiplied from the right
+
+        .. NOTE::
+
+            It overrides a method inherited from
+            :class:`~sage.combinat.free_module.CombinatorialFreeModule`,
+            which relies on a private attribute of elements---an
+            implementation detail that is simply not available for
+            :class:`~sage.quivers.algebra_elements.PathAlgebraElement`.
+
+        EXAMPLES::
+
+            sage: A = DiGraph({0: {1: ['a'], 2: ['b']},
+            ....:              1: {0: ['c'], 1: ['d']},
+            ....:              2: {0: ['e'], 2: ['f']}}).path_semigroup().algebra(ZZ)
+            sage: A.inject_variables()
+            Defining e_0, e_1, e_2, a, b, c, d, e, f
+            sage: A.linear_combination([(a, 1), (b, 2), (c*e, 3),
+            ....:                       (a*d, -1), (e_0, 5), (e_2, 3)])
+            5*e_0 + a - a*d + 2*b + 3*e_2
+        """
+        if factor_on_left:
+            return self.sum(coeff * element
+                            for element, coeff in iter_of_elements_coeff)
+        else:
+            return self.sum(element * coeff
+                            for element, coeff in iter_of_elements_coeff)
 
     def homogeneous_component(self, n):
         """
@@ -612,7 +644,6 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: A = P.algebra(ZZ)
             sage: A.homogeneous_component(3)
             Free module spanned by [a*b*c, b*c*a, c*a*b] over Integer Ring
-
         """
         basis = []
         for v in self._semigroup._quiver:
@@ -625,7 +656,7 @@ class PathAlgebra(CombinatorialFreeModule):
 
     def homogeneous_components(self):
         r"""
-        Return the non-zero homogeneous components of ``self``.
+        Return the nonzero homogeneous components of ``self``.
 
         EXAMPLES::
 
@@ -640,8 +671,8 @@ class PathAlgebra(CombinatorialFreeModule):
 
         .. WARNING::
 
-             Backward incompatible change: since :trac:`12630` and
-             until :trac:`8678`, this feature was implemented under
+             Backward incompatible change: since :issue:`12630` and
+             until :issue:`8678`, this feature was implemented under
              the syntax ``list(A)`` by means of ``A.__iter__``. This
              was incorrect since ``A.__iter__``, when defined for a
              parent, should iterate through the elements of `A`.

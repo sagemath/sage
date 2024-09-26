@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 Base Class for Character-Based Art
 
@@ -39,7 +39,7 @@ class CharacterArt(SageObject):
 
     def __init__(self, lines=[], breakpoints=[], baseline=None):
         r"""
-        Abstract base class for character art
+        Abstract base class for character art.
 
         INPUT:
 
@@ -75,7 +75,7 @@ class CharacterArt(SageObject):
             *****
 
         If there are nested breakpoints, line breaks are avoided inside the
-        nested elements (:trac:`29204`)::
+        nested elements (:issue:`29204`)::
 
             sage: s = ascii_art([[1..5], [1..17], [1..25]])
             sage: s._breakpoints
@@ -96,7 +96,7 @@ class CharacterArt(SageObject):
     @classmethod
     def empty(cls):
         """
-        Return the empty character art object
+        Return the empty character art object.
 
         EXAMPLES::
 
@@ -210,7 +210,7 @@ class CharacterArt(SageObject):
         This method is deprecated, as its output is an implementation detail.
         The mere breakpoints of a character art element do not reflect the best
         way to split it if nested structures are involved. For details, see
-        :trac:`29204`.
+        :issue:`29204`.
 
         For example the expression::
 
@@ -242,9 +242,7 @@ class CharacterArt(SageObject):
         connected to a terminal. Otherwise you should treat ``stdout`` as
         being redirected to a file.
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -292,7 +290,7 @@ class CharacterArt(SageObject):
 
         - ``size`` -- the maximum width of each chunk
 
-        - ``offset`` -- (default: ``0``); the first chunk has width at most
+        - ``offset`` -- (default: ``0``) the first chunk has width at most
           ``size - offset``
 
         TESTS::
@@ -383,7 +381,7 @@ class CharacterArt(SageObject):
             sage: ascii_art(['a' * k for k in (1..10)])._split_repr_(20)
             '[ a, aa, aaa, aaaa,\n\n aaaaa, aaaaaa,\n\n aaaaaaa, aaaaaaaa,\n\n aaaaaaaaa,\n\n aaaaaaaaaa ]'
 
-        Check that wrapping happens exactly at the given size (:trac:`28527`)::
+        Check that wrapping happens exactly at the given size (:issue:`28527`)::
 
             sage: len(ascii_art(*(['']*90), sep=',')._split_repr_(80).split('\n')[0])
             80
@@ -560,9 +558,7 @@ class CharacterArt(SageObject):
         r"""
         Return the length (width) of the ASCII art object.
 
-        OUTPUT:
-
-        Integer. The number of characters in each line.
+        OUTPUT: integer; the number of characters in each line
 
         TESTS::
 
@@ -582,9 +578,7 @@ class CharacterArt(SageObject):
         r"""
         Return the height of the ASCII art object.
 
-        OUTPUT:
-
-        Integer. The number of lines.
+        OUTPUT: integer; the number of lines
 
         TESTS::
 
@@ -632,7 +626,7 @@ class CharacterArt(SageObject):
              / \ [7 8 9]
             o   o
 
-        Since :trac:`28527`, the baseline must always be a number.
+        Since :issue:`28527`, the baseline must always be a number.
 
         TESTS::
 

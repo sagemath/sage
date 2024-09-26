@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.graphs sage.combinat
 r"""
 Loop Crystals
@@ -127,6 +128,8 @@ class LoopCrystals(Category_singleton):
             return G
 
 # TODO: Should we make "regular" an axiom?
+
+
 class RegularLoopCrystals(Category_singleton):
     r"""
     The category of regular `U_q'(\mathfrak{g})`-crystals, where
@@ -163,6 +166,7 @@ class RegularLoopCrystals(Category_singleton):
             I0 = CT.index_set()
             La = CT.root_system().ambient_space().fundamental_weights()
             return sum(La[i] * (self.phi(i) - self.epsilon(i)) for i in I0)
+
 
 class KirillovReshetikhinCrystals(Category_singleton):
     """
@@ -269,7 +273,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
             TESTS:
 
-            Check that :trac:`23028` is fixed::
+            Check that :issue:`23028` is fixed::
 
                 sage: ct = CartanType(['A',8,2]).dual()
                 sage: K = crystals.KirillovReshetikhin(ct, 4, 1)
@@ -528,7 +532,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
             TESTS:
 
             Check that this works correctly for `B^{n,s}`
-            of type `A_{2n}^{(2)\dagger}` (:trac:`24364`)::
+            of type `A_{2n}^{(2)\dagger}` (:issue:`24364`)::
 
                 sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 3, 1)
                 sage: K.is_perfect()
@@ -612,7 +616,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
             TESTS:
 
             Check that this works correctly for `B^{n,s}`
-            of type `A_{2n}^{(2)\dagger}` (:trac:`24364`)::
+            of type `A_{2n}^{(2)\dagger}` (:issue:`24364`)::
 
                 sage: ct = CartanType(['A',6,2]).dual()
                 sage: K1 = crystals.KirillovReshetikhin(ct, 3,1)
@@ -818,7 +822,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
                 - ``q`` -- (default: ``None``) a variable or ``None``;
                   if ``None``, a variable `q` is set in the code
-                - ``group_components`` -- (default: ``True``) boolean; if
+                - ``group_components`` -- boolean (default: ``True``); if
                   ``True``, then the terms are grouped by classical component
 
                 The one-dimensional configuration sum is the sum of the
@@ -912,15 +916,15 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 - ``algorithm`` -- (default: ``None``) use one of the
                   following algorithms to determine the energy function:
 
-                  * ``'definition'`` - use the definition of the energy
+                  * ``'definition'`` -- use the definition of the energy
                     function;
-                  * ``'grading'`` - use the affine grading;
+                  * ``'grading'`` -- use the affine grading;
 
                   if not specified, then this uses ``'grading'`` if all
                   factors are perfect of the same level and otherwise
                   this uses ``'definition'``
 
-                OUTPUT: an integer
+                OUTPUT: integer
 
                 EXAMPLES::
 
@@ -1017,7 +1021,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 :meth:`e_string_to_ground_state`) and counting the number
                 of affine Kashiwara operators `e_0` applied on the way.
 
-                OUTPUT: an integer
+                OUTPUT: integer
 
                 EXAMPLES::
 
@@ -1088,7 +1092,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
                 TESTS:
 
-                Check that :trac:`22882` is fixed::
+                Check that :issue:`22882` is fixed::
 
                     sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 1,1)
                     sage: T = tensor([K,K,K])
@@ -1183,7 +1187,7 @@ class LocalEnergyFunction(Map):
 
         TESTS:
 
-        Check that :trac:`23014` is fixed::
+        Check that :issue:`23014` is fixed::
 
             sage: La = RootSystem(['G',2,1]).weight_space().fundamental_weights()
             sage: K = crystals.ProjectedLevelZeroLSPaths(La[1])

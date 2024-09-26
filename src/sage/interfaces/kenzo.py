@@ -119,15 +119,13 @@ if Kenzo().is_present():
 
 def Sphere(n):
     r"""
-    Return the ``n`` dimensional sphere as a Kenzo simplicial set.
+    Return the `n` dimensional sphere as a Kenzo simplicial set.
 
     INPUT:
 
     - ``n`` -- the dimension of the sphere
 
-    OUTPUT:
-
-    - A :class:`KenzoSimplicialSet`
+    OUTPUT: a :class:`KenzoSimplicialSet`
 
     EXAMPLES::
 
@@ -145,21 +143,19 @@ def Sphere(n):
 
 def MooreSpace(m, n):
     r"""
-    Return the Moore space ``M(m, n)`` as a Kenzo simplicial set.
+    Return the Moore space `M(m, n)` as a Kenzo simplicial set.
 
-    The Moore space ``M(m, n)`` is the space whose n'th homology group
-    is isomorphic to the cyclic group of order ``m``, and the rest of the
+    The Moore space `M(m, n)` is the space whose `n`-th homology group
+    is isomorphic to the cyclic group of order `m`, and the rest of the
     homology groups are trivial.
 
     INPUT:
 
-    - ``m`` -- A positive integer. The order of the nontrivial homology group.
+    - ``m`` -- positive integer; the order of the nontrivial homology group
 
-    - ``n`` -- The dimension in which the homology is not trivial
+    - ``n`` -- the dimension in which the homology is not trivial
 
-    OUTPUT:
-
-    - A KenzoSimplicialSet
+    OUTPUT: a KenzoSimplicialSet
 
     EXAMPLES::
 
@@ -184,14 +180,12 @@ def EilenbergMacLaneSpace(G, n):
 
     INPUT:
 
-    - ``G`` -- group. Currently only ``ZZ`` and the additive group of two
-      elements are supported.
+    - ``G`` -- group; currently only ``ZZ`` and the additive group of two
+      elements are supported
 
     - ``n`` -- the dimension in which the homotopy is not trivial
 
-    OUTPUT:
-
-    - A :class:`KenzoSimplicialGroup`
+    OUTPUT: a :class:`KenzoSimplicialGroup`
 
     EXAMPLES::
 
@@ -219,12 +213,12 @@ def EilenbergMacLaneSpace(G, n):
 
 class KenzoObject(SageObject):
     r"""
-    Wrapper to Kenzo objects
+    Wrapper to Kenzo objects.
 
     INPUT:
 
     - ``kenzo_object`` -- a wrapper around a Kenzo object
-      (which is an ecl object).
+      (which is an ecl object)
     """
 
     def __init__(self, kenzo_object):
@@ -243,7 +237,6 @@ class KenzoObject(SageObject):
             sage: s2
             [K1 Simplicial-Set]
             sage: TestSuite(s2).run(skip='_test_pickling')
-
         """
         self._kenzo = kenzo_object
 
@@ -272,15 +265,15 @@ class KenzoSpectralSequence(KenzoObject):
 
     def group(self, p, i, j):
         r"""
-        Return the ``i,j``'th group of the ``p`` page.
+        Return the ``i,j``-th group of the ``p`` page.
 
         INPUT:
 
-        - ``p`` -- the page to take the group from.
+        - ``p`` -- the page to take the group from
 
-        - ``i`` -- the column where the group is taken from.
+        - ``i`` -- the column where the group is taken from
 
-        - ``j`` -- the row where the group is taken from.
+        - ``j`` -- the row where the group is taken from
 
         EXAMPLES::
 
@@ -301,15 +294,15 @@ class KenzoSpectralSequence(KenzoObject):
     def matrix(self, p, i, j):
         r"""
         Return the matrix that determines the differential from the
-        ``i,j``'th group of the ``p``'th page.
+        ``i,j``-th group of the ``p``-th page.
 
         INPUT:
 
-        - ``p`` -- the page.
+        - ``p`` -- the page
 
-        - ``i`` -- the column of the differential domain.
+        - ``i`` -- the column of the differential domain
 
-        - ``j`` -- the row of the differential domain.
+        - ``j`` -- the row of the differential domain
 
         EXAMPLES::
 
@@ -342,11 +335,11 @@ class KenzoSpectralSequence(KenzoObject):
 
         INPUT:
 
-        - ``p`` -- the page.
+        - ``p`` -- the page
 
-        - ``i`` -- the column of the differential domain.
+        - ``i`` -- the column of the differential domain
 
-        - ``j`` -- the row of the differential domain.
+        - ``j`` -- the row of the differential domain
 
         EXAMPLES::
 
@@ -377,15 +370,15 @@ class KenzoSpectralSequence(KenzoObject):
 
         INPUT:
 
-        - ``p`` -- the page to print.
+        - ``p`` -- the page to print
 
-        -- ``i1`` -- the first column to print.
+        -- ``i1`` -- the first column to print
 
-        -- ``i2`` -- the last column to print.
+        -- ``i2`` -- the last column to print
 
-        -- ``j1`` -- the first row to print.
+        -- ``j1`` -- the first row to print
 
-        -- ``j2`` -- the last row to print.
+        -- ``j2`` -- the last row to print
 
         EXAMPLES::
 
@@ -421,16 +414,14 @@ class KenzoChainComplex(KenzoObject):
     """
     def homology(self, n):
         r"""
-        Return the ``n``'th homology group of the chain complex associated to this
+        Return the `n`-th homology group of the chain complex associated to this
         kenzo object.
 
         INPUT:
 
         - ``n`` -- the dimension in which compute the homology
 
-        OUTPUT:
-
-        - A homology group.
+        OUTPUT: a homology group
 
         EXAMPLES::
 
@@ -459,11 +450,9 @@ class KenzoChainComplex(KenzoObject):
 
         INPUT:
 
-        - ``other`` --  The Kenzo object with which to compute the tensor product
+        - ``other`` -- The Kenzo object with which to compute the tensor product
 
-        OUTPUT:
-
-        - A :class:`KenzoChainComplex`
+        OUTPUT: a :class:`KenzoChainComplex`
 
         EXAMPLES::
 
@@ -486,11 +475,9 @@ class KenzoChainComplex(KenzoObject):
 
         INPUT:
 
-        - ``dim`` -- An integer number
+        - ``dim`` -- integer
 
-        OUTPUT:
-
-        - A list of the form ['G"dim"G0', 'G"dim"G1', 'G"dim"G2', ...].
+        OUTPUT: list of the form ['G"dim"G0', 'G"dim"G1', 'G"dim"G2', ...]
 
         EXAMPLES::
 
@@ -518,9 +505,7 @@ class KenzoChainComplex(KenzoObject):
         r"""
         Return the identity morphism (degree 0) between ``self`` and itself.
 
-        OUTPUT:
-
-        - A :class:`KenzoChainComplexMorphism`
+        OUTPUT: a :class:`KenzoChainComplexMorphism`
 
         EXAMPLES::
 
@@ -541,14 +526,14 @@ class KenzoChainComplex(KenzoObject):
 
         INPUT:
 
-        - ``target`` -- A KenzoChainComplex or None (default).
-        - ``degree`` -- An integer number or None (default).
+        - ``target`` -- a KenzoChainComplex or ``None`` (default)
+        - ``degree`` -- integer or ``None`` (default)
 
         OUTPUT:
 
         - A :class:`KenzoChainComplexMorphism` representing the null morphism between
-          ``self`` and ``target`` of degree ``degree``. If ``target`` takes None value,
-          ``self`` is assumed as the target chain complex; if ``degree`` takes None value,
+          ``self`` and ``target`` of degree ``degree``. If ``target`` takes ``None`` value,
+          ``self`` is assumed as the target chain complex; if ``degree`` takes ``None`` value,
           0 is assumed as the degree of the null morphism.
 
         EXAMPLES::
@@ -587,10 +572,10 @@ class KenzoChainComplex(KenzoObject):
 
         INPUT:
 
-        - ``dim`` -- An integer number or None (default)
+        - ``dim`` -- integer or ``None`` (default)
 
-        - ``comb`` -- A list representing a formal sum of generators in the module
-          of dimension ``dim`` or None (default). For example, to represent
+        - ``comb`` -- list representing a formal sum of generators in the module
+          of dimension ``dim`` or ``None`` (default). For example, to represent
           G7G12 + 3*G7G0 - 5*G7G3 we use the list [3, 'G7G0', -5, 'G7G3', 1, 'G7G12'].
           Note that the generators must be in ascending order respect to the number
           after the second G in their representation; the parameter
@@ -599,10 +584,10 @@ class KenzoChainComplex(KenzoObject):
 
         OUTPUT:
 
-        - If ``dim`` and ``comb`` are not None, it returns a Kenzo combination
+        - If ``dim`` and ``comb`` are not ``None``, it returns a Kenzo combination
           representing the differential of the formal combination represented by
           ``comb`` in the chain complex ``self`` in dimension ``dim``. On the other
-          hand, if `dim`` or ``comb`` (or both) take None value, the differential
+          hand, if ``dim`` or ``comb`` (or both) take ``None`` value, the differential
           :class:`KenzoMorphismChainComplex` of ``self`` is returned.
 
         EXAMPLES::
@@ -643,7 +628,7 @@ class KenzoChainComplex(KenzoObject):
 
     def orgn(self):
         r"""
-        Return the :orgn slot of Kenzo, which stores as a list the origin of the object
+        Return the :orgn slot of Kenzo, which stores as a list the origin of the object.
 
         EXAMPLES::
 
@@ -670,16 +655,14 @@ class KenzoSimplicialSet(KenzoChainComplex):
 
     def loop_space(self, n=1):
         r"""
-        Return the ``n`` th iterated loop space.
+        Return the `n`-th iterated loop space.
 
         INPUT:
 
         - ``n`` -- (default: 1) the number of times to iterate the loop space
           construction
 
-        OUTPUT:
-
-        - A :class:`KenzoSimplicialGroup`
+        OUTPUT: a :class:`KenzoSimplicialGroup`
 
         EXAMPLES::
 
@@ -703,9 +686,7 @@ class KenzoSimplicialSet(KenzoChainComplex):
 
         - ``other`` -- the Kenzo simplicial set with which the product is made
 
-        OUTPUT:
-
-        - A :class:`KenzoSimplicialSet`
+        OUTPUT: a :class:`KenzoSimplicialSet`
 
         EXAMPLES::
 
@@ -726,9 +707,7 @@ class KenzoSimplicialSet(KenzoChainComplex):
         r"""
         Return the suspension of the simplicial set.
 
-        OUTPUT:
-
-        - A :class:`KenzoSimplicialSet`
+        OUTPUT: a :class:`KenzoSimplicialSet`
 
         EXAMPLES::
 
@@ -745,7 +724,7 @@ class KenzoSimplicialSet(KenzoChainComplex):
 
     def homotopy_group(self, n):
         """
-        Return the n'th homotopy group of ``self``
+        Return the `n`-th homotopy group of ``self``.
 
         INPUT:
 
@@ -780,9 +759,7 @@ class KenzoSimplicialSet(KenzoChainComplex):
         r"""
         Return the Eilenberg-Moore spectral sequence of ``self``.
 
-        OUTPUT:
-
-        - A :class:`KenzoSpectralSequence`
+        OUTPUT: a :class:`KenzoSpectralSequence`
 
         EXAMPLES::
 
@@ -812,9 +789,7 @@ class KenzoSimplicialSet(KenzoChainComplex):
         r"""
         Return the Serre sequence of the first step of the Whitehead tower.
 
-        OUTPUT:
-
-        - A :class:`KenzoSpectralSequence`
+        OUTPUT: a :class:`KenzoSpectralSequence`
 
         EXAMPLES::
 
@@ -839,11 +814,9 @@ class KenzoSimplicialSet(KenzoChainComplex):
         r"""
         Return the spectral sequence of ``self``.
 
-        The object self must be created as a cartesian product (twisted or not).
+        The object ``self`` must be created as a cartesian product (twisted or not).
 
-        OUTPUT:
-
-        - A :class:`KenzoSpectralSequence`
+        OUTPUT: a :class:`KenzoSpectralSequence`
 
         EXAMPLES::
 
@@ -877,9 +850,7 @@ class KenzoSimplicialSet(KenzoChainComplex):
 
         - ``other`` -- the Kenzo simplicial set with which the wedge is made
 
-        OUTPUT:
-
-        - A :class:`KenzoSimplicialSet`
+        OUTPUT: a :class:`KenzoSimplicialSet`
 
         EXAMPLES::
 
@@ -904,9 +875,7 @@ class KenzoSimplicialSet(KenzoChainComplex):
 
         - ``other`` -- the Kenzo simplicial set with which the join is made
 
-        OUTPUT:
-
-        - A :class:`KenzoSimplicialSet`
+        OUTPUT: a :class:`KenzoSimplicialSet`
 
         EXAMPLES::
 
@@ -931,9 +900,7 @@ class KenzoSimplicialSet(KenzoChainComplex):
 
         - ``other`` -- the Kenzo simplicial set with which the smash product is made
 
-        OUTPUT:
-
-        - A :class:`KenzoSimplicialSet`
+        OUTPUT: a :class:`KenzoSimplicialSet`
 
         EXAMPLES::
 
@@ -960,9 +927,7 @@ class KenzoSimplicialGroup(KenzoSimplicialSet):
         r"""
         Return the classifying space.
 
-        OUTPUT:
-
-        - A :class:`KenzoSimplicialGroup`
+        OUTPUT: a :class:`KenzoSimplicialGroup`
 
         EXAMPLES::
 
@@ -985,7 +950,7 @@ def k2s_matrix(kmatrix):
 
     INPUT:
 
-    - ``kmatrix`` -- An array in ECL
+    - ``kmatrix`` -- an array in ECL
 
     EXAMPLES::
 
@@ -1008,11 +973,9 @@ def s2k_matrix(smatrix):
 
     INPUT:
 
-    - ``smatrix`` -- A matrix in Sage
+    - ``smatrix`` -- a matrix in Sage
 
-    OUTPUT:
-
-    - A :class:`EclObject`
+    OUTPUT: a :class:`EclObject`
 
     EXAMPLES::
 
@@ -1035,11 +998,9 @@ def s2k_dictmat(sdictmat):
 
     INPUT:
 
-    - ``sdictmat`` -- A dictionary in Sage
+    - ``sdictmat`` -- dictionary in Sage
 
-    OUTPUT:
-
-    - A :class:`EclObject`
+    OUTPUT: a :class:`EclObject`
 
     EXAMPLES::
 
@@ -1049,7 +1010,6 @@ def s2k_dictmat(sdictmat):
         sage: d = {1 : A, 2 : B}
         sage: s2k_dictmat(d)                                  # optional - kenzo
         <ECL: ((2 . #2A((1 2) (2 1) (1 1))) (1 . #2A((1 2 3) (3 2 1) (1 1 1))))>
-
     """
     rslt = EclObject([])
     for k in sdictmat.keys():
@@ -1063,11 +1023,9 @@ def pairing(slist):
 
     INPUT:
 
-    - ``slist`` -- A list in Sage
+    - ``slist`` -- list in Sage
 
-    OUTPUT:
-
-    - A :class:`EclObject`
+    OUTPUT: a :class:`EclObject`
 
     EXAMPLES::
 
@@ -1084,16 +1042,14 @@ def pairing(slist):
 
 def KChainComplex(chain_complex):
     r"""
-    Construct a KenzoChainComplex from a ChainComplex of degree = -1 in
+    Construct a KenzoChainComplex from a ChainComplex of degree `-1` in
     Sage.
 
     INPUT:
 
-    - ``chain_complex`` -- A ChainComplex of degree = -1
+    - ``chain_complex`` -- a ChainComplex of degree `-1`
 
-    OUTPUT:
-
-    - A KenzoChainComplex
+    OUTPUT: a KenzoChainComplex
 
     EXAMPLES::
 
@@ -1122,15 +1078,13 @@ def SChainComplex(kchaincomplex, start=0, end=15):
 
     INPUT:
 
-    - ``kchaincomplex`` -- A KenzoChainComplex
+    - ``kchaincomplex`` -- a KenzoChainComplex
 
-    - ``start`` -- An integer number (optional, default 0)
+    - ``start`` -- integer (default: 0)
 
-    - ``end`` -- An integer number greater than or equal to ``start`` (optional, default 15)
+    - ``end`` -- integer greater than or equal to ``start`` (default: 15)
 
-    OUTPUT:
-
-    - A ChainComplex
+    OUTPUT: a ChainComplex
 
     EXAMPLES::
 
@@ -1173,13 +1127,11 @@ def SAbstractSimplex(simplex, dim):
 
     INPUT:
 
-    - ``simplex`` -- An abstract simplex of Kenzo.
+    - ``simplex`` -- an abstract simplex of Kenzo
 
-    - ``dim``-- The dimension of ``simplex``.
+    - ``dim`` -- the dimension of ``simplex``
 
-    OUTPUT:
-
-    - An AbstractSimplex.
+    OUTPUT: an AbstractSimplex
 
     EXAMPLES::
 
@@ -1212,11 +1164,9 @@ def KAbstractSimplex(simplex):
 
     INPUT:
 
-    - ``simplex`` -- An AbstractSimplex.
+    - ``simplex`` -- an AbstractSimplex
 
-    OUTPUT:
-
-    - An abstract simplex of Kenzo.
+    OUTPUT: an abstract simplex of Kenzo
 
     EXAMPLES::
 
@@ -1242,11 +1192,9 @@ def KFiniteSimplicialSet(sset):
 
     INPUT:
 
-    - ``sset`` -- A finite SimplicialSet.
+    - ``sset`` -- a finite SimplicialSet
 
-    OUTPUT:
-
-    - A finite simplicial set of Kenzo.
+    OUTPUT: a finite simplicial set of Kenzo
 
     EXAMPLES::
 
@@ -1309,13 +1257,11 @@ def SFiniteSimplicialSet(ksimpset, limit):
 
     INPUT:
 
-    - ``ksimpset`` -- A finite simplicial set in Kenzo.
+    - ``ksimpset`` -- a finite simplicial set in Kenzo
 
-    - ``limit`` -- A natural number.
+    - ``limit`` -- a natural number
 
-    OUTPUT:
-
-    - A finite SimplicialSet.
+    OUTPUT: a finite SimplicialSet
 
     EXAMPLES::
 
@@ -1392,9 +1338,7 @@ class KenzoChainComplexMorphism(KenzoObject):
         r"""
         Return the source chain complex of the morphism.
 
-        OUTPUT:
-
-        - A :class:`KenzoChainComplex`
+        OUTPUT: a :class:`KenzoChainComplex`
 
         EXAMPLES::
 
@@ -1419,9 +1363,7 @@ class KenzoChainComplexMorphism(KenzoObject):
         r"""
         Return the target chain complex of the morphism.
 
-        OUTPUT:
-
-        - A :class:`KenzoChainComplex`
+        OUTPUT: a :class:`KenzoChainComplex`
 
         EXAMPLES::
 
@@ -1446,9 +1388,7 @@ class KenzoChainComplexMorphism(KenzoObject):
         r"""
         Return the degree of the morphism.
 
-        OUTPUT:
-
-        - An integer number, the degree of the morphism.
+        OUTPUT: integer; the degree of the morphism
 
         EXAMPLES::
 
@@ -1479,9 +1419,9 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         INPUT:
 
-        - ``dim`` -- An integer number
+        - ``dim`` -- integer
 
-        - ``comb`` -- A list representing a formal sum of generators in the module
+        - ``comb`` -- list representing a formal sum of generators in the module
           of dimension ``dim``. For example, to represent G7G12 + 3*G7G0 - 5*G7G3
           we use the list [3, 'G7G0', -5, 'G7G3', 1, 'G7G12']. Note that the
           generators must be in ascending order respect to the number after the
@@ -1563,9 +1503,7 @@ class KenzoChainComplexMorphism(KenzoObject):
         r"""
         Return the opposite morphism of ``self``, i.e., -1 x ``self``.
 
-        OUTPUT:
-
-        - A :class:`KenzoChainComplexMorphism`
+        OUTPUT: a :class:`KenzoChainComplexMorphism`
 
         EXAMPLES::
 
@@ -1609,8 +1547,9 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         INPUT:
 
-        - ``object`` -- A KenzoChainComplexMorphism instance, a KenzoChainComplex instance, a tuple
-          of KenzoChainComplexMorphism and KenzoChainComplex instances, or None (default).
+        - ``object`` -- a KenzoChainComplexMorphism instance, a
+          KenzoChainComplex instance, a tuple of KenzoChainComplexMorphism and
+          KenzoChainComplex instances, or ``None`` (default).
 
         OUTPUT:
 
@@ -1619,7 +1558,7 @@ class KenzoChainComplexMorphism(KenzoObject):
           the composite of ``self`` and the differential morphism of ``object`` is returned; if
           ``object`` is a tuple, the composite of ``self`` and the morphisms or the differential
           morphisms of the given chain complexes in ``object`` is returned (if ``object`` is
-          None, ``self`` morphism is returned).
+          ``None``, ``self`` morphism is returned).
 
         EXAMPLES::
 
@@ -1657,13 +1596,14 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         INPUT:
 
-        - ``object`` -- A KenzoChainComplexMorphism instance, a tuple of KenzoChainComplexMorphism
-          instances or None (default).
+        - ``object`` -- a KenzoChainComplexMorphism instance, a tuple of
+          KenzoChainComplexMorphism instances or ``None`` (default)
 
         OUTPUT:
 
-        - A :class:`KenzoChainComplexMorphism`, sum of the morphism ``self`` and the morphism(s)
-          given by ``object`` (if ``object`` is None, ``self`` morphism is returned).
+        A :class:`KenzoChainComplexMorphism`, sum of the morphism ``self``
+        and the morphism(s given by ``object`` (if ``object`` is ``None``,
+        ``self`` morphism is returned).
 
         EXAMPLES::
 
@@ -1717,20 +1657,20 @@ class KenzoChainComplexMorphism(KenzoObject):
 
     def substract(self, object=None):
         r"""
-        Return a morphism, difference of the morphism ``self`` and the morphism(s) given by the
-        parameter ``object``.
+        Return a morphism, difference of the morphism ``self`` and the
+        morphism(s) given by the parameter ``object``.
 
         INPUT:
 
-        - ``object`` -- A KenzoChainComplexMorphism instance, a tuple of KenzoChainComplexMorphism
-          instances or None (default).
+        - ``object`` -- a KenzoChainComplexMorphism instance, a tuple of
+          KenzoChainComplexMorphism instances or ``None`` (default)
 
         OUTPUT:
 
-        - A :class:`KenzoChainComplexMorphism`, difference of the morphism ``self`` and the
-          morphism(s) given by ``object`` (if ``object`` is None, ``self`` morphism is returned).
-          For example, if ``object`` = (mrph1, mrph2, mrph3) the result is
-          ``self`` - mrph1 - mrph2 - mrph3.
+        A :class:`KenzoChainComplexMorphism`, difference of the morphism
+        ``self`` and the morphism(s) given by ``object`` (if ``object`` is
+        ``None``, ``self`` morphism is returned). For example, if ``object`` =
+        (mrph1, mrph2, mrph3) the result is ``self`` - mrph1 - mrph2 - mrph3.
 
         EXAMPLES::
 
@@ -1789,9 +1729,9 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         INPUT:
 
-        - ``source`` -- A KenzoChainComplex instance or None (default).
+        - ``source`` -- a KenzoChainComplex instance or ``None`` (default)
 
-        - ``target`` -- A KenzoChainComplex instance or None (default).
+        - ``target`` -- a KenzoChainComplex instance or ``None`` (default)
 
         OUTPUT:
 
@@ -1838,9 +1778,9 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         INPUT:
 
-        - ``source`` -- A KenzoChainComplex instance or None (default).
+        - ``source`` -- a KenzoChainComplex instance or ``None`` (default)
 
-        - ``target`` -- A KenzoChainComplex instance or None (default).
+        - ``target`` -- a KenzoChainComplex instance or ``None`` (default)
 
         OUTPUT:
 
@@ -1884,24 +1824,22 @@ def build_morphism(source_complex, target_complex, degree, algorithm, strategy, 
 
     INPUT:
 
-    - ``source_complex`` -- The source object as a KenzoChainComplex instance
+    - ``source_complex`` -- the source object as a KenzoChainComplex instance
 
-    - ``target_complex`` -- The target object as a KenzoChainComplex instance
+    - ``target_complex`` -- the target object as a KenzoChainComplex instance
 
-    - ``degree`` -- An integer number representing the degree of the morphism
+    - ``degree`` -- integer representing the degree of the morphism
 
-    - ``algorithm`` -- A Lisp function defining the mapping (:intr slot in Kenzo)
+    - ``algorithm`` -- a Lisp function defining the mapping (:intr slot in Kenzo)
 
-    - ``strategy`` -- The strategy (:strt slot in Kenzo), which must be one of
+    - ``strategy`` -- the strategy (:strt slot in Kenzo), which must be one of
       the two strings ``gnrt`` or ``cmbn``, depending if the ``algorithm`` (a Lisp
       function) uses as arguments a degree and a generator or a combination,
       respectively.
 
-    - ``orgn`` -- A list containing a description about the origin of the morphism
+    - ``orgn`` -- list containing a description about the origin of the morphism
 
-    OUTPUT:
-
-    - A :class:`KenzoChainComplexMorphism`
+    OUTPUT: a :class:`KenzoChainComplexMorphism`
 
     EXAMPLES::
 
@@ -1928,15 +1866,13 @@ def build_morphism(source_complex, target_complex, degree, algorithm, strategy, 
 
 def morphism_dictmat(morphism):
     r"""
-    Computes a list of matrices in ECL associated to a morphism in Sage.
+    Compute a list of matrices in ECL associated to a morphism in Sage.
 
     INPUT:
 
-    - ``morphism`` -- A morphism of chain complexes
+    - ``morphism`` -- a morphism of chain complexes
 
-    OUTPUT:
-
-    - A :class:`EclObject`
+    OUTPUT: a :class:`EclObject`
 
     EXAMPLES::
 
@@ -1962,11 +1898,9 @@ def KChainComplexMorphism(morphism):
 
     INPUT:
 
-    - ``morphism`` -- A morphism of chain complexes
+    - ``morphism`` -- a morphism of chain complexes
 
-    OUTPUT:
-
-    - A :class:`KenzoChainComplexMorphism`
+    OUTPUT: a :class:`KenzoChainComplexMorphism`
 
     EXAMPLES::
 
@@ -1991,15 +1925,13 @@ def KChainComplexMorphism(morphism):
 
 def s2k_listofmorphisms(l):
     r"""
-    Computes a list of morphisms of chain complexes in Kenzo from a list of morphisms in Sage.
+    Compute a list of morphisms of chain complexes in Kenzo from a list of morphisms in Sage.
 
     INPUT:
 
-    - ``l`` -- A list of morphisms of chain complexes
+    - ``l`` -- list of morphisms of chain complexes
 
-    OUTPUT:
-
-    - A :class:`EclObject`
+    OUTPUT: a :class:`EclObject`
 
     EXAMPLES::
 
@@ -2025,11 +1957,9 @@ def BicomplexSpectralSequence(l):
 
     INPUT:
 
-    - ``l`` -- A list of morphisms of chain complexes
+    - ``l`` -- list of morphisms of chain complexes
 
-    OUTPUT:
-
-    - A :class:`KenzoSpectralSequence`
+    OUTPUT: a :class:`KenzoSpectralSequence`
 
     EXAMPLES::
 

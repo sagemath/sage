@@ -23,7 +23,7 @@ from sage.categories.algebras import Algebras
 
 def is_Algebra(x):
     r"""
-    Return True if x is an Algebra.
+    Return ``True`` if `x` is an Algebra.
 
     EXAMPLES::
 

@@ -14,7 +14,6 @@ REFERENCES:
 
 - Chap. 1 of [KN1963]_
 - [Lee2011]_
-
 """
 
 # ****************************************************************************
@@ -61,7 +60,7 @@ class ContinuousMap(Morphism):
 
     - ``parent`` -- homset `\mathrm{Hom}(M,N)` to which the continuous
       map belongs
-    - ``coord_functions`` -- a dictionary of the coordinate expressions
+    - ``coord_functions`` -- dictionary of the coordinate expressions
       (as lists or tuples of the coordinates of the image expressed in
       terms of the coordinates of the considered point) with the pairs
       of charts ``(chart1, chart2)`` as keys (``chart1`` being a chart
@@ -70,12 +69,12 @@ class ContinuousMap(Morphism):
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
       continuous map; if ``None``, the LaTeX symbol is set to
       ``name``
-    - ``is_isomorphism`` -- (default: ``False``) determines whether the
-      constructed object is a isomorphism (i.e. a homeomorphism); if set to
-      ``True``, then the manifolds `M` and `N` must have the same dimension
-    - ``is_identity`` -- (default: ``False``) determines whether the
-      constructed object is the identity map; if set to ``True``,
-      then `N` must be `M` and the entry ``coord_functions`` is not used
+    - ``is_isomorphism`` -- boolean (default: ``False``); determines whether the
+      constructed object is a isomorphism (i.e. a homeomorphism). If set to
+      ``True``, then the manifolds `M` and `N` must have the same dimension.
+    - ``is_identity`` -- boolean (default: ``False``); determines whether the
+      constructed object is the identity map. If set to ``True``,
+      then `N` must be `M` and the entry ``coord_functions`` is not used.
 
     .. NOTE::
 
@@ -342,7 +341,6 @@ class ContinuousMap(Morphism):
         True
         sage: ~id is id
         True
-
     """
     def __init__(self, parent, coord_functions=None, name=None, latex_name=None,
                  is_isomorphism=False, is_identity=False):
@@ -371,7 +369,6 @@ class ContinuousMap(Morphism):
             Id_M: M → M
                (x, y) ↦ (x, y)
             sage: TestSuite(f).run()
-
         """
         Morphism.__init__(self, parent)
         domain = parent.domain()
@@ -468,7 +465,6 @@ class ContinuousMap(Morphism):
             sage: f = Hom(M,M)({}, name='f', is_identity=True)
             sage: f
             Identity map f of the 2-dimensional topological manifold M
-
         """
         if self._is_identity:
             return "Identity map {} of the {}".format(self._name, self._domain)
@@ -502,7 +498,6 @@ class ContinuousMap(Morphism):
             sage: f = Hom(M,M)({(X,X): (x+y,x*y)}, name='f', latex_name=r'\Phi')
             sage: latex(f)
             \Phi
-
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
@@ -531,7 +526,6 @@ class ContinuousMap(Morphism):
 
             sage: {f: 1}[f]
             1
-
         """
         return hash((self._domain, self._codomain))
 
@@ -543,9 +537,7 @@ class ContinuousMap(Morphism):
 
         - ``other`` -- a :class:`ContinuousMap`
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
 
         TESTS::
 
@@ -560,7 +552,6 @@ class ContinuousMap(Morphism):
             sage: g = M.continuous_map(N, {(X,Y): [x+y+z, 1]}, name='g')
             sage: f == g
             False
-
         """
         if other is self:
             return True
@@ -606,7 +597,6 @@ class ContinuousMap(Morphism):
             sage: g = M.continuous_map(N, {(X,Y): [x+y+z, 1]}, name='g')
             sage: f != g
             True
-
         """
         return not (self == other)
 
@@ -623,9 +613,7 @@ class ContinuousMap(Morphism):
         - ``point`` -- :class:`~sage.manifolds.point.TopologicalManifoldPoint`;
           point in the domain of ``self``
 
-        OUTPUT:
-
-        - image of the point by ``self``
+        OUTPUT: image of the point by ``self``
 
         EXAMPLES:
 
@@ -660,7 +648,6 @@ class ContinuousMap(Morphism):
             sage: q2 = rot(p2) # computation on c_spher
             sage: q2 == q
             True
-
         """
         # NB: checking that ``point`` belongs to the map's domain has been
         # already performed by Map.__call__(); this check is therefore not
@@ -741,7 +728,6 @@ class ContinuousMap(Morphism):
                (x, y) ↦ (u, v) = (x, y)
             sage: a.is_identity()
             False
-
         """
         if self._is_identity:
             return True
@@ -797,7 +783,6 @@ class ContinuousMap(Morphism):
                (x, y, z) ↦ (a, b, c, d) = ((x*y + 1)*z + x + y, x*y*z^2 + (x^2*y + x*y^2)*z, x + y + z + 1, -x*y*z + 2)
             sage: s == f*g
             True
-
         """
         # This method is invoked by Map._composition (single underscore),
         # which is itself invoked by Map.__mul__ . The latter performs the
@@ -834,8 +819,8 @@ class ContinuousMap(Morphism):
 
         EXAMPLES::
 
-            sage: M = Manifold(2, 'M', structure="topological")
-            sage: N = Manifold(1, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: N = Manifold(1, 'N', ambient=M, structure='topological')
             sage: CM.<x,y> = M.chart()
             sage: CN.<u> = N.chart(coord_restrictions=lambda u: [u > -1, u < 1])
             sage: Phi = N.continuous_map(M, {(CN,CM): [u, u^2]}, name='Phi')
@@ -876,7 +861,7 @@ class ContinuousMap(Morphism):
         - ``codomain_subset`` -- an instance of
           :class:`~sage.manifolds.subset.ManifoldSubset`
         - ``name`` -- string; name (symbol) given to the subset
-        - ``latex_name`` --  (default: ``None``) string; LaTeX symbol to
+        - ``latex_name`` -- string (default: ``None``); LaTeX symbol to
           denote the subset; if none are provided, it is set to ``name``
 
         OUTPUT:
@@ -976,7 +961,6 @@ class ContinuousMap(Morphism):
             True
             sage: M.identity_map()._mul_(f) == f
             True
-
         """
         dom = self._domain
         return self._composition_(other, Hom(dom, dom))
@@ -1001,7 +985,7 @@ class ContinuousMap(Morphism):
 
         ``_extensions_graph`` and ``_restrictions_graph`` were not originally
         derived quantities, but this induced a bug when dealing with other
-        derived quantities (see :trac:`26012`)::
+        derived quantities (see :issue:`26012`)::
 
             sage: M = Manifold(2, 'M')
             sage: C.<x, y> = M.chart()
@@ -1016,7 +1000,6 @@ class ContinuousMap(Morphism):
             sage: g.inverse().restrict(U)[:] # used to be wrong
             [  1   0]
             [  0 1/2]
-
         """
         self._restrictions = {} # dict. of restrictions to subdomains of
                                 # self._domain
@@ -1049,7 +1032,6 @@ class ContinuousMap(Morphism):
             Homeomorphism of the 2-dimensional topological manifold M
             sage: f._del_derived()
             sage: f._inverse  # has been set to None by _del_derived()
-
         """
         self._restrictions.clear()
         self._restrictions_graph = {(self._domain, self._codomain): self}
@@ -1181,7 +1163,6 @@ class ContinuousMap(Morphism):
                \frac{2 y}{x^{2} + y^{2} + 1},
                \frac{x^{2} + y^{2} - 1}{x^{2} + y^{2} + 1}\right)
              \end{array}
-
         """
         from sage.misc.latex import latex
         from sage.typeset.unicode_characters import unicode_to, unicode_mapsto
@@ -1363,7 +1344,6 @@ class ContinuousMap(Morphism):
              - 2*V**2 + 6*V)/(2*(U - V)), (U**3/4 - U**2*V/4 - U*V**2/4 + U*V
              - U + V**3/4 - V**2 - V)/(U - V), (U**3 - U**2*V - U*V**2 - 4*U*V
              - 8*U + V**3 + 4*V**2 - 8*V)/(4*(U - V))) on the Chart (M, (U, V))
-
         """
         dom1 = self._domain
         dom2 = self._codomain
@@ -1548,7 +1528,6 @@ class ContinuousMap(Morphism):
             NB: a failed report can reflect a mere lack of simplification.
             sage: rot.expr(c_cart, c_cart)
             (-1/2*sqrt(3)*y + 1/2*x, 1/2*sqrt(3)*x + 1/2*y)
-
         """
         return self.coord_functions(chart1, chart2).expr()
 
@@ -1793,7 +1772,6 @@ class ContinuousMap(Morphism):
             sage: q1 = rot(p1) # computation by means of spherical coordinates
             sage: q1 == q
             True
-
         """
         if self._is_identity:
             raise NotImplementedError("add_expr() must not be used for the identity map")
@@ -1890,7 +1868,6 @@ class ContinuousMap(Morphism):
             sage: Phi.restrict(D, subcodomain=D)
             Continuous map from the Open subset D of the 2-dimensional
              topological manifold R^2 to itself
-
         """
         if subcodomain is None:
             if self._is_identity:
@@ -1994,9 +1971,7 @@ class ContinuousMap(Morphism):
         r"""
         Return the inverse of ``self`` if it is an isomorphism.
 
-        OUTPUT:
-
-        - the inverse isomorphism
+        OUTPUT: the inverse isomorphism
 
         EXAMPLES:
 
@@ -2068,7 +2043,6 @@ class ContinuousMap(Morphism):
 
             sage: si == s
             True
-
         """
         from sage.symbolic.ring import SR
         from sage.symbolic.relation import solve

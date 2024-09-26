@@ -144,7 +144,7 @@ Conversion to Maxima::
 
 TESTS:
 
-Check that :trac:`12778` is fixed::
+Check that :issue:`12778` is fixed::
 
     sage: M = Matrix([[1, 0.9, 1/5, x^2], [2, 1.9, 2/5, x^3], [3, 2.9, 3/5, x^4]]); M
     [                1 0.900000000000000               1/5               x^2]
@@ -170,7 +170,6 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         """
         Echelonize using the classical algorithm.
 
-
         TESTS::
 
             sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]])
@@ -179,7 +178,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [0 1]
         """
 
-        return super().echelonize(algorithm="classical", **kwds)
+        return super().echelonize(algorithm='classical', **kwds)
 
     def eigenvalues(self, extend=True):
         """
@@ -197,7 +196,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         TESTS:
 
-        Check for :trac:`31700`::
+        Check for :issue:`31700`::
 
             sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]])
             sage: t = linear_transformation(m)
@@ -303,7 +302,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Symbolic Ring
 
-        Check that :trac:`23332` is fixed::
+        Check that :issue:`23332` is fixed::
 
             sage: matrix([[x, x^2], [1, 0]]).eigenvectors_left()
             [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*x*(sqrt(5) + 1))], 1),
@@ -368,7 +367,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Symbolic Ring
 
-        Check that :trac:`23332` is fixed::
+        Check that :issue:`23332` is fixed::
 
             sage: matrix([[x, x^2], [1, 0]]).eigenvectors_right()
             [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*(sqrt(5) + 1)/x)], 1),
@@ -403,7 +402,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [1/2*(e^(2*x) - 1)*e^(-x) 1/2*(e^(2*x) + 1)*e^(-x)]
 
         Exponentiation works on 0x0 and 1x1 matrices, but the 1x1 example
-        requires a patched version of maxima (:trac:`32898`) for now::
+        requires a patched version of maxima (:issue:`32898`) for now::
 
             sage: m = matrix(SR,0,[]); m
             []
@@ -479,7 +478,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``var`` -- (default: 'x') name of variable of charpoly
+        - ``var`` -- (default: ``'x'``) name of variable of charpoly
 
         EXAMPLES::
 
@@ -492,7 +491,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         TESTS:
 
         The cached polynomial should be independent of the ``var``
-        argument (:trac:`12292`). We check (indirectly) that the
+        argument (:issue:`12292`). We check (indirectly) that the
         second call uses the cached value by noting that its result is
         not cached::
 
@@ -508,17 +507,17 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             x^2 - 3*x - 2
 
         Ensure the variable name of the polynomial does not conflict
-        with variables used within the matrix (:trac:`14403`)::
+        with variables used within the matrix (:issue:`14403`)::
 
             sage: Matrix(SR, [[sqrt(x), x],[1,x]]).charpoly().list()
             [x^(3/2) - x, -x - sqrt(x), 1]
 
-        Test that :trac:`13711` is fixed::
+        Test that :issue:`13711` is fixed::
 
             sage: matrix([[sqrt(2), -1], [pi, e^2]]).charpoly()
             x^2 + (-sqrt(2) - e^2)*x + pi + sqrt(2)*e^2
 
-        Test that :trac:`26427` is fixed::
+        Test that :issue:`26427` is fixed::
 
             sage: M = matrix(SR, 7, 7, SR.var('a', 49))
             sage: M.charpoly().degree() # long time
@@ -569,7 +568,6 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: m = matrix([[x]])
             sage: m.minimal_polynomial('y')
             y - x
-
         """
         mp = self.fetch('minpoly')
         if mp is None:
@@ -586,7 +584,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``var`` -- (default: 'x') name of variable of charpoly
+        - ``var`` -- (default: ``'x'``) name of variable of charpoly
 
         EXAMPLES::
 
@@ -605,7 +603,6 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             (x^2 - 65*x - 250) * x^3
             sage: list(a.fcp())
             [(x^2 - 65*x - 250, 1), (x, 3)]
-
         """
         from sage.symbolic.ring import SR
         sub_dict = {var: SR.var(var)}
@@ -779,11 +776,9 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``self`` -- the matrix whose entries we should simplify.
+        - ``self`` -- the matrix whose entries we should simplify
 
-        OUTPUT:
-
-        A copy of ``self`` with all of its entries simplified.
+        OUTPUT: a copy of ``self`` with all of its entries simplified
 
         EXAMPLES:
 
@@ -798,7 +793,6 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: A.simplify_full()
             [                1    sin(1/(x + 1))]
             [     factorial(n) x^(-a + 1)*sin(2)]
-
         """
         M = self.parent()
         return M([expr.simplify_full() for expr in self])

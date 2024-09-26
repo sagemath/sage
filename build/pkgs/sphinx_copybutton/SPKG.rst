@@ -1,10 +1,10 @@
-sphinx_copybutton: Add a copy button to each of your code cells.
-================================================================
+sphinx_copybutton: Add a copy button to each of your code cells
+===============================================================
 
 Description
 -----------
 
-Add a copy button to each of your code cells.
+Add a copy button to each of your code cells
 
 License
 -------

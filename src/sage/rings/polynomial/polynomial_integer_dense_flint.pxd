@@ -7,6 +7,6 @@ from sage.structure.parent cimport Parent
 cdef class Polynomial_integer_dense_flint(Polynomial):
     cdef fmpz_poly_t _poly
 
-    cdef Polynomial_integer_dense_flint _new(self) noexcept
-    cpdef _unsafe_mutate(self, long n, value) noexcept
-    cpdef Integer content(self) noexcept
+    cdef Polynomial_integer_dense_flint _new(self)
+    cpdef _unsafe_mutate(self, long n, value)
+    cpdef Integer content(self)

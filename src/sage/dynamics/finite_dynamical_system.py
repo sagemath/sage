@@ -70,7 +70,6 @@ dynamical systems:
 
     - Interact with sage.dynamics. This requires someone who
       knows the latter part of the Sage library well.
-
 """
 # ****************************************************************************
 #       Copyright (C) 2018 Darij Grinberg <darijgrinberg@gmail.com>,
@@ -98,21 +97,14 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
 
     A *discrete dynamical system* (henceforth *DDS*) is a
     pair `(X, \phi)` of a set `X` and a map `\phi : X \to X`.
-    This set `X` is called the *ground set* of the DDS, while
-    the map `\phi` is called the *evolution* of the DDS.
-
-    A *discrete dynamical system* (short: *DDS*) is a pair
-    `(X, \phi)` of a set `X` and a map `\phi : X \to X`.
-    (This is one of several things known as a "discrete
-    dynamical system" in mathematics.)
-    Thus, a DDS is the same as an endomorphism of a set.
-    The DDS is said to be *finite* if `X` is finite.
-    The DDS is said to be *invertible* if the map `\phi` is
-    invertible.
     The set `X` is called the *ground set* of the DDS;
     the map `\phi` is called the *evolution* of the DDS;
     the inverse map `\phi^{-1}` (when it exists) is called the
     *inverse evolution* of the DDS.
+
+    The DDS is called *finite* if `X` is finite.
+    The DDS is called *invertible* if the map `\phi` is
+    invertible.
 
     Given a DDS `(X, \phi)`, we can study
 
@@ -138,7 +130,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
 
     - ``X`` -- set, list, tuple, or another iterable, or
       ``None`` (default: ``None``); the ground set for the DDS.
-      Tthis can be ``None`` (in which case Sage will not know
+      This can be ``None`` (in which case Sage will not know
       the ground set, but can still apply evolution to any
       elements that are provided to it).
       Make sure to set the ``create_tuple`` argument to
@@ -147,7 +139,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
       (and thus subject to mutation or exhaustion).
 
     - ``phi`` -- function, or callable that acts like a
-      function; the evolution of the DDS.
+      function; the evolution of the DDS
 
     - ``cache_orbits`` -- boolean (default: ``False``);
       whether or not the orbits should be cached once they
@@ -374,15 +366,15 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
         EXAMPLES::
 
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: (3 if x == 4 else 1), create_tuple=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: (3 if x == 4 else 1), create_tuple=True, is_finite=False)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(NN, lambda x: (3 if x == 4 else 1))
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(None, lambda x: (3 if x == 4 else 1))
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: x, create_tuple=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
         """
         if create_tuple:
             X = tuple(X)
@@ -713,7 +705,7 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
       ``X``, as otherwise the input would be exposed.
 
     - ``phi`` -- function, or callable that acts like a
-      function; the evolution of the DDS.
+      function; the evolution of the DDS
 
     - ``inverse`` -- function, or callable that acts like a
       function; the inverse evolution of the DDS. (A
@@ -764,13 +756,13 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
         EXAMPLES::
 
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: x, create_tuple=True, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem([1, 3, 4], lambda x: x, create_tuple=True, is_finite=False, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(NN, lambda x: x, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
             sage: D = DiscreteDynamicalSystem(None, lambda x: x, inverse=True)
-            sage: TestSuite(D).run(skip ="_test_pickling") # indirect doctest
+            sage: TestSuite(D).run(skip ='_test_pickling') # indirect doctest
         """
         if create_tuple:
             X = tuple(X)

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Sage's IPython Extension
 
@@ -70,17 +71,18 @@ from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
 from sage.misc.lazy_import import LazyImport
 from sage.misc.misc import run_once
 
+
 @magics_class
 class SageMagics(Magics):
 
     @line_magic
     def crun(self, s):
         r"""
-        Profile C function calls
+        Profile C function calls.
 
         INPUT:
 
-        - ``s`` -- string. Sage command to profile.
+        - ``s`` -- string; Sage command to profile
 
         EXAMPLES::
 
@@ -103,7 +105,7 @@ class SageMagics(Magics):
         This is designed to be used from the command line as
         ``%runfile /path/to/file``.
 
-        - ``s`` -- string. The file to be loaded.
+        - ``s`` -- string; the file to be loaded
 
         EXAMPLES::
 
@@ -136,7 +138,7 @@ class SageMagics(Magics):
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with NTF(mode="w+t", suffix=".py", delete=False) as f:
+            sage: with NTF(mode='w+t', suffix='.py', delete=False) as f:
             ....:     _ = f.write('a = 2\n')
             sage: shell.run_cell('%attach ' + f.name)
             sage: shell.run_cell('a')
@@ -168,7 +170,7 @@ class SageMagics(Magics):
 
         - ``args`` -- string. The file to be interactively loaded
 
-        .. note::
+        .. NOTE::
 
             Currently, this cannot be completely doctested as it
             relies on :func:`raw_input`.
@@ -333,20 +335,18 @@ class SageMagics(Magics):
     @cell_magic
     def cython(self, line, cell):
         """
-        Cython cell magic
+        Cython cell magic.
 
         This is syntactic sugar on the
         :func:`~sage.misc.cython.cython_compile` function.
 
         INPUT:
 
-        - ``line`` -- ignored.
+        - ``line`` -- ignored
 
-        - ``cell`` -- string. The Cython source code to process.
+        - ``cell`` -- string; the Cython source code to process
 
-        OUTPUT:
-
-        None. The Cython code is compiled and loaded.
+        OUTPUT: none; the Cython code is compiled and loaded
 
         EXAMPLES::
 
@@ -374,13 +374,11 @@ class SageMagics(Magics):
 
         INPUT:
 
-        - ``line`` -- ignored.
+        - ``line`` -- ignored
 
-        - ``cell`` -- string. The Cython source code to process.
+        - ``cell`` -- string; the Cython source code to process
 
-        OUTPUT:
-
-        None. The Fortran code is compiled and loaded.
+        OUTPUT: none; the Fortran code is compiled and loaded
 
         EXAMPLES::
 
@@ -509,7 +507,7 @@ class SageCustomizations():
 
         TESTS:
 
-        Check that :trac:`31951` is fixed::
+        Check that :issue:`31951` is fixed::
 
              sage: from IPython import get_ipython
              sage: ip = get_ipython()

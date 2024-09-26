@@ -45,7 +45,7 @@ class QuiverHomSpace(Homset):
     .. NOTE::
 
         The quivers of the domain and codomain must be equal or a
-        :class:`ValueError` is raised.
+        :exc:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -272,9 +272,7 @@ class QuiverHomSpace(Homset):
         default call method of :class:`~sage.categories.homset.Homset`
         is called instead.
 
-        OUTPUT:
-
-        - :class:`QuiverRepHom`
+        OUTPUT: :class:`QuiverRepHom`
 
         EXAMPLES::
 
@@ -383,9 +381,7 @@ class QuiverHomSpace(Homset):
         """
         Return the identity map.
 
-        OUTPUT:
-
-        - :class:`QuiverRepHom`
+        OUTPUT: :class:`QuiverRepHom`
 
         EXAMPLES::
 
@@ -427,9 +423,7 @@ class QuiverHomSpace(Homset):
         """
         Return the quiver of the representations.
 
-        OUTPUT:
-
-        - :class:`DiGraph`, the quiver of the representations
+        OUTPUT: :class:`DiGraph`; the quiver of the representations
 
         EXAMPLES::
 
@@ -444,9 +438,7 @@ class QuiverHomSpace(Homset):
         """
         Return the domain of the hom space.
 
-        OUTPUT:
-
-        - :class:`QuiverRep`, the domain of the Hom space
+        OUTPUT: :class:`QuiverRep`; the domain of the Hom space
 
         EXAMPLES::
 
@@ -462,9 +454,7 @@ class QuiverHomSpace(Homset):
         """
         Return the codomain of the hom space.
 
-        OUTPUT:
-
-        - :class:`QuiverRep`, the codomain of the Hom space
+        OUTPUT: :class:`QuiverRep`; the codomain of the Hom space
 
         EXAMPLES::
 
@@ -487,9 +477,7 @@ class QuiverHomSpace(Homset):
         """
         Return the dimension of the hom space.
 
-        OUTPUT:
-
-        - integer, the dimension
+        OUTPUT: integer; the dimension
 
         EXAMPLES::
 
@@ -505,9 +493,7 @@ class QuiverHomSpace(Homset):
         Return a tuple of generators of the hom space (as a `k`-vector
         space).
 
-        OUTPUT:
-
-        - tuple of :class:`QuiverRepHom` objects, the generators
+        OUTPUT: tuple of :class:`QuiverRepHom` objects; the generators
 
         EXAMPLES::
 
@@ -577,16 +563,14 @@ class QuiverHomSpace(Homset):
 
         INPUT:
 
-        - ``basis`` - bool. If ``False``, then only the module is
+        - ``basis`` -- boolean; if ``False``, then only the module is
           returned.  If ``True``, then a tuple is returned.  The first
           element is the QuiverRep and the second element is a
           dictionary which associates to each vertex a list.  The
           elements of this list are the homomorphisms which correspond to
           the basis elements of that vertex in the module.
 
-        OUTPUT:
-
-        - :class:`QuiverRep` or tuple
+        OUTPUT: :class:`QuiverRep` or tuple
 
         .. WARNING::
 

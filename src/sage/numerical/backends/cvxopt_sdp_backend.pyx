@@ -8,7 +8,6 @@ AUTHORS:
 - Ingolfur Edvardsson (2014-05): initial implementation
 
 - Dima Pasechnik      (2015-12): minor fixes
-
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Ingolfur Edvardsson <ingolfured@gmail.com>
@@ -32,13 +31,12 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
     def __init__(self, maximization=True, base_ring=None):
         """
-        Cython constructor
+        Cython constructor.
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver="CVXOPT")
-
+            sage: p = get_solver(solver='CVXOPT')
         """
 
         from sage.rings.real_double import RDF
@@ -56,7 +54,6 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
                       "refinement":1 }
         self.answer = {}
 
-
     cpdef int solve(self) except -1:
         """
         Solve the problem.
@@ -69,7 +66,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(solver="cvxopt", maximization=False)
+            sage: p = SemidefiniteProgram(solver='cvxopt', maximization=False)
             sage: x = p.new_variable()
             sage: p.set_objective(x[0] - x[1] + x[2])
             sage: a1 = matrix([[-7., -11.], [-11., 3.]])
@@ -84,7 +81,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)
             sage: N(p.solve(), digits=4)
             -3.225
-            sage: p = SemidefiniteProgram(solver="cvxopt", maximization=False)
+            sage: p = SemidefiniteProgram(solver='cvxopt', maximization=False)
             sage: x = p.new_variable()
             sage: p.set_objective(x[0] - x[1] + x[2])
             sage: a1 = matrix([[-7., -11.], [-11., 3.]])
@@ -99,7 +96,6 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             sage: p.add_constraint(b1*x[0] + b2*x[1] + b3*x[2] <= b4)
             sage: N(p.solve(), digits=4)
             -3.154
-
         """
         from cvxopt import matrix as c_matrix, solvers
         from sage.rings.real_double import RDF
@@ -161,8 +157,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             raise SDPSolverException("CVXOPT: Terminated early due to numerical difficulties or because the maximum number of iterations was reached.")
         return 0
 
-
-    cpdef get_objective_value(self) noexcept:
+    cpdef get_objective_value(self):
         """
         Return the value of the objective function.
 
@@ -172,7 +167,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(solver="cvxopt", maximization=False)
+            sage: p = SemidefiniteProgram(solver='cvxopt', maximization=False)
             sage: x = p.new_variable()
             sage: p.set_objective(x[0] - x[1] + x[2])
             sage: a1 = matrix([[-7., -11.], [-11., 3.]])
@@ -197,9 +192,9 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             i+=1
         return sum
 
-    cpdef _get_answer(self) noexcept:
+    cpdef _get_answer(self):
         """
-        return the complete output dict of the solver
+        Return the complete output dict of the solver.
 
         Mainly for testing purposes
 
@@ -223,7 +218,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         """
         return self.answer
 
-    cpdef get_variable_value(self, int variable) noexcept:
+    cpdef get_variable_value(self, int variable):
         """
         Return the value of a variable given by the solver.
 
@@ -233,7 +228,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
 
         EXAMPLES::
 
-            sage: p = SemidefiniteProgram(solver="cvxopt", maximization=False)
+            sage: p = SemidefiniteProgram(solver='cvxopt', maximization=False)
             sage: x = p.new_variable()
             sage: p.set_objective(x[0] - x[1] + x[2])
             sage: a1 = matrix([[-7., -11.], [-11., 3.]])
@@ -257,17 +252,16 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         """
         return self.answer['x'][variable]
 
-    cpdef dual_variable(self, int i, sparse=False) noexcept:
+    cpdef dual_variable(self, int i, sparse=False):
         """
-        The `i`-th dual variable
+        The `i`-th dual variable.
 
-        Available after self.solve() is called, otherwise the result is undefined
+        Available after ``self.solve()`` is called, otherwise the result is
+        undefined.
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
-        OUTPUT:
-
-        The matrix of the `i`-th dual variable
+        OUTPUT: the matrix of the `i`-th dual variable
 
         EXAMPLES::
 
@@ -300,24 +294,22 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             IndexError: list index out of range
             sage: abs(g - B._get_answer()['gap'])   # tol 1e-22
             0.0
-
         """
         cdef int n
         n = self.answer['zs'][i].size[0]
         assert(n == self.answer['zs'][i].size[1]) # must be square matrix
         return Matrix(n, n, list(self.answer['zs'][i]), sparse=sparse)
 
-    cpdef slack(self, int i, sparse=False) noexcept:
+    cpdef slack(self, int i, sparse=False):
         """
-        Slack of the `i`-th constraint
+        Slack of the `i`-th constraint.
 
-        Available after self.solve() is called, otherwise the result is undefined
+        Available after ``self.solve()`` is called, otherwise the result is
+        undefined.
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
-        OUTPUT:
-
-        The matrix of the slack of the `i`-th constraint
+        OUTPUT: the matrix of the slack of the `i`-th constraint
 
         EXAMPLES::
 
@@ -351,24 +343,22 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
-
         """
         cdef int n
         n = self.answer['ss'][i].size[0]
         assert(n == self.answer['ss'][i].size[1]) # must be square matrix
         return Matrix(n, n, list(self.answer['ss'][i]), sparse=sparse)
 
-
-    cpdef solver_parameter(self, name, value=None) noexcept:
+    cpdef solver_parameter(self, name, value=None):
         """
-        Return or define a solver parameter
+        Return or define a solver parameter.
 
         INPUT:
 
-        - ``name`` (string) -- the parameter
+        - ``name`` -- string; the parameter
 
         - ``value`` -- the parameter's value if it is to be defined,
-          or ``None`` (default) to obtain its current value.
+          or ``None`` (default) to obtain its current value
 
         .. NOTE::
 
@@ -378,7 +368,7 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
-            sage: p = get_solver(solver="CVXOPT")
+            sage: p = get_solver(solver='CVXOPT')
             sage: p.solver_parameter("show_progress")
             False
             sage: p.solver_parameter("show_progress", True)

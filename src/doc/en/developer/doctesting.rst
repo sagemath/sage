@@ -26,7 +26,7 @@ this syntax:
 
 .. CODE-BLOCK:: text
 
-    /path/to/sage-x.y.z/sage -t [--long] /path/to/sage-x.y.z/path/to/module.py[x]
+    /path/to/sage_root/sage -t [--long] /path/to/sage_root/path/to/module.py[x]
 
 where ``--long`` is an optional argument (see :ref:`section-options`
 for more options). The version of ``sage`` used must match the version
@@ -499,7 +499,7 @@ Parallel testing the whole Sage library
 =======================================
 
 The main Sage library resides in the directory
-``SAGE_ROOT/src/``. We can use the syntax described above
+:sage_root:`src/`. We can use the syntax described above
 to doctest the main library using multiple threads. When doing release
 management or patching the main Sage library, a release manager would
 parallel test the library using 10 threads with the following command::
@@ -538,22 +538,22 @@ The differences are:
   set of tests. First the Sage standard documentation is tested,
   i.e. the documentation that resides in
 
-  * ``SAGE_ROOT/src/doc/common``
-  * ``SAGE_ROOT/src/doc/en``
-  * ``SAGE_ROOT/src/doc/fr``
+  * :sage_root:`src/doc/common`
+  * :sage_root:`src/doc/en`
+  * :sage_root:`src/doc/fr`
 
   Finally, the commands doctest the Sage library. For more details on
-  these command, see the file ``SAGE_ROOT/Makefile``.
+  these command, see the file :sage_root:`Makefile`.
 
 * ``make testlong`` --- This command doctests the standard
   documentation:
 
-  * ``SAGE_ROOT/src/doc/common``
-  * ``SAGE_ROOT/src/doc/en``
-  * ``SAGE_ROOT/src/doc/fr``
+  * :sage_root:`src/doc/common`
+  * :sage_root:`src/doc/en`
+  * :sage_root:`src/doc/fr`
 
   and then the Sage library. Doctesting is run with the optional
-  argument ``--long``. See the file ``SAGE_ROOT/Makefile`` for further
+  argument ``--long``. See the file :sage_root:`Makefile` for further
   details.
 
 * ``make ptest`` --- Similar to the commands ``make test`` and ``make

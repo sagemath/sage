@@ -1,10 +1,10 @@
-mathics: A general-purpose computer algebra system
-==================================================
+mathics: General-purpose computer algebra system
+================================================
 
 Description
 -----------
 
-A general-purpose computer algebra system.
+General-purpose computer algebra system
 
 License
 -------

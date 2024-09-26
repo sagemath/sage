@@ -111,14 +111,14 @@ class Function_sin(GinacFunction):
             ....:                 1/8, 3/8, 1/16, 3/16, 5/16, 7/16, 1/24, 5/24, 7/24, 11/24])
             True
 
-        Check that :trac:`20456` is fixed::
+        Check that :issue:`20456` is fixed::
 
             sage: assume(x > 0)                                                         # needs sage.symbolic
             sage: sin(pi*x)                                                             # needs sage.symbolic
             sin(pi*x)
             sage: forget()                                                              # needs sage.symbolic
 
-        Check that :trac:`20752` is fixed::
+        Check that :issue:`20752` is fixed::
 
             sage: sin(3*pi + 41/42*pi)                                                  # needs sage.symbolic
             -sin(1/42*pi)
@@ -186,7 +186,7 @@ class Function_cos(GinacFunction):
             sage: cos(complex(1,1))     # rel tol 1e-15
             (0.8337300251311491-0.9888977057628651j)
 
-        Check that :trac:`20752` is fixed::
+        Check that :issue:`20752` is fixed::
 
             sage: cos(3*pi + 41/42*pi)                                                  # needs sage.symbolic
             cos(1/42*pi)
@@ -210,6 +210,7 @@ class Function_tan(GinacFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr
             sage: tan(3.1415)
             -0.0000926535900581913
             sage: tan(3.1415/4)
@@ -255,7 +256,7 @@ class Function_tan(GinacFunction):
             sage: tan(complex(1,1))     # rel tol 1e-15
             (0.2717525853195118+1.0839233273386946j)
 
-        Check that :trac:`19791` is fixed::
+        Check that :issue:`19791` is fixed::
 
             sage: tan(2+I).imag().n()                                                   # needs sage.symbolic
             1.16673625724092
@@ -323,20 +324,20 @@ class Function_cot(GinacFunction):
 
         TESTS::
 
-            sage: cot(float(0))                                                         # needs sage.symbolic
+            sage: # needs sage.symbolic
+            sage: cot(float(0))
             Infinity
-            sage: cot(SR(0))                                                            # needs sage.symbolic
+            sage: cot(SR(0))
             Infinity
-            sage: cot(float(0.1))                                                       # needs sage.symbolic
+            sage: cot(float(0.1))
             9.966644423259238
             sage: type(_)
             <... 'float'>
-
-            sage: cot(float(0))                                                         # needs sage.symbolic
+            sage: cot(float(0))
             Infinity
-            sage: cot(SR(0))                                                            # needs sage.symbolic
+            sage: cot(SR(0))
             Infinity
-            sage: cot(float(0.1))                                                       # needs sage.symbolic
+            sage: cot(float(0.1))
             9.966644423259238
             sage: type(_)
             <... 'float'>
@@ -520,7 +521,7 @@ class Function_arcsin(GinacFunction):
 
         EXAMPLES::
 
-            sage: arcsin(0.5)
+            sage: arcsin(0.5)                                                           # needs sage.rings.real_mpfr
             0.523598775598299
             sage: arcsin(1/2)                                                           # needs sage.symbolic
             1/6*pi
@@ -571,7 +572,7 @@ class Function_arcsin(GinacFunction):
         GinacFunction.__init__(self, 'arcsin', latex_name=r"\arcsin",
                 conversions=dict(maxima='asin', sympy='asin',
                                  mathematica='ArcSin',
-                                 fricas="asin", giac="asin"))
+                                 fricas='asin', giac='asin'))
 
 
 arcsin = asin = Function_arcsin()
@@ -584,7 +585,7 @@ class Function_arccos(GinacFunction):
 
         EXAMPLES::
 
-            sage: arccos(0.5)
+            sage: arccos(0.5)                                                           # needs sage.rings.real_mpfr
             1.04719755119660
             sage: arccos(1/2)                                                           # needs sage.symbolic
             1/3*pi
@@ -701,7 +702,7 @@ class Function_arctan(GinacFunction):
             sage: atan(complex(1,1))                                                    # needs sage.rings.complex_double
             (1.0172219678978514+0.4023594781085251j)
 
-        Check that :trac:`19918` is fixed::
+        Check that :issue:`19918` is fixed::
 
             sage: arctan(-x).subs(x=oo)                                                 # needs sage.symbolic
             -1/2*pi
@@ -761,7 +762,6 @@ class Function_arccot(GinacFunction):
             (0.5535743588970452-0.4023594781085251j)
             sage: arccot(1.+I)                                                          # needs sage.symbolic
             0.553574358897045 - 0.402359478108525*I
-
         """
         GinacFunction.__init__(self, 'arccot', latex_name=r"\operatorname{arccot}",
                 conversions=dict(maxima='acot', sympy='acot',
@@ -926,7 +926,6 @@ class Function_arctan2(GinacFunction):
 
         Note that the `y`-coordinate is by convention the first input.
 
-
         EXAMPLES:
 
         Note the difference between the two functions::
@@ -940,7 +939,7 @@ class Function_arctan2(GinacFunction):
 
             sage: maxima.atan2(1, -1)                                                   # needs sage.symbolic
             (3*%pi)/4
-            sage: math.atan2(1,-1)
+            sage: math.atan2(1, -1)
             2.356194490192345
 
         More examples::
@@ -991,22 +990,22 @@ class Function_arctan2(GinacFunction):
             sage: arctan2(y, x).operator()                                              # needs sage.symbolic
             arctan2
 
-        Check if :trac:`8565` is fixed::
+        Check if :issue:`8565` is fixed::
 
             sage: atan2(-pi, 0)                                                         # needs sage.symbolic
             -1/2*pi
 
-        Check if :trac:`8564` is fixed::
+        Check if :issue:`8564` is fixed::
 
             sage: arctan2(x,x)._sympy_()                                                # needs sympy sage.symbolic
             atan2(x, x)
 
-        Check if numerical evaluation works :trac:`9913`::
+        Check if numerical evaluation works :issue:`9913`::
 
             sage: arctan2(0, -log(2)).n()                                               # needs sage.symbolic
             3.14159265358979
 
-        Check that atan2(0,0) returns NaN :trac:`21614`::
+        Check that atan2(0,0) returns NaN :issue:`21614`::
 
             sage: # needs sage.symbolic
             sage: atan2(0, 0)
@@ -1020,7 +1019,7 @@ class Function_arctan2(GinacFunction):
             ...
             RuntimeError: atan2(): division by zero
 
-        Check if :trac:`10062` is fixed, this was caused by
+        Check if :issue:`10062` is fixed, this was caused by
         ``(I*I).is_positive()`` returning ``True``::
 
             sage: arctan2(0, I*I)                                                       # needs sage.symbolic

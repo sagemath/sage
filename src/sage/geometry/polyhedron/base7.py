@@ -64,7 +64,7 @@ class Polyhedron_base7(Polyhedron_base6):
         The mass is taken with respect to the induced Lebesgue measure,
         see :meth:`volume`.
 
-        If the polyhedron is not compact, a ``NotImplementedError`` is
+        If the polyhedron is not compact, a :exc:`NotImplementedError` is
         raised.
 
         INPUT:
@@ -76,9 +76,9 @@ class Polyhedron_base7(Polyhedron_base6):
           TOPCOM is used if it is available and internal routines otherwise.
 
         - ``**kwds`` -- keyword arguments that are passed to the
-          triangulation engine (see :meth:`triangulate`).
+          triangulation engine (see :meth:`triangulate`)
 
-        OUTPUT: The centroid as vector.
+        OUTPUT: the centroid as vector
 
         ALGORITHM:
 
@@ -150,7 +150,7 @@ class Polyhedron_base7(Polyhedron_base6):
 
     def _triangulate_normaliz(self):
         r"""
-        Gives a triangulation of the polyhedron using normaliz
+        Give a triangulation of the polyhedron using normaliz.
 
         OUTPUT:
 
@@ -188,17 +188,17 @@ class Polyhedron_base7(Polyhedron_base6):
         :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`
         constructor:
 
-        - ``connected`` -- boolean (default: ``True``). Whether the
+        - ``connected`` -- boolean (default: ``True``); whether the
           triangulations should be connected to the regular
           triangulations via bistellar flips. These are much easier to
           compute than all triangulations.
 
-        - ``fine`` -- boolean (default: ``False``). Whether the
+        - ``fine`` -- boolean (default: ``False``); whether the
           triangulations must be fine, that is, make use of all points
-          of the configuration.
+          of the configuration
 
         - ``regular`` -- boolean or ``None`` (default:
-          ``None``). Whether the triangulations must be regular. A
+          ``None``); whether the triangulations must be regular. A
           regular triangulation is one that is induced by a
           piecewise-linear convex support function. In other words,
           the shadows of the faces of a polyhedron in one higher
@@ -312,11 +312,9 @@ class Polyhedron_base7(Polyhedron_base6):
 
     def _volume_lrs(self, verbose=False):
         """
-        Computes the volume of a polytope using lrs.
+        Compute the volume of a polytope using lrs.
 
-        OUTPUT:
-
-        The exact volume as a rational number.
+        OUTPUT: the exact volume as a rational number
 
         EXAMPLES::
 
@@ -365,24 +363,25 @@ class Polyhedron_base7(Polyhedron_base6):
 
     def _volume_latte(self, verbose=False, algorithm='triangulate', **kwargs):
         """
-        Computes the volume of a polytope using LattE integrale.
+        Compute the volume of a polytope using LattE integrale.
 
         INPUT:
 
         - ``arg`` -- a cdd or LattE description string
 
-        - ``algorithm`` -- (default: 'triangulate') the integration method. Use 'triangulate' for
-          polytope triangulation or 'cone-decompose' for tangent cone decomposition method.
+        - ``algorithm`` -- (default: ``'triangulate'``) the integration method;
+          use 'triangulate' for polytope triangulation or 'cone-decompose' for
+          tangent cone decomposition method
 
-        - ``raw_output`` -- if ``True`` then return directly the output string from LattE.
+        - ``raw_output`` -- if ``True`` then return directly the output string
+          from LattE
 
-        - ``verbose`` -- if ``True`` then return directly verbose output from LattE.
+        - ``verbose`` -- if ``True`` then return directly verbose output from
+          LattE
 
         - For all other options, consult the LattE manual.
 
-        OUTPUT:
-
-        A rational value, or a string if ``raw_output`` if set to ``True``.
+        OUTPUT: a rational value, or a string if ``raw_output`` if set to ``True``
 
         .. NOTE::
 
@@ -436,13 +435,13 @@ class Polyhedron_base7(Polyhedron_base6):
 
     def _volume_normaliz(self, measure='induced'):
         r"""
-        Computes the volume of a polytope using normaliz.
+        Compute the volume of a polytope using normaliz.
 
         INPUT:
 
-        - ``measure`` -- (default: 'induced') the measure to take. 'induced'
-          correspond to ``EuclideanVolume`` in normaliz and 'induced_lattice'
-          correspond to ``Volume`` in normaliz
+        - ``measure`` -- (default: ``'induced'``) the measure to take;
+          'induced' correspond to ``EuclideanVolume`` in normaliz and
+          'induced_lattice' correspond to ``Volume`` in normaliz
 
         OUTPUT:
 
@@ -492,9 +491,7 @@ class Polyhedron_base7(Polyhedron_base6):
         - ``**kwds`` -- keyword arguments that are passed to the
           triangulation engine
 
-        OUTPUT:
-
-        The volume of the polytope
+        OUTPUT: the volume of the polytope
 
         EXAMPLES::
 
@@ -521,9 +518,9 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: P5.volume()                                                           # needs sage.rings.number_field
             2.377641290737884?
 
-            sage: polytopes.icosahedron().volume()                                      # needs sage.rings.number_field
+            sage: polytopes.icosahedron().volume()                                      # needs sage.groups sage.rings.number_field
             5/12*sqrt5 + 5/4
-            sage: numerical_approx(_)  # abs tol 1e9                                    # needs sage.rings.number_field
+            sage: numerical_approx(_)  # abs tol 1e9                                    # needs sage.groups sage.rings.number_field
             2.18169499062491
 
         When considering lower-dimensional polytopes, we can ask for the
@@ -660,7 +657,7 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: Q.volume.is_in_cache()
             True
 
-        Induced volumes work with lrs (:trac:`33410`)::
+        Induced volumes work with lrs (:issue:`33410`)::
 
             sage: P = Polyhedron([[0, 0], [1, 1]])
             sage: P.volume(measure='induced', engine='lrs')             # optional - lrslib
@@ -788,9 +785,7 @@ class Polyhedron_base7(Polyhedron_base6):
         - ``**kwds`` -- additional keyword arguments that
           are passed to the engine
 
-        OUTPUT:
-
-        The integral of the polynomial over the polytope
+        OUTPUT: the integral of the polynomial over the polytope
 
         .. NOTE::
 
@@ -861,8 +856,8 @@ class Polyhedron_base7(Polyhedron_base6):
 
         Testing a polytope with non-rational vertices::
 
-            sage: P = polytopes.icosahedron()                                           # needs sage.rings.number_field
-            sage: P.integrate(x^2*y^2*z^2)                              # optional - latte_int, needs sage.rings.number_field
+            sage: P = polytopes.icosahedron()                                           # needs sage.groups sage.rings.number_field
+            sage: P.integrate(x^2*y^2*z^2)                              # optional - latte_int, needs sage.groups sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: the base ring must be ZZ, QQ, or RDF
@@ -961,9 +956,7 @@ class Polyhedron_base7(Polyhedron_base6):
         - ``**kwds`` -- additional keyword arguments that are passed
           to the engine
 
-        OUTPUT:
-
-        The integral of the polynomial over the polytope.
+        OUTPUT: the integral of the polynomial over the polytope
 
         .. NOTE::
 

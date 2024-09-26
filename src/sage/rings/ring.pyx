@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Rings
 
@@ -8,7 +9,7 @@ specific base classes.
 .. WARNING::
 
     Those classes, except maybe for the lowest ones like
-    :class:`CommutativeRing` and :class:`CommutativeAlgebra`,
+    :class:`CommutativeRing` and :class:`Field`,
     are being progressively deprecated in favor of the corresponding
     categories. which are more flexible, in particular with respect to multiple
     inheritance.
@@ -17,17 +18,17 @@ The class inheritance hierarchy is:
 
 - :class:`Ring` (to be deprecated)
 
-  - :class:`Algebra` (to be deprecated)
+  - :class:`Algebra` (deprecated and essentially removed)
   - :class:`CommutativeRing`
 
-    - :class:`NoetherianRing` (deprecated)
-    - :class:`CommutativeAlgebra` (to be deprecated)
+    - :class:`NoetherianRing` (deprecated and essentially removed)
+    - :class:`CommutativeAlgebra` (deprecated and essentially removed)
     - :class:`IntegralDomain` (deprecated)
 
       - :class:`DedekindDomain` (deprecated and essentially removed)
-      - :class:`PrincipalIdealDomain` (deprecated)
+      - :class:`PrincipalIdealDomain` (deprecated and essentially removed)
 
-Subclasses of :class:`PrincipalIdealDomain` are
+Subclasses of :class:`CommutativeRing` are
 
 - :class:`Field`
 
@@ -35,9 +36,7 @@ Subclasses of :class:`PrincipalIdealDomain` are
 
 Some aspects of this structure may seem strange, but this is an unfortunate
 consequence of the fact that Cython classes do not support multiple
-inheritance. Hence, for instance, :class:`Field` cannot be a subclass of both
-:class:`NoetherianRing` and :class:`PrincipalIdealDomain`, although all fields
-are Noetherian PIDs.
+inheritance.
 
 (A distinct but equally awkward issue is that sometimes we may not know *in
 advance* whether or not a ring belongs in one of these classes; e.g. some
@@ -67,6 +66,37 @@ This is to test a deprecation::
     See https://github.com/sagemath/sage/issues/37234 for details.
     sage: F.category()
     Category of Dedekind domains
+
+    sage: from sage.rings.ring import CommutativeAlgebra
+    sage: class Nein(CommutativeAlgebra):
+    ....:     pass
+    sage: F = Nein(QQ)
+    ...:
+    DeprecationWarning: use the category CommutativeAlgebras
+    See https://github.com/sagemath/sage/issues/37999 for details.
+    sage: F.category()
+    Category of commutative algebras over Rational Field
+
+    sage: from sage.rings.ring import PrincipalIdealDomain
+    sage: class Non(PrincipalIdealDomain):
+    ....:     pass
+    sage: F = Non(QQ)
+    ...:
+    DeprecationWarning: use the category PrincipalIdealDomains
+    See https://github.com/sagemath/sage/issues/37719 for details.
+    sage: F.category()
+    Category of principal ideal domains
+
+    sage: from sage.rings.ring import Algebra
+    sage: class Nichts(Algebra):
+    ....:     pass
+    sage: F = Nichts(QQ)
+    ...:
+    DeprecationWarning: use the category Algebras
+    See https://github.com/sagemath/sage/issues/38502 for details.
+    sage: F.category()
+    Category of algebras over Rational Field
+
 """
 
 # ****************************************************************************
@@ -83,14 +113,16 @@ from sage.misc.superseded import deprecation
 
 from sage.structure.coerce cimport coercion_model
 from sage.structure.parent cimport Parent
-from sage.structure.category_object import check_default_category
-from sage.structure.sequence import Sequence
+from sage.structure.category_object cimport check_default_category
 from sage.misc.prandom import randint
 from sage.categories.rings import Rings
+from sage.categories.algebras import Algebras
+from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.dedekind_domains import DedekindDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.noetherian_rings import NoetherianRings
 
 _Rings = Rings()
 _CommutativeRings = CommutativeRings()
@@ -101,7 +133,7 @@ cdef class Ring(ParentWithGens):
 
     TESTS:
 
-    This is to test against the bug fixed in :trac:`9138`::
+    This is to test against the bug fixed in :issue:`9138`::
 
         sage: R.<x> = QQ[]
         sage: R.sum([x,x])
@@ -149,7 +181,7 @@ cdef class Ring(ParentWithGens):
         sage: TestSuite(ZZ['x','y']).run(skip='_test_elements')                         # needs sage.libs.singular
         sage: TestSuite(ZZ['x','y']['t']).run()
 
-    Test against another bug fixed in :trac:`9944`::
+    Test against another bug fixed in :issue:`9944`::
 
         sage: QQ['x'].category()
         Join of Category of euclidean domains and Category of commutative algebras over
@@ -216,7 +248,7 @@ cdef class Ring(ParentWithGens):
         # This is a low-level class. For performance, we trust that the category
         # is fine, if it is provided. If it isn't, we use the category of rings.
         if category is None:
-            category=_Rings
+            category = check_default_category(_Rings, category)
         Parent.__init__(self, base=base, names=names, normalize=normalize,
                         category=category)
 
@@ -237,7 +269,7 @@ cdef class Ring(ParentWithGens):
     def __len__(self):
         r"""
         Return the cardinality of this ring if it is finite, else raise
-        a ``NotImplementedError``.
+        a :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -319,36 +351,6 @@ cdef class Ring(ParentWithGens):
         # initialisation has finished.
         return self._category or _Rings
 
-    def ideal_monoid(self):
-        """
-        Return the monoid of ideals of this ring.
-
-        EXAMPLES::
-
-            sage: # needs sage.combinat sage.modules
-            sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)
-            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
-            sage: Q = F.quotient(I)
-            sage: Q.ideal_monoid()
-            Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z)
-             over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
-            sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')
-            sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
-            sage: Q = F.quo(I)
-            sage: Q.ideal_monoid()
-            Monoid of ideals of Quotient of Free Associative Unital Algebra
-             on 3 generators (x, y, z) over Integer Ring
-             by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
-
-        """
-        if self._ideal_monoid is not None:
-            return self._ideal_monoid
-        else:
-            from sage.rings.noncommutative_ideals import IdealMonoid_nc
-            M = IdealMonoid_nc(self)
-            self._ideal_monoid = M
-            return M
-
     def ideal(self, *args, **kwds):
         """
         Return the ideal defined by ``x``, i.e., generated by ``x``.
@@ -357,7 +359,7 @@ cdef class Ring(ParentWithGens):
 
         - ``*x`` -- list or tuple of generators (or several input arguments)
 
-        - ``coerce`` -- bool (default: ``True``); this must be a keyword
+        - ``coerce`` -- boolean (default: ``True``); this must be a keyword
           argument. Only set it to ``False`` if you are certain that each
           generator is already in the ring.
 
@@ -390,7 +392,7 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        Make sure that :trac:`11139` is fixed::
+        Make sure that :issue:`11139` is fixed::
 
             sage: R.<x> = QQ[]
             sage: R.ideal([])
@@ -407,7 +409,7 @@ cdef class Ring(ParentWithGens):
             coerce = True
 
         from sage.rings.ideal import Ideal_generic
-        from sage.structure.parent import is_Parent
+        from sage.structure.parent import Parent
         gens = args
         while isinstance(gens, (list, tuple)) and len(gens) == 1:
             first = gens[0]
@@ -426,8 +428,8 @@ cdef class Ring(ParentWithGens):
                 break
             elif isinstance(first, (list, tuple)):
                 gens = first
-            elif is_Parent(first) and self.has_coerce_map_from(first):
-                gens = first.gens() # we have a ring as argument
+            elif isinstance(first, Parent) and self.has_coerce_map_from(first):
+                gens = first.gens()  # we have a ring as argument
             else:
                 break
 
@@ -436,13 +438,14 @@ cdef class Ring(ParentWithGens):
 
         if coerce:
             gens = [self(g) for g in gens]
-        if isinstance(self, PrincipalIdealDomain):
+        if self in PrincipalIdealDomains():
             # Use GCD algorithm to obtain a principal ideal
             g = gens[0]
             if len(gens) == 1:
                 try:
-                    g = g.gcd(g) # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
-                except (AttributeError, NotImplementedError):
+                    # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
+                    g = g.gcd(g)
+                except (AttributeError, NotImplementedError, IndexError):
                     pass
             else:
                 for h in gens[1:]:
@@ -472,7 +475,7 @@ cdef class Ring(ParentWithGens):
             Ideal (x + y, y^3 + z) of Multivariate Polynomial Ring in x, y, z
              over Finite Field of size 7
 
-        The following was implemented in :trac:`7797`::
+        The following was implemented in :issue:`7797`::
 
             sage: # needs sage.combinat sage.modules
             sage: A = SteenrodAlgebra(2)
@@ -482,7 +485,6 @@ cdef class Ring(ParentWithGens):
             Right Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
             sage: A * [A.1 + A.2, A.1^2] * A
             Twosided Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
-
         """
         if isinstance(self, Ring):
             if self.is_commutative():
@@ -520,123 +522,6 @@ cdef class Ring(ParentWithGens):
                 return x.ideal(self,side='twosided')
             else:
                 raise TypeError("Don't know how to transform %s into an ideal of %s" % (self, x))
-
-    def _ideal_class_(self, n=0):
-        r"""
-        Return a callable object that can be used to create ideals in this
-        ring. For generic rings, this returns the factory function
-        :func:`sage.rings.ideal.Ideal`, which does its best to be clever about
-        what is required.
-
-        This class can depend on `n`, the number of generators of the ideal.
-        The default input of `n=0` indicates an unspecified number of generators,
-        in which case a class that works for any number of generators is returned.
-
-        EXAMPLES::
-
-            sage: ZZ._ideal_class_()
-            <class 'sage.rings.ideal.Ideal_pid'>
-            sage: RR._ideal_class_()
-            <class 'sage.rings.ideal.Ideal_pid'>
-            sage: R.<x,y> = GF(5)[]
-            sage: R._ideal_class_(1)
-            <class 'sage.rings.polynomial.multi_polynomial_ideal.MPolynomialIdeal'>
-            sage: S = R.quo(x^3 - y^2)
-            sage: S._ideal_class_(1)
-            <class 'sage.rings.quotient_ring.QuotientRingIdeal_principal'>
-            sage: S._ideal_class_(2)
-            <class 'sage.rings.quotient_ring.QuotientRingIdeal_generic'>
-            sage: T.<z> = S[]                                                           # needs sage.libs.singular
-            sage: T._ideal_class_(5)                                                    # needs sage.libs.singular
-            <class 'sage.rings.ideal.Ideal_generic'>
-            sage: T._ideal_class_(1)                                                    # needs sage.libs.singular
-            <class 'sage.rings.ideal.Ideal_principal'>
-
-        Since :trac:`7797`, non-commutative rings have ideals as well::
-
-            sage: A = SteenrodAlgebra(2)                                                # needs sage.combinat sage.modules
-            sage: A._ideal_class_()                                                     # needs sage.combinat sage.modules
-            <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
-
-        """
-        # One might need more than just n, but I can't think of an example.
-        from sage.rings.noncommutative_ideals import Ideal_nc
-        try:
-            if not self.is_commutative():
-                return Ideal_nc
-        except (NotImplementedError, AttributeError):
-            return Ideal_nc
-        from sage.rings.ideal import Ideal_generic, Ideal_principal
-        if n == 1:
-            return Ideal_principal
-        else:
-            return Ideal_generic
-
-    def principal_ideal(self, gen, coerce=True):
-        """
-        Return the principal ideal generated by gen.
-
-        EXAMPLES::
-
-            sage: R.<x,y> = ZZ[]
-            sage: R.principal_ideal(x+2*y)
-            Ideal (x + 2*y) of Multivariate Polynomial Ring in x, y over Integer Ring
-        """
-        C = self._ideal_class_(1)
-        if coerce:
-            gen = self(gen)
-        return C(self, [gen])
-
-    def unit_ideal(self):
-        """
-        Return the unit ideal of this ring.
-
-        EXAMPLES::
-
-            sage: Zp(7).unit_ideal()                                                    # needs sage.rings.padics
-            Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
-        """
-        if self._unit_ideal is None:
-            I = Ring.ideal(self, [self(1)], coerce=False)
-            self._unit_ideal = I
-            return I
-        return self._unit_ideal
-
-    def zero_ideal(self):
-        """
-        Return the zero ideal of this ring (cached).
-
-        EXAMPLES::
-
-            sage: ZZ.zero_ideal()
-            Principal ideal (0) of Integer Ring
-            sage: QQ.zero_ideal()
-            Principal ideal (0) of Rational Field
-            sage: QQ['x'].zero_ideal()
-            Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
-
-        The result is cached::
-
-            sage: ZZ.zero_ideal() is ZZ.zero_ideal()
-            True
-
-        TESTS:
-
-        Make sure that :trac:`13644` is fixed::
-
-            sage: # needs sage.rings.padics
-            sage: K = Qp(3)
-            sage: R.<a> = K[]
-            sage: L.<a> = K.extension(a^2-3)
-            sage: L.ideal(a)
-            Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
-
-        """
-        if self._zero_ideal is None:
-            I = Ring.ideal(self, [self.zero()], coerce=False)
-            self._zero_ideal = I
-            return I
-        return self._zero_ideal
 
     def zero(self):
         """
@@ -686,39 +571,21 @@ cdef class Ring(ParentWithGens):
             return x
         return self._one_element
 
-    def is_commutative(self):
-        """
-        Return ``True`` if this ring is commutative.
-
-        EXAMPLES::
-
-            sage: QQ.is_commutative()
-            True
-            sage: QQ['x,y,z'].is_commutative()
-            True
-            sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                             # needs sage.combinat sage.modules
-            sage: Q.is_commutative()                                                    # needs sage.combinat sage.modules
-            False
-        """
-        if self.is_zero():
-            return True
-        raise NotImplementedError
-
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return ``True`` if this ring is a field.
 
         INPUT:
 
-        - ``proof`` -- (default: ``True``) Determines what to do in unknown
-          cases
+        - ``proof`` -- boolean (default: ``True``); determines what to do in
+          unknown cases
 
         ALGORITHM:
 
         If the parameter ``proof`` is set to ``True``, the returned value is
         correct but the method might throw an error.  Otherwise, if it is set
-        to ``False``, the method returns True if it can establish that self is
-        a field and False otherwise.
+        to ``False``, the method returns ``True`` if it can establish that
+        ``self`` is a field and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -780,7 +647,7 @@ cdef class Ring(ParentWithGens):
         Return ``True`` if the canonical map from ``self`` to ``other`` is
         injective.
 
-        Raises a ``NotImplementedError`` if not known.
+        Raises a :exc:`NotImplementedError` if not known.
 
         EXAMPLES::
 
@@ -800,7 +667,7 @@ cdef class Ring(ParentWithGens):
             sage: QQ.is_subring(ZZ)
             False
 
-        Every ring is a subring of itself, :trac:`17287`::
+        Every ring is a subring of itself, :issue:`17287`::
 
             sage: QQbar.is_subring(QQbar)                                               # needs sage.rings.number_field
             True
@@ -845,99 +712,6 @@ cdef class Ring(ParentWithGens):
         """
         return False
 
-    def is_integral_domain(self, proof = True):
-        """
-        Return ``True`` if this ring is an integral domain.
-
-        INPUT:
-
-        - ``proof`` -- (default: ``True``) Determines what to do in unknown
-          cases
-
-        ALGORITHM:
-
-        If the parameter ``proof`` is set to ``True``, the returned value is
-        correct but the method might throw an error.  Otherwise, if it is set
-        to ``False``, the method returns ``True`` if it can establish that self
-        is an integral domain and ``False`` otherwise.
-
-        EXAMPLES::
-
-            sage: QQ.is_integral_domain()
-            True
-            sage: ZZ.is_integral_domain()
-            True
-            sage: ZZ['x,y,z'].is_integral_domain()
-            True
-            sage: Integers(8).is_integral_domain()
-            False
-            sage: Zp(7).is_integral_domain()                                            # needs sage.rings.padics
-            True
-            sage: Qp(7).is_integral_domain()                                            # needs sage.rings.padics
-            True
-            sage: R.<a,b> = QQ[]
-            sage: S.<x,y> = R.quo((b^3))                                                # needs sage.libs.singular
-            sage: S.is_integral_domain()                                                # needs sage.libs.singular
-            False
-
-        This illustrates the use of the ``proof`` parameter::
-
-            sage: R.<a,b> = ZZ[]
-            sage: S.<x,y> = R.quo((b^3))                                                # needs sage.libs.singular
-            sage: S.is_integral_domain(proof=True)                                      # needs sage.libs.singular
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-            sage: S.is_integral_domain(proof=False)                                     # needs sage.libs.singular
-            False
-
-        TESTS:
-
-        Make sure :trac:`10481` is fixed::
-
-            sage: x = polygen(ZZ, 'x')
-            sage: R.<a> = ZZ['x'].quo(x^2)                                              # needs sage.libs.pari
-            sage: R.fraction_field()                                                    # needs sage.libs.pari
-            Traceback (most recent call last):
-            ...
-            TypeError: self must be an integral domain.
-            sage: R.is_integral_domain()                                                # needs sage.libs.pari
-            False
-
-        Forward the proof flag to ``is_field``, see :trac:`22910`::
-
-            sage: # needs sage.libs.singular
-            sage: R1.<x> = GF(5)[]
-            sage: F1 = R1.quotient_ring(x^2 + x + 1)
-            sage: R2.<x> = F1[]
-            sage: F2 = R2.quotient_ring(x^2 + x + 1)
-            sage: F2.is_integral_domain(False)
-            False
-        """
-        if self.is_field(proof):
-            return True
-
-        if self.is_zero():
-            return False
-
-        if proof:
-            raise NotImplementedError
-        else:
-            return False
-
-    def is_noetherian(self):
-        """
-        Return ``True`` if this ring is Noetherian.
-
-        EXAMPLES::
-
-            sage: QQ.is_noetherian()
-            True
-            sage: ZZ.is_noetherian()
-            True
-        """
-        raise NotImplementedError
-
     def order(self):
         """
         The number of elements of ``self``.
@@ -956,19 +730,17 @@ cdef class Ring(ParentWithGens):
     def zeta(self, n=2, all=False):
         """
         Return a primitive ``n``-th root of unity in ``self`` if there
-        is one, or raise a ``ValueError`` otherwise.
+        is one, or raise a :exc:`ValueError` otherwise.
 
         INPUT:
 
         - ``n`` -- positive integer
 
-        - ``all`` -- bool (default: False) - whether to return
-          a list of all primitive `n`-th roots of unity. If True, raise a ``ValueError``
-          if ``self`` is not an integral domain.
+        - ``all`` -- boolean (default: ``False``); whether to return
+          a list of all primitive `n`-th roots of unity. If ``True``, raise a
+          :exc:`ValueError` if ``self`` is not an integral domain.
 
-        OUTPUT:
-
-        Element of ``self`` of finite order
+        OUTPUT: element of ``self`` of finite order
 
         EXAMPLES::
 
@@ -1074,9 +846,9 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        The following example returns a ``NotImplementedError`` since the
+        The following example returns a :exc:`NotImplementedError` since the
         generic ring class ``__call__`` function returns a
-        ``NotImplementedError``. Note that
+        :exc:`NotImplementedError`. Note that
         ``sage.rings.ring.Ring.random_element`` performs a call in the generic
         ring class by a random integer::
 
@@ -1088,25 +860,6 @@ cdef class Ring(ParentWithGens):
             NotImplementedError: cannot construct elements of <sage.rings.ring.Ring object at ...>
         """
         return self(randint(-bound,bound))
-
-    def ideal_monoid(self):
-        """
-        Return the monoid of ideals of this ring.
-
-        EXAMPLES::
-
-            sage: ZZ.ideal_monoid()
-            Monoid of ideals of Integer Ring
-            sage: R.<x>=QQ[]; R.ideal_monoid()
-            Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
-        """
-        if self._ideal_monoid is not None:
-            return self._ideal_monoid
-        else:
-            from sage.rings.ideal_monoid import IdealMonoid
-            M = IdealMonoid(self)
-            self._ideal_monoid = M
-            return M
 
     @cached_method
     def epsilon(self):
@@ -1166,6 +919,8 @@ cdef class CommutativeRing(Ring):
     """
     Generic commutative ring.
     """
+    _default_category = _CommutativeRings
+
     def __init__(self, base_ring, names=None, normalize=True, category=None):
         """
         Initialize ``self``.
@@ -1183,8 +938,7 @@ cdef class CommutativeRing(Ring):
         # This is a low-level class. For performance, we trust that
         # the category is fine, if it is provided. If it isn't, we use
         # the category of commutative rings.
-        if category is None:
-            category=_CommutativeRings
+        category = check_default_category(self._default_category, category)
         Ring.__init__(self, base_ring, names=names, normalize=normalize,
                       category=category)
 
@@ -1329,32 +1083,14 @@ cdef class CommutativeRing(Ring):
         """
         raise NotImplementedError
 
-    def ideal_monoid(self):
-        """
-        Return the monoid of ideals of this ring.
-
-        EXAMPLES::
-
-            sage: ZZ.ideal_monoid()
-            Monoid of ideals of Integer Ring
-            sage: R.<x>=QQ[]; R.ideal_monoid()
-            Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
-        """
-        if self._ideal_monoid is not None:
-            return self._ideal_monoid
-        else:
-            from sage.rings.ideal_monoid import IdealMonoid
-            M = IdealMonoid(self)
-            self._ideal_monoid = M
-            return M
-
     def extension(self, poly, name=None, names=None, **kwds):
         """
-        Algebraically extends self by taking the quotient ``self[x] / (f(x))``.
+        Algebraically extend ``self`` by taking the quotient
+        ``self[x] / (f(x))``.
 
         INPUT:
 
-        - ``poly`` -- A polynomial whose coefficients are coercible into
+        - ``poly`` -- a polynomial whose coefficients are coercible into
           ``self``
 
         - ``name`` -- (optional) name for the root of `f`
@@ -1404,204 +1140,6 @@ cdef class CommutativeRing(Ring):
         I = R.ideal(R(poly.list()))
         return R.quotient(I, name)
 
-    def frobenius_endomorphism(self, n=1):
-        """
-        INPUT:
-
-        - ``n`` -- a nonnegative integer (default: 1)
-
-        OUTPUT:
-
-        The `n`-th power of the absolute arithmetic Frobenius
-        endomorphism on this finite field.
-
-        EXAMPLES::
-
-            sage: K.<u> = PowerSeriesRing(GF(5))
-            sage: Frob = K.frobenius_endomorphism(); Frob
-            Frobenius endomorphism x |--> x^5 of Power Series Ring in u
-             over Finite Field of size 5
-            sage: Frob(u)
-            u^5
-
-        We can specify a power::
-
-            sage: f = K.frobenius_endomorphism(2); f
-            Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
-             over Finite Field of size 5
-            sage: f(1+u)
-            1 + u^25
-        """
-        from sage.rings.morphism import FrobeniusEndomorphism_generic
-        return FrobeniusEndomorphism_generic(self, n)
-
-    def derivation_module(self, codomain=None, twist=None):
-        r"""
-        Returns the module of derivations over this ring.
-
-        INPUT:
-
-        - ``codomain`` -- an algebra over this ring or a ring homomorphism
-          whose domain is this ring or ``None`` (default: ``None``); if it
-          is a morphism, the codomain of derivations will be the codomain
-          of the morphism viewed as an algebra over ``self`` through the
-          given morphism; if ``None``, the codomain will be this ring
-
-        - ``twist`` -- a morphism from this ring to ``codomain``
-          or ``None`` (default: ``None``); if ``None``, the coercion
-          map from this ring to ``codomain`` will be used
-
-        .. NOTE::
-
-            A twisted derivation with respect to `\theta` (or a
-            `\theta`-derivation for short) is an additive map `d`
-            satisfying the following axiom for all `x, y` in the domain:
-
-            .. MATH::
-
-                d(xy) = \theta(x) d(y) + d(x) y.
-
-        EXAMPLES::
-
-            sage: R.<x,y,z> = QQ[]
-            sage: M = R.derivation_module(); M                                          # needs sage.modules
-            Module of derivations over
-             Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: M.gens()                                                              # needs sage.modules
-            (d/dx, d/dy, d/dz)
-
-        We can specify a different codomain::
-
-            sage: K = R.fraction_field()
-            sage: M = R.derivation_module(K); M                                         # needs sage.modules
-            Module of derivations
-             from Multivariate Polynomial Ring in x, y, z over Rational Field
-               to Fraction Field of
-                  Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: M.gen() / x                                                           # needs sage.modules
-            1/x*d/dx
-
-        Here is an example with a non-canonical defining morphism::
-
-            sage: ev = R.hom([QQ(0), QQ(1), QQ(2)])
-            sage: ev
-            Ring morphism:
-              From: Multivariate Polynomial Ring in x, y, z over Rational Field
-              To:   Rational Field
-              Defn: x |--> 0
-                    y |--> 1
-                    z |--> 2
-            sage: M = R.derivation_module(ev)                                           # needs sage.modules
-            sage: M                                                                     # needs sage.modules
-            Module of derivations
-             from Multivariate Polynomial Ring in x, y, z over Rational Field
-               to Rational Field
-
-        Elements in `M` acts as derivations at `(0,1,2)`::
-
-            sage: # needs sage.modules
-            sage: Dx = M.gen(0); Dx
-            d/dx
-            sage: Dy = M.gen(1); Dy
-            d/dy
-            sage: Dz = M.gen(2); Dz
-            d/dz
-            sage: f = x^2 + y^2 + z^2
-            sage: Dx(f)  # = 2*x evaluated at (0,1,2)
-            0
-            sage: Dy(f)  # = 2*y evaluated at (0,1,2)
-            2
-            sage: Dz(f)  # = 2*z evaluated at (0,1,2)
-            4
-
-        An example with a twisting homomorphism::
-
-            sage: theta = R.hom([x^2, y^2, z^2])
-            sage: M = R.derivation_module(twist=theta); M                               # needs sage.modules
-            Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
-             over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
-
-        .. SEEALSO::
-
-            :meth:`derivation`
-
-        """
-        from sage.rings.derivation import RingDerivationModule
-        if codomain is None:
-            codomain = self
-        return RingDerivationModule(self, codomain, twist)
-
-    def derivation(self, arg=None, twist=None):
-        r"""
-        Return the twisted or untwisted derivation over this ring
-        specified by ``arg``.
-
-        .. NOTE::
-
-            A twisted derivation with respect to `\theta` (or a
-            `\theta`-derivation for short) is an additive map `d`
-            satisfying the following axiom for all `x, y` in the domain:
-
-            .. MATH::
-
-                d(xy) = \theta(x) d(y) + d(x) y.
-
-        INPUT:
-
-        - ``arg`` -- (optional) a generator or a list of coefficients
-          that defines the derivation
-
-        - ``twist`` -- (optional) the twisting homomorphism
-
-        EXAMPLES::
-
-            sage: R.<x,y,z> = QQ[]
-            sage: R.derivation()                                                        # needs sage.modules
-            d/dx
-
-        In that case, ``arg`` could be a generator::
-
-            sage: R.derivation(y)                                                       # needs sage.modules
-            d/dy
-
-        or a list of coefficients::
-
-            sage: R.derivation([1,2,3])                                                 # needs sage.modules
-            d/dx + 2*d/dy + 3*d/dz
-
-        It is not possible to define derivations with respect to a
-        polynomial which is not a variable::
-
-            sage: R.derivation(x^2)                                                     # needs sage.modules
-            Traceback (most recent call last):
-            ...
-            ValueError: unable to create the derivation
-
-        Here is an example with twisted derivations::
-
-            sage: R.<x,y,z> = QQ[]
-            sage: theta = R.hom([x^2, y^2, z^2])
-            sage: f = R.derivation(twist=theta); f                                      # needs sage.modules
-            0
-            sage: f.parent()                                                            # needs sage.modules
-            Module of twisted derivations over Multivariate Polynomial Ring in x, y, z
-             over Rational Field (twisting morphism: x |--> x^2, y |--> y^2, z |--> z^2)
-
-        Specifying a scalar, the returned twisted derivation is the
-        corresponding multiple of `\theta - id`::
-
-            sage: R.derivation(1, twist=theta)                                          # needs sage.modules
-            [x |--> x^2, y |--> y^2, z |--> z^2] - id
-            sage: R.derivation(x, twist=theta)                                          # needs sage.modules
-            x*([x |--> x^2, y |--> y^2, z |--> z^2] - id)
-
-        """
-        if isinstance(arg, (list, tuple)):
-            codomain = Sequence([self(0)] + list(arg)).universe()
-        else:
-            codomain = self
-        return self.derivation_module(codomain, twist=twist)(arg)
-
 
 cdef class IntegralDomain(CommutativeRing):
     """
@@ -1619,14 +1157,12 @@ cdef class IntegralDomain(CommutativeRing):
 
         INPUT:
 
-         - ``category`` (default: ``None``) -- a category, or ``None``
+         - ``category`` -- (default: ``None``) a category, or ``None``
 
         This method is used by all the abstract subclasses of
-        :class:`IntegralDomain`, like :class:`NoetherianRing`,
-        :class:`PrincipalIdealDomain`,
-        :class:`Field`, ... in order to
+        :class:`IntegralDomain`, like :class:`Field`, ... in order to
         avoid cascade calls Field.__init__ ->
-        PrincipalIdealDomain.__init__ -> IntegralDomain.__init__ ->
+        IntegralDomain.__init__ ->
         ...
 
         EXAMPLES::
@@ -1635,18 +1171,9 @@ cdef class IntegralDomain(CommutativeRing):
             sage: F.category()
             Category of integral domains
 
-            sage: F = PrincipalIdealDomain(QQ)
-            sage: F.category()
-            Category of principal ideal domains
-
             sage: F = Field(QQ)
             sage: F.category()
             Category of fields
-
-        If a category is specified, then the category is set to the
-        join of that category with the default category::
-
-            sage: F = PrincipalIdealDomain(QQ, category=EnumeratedSets())
 
         The default value for the category is specified by the class
         attribute ``default_category``::
@@ -1654,36 +1181,11 @@ cdef class IntegralDomain(CommutativeRing):
             sage: IntegralDomain._default_category
             Category of integral domains
 
-            sage: PrincipalIdealDomain._default_category
-            Category of principal ideal domains
-
             sage: Field._default_category
             Category of fields
-
         """
-        category = check_default_category(self._default_category, category)
         CommutativeRing.__init__(self, base_ring, names=names, normalize=normalize,
                                  category=category)
-
-    def is_integral_domain(self, proof = True):
-        """
-        Return ``True``, since this ring is an integral domain.
-
-        (This is a naive implementation for objects with type
-        ``IntegralDomain``)
-
-        EXAMPLES::
-
-            sage: ZZ.is_integral_domain()
-            True
-            sage: QQ.is_integral_domain()
-            True
-            sage: ZZ['x'].is_integral_domain()
-            True
-            sage: R = ZZ.quotient(ZZ.ideal(10)); R.is_integral_domain()
-            False
-        """
-        return True
 
     def is_integrally_closed(self):
         r"""
@@ -1691,7 +1193,7 @@ cdef class IntegralDomain(CommutativeRing):
         fractions; otherwise return ``False``.
 
         When no algorithm is implemented for this, then this
-        function raises a ``NotImplementedError``.
+        function raises a :exc:`NotImplementedError`.
 
         Note that ``is_integrally_closed`` has a naive implementation
         in fields. For every field `F`, `F` is its own field of fractions,
@@ -1716,7 +1218,7 @@ cdef class IntegralDomain(CommutativeRing):
         """
         raise NotImplementedError
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         r"""
         Return ``True`` if this ring is a field.
 
@@ -1741,35 +1243,14 @@ cdef class IntegralDomain(CommutativeRing):
             return False
 
 cdef class NoetherianRing(CommutativeRing):
-    """
-    Generic Noetherian ring class.
+    _default_category = NoetherianRings()
 
-    A Noetherian ring is a commutative ring in which every ideal is
-    finitely generated.
-
-    This class is deprecated, and not actually used anywhere in the
-    Sage code base.  If you think you need it, please create a
-    category :class:`NoetherianRings`, move the code of this class
-    there, and use it instead.
-    """
-    def is_noetherian(self):
-        """
-        Return ``True`` since this ring is Noetherian.
-
-        EXAMPLES::
-
-            sage: ZZ.is_noetherian()
-            True
-            sage: QQ.is_noetherian()
-            True
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: R.is_noetherian()
-            True
-        """
-        return True
+    def __init__(self, *args, **kwds):
+        deprecation(37234, "use the category NoetherianRings")
+        super().__init__(*args, **kwds)
 
 
-cdef class DedekindDomain(IntegralDomain):
+cdef class DedekindDomain(CommutativeRing):
     _default_category = DedekindDomains()
 
     def __init__(self, *args, **kwds):
@@ -1777,154 +1258,12 @@ cdef class DedekindDomain(IntegralDomain):
         super().__init__(*args, **kwds)
 
 
-cdef class PrincipalIdealDomain(IntegralDomain):
-    """
-    Generic principal ideal domain.
-
-    This class is deprecated. Please use the
-    :class:`~sage.categories.principal_ideal_domains.PrincipalIdealDomains`
-    category instead.
-    """
+cdef class PrincipalIdealDomain(CommutativeRing):
     _default_category = PrincipalIdealDomains()
 
-    def is_noetherian(self):
-        """
-        Every principal ideal domain is noetherian, so we return ``True``.
-
-        EXAMPLES::
-
-            sage: Zp(5).is_noetherian()                                                 # needs sage.rings.padics
-            True
-        """
-        return True
-
-    def class_group(self):
-        """
-        Return the trivial group, since the class group of a PID is trivial.
-
-        EXAMPLES::
-
-            sage: QQ.class_group()                                                      # needs sage.groups
-            Trivial Abelian group
-        """
-        from sage.groups.abelian_gps.abelian_group import AbelianGroup
-        return AbelianGroup([])
-
-    def gcd(self, x, y, coerce=True):
-        r"""
-        Return the greatest common divisor of ``x`` and ``y``, as elements
-        of ``self``.
-
-        EXAMPLES:
-
-        The integers are a principal ideal domain and hence a GCD domain::
-
-            sage: ZZ.gcd(42, 48)
-            6
-            sage: 42.factor(); 48.factor()
-            2 * 3 * 7
-            2^4 * 3
-            sage: ZZ.gcd(2^4*7^2*11, 2^3*11*13)
-            88
-            sage: 88.factor()
-            2^3 * 11
-
-        In a field, any nonzero element is a GCD of any nonempty set
-        of nonzero elements. In previous versions, Sage used to return
-        1 in the case of the rational field. However, since :trac:`10771`,
-        the rational field is considered as the
-        *fraction field* of the integer ring. For the fraction field
-        of an integral domain that provides both GCD and LCM, it is
-        possible to pick a GCD that is compatible with the GCD of the
-        base ring::
-
-            sage: QQ.gcd(ZZ(42), ZZ(48)); type(QQ.gcd(ZZ(42), ZZ(48)))
-            6
-            <class 'sage.rings.rational.Rational'>
-            sage: QQ.gcd(1/2, 1/3)
-            1/6
-
-        Polynomial rings over fields are GCD domains as well. Here is a simple
-        example over the ring of polynomials over the rationals as well as
-        over an extension ring. Note that ``gcd`` requires x and y to be
-        coercible::
-
-            sage: # needs sage.rings.number_field
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = NumberField(x^2 - 2, 'a')
-            sage: f = (x - a)*(x + a); g = (x - a)*(x^2 - 2)
-            sage: print(f); print(g)
-            x^2 - 2
-            x^3 - a*x^2 - 2*x + 2*a
-            sage: f in R
-            True
-            sage: g in R
-            False
-            sage: R.gcd(f, g)
-            Traceback (most recent call last):
-            ...
-            TypeError: Unable to coerce 2*a to a rational
-            sage: R.base_extend(S).gcd(f,g)
-            x^2 - 2
-            sage: R.base_extend(S).gcd(f, (x - a)*(x^2 - 3))
-            x - a
-        """
-        if coerce:
-            x = self(x)
-            y = self(y)
-        return x.gcd(y)
-
-    def content(self, x, y, coerce=True):
-        r"""
-        Return the content of `x` and `y`, i.e. the unique element `c` of
-        ``self`` such that `x/c` and `y/c` are coprime and integral.
-
-        EXAMPLES::
-
-            sage: QQ.content(ZZ(42), ZZ(48)); type(QQ.content(ZZ(42), ZZ(48)))
-            6
-            <class 'sage.rings.rational.Rational'>
-            sage: QQ.content(1/2, 1/3)
-            1/6
-            sage: factor(1/2); factor(1/3); factor(1/6)
-            2^-1
-            3^-1
-            2^-1 * 3^-1
-            sage: a = (2*3)/(7*11); b = (13*17)/(19*23)
-            sage: factor(a); factor(b); factor(QQ.content(a,b))
-            2 * 3 * 7^-1 * 11^-1
-            13 * 17 * 19^-1 * 23^-1
-            7^-1 * 11^-1 * 19^-1 * 23^-1
-
-        Note the changes to the second entry::
-
-            sage: c = (2*3)/(7*11); d = (13*17)/(7*19*23)
-            sage: factor(c); factor(d); factor(QQ.content(c,d))
-            2 * 3 * 7^-1 * 11^-1
-            7^-1 * 13 * 17 * 19^-1 * 23^-1
-            7^-1 * 11^-1 * 19^-1 * 23^-1
-            sage: e = (2*3)/(7*11); f = (13*17)/(7^3*19*23)
-            sage: factor(e); factor(f); factor(QQ.content(e,f))
-            2 * 3 * 7^-1 * 11^-1
-            7^-3 * 13 * 17 * 19^-1 * 23^-1
-            7^-3 * 11^-1 * 19^-1 * 23^-1
-        """
-        if coerce:
-            x = self(x)
-            y = self(y)
-        return x.content(y)
-
-    def _ideal_class_(self, n=0):
-        """
-        Ideals in PIDs have their own special class.
-
-        EXAMPLES::
-
-            sage: ZZ._ideal_class_()
-            <class 'sage.rings.ideal.Ideal_pid'>
-        """
-        from sage.rings.ideal import Ideal_pid
-        return Ideal_pid
+    def __init__(self, *args, **kwds):
+        deprecation(37719, "use the category PrincipalIdealDomains")
+        super().__init__(*args, **kwds)
 
 
 cpdef bint _is_Field(x) except -2:
@@ -1963,9 +1302,14 @@ from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.fields import Fields
 _Fields = Fields()
 
-cdef class Field(PrincipalIdealDomain):
+cdef class Field(CommutativeRing):
     """
     Generic field
+
+    TESTS::
+
+        sage: QQ.is_noetherian()
+        True
     """
     _default_category = _Fields
 
@@ -2085,17 +1429,6 @@ cdef class Field(PrincipalIdealDomain):
         """
         return True
 
-    def is_noetherian(self):
-        """
-        Return ``True`` since fields are Noetherian rings.
-
-        EXAMPLES::
-
-            sage: QQ.is_noetherian()
-            True
-        """
-        return True
-
     def krull_dimension(self):
         """
         Return the Krull dimension of this field, which is 0.
@@ -2147,156 +1480,18 @@ cdef class Field(PrincipalIdealDomain):
 
 
 cdef class Algebra(Ring):
-    """
-    Generic algebra
-    """
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        """
-        Initialize ``self``.
+    def __init__(self, base_ring, *args, **kwds):
+        if 'category' not in kwds:
+            kwds['category'] = Algebras(base_ring)
+        deprecation(38502, "use the category Algebras")
+        super().__init__(base_ring, *args, **kwds)
 
-        EXAMPLES::
-
-            sage: A = Algebra(ZZ); A                                                    # needs sage.modules
-            <sage.rings.ring.Algebra object at ...>
-        """
-        # This is a low-level class. For performance, we trust that the category
-        # is fine, if it is provided. If it isn't, we use the category of Algebras(base_ring).
-        if category is None:
-            category = Algebras(base_ring)
-        Ring.__init__(self,base_ring, names=names, normalize=normalize,
-                      category=category)
-
-    def characteristic(self):
-        r"""
-        Return the characteristic of this algebra, which is the same
-        as the characteristic of its base ring.
-
-        See objects with the ``base_ring`` attribute for additional examples.
-        Here are some examples that explicitly use the :class:`Algebra` class.
-
-        EXAMPLES::
-
-            sage: # needs sage.modules
-            sage: A = Algebra(ZZ); A
-            <sage.rings.ring.Algebra object at ...>
-            sage: A.characteristic()
-            0
-            sage: A = Algebra(GF(7^3, 'a'))                                             # needs sage.rings.finite_rings
-            sage: A.characteristic()                                                    # needs sage.rings.finite_rings
-            7
-        """
-        return self.base_ring().characteristic()
-
-    def has_standard_involution(self):
-        r"""
-        Return ``True`` if the algebra has a standard involution and ``False`` otherwise.
-        This algorithm follows Algorithm 2.10 from John Voight's *Identifying the Matrix Ring*.
-        Currently the only type of algebra this will work for is a quaternion algebra.
-        Though this function seems redundant, once algebras have more functionality, in particular
-        have a method to construct a basis, this algorithm will have more general purpose.
-
-        EXAMPLES::
-
-            sage: # needs sage.combinat sage.modules
-            sage: B = QuaternionAlgebra(2)
-            sage: B.has_standard_involution()
-            True
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<u> = NumberField(x**2 - 2)                                         # needs sage.rings.number_field
-            sage: A = QuaternionAlgebra(K, -2, 5)                                       # needs sage.rings.number_field
-            sage: A.has_standard_involution()                                           # needs sage.rings.number_field
-            True
-            sage: L.<a,b> = FreeAlgebra(QQ, 2)
-            sage: L.has_standard_involution()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: has_standard_involution is not implemented for this algebra
-            """
-        field = self.base_ring()
-        try:
-            basis = self.basis()
-        except AttributeError:
-            raise AttributeError("Basis is not yet implemented for this algebra.")
-        try:
-            # TODO: The following code is specific to the quaternion algebra
-            #   and should belong there
-            #step 1
-            for i in range(1,4):
-                ei = basis[i]
-                a = ei**2
-                coef = a.coefficient_tuple()
-                ti = coef[i]
-                ni = a - ti*ei
-                if ni not in field:
-                    return False
-            #step 2
-            for i in range(1,4):
-                for j in range(2,4):
-                    ei = basis[i]
-                    ej = basis[j]
-                    a = ei**2
-                    coef = a.coefficient_tuple()
-                    ti = coef[i]
-                    b = ej**2
-                    coef = b.coefficient_tuple()
-                    tj = coef[j]
-                    nij = (ei + ej)**2 - (ti + tj)*(ei + ej)
-                    if nij not in field:
-                        return False
-        except AttributeError:
-            raise NotImplementedError("has_standard_involution is not implemented for this algebra")
-        return True
 
 cdef class CommutativeAlgebra(CommutativeRing):
-    """
-    Generic commutative algebra
-    """
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        r"""
-        Standard init function. This just checks that the base is a commutative
-        ring and then passes the buck.
-
-        EXAMPLES::
-
-            sage: sage.rings.ring.CommutativeAlgebra(QQ)
-            <sage.rings.ring.CommutativeAlgebra object at ...>
-
-            sage: sage.rings.ring.CommutativeAlgebra(QuaternionAlgebra(QQ, -1, -1))     # needs sage.combinat sage.modules
-            Traceback (most recent call last):
-            ...
-            TypeError: base ring must be a commutative ring
-        """
-        # TODO: use the idiom base_ring in CommutativeRings()
-        try:
-            if not base_ring.is_commutative():
-                raise TypeError("base ring must be a commutative ring")
-        except (AttributeError, NotImplementedError):
-            raise TypeError("base ring must be a commutative ring")
-        # This is a low-level class. For performance, we trust that
-        # the category is fine, if it is provided. If it isn't, we use
-        # the category of commutative algebras.
-        if category is None:
-            category = CommutativeAlgebras(base_ring)
-        CommutativeRing.__init__(self, base_ring, names=names, normalize=normalize, category=category)
-
-    def is_commutative(self):
-        """
-        Return ``True`` since this algebra is commutative.
-
-        EXAMPLES:
-
-        Any commutative ring is a commutative algebra over itself::
-
-            sage: A = sage.rings.ring.CommutativeAlgebra
-            sage: A(ZZ).is_commutative()
-            True
-            sage: A(QQ).is_commutative()
-            True
-
-        Trying to create a commutative algebra over a non-commutative ring
-        will result in a ``TypeError``.
-        """
-        return True
+    def __init__(self, base_ring, *args, **kwds):
+        self._default_category = CommutativeAlgebras(base_ring)
+        deprecation(37999, "use the category CommutativeAlgebras")
+        super().__init__(base_ring, *args, **kwds)
 
 
 def is_Ring(x):
@@ -2307,9 +1502,16 @@ def is_Ring(x):
 
         sage: from sage.rings.ring import is_Ring
         sage: is_Ring(ZZ)
+        doctest:warning...
+        DeprecationWarning: The function is_Ring is deprecated; use '... in Rings()' instead
+        See https://github.com/sagemath/sage/issues/38288 for details.
         True
         sage: MS = MatrixSpace(QQ, 2)                                                   # needs sage.modules
         sage: is_Ring(MS)                                                               # needs sage.modules
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38288,
+                       "The function is_Ring is deprecated; "
+                       "use '... in Rings()' instead")
     return x in _Rings

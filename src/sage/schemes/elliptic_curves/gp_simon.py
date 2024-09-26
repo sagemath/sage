@@ -27,6 +27,8 @@ from sage.rings.rational_field import QQ
 
 
 gp = None
+
+
 def init():
     """
     Function to initialize the gp process
@@ -76,7 +78,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         sage: E.simon_two_descent(lim1=2, limtriv=3)
         (1, 1, ...)
 
-    Check that :trac:`16022` is fixed::
+    Check that :issue:`16022` is fixed::
 
         sage: # needs sage.rings.number_field
         sage: K.<y> = NumberField(x^4 + x^2 - 7)
@@ -84,7 +86,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         sage: E.simon_two_descent(lim1=2, limtriv=3)            # long time (about 3 s)
         (1, 1, ...)
 
-    An example that checks that :trac:`9322` is fixed (it should take less than a second to run)::
+    An example that checks that :issue:`9322` is fixed (it should take less than a second to run)::
 
         sage: # needs sage.rings.number_field
         sage: K.<w> = NumberField(x^2 - x - 232)

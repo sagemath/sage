@@ -4,160 +4,235 @@ on:
   pull_request:
   merge_group:
   push:
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
     branches:
-      - master
       - develop
   workflow_dispatch:
     # Allow to run manually
+    inputs:
+      platform:
+        description: 'Platform'
+        required: true
+        default: 'ubuntu-jammy-standard'
+      docker_tag:
+        description: 'Docker tag'
+        required: true
+        default: 'dev'
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # Same as in build.yml
+  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-incremental"
+  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-with-targets:ci"
+  FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
+  FROM_DOCKER_TARGET:     "with-targets"
+  FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
+  EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
+
 jobs:
-  get_ci_fixes:
+  build-doc:
     runs-on: ubuntu-latest
+    services:
+      # https://docs.docker.com/build/ci/github-actions/local-registry/
+      registry:
+        image: registry:2
+        ports:
+          - 5000:5000
     steps:
+      - name: Maximize build disk space
+        uses: easimon/maximize-build-space@v10
+        with:
+          # need space in /var for Docker images
+          root-reserve-mb:      30000
+          remove-dotnet:        true
+          remove-android:       true
+          remove-haskell:       true
+          remove-codeql:        true
+          remove-docker-images: true
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v4
+      - name: Install test prerequisites
+        # From docker.yml
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
       - name: Merge CI fixes from sagemath/sage
         run: |
-          .ci/merge-fixes.sh
+          mkdir -p upstream
+          .ci/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
-      - name: Store CI fixes in upstream artifact
+
+      # Building
+
+      - name: Generate Dockerfile
+        # From docker.yml
         run: |
-          mkdir -p upstream
-          if git format-patch --stdout test_base > ci_fixes.patch; then
-            cp ci_fixes.patch upstream/
-          fi
-      - uses: actions/upload-artifact@v3
+          tox -e ${{ env.TOX_ENV }}
+          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+        env:
+          # Only generate the Dockerfile, do not run 'docker build' here
+          DOCKER_TARGETS: ""
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
         with:
-          path: upstream
-          name: upstream
+          driver-opts: network=host
 
-  build-docs:
-    runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets:dev
-    needs: [get_ci_fixes]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Build Docker image
+        id: image
+        uses: docker/build-push-action@v6
+        with:
+          # push and load may not be set together at the moment
+          push:       true
+          load:       false
+          context:    .
+          tags:       ${{ env.BUILD_IMAGE }}
+          target:     with-targets
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+          build-args: |
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
+            TARGETS_PRE=build/make/Makefile
+            TARGETS=ci-build-with-fallback
 
-      - name: Update system packages
+      - name: Start container
+        id: container
+        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+        if: (success() || failure())
         run: |
-          apt-get update && apt-get install -y git zip
+          docker run --name BUILD -dit \
+                     --mount type=bind,src=$(pwd),dst=$(pwd) \
+                     --workdir $(pwd) \
+                     ${{ env.BUILD_IMAGE }} /bin/sh
 
-      - name: Add prebuilt tree as a worktree
+      #
+      # On PRs and pushes to develop
+      #
+
+      - name: Store old doc
         id: worktree
+        if: (success() || failure()) && steps.container.outcome == 'success' && !startsWith(github.ref, 'refs/tags/')
         run: |
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
-          git config --global user.name "Build & Test workflow"
-          # mathjax path in old doc
-          mathjax_path_from=$(SAGE_USE_CDNS=no /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
-          .ci/retrofit-worktree.sh worktree-image /sage
-          # mathjax path in new doc
-          mathjax_path_to=$(SAGE_USE_CDNS=yes /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
-          new_version=$(cat src/VERSION.txt)
-          # Wipe out chronic diffs between old doc and new doc
-          (cd /sage/local/share/doc/sage/html && \
-           find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
-                                                -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
-                                                -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d')
-          # Create git repo from old doc
-          DOC_DIR=/sage/local/share/doc/sage/html
-          (cd $DOC_DIR && git init && \
-           (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
-           (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
-           git add -A && git commit --quiet -m "old")
-
-      - name: Download upstream artifact
-        uses: actions/download-artifact@v3
-        with:
-          path: upstream
-          name: upstream
-
-      - name: Apply CI fixes from sagemath/sage
-        # After applying the fixes, make sure all changes are marked as uncommitted changes.
-        run: |
-          if [ -r upstream/ci_fixes.patch ]; then
-            (cd worktree-image && git commit -q -m "current changes" --allow-empty -a && git am; git reset --quiet old; git add -N .) < upstream/ci_fixes.patch
+          git config --global user.name "Build documentation workflow"
+          mkdir -p doc
+          # Check if we are on PR
+          PR_NUMBER=""
+          if [[ -n "$GITHUB_REF" ]]; then
+            if [[ "$GITHUB_REF" =~ refs/pull/([0-9]+)/merge ]]; then
+              PR_NUMBER="${BASH_REMATCH[1]}"
+            fi
+          fi
+          # If so, then prepare to create CHANGES.html
+          if [[ -n "$PR_NUMBER" ]]; then
+            # mathjax path in old doc (regex)
+            mathjax_path_from="[-./A-Za-z_]*/tex-chtml[.]js?v=[0-9a-f]*"
+            # mathjax path in new doc
+            mathjax_path_to=$(docker exec -e SAGE_USE_CDNS=yes BUILD /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
+            new_version=$(docker exec BUILD cat src/VERSION.txt)
+            docker cp BUILD:/sage/local/share/doc/sage/html doc/
+            # Wipe out chronic diffs between old doc and new doc
+            (cd doc && \
+             find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
+                                                  -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/' \
+                                                  -e 's;'"$mathjax_path_from"';'"$mathjax_path_to"';' \
+                                                  -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d' \
+                                                  -e 's;#L[0-9]*";";' \
+             && true)
+            # Create git repo from old doc
+            (cd doc && \
+             git init && \
+             (echo "*.svg binary"; echo "*.pdf binary") >> .gitattributes && \
+             (echo ".buildinfo"; echo '*.inv'; echo '.git*'; echo '*.svg'; echo '*.pdf'; echo '*.png'; echo 'searchindex.js') > .gitignore; \
+             git add -A && git commit --quiet -m 'old')
           fi
 
-      - name: Incremental build
-        id: incremental
-        run: |
-          # Now re-bootstrap and build. The build is incremental because we were careful with the timestamps.
-          ./bootstrap && make sagemath_doc_html-build-deps
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
-
-      - name: Build (fallback to non-incremental)
-        id: build
-        if: (success() || failure()) && steps.worktree.outcome == 'success' && steps.incremental.outcome != 'success'
-        run: |
-          set -ex
-          make sagelib-clean && git clean -fx src/sage && ./config.status && make sagemath_doc_html-build-deps
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
-
-      - name: Build docs
+      - name: Build doc
         id: docbuild
-        if: (success() || failure()) && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: (success() || failure()) && steps.worktree.outcome == 'success' && !startsWith(github.ref, 'refs/tags/')
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
-          set -ex
-          DOC_DIR=/sage/local/share/doc/sage/html
-          mv $DOC_DIR/.git /sage/.git-doc
+          export GITHUB_REF=${{ github.ref }}
+          export PR_SHA=${{ github.event.pull_request.head.sha }}
+          export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           make doc-clean doc-uninstall
-          mkdir -p $DOC_DIR/ && mv /sage/.git-doc $DOC_DIR/.git
           export SAGE_USE_CDNS=yes
           ./config.status && make sagemath_doc_html-no-deps
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Copy docs
+      - name: Copy doc
         id: copy
         if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
           set -ex
-          DOC_DIR=/sage/local/share/doc/sage/html
-          (cd $DOC_DIR && git commit -a -m 'new')
-          ls -l /sage/venv/bin
-          PATH=/sage/venv/bin:$PATH .ci/create-changes-html.sh $(cd $DOC_DIR; git rev-parse HEAD^) $DOC_DIR
-          (cd $DOC_DIR && rm -rf .git)
           # We copy everything to a local folder
-          # We also need to replace the symlinks because netlify is not following them
-          mkdir -p ./docs
-          mv CHANGES.html ./docs
-          cp -r -L $DOC_DIR ./docs
-          cp  $DOC_DIR/../index.html ./docs
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html doc
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/index.html doc
+          # Check if we are on PR
+          PR_NUMBER=""
+          if [[ -n "$GITHUB_REF" ]]; then
+            if [[ "$GITHUB_REF" =~ refs/pull/([0-9]+)/merge ]]; then
+              PR_NUMBER="${BASH_REMATCH[1]}"
+            fi
+          fi
+          # If so, then create CHANGES.html
+          if [[ -n "$PR_NUMBER" ]]; then
+            (cd doc && git commit -a -m 'new')
+            # Wipe out chronic diffs of new doc against old doc before creating CHANGES.html
+            (cd doc && \
+             find . -name "*.html" | xargs sed -i -e '/This is documentation/ s/ built with GitHub PR .* for development/ for development/' \
+                                                  -e '/<link rel="stylesheet"/ s/?v=[0-9a-f]*"/"/' \
+                                                  -e '\;<script type="application/vnd\.jupyter\.widget-state+json">;,\;</script>; d' \
+                                                  -e 's;#L[0-9]*";";' \
+             && git commit -a -m 'wipe-out')
+            # Since HEAD is at commit 'wipe-out', HEAD~1 is commit 'new' (new doc), HEAD~2 is commit 'old' (old doc)
+            (cd doc && git diff $(git rev-parse HEAD~2) -- "*.html") > diff.txt
+            # Restore the new doc dropping changes by "wipe out"
+            (cd doc && git checkout -q -f HEAD~1)
+            .ci/create-changes-html.sh diff.txt doc
+            # Sometimes rm -rf .git errors out because of some diehard hidden files
+            # So we simply move it out of the doc directory
+            (cd doc && mv .git ../git && mv .gitattributes ../gitattributes)
+            mv CHANGES.html doc
+          fi
           # Zip everything for increased performance
-          zip -r docs.zip docs
+          zip -r doc.zip doc
 
-      - name: Upload docs
+      - name: Upload doc
+        id: upload
         if: (success() || failure()) && steps.copy.outcome == 'success'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: docs
-          path: docs.zip
+          name: doc
+          path: doc.zip
+
+      #
+      # On release tags: live doc and wheels
+      #
 
       - name: Build live doc
         id: buildlivedoc
-        if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
+        if: (success() || failure()) && startsWith(github.ref, 'refs/tags/')
         run: |
-          set -ex
+          export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           export PATH="build/bin:$PATH"
           eval $(sage-print-system-package-command auto update)
           eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
@@ -167,25 +242,22 @@ jobs:
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
           make doc-clean doc-uninstall
           ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
-        working-directory: ./worktree-image
-        env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy live doc
         id: copylivedoc
         if: (success() || failure()) && steps.buildlivedoc.outcome == 'success'
         run: |
-          set -ex
           mkdir -p ./livedoc
-          cp -r -L /sage/local/share/doc/sage/html ./livedoc
-          cp -r -L /sage/local/share/doc/sage/pdf ./livedoc
-          cp  /sage/local/share/doc/sage/index.html ./livedoc
+          # We copy everything to a local folder
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html livedoc
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/pdf livedoc
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/index.html livedoc
           zip -r livedoc.zip livedoc
 
       - name: Upload live doc
         if: (success() || failure()) && steps.copylivedoc.outcome == 'success'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: livedoc
           path: livedoc.zip

@@ -1,7 +1,7 @@
 SAGE_SPKG_CONFIGURE([python3], [
    m4_pushdef([MIN_VERSION],               [3.9.0])
    m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.9.0])
-   m4_pushdef([LT_STABLE_VERSION],         [3.12.0])
+   m4_pushdef([LT_STABLE_VERSION],         [3.13.0])
    m4_pushdef([LT_VERSION],                [3.13.0])
    AC_ARG_WITH([python],
                [AS_HELP_STRING([--with-python=PYTHON3],
@@ -15,7 +15,7 @@ SAGE_SPKG_CONFIGURE([python3], [
          [AC_MSG_ERROR([building Sage --without-python is not supported])])
    ac_path_PYTHON3="$with_python"
 
-   dnl Trac #30559:  Removed the DEPCHECK for sqlite.  We never use libsqlite3 from SPKG for anything
+   dnl Issue #30559:  Removed the DEPCHECK for sqlite.  We never use libsqlite3 from SPKG for anything
    dnl other than building the python3 SPKG; so our libsqlite3 cannot create shared library conflicts.
    dnl
    dnl However, if we add another package (providing a shared library linked into a Python module)
@@ -23,7 +23,7 @@ SAGE_SPKG_CONFIGURE([python3], [
    SAGE_SPKG_DEPCHECK([bzip2 liblzma libffi zlib], [
       dnl Check if we can do venv with a system python3
       dnl instead of building our own copy.
-      dnl  Trac #31160: We no longer check for readline here.
+      dnl  Issue #31160: We no longer check for readline here.
       check_modules="sqlite3, ctypes, math, hashlib, socket, zlib, ssl, ensurepip"
       AC_CACHE_CHECK([for python3 >= ]MIN_VERSION[, < ]LT_VERSION[ with modules $check_modules and setuptools/distutils], [ac_cv_path_PYTHON3], [
         AS_IF([test x"$ac_path_PYTHON3" != x], [dnl checking explicitly specified $with_python
@@ -96,7 +96,7 @@ SAGE_SPKG_CONFIGURE([python3], [
             export ARCHFLAGS
         ])
         AS_IF([test -n "$CFLAGS_MARCH"], [
-            dnl Trac #31228
+            dnl Issue #31228
             AC_MSG_CHECKING([whether "$CFLAGS_MARCH" works with the C/C++ compilers configured for building extensions for $PYTHON_FOR_VENV])
             SAGE_PYTHON_CHECK_DISTUTILS([CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS_MARCH" conftest_venv/bin/python3], [
                 AC_MSG_RESULT([yes])

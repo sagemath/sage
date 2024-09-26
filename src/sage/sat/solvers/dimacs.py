@@ -6,7 +6,7 @@ infrastructure to make it easy to add new such interfaces and some example inter
 
 Currently, interfaces to **RSat** and **Glucose** are included by default.
 
-.. note::
+.. NOTE::
 
     Our SAT solver interfaces are 1-based, i.e., literals start at 1. This is consistent with the
     popular DIMACS format for SAT solving but not with Pythion's 0-based convention. However, this
@@ -42,7 +42,7 @@ class DIMACS(SatSolver):
     """
     Generic DIMACS Solver.
 
-    .. note::
+    .. NOTE::
 
         Usually, users won't have to use this class directly but some
         class which inherits from this class.
@@ -59,22 +59,21 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``command`` - a named format string with the command to
+        - ``command`` -- a named format string with the command to
           run. The string must contain {input} and may contain
           {output} if the solvers writes the solution to an output
           file. For example "sat-solver {input}" is a valid
           command. If ``None`` then the class variable ``command`` is
           used. (default: ``None``)
 
-        - ``filename`` - a filename to write clauses to in DIMACS
+        - ``filename`` -- a filename to write clauses to in DIMACS
           format, must be writable. If ``None`` a temporary filename
           is chosen automatically. (default: ``None``)
 
-        - ``verbosity`` - a verbosity level, where zero means silent
+        - ``verbosity`` -- a verbosity level, where zero means silent
           and anything else means verbose output. (default: ``0``)
 
-        - ``**kwds`` - accepted for compatibility with other solves,
-          ignored.
+        - ``**kwds`` -- accepted for compatibility with other solvers; ignored
 
         TESTS::
 
@@ -82,8 +81,10 @@ class DIMACS(SatSolver):
             sage: DIMACS()
             DIMACS Solver: ''
         """
+        self._headname_file_created_during_init = False
         if filename is None:
             filename = tmp_filename()
+            self._headname_file_created_during_init = True
 
         self._headname = filename
         self._verbosity = verbosity
@@ -114,11 +115,31 @@ class DIMACS(SatSolver):
             sage: from sage.sat.solvers.dimacs import DIMACS
             sage: d = DIMACS(command="iliketurtles {input}")
             sage: del d
+
+        We check that files created during initialization are properly
+        deleted (:issue:`38328`)::
+
+            sage: from sage.sat.solvers.dimacs import DIMACS
+            sage: d = DIMACS(command="iliketurtles {input}")
+            sage: filename = d._headname
+            sage: os.path.exists(filename)
+            True
+            sage: del d
+            sage: os.path.exists(filename)
+            False
+
+        ::
+
+            sage: fn = tmp_filename()
+            sage: d = DIMACS(filename=fn)
+            sage: del d
         """
         if not self._tail.closed:
             self._tail.close()
         if os.path.exists(self._tail.name):
             os.unlink(self._tail.name)
+        if self._headname_file_created_during_init and os.path.exists(self._headname):
+            os.unlink(self._headname)
 
     def var(self, decision=None):
         """
@@ -126,7 +147,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``decision`` - accepted for compatibility with other solvers, ignored.
+        - ``decision`` -- accepted for compatibility with other solvers; ignored
 
         EXAMPLES::
 
@@ -161,9 +182,9 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``lits`` - a tuple of integers != 0
+        - ``lits`` -- tuple of nonzero integers
 
-        .. note::
+        .. NOTE::
 
             If any element ``e`` in ``lits`` has ``abs(e)`` greater
             than the number of variables generated so far, then new
@@ -197,7 +218,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``filename`` - if ``None`` default filename specified at initialization is used for
+        - ``filename`` -- if ``None`` default filename specified at initialization is used for
           writing to (default: ``None``)
 
         EXAMPLES::
@@ -246,7 +267,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``filename`` - if not ``None`` clauses are written to ``filename`` in
+        - ``filename`` -- if not ``None`` clauses are written to ``filename`` in
           DIMACS format (default: ``None``)
 
         OUTPUT:
@@ -304,11 +325,11 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``clauses`` - a list of clauses, either in simple format as a list of
+        - ``clauses`` -- list of clauses, either in simple format as a list of
           literals or in extended format for CryptoMiniSat: a tuple of literals,
           ``is_xor`` and ``rhs``.
 
-        - ``filename`` - the file to write to
+        - ``filename`` -- the file to write to
 
         - ``nlits -- the number of literals appearing in ``clauses``
 
@@ -428,7 +449,7 @@ class DIMACS(SatSolver):
 
         INPUT:
 
-        - ``assumptions`` - ignored, accepted for compatibility with
+        - ``assumptions`` -- ignored, accepted for compatibility with
           other solvers (default: ``None``)
 
         OUTPUT:
@@ -491,14 +512,13 @@ class DIMACS(SatSolver):
 
             sage: from sage.sat.boolean_polynomials import solve as solve_sat
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)                       # needs sage.rings.finite_rings sage.rings.polynomial.pbori
-            sage: while True:  # workaround (see :trac:`31891`)                         # needs sage.rings.finite_rings sage.rings.polynomial.pbori
+            sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.finite_rings sage.rings.polynomial.pbori
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
             sage: solve_sat(F, solver=sage.sat.solvers.RSat)    # optional - rsat, needs sage.rings.finite_rings sage.rings.polynomial.pbori
-
         """
         if assumptions is not None:
             raise NotImplementedError("Assumptions are not supported for DIMACS based solvers.")
@@ -520,7 +540,8 @@ class DIMACS(SatSolver):
             assert L[-1] == "0", "last digit of solution line must be zero (not {})".format(L[-1])
             return (None,) + tuple(int(e) > 0 for e in L[:-1])
         else:
-            raise ValueError("When parsing the output, no line starts with letter v or s")
+            raise ValueError("When parsing the output(={}), no line starts with letter v or s".format(self._output))
+
 
 class RSat(DIMACS):
     """
@@ -554,7 +575,6 @@ class RSat(DIMACS):
         sage: solver.add_clause((-1,-2))
         sage: solver()                            # optional - rsat
         False
-
     """
     command = "rsat {input} -v -s"
 
@@ -620,9 +640,9 @@ class Glucose(DIMACS):
         c...
         s SATISFIABLE
         v -1 -2 ... 100 0
-
     """
     command = "glucose -verb=0 -model {input}"
+
 
 class GlucoseSyrup(DIMACS):
     """
@@ -684,13 +704,13 @@ class GlucoseSyrup(DIMACS):
         c...
         s SATISFIABLE
         v -1 -2 ... 100 0
-
     """
     command = "glucose-syrup -model -verb=0 {input}"
 
+
 class Kissat(DIMACS):
     """
-    An instance of the Kissat SAT solver
+    An instance of the Kissat SAT solver.
 
     For information on Kissat see: http://fmv.jku.at/kissat/
 
@@ -748,7 +768,6 @@ class Kissat(DIMACS):
         v ...
         v ...
         v ... 100 0
-
     """
 
     command = "kissat -q {input}"

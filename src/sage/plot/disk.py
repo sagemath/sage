@@ -33,14 +33,14 @@ class Disk(GraphicPrimitive):
 
     INPUT:
 
-    - ``point`` - coordinates of center of disk
+    - ``point`` -- coordinates of center of disk
 
-    - ``r`` - radius of disk
+    - ``r`` -- radius of disk
 
-    - ``angle`` - beginning and ending angles of disk (i.e.
+    - ``angle`` -- beginning and ending angles of disk (i.e.
       angle extent of sector/wedge)
 
-    - ``options`` - dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -66,7 +66,7 @@ class Disk(GraphicPrimitive):
     """
     def __init__(self, point, r, angle, options):
         """
-        Initializes base class ``Disk``.
+        Initialize base class ``Disk``.
 
         EXAMPLES::
 
@@ -94,7 +94,7 @@ class Disk(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
@@ -109,7 +109,6 @@ class Disk(GraphicPrimitive):
             6.0
             sage: d['ymax']
             5.0
-
         """
         from sage.plot.plot import minmax_data
         return minmax_data([self.x - self.r, self.x + self.r],
@@ -149,7 +148,7 @@ class Disk(GraphicPrimitive):
             sage: p = P[0]; p
             Disk defined by (3.0,3.0) with r=1.0 spanning (0.0, 1.5707963267...) radians
         """
-        return "Disk defined by (%s,%s) with r=%s spanning (%s, %s) radians" % (self.x, self.y, self.r, self.rad1, self.rad2)
+        return "Disk defined by ({},{}) with r={} spanning ({}, {}) radians".format(self.x, self.y, self.r, self.rad1, self.rad2)
 
     def _render_on_subplot(self, subplot):
         """
@@ -159,12 +158,11 @@ class Disk(GraphicPrimitive):
             sage: D = disk((2,-1), 2, (0, pi), color='black', thickness=3, fill=False); D
             Graphics object consisting of 1 graphics primitive
 
-        Save alpha information in pdf (see :trac:`13732`)::
+        Save alpha information in pdf (see :issue:`13732`)::
 
             sage: f = tmp_filename(ext='.pdf')
             sage: p = disk((0,0), 5, (0, pi/4), alpha=0.5)
             sage: p.save(f)
-
         """
         import matplotlib.patches as patches
         options = self.options()
@@ -190,8 +188,7 @@ class Disk(GraphicPrimitive):
 
         INPUT:
 
-
-        -  ``z`` - optional 3D height above `xy`-plane.
+        - ``z`` -- (optional) 3D height above `xy`-plane
 
         AUTHORS:
 
@@ -349,7 +346,7 @@ def disk(point, radius, angle, **options):
 
     Verify that :issue:`36153` is fixed::
 
-        sage: D = disk((0, 0), 5, (0, pi/2), legend_label="test")
+        sage: D = disk((0, 0), 5, (0, pi/2), legend_label='test')
     """
     from sage.plot.all import Graphics
     g = Graphics()

@@ -1,12 +1,22 @@
+# sage_setup: distribution = sagemath-objects
 "Global proof preferences"
 
 from sage.structure.sage_object import SageObject
 
+
 class _ProofPref(SageObject):
     """
-    An object that holds global proof preferences.  For now these are merely True/False flags for various parts of Sage that use probabilistic algorithms.
-    A True flag means that the subsystem (such as linear algebra or number fields) should return results that are true unconditionally: the correctness should not depend on an algorithm with a nonzero probability of returning an incorrect answer or on the truth of any unproven conjectures.
-    A False flag means that the subsystem can use faster methods to return answers that have a very small probability of being wrong.
+    An object that holds global proof preferences.  For now these are merely
+    boolean flags for various parts of Sage that use probabilistic
+    algorithms.
+
+    A ``True`` flag means that the subsystem (such as linear algebra or number
+    fields) should return results that are true unconditionally: the
+    correctness should not depend on an algorithm with a nonzero probability of
+    returning an incorrect answer or on the truth of any unproven conjectures.
+
+    A ``False`` flag means that the subsystem can use faster methods to return
+    answers that have a very small probability of being wrong.
     """
     def __init__(self, proof=True):
         self._require_proof = {}
@@ -23,13 +33,20 @@ class _ProofPref(SageObject):
 
         INPUT:
 
-            t -- boolean or None
+        - ``t`` -- boolean or ``None``
 
         OUTPUT:
 
-            If t == True, requires integer arithmetic operations to (by default) return results that are true unconditionally: the correctness will not depend on an algorithm with a nonzero probability of returning an incorrect answer or on the truth of any unproven conjectures.
-            If t == False, allows integer arithmetic operations to (by default) return results that may depend on unproven conjectures or on probabilistic algorithms.  Such algorithms often have a substantial speed improvement over those requiring proof.
-            If t is None, returns the integer arithmetic proof status.
+        - if ``t == True``, requires integer arithmetic operations to (by
+          default) return results that are true unconditionally: the
+          correctness will not depend on an algorithm with a nonzero
+          probability of returning an incorrect answer or on the truth of any
+          unproven conjectures.
+        - if ``t == False``, allows integer arithmetic operations to (by
+          default) return results that may depend on unproven conjectures or on
+          probabilistic algorithms.  Such algorithms often have a substantial
+          speed improvement over those requiring proof.
+        - if ``t == None``, returns the integer arithmetic proof status.
 
         EXAMPLES::
 
@@ -52,13 +69,19 @@ class _ProofPref(SageObject):
 
         INPUT:
 
-            t -- boolean or None
+        - ``t`` -- boolean or ``None``
 
         OUTPUT:
 
-            If t == True, requires elliptic curve algorithms to (by default) return results that are true unconditionally: the correctness will not depend on an algorithm with a nonzero probability of returning an incorrect answer or on the truth of any unproven conjectures.
-            If t == False, allows elliptic curve algorithms to (by default) return results that may depend on unproven conjectures or on probabilistic algorithms.  Such algorithms often have a substantial speed improvement over those requiring proof.
-            If t is None, returns the current elliptic curve proof status.
+        - if ``t == True``, requires elliptic curve algorithms to (by default)
+          return results that are true unconditionally: the correctness will
+          not depend on an algorithm with a nonzero probability of returning an
+          incorrect answer or on the truth of any unproven conjectures.
+        - if ``t == False``, allows elliptic curve algorithms to (by default)
+          return results that may depend on unproven conjectures or on
+          probabilistic algorithms.  Such algorithms often have a substantial
+          speed improvement over those requiring proof.
+        - if ``t == None``, returns the current elliptic curve proof status.
 
         EXAMPLES::
 
@@ -81,13 +104,19 @@ class _ProofPref(SageObject):
 
         INPUT:
 
-            t -- boolean or None
+        - ``t`` -- boolean or ``None``
 
         OUTPUT:
 
-            If t == True, requires linear algebra algorithms to (by default) return results that are true unconditionally: the correctness will not depend on an algorithm with a nonzero probability of returning an incorrect answer or on the truth of any unproven conjectures.
-            If t == False, allows linear algebra algorithms to (by default) return results that may depend on unproven conjectures or on probabilistic algorithms.  Such algorithms often have a substantial speed improvement over those requiring proof.
-            If t is None, returns the current linear algebra proof status.
+        - if ``t == True``, requires linear algebra algorithms to (by default)
+          return results that are true unconditionally: the correctness will
+          not depend on an algorithm with a nonzero probability of returning an
+          incorrect answer or on the truth of any unproven conjectures.
+        - if ``t == False``, allows linear algebra algorithms to (by default)
+          return results that may depend on unproven conjectures or on
+          probabilistic algorithms.  Such algorithms often have a substantial
+          speed improvement over those requiring proof.
+        - if ``t == None``, returns the current linear algebra proof status.
 
         EXAMPLES::
 
@@ -110,13 +139,19 @@ class _ProofPref(SageObject):
 
         INPUT:
 
-            t -- boolean or None
+        - ``t`` -- boolean or ``None``
 
         OUTPUT:
 
-            If t == True, requires number field algorithms to (by default) return results that are true unconditionally: the correctness will not depend on an algorithm with a nonzero probability of returning an incorrect answer or on the truth of any unproven conjectures.
-            If t == False, allows number field algorithms to (by default) return results that may depend on unproven conjectures or on probabilistic algorithms.  Such algorithms often have a substantial speed improvement over those requiring proof.
-            If t is None, returns the current number field proof status.
+        - if ``t == True``, requires number field algorithms to (by default)
+          return results that are true unconditionally: the correctness will
+          not depend on an algorithm with a nonzero probability of returning an
+          incorrect answer or on the truth of any unproven conjectures.
+        - if ``t == False``, allows number field algorithms to (by default)
+          return results that may depend on unproven conjectures or on
+          probabilistic algorithms.  Such algorithms often have a substantial
+          speed improvement over those requiring proof.
+        - if ``t == None``, returns the current number field proof status.
 
         EXAMPLES::
 
@@ -139,13 +174,19 @@ class _ProofPref(SageObject):
 
         INPUT:
 
-            t -- boolean or None
+        - ``t`` -- boolean or ``None``
 
         OUTPUT:
 
-            If t == True, requires polynomial algorithms to (by default) return results that are true unconditionally: the correctness will not depend on an algorithm with a nonzero probability of returning an incorrect answer or on the truth of any unproven conjectures.
-            If t == False, allows polynomial algorithms to (by default) return results that may depend on unproven conjectures or on probabilistic algorithms.  Such algorithms often have a substantial speed improvement over those requiring proof.
-            If t is None, returns the current polynomial proof status.
+        - if ``t == True``, requires polynomial algorithms to (by default)
+          return results that are true unconditionally: the correctness will
+          not depend on an algorithm with a nonzero probability of returning an
+          incorrect answer or on the truth of any unproven conjectures.
+        - if ``t == False``, allows polynomial algorithms to (by default)
+          return results that may depend on unproven conjectures or on
+          probabilistic algorithms.  Such algorithms often have a substantial
+          speed improvement over those requiring proof.
+        - if ``t == None``, returns the current polynomial proof status.
 
         EXAMPLES::
 
@@ -163,7 +204,8 @@ class _ProofPref(SageObject):
         self._require_proof["polynomial"] = bool(t)
 
 
-_proof_prefs = _ProofPref(True) #Creates the global object that stores proof preferences.
+_proof_prefs = _ProofPref(True)  # Creates the global object that stores proof preferences.
+
 
 def get_flag(t=None, subsystem=None):
     """
@@ -192,7 +234,7 @@ def get_flag(t=None, subsystem=None):
 
 class WithProof():
     """
-    Use WithProof to temporarily set the value of one of the proof
+    Use :class:`WithProof` to temporarily set the value of one of the proof
     systems for a block of code, with a guarantee that it will be set
     back to how it was before after the block is done, even if there is an error.
 

@@ -101,7 +101,7 @@ cdef class ProbabilityDistribution:
           the probability distribution
 
         - ``bins`` -- (optional) number of bins to divide the samples
-          into.
+          into
 
         OUTPUT:
 
@@ -140,6 +140,9 @@ cdef class ProbabilityDistribution:
              1.8,
              2.0]
         """
+        import numpy as np
+        if int(np.version.short_version[0]) > 1:
+            np.set_printoptions(legacy="1.25")
         import pylab
         ell = [float(self.get_random_element()) for _ in range(num_samples)]
         S = pylab.hist(ell, bins, density=True)
@@ -152,13 +155,13 @@ cdef class ProbabilityDistribution:
 
         INPUT:
 
-        - ``name`` -- file to save the histogram plot (as a PNG).
+        - ``name`` -- file to save the histogram plot (as a PNG)
 
         - ``num_samples`` -- (optional) number of times to sample from
           the probability distribution
 
         - ``bins`` -- (optional) number of bins to divide the samples
-          into.
+          into
 
         EXAMPLES:
 
@@ -205,7 +208,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
     TESTS:
 
     Make sure that repeated initializations are randomly seeded
-    (:trac:`9770`)::
+    (:issue:`9770`)::
 
         sage: Xs = [tuple(SphericalDistribution(2).get_random_element()) for _ in range(1000)]
         sage: len(set(Xs)) > 2^^32
@@ -228,7 +231,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
 
         TESTS:
 
-        Until :trac:`15089` a value of the ``seed`` keyword
+        Until :issue:`15089` a value of the ``seed`` keyword
         besides ``None`` was ignored. We check here that setting
         a seed is effective. ::
 
@@ -561,12 +564,11 @@ cdef class RealDistribution(ProbabilityDistribution):
     TESTS:
 
     Make sure that repeated initializations are randomly seeded
-    (:trac:`9770`)::
+    (:issue:`9770`)::
 
         sage: Xs = [RealDistribution('gaussian', 1).get_random_element() for _ in range(1000)]
         sage: len(set(Xs)) > 2^^32
         True
-
     """
     cdef gsl_rng_type *T
     cdef gsl_rng *r
@@ -589,7 +591,7 @@ cdef class RealDistribution(ProbabilityDistribution):
 
         TESTS:
 
-        Until :trac:`15089` a value of the ``seed`` keyword
+        Until :issue:`15089` a value of the ``seed`` keyword
         besides ``None`` was ignored. We check here that setting
         a seed is effective. ::
 
@@ -682,7 +684,6 @@ cdef class RealDistribution(ProbabilityDistribution):
             sage: T = RealDistribution('gaussian', 1, seed=0)
             sage: T.get_random_element()  # rel tol 4e-16
             0.13391860811867587
-
         """
         cdef double result
         if self.distribution_type == uniform:
@@ -1035,19 +1036,17 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
 
     INPUT:
 
-    - ``P`` -- list of probabilities. The list will automatically be
-      normalised if ``sum(P)`` is not equal to 1.
+    - ``P`` -- list of probabilities; the list will automatically be
+      normalised if ``sum(P)`` is not equal to 1
 
-    - ``rng`` -- (optional) random number generator to use. May be
-      one of ``'default'``, ``'luxury'``, or ``'taus'``.
+    - ``rng`` -- (optional) random number generator to use; may be
+      one of ``'default'``, ``'luxury'``, or ``'taus'``
 
     - ``seed`` -- (optional) seed to use with the random number
-      generator.
+      generator
 
-    OUTPUT:
-
-    - a probability distribution where the probability of selecting
-      ``x`` is ``P[x]``.
+    OUTPUT: a probability distribution where the probability of selecting
+    ``x`` is ``P[x]``.
 
     EXAMPLES:
 
@@ -1083,19 +1082,19 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
     TESTS:
 
     Make sure that repeated initializations are randomly seeded
-    (:trac:`9770`)::
+    (:issue:`9770`)::
 
         sage: P = [0.001] * 1000
         sage: Xs = [GeneralDiscreteDistribution(P).get_random_element() for _ in range(1000)]
         sage: len(set(Xs)) > 2^^32
         True
 
-    The distribution probabilities must be non-negative::
+    The distribution probabilities must be nonnegative::
 
         sage: GeneralDiscreteDistribution([0.1, -0.1])
         Traceback (most recent call last):
         ...
-        ValueError: The distribution probabilities must be non-negative
+        ValueError: The distribution probabilities must be nonnegative
     """
     cdef gsl_rng_type * T
     cdef gsl_rng * r
@@ -1115,7 +1114,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
 
         TESTS:
 
-        Until :trac:`15089` a value of the ``seed`` keyword
+        Until :issue:`15089` a value of the ``seed`` keyword
         besides ``None`` was ignored. We check here that setting
         a seed is effective. ::
 
@@ -1131,7 +1130,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
             sage: one == three
             False
 
-        Testing that :trac:`24416` is fixed for when entries are larger
+        Testing that :issue:`24416` is fixed for when entries are larger
         than `2^{1024}`::
 
             sage: from collections import Counter
@@ -1160,7 +1159,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
         for i in range(n):
             if P[i] < 0:
                 raise ValueError("The distribution probabilities must "
-                                 "be non-negative")
+                                 "be nonnegative")
             P_vec[i] = P[i]
 
         self.dist = gsl_ran_discrete_preproc(n, P_vec)

@@ -42,11 +42,9 @@ def is_triangular(B) -> bool:
 
     INPUT:
 
-    - ``B`` -- a list/tuple of polynomials or a multivariate polynomial ideal
+    - ``B`` -- list/tuple of polynomials or a multivariate polynomial ideal
 
-    OUTPUT:
-
-    ``True`` if the basis is triangular; ``False`` otherwise.
+    OUTPUT: ``True`` if the basis is triangular; ``False`` otherwise
 
     EXAMPLES::
 
@@ -90,11 +88,9 @@ def coefficient_matrix(polys):
 
     INPUT:
 
-    - ``polys`` -- a list/tuple of polynomials
+    - ``polys`` -- list/tuple of polynomials
 
-    OUTPUT:
-
-    A matrix ``M`` of the coefficients of ``polys``
+    OUTPUT: a matrix ``M`` of the coefficients of ``polys``
 
     EXAMPLES::
 
@@ -149,7 +145,7 @@ def is_linearly_dependent(polys) -> bool:
 
     INPUT:
 
-    - ``polys`` -- a list/tuple of polynomials
+    - ``polys`` -- list/tuple of polynomials
 
     OUTPUT:
 
@@ -204,7 +200,7 @@ def linear_representation(p, polys):
     INPUT:
 
     - ``p`` -- a polynomial
-    - ``polys`` -- a list/tuple of polynomials
+    - ``polys`` -- list/tuple of polynomials
 
     OUTPUT:
 
@@ -242,12 +238,10 @@ def triangular_factorization(B, n=-1):
 
     INPUT:
 
-    - ``B`` -- a list/tuple of polynomials or a multivariate polynomial ideal
+    - ``B`` -- list/tuple of polynomials or a multivariate polynomial ideal
     - ``n`` -- the recursion parameter (default: ``-1``)
 
-    OUTPUT:
-
-    A list ``T`` of triangular sets ``T_0``, ``T_1``, etc.
+    OUTPUT: list ``T`` of triangular sets ``T_0``, ``T_1``, etc.
 
     EXAMPLES::
 
@@ -320,7 +314,7 @@ def elim_pol(B, n=-1):
 
     INPUT:
 
-    - ``B`` -- a list/tuple of polynomials or a multivariate polynomial ideal
+    - ``B`` -- list/tuple of polynomials or a multivariate polynomial ideal
     - ``n`` -- the variable to check (see above) (default: ``-1``)
 
     EXAMPLES::

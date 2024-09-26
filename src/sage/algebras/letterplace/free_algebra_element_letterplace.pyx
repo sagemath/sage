@@ -3,8 +3,7 @@ Weighted homogeneous elements of free algebras, in letterplace implementation
 
 AUTHOR:
 
-- Simon King (2011-03-23): Github issue :trac:`7797`
-
+- Simon King (2011-03-23): Github issue :issue:`7797`
 """
 
 # ****************************************************************************
@@ -30,7 +29,8 @@ poly_reduce = singular_function("NF")
 # Free algebra elements
 cdef class FreeAlgebraElement_letterplace(AlgebraElement):
     """
-    Weighted homogeneous elements of a free associative unital algebra (letterplace implementation)
+    Weighted homogeneous elements of a free associative unital algebra
+    (letterplace implementation).
 
     EXAMPLES::
 
@@ -61,17 +61,16 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         z*z*y*x
         sage: ((x*y)^3).degree()
         9
-
     """
     def __init__(self, A, x, check=True):
         """
         INPUT:
 
-        - A free associative unital algebra in letterplace implementation, `A`.
-        - A homogeneous polynomial that can be coerced into the currently
-          used polynomial ring of `A`.
-        - ``check`` (optional bool, default ``True``): Do not attempt the
-          above coercion (for internal use only).
+        - ``A`` - a free associative unital algebra in letterplace implementation
+        - ``x`` -- a homogeneous polynomial that can be coerced into the currently
+          used polynomial ring of `A`
+        - ``check`` -- boolean (default: ``True``); do not attempt the
+          above coercion (for internal use only)
 
         TESTS::
 
@@ -86,7 +85,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             -x*y + y*x
             sage: loads(dumps(p)) == p
             True
-
         """
         cdef FreeAlgebra_letterplace P = A
         if check:
@@ -132,7 +130,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
     def __iter__(self):
         """
-        Iterates over the pairs "tuple of exponents, coefficient".
+        Iterate over the pairs "tuple of exponents, coefficient".
 
         EXAMPLES::
 
@@ -402,7 +400,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
     def lm_divides(self, FreeAlgebraElement_letterplace p):
         """
-        Tell whether or not the leading monomial of self divides the
+        Tell whether or not the leading monomial of ``self`` divides the
         leading monomial of another element.
 
         .. NOTE::
@@ -441,7 +439,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                 return True
         return False
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         Implement comparisons, using the Cython richcmp convention.
 
@@ -458,7 +456,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
     ################################
     # Arithmetic
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         TESTS::
 
@@ -469,12 +467,11 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: -(3*x*y+2*z^2)
             -3*x*y - 2*z*z
-
         """
         return FreeAlgebraElement_letterplace(self._parent, -self._poly,
                                               check=False)
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         Addition, under the side condition that either one summand
         is zero, or both summands have the same degree.
@@ -508,7 +505,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                                               self._poly + right._poly,
                                               check=False)
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         """
         Difference, under the side condition that either one summand
         is zero or both have the same weighted degree.
@@ -548,7 +545,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                                               self._poly - right._poly,
                                               check=False)
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         """
         Multiplication from the right with an element of the base ring.
 
@@ -563,7 +560,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                                               self._poly._lmul_(right),
                                               check=False)
 
-    cpdef _rmul_(self, Element left) noexcept:
+    cpdef _rmul_(self, Element left):
         """
         Multiplication from the left with an element of the base ring.
 
@@ -578,7 +575,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                                               self._poly._rmul_(left),
                                               check=False)
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         Product of two free algebra elements in letterplace implementation.
 
@@ -587,7 +584,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
             sage: (x*y+z)*z   # indirect doctest
             x*y*z + z*z
-
         """
         cdef FreeAlgebraElement_letterplace left = self
         cdef FreeAlgebraElement_letterplace right = other
@@ -645,9 +641,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         the commutative polynomial ring that is currently used to
         implement the multiplication in the free algebra.
 
-        OUTPUT:
-
-        The twosided reduction of this element by the argument.
+        OUTPUT: the twosided reduction of this element by the argument
 
         .. NOTE::
 
@@ -714,12 +708,10 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
         INPUT:
 
-        A twosided homogeneous ideal `I` of the parent `F` of
-        this element, `x`.
+        - ``I`` -- a twosided homogeneous ideal of the parent `F` of
+          this element, `x`
 
-        OUTPUT:
-
-        The normal form of `x` wrt. `I`.
+        OUTPUT: the normal form of `x` wrt. `I`
 
         .. NOTE::
 

@@ -1,24 +1,23 @@
 "get_remote_file"
-
-
 import os
+from pathlib import Path
 from urllib.request import Request, urlopen
 from ssl import create_default_context as default_context
 
 
-def get_remote_file(filename, verbose=True):
+def get_remote_file(filename, verbose=True) -> Path:
     """
     INPUT:
 
     - ``filename`` -- the URL of a file on the web, e.g.,
-      ``"http://modular.math.washington.edu/myfile.txt"``
+      ``'http://modular.math.washington.edu/myfile.txt'``
 
     - ``verbose`` -- whether to display download status
 
     OUTPUT:
 
-    creates a file in the temp directory and returns the absolute path
-    to that file.
+    This creates a file in the temp directory and returns the absolute path
+    to that file as a :class:`Path` object.
 
     EXAMPLES::
 
@@ -28,13 +27,13 @@ def get_remote_file(filename, verbose=True):
         print("hi from the net")
         <BLANKLINE>
         print(2 + 3)
-
     """
     if verbose:
         print("Attempting to load remote file: " + filename)
 
     from sage.misc.temporary_file import tmp_filename
-    temp_name = tmp_filename() + '.' + os.path.splitext(filename)[1][1:]
+    ext = os.path.splitext(filename)[1]
+    temp_name = Path(tmp_filename(ext=ext))
     # IMPORTANT -- urllib takes a long time to load,
     # so do not import it in the module scope.
 
@@ -44,7 +43,7 @@ def get_remote_file(filename, verbose=True):
         print("Loading started")
 
     content = urlopen(req, timeout=1, context=default_context())
-    with open(temp_name, 'wb') as f:
+    with temp_name.open('wb') as f:
         f.write(content.read())
 
     if verbose:

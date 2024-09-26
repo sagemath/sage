@@ -94,8 +94,7 @@ cimported in Cython modules:
 
 AUTHORS:
 
-- Simon King, Jeroen Demeyer (2014-10): initial version (:trac:`15820`)
-
+- Simon King, Jeroen Demeyer (2014-10): initial version (:issue:`15820`)
 """
 # ****************************************************************************
 #       Copyright (C) 2014 Simon King <simon.king@uni-jena.de>
@@ -125,6 +124,7 @@ cimport cython
 #
 # (De)allocation, copying
 #
+
 
 @cython.overflowcheck
 cdef bint biseq_init(biseq_t R, mp_size_t l, mp_bitcnt_t itemsize) except -1:
@@ -161,7 +161,7 @@ cdef bint biseq_init_copy(biseq_t R, biseq_t S) except -1:
 # Pickling
 #
 
-cdef tuple biseq_pickle(biseq_t S) noexcept:
+cdef tuple biseq_pickle(biseq_t S):
     return (bitset_pickle(S.data), S.itembitsize, S.length)
 
 cdef bint biseq_unpickle(biseq_t R, tuple bitset_data, mp_bitcnt_t itembitsize, mp_size_t length) except -1:
@@ -182,7 +182,7 @@ cdef bint biseq_init_list(biseq_t R, list data, size_t bound) except -1:
 
     INPUT:
 
-    - ``data`` -- a list of integers
+    - ``data`` -- list of integers
 
     - ``bound`` -- a number which is the maximal value of an item
     """
@@ -235,7 +235,7 @@ cdef bint biseq_init_concat(biseq_t R, biseq_t S1, biseq_t S2) except -1:
 
 cdef inline bint biseq_startswith(biseq_t S1, biseq_t S2) except -1:
     """
-    Tests if bounded integer sequence ``S1`` starts with bounded integer
+    Test if bounded integer sequence ``S1`` starts with bounded integer
     sequence ``S2``.
 
     ASSUMPTION:
@@ -243,7 +243,6 @@ cdef inline bint biseq_startswith(biseq_t S1, biseq_t S2) except -1:
     - The two sequences must have equivalent bounds, i.e., the items on the
       sequences must fit into the same number of bits. This condition is not
       tested.
-
     """
     if S2.length > S1.length:
         return False
@@ -259,7 +258,6 @@ cdef mp_size_t biseq_index(biseq_t S, size_t item, mp_size_t start) except -2:
     """
     Return the position in ``S`` of an item in ``S[start:]``, or -1 if
     ``S[start:]`` does not contain the item.
-
     """
     cdef mp_size_t index
     sig_on()
@@ -274,7 +272,6 @@ cdef mp_size_t biseq_index(biseq_t S, size_t item, mp_size_t start) except -2:
 cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index) noexcept:
     """
     Get item ``S[index]``, without checking margins.
-
     """
     cdef mp_bitcnt_t limb_index, bit_index
     bit_index = (<mp_bitcnt_t>index) * S.itembitsize
@@ -288,11 +285,10 @@ cdef inline size_t biseq_getitem(biseq_t S, mp_size_t index) noexcept:
         out |= (S.data.bits[limb_index+1]) << (GMP_LIMB_BITS - bit_index)
     return out & S.mask_item
 
-cdef biseq_getitem_py(biseq_t S, mp_size_t index) noexcept:
+cdef biseq_getitem_py(biseq_t S, mp_size_t index):
     """
     Get item ``S[index]`` as a Python ``int``, without
     checking margins.
-
     """
     cdef size_t out = biseq_getitem(S, index)
     return PyLong_FromSize_t(out)
@@ -336,7 +332,6 @@ cdef bint biseq_init_slice(biseq_t R, biseq_t S, mp_size_t start, mp_size_t stop
     """
     Create the slice ``S[start:stop:step]`` as bounded integer sequence
     and write the result to ``R``, which must not be initialised.
-
     """
     cdef mp_size_t length = 0
     if step > 0:
@@ -369,13 +364,13 @@ cdef bint biseq_init_slice(biseq_t R, biseq_t S, mp_size_t start, mp_size_t stop
 
 cdef mp_size_t biseq_contains(biseq_t S1, biseq_t S2, mp_size_t start) except -2:
     """
-    Tests if the bounded integer sequence ``S1[start:]`` contains a
+    Test if the bounded integer sequence ``S1[start:]`` contains a
     sub-sequence ``S2``.
 
     INPUT:
 
     - ``S1``, ``S2`` -- two bounded integer sequences
-    - ``start`` -- integer, start index
+    - ``start`` -- integer; start index
 
     OUTPUT:
 
@@ -387,7 +382,6 @@ cdef mp_size_t biseq_contains(biseq_t S1, biseq_t S2, mp_size_t start) except -2
     - The two sequences must have equivalent bounds, i.e., the items on the
       sequences must fit into the same number of bits. This condition is not
       tested.
-
     """
     if S2.length == 0:
         return start
@@ -410,7 +404,7 @@ cdef mp_size_t biseq_startswith_tail(biseq_t S1, biseq_t S2, mp_size_t start) ex
     INPUT:
 
     - ``S1``, ``S2`` -- two bounded integer sequences
-    - ``start`` -- integer, start index
+    - ``start`` -- integer; start index
 
     OUTPUT:
 
@@ -422,7 +416,6 @@ cdef mp_size_t biseq_startswith_tail(biseq_t S1, biseq_t S2, mp_size_t start) ex
     - The two sequences must have equivalent bounds, i.e., the items on the
       sequences must fit into the same number of bits. This condition is not
       tested.
-
     """
     # Increase start if S1 is too short to contain S2[start:]
     if S1.length < S2.length - start:
@@ -447,14 +440,14 @@ from sage.rings.integer cimport smallInteger
 
 cdef class BoundedIntegerSequence:
     """
-    A sequence of non-negative uniformly bounded integers.
+    A sequence of nonnegative uniformly bounded integers.
 
     INPUT:
 
-    - ``bound`` -- non-negative integer. When zero, a :class:`ValueError`
+    - ``bound`` -- nonnegative integer. When zero, a :exc:`ValueError`
       will be raised. Otherwise, the given bound is replaced by the
       power of two that is at least the given bound.
-    - ``data`` -- a list of integers.
+    - ``data`` -- list of integers
 
     EXAMPLES:
 
@@ -603,16 +596,15 @@ cdef class BoundedIntegerSequence:
         False
         sage: BoundedIntegerSequence(16, [2, 7, 4])[1:1]
         <>
-
     """
     def __cinit__(self, *args, **kwds):
         """
-        Allocate memory for underlying data
+        Allocate memory for underlying data.
 
         INPUT:
 
-        - ``bound``, non-negative integer
-        - ``data``, ignored
+        - ``bound`` -- nonnegative integer
+        - ``data`` -- ignored
 
         .. WARNING::
 
@@ -624,21 +616,19 @@ cdef class BoundedIntegerSequence:
             sage: from sage.data_structures.bounded_integer_sequences import BoundedIntegerSequence
             sage: BoundedIntegerSequence(21, [4,1,6,2,7,20,9])  # indirect doctest
             <4, 1, 6, 2, 7, 20, 9>
-
         """
         # In __init__, we'll raise an error if the bound is 0.
         self.data.data.bits = NULL
 
     def __dealloc__(self):
         """
-        Free the memory from underlying data
+        Free the memory from underlying data.
 
         EXAMPLES::
 
             sage: from sage.data_structures.bounded_integer_sequences import BoundedIntegerSequence
             sage: S = BoundedIntegerSequence(21, [4,1,6,2,7,20,9])
             sage: del S     # indirect doctest
-
         """
         biseq_dealloc(self.data)
 
@@ -646,11 +636,11 @@ cdef class BoundedIntegerSequence:
         """
         INPUT:
 
-        - ``bound`` -- positive integer. The given bound is replaced by
-          the next power of two that is greater than the given bound.
+        - ``bound`` -- positive integer; the given bound is replaced by
+          the next power of two that is greater than the given bound
 
-        - ``data`` -- a list of non-negative integers, all less than
-          ``bound``.
+        - ``data`` -- list of nonnegative integers; all less than
+          ``bound``
 
         EXAMPLES::
 
@@ -702,7 +692,6 @@ cdef class BoundedIntegerSequence:
             Traceback (most recent call last):
             ...
             OverflowError: ... int too large to convert...
-
         """
         if bound <= 0:
             raise ValueError("positive bound expected")
@@ -718,13 +707,12 @@ cdef class BoundedIntegerSequence:
             sage: S = BoundedIntegerSequence(21, [4,1,6,2,7,20,9])
             sage: copy(S) is S
             True
-
         """
         return self
 
     def __reduce__(self):
         """
-        Pickling of :class:`BoundedIntegerSequence`
+        Pickling of :class:`BoundedIntegerSequence`.
 
         EXAMPLES::
 
@@ -736,7 +724,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following is a good test::
+        The discussion at :issue:`15820` explains why the following is a good test::
 
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
@@ -751,7 +739,6 @@ cdef class BoundedIntegerSequence:
             True
             sage: loads(dumps(X[1::2])) == X[1::2]
             True
-
         """
         return NewBISEQ, biseq_pickle(self.data)
 
@@ -764,7 +751,6 @@ cdef class BoundedIntegerSequence:
             sage: S = BoundedIntegerSequence(57, L)   # indirect doctest
             sage: len(S) == len(L)
             True
-
         """
         return self.data.length
 
@@ -780,7 +766,6 @@ cdef class BoundedIntegerSequence:
             True
             sage: bool(S[1:1])
             False
-
         """
         return self.data.length!=0
 
@@ -798,7 +783,6 @@ cdef class BoundedIntegerSequence:
             <4, 1, 6, 2, 7, 20, 9>
             sage: BoundedIntegerSequence(21, [0,0]) + BoundedIntegerSequence(21, [0,0])
             <0, 0, 0, 0>
-
         """
         return "<" + ", ".join(str(x) for x in self) + ">"
 
@@ -806,7 +790,7 @@ cdef class BoundedIntegerSequence:
         """
         Return the bound of this bounded integer sequence.
 
-        All items of this sequence are non-negative integers less than the
+        All items of this sequence are nonnegative integers less than the
         returned bound. The bound is a power of two.
 
         EXAMPLES::
@@ -818,7 +802,6 @@ cdef class BoundedIntegerSequence:
             32
             sage: T.bound()
             64
-
         """
         return smallInteger(1) << self.data.itembitsize
 
@@ -837,7 +820,7 @@ cdef class BoundedIntegerSequence:
             sage: list(BoundedIntegerSequence(1, []))
             []
 
-        The discussion at :trac:`15820` explains why this is a good test::
+        The discussion at :issue:`15820` explains why this is a good test::
 
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
@@ -847,7 +830,6 @@ cdef class BoundedIntegerSequence:
             [4, 1, 6, 2, 7, 2, 3, 0, 0, 0, 0, 0, 0, 0]
             sage: list(BoundedIntegerSequence(21, [0,0]) + BoundedIntegerSequence(21, [0,0]))
             [0, 0, 0, 0]
-
         """
         cdef mp_size_t index
         for index in range(self.data.length):
@@ -944,7 +926,6 @@ cdef class BoundedIntegerSequence:
             sage: B2 = BoundedIntegerSequence(8, [2,1,4])
             sage: B1[0:1]+B2
             <0, 2, 1, 4>
-
         """
         cdef BoundedIntegerSequence out
         cdef Py_ssize_t start, stop, step, slicelength
@@ -968,7 +949,7 @@ cdef class BoundedIntegerSequence:
 
     def __contains__(self, other):
         """
-        Tells whether this bounded integer sequence contains an item or a sub-sequence
+        Tells whether this bounded integer sequence contains an item or a sub-sequence.
 
         EXAMPLES::
 
@@ -995,7 +976,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following are good tests::
+        The discussion at :issue:`15820` explains why the following are good tests::
 
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
@@ -1029,7 +1010,6 @@ cdef class BoundedIntegerSequence:
 
             sage: -1 in B
             False
-
         """
         if not isinstance(other, BoundedIntegerSequence):
             try:
@@ -1041,9 +1021,9 @@ cdef class BoundedIntegerSequence:
             return False
         return biseq_contains(self.data, right.data, 0) >= 0
 
-    cpdef list list(self) noexcept:
+    cpdef list list(self):
         """
-        Converts this bounded integer sequence to a list
+        Convert this bounded integer sequence to a list.
 
         NOTE:
 
@@ -1058,11 +1038,10 @@ cdef class BoundedIntegerSequence:
             sage: S.list() == list(S) == L
             True
 
-        The discussion at :trac:`15820` explains why the following is a good test::
+        The discussion at :issue:`15820` explains why the following is a good test::
 
             sage: (BoundedIntegerSequence(21, [0,0]) + BoundedIntegerSequence(21, [0,0])).list()
             [0, 0, 0, 0]
-
         """
         cdef mp_size_t i
         return [biseq_getitem_py(self.data, i) for i in range(self.data.length)]
@@ -1097,7 +1076,6 @@ cdef class BoundedIntegerSequence:
             sage: T = BoundedIntegerSequence(51, L0)
             sage: S.startswith(T)
             False
-
         """
         if self.data.itembitsize != other.data.itembitsize:
             return False
@@ -1105,7 +1083,7 @@ cdef class BoundedIntegerSequence:
 
     def index(self, other):
         """
-        The index of a given item or sub-sequence of ``self``
+        The index of a given item or sub-sequence of ``self``.
 
         EXAMPLES::
 
@@ -1159,7 +1137,6 @@ cdef class BoundedIntegerSequence:
             Traceback (most recent call last):
             ...
             TypeError: an integer is required
-
         """
         cdef mp_size_t out
         if not isinstance(other, BoundedIntegerSequence):
@@ -1215,7 +1192,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following are good tests::
+        The discussion at :issue:`15820` explains why the following are good tests::
 
             sage: BoundedIntegerSequence(21, [0,0]) + BoundedIntegerSequence(21, [0,0])
             <0, 0, 0, 0>
@@ -1223,7 +1200,6 @@ cdef class BoundedIntegerSequence:
             sage: B2 = BoundedIntegerSequence(2^30, [10^9+3, 10^9+4])
             sage: B1 + B2
             <1000000001, 1000000002, 1000000003, 1000000004>
-
         """
         cdef BoundedIntegerSequence myself, right, out
         if other is None or self is None:
@@ -1236,7 +1212,7 @@ cdef class BoundedIntegerSequence:
         biseq_init_concat(out.data, myself.data, right.data)
         return out
 
-    cpdef BoundedIntegerSequence maximal_overlap(self, BoundedIntegerSequence other) noexcept:
+    cpdef BoundedIntegerSequence maximal_overlap(self, BoundedIntegerSequence other):
         """
         Return ``self``'s maximal trailing sub-sequence that ``other`` starts with.
 
@@ -1258,7 +1234,6 @@ cdef class BoundedIntegerSequence:
             sage: B2 = BoundedIntegerSequence(4,[2,3,2,3,2,3,1])
             sage: B1.maximal_overlap(B2)
             <2, 3, 2, 3, 2, 3>
-
         """
         cdef mp_size_t i = biseq_startswith_tail(other.data, self.data, 0)
         if i==-1:
@@ -1267,7 +1242,7 @@ cdef class BoundedIntegerSequence:
 
     def __richcmp__(self, other, op):
         """
-        Comparison of bounded integer sequences
+        Comparison of bounded integer sequences.
 
         We compare, in this order:
 
@@ -1313,7 +1288,6 @@ cdef class BoundedIntegerSequence:
             False
             sage: list(S)> list(T)
             True
-
         """
         cdef BoundedIntegerSequence right
         cdef BoundedIntegerSequence left
@@ -1348,14 +1322,13 @@ cdef class BoundedIntegerSequence:
             True
             sage: hash(S) == hash(T)
             True
-
         """
         cdef Py_hash_t h = biseq_hash(self.data)
         if h == -1:
             return 0
         return h
 
-cpdef BoundedIntegerSequence NewBISEQ(tuple bitset_data, mp_bitcnt_t itembitsize, mp_size_t length) noexcept:
+cpdef BoundedIntegerSequence NewBISEQ(tuple bitset_data, mp_bitcnt_t itembitsize, mp_size_t length):
     """
     Helper function for unpickling of :class:`BoundedIntegerSequence`.
 
@@ -1382,11 +1355,11 @@ cpdef BoundedIntegerSequence NewBISEQ(tuple bitset_data, mp_bitcnt_t itembitsize
         sage: S = BoundedIntegerSequence(2*sys.maxsize, [8, 8, 26, 18, 18, 8, 22, 4, 17, 22, 22, 7, 12, 4, 1, 7, 21, 7, 10, 10])
         sage: loads(dumps(S))
         <8, 8, 26, 18, 18, 8, 22, 4, 17, 22, 22, 7, 12, 4, 1, 7, 21, 7, 10, 10>
-
     """
     cdef BoundedIntegerSequence out = BoundedIntegerSequence.__new__(BoundedIntegerSequence)
     biseq_unpickle(out.data, bitset_data, itembitsize, length)
     return out
+
 
 def _biseq_stresstest():
     """

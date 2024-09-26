@@ -68,18 +68,18 @@ def _format_function_call(fn_name, *v, **k):
 #########################################################################
 class Polyhedron_normaliz(Polyhedron_base_number_field):
     """
-    Polyhedra with normaliz
+    Polyhedra with normaliz.
 
     INPUT:
 
     - ``parent`` -- :class:`~sage.geometry.polyhedron.parent.Polyhedra`
       the parent
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``; the
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``; the
       V-representation of the polyhedron; if ``None``, the polyhedron
       is determined by the H-representation
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``; the
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``; the
       H-representation of the polyhedron; if ``None``, the polyhedron
       is determined by the V-representation
 
@@ -200,7 +200,6 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
          the convex hull of 2 vertices
         sage: P.vertices()                                                              # needs sage.rings.number_field sage.symbolic
         (A vertex at (2^(1/3)), A vertex at (sqrt(2)))
-
     """
     def __init__(self, parent, Vrep, Hrep, normaliz_cone=None, normaliz_data=None, internal_base_ring=None, **kwds):
         """
@@ -329,7 +328,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: Pn._convert_to_pynormaliz([[1, 2], (3, 4)])
             [[1, 2], [3, 4]]
 
-        Check that :trac:`29836` is fixed::
+        Check that :issue:`29836` is fixed::
 
             sage: P = polytopes.simplex(backend='normaliz')
             sage: K.<sqrt2> = QuadraticField(2)                                         # needs sage.rings.number_field
@@ -428,9 +427,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -450,9 +447,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -472,9 +467,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -593,7 +586,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: p & p == p                                                            # needs sage.rings.number_field
             True
 
-        Check that :trac:`30248` is fixed, that maps as input works::
+        Check that :issue:`30248` is fixed, that maps as input works::
 
             sage: # needs sage.rings.number_field
             sage: q = Polyhedron(backend='normaliz', base_ring=AA,
@@ -766,7 +759,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             ...
             ValueError: the specification of this method has changed; please specify the lines as well
 
-        Check that :trac:`30891` is fixed::
+        Check that :issue:`30891` is fixed::
 
             sage: p = Polyhedron(vertices=[(-3,-3), (3,0), (3,3), (0,3)],
             ....:                backend='normaliz')
@@ -1038,9 +1031,9 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         INPUT:
 
-        - ``data`` -- a dictionary
+        - ``data`` -- dictionary
 
-        - ``verbose`` -- a boolean (default: ``False``)
+        - ``verbose`` -- boolean (default: ``False``)
 
         TESTS::
 
@@ -1061,9 +1054,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         r"""
         Get the data necessary to reproduce the normaliz cone.
 
-        OUTPUT:
-
-        - ``data`` -- a dictionary.
+        OUTPUT: ``data`` -- dictionary
 
         TESTS:
 
@@ -1105,9 +1096,9 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         INPUT:
 
-        - ``data`` -- a dictionary of PyNormaliz cone input properties
+        - ``data`` -- dictionary of PyNormaliz cone input properties
 
-        - ``file_output`` (string; optional) -- a filename to which the
+        - ``file_output`` -- string (optional); a filename to which the
           representation should be written. If set to ``None`` (default),
           representation is returned as a string.
 
@@ -1270,7 +1261,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: P == P2
             True
 
-        Test that :trac:`31820` is fixed::
+        Test that :issue:`31820` is fixed::
 
             sage: P = polytopes.cube(backend='normaliz')
             sage: v = P.Vrepresentation()[0]
@@ -1353,7 +1344,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         INPUT:
 
-        - ``self`` -- A lattice polytope with backend ``'normaliz'``.
+        - ``self`` -- a lattice polytope with backend ``'normaliz'``
 
         OUTPUT:
 
@@ -1375,7 +1366,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS:
 
-        Check that :trac:`33847` is fixed::
+        Check that :issue:`33847` is fixed::
 
             sage: L = [[1, 0, 0, 0, 0, 0], [1, 1, 0, 0, 0, 0], [1, 0, 1, 0, 0, 0],
             ....:      [1, 0, 0, 1, 0, 0], [1, 0, 0, 0, 1, 0], [1, 0, 0, 1, 2, 3]]
@@ -1443,7 +1434,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS:
 
-        Check that :trac:`28872` is fixed::
+        Check that :issue:`28872` is fixed::
 
             sage: P = polytopes.dodecahedron(backend='normaliz')                        # needs sage.rings.number_field
             sage: P.volume(measure='induced_lattice')                                   # needs sage.rings.number_field
@@ -1537,7 +1528,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS:
 
-        Check that :trac:`30531` is fixed::
+        Check that :issue:`30531` is fixed::
 
             sage: P = polytopes.cube(backend='normaliz')*AA(2).sqrt()
             sage: P._triangulate_normaliz()
@@ -1623,8 +1614,8 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 
@@ -1647,9 +1638,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A rational function.
+        OUTPUT: a rational function
 
         EXAMPLES::
 
@@ -1737,9 +1726,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A polynomial or tuple of polynomials.
+        OUTPUT: a polynomial or tuple of polynomials
 
         EXAMPLES::
 
@@ -1810,9 +1797,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A rational function.
+        OUTPUT: a rational function
 
         EXAMPLES::
 
@@ -1905,7 +1890,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a :class:`ValueError` is raised.
+        polyhedron is not compact, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -1974,7 +1959,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         TESTS:
 
-        Test some trivial cases (see :trac:`17937`):
+        Test some trivial cases (see :issue:`17937`):
 
         Empty polyhedron in 1 dimension::
 
@@ -2006,7 +1991,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             sage: P.integral_points()
             ((),)
 
-        A polytope with no integral points (:trac:`22938`)::
+        A polytope with no integral points (:issue:`22938`)::
 
             sage: ieqs = [[1, 2, -1, 0], [0, -1, 2, -1], [0, 0, -1, 2],
             ....:         [0, -1, 0, 0], [0, 0, -1, 0],  [0, 0, 0, -1],
@@ -2020,7 +2005,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             sage: P.integral_points()
             ()
 
-        Check the polytopes from :trac:`22984`::
+        Check the polytopes from :issue:`22984`::
 
             sage: base = [[0, 2, 0, -1, 0, 0, 0, 0, 0],
             ....:         [0, 0, 2, 0, -1, 0, 0, 0, 0],
@@ -2121,7 +2106,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         Return the integral points generators of the polyhedron.
 
         Every integral point in the polyhedron can be written as a (unique)
-        non-negative linear combination of integral points contained in the three
+        nonnegative linear combination of integral points contained in the three
         defining parts of the polyhedron: the integral points (the compact
         part), the recession cone, and the lineality space.
 
@@ -2215,7 +2200,6 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         function in `t` with coefficients in the ring of class functions.
         There are several output options to see the intermediary outputs of the
         function.
-
 
         EXAMPLES:
 
@@ -2374,7 +2358,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         INPUT:
 
-        - ``initial_Hstar`` -- a vector of rational functions in `t`.
+        - ``initial_Hstar`` -- a vector of rational functions in `t`
 
         OUTPUT:
 
@@ -2441,21 +2425,19 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
         the coefficients of the irreducible representations in the expression
-        of `\rho` are non-negative integers.
+        of `\rho` are nonnegative integers.
 
         INPUT:
 
         - ``Hstar`` -- a rational function in `t` with coefficients in the ring
-          of class functions.
+          of class functions
 
         - ``Hstar_as_lin_comb`` -- vector. The coefficients of the irreducible
           representations of the acting group in the expression of ``Hstar`` as
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT:
-
-        Boolean. Whether the ``Hstar`` series is effective.
+        OUTPUT: boolean; whether the ``Hstar`` series is effective
 
         EXAMPLES:
 
@@ -2507,8 +2489,8 @@ class Polyhedron_ZZ_normaliz(Polyhedron_QQ_normaliz, Polyhedron_ZZ):
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 

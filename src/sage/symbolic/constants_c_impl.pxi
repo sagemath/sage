@@ -2,7 +2,7 @@
 The constant `e`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008      William Stein <wstein@gmail.com>
 #       Copyright (C) 2008-2009 Burcin Erocal <burcin@erocal.org>
 #       Copyright (C) 2009-2012 Mike Hansen <mhansen@gmail.com>
@@ -13,8 +13,8 @@ The constant `e`
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # keep exp(1) for fast access
 # this is initialized in the constructor of the class E below to prevent
@@ -115,7 +115,7 @@ cdef class E(Expression):
             sage: SR(1).exp()
             e
 
-        Testing that it works with matrices (see :trac:`4735`)::
+        Testing that it works with matrices (see :issue:`4735`)::
 
             sage: m = matrix(QQ, 2, 2, [1,0,0,1])
             sage: e^m
@@ -152,7 +152,7 @@ cdef class E(Expression):
             sage: u.operands()
             [a]
 
-        It also works with matrices (see :trac:`4735`)::
+        It also works with matrices (see :issue:`4735`)::
 
             sage: m = matrix(QQ, 2, 2, [1,0,0,1])
             sage: e^m

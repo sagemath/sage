@@ -168,7 +168,7 @@ layout_options = {
         'Which graphviz layout program to use -- one of '
         '"circo", "dot", "fdp", "neato", or "twopi".',
     'by_component':
-        'Whether to do the spring layout by connected component -- a boolean.'}
+        'Whether to do the spring layout by connected component -- boolean.'}
 
 graphplot_options = layout_options.copy()
 
@@ -364,7 +364,7 @@ class GraphPlot(SageObject):
 
         Make sure that vertex locations are floats.  Not being floats isn't
         a bug in itself but made it too easy to accidentally introduce a bug
-        elsewhere, such as in :meth:`set_edges` (:trac:`10124`), via silent
+        elsewhere, such as in :meth:`set_edges` (:issue:`10124`), via silent
         truncating division of Python 2 integers::
 
             sage: g = graphs.FruchtGraph()
@@ -376,7 +376,7 @@ class GraphPlot(SageObject):
             sage: set(map(type, flatten(gp._pos.values())))
             {<... 'float'>}
 
-        Non-ascii labels are also possible using unicode (:trac:`21008`)::
+        Non-ascii labels are also possible using unicode (:issue:`21008`)::
 
             sage: Graph({u'où': [u'là', u'ici']}).plot()
             Graphics object consisting of 6 graphics primitives
@@ -669,7 +669,7 @@ class GraphPlot(SageObject):
 
         Check default edge labels are pretty close to halfway between
         the vertices in some cases where they weren't due to Python 2
-        truncating division (:trac:`10124`)::
+        truncating division (:issue:`10124`)::
 
             sage: test_graphs = graphs.FruchtGraph(), graphs.BullGraph()
             sage: tol = 0.001
@@ -687,13 +687,13 @@ class GraphPlot(SageObject):
             ....:         m = sum(vector((vx[v], vy[v])) for v in (v0, v1))/2
             ....:         assert (vector((x, y)) - m).norm() < tol
 
-        Issue :trac:`24051` is fixed::
+        Issue :issue:`24051` is fixed::
 
             sage: G = Graph([(0, 1), (0, 1)], multiedges=True)
             sage: G.plot(edge_colors={"red": [(1, 0)]})
             Graphics object consisting of 5 graphics primitives
 
-        Issue :trac:`31542` is fixed::
+        Issue :issue:`31542` is fixed::
 
             sage: s = 'ABCCCCDABCDABCDA'
             sage: g = DiGraph({}, loops=True, multiedges=True)
@@ -978,7 +978,7 @@ class GraphPlot(SageObject):
 
         TESTS:
 
-        Make sure that Python ints are acceptable arguments (:trac:`10124`)::
+        Make sure that Python ints are acceptable arguments (:issue:`10124`)::
 
             sage: GP = DiGraph().graphplot()
             sage: GP._polar_hack_for_multidigraph((0, 1), (2, 2), .1)
@@ -1033,7 +1033,6 @@ class GraphPlot(SageObject):
             P = C.graphplot(vertex_labels=False, vertex_size=0,
                             graph_border=True)
             sphinx_plot(P)
-
         """
         # Setting the default values if needed
         for k, value in DEFAULT_SHOW_OPTIONS.items():
@@ -1334,7 +1333,7 @@ class GraphPlot(SageObject):
 
             t = DiGraph('JCC???@A??GO??CO??GO??')
             sphinx_plot(t.graphplot(layout='tree', tree_root=0,
-                                    tree_orientation="up"))
+                                    tree_orientation='up'))
 
         More examples::
 
@@ -1422,7 +1421,7 @@ class GraphPlot(SageObject):
             ....:      assert (bbox['ymin'] <= part_bbox['ymin']
             ....:              <= part_bbox['ymax'] <= bbox['ymax'])
 
-        Check that one can plot immutable graphs (:trac:`17340`)::
+        Check that one can plot immutable graphs (:issue:`17340`)::
 
             sage: Graph({0: [0]}, immutable=True).plot()
             Graphics object consisting of 3 graphics primitives
@@ -1467,7 +1466,7 @@ class GraphPlot(SageObject):
 
         INPUT:
 
-        - ``root`` -- the root vertex.
+        - ``root`` -- the root vertex
 
         - ``orientation`` -- whether to place the root at the top or at the
           bottom:

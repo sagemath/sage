@@ -13,7 +13,6 @@ AUTHORS:
 
 - John Doyle, David Krumm (2013): initial version
 - TJ Combs, Raghukul Raman (2018): added Doyle-Krumm algorithm-4
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013 John Doyle and David Krumm
@@ -51,13 +50,11 @@ def bdd_norm_pr_gens_iq(K, norm_list):
 
     INPUT:
 
-    - `K` -- an imaginary quadratic number field
+    - ``K`` -- an imaginary quadratic number field
 
-    - ``norm_list`` -- a list of positive integers
+    - ``norm_list`` -- list of positive integers
 
-    OUTPUT:
-
-    - a dictionary of number field elements, keyed by norm
+    OUTPUT: dictionary of number field elements, keyed by norm
 
     EXAMPLES:
 
@@ -115,13 +112,11 @@ def bdd_height_iq(K, height_bound):
 
     INPUT:
 
-    - `K` -- an imaginary quadratic number field
+    - ``K`` -- an imaginary quadratic number field
 
     - ``height_bound`` -- a real number
 
-    OUTPUT:
-
-    - an iterator of number field elements
+    OUTPUT: an iterator of number field elements
 
     EXAMPLES::
 
@@ -188,7 +183,7 @@ def bdd_height_iq(K, height_bound):
     possible_norm_set = set()
     for n in range(class_number):
         for m in range(1, int(height_bound + 1)):
-            possible_norm_set.add(m*class_group_rep_norms[n])
+            possible_norm_set.add(m * class_group_rep_norms[n])
     bdd_ideals = bdd_norm_pr_gens_iq(K, possible_norm_set)
 
     # Distribute the principal ideals
@@ -196,11 +191,8 @@ def bdd_height_iq(K, height_bound):
     for n in range(class_number):
         this_ideal = class_group_reps[n]
         this_ideal_norm = class_group_rep_norms[n]
-        gens = []
-        for i in range(1, int(height_bound + 1)):
-            for g in bdd_ideals[i*this_ideal_norm]:
-                if g in this_ideal:
-                    gens.append(g)
+        gens = [g for i in range(1, int(height_bound + 1))
+                for g in bdd_ideals[i * this_ideal_norm] if g in this_ideal]
         generator_lists.append(gens)
 
     # Build all the output numbers
@@ -210,7 +202,7 @@ def bdd_height_iq(K, height_bound):
         for i in range(s):
             for j in range(i + 1, s):
                 if K.ideal(gens[i], gens[j]) == class_group_reps[n]:
-                    new_number = gens[i]/gens[j]
+                    new_number = gens[i] / gens[j]
                     for zeta in roots_of_unity:
                         yield zeta * new_number
                         yield zeta / new_number
@@ -223,13 +215,11 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
 
     INPUT:
 
-    - `K` -- a number field
+    - ``K`` -- a number field
 
-    - ``norm_list`` -- a list of positive integers
+    - ``norm_list`` -- list of positive integers
 
-    OUTPUT:
-
-    - a dictionary of number field elements, keyed by norm
+    OUTPUT: dictionary of number field elements, keyed by norm
 
     EXAMPLES:
 
@@ -257,7 +247,6 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
         sage: key = ZZ(28)
         sage: b[key]
         [157*g^4 - 139*g^3 - 369*g^2 + 848*g + 158, g^4 + g^3 - g - 7]
-
     """
     negative_norm_units = K.elements_of_norm(-1)
     gens = {}
@@ -289,9 +278,7 @@ def integer_points_in_polytope(matrix, interval_radius):
 
     - ``interval_radius`` -- a real number
 
-    OUTPUT:
-
-    - a list of tuples of integers
+    OUTPUT: list of tuples of integers
 
     EXAMPLES:
 
@@ -374,9 +361,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     - ``precision`` -- (default: 53) positive integer
 
-    OUTPUT:
-
-    an iterator of number field elements
+    OUTPUT: an iterator of number field elements
 
     EXAMPLES:
 
@@ -418,7 +403,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     TESTS:
 
-    Check that :trac:`22771` is fixed::
+    Check that :issue:`22771` is fixed::
 
         sage: from sage.rings.number_field.bdd_height import bdd_height
         sage: K.<v> = NumberField(x^3 + x + 1)

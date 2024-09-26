@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Base class for maps
 
@@ -6,10 +7,10 @@ AUTHORS:
 - Robert Bradshaw: initial implementation
 
 - Sebastien Besnier (2014-05-5): :class:`FormalCompositeMap` contains
-  a list of Map instead of only two Map. See :trac:`16291`.
+  a list of Map instead of only two Map. See :issue:`16291`.
 
 - Sebastian Oehms   (2019-01-19): :meth:`section` added to :class:`FormalCompositeMap`.
-  See :trac:`27081`.
+  See :issue:`27081`.
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
@@ -62,8 +63,13 @@ def is_Map(x):
         sage: f = R.hom([x+y, x-y], R)
         sage: from sage.categories.map import is_Map
         sage: is_Map(f)
+        doctest:warning...
+        DeprecationWarning: The function is_Map is deprecated; use 'isinstance(..., Map)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(38103, "The function is_Map is deprecated; use 'isinstance(..., Map)' instead.")
     return isinstance(x, Map)
 
 
@@ -177,7 +183,7 @@ cdef class Map(Element):
         cdef Map out = Element.__copy__(self)
         # Element.__copy__ updates the __dict__, but not the slots.
         # Let's do this now, but with strong references.
-        out._parent = self.parent() # self._parent might be None
+        out._parent = self.parent()  # self._parent might be None
         out._update_slots(self._extra_slots())
         return out
 
@@ -264,7 +270,7 @@ cdef class Map(Element):
             sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
             sage: phi = CDF._internal_convert_map_from(Q)                               # needs sage.rings.number_field
 
-        By :trac:`14711`, maps used in the coercion and conversion system
+        By :issue:`14711`, maps used in the coercion and conversion system
         use *weak* references to domain and codomain, in contrast to other
         maps::
 
@@ -332,7 +338,7 @@ cdef class Map(Element):
             sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
             sage: phi = CDF._internal_convert_map_from(Q)                               # needs sage.rings.number_field
 
-        By :trac:`14711`, maps used in the coercion and conversion system
+        By :issue:`14711`, maps used in the coercion and conversion system
         use *weak* references to domain and codomain, in contrast to other
         maps::
 
@@ -389,16 +395,16 @@ cdef class Map(Element):
         self.domain = ConstantFunction(D)
         self._parent = homset.Hom(D, C, self._category_for)
 
-    cdef _update_slots(self, dict slots) noexcept:
+    cdef _update_slots(self, dict slots):
         """
         Set various attributes of this map to implement unpickling.
 
         INPUT:
 
-        - ``slots`` -- A dictionary of slots to be updated.
-          The dictionary must have the keys ``'_domain'`` and
+        - ``slots`` -- dictionary of slots to be updated;
+          the dictionary must have the keys ``'_domain'`` and
           ``'_codomain'``, and may have the keys ``'_repr_type_str'``
-          and ``'_is_coercion'``.
+          and ``'_is_coercion'``
 
         TESTS:
 
@@ -451,15 +457,15 @@ cdef class Map(Element):
         """
         self._update_slots(_slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Return a dict with attributes to pickle and copy this map.
         """
         return dict(
-                _domain=self.domain(),
-                _codomain=self._codomain,
-                _is_coercion=self._is_coercion,
-                _repr_type_str=self._repr_type_str)
+            _domain=self.domain(),
+            _codomain=self._codomain,
+            _is_coercion=self._is_coercion,
+            _repr_type_str=self._repr_type_str)
 
     def _extra_slots_test(self):
         """
@@ -503,7 +509,7 @@ cdef class Map(Element):
 
         .. NOTE::
 
-            By default, the string ``"Generic"`` is returned. Subclasses may overload this method.
+            By default, the string ``'Generic'`` is returned. Subclasses may overload this method.
 
         EXAMPLES::
 
@@ -628,7 +634,7 @@ cdef class Map(Element):
 
     def category_for(self):
         """
-        Returns the category self is a morphism for.
+        Return the category ``self`` is a morphism for.
 
         .. NOTE::
 
@@ -718,7 +724,7 @@ cdef class Map(Element):
 
         We test that the map can be applied to something that converts
         (but not coerces) into the domain and can *not* be dealt with
-        by :meth:`pushforward` (see :trac:`10496`)::
+        by :meth:`pushforward` (see :issue:`10496`)::
 
             sage: D = {(0, 2): -1, (0, 0): -1, (1, 1): 7, (2, 0): 1/3}
             sage: phi(D)
@@ -736,7 +742,7 @@ cdef class Map(Element):
             but a `pushforward` method is not properly implemented
 
         We test that the default call method really works as described
-        above (that was fixed in :trac:`10496`)::
+        above (that was fixed in :issue:`10496`)::
 
             sage: class FOO(Map):
             ....:   def _call_(self, x):
@@ -795,7 +801,7 @@ cdef class Map(Element):
         """
         P = parent(x)
         cdef Parent D = self.domain()
-        if P is D: # we certainly want to call _call_/with_args
+        if P is D:  # we certainly want to call _call_/with_args
             if not args and not kwds:
                 return self._call_(x)
             return self._call_with_args(x, args, kwds)
@@ -816,7 +822,7 @@ cdef class Map(Element):
             return self._call_(x)
         return self._call_with_args(x, args, kwds)
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Call method with a single argument, not implemented in the base class.
 
@@ -831,7 +837,7 @@ cdef class Map(Element):
         """
         raise NotImplementedError(type(self))
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
         Call method with multiple arguments, not implemented in the base class.
 
@@ -851,7 +857,7 @@ cdef class Map(Element):
 
     def __mul__(self, right):
         r"""
-        The multiplication * operator is operator composition
+        The multiplication * operator is operator composition.
 
         IMPLEMENTATION:
 
@@ -931,7 +937,7 @@ cdef class Map(Element):
 
         INPUT:
 
-        - ``self``  -- a Map in some ``Hom(Y, Z, category_left)``
+        - ``self`` -- a Map in some ``Hom(Y, Z, category_left)``
         - ``right`` -- a Map in some ``Hom(X, Y, category_right)``
 
         OUTPUT:
@@ -971,7 +977,7 @@ cdef class Map(Element):
         INPUT:
 
         - ``self``, ``right`` -- maps
-        - homset -- a homset
+        - ``homset`` -- a homset
 
         ASSUMPTION:
 
@@ -1133,7 +1139,7 @@ cdef class Map(Element):
         OUTPUT:
 
         An element of Hom(X, Z) obtained by composing self with `\phi`.  If
-        no canonical `\phi` exists, a :class:`TypeError` is raised.
+        no canonical `\phi` exists, a :exc:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -1177,8 +1183,8 @@ cdef class Map(Element):
 
         OUTPUT:
 
-        An element of Hom(X, Z) obtained by composing self with `\phi`.  If
-        no canonical `\phi` exists, a :class:`TypeError` is raised.
+        An element of Hom(X, Z) obtained by composing ``self`` with `\phi`.  If
+        no canonical `\phi` exists, a :exc:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -1209,7 +1215,7 @@ cdef class Map(Element):
 
     def is_surjective(self):
         """
-        Tells whether the map is surjective (not implemented in the base class).
+        Tell whether the map is surjective (not implemented in the base class).
 
         TESTS::
 
@@ -1222,7 +1228,7 @@ cdef class Map(Element):
         """
         raise NotImplementedError(type(self))
 
-    cpdef _pow_int(self, n) noexcept:
+    cpdef _pow_int(self, n):
         """
         TESTS::
 
@@ -1272,7 +1278,7 @@ cdef class Map(Element):
 
     def section(self):
         """
-        Return a section of self.
+        Return a section of ``self``.
 
         .. NOTE::
 
@@ -1351,7 +1357,7 @@ cdef class Section(Map):
         """
         INPUT:
 
-        A map.
+        - ``map`` -- a map
 
         TESTS::
 
@@ -1368,7 +1374,7 @@ cdef class Section(Map):
         Map.__init__(self, Hom(map.codomain(), map.domain(), SetsWithPartialMaps()))
         self._inverse = map    # TODO: Use this attribute somewhere!
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for pickling and copying.
 
@@ -1387,7 +1393,7 @@ cdef class Section(Map):
         slots['_inverse'] = self._inverse
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for pickling and copying.
 
@@ -1438,6 +1444,7 @@ cdef class Section(Map):
                     y |--> x - y
         """
         return self._inverse
+
 
 cdef class FormalCompositeMap(Map):
     """
@@ -1492,9 +1499,9 @@ cdef class FormalCompositeMap(Map):
         """
         INPUT:
 
-        - ``parent``: a homset
-        - ``first``: a map or a list of maps
-        - ``second``: a map or None
+        - ``parent`` -- a homset
+        - ``first`` -- a map or a list of maps
+        - ``second`` -- a map or None
 
         .. NOTE::
 
@@ -1576,7 +1583,7 @@ cdef class FormalCompositeMap(Map):
         """
         return FormalCompositeMap(self.parent(), [f.__copy__() for f in self.__list])
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Used in pickling and copying.
 
@@ -1595,7 +1602,7 @@ cdef class FormalCompositeMap(Map):
         self.__list = _slots['__list']
         Map._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Used in pickling and copying.
 
@@ -1704,13 +1711,12 @@ cdef class FormalCompositeMap(Map):
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
-
         """
         return self.__list[i]
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
-        Call with a single argument
+        Call with a single argument.
 
         TESTS::
 
@@ -1726,7 +1732,7 @@ cdef class FormalCompositeMap(Map):
             x = f._call_(x)
         return x
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
         Additional arguments are only passed to the last applied map.
 
@@ -1759,7 +1765,7 @@ cdef class FormalCompositeMap(Map):
 
     def _repr_type(self):
         """
-        Return a string describing the type of ``self``, namely "Composite"
+        Return a string describing the type of ``self``, namely "Composite".
 
         TESTS::
 
@@ -1785,7 +1791,7 @@ cdef class FormalCompositeMap(Map):
 
     def _repr_defn(self):
         """
-        Return a string describing the definition of ``self``
+        Return a string describing the definition of ``self``.
 
         The return value is obtained from the string representations
         of the two constituents.
@@ -1880,7 +1886,7 @@ cdef class FormalCompositeMap(Map):
         """
         Tell whether ``self`` is injective.
 
-        It raises :class:`NotImplementedError` if it cannot be determined.
+        It raises :exc:`NotImplementedError` if it cannot be determined.
 
         EXAMPLES::
 
@@ -1920,12 +1926,11 @@ cdef class FormalCompositeMap(Map):
 
         TESTS:
 
-        Check that :trac:`23205` has been resolved::
+        Check that :issue:`23205` has been resolved::
 
             sage: f = QQ.hom(QQbar) * ZZ.hom(QQ)                                        # needs sage.rings.number_field
             sage: f.is_injective()                                                      # needs sage.rings.number_field
             True
-
         """
         try:
             # we try the category first
@@ -1955,7 +1960,7 @@ cdef class FormalCompositeMap(Map):
         """
         Tell whether ``self`` is surjective.
 
-        It raises :class:`NotImplementedError` if it cannot be determined.
+        It raises :exc:`NotImplementedError` if it cannot be determined.
 
         EXAMPLES::
 
@@ -2087,7 +2092,7 @@ cdef class FormalCompositeMap(Map):
             sage: ZZ(3*x + 45)              # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: 3*x + 45 is not a constant polynomial
         """
         sections = []
         for m in reversed(list(self)):

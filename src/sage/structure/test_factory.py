@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Test of the :mod:`~sage.structure.factory` module
 """
@@ -23,6 +24,7 @@ from sage.structure.factory import UniqueFactory
 class A():
     # something we can weakref
     pass
+
 
 class UniqueFactoryTester(UniqueFactory):
 

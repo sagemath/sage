@@ -156,32 +156,32 @@ def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
 
     INPUT:
 
-    - ``nargs=0`` - number of arguments the function accepts, defaults to
+    - ``nargs=0`` -- number of arguments the function accepts, defaults to
       variable number of arguments, or 0
-    - ``latex_name`` - name used when printing in latex mode
-    - ``conversions`` - a dictionary specifying names of this function in
+    - ``latex_name`` -- name used when printing in latex mode
+    - ``conversions`` -- dictionary specifying names of this function in
       other systems, this is used by the interfaces internally during conversion
-    - ``eval_func`` - method used for automatic evaluation
-    - ``evalf_func`` - method used for numeric evaluation
-    - ``evalf_params_first`` - bool to indicate if parameters should be
+    - ``eval_func`` -- method used for automatic evaluation
+    - ``evalf_func`` -- method used for numeric evaluation
+    - ``evalf_params_first`` -- boolean to indicate if parameters should be
       evaluated numerically before calling the custom evalf function
-    - ``conjugate_func`` - method used for complex conjugation
-    - ``real_part_func`` - method used when taking real parts
-    - ``imag_part_func`` - method used when taking imaginary parts
-    - ``derivative_func`` - method to be used for (partial) derivation
+    - ``conjugate_func`` -- method used for complex conjugation
+    - ``real_part_func`` -- method used when taking real parts
+    - ``imag_part_func`` -- method used when taking imaginary parts
+    - ``derivative_func`` -- method to be used for (partial) derivation
       This method should take a keyword argument deriv_param specifying
       the index of the argument to differentiate w.r.t
-    - ``tderivative_func`` - method to be used for derivatives
-    - ``power_func`` - method used when taking powers
+    - ``tderivative_func`` -- method to be used for derivatives
+    - ``power_func`` -- method used when taking powers
       This method should take a keyword argument power_param specifying
       the exponent
-    - ``series_func`` - method used for series expansion
+    - ``series_func`` -- method used for series expansion
       This method should expect keyword arguments
-      - ``order`` - order for the expansion to be computed
-      - ``var`` - variable to expand w.r.t.
-      - ``at`` - expand at this value
-    - ``print_func`` - method for custom printing
-    - ``print_latex_func`` - method for custom printing in latex mode
+      - ``order`` -- order for the expansion to be computed
+      - ``var`` -- variable to expand w.r.t.
+      - ``at`` -- expand at this value
+    - ``print_func`` -- method for custom printing
+    - ``print_latex_func`` -- method for custom printing in latex mode
 
     Note that custom methods must be instance methods, i.e., expect the instance
     of the symbolic function as the first argument.
@@ -328,7 +328,7 @@ def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
 
     TESTS:
 
-    Make sure that :trac:`15860` is fixed and whitespaces are removed::
+    Make sure that :issue:`15860` is fixed and whitespaces are removed::
 
         sage: C, D, E = function(' C  D E')
         sage: C(D(x))

@@ -118,7 +118,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting power series will have precision prec, but
+            The resulting power series will have precision ``prec``, but
             its parent PowerSeriesRing will have default precision 20
             (or whatever the default default is).
 
@@ -251,7 +251,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting series will have precision prec, but its
+            The resulting series will have precision ``prec``, but its
             parent PowerSeriesRing will have default precision 20 (or
             whatever the default default is).
 
@@ -289,7 +289,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting series will have precision prec, but its
+            The resulting series will have precision ``prec``, but its
             parent PowerSeriesRing will have default precision 20 (or
             whatever the default default is).
 
@@ -338,7 +338,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting series will have precision prec, but its
+            The resulting series will have precision ``prec``, but its
             parent PowerSeriesRing will have default precision 20 (or
             whatever the default default is).
 
@@ -417,7 +417,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting power series will have precision prec, but
+            The resulting power series will have precision ``prec``, but
             its parent PowerSeriesRing will have default precision 20
             (or whatever the default default is).
 
@@ -509,7 +509,7 @@ class EllipticCurveFormalGroup(SageObject):
             sage: e.formal_group().group_law(4)
             t1 + t2 + O(t1, t2)^4
 
-        Test for :trac:`9646`::
+        Test for :issue:`9646`::
 
             sage: P.<a1, a2, a3, a4, a6> = PolynomialRing(ZZ, 5)
             sage: E = EllipticCurve(list(P.gens()))
@@ -579,7 +579,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting power series will have precision prec, but
+            The resulting power series will have precision ``prec``, but
             its parent PowerSeriesRing will have default precision 20
             (or whatever the default default is).
 

@@ -7,6 +7,7 @@ Coding in Python for Sage
 This chapter discusses some issues with, and advice for, coding in
 Sage.
 
+.. _section-python-language-standard:
 
 Python language standard
 ========================
@@ -64,7 +65,7 @@ scratch. Try to figure out how your code should fit in with other Sage
 code, and design it accordingly.
 
 
-Special sage functions
+Special Sage functions
 ======================
 
 Functions with leading and trailing double underscores ``__XXX__`` are
@@ -94,17 +95,17 @@ or from some other already existing Sage class:
 
 .. CODE-BLOCK:: python
 
-    from sage.rings.ring import Algebra
+    from sage.structure.parent import Parent
 
-    class MyFavoriteAlgebra(Algebra):
+    class MyFavoriteAlgebra(Parent):
         ...
 
 You should implement the ``_latex_`` and ``_repr_`` method for every
 object. The other methods depend on the nature of the object.
 
 
-LaTeX Representation
---------------------
+LaTeX representation
+====================
 
 Every object ``x`` in Sage should support the command ``latex(x)``, so
 that any Sage object can be easily and accurately displayed via
@@ -127,8 +128,7 @@ support the command ``latex``.
    illustrates LaTeX generation for your object.
 
 #. You can use any macros included in ``amsmath``, ``amssymb``, or
-   ``amsfonts``, or the ones defined in
-   ``SAGE_ROOT/doc/commontex/macros.tex``.
+   ``amsfonts``, or the ones defined in :mod:`sage.misc.latex_macros`.
 
 An example template for a ``_latex_`` method follows. Note that the
 ``.. skip`` line should not be included in your code; it is here to
@@ -158,10 +158,10 @@ typeset version of this.
 
 
 Print representation
---------------------
+====================
 
 The standard Python printing method is ``__repr__(self)``. In Sage,
-that is for objects that derive from ``SageObject`` (which is
+that is for objects that derive from :class:`SageObject` (which is
 everything in Sage), instead define ``_repr_(self)``. This is
 preferable because if you only define ``_repr_(self)`` and not
 ``__repr__(self)``, then users can rename your object to print however
@@ -170,7 +170,7 @@ the context.
 
 Here is an example of the ``_latex_`` and ``_repr_`` functions for the
 ``Pi`` class. It is from the file
-``SAGE_ROOT/src/sage/symbolic/constants.py``:
+:sage_root:`src/sage/symbolic/constants.py`:
 
 .. CODE-BLOCK:: python
 
@@ -194,14 +194,14 @@ Here is an example of the ``_latex_`` and ``_repr_`` functions for the
 
 
 Matrix or vector from object
-----------------------------
+============================
 
 Provide a ``_matrix_`` method for an object that can be coerced to a
 matrix over a ring `R`. Then the Sage function ``matrix`` will work
 for this object.
 
 The following is from
-``SAGE_ROOT/src/sage/graphs/generic_graph.py``:
+:sage_root:`src/sage/graphs/generic_graph.py`:
 
 .. CODE-BLOCK:: python
 
@@ -220,7 +220,7 @@ The following is from
 Similarly, provide a ``_vector_`` method for an object that can be
 coerced to a vector over a ring `R`. Then the Sage function ``vector``
 will work for this object. The following is from the file
-``SAGE_ROOT/src/sage/modules/free_module_element.pyx``:
+:sage_root:`src/sage/modules/free_module_element.pyx`:
 
 .. CODE-BLOCK:: python
 
@@ -259,9 +259,9 @@ replacements are made:
       3 * 29
 
 - Raw literals are not preparsed, which can be useful from an
-  efficiency point of view. Just like Python ints are denoted by an L,
-  in Sage raw integer and floating literals are followed by an "r" (or
-  "R") for raw, meaning not preparsed. For example::
+  efficiency point of view. In Sage raw integer and floating
+  literals are followed by an "r" (or "R") for raw, meaning
+  not preparsed. For example::
 
       sage: a = 393939r
       sage: a
@@ -297,11 +297,11 @@ creates the file ``foo.sage.py``.
 
 The following files are relevant to preparsing in Sage:
 
-#. ``SAGE_ROOT/src/bin/sage``
+#. :sage_root:`src/bin/sage`
 
-#. ``SAGE_ROOT/src/bin/sage-preparse``
+#. :sage_root:`src/bin/sage-preparse`
 
-#. ``SAGE_ROOT/src/sage/repl/preparse.py``
+#. :sage_root:`src/sage/repl/preparse.py`
 
 In particular, the file ``preparse.py`` contains the Sage preparser
 code.
@@ -343,7 +343,7 @@ scope variable.
 
 Certain objects, e.g. matrices, may start out mutable and become
 immutable later. See the file
-``SAGE_ROOT/src/sage/structure/mutability.py``.
+:sage_root:`src/sage/structure/mutability.py`.
 
 
 The  __hash__ special method
@@ -473,6 +473,34 @@ example:
 Note that the syntax in ``except`` is to list all the exceptions that
 are caught as a tuple, followed by an error message.
 
+A method or a function accepts input described in the ``INPUT`` block of
+:ref:`the docstring <section-docstring-function>`. If the input cannot be
+handled by the code, then it may raise an exception. The following aims to
+guide you in choosing from the most relevant exceptions to Sage. Raise
+
+- :class:`TypeError`: if the input belongs to a class of objects that is not
+  supported by the method. For example, a method works only with monic
+  polynomials over a finite field, but a polynomial over rationals was given.
+
+- :class:`ValueError`: if the input has a value not supported by the method.
+  For example, the above method was given a non-monic polynomial.
+
+- :class:`ArithmeticError`: if the method performs an arithmetic operation
+  (sum, product, quotient, and the like) but the input is not appropriate.
+
+- :class:`ZeroDivisionError`: if the method performs division but the input is
+  zero. Note that for non-invertible input values, :class:`ArithmeticError` is
+  more appropriate. As derived from :class:`ArithmeticError`,
+  :class:`ZeroDivisionError` can be caught as :class:`ArithmeticError`.
+
+- :class:`NotImplementedError`: if the input is for a feature not yet
+  implemented by the method. Note that this exception is derived from
+  :class:`RuntimeError`.
+
+If no specific error seems to apply for your situation, :class:`RuntimeError`
+can be used. In all cases, the string associated with the exception should
+describe the details of what went wrong.
+
 
 Integer return values
 =====================
@@ -509,7 +537,7 @@ large third-party modules. See also :ref:`section_dependencies_distributions`
 for a discussion of imports from the viewpoint of modularization.
 
 First, you must avoid circular imports. For example, suppose that the
-file ``SAGE_ROOT/src/sage/algebras/steenrod_algebra.py``
+file :sage_root:`src/sage/algebras/steenrod_algebra.py`
 started with a line:
 
 .. CODE-BLOCK:: python
@@ -517,7 +545,7 @@ started with a line:
     from sage.sage.algebras.steenrod_algebra_bases import *
 
 and that the file
-``SAGE_ROOT/src/sage/algebras/steenrod_algebra_bases.py``
+:sage_root:`src/sage/algebras/steenrod_algebra_bases.py`
 started with a line:
 
 .. CODE-BLOCK:: python
@@ -618,17 +646,17 @@ When importing from other Python libraries that do not provide sufficient typing
 information, it is possible to augment the library's typing information for
 the purposes of typechecking the Sage library:
 
-- Create typestub files and place them in the directory ``SAGE_ROOT/src/typings``.
+- Create typestub files and place them in the directory :file:`SAGE_ROOT/src/typings`.
   For example, the distribution **pplpy** provides the top-level package :mod:`ppl`,
   which publishes no typing information. We can create a typestub file
-  ``SAGE_ROOT/src/typings/ppl.pyi`` or ``SAGE_ROOT/src/typings/ppl/__init__.pyi``.
+  :file:`SAGE_ROOT/src/typings/ppl.pyi` or :file:`SAGE_ROOT/src/typings/ppl/__init__.pyi`.
 
 - When these typestub files are working well, it is preferable from the viewpoint
   of the Sage project that they are "upstreamed", i.e., contributed to the
   project that maintains the library. If a new version of the upstream library
   becomes available that provides the necessary typing information, we can
   update the package in the Sage distribution and remove the typestub files again
-  from ``SAGE_ROOT/src/typings``.
+  from :file:`SAGE_ROOT/src/typings`.
 
 - As a fallback, when neither adding typing annotations to source files
   nor adding typestub files is welcomed by the upstream project, it is possible
@@ -640,17 +668,28 @@ Deprecation
 ===========
 
 When making a **backward-incompatible** modification in Sage, the old code should
-keep working and display a message indicating how it should be updated/written
-in the future. We call this a *deprecation*.
+keep working and a message indicating how the code should be updated/written
+in the future should be displayed somewhere. We call this *deprecation*. We explain
+how to do the deprecation, the deprecation policy, below.
+
+Any class, function, method, or attribute defined in a file under
+:sage_root:`src/sage` is subject to the deprecation policy. If its name starts
+with an underscore, then it is considered internal, and exempt from the
+deprecation policy.
 
 .. NOTE::
 
-    Deprecated code can only be removed one year after the first
-    stable release in which it appeared.
+    A deprecated class, function, method, or attribute can only be removed one
+    year after the first stable release in which it appeared.
 
-Each deprecation warning contains the number of the GitHub PR that defines
-it. We use 666 in the examples below. For each entry, consult the function's
-documentation for more information on its behaviour and optional arguments.
+When a deprecated function, method, or attribute is used, a deprecation warning
+is issued. The warning message contains the number of the GitHub PR that
+implemented the deprecation. We use 12345 in the examples below.
+
+.. NOTE::
+
+    For deprecation tools used in the examples, consult the tool's documentation for more
+    information on its behaviour and optional arguments.
 
 * **Rename a keyword:** by decorating a function/method with
   :class:`~sage.misc.decorators.rename_keyword`, any user calling
@@ -659,7 +698,7 @@ documentation for more information on its behaviour and optional arguments.
   .. CODE-BLOCK:: python
 
       from sage.misc.decorators import rename_keyword
-      @rename_keyword(deprecation=666, my_old_keyword='my_new_keyword')
+      @rename_keyword(deprecation=12345, my_old_keyword='my_new_keyword')
       def my_function(my_new_keyword=True):
           return my_new_keyword
 
@@ -673,7 +712,7 @@ documentation for more information on its behaviour and optional arguments.
       def my_new_function():
           ...
 
-      my_old_function = deprecated_function_alias(666, my_new_function)
+      my_old_function = deprecated_function_alias(12345, my_new_function)
 
 * **Moving an object to a different module:**
   if you rename a source file or move some function (or class) to a
@@ -685,7 +724,7 @@ documentation for more information on its behaviour and optional arguments.
   .. CODE-BLOCK:: python
 
     from sage.misc.lazy_import import lazy_import
-    lazy_import('sage.new.module.name', 'name_of_the_function', deprecation=666)
+    lazy_import('sage.new.module.name', 'name_of_the_function', deprecation=12345)
 
   You can also lazily import everything using ``*`` or a few functions
   using a tuple:
@@ -693,8 +732,8 @@ documentation for more information on its behaviour and optional arguments.
   .. CODE-BLOCK:: python
 
     from sage.misc.lazy_import import lazy_import
-    lazy_import('sage.new.module.name', '*', deprecation=666)
-    lazy_import('sage.other.module', ('func1', 'func2'), deprecation=666)
+    lazy_import('sage.new.module.name', '*', deprecation=12345)
+    lazy_import('sage.other.module', ('func1', 'func2'), deprecation=12345)
 
 * **Remove a name from a global namespace:** this is when you want to
   remove a name from a global namespace (say, ``sage.all`` or some
@@ -708,7 +747,7 @@ documentation for more information on its behaviour and optional arguments.
   .. CODE-BLOCK:: python
 
     from sage.misc.lazy_import import lazy_import as _lazy_import
-    _lazy_import('sage.some.package', 'some_function', deprecation=666)
+    _lazy_import('sage.some.package', 'some_function', deprecation=12345)
 
 * **Any other case:** if none of the cases above apply, call
   :func:`~sage.misc.superseded.deprecation` in the function that you want to
@@ -718,11 +757,51 @@ documentation for more information on its behaviour and optional arguments.
   .. CODE-BLOCK:: python
 
       from sage.misc.superseded import deprecation
-      deprecation(666, "Do not use your computer to compute 1+1. Use your brain.")
+      deprecation(12345, "Do not use your computer to compute 1 + 1. Use your brain.")
+
+.. NOTE::
+
+    These decorators only work for Python. There is no implementation
+    of decorators in Cython. Hence, when in need to rename a keyword/function/method/...
+    in a Cython (.pyx) file and/or to deprecate something, forget about decorators and
+    just use :func:`~sage.misc.superseded.deprecation_cython` instead. The usage of
+    :func:`~sage.misc.superseded.deprecation_cython` is exactly the same as
+    :func:`~sage.misc.superseded.deprecation`.
+
+When a class is renamed or removed, it should be deprecated unless it is
+internal. A class is internal if its name starts with an underscore, or experts
+(authors and reviewers of a PR making changes to the class) agree that the
+class is unlikely to be directly imported by user code. Otherwise, or if experts
+disagree, it is public.
+
+As a class is imported rather than run by user code, there are some technical
+difficulties in using the above deprecation tools. Instead we follow
+the procedure below:
+
+* **Renaming a class:** rename ``OldClass`` to ``NewClass`` and add an
+  alias ``OldClass = NewClass``:
+
+  .. CODE-BLOCK:: python
+
+    class NewClass:
+        ...
+
+    OldClass = NewClass   # OldClass is deprecated. See Issue 12345.
+
+* **Removing a class:**  add a comment:
+
+  .. CODE-BLOCK:: python
+
+    # OldClass is deprecated. See Issue 12345.
+
+    class OldClass:
+
+In both cases, make it sure to display the change in the "Deprecations"
+section of the release notes of the next stable release.
 
 
 Experimental/unstable code
---------------------------
+==========================
 
 You can mark your newly created code (classes/functions/methods) as
 experimental/unstable. In this case, no deprecation warning is needed
@@ -743,7 +822,7 @@ reviewing process.
   .. CODE-BLOCK:: python
 
       from sage.misc.superseded import experimental
-      @experimental(66666)
+      @experimental(12345)
       def experimental_function():
           # do something
 
@@ -755,7 +834,7 @@ reviewing process.
 
       from sage.misc.superseded import experimental
       class experimental_class(SageObject):
-          @experimental(66666)
+          @experimental(12345)
           def __init__(self, some, arguments):
               # do something
 
@@ -766,7 +845,7 @@ reviewing process.
   .. CODE-BLOCK:: python
 
       from sage.misc.superseded import experimental_warning
-      experimental_warning(66666, 'This code is not foolproof.')
+      experimental_warning(12345, 'This code is not foolproof.')
 
 
 Using optional packages

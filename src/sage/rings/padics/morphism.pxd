@@ -7,4 +7,4 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
     cdef long _power
     cdef long _order
 
-    cpdef Element _call_(self, x) noexcept
+    cpdef Element _call_(self, x)

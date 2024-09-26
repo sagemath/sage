@@ -14,10 +14,11 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.libs.pari.all as pari
-from sage.rings.ring import Ring
+from sage.categories.rings import Rings
+from sage.structure.parent import Parent
 from sage.structure.element import RingElement
 from sage.structure.richcmp import richcmp
 from sage.misc.fast_methods import Singleton
@@ -27,7 +28,7 @@ class Pari(RingElement):
     """
     Element of Pari pseudo-ring.
     """
-    def __init__(self, x, parent=None):
+    def __init__(self, x, parent=None) -> None:
         """
         EXAMPLES::
 
@@ -45,7 +46,7 @@ class Pari(RingElement):
         RingElement.__init__(self, parent)
         self.__x = pari.pari(x)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -138,7 +139,7 @@ class Pari(RingElement):
         """
         return self.__class__(~self.__x, parent=_inst)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         EXAMPLES::
 
@@ -154,11 +155,11 @@ class Pari(RingElement):
         """
         return richcmp(self.__x, other.__x, op)
 
-    def __int__(self):
+    def __int__(self) -> int:
         return int(self.__x)
 
 
-class PariRing(Singleton, Ring):
+class PariRing(Singleton, Parent):
     """
     EXAMPLES::
 
@@ -170,9 +171,9 @@ class PariRing(Singleton, Ring):
     Element = Pari
 
     def __init__(self):
-        Ring.__init__(self, self)
+        Parent.__init__(self, self, category=Rings())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return 'Pseudoring of all PARI objects.'
 
     def _element_constructor_(self, x):
@@ -180,7 +181,7 @@ class PariRing(Singleton, Ring):
             return x
         return self.element_class(x, parent=self)
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         return False
 
     def characteristic(self):
@@ -201,8 +202,8 @@ class PariRing(Singleton, Ring):
           between 0 and `x-1`, inclusive. If both are provided, then the
           result is between `x` and `y-1`, inclusive.
 
-        - `distribution` -- optional string, so that ``ZZ`` can make sense
-          of it as a probability distribution.
+        - ``distribution`` -- (optional) string, so that ``ZZ`` can make sense
+          of it as a probability distribution
 
         EXAMPLES::
 
@@ -211,9 +212,8 @@ class PariRing(Singleton, Ring):
             True
             sage: R(5) <= R.random_element(5,13) < R(13)
             True
-            sage: R.random_element(distribution="1/n").parent() is R
+            sage: R.random_element(distribution='1/n').parent() is R
             True
-
         """
         from sage.rings.integer_ring import ZZ
         return self(ZZ.random_element(x, y, distribution))

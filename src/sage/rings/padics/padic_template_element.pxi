@@ -46,11 +46,11 @@ cdef long minusmaxordp = -maxordp
 
 cdef inline int check_ordp(long ordp) except -1:
     """
-    Checks for overflow after addition or subtraction of valuations.
+    Check for overflow after addition or subtraction of valuations.
 
     There is another variant, :meth:`check_ordp_mpz`, for ``mpz_t`` input.
 
-    If overflow is detected, raises a OverflowError.
+    If overflow is detected, raises a :exc:`OverflowError`.
     """
     if ordp >= maxordp or ordp <= minusmaxordp:
         raise OverflowError("valuation overflow")
@@ -64,8 +64,8 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
     - ``parent`` -- a local ring or field
 
     - ``x`` -- data defining this element.  Various types are supported,
-      including ints, Integers, Rationals, PARI p-adics, integers mod `p^k`
-      and other Sage p-adics.
+      including ints, Integers, Rationals, PARI `p`-adics, integers mod `p^k`
+      and other Sage `p`-adics.
 
     - ``absprec`` -- a cap on the absolute precision of this element
 
@@ -75,7 +75,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         sage: Zp(17)(17^3, 8, 4)
         17^3 + O(17^7)
-
     """
     def __init__(self, parent, x, absprec=infinity, relprec=infinity):
         """
@@ -117,7 +116,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             Traceback (most recent call last):
             ...
             TypeError: no conversion between padics when prime numbers differ
-
         """
         self.prime_pow = <PowComputer_?>parent.prime_pow
         pAdicGenericElement.__init__(self, parent)
@@ -145,7 +143,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
                         x = []
                     else:
                         x = [x]
-        elif sage.rings.finite_rings.integer_mod.is_IntegerMod(x):
+        elif isinstance(x, sage.rings.finite_rings.integer_mod.IntegerMod_abstract):
             if not Integer(self.prime_pow.prime).divides(x.parent().order()):
                 raise TypeError("p does not divide modulus %s" % x.parent().order())
         elif isinstance(x, Element) and isinstance(x.parent(), FiniteField):
@@ -171,26 +169,26 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
     cdef int _set(self, x, long val, long xprec, absprec, relprec) except -1:
         """
-        Sets this element from given data computed in :meth:`__init__`.
+        Set this element from given data computed in :meth:`__init__`.
 
         INPUT:
 
-        - ``x`` -- an int, Integer, Rational, PARI p-adic, integer mod `p^k` or Sage p-adic
+        - ``x`` -- an int, Integer, Rational, PARI `p`-adic, integer mod `p^k` or
+          Sage `p`-adic
 
-        - ``val`` -- a long, the valuation of ``x``
+        - ``val`` -- a long; the valuation of ``x``
 
-        - ``xprec`` -- a long, the cap on the absolute precision imposed by ``x``
+        - ``xprec`` -- a long; the cap on the absolute precision imposed by ``x``
 
-        - ``absprec`` -- an integer or infinity, a bound on the absolute precision
+        - ``absprec`` -- integer or infinity; a bound on the absolute precision
 
-        - ``relprec`` -- an integer or infinity, a bound on the relative precision
-
+        - ``relprec`` -- integer or infinity; a bound on the relative precision
         """
         raise NotImplementedError
 
-    cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec) noexcept:
+    cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec):
         """
-        Creates a new element with a given value and absolute precision.
+        Create a new element with a given value and absolute precision.
 
         Used by code that doesn't know the precision type.
         """
@@ -198,13 +196,13 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
     cdef int _get_unit(self, celement value) except -1:
         """
-        Sets ``value`` to the unit of this p-adic element.
+        Set ``value`` to the unit of this `p`-adic element.
         """
         raise NotImplementedError
 
     def __lshift__(pAdicTemplateElement self, shift):
         """
-        Multiplies ``self`` by ``pi^shift``.
+        Multiply ``self`` by ``pi^shift``.
 
         If ``shift`` is negative and this element does not lie in a field,
         digits may be truncated.  See ``__rshift__`` for details.
@@ -264,12 +262,12 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         check_ordp(s)
         return self._lshift_c(s)
 
-    cdef pAdicTemplateElement _lshift_c(self, long shift) noexcept:
+    cdef pAdicTemplateElement _lshift_c(self, long shift):
         raise NotImplementedError
 
     def __rshift__(pAdicTemplateElement self, shift):
         """
-        Divides by ``p^shift``, and truncates (if the parent is not a field).
+        Divide by ``p^shift``, and truncate (if the parent is not a field).
 
         EXAMPLES::
 
@@ -312,15 +310,15 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         check_ordp(s)
         return self._rshift_c(s)
 
-    cdef pAdicTemplateElement _rshift_c(self, long shift) noexcept:
+    cdef pAdicTemplateElement _rshift_c(self, long shift):
         """
-        Divides by ``p^shift`` and truncates (if the parent is not a field).
+        Divide by ``p^shift`` and truncate (if the parent is not a field).
         """
         raise NotImplementedError
 
     cdef int check_preccap(self) except -1:
         """
-        Checks that this element doesn't have precision higher than allowed by
+        Check that this element doesn't have precision higher than allowed by
         the precision cap.
         """
         raise NotImplementedError
@@ -333,9 +331,9 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or ``None`` (default: ``None``); the
+        - ``absprec`` -- integer or ``None`` (default: ``None``); the
           absolute precision of the result. If ``None``, lifts to the maximum
-          precision allowed
+          precision allowed.
 
         .. NOTE::
 
@@ -368,7 +366,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             5
             sage: a.lift_to_precision(10000)
             5
-
         """
         if absprec is None:
             absprec = maxordp
@@ -380,7 +377,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         ans.check_preccap()
         return ans
 
-    cdef pAdicTemplateElement lift_to_precision_c(self, long absprec) noexcept:
+    cdef pAdicTemplateElement lift_to_precision_c(self, long absprec):
         """
         Lift this element to another with precision at least ``absprec``.
         """
@@ -404,7 +401,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         Different lift modes affect the choice of `a_i`.  When
         ``lift_mode`` is ``'simple'``, the resulting `a_i` will be
-        non-negative: if the residue field is `\GF{p}` then they
+        nonnegative: if the residue field is `\GF{p}` then they
         will be integers with `0 \le a_i < p`; otherwise they will be
         a list of integers in the same range giving the coefficients
         of a polynomial in the indeterminant representing the maximal
@@ -421,14 +418,15 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``n`` -- integer (default ``None``).  If given, returns the corresponding
-          entry in the expansion.  Can also accept a slice (see :meth:`slice`)
+        - ``n`` -- integer (default: ``None``); if given, returns the
+          corresponding entry in the expansion. Can also accept a slice (see
+          :meth:`slice`).
 
         - ``lift_mode`` -- ``'simple'``, ``'smallest'`` or
           ``'teichmuller'`` (default: ``'simple'``)
 
         - ``start_val`` -- start at this valuation rather than the
-          default (`0` or the valuation of this element).
+          default (`0` or the valuation of this element)
 
         OUTPUT:
 
@@ -516,7 +514,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         TESTS:
 
-        Check to see that :trac:`10292` is resolved::
+        Check to see that :issue:`10292` is resolved::
 
             sage: # needs sage.schemes
             sage: E = EllipticCurve('37a')
@@ -564,7 +562,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
     def teichmuller_expansion(self, n = None):
         r"""
-        Returns an iterator over coefficients `a_0, a_1, \dots, a_n` such that
+        Return an iterator over coefficients `a_0, a_1, \dots, a_n` such that
 
         - `a_i^q = a_i`, where `q` is the cardinality of the residue field,
 
@@ -588,8 +586,8 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``n`` -- integer (default ``None``).  If given, returns the
-          coefficient of `\pi^n` in the expansion.
+        - ``n`` -- integer (default: ``None``); if given, returns the
+          coefficient of `\pi^n` in the expansion
 
         EXAMPLES:
 
@@ -611,7 +609,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
     def _ext_p_list(self, pos):
         """
-        Returns the p-adic expansion of the unit part.  Used in printing.
+        Return the `p`-adic expansion of the unit part.  Used in printing.
 
         EXAMPLES::
 
@@ -626,9 +624,9 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         else:
             return trim_zeros(list(self.unit_part().expansion(lift_mode='smallest')))
 
-    cpdef pAdicTemplateElement unit_part(self) noexcept:
+    cpdef pAdicTemplateElement unit_part(self):
         r"""
-        Returns the unit part of this element.
+        Return the unit part of this element.
 
         This is the `p`-adic element `u` in the same ring so that this
         element is `\pi^v u`, where `\pi` is a uniformizer and `v` is
@@ -650,7 +648,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``p`` -- a prime, which is compared with the parent of this element.
+        - ``p`` -- a prime, which is compared with the parent of this element
 
         EXAMPLES::
 
@@ -658,7 +656,6 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             True
             sage: a._is_base_elt(17)
             False
-
         """
         return self.prime_pow.prime == p and self.prime_pow.deg == 1
 
@@ -680,12 +677,12 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         INPUT:
 
-        - ``absprec`` -- ``0`` or ``1``.
+        - ``absprec`` -- ``0`` or ``1``
 
-        - ``field`` -- boolean (default ``None``).  For precision 1, whether to return
+        - ``field`` -- boolean (default: ``None``); for precision 1, whether to return
           an element of the residue field or a residue ring.  Currently unused.
 
-        - ``check_prec`` -- boolean (default ``True``).  Whether to raise an error if this
+        - ``check_prec`` -- boolean (default: ``True``); whether to raise an error if this
           element has insufficient precision to determine the reduction.  Errors are never
           raised for fixed-mod or floating-point types.
 
@@ -737,12 +734,12 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             sage: (a/3).residue()
             Traceback (most recent call last):
             ...
-            ValueError: element must have non-negative valuation in order to compute residue
+            ValueError: element must have nonnegative valuation in order to compute residue
         """
         if absprec < 0:
             raise ValueError("cannot reduce modulo a negative power of the uniformizer")
         if self.valuation() < 0:
-            raise ValueError("element must have non-negative valuation in order to compute residue")
+            raise ValueError("element must have nonnegative valuation in order to compute residue")
         R = self.parent()
         if check_prec and (R.is_fixed_mod() or R.is_floating_point()):
             check_prec = False
@@ -761,7 +758,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         else:
             raise NotImplementedError("reduction modulo p^n with n>1")
 
-cdef Integer exact_pow_helper(long *ansrelprec, long relprec, _right, PowComputer_ prime_pow) noexcept:
+cdef Integer exact_pow_helper(long *ansrelprec, long relprec, _right, PowComputer_ prime_pow):
     """
     This function is used by exponentiation in both ``CR_template.pxi``
     and ``CA_template.pxi`` to determine the extra precision gained from
@@ -772,16 +769,13 @@ cdef Integer exact_pow_helper(long *ansrelprec, long relprec, _right, PowCompute
 
     - ``ansrelprec`` -- (return value) the relative precision of the answer
 
-    - ``relprec`` -- a positive integer: the relative precision of the base
+    - ``relprec`` -- positive integer: the relative precision of the base
 
     - ``_right`` -- the exponent, nonzero
 
-    - ``prime_pow`` -- the Powcomputer for the ring.
+    - ``prime_pow`` -- the Powcomputer for the ring
 
-    OUTPUT:
-
-    an Integer congruent to the given exponent
-
+    OUTPUT: an Integer congruent to the given exponent
     """
     cdef Integer right, p = prime_pow.prime
     cdef long exp_val
@@ -806,14 +800,14 @@ cdef long padic_pow_helper(celement result, celement base, long base_val, long b
     """
     INPUT:
 
-    - ``result`` -- the result of exponentiation.
+    - ``result`` -- the result of exponentiation
 
-    - ``base`` -- a celement, the base of the exponentiation.
+    - ``base`` -- a celement; the base of the exponentiation
 
-    - ``base_val`` -- a long, used to check that the base is a unit
+    - ``base_val`` -- a long; used to check that the base is a unit
 
-    - ``base_relprec`` -- a positive integer: the relative precision
-      of the base.
+    - ``base_relprec`` -- positive integer; the relative precision
+      of the base
 
     - ``right_unit`` -- the unit part of the exponent
 
@@ -821,11 +815,9 @@ cdef long padic_pow_helper(celement result, celement base, long base_val, long b
 
     - ``right_relprec`` -- the relative precision of the exponent
 
-    - ``prime_pow`` -- the Powcomputer for the ring.
+    - ``prime_pow`` -- the Powcomputer for the ring
 
-    OUTPUT:
-
-    the precision of the result
+    OUTPUT: the precision of the result
 
     EXAMPLES::
 
@@ -875,7 +867,7 @@ cdef long padic_pow_helper(celement result, celement base, long base_val, long b
     cpow(result, prime_pow.powhelper_oneunit, right.value, bloga_aprec, prime_pow)
     return bloga_aprec
 
-cdef _zero(expansion_mode mode, teich_ring) noexcept:
+cdef _zero(expansion_mode mode, teich_ring):
     """
     Return an appropriate zero for a given expansion mode.
 
@@ -920,7 +912,7 @@ cdef class ExpansionIter():
 
     def __cinit__(self, pAdicTemplateElement elt, long prec, expansion_mode mode):
         """
-        Allocates memory for the iterator.
+        Allocate memory for the iterator.
 
         TESTS::
 
@@ -946,7 +938,7 @@ cdef class ExpansionIter():
 
     def __dealloc__(self):
         """
-        Deallocates memory for the iterator.
+        Deallocate memory for the iterator.
 
         TESTS::
 
@@ -1052,7 +1044,7 @@ cdef class ExpansionIterable():
 
     def __cinit__(self, pAdicTemplateElement elt, long prec, long val_shift, expansion_mode mode):
         """
-        Allocates memory for the iteratable.
+        Allocate memory for the iteratable.
 
         TESTS::
 

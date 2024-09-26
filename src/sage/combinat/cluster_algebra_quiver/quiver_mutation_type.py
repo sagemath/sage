@@ -680,11 +680,11 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``circular`` -- (default: ``False``) if ``True``, the
-          circular plot is chosen, otherwise >>spring<< is used.
+        - ``circular`` -- boolean (default: ``False``); if ``True``, the
+          circular plot is chosen, otherwise >>spring<< is used
 
-        - ``directed`` -- (default: ``True``) if ``True``, the
-          directed version is shown, otherwise the undirected.
+        - ``directed`` -- boolean (default: ``True``); if ``True``, the
+          directed version is shown, otherwise the undirected
 
         EXAMPLES::
 
@@ -700,15 +700,15 @@ class QuiverMutationType_abstract(UniqueRepresentation, SageObject):
 
         INPUT:
 
-        - ``circular`` -- (default:``False``) if ``True``, the
-          circular plot is chosen, otherwise >>spring<< is used.
+        - ``circular`` -- boolean (default: ``False``); if ``True``, the
+          circular plot is chosen, otherwise >>spring<< is used
 
-        - ``directed`` -- (default: ``True``) if ``True``, the
-          directed version is shown, otherwise the undirected.
+        - ``directed`` -- boolean (default: ``True``); if ``True``, the
+          directed version is shown, otherwise the undirected
 
         TESTS::
 
-            sage: QMT = QuiverMutationType(['A',5])
+            sage: QMT = QuiverMutationType(['A', 5])
             sage: QMT.show()                    # long time                             # needs sage.plot sage.symbolic
         """
         self.plot(circular=circular, directed=directed).show()
@@ -1686,7 +1686,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             sage: mut_type.irreducible_components()
             (['A', 3],)
         """
-        return tuple([self])
+        return (self,)
 
     @cached_method
     def class_size(self):
@@ -1732,7 +1732,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             Warning: This method uses a formula which has not been proved correct.
             504
 
-        Check that :trac:`14048` is fixed::
+        Check that :issue:`14048` is fixed::
 
             sage: mut_type = QuiverMutationType( ['F',4,(2, 1)] )
             sage: mut_type.class_size()
@@ -1973,8 +1973,8 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
 
         INPUT:
 
-        - ``data`` -- a list each of whose entries is a
-          QuiverMutationType_Irreducible
+        - ``data`` -- list; each of whose entries is a
+          :class:`QuiverMutationType_Irreducible`
 
         EXAMPLES::
 
@@ -2287,7 +2287,7 @@ def _save_data_dig6(n, types='ClassicalExceptional', verbose=False):
 def save_quiver_data(n, up_to=True, types='ClassicalExceptional', verbose=True):
     r"""
     Save mutation classes of certain quivers of ranks up to and equal
-    to ``n`` or equal to ``n`` to
+    to `n` or equal to `n` to
     ``DOT_SAGE/cluster_algebra_quiver/mutation_classes_n.dig6``.
 
     This data will then be used to determine quiver mutation types.
@@ -2295,16 +2295,16 @@ def save_quiver_data(n, up_to=True, types='ClassicalExceptional', verbose=True):
     INPUT:
 
     - ``n`` -- the rank (or the upper limit on the rank) of the mutation
-      classes that are being saved.
+      classes that are being saved
 
-    - ``up_to`` -- (default:``True``) if ``True``, saves data for
-      ranks smaller than or equal to ``n``. If ``False``, saves data
-      for rank exactly ``n``.
+    - ``up_to`` -- (default: ``True``) if ``True``, saves data for
+      ranks smaller than or equal to `n`; if ``False``, saves data
+      for rank exactly `n`
 
-    - ``types`` -- (default:'ClassicalExceptional') if all, saves data
+    - ``types`` -- (default: ``'ClassicalExceptional'``) if all, saves data
       for both exceptional mutation-finite quivers and for classical
-      quiver. The input 'Exceptional' or 'Classical' is also allowed
-      to save only part of this data.
+      quiver; the input 'Exceptional' or 'Classical' is also allowed
+      to save only part of this data
 
     TESTS::
 
