@@ -791,7 +791,7 @@ def coefficients_from_j(j, minimal_twist=True):
     return Sequence([0, 0, 0, -3*j*k, -2*j*k**2], universe=K)
 
 
-def EllipticCurve_from_cubic(F, P=None, morphism=True):
+def EllipticCurve_from_cubic(F, P=None, morphism=True, minimize=False):
     r"""
     Construct an elliptic curve from a ternary cubic with a rational point.
 
@@ -815,6 +815,10 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     - ``morphism`` -- boolean (default: ``True``); if ``True``
       returns a birational isomorphism from `C` to a Weierstrass
       elliptic curve `E`, otherwise just returns `E`
+
+    - ``minimize`` -- boolean (default: ``False``). If ``True``
+      the elliptic curve `E` will be a minimal model.
+
 
     OUTPUT:
 
@@ -919,6 +923,39 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         sage: E.defining_polynomial()(f.defining_polynomials()) * f.post_rescaling()
         a^3 + b^3 + 60*c^3
 
+    We can get the birational isomorphism to and from the minimal model
+    of the elliptic curve::
+
+        sage: fmin = EllipticCurve_from_cubic(cubic, P, morphism=True, minimize=True)
+        sage: fmin
+        Scheme morphism:
+          From: Projective Plane Curve over Rational Field defined by a^3 + b^3 + 60*c^3
+          To:   Elliptic Curve defined by y^2 = x^3 - 24300 over Rational Field
+          Defn: Defined on coordinates by sending (a : b : c) to
+                (-c : 3/2*a - 3/2*b : 1/180*a + 1/180*b)
+
+        sage: fmininv = fmin.inverse(); fmininv
+        Scheme morphism:
+          From: Elliptic Curve defined by y^2 = x^3 - 24300 over Rational Field
+          To:   Projective Plane Curve over Rational Field defined by a^3 + b^3 + 60*c^3
+          Defn: Defined on coordinates by sending (x : y : z) to
+                (1/3*y + 90*z : -1/3*y + 90*z : -x)
+
+    We check that `fmin` maps `P` to the origin::
+
+        sage: fmin([1,-1,0])
+        (0 : 1 : 0)
+        sage: fmininv([0,1,0])
+        (-1 : 1 : 0)
+
+    We check that `fmin` maps the cubic to the minimal model::
+
+        sage: cubic(fmininv.defining_polynomials()) * fmininv.post_rescaling()
+        -x^3 + y^2*z + 24300*z^3
+        sage: Emin = fmin.codomain()
+        sage: Emin.defining_polynomial()(fmin.defining_polynomials()) * fmin.post_rescaling()
+        a^3 + b^3 + 60*c^3
+    
     If the given point is not a flex and the cubic has no rational
     flexes, then the cubic can not be transformed to a Weierstrass
     equation by a linear transformation. The general birational
@@ -985,6 +1022,46 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
          (-5760000/17689 : -124070400000/2352637 : 1)]
         sage: [finv(Q) for Q in E.torsion_points() if Q]
         [(9 : -9/4 : 1), (-9 : 0 : 1), (0 : 1 : 0)]
+
+    We can also map to the minimal model of this curve::
+
+        sage: E.minimal_model()
+        Elliptic Curve defined by y^2 = x^3 - 147*x - 286 over Rational Field
+        sage: fmin = EllipticCurve_from_cubic(cubic, [1,-1,1], morphism=True, minimize=True); fmin
+        Scheme morphism:
+          From: Projective Plane Curve over Rational Field defined
+          by x^2*y + 4*x*y^2 + x^2*z + 8*x*y*z + 4*y^2*z + 9*x*z^2 + 9*y*z^2
+          To:   Elliptic Curve defined
+          by y^2 = x^3 - 147*x - 286 over Rational Field
+          Defn: Defined on coordinates by sending (x : y : z) to
+                (2352637/19906560000*x^2 - 2352637/31104000000*x*y
+                  - 30584281/622080000000*y^2 + 44700103/82944000000*x*z
+                  + 16468459/51840000000*y*z - 101163391/276480000000*z^2
+                : 2352637/5529600000*x^2 + 44700103/13824000000*x*y
+                  + 2352637/576000000*x*z
+                  + 16468459/4608000000*y*z + 2352637/1024000000*z^2
+                : -2352637/99532800000*x^2 - 2352637/124416000000*x*y
+                  - 2352637/622080000000*y^2 + 2352637/82944000000*x*z
+                  + 2352637/207360000000*y*z - 2352637/276480000000*z^2)
+        sage: fmin([-4, 1, 0])
+        (-7 : 20 : 1)
+        sage: [fmin(Q) for Q in [[9, -9/4, 1], [-9, 0, 1], [0, 1, 0]]]
+        [(-11 : 0 : 1), (-2 : 0 : 1), (13 : 0 : 1)]
+        sage: fmininv = fmin.inverse(); fmininv
+        Scheme morphism:
+          From: Elliptic Curve defined
+          by y^2 = x^3 - 147*x - 286 over Rational Field
+          To:   Projective Plane Curve over Rational Field defined
+          by x^2*y + 4*x*y^2 + x^2*z + 8*x*y*z + 4*y^2*z + 9*x*z^2 + 9*y*z^2
+          Defn: Defined on coordinates by sending (x : y : z) to
+                (33177600000000/312900721*x^2 - 1559347200000000/312900721*x*z
+                  + 33177600000000/312900721*y*z + 14664499200000000/312900721*z^2
+                : -33177600000000/312900721*x^2 + 564019200000000/312900721*x*z
+                  - 132710400000000/312900721*y*z + 66355200000000/16468459*z^2
+                : 33177600000000/312900721*x^2 - 33177600000000/44700103*x*z
+                  - 33177600000000/312900721*y*z - 2587852800000000/312900721*z^2)
+        sage: fmininv([-7, 20, 1])
+        (-4 : 1 : 0)
 
     In this example, the given point ``P`` is not a flex but the cubic
     does have a rational flex, ``(-4:0:1)``.  We return a linear
@@ -1248,7 +1325,13 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         S2 = a*S1(T2)
         # assert F4 == F(xyzW) // S2
 
-        E = EllipticCurve(F4([x,y,1]))
+        E0 = EllipticCurve(F4([x,y,1]))
+
+        if minimize:
+            E = E0.minimal_model()
+        else:
+            E = E0
+
         if not morphism:
             return E
 
@@ -1266,6 +1349,30 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         # assert F4(fwd_defining_poly)*fwd_post == F
 
     # Construct the morphism
+    if minimize:
+        fwd_defining_poly0 = fwd_defining_poly
+        fwd_post0 = fwd_post
+        inv_defining_poly0 = inv_defining_poly
+        inv_post0 = inv_post
+
+        phi = E0.isomorphism_to(E)
+        T3 = [x*phi.u**2 + phi.r*z,
+              y*phi.u**3 + phi.s*x*phi.u**2 + phi.t*z,
+              z]
+        T3I = [(x - phi.r*z) / (phi.u**2),
+               (y - phi.s*(x - phi.r*z) - phi.t*z) / (phi.u**3),
+               z] # inverse of T3
+        inv_defining_poly = [t(T3) for t in inv_defining_poly0]
+        fwd_defining_poly = [t(fwd_defining_poly0) for t in T3I]
+
+        if flex_point is not None:
+            inv_post = inv_post0
+            fwd_post = fwd_post0
+        else:
+            inv_post = inv_post0(T3)
+            xyzImin = [t(xyzI) for t in T3I]
+            fwd_post = a/(x*z*z)(xyzImin)
+
 
     return WeierstrassTransformationWithInverse(
         C, E, fwd_defining_poly, fwd_post, inv_defining_poly, inv_post)
