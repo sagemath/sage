@@ -130,7 +130,7 @@ class EuclideanDomains(Category_singleton):
 
         def _test_euclidean_degree(self, **options):
             r"""
-            Test that the assumptions on an Euclidean degree are met.
+            Test that the assumptions on a Euclidean degree are met.
 
             EXAMPLES::
 
@@ -195,7 +195,7 @@ class EuclideanDomains(Category_singleton):
         @abstract_method
         def euclidean_degree(self):
             r"""
-            Return the degree of this element as an element of an Euclidean
+            Return the degree of this element as an element of a Euclidean
             domain, i.e., for elements `a`, `b` the euclidean degree `f`
             satisfies the usual properties:
 
