@@ -122,10 +122,11 @@ This will take a while. For your platform, refer to
 
 ### Preparing the macOS Platform
 
-To build Sage on macOS, You have to use
-[Homebrew](https://brew.sh/) ("the missing package manager for macOS").
-Installing Homebrew also accompanies installing [Xcode command line tools](https://developer.apple.com/xcode/),
-which contain the compiler and library suites necessary to build software from source on mac.
+To build Sage on macOS, You need to use [Homebrew](https://brew.sh/), "the
+missing package manager for macOS". Installing Homebrew is also accompanied by
+installing Xcode command line tools, which are part of
+[Xcode](https://developer.apple.com/xcode/). These tools provide the compiler
+and library suites necessary for building software from source on macOS.
 
 To check if Xcode command line tools are installed, open a terminal window and
 run `xcode-select --install`. If a pop-up window opens, click "Install" to
