@@ -212,13 +212,13 @@ class FreeModulePseudoMorphism(Morphism):
         else:
             x_twist = D(list(map(self._morphism, x)))
         v = x_twist * self._matrix
-        if self._derivation is not None:
-            v += D(list(map(self._derivation, x)))
         if C.is_ambient():
-            v = v.list()
+            v = C(v.list())
         else:
             v = C.linear_combination_of_basis(v)
-        return C(v)
+        if self._derivation is not None:
+            v += D(list(map(self._derivation, x)))
+        return v
 
     def _repr_(self):
         r"""
