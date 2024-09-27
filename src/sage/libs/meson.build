@@ -22,8 +22,6 @@ extension_data = {
   'ecl' : files('ecl.pyx'),
   'homfly' : files('homfly.pyx'),
   'libecm' : files('libecm.pyx'),
-  'meataxe' : files('meataxe.pyx'),
-  'sirocco' : files('sirocco.pyx'),
 }
 
 dependencies = [
@@ -40,7 +38,7 @@ dependencies = [
 ]
 
 if sirocco.found()
-  #extension_data['sirocco'] += files('sirocco.pxd') # not yet on conda
+  extension_data += {'sirocco': files('sirocco.pxd', 'sirocco.pyx')}
   dependencies += [sirocco]
 endif
 

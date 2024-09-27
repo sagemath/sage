@@ -22,7 +22,7 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/modular',
     install: true,
-    include_directories: [],
+    include_directories: [inc_cpython],
     dependencies: [py_dep, cysignals, gmp],
   )
 endforeach

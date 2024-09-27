@@ -53,7 +53,7 @@ if gap_exe.found()
 endif
 conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
 
-configure_file(
+config_file = configure_file(
   input: '../../pkgs/sage-conf_conda/_sage_conf/_conf.py.in',
   output: 'config.py',
   install_dir: py.get_install_dir() / 'sage',
@@ -84,6 +84,7 @@ foreach package : no_processing
 endforeach
 
 py.install_sources(
+  config_file,
   'all.py',
   'all__sagemath_bliss.py',
   'all__sagemath_categories.py',

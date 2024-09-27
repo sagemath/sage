@@ -20,9 +20,7 @@ extension_data = {
   'graph_products' : files('graph_products.pyx'),
   'rankwidth' : files('rankwidth.pyx'),
   'tree_decomposition' : files('tree_decomposition.pyx'),
-  'vertex_separation' : files('vertex_separation.pyx'),
-  'slice_decomposition' : files('slice_decomposition.pyx'),
-  'tdlib' : files('tdlib.pyx'),
+  'vertex_separation' : files('vertex_separation.pyx')
 }
 
 foreach name, pyx : extension_data
@@ -36,7 +34,10 @@ foreach name, pyx : extension_data
   )
 endforeach
 
-extension_data_cpp = {'clique_separators': files('clique_separators.pyx')}
+extension_data_cpp = {
+  'clique_separators': files('clique_separators.pyx'),
+  'slice_decomposition' : files('slice_decomposition.pyx'),
+}
 
 foreach name, pyx : extension_data_cpp
   py.extension_module(

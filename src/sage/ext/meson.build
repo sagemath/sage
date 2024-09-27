@@ -13,7 +13,7 @@ py.install_sources(
 extension_data = {
   'fast_callable' : files('fast_callable.pyx'),
   'fast_eval' : files('fast_eval.pyx'),
-  'memory' : files('memory.pyx')
+  'memory' : files('memory.pyx'),
 }
 
 foreach name, pyx : extension_data

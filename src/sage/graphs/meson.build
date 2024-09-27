@@ -70,8 +70,6 @@ extension_data = {
   'trees' : files('trees.pyx'),
   'views' : files('views.pyx'),
   'weakly_chordal' : files('weakly_chordal.pyx'),
-  'bliss' : files('bliss.pyx'),
-  'mcqd' : files('mcqd.pyx'),
 }
 
 foreach name, pyx : extension_data
