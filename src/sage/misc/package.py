@@ -39,7 +39,7 @@ Functions
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import Dict, List, NamedTuple, Optional, Union
+from typing import NamedTuple, Optional, Union
 
 import sage.env
 
@@ -230,8 +230,8 @@ class PackageInfo(NamedTuple):
         return self.installed_version is not None
 
 
-def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 'script'],
-                  local: bool = False, ignore_URLError: bool = False, exclude_pip: bool = False) -> Dict[str, PackageInfo]:
+def list_packages(*pkg_types: str, pkg_sources: list[str] = ['normal', 'pip', 'script'],
+                  local: bool = False, ignore_URLError: bool = False, exclude_pip: bool = False) -> dict[str, PackageInfo]:
     r"""
     Return a dictionary of information about each package.
 
