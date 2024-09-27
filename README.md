@@ -112,7 +112,7 @@ Sage depends on many system packages. Install them by executing
         python3-venv qhull-bin singular singular-doc sqlite3 sympow tachyon \
         tar texinfo tox xcas xz-utils
 
-If you encounter error messages like "Unable to locate package ...", don't be
+If you encounter error messages like "Unable to locate package ...", don't
 panic. Just delete the problematic package names in the list, and rerun the
 command. Sage will automatically install a package from its own mirrors if it
 is not found in the system.
