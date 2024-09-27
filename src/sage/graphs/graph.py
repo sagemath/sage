@@ -4136,8 +4136,8 @@ class Graph(GenericGraph):
             XB_G = \sum_{\pi \vdash V} (1+t)^{e(\pi)} \tilde{m}_{\lambda(\pi)},
 
         where the sum ranges over all set-partitions `\pi` of the vertex set
-        `V`, `\lambda(pi)` is the partition determined by the sizes of the
-        blocks of `\pi`, and `e(pi)` is the number of edges whose endpoints
+        `V`, `\lambda(\pi)` is the partition determined by the sizes of the
+        blocks of `\pi`, and `e(\pi)` is the number of edges whose endpoints
         lie in the same block of `\pi`. In particular, the coefficients of
         `XB_G` when expanded in terms of augmented monomial symmetric functions
         are polynomials in `t` with non-negative integer coefficients.
