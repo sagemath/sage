@@ -1,0 +1,15 @@
+set -e
+# https://pyodide.org/en/stable/development/building-and-testing-packages.html#building-binary-packages-for-pyodide
+if [ -r "$SAGE_ROOT"/emsdk/.git ]; then
+    (cd "$SAGE_ROOT"/emsdk && git pull)
+elif [ -d "$SAGE_ROOT"/emsdk ]; then
+    (cd "$SAGE_ROOT"/emsdk && ./emsdk update)
+else
+    (cd "$SAGE_ROOT" && git clone https://github.com/emscripten-core/emsdk.git)
+fi
+. "$SAGE_ROOT"/venv-pyodide-build/bin/activate
+cd "$SAGE_ROOT"/emsdk
+PYODIDE_EMSCRIPTEN_VERSION=$(pyodide config get emscripten_version)
+./emsdk install ${PYODIDE_EMSCRIPTEN_VERSION}
+./emsdk activate ${PYODIDE_EMSCRIPTEN_VERSION}
+#source emsdk_env.sh

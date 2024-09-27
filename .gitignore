@@ -299,3 +299,8 @@ src/.coverage/
 # git worktree
 worktree*
 **/worktree*
+
+# Pyodide
+**/.pyodide-xbuildenv
+/emsdk/
+/venv-pyodide*/
