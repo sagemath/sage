@@ -629,8 +629,7 @@ and WSL.
    further use at build time and runtime.
 
    For an in-depth discussion of more environment variables for
-   building Sage, see `the installation
-   guide <https://doc.sagemath.org/html/en/installation/source.html#environment-variables>`__.
+   building Sage, see :ref:`section_envvar`.
 
 #. Type ``./configure``, followed by any options that you wish to use.
    For example, to build Sage with ``gf2x`` package supplied by Sage,
