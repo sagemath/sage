@@ -340,7 +340,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             import scipy
         import scipy.linalg
         from numpy.linalg import LinAlgError
-        try: ##  Standard error reporting for Sage.
+        try:  # Standard error reporting for Sage.
             M._matrix_numpy = scipy.linalg.inv(self._matrix_numpy)
         except LinAlgError:
             raise ZeroDivisionError("input matrix must be nonsingular")

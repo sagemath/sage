@@ -10188,7 +10188,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         # __getitem__ already returns a polynomial!!
         # We must not have check=False, since 0 must not have _coeffs = [0].
-        return <Polynomial>self._parent(self[:n])#, check=False)
+        return <Polynomial>self._parent(self[:n])  # , check=False)
 
     cdef _inplace_truncate(self, long prec):
         return self.truncate(prec)
