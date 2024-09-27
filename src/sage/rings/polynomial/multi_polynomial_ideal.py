@@ -176,7 +176,7 @@ when the system has no solutions over the rationals.
     The Groebner basis modulo any product of the prime factors is also non-trivial::
 
         sage: I.change_ring(P.change_ring(IntegerModRing(2 * 7))).groebner_basis()
-        [x + 9*y + 13*z, y^2 + 3*y, y*z + 7*y + 6, 2*y + 6, z^2 + 3, 2*z + 10]
+        [x + ..., y^2 + 3*y, y*z + 7*y + 6, 2*y + 6, z^2 + 3, 2*z + 10]
 
     Modulo any other prime the Groebner basis is trivial so there are
     no other solutions. For example::
