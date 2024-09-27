@@ -1,6 +1,0 @@
-[wrap-file]
-directory=givaro-4.2.0
-source_url=https://github.com/linbox-team/givaro/releases/download/v4.2.0/givaro-4.2.0.tar.gz
-source_filename=givaro-4.2.0.tar.gz
-source_hash=865e228812feca971dfb6e776a7bc7ac959cf63ebd52b4f05492730a46e1f189
-patch_directory=givaro

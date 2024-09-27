@@ -1,6 +1,0 @@
-[wrap-file]
-directory=gap-4.12.2
-source_url=https://github.com/gap-system/gap/releases/download/v4.12.2/gap-4.12.2.tar.gz
-source_filename=gap-4.12.2.tar.gz
-source_hash=672308745eb78a222494ee8dd6786edd5bc331456fcc6456ac064bdb28d587a8
-patch_directory=gap
