@@ -168,8 +168,7 @@ platform, create a subdirectory `sage` of your home directory:
 
 The full path `.../sage` must contain no spaces. Now run
 
-    $ git clone -c core.symlinks=true --filter blob:none \
-            --origin upstream --branch master https://github.com/sagemath/sage.git
+    $ git clone -c core.symlinks=true --origin upstream --branch master https://github.com/sagemath/sage.git
 
 This will create the subdirectory `sage` in the current directory `~/sage`.
 Change into the directory:
