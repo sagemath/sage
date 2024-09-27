@@ -537,6 +537,26 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             raise ValueError('j must be between 0 and %s (%s given)' % (card - 1, j))
         OP_join(self._nodes, i, j)
 
+    def make_set(self):
+        r"""
+        Add a new element into a new set containing only the new element.
+
+        According to :wikipedia:`Disjoint-set_data_structure#Making_new_sets` the
+        `make_set` operation adds a new element into a new set containing only
+        the new element. The new set is added at the end of `self`.
+
+        EXAMPLES::
+            sage: d = DisjointSet(5)
+            sage: d.union(1, 2)
+            sage: d.union(0, 1)
+            sage: d.make_set()
+            sage: d
+            {{0, 1, 2}, {3}, {4}, {5}}
+            sage: d.find(1)
+            1
+        """
+        OP_make_set(self._nodes)
+
     cpdef root_to_elements_dict(self):
         r"""
         Return the dictionary where the keys are the roots of ``self`` and the
@@ -833,6 +853,43 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         cdef int i = <int> self._el_to_int[e]
         cdef int j = <int> self._el_to_int[f]
         OP_join(self._nodes, i, j)
+
+    def make_set(self, new_elt=None):
+        r"""
+        Add a new element into a new set containing only the new element.
+
+        According to :wikipedia:`Disjoint-set_data_structure#Making_new_sets`
+        the `make_set` operation adds a new element into a new set containing
+        only the new element. The new set is added at the end of `self`.
+
+        INPUT:
+
+        - ``new_elt`` -- (optional) element to add. If `None`, then an integer
+          is added.
+
+        EXAMPLES::
+
+            sage: e = DisjointSet('abcde')
+            sage: e.union('d', 'c')
+            sage: e.union('c', 'e')
+            sage: e.make_set('f')
+            sage: e
+            {{'a'}, {'b'}, {'c', 'd', 'e'}, {'f'}}
+            sage: e.union('f', 'b')
+            sage: e
+            {{'a'}, {'b', 'f'}, {'c', 'd', 'e'}}
+            sage: e.make_set('e'); e
+            {{'a'}, {'b', 'f'}, {'c', 'd', 'e'}}
+            sage: e.make_set(); e
+            {{'a'}, {'b', 'f'}, {'c', 'd', 'e'}, {6}}
+        """
+        if new_elt is None:
+            new_elt = self._nodes.degree
+        if new_elt not in self._int_to_el:
+            d = self._nodes.degree
+            self._int_to_el.append(new_elt)
+            self._el_to_int[new_elt] = d
+            OP_make_set(self._nodes)
 
     cpdef root_to_elements_dict(self):
         r"""
