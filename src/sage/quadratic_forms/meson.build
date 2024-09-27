@@ -28,23 +28,24 @@ py.install_sources(
   'random_quadraticform.py',
   'special_values.py',
   'ternary_qf.py',
-  subdir : 'sage/quadratic_forms'
+  subdir: 'sage/quadratic_forms',
 )
 
 extension_data = {
   'count_local_2' : files('count_local_2.pyx'),
   'quadratic_form__evaluate' : files('quadratic_form__evaluate.pyx'),
-  'ternary' : files('ternary.pyx')
+  'ternary' : files('ternary.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/quadratic_forms',
-        install: true,
-        include_directories: [],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/quadratic_forms',
+    install: true,
+    include_directories: [],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 
 install_subdir('genera', install_dir: sage_install_dir / 'quadratic_forms')

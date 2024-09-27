@@ -1,4 +1,7 @@
-py.install_sources('all.py', subdir : 'sage/geometry/polyhedron/combinatorial_polyhedron')
+py.install_sources(
+  'all.py',
+  subdir: 'sage/geometry/polyhedron/combinatorial_polyhedron',
+)
 
 extension_data = {
   'base' : files('base.pyx'),
@@ -7,16 +10,17 @@ extension_data = {
   'face_iterator' : files('face_iterator.pyx'),
   'face_list_data_structure' : files('face_list_data_structure.pyx'),
   'list_of_faces' : files('list_of_faces.pyx'),
-  'polyhedron_face_lattice' : files('polyhedron_face_lattice.pyx')
+  'polyhedron_face_lattice' : files('polyhedron_face_lattice.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/geometry/polyhedron/combinatorial_polyhedron',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/geometry/polyhedron/combinatorial_polyhedron',
+    install: true,
+    include_directories: [inc_cpython, inc_data_structures, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

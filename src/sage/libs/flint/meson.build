@@ -28,7 +28,7 @@ py.install_sources(
   'thread_pool.pxd',
   'types.pxd',
   'ulong_extras.pxd',
-  subdir : 'sage/libs/flint'
+  subdir: 'sage/libs/flint',
 )
 
 extension_data = {
@@ -42,16 +42,17 @@ extension_data = {
   'qsieve' : files('qsieve.pyx'),
   'qsieve_sage' : files('qsieve_sage.pyx'),
   'ulong_extras' : files('ulong_extras.pyx'),
-  'ulong_extras_sage' : files('ulong_extras_sage.pyx')
+  'ulong_extras_sage' : files('ulong_extras_sage.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/libs/flint',
-        install: true,
-        include_directories: [inc_cpython, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, flint, gmp, mpfr],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/libs/flint',
+    install: true,
+    include_directories: [inc_cpython, inc_flint, inc_rings],
+    dependencies: [py_dep, cysignals, flint, gmp, mpfr],
+  )
 endforeach
 

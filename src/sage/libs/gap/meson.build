@@ -13,22 +13,23 @@ py.install_sources(
   'test.py',
   'test_long.py',
   'util.pxd',
-  subdir : 'sage/libs/gap'
+  subdir: 'sage/libs/gap',
 )
 
 extension_data = {
   'element' : files('element.pyx'),
   'libgap' : files('libgap.pyx'),
-  'util' : files('util.pyx')
+  'util' : files('util.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/libs/gap',
-        install: true,
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, cysignals, gap, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/libs/gap',
+    install: true,
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: [py_dep, cysignals, gap, gmp],
+  )
 endforeach
 

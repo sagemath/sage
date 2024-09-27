@@ -81,7 +81,7 @@ py.install_sources(
   'tate_algebra_ideal.pxd',
   'tests.py',
   'universal_cyclotomic_field.py',
-  subdir : 'sage/rings'
+  subdir: 'sage/rings',
 )
 
 extension_data = {
@@ -121,36 +121,89 @@ extension_data = {
   'ring_extension_morphism' : files('ring_extension_morphism.pyx'),
   'sum_of_squares' : files('sum_of_squares.pyx'),
   'tate_algebra_element' : files('tate_algebra_element.pyx'),
-  'tate_algebra_ideal' : files('tate_algebra_ideal.pyx')
+  'tate_algebra_ideal' : files('tate_algebra_ideal.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/rings',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_gsl, inc_ntl, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/rings',
+    install: true,
+    include_directories: [
+      inc_cpython,
+      inc_ext,
+      inc_flint,
+      inc_gsl,
+      inc_ntl,
+      inc_rings,
+      inc_rings_finite,
+    ],
+    dependencies: [
+      py_dep,
+      cypari2,
+      cysignals,
+      flint,
+      gmp,
+      gmpy2,
+      gsl,
+      m,
+      mpc,
+      mpfi,
+      mpfr,
+      ntl,
+      pari,
+      pthread,
+    ],
+  )
 endforeach
 
 extension_data_cpp = {
-    'bernmm': files('bernmm.pyx', 'bernmm/bern_modp.cpp', 'bernmm/bern_modp_util.cpp', 'bernmm/bern_rat.cpp'),
-    'bernoulli_mod_p': files('bernoulli_mod_p.pyx'),
-    'fraction_field_FpT': files('fraction_field_FpT.pyx'),
-    'rational': files('rational.pyx'),
+  'bernmm': files(
+    'bernmm.pyx',
+    'bernmm/bern_modp.cpp',
+    'bernmm/bern_modp_util.cpp',
+    'bernmm/bern_rat.cpp',
+  ),
+  'bernoulli_mod_p': files('bernoulli_mod_p.pyx'),
+  'fraction_field_FpT': files('fraction_field_FpT.pyx'),
+  'rational': files('rational.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/rings',
-        install: true,
-        cpp_args: ['-DUSE_THREADS=1','-DTHREAD_STACK_SIZE=4096'],
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_gsl, inc_ntl, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, cypari2, cysignals, flint, gmp, gmpy2, gsl, m, mpc, mpfi, mpfr, ntl, pari, pthread],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/rings',
+    install: true,
+    cpp_args: ['-DUSE_THREADS=1', '-DTHREAD_STACK_SIZE=4096'],
+    override_options: ['cython_language=cpp'],
+    include_directories: [
+      inc_cpython,
+      inc_ext,
+      inc_flint,
+      inc_gsl,
+      inc_ntl,
+      inc_rings,
+      inc_rings_finite,
+    ],
+    dependencies: [
+      py_dep,
+      cypari2,
+      cysignals,
+      flint,
+      gmp,
+      gmpy2,
+      gsl,
+      m,
+      mpc,
+      mpfi,
+      mpfr,
+      ntl,
+      pari,
+      pthread,
+    ],
+  )
 endforeach
 
 install_subdir('asymptotic', install_dir: sage_install_dir / 'rings')

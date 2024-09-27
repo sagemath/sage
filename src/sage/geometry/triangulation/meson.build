@@ -1,17 +1,23 @@
-py.install_sources('all.py', 'element.py', 'point_configuration.py', subdir : 'sage/geometry/triangulation')
+py.install_sources(
+  'all.py',
+  'element.py',
+  'point_configuration.py',
+  subdir: 'sage/geometry/triangulation',
+)
 
 extension_data_cpp = {
-    'base': files('base.pyx', 'functions.cc', 'data.cc', 'triangulations.cc'),
+  'base': files('base.pyx', 'data.cc', 'functions.cc', 'triangulations.cc'),
 }
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/geometry/triangulation',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/geometry/triangulation',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 

@@ -34,7 +34,7 @@ py.install_sources(
   'support_view.py',
   'test_factory.py',
   'unique_representation.py',
-  subdir : 'sage/structure'
+  subdir: 'sage/structure',
 )
 
 extension_data = {
@@ -56,17 +56,18 @@ extension_data = {
   'parent_gens' : files('parent_gens.pyx'),
   'parent_old' : files('parent_old.pyx'),
   'richcmp' : files('richcmp.pyx'),
-  'sage_object' : files('sage_object.pyx')
+  'sage_object' : files('sage_object.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/structure',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_rings],
-        dependencies: [py_dep, cysignals, gmp, gmpy2, mpc, mpfr],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/structure',
+    install: true,
+    include_directories: [inc_cpython, inc_ext, inc_rings],
+    dependencies: [py_dep, cysignals, gmp, gmpy2, mpc, mpfr],
+  )
 endforeach
 
 install_subdir('proof', install_dir: sage_install_dir / 'structure')

@@ -2,6 +2,7 @@ py.install_sources(
   'all.py',
   'cone.py',
   'cone_catalog.py',
+  'cone_critical_angles.py',
   'convex_set.py',
   'fan.py',
   'fan_isomorphism.py',
@@ -18,7 +19,7 @@ py.install_sources(
   'toric_lattice.py',
   'toric_plotter.py',
   'voronoi_diagram.py',
-  subdir : 'sage/geometry'
+  subdir: 'sage/geometry',
 )
 
 extension_data = {
@@ -27,21 +28,28 @@ extension_data = {
   'integral_points_integer_dense' : files('integral_points_integer_dense.pyx'),
   'palp_normal_form' : files('palp_normal_form.pyx'),
   'point_collection' : files('point_collection.pyx'),
-  'toric_lattice_element' : files('toric_lattice_element.pyx')
+  'toric_lattice_element' : files('toric_lattice_element.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/geometry',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, flint, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/geometry',
+    install: true,
+    include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings],
+    dependencies: [py_dep, cysignals, flint, gmp],
+  )
 endforeach
 
 install_subdir('hyperbolic_space', install_dir: sage_install_dir / 'geometry')
-install_subdir('hyperplane_arrangement', install_dir: sage_install_dir / 'geometry')
+install_subdir(
+  'hyperplane_arrangement',
+  install_dir: sage_install_dir / 'geometry',
+)
 subdir('polyhedron')
-install_subdir('riemannian_manifolds', install_dir: sage_install_dir / 'geometry')
+install_subdir(
+  'riemannian_manifolds',
+  install_dir: sage_install_dir / 'geometry',
+)
 subdir('triangulation')

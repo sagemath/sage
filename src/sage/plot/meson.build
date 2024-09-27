@@ -29,21 +29,20 @@ py.install_sources(
   'step.py',
   'streamline_plot.py',
   'text.py',
-  subdir : 'sage/plot'
+  subdir: 'sage/plot',
 )
 
-extension_data = {
-  'complex_plot' : files('complex_plot.pyx')
-}
+extension_data = {'complex_plot' : files('complex_plot.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/plot',
-        install: true,
-        include_directories: [inc_cpython, inc_gsl, inc_numpy, inc_rings],
-        dependencies: [py_dep, cysignals, gmp, gsl],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/plot',
+    install: true,
+    include_directories: [inc_cpython, inc_gsl, inc_numpy, inc_rings],
+    dependencies: [py_dep, cysignals, gmp, gsl],
+  )
 endforeach
 
 subdir('plot3d')

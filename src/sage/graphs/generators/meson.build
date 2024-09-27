@@ -10,20 +10,19 @@ py.install_sources(
   'random.py',
   'smallgraphs.py',
   'world_map.py',
-  subdir : 'sage/graphs/generators'
+  subdir: 'sage/graphs/generators',
 )
 
-extension_data = {
-  'distance_regular' : files('distance_regular.pyx')
-}
+extension_data = {'distance_regular' : files('distance_regular.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/graphs/generators',
-        install: true,
-        include_directories: [],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/graphs/generators',
+    install: true,
+    include_directories: [],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

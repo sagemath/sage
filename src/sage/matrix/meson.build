@@ -1,14 +1,30 @@
 # Cannot be found via pkg-config
-meataxe = cc.find_library('meataxe', required: false, disabler : true)
+meataxe = cc.find_library('meataxe', required: false, disabler: true)
 iml = cc.find_library('iml')
 
 if meataxe.found()
-  py.install_sources('all__sagemath_meataxe.py')
+  py.install_sources(
+    'all.py',
+    'all__sagemath_meataxe.py',
+    'benchmark.py',
+    'berlekamp_massey.py',
+    'compute_J_ideal.py',
+    'docs.py',
+    'matrix_integer_dense_hnf.py',
+    'matrix_integer_dense_saturation.py',
+    'matrix_misc.py',
+    'matrix_space.py',
+    'operation_table.py',
+    'special.py',
+    'symplectic_basis.py',
+    'tests.py',
+  )
 endif
 
 py.install_sources(
   '__init__.py',
   'all.py',
+  'all__sagemath_meataxe.py',
   'benchmark.py',
   'berlekamp_massey.py',
   'compute_J_ideal.py',
@@ -21,7 +37,7 @@ py.install_sources(
   'special.py',
   'symplectic_basis.py',
   'tests.py',
-  subdir : 'sage/matrix'
+  subdir: 'sage/matrix',
 )
 
 extension_data = {
@@ -43,7 +59,9 @@ extension_data = {
   'matrix_generic_dense' : files('matrix_generic_dense.pyx'),
   'matrix_generic_sparse' : files('matrix_generic_sparse.pyx'),
   'matrix_gfpn_dense' : files('matrix_gfpn_dense.pyx'),
-  'matrix_laurent_mpolynomial_dense' : files('matrix_laurent_mpolynomial_dense.pyx'),
+  'matrix_laurent_mpolynomial_dense' : files(
+    'matrix_laurent_mpolynomial_dense.pyx',
+  ),
   'matrix_numpy_dense' : files('matrix_numpy_dense.pyx'),
   'matrix_numpy_integer_dense' : files('matrix_numpy_integer_dense.pyx'),
   'matrix_polynomial_dense' : files('matrix_polynomial_dense.pyx'),
@@ -56,45 +74,110 @@ extension_data = {
   'misc' : files('misc.pyx'),
   'misc_flint' : files('misc_flint.pyx'),
   'misc_mpfr' : files('misc_mpfr.pyx'),
-  'strassen' : files('strassen.pyx')
+  'strassen' : files('strassen.pyx'),
 }
 
 foreach name, pyx : extension_data
-    dependencies = [py_dep, blas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, zlib]
-    if name == 'matrix_gfpn_dense'
-        dependencies += [meataxe]
-    endif
+  dependencies = [
+    py_dep,
+    blas,
+    cypari2,
+    cysignals,
+    fflas,
+    flint,
+    gd,
+    givaro,
+    gmp,
+    gmpxx,
+    iml,
+    linbox,
+    m,
+    m4ri,
+    m4rie,
+    mpfi,
+    mpfr,
+    mtx,
+    ntl,
+    pari,
+    png,
+    zlib,
+  ]
+  if name == 'matrix_gfpn_dense'
+    dependencies += [meataxe]
+  endif
 
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/matrix',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
-        dependencies: dependencies,
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/matrix',
+    install: true,
+    include_directories: [
+      inc_cpython,
+      inc_ext,
+      inc_flint,
+      inc_ntl,
+      inc_numpy,
+      inc_rings,
+      inc_rings_finite,
+    ],
+    dependencies: dependencies,
+  )
 endforeach
 
 extension_data_cpp = {
-    'matrix_cyclo_dense': files('matrix_cyclo_dense.pyx'),
-    'matrix_gf2e_dense': files('matrix_gf2e_dense.pyx'),
-    'matrix_integer_dense': files('matrix_integer_dense.pyx'),
-    'matrix_integer_sparse': files('matrix_integer_sparse.pyx'),
-    'matrix_mod2_dense': files('matrix_mod2_dense.pyx'),
-    'matrix_modn_dense_double': files('matrix_modn_dense_double.pyx'),
-    'matrix_modn_dense_float': files('matrix_modn_dense_float.pyx'),
-    'matrix_modn_sparse': files('matrix_modn_sparse.pyx'),
-    'matrix_mpolynomial_dense': files('matrix_mpolynomial_dense.pyx'),
-    'matrix_rational_dense': files('matrix_rational_dense.pyx'),
+  'matrix_cyclo_dense': files('matrix_cyclo_dense.pyx'),
+  'matrix_gf2e_dense': files('matrix_gf2e_dense.pyx'),
+  'matrix_integer_dense': files('matrix_integer_dense.pyx'),
+  'matrix_integer_sparse': files('matrix_integer_sparse.pyx'),
+  'matrix_mod2_dense': files('matrix_mod2_dense.pyx'),
+  'matrix_modn_dense_double': files('matrix_modn_dense_double.pyx'),
+  'matrix_modn_dense_float': files('matrix_modn_dense_float.pyx'),
+  'matrix_modn_sparse': files('matrix_modn_sparse.pyx'),
+  'matrix_mpolynomial_dense': files('matrix_mpolynomial_dense.pyx'),
+  'matrix_rational_dense': files('matrix_rational_dense.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/matrix',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, blas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, singular, zlib],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/matrix',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [
+      inc_cpython,
+      inc_ext,
+      inc_flint,
+      inc_ntl,
+      inc_numpy,
+      inc_rings,
+      inc_rings_finite,
+    ],
+    dependencies: [
+      py_dep,
+      blas,
+      cypari2,
+      cysignals,
+      fflas,
+      flint,
+      gd,
+      givaro,
+      gmp,
+      gmpxx,
+      iml,
+      linbox,
+      m,
+      m4ri,
+      m4rie,
+      mpfi,
+      mpfr,
+      mtx,
+      ntl,
+      pari,
+      png,
+      singular,
+      zlib,
+    ],
+  )
 endforeach
 

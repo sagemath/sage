@@ -30,6 +30,7 @@ py.install_sources(
   'q_system.py',
   'quantum_clifford.py',
   'quantum_matrix_coordinate_algebra.py',
+  'quantum_oscillator.py',
   'quaternion_algebra.py',
   'quaternion_algebra_element.py',
   'rational_cherednik_algebra.py',
@@ -40,23 +41,24 @@ py.install_sources(
   'weyl_algebra.py',
   'yangian.py',
   'yokonuma_hecke_algebra.py',
-  subdir : 'sage/algebras'
+  subdir: 'sage/algebras',
 )
 
 extension_data = {
   'clifford_algebra_element' : files('clifford_algebra_element.pyx'),
   'exterior_algebra_groebner' : files('exterior_algebra_groebner.pyx'),
-  'octonion_algebra' : files('octonion_algebra.pyx')
+  'octonion_algebra' : files('octonion_algebra.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/algebras',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/algebras',
+    install: true,
+    include_directories: [inc_cpython, inc_data_structures, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 
 subdir('finite_dimensional_algebras')
@@ -64,7 +66,10 @@ subdir('fusion_rings')
 install_subdir('hecke_algebras', install_dir: sage_install_dir / 'algebras')
 subdir('letterplace')
 subdir('lie_algebras')
-install_subdir('lie_conformal_algebras', install_dir: sage_install_dir / 'algebras')
+install_subdir(
+  'lie_conformal_algebras',
+  install_dir: sage_install_dir / 'algebras',
+)
 install_subdir('quantum_groups', install_dir: sage_install_dir / 'algebras')
 subdir('quatalg')
 install_subdir('steenrod', install_dir: sage_install_dir / 'algebras')

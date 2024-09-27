@@ -22,7 +22,6 @@ py.install_sources(
   'decorators.py',
   'defaults.py',
   'dev_tools.py',
-  'dist.py',
   'edit_module.py',
   'element_with_label.py',
   'explain_pickle.py',
@@ -87,7 +86,7 @@ py.install_sources(
   'verbose.py',
   'viewer.py',
   'weak_dict.pxd',
-  subdir : 'sage/misc'
+  subdir: 'sage/misc',
 )
 
 extension_data = {
@@ -122,16 +121,17 @@ extension_data = {
   'search' : files('search.pyx'),
   'session' : files('session.pyx'),
   'stopgap' : files('stopgap.pyx'),
-  'weak_dict' : files('weak_dict.pyx')
+  'weak_dict' : files('weak_dict.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/misc',
-        install: true,
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/misc',
+    install: true,
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

@@ -9,7 +9,7 @@ py.install_sources(
   'numerical_approx.pxd',
   'power.pxd',
   'rational_reconstruction.pxd',
-  subdir : 'sage/arith'
+  subdir: 'sage/arith',
 )
 
 extension_data = {
@@ -18,16 +18,17 @@ extension_data = {
   'numerical_approx' : files('numerical_approx.pyx'),
   'power' : files('power.pyx'),
   'rational_reconstruction' : files('rational_reconstruction.pyx'),
-  'srange' : files('srange.pyx')
+  'srange' : files('srange.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/arith',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/arith',
+    install: true,
+    include_directories: [inc_cpython, inc_ext, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

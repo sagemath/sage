@@ -15,45 +15,58 @@ py.install_sources(
   'm4ri.pxd',
   'm4rie.pxd',
   'meataxe.pxd',
-  subdir : 'sage/libs'
+  subdir: 'sage/libs',
 )
 
 extension_data = {
   'ecl' : files('ecl.pyx'),
   'homfly' : files('homfly.pyx'),
-  'libecm' : files('libecm.pyx')
+  'libecm' : files('libecm.pyx'),
+  'meataxe' : files('meataxe.pyx'),
+  'sirocco' : files('sirocco.pyx'),
 }
 
-dependencies = [py_dep, braiding, cysignals, ecl, ecm, gc, gmp, homfly, mtx, sirocco]
+dependencies = [
+  py_dep,
+  braiding,
+  cysignals,
+  ecl,
+  ecm,
+  gc,
+  gmp,
+  homfly,
+  mtx,
+  sirocco,
+]
 
 if sirocco.found()
-    #extension_data['sirocco'] += files('sirocco.pxd') # not yet on conda
-    dependencies += [sirocco]
+  #extension_data['sirocco'] += files('sirocco.pxd') # not yet on conda
+  dependencies += [sirocco]
 endif
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/libs',
-        install: true,
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: dependencies,
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/libs',
+    install: true,
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: dependencies,
+  )
 endforeach
 
-extension_data_cpp = {
-    'braiding': files('braiding.pyx'),
-}
+extension_data_cpp = {'braiding': files('braiding.pyx')}
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/libs',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: dependencies,
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/libs',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: dependencies,
+  )
 endforeach
 
 subdir('arb')

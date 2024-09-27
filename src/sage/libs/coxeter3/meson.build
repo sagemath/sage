@@ -5,24 +5,23 @@ py.install_sources(
   'coxeter.pxd',
   'coxeter_group.py',
   'decl.pxd',
-  subdir : 'sage/libs/coxeter3'
+  subdir: 'sage/libs/coxeter3',
 )
 
 
 if coxeter3.found()
-    extension_data_cpp = {
-        'coxeter': files('coxeter.pyx'),
-    }
+  extension_data_cpp = {'coxeter': files('coxeter.pyx')}
 
-    foreach name, pyx : extension_data_cpp
-        py.extension_module(name,
-            sources: pyx,
-            subdir: 'sage/libs/coxeter3',
-            install: true,
-            override_options : ['cython_language=cpp'],
-            include_directories: [],
-            dependencies: [py_dep, cysignals, coxeter3],
-        )
-    endforeach
+  foreach name, pyx : extension_data_cpp
+    py.extension_module(
+      name,
+      sources: pyx,
+      subdir: 'sage/libs/coxeter3',
+      install: true,
+      override_options: ['cython_language=cpp'],
+      include_directories: [],
+      dependencies: [py_dep, cysignals, coxeter3],
+    )
+  endforeach
 endif
 

@@ -20,36 +20,34 @@ py.install_sources(
   'symbolic-series.py',
   'sympy.py',
   'test_deprecation.py',
-  subdir : 'sage/tests'
+  subdir: 'sage/tests',
 )
 
-extension_data = {
-  'cython' : files('cython.pyx')
-}
+extension_data = {'cython' : files('cython.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/tests',
-        install: true,
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/tests',
+    install: true,
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 
-extension_data_cpp = {
-    'stl_vector': files('stl_vector.pyx'),
-}
+extension_data_cpp = {'stl_vector': files('stl_vector.pyx')}
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/tests',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/tests',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 
 install_subdir('books', install_dir: sage_install_dir / 'tests')

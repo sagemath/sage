@@ -64,20 +64,19 @@ py.install_sources(
   'vector_complex.pxd',
   'wavelet.pxd',
   'zeta.pxd',
-  subdir : 'sage/libs/gsl'
+  subdir: 'sage/libs/gsl',
 )
 
-extension_data = {
-  'array' : files('array.pyx')
-}
+extension_data = {'array' : files('array.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/libs/gsl',
-        install: true,
-        include_directories: [inc_gsl],
-        dependencies: [py_dep, cysignals, gmp, gsl],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/libs/gsl',
+    install: true,
+    include_directories: [inc_gsl],
+    dependencies: [py_dep, cysignals, gmp, gsl],
+  )
 endforeach
 

@@ -27,23 +27,24 @@ py.install_sources(
   'old.pxd',
   'pari_group.py',
   'raag.py',
-  subdir : 'sage/groups'
+  subdir: 'sage/groups',
 )
 
 extension_data = {
   'group' : files('group.pyx'),
   'libgap_wrapper' : files('libgap_wrapper.pyx'),
-  'old' : files('old.pyx')
+  'old' : files('old.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/groups',
-        install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/groups',
+    install: true,
+    include_directories: [inc_cpython],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 
 install_subdir('abelian_gps', install_dir: sage_install_dir / 'groups')

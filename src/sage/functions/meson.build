@@ -19,20 +19,19 @@ py.install_sources(
   'transcendental.py',
   'trig.py',
   'wigner.py',
-  subdir : 'sage/functions'
+  subdir: 'sage/functions',
 )
 
-extension_data = {
-  'prime_pi' : files('prime_pi.pyx')
-}
+extension_data = {'prime_pi' : files('prime_pi.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/functions',
-        install: true,
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/functions',
+    install: true,
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 

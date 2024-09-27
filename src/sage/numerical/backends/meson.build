@@ -10,7 +10,7 @@ py.install_sources(
   'logging_backend.py',
   'ppl_backend_test.py',
   'scip_backend_test.py',
-  subdir : 'sage/numerical/backends'
+  subdir: 'sage/numerical/backends',
 )
 
 extension_data = {
@@ -24,31 +24,31 @@ extension_data = {
   'glpk_graph_backend' : files('glpk_graph_backend.pyx'),
   'interactivelp_backend' : files('interactivelp_backend.pyx'),
   'matrix_sdp_backend' : files('matrix_sdp_backend.pyx'),
-  'ppl_backend' : files('ppl_backend.pyx')
+  'ppl_backend' : files('ppl_backend.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/numerical/backends',
-        install: true,
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, cysignals, glpk, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/numerical/backends',
+    install: true,
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: [py_dep, cysignals, glpk, gmp],
+  )
 endforeach
 
-extension_data_cpp = {
-    'scip_backend': files('scip_backend.pyx'),
-}
+extension_data_cpp = {'scip_backend': files('scip_backend.pyx')}
 
 foreach name, pyx : extension_data_cpp
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/numerical/backends',
-        install: true,
-        override_options : ['cython_language=cpp'],
-        include_directories: [inc_cpython, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/numerical/backends',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

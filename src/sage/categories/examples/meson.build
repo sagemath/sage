@@ -31,20 +31,19 @@ py.install_sources(
   'sets_cat.py',
   'sets_with_grading.py',
   'with_realizations.py',
-  subdir : 'sage/categories/examples'
+  subdir: 'sage/categories/examples',
 )
 
-extension_data = {
-  'semigroups_cython' : files('semigroups_cython.pyx')
-}
+extension_data = {'semigroups_cython' : files('semigroups_cython.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/categories/examples',
-        install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/categories/examples',
+    install: true,
+    include_directories: [inc_cpython],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 

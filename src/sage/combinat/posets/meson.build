@@ -12,22 +12,23 @@ py.install_sources(
   'moebius_algebra.py',
   'poset_examples.py',
   'posets.py',
-  subdir : 'sage/combinat/posets'
+  subdir: 'sage/combinat/posets',
 )
 
 extension_data = {
   'hasse_cython' : files('hasse_cython.pyx'),
   'hasse_cython_flint' : files('hasse_cython_flint.pyx'),
-  'linear_extension_iterator' : files('linear_extension_iterator.pyx')
+  'linear_extension_iterator' : files('linear_extension_iterator.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/combinat/posets',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings],
-        dependencies: [py_dep, cysignals, flint, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/combinat/posets',
+    install: true,
+    include_directories: [inc_cpython, inc_ext, inc_flint, inc_rings],
+    dependencies: [py_dep, cysignals, flint, gmp],
+  )
 endforeach
 

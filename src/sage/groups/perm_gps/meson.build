@@ -7,21 +7,20 @@ py.install_sources(
   'permgroup_named.py',
   'permutation_groups_catalog.py',
   'symgp_conjugacy_class.py',
-  subdir : 'sage/groups/perm_gps'
+  subdir: 'sage/groups/perm_gps',
 )
 
-extension_data = {
-  'permgroup_element' : files('permgroup_element.pyx')
-}
+extension_data = {'permgroup_element' : files('permgroup_element.pyx')}
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/groups/perm_gps',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_rings],
-        dependencies: [py_dep, cysignals, gap, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/groups/perm_gps',
+    install: true,
+    include_directories: [inc_cpython, inc_ext, inc_rings],
+    dependencies: [py_dep, cysignals, gap, gmp],
+  )
 endforeach
 
 subdir('partn_ref')

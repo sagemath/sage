@@ -36,7 +36,7 @@ py.install_sources(
   'ppl_lattice_polygon.py',
   'ppl_lattice_polytope.py',
   'representation.py',
-  subdir : 'sage/geometry/polyhedron'
+  subdir: 'sage/geometry/polyhedron',
 )
 
 subdir('combinatorial_polyhedron')

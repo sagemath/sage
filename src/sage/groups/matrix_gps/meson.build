@@ -22,21 +22,22 @@ py.install_sources(
   'symplectic_gap.py',
   'unitary.py',
   'unitary_gap.py',
-  subdir : 'sage/groups/matrix_gps'
+  subdir: 'sage/groups/matrix_gps',
 )
 
 extension_data = {
   'group_element' : files('group_element.pyx'),
-  'group_element_gap' : files('group_element_gap.pyx')
+  'group_element_gap' : files('group_element_gap.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/groups/matrix_gps',
-        install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/groups/matrix_gps',
+    install: true,
+    include_directories: [inc_cpython],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 

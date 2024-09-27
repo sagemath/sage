@@ -12,7 +12,7 @@ py.install_sources(
   'tachyon.py',
   'texture.py',
   'tri_plot.py',
-  subdir : 'sage/plot/plot3d'
+  subdir: 'sage/plot/plot3d',
 )
 
 extension_data = {
@@ -21,16 +21,17 @@ extension_data = {
   'index_face_set' : files('index_face_set.pyx'),
   'parametric_surface' : files('parametric_surface.pyx'),
   'shapes' : files('shapes.pyx'),
-  'transform' : files('transform.pyx')
+  'transform' : files('transform.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/plot/plot3d',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_numpy],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/plot/plot3d',
+    install: true,
+    include_directories: [inc_cpython, inc_ext, inc_numpy],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

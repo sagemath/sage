@@ -16,7 +16,7 @@ py.install_sources(
   'string_impl.h',
   'type.pxd',
   'wrapperdescr.pxd',
-  subdir : 'sage/cpython'
+  subdir: 'sage/cpython',
 )
 
 extension_data = {
@@ -28,16 +28,17 @@ extension_data = {
   'getattr' : files('getattr.pyx'),
   'string' : files('string.pyx'),
   'type' : files('type.pyx'),
-  'wrapperdescr' : files('wrapperdescr.pyx')
+  'wrapperdescr' : files('wrapperdescr.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/cpython',
-        install: true,
-        include_directories: [inc_cpython],
-        dependencies: [py_dep, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/cpython',
+    install: true,
+    include_directories: [inc_cpython],
+    dependencies: [py_dep, gmp],
+  )
 endforeach
 

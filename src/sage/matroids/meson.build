@@ -6,14 +6,13 @@ py.install_sources(
   'database_collections.py',
   'database_matroids.py',
   'dual_matroid.py',
-  'graphic_matroid.py',
   'matroids_catalog.py',
   'matroids_plot_helpers.py',
   'minor_matroid.py',
   'named_matroids.py',
   'rank_matroid.py',
   'utilities.py',
-  subdir : 'sage/matroids'
+  subdir: 'sage/matroids',
 )
 
 extension_data = {
@@ -27,16 +26,19 @@ extension_data = {
   'matroid' : files('matroid.pyx'),
   'set_system' : files('set_system.pyx'),
   'union_matroid' : files('union_matroid.pyx'),
-  'unpickling' : files('unpickling.pyx')
+  'unpickling' : files('unpickling.pyx'),
+  'flats_matroid' : files('flats_matroid.pyx'),
+  'graphic_matroid' : files('graphic_matroid.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/matroids',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/matroids',
+    install: true,
+    include_directories: [inc_cpython, inc_data_structures, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 

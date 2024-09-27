@@ -1,4 +1,5 @@
 py.install_sources(
+  'SJT.py',
   'abstract_tree.py',
   'affine_permutation.py',
   'algebraic_combinatorics.py',
@@ -123,7 +124,7 @@ py.install_sources(
   'tutorial.py',
   'vector_partition.py',
   'yang_baxter_graph.py',
-  subdir : 'sage/combinat'
+  subdir: 'sage/combinat',
 )
 
 extension_data = {
@@ -137,21 +138,25 @@ extension_data = {
   'permutation_cython' : files('permutation_cython.pyx'),
   'q_bernoulli' : files('q_bernoulli.pyx'),
   'set_partition_iterator' : files('set_partition_iterator.pyx'),
-  'subword_complex_c' : files('subword_complex_c.pyx')
+  'subword_complex_c' : files('subword_complex_c.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/combinat',
-        install: true,
-        include_directories: [inc_cpython, inc_data_structures, inc_rings],
-        dependencies: [py_dep, cysignals, gmp],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/combinat',
+    install: true,
+    include_directories: [inc_cpython, inc_data_structures, inc_rings],
+    dependencies: [py_dep, cysignals, gmp],
+  )
 endforeach
 
 install_subdir('chas', install_dir: sage_install_dir / 'combinat')
-install_subdir('cluster_algebra_quiver', install_dir: sage_install_dir / 'combinat')
+install_subdir(
+  'cluster_algebra_quiver',
+  install_dir: sage_install_dir / 'combinat',
+)
 subdir('crystals')
 subdir('designs')
 subdir('integer_lists')

@@ -9,7 +9,7 @@ py.install_sources(
   'convert_sage_real_mpfr.pxd',
   'misc.pxd',
   'tests.py',
-  subdir : 'sage/libs/pari'
+  subdir: 'sage/libs/pari',
 )
 
 extension_data = {
@@ -20,16 +20,17 @@ extension_data = {
   'convert_sage_matrix' : files('convert_sage_matrix.pyx'),
   'convert_sage_real_double' : files('convert_sage_real_double.pyx'),
   'convert_sage_real_mpfr' : files('convert_sage_real_mpfr.pyx'),
-  'misc' : files('misc.pyx')
+  'misc' : files('misc.pyx'),
 }
 
 foreach name, pyx : extension_data
-    py.extension_module(name,
-        sources: pyx,
-        subdir: 'sage/libs/pari',
-        install: true,
-        include_directories: [inc_cpython, inc_ext, inc_flint, inc_gsl, inc_rings],
-        dependencies: [py_dep, cypari2, cysignals, flint, gmp, gsl, mpfr, pari],
-    )
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/libs/pari',
+    install: true,
+    include_directories: [inc_cpython, inc_ext, inc_flint, inc_gsl, inc_rings],
+    dependencies: [py_dep, cypari2, cysignals, flint, gmp, gsl, mpfr, pari],
+  )
 endforeach
 
