@@ -90,35 +90,19 @@ For your platform, there is a similar list of
 [build prerequisites](https://doc.sagemath.org/html/en/reference/spkg/_bootstrap.html#equivalent-system-packages).
 Install them using the package manager of your platform.
 
-Sage depends on many system packages. Install them by executing
+Sage depends on many system packages. Sage builds and installs them into its
+own system if they are not found in your system. To save time, install as many
+of them as you can using your system package manager.
+Find [the list of system packages](https://doc.sagemath.org/html/en/installation/source#linux-system-package-installation)
+for your platform and run the command like
 
-    sudo apt-get install bc binutils bzip2 ca-certificates cliquer cmake curl \
-        ecl eclib-tools fflas-ffpack g++ gap gcc gengetopt gfan gfortran \
-        glpk-utils gmp-ecm lcalc libatomic-ops-dev libboost-dev \
-        libbraiding-dev libbz2-dev \
-        libcdd-dev libcdd-tools libcliquer-dev libcurl4-openssl-dev libec-dev \
-        libecm-dev libffi-dev libflint-dev libfplll-dev libfreetype-dev \
-        libgap-dev libgc-dev libgd-dev libgf2x-dev libgiac-dev libgivaro-dev \
-        libglpk-dev libgmp-dev libgsl-dev libhomfly-dev libiml-dev \
-        liblfunction-dev liblinbox-dev liblrcalc-dev liblzma-dev libm4ri-dev \
-        libm4rie-dev libmpc-dev libmpfi-dev libmpfr-dev libncurses-dev \
-        libntl-dev libopenblas-dev libpari-dev libplanarity-dev libppl-dev \
-        libprimesieve-dev libpython3-dev libqhull-dev \
-        libreadline-dev librw-dev libsingular4-dev libsqlite3-dev libssl-dev \
-        libsuitesparse-dev libsymmetrica2-dev zlib1g-dev libzmq3-dev m4 make \
-        maxima meson nauty ninja-build openssl palp pari-doc \
-        pari-elldata pari-galdata pari-galpol pari-gp2c pari-seadata patch \
-        patchelf perl pkg-config planarity ppl-dev python3 python3-setuptools \
-        python3-venv qhull-bin singular singular-doc sqlite3 sympow tachyon \
-        tar texinfo tox xcas xz-utils
+    sudo apt-get install ...
 
 If you encounter error messages like "Unable to locate package ...", don't
 panic. Just delete the problematic package names in the list, and rerun the
-command. Sage will automatically install a package from its own mirrors if it
+command. Sage will automatically download a package from its own mirrors if it
 is not found in the system.
 
-This will take a while. For your platform, refer to
-[the lists of system packages](https://doc.sagemath.org/html/en/installation/source#linux-system-package-installation).
 
 ### Preparing the macOS Platform
 
