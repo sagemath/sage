@@ -1,5 +1,4 @@
 py.install_sources(
-  '__init__.py',
   'all.py',
   'binary_matrix.pxd',
   'binary_search.pxd',

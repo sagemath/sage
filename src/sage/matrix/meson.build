@@ -22,7 +22,6 @@ if meataxe.found()
 endif
 
 py.install_sources(
-  '__init__.py',
   'all.py',
   'all__sagemath_meataxe.py',
   'benchmark.py',

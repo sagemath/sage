@@ -2,7 +2,6 @@ inc_ginac = include_directories('ginac')
 inc_pynac = include_directories('.')
 
 py.install_sources(
-  '__init__.py',
   'all.py',
   'assumptions.py',
   'benchmark.py',

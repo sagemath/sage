@@ -1,5 +1,4 @@
 py.install_sources(
-  '__init__.py',
   'action.pxd',
   'additive_groups.py',
   'additive_magmas.py',
