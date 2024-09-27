@@ -116,7 +116,7 @@ class FreeModulePseudoMorphism(Morphism):
             Codomain: Vector space of dimension 2 over Finite Field in z of size 5^3
 
             sage: type(f)
-            <class 'sage.modules.free_module_pseudohomspace.FreeModulepseudoHomspace_with_category.element_class'>
+            <class 'sage.modules.free_module_pseudohomspace.FreeModulePseudoHomspace_with_category.element_class'>
 
         or a pseudomorphism with the same parent::
 

@@ -31,7 +31,7 @@ from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
 from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
 
 
-class FreeModulepseudoHomspace(UniqueRepresentation, HomsetWithBase):
+class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
     Element = FreeModulePseudoMorphism
 
     r"""
@@ -72,7 +72,7 @@ class FreeModulepseudoHomspace(UniqueRepresentation, HomsetWithBase):
             sage: M = F^2
             sage: H = M.pseudoHom(Frob)
             sage: type(H)
-            <class 'sage.modules.free_module_pseudohomspace.FreeModulepseudoHomspace_with_category'>
+            <class 'sage.modules.free_module_pseudohomspace.FreeModulePseudoHomspace_with_category'>
 
             sage: # Testsuite(H).run()
 
@@ -86,7 +86,7 @@ class FreeModulepseudoHomspace(UniqueRepresentation, HomsetWithBase):
                 raise ValueError("base rings do not match")
         else:
             ore = OrePolynomialRing(ring, twist, names='x', polcast=False)
-        if isinstance(ore, OrePolynomialRing) and ore._derivation is not None:
+        if ore._derivation is not None:
             if not codomain.has_coerce_map_from(domain):
                 raise ValueError("the domain does not coerce into the codomain")
         return cls.__classcall__(cls, domain, codomain, ore)
@@ -161,7 +161,7 @@ class FreeModulepseudoHomspace(UniqueRepresentation, HomsetWithBase):
             twist = self._morphism
         else:
             twist = self._derivation
-        return FreeModulepseudoHomspace, (self.domain(), self.codomain(), twist)
+        return FreeModulePseudoHomspace, (self.domain(), self.codomain(), twist)
 
     def _repr_(self):
         r"""
