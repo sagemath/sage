@@ -339,8 +339,7 @@ git repository with ``git``:
 
   ::
 
-       $ git clone -c core.symlinks=true --filter blob:none  \
-                   --origin upstream --branch develop --tags \
+       $ git clone -c core.symlinks=true --origin upstream --branch develop \
                    https://github.com/sagemath/sage.git
 
   This command obtains the most recent development release. Replace
