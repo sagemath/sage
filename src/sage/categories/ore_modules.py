@@ -14,13 +14,16 @@ class OreModules(Category_over_base_ring):
             if ore.base_ring() is not ring:
                 raise ValueError("base rings do not match")
         else:
-            ore = OrePolynomialRing(ring, twist, names='x')
+            ore = OrePolynomialRing(ring, twist, names='x', polcast=False)
         return cls.__classcall__(cls, ore)
 
     def __init__(self, ore):
         base = ore.base_ring()
         Category_over_base_ring.__init__(self, base)
         self._ore = ore
+
+    def __reduce__(self):
+        return OreModules, (self.base_ring(), self._ore)
 
     def super_categories(self):
         return [Modules(self.base())]
@@ -31,27 +34,11 @@ class OreModules(Category_over_base_ring):
     def Homsets(self):
         return Homsets()
 
-    class SubcategoryMethods:
+    def ore_ring(self, var='x'):
+        return self._ore.change_var(var)
 
-        @lazy_attribute
-        def _ore(self):
-            for cat in self.super_categories():
-                if isinstance(cat, OreModules):
-                    return cat._ore
+    def twisting_morphism(self):
+        return self._ore.twisting_morphism()
 
-        def ore_ring(self, var='x'):
-            return self._ore.change_var(var)
-
-        def twisting_morphism(self):
-            return self._ore.twisting_morphism()
-
-        def twisting_derivation(self):
-            return self._ore.twisting_derivation()
-
-    class ParentMethods:
-
-        def twisting_morphism(self):
-            return self.category().twisting_morphism()
-
-        def twisting_derivation(self):
-            return self.category().twisting_derivation()
+    def twisting_derivation(self):
+        return self._ore.twisting_derivation()

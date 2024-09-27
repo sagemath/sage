@@ -259,9 +259,9 @@ from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
 from sage.misc.cachefunc import cached_method
 from sage.structure.sequence import Sequence
+from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.categories.action import Action
-from sage.categories.fields import Fields
 from sage.categories.ore_modules import OreModules
 
 from sage.matrix.matrix0 import Matrix
@@ -273,11 +273,56 @@ from sage.modules.free_module import FreeModule_ambient
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
 from sage.modules.ore_module_element import OreModuleElement
 
-# Action of Ore polynomials on Ore modules
-##########################################
+# Action by left multiplication on Ore modules
+##############################################
+
+class ScalarAction(Action):
+    r"""
+    Action by scalar multiplication on Ore modules.
+    """
+    def _act_(self, a, x):
+        r"""
+        Return the result of the action of `a` on `x`.
+
+        INPUT:
+
+        - ``a`` -- a scalar in the base ring
+
+        - ``x`` -- a vector in a Ore module
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M.<e0,e1> = S.quotient_module(X^2 + z)  # indirect doctest
+            sage: z*e0  # indirect doctest
+            z*e0
+        """
+        return x._rmul_(a)
 
 class OreAction(Action):
+    r"""
+    Action by left multiplication of Ore polynomial rings
+    over Ore modules.
+    """
     def _act_(self, P, x):
+        r"""
+        Return the result of the action of `P` on `x`.
+
+        INPUT:
+
+        - ``P`` -- a Ore polynomial
+
+        - ``x`` -- a vector in a Ore module
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M.<e0,e1> = S.quotient_module(X^2 + z)  # indirect doctest
+            sage: X*e0  # indirect doctest
+            e1
+        """
         M = x.parent()
         ans = P[0]*x
         y = x
@@ -286,20 +331,68 @@ class OreAction(Action):
             ans += y._rmul_(P[i])
         return ans
 
-class ScalarAction(Action):
-    def _act_(self, a, x):
-        return x._rmul_(a)
-
 # Generic class for Ore modules
 ###############################
 
-class OreModule(FreeModule_ambient):
-    # TODO: ensure uniqueness of parents
+def normalize_names(names, rank):
+    r"""
+    Return a normalized form of ``names``.
+
+    INPUT:
+
+    - ``names`` -- a string, a list of strings or ``None``
+
+    - ``rank`` -- the number of names to normalize
+
+    EXAMPLES::
+
+        sage: from sage.modules.ore_module import normalize_names
+
+    When ``names`` is a string, indices are added::
+
+        sage: normalize_names('e', 3)
+        ('e0', 'e1', 'e2')
+
+    When ``names`` is a list or a tuple, it remains untouched
+    except that it is always casted to a tuple (in order to be
+    hashable and serve as a key)::
+
+        sage: normalize_names(['u', 'v', 'w'], 3)
+        ('u', 'v', 'w')
+
+    Similarly, when ``names`` is ``None``, nothing is returned::
+
+        sage: normalize_names(None, 3)
+
+    If the number of names is not equal to ``rank``, an error
+    is raised::
+
+        sage: normalize_names(['u', 'v', 'w'], 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: the number of given names does not match the rank of the Ore module
+    """
+    if names is None:
+        pass
+    elif isinstance(names, (list, tuple)):
+        if rank != len(names):
+            raise ValueError("the number of given names does not match the rank of the Ore module")
+        names = tuple([str(name) for name in names])
+    elif isinstance(names, str):
+        names = tuple([names + str(i) for i in range(rank)])
+    else:
+        raise ValueError("names must be a string or a list/tuple of strings")
+    return names
+
+class OreModule(UniqueRepresentation, FreeModule_ambient):
+    r"""
+    Generic class for Ore modules.
+    """
     Element = OreModuleElement
 
-    def __init__(self, mat, twist, names=None, category=None):
+    def __classcall_private__(cls, mat, twist, names=None, category=None):
         r"""
-        Initialize this Ore module.
+        Normalize the input and call the init function.
 
         INPUT:
 
@@ -318,40 +411,88 @@ class OreModule(FreeModule_ambient):
 
             sage: K.<z> = GF(5^3)
             sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
-            sage: M = S.quotient_module(X^2 + z)  # indirect doctest
-            sage: type(M)
-            <class 'sage.modules.ore_module.OreModule_with_category'>
+            sage: P = X^2 + z
 
+            sage: M1 = S.quotient_module(P)
+            sage: M2 = S.quotient_module(P, names='e')
+            sage: M3.<e0,e1> = S.quotient_module(P)
+
+            sage: M1 is M2
+            False
+            sage: M2 is M3
+            True
         """
         base = mat.base_ring()
         if category is None:
             category = OreModules(base, twist)
-        if base not in Fields():
-            raise NotImplementedError("Ore modules are only implemented over fields")
         rank = mat.nrows()
         if mat.ncols() != rank:
             raise ValueError("matrix must be square")
+        names = normalize_names(names, rank)
+        return cls.__classcall__(cls, mat, category._ore, names, category)
+
+    def __init__(self, mat, ore, names, category):
+        r"""
+        Initialize this Ore module.
+
+        INPUT:
+
+        - ``mat`` -- the matrix defining the action of the Ore variable
+
+        - ``ore`` -- the underlying Ore polynomial ring
+
+        - ``names`` -- a string of a list of stings,
+          the names of the vector of the canonical basis; if ``None``,
+          elements are represented as vectors in `K^d`
+
+        - ``category`` -- the category of this Ore module
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)  # indirect doctest
+            sage: type(M)
+            <class 'sage.modules.ore_module.OreModule_with_category'>
+
+            sage: TestSuite(M).run()
+        """
+        base = mat.base_ring()
+        rank = mat.nrows()
         FreeModule_ambient.__init__(self, base, rank, category=category)
         self.register_action(ScalarAction(base, self, True, operator.mul))
-        self._ore = category._ore
-        self._pseudohom = FreeModule_ambient.pseudohom(self, mat, self._ore, codomain=self)
-        if names is None:
-            pass
-        elif isinstance(names, (list, tuple)):
-            if rank != len(names):
-                raise ValueError
-            names = [str(name) for name in names]
-        elif isinstance(names, str):
-            names = [ names + str(i) for i in range(rank) ]
-        else:
-            raise ValueError
+        self._ore = ore
+        self._ore_category = category
         self._names = names
         if names is not None:
             self._latex_names = [latex_variable_name(name) for name in names]
         self._submodule_class = OreSubmodule
         self._quotientModule_class = OreQuotientModule
+        self._pseudohom = FreeModule_ambient.pseudohom(self, mat, ore, codomain=self)
 
     def _repr_(self):
+        r"""
+        Return a string representation of this Ore module.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: M._repr_()
+            'Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5'
+            sage: N = S.quotient_module(X^2 + z, names='e')
+            sage: N._repr_()
+            'Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5'
+
+        ::
+
+            sage: K.<z> = Frac(GF(17)['z'])
+            sage: S.<X> = OrePolynomialRing(K, K.derivation())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: M._repr_()
+            'Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in z over Finite Field of size 17 twisted by d/dz'
+        """
         s = "Ore module "
         if self._names is None:
             s += "of rank %s " % self.rank()
@@ -361,6 +502,28 @@ class OreModule(FreeModule_ambient):
         return s
 
     def _latex_(self):
+        r"""
+        Return a LaTeX representation of this Ore module.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: Frob = K.frobenius_endomorphism()
+            sage: S.<X> = OrePolynomialRing(K, Frob)
+            sage: M = S.quotient_module(X^2 + z)
+            sage: latex(M)
+            \texttt{Ore module of rank } 2\texttt{ over } \Bold{F}_{5^{3}} \texttt{ twisted by } z \mapsto z^{5}
+            sage: N = S.quotient_module(X^2 + z, names='e')
+            sage: latex(N)
+            \left<e_{0}, e_{1}\right>_{\Bold{F}_{5^{3}} , z \mapsto z^{5} }
+
+        ::
+
+            sage: T.<Y> = OrePolynomialRing(K, Frob^3, polcast=False)
+            sage: M = T.quotient_module(Y^2 + z^2)
+            sage: latex(M)
+            \texttt{Ore module of rank } 2\texttt{ over } \Bold{F}_{5^{3}}\texttt{ untwisted}
+        """
         if self._names is None:
             s = "\\texttt{Ore module of rank } %s" % self.rank()
             s += "\\texttt{ over } %s" % latex(self.base_ring())
@@ -379,25 +542,213 @@ class OreModule(FreeModule_ambient):
         return s
 
     def _repr_element(self, x):
+        r"""
+        Return a string representation of the element `x` in
+        this Ore module.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: M((z, z^2))  # indirect doctest
+            (z, z^2)
+        """
         return FreeModuleElement_generic_dense._repr_(x)
 
     def _latex_element(self, x):
+        r"""
+        Return a LaTeX representation of the element `x` in
+        this Ore module.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: v = M((z, z^2))
+            sage: latex(v)  # indirect doctest
+            \left(z,\,z^{2}\right)
+        """
         return FreeModuleElement_generic_dense._latex_(x)
 
+    def _coerce_map_from_(self, S):
+        r"""
+        Return a coercion map from `M` to ``self``, or ``None``.
+
+        """
+        pass
+
     def pseudohom(self):
+        r"""
+        Return the pseudomorphism giving the action of the Ore
+        variable on this Ore module.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + z*X^2 - z^2*X + (z + 2)
+            sage: M = S.quotient_module(P)
+            sage: M.pseudohom()
+            Free module pseudomorphism (twisted by z |--> z^5) defined by the matrix
+            [      0       1       0]
+            [      0       0       1]
+            [4*z + 3     z^2     4*z]
+            Domain: Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            Codomain: Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+        .. SEEALSO:
+
+            :meth:`matrix`
+        """
         return self._pseudohom
 
     def ore_ring(self, names='x', action=True):
-        S = self.category().ore_ring(names)
+        r"""
+        Return the underlying Ore polynomial ring.
+
+        INPUT:
+
+        - ``names`` (default: ``x``) -- a string, the name
+          of the variable
+
+        - ``action`` (default: ``True``) -- a boolean; if
+          ``True``, an action of the Ore polynomial ring on
+          the Ore module is set
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M.<e1,e2> = S.quotient_module(X^2 - a)
+            sage: M.ore_ring()
+            Ore Polynomial Ring in x over Finite Field in a of size 5^3 twisted by a |--> a^5
+
+        We can use a different variable name::
+
+            sage: M.ore_ring('Y')
+            Ore Polynomial Ring in Y over Finite Field in a of size 5^3 twisted by a |--> a^5
+
+        Alternatively, one can use the following shortcut::
+
+            sage: T.<Z> = M.ore_ring()
+            sage: T
+            Ore Polynomial Ring in Z over Finite Field in a of size 5^3 twisted by a |--> a^5
+
+        In all the above cases, an action of the returned Ore polynomial
+        ring on `M` is registered::
+
+            sage: Z*e1
+            e2
+            sage: Z*e2
+            a*e1
+
+        Specifying ``action=False`` prevents this to happen::
+
+            sage: T.<U> = M.ore_ring(action=False)
+            sage: U*e1
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for *:
+                'Ore Polynomial Ring in U over Finite Field in a of size 5^3 twisted by a |--> a^5' and
+                'Ore module <e1, e2> over Finite Field in a of size 5^3 twisted by a |--> a^5'
+        """
+        S = self._ore_category.ore_ring(names)
         if action:
             self._unset_coercions_used()
             self.register_action(OreAction(S, self, True, operator.mul))
         return S
 
+    def twisting_morphism(self):
+        r"""
+        Return the twisting morphism corresponding to this Ore module.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X + z)
+            sage: M.twisting_morphism()
+            Frobenius endomorphism z |--> z^5 on Finite Field in z of size 5^3
+
+        When the twisting morphism is trivial (that is, the identity),
+        nothing is returned::
+
+            sage: R.<t> = QQ[]
+            sage: T.<Y> = OrePolynomialRing(R, R.derivation())
+            sage: M = T.quotient_module(Y + t^2)
+            sage: M.twisting_morphism()
+
+        .. SEEALSO:
+
+            :meth:`twisting_derivation`
+        """
+        return self._ore.twisting_morphism()
+
+    def twisting_derivation(self):
+        r"""
+        Return the twisting derivation corresponding to this Ore module.
+
+        EXAMPLES::
+
+            sage: R.<t> = QQ[]
+            sage: T.<Y> = OrePolynomialRing(R, R.derivation())
+            sage: M = T.quotient_module(Y + t^2)
+            sage: M.twisting_derivation()
+            d/dt
+
+        When the twisting derivation in zero, nothing is returned::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X + z)
+            sage: M.twisting_derivation()
+
+        .. SEEALSO:
+
+            :meth:`twisting_morphism`
+        """
+        return self._ore.twisting_derivation()
+
     def matrix(self):
+        r"""
+        Return the matrix giving the action of the Ore variable
+        on this Ore module.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + z*X^2 - z^2*X + (z + 2)
+            sage: M = S.quotient_module(P)
+            sage: M.matrix()
+            [      0       1       0]
+            [      0       0       1]
+            [4*z + 3     z^2     4*z]
+
+        We recognize the companion matrix attached to the Ore
+        polynomial `P`. This is of course not a coincidence given
+        that the pseudomorphism corresponds to the left multiplication
+
+        .. SEEALSO:
+
+            :meth:`pseudohom`
+        """
         return self._pseudohom.matrix()
 
     def basis(self):
+        r"""
+        Return the canonical basis of this Ore module.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^3 - z)
+            sage: M.basis()
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
+        """
         rank = self.rank()
         zero = self.base_ring().zero()
         one = self.base_ring().one()
@@ -410,9 +761,40 @@ class OreModule(FreeModule_ambient):
         return B
 
     def gens(self):
+        r"""
+        Return the canonical basis of this Ore module.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^3 - z)
+            sage: M.basis()
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
+        """
         return self.basis()
 
     def gen(self, i):
+        r"""
+        Return the `i`th vector in the canonical basis
+        of this Ore module.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^3 - z)
+            sage: M.gen(0)
+            (1, 0, 0)
+            sage: M.gen(1)
+            (0, 1, 0)
+            sage: M.gen(2)
+            (0, 0, 1)
+            sage: M.gen(3)
+            Traceback (most recent call last):
+            ...
+            IndexError: list assignment index out of range
+        """
         rank = self.rank()
         zero = self.base_ring().zero()
         one = self.base_ring().one()
@@ -421,19 +803,187 @@ class OreModule(FreeModule_ambient):
         return self(coeffs)
 
     def random_element(self, *args, **kwds):
+        r"""
+        Return a random element in this Ore module.
+
+        Extra arguments are passed to the random generator
+        of the base ring.
+
+        EXAMPLES::
+
+            sage: A.<t> = QQ['t']
+            sage: S.<X> = OrePolynomialRing(A, A.derivation())
+            sage: M = S.quotient_module(X^3 - t, names='e')
+            sage: M.random_element()   # random
+            (-1/2*t^2 - 3/4*t + 3/2)*e0 + (-3/2*t^2 - 3*t + 4)*e1 + (-6*t + 2)*e2
+
+            sage: M.random_element(degree=5)   # random
+            (4*t^5 - 1/2*t^4 + 3/2*t^3 + 6*t^2 - t - 1/10)*e0 + (19/3*t^5 - t^3 - t^2 + 1)*e1 + (t^5 + 4*t^4 + 4*t^2 + 1/3*t - 33)*e2
+        """
         K = self.base_ring()
         r = self.rank()
         vs = [K.random_element(*args, **kwds) for _ in range(r)]
         return self(vs)
 
     def module(self):
+        r"""
+        Return the underlying free module of this Ore module.
+
+        EXAMPLES::
+
+            sage: A.<t> = QQ['t']
+            sage: S.<X> = OrePolynomialRing(A, A.derivation())
+            sage: M = S.quotient_module(X^3 - t)
+            sage: M
+            Ore module of rank 3 over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+            sage: M.module()
+            Ambient free module of rank 3 over the principal ideal domain Univariate Polynomial Ring in t over Rational Field
+        """
         return self.base_ring() ** self.rank()
 
     def _Hom_(self, codomain, category):
+        r"""
+        Return the space of Ore morphisms from this Ore module
+        to ``codomain``.
+
+        INPUT:
+
+        - ``codomain`` -- a Ore module
+
+        - ``category`` -- the category in which the morphisms are
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 - z)
+            sage: N = S.quotient_module(X^3 - z)
+
+            sage: Hom(M, N)  # indirect doctest
+            Set of Morphisms
+            from Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            to Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            in Category of enumerated finite dimensional Ore modules with basis over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+        ::
+
+            sage: End(M)  # indirect doctest
+            Set of Morphisms
+            from Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            to Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            in Category of enumerated finite dimensional Ore modules with basis over Finite Field in z of size 5^3 twisted by z |--> z^5
+        """
         from sage.modules.ore_module_homspace import OreModule_homspace
         return OreModule_homspace(self, codomain)
 
     def hom(self, im_gens, codomain=None):
+        r"""
+        Return the morphism from this Ore module to ``codomain``
+        defined by ``im_gens``.
+
+        INPUT:
+
+        - ``im_gens`` -- a datum defining the morphism to build;
+          it could either a list, a tuple, a dictionary or a morphism
+          of Ore modules
+
+        - ``codomain`` (default: ``None``) -- a Ore module, the
+          codomain of the morphism; if ``None``, it is inferred from
+          ``im_gens``
+
+        EXAMPLES::
+
+            sage: K.<t> = Frac(GF(5)['t'])
+            sage: S.<X> = OrePolynomialRing(K, K.derivation())
+            sage: P = X^3 + 2*t*X^2 + (t^2 + 2)*X + t
+            sage: Q = t*X^2 - X + 1
+
+            sage: U = S.quotient_module(P, names='u')
+            sage: U.inject_variables()
+            Defining u0, u1, u2
+            sage: V = S.quotient_module(P*Q, names='v')
+            sage: V.inject_variables()
+            Defining v0, v1, v2, v3, v4
+
+        The first method for creating a morphism from `U` to `V` is
+        to explicitely write down its matrix in the canonical bases::
+
+            sage: mat = matrix(3, 5, [1, 4, t, 0, 0,
+            ....:                     0, 1, 0, t, 0,
+            ....:                     0, 0, 1, 1, t])
+            sage: f = U.hom(mat, codomain=V)
+            sage: f
+            Ore module morphism:
+              From: Ore module <u0, u1, u2> over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+              To:   Ore module <v0, v1, v2, v3, v4> over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+
+        This method is however not really convenient because it
+        requires to compute beforehand all the entries of the
+        defining matrix.
+        Instead, we can pass the list of images of the generators::
+
+            sage: g = U.hom([Q*v0, X*Q*v0, X^2*Q*v0])
+            sage: g
+            Ore module morphism:
+              From: Ore module <u0, u1, u2> over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+              To:   Ore module <v0, v1, v2, v3, v4> over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+            sage: g.matrix()
+            [1 4 t 0 0]
+            [0 1 0 t 0]
+            [0 0 1 1 t]
+
+        One can even give the values of the morphism on a smaller
+        set as soon as the latter generates the domain as Ore module.
+        The syntax uses dictionaries as follows::
+
+            sage: h = U.hom({u0: Q*v0})
+            sage: h
+            Ore module morphism:
+              From: Ore module <u0, u1, u2> over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+              To:   Ore module <v0, v1, v2, v3, v4> over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+            sage: g == h
+            True
+
+        Finally ``im_gens`` can also be itself a Ore morphism, in which
+        case SageMath tries to cast it into a morphism with the requested
+        domains and codomains.
+        As an example below, we restrict `g` to a subspace::
+
+            sage: C.<c0,c1> = U.span((X + t)*u0)
+            sage: gC = C.hom(g)
+            sage: gC
+            Ore module morphism:
+              From: Ore module <c0, c1> over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+              To:   Ore module <v0, v1, v2, v3, v4> over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+
+            sage: g(c0) == gC(c0)
+            True
+            sage: g(c1) == gC(c1)
+            True
+
+        TESTS::
+
+            sage: U.hom(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: im_gens must be a list, a tuple, a dictionary, a matrix or a Ore module morphism
+
+            sage: U.hom([Q*v0])
+            Traceback (most recent call last):
+            ...
+            ValueError: wrong number of generators
+
+            sage: U.hom({u0: Q*v0, u1: Q*v0})
+            Traceback (most recent call last):
+            ...
+            ValueError: does not define a morphism of Ore modules
+
+            sage: U.hom({(X+t)*u0: (X+t)*Q*v0})
+            Traceback (most recent call last):
+            ...
+            ValueError: does not define a morphism of Ore modules
+        """
         from sage.modules.ore_module_morphism import OreModuleMorphism
         if codomain is None:
             if isinstance(im_gens, Matrix):
@@ -499,9 +1049,65 @@ class OreModule(FreeModule_ambient):
             raise ValueError("im_gens must be a list, a tuple, a dictionary, a matrix or a Ore module morphism")
 
     def multiplication_map(self, P):
+        r"""
+        Return the multiplication by `P` acting on this Ore module.
+
+        INPUT:
+
+        - ``P`` -- a scalar in the base ring, or a Ore polynomial
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(7^5)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + a*X^2 + X - a^2
+            sage: M = S.quotient_module(P)
+
+        We define the scalar multiplication by an element in the base ring::
+
+            sage: f = M.multiplication_map(3)
+            sage: f
+            Ore module endomorphism of Ore module of rank 3 over Finite Field in a of size 7^5 twisted by a |--> a^7
+            sage: f.matrix()
+            [3 0 0]
+            [0 3 0]
+            [0 0 3]
+
+        Be careful that an element in the base ring defines a Ore morphism
+        if and only if it is fixed by the twisting morphisms and killed by
+        the derivation (otherwise the multiplication by this element does
+        not commute with the Ore action).
+        In SageMath, attempting to create the multiplication by an element
+        which does not fulfill these requirements leads to an error::
+
+            sage: M.multiplication_map(a)
+            Traceback (most recent call last):
+            ...
+            ValueError: does not define a morphism of Ore modules
+
+        As soon as it defines a Ore morphism, one can also build the left
+        multiplication by an Ore polynomial::
+
+            sage: g = M.multiplication_map(X^5)
+            sage: g
+            Ore module endomorphism of Ore module of rank 3 over Finite Field in a of size 7^5 twisted by a |--> a^7
+            sage: g.matrix()
+            [    3*a^4 + 3*a^3 + 6*a^2 + 5*a       4*a^4 + 5*a^3 + 2*a^2 + 6         6*a^4 + 6*a^3 + a^2 + 4]
+            [                        a^2 + 3 5*a^4 + 5*a^3 + 6*a^2 + 4*a + 1                 a^3 + 5*a^2 + 4]
+            [6*a^4 + 6*a^3 + 3*a^2 + 3*a + 1         4*a^4 + 2*a^3 + 3*a + 5 6*a^4 + 6*a^3 + 2*a^2 + 5*a + 2]
+
+        We check that the characteristic polynomial of `g` is the reduced
+        norm of the Ore polynomial `P` we started with (this is a classical
+        property)::
+
+            sage: g.charpoly()
+            x^3 + 4*x^2 + 2*x + 5
+            sage: P.reduced_norm(var='x')
+            x^3 + 4*x^2 + 2*x + 5
+        """
         if isinstance(P, OrePolynomial):
             S = P.parent()
-            ore = self.category()._ore
+            ore = self._ore
             if S._morphism != ore._morphism or S._derivation != ore._derivation:
                 raise ValueError("twist does not match")
             action = OreAction(S, self, True, operator.mul)
@@ -514,11 +1120,65 @@ class OreModule(FreeModule_ambient):
         return H(M)
 
     def identity_morphism(self):
+        r"""
+        Return the identity morphism of this Ore module.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(7^5)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M.<u,v> = S.quotient_module(X^2 + a*X + a^2)
+            sage: id = M.identity_morphism()
+            sage: id
+            Ore module endomorphism of Ore module <u, v> over Finite Field in a of size 7^5 twisted by a |--> a^7
+
+            sage: id(u)
+            u
+            sage: id(v)
+            v
+        """
         H = self.Hom(self)
         M = identity_matrix(self.base_ring(), self.rank())
         return H(M)
 
     def _span(self, gens):
+        r"""
+        Return a matrix defining a basis of the submodule of this
+        Ore modules generated by ``gens``.
+
+        INPUT:
+
+        - ``gens`` -- a list of vectors or submodules of this Ore module
+
+        TESTS::
+
+            sage: K.<a> = GF(7^5)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^2 + a
+            sage: Q = X^3 + a^2*X + 1
+            sage: M = S.quotient_module(P*Q, names='e')
+            sage: M.inject_variables()
+            Defining e0, e1, e2, e3, e4
+
+            sage: M._span([Q*e0])
+            [                      1                       0 a^4 + 5*a^3 + 6*a^2 + a                       1                   6*a^2]
+            [                      0                       1 2*a^4 + 6*a^2 + 2*a + 3                       0                       1]
+
+            sage: M._span([Q*e0, e1])
+            [1 0 0 0 0]
+            [0 1 0 0 0]
+            [0 0 1 0 0]
+            [0 0 0 1 0]
+            [0 0 0 0 1]
+
+            sage: N = M.span(Q*e0)
+            sage: M._span([N, e2])
+            [1 0 0 0 0]
+            [0 1 0 0 0]
+            [0 0 1 0 0]
+            [0 0 0 1 0]
+            [0 0 0 0 1]
+        """
         base = self.base_ring()
         rank = self.rank()
         f = self._pseudohom
@@ -556,28 +1216,193 @@ class OreModule(FreeModule_ambient):
         return M.matrix_from_rows(range(r))
 
     def span(self, gens, names=None):
+        r"""
+        Return the submodule of this Ore module generated by ``gens``.
+
+        INPUT:
+
+        - ``gens`` -- a list of vectors or submodules of this Ore module
+
+        - ``names`` (default: ``None``) -- the name of the vectors in a
+          basis of this submodule
+
+        EXAMPLES::
+
+            sage: K.<t> = Frac(GF(5)['t'])
+            sage: S.<X> = OrePolynomialRing(K, K.derivation())
+            sage: P = X^2 + t*X + 1
+            sage: M = S.quotient_module(P^3, names='e')
+            sage: M.inject_variables()
+            Defining e0, e1, e2, e3, e4, e5
+
+        We create the submodule `M P`::
+
+            sage: MP = M.span([P*e0])
+            sage: MP
+            Ore module of rank 4 over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+            sage: MP.basis()
+            [e0 + (t^4 + t^2 + 3)*e4 + t^3*e5,
+             e1 + (4*t^3 + 2*t)*e4 + (4*t^2 + 3)*e5,
+             e2 + (2*t^2 + 2)*e4 + 2*t*e5,
+             e3 + 4*t*e4 + 4*e5]
+
+        When there is only one generated, encapsulating it in a list in
+        not necessary; one can equally write::
+
+            sage: MP = M.span(P*e0)
+
+        If we want, one can give names to the basis of the submodule using
+        the attribute ``names``::
+
+            sage: MP2 = M.span(P^2*e0, names='u')
+            sage: MP2.inject_variables()
+            Defining u0, u1
+            sage: MP2.basis()
+            [u0, u1]
+
+            sage: M(u0)
+            e0 + (t^2 + 4)*e2 + 3*t^3*e3 + (t^2 + 1)*e4 + 3*t*e5
+
+        Note that a coercion map from the submodule to the ambient module
+        is automatically set::
+
+            sage: M.has_coerce_map_from(MP2)
+            True
+
+        Therefore, combining elements of ``M`` and ``MP2`` in the same
+        expression perfectly works::
+
+            sage: t*u0 + e1
+            t*e0 + e1 + (t^3 + 4*t)*e2 + 3*t^4*e3 + (t^3 + t)*e4 + 3*t^2*e5
+
+        Here is an example with multiple generators::
+
+            sage: MM = M.span([MP2, P*e1])
+            sage: MM.basis()
+            [e0, e1, e2, e3, e4, e5]
+
+        In this case, we obtain the whole space.
+
+        Creating submodules of submodules is also allowed::
+
+            sage: N = MP.span(P^2*e0)
+            sage: N
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+            sage: N.basis()
+            [e0 + (t^2 + 4)*e2 + 3*t^3*e3 + (t^2 + 1)*e4 + 3*t*e5,
+             e1 + (4*t^2 + 4)*e3 + 3*t*e4 + 4*e5]
+
+        .. SEEALSO::
+
+            :meth:`quotient`
+        """
         gens = self._span(gens)
         return self._submodule_class(self, gens, names=names)
 
     def quotient(self, sub, names=None, check=True):
+        r"""
+        Return the quotient of this Ore module by the submodule
+        generated by ``gens``.
+
+        INPUT:
+
+        - ``gens`` -- a list of vectors or submodules of this Ore module
+
+        - ``names`` (default: ``None``) -- the name of the vectors in a
+          basis of the quotient
+
+        - ``check`` (default: ``True``) -- a boolean, ignored
+
+        EXAMPLES::
+
+            sage: K.<t> = Frac(GF(5)['t'])
+            sage: S.<X> = OrePolynomialRing(K, K.derivation())
+            sage: P = X^2 + t*X + 1
+            sage: M = S.quotient_module(P^3, names='e')
+            sage: M.inject_variables()
+            Defining e0, e1, e2, e3, e4, e5
+
+        We create the quotient `M/MP`::
+
+            sage: modP = M.quotient(P*e0)
+            sage: modP
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+
+        As a shortcut, we can write ``quo`` instead of ``quotient`` or even
+        use the `/` operator::
+
+            sage: modP = M / (P*e0)
+            sage: modP
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+
+        By default, the vectors in the quotient have the same names as their
+        representatives in `M`.
+
+            sage: modP.basis()
+            [e4, e5]
+
+        One can override this by setting the attributes ``names``::
+
+            sage: modP = M.quo(P*e0, names='u')
+            sage: modP.inject_variables()
+            Defining u0, u1
+            sage: modP.basis()
+            [u0, u1]
+
+        Note that a coercion map from the initial Ore module to its quotient
+        is automatically set. As a consequence, combining elements of ``M``
+        and ``modP`` in the same formula works::
+
+            sage: t*u0 + e1
+            (t^3 + 4*t)*u0 + (t^2 + 2)*u1
+
+        One can combine the construction of quotients and submodules without
+        trouble. For instance, here we build the space `M P / M P^2`::
+
+            sage: modP2 = M / (P^2*e0)
+            sage: N = modP2.span(P*e0)
+            sage: N
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+            sage: N.basis()
+            [e2 + (2*t^2 + 2)*e4 + 2*t*e5,
+             e3 + 4*t*e4 + 4*e5]
+
+        .. SEEALSO::
+
+            :meth:`quo`, :meth:`span`
+        """
         gens = self._span(sub)
         return self._quotientModule_class(self, gens, names=names)
 
     quo = quotient
 
     def __eq__(self, other):
+        r"""
+        Return ``True`` if this Ore module is the same than ``other``.
+
+        TESTS::
+        """
         return self is other
 
     def __hash__(self):
+        r"""
+        Return a hash of this Ore module.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^3 - z)
+            sage: hash(M)  # random
+            128873304640624
+        """
         return id(self)
 
 # Submodules
 ############
 
 class OreSubmodule(OreModule):
-    def __init__(self, M, gens, names):
-        from sage.modules.ore_module_morphism import OreModuleRetraction
-        self._M = M
+    def __classcall_private__(cls, M, gens, names):
         base = M.base_ring()
         if isinstance(gens, Matrix):
             basis = gens
@@ -587,32 +1412,39 @@ class OreSubmodule(OreModule):
         rank = basis.rank()
         if basis.nrows() != rank:
             basis = basis.matrix_from_rows(range(rank))
+        names = normalize_names(names, rank)
+        return cls.__classcall__(cls, M, basis, names)
+
+    def __init__(self, M, basis, names):
+        from sage.modules.ore_module_morphism import OreModuleRetraction
+        base = M.base_ring()
+        self._ambient = M
         rows = [basis.solve_left(M(x).image()) for x in basis.rows()]
-        OreModule.__init__(self, matrix(base, rows), M.ore_ring(action=False), names)
+        OreModule.__init__(self, matrix(base, rows), M.ore_ring(action=False), names, M._ore_category)
         self._inject = coerce = self.hom(basis, codomain=M)
         self._basis = basis
         M.register_coercion(coerce)
         self.register_conversion(OreModuleRetraction(M, self))
 
     def _repr_element(self, x):
-        return self._M(x)._repr_()
+        return self._ambient(x)._repr_()
 
     def _latex_element(self, x):
-        return self._M(x)._latex_()
+        return self._ambient(x)._latex_()
 
     def ambient(self):
-        return self._M
+        return self._ambient
 
     def injection_morphism(self):
         return self._inject
 
     def _hom_change_domain(self, f):
-        if f.domain() is not self._M:
+        if f.domain() is not self._ambient:
             raise ValueError
         return f * self._inject
 
     def _hom_change_codomain(self, f):
-        if f.codomain() is not self._M:
+        if f.codomain() is not self._ambient:
             raise ValueError
         rows = []
         basis = self._basis
@@ -623,15 +1455,25 @@ class OreSubmodule(OreModule):
 ###########
 
 class OreQuotientModule(OreModule):
-    def __init__(self, M, gens, names):
-        self._M = M
-        d = M.rank()
+    def __classcall_private__(cls, M, gens, names):
         base = M.base_ring()
         if isinstance(gens, Matrix):
             basis = gens
         else:
             basis = matrix(base, gens)
-        self._ker = basis = basis.echelon_form()
+        basis = basis.echelon_form()
+        rank = basis.rank()
+        if basis.nrows() != rank:
+            basis = basis.matrix_from_rows(range(rank))
+        names = normalize_names(names, M.rank() - rank)
+        return cls.__classcall__(cls, M, basis, names)
+
+    def __init__(self, M, basis, names):
+        from sage.modules.ore_module_morphism import OreModuleSection
+        self._cover = M
+        d = M.rank()
+        base = M.base_ring()
+        self._relations = basis
         pivots = basis.pivots()
         r = basis.rank()
         coerce = matrix(base, d, d-r)
@@ -647,13 +1489,14 @@ class OreQuotientModule(OreModule):
             for j in range(d-r):
                 coerce[pivots[i],j] = -basis[i,indices[j]]
         rows = [M.gen(i).image() * coerce for i in indices]
-        OreModule.__init__(self, matrix(base, rows), M.ore_ring(action=False), names)
+        OreModule.__init__(self, matrix(base, rows), M.ore_ring(action=False), names, M._ore_category)
         self._indices = indices
         self._project = coerce = M.hom(coerce, codomain=self)
         self.register_coercion(coerce)
+        M.register_conversion(OreModuleSection(self, M))
 
     def _repr_element(self, x):
-        M = self._M
+        M = self._cover
         indices = self._indices
         base = self.base_ring()
         coords = M.rank() * [base.zero()]
@@ -662,7 +1505,7 @@ class OreQuotientModule(OreModule):
         return M(coords)._repr_()
 
     def _latex_element(self, x):
-        M = self._M
+        M = self._cover
         indices = self._indices
         base = self.base_ring()
         coords = M.rank() * [base.zero()]
@@ -670,26 +1513,26 @@ class OreQuotientModule(OreModule):
             coords[indices[i]] = x[i]
         return M(coords)._latex_()
 
-    def dividend(self):
-        return self._M
+    def cover(self):
+        return self._cover
 
     @cached_method
-    def divisor(self, names=None):
-        return self._submodule_class(self._M, self._ker, names=names)
+    def relations(self, names=None):
+        return self._submodule_class(self._cover, self._relations, names=names)
 
     def projection_morphism(self):
         return self._project
 
     def _hom_change_domain(self, f):
-        if f.domain() is not self._M:
+        if f.domain() is not self._cover:
             raise ValueError
-        Z = self._ker * f._matrix
+        Z = self._relations * f._matrix
         if not Z.is_zero():
             raise ValueError
         mat = f._matrix.matrix_from_rows(self._indices)
         return self.hom(mat, codomain=f.codomain())
 
     def _hom_change_codomain(self, f):
-        if f.codomain() is not self._M:
+        if f.codomain() is not self._cover:
             raise ValueError
         return self._project * f

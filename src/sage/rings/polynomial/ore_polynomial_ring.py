@@ -339,6 +339,8 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
                 derivation = twist
             else:
                 derivation = None
+        elif twist is None:
+            morphism = derivation = None
         else:
             raise TypeError("the twisting map must be a ring morphism or a derivation")
         if names is None:
@@ -732,7 +734,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         else:
             twist = self._derivation
         return OrePolynomialRing(self.base_ring(), twist, names=var,
-                                 sparse=self.__is_sparse)
+                                 sparse=self.__is_sparse, polcast=False)
 
     def characteristic(self):
         r"""

@@ -81,7 +81,7 @@ class OreModuleMorphism(Morphism):
 
     def _composition_(self, other, homset):
         if not isinstance(other, OreModuleMorphism):
-            raise ValueError
+            raise ValueError(str(other))
         return homset(other._matrix * self._matrix)
 
     def kernel(self, names=None):
@@ -102,4 +102,15 @@ class OreModuleRetraction(Map):
     def _call_(self, y):
         X = self.codomain()
         xs = X._basis.solve_left(y)
+        return X(xs)
+
+class OreModuleSection(Map):
+    def _call_(self, y):
+        X = self.codomain()
+        Y = self.domain()
+        indices = Y._indices
+        zero = X.base_ring().zero()
+        xs = X.rank() * [zero]
+        for i in range(Y.rank()):
+            xs[indices[i]] = y[i]
         return X(xs)

@@ -2979,6 +2979,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         coeffs = self.right_monic().list()
         f = companion_matrix(coeffs, format='bottom')
         M = OreModule(f, S, names=names)
+        M._unset_coercions_used()
         M.register_action(OreAction(S, M, True, operator.mul))
         return M
 
