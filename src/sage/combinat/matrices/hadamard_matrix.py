@@ -321,7 +321,8 @@ def hadamard_matrix_paleyII(n):
 
 
 def hadamard_matrix_from_symmetric_conference_matrix(n, existence=False, check=True):
-    r"""Construct a Hadamard matrix of order `n` from a symmetric conference matrix
+    r"""
+    Construct a Hadamard matrix of order `n` from a symmetric conference matrix
     of order `n/2`.
 
     The construction is described in Theorem 4.3.24 of [IS2006]_.
