@@ -22,6 +22,7 @@ from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement)
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
+from sage.sets.set import Set
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, parent
 from sage.structure.parent import Parent
@@ -895,12 +896,26 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         """
         return IntegerVectors(length=self._arity)
 
+    def subset(self, size):
+        """
+        Return the set of molecular species with given total cardinality.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: M = MolecularSpecies(["X", "Y"])
+            sage: M.subset(3)  # random
+            {X*E_2(Y), X*Y^2, C_3(Y), E_3(X), Y^3, Y*E_2(Y), C_3(X), X^2*Y,
+             E_3(Y), E_2(X)*Y, X*E_2(X), X^3}
+        """
+        result = Set()
+        for grade in IntegerVectors(size, length=self._arity):
+            result = result.union(self.graded_component(grade))
+        return result
+
     def graded_component(self, grade):
         """
         Return the set of molecular species with given multicardinality.
-
-        The default implementation just calls the method :meth:`subset()`
-        with the first argument ``grade``.
 
         EXAMPLES::
 
@@ -912,7 +927,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
              X*{((1,2)(3,4),): ({1, 2}, {3, 4})}, X*E_2(X)*Y^2, E_3(X)*E_2(Y),
              C_3(X)*Y^2, C_3(X)*E_2(Y)}
         """
-        from sage.sets.set import Set
         assert len(grade) == self._arity
         n = sum(grade)
         S = SymmetricGroup(n).young_subgroup(grade)
@@ -1666,6 +1680,21 @@ class PolynomialSpecies(CombinatorialFreeModule):
         S = SymmetricGroup(sum(L)).young_subgroup(L)
         Hs = _stabilizer_subgroups(S, X, a)
         return self._from_dict({self._indices(H, pi): ZZ.one() for H in Hs})
+
+    def change_ring(self, R):
+        r"""
+        Return the base change of ``self`` to `R`.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: P.change_ring(QQ)
+            Polynomial species in X, Y over Rational Field
+        """
+        if R is self.base_ring():
+            return self
+        return PolynomialSpecies(R, self._indices._indices._names)
 
     def degree_on_basis(self, m):
         r"""
