@@ -1,4 +1,4 @@
-jsonschema_specifications pyrsistent attrs fqdn isoduration jsonpointer uri_template webcolors | $(PYTHON_TOOLCHAIN) $(PYTHON)
+attrs jsonschema_specifications referencing rpds_py | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

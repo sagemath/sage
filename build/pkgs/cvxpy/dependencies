@@ -1,4 +1,4 @@
- numpy scipy glpk cvxopt osqp_python ecos_python scs clarabel | $(PYTHON_TOOLCHAIN) $(PYTHON)
+ numpy scipy glpk cvxopt osqp_python ecos_python scs clarabel | $(PYTHON_TOOLCHAIN) pybind11 $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
