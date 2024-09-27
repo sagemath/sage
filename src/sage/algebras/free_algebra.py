@@ -160,28 +160,25 @@ Some tests for the category::
 # ***************************************************************************
 
 
-from sage.categories.rings import Rings
-
-from sage.monoids.free_monoid import FreeMonoid
-from sage.monoids.free_monoid_element import FreeMonoidElement
-
 from sage.algebras.free_algebra_element import FreeAlgebraElement
-
-from sage.structure.factory import UniqueFactory
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import lazy_import
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer_ring import ZZ
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.word import Word
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.monoids.free_monoid import FreeMonoid
+from sage.monoids.free_monoid_element import FreeMonoidElement
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import normalize_names
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 lazy_import('sage.algebras.letterplace.free_algebra_letterplace', 'FreeAlgebra_letterplace')
 
 
-class FreeAlgebraFactory(UniqueFactory):
+class FreeAlgebra(UniqueRepresentation):
     """
     A constructor of free algebras.
 
@@ -269,10 +266,12 @@ class FreeAlgebraFactory(UniqueFactory):
         sage: c^3 * a * b^2
         a*b^2*c^3
     """
-    def create_key(self, base_ring, arg1=None, arg2=None,
-                   sparse=None, order=None,
-                   names=None, name=None,
-                   implementation=None, degrees=None):
+
+    @staticmethod
+    def __classcall_private__(cls, base_ring, arg1=None, arg2=None,
+                              sparse=None, order=None,
+                              names=None, name=None,
+                              implementation=None, degrees=None):
         """
         Create the key under which a free algebra is stored.
 
@@ -298,12 +297,18 @@ class FreeAlgebraFactory(UniqueFactory):
             sage: FreeAlgebra.create_key(GF(5),3,'xyz',
             ....:                        implementation='letterplace', degrees=[1,2,3])
             ((1, 2, 3), Multivariate Polynomial Ring in x, y, z, x_ over Finite Field of size 5)
+
+            sage: FreeAlgebra.create_object('4.7.1', (QQ['x','y'],))
+            Free Associative Unital Algebra on 2 generators (x, y) over Rational Field
+            sage: FreeAlgebra.create_object('4.7.1', (QQ['x','y'],)) is FreeAlgebra(QQ,['x','y'])
+            False
         """
         if arg1 is None and arg2 is None and names is None:
             # this is used for pickling
+            from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
             if degrees is None:
-                return (base_ring,)
-            return tuple(degrees), base_ring
+                return FreeAlgebra_letterplace(base_ring)
+            return FreeAlgebra_letterplace(base_ring, tuple(degrees))
         # test if we can use libSingular/letterplace
         if implementation == "letterplace":
             if order is None:
@@ -316,7 +321,8 @@ class FreeAlgebraFactory(UniqueFactory):
                 kwds["names"] = names
             PolRing = PolynomialRing(base_ring, *args, **kwds)
             if degrees is None:
-                return (PolRing,)
+                from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
+                return FreeAlgebra_letterplace(PolRing)
             from sage.rings.polynomial.term_order import TermOrder
             T = TermOrder(PolRing.term_order(), PolRing.ngens() + 1)
             varnames = list(PolRing.variable_names())
@@ -327,7 +333,7 @@ class FreeAlgebraFactory(UniqueFactory):
             R = PolynomialRing(
                 PolRing.base(), varnames,
                 sparse=sparse, order=T)
-            return tuple(degrees), R
+            return FreeAlgebra_letterplace(R, tuple(degrees))
         # normalise the generator names
         from sage.rings.integer import Integer
         if isinstance(arg1, (Integer, int)):
@@ -340,39 +346,10 @@ class FreeAlgebraFactory(UniqueFactory):
             arg2 = len(arg1)
         names = normalize_names(arg2, arg1)
         if degrees is None:
-            return base_ring, names
+            return FreeAlgebra_generic(base_ring, len(names), names, None)
         if degrees in ZZ:
-            return base_ring, names, (degrees,) * len(names)
-        return base_ring, names, tuple(degrees)
-
-    def create_object(self, version, key):
-        """
-        Construct the free algebra that belongs to a unique key.
-
-        NOTE:
-
-        Of course, that method should not be called directly,
-        since it does not use the cache of free algebras.
-
-        TESTS::
-
-            sage: FreeAlgebra.create_object('4.7.1', (QQ['x','y'],))
-            Free Associative Unital Algebra on 2 generators (x, y) over Rational Field
-            sage: FreeAlgebra.create_object('4.7.1', (QQ['x','y'],)) is FreeAlgebra(QQ,['x','y'])
-            False
-        """
-        if len(key) == 1:
-            from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
-            return FreeAlgebra_letterplace(key[0])
-        if isinstance(key[0], tuple):
-            from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
-            return FreeAlgebra_letterplace(key[1], degrees=key[0])
-        if len(key) == 2:
-            return FreeAlgebra_generic(key[0], len(key[1]), key[1])
-        return FreeAlgebra_generic(key[0], len(key[1]), key[1], key[2])
-
-
-FreeAlgebra = FreeAlgebraFactory('FreeAlgebra')
+            return FreeAlgebra_generic(base_ring, len(names), names, (degrees,) * len(names))
+        return FreeAlgebra_generic(base_ring, len(names), names, tuple(degrees))
 
 
 def is_FreeAlgebra(x) -> bool:
@@ -399,11 +376,11 @@ def is_FreeAlgebra(x) -> bool:
         True
     """
     from sage.misc.superseded import deprecation
-    deprecation(37896, "the function is_FreeAlgebra is deprecated; use 'isinstance(..., (FreeAlgebra_generic, FreeAlgebra_letterplace))' instead")
-    return isinstance(x, (FreeAlgebra_generic, FreeAlgebra_letterplace))
+    deprecation(37896, "the function is_FreeAlgebra is deprecated; use 'isinstance(..., FreeAlgebra)' instead")
+    return isinstance(x, FreeAlgebra)
 
 
-class FreeAlgebra_generic(CombinatorialFreeModule):
+class FreeAlgebra_generic(CombinatorialFreeModule, FreeAlgebra):
     """
     The free algebra on `n` generators over a base ring.
 
