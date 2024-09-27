@@ -19,7 +19,6 @@ AUTHORS:
 - Martin Rubey, Bill Page (2016-08): Completely separate from Axiom,
   implement more complete translation from FriCAS to SageMath types.
 
-
 EXAMPLES::
 
     sage: fricas('3 * 5')
@@ -183,7 +182,6 @@ FriCAS does some limits right::
 
     sage: x = var('x'); ex = x^2*exp(-x)*Ei(x) - x; fricas(ex).limit(x=oo)
     1
-
 """
 
 ###########################################################################
@@ -281,7 +279,7 @@ class FriCAS(ExtraTabCompletion, Expect):
             sage: fricas(I)
             %i
 
-            sage: integrate(sin(x)*exp(I*x), x, -pi, 0, algorithm="fricas")
+            sage: integrate(sin(x)*exp(I*x), x, -pi, 0, algorithm='fricas')
             1/2*I*pi
 
             sage: fricas(I*sin(x)).sage()
@@ -381,7 +379,6 @@ http://fricas.sourceforge.net.
             sage: fricas.quit()
             sage: fricas.pid() == p
             False
-
         """
         return ')quit'
 
@@ -464,11 +461,9 @@ http://fricas.sourceforge.net.
 
         INPUT:
 
-        - ``filename``, a string ending in '.input'.
+        - ``filename`` -- string ending in '.input'.
 
-        OUTPUT:
-
-        - a string with the command for reading filename without output.
+        OUTPUT: string with the command for reading filename without output
 
         TESTS:
 
@@ -476,7 +471,6 @@ http://fricas.sourceforge.net.
 
             sage: len(fricas([i for i in range(600)]))  # indirect doctest
             600
-
         """
         if not filename.endswith('.input'):
             raise ValueError("the filename must end with .input")
@@ -487,7 +481,6 @@ http://fricas.sourceforge.net.
         """
         Return a remote tmpfile ending with ".input" used to buffer long
         command lines sent to FriCAS.
-
         """
         try:
             return self.__remote_tmpfile
@@ -516,13 +509,11 @@ http://fricas.sourceforge.net.
 
         INPUT:
 
-        - ``line``, a string that was sent to FriCAS.
+        - ``line`` -- string that was sent to FriCAS
 
-        - ``output``, a string returned by FriCAS
+        - ``output`` -- string returned by FriCAS
 
-        OUTPUT:
-
-        None
+        OUTPUT: none
 
         TESTS::
 
@@ -553,7 +544,6 @@ http://fricas.sourceforge.net.
             <BLANKLINE>
                   Perhaps you should use "@" to indicate the required return type, or
                   "$" to specify which version of the function you need.
-
         """
         # otherwise there might be a message
         m = re.search(r"\|startKeyedMsg\|\n(.*)\n\|endOfKeyedMsg\|",
@@ -657,17 +647,16 @@ http://fricas.sourceforge.net.
 
         INPUT:
 
-        - ``var``, ``value``: strings, the first representing a valid
-          FriCAS variable identifier, the second a FriCAS expression.
+        - ``var``, ``value`` -- strings; the first representing a valid
+          FriCAS variable identifier, the second a FriCAS expression
 
-        OUTPUT: None
+        OUTPUT: none
 
         EXAMPLES::
 
             sage: fricas.set('xx', '2')
             sage: fricas.get('xx')
             '2'
-
         """
         cmd = '%s%s%s;' % (var, self._assign_symbol(), value)
         output = self.eval(cmd, reformat=False)
@@ -736,19 +725,18 @@ http://fricas.sourceforge.net.
 
             sage: var("a b"); f = 1/(1+a*cos(x))
             (a, b)
-            sage: lF = integrate(f, x, algorithm="fricas")
+            sage: lF = integrate(f, x, algorithm='fricas')
             sage: (diff(lF[0], x) - f).simplify_trig()
             0
             sage: (diff(lF[1], x) - f).simplify_trig()
             0
-            sage: f = 1/(b*x^2+a); lF = integrate(f, x, algorithm="fricas"); lF
+            sage: f = 1/(b*x^2+a); lF = integrate(f, x, algorithm='fricas'); lF
             [1/2*log((2*a*b*x + (b*x^2 - a)*sqrt(-a*b))/(b*x^2 + a))/sqrt(-a*b),
              arctan(sqrt(a*b)*x/a)/sqrt(a*b)]
             sage: (diff(lF[0], x) - f).simplify_trig()
             0
             sage: (diff(lF[1], x) - f).simplify_trig()
             0
-
         """
         # strip removes leading and trailing whitespace, after that
         # we can assume that the first and the last character are
@@ -764,7 +752,6 @@ http://fricas.sourceforge.net.
 
             sage: fricas.get_integer('factorial 1111') == factorial(1111)
             True
-
         """
         return int(self.get_unparsed_InputForm(str(var)))
 
@@ -791,7 +778,7 @@ http://fricas.sourceforge.net.
 
             - catch errors, especially when InputForm is not available:
 
-                - for example when integration returns ``"failed"``
+                - for example when integration returns ``'failed'``
 
                 - ``UnivariatePolynomial``
 
@@ -801,7 +788,6 @@ http://fricas.sourceforge.net.
 
             sage: fricas.get_unparsed_InputForm('1..3')
             '(1..3)$Segment(PositiveInteger())'
-
         """
         return self.get_string('unparse((%s)::InputForm)' % var)
 
@@ -813,7 +799,6 @@ http://fricas.sourceforge.net.
 
             sage: fricas.get_InputForm('1..3')
             '(($elt (Segment (PositiveInteger)) SEGMENT) 1 3)'
-
         """
         return self.get_string('sageprint((%s)::InputForm)' % str(var))
 
@@ -905,7 +890,7 @@ http://fricas.sourceforge.net.
         return reduce_load_fricas, tuple([])
 
     def eval(self, code, strip=True, synchronize=False, locals=None, allow_use_file=True,
-             split_lines="nofile", reformat=True, **kwds):
+             split_lines='nofile', reformat=True, **kwds):
         """
         Evaluate ``code`` using FriCAS.
 
@@ -914,7 +899,7 @@ http://fricas.sourceforge.net.
 
         INPUT:
 
-        - ``reformat`` -- bool; remove the output markers when True.
+        - ``reformat`` -- boolean; remove the output markers when True
 
         This can also be used to pass system commands to FriCAS.
 
@@ -926,7 +911,6 @@ http://fricas.sourceforge.net.
             ''
             sage: fricas("x")
             x
-
         """
         output = Expect.eval(self, code, strip=strip,
                              synchronize=synchronize, locals=locals,
@@ -1204,11 +1188,9 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         """
         INPUT:
 
-        - ``domain``, a FriCAS SExpression
+        - ``domain`` -- a FriCAS SExpression
 
-        OUTPUT:
-
-        - a corresponding Sage type
+        OUTPUT: a corresponding Sage type
 
         EXAMPLES::
 
@@ -1310,7 +1292,6 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             Traceback (most recent call last):
             ...
             TypeError: cannot coerce arguments: no canonical coercion from <class 'str'> to Symbolic Ring
-
         """
         a = start
         while s[a] in FriCASElement._WHITESPACE:
@@ -1349,7 +1330,6 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             sage: FriCASElement._parse_list('(bcd)')
             (bcd(), 4)
-
         """
         a = start
         assert s[a] == FriCASElement._LEFTBRACKET
@@ -1387,8 +1367,8 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         - ``s`` -- string
         - ``start`` -- integer; specifies where the symbol begins
-        - ``make_fun`` -- (default: ``False``) a Boolean; specifying
-          whether the atom should be interpreted as a function call
+        - ``make_fun`` -- boolean (default: ``False``); whether the atom should
+          be interpreted as a function call
 
         TESTS::
 
@@ -1402,12 +1382,12 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         This function cannot use the symbol table to translate
         symbols which are not function calls, as :issue:`31849` shows
-        - ``D`` would erroneously be interpreted as differential
+        ``D`` would erroneously be interpreted as differential
         then::
 
             sage: var("D")
             D
-            sage: integrate(D/x, x, algorithm="fricas")
+            sage: integrate(D/x, x, algorithm='fricas')
             D*log(x)
 
         However, it does have to check for constants, for example
@@ -1415,7 +1395,6 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             sage: FriCASElement._parse_other("%pi")
             (pi, 2)
-
         """
         a = start
         b = len(s)
@@ -1470,7 +1449,6 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             sage: FriCASElement._parse_string('"(b c)"')
             ('(b c)', 6)
-
         """
         a = start
         assert s[a] == FriCASElement._STRINGMARKER
@@ -1593,7 +1571,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         Check that :issue:`25987` is fixed::
 
-            sage: integrate(lambert_w(x), x, algorithm="fricas")
+            sage: integrate(lambert_w(x), x, algorithm='fricas')
             (x*lambert_w(x)^2 - x*lambert_w(x) + x)/lambert_w(x)
 
         Check that :issue:`25838` is fixed::
@@ -2085,7 +2063,6 @@ class FriCASFunctionElement(FunctionElement):
             upperCase!
             sage: a.upperCase_e()
             "HELLO"
-
         """
         if name.endswith("_q"):
             name = name[:-2] + "?"
@@ -2107,7 +2084,6 @@ class FriCASExpectFunction(ExpectFunction):
             upperCase?
             sage: fricas.upperCase_e
             upperCase!
-
         """
         if name.endswith("_q"):
             name = name[:-2] + "?"

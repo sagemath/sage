@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Graded algebras with basis
 """
@@ -16,7 +17,7 @@ from sage.misc.cachefunc import cached_method
 
 class GradedAlgebrasWithBasis(GradedModulesCategory):
     """
-    The category of graded algebras with a distinguished basis
+    The category of graded algebras with a distinguished basis.
 
     EXAMPLES::
 
@@ -88,7 +89,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
         def free_graded_module(self, generator_degrees, names=None):
             """
-            Create a finitely generated free graded module over ``self``
+            Create a finitely generated free graded module over ``self``.
 
             INPUT:
 
@@ -174,7 +175,7 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
         class ParentMethods:
             """
-            Implements operations on tensor products of super algebras
+            Implement operations on tensor products of super algebras
             with basis.
             """
             @cached_method

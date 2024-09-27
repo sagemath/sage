@@ -31,7 +31,7 @@ class Arc(GraphicPrimitive):
 
     INPUT:
 
-    - ``x,y`` -- coordinates of the center of the arc
+    - ``x``, ``y`` -- coordinates of the center of the arc
 
     - ``r1``, ``r2`` -- lengths of the two radii
 
@@ -39,7 +39,7 @@ class Arc(GraphicPrimitive):
 
     - ``sector`` -- sector of angle
 
-    - ``options`` -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -52,7 +52,7 @@ class Arc(GraphicPrimitive):
     """
     def __init__(self, x, y, r1, r2, angle, s1, s2, options):
         """
-        Initializes base class ``Arc``.
+        Initialize base class ``Arc``.
 
         EXAMPLES::
 
@@ -297,7 +297,7 @@ class Arc(GraphicPrimitive):
             Graphics object consisting of 1 graphics primitive
 
             sage: from math import pi
-            sage: a = arc((0,0),2,1,0,(pi/5,pi/2+pi/12), linestyle="--", color="red")
+            sage: a = arc((0,0),2,1,0,(pi/5,pi/2+pi/12), linestyle='--', color='red')
             sage: b = a[0].bezier_path()
             sage: b[0]
             Bezier path from (1.133..., 0.8237...) to (-0.2655..., 0.9911...)
@@ -390,23 +390,23 @@ class Arc(GraphicPrimitive):
          aspect_ratio=1.0)
 def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
     r"""
-    An arc (that is a portion of a circle or an ellipse)
+    An arc (that is a portion of a circle or an ellipse).
 
     Type ``arc.options`` to see all options.
 
     INPUT:
 
-    - ``center`` -- 2-tuple of real numbers; position of the center.
+    - ``center`` -- 2-tuple of real numbers; position of the center
 
     - ``r1``, ``r2`` -- positive real numbers; radii of the ellipse. If only ``r1``
       is set, then the two radii are supposed to be equal and this function returns
       an arc of circle.
 
     - ``angle`` -- real number; angle between the horizontal and the axis that
-      corresponds to ``r1``.
+      corresponds to ``r1``
 
-    - ``sector`` -- 2-tuple (default: (0,2*pi))- angles sector in which the arc will
-      be drawn.
+    - ``sector`` -- 2-tuple (default: (0,2*pi)); angles sector in which the arc will
+      be drawn
 
     OPTIONS:
 
@@ -414,12 +414,12 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
 
     - ``thickness`` -- float (default: 1) -- thickness of the arc
 
-    - ``color``, ``rgbcolor``; string or 2-tuple (default: 'blue') -- the color
-      of the arc
+    - ``color``, ``rgbcolor`` -- string or 2-tuple (default: ``'blue'``); the
+      color of the arc
 
-    - ``linestyle`` -- string (default: ``'solid'``) -- The style of the line,
+    - ``linestyle`` -- string (default: ``'solid'``); the style of the line,
       which is one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
-      or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively.
+      or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively
 
     EXAMPLES:
 
@@ -454,14 +454,14 @@ def arc(center, r1, r2=None, angle=0.0, sector=(0.0, 2 * pi), **options):
 
     Plot an arc of an ellipse in red with a dashed linestyle::
 
-        sage: arc((0,0), 2, 1, 0, (0,pi/2), linestyle="dashed", color="red")
+        sage: arc((0,0), 2, 1, 0, (0,pi/2), linestyle='dashed', color='red')
         Graphics object consisting of 1 graphics primitive
-        sage: arc((0,0), 2, 1, 0, (0,pi/2), linestyle="--", color="red")
+        sage: arc((0,0), 2, 1, 0, (0,pi/2), linestyle='--', color='red')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        sphinx_plot(arc((0,0), 2, 1, 0, (0,pi/2), linestyle="dashed", color="red"))
+        sphinx_plot(arc((0,0), 2, 1, 0, (0,pi/2), linestyle='dashed', color='red'))
 
     The default aspect ratio for arcs is 1.0::
 

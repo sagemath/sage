@@ -24,7 +24,7 @@ Graphic matroids do not have a representation matrix or any of the
 functionality of regular matroids. It is possible to get an instance of the
 :class:`~sage.matroids.linear_matroid.RegularMatroid` class by using the
 ``regular`` keyword when constructing the matroid. It is also possible to cast
-a class:`GraphicMatroid` as a class:`RegularMatroid` with the
+a :class:`GraphicMatroid` as a :class:`RegularMatroid` with the
 :meth:`~sage.matroids.graphic_matroids.GraphicMatroid.regular_matroid`
 method::
 
@@ -86,9 +86,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .matroid cimport Matroid
-from copy import copy, deepcopy
-from .utilities import newlabel, split_vertex, sanitize_contractions_deletions
+from sage.matroids.matroid cimport Matroid
+from copy import copy
+from sage.matroids.utilities import newlabel, split_vertex, sanitize_contractions_deletions
 from itertools import combinations
 from sage.rings.integer import Integer
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
@@ -99,14 +99,14 @@ cdef class GraphicMatroid(Matroid):
 
     INPUT:
 
-    - ``G`` -- class:`Graph`
+    - ``G`` -- :class:`Graph`
     - ``groundset`` -- list (optional); in 1-1 correspondence with ``G.edge_iterator()``
 
-    OUTPUT: class:`GraphicMatroid` where the groundset elements are the edges of `G`
+    OUTPUT: :class:`GraphicMatroid` where the groundset elements are the edges of `G`
 
     .. NOTE::
 
-        If a disconnected graph is given as input, the instance of class:`GraphicMatroid`
+        If a disconnected graph is given as input, the instance of :class:`GraphicMatroid`
         will connect the graph components and store this as its graph.
 
     EXAMPLES::
@@ -186,7 +186,7 @@ cdef class GraphicMatroid(Matroid):
         groundset_set = frozenset(groundset)
 
         # if the provided groundset is incomplete, it gets overwritten
-        # invalidate `None` as label
+        # invalidate ``None`` as label
         if None in groundset_set or len(groundset_set) != G.num_edges():
             groundset = range(G.num_edges())
             groundset_set = frozenset(groundset)
@@ -220,7 +220,7 @@ cdef class GraphicMatroid(Matroid):
         # The edge labels should already be the elements.
         self._groundset_edge_map = ({l: (u, v) for (u, v, l) in self._G.edge_iterator()})
 
-    cpdef groundset(self):
+    cpdef frozenset groundset(self):
         """
         Return the groundset of the matroid as a frozenset.
 
@@ -238,7 +238,7 @@ cdef class GraphicMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X):
+    cpdef int _rank(self, frozenset X) except? -1:
         """
         Return the rank of a set ``X``.
 
@@ -452,7 +452,7 @@ cdef class GraphicMatroid(Matroid):
             sage: loads(dumps(M))
             Graphic matroid of rank 9 on 15 elements
         """
-        from .unpickling import unpickle_graphic_matroid
+        from sage.matroids.unpickling import unpickle_graphic_matroid
         data = (self._G, self.get_custom_name())
         version = 0
         return unpickle_graphic_matroid, (version, data)
@@ -471,7 +471,7 @@ cdef class GraphicMatroid(Matroid):
         Assumptions: contractions are independent, deletions are coindependent,
         contractions and deletions are disjoint.
 
-        OUTPUT: class:`GraphicMatroid`
+        OUTPUT: :class:`GraphicMatroid`
 
         EXAMPLES::
 
@@ -501,8 +501,8 @@ cdef class GraphicMatroid(Matroid):
         INPUT:
 
         - ``N`` -- matroid
-        - ``certificate`` -- (default: ``False``) if ``True``, returns the
-          certificate isomorphism from the minor of ``self`` to ``N``
+        - ``certificate`` -- boolean (default: ``False``); if ``True``, returns
+          the certificate isomorphism from the minor of ``self`` to ``N``
 
         OUTPUT:
 
@@ -625,7 +625,7 @@ cdef class GraphicMatroid(Matroid):
                 N = N.regular_matroid()
             return M._has_minor(N, certificate=certificate)
 
-    cpdef _corank(self, X):
+    cpdef int _corank(self, frozenset X) noexcept:
         """
         Return the corank of the set `X` in the matroid.
 
@@ -640,9 +640,9 @@ cdef class GraphicMatroid(Matroid):
         EXAMPLES::
 
             sage: M = Matroid(range(9), graphs.CompleteBipartiteGraph(3,3))
-            sage: M._corank([0,1,2])
+            sage: M._corank(frozenset([0,1,2]))
             2
-            sage: M._corank([1,2,3])
+            sage: M._corank(frozenset([1,2,3]))
             3
         """
         cdef DisjointSet_of_hashables DS_vertices
@@ -653,7 +653,7 @@ cdef class GraphicMatroid(Matroid):
             DS_vertices.union(u, v)
         return len(X) - (DS_vertices.number_of_subsets() - Integer(1))
 
-    cpdef _is_circuit(self, X):
+    cpdef bint _is_circuit(self, frozenset X) noexcept:
         """
         Test if input is a circuit.
 
@@ -666,17 +666,17 @@ cdef class GraphicMatroid(Matroid):
         EXAMPLES::
 
             sage: M = Matroid(range(5), graphs.DiamondGraph())
-            sage: M._is_circuit([0,1,2])
+            sage: M._is_circuit(frozenset([0,1,2]))
             True
-            sage: M._is_circuit([0,1,2,3])
+            sage: M._is_circuit(frozenset([0,1,2,3]))
             False
-            sage: M._is_circuit([0,1,3])
+            sage: M._is_circuit(frozenset([0,1,3]))
             False
         """
         cdef GenericGraph_pyx g = self._subgraph_from_set(X)
         return g.is_cycle()
 
-    cpdef _closure(self, X):
+    cpdef frozenset _closure(self, frozenset X):
         """
         Return the closure of a set.
 
@@ -689,9 +689,9 @@ cdef class GraphicMatroid(Matroid):
         EXAMPLES::
 
             sage: M = Matroid(range(5), graphs.DiamondGraph())
-            sage: sorted(M._closure([0]))
+            sage: sorted(M._closure(frozenset([0])))
             [0]
-            sage: sorted(M._closure([0,1]))
+            sage: sorted(M._closure(frozenset([0,1])))
             [0, 1, 2]
             sage: sorted(M._closure(M.groundset()))
             [0, 1, 2, 3, 4]
@@ -704,16 +704,15 @@ cdef class GraphicMatroid(Matroid):
             sage: M = Matroid(range(6), Graph(edgelist, loops=True, multiedges=True))
             sage: M.graph().edges(sort=True)
             [(0, 0, 0), (0, 1, 1), (0, 2, 2), (0, 3, 3), (1, 2, 4), (1, 2, 5)]
-            sage: sorted(M._closure([4]))
+            sage: sorted(M._closure(frozenset([4])))
             [0, 4, 5]
         """
         cdef set XX = set(X)
-        cdef frozenset Y = self._groundset.difference(XX)
+        cdef frozenset Y = self.groundset().difference(XX)
         cdef list edgelist = self._groundset_to_edges(Y)
         cdef GenericGraph_pyx g = self._subgraph_from_set(XX)
         cdef list V = g.vertices(sort=False)
         cdef int components = g.connected_components_number()
-        cdef tuple e
         for e in edgelist:
             # a non-loop edge is in the closure iff both its vertices are
             # in the induced subgraph, and the edge doesn't connect components
@@ -727,7 +726,7 @@ cdef class GraphicMatroid(Matroid):
         XX.update(set([l for (u, v, l) in self._G.loops()]))
         return frozenset(XX)
 
-    cpdef _max_independent(self, X):
+    cpdef frozenset _max_independent(self, frozenset X):
         """
         Compute a maximal independent subset.
 
@@ -766,7 +765,7 @@ cdef class GraphicMatroid(Matroid):
                 our_set.add(l)
         return frozenset(our_set)
 
-    cpdef _max_coindependent(self, X):
+    cpdef frozenset _max_coindependent(self, frozenset X):
         """
         Compute a maximal coindependent subset.
 
@@ -781,10 +780,10 @@ cdef class GraphicMatroid(Matroid):
             sage: M = Matroid(range(5), graphs.DiamondGraph())
             sage: sorted(M._max_coindependent(M.groundset()))
             [2, 4]
-            sage: sorted(M._max_coindependent([2,3,4]))
+            sage: sorted(M._max_coindependent(frozenset([2,3,4])))
             [2, 4]
             sage: N = M.graphic_extension(0, element=5)
-            sage: sorted(N.max_coindependent([0,1,2,5]))
+            sage: sorted(N.max_coindependent(frozenset([0,1,2,5])))
             [1, 2, 5]
         """
         cdef DisjointSet_of_hashables DS_vertices
@@ -804,7 +803,7 @@ cdef class GraphicMatroid(Matroid):
                 DS_vertices.union(u, v)
         return frozenset(our_set)
 
-    cpdef _circuit(self, X):
+    cpdef frozenset _circuit(self, frozenset X):
         """
         Return a minimal dependent subset.
 
@@ -813,7 +812,7 @@ cdef class GraphicMatroid(Matroid):
         - ``X`` -- an iterable container of groundset elements
 
         OUTPUT: ``frozenset`` instance containing a subset of ``X``;
-        a :class:`ValueError` is raised if the set contains no circuit
+        a :exc:`ValueError` is raised if the set contains no circuit
 
         EXAMPLES::
 
@@ -821,9 +820,9 @@ cdef class GraphicMatroid(Matroid):
             sage: sorted(M._circuit(M.groundset()))
             [0, 1, 2]
             sage: N = Matroid(range(9), graphs.CompleteBipartiteGraph(3,3))
-            sage: sorted(N._circuit([0, 1, 2, 6, 7, 8]))
+            sage: sorted(N._circuit(frozenset([0, 1, 2, 6, 7, 8])))
             [0, 1, 6, 7]
-            sage: N._circuit([0, 1, 2])
+            sage: N._circuit(frozenset([0, 1, 2]))
             Traceback (most recent call last):
             ...
             ValueError: no circuit in independent set
@@ -883,7 +882,7 @@ cdef class GraphicMatroid(Matroid):
 
         return frozenset([l for (u, v, l) in edge_set])
 
-    cpdef _coclosure(self, X):
+    cpdef frozenset _coclosure(self, frozenset X):
         """
         Return the coclosure of a set.
 
@@ -896,15 +895,15 @@ cdef class GraphicMatroid(Matroid):
         EXAMPLES::
 
             sage: M = Matroid(range(5), graphs.DiamondGraph())
-            sage: sorted(M._coclosure([0]))
+            sage: sorted(M._coclosure(frozenset([0])))
             [0, 1]
-            sage: sorted(M._coclosure([0,1]))
+            sage: sorted(M._coclosure(frozenset([0,1])))
             [0, 1]
             sage: N = M.graphic_extension(0, element=5)
-            sage: sorted(N._coclosure([3]))
+            sage: sorted(N._coclosure(frozenset([3])))
             [3, 4]
             sage: N = M.graphic_coextension(0, element=5)
-            sage: sorted(N._coclosure([3]))
+            sage: sorted(N._coclosure(frozenset([3])))
             [3, 4, 5]
         """
         cdef GenericGraph_pyx g = self.graph()
@@ -919,7 +918,7 @@ cdef class GraphicMatroid(Matroid):
             g.add_edge(e)
         return frozenset(XX)
 
-    cpdef _is_closed(self, X):
+    cpdef bint _is_closed(self, frozenset X) noexcept:
         """
         Test if input is a closed set.
 
@@ -1094,7 +1093,7 @@ cdef class GraphicMatroid(Matroid):
         """
         return self.is_isomorphic(other, certificate=True)[1]
 
-    cpdef is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         """
         Test if the data obey the matroid axioms.
 
@@ -1111,11 +1110,11 @@ cdef class GraphicMatroid(Matroid):
         """
         return True
 
-    def is_graphic(self):
+    cpdef bint is_graphic(self) noexcept:
         r"""
         Return if ``self`` is graphic.
 
-        This is trivially ``True`` for a class:`GraphicMatroid`.
+        This is trivially ``True`` for a :class:`GraphicMatroid`.
 
         EXAMPLES::
 
@@ -1125,11 +1124,11 @@ cdef class GraphicMatroid(Matroid):
         """
         return True
 
-    def is_regular(self):
+    cpdef bint is_regular(self) noexcept:
         r"""
         Return if ``self`` is regular.
 
-        This is always ``True`` for a class:`GraphicMatroid`.
+        This is always ``True`` for a :class:`GraphicMatroid`.
 
         EXAMPLES::
 
@@ -1195,7 +1194,7 @@ cdef class GraphicMatroid(Matroid):
         """
         return copy(self._vertex_map)
 
-    cpdef groundset_to_edges(self, X):
+    cpdef list groundset_to_edges(self, X):
         """
         Return a list of edges corresponding to a set of groundset elements.
 
@@ -1298,7 +1297,7 @@ cdef class GraphicMatroid(Matroid):
 
         OUTPUT:
 
-        A class:`GraphicMatroid` with the specified element added. Note that if
+        A :class:`GraphicMatroid` with the specified element added. Note that if
         ``v`` is not specified or if ``v`` is ``u``, then the new element will
         be a loop. If the new element's label is not specified, it will be
         generated automatically.
@@ -1365,12 +1364,12 @@ cdef class GraphicMatroid(Matroid):
           each extension
         - ``vertices`` -- (optional) a set of vertices over which the extension
           may be taken
-        - ``simple`` -- (default: ``False``) if true, extensions by loops and
-          parallel elements are not taken
+        - ``simple`` -- boolean (default: ``False``); if ``True``, extensions
+          by loops and parallel elements are not taken
 
         OUTPUT:
 
-        An iterable containing instances of class:`GraphicMatroid`. If
+        An iterable containing instances of :class:`GraphicMatroid`. If
         ``vertices`` is not specified, every vertex is used.
 
         .. NOTE::
@@ -1441,11 +1440,11 @@ cdef class GraphicMatroid(Matroid):
         - ``v`` -- (optional) the name of the new vertex after splitting
         - ``X`` -- (optional) a list of the matroid elements corresponding to
           edges incident to ``u`` that move to the new vertex after splitting
-        - ``element`` -- (optional) The name of the newly added element
+        - ``element`` -- (optional) the name of the newly added element
 
         OUTPUT:
 
-        An instance of class:`GraphicMatroid` coextended by the new element.
+        An instance of :class:`GraphicMatroid` coextended by the new element.
         If ``X`` is not specified, the new element will be a coloop.
 
         .. NOTE::
@@ -1574,12 +1573,12 @@ cdef class GraphicMatroid(Matroid):
         - ``vertices`` -- (optional) the vertices to be split
         - ``v`` -- (optional) the name of the new vertex
         - ``element`` -- (optional) the name of the new element
-        - ``cosimple`` -- (default: ``False``) if true, coextensions
+        - ``cosimple`` -- boolean (default: ``False``); if ``True``, coextensions
           by a coloop or series elements will not be taken
 
         OUTPUT:
 
-        An iterable containing instances of class:`GraphicMatroid`. If
+        An iterable containing instances of :class:`GraphicMatroid`. If
         ``vertices`` is not specified, the method iterates over all vertices.
 
         EXAMPLES::
@@ -1721,7 +1720,7 @@ cdef class GraphicMatroid(Matroid):
         - ``X`` -- the set of elements to be twisted with respect
           to the rest of the matroid
 
-        OUTPUT: class:`GraphicMatroid` isomorphic to this matroid but
+        OUTPUT: :class:`GraphicMatroid` isomorphic to this matroid but
         with a graph that is not necessarily isomorphic
 
         EXAMPLES::
@@ -1831,7 +1830,7 @@ cdef class GraphicMatroid(Matroid):
         - ``u`` -- vertex spanned by the edges of the elements in ``X``
         - ``v`` -- vertex spanned by the edges of the elements not in ``X``
 
-        OUTPUT: class:`GraphicMatroid` isomorphic to this matroid but
+        OUTPUT: :class:`GraphicMatroid` isomorphic to this matroid but
         with a graph that is not necessarily isomorphic
 
         EXAMPLES::
@@ -1950,8 +1949,8 @@ cdef class GraphicMatroid(Matroid):
 
     cpdef regular_matroid(self):
         """
-        Return an instance of class:`RegularMatroid` isomorphic to this
-        class:`GraphicMatroid`.
+        Return an instance of :class:`RegularMatroid` isomorphic to this
+        :class:`GraphicMatroid`.
 
         EXAMPLES::
 
@@ -1978,7 +1977,7 @@ cdef class GraphicMatroid(Matroid):
         X = [l for u, v, l in self._G.edge_iterator()]
         return ConstructorMatroid(groundset=X, graph=self._G, regular=True)
 
-    def relabel(self, mapping):
+    cpdef relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 

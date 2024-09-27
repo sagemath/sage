@@ -69,7 +69,6 @@ Test hashing::
 REFERENCES:
 
 - [BB2009]_
-
 """
 
 #*****************************************************************************
@@ -206,7 +205,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         EXAMPLES::
@@ -233,9 +232,10 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         """
-        A[i,j] = value without bound checks
+        A[i,j] = value without bound checks.
 
         INPUT:
+
         - ``i`` -- row index
         - ``j`` -- column index
         - ``value`` -- a finite field element (not checked but assumed)
@@ -263,6 +263,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         Get A[i,j] without bound checks.
 
         INPUT:
+
         - ``i`` -- row index
         - ``j`` -- column index
 
@@ -298,8 +299,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         return mzed_read_elem(self._entries, i, j) == self._zero_word
 
     cpdef _add_(self, right):
-        """
-        Return A+B
+        r"""
+        Return ``A+B``.
 
         INPUT:
 
@@ -385,8 +386,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         return ans
 
     cdef _matrix_times_matrix_(self, Matrix right):
-        """
-        Return A*B
+        r"""
+        Return ``A*B``.
 
         Uses the M4RIE machinery to decide which function to call.
 
@@ -442,7 +443,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         finite field is small, there is a very high chance that
         ``e * B[j]`` is computed more than once for any ``e`` in the finite
         field. Instead, we compute all possible
-        multiples of ``B[j]`` and re-use this data in the inner loop.
+        multiples of ``B[j]`` and reuse this data in the inner loop.
         This is what is called a "Newton-John" table in M4RIE.
 
         INPUT:
@@ -708,14 +709,12 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        -  ``density`` -- float; proportion (roughly) to be considered for
-           changes
-        -  ``nonzero`` -- Bool (default: ``False``); whether the new entries
-           are forced to be non-zero
+        - ``density`` -- float; proportion (roughly) to be considered for
+          changes
+        - ``nonzero`` -- boolean (default: ``False``); whether the new entries
+          are forced to be nonzero
 
-        OUTPUT:
-
-        -  None, the matrix is modified in-place
+        OUTPUT: none, the matrix is modified in-place
 
         EXAMPLES::
 
@@ -928,7 +927,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sig_off()
 
         elif algorithm == 'builtin':
-            self._echelon_in_place(algorithm="classical")
+            self._echelon_in_place(algorithm='classical')
 
         else:
             raise ValueError("No algorithm '%s'."%algorithm)
@@ -977,7 +976,6 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [1 0 0]
             [0 1 0]
             [0 0 1]
-
         """
         cdef Matrix_gf2e_dense A
         A = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent, 0, 0, 0)
@@ -994,13 +992,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
     cdef rescale_row_c(self, Py_ssize_t row, multiple, Py_ssize_t start_col):
         """
-        Return ``multiple * self[row][start_col:]``
+        Return ``multiple * self[row][start_col:]``.
 
         INPUT:
 
         - ``row`` -- row index for row to rescale
         - ``multiple`` -- finite field element to scale by
-        - ``start_col`` -- only start at this column index.
+        - ``start_col`` -- only start at this column index
 
         EXAMPLES::
 
@@ -1040,7 +1038,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         - ``row_to`` -- row index of source
         - ``row_from`` -- row index of destination
-        - ``multiple`` --  finite field element
+        - ``multiple`` -- finite field element
         - ``start_col`` -- only start at this column index
 
         EXAMPLES::
@@ -1064,7 +1062,6 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         cdef m4ri_word x = poly_to_word(multiple)
         mzed_add_multiple_of_row(self._entries, row_to, self._entries, row_from, x, start_col)
-
 
     cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2):
         """
@@ -1325,7 +1322,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         EXAMPLES::
 
             sage: K.<a> = GF(2^4)
-            sage: A = random_matrix(K, 10, 10, algorithm="unimodular")
+            sage: A = random_matrix(K, 10, 10, algorithm='unimodular')
             sage: A.rank()
             10
             sage: A = matrix(K, 10, 0)
@@ -1447,7 +1444,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``C`` -- a list of matrices over GF(2)
+        - ``C`` -- list of matrices over GF(2)
 
         EXAMPLES::
 

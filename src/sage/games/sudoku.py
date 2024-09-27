@@ -26,7 +26,7 @@ from sage.structure.sage_object import SageObject
 
 def sudoku(m):
     r"""
-    Solves Sudoku puzzles described by matrices.
+    Solve Sudoku puzzles described by matrices.
 
     INPUT:
 
@@ -76,9 +76,9 @@ def sudoku(m):
         ...
         ValueError: sudoku function expects puzzle to be a matrix, perhaps use the Sudoku class
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
 
-    if not is_Matrix(m):
+    if not isinstance(m, Matrix):
         raise ValueError('sudoku function expects puzzle to be a matrix, perhaps use the Sudoku class')
     solution = next(Sudoku(m).solve(algorithm='dlx'))
     return (solution.to_matrix() if solution else None)
@@ -91,13 +91,14 @@ class Sudoku(SageObject):
 
     INPUT:
 
-    - puzzle -- the first argument can take one of three forms
+    - ``puzzle`` -- the first argument can take one of three forms
         * list - a Python list with elements of the puzzle in row-major order,
           where a blank entry is a zero
         * matrix - a square Sage matrix over `\ZZ`
         * string - a string where each character is an entry of
           the puzzle. For two-digit entries, a = 10, b = 11, etc.
-    - verify_input -- default = ``True``, use ``False`` if you know the input is valid
+    - ``verify_input`` -- boolean (default: ``True``); use ``False`` if you know
+      the input is valid
 
     EXAMPLES::
 
@@ -170,12 +171,12 @@ class Sudoku(SageObject):
             ValueError: Sudoku puzzle has an invalid entry
         """
         from math import sqrt
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
         if isinstance(puzzle, list):
             puzzle_size = int(round(sqrt(len(puzzle))))
             self.puzzle = tuple(puzzle)
-        elif is_Matrix(puzzle):
+        elif isinstance(puzzle, Matrix):
             puzzle_size = puzzle.ncols()
             if verify_input and not puzzle.is_square():
                 raise ValueError('Sudoku puzzle must be a square matrix')
@@ -203,7 +204,7 @@ class Sudoku(SageObject):
 
     def __eq__(self, other):
         r"""
-        Compares two Sudoku puzzles, based on the underlying
+        Compare two Sudoku puzzles, based on the underlying
         representation of the puzzles as tuples.
 
         EXAMPLES::
@@ -269,7 +270,6 @@ class Sudoku(SageObject):
             sage: s = Sudoku('.4..32....14..3.')
             sage: s._repr_()
             '+---+---+\n|  4|   |\n|3 2|   |\n+---+---+\n|   |1 4|\n|   |3  |\n+---+---+'
-
         """
         return self.to_ascii()
 
@@ -480,8 +480,9 @@ class Sudoku(SageObject):
 
         INPUT:
 
-        - algorithm -- default = ``'dlx'``, specify choice of solution algorithm. The
-          two possible algorithms are ``'dlx'`` and ``'backtrack'``.
+        - ``algorithm`` -- string (default: ``'dlx'``); specify choice of
+          solution algorithm. The two possible algorithms are ``'dlx'`` and
+          ``'backtrack'``
 
         OUTPUT:
 
@@ -727,14 +728,12 @@ class Sudoku(SageObject):
 
         INPUT:
 
-        - count_only -- boolean, default = False.
-          If set to ``True`` the generator returned as output will
+        - ``count_only`` -- boolean (default: ``False``);
+          if set to ``True`` the generator returned as output will
           simply generate ``None`` for each solution, so the
-          calling routine can count these.
+          calling routine can count these
 
-        OUTPUT:
-
-        A generator that iterates over all the solutions.
+        OUTPUT: a generator that iterates over all the solutions
 
         This function is intended to be called from the
         :func:`~sage.games.sudoku.Sudoku.solve` method
@@ -840,7 +839,7 @@ class Sudoku(SageObject):
 
         def make_row(row, col, entry):
             r"""
-            Constructs a row of the `0-1` matrix describing
+            Construct a row of the `0-1` matrix describing
             the exact cover constraints for a Sudoku puzzle.
 
             If a (zero-based) ``entry`` is placed in location

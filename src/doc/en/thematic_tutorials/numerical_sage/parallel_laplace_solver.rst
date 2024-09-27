@@ -78,7 +78,6 @@ this with the solver we wrote in the section on f2py.
             row_below=MPI.COMM_WORLD.Recv(1)
 
 
-
         if rank >0 and rank < size-1:
             row_below.shape=(1,num_points)
             row_above.shape=(1,num_points)
@@ -109,7 +108,6 @@ this with the solver we wrote in the section on f2py.
         num_iter=num_iter+1
 
 
-
     recvbuf=MPI.COMM_WORLD.Gather(my_grid,root)
     if rank==0:
         sol=numpy.array(recvbuf)
@@ -126,5 +124,5 @@ takes more time than just doing the iteration. However, on a
 takes only 6 seconds while the serial version we wrote earlier
 takes 20 seconds.
 
-Exercise: Rewrite the above using f2py, so that each process 
+Exercise: Rewrite the above using f2py, so that each process
 compiles a fortran function and uses that, how fast can you get this?

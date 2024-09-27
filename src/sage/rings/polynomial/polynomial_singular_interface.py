@@ -16,7 +16,6 @@ TESTS::
     sage: P.<a,b> = PolynomialRing(GF(7), 2)
     sage: f = (a^3 + 2*b^2*a)^7; f
     a^21 + 2*a^7*b^14
-
 """
 #################################################################
 #
@@ -41,7 +40,7 @@ import sage.rings.fraction_field
 import sage.rings.abc
 import sage.rings.number_field as number_field
 
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import ZZ
@@ -75,7 +74,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
     if base_ring is ZZ:
         return make_ring("(ZZ)"), None
 
-    if sage.rings.rational_field.is_RationalField(base_ring):
+    if isinstance(base_ring, sage.rings.rational_field.RationalField):
         return make_ring("(QQ)"), None
 
     elif isinstance(base_ring, sage.rings.abc.RealField):
@@ -137,7 +136,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
         return R, minpoly
 
-    elif sage.rings.fraction_field.is_FractionField(base_ring):
+    elif isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
         if base_ring.ngens() == 1:
             gens = str(base_ring.gen())
         else:
@@ -173,7 +172,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
 class PolynomialRing_singular_repr:
     """
-    Implements methods to convert polynomial rings to Singular.
+    Implement methods to convert polynomial rings to Singular.
 
     This class is a base class for all univariate and multivariate
     polynomial rings which support conversion from and to Singular
@@ -222,7 +221,7 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(GF(127), 'x', implementation="singular")           # needs sage.libs.singular
+            sage: R = PolynomialRing(GF(127), 'x', implementation='singular')           # needs sage.libs.singular
             sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
@@ -231,7 +230,7 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(QQ, 'x', implementation="singular")                # needs sage.libs.singular
+            sage: R = PolynomialRing(QQ, 'x', implementation='singular')                # needs sage.libs.singular
             sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
@@ -431,7 +430,7 @@ def can_convert_to_singular(R):
 
     base_ring = R.base_ring()
     if (base_ring is ZZ
-        or is_RationalField(base_ring)
+        or isinstance(base_ring, RationalField)
         or isinstance(base_ring, (sage.rings.abc.IntegerModRing,
                                   sage.rings.abc.RealField, sage.rings.abc.ComplexField,
                                   sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))):
@@ -440,7 +439,7 @@ def can_convert_to_singular(R):
         return base_ring.characteristic() <= 2147483647
     elif isinstance(base_ring, NumberField):
         return base_ring.is_absolute()
-    elif sage.rings.fraction_field.is_FractionField(base_ring):
+    elif isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
         B = base_ring.base_ring()
         return (B.is_prime_field() or B is ZZ
                 or (isinstance(B, FiniteField) and B.characteristic() <= 2147483647))
@@ -452,7 +451,7 @@ def can_convert_to_singular(R):
 
 class Polynomial_singular_repr:
     """
-    Implements coercion of polynomials to Singular polynomials.
+    Implement coercion of polynomials to Singular polynomials.
 
     This class is a base class for all (univariate and multivariate)
     polynomial classes which support conversion from and to
@@ -478,7 +477,7 @@ def _singular_func(self, singular=None):
 
     INPUT:
 
-    - ``singular`` -- Singular instance to use.
+    - ``singular`` -- Singular instance to use
 
     EXAMPLES::
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Containers for storing coercion data
 
@@ -203,7 +204,7 @@ cdef class MonoDictEraser:
         """
         INPUT:
 
-        A :class:`MonoDict`.
+        - ``D`` -- a :class:`MonoDict`
 
         EXAMPLES::
 
@@ -221,7 +222,7 @@ cdef class MonoDictEraser:
         """
         INPUT:
 
-        A weak reference with key.
+        - ``r`` -- a weak reference with key
 
         For internal use only.
 
@@ -272,12 +273,12 @@ cdef class MonoDict:
 
     INPUT:
 
-    - ``data`` -- optional iterable defining initial data, as dict or
-      iterable of (key, value) pairs.
+    - ``data`` -- (optional) iterable defining initial data, as dict or
+      iterable of (key, value) pairs
 
-    - ``weak_values`` -- optional bool (default: ``False``). If it is true,
-      weak references to the values in this dictionary will be used,
-      when possible.
+    - ``weak_values`` -- boolean (default: ``False``); if it is
+      ``True``, weak references to the values in this dictionary will be used,
+      when possible
 
     EXAMPLES::
 
@@ -519,7 +520,7 @@ cdef class MonoDict:
 
     def __cinit__(self):
         """
-        Setup basic data structure
+        Setup basic data structure.
 
         TESTS::
 
@@ -554,7 +555,6 @@ cdef class MonoDict:
             sage: L = MonoDict([(a, 1)])
             sage: L[a]
             1
-
         """
         self.weak_values = weak_values
         if data:
@@ -571,7 +571,7 @@ cdef class MonoDict:
 
     def __len__(self):
         """
-        The number of items in self.
+        The number of items in ``self``.
         EXAMPLES::
 
             sage: from sage.structure.coerce_dict import MonoDict
@@ -923,7 +923,7 @@ cdef class TripleDictEraser:
         """
         INPUT:
 
-        A :class:`TripleDict`. For internal use only.
+        - ``D`` -- a :class:`TripleDict`. For internal use only.
 
         EXAMPLES::
 
@@ -935,7 +935,6 @@ cdef class TripleDictEraser:
             sage: del k
             sage: len(D) # indirect doctest
             0
-
         """
         self.D = ref(D)
 
@@ -943,7 +942,7 @@ cdef class TripleDictEraser:
         """
         INPUT:
 
-        A weak reference with key.
+        - ``r`` -- a weak reference with key
 
         For internal use only.
 
@@ -1002,22 +1001,19 @@ cdef class TripleDict:
     It is bare-bones in the sense that not all dictionary methods are
     implemented.
 
-
     INPUT:
 
-    - ``data`` -- optional iterable defining initial data, as dict or
-      iterable of (key, value) pairs.
+    - ``data`` -- (optional) iterable defining initial data, as dict or
+      iterable of (key, value) pairs
 
-    - ``weak_values`` -- optional bool (default: ``False``). If it is true,
-      weak references to the values in this dictionary will be used,
-      when possible.
-
+    - ``weak_values`` -- boolean (default: ``False``); if it is
+      ``True``, weak references to the values in this dictionary will be used,
+      when possible
 
     IMPLEMENTATION:
 
     It is implemented as a hash table with open addressing, similar to python's
     dict.
-
 
     EXAMPLES::
 
@@ -1189,7 +1185,7 @@ cdef class TripleDict:
 
     def __cinit__(self):
         """
-        Setup basic data structure
+        Setup basic data structure.
 
         TESTS::
 
@@ -1225,7 +1221,6 @@ cdef class TripleDict:
             sage: L = TripleDict({key: 42})
             sage: L[key]
             42
-
         """
         self.weak_values = weak_values
         if data:
@@ -1242,7 +1237,7 @@ cdef class TripleDict:
 
     def __len__(self):
         """
-        The number of items in self.
+        The number of items in ``self``.
 
         EXAMPLES::
 

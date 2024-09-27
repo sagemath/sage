@@ -32,19 +32,18 @@ from sphinx.application import Sphinx
 
 def sphinxify(docstring, format='html'):
     r"""
-    Runs Sphinx on a ``docstring``, and outputs the processed
-    documentation.
+    Run Sphinx on a ``docstring``, and output the processed documentation.
 
     INPUT:
 
     - ``docstring`` -- string; a ReST-formatted docstring
 
-    - ``format`` -- string (default: 'html'); either 'html' or
-      'text'
+    - ``format`` -- string (default: ``'html'``); either ``'html'`` or
+      ``'text'``
 
     OUTPUT:
 
-    - string -- Sphinx-processed documentation, in either HTML or
+    - ``string`` -- Sphinx-processed documentation, in either HTML or
       plain text format, depending on the value of ``format``
 
     EXAMPLES::
@@ -82,7 +81,7 @@ def sphinxify(docstring, format='html'):
     with open(rst_name, 'w') as filed:
         filed.write(docstring)
 
-    confdir = os.path.join(srcdir, 'en' , 'introspect')
+    confdir = os.path.join(srcdir, 'en', 'introspect')
     os.makedirs(confdir)
     with open(os.path.join(confdir, 'conf.py'), 'w') as filed:
         filed.write(r"""

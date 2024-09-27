@@ -16,7 +16,7 @@ A symplectic basis is a basis of the form `e_1,
 * `f_i M {f_j}^t = 0` for all `i, j`;
 * `e_i M {f_j}^t = 0` for all `i` not equal `j`;
 
-and such that the non-zero terms
+and such that the nonzero terms
 
 * `e_i M {f_i}^t` are "as nice as possible": 1 over fields, or
   integers satisfying divisibility properties otherwise.
@@ -292,7 +292,7 @@ def symplectic_basis_over_field(M):
     fs = []
     pivot = 0
     while pivot < n:
-        # find non-zero element in row
+        # find nonzero element in row
         found_i = None
         for i in range(pivot, n):
             if E[pivot, i] != 0:
@@ -312,7 +312,7 @@ def symplectic_basis_over_field(M):
         E.rescale_col(pivot, v)
         B.rescale_row(pivot, v)
 
-        # use non-zero element to clean row pivot
+        # use nonzero element to clean row pivot
         for i in range(pivot+2, n):
             v = - E[i, pivot] / E[pivot+1, pivot]
             if v != 0:
@@ -320,7 +320,7 @@ def symplectic_basis_over_field(M):
                 E.add_multiple_of_column(i, pivot+1, v)
                 B.add_multiple_of_row(i, pivot+1, v)
 
-        # use non-zero element to clean row pivot+1
+        # use nonzero element to clean row pivot+1
         for i in range(pivot+2, n):
             v = - E[i, pivot+1] / E[pivot, pivot+1]
             if v != 0:
@@ -506,7 +506,7 @@ def symplectic_basis_over_ZZ(M):
             continue
         _inplace_move_to_positive_pivot(E, found[0], found[1], B, pivot)
 
-        # use non-zero element to clean row pivot
+        # use nonzero element to clean row pivot
         all_zero = True
         u = E[pivot+1, pivot]
         for i in range(pivot+2, n):
@@ -517,7 +517,7 @@ def symplectic_basis_over_ZZ(M):
                 E.add_multiple_of_column(i, pivot+1, v)
                 B.add_multiple_of_row(i, pivot+1, v)
 
-        # use non-zero element to clean row pivot+1
+        # use nonzero element to clean row pivot+1
         u = E[pivot, pivot+1]
         for i in range(pivot+2, n):
             v, r = (-E[i, pivot+1]).quo_rem(u)
@@ -533,8 +533,8 @@ def symplectic_basis_over_ZZ(M):
             pivot += 2
 
     ps.sort()
-    es = [ p[1]   for p in ps ]
-    fs = [ p[1]+1 for p in ps ]
+    es = [p[1] for p in ps]
+    fs = [p[1] + 1 for p in ps]
     C = B.matrix_from_rows(es + fs + zeroes)
     F = C * M * C.transpose()
     return F, C

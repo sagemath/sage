@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Reporting doctest results
 
@@ -9,7 +10,7 @@ It also computes the exit status in the ``error_status`` attribute of
 - 1: Doctest failure
 - 2: Bad command line syntax or invalid options
 - 4: Test timed out
-- 8: Test exited with non-zero status
+- 8: Test exited with nonzero status
 - 16: Test crashed with a signal (e.g. segmentation fault)
 - 32: TAB character found
 - 64: Internal error in the doctesting framework
@@ -101,9 +102,9 @@ class DocTestReporter(SageObject):
         INPUT:
 
         - ``controller`` -- a
-          :class:`sage.doctest.control.DocTestController` instance.
+          :class:`sage.doctest.control.DocTestController` instance;
           Note that some methods assume that appropriate tests have
-          been run by the controller.
+          been run by the controller
 
         EXAMPLES::
 
@@ -151,7 +152,6 @@ class DocTestReporter(SageObject):
             sage: DTR = DocTestReporter(DC)
             sage: DTR.were_doctests_with_optional_tag_run('latex')   # optional - latex
             True
-
         """
         if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
@@ -226,11 +226,11 @@ class DocTestReporter(SageObject):
 
         - ``source`` -- a source from :mod:`sage.doctest.sources`
 
-        - ``fail_msg`` -- a string
+        - ``fail_msg`` -- string
 
-        - ``event`` -- a string
+        - ``event`` -- string
 
-        - ``output`` -- optional string
+        - ``output`` -- (optional) string
 
         EXAMPLES::
 
@@ -292,25 +292,22 @@ class DocTestReporter(SageObject):
 
         - ``source`` -- a source from :mod:`sage.doctest.sources`
 
-        - ``timeout`` -- a boolean, whether doctests timed out
+        - ``timeout`` -- boolean; whether doctests timed out
 
-        - ``return_code`` -- an int, the return code of the process
-          running doctests on that file.
+        - ``return_code`` -- integer; the return code of the process
+          running doctests on that file
 
-        - ``results`` -- (irrelevant if ``timeout`` or
-          ``return_code``), a tuple
+        - ``results`` -- (irrelevant if ``timeout`` or ``return_code``) a tuple
 
           - ``ntests`` -- the number of doctests
 
           - ``timings`` -- a
             :class:`sage.doctest.sources.DictAsObject` instance
-            storing timing data.
+            storing timing data
 
-        - ``output`` -- a string, printed if there was some kind of
-          failure
+        - ``output`` -- string; printed if there was some kind of failure
 
-        - ``pid`` -- optional integer (default: ``None``). The pid of
-          the worker process.
+        - ``pid`` -- integer (default: ``None``); the pid of the worker process
 
         EXAMPLES::
 

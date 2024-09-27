@@ -295,5 +295,4 @@ r"""
 
     sage: log(QQ[cos(pi/9)].degree(), 2) in ZZ
     False
-
 """

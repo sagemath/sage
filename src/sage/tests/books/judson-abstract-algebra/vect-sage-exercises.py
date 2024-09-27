@@ -44,5 +44,4 @@ r"""
     sage: v = M([2, 2, 0])
     sage: w = M([0, 0, 4])
     sage: N = M.submodule([u, v, w])
-
 """

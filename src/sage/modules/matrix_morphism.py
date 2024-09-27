@@ -58,7 +58,7 @@ from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
 def is_MatrixMorphism(x):
     """
-    Return True if x is a Matrix morphism of free modules.
+    Return ``True`` if x is a Matrix morphism of free modules.
 
     This function is deprecated.
 
@@ -97,10 +97,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         INPUT:
 
-        -  ``parent`` -- a homspace
+        - ``parent`` -- a homspace
 
-        -  ``A`` -- matrix
-
+        - ``A`` -- matrix
 
         EXAMPLES::
 
@@ -244,7 +243,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             to coefficients in Real Field with 53 bits of precision
             sage: f((1, 0), coerce=False)
             (1.00000000000000*I, 0.000000000000000)
-
         """
         if self.domain().is_ambient():
             x = x.element()
@@ -299,7 +297,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
             sage: m = matrix(2, [1, 1, 0, 1])
             sage: V = ZZ^2
-            sage: h1 = V.hom(m); h2 = V.hom(m, side="right")
+            sage: h1 = V.hom(m); h2 = V.hom(m, side='right')
             sage: h1.side()
             'left'
             sage: h1([1, 0])
@@ -313,7 +311,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
     def side_switch(self):
         """
-        Return the same morphism, acting on vectors on the opposite side
+        Return the same morphism, acting on vectors on the opposite side.
 
         EXAMPLES::
 
@@ -342,7 +340,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         r"""
         Return the inverse of this matrix morphism, if the inverse exists.
 
-        This raises a :class:`ZeroDivisionError` if the inverse does not exist.
+        This raises a :exc:`ZeroDivisionError` if the inverse does not exist.
 
         EXAMPLES:
 
@@ -565,7 +563,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
                     Codomain: Vector space of dimension 2 over Rational Field
             sage: f(a)
             (1, 1)
-            sage: V.hom([V.0 - V.1, V.0 + V.1], side="right")*KtoV
+            sage: V.hom([V.0 - V.1, V.0 + V.1], side='right')*KtoV
             Composite map:
               From: Number Field in a with defining polynomial x^2 + 23
               To:   Vector space of dimension 2 over Rational Field
@@ -585,7 +583,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: V = ZZ^2
             sage: m = matrix(2, [1,1,0,1])
             sage: hl = V.hom(m)
-            sage: hr = V.hom(m, side="right")
+            sage: hr = V.hom(m, side='right')
             sage: hl * hl
             Free module morphism defined by the matrix
             [1 2]
@@ -623,8 +621,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [1 0]
             [0 1]...
 
-
-
         .. WARNING::
 
             Matrix morphisms can be defined by either left or right-multiplication.
@@ -652,7 +648,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             if right.side() == "right":
                 return H(self.matrix() * right.matrix(), side=self.side())
             else:
-                return H(right.matrix() * self.matrix().transpose(), side="left")
+                return H(right.matrix() * self.matrix().transpose(), side='left')
 
     def __add__(self, right):
         """
@@ -696,7 +692,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: V = ZZ^2
             sage: m = matrix(2, [1,1,0,1])
             sage: hl = V.hom(m)
-            sage: hr = V.hom(m, side="right")
+            sage: hr = V.hom(m, side='right')
             sage: hl + hl
             Free module morphism defined by the matrix
             [2 2]
@@ -729,12 +725,12 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             if right.side() == "left":
                 return self.parent()(self.matrix() + right.matrix(), side=self.side())
             elif right.side() == "right":
-                return self.parent()(self.matrix() + right.matrix().transpose(), side="left")
+                return self.parent()(self.matrix() + right.matrix().transpose(), side='left')
         if self.side() == "right":
             if right.side() == "right":
                 return self.parent()(self.matrix() + right.matrix(), side=self.side())
             elif right.side() == "left":
-                return self.parent()(self.matrix().transpose() + right.matrix(), side="left")
+                return self.parent()(self.matrix().transpose() + right.matrix(), side='left')
 
     def __neg__(self):
         """
@@ -767,7 +763,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: V = ZZ^2
             sage: m = matrix(2, [1,1,0,1])
             sage: hl = V.hom(m)
-            sage: hr = V.hom(m, side="right")
+            sage: hr = V.hom(m, side='right')
             sage: hl - hr
             Free module morphism defined by the matrix
             [ 0  1]
@@ -800,17 +796,17 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             if other.side() == "left":
                 return self.parent()(self.matrix() - other.matrix(), side=self.side())
             elif other.side() == "right":
-                return self.parent()(self.matrix() - other.matrix().transpose(), side="left")
+                return self.parent()(self.matrix() - other.matrix().transpose(), side='left')
         if self.side() == "right":
             if other.side() == "right":
                 return self.parent()(self.matrix() - other.matrix(), side=self.side())
             elif other.side() == "left":
-                return self.parent()(self.matrix().transpose() - other.matrix(), side="left")
+                return self.parent()(self.matrix().transpose() - other.matrix(), side='left')
 
     def base_ring(self):
         """
-        Return the base ring of self, that is, the ring over which self is
-        given by a matrix.
+        Return the base ring of ``self``, that is, the ring over which ``self``
+        is given by a matrix.
 
         EXAMPLES::
 
@@ -822,9 +818,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
     def decomposition(self, *args, **kwds):
         """
         Return decomposition of this endomorphism, i.e., sequence of
-        subspaces obtained by finding invariant subspaces of self.
+        subspaces obtained by finding invariant subspaces of ``self``.
 
-        See the documentation for self.matrix().decomposition for more
+        See the documentation for ``self.matrix().decomposition`` for more
         details.  All inputs to this function are passed onto the
         matrix one.
 
@@ -840,7 +836,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Echelon basis matrix:
             [ 1 -1]
             ]
-            sage: phi2 = V.hom(phi.matrix(), side="right")
+            sage: phi2 = V.hom(phi.matrix(), side='right')
             sage: phi2.decomposition()                                                  # needs sage.libs.pari
             [
             Free module of degree 2 and rank 1 over Integer Ring
@@ -895,7 +891,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [1 0 0]
             [0 0 1]
             sage: f1 = V.hom(m)
-            sage: f2 = V.hom(m, side="right")
+            sage: f2 = V.hom(m, side='right')
             sage: f1.kernel()
             Vector space of degree 3 and dimension 1 over Rational Field
             Basis matrix:
@@ -940,7 +936,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [1 0 0]
             [0 0 1]
             sage: f1 = V.hom(m)
-            sage: f2 = V.hom(m, side="right")
+            sage: f2 = V.hom(m, side='right')
             sage: f1.image()
             Vector space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
@@ -1032,7 +1028,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
     def rank(self):
         r"""
-        Returns the rank of the matrix representing this morphism.
+        Return the rank of the matrix representing this morphism.
 
         EXAMPLES::
 
@@ -1047,7 +1043,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
     def nullity(self):
         r"""
-        Returns the nullity of the matrix representing this morphism, which is the
+        Return the nullity of the matrix representing this morphism, which is the
         dimension of its kernel.
 
         EXAMPLES::
@@ -1067,7 +1063,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: h1.nullity()
             1
             sage: W = ZZ^1
-            sage: h2 = W.hom(m, side="right")
+            sage: h2 = W.hom(m, side='right')
             sage: h2.nullity()
             0
         """
@@ -1209,7 +1205,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: phi.is_zero()
             True
 
-        An image list that just barely makes a non-zero morphism.  ::
+        An image list that just barely makes a nonzero morphism.  ::
 
             sage: V = ZZ^4
             sage: W = ZZ^6
@@ -1349,7 +1345,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Free module morphism defined by the matrix
             [0 2]...
             sage: m = matrix(2, range(1,5))
-            sage: f1 = V.hom(m); f2 = V.hom(m, side="right")
+            sage: f1 = V.hom(m); f2 = V.hom(m, side='right')
             sage: SV = V.span([V.0])
             sage: f1.restrict_domain(SV)
             Free module morphism defined by the matrix
@@ -1453,7 +1449,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             V = sub.free_module()
         try:
             if self.side() == "right":
-                return H(self.matrix().transpose().restrict_codomain(V).transpose(), side="right")
+                return H(self.matrix().transpose().restrict_codomain(V).transpose(), side='right')
             else:
                 return H(self.matrix().restrict_codomain(V))
         except Exception:
@@ -1557,13 +1553,13 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
     INPUT:
 
-    -  ``parent`` -- a homspace
+    - ``parent`` -- a homspace
 
-    -  ``A`` -- matrix or a :class:`MatrixMorphism_abstract` instance
+    - ``A`` -- matrix or a :class:`MatrixMorphism_abstract` instance
 
-    -  ``copy_matrix`` -- (default: ``True``) make an immutable copy of
-       the matrix ``A`` if it is mutable; if ``False``, then this makes
-       ``A`` immutable
+    - ``copy_matrix`` -- boolean (default: ``True``); make an immutable copy of
+      the matrix ``A`` if it is mutable. If ``False``, then this makes
+      ``A`` immutable.
     """
     def __init__(self, parent, A, copy_matrix=True, side='left'):
         """

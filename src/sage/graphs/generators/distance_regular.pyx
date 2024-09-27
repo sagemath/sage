@@ -22,7 +22,6 @@ EXAMPLES::
 AUTHORS:
 
 - Ivo Maffei (2020-07-28): initial version
-
 """
 
 # ****************************************************************************
@@ -87,7 +86,7 @@ def cocliques_HoffmannSingleton():
         if len(c1.intersection(c2)) == 8:
             edges.append((c1, c2))
 
-    G = Graph(edges, format="list_of_edges")
+    G = Graph(edges, format='list_of_edges')
     return G
 
 
@@ -579,11 +578,11 @@ def LeonardGraph():
         if M[i, j] * M[i, l] * M[k, j] * M[k, l] == -1:
             edges.append(((i, j), (k, l)))
 
-    D = Graph(edges, format="list_of_edges")
+    D = Graph(edges, format='list_of_edges')
     blocks = [frozenset(cl) for cl in D.cliques_maximum()]
 
     edges = [(p, b) for b in blocks for p in b]
-    G = Graph(edges, format="list_of_edges")
+    G = Graph(edges, format='list_of_edges')
     return G
 
 
@@ -592,12 +591,13 @@ def UstimenkoGraph(const int m, const int q):
     Return the Ustimenko graph with parameters `(m, q)`.
 
     This is the distance 1 or 2 graph of the dual polar graph `C_{m-1}(q)`.
-    The graph is distance-regular with classical with parameters
-    `(d,q^2, qbinom(3,1,q) -1, qbinom(m+1,1,q) -1)`
+    The graph is distance-regular with parameters
+    `(d,q^2, \binom{3}{1}_q -1, \binom{m+1}{1}_q -1)`,
+    where `\binom{n}{k}_q` is the `q`-binomial coefficient.
 
     INPUT:
 
-    - ``m, q`` -- integers; ``q`` must be a prime power and ``m > 1``.
+    - ``m``, ``q`` -- integers; `q` must be a prime power and `m > 1`
 
     EXAMPLES::
 
@@ -652,7 +652,7 @@ def BilinearFormsGraph(const int d, const int e, const int q):
 
     INPUT:
 
-    - ``d, e`` -- integers; dimension of the matrices
+    - ``d``, ``e`` -- integers; dimension of the matrices
     - ``q`` -- integer; a prime power
 
     EXAMPLES::
@@ -740,7 +740,7 @@ def AlternatingFormsGraph(const int n, const int q):
     matrices over `GF(q)` with zero diagonal. Two vertices are adjacent
     if and only if the difference of the two matrices has rank 2.
 
-    This grap is distance-regular with classical parameters
+    This graph is distance-regular with classical parameters
     `(\lfloor \frac n 2 \rfloor,  q^2, q^2 - 1, q^{2 \lceil \frac n 2 \rceil -1})`.
 
     INPUT:
@@ -834,7 +834,7 @@ def HermitianFormsGraph(const int n, const int r):
     r"""
     Return the Hermitian forms graph with the given parameters.
 
-    We build a graph whose vertices are all ``n``x``n`` Hermitian matrices
+    We build a graph whose vertices are all `n \times n` Hermitian matrices
     over ``GF(r^2)``. Two  vertices are adjacent if the difference of the two
     vertices has rank 1.
 
@@ -1085,7 +1085,7 @@ def GrassmannGraph(const int q, const int n, const int input_e):
     INPUT:
 
     - ``q`` -- a prime power
-    - ``n, e`` -- integers with ``n > e+1``
+    - ``n``, ``e`` -- integers with `n > e+1`
 
     EXAMPLES::
 
@@ -1129,7 +1129,7 @@ def DoubleGrassmannGraph(const int q, const int e):
     r"""
     Return the bipartite double of the distance-`e` graph of the Grassmann graph `J_q(n,e)`.
 
-    This graph can also be descirbed as follows:
+    This graph can also be described as follows:
     Let `V` be the vector space of dimension `n` over `GF(q)`.
     The vertex set is the set of `e+1` or `e` subspaces of `V`.
     Two vertices are adjacent if one subspace is contained in the other.
@@ -1264,7 +1264,7 @@ def graph_from_GQ_spread(const int s, const int t):
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised quadrangle
+    - ``s``, ``t`` -- integers; order of the generalised quadrangle
 
     EXAMPLES::
 
@@ -1301,7 +1301,7 @@ def graph_from_GQ_spread(const int s, const int t):
             sig_check()
             edges.append((p1, p2))
 
-    return Graph(edges, format="list_of_edges")
+    return Graph(edges, format='list_of_edges')
 
 
 def GeneralisedDodecagonGraph(const int s, const int t):
@@ -1310,7 +1310,7 @@ def GeneralisedDodecagonGraph(const int s, const int t):
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised dodecagon
+    - ``s``, ``t`` -- integers; order of the generalised dodecagon
 
     EXAMPLES::
 
@@ -1418,7 +1418,7 @@ def GeneralisedOctagonGraph(const int s, const int t):
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised octagon
+    - ``s``, ``t`` -- integers; order of the generalised octagon
 
     EXAMPLES::
 
@@ -1529,7 +1529,7 @@ def GeneralisedHexagonGraph(const int s, const int t):
 
     INPUT:
 
-    - ``s, t`` -- integers; order of the generalised hexagon
+    - ``s``, ``t`` -- integers; order of the generalised hexagon
 
     EXAMPLES::
 
@@ -1792,7 +1792,7 @@ def _line_graph_generalised_polygon(H):
             sig_check()
             edges.append((l1, l2))
 
-    return Graph(edges, format="list_of_edges")
+    return Graph(edges, format='list_of_edges')
 
 
 def _intersection_array_from_graph(G):
@@ -1806,7 +1806,7 @@ def _intersection_array_from_graph(G):
 
     INPUT:
 
-    - G -- a graph
+    - ``G`` -- a graph
 
     EXAMPLES::
 
@@ -2099,8 +2099,8 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
 
     INPUT:
 
-    - ``d, b, alpha_in, beta_in`` -- numbers; the parameters of the graph;
-      ``d`` and ``b`` must be integers
+    - ``d``, ``b``, ``alpha_in``, ``beta_in`` -- numbers; the parameters of the
+      graph; ``d`` and ``b`` must be integers
 
     - ``gamma`` -- element of the enum ``ClassicalParametersGraph``
 
@@ -2324,7 +2324,7 @@ def pseudo_partition_graph(int m, int a):
 
     INPUT:
 
-    - ``m, a`` -- integers; parameters of the graph
+    - ``m``, ``a`` -- integers; parameters of the graph
 
     EXAMPLES::
 
@@ -2539,10 +2539,10 @@ def near_polygon_graph(family, params):
 
     INPUT:
 
-    - ``family`` -- int; an element of the enum ``NearPolygonGraph``.
+    - ``family`` -- integer; an element of the enum ``NearPolygonGraph``
 
-    - ``params`` -- int or tuple; the parameters needed to construct a graph
-      of the family ``family``.
+    - ``params`` -- integer or tuple; the parameters needed to construct a graph
+      of the family ``family``
 
     EXAMPLES::
 
@@ -2707,7 +2707,7 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
       - ``False`` -- if there is no graph with the given intersection array;
 
-      - ``Unknown`` -- if Sage doesn't know if such a graph exists.
+      - ``Unknown`` -- if Sage doesn't know if such a graph exists
 
     - ``check`` -- boolean (default: ``True``); if ``True``, then checks that the result
       of this function has the given intersection array

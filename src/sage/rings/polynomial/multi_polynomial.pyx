@@ -20,11 +20,13 @@ from itertools import chain
 
 from sage.misc.misc_c import prod
 
+
 def is_MPolynomial(x):
     from sage.misc.superseded import deprecation
     deprecation(32709, "the function is_MPolynomial is deprecated; use isinstance(x, sage.rings.polynomial.multi_polynomial.MPolynomial) instead")
 
     return isinstance(x, MPolynomial)
+
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.map cimport Map
@@ -246,7 +248,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def truncate(self, var, n):
         r"""
-        Returns a new multivariate polynomial obtained from ``self`` by
+        Return a new multivariate polynomial obtained from ``self`` by
         deleting all terms that involve the given variable to a power
         at least ``n``.
         """
@@ -571,7 +573,6 @@ cdef class MPolynomial(CommutativePolynomial):
             Traceback (most recent call last):
             ...
             TypeError: unhashable type: 'sage.rings.padics.qadic_flint_CR.qAdicCappedRelativeElement'
-
         """
         cdef long result = 0 # store it in a c-int and just let the overflowing additions wrap
         cdef long result_mon
@@ -603,7 +604,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def args(self):
         r"""
-        Returns the names of the arguments of ``self``, in the
+        Return the names of the arguments of ``self``, in the
         order they are accepted from call.
 
         EXAMPLES::
@@ -708,7 +709,6 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: q2 = p.homogenize()
             sage: q1.parent() is q2.parent()
             True
-
         """
         P = self.parent()
 
@@ -782,9 +782,7 @@ cdef class MPolynomial(CommutativePolynomial):
         r"""
         Return the homogeneous components of this polynomial.
 
-        OUTPUT:
-
-        A dictionary mapping degrees to homogeneous polynomials.
+        OUTPUT: a dictionary mapping degrees to homogeneous polynomials
 
         EXAMPLES::
 
@@ -848,7 +846,7 @@ cdef class MPolynomial(CommutativePolynomial):
         - ``R`` -- a ring or morphism; if a morphism, the coefficients
           are mapped to the codomain of ``R``
 
-        OUTPUT: a new polynomial with the base ring changed to ``R``.
+        OUTPUT: a new polynomial with the base ring changed to ``R``
 
         EXAMPLES::
 
@@ -923,7 +921,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``group`` (default: symmetric group) -- if set, test whether the
+        - ``group`` -- (default: symmetric group) if set, test whether the
           polynomial is invariant with respect to the given permutation group
 
         EXAMPLES::
@@ -1006,7 +1004,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def _gap_(self, gap):
         r"""
-        Return a representation of ``self`` in the GAP interface
+        Return a representation of ``self`` in the GAP interface.
 
         INPUT:
 
@@ -1074,7 +1072,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def _magma_init_(self, magma):
         r"""
-        Returns a Magma string representation of ``self`` valid in the
+        Return a Magma string representation of ``self`` valid in the
         given magma session.
 
         EXAMPLES::
@@ -1148,7 +1146,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def jacobian_ideal(self):
         r"""
-        Return the Jacobian ideal of the polynomial self.
+        Return the Jacobian ideal of the polynomial ``self``.
 
         EXAMPLES::
 
@@ -1192,7 +1190,7 @@ cdef class MPolynomial(CommutativePolynomial):
         r"""
         Facilitates iterating over the monomials of ``self``,
         returning tuples of the form ``(coeff, mon)`` for each
-        non-zero monomial.
+        nonzero monomial.
 
         EXAMPLES::
 
@@ -1213,7 +1211,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``as_ETuples`` -- (default: ``True``) if ``True``, iterate over
+        - ``as_ETuples`` -- boolean (default: ``True``); if ``True``, iterate over
           pairs whose first element is an :class:`ETuple`, otherwise as a tuples
 
         EXAMPLES::
@@ -1260,7 +1258,6 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f.content(); f.content().parent()
             2
             Rational Field
-
         """
         from sage.arith.misc import GCD as gcd
         return gcd(self.coefficients())
@@ -1289,8 +1286,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def is_generator(self):
         r"""
-        Returns ``True`` if this polynomial is a generator of its
-        parent.
+        Return ``True`` if this polynomial is a generator of its parent.
 
         EXAMPLES::
 
@@ -1313,7 +1309,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def map_coefficients(self, f, new_base_ring=None):
         r"""
-        Returns the polynomial obtained by applying ``f`` to the non-zero
+        Return the polynomial obtained by applying ``f`` to the nonzero
         coefficients of ``self``.
 
         If ``f`` is a :class:`sage.categories.map.Map`, then the resulting
@@ -1323,10 +1319,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``f`` -- a callable that will be applied to the coefficients of ``self``.
+        - ``f`` -- a callable that will be applied to the coefficients of ``self``
 
-        - ``new_base_ring`` (optional) -- if given, the resulting polynomial
-          will be defined over this ring.
+        - ``new_base_ring`` -- (optional) if given, the resulting polynomial
+          will be defined over this ring
 
         EXAMPLES::
 
@@ -1358,7 +1354,6 @@ cdef class MPolynomial(CommutativePolynomial):
             X - Y
             sage: g.parent()
             Multivariate Polynomial Ring in X, Y over Finite Field of size 3
-
         """
         R = self.parent()
         if new_base_ring is not None:
@@ -1373,7 +1368,7 @@ cdef class MPolynomial(CommutativePolynomial):
         `\GF{p^e}`, compute the norm of the polynomial down to `\GF{p}`.
 
         This is the product of the conjugates by the Frobenius action
-        on coefficients, where Frobenius acts by p-th power.
+        on coefficients, where Frobenius acts by `p`-th power.
 
         This is (currently) an internal function used in factoring over finite
         fields.
@@ -1407,13 +1402,11 @@ cdef class MPolynomial(CommutativePolynomial):
         INPUT:
 
         - ``self``, ``right`` -- multivariate polynomials
-        - ``variable`` -- optional, compute the Sylvester matrix with respect to this
-          variable. If ``variable`` is not provided, the first variable of the
-          polynomial ring is used.
+        - ``variable`` -- (optional) compute the Sylvester matrix with respect
+          to this variable. If ``variable`` is not provided, the first variable
+          of the polynomial ring is used.
 
-        OUTPUT:
-
-        - The Sylvester matrix of ``self`` and ``right``.
+        OUTPUT: the Sylvester matrix of ``self`` and ``right``
 
         EXAMPLES::
 
@@ -1506,7 +1499,6 @@ cdef class MPolynomial(CommutativePolynomial):
             [0 3]
             sage: K(3).sylvester_matrix(K(4))
             []
-
         """
 
         # This code is almost exactly the same as that of
@@ -1555,14 +1547,14 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def discriminant(self,variable):
         r"""
-        Returns the discriminant of ``self`` with respect to the given variable.
+        Return the discriminant of ``self`` with respect to the given variable.
 
         INPUT:
 
-        - ``variable`` -- The variable with respect to which we compute
+        - ``variable`` -- the variable with respect to which we compute
           the discriminant
 
-        OUTPUT: An element of the base ring of the polynomial ring.
+        OUTPUT: an element of the base ring of the polynomial ring
 
         EXAMPLES::
 
@@ -1620,7 +1612,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         - ``other`` -- a polynomial
 
-        OUTPUT: a list of polynomials in the same ring as ``self``
+        OUTPUT: list of polynomials in the same ring as ``self``
 
         EXAMPLES::
 
@@ -1633,7 +1625,6 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: p.subresultants(q, x)
             [2*y^6 - 22*y^5 + 102*y^4 - 274*y^3 + 488*y^2 - 552*y + 288,
              x*y^2 + y^3 - 5*x*y - 6*y^2 + 6*x + 11*y - 6]
-
         """
         R = self.parent()
         if variable is None:
@@ -1660,13 +1651,11 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``args`` -- a list of `n-1` homogeneous polynomials in `n` variables.
-          works when ``args[0]`` is the list of polynomials,
-          or ``args`` is itself the list of polynomials
+        - ``args`` -- list of `n-1` homogeneous polynomials in `n` variables;
+          works when ``args[0]`` is the list of polynomials, or ``args`` is
+          itself the list of polynomials
 
-        OUTPUT:
-
-        - the Macaulay resultant
+        OUTPUT: the Macaulay resultant
 
         EXAMPLES:
 
@@ -1771,7 +1760,6 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: RH = fh.parent()
             sage: f.resultant(g) == fh.macaulay_resultant(gh)                           # needs sage.modules
             True
-
         """
         if len(args) == 1 and isinstance(args[0],list):
             return self.parent().macaulay_resultant(self, *args[0])
@@ -1791,7 +1779,7 @@ cdef class MPolynomial(CommutativePolynomial):
         .. warning::
 
            This is not the denominator of the rational function
-           defined by self, which would always be 1 since self is a
+           defined by ``self``, which would always be 1 since ``self`` is a
            polynomial.
 
         EXAMPLES:
@@ -1868,7 +1856,7 @@ cdef class MPolynomial(CommutativePolynomial):
         .. warning::
 
            This is not the numerator of the rational function
-           defined by ``self``, which would always be self since ``self`` is a
+           defined by ``self``, which would always be ``self`` since ``self`` is a
            polynomial.
 
         EXAMPLES:
@@ -1946,7 +1934,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def inverse_mod(self, I):
         r"""
-        Returns an inverse of ``self`` modulo the polynomial ideal `I`,
+        Return an inverse of ``self`` modulo the polynomial ideal `I`,
         namely a multivariate polynomial `f` such that
         ``self * f - 1`` belongs to `I`.
 
@@ -1954,9 +1942,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         - ``I`` -- an ideal of the polynomial ring in which ``self`` lives
 
-        OUTPUT:
-
-        a multivariate polynomial representing the inverse of ``f`` modulo `I`
+        OUTPUT: a multivariate polynomial representing the inverse of ``f`` modulo `I`
 
         EXAMPLES::
 
@@ -1997,11 +1983,11 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``weights`` -- Either individual numbers, an iterable or a dictionary,
+        - ``weights`` -- either individual numbers, an iterable or a dictionary,
           specifying the weights of each variable. If it is a dictionary, it
           maps each variable of ``self`` to its weight. If it is a sequence of
           individual numbers or a tuple, the weights are specified in the order
-          of the generators as given by ``self.parent().gens()``:
+          of the generators as given by ``self.parent().gens()``.
 
         EXAMPLES::
 
@@ -2178,7 +2164,7 @@ cdef class MPolynomial(CommutativePolynomial):
         r"""
         Return a `n`-th root of this element.
 
-        If there is no such root, a ``ValueError`` is raised.
+        If there is no such root, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -2342,20 +2328,19 @@ cdef class MPolynomial(CommutativePolynomial):
         Implemented by Rebecca Lauren Miller as part of GSOC 2016. Smallest
         coefficients added by Ben Hutz July 2018.
 
-        INPUT:
+        INPUT: keyword arguments:
 
-        keywords:
+        - ``prec`` -- integer (default: 300); sets the precision
 
-        - ``prec`` --  integer, sets the precision (default: 300)
-
-        - ``return_conjugation`` -- boolean. Returns element of `SL(2, \ZZ)` (default: ``True``)
+        - ``return_conjugation`` -- boolean (default: ``True``); whether to
+          return element of `SL(2, \ZZ)`
 
         - ``error_limit`` -- sets the error tolerance (default: 0.000001)
 
-        - ``smallest_coeffs`` -- (default: ``True``), boolean, whether to find the
+        - ``smallest_coeffs`` -- boolean (default: ``True``); whether to find the
           model with smallest coefficients
 
-        - ``norm_type`` -- either ``'norm'`` or ``'height'``. What type of norm
+        - ``norm_type`` -- either ``'norm'`` or ``'height'``; what type of norm
           to use for smallest coefficients
 
         - ``emb`` -- (optional) embedding of based field into ``CC``
@@ -2615,7 +2600,6 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: _.<x,y> = Zmod(36)[]
             sage: (7+ 6*x + 12*y - 18*x*y).is_unit()
             True
-
         """
         # EXERCISE (Atiyah-McDonald, Ch 1): Let `A[x]` be a polynomial
         # ring in one variable. Then `f=\sum a_i x^i \in A[x]` is a unit\
@@ -2681,7 +2665,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         if gens:
             # substituting all variables (in a polynomial ring with variables) with 0
-            d = {str(gen): 0 for gen in gens}
+            d = {str(gen): self.base_ring().zero() for gen in gens}
             tester.assertEqual(self.subs(**d).parent(), self.parent().base_ring())
 
             # substituting all variables (in a polynomial ring with variables)
@@ -2694,7 +2678,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         if len(gens) > 1:
             # substituting one variable (in a polynomial ring with variables) with 0
-            d = {str(gens[0]): 0}
+            d = {str(gens[0]): self.base_ring().zero()}
             tester.assertEqual(self.subs(**d).parent(), self.parent())
 
             # test error checking: partial substitution by elements
@@ -2947,7 +2931,7 @@ cdef remove_from_tuple(e, int ind):
 
 cdef class MPolynomial_libsingular(MPolynomial):
     r"""
-    Abstract base class for :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular`
+    Abstract base class for :class:`~sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular`.
 
     This class is defined for the purpose of :func:`isinstance` tests.  It should not be
     instantiated.

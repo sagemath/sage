@@ -38,7 +38,6 @@ AUTHORS:
 
 - John Cremona and Charlie Turner <charlotteturner@gmail.com> (06-2010):
   improvements to clarity and documentation.
-
 """
 
 # ****************************************************************************
@@ -63,8 +62,8 @@ def enum_affine_rational_field(X, B):
 
     INPUT:
 
-    - ``X`` --  a scheme or set of abstract rational points of a scheme.
-    - ``B`` --  a positive integer bound.
+    - ``X`` -- a scheme or set of abstract rational points of a scheme
+    - ``B`` -- a positive integer bound
 
     OUTPUT:
 
@@ -171,15 +170,13 @@ def enum_affine_number_field(X, **kwds):
     [DK2013]_. Algorithm 5 is used for imaginary quadratic fields.
 
 
-    INPUT:
-
-    kwds:
+    INPUT: keyword arguments:
 
     - ``bound`` -- a real number
 
-    - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
+    - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm algorithm-4
 
-    - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
+    - ``precision`` -- the precision to use for computing the elements of bounded height of number fields
 
     OUTPUT:
 
@@ -241,8 +238,8 @@ def enum_affine_finite_field(X):
 
     INPUT:
 
-    - ``X`` --  a scheme defined over a finite field or a set of abstract
-      rational points of such a scheme.
+    - ``X`` -- a scheme defined over a finite field or a set of abstract
+      rational points of such a scheme
 
     OUTPUT:
 

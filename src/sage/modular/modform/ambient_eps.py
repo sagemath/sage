@@ -102,7 +102,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         """
         Create an ambient modular forms space with character.
 
-        .. note::
+        .. NOTE::
 
            The base ring must be of characteristic 0.  The ambient_R
            Python module is used for computing in characteristic p,
@@ -110,7 +110,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
         INPUT:
 
-        - ``weight`` -- int
+        - ``weight`` -- integer
 
         - ``character`` -- dirichlet.DirichletCharacter
 
@@ -124,7 +124,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             sage: type(m)
             <class 'sage.modular.modform.ambient_eps.ModularFormsAmbient_eps_with_category'>
         """
-        if not dirichlet.is_DirichletCharacter(character):
+        if not isinstance(character, dirichlet.DirichletCharacter):
             raise TypeError("character (=%s) must be a Dirichlet character" % character)
         if base_ring is None:
             base_ring = character.base_ring()
@@ -260,10 +260,10 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
     def hecke_module_of_level(self, N):
         r"""
-        Return the Hecke module of level N corresponding to self, which is the
-        domain or codomain of a degeneracy map from self. Here N must be either
-        a divisor or a multiple of the level of self, and a multiple of the
-        conductor of the character of self.
+        Return the Hecke module of level N corresponding to ``self``, which is the
+        domain or codomain of a degeneracy map from ``self``. Here N must be either
+        a divisor or a multiple of the level of ``self``, and a multiple of the
+        conductor of the character of ``self``.
 
         EXAMPLES::
 

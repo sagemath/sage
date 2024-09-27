@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite dimensional semisimple algebras with basis
 """
@@ -17,7 +18,7 @@ from sage.misc.cachefunc import cached_method
 
 class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
-    The category of finite dimensional semisimple algebras with a distinguished basis
+    The category of finite dimensional semisimple algebras with a distinguished basis.
 
     EXAMPLES::
 
@@ -44,9 +45,9 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
             r"""
             Return a basis of the Jacobson radical of this algebra.
 
-            - ``keywords`` -- for compatibility; ignored.
+            - ``keywords`` -- for compatibility; ignored
 
-            OUTPUT: the empty list since this algebra is semisimple.
+            OUTPUT: the empty list since this algebra is semisimple
 
             EXAMPLES::
 
@@ -120,12 +121,10 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
 
                 INPUT:
 
-                - ``generators`` -- a list of generators of
+                - ``generators`` -- list of generators of
                   ``self`` (default: the basis of ``self``)
 
-                OUTPUT:
-
-                A list of quasi-idempotent elements of ``self``.
+                OUTPUT: list of quasi-idempotent elements of ``self``
 
                 Each quasi-idempotent `e` spans a one
                 dimensional (non unital) subalgebra of
@@ -145,7 +144,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 dimension 1 subalgebras. The algorithm is
                 recursive and proceeds as follows:
 
-                0. If `A` is of dimension 1, return a non zero
+                0. If `A` is of dimension 1, return a nonzero
                    element.
 
                 1. Otherwise: find one of the generators such
@@ -216,9 +215,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 of the identity into primitive orthogonal
                 idempotents.
 
-                OUTPUT:
-
-                A list of orthogonal idempotents of ``self``.
+                OUTPUT: list of orthogonal idempotents of ``self``
 
                 EXAMPLES::
 

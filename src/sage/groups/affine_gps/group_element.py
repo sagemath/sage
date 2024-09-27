@@ -40,7 +40,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.richcmp import richcmp, richcmp_not_equal
@@ -61,11 +61,11 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
     - ``parent`` -- the parent affine group
 
-    - ``convert`` -- bool (default: ``True``); whether to convert
+    - ``convert`` -- boolean (default: ``True``); whether to convert
       ``A`` into the correct matrix space and ``b`` into the
       correct vector space
 
-    - ``check`` -- bool (default: ``True``); whether to do some
+    - ``check`` -- boolean (default: ``True``); whether to do some
       checks or just accept the input as valid
 
     As a special case, ``A`` can be a matrix obtained from
@@ -73,7 +73,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
     that case, the group element defining that matrix is
     reconstructed.
 
-    OUTPUT: The affine group element `x \mapsto Ax + b`
+    OUTPUT: the affine group element `x \mapsto Ax + b`
 
     EXAMPLES::
 
@@ -119,7 +119,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
             A = A.matrix()
         except AttributeError:
             pass
-        if is_Matrix(A) and A.nrows() == A.ncols() == parent.degree()+1:
+        if isinstance(A, Matrix) and A.nrows() == A.ncols() == parent.degree()+1:
             g = A
             d = parent.degree()
             A = g.submatrix(0, 0, d, d)
@@ -130,7 +130,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
             b = parent.vector_space()(b)
         if check:
             # Note: the coercion framework expects that we raise TypeError for invalid input
-            if not is_Matrix(A):
+            if not isinstance(A, Matrix):
                 raise TypeError('A must be a matrix')
             if not (A.parent() is parent.matrix_space()):
                 raise TypeError('A must be an element of ' + str(parent.matrix_space()))
@@ -145,7 +145,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the general linear part of an affine group element.
 
-        OUTPUT: The matrix `A` of the affine group element `Ax + b`
+        OUTPUT: the matrix `A` of the affine group element `Ax + b`
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         Return the translation part of an affine group element.
 
-        OUTPUT: The vector `b` of the affine group element `Ax + b`
+        OUTPUT: the vector `b` of the affine group element `Ax + b`
 
         EXAMPLES::
 

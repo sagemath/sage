@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Representations of objects
 """
@@ -34,9 +35,7 @@ class ObjectReprABC():
         """
         Return string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -52,15 +51,15 @@ class ObjectReprABC():
 
         INPUT:
 
-        - ``obj`` -- anything. Object to format.
+        - ``obj`` -- anything; object to format
 
-        - ``p`` -- PrettyPrinter instance.
+        - ``p`` -- PrettyPrinter instance
 
-        - ``cycle`` -- boolean. Whether there is a cycle.
+        - ``cycle`` -- boolean; whether there is a cycle
 
         OUTPUT:
 
-        Boolean. Whether the representer is applicable to ``obj``. If
+        boolean; whether the representer is applicable to ``obj``. If
         ``True``, the string representation is appended to ``p``.
 
         EXAMPLES::
@@ -78,11 +77,9 @@ class ObjectReprABC():
 
         INPUT:
 
-        - ``obj`` -- anything. Object to format.
+        - ``obj`` -- anything; object to format
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -105,7 +102,7 @@ class SomeIPythonRepr(ObjectReprABC):
 
     def __init__(self):
         """
-        Some selected representers from IPython
+        Some selected representers from IPython.
 
         EXAMPLES::
 
@@ -128,15 +125,15 @@ class SomeIPythonRepr(ObjectReprABC):
 
         INPUT:
 
-        - ``obj`` -- anything. Object to format.
+        - ``obj`` -- anything; object to format
 
-        - ``p`` -- PrettyPrinter instance.
+        - ``p`` -- PrettyPrinter instance
 
-        - ``cycle`` -- boolean. Whether there is a cycle.
+        - ``cycle`` -- boolean; whether there is a cycle
 
         OUTPUT:
 
-        Boolean. Whether the representer is applicable to ``obj``. If
+        boolean; whether the representer is applicable to ``obj``. If
         ``True``, the string representation is appended to ``p``.
 
         EXAMPLES::
@@ -156,7 +153,7 @@ class SomeIPythonRepr(ObjectReprABC):
 
 class LargeMatrixHelpRepr(ObjectReprABC):
     """
-    Representation including help for large Sage matrices
+    Representation including help for large Sage matrices.
 
     .. automethod:: __call__
     """
@@ -167,15 +164,15 @@ class LargeMatrixHelpRepr(ObjectReprABC):
 
         INPUT:
 
-        - ``obj`` -- anything. Object to format.
+        - ``obj`` -- anything; object to format
 
-        - ``p`` -- PrettyPrinter instance.
+        - ``p`` -- PrettyPrinter instance
 
-        - ``cycle`` -- boolean. Whether there is a cycle.
+        - ``cycle`` -- boolean; whether there is a cycle
 
         OUTPUT:
 
-        Boolean. Whether the representer is applicable to ``obj``. If
+        boolean; whether the representer is applicable to ``obj``. If
         ``True``, the string representation is appended to ``p``.
 
         EXAMPLES::
@@ -214,7 +211,7 @@ class LargeMatrixHelpRepr(ObjectReprABC):
 
 class PlainPythonRepr(ObjectReprABC):
     """
-    The ordinary Python representation
+    The ordinary Python representation.
 
     .. automethod:: __call__
     """
@@ -225,15 +222,15 @@ class PlainPythonRepr(ObjectReprABC):
 
         INPUT:
 
-        - ``obj`` -- anything. Object to format.
+        - ``obj`` -- anything; object to format
 
-        - ``p`` -- PrettyPrinter instance.
+        - ``p`` -- PrettyPrinter instance
 
-        - ``cycle`` -- boolean. Whether there is a cycle.
+        - ``cycle`` -- boolean; whether there is a cycle
 
         OUTPUT:
 
-        Boolean. Whether the representer is applicable to ``obj``. If
+        boolean; whether the representer is applicable to ``obj``. If
         ``True``, the string representation is appended to ``p``.
 
         EXAMPLES::
@@ -286,7 +283,7 @@ class PlainPythonRepr(ObjectReprABC):
 
 class TallListRepr(ObjectReprABC):
     """
-    Special representation for lists with tall entries (e.g. matrices)
+    Special representation for lists with tall entries (e.g. matrices).
 
     .. automethod:: __call__
     """
@@ -297,15 +294,15 @@ class TallListRepr(ObjectReprABC):
 
         INPUT:
 
-        - ``obj`` -- anything. Object to format.
+        - ``obj`` -- anything; object to format
 
-        - ``p`` -- PrettyPrinter instance.
+        - ``p`` -- PrettyPrinter instance
 
-        - ``cycle`` -- boolean. Whether there is a cycle.
+        - ``cycle`` -- boolean; whether there is a cycle
 
         OUTPUT:
 
-        Boolean. Whether the representer is applicable to ``obj``. If
+        boolean; whether the representer is applicable to ``obj``. If
         ``True``, the string representation is appended to ``p``.
 
         EXAMPLES::

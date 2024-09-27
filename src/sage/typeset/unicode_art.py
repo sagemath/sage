@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Unicode Art
 
@@ -64,15 +65,14 @@ empty_unicode_art = _unicode_art_factory.build_empty()
 
 def unicode_art(*obj, **kwds):
     r"""
-    Return an unicode art representation
+    Return an unicode art representation.
 
     INPUT:
-
 
     - ``*obj`` -- any number of positional arguments, of arbitrary
       type. The objects whose ascii art representation we want.
 
-    - ``sep`` -- optional ``'sep=...'`` keyword argument (or ``'separator'``).
+    - ``sep`` -- (optional) ``'sep=...'`` keyword argument (or ``'separator'``).
       Anything that can be converted to unicode art (default: empty unicode
       art). The separator in-between a list of objects. Only used if
       more than one object given.
@@ -81,9 +81,7 @@ def unicode_art(*obj, **kwds):
 
     - ``sep_baseline`` -- (default: 0) the baseline for the separator
 
-    OUTPUT:
-
-    :class:`UnicodeArt` instance.
+    OUTPUT: :class:`UnicodeArt` instance
 
     EXAMPLES::
 

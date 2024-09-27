@@ -107,5 +107,4 @@ Sage example in ./sol/nonlinear.tex, line 141::
   sage: generator = quadraticgen(f, a, b)
   sage: next(generator)
   1/2*pi - (e^(1/2*pi) - 10)*e^(-1/2*pi)
-
 """

@@ -18,7 +18,7 @@ Image Sets
 
 from typing import Iterator
 
-from sage.categories.map import is_Map
+from sage.categories.map import Map
 from sage.categories.poor_man_map import PoorManMap
 from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -52,7 +52,7 @@ class ImageSubobject(Parent):
       - ``None`` (default): infer from ``map`` or default to ``False``
       - ``False``: do not assume that ``map`` is injective
       - ``True``: ``map`` is known to be injective
-      - ``"check"``: raise an error when ``map`` is not injective
+      - ``'check'``: raise an error when ``map`` is not injective
 
     - ``inverse`` -- a function (optional); a map from `f(X)` to `X`
 
@@ -86,7 +86,7 @@ class ImageSubobject(Parent):
             from sage.sets.set import Set
             domain_subset = Set(domain_subset)
 
-        if not is_Map(map) and not isinstance(map, PoorManMap):
+        if not isinstance(map, Map) and not isinstance(map, PoorManMap):
             map_name = f"The map {map}"
             if isinstance(map, Expression) and map.is_callable():
                 domain = map.parent().base()
@@ -100,7 +100,7 @@ class ImageSubobject(Parent):
                 domain = domain_subset
             map = PoorManMap(map, domain, name=map_name)
 
-        if is_Map(map):
+        if isinstance(map, Map):
             map_category = map.category_for()
             if is_injective is None:
                 try:

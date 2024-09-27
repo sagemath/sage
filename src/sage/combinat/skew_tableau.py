@@ -50,6 +50,7 @@ from sage.combinat.words.words import Words
 from sage.misc.persist import register_unpickle_override
 
 lazy_import('sage.matrix.special', 'zero_matrix')
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
 
 
 class SkewTableau(ClonableList,
@@ -151,9 +152,7 @@ class SkewTableau(ClonableList,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -188,9 +187,7 @@ class SkewTableau(ClonableList,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -687,7 +684,7 @@ class SkewTableau(ClonableList,
 
     def to_tableau(self):
         """
-        Returns a tableau with the same filling. This only works if the
+        Return a tableau with the same filling. This only works if the
         inner shape of the skew tableau has size zero.
 
         EXAMPLES::
@@ -1068,9 +1065,9 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``algorithm`` -- optional: if set to ``'jdt'``, rectifies by jeu de
+        - ``algorithm`` -- (optional) if set to ``'jdt'``, rectifies by jeu de
           taquin; if set to ``'schensted'``, rectifies by Schensted insertion
-          of the reading word; otherwise, guesses which will be faster.
+          of the reading word. Otherwise, guesses which will be faster.
 
         EXAMPLES::
 
@@ -1135,9 +1132,83 @@ class SkewTableau(ClonableList,
             [[None, None, 3], [None, 1, 3], [2, 2]]
             sage: st.to_list() == stlist
             True
-
         """
         return [list(row) for row in self]
+
+    def row_stabilizer(self):
+        """
+        Return the :func:`PermutationGroup` corresponding to the row stabilizer of
+        ``self``.
+
+        This assumes that every integer from `1` to the size of ``self``
+        appears exactly once in ``self``.
+
+        EXAMPLES::
+
+            sage: # needs sage.groups
+            sage: rs = SkewTableau([[None,1,2,3],[4,5]]).row_stabilizer()
+            sage: rs.order() == factorial(3) * factorial(2)
+            True
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs
+            True
+            sage: PermutationGroupElement([(1,4)]) in rs
+            False
+            sage: rs = SkewTableau([[None,1,2],[3]]).row_stabilizer()
+            sage: PermutationGroupElement([(1,2),(3,)]) in rs
+            True
+            sage: rs.one().domain()
+            [1, 2, 3]
+            sage: rs = SkewTableau([[None,None,1],[None,2],[3]]).row_stabilizer()
+            sage: rs.order()
+            1
+            sage: rs = SkewTableau([[None,None,2,4,5],[1,3]]).row_stabilizer()
+            sage: rs.order()
+            12
+            sage: rs = SkewTableau([]).row_stabilizer()
+            sage: rs.order()
+            1
+        """
+        # Ensure that the permutations involve all elements of the
+        # tableau, by including the identity permutation on the set [1..k].
+        k = self.size()
+        gens = [list(range(1, k + 1))]
+        gens.extend((row[j], row[j + 1])
+                    for row in self
+                    for j in range(len(row) - 1)
+                    if row[j] is not None)
+        return PermutationGroup(gens)
+
+    def column_stabilizer(self):
+        """
+        Return the :func:`PermutationGroup` corresponding to the column stabilizer
+        of ``self``.
+
+        This assumes that every integer from `1` to the size of ``self``
+        appears exactly once in ``self``.
+
+        EXAMPLES::
+
+            sage: # needs sage.groups
+            sage: cs = SkewTableau([[None,2,3],[1,5],[4]]).column_stabilizer()
+            sage: cs.order() == factorial(2) * factorial(2)
+            True
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs
+            False
+            sage: PermutationGroupElement([(1,4)]) in cs
+            True
+        """
+        # Ensure that the permutations involve all elements of the
+        # tableau, by including the identity permutation on the set [1..k].
+        k = self.size()
+        gens = [list(range(1, k + 1))]
+        ell = len(self)
+        while ell > 1:
+            ell -= 1
+            for i, val in enumerate(self[ell]):
+                top_neighbor = self[ell-1][i]
+                if top_neighbor is not None:
+                    gens.append((val, top_neighbor))
+        return PermutationGroup(gens)
 
     def shuffle(self, t2):
         r"""
@@ -1277,8 +1348,8 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``check`` -- (Default: ``True``) Check to make sure ``self`` is
-          semistandard. Set to ``False`` to avoid this check.
+        - ``check`` -- (default: ``True``) check to make sure ``self`` is
+          semistandard; set to ``False`` to avoid this check
 
         EXAMPLES::
 
@@ -1344,17 +1415,17 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``k`` -- an integer
+        - ``k`` -- integer
 
-        - ``rows`` -- (Default ``None``) When set to ``None``, the method
+        - ``rows`` -- (default: ``None``) when set to ``None``, the method
           computes the `k`-th Bender--Knuth involution as defined above.
           When an iterable, this computes the composition of the `k`-th
           Bender--Knuth switches at row `i` over all `i` in ``rows``. When set
           to an integer `i`, the method computes the `k`-th Bender--Knuth
           switch at row `i`. Note the indexing of the rows starts with `1`.
 
-        - ``check`` -- (Default: ``True``) Check to make sure ``self`` is
-          semistandard. Set to ``False`` to avoid this check.
+        - ``check`` -- (default: ``True``) check to make sure ``self`` is
+          semistandard; set to ``False`` to avoid this check
 
         OUTPUT:
 
@@ -1610,8 +1681,8 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``check_input`` -- (default: ``True``) whether or not to check
-          that ``self`` indeed has ribbon shape
+        - ``check_input`` -- boolean (default: ``True``); whether or not to
+          check that ``self`` indeed has ribbon shape
 
         EXAMPLES::
 
@@ -1706,12 +1777,10 @@ class SkewTableau(ClonableList,
             sage: s.cells()
             [(0, 1), (0, 2), (1, 0), (2, 0)]
         """
-        res = []
-        for i in range(len(self)):
-            for j in range(len(self[i])):
-                if self[i][j] is not None:
-                    res.append((i, j))
-        return res
+        return [(i, j)
+                for i, selfi in enumerate(self)
+                for j in range(len(selfi))
+                if selfi[j] is not None]
 
     def cells_containing(self, i):
         r"""
@@ -1757,7 +1826,7 @@ class SkewTableau(ClonableList,
 
     def is_k_tableau(self, k):
         r"""
-        Checks whether ``self`` is a valid skew weak `k`-tableau.
+        Check whether ``self`` is a valid skew weak `k`-tableau.
 
         EXAMPLES::
 
@@ -1845,7 +1914,7 @@ class SkewTableaux(UniqueRepresentation, Parent):
 
     def __contains__(self, x):
         """
-        Checks if ``x`` is a skew tableau.
+        Check if ``x`` is a skew tableau.
 
         EXAMPLES::
 
@@ -1879,12 +1948,11 @@ class SkewTableaux(UniqueRepresentation, Parent):
             sage: SkewTableaux().from_expr([[1,1],[[5],[3,4],[1,2]]])
             [[None, 1, 2], [None, 3, 4], [5]]
         """
-        skp = []
         outer = expr[1]
         inner = expr[0] + [0] * (len(outer) - len(expr[0]))
 
-        for i in range(len(outer)):
-            skp.append([None] * (inner[i]) + outer[-(i + 1)])
+        skp = [[None] * (inner[i]) + outer[-(i + 1)]
+               for i in range(len(outer))]
 
         return self.element_class(self, skp)
 
@@ -2219,7 +2287,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
              [[None, 1, 3], [None, 2], [4]],
              [[None, 2, 4], [None, 3], [1]]]
         """
-        dag = self.skp.to_dag(format="tuple")
+        dag = self.skp.to_dag(format='tuple')
         le_list = list(dag.topological_sort_generator())
 
         empty = [[None] * row_length for row_length in self.skp.outer()]
@@ -2605,9 +2673,9 @@ class SemistandardSkewTableaux_shape(SemistandardSkewTableaux):
 
     INPUT:
 
-    - ``p`` -- A skew partition
+    - ``p`` -- a skew partition
 
-    - ``max_entry`` -- The max entry; defaults to the size of ``p``.
+    - ``max_entry`` -- the max entry; defaults to the size of ``p``
 
     .. WARNING::
 

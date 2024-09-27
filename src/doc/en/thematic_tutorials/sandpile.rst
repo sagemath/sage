@@ -122,7 +122,6 @@ Alternatives::
     [{1: 2, 2: 1, 3: 1}, {1: 2, 2: 2, 3: 3}]
 
 
-
 Since vertex 3 has become unstable after firing vertex 1, it can be fired,
 which causes vertex 2 to become unstable, etc.  Repeated firings eventually
 lead to a stable configuration.  The last line of the Sage code, above, is a
@@ -1025,9 +1024,7 @@ INPUT:
 
 - ``k`` -- integer
 
-OUTPUT:
-
-SandpileConfig
+OUTPUT: SandpileConfig
 
 EXAMPLES::
 
@@ -1047,9 +1044,7 @@ INPUT:
 
 - ``k`` -- integer
 
-OUTPUT:
-
-SandpileDivisor
+OUTPUT: SandpileDivisor
 
 EXAMPLES::
 
@@ -1069,9 +1064,7 @@ INPUT:
 
 - ``multivariable`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-polynomial
+OUTPUT: polynomial
 
 EXAMPLES::
 
@@ -1109,9 +1102,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-Betti numbers for the sandpile
+OUTPUT: Betti numbers for the sandpile
 
 
 EXAMPLES::
@@ -1230,9 +1221,7 @@ EXAMPLES::
 
 A script for the minimal burning configuration.
 
-OUTPUT:
-
-dict
+OUTPUT: dict
 
 EXAMPLES::
 
@@ -1285,9 +1274,7 @@ EXAMPLES::
 The canonical divisor.  This is the divisor with `\deg(v)-2` grains of
 sand on each vertex (not counting loops).  Only for undirected graphs.
 
-OUTPUT:
-
-SandpileDivisor
+OUTPUT: SandpileDivisor
 
 EXAMPLES::
 
@@ -1310,9 +1297,7 @@ EXAMPLES::
 
 A dictionary of dictionaries representing a directed graph.
 
-OUTPUT:
-
-dict
+OUTPUT: dict
 
 EXAMPLES::
 
@@ -1333,9 +1318,7 @@ EXAMPLES::
 
 The genus: (# non-loop edges) - (# vertices) + 1.  Only defined for undirected graphs.
 
-OUTPUT:
-
-integer
+OUTPUT: integer
 
 EXAMPLES::
 
@@ -1353,9 +1336,7 @@ EXAMPLES::
 A Groebner basis for the homogeneous toppling ideal.  It is computed
 with respect to the standard sandpile ordering (see ``ring``).
 
-OUTPUT:
-
-Groebner basis
+OUTPUT: Groebner basis
 
 EXAMPLES::
 
@@ -1403,9 +1384,7 @@ EXAMPLES::
 
 The size of the sandpile group.
 
-OUTPUT:
-
-integer
+OUTPUT: integer
 
 EXAMPLES::
 
@@ -1423,9 +1402,7 @@ The number of superstable configurations in each degree.  Equivalently,
 this is the list of first differences of the Hilbert function of the
 (homogeneous) toppling ideal.
 
-OUTPUT:
-
-list of nonnegative integers
+OUTPUT: list of nonnegative integers
 
 
 EXAMPLES::
@@ -1448,9 +1425,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-printed string
+OUTPUT: printed string
 
 EXAMPLES::
 
@@ -1477,9 +1452,7 @@ EXAMPLES::
 
 The Hilbert function of the homogeneous toppling ideal.
 
-OUTPUT:
-
-list of nonnegative integers
+OUTPUT: list of nonnegative integers
 
 EXAMPLES::
 
@@ -1502,9 +1475,7 @@ INPUT:
 
 - ``gens`` -- (default: ``False``) boolean
 
-OUTPUT:
-
-ideal or, optionally, the generators of an ideal
+OUTPUT: ideal or, optionally, the generators of an ideal
 
 EXAMPLES::
 
@@ -1556,9 +1527,7 @@ INPUT:
 
 - ``v`` -- (optional) vertex name
 
-OUTPUT:
-
-integer or dict
+OUTPUT: integer or dict
 
 EXAMPLES::
 
@@ -1576,9 +1545,7 @@ EXAMPLES::
 
 The invariant factors of the sandpile group.
 
-OUTPUT:
-
-list of integers
+OUTPUT: list of integers
 
 EXAMPLES::
 
@@ -1595,9 +1562,7 @@ EXAMPLES::
 Is the underlying graph undirected?  ``True`` if `(u,v)` is and edge if
 and only if `(v,u)` is an edge, each edge with the same weight.
 
-OUTPUT:
-
-boolean
+OUTPUT: boolean
 
 EXAMPLES::
 
@@ -1668,9 +1633,7 @@ group is isomorphic to the direct sum of the cyclic group of order
 
 The Laplacian matrix of the graph.  Its *rows* encode the vertex firing rules.
 
-OUTPUT:
-
-matrix
+OUTPUT: matrix
 
 
 EXAMPLES::
@@ -1825,9 +1788,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-tuple of SandpileConfig
+OUTPUT: tuple of SandpileConfig
 
 EXAMPLES::
 
@@ -1861,9 +1822,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-list of SandpileConfig
+OUTPUT: list of SandpileConfig
 
 EXAMPLES::
 
@@ -1890,9 +1849,7 @@ EXAMPLES::
 
 The nonsink vertices.
 
-OUTPUT:
-
-list of vertices
+OUTPUT: list of vertices
 
 EXAMPLES::
 
@@ -1952,9 +1909,7 @@ INPUT:
 
 - ``v`` - (optional) vertex name
 
-OUTPUT:
-
-integer or dict
+OUTPUT: integer or dict
 
 EXAMPLES::
 
@@ -2002,9 +1957,7 @@ EXAMPLES::
 Generators for the multiplicative group of zeros of the sandpile
 ideal.
 
-OUTPUT:
-
-list of complex numbers
+OUTPUT: list of complex numbers
 
 EXAMPLES:
 
@@ -2026,9 +1979,7 @@ single generator for the group of solutions.
 The postulation number of the toppling ideal.  This is the
 largest weight of a superstable configuration of the graph.
 
-OUTPUT:
-
-nonnegative integer
+OUTPUT: nonnegative integer
 
 EXAMPLES::
 
@@ -2049,9 +2000,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-list of recurrent configurations
+OUTPUT: list of recurrent configurations
 
 
 EXAMPLES::
@@ -2087,9 +2036,7 @@ EXAMPLES::
 
 The reduced Laplacian matrix of the graph.
 
-OUTPUT:
-
-matrix
+OUTPUT: matrix
 
 
 EXAMPLES::
@@ -2120,9 +2067,7 @@ A copy of the sandpile with vertex names permuted.  After reordering,
 vertex `u` comes before vertex `v` in the list of vertices if `u` is
 closer to the sink.
 
-OUTPUT:
-
-Sandpile
+OUTPUT: Sandpile
 
 EXAMPLES::
 
@@ -2150,9 +2095,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``False``) boolean
 
-OUTPUT:
-
-free resolution of the toppling ideal
+OUTPUT: free resolution of the toppling ideal
 
 EXAMPLES::
 
@@ -2187,9 +2130,7 @@ EXAMPLES::
 
 The ring containing the homogeneous toppling ideal.
 
-OUTPUT:
-
-ring
+OUTPUT: ring
 
 EXAMPLES::
 
@@ -2249,9 +2190,7 @@ EXAMPLES::
 
 The sink vertex.
 
-OUTPUT:
-
-sink vertex
+OUTPUT: sink vertex
 
 EXAMPLES::
 
@@ -2275,9 +2214,7 @@ matrices `D, U, V` such that `ULV = D` where `L` is the transpose of the
 Laplacian, `D` is diagonal, and  `U` and `V` are invertible over the
 integers.
 
-OUTPUT:
-
-list of integer matrices
+OUTPUT: list of integer matrices
 
 EXAMPLES::
 
@@ -2300,9 +2237,7 @@ EXAMPLES::
 Approximations of the complex affine zeros of the sandpile
 ideal.
 
-OUTPUT:
-
-list of complex numbers
+OUTPUT: list of complex numbers
 
 EXAMPLES::
 
@@ -2347,9 +2282,7 @@ INPUT:
 - ``smax`` -- (optional) SandpileConfig or list representing a SandpileConfig
 
 
-OUTPUT:
-
-generator for all stable configurations
+OUTPUT: generator for all stable configurations
 
 EXAMPLES::
 
@@ -2371,9 +2304,7 @@ EXAMPLES::
 
 The stationary density of the sandpile.
 
-OUTPUT:
-
-rational number
+OUTPUT: rational number
 
 EXAMPLES::
 
@@ -2408,9 +2339,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-list of SandpileConfig
+OUTPUT: list of SandpileConfig
 
 
 EXAMPLES::
@@ -2450,9 +2379,7 @@ INPUT:
 
 - ``orbits`` - list of lists partitioning the vertices
 
-OUTPUT:
-
-list of recurrent configurations
+OUTPUT: list of recurrent configurations
 
 EXAMPLES::
 
@@ -2487,9 +2414,7 @@ EXAMPLES::
 The Tutte polynomial of the underlying graph.
 Only defined for undirected sandpile graphs.
 
-OUTPUT:
-
-polynomial
+OUTPUT: polynomial
 
 EXAMPLES::
 
@@ -2509,9 +2434,7 @@ EXAMPLES::
 
 The unsaturated, homogeneous toppling ideal.
 
-OUTPUT:
-
-ideal
+OUTPUT: ideal
 
 EXAMPLES::
 
@@ -2529,9 +2452,7 @@ EXAMPLES::
 
 The version number of Sage Sandpiles.
 
-OUTPUT:
-
-string
+OUTPUT: string
 
 EXAMPLES::
 
@@ -2549,9 +2470,7 @@ EXAMPLES::
 
 The all-zero configuration.
 
-OUTPUT:
-
-SandpileConfig
+OUTPUT: SandpileConfig
 
 EXAMPLES::
 
@@ -2567,9 +2486,7 @@ EXAMPLES::
 
 The all-zero divisor.
 
-OUTPUT:
-
-SandpileDivisor
+OUTPUT: SandpileDivisor
 
 EXAMPLES::
 
@@ -2626,13 +2543,13 @@ SandpileConfig
 
 - :ref:`help <help-config>` --- List of SandpileConfig methods.
 
-- :ref:`is_recurrent <is_recurrent-config>` --- Is the configuration recurrent?
+- :ref:`is_recurrent <is_recurrent-config>` --- Return whether the configuration is recurrent.
 
-- :ref:`is_stable <is_stable-config>` --- Is the configuration stable?
+- :ref:`is_stable <is_stable-config>` --- Return whether the configuration is stable.
 
-- :ref:`is_superstable <is_superstable-config>` --- Is the configuration superstable?
+- :ref:`is_superstable <is_superstable-config>` --- Return whether the configuration is superstable.
 
-- :ref:`is_symmetric <is_symmetric-config>` --- Is the configuration symmetric?
+- :ref:`is_symmetric <is_symmetric-config>` --- Return whether the configuration is symmetric.
 
 - :ref:`order <order-config>` --- The order of the equivalent recurrent element.
 
@@ -2664,9 +2581,7 @@ SandpileConfig
 
    - ``other`` -- SandpileConfig
 
-   OUTPUT:
-
-   sum of ``self`` and ``other``
+   OUTPUT: sum of ``self`` and ``other``
 
    EXAMPLES::
 
@@ -2688,9 +2603,7 @@ SandpileConfig
 
    - ``other`` -- SandpileConfig
 
-   OUTPUT:
-
-   SandpileConfig
+   OUTPUT: SandpileConfig
 
    EXAMPLES::
 
@@ -2718,9 +2631,7 @@ SandpileConfig
 
    - ``other`` -- SandpileConfig
 
-   OUTPUT:
-
-   boolean
+   OUTPUT: boolean
 
    EXAMPLES::
 
@@ -2752,9 +2663,7 @@ SandpileConfig
 
    - ``other`` -- SandpileConfig
 
-   OUTPUT:
-
-   boolean
+   OUTPUT: boolean
 
    EXAMPLES::
 
@@ -2776,9 +2685,7 @@ SandpileConfig
 
    The stabilized configuration.
 
-   OUTPUT:
-
-   ``SandpileConfig``
+   OUTPUT: ``SandpileConfig``
 
    EXAMPLES::
 
@@ -2800,9 +2707,7 @@ SandpileConfig
 
    - ``other`` -- SandpileConfig
 
-   OUTPUT:
-
-   boolean
+   OUTPUT: boolean
 
    EXAMPLES::
 
@@ -2834,9 +2739,7 @@ SandpileConfig
 
    - ``other`` -- SandpileConfig
 
-   OUTPUT:
-
-   boolean
+   OUTPUT: boolean
 
    EXAMPLES::
 
@@ -2873,9 +2776,7 @@ SandpileConfig
 
    - ``other`` -- SandpileConfig or Integer
 
-   OUTPUT:
-
-   SandpileConfig
+   OUTPUT: SandpileConfig
 
    EXAMPLES::
 
@@ -2911,9 +2812,7 @@ SandpileConfig
 
    - ``k`` -- SandpileConfig
 
-   OUTPUT:
-
-   SandpileConfig
+   OUTPUT: SandpileConfig
 
    EXAMPLES::
 
@@ -2938,9 +2837,7 @@ SandpileConfig
 
    The additive inverse of the configuration.
 
-   OUTPUT:
-
-   SandpileConfig
+   OUTPUT: SandpileConfig
 
    EXAMPLES::
 
@@ -2961,9 +2858,7 @@ SandpileConfig
 
    - ``other`` -- SandpileConfig
 
-   OUTPUT:
-
-   sum of ``self`` and ``other``
+   OUTPUT: sum of ``self`` and ``other``
 
    EXAMPLES::
 
@@ -2987,9 +2882,7 @@ INPUT:
 
 - ``distrib`` -- (optional) list of nonnegative numbers summing to 1 (representing a prob. dist.)
 
-OUTPUT:
-
-SandpileConfig
+OUTPUT: SandpileConfig
 
 EXAMPLES::
 
@@ -3051,9 +2944,7 @@ INPUT:
 
 - ``v`` -- vertex
 
-OUTPUT:
-
-integer
+OUTPUT: integer
 
 EXAMPLES::
 
@@ -3082,9 +2973,7 @@ REFERENCES:
 
 The degree of the configuration.
 
-OUTPUT:
-
-integer
+OUTPUT: integer
 
 EXAMPLES::
 
@@ -3101,9 +2990,7 @@ EXAMPLES::
 
 The difference with the maximal stable configuration.
 
-OUTPUT:
-
-SandpileConfig
+OUTPUT: SandpileConfig
 
 EXAMPLES::
 
@@ -3129,9 +3016,7 @@ INPUT:
 
 - ``with_firing_vector`` -- (default: ``False``)  boolean
 
-OUTPUT:
-
-SandpileConfig or [SandpileConfig, firing_vector]
+OUTPUT: SandpileConfig or [SandpileConfig, firing_vector]
 
 
 EXAMPLES::
@@ -3166,9 +3051,7 @@ INPUT:
 
 - ``with_firing_vector`` -- (default: ``False``) boolean
 
-OUTPUT:
-
-SandpileConfig or [SandpileConfig, firing_vector]
+OUTPUT: SandpileConfig or [SandpileConfig, firing_vector]
 
 
 EXAMPLES::
@@ -3203,9 +3086,7 @@ INPUT:
 
 - ``sigma`` -- SandpileConfig or (list or dict representing a SandpileConfig)
 
-OUTPUT:
-
-SandpileConfig
+OUTPUT: SandpileConfig
 
 EXAMPLES::
 
@@ -3226,9 +3107,7 @@ EXAMPLES::
 
 Fire all unstable vertices.
 
-OUTPUT:
-
-SandpileConfig
+OUTPUT: SandpileConfig
 
 EXAMPLES::
 
@@ -3249,9 +3128,7 @@ INPUT:
 
 - ``v`` -- vertex
 
-OUTPUT:
-
-SandpileConfig
+OUTPUT: SandpileConfig
 
 EXAMPLES::
 
@@ -3272,9 +3149,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-printed string
+OUTPUT: printed string
 
 EXAMPLES::
 
@@ -3299,10 +3174,10 @@ EXAMPLES::
     fire_unstable          -- Fire all unstable vertices.
     fire_vertex            -- Fire the given vertex.
     help                   -- List of SandpileConfig methods.
-    is_recurrent           -- Is the configuration recurrent?
-    is_stable              -- Is the configuration stable?
-    is_superstable         -- Is the configuration superstable?
-    is_symmetric           -- Is the configuration symmetric?
+    is_recurrent           -- Return whether the configuration is recurrent.
+    is_stable              -- Return whether the configuration is stable.
+    is_superstable         -- Return whether the configuration is superstable.
+    is_symmetric           -- Return whether the configuration is symmetric.
     order                  -- The order of the equivalent recurrent element.
     sandpile               -- The configuration's underlying sandpile.
     show                   -- Show the configuration.
@@ -3317,11 +3192,9 @@ EXAMPLES::
 
 **is_recurrent()**
 
-Is the configuration recurrent?
+Return whether the configuration is recurrent.
 
-OUTPUT:
-
-boolean
+OUTPUT: boolean
 
 EXAMPLES::
 
@@ -3337,11 +3210,9 @@ EXAMPLES::
 
 **is_stable()**
 
-Is the configuration stable?
+Return whether the configuration is stable.
 
-OUTPUT:
-
-boolean
+OUTPUT: boolean
 
 EXAMPLES::
 
@@ -3359,11 +3230,9 @@ EXAMPLES::
 
 **is_superstable()**
 
-Is the configuration superstable?
+Return whether the configuration is superstable.
 
-OUTPUT:
-
-boolean
+OUTPUT: boolean
 
 EXAMPLES::
 
@@ -3377,7 +3246,7 @@ EXAMPLES::
 
 **is_symmetric(orbits)**
 
-Is the configuration symmetric?  Return ``True`` if the values of the
+Return whether the configuration is symmetric.  Return ``True`` if the values of the
 configuration are constant over the vertices in each sublist of
 ``orbits``.
 
@@ -3385,9 +3254,7 @@ INPUT:
 
 - ``orbits`` -- list of lists of vertices
 
-OUTPUT:
-
-boolean
+OUTPUT: boolean
 
 EXAMPLES::
 
@@ -3408,9 +3275,7 @@ EXAMPLES::
 
 The order of the equivalent recurrent element.
 
-OUTPUT:
-
-integer
+OUTPUT: integer
 
 EXAMPLES::
 
@@ -3436,9 +3301,7 @@ EXAMPLES::
 
 The configuration's underlying sandpile.
 
-OUTPUT:
-
-Sandpile
+OUTPUT: Sandpile
 
 EXAMPLES::
 
@@ -3490,9 +3353,7 @@ INPUT:
 
 - ``with_firing_vector`` -- (default: ``False``)  boolean
 
-OUTPUT:
-
-``SandpileConfig`` or ``[SandpileConfig, firing_vector]``
+OUTPUT: ``SandpileConfig`` or ``[SandpileConfig, firing_vector]``
 
 EXAMPLES::
 
@@ -3539,9 +3400,7 @@ EXAMPLES::
 
 The unstable vertices.
 
-OUTPUT:
-
-list of vertices
+OUTPUT: list of vertices
 
 EXAMPLES::
 
@@ -3559,9 +3418,7 @@ EXAMPLES::
 The values of the configuration as a list.  The list is sorted in the
 order of the vertices.
 
-OUTPUT:
-
-list of integers
+OUTPUT: list of integers
 
 boolean
 
@@ -3617,13 +3474,13 @@ SandpileDivisor
 
 - :ref:`help <help-divisor>` --- List of SandpileDivisor methods.
 
-- :ref:`is_alive <is_alive-divisor>` --- Is the divisor stabilizable?
+- :ref:`is_alive <is_alive-divisor>` --- Return whether the divisor is stabilizable.
 
-- :ref:`is_linearly_equivalent <is_linearly_equivalent-divisor>` --- Is the given divisor linearly equivalent?
+- :ref:`is_linearly_equivalent <is_linearly_equivalent-divisor>` --- Return whether the given divisor is linearly equivalent.
 
-- :ref:`is_q_reduced <is_q_reduced-divisor>` --- Is the divisor q-reduced?
+- :ref:`is_q_reduced <is_q_reduced-divisor>` --- Return whether the divisor is q-reduced.
 
-- :ref:`is_symmetric <is_symmetric-divisor>` --- Is the divisor symmetric?
+- :ref:`is_symmetric <is_symmetric-divisor>` --- Return whether the divisor is symmetric.
 
 - :ref:`is_weierstrass_pt <is_weierstrass_pt-divisor>` --- Is the given vertex a Weierstrass point?
 
@@ -3673,9 +3530,7 @@ SandpileDivisor
 
    - ``other`` -- SandpileDivisor
 
-   OUTPUT:
-
-   sum of ``self`` and ``other``
+   OUTPUT: sum of ``self`` and ``other``
 
    EXAMPLES::
 
@@ -3698,9 +3553,7 @@ SandpileDivisor
 
    - ``other`` -- SandpileDivisor
 
-   OUTPUT:
-
-   boolean
+   OUTPUT: boolean
 
    EXAMPLES::
 
@@ -3732,9 +3585,7 @@ SandpileDivisor
 
    - ``other`` -- SandpileDivisor
 
-   OUTPUT:
-
-   boolean
+   OUTPUT: boolean
 
    EXAMPLES::
 
@@ -3761,9 +3612,7 @@ SandpileDivisor
 
    - ``other`` -- SandpileDivisor
 
-   OUTPUT:
-
-   boolean
+   OUTPUT: boolean
 
    EXAMPLES::
 
@@ -3795,9 +3644,7 @@ SandpileDivisor
 
    - ``other`` -- SandpileDivisor
 
-   OUTPUT:
-
-   boolean
+   OUTPUT: boolean
 
    EXAMPLES::
 
@@ -3819,9 +3666,7 @@ SandpileDivisor
 
    The additive inverse of the divisor.
 
-   OUTPUT:
-
-   SandpileDivisor
+   OUTPUT: SandpileDivisor
 
    EXAMPLES::
 
@@ -3842,9 +3687,7 @@ SandpileDivisor
 
    - ``other`` -- SandpileDivisor
 
-   OUTPUT:
-
-   Difference of ``self`` and ``other``
+   OUTPUT: difference of ``self`` and ``other``
 
    EXAMPLES::
 
@@ -3862,9 +3705,7 @@ SandpileDivisor
 
 The support-complex. (See NOTE.)
 
-OUTPUT:
-
-simplicial complex
+OUTPUT: simplicial complex
 
 EXAMPLES::
 
@@ -3894,9 +3735,7 @@ INPUT:
 
 - ``distrib`` -- (optional) list of nonnegative numbers representing a probability distribution on the vertices
 
-OUTPUT:
-
-SandpileDivisor
+OUTPUT: SandpileDivisor
 
 EXAMPLES::
 
@@ -3919,9 +3758,7 @@ EXAMPLES::
 
 The Betti numbers for the support-complex.  (See NOTE.)
 
-OUTPUT:
-
-dictionary of integers
+OUTPUT: dictionary of integers
 
 EXAMPLES::
 
@@ -3943,9 +3780,7 @@ EXAMPLES::
 
 The degree of the divisor.
 
-OUTPUT:
-
-integer
+OUTPUT: integer
 
 EXAMPLES::
 
@@ -3962,9 +3797,7 @@ EXAMPLES::
 
 The difference with the maximal stable divisor.
 
-OUTPUT:
-
-SandpileDivisor
+OUTPUT: SandpileDivisor
 
 EXAMPLES::
 
@@ -4051,9 +3884,7 @@ INPUT:
 
 - ``sigma`` -- SandpileDivisor or (list or dict representing a SandpileDivisor)
 
-OUTPUT:
-
-SandpileDivisor
+OUTPUT: SandpileDivisor
 
 EXAMPLES::
 
@@ -4074,9 +3905,7 @@ EXAMPLES::
 
 Fire all unstable vertices.
 
-OUTPUT:
-
-SandpileDivisor
+OUTPUT: SandpileDivisor
 
 EXAMPLES::
 
@@ -4097,9 +3926,7 @@ INPUT:
 
 - ``v`` -- vertex
 
-OUTPUT:
-
-SandpileDivisor
+OUTPUT: SandpileDivisor
 
 EXAMPLES::
 
@@ -4120,9 +3947,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-printed string
+OUTPUT: printed string
 
 EXAMPLES::
 
@@ -4140,11 +3965,11 @@ EXAMPLES::
     fire_unstable          -- Fire all unstable vertices.
     fire_vertex            -- Fire the given vertex.
     help                   -- List of SandpileDivisor methods.
-    is_alive               -- Is the divisor stabilizable?
-    is_linearly_equivalent -- Is the given divisor linearly equivalent?
-    is_q_reduced           -- Is the divisor q-reduced?
-    is_symmetric           -- Is the divisor symmetric?
-    is_weierstrass_pt      -- Is the given vertex a Weierstrass point?
+    is_alive               -- Return whether the divisor is stabilizable.
+    is_linearly_equivalent -- Return whether the given divisor is linearly equivalent.
+    is_q_reduced           -- Return whether the divisor is q-reduced.
+    is_symmetric           -- Return whether the divisor is symmetric.
+    is_weierstrass_pt      -- Return whether the given vertex is a Weierstrass point.
     polytope               -- The polytope determining the complete linear system.
     polytope_integer_pts   -- The integer points inside divisor's polytope.
     q_reduced              -- The linearly equivalent q-reduced divisor.
@@ -4167,7 +3992,7 @@ EXAMPLES::
 
 **is_alive(cycle=False)**
 
-Is the divisor stabilizable?  In other words, will the divisor stabilize
+Return whether the divisor is stabilizable.  In other words, will the divisor stabilize
 under repeated firings of all unstable vertices?  Optionally returns the
 resulting cycle.
 
@@ -4175,9 +4000,7 @@ INPUT:
 
 - ``cycle`` -- (default: ``False``) boolean
 
-OUTPUT:
-
-boolean or optionally, a list of SandpileDivisors
+OUTPUT: boolean or optionally, a list of SandpileDivisors
 
 EXAMPLES::
 
@@ -4194,7 +4017,7 @@ EXAMPLES::
 
 **is_linearly_equivalent(D, with_firing_vector=False)**
 
-Is the given divisor linearly equivalent?  Optionally, returns the
+Return whether the given divisor is linearly equivalent.  Optionally, returns the
 firing vector.  (See NOTE.)
 
 INPUT:
@@ -4203,9 +4026,7 @@ INPUT:
 
 - ``with_firing_vector`` -- (default: ``False``) boolean
 
-OUTPUT:
-
-boolean or integer vector
+OUTPUT: boolean or integer vector
 
 EXAMPLES::
 
@@ -4237,12 +4058,10 @@ EXAMPLES::
 
 **is_q_reduced()**
 
-Is the divisor `q`-reduced?  This would mean that `self = c + kq` where
+Return whether the divisor is `q`-reduced.  This would mean that `self = c + kq` where
 `c` is superstable, `k` is an integer, and `q` is the sink vertex.
 
-OUTPUT:
-
-boolean
+OUTPUT: boolean
 
 EXAMPLES::
 
@@ -4277,7 +4096,7 @@ general directed graphs:
 
 **is_symmetric(orbits)**
 
-Is the divisor symmetric?  Return ``True`` if the values of the
+Return whether the divisor is symmetric.  Return ``True`` if the values of the
 configuration are constant over the vertices in each sublist of
 ``orbits``.
 
@@ -4285,9 +4104,7 @@ INPUT:
 
 - ``orbits`` -- list of lists of vertices
 
-OUTPUT:
-
-boolean
+OUTPUT: boolean
 
 EXAMPLES::
 
@@ -4308,15 +4125,13 @@ EXAMPLES::
 
 **is_weierstrass_pt(v='sink')**
 
-Is the given vertex a Weierstrass point?
+Return whether the given vertex is a Weierstrass point.
 
 INPUT:
 
 - ``v`` -- (default: ``sink``) vertex
 
-OUTPUT:
-
-boolean
+OUTPUT: boolean
 
 EXAMPLES::
 
@@ -4345,9 +4160,7 @@ EXAMPLES::
 
 The polytope determining the complete linear system.
 
-OUTPUT:
-
-polytope
+OUTPUT: polytope
 
 EXAMPLES::
 
@@ -4382,9 +4195,7 @@ The integer points inside divisor's polytope.  The polytope referred to
 here is the one determining the divisor's complete linear system (see the
 documentation for ``polytope``).
 
-OUTPUT:
-
-tuple of integer vectors
+OUTPUT: tuple of integer vectors
 
 EXAMPLES::
 
@@ -4413,9 +4224,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-SandpileDivisor or list representing SandpileDivisor
+OUTPUT: SandpileDivisor or list representing SandpileDivisor
 
 EXAMPLES::
 
@@ -4500,9 +4309,7 @@ EXAMPLES::
 
 The divisor's underlying sandpile.
 
-OUTPUT:
-
-Sandpile
+OUTPUT: Sandpile
 
 EXAMPLES::
 
@@ -4548,9 +4355,7 @@ INPUT:
 
 - ``distrib`` -- (optional)  list of nonnegative numbers representing a probability distribution on the vertices
 
-OUTPUT:
-
-SandpileDivisor
+OUTPUT: SandpileDivisor
 
 EXAMPLES::
 
@@ -4599,9 +4404,7 @@ EXAMPLES::
 
 List of vertices at which the divisor is nonzero.
 
-OUTPUT:
-
-list representing the support of the divisor
+OUTPUT: list representing the support of the divisor
 
 EXAMPLES::
 
@@ -4620,9 +4423,7 @@ EXAMPLES::
 
 The unstable vertices.
 
-OUTPUT:
-
-list of vertices
+OUTPUT: list of vertices
 
 EXAMPLES::
 
@@ -4640,9 +4441,7 @@ EXAMPLES::
 The values of the divisor as a list.  The list is sorted in the order of
 the vertices.
 
-OUTPUT:
-
-list of integers
+OUTPUT: list of integers
 
 boolean
 
@@ -4672,9 +4471,7 @@ INPUT:
 
 - ``verbose`` -- (default: ``True``) boolean
 
-OUTPUT:
-
-SandpileDivisor
+OUTPUT: SandpileDivisor
 
 EXAMPLES::
 
@@ -4778,9 +4575,7 @@ INPUT:
 
 - ``v`` -- (default: ``sink``) vertex
 
-OUTPUT:
-
-tuple of int
+OUTPUT: tuple of int
 
 EXAMPLES::
 
@@ -4819,9 +4614,7 @@ Other
     - ``S`` -- Sandpi
     - ``eff`` -- list of divisors
 
-    OUTPUT:
-
-    DiGraph
+    OUTPUT: DiGraph
 
     EXAMPLES::
 
@@ -4845,9 +4638,7 @@ Other
     - ``S`` - Sandpi
     - ``eff`` - list of divisors
 
-    OUTPUT:
-
-    DiGraph
+    OUTPUT: DiGraph
 
     EXAMPLES::
 
@@ -4940,9 +4731,7 @@ Documentation for each method is available through the Sage online help system:
 
            - ``v`` - vertex
 
-           OUTPUT:
-
-           SandpileConfig
+           OUTPUT: SandpileConfig
 
            EXAMPLES:
 

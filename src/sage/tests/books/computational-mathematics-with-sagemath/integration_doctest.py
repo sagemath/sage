@@ -286,5 +286,4 @@ Sage example in ./integration.tex, line 1497::
   sage: mpmath.mp.prec = 100
   sage: sol(1)
   mpf('2.7135204235459511323824699502438')
-
 """

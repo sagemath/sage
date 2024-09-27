@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Evaluating a String in Sage
 """
@@ -21,32 +22,26 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
 
     INPUT:
 
+    - ``source`` -- string or object with a ``_sage_``
+      method
 
-    -  ``source`` -- a string or object with a ``_sage_``
-       method
+    - ``locals`` -- evaluate in namespace of :mod:`sage.all` plus
+      the locals dictionary
 
-    -  ``locals`` -- evaluate in namespace of :mod:`sage.all` plus
-       the locals dictionary
+    - ``cmds`` -- string; sequence of commands to be run
+      before source is evaluated
 
-    -  ``cmds`` -- string; sequence of commands to be run
-       before source is evaluated.
+    - ``preparse`` -- boolean (default: ``True``); if ``True``, preparse the
+      string expression
 
-    -  ``preparse`` -- (default: ``True``) if True, preparse the
-       string expression.
-
-
-    EXAMPLES: This example illustrates that preparsing is applied.
-
-    ::
+    EXAMPLES: This example illustrates that preparsing is applied::
 
         sage: eval('2^3')
         1
         sage: sage_eval('2^3')
         8
 
-    However, preparsing can be turned off.
-
-    ::
+    However, preparsing can be turned off::
 
         sage: sage_eval('2^3', preparse=False)
         1
@@ -62,9 +57,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     ``from sage.all import *``. Even though ``bernoulli`` has
     been redefined in the local scope, when calling
     :func:`sage_eval` the default value meaning of :func:`bernoulli`
-    is used. Likewise for ``QQ`` below.
-
-    ::
+    is used. Likewise for ``QQ`` below::
 
         sage: bernoulli = lambda x : x^2
         sage: bernoulli(6)
@@ -84,9 +77,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
         sage: parent(sage_eval('QQ(2)'))
         Rational Field
 
-    This example illustrates setting a variable for use in evaluation.
-
-    ::
+    This example illustrates setting a variable for use in evaluation::
 
         sage: x = 5
         sage: eval('4//3 + x', {'x': 25})
@@ -127,9 +118,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
 
     This example illustrates how :mod:`sage_eval` can be
     useful when evaluating the output of other computer algebra
-    systems.
-
-    ::
+    systems::
 
         sage: # needs sage.libs.gap
         sage: R.<x> = PolynomialRing(RationalField())

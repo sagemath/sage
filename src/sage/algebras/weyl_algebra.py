@@ -21,7 +21,6 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex, LatexExpr
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
-from sage.structure.richcmp import richcmp
 from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -34,6 +33,7 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.global_options import GlobalOptions
+from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 
 
 def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
@@ -43,12 +43,12 @@ def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
 
     INPUT:
 
-    - ``monomials`` -- a list of pairs ``[m, c]`` where ``m`` is the index
+    - ``monomials`` -- list of pairs ``[m, c]`` where ``m`` is the index
       and ``c`` is the coefficient
     - ``term_repr`` -- a function which returns a string given an index
       (can be ``repr`` or ``latex``, for example)
-    - ``use_latex`` -- (default: ``False``) if ``True`` then the output is
-      in latex format
+    - ``use_latex`` -- boolean (default: ``False``); if ``True`` then the
+      output is in latex format
 
     EXAMPLES::
 
@@ -231,24 +231,68 @@ def repr_factored(w, latex_output=False) -> str:
     return ret
 
 
-class DifferentialWeylAlgebraElement(Element):
+class DifferentialWeylAlgebraElement(IndexedFreeModuleElement):
     """
     An element in a differential Weyl algebra.
+
+    TESTS:
+
+    Some computations in the Weyl algebra, using the implicit
+    coercion from the polynomial ring into the Weyl algebra::
+
+        sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
+        sage: dx,dy,dz = W.differentials()
+        sage: elt = ((x^3-z)*dx + dy)^2
+        sage: TestSuite(elt).run()
+
+        sage: R.<x,y,z> =  QQ[]
+        sage: W = DifferentialWeylAlgebra(R)
+        sage: dx,dy,dz = W.differentials()
+        sage: dy*(x^3-y*z)*dx == -z*dx + x^3*dx*dy - y*z*dx*dy
+        True
+        sage: W.zero() == 0
+        True
+        sage: W.one() == 1
+        True
+        sage: x == 1
+        False
+        sage: x + 1 == 1
+        False
+        sage: W(x^3 - y*z) == x^3 - y*z
+        True
+        sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
+        sage: dx,dy,dz = W.differentials()
+        sage: dx != dy
+        True
+        sage: W.one() != 1
+        False
+        sage: dy - (3*x - z)*dx
+        dy + z*dx - 3*x*dx
+        sage: (dx*dy) + dz + x^3 - 2
+        dx*dy + dz + x^3 - 2
+        sage: elt = (dy - (3*x - z)*dx)
+        sage: sorted(elt.monomial_coefficients().items())
+        [(((0, 0, 0), (0, 1, 0)), 1),
+         (((0, 0, 1), (1, 0, 0)), 1),
+         (((1, 0, 0), (1, 0, 0)), -3)]
+        sage: elt = dy - (3*x - z)*dx + 1
+        sage: sorted(elt.support())
+        [((0, 0, 0), (0, 0, 0)),
+         ((0, 0, 0), (0, 1, 0)),
+         ((0, 0, 1), (1, 0, 0)),
+         ((1, 0, 0), (1, 0, 0))]
+
+    Hashing works::
+
+        sage: hash(dx) == hash(dx) # hashing works
+        True
+
+    Comparison works, even if mathematically meaningless
+    (but useful e.g. for sorting)::
+
+        sage: dx < dy or dy < dx
+        True
     """
-    def __init__(self, parent, monomials) -> None:
-        """
-        Initialize ``self``.
-
-        TESTS::
-
-            sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
-            sage: dx,dy,dz = W.differentials()
-            sage: elt = ((x^3-z)*dx + dy)^2
-            sage: TestSuite(elt).run()
-        """
-        Element.__init__(self, parent)
-        self.__monomials = monomials
-
     def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
@@ -327,64 +371,6 @@ class DifferentialWeylAlgebraElement(Element):
                 return p + ' ' + d
         return repr_from_monomials(self.list(), term, True)
 
-    def _richcmp_(self, other, op) -> bool:
-        """
-        Rich comparison for equal parents.
-
-        TESTS::
-
-            sage: R.<x,y,z> =  QQ[]
-            sage: W = DifferentialWeylAlgebra(R)
-            sage: dx,dy,dz = W.differentials()
-            sage: dy*(x^3-y*z)*dx == -z*dx + x^3*dx*dy - y*z*dx*dy
-            True
-            sage: W.zero() == 0
-            True
-            sage: W.one() == 1
-            True
-            sage: x == 1
-            False
-            sage: x + 1 == 1
-            False
-            sage: W(x^3 - y*z) == x^3 - y*z
-            True
-            sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
-            sage: dx,dy,dz = W.differentials()
-            sage: dx != dy
-            True
-            sage: W.one() != 1
-            False
-        """
-        return richcmp(self.__monomials, other.__monomials, op)
-
-    def __neg__(self):
-        """
-        Return the negative of ``self``.
-
-        EXAMPLES::
-
-            sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
-            sage: dx,dy,dz = W.differentials()
-            sage: dy - (3*x - z)*dx
-            dy + z*dx - 3*x*dx
-        """
-        return self.__class__(self.parent(),
-                              {m: -c for m, c in self.__monomials.items()})
-
-    def _add_(self, other):
-        """
-        Return ``self`` added to ``other``.
-
-        EXAMPLES::
-
-            sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
-            sage: dx,dy,dz = W.differentials()
-            sage: (dx*dy) + dz + x^3 - 2
-            dx*dy + dz + x^3 - 2
-        """
-        F = self.parent()
-        return self.__class__(F, blas.add(self.__monomials, other.__monomials))
-
     def _mul_(self, other):
         """
         Return ``self`` multiplied by ``other``.
@@ -406,10 +392,10 @@ class DifferentialWeylAlgebraElement(Element):
         n = self.parent()._n
         t = tuple([0] * n)
         zero = self.parent().base_ring().zero()
-        for ml in self.__monomials:
-            cl = self.__monomials[ml]
-            for mr in other.__monomials:
-                cr = other.__monomials[mr]
+        for ml in self._monomial_coefficients:
+            cl = self._monomial_coefficients[ml]
+            for mr in other._monomial_coefficients:
+                cr = other._monomial_coefficients[mr]
                 cur = [((mr[0], t), cl * cr)]
                 for i, p in enumerate(ml[1]):
                     for _ in range(p):
@@ -447,7 +433,7 @@ class DifferentialWeylAlgebraElement(Element):
         """
         if other == 0:
             return self.parent().zero()
-        M = self.__monomials
+        M = self._monomial_coefficients
         return self.__class__(self.parent(), {t: other * M[t] for t in M})
 
     def _lmul_(self, other):
@@ -464,35 +450,8 @@ class DifferentialWeylAlgebraElement(Element):
         """
         if other == 0:
             return self.parent().zero()
-        M = self.__monomials
+        M = self._monomial_coefficients
         return self.__class__(self.parent(), {t: M[t] * other for t in M})
-
-    def monomial_coefficients(self, copy=True) -> dict:
-        """
-        Return a dictionary which has the basis keys in the support
-        of ``self`` as keys and their corresponding coefficients
-        as values.
-
-        INPUT:
-
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
-          represented by a dictionary ``d``, then make a copy of ``d``;
-          if ``False``, then this can cause undesired behavior by
-          mutating ``d``
-
-        EXAMPLES::
-
-            sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
-            sage: dx,dy,dz = W.differentials()
-            sage: elt = (dy - (3*x - z)*dx)
-            sage: sorted(elt.monomial_coefficients().items())
-            [(((0, 0, 0), (0, 1, 0)), 1),
-             (((0, 0, 1), (1, 0, 0)), 1),
-             (((1, 0, 0), (1, 0, 0)), -3)]
-        """
-        if copy:
-            return dict(self.__monomials)
-        return self.__monomials
 
     def __iter__(self):
         """
@@ -530,25 +489,8 @@ class DifferentialWeylAlgebraElement(Element):
              (((0, 0, 1), (1, 0, 0)), 1),
              (((1, 0, 0), (1, 0, 0)), -3)]
         """
-        return sorted(self.__monomials.items(),
+        return sorted(self._monomial_coefficients.items(),
                       key=lambda x: (-sum(x[0][1]), x[0][1], -sum(x[0][0]), x[0][0]))
-
-    def support(self) -> list:
-        """
-        Return the support of ``self``.
-
-        EXAMPLES::
-
-            sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
-            sage: dx,dy,dz = W.differentials()
-            sage: elt = dy - (3*x - z)*dx + 1
-            sage: sorted(elt.support())
-            [((0, 0, 0), (0, 0, 0)),
-            ((0, 0, 0), (0, 1, 0)),
-            ((0, 0, 1), (1, 0, 0)),
-            ((1, 0, 0), (1, 0, 0))]
-        """
-        return list(self.__monomials)
 
     # This is essentially copied from
     #   sage.combinat.free_module.CombinatorialFreeModuleElement
@@ -567,7 +509,7 @@ class DifferentialWeylAlgebraElement(Element):
             2*y*z + x
         """
         F = self.parent()
-        D = self.__monomials
+        D = self._monomial_coefficients
         if F.base_ring().is_field():
             x = F.base_ring()(x)
             x_inv = x**-1
@@ -786,7 +728,7 @@ class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets the global options for elements of the differential Weyl
+        Set the global options for elements of the differential Weyl
         algebra class. The default is to have the factored
         representations turned off.
 

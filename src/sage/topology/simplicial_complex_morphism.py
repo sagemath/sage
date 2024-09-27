@@ -126,9 +126,16 @@ def is_SimplicialComplexMorphism(x):
         sage: f = {0:0,1:1,3:3,4:4}
         sage: x = H(f)
         sage: is_SimplicialComplexMorphism(x)
+        doctest:warning...
+        DeprecationWarning: The function is_SimplicialComplexMorphism is deprecated;
+        use 'isinstance(..., SimplicialComplexMorphism)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
-
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_SimplicialComplexMorphism is deprecated; "
+                "use 'isinstance(..., SimplicialComplexMorphism)' instead.")
     return isinstance(x, SimplicialComplexMorphism)
 
 
@@ -453,7 +460,7 @@ class SimplicialComplexMorphism(Morphism):
 
     def image(self):
         """
-        Computes the image simplicial complex of `f`.
+        Compute the image simplicial complex of `f`.
 
         EXAMPLES::
 
@@ -491,7 +498,6 @@ class SimplicialComplexMorphism(Morphism):
             Simplicial complex with vertex set (0, 1) and facets {(0, 1)}
             sage: z.image()
             Simplicial complex with vertex set (0, 2) and facets {(0, 2)}
-
         """
         fa = [self(i) for i in self.domain().facets()]
         return SimplicialComplex(fa, maximality_check=True)
@@ -542,7 +548,6 @@ class SimplicialComplexMorphism(Morphism):
             False
             sage: y.is_injective()
             True
-
         """
         v = [self._vertex_dictionary[i[0]] for i in self.domain().faces()[0]]
         for i in v:
@@ -640,7 +645,7 @@ class SimplicialComplexMorphism(Morphism):
 
     def mapping_torus(self):
         r"""
-        The mapping torus of a simplicial complex endomorphism
+        The mapping torus of a simplicial complex endomorphism.
 
         The mapping torus is the simplicial complex formed by taking
         the product of the domain of ``self`` with a `4` point
@@ -693,8 +698,8 @@ class SimplicialComplexMorphism(Morphism):
 
         - ``base_ring`` -- must be a field (default: ``QQ``)
 
-        - ``cohomology`` -- boolean (default: ``False``). If
-          ``True``, the map induced in cohomology rather than homology.
+        - ``cohomology`` -- boolean (default: ``False``); if
+          ``True``, the map induced in cohomology rather than homology
 
         EXAMPLES::
 

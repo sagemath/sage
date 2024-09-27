@@ -92,8 +92,9 @@ class Ideal_1poly_field(Ideal_pid):
         EXAMPLES::
 
             sage: R.<q> = QQ[]
-            sage: I = R.ideal([q^2+q-1])
-            sage: I.change_ring(RR['q'])
-            Principal ideal (q^2 + q - 1.00000000000000) of Univariate Polynomial Ring in q over Real Field with 53 bits of precision
+            sage: I = R.ideal([q^2 + q - 1])
+            sage: I.change_ring(RR['q'])                                                # needs sage.rings.real_mpfr
+            Principal ideal (q^2 + q - 1.00000000000000) of
+             Univariate Polynomial Ring in q over Real Field with 53 bits of precision
         """
         return R.ideal(self.gens())

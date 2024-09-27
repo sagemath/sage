@@ -388,5 +388,4 @@ Sage example in ./recequadiff.tex, line 1798::
   sage: from sympy.abc import n
   sage: rsolve_hyper([-2,1],2**(n+2),n)
   2**n*C0 + 2**(n + 1)*n
-
 """

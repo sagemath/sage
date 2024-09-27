@@ -118,7 +118,7 @@ def integral_elements_in_box(K, C):
     INPUT:
 
     - ``K`` -- a totally real number field
-    - ``C`` -- a list ``[[lower, upper], ...]`` of lower and upper bounds,
+    - ``C`` -- list ``[[lower, upper], ...]`` of lower and upper bounds,
       for each embedding
 
     EXAMPLES::
@@ -227,6 +227,7 @@ def integral_elements_in_box(K, C):
 
 eps_global = 10**(-6)
 
+
 class tr_data_rel:
     r"""
     This class encodes the data used in the enumeration of totally real
@@ -244,11 +245,11 @@ class tr_data_rel:
 
         INPUT:
 
-        - ``F`` -- number field, the base field
-        - ``m`` -- integer, the relative degree
-        - ``B`` -- integer, the discriminant bound
-        - ``a`` -- list (default: ``[]``), the coefficient list to begin with,
-          corresponding to ``a[len(a)]*x^n + ... + a[0]x^(n-len(a))``.
+        - ``F`` -- number field; the base field
+        - ``m`` -- integer; the relative degree
+        - ``B`` -- integer; the discriminant bound
+        - ``a`` -- list (default: ``[]``); the coefficient list to begin with,
+          corresponding to ``a[len(a)]*x^n + ... + a[0]x^(n-len(a))``
 
         OUTPUT:
 
@@ -287,7 +288,7 @@ class tr_data_rel:
         Z_Fbasis = self.Z_F.basis()
 
         # Initialize variables.
-        if a == []:
+        if not a:
             # No starting input, all polynomials will be found; initialize to zero.
             self.a = [0]*m + [1]
             self.amaxvals = [[]]*m
@@ -301,7 +302,7 @@ class tr_data_rel:
             import numpy
             for i in range(len(anm1s)):
                 Q = [[v(m*x) for v in self.Foo] + [0] for x in Z_Fbasis] + [[v(anm1s[i]) for v in self.Foo] + [10**6]]
-                pari_string = '['+';'.join([','.join(["%s" % ii for ii in row]) for row in zip(*Q)])+']'
+                pari_string = '[' + ';'.join(','.join("%s" % ii for ii in row) for row in zip(*Q)) + ']'
                 adj = pari(pari_string).qflll()[self.d]
                 anm1s[i] += sum([m*Z_Fbasis[ii]*int(adj[ii])//int(adj[self.d]) for ii in range(self.d)])
 
@@ -371,17 +372,15 @@ class tr_data_rel:
 
         INPUT:
 
-        - ``f_out`` -- an integer sequence, to be written with the
-          coefficients of the next polynomial
-        - ``verbose`` -- boolean or nonnegative integer (default: ``False``)
-          print verbosely computational details. It prints extra
-          information if ``verbose`` is set to ``2`` or more
-        - ``haltk`` -- integer, the level at which to halt the inductive
+        - ``f_out`` -- integer sequence; to be written with the coefficients of
+          the next polynomial
+        - ``verbose`` -- boolean or nonnegative integer (default: ``False``);
+          print verbosely computational details. It prints extra information if
+          ``verbose`` is set to ``2`` or more.
+        - ``haltk`` -- integer; the level at which to halt the inductive
           coefficient bounds
 
-        OUTPUT:
-
-        the successor polynomial as a coefficient list.
+        OUTPUT: the successor polynomial as a coefficient list
         """
         import numpy
 
@@ -655,30 +654,29 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
 
     if ``length(a) = d+1``, so in particular always ``a[d] = 1``.
 
-    .. note::
+    .. NOTE::
 
         This is guaranteed to give all primitive such fields, and
         seems in practice to give many imprimitive ones.
 
     INPUT:
 
-    - ``F`` -- number field, the base field
-    - ``m`` -- integer, the degree
-    - ``B`` -- integer, the discriminant bound
-    - ``a`` -- list (default: ``[]``), the coefficient list to begin with
-    - ``verbose`` -- boolean or nonnegative integer or string (default: 0)
+    - ``F`` -- number field; the base field
+    - ``m`` -- integer; the degree
+    - ``B`` -- integer; the discriminant bound
+    - ``a`` -- list (default: ``[]``); the coefficient list to begin with
+    - ``verbose`` -- boolean or nonnegative integer or string (default: 0);
       give a verbose description of the computations being performed. If
       ``verbose`` is set to ``2`` or more then it outputs some extra
       information. If ``verbose`` is a string then it outputs to a file
-      specified by ``verbose``
-    - ``return_seqs`` -- (boolean, default ``False``) If ``True``, then return
+      specified by ``verbose``.
+    - ``return_seqs`` -- boolean (default: ``False``); if ``True``, then return
       the polynomials as sequences (for easier exporting to a file). This
       also returns a list of four numbers, as explained in the OUTPUT
       section below.
-    - ``return_pari_objects`` -- (boolean, default: ``True``) if
-      both ``return_seqs`` and ``return_pari_objects`` are ``False`` then
-      it returns the elements as Sage objects; otherwise it returns PARI
-      objects.
+    - ``return_pari_objects`` -- boolean (default: ``True``); if both
+      ``return_seqs`` and ``return_pari_objects`` are ``False`` then it returns
+      the elements as Sage objects; otherwise it returns PARI objects.
 
     OUTPUT:
 
@@ -910,21 +908,19 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
 
     INPUT:
 
-    - ``n`` -- integer, the degree
-    - ``B`` -- integer, the discriminant bound
-    - ``verbose`` -- boolean or nonnegative integer or string (default: 0)
+    - ``n`` -- integer; the degree
+    - ``B`` -- integer; the discriminant bound
+    - ``verbose`` -- boolean or nonnegative integer or string (default: 0);
       give a verbose description of the computations being performed. If
-      ``verbose`` is set to ``2`` or more, it outputs some extra
-      information. If ``verbose`` is a string, it outputs to a file
-      specified by ``verbose``
-    - ``return_seqs`` -- (boolean, default ``False``) If ``True``, then return
+      ``verbose`` is set to ``2`` or more, it outputs some extra information.
+      If ``verbose`` is a string, it outputs to a file specified by ``verbose``.
+    - ``return_seqs`` -- boolean (default: ``False``); if ``True``, then return
       the polynomials as sequences (for easier exporting to a file). This
       also returns a list of four numbers, as explained in the OUTPUT
       section below.
-    - ``return_pari_objects`` -- (boolean, default: ``True``) if both
+    - ``return_pari_objects`` -- boolean (default: ``True``); if both
       ``return_seqs`` and ``return_pari_objects`` are ``False`` then it
-      returns the elements as Sage objects; otherwise it returns PARI
-      objects.
+      returns the elements as Sage objects; otherwise it returns PARI objects.
 
     EXAMPLES::
 

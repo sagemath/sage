@@ -182,14 +182,14 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.finite_field_constructor import zech_log_bound, FiniteField as GF
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
-from sage.rings.ideal import is_Ideal
+from sage.rings.ideal import Ideal_generic
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
-from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
+from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
 
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_element import Polynomial
 
 from sage.structure.element cimport Element, parent, Vector
@@ -205,17 +205,15 @@ class ResidueFieldFactory(UniqueFactory):
 
     INPUT:
 
-    - ``p`` -- a prime ideal of an order in a number field.
+    - ``p`` -- a prime ideal of an order in a number field
 
-    - ``names`` -- the variable name for the finite field created.
-      Defaults to the name of the number field variable but with
-      bar placed after it.
+    - ``names`` -- the variable name for the finite field created;
+      defaults to the name of the number field variable but with
+      bar placed after it
 
-    - ``check`` -- whether or not to check if `p` is prime.
+    - ``check`` -- whether or not to check if `p` is prime
 
-    OUTPUT:
-
-    The residue field at the prime `p`.
+    OUTPUT: the residue field at the prime `p`
 
     EXAMPLES::
 
@@ -322,7 +320,7 @@ class ResidueFieldFactory(UniqueFactory):
             Residue field in abar of Fractional ideal (2*a^2 + 3*a - 10)
         """
         if check:
-            if not is_Ideal(p):
+            if not isinstance(p, Ideal_generic):
                 if isinstance(p, (int, Integer, Rational)):
                     p = ZZ.ideal(p)
                 elif isinstance(p, NumberFieldElement_base):
@@ -339,13 +337,13 @@ class ResidueFieldFactory(UniqueFactory):
                     raise ValueError("p must be an ideal or element of a number field or function field.")
             if not p.is_prime():
                 raise ValueError("p (%s) must be prime" % p)
-            if is_PolynomialRing(p.ring()):
+            if isinstance(p.ring(), PolynomialRing_general):
                 if not p.ring().base_ring().is_finite():
                     raise ValueError("residue fields only supported for polynomial rings over finite fields")
                 if not p.ring().base_ring().is_prime_field():
                     # neither of these will work over non-prime fields quite yet.  We should use relative finite field extensions.
                     raise NotImplementedError
-            elif not (is_NumberFieldIdeal(p) or p.ring() is ZZ):
+            elif not (isinstance(p, NumberFieldIdeal) or p.ring() is ZZ):
                 raise NotImplementedError
         if isinstance(names, tuple):
             if names:
@@ -375,7 +373,7 @@ class ResidueFieldFactory(UniqueFactory):
 
         if pring is ZZ:
             return ResidueFiniteField_prime_modn(p, names, p.gen(), None, None, None)
-        if is_PolynomialRing(pring):
+        if isinstance(pring, PolynomialRing_general):
             K = pring.fraction_field()
             Kbase = pring.base_ring()
             f = p.gen()
@@ -411,7 +409,7 @@ class ResidueFieldFactory(UniqueFactory):
                 raise ValueError("unrecognized finite field type")
 
         # Should generalize to allowing residue fields of relative extensions to be extensions of finite fields.
-        if is_NumberFieldIdeal(p):
+        if isinstance(p, NumberFieldIdeal):
             characteristic = p.smallest_integer()
         else: # ideal of a function field
             characteristic = pring.base_ring().characteristic()
@@ -588,7 +586,6 @@ class ResidueField_generic(Field):
             Residue field of Integers modulo 17
             sage: F(CyclotomicField(49))
             Residue field in zbar of Fractional ideal (17)
-
         """
         return AlgebraicExtensionFunctor([self.polynomial()], [self.variable_name()], [None], residue=self.p), self.p.ring()
 
@@ -683,7 +680,7 @@ class ResidueField_generic(Field):
 
     def _coerce_map_from_(self, R):
         """
-        Returns ``True`` if there is a coercion map from ``R`` to ``self``.
+        Return ``True`` if there is a coercion map from ``R`` to ``self``.
 
         EXAMPLES::
 
@@ -716,7 +713,7 @@ class ResidueField_generic(Field):
 
     def __repr__(self):
         """
-        Returns a string describing this residue field.
+        Return a string describing this residue field.
 
         EXAMPLES::
 
@@ -742,7 +739,7 @@ class ResidueField_generic(Field):
 
     def lift(self, x):
         """
-        Returns a lift of ``x`` to the Order, returning a "polynomial" in the
+        Return a lift of ``x`` to the Order, returning a "polynomial" in the
         generator with coefficients between 0 and `p-1`.
 
         EXAMPLES::
@@ -822,7 +819,7 @@ class ResidueField_generic(Field):
 
     def lift_map(self):
         """
-        Returns the standard map from this residue field up to the ring of
+        Return the standard map from this residue field up to the ring of
         integers lifting the canonical projection.
 
         EXAMPLES::
@@ -864,7 +861,7 @@ class ResidueField_generic(Field):
 
     def _richcmp_(self, x, op):
         """
-        Compares two residue fields: they are equal iff the primes
+        Compare two residue fields: they are equal iff the primes
         defining them are equal and they have the same variable name.
 
         EXAMPLES::
@@ -919,12 +916,13 @@ class ResidueField_generic(Field):
         """
         return 1 + hash(self.ideal())
 
+
 cdef class ReductionMap(Map):
     """
     A reduction map from a (subset) of a number field or function field to
     this residue class field.
 
-    It will be defined on those elements of the field with non-negative
+    It will be defined on those elements of the field with nonnegative
     valuation at the specified prime.
 
     EXAMPLES::
@@ -1062,7 +1060,7 @@ cdef class ReductionMap(Map):
         field.
 
         If ``x`` doesn't map because it has negative valuation, then a
-        ``ZeroDivisionError`` exception is raised.
+        :exc:`ZeroDivisionError` exception is raised.
 
         EXAMPLES::
 
@@ -1137,7 +1135,7 @@ cdef class ReductionMap(Map):
                 return FiniteField_prime_modn._element_constructor_(self._F, x)
             except ZeroDivisionError:
                 raise ZeroDivisionError("Cannot reduce rational %s modulo %s: it has negative valuation" % (x, p.gen()))
-        elif is_FractionField(self._K):
+        elif isinstance(self._K, FractionField_generic):
             p = p.gen()
             if p.degree() == 1:
                 return self._F((x.numerator() % p)[0] / (x.denominator() % p)[0])
@@ -1177,7 +1175,7 @@ cdef class ReductionMap(Map):
 
     def section(self):
         """
-        Computes a section of the map, namely a map that lifts elements of the
+        Compute a section of the map, namely a map that lifts elements of the
         residue field to elements of the field.
 
         EXAMPLES::
@@ -1266,11 +1264,11 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
         INPUT:
 
-        - ``k`` -- The residue field that is the codomain of this morphism
+        - ``k`` -- the residue field that is the codomain of this morphism
 
-        - ``p`` -- The prime ideal defining this residue field
+        - ``p`` -- the prime ideal defining this residue field
 
-        - ``im_gen`` -- The image of the generator of the number field
+        - ``im_gen`` -- the image of the generator of the number field
 
         EXAMPLES:
 
@@ -1402,7 +1400,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
         # No special code for residue fields of Z, since we just use the normal reduction map to GF(p)
         if self._K is ZZ:
             return self._F(x)
-        if is_PolynomialRing(self._K):
+        if isinstance(self._K, PolynomialRing_general):
             p = self._F.p.gen()
             if p.degree() == 1:
                 return self._F((x % p)[0])
@@ -1413,7 +1411,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
     def section(self):
         """
-        Computes a section of the map, namely a map that lifts elements of
+        Compute a section of the map, namely a map that lifts elements of
         the residue field to elements of the ring of integers.
 
         EXAMPLES::
@@ -1460,7 +1458,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
 
     def lift(self, x):
         """
-        Returns a lift of ``x`` to the Order, returning a "polynomial" in
+        Return a lift of ``x`` to the Order, returning a "polynomial" in
         the generator with coefficients between 0 and `p-1`.
 
         EXAMPLES::
@@ -1655,12 +1653,12 @@ cdef class LiftingMap(Section):
         """
         if self._K is QQ or self._K is ZZ:
             return self._K(x.lift())  # x.lift() is in ZZ
-        elif is_FractionField(self._K):
+        elif isinstance(self._K, FractionField_generic):
             if self._F.p.degree() == 1:
                 return self._K(self._K.ring_of_integers()(x))
             else:
                 return self._K(self._K.ring_of_integers()(x.polynomial().list()))
-        elif is_PolynomialRing(self._K):
+        elif isinstance(self._K, PolynomialRing_general):
             return self._K(x.polynomial().list())
         # Else the lifting map is just x |--> to_order(x * PB)
         x = self._F(x)
@@ -1684,6 +1682,7 @@ cdef class LiftingMap(Section):
               To:   Maximal Order generated by theta_12 in Cyclotomic Field of order 12 and degree 4
         """
         return "Lifting"
+
 
 class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn):
     """
@@ -1728,7 +1727,7 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
 
         INPUT:
 
-        - ``p`` -- A prime ideal of a number field
+        - ``p`` -- a prime ideal of a number field
 
         - ``name`` -- the name of the generator of this extension
 
@@ -1778,7 +1777,7 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
 
         INPUT:
 
-           - ``x`` -- something to cast in to ``self``.
+           - ``x`` -- something to cast in to ``self``
 
         EXAMPLES::
 

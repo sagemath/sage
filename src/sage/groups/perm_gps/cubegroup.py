@@ -563,7 +563,7 @@ class CubeGroup(PermutationGroup_generic):
         EXAMPLES::
 
             sage: rubik = CubeGroup()
-            sage: TestSuite(rubik).run(skip="_test_enumerated_set_contains") # because the group is very large
+            sage: TestSuite(rubik).run(skip='_test_enumerated_set_contains') # because the group is very large
 
         TESTS:
 
@@ -684,18 +684,18 @@ class CubeGroup(PermutationGroup_generic):
 
         INPUT:
 
-        - ``mv`` -- Can one of the following:
+        - ``mv`` -- can one of the following:
 
-          -  ``list`` -- list of facets (as returned by
-             self.facets())
+          - ``list`` -- list of facets (as returned by
+            self.facets())
 
-          -  ``dict`` -- list of faces (as returned by
-             ``self.faces()``)
+          - ``dict`` -- list of faces (as returned by
+            ``self.faces()``)
 
-          -  ``str`` -- either cycle notation (passed to GAP) or
-             a product of generators or Singmaster notation
+          - ``str`` -- either cycle notation (passed to GAP) or
+            a product of generators or Singmaster notation
 
-          -  ``perm_group element`` -- returned as an element of ``self``
+          - ``perm_group element`` -- returned as an element of ``self``
 
         - ``check`` -- check if the input is valid
 
@@ -845,9 +845,9 @@ class CubeGroup(PermutationGroup_generic):
 
         INPUT:
 
-        - ``mv`` -- A string of the form ``Xa*Yb*...``,
+        - ``mv`` -- string of the form ``Xa*Yb*...``,
           where ``X``, ``Y``, ... are in ``R``, ``L``, ``F``, ``B``, ``U``,
-          ``D`` and ``a``, ``b``, ... are integers.
+          ``D`` and ``a``, ``b``, ... are integers
 
         EXAMPLES::
 
@@ -982,8 +982,8 @@ class CubeGroup(PermutationGroup_generic):
 
         INPUT:
 
-        - ``mv`` -- A string in the Singmaster notation
-        - ``title`` -- (Default: ``True``) Display the title information
+        - ``mv`` -- string in the Singmaster notation
+        - ``title`` -- boolean (default: ``True``); display the title information
 
         The first one below is "superflip+4 spot" (in 26q\* moves) and the
         second one is the superflip (in 20f\* moves). Type show(P) to view
@@ -1018,7 +1018,7 @@ class CubeGroup(PermutationGroup_generic):
             return P
         return P
 
-    def legal(self, state, mode="quiet"):
+    def legal(self, state, mode='quiet'):
         r"""
         Return 1 (true) if the dictionary ``state`` (in the
         same format as returned by the faces method) represents a legal
@@ -1237,7 +1237,7 @@ class RubiksCube(SageObject):
             if isinstance(state, str):
                 state = self._group.faces(state)
             if not isinstance(state, PermutationGroupElement):
-                legal, state = self._group.legal(state, mode="gimme_group_element")
+                legal, state = self._group.legal(state, mode='gimme_group_element')
                 if not legal:
                     raise ValueError("not a legal cube")
             self._state = state
@@ -1337,11 +1337,11 @@ class RubiksCube(SageObject):
 
         INPUT:
 
-        - ``size`` -- The size of the cubie
-        - ``gap`` -- The gap between cubies
-        - ``x,y,z`` -- The position of the cubie
-        - ``colors`` -- The list of colors
-        - ``stickers`` -- (Default ``True``) Boolean to display stickers
+        - ``size`` -- the size of the cubie
+        - ``gap`` -- the gap between cubies
+        - ``x``, ``y``, ``z`` -- the position of the cubie
+        - ``colors`` -- the list of colors
+        - ``stickers`` -- boolean (default: ``True``); whether to display stickers
 
         EXAMPLES::
 
@@ -1420,7 +1420,7 @@ class RubiksCube(SageObject):
             return NotImplemented
         return richcmp(self._state, other._state, op)
 
-    def solve(self, algorithm="hybrid", timeout=15):
+    def solve(self, algorithm='hybrid', timeout=15):
         r"""
         Solve the Rubik's cube.
 
@@ -1429,13 +1429,13 @@ class RubiksCube(SageObject):
         - ``algorithm`` -- must be one of the following:
 
           - ``hybrid`` -- try ``kociemba`` for timeout seconds, then ``dietz``
-          - ``kociemba`` -- Use Dik T. Winter's program
+          - ``kociemba`` -- use Dik T. Winter's program
             (reasonable speed, few moves)
-          - ``dietz`` -- Use Eric Dietz's cubex program
+          - ``dietz`` -- use Eric Dietz's cubex program
             (fast but lots of moves)
-          - ``optimal`` -- Use Michael Reid's optimal program
+          - ``optimal`` -- use Michael Reid's optimal program
             (may take a long time)
-          - ``gap`` -- Use GAP word solution (can be slow)
+          - ``gap`` -- use GAP word solution (can be slow)
 
         Any choice other than ``gap`` requires the optional package
         ``rubiks``. Otherwise, the ``gap`` algorithm is used.
@@ -1487,7 +1487,7 @@ class RubiksCube(SageObject):
 
         elif algorithm == "gap":
             solver = CubeGroup()
-            return solver.solve(self._state, algorithm="gap")
+            return solver.solve(self._state, algorithm='gap')
 
         else:
             raise ValueError(f"Unrecognized algorithm: {algorithm}")

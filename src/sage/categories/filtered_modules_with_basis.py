@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Modules With Basis
 
@@ -158,7 +159,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                  over Integer Ring(i))_{i in Partitions}
 
             Checking this method on a filtered algebra. Note that this
-            will typically raise a :class:`NotImplementedError` when this
+            will typically raise a :exc:`NotImplementedError` when this
             feature is not implemented. ::
 
                 sage: A = AlgebrasWithBasis(ZZ).Filtered().example()
@@ -480,9 +481,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             - ``f`` -- a filtration-preserving linear map from ``self``
               to ``other`` (can be given as a morphism or as a function)
 
-            OUTPUT:
-
-            The graded linear map `\operatorname{gr} f`.
+            OUTPUT: the graded linear map `\operatorname{gr} f`
 
             EXAMPLES:
 

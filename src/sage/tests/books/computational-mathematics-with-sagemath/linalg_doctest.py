@@ -457,5 +457,4 @@ Sage example in ./linalg.tex, line 2949::
   sage: J,U = A.jordan_form(transformation=True)
   sage: U^-1*A*U == J
   True
-
 """

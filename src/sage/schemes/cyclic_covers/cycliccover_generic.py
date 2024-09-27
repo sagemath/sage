@@ -27,9 +27,6 @@ EXAMPLES::
     Traceback (most recent call last):
     ...
     NotImplementedError: Weighted Projective Space is not implemented
-
-
-
 """
 
 # *****************************************************************************
@@ -47,7 +44,7 @@ from sage.schemes.curves.affine_curve import AffinePlaneCurve
 class CyclicCover_generic(AffinePlaneCurve):
     def __init__(self, AA, r, f, names=None):
         """
-        Cyclic covers over a general ring
+        Cyclic covers over a general ring.
 
         INPUT:
 
@@ -55,10 +52,10 @@ class CyclicCover_generic(AffinePlaneCurve):
 
         - ``r`` -- degree of the cover
 
-        -  ``f`` -- univariate polynomial
+        - ``f`` -- univariate polynomial
 
-        -  ``names``  (default: ``["x","y"]``) -- names for the
-           coordinate functions
+        - ``names`` -- (default: ``["x","y"]``); names for the
+          coordinate functions
 
         TESTS::
 
@@ -88,9 +85,6 @@ class CyclicCover_generic(AffinePlaneCurve):
             Traceback (most recent call last):
             ...
             NotImplementedError: Weighted Projective Space is not implemented
-
-
-
         """
         x, y = AA.gens()
         self._r = r
@@ -250,7 +244,6 @@ class CyclicCover_generic(AffinePlaneCurve):
             sage: ZZx.<x> = ZZ[]
             sage: CyclicCover(5, x^5 + x + 1).projective_closure()
             Projective Plane Curve over Integer Ring defined by x0^5 + x0^4*x1 + x1^5 - x2^5
-
         """
         # test d = 3 and 4
         if self._d == self._r:
@@ -258,7 +251,7 @@ class CyclicCover_generic(AffinePlaneCurve):
         else:
             raise NotImplementedError("Weighted Projective Space is not implemented")
 
-    def cover_polynomial(self, K=None, var="x"):
+    def cover_polynomial(self, K=None, var='x'):
         """
         Return the polynomial defining the cyclic cover.
 
@@ -266,7 +259,6 @@ class CyclicCover_generic(AffinePlaneCurve):
 
             sage: ZZx.<x> = ZZ[]; CyclicCover(5, x^5 + x + 1).cover_polynomial()
             x^5 + x + 1
-
         """
 
         if K is None:

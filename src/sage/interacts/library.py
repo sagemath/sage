@@ -153,7 +153,7 @@ def library_interact(
 
 def html(obj):
     r"""
-    Shorthand to pretty print HTML
+    Shorthand to pretty print HTML.
 
     EXAMPLES::
 
@@ -231,9 +231,9 @@ def taylor_polynomial(title, f, order: int):
 
 @library_interact(
     title=lambda: text_control("<h2>Definite integral</h2>"),
-    f=lambda: input_box(default="3*x", label="$f(x)=$"),
-    g=lambda: input_box(default="x^2", label="$g(x)=$"),
-    interval=lambda: range_slider(-10, 10, default=(0, 3), label="Interval"),
+    f=lambda: input_box(default='3*x', label="$f(x)=$"),
+    g=lambda: input_box(default='x^2', label="$g(x)=$"),
+    interval=lambda: range_slider(-10, 10, default=(0, 3), label='Interval'),
     x_range=lambda: range_slider(-10, 10, default=(0, 3), label="plot range (x)"),
     selection=lambda: selector(
         ["f", "g", "f and g", "f - g"], default="f and g", label="Select"
@@ -278,11 +278,11 @@ def definite_integral(title, f, g, interval, x_range, selection):
 
     # Plot function f.
     if selection != "g":
-        f_plot = plot(f(x), x, x_range, color="blue", thickness=1.5)
+        f_plot = plot(f(x), x, x_range, color='blue', thickness=1.5)
 
     # Color and calculate the area between f and the horizontal axis.
     if selection == "f" or selection == "f and g":
-        f_plot += plot(f(x), x, interval, color="blue", fill=True, fillcolor="blue", fillalpha=0.15)
+        f_plot += plot(f(x), x, interval, color='blue', fill=True, fillcolor='blue', fillalpha=0.15)
         text += r"$\int_{%.2f}^{%.2f}(\color{Blue}{f(x)})\,\mathrm{d}x=\int_{%.2f}^{%.2f}(%s)\,\mathrm{d}x=%.2f$" % (
             interval[0], interval[1],
             interval[0], interval[1],
@@ -295,8 +295,8 @@ def definite_integral(title, f, g, interval, x_range, selection):
 
     # Plot function g. Also color and calculate the area between g and the horizontal axis.
     if selection == "g" or selection == "f and g":
-        g_plot = plot(g(x), x, x_range, color="green", thickness=1.5)
-        g_plot += plot(g(x), x, interval, color="green", fill=True, fillcolor="yellow", fillalpha=0.5)
+        g_plot = plot(g(x), x, x_range, color='green', thickness=1.5)
+        g_plot += plot(g(x), x, interval, color='green', fill=True, fillcolor='yellow', fillalpha=0.5)
         text += r"$\int_{%.2f}^{%.2f}(\color{Green}{g(x)})\,\mathrm{d}x=\int_{%.2f}^{%.2f}(%s)\,\mathrm{d}x=%.2f$" % (
             interval[0], interval[1],
             interval[0], interval[1],
@@ -306,9 +306,9 @@ def definite_integral(title, f, g, interval, x_range, selection):
 
     # Plot function f-g. Also color and calculate the area between f-g and the horizontal axis.
     if selection == "f - g":
-        g_plot = plot(g(x), x, x_range, color="green", thickness=1.5)
-        g_plot += plot(g(x), x, interval, color="green", fill=f(x), fillcolor="red", fillalpha=0.15)
-        h_plot = plot(f(x)-g(x), x, interval, color="red", thickness=1.5, fill=True, fillcolor="red", fillalpha=0.15)
+        g_plot = plot(g(x), x, x_range, color='green', thickness=1.5)
+        g_plot += plot(g(x), x, interval, color='green', fill=f(x), fillcolor='red', fillalpha=0.15)
+        h_plot = plot(f(x)-g(x), x, interval, color='red', thickness=1.5, fill=True, fillcolor='red', fillalpha=0.15)
         text = r"$\int_{%.2f}^{%.2f}(\color{Red}{f(x)-g(x)})\,\mathrm{d}x=\int_{%.2f}^{%.2f}(%s)\,\mathrm{d}x=%.2f$" % (
             interval[0], interval[1],
             interval[0], interval[1],
@@ -322,7 +322,7 @@ def definite_integral(title, f, g, interval, x_range, selection):
 
 @library_interact(
     title=lambda: text_control("<h2>Derivative grapher</h2>"),
-    function=lambda: input_box(default="x^5-3*x^3+1", label="Function:"),
+    function=lambda: input_box(default='x^5-3*x^3+1', label='Function:'),
     x_range=lambda: range_slider(-15, 15, 0.1, default=(-2, 2), label="Range (x)"),
     y_range=lambda: range_slider(-15, 15, 0.1, default=(-8, 6), label="Range (y)"),
 )
@@ -355,7 +355,7 @@ def function_derivative(title, function, x_range, y_range):
     f = symbolic_expression(function).function(x)
     df = derivative(f, x)
     ddf = derivative(df, x)
-    plots = plot(f(x), x_range, thickness=1.5) + plot(df(x), x_range, color="green") + plot(ddf(x), x_range, color="red")
+    plots = plot(f(x), x_range, thickness=1.5) + plot(df(x), x_range, color='green') + plot(ddf(x), x_range, color='red')
     if y_range == (0,0):
         show(plots, xmin=x_range[0], xmax=x_range[1])
     else:
@@ -368,9 +368,9 @@ def function_derivative(title, function, x_range, y_range):
 
 @library_interact(
     title=lambda: text_control("<h2>Difference quotient</h2>"),
-    f=lambda: input_box(default="sin(x)", label="f(x)"),
-    interval=lambda: range_slider(0, 10, 0.1, default=(0.0, 10.0), label="Range"),
-    a=lambda: slider(0, 10, None, 5.5, label="$a$"),
+    f=lambda: input_box(default='sin(x)', label="f(x)"),
+    interval=lambda: range_slider(0, 10, 0.1, default=(0.0, 10.0), label='Range'),
+    a=lambda: slider(0, 10, None, 5.5, label='$a$'),
     x0=lambda: slider(0, 10, None, 2.5, label="$x_0$ (start point)"),
 )
 def difference_quotient(title, f, interval, a, x0):
@@ -413,19 +413,19 @@ def difference_quotient(title, f, interval, a, x0):
     f_height = fmax - fmin
     measure_y = fmin - 0.1*f_height
 
-    measure_0 = line2d([(x0, measure_y), (a, measure_y)], rgbcolor="black")
-    measure_1 = line2d([(x0, measure_y + 0.02*f_height), (x0, measure_y-0.02*f_height)], rgbcolor="black")
-    measure_2 = line2d([(a, measure_y + 0.02*f_height), (a, measure_y-0.02*f_height)], rgbcolor="black")
-    text_x0 = text("x0", (x0, measure_y - 0.05*f_height), rgbcolor="black")
-    text_a = text("a", (a, measure_y - 0.05*f_height), rgbcolor="black")
+    measure_0 = line2d([(x0, measure_y), (a, measure_y)], rgbcolor='black')
+    measure_1 = line2d([(x0, measure_y + 0.02*f_height), (x0, measure_y-0.02*f_height)], rgbcolor='black')
+    measure_2 = line2d([(a, measure_y + 0.02*f_height), (a, measure_y-0.02*f_height)], rgbcolor='black')
+    text_x0 = text("x0", (x0, measure_y - 0.05*f_height), rgbcolor='black')
+    text_a = text("a", (a, measure_y - 0.05*f_height), rgbcolor='black')
     measure = measure_0 + measure_1 + measure_2 + text_x0 + text_a
 
     tanf = symbolic_expression((f(x0)-f(a))*(x-a)/(x0-a)+f(a)).function(x)
 
     fplot = plot(f(x), x, interval[0], interval[1])
-    tanplot = plot(tanf(x), x, interval[0], interval[1], rgbcolor="#FF0000")
-    points = point([(x0, f(x0)), (a, f(a))], pointsize=20, rgbcolor="#005500")
-    dashline = line2d([(x0, f(x0)), (x0, f(a)), (a, f(a))], rgbcolor="#005500", linestyle="--")
+    tanplot = plot(tanf(x), x, interval[0], interval[1], rgbcolor='#FF0000')
+    points = point([(x0, f(x0)), (a, f(a))], pointsize=20, rgbcolor='#005500')
+    dashline = line2d([(x0, f(x0)), (x0, f(a)), (a, f(a))], rgbcolor='#005500', linestyle='--')
     html('<h2>Difference Quotient</h2>')
     show(fplot + tanplot + points + dashline + measure, xmin=interval[0], xmax=interval[1], ymin=fmin-0.2*f_height, ymax=fmax)
     html(r"<br>$\text{Line's equation:}$")
@@ -497,9 +497,9 @@ def quadratic_equation(A, B, C):
     html(calc % (B, dis1, A, B, dis2, (2*A), sol))
 
 @library_interact(
-    a0=lambda: slider(0, 360, 1, 30, label="A"),
-    a1=lambda: slider(0, 360, 1, 180, label="B"),
-    a2=lambda: slider(0, 360, 1, 300, label="C"),
+    a0=lambda: slider(0, 360, 1, 30, label='A'),
+    a1=lambda: slider(0, 360, 1, 180, label='B'),
+    a2=lambda: slider(0, 360, 1, 300, label='C'),
 )
 def trigonometric_properties_triangle(a0, a1, a2):
     r"""
@@ -563,7 +563,7 @@ def trigonometric_properties_triangle(a0, a1, a2):
     unit_circle = circle((0, 0), 1, aspect_ratio=1)
 
     # Triangle
-    triangle = line([xy[0], xy[1], xy[2], xy[0]], rgbcolor="black")
+    triangle = line([xy[0], xy[1], xy[2], xy[0]], rgbcolor='black')
     triangle_points = point(xy, pointsize=30)
 
     # Labels of the angles drawn in a distance from points
@@ -612,41 +612,41 @@ def unit_circle(function, x):
 
     # Unit Circle
     C = circle((0, 0), 1, figsize=[5, 5], aspect_ratio=1)
-    C_line = line([(0, 0), (xy[0], xy[1])], rgbcolor="black")
-    C_point = point((xy[0], xy[1]), pointsize=40, rgbcolor="green")
-    C_inner = parametric_plot((cos(t), sin(t)), (t, 0, x + 0.001), color="green", thickness=3)
-    C_outer = parametric_plot((0.1 * cos(t), 0.1 * sin(t)), (t, 0, x + 0.001), color="black")
+    C_line = line([(0, 0), (xy[0], xy[1])], rgbcolor='black')
+    C_point = point((xy[0], xy[1]), pointsize=40, rgbcolor='green')
+    C_inner = parametric_plot((cos(t), sin(t)), (t, 0, x + 0.001), color='green', thickness=3)
+    C_outer = parametric_plot((0.1 * cos(t), 0.1 * sin(t)), (t, 0, x + 0.001), color='black')
     C_graph = C + C_line + C_point + C_inner + C_outer
 
     # Graphics related to the graph of the function
-    G_line = line([(0, 0), (x, 0)], rgbcolor="green", thickness=3)
-    G_point = point((x, 0), pointsize=30, rgbcolor="green")
+    G_line = line([(0, 0), (x, 0)], rgbcolor='green', thickness=3)
+    G_point = point((x, 0), pointsize=30, rgbcolor='green')
     G_graph = G_line + G_point
 
     # Sine
     if function == 0:
         Gf = plot(sin(t), t, 0, 2*pi, axes_labels=("x", "sin(x)"))
-        Gf_point = point((x, sin(x)), pointsize=30, rgbcolor="red")
-        Gf_line = line([(x, 0),(x, sin(x))], rgbcolor="red")
-        Cf_point = point((0, xy[1]), pointsize=40, rgbcolor="red")
-        Cf_line1 = line([(0, 0), (0, xy[1])], rgbcolor="red", thickness=3)
-        Cf_line2 = line([(0, xy[1]), (xy[0], xy[1])], rgbcolor="purple", linestyle="--")
+        Gf_point = point((x, sin(x)), pointsize=30, rgbcolor='red')
+        Gf_line = line([(x, 0),(x, sin(x))], rgbcolor='red')
+        Cf_point = point((0, xy[1]), pointsize=40, rgbcolor='red')
+        Cf_line1 = line([(0, 0), (0, xy[1])], rgbcolor='red', thickness=3)
+        Cf_line2 = line([(0, xy[1]), (xy[0], xy[1])], rgbcolor='purple', linestyle='--')
     # Cosine
     elif function == 1:
         Gf = plot(cos(t), t, 0, 2*pi, axes_labels=("x", "cos(x)"))
-        Gf_point = point((x, cos(x)), pointsize=30, rgbcolor="red")
-        Gf_line = line([(x, 0), (x, cos(x))], rgbcolor="red")
-        Cf_point = point((xy[0], 0), pointsize=40, rgbcolor="red")
-        Cf_line1 = line([(0, 0), (xy[0], 0)], rgbcolor="red", thickness=3)
-        Cf_line2 = line([(xy[0], 0), (xy[0], xy[1])], rgbcolor="purple", linestyle="--")
+        Gf_point = point((x, cos(x)), pointsize=30, rgbcolor='red')
+        Gf_line = line([(x, 0), (x, cos(x))], rgbcolor='red')
+        Cf_point = point((xy[0], 0), pointsize=40, rgbcolor='red')
+        Cf_line1 = line([(0, 0), (xy[0], 0)], rgbcolor='red', thickness=3)
+        Cf_line2 = line([(xy[0], 0), (xy[0], xy[1])], rgbcolor='purple', linestyle='--')
     # Tangent
     else:
         Gf = plot(tan(t), t, 0, 2*pi, ymin=-8, ymax=8, axes_labels=("x", "tan(x)"))
-        Gf_point = point((x, tan(x)), pointsize=30, rgbcolor="red")
-        Gf_line = line([(x, 0), (x, tan(x))], rgbcolor="red")
-        Cf_point = point((1, tan(x)), pointsize=40, rgbcolor="red")
-        Cf_line1 = line([(1, 0), (1, tan(x))], rgbcolor="red", thickness=3)
-        Cf_line2 = line([(xy[0], xy[1]), (1, tan(x))], rgbcolor="purple", linestyle="--")
+        Gf_point = point((x, tan(x)), pointsize=30, rgbcolor='red')
+        Gf_line = line([(x, 0), (x, tan(x))], rgbcolor='red')
+        Cf_point = point((1, tan(x)), pointsize=40, rgbcolor='red')
+        Cf_line1 = line([(1, 0), (1, tan(x))], rgbcolor='red', thickness=3)
+        Cf_line2 = line([(xy[0], xy[1]), (1, tan(x))], rgbcolor='purple', linestyle='--')
 
     C_graph += Cf_point + Cf_line1 + Cf_line2
     G_graph += Gf + Gf_point + Gf_line
@@ -656,14 +656,14 @@ def unit_circle(function, x):
 
 @library_interact(
     title=lambda: text_control("<h2>Special points in triangle</h2>"),
-    a0=lambda: slider(0, 360, 1, 30, label="A"),
-    a1=lambda: slider(0, 360, 1, 180, label="B"),
-    a2=lambda: slider(0, 360, 1, 300, label="C"),
-    show_median=lambda: checkbox(False, label="Medians"),
+    a0=lambda: slider(0, 360, 1, 30, label='A'),
+    a1=lambda: slider(0, 360, 1, 180, label='B'),
+    a2=lambda: slider(0, 360, 1, 300, label='C'),
+    show_median=lambda: checkbox(False, label='Medians'),
     show_pb=lambda: checkbox(False, label="Perpendicular Bisectors"),
-    show_alt=lambda: checkbox(False, label="Altitudes"),
+    show_alt=lambda: checkbox(False, label='Altitudes'),
     show_ab=lambda: checkbox(False, label="Angle Bisectors"),
-    show_incircle=lambda: checkbox(False, label="Incircle"),
+    show_incircle=lambda: checkbox(False, label='Incircle'),
     show_euler=lambda: checkbox(False, label="Euler's Line"),
 )
 def special_points(
@@ -749,7 +749,7 @@ def special_points(
     C = circle((0, 0), 1, aspect_ratio=1)
 
     # Triangle
-    triangle = line([xy[0], xy[1], xy[2], xy[0]], rgbcolor="black")
+    triangle = line([xy[0], xy[1], xy[2], xy[0]], rgbcolor='black')
     triangle_points = point(xy, pointsize=30)
 
     # Side lengths (bc, ca, ab) corresponding to triangle vertices (a, b, c)
@@ -778,34 +778,34 @@ def special_points(
 
     # Angle Bisectors
     if show_ab:
-        a_ab = line([xy[0], half(a, 1, 2, 0)], rgbcolor="blue", alpha=0.6)
-        b_ab = line([xy[1], half(a, 2, 0, 1)], rgbcolor="blue", alpha=0.6)
-        c_ab = line([xy[2], half(a, 0, 1, 2)], rgbcolor="blue", alpha=0.6)
-        ab_point = point(incircle_center, rgbcolor="blue", pointsize=28)
+        a_ab = line([xy[0], half(a, 1, 2, 0)], rgbcolor='blue', alpha=0.6)
+        b_ab = line([xy[1], half(a, 2, 0, 1)], rgbcolor='blue', alpha=0.6)
+        c_ab = line([xy[2], half(a, 0, 1, 2)], rgbcolor='blue', alpha=0.6)
+        ab_point = point(incircle_center, rgbcolor='blue', pointsize=28)
         ab_graph = a_ab + b_ab + c_ab + ab_point
     else:
         ab_graph = Graphics()
 
     # Medians
     if show_median:
-        a_median = line([xy[0], a_middle[0]], rgbcolor="green", alpha=0.6)
-        b_median = line([xy[1], a_middle[1]], rgbcolor="green", alpha=0.6)
-        c_median = line([xy[2], a_middle[2]], rgbcolor="green", alpha=0.6)
+        a_median = line([xy[0], a_middle[0]], rgbcolor='green', alpha=0.6)
+        b_median = line([xy[1], a_middle[1]], rgbcolor='green', alpha=0.6)
+        c_median = line([xy[2], a_middle[2]], rgbcolor='green', alpha=0.6)
         median_point = point(
             (
                 (xy[0][0]+xy[1][0]+xy[2][0])/3.0,
                 (xy[0][1]+xy[1][1]+xy[2][1])/3.0
-            ), rgbcolor="green", pointsize=28)
+            ), rgbcolor='green', pointsize=28)
         median_graph = a_median + b_median + c_median + median_point
     else:
         median_graph = Graphics()
 
     # Perpendicular Bisectors
     if show_pb:
-        a_pb = line_to_points(a_middle[0], half(a, 1, 2, 0), rgbcolor="red", alpha=0.6)
-        b_pb = line_to_points(a_middle[1], half(a, 2, 0, 1), rgbcolor="red", alpha=0.6)
-        c_pb = line_to_points(a_middle[2], half(a, 0, 1, 2), rgbcolor="red", alpha=0.6)
-        pb_point = point((0, 0), rgbcolor="red", pointsize=28)
+        a_pb = line_to_points(a_middle[0], half(a, 1, 2, 0), rgbcolor='red', alpha=0.6)
+        b_pb = line_to_points(a_middle[1], half(a, 2, 0, 1), rgbcolor='red', alpha=0.6)
+        c_pb = line_to_points(a_middle[2], half(a, 0, 1, 2), rgbcolor='red', alpha=0.6)
+        pb_point = point((0, 0), rgbcolor='red', pointsize=28)
         pb_graph = a_pb + b_pb + c_pb + pb_point
     else:
         pb_graph = Graphics()
@@ -814,12 +814,12 @@ def special_points(
     if show_alt:
         xA, xB, xC = xy[0][0], xy[1][0], xy[2][0]
         yA, yB, yC = xy[0][1], xy[1][1], xy[2][1]
-        a_alt = plot(((xC-xB)*x+(xB-xC)*xA)/(yB-yC)+yA, (x,-3,3), rgbcolor="brown", alpha=0.6)
-        b_alt = plot(((xA-xC)*x+(xC-xA)*xB)/(yC-yA)+yB, (x,-3,3), rgbcolor="brown", alpha=0.6)
-        c_alt = plot(((xB-xA)*x+(xA-xB)*xC)/(yA-yB)+yC, (x,-3,3), rgbcolor="brown", alpha=0.6)
+        a_alt = plot(((xC-xB)*x+(xB-xC)*xA)/(yB-yC)+yA, (x,-3,3), rgbcolor='brown', alpha=0.6)
+        b_alt = plot(((xA-xC)*x+(xC-xA)*xB)/(yC-yA)+yB, (x,-3,3), rgbcolor='brown', alpha=0.6)
+        c_alt = plot(((xB-xA)*x+(xA-xB)*xC)/(yA-yB)+yC, (x,-3,3), rgbcolor='brown', alpha=0.6)
         alt_lx = (xA*xB*(yA-yB)+xB*xC*(yB-yC)+xC*xA*(yC-yA)-(yA-yB)*(yB-yC)*(yC-yA))/(xC*yB-xB*yC+xA*yC-xC*yA+xB*yA-xA*yB)
         alt_ly = (yA*yB*(xA-xB)+yB*yC*(xB-xC)+yC*yA*(xC-xA)-(xA-xB)*(xB-xC)*(xC-xA))/(yC*xB-yB*xC+yA*xC-yC*xA+yB*xA-yA*xB)
-        alt_intersection = point((alt_lx, alt_ly), rgbcolor="brown", pointsize=28)
+        alt_intersection = point((alt_lx, alt_ly), rgbcolor='brown', pointsize=28)
         alt_graph = a_alt + b_alt + c_alt + alt_intersection
     else:
         alt_graph = Graphics()
@@ -832,7 +832,7 @@ def special_points(
                 (xy[0][0]+xy[1][0]+xy[2][0])/3.0,
                 (xy[0][1]+xy[1][1]+xy[2][1])/3.0
             ),
-            rgbcolor="purple",
+            rgbcolor='purple',
             thickness=2,
             alpha=0.7
         )
@@ -892,7 +892,7 @@ def coin(n, interval):
 @library_interact(
     title=lambda: text_control("<h2>Bisection method</h2>"),
     f=lambda: input_box("x^2-2", label="f(x)"),
-    interval=lambda: range_slider(-5, 5, default=(0, 4), label="range"),
+    interval=lambda: range_slider(-5, 5, default=(0, 4), label='range'),
     d=lambda: slider(1, 8, 1, 3, label="$10^{-d}$ precision"),
     maxn=lambda: slider(0, 50, 1, 10, label="max iterations"),
 )
@@ -971,7 +971,7 @@ def bisection_method(title, f, interval, d, maxn):
 @library_interact(
     title=lambda: text_control("<h2>Secant method for numerical root finding</h2>"),
     f=lambda: input_box("x^2-2", label="f(x)"),
-    interval=lambda: range_slider(-5, 5, default=(0, 4), label="range"),
+    interval=lambda: range_slider(-5, 5, default=(0, 4), label='range'),
     d=lambda: slider(1, 16, 1, 3, label="10^-d precision"),
     maxn=lambda: slider(0, 15, 1, 10, label="max iterations"),
 )
@@ -1033,7 +1033,7 @@ def secant_method(title, f, interval, d, maxn):
         L = sum(line([(c,k*i), (d,k*i)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(c,k*i-k/4), (c,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
         L += sum(line([(d,k*i-k/4), (d,k*i+k/4)]) for i, (c,d) in enumerate(intervals) )
-        S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color="green") for (c, d) in intervals)
+        S = sum(line([(c,f(c)), (d,f(d)), (d-(d-c)*f(d)/(f(d)-f(c)), 0)], color='green') for (c, d) in intervals)
         show(P + L + S, xmin=a, xmax=b)
 
 
@@ -1043,7 +1043,7 @@ def secant_method(title, f, interval, d, maxn):
     c=lambda: slider(-10, 10, default=6, label="Start ($x$)"),
     d=lambda: slider(1, 16, 1, 3, label="$10^{-d}$ precision"),
     maxn=lambda: slider(0, 15, 1, 10, label="max iterations"),
-    interval=lambda: range_slider(-10, 10, default=(0, 6), label="Interval"),
+    interval=lambda: range_slider(-10, 10, default=(0, 6), label='Interval'),
     list_steps=lambda: checkbox(default=False, label="List steps"),
 )
 def newton_method(title, f, c, d, maxn, interval, list_steps):
@@ -1059,7 +1059,7 @@ def newton_method(title, f, c, d, maxn, interval, list_steps):
     - ``d`` -- slider for the precision (`10^{-d}`)
     - ``maxn`` -- max number of iterations
     - ``interval`` -- range slider for the search interval
-    - ``list_steps`` -- checkbox, if true shows the steps numerically
+    - ``list_steps`` -- checkbox, if ``True`` shows the steps numerically
 
     EXAMPLES:
 
@@ -1104,10 +1104,10 @@ def newton_method(title, f, c, d, maxn, interval, list_steps):
             s.append([i+1, c, f(c), (c-h)*f(c+h)])
         pretty_print(table(s, header_row=True))
     else:
-        P = plot(f, x, interval, color="blue")
-        L = sum(line([(c, 0), (c, f(c))], color="green") for c in midpoints[:-1])
+        P = plot(f, x, interval, color='blue')
+        L = sum(line([(c, 0), (c, f(c))], color='green') for c in midpoints[:-1])
         for i in range(len(midpoints) - 1):
-            L += line([(midpoints[i], f(midpoints[i])), (midpoints[i+1], 0)], color="red")
+            L += line([(midpoints[i], f(midpoints[i])), (midpoints[i+1], 0)], color='red')
         show(P + L, xmin=interval[0], xmax=interval[1], ymin=P.ymin(), ymax=P.ymax())
 
 
@@ -1240,7 +1240,7 @@ def trapezoid_integration(
 
 @library_interact(
     title=lambda: text_control("<h2>Simpson integration</h2>"),
-    f=lambda: input_box(default="x*sin(x)+x+1", label="$f(x)=$"),
+    f=lambda: input_box(default='x*sin(x)+x+1', label="$f(x)=$"),
     n=lambda: slider(2, 100, 2, 6, label="# divisions"),
     interval_input=lambda: selector(
         ["from slider", "from keyboard"],
@@ -1321,11 +1321,11 @@ def simpson_integration(
 
     for i in range(0, n-1, 2):
         p = parabola((xs[i],ys[i]),(xs[i+1],ys[i+1]),(xs[i+2],ys[i+2]))
-        parabolas += plot(p(x=x), (x, xs[i], xs[i+2]), color="red")
-        lines += line([(xs[i],ys[i]), (xs[i],0), (xs[i+2],0)],color="red")
-        lines += line([(xs[i+1],ys[i+1]), (xs[i+1],0)], linestyle="-.", color="red")
+        parabolas += plot(p(x=x), (x, xs[i], xs[i+2]), color='red')
+        lines += line([(xs[i],ys[i]), (xs[i],0), (xs[i+2],0)],color='red')
+        lines += line([(xs[i+1],ys[i+1]), (xs[i+1],0)], linestyle='-.', color='red')
 
-    lines += line([(xs[-1],ys[-1]), (xs[-1],0)], color="red")
+    lines += line([(xs[-1],ys[-1]), (xs[-1],0)], color='red')
 
     html(r'Function $f(x)=%s$' % latex(f(x)))
 
@@ -1393,7 +1393,7 @@ def simpson_integration(
 
 @library_interact(
     title=lambda: text_control("<h2>Riemann integral with random sampling</h2>"),
-    f=lambda: input_box("x^2+1", label="$f(x)=$", width=40),
+    f=lambda: input_box("x^2+1", label='$f(x)=$', width=40),
     n=lambda: slider(1, 30, 1, 5, label="# divisions"),
     hr1=lambda: text_control("<hr>"),
     interval_input=lambda: selector(
@@ -1420,7 +1420,7 @@ def riemann_sum(
     auto_update=False,
 ):
     r"""
-    Interact explaining the definition of Riemann integral
+    Interact explaining the definition of Riemann integral.
 
     INPUT:
 
@@ -1486,7 +1486,7 @@ def riemann_sum(
             ["$i$", "$[x_{i-1},x_i]$", r"$\eta_i$", r"$f(\eta_i)$", "$x_{i}-x_{i-1}$"]
         ] + [
             [i+1,[division[i],division[i+1]],xs[i],ys[i],delka_intervalu[i]] for i in range(n)
-        ],  header_row=True))
+        ], header_row=True))
 
     html(r'Riemann sum: $\displaystyle\sum_{i=1}^{%s} f(\eta_i)(x_i-x_{i-1})=%s$ ' %
          (latex(n),latex(sum([ys[i]*delka_intervalu[i] for i in range(n)]))))
@@ -1500,7 +1500,7 @@ x = SR.var("x")
 @library_interact(
     f=lambda: sin(x),
     g=lambda: cos(x),
-    xrange=lambda: range_slider(-3, 3, default=(0, 1), label="x-range"),
+    xrange=lambda: range_slider(-3, 3, default=(0, 1), label='x-range'),
     yrange=lambda: "auto",
     a=lambda: 1,
     action=lambda: selector(
@@ -1544,7 +1544,7 @@ def function_tool(f, g, xrange, yrange, a, action, do_plot):
     - ``yrange`` -- range for plotting ('auto' is default, otherwise a tuple)
     - ``a`` -- factor ``a``
     - ``action`` -- select given operation on or combination of functions
-    - ``do_plot`` -- if true, a plot is drawn
+    - ``do_plot`` -- if ``True``, a plot is drawn
 
     EXAMPLES:
 
@@ -1658,7 +1658,7 @@ def function_tool(f, g, xrange, yrange, a, action, do_plot):
     zoom_x=lambda: range_slider(-2, 2, 0.01, (-1.5, 1.5), label="Zoom X"),
     zoom_y=lambda: range_slider(-2, 2, 0.01, (-1.5, 1.5), label="Zoom Y"),
     plot_points=lambda: slider(20, 400, 20, default=150, label="plot points"),
-    dpi=lambda: slider(20, 200, 10, default=80, label="dpi"),
+    dpi=lambda: slider(20, 200, 10, default=80, label='dpi'),
 )
 def julia(expo, c_real, c_imag, iterations, zoom_x, zoom_y, plot_points, dpi):
     r"""
@@ -1712,7 +1712,7 @@ def julia(expo, c_real, c_imag, iterations, zoom_x, zoom_y, plot_points, dpi):
     zoom_x=lambda: range_slider(-2, 2, 0.01, (-2, 1), label="Zoom X"),
     zoom_y=lambda: range_slider(-2, 2, 0.01, (-1.5, 1.5), label="Zoom Y"),
     plot_points=lambda: slider(20, 400, 20, default=150, label="plot points"),
-    dpi=lambda: slider(20, 200, 10, default=80, label="dpi"),
+    dpi=lambda: slider(20, 200, 10, default=80, label='dpi'),
 )
 def mandelbrot(expo, iterations, zoom_x, zoom_y, plot_points, dpi):
     r"""
@@ -1809,12 +1809,12 @@ def cellular_automaton(N, rule_number, size):
 
 
 @library_interact(
-    interval=lambda: range_slider(1, 4000, 10, default=(1, 1000), label="range"),
+    interval=lambda: range_slider(1, 4000, 10, default=(1, 1000), label='range'),
     show_factors=lambda: True,
     highlight_primes=lambda: True,
     show_curves=lambda: True,
     n=lambda: slider(1, 200, 1, default=89, label="number $n$"),
-    dpi=lambda: slider(10, 300, 10, default=100, label="dpi"),
+    dpi=lambda: slider(10, 300, 10, default=100, label='dpi'),
 )
 def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n, dpi):
     r"""
@@ -1826,9 +1826,9 @@ def polar_prime_spiral(interval, show_factors, highlight_primes, show_curves, n,
     INPUT:
 
     - ``interval`` -- range slider to specify start and end
-    - ``show_factors`` -- if true, show factors
-    - ``highlight_primes`` -- if true, prime numbers are highlighted
-    - ``show_curves`` -- if true, curves are plotted
+    - ``show_factors`` -- if ``True``, show factors
+    - ``highlight_primes`` -- if ``True``, prime numbers are highlighted
+    - ``show_curves`` -- if ``True``, curves are plotted
     - ``n`` -- number `n`
     - ``dpi`` -- dots per inch resolution for plotting
 

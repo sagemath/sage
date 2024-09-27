@@ -212,7 +212,7 @@ cdef class RealIntervalAbsoluteField_class(Field):
 
     def absprec(self):
         """
-        Returns the absolute precision of self.
+        Return the absolute precision of ``self``.
 
         EXAMPLES::
 

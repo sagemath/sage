@@ -28,7 +28,6 @@ AUTHOR:
 * optimized partition stack class
 * NICE-based partition refinement algorithm
 * canonical generation function
-
 """
 
 #*****************************************************************************
@@ -46,7 +45,7 @@ from cpython.mem cimport *
 from cpython.object cimport PyObject_RichCompare
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 
-from sage.structure.element import is_Matrix
+from sage.structure.element cimport Matrix
 from sage.misc.timing import cputime
 from sage.rings.integer cimport Integer
 from copy import copy
@@ -86,9 +85,10 @@ cdef int *hamming_weights() noexcept:
         ham_wts[i] = ham_wts[i & 255] + ham_wts[(i>>8) & 255]
     return ham_wts
 
+
 def weight_dist(M):
     """
-    Computes the weight distribution of the row space of `M`.
+    Compute the weight distribution of the row space of `M`.
 
     EXAMPLES::
 
@@ -119,7 +119,6 @@ def weight_dist(M):
         ....:  [0,0,0,0,0,0,0,1,0,0,1,1,1,1,0,0,1]])
         sage: weight_dist(M)
         [1, 0, 0, 0, 0, 0, 68, 0, 85, 0, 68, 0, 34, 0, 0, 0, 0, 0]
-
     """
     cdef bitset_t word
     cdef int i,j,k, dim=M.nrows(), deg=M.ncols()
@@ -154,6 +153,7 @@ def weight_dist(M):
     sig_free(LL)
     sig_free(basis)
     return L
+
 
 def test_word_perms(t_limit=5.0):
     r"""
@@ -192,7 +192,6 @@ def test_word_perms(t_limit=5.0):
 
         sage: from sage.coding.binary_code import test_word_perms
         sage: test_word_perms()  # long time (5s on sage.math, 2011)
-
     """
     cdef WordPermutation *g
     cdef WordPermutation *h
@@ -278,6 +277,7 @@ def test_word_perms(t_limit=5.0):
         dealloc_word_perm(h)
         dealloc_word_perm(i)
     sig_free(arr)
+
 
 cdef WordPermutation *create_word_perm(object list_perm) noexcept:
     r"""
@@ -555,7 +555,6 @@ def test_expand_to_ortho_basis(B=None):
         0000100001
         0000010001
         0000001001
-
     """
     cdef codeword *output
     cdef int k=0, i
@@ -574,12 +573,13 @@ def test_expand_to_ortho_basis(B=None):
         print(''.join(reversed(Integer(output[i]).binary().zfill(C.ncols))))
     sig_free(output)
 
+
 cdef codeword *expand_to_ortho_basis(BinaryCode B, int n) noexcept:
     r"""
     INPUT:
 
-    - B -- a BinaryCode in standard form
-    - n -- the degree
+    - ``B`` -- a BinaryCode in standard form
+    - ``n`` -- the degree
 
     OUTPUT:
 
@@ -735,7 +735,6 @@ cdef class BinaryCode:
         sage: B
         Binary [32,1] linear code, generator matrix
         [11111111111111111111111111111111]
-
     """
     def __cinit__(self, arg1, arg2=None):
         """
@@ -759,7 +758,7 @@ cdef class BinaryCode:
 
         self.radix = sizeof(int) << 3
 
-        if is_Matrix(arg1):
+        if isinstance(arg1, Matrix):
             self.ncols = arg1.ncols()
             self.nrows = arg1.nrows()
             nrows = self.nrows
@@ -795,7 +794,7 @@ cdef class BinaryCode:
         self_words = self.words
         self_basis = self.basis
 
-        if is_Matrix(arg1):
+        if isinstance(arg1, Matrix):
             rows = arg1.rows()
             for i from 0 <= i < nrows:
                 word = <codeword> 0
@@ -845,7 +844,6 @@ cdef class BinaryCode:
             sage: B = BinaryCode(M)
             sage: loads(dumps(B)) == B
             True
-
         """
         return BinaryCode, (self.matrix(),)
 
@@ -879,7 +877,6 @@ cdef class BinaryCode:
             sage: B.matrix()
             [1 1 1 1 0 0]
             [0 0 1 1 1 1]
-
         """
         cdef int i, j
         from sage.matrix.constructor import matrix
@@ -1013,7 +1010,6 @@ cdef class BinaryCode:
             [00111100]
             [00001111]
             [10101010]
-
         """
         cdef int i, j
         s = 'Binary [%d,%d] linear code, generator matrix\n'%(self.ncols, self.nrows)
@@ -1023,9 +1019,9 @@ cdef class BinaryCode:
 
     def _word(self, coords):
         """
-        Considering coords as an integer in binary, think of the 0's and 1's as
-        coefficients of the basis given by self.matrix(). This function returns
-        a string representation of that word.
+        Considering ``coords`` as an integer in binary, think of the 0s and 1s
+        as coefficients of the basis given by ``self.matrix()``. This function
+        returns a string representation of that word.
 
         EXAMPLES::
 
@@ -1039,7 +1035,6 @@ cdef class BinaryCode:
 
         Note that behavior under input which does not represent a word in
         the code is unspecified (gives nonsense).
-
         """
         s = ''
         for j from 0 <= j < self.ncols:
@@ -1048,7 +1043,7 @@ cdef class BinaryCode:
 
     def _is_one(self, word, col):
         """
-        Returns the col-th letter of word, i.e. 0 or 1. Words are expressed
+        Return the col-th letter of word, i.e. 0 or 1. Words are expressed
         as integers, which represent linear combinations of the rows of the
         generator matrix of the code.
 
@@ -1070,7 +1065,6 @@ cdef class BinaryCode:
             1
             sage: B._is_automorphism([1,0,3,2,4,5,6,7], [0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 11, 10, 13, 12, 15, 14])
             1
-
         """
         return self.is_one(word, col) != 0
 
@@ -1083,10 +1077,10 @@ cdef class BinaryCode:
 
         INPUT:
 
-        - col_gamma -- permutation sending i |--> col_gamma[i] acting
-          on the columns.
-        - word_gamma -- permutation sending i |--> word_gamma[i] acting
-          on the words.
+        - ``col_gamma`` -- permutation sending i |--> col_gamma[i] acting
+          on the columns
+        - ``word_gamma`` -- permutation sending i |--> word_gamma[i] acting
+          on the words
 
         EXAMPLES::
 
@@ -1102,7 +1096,6 @@ cdef class BinaryCode:
             [10101010]
             sage: B._is_automorphism([1,0,3,2,4,5,6,7], [0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 11, 10, 13, 12, 15, 14])
             1
-
         """
         cdef int i
         cdef int *_col_gamma
@@ -1138,7 +1131,7 @@ cdef class BinaryCode:
 
         INPUT:
 
-        - labeling -- a list permutation of the columns
+        - ``labeling`` -- list permutation of the columns
 
         EXAMPLES::
 
@@ -1173,7 +1166,6 @@ cdef class BinaryCode:
             [001000000000001011011110]
             [010000000000101110001101]
             [100000000000010111000111]
-
         """
         # Tests for this function implicitly test _apply_permutation_to_basis
         # and _update_words_from_basis. These functions should not be used
@@ -1270,7 +1262,6 @@ cdef class OrbitPartition:
     cell of the partition, and the size of the partition.
 
     See :wikipedia:`Disjoint-set_data_structure`
-
     """
     def __cinit__(self, int nrows, int ncols):
         """
@@ -1344,7 +1335,6 @@ cdef class OrbitPartition:
             0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
             Columns:
             0,1,2,3,4,5,6,7
-
         """
         cdef int i
         cdef int j
@@ -1368,7 +1358,7 @@ cdef class OrbitPartition:
 
     def _wd_find(self, word):
         """
-        Returns the root of word.
+        Return the root of word.
 
         EXAMPLES::
 
@@ -1383,7 +1373,6 @@ cdef class OrbitPartition:
             0,1,2,3,4,5,6,7
             sage: O._wd_find(12)
             12
-
         """
         return self.wd_find(word)
 
@@ -1418,7 +1407,6 @@ cdef class OrbitPartition:
             0,1,2,3,4,5,6,7
             sage: O._wd_find(10)
             1
-
         """
         self.wd_union(x, y)
 
@@ -1442,7 +1430,7 @@ cdef class OrbitPartition:
 
     def _col_find(self, col):
         """
-        Returns the root of col.
+        Return the root of col.
 
         EXAMPLES::
 
@@ -1457,7 +1445,6 @@ cdef class OrbitPartition:
             0,1,2,3,4,5,6,7
             sage: O._col_find(6)
             6
-
         """
         return self.col_find(col)
 
@@ -1492,7 +1479,6 @@ cdef class OrbitPartition:
             0,1,2,3,1,5,6,7
             sage: O._col_find(4)
             1
-
         """
         self.col_union(x, y)
 
@@ -1516,7 +1502,7 @@ cdef class OrbitPartition:
 
     def _merge_perm(self, col_gamma, wd_gamma):
         """
-        Merges the cells of self under the given permutation. If gamma[a] = b,
+        Merges the cells of ``self`` under the given permutation. If gamma[a] = b,
         then after merge_perm, a and b will be in the same cell. Returns 0 if
         nothing was done, otherwise returns 1.
 
@@ -1539,7 +1525,6 @@ cdef class OrbitPartition:
             0,1,2,3,4,5,6,7,8,8,10,10,12,12,14,14
             Columns:
             0,0,2,2,4,5,6,7
-
         """
         cdef int i
         cdef int *_col_gamma
@@ -1704,7 +1689,7 @@ cdef class PartitionStack:
 
     def print_data(self):
         """
-        Prints all data for self.
+        Print all data for ``self``.
 
         EXAMPLES::
 
@@ -1777,7 +1762,6 @@ cdef class PartitionStack:
             0
             0
             0
-
         """
         cdef int i, j
         s = ''
@@ -1826,7 +1810,7 @@ cdef class PartitionStack:
 
     def __repr__(self):
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -1835,7 +1819,6 @@ cdef class PartitionStack:
             sage: P = PartitionStack(2, 6)
             sage: P
             ({0,1,2,3})  ({0,1,2,3,4,5})
-
         """
         cdef int i, j, k
         s = ''
@@ -1850,7 +1833,7 @@ cdef class PartitionStack:
 
     def _repr_at_k(self, k):
         """
-        Gives a string representing the partition at level k:
+        Give a string representing the partition at level k.
 
         EXAMPLES::
 
@@ -1859,7 +1842,6 @@ cdef class PartitionStack:
             ({0,1,2,3})  ({0,1,2,3,4,5})
             sage: P._repr_at_k(0)
             '({0,1,2,3})  ({0,1,2,3,4,5})\n'
-
         """
         s = '({'
         for j from 0 <= j < self.nwords:
@@ -1881,7 +1863,7 @@ cdef class PartitionStack:
 
     def _is_discrete(self, k):
         """
-        Returns whether the partition at level k is discrete.
+        Return whether the partition at level k is discrete.
 
         EXAMPLES::
 
@@ -1903,7 +1885,6 @@ cdef class PartitionStack:
             0
             sage: P._is_discrete(5)
             1
-
         """
         return self.is_discrete(k)
 
@@ -1921,7 +1902,7 @@ cdef class PartitionStack:
 
     def _num_cells(self, k):
         """
-        Returns the number of cells in the partition at level k.
+        Return the number of cells in the partition at level k.
 
         EXAMPLES::
 
@@ -1939,7 +1920,6 @@ cdef class PartitionStack:
             ({0,1,2,3})  ({0},{1},{2},{3},{4},{5})
             sage: P._num_cells(3)
             5
-
         """
         return self.num_cells(k)
 
@@ -1957,7 +1937,7 @@ cdef class PartitionStack:
 
     def _sat_225(self, k):
         """
-        Returns whether the partition at level k satisfies the hypotheses of
+        Return whether the partition at level k satisfies the hypotheses of
         Lemma 2.25 in Brendan McKay's Practical Graph Isomorphism paper (see
         sage/graphs/graph_isom.pyx.
 
@@ -1979,7 +1959,6 @@ cdef class PartitionStack:
             ({0,1,2,3})  ({0},{1},{2},{3,4,5})
             ({0,1,2,3})  ({0},{1},{2},{3},{4,5})
             ({0,1,2,3})  ({0},{1},{2},{3},{4},{5})
-
         """
         return self.sat_225(k)
 
@@ -2259,7 +2238,6 @@ cdef class PartitionStack:
             ({4,3,5},{6})  ({99},{99,99,99,99,99})
             ({4,3},{5},{6})  ({99},{99,99},{99,99,99})
             ({4},{3},{5},{6})  ({99},{99},{99},{99},{99,99})
-
         """
         cdef int i
         for i from 0 <= i < len(col_ents):
@@ -2293,7 +2271,6 @@ cdef class PartitionStack:
             ({0},{3},{2,1})  ({0},{5,4,3,2,1})
             ({0},{3},{2},{1})  ({0},{5},{4},{3,2,1})
             ({0},{3},{2},{1})  ({0},{5},{4},{3},{2},{1})
-
         """
         self.col_percolate(start, end)
 
@@ -2328,7 +2305,6 @@ cdef class PartitionStack:
             ({0},{3},{2,1})  ({0},{5,4,3,2,1})
             ({0},{3},{2},{1})  ({0},{5},{4},{3,2,1})
             ({0},{3},{2},{1})  ({0},{5},{4},{3},{2},{1})
-
         """
         self.wd_percolate(start, end)
 
@@ -2427,7 +2403,6 @@ cdef class PartitionStack:
             ({0,1,2,3})  ({0},{1},{2},{3,4,5})
             ({0,1,2,3})  ({0},{1},{2},{3},{4,5})
             ({0,1,2,3})  ({0},{1},{2},{3},{4},{5})
-
         """
         return self.split_vertex(v, k)
 
@@ -2468,7 +2443,7 @@ cdef class PartitionStack:
 
     def _col_degree(self, C, col, wd_ptr, k):
         """
-        Returns the number of words in the cell specified by wd_ptr that have a
+        Return the number of words in the cell specified by wd_ptr that have a
         1 in the col-th column.
 
         EXAMPLES::
@@ -2493,7 +2468,6 @@ cdef class PartitionStack:
             ({0,1,2,3})  ({0},{1},{2},{3},{4},{5})
             sage: P._col_degree(B, 2, 0, 2)
             2
-
         """
         return self.col_degree(C, col, wd_ptr, k)
 
@@ -2509,7 +2483,7 @@ cdef class PartitionStack:
 
     def _wd_degree(self, C, wd, col_ptr, k):
         """
-        Returns the number of columns in the cell specified by col_ptr that are
+        Return the number of columns in the cell specified by col_ptr that are
         1 in wd.
 
         EXAMPLES::
@@ -2534,7 +2508,6 @@ cdef class PartitionStack:
             ({0,1,2,3})  ({0},{1},{2},{3},{4},{5})
             sage: P._wd_degree(B, 1, 1, 1)
             3
-
         """
         cdef int *ham_wts = hamming_weights()
         result = self.wd_degree(C, wd, col_ptr, k, ham_wts)
@@ -2558,9 +2531,9 @@ cdef class PartitionStack:
 
         INPUT:
 
-        - start -- location of the beginning of the cell
-        - k -- at what level of refinement the partition of interest lies
-        - degrees -- the counts to sort by
+        - ``start`` -- location of the beginning of the cell
+        - ``k`` -- at what level of refinement the partition of interest lies
+        - ``degrees`` -- the counts to sort by
 
         EXAMPLES::
 
@@ -2574,7 +2547,6 @@ cdef class PartitionStack:
             sage: P
             ({0,1,2,3})  ({0,1,4,5,2,3})
             ({0,1,2,3})  ({0},{1},{4,5},{2,3})
-
         """
         cdef int i
         for i from 0 <= i < len(degrees):
@@ -2630,9 +2602,9 @@ cdef class PartitionStack:
 
         INPUT:
 
-        - start -- location of the beginning of the cell
-        - k -- at what level of refinement the partition of interest lies
-        - degrees -- the counts to sort by
+        - ``start`` -- location of the beginning of the cell
+        - ``k`` -- at what level of refinement the partition of interest lies
+        - ``degrees`` -- the counts to sort by
 
         EXAMPLES::
 
@@ -2644,7 +2616,6 @@ cdef class PartitionStack:
             sage: P
             ({0,1,6,7,2,3,4,5})  ({0,1,2,3,4,5})
             ({0,1},{6,7},{2,3,4,5})  ({0,1,2,3,4,5})
-
         """
         cdef int i
         for i from 0 <= i < len(degrees):
@@ -2739,7 +2710,6 @@ cdef class PartitionStack:
             ({0},{4},{6,2},{13,9},{11,15},{10,14},{12,8},{7,3},{1},{5})  ({0},{1},{2},{3,4,7,6,5})
             ({0},{4},{6,2},{13,9},{11,15},{10,14},{12,8},{7,3},{1},{5})  ({0},{1},{2},{3},{4,7,6,5})
             ({0},{4},{6},{2},{13},{9},{11},{15},{10},{14},{12},{8},{7},{3},{1},{5})  ({0},{1},{2},{3},{4},{7},{6},{5})
-
         """
         cdef int i, alpha_length = len(alpha)
         cdef int *_alpha = <int *> sig_malloc( (self.nwords + self.ncols) * sizeof(int) )
@@ -2855,7 +2825,6 @@ cdef class PartitionStack:
             sage: P
             ({0,1,2,3})  ({0,1,2,3,4,5})
             ({0,1,2,3})  ({0},{1,2,3,4,5})
-
         """
         self.clear(k)
 
@@ -2956,7 +2925,6 @@ cdef class PartitionStack:
             8
             0
             11
-
         """
         cdef int i, j
         if self.basis_locations:
@@ -2990,7 +2958,6 @@ cdef class PartitionStack:
             8
             0
             11
-
         """
         cdef int i
         cdef int *ham_wts = hamming_weights()
@@ -3057,7 +3024,6 @@ cdef class PartitionStack:
             1
             sage: P._get_permutation(Q)
             ([0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 8, 9, 10, 11], [0, 1, 2, 3, 5, 4, 7, 6])
-
         """
         cdef int i
         cdef int *word_g = <int *> sig_malloc( self.nwords * sizeof(int) )
@@ -3179,17 +3145,18 @@ cdef class BinaryCodeClassifier:
         INPUT:
 
         - ``CC`` -- a BinaryCode object
-        - ``verbosity`` -- a nonnegative integer
+        - ``verbosity`` -- nonnegative integer
 
         OUTPUT:
-            a tuple, (gens, labeling, size, base)
-            gens -- a list of permutations (in list form) representing generators
-                of the permutation automorphism group of the code CC.
-            labeling -- a permutation representing the canonical labeling of the
-                code. mostly for internal use; entries describe the relabeling
-                on the columns.
-            size -- the order of the automorphism group.
-            base -- a set of cols whose action determines the action on all cols
+
+        a tuple, (gens, labeling, size, base)
+        - gens; list of permutations (in list form) representing generators
+          of the permutation automorphism group of the code CC
+        - labeling; a permutation representing the canonical labeling of the
+          code. mostly for internal use; entries describe the relabeling
+          on the columns.
+        - size; the order of the automorphism group
+        - base; a set of cols whose action determines the action on all cols
 
         EXAMPLES::
 
@@ -3326,7 +3293,6 @@ cdef class BinaryCodeClassifier:
             sage: BC = BinaryCodeClassifier()
             sage: BC._aut_gp_and_can_label(B)[2]
             442368
-
         """
         cdef int i, j
         cdef BinaryCode C = CC
@@ -3940,7 +3906,6 @@ cdef class BinaryCodeClassifier:
             [000000000100010011011110]
             [000000000010001011110101]
             [000000000001001101101110]
-
         """
         aut_gp_gens, labeling, size, base = self._aut_gp_and_can_label(B)
         B._apply_permutation_to_basis(labeling)
@@ -4000,7 +3965,6 @@ cdef class BinaryCodeClassifier:
             n=10 :   0   1   1   1   0   0
             n=11 :   0   0   1   1   0   0
             n=12 :   1   2   3   4   2   0
-
         """
         cdef BinaryCode m
         cdef codeword *ortho_basis
@@ -4069,7 +4033,6 @@ cdef class BinaryCodeClassifier:
 
         output = []
 
-
         for i from 0 <= i < len(aut_gp_gens):
             parent_generators[i] = create_word_perm(aut_gp_gens[i] + list(range(B.ncols, n)))
 
@@ -4094,7 +4057,6 @@ cdef class BinaryCodeClassifier:
             raise MemoryError()
         for temp from 0 <= temp < ((<codeword>1) << orb_chx_size):
             orbit_checks[temp] = 0
-
 
         combo = 0
         parity = 0
@@ -4187,9 +4149,9 @@ cdef class BinaryCodeClassifier:
                                 dealloc_word_perm(hwp)
                                 break
                         if bingo2:
-                            from sage.matrix.constructor import Matrix
+                            from sage.matrix.constructor import matrix
                             from sage.rings.finite_rings.finite_field_constructor import GF
-                            M = Matrix(GF(2), B_aug.nrows, B_aug.ncols)
+                            M = matrix(GF(2), B_aug.nrows, B_aug.ncols)
                             for i from 0 <= i < B_aug.ncols:
                                 for j from 0 <= j < B_aug.nrows:
                                     M[j,i] = B_aug.is_one(1 << j, i)
@@ -4211,7 +4173,6 @@ cdef class BinaryCodeClassifier:
                     for temp in orbits:
                         temp = (temp >> B.nrows) & k_gate
                         orbit_checks[temp >> log_2_radix] |= ((<codeword>1) << (temp & radix_gate))
-
 
             parity ^= 1
             i = 0

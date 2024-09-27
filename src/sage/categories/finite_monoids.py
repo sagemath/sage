@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite monoids
 """
@@ -46,7 +47,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
                 a_1 * a_2 * \cdots * a_k
 
-            The 0th face of this is obtained by deleting `a_1`, and
+            The `0`-th face of this is obtained by deleting `a_1`, and
             the `k`-th face is obtained by deleting `a_k`. The other
             faces are obtained by multiplying elements: the 1st face
             is
@@ -169,7 +170,7 @@ class FiniteMonoids(CategoryWithAxiom):
 
             INPUT:
 
-            - ``base_ring`` (default: `\QQ`) a field
+            - ``base_ring`` -- (default: `\QQ`) a field
 
             OUTPUT:
 
@@ -185,7 +186,7 @@ class FiniteMonoids(CategoryWithAxiom):
                 sage: # needs sage.combinat sage.groups sage.modules
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
                 sage: H3 = HeckeMonoid(SymmetricGroup(3))
-                sage: H3.repr_element_method(style="reduced")
+                sage: H3.repr_element_method(style='reduced')
                 sage: H3.rhodes_radical_congruence()
                 [([1, 2], [2, 1]), ([1, 2], [1, 2, 1]), ([2, 1], [1, 2, 1])]
 

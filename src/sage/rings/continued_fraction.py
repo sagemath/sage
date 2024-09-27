@@ -265,7 +265,7 @@ def rat_interval_cf_list(r1, r2):
     Return the common prefix of the rationals ``r1`` and ``r2`` seen as
     continued fractions.
 
-    OUTPUT: a list of Sage integers.
+    OUTPUT: list of Sage integers
 
     EXAMPLES::
 
@@ -362,9 +362,9 @@ class ContinuedFraction_base(SageObject):
 
         - ``nterms`` -- the maximum number of terms to use
 
-        - ``unicode`` -- (default ``False``) whether to use unicode character
+        - ``unicode`` -- (default: ``False``) whether to use unicode character
 
-        - ``join`` -- (default ``True``) if ``False`` instead of returning a
+        - ``join`` -- (default: ``True``) if ``False`` instead of returning a
           string return a list of string, each of them representing a line
 
         EXAMPLES::
@@ -823,7 +823,7 @@ class ContinuedFraction_base(SageObject):
 
     def convergent(self, n):
         """
-        Return the ``n``-th partial convergent to self.
+        Return the ``n``-th partial convergent to ``self``.
 
         EXAMPLES::
 
@@ -1172,11 +1172,12 @@ class ContinuedFraction_base(SageObject):
 
         INPUT:
 
-        - ``a, b, c, d`` -- integers
+        - ``a``, ``b``, ``c``, ``d`` -- integers
 
-        - ``forward_value`` -- boolean (default: ``False``) whether the returned continued
-          fraction is given the symbolic value of `(a x + b)/(cx + d)` and not only the
-          list of partial quotients obtained from Gosper's algorithm.
+        - ``forward_value`` -- boolean (default: ``False``); whether the
+          returned continued fraction is given the symbolic value of
+          `(a x + b)/(cx + d)` and not only the list of partial quotients
+          obtained from Gosper's algorithm
 
         EXAMPLES::
 
@@ -1312,9 +1313,9 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
         r"""
         INPUT:
 
-        - ``x1`` -- a tuple of integers
+        - ``x1`` -- tuple of integers
 
-        - ``x2`` -- a tuple of integers
+        - ``x2`` -- tuple of integers
 
         TESTS::
 
@@ -1840,7 +1841,7 @@ class ContinuedFraction_real(ContinuedFraction_base):
 
     def length(self):
         r"""
-        Return infinity
+        Return infinity.
 
         EXAMPLES::
 
@@ -2065,8 +2066,7 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
 
         - ``value`` -- an optional known value
 
-        - ``check`` -- whether the constructor checks the input (default is
-          ``True``)
+        - ``check`` -- whether the constructor checks the input (default: ``True``)
 
         TESTS::
 
@@ -2077,11 +2077,11 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
             ValueError: the sequence must consist of integers
 
             sage: from itertools import count
-            sage: w = Word(count(), length="infinite")                                  # needs sage.combinat
+            sage: w = Word(count(), length='infinite')                                  # needs sage.combinat
             sage: continued_fraction(w)                                                 # needs sage.combinat
             [0; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19...]
 
-            sage: w = Word(count(), length="unknown")                                   # needs sage.combinat
+            sage: w = Word(count(), length='unknown')                                   # needs sage.combinat
             sage: continued_fraction(w)                                                 # needs sage.combinat
             Traceback (most recent call last):
             ...
@@ -2157,7 +2157,7 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -2192,7 +2192,7 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -2333,7 +2333,7 @@ def check_and_reduce_pair(x1, x2=None):
     return tuple(y1), tuple(y2)
 
 
-def continued_fraction_list(x, type="std", partial_convergents=False,
+def continued_fraction_list(x, type='std', partial_convergents=False,
                             bits=None, nterms=None):
     r"""
     Return the (finite) continued fraction of ``x`` as a list.
@@ -2358,20 +2358,20 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
 
     INPUT:
 
-    - ``x`` -- exact rational or floating-point number. The number to
-      compute the continued fraction of.
+    - ``x`` -- exact rational or floating-point number; the number to
+      compute the continued fraction of
 
-    - ``type`` -- either "std" (default) for standard continued fractions or
-      "hj" for Hirzebruch-Jung ones.
+    - ``type`` -- either ``'std'`` (default) for standard continued fractions or
+      ``'hj'`` for Hirzebruch-Jung ones
 
-    - ``partial_convergents`` -- boolean. Whether to return the
-      partial convergents.
+    - ``partial_convergents`` -- boolean; whether to return the
+      partial convergents
 
     - ``bits`` -- an optional integer that specify a precision for the real
-      interval field that is used internally.
+      interval field that is used internally
 
-    - ``nterms`` -- integer. The upper bound on the number of terms in
-      the continued fraction expansion to return.
+    - ``nterms`` -- integer; the upper bound on the number of terms in
+      the continued fraction expansion to return
 
     OUTPUT:
 
@@ -2387,7 +2387,7 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
         sage: 2 + 1/(2 + 1/(1 + 1/(2 + 1/2)))
         45/19
 
-        sage: continued_fraction_list(45/19, type="hj")
+        sage: continued_fraction_list(45/19, type='hj')
         [3, 2, 3, 2, 3]
         sage: 3 - 1/(2 - 1/(3 - 1/(2 - 1/3)))
         45/19

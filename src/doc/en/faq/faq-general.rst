@@ -315,7 +315,6 @@ following commands:
     $ ./sage --advanced
 
 
-
 I want to cite Sage in a publication, how do I do it?
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 

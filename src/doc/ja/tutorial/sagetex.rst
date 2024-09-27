@@ -81,7 +81,7 @@ SageTeXの動作を体験するために，まずSageTeXのインストール手
 ここでLaTeX処理を実行すると，Sageの演算結果とプロットの全てがLaTeX文書に収められることになる．
 
 
-上の処理に用いられた各マクロの内容はごく簡単に理解できる． 
+上の処理に用いられた各マクロの内容はごく簡単に理解できる．
 ``sageblock`` 環境はSageコードを入力通りに組版し，ユーザーがSageを動かすとそのコードを実行する．
 ``\sage{foo}`` とすると， Sage上で ``latex(foo)`` を実行したのと同じ結果がLaTeX文書に挿入される．
 プロット命令はやや複雑だが，もっとも単純な場合である ``\sageplot{foo}`` は ``foo.save('filename.eps')`` を実行して得られた画像を文書へ挿入する役割を果たす．
@@ -115,7 +115,6 @@ SageTeXパッケージを使えばSageによる演算やプロットをLaTeX文�
 SageTeXはデフォルトでSageにインストールされるが，LaTeX文書で利用する前に，運用しているTeXシステムへSageTeXの存在を教えておかねばならない．
 
 
-
 鍵になるのは， TeXが ``sagetex.sty`` を発見できるかどうかである．
 この ``sagetex.sty`` は， ``SAGE_ROOT`` をSageがビルトあるいはインストールされたディレクトリとすると，
 :file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/` に置かれているはずだ．
@@ -129,7 +128,6 @@ TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeX�
   ただし，このやり方には二つのちょっとした問題点がある．
   一つ目は，このやり方では使用しているシステムが重複した ``sagetex.sty`` だらけになってしまうこと．
   二つ目の，もっと厄介な問題は，この状態でSageが更新されてSageTeXも新しいバージョンになった場合，SageTeXを構成するPythonコードやLaTeXコードとの食い違いが生じて実行時にエラーが発生しかねない点である．
-
 
 
 - 第二の方法は，環境変数 ``TEXINPUTS`` を利用することである．
@@ -152,7 +150,6 @@ TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeX�
 
   インストール済みのSageを移動したり，新バージョンを旧版とは違う場所にインストールした場合，
   先に紹介したコマンドも新しい ``SAGE_ROOT`` を反映させるように変更する必要がある．
-
 
 
 - TeXに ``sagetex.sty`` の在処を教える第三の(かつ最善の)方法は，このスタイルファイルを自分のホームディレクトリのどこか都合のよい所にコピーしておくことだ．
@@ -205,7 +202,6 @@ TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeX�
   第三の方法にしておけば，Sage更新後もSageTeXを正常に動作させるために必要な作業はディレクトリを一つコピーするだけになる．
 
 
-
 SageTeXドキュメント
 ---------------------
 
@@ -213,7 +209,6 @@ SageTeXドキュメント
 SageTeXのドキュメントが :file:`SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf` に配置されていることに触れておきたい．
 同じディレクトリには例題ファイルと，これをLaTeXとSageTeXによってすでに組版処理した結果も用意されている(``example.tex`` と ``example.pdf`` を参照)．
 これらのファイルは `SageTeX ページ <https://github.com/sagemath/sagetex>`_ からダンロードすることもできる．
-
 
 
 SageTeXとTeXLive

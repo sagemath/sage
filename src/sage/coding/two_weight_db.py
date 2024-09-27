@@ -27,7 +27,6 @@ Check the data's consistency::
     ....:     assert code['k'] == M.nrows()
     ....:     w1,w2 = [w for w,f in enumerate(LinearCode(M).weight_distribution()) if w and f]
     ....:     assert (code['w1'], code['w2']) == (w1, w2)
-
 """
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.matrix.constructor import Matrix

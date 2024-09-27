@@ -19,20 +19,18 @@ from sage.modular.arithgroup.all import CongruenceSubgroupBase, Gamma0
 from sage.modular.modsym.space import ModularSymbolsSpace
 from .abvar_newform import ModularAbelianVariety_newform
 import sage.modular.modform.element
-from . import abvar
+from sage.modular.abvar import abvar
 
 _cache = {}
 
 def _get(key):
     """
-    Returns the cached abelian variety with given key. This is used
+    Return the cached abelian variety with given key. This is used
     internally by the abelian varieties constructor.
 
     INPUT:
 
-
-    -  ``key`` -- hashable
-
+    - ``key`` -- hashable
 
     EXAMPLES::
 
@@ -53,23 +51,17 @@ def _get(key):
 
 def _saved(key, J):
     """
-    Returns the cached abelian variety with given key. This is used
+    Return the cached abelian variety with given key. This is used
     internally by the abelian varieties constructor.
 
     INPUT:
 
+    - ``key`` -- hashable
 
-    -  ``key`` -- hashable
+    - ``J`` -- modular abelian variety
 
-    -  ``J`` -- modular abelian variety
-
-
-    OUTPUT:
-
-
-    -  ``J`` -- returns the modabvar, to make code that uses
-       this simpler
-
+    OUTPUT: ``J`` -- returns the modabvar, to make code that uses
+    this simpler
 
     EXAMPLES::
 
@@ -144,10 +136,8 @@ def AbelianVariety(X):
 
     INPUT:
 
-
-    -  ``X`` -- an integer, string, newform, modsym space,
-       congruence subgroup or tuple of congruence subgroups
-
+    - ``X`` -- integer, string, newform, modsym space,
+      congruence subgroup or tuple of congruence subgroups
 
     OUTPUT: a modular abelian variety
 

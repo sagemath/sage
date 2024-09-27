@@ -41,7 +41,6 @@ equal to `x_1` in ``Q``. Indeed, we have
 
     sage: Q(p)*x[2] == Q(p)*x[1]*x[3]*x[5]                                              # needs sage.combinat
     True
-
 """
 # ****************************************************************************
 #       Copyright (C) 2009 Simon King <king@mathematik.nuigalway.ie>
@@ -68,7 +67,8 @@ from sage.structure.sequence import Sequence
 
 class SymmetricIdeal(Ideal_generic):
     r"""
-    Ideal in an Infinite Polynomial Ring, invariant under permutation of variable indices
+    Ideal in an Infinite Polynomial Ring, invariant under permutation of
+    variable indices.
 
     THEORY:
 
@@ -177,7 +177,6 @@ class SymmetricIdeal(Ideal_generic):
          Infinite polynomial ring in x, y over Rational Field
         sage: I * I == X * (x[1]^2)                                                     # needs sage.combinat
         False
-
     """
 
     def __init__(self, ring, gens, coerce=True):
@@ -186,7 +185,8 @@ class SymmetricIdeal(Ideal_generic):
 
         - ``ring`` -- an infinite polynomial ring
         - ``gens`` -- generators of this ideal
-        - ``coerce`` -- (bool, default ``True``) coerce the given generators into ``ring``
+        - ``coerce`` -- boolean (default ``True``); coerce the given generators
+          into ``ring``
 
         EXAMPLES::
 
@@ -198,7 +198,6 @@ class SymmetricIdeal(Ideal_generic):
             sage: J = SymmetricIdeal(X, [x[1]^2 + y[2]^2, x[1]*x[2]*y[3] + x[1]*y[4]])
             sage: I == J
             True
-
         """
         Ideal_generic.__init__(self, ring, gens, coerce=coerce)
 
@@ -210,7 +209,6 @@ class SymmetricIdeal(Ideal_generic):
             sage: I = X * (x[1]^2 + y[2]^2, x[1]*x[2]*y[3] + x[1]*y[4])
             sage: I # indirect doctest
             Symmetric Ideal (x_1^2 + y_2^2, x_2*x_1*y_3 + x_1*y_4) of Infinite polynomial ring in x, y over Rational Field
-
         """
         return f"Symmetric Ideal {self._repr_short()} of {self.ring()}"
 
@@ -223,7 +221,6 @@ class SymmetricIdeal(Ideal_generic):
             sage: I = X * (x[1]*y[2])
             sage: latex(I) # indirect doctest
             \left(x_{1} y_{2}\right)\Bold{Q}[x_{\ast}, y_{\ast}][\mathfrak{S}_{\infty}]
-
         """
         from sage.misc.latex import latex
         return r'\left({}\right){}[\mathfrak{{S}}_{{\infty}}]'.format(", ".join(latex(g) for g in self.gens()), latex(self.ring()))
@@ -306,7 +303,6 @@ class SymmetricIdeal(Ideal_generic):
             sage: I = X * (x[1])
             sage: I^2     # indirect doctest                                            # needs sage.combinat
             Symmetric Ideal (x_1^2, x_2*x_1) of Infinite polynomial ring in x over Rational Field
-
         """
         OUT = SymmetricIdeal(self.ring(), [1])
         for i in range(n):
@@ -325,7 +321,7 @@ class SymmetricIdeal(Ideal_generic):
 
         It is not checked whether ``self`` is in fact a symmetric Groebner
         basis. A wrong answer can result if this assumption does not
-        hold.  A :class:`NotImplementedError` is raised if the base ring is not
+        hold.  A :exc:`NotImplementedError` is raised if the base ring is not
         a field, since symmetric Groebner bases are not implemented in
         this setting.
 
@@ -348,7 +344,6 @@ class SymmetricIdeal(Ideal_generic):
              Infinite polynomial ring in x, y over Rational Field
             sage: I.is_maximal()                                                        # needs sage.combinat
             True
-
         """
         if not self.base_ring().is_field():
             raise NotImplementedError
@@ -367,13 +362,11 @@ class SymmetricIdeal(Ideal_generic):
         INPUT:
 
         - ``I`` -- an Infinite Polynomial, or a Symmetric Ideal or a
-          list of Infinite Polynomials.
-        - ``tailreduce`` -- (bool, default ``False``) If ``True``, the
-          non-leading terms will be reduced as well.
+          list of Infinite Polynomials
+        - ``tailreduce`` -- boolean (default ``False``); if ``True``, the
+          non-leading terms will be reduced as well
 
-        OUTPUT:
-
-        Symmetric reduction of ``self`` with respect to ``I``.
+        OUTPUT: symmetric reduction of ``self`` with respect to ``I``
 
         THEORY:
 
@@ -416,7 +409,6 @@ class SymmetricIdeal(Ideal_generic):
             sage: I.reduce(J, tailreduce=True)                                          # needs sage.combinat
             Symmetric Ideal (x_3^2*y_1) of
              Infinite polynomial ring in x, y over Rational Field
-
         """
         if I in self.ring():  # we want to reduce a polynomial by self
             return self.ring()(I).reduce(self)
@@ -436,11 +428,11 @@ class SymmetricIdeal(Ideal_generic):
 
         INPUT:
 
-        - ``tailreduce`` -- (bool, default ``True``) If ``True``, the
+        - ``tailreduce`` -- boolean (default: ``True``); if ``True``, the
           interreduction is also performed on the non-leading monomials.
-        - ``sorted`` -- (bool, default ``False``) If ``True``, it is assumed that the
+        - ``sorted`` -- boolean (default: ``False``); if ``True``, it is assumed that the
           generators of ``self`` are already increasingly sorted.
-        - ``report`` -- (object, default ``None``) If not ``None``, some information on the
+        - ``report`` -- object (default ``None``); if not ``None``, some information on the
           progress of computation is printed
         - ``RStrat`` -- (:class:`~sage.rings.polynomial.symmetric_reduction.SymmetricReductionStrategy`,
           default ``None``) A reduction strategy to which the polynomials resulting
@@ -498,7 +490,6 @@ class SymmetricIdeal(Ideal_generic):
             sage: R = SymmetricReductionStrategy(X, [x[1]^2])
             sage: I.interreduction(RStrat=R)                                            # needs sage.combinat
             Symmetric Ideal (x_2 + x_1) of Infinite polynomial ring in x over Rational Field
-
         """
         DONE = []
         TODO = []
@@ -567,7 +558,8 @@ class SymmetricIdeal(Ideal_generic):
 
     def interreduced_basis(self):
         """
-        A fully symmetrically reduced generating set (type :class:`~sage.structure.sequence.Sequence`) of self.
+        A fully symmetrically reduced generating set (type
+        :class:`~sage.structure.sequence.Sequence`) of ``self``.
 
         This does essentially the same as :meth:`interreduction` with
         the option 'tailreduce', but it returns a
@@ -580,7 +572,6 @@ class SymmetricIdeal(Ideal_generic):
             sage: I = X * (x[1] + x[2], x[1]*x[2])
             sage: I.interreduced_basis()                                                # needs sage.combinat
             [-x_1^2, x_2 + x_1]
-
         """
         return Sequence(self.interreduction(tailreduce=True).gens(), self.ring(), check=False)
 
@@ -590,15 +581,15 @@ class SymmetricIdeal(Ideal_generic):
 
         INPUT:
 
-        - ``N`` -- (integer, default ``None``) Apply permutations in
+        - ``N`` -- integer (default: ``None``); apply permutations in
           `Sym(N)`. If it is not given then it will be replaced by the
           maximal variable index occurring in the generators of
           ``self.interreduction().squeezed()``.
-        - ``tailreduce`` -- (bool, default ``False``) If ``True``, perform
+        - ``tailreduce`` -- boolean (default: ``False``); if ``True``, perform
           tail reductions.
-        - ``report`` -- (object, default ``None``) If not ``None``, report
+        - ``report`` -- object (default ``None``); if not ``None``, report
           on the progress of computations.
-        - ``use_full_group`` (optional) -- If ``True``, apply *all* elements of
+        - ``use_full_group`` -- (optional) if ``True``, apply *all* elements of
           `Sym(N)` to the generators of ``self`` (this is what [AB2008]_
           originally suggests). The default is to apply all elementary
           transpositions to the generators of ``self.squeezed()``,
@@ -632,7 +623,6 @@ class SymmetricIdeal(Ideal_generic):
             Symmetric Ideal (-2*x_1) of Infinite polynomial ring in x over Rational Field
             sage: I.symmetrisation(N=3, use_full_group=True)                            # needs sage.combinat
             Symmetric Ideal (-2*x_1) of Infinite polynomial ring in x over Rational Field
-
         """
         newOUT = self.interreduction(tailreduce=tailreduce, report=report).squeezed()
         R = self.ring()
@@ -689,7 +679,6 @@ class SymmetricIdeal(Ideal_generic):
             sage: I = X * (x[1] + x[2], x[1]*x[2])
             sage: I.symmetric_basis()                                                   # needs sage.combinat
             [x_1^2, x_2 + x_1]
-
         """
         return Sequence(self.symmetrisation(tailreduce=True).normalisation().gens(), self.ring(), check=False)
 
@@ -706,7 +695,6 @@ class SymmetricIdeal(Ideal_generic):
             sage: I.normalisation()
             Symmetric Ideal (x_2 + 3/4*x_1, x_2*x_1) of
              Infinite polynomial ring in x over Rational Field
-
         """
         return SymmetricIdeal(self.ring(), [X / X.lc() for X in self.gens() if X._p != 0])
 
@@ -731,7 +719,6 @@ class SymmetricIdeal(Ideal_generic):
             sage: I.squeezed()
             Symmetric Ideal (x_2*y_1, x_1*y_2) of
              Infinite polynomial ring in x, y over Rational Field
-
         """
         return SymmetricIdeal(self.ring(), [X.squeezed() for X in self.gens()])
 
@@ -742,15 +729,15 @@ class SymmetricIdeal(Ideal_generic):
 
         INPUT:
 
-        - ``tailreduce`` -- (bool, default ``False``) If ``True``, use tail reduction
+        - ``tailreduce`` -- boolean (default: ``False``); if ``True``, use tail reduction
           in intermediate computations
-        - ``reduced`` -- (bool, default ``True``) If ``True``, return the reduced normalised
-          symmetric Groebner basis.
-        - ``algorithm`` -- (string, default ``None``) Determine the algorithm (see below for
-          available algorithms).
-        - ``report`` -- (object, default ``None``) If not ``None``, print information on the
-          progress of computation.
-        - ``use_full_group`` -- (bool, default ``False``) If ``True`` then proceed as
+        - ``reduced`` -- boolean (default: ``True``); if ``True``, return the reduced normalised
+          symmetric Groebner basis
+        - ``algorithm`` -- string (default: ``None``); determine the algorithm (see below for
+          available algorithms)
+        - ``report`` -- object (default ``None``); if not ``None``, print information on the
+          progress of computation
+        - ``use_full_group`` -- boolean (default: ``False``); if ``True`` then proceed as
           originally suggested by [AB2008]_. Our default method should be faster; see
           :meth:`symmetrisation` for more details.
 
@@ -803,7 +790,7 @@ class SymmetricIdeal(Ideal_generic):
         If only a system is given - e.g. 'magma' - the default algorithm is
         chosen for that system.
 
-        .. note::
+        .. NOTE::
 
            The Singular and libSingular versions of the respective
            algorithms are identical, but the former calls an external
@@ -901,7 +888,7 @@ class SymmetricIdeal(Ideal_generic):
             [x_1]
 
         The Aschenbrenner-Hillar algorithm is only guaranteed to work
-        if the base ring is a field. So, we raise a :class:`TypeError` if this
+        if the base ring is a field. So, we raise a :exc:`TypeError` if this
         is not the case::
 
             sage: R.<x,y> = InfinitePolynomialRing(ZZ)

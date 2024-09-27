@@ -17,7 +17,6 @@ EXAMPLES::
     1 + 4092/50521*q^2 + 472384/50521*q^3 + 4194300/50521*q^4 + O(q^6),
     q + 1024*q^2 + 59048*q^3 + 1048576*q^4 + 9765626*q^5 + O(q^6)
     ]
-
 """
 
 #*****************************************************************************
@@ -57,28 +56,23 @@ def canonical_parameters(group, level, weight, base_ring):
 
     INPUT:
 
+    - ``group`` -- integer, group, or Dirichlet character
 
-    -  ``group`` -- int, long, Sage integer, group,
-       Dirichlet character, or
+    - ``level`` -- integer or group
 
-    -  ``level`` -- int, long, Sage integer, or group
+    - ``weight`` -- coercible to integer
 
-    -  ``weight`` -- coercible to Sage integer
-
-    -  ``base_ring`` -- commutative Sage ring
-
+    - ``base_ring`` -- commutative ring
 
     OUTPUT:
 
+    - ``level`` -- integer
 
-    -  ``level`` -- Sage integer
+    - ``group`` -- congruence subgroup
 
-    -  ``group`` -- congruence subgroup
+    - ``weight`` -- integer
 
-    -  ``weight`` -- Sage integer
-
-    -  ``ring`` -- commutative Sage ring
-
+    - ``ring`` -- commutative ring
 
     EXAMPLES::
 
@@ -169,13 +163,13 @@ def ModularForms(group=1,
 
     INPUT:
 
-    - ``group`` -- A congruence subgroup or a Dirichlet character eps.
+    - ``group`` -- a congruence subgroup or a Dirichlet character eps
 
-    - ``weight`` -- int, the weight, which must be an integer >= 1.
+    - ``weight`` -- integer; the weight (`\geq 1`)
 
     - ``base_ring`` -- the base ring (ignored if group is a Dirichlet character)
 
-    - ``eis_only`` -- if True, compute only the Eisenstein part of the space.
+    - ``eis_only`` -- if ``True``, compute only the Eisenstein part of the space.
       Only permitted (and only useful) in weight 1, where computing dimensions
       of cusp form spaces is expensive.
 
@@ -308,7 +302,6 @@ def ModularForms(group=1,
          Congruence Subgroup Gamma1(59) of weight 1 over Rational Field
         sage: (E.0 + E.2).q_expansion(40)
         1 + q^2 + 196*q^29 - 197*q^30 - q^31 + q^33 + q^34 + q^37 + q^38 - q^39 + O(q^40)
-
     """
     if isinstance(group, dirichlet.DirichletCharacter):
         if base_ring is None:
@@ -424,25 +417,23 @@ def EisensteinForms(group=1,
 
 def Newforms(group, weight=2, base_ring=None, names=None):
     r"""
-    Returns a list of the newforms of the given weight and level (or weight,
+    Return a list of the newforms of the given weight and level (or weight,
     level and character). These are calculated as
     `\operatorname{Gal}(\overline{F} / F)`-orbits, where `F` is the given base
     field.
 
     INPUT:
 
+    - ``group`` -- the congruence subgroup of the newform, or a Nebentypus
+      character
 
-    -  ``group`` -- the congruence subgroup of the newform, or a Nebentypus
-       character
+    - ``weight`` -- the weight of the newform (default: 2)
 
-    -  ``weight`` -- the weight of the newform (default 2)
+    - ``base_ring`` -- the base ring (defaults to `\QQ` for spaces without
+      character, or the base ring of the character otherwise)
 
-    -  ``base_ring`` -- the base ring (defaults to `\QQ` for spaces without
-       character, or the base ring of the character otherwise)
-
-    -  ``names`` -- if the newform has coefficients in a
-       number field, a generator name must be specified
-
+    - ``names`` -- if the newform has coefficients in a number field, a
+      generator name must be specified
 
     EXAMPLES::
 
@@ -479,7 +470,6 @@ def Newforms(group, weight=2, base_ring=None, names=None):
 
         sage: N = Newforms(719, names='a'); len(N)  # long time (3 s)
         3
-
     """
     return CuspForms(group, weight, base_ring).newforms(names)
 
@@ -488,19 +478,17 @@ def Newform(identifier, group=None, weight=2, base_ring=QQ, names=None):
     """
     INPUT:
 
+    - ``identifier`` -- a canonical label, or the index of
+      the specific newform desired
 
-    -  ``identifier`` -- a canonical label, or the index of
-       the specific newform desired
+    - ``group`` -- the congruence subgroup of the newform
 
-    -  ``group`` -- the congruence subgroup of the newform
+    - ``weight`` -- the weight of the newform (default: 2)
 
-    -  ``weight`` -- the weight of the newform (default 2)
+    - ``base_ring`` -- the base ring
 
-    -  ``base_ring`` -- the base ring
-
-    -  ``names`` -- if the newform has coefficients in a
-       number field, a generator name must be specified
-
+    - ``names`` -- if the newform has coefficients in a
+      number field, a generator name must be specified
 
     EXAMPLES::
 

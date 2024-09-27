@@ -35,7 +35,6 @@ to `M_1=V_1/W_1` by giving a morphism from the optimized representation `V_0'`
 of `M_0` to `V_1` that sends `W_0` into `W_1`.
 
 
-
 The following TUTORIAL illustrates several of the above points.
 
 First we create free modules `V_0` and `W_0` and the quotient module `M_0`.
@@ -239,14 +238,12 @@ def FGP_Module(V, W, check=True):
 
     - ``W`` -- a free `R`-submodule of `V`
 
-    - ``check`` -- bool (default: ``True``); if ``True``, more checks
-      on correctness are performed; in particular, we check the data
+    - ``check`` -- boolean (default: ``True``); if ``True``, more checks
+      on correctness are performed. In particular, we check the data
       types of ``V`` and ``W``, and that `W` is a submodule of `V`
       with the same base ring.
 
-    OUTPUT:
-
-    - the quotient `V/W` as a finitely generated `R`-module
+    OUTPUT: the quotient `V/W` as a finitely generated `R`-module
 
     EXAMPLES::
 
@@ -303,7 +300,7 @@ class FGP_Module_class(Module):
 
     - ``W`` -- an `R`-submodule of `V`
 
-    - ``check`` -- bool (default: ``True``)
+    - ``check`` -- boolean (default: ``True``)
 
     EXAMPLES::
 
@@ -347,8 +344,8 @@ class FGP_Module_class(Module):
 
         - ``W`` -- an `R`-submodule of `V`
 
-        - ``check`` -- bool (default: ``True``); if ``True``, more checks on
-          correctness are performed; in particular, we check the data types of
+        - ``check`` -- boolean (default: ``True``); if ``True``, more checks on
+          correctness are performed. In particular, we check the data types of
           ``V`` and ``W``, and that `W` is a submodule of `V` with the same
           base ring `R`.
 
@@ -392,11 +389,9 @@ class FGP_Module_class(Module):
 
         - ``W`` -- an `R`-submodule of `V`
 
-        - ``check`` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        The quotient `V/W`.
+        OUTPUT: the quotient `V/W`
 
         EXAMPLES::
 
@@ -417,9 +412,7 @@ class FGP_Module_class(Module):
 
         - ``S`` -- anything
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -458,7 +451,8 @@ class FGP_Module_class(Module):
         INPUT:
 
         - ``other`` -- an element of the base ring
-        - ``switch_sides`` -- (default: ``False``) left or right multiplication
+        - ``switch_sides`` -- boolean (default: ``False``); left or right
+          multiplication
 
         EXAMPLES::
 
@@ -537,7 +531,7 @@ class FGP_Module_class(Module):
 
     def __ne__(self, other):
         """
-        True iff ``self`` is not equal to ``other``.
+        Return ``True`` iff ``self`` is not equal to ``other``.
 
         This may not be needed for modules created using the function
         :func:`FGP_Module`, since those have uniqueness built into
@@ -577,7 +571,7 @@ class FGP_Module_class(Module):
 
     def __lt__(self, other):
         """
-        True iff ``self`` is a proper submodule of ``other``.
+        Return ``True`` iff ``self`` is a proper submodule of ``other``.
 
         EXAMPLES::
 
@@ -595,7 +589,7 @@ class FGP_Module_class(Module):
 
     def __gt__(self, other):
         """
-        True iff ``other`` is a proper submodule of ``self``.
+        Return ``True`` iff ``other`` is a proper submodule of ``self``.
 
         EXAMPLES::
 
@@ -613,7 +607,7 @@ class FGP_Module_class(Module):
 
     def __ge__(self, other):
         """
-        True iff ``other`` is a submodule of ``self``.
+        Return ``True`` iff ``other`` is a submodule of ``self``.
 
         EXAMPLES::
 
@@ -642,7 +636,7 @@ class FGP_Module_class(Module):
             space and try to put into `V`.  If ``x`` is in ``self`` already,
             just return ``x``.
 
-        - `check` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
         .. SEEALSO:: :meth:`linear_combination_of_smith_form_gens`
 
@@ -674,7 +668,6 @@ class FGP_Module_class(Module):
             sage: X = ZZ**2 / span([[3,0], [0,2]], ZZ)
             sage: X.linear_combination_of_smith_form_gens([1])
             (1)
-
         """
         try:
             x = self.optimized()[0].V().linear_combination_of_basis(x)
@@ -795,7 +788,6 @@ class FGP_Module_class(Module):
             True
             sage: Q.has_canonical_map_to(A)
             False
-
         """
         if not isinstance(A, FGP_Module_class):
             return False
@@ -857,7 +849,6 @@ class FGP_Module_class(Module):
             [1/2   0   0]
             [  0   1   0]
             [  0   0   1]
-
         """
         return self._V
 
@@ -950,7 +941,7 @@ class FGP_Module_class(Module):
         """
         Return matrices `S`, `U`, and `V` such that `S = U*R*V`, and `S` is in
         Smith normal form, and `R` is the relative matrix that defines
-        self.
+        ``self``.
 
         See :meth:`_relative_matrix`.
 
@@ -987,14 +978,14 @@ class FGP_Module_class(Module):
         r"""
         Return the diagonal entries of the Smith form of the relative
         matrix that defines ``self`` (see :meth:`._relative_matrix`)
-        padded with zeros, excluding 1's by default.   Thus if ``v`` is the
-        list of integers returned, then self is abstractly isomorphic to
+        padded with zeros, excluding 1s by default.   Thus if ``v`` is the
+        list of integers returned, then ``self`` is abstractly isomorphic to
         the product of cyclic groups `\ZZ/n\ZZ` where `n` is in ``v``.
 
         INPUT:
 
-        - ``include_ones`` -- bool (default: ``False``); if ``True``, also
-          include 1's in the output list.
+        - ``include_ones`` -- boolean (default: ``False``); if ``True``, also
+          include 1s in the output list
 
         EXAMPLES::
 
@@ -1012,7 +1003,6 @@ class FGP_Module_class(Module):
             (0,)
             sage: Q.invariants(include_ones=True)
             (1, 1, 0)
-
         """
         D, _, _ = self._smith_form()
 
@@ -1084,9 +1074,7 @@ class FGP_Module_class(Module):
 
         To go in the other direction, use :meth:`smith_to_gens`.
 
-        OUTPUT:
-
-        - a matrix over the base ring
+        OUTPUT: a matrix over the base ring
 
         EXAMPLES::
 
@@ -1135,9 +1123,7 @@ class FGP_Module_class(Module):
 
         To go in the other direction, use :meth:`gens_to_smith`.
 
-        OUTPUT:
-
-        - a matrix over the base ring
+        OUTPUT: a matrix over the base ring
 
         EXAMPLES::
 
@@ -1204,7 +1190,7 @@ class FGP_Module_class(Module):
 
         - ``x`` -- element of ``self``
 
-        - ``reduce`` -- (default: ``False``); if ``True``,
+        - ``reduce`` -- (default: ``False``) if ``True``,
           reduce coefficients modulo invariants; this is
           ignored if the base ring is not `\ZZ`
 
@@ -1267,9 +1253,9 @@ class FGP_Module_class(Module):
 
         - ``x`` -- element of ``self``
 
-        - ``reduce`` -- (default: ``False``); if ``True``, reduce
+        - ``reduce`` -- (default: ``False``) if ``True``, reduce
           coefficients modulo invariants; this is
-          ignored if the base ring is not ``ZZ``.
+          ignored if the base ring is not ``ZZ``
 
         OUTPUT:
 
@@ -1504,9 +1490,8 @@ class FGP_Module_class(Module):
 
         INPUT:
 
-        - ``im_gens`` -- a list of the images of ``self.gens()`` in some
+        - ``im_gens`` -- list of the images of ``self.gens()`` in some
           `R`-module
-
 
         EXAMPLES::
 
@@ -1651,7 +1636,6 @@ class FGP_Module_class(Module):
             Morphism from module over Integer Ring with invariants (3,)
                        to module with invariants (3,)
               that sends the generators to [(1), (1)]
-
         """
         m = self.ngens()
         A = ZZ**m
@@ -1741,7 +1725,6 @@ class FGP_Module_class(Module):
                 in Category of commutative additive groups
             sage: type(H)
             <class 'sage.categories.homset.Homset_with_category'>
-
         """
         if isinstance(N, FGP_Module_class):
             return FGP_Homset(self, N)
@@ -2001,7 +1984,8 @@ def random_fgp_module(n, R=ZZ, finite=False):
 
     - ``R`` -- base ring (default: ``ZZ``)
 
-    - ``finite`` -- bool (default: ``True``); if True, make the random module finite
+    - ``finite`` -- boolean (default: ``True``); if ``True``, make the random
+      module finite
 
     EXAMPLES::
 

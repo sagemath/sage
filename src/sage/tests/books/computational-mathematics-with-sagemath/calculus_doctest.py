@@ -549,5 +549,4 @@ Sage example in ./calculus.tex, line 2597::
   [-+-+-]  [1/2*sqrt2*sqrt3               0               1]
   [0|0|0], [      1/2*sqrt2          -sqrt2          -sqrt3]
   )
-
 """

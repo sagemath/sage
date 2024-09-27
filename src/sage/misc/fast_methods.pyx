@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fast methods via Cython
 
@@ -15,7 +16,6 @@ AUTHOR:
 
 - Simon King (2013-02): Original version
 - Simon King (2013-10): Add :class:`Singleton`
-
 """
 
 #*****************************************************************************
@@ -101,7 +101,6 @@ cdef class WithEqualityById:
         True
         sage: a is d
         False
-
     """
     def __hash__(self):
         """
@@ -195,7 +194,7 @@ cdef class FastHashable_class:
 
         This is for internal use only. The class has a cdef attribute
         ``_hash``, that needs to be assigned (for example, by calling
-        the init method, or by a direct assignement using
+        the init method, or by a direct assignment using
         cython). This is slower than using :func:`provide_hash_by_id`,
         but has the advantage that the hash can be prescribed, by
         assigning a cdef attribute ``_hash``.
@@ -226,7 +225,6 @@ cdef class FastHashable_class:
             sage: H = FastHashable_class(123)
             sage: hash(H)   # indirect doctest
             123
-
         """
         return self._hash
 

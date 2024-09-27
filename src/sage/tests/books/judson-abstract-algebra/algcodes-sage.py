@@ -126,5 +126,4 @@ r"""
 
     sage: H.decode_to_code(received) == received
     True
-
 """

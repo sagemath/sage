@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.graphs sage.combinat
 r"""
 Loop Crystals
@@ -821,7 +822,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
                 - ``q`` -- (default: ``None``) a variable or ``None``;
                   if ``None``, a variable `q` is set in the code
-                - ``group_components`` -- (default: ``True``) boolean; if
+                - ``group_components`` -- boolean (default: ``True``); if
                   ``True``, then the terms are grouped by classical component
 
                 The one-dimensional configuration sum is the sum of the
@@ -923,7 +924,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                   factors are perfect of the same level and otherwise
                   this uses ``'definition'``
 
-                OUTPUT: an integer
+                OUTPUT: integer
 
                 EXAMPLES::
 
@@ -1020,7 +1021,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 :meth:`e_string_to_ground_state`) and counting the number
                 of affine Kashiwara operators `e_0` applied on the way.
 
-                OUTPUT: an integer
+                OUTPUT: integer
 
                 EXAMPLES::
 

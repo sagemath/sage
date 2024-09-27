@@ -563,7 +563,6 @@ fonction coordinates, ``V.coordinates?`` affiche un message d'aide et
 la section suivante.
 
 
-
 Aide en ligne
 =============
 

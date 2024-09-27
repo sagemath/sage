@@ -1,1 +1,1 @@
-python-beautifulsoup4
+python3-beautifulsoup4

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Bimodules
 """
@@ -23,7 +24,7 @@ _Rings = Rings()
 
 class Bimodules(CategoryWithParameters):
     """
-    The category of `(R,S)`-bimodules
+    The category of `(R,S)`-bimodules.
 
     For `R` and `S` rings, a `(R,S)`-bimodule `X` is a left `R`-module
     and right `S`-module such that the left and right actions commute:
@@ -101,7 +102,7 @@ class Bimodules(CategoryWithParameters):
             sage: Bimodules(Fields(), Rings())._make_named_class_key('element_class')
             (Category of fields, Category of rings)
         """
-        return (self._left_base_ring  if isinstance(self._left_base_ring,  Category) else self._left_base_ring.category(),
+        return (self._left_base_ring if isinstance(self._left_base_ring, Category) else self._left_base_ring.category(),
                 self._right_base_ring if isinstance(self._right_base_ring, Category) else self._right_base_ring.category())
 
     @classmethod

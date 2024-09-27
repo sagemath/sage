@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Coxeter Group Algebras
@@ -12,7 +13,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
     class ParentMethods:
 
         def demazure_lusztig_operator_on_basis(self, w, i, q1, q2,
-                                               side="right"):
+                                               side='right'):
             r"""
             Return the result of applying the `i`-th Demazure Lusztig
             operator on ``w``.
@@ -21,8 +22,8 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
 
             - ``w`` -- an element of the Coxeter group
             - ``i`` -- an element of the index set
-            - ``q1,q2`` -- two elements of the ground ring
-            - ``bar`` -- a boolean (default ``False``)
+            - ``q1``, ``q2`` -- two elements of the ground ring
+            - ``bar`` -- boolean (default: ``False``)
 
             See :meth:`demazure_lusztig_operators` for details.
 
@@ -69,16 +70,16 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             """
             return (q1+q2) * self.monomial(w.apply_simple_projection(i,side=side)) - self.term(w.apply_simple_reflection(i, side=side), q2)
 
-        def demazure_lusztig_operators(self, q1, q2, side="right", affine=True):
+        def demazure_lusztig_operators(self, q1, q2, side='right', affine=True):
             r"""
             Return the Demazure Lusztig operators acting on ``self``.
 
             INPUT:
 
-            - ``q1,q2`` -- two elements of the ground ring `K`
-            - ``side`` -- ``"left"`` or ``"right"`` (default: ``"right"``);
+            - ``q1``, ``q2`` -- two elements of the ground ring `K`
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``);
               which side to act upon
-            - ``affine`` -- a boolean (default: ``True``)
+            - ``affine`` -- boolean (default: ``True``)
 
             The Demazure-Lusztig operator `T_i` is the linear map
             `R \to R` obtained by interpolating between the
@@ -145,7 +146,7 @@ class CoxeterGroupAlgebras(AlgebrasCategory):
             INPUT:
 
             - ``self`` -- a finite Coxeter group `W`
-            - ``q1,q2`` -- two elements of the ground ring `K`
+            - ``q1``, ``q2`` -- two elements of the ground ring `K`
 
             The affine Hecke algebra `H_{q_1,q_2}(\tilde W)` acts on
             the group algebra of `W` through the Demazure-Lusztig

@@ -250,5 +250,4 @@ Sage example in ./graphique.tex, line 2004::
   ....:          -15*cos(2*t)+10*sin(t)-2*sin(5*t),\
   ....:          10*cos(3*t)) for t in srange(0,6.4,.1)],radius=.5)
   Graphics3d Object
-
 """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Elements, Array and Lists With Clone Protocol, demonstration classes
 
@@ -115,7 +116,7 @@ cdef class IncreasingList(ClonableList):
 
     cpdef check(self):
         """
-        Check that ``self`` is increasing
+        Check that ``self`` is increasing.
 
         EXAMPLES::
 
@@ -194,7 +195,7 @@ cdef class SortedList(NormalizedClonableList):
     """
     cpdef normalize(self):
         """
-        Normalize ``self``
+        Normalize ``self``.
 
         Sort the list stored in ``self``.
 
@@ -214,7 +215,7 @@ cdef class SortedList(NormalizedClonableList):
 
     cpdef check(self):
         """
-        Check that ``self`` is strictly increasing
+        Check that ``self`` is strictly increasing.
 
         EXAMPLES::
 

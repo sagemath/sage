@@ -5,7 +5,6 @@ Lie Conformal Algebras With Structure Coefficients
 AUTHORS:
 
 - Reimundo Heluani (2019-08-09): Initial implementation.
-
 """
 
 # *****************************************************************************
@@ -36,11 +35,11 @@ class LieConformalAlgebraWithStructureCoefficients(
 
     INPUT:
 
-    - ``R`` -- a ring (Default: ``None``); The base ring of this Lie
+    - ``R`` -- a ring (default: ``None``); the base ring of this Lie
       conformal algebra. Behaviour is undefined if it is not a field
       of characteristic zero.
 
-    - ``s_coeff`` -- Dictionary (Default: ``None``);
+    - ``s_coeff`` -- dictionary (default: ``None``);
       a dictionary containing the `\lambda` brackets of the
       generators of this Lie conformal algebra. The family encodes a
       dictionary whose keys
@@ -49,7 +48,7 @@ class LieConformalAlgebraWithStructureCoefficients(
       generators `a` and `b`, the value of ``s_coeff[('a','b')]`` is
       a dictionary whose keys are positive integer numbers and the
       corresponding value for the key `j` is a dictionary itself
-      representing the j-th product `a_{(j)}b`.
+      representing the `j`-th product `a_{(j)}b`.
       Thus, for a positive integer number `j`, the value of
       ``s_coeff[('a','b')][j]`` is a dictionary whose entries are
       pairs ``('c',n)`` where ``'c'`` is the name of a generator
@@ -67,21 +66,20 @@ class LieConformalAlgebraWithStructureCoefficients(
       defined by skew-symmetry) is assumed to have vanishing
       `\lambda`-bracket.
 
-    - ``names`` -- tuple of ``str`` (Default: ``None``); The list of
+    - ``names`` -- tuple of strings (default: ``None``); the list of
       names for generators of this Lie conformal algebra. Do not
       include central elements in this list.
 
-    - ``central_elements`` -- tuple of ``str`` (Default: ``None``);
-      A list of names for central
-      elements of this Lie conformal algebra.
+    - ``central_elements`` -- tuple of strings (default: ``None``);
+      a list of names for central elements of this Lie conformal algebra
 
-    - ``index_set`` -- enumerated set (Default: ``None``);
+    - ``index_set`` -- enumerated set (default: ``None``);
       an indexing set for the generators of this Lie
       conformal algebra. Do not include central elements in this
       list.
 
-    - ``parity`` -- tuple of `0` or `1` (Default: tuple of `0`);
-       a tuple specifying the parity of each non-central generator.
+    - ``parity`` -- tuple of `0` or `1` (default: tuple of `0`);
+      a tuple specifying the parity of each non-central generator
 
     EXAMPLES:
 
@@ -122,14 +120,14 @@ class LieConformalAlgebraWithStructureCoefficients(
 
         INPUT:
 
-        - ``s_coeff`` -- a dictionary as in
-          :class:`~sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefficients.LieConformalAlgebraWithStructureCoefficients`.
+        - ``s_coeff`` -- dictionary as in
+          :class:`~sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefficients.LieConformalAlgebraWithStructureCoefficients`
         - ``index_set`` -- a finite enumerated set indexing the
           generators (not counting the central elements).
-        - ``ce`` -- a tuple of ``str``; a list of names for the central
+        - ``ce`` -- tuple of strings; a list of names for the central
           generators of this Lie conformal algebra
-        - ``parity`` -- a tuple of `0` or `1` (Default: tuple of `0`);
-          this tuple specifies the parity of each non-central generator.
+        - ``parity`` -- tuple of `0` or `1` (default: tuple of `0`);
+          this tuple specifies the parity of each non-central generator
 
         OUTPUT:
 
@@ -207,7 +205,7 @@ class LieConformalAlgebraWithStructureCoefficients(
                  category=None, element_class=None, prefix=None, names=None,
                  latex_names=None, parity=None, **kwds):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -277,7 +275,7 @@ class LieConformalAlgebraWithStructureCoefficients(
 
         s_coeff = dict(s_coeff)
         self._s_coeff = Family({k: tuple((j, sum(c*self.monomial(i)
-                for i,c in v )) for j,v in s_coeff[k]) for k in s_coeff})
+                for i,c in v)) for j,v in s_coeff[k]) for k in s_coeff})
         self._parity = dict(zip(self.gens(),parity+(0,)*len(central_elements)))
 
     def structure_coefficients(self):

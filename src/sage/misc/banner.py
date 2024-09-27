@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 SageMath version and banner info
 """
@@ -19,9 +20,7 @@ def version():
     """
     Return the version of Sage.
 
-    OUTPUT:
-
-    str
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -89,7 +88,7 @@ def banner():
     """
     Print the Sage banner.
 
-    OUTPUT: None
+    OUTPUT: none
 
     If the environment variable ``SAGE_BANNER`` is set to ``no``, no
     banner is displayed. If ``SAGE_BANNER`` is set to ``bare``, a
@@ -124,13 +123,7 @@ def version_dict():
     """
     A dictionary describing the version of Sage.
 
-    INPUT:
-
-    nothing
-
-    OUTPUT:
-
-    dictionary with keys 'major', 'minor', 'tiny', 'prerelease'
+    OUTPUT: dictionary with keys 'major', 'minor', 'tiny', 'prerelease'
 
     This process the Sage version string and produces a dictionary.
     It expects the Sage version to be in one of these forms::
@@ -187,19 +180,18 @@ def version_dict():
 def require_version(major, minor=0, tiny=0, prerelease=False,
                     print_message=False):
     """
-    True if Sage version is at least major.minor.tiny.
+    Return ``True`` if Sage version is at least ``major.minor.tiny``.
 
     INPUT:
 
-    - major -- integer
-    - minor -- integer (default: 0)
-    - tiny -- float (default: 0)
-    - prerelease -- boolean (default: ``False``)
-    - print_message -- boolean (default: ``False``)
+    - ``major`` -- integer
+    - ``minor`` -- integer (default: 0)
+    - ``tiny`` -- float (default: 0)
+    - ``prerelease`` -- boolean (default: ``False``)
+    - ``print_message`` -- boolean (default: ``False``)
 
-    OUTPUT:
-
-    True if major.minor.tiny is <= version of Sage, False otherwise
+    OUTPUT: ``True`` if ``major.minor.tiny`` is <= version of Sage, ``False``
+    otherwise
 
     For example, if the Sage version number is 3.1.2, then
     require_version(3, 1, 3) will return False, while
@@ -211,7 +203,7 @@ def require_version(major, minor=0, tiny=0, prerelease=False,
     if the optional argument prerelease is True, then a prerelease
     version of Sage counts as if it were the released version.
 
-    If optional argument print_message is True and this function
+    If optional argument print_message is ``True`` and this function
     is returning False, print a warning message.
 
     EXAMPLES::

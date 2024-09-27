@@ -556,7 +556,6 @@ coordinates function, type ``V.coordinates?`` for help or
 section.
 
 
-
 Integrated Help System
 ======================
 

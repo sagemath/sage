@@ -8,32 +8,30 @@ cdef class CircuitsMatroid(Matroid):
     cdef dict _k_C  # k-circuits (k=len)
     cdef list _sorted_C_lens
     cdef bint _nsc_defined
-    cpdef groundset(self)
-    cpdef _rank(self, X)
+    cpdef frozenset groundset(self)
+    cpdef int _rank(self, frozenset X) except? -1
     cpdef full_rank(self)
-    cpdef _is_independent(self, X)
-    cpdef _max_independent(self, X)
-    cpdef _circuit(self, X)
-    cpdef _closure(self, X)
+    cpdef bint _is_independent(self, frozenset X) noexcept
+    cpdef frozenset _max_independent(self, frozenset X)
+    cpdef frozenset _circuit(self, frozenset X)
+    cpdef frozenset _closure(self, frozenset X)
 
     # enumeration
-    cpdef bases(self)
-    cpdef nonbases(self)
-    cpdef independent_r_sets(self, long r)
-    cpdef dependent_r_sets(self, long r)
-    cpdef circuits(self, k=*)
-    cpdef nonspanning_circuits(self)
-    cpdef no_broken_circuits_facets(self, ordering=*, reduced=*)
-    cpdef no_broken_circuits_sets(self, ordering=*, reduced=*)
+    cpdef SetSystem independent_sets(self, long k=*)
+    cpdef SetSystem dependent_sets(self, long k)
+    cpdef SetSystem circuits(self, k=*)
+    cpdef SetSystem nonspanning_circuits(self)
+    cpdef SetSystem no_broken_circuits_facets(self, ordering=*, reduced=*)
+    cpdef SetSystem no_broken_circuits_sets(self, ordering=*, reduced=*)
     cpdef broken_circuit_complex(self, ordering=*, reduced=*)
 
     # properties
     cpdef girth(self)
-    cpdef is_paving(self)
+    cpdef bint is_paving(self) noexcept
 
     # isomorphism and relabeling
     cpdef _is_isomorphic(self, other, certificate=*)
     cpdef relabel(self, mapping)
 
     # verification
-    cpdef is_valid(self)
+    cpdef bint is_valid(self) noexcept

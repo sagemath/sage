@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Rings
 """
@@ -21,7 +22,7 @@ from sage.structure.element import Element
 
 class Rings(CategoryWithAxiom):
     """
-    The category of rings
+    The category of rings.
 
     Associative rings with unit, not necessarily commutative
 
@@ -136,7 +137,6 @@ class Rings(CategoryWithAxiom):
                 sage: R = ZpFM(3)                                                       # needs sage.rings.padics
                 sage: R.fraction_field().coerce_map_from(R).is_injective()
                 True
-
             """
             if self.domain().is_zero():
                 return True
@@ -288,7 +288,7 @@ class Rings(CategoryWithAxiom):
             """
             Return the full subcategory of the division objects of ``self``.
 
-            A ring satisfies the *division axiom* if all non-zero
+            A ring satisfies the *division axiom* if all nonzero
             elements have multiplicative inverses.
 
             EXAMPLES::
@@ -345,8 +345,8 @@ class Rings(CategoryWithAxiom):
 
             INPUT:
 
-            - ``proof`` -- (default: ``True``) Determines what to do in unknown
-              cases
+            - ``proof`` -- boolean (default: ``True``); determine what to do
+              in unknown cases
 
             ALGORITHM:
 
@@ -499,7 +499,7 @@ class Rings(CategoryWithAxiom):
             The sole purpose of this method is to construct the homset
             as a :class:`~sage.rings.homset.RingHomset`. If
             ``category`` is specified and is not a subcategory of
-            :class:`Rings() <Rings>`, a :class:`TypeError` is raised instead
+            :class:`Rings() <Rings>`, a :exc:`TypeError` is raised instead
 
             This method is not meant to be called directly. Please use
             :func:`sage.categories.homset.Hom` instead.
@@ -643,13 +643,6 @@ class Rings(CategoryWithAxiom):
             """
             The monoid of the ideals of this ring.
 
-            .. NOTE::
-
-                The code is copied from the base class of rings.
-                This is since there are rings that do not inherit
-                from that class, such as matrix algebras.  See
-                :issue:`7797`.
-
             EXAMPLES::
 
                 sage: # needs sage.modules
@@ -666,6 +659,28 @@ class Rings(CategoryWithAxiom):
 
                 sage: MS.ideal_monoid() is MS.ideal_monoid()                            # needs sage.modules
                 True
+
+            More examples::
+
+                sage: # needs sage.combinat sage.modules
+                sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)
+                sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
+                sage: Q = F.quotient(I)
+                sage: Q.ideal_monoid()
+                Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z)
+                 over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
+                sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')
+                sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
+                sage: Q = F.quo(I)
+                sage: Q.ideal_monoid()
+                Monoid of ideals of Quotient of Free Associative Unital Algebra
+                 on 3 generators (x, y, z) over Integer Ring
+                 by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
+
+                sage: ZZ.ideal_monoid()
+                Monoid of ideals of Integer Ring
+                sage: R.<x> = QQ[]; R.ideal_monoid()
+                Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
             """
             try:
                 from sage.rings.ideal_monoid import IdealMonoid
@@ -693,6 +708,65 @@ class Rings(CategoryWithAxiom):
             """
             from sage.rings.noncommutative_ideals import Ideal_nc
             return Ideal_nc
+
+        @cached_method
+        def zero_ideal(self):
+            """
+            Return the zero ideal of this ring (cached).
+
+            EXAMPLES::
+
+                sage: ZZ.zero_ideal()
+                Principal ideal (0) of Integer Ring
+                sage: QQ.zero_ideal()
+                Principal ideal (0) of Rational Field
+                sage: QQ['x'].zero_ideal()
+                Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
+
+            The result is cached::
+
+                sage: ZZ.zero_ideal() is ZZ.zero_ideal()
+                True
+
+            TESTS:
+
+            Make sure that :issue:`13644` is fixed::
+
+                sage: # needs sage.rings.padics
+                sage: K = Qp(3)
+                sage: R.<a> = K[]
+                sage: L.<a> = K.extension(a^2-3)
+                sage: L.ideal(a)
+                Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
+            """
+            return self._ideal_class_(1)(self, [self.zero()])
+
+        @cached_method
+        def unit_ideal(self):
+            """
+            Return the unit ideal of this ring.
+
+            EXAMPLES::
+
+                sage: Zp(7).unit_ideal()                                                    # needs sage.rings.padics
+                Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
+            """
+            return self._ideal_class_(1)(self, [self.one()])
+
+        def principal_ideal(self, gen, coerce=True):
+            """
+            Return the principal ideal generated by gen.
+
+            EXAMPLES::
+
+                sage: R.<x,y> = ZZ[]
+                sage: R.principal_ideal(x+2*y)
+                Ideal (x + 2*y) of Multivariate Polynomial Ring in x, y over Integer Ring
+            """
+            C = self._ideal_class_(1)
+            if coerce:
+                gen = self(gen)
+            return C(self, [gen])
 
         def characteristic(self):
             """
@@ -751,13 +825,13 @@ class Rings(CategoryWithAxiom):
 
             INPUT:
 
-            - An element or a list/tuple/sequence of elements.
-            - ``coerce`` (optional bool, default ``True``):
-              First coerce the elements into this ring.
-            - ``side``, optional string, one of ``"twosided"``
-              (default), ``"left"``, ``"right"``: determines
+            - an element or a list/tuple/sequence of elements
+            - ``coerce`` -- boolean (default: ``True``);
+              first coerce the elements into this ring
+            - ``side`` -- (optional) string, one of ``'twosided'``
+              (default), ``'left'``, ``'right'``; determines
               whether the resulting ideal is twosided, a left
-              ideal or a right ideal.
+              ideal or a right ideal
 
             EXAMPLES::
 
@@ -856,7 +930,7 @@ class Rings(CategoryWithAxiom):
 
             INPUT:
 
-            - ``I`` -- A twosided ideal of this ring.
+            - ``I`` -- a twosided ideal of this ring
             - ``names`` -- (optional) names of the generators of the quotient (if
               there are multiple generators, you can specify a single character
               string and the generators are named in sequence starting with 0).
@@ -996,9 +1070,7 @@ class Rings(CategoryWithAxiom):
             - further named arguments that may be passed to the quotient ring
               constructor.
 
-            OUTPUT:
-
-            - ``R/I`` -- the quotient ring of `R` by the ideal `I`
+            OUTPUT: ``R/I`` -- the quotient ring of `R` by the ideal `I`
 
             EXAMPLES::
 
@@ -1352,12 +1424,10 @@ class Rings(CategoryWithAxiom):
 
             - ``basis`` -- (optional) a basis for this ring over the base
 
-            - ``map`` -- boolean (default ``True``), whether to return
+            - ``map`` -- boolean (default: ``True``); whether to return
               `R`-linear maps to and from `V`
 
-            OUTPUT:
-
-            - A finite-rank free `R`-module `V`
+            OUTPUT: a finite-rank free `R`-module `V`
 
             - An `R`-module isomorphism from `V` to this ring
               (only included if ``map`` is ``True``)
@@ -1409,10 +1479,10 @@ class Rings(CategoryWithAxiom):
 
         def _random_nonzero_element(self, *args, **kwds):
             """
-            Return a random non-zero element in this ring.
+            Return a random nonzero element in this ring.
 
             The default behaviour of this method is to repeatedly call the
-            ``random_element`` method until a non-zero element is obtained.
+            ``random_element`` method until a nonzero element is obtained.
 
             In this implementation, all parameters are simply pushed forward
             to the ``random_element`` method.
@@ -1468,9 +1538,7 @@ class Rings(CategoryWithAxiom):
             r"""
             Return the inverse of this element if it is a unit.
 
-            OUTPUT:
-
-            An element in the same ring as this element.
+            OUTPUT: an element in the same ring as this element
 
             EXAMPLES::
 
@@ -1520,7 +1588,7 @@ class Rings(CategoryWithAxiom):
         def _divide_if_possible(self, y):
             """
             Divide ``self`` by ``y`` if possible and raise a
-            :class:`ValueError` otherwise.
+            :exc:`ValueError` otherwise.
 
             EXAMPLES::
 

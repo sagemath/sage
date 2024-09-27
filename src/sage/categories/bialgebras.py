@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat
 r"""
 Bialgebras
@@ -19,7 +20,7 @@ from sage.misc.lazy_import import LazyImport
 
 class Bialgebras(Category_over_base_ring):
     """
-    The category of bialgebras
+    The category of bialgebras.
 
     EXAMPLES::
 

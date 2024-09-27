@@ -2,7 +2,6 @@ r"""
 Basic graphs
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
-
 """
 # ****************************************************************************
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
@@ -102,7 +101,7 @@ def ButterflyGraph():
 
     .. SEEALSO::
 
-        - :meth:`GraphGenerators.FriendshipGraph`
+        - :meth:`~sage.graphs.graph_generators.GraphGenerators.FriendshipGraph`
 
     EXAMPLES:
 
@@ -162,7 +161,7 @@ def CircularLadderGraph(n):
     displayed as an inner and outer cycle pair, with the first `n` nodes drawn
     on the inner circle. The first (0) node is drawn at the top of the
     inner-circle, moving clockwise after that. The outer circle is drawn with
-    the `(n+1)`th node at the top, then counterclockwise as well.
+    the `(n+1)`-th node at the top, then counterclockwise as well.
     When `n == 2`, we rotate the outer circle by an angle of `\pi/8` to ensure
     that all edges are visible (otherwise the 4 vertices of the graph would be
     placed on a single line).
@@ -402,15 +401,28 @@ def CompleteGraph(n):
     G.add_edges((i, j) for i in range(n) for j in range(i + 1, n))
     return G
 
+
 def CorrelationGraph(seqs, alpha, include_anticorrelation):
-    """
-    Constructs and returns a correlation graph with a node corresponding to each sequence in `seqs`.
+    r"""
+    Return a correlation graph with a node per sequence in ``seqs``.
 
-    Edges are added between nodes where the corresponding sequences have a correlation coeffecient greater than alpha.
+    Edges are added between nodes where the corresponding sequences have a
+    correlation coeffecient greater than alpha.
 
-    If include_anticorrelation is true, then edges are also added between nodes with correlation coeffecient less than -alpha.
+    If ``include_anticorrelation`` is ``True``, then edges are also added
+    between nodes with correlation coefficient less than ``-alpha``.
 
-    EXAMPLES:
+    INPUT:
+
+    - ``seqs`` -- list of sequences, that is a list of lists
+
+    - ``alpha`` -- float; threshold on the correlation coefficient between two
+      sequences for adding an edge
+
+    - ``include_anticorrelation`` -- boolean; whether to add edges between nodes
+      with correlation coefficient less than ``-alpha`` or not
+
+    EXAMPLES::
 
         sage: # needs numpy
         sage: from sage.graphs.generators.basic import CorrelationGraph
@@ -424,7 +436,6 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
         [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
         sage: CG3.edges(sort=False)
         [(0, 0, None), (0, 1, None), (0, 2, None), (1, 1, None), (1, 2, None), (2, 2, None)]
-
     """
     from numpy import corrcoef
     from sage.matrix.constructor import Matrix
@@ -441,7 +452,8 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
     adjacency_matrix = Matrix(boolean_adjacency_matrix.astype(int))
 
     # call graph constructor
-    return Graph(adjacency_matrix, format="adjacency_matrix", name="Correlation Graph")
+    return Graph(adjacency_matrix, format='adjacency_matrix', name="Correlation Graph")
+
 
 def CompleteBipartiteGraph(p, q, set_position=True):
     r"""
@@ -453,9 +465,9 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
     INPUT:
 
-    - ``p,q`` -- number of vertices in each side
+    - ``p``, ``q`` -- number of vertices in each side
 
-    - ``set_position`` -- boolean (default ``True``); if set to ``True``, we
+    - ``set_position`` -- boolean (default: ``True``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `p` is
       on the line `y=1` and the set of cardinality `q` is on the line `y=0`.
 
@@ -579,7 +591,7 @@ def CompleteMultipartiteGraph(L):
 
     INPUT:
 
-    - ``L`` -- a list of integers; the respective sizes of the components
+    - ``L`` -- list of integers; the respective sizes of the components
 
     PLOTTING: Produce a layout of the vertices so that vertices in the same
     vertex set are adjacent and clearly separated from vertices in other vertex
@@ -828,7 +840,7 @@ def Toroidal6RegularGrid2dGraph(p, q):
 
     INPUT:
 
-    - ``p, q`` -- integers (see above)
+    - ``p``, ``q`` -- integers
 
     EXAMPLES:
 
@@ -859,7 +871,6 @@ def Toroidal6RegularGrid2dGraph(p, q):
         ...
         ValueError: parameters p and q must be integers larger than 3
     """
-
     if p <= 3 or q <= 3:
         raise ValueError("parameters p and q must be integers larger than 3")
 
@@ -882,7 +893,7 @@ def Grid2dGraph(p, q, set_positions=True):
 
     INPUT:
 
-    - ``p`` and ``q`` -- two positive integers
+    - ``p``, ``q`` -- two positive integers
 
     - ``set_positions`` -- boolean (default: ``True``); whether to set the
       position of the nodes
@@ -943,8 +954,8 @@ def GridGraph(dim_list):
 
     INPUT:
 
-    - ``dim_list`` -- a list of integers representing the number of nodes to
-       extend in each dimension
+    - ``dim_list`` -- list of integers representing the number of nodes to
+      extend in each dimension
 
     PLOTTING: When plotting, this graph will use the default spring-layout
     algorithm, unless a position dictionary is specified.
@@ -1149,6 +1160,90 @@ def LadderGraph(n):
     return G
 
 
+def MoebiusLadderGraph(n):
+    r"""
+    Return a Möbius ladder graph with `2n` nodes
+
+    A Möbius ladder graph of order `2n` is a ladder graph of the same order
+    that is connected at the ends with a single twist, i.e., a ladder graph
+    bent around so that top meets bottom with a single twist. Alternatively,
+    it can be described as a single cycle graph (of order `2n`) with the
+    addition of edges (called `rungs`) joining the antipodal pairs of nodes.
+    Also, note that the Möbius ladder graph ``graphs.MoebiusLadderGraph(n)`` is
+    precisely the same graph as the circulant graph
+    ``graphs.CirculantGraph(2 * n, [1, n])``.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override the
+    spring-layout algorithm. By convention, each Möbius ladder graph will be
+    displayed with the first (0) node at the top, with the rest following in a
+    counterclockwise manner.
+
+    INPUT:
+
+    - ``n`` -- a nonnegative integer; number of nodes is `2n`
+
+    OUTPUT:
+
+    - ``G`` -- a Möbius ladder graph of order `2n`; note that a
+      :exc:`ValueError` is returned if `n < 0`
+
+    EXAMPLES:
+
+    Construct and show a Möbius ladder graph with 26 nodes::
+
+        sage: g = graphs.MoebiusLadderGraph(13)
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    Create several Möbius ladder graphs in a Sage graphics array::
+
+        sage: # needs sage.plots
+        sage: g = []
+        sage: j = []
+        sage: for i in range(9):
+        ....:    k = graphs.MoebiusLadderGraph(i+3)
+        ....:    g.append(k)
+        sage: for i in range(3):
+        ....:    n = []
+        ....:    for m in range(3):
+        ....:        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+        ....:    j.append(n)
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
+
+    TESTS:
+
+    The input parameter must be a nonnegative integer::
+
+        sage: G = graphs.MoebiusLadderGraph(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be a nonnegative integer
+
+    REFERENCES:
+
+    - :wikipedia:`Möbius_ladder`
+
+    .. SEEALSO::
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.LadderGraph`,
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.CircularLadderGraph`,
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.CirculantGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-05-26)
+    """
+    if n < 0:
+        raise ValueError("parameter n must be a nonnegative integer")
+
+    G = Graph(2 * n, name="Moebius ladder graph")
+    G._circle_embedding(list(range(2 * n)), angle=pi/2)
+    G.add_cycle(list(range(2 * n)))
+    G.add_edges((i, i + n) for i in range(n))
+    return G
+
+
 def PathGraph(n, pos=None):
     r"""
     Return a path graph with `n` nodes.
@@ -1326,7 +1421,7 @@ def StarGraph(n):
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
     """
-    G = Graph({0: list(range(1, n + 1))}, name="Star graph", format="dict_of_lists")
+    G = Graph({0: list(range(1, n + 1))}, name="Star graph", format='dict_of_lists')
     G.set_pos({0: (0, 0)})
     G._circle_embedding(list(range(1, n + 1)), angle=pi/2)
     return G

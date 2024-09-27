@@ -19,7 +19,6 @@ AUTHORS:
   heights
 - Robert Harron (2012-08): conjugate() now works for all fields contained in
   CM fields
-
 """
 # ****************************************************************************
 #       Copyright (C) 2004, 2007 William Stein <wstein@gmail.com>
@@ -50,6 +49,7 @@ from sage.libs.gmp.pylong cimport mpz_pythonhash
 from cpython.object cimport Py_EQ, Py_NE, Py_LT, Py_GT, Py_LE, Py_GE
 from sage.structure.richcmp cimport rich_to_bool
 
+import sage.rings.abc
 import sage.rings.polynomial.polynomial_element
 from sage.rings.polynomial.evaluation_ntl cimport ZZX_evaluation_mpfi
 import sage.rings.rational_field
@@ -104,7 +104,7 @@ def is_NumberFieldElement(x):
         sage: is_NumberFieldElement(2)
         doctest:warning...
         DeprecationWarning: is_NumberFieldElement is deprecated;
-        use isinstance(..., sage.structure.element.NumberFieldElement) instead
+        use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead
         See https://github.com/sagemath/sage/issues/34931 for details.
         False
         sage: x = polygen(ZZ, 'x')
@@ -115,7 +115,7 @@ def is_NumberFieldElement(x):
     from sage.misc.superseded import deprecation
     deprecation(34931,
                 'is_NumberFieldElement is deprecated; '
-                'use isinstance(..., sage.structure.element.NumberFieldElement) instead')
+                'use isinstance(..., sage.rings.number_field.number_field_element_base.NumberFieldElement_base) instead')
     return isinstance(x, NumberFieldElement)
 
 
@@ -172,8 +172,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
     """
     cdef _new(self):
         """
-        Quickly creates a new initialized NumberFieldElement with the same
-        parent as self.
+        Quickly create a new initialized NumberFieldElement with the same
+        parent as ``self``.
         """
         cdef type t = type(self)
         cdef NumberFieldElement x = <NumberFieldElement>t.__new__(t)
@@ -184,8 +184,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     cdef number_field(self):
         r"""
+        Return the number field of ``self``. Only accessible from Cython.
 
-        Return the number field of self. Only accessible from Cython.
         EXAMPLES::
 
             sage: x = polygen(ZZ, 'x')
@@ -210,9 +210,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         INPUT:
 
-        -  ``parent`` -- a number field
+        - ``parent`` -- a number field
 
-        -  ``f`` -- defines an element of a number field.
+        - ``f`` -- defines an element of a number field
 
         EXAMPLES:
 
@@ -308,7 +308,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def _lift_cyclotomic_element(self, new_parent, bint check=True, int rel=0):
         """
-        Creates an element of the passed field from this field. This is
+        Create an element of the passed field from this field. This is
         specific to creating elements in a cyclotomic field from elements
         in another cyclotomic field, in the case that
         self.number_field()._n() divides new_parent()._n(). This
@@ -449,7 +449,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             b^2 + 1
             sage: (a+1)._im_gens_(m, [b^2])
             b^2 + 1
-
         """
         # NOTE -- if you ever want to change this so relative number
         # fields are in terms of a root of a poly.  The issue is that
@@ -467,7 +466,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def _latex_(self):
         r"""
-        Returns the latex representation for this element.
+        Return the latex representation for this element.
 
         EXAMPLES::
 
@@ -480,7 +479,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def _gap_init_(self):
         """
-        Return gap string representation of self.
+        Return gap string representation of ``self``.
 
         EXAMPLES::
 
@@ -599,7 +598,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def __pari__(self, name='y'):
         r"""
-        Return PARI representation of self.
+        Return PARI representation of ``self``.
 
         The returned element is a PARI ``POLMOD`` in the variable
         ``name``, which is by default 'y' - not the name of the generator
@@ -607,7 +606,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        -  ``name`` -- (default: 'y') the PARI variable name used.
+        - ``name`` -- (default: ``'y'``) the PARI variable name used
 
         EXAMPLES::
 
@@ -698,7 +697,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def _pari_init_(self, name='y'):
         """
-        Return PARI/GP string representation of self.
+        Return PARI/GP string representation of ``self``.
 
         The returned string defines a PARI ``POLMOD`` in the variable
         ``name``, which is by default 'y' - not the name of the generator
@@ -706,7 +705,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        -  ``name`` -- (default: 'y') the PARI variable name used.
+        - ``name`` -- (default: ``'y'``) the PARI variable name used
 
         EXAMPLES::
 
@@ -882,11 +881,11 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        - ``num_bound`` -- Bound for the numerator of coefficients of result
+        - ``num_bound`` -- bound for the numerator of coefficients of result
 
-        - ``den_bound`` -- Bound for the denominator of coefficients of result
+        - ``den_bound`` -- bound for the denominator of coefficients of result
 
-        - ``distribution`` -- Distribution to use for coefficients of result
+        - ``distribution`` -- distribution to use for coefficients of result
 
         EXAMPLES::
 
@@ -1156,7 +1155,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             mpfi_set_prec(a, mpfi_get_prec(v.value))
             ZZX_evaluation_mpfi(a, self._numerator, v.value)
             mpfi_div_z(a, a, den)
-            mpfr_floor(&a.left ,&a.left)
+            mpfr_floor(&a.left, &a.left)
             mpfr_floor(&a.right, &a.right)
 
         ans = PY_NEW(Integer)
@@ -1293,12 +1292,9 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
+        - ``prec`` -- integer (default: ``None``); bits of precision
 
-        -  ``prec`` -- (default: None) integer bits of precision
-
-        -  ``i`` -- (default: None) integer, which embedding to
-           use
-
+        - ``i`` -- integer (default: ``None``); which embedding to use
 
         EXAMPLES::
 
@@ -1357,7 +1353,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: b.abs(prec=53)
             1.32471795724475
-
         """
         if (i is None and prec is None
                 and (<number_field_base.NumberField> self._parent)._embedded_real):
@@ -1380,10 +1375,10 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        -  ``P`` -- a prime ideal of the parent of ``self``
+        - ``P`` -- a prime ideal of the parent of ``self``
 
-        - ``prec`` (int) -- desired floating point precision (default:
-          default :class:`RealField` precision).
+        - ``prec`` -- integer (default: default :class:`RealField` precision);
+          desired floating point precision
 
         OUTPUT:
 
@@ -1391,7 +1386,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         respect to the prime `P`, to the given precision.  This is the
         normalised absolute value, so that the underlying prime number
         `p` has absolute value `1/p`.
-
 
         EXAMPLES::
 
@@ -1489,9 +1483,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-
-        -  ``prec`` -- integer (default: 53) bits of precision
-
+        - ``prec`` -- integer (default: 53); bits of precision
 
         EXAMPLES::
 
@@ -1571,11 +1563,11 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-         - ``L`` -- a number field containing `K` = ``self.parent()``.
-         - ``element`` -- ``True`` or ``False``, whether to also output an element
-           of which ``self`` is a norm.
-         - ``proof`` -- If ``True``, then the output is correct unconditionally.
-           If ``False``, then the output is correct under GRH.
+        - ``L`` -- a number field containing `K` = ``self.parent()``
+        - ``element`` -- boolean; whether to also output an element
+          of which ``self`` is a norm
+        - ``proof`` -- if ``True``, then the output is correct unconditionally;
+          if ``False``, then the output is correct under GRH
 
         OUTPUT:
 
@@ -1663,8 +1655,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if not isinstance(L, NumberField):
             raise ValueError("L (=%s) must be a NumberField in is_norm" % L)
 
-        from sage.rings.number_field.number_field import is_AbsoluteNumberField
-        if is_AbsoluteNumberField(L):
+        from sage.rings.number_field.number_field import NumberField_absolute
+        if isinstance(L, NumberField_absolute):
             Lrel = L.relativize(K.hom(L), L.variable_name() + '0')
             b, x = self.is_norm(Lrel, element=True, proof=proof)
             h = Lrel.structure()[0]
@@ -1707,7 +1699,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         algorithm looks for a solution `x` that is an `S`-integer, with `S`
         a list of places of `L` containing at least the ramified primes,
         the generators of the class group of `L`, as well as those primes
-        dividing self.
+        dividing ``self``.
 
         If `L/K` is Galois, then this is enough; otherwise,
         ``extra_primes`` is used to add more primes to `S`: all the places
@@ -1720,10 +1712,10 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-         - `L` -- a relative number field with base field ``self.parent()``
-         - ``proof`` -- whether to certify outputs of PARI init functions.
-           If ``False``, truth of the output depends on GRH.
-         - ``extra_primes`` -- an integer as explained above.
+        - ``L`` -- a relative number field with base field ``self.parent()``
+        - ``proof`` -- whether to certify outputs of PARI init functions;
+          if ``False``, truth of the output depends on GRH
+        - ``extra_primes`` -- integer; as explained above
 
         OUTPUT:
 
@@ -1803,8 +1795,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         - Francis Clarke (2010-12-26)
         """
         K = self.parent()
-        from sage.rings.number_field.number_field_rel import is_RelativeNumberField
-        if (not is_RelativeNumberField(L)) or L.base_field() != K:
+        from sage.rings.number_field.number_field_rel import NumberField_relative
+        if not isinstance(L, NumberField_relative) or L.base_field() != K:
             raise ValueError("L (=%s) must be a relative number field with base field K (=%s) in rnfisnorm" % (L, K))
 
         rnf_data = K.pari_rnfnorm_data(L, proof=proof)
@@ -1954,7 +1946,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         elements raised to appropriate powers, with an appropriate
         unit factor.
 
-        Raise :class:`ValueError` if the factorization of the
+        Raise :exc:`ValueError` if the factorization of the
         ideal (``self``) contains a non-principal prime ideal.
 
         EXAMPLES::
@@ -1982,14 +1974,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             Traceback (most recent call last):
             ...
             ArithmeticError: factorization of 0 is not defined
-
         """
         if self.is_zero():
             raise ArithmeticError("factorization of 0 is not defined")
 
         K = self.parent()
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if is_NumberFieldOrder(K):
+        if isinstance(K, sage.rings.abc.Order):
             K = K.number_field()
         fac = K.ideal(self).factor()
         # Check whether all prime ideals in `fac` are principal
@@ -2034,14 +2024,13 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        - ``self``, ``other`` -- elements of a number field or maximal
-          order.
+        - ``self``, ``other`` -- elements of a number field or maximal order
 
         OUTPUT:
 
-        - A generator of the ideal ``(self, other)``. If the parent is
-          a number field, this always returns 0 or 1. For maximal orders,
-          this raises :class:`ArithmeticError` if the ideal is not principal.
+        A generator of the ideal ``(self, other)``. If the parent is
+        a number field, this always returns 0 or 1. For maximal orders,
+        this raises :exc:`ArithmeticError` if the ideal is not principal.
 
         EXAMPLES::
 
@@ -2088,8 +2077,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         if R.is_field():
             return R.one()
 
-        from sage.rings.number_field.order import is_NumberFieldOrder
-        if not is_NumberFieldOrder(R):
+        if not isinstance(R, sage.rings.abc.Order):
             raise NotImplementedError("gcd() for %r is not implemented" % R)
 
         K = R.number_field()
@@ -2151,10 +2139,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-
-        -  ``root`` -- if ``True``, also return a square root (or
-           ``None`` if ``self`` is not a perfect square)
-
+        - ``root`` -- if ``True``, also return a square root (or ``None`` if
+          ``self`` is not a perfect square)
 
         EXAMPLES::
 
@@ -2206,7 +2192,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         INPUT:
 
         - ``P`` -- a prime ideal
-        - ``check`` -- (default: ``True``); check if `P` is prime
+        - ``check`` -- boolean (default: ``True``); check if `P` is prime
 
         EXAMPLES::
 
@@ -2224,10 +2210,10 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        - ``all`` -- optional boolean (default ``False``); whether to return
+        - ``all`` -- boolean (default: ``False``); whether to return
           both square roots
 
-        - ``extend`` -- optional boolean (default ``True``); whether to extend
+        - ``extend`` -- boolean (default: ``True``); whether to extend
           the field by adding the square roots if needed
 
         EXAMPLES::
@@ -2306,7 +2292,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def nth_root(self, n, all=False):
         r"""
-        Return an `n`'th root of ``self`` in its parent `K`.
+        Return an `n`-th root of ``self`` in its parent `K`.
 
         EXAMPLES::
 
@@ -2332,7 +2318,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def is_nth_power(self, n):
         r"""
-        Return ``True`` if ``self`` is an `n`'th power in its parent `K`.
+        Return ``True`` if ``self`` is an `n`-th power in its parent `K`.
 
         EXAMPLES::
 
@@ -2496,7 +2482,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     cpdef _mul_(self, right):
         """
-        Returns the product of self and other as elements of a number
+        Return the product of ``self`` and ``other`` as elements of a number
         field.
 
         EXAMPLES::
@@ -2544,7 +2530,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     cpdef _div_(self, other):
         """
-        Returns the quotient of self and other as elements of a number
+        Return the quotient of ``self`` and ``other`` as elements of a number
         field.
 
         EXAMPLES::
@@ -2755,7 +2741,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def __invert__(self):
         """
-        Return the multiplicative inverse of self in the number field.
+        Return the multiplicative inverse of ``self`` in the number field.
 
         EXAMPLES::
 
@@ -2794,7 +2780,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def _integer_(self, Z=None):
         """
-        Returns an integer if this element is actually an integer.
+        Return an integer if this element is actually an integer.
 
         EXAMPLES::
 
@@ -2812,7 +2798,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def _rational_(self):
         """
-        Returns a rational number if this element is actually a rational
+        Return a rational number if this element is actually a rational
         number.
 
         EXAMPLES::
@@ -2846,7 +2832,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: AA(alpha)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot coerce algebraic number with non-zero imaginary
+            ValueError: Cannot coerce algebraic number with nonzero imaginary
             part to algebraic real
 
             sage: NF.<alpha> = NumberField(x^5 + 7*x + 3)
@@ -2982,7 +2968,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: K.<a> = NumberField(p, embedding=rt)
             sage: SR(a)                                                                 # needs sage.symbolic
             -0.3056815681115094?
-
         """
         K = self._parent.fraction_field()
 
@@ -3075,7 +3060,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         This is only well-defined for fields contained in CM fields
         (i.e. for totally real fields and CM fields). Recall that a CM
         field is a totally imaginary quadratic extension of a totally
-        real field. For other fields, a :class:`ValueError` is raised.
+        real field. For other fields, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -3098,7 +3083,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: j.conjugate()
             -j
 
-        Raise a :class:`ValueError` if the field is not contained in a CM field.
+        Raise a :exc:`ValueError` if the field is not contained in a CM field.
 
         ::
 
@@ -3126,7 +3111,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             -1/2*a^3 - a - 1/2
             sage: (2*a^2 - 1).conjugate()
             a^3 - 2*a^2 - 2
-
         """
 
         nf = self.number_field()
@@ -3173,7 +3157,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             1/2*x^3 + 3*x - 1/2
             sage: R(list(b))
             y
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import _single_variate as Pol
         return Pol(QQ, var)(self._coefficients())
@@ -3237,10 +3220,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         Return the coefficients of the underlying polynomial corresponding
         to this number field element.
 
-        OUTPUT:
-
-        - a list whose length corresponding to the degree of this
-          element written in terms of a generator
+        OUTPUT: list whose length corresponding to the degree of this element
+        written in terms of a generator
 
         EXAMPLES::
 
@@ -3742,9 +3723,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-
-        -  ``base`` -- field or morphism
-
+        - ``base`` -- field or morphism
 
         EXAMPLES:
 
@@ -3865,7 +3844,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        -  ``P`` -- a prime ideal of the parent of ``self``
+        - ``P`` -- a prime ideal of the parent of ``self``
 
         .. NOTE::
 
@@ -3914,8 +3893,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             ...
             ValueError: P must be prime
         """
-        from sage.rings.number_field.number_field_ideal import is_NumberFieldIdeal
-        if not is_NumberFieldIdeal(P):
+        from sage.rings.number_field.number_field_ideal import NumberFieldIdeal
+        if not isinstance(P, NumberFieldIdeal):
             if isinstance(P, NumberFieldElement):
                 P = self.number_field().fractional_ideal(P)
             else:
@@ -3932,18 +3911,17 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def local_height(self, P, prec=None, weighted=False):
         r"""
-        Returns the local height of ``self`` at a given prime ideal `P`.
+        Return the local height of ``self`` at a given prime ideal `P`.
 
         INPUT:
 
-
         - ``P`` -- a prime ideal of the parent of ``self``
 
-        - ``prec`` (int) -- desired floating point precision (default:
-          default :class:`RealField` precision).
+        - ``prec`` -- integer; (default: default :class:`RealField` precision);
+          desired floating point precision
 
-        - ``weighted`` (bool, default ``False``) -- if ``True``, apply local
-          degree weighting.
+        - ``weighted`` -- boolean (default: ``False``); if ``True``, apply local
+          degree weighting
 
         OUTPUT:
 
@@ -3989,23 +3967,23 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def local_height_arch(self, i, prec=None, weighted=False):
         r"""
-        Returns the local height of ``self`` at the `i`'th infinite place.
+        Return the local height of ``self`` at the `i`-th infinite place.
 
         INPUT:
 
-        - ``i`` (int) -- an integer in ``range(r+s)`` where `(r,s)` is the
-          signature of the parent field (so `n=r+2s` is the degree).
+        - ``i`` -- integer in ``range(r+s)`` where `(r,s)` is the signature of
+          the parent field (so `n=r+2s` is the degree)
 
-        - ``prec`` (int) -- desired floating point precision (default:
-          default :class:`RealField` precision).
+        - ``prec`` -- integer (default: default :class:`RealField` precision);
+          desired floating point precision
 
-        - ``weighted`` (bool, default ``False``) -- if ``True``, apply local
-          degree weighting, i.e. double the value for complex places.
+        - ``weighted`` -- boolean (default: ``False``); if ``True``, apply local
+          degree weighting, i.e. double the value for complex places
 
         OUTPUT:
 
         (real) The archimedean local height of this number field
-        element at the `i`'th infinite place.  If ``weighted`` is
+        element at the `i`-th infinite place.  If ``weighted`` is
         ``True``, this is multiplied by the local degree (as required for
         global heights), i.e. 1 for real places and 2 for complex
         places.
@@ -4053,8 +4031,8 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         INPUT:
 
-        - ``prec`` (int) -- desired floating point precision (default:
-          default RealField precision).
+        - ``prec`` -- integer (default: default RealField precision); desired
+          floating point precision
 
         OUTPUT:
 
@@ -4103,12 +4081,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def global_height_arch(self, prec=None):
         """
-        Returns the total archimedean component of the height of ``self``.
+        Return the total archimedean component of the height of ``self``.
 
         INPUT:
 
-        - ``prec`` (int) -- desired floating point precision (default:
-          default :class:`RealField` precision).
+        - ``prec`` -- integer (default: default :class:`RealField` precision);
+          desired floating point precision
 
         OUTPUT:
 
@@ -4130,12 +4108,12 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def global_height(self, prec=None):
         """
-        Returns the absolute logarithmic height of this number field element.
+        Return the absolute logarithmic height of this number field element.
 
         INPUT:
 
-        - ``prec`` (int) -- desired floating point precision (default:
-          default :class:`RealField` precision).
+        - ``prec`` -- integer (default: default :class:`RealField` precision);
+          desired floating point precision
 
         OUTPUT:
 
@@ -4177,7 +4155,6 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             0.346573590279973
             sage: (1/s).global_height()   #make sure that 11758 is fixed
             0.346573590279973
-
         """
         return (self.global_height_non_arch(prec)+self.global_height_arch(prec))/self.number_field().absolute_degree()
 
@@ -4248,7 +4225,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         Return the support of this number field element.
 
-        OUTPUT: A sorted list of the prime ideals at which this number
+        OUTPUT: a sorted list of the prime ideals at which this number
         field element has nonzero valuation. An error is raised if the
         element is zero.
 
@@ -4368,14 +4345,14 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
     def inverse_mod(self, I):
         r"""
-        Returns the inverse of ``self`` mod the integral ideal `I`.
+        Return the inverse of ``self`` mod the integral ideal `I`.
 
         INPUT:
 
-        -  ``I`` -- may be an ideal of ``self.parent()``, or an element or list
-           of elements of ``self.parent()`` generating a nonzero ideal. A :class:`ValueError`
-           is raised if `I` is non-integral or zero. A :class:`ZeroDivisionError` is
-           raised if `I + (x) \neq (1)`.
+        - ``I`` -- may be an ideal of ``self.parent()``, or an element or list
+          of elements of ``self.parent()`` generating a nonzero ideal. A
+          :exc:`ValueError` is raised if `I` is non-integral or zero. A
+          :exc:`ZeroDivisionError` is raised if `I + (x) \neq (1)`.
 
         .. NOTE::
 
@@ -4422,7 +4399,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         .. NOTE:: can also be called for an ideal from sage.rings.number_field_ideal.residue_symbol
 
-        .. NOTE:: self is coerced into the number field of the ideal P
+        .. NOTE:: ``self`` is coerced into the number field of the ideal P
 
         .. NOTE::
 
@@ -4435,9 +4412,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         - ``m`` -- positive integer
 
-        OUTPUT:
-
-        - an `m`-th root of unity in the number field
+        OUTPUT: an `m`-th root of unity in the number field
 
         EXAMPLES:
 
@@ -4465,35 +4440,34 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: (w^2 + 3).residue_symbol(K.ideal(17),3)
             -w
 
-        The field must contain the m-th roots of unity::
+        The field must contain the `m`-th roots of unity::
 
             sage: K.<w> = NumberField(x^2 - x + 1)
             sage: (w^2 + 3).residue_symbol(K.ideal(17),5)
             Traceback (most recent call last):
             ...
             ValueError: The residue symbol to that power is not defined for the number field
-
         """
         return P.residue_symbol(self,m,check)
 
     def descend_mod_power(self, K=QQ, d=2):
         r"""
         Return a list of elements of the subfield `K` equal to
-        ``self`` modulo `d`'th powers.
+        ``self`` modulo `d`-th powers.
 
         INPUT:
 
-        - ``K`` (number field, default `\QQ`) -- a subfield of the
+        - ``K`` -- number field (default: `\QQ`); a subfield of the
           parent number field `L` of ``self``
 
-        - ``d`` (positive integer, default 2) -- an integer at least 2
+        - ``d`` -- positive integer (default: 2); an integer at least 2
 
         OUTPUT:
 
         A list, possibly empty, of elements of `K` equal to ``self``
-        modulo `d`'th powers, i.e. the preimages of ``self`` under the
+        modulo `d`-th powers, i.e. the preimages of ``self`` under the
         map `K^*/(K^*)^d \rightarrow L^*/(L^*)^d` where `L` is the
-        parent of ``self``.  A :class:`ValueError` is raised if `K` does
+        parent of ``self``.  A :exc:`ValueError` is raised if `K` does
         not embed into `L`.
 
         ALGORITHM:
@@ -4652,12 +4626,10 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
 
         INPUT:
 
-
-        -  ``magma`` -- a Magma interpreter
-
+        - ``magma`` -- a Magma interpreter
 
         OUTPUT: MagmaElement that has parent the Magma object corresponding
-        to the parent number field.
+        to the parent number field
 
         EXAMPLES::
 
@@ -4862,7 +4834,6 @@ cdef class NumberFieldElement_absolute(NumberFieldElement):
             sage: K.<a> = QuadraticField(-3)
             sage: a.lift()
             x
-
         """
         R = self.number_field().base_field()[var]
         return R(self.list())
@@ -4926,7 +4897,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
     The current relative number field element implementation
     does everything in terms of absolute polynomials.
 
-    All conversions from relative polynomials, lists, vectors, etc
+    All conversions from relative polynomials, lists, vectors, etc.
     should happen in the parent.
     """
     def __init__(self, parent, f):
@@ -5023,7 +4994,6 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
             sage: u = L(1/2*a + 1/2 + b + (a-9)*b^5)
             sage: u.lift()
             (a - 9)*x^5 + x + 1/2*a + 1/2
-
         """
         K = self.number_field()
         # Compute representation of self in terms of relative vector space.
@@ -5193,7 +5163,8 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
 
         INPUT:
 
-        -  ``P`` -- a prime ideal of relative number field which is the parent of ``self``
+        - ``P`` -- a prime ideal of relative number field which is the parent
+          of ``self``
 
         EXAMPLES::
 
@@ -5249,7 +5220,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
 
     cdef _new(self):
         """
-        Quickly creates a new initialized NumberFieldElement with the same
+        Quickly create a new initialized NumberFieldElement with the same
         parent as ``self``.
 
         EXAMPLES:
@@ -5290,10 +5261,10 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
 
         INPUT:
 
-        -  ``I`` -- may be an ideal of ``self.parent()``, or an
-           element or list of elements of ``self.parent()`` generating a nonzero
-           ideal. A :class:`ValueError` is raised if `I` is non-integral or is zero.
-           A :class:`ZeroDivisionError` is raised if `I + (x) \neq (1)`.
+        - ``I`` -- may be an ideal of ``self.parent()``, or an element or list
+          of elements of ``self.parent()`` generating a nonzero ideal. A
+          :exc:`ValueError` is raised if `I` is non-integral or is zero. A
+          :exc:`ZeroDivisionError` is raised if `I + (x) \neq (1)`.
 
         EXAMPLES::
 
@@ -5368,8 +5339,8 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
     cdef _new(self):
         """
-        Quickly creates a new initialized NumberFieldElement with the same
-        parent as self.
+        Quickly create a new initialized NumberFieldElement with the same
+        parent as ``self``.
 
         EXAMPLES:
 
@@ -5422,12 +5393,10 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
         INPUT:
 
-
-        -  ``I`` -- may be an ideal of ``self.parent()``, or an
-           element or list of elements of ``self.parent()`` generating a nonzero
-           ideal. A :class:`ValueError` is raised if `I` is non-integral or is zero.
-           A :class:`ZeroDivisionError` is raised if `I + (x) \neq (1)`.
-
+        - ``I`` -- may be an ideal of ``self.parent()``, or an
+          element or list of elements of ``self.parent()`` generating a nonzero
+          ideal. A :exc:`ValueError` is raised if `I` is non-integral or is zero.
+          A :exc:`ZeroDivisionError` is raised if `I + (x) \neq (1)`.
 
         EXAMPLES::
 
@@ -5633,7 +5602,7 @@ class CoordinateFunction():
 
     def __eq__(self, other):
         """
-        Test equality
+        Test equality.
 
         EXAMPLES::
 
@@ -5659,7 +5628,7 @@ class CoordinateFunction():
 
     def __ne__(self, other):
         """
-        Test inequality
+        Test inequality.
 
         EXAMPLES::
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Semisimple Algebras
 """
@@ -91,9 +92,9 @@ class SemisimpleAlgebras(Category_over_base_ring):
             r"""
             Return a basis of the Jacobson radical of this algebra.
 
-            - ``keywords`` -- for compatibility; ignored.
+            - ``keywords`` -- for compatibility; ignored
 
-            OUTPUT: the empty list since this algebra is semisimple.
+            OUTPUT: the empty list since this algebra is semisimple
 
             EXAMPLES::
 

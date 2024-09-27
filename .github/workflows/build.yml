@@ -78,6 +78,8 @@ env:
 jobs:
   test-new:
     runs-on: ubuntu-latest
+    outputs:
+      build_targets:     ${{ steps.build-targets.outputs.build_targets }}
     services:
       # https://docs.docker.com/build/ci/github-actions/local-registry/
       registry:
@@ -98,6 +100,46 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+      - name: Get changed files and packages
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          # File extensions for doctests per sage.doctest.control.skipfile
+          files_yaml: |
+            configures:
+              - 'build/pkgs/*/spkg-configure.m4'
+            pkgs:
+              - 'build/pkgs/**'
+              - 'pkgs/**'
+            doctests:
+              - 'src/**/*.{py,pyx,pxd,pxi,sage,spyx,rst,tex}'
+              - '!src/{setup,conftest*}.py'
+      - name: Determine targets to build
+        id: build-targets
+        run: |
+          uninstall_targets=$(echo $(for a in '' ${{ steps.changed-files.outputs.configures_all_changed_files }}; do echo $a | sed -E 's,build/pkgs/([a-z0-9][_.a-z0-9]*)/spkg-configure[.]m4 *,\1-uninstall,'; done | sort -u))
+          build_targets=$(echo $(for a in '' ${{ steps.changed-files.outputs.pkgs_all_changed_files }}; do SPKG=$(echo $a | sed -E 's,-,_,g;s,(build/)?pkgs/([a-z0-9][-_.a-z0-9]*)/[^ ]* *,\2,;'); if [ -f "build/pkgs/$SPKG/checksums.ini" -o -f "build/pkgs/$SPKG/requirements.txt" -o -f "build/pkgs/$SPKG/spkg-install" ]; then echo "$SPKG-ensure"; fi; done | sort -u))
+          if [ -n "$uninstall_targets" ]; then
+              echo "build_targets=$uninstall_targets reconfigure $build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
+          else
+              echo "build_targets=$build_targets ci-build-with-fallback" >> $GITHUB_OUTPUT
+          fi
+          cat $GITHUB_OUTPUT
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: worktree-base
+        if: github.base_ref && steps.changed-files.outputs.pkgs_all_changed_files
+      - name: Compute metrics
+        run: |
+          export PATH=build/bin:$PATH
+          if [ -d worktree-base ]; then
+            (echo "# $GITHUB_BASE_REF"; SAGE_ROOT=worktree-base sage-package metrics :all:) > base-metrics.txt
+            (echo "# $GITHUB_REF"; sage-package metrics :all:) > metrics.txt
+            diff --color=always --width=100 --side-by-side --left-column base-metrics.txt metrics.txt || true
+          else
+            sage-package metrics :all:
+          fi
       - name: Install test prerequisites
         # From docker.yml
         run: |
@@ -134,7 +176,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           # push and load may not be set together at the moment
           #
@@ -142,7 +184,7 @@ jobs:
           # more reliable than "load", for which we observed random failure
           # conditions in which the built image could not be found.
           #
-          push:       true
+          push:       ${{ steps.changed-files.outputs.doctests_all_changed_files && true || false }}
           load:       false
           context:    .
           tags:       ${{ env.BUILD_IMAGE }}
@@ -153,9 +195,12 @@ jobs:
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
-            TARGETS=ci-build-with-fallback
+            TARGETS=${{ steps.build-targets.outputs.build_targets }}
 
       - name: Start container
+        id: container
+        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+        if: (success() || failure()) && steps.changed-files.outputs.doctests_all_changed_files
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -165,6 +210,7 @@ jobs:
       # Testing
 
       - name: Check that all modules can be imported
+        if: (success() || failure()) && steps.container.outcome == 'success' && steps.changed-files.outputs.doctests_all_changed_files
         run: |
           # Increase the length of the lines in the "short summary"
           export COLUMNS=120
@@ -175,20 +221,12 @@ jobs:
           ./sage -python -m pytest -c tox.ini -qq --doctest --collect-only || true
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v44
-        with:
-          # File extensions per sage.doctest.control.skipfile
-          files: src/**/*.{py,pyx,pxd,pxi,sage,spyx,rst,tex}
-          files_ignore: src/{setup,conftest*}.py
-
       - name: Test changed files (sage -t --new)
-        if: steps.changed-files.outputs.all_changed_files
+        if: (success() || failure()) && steps.container.outcome == 'success' && steps.changed-files.outputs.doctests_all_changed_files
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
           # https://github.com/tj-actions/changed-files?tab=readme-ov-file#outputs-
-          ./sage -t --long --format github -p4 ${{ steps.changed-files.outputs.all_changed_files }}
+          ./sage -t --long --format github -p4 ${{ steps.changed-files.outputs.doctests_all_changed_files }}
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
   test-mod:
@@ -253,7 +291,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push:       true
           load:       false
@@ -266,9 +304,11 @@ jobs:
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
-            TARGETS=ci-build-with-fallback
+            TARGETS=${{ needs.test-new.outputs.build_targets }}
 
       - name: Start container
+        id: container
+        if: (success() || failure())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -278,6 +318,7 @@ jobs:
       # Testing
 
       - name: Test modularized distributions
+        if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
           make V=0 tox-ensure && make ${{ matrix.targets }}
@@ -348,7 +389,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push:       true
           load:       false
@@ -361,10 +402,11 @@ jobs:
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
-            TARGETS=ci-build-with-fallback
+            TARGETS=${{ needs.test-new.outputs.build_targets }}
 
       - name: Start container
         id: container
+        if: (success() || failure())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -374,6 +416,7 @@ jobs:
       # Testing
 
       - name: Test all files (sage -t --long ${{ matrix.tests }})
+        if: (success() || failure()) && steps.container.outcome == 'success'
         run: |
           mkdir .coverage
           rm -rf /sage/.coverage
@@ -399,8 +442,11 @@ jobs:
         if: (success() || failure()) && steps.container.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
+          # The path .coverage is a directory that contains the combined coverage
+          # data file .coverage, which is a hidden file because of the leading dot
           name: coverage-${{ steps.copy-coverage.outputs.tests_id }}
           path: .coverage
+          include-hidden-files: true
 
   coverage-report:
     runs-on: ubuntu-latest
@@ -460,7 +506,7 @@ jobs:
 
       - name: Build Docker image
         id: image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push:       true
           load:       false
@@ -473,10 +519,11 @@ jobs:
             NUMPROC=6
             USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
-            TARGETS=ci-build-with-fallback
+            TARGETS=${{ needs.test-new.outputs.build_targets }}
 
       - name: Start container
         id: container
+        if: (success() || failure())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -486,12 +533,14 @@ jobs:
       # Combining
 
       - name: Download coverage artifacts
+        if: (success() || failure()) && steps.container.outcome == 'success'
         uses: actions/download-artifact@v4
         with:
           path: .coverage
           pattern: coverage-*
 
       - name: Coverage report
+        if: (success() || failure()) && steps.container.outcome == 'success'
         # Using --omit to avoid "CoverageWarning: Couldn't parse '/tmp/tmp06qizzie/tmp_ldpu46ob.py': No source for code"
         run: |
           rm -rf /sage/.coverage
@@ -505,6 +554,7 @@ jobs:
         shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
       - name: Upload coverage to codecov
+        if: (success() || failure()) && steps.container.outcome == 'success'
         uses: codecov/codecov-action@v4
         with:
           directory: .coverage/coverage-report
