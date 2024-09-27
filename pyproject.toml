@@ -1,6 +1,17 @@
 [build-system]
 build-backend = 'mesonpy'
-requires = ['meson-python', 'cython>=3.0.0']
+# Minimum requirements for the build system to execute.
+requires = [
+    'meson-python',
+    'cypari2 >=2.1.1',
+    'cysignals >=1.11.4',
+    # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
+    'cython >=3.0, != 3.0.3, <4.0',
+    'gmpy2 ~=2.1.b999',
+    'memory_allocator',
+    'numpy >=1.19',
+    'jinja2'
+]
 
 [project]
 name = 'sagemath'
