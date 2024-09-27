@@ -3133,10 +3133,10 @@ class FreeModule_generic(Module_free_ambient):
 
             :meth:`pseudohom`
         """
-        from sage.modules.free_module_pseudohomspace import FreeModulepseudoHomspace
+        from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
         if codomain is None:
             codomain = self
-        return FreeModulepseudoHomspace(self, codomain, twist)
+        return FreeModulePseudoHomspace(self, codomain, twist)
 
     def pseudohom(self, f, twist, codomain=None, side="left"):
         r"""
