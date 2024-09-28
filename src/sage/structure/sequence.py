@@ -70,9 +70,16 @@ specifying the universe of the sequence::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
 import sage.structure.sage_object
 import sage.structure.coerce
+
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.polynomial.multi_polynomial_ideal', 'MPolynomialIdeal')
+lazy_import('sage.rings.polynomial.multi_polynomial_ring', 'MPolynomialRing_base')
+lazy_import('sage.rings.polynomial.multi_polynomial_sequence', 'PolynomialSequence')
+lazy_import('sage.rings.polynomial.pbori.pbori', 'BooleanMonomialMonoid')
+lazy_import('sage.rings.quotient_ring', 'QuotientRing_nc')
 
 
 def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=None, use_sage_types=False):
@@ -215,14 +222,9 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
             universe = x.universe()
             x = list(x)
         else:
-            try:
-                from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-            except ImportError:
-                pass
-            else:
-                if isinstance(x, MPolynomialIdeal):
-                    universe = x.ring()
-                    x = x.gens()
+            if isinstance(x, MPolynomialIdeal):
+                universe = x.ring()
+                x = x.gens()
 
     if universe is None:
         orig_x = x
@@ -249,16 +251,8 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
             if universe is None:   # no type errors raised.
                 universe = sage.structure.element.parent(x[len(x)-1])
 
-    try:
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-        from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
-        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-        from sage.rings.quotient_ring import QuotientRing_nc
-    except ImportError:
-        pass
-    else:
-        if isinstance(universe, MPolynomialRing_base) or isinstance(universe, BooleanMonomialMonoid) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
-            return PolynomialSequence(x, universe, immutable=immutable, cr=cr, cr_str=cr_str)
+    if isinstance(universe, (MPolynomialRing_base, BooleanMonomialMonoid)) or (isinstance(universe, QuotientRing_nc) and isinstance(universe.cover_ring(), MPolynomialRing_base)):
+        return PolynomialSequence(x, universe, immutable=immutable, cr=cr, cr_str=cr_str)
 
     return Sequence_generic(x, universe, check, immutable, cr, cr_str, use_sage_types)
 
