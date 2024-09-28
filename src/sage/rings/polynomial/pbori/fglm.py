@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-brial
+# sage.doctest: needs sage.rings.polynomial.pbori
 from .pbori import BooleSet, FGLMStrategy
 from .PyPolyBoRi import BoolePolynomialVector, Polynomial
 

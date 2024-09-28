@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-brial
+# sage.doctest: needs sage.rings.polynomial.pbori
 from .PyPolyBoRi import Polynomial, gauss_on_polys
 
 

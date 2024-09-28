@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-brial
+# sage.doctest: needs sage.rings.polynomial.pbori
 import contextlib
 from copy import copy
 from itertools import chain
