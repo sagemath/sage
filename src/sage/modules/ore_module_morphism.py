@@ -245,6 +245,7 @@ AUTHOR:
 # ***************************************************************************
 
 from sage.misc.latex import latex
+from sage.structure.element import Element
 from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 from sage.categories.map import Map
@@ -256,8 +257,12 @@ class OreModuleMorphism(Morphism):
         Morphism.__init__(self, parent)
         domain = parent.domain()
         codomain = parent.codomain()
+        base = domain.base_ring()
         MS = parent.matrix_space()
-        if isinstance(im_gens, Matrix):
+        if (isinstance(im_gens, Element)
+            and base.has_coerce_map_from(im_gens.parent())):
+            self._matrix = MS(im_gens)
+        elif isinstance(im_gens, Matrix):
             self._matrix = MS(im_gens)
         elif isinstance(im_gens, OreModuleMorphism):
             # Not optimal: too many intermediate morphisms constructed
@@ -304,6 +309,8 @@ class OreModuleMorphism(Morphism):
             if list(M.pivots()) != list(range(dimd)):
                 raise ValueError("does not define a morphism of Ore modules")
             self._matrix = M.submatrix(0, dimd, dimd, dimc)
+        else:
+            raise ValueError("cannot construct a morphism from the given data")
         if check:
             for x in parent.domain().basis():
                 if self._call_(x.image()) != self._call_(x).image():
@@ -323,11 +330,42 @@ class OreModuleMorphism(Morphism):
     def matrix(self):
         return self._matrix.__copy__()
 
+    def _call_(self, x):
+        return self.codomain()(x * self._matrix)
+
     def is_zero(self):
         return self._matrix.is_zero()
 
     def is_identity(self):
         return self.domain() is self.codmain() and self._matrix.is_one()
+
+    def _add_(self, other):
+        if not isinstance(other, OreModuleMorphism):
+            raise ValueError("the morphism is not a morphism of Ore modules")
+        H = self.parent()
+        return H(self._matrix + other._matrix, check=False)
+
+    def _neg_(self):
+        H = self.parent()
+        return H(-self._matrix, check=False)
+
+    def _sub_(self, other):
+        if not isinstance(other, OreModuleMorphism):
+            raise ValueError("the morphism is not a morphism of Ore modules")
+        H = self.parent()
+        return H(self._matrix - other._matrix, check=False)
+
+    def _rmul_(self, a):
+        H = self.parent()
+        return H(a*self._matrix, check=False)
+
+    def __eq__(self, other):
+        if not isinstance(other, OreModuleMorphism):
+            try:
+                other = self.parent()(other)
+            except ValueError:
+                return False
+        return self._matrix == other._matrix
 
     def determinant(self):
         if self.domain() is not self.codomain():
@@ -355,13 +393,10 @@ class OreModuleMorphism(Morphism):
     def is_isomorphism(self):
         return self.is_bijective()
 
-    def _call_(self, x):
-        return self.codomain()(x * self._matrix)
-
     def _composition_(self, other, homset):
         if not isinstance(other, OreModuleMorphism):
-            raise ValueError(str(other))
-        return homset(other._matrix * self._matrix)
+            raise ValueError("the morphism is not a morphism of Ore modules")
+        return homset(other._matrix * self._matrix, check=False)
 
     def kernel(self, names=None):
         ker = self._matrix.left_kernel_matrix()
