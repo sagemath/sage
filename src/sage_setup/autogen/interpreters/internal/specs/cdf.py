@@ -34,7 +34,7 @@ class CDFInterpreter(StackInterpreter):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.cdf import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.cdf import *
             sage: interp = CDFInterpreter()
             sage: interp.name
             'cdf'

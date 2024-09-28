@@ -32,7 +32,7 @@ class MemoryChunkPythonArguments(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.python import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPythonArguments('args', ty_python)
         """
         return "    cdef int _n_%s\n" % self.name
@@ -46,7 +46,7 @@ class MemoryChunkPythonArguments(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.python import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPythonArguments('args', ty_python)
             sage: mc.init_class_members()
             "        count = args['args']\n        self._n_args = count\n"
@@ -64,7 +64,7 @@ class MemoryChunkPythonArguments(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.python import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPythonArguments('args', ty_python)
             sage: mc.setup_args()
             ''
@@ -78,7 +78,7 @@ class MemoryChunkPythonArguments(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.python import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPythonArguments('args', ty_python)
             sage: mc.pass_argument()
             '(<PyTupleObject*>args).ob_item'
@@ -101,7 +101,7 @@ class MemoryChunkPyConstant(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.python import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.name
             'domain'
@@ -118,7 +118,7 @@ class MemoryChunkPyConstant(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.python import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.declare_class_members()
             '    cdef object _domain\n'
@@ -137,7 +137,7 @@ class MemoryChunkPyConstant(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.python import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.init_class_members()
             "        self._domain = args['domain']\n"
@@ -155,7 +155,7 @@ class MemoryChunkPyConstant(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.python import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.declare_parameter()
             'PyObject* domain'
@@ -170,7 +170,7 @@ class MemoryChunkPyConstant(MemoryChunk):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.python import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.pass_argument()
             '<PyObject*>self._domain'
@@ -213,7 +213,7 @@ class PythonInterpreter(StackInterpreter):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.python import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: interp = PythonInterpreter()
             sage: interp.name
             'py'

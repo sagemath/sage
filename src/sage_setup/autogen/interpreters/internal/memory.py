@@ -172,7 +172,7 @@ class MemoryChunk(object):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.rr import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_call_locals()
             '        cdef RealNumber retval = (self.domain)()\n'

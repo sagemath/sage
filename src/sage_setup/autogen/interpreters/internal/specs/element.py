@@ -38,7 +38,7 @@ class MemoryChunkElementArguments(MemoryChunkPythonArguments):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.element import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.element import *
             sage: mc = MemoryChunkElementArguments('args', ty_python)
             sage: mc.setup_args()
             'mapped_args = [self._domain(a) for a in args]\n'
@@ -52,7 +52,7 @@ class MemoryChunkElementArguments(MemoryChunkPythonArguments):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.element import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.element import *
             sage: mc = MemoryChunkElementArguments('args', ty_python)
             sage: mc.pass_argument()
             '(<PyListObject*>mapped_args).ob_item'
@@ -82,7 +82,7 @@ class ElementInterpreter(PythonInterpreter):
         EXAMPLES::
 
             sage: from sage_setup.autogen.interpreters import *
-            sage: from sage_setup.autogen.interpreters.specs.element import *
+            sage: from sage_setup.autogen.interpreters.internal.specs.element import *
             sage: interp = ElementInterpreter()
             sage: interp.name
             'el'
