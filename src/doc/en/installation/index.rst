@@ -87,7 +87,7 @@ Linux
 
 - Alternatively, follow the instructions in section
   :ref:`sec-installation-conda-develop`;
-  these describe an experimental method that gets all required
+  these describe a method that gets all required
   packages, including Python packages, from conda-forge.
 
 **I don't want to do Sage development:**
