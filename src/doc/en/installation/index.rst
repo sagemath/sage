@@ -97,10 +97,13 @@ Linux
   Linux distributions have up-to-date versions of Sage,
   see `repology.org: sagemath
   <https://repology.org/project/sagemath/versions>`_ for an
-  overview.  See :ref:`sec-installation-linux` for additional information.
+  overview. See :ref:`sec-installation-linux` for additional information.
 
   You may need to consider upgrading your Linux distribution because a recent
   version of Sage is only available on a newer version of the distribution.
+
+  If there is no up-to-date version for your Linux distribution, you may
+  consider `conda`, as explained below.
 
 - **I have no root access or I am on an older distribution:** Install Sage from
   the `conda-forge <https://conda-forge.org/>`_ project, as described in section
