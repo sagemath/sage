@@ -27,6 +27,7 @@ from itertools import combinations
 # The dot is special syntax for unnamed index positions.
 _alph_or_dot_pattern = r"([.]|[^\d\W_])"
 
+
 class TensorWithIndices(SageObject):
     r"""
     Index notation for tensors.

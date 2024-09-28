@@ -148,6 +148,7 @@ def mwrank_two_descent_work(E, two_tor_rk):
     sha2_upper_bd = MWRC.selmer_rank() - two_tor_rk - rank_lower_bd
     return rank_lower_bd, rank_upper_bd, sha2_lower_bd, sha2_upper_bd, gens
 
+
 def pari_two_descent_work(E):
     r"""
     Prepare the output from pari by two-isogeny.
@@ -872,8 +873,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     # Try harder to compute the Heegner index, where it matters
     if heegner_index is None:
-        if max_height < 18:
-            max_height = 18
+        max_height = max(max_height, 18)
         for D in BSD.heegner_index_upper_bound:
             M = BSD.heegner_index_upper_bound[D]
             for p in kolyvagin_primes:

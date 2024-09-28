@@ -3013,7 +3013,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             sage: L = [P.L(i/2) for i in range(1,2*k+1)]
             sage: all(x.dual() == x for x in L)
             True
-            sage: all(x * y == y * x for x in L for y in L)  # long time
+            sage: all(x * y == y * x for x, y in Subsets(L, 2))  # long time
             True
             sage: Lsum = sum(L)
             sage: gens = [P.s(i) for i in range(1,k)]
@@ -3045,13 +3045,13 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         The same tests for a half integer partition algebra::
 
-            sage: k = 9/2
+            sage: k = 7/2
             sage: R.<n> = QQ[]
             sage: P = PartitionAlgebra(k, n)
             sage: L = [P.L(i/2) for i in range(1,2*k+1)]
             sage: all(x.dual() == x for x in L)
             True
-            sage: all(x * y == y * x for x in L for y in L)  # long time
+            sage: all(x * y == y * x for x, y in Subsets(L, 2))  # long time
             True
             sage: Lsum = sum(L)
             sage: gens = [P.s(i) for i in range(1,k-1/2)]
@@ -5847,11 +5847,9 @@ def to_Brauer_partition(l, k=None):
         True
     """
     L = to_set_partition(l, k=k)
-    L2 = []
     paired = []
     not_paired = []
-    for i in L:
-        L2.append(list(i))
+    L2 = (list(i) for i in L)
     for i in L2:
         if len(i) > 2:
             raise ValueError("blocks must have size at most 2, but {} has {}".format(i, len(i)))

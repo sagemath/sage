@@ -444,7 +444,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         tester = self._tester(**options)
         dual = self.dual()
         dims = [a[0] for a in self._indices]
-        for dim in range(max(max(dims),  tester._max_runs) + 1):
+        for dim in range(max(max(dims), tester._max_runs) + 1):
             n = len(self.basis(dim))
             m = matrix(n, n, [a.eval(b) for a in self.basis(dim) for b in dual.basis(dim)])
             tester.assertEqual(m, 1, f"error in dimension {dim}")
@@ -633,7 +633,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
                 = \langle f, \phi_L (a \otimes x) \rangle,
 
             for `f \in H_m`, `a \in A^n`, and `x \in
-            H^{m-n}`. Somewhat more succintly, we define the action `f
+            H^{m-n}`. Somewhat more succinctly, we define the action `f
             \cdot a` by
 
             .. MATH::

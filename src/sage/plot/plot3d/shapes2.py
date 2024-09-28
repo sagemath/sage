@@ -437,8 +437,10 @@ def frame3d(lower_left, upper_right, **kwds):
     """
     x0, y0, z0 = lower_left
     x1, y1, z1 = upper_right
-    L1 = line3d([(x0, y0, z0), (x0, y1, z0), (x1, y1, z0), (x1, y0, z0),  (x0, y0, z0),  # top square
-                 (x0, y0, z1), (x0, y1, z1), (x1, y1, z1), (x1, y0, z1),  (x0, y0, z1)],  # bottom square
+    L1 = line3d([(x0, y0, z0), (x0, y1, z0), (x1, y1, z0),
+                 (x1, y0, z0), (x0, y0, z0),  # top square
+                 (x0, y0, z1), (x0, y1, z1), (x1, y1, z1),
+                 (x1, y0, z1), (x0, y0, z1)],  # bottom square
                 **kwds)
     # 3 additional lines joining top to bottom
     v2 = line3d([(x0, y1, z0), (x0, y1, z1)], **kwds)

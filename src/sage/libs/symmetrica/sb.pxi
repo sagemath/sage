@@ -51,7 +51,6 @@ def mult_schubert_schubert_symmetrica(a, b):
         freeall(cres)
         raise err
 
-
     sig_on()
     mult_schubert_schubert(ca, cb, cres)
     sig_off()
