@@ -305,6 +305,8 @@ worktree*
 builddir
 builddir-*
 build-install
+build/cp311
+
 # Meson temporary files
 src/sage/interfaces/__init__.py
 src/sage/crypto/block_cipher/__init__.py
