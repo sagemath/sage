@@ -2255,7 +2255,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(test_func)
         (['def base(x):\n',
         ...
-        '    return x\n'], 7)
+        '    return x\n'], 8)
 
     Here are some cases that were covered in :issue:`11298`;
     note that line numbers may easily change, and therefore we do

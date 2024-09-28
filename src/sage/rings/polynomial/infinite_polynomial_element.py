@@ -664,7 +664,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             2*x_0
             sage: c.parent()
             Infinite polynomial ring in x over Rational Field
-
         """
         return self._p.monomial_coefficient(mon._p)
 

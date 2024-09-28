@@ -15,6 +15,8 @@ AUTHORS:
 - Lorenz Panny, John Cremona (2023-02): ``.twists()``
 
 - Lorenz Panny (2023): ``special_supersingular_curve()``
+
+- Martin Grenouilloux, Gareth Ma (2024-09): ``EllipticCurve_with_prime_order()``
 """
 
 # ****************************************************************************
@@ -1341,6 +1343,113 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         """
         return not is_j_supersingular(self.j_invariant(), proof=proof)
 
+    def has_order(self, value, num_checks=8):
+        r"""
+        Return ``True`` if the curve has order ``value``.
+
+        INPUT:
+
+        - ``value`` -- integer in the Hasse-Weil range for this curve
+
+        - ``num_checks``-- integer (default: `8`); the number of times to check
+          whether ``value`` times a random point on this curve equals the
+          identity. If ``value`` is a prime and the curve is over a field of
+          order at least `5`, it is sufficient to pass in ``num_checks=1`` -
+          see the examples below.
+
+        .. NOTE::
+
+            Since the method is probabilistic, there is a possibility for the
+            method to yield false positives (i.e. returning ``True`` even when
+            the result is ``False``). Even worse, it is possible for this to
+            happen even when ``num_checks`` is increased arbitrarily. See below
+            for an example and :issue:`38617` for an open discussion.
+
+        EXAMPLES:
+
+        For curves over small finite fields, the order is computed and compared
+        directly::
+
+            sage: E = EllipticCurve(GF(7), [0, 1])
+            sage: E.order()
+            12
+            sage: E.has_order(12, num_checks=0)
+            True
+            sage: E.has_order(11, num_checks=0)
+            False
+            sage: E.has_order(13, num_checks=0)
+            False
+
+        This tests the method on a random curve::
+
+            sage: # long time (10s)
+            sage: p = random_prime(2**128, lbound=2**127)
+            sage: K = GF((p, 2), name="a")
+            sage: E = EllipticCurve(K, [K.random_element() for _ in range(2)])
+            sage: N = E.order()
+            sage: E.has_order(N, num_checks=20)
+            True
+            sage: E.has_order(N + 1)
+            False
+
+        This demonstrates the bug mentioned in the NOTE above. The last return
+        value should be ``False`` after :issue:`38617` is fixed::
+
+            sage: E = EllipticCurve(GF(5443568676570036275321323), [0, 13])
+            sage: N = 2333145661241
+            sage: E.order() == N^2
+            True
+            sage: E.has_order(N^2)
+            True
+            sage: del E._order
+            sage: E.has_order(N^2 + N)
+            True
+
+        Due to the nature of the algorithm (testing multiple of points) and the Hasse-Weil bound, we see that for testing prime orders, ``num_checks=1`` is sufficient::
+
+            sage: p = random_prime(1000)
+            sage: E = EllipticCurve(GF(p), j=randrange(p))
+            sage: q = random_prime(p + 20, lbound=p - 20)
+            sage: E.has_order(q, num_checks=20) == E.has_order(q, num_checks=1)
+            True
+
+        AUTHORS:
+
+         - Mariah Lenox (2011-02-16): Initial implementation
+
+         - Gareth Ma (2024-01-21): Fix bug for small curves
+        """
+        q = self.base_field().order()
+        a, b = Hasse_bounds(q, 1)
+        if not a <= value <= b:
+            return False
+
+        # For really small values, the random tests are too weak to detect wrong
+        # orders So we go with computing directly instead.
+        # In #38341, the bound has been increased to a large value (2^64), but
+        # it should be decreased (to ~100) after bug #38617 is fixed.
+        if q <= 2**64 or hasattr(self, "_order"):
+            return self.order() == value
+
+        # This might be slow
+        # if value.is_prime():
+        #     num_checks = 1
+
+        # Is value * random == identity?
+        for _ in range(num_checks):
+            while True:
+                G = self.random_point()
+                if not G.is_zero():
+                    break
+
+            if not (value * G).is_zero():
+                return False
+
+        # TODO: uncomment this and remove the line in `set_order` after 38617 is fixed.
+        # self._order = value
+
+        return True
+
     def set_order(self, value, *, check=True, num_checks=8):
         r"""
         Set the value of ``self._order`` to ``value``.
@@ -1355,7 +1464,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         - ``check``-- boolean (default: ``True``); whether or
           not to run sanity checks on the input
 
-        - ``num_checks``-- integer (default: 8); if ``check`` is
+        - ``num_checks``-- integer (default: `8`); if ``check`` is
           ``True``, the number of times to check whether ``value``
           times a random point on this curve equals the identity
 
@@ -1401,42 +1510,41 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.set_order(0)
             Traceback (most recent call last):
             ...
-            ValueError: Value 0 illegal (not an integer in the Hasse range)
+            ValueError: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 does not have order 0
             sage: E.set_order(1000)
             Traceback (most recent call last):
             ...
-            ValueError: Value 1000 illegal (not an integer in the Hasse range)
+            ValueError: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 does not have order 1000
 
-        It is also very likely an error to pass a value which is not
-        the actual order of this curve. How unlikely is determined by
-        ``num_checks``, the factorization of the actual order, and the
-        actual group structure::
+        It is also very likely an error to pass a value which is not the actual
+        order of this curve. How unlikely is determined by ``num_checks``, the
+        factorization of the actual order, and the actual group structure::
 
             sage: E = EllipticCurve(GF(1009), [0, 1]) # This curve has order 948
             sage: E.set_order(947)
             Traceback (most recent call last):
             ...
-            ValueError: Value 947 illegal (multiple of random point not the identity)
+            ValueError: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 1009 does not have order 947
 
-        For curves over small finite fields, the order is cheap to compute, so it is computed
-        directly and compared::
+        For curves over small finite fields, the order is cheap to compute, so
+        it is computed directly and compared::
 
             sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 12
             sage: E.set_order(11)
             Traceback (most recent call last):
             ...
-            ValueError: Value 11 illegal (correct order is 12)
+            ValueError: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 does not have order 11
 
         TESTS:
 
-        The previous version's random tests are not strong enough. In particular, the following used
-        to work::
+        The previous version's random tests are not strong enough. In particular,
+        the following used to work::
 
             sage: E = EllipticCurve(GF(2), [0, 0, 1, 1, 1]) # This curve has order 1
             sage: E.set_order(3)
             Traceback (most recent call last):
             ...
-            ValueError: Value 3 illegal (correct order is 1)
+            ValueError: Elliptic Curve defined by y^2 + y = x^3 + x + 1 over Finite Field of size 2 does not have order 3
 
         ::
 
@@ -1444,12 +1552,12 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E.set_order(4, num_checks=0)
             Traceback (most recent call last):
             ...
-            ValueError: Value 4 illegal (correct order is 12)
+            ValueError: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7 does not have order 4
             sage: E.order()
             12
 
-        .. TODO:: Add provable correctness check by computing the abelian group structure and
-            comparing.
+        .. TODO:: Add provable correctness check by computing the abelian group
+            structure and comparing.
 
         AUTHORS:
 
@@ -1459,24 +1567,8 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         """
         value = Integer(value)
 
-        if check:
-            # Is value in the Hasse range?
-            q = self.base_field().order()
-            a,b = Hasse_bounds(q,1)
-            if not a <= value <= b:
-                raise ValueError(f"Value {value} illegal (not an integer in the Hasse range)")
-
-            # For really small values, the random tests are too weak to detect wrong orders
-            # So we go with computing directly instead.
-            if q <= 100:
-                if self.order() != value:
-                    raise ValueError(f"Value {value} illegal (correct order is {self.order()})")
-
-            # Is value*random == identity?
-            for _ in range(num_checks):
-                G = self.random_point()
-                if value * G != self(0):
-                    raise ValueError(f"Value {value} illegal (multiple of random point not the identity)")
+        if check and not self.has_order(value, num_checks=num_checks):
+            raise ValueError(f"{self} does not have order {value}")
 
         # TODO: It might help some of PARI's algorithms if we
         # could copy this over to the .pari_curve() as well.
@@ -1868,6 +1960,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         return [self, self.quadratic_twist(D)]
 
+
 def curves_with_j_0(K):
     r"""
     Return a complete list of pairwise nonisomorphic elliptic curves with `j`-invariant 0 over the finite field `K`.
@@ -1937,6 +2030,7 @@ def curves_with_j_0(K):
     # then you can also compute the orders!
     return curves
 
+
 def curves_with_j_1728(K):
     r"""
     Return a complete list of pairwise nonisomorphic elliptic curves with `j`-invariant 1728 over the finite field `K`.
@@ -1992,6 +2086,7 @@ def curves_with_j_1728(K):
         D = K.random_element()
     curves = [EllipticCurve(K, [D**i, 0]) for i in range(4)]
     return curves
+
 
 def curves_with_j_0_char2(K):
     r"""
@@ -2085,6 +2180,7 @@ def curves_with_j_0_char2(K):
         e = K.random_element()
     return [EllipticCurve(K, ai) for ai in
             [[0,0,1,0,0], [0,0,1,0,b], [0,0,1,c,0], [0,0,a,0,0], [0,0,a,0,d], [0,0,asq,0,0], [0,0,asq,0,e]]]
+
 
 def curves_with_j_0_char3(K):
     r"""
@@ -2182,6 +2278,7 @@ def curves_with_j_0_char3(K):
 
 supersingular_j_polynomials = {}
 
+
 def fill_ss_j_dict():
     r"""
     Fill the global cache of supersingular j-_polynomials.
@@ -2250,6 +2347,7 @@ def fill_ss_j_dict():
         supersingular_j_polynomials[281] = [230, 15, 146, 69, 41, 23, 142, 232, 18, 80, 58, 134, 270, 62, 272, 70, 247, 189, 118, 255, 274, 159, 60, 1]
         supersingular_j_polynomials[283] = [212, 4, 42, 155, 38, 1, 270, 175, 172, 256, 264, 232, 50, 82, 244, 127, 148, 46, 249, 72, 59, 124, 75, 1]
         supersingular_j_polynomials[293] = [264, 66, 165, 144, 243, 25, 163, 210, 18, 107, 160, 153, 70, 255, 91, 211, 22, 7, 256, 50, 150, 94, 225, 60, 1]
+
 
 def supersingular_j_polynomial(p, use_cache=True):
     r"""
@@ -2331,6 +2429,7 @@ def supersingular_j_polynomial(p, use_cache=True):
         R = R // (J - 1728)
     supersingular_j_polynomials[p] = R.coefficients(sparse=False)
     return R
+
 
 def is_j_supersingular(j, proof=True):
     r"""
@@ -2464,6 +2563,7 @@ def is_j_supersingular(j, proof=True):
     # expensive since it involves counting the number of points on E):
 
     return E.trace_of_frobenius() % p == 0
+
 
 def special_supersingular_curve(F, *, endomorphism=False):
     r"""
@@ -2662,12 +2762,13 @@ def special_supersingular_curve(F, *, endomorphism=False):
     endo.trace.set_cache(ZZ.zero())
     return E, endo
 
+
 def EllipticCurve_with_order(m, *, D=None):
     r"""
     Return an iterator for elliptic curves over finite fields with the given order. The curves are
     computed using the Complex Multiplication (CM) method.
 
-    A `:sage:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
+    A :class:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
     the algorithm is more efficient.
 
     If ``D`` is specified, it is used as the discriminant.
@@ -2714,8 +2815,8 @@ def EllipticCurve_with_order(m, *, D=None):
         sage: all(E.order() == 21 for E in Es)
         True
 
-    Indeed, we can verify that this is correct. Hasse's bounds tell us that $p \leq 50$
-    (approximately), and the rest can be checked via bruteforce::
+    Indeed, we can verify that this is correct. Hasse's bounds tell us that
+    `p \leq 50` (approximately), and the rest can be checked via bruteforce::
 
         sage: for p in prime_range(50):
         ....:     for j in range(p):
@@ -2751,7 +2852,7 @@ def EllipticCurve_with_order(m, *, D=None):
         m_val = m
 
     if D is None:
-        Ds = (D for D in range(-4 * m_val, 0) if D % 4 in [0, 1])
+        Ds = (D for D in range(-1, -4 * m_val - 1, -1) if D % 4 in [0, 1])
     else:
         assert D < 0 and D % 4 in [0, 1]
         Ds = [D]
@@ -2763,17 +2864,325 @@ def EllipticCurve_with_order(m, *, D=None):
                 continue
 
             H = hilbert_class_polynomial(D)
-            K = GF(q)
-            roots = H.roots(ring=K)
-            for j0, _ in roots:
+            for j0 in H.roots(ring=GF(q), multiplicities=False):
                 E = EllipticCurve(j=j0)
                 for Et in E.twists():
                     if any(Et.is_isomorphic(E) for E in seen):
                         continue
-                    try:
-                        # This tests whether the curve has given order
-                        Et.set_order(m_val)
+                    # This tests whether the curve has given order
+                    if Et.has_order(m_val):
+                        # TODO: remove after 38617
+                        Et.set_order(m_val, check=False)
                         seen.add(Et)
                         yield Et
-                    except ValueError:
-                        pass
+
+def EllipticCurve_with_prime_order(N):
+    r"""
+    Given a prime number ``N``, find another prime number `p` and construct an
+    elliptic curve `E` defined over `\mathbb F_p` such that
+    `\#E(\mathbb F_p) = N`.
+
+    INPUT:
+
+    - ``N`` -- integer; the order for which we seek an elliptic curve. Must be a
+      prime number.
+
+    OUTPUT: an iterator of (some) elliptic curves `E/\mathbb F_p` of order ``N``
+
+    ALGORITHM:
+
+    Our algorithm is based on [BS2007]_, Algorithm 2.2, but we deviate for
+    several key steps. Firstly, the authors in the paper perform the search for
+    a suitable `D` *incrementally*, by enlarging the table `S` by `log(N)`-size
+    interval of primes `p` and testing all products of distinct primes `p` (or
+    rather `p^*`). We find this difficult to implement without testing
+    duplicate `D`s, so we instead enlarge the table one prime at a time
+    (effectively replacing `[r\log(N), (r + 1)\log(N)]` in the paper by `[r,
+    r]`). To compensate for the speed loss, we begin the algorithm by
+    prefilling `S` with the primes below `1000` (satisfying quadratic
+    reciprocity properties). The constant `1000` is determined experimentally
+    to be fast for many purposes, and for most `N` we tested we are able to
+    find a suitable small `D` without increasing the size of `S`.
+
+    The paper also doesn't specify how to enumerate such `D`s, which recall
+    should be product of distinct values in the table `S`. We implement this
+    with a priority queue (min heap), which also allows us to search for the
+    suitable `D`s in increasing (absolute value) order. This is suitable for
+    the algorithm because smaller `D` means the Hilbert class polynomial is
+    computed quicker.
+
+    Finally, to avoid repeatedly testing the same `D`s, we require the latest
+    prime to be added to the table to be included as a factor of `D` (see code
+    for more explanation). As we need to find integers `x, y` such that `x^2 +
+    (-D)y^2 = 4N` with `D < 0` and `N` prime, we actually need `|D| \leq 4N`,
+    so we terminate the algorithm when the primes in the table are larger than
+    that bound. This makes the iterator return all curves it can find in finite
+    time.
+
+    ALGORITHM: Based on [BS2007]_, Algorithm 2.2
+
+    EXAMPLES::
+
+        sage: N = 8314040072427107567
+        sage: E = next(EllipticCurve_with_prime_order(N))
+        sage: E
+        Elliptic Curve defined by y^2 = x^3 + 4757897140353078952*x + 1841350074072114366
+         over Finite Field of size 8314040074357871443
+        sage: E.has_order(N)
+        True
+
+    The returned curves are sometimes random because
+    :meth:`~sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.twists`
+    is not deterministic. However, it's always isomorphic::
+
+        sage: E = next(EllipticCurve_with_prime_order(23)); E # random
+        Elliptic Curve defined by y^2 = x^3 + 12*x + 6 over Finite Field of size 17
+        sage: E.is_isomorphic(EllipticCurve(GF(17), [3, 5]))
+        True
+
+    You can directly iterate over the iterator; here only on the first 10
+    curves::
+
+        sage: N = 54675917
+        sage: for _, E in zip(range(10), EllipticCurve_with_prime_order(N)):
+        ....:     assert E.has_order(N)
+
+    It works for large primes::
+
+        sage: N = 2666207849820848272386538889527600954292544013630953455833
+        sage: E = next(EllipticCurve_with_prime_order(N)); E
+        Elliptic Curve defined by y^2 = x^3 + 2666207849820848272386538889427721639173508298483739490459*x
+         + 77986137112576 over Finite Field of size 2666207849820848272386538889427721639173508298487130585243
+        sage: E.has_order(N)
+        True
+
+    ::
+
+        sage: N = next_prime(2^256)
+        sage: E = next(EllipticCurve_with_prime_order(N)); E                            # random
+        Elliptic Curve defined by y^2 = x^3 + 6056521267553273205988520276135607487700943205131813669424576873701361709521*x
+         + 86942739955486781674010637133214195706465136689012129911736706024465988573567 over Finite Field of size
+         115792089237316195423570985008687907853847329310253429036565151476471048389761
+        sage: E.j_invariant()
+        111836223967433630316209796253554285080540088646141285337487360944738698436350
+        sage: E.has_order(N)
+        True
+
+    Note that the iterator does *not* return all curves with the given order::
+
+        sage: any(E.base_ring() is GF(7) for E in EllipticCurve_with_prime_order(7))
+        False
+        sage: EllipticCurve(GF(7), [0, 5]).order()
+        7
+
+    However, experimentally it returns many of them. Here it returns all of
+    them::
+
+        sage: N = 23
+        sage: set_random_seed(1337)  # as the function returns random twists of curves
+        sage: curves = list(EllipticCurve_with_prime_order(N)); curves  # random
+        [Elliptic Curve defined by y^2 = x^3 + 3*x + 5 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + 19*x + 14 over Finite Field of size 31,
+         Elliptic Curve defined by y^2 = x^3 + 2*x + 9 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 7*x + 18 over Finite Field of size 29,
+         Elliptic Curve defined by y^2 = x^3 + 20*x + 20 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + 10*x + 16 over Finite Field of size 23]
+        sage: import itertools
+        sage: # These are the only primes, by the Hasse-Weil bound
+        sage: for q in prime_range(17, 35):
+        ....:     K = GF(q)
+        ....:     for u in itertools.product(range(q), repeat=2):
+        ....:         try: E = EllipticCurve(GF(q), u)
+        ....:         except ArithmeticError: continue
+        ....:         if E.has_order(N):
+        ....:             assert any(E.is_isomorphic(E_) for E_ in curves)
+
+    The algorithm is efficient for small ``N`` due to the low number of suitable
+    discriminants (see the ``abs_products_under`` internal function of the code
+    for details)::
+
+        sage: len(list(EllipticCurve_with_prime_order(next_prime(5000))))
+        534
+        sage: len(list(EllipticCurve_with_prime_order(next_prime(50000))))              # long time (6s)
+        3841
+
+    There is different verbose data for level `2` to `4`, though level `3`
+    rarely logs anything (it logs when a new prime `p` is added to the
+    smoothness bound)::
+
+        sage: from sage.misc.verbose import set_verbose
+        sage: set_random_seed(1337)  # as the function returns random twists of curves
+        sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
+        ....:     print(E)
+        Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
+        Elliptic Curve defined by y^2 = x^3 + 689795416*x + 188156157 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 999178436*x + 900579394 over Finite Field of size 999969307
+        sage: set_verbose(2)
+        sage: set_random_seed(1337)
+        sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
+        ....:     print(E)
+        verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
+        Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
+        verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
+        Elliptic Curve defined by y^2 = x^3 + 689795416*x + 188156157 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 999178436*x + 900579394 over Finite Field of size 999969307
+        sage: set_verbose(4)
+        sage: set_random_seed(1337)
+        sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
+        ....:     print(E)
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-19
+        ...
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-163
+        verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
+        Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-179
+        ...
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-667
+        verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
+        Elliptic Curve defined by y^2 = x^3 + 689795416*x + 188156157 over Finite Field of size 999969307
+        Elliptic Curve defined by y^2 = x^3 + 999178436*x + 900579394 over Finite Field of size 999969307
+
+    TESTS::
+
+        sage: list(EllipticCurve_with_prime_order(2))
+        [Elliptic Curve defined by y^2 + x*y + y = x^3 + 1 over Finite Field of size 2,
+         Elliptic Curve defined by y^2 = x^3 + 2*x^2 + 2 over Finite Field of size 3,
+         Elliptic Curve defined by y^2 = x^3 + 2*x over Finite Field of size 5]
+
+        sage: set_verbose(0)
+        sage: for N in prime_range(3, 100):
+        ....:     E = next(EllipticCurve_with_prime_order(N))
+        ....:     assert E.has_order(N)
+
+        sage: N = 113
+        sage: for _, E in zip(range(30), EllipticCurve_with_prime_order(N)):
+        ....:     assert E.has_order(N)
+
+        sage: N = 15175980689839334471
+        sage: E = next(EllipticCurve_with_prime_order(N))
+        sage: E.has_order(N)
+        True
+
+        sage: N = next_prime(123456789)
+        sage: E = next(EllipticCurve_with_prime_order(N))
+        sage: E.has_order(N)
+        True
+
+        sage: N = 123456789
+        sage: E = next(EllipticCurve_with_prime_order(N))
+        Traceback (most recent call last):
+        ...
+        ValueError: input order is not a prime
+
+        sage: E = next(EllipticCurve_with_prime_order(0))
+        Traceback (most recent call last):
+        ...
+        ValueError: input order is not a prime
+
+        sage: E = next(EllipticCurve_with_prime_order(-7))
+        Traceback (most recent call last):
+        ...
+        ValueError: input order is not a prime
+
+    AUTHORS:
+
+    - Martin Grenouilloux, Gareth Ma (2024-09): initial implementation
+    """
+    import itertools
+    from sage.arith.misc import is_prime, legendre_symbol
+    from sage.misc.verbose import verbose
+    from sage.quadratic_forms.binary_qf import BinaryQF
+    from sage.rings.fast_arith import prime_range
+    from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
+    from sage.sets.primes import Primes
+
+    if not is_prime(N):
+        raise ValueError("input order is not a prime")
+
+    if N == 2:
+        yield from [
+            EllipticCurve(GF(2), [1, 0, 1, 0, 1]),
+            EllipticCurve(GF(3), [0, 2, 0, 0, 2]),
+            EllipticCurve(GF(5), [2, 0])
+        ]
+        return
+
+    # We start with small primes directly to accelerate the search. Note that
+    # 1000 is a magic constant, it's just fast enough to compute without
+    # sacrificing much speed.
+    # The if-then-else term is (-1)^((p - 1) / 2) * p in [BS2007]_ page 5.
+    S = [(-p if p % 4 == 3 else p) for p in prime_range(3, min(1000, 4 * N))
+         if legendre_symbol(N, p) == 1]
+
+    def abs_products_under(bound):
+        """
+        This function returns an iterator of all numbers with absolute value not
+        exceeding ``bound`` expressable as product of distinct elements in ``S``
+        in ascending order.
+        """
+        import heapq
+        hq = [(1, 1, -1)]
+        while len(hq):
+            abs_n, n, idx = heapq.heappop(hq)
+            yield n
+            for nxt in range(idx + 1, len(S)):
+                if abs_n * abs(S[nxt]) <= bound:
+                    heapq.heappush(hq, (abs_n * abs(S[nxt]), n * S[nxt], nxt))
+                else:
+                    break
+
+    # We add p = 1 to process the small primes.
+    for p in itertools.chain([1], Primes()):
+        if p != 1:
+            if p < abs(S[-1]):
+                continue
+
+            if legendre_symbol(N, p) != 1:
+                continue
+
+            # Later we need x^2 + (-D)y^2 = 4N, and since y = 0 has no
+            # solution, we need p = |p_star| <= |-D| <= 4N. This is a stopping
+            # condition for the algorithm.
+            if p > 4 * N:
+                break
+
+            verbose(f"Considering {len(S) + 1}th valid prime {p}", level=3)
+
+        p_star = -p if p % 4 == 3 else p
+
+        for e in abs_products_under(4 * N // p):
+            # According to the paper, the expected minimum D to work is
+            # O(log(N)^2)
+            D = p_star * e
+            assert abs(D) <= 4 * N
+
+            if D % 8 != 5 or D >= 0:
+                continue
+
+            verbose(f"Testing {D=}", level=4)
+
+            Q = BinaryQF([1, 0, -D])
+            sol = Q.solve_integer(4 * N, algorithm='cornacchia')
+            if sol is None:
+                continue
+
+            x, _ = sol
+            for p_i in [N + 1 - x, N + 1 + x]:
+                if is_prime(p_i):
+                    verbose(f"Computing the Hilbert class polynomial H_{D}",
+                            level=2)
+                    H = hilbert_class_polynomial(D)
+                    K = GF(p_i)
+                    for j0 in H.roots(ring=K, multiplicities=False):
+                        E = EllipticCurve(K, j=j0)
+                        # `E.twists()` also contains E.
+                        for Et in E.twists():
+                            # `num_checks=1` is sufficient for prime order
+                            if Et.has_order(N, num_checks=1):
+                                # TODO: remove after 38617
+                                Et.set_order(N, check=False)
+                                yield Et
+
+        if p != 1:
+            # Extending our prime list and continuing onto the next round.
+            S.append(p_star)

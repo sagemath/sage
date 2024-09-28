@@ -1643,6 +1643,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             con.executemany("UPDATE t_curve SET gens=? WHERE curve=?",
                 curve_data)
             print("Committing...")
+            self.commit()
             if largest_conductor and int(v[0]) > largest_conductor:
                 break
 

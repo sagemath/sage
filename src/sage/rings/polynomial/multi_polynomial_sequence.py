@@ -1489,7 +1489,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             g.reduction_strategy.opt_red_tail = True
             return g
 
-    def solve(self, algorithm='polybori', n=1,  eliminate_linear_variables=True, verbose=False, **kwds):
+    def solve(self, algorithm='polybori', n=1,
+              eliminate_linear_variables=True, verbose=False, **kwds):
         r"""
         Find solutions of this boolean polynomial system.
 

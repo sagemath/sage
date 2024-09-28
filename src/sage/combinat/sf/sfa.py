@@ -6472,6 +6472,7 @@ from sage.categories.pushout import ConstructionFunctor
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.functor import Functor
 
+
 class SymmetricFunctionsFunctor(ConstructionFunctor):
     """
     A constructor for algebras of symmetric functions.
