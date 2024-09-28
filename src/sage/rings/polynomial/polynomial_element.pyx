@@ -4485,6 +4485,8 @@ cdef class Polynomial(CommutativePolynomial):
                 X[i] = c
         return X
 
+    monomial_coefficients = dict
+
     def factor(self, **kwargs):
         r"""
         Return the factorization of ``self`` over its base ring.
