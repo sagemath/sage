@@ -29,24 +29,39 @@ dependencies = [
     'cysignals >=1.10.2',
     'cython >=3.0, != 3.0.3, <4.0',
     'gmpy2 ~=2.1.b999',
+    # According to https://pypi.org/project/importlib-metadata/,
+    # 4.13 provides the features of Python 3.11 importlib.metadata
     'importlib_metadata >=4.13; python_version<"3.11"',
+    # According to https://pypi.org/project/importlib-resources/,
+    # version 5.7 provides the features of Python 3.11 importlib.resources
     'importlib_resources >= 5.7; python_version<"3.11"',
     'lrcalc ~=2.1',
     'memory_allocator',
     'numpy >=1.19',
     'pkgconfig',
-    'pplpy',
+    # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
+    'pplpy >=0.8.6',
     'primecountpy',
     'requests >=2.13.0',
+    # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
+    # version 4.4.0 adds another Python 3.11 typing backport
     'typing_extensions >= 4.4.0; python_version<"3.11"',
     # From Makefile.in: SAGERUNTIME
     'ipython >=7.13.0',
     'pexpect >=4.8.0',
     # From Makefile.in: DOC_DEPENDENCIES
-    'sphinx >=5.2, <9'
+    'sphinx >=5.2, <9',
     'networkx >=2.4',
+    # 1.8 is known good version.
+    # Per https://docs.scipy.org/doc/scipy/dev/core-dev/index.html#version-numbering
+    # and https://docs.scipy.org/doc/scipy/dev/core-dev/index.html#deprecations,
+    # deprecations cannot be introduced in micro releases.
+    # SciPy devs wait "at least 6 months", "in practice two (minor) releases"
+    # from deprecation to removal of a feature.
     'scipy >=1.5',
     'sympy >=1.6, <2.0',
+    # Issue #33642: Set lower bound for use of matplotlib color maps introduced in #33491,
+    # and to suppress deprecation warnings (https://github.com/matplotlib/matplotlib/pull/21073)
     'matplotlib >=3.5.1',
     'pillow >=7.2.0',
     'mpmath >=1.1.0',
