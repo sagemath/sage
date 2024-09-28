@@ -2018,7 +2018,8 @@ class Stream_uninitialized(Stream):
                 # TODO: it is a coincidence that `coefficients`
                 # currently exists in all examples;
                 # the monomials are only needed for the error messages
-                elt_coeffs = list(zip(elt.monomials(), elt.coefficients()))
+                elt_coeffs = [(self._coefficient_ring.monomial(idx), coeff)
+                              for idx, coeff in elt.monomial_coefficients().items()]
 
             all_coeffs.append(elt_coeffs)
             for idx, coeff in elt_coeffs:
