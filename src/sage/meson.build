@@ -52,6 +52,8 @@ if gap_exe.found()
   gap_root_paths = '${prefix}/lib/gap;${prefix}/share/gap;' + gaprun.stdout().strip()
 endif
 conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
+ecm_bin = find_program(['ecm', 'gmp-ecm'], required: true)
+conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
 
 config_file = configure_file(
   input: '../../pkgs/sage-conf_conda/_sage_conf/_conf.py.in',
