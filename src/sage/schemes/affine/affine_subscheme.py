@@ -85,7 +85,6 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             Scheme endomorphism of Affine Space of dimension 3 over Integer Ring
               Defn: Defined on coordinates by sending (x, y, z) to
                     (x, y, z)
-
         """
         return self.ambient_space()._morphism(*args, **kwds)
 
@@ -138,13 +137,12 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        -  ``i`` -- integer (default: dimension of self = last
-           coordinate) determines which projective embedding to compute. The
-           embedding is that which has a 1 in the i-th coordinate, numbered
-           from 0.
+        - ``i`` -- integer (default: dimension of self = last coordinate);
+          determines which projective embedding to compute. The embedding is
+          that which has a 1 in the `i`-th coordinate, numbered from 0.
 
-        -  ``PP`` -- (default: None) ambient projective space, i.e., ambient space
-            of codomain of morphism; this is constructed if it is not given.
+        - ``PP`` -- (default: ``None``) ambient projective space, i.e., ambient
+          space of codomain of morphism; this is constructed if it is not given
 
         EXAMPLES::
 
@@ -247,12 +245,13 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``i`` -- (default: None) determines the embedding to use to compute the projective
-          closure of this affine subscheme. The embedding used is the one which has a 1 in the
-          i-th coordinate, numbered from 0.
+        - ``i`` -- (default: ``None``) determines the embedding to use to
+          compute the projective closure of this affine subscheme. The
+          embedding used is the one which has a 1 in the i-th coordinate,
+          numbered from 0.
 
-        -  ``PP`` -- (default: None) ambient projective space, i.e., ambient space
-           of codomain of morphism; this is constructed if it is not given
+        - ``PP`` -- (default: ``None``) ambient projective space, i.e., ambient
+          space of codomain of morphism; this is constructed if it is not given
 
         OUTPUT: a projective subscheme
 
@@ -287,12 +286,12 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``point`` -- A point or ``None`` (default). The point to
-          test smoothness at.
+        - ``point`` -- a point or ``None`` (default). The point to
+          test smoothness at
 
         OUTPUT:
 
-        Boolean. If no point was specified, returns whether the
+        boolean; if no point was specified, returns whether the
         algebraic subscheme is smooth everywhere. Otherwise,
         smoothness at the specified point is tested.
 
@@ -344,11 +343,11 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``X`` -- subscheme in the same ambient space as this subscheme.
+        - ``X`` -- subscheme in the same ambient space as this subscheme
 
-        - ``P`` -- a point in the intersection of this subscheme with ``X``.
+        - ``P`` -- a point in the intersection of this subscheme with ``X``
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -412,7 +411,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         J = X.defining_ideal()
         # move P to the origin and localize
         chng_coords = [AA.gens()[i] + P[i] for i in range(AA.dimension_relative())]
-        R = AA.coordinate_ring().change_ring(order="negdegrevlex")
+        R = AA.coordinate_ring().change_ring(order='negdegrevlex')
         Iloc = R.ideal([f(chng_coords) for f in I.gens()])
         Jloc = R.ideal([f(chng_coords) for f in J.gens()])
         # compute the intersection multiplicity with Serre's Tor formula using Singular
@@ -436,11 +435,9 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``P`` -- a point on this subscheme.
+        - ``P`` -- a point on this subscheme
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

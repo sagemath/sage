@@ -196,7 +196,6 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         sage: K.<T> = GF(3^21)
         sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
         sage: TestSuite(f).run()
-
     """
     def __init__(self, parent, im_gens=None, base_map=None, check=True, section_class=None):
         """
@@ -423,7 +422,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
     def __hash__(self):
         r"""
-        Return a hash of this morphism
+        Return a hash of this morphism.
 
         TESTS::
 
@@ -437,7 +436,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
     cdef dict _extra_slots(self):
         r"""
-        Helper function for copying and pickling
+        Helper function for copying and pickling.
 
         TESTS::
 
@@ -465,7 +464,7 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
 
     cdef _update_slots(self, dict slots):
         r"""
-        Helper function for copying and pickling
+        Helper function for copying and pickling.
 
         TESTS::
 
@@ -494,15 +493,14 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         sage: k.<a> = GF(7^11)
         sage: Frob = k.frobenius_endomorphism(5)
         sage: TestSuite(Frob).run()
-
     """
     def __init__(self, domain, n=1):
         """
         INPUT:
 
-        -  ``domain`` -- a finite field
+        - ``domain`` -- a finite field
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         .. NOTE::
 
@@ -713,7 +711,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     def _composition(self, right):
         """
-        Return self o right.
+        Return ``self`` o ``right``.
 
         EXAMPLES::
 
@@ -830,7 +828,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     def __hash__(self):
         r"""
-        Return a hash of this morphism
+        Return a hash of this morphism.
 
         EXAMPLES::
 
@@ -843,7 +841,7 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
 
     cdef _update_slots(self, dict slots):
         r"""
-        Helper function for copying and pickling
+        Helper function for copying and pickling.
 
         TESTS::
 

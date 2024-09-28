@@ -123,8 +123,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         INPUT:
 
         - ``x`` -- data used to the define a series
-        - ``valuation`` -- integer (optional); integer; a lower bound for
-          the valuation of the series
+        - ``valuation`` -- integer (optional); a lower bound for the valuation
+          of the series
         - ``degree`` -- (optional) the degree when the series is ``constant``
         - ``constant`` -- (optional) the eventual constant of the series
         - ``coefficients`` -- (optional) a callable that defines the
@@ -1325,9 +1325,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``f`` -- a list (or iterable) of elements of ``self``
+        - ``f`` -- list (or iterable) of elements of ``self``
         - ``a``, ``b`` -- optional arguments
-        - ``add_one`` -- (default: ``False``); if ``True``, then converts a
+        - ``add_one`` -- (default: ``False``) if ``True``, then converts a
           lazy series `p_i` from ``args`` into `1 + p_i` for the product
 
         If ``a`` and ``b`` are both integers, then this returns the product
@@ -1425,7 +1425,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``f`` -- a list (or iterable or function) of elements of ``self``
+        - ``f`` -- list (or iterable or function) of elements of ``self``
         - ``a``, ``b`` -- optional arguments
 
         If ``a`` and ``b`` are both integers, then this returns the sum
@@ -1652,7 +1652,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
     - ``base_ring`` -- base ring
     - ``names`` -- name of the generator
-    - ``sparse`` -- (default: ``True``) whether the implementation of
+    - ``sparse`` -- boolean (default: ``True``); whether the implementation of
       the series is sparse or not
 
     EXAMPLES::
@@ -1799,7 +1799,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         False
 
     We additionally provide two other methods of performing comparisons.
-    The first is raising a ``ValueError`` and the second uses a check
+    The first is raising a :exc:`ValueError` and the second uses a check
     up to a (user set) finite precision. These behaviors are set using the
     options ``secure`` and ``halting_precision``. In particular,
     this applies to series that are not specified by a finite number
@@ -1807,7 +1807,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
     Equality checking will depend on the coefficients which have
     already been computed. If this information is not enough to
     check that two series are different, then if ``L.options.secure``
-    is set to ``True``, then we raise a ``ValueError``::
+    is set to ``True``, then we raise a :exc:`ValueError`::
 
         sage: L.options.secure = True
         sage: f = 1 / (z + z^2); f
@@ -2385,7 +2385,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
     - ``base_ring`` -- base ring of this Taylor series ring
     - ``names`` -- name(s) of the generator of this Taylor series ring
-    - ``sparse`` -- (default: ``True``) whether this series is sparse or not
+    - ``sparse`` -- boolean (default: ``True``); whether this series is sparse or not
 
     EXAMPLES::
 
@@ -2409,14 +2409,14 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: LazyPowerSeriesRing.options.halting_precision(12)
 
             sage: L = LazyPowerSeriesRing(ZZ, 't')
-            sage: TestSuite(L).run(skip="_test_fraction_field")
+            sage: TestSuite(L).run(skip='_test_fraction_field')
             sage: L = LazyPowerSeriesRing(ZZ, 's, t')
-            sage: TestSuite(L).run(skip="_test_fraction_field")
+            sage: TestSuite(L).run(skip='_test_fraction_field')
 
             sage: L = LazyPowerSeriesRing(QQ, 't')
-            sage: TestSuite(L).run(skip="_test_fraction_field")
+            sage: TestSuite(L).run(skip='_test_fraction_field')
             sage: L = LazyPowerSeriesRing(QQ, 's, t')
-            sage: TestSuite(L).run(skip="_test_fraction_field")
+            sage: TestSuite(L).run(skip='_test_fraction_field')
 
             sage: L = LazyPowerSeriesRing(GF(5), 't')
             sage: TestSuite(L).run()
@@ -2430,14 +2430,14 @@ class LazyPowerSeriesRing(LazySeriesRing):
             sage: TestSuite(L).run(skip=['_test_revert'])
 
             sage: L = LazyPowerSeriesRing(QQ['q'], 't')
-            sage: TestSuite(L).run(skip="_test_fraction_field")
+            sage: TestSuite(L).run(skip='_test_fraction_field')
             sage: L = LazyPowerSeriesRing(QQ['q'], 's, t')
-            sage: TestSuite(L).run(skip="_test_fraction_field")  # long time
+            sage: TestSuite(L).run(skip='_test_fraction_field')  # long time
 
             sage: L = LazyPowerSeriesRing(ZZ['q'], 't')
-            sage: TestSuite(L).run(skip="_test_fraction_field")
+            sage: TestSuite(L).run(skip='_test_fraction_field')
             sage: L = LazyPowerSeriesRing(ZZ['q'], 's, t')
-            sage: TestSuite(L).run(skip="_test_fraction_field")  # long time
+            sage: TestSuite(L).run(skip='_test_fraction_field')  # long time
 
             sage: LazyPowerSeriesRing.options._reset()  # reset the options
 
@@ -2648,15 +2648,17 @@ class LazyPowerSeriesRing(LazySeriesRing):
         INPUT:
 
         - ``x`` -- data used to the define a Taylor series
-        - ``valuation`` -- integer (optional); integer; a lower bound for the valuation of the series
+        - ``valuation`` -- integer (optional); a lower bound for the valuation
+          of the series
         - ``constant`` -- (optional) the eventual constant of the series
         - ``degree`` -- (optional) the degree when the series is ``constant``
-        - ``check`` -- (optional) check that coefficients are homogeneous of the correct degree when they are retrieved
+        - ``check`` -- (optional) check that coefficients are homogeneous of
+          the correct degree when they are retrieved
 
         .. WARNING::
 
             The behaviour of ``LazyPowerSeries(c)`` for a list ``c``
-            with non-zero last element `e` changed with
+            with nonzero last element `e` changed with
             :issue:`32367`.  To obtain the old behaviour, use
             ``LazyPowerSeries(c, constant=e)``.
 
@@ -2766,7 +2768,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         """
         if valuation is not None:
             if valuation < 0:
-                raise ValueError("the valuation of a Taylor series must be non-negative")
+                raise ValueError("the valuation of a Taylor series must be nonnegative")
             # TODO: the following is nonsense, think of an iterator
 #            if self._arity > 1 and valuation != 0:
 #                raise ValueError(f"valuation must not be specified for multivariate Taylor series (for {x}), but was set to {valuation}")
@@ -3101,7 +3103,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
     - ``basis`` -- a graded algebra
     - ``names`` -- name(s) of the alphabets
-    - ``sparse`` -- (default: ``True``) whether we use a sparse or
+    - ``sparse`` -- boolean (default: ``True``); whether we use a sparse or
       a dense representation
 
     EXAMPLES::
@@ -3302,8 +3304,8 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         INPUT:
 
         - ``x`` -- data used to the define a lazy element
-        - ``valuation`` -- integer (optional); integer; a lower bound for
-          the valuation of the series
+        - ``valuation`` -- integer (optional); a lower bound for the valuation
+          of the series
         - ``degree`` -- (optional) the degree when the lazy element
           has finite support
         - ``check`` -- (optional) check that coefficients are homogeneous of
@@ -3549,7 +3551,8 @@ class LazySymmetricFunctions(LazyCompletionGradedAlgebra):
 
     - ``basis`` -- the ring of symmetric functions
     - ``names`` -- name(s) of the alphabets
-    - ``sparse`` -- (default: ``True``) whether we use a sparse or a dense representation
+    - ``sparse`` -- boolean (default: ``True``); whether we use a sparse or a
+      dense representation
 
     EXAMPLES::
 
@@ -3576,7 +3579,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
 
     - ``base_ring`` -- base ring of this Dirichlet series ring
     - ``names`` -- name of the generator of this Dirichlet series ring
-    - ``sparse`` -- (default: ``True``) whether this series is sparse or not
+    - ``sparse`` -- boolean (default: ``True``); whether this series is sparse or not
 
     Unlike formal univariate Laurent/power series (over a field),
     the ring of formal Dirichlet series is not a
@@ -3737,8 +3740,8 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         INPUT:
 
         - ``x`` -- data used to the define a Dirichlet series
-        - ``valuation`` -- integer (optional); integer; a lower bound for
-          the exp of the valuation of the series
+        - ``valuation`` -- integer (optional); a lower bound for the exp of the
+          valuation of the series
         - ``degree`` -- (optional) the degree when the series is ``constant``
         - ``constant`` -- (optional) the eventual constant of the series
 

@@ -135,7 +135,7 @@ class ModularFormsAmbient_gH_Q(ambient.ModularFormsAmbient):
 
     def _compute_hecke_matrix(self, n):
         r"""
-        Compute the matrix of the Hecke operator T_n acting on this space.
+        Compute the matrix of the Hecke operator `T_n` acting on this space.
 
         EXAMPLES::
 

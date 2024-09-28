@@ -53,11 +53,10 @@ def RingHomset(R, S, category=None):
 
         sage: Hom(ZZ, QQ) # indirect doctest
         Set of Homomorphisms from Integer Ring to Rational Field
-
     """
-    if quotient_ring.is_QuotientRing(R):
-        from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-        if not is_PolynomialQuotientRing(R):  # backwards compatibility
+    if isinstance(R, quotient_ring.QuotientRing_nc):
+        from .polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+        if not isinstance(R, PolynomialQuotientRing_generic):  # backwards compatibility
             return RingHomset_quo_ring(R, S, category=category)
     return RingHomset_generic(R, S, category=category)
 
@@ -204,7 +203,7 @@ class RingHomset_generic(HomsetWithBase):
 
     def natural_map(self):
         """
-        Returns the natural map from the domain to the codomain.
+        Return the natural map from the domain to the codomain.
 
         The natural map is the coercion map from the domain ring to the
         codomain ring.
@@ -240,7 +239,6 @@ class RingHomset_generic(HomsetWithBase):
             Traceback (most recent call last):
             ...
             ValueError: homset has no zero element
-
         """
         if not self.codomain().is_zero():
             raise ValueError("homset has no zero element")
@@ -324,7 +322,6 @@ class RingHomset_quo_ring(RingHomset_generic):
                       Coercion map:
                       From: Multivariate Polynomial Ring in x, y over Rational Field
                       To:   Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 + y^2)
-
         """
         if isinstance(x, morphism.RingHomomorphism_from_quotient):
             phi = x._phi()

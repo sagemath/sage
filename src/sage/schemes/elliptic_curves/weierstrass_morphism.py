@@ -60,7 +60,7 @@ class baseWI:
     """
     def __init__(self, u=1, r=0, s=0, t=0):
         r"""
-        Constructor: check for valid parameters (defaults to identity)
+        Constructor: check for valid parameters (defaults to identity).
 
         INPUT:
 
@@ -179,11 +179,9 @@ class baseWI:
 
         INPUT:
 
-        - ``EorP`` -- either an elliptic curve, or a point on an elliptic curve.
+        - ``EorP`` -- either an elliptic curve, or a point on an elliptic curve
 
-        OUTPUT:
-
-        The transformed curve or point.
+        OUTPUT: the transformed curve or point
 
         EXAMPLES::
 
@@ -227,7 +225,7 @@ def _isomorphisms(E, F):
 
     INPUT:
 
-    - ``E``, ``F`` (EllipticCurve) -- Two elliptic curves.
+    - ``E``, ``F`` -- two elliptic curves
 
     OUTPUT:
 
@@ -378,12 +376,12 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
     INPUT:
 
-    - ``E`` -- an ``EllipticCurve``, or ``None`` (see below).
+    - ``E`` -- an ``EllipticCurve``, or ``None`` (see below)
 
     - ``urst`` -- a 4-tuple `(u,r,s,t)`, a :class:`baseWI` object,
-      or ``None`` (see below).
+      or ``None`` (see below)
 
-    - ``F`` -- an ``EllipticCurve``, or ``None`` (see below).
+    - ``F`` -- an ``EllipticCurve``, or ``None`` (see below)
 
     Given two Elliptic Curves ``E`` and ``F`` (represented by Weierstrass
     models as usual), and a transformation ``urst`` from ``E`` to ``F``,
@@ -617,7 +615,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         INPUT:
 
-        - ``P`` (Point) -- a point on the domain curve.
+        - ``P`` -- Point; a point on the domain curve
 
         OUTPUT:
 
@@ -1003,9 +1001,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         r"""
         Compute the order of this Weierstrass isomorphism if it is an automorphism.
 
-        A :class:`ValueError` is raised if the domain is not equal to the codomain.
+        A :exc:`ValueError` is raised if the domain is not equal to the codomain.
 
-        A :class:`NotImplementedError` is raised if the order of the automorphism is not 1, 2, 3, 4 or 6.
+        A :exc:`NotImplementedError` is raised if the order of the automorphism is not 1, 2, 3, 4 or 6.
 
         EXAMPLES::
 
