@@ -33,7 +33,7 @@ class CooperativeGame(SageObject):
 
     INPUT:
 
-    - ``characteristic_function`` -- a dictionary containing all possible
+    - ``characteristic_function`` -- dictionary containing all possible
       sets of players:
 
       * key - each set must be entered as a tuple.
@@ -254,7 +254,7 @@ class CooperativeGame(SageObject):
     """
     def __init__(self, characteristic_function):
         r"""
-        Initializes a co-operative game and checks the inputs.
+        Initialize a co-operative game and checks the inputs.
 
         TESTS:
 
@@ -616,7 +616,7 @@ class CooperativeGame(SageObject):
 
         INPUT:
 
-        - ``payoff_vector`` -- a dictionary where the key is the player
+        - ``payoff_vector`` -- dictionary where the key is the player
           and the value is their payoff
 
         EXAMPLES:
@@ -684,7 +684,7 @@ class CooperativeGame(SageObject):
 
         INPUT:
 
-        - ``payoff_vector`` -- a dictionary where the key is the player
+        - ``payoff_vector`` -- dictionary where the key is the player
           and the value is their payoff
 
         EXAMPLES:
@@ -775,7 +775,7 @@ class CooperativeGame(SageObject):
 
         INPUT:
 
-        - ``payoff_vector`` -- a dictionary where the key is the player
+        - ``payoff_vector`` -- dictionary where the key is the player
           and the value is their payoff
 
         EXAMPLES:

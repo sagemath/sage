@@ -638,7 +638,7 @@ class ClusterAlgebraSeed(SageObject):
     - ``G`` -- the matrix of g-vectors of ``self``
     - ``parent`` -- :class:`ClusterAlgebra`; the algebra to which the
       seed belongs
-    - ``path`` -- list (default ``[]``); the mutation sequence from the
+    - ``path`` -- list (default: ``[]``); the mutation sequence from the
       initial seed of ``parent`` to ``self``
 
     .. WARNING::
@@ -902,7 +902,7 @@ class ClusterAlgebraSeed(SageObject):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the c-vector to return
 
         EXAMPLES::
@@ -953,7 +953,7 @@ class ClusterAlgebraSeed(SageObject):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the g-vector to return
 
         EXAMPLES::
@@ -984,7 +984,7 @@ class ClusterAlgebraSeed(SageObject):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the F-polynomial to return
 
         EXAMPLES::
@@ -1015,7 +1015,7 @@ class ClusterAlgebraSeed(SageObject):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the cluster variable to return
 
         EXAMPLES::
@@ -1055,9 +1055,10 @@ class ClusterAlgebraSeed(SageObject):
           * an iterable of such integers to mutate along a sequence
           * a string "sinks" or "sources" to mutate at all sinks or sources simultaneously
 
-        - ``inplace`` -- bool (default ``True``); whether to mutate in place or to return a new object
+        - ``inplace`` -- boolean (default: ``True``); whether to mutate in place
+          or to return a new object
 
-        - ``mutating_F`` -- bool (default ``True``); whether to compute
+        - ``mutating_F`` -- boolean (default: ``True``); whether to compute
           F-polynomials while mutating
 
         .. NOTE::
@@ -1162,10 +1163,10 @@ class ClusterAlgebraSeed(SageObject):
 
         INPUT:
 
-        - ``k`` --  an integer in ``range(self.parent().rank())``;
+        - ``k`` -- an integer in ``range(self.parent().rank())``;
           the direction in which we are mutating
 
-        - ``old_g_vector`` -- tuple; the k-th g-vector of ``self``
+        - ``old_g_vector`` -- tuple; the `k`-th g-vector of ``self``
           before mutating
 
         .. NOTE::
@@ -1219,22 +1220,22 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
     - ``data`` -- some data defining a cluster algebra; it can be anything
       that can be parsed by :class:`ClusterQuiver`
 
-    - ``scalars`` -- a ring (default `\ZZ`); the scalars over
+    - ``scalars`` -- a ring (default: `\ZZ`); the scalars over
       which the cluster algebra is defined
 
-    - ``cluster_variable_prefix`` -- string (default ``'x'``); it needs to be
+    - ``cluster_variable_prefix`` -- string (default: ``'x'``); it needs to be
       a valid variable name
 
-    - ``cluster_variable_names`` -- a list of strings; each element needs
+    - ``cluster_variable_names`` -- list of strings; each element needs
       to be a valid variable name;  supersedes ``cluster_variable_prefix``
 
-    - ``coefficient_prefix`` -- string (default ``'y'``); it needs to be
-      a valid variable name.
+    - ``coefficient_prefix`` -- string (default: ``'y'``); it needs to be
+      a valid variable name
 
-    - ``coefficient_names`` -- a list of strings; each element needs
+    - ``coefficient_names`` -- list of strings; each element needs
       to be a valid variable name; supersedes ``cluster_variable_prefix``
 
-    - ``principal_coefficients`` -- bool (default ``False``); supersedes any
+    - ``principal_coefficients`` -- boolean (default: ``False``); supersedes any
       coefficient defined by ``data``
 
     ALGORITHM:
@@ -1811,7 +1812,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``mutating_F`` -- bool (default ``True``); whether to compute
+        - ``mutating_F`` -- boolean (default: ``True``); whether to compute
           F-polynomials; disable this for speed considerations
 
         ALGORITHM:
@@ -1990,12 +1991,13 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
     def find_g_vector(self, g_vector, depth=infinity):
         r"""
-        Return a mutation sequence to obtain a seed containing the g-vector ``g_vector`` from the initial seed.
+        Return a mutation sequence to obtain a seed containing the g-vector
+        ``g_vector`` from the initial seed.
 
         INPUT:
 
-        - ``g_vector`` -- a tuple: the g-vector to find
-        - ``depth`` -- a positive integer or infinity (default ``infinity``);
+        - ``g_vector`` -- tuple; the g-vector to find
+        - ``depth`` -- positive integer or infinity (default: ``infinity``);
           the maximum distance from ``self.current_seed`` to reach
 
         OUTPUT:
@@ -2111,7 +2113,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the coefficient to return
 
         EXAMPLES::
@@ -2167,7 +2169,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``j`` -- an integer in ``range(self.parent().rank())``;
+        - ``j`` -- integer in ``range(self.parent().rank())``;
           the index of the cluster variable to return
 
         EXAMPLES::
@@ -2212,19 +2214,19 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``from_current_seed`` -- bool (default ``False``); whether to start
+        - ``from_current_seed`` -- boolean (default: ``False``); whether to start
           the iterator from :meth:`current_seed` or :meth:`initial_seed`
 
-        - ``mutating_F`` -- bool (default ``True``); whether to compute
+        - ``mutating_F`` -- boolean (default: ``True``); whether to compute
           F-polynomials also; disable this for speed considerations
 
         - ``allowed_directions`` -- iterable of integers
-          (default ``range(self.rank())``); the directions in which to mutate
+          (default: ``range(self.rank())``); the directions in which to mutate
 
-        - ``depth`` -- a positive integer or infinity (default ``infinity``);
+        - ``depth`` -- positive integer or infinity (default: ``infinity``);
           the maximum depth at which to stop searching
 
-        - ``catch_KeyboardInterrupt`` -- bool (default ``False``); whether to
+        - ``catch_KeyboardInterrupt`` -- boolean (default: ``False``); whether to
           catch ``KeyboardInterrupt`` and return it rather then raising an
           exception -- this allows the iterator returned by this method to be
           resumed after being interrupted
@@ -2319,7 +2321,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``mutating_F`` -- bool (default ``True``); whether to also compute
+        - ``mutating_F`` -- boolean (default: ``True``); whether to also compute
           F-polynomials; disable this for speed considerations
 
         EXAMPLES::
@@ -2343,7 +2345,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``depth`` -- a positive integer or infinity; the maximum depth
+        - ``depth`` -- positive integer or infinity; the maximum depth
           at which to stop searching
 
         EXAMPLES::
@@ -2370,7 +2372,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``depth`` -- a positive integer or infinity (default ``infinity``);
+        - ``depth`` -- positive integer or infinity (default: ``infinity``);
           the maximum depth at which to compute
 
         EXAMPLES::
@@ -2401,7 +2403,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
           * an iterable of such integers to mutate along a sequence
           * a string "sinks" or "sources" to mutate at all sinks or sources simultaneously
 
-        - ``mutating_F`` -- bool (default ``True``); whether to compute
+        - ``mutating_F`` -- boolean (default: ``True``); whether to compute
           F-polynomials while mutating
 
         .. NOTE::

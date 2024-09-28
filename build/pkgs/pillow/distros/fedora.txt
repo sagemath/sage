@@ -1,1 +1,1 @@
-python-pillow
+python3-pillow

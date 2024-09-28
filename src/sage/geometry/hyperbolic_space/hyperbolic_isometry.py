@@ -89,7 +89,7 @@ class HyperbolicIsometry(Morphism):
         EXAMPLES::
 
             sage: A = HyperbolicPlane().UHP().get_isometry(matrix(2, [0,1,-1,0]))
-            sage: TestSuite(A).run(skip="_test_category")
+            sage: TestSuite(A).run(skip='_test_category')
         """
         if check:
             model.isometry_test(A)
@@ -120,9 +120,7 @@ class HyperbolicIsometry(Morphism):
         r"""
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        - a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -489,7 +487,7 @@ class HyperbolicIsometry(Morphism):
     def translation_length(self):
         r"""
         For hyperbolic elements, return the translation length;
-        otherwise, raise a :class:`ValueError`.
+        otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -512,7 +510,7 @@ class HyperbolicIsometry(Morphism):
     def axis(self):
         r"""
         For a hyperbolic isometry, return the axis of the
-        transformation; otherwise raise a :class:`ValueError`.
+        transformation; otherwise raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -540,9 +538,7 @@ class HyperbolicIsometry(Morphism):
         Return a list containing the fixed point set of
         orientation-preserving isometries.
 
-        OUTPUT:
-
-        list of hyperbolic points or a hyperbolic geodesic
+        OUTPUT: list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -593,11 +589,9 @@ class HyperbolicIsometry(Morphism):
     def repelling_fixed_point(self):
         r"""
         For a hyperbolic isometry, return the attracting fixed point;
-        otherwise raise a :class:`ValueError`.
+        otherwise raise a :exc:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -612,11 +606,9 @@ class HyperbolicIsometry(Morphism):
     def attracting_fixed_point(self):
         r"""
         For a hyperbolic isometry, return the attracting fixed point;
-        otherwise raise a :class:`ValueError`.
+        otherwise raise a :exc:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -735,7 +727,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
     def translation_length(self): #UHP
         r"""
         For hyperbolic elements, return the translation length;
-        otherwise, raise a :class:`ValueError`.
+        otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -762,9 +754,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         Return a list or geodesic containing the fixed point set of
         orientation-preserving isometries.
 
-        OUTPUT:
-
-        list of hyperbolic points or a hyperbolic geodesic
+        OUTPUT: list of hyperbolic points or a hyperbolic geodesic
 
         EXAMPLES::
 
@@ -847,11 +837,9 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         r"""
         Return the repelling fixed point.
 
-        Otherwise, this raises a :class:`ValueError`.
+        Otherwise, this raises a :exc:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -873,11 +861,9 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         r"""
         Return the attracting fixed point.
 
-        Otherwise, this raises a :class:`ValueError`.
+        Otherwise, this raises a :exc:`ValueError`.
 
-        OUTPUT:
-
-        - a hyperbolic point
+        OUTPUT: a hyperbolic point
 
         EXAMPLES::
 
@@ -957,7 +943,6 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
             Isometry in PD
             [   5/8  3/8*I]
             [-3/8*I    5/8]
-
         """
         return (self._cached_isometry**n).to_model('PD')
 
@@ -1044,9 +1029,7 @@ def moebius_transform(A, z):
     - ``A`` -- a `2 \times 2` invertible matrix over the complex numbers
     - ``z`` -- a complex number or infinity
 
-    OUTPUT:
-
-    - a complex number or infinity
+    OUTPUT: a complex number or infinity
 
     EXAMPLES::
 

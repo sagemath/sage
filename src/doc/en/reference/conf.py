@@ -25,9 +25,10 @@ html_static_path = [] + html_common_static_path
 ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
 
-# Add a small edit button.
+# Add small view/edit buttons.
 html_theme_options.update({
-  'source_edit_link': os.path.join(source_repository, 'blob/develop/src/doc/en/reference/index.rst'),
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/en/reference/index.rst'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/en/reference/index.rst'),
 })
 
 # General information about the project.

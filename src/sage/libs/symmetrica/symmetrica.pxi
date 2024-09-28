@@ -522,9 +522,10 @@ cdef int _op(object a, OP result) except -1:
     else:
         raise TypeError("cannot convert a (= %s) to OP" % a)
 
+
 def test_integer(object x):
     """
-    Tests functionality for converting between Sage's integers
+    Test functionality for converting between Sage's integers
     and symmetrica's integers.
 
     EXAMPLES::
@@ -792,13 +793,12 @@ cdef object _py_polynom(OP a):
 
 cdef object _py_polynom_alphabet(OP a, object alphabet, object length):
     """
-    Converts a symmetrica multivariate polynomial a to a Sage multivariate
+    Convert a symmetrica multivariate polynomial a to a Sage multivariate
     polynomials.  Alphabet specifies the names of the variables which are
     fed into PolynomialRing.  length specifies the number of variables; if
     it is set to 0, then the number of variables is autodetected based on
     the number of variables in alphabet or the result obtained from
     symmetrica.
-
     """
     late_import()
     cdef OP pointer = a

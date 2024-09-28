@@ -1,1 +1,2 @@
-pluggy
+# warn_on_impl_args used by pytest
+pluggy >=1.5

@@ -56,7 +56,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
     - ``name`` -- (default: ``None``) name given to the automorphism
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
       automorphism; if none is provided, the LaTeX symbol is set to ``name``
-    - ``is_identity`` -- (default: ``False``) determines whether the
+    - ``is_identity`` -- boolean (default: ``False``); determines whether the
       constructed object is the identity automorphism, i.e. the identity map
       of `M` considered as an automorphism (the identity element of the
       general linear group)
@@ -254,7 +254,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
         True
         sage: s.matrix(f) == a.matrix(f) + b.matrix(f)
         True
-
     """
     def __init__(self, fmodule, name=None, latex_name=None):
         r"""
@@ -265,7 +264,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
             sage: a = FreeModuleAutomorphism(M, name='a')
             sage: a[e,:] = [[-1,0,0],[0,1,2],[0,1,3]]
-            sage: TestSuite(a).run(skip="_test_category") # see below
+            sage: TestSuite(a).run(skip='_test_category') # see below
 
         In the above test suite, _test_category fails because a is not an
         instance of a.parent().category().element_class. Actually automorphism
@@ -285,7 +284,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
 
             sage: b = M.general_linear_group().an_element()
             sage: TestSuite(b).run()
-
         """
         FreeModuleTensor.__init__(self, fmodule, (1,1), name=name,
                                   latex_name=latex_name,
@@ -312,7 +310,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             Automorphism a of the 3-dimensional vector space M over the Rational Field
             sage: M.identity_map()
             Identity map of the 3-dimensional vector space M over the Rational Field
-
         """
         if self._is_identity:
             description = "Identity map "
@@ -340,7 +337,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: Id = M.identity_map()
             sage: Id._new_instance()
             Automorphism of the Rank-3 free module M over the Integer Ring
-
         """
         return self.__class__(self._fmodule)
 
@@ -360,7 +356,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
              Rational Field
             sage: a._del_derived()
             sage: a._inverse  # has been reset to None
-
         """
         # First delete the derived quantities pertaining to FreeModuleTensor:
         FreeModuleTensor._del_derived(self)
@@ -479,7 +474,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             Kronecker delta of size 3x3
             sage: id.comp(f)
             Kronecker delta of size 3x3
-
         """
         if self._is_identity:
             raise ValueError("the components of the identity map cannot be "
@@ -551,7 +545,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             Kronecker delta of size 3x3
             sage: id.comp(f)
             Kronecker delta of size 3x3
-
         """
         if self._is_identity:
             raise ValueError("the components of the identity map cannot be "
@@ -613,7 +606,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             True
             sage: id(b,v) == b(v)
             True
-
         """
         from .free_module_element import FiniteRankFreeModuleElement
         if len(arg) > 1:
@@ -752,7 +744,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: c.inverse()
             Automorphism (a^(-1)*b)^(-1) of the Rank-3 free module M over the
              Integer Ring
-
         """
         from .comp import Components
         if self._is_identity:
@@ -845,7 +836,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             True
             sage: a.inverse()._mul_(a) == id
             True
-
         """
         # No need for consistency check since self and other are guaranteed
         # to have the same parent. In particular, they are defined on the same
@@ -1027,7 +1017,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             [1 0 0]
             [0 1 0]
             [0 0 1]
-
         """
         from sage.matrix.constructor import matrix
         fmodule = self._fmodule
@@ -1131,7 +1120,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: id = M.identity_map()
             sage: id.det()
             1
-
         """
         return self._some_matrix().det
 
@@ -1213,6 +1201,5 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: id = M.identity_map()
             sage: id.trace()
             2
-
         """
         return self._some_matrix().trace

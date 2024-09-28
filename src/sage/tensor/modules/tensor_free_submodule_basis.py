@@ -37,7 +37,6 @@ class TensorFreeSubmoduleBasis_sym(Basis_abstract):
         e_2⊗e^0
         e_2⊗e^1
         e_2⊗e^2
-
     """
 
     def __init__(self, tensor_module, symbol, latex_symbol=None, indices=None,
@@ -132,7 +131,6 @@ class TensorFreeSubmoduleBasis_sym(Basis_abstract):
             e_1⊗e_1
             sage: eSym2M[1, 2].display()
             e_1⊗e_2 + e_2⊗e_1
-
         """
         tensor_module = self._fmodule
         base_module_basis = self._base_module_basis

@@ -16,7 +16,7 @@ What Sage feeds javascript with is a "graph" object with the following content:
 
 - ``vertices`` -- each vertex is a dictionary defining :
 
-    - ``name``  -- The vertex's label
+    - ``name`` -- the vertex's label
 
     - ``group`` -- the vertex' color (integer)
 
@@ -28,7 +28,7 @@ The ID of a vertex is its index in the vertex list.
 
     - ``target`` -- the ID (int) of the edge's destination
 
-    - ``color``  -- the edge's color (integer)
+    - ``color`` -- the edge's color (integer)
 
     - ``value`` -- thickness of the edge
 
@@ -40,7 +40,7 @@ The ID of a vertex is its index in the vertex list.
       center of the edge. It defines the curve of the edge, which can be useful
       for multigraphs.
 
-- ``pos`` -- a list whose `i` th element is a dictionary defining the position
+- ``pos`` -- list whose `i` th element is a dictionary defining the position
   of the `i` th vertex
 
 It also contains the definition of some numerical/boolean variables whose
@@ -120,12 +120,12 @@ def gen_html_code(G,
 
     - ``vertex_partition`` -- list (default: ``[]``); a list of lists
       representing a partition of the vertex set. Vertices are then colored in
-      the graph according to the partition
+      the graph according to the partition.
 
-    - ``vertex_colors`` -- dict (default: ``None``); a dictionary representing a
-      partition of the vertex set. Keys are colors (ignored) and values are
-      lists of vertices. Vertices are then colored in the graph according to the
-      partition
+    - ``vertex_colors`` -- dictionary (default: ``None``); a dictionary
+      representing a partition of the vertex set. Keys are colors (ignored) and
+      values are lists of vertices. Vertices are then colored in the graph
+      according to the partition.
 
     - ``edge_partition`` -- list (default: ``[]``); same as
       ``vertex_partition``, with edges instead
@@ -134,24 +134,24 @@ def gen_html_code(G,
       previously computed position of nodes into account if there is one, or to
       compute a spring layout
 
-    - ``vertex_size`` -- integer (default: ``7``); the size of a vertex' circle
+    - ``vertex_size`` -- integer (default: 7); the size of a vertex' circle
 
-    - ``edge_thickness`` -- integer (default: ``4``); thickness of an edge
+    - ``edge_thickness`` -- integer (default: 4); thickness of an edge
 
-    - ``charge`` -- integer (default: ``-120``); the vertices' charge. Defines
+    - ``charge`` -- integer (default: -120); the vertices' charge. Defines
       how they repulse each other. See
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
-    - ``link_distance`` -- integer (default: ``30``); see
+    - ``link_distance`` -- integer (default: 30); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
-    - ``link_strength`` -- integer (default: ``2``); see
+    - ``link_strength`` -- integer (default: 2); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
-    - ``gravity`` -- float (default: ``0.04``); see
+    - ``gravity`` -- float (default: 0.04); see
       `<https://github.com/mbostock/d3/wiki/Force-Layout>`_ for more
       information
 
@@ -165,15 +165,15 @@ def gen_html_code(G,
 
     EXAMPLES::
 
-        sage: graphs.RandomTree(50).show(method="js")                           # optional - internet
+        sage: graphs.RandomTree(50).show(method='js')                           # optional - internet
 
         sage: g = graphs.PetersenGraph()
-        sage: g.show(method="js", vertex_partition=g.coloring())                # optional - internet
+        sage: g.show(method='js', vertex_partition=g.coloring())                # optional - internet
 
-        sage: graphs.DodecahedralGraph().show(method="js",                      # optional - internet
+        sage: graphs.DodecahedralGraph().show(method='js',                      # optional - internet
         ....:                                 force_spring_layout=True)
 
-        sage: graphs.DodecahedralGraph().show(method="js")                      # optional - internet
+        sage: graphs.DodecahedralGraph().show(method='js')                      # optional - internet
 
         sage: # needs sage.combinat
         sage: g = digraphs.DeBruijn(2, 2)
@@ -183,7 +183,7 @@ def gen_html_code(G,
         sage: g.add_edge("10", "10", "c")
         sage: g.add_edge("10", "10", "d")
         sage: g.add_edge("01", "11", "1")
-        sage: g.show(method="js", vertex_labels=True, edge_labels=True,         # optional - internet
+        sage: g.show(method='js', vertex_labels=True, edge_labels=True,         # optional - internet
         ....:        link_distance=200, gravity=.05, charge=-500,
         ....:        edge_partition=[[("11", "12", "2"), ("21", "21", "a")]],
         ....:        edge_thickness=4)

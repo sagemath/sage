@@ -20,19 +20,19 @@ import subprocess
 from sage.env import DOT_SAGE, HOSTNAME, GAP_ROOT_PATHS
 
 
-def gap_workspace_file(system="gap", name="workspace", dir=None):
+def gap_workspace_file(system='gap', name='workspace', dir=None):
     r"""
     Return the filename for the GAP workspace.
 
     INPUT:
 
-    - ``system`` -- the name of the system, either ``"gap"`` or
-      ``"libgap"``
+    - ``system`` -- the name of the system, either ``'gap'`` or
+      ``'libgap'``
 
-    - ``name`` -- the kind of workspace, usually ``"workspace"`` but
+    - ``name`` -- the kind of workspace, usually ``'workspace'`` but
       the library interface also uses other files
 
-    - ``dir`` -- the directory where the workspaces should be stored.
+    - ``dir`` -- the directory where the workspaces should be stored
       By default, this is ``DOT_SAGE/gap``
 
     EXAMPLES::
@@ -79,7 +79,7 @@ def prepare_workspace_dir(dir=None):
 
     INPUT:
 
-    - ``dir`` -- the directory where the workspaces should be stored.
+    - ``dir`` -- the directory where the workspaces should be stored
       By default, this is ``DOT_SAGE/gap``
 
     OUTPUT: the actual workspace directory

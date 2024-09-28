@@ -567,7 +567,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
         If ``narrow`` is ``True``, test narrow equivalence instead.
 
         (Two ideals are equivalent if they differ by multiplication
-        by a non-zero element. They are narrowly equivalent if they
+        by a nonzero element. They are narrowly equivalent if they
         differ by multiplication by an element of positive norm.)
 
         EXAMPLES::
