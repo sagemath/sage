@@ -32,5 +32,6 @@ foreach name, pyx : extension_data
 endforeach
 
 install_subdir('block_cipher', install_dir: sage_install_dir / 'crypto')
+install_subdir('key_exchange', install_dir: sage_install_dir / 'crypto')
 install_subdir('mq', install_dir: sage_install_dir / 'crypto')
 install_subdir('public_key', install_dir: sage_install_dir / 'crypto')

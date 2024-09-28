@@ -34,7 +34,7 @@ endforeach
 extension_data_cpp = {
   'boost_graph': files('boost_graph.pyx'),
   'c_graph': files('c_graph.pyx'),
-  # 'static_sparse_graph': files('static_sparse_graph.pyx'), # fails
+  'static_sparse_graph': files('static_sparse_graph.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp

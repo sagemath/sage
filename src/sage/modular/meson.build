@@ -30,6 +30,7 @@ endforeach
 install_subdir('abvar', install_dir: sage_install_dir / 'modular')
 subdir('arithgroup')
 install_subdir('btquotients', install_dir: sage_install_dir / 'modular')
+install_subdir('drinfeld_modform', install_dir: sage_install_dir / 'modular')
 install_subdir('hecke', install_dir: sage_install_dir / 'modular')
 install_subdir('local_comp', install_dir: sage_install_dir / 'modular')
 subdir('modform')
