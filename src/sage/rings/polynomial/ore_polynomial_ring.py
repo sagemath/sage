@@ -1257,6 +1257,57 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         return self._fraction_field
 
     def quotient_module(self, P, names=None):
+        r"""
+        Return the quotient ring `A/AP` as a module over `A`
+        where `A` is this Ore polynomial ring.
+
+        INPUT:
+
+        - ``names`` (default: ``None``) -- a string or a list
+          of string, the names of the vector of the canonical
+          basis
+
+        EXAMPLES::
+
+            sage: k.<a> = GF(5^3)
+            sage: S.<x> = k['a', k.frobenius_endomorphism()]
+            sage: P = x^3 + a*x^2 + a^2 + 1
+            sage: M = S.quotient_module(P)
+            sage: M
+            Ore module of rank 3 over Finite Field in a of size 5^3 twisted by a |--> a^5
+
+        The argument ``names`` can be used to give chosen names
+        to the vectors in the canonical basis::
+
+            sage: M = S.quotient_module(P, names=('u', 'v', 'w'))
+            sage: M.basis()
+            [u, v, w]
+
+        or even::
+
+            sage: M = S.quotient_module(P, names='e')
+            sage: M.basis()
+            [e0, e1, e2]
+
+        Note that the bracket construction also works::
+
+            sage: M.<u,v,w> = S.quotient_module(P)
+            sage: M.basis()
+            [u, v, w]
+
+        With this construction, the vectors `u`, `v` and `w`
+        are directly available in the namespace::
+
+            sage: x*u + v
+            2*v
+
+        We refer to :module:`sage.modules.ore_module` for a
+        tutorial on Ore modules in SageMath.
+
+        .. SEEALSO:
+
+            :module:`sage.modules.ore_module`
+        """
         return self(P).quotient_module(names=names)
 
     def _pushout_(self, other):
