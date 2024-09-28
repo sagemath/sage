@@ -159,85 +159,8 @@ Shortcuts for creating quotients are also available::
 
 .. RUBRIC:: Morphisms of Ore modules
 
-By definition, a morphism of Ore module is a `R`-linear morphism
-commuting with the Ore action, or equivalenty a `\mathcal S`-linear
-map.
-
-There are several ways for creating Ore modules morphisms in SageMath.
-First of all, one can use the method :meth:`hom`, passing in to it the
-matrix (in the canonical bases) of the morphism we want to build::
-
-    sage: mat = matrix(2, 2, [3*z^2 + z + 2, 2*z,
-    ....:                     3*z^2 + z + 1, 4])
-    sage: f = V.hom(mat, codomain=W)
-    sage: f
-    Ore module morphism:
-      From: Ore module <v0, v1> over Finite Field in z of size 5^3 twisted by z |--> z^5
-      To:   Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
-
-Clearly, this method is not optimal: typing all the entries of the
-defining matrix is long and is a potential source of errors.
-Instead, one can use a dictionary encoding the values taken by the
-morphism on a set of generators; the morphism is automatically
-prolonged by `\mathcal S`-linearity::
-
-    sage: g = V.hom({P*u0: W(u0)})
-    sage: g
-    Ore module morphism:
-      From: Ore module <v0, v1> over Finite Field in z of size 5^3 twisted by z |--> z^5
-      To:   Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
-
-One can then recover the matrix of `g` by using the method :meth:`matrix`::
-
-    sage: g.matrix()
-    [3*z^2 + z + 2           2*z]
-    [3*z^2 + z + 1             4]
-
-The method :meth:`multiplication_map` can also be used to define
-scalar endomorphisms::
-
-    sage: h = U.multiplication_map(2)
-    sage: h
-    Ore module endomorphism of Ore module <u0, u1, u2, u3> over Finite Field in z of size 5^3 twisted by z |--> z^5
-    sage: h.matrix()
-    [2 0 0 0]
-    [0 2 0 0]
-    [0 0 2 0]
-    [0 0 0 2]
-
-Be careful that scalar multiplications do not always properly
-define a morphism of Ore modules::
-
-    sage: U.multiplication_map(z)
-    Traceback (most recent call last):
-    ...
-    ValueError: does not define a morphism of Ore modules
-
-The method :meth:`multiplication_map` also accepts a Ore
-polynomial::
-
-    sage: h = U.multiplication_map(X^3)
-    sage: h
-    Ore module endomorphism of Ore module <u0, u1, u2, u3> over Finite Field in z of size 5^3 twisted by z |--> z^5
-    sage: h.matrix()
-    [              0               0               0               1]
-    [              4             3*z   z^2 + 2*z + 4 2*z^2 + 4*z + 4]
-    [      2*z^2 + 4           z + 2         2*z + 3               3]
-    [              2             3*z               3               3]
-
-For endomorphisms, one can compute classical invariants as
-determinants and characteristic polynomials::
-
-    sage: h.det()
-    1
-    sage: h.charpoly()
-    x^4 + 4*x^3 + x^2 + 4*x + 1
-
-One can check that the latter is the same than the reduced
-norm of `P^2`::
-
-    sage: (P^2).reduced_norm()
-    z^4 + 4*z^3 + z^2 + 4*z + 1
+For a tutorial on morphisms of Ore modules, we refer to
+:module:`sage.modules.ore_modules_morphism`.
 
 AUTHOR:
 
@@ -595,6 +518,26 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
               To:   Ore module <v, w> over Finite Field in z of size 5^3 twisted by z |--> z^5
         """
         pass
+
+    def is_zero(self):
+        r"""
+        Return ``True`` if this Ore module is reduced to zero.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: M
+            Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            sage: M.is_zero()
+            False
+
+            sage: Q = M.quo(M)
+            sage: Q.is_zero()
+            True
+        """
+        return self.rank() == 0
 
     def rename_basis(self, names, coerce=False):
         r"""
@@ -1126,56 +1069,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             else:
                 raise ValueError("im_gens must be a list, a tuple, a dictionary, a matrix or a Ore module morphism")
         H = self.Hom(codomain)
-        if isinstance(im_gens, Matrix):
-            return H(im_gens)
-        elif isinstance(im_gens, OreModuleMorphism):
-            f = im_gens
-            if f.domain() is not self:
-                f = self._hom_change_domain(f)
-            if f.codomain() is not codomain:
-                f = codomain._hom_change_codomain(f)
-            return f
-        elif isinstance(im_gens, (list, tuple)):
-            if len(im_gens) != self.rank():
-                raise ValueError("wrong number of generators")
-            M = matrix([codomain(v).list() for v in im_gens])
-            return H(M)
-        elif isinstance(im_gens, dict):
-            zero = self.base_ring().zero()
-            dimd = self.rank()
-            dimc = codomain.rank()
-            d = dimc + dimd
-            vs = [self(x).list() + codomain(y).list() for x, y in im_gens.items()]
-            if len(vs) < 2*d:
-                vs += (2*d - len(vs)) * [d * [zero]]
-            M = matrix(vs)
-            M.echelonize()
-            oldr = 0
-            r = M.rank()
-            iter = 1
-            fd = self._pseudohom
-            fc = codomain._pseudohom
-            while r > oldr:
-                for i in range(r):
-                    row = M.row(i).list()
-                    x = row[:dimd]
-                    y = row[dimd:]
-                    for _ in range(iter):
-                        x = fd(x)
-                        y = fc(y)
-                    v = x.list() + y.list()
-                    for j in range(d):
-                        M[i+r,j] = v[j]
-                M.echelonize()
-                oldr = r
-                r = M.rank()
-                iter *= 2
-            if list(M.pivots()) != list(range(dimd)):
-                raise ValueError("does not define a morphism of Ore modules")
-            M = M.submatrix(0, dimd, dimd, dimc)
-            return H(M)
-        else:
-            raise ValueError("im_gens must be a list, a tuple, a dictionary, a matrix or a Ore module morphism")
+        return H(im_gens)
 
     def multiplication_map(self, P):
         r"""
@@ -1594,6 +1488,7 @@ class OreSubmodule(OreModule):
         else:
             basis = matrix(base, gens)
         basis = basis.echelon_form()
+        basis.set_immutable()
         rank = basis.rank()
         if basis.nrows() != rank:
             basis = basis.matrix_from_rows(range(rank))
@@ -1926,6 +1821,7 @@ class OreQuotientModule(OreModule):
         else:
             basis = matrix(base, gens)
         basis = basis.echelon_form()
+        basis.set_immutable()
         rank = basis.rank()
         if basis.nrows() != rank:
             basis = basis.matrix_from_rows(range(rank))
