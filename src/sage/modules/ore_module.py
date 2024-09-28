@@ -596,6 +596,87 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         pass
 
+    def rename_basis(self, names, coerce=False):
+        r"""
+        Return the same Ore module with the given naming
+        for the vectors in its distinguished basis.
+
+        INPUT:
+
+        - ``names`` -- a string or a list of strings, the
+          new names
+
+        - ``coerce`` (default: ``False``) -- a boolean; if
+          ``True``, a coercion map from this Ore module to
+          renamed version is set
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: M
+            Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+            sage: Me = M.rename_basis('e')
+            sage: Me
+            Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+        Now compare how elements are displayed::
+
+            sage: M.random_element()   # random
+            (3*z^2 + 4*z + 2, 3*z^2 + z)
+            sage: Me.random_element()  # random
+            (2*z + 4)*e0 + (z^2 + 4*z + 4)*e1
+
+        At this point, there is no coercion map between ``M``
+        and ``Me``. Therefore, adding elements in both parents
+        results in an error:
+
+            sage: M.random_element() + Me.random_element()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +:
+                'Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5' and
+                'Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5'
+
+        In order to set this coercion, one should define ``Me``
+        by passing the extra argument ``coerce=True``::
+
+            sage: Me = M.rename_basis('e', coerce=True)
+            sage: M.random_element() + Me.random_element()  # random
+            2*z^2*e0 + (z^2 + z + 4)*e1
+
+        .. WARNING::
+
+            Use ``coerce=True`` with extreme caution. Indeed,
+            setting inappropriate coercion maps may result in a
+            circular path in the coercion graph which, in turn,
+            could eventually break the coercion system.
+
+        Note that the bracket construction also works::
+
+            sage: M.<v,w> = M.rename_basis()
+            sage: M
+            Ore module <v, w> over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+        In this case, `v` and `w` are automatically defined::
+
+            sage: v + w
+            v + w
+        """
+        rank = self.rank()
+        names = normalize_names(names, rank)
+        cls = self.__class__
+        M = cls.__classcall__(cls, self._pseudohom._matrix,
+                              self._ore, names, self._ore_category)
+        if coerce:
+            mat = identity_matrix(self.base_ring(), rank)
+            id = self.hom(mat, codomain=M)
+            M._unset_coercions_used()
+            M.register_coercion(id)
+        return M
+
     def pseudohom(self):
         r"""
         Return the pseudomorphism giving the action of the Ore
@@ -1610,6 +1691,98 @@ class OreSubmodule(OreModule):
         """
         return self._ambient
 
+    def rename_basis(self, names, coerce=False):
+        r"""
+        Return the same Ore module with the given naming
+        for the vectors in its distinguished basis.
+
+        INPUT:
+
+        - ``names`` -- a string or a list of strings, the
+          new names
+
+        - ``coerce`` (default: ``False``) -- a boolean; if
+          ``True``, a coercion map from this Ore module to
+          renamed version is set
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z^2)
+            sage: M
+            Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+            sage: Me = M.rename_basis('e')
+            sage: Me
+            Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+        Now compare how elements are displayed::
+
+            sage: M.random_element()   # random
+            (3*z^2 + 4*z + 2, 3*z^2 + z)
+            sage: Me.random_element()  # random
+            (2*z + 4)*e0 + (z^2 + 4*z + 4)*e1
+
+        At this point, there is no coercion map between ``M``
+        and ``Me``. Therefore, adding elements in both parents
+        results in an error:
+
+            sage: M.random_element() + Me.random_element()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +:
+                'Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5' and
+                'Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5'
+
+        In order to set this coercion, one should define ``Me``
+        by passing the extra argument ``coerce=True``::
+
+            sage: Me = M.rename_basis('e', coerce=True)
+            sage: M.random_element() + Me.random_element()  # random
+            2*z^2*e0 + (z^2 + z + 4)*e1
+
+        .. WARNING::
+
+            Use ``coerce=True`` with extreme caution. Indeed,
+            setting inappropriate coercion maps may result in a
+            circular path in the coercion graph which, in turn,
+            could eventually break the coercion system.
+
+        Note that the bracket construction also works::
+
+            sage: M.<v,w> = M.rename_basis()
+            sage: M
+            Ore module <v, w> over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+        In this case, `v` and `w` are automatically defined::
+
+            sage: v + w
+            v + w
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X + z
+            sage: A.<v,w> = S.quotient_module(P^2)
+            sage: M = A.span(P*v)
+            sage: Me = M.rename_basis('e', coerce=True)
+            sage: M.an_element() + Me.an_element()
+            2*e0
+
+        """
+        rank = self.rank()
+        names = normalize_names(names, rank)
+        cls = self.__class__
+        M = cls.__classcall__(cls, self._ambient, self._basis, names)
+        if coerce:
+            mat = identity_matrix(self.base_ring(), rank)
+            id = self.hom(mat, codomain=M)
+            M._unset_coercions_used()
+            M.register_coercion(id)
+        return M
+
     def injection_morphism(self):
         r"""
         Return the inclusion of this submodule in the ambient space.
@@ -1921,6 +2094,98 @@ class OreQuotientModule(OreModule):
             :meth:`relations`
         """
         return self._submodule_class(self._cover, self._relations, names=names)
+
+    def rename_basis(self, names, coerce=False):
+        r"""
+        Return the same Ore module with the given naming
+        for the vectors in its distinguished basis.
+
+        INPUT:
+
+        - ``names`` -- a string or a list of strings, the
+          new names
+
+        - ``coerce`` (default: ``False``) -- a boolean; if
+          ``True``, a coercion map from this Ore module to
+          renamed version is set
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z*X + 1)
+            sage: M
+            Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+            sage: Me = M.rename_basis('e')
+            sage: Me
+            Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+        Now compare how elements are displayed::
+
+            sage: M.random_element()   # random
+            (3*z^2 + 4*z + 2, 3*z^2 + z)
+            sage: Me.random_element()  # random
+            (2*z + 4)*e0 + (z^2 + 4*z + 4)*e1
+
+        At this point, there is no coercion map between ``M``
+        and ``Me``. Therefore, adding elements in both parents
+        results in an error:
+
+            sage: M.random_element() + Me.random_element()
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +:
+                'Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5' and
+                'Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5'
+
+        In order to set this coercion, one should define ``Me``
+        by passing the extra argument ``coerce=True``::
+
+            sage: Me = M.rename_basis('e', coerce=True)
+            sage: M.random_element() + Me.random_element()  # random
+            2*z^2*e0 + (z^2 + z + 4)*e1
+
+        .. WARNING::
+
+            Use ``coerce=True`` with extreme caution. Indeed,
+            setting inappropriate coercion maps may result in a
+            circular path in the coercion graph which, in turn,
+            could eventually break the coercion system.
+
+        Note that the bracket construction also works::
+
+            sage: M.<v,w> = M.rename_basis()
+            sage: M
+            Ore module <v, w> over Finite Field in z of size 5^3 twisted by z |--> z^5
+
+        In this case, `v` and `w` are automatically defined::
+
+            sage: v + w
+            v + w
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X + z
+            sage: A.<v,w> = S.quotient_module(P^2)
+            sage: M = A.quo(P*v)
+            sage: Me = M.rename_basis('e', coerce=True)
+            sage: M.an_element() + Me.an_element()
+            2*e0
+
+        """
+        rank = self.rank()
+        names = normalize_names(names, rank)
+        cls = self.__class__
+        M = cls.__classcall__(cls, self._cover, self._relations, names)
+        if coerce:
+            mat = identity_matrix(self.base_ring(), rank)
+            id = self.hom(mat, codomain=M)
+            M._unset_coercions_used()
+            M.register_coercion(id)
+        return M
 
     def projection_morphism(self):
         r"""
