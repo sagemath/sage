@@ -1,19 +1,20 @@
 r"""
 Morphisms between Ore modules
 
-By definition, a morphism of Ore module is a `R`-linear morphism
+By definition, a morphism of Ore modules is a `R`-linear morphism
 commuting with the Ore action, or equivalenty a `\mathcal S`-linear
-map.
+map when `\mathcal S` is the underlying Ore polynomial ring.
 
 .. RUBRIC:: Construction of morphisms
 
 There are several ways for creating Ore modules morphisms in SageMath.
-First of all, one can use the method :meth:`hom`, passing in to it the
+First of all, one can use the method :meth:`hom`, passing to it the
 matrix (in the canonical bases) of the morphism we want to build::
 
     sage: K.<z> = GF(5^3)
     sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
     sage: M.<e0,e1> = S.quotient_module(X^2 + X + z)
+
     sage: mat = matrix(2, 2, [z,     3*z^2 + z + 2,
     ....:                     z + 1,       4*z + 4])
     sage: f = M.hom(mat)
@@ -26,8 +27,8 @@ defining matrix is long and is a potential source of errors.
 Instead, one can use a dictionary encoding the values taken by the
 morphism on a set of generators; the morphism is automatically
 prolonged by `\mathcal S`-linearity.
-Actually, `f` was just the multiplication by `X^3` on `M`. We can
-then redefine it simply as follows:
+Actually here, `f` was just the multiplication by `X^3` on `M`.
+We can then redefine it simply as follows::
 
     sage: g = M.hom({e0: X^3*e0})
     sage: g
@@ -69,8 +70,7 @@ define a morphism of Ore modules::
 
 SageMath provides methods to compute kernels, cokernels,
 images and coimages. In order to illustrate this, we will
-build the sequence (where `\S` is the corresponding Ore
-polynomial ring)::
+build the sequence
 
 .. MATH::
 
@@ -109,8 +109,8 @@ vanishes. Instead of reading the output, one can check
 programmatically the vanishing of a Ore module using the
 method :meth:`is_zero`.
 
-Of course, here, one can, more simply, use the method
-:meth:`is_injective`::
+Actually, in our use case, one can, more simply, use the
+method :meth:`is_injective`::
 
     sage: f.is_injective()
     True
@@ -135,9 +135,9 @@ results::
     True
 
 As a sanity check, one can also verity that the composite
-`g \circ f` vanishes:
+`g \circ f` vanishes::
 
-    sage: h = g*f
+    sage: h = g * f
     sage: h
     Ore module morphism:
       From: Ore module <u0, u1> over Finite Field in z of size 5^3 twisted by z |--> z^5
@@ -159,6 +159,7 @@ We start by defining `f`::
     sage: V = S.quotient_module(P*A, names='v')
     sage: V.inject_variables()
     Defining v0, v1, v2
+
     sage: f = U.hom({u0: A*v0})
     sage: f
     Ore module morphism:
@@ -218,7 +219,7 @@ For endomorphisms, one can compute classical invariants as
 determinants and characteristic polynomials.
 To illustrate this, we check on an example that the characteristic
 polynomial of the multiplication by `X^3` on the quotient
-`\mathcal S / \mathcal S P` is the reduced norm of P.
+`\mathcal S / \mathcal S P` is the reduced norm of `P`.
 
     sage: P = X^5 + z*X^4 + z^2*X^2 + z + 1
     sage: M = S.quotient_module(P)
