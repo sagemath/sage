@@ -49,6 +49,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         pass
+
     @staticmethod
     def __classcall__(cls, Sym, base, scalar, prefix, basis_name, leading_coeff=None):
         """
@@ -282,6 +283,8 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
 
 
 from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+
+
 class OrthotriangBasisFunctor(SymmetricFunctionsFunctor):
     """
     A constructor for algebras of symmetric functions constructed by
@@ -345,4 +348,4 @@ class OrthotriangBasisFunctor(SymmetricFunctionsFunctor):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang',  SymmetricFunctionAlgebra_orthotriang.Element)
+register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang', SymmetricFunctionAlgebra_orthotriang.Element)

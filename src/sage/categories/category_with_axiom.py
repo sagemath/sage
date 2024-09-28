@@ -1908,7 +1908,7 @@ class CategoryWithAxiom(Category):
             sage: CommutativeRings()._base_category_class_and_axiom
             (<class 'sage.categories.rings.Rings'>, 'Commutative')
             sage: CommutativeRings()._base_category_class_and_axiom_origin
-            'deduced by base_category_class_and_axiom'
+            'set by __classget__'
 
         ``Sets.Infinite`` is a nested class, so the attribute is set
         by :meth:`CategoryWithAxiom.__classget__` the first time

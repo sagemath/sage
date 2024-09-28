@@ -913,6 +913,8 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
 
 from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+
+
 class DualBasisFunctor(SymmetricFunctionsFunctor):
     """
     A constructor for algebras of symmetric functions constructed by
@@ -986,4 +988,6 @@ class DualBasisFunctor(SymmetricFunctionsFunctor):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.dual', 'SymmetricFunctionAlgebraElement_dual',  SymmetricFunctionAlgebra_dual.Element)
+register_unpickle_override('sage.combinat.sf.dual',
+                           'SymmetricFunctionAlgebraElement_dual',
+                           SymmetricFunctionAlgebra_dual.Element)

@@ -18,7 +18,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from pathlib import Path
 from copy import copy, deepcopy
 
 from sage.misc.lazy_import import lazy_import
@@ -2930,13 +2930,11 @@ class GenusSymbol_global_ring:
             sig = self.signature_pair_of_matrix()
             if sig[0] * sig[1] != 0:
                 from sage.env import SAGE_EXTCODE
-                from sage.interfaces.gp import gp
-
                 m = pari(L)
-                gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
-                m = gp.eval('qflllgram_indefgoon(%s)' % m)
+                pari.read(Path(SAGE_EXTCODE) / "pari" / "simon" / "qfsolve.gp")
+                m = pari('qflllgram_indefgoon')(m)
                 # convert the output string to sage
-                L = pari(m).sage()[0]
+                L = m.sage()[0]
             elif sig[1] != 0:
                 U = -(-L).LLL_gram()
                 L = U.T * L * U

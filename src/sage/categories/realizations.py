@@ -27,7 +27,7 @@ class RealizationsCategory(RegressiveCovariantConstructionCategory):
     """
     An abstract base class for all categories of realizations category.
 
-    Relization are implemented as
+    Realization are implemented as
     :class:`~sage.categories.covariant_functorial_construction.RegressiveCovariantConstructionCategory`.
     See there for the documentation of how the various bindings such
     as ``Sets().Realizations()`` and ``P.Realizations()``, where ``P``

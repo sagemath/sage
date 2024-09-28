@@ -399,7 +399,7 @@ cdef list compute_gb(factory, tuple args):
     cdef MPolynomialRing_libsingular R = PolynomialRing(factory._FR.field(), len(sorted_vars), 'a', order=term_order)
 
     # Zip tuples into R and compute Groebner basis
-    cdef idx_map = {old : new for new, old in enumerate(sorted_vars)}
+    cdef idx_map = {old: new for new, old in enumerate(sorted_vars)}
     nvars = len(sorted_vars)
     F = factory.field()
     cdef list polys = list()
@@ -455,7 +455,7 @@ cpdef executor(tuple params):
     Execute a function defined in this module
     (``sage.algebras.fusion_rings.fast_parallel_fmats_methods``) in a worker
     process, and supply the factory parameter by constructing a reference
-    to the ``FMatrix`` object in the worker's memory adress space from
+    to the ``FMatrix`` object in the worker's memory address space from
     its ``id``.
 
     INPUT:
