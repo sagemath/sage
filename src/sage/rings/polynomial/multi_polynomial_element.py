@@ -804,6 +804,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         return self.element().dict()
 
+    monomial_coefficients = dict
+
     def __iter__(self):
         """
         Iterate over ``self`` respecting the term order.

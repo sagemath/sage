@@ -1371,7 +1371,14 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: m = R.monomial(1,2,3)
             sage: R.monomial(*m.degrees()) == m
             True
+
+        We also allow to specify the exponents in a single tuple::
+
+            sage: R.monomial(e)
+            x*y^2*z^3
         """
+        if len(exponents) == 1 and isinstance(exponents, tuple):
+            return self({exponents[0]: self.base_ring().one()})
         return self({exponents: self.base_ring().one()})
 
     def monomials_of_degree(self, degree):
