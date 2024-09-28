@@ -33,8 +33,13 @@ To compile and install the project in editable install, just use::
     pip install --no-build-isolation --editable .
     ```
 
-This will install Sage in the current Python environment. You can then start
-Sage from the command line with ``./sage`` or run the tests with ``./sage -t``.
+This will install Sage in the current Python environment. 
+In a Conda environment, the ̀ `--no-build-isolation` flag is necessary to 
+allow the build system to reuse the already installed build dependencies.
+If you don't use Conda, you can omit this flag.
+
+You can then start Sage from the command line with ``./sage`` 
+or run the tests with ``./sage -t``.
 
 .. NOTE::
     
