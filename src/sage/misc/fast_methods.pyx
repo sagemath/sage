@@ -194,7 +194,7 @@ cdef class FastHashable_class:
 
         This is for internal use only. The class has a cdef attribute
         ``_hash``, that needs to be assigned (for example, by calling
-        the init method, or by a direct assignement using
+        the init method, or by a direct assignment using
         cython). This is slower than using :func:`provide_hash_by_id`,
         but has the advantage that the hash can be prescribed, by
         assigning a cdef attribute ``_hash``.

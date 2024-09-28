@@ -56,6 +56,7 @@ AUTHORS:
 
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class NumberFieldStructure(UniqueRepresentation):
     r"""
     Abstract base class encapsulating information about a number fields
@@ -136,6 +137,7 @@ class NumberFieldStructure(UniqueRepresentation):
         """
         raise NotImplementedError
 
+
 class NameChange(NumberFieldStructure):
     r"""
     Structure for a number field created by a change in variable name.
@@ -179,6 +181,7 @@ class NameChange(NumberFieldStructure):
         from . import maps
         return maps.NameChangeMap(field, self.other), maps.NameChangeMap(self.other, field)
 
+
 class AbsoluteFromRelative(NumberFieldStructure):
     r"""
     Structure for an absolute number field created from a relative number
@@ -217,6 +220,7 @@ class AbsoluteFromRelative(NumberFieldStructure):
         """
         from . import maps
         return maps.MapAbsoluteToRelativeNumberField(field, self.other), maps.MapRelativeToAbsoluteNumberField(self.other, field)
+
 
 class RelativeFromAbsolute(NumberFieldStructure):
     r"""
@@ -291,6 +295,7 @@ class RelativeFromAbsolute(NumberFieldStructure):
         field_to_other = field.Hom(other)([other.gen()], base_map=base_map, check=True)
 
         return field_to_other, other_to_field
+
 
 class RelativeFromRelative(NumberFieldStructure):
     r"""

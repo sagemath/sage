@@ -102,7 +102,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         """
         fmpz_poly_init(self._poly)
 
-
     def __dealloc__(self):
         r"""
         Call the underlying FLINT fmpz_poly destructor
@@ -652,7 +651,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
-
     cpdef _sub_(self, right):
         r"""
         Return ``self`` minus ``right``.
@@ -671,7 +669,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
                 (<Polynomial_integer_dense_flint>right)._poly)
         sig_off()
         return x
-
 
     cpdef _neg_(self):
         r"""
@@ -834,7 +831,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
-
     @coerce_binop
     def lcm(self, right):
         """
@@ -954,7 +950,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             return R(d*g), R(d*u), R(d*v)
         else:
             return self._parent(rr), ss, tt
-
 
     cpdef _mul_(self, right):
         r"""
@@ -1360,11 +1355,10 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         return real_roots(self)
 
-##     def __copy__(self):
-##         f = Polynomial_integer_dense(self.parent())
-##         f._poly = self._poly.copy()
-##         return f
-
+    #     def __copy__(self):
+    #         f = Polynomial_integer_dense(self.parent())
+    #         f._poly = self._poly.copy()
+    #         return f
 
     def degree(self, gen=None):
         """
@@ -1484,7 +1478,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         if variable is None:
             variable = self.parent().variable_name()
         return pari(self.list()).Polrev(variable)
-
 
     def squarefree_decomposition(Polynomial_integer_dense_flint self):
         """
@@ -1742,7 +1735,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             []
         """
         return [self.get_unsafe(i) for i in range(self.degree()+1)]
-
 
     @coerce_binop
     def resultant(self, other, proof=True):
