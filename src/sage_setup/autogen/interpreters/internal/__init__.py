@@ -213,7 +213,7 @@ def rebuild(dirname, force=False, interpreters=None, distribution=None):
     _INTERPRETERS = [
         getattr(
             import_module(
-                ".specs." + interpreter.lower(), package=__name__.rsplit(".", 1)[0]
+                ".specs." + interpreter.lower(), package=__name__
             ),
             interpreter + "Interpreter",
         )
