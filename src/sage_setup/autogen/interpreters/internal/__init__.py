@@ -210,9 +210,15 @@ def rebuild(dirname, force=False, interpreters=None, distribution=None):
 
     from importlib import import_module
 
-    _INTERPRETERS = [getattr(import_module('sage_setup.autogen.interpreters.specs.' + interpreter.lower()),
-                             interpreter + 'Interpreter')
-                     for interpreter in interpreters]
+    _INTERPRETERS = [
+        getattr(
+            import_module(
+                ".specs." + interpreter.lower(), package=__name__.rsplit(".", 1)[0]
+            ),
+            interpreter + "Interpreter",
+        )
+        for interpreter in interpreters
+    ]
 
     if distribution is None:
         all_py = 'all.py'

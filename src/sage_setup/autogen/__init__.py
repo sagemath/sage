@@ -1,6 +1,6 @@
 import os
 
-from . import interpreters
+from .interpreters.internal import interpreters
 
 
 def autogen_all():
