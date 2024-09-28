@@ -474,13 +474,13 @@ cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t
 
     INPUT:
 
-    - ``x`` -- polynomial; the base.
+    - ``x`` -- polynomial; the base
 
-    - ``e`` -- integer; the exponent.
+    - ``e`` -- integer; the exponent
 
-    - ``modulus`` -- polynomial or NULL; if not NULL, then perform a modular exponentiation.
+    - ``modulus`` -- polynomial or NULL; if not NULL, then perform a modular exponentiation
 
-    - ``n`` -- integer; not used, but all polynomials' coefficients are understood modulo ``n``.
+    - ``n`` -- integer; not used, but all polynomials' coefficients are understood modulo ``n``
 
     EXAMPLES::
 

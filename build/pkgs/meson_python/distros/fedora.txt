@@ -1,1 +1,1 @@
-python-meson-python
+python3-meson-python

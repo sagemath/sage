@@ -85,12 +85,10 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
     - ``names`` -- names of generators
 
-    - ``commutative`` -- (default: ``False``) whether the free
+    - ``commutative`` -- boolean (default: ``False``); whether the free
       monoid is commutative or not
 
-    OUTPUT:
-
-    A free monoid.
+    OUTPUT: a free monoid
 
     EXAMPLES::
 

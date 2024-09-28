@@ -401,10 +401,10 @@ cdef class Map(Element):
 
         INPUT:
 
-        - ``slots`` -- A dictionary of slots to be updated.
-          The dictionary must have the keys ``'_domain'`` and
+        - ``slots`` -- dictionary of slots to be updated;
+          the dictionary must have the keys ``'_domain'`` and
           ``'_codomain'``, and may have the keys ``'_repr_type_str'``
-          and ``'_is_coercion'``.
+          and ``'_is_coercion'``
 
         TESTS:
 
@@ -509,7 +509,7 @@ cdef class Map(Element):
 
         .. NOTE::
 
-            By default, the string ``"Generic"`` is returned. Subclasses may overload this method.
+            By default, the string ``'Generic'`` is returned. Subclasses may overload this method.
 
         EXAMPLES::
 
@@ -634,7 +634,7 @@ cdef class Map(Element):
 
     def category_for(self):
         """
-        Returns the category self is a morphism for.
+        Return the category ``self`` is a morphism for.
 
         .. NOTE::
 
@@ -857,7 +857,7 @@ cdef class Map(Element):
 
     def __mul__(self, right):
         r"""
-        The multiplication * operator is operator composition
+        The multiplication * operator is operator composition.
 
         IMPLEMENTATION:
 
@@ -937,7 +937,7 @@ cdef class Map(Element):
 
         INPUT:
 
-        - ``self``  -- a Map in some ``Hom(Y, Z, category_left)``
+        - ``self`` -- a Map in some ``Hom(Y, Z, category_left)``
         - ``right`` -- a Map in some ``Hom(X, Y, category_right)``
 
         OUTPUT:
@@ -977,7 +977,7 @@ cdef class Map(Element):
         INPUT:
 
         - ``self``, ``right`` -- maps
-        - homset -- a homset
+        - ``homset`` -- a homset
 
         ASSUMPTION:
 
@@ -1139,7 +1139,7 @@ cdef class Map(Element):
         OUTPUT:
 
         An element of Hom(X, Z) obtained by composing self with `\phi`.  If
-        no canonical `\phi` exists, a :class:`TypeError` is raised.
+        no canonical `\phi` exists, a :exc:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -1183,8 +1183,8 @@ cdef class Map(Element):
 
         OUTPUT:
 
-        An element of Hom(X, Z) obtained by composing self with `\phi`.  If
-        no canonical `\phi` exists, a :class:`TypeError` is raised.
+        An element of Hom(X, Z) obtained by composing ``self`` with `\phi`.  If
+        no canonical `\phi` exists, a :exc:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -1357,7 +1357,7 @@ cdef class Section(Map):
         """
         INPUT:
 
-        A map.
+        - ``map`` -- a map
 
         TESTS::
 
@@ -1499,9 +1499,9 @@ cdef class FormalCompositeMap(Map):
         """
         INPUT:
 
-        - ``parent``: a homset
-        - ``first``: a map or a list of maps
-        - ``second``: a map or None
+        - ``parent`` -- a homset
+        - ``first`` -- a map or a list of maps
+        - ``second`` -- a map or None
 
         .. NOTE::
 
@@ -1711,13 +1711,12 @@ cdef class FormalCompositeMap(Map):
             Traceback (most recent call last):
             ...
             IndexError: list index out of range
-
         """
         return self.__list[i]
 
     cpdef Element _call_(self, x):
         """
-        Call with a single argument
+        Call with a single argument.
 
         TESTS::
 
@@ -1766,7 +1765,7 @@ cdef class FormalCompositeMap(Map):
 
     def _repr_type(self):
         """
-        Return a string describing the type of ``self``, namely "Composite"
+        Return a string describing the type of ``self``, namely "Composite".
 
         TESTS::
 
@@ -1792,7 +1791,7 @@ cdef class FormalCompositeMap(Map):
 
     def _repr_defn(self):
         """
-        Return a string describing the definition of ``self``
+        Return a string describing the definition of ``self``.
 
         The return value is obtained from the string representations
         of the two constituents.
@@ -1887,7 +1886,7 @@ cdef class FormalCompositeMap(Map):
         """
         Tell whether ``self`` is injective.
 
-        It raises :class:`NotImplementedError` if it cannot be determined.
+        It raises :exc:`NotImplementedError` if it cannot be determined.
 
         EXAMPLES::
 
@@ -1932,7 +1931,6 @@ cdef class FormalCompositeMap(Map):
             sage: f = QQ.hom(QQbar) * ZZ.hom(QQ)                                        # needs sage.rings.number_field
             sage: f.is_injective()                                                      # needs sage.rings.number_field
             True
-
         """
         try:
             # we try the category first
@@ -1962,7 +1960,7 @@ cdef class FormalCompositeMap(Map):
         """
         Tell whether ``self`` is surjective.
 
-        It raises :class:`NotImplementedError` if it cannot be determined.
+        It raises :exc:`NotImplementedError` if it cannot be determined.
 
         EXAMPLES::
 

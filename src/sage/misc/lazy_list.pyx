@@ -131,11 +131,11 @@ def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
       #. or a standard Python container ``list`` or ``tuple``.
 
     - ``initial_values`` -- the beginning of the sequence that will not be computed from
-      the ``data`` provided.
+      the ``data`` provided
 
     - ``update_function`` -- you can also construct a lazy list from a function
       that takes as input a list of precomputed values and updates it with some
-      more values.
+      more values
 
     .. NOTE::
 
@@ -252,7 +252,7 @@ def lazy_list(data=None, initial_values=None, start=None, stop=None, step=None,
 
 def slice_unpickle(master, start, stop, step):
     r"""
-    Unpickle helper
+    Unpickle helper.
 
     TESTS::
 
@@ -293,9 +293,7 @@ def lazy_list_formatter(L, name='lazy list',
     - ``preview`` -- (default: ``3``) an integer specifying the number of
       elements shown in the representation string
 
-    OUTPUT:
-
-    A string.
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -351,7 +349,7 @@ def lazy_list_formatter(L, name='lazy list',
 
 cdef class lazy_list_generic():
     r"""
-    A lazy list
+    A lazy list.
 
     EXAMPLES::
 
@@ -374,7 +372,7 @@ cdef class lazy_list_generic():
         INPUT:
 
         - ``cache`` -- an optional list to be used as the cache. Be careful that
-          there is no copy.
+          there is no copy
 
         - ``start``, ``stop``, ``step`` -- for slices
 
@@ -532,7 +530,7 @@ cdef class lazy_list_generic():
 
     def __reduce__(self):
         r"""
-        Pickling support
+        Pickling support.
 
         EXAMPLES::
 
@@ -614,10 +612,10 @@ cdef class lazy_list_generic():
         r"""
         Return the element at position ``i``.
 
-        If the index is not an integer, then raise a ``TypeError``.  If the
-        argument is negative then raise a ``ValueError``.  Finally, if the
+        If the index is not an integer, then raise a :exc:`TypeError`.  If the
+        argument is negative then raise a :exc:`ValueError`.  Finally, if the
         argument is beyond the size of that lazy list it raises a
-        ``IndexError``.
+        :exc:`IndexError`.
 
         EXAMPLES::
 
@@ -646,7 +644,7 @@ cdef class lazy_list_generic():
             TypeError: unable to convert rational 1/2 to an integer
         """
         if i < 0:
-            raise ValueError("indices must be non-negative")
+            raise ValueError("indices must be nonnegative")
 
         i = self.start + i * self.step
         if self._fit(i):
@@ -655,7 +653,7 @@ cdef class lazy_list_generic():
 
     def __call__(self, i):
         r"""
-        An alias for :meth:`get`
+        An alias for :meth:`get`.
 
         TESTS::
 
@@ -817,7 +815,7 @@ cdef class lazy_list_generic():
         if step == 0:
             raise TypeError("step may not be 0")
         if step < 0 or start < 0 or stop < 0:
-            raise ValueError("slice indices must be non negative")
+            raise ValueError("slice indices must be nonnegative")
 
         step = step * self.step
         start = self.start + start * self.step
@@ -928,8 +926,8 @@ cdef class lazy_list_from_iterator(lazy_list_generic):
 
         - ``iterator`` -- an iterator
 
-        - ``cache`` -- an optional list to be used as the cache. Be careful that
-          there is no copy.
+        - ``cache`` -- an optional list to be used as the cache; be careful that
+          there is no copy
 
         - ``stop`` -- an optional stop point
 
@@ -1004,15 +1002,14 @@ cdef class lazy_list_from_function(lazy_list_generic):
         INPUT:
 
         - ``function`` -- a function that maps ``n`` to the element
-          at position ``n``. (This
-          function only needs to be defined for length larger than the length of
-          the cache.)
+          at position ``n`` (this function only needs to be defined for length
+          larger than the length of the cache)
 
         - ``cache`` -- an optional list to be used as the cache. Be careful that
-          there is no copy.
+          there is no copy
 
-        - ``stop`` -- an optional integer to specify the length of this lazy list.
-          (Otherwise it is considered infinite).
+        - ``stop`` -- an optional integer to specify the length of this lazy list
+          (Otherwise it is considered infinite)
 
         EXAMPLES::
 
@@ -1086,15 +1083,15 @@ cdef class lazy_list_from_update_function(lazy_list_generic):
         r"""
         INPUT:
 
-        - ``function`` -- a function that updates a list of precomputed values.
+        - ``function`` -- a function that updates a list of precomputed values
           The update function should take as input a list and make it longer
           (using either the methods ``append`` or ``extend``). If after a call
           to the update function the list of values is shorter a
-          ``RuntimeError`` will occurr. If no value is added then the lazy list
+          :exc:`RuntimeError` will occurr. If no value is added then the lazy list
           is considered finite.
 
         - ``cache`` -- an optional list to be used as the cache. Be careful that
-          there is no copy.
+          there is no copy
 
         - ``stop`` -- an optional integer to specify the length of this lazy list
           (otherwise it is considered infinite)

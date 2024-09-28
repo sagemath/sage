@@ -52,9 +52,9 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
 
     INPUT:
 
-    - ``N`` -- int
-    - ``M`` -- int (divisor of `N`)
-    - ``t`` -- int (divisor of `N/M`)
+    - ``N`` -- integer
+    - ``M`` -- integer (divisor of `N`)
+    - ``t`` -- integer (divisor of `N/M`)
 
     OUTPUT:
 
@@ -165,9 +165,9 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
 
     INPUT:
 
-    - ``N`` -- int
-    - ``M`` -- int (divisor of `N`)
-    - ``t`` -- int (divisor of `N/M`)
+    - ``N`` -- integer
+    - ``M`` -- integer (divisor of `N`)
+    - ``t`` -- integer (divisor of `N/M`)
 
     OUTPUT:
 
@@ -288,7 +288,7 @@ def generators_helper(coset_reps, level):
 
     EXAMPLES::
 
-        sage: Gamma0(7).generators(algorithm="todd-coxeter") # indirect doctest
+        sage: Gamma0(7).generators(algorithm='todd-coxeter') # indirect doctest
         [
         [1 1]  [-1  0]  [ 1 -1]  [1 0]  [1 1]  [-3 -1]  [-2 -1]  [-5 -1]
         [0 1], [ 0 -1], [ 0  1], [7 1], [0 1], [ 7  2], [ 7  3], [21  4],

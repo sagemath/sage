@@ -60,12 +60,10 @@ cpdef gen_to_sage(Gen z, locals=None):
 
     - ``z`` -- PARI ``gen``
 
-    - ``locals`` -- optional dictionary used in fallback cases that
+    - ``locals`` -- (optional) dictionary used in fallback cases that
       involve :func:`sage_eval`
 
-    OUTPUT:
-
-    One of the following depending on the PARI type of ``z``
+    OUTPUT: one of the following depending on the PARI type of ``z``
 
     - a :class:`~sage.rings.integer.Integer` if ``z`` is an integer (type ``t_INT``)
 
@@ -88,7 +86,7 @@ cpdef gen_to_sage(Gen z, locals=None):
 
     - a matrix if ``z`` is a matrix (type ``t_MAT``)
 
-    - a padic element (type ``t_PADIC``)
+    - a `p`-adic element (type ``t_PADIC``)
 
     - a :class:`~sage.rings.infinity.Infinity` if ``z`` is an infinity
       (type ``t_INF``)
@@ -248,7 +246,7 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: a.parent()
         Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
 
-    Conversion of p-adics::
+    Conversion of `p`-adics::
 
         sage: # needs sage.rings.padics
         sage: z = pari('569 + O(7^8)'); z

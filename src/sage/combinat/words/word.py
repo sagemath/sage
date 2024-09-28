@@ -47,31 +47,31 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
 
     INPUT:
 
-    -  ``data`` -- (default: ``None``) list, string, tuple, iterator, free
-       monoid element, ``None`` (shorthand for ``[]``), or a callable defined
-       on ``[0,1,...,length]``.
+    - ``data`` -- (default: ``None``) list, string, tuple, iterator, free
+      monoid element, ``None`` (shorthand for ``[]``), or a callable defined
+      on ``[0,1,...,length]``
 
-    -  ``alphabet`` -- any argument accepted by Words
+    - ``alphabet`` -- any argument accepted by Words
 
-    -  ``length`` -- (default: ``None``) This is dependent on the type of data.
-       It is ignored for words defined by lists, strings, tuples,
-       etc., because they have a naturally defined length.
-       For callables, this defines the domain of definition,
-       which is assumed to be ``[0, 1, 2, ..., length-1]``.
-       For iterators: Infinity if you know the iterator will not
-       terminate (default); ``"unknown"`` if you do not know whether the
-       iterator terminates; ``"finite"`` if you know that the iterator
-       terminates, but do not know the length.
+    - ``length`` -- (default: ``None``) this is dependent on the type of data.
+      It is ignored for words defined by lists, strings, tuples,
+      etc., because they have a naturally defined length.
+      For callables, this defines the domain of definition,
+      which is assumed to be ``[0, 1, 2, ..., length-1]``.
+      For iterators: Infinity if you know the iterator will not
+      terminate (default); ``'unknown'`` if you do not know whether the
+      iterator terminates; ``'finite'`` if you know that the iterator
+      terminates, but do not know the length.
 
-    -  ``datatype`` -- (default: ``None``) ``None``, ``"list"``, ``"str"``,
-       ``"tuple"``, ``"iter"``, ``"callable"``. If ``None``, then the function
-       tries to guess this from the data.
+    - ``datatype`` -- (default: ``None``) ``None``, ``'list'``, ``'str'``,
+      ``'tuple'``, ``'iter'``, ``'callable'``; if ``None``, then the function
+      tries to guess this from the data
 
-    -  ``caching`` -- (default: ``True``) ``True`` or ``False``. Whether to
-       keep a cache of the letters computed by an iterator or callable.
+    - ``caching`` -- boolean (default: ``True``); whether to
+      keep a cache of the letters computed by an iterator or callable
 
-    -  ``RSK_data`` -- (Optional. Default: ``None``) A semistandard and a
-       standard Young tableau to run the inverse RSK bijection on.
+    - ``RSK_data`` -- (default: ``None``) semistandard and a
+      standard Young tableau to run the inverse RSK bijection on
 
     .. NOTE::
 
@@ -94,9 +94,9 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
 
     Word with string constructed from other types::
 
-        sage: Word([0,1,1,0,1,0,0,1], datatype="str")
+        sage: Word([0,1,1,0,1,0,0,1], datatype='str')
         word: 01101001
-        sage: Word((0,1,1,0,1,0,0,1), datatype="str")
+        sage: Word((0,1,1,0,1,0,0,1), datatype='str')
         word: 01101001
 
     Word with list::
@@ -106,9 +106,9 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
 
     Word with list constructed from other types::
 
-        sage: Word("01101001", datatype="list")
+        sage: Word("01101001", datatype='list')
         word: 01101001
-        sage: Word((0,1,1,0,1,0,0,1), datatype="list")
+        sage: Word((0,1,1,0,1,0,0,1), datatype='list')
         word: 01101001
 
     Word with tuple::
@@ -118,9 +118,9 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
 
     Word with tuple constructed from other types::
 
-        sage: Word([0,1,1,0,1,0,0,1], datatype="tuple")
+        sage: Word([0,1,1,0,1,0,0,1], datatype='tuple')
         word: 01101001
-        sage: Word("01101001", datatype="str")
+        sage: Word("01101001", datatype='str')
         word: 01101001
 
     Word with iterator::
@@ -130,9 +130,9 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
         word: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,...
         sage: Word(iter("abbabaab")) # iterators default to infinite words
         word: abbabaab
-        sage: Word(iter("abbabaab"), length="unknown")
+        sage: Word(iter("abbabaab"), length='unknown')
         word: abbabaab
-        sage: Word(iter("abbabaab"), length="finite")
+        sage: Word(iter("abbabaab"), length='finite')
         word: abbabaab
 
     Word with function (a 'callable')::
@@ -145,7 +145,7 @@ def Word(data=None, alphabet=None, length=None, datatype=None, caching=True, RSK
 
     Word over a string with a parent::
 
-        sage: w = Word("abbabaab", alphabet="abc"); w
+        sage: w = Word("abbabaab", alphabet='abc'); w
         word: abbabaab
         sage: w.parent()
         Finite words over {'a', 'b', 'c'}
