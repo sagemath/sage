@@ -451,3 +451,68 @@ class FreeModulePseudoMorphism(Morphism):
                 return False
         if isinstance(other, FreeModulePseudoMorphism):
             return self.parent() is other.parent() and self._matrix == other._matrix
+
+    def ore_module(self, names=None):
+        r"""
+        Return the Ore module over which the Ore variable acts
+        through this pseudomorphism.
+
+        INPUT:
+
+        - ``names`` -- a string, a list of strings or ``None``,
+          the names of the vector of the canonical basis of the
+          Ore module; if ``None``, elements are represented as
+          vectors in `K^d` (where `K` is the base ring)
+
+        EXAMPLES::
+
+            sage: Fq.<z> = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: mat = matrix(2, [1, z, z^2, z^3])
+            sage: f = V.pseudohom(mat, Frob)
+
+            sage: M = f.ore_module()
+            sage: M
+            Ore module of rank 2 over Finite Field in z of size 7^3 twisted by z |--> z^7
+
+        Here `M` is a module over the Ore ring `\FF_q[X; \\text{Frob}]`
+        and the variable `X` acts on `M` through `f`::
+
+            sage: S.<X> = M.ore_ring()
+            sage: S
+            Ore Polynomial Ring in X over Finite Field in z of size 7^3 twisted by z |--> z^7
+            sage: v = M((1,0))
+            sage: X*v
+            (1, z)
+
+        The argument ``names`` can be used to give chosen names
+        to the vectors in the canonical basis::
+
+            sage: M = f.ore_module(names=('v', 'w'))
+            sage: M.basis()
+            [v, w]
+
+        or even::
+
+            sage: M = f.ore_module(names='e')
+            sage: M.basis()
+            [e0, e1]
+
+        Note that the bracket construction also works::
+
+            sage: M.<v,w> = f.ore_module()
+            sage: M.basis()
+            [v, w]
+            sage: v + w
+            v + w
+
+        We refer to :module:`sage.modules.ore_module` for a
+        tutorial on Ore modules in SageMath.
+
+        .. SEEALSO:
+
+            :module:`sage.modules.ore_module`
+        """
+        from sage.modules.ore_module import OreModule
+        return OreModule(self._matrix, self.parent()._ore, names)
