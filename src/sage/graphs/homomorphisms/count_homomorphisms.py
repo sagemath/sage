@@ -27,8 +27,8 @@ class GraphHomomorphismCounter:
         if colourful and (graph_clr is None or target_clr is None):
             raise ValueError("Both graph_clr and target_clr must be provided when colourful is True")
 
-        self.graph._scream_if_not_simple()
-        self.target_graph._scream_if_not_simple()
+        graph._scream_if_not_simple()
+        target_graph._scream_if_not_simple()
 
         # Only used in `__init__`
         from sage.graphs.graph_decompositions.tree_decomposition import make_nice_tree_decomposition, label_nice_tree_decomposition
@@ -67,7 +67,7 @@ class GraphHomomorphismCounter:
         # `DP_table` is a list of lists of natural numbers (0 included)
         # Each element (list) corresponds to the (induced) homomorphisms of
         # a tree node.
-        self.DP_table = [] * self.dir_labelled_TD.order()
+        self.DP_table = [{} for _ in range(self.dir_labelled_TD.order())]
 
     def count_homomorphisms(self):
         r"""
