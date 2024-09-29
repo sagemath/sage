@@ -1464,12 +1464,13 @@ def riemann_sum(
         b = interval_g[0][1]
     func = symbolic_expression(f).function(x)
     division = [a]+[a+random()*(b-a) for i in range(n-1)]+[b]
-    division = sorted([i for i in division])
+    division = sorted(division)
     xs = [division[i]+random()*(division[i+1]-division[i]) for i in range(n)]
     ys = [func(x_val) for x_val in xs]
     rects = Graphics()
     for i in range(n):
-        body = [[division[i],0],[division[i],ys[i]],[division[i+1],ys[i]],[division[i+1],0]]
+        body = [[division[i], 0], [division[i], ys[i]],
+                [division[i+1], ys[i]], [division[i+1], 0]]
         if ys[i].n() > 0:
             color_rect = 'green'
         else:
