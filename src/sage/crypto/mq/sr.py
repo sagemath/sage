@@ -2214,9 +2214,9 @@ class SR_gf2n(SR_generic):
             True
         """
         if isinstance(l, Matrix):
-            ret = [e for e in l.transpose().list()[0:-1:self.e]]
+            ret = l.transpose().list()[0:-1:self.e]
         else:
-            ret = [e for e in l[0:-1:self.e]]
+            ret = l[0:-1:self.e]
 
         if isinstance(l, list):
             return ret

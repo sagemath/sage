@@ -762,7 +762,19 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: P.<x> = GF(7)[]
             sage: (6*x+3).squarefree_decomposition()
             (6) * (x + 4)
+
+        Test zero polynomial::
+
+            sage: R.<x> = PolynomialRing(GF(65537), implementation="FLINT")
+            sage: R.zero().squarefree_decomposition()
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: square-free decomposition of 0 is not defined
         """
+        if self.is_zero():
+            raise ArithmeticError(
+                "square-free decomposition of 0 is not defined"
+            )
         if not self.base_ring().is_field():
             raise NotImplementedError("square free factorization of polynomials over rings with composite characteristic is not implemented")
 
@@ -803,9 +815,20 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             Traceback (most recent call last):
             ...
             AlarmInterrupt
-        """
-        R = self.base_ring()
 
+        Test zero polynomial::
+
+            sage: R.<x> = PolynomialRing(GF(65537), implementation="FLINT")
+            sage: R.zero().factor()
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: factorization of 0 is not defined
+
+        """
+        if self.is_zero():
+            raise ArithmeticError("factorization of 0 is not defined")
+
+        R = self.base_ring()
         if not R.is_field():
             p,e = R.characteristic().is_prime_power(get_data=True)
             if not e:
