@@ -30,7 +30,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import List, Optional
+from typing import Optional
 import sage
 import os
 import socket

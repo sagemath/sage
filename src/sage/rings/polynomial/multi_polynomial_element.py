@@ -1603,7 +1603,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 return R(0)
 
         #construct list
-        lookup = [int(0),] * len(next(iter(monomial_coefficients)))
+        lookup = [0,] * len(next(iter(monomial_coefficients)))
         coefficients = []
         for degree in range(max(m[var_idx]
                                 for m in monomial_coefficients.keys()) + 1):
