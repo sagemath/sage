@@ -1,0 +1,11 @@
+# Cannot be found via pkg-config
+meataxe = declare_dependency(
+  dependencies: [
+    cc.find_library('meataxe', required: false),
+  ]
+)
+iml = declare_dependency(
+  dependencies: [
+    cc.find_library('iml'),
+  ]
+)
