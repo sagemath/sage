@@ -72,8 +72,9 @@ of the canonical basis. This is easily done as follows::
     sage: N.basis()
     [u, v, w]
 
-Alternatively, one can pass in the argument ``names``; this could be
-useful in particular when we want to name them `e_0, e_1, \ldots`::
+Alternatively, one can pass in the argument ``names``; this
+could be useful in particular when we want to name the vectors
+basis `e_0, e_1, \ldots`::
 
     sage: A = S.quotient_module(X^11 + z, names='e')
     sage: A
@@ -105,7 +106,7 @@ First of all, we define the Ore module `\mathcal S/\mathcal S P^2`
     sage: U.inject_variables()
     Defining u0, u1, u2, u3
 
-We now build the submodule `\mathcal S Q / \mathcal S PQ` using
+We now build the submodule `\mathcal S P / \mathcal S P^2` using
 the method :meth:`span`::
 
     sage: V = U.span(P*u0)
@@ -131,7 +132,7 @@ names to the basis vectors::
     sage: U(v0)
     u0 + (z^2 + 2*z + 2)*u2 + 4*z*u3
 
-A coercion map from `V` to `U` is automatically created and set up.
+A coercion map from `V` to `U` is automatically created.
 Hence, we can safely combine vectors in `V` and vectors in `U` in a
 single expression::
 

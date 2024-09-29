@@ -1,9 +1,18 @@
 r"""
 Morphisms between Ore modules
 
-By definition, a morphism of Ore modules is a `R`-linear morphism
-commuting with the Ore action, or equivalenty a `\mathcal S`-linear
-map when `\mathcal S` is the underlying Ore polynomial ring.
+Let `R` be a commutative ring, `\theta : K \to K` by a ring
+endomorphism and `\partial : K \to K` be a `\theta`-derivation.
+Let also `\mathcal S = K[X; \theta, \partial]` denote the
+associated Ore polynomial ring.
+
+By definition, a Ore module is a module over `\mathcal S`. In
+SageMath, there are rather represented as modules over `R`
+equipped with the map giving the action of the Ore variable `X`.
+We refer to :mod:`sage.modules.ore_module` for more details.
+
+A morphism of Ore modules is a `R`-linear morphism commuting
+with the Ore action, or equivalenty a `\mathcal S`-linear.
 
 .. RUBRIC:: Construction of morphisms
 
@@ -25,7 +34,7 @@ Clearly, this method is not optimal: typing all the entries of the
 defining matrix is long and is a potential source of errors.
 
 Instead, one can use a dictionary encoding the values taken by the
-morphism on a set of generators; the morphism is automatically
+morphism on a set of generators; the morphism is then automatically
 prolonged by `\mathcal S`-linearity.
 Actually here, `f` was just the multiplication by `X^3` on `M`.
 We can then redefine it simply as follows::
@@ -109,6 +118,9 @@ vanishes. Instead of reading the output, one can check
 programmatically the vanishing of a Ore module using the
 method :meth:`is_zero`.
 
+    sage: f.kernel().is_zero()
+    True
+
 Actually, in our use case, one can, more simply, use the
 method :meth:`is_injective`::
 
@@ -188,7 +200,7 @@ of the Ore module::
       From: Ore module <u0, u1, u2> over Finite Field in z of size 5^3 twisted by z |--> z^5
       To:   Ore module <im0, im1> over Finite Field in z of size 5^3 twisted by z |--> z^5
 
-Now we want to factor `g` by the coimage. We proceed as follows::
+Next, we want to factor `g` by the coimage. We proceed as follows::
 
     sage: h = C.morphism_quotient(g)
     sage: h
