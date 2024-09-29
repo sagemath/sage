@@ -787,6 +787,56 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         return self.dual.ambient_space(base_ring)
 
+    def coxeter_number(self):
+        """
+        For an irreducible finite root system, reports the Coxeter number.
+        This function is a wrapper for the corresponding function in CartanType.
+
+        EXAMPLES::
+
+            sage: rt = RootSystem(['C', 5])
+            sage: rt.coxeter_number()
+            10
+
+        .. SEEALSO:: :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.coxeter_number`
+        """
+        # Check if RootSystem is finite and irreducible
+        if self.is_finite() and self.is_irreducible():
+            # Hand over to CartanType method
+            return self._cartan_type.coxeter_number()
+        else:
+            raise ValueError("Coxeter number is defined only for finite and irreducible root systems.")
+
+    def dual_coxeter_number(self):
+        """
+        For an irreducible finite root system, reports the dual Coxeter number,
+        which is defined to be 1 plus the sum of the coefficients of simple roots
+        in the highest short root of the dual root system.  This function is a
+        wrapper for the corresponding function in CartanType.
+
+        EXAMPLES::
+
+            sage: rt = RootSystem(['C', 5])
+            sage: rt.dual_coxeter_number()
+            6
+
+        The dual Coxeter number is not the same concept as the Coxeter number
+        of the dual root system::
+
+            sage: rt.dual
+            Dual of root system of type ['C', 5]
+            sage: rt.dual.coxeter_number()
+            10
+
+        .. SEEALSO:: :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.dual_coxeter_number`
+        """
+        # Check if RootSystem is finite and irreducible
+        if self.is_finite() and self.is_irreducible():
+            # Hand over to CartanType method
+            return self._cartan_type.dual_coxeter_number()
+        else:
+            raise ValueError("Dual Coxeter number is defined only for finite and irreducible root systems.")
+
 
 def WeylDim(ct, coeffs):
     """
