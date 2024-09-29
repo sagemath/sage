@@ -106,7 +106,6 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Elem
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
             sage: G = C(PermutationGroup([[(1,2),(3,4)],[(1,2),(5,6)]]))
             sage: TestSuite(G).run()
-
         """
         Element.__init__(self, parent)
         self._C = C
@@ -263,7 +262,7 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
         Check that the domain is irrelevant::
 
             sage: G = PermutationGroup([[("a", "b", "c", "d"), ("e", "f")]])
-            sage: a = A(G, {0: "abcd", 1: "ef"}); a
+            sage: a = A(G, {0: "abcd", 1: "ef"}); a  # random
             {((1,2,3,4)(5,6),): ({1, 2, 3, 4}, {5, 6})}
             sage: H = PermutationGroup([[(1,2,3,4), (5,6)]])
             sage: a is A(H, {0: [1,2,3,4], 1: [5,6]})
@@ -422,7 +421,11 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         - ``names`` -- an iterable of ``k`` strings for the sorts of the species
 
-        TESTS::
+        TESTS:
+
+        We have to exclude `_test_graded_components`, because
+        :meth:`~sage.combinat.integer_vector.IntegerVectors.some_elements`
+        yields degrees that are too large::
 
             sage: from sage.rings.species import AtomicSpecies
             sage: A1 = AtomicSpecies(["X"])
@@ -473,10 +476,10 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             P_5(X)
 
             sage: G = PermutationGroup([[(1,2),(3,4,5,6)]])
-            sage: A(G, {0: [1,2], 1: [3,4,5,6]})
+            sage: A(G, {0: [1,2], 1: [3,4,5,6]})  # random
             {((1,2,3,4)(5,6),): ({5, 6}, {1, 2, 3, 4})}
 
-            sage: A(G, ([1,2], [3,4,5,6]))
+            sage: A(G, ([1,2], [3,4,5,6]))  # random
             {((1,2,3,4)(5,6),): ({5, 6}, {1, 2, 3, 4})}
 
         TESTS::
@@ -761,7 +764,11 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: M(G, {0: [5,6], 1: [1,2,3,4]})
             {((1,2)(3,4),): ({}, {1, 2, 3, 4})}*E_2(X)
 
-        TESTS::
+        TESTS:
+
+        We have to exclude `_test_graded_components`, because
+        :meth:`~sage.combinat.integer_vector.IntegerVectors.some_elements`
+        yields degrees that are too large::
 
             sage: M1 = MolecularSpecies("X")
             sage: TestSuite(M1).run(skip="_test_graded_components")
@@ -949,6 +956,12 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: M = MolecularSpecies("X")
                 sage: M(CyclicPermutationGroup(3))  # indirect doctest
                 C_3
+
+            TESTS::
+
+                sage: X = M(CyclicPermutationGroup(3))
+                sage: C3 = M(CyclicPermutationGroup(3))
+                sage: TestSuite(X*C3).run()
             """
             super().__init__(parent, x)
 
@@ -1217,6 +1230,8 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         sage: E2 = P(SymmetricGroup(2))
         sage: (E2*X + C3).homogeneous_degree()
         3
+
+        sage: TestSuite(E2*X + C3).run()
     """
     def is_constant(self):
         """
