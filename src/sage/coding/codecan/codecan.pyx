@@ -608,7 +608,7 @@ cdef class PartitionRefinementLinearCode(PartitionRefinement_generic):
 
         self._init_partition_stack(P)
         self._init_point_hyperplane_incidence()
-        self._start_Sn_backtrack() #start the main computation
+        self._start_Sn_backtrack()  # start the main computation
 
         # up to now, we just computed the permutational part of the group action
         # compute the other components of the transporter
