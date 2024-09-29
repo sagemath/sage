@@ -266,7 +266,36 @@ from sage.categories.morphism import Morphism
 from sage.modules.ore_module import OreModule, OreSubmodule, OreQuotientModule
 
 class OreModuleMorphism(Morphism):
+    r"""
+    Generic class for morphism between Ore modules.
+    """
     def __init__(self, parent, im_gens, check=True):
+        r"""
+        Initialize this Ore module.
+
+        INPUT:
+
+        - ``parent`` -- the hom space
+
+        - ``im_gens`` -- the image of the generators (formatted as
+          a list, a tuple, a dictionary or a matrix) or a Ore modules
+          morphism
+
+        - ``check`` (default: ``True``) -- a boolean, whether we
+          should check if the given data correctly defined a morphism
+          of Ore modules
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: type(f)
+            <class 'sage.modules.ore_module_homspace.OreModule_homspace_with_category.element_class'>
+
+            sage: TestSuite(f).run()
+        """
         Morphism.__init__(self, parent)
         domain = parent.domain()
         codomain = parent.codomain()
@@ -330,49 +359,224 @@ class OreModuleMorphism(Morphism):
                     raise ValueError("does not define a morphism of Ore modules")
 
     def _repr_type(self):
+        r"""
+        Return a string with the type of this morphism.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: f._repr_type()
+            'Ore module'
+        """
         return "Ore module"
 
     def _latex_(self):
+        r"""
+        Return a LaTeX representation of this morphism.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: latex(f)
+            \begin{array}{l}
+            \text{\texttt{Ore module morphism:}} \\
+            \text{\texttt{{ }{ }From:}}\hspace{1ex} \texttt{Ore module of rank } 2\texttt{ over } \Bold{F}_{5^{3}} \texttt{ twisted by } z \mapsto z^{5} \\
+            \text{\texttt{{ }{ }To:}}\hspace{3ex} \texttt{Ore module of rank } 2\texttt{ over } \Bold{F}_{5^{3}} \texttt{ twisted by } z \mapsto z^{5}
+            \end{array}
+
+        ::
+
+            sage: Me = M.rename_basis('e')
+            sage: fe = Me.multiplication_map(X^3)
+            sage: latex(fe)
+            \begin{array}{l}
+            \text{\texttt{Ore module morphism:}} \\
+            \text{\texttt{{ }{ }From:}}\hspace{1ex} \left<e_{0}, e_{1}\right>_{\Bold{F}_{5^{3}} , z \mapsto z^{5} } \\
+            \text{\texttt{{ }{ }To:}}\hspace{3ex} \left<e_{0}, e_{1}\right>_{\Bold{F}_{5^{3}} , z \mapsto z^{5} }
+            \end{array}
+        """
         s = "\\begin{array}{l}\n"
         s += "\\text{\\texttt{%s morphism:}} \\\\\n" % self._repr_type()
         s += "\\text{\\texttt{{ }{ }From:}}\\hspace{1ex} %s \\\\\n" % latex(self.domain())
-        s += "\\text{\\texttt{{ }{ }To:}}\\hspace{3ex} %s \n" % latex(self.codomain())
+        s += "\\text{\\texttt{{ }{ }To:}}\\hspace{3ex} %s\n" % latex(self.codomain())
         s += "\\end{array}"
         return s
 
     def matrix(self):
+        r"""
+        Return the matrix defining this morphism.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(2)
+            sage: f.matrix()
+            [2 0]
+            [0 2]
+
+            sage: g = M.multiplication_map(X^3)
+            sage: g.matrix()
+            [            0 3*z^2 + z + 1]
+            [      2*z + 1             0]
+        """
         return self._matrix.__copy__()
 
     def _call_(self, x):
+        r"""
+        Return the image of `x` by this morphism.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M.<v,w> = S.quotient_module(X^2 + z*X + 1)
+            sage: f = M.multiplication_map(X^3)
+            sage: f(v)
+            (2*z^2 + 4*z + 4)*v + (4*z^2 + 3*z + 3)*w
+
+        We check that it is the correct answer::
+
+            sage: X^3 * v
+            (2*z^2 + 4*z + 4)*v + (4*z^2 + 3*z + 3)*w
+        """
         return self.codomain()(x * self._matrix)
 
     def is_zero(self):
+        r"""
+        Return ``True`` if this morphism is zero.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + z*X^2 + z^2 + 1
+            sage: M = S.quotient_module(P^2, names='e')
+            sage: M.inject_variables()
+            Defining e0, e1, e2, e3, e4, e5
+
+            sage: f = M.hom({e0: P*e0})
+            sage: f.is_zero()
+            False
+            sage: (f*f).is_zero()
+            True
+        """
         return self._matrix.is_zero()
 
     def is_identity(self):
-        return self.domain() is self.codmain() and self._matrix.is_one()
+        r"""
+        Return ``True`` if this morphism is the identity.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M.<v,w> = S.quotient_module(X^2 + z)
+            sage: f = M.hom({v: v})
+            sage: f.is_identity()
+            True
+
+            sage: f = M.hom({v: 2*v})
+            sage: f.is_identity()
+            False
+        """
+        return self.domain() is self.codomain() and self._matrix.is_one()
 
     def _add_(self, other):
+        r"""
+        Return the sum of this morphism and ``other``.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: g = M.multiplication_map(X^6)
+            sage: h = f + g
+            sage: h == M.multiplication_map(X^3 + X^6)
+            True
+        """
         if not isinstance(other, OreModuleMorphism):
             raise ValueError("the morphism is not a morphism of Ore modules")
         H = self.parent()
         return H(self._matrix + other._matrix, check=False)
 
     def _neg_(self):
+        r"""
+        Return the oppositive of this morphism.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: g = -f
+            sage: g == M.multiplication_map(-X^3)
+            True
+        """
         H = self.parent()
         return H(-self._matrix, check=False)
 
     def _sub_(self, other):
+        r"""
+        Return the different between this morphism and ``other``.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: g = M.multiplication_map(X^6)
+            sage: h = f - g
+            sage: h == M.multiplication_map(X^3 - X^6)
+            True
+        """
         if not isinstance(other, OreModuleMorphism):
             raise ValueError("the morphism is not a morphism of Ore modules")
         H = self.parent()
         return H(self._matrix - other._matrix, check=False)
 
     def _rmul_(self, a):
+        r"""
+        Return the product of the scalar `a` by this morphism.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: g = 2*f
+            sage: g == M.multiplication_map(2*X^3)
+            True
+        """
         H = self.parent()
         return H(a*self._matrix, check=False)
 
     def __eq__(self, other):
+        r"""
+        Return ``True`` if this morphism is equal to ``other``.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = 2*M.multiplication_map(X^3)
+            sage: g = M.multiplication_map(2*X^3)
+            sage: f == g
+            True
+        """
         if not isinstance(other, OreModuleMorphism):
             try:
                 other = self.parent()(other)
@@ -380,7 +584,278 @@ class OreModuleMorphism(Morphism):
                 return False
         return self._matrix == other._matrix
 
+    def is_injective(self):
+        r"""
+        Return ``True`` if this morphism is injective.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + z*X^2 + z^2
+            sage: M = S.quotient_module(P^2, names='m')
+            sage: M.inject_variables()
+            Defining m0, m1, m2, m3, m4, m5
+            sage: N = S.quotient_module(P, names='n')
+            sage: N.inject_variables()
+            Defining n0, n1, n2
+
+            sage: f = N.hom({n0: P*m0})
+            sage: f.is_injective()
+            True
+
+            sage: g = M.hom({m0: n0})
+            sage: g.is_injective()
+            False
+        """
+        return self._matrix.rank() == self.domain().rank()
+
+    def is_surjective(self):
+        r"""
+        Return ``True`` if this morphism is surjective.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + z*X^2 + z^2
+            sage: M = S.quotient_module(P^2, names='m')
+            sage: M.inject_variables()
+            Defining m0, m1, m2, m3, m4, m5
+            sage: N = S.quotient_module(P, names='n')
+            sage: N.inject_variables()
+            Defining n0, n1, n2
+
+            sage: f = N.hom({n0: P*m0})
+            sage: f.is_surjective()
+            False
+
+            sage: g = M.hom({m0: n0})
+            sage: g.is_surjective()
+            True
+        """
+        return self._matrix.rank() == self.codomain().rank()
+
+    def is_bijective(self):
+        r"""
+        Return ``True`` if this morphism is bijective.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: f.is_bijective()
+            True
+
+            sage: N = S.quotient_module(X^2)
+            sage: g = N.multiplication_map(X^3)
+            sage: g.is_bijective()
+            False
+        """
+        return self.is_injective() and self.is_surjective()
+
+    def is_isomorphism(self):
+        r"""
+        Return ``True`` if this morphism is an isomorphism.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: f.is_isomorphism()
+            True
+
+            sage: N = S.quotient_module(X^2)
+            sage: g = N.multiplication_map(X^3)
+            sage: g.is_isomorphism()
+            False
+        """
+        return self.is_bijective()
+
+    def _composition_(self, other, homset):
+        r"""
+        Return the composite ``other`` `\circ` ``self``.
+
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: g = f * f
+            sage: g == M.multiplication_map(X^6)
+            True
+        """
+        if not isinstance(other, OreModuleMorphism):
+            raise ValueError("the morphism is not a morphism of Ore modules")
+        return homset(other._matrix * self._matrix, check=False)
+
+    def inverse(self):
+        r"""
+        Return the inverse of this morphism.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^2 + z
+            sage: M.<e0,e1,e2,e3> = S.quotient_module(P^2)
+
+            sage: f = M.multiplication_map(X^3)
+            sage: g = f.inverse()
+            sage: (f*g).is_identity()
+            True
+            sage: (g*f).is_identity()
+            True
+
+        If the morphism is not invertible, an error is raised::
+
+            sage: h = M.hom({e0: P*e0})
+            sage: h.inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: this morphism is not invertible
+        """
+        if not self.is_isomorphism():
+            raise ValueError("this morphism is not invertible")
+        H = self.parent()
+        return H(self._matrix.inverse(), check=False)
+
+    __invert__ = inverse
+
+    def kernel(self, names=None):
+        r"""
+        Return ``True`` if this morphism is injective.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + z*X^2 + z^2
+            sage: M = S.quotient_module(P^2, names='m')
+            sage: M.inject_variables()
+            Defining m0, m1, m2, m3, m4, m5
+            sage: N = S.quotient_module(P, names='n')
+            sage: N.inject_variables()
+            Defining n0, n1, n2
+
+            sage: f = M.hom({m0: n0})
+            sage: ker = f.kernel()
+            sage: ker
+            Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            sage: ker.basis()
+            [m0 + (2*z^2 + 3*z + 1)*m3 + (4*z^2 + 3*z + 3)*m4 + (2*z^2 + 3*z)*m5,
+             m1 + (z + 3)*m3 + (z^2 + z + 4)*m4,
+             m2 + (2*z^2 + 4*z + 2)*m4 + (2*z^2 + z + 1)*m5]
+        """
+        ker = self._matrix.left_kernel_matrix()
+        return OreSubmodule(self.domain(), ker, names)
+
+    def image(self, names=None):
+        r"""
+        Return ``True`` if this morphism is injective.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + z*X^2 + z^2
+            sage: M = S.quotient_module(P^2, names='m')
+            sage: M.inject_variables()
+            Defining m0, m1, m2, m3, m4, m5
+            sage: N = S.quotient_module(P, names='n')
+            sage: N.inject_variables()
+            Defining n0, n1, n2
+
+            sage: f = N.hom({n0: P*m0})
+            sage: im = f.image()
+            sage: im
+            Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            sage: im.basis()
+            [m0 + (2*z^2 + 3*z + 1)*m3 + (4*z^2 + 3*z + 3)*m4 + (2*z^2 + 3*z)*m5,
+             m1 + (z + 3)*m3 + (z^2 + z + 4)*m4,
+             m2 + (2*z^2 + 4*z + 2)*m4 + (2*z^2 + z + 1)*m5]
+        """
+        return OreSubmodule(self.codomain(), self._matrix, names)
+
+    def cokernel(self, names=None):
+        r"""
+        Return ``True`` if this morphism is injective.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + z*X^2 + z^2
+            sage: M = S.quotient_module(P^2, names='m')
+            sage: M.inject_variables()
+            Defining m0, m1, m2, m3, m4, m5
+            sage: N = S.quotient_module(P, names='n')
+            sage: N.inject_variables()
+            Defining n0, n1, n2
+
+            sage: f = N.hom({n0: P*m0})
+            sage: coker = f.cokernel()
+            sage: coker
+            Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            sage: coker.basis()
+            [m3, m4, m5]
+        """
+        return OreQuotientModule(self.codomain(), self._matrix, names)
+
+    def coimage(self, names=None):
+        r"""
+        Return ``True`` if this morphism is injective.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + z*X^2 + z^2
+            sage: M = S.quotient_module(P^2, names='m')
+            sage: M.inject_variables()
+            Defining m0, m1, m2, m3, m4, m5
+            sage: N = S.quotient_module(P, names='n')
+            sage: N.inject_variables()
+            Defining n0, n1, n2
+
+            sage: f = M.hom({m0: n0})
+            sage: coim = f.coimage()
+            sage: coim
+            Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            sage: coim.basis()
+            [m3, m4, m5]
+        """
+        ker = self._matrix.left_kernel_matrix()
+        return OreQuotientModule(self.domain(), ker, names)
+
     def determinant(self):
+        r"""
+        Return the determinant of this endomorphism.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M.<m0,m1> = S.quotient_module(X^2 + z)
+            sage: f = M.multiplication_map(X^3)
+            sage: f.determinant()
+            2
+
+        If the domain differs from the codomain (even if they have
+        the same rank), an error is raised::
+
+            sage: N.<n0,n1> = S.quotient_module(X^2 + z^25)
+            sage: g = M.hom({z*m0: n0})
+            sage: g.determinant()
+            Traceback (most recent call last):
+            ...
+            ValueError: determinants are only defined for endomorphisms
+        """
         if self.domain() is not self.codomain():
             raise ValueError("determinants are only defined for endomorphisms")
         return self._matrix.determinant()
@@ -388,50 +863,93 @@ class OreModuleMorphism(Morphism):
     det = determinant
 
     def characteristic_polynomial(self, var='x'):
+        r"""
+        Return the determinant of this endomorphism.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^3 + z*X^2 + (z^2 + 3)*X + z^5
+            sage: M = S.quotient_module(P)
+            sage: f = M.multiplication_map(X^3)
+            sage: f.characteristic_polynomial()
+            x^3 + x^2 + 2*x + 2
+
+        We check that the latter is equal to the reduced norm
+        of `P`::
+
+            sage: P.reduced_norm('x')
+            x^3 + x^2 + 2*x + 2
+
+        TESTS::
+
+            sage: M.<m0,m1> = S.quotient_module(X^2 + z)
+            sage: N.<n0,n1> = S.quotient_module(X^2 + z^25)
+            sage: g = M.hom({z*m0: n0})
+            sage: g.characteristic_polynomial()
+            Traceback (most recent call last):
+            ...
+            ValueError: characteristic polynomials are only defined for endomorphisms
+        """
         if self.domain() is not self.codomain():
             raise ValueError("characteristic polynomials are only defined for endomorphisms")
         return self._matrix.charpoly(var)
 
     charpoly = characteristic_polynomial
 
-    def is_injective(self):
-        return self._matrix.rank() == self.domain().rank()
-
-    def is_surjective(self):
-        return self._matrix.rank() == self.codomain().rank()
-
-    def is_bijective(self):
-        return self.is_injective() and self.is_surjective()
-
-    is_isomorphism = is_bijective
-
-    def _composition_(self, other, homset):
-        if not isinstance(other, OreModuleMorphism):
-            raise ValueError("the morphism is not a morphism of Ore modules")
-        return homset(other._matrix * self._matrix, check=False)
-
-    def kernel(self, names=None):
-        ker = self._matrix.left_kernel_matrix()
-        return OreSubmodule(self.domain(), ker, names)
-
-    def image(self, names=None):
-        return OreSubmodule(self.codomain(), self._matrix, names)
-
-    def cokernel(self, names=None):
-        return OreQuotientModule(self.codomain(), self._matrix, names)
-
-    def coimage(self, names=None):
-        ker = self._matrix.left_kernel_matrix()
-        return OreQuotientModule(self.domain(), ker, names)
-
 class OreModuleRetraction(Map):
+    r"""
+    Conversion (partially defined) map from an ambient module
+    to one of its submodule.
+    """
     def _call_(self, y):
+        r"""
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^2 + z*X + 1
+            sage: M = S.quotient_module(P^2, names='e')
+            sage: M.inject_variables()
+            Defining e0, e1, e2, e3
+            sage: N = M.span(P*e0, names='u')
+            sage: N(P*e0)  # indirect doctest
+            u0 + z*u1
+
+            sage: N(e0)
+            Traceback (most recent call last):
+            ...
+            ValueError: not in the submodule
+        """
         X = self.codomain()
-        xs = X._basis.solve_left(y)
+        try:
+            xs = X._basis.solve_left(y)
+        except ValueError:
+            raise ValueError("not in the submodule")
         return X(xs)
 
 class OreModuleSection(Map):
+    r"""
+    Section map of the projection onto a quotient.
+    It is not necessarily compatible with the Ore action.
+    """
     def _call_(self, y):
+        r"""
+        TESTS::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: P = X^2 + z*X + 1
+            sage: M = S.quotient_module(P^2, names='e')
+            sage: M.inject_variables()
+            Defining e0, e1, e2, e3
+            sage: N = M.quo(P*e0, names='u')
+            sage: N.inject_variables()
+            Defining u0, u1
+            sage: M(u0)  # indirect doctest
+            e2
+        """
         X = self.codomain()
         Y = self.domain()
         indices = Y._indices

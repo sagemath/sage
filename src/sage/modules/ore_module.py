@@ -1718,9 +1718,16 @@ class OreSubmodule(OreModule):
               To:   Ore module <v, w> over Finite Field in z of size 5^3 twisted by z |--> z^5
             sage: g.matrix()
             [        3 4*z^2 + 2]
+
+        TESTS::
+
+            sage: N.morphism_restriction(g)
+            Traceback (most recent call last):
+            ...
+            ValueError: the domain of the morphism must be the ambient space
         """
         if f.domain() is not self._ambient:
-            raise ValueError
+            raise ValueError("the domain of the morphism must be the ambient space")
         return f * self._inject
 
     def morphism_corestriction(self, f):
@@ -1757,9 +1764,16 @@ class OreSubmodule(OreModule):
             Traceback (most recent call last):
             ...
             ValueError: the image of the morphism is not contained in this submodule
+
+        TESTS::
+
+            sage: N.morphism_corestriction(g)
+            Traceback (most recent call last):
+            ...
+            ValueError: the codomain of the morphism must be the ambient space
         """
         if f.codomain() is not self._ambient:
-            raise ValueError
+            raise ValueError("the codomain of the morphism must be the ambient space")
         rows = []
         basis = self._basis
         try:
@@ -2132,9 +2146,16 @@ class OreQuotientModule(OreModule):
             Traceback (most recent call last):
             ...
             ValueError: the morphism does not factor through this quotient
+
+        TESTS::
+
+            sage: Q.morphism_quotient(g)
+            Traceback (most recent call last):
+            ...
+            ValueError: the domain of the morphism must be the cover ring
         """
         if f.domain() is not self._cover:
-            raise ValueError
+            raise ValueError("the domain of the morphism must be the cover ring")
         Z = self._relations * f._matrix
         if not Z.is_zero():
             raise ValueError("the morphism does not factor through this quotient")
@@ -2162,9 +2183,16 @@ class OreQuotientModule(OreModule):
             Ore module morphism:
               From: Ore module <v, w> over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
               To:   Ore module <wbar> over Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5 twisted by d/dt
+
+        TESTS::
+
+            sage: Q.morphism_modulo(g)
+            Traceback (most recent call last):
+            ...
+            ValueError: the codomain of the morphism must be the cover ring
         """
         if f.codomain() is not self._cover:
-            raise ValueError
+            raise ValueError("the codomain of the morphism must be the cover ring")
         return self._project * f
 
     _hom_change_domain = morphism_quotient
