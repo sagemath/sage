@@ -418,7 +418,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
             [KnotInfo['K4_1']*KnotInfo['K5_2'], KnotInfo['K9_12']]
         """
         hp = knot.homfly_polynomial(normalization='vz')
-        num_summands = sum(e for f, e in hp.factor())
+        num_summands = sum(e for _, e in hp.factor())
         if num_summands == 1:
             return knot.get_knotinfo()
 
@@ -427,14 +427,12 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
             if len(res) == 1:
                 if unique:
                     return res[0]
-                else:
-                    return [res[0]]  # to be consistent with get_knotinfo
+                return [res[0]]  # to be consistent with get_knotinfo
             k = self._check_elements(knot, res)
             if k:
                 if unique:
                     return k
-                else:
-                    return [k]  # to be consistent with get_knotinfo
+                return [k]  # to be consistent with get_knotinfo
 
         if res and not unique:
             return sorted(set(res))
