@@ -177,10 +177,10 @@ class PiecewiseFunction(BuiltinFunction):
             'piecewise(x|-->-x on (-2, 0), x|-->x on [0, 4]; x)'
         """
         s = 'piecewise('
-        args = []
-        for domain, func in parameters:
-            args.append('{0}|-->{1} on {2}'.format(str(variable), str(func), str(domain)))
-        s += ', '.join(args) + '; {0})'.format(str(variable))
+        # NOTE : could use ⟼ instead of |-->
+        args = (f'{variable}|-->{func} on {domain}'
+                for domain, func in parameters)
+        s += ', '.join(args) + f'; {variable})'
         return s
 
     def _subs_(self, subs_map, options, parameters, x):
@@ -209,25 +209,31 @@ class PiecewiseFunction(BuiltinFunction):
             piecewise(x|-->-x^y on (-2, 0), x|-->x - y on [0, 2]; x)
             sage: p.subs(y=sin(y))
             piecewise(x|-->-x^sin(y) on (-2, 0), x|-->x - sin(y) on [0, 2]; x)
+
+        One can change the variable as follows::
+
+            sage: p = piecewise([((-2, 0), -x), ([0, 4], x)], var=x)
+            sage: y = SR.var('y')
+            sage: p(y)
+            piecewise(y|-->-y on (-2, 0), y|-->y on [0, 4]; y)
         """
         point = subs_map.apply_to(x, 0)
-        if ((point.is_numeric() or point.is_constant()) and (point.is_real())):
+
+        if point.is_symbol():  # avoid to compare with x (see #37925)
+            new_params = [(domain, subs_map.apply_to(func, 0))
+                          for domain, func in parameters]
+            return piecewise(new_params, var=point)
+
+        if (point.is_numeric() or point.is_constant()) and point.is_real():
             if hasattr(point, 'pyobject'):
                 # unwrap any numeric values
                 point = point.pyobject()
-        elif point == x:  # this comparison may be very slow (see #37925)
-            # substitution only in auxiliary variables
-            new_params = []
             for domain, func in parameters:
-                new_params.append((domain, subs_map.apply_to(func, 0)))
-            return piecewise(new_params, var=x)
-        else:
-            raise ValueError('substituting the piecewise variable must result in real number')
+                if domain.contains(point):
+                    return subs_map.apply_to(func, 0)
+            raise ValueError(f'point {point} is not in the domain')
 
-        for domain, func in parameters:
-            if domain.contains(point):
-                return subs_map.apply_to(func, 0)
-        raise ValueError('point {} is not in the domain'.format(point))
+        raise ValueError('substition not allowed')
 
     @staticmethod
     def in_operands(ex):
@@ -253,10 +259,12 @@ class PiecewiseFunction(BuiltinFunction):
             False
         """
         def is_piecewise(ex):
-            result = ex.operator() is piecewise
+            if ex.operator() is piecewise:
+                return True
             for op in ex.operands():
-                result = result or is_piecewise(op)
-            return result
+                if is_piecewise(op):
+                    return True
+            return False
         return is_piecewise(ex)
 
     @staticmethod
@@ -592,7 +600,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: bool(h == f)
                 True
             """
-            result = [(domain, func) for domain,func in parameters
+            result = [(domain, func) for domain, func in parameters
                       if func != 0]
             return piecewise(result, var=variable)
 
@@ -612,12 +620,10 @@ class PiecewiseFunction(BuiltinFunction):
                 (piecewise(x|-->-x on (-1, 0); x),
                  piecewise(x|-->x on [0, 1]; x))
             """
-            result = []
-            for domain, func in parameters:
-                result.append(piecewise([(domain, func)], var=variable))
-            return tuple(result)
+            return tuple(piecewise([(domain, func)], var=variable)
+                         for domain, func in parameters)
 
-        def end_points(self, parameters, variable):
+        def end_points(self, parameters, variable) -> list:
             """
             Return a list of all interval endpoints for this function.
 
@@ -673,14 +679,14 @@ class PiecewiseFunction(BuiltinFunction):
                         other.domain().contains(points[i+1]))
                     if contains_lower:
                         if contains_upper:
-                            rs = RealSet.closed(points[i],points[i+1])
+                            rs = RealSet.closed(points[i], points[i+1])
                         else:
-                            rs = RealSet.closed_open(points[i],points[i+1])
+                            rs = RealSet.closed_open(points[i], points[i+1])
                     else:
                         if contains_upper:
-                            rs = RealSet.open_closed(points[i],points[i+1])
+                            rs = RealSet.open_closed(points[i], points[i+1])
                         else:
-                            rs = RealSet.open(points[i],points[i+1])
+                            rs = RealSet.open(points[i], points[i+1])
                     point = (points[i+1] + points[i])/2
                 except ValueError:
                     if points[i] == minus_infinity and points[i+1] == infinity:
@@ -828,9 +834,9 @@ class PiecewiseFunction(BuiltinFunction):
             Check that the algorithm keyword can be used::
 
                 sage: ex = piecewise([([0, 1], 1), ((1, oo), 1/x**2)])
-                sage: integral(ex, x, 0, 100, algorithm='giac')
+                sage: integral(ex, x, 0, 100, algorithm='sympy')
                 199/100
-                sage: integral(ex, x, algorithm='giac')
+                sage: integral(ex, x, algorithm='sympy')
                 piecewise(x|-->x on [0, 1], x|-->-1/x + 2 on (1, +oo); x)
             """
             if a is not None and b is not None:
@@ -870,7 +876,7 @@ class PiecewiseFunction(BuiltinFunction):
                     else:
                         try:
                             assume(start < x)
-                        except ValueError: # Assumption is redundant
+                        except ValueError:  # Assumption is redundant
                             pass
                         fun_integrated = fun.integral(x, start, x, **kwds) + area
                         forget(start < x)
@@ -992,11 +998,11 @@ class PiecewiseFunction(BuiltinFunction):
             from sage.symbolic.integration.integral import definite_integral
             f = self
             g = other
-            if len(f.end_points())*len(g.end_points()) == 0:
+            if not f.end_points() or not g.end_points():
                 raise ValueError('one of the piecewise functions is nowhere defined')
             fd, f0 = parameters[0]
             gd, g0 = next(other.items())
-            if len(f) == 1 and len(g) == 1:
+            if len(f) == 1 == len(g):
                 f = f.unextend_zero()
                 g = g.unextend_zero()
                 a1 = fd[0].lower()
@@ -1007,24 +1013,30 @@ class PiecewiseFunction(BuiltinFunction):
                     with SR.temp_var() as uu:
                         i1 = f0.subs({variable: uu})
                         i2 = g0.subs({variable: tt-uu})
-                        fg1 = definite_integral(i1*i2, uu, a1, tt-b1).subs({tt:variable})
-                        fg2 = definite_integral(i1*i2, uu, tt-b2, tt-b1).subs({tt:variable})
-                        fg3 = definite_integral(i1*i2, uu, tt-b2, a2).subs({tt:variable})
-                        fg4 = definite_integral(i1*i2, uu, a1, a2).subs({tt:variable})
+                        fg1 = definite_integral(i1*i2, uu, a1, tt-b1).subs({tt: variable})
+                        fg2 = definite_integral(i1*i2, uu, tt-b2, tt-b1).subs({tt: variable})
+                        fg3 = definite_integral(i1*i2, uu, tt-b2, a2).subs({tt: variable})
+                        fg4 = definite_integral(i1*i2, uu, a1, a2).subs({tt: variable})
                 if a1-b1 < a2-b2:
                     if a2+b1 != a1+b2:
-                        h = piecewise([[(a1+b1,a1+b2),fg1],[(a1+b2,a2+b1),fg2],[(a2+b1,a2+b2),fg3]])
+                        h = piecewise([[(a1+b1, a1+b2), fg1],
+                                       [(a1+b2, a2+b1), fg2],
+                                       [(a2+b1, a2+b2), fg3]])
                     else:
-                        h = piecewise([[(a1+b1,a1+b2),fg1],[(a1+b2,a2+b2),fg3]])
+                        h = piecewise([[(a1+b1, a1+b2), fg1],
+                                       [(a1+b2, a2+b2), fg3]])
                 else:
                     if a1+b2 != a2+b1:
-                        h = piecewise([[(a1+b1,a2+b1),fg1],[(a2+b1,a1+b2),fg4],[(a1+b2,a2+b2),fg3]])
+                        h = piecewise([[(a1+b1, a2+b1), fg1],
+                                       [(a2+b1, a1+b2), fg4],
+                                       [(a1+b2, a2+b2), fg3]])
                     else:
-                        h = piecewise([[(a1+b1,a2+b1),fg1],[(a2+b1,a2+b2),fg3]])
-                return (piecewise([[(minus_infinity,infinity),0]]).piecewise_add(h)).unextend_zero()
+                        h = piecewise([[(a1+b1, a2+b1), fg1],
+                                       [(a2+b1, a2+b2), fg3]])
+                return (piecewise([[(minus_infinity, infinity), 0]]).piecewise_add(h)).unextend_zero()
 
             if len(f) > 1 or len(g) > 1:
-                z = piecewise([[(0,0),0]])
+                z = piecewise([[(0, 0), 0]])
                 for fpiece in f.pieces():
                     for gpiece in g.pieces():
                         h = gpiece.convolution(fpiece)
@@ -1069,8 +1081,8 @@ class PiecewiseFunction(BuiltinFunction):
             """
             def func(x0, x1):
                 f0, f1 = self(x0), self(x1)
-                return [[(x0,x1), f0 + (f1-f0) * (x1-x0)**(-1)
-                    * (self.default_variable()-x0)]]
+                return [[(x0, x1), f0 + (f1-f0) * (x1-x0)**(-1)
+                         * (self.default_variable()-x0)]]
             rsum = []
             for domain, f in parameters:
                 for interval in domain:
@@ -1134,7 +1146,7 @@ class PiecewiseFunction(BuiltinFunction):
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
-                    result += (SR(f)*exp(-s*x)).integral(x,a,b)
+                    result += (SR(f)*exp(-s*x)).integral(x, a, b)
             forget(s > 0)
             return result
 
@@ -1230,7 +1242,7 @@ class PiecewiseFunction(BuiltinFunction):
                     a = interval.lower()
                     b = interval.upper()
                     result += (f*cos(pi*variable*n/L)).integrate(variable, a, b)
-            return SR(result/L0).simplify_trig()
+            return SR(result / L0).simplify_trig()
 
         def fourier_series_sine_coefficient(self, parameters, variable,
                                             n, L=None):
