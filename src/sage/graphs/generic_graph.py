@@ -22762,7 +22762,7 @@ class GenericGraph(GenericGraph_pyx):
               node_2 -- node_3 [label="foo"];
             }
         """
-        with open(filename, 'wt') as file:
+        with open(filename, "w") as file:
             file.write(self.graphviz_string(**options))
 
     # Spectrum

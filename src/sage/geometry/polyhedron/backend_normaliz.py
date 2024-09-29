@@ -807,7 +807,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
             from sage.matrix.constructor import Matrix
             lattice = Matrix(ZZ, nmz_vertices + nmz_rays + nmz_lines).saturation()
-            nmz_lattice = [[x for x in y] for y in lattice]
+            nmz_lattice = [list(y) for y in lattice]
 
             if Matrix(ZZ, nmz_vertices + nmz_rays).rank() == Matrix(ZZ, nmz_rays).rank() + 1:
                 # The recession cone is full-dimensional.
@@ -2300,7 +2300,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         # A check on whether the character table has permuted columns
         tbl = G_perm_gap.CharacterTable()
         perm = tbl.IdentificationOfConjugacyClasses()
-        ident_perm = [i for i in range(1, 1 + n_classes)]
+        ident_perm = list(range(1, 1 + n_classes))
         assert perm == ident_perm, "The conjugacy classes don't match with the character table"
 
         # Create fixed subpolytopes and their Ehrhart series
