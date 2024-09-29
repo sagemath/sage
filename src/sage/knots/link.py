@@ -4447,7 +4447,7 @@ class Link(SageObject):
                     a = answer(L)
                     if a:
                         ansl.append(a)
-                return sorted(list(set(ansl)))
+                return sorted(set(ansl))
 
             if len(set(l)) == 1:
                 return answer(l[0])
