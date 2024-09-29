@@ -658,9 +658,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         Coercion from boolean polynomials, also by index::
 
-            sage: B.<x,y,z> = BooleanPolynomialRing(3)
-            sage: P.<x,y,z> = QQ[]
-            sage: P(B.gen(0))
+            sage: B.<x,y,z> = BooleanPolynomialRing(3)                                  # needs sage.rings.polynomial.pbori
+            sage: P.<x,y,z> = QQ[]                                                      # needs sage.rings.polynomial.pbori
+            sage: P(B.gen(0))                                                           # needs sage.rings.polynomial.pbori
             x
 
         If everything else fails, we try to convert to the base ring::
