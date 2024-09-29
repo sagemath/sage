@@ -991,16 +991,14 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             return (0, 1, self.lc() / other.lc())
         if self.lm() < other.lm():
             rawcmp = -1
-            Fsmall = dict([[k[0], [e for e in k[1]]]
-                           for k in self.footprint().items()])
-            Fbig = dict([[k[0], [e for e in k[1]]]
-                         for k in other.footprint().items()])
+            Fsmall = {k: list(v) for k, v in self.footprint().items()}
+            Fbig = {k: list(v) for k, v in other.footprint().items()}
             ltsmall = slt
             ltbig = olt
         else:
             rawcmp = 1
-            Fbig = dict([[k[0], [e for e in k[1]]] for k in self.footprint().items()])
-            Fsmall = dict([[k[0], [e for e in k[1]]] for k in other.footprint().items()])
+            Fbig = {k: list(v) for k, v in self.footprint().items()}
+            Fsmall = {k: list(v) for k, v in other.footprint().items()}
             ltbig = slt
             ltsmall = olt
         # Case 1: one of the Infinite Polynomials is scalar.
@@ -1031,7 +1029,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             while j < lenBig:
                 found = False
                 if Lbig[j] >= i:
-                    ExpoBigSave = [e for e in Fbig[Lbig[j]]]
+                    ExpoBigSave = list(Fbig[Lbig[j]])
                     ExpoBig = Fbig[Lbig[j]]
                     found = True
                     for k in gens:

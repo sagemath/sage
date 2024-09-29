@@ -1608,6 +1608,16 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         sage: G.add_edge(0, 1)
         sage: G.vertex_connectivity(value_only=False, verbose=1)                        # needs sage.numerical.mip
         (3, [])
+
+    Check that :issue:`38723` is fixed::
+
+        sage: G = graphs.SierpinskiGasketGraph(3)
+        sage: G.vertex_connectivity(k=1)                                                # needs sage.numerical.mip
+        True
+        sage: G.vertex_connectivity(k=2)                                                # needs sage.numerical.mip
+        True
+        sage: G.vertex_connectivity(k=3)                                                # needs sage.numerical.mip
+        False
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
@@ -1622,8 +1632,8 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
             # We follow the convention of is_connected, is_biconnected and
             # is_strongly_connected
             return k == 1
-        if (g.is_directed() and k > min(min(g.in_degree()), min(g.out_degree()))) \
-           or (not g.is_directed() and (k > min(g.degree()))):
+        if ((g.is_directed() and k > min(min(g.in_degree()), min(g.out_degree())))
+                or (not g.is_directed() and (k > min(g.degree())))):
             return False
         value_only = True
         sets = False
@@ -1655,7 +1665,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
                 return 1 if k is None else (k == 1)
 
             if not G.is_triconnected():
-                return 2 if k is None else (k == 2)
+                return 2 if k is None else (k <= 2)
             elif k == 3:
                 return True
 
