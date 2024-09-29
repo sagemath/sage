@@ -213,8 +213,8 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.power_series_ring import PowerSeriesRing, PowerSeriesRing_generic
-from sage.rings.ring import CommutativeRing
 from sage.structure.nonexact import Nonexact
+from sage.structure.parent import Parent
 
 from sage.categories.commutative_rings import CommutativeRings
 _CommutativeRings = CommutativeRings()
@@ -389,8 +389,9 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         # Multivariate power series rings inherit from power series rings. But
         # apparently we can not call their initialisation. Instead, initialise
         # CommutativeRing and Nonexact:
-        CommutativeRing.__init__(self, base_ring, name_list, category=_IntegralDomains if base_ring in
-                                 _IntegralDomains else _CommutativeRings)
+        Parent.__init__(self, base=base_ring, names=name_list,
+                        category=_IntegralDomains if base_ring in
+                        _IntegralDomains else _CommutativeRings)
         Nonexact.__init__(self, default_prec)
 
         # underlying polynomial ring in which to represent elements
@@ -1005,7 +1006,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         if n < 0 or n >= self._ngens:
             raise ValueError("Generator not defined.")
         #return self(self._poly_ring().gens()[int(n)])
-        return self.element_class(parent=self,x=self._poly_ring().gens()[int(n)], is_gen=True)
+        return self.element_class(parent=self, x=self._poly_ring().gens()[int(n)], is_gen=True)
 
     def ngens(self):
         """
@@ -1018,6 +1019,19 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             10
         """
         return self._ngens
+
+    def gens(self):
+        """
+        Return the generators of this ring.
+
+        EXAMPLES::
+
+            sage: M = PowerSeriesRing(ZZ, 3, 'v')
+            sage: M.gens()
+            (v0, v1, v2)
+        """
+
+        return tuple(self.gen(i) for i in range(self._ngens))
 
     def prec_ideal(self):
         """

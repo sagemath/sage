@@ -491,7 +491,7 @@ def is_PowerSeriesRing(R):
         return False
 
 
-class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexact):
+class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
     """
     A power series ring.
     """
@@ -1099,6 +1099,18 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         if n != 0:
             raise IndexError("generator n>0 not defined")
         return self.__generator
+
+    def gens(self):
+        """
+        Return the generators of this ring.
+
+        EXAMPLES::
+
+            sage: R.<t> = PowerSeriesRing(ZZ)
+            sage: R.gens()
+            (t,)
+        """
+        return (self.__generator,)
 
     def uniformizer(self):
         """
