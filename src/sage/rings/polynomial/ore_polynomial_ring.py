@@ -1301,12 +1301,12 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
             sage: x*u + v
             2*v
 
-        We refer to :module:`sage.modules.ore_module` for a
+        We refer to :mod:`sage.modules.ore_module` for a
         tutorial on Ore modules in SageMath.
 
         .. SEEALSO:
 
-            :module:`sage.modules.ore_module`
+            :mod:`sage.modules.ore_module`
         """
         return self(P).quotient_module(names=names)
 

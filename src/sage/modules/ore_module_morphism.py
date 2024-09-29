@@ -146,7 +146,7 @@ As a sanity check, one can also verity that the composite
     True
 
 Let us now consider another morphism `f` and build the
-canonical isomorphism ``\text{coim }f \to \text{im }f`
+canonical isomorphism `\text{coim }f \to \text{im }f`
 that it induces.
 We start by defining `f`::
 
@@ -391,8 +391,7 @@ class OreModuleMorphism(Morphism):
     def is_bijective(self):
         return self.is_injective() and self.is_surjective()
 
-    def is_isomorphism(self):
-        return self.is_bijective()
+    is_isomorphism = is_bijective
 
     def _composition_(self, other, homset):
         if not isinstance(other, OreModuleMorphism):

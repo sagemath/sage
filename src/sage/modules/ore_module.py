@@ -160,7 +160,7 @@ Shortcuts for creating quotients are also available::
 .. RUBRIC:: Morphisms of Ore modules
 
 For a tutorial on morphisms of Ore modules, we refer to
-:module:`sage.modules.ore_modules_morphism`.
+:mod:`sage.modules.ore_modules_morphism`.
 
 AUTHOR:
 
@@ -580,8 +580,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for +:
-                'Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5' and
-                'Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5'
+            'Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5' and
+            'Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5'
 
         In order to set this coercion, one should define ``Me``
         by passing the extra argument ``coerce=True``::
@@ -639,7 +639,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             Domain: Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
             Codomain: Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
 
-        .. SEEALSO:
+        .. SEEALSO::
 
             :meth:`matrix`
         """
@@ -721,7 +721,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             sage: M = T.quotient_module(Y + t^2)
             sage: M.twisting_morphism()
 
-        .. SEEALSO:
+        .. SEEALSO::
 
             :meth:`twisting_derivation`
         """
@@ -746,7 +746,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             sage: M = S.quotient_module(X + z)
             sage: M.twisting_derivation()
 
-        .. SEEALSO:
+        .. SEEALSO::
 
             :meth:`twisting_morphism`
         """
@@ -772,7 +772,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         polynomial `P`. This is of course not a coincidence given
         that the pseudomorphism corresponds to the left multiplication
 
-        .. SEEALSO:
+        .. SEEALSO::
 
             :meth:`pseudohom`
         """
@@ -817,7 +817,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
     def gen(self, i):
         r"""
-        Return the `i`th vector in the canonical basis
+        Return the `i`-th vector of the canonical basis
         of this Ore module.
 
         EXAMPLES::
@@ -1627,8 +1627,8 @@ class OreSubmodule(OreModule):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for +:
-                'Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5' and
-                'Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5'
+            'Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5' and
+            'Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5'
 
         In order to set this coercion, one should define ``Me``
         by passing the extra argument ``coerce=True``::
@@ -2032,8 +2032,8 @@ class OreQuotientModule(OreModule):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for +:
-                'Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5' and
-                'Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5'
+            'Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5' and
+            'Ore module <e0, e1> over Finite Field in z of size 5^3 twisted by z |--> z^5'
 
         In order to set this coercion, one should define ``Me``
         by passing the extra argument ``coerce=True``::

@@ -507,12 +507,12 @@ class FreeModulePseudoMorphism(Morphism):
             sage: v + w
             v + w
 
-        We refer to :module:`sage.modules.ore_module` for a
+        We refer to :mod:`sage.modules.ore_module` for a
         tutorial on Ore modules in SageMath.
 
-        .. SEEALSO:
+        .. SEEALSO::
 
-            :module:`sage.modules.ore_module`
+            :mod:`sage.modules.ore_module`
         """
         from sage.modules.ore_module import OreModule
         return OreModule(self._matrix, self.parent()._ore, names)
