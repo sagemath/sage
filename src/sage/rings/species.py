@@ -1681,6 +1681,25 @@ class PolynomialSpecies(CombinatorialFreeModule):
         Hs = _stabilizer_subgroups(S, X, a)
         return self._from_dict({self._indices(H, pi): ZZ.one() for H in Hs})
 
+    def _first_ngens(self, n):
+        """
+        Used by the preparser for ``F.<x> = ...``.
+
+        We do not use the generic implementation of
+        :class:`sage.combinat.CombinatorialFreeModule`, because we do
+        not want to implement `gens`.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P.<X, Y> = PolynomialSpecies(QQ)  # indirect doctest
+            sage: X + 2*Y
+            X + 2*Y
+        """
+        B = self.basis()
+        return tuple(B[i] for grade in IntegerVectors(1, length=self._arity)
+                     for i in self._indices.graded_component(grade))
+
     def change_ring(self, R):
         r"""
         Return the base change of ``self`` to `R`.
