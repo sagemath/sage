@@ -16,7 +16,7 @@ AUTHORS:
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import Optional, Tuple
+from typing import Optional
 
 from sage.categories.manifolds import Manifolds
 from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
@@ -43,7 +43,7 @@ class StandardSymplecticSpace(EuclideanSpace):
         symplectic_latex_name: Optional[str] = None,
         start_index: int = 1,
         base_manifold: Optional[StandardSymplecticSpace] = None,
-        names: Optional[Tuple[str]] = None,
+        names: Optional[tuple[str]] = None,
     ):
         r"""
         INPUT:

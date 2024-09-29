@@ -40,7 +40,7 @@ cdef class CVXOPTBackend(GenericBackend):
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
     """
 
-    cdef list objective_function #c_matrix
+    cdef list objective_function  # c_matrix
     cdef list G_matrix
     cdef str prob_name
     cdef bint is_maximize
@@ -65,7 +65,7 @@ cdef class CVXOPTBackend(GenericBackend):
             sage: p = get_solver(solver='CVXOPT')
         """
 
-        self.objective_function = [] #c_matrix in the example for cvxopt
+        self.objective_function = []  # c_matrix in the example for cvxopt
         self.G_matrix = []
         self.prob_name = ''
         self.obj_constant_term = 0
@@ -79,12 +79,12 @@ cdef class CVXOPTBackend(GenericBackend):
         self.row_name_var = []
         self.col_name_var = []
 
-        self.param = {"show_progress":False,
-                      "maxiters":100,
-                      "abstol":1e-7,
-                      "reltol":1e-6,
-                      "feastol":1e-7,
-                      "refinement":0 }
+        self.param = {"show_progress": False,
+                      "maxiters": 100,
+                      "abstol": 1e-7,
+                      "reltol": 1e-6,
+                      "feastol": 1e-7,
+                      "refinement": 0}
         self.answer = {}
         if maximization:
             self.set_sense(+1)
