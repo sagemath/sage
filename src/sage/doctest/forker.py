@@ -2467,7 +2467,7 @@ class DocTestWorker(multiprocessing.Process):
         return True
 
 
-class DocTestTask():
+class DocTestTask:
     """
     This class encapsulates the tests from a single source.
 

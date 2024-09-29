@@ -338,7 +338,7 @@ def skipfile(filename, tested_optional_tags=False, *,
     return False
 
 
-class Logger():
+class Logger:
     r"""
     File-like object which implements writing to multiple files at
     once.

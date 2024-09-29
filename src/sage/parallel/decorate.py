@@ -51,7 +51,7 @@ def normalize_input(a):
         return ((a,), {})
 
 
-class Parallel():
+class Parallel:
     r"""
     Create a ``parallel``-decorated function.
     This is the object created by :func:`parallel`.
@@ -119,7 +119,7 @@ class Parallel():
 
 
 @instancedoc
-class ParallelFunction():
+class ParallelFunction:
     """
     Class which parallelizes a function or class method.
     This is typically accessed indirectly through
@@ -422,7 +422,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 #   def f(...): ...
 ###################################################################
 
-class Fork():
+class Fork:
     """
     A ``fork`` decorator class.
     """

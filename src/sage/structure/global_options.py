@@ -514,7 +514,7 @@ from textwrap import dedent
 from sage.misc.instancedoc import instancedoc
 
 
-class Option():
+class Option:
     r"""
     An option.
 

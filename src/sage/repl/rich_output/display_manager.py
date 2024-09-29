@@ -103,7 +103,7 @@ class RichReprWarning(UserWarning):
     pass
 
 
-class restricted_output():
+class restricted_output:
 
     def __init__(self, display_manager, output_classes):
         """
