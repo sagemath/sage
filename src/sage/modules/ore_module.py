@@ -1161,8 +1161,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             v
         """
         H = self.Hom(self)
-        M = identity_matrix(self.base_ring(), self.rank())
-        return H(M)
+        one = self.base_ring().one()
+        return H(one)
 
     def _span(self, gens):
         r"""

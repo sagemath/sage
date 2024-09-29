@@ -204,7 +204,7 @@ We can now check that it is an isomorphism::
 
 As a shortcut, we can use explicit conversions as follows::
 
-    sage: H = C.Hom(I)
+    sage: H = Hom(C, I)  # the hom space
     sage: h2 = H(f)
     sage: h2
     Ore module morphism:

@@ -112,3 +112,33 @@ class OreModule_homspace(UniqueRepresentation, HomsetWithBase):
             Full MatrixSpace of 3 by 2 dense matrices over Finite Field in z of size 7^2
         """
         return self._matrix_space
+
+    def identity(self):
+        r"""
+        Return the identity morphism in this homspace.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(7^2)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^3 + z*X + 1)
+            sage: End(M).identity()
+            Ore module endomorphism of Ore module of rank 3 over Finite Field in z of size 7^2 twisted by z |--> z^7
+        """
+        one = self.base_ring().one()
+        return self(one, check=False)
+
+    def zero(self):
+        r"""
+        Return the zero morphism in this homspace.
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(7^2)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^3 + z*X + 1)
+            sage: End(M).zero()
+            Ore module endomorphism of Ore module of rank 3 over Finite Field in z of size 7^2 twisted by z |--> z^7
+        """
+        zero = self.base_ring().zero()
+        return self(zero, check=False)
