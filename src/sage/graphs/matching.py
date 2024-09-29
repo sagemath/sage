@@ -695,7 +695,7 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
 
 
 def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
-                        solver=None, verbose=0, *, integrality_tolerance=0.001):
+                        solver=None, verbose=0, integrality_tolerance=0.001):
     r"""
     Check if the graph is matching covered.
 
