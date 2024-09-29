@@ -2,6 +2,12 @@ prune sage
 
 include VERSION.txt
 
+# include sage_setup
+recursive-include sage_setup *
+prune sage_setup/autogen/flint*
+exclude sage_setup/autogen/flint*
+exclude sage_setup/autogen/giacpy*
+
 graft sage/graphs/bliss_cpp
 include sage/graphs/bliss.p*
 
