@@ -1020,7 +1020,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         """
         return self._ngens
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of this ring.
 
@@ -1030,7 +1030,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: M.gens()
             (v0, v1, v2)
         """
-
         return tuple(self.gen(i) for i in range(self._ngens))
 
     def prec_ideal(self):

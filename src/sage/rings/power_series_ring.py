@@ -1100,7 +1100,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             raise IndexError("generator n>0 not defined")
         return self.__generator
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of this ring.
 
