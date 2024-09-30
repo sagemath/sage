@@ -400,9 +400,12 @@ class MatchingCoveredGraph(Graph):
         elif isinstance(data, MatchingCoveredGraph):
             Graph.__init__(self, data, *args, **kwds)
 
-        else:
+        elif isinstance(data, Graph):
+            Graph.__init__(self, data, *args, **kwds)
             self._upgrade_from_graph(matching, algorithm, solver, verbose,
                                      integrality_tolerance)
+        else:
+            raise ValueError('input data is of unknown type')
 
         del self.allow_loops
         self.allow_multiple_edges(True)
@@ -417,9 +420,9 @@ class MatchingCoveredGraph(Graph):
         """
         try:
             coNP_certificate = False
-            check, _ = self.is_matching_covered(matching, algorithm,
-                                                coNP_certificate, solver,
-                                                verbose, integrality_tolerance)
+            check = Graph.is_matching_covered(self, matching, algorithm,
+                                              coNP_certificate, solver,
+                                              verbose, integrality_tolerance)
 
             if not check:
                 raise ValueError("input graph is not matching covered")
