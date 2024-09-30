@@ -386,14 +386,10 @@ class MatchingCoveredGraph(Graph):
             kwds = {'loops': False}
         else:
             if 'loops' in kwds and kwds['loops']:
-                raise ValueError('loops are not allowed in a matching \
-                                  covered graph')
+                raise ValueError('loops are not allowed in matching '
+                                  'covered graphs')
             kwds['loops'] = False
 
-        # Note that self-loops are now allowed in a matching covered graph.
-        # Hence, such method shall be turned off
-        from types import MethodType
-        self.allow_loops = MethodType(Graph.allow_loops, self)
         if data is None:
             raise ValueError('the graph is trivial')
 
@@ -406,9 +402,6 @@ class MatchingCoveredGraph(Graph):
                                      integrality_tolerance)
         else:
             raise ValueError('input data is of unknown type')
-
-        del self.allow_loops
-        self.allow_multiple_edges(True)
 
     def _upgrade_from_graph(self, matching=None, algorithm='Edmonds',
                             solver=None, verbose=0,
@@ -469,3 +462,39 @@ class MatchingCoveredGraph(Graph):
         if "matching covered" in s:
             return s.capitalize()
         return "".join(["Matching covered ", s])
+
+    def allow_loops(self, new, check=True):
+        """
+        Change whether loops are allowed in (matching covered) graphs
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.allow_loops` method
+            to ensure that loops are forbidden in :class:`~BipartiteGraph`.
+
+        INPUT:
+
+        - ``new`` -- boolean
+
+        - ``check`` -- boolean (default: ``True``); whether to remove existing
+          loops from the graph when the new status is ``False``. It is an
+          argument in
+          :meth:`~sage.graphs.generic_graph.GenericGraph.allow_loops` method
+          and is not used in this overwritten one.
+
+        EXAMPLES:
+
+        Petersen graph is matching covered::
+
+            sage: P = graphs.PetersenGraph()
+            sage: P.is_matching_covered()
+            True
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.allow_loops(True)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+        """
+        if new is True:
+            raise ValueError('loops are not allowed in matching covered graphs')
