@@ -76,18 +76,18 @@ class MatchingCoveredGraph(Graph):
     provided instance of ``Graph`` without providing any other information::
 
         sage: G = MatchingCoveredGraph(graphs.PetersenGraph())
-        SAGE: G
-        Matching covered Petersen graph: Graph on 10 vertices
+        sage: G
+        Matching covered petersen graph: graph on 10 vertices
         sage: G = graphs.StaircaseGraph(4)
         sage: H = MatchingCoveredGraph(G)
         sage: H
-        Matching covered staircase graph: Graph on 8 vertices
+        Matching covered staircase graph: graph on 8 vertices
         sage: H == G
         True
         sage: G = Graph({0: [1, 2, 3, 4], 1: [2, 5], 2: [5], 3: [4, 5], 4: [5]})
         sage: H = MatchingCoveredGraph(G)
         sage: H
-        Matching covered graph: Graph on 6 vertices
+        Matching covered graph on 6 vertices
         sage: H == G
         True
         sage: # needs networkx
@@ -95,13 +95,13 @@ class MatchingCoveredGraph(Graph):
         sage: G = Graph(networkx.complete_bipartite_graph(12, 12))
         sage: H = MatchingCoveredGraph(G)
         sage: H
-        Matching covered graph: Graph on 12 vertices
+        Matching covered graph on 24 vertices
         sage: H == G
         True
         sage: G = Graph('E|fG', sparse=True)
         sage: H = MatchingCoveredGraph(G)
         sage: H
-        Matching covered graph: Graph on 6 vertices
+        Matching covered graph on 6 vertices
         sage: H == G
         True
         sage: # needs sage.modules
@@ -172,14 +172,14 @@ class MatchingCoveredGraph(Graph):
         sage: M = P.matching()
         sage: G = MatchingCoveredGraph(P, matching=M)
         sage: G
-        Matching covered Petersen graph: Graph on 10 vertices
+        Matching covered petersen graph: graph on 10 vertices
         sage: P == G
         True
-        sage: G = graphs.TruncatedBiwheelGraph()
+        sage: G = graphs.TruncatedBiwheelGraph(14)
         sage: M = G.matching()
         sage: H = MatchingCoveredGraph(G, M)
         sage: H
-        Matching covered Truncated biwheel graph: Graph on 28 vertices
+        Matching covered truncated biwheel graph: graph on 28 vertices
         sage: H == G
         True
 
@@ -219,7 +219,7 @@ class MatchingCoveredGraph(Graph):
         sage: G.allow_loops(True)
         Traceback (most recent call last):
         ...
-        ValueError:
+        ValueError: loops are not allowed in matching covered graphs
         sage: G.add_edge(0, 0)
         Traceback (most recent call last):
         ...
@@ -229,28 +229,33 @@ class MatchingCoveredGraph(Graph):
         ...
         ValueError: loops are not allowed in matching covered graphs
 
-    Make sure that multiple edges are allowed for a matching covered graph by
-    default and can be modified for this not to be allowed::
+    Make sure that multiple edges are allowed for a matching covered graph (by
+    default it is off and can be modified to be allowed)::
 
         sage: P = graphs.PetersenGraph()
         sage: G = MatchingCoveredGraph(P)
+        sage: G
+        Matching covered petersen graph: graph on 10 vertices
+        sage: G.allows_multiple_edges()
+        False
+        sage: G.size()
+        15
+        sage: G.allow_multiple_edges(True)
         sage: G.allows_multiple_edges()
         True
         sage: G.add_edge(next(P.edge_iterator()))
-        sage: G.allow_multiple_edges(False)
-        sage: G.allows_multple_edges()
-        False
-        sage: G.add_edge(next(P.edge_iterator()))
-        Traceback (most recent call last):
-        ...
-        ValueError:
-        sage: H = MatchingCoveredGraph(P, multiedges=False)
-        sage: G.allows_multple_edges()
-        False
+        sage: G.size()
+        16
+        sage: G
+        Matching covered petersen graph: multi-graph on 10 vertices
+        sage: H = MatchingCoveredGraph(P, multiedges=True)
+        sage: H.allows_multiple_edges()
+        True
         sage: H.add_edge(next(P.edge_iterator()))
-        Traceback (most recent call last):
-        ...
-        ValueError:
+        sage: H.size()
+        16
+        sage: H
+        Matching covered petersen graph: multi-graph on 10 vertices
 
     Providing with a connected nontrivial graph free of self-loops that is
     not matching covered::
@@ -320,10 +325,10 @@ class MatchingCoveredGraph(Graph):
         ValueError: input graph is not matching covered
         sage: # needs sage.modules
         sage: M = Matrix([(1, 1, 0, 0, 0, 0),
-                          (0, 0, 1, 1, 0, 0),
-                          (0, 0, 1, 0, 1, 0),
-                          (1, 0, 0, 0, 0, 1),
-                          (0, 1, 0, 1, 1, 1)])
+        ....:             (0, 0, 1, 1, 0, 0),
+        ....:             (0, 0, 1, 0, 1, 0),
+        ....:             (1, 0, 0, 0, 0, 1),
+        ....:             (0, 1, 0, 1, 1, 1)])
         sage: G = Graph(M)
         sage: H = MatchingCoveredGraph(G)
         Traceback (most recent call last):
@@ -389,7 +394,6 @@ class MatchingCoveredGraph(Graph):
         # Hence, such method shall be turned off
         from types import MethodType
         self.allow_loops = MethodType(Graph.allow_loops, self)
-        
         if data is None:
             raise ValueError('the graph is trivial')
 
@@ -435,10 +439,10 @@ class MatchingCoveredGraph(Graph):
             sage: G = graphs.CompleteGraph(10)
             sage: H = MatchingCoveredGraph(G)
             sage: H
-            Matching covered complete graph: Graph on 10 vertices
+            Matching covered complete graph: graph on 10 vertices
             sage: G = MatchingCoveredGraph(BipartiteGraph(graphs.HexahedralGraph()))
-            sage: G
-            Matching covered bipartite hexahedron: graph on 8 vertices
+            sage: G  # An object of the class MatchingCoveredGraph
+            Matching covered hexahedron: graph on 8 vertices
 
         In case the string representation of the (matching covered) graph
         contains the term 'matching covered', the representation remains as it
@@ -447,16 +451,16 @@ class MatchingCoveredGraph(Graph):
             sage: G = graphs.CompleteGraph(10)
             sage: H = MatchingCoveredGraph(G)
             sage: H
-            Matching covered complete graph: Graph on 10 vertices
+            Matching covered complete graph: graph on 10 vertices
             sage: J = MatchingCoveredGraph(H)
             sage: J
-            Matching covered complete graph: Graph on 10 vertices
+            Matching covered complete graph: graph on 10 vertices
             sage: G = BipartiteGraph(MatchingCoveredGraph(graphs.HexahedralGraph()))
-            sage: G
-            Bipartite matching covered hexahedron: graph on 8 vertices
+            sage: G  # An object of the class BipartiteGraph
+            Bipartite hexahedron: graph on 8 vertices
             sage: H = MatchingCoveredGraph(G)
-            sage: H
-            Bipartite matching covered hexahedron: graph on 8 vertices
+            sage: H  # An object of the class MatchingCoveredGraph
+            Matching covered hexahedron: graph on 8 vertices
         """
         s = Graph._repr_(self).lower()
         if "matching covered" in s:
