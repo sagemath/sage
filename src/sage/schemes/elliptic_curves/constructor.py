@@ -1269,7 +1269,13 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True, minimize=False):
         F3 = F2([-x, y/b, z*a*b]) / a
         # assert F3.coefficient(x**3) == -1
         # assert F3.coefficient(y*y*z) == 1
-        E = EllipticCurve(F3([x,y,1]))
+        E0 = EllipticCurve(F3([x,y,1]))
+
+        if minimize:
+            E = E0.minimal_model()
+        else:
+            E = E0
+
         if not morphism:
             return E
 
