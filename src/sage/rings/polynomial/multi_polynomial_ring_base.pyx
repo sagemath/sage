@@ -26,7 +26,7 @@ from sage.rings.polynomial import polynomial_ring
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
                                           polynomial_default_category)
-from sage.rings.polynomial.polydict import ETuple
+from sage.rings.polynomial.polydict cimport ETuple
 
 
 def is_MPolynomialRing(x):
