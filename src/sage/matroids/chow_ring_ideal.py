@@ -76,8 +76,8 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
     
     INPUT:
 
-    - `M` -- matroid
-    - `R` -- commutative ring
+    - ``M`` -- matroid
+    - ``R`` -- commutative ring
 
     REFERENCES:
 
@@ -162,18 +162,39 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             Aa - Af + Aace + Aadg - Acfg - Adf - Aef]
         """
         E = list(self._matroid.groundset())
-        flats = list(self._flats_generator.keys())
+        R = self.ring()
+        flats = list(self._flats_generator)
+        flats.append(E)
         flats_containing = {x: [] for x in E}
         for i,F in enumerate(flats):
             for x in F:
                 flats_containing[x].append(i)
-        gens = poly_ring.gens()
-        Q = [gens[i] * gens[i+j+1] for i,F in enumerate(flats)
-            for j,G in enumerate(flats[i+1:]) if not (F < G or G < F)] #Quadratic Generators
-        L = [sum(gens[i] for i in flats_containing[x])
-            - sum(gens[i] for i in flats_containing[y])
-            for j,x in enumerate(E) for y in E[j+1:]] #Linear Generators
-        return Q + L
+        lattice_flats = self._matroid.lattice_of_flats()
+        subsets = []
+        I = []
+        # Generate all subsets of flats using combinations
+        for r in range(len(flats) + 1):  # r is the size of the subset
+            subsets.extend(list(subset) for subset in combinations(flats, r))
+        for subset in subsets:
+            flag = True
+            sorted_list = sorted(subset, key=len)
+            for i in range (len(sorted_list)): #Checking whether the subset is a chain
+                if (i != 0) & (len(sorted_list[i]) == len(sorted_list[i-1])):
+                    flag = False
+                    break
+            if not flag:
+                term = R.one()
+                for el in subset:
+                    self._flats_generator[el]
+                I.append(term) #Stanley-Reisner Ideal
+        atoms = lattice_flats.atoms()
+        J = []
+        for a in atoms:
+            term = R.zero()
+            for F in flats_containing[a]:
+                term += self._flats_generator[F]
+            J.append(term) #Linear Generators
+        return I + J
 
     def _repr_(self):
         r"""
