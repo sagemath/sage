@@ -1377,7 +1377,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: R.monomial(e)
             x*y^2*z^3
         """
-        if len(exponents) == 1 and isinstance(exponents, tuple):
+        if len(exponents) == 1 and isinstance(exponents[0], tuple):
             return self({exponents[0]: self.base_ring().one()})
         return self({exponents: self.base_ring().one()})
 
