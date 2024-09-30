@@ -407,7 +407,7 @@ class MatchingCoveredGraph(Graph):
                             solver=None, verbose=0,
                             integrality_tolerance=0.001):
         """
-        Upgrade the given graph to an object of matching covered graph if eligible
+        Upgrade the given graph to a matching covered graph if eligible
 
         See documentation ``MatchingCoveredGraph?`` for detailed information.
         """
