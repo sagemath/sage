@@ -16,7 +16,7 @@ Image Sets
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.categories.map import Map
 from sage.categories.poor_man_map import PoorManMap
