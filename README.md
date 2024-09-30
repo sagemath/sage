@@ -90,17 +90,17 @@ For your platform, there is a similar list of
 [build prerequisites](https://doc.sagemath.org/html/en/reference/spkg/_bootstrap.html#equivalent-system-packages).
 Install them using the package manager of your platform.
 
-Sage depends on many system packages. Sage builds and installs them into its
+Sage depends on many software packages. Sage builds and installs them into its
 own system if they are not found in your system. To save time, install as many
-of them as you can using your system package manager.
+of them as you can using your system's package manager.
 Find [the list of system packages](https://doc.sagemath.org/html/en/installation/source#linux-system-package-installation)
 for your platform and run a command like
 
     sudo apt-get install ...
 
 If you encounter error messages like "Unable to locate package ...", don't
-panic. Just delete the problematic package names in the list, and rerun the
-command.
+panic. You can safely remove the problematic package name from the list and
+rerun the command.
 
 ### Preparing the macOS Platform
 
