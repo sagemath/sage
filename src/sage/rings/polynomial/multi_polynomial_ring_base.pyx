@@ -28,6 +28,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
                                           polynomial_default_category)
 from sage.rings.polynomial.polydict import ETuple
 
+
 def is_MPolynomialRing(x):
     from sage.misc.superseded import deprecation_cython
     deprecation_cython(38266,
