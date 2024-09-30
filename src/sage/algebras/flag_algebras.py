@@ -975,26 +975,44 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def _round_sdp_solution_no_phi(self, sdp_result, sdp_data, table_constructor, \
                                    constraints_data, denom=1024):
+        from tqdm import tqdm
+        import numpy as np
+        from numpy import linalg as LA
+        from sage.functions.other import ceil
+        from sage.matrix.special import diagonal_matrix
+
         #unpack variables
+
         block_sizes, target_list_exact, mat_inds, mat_vals = sdp_data
         target_vector_exact = vector(target_list_exact)
         flags_num, constraints_vals, positives_list_exact, one_vector = constraints_data
         positives_matrix_exact = matrix(QQ, len(positives_list_exact), flags_num, positives_list_exact)
-        
+
         positives_matrix_exact = positives_matrix_exact[:-2, :] # remove the equality constraints
 
         flags_num = -block_sizes[-2] # same as |F_n|
 
         X_matrices_approx = sdp_result['X'][:-2]
-        X_matrices_rounded = [_round_ldl(X, method=0, denom=denom) for X in X_matrices_approx]
-        X_matrices_flat = [vector(_flatten_matrix(X.rows(), doubled=False)) for X in X_matrices_rounded]
-        
+        X_matrices_rounded = []
+        print("Rounding X matrices")
+        for X in tqdm(X_matrices_approx):
+
+            Xr = _round_matrix(X, method=0, denom=denom)
+            Xnp = np.array(Xr)
+            eigenvalues, eigenvectors = LA.eig(Xnp)
+            emin = min(eigenvalues)
+            eminr = ceil(-emin*denom)/denom
+            Xrf = matrix(QQ, Xr) + diagonal_matrix(QQ, [eminr]*len(X), sparse=True)
+            X_matrices_rounded.append(Xrf)
+        X_matrices_flat = [vector(_flatten_matrix(X.rows(), doubled=False)) for X in (X_matrices_rounded)]
+
         e_vector_approx = sdp_result['X'][-1][:-2]
         e_vector_rounded = vector(_round_list(e_vector_approx, force_pos=True, method=0, denom=denom))
-        
+
         slacks = target_vector_exact - positives_matrix_exact.T*e_vector_rounded
         block_index = 0
-        for params in table_constructor.keys():
+        print("Calculating resulting bound")
+        for params in tqdm(table_constructor.keys()):
             ns, ftype, target_size = params
             table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
             for gg, morig in enumerate(table):
@@ -1008,7 +1026,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         return min(slacks), X_matrices_rounded, e_vector_rounded, slacks, []
     
-    def _round_sdp_solution(self, sdp_result, sdp_data, table_constructor, \
+    def _round_sdp_solution_phi(self, sdp_result, sdp_data, table_constructor, \
                             constraints_data, phi_vectors_exact, denom=1024):
         r"""
         Round the SDP results output to get something exact.
@@ -1223,7 +1241,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         sends the SDP problem to CSDPY.
         
         INPUT:
-
+ 
         - ``target_element`` -- Flag or FlagAlgebraElement; 
             the target whose density this function tries to
             maximize or minimize in large structures.
@@ -1382,7 +1400,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         
         print("Starting the rounding of the result")
-        rounding_output = self._round_sdp_solution_construction(final_sol, sdp_data, table_constructor, \
+        rounding_output = self._round_sdp_solution_phi(final_sol, sdp_data, table_constructor, \
                                                                          constraints_data, phi_vectors_exact, denom=denom)
         if rounding_output==None:
             print("Rounding based on construction was unsuccessful")
