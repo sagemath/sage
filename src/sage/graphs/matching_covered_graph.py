@@ -381,6 +381,18 @@ class MatchingCoveredGraph(Graph):
         Traceback (most recent call last):
         ...
         ValueError: the input is not a perfect matching of the graph
+
+    Note that data shall be one of empty or ``None`` or an instance of
+    ``Graph`` or an instance of ``MatchingCoveredGraph``. Otherwise a
+    :class:`ValueError` is returned::
+
+        sage: D = digraphs.Complete(10)
+        sage: D
+        Complete digraph: Digraph on 10 vertices
+        sage: G = MatchingCoveredGraph(D)
+        Traceback (most recent call last):
+        ...
+        ValueError: input data is of unknown type
     """
 
     def __init__(self, data=None, matching=None, algorithm='Edmonds',
