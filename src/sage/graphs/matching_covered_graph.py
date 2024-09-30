@@ -208,7 +208,17 @@ class MatchingCoveredGraph(Graph):
 
     Providing with a graph that is not connected::
 
-        sage:
+        sage: cycle1 = graphs.CycleGraph(4)
+        sage: cycle2 = graphs.CycleGraph(6)
+        sage: cycle2.relabel(lambda v: v + 4)
+        sage: G = Graph()
+        sage: G.add_edges(cycle1.edges() + cycle2.edges())
+        sage: len(G.connected_components(sort=False))
+        2
+        sage: H = MatchingCoveredGraph(G)
+        Traceback (most recent call last):
+        ...
+        ValueError: the graph is not connected
 
     Make sure that self-loops are not allowed for a matching covered graph::
 
