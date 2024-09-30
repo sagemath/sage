@@ -1753,7 +1753,7 @@ class BipartiteGraph(Graph):
         """
         # open the file
         try:
-            fi = open(fname, "r")
+            fi = open(fname)
         except OSError:
             print("unable to open file <<" + fname + ">>")
             return None
