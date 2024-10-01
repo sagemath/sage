@@ -84,6 +84,7 @@ Libraries of algorithms
    sage/graphs/spanning_tree
    sage/graphs/pq_trees
    sage/graphs/trees
+   sage/graphs/matching
    sage/graphs/matchpoly
    sage/graphs/genus
    sage/graphs/lovasz_theta
