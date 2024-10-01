@@ -1307,7 +1307,7 @@ class DiGraphGenerators:
                 raise ValueError("degree must be greater than or equal to one")
 
             # We start building the set of vertices
-            V = [i for i in my_alphabet]
+            V = list(my_alphabet)
             for i in range(D - 1):
                 VV = []
                 for w in V:
