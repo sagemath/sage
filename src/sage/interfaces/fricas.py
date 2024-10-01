@@ -1963,7 +1963,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         if head == "Factored":
             l = P.new('[[f.factor, f.exponent] for f in factors(%s)]' % self._name).sage()
-            return Factorization([(p, e) for p, e in l])
+            return Factorization(list(l))
 
         if head == "UnivariatePolynomial":
             base_ring = self._get_sage_type(domain[2])

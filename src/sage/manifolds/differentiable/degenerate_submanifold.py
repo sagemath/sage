@@ -452,12 +452,12 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: S.set_transverse(rigging=t)
         """
         if isinstance(rigging, (list, tuple)):
-            rigging = [elt for elt in rigging]
+            rigging = list(rigging)
         else:
             if rigging is not None:
                 rigging = [rigging]
         if isinstance(normal, (list, tuple)):
-            normal = [elt for elt in normal]
+            normal = list(normal)
         else:
             if normal is not None:
                 normal = [normal]
@@ -540,11 +540,11 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             Lorentzian manifold M
         """
         if isinstance(screen, (list, tuple)):
-            screen = [elt for elt in screen]
+            screen = list(screen)
         else:
             screen = [screen]
         if isinstance(rad, (list, tuple)):
-            rad = [elt for elt in rad]
+            rad = list(rad)
         else:
             rad = [rad]
         if name in self._screens:
@@ -1288,7 +1288,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             for eigen_vector in eigen_space[1]:
                 v = self._ambient.vector_field(name="e_{}".format(next(counter))
                                                             ).along(self.immersion())
-                v[frame, :] = [elt for elt in eigen_vector] + [0]
+                v[frame, :] = list(eigen_vector) + [0]
                 res.append((TangentTensor(v, self.immersion()), self.scalar_field(
                   {chart: eigen_space[0] for chart in self.top_charts()})))
                 #res[-1][0].set_name("e_{}".format(next(counter)))
