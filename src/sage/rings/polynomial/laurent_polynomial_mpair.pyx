@@ -804,10 +804,15 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f = 4*x^7*z^-1 + 3*x^3*y + 2*x^4*z^-2 + x^6*y^-7
             sage: sorted(f.dict().items())
             [((3, 1, 0), 3), ((4, 0, -2), 2), ((6, -7, 0), 1), ((7, 0, -1), 4)]
+
+            sage: sorted(f.monomial_coefficients().items())
+            [((3, 1, 0), 3), ((4, 0, -2), 2), ((6, -7, 0), 1), ((7, 0, -1), 4)]
         """
         if self._prod is None:
             self._compute_polydict()
         return < dict > self._prod.dict()
+
+    monomial_coefficients = dict
 
     def _fraction_pair(self):
         """

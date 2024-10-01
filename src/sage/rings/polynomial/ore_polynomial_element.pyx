@@ -2493,6 +2493,9 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: a = x^2012 + t*x^1006 + t^3 + 2*t
             sage: a.dict()
             {0: t^3 + 2*t, 1006: t, 2012: 1}
+
+            sage: a.monomial_coefficients()
+            {0: t^3 + 2*t, 1006: t, 2012: 1}
         """
         cdef dict X = {}
         cdef list Y = (<OrePolynomial_generic_dense>self)._coeffs
@@ -2502,6 +2505,8 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             if c:
                 X[i] = c
         return X
+
+    monomial_coefficients = dict
 
     cpdef Integer degree(self):
         r"""

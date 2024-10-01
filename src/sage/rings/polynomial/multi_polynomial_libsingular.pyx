@@ -2992,8 +2992,11 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         EXAMPLES::
 
             sage: R.<x,y,z> = QQ[]
-            sage: f=2*x*y^3*z^2 + 1/7*x^2 + 2/3
+            sage: f = 2*x*y^3*z^2 + 1/7*x^2 + 2/3
             sage: f.dict()
+            {(0, 0, 0): 2/3, (1, 3, 2): 2, (2, 0, 0): 1/7}
+
+            sage: f.monomial_coefficients()
             {(0, 0, 0): 2/3, (1, 3, 2): 2, (2, 0, 0): 1/7}
         """
         cdef poly *p
@@ -3015,6 +3018,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
             p = pNext(p)
         return pd
+
+    monomial_coefficients = dict
 
     def iterator_exp_coeff(self, as_ETuples=True):
         """

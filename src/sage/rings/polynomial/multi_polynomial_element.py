@@ -806,6 +806,17 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         Return underlying dictionary with keys the exponents and values
         the coefficients of this polynomial.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y,z> = PolynomialRing(QQbar, order='lex')
+            sage: f = (x^1*y^5*z^2 + x^2*z + x^4*y^1*z^3)
+            sage: f.dict()
+            {(1, 5, 2): 1, (2, 0, 1): 1, (4, 1, 3): 1}
+
+            sage: f.monomial_coefficients()  # needs sage.rings.number_field
+            {(1, 5, 2): 1, (2, 0, 1): 1, (4, 1, 3): 1}
         """
         return self.element().dict()
 

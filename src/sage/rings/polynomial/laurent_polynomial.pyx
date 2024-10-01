@@ -850,9 +850,14 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             y^3*t^-9 + 3*x^3*y^2*t^-6 + 3*x^6*y*t^-3 + x^9 + t^2
             sage: f.dict()
             {-9: y^3, -6: 3*x^3*y^2, -3: 3*x^6*y, 0: x^9, 2: 1}
+
+            sage: f.monomial_coefficients()
+            {-9: y^3, -6: 3*x^3*y^2, -3: 3*x^6*y, 0: x^9, 2: 1}
         """
         cdef dict d = self.__u.dict()
         return {k+self.__n: d[k] for k in d}
+
+    monomial_coefficients = dict
 
     def coefficients(self):
         """

@@ -143,8 +143,13 @@ class Polynomial_generic_sparse(Polynomial):
             sage: d[0] = 10
             sage: f.dict()
             {0: 5, 1997: 1, 10000: 7}
+
+            sage: f.monomial_coefficients()
+            {0: 5, 1997: 1, 10000: 7}
         """
         return dict(self.__coeffs)
+
+    monomial_coefficients = dict
 
     def coefficients(self, sparse=True):
         """

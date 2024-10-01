@@ -4475,6 +4475,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = x^3 + -1/7*x + 13
             sage: f.dict()
             {0: 13, 1: -1/7, 3: 1}
+
+            sage: f.monomial_coefficients()
+            {0: 13, 1: -1/7, 3: 1}
         """
         cdef dict X = {}
         cdef list Y = self.list(copy=False)
