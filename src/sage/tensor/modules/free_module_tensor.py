@@ -193,7 +193,7 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
@@ -310,7 +310,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             self._latex_name = self._name
         else:
             self._latex_name = latex_name
-        self._components: Dict[FreeModuleBasis, Components] = {}  # dict. of the sets of components on various
+        self._components: dict[FreeModuleBasis, Components] = {}  # dict. of the sets of components on various
                               # bases, with the bases as keys (initially empty)
 
         # Treatment of symmetry declarations:

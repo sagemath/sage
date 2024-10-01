@@ -26,7 +26,7 @@ the full Hecke algebra, only with the anemic algebra.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.rings.infinity import infinity
 from sage.categories.algebras import Algebras
