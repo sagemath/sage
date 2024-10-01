@@ -260,13 +260,30 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             [-1  2 -1  0]
             [ 0 -1  2 -1]
             [ 0  0 -2  2]
+
+        TESTS::
+
+            sage: rt = RootSystem(['E',8])  # verify that error from issue gh-15325 Exhibit A is fixed
+            sage: lat = rt.root_lattice()
+            sage: spc = rt.ambient_space()
+            sage: lat.simple_root(1).scalar(spc.simple_coroot(2))
+            0
+
+            sage: lat = RootSystem(['B', 3]).root_lattice()  # verify that directionality is correct for roots of different lengths
+            sage: lat.simple_root(2).scalar(lat.simple_coroot(3))
+            -2
         """
-        # Find some better test
-        if not (lambdacheck in self.parent().coroot_lattice() or lambdacheck in self.parent().coroot_space()):
-            raise TypeError("%s is not in a coroot lattice/space" % (lambdacheck))
-        zero = self.parent().base_ring().zero()
-        cartan_matrix = self.parent().dynkin_diagram()
-        return sum( (sum( (lambdacheck[i]*s for i,s in cartan_matrix.column(j)), zero) * c for j,c in self), zero)
+        if (lambdacheck in self.parent().coroot_lattice() or lambdacheck in self.parent().coroot_space()):
+            # This is the mathematically canonical case, where we use the Cartan matrix to find the scalar product
+            zero = self.parent().base_ring().zero()
+            cartan_matrix = self.parent().dynkin_diagram()
+            return sum( (sum( (lambdacheck[i]*s for i,s in cartan_matrix.column(j)), zero) * c for j,c in self), zero)
+
+        if (lambdacheck in self.parent().root_system.ambient_space()):
+            # lambdacheck lives in the ambient space of the root space, so we take the usual dot product in the ambient space
+            return self.to_ambient().dot_product(lambdacheck)
+
+        raise TypeError(f"{lambdacheck} is not in a coroot lattice/space")
 
     def is_positive_root(self):
         """
