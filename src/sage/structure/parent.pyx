@@ -2741,6 +2741,14 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     # to support. But in general this should not be
                     # allowed. See Issue #15709
                     S_is_int = True
+                from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
+                from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
+                from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
+                if isinstance(S, (FiniteField_pari_ffelt, FiniteField_ntl_gf2e, FiniteField_givaro)):
+                    # See Issue : #32287
+                    # Disallowing Finite Field Polynomial Element
+                    # to be used to raise power
+                    raise TypeError('Unable to raise power using finite field polynomial element')
             if S_is_int:
                 from sage.structure.coerce_actions import IntegerPowAction
                 try:
