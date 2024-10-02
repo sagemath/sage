@@ -955,7 +955,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True, minimize=False):
         sage: Emin = fmin.codomain()
         sage: Emin.defining_polynomial()(fmin.defining_polynomials()) * fmin.post_rescaling()
         a^3 + b^3 + 60*c^3
-    
+
     If the given point is not a flex and the cubic has no rational
     flexes, then the cubic can not be transformed to a Weierstrass
     equation by a linear transformation. The general birational
@@ -1378,7 +1378,6 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True, minimize=False):
             inv_post = inv_post0(T3)
             xyzImin = [t(xyzI) for t in T3I]
             fwd_post = a/(x*z*z)(xyzImin)
-
 
     return WeierstrassTransformationWithInverse(
         C, E, fwd_defining_poly, fwd_post, inv_defining_poly, inv_post)
