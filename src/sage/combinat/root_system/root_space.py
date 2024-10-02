@@ -261,9 +261,11 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             [ 0 -1  2 -1]
             [ 0  0 -2  2]
 
-        TESTS::
+        TESTS:
 
-            sage: rt = RootSystem(['E',8])  # verify that error from issue gh-15325 Exhibit A is fixed
+       Verify that :issue:`15325` (A) is fixed::
+
+            sage: rt = RootSystem(['E', 8])
             sage: lat = rt.root_lattice()
             sage: spc = rt.ambient_space()
             sage: lat.simple_root(1).scalar(spc.simple_coroot(2))
