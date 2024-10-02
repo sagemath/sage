@@ -273,7 +273,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             sage: lat.simple_root(2).scalar(lat.simple_coroot(3))
             -2
         """
-        if (lambdacheck in self.parent().coroot_lattice() or lambdacheck in self.parent().coroot_space()):
+        if lambdacheck in self.parent().coroot_lattice() or lambdacheck in self.parent().coroot_space():
             # This is the mathematically canonical case, where we use the Cartan matrix to find the scalar product
             zero = self.parent().base_ring().zero()
             cartan_matrix = self.parent().dynkin_diagram()
