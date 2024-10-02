@@ -834,7 +834,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         if not (self.is_finite() and self.is_irreducible()):
             raise ValueError("the dual Coxeter number is defined only for finite and irreducible root systems")
         # Hand over to CartanType method
-        return self._cartan_type.dual_coxeter_number()            
+        return self._cartan_type.dual_coxeter_number()
 
 
 def WeylDim(ct, coeffs):
