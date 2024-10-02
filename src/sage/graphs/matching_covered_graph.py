@@ -425,7 +425,8 @@ class MatchingCoveredGraph(Graph):
             self._upgrade_from_graph(matching=matching, algorithm=algorithm,
                                      solver=solver, verbose=verbose,
                                      integrality_tolerance=integrality_tolerance)
-        raise ValueError('input data is of unknown type')
+        else:
+            raise ValueError('input data is of unknown type')
 
     def _upgrade_from_graph(self, matching=None, algorithm='Edmonds',
                             solver=None, verbose=0,
@@ -438,7 +439,7 @@ class MatchingCoveredGraph(Graph):
         try:
             check = Graph.is_matching_covered(G=self, matching=matching,
                                               algorithm=algorithm,
-                                              coNP_certificate=coNP_certificate,
+                                              coNP_certificate=False,
                                               solver=solver, verbose=verbose,
                                               integrality_tolerance=integrality_tolerance)
 
