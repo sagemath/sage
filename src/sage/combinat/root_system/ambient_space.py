@@ -379,9 +379,11 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
             sage: a.inner_product(a)
             2
 
-        TESTS::
+        TESTS:
 
-            sage: rt = RootSystem(['E',8])  # verify that error from issue gh-15325 Exhibit A is fixed
+        Verify that :issue:`15325` (A) is fixed::
+
+            sage: rt = RootSystem(['E', 8])
             sage: lat = rt.root_lattice()
             sage: spc = rt.ambient_space()
             sage: spc.simple_root(1).scalar(lat.simple_coroot(2))
