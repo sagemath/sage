@@ -809,10 +809,10 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def dual_coxeter_number(self):
         """
-        For an irreducible finite root system, reports the dual Coxeter number,
-        which is defined to be 1 plus the sum of the coefficients of simple roots
-        in the highest short root of the dual root system.  This function is a
-        wrapper for the corresponding function in CartanType.
+        Return the dual Coxeter number of a irreducible finite root system.
+
+        The dual Coxeter number is equal to 1 plus the sum of the coefficients
+        of simple roots in the highest short root of the dual root system.
 
         EXAMPLES::
 
