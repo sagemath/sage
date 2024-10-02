@@ -1,7 +1,8 @@
 r"""
 Matching covered graphs
 
-This module implements functions and operations pertaining to matching covered graphs.
+This module implements functions and operations pertaining to matching covered
+graphs.
 
 A *matching* in a graph is a set of pairwise nonadjacent links
 (nonloop edges). In other words, a matching in a graph is the edge set of an
@@ -33,7 +34,8 @@ class MatchingCoveredGraph(Graph):
 
     - ``data`` -- can be any of the following:
 
-      - Empty or ``None`` (throws a :class:`ValueError` as the graph must be nontrival).
+      - Empty or ``None`` (throws a :class:`ValueError` as the graph must be
+        nontrival).
 
       - An arbitrary graph.
 
@@ -84,7 +86,8 @@ class MatchingCoveredGraph(Graph):
         Matching covered staircase graph: graph on 8 vertices
         sage: H == G
         True
-        sage: G = Graph({0: [1, 2, 3, 4], 1: [2, 5], 2: [5], 3: [4, 5], 4: [5]})
+        sage: G = Graph({0: [1, 2, 3, 4], 1: [2, 5],
+        ....:            2: [5], 3: [4, 5], 4: [5]})
         sage: H = MatchingCoveredGraph(G)
         sage: H
         Matching covered graph on 6 vertices
@@ -156,7 +159,8 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
-        sage: G = Graph([(0, 1), (0, 3), (0, 4), (1, 2), (1, 5), (2, 3), (2, 6), (3, 7), (4, 5), (4, 7), (5, 6), (6, 7)])
+        sage: G = Graph([(0, 1), (0, 3), (0, 4), (1, 2), (1, 5), (2, 3),
+        ....:            (2, 6), (3, 7), (4, 5), (4, 7), (5, 6), (6, 7)])
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
@@ -410,8 +414,8 @@ class MatchingCoveredGraph(Graph):
             kwds = {'loops': False}
         else:
             if 'loops' in kwds and kwds['loops']:
-                raise ValueError('loops are not allowed in matching '
-                                  'covered graphs')
+                raise ValueError('loops are not allowed in '
+                                 'matching covered graphs')
             kwds['loops'] = False
 
         if data is None:
@@ -463,8 +467,9 @@ class MatchingCoveredGraph(Graph):
             sage: H = MatchingCoveredGraph(G)
             sage: H
             Matching covered complete graph: graph on 10 vertices
-            sage: G = MatchingCoveredGraph(BipartiteGraph(graphs.HexahedralGraph()))
-            sage: G  # An object of the class MatchingCoveredGraph
+            sage: G = graphs.HexahedralGraph()
+            sage: H = MatchingCoveredGraph(BipartiteGraph(G))
+            sage: H  # An object of the class MatchingCoveredGraph
             Matching covered hexahedron: graph on 8 vertices
 
         In case the string representation of the (matching covered) graph
@@ -478,11 +483,12 @@ class MatchingCoveredGraph(Graph):
             sage: J = MatchingCoveredGraph(H)
             sage: J
             Matching covered complete graph: graph on 10 vertices
-            sage: G = BipartiteGraph(MatchingCoveredGraph(graphs.HexahedralGraph()))
-            sage: G  # An object of the class BipartiteGraph
+            sage: G = graphs.HexahedralGraph()
+            sage: H = BipartiteGraph(MatchingCoveredGraph(G))
+            sage: H  # An object of the class BipartiteGraph
             Bipartite hexahedron: graph on 8 vertices
-            sage: H = MatchingCoveredGraph(G)
-            sage: H  # An object of the class MatchingCoveredGraph
+            sage: J = MatchingCoveredGraph(H)
+            sage: J  # An object of the class MatchingCoveredGraph
             Matching covered hexahedron: graph on 8 vertices
         """
         s = Graph._repr_(self).lower()
@@ -524,4 +530,5 @@ class MatchingCoveredGraph(Graph):
             ValueError: loops are not allowed in matching covered graphs
         """
         if new is True:
-            raise ValueError('loops are not allowed in matching covered graphs')
+            raise ValueError('loops are not allowed in '
+                             'matching covered graphs')
