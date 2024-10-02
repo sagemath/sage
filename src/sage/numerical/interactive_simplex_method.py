@@ -206,6 +206,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.all import SageObject
 from sage.symbolic.ring import SR
 
+
 # We produce rather complicated LaTeX code which needs some tweaks to be
 # displayed nicely by MathJax, which make it look slightly different from real
 # LaTeX. We use our own variable as it may be convenient to override it.
@@ -2708,7 +2709,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             sage: P = InteractiveLPProblemStandardForm(A, b, c)
             sage: def eta(v):
             ....:     return v.norm()
-            sage: P.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=[1,2])
+            sage: P.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=(1,2))
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Integer Ring' and 'Vector space of dimension 3 over Rational Field'
@@ -2722,8 +2723,8 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             # Phase I
             ad = self.auxiliary_problem().initial_dictionary()
             ad.enter(self.auxiliary_variable())
-            pivot = SimplexMethodPivot(pivot_rule)
-            pivot(ad, False, **kwrds)
+            pivot = SimplexMethodPivot(pivot_rule, **kwrds)
+            pivot(ad, False)
             ad.leave(min(zip(ad.constant_terms(), ad.basic_variables()))[1])
             output.append(ad.run_simplex_method(pivot_rule=pivot_rule, **kwrds))
             if ad.objective_value() < 0:
@@ -3867,10 +3868,10 @@ class LPAbstractDictionary(SageObject):
             \end{equation*}
             The problem is unbounded in $x_{2}$ direction.
         """
-        pivot = SimplexMethodPivot(pivot_rule)
+        pivot = SimplexMethodPivot(pivot_rule, **kwrds)
         output = []
         while not self.is_optimal():
-            pivot(self, False, **kwrds) # Sets entering and leaving variables
+            pivot(self, False) # Sets entering and leaving variables
             output.append(self._html_())
             if self.leaving() is None:
                 output.append("The problem is unbounded in ${}$ direction."
@@ -5498,4 +5499,4 @@ class LPRevisedDictionary(LPAbstractDictionary):
     x_N = nonbasic_variables
 
 
-from sage.numerical.pivot_rules_for_simplex_method import SimplexMethodPivot
+from sage.numerical.pivot_rules_for_simplex_method import SimplexMethodPivot  # do not move. this breaks :mod:`sage.pivot_rules_for_simplex_method` if moved.

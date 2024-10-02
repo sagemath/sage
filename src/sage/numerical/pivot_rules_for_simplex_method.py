@@ -53,7 +53,7 @@ It allows one to explore different pivot rules such as the Normalized Weight piv
     sage: D.enter('x0')
     sage: D.leave('x5')
     sage: D.update()
-    sage: D.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=[1,1,4])
+    sage: D.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=(1,1,4))
     \begin{equation*}
     ...
     \end{equation*}
@@ -62,7 +62,7 @@ It allows one to explore different pivot rules such as the Normalized Weight piv
     ...
     \end{equation*}
     sage: d = P.feasible_dictionary(D)  # Phase II
-    sage: d.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=[1,1])
+    sage: d.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=(1,1))
     \begin{equation*}
     ...
     \end{equation*}
@@ -94,7 +94,7 @@ Define custom pivot rules::
 
     sage: from sage.numerical.pivot_rules_for_simplex_method import AbstractSimplexMethodPivotRule
     sage: class MyPivotRule(AbstractSimplexMethodPivotRule):
-    ....:     def dictionary_pivot(dict):
+    ....:     def dictionary_pivot(cls, dict):
     ....:         dict.enter('x1')
     ....:         dict.leave('x4')
     sage: my_pivot = SimplexMethodPivot(MyPivotRule)
@@ -130,7 +130,6 @@ from sage.rings.infinity import InfinityRing
 from numpy import argmax
 from sage.numerical.interactive_simplex_method import LPAbstractDictionary
 
-
 class AbstractSimplexMethodPivotRule(UniqueRepresentation):
     r"""
     Abstract class for memoryless pivot rules.
@@ -138,6 +137,10 @@ class AbstractSimplexMethodPivotRule(UniqueRepresentation):
     Individual pivot rules are not in Sage's namespace.
     Using a pivot rule should be instantiated via :class:`~sage.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot`.
     """
+    @classmethod
+    def __init__(cls, **kwrds):
+        pass
+
     @classmethod
     def has_dual_method(cls):
         r""" For use in SimplexMethodPivot to identify if a dual pivot rule has been written.
@@ -149,21 +152,21 @@ class AbstractSimplexMethodPivotRule(UniqueRepresentation):
         return False
 
     @abstract_method
-    def dictionary_pivot(dictionary, *args):
+    def dictionary_pivot(cls, dictionary):
         r"""
         Abstract method for computing a pivot for the primal simplex method based on an :class:`sage.numerical.interactive_simplex_method.LPDictionary`.
 
-        Sets the entering and leaving variables of :class:`sage.numerical.interactive_simplex_method.LPDictionary` for the primal simplex method.
+        Set the entering and leaving variables of :class:`sage.numerical.interactive_simplex_method.LPDictionary` for the primal simplex method.
 
         INPUT:
 
         - ``dictionary`` -- an instance of :class:`sage.numerical.interactive_simplex_method.LPDictionary`
 
-        - ``*args`` -- required inputs for specific method
+        - ``**kwrds`` -- required inputs for specific method  # TODO: Change documentation
 
         EXAMPLES::
 
-            sage: from sage.numerical.pivot_rules_for_simplex_method import BlandsRule
+            sage: from sage.numerical.pivot_rules_for_simplex_method import SimplexMethodPivot
             sage: A = ([1, 1], [3, 1])
             sage: b = (1000, 1500)
             sage: c = (10, 5)
@@ -173,7 +176,8 @@ class AbstractSimplexMethodPivotRule(UniqueRepresentation):
 
             sage: D.leaving()
 
-            sage: BlandsRule.dictionary_pivot(D)
+            sage: pivot = SimplexMethodPivot()
+            sage: pivot(D)  # indirect use of dictionary_pivot
             sage: D.entering()
             x1
             sage: D.leaving()
@@ -195,7 +199,7 @@ class AbstractSimplexMethodPivotRule(UniqueRepresentation):
         The leaving variable should be ``None`` if a dictionary represents unboundedness in a problem::
 
             sage: D = P.initial_dictionary()
-            sage: BlandsRule.dictionary_pivot(D)
+            sage: pivot(D)  # indirect use of dictionary_pivot
             sage: D.entering()
             x2
             sage: D.leaving() is None
@@ -204,14 +208,14 @@ class AbstractSimplexMethodPivotRule(UniqueRepresentation):
         The :meth:`__call__` method of :class:`SimplexMethodPivot` is responsible checking for type input::
 
             sage: LP_tablaux = Matrix([[0, 10, 5], [1, 1, 1000], [3, 1, 1500]])
-            sage: BlandsRule.dictionary_pivot(LP_tablaux)
+            sage: pivot(LP_tablaux)
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.matrix.matrix_integer_dense.Matrix_integer_dense' object has no attribute 'entering'
+            TypeError: Input is required to be an instance of :class:`LPAbstractDictionary`
 
             """
     @abstract_method
-    def dual_dictionary_pivot(dictionary, **kwrds):
+    def dual_dictionary_pivot(cls, dictionary):
         r"""
         Abstract method for computing a pivot for the dual simplex method based on an :class:`sage.numerical.interactive_simplex_method.LPDictionary`.
 
@@ -225,7 +229,7 @@ class AbstractSimplexMethodPivotRule(UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: from sage.numerical.pivot_rules_for_simplex_method import BlandsRule
+            sage: from sage.numerical.pivot_rules_for_simplex_method import SimplexMethodPivot
             sage: A = ([1, 1], [3, 1], [-1, -1])
             sage: b = (1000, 1500, -400)
             sage: c = (10, 5)
@@ -235,7 +239,8 @@ class AbstractSimplexMethodPivotRule(UniqueRepresentation):
 
             sage: D.leaving()
 
-            sage: BlandsRule.dual_dictionary_pivot(D)
+            sage: pivot = SimplexMethodPivot()
+            sage: pivot(D, True)  # indirect use of dual_dictionary_pivot
             sage: D.entering()
             x1
             sage: D.leaving()
@@ -277,7 +282,7 @@ class SimplexMethodPivot(SageObject, UniqueRepresentation):
         x4
     """
     @staticmethod
-    def __classcall__(cls, name=None):
+    def __classcall__(cls, name=None, **kwrds):
         r"""
         Normalize init agrugments.
 
@@ -297,17 +302,17 @@ class SimplexMethodPivot(SageObject, UniqueRepresentation):
         if name == "blands_rule" or name is None:
             return super().__classcall__(cls, pivot_rule=BlandsRule)
         if name == "steepest_edge":
-            return super().__classcall__(cls, pivot_rule=SteepestEdge)
+            return super().__classcall__(cls, pivot_rule=SteepestEdge, **kwrds)
         if name == "dantzig":
             return super().__classcall__(cls, pivot_rule=DantzigsRule)
         if name == "NW_rule":
-            return super().__classcall__(cls, pivot_rule=NWRule)
+            return super().__classcall__(cls, pivot_rule=NWRule, **kwrds)
         if issubclass(name, AbstractSimplexMethodPivotRule):
-            return super().__classcall__(cls, pivot_rule=name)
+            return super().__classcall__(cls, pivot_rule=name, **kwrds)
         else:
             raise TypeError("Input is required to be a string with the name of a predefined pivot rule or an instance of ``AbstractSimplexMethodPivotRule``")
 
-    def __init__(self, pivot_rule):
+    def __init__(self, pivot_rule, **kwrds):
         r"""
         Initialize a pivot rule. This is never directly called.
 
@@ -340,12 +345,12 @@ class SimplexMethodPivot(SageObject, UniqueRepresentation):
 
         Create Normalized Weight Pivot Rule::
 
-            sage: NW_rule =  SimplexMethodPivot("NW_rule")
+            sage: NW_rule =  SimplexMethodPivot("NW_rule", normalization=eta, weight=(1,1))
         """
-        self._pivot_rule = pivot_rule
+        self._pivot_rule = pivot_rule(**kwrds)
         super().__init__()
 
-    def __call__(self, dictionary, dual_mode=False, **kwrds):
+    def __call__(self, dictionary, dual_mode=False):
         r"""
         Makes pivot rules have a function like notation and normalizes inputs.
 
@@ -385,7 +390,7 @@ class SimplexMethodPivot(SageObject, UniqueRepresentation):
             sage: blands_rule(LP_tablaux)
             Traceback (most recent call last):
             ...
-            TypeError: Input is required to be an instance of `LPAbstractDictionary`
+            TypeError: Input is required to be an instance of :class:`LPAbstractDictionary`
         """
         if dual_mode:
             if self._pivot_rule.has_dual_method():
@@ -395,12 +400,9 @@ class SimplexMethodPivot(SageObject, UniqueRepresentation):
         else:
             pivot = self._pivot_rule.dictionary_pivot
         if isinstance(dictionary, LPAbstractDictionary):
-            if kwrds:
-                pivot(dictionary, **kwrds)
-            else:
-                pivot(dictionary)
+            pivot(dictionary)
         else:
-            raise TypeError("Input is required to be an instance of `LPAbstractDictionary`")
+            raise TypeError("Input is required to be an instance of :class:`LPAbstractDictionary`")
 
 
 class BlandsRule(AbstractSimplexMethodPivotRule):
@@ -427,10 +429,10 @@ class BlandsRule(AbstractSimplexMethodPivotRule):
         sage: D.leaving()
         x4
     """
-    def has_dual_method():
+    def has_dual_method(cls):
         return True
 
-    def dictionary_pivot(current_dictionary):
+    def dictionary_pivot(cls, current_dictionary):
         r"""
         Sets the entering and leaving variables of :class:`sage.numerical.interactive_simplex_method.LPDictionary` as defined by Bland's rule.
 
@@ -462,7 +464,7 @@ class BlandsRule(AbstractSimplexMethodPivotRule):
                 leaving_variable = min(possible)
                 current_dictionary.leave(leaving_variable)
 
-    def dual_dictionary_pivot(current_dictionary):
+    def dual_dictionary_pivot(cls, current_dictionary):
         r"""
         Sets the entering and leaving variables of :class:`sage.numerical.interactive_simplex_method.LPDictionary` as defined by Bland's rule for dual simplex
         method.
@@ -479,7 +481,7 @@ class BlandsRule(AbstractSimplexMethodPivotRule):
             sage: c = (10, 5)
             sage: P = InteractiveLPProblemStandardForm(A, b, c)
             sage: D = P.dictionary(2, 3, 5)  # dual feasible dictionary
-            sage: pivot = SimplexMethodPivot()
+            sage: pivot = SimplexMethodPivot("blands_rule")  #indirect test
             sage: pivot(D, True)
             sage: D.leaving()
             x3
@@ -523,8 +525,12 @@ class SteepestEdge(AbstractSimplexMethodPivotRule):
         sage: D.leaving()
         x4
     """
+    def __init__(self, **kwrds):
+        self.p = kwrds.pop("p", 2)
+        if self.p < 1:
+            raise ValueError("p must be at least 1")
 
-    def dictionary_pivot(current_dictionary, **kwrds):
+    def dictionary_pivot(self, current_dictionary):
         r"""
         Sets the entering and leaving variables of :class:`sage.numerical.interactive_simplex_method.LPDictionary` as defined by steepest edge rule.
 
@@ -542,8 +548,8 @@ class SteepestEdge(AbstractSimplexMethodPivotRule):
             sage: c = (10, 5)
             sage: P = InteractiveLPProblemStandardForm(A, b, c)
             sage: D = P.initial_dictionary()
-            sage: pivot = SimplexMethodPivot("steepest_edge")  # indirect test
-            sage: pivot(D, False, p=1)  # let's use the 1 norm.
+            sage: pivot = SimplexMethodPivot("steepest_edge", p=1)  # indirect test
+            sage: pivot(D, False)  # let's use the 1 norm.
             sage: D.entering()
             x1
             sage: D.leaving()
@@ -551,20 +557,16 @@ class SteepestEdge(AbstractSimplexMethodPivotRule):
 
             Values of p are checked::
 
-            sage: D.update()
-            sage: pivot(D, False, p=0)
+            sage: bad_pivot = SimplexMethodPivot("steepest_edge", p=.5)
             Traceback (most recent call last):
             ...
             ValueError: p must be at least 1
         """
-        p = kwrds.pop('p', 2)  # sets p = 2 as default value.
-        if p < 1:
-            raise ValueError("p must be at least 1")
         if current_dictionary.entering() is None:
             thetas = []
             for v in current_dictionary.basic_variables():
                 # We want to avoid p-root complications, so work with the pth power.
-                thetas.append((1+sum([i**p for i in current_dictionary.row_coefficients(v)])))
+                thetas.append((1+sum([i**self.p for i in current_dictionary.row_coefficients(v)])))
             best_value = -1*current_dictionary.objective_coefficients()[0]/thetas[0]
             index_to_select = 0
             # This loop selects the index that corresponds to the steepest edge.
@@ -614,10 +616,10 @@ class DantzigsRule(AbstractSimplexMethodPivotRule):
         sage: D.leaving()
         x4
     """
-    def has_dual_method():
+    def has_dual_method(cls):
         return True
 
-    def dictionary_pivot(current_dictionary):
+    def dictionary_pivot(cls, current_dictionary):
         r"""
         Set the entering and leaving variables of :class:`sage.numerical.interactive_simplex_method.LPDictionary` as defined by Dantzig's rule.
 
@@ -626,18 +628,18 @@ class DantzigsRule(AbstractSimplexMethodPivotRule):
 
         EXAMPLES::
 
-        sage: from sage.numerical.pivot_rules_for_simplex_method import SimplexMethodPivot
-        sage: A = ([1, 1], [3, 1])
-        sage: b = (1000, 1500)
-        sage: c = (10, 5)
-        sage: P = InteractiveLPProblemStandardForm(A, b, c)
-        sage: D = P.initial_dictionary()
-        sage: pivot = SimplexMethodPivot("dantzig")
-        sage: pivot(D)
-        sage: D.entering()
-        x1
-        sage: D.leaving()
-        x4
+            sage: from sage.numerical.pivot_rules_for_simplex_method import SimplexMethodPivot
+            sage: A = ([1, 1], [3, 1])
+            sage: b = (1000, 1500)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: D = P.initial_dictionary()
+            sage: pivot = SimplexMethodPivot("dantzig")
+            sage: pivot(D)
+            sage: D.entering()
+            x1
+            sage: D.leaving()
+            x4
         """
         if current_dictionary.entering() is None:
             entering_index = argmax(current_dictionary.objective_coefficients())
@@ -649,7 +651,7 @@ class DantzigsRule(AbstractSimplexMethodPivotRule):
                 leaving_variable = min(current_dictionary.ratios())[1]
                 current_dictionary.leave(leaving_variable)
 
-    def dual_dictionary_pivot(current_dictionary):
+    def dual_dictionary_pivot(cls, current_dictionary):
         r"""
         Set the entering and leaving variables of :class:`sage.numerical.interactive_simplex_method.LPDictionary` as defined by Dantzig's rule.
 
@@ -658,20 +660,20 @@ class DantzigsRule(AbstractSimplexMethodPivotRule):
 
         EXAMPLES::
 
-        sage: from sage.numerical.pivot_rules_for_simplex_method import SimplexMethodPivot
-        sage: A = ([1, 1], [3, 1], [-1, -1])
-        sage: b = (1000, 1500, -400)
-        sage: c = (10, 5)
-        sage: P = InteractiveLPProblemStandardForm(A, b, c)
-        sage: D = P.dictionary(2, 3, 5)
-        sage: D.is_dual_feasible()
-        True
-        sage: pivot = SimplexMethodPivot("dantzig")
-        sage: pivot(D, True)
-        sage: D.entering()
-        x1
-        sage: D.leaving()
-        x3
+            sage: from sage.numerical.pivot_rules_for_simplex_method import SimplexMethodPivot
+            sage: A = ([1, 1], [3, 1], [-1, -1])
+            sage: b = (1000, 1500, -400)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: D = P.dictionary(2, 3, 5)
+            sage: D.is_dual_feasible()
+            True
+            sage: pivot = SimplexMethodPivot("dantzig")
+            sage: pivot(D, True)
+            sage: D.entering()
+            x1
+            sage: D.leaving()
+            x3
         """
         if current_dictionary.leaving() is None:
             possible = current_dictionary.possible_leaving()
@@ -688,10 +690,9 @@ class NWRule(AbstractSimplexMethodPivotRule):
     r"""
     Selects the entering and leaving variable based on a Normalzied Weight (NW) pivot rule.
 
-    For a linear program `min(cx: Ax\leq b) = min(cx: x\in P)`, a NW-rule is defined by a normalization `\eta: \RR^d\to \mathbb{R}` and a weight
-    `w\in \mathbb{R}^n`. Given `v\in P` s.t. `cv \neq cv_{\text{opt}}`, pick the next vertex `u_* = \text{argmax}\{ \frac{w^t(u-v)}{\eta(u-v)}:` `u` adjacent to
-     `v` and `c^tu>c^tv\}`.
-    See [BDLS2022]_.
+    For a linear program `min(cx: Ax\leq b) = min(cx: x\in P)`, a NW-rule is defined by a normalization `\eta: \RR^d\to \RR` and a weight
+    `w\in \RR^n`. Given `v\in P` s.t. `cv \neq cv_{\text{opt}}`, pick the next vertex `u_* = \text{argmax}\{ \frac{w^t(u-v)}{\eta(u-v)}:` `u` adjacent to
+    `v` and `c^tu>c^tv\}`. See [BDLS2022]_.
 
     EXAMPLES::
 
@@ -701,16 +702,16 @@ class NWRule(AbstractSimplexMethodPivotRule):
         sage: c = (10, 5)
         sage: P = InteractiveLPProblemStandardForm(A, b, c)
         sage: D = P.initial_dictionary()
-        sage: pivot = SimplexMethodPivot("NW_rule")
-        sage: def eta(v):  # use 2 norm as normalization
+        sage: def eta(v):  # use 2-norm as normalization
         ....:     return v.norm()
-        sage: pivot(D, False, normalization=eta, weight=[1,2])
+        sage: pivot = SimplexMethodPivot("NW_rule", normalization=eta, weight=(1,2))
+        sage: pivot(D)
         sage: D.entering()
         x2
         sage: D.leaving()
         x3
 
-    NW rule is not eqipped to solve both a Phase I and a phase II with :meth:`run_simplex_method`::
+    NW rule is not equipped to solve both Phase I and phase II with :meth:`run_simplex_method`::
 
         sage: A = ([1, 1], [3, 1], [-1, -1])
         sage: b = (1000, 1500, -400)
@@ -718,7 +719,7 @@ class NWRule(AbstractSimplexMethodPivotRule):
         sage: P = InteractiveLPProblemStandardForm(A, b, c)
         sage: def eta(v):
         ....:     return v.norm()
-        sage: P.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=[1,2])
+        sage: P.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=(1,2))
         Traceback (most recent call last):
         ...
         TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Integer Ring' and 'Vector space of dimension 3 over Rational Field'
@@ -735,7 +736,7 @@ class NWRule(AbstractSimplexMethodPivotRule):
         sage: D.enter('x0')
         sage: D.leave('x5')
         sage: D.update()
-        sage: D.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=[1,1,4])
+        sage: D.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=(1,1,4))
         \begin{equation*}
         ...
         \end{equation*}
@@ -744,7 +745,7 @@ class NWRule(AbstractSimplexMethodPivotRule):
         ...
         \end{equation*}
         sage: d = P.feasible_dictionary(D)
-        sage: d.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=[1,1])
+        sage: d.run_simplex_method(pivot_rule='NW_rule', normalization=eta, weight=(1,1))
         \begin{equation*}
         ...
         \end{equation*}
@@ -757,16 +758,67 @@ class NWRule(AbstractSimplexMethodPivotRule):
         ...
         \end{equation*}
     """
-    def dictionary_pivot(current_dictionary, **kwrds):
+    def __init__(cls, **kwrds):
+        r"""
+        Defines the data of a Normalized Weight pivot rule.
+
+        INPUT:
+        - ``eta`` -- callable function from ambient space of interest to the real numbers.
+
+        - ``weight`` -- a hashable object convertible to a sage ``vector`` in the ambient space of interest.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.pivot_rules_for_simplex_method import SimplexMethodPivot
+            sage: def eta(v):  # use 2-norm as normalization
+            ....:     return v.norm()
+            sage: first_pivot = SimplexMethodPivot("NW_rule", normalization=eta, weight=(1,1))
+            sage: second_pivot = SimplexMethodPivot("NW_rule", normalization=eta, weight=(2,1))
+            sage: first_pivot is second_pivot
+            False
+
+        It is assumed that both the normalization and the weight are defined on the same ambient space.
+
+            sage: def eta_2(v):
+            ....:   if len(v) == 3:
+            ....:       return sum(v)
+            ....:   return
+            sage: third_pivot = SimplexMethodPivot("NW_rule", normalization=eta_2, weight=(1,1))
+            sage: A = ([1, 1], [3, 1])
+            sage: b = (1000, 1500)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: D = P.initial_dictionary()
+            sage: third_pivot(D)
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for /: 'Rational Field' and '<class 'NoneType'>'
+
+        It is also assumed that inputs are correct.
+
+            sage: pivot = SimplexMethodPivot("NW_rule", normalization=eta, weight=[1,1])
+            Traceback (most recent call last):
+            ...
+            TypeError: unhashable type: 'list'
+            sage: pivot = SimplexMethodPivot("NW_rule", normalization=eta, weight=1)
+            Traceback (most recent call last):
+            ...
+            TypeError: 'sage.rings.integer.Integer' object is not iterable
+            sage: SimplexMethodPivot("NW_rule", weight=(2,1))
+            Traceback (most recent call last):
+            ...
+            KeyError: 'normalization'
+
+        """
+        cls.eta = kwrds.pop('normalization')
+        cls.weight = vector(kwrds.pop('weight'))
+
+    def dictionary_pivot(cls, current_dictionary):
         r"""
         Set the entering and leaving variables of `:class:`~sage.numerical.interactive_simplex_method.LPDictionary` as defined by Normalized Weight pivot rule.
 
         INPUT:
         - ``current_dictionary`` -- an instance of `:class:`~sage.numerical.interactive_simplex_method.LPDictionary`
-
-        - ``eta`` -- callable function from ambient space of ``current_dictionary`` to the real numbers.
-
-        - ``weight`` -- object convertible to a sage ``vector`` in the ambient space of current_dictionary.
 
         EXAMPLES::
 
@@ -782,8 +834,8 @@ class NWRule(AbstractSimplexMethodPivotRule):
 
             sage: def eta(v):  # use 2-norm as normalization
             ....:     return v.norm()
-            sage: pivot = SimplexMethodPivot("NW_rule")
-            sage: pivot(D, False, normalization=eta, weight=[1,1])
+            sage: pivot = SimplexMethodPivot("NW_rule", normalization=eta, weight=(1,1))
+            sage: pivot(D, False)
             sage: D.entering()
             x1
             sage: D.leaving()
@@ -792,22 +844,13 @@ class NWRule(AbstractSimplexMethodPivotRule):
         Inputs are assumed to be correct for the current problem::
 
             sage: D.update()
-            sage: pivot(D, False, normalization=eta, weight=1)
+            sage: eta = (1,2,1)
+            sage: pivot = SimplexMethodPivot("NW_rule", normalization=eta, weight=(1,1))
+            sage: pivot(D)
             Traceback (most recent call last):
             ...
-            TypeError: 'sage.rings.integer.Integer' object is not iterable
-            sage: eta = [1,2,1]
-            sage: pivot(D, False, normalization=eta, weight=[1,1])
-            Traceback (most recent call last):
-            ...
-            TypeError: 'list' object is not callable
-            sage: pivot(D, False, weight=[2,1])
-            Traceback (most recent call last):
-            ...
-            KeyError: 'normalization'
+            TypeError: 'tuple' object is not callable
         """
-        eta = kwrds.pop('normalization')
-        weight = vector(kwrds.pop('weight'))
         if current_dictionary.entering() is None:
             current_vertex = current_dictionary.basic_solution()  # This current vertex v of P.
             best_value = InfinityRing(float('-inf'))
@@ -819,8 +862,8 @@ class NWRule(AbstractSimplexMethodPivotRule):
                     copy_of_dict.leave(var_out)
                     copy_of_dict.update()
                     next_vertex = copy_of_dict.basic_solution()  # Vertex u adjacent to v in gr(P).
-                    if eta(next_vertex - current_vertex) != 0:
-                        current_value = (weight * (next_vertex - current_vertex)) / eta(next_vertex - current_vertex)  # NW-rule
+                    if cls.eta(next_vertex - current_vertex) != 0:
+                        current_value = (cls.weight * (next_vertex - current_vertex)) / cls.eta(next_vertex - current_vertex)  # NW-rule
                         if current_value > best_value:
                             best_vars = var_in, var_out
                             best_value = current_value
