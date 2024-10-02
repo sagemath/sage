@@ -53,7 +53,7 @@ from sage.graphs.views import EdgesView
 
 
 def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
-                         integrality_tolerance=1e-3):
+                         *, integrality_tolerance=1e-3):
     r"""
     Return whether the graph has a perfect matching
 
@@ -160,7 +160,7 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
 
 
 def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
-                  solver=None, verbose=0, integrality_tolerance=0.001):
+                  solver=None, verbose=0, *, integrality_tolerance=0.001):
     r"""
     Check if the graph is bicritical
 
@@ -490,7 +490,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
 
 
 def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbose=0,
-                       integrality_tolerance=0.001):
+                       *, integrality_tolerance=0.001):
     r"""
     Check whether the graph is factor-critical.
 
@@ -695,7 +695,7 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
 
 
 def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
-                        solver=None, verbose=0, integrality_tolerance=0.001):
+                        solver=None, verbose=0, *, integrality_tolerance=0.001):
     r"""
     Check if the graph is matching covered.
 
@@ -1089,7 +1089,7 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
 
 def matching(G, value_only=False, algorithm='Edmonds',
              use_edge_labels=False, solver=None, verbose=0,
-             integrality_tolerance=1e-3):
+             *, integrality_tolerance=1e-3):
     r"""
     Return a maximum weighted matching of the graph represented by the list
     of its edges
