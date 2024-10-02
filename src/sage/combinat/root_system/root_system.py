@@ -789,16 +789,17 @@ class RootSystem(UniqueRepresentation, SageObject):
 
     def coxeter_number(self):
         """
-        For an irreducible finite root system, reports the Coxeter number.
-        This function is a wrapper for the corresponding function in CartanType.
+        Return the Coxeter number of an irreducible finite root system.
+
+        .. SEEALSO::
+
+            :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.coxeter_number`.
 
         EXAMPLES::
 
             sage: rt = RootSystem(['C', 5])
             sage: rt.coxeter_number()
             10
-
-        .. SEEALSO:: :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.coxeter_number`
         """
         # Check if RootSystem is finite and irreducible
         if self.is_finite() and self.is_irreducible():
