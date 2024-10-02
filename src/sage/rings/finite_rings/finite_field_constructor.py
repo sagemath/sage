@@ -495,17 +495,17 @@ class FiniteFieldFactory(UniqueFactory):
         Traceback (most recent call last)
         ...
         TypeError: Unable to raise power with finite field polynomial element
-        
+
         sage: x = 12.3**GF(64, impl='ntl')(5)
         Traceback (most recent call last)
         ...
         TypeError: Unable to raise power with finite field polynomial element
-        
+
         sage: x = 12.3**GF(64, impl='pari_ffelt')(5)
         Traceback (most recent call last)
         ...
         TypeError: Unable to raise power with finite field polynomial element
-        
+
         sage: x = 123**GF(61)(5); x
         28153056843
 
