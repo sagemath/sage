@@ -293,6 +293,22 @@ cdef class Flag(Element):
             return 'Ftype on {} points with {}'.format(self.size(), strblocks)
         return 'Flag on {} points, ftype from {} with {}'.format(self.size(), self.ftype_points(), strblocks)
     
+    def compact_repr(self):
+        blocks = self.blocks()
+        ret = ["n:{}".format(self.size())]
+        if len(self._ftype_points)!=0:
+            ret.append("t:"+"".join(map(str, self._ftype_points)))
+        for name in self.theory()._signature.keys():
+            desc = name + ":"
+            arity = self.theory()._signature[name]
+            if arity==1:
+                desc += "".join([str(xx[0]) for xx in blocks[name]])
+            else:
+                desc += ",".join(["".join(map(str, ed)) for ed in blocks[name]])
+            ret.append(desc)
+        return "; ".join(ret)
+            
+    
     def raw_numbers(self):
         r"""
         Return a list of numbers uniquely describing this flag.

@@ -420,8 +420,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def _calcs_dir(self):
         if os.path.isdir("../calcs"):
-            return "../calcs"
+            return "../calcs/"
         return "calcs/"
+    
+    def _certs_dir(self):
+        if os.path.isdir("../certs"):
+            return "../certs/"
+        return "certs/"
     
     def _repr_(self):
         r"""
@@ -546,6 +551,21 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         if 2 in self.sizes():
             res.append(self._an_element_(n=2))
         return res
+    
+    def flag_compact_repr(self, flag):
+        blocks = flag.blocks()
+        ret = ["n:{}".format(flag.size())]
+        if len(flag.ftype_points())!=0:
+            ret.append("t:"+"".join(map(str, flag.ftype_points())))
+        for name in self._signature.keys():
+            desc = name + ":"
+            arity = self._signature[name]
+            if arity==1:
+                desc += "".join([str(xx[0]) for xx in blocks[name]])
+            else:
+                desc += ",".join(["".join(map(str, ed)) for ed in blocks[name]])
+            ret.append(desc)
+        return "; ".join(ret)
     
     def blowup_construction(self, target_size, pattern_size, symbolic=False, symmetric=True, unordered=False, **kwargs):
         r"""
@@ -987,7 +1007,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         target_vector_exact = vector(target_list_exact)
         flags_num, constraints_vals, positives_list_exact, one_vector = constraints_data
         positives_matrix_exact = matrix(QQ, len(positives_list_exact), flags_num, positives_list_exact)
-
+        
+        one_vector_exact = positives_matrix_exact.rows()[-2] # find the one_vector from the equality constraint
         positives_matrix_exact = positives_matrix_exact[:-2, :] # remove the equality constraints
 
         flags_num = -block_sizes[-2] # same as |F_n|
@@ -1001,13 +1022,17 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             Xnp = np.array(Xr)
             eigenvalues, eigenvectors = LA.eig(Xnp)
             emin = min(eigenvalues)
-            eminr = ceil(-emin*denom)/denom
-            Xrf = matrix(QQ, Xr) + diagonal_matrix(QQ, [eminr]*len(X), sparse=True)
-            X_matrices_rounded.append(Xrf)
+            if emin<0:
+                eminr = ceil(-emin*denom)/denom
+                Xr = matrix(QQ, Xr) + diagonal_matrix(QQ, [eminr]*len(X), sparse=True)
+            X_matrices_rounded.append(Xr)
         X_matrices_flat = [vector(_flatten_matrix(X.rows(), doubled=False)) for X in (X_matrices_rounded)]
 
         e_vector_approx = sdp_result['X'][-1][:-2]
         e_vector_rounded = vector(_round_list(e_vector_approx, force_pos=True, method=0, denom=denom))
+        
+        phi_vector_approx = sdp_result['y']
+        phi_vector_rounded = vector(_round_list(phi_vector_approx, force_pos=True, method=0, denom=denom))
 
         slacks = target_vector_exact - positives_matrix_exact.T*e_vector_rounded
         block_index = 0
@@ -1023,8 +1048,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                     M_flat_vector_exact = vector(_flatten_matrix(M.rows(), doubled=True))
                     slacks[gg] -= M_flat_vector_exact*X_flat
             block_index += len(table_constructor[params])
-
-        return min(slacks), X_matrices_rounded, e_vector_rounded, slacks, []
+        # scale back slacks with the one vector, the minimum is the final result
+        result = min([slacks[ii]/oveii for ii, oveii in enumerate(one_vector_exact) if oveii!=0])
+        # pad the slacks, so it is all positive where it counts
+        slacks -= result*one_vector_exact
+        
+        rerrs = []
+        for ii in range(len(X_matrices_rounded)):
+            Xr = X_matrices_rounded[ii]
+            Xo = matrix(sdp_result['X'][ii])
+            rerrs.append((Xr-Xo).norm())
+        rerrs.append((vector(e_vector_approx) - e_vector_rounded).norm())
+        print("Rounding errors are {}".format(rerrs))
+        
+        return result, X_matrices_rounded, e_vector_rounded, slacks, [phi_vector_rounded]
     
     def _round_sdp_solution_phi(self, sdp_result, sdp_data, table_constructor, \
                             constraints_data, phi_vectors_exact, denom=1024):
@@ -1040,7 +1077,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         no_constr = len(phi_vectors_exact)==0
         phi_vector_exact = vector([0]*positives_matrix_exact.ncols()) if no_constr else phi_vectors_exact[0]
-
+        
+        one_vector_exact = positives_matrix_exact.rows()[-2] # find the one_vector from the equality constraint
         positives_matrix_exact = positives_matrix_exact[:-2, :] # remove the equality constraints
 
         flags_num = -block_sizes[-2] # same as |F_n|
@@ -1164,8 +1202,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 
                 X_final.append(X_ii_small)
             block_index += len(table_constructor[params])
-
-        return min(slacks), X_final, e_vector_corr, slacks, phi_vectors_exact
+        
+        # scale back slacks with the one vector, the minimum is the final result
+        result = min([slacks[ii]/oveii for ii, oveii in enumerate(one_vector_exact) if oveii!=0])
+        # pad the slacks, so it is all positive where it counts
+        slacks -= result*one_vector_exact
+        
+        return result, X_final, e_vector_corr, slacks, phi_vectors_exact
     
     
     def _fix_X_bases(self, table_constructor, X_original):
@@ -1176,7 +1219,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         """
         if X_original==None:
             return None
-        X_transformed = []
+        D_vectors = []
+        L_vectors = []
         block_index = 0
         for params in table_constructor.keys():
             ns, ftype, target_size = params
@@ -1187,10 +1231,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 else:
                     X_ii += base.T * X_original[block_index + plus_index] * base
             block_index += len(table_constructor[params])
-            X_transformed.append(X_ii)
-        return X_transformed
+            P, L, D = X_ii.block_ldlt(classical=False)
+            D_vectors.append(vector(D.diagonal()))
+            L_vectors.append(vector(_flatten_matrix(L.T.rows())))
+        return D_vectors, L_vectors
     
-    def _format_optimizer_output(self, table_constructor, mult=1, sdp_output=None, rounding_output=None):
+    def _format_optimizer_output(self, table_constructor, mult=1, sdp_output=None, rounding_output=None, file="default"):
         r"""
         Formats the outputs to a nice certificate
         
@@ -1198,42 +1244,57 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                             a guess or exact construction, the list of base flags, the list of used (typed) flags
         """
         
+        import json
+        
         target_size = 0
         typed_flags = {}
         for params in table_constructor.keys():
             ns, ftype, target_size = params
-            typed_flags[(ns, ftype)] = self.generate_flags(ns, ftype)
-        base_flags = self.generate_flags(target_size)
+            safekey = "target:" + str(ns) + "; " + self.flag_compact_repr(ftype)
+            typed_flags[safekey] = [self.flag_compact_repr(xx) for xx in self.generate_flags(ns, ftype)]
+        
+        base_flags = [self.flag_compact_repr(xx) for xx in self.generate_flags(target_size)]
         
         result = None
         X_original = None
         e_vector = None
         slacks = None
-        phi_vec = None
+        phi_vecs = None
         
         if sdp_output!=None:
-            result = sdp_output['primal'] * mult
-            X_original = [matrix(QQ, dat) for dat in sdp_output['X'][:-2]]
+            result = sdp_output['primal']
+            X_original = [matrix(dat) for dat in sdp_output['X'][:-2]]
             e_vector = vector(sdp_output['X'][-1])
             slacks = vector(sdp_output['X'][-2])
-            phi_vec = matrix([sdp_output['y']])
+            phi_vecs = [vector(sdp_output['y'])]
         elif rounding_output!=None:
-            result, X_original, e_vector, slacks, phi_vec = rounding_output
-            result *= mult
+            result, X_original, e_vector, slacks, phi_vecs = rounding_output
         
-        X_final = self._fix_X_bases(table_constructor, X_original)
+        result *= mult
+        Ds, Ls = self._fix_X_bases(table_constructor, X_original)
         
-        return {"result": result, 
-                "X": X_final,
-                "e": e_vector,
-                "slacks": slacks, 
-                "phi": phi_vec,
-                "base flags": base_flags,
-                "typed flags": typed_flags
-               }
+        cert_dict = {"result": result, 
+                     "D vectors": Ds,
+                     "L matrices": Ls,
+                     "e": e_vector,
+                     "slacks": slacks,
+                     "phi": phi_vecs,
+                     "base flags": base_flags,
+                     "typed flags": typed_flags
+                    }
+        
+        if not file.endswith(".json"):
+            file += ".json"
+        
+        file = self._certs_dir() + file
+        
+        with open(file, "w") as f:
+            json.dump(cert_dict, f, indent=2, default=str)
+        
+        return result
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
-                         construction=None, certificate=False, exact=False, denom=1024):
+                         construction=None, file=None, exact=False, denom=1024):
         r"""
         Try to maximize or minimize the value of `target_element`
         
@@ -1249,7 +1310,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             flags and the relations between them up to this
             size.
         - ``maximize`` -- boolean (default: `True`); 
-        - ``certificate`` -- boolean (default: `False`);
+        - ``file`` -- file to save the certificate 
+            (default: `None`); Use None to not create 
+            certificate
         - ``positives`` -- list of flag algebra elements, 
             optimizer will assume those are positive, can
             have different types
@@ -1335,9 +1398,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             
             # Format the result and return it if floating point values are fine
             if (not exact):
-                if not certificate:
+                if file==None:
                     return initial_sol['primal'] * mult
-                return self._format_optimizer_output(table_constructor, mult=mult, sdp_output=initial_sol)
+                return self._format_optimizer_output(table_constructor, mult=mult, sdp_output=initial_sol, file=file)
             
             # Guess the construction in this case
             if construction==None:
@@ -1359,9 +1422,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             if construction==[]:
                 rounding_output = self._round_sdp_solution_no_phi(initial_sol, sdp_data, table_constructor, \
                                                                  constraints_data, denom=denom)
-                if not certificate:
+                if file==None:
                     return rounding_output[0] * mult
-                return self._format_optimizer_output(table_constructor, mult=mult, rounding_output=rounding_output)
+                return self._format_optimizer_output(table_constructor, mult=mult, rounding_output=rounding_output, file=file)
         
         
         #
@@ -1394,9 +1457,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         # Quickly deal with the case when no rounding is needed
         if (not exact):
-            if not certificate:
+            if file==None:
                 return final_sol['primal'] * mult
-            return self._format_optimizer_output(table_constructor, mult=mult, sdp_output=final_sol)
+            return self._format_optimizer_output(table_constructor, mult=mult, sdp_output=final_sol, file=file)
         
         
         print("Starting the rounding of the result")
@@ -1409,9 +1472,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         
         print("Final rounded bound is {}".format(rounding_output[0]*mult))
         
-        if not certificate:
+        if file==None:
             return rounding_output[0] * mult
-        return self._format_optimizer_output(table_constructor, mult=mult, rounding_output=rounding_output)
+        return self._format_optimizer_output(table_constructor, mult=mult, rounding_output=rounding_output, file=file)
     
     
     optimize = optimize_problem
