@@ -814,6 +814,8 @@ class RootSystem(UniqueRepresentation, SageObject):
         The dual Coxeter number is equal to 1 plus the sum of the coefficients
         of simple roots in the highest short root of the dual root system.
 
+        .. SEEALSO:: :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.dual_coxeter_number`
+
         EXAMPLES::
 
             sage: rt = RootSystem(['C', 5])
@@ -827,8 +829,6 @@ class RootSystem(UniqueRepresentation, SageObject):
             Dual of root system of type ['C', 5]
             sage: rt.dual.coxeter_number()
             10
-
-        .. SEEALSO:: :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.dual_coxeter_number`
         """
         # Check if RootSystem is finite and irreducible
         if not (self.is_finite() and self.is_irreducible()):
