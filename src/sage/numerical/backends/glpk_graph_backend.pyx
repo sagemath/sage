@@ -484,11 +484,11 @@ cdef class GLPKGraphBackend():
         cdef c_v_data * vdata = <c_v_data *> vert.data
 
         return {
-            "rhs" : vdata.rhs,
-            "pi"  : vdata.pi,
-            "cut" : vdata.cut,
-            "es"  : vdata.es,
-            "ls"  : vdata.ls
+            "rhs": vdata.rhs,
+            "pi": vdata.pi,
+            "cut": vdata.cut,
+            "es": vdata.es,
+            "ls": vdata.ls
             }
 
     cpdef dict get_vertices(self, verts):

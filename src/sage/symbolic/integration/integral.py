@@ -71,12 +71,13 @@ class IndefiniteIntegral(BuiltinFunction):
             sage: (f*f).integrate(x, algorithm='mathematica_free') # optional -- internet
             -b*log(e^(a/b) + e^(x/b)) + x + b/(e^(-(a - x)/b) + 1)
 
-        Check for :issue:`25119`::
+        After :issue:`25119` we can integrate the following function,
+        although giac and sympy give different-looking answers::
 
             sage: result = integrate(sqrt(x^2)/x,x)
             ...
-            sage: result
-            x*sgn(x)
+            sage: result in [x*sgn(x), sqrt(x^2)]
+            True
         """
         # The automatic evaluation routine will try these integrators
         # in the given order. This is an attribute of the class instead of

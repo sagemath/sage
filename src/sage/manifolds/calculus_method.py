@@ -172,7 +172,7 @@ class CalculusMethod(SageObject):
     """
     _default = 'SR'  # default calculus method
     _methods = ('SR', 'sympy')  # implemented methods
-    _tranf = {'SR':  _Sympy_to_SR, 'sympy': _SR_to_Sympy}  # translators
+    _tranf = {'SR': _Sympy_to_SR, 'sympy': _SR_to_Sympy}  # translators
 
     def __init__(self, current=None, base_field_type='real'):
         r"""

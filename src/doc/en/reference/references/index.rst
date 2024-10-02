@@ -1443,6 +1443,11 @@ REFERENCES:
              for closed Riemannian manifolds*, Ann. of Math. (2) 45 (1944),
              747–752.
 
+.. [CHNP2020] Kieran Clancy, Michael Haythorpe, Alex Newcombe and Ed Pegg Jr,
+              *There Are No Cubic Graphs on 26 Vertices with Crossing Number 10
+              or 11*, Graphs and Combinatorics 36, pages: 1713 -- 1721, (2020),
+              :doi:`10.1007/s00373-020-02204-6`.
+
 .. [CP2023] \M. Cati and D.V. Pasechnik.
             *Implementing Hadamard Matrices in SageMath*.
             Preprint, :arxiv:`2306.16812`, (2023).
@@ -1700,6 +1705,10 @@ REFERENCES:
             bi-matrix
             games*. http://vknight.org/unpeudemath/code/2015/06/25/on_testing_degeneracy_of_games/ (2015)
 
+.. [CKWL2019] Marcelo H. de Carvalho, Nishad Kothari, Xiumei Wang and Yixun
+              Linc. *Birkhoff-von Neumann graphs that are PM-compact*. 2019.
+              :doi:`10.48550/arXiv.1807.07339`.
+
 .. [CL1996] Chartrand, G. and Lesniak, L.: *Graphs and Digraphs*.
             Chapman and Hall/CRC, 1996.
 
@@ -1716,11 +1725,19 @@ REFERENCES:
             Yokonuma-Hecke algebras and the HOMFLYPT
             polynomial*. (2015) :arxiv:`1204.1871v4`.
 
+.. [CL2023] Xavier Caruso and Antoine Leudière.
+            *Algorithms for computing norms and characteristic polynomials on general Drinfeld modules*, (2023) :arxiv:`2307.02879`.
+
 .. [Cle1872] Alfred Clebsch, *Theorie der binären algebraischen Formen*,
              Teubner, 1872.
 
 .. [CLG1997] Frank Celler and C. R. Leedham-Green,
              *Calculating the Order of an Invertible Matrix*, 1997
+
+.. [CLM2006] Marcelo H. de Carvalho, Cláudio L. Lucchesi and U.S.R. Murty,
+             *How to build a brick*, Discrete Mathematics, Volume 306,
+             Issues 19--20, Pages 2383--2410,ISSN 0012--365X, (2006),
+             :doi:`10.1016/j.disc.2005.12.032`.
 
 .. [CLRS2001] Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest
               and Clifford Stein, *Section 22.4: Topological sort*,
@@ -2618,6 +2635,11 @@ REFERENCES:
             Wehler K3 Surfaces over finite fields*. New Zealand Journal
             of Mathematics 45 (2015), 19–31.
 
+.. [FiLi2001] Ilse Fischer and Charles H.C. Little, *A Characterisation of
+              Pfaffian Near Bipartite Graphs*, Journal of Combinatorial Theory,
+              Series B, vol. 82, issue 2, (2001), pages: 175 -- 222, ISSN:
+              0095 -- 8956, :doi:`10.1006/jctb.2000.2025`.
+
 .. [Fil2017] Ivana Filipan, *An Invitation to Combinatorial Tropical Geometry*.
              Conference: 1st Croatian Combinatorial Days. 2017.
              :doi:`10.5592/CO/CCD.2016.05`.
@@ -2813,6 +2835,10 @@ REFERENCES:
 
 .. [Gek1991] \E.-U. Gekeler. On finite Drinfeld modules. Journal of
              algebra, 1(141):187–203, 1991.
+
+.. [Gek2008] \E.-U. Gekeler. Frobenius Distributions of Drinfeld Modules over
+             Finite Fields. Transactions of the American Mathematical Society,
+             Volume 360 (2008), no. 4.
 
 .. [Gek2017] \E.-U. Gekeler. On Drinfeld modular forms of higher rank.
              Journal de théorie des nombres de Bordeaux,
@@ -3936,6 +3962,10 @@ REFERENCES:
             47:95-104, 1997.
             :doi:`10.1023/A:1022444205860`
 
+.. [KM2015] Nishad Kothari and U.S.R. Murty. *K4-free and C6¯-free Planar
+            Matching Covered Graphs.* Journal of Graph Theory. 82. (2015)
+            :doi:`10.1002/jgt.21882`.
+
 .. [KMAUTOM2000] Masayuki Kanda, Shiho Moriai, Kazumaro Aoki, Hiroki Ueda,
                  Youichi Takashima, Kazuo Ohta, and Tsutomu Matsumoto,
                  *E2 - a new 128-bit block cipher*; in IEICE Transactions on
@@ -4477,6 +4507,11 @@ REFERENCES:
              IEEE Trans. Inf. Th. 25(1979), 1-7.
              :doi:`10.1109/TIT.1979.1055985`.
 
+.. [Lov1983] László Lovász,
+             *Ear-decompositions of matching-covered graphs*,
+             Combinatorica 3, 105--117 (1983)
+             :doi:`10.1007/BF02579346`.
+
 .. [LP2007] \G. Leander and A. Poschmann,
             *On the Classification of 4 Bit S-boxes*; in WAIFI, (2007), pp. 159-176.
 
@@ -4630,6 +4665,12 @@ REFERENCES:
 .. [Lyo2003] \R. Lyons, *Determinantal probability
              measures*. Publications Mathématiques de l'Institut des
              Hautes Études Scientifiques 98(1)  (2003), pp. 167-212.
+
+.. [LZ2001] Dingjun Lou and Ning Zhong. *A highly efficient algorithm to
+            determine bicritical graphs.* In: Wang, J. (eds) Computing and
+            Combinatorics. Lecture Notes in Computer Science, vol 2108,
+            pages 349--356. Springer, Berlin, Heidelberg, 2001,
+            :doi:`10.1007/3-540-44679-6_38`.
 
 .. [LZ2004] S. Lando and A. Zvonkine, "Graphs on surfaces and their
             applications", Springer-Verlag, 2004.
@@ -5157,6 +5198,10 @@ REFERENCES:
             :doi:`10.1007/s00453-006-1225-y`,
             http://www.cs.uoi.gr/~stavros/C-Papers/C-2004-SODA.pdf
 
+.. [NT2007] Serguei Norine and Robin Thomas. *Minimally Non-Pfaffian Graphs*.
+            Combinatorica, vol. 27, no. 5, pages: 587 -- 600, Springer. 2007.
+            :doi:`10.1016/j.jctb.2007.12.005`.
+            
 .. [Nur2004] K. Nurmela. *Upper bounds for covering arrays by tabu search*.
              Discrete Applied Math., 138 (2004), 143-152.
 
@@ -5667,6 +5712,11 @@ REFERENCES:
 
 .. [RS2012] G. Rudolph and M. Schmidt, "Differential Geometry and Mathematical Physics.
             Part I. Manifolds, Lie Groups and Hamiltonian Systems", Springer, 2012.
+
+.. [RST2019] Neil Robertson, Paul Seymour and Robin Thomas, *Excluded minors in
+             cubic graphs*, Journal of Combinatorial Theory, Series B, vol. 138,
+             (2019), pages: 219 -- 285, ISSN: 0095 -- 8956,
+             :doi:`10.1016/j.jctb.2019.02.002`.
 
 .. [RSW2011] Victor Reiner, Franco Saliola, Volkmar Welker.
              *Spectra of Symmetrized Shuffling Operators*.
@@ -6465,6 +6515,10 @@ REFERENCES:
 
 .. [TTWL2009] Trebst, Troyer, Wang and Ludwig, A short introduction to
               Fibonacci anyon models, :arxiv:`0902.3275`.
+
+.. [Tut1947] W.T. Tutte. *The factorization of linear graphs.* Journal of the
+             London Mathematical Society, vol. s1-22, issue 2, pages 107--111,
+             April 1947. :doi:`10.1112/jlms/s1-22.2.107`.
 
 .. [Tur1974] \R. J. Turyn *Hadamard matrices, Baumert-Hall units,
              four-symbol sequences, pulse compression, and surface wave encodings*.

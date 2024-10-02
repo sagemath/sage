@@ -348,4 +348,4 @@ class OrthotriangBasisFunctor(SymmetricFunctionsFunctor):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang',  SymmetricFunctionAlgebra_orthotriang.Element)
+register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang', SymmetricFunctionAlgebra_orthotriang.Element)
