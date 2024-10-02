@@ -160,8 +160,9 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
-        sage: import igraph                                                      # optional - python_igraph
-        sage: G = Graph(igraph.Graph([(0, 1), (0, 3), (1, 2), (2, 3)]))          # optional - python_igraph
+        sage: # optional - python_igraph
+        sage: import igraph
+        sage: G = Graph(igraph.Graph([(0, 1), (0, 3), (1, 2), (2, 3)]))
         sage: H = MatchingCoveredGraph(G)
         sage: H
         Matching covered graph on 4 vertices
@@ -353,8 +354,9 @@ class MatchingCoveredGraph(Graph):
         Traceback (most recent call last):
         ...
         ValueError: input graph is not matching covered
-        sage: import igraph                                                      # optional - python_igraph
-        sage: G = Graph(igraph.Graph([(0, 1), (0, 2), (0, 3), (1, 2), (2, 3)]))  # optional - python_igraph
+        sage: # optional - python_igraph
+        sage: import igraph
+        sage: G = Graph(igraph.Graph([(0, 1), (0, 2), (0, 3), (1, 2), (2, 3)]))
         sage: H = MatchingCoveredGraph(G)
         Traceback (most recent call last):
         ...
