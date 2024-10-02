@@ -802,11 +802,10 @@ class RootSystem(UniqueRepresentation, SageObject):
             10
         """
         # Check if RootSystem is finite and irreducible
-        if self.is_finite() and self.is_irreducible():
-            # Hand over to CartanType method
-            return self._cartan_type.coxeter_number()
-        else:
-            raise ValueError("Coxeter number is defined only for finite and irreducible root systems.")
+        if not (self.is_finite() and self.is_irreducible()):
+            raise ValueError("the Coxeter number is defined only for finite and irreducible root systems")
+        # Hand over to CartanType method
+        return self._cartan_type.coxeter_number()
 
     def dual_coxeter_number(self):
         """
