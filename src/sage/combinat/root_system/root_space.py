@@ -279,7 +279,7 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             cartan_matrix = self.parent().dynkin_diagram()
             return sum( (sum( (lambdacheck[i]*s for i,s in cartan_matrix.column(j)), zero) * c for j,c in self), zero)
 
-        if (lambdacheck in self.parent().root_system.ambient_space()):
+        if lambdacheck in self.parent().root_system.ambient_space():
             # lambdacheck lives in the ambient space of the root space, so we take the usual dot product in the ambient space
             return self.to_ambient().dot_product(lambdacheck)
 
