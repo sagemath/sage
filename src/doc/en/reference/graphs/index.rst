@@ -14,6 +14,7 @@ Graph objects and methods
    sage/graphs/graph
    sage/graphs/digraph
    sage/graphs/bipartite_graph
+   sage/graphs/matching_covered_graph
    sage/graphs/views
 
 Constructors and databases
@@ -85,7 +86,6 @@ Libraries of algorithms
    sage/graphs/pq_trees
    sage/graphs/trees
    sage/graphs/matching
-   sage/graphs/matching_covered_graph
    sage/graphs/matchpoly
    sage/graphs/genus
    sage/graphs/lovasz_theta
