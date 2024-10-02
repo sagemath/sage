@@ -292,7 +292,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return len(m)
 
-    ## Multiplication
+    # Multiplication
 
     def product_on_basis(self, a, b):
         r"""
@@ -359,7 +359,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``S`` -- a frozenset which is a subset of the groundset of `M`
+        - ``S`` -- frozenset which is a subset of the groundset of `M`
 
         EXAMPLES::
 
@@ -613,7 +613,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
         Finite family {0: B[0], 1: B[1]}
         sage: [OTG.lift(b) for b in OTG.basis()]
         [OT{}, OT{0} + OT{1} + OT{2} + OT{3} + OT{4} + OT{5}]
-
     """
     def __init__(self, R, M, G, action_on_groundset=None, *args, **kwargs):
         r"""
@@ -630,7 +629,6 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             sage: import __main__; __main__.on_groundset = on_groundset
             sage: OTG = M.orlik_terao_algebra(QQ, invariant = (G,on_groundset))
             sage: TestSuite(OTG).run()
-
         """
         ordering = kwargs.pop('ordering', None)
         OT = OrlikTeraoAlgebra(R, M, ordering)

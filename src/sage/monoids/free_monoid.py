@@ -73,7 +73,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
     Return a free monoid on `n` generators or with the generators
     indexed by a set `I`.
 
-    We construct free monoids by specifing either:
+    We construct free monoids by specifying either:
 
     - the number of generators and/or the names of the generators
     - the indexing set for the generators
@@ -85,12 +85,10 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
     - ``names`` -- names of generators
 
-    - ``commutative`` -- (default: ``False``) whether the free
+    - ``commutative`` -- boolean (default: ``False``); whether the free
       monoid is commutative or not
 
-    OUTPUT:
-
-    A free monoid.
+    OUTPUT: a free monoid
 
     EXAMPLES::
 

@@ -24,8 +24,10 @@ from sage.libs.pari.all import pari_gen
 
 import operator
 
+
 def make_element(parent, args):
     return parent(*args)
+
 
 cdef inline Polynomial_template element_shift(self, int n):
      if not isinstance(self, Polynomial_template):
@@ -75,7 +77,7 @@ cdef class Polynomial_template(Polynomial):
     We illustrate the generic glueing using univariate polynomials over
     `\mathop{\mathrm{GF}}(2)`.
 
-    .. note::
+    .. NOTE::
 
         Implementations using this template MUST implement coercion from base
         ring elements and :meth:`get_unsafe`. See
@@ -340,7 +342,7 @@ cdef class Polynomial_template(Polynomial):
     @coerce_binop
     def gcd(self, Polynomial_template other):
         """
-        Return the greatest common divisor of self and other.
+        Return the greatest common divisor of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -392,7 +394,7 @@ cdef class Polynomial_template(Polynomial):
     @coerce_binop
     def xgcd(self, Polynomial_template other):
         """
-        Computes extended gcd of self and other.
+        Compute extended gcd of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -585,7 +587,6 @@ cdef class Polynomial_template(Polynomial):
         if result == -1:
             return -2
         return result
-
 
     def __pow__(self, ee, modulus):
         """
@@ -780,7 +781,7 @@ cdef class Polynomial_template(Polynomial):
 
     cpdef Polynomial truncate(self, long n):
         r"""
-        Returns this polynomial mod `x^n`.
+        Return this polynomial mod `x^n`.
 
         EXAMPLES::
 
@@ -816,7 +817,7 @@ cdef class Polynomial_template(Polynomial):
 
     def _singular_(self, singular=None):
         r"""
-        Return Singular representation of this polynomial
+        Return Singular representation of this polynomial.
 
         INPUT:
 

@@ -48,16 +48,16 @@ def bCheck(c, v, p, b):
 
     INPUT:
 
-    - ``c`` -- a list of polynomials in `b`. See v for their use
+    - ``c`` -- list of polynomials in `b`. See v for their use
 
-    - ``v`` -- a list of rational numbers, where we are considering the inequalities
+    - ``v`` -- list of rational numbers, where we are considering the inequalities
       `ord_p(c[i]) > v[i]`
 
     - ``p`` -- a prime
 
     - ``b`` -- local variable
 
-    OUTPUT: ``bval`` -- Integer, lower bound in Theorem 3.3.5
+    OUTPUT: ``bval`` -- integer; lower bound in Theorem 3.3.5
 
     EXAMPLES::
 
@@ -88,9 +88,9 @@ def scale(c, v, p):
 
     INPUT:
 
-    - ``c`` -- an integer polynomial
+    - ``c`` -- integer polynomial
 
-    - ``v`` -- an integer; the bound on the exponent from :func:`blift`
+    - ``v`` -- integer; the bound on the exponent from :func:`blift`
 
     - ``p`` -- a prime
 
@@ -129,9 +129,9 @@ def blift(LF, Li, p, k, S=None, all_orbits=False):
 
     INPUT:
 
-    - ``LF`` -- a list of integer polynomials in one variable (the normalized coefficients)
+    - ``LF`` -- list of integer polynomials in one variable (the normalized coefficients)
 
-    - ``Li`` -- an integer, the bound on coefficients
+    - ``Li`` -- integer; the bound on coefficients
 
     - ``p`` -- a prime
 
@@ -220,20 +220,18 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
 
     - ``vp`` -- dynamical system on the projective line
 
-    - ``D`` -- a list of primes, in case one only wants to check minimality
+    - ``D`` -- list of primes, in case one only wants to check minimality
       at those specific primes
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the `PGL_2` transformation to conjugate
       this map to the calculated models
 
-    - ``quick`` -- a boolean value. If true the algorithm terminates once
+    - ``quick`` -- boolean value. If true the algorithm terminates once
       algorithm determines F/G is not minimal, otherwise algorithm only
       terminates once a minimal model has been found
 
-    OUTPUT:
-
-    - ``newvp`` -- dynamical system on the projective line
+    OUTPUT: ``newvp`` -- dynamical system on the projective line
 
     - ``conj`` -- linear fractional transformation which conjugates ``vp`` to ``newvp``
 
@@ -341,7 +339,7 @@ def Min(Fun, p, ubRes, conj, all_orbits=False):
 
     - ``p`` -- a prime
 
-    - ``ubRes`` -- integer, the upper bound needed for Th. 3.3.3 in [Molnar]_
+    - ``ubRes`` -- integer; the upper bound needed for Th. 3.3.3 in [Molnar]_
 
     - ``conj`` -- a 2x2 matrix keeping track of the conjugation
 
@@ -491,11 +489,11 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
 
     - ``vp`` -- a minimal model of a dynamical system on the projective line
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the ``PGL_2`` transformation to conjugate ``vp``
       to the calculated minimal model
 
-    - ``D`` -- a list of primes, in case one only wants to check minimality
+    - ``D`` -- list of primes, in case one only wants to check minimality
       at those specific primes
 
     OUTPUT:
@@ -637,11 +635,11 @@ def HS_minimal(f, return_transformation=False, D=None):
 
     - ``f`` -- dynamical system on the projective line with minimal resultant
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the `PGL_2` transformation to conjugate
       this map to the calculated models
 
-    - ``D`` -- a list of primes, in case one only wants to check minimality
+    - ``D`` -- list of primes, in case one only wants to check minimality
       at those specific primes
 
     OUTPUT:
@@ -733,7 +731,7 @@ def HS_all_minimal_p(p, f, m=None, return_transformation=False):
 
     - ``m`` -- (optional) `2 \times 2` matrix associated with ``f``
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the ``PGL_2`` transformation to conjugate ``vp``
       to the calculated minimal model
 
@@ -828,11 +826,11 @@ def HS_all_minimal(f, return_transformation=False, D=None):
 
     - ``f`` -- dynamical system on the projective line with minimal resultant
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the ``PGL_2`` transformation to conjugate ``vp``
       to the calculated minimal model
 
-    - ``D`` -- a list of primes, in case one only wants to check minimality
+    - ``D`` -- list of primes, in case one only wants to check minimality
       at those specific primes
 
     OUTPUT:
@@ -914,7 +912,7 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
 
     This defines the maximum possible distance from `j` to the `z_0` covariant
     of the associated binary form `F` in the hyperbolic 3-space
-    for which the map `f`` could have smaller coefficients.
+    for which the map `f` could have smaller coefficients.
 
     INPUT:
 
@@ -984,7 +982,7 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
 
 def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorithm='HS', check_minimal=True):
     r"""
-    Determine the poly with smallest coefficients in `SL(2,\ZZ)` orbit of ``F``
+    Determine the poly with smallest coefficients in `SL(2,\ZZ)` orbit of ``F``.
 
     Smallest is in the sense of global height.
     The method is the algorithm in Hutz-Stoll [HS2018]_.
@@ -1097,9 +1095,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         red_g = f.conjugate(M*MG)
         if G != pts_poly:
             R2 = get_bound_dynamical(G, red_g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
-            if R2 < R:
-                # use the better bound
-                R = R2
+            R = min(R2, R)
         red_g.normalize_coordinates()
         if red_g.global_height(prec=prec) == 0:
             return [red_g, M*MG]
@@ -1136,8 +1132,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
                 if new_size == 1:  # early exit
                     return [current_min[1], current_min[4]]
                 new_R = get_bound_dynamical(G, g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
-                if new_R < R:
-                    R = new_R
+                R = min(new_R, R)
 
             # add new points to check
             if label != 1 and min((rep+1).norm(), (rep-1).norm()) >= 1: # don't undo S

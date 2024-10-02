@@ -164,8 +164,8 @@ class ProjectionFuncStereographic:
 
         INPUT:
 
-        - ``projection_point`` -- a list of coordinates in the
-          appropriate dimension, which is the point projected from.
+        - ``projection_point`` -- list of coordinates in the
+          appropriate dimension, which is the point projected from
 
         EXAMPLES::
 
@@ -185,7 +185,7 @@ class ProjectionFuncStereographic:
         pproj = vector(RDF, self.projection_point)
         self.psize = norm(pproj)
         if (self.psize).is_zero():
-            raise ValueError("projection direction must be a non-zero vector.")
+            raise ValueError("projection direction must be a nonzero vector.")
         v = vector(RDF, [0.0] * (self.dim - 1) + [-self.psize]) - pproj
         polediff = matrix(RDF, v).transpose()
         denom = RDF((polediff.transpose() * polediff)[0][0])
@@ -203,7 +203,7 @@ class ProjectionFuncStereographic:
 
         INPUT:
 
-        - ``x`` -- a vector or anything convertible to a vector.
+        - ``x`` -- a vector or anything convertible to a vector
 
         OUTPUT:
 
@@ -253,7 +253,7 @@ class ProjectionFuncSchlegel:
     """
     def __init__(self, facet, projection_point):
         """
-        Initializes the projection.
+        Initialize the projection.
 
         EXAMPLES::
 
@@ -297,7 +297,7 @@ class ProjectionFuncSchlegel:
         """
         Apply the projection to a vector.
 
-        - ``x`` -- a vector or anything convertible to a vector.
+        - ``x`` -- a vector or anything convertible to a vector
 
         EXAMPLES::
 
@@ -453,8 +453,8 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``projection_point`` -- The projection point. This must be
-          distinct from the polyhedron's vertices. Default is `(1,0,\dots,0)`
+        - ``projection_point`` -- the projection point. This must be
+          distinct from the polyhedron's vertices. Default is `(1,0,\dots,0)`.
 
         EXAMPLES::
 
@@ -481,7 +481,7 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``facet`` -- a PolyhedronFace. The facet into which the Schlegel
+        - ``facet`` -- a PolyhedronFace; the facet into which the Schlegel
           diagram is created. The default is the first facet.
 
         - ``position`` -- a positive number. Determines a relative distance
@@ -769,7 +769,7 @@ class Projection(SageObject):
             [[3, 0, 1, 2]]
         """
         assert polyhedron.ambient_dim() == 2, "Requires polyhedron in 2d"
-        vertices = [v for v in polyhedron.Vrep_generator()]
+        vertices = list(polyhedron.Vrep_generator())
         vertices = cyclic_sort_vertices_2d(vertices)
         coords = []
 
@@ -802,7 +802,7 @@ class Projection(SageObject):
                                      coords[i] + shift, coords[i - 1] + shift])
 
         if polyhedron.n_lines() == 2:
-            [line1, line2] = [l for l in polyhedron.lines()]
+            line1, line2 = polyhedron.lines()
             assert len(coords) == 1, "Can have only a single vertex!"
             v = coords[0]
             l1 = line1()
@@ -848,7 +848,7 @@ class Projection(SageObject):
         faces = []
         face_inequalities = []
         for facet_equation in defining_equation():
-            vertices = [v for v in facet_equation.incident()]
+            vertices = list(facet_equation.incident())
             face_inequalities.append(facet_equation)
             vertices = cyclic_sort_vertices_2d(vertices)
             if len(vertices) >= 3:
@@ -894,7 +894,7 @@ class Projection(SageObject):
                                  coords[1] + shift, coords[0] + shift])
 
         if polyhedron.n_lines() == 2:
-            [line1, line2] = [l for l in polyhedron.line_generator()]
+            line1, line2 = polyhedron.line_generator()
             l1 = line1()
             l2 = line2()
             for v in polyhedron.vertex_generator():
@@ -909,11 +909,9 @@ class Projection(SageObject):
         INPUT:
 
         - ``**kwds`` -- options passed through to
-          :func:`~sage.plot.point.point2d`.
+          :func:`~sage.plot.point.point2d`
 
-        OUTPUT:
-
-        A 2-d graphics object.
+        OUTPUT: a 2-d graphics object
 
         EXAMPLES::
 
@@ -932,11 +930,9 @@ class Projection(SageObject):
         INPUT:
 
         - ``**kwds`` -- options passed through to
-          :func:`~sage.plot.line.line2d`.
+          :func:`~sage.plot.line.line2d`
 
-        OUTPUT:
-
-        A 2-d graphics object.
+        OUTPUT: a 2-d graphics object
 
         EXAMPLES::
 
@@ -1071,9 +1067,7 @@ class Projection(SageObject):
         See
         :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
 
-        OUTPUT:
-
-        A 2-d graphics object.
+        OUTPUT: a 2-d graphics object
 
         EXAMPLES::
 
@@ -1103,9 +1097,7 @@ class Projection(SageObject):
         See
         :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
 
-        OUTPUT:
-
-        A 2-d graphics object.
+        OUTPUT: a 2-d graphics object
 
         EXAMPLES::
 
@@ -1251,28 +1243,26 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``view`` -- list (default: [0,0,1]) representing the rotation axis (see note below).
-        - ``angle`` -- integer (default: 0) angle of rotation in degree from 0 to 360 (see note
-          below).
-        - ``scale`` -- integer (default: 1) specifying the scaling of the tikz picture.
-        - ``edge_color`` -- string (default: 'blue!95!black') representing colors which tikz
-          recognize.
-        - ``facet_color`` -- string (default: 'blue!95!black') representing colors which tikz
-          recognize.
-        - ``vertex_color`` -- string (default: 'green') representing colors which tikz
-          recognize.
+        - ``view`` -- list (default: [0,0,1]) representing the rotation axis (see note below)
+        - ``angle`` -- integer (default: 0); angle of rotation in degree from 0 to 360 (see note
+          below)
+        - ``scale`` -- integer (default: 1); the scaling of the tikz picture
+        - ``edge_color`` -- string (default: ``'blue!95!black'``); representing colors which tikz
+          recognizes
+        - ``facet_color`` -- string (default: ``'blue!95!black'``); representing colors which tikz
+          recognizes
+        - ``vertex_color`` -- string (default: ``'green'``); representing colors which tikz
+          recognizes
         - ``opacity`` -- real number (default: 0.8) between 0 and 1 giving the opacity of
-          the front facets.
-        - ``axis`` -- Boolean (default: ``False``) draw the axes at the origin or not.
-        - ``output_type`` -- string (default: ``None``), valid values
+          the front facets
+        - ``axis`` -- boolean (default: ``False``); draw the axes at the origin or not
+        - ``output_type`` -- string (default: ``None``); valid values
           are ``None`` (deprecated), ``'LatexExpr'`` and ``'TikzPicture'``,
           whether to return a :class:`LatexExpr` object (which inherits from Python
           :class:`str`) or a :class:`TikzPicture` object from module
           :mod:`sage.misc.latex_standalone`
 
-        OUTPUT:
-
-        :class:`LatexExpr` object or :class:`TikzPicture` object
+        OUTPUT: :class:`LatexExpr` object or :class:`TikzPicture` object
 
         .. NOTE::
 
@@ -1476,16 +1466,16 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``scale`` -- integer specifying the scaling of the tikz picture.
+        - ``scale`` -- integer specifying the scaling of the tikz picture
         - ``edge_color`` -- string representing colors which tikz
-          recognize.
+          recognizes
         - ``facet_color`` -- string representing colors which tikz
-          recognize.
+          recognizes
         - ``vertex_color`` -- string representing colors which tikz
-          recognize.
+          recognizes
         - ``opacity`` -- real number between 0 and 1 giving the opacity of
-          the front facets.
-        - ``axis`` -- Boolean (default: ``False``) draw the axes at the origin or not.
+          the front facets
+        - ``axis`` -- boolean (default: ``False``); draw the axes at the origin or not
 
         OUTPUT:
 
@@ -1606,22 +1596,20 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``view`` -- list (default: [0,0,1]) representing the rotation axis.
-        - ``angle`` -- integer angle of rotation in degree from 0 to 360.
-        - ``scale`` -- integer specifying the scaling of the tikz picture.
+        - ``view`` -- list (default: [0,0,1]) representing the rotation axis
+        - ``angle`` -- integer angle of rotation in degree from 0 to 360
+        - ``scale`` -- integer specifying the scaling of the tikz picture
         - ``edge_color`` -- string representing colors which tikz
-          recognize.
+          recognizes
         - ``facet_color`` -- string representing colors which tikz
-          recognize.
+          recognizes
         - ``vertex_color`` -- string representing colors which tikz
-          recognize.
+          recognizes
         - ``opacity`` -- real number between 0 and 1 giving the opacity of
-          the front facets.
-        - ``axis`` -- Boolean draw the axes at the origin or not.
+          the front facets
+        - ``axis`` -- boolean draw the axes at the origin or not
 
-        OUTPUT:
-
-        :class:`LatexExpr` -- containing the TikZ picture.
+        OUTPUT: :class:`LatexExpr` -- containing the TikZ picture
 
         EXAMPLES::
 
@@ -1760,22 +1748,20 @@ class Projection(SageObject):
 
         INPUT:
 
-        - ``view`` -- list (default: [0,0,1]) representing the rotation axis.
-        - ``angle`` -- integer angle of rotation in degree from 0 to 360.
-        - ``scale`` -- integer specifying the scaling of the tikz picture.
+        - ``view`` -- list (default: [0,0,1]) representing the rotation axis
+        - ``angle`` -- integer angle of rotation in degree from 0 to 360
+        - ``scale`` -- integer specifying the scaling of the tikz picture
         - ``edge_color`` -- string representing colors which tikz
-          recognize.
+          recognizes
         - ``facet_color`` -- string representing colors which tikz
-          recognize.
+          recognizes
         - ``vertex_color`` -- string representing colors which tikz
-          recognize.
+          recognizes
         - ``opacity`` -- real number between 0 and 1 giving the opacity of
-          the front facets.
-        - ``axis`` -- Boolean draw the axes at the origin or not.
+          the front facets
+        - ``axis`` -- boolean draw the axes at the origin or not
 
-        OUTPUT:
-
-        :class:`LatexExpr` -- containing the TikZ picture.
+        OUTPUT: :class:`LatexExpr` -- containing the TikZ picture.
 
         EXAMPLES::
 

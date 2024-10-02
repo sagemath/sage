@@ -15,6 +15,11 @@ from sage.env import SAGE_DOC_SRC, SAGE_DOC
 from sage_docbuild.conf import release, exclude_patterns
 from sage_docbuild.conf import *
 
+
+for tag in feature_tags():
+    tags.add(tag)
+
+
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
 # builtin static files, so a file named "default.css" will overwrite the
@@ -42,9 +47,10 @@ if not title:
     title = name.capitalize()
 title = title.replace('`', '$')
 
-# We use the directory's name to add a small edit button.
+# We use the directory's name to add small view/edit buttons.
 html_theme_options.update({
-  'source_edit_link': os.path.join(source_repository, f'blob/develop/src/doc/en/reference/{name}', '{filename}'),
+  'source_view_link': os.path.join(source_repository, f'blob/develop/src/doc/en/reference/{name}', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, f'edit/develop/src/doc/en/reference/{name}', '{filename}'),
 })
 
 # General information about the project.

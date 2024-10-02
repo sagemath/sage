@@ -63,7 +63,7 @@ def cyclic_representative(L):
 
     INPUT:
 
-    - ``L`` -- A list or tuple.
+    - ``L`` -- list or tuple
 
     OUTPUT:
 
@@ -103,13 +103,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``parent`` -- A ``HeckeTriangleGroup``.
+        - ``parent`` -- a ``HeckeTriangleGroup``
 
-        - ``M`` -- A matrix which coerces into the matrix space
+        - ``M`` -- a matrix which coerces into the matrix space
           of ``parent``. For example with entries in a
           polynomial ring over ``ZZ`` with parameter ``lam``.
 
-        - ``check``  -- ``True`` (default) or ``False``. If ``True``
+        - ``check`` -- boolean (default: ``True``); if ``True``
           then a (possibly long) check is performed
           to see whether ``M`` really corresponds to a
           group element of ``parent``.
@@ -182,7 +182,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         of ``self`` as a product of the generators ``S`` and ``T``
         together with a sign correction ``sgn``.
 
-        If this decomposition is not possible a :class:`TypeError`
+        If this decomposition is not possible a :exc:`TypeError`
         is raised. In particular this function can be used to
         check the membership in ``parent`` of an arbitrary matrix
         over the base ring.
@@ -256,7 +256,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         of ``L`` are either the generator ``S`` or a non-trivial
         integer power of the generator ``T``. ``sgn`` is +- the identity.
 
-        If this decomposition is not possible a :class:`TypeError` is raised.
+        If this decomposition is not possible a :exc:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -337,7 +337,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         """
         return self.string_repr(self.parent().element_repr_method())
 
-    def string_repr(self, method="default"):
+    def string_repr(self, method='default'):
         r"""
         Return a string representation of ``self`` using the specified ``method``.
         This method is used to represent ``self``.
@@ -346,21 +346,23 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``method``  -- one of
+        - ``method`` -- one of
 
-          - ``default``: Use the usual representation method for matrix group elements.
+          - ``'default'`` -- use the usual representation method for matrix
+            group elements
 
-          - ``basic``: The representation is given as a word in ``S`` and powers of ``T``.
-            Note: If ``S, T`` are defined accordingly the output can
-            be used/evaluated directly to recover ``self``.
+          - ``'basic'`` -- the representation is given as a word in ``S`` and
+            powers of ``T``. Note: If ``S, T`` are defined accordingly the
+            output can be used/evaluated directly to recover ``self``.
 
-          - ``conj``: The conjugacy representative of the element is represented
-            as a word in powers of the basic blocks, together with
-            an unspecified conjugation matrix.
+          - ``'conj'`` -- the conjugacy representative of the element is
+            represented as a word in powers of the basic blocks, together with
+            an unspecified conjugation matrix
 
-          - ``block``: Same as ``conj`` but the conjugation matrix is specified as well.
-            Note: Assuming ``S, T, U, V`` are defined accordingly the output
-            can directly be used/evaluated to recover ``self``.
+          - ``'block'`` -- same as ``conj`` but the conjugation matrix is
+            specified as well. Note: Assuming ``S, T, U, V`` are defined
+            accordingly the output can directly be used/evaluated to recover
+            ``self``.
 
         Warning: For ``n=infinity`` the methods ``conj`` and ``block`` are not verified at all
         and are probably wrong!
@@ -375,10 +377,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: el4 = G.U()^4
             sage: el5 = (G.V(2)*G.T()).acton(-G.S())
 
-            sage: el4.string_repr(method="basic")
+            sage: el4.string_repr(method='basic')
             'S*T^(-1)'
 
-            sage: G.element_repr_method("default")
+            sage: G.element_repr_method('default')
             sage: el1
             [-1  0]
             [ 0 -1]
@@ -395,7 +397,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             [-7*lam - 4  9*lam + 6]
             [-4*lam - 5  7*lam + 4]
 
-            sage: G.element_repr_method("basic")
+            sage: G.element_repr_method('basic')
             sage: el1
             -1
             sage: el2
@@ -407,7 +409,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: el5
             T*S*T^2*S*T^(-2)*S*T^(-1)
 
-            sage: G.element_repr_method("conj")
+            sage: G.element_repr_method('conj')
             sage: el1
             [-1]
             sage: el2
@@ -419,7 +421,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: el5
             [-S]
 
-            sage: G.element_repr_method("block")
+            sage: G.element_repr_method('block')
             sage: el1
             -1
             sage: el2
@@ -431,14 +433,14 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: el5
             -(T*S*T^2) * (S) * (T*S*T^2)^(-1)
 
-            sage: G.element_repr_method("default")
+            sage: G.element_repr_method('default')
 
             sage: G = HeckeTriangleGroup(n=infinity)
             sage: el = G.S()*G.T(3)*G.S()*G.T(-2)
             sage: print(el.string_repr())
             [ -1   4]
             [  6 -25]
-            sage: print(el.string_repr(method="basic"))
+            sage: print(el.string_repr(method='basic'))
             S*T^3*S*T^(-2)
         """
         if method == "default":
@@ -472,7 +474,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
             (L, R, sgn) = self._block_decomposition_data()
 
-            repr_str = self.string_repr(method="conj")
+            repr_str = self.string_repr(method='conj')
             repr_str = repr_str[1:-1]
             if sgn < 0:
                 repr_str = repr_str[1:]
@@ -481,7 +483,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             if R.is_identity():
                 repr_str = "{}{}".format("-" if sgn < 0 else "", repr_str)
             else:
-                R_str = "({})".format(R.string_repr(method="basic"))
+                R_str = "({})".format(R.string_repr(method='basic'))
                 repr_str = "{}{} * ({}) * {}^(-1)".format("-" if sgn < 0 else "", R_str, repr_str, R_str)
 
             return repr_str
@@ -660,7 +662,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         decomposition is further described by the tuple ``L``,
         and the corresponding  conjugation matrix ``R``.
 
-        Together they describe the primitive part of self.
+        Together they describe the primitive part of ``self``.
         I.e. an element which is equal to ``self`` up
         to a sign after taking the appropriate power
         and which itself cannot be written as a non-trivial
@@ -680,7 +682,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         The number of such factors is called ``block length``
         (see :meth:`block_length`). Each block (and also
         their product) has a positive sign and
-        non-negative entries.
+        nonnegative entries.
 
         In the elliptic case the primitive representative
         is either ``S`` or ``U``.
@@ -878,7 +880,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         return (L, R)
 
-    def primitive_representative(self, method="block"):
+    def primitive_representative(self, method='block'):
         r"""
         Return a tuple ``(P, R)`` which gives the
         decomposition of the primitive part of ``self``,
@@ -887,7 +889,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         conjugation matrix ``R`` (the result depends on
         the method used).
 
-        Together they describe the primitive part of self.
+        Together they describe the primitive part of ``self``.
         I.e. an element which is equal to ``self`` up
         to a sign after taking the appropriate power.
 
@@ -901,20 +903,17 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``method`` -- ``block`` (default) or ``cf``. The method
-          used to determine ``P`` and ``R``. If
-          ``self`` is elliptic, this parameter is
-          ignored, and if ``self`` is +- the identity
-          then the ``block`` method is used.
+        - ``method`` -- ``'block'`` (default) or ``'cf'``. The method used to
+          determine ``P`` and ``R``. If ``self`` is elliptic, this parameter is
+          ignored, and if ``self`` is +- the identity then the ``block`` method
+          is used.
 
-          With ``block`` the decomposition described
-          in :meth:`_primitive_block_decomposition_data` is used.
+          With ``'block'`` the decomposition described in
+          :meth:`_primitive_block_decomposition_data` is used.
 
-          With ``cf`` a reduced representative from
-          the lambda-CF of ``self`` is used (see
-          :meth:`continued_fraction`). In that case
-          ``P`` corresponds to the period and ``R``
-          to the preperiod.
+          With ``'cf'`` a reduced representative from the lambda-CF of ``self``
+          is used (see :meth:`continued_fraction`). In that case ``P``
+          corresponds to the period and ``R`` to the preperiod.
 
         OUTPUT:
 
@@ -926,37 +925,37 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(n=7)
             sage: G.element_repr_method("basic")
-            sage: el = G.T().primitive_representative(method="cf")
+            sage: el = G.T().primitive_representative(method='cf')
             sage: el
             (S*T^(-1)*S*T^(-1)*S*T*S, S*T*S)
             sage: (el[0]).is_primitive()
             True
-            sage: el = G.V(2).acton(G.T(-3)).primitive_representative(method="cf")
+            sage: el = G.V(2).acton(G.T(-3)).primitive_representative(method='cf')
             sage: el
             (-T*S*T^(-1)*S*T^(-1), 1)
             sage: (el[0]).is_primitive()
             True
-            sage: el = (-G.V(2)).primitive_representative(method="cf")
+            sage: el = (-G.V(2)).primitive_representative(method='cf')
             sage: el
             (T^2*S, T*S)
             sage: (el[0]).is_primitive()
             True
-            sage: el = (-G.V(2)^3*G.V(6)^2*G.V(3)).primitive_representative(method="cf")
+            sage: el = (-G.V(2)^3*G.V(6)^2*G.V(3)).primitive_representative(method='cf')
             sage: el
             (-T^2*S*T^2*S*T*S*T^(-2)*S*T*S*T*S*T^2*S, T*S)
             sage: (el[0]).is_primitive()
             True
-            sage: el = (G.U()^4*G.S()*G.V(2)).acton(-G.V(2)^3*G.V(6)^2*G.V(3)).primitive_representative(method="cf")
+            sage: el = (G.U()^4*G.S()*G.V(2)).acton(-G.V(2)^3*G.V(6)^2*G.V(3)).primitive_representative(method='cf')
             sage: el
             (-T^2*S*T^2*S*T^2*S*T*S*T^(-2)*S*T*S*T*S, T*S*T*S*T*S*T^2*S)
             sage: (el[0]).is_primitive()
             True
-            sage: el = (G.V(1)^5*G.V(2)*G.V(3)^3).primitive_representative(method="cf")
+            sage: el = (G.V(1)^5*G.V(2)*G.V(3)^3).primitive_representative(method='cf')
             sage: el
             (T^2*S*T*S*T^2*S*T*S*T^2*S*T*S*T^7*S, T^6*S)
             sage: (el[0]).is_primitive()
             True
-            sage: el = (G.V(2)*G.V(3)).acton(G.U()^6).primitive_representative(method="cf")
+            sage: el = (G.V(2)*G.V(3)).acton(G.U()^6).primitive_representative(method='cf')
             sage: el
             (T*S, -T*S*T^2*S*T*S*T)
             sage: (el[0]).is_primitive()
@@ -1066,15 +1065,15 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             raise ValueError("if the element is not elliptic, then method must "
                              "be either be 'cf' or 'block'")
 
-    def primitive_part(self, method="cf"):
+    def primitive_part(self, method='cf'):
         r"""
         Return the primitive part of ``self``. I.e. a group element
-        ``A`` with non-negative trace such that
+        ``A`` with nonnegative trace such that
         ``self = sign * A^power``, where ``sign = self.sign()``
         is +- the identity (to correct the sign) and
         ``power = self.primitive_power()``.
 
-        The primitive part itself is choosen such that it cannot be
+        The primitive part itself is chosen such that it cannot be
         written as a non-trivial power of another element.
         It is a generator of the stabilizer of the corresponding
         (attracting) fixed point.
@@ -1087,16 +1086,14 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``method``  -- The method used to determine the primitive
+        - ``method`` -- the method used to determine the primitive
           part (see :meth:`primitive_representative`),
-          default: "cf". The parameter is ignored
+          default: ``'cf'``. The parameter is ignored
           for elliptic elements or +- the identity.
 
           The result should not depend on the method.
 
-        OUTPUT:
-
-        The primitive part as a group element of ``self``.
+        OUTPUT: the primitive part as a group element of ``self``
 
         EXAMPLES::
 
@@ -1128,25 +1125,25 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: el = (G.V(2)*G.V(3)).acton(G.U()^6)
             sage: el.primitive_part()
             (-T*S*T^2*S*T*S*T) * (U) * (-T*S*T^2*S*T*S*T)^(-1)
-            sage: el.primitive_part() == el.primitive_part(method="block")
+            sage: el.primitive_part() == el.primitive_part(method='block')
             True
 
             sage: G.T().primitive_part()
             (T^(-1)*S) * (V(6)) * (T^(-1)*S)^(-1)
-            sage: G.T().primitive_part(method="block")
+            sage: G.T().primitive_part(method='block')
             (T^(-1)) * (V(1)) * (T^(-1))^(-1)
-            sage: G.V(2).acton(G.T(-3)).primitive_part() == G.V(2).acton(G.T(-3)).primitive_part(method="block")
+            sage: G.V(2).acton(G.T(-3)).primitive_part() == G.V(2).acton(G.T(-3)).primitive_part(method='block')
             True
-            sage: (-G.V(2)).primitive_part() == (-G.V(2)).primitive_part(method="block")
+            sage: (-G.V(2)).primitive_part() == (-G.V(2)).primitive_part(method='block')
             True
             sage: el = -G.V(2)^3*G.V(6)^2*G.V(3)
-            sage: el.primitive_part() == el.primitive_part(method="block")
+            sage: el.primitive_part() == el.primitive_part(method='block')
             True
             sage: el = (G.U()^4*G.S()*G.V(2)).acton(-G.V(2)^3*G.V(6)^2*G.V(3))
-            sage: el.primitive_part() == el.primitive_part(method="block")
+            sage: el.primitive_part() == el.primitive_part(method='block')
             True
             sage: el=G.V(1)^5*G.V(2)*G.V(3)^3
-            sage: el.primitive_part() == el.primitive_part(method="block")
+            sage: el.primitive_part() == el.primitive_part(method='block')
             True
 
             sage: G.element_repr_method("default")
@@ -1167,15 +1164,15 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         If ``self`` is elliptic (or +- the identity) the result
         is never reduced (by definition). Instead a more canonical
         conjugation representative of ``self`` (resp. it's
-        primitive part) is choosen.
+        primitive part) is chosen.
 
         Warning: The case ``n=infinity`` is not verified at all
         and probably wrong!
 
         INPUT:
 
-        - ``primitive`` -- If ``True`` (default) then a primitive
-          representative for ``self`` is returned.
+        - ``primitive`` -- if ``True`` (default) then a primitive
+          representative for ``self`` is returned
 
         EXAMPLES::
 
@@ -1213,7 +1210,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             from warnings import warn
             warn("The case n=infinity here is not verified at all and probably wrong!")
 
-        (P, R) = self.primitive_representative(method="cf")
+        (P, R) = self.primitive_representative(method='cf')
 
         if primitive:
             return P
@@ -1270,7 +1267,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                 raise AssertionError("This shouldn't happen!")
 
     @cached_method
-    def primitive_power(self, method="cf"):
+    def primitive_power(self, method='cf'):
         r"""
         Return the primitive power of ``self``. I.e. an integer
         ``power`` such that ``self = sign * primitive_part^power``,
@@ -1286,16 +1283,16 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``method``  -- The method used to determine the primitive
+        - ``method`` -- the method used to determine the primitive
           power (see :meth:`primitive_representative`),
-          default: "cf". The parameter is ignored
+          default: ``'cf'``. The parameter is ignored
           for elliptic elements or +- the identity.
 
         OUTPUT:
 
         An integer. For +- the identity element ``0`` is returned,
         for parabolic and hyperbolic elements a positive integer.
-        And for elliptic elements a (non-zero) integer with minimal
+        And for elliptic elements a (nonzero) integer with minimal
         absolute value such that ``primitive_part^power`` still
         has a positive sign.
 
@@ -1316,7 +1313,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             2
             sage: (G.V(2)*G.V(3)).acton(G.U()^6).primitive_power()
             -1
-            sage: G.V(2).acton(G.T(-3)).primitive_power() == G.V(2).acton(G.T(-3)).primitive_power(method="block")
+            sage: G.V(2).acton(G.T(-3)).primitive_power() == G.V(2).acton(G.T(-3)).primitive_power(method='block')
             True
 
             sage: (-G.I()).primitive_power()
@@ -1379,7 +1376,8 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                     return j
                 elif two*j == G.n():
                     return j
-                # for the cases fom here on the sign has to be adjusted to the
+                # for the cases from here on the sign has to be adjusted
+                # to the
                 # sign of self (in self._block_decomposition_data())
                 elif two*j == -G.n():
                     return -j
@@ -1424,16 +1422,15 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``primitive``  -- If ``True`` then the conjugacy
-          representative of the primitive part is
-          used instead, default: ``False``.
+        - ``primitive`` -- boolean (default: ``False``); if ``True`` then the
+          conjugacy representative of the primitive part is used instead
 
         OUTPUT:
 
-        An integer. For hyperbolic elements a non-negative integer.
+        An integer. For hyperbolic elements a nonnegative integer.
         For parabolic elements a negative sign corresponds to taking
         the inverse. For elliptic elements a (non-trivial) integer
-        with minimal absolute value is choosen. For +- the identity
+        with minimal absolute value is chosen. For +- the identity
         element ``0`` is returned.
 
         EXAMPLES::
@@ -1786,12 +1783,12 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``ignore_sign``  -- If ``True`` (default) then the conjugacy
-          classes are only considered up to a sign.
+        - ``ignore_sign`` -- if ``True`` (default) then the conjugacy
+          classes are only considered up to a sign
 
-        - ``primitive`` -- If ``True`` then the conjugacy class of
-          the primitive part is considered instead
-          and the sign is ignored, default: ``False``.
+        - ``primitive`` -- boolean (default: ``False``); if ``True`` then the
+          conjugacy class of the primitive part is considered instead and the
+          sign is ignored
 
         OUTPUT:
 
@@ -2012,7 +2009,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         This is a so called `irreducible system of poles`
         for rational period functions for the parent group.
         I.e. the fixed points occur as a irreducible part
-        of the non-zero pole set of some rational period
+        of the nonzero pole set of some rational period
         function and all pole sets are given as a union
         of such irreducible systems of poles.
 
@@ -2307,7 +2304,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
     def is_primitive(self):
         r"""
-        Returns whether ``self`` is primitive. We call an element
+        Return whether ``self`` is primitive. We call an element
         primitive if (up to a sign and taking inverses) it generates
         the full stabilizer subgroup of the corresponding fixed point.
         In the non-elliptic case this means that primitive elements
@@ -2366,7 +2363,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
     def is_reduced(self, require_primitive=True, require_hyperbolic=True):
         r"""
-        Returns whether ``self`` is reduced. We call an element
+        Return whether ``self`` is reduced. We call an element
         reduced if the associated lambda-CF is purely periodic.
 
         I.e. (in the hyperbolic case) if the associated hyperbolic
@@ -2386,11 +2383,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``require_primitive``  -- If ``True`` (default) then non-primitive elements
-          are not considered reduced.
+        - ``require_primitive`` -- if ``True`` (default) then non-primitive
+          elements are not considered reduced
 
-        - ``require_hyperbolic`` -- If ``True`` (default) then non-hyperbolic elements
-          are not considered reduced.
+        - ``require_hyperbolic`` -- if ``True`` (default) then non-hyperbolic
+          elements are not considered reduced
 
         EXAMPLES::
 
@@ -2885,7 +2882,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``K`` -- A field to which we want the (correct) embedding.
+        - ``K`` -- a field to which we want the (correct) embedding.
           If ``K=None`` (default), then ``AlgebraicField()`` is
           used for elliptic elements and ``AlgebraicRealField()``
           otherwise.
@@ -2946,28 +2943,29 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         """
         return self.parent().root_extension_embedding(self.discriminant(), K)
 
-    def fixed_points(self, embedded=False, order="default"):
+    def fixed_points(self, embedded=False, order='default'):
         r"""
         Return a pair of (mutually conjugate) fixed points of ``self``
         in a possible quadratic extension of the base field.
 
         INPUT:
 
-        - ``embedded`` -- If ``True``, the fixed points are embedded into
-          ``AlgebraicRealField`` resp. ``AlgebraicField``. Default: ``False``.
+        - ``embedded`` -- boolean (default: ``False``); if ``True``, the fixed
+          points are embedded into ``AlgebraicRealField`` resp.
+          ``AlgebraicField``
 
-        - ``order`` -- If ``order="none"`` the fixed points are choosen
-          and ordered according to a fixed formula.
+        - ``order`` -- if ``order='none'`` the fixed points are chosen
+          and ordered according to a fixed formula
 
-          If ``order="sign"`` the fixed points are always ordered
+          If ``order='sign'`` the fixed points are always ordered
           according to the sign in front of the square root.
 
-          If ``order="default"`` (default) then in case the fixed
+          If ``order='default'`` (default) then in case the fixed
           points are hyperbolic they are ordered according to the
           sign of the trace of ``self`` instead, such that the
           attracting fixed point comes first.
 
-          If ``order="trace"`` the fixed points are always ordered
+          If ``order='trace'`` the fixed points are always ordered
           according to the sign of the trace of ``self``.
           If the trace is zero they are ordered by the sign in
           front of the square root. In particular the fixed_points
@@ -2979,9 +2977,9 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         ``AlgebraicField`` is returned. Otherwise an element of a relative field
         extension over the base field of (the parent of) ``self`` is returned.
 
-        Warning: Relative field extensions don't support default embeddings.
+        Warning: Relative field extensions do not support default embeddings.
         So the correct embedding (which is the positive resp. imaginary positive
-        one) has to be choosen.
+        one) has to be chosen.
 
         EXAMPLES::
 
@@ -3016,16 +3014,16 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             True
             sage: (G.U()^4).fixed_points()
             ((1/2*lam^2 - 1/2*lam - 1/2)*e + 1/2*lam, (-1/2*lam^2 + 1/2*lam + 1/2)*e + 1/2*lam)
-            sage: pts = (G.U()^4).fixed_points(order="trace")
+            sage: pts = (G.U()^4).fixed_points(order='trace')
             sage: (G.U()^4).fixed_points() == [pts[1], pts[0]]
             False
-            sage: (G.U()^4).fixed_points(order="trace") == (-G.U()^4).fixed_points(order="trace")
+            sage: (G.U()^4).fixed_points(order='trace') == (-G.U()^4).fixed_points(order='trace')
             True
-            sage: (G.U()^4).fixed_points() == (G.U()^4).fixed_points(order="none")
+            sage: (G.U()^4).fixed_points() == (G.U()^4).fixed_points(order='none')
             True
             sage: (-G.U()^4).fixed_points() == (G.U()^4).fixed_points()
             True
-            sage: (-G.U()^4).fixed_points(order="none") == pts
+            sage: (-G.U()^4).fixed_points(order='none') == pts
             True
             sage: p = (G.U()^4).fixed_points(embedded=True)[1]
             sage: p
@@ -3105,7 +3103,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``tau`` -- Either an element of ``self`` or any
+        - ``tau`` -- either an element of ``self`` or any
           element to which a linear fractional
           transformation can be applied in the usual way.
 
@@ -3237,10 +3235,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         INPUT:
 
-        - ``f``   -- A function in ``tau`` (or an object for which
-          evaluation at ``self.acton(tau)`` makes sense.
+        - ``f`` -- a function in ``tau`` (or an object for which
+          evaluation at ``self.acton(tau)`` makes sense
 
-        - ``tau`` -- Where to evaluate the result.
+        - ``tau`` -- where to evaluate the result.
           This should be a valid argument for :meth:`acton`.
 
           If ``tau`` is a point of ``HyperbolicPlane()`` then
@@ -3251,7 +3249,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
           the generator of the polynomial ring is used for ``tau``.
           That way ``slash`` acts on rational functions / polynomials.
 
-        - ``k``   -- An even integer.
+        - ``k`` -- even integer
 
           Default: ``None`` in which case ``f`` either
           has to be a rational function / polynomial in one
@@ -3319,9 +3317,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         return (self.c()*tau + self.d())**(-k) * f(self.acton(tau))
 
-    def as_hyperbolic_plane_isometry(self, model="UHP"):
+    def as_hyperbolic_plane_isometry(self, model='UHP'):
         r"""
-        Return ``self`` as an isometry of ``HyperbolicPlane()`` (in the upper half plane model).
+        Return ``self`` as an isometry of ``HyperbolicPlane()`` (in the upper
+        half plane model).
 
         EXAMPLES::
 

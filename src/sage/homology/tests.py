@@ -17,10 +17,9 @@ def random_chain_complex(level=1):
     random matrix in a random degree, with differential of degree
     either 1 or -1.  The matrix is randomly sparse or dense.
 
-    :param level: measure of complexity: the larger this is, the
-      larger the matrix can be, and the larger its degree can be in
-      the chain complex.
-    :type level: positive integer; optional, default 1
+    - ``level`` -- positive integer (default: 1); measure of complexity. The larger
+      this is, the larger the matrix can be, and the larger its degree can be
+      in the chain complex.
 
     EXAMPLES::
 
@@ -47,12 +46,11 @@ def random_simplicial_complex(level=1, p=0.5):
     """
     Return a random simplicial complex.
 
-    :param level: measure of complexity: the larger this is, the more
-      vertices and therefore the larger the possible dimension of the
-      complex.
-    :type level: positive integer; optional, default 1
-    :param p: probability, passed on to ``simplicial_complexes.RandomComplex``
-    :type p: float between 0 and 1; optional; default 0.5
+    - ``level`` -- positive integer (default: 1); measure of complexity. The
+      larger this is, the more vertices and therefore the larger the possible
+      dimension of the complex.
+    - ``p`` -- float between 0 and 1 (default: 0.5); probability, passed on to
+      ``simplicial_complexes.RandomComplex``
 
     EXAMPLES::
 

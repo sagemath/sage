@@ -71,7 +71,8 @@ cpdef int gen_index(PolyDict x) noexcept:
 
 cpdef ETuple monomial_exponent(PolyDict p):
     r"""
-    Return the unique exponent of ``p`` if it is a monomial or raise a ``ValueError``.
+    Return the unique exponent of ``p`` if it is a monomial or raise a
+    :exc:`ValueError`.
 
     EXAMPLES::
 
@@ -110,10 +111,10 @@ cdef class PolyDict:
         """
         INPUT:
 
-        - ``pdict`` -- dict or list, which represents a multi-variable
+        - ``pdict`` -- dictionary or list, which represents a multi-variable
           polynomial with the distribute representation (a copy is made)
 
-        - ``zero`` --  deprecated
+        - ``zero`` -- deprecated
 
         - ``remove_zero`` -- deprecated
 
@@ -122,7 +123,7 @@ cdef class PolyDict:
         - ``force_etuples`` -- deprecated
 
         - ``check`` -- if set to ``False`` then assumes that the exponents are
-          all valid ``ETuple``; in that case the construction is a bit faster.
+          all valid ``ETuple``; in that case the construction is a bit faster
 
         EXAMPLES::
 
@@ -200,7 +201,7 @@ cdef class PolyDict:
 
         INPUT:
 
-        - ``zero_test`` -- optional function that performs test to zero of a coefficient
+        - ``zero_test`` -- (optional) function that performs test to zero of a coefficient
 
         EXAMPLES::
 
@@ -275,7 +276,7 @@ cdef class PolyDict:
 
     def coerce_coefficients(self, A):
         r"""
-        Coerce the coefficients in the parent ``A``
+        Coerce the coefficients in the parent ``A``.
 
         EXAMPLES::
 
@@ -612,7 +613,7 @@ cdef class PolyDict:
 
         INPUT:
 
-        - ``degrees`` -- a list of degree restrictions; list elements are None
+        - ``degrees`` -- list of degree restrictions; list elements are ``None``
           if the variable in that position should be unrestricted
 
         EXAMPLES::
@@ -671,7 +672,7 @@ cdef class PolyDict:
                 ans[ETuple(t)] = self.__repn[S]
         return self._new(ans)
 
-    def is_homogeneous(self):
+    def is_homogeneous(self, tuple w=None):
         r"""
         Return whether this polynomial is homogeneous.
 
@@ -687,12 +688,20 @@ cdef class PolyDict:
         """
         if not self.__repn:
             return True
+        cdef size_t s
         it = iter(self.__repn)
-        cdef size_t s = (<ETuple> next(it)).unweighted_degree()
-        for elt in it:
-            if (<ETuple> elt).unweighted_degree() != s:
-                return False
-        return True
+        if w is None:
+            s = (<ETuple> next(it)).unweighted_degree()
+            for elt in it:
+                if (<ETuple> elt).unweighted_degree() != s:
+                    return False
+            return True
+        else:
+            s = (<ETuple> next(it)).weighted_degree(w)
+            for elt in it:
+                if (<ETuple> elt).weighted_degree(w) != s:
+                    return False
+            return True
 
     def is_constant(self):
         """
@@ -758,8 +767,8 @@ cdef class PolyDict:
         INPUT:
 
         - ``vars`` -- list
-        - ``atomic_exponents`` -- bool (default: ``True``)
-        - ``atomic_coefficients`` -- bool (default: ``True``)
+        - ``atomic_exponents`` -- boolean (default: ``True``)
+        - ``atomic_coefficients`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -799,7 +808,9 @@ cdef class PolyDict:
             ring = self.__repn[E[0]].parent()
             pos_one = ring.one()
             neg_one = -pos_one
-        except AttributeError:
+        except (AttributeError, ArithmeticError):
+            # AritchmeticError occurs when self.__repn[E[0]] is a tropical
+            # semiring element
             # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
@@ -851,8 +862,8 @@ cdef class PolyDict:
         INPUT:
 
         - ``vars`` -- list
-        - ``atomic_exponents`` -- bool (default: ``True``)
-        - ``atomic_coefficients`` -- bool (default: ``True``)
+        - ``atomic_exponents`` -- boolean (default: ``True``)
+        - ``atomic_coefficients`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -900,7 +911,9 @@ cdef class PolyDict:
             ring = self.__repn[E[0]].parent()
             pos_one = ring.one()
             neg_one = -pos_one
-        except AttributeError:
+        except (AttributeError, ArithmeticError):
+            # AritchmeticError occurs when self.__repn[E[0]] is a tropical
+            # semiring element
             # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
@@ -952,7 +965,7 @@ cdef class PolyDict:
 
     def __iadd__(PolyDict self, PolyDict other):
         r"""
-        Inplace addition
+        Inplace addition.
 
         EXAMPLES::
 
@@ -1026,7 +1039,7 @@ cdef class PolyDict:
 
         The algorithm do not test whether a product of coefficients is zero
         or whether a final coefficient is zero because there is no reliable way
-        to do so in general (eg power series ring or p-adic rings).
+        to do so in general (eg power series ring or `p`-adic rings).
 
         EXAMPLES:
 
@@ -1137,7 +1150,6 @@ cdef class PolyDict:
             sage: f = PolyDict({(2,3): 2, (1,2): 3, (2,1): 4})
             sage: f.term_lmult(ETuple((1, 2)), -2)
             PolyDict with representation {(2, 4): -6, (3, 3): -8, (3, 5): -4}
-
         """
         cdef dict v = {}
         for e, c in self.__repn.items():
@@ -1167,7 +1179,6 @@ cdef class PolyDict:
             sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
             sage: f.term_rmult(ETuple((1, 2)), -2)
             PolyDict with representation {(2, 4): -6, (3, 3): -8, (3, 5): -4}
-
         """
         cdef dict v = {}
         for e, c in self.__repn.items():
@@ -1216,7 +1227,7 @@ cdef class PolyDict:
 
     def derivative(self, PolyDict x):
         r"""
-        Return the derivative of ``self`` with respect to ``x``
+        Return the derivative of ``self`` with respect to ``x``.
 
         EXAMPLES::
 
@@ -1263,7 +1274,7 @@ cdef class PolyDict:
 
     def integral(self, PolyDict x):
         r"""
-        Return the integral of ``self`` with respect to ``x``
+        Return the integral of ``self`` with respect to ``x``.
 
         EXAMPLES::
 
@@ -1318,7 +1329,7 @@ cdef class PolyDict:
 
     def min_exp(self):
         """
-        Returns an ETuple containing the minimum exponents appearing.  If
+        Return an ETuple containing the minimum exponents appearing.  If
         there are no terms at all in the PolyDict, it returns None.
 
         The nvars parameter is necessary because a PolyDict doesn't know it
@@ -1344,7 +1355,7 @@ cdef class PolyDict:
 
     def max_exp(self):
         """
-        Returns an ETuple containing the maximum exponents appearing.  If
+        Return an ETuple containing the maximum exponents appearing.  If
         there are no terms at all in the PolyDict, it returns None.
 
         The nvars parameter is necessary because a PolyDict doesn't know it
@@ -1432,8 +1443,8 @@ cdef class ETuple:
     """
     cdef ETuple _new(self):
         """
-        Quickly creates a new initialized ETuple with the
-        same length as self.
+        Quickly create a new initialized ETuple with the
+        same length as ``self``.
         """
         cdef type t = type(self)
         cdef ETuple x = <ETuple>t.__new__(t)
@@ -1511,7 +1522,7 @@ cdef class ETuple:
 
     def __bool__(self):
         r"""
-        Return whether self is nonzero.
+        Return whether ``self`` is nonzero.
 
         TESTS::
 
@@ -1529,9 +1540,9 @@ cdef class ETuple:
 
     def __add__(ETuple self, ETuple other):
         """
-        x.__add__(n) <==> x+n
+        ``x.__add__(n) <==> x+n``.
 
-        concatenates two ETuples
+        Concatenate two ETuples.
 
         EXAMPLES::
 
@@ -1554,7 +1565,7 @@ cdef class ETuple:
 
     def __mul__(ETuple self, factor):
         """
-        x.__mul__(n) <==> x*n
+        ``x.__mul__(n) <==> x*n``.
 
         EXAMPLES::
 
@@ -1665,7 +1676,7 @@ cdef class ETuple:
 
     def __len__(self):
         """
-        x.__len__() <==> len(x)
+        ``x.__len__() <==> len(x)``.
 
         EXAMPLES::
 
@@ -1678,7 +1689,7 @@ cdef class ETuple:
 
     def __contains__(self, elem):
         """
-        x.__contains__(n) <==> n in x
+        ``x.__contains__(n) <==> n in x``.
 
         EXAMPLES::
 
@@ -1780,7 +1791,7 @@ cdef class ETuple:
 
     def __iter__(self):
         """
-        x.__iter__() <==> iter(x)
+        ``x.__iter__() <==> iter(x)``.
 
         TESTS::
 
@@ -1885,7 +1896,7 @@ cdef class ETuple:
 
         INPUT:
 
-        - ``w`` -- tuple of non-negative integers
+        - ``w`` -- tuple of nonnegative integers
 
         EXAMPLES::
 
@@ -1917,7 +1928,7 @@ cdef class ETuple:
         """
         Return the degree of ``self`` divided by its gcd with ``other``.
 
-        It amounts to counting the non-negative entries of
+        It amounts to counting the nonnegative entries of
         ``self.esub(other)``.
         """
         cdef size_t ind1 = 0    # both ind1 and ind2 will be increased in double steps.
@@ -1956,7 +1967,7 @@ cdef class ETuple:
         INPUT:
 
         - ``other`` -- an :class:`~sage.rings.polynomial.polydict.ETuple`
-        - ``w`` -- tuple of non-negative integers.
+        - ``w`` -- tuple of nonnegative integers
         """
         if len(w) != self._length:
             raise ValueError('w must be of the same length as the ETuple')
@@ -2218,7 +2229,7 @@ cdef class ETuple:
         cdef size_t ind
         cdef ETuple result = <ETuple>self._new()
         if factor == 0:
-            result._nonzero = 0  # all zero, no non-zero entries!
+            result._nonzero = 0  # all zero, no nonzero entries!
             result._data = <int*>sig_malloc(sizeof(int) * result._nonzero * 2)
         else:
             result._nonzero = self._nonzero
@@ -2433,7 +2444,7 @@ cdef class ETuple:
         """
         Return division of ``self`` by the variable with index ``pos``.
 
-        If ``self[pos] == 0`` then a ``ArithmeticError`` is raised. Otherwise,
+        If ``self[pos] == 0`` then a :exc:`ArithmeticError` is raised. Otherwise,
         an :class:`~sage.rings.polynomial.polydict.ETuple` is returned that is
         zero in position ``pos`` and coincides with ``self`` in the other
         positions.
@@ -2558,11 +2569,11 @@ cdef class ETuple:
 
     cpdef list nonzero_positions(self, bint sort=False):
         """
-        Return the positions of non-zero exponents in the tuple.
+        Return the positions of nonzero exponents in the tuple.
 
         INPUT:
 
-        - ``sort`` -- (default: ``False``) if ``True`` a sorted list is
+        - ``sort`` -- boolean (default: ``False``); if ``True`` a sorted list is
           returned; if ``False`` an unsorted list is returned
 
         EXAMPLES::
@@ -2577,8 +2588,8 @@ cdef class ETuple:
 
     cpdef common_nonzero_positions(self, ETuple other, bint sort=False):
         """
-        Returns an optionally sorted list of non zero positions either
-        in self or other, i.e. the only positions that need to be
+        Return an optionally sorted list of nonzero positions either
+        in ``self`` or other, i.e. the only positions that need to be
         considered for any vector operation.
 
         EXAMPLES::
@@ -2600,12 +2611,12 @@ cdef class ETuple:
 
     cpdef list nonzero_values(self, bint sort=True):
         """
-        Return the non-zero values of the tuple.
+        Return the nonzero values of the tuple.
 
         INPUT:
 
-        - ``sort`` -- (default: ``True``) if ``True`` the values are sorted
-          by their indices; otherwise the values are returned unsorted
+        - ``sort`` -- boolean (default: ``True``); if ``True`` the values are
+          sorted by their indices. Otherwise the values are returned unsorted.
 
         EXAMPLES::
 

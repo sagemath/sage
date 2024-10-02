@@ -55,7 +55,7 @@ ADD="ADD $__CHOWN"
 RUN=RUN
 cat <<EOF
 ARG BASE_IMAGE=$(eval echo "${FULL_BASE_IMAGE_AND_TAG}")
-FROM \${BASE_IMAGE} as with-system-packages
+FROM \${BASE_IMAGE} AS with-system-packages
 EOF
 case $SYSTEM in
     debian*|ubuntu*)
@@ -199,7 +199,7 @@ EOF
     *)
         cat <<EOF
 ARG BASE_IMAGE
-FROM \${BASE_IMAGE} as with-system-packages
+FROM \${BASE_IMAGE} AS with-system-packages
 EOF
         INSTALL=$(sage-print-system-package-command $SYSTEM install " ")
         ;;
@@ -260,9 +260,15 @@ case ${DOCKER_BUILDKIT-0} in
         CHECK_STATUS_THEN='STATUS=$(cat STATUS 2>/dev/null); case "$STATUS" in ""|0) ;; *) exit $STATUS;; esac; '
 esac
 
+if [ -n "$GITHUB_ACTIONS" ]; then
+    cat <<EOF
+ENV GITHUB_ACTIONS=1
+EOF
+fi
+
 cat <<EOF
 
-FROM with-system-packages as bootstrapped
+FROM with-system-packages AS bootstrapped
 #:bootstrapping:
 RUN rm -rf /new /sage/.git
 $ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 .gitignore /new/
@@ -277,8 +283,8 @@ $ADD .upstream.d /new/.upstream.d
 ADD .ci /.ci
 RUN if [ -d /sage ]; then                                               \
         echo "### Incremental build from \$(cat /sage/VERSION.txt)" &&  \
-        printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \
-        printf '/src\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore && \
+        printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \
+        printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /new/.gitignore && \
         if ! (cd /new && /.ci/retrofit-worktree.sh worktree-image /sage); then \
             echo "retrofit-worktree.sh failed, falling back to replacing /sage"; \
             for a in local logs; do                                     \
@@ -295,7 +301,7 @@ WORKDIR /sage
 ARG BOOTSTRAP="${BOOTSTRAP-./bootstrap}"
 $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN $THEN_SAVE_STATUS
 
-FROM bootstrapped as configured
+FROM bootstrapped AS configured
 #:configuring:
 RUN $CHECK_STATUS_THEN mkdir -p logs/pkgs; rm -f config.log; ln -s logs/pkgs/config.log config.log
 ARG CONFIGURE_ARGS="${CONFIGURE_ARGS:---enable-build-as-root}"
@@ -311,7 +317,7 @@ EOF
 fi
 cat <<EOF
 
-FROM configured as with-base-toolchain
+FROM configured AS with-base-toolchain
 # We first compile base-toolchain because otherwise lots of packages are missing their dependency on 'patch'
 ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
@@ -321,7 +327,7 @@ ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!
 #:toolchain:
 $RUN $CHECK_STATUS_THEN make \${USE_MAKEFLAGS} base-toolchain $ENDRUN $THEN_SAVE_STATUS
 
-FROM with-base-toolchain as with-targets-pre
+FROM with-base-toolchain AS with-targets-pre
 ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
@@ -331,7 +337,7 @@ ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!
 ARG TARGETS_PRE="all-sage-local"
 $RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_PRE} $ENDRUN $THEN_SAVE_STATUS
 
-FROM with-targets-pre as with-targets
+FROM with-targets-pre AS with-targets
 ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
@@ -348,12 +354,12 @@ RUN cd /new && rm -rf .git && \
         mv src /sage/src;                                    \
         cd /sage && ./bootstrap && ./config.status;          \
     fi; \
-    cd /sage && rm -rf /new .git
+    cd /sage && rm -rf .git; rm -rf /new || echo "(error ignored)"
 
 ARG TARGETS="build"
 $RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN $THEN_SAVE_STATUS
 
-FROM with-targets as with-targets-optional
+FROM with-targets AS with-targets-optional
 ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"

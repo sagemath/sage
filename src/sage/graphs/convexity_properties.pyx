@@ -117,7 +117,7 @@ cdef class ConvexityProperties:
       elements `z` with `d_{G}(u,w) + d_{G}(w,v) = d_{G}(u,v)`. This is not in
       general equal to `h(\{u,v\})` !
 
-    Nothing says these recommandations will actually lead to any actual
+    Nothing says these recommendations will actually lead to any actual
     improvements. There are just some ideas remembered while writing this
     code. Trying to optimize may well lead to lost in efficiency on many
     instances.
@@ -142,7 +142,7 @@ cdef class ConvexityProperties:
 
     def __init__(self, G):
         r"""
-        Constructor
+        Constructor.
 
         EXAMPLES::
 
@@ -215,7 +215,7 @@ cdef class ConvexityProperties:
 
     def __dealloc__(self):
         r"""
-        Destructor
+        Destructor.
 
         EXAMPLES::
 
@@ -223,13 +223,12 @@ cdef class ConvexityProperties:
             sage: g = graphs.PetersenGraph()
             sage: ConvexityProperties(g)
             <sage.graphs.convexity_properties.ConvexityProperties object at ...>
-
         """
         binary_matrix_free(self._cache_hull_pairs)
 
     cdef list _vertices_to_integers(self, vertices):
         r"""
-        Converts a list of vertices to a list of integers with the cached data.
+        Convert a list of vertices to a list of integers with the cached data.
         """
         return [self._dict_vertices_to_integers[v] for v in vertices]
 
@@ -296,7 +295,7 @@ cdef class ConvexityProperties:
 
         INPUT:
 
-        * ``vertices`` -- A list of vertices.
+        - ``vertices`` -- list of vertices
 
         EXAMPLES::
 
@@ -352,11 +351,11 @@ cdef class ConvexityProperties:
 
         INPUT:
 
-        * ``value_only`` -- boolean (default: ``True``); whether to return only
+        - ``value_only`` -- boolean (default: ``True``); whether to return only
           the hull number (default) or a minimum set whose convex hull is the
           whole graph
 
-        * ``verbose`` -- boolean (default: ``False``); whether to display
+        - ``verbose`` -- boolean (default: ``False``); whether to display
           information on the LP
 
         **COMPLEXITY:**
@@ -507,11 +506,9 @@ def geodetic_closure(G, S):
     each vertex `u \in S`, the algorithm first performs a breadth first search
     from `u` to get distances, and then identifies the vertices of `G` lying on
     a shortest path from `u` to any `v\in S` using a reversal traversal from
-    vertices in `S`.  This algorithm has time complexity in
-    `O(|S|(n + m) + (n + m\log{m}))` for ``SparseGraph``,
-    `O(|S|(n + m) + n^2\log{m})` for ``DenseGraph`` and space complexity in
-    `O(n + m)` (the extra `\log` factor is due to ``init_short_digraph`` being
-    called with ``sort_neighbors=True``).
+    vertices in `S`.  This algorithm has time complexity in `O(|S|(n + m))` for
+    ``SparseGraph``, `O(|S|(n + m) + n^2)` for ``DenseGraph`` and
+    space complexity in `O(n + m)`.
 
     INPUT:
 
@@ -758,7 +755,7 @@ def is_geodetic(G):
     # Copy the graph as a short digraph
     cdef int n = G.order()
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G), sort_neighbors=False)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=list(G))
 
     # Allocate some data structures
     cdef MemoryAllocator mem = MemoryAllocator()
