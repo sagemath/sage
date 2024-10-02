@@ -369,7 +369,7 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
 
     def inner_product(self, lambdacheck):
         """
-        The scalar product with elements of the ambient space
+        The scalar product with elements of the ambient space.
 
         EXAMPLES::
 
