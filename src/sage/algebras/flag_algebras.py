@@ -1068,6 +1068,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         r"""
         Round the SDP results output to get something exact.
         """
+        import tqdm
         
         #unpack variables
         block_sizes, target_list_exact, mat_inds, mat_vals = sdp_data
@@ -1129,6 +1130,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         # The relevant entries of M flattened to a matrix this will be indexed by 
         # c_zero_inds and the triples from the types
+        
+        print("Rounding X matrices")
+        
         M_flat_relevant_matrix_exact = matrix(QQ, len(c_zero_inds), 0, 0, sparse=True)
         X_flat_vector_rounded = [] # The rounded X values flattened to a list
         block_index = 0
@@ -1181,7 +1185,8 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         X_final = []
         slacks = target_vector_exact - positives_matrix_exact.T*e_vector_corr
         block_index = 0
-        for params in table_constructor.keys():
+        print("Calculating resulting bound")
+        for params in tqdm(table_constructor.keys()):
             ns, ftype, target_size = params
             table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
             for plus_index, base in enumerate(table_constructor[params]):
@@ -1244,16 +1249,22 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                             a guess or exact construction, the list of base flags, the list of used (typed) flags
         """
         
-        import json
+        is_json = file.endswith(".json")
         
         target_size = 0
         typed_flags = {}
         for params in table_constructor.keys():
             ns, ftype, target_size = params
-            safekey = "target:" + str(ns) + "; " + self.flag_compact_repr(ftype)
-            typed_flags[safekey] = [self.flag_compact_repr(xx) for xx in self.generate_flags(ns, ftype)]
+            if is_json:
+                safekey = "target:" + str(ns) + "; " + self.flag_compact_repr(ftype)
+                typed_flags[safekey] = [self.flag_compact_repr(xx) for xx in self.generate_flags(ns, ftype)]
+            else:
+                typed_flags[(ns, ftype)] = self.generate_flags(ns, ftype)
         
-        base_flags = [self.flag_compact_repr(xx) for xx in self.generate_flags(target_size)]
+        if is_json:
+            base_flags = [self.flag_compact_repr(xx) for xx in self.generate_flags(target_size)]
+        else:
+            base_flags = self.generate_flags(target_size)
         
         result = None
         X_original = None
@@ -1283,15 +1294,20 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                      "typed flags": typed_flags
                     }
         
-        if not file.endswith(".json"):
-            file += ".json"
+        if is_json:
+            import json
+            file = self._certs_dir() + file
+            with open(file, "w") as f:
+                json.dump(cert_dict, f, indent=2, default=str)
+        else:
+            import pickle
+            if not file.endswith(".pickle"):
+                file += ".pickle"
+            file = self._certs_dir() + file
+            with open(file, "wb") as f:
+                pickle.dump(cert_dict, f)
         
-        file = self._certs_dir() + file
-        
-        with open(file, "w") as f:
-            json.dump(cert_dict, f, indent=2, default=str)
-        
-        return result
+        return cert_dict
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
                          construction=None, file=None, exact=False, denom=1024):
