@@ -4197,9 +4197,9 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     from sage.rings.integer_ring import ZZ
     from time import time
 
-    assert d > 1,              'd must be at least 2'
+    assert d > 1, 'd must be at least 2'
     assert is_even(n * (d-1)), 'n must be even or d must be odd'
-    assert is_prime_power(n),  'n must be a prime power'
+    assert is_prime_power(n), 'n must be a prime power'
     t = time()
 
     # build L, L_i and the design
