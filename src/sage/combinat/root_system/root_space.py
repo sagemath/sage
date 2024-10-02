@@ -269,7 +269,9 @@ class RootSpaceElement(CombinatorialFreeModule.Element):
             sage: lat.simple_root(1).scalar(spc.simple_coroot(2))
             0
 
-            sage: lat = RootSystem(['B', 3]).root_lattice()  # verify that directionality is correct for roots of different lengths
+        Verify that directionality is correct for roots of different lengths::
+
+            sage: lat = RootSystem(['B', 3]).root_lattice()
             sage: lat.simple_root(2).scalar(lat.simple_coroot(3))
             -2
         """
