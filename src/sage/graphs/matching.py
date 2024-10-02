@@ -55,7 +55,7 @@ from sage.graphs.views import EdgesView
 def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
                          *, integrality_tolerance=1e-3):
     r"""
-    Return whether the graph has a perfect matching
+    Return whether the graph has a perfect matching.
 
     INPUT:
 
@@ -162,7 +162,7 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
 def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
                   solver=None, verbose=0, *, integrality_tolerance=0.001):
     r"""
-    Check if the graph is bicritical
+    Check if the graph is bicritical.
 
     A nontrivial graph `G` is *bicritical* if `G - u - v` has a perfect
     matching for any two distinct vertices `u` and `v` of `G`. Bicritical
@@ -270,12 +270,9 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
 
     A graph (of order more than two) with more that one component is not bicritical::
 
-        sage: cycle1 = graphs.CycleGraph(4)
-        sage: cycle2 = graphs.CycleGraph(6)
-        sage: cycle2.relabel(lambda v: v + 4)
-        sage: G = Graph()
-        sage: G.add_edges(cycle1.edges() + cycle2.edges())
-        sage: len(G.connected_components(sort=False))
+        sage: G = graphs.CycleGraph(4)
+        sage: G += graphs.CycleGraph(6)
+        sage: G.connected_components_number()
         2
         sage: G.is_bicritical()
         False
@@ -1092,7 +1089,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
              *, integrality_tolerance=1e-3):
     r"""
     Return a maximum weighted matching of the graph represented by the list
-    of its edges
+    of its edges.
 
     For more information, see the :wikipedia:`Matching_(graph_theory)`.
 
@@ -1291,7 +1288,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
 def perfect_matchings(G, labels=False):
     r"""
-    Return an iterator over all perfect matchings of the graph
+    Return an iterator over all perfect matchings of the graph.
 
     ALGORITHM:
 
@@ -1404,7 +1401,7 @@ def perfect_matchings(G, labels=False):
 def M_alternating_even_mark(G, vertex, matching):
     r"""
     Return the vertices reachable from ``vertex`` via an even alternating path
-    starting with a non-matching edge
+    starting with a non-matching edge.
 
     This method implements the algorithm proposed in [LR2004]_. Note that
     the complexity of the algorithm is linear in number of edges.

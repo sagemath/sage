@@ -93,6 +93,7 @@ class MatchingCoveredGraph(Graph):
         Matching covered graph on 6 vertices
         sage: H == G
         True
+
         sage: # needs networkx
         sage: import networkx
         sage: G = Graph(networkx.complete_bipartite_graph(12, 12))
@@ -107,6 +108,7 @@ class MatchingCoveredGraph(Graph):
         Matching covered graph on 6 vertices
         sage: H == G
         True
+
         sage: # needs sage.modules
         sage: M = Matrix([(0,1,0,0,1,1,0,0,0,0),
         ....:             (1,0,1,0,0,0,1,0,0,0),
@@ -133,6 +135,7 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
+
         sage: # needs sage.modules
         sage: M = Matrix([(-1, 0, 0, 0, 1, 0, 0, 0, 0, 0,-1, 0, 0, 0, 0),
         ....:             ( 1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0,-1, 0, 0, 0),
@@ -164,6 +167,7 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
+
         sage: # optional - python_igraph
         sage: import igraph
         sage: G = Graph(igraph.Graph([(0, 1), (0, 3), (1, 2), (2, 3)]))
@@ -197,28 +201,16 @@ class MatchingCoveredGraph(Graph):
         Traceback (most recent call last):
         ...
         ValueError: the graph is trivial
-        sage: G = Graph(None)
-        sage: H = MatchingCoveredGraph(G)
-        Traceback (most recent call last):
-        ...
-        ValueError: the graph is trivial
         sage: G = MatchingCoveredGraph()
-        Traceback (most recent call last):
-        ...
-        ValueError: the graph is trivial
-        sage: G = MatchingCoveredGraph(None)
         Traceback (most recent call last):
         ...
         ValueError: the graph is trivial
 
     Providing with a graph that is not connected::
 
-        sage: cycle1 = graphs.CycleGraph(4)
-        sage: cycle2 = graphs.CycleGraph(6)
-        sage: cycle2.relabel(lambda v: v + 4)
-        sage: G = Graph()
-        sage: G.add_edges(cycle1.edges() + cycle2.edges())
-        sage: len(G.connected_components(sort=False))
+        sage: G = graphs.CycleGraph(4)
+        sage: G += graphs.CycleGraph(6)
+        sage: G.connected_components_number()
         2
         sage: H = MatchingCoveredGraph(G)
         Traceback (most recent call last):
@@ -287,6 +279,7 @@ class MatchingCoveredGraph(Graph):
         Traceback (most recent call last):
         ...
         ValueError: input graph is not matching covered
+
         sage: # needs networkx
         sage: import networkx
         sage: G = Graph(networkx.complete_bipartite_graph(2, 12))
@@ -299,6 +292,7 @@ class MatchingCoveredGraph(Graph):
         Traceback (most recent call last):
         ...
         ValueError: input graph is not matching covered
+
         sage: # needs sage.modules
         sage: M = Matrix([(0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0),
         ....:             (1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -338,6 +332,7 @@ class MatchingCoveredGraph(Graph):
         Traceback (most recent call last):
         ...
         ValueError: input graph is not matching covered
+
         sage: # needs sage.modules
         sage: M = Matrix([(1, 1, 0, 0, 0, 0),
         ....:             (0, 0, 1, 1, 0, 0),
@@ -358,6 +353,7 @@ class MatchingCoveredGraph(Graph):
         Traceback (most recent call last):
         ...
         ValueError: input graph is not matching covered
+
         sage: # optional - python_igraph
         sage: import igraph
         sage: G = Graph(igraph.Graph([(0, 1), (0, 2), (0, 3), (1, 2), (2, 3)]))
@@ -406,7 +402,7 @@ class MatchingCoveredGraph(Graph):
                  *args, **kwds):
         r"""
         Create a matching covered graph, that is a connected nontrivial graph
-        wherein each edge participates in some perfect matching
+        wherein each edge participates in some perfect matching.
 
         See documentation ``MatchingCoveredGraph?`` for detailed information.
         """
@@ -435,8 +431,8 @@ class MatchingCoveredGraph(Graph):
     def _upgrade_from_graph(self, matching=None, algorithm='Edmonds',
                             solver=None, verbose=0,
                             integrality_tolerance=0.001):
-        """
-        Upgrade the given graph to a matching covered graph if eligible
+        r"""
+        Upgrade the given graph to a matching covered graph if eligible.
 
         See documentation ``MatchingCoveredGraph?`` for detailed information.
         """
@@ -456,7 +452,7 @@ class MatchingCoveredGraph(Graph):
 
     def __repr__(self):
         r"""
-        Return a short string representation of the matching covered graph
+        Return a short string representation of the matching covered graph.
 
         EXAMPLES:
 
@@ -497,8 +493,8 @@ class MatchingCoveredGraph(Graph):
         return "".join(["Matching covered ", s])
 
     def allow_loops(self, new, check=True):
-        """
-        Change whether loops are allowed in (matching covered) graphs
+        r"""
+        Check whether loops are allowed in (matching covered) graphs.
 
         .. NOTE::
 
