@@ -422,8 +422,7 @@ class MatchingCoveredGraph(Graph):
             Graph.__init__(self, data, *args, **kwds)
             self._upgrade_from_graph(matching=matching, algorithm=algorithm,
                                      solver=solver, verbose=verbose,
-                                     integrality_tolerance=
-                                     integrality_tolerance)
+                                     integrality_tolerance=integrality_tolerance)
         else:
             raise ValueError('input data is of unknown type')
 
@@ -439,11 +438,9 @@ class MatchingCoveredGraph(Graph):
             coNP_certificate = False
             check = Graph.is_matching_covered(G=self, matching=matching,
                                               algorithm=algorithm,
-                                              coNP_certificate=
-                                              coNP_certificate,
+                                              coNP_certificate=coNP_certificate,
                                               solver=solver, verbose=verbose,
-                                              integrality_tolerance=
-                                              integrality_tolerance)
+                                              integrality_tolerance=integrality_tolerance)
 
             if not check:
                 raise ValueError("input graph is not matching covered")
