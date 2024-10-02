@@ -425,8 +425,7 @@ class MatchingCoveredGraph(Graph):
             self._upgrade_from_graph(matching=matching, algorithm=algorithm,
                                      solver=solver, verbose=verbose,
                                      integrality_tolerance=integrality_tolerance)
-        else:
-            raise ValueError('input data is of unknown type')
+        raise ValueError('input data is of unknown type')
 
     def _upgrade_from_graph(self, matching=None, algorithm='Edmonds',
                             solver=None, verbose=0,
@@ -437,7 +436,6 @@ class MatchingCoveredGraph(Graph):
         See documentation ``MatchingCoveredGraph?`` for detailed information.
         """
         try:
-            coNP_certificate = False
             check = Graph.is_matching_covered(G=self, matching=matching,
                                               algorithm=algorithm,
                                               coNP_certificate=coNP_certificate,
@@ -525,6 +523,6 @@ class MatchingCoveredGraph(Graph):
             ...
             ValueError: loops are not allowed in matching covered graphs
         """
-        if new is True:
+        if new:
             raise ValueError('loops are not allowed in '
                              'matching covered graphs')
