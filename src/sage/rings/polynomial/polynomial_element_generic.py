@@ -39,15 +39,15 @@ try:
 except ImportError:
     pari_gen = ()
 
-from sage.structure.richcmp import richcmp, richcmp_item, rich_to_bool, rich_to_bool_sgn
 from sage.structure.element import coerce_binop, parent
+from sage.structure.factorization import Factorization
+from sage.structure.richcmp import richcmp, richcmp_item, rich_to_bool, rich_to_bool_sgn
 
 from sage.rings.infinity import infinity, Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.structure.factorization import Factorization
-
 from sage.rings.padics.precision_error import PrecisionError
+
 
 class Polynomial_generic_sparse(Polynomial):
     """
@@ -99,18 +99,18 @@ class Polynomial_generic_sparse(Polynomial):
         R = parent.base_ring()
         if isinstance(x, Polynomial):
             if x.parent() == self.parent():
-                x = dict(x.dict())
+                x = x.monomial_coefficients()
             elif x.parent() == R:
-                x = {0:x}
+                x = {0: x}
             else:
                 w = {}
-                for n, c in x.dict().items():
+                for n, c in x.monomial_coefficients().items():
                     w[n] = R(c)
                 # The following line has been added in github issue #9944.
                 # Apparently, the "else" case has never occurred before.
                 x = w
         elif isinstance(x, (list, tuple)):
-            x = dict((i, c) for (i, c) in enumerate(x) if c)
+            x = {i: c for i, c in enumerate(x) if c}
         elif isinstance(x, pari_gen):
             y = {}
             for i in range(len(x)):
@@ -118,7 +118,7 @@ class Polynomial_generic_sparse(Polynomial):
             x = y
             check = True
         elif not isinstance(x, dict):
-            x = {0:x}   # constant polynomials
+            x = {0: x}   # constant polynomials
         if check:
             self.__coeffs = {}
             for i, z in x.items():
@@ -128,7 +128,7 @@ class Polynomial_generic_sparse(Polynomial):
         if check:
             self.__normalize()
 
-    def dict(self):
+    def monomial_coefficients(self):
         """
         Return a new copy of the dict of the underlying
         elements of ``self``.
@@ -138,18 +138,20 @@ class Polynomial_generic_sparse(Polynomial):
             sage: R.<w> = PolynomialRing(Integers(8), sparse=True)
             sage: f = 5 + w^1997 - w^10000; f
             7*w^10000 + w^1997 + 5
-            sage: d = f.dict(); d
+            sage: d = f.monomial_coefficients(); d
             {0: 5, 1997: 1, 10000: 7}
             sage: d[0] = 10
-            sage: f.dict()
+            sage: f.monomial_coefficients()
             {0: 5, 1997: 1, 10000: 7}
 
-            sage: f.monomial_coefficients()
+        ``dict`` is an alias::
+
+            sage: f.dict()
             {0: 5, 1997: 1, 10000: 7}
         """
         return dict(self.__coeffs)
 
-    monomial_coefficients = dict
+    dict = monomial_coefficients
 
     def coefficients(self, sparse=True):
         """

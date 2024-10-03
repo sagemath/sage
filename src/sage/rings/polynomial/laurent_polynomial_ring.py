@@ -388,7 +388,8 @@ def _split_laurent_polynomial_dict_(P, M, d):
         return {k: value(v, P.base_ring()) for k, v in D.items()}
     except (ValueError, TypeError):
         pass
-    return sum(P({k: 1}) * value(v, P) for k, v in D.items()).dict()
+    return sum(P({k: 1}) * value(v, P)
+               for k, v in D.items()).monomial_coefficients()
 
 def from_fraction_field(L, x):
     r"""
@@ -535,9 +536,9 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             P = x.parent()
             if set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):
-                    d = {(k,): v for k, v in x.dict().items()}
+                    d = {(k,): v for k, v in x.monomial_coefficients().items()}
                 else:
-                    d = x.dict()
+                    d = x.monomial_coefficients()
                 x = _split_laurent_polynomial_dict_(self, P, d)
                 x = {k[0]: v for k, v in x.items()}
             elif P is self.base_ring():
@@ -545,7 +546,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             elif x.is_constant() and self.has_coerce_map_from(x.parent().base_ring()):
                 return self(x.constant_coefficient())
             elif len(self.variable_names()) == len(P.variable_names()):
-                x = x.dict()
+                x = x.monomial_coefficients()
 
         elif isinstance(x, FractionFieldElement):
             # since the field of fraction of self is defined corresponding to
@@ -762,9 +763,9 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
                 pass
             elif set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):
-                    d = {(k,): v for k, v in x.dict().items()}
+                    d = {(k,): v for k, v in x.monomial_coefficients().items()}
                 else:
-                    d = x.dict()
+                    d = x.monomial_coefficients()
                 x = _split_laurent_polynomial_dict_(self, P, d)
             elif P is self.base_ring():
                 from sage.rings.polynomial.polydict import ETuple
@@ -773,7 +774,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             elif x.is_constant() and self.has_coerce_map_from(P.base_ring()):
                 return self(x.constant_coefficient())
             elif len(self.variable_names()) == len(P.variable_names()):
-                x = x.dict()
+                x = x.monomial_coefficients()
 
         elif isinstance(x, FractionFieldElement):
             # since the field of fraction of self is defined corresponding to

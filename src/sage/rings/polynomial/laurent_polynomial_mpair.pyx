@@ -281,7 +281,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         #                                <tuple> self._parent.variable_names(),
         #                                self._parent.base_ring()
         #                                )
-        cdef dict D = <dict > self._poly.dict()
+        cdef dict D = <dict > self._poly.monomial_coefficients()
 
         cdef ETuple e
         if i is None:
@@ -309,12 +309,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: L.<w,z> = LaurentPolynomialRing(QQ)
             sage: a = w^2*z^-1 +3
-            sage: a.dict()  # indirect doctest
+            sage: a.monomial_coefficients()  # indirect doctest
             {(0, 0): 3, (2, -1): 1}
         """
         # cdef dict D = <dict> self._poly._mpoly_dict_recursive(self._parent.variable_names(),
         #                                                      self._parent.base_ring())
-        cdef dict D = <dict > self._poly.dict()
+        cdef dict D = <dict > self._poly.monomial_coefficients()
         cdef dict DD
         if self._mon.is_constant():
             self._prod = PolyDict(D)
@@ -448,7 +448,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         """
         cdef ETuple e
         if self._poly.is_term():
-            (e, c), = self.dict().items()
+            (e, c), = self.monomial_coefficients().items()
             e = e.emul(-1)
             P = self._parent
             try:
@@ -574,7 +574,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             Multivariate Polynomial Ring in t1, t1inv, t2, t2inv over Rational Field
         """
         dres = {}
-        for (e, c) in self.dict().items():
+        for e, c in self.monomial_coefficients().items():
             exps = []
             for t in e:
                 if t > 0:
@@ -742,7 +742,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             self._compute_polydict()
         if m._prod is None:
             m._compute_polydict()
-        return self._parent(self._prod.coefficient(m.dict()))
+        return self._parent(self._prod.coefficient(m.monomial_coefficients()))
 
     def coefficients(self):
         """
@@ -781,7 +781,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.variables(sort=False) #random
             (y, z, x)
         """
-        cdef dict d = self.dict()
+        cdef dict d = self.monomial_coefficients()
         cdef tuple g = self._parent.gens()
         cdef Py_ssize_t nvars = len(g)
         cdef set vars = set()
@@ -794,7 +794,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             v.sort()
         return tuple(v)
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         """
         Return ``self`` represented as a ``dict``.
 
@@ -802,17 +802,20 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: L.<x,y,z> = LaurentPolynomialRing(QQ)
             sage: f = 4*x^7*z^-1 + 3*x^3*y + 2*x^4*z^-2 + x^6*y^-7
-            sage: sorted(f.dict().items())
+            sage: sorted(f.monomial_coefficients().items())
             [((3, 1, 0), 3), ((4, 0, -2), 2), ((6, -7, 0), 1), ((7, 0, -1), 4)]
 
-            sage: sorted(f.monomial_coefficients().items())
+        ``dict`` is an alias::
+
+            sage: sorted(f.dict().items())
             [((3, 1, 0), 3), ((4, 0, -2), 2), ((6, -7, 0), 1), ((7, 0, -1), 4)]
         """
         if self._prod is None:
             self._compute_polydict()
         return < dict > self._prod.dict()
 
-    monomial_coefficients = dict
+    cpdef dict dict(self):
+        return self.monomial_coefficients()
 
     def _fraction_pair(self):
         """
@@ -1563,11 +1566,11 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         except ValueError:
             # call _derivative() recursively on coefficients
             return P({m: c._derivative(var)
-                      for (m, c) in self.dict().iteritems()})
+                      for m, c in self.monomial_coefficients().iteritems()})
 
         # compute formal derivative with respect to generator
         cdef dict d = {}
-        for m, c in self.dict().iteritems():
+        for m, c in self.monomial_coefficients().iteritems():
             if m[index] != 0:
                 new_m = [u for u in m]
                 new_m[index] += -1
@@ -1648,7 +1651,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if R is None:
             R = LaurentPolynomialRing(self.base_ring(), x)
 
-        return R({m[i]: c for m, c in self.dict().iteritems()})
+        return R({m[i]: c for m, c in self.monomial_coefficients().iteritems()})
 
     def monomial_reduction(self):
         """
@@ -1718,7 +1721,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef list f = []
         cdef dict d
         for t in pf:
-            d = <dict > (t[0].dict())
+            d = <dict > (t[0].monomial_coefficients())
             if len(d) == 1:  # monomials are units
                 u *= self.parent(d) ** t[1]
             else:

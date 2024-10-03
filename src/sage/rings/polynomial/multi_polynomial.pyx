@@ -243,7 +243,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         - Didier Deshommes
         """
-        d = self.dict()
+        d = self.monomial_coefficients()
         return [d[i] for i in self.exponents()]
 
     def truncate(self, var, n):
@@ -260,8 +260,8 @@ cdef class MPolynomial(CommutativePolynomial):
             ind = Z.index(var)
         except ValueError:
             raise ValueError("var must be one of the generators of the parent polynomial ring.")
-        d = self.dict()
-        return R(dict([(k, c) for k, c in d.iteritems() if k[ind] < n]))
+        return R({k: c for k, c in self.monomial_coefficients().iteritems()
+                  if k[ind] < n})
 
     def _fast_callable_(self, etb):
         r"""
@@ -299,9 +299,9 @@ cdef class MPolynomial(CommutativePolynomial):
         n = len(x)
 
         expr = etb.constant(self.base_ring().zero())
-        for (m, c) in self.dict().iteritems():
-            monom = prod([ x[i]**m[i] for i in range(n) if m[i] != 0],
-                             etb.constant(c))
+        for m, c in self.monomial_coefficients().iteritems():
+            monom = prod([x[i] ** m[i] for i in range(n) if m[i] != 0],
+                         etb.constant(c))
             expr = expr + monom
         return expr
 
@@ -426,11 +426,11 @@ cdef class MPolynomial(CommutativePolynomial):
         d = self.degree(var)
         B = ring.base_ring()
         w = {remove_from_tuple(e, ind): val
-             for e, val in self.dict().iteritems() if not e[ind]}
+             for e, val in self.monomial_coefficients().iteritems() if not e[ind]}
         v = [B(w)]  # coefficients that don't involve var
         z = var
         for i in range(1,d+1):
-            c = <dict> self.coefficient(z).dict()
+            c = <dict> self.coefficient(z).monomial_coefficients()
             w = {remove_from_tuple(e, ind): val for e, val in c.iteritems()}
             v.append(B(w))
             z *= var
@@ -483,7 +483,7 @@ cdef class MPolynomial(CommutativePolynomial):
             vars = self._parent.variable_names_recursive()
         cdef tuple my_vars = self._parent.variable_names()
         if vars == my_vars:
-            return <dict> self.dict()
+            return <dict> self.monomial_coefficients()
         elif my_vars[-1] not in vars:
             x = base_ring(self) if base_ring is not None else self
             const_ix = ETuple((0,)*len(vars))
@@ -511,13 +511,13 @@ cdef class MPolynomial(CommutativePolynomial):
                 new_map[k] -= m
             tmp = [0] * (len(vars) - m)
             try:
-                for ix,a in self.dict().iteritems():
+                for ix, a in self.monomial_coefficients().iteritems():
                     for k in range(len(my_vars)):
                         tmp[new_map[k]] = ix[k]
                     postfix = ETuple(tmp)
                     mpoly = <dict> a._mpoly_dict_recursive(prev_vars, base_ring)
-                    for prefix,b in mpoly.iteritems():
-                        D[prefix+postfix] = b
+                    for prefix, b in mpoly.iteritems():
+                        D[prefix + postfix] = b
                 return D
 
             except AttributeError:
@@ -527,7 +527,7 @@ cdef class MPolynomial(CommutativePolynomial):
             base_ring = None
 
         tmp = [0] * len(vars)
-        for ix,a in self.dict().iteritems():
+        for ix, a in self.monomial_coefficients().iteritems():
             for k in range(len(my_vars)):
                 tmp[mapping[k]] = ix[k]
             if base_ring is not None:
@@ -578,7 +578,7 @@ cdef class MPolynomial(CommutativePolynomial):
         cdef long result_mon
         var_name_hash = [hash(v) for v in self._parent.variable_names()]
         cdef long c_hash
-        for m,c in self.dict().iteritems():
+        for m, c in self.monomial_coefficients().iteritems():
             #  I'm assuming (incorrectly) that hashes of zero indicate that the element is 0.
             # This assumption is not true, but I think it is true enough for the purposes and it
             # it allows us to write fast code that omits terms with 0 coefficients.  This is
@@ -913,7 +913,7 @@ cdef class MPolynomial(CommutativePolynomial):
         """
         if isinstance(R, Map):
             return self.map_coefficients(R)
-        return self.parent().change_ring(R)(self.dict())
+        return self.parent().change_ring(R)(self.monomial_coefficients())
 
     def is_symmetric(self, group=None):
         r"""
@@ -997,7 +997,7 @@ cdef class MPolynomial(CommutativePolynomial):
                     raise ValueError("argument must be a permutation group")
             gens = [S(g) for g in gens]
 
-        cdef dict coeffs = self.dict()
+        cdef dict coeffs = self.monomial_coefficients()
         zero = self.base_ring().zero()
         return all(coeffs.get(g._act_on_etuple_on_position(e), zero) == coeff
                    for e, coeff in coeffs.items() for g in gens)
@@ -1360,7 +1360,7 @@ cdef class MPolynomial(CommutativePolynomial):
             R = R.change_ring(new_base_ring)
         elif isinstance(f, Map):
             R = R.change_ring(f.codomain())
-        return R(dict([(k,f(v)) for (k,v) in self.dict().items()]))
+        return R({k: f(v) for k, v in self.monomial_coefficients().items()})
 
     def _norm_over_nonprime_finite_field(self):
         r"""
@@ -2611,7 +2611,7 @@ cdef class MPolynomial(CommutativePolynomial):
         # K[x,y,...] as K[x][y]...
         if not self.constant_coefficient().is_unit():
             return False
-        cdef dict d = self.dict()
+        cdef dict d = self.monomial_coefficients()
         cdef ETuple zero_key = ETuple({}, int(self.parent().ngens()))
         d.pop(zero_key, None)
         return all(d[k].is_nilpotent() for k in d)
@@ -2646,7 +2646,7 @@ cdef class MPolynomial(CommutativePolynomial):
         # Section 7.3 Exercise 33).
         # This generalizes easily to the multivariate case, by considering
         # K[x,y,...] as K[x][y]...
-        d = self.dict()
+        d = self.monomial_coefficients()
         return all(c.is_nilpotent() for c in d.values())
 
     def _test_subs(self, tester=None, **options):

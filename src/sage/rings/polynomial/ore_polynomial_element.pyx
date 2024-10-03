@@ -2481,7 +2481,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         else:
             return (<OrePolynomial_generic_dense>self)._coeffs
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         r"""
         Return a dictionary representation of ``self``.
 
@@ -2506,7 +2506,8 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
                 X[i] = c
         return X
 
-    monomial_coefficients = dict
+    cpdef dict dict(self):
+        return self.monomial_coefficients()
 
     cpdef Integer degree(self):
         r"""
