@@ -14,6 +14,8 @@ AUTHORS:
 - Lorenz Panny (2022): :meth:`QuaternionOrder.isomorphism_to`,
   :meth:`QuaternionFractionalIdeal_rational.minimal_element`
 
+- Eloi Torrents (2024): construct quaternion algebras over number fields from ramification
+
 This code is partly based on Sage code by David Kohel from 2005.
 
 TESTS:
@@ -48,7 +50,6 @@ from sage.arith.misc import (hilbert_conductor_inverse,
 from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.ideal import Ideal_fractional
 from sage.rings.rational_field import RationalField, QQ
@@ -78,11 +79,13 @@ from . import quaternion_algebra_cython
 from sage.modular.modsym.p1list import P1List
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.functional import is_odd, category
 
 from sage.categories.algebras import Algebras
 from sage.categories.number_fields import NumberFields
 
 from sage.structure.richcmp import richcmp_method
+from sage.libs.pari.all import pari
 
 ########################################################
 # Constructor
@@ -95,7 +98,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
     INPUT:
 
-    There are three input formats:
+    There are four input formats:
 
     - ``QuaternionAlgebra(a, b)``, where `a` and `b` can be coerced to
       units in a common field `K` of characteristic different from 2.
@@ -107,6 +110,13 @@ class QuaternionAlgebraFactory(UniqueFactory):
       integer.  This constructs a quaternion algebra of discriminant
       `D` over `K = \QQ`.  Suitable nonzero rational numbers `a`, `b`
       as above are deduced from `D`.
+
+    - ``QuaternionAlgebra(K, primes, inv_archimedean)``, where `primes`
+      is a list of prime ideals and `inv_archimedean` is a list of local
+      invariants (0 or 1/2) specifying the ramification at the (infinite)
+      real places of `K`.  This constructs a quaternion algebra ramified
+      exacly at the places in `primes` and those in `K.real_embeddings()`
+      indexed by `i` with `inv_archimedean[i]=1/2`.
 
     OUTPUT:
 
@@ -184,6 +194,26 @@ class QuaternionAlgebraFactory(UniqueFactory):
         sage: QuaternionAlgebra(2*3*5*7)
         Quaternion Algebra (-22, 210) with base ring Rational Field
 
+    ``QuaternionAlgebra(K, primes, inv_archimedean)`` -- return the quaternion
+    algebra over `K` with the specified ramification::
+
+        sage: QuaternionAlgebra(QQ, [(2), (3)], [0])
+        Quaternion Algebra (-1, 3) with base ring Rational Field
+        sage: QuaternionAlgebra(QQ, [(2), (3)], [1/2])
+        Traceback (most recent call last):
+        ...
+        ValueError: Quaternion algebra over the rationals must have an even number of ramified places
+        sage: K.<w> = NumberField(x^2-x-1)
+        sage: P = K.prime_above(2)
+        sage: Q = K.prime_above(3)
+        sage: A = QuaternionAlgebra(K, [P,Q], [0,0])
+        sage: A.discriminant()
+        Fractional ideal (6)
+        sage: A = QuaternionAlgebra(K, [P,Q], [1/2,0])
+        Traceback (most recent call last):
+        ...
+        ValueError: Quaternion algebra over the rationals must have an even number of ramified places
+
     If the coefficients `a` and `b` in the definition of the quaternion
     algebra are not integral, then a slower generic type is used for
     arithmetic::
@@ -240,8 +270,8 @@ class QuaternionAlgebraFactory(UniqueFactory):
             K = QQ
             D = Integer(arg0)
             a, b = hilbert_conductor_inverse(D)
-            a = Rational(a)
-            b = Rational(b)
+            a = QQ(a)
+            b = QQ(b)
 
         elif arg2 is None:
             # If arg0 or arg1 are Python data types, coerce them
@@ -263,11 +293,37 @@ class QuaternionAlgebraFactory(UniqueFactory):
             a = K(v[0])
             b = K(v[1])
 
-        # QuaternionAlgebra(K, a, b)
         else:
+            # QuaternionAlgebra(K, primes, inv_archimedean)
             K = arg0
-            a = K(arg1)
-            b = K(arg2)
+            if category(K) is not NumberFields():
+                raise ValueError("quaternion algbera must be defined over a number field")
+            if isinstance(arg1, list) and isinstance(arg2, list):
+                if not set(arg2).issubset(set([0,QQ(1/2)])):
+                    raise ValueError("list of local invariants specifying ramification should contain only 0 and 1/2")
+                arg1 = list(set(arg1))
+                if not all([p.is_prime() for p in arg1]):
+                    raise ValueError("quaternion algebra constructor requires a list of primes specifying the ramification")
+                if is_RationalField(K):
+                    if len(arg2) > 1 or (len(arg2) == 1 and is_odd(len(arg1) + 2*arg2[0])):
+                        raise ValueError("quaternion algebra over the rationals must have an even number of ramified places")
+                    D = ZZ.ideal_monoid().prod(arg1).gen()
+                    a, b = hilbert_conductor_inverse(D)
+                    a = QQ(a)
+                    b = QQ(b)
+                else:
+                    if len(arg2) != len(K.real_places()):
+                        raise ValueError("must specify ramification at the real places of %s" % K)
+                    if is_odd(len(arg1) + 2 * sum(arg2)):
+                        raise ValueError("quaternion algebra over the rationals must have an even number of ramified places")
+                    fin_places_pari = [I.pari_prime() for I in arg1]
+                    A = pari(K).alginit([2, [fin_places_pari, [QQ(1/2)] * len(fin_places_pari)], arg2], maxord=0)
+                    a = K(A.algsplittingfield().disc()[1])
+                    b = K(A.algb())
+            else:
+                # QuaternionAlgebra(K, a, b)
+                a = K(arg1)
+                b = K(arg2)
 
         if not K(2).is_unit():
             raise ValueError("2 is not invertible in %s" % K)
