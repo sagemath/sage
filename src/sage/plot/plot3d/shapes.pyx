@@ -1162,14 +1162,14 @@ class Text(PrimitiveObject):
             [[['select atomno = 1', 'color atom  [102,102,255]', 'label "Hi"']],
              [['select atomno = 2', 'color atom  [102,102,255]', 'label "Bye"']]]
         """
-        cen = (0,0,0)
+        cen = (0, 0, 0)
         if render_params.transform is not None:
             cen = render_params.transform.transform_point(cen)
         render_params.atom_list.append(cen)
         atom_no = len(render_params.atom_list)
         return ['select atomno = %s' % atom_no,
                 self.get_texture().jmol_str("atom"),
-                'label "%s"' % self.string] #.replace('\n', '|')]
+                'label "%s"' % self.string]  # .replace('\n', '|')]
 
     def threejs_repr(self, render_params):
         r"""
