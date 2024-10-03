@@ -67,11 +67,12 @@ def acyclic_orientations(G):
 
     .. NOTE::
 
-        The function assumes that the input graph is undirected and the edges are unlabelled.
+        The function assumes that the input graph is undirected and the edges
+        are unlabelled.
 
     EXAMPLES:
 
-    To count number acyclic orientations for a graph::
+    To count the number of acyclic orientations for a graph::
 
         sage: g = Graph([(0, 3), (0, 4), (3, 4), (1, 3), (1, 2), (2, 3), (2, 4)])
         sage: it = g.acyclic_orientations()
@@ -80,10 +81,20 @@ def acyclic_orientations(G):
 
     Test for arbitrary vertex labels::
 
-        sage: g_str = Graph([('abc', 'def'), ('ghi', 'def'), ('xyz', 'abc'), ('xyz', 'uvw'), ('uvw', 'abc'), ('uvw', 'ghi')])
+        sage: g_str = Graph([('abc', 'def'), ('ghi', 'def'), ('xyz', 'abc'),
+        ....:                ('xyz', 'uvw'), ('uvw', 'abc'), ('uvw', 'ghi')])
         sage: it = g_str.acyclic_orientations()
         sage: len(list(it))
         42
+
+    Check that the method returns properly relabeled acyclic digraphs::
+
+        sage: g = Graph([(0, 1), (1, 2), (2, 3), (3, 0), (0, 2)])
+        sage: orientations = set([frozenset(d.edges(labels=false)) for d in g.acyclic_orientations()])
+        sage: len(orientations)
+        18
+        sage: all(d.is_directed_acyclic() for d in g.acyclic_orientations())
+        True
 
     TESTS:
 
@@ -291,8 +302,9 @@ def acyclic_orientations(G):
 
     # Iterate over acyclic orientations and create relabeled graphs
     for orientation in orientations:
-        relabeled_graph = DiGraph([(reverse_vertex_labels[u], reverse_vertex_labels[v], label) for (u, v), label in orientation.items()])
-        yield relabeled_graph
+        D = DiGraph([(u, v) if label else (v, u) for (u, v), label in orientation.items()])
+        D.relabel(perm=reverse_vertex_labels, inplace=True)
+        yield D
 
 
 def strong_orientations_iterator(G):
