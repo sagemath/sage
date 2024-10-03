@@ -165,19 +165,16 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     if algorithm == 'magma':
         from sage.interfaces.magma import magma
-        from sage.misc.sage_eval import sage_eval
         if MConic.has_rational_point(algorithm='magma'):
-            parametrization = [l.replace('$.1', 't').replace('$.2', 'u')
-               for l in str(magma(MConic).Parametrization()).splitlines()[4:7]]
-            [F1, F2, F3] = [sage_eval(p, locals={'t': t, 'u': 1, 'a': k.gen()})
-                            for p in parametrization]
+            parametrization = magma(MConic).Parametrization().DefiningPolynomials().sage()
+            F1, F2, F3 = (p(t, 1) for p in parametrization)
         else:
             raise ValueError(f"No such curve exists over {k} as there are no "
                              f"rational points on {MConic}")
     else:
         if MConic.has_rational_point():
             parametrization = MConic.parametrization(morphism=False)[0]
-            [F1, F2, F3] = [p(t, 1) for p in parametrization]
+            F1, F2, F3 = (p(t, 1) for p in parametrization)
         else:
             raise ValueError(f"No such curve exists over {k} as there are no "
                              f"rational points on {MConic}")
