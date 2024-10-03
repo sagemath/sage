@@ -925,6 +925,8 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
 
         """
         from sage.misc.latex_standalone import Standalone
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
         return Standalone(self._latex_(), **kwds)
 
     @cached_method
@@ -1425,6 +1427,8 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
 
         """
         from sage.misc.latex_standalone import Standalone
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
         return Standalone(self._latex_(), **kwds)
 
     @cached_method
@@ -1782,6 +1786,8 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
 
         """
         from sage.misc.latex_standalone import Standalone
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
         return Standalone(self._latex_(), **kwds)
 
     def rows(self):

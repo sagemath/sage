@@ -524,6 +524,8 @@ cdef class Spin(Element):
 
         """
         from sage.misc.latex_standalone import Standalone
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
         return Standalone(self._latex_(), **kwds)
 
     def weight(self):

@@ -559,6 +559,8 @@ class GeneralizedYoungWall(CombinatorialElement):
 
         """
         from sage.misc.latex_standalone import TikzPicture
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
         if latex_large:
             s = self.latex_large()
         else:

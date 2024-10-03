@@ -146,6 +146,8 @@ class MVPolytope(PBWCrystalElement):
 
         """
         from sage.misc.latex_standalone import TikzPicture
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
         return TikzPicture(self._latex_(), **kwds)
 
     def _polytope_vertices(self, P):
