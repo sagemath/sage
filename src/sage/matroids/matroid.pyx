@@ -6612,7 +6612,7 @@ cdef class Matroid(SageObject):
                 return False
         return True
 
-    cpdef bint is_regular(self) noexcept:
+    cpdef bint is_regular(self, algorithm="cmr") except -1:
         r"""
         Return if ``self`` is regular.
 
@@ -6623,25 +6623,57 @@ cdef class Matroid(SageObject):
         Alternatively, a matroid is regular if and only if it has no minor
         isomorphic to `U_{2, 4}`, `F_7`, or `F_7^*`.
 
+        INPUT:
+
+        - ``algorithm`` -- (default: ``"cmr"``); specify which algorithm
+          to check regularity:
+
+          - ``None`` -- an algorithm based on excluded minors.
+          - ``"cmr"`` -- an algorithm based on Seymour's decomposition,
+            the optional package "cmr" is required.
+
+        .. SEEALSO::
+
+            :meth:`M.is_regular() <sage.matroids.linear_matroid.
+            RegularMatroid.is_regular>`
+            :meth:`M.is_regular() <sage.matroids.graphic_matroid.
+            GraphicMatroid.is_regular>`
+            :meth:`M._is_binary_linear_matroid_regular() <sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse._is_binary_linear_matroid_regular>`
+            :meth:`M.is_totally_unimodular() <sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse.is_totally_unimodular>`
+
         EXAMPLES::
 
             sage: M = matroids.catalog.Wheel4()
             sage: M.is_regular()
             True
             sage: M = matroids.catalog.R9()
-            sage: M.is_regular()
+            sage: M.is_regular() # optional - cmr
+            False
+            sage: from sage.matroids.advanced import LinearMatroid
+            sage: M1 = LinearMatroid(Matrix(ZZ,[[1,0,1,1],[0,1,1,-1]]))
+            sage: M1.is_regular() # optional - cmr
             False
 
         REFERENCES:
 
-        [Oxl2011]_, p. 373.
+        [Oxl2011]_, p. 373, chapter 13.
         """
-        if not self.is_binary():  # equivalent to checking for a U24 minor
+        M = self.binary_matroid()
+        if M is None:  # equivalent to checking for a U24 minor
             return False
-        from sage.matroids.database_matroids import Fano, FanoDual
-        if self.has_minor(Fano()) or self.has_minor(FanoDual()):
-            return False
-        return True
+        if algorithm is None:
+            from sage.matroids.database_matroids import Fano, FanoDual
+            if self.has_minor(Fano()) or self.has_minor(FanoDual()):
+                return False
+            return True
+        if algorithm == "cmr":
+            from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            A = M.representation()
+            A_cmr = Matrix_cmr_chr_sparse(A.parent(), A)
+            return A_cmr._is_binary_linear_matroid_regular()
+        raise ValueError("Not a valid algorithm.")
 
     # matroid k-closed
 
