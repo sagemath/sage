@@ -386,7 +386,7 @@ cdef MPopts global_opts
 global_context = None
 
 cdef class Context:
-    cdef public mpf, mpc, constant #, def_mp_function
+    cdef public mpf, mpc, constant  # , def_mp_function
     cdef public trap_complex
     cdef public pretty
 

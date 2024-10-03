@@ -3948,7 +3948,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def euclidean_degree(self):
         r"""
-        Return the degree of this element as an element of an Euclidean domain.
+        Return the degree of this element as an element of a Euclidean domain.
 
         If this polynomial is defined over a field, this is simply its :meth:`degree`.
 
@@ -8404,6 +8404,9 @@ cdef class Polynomial(CommutativePolynomial):
             UserWarning: roots may have been lost...
             [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
              [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
+            sage: ((x - 1)^2).roots(multiplicities=False, proof=False, warn=False)
+            [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
+             [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
 
         Note that coefficients in a number field with defining polynomial
         `x^2 + 1` are considered to be Gaussian rationals (with the
@@ -10185,7 +10188,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         # __getitem__ already returns a polynomial!!
         # We must not have check=False, since 0 must not have _coeffs = [0].
-        return <Polynomial>self._parent(self[:n])#, check=False)
+        return <Polynomial>self._parent(self[:n])  # , check=False)
 
     cdef _inplace_truncate(self, long prec):
         return self.truncate(prec)
