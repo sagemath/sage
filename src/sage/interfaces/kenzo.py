@@ -437,10 +437,10 @@ class KenzoChainComplex(KenzoObject):
         m1 = __chcm_mat__(echcm1, n)
         m2 = __chcm_mat__(echcm1, n + 1)
         homology = __homologie__(m1, m2)
-        lhomomology = [i for i in EclListIterator(homology)]
+        lhomomology = list(EclListIterator(homology))
         res = []
         for component in lhomomology:
-            pair = [i for i in EclListIterator(component)]
+            pair = list(EclListIterator(component))
             res.append(pair[0].python())
         return HomologyGroup(len(res), ZZ, res)
 
@@ -1309,7 +1309,7 @@ def SFiniteSimplicialSet(ksimpset, limit):
         bases.append(lbasis_k)
         names.append(names_k)
     all_simplices = __sfinitesimplicialset_aux1__(ksimpset._kenzo, limit)
-    lall_simplices = [i for i in EclListIterator(all_simplices)]
+    lall_simplices = list(EclListIterator(all_simplices))
     dim = 1
     for Kdim in lall_simplices:
         for simp in Kdim:

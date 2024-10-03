@@ -1024,8 +1024,8 @@ class DiffMap(ContinuousMap):
             if nproc != 1:
                 # Parallel computation
                 lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                ind_list = [ind for ind in ptcomp.non_redundant_index_generator()]
-                ind_step = max(1, int(len(ind_list)/nproc/2))
+                ind_list = list(ptcomp.non_redundant_index_generator())
+                ind_step = max(1, (len(ind_list) // nproc) // 2)
                 local_list = lol(ind_list, ind_step)
                 # list of input parameters
                 listParalInput = [(tcomp, chart1, chart2, coord2_1, jacob,

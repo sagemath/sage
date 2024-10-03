@@ -567,8 +567,8 @@ def cremona_to_lmfdb(cremona_label, CDB=None):
     if CDB is None:
         CDB = CremonaDatabase()
     classes = CDB.isogeny_classes(N)
-    ft = int(53)
-    tff = int(255) # This should be enough to distinguish between curves (using heuristics from Sato-Tate for example)
+    ft = 53
+    tff = 255 # This should be enough to distinguish between curves (using heuristics from Sato-Tate for example)
     isos = []
     for i, iso in enumerate(classes):
         alist = iso[0][0]
@@ -617,8 +617,8 @@ def lmfdb_to_cremona(lmfdb_label, CDB=None):
     if CDB is None:
         CDB = CremonaDatabase()
     classes = CDB.isogeny_classes(N)
-    ft = int(53)
-    tff = int(255) # This should be enough to distinguish between curves (using heuristics from Sato-Tate for example)
+    ft = 53
+    tff = 255 # This should be enough to distinguish between curves (using heuristics from Sato-Tate for example)
     isos = []
     for i, iso in enumerate(classes):
         alist = iso[0][0]
@@ -818,7 +818,7 @@ class MiniCremonaDatabase(SQLDatabase):
             ret[iso+str(num)] = [eval(c[1]),c[2],c[3]]
         if N == 990:
             del ret['h1']
-            ret['h3'] = [[1,-1,1,-1568,-4669],int(1),int(6)]
+            ret['h3'] = [[1,-1,1,-1568,-4669],1,6]
         return ret
 
     def coefficients_and_data(self, label):
@@ -1643,6 +1643,7 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             con.executemany("UPDATE t_curve SET gens=? WHERE curve=?",
                 curve_data)
             print("Committing...")
+            self.commit()
             if largest_conductor and int(v[0]) > largest_conductor:
                 break
 

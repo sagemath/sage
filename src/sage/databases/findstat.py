@@ -2211,7 +2211,7 @@ class FindStatStatistic(Element,
 
         included = _get_json(url)["included"]
         # slightly simplify the representation
-        data = {key: val for key, val in included["Statistics"][self.id_str()].items()}
+        data = dict(included["Statistics"][self.id_str()].items())
         # we replace the list of identifiers in Bibliography with the dictionary
         data["Bibliography"] = included["References"]
         return data
