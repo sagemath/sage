@@ -6612,7 +6612,7 @@ cdef class Matroid(SageObject):
                 return False
         return True
 
-    cpdef bint is_regular(self, algorithm="cmr") except -1:
+    cpdef bint is_regular(self, algorithm=None) except -1:
         r"""
         Return if ``self`` is regular.
 
@@ -6625,7 +6625,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``"cmr"``); specify which algorithm
+        - ``algorithm`` -- (default: ``None``); specify which algorithm
           to check regularity:
 
           - ``None`` -- an algorithm based on excluded minors.
@@ -6649,11 +6649,11 @@ cdef class Matroid(SageObject):
             sage: M.is_regular()
             True
             sage: M = matroids.catalog.R9()
-            sage: M.is_regular() # optional - cmr
+            sage: M.is_regular(algorithm="cmr") # optional - cmr
             False
             sage: from sage.matroids.advanced import LinearMatroid
             sage: M1 = LinearMatroid(Matrix(ZZ,[[1,0,1,1],[0,1,1,-1]]))
-            sage: M1.is_regular() # optional - cmr
+            sage: M1.is_regular(algorithm="cmr") # optional - cmr
             False
 
         REFERENCES:

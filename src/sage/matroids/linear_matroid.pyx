@@ -6299,7 +6299,7 @@ cdef class RegularMatroid(LinearMatroid):
 
     # representation
 
-    cpdef bint is_regular(self) noexcept:
+    cpdef bint is_regular(self, **kwds) except -1:
         r"""
         Return if ``self`` is regular.
 
