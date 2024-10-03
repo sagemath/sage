@@ -20393,6 +20393,8 @@ class GenericGraph(GenericGraph_pyx):
             option spring : Use spring layout to finalize the current layout.
             option tree_orientation : The direction of tree branches -- 'up', 'down', 'left' or 'right'.
             option tree_root : A vertex designation for drawing trees. A vertex of the tree to be used as the root for the ``layout='tree'`` option. If no root is specified, then one is chosen close to the center of the tree. Ignored unless ``layout='tree'``.
+            option external_face : A list of vertices to be the external face in the Tutte layout. Ignored unless ``layout='tutte'``.
+            option external_face_pos : A dictionary of positions for the external face in the Tutte layout. If none are specified, the external face is a regular polygon. Ignored unless ``layout='tutte'``
 
         Some of them only apply to certain layout algorithms. For details, see
         :meth:`.layout_acyclic`, :meth:`.layout_planar`,
@@ -21014,6 +21016,77 @@ class GenericGraph(GenericGraph_pyx):
         positions = dot2tex.dot2tex(self.graphviz_string(**options), format='positions', prog=prog)
 
         return {key_to_vertex[key]: pos for key, pos in positions.items()}
+    
+    def layout_tutte(self, external_face, external_face_pos=None, **options):
+        """
+
+        Compute graph layout based on a Tutte embedding.
+
+        The graph must be 3-connected and planar.
+
+        INPUT:
+
+        - ``external_face`` -- list; the external face to be made a polygon
+
+        - ``external_face_pos`` -- list (default: ``None``); the positions of the vertices 
+          of the external face. If ``None``, will automatically generate a unit sided regular polygon.
+        
+        - ``**options`` -- other parameters not used here
+
+        """
+        from sage.graphs.graph import Graph
+        from sage.matrix.constructor import zero_matrix
+        from sage.rings.real_mpfr import RR
+        
+        if (len(external_face) < 3):
+            raise ValueError("External face must have at least 3 vertices")
+
+        G = Graph(self)
+        if (not G.is_planar()):
+            raise ValueError("Graph must be planar")
+        C = G.subgraph(vertices=external_face)
+        if (not C.is_cycle()):
+            raise ValueError("External face must be a cycle")
+        external_face_ordered = C.depth_first_search(start=external_face[0])
+        
+        from sage.graphs.connectivity import vertex_connectivity
+        if (vertex_connectivity(G, k=4)):
+            raise ValueError("Graph must be 3-connected")
+
+        from math import sin, cos, pi
+        pos = dict()
+
+        if external_face_pos is None:
+            l = len(external_face)
+            a0 = pi/l+pi/2
+            for i, vertex in enumerate(external_face_ordered):
+                ai = a0+pi*2*i/l
+                pos[vertex] = (cos(ai),sin(ai))
+        else:
+            for v,p in external_face_pos.items():
+                pos[v] = p
+
+        V = self.vertices()
+        n = len(V)
+        M = zero_matrix(RR,n,n)
+        b = zero_matrix(RR,n,2)
+
+        for i in range(n):
+            v = V[i]
+            if v in pos:
+                M[i,i] = 1
+                b[i,0] = pos[v][0]
+                b[i,1] = pos[v][1]
+            else:
+                nv = G.neighbors(v)
+                for u in nv:
+                    j = V.index(u)
+                    M[i,j] = -1
+                M[i,i] = len(nv)
+
+        sol = M.pseudoinverse()*b
+        return {V[i]:sol[i] for i in range(n)}  
+        
 
     def _layout_bounding_box(self, pos):
         """
@@ -21333,6 +21406,9 @@ class GenericGraph(GenericGraph_pyx):
             of the tree using the keyword tree_root, otherwise a root will be
             selected at random. Then the tree will be plotted in levels,
             depending on minimum distance for the root.
+          
+          - ``'tutte'`` -- uses the Tutte embedding algorithm. The graph must be
+          a 3-connected, planar graph.
 
         - ``vertex_labels`` -- boolean (default: ``True``); whether to print
           vertex labels
@@ -21399,6 +21475,13 @@ class GenericGraph(GenericGraph_pyx):
           "down".  If "up" (resp., "down"), then the root of the tree will
           appear on the bottom (resp., top) and the tree will grow upwards
           (resp. downwards). Ignored unless ``layout='tree'``.
+        
+        - ``external_face`` -- list of vertices; the external face to be made a
+        in the Tutte layout. Ignored unless ``layout='tutte''``.
+
+        - ``external_face_pos`` -- dictionary (default: ``None``). If specified,
+        used as the positions for the external face in the Tutte layout. Ignored
+        unless ``layout='tutte'``.
 
         - ``save_pos`` -- boolean (default: ``False``); save position computed
           during plotting
