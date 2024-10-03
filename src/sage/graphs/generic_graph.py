@@ -21033,6 +21033,23 @@ class GenericGraph(GenericGraph_pyx):
         
         - ``**options`` -- other parameters not used here
 
+        OUTPUT: a dictionary mapping vertices to positions
+
+        EXAMPLES::
+
+            sage: g = graphs.WheelGraph(n=7)
+            sage: g.layout_tutte(external_face=[1, 2, 3, 4, 5, 6])
+            {1: (-0.499999999999999, 0.866025403784438),
+            2: (0.500000000000000, 0.866025403784439),
+            3: (1.00000000000000, 8.85026869717109e-17),
+            4: (0.500000000000000, -0.866025403784439),
+            5: (-0.500000000000001, -0.866025403784438),
+            6: (-1.00000000000000, 4.55896726715916e-16),
+            0: (-5.55111512312578e-17, 1.86944233679563e-16)}
+            sage: g = graphs.CubeGraph(n=3, embedding=2)
+            sage: g.plot(layout='tutte', external_face=['101','111','001','011'], external_face_pos={'101':(1,0), '111':(0,0), '001':(2,1), '011':(-1,1)})
+            Launched png viewer for Graphics object consisting of 21 graphics primitives
+
         """
         from sage.graphs.graph import Graph
         from sage.matrix.constructor import zero_matrix
