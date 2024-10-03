@@ -351,7 +351,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
     - ``M`` -- matroid
     - ``R`` -- commutative ring
 
-    EXAMPLES::
+    EXAMPLES:
 
     Augmented Chow ring ideal of Wheel matroid of rank 3::
 
@@ -488,7 +488,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             True
         """
         if algorithm == '':
-            gb = []
+            gb = [] #Don't use flats. Get lattice of flats and use order_filter()
             E = list(self._matroid.groundset())
             poly_ring = self.ring()
             for F in self._flats:
@@ -498,10 +498,10 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
                     for i in E:
                         term = poly_ring.zero()
                         term1 = poly_ring.zero()
-                        for H in self._flats:
-                            if i in H:
+                        for H in self._flats: #Remove it somehow
+                            if i in H: #WASTEFUL
                                 term += self._flats_generator[H]
-                            if H > G:
+                            if H > G: #WASTEFUL
                                 term1 += self._flats_generator[H]
                         if term != poly_ring.zero():
                             gb.append(self._flats_generator[i] + term) #5.7
@@ -683,7 +683,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                                                   for g in self.gens()),
                                         latex(self.ring()))
     
-    def groebner_basis(self, algorithm='constructed', *args, **kwargs):
+    def groebner_basis(self, algorithm='constructed', *args, **kwargs): #Copy from fy presentation
         """
         Returns the Groebner basis of `self`.
 
