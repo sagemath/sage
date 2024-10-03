@@ -27,6 +27,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.finite_field_constructor import GF
 from copy import copy
 
+
 def _puncture(v, points):
     r"""
     Return v punctured as the positions listed in ``points``.
@@ -57,6 +58,7 @@ def _puncture(v, points):
     S = VectorSpace(v.base_ring(), len(v) - len(points))
     new_v = [v[i] for i in range(len(v)) if i not in points]
     return S(new_v)
+
 
 def _insert_punctured_positions(l, punctured_points, value=None):
     r"""

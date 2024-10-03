@@ -44,6 +44,7 @@ from sage.misc.cachefunc import cached_method
 columns_white_list = ['knot_atlas_anon', 'knotilus_page_anon']
 columns_black_list = ['homfly_polynomial_old']
 
+
 class KnotInfoColumnTypes(Enum):
     r"""
     Enum class to specify if a column from the table of knots and links provided
@@ -792,7 +793,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
-            sage: TestSuite(ki_db).run()    # long time indirect doctest
+            sage: TestSuite(ki_db).run()    # optional - database_knotinfo, long time, indirect doctest
         """
         from sage.knots.knotinfo import KnotInfo
         from sage.misc.misc import some_tuples

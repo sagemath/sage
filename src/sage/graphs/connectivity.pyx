@@ -23,7 +23,8 @@ Here is what the module can do:
     :meth:`connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`blocks_and_cut_vertices` | Return the blocks and cut vertices of the graph.
     :meth:`blocks_and_cuts_tree` | Return the blocks-and-cuts tree of the graph.
-    :meth:`is_cut_edge` | Return ``True`` if the input edge is a cut-edge or a bridge.
+    :meth:`is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
+    :meth:`is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`is_cut_vertex` | Check whether the input vertex is a cut-vertex.
     :meth:`edge_connectivity` | Return the edge connectivity of the graph.
     :meth:`vertex_connectivity` | Return the vertex connectivity of the graph.
@@ -70,6 +71,7 @@ Methods
 # ****************************************************************************
 
 from sage.misc.superseded import deprecation
+from sage.sets.disjoint_set cimport DisjointSet
 
 
 def is_connected(G):
@@ -732,13 +734,160 @@ def blocks_and_cuts_tree(G):
     return g
 
 
+def is_edge_cut(G, edges):
+    """
+    Check whether ``edges`` form an edge cut.
+
+    A set of edges is an edge cut of a graph if its removal increases the number
+    of connected components. In a digraph, we consider the number of (weakly)
+    connected components.
+
+    This method is not working for (di)graphs with multiple edges. Furthermore,
+    edge labels are ignored.
+
+    INPUT:
+
+    - ``G`` -- a (di)graph
+
+    - ``edges`` -- a set of edges
+
+    EXAMPLES:
+
+    A cycle graph of order 4::
+
+        sage: from sage.graphs.connectivity import is_edge_cut
+        sage: G = graphs.CycleGraph(4)
+        sage: is_edge_cut(G, [(1, 2)])
+        False
+        sage: is_edge_cut(G, [(1, 2), (2, 3)])
+        True
+        sage: is_edge_cut(G, [(1, 2), (3, 0)])
+        True
+
+    A pending edge is a cut-edge::
+
+        sage: G.add_edge((0, 5, 'silly'))
+        sage: is_edge_cut(G, [(0, 5, 'silly')])
+        True
+
+    Edge labels are ignored, even if specified::
+
+        sage: G.add_edge((2, 5, 'xyz'))
+        sage: is_edge_cut(G, [(0, 5), (2, 5)])
+        True
+        sage: is_edge_cut(G, [(0, 5), (2, 5, 'xyz')])
+        True
+        sage: is_edge_cut(G, [(0, 5, 'silly'), (2, 5)])
+        True
+        sage: is_edge_cut(G, [(0, 5, 'aa'), (2, 5, 'bb')])
+        True
+
+    The graph can have loops::
+
+        sage: G.allow_loops(True)
+        sage: G.add_edge(0, 0)
+        sage: is_edge_cut(G, [(0, 5), (2, 5)])
+        True
+        sage: is_edge_cut(G, [(0, 0), (0, 5), (2, 5)])
+        True
+
+    Multiple edges are not allowed::
+
+        sage: G.allow_multiple_edges(True)
+        sage: is_edge_cut(G, [(0, 5), (2, 5)])
+        Traceback (most recent call last):
+        ...
+        ValueError: This method is not known to work on graphs with
+         multiedges. Perhaps this method can be updated to handle them, but in
+         the meantime if you want to use it please disallow multiedges using
+         allow_multiple_edges().
+
+    An error is raised if an element of ``edges`` is not an edge of `G`::
+
+        sage: G = graphs.CycleGraph(4)
+        sage: is_edge_cut(G, [(0, 2)])
+        Traceback (most recent call last):
+        ...
+        ValueError: edge (0, 2) is not an edge of the graph
+
+    For digraphs, this method considers the number of (weakly) connected
+    components::
+
+        sage: G = digraphs.Circuit(4)
+        sage: is_edge_cut(G, [(0, 1)])
+        False
+        sage: G = digraphs.Circuit(4)
+        sage: is_edge_cut(G, [(0, 1), (1, 2)])
+        True
+
+    For disconnected (di)graphs, the method checks if the number of (weakly)
+    connected components increases::
+
+        sage: G = graphs.CycleGraph(4) * 2
+        sage: is_edge_cut(G, [(1, 2), (2, 3)])
+        True
+        sage: G = digraphs.Circuit(4) * 2
+        sage: is_edge_cut(G, [(0, 1), (1, 2)])
+        True
+    """
+    G._scream_if_not_simple(allow_loops=True)
+
+    cdef set C = set()  # set of edges of the potential cut
+    cdef set S = set()  # set of incident vertices
+    for e in edges:
+        u, v = e[0], e[1]
+        if not G.has_edge(u, v):
+            raise ValueError("edge {0} is not an edge of the graph".format(repr(e)))
+        if u == v:
+            # We ignore loops
+            continue
+        if G.degree(u) == 1 or G.degree(v) == 1:
+            # e is a pending edge and so a cut-edge
+            return True
+        S.add(u)
+        S.add(v)
+        C.add((u, v))
+        if not G.is_directed():
+            C.add((v, u))
+
+    cdef list queue
+    cdef set seen
+    DS = DisjointSet(G)
+
+    for comp in G.connected_components():
+        if not S.intersection(comp):
+            # This component is not involved in the cut
+            continue
+
+        # We run a DFS in comp from any vertex and avoid edges in C
+        start = comp[0]
+        queue = [start]
+        seen = set(queue)
+        while queue:
+            v = queue.pop()
+            for e in G.edge_iterator(vertices=[v], labels=False, ignore_direction=True, sort_vertices=False):
+                if e in C:
+                    continue
+                w = e[1] if e[0] == v else e[0]
+                if w not in seen:
+                    seen.add(w)
+                    DS.union(v, w)
+                    queue.append(w)
+
+        # We now check if some vertices of comp have not been reached
+        if len(set(DS.find(v) for v in comp)) > 1:
+            return True
+
+    return False
+
+
 def is_cut_edge(G, u, v=None, label=None):
     """
-    Return ``True`` if the input edge is a cut-edge or a bridge.
+    Check whether the edge ``(u, v)`` is a cut-edge or a bridge of graph ``G``.
 
     A cut edge (or bridge) is an edge that when removed increases
-    the number of connected components.  This function works with
-    simple graphs as well as graphs with loops and multiedges.  In
+    the number of connected components. This function works with
+    simple graphs as well as graphs with loops and multiedges. In
     a digraph, a cut edge is an edge that when removed increases
     the number of (weakly) connected components.
 
@@ -787,20 +936,7 @@ def is_cut_edge(G, u, v=None, label=None):
         Traceback (most recent call last):
         ...
         ValueError: edge not in graph
-
-    TESTS:
-
-    If ``G`` is not a Sage graph, an error is raised::
-
-        sage: is_cut_edge('I am not a graph',0)
-        Traceback (most recent call last):
-        ...
-        TypeError: the input must be a Sage graph
     """
-    from sage.graphs.generic_graph import GenericGraph
-    if not isinstance(G, GenericGraph):
-        raise TypeError("the input must be a Sage graph")
-
     if label is None:
         if v is None:
             try:
@@ -1472,6 +1608,16 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         sage: G.add_edge(0, 1)
         sage: G.vertex_connectivity(value_only=False, verbose=1)                        # needs sage.numerical.mip
         (3, [])
+
+    Check that :issue:`38723` is fixed::
+
+        sage: G = graphs.SierpinskiGasketGraph(3)
+        sage: G.vertex_connectivity(k=1)                                                # needs sage.numerical.mip
+        True
+        sage: G.vertex_connectivity(k=2)                                                # needs sage.numerical.mip
+        True
+        sage: G.vertex_connectivity(k=3)                                                # needs sage.numerical.mip
+        False
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
@@ -1486,8 +1632,8 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
             # We follow the convention of is_connected, is_biconnected and
             # is_strongly_connected
             return k == 1
-        if (g.is_directed() and k > min(min(g.in_degree()), min(g.out_degree()))) \
-           or (not g.is_directed() and (k > min(g.degree()))):
+        if ((g.is_directed() and k > min(min(g.in_degree()), min(g.out_degree())))
+                or (not g.is_directed() and (k > min(g.degree())))):
             return False
         value_only = True
         sets = False
@@ -1519,7 +1665,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
                 return 1 if k is None else (k == 1)
 
             if not G.is_triconnected():
-                return 2 if k is None else (k == 2)
+                return 2 if k is None else (k <= 2)
             elif k == 3:
                 return True
 
@@ -2634,10 +2780,27 @@ def spqr_tree_to_graph(T):
         sage: H.is_isomorphic(G)
         True
 
-    TESTS::
+    TESTS:
+
+    Check that the method is working for the empty SPQR tree::
 
         sage: H = spqr_tree_to_graph(Graph())
         sage: H.is_isomorphic(Graph())
+        True
+
+    Check that :issue:`38527` is fixed::
+
+        sage: from sage.graphs.connectivity import spqr_tree, spqr_tree_to_graph
+        sage: G = Graph('LlCG{O@?GBoMw?')
+        sage: T1 = spqr_tree(G, algorithm="Hopcroft_Tarjan")
+        sage: T2 = spqr_tree(G, algorithm="cleave")
+        sage: T1.is_isomorphic(T2)
+        True
+        sage: G1 = spqr_tree_to_graph(T1)
+        sage: G2 = spqr_tree_to_graph(T2)
+        sage: G.is_isomorphic(G1)
+        True
+        sage: G.is_isomorphic(G2)
         True
     """
     from sage.graphs.graph import Graph
@@ -2645,11 +2808,23 @@ def spqr_tree_to_graph(T):
 
     count_G = Counter()
     count_P = Counter()
+    vertex_to_int = dict()
     for t, g in T:
+        for u in g:
+            if u not in vertex_to_int:
+                vertex_to_int[u] = len(vertex_to_int)
         if t in ['P', 'Q']:
-            count_P.update(g.edge_iterator())
+            for u, v, label in g.edge_iterator():
+                if vertex_to_int[u] < vertex_to_int[v]:
+                    count_P[u, v, label] += 1
+                else:
+                    count_P[v, u, label] += 1
         else:
-            count_G.update(g.edge_iterator())
+            for u, v, label in g.edge_iterator():
+                if vertex_to_int[u] < vertex_to_int[v]:
+                    count_G[u, v, label] += 1
+                else:
+                    count_G[v, u, label] += 1
 
     G = Graph(multiedges=True)
     for e, num in count_G.items():
