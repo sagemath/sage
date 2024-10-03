@@ -1390,6 +1390,11 @@ REFERENCES:
             vol. 308, no. 1, July 1988.
             http://www.ams.org/journals/tran/1988-308-01/S0002-9947-1988-0946427-X/S0002-9947-1988-0946427-X.pdf
 
+.. [BW1988b] Robert E. Bixby, Donald K. Wagner.
+             *An Almost Linear-Time Algorithm for Graph Realization*.
+             Mathematics of Operations Research, 1988.
+             :doi:`10.1287/moor.13.1.99`
+
 .. [BW1993] Thomas Becker and Volker Weispfenning. *Groebner Bases - A
             Computational Approach To Commutative Algebra*. Springer,
             New York, 1993.

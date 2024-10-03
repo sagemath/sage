@@ -3793,8 +3793,61 @@ cdef class BinaryMatroid(LinearMatroid):
                              keep_initial_representation=False)
 
     # graphicness test
-    cpdef bint is_graphic(self) noexcept:
+    cpdef is_graphic(self, algorithm=None):
+        r"""
+        Test if the binary matroid is graphic.
+
+        A matroid is *graphic* if there exists a graph whose edge set equals
+        the groundset of the matroid, such that a subset of elements of the
+        matroid is independent if and only if the corresponding subgraph is
+        acyclic.
+
+        INPUT:
+
+        - ``algorithm`` -- (default: ``None``); specify which algorithm
+          to check graphicness:
+
+          - ``None`` -- an algorithm based on [GG2012]_.
+          - ``"cmr"`` -- an algorithm based on [BW1988b]_.
+          the optional package "cmr" is required.
+
+        OUTPUT:
+
+        Boolean.
+ 
+        .. SEEALSO::
+
+            :meth:`M.is_graphic() <sage.matroids.linear_matroid.
+            RegularMatroid.is_graphic>`
+            :meth:`M.is_graphic() <sage.matroids.graphic_matroid.
+            GraphicMatroid.is_graphic>`
+
+        EXAMPLES::
+
+            sage: R10 = matroids.catalog.R10()
+            sage: M = Matroid(ring=GF(2), reduced_matrix=R10.representation(
+            ....:                                 reduced=True, labels=False))
+            sage: M.is_graphic(algorithm="cmr") # optional - cmr
+            False
+            sage: K5 = Matroid(graphs.CompleteGraph(5))                                 # needs sage.graphs
+            sage: K5.is_graphic(algorithm="cmr") # optional - cmr                       # needs sage.graphs
+            True
+            sage: K5 = Matroid(graphs.CompleteGraph(5), regular=True)                   # needs sage.graphs
+            sage: M = Matroid(ring=GF(2), reduced_matrix=K5.representation(             # needs sage.graphs sage.rings.finite_rings
+            ....:                                 reduced=True, labels=False))
+            sage: M.is_graphic(algorithm="cmr") # optional - cmr                        # needs sage.graphs sage.rings.finite_rings
+            True
+            sage: M.dual().is_graphic(algorithm="cmr") # optional - cmr                 # needs sage.graphs
+            False
         """
+        if algorithm is None:
+            return self._is_graphic_GG()
+        if algorithm == "cmr":
+            return self._is_graphic_cmr()
+        raise ValueError("Not a valid algorithm.")
+
+    cpdef _is_graphic_GG(self):
+        r"""
         Test if the binary matroid is graphic.
 
         A matroid is *graphic* if there exists a graph whose edge set equals
@@ -3809,14 +3862,14 @@ cdef class BinaryMatroid(LinearMatroid):
             sage: R10 = matroids.catalog.R10()
             sage: M = Matroid(ring=GF(2), reduced_matrix=R10.representation(
             ....:                                 reduced=True, labels=False))
-            sage: M.is_graphic()
+            sage: M._is_graphic_GG()
             False
             sage: K5 = Matroid(graphs.CompleteGraph(5), regular=True)                   # needs sage.graphs
             sage: M = Matroid(ring=GF(2), reduced_matrix=K5.representation(             # needs sage.graphs sage.rings.finite_rings
             ....:                                 reduced=True, labels=False))
-            sage: M.is_graphic()                                                        # needs sage.graphs sage.rings.finite_rings
+            sage: M._is_graphic_GG()                                                    # needs sage.graphs sage.rings.finite_rings
             True
-            sage: M.dual().is_graphic()                                                 # needs sage.graphs
+            sage: M.dual()._is_graphic_GG()                                             # needs sage.graphs
             False
 
         ALGORITHM:
@@ -3862,7 +3915,52 @@ cdef class BinaryMatroid(LinearMatroid):
         # now self is graphic iff there is a binary vector x so that M*x = 0 and x_0 = 1, so:
         return BinaryMatroid(m).corank(frozenset([0])) > 0
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef _is_graphic_cmr(self):
+        r"""
+        Test if the binary matroid is graphic.
+
+        A matroid is *graphic* if there exists a graph whose edge set equals
+        the groundset of the matroid, such that a subset of elements of the
+        matroid is independent if and only if the corresponding subgraph is
+        acyclic.
+
+        OUTPUT:
+
+        Boolean.
+
+        .. SEEALSO::
+
+            :meth:`M._is_binary_linear_matroid_graphic() <sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse._is_binary_linear_matroid_graphic>`
+            :meth:`M.is_network_matrix() <sage.matrix.matrix_cmr_sparse.
+            Matrix_cmr_chr_sparse.is_network_matrix>`
+
+        EXAMPLES::
+
+            sage: R10 = matroids.catalog.R10()
+            sage: M = Matroid(ring=GF(2), reduced_matrix=R10.representation(
+            ....:                                 reduced=True, labels=False))
+            sage: M._is_graphic_cmr() # optional - cmr
+            False
+            sage: K5 = Matroid(graphs.CompleteGraph(5), regular=True)                   # needs sage.graphs
+            sage: M = Matroid(ring=GF(2), reduced_matrix=K5.representation(             # needs sage.graphs sage.rings.finite_rings
+            ....:                                 reduced=True, labels=False))
+            sage: M._is_graphic_cmr() # optional - cmr                                  # needs sage.graphs sage.rings.finite_rings
+            True
+            sage: M.dual()._is_graphic_cmr() # optional - cmr                           # needs sage.graphs
+            False
+
+        ALGORITHM:
+
+        The implemented recognition algorithm is based on [BW1988b]_, [An Almost Linear-Time Algorithm for Graph Realization](https://doi.org/10.1287/moor.13.1.99) by Robert E. Bixby and Donald K. Wagner (Mathematics of Operations Research, 1988).
+        For a matrix `M \in \{0,1\}^{m \times n}` with `k` nonzeros it runs in `\mathcal{O}( k \cdot \alpha(k, m) )` time, where `\alpha(\cdot)` denotes the inverse Ackerman function.
+        """
+        from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+        A = self.representation()
+        A_cmr = Matrix_cmr_chr_sparse(A.parent(), A)
+        return A_cmr._is_binary_linear_matroid_graphic()
+
+    cpdef is_valid(self):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -6239,7 +6337,7 @@ cdef class RegularMatroid(LinearMatroid):
             fundamentals = set([1])
         return LinearMatroid._linear_extension_chains(self, F, fundamentals)
 
-    cpdef bint is_graphic(self) noexcept:
+    cpdef bint is_graphic(self, algorithm=None) except -1:
         """
         Test if the regular matroid is graphic.
 
@@ -6248,27 +6346,36 @@ cdef class RegularMatroid(LinearMatroid):
         matroid is independent if and only if the corresponding subgraph is
         acyclic.
 
+        INPUT:
+
+        - ``algorithm`` -- (default: ``None``); specify which algorithm
+          to check graphicness:
+
+          - ``None`` -- an algorithm based on [GG2012]_.
+          - ``"cmr"`` -- an algorithm based on [BW1988b]_.
+          the optional package "cmr" is required.
+
         OUTPUT: boolean
+
+        .. SEEALSO::
+
+            :meth:`M.is_graphic() <sage.matroids.linear_matroid.
+            BinaryMatroid.is_graphic>`
+            :meth:`M.is_graphic() <sage.matroids.graphic_matroid.
+            GraphicMatroid.is_graphic>`
 
         EXAMPLES::
 
             sage: M = matroids.catalog.R10()
-            sage: M.is_graphic()
+            sage: M.is_graphic(algorithm="cmr") # optional - cmr
             False
             sage: M = Matroid(graphs.CompleteGraph(5), regular=True)                    # needs sage.graphs
-            sage: M.is_graphic()                                                        # needs sage.graphs sage.rings.finite_rings
+            sage: M.is_graphic(algorithm="cmr")  # optional - cmr                       # needs sage.graphs sage.rings.finite_rings
             True
-            sage: M.dual().is_graphic()                                                 # needs sage.graphs
+            sage: M.dual().is_graphic(algorithm="cmr") # optional - cmr                 # needs sage.graphs
             False
-
-        ALGORITHM:
-
-        In a recent paper, Geelen and Gerards [GG2012]_ reduced the problem to
-        testing if a system of linear equations has a solution. While not the
-        fastest method, and not necessarily constructive (in the presence of
-        2-separations especially), it is easy to implement.
         """
-        return BinaryMatroid(reduced_matrix=self._reduced_representation()).is_graphic()
+        return BinaryMatroid(reduced_matrix=self._reduced_representation()).is_graphic(algorithm=algorithm)
 
     cpdef bint is_valid(self) noexcept:
         r"""

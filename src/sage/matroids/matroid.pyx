@@ -305,6 +305,7 @@ REFERENCES
 ==========
 
 - [BC1977]_
+- [BW1988b]_
 - [Cun1986]_
 - [CMO2011]_
 - [CMO2012]_
@@ -6578,13 +6579,35 @@ cdef class Matroid(SageObject):
         """
         return self.ternary_matroid(randomized_tests=randomized_tests, verify=True) is not None
 
-    cpdef bint is_graphic(self) noexcept:
+    cpdef bint is_graphic(self, algorithm=None) except -1:
         r"""
         Return if ``self`` is graphic.
 
+        A matroid is *graphic* if there exists a graph whose edge set equals
+        the groundset of the matroid, such that a subset of elements of the
+        matroid is independent if and only if the corresponding subgraph is
+        acyclic.
         A matroid is graphic if and only if it has no minor isomorphic to any
         of the matroids `U_{2, 4}`, `F_7`, `F_7^*`, `M^*(K_5)`, and
         `M^*(K_{3, 3})`.
+
+        INPUT:
+
+        - ``algorithm`` -- (default: ``None``); specify which algorithm
+          to check graphicness:
+
+          - ``None`` -- an algorithm based on excluded minors.
+          - ``"cmr"`` -- an algorithm based on [BW1988b]_,
+            the optional package "cmr" is required.
+
+        .. SEEALSO::
+
+            :meth:`M._is_graphic_cmr() <sage.matroids.linear_matroid.
+            BinaryMatroid._is_graphic_cmr>`
+            :meth:`M.is_graphic() <sage.matroids.linear_matroid.
+            RegularMatroid.is_graphic>`
+            :meth:`M.is_graphic() <sage.matroids.graphic_matroid.
+            GraphicMatroid.is_graphic>`
 
         EXAMPLES::
 
@@ -6594,23 +6617,36 @@ cdef class Matroid(SageObject):
             sage: M = matroids.catalog.U24()
             sage: M.is_graphic()
             False
+            sage: M = matroids.catalog.Wheel4()
+            sage: M.is_graphic(algorithm="cmr") # optional - cmr
+            True
+            sage: M = matroids.catalog.U24()
+            sage: M.is_graphic(algorithm="cmr") # optional - cmr
+            False
 
         REFERENCES:
 
         [Oxl2011]_, p. 385.
         """
-        from sage.matroids.database_matroids import (
-            U24,
-            Fano,
-            FanoDual,
-            K5dual,
-            K33dual
-        )
-        excluded_minors = [U24(), Fano(), FanoDual(), K5dual(), K33dual()]
-        for M in excluded_minors:
-            if self.has_minor(M):
-                return False
-        return True
+        M = self.binary_matroid()
+        if M is None:  # equivalent to checking for a U24 minor
+            return False
+        if algorithm is None:
+            from sage.matroids.database_matroids import (
+                U24,
+                Fano,
+                FanoDual,
+                K5dual,
+                K33dual
+            )
+            excluded_minors = [U24(), Fano(), FanoDual(), K5dual(), K33dual()]
+            for M in excluded_minors:
+                if self.has_minor(M):
+                    return False
+            return True
+        if algorithm == "cmr":
+            return M._is_graphic_cmr()
+        raise ValueError("Not a valid algorithm.")
 
     cpdef bint is_regular(self, algorithm=None) except -1:
         r"""
