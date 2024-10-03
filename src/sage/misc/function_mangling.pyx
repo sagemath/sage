@@ -132,16 +132,16 @@ cdef class ArgumentFixer:
         else:
             self._default_tuple = tuple(defaults)
 
-        #code = f.__code__
+        # code = f.__code__
 
         self.f = f
         self._ndefault = len(defaults)
         if classmethod:
-            self._nargs = len(arg_names)-1 #code.co_argcount-1
-            self._arg_names = tuple(arg_names[1:]) #code.co_varnames[1:self._nargs+1]
+            self._nargs = len(arg_names)-1  # code.co_argcount-1
+            self._arg_names = tuple(arg_names[1:])  # code.co_varnames[1:self._nargs+1]
         else:
-            self._nargs = len(arg_names) #code.co_argcount
-            self._arg_names = tuple(arg_names) #code.co_varnames[:self._nargs]
+            self._nargs = len(arg_names)  # code.co_argcount
+            self._arg_names = tuple(arg_names)  # code.co_varnames[:self._nargs]
         self._classmethod = classmethod
 
         cdef dict default_map

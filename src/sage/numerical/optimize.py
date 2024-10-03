@@ -740,7 +740,7 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
         estimated_params = estimated_params.tolist()
 
     if solution_dict:
-        return {i0: i1 for i0, i1 in zip(parameters, estimated_params)}
+        return dict(zip(parameters, estimated_params))
 
     return [item[0] == item[1] for item in zip(parameters, estimated_params)]
 
@@ -859,7 +859,7 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
         TypeError: parameter items must be a list or a dictionary.
     """
     if isinstance(items, list):
-        weight = {i:w for i,w in enumerate(items)}
+        weight = dict(enumerate(items))
     elif isinstance(items, dict):
         weight = items
     else:
