@@ -59,7 +59,7 @@ class ChowRing(QuotientRing_generic):
     - ``presentation`` -- string (default: ``None``); one of the following:
     
       * ``"fy"`` - the Feitchner-Yuzvinsky presentation
-      * ``"atom-free" - the atom-free presentation
+      * ``"atom-free"`` - the atom-free presentation
 
     REFERENCES:
 
