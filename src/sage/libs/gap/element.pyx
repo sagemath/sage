@@ -2437,7 +2437,7 @@ cdef class GapElement_Function(GapElement):
             <Gap function "NormalSubgroups">
             sage: b
             Sym( [ 1 .. 4 ] )
-            sage: [x.StructureDescription() for x in sorted(b.NormalSubgroups())]
+            sage: [x.StructureDescription() for x in sorted(a(b))]
             ["1", "S4", "A4", "C2 x C2"]
 
             sage: libgap.eval("a := NormalSubgroups")
