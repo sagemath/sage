@@ -485,7 +485,7 @@ class SageCustomizations():
         Run Sage's initial startup file.
         """
         try:
-            with open(SAGE_STARTUP_FILE, 'r') as f:
+            with open(SAGE_STARTUP_FILE) as f:
                 self.shell.run_cell(f.read(), store_history=False)
         except OSError:
             pass

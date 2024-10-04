@@ -63,7 +63,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ

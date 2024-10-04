@@ -6462,7 +6462,7 @@ class Graph(GenericGraph):
                 T.append([x, y, z])
 
         T = TwoGraph(T)
-        T.relabel({i: v for i, v in enumerate(self)})
+        T.relabel(dict(enumerate(self)))
 
         return T
 
@@ -9112,221 +9112,6 @@ class Graph(GenericGraph):
         return T.charpoly('t').reverse()
 
     @doc_index("Leftovers")
-    def perfect_matchings(self, labels=False):
-        r"""
-        Return an iterator over all perfect matchings of the graph.
-
-        ALGORITHM:
-
-        Choose a vertex `v`, then recurse through all edges incident to `v`,
-        removing one edge at a time whenever an edge is added to a matching.
-
-        INPUT:
-
-        - ``labels`` -- boolean (default: ``False``); when ``True``, the edges
-          in each perfect matching are triples (containing the label as the
-          third element), otherwise the edges are pairs.
-
-        .. SEEALSO::
-
-            :meth:`matching`
-
-        EXAMPLES::
-
-            sage: G=graphs.GridGraph([2,3])
-            sage: for m in G.perfect_matchings():
-            ....:     print(sorted(m))
-            [((0, 0), (0, 1)), ((0, 2), (1, 2)), ((1, 0), (1, 1))]
-            [((0, 0), (1, 0)), ((0, 1), (0, 2)), ((1, 1), (1, 2))]
-            [((0, 0), (1, 0)), ((0, 1), (1, 1)), ((0, 2), (1, 2))]
-
-            sage: G = graphs.CompleteGraph(4)
-            sage: for m in G.perfect_matchings(labels=True):
-            ....:     print(sorted(m))
-            [(0, 1, None), (2, 3, None)]
-            [(0, 2, None), (1, 3, None)]
-            [(0, 3, None), (1, 2, None)]
-
-            sage: G = Graph([[1,-1,'a'], [2,-2, 'b'], [1,-2,'x'], [2,-1,'y']])
-            sage: sorted(sorted(m) for m in G.perfect_matchings(labels=True))
-            [[(-2, 1, 'x'), (-1, 2, 'y')], [(-2, 2, 'b'), (-1, 1, 'a')]]
-
-            sage: G = graphs.CompleteGraph(8)
-            sage: mpc = G.matching_polynomial().coefficients(sparse=False)[0]           # needs sage.libs.flint
-            sage: len(list(G.perfect_matchings())) == mpc                               # needs sage.libs.flint
-            True
-
-            sage: G = graphs.PetersenGraph().copy(immutable=True)
-            sage: [sorted(m) for m in G.perfect_matchings()]
-            [[(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)],
-             [(0, 1), (2, 7), (3, 4), (5, 8), (6, 9)],
-             [(0, 4), (1, 2), (3, 8), (5, 7), (6, 9)],
-             [(0, 4), (1, 6), (2, 3), (5, 8), (7, 9)],
-             [(0, 5), (1, 2), (3, 4), (6, 8), (7, 9)],
-             [(0, 5), (1, 6), (2, 7), (3, 8), (4, 9)]]
-
-            sage: list(Graph().perfect_matchings())
-            [[]]
-
-            sage: G = graphs.CompleteGraph(5)
-            sage: list(G.perfect_matchings())
-            []
-        """
-        if not self:
-            yield []
-            return
-        if self.order() % 2 or any(len(cc) % 2 for cc in self.connected_components(sort=False)):
-            return
-
-        def rec(G):
-            """
-            Iterator over all perfect matchings of a simple graph `G`.
-            """
-            if not G:
-                yield []
-                return
-            if G.order() % 2 == 0:
-                v = next(G.vertex_iterator())
-                Nv = list(G.neighbor_iterator(v))
-                G.delete_vertex(v)
-                for u in Nv:
-                    Nu = list(G.neighbor_iterator(u))
-                    G.delete_vertex(u)
-                    for partial_matching in rec(G):
-                        partial_matching.append((u, v))
-                        yield partial_matching
-                    G.add_vertex(u)
-                    G.add_edges((u, nu) for nu in Nu)
-                G.add_vertex(v)
-                G.add_edges((v, nv) for nv in Nv)
-
-        # We create a mutable copy of the graph and remove its loops, if any
-        G = self.copy(immutable=False)
-        G.allow_loops(False)
-
-        # We create a mapping from frozen unlabeled edges to (labeled) edges.
-        # This ease for instance the manipulation of multiedges (if any)
-        edges = {}
-        for e in G.edges(sort=False, labels=labels):
-            f = frozenset(e[:2])
-            if f in edges:
-                edges[f].append(e)
-            else:
-                edges[f] = [e]
-
-        # We now get rid of multiple edges, if any
-        G.allow_multiple_edges(False)
-
-        # For each unlabeled matching, we yield all its possible labelings
-        for m in rec(G):
-            yield from itertools.product(*[edges[frozenset(e)] for e in m])
-
-    @doc_index("Leftovers")
-    def has_perfect_matching(self, algorithm='Edmonds', solver=None, verbose=0,
-                             *, integrality_tolerance=1e-3):
-        r"""
-        Return whether this graph has a perfect matching.
-        INPUT:
-
-        - ``algorithm`` -- string (default: ``'Edmonds'``)
-
-          - ``'Edmonds'`` uses Edmonds' algorithm as implemented in NetworkX to
-            find a matching of maximal cardinality, then check whether this
-            cardinality is half the number of vertices of the graph.
-
-          - ``'LP_matching'`` uses a Linear Program to find a matching of
-            maximal cardinality, then check whether this cardinality is half the
-            number of vertices of the graph.
-
-          - ``'LP'`` uses a Linear Program formulation of the perfect matching
-            problem: put a binary variable ``b[e]`` on each edge `e`, and for
-            each vertex `v`, require that the sum of the values of the edges
-            incident to `v` is 1.
-
-        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
-          Linear Programming (MILP) solver to be used. If set to ``None``, the
-          default one is used. For more information on MILP solvers and which
-          default solver is used, see the method :meth:`solve
-          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-          :class:`MixedIntegerLinearProgram
-          <sage.numerical.mip.MixedIntegerLinearProgram>`.
-
-        - ``verbose`` -- integer (default: 0); sets the level of verbosity:
-          set to 0 by default, which means quiet (only useful when
-          ``algorithm == "LP_matching"`` or ``algorithm == "LP"``)
-
-        - ``integrality_tolerance`` -- float; parameter for use with MILP
-          solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
-
-        OUTPUT: boolean
-
-        EXAMPLES::
-
-            sage: graphs.PetersenGraph().has_perfect_matching()                         # needs networkx
-            True
-            sage: graphs.WheelGraph(6).has_perfect_matching()                           # needs networkx
-            True
-            sage: graphs.WheelGraph(5).has_perfect_matching()                           # needs networkx
-            False
-            sage: graphs.PetersenGraph().has_perfect_matching(algorithm='LP_matching')  # needs sage.numerical.mip
-            True
-            sage: graphs.WheelGraph(6).has_perfect_matching(algorithm='LP_matching')    # needs sage.numerical.mip
-            True
-            sage: graphs.WheelGraph(5).has_perfect_matching(algorithm='LP_matching')
-            False
-            sage: graphs.PetersenGraph().has_perfect_matching(algorithm='LP_matching')  # needs sage.numerical.mip
-            True
-            sage: graphs.WheelGraph(6).has_perfect_matching(algorithm='LP_matching')    # needs sage.numerical.mip
-            True
-            sage: graphs.WheelGraph(5).has_perfect_matching(algorithm='LP_matching')
-            False
-
-        TESTS::
-
-            sage: G = graphs.EmptyGraph()
-            sage: all(G.has_perfect_matching(algorithm=algo)                            # needs networkx
-            ....:     for algo in ['Edmonds', 'LP_matching', 'LP'])
-            True
-
-        Be careful with isolated vertices::
-
-            sage: G = graphs.PetersenGraph()
-            sage: G.add_vertex(11)
-            sage: any(G.has_perfect_matching(algorithm=algo)                            # needs networkx
-            ....:     for algo in ['Edmonds', 'LP_matching', 'LP'])
-            False
-        """
-        if self.order() % 2:
-            return False
-        if algorithm == "Edmonds":
-            return len(self) == 2*self.matching(value_only=True,
-                                                use_edge_labels=False,
-                                                algorithm='Edmonds')
-        elif algorithm == "LP_matching":
-            return len(self) == 2*self.matching(value_only=True,
-                                                use_edge_labels=False,
-                                                algorithm='LP',
-                                                solver=solver,
-                                                verbose=verbose,
-                                                integrality_tolerance=integrality_tolerance)
-        elif algorithm == "LP":
-            from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
-            p = MixedIntegerLinearProgram(solver=solver)
-            b = p.new_variable(binary=True)
-            for v in self:
-                edges = self.edges_incident(v, labels=False)
-                if not edges:
-                    return False
-                p.add_constraint(p.sum(b[frozenset(e)] for e in edges) == 1)
-            try:
-                p.solve(log=verbose)
-                return True
-            except MIPSolverException:
-                return False
-        raise ValueError('algorithm must be set to "Edmonds", "LP_matching" or "LP"')
-
-    @doc_index("Leftovers")
     def effective_resistance(self, i, j, *, base_ring=None):
         r"""
         Return the effective resistance between nodes `i` and `j`.
@@ -10324,6 +10109,12 @@ class Graph(GenericGraph):
     from sage.graphs.graph_coloring import fractional_chromatic_number
     from sage.graphs.graph_coloring import fractional_chromatic_index
     from sage.graphs.hyperbolicity import hyperbolicity
+    from sage.graphs.matching import has_perfect_matching
+    from sage.graphs.matching import is_bicritical
+    from sage.graphs.matching import is_factor_critical
+    from sage.graphs.matching import is_matching_covered
+    from sage.graphs.matching import matching
+    from sage.graphs.matching import perfect_matchings
 
 
 _additional_categories = {
@@ -10372,7 +10163,13 @@ _additional_categories = {
     "fractional_chromatic_number" : "Coloring",
     "fractional_chromatic_index" : "Coloring",
     "geodetic_closure"          : "Leftovers",
-    "hyperbolicity"              : "Distances",
+    "hyperbolicity"             : "Distances",
+    "has_perfect_matching"      : "Matching",
+    "is_bicritical"             : "Matching",
+    "is_factor_critical"        : "Matching",
+    "is_matching_covered"       : "Matching",
+    "matching"                  : "Matching",
+    "perfect_matchings"         : "Matching"
     }
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))

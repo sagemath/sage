@@ -1489,7 +1489,7 @@ class Representation_Tensor(Representation_abstract, CombinatorialFreeModule_Ten
         reps = sum((module._sets if isinstance(module, Representation_Tensor) else (module,) for module in reps), ())
         if all('FiniteDimensional' in M.category().axioms() for M in reps):
             options['category'] = options['category'].FiniteDimensional()
-        return super(Representation_Tensor, cls).__classcall__(cls, reps, **options)
+        return super().__classcall__(cls, reps, **options)
 
     def __init__(self, reps, **options):
         r"""
