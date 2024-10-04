@@ -3151,7 +3151,7 @@ DF = {
              92,93,99,103,104,106,107,112,113,122,
              126,128,129]]},
 
-# a (144,66,30)-noncyclic difference set in AbelianGroup([2,8,3,3])
+# a (144,66,30) non-cyclic difference set in AbelianGroup([2,8,3,3])
 # given in unpublished paper by Kroeger, Miller, Mooney, Shepard and Smith
 # see https://dmgordon.org/diffset
 (144,66,30):
@@ -3170,7 +3170,7 @@ DF = {
                 (1,1,1,2),(1,7,1,1),(1,0,1,1),(1,1,1,1),(1,4,1,2),
                 (1,5,1,2)]]},
 
-# a (320,88,24)-noncyclic difference set in AbelianGroup([4,4,4,5]),
+# a (320,88,24) non-cyclic difference set in AbelianGroup([4,4,4,5]),
 # given in Arasu and Chen, Designs, Codes and Cryptography 2001
 # see https://dmgordon.org/diffset
 (320,88,24):
