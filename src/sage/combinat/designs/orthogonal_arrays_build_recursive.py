@@ -538,7 +538,7 @@ def construction_q_x(k, q, x, check=True, explain_construction=False):
     # Add rows, extended with p1 and p2
     p1 = q**2
     p2 = p1 + 1
-    TD.extend(([ii*q + i for ii in range(q)] + [p1] for i in range(1, q)))
+    TD.extend([ii*q + i for ii in range(q)] + [p1] for i in range(1, q))
     TD.append([ii*q for ii in range(q)] + [p1, p2])
 
     # Add Columns. We do not add some columns which would have size 1 after we
