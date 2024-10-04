@@ -10,12 +10,9 @@ from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.matroids.utilities import cmp_elements_key
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-from sage.misc.abstract_method import abstract_method
-from itertools import combinations
-from functools import reduce
+from sage.combinat.posets.posets import Poset
 
 class ChowRingIdeal(MPolynomialIdeal):
-    @abstract_method
     def matroid(self):
         r"""
         Return the matroid of the given Chow ring ideal.
@@ -40,11 +37,15 @@ class ChowRingIdeal(MPolynomialIdeal):
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
             sage: ch.defining_ideal().flats_generator()
             {frozenset({'a'}): Aa, frozenset({'b'}): Ab, frozenset({'c'}): Ac,
-            frozenset({'d'}): Ad, frozenset({'e'}): Ae, frozenset({'f'}): Af,
-            frozenset({'g'}): Ag, frozenset({'b', 'a', 'f'}): Aabf,
-            frozenset({'c', 'e', 'a'}): Aace, frozenset({'d', 'g', 'a'}): Aadg,
-            frozenset({'c', 'b', 'd'}): Abcd, frozenset({'b', 'g', 'e'}): Abeg,
-            frozenset({'c', 'g', 'f'}): Acfg, frozenset({'d', 'e', 'f'}): Adef}
+             frozenset({'d'}): Ad, frozenset({'e'}): Ae, frozenset({'f'}): Af,
+             frozenset({'g'}): Ag, frozenset({'a', 'b', 'f'}): Aabf,
+             frozenset({'a', 'c', 'e'}): Aace,
+             frozenset({'a', 'd', 'g'}): Aadg,
+             frozenset({'b', 'c', 'd'}): Abcd,
+             frozenset({'b', 'e', 'g'}): Abeg,
+             frozenset({'c', 'f', 'g'}): Acfg,
+             frozenset({'d', 'e', 'f'}): Adef,
+             frozenset({'a', 'b', 'c', 'd', 'e', 'f', 'g'}): Aabcdefg}
         """
         return dict(self._flats_generator)
     
@@ -90,11 +91,11 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         sage: ch = matroids.Uniform(3,6).chow_ring(QQ, False)
         sage: ch.defining_ideal()
         Chow ring ideal of U(3, 6): Matroid of rank 3 on 6 elements with
-        circuit-closures {3: {{0, 1, 2, 3, 4, 5}}}
+        circuit-closures {3: {{0, 1, 2, 3, 4, 5}}} - non augmented
         sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
         sage: ch.defining_ideal()
         Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
-        type (3, 0)
+        type (3, 0) - non augmented
     """
     def __init__(self, M, R):
         r"""
@@ -106,7 +107,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             sage: TestSuite(I).run(skip="_test_category")
         """
         self._matroid = M
-        flats = [X for i in range(1, self._matroid.rank())
+        flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
         names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
         try:
@@ -125,74 +126,127 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
             sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False)
             sage: ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring())
-            [Aa*Ab, Aa*Ac, Aa*Ad, Aa*Ae, Aa*Af, Aa*Ag, Aa*Abcd, Aa*Abeg,
-            Aa*Acfg, Aa*Ade, Aa*Adf, Aa*Aef, Ab*Ac, Ab*Ad, Ab*Ae, Ab*Af, Ab*Ag,
-            Ab*Aace, Ab*Aadg, Ab*Acfg, Ab*Ade, Ab*Adf, Ab*Aef, Ac*Ad, Ac*Ae,
-            Ac*Af, Ac*Ag, Ac*Aabf, Ac*Aadg, Ac*Abeg, Ac*Ade, Ac*Adf, Ac*Aef,
-            Ad*Ae, Ad*Af, Ad*Ag, Ad*Aabf, Ad*Aace, Ad*Abeg, Ad*Acfg, Ad*Aef,
-            Ae*Af, Ae*Ag, Ae*Aabf, Ae*Aadg, Ae*Abcd, Ae*Acfg, Ae*Adf, Af*Ag,
-            Af*Aace, Af*Aadg, Af*Abcd, Af*Abeg, Af*Ade, Ag*Aabf, Ag*Aace,
-            Ag*Abcd, Ag*Ade, Ag*Adf, Ag*Aef, Aabf*Aace, Aabf*Aadg, Aabf*Abcd,
-            Aabf*Abeg, Aabf*Acfg, Aabf*Ade, Aabf*Adf, Aabf*Aef, Aace*Aadg,
-            Aace*Abcd, Aace*Abeg, Aace*Acfg, Aace*Ade, Aace*Adf, Aace*Aef,
-            Aadg*Abcd, Aadg*Abeg, Aadg*Acfg, Aadg*Ade, Aadg*Adf, Aadg*Aef,
-            Abcd*Abeg, Abcd*Acfg, Abcd*Ade, Abcd*Adf, Abcd*Aef, Abeg*Acfg,
-            Abeg*Ade, Abeg*Adf, Abeg*Aef, Acfg*Ade, Acfg*Adf, Acfg*Aef,
-            Ade*Adf, Ade*Aef, Adf*Aef,
-            -Ab + Ae - Aabf + Aace - Abcd + Ade + Aef,
-            -Ac + Ae - Abcd + Abeg - Acfg + Ade + Aef,
-            Ae - Ag + Aace - Aadg - Acfg + Ade + Aef,
-            -Ad + Ae + Aace - Aadg - Abcd + Abeg - Adf + Aef,
-            -Aa + Ae - Aabf - Aadg + Abeg + Ade + Aef,
-            Ae - Af - Aabf + Aace + Abeg - Acfg + Ade - Adf,
-            Ab - Ac + Aabf - Aace + Abeg - Acfg,
-            Ab - Ag + Aabf - Aadg + Abcd - Acfg,
-            Ab - Ad + Aabf - Aadg + Abeg - Ade - Adf,
-            -Aa + Ab - Aace - Aadg + Abcd + Abeg,
-            Ab - Af + Abcd + Abeg - Acfg - Adf - Aef,
-            Ac - Ag + Aace - Aadg + Abcd - Abeg,
-            Ac - Ad + Aace - Aadg + Acfg - Ade - Adf,
-            -Aa + Ac - Aabf - Aadg + Abcd + Acfg,
-            Ac - Af - Aabf + Aace + Abcd - Adf - Aef,
-            -Ad + Ag - Abcd + Abeg + Acfg - Ade - Adf,
-            -Aa + Ag - Aabf - Aace + Abeg + Acfg,
-            -Af + Ag - Aabf + Aadg + Abeg - Adf - Aef,
-            -Aa + Ad - Aabf - Aace + Abcd + Ade + Adf,
-            Ad - Af - Aabf + Aadg + Abcd - Acfg + Ade - Aef,
-            Aa - Af + Aace + Aadg - Acfg - Adf - Aef]
+            [Aa*Ab,
+             Aa*Ac,
+             Aa*Ae,
+             Aa*Ad,
+             Aa*Ade,
+             Aa*Abcd,
+             Aa*Af,
+             Aa*Adf,
+             Aa*Aef,
+             Aa*Ag,
+             Aa*Abeg,
+             Aa*Acfg,
+             Ab*Ac,
+             Ab*Ae,
+             Ab*Aace,
+             Ab*Ad,
+             Ab*Ade,
+             Ab*Af,
+             Ab*Adf,
+             Ab*Aef,
+             Ab*Ag,
+             Ab*Aadg,
+             Ab*Acfg,
+             Ac*Ae,
+             Ac*Ad,
+             Ac*Ade,
+             Ac*Af,
+             Ac*Aabf,
+             Ac*Adf,
+             Ac*Aef,
+             Ac*Ag,
+             Ac*Aadg,
+             Ac*Abeg,
+             Ad*Ae,
+             Ae*Abcd,
+             Ae*Af,
+             Ae*Aabf,
+             Ae*Adf,
+             Ae*Ag,
+             Ae*Aadg,
+             Ae*Acfg,
+             Ad*Aace,
+             Aace*Ade,
+             Aace*Abcd,
+             Af*Aace,
+             Aabf*Aace,
+             Aace*Adf,
+             Aace*Aef,
+             Ag*Aace,
+             Aace*Aadg,
+             Aace*Abeg,
+             Aace*Acfg,
+             Ad*Af,
+             Ad*Aabf,
+             Ad*Aef,
+             Ad*Ag,
+             Ad*Abeg,
+             Ad*Acfg,
+             Abcd*Ade,
+             Af*Ade,
+             Aabf*Ade,
+             Ade*Adf,
+             Ade*Aef,
+             Ag*Ade,
+             Aadg*Ade,
+             Abeg*Ade,
+             Acfg*Ade,
+             Af*Abcd,
+             Aabf*Abcd,
+             Abcd*Adf,
+             Abcd*Aef,
+             Ag*Abcd,
+             Aadg*Abcd,
+             Abcd*Abeg,
+             Abcd*Acfg,
+             Af*Ag,
+             Af*Aadg,
+             Af*Abeg,
+             Aabf*Adf,
+             Aabf*Aef,
+             Ag*Aabf,
+             Aabf*Aadg,
+             Aabf*Abeg,
+             Aabf*Acfg,
+             Adf*Aef,
+             Ag*Adf,
+             Aadg*Adf,
+             Abeg*Adf,
+             Acfg*Adf,
+             Ag*Aef,
+             Aadg*Aef,
+             Abeg*Aef,
+             Acfg*Aef,
+             Aadg*Abeg,
+             Aadg*Acfg,
+             Abeg*Acfg,
+             Aa + Aabf + Aace + Aadg + Aabcdefg,
+             Ab + Aabf + Abcd + Abeg + Aabcdefg,
+             Ac + Aace + Abcd + Acfg + Aabcdefg,
+             Ad + Aadg + Abcd + Ade + Adf + Aabcdefg,
+             Ae + Aace + Abeg + Ade + Aef + Aabcdefg,
+             Af + Aabf + Acfg + Adf + Aef + Aabcdefg,
+             Ag + Aadg + Abeg + Acfg + Aabcdefg]
         """
-        E = list(self._matroid.groundset())
         flats = list(self._flats_generator)
-        flats.append(E)
-        flats_containing = {x: [] for x in E}
-        for i,F in enumerate(flats):
-            for x in F:
-                flats_containing[x].append(i)
-        lattice_flats = self._matroid.lattice_of_flats()
-        subsets = []
+        reln = lambda x,y: x <= y        
+        lattice_flats = Poset((flats, reln))
         I = []
-        # Generate all subsets of flats using combinations
-        for r in range(len(flats) + 1):  # r is the size of the subset
-            subsets.extend(list(subset) for subset in combinations(flats, r))
+        subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
         for subset in subsets:
-            flag = True
-            sorted_list = sorted(subset, key=len)
-            for i in range (len(sorted_list)): #Checking whether the subset is not a chain
-                if (i != 0) & (len(sorted_list[i]) == len(sorted_list[i-1])):
-                    flag = False
-                    break
-            if not flag:
-                term = poly_ring.one()
-                for el in subset:
-                    self._flats_generator[el]
-                I.append(term) #Stanley-Reisner Ideal
-        atoms = lattice_flats.atoms()
-        J = []
-        for a in atoms:
-            term = poly_ring.zero()
-            for F in flats_containing[a]:
-                term += self._flats_generator[F]
-            J.append(term) #Linear Generators
+            term = poly_ring.one()
+            for el in subset:
+                term *= self._flats_generator[el]
+            I.append(term) #Stanley-Reisner Ideal
+        atoms = self._matroid.lattice_of_flats().atoms()
+        atoms_gen = {a:poly_ring.zero() for a in atoms}
+        for F in flats:
+            for a in atoms:
+                if a.issubset(F):
+                    atoms_gen[a] += self._flats_generator[F]
+        J = list(atoms_gen.values()) #Linear Generators
         return I + J
 
     def _repr_(self):
@@ -203,9 +257,9 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
             sage: ch.defining_ideal()
-            Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
+            Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0) - non augmented
         """
-        return "Chow ring ideal of {}- non augmented".format(self._matroid)
+        return "Chow ring ideal of {} - non augmented".format(self._matroid)
     
     def _latex_(self):
         r"""
@@ -216,17 +270,14 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
             sage: ch = M1.chow_ring(QQ, False)
             sage: ch.defining_ideal()._latex_()
-            '\\left(\\mathit{Aac} \\mathit{Abd}, 0,
-            \\mathit{Aac} - \\mathit{Abd}, \\mathit{Aac} - \\mathit{Abd},
-            \\mathit{Aac} - \\mathit{Abd}, \\mathit{Aac} - \\mathit{Abd},
-            0\\right)\\Bold{Q}[\\mathit{Aac}, \\mathit{Abd}]'
+            '\\left(\\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} + \\mathit{Aabcd}, \\mathit{Abd} + \\mathit{Aabcd}\\right)\\Bold{Q}[\\mathit{Aac}, \\mathit{Abd}, \\mathit{Aabcd}]'
         """
         from sage.misc.latex import latex
         return '\\left(%s\\right)%s' % (", ".join(latex(g)
                                                   for g in self.gens()),
                                         latex(self.ring()))
 
-    def groebner_basis(self, algorithm='', *args, **kwargs): #can you reduce it? - consider every antichain of size 2, and chains?
+    def groebner_basis(self, algorithm='', *args, **kwargs):
         r"""
         Return a Groebner basis of ``self``.
 
@@ -234,7 +285,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
             sage: ch = Matroid(groundset='abc', bases=['ab', 'ac']).chow_ring(QQ, False)
             sage: ch.defining_ideal().groebner_basis()
-            [Aa, Abc]
+            [Aa*Abc, Aa*Aabc]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
             True
         
@@ -243,7 +294,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
             sage: ch = Matroid(graphs.CycleGraph(3)).chow_ring(QQ, False)
             sage: ch.defining_ideal().groebner_basis()
-            [A0, A1, A2, A0*A1, A0*A2, A1*A2, A0*A1*A2]
+            [A0*A1, A0*A2, A1*A2, A0*A2 + A0*A3, A0*A3, A1*A3]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
             True
         """
@@ -251,65 +302,25 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             algorithm = 'constructed'
         if algorithm != 'constructed':
             return super().groebner_basis(algorithm=algorithm, *args, **kwargs)   
-        flats = list(self._flats_generator)
+        flats = sorted(list(self._flats_generator), key=len)
         gb = list()
-        R = self.ring() 
-        if frozenset() in flats:
-            flats.remove(frozenset()) #Non-empty proper flats needed
-            
-        ranks = {F:self._matroid.rank(F) for F in flats}
-
+        R = self.ring()
+        reln = lambda x,y: x<=y
         flats_gen = self._flats_generator
-        subsets = []
-        # Generate all subsets of flats using combinations
-        for r in range(len(flats) + 1):  # r is the size of the subset
-            subsets.extend(list(subset) for subset in combinations(flats, r))
-
-        for subset in subsets:
-            k = len(subset)
-            flag = True
-            sorted_list = sorted(subset, key=len)
-            for i in range (len(sorted_list)): #Checking whether the subset is a chain
-                if (i != 0) & (len(sorted_list[i]) == len(sorted_list[i-1])):
-                    flag = False
-                    break
-
-            if not flag: 
-                if k == 2: #Taking only antichains of length 2
-                    term = R.one()
-                    for x in subset:
-                        term *= flats_gen[x]
-                    gb.append(term)
-            
-            else:
-                if k == 0:
-                    for F in flats:
-                        term = R.zero()
-                        for G in flats:
-                            if G >= F:
-                                term += flats_gen[G]
-                        gb.append((term)**(ranks[F]))
-
-                else:
-                    for i in range(len(subset)):
-                        for j in range(i+1, len(subset)): #Checking if every element in the chain is maximal
-                            if (sorted_list[i] != sorted_list[j]) & (sorted_list[i].issubset(sorted_list[j])):
-                                flag = False
-                                break
-
-                    if flag:
-                        for F in flats:
-                            if F > reduce(lambda a, b: a.union(b), sorted_list): 
-                                term = R.one()
-                                for x in subset:
-                                    term *= flats_gen[x]
-                                term1 = R.zero()
-                                for G in flats:
-                                    if G >= F:
-                                        term1 += flats_gen[G]
-                                if term1 != R.zero():
-                                    gb.append(term*(term1**(ranks[F] - ranks[sorted_list[len(subset) - 1]])))
-            
+        lattice_flats = Poset((flats, reln))
+        antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
+        for subset in antichains: #Taking antichains of size 2
+            term = R.one()
+            for x in subset:
+                term *= flats_gen[x]
+            gb.append(term)
+        for i in range(len(flats)): #Reduced groebner basis by computing the sum first and then the product
+            term = R.zero()
+            for j in range(i+1, len(flats)):
+                term += flats_gen[flats[j]]
+            for j in range(i):
+                if term != R.zero():
+                    gb.append(flats_gen[flats[j]]*term)
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
 
@@ -357,8 +368,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
         sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'fy')
         sage: ch.defining_ideal()
-        Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
-        6 elements with 16 bases of Feitchner-Yuzvinsky presentation
+        Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6 elements with 16 bases of Feitchner-Yuzvinsky presentation
     """
     def __init__(self, M, R):
         r"""
@@ -447,8 +457,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'fy')
             sage: ch.defining_ideal()
-            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
-            6 elements with 16 bases of Feitchner-Yuzvinsky presentation
+            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6 elements with 16 bases of Feitchner-Yuzvinsky presentation
         """
         return "Augmented Chow ring ideal of {} of Feitchner-Yuzvinsky presentation".format(self._matroid)
     
@@ -457,19 +466,12 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         Return a LaTeX representation`self`.
 
         EXAMPLES::
-
-            sage: from sage.matroids.basis_matroid import BasisMatroid
             
-            sage: M1 = BasisMatroid(groundset='abcd', bases=['ab','ad', 'bc'])
+            sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
             sage: ch = M1.chow_ring(QQ, True, 'fy')
             sage: ch.defining_ideal()._latex_()
-            '\\left(\\mathit{Bac}^{2}, \\mathit{Bac} \\mathit{Bbd},
-            \\mathit{Bac} \\mathit{Bbd}, \\mathit{Bbd}^{2},
-            \\mathit{Ad} - \\mathit{Bac}, \\mathit{Ab} - \\mathit{Bac},
-            \\mathit{Aa} - \\mathit{Bbd}, \\mathit{Ac} - \\mathit{Bbd}\\right)
-            \\Bold{Q}[\\mathit{Ad}, \\mathit{Ab}, \\mathit{Aa}, \\mathit{Ac},
-            \\mathit{Bac}, \\mathit{Bbd}]'
-        """
+            '\\left(\\mathit{Bac}^{2}, \\mathit{Bac} \\mathit{Bbd}, \\mathit{Bac} \\mathit{Bbd}, \\mathit{Bbd}^{2}, \\mathit{Aa} - \\mathit{Bbd}, \\mathit{Ab} - \\mathit{Bac}, \\mathit{Ac} - \\mathit{Bbd}, \\mathit{Ad} - \\mathit{Bac}\\right)\\Bold{Q}[\\mathit{Aa}, \\mathit{Ab}, \\mathit{Ac}, \\mathit{Ad}, \\mathit{Bac}, \\mathit{Bbd}]'
+        """    
         from sage.misc.latex import latex
         return '\\left(%s\\right)%s' % (", ".join(latex(g)
                                                   for g in self.gens()),
@@ -570,8 +572,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
         sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
         sage: ch.defining_ideal()
-        Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
-        6 elements with 16 bases of atom-free presentation
+        Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6 elements with 16 bases in the atom-free presentation
     """ 
     def __init__(self, M, R):
         r"""
@@ -651,8 +652,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal()
-            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 
-            6 elements with 16 bases of atom-free presentation
+            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6 elements with 16 bases in the atom-free presentation
         """
         return "Augmented Chow ring ideal of {} in the atom-free presentation".format(self._matroid)
     
@@ -662,22 +662,11 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: M1 = BMatroid(groundset='abcd', bases=['ab','ad', 'bc'])
+            sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal()._latex_()
-            '\\left(\\mathit{Aac}^{2}, \\mathit{Abd}^{2},
-            \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2},
-            \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac}^{2},
-            \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2},
-            \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2},
-            \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac}^{2},
-            \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2},
-            \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2},
-            \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2},
-            \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd},
-            \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}\\right)
-            \\Bold{Q}[\\mathit{Aac}, \\mathit{Abd}]'
-        """
+            '\\left(\\mathit{Aac}^{2}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}\\right)\\Bold{Q}[\\mathit{Aac}, \\mathit{Abd}]'
+        """    
         from sage.misc.latex import latex
         return '\\left(%s\\right)%s' % (", ".join(latex(g)
                                                   for g in self.gens()),
