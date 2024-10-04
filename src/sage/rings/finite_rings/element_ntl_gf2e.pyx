@@ -784,7 +784,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             sage: 2 ^ a
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for ^: 'Finite Field in a of size 2^63' and 'Finite Field in a of size 2^63'
+            TypeError: Unable to raise power using finite field polynomial element
             sage: a ^ "exp"
             Traceback (most recent call last):
             ...
