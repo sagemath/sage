@@ -1690,11 +1690,10 @@ class PolynomialSpecies(CombinatorialFreeModule):
             return self._from_dict({self._indices(G, pi): ZZ.one()})
 
         X, a = G
-        X, a = G
         L = [len(pi.get(i, [])) for i in range(self._arity)]
         S = SymmetricGroup(sum(L)).young_subgroup(L)
         Hs = _stabilizer_subgroups(S, X, a)
-        return self._from_dict({self._indices(H, pi): ZZ.one() for H in Hs})
+        return self.sum_of_terms((self._indices(H, pi), ZZ.one()) for H in Hs)
 
     def _first_ngens(self, n):
         """
