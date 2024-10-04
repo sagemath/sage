@@ -2451,7 +2451,7 @@ cdef class GapElement_Function(GapElement):
             sage: a = libgap.eval('a')
             sage: b = libgap.eval('b')
             sage: libgap.collect()
-            sage: [x.StructureDescription() for x in sorted(b.NormalSubgroups())]
+            sage: [x.StructureDescription() for x in sorted(a(b))]
             ["1", "S4", "A4", "C2 x C2"]
 
         Not every ``GapElement`` is callable::
