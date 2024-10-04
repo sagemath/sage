@@ -699,6 +699,10 @@ def _stabilizer_subgroups(G, X, a):
         sage: _stabilizer_subgroups(S, X, a)
         [Permutation Group with generators [(1,2), (4,5), (1,4)(2,5)(3,6)]]
 
+    TESTS::
+
+        sage: _stabilizer_subgroups(SymmetricGroup(2), [1], lambda pi, H: H)
+        [Permutation Group with generators [(1,2)]]
     """
     from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
     to_gap = {x: i for i, x in enumerate(X, 1)}
@@ -706,9 +710,9 @@ def _stabilizer_subgroups(G, X, a):
     g_orbits = [orbit_decomposition(list(to_gap), lambda x: a(g, x))
                 for g in G.gens()]
 
-    gens = [PermutationGroupElement(gen) for g_orbit in g_orbits
-            if (gen := [tuple([to_gap[x] for x in o])
-                        for o in g_orbit if len(o) > 1])]
+    gens = [PermutationGroupElement([tuple([to_gap[x] for x in o])
+                                     for o in g_orbit])
+            for g_orbit in g_orbits]
     result = []
     M = set(range(1, len(to_gap) + 1))
     while M:
@@ -1651,12 +1655,11 @@ class PolynomialSpecies(CombinatorialFreeModule):
         INPUT:
 
         - ``G`` - an element of ``self`` (in this case pi must be ``None``)
-          or a permutation group.
-        - ``pi`` - a dict mapping sorts to iterables whose union is the domain.
-          If `k=1`, `pi` can be omitted.
-
-        If `G = (X, a)`, then `X` should be a finite set and `a` an action of
-        `G` on `X`.
+          or a permutation group, or a pair ``(X, a)`` consisting of a
+          finite set and an action.
+        - ``pi`` - a dict mapping sorts to iterables whose union is the
+          domain of ``G`` (if ``G`` is a permutation group) or `X` (if ``G``)
+          is a pair ``(X, a)``. If `k=1`, `pi` can be omitted.
 
         EXAMPLES::
 
@@ -1675,6 +1678,18 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
             sage: P((X, a), {0: [1,2,3,4]})
             E_3*X + P_4
+
+        The species of permutation groups::
+
+            sage: P = PolynomialSpecies(ZZ, ["X"])
+            sage: n = 4
+            sage: S = SymmetricGroup(n)
+            sage: X = S.subgroups()
+            sage: def act(pi, G):  # WARNING: returning H does not work because of equality problems
+            ....:     H = S.subgroup(G.conjugate(pi).gens())
+            ....:     return next(K for K in X if K == H)
+            sage: P((X, act), {0: range(1, n+1)})
+            4*E_4 + 4*P_4 + E_2^2 + 2*X*E_3
         """
         if parent(G) == self:
             if pi is not None:
