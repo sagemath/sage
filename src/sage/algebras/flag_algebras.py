@@ -211,6 +211,7 @@ from sage.structure.element import CommutativeAlgebraElement
 from sage.rings.ring import CommutativeAlgebra
 from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
+from sage.rings.integer import Integer
 from sage.rings.real_mpfr import RR
 from sage.algebras.flag import Flag
 
@@ -218,6 +219,7 @@ from sage.categories.sets_cat import Sets
 
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
+from sage.matrix.special import diagonal_matrix
 
 from sage.misc.prandom import randint
 from sage.arith.misc import falling_factorial, binomial
@@ -232,6 +234,7 @@ lazy_import("sage.graphs.hypergraph_generators", "hypergraphs")
 
 import pickle
 import os
+from tqdm import tqdm
 
 class CombinatorialTheory(Parent, UniqueRepresentation):
     
@@ -587,7 +590,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         OUTPUT: A FlagAlgebraElement with values corresponding to the one resulting from a
             blowup construction
         """
-        from tqdm import tqdm
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(QQ, pattern_size, "X")
         gs = R.gens()
@@ -925,7 +927,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         For each ftype and base change it provides the data to create the multiplication table.
         Also pre-computes the multiplication tables if they are not calculated yet.
         """
-        from tqdm import tqdm
         
         sym_asym_mats = [self.sym_asym_bases(dat[0], dat[1]) for dat in ftype_data]
 
@@ -952,7 +953,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         Creates the data that holds the linear constraints
         """
         
-        from tqdm import tqdm
         
         base_flags = self.generate_flags(target_size)
         
@@ -995,11 +995,9 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def _round_sdp_solution_no_phi(self, sdp_result, sdp_data, table_constructor, \
                                    constraints_data, denom=1024):
-        from tqdm import tqdm
         import numpy as np
         from numpy import linalg as LA
         from sage.functions.other import ceil
-        from sage.matrix.special import diagonal_matrix
 
         #unpack variables
 
@@ -1053,13 +1051,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         # pad the slacks, so it is all positive where it counts
         slacks -= result*one_vector_exact
         
-        rerrs = []
-        for ii in range(len(X_matrices_rounded)):
-            Xr = X_matrices_rounded[ii]
-            Xo = matrix(sdp_result['X'][ii])
-            rerrs.append((Xr-Xo).norm())
-        rerrs.append((vector(e_vector_approx) - e_vector_rounded).norm())
-        print("Rounding errors are {}".format(rerrs))
+        print("The rounded result is {}".format(result))
         
         return result, X_matrices_rounded, e_vector_rounded, slacks, [phi_vector_rounded]
     
@@ -1068,7 +1060,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         r"""
         Round the SDP results output to get something exact.
         """
-        import tqdm
         
         #unpack variables
         block_sizes, target_list_exact, mat_inds, mat_vals = sdp_data
@@ -1224,8 +1215,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         """
         if X_original==None:
             return None
-        D_vectors = []
-        L_vectors = []
+        X_flats = []
         block_index = 0
         for params in table_constructor.keys():
             ns, ftype, target_size = params
@@ -1236,10 +1226,40 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                 else:
                     X_ii += base.T * X_original[block_index + plus_index] * base
             block_index += len(table_constructor[params])
-            P, L, D = X_ii.block_ldlt(classical=False)
-            D_vectors.append(vector(D.diagonal()))
-            L_vectors.append(vector(_flatten_matrix(L.T.rows())))
-        return D_vectors, L_vectors
+            X_flats.append(vector(QQ, _flatten_matrix(X_ii.rows())))
+        return X_flats
+    
+    def _fix_X_bases_pld(self, table_constructor, X_original):
+        r"""
+        Transforms the X matrices to a base that agrees with the original list of flags
+        
+        Basically undoes the sym/asym changes and the reductions by the constructions' kernels.
+        Also changes the X matrices to the P L D L.T P.T form
+        """
+        if X_original==None:
+            return None
+        P_dicts = []
+        L_mats = []
+        D_vecs = []
+        block_index = 0
+        for params in table_constructor.keys():
+            ns, ftype, target_size = params
+            X_ii = None
+            for plus_index, base in enumerate(table_constructor[params]):
+                if X_ii == None:
+                    X_ii = base.T * X_original[block_index + plus_index] * base
+                else:
+                    X_ii += base.T * X_original[block_index + plus_index] * base
+            block_index += len(table_constructor[params])
+            P, L, D = X_ii.block_ldlt()
+            # last check that D has only diagonals
+            if not all([xx[0]==xx[1] for xx in D._dict().keys()]):
+                print("LDLT factoring failed")
+                return None
+            P_dicts.append(P._dict())
+            L_mats.append(vector(_flatten_matrix(L.T.rows())))
+            D_vecs.append(vector(D.diagonal()))
+        return P_dicts, L_mats, D_vecs
     
     def _format_optimizer_output(self, table_constructor, mult=1, sdp_output=None, rounding_output=None, file="default"):
         r"""
@@ -1282,14 +1302,14 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             result, X_original, e_vector, slacks, phi_vecs = rounding_output
         
         result *= mult
-        Ds, Ls = self._fix_X_bases(table_constructor, X_original)
+        #Ps, Ls, Ds = self._fix_X_bases_pld(table_constructor, X_original)
+        Xs = self._fix_X_bases(table_constructor, X_original)
         
         cert_dict = {"result": result, 
-                     "D vectors": Ds,
-                     "L matrices": Ls,
-                     "e": e_vector,
-                     "slacks": slacks,
-                     "phi": phi_vecs,
+                     "X matrices": Xs,
+                     "e vector": e_vector,
+                     "slack vector": slacks,
+                     "phi vectors": phi_vecs,
                      "base flags": base_flags,
                      "typed flags": typed_flags
                     }
@@ -1307,7 +1327,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             with open(file, "wb") as f:
                 pickle.dump(cert_dict, f)
         
-        return cert_dict
+        return result
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
                          construction=None, file=None, exact=False, denom=1024):
@@ -1357,7 +1377,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             -OEGraphTheory: 4
         """
         from csdpy import solve_sdp
-        from tqdm import tqdm
         import sys
         import io
         import time
@@ -1496,71 +1515,86 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     optimize = optimize_problem
     
     
-    def verify_certificate(self, certificate, target_element, target_size, maximize=True, positives=None, construction=None):
+    def verify_certificate(self, file_or_cert, target_element, target_size, maximize=True, positives=None, construction=None):
         r"""
-        Verifies the certificate provided by the optimizer when `certificate=True` is set.
+        Verifies the certificate provided by the optimizer written to `file`
         """
+        import pickle
+        
+        #
+        # Load the certificate file (only pickle is supported)
+        #
+        
+        if isinstance(file_or_cert, str):
+            file = file_or_cert
+            if not file.endswith(".pickle"):
+                file += ".pickle"
+            file = self._certs_dir() + file
+            with open(file, 'rb') as file:
+                certificate = pickle.load(file)
+        else:
+            certificate = file_or_cert
+        
+        
         #
         # Checking eigenvalues and positivity constraints
         #
         
-        res = certificate['result']
-        Xs = certificate['X']
-        e_values = vector(certificate['e'])
+        res = certificate["result"]
+        e_values = vector(certificate["e vector"])
 
         if len(e_values)>0 and min(e_values)<0:
             print("Solution is not valid!")
             print("Linear constraint's coefficient is negative {}".format(min(e_values)))
             return -1
-
-        for ii,X in enumerate(Xs):
-            if not X.is_positive_semidefinite():
+        
+        X_flats = certificate["X matrices"]
+        #Ps = certificate["P dictionaries"]
+        #Ds = certificate["D vectors"]
+        #Ls = certificate["L matrices"]
+        print("Checking X matrices")
+        for ii, Xf in tqdm(enumerate(X_flats)):
+            X = matrix(QQ, _unflatten_matrix(Xf)[0])
+            if not (X.is_positive_semidefinite()):
                 print("Solution is not valid!")
                 print("Matrix {} is not semidefinite".format(ii))
                 return -1
+            #P = matrix(QQ, len(Ddiag), len(Ddiag), Ps[ii], sparse=True)
+            #D = diagonal_matrix(QQ, Ddiag, sparse=True)
+            #Larr, _ = _unflatten_matrix(Ls[ii], dim=len(Ddiag), doubled=False, upper=True)
+            #L = matrix(QQ, Larr).T
+            #PL = P*L
+            #X = PL * D * PL.T
+            #X_flats.append(vector(QQ, _flatten_matrix(X.rows())))
 
-        print("Solution matrices are all semidefinite, linear coefficients are all non-negative")
+        print("Solution matrices are all positive semidefinite, linear coefficients are all non-negative")
 
         #
         # Initial setup
         #
 
         mult = -1 if maximize else 1
-        base_flags = self.generate_flags(target_size)
+        base_flags = certificate["base flags"]
         target_vector_exact = (target_element.project()*(mult)<<(target_size - target_element.size())).values()
         if target_element.ftype().size()==0:
             one_vector = vector([1]*len(base_flags))
         else:
             one_vector = (target_element.ftype().project()<<(target_size - target_element.ftype().size())).values()
-
-        #
-        # Create the types used in the calculation
-        #
-
-        ftype_data = []
-        for fs in range(target_size-2, 1, -2):
-            for fl in self.generate_flags(fs):
-                ftype = fl.subflag(ftype_points=list(range(fs)))
-                ns = (target_size + fs)/2
-                ftype_data.append((ns, ftype, target_size))
-        ftype_data.sort()
-
-        print("Done calculating types relevant for the calculation")
+        
+        ftype_data = list(certificate["typed flags"].keys())
 
         #
         # Create the semidefinite matrix data
         #
 
         table_list = []
-        for ii, dat in enumerate(ftype_data):
-            ns, ftype, target_size = dat
+        print("Calculating multiplication tables")
+        for ii, dat in tqdm(enumerate(ftype_data)):
+            ns, ftype = dat
             #calculate the table
             table = self.mul_project_table(ns, ns, ftype, ftype_inj=[], target_size=target_size)
             if table!=None:
                 table_list.append(table)
-            print("Done with mult table for {}".format(ftype))
-
-        print("Done calculating semidefinite constraints")
 
         #
         # Create the data from linear constraints
@@ -1585,15 +1619,19 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         #
         # Calculate the bound the solution provides
         #
-
+        
+        print("Calculating the bound provided by the certificate")
+        
         slacks = target_vector_exact - positives_matrix_exact.T*e_values
-        for ii, table in enumerate(table_list):
+        for ii, table in tqdm(enumerate(table_list)):
             for gg, mat_gg in enumerate(table):
-                slacks[gg] -= sum([mat_gg.rows()[jj]*Xs[ii][jj] for jj in range(mat_gg.nrows())])
-        res = min(slacks)*mult
-        print("The solution is valid, it proves the bound {}".format(res))
+                mat_flat = vector(_flatten_matrix(mat_gg.rows(), doubled=True))
+                slacks[gg] -= mat_flat * X_flats[ii]
+        result = min([slacks[ii]/oveii for ii, oveii in enumerate(one_vector) if oveii!=0])
+        result *= mult
+        print("The solution is valid, it proves the bound {}".format(result))
 
-        return res
+        return result
     
     verify = verify_certificate
     
@@ -1845,10 +1883,12 @@ def _flatten_matrix(mat, doubled=False):
         res += [factor*mat[ii][jj] for jj in range(ii+1, len(mat))]
     return res
 
-def _unflatten_matrix(ls, dim, doubled=False):
+def _unflatten_matrix(ls, dim=-1, doubled=False, upper=False):
     r"""
     Unflatten a symmetric matrix, optionally correct for the doubled non-diagonal elements
     """
+    if dim==-1:
+        dim = Integer(round((1/2) * ((8*len(ls)+1)**(1/2) - 1) ))
     mat = [[0]*dim for ii in range(dim)]
     factor = 2 if doubled else 1
     index = 0
@@ -1859,7 +1899,8 @@ def _unflatten_matrix(ls, dim, doubled=False):
         # Fill the off-diagonal elements
         for jj in range(ii + 1, dim):
             mat[ii][jj] = ls[index] / factor
-            mat[jj][ii] = ls[index] / factor
+            if not upper:
+                mat[jj][ii] = ls[index] / factor
             index += 1
     return matrix(mat), ls[index:]
 
@@ -1897,7 +1938,6 @@ def _round_matrix(mat, method=1, quotient_bound=7, denom_bound=9, denom=1024):
     return matrix(QQ, [_round_list(xx, False, method, quotient_bound, denom_bound, denom) for xx in mat])
 
 def _round_ldl(mat, method=1, quotient_bound=7, denom_bound=9, denom=1024):
-    from sage.matrix.special import diagonal_matrix
     r"""
     Helper function, to round a matrix using ldl decomposition
     """
