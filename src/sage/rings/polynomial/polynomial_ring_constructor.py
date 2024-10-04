@@ -916,23 +916,30 @@ def polynomial_default_category(base_ring_category, n_variables):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.polynomial_ring_constructor import polynomial_default_category
-        sage: polynomial_default_category(Rings(),1) is Algebras(Rings()).Infinite()
-        True
-        sage: polynomial_default_category(Rings().Commutative(),1) is Algebras(Rings().Commutative()).Commutative().Infinite()
-        True
-        sage: polynomial_default_category(Fields(),1) is EuclideanDomains() & Algebras(Fields()).Infinite()
-        True
-        sage: polynomial_default_category(Fields(),2) is UniqueFactorizationDomains() & CommutativeAlgebras(Fields()).Infinite()
-        True
+        sage: polynomial_default_category(Rings(), 1)
+        Category of infinite algebras with basis over rings
+        sage: polynomial_default_category(Rings().Commutative(), 1)
+        Category of infinite commutative algebras with basis
+            over commutative rings
+        sage: polynomial_default_category(Fields(), 1)
+        Join of Category of euclidean domains
+            and Category of algebras with basis over fields
+            and Category of commutative algebras over fields
+            and Category of infinite sets
+        sage: polynomial_default_category(Fields(), 2)
+        Join of Category of unique factorization domains
+            and Category of algebras with basis over fields
+            and Category of commutative algebras over fields
+            and Category of infinite sets
 
-        sage: QQ['t'].category() is EuclideanDomains() & CommutativeAlgebras(QQ.category()).Infinite()
+        sage: QQ['t'].category() is EuclideanDomains() & CommutativeAlgebras(QQ.category()).WithBasis().Infinite()
         True
-        sage: QQ['s','t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ.category()).Infinite()
+        sage: QQ['s','t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ.category()).WithBasis().Infinite()
         True
-        sage: QQ['s']['t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ['s'].category()).Infinite()
+        sage: QQ['s']['t'].category() is UniqueFactorizationDomains() & CommutativeAlgebras(QQ['s'].category()).WithBasis().Infinite()
         True
     """
-    category = Algebras(base_ring_category)
+    category = Algebras(base_ring_category).WithBasis()
 
     if n_variables:
         # here we assume the base ring to be nonzero
