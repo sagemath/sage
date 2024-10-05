@@ -2693,7 +2693,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
         sage: K.<i> = QuadraticField(-1)                                                # needs sage.rings.number_field
         sage: factor(122 - 454*i)                                                       # needs sage.rings.number_field
-        (-i) * (-i - 2)^3 * (i + 1)^3 * (-2*i + 3) * (i + 4)
+        (-i - 2)^3 * (-i - 1)^3 * (3*i + 2) * (i + 4)
 
     To access the data in a factorization::
 
@@ -2776,7 +2776,7 @@ def radical(n, *args, **kwds):
         ArithmeticError: radical of 0 is not defined
         sage: K.<i> = QuadraticField(-1)                                                # needs sage.rings.number_field
         sage: radical(K(2))                                                             # needs sage.rings.number_field
-        i + 1
+        -i - 1
 
     Tests with numpy and gmpy2 numbers::
 
@@ -3031,7 +3031,7 @@ def is_squarefree(n):
         sage: is_squarefree(O(2))
         False
         sage: O(2).factor()
-        (-I) * (I + 1)^2
+        (-I) * (-I - 1)^2
 
     This method fails on domains which are not Unique Factorization Domains::
 

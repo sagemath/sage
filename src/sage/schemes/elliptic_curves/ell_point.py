@@ -3053,10 +3053,10 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: K.<i> = NumberField(x^2 + 1)
             sage: E = EllipticCurve(K, [0,1,0,-160,308])
             sage: P = E(26, -120)
-            sage: E.discriminant().support()
-            [Fractional ideal (i + 1),
-             Fractional ideal (-i - 2),
-             Fractional ideal (2*i + 1),
+            sage: E.discriminant().support() # random
+            [Fractional ideal (-i - 1),
+             Fractional ideal (2*i - 1),
+             Fractional ideal (-2*i - 1),
              Fractional ideal (3)]
             sage: [E.tamagawa_exponent(p) for p in E.discriminant().support()]
             [1, 4, 4, 4]
