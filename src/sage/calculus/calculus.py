@@ -407,7 +407,7 @@ To check that :issue:`14821` is fixed::
     0.6321205588285577
     sage: result = integral(exp(-300.0/(-0.064*x+14.0)),x,0.0,120.0)
     ...
-    sage: result
+    sage: result  # abs tol 1e-10
     4.62770039817000e-9
 
 To check that :issue:`27092` is fixed::
