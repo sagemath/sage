@@ -2938,7 +2938,7 @@ cdef class Polynomial(CommutativePolynomial):
                     q, r = q.quo_rem(p)
                     if r != 0:
                         if sparse:
-                            tmp = self.parent()({e*k : d[k]**e for k in d})
+                            tmp = self.parent()({e*k: d[k]**e for k in d})
                         else:
                             tmp = [0] * (e * len(c) - e + 1)
                             for i in range(len(c)):
@@ -3526,7 +3526,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         - Didier Deshommes (2006-05-25)
         """
-        return self._parent(polynomial_fateman._mul_fateman_mul(self,right))
+        return self._parent(polynomial_fateman._mul_fateman_mul(self, right))
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -3948,7 +3948,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def euclidean_degree(self):
         r"""
-        Return the degree of this element as an element of an Euclidean domain.
+        Return the degree of this element as an element of a Euclidean domain.
 
         If this polynomial is defined over a field, this is simply its :meth:`degree`.
 
@@ -5953,7 +5953,7 @@ cdef class Polynomial(CommutativePolynomial):
         # sylvester_matrix() in multi_polynomial.pyx.
 
         if self._parent != right.parent():
-            a, b = coercion_model.canonical_coercion(self,right)
+            a, b = coercion_model.canonical_coercion(self, right)
             variable = a.parent()(self.variables()[0])
             #We add the variable to cover the case that right is a multivariate
             #polynomial
@@ -6051,7 +6051,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         - Naqi Jaffery (2006-01-24): examples
         """
-        return not self.is_zero() and self[self.degree()] == 1
+        return not self.is_zero() and self[self.degree()] == self.base_ring().one()
 
     def is_unit(self):
         r"""
@@ -8404,6 +8404,9 @@ cdef class Polynomial(CommutativePolynomial):
             UserWarning: roots may have been lost...
             [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
              [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
+            sage: ((x - 1)^2).roots(multiplicities=False, proof=False, warn=False)
+            [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
+             [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
 
         Note that coefficients in a number field with defining polynomial
         `x^2 + 1` are considered to be Gaussian rationals (with the
@@ -10185,7 +10188,7 @@ cdef class Polynomial(CommutativePolynomial):
         """
         # __getitem__ already returns a polynomial!!
         # We must not have check=False, since 0 must not have _coeffs = [0].
-        return <Polynomial>self._parent(self[:n])#, check=False)
+        return <Polynomial>self._parent(self[:n])  # , check=False)
 
     cdef _inplace_truncate(self, long prec):
         return self.truncate(prec)

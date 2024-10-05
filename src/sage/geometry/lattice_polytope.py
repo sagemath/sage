@@ -1327,7 +1327,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             parts.extend(["face of", str(self.ambient())])
         return " ".join(parts)
 
-    def _sort_faces(self,  faces):
+    def _sort_faces(self, faces):
         r"""
         Return sorted (if necessary) ``faces`` as a tuple.
 
@@ -1402,7 +1402,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         adjacent = set()
         for superface in self.facet_of():
             for facet in self.facets():
-                adjacent.update(L.open_interval(facet,  superface))
+                adjacent.update(L.open_interval(facet, superface))
         adjacent.discard(self)
         return self._sort_faces(adjacent)
 
@@ -2064,7 +2064,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 faces.append(self)
                 for face in dfaces:
                     L.add_edge(face_to_index[face], next_index)
-            D = {i:f for i,f in enumerate(faces)}
+            D = dict(enumerate(faces))
             L.relabel(D)
             return FinitePoset(L, faces, key=id(self))
 

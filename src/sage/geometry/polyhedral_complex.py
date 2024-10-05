@@ -2074,8 +2074,7 @@ class PolyhedralComplex(GenericCellComplex):
                 raise ValueError("the cell is not face-to-face with complex")
         # update dim and maximal cells
         d = cell.dimension()
-        if d > self._dim:
-            self._dim = d
+        self._dim = max(d, self._dim)
         maximal_cells = poset.maximal_elements()    # a list
         self._maximal_cells = cells_list_to_cells_dict(maximal_cells)
         # update convexity if self was known to be convex, reset otherwise.

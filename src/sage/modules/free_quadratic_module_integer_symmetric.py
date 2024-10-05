@@ -51,8 +51,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from pathlib import Path
 from copy import copy
+
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
@@ -84,7 +85,7 @@ def IntegralLattice(data, basis=None):
     - ``data`` -- can be one of the following:
 
       * a symmetric matrix over the rationals -- the inner product matrix
-      * an integer -- the dimension for an Euclidean lattice
+      * an integer -- the dimension for a Euclidean lattice
       * a symmetric Cartan type or anything recognized by
         :class:`CartanMatrix` (see also
         :mod:`Cartan types <sage.combinat.root_system.cartan_type>`)
@@ -119,7 +120,7 @@ def IntegralLattice(data, basis=None):
         [ 2  1]
         [ 1 -2]
 
-    We can define an Euclidean lattice just by its dimension::
+    We can define a Euclidean lattice just by its dimension::
 
         sage: IntegralLattice(3)
         Lattice of degree 3 and rank 3 over Integer Ring
@@ -1480,13 +1481,12 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         p, n = self.signature_pair()
         if p * n != 0:
             from sage.env import SAGE_EXTCODE
-            from sage.interfaces.gp import gp
             from sage.libs.pari import pari
-            m = self.gram_matrix().__pari__()
-            gp.read(SAGE_EXTCODE + "/pari/simon/qfsolve.gp")
-            m = gp.eval('qflllgram_indefgoon(%s)' % m)
-            # convert the output string to sage
-            G, U = pari(m).sage()
+            m = self.gram_matrix()
+            pari.read(Path(SAGE_EXTCODE) / "pari" / "simon" / "qfsolve.gp")
+            m = pari('qflllgram_indefgoon')(m)
+            # convert the output to sage
+            G, U = m.sage()
             U = U.T
         else:
             e = 1
@@ -1537,13 +1537,15 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice('A4')
             sage: t = vector([1.2, -3/11, 5.5, -9.1])
             sage: short = L.enumerate_short_vectors()   # implicit doctest
-            sage: [next(short) for _ in range(10)]
-            [(0, 0, 0, 1), (0, 0, 1, 1), (0, 1, 1, 1), (1, 1, 1, 1), (0, 0, 1, 0),
-             (1, 1, 1, 0), (0, 1, 1, 0), (0, 1, 0, 0), (1, 1, 0, 0), (1, 0, 0, 0)]
+            sage: vecs = [next(short) for _ in range(10)]
+            sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
+            [(0, 0, 0, 1), (0, 0, 1, 0), (0, 0, 1, 1), (0, 1, 0, 0), (0, 1, 1, 0),
+             (0, 1, 1, 1), (1, 0, 0, 0), (1, 1, 0, 0), (1, 1, 1, 0), (1, 1, 1, 1)]
             sage: close = L.enumerate_close_vectors(t)  # implicit doctest
-            sage: [next(close) for _ in range(10)]
-            [(1, 0, 6, -9), (1, -1, 5, -9), (2, 0, 6, -9), (1, 0, 5, -9), (1, -1, 5, -10),
-             (2, 1, 6, -9), (1, 0, 5, -10), (2, 0, 5, -9), (1, 0, 6, -8), (1, -1, 6, -9)]
+            sage: vecs = [next(close) for _ in range(10)]
+            sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
+            [(1, 0, 6, -8), (1, 0, 5, -9), (2, 0, 5, -9), (1, -1, 5, -9), (2, 1, 6, -9),
+             (1, 0, 6, -9), (2, 0, 6, -9), (1, 0, 5, -10), (1, -1, 6, -9), (1, -1, 5, -10)]
         """
         L = self.LLL()
         dim = L.dimension()
@@ -1598,11 +1600,24 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
             sage: L = IntegralLattice(4, [[1,2,3,4], [7,7,8,8], [1,-1,1,0]])
             sage: short = L.enumerate_short_vectors()
-            sage: [next(short) for _ in range(20)]
+            sage: vecs = [next(short) for _ in range(20)]
+            sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
             [(1, -1, 1, 0), (2, -2, 2, 0), (3, -3, 3, 0), (0, 3, 2, 4), (1, 2, 3, 4),
-             (4, 4, 1, 0), (3, 2, -2, -4), (3, 5, 0, 0), (4, 1, -1, -4), (-1, 4, 1, 4),
-             (2, 1, 4, 4), (5, 3, 2, 0), (2, 3, -3, -4), (2, 6, -1, 0), (5, 0, 0, -4),
-             (-2, 5, 0, 4), (4, -4, 4, 0), (6, 2, 3, 0), (1, 4, -4, -4), (3, 0, 5, 4)]
+             (3, 2, -2, -4), (4, 4, 1, 0), (-1, 4, 1, 4), (3, 5, 0, 0), (4, 1, -1, -4),
+             (2, 1, 4, 4), (2, 3, -3, -4), (5, 3, 2, 0), (2, 6, -1, 0), (5, 0, 0, -4),
+             (-2, 5, 0, 4), (4, -4, 4, 0), (1, 4, -4, -4), (6, 2, 3, 0), (3, 0, 5, 4)]
+
+        This example demonstrates that the lattice inner product is used for the norm::
+
+            sage: Q = Matrix(QQ, [[1000, 0], [0, 1]])
+            sage: B = [[1, 1], [1, -1]]
+            sage: L = IntegralLattice(Q, basis=B)
+            sage: short = L.enumerate_short_vectors()
+            sage: vecs = [next(short) for _ in range(20)]
+            sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
+            [(0, -2), (0, -4), (0, -6), (0, -8), (0, -10), (0, -12), (0, -14), (0, -16),
+            (0, -18), (0, -20), (0, -22), (0, -24), (0, -26), (0, -28), (0, -30), (-1, -1),
+            (-1, 1), (-1, -3), (-1, 3), (0, -32)]
         """
         yield from self._fplll_enumerate()
 
@@ -1621,9 +1636,10 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L = IntegralLattice(4, [[1,2,3,4], [7,7,8,8], [1,-1,1,0]])
             sage: t = vector([1/2, -133/7, 123.44, -11])
             sage: close = L.enumerate_close_vectors(t)
-            sage: [next(close) for _ in range(10)]
-            [(1, -18, 123, 148), (2, -19, 124, 148), (0, -17, 122, 148), (3, -20, 125, 148), (-1, -16, 121, 148),
-             (-2, -20, 125, 152), (-2, -23, 123, 148), (4, -21, 126, 148), (-3, -22, 122, 148), (-3, -19, 124, 152)]
+            sage: vecs = [next(close) for _ in range(10)]
+            sage: sorted(vecs, key=lambda v: (L(v).inner_product(L(v)), v))
+            [(-1, -16, 121, 148), (0, -17, 122, 148), (-3, -22, 122, 148), (1, -18, 123, 148), (-2, -23, 123, 148),
+             (2, -19, 124, 148), (3, -20, 125, 148), (4, -21, 126, 148), (-3, -19, 124, 152), (-2, -20, 125, 152)]
         """
         yield from self._fplll_enumerate(target)
 

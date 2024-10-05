@@ -8285,8 +8285,7 @@ class NumberField_absolute(NumberField_generic):
             log_half_root_bound = log2abs(f[0]/2)/n
             for i in range(1, n):
                 bd = log2abs(f[i])/(n-i)
-                if bd > log_half_root_bound:
-                    log_half_root_bound = bd
+                log_half_root_bound = max(bd, log_half_root_bound)
             # Twice the bound on the roots of f, in other words an upper
             # bound for the distance between two roots.
             log_double_root_bound = log_half_root_bound + 2.0  # 2.0 = log2(4)

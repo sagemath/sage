@@ -25,6 +25,7 @@ class A():
     # something we can weakref
     pass
 
+
 class UniqueFactoryTester(UniqueFactory):
 
     def create_key(self, *args, **kwds):
