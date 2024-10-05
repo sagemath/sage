@@ -17,10 +17,10 @@ Built-in oriented matroids
 
 The types of oriented matroids currently implemented into sage are:
 
-- Circuit Oriented Matroids
-- Covector Oriented Matroids
-- Vector Oriented Matroids
-- (Real) Hyperplane Arrangement Oriented Matroids
+- :class:`Circuit Oriented Matroids<sage.matroids.oriented_matroids.circuit_oriented_matroid.CircuitOrientedMatroid>`
+- :class:`Covector Oriented Matroids<sage.matroids.oriented_matroids.covector_oriented_matroid.CovectorOrientedMatroid>`
+- :class:`Vector Oriented Matroids<sage.matroids.oriented_matroids.vector_oriented_matroid.VectorOrientedMatroid>`
+- :class:`(Real) Hyperplane Arrangement Oriented Matroids<sage.matroids.oriented_matroids.real_hyperplane_arrangement_oriented_matroid.RealHyperplaneArrangementOrientedMatroid>`
 
 Constructing oriented matroids
 ==============================
@@ -37,6 +37,7 @@ AUTHORS:
 - Aram Dermenjian (2019-07-12): Initial version
 - Elizabeth Flight (2023-08-01): Beta version
 - Tudor Tanasa (2023-08-01): Beta version
+
 """
 
 # *****************************************************************************
@@ -66,9 +67,6 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
 
     INPUT:
 
-    - ``groundset`` -- (default: ``None``) the groundset of the oriented
-      matroid
-
     - ``data`` -- (default: ``None``) the data that defines the oriented
       matroid. It can be one of the following:
 
@@ -84,6 +82,9 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
           + :class:`SignedSubsetElement`
           + A tuple with positive, negative, and zero sets.
 
+    - ``groundset`` -- (default: ``None``) the groundset of the oriented
+      matroid
+
     - ``key`` -- (default: ``None``) the representation of the oriented
       matroid. It can be one of the following:
 
@@ -91,9 +92,6 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
       + ``'vector'`` - uses vector axioms with signed subsets
       + ``'circuit'`` - uses circuit axioms with signed subsets
       + ``None`` - try and guess key.
-
-    - ``throw_warnings`` -- (default: ``False``) whether to throw a warning
-    on why an oriented matroid can't be constructed.
 
     EXAMPLES::
 
