@@ -697,10 +697,15 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: integrate(f(x), x, 1, 2, algorithm='sympy')                               # needs sympy
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
 
-    Using Giac to integrate the absolute value of a trigonometric expression::
+    Using Giac to integrate the absolute value of a trigonometric
+    expression. If Giac is installed, this will be attempted
+    automatically in the event that Maxima is unable to integrate the
+    expression::
 
         sage: # needs sage.libs.giac
-        sage: integrate(abs(cos(x)), x, 0, 2*pi, algorithm='giac')
+        sage: result = integrate(abs(cos(x)), x, 0, 2*pi, algorithm='giac')
+        ...
+        sage: result
         4
         sage: result = integrate(abs(cos(x)), x, 0, 2*pi)
         ...
