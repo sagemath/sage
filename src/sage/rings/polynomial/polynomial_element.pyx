@@ -4487,8 +4487,7 @@ cdef class Polynomial(CommutativePolynomial):
                 X[i] = c
         return X
 
-    def dict(self):
-        return self.monomial_coefficients()
+    dict = monomial_coefficients
 
     def factor(self, **kwargs):
         r"""

@@ -814,8 +814,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             self._compute_polydict()
         return < dict > self._prod.dict()
 
-    cpdef dict dict(self):
-        return self.monomial_coefficients()
+    dict = monomial_coefficients
 
     def _fraction_pair(self):
         """

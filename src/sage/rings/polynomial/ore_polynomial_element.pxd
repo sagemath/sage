@@ -38,7 +38,6 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
     cdef list _mul_list(self, list A)
     cpdef _mul_(self, other)
 
-    cpdef dict dict(self)
     cpdef dict monomial_coefficients(self)
     cpdef list list(self, bint copy=*)
 

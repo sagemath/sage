@@ -3022,8 +3022,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             p = pNext(p)
         return pd
 
-    def dict(self):
-        return self.monomial_coefficients()
+    dict = monomial_coefficients
 
     def iterator_exp_coeff(self, as_ETuples=True):
         """

@@ -2213,8 +2213,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         self._normalize()
         return dict(self._poly.__repn)
 
-    def dict(self):
-        return self.monomial_coefficients()
+    dict = monomial_coefficients
 
     def coefficient(self, exponent):
         r"""

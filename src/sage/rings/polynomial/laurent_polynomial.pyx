@@ -218,7 +218,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         """
         return self.number_of_terms()
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         """
         Abstract ``dict`` method.
 
@@ -226,15 +226,14 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
             sage: R.<x> = LaurentPolynomialRing(ZZ)
             sage: from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial
-            sage: LaurentPolynomial.dict(x)
+            sage: LaurentPolynomial.monomial_coefficients(x)
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError
 
-    cpdef dict monomial_coefficients(self):
-        raise NotImplementedError
+    dict = monomial_coefficients
 
     def map_coefficients(self, f, new_base_ring=None):
         """
@@ -863,8 +862,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         cdef dict d = self.__u.monomial_coefficients()
         return {k + self.__n: d[k] for k in d}
 
-    cpdef dict dict(self):
-        return self.monomial_coefficients()
+    dict = monomial_coefficients
 
     def coefficients(self):
         """

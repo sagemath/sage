@@ -756,8 +756,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return self.polynomial().monomial_coefficients()
 
-    def dict(self):
-        return self.monomial_coefficients()
+    dict = monomial_coefficients
 
     def _derivative(self, var=None):
         """

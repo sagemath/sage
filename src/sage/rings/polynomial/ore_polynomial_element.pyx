@@ -2491,10 +2491,12 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
             sage: a = x^2012 + t*x^1006 + t^3 + 2*t
-            sage: a.dict()
+            sage: a.monomial_coefficients()
             {0: t^3 + 2*t, 1006: t, 2012: 1}
 
-            sage: a.monomial_coefficients()
+        ``dict`` is an alias::
+
+            sage: a.dict()
             {0: t^3 + 2*t, 1006: t, 2012: 1}
         """
         cdef dict X = {}
@@ -2506,8 +2508,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
                 X[i] = c
         return X
 
-    cpdef dict dict(self):
-        return self.monomial_coefficients()
+    dict = monomial_coefficients
 
     cpdef Integer degree(self):
         r"""

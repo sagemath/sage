@@ -816,8 +816,7 @@ cdef class PowerSeries_poly(PowerSeries):
         """
         return self.__f.monomial_coefficients()
 
-    def dict(self):
-        return self.monomial_coefficients()
+    dict = monomial_coefficients
 
     def _derivative(self, var=None):
         """
