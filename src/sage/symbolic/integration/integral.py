@@ -62,7 +62,7 @@ class IndefiniteIntegral(BuiltinFunction):
             sage: # needs sage.libs.giac
             sage: Ex = (1-2*x^(1/3))^(3/4)/x
             sage: integrate(Ex, x, algorithm='giac')  # long time
-            4*(-2*x^(1/3) + 1)^(3/4) + 6*arctan((-2*x^(1/3) + 1)^(1/4)) - 3*log((-2*x^(1/3) + 1)^(1/4) + 1) + 3*log(abs((-2*x^(1/3) + 1)^(1/4) - 1))
+            4*(-2*x^(1/3) + 1)^(3/4) + 6*arctan((-2*x^(1/3) + 1)^(1/4)) - 3*log(abs((-2*x^(1/3) + 1)^(1/4) + 1)) + 3*log(abs((-2*x^(1/3) + 1)^(1/4) - 1))
 
         Check for :issue:`29833`::
 
