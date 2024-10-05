@@ -29,7 +29,7 @@ def magma_free_eval(code, strip=True, columns=0):
     .. WARNING::
     
         The code must evaluate in at most 120 seconds
-    and there is a limitation on the amount of RAM.
+        and there is a limitation on the amount of RAM.
 
     EXAMPLES::
 
