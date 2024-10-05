@@ -288,7 +288,6 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
 
         return OM
 
-
     def __init__(self, category=None):
         if category is None:
             category = Sets()
@@ -727,8 +726,6 @@ class OrientedMatroid(Parent, metaclass=ClasscallMetaclass):
             return False
         except ValueError:
             return False
-
-
 
 
 def deep_tupler(obj):
