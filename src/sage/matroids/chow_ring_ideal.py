@@ -126,102 +126,20 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
             sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False)
             sage: ch.defining_ideal()._gens_constructor(ch.defining_ideal().ring())
-            [Aa*Ab,
-             Aa*Ac,
-             Aa*Ae,
-             Aa*Ad,
-             Aa*Ade,
-             Aa*Abcd,
-             Aa*Af,
-             Aa*Adf,
-             Aa*Aef,
-             Aa*Ag,
-             Aa*Abeg,
-             Aa*Acfg,
-             Ab*Ac,
-             Ab*Ae,
-             Ab*Aace,
-             Ab*Ad,
-             Ab*Ade,
-             Ab*Af,
-             Ab*Adf,
-             Ab*Aef,
-             Ab*Ag,
-             Ab*Aadg,
-             Ab*Acfg,
-             Ac*Ae,
-             Ac*Ad,
-             Ac*Ade,
-             Ac*Af,
-             Ac*Aabf,
-             Ac*Adf,
-             Ac*Aef,
-             Ac*Ag,
-             Ac*Aadg,
-             Ac*Abeg,
-             Ad*Ae,
-             Ae*Abcd,
-             Ae*Af,
-             Ae*Aabf,
-             Ae*Adf,
-             Ae*Ag,
-             Ae*Aadg,
-             Ae*Acfg,
-             Ad*Aace,
-             Aace*Ade,
-             Aace*Abcd,
-             Af*Aace,
-             Aabf*Aace,
-             Aace*Adf,
-             Aace*Aef,
-             Ag*Aace,
-             Aace*Aadg,
-             Aace*Abeg,
-             Aace*Acfg,
-             Ad*Af,
-             Ad*Aabf,
-             Ad*Aef,
-             Ad*Ag,
-             Ad*Abeg,
-             Ad*Acfg,
-             Abcd*Ade,
-             Af*Ade,
-             Aabf*Ade,
-             Ade*Adf,
-             Ade*Aef,
-             Ag*Ade,
-             Aadg*Ade,
-             Abeg*Ade,
-             Acfg*Ade,
-             Af*Abcd,
-             Aabf*Abcd,
-             Abcd*Adf,
-             Abcd*Aef,
-             Ag*Abcd,
-             Aadg*Abcd,
-             Abcd*Abeg,
-             Abcd*Acfg,
-             Af*Ag,
-             Af*Aadg,
-             Af*Abeg,
-             Aabf*Adf,
-             Aabf*Aef,
-             Ag*Aabf,
-             Aabf*Aadg,
-             Aabf*Abeg,
-             Aabf*Acfg,
-             Adf*Aef,
-             Ag*Adf,
-             Aadg*Adf,
-             Abeg*Adf,
-             Acfg*Adf,
-             Ag*Aef,
-             Aadg*Aef,
-             Abeg*Aef,
-             Acfg*Aef,
-             Aadg*Abeg,
-             Aadg*Acfg,
-             Abeg*Acfg,
+            [Aa*Ab, Aa*Ac, Aa*Ae, Aa*Ad, Aa*Ade, Aa*Abcd, Aa*Af, Aa*Adf,
+             Aa*Aef, Aa*Ag, Aa*Abeg, Aa*Acfg, Ab*Ac, Ab*Ae, Ab*Aace, Ab*Ad,
+             Ab*Ade, Ab*Af, Ab*Adf, Ab*Aef, Ab*Ag, Ab*Aadg, Ab*Acfg, Ac*Ae,
+             Ac*Ad, Ac*Ade, Ac*Af, Ac*Aabf, Ac*Adf, Ac*Aef, Ac*Ag, Ac*Aadg,
+             Ac*Abeg, Ad*Ae, Ae*Abcd, Ae*Af, Ae*Aabf, Ae*Adf, Ae*Ag, Ae*Aadg,
+             Ae*Acfg, Ad*Aace, Aace*Ade, Aace*Abcd, Af*Aace, Aabf*Aace,
+             Aace*Adf, Aace*Aef, Ag*Aace, Aace*Aadg, Aace*Abeg, Aace*Acfg,
+             Ad*Af, Ad*Aabf, Ad*Aef, Ad*Ag, Ad*Abeg, Ad*Acfg, Abcd*Ade, Af*Ade,
+             Aabf*Ade, Ade*Adf, Ade*Aef, Ag*Ade, Aadg*Ade, Abeg*Ade, Acfg*Ade,
+             Af*Abcd, Aabf*Abcd, Abcd*Adf, Abcd*Aef, Ag*Abcd, Aadg*Abcd,
+             Abcd*Abeg, Abcd*Acfg, Af*Ag, Af*Aadg, Af*Abeg, Aabf*Adf, Aabf*Aef,
+             Ag*Aabf, Aabf*Aadg, Aabf*Abeg, Aabf*Acfg, Adf*Aef, Ag*Adf,
+             Aadg*Adf, Abeg*Adf, Acfg*Adf, Ag*Aef, Aadg*Aef, Abeg*Aef,
+             Acfg*Aef, Aadg*Abeg, Aadg*Acfg, Abeg*Acfg,
              Aa + Aabf + Aace + Aadg + Aabcdefg,
              Ab + Aabf + Abcd + Abeg + Aabcdefg,
              Ac + Aace + Abcd + Acfg + Aabcdefg,
@@ -257,7 +175,8 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
 
             sage: ch = matroids.catalog.Fano().chow_ring(QQ, False)
             sage: ch.defining_ideal()
-            Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0) - non augmented
+            Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements,
+            type (3, 0) - non augmented
         """
         return "Chow ring ideal of {} - non augmented".format(self._matroid)
 
@@ -367,7 +286,8 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
         sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'fy')
         sage: ch.defining_ideal()
-        Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6 elements with 16 bases of Feitchner-Yuzvinsky presentation
+        Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6
+        elements with 16 bases of Feitchner-Yuzvinsky presentation
     """
     def __init__(self, M, R):
         r"""
@@ -455,7 +375,8 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'fy')
             sage: ch.defining_ideal()
-            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6 elements with 16 bases of Feitchner-Yuzvinsky presentation
+            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on
+            6 elements with 16 bases of Feitchner-Yuzvinsky presentation
         """
         return "Augmented Chow ring ideal of {} of Feitchner-Yuzvinsky presentation".format(self._matroid)
 
@@ -468,8 +389,8 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
             sage: ch = M1.chow_ring(QQ, True, 'fy')
             sage: ch.defining_ideal()._latex_()
-            '\\left(\\mathit{Bac}^{2}, \\mathit{Bac} \\mathit{Bbd}, \\mathit{Bac} \\mathit{Bbd}, \\mathit{Bbd}^{2}, \\mathit{Aa} - \\mathit{Bbd}, \\mathit{Ab} - \\mathit{Bac}, \\mathit{Ac} - \\mathit{Bbd}, \\mathit{Ad} - \\mathit{Bac}\\right)\\Bold{Q}[\\mathit{Aa}, \\mathit{Ab}, \\mathit{Ac}, \\mathit{Ad}, \\mathit{Bac}, \\mathit{Bbd}]'
-        """    
+            '\\left(\\mathit{Bac}^{2}, \\mathit{Bac} \\mathit{Bbd}, \\mathit{Bac} \\mathit{Bbd}, \\mathit{Bbd}^{2}, \\mathit{Ac} - \\mathit{Bbd}, \\mathit{Aa} - \\mathit{Bbd}, \\mathit{Ab} - \\mathit{Bac}, \\mathit{Ad} - \\mathit{Bac}\\right)\\Bold{Q}[\\mathit{Ac}, \\mathit{Aa}, \\mathit{Ab}, \\mathit{Ad}, \\mathit{Bac}, \\mathit{Bbd}]'
+        """
         from sage.misc.latex import latex
         return '\\left(%s\\right)%s' % (", ".join(latex(g)
                                                   for g in self.gens()),
@@ -549,7 +470,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
            for all `i \in E` and `i \notin F`, and
 
-           ..MATH::
+           .. MATH::
 
                 \sum_{i \in F'} (x_{F'})^2
 
@@ -570,7 +491,8 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
         sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
         sage: ch.defining_ideal()
-        Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6 elements with 16 bases in the atom-free presentation
+        Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6
+        elements with 16 bases in the atom-free presentation
     """
     def __init__(self, M, R):
         r"""
@@ -648,10 +570,11 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
             sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal()
-            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6 elements with 16 bases in the atom-free presentation
+            Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on
+            6 elements with 16 bases in the atom-free presentation
         """
         return "Augmented Chow ring ideal of {} in the atom-free presentation".format(self._matroid)
-    
+
     def _latex_(self):
         r"""
         Return the LaTeX output of the ring and generators of `self`.
@@ -661,7 +584,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal()._latex_()
-            '\\left(\\mathit{Aac}^{2}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}\\right)\\Bold{Q}[\\mathit{Aac}, \\mathit{Abd}]'
+            '\\left(\\mathit{Aac}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2}\\right)\\Bold{Q}[\\mathit{Aac}, \\mathit{Abd}]'
         """
         from sage.misc.latex import latex
         return '\\left(%s\\right)%s' % (", ".join(latex(g)
@@ -698,7 +621,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                             if H < F:
                                 term += self._flats_generator[H]
                         if term != poly_ring.zero():
-                            gb.append(self._flats_generator[F]*(term**self._matroid.rank(G))*
+                            gb.append(self._flats_generator[F]*(term ** self._matroid.rank(G))*
                                 (term**(self._matroid.rank(G)-self._matroid.rank(F))))
 
             g_basis = PolynomialSequence(poly_ring, [gb])
