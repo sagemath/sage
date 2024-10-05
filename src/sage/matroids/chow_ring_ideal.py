@@ -18,7 +18,7 @@ class ChowRingIdeal(MPolynomialIdeal):
         Return the matroid of the given Chow ring ideal.
 
         EXAMPLES::
-            
+
             sage: ch = matroids.Uniform(3,6).chow_ring(QQ, False)
             sage: ch.defining_ideal().matroid()
             U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
@@ -26,7 +26,7 @@ class ChowRingIdeal(MPolynomialIdeal):
         """
         M = self._matroid
         return M
-    
+
     def flats_generator(self):
         r"""
         Return the variables of every corresponding flat/groundset element
@@ -48,15 +48,15 @@ class ChowRingIdeal(MPolynomialIdeal):
              frozenset({'a', 'b', 'c', 'd', 'e', 'f', 'g'}): Aabcdefg}
         """
         return dict(self._flats_generator)
-    
 
-class ChowRingIdeal_nonaug(ChowRingIdeal): 
+
+class ChowRingIdeal_nonaug(ChowRingIdeal):
     r"""
     The Chow ring ideal of a matroid `M`.
 
     The *Chow ring ideal* for a matroid `M` is defined as the ideal
     `(I_M + J_M)` of the polynomial ring
-    
+
     .. MATH::
 
         R[x_{F_1}, \ldots, x_{F_k}],
@@ -74,7 +74,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
           \sum_{a \in F} x_F
 
       for all atoms `a` in the lattice of flats.
-    
+
     INPUT:
 
     - ``M`` -- matroid
@@ -121,7 +121,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
     def _gens_constructor(self, poly_ring):
         r"""
         Return the generators of ``self``.
-        
+
         EXAMPLES::
 
             sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False)
@@ -231,7 +231,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
              Ag + Aadg + Abeg + Acfg + Aabcdefg]
         """
         flats = list(self._flats_generator)
-        reln = lambda x,y: x <= y        
+        reln = lambda x,y: x <= y
         lattice_flats = Poset((flats, reln))
         I = []
         subsets = lattice_flats.antichains().elements_of_depth_iterator(2)
@@ -260,13 +260,13 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             Chow ring ideal of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0) - non augmented
         """
         return "Chow ring ideal of {} - non augmented".format(self._matroid)
-    
+
     def _latex_(self):
         r"""
         Return a LaTeX representation of ``self``.
 
         EXAMPLES::
-            
+
             sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
             sage: ch = M1.chow_ring(QQ, False)
             sage: ch.defining_ideal()._latex_()
@@ -288,7 +288,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             [Aa*Abc, Aa*Aabc]
             sage: ch.defining_ideal().groebner_basis().is_groebner()
             True
-        
+
         Another example would be the Groebner basis of the Chow ring ideal of
         the matroid of the length 3 cycle graph::
 
@@ -301,11 +301,11 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         if algorithm == '':
             algorithm = 'constructed'
         if algorithm != 'constructed':
-            return super().groebner_basis(algorithm=algorithm, *args, **kwargs)   
+            return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
         flats = sorted(list(self._flats_generator), key=len)
         gb = list()
         R = self.ring()
-        reln = lambda x,y: x<=y
+        reln = lambda x,y: x <= y
         flats_gen = self._flats_generator
         lattice_flats = Poset((flats, reln))
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
@@ -324,7 +324,6 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
 
-    
 class AugmentedChowRingIdeal_fy(ChowRingIdeal):
     r"""
     The augmented Chow ring ideal of matroid `M` over ring `R` in
@@ -349,10 +348,10 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
       .. MATH::
 
-          y_i - \sum_{i \notin F} x_F 
+          y_i - \sum_{i \notin F} x_F
 
       for all `i \in E`.
-    
+
     REFERENCES:
 
     - [MM2022]_
@@ -395,8 +394,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         for i,F in enumerate(self._flats):
             self._flats_generator[F] = poly_ring.gens()[len(E) + i]
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
-        
-    
+
     def _gens_constructor(self, poly_ring):
         r"""
         Return the generators of ``self``.
@@ -460,13 +458,13 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6 elements with 16 bases of Feitchner-Yuzvinsky presentation
         """
         return "Augmented Chow ring ideal of {} of Feitchner-Yuzvinsky presentation".format(self._matroid)
-    
+
     def _latex_(self):
         r"""
         Return a LaTeX representation`self`.
 
         EXAMPLES::
-            
+
             sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
             sage: ch = M1.chow_ring(QQ, True, 'fy')
             sage: ch.defining_ideal()._latex_()
@@ -476,7 +474,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         return '\\left(%s\\right)%s' % (", ".join(latex(g)
                                                   for g in self.gens()),
                                         latex(self.ring()))
-    
+
     def groebner_basis(self, algorithm='constructed', *args, **kwargs):
         r"""
         Returns the Groebner basis of `self`.
@@ -513,10 +511,10 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
                         if i in G: #if element in flat
                             if term1 != poly_ring.zero():
                                 gb.append(self._flats_generator[i]*((term1)**self._matroid.rank(G)))
-                
-                        elif not i in G: #if element not in flat
+
+                        elif i not in G: #if element not in flat
                             gb.append(self._flats_generator[i]*self._flats_generator[F])
-                        
+
                         elif G < F: #nested flats
                             gb.append(self._flats_generator[G]*term1**(self._matroid.rank(F)-self._matroid.rank(G)))
 
@@ -544,7 +542,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         - `I_{af}M` is the ideal generated by all quadratic forms `x_{F_i} x_{F_j}`
            where `F_i` and `F_j` are incomparable elements in the lattice of
            flats,
-        
+
            .. MATH::
 
                 x_F \sum_{i \in F'} x_{F'}
@@ -573,7 +571,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         sage: ch = matroids.Wheel(3).chow_ring(QQ, True, 'atom-free')
         sage: ch.defining_ideal()
         Augmented Chow ring ideal of Wheel(3): Regular matroid of rank 3 on 6 elements with 16 bases in the atom-free presentation
-    """ 
+    """
     def __init__(self, M, R):
         r"""
         Initialize ``self``.
@@ -586,7 +584,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         self._matroid = M
         self._flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)]
-        
+
         E = list(self._matroid.groundset())
         flats_containing = {x: [] for x in E}
         for i,F in enumerate(self._flats):
@@ -603,7 +601,6 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         self._flats_generator = dict()
         self._flats_generator = dict(zip(self._flats, gens))
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
-        
 
     def _gens_constructor(self, poly_ring):
         r"""
@@ -643,9 +640,8 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                         for H in flats_containing[x]:
                             term += self._flats_generator[H]
                         Q.append(self._flats_generator[F]*term)
-
         return Q
-            
+
     def _repr_(self):
         r"""
         EXAMPLE::
@@ -666,12 +662,12 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal()._latex_()
             '\\left(\\mathit{Aac}^{2}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}\\right)\\Bold{Q}[\\mathit{Aac}, \\mathit{Abd}]'
-        """    
+        """
         from sage.misc.latex import latex
         return '\\left(%s\\right)%s' % (", ".join(latex(g)
                                                   for g in self.gens()),
                                         latex(self.ring()))
-    
+
     def groebner_basis(self, algorithm='constructed', *args, **kwargs): #Copy from fy presentation
         """
         Returns the Groebner basis of `self`.
@@ -707,11 +703,6 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
             g_basis = PolynomialSequence(poly_ring, [gb])
             return g_basis
-        
+
         elif algorithm == 'constructed':
             super().groebner_basis(*args, **kwargs)
-
-            
-
-        
-
