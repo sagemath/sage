@@ -2733,6 +2733,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             S_is_int = parent_is_integers(S)
             if not S_is_int:
                 from sage.rings.abc import IntegerModRing
+                from sage.rings.finite_rings.finite_field_base import FiniteField
                 if isinstance(S, IntegerModRing):
                     # We allow powering by an IntegerMod by treating it
                     # as an integer.
@@ -2741,10 +2742,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     # to support. But in general this should not be
                     # allowed. See Issue #15709
                     S_is_int = True
-                from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
-                from sage.rings.finite_rings.finite_field_ntl_gf2e import FiniteField_ntl_gf2e
-                from sage.rings.finite_rings.finite_field_givaro import FiniteField_givaro
-                if isinstance(S, (FiniteField_pari_ffelt, FiniteField_ntl_gf2e, FiniteField_givaro)):
+                elif isinstance(S, FiniteField):
                     # See Issue : #32287
                     # Disallowing Finite Field Polynomial Element
                     # to be used to raise power
