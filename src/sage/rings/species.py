@@ -22,6 +22,7 @@ from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement)
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
+from sage.sets.set import Set
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, parent
 from sage.structure.parent import Parent
@@ -105,7 +106,6 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Elem
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
             sage: G = C(PermutationGroup([[(1,2),(3,4)],[(1,2),(5,6)]]))
             sage: TestSuite(G).run()
-
         """
         Element.__init__(self, parent)
         self._C = C
@@ -262,7 +262,7 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
         Check that the domain is irrelevant::
 
             sage: G = PermutationGroup([[("a", "b", "c", "d"), ("e", "f")]])
-            sage: a = A(G, {0: "abcd", 1: "ef"}); a
+            sage: a = A(G, {0: "abcd", 1: "ef"}); a  # random
             {((1,2,3,4)(5,6),): ({1, 2, 3, 4}, {5, 6})}
             sage: H = PermutationGroup([[(1,2,3,4), (5,6)]])
             sage: a is A(H, {0: [1,2,3,4], 1: [5,6]})
@@ -421,7 +421,11 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         - ``names`` -- an iterable of ``k`` strings for the sorts of the species
 
-        TESTS::
+        TESTS:
+
+        We have to exclude `_test_graded_components`, because
+        :meth:`~sage.combinat.integer_vector.IntegerVectors.some_elements`
+        yields degrees that are too large::
 
             sage: from sage.rings.species import AtomicSpecies
             sage: A1 = AtomicSpecies(["X"])
@@ -472,10 +476,10 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             P_5(X)
 
             sage: G = PermutationGroup([[(1,2),(3,4,5,6)]])
-            sage: A(G, {0: [1,2], 1: [3,4,5,6]})
+            sage: A(G, {0: [1,2], 1: [3,4,5,6]})  # random
             {((1,2,3,4)(5,6),): ({5, 6}, {1, 2, 3, 4})}
 
-            sage: A(G, ([1,2], [3,4,5,6]))
+            sage: A(G, ([1,2], [3,4,5,6]))  # random
             {((1,2,3,4)(5,6),): ({5, 6}, {1, 2, 3, 4})}
 
         TESTS::
@@ -695,6 +699,10 @@ def _stabilizer_subgroups(G, X, a):
         sage: _stabilizer_subgroups(S, X, a)
         [Permutation Group with generators [(1,2), (4,5), (1,4)(2,5)(3,6)]]
 
+    TESTS::
+
+        sage: _stabilizer_subgroups(SymmetricGroup(2), [1], lambda pi, H: H)
+        [Permutation Group with generators [(1,2)]]
     """
     from sage.combinat.cyclic_sieving_phenomenon import orbit_decomposition
     to_gap = {x: i for i, x in enumerate(X, 1)}
@@ -702,9 +710,9 @@ def _stabilizer_subgroups(G, X, a):
     g_orbits = [orbit_decomposition(list(to_gap), lambda x: a(g, x))
                 for g in G.gens()]
 
-    gens = [PermutationGroupElement(gen) for g_orbit in g_orbits
-            if (gen := [tuple([to_gap[x] for x in o])
-                        for o in g_orbit if len(o) > 1])]
+    gens = [PermutationGroupElement([tuple([to_gap[x] for x in o])
+                                     for o in g_orbit])
+            for g_orbit in g_orbits]
     result = []
     M = set(range(1, len(to_gap) + 1))
     while M:
@@ -760,7 +768,11 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: M(G, {0: [5,6], 1: [1,2,3,4]})
             {((1,2)(3,4),): ({}, {1, 2, 3, 4})}*E_2(X)
 
-        TESTS::
+        TESTS:
+
+        We have to exclude `_test_graded_components`, because
+        :meth:`~sage.combinat.integer_vector.IntegerVectors.some_elements`
+        yields degrees that are too large::
 
             sage: M1 = MolecularSpecies("X")
             sage: TestSuite(M1).run(skip="_test_graded_components")
@@ -895,12 +907,26 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         """
         return IntegerVectors(length=self._arity)
 
+    def subset(self, size):
+        """
+        Return the set of molecular species with given total cardinality.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import MolecularSpecies
+            sage: M = MolecularSpecies(["X", "Y"])
+            sage: M.subset(3)  # random
+            {X*E_2(Y), X*Y^2, C_3(Y), E_3(X), Y^3, Y*E_2(Y), C_3(X), X^2*Y,
+             E_3(Y), E_2(X)*Y, X*E_2(X), X^3}
+        """
+        result = Set()
+        for grade in IntegerVectors(size, length=self._arity):
+            result = result.union(self.graded_component(grade))
+        return result
+
     def graded_component(self, grade):
         """
         Return the set of molecular species with given multicardinality.
-
-        The default implementation just calls the method :meth:`subset()`
-        with the first argument ``grade``.
 
         EXAMPLES::
 
@@ -912,7 +938,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
              X*{((1,2)(3,4),): ({1, 2}, {3, 4})}, X*E_2(X)*Y^2, E_3(X)*E_2(Y),
              C_3(X)*Y^2, C_3(X)*E_2(Y)}
         """
-        from sage.sets.set import Set
         assert len(grade) == self._arity
         n = sum(grade)
         S = SymmetricGroup(n).young_subgroup(grade)
@@ -935,6 +960,12 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: M = MolecularSpecies("X")
                 sage: M(CyclicPermutationGroup(3))  # indirect doctest
                 C_3
+
+            TESTS::
+
+                sage: X = M(CyclicPermutationGroup(3))
+                sage: C3 = M(CyclicPermutationGroup(3))
+                sage: TestSuite(X*C3).run()
             """
             super().__init__(parent, x)
 
@@ -1203,6 +1234,8 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         sage: E2 = P(SymmetricGroup(2))
         sage: (E2*X + C3).homogeneous_degree()
         3
+
+        sage: TestSuite(E2*X + C3).run()
     """
     def is_constant(self):
         """
@@ -1622,12 +1655,11 @@ class PolynomialSpecies(CombinatorialFreeModule):
         INPUT:
 
         - ``G`` - an element of ``self`` (in this case pi must be ``None``)
-          or a permutation group.
-        - ``pi`` - a dict mapping sorts to iterables whose union is the domain.
-          If `k=1`, `pi` can be omitted.
-
-        If `G = (X, a)`, then `X` should be a finite set and `a` an action of
-        `G` on `X`.
+          or a permutation group, or a pair ``(X, a)`` consisting of a
+          finite set and an action.
+        - ``pi`` - a dict mapping sorts to iterables whose union is the
+          domain of ``G`` (if ``G`` is a permutation group) or `X` (if ``G``)
+          is a pair ``(X, a)``. If `k=1`, `pi` can be omitted.
 
         EXAMPLES::
 
@@ -1646,6 +1678,18 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
             sage: P((X, a), {0: [1,2,3,4]})
             E_3*X + P_4
+
+        The species of permutation groups::
+
+            sage: P = PolynomialSpecies(ZZ, ["X"])
+            sage: n = 4
+            sage: S = SymmetricGroup(n)
+            sage: X = S.subgroups()
+            sage: def act(pi, G):  # WARNING: returning H does not work because of equality problems
+            ....:     H = S.subgroup(G.conjugate(pi).gens())
+            ....:     return next(K for K in X if K == H)
+            sage: P((X, act), {0: range(1, n+1)})
+            4*E_4 + 4*P_4 + E_2^2 + 2*X*E_3
         """
         if parent(G) == self:
             if pi is not None:
@@ -1661,11 +1705,44 @@ class PolynomialSpecies(CombinatorialFreeModule):
             return self._from_dict({self._indices(G, pi): ZZ.one()})
 
         X, a = G
-        X, a = G
         L = [len(pi.get(i, [])) for i in range(self._arity)]
         S = SymmetricGroup(sum(L)).young_subgroup(L)
         Hs = _stabilizer_subgroups(S, X, a)
-        return self._from_dict({self._indices(H, pi): ZZ.one() for H in Hs})
+        return self.sum_of_terms((self._indices(H, pi), ZZ.one()) for H in Hs)
+
+    def _first_ngens(self, n):
+        """
+        Used by the preparser for ``F.<x> = ...``.
+
+        We do not use the generic implementation of
+        :class:`sage.combinat.CombinatorialFreeModule`, because we do
+        not want to implement `gens`.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P.<X, Y> = PolynomialSpecies(QQ)  # indirect doctest
+            sage: X + 2*Y
+            X + 2*Y
+        """
+        B = self.basis()
+        return tuple(B[i] for grade in IntegerVectors(1, length=self._arity)
+                     for i in self._indices.graded_component(grade))
+
+    def change_ring(self, R):
+        r"""
+        Return the base change of ``self`` to `R`.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
+            sage: P.change_ring(QQ)
+            Polynomial species in X, Y over Rational Field
+        """
+        if R is self.base_ring():
+            return self
+        return PolynomialSpecies(R, self._indices._indices._names)
 
     def degree_on_basis(self, m):
         r"""
