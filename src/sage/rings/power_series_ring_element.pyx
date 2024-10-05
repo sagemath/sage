@@ -1045,7 +1045,7 @@ cdef class PowerSeries(AlgebraElement):
         else:
             n = int(n)
             v = {}
-            for k, x in self.monomial_coefficients().iteritems():
+            for k, x in self.monomial_coefficients().items():
                 if k >= n:
                     v[k-n] = x
         return self._parent(v, self.prec()-n)

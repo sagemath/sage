@@ -260,7 +260,7 @@ cdef class MPolynomial(CommutativePolynomial):
             ind = Z.index(var)
         except ValueError:
             raise ValueError("var must be one of the generators of the parent polynomial ring.")
-        return R({k: c for k, c in self.monomial_coefficients().iteritems()
+        return R({k: c for k, c in self.monomial_coefficients().items()
                   if k[ind] < n})
 
     def _fast_callable_(self, etb):
@@ -299,7 +299,7 @@ cdef class MPolynomial(CommutativePolynomial):
         n = len(x)
 
         expr = etb.constant(self.base_ring().zero())
-        for m, c in self.monomial_coefficients().iteritems():
+        for m, c in self.monomial_coefficients().items():
             monom = prod([x[i] ** m[i] for i in range(n) if m[i] != 0],
                          etb.constant(c))
             expr = expr + monom
@@ -426,12 +426,12 @@ cdef class MPolynomial(CommutativePolynomial):
         d = self.degree(var)
         B = ring.base_ring()
         w = {remove_from_tuple(e, ind): val
-             for e, val in self.monomial_coefficients().iteritems() if not e[ind]}
+             for e, val in self.monomial_coefficients().items() if not e[ind]}
         v = [B(w)]  # coefficients that don't involve var
         z = var
         for i in range(1,d+1):
             c = <dict> self.coefficient(z).monomial_coefficients()
-            w = {remove_from_tuple(e, ind): val for e, val in c.iteritems()}
+            w = {remove_from_tuple(e, ind): val for e, val in c.items()}
             v.append(B(w))
             z *= var
         return ring(v)
@@ -511,12 +511,12 @@ cdef class MPolynomial(CommutativePolynomial):
                 new_map[k] -= m
             tmp = [0] * (len(vars) - m)
             try:
-                for ix, a in self.monomial_coefficients().iteritems():
+                for ix, a in self.monomial_coefficients().items():
                     for k in range(len(my_vars)):
                         tmp[new_map[k]] = ix[k]
                     postfix = ETuple(tmp)
                     mpoly = <dict> a._mpoly_dict_recursive(prev_vars, base_ring)
-                    for prefix, b in mpoly.iteritems():
+                    for prefix, b in mpoly.items():
                         D[prefix + postfix] = b
                 return D
 
@@ -527,7 +527,7 @@ cdef class MPolynomial(CommutativePolynomial):
             base_ring = None
 
         tmp = [0] * len(vars)
-        for ix, a in self.monomial_coefficients().iteritems():
+        for ix, a in self.monomial_coefficients().items():
             for k in range(len(my_vars)):
                 tmp[mapping[k]] = ix[k]
             if base_ring is not None:
@@ -578,7 +578,7 @@ cdef class MPolynomial(CommutativePolynomial):
         cdef long result_mon
         var_name_hash = [hash(v) for v in self._parent.variable_names()]
         cdef long c_hash
-        for m, c in self.monomial_coefficients().iteritems():
+        for m, c in self.monomial_coefficients().items():
             #  I'm assuming (incorrectly) that hashes of zero indicate that the element is 0.
             # This assumption is not true, but I think it is true enough for the purposes and it
             # it allows us to write fast code that omits terms with 0 coefficients.  This is

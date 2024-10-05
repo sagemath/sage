@@ -624,7 +624,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
         K = self.base_ring()
         D = {}
         var_range = range(len(self.variable_names()))
-        for ix, a in x.monomial_coefficients().iteritems():
+        for ix, a in x.monomial_coefficients().items():
             ix = ETuple([0 if name_mapping[t] == -1 else ix[name_mapping[t]]
                          for t in var_range])
             D[ix] = K(a)

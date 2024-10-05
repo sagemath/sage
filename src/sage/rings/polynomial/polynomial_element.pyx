@@ -3880,7 +3880,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef dict D = {}
         cdef tuple leftovers = (0,) * (len(variables) - len(prev_variables) - 1)
         for k in range(len(mpolys)):
-            for i,a in mpolys[k].iteritems():
+            for i, a in mpolys[k].items():
                 j = ETuple((k,) + leftovers)
                 D[i + j] = a
 
@@ -12687,11 +12687,11 @@ cpdef list _dict_to_list(dict x, zero):
     if isinstance(n, tuple): # a mpoly dict
         n = n[0]
         v = [zero] * (n+1)
-        for i, z in x.iteritems():
+        for i, z in x.items():
             v[i[0]] = z
     else:
         v = [zero] * (n+1)
-        for i, z in x.iteritems():
+        for i, z in x.items():
             v[i] = z
     return v
 

@@ -2371,7 +2371,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                 return elt.lift_to_precision(prec)
             except PrecisionError:
                 return elt.lift_to_precision()
-        ans._poly = PolyDict({ e: lift_without_error(c) for (e,c) in self._poly.__repn.iteritems() }, None)
+        ans._poly = PolyDict({e: lift_without_error(c)
+                              for e, c in self._poly.__repn.items()},
+                             None)
         if prec is None:
             prec = self._parent.precision_cap()
         ans._prec = max(self._prec, prec)

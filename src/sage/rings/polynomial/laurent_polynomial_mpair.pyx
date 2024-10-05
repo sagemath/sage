@@ -108,7 +108,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             if isinstance(x, dict):
                 self._mon = ETuple({}, int(parent.ngens()))
                 D = {}
-                for k, x_k in x.iteritems():  # ETuple-ize keys, set _mon
+                for k, x_k in x.items():  # ETuple-ize keys, set _mon
                     if not isinstance(k, (tuple, ETuple)) or len(k) != parent.ngens():
                         self._mon = ETuple({}, int(parent.ngens()))
                         break
@@ -119,7 +119,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
                 else:
                     x = D
                 if not self._mon.is_constant():  # factor out _mon
-                    x = {k.esub(self._mon): x_k for k, x_k in x.iteritems()}
+                    x = {k.esub(self._mon): x_k for k, x_k in x.items()}
             elif (isinstance(x, LaurentPolynomial_mpair) and
                   parent.variable_names() == x.parent().variable_names()):
                 self._mon = ( < LaurentPolynomial_mpair > x)._mon
@@ -1565,11 +1565,11 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         except ValueError:
             # call _derivative() recursively on coefficients
             return P({m: c._derivative(var)
-                      for m, c in self.monomial_coefficients().iteritems()})
+                      for m, c in self.monomial_coefficients().items()})
 
         # compute formal derivative with respect to generator
         cdef dict d = {}
-        for m, c in self.monomial_coefficients().iteritems():
+        for m, c in self.monomial_coefficients().items():
             if m[index] != 0:
                 new_m = [u for u in m]
                 new_m[index] += -1
@@ -1650,7 +1650,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if R is None:
             R = LaurentPolynomialRing(self.base_ring(), x)
 
-        return R({m[i]: c for m, c in self.monomial_coefficients().iteritems()})
+        return R({m[i]: c for m, c in self.monomial_coefficients().items()})
 
     def monomial_reduction(self):
         """

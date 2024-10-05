@@ -5846,12 +5846,12 @@ cdef class Expression(Expression_abc):
 
         if kwds:
             # Ensure that the keys are symbolic variables.
-            varkwds = {self._parent.var(k): v for k,v in kwds.iteritems()}
+            varkwds = {self._parent.var(k): v for k,v in kwds.items()}
             # Check for duplicate
             _dict_update_check_duplicate(sdict, varkwds)
 
         cdef GExMap smap
-        for k, v in sdict.iteritems():
+        for k, v in sdict.items():
             smap.insert(make_pair((<Expression>self.coerce_in(k))._gobj,
                                   (<Expression>self.coerce_in(v))._gobj))
         res = self._gobj.subs_map(smap, 0)
@@ -5999,7 +5999,7 @@ cdef class Expression(Expression_abc):
 
         if kwds:
             # Ensure that the keys are functions.
-            funkwds = {_find_func(k): v for k,v in kwds.iteritems()}
+            funkwds = {_find_func(k): v for k,v in kwds.items()}
             # Check for duplicate
             _dict_update_check_duplicate(sdict, funkwds)
 

@@ -58,11 +58,11 @@ cdef class PowerSeries_mpoly(PowerSeries):
             d = {}
             if isinstance(B, MPolynomialRing_base):
                 for i in range(len(v)):
-                    for n, c in v[i].monomial_coefficients().iteritems():
+                    for n, c in v[i].monomial_coefficients().items():
                         d[tuple(n) + (i,)] = c
             else:
                 for i in range(len(v)):
-                    for n, c in v[i].monomial_coefficients().iteritems():
+                    for n, c in v[i].monomial_coefficients().items():
                         d[(n,i)] = c
 
             self.__f = S(d)

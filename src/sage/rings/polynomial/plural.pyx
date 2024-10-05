@@ -1403,7 +1403,7 @@ def unpickle_NCPolynomial_plural(NCPolynomialRing_plural R, d):
     cdef int _i, _e
     p = p_ISet(0,r)
     rChangeCurrRing(r)
-    for mon,c in d.iteritems():
+    for mon, c in d.items():
         m = p_Init(r)
         for i,e in mon.sparse_iter():
             _i = i

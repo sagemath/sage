@@ -140,7 +140,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             [((0, 0, 0, 1, 0, 0, 0, 1), 2), ((0, 1, 0, 0, 0, 0, 1, 0), 1)]
         """
         cdef dict d = self._poly.monomial_coefficients()
-        yield from d.iteritems()
+        yield from d.items()
 
     def _repr_(self):
         """

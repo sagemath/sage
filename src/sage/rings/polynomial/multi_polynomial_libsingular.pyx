@@ -855,7 +855,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             if element.parent() == self:
                 bucket = sBucketCreate(_ring)
                 try:
-                    for (m,c) in element.element().dict().iteritems():
+                    for m, c in element.element().dict().items():
                         mon = p_Init(_ring)
                         p_SetCoeff(mon, sa2si(c, _ring), _ring)
                         for pos in m.nonzero_positions():
@@ -893,7 +893,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
                 if element.parent().ngens() <= self.ngens():
                     bucket = sBucketCreate(_ring)
                     try:
-                        for (m,c) in element.element().dict().iteritems():
+                        for m, c in element.element().dict().items():
                             if check:
                                 c = base_ring(c)
                             if not c:
@@ -923,7 +923,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             else:
                 bucket = sBucketCreate(_ring)
                 try:
-                    for (m,c) in element.iteritems():
+                    for m, c in element.items():
                         if check:
                             c = base_ring(c)
                         if not c:
@@ -2088,7 +2088,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         except TypeError:
             # give up, evaluate functional
             sage_res = parent.base_ring().zero()
-            for m, c in self.monomial_coefficients().iteritems():
+            for m, c in self.monomial_coefficients().items():
                 sage_res += c * mul([x[i] ** m[i] for i in m.nonzero_positions()])
         else:
             singular_polynomial_call(&res, self._poly, _ring, coerced_x,
@@ -5272,7 +5272,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if base_map is None:
             # Just use conversion
             base_map = codomain
-        for m, c in self.monomial_coefficients().iteritems():
+        for m, c in self.monomial_coefficients().items():
             y += base_map(c) * mul([im_gens[i] ** m[i] for i in range(n) if m[i]])
         return y
 
@@ -5400,7 +5400,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         v = ETuple({index: 1}, len(gens))
 
         _p = p_ISet(0, _ring)
-        for exp, coeff in self.monomial_coefficients().iteritems():
+        for exp, coeff in self.monomial_coefficients().items():
             nexp = exp.eadd(v)  # new exponent
             mon = p_Init(_ring)
             p_SetCoeff(mon, sa2si(coeff / (1 + exp[index]), _ring), _ring)
@@ -5906,9 +5906,9 @@ def unpickle_MPolynomial_libsingular(MPolynomialRing_libsingular R, d):
     rChangeCurrRing(r)
     bucket = sBucketCreate(r)
     try:
-        for mon,c in d.iteritems():
+        for mon, c in d.items():
             m = p_Init(r)
-            for i,e in mon.sparse_iter():
+            for i, e in mon.sparse_iter():
                 _i = i
                 if _i >= r.N:
                     p_Delete(&m, r)
