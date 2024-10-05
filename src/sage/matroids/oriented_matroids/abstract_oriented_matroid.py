@@ -27,13 +27,13 @@ from sage.structure.global_options import GlobalOptions
 from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
 
 
-class AbstractOrientedMatroid(UniqueRepresentation, Parent):
+class AbstractOrientedMatroid(Parent):
     r"""
     Abstract class for oriented matroids.
 
     .. SEEALSO::
 
-        :class:`oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
     """
 
     # List of all possible keys

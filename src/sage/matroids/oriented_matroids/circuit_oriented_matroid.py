@@ -31,14 +31,14 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
     a pair `M = (E, \mathcal{C})` is an oriented matroid using the circuit
     axioms if (see Definition 3.2.1 in [BLSWZ1999]_):
 
-        - `\emptyset \notin \mathcal{C}`
-        - `\mathcal{C} = -\mathcal{C}`
-        - For all `X, Y \in \mathcal{C}`, if the support of `X` is contained
-          in the support of `Y` then `X = Y` or `X = -Y`
-        - For all `X, Y \in \mathcal{C}`, `X \neq -Y`, and
-          `e \in X^+ \cap Y^-` there exists a `Z \in \mathcal{C}` such that
-          `Z^+ \subseteq (X^+ \cup Y^+) \backslash \left\{e\right\}` and
-          `Z^- \subseteq (X^- \cup Y^-) \backslash \left\{e\right\}`.
+    - `\emptyset \notin \mathcal{C}`
+    - `\mathcal{C} = -\mathcal{C}`
+    - For all `X, Y \in \mathcal{C}`, if the support of `X` is contained
+      in the support of `Y` then `X = Y` or `X = -Y`
+    - For all `X, Y \in \mathcal{C}`, `X \neq -Y`, and
+      `e \in X^+ \cap Y^-` there exists a `Z \in \mathcal{C}` such that
+      `Z^+ \subseteq (X^+ \cup Y^+) \backslash \left\{e\right\}` and
+      `Z^- \subseteq (X^- \cup Y^-) \backslash \left\{e\right\}`.
 
     INPUT:
 

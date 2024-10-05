@@ -34,14 +34,14 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
     a pair `M = (E,\mathcal{V})` is an oriented matroid using the vector
     axioms if (see Theorem 3.7.5 and Corollary 3.7.9 in [BLSWZ1999]_):
 
-        - `\emptyset \in \mathcal{V}`
-        - `\mathcal{V} = -\mathcal{V}`
-        - For all `X,Y \in \mathcal{V}`, `X \circ Y \in \mathcal{V}`
-        - For all `X,Y \in \mathcal{V}` and `e \in X^+ \cap Y^-` there exists
-          a `Z \in \mathcal{V}` such that
-          `Z^+ \subseteq (X^+ \cup Y^+) \backslash \left\{e\right\}` and
-          `Z^- \subseteq (X^- \cup Y^-) \backslash \left\{e\right\}` and
-          `(X \backslash Y) \cup (Y \backslash X) \cup (X^+ \cap Y^+) \cup (X^- \cap Y^-) \subseteq Z`.
+    - `\emptyset \in \mathcal{V}`
+    - `\mathcal{V} = -\mathcal{V}`
+    - For all `X,Y \in \mathcal{V}`, `X \circ Y \in \mathcal{V}`
+    - For all `X,Y \in \mathcal{V}` and `e \in X^+ \cap Y^-` there exists
+      a `Z \in \mathcal{V}` such that
+      `Z^+ \subseteq (X^+ \cup Y^+) \backslash \left\{e\right\}` and
+      `Z^- \subseteq (X^- \cup Y^-) \backslash \left\{e\right\}` and
+      `(X \backslash Y) \cup (Y \backslash X) \cup (X^+ \cap Y^+) \cup (X^- \cap Y^-) \subseteq Z`.
 
     INPUT:
 
