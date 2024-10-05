@@ -21058,16 +21058,16 @@ class GenericGraph(GenericGraph_pyx):
         if (len(external_face) < 3):
             raise ValueError("External face must have at least 3 vertices")
 
-        G = Graph(self)
-        if (not G.is_planar()):
+        if (not self.is_planar()):
             raise ValueError("Graph must be planar")
-        C = G.subgraph(vertices=external_face)
-        if (not C.is_cycle()):
+
+        C = self.subgraph(vertices=external_face)
+        if (not C.is_cycle(directed_cycle=False)):
             raise ValueError("External face must be a cycle")
-        external_face_ordered = C.depth_first_search(start=external_face[0])
+        external_face_ordered = C.depth_first_search(start=external_face[0], ignore_direction=False)
         
         from sage.graphs.connectivity import vertex_connectivity
-        if (vertex_connectivity(G, k=4)):
+        if (not vertex_connectivity(self, k=3)):
             raise ValueError("Graph must be 3-connected")
 
         from math import sin, cos, pi
@@ -21088,6 +21088,7 @@ class GenericGraph(GenericGraph_pyx):
         M = zero_matrix(RR,n,n)
         b = zero_matrix(RR,n,2)
 
+        vertices_to_indices = {v:i for i,v in enumerate(V)}
         for i in range(n):
             v = V[i]
             if v in pos:
@@ -21095,9 +21096,9 @@ class GenericGraph(GenericGraph_pyx):
                 b[i,0] = pos[v][0]
                 b[i,1] = pos[v][1]
             else:
-                nv = G.neighbors(v)
+                nv = self.neighbors(v)
                 for u in nv:
-                    j = V.index(u)
+                    j = vertices_to_indices[u]
                     M[i,j] = -1
                 M[i,i] = len(nv)
 
@@ -21425,7 +21426,7 @@ class GenericGraph(GenericGraph_pyx):
             depending on minimum distance for the root.
           
           - ``'tutte'`` -- uses the Tutte embedding algorithm. The graph must be
-          a 3-connected, planar graph.
+            a 3-connected, planar graph.
 
         - ``vertex_labels`` -- boolean (default: ``True``); whether to print
           vertex labels
