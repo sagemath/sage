@@ -1562,6 +1562,21 @@ class GraphLatex(SageObject):
             %
             %
             \end{tikzpicture}
+
+        For a complicated vertex, a tex box is used. ::
+
+            sage: B = crystals.Tableaux(['B', 2], shape=[1])
+            sage: latex(B)
+            \begin{tikzpicture}
+            ...
+            \newsavebox{\vertex}
+            \sbox{\vertex}{${\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{1}c}\cline{1-1}
+            \lr{1}\\\cline{1-1}
+            \end{array}$}
+            }$}\Vertex[style={minimum size=1.0cm,draw=cv0,fill=cfv0,text=clv0,shape=circle},LabelOut=false,L=\usebox{\vertex},x=...,y=...]{v0}
+            ...
+            \end{tikzpicture}
         """
         # This routine does not handle multiple edges
         # It will properly handle digraphs where a pair of vertices has an edge
