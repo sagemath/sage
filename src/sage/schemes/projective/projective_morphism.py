@@ -928,7 +928,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             Dynamical System of Projective Space of dimension 1 over
             Number Field in a with defining polynomial 3*x^2 + 1
             Defn: Defined on coordinates by sending (z : w) to
-                ((-3/2*a + 1/2)*z^2 + (-3/2*a + 1/2)*w^2 : (-3/2*a - 3/2)*z*w)
+                ((3/2*a + 1/2)*z^2 + (3/2*a + 1/2)*w^2 : (-3/2*a + 3/2)*z*w)
 
         ::
 
@@ -1728,11 +1728,11 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f._number_field_from_algebraics()                                     # needs sage.symbolic
             Scheme endomorphism of Projective Space of dimension 1 over Number
              Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17
-             with a = 1.442249570307409? + 1.414213562373095?*I
+             with a = 1.442249570307409? - 1.414213562373095?*I
               Defn: Defined on coordinates by sending (x : y) to
                     ((-48/269*a^5 + 27/269*a^4 - 320/269*a^3 + 468/269*a^2 - 772/269*a
-                    - 1092/269)*x^2 + (48/269*a^5 - 27/269*a^4 + 320/269*a^3 - 468/269*a^2
-                    + 1041/269*a + 1092/269)*y^2 : y^2)
+                    - 1092/269)*x^2 + (-48/269*a^5 + 27/269*a^4 - 320/269*a^3 + 468/269*a^2
+                    - 1041/269*a - 1092/269)*y^2 : y^2)
 
         ::
 
@@ -1745,12 +1745,12 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             Scheme morphism:
               From: Projective Space of dimension 1 over Number Field in a
                     with defining polynomial y^4 + 3*y^2 + 1
-                    with a = 0.?e-113 + 0.618033988749895?*I
+                    with a = 0.?e-166 + 1.618033988749895?*I
               To:   Projective Space of dimension 2 over Number Field in a
                     with defining polynomial y^4 + 3*y^2 + 1
-                    with a = 0.?e-113 + 0.618033988749895?*I
+                    with a = 0.?e-166 + 1.618033988749895?*I
               Defn: Defined on coordinates by sending (x : y) to
-                    (x^2 + (a^3 + 2*a)*x*y + 3*y^2 : y^2 : (2*a^2 + 3)*x*y)
+                    (x^2 + (-a^3 - 2*a)*x*y + 3*y^2 : y^2 : (-2*a^2 - 3)*x*y)
 
         The following was fixed in :issue:`23808`::
 

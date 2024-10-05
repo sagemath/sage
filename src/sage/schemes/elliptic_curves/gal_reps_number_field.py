@@ -800,17 +800,17 @@ def deg_one_primes_iter(K, principal_only=False):
         [Fractional ideal (2, a + 1),
          Fractional ideal (3, a + 1),
          Fractional ideal (3, a + 2),
-         Fractional ideal (a),
+         Fractional ideal (-a),
          Fractional ideal (7, a + 3),
          Fractional ideal (7, a + 4)]
         sage: it = deg_one_primes_iter(K, True)
         sage: [next(it) for _ in range(6)]
-        [Fractional ideal (a),
-         Fractional ideal (-2*a + 3),
-         Fractional ideal (2*a + 3),
+        [Fractional ideal (-a),
+         Fractional ideal (2*a - 3),
+         Fractional ideal (-2*a - 3),
          Fractional ideal (a + 6),
          Fractional ideal (a - 6),
-         Fractional ideal (-3*a + 4)]
+         Fractional ideal (3*a - 4)]
     """
     # imaginary quadratic fields have no principal primes of norm < disc / 4
     start = K.discriminant().abs() // 4 if principal_only and K.signature() == (0,1) else 2

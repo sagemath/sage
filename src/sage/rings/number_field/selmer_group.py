@@ -71,7 +71,7 @@ def _ideal_generator(I):
 
         sage: K.<a> = QuadraticField(-11)
         sage: [_ideal_generator(K.prime_above(p)) for p in primes(25)]
-        [2, 1/2*a - 1/2, -1/2*a - 3/2, 7, -a, 13, 17, 19, 1/2*a + 9/2]
+        [2, 1/2*a - 1/2, -1/2*a - 3/2, 7, a, 13, 17, 19, 1/2*a + 9/2]
     """
     try:
         return I.gens_reduced()[0]

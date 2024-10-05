@@ -2776,11 +2776,12 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
             To:   Algebraic Real Field
             Defn: a |--> 1.732050807568878?)
         sage: number_field_elements_from_algebraics((rt2,qqI))                          # needs sage.symbolic
-        (Number Field in a with defining polynomial y^4 + 1, [-a^3 + a, a^2],
+        (Number Field in a with defining polynomial y^4 + 1,
+         [a^3 - a, a^2],
          Ring morphism:
-            From: Number Field in a with defining polynomial y^4 + 1
-            To:   Algebraic Field
-            Defn: a |--> 0.7071067811865475? + 0.7071067811865475?*I)
+           From: Number Field in a with defining polynomial y^4 + 1
+           To:   Algebraic Field
+           Defn: a |--> -0.7071067811865475? - 0.7071067811865475?*I)
 
     Note that for the first example, where \sage does not realize that
     the number is real, we get a homomorphism to ``QQbar``::
@@ -4590,8 +4591,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             Number Field in a with defining polynomial y^4 - 20*y^2 + 81
              with a in -3.789313782671036?
             sage: (QQbar(7)^(3/5))._exact_field()
-            Number Field in a with defining polynomial
-             y^5 - 2*y^4 - 18*y^3 + 38*y^2 + 82*y - 181 with a in 2.554256611698490?
+            Number Field in a with defining polynomial y^5 - 7 with a in 1.475773161594552?
         """
         sd = self._descr
         if isinstance(sd, (ANRational, ANExtensionElement)):
@@ -4611,7 +4611,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: (sqrt(QQbar(2)) + sqrt(QQbar(19)))._exact_value()
             -1/9*a^3 + a^2 + 11/9*a - 10 where a^4 - 20*a^2 + 81 = 0 and a in -3.789313782671036?
             sage: (QQbar(7)^(3/5))._exact_value()
-            2*a^4 + 2*a^3 - 34*a^2 - 17*a + 150 where a^5 - 2*a^4 - 18*a^3 + 38*a^2 + 82*a - 181 = 0 and a in 2.554256611698490?
+            a^3 where a^5 - 7 = 0 and a in 1.475773161594552?
         """
         sd = self._descr
         if isinstance(sd, (ANRational, ANExtensionElement)):
@@ -7839,8 +7839,8 @@ class ANExtensionElement(ANDescr):
             sage: sage_input(v, verify=True)
             # Verified
             R.<y> = QQ[]
-            v = QQbar.polynomial_root(AA.common_polynomial(y^8 - y^7 + y^5 - y^4 + y^3 - y + 1), CIF(RIF(RR(0.91354545764260087), RR(0.91354545764260098)), RIF(RR(0.40673664307580015), RR(0.40673664307580021))))
-            v^5 + v^3
+            v = QQbar.polynomial_root(AA.common_polynomial(y^8 - y^7 + y^5 - y^4 + y^3 - y + 1), CIF(RIF(RR(0.66913060635885813), RR(0.66913060635885824)), RIF(-RR(0.74314482547739424), -RR(0.74314482547739413))))
+            v^6 + v^5
             sage: v = QQbar(sqrt(AA(2)))
             sage: v.exactify()
             sage: sage_input(v, verify=True)

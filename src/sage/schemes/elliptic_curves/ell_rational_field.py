@@ -1848,7 +1848,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve('389a1')
             sage: E._known_points = []  # clear cached points
             sage: E.simon_two_descent()
-            (2, 2, [(5/4 : 5/8 : 1), (-3/4 : 7/8 : 1)])
+            (2, 2, [(-3/4 : 7/8 : 1), (5/4 : 5/8 : 1)])
             sage: E = EllipticCurve('5077a1')
             sage: E.simon_two_descent()
             (3, 3, [(1 : 0 : 1), (2 : 0 : 1), (0 : 2 : 1)])

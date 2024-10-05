@@ -1954,14 +1954,14 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: x = polygen(ZZ, 'x')
             sage: K.<i> = NumberField(x^2 + 1)
             sage: (6*i + 6).factor()
-            (-i) * (i + 1)^3 * 3
+            (i) * (-i - 1)^3 * 3
 
         In the following example, the class number is 2.  If a factorization
         in prime elements exists, we will find it::
 
             sage: K.<a> = NumberField(x^2 - 10)
             sage: factor(169*a + 531)
-            (-6*a - 19) * (-3*a - 1) * (-2*a + 9)
+            (-6*a - 19) * (2*a - 9) * (3*a + 1)
             sage: factor(K(3))
             Traceback (most recent call last):
             ...
@@ -4238,7 +4238,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
             sage: P5s = F(5).support()
             sage: P5s
-            [Fractional ideal (-t^2 - 1), Fractional ideal (t^2 - 2*t - 1)]
+            [Fractional ideal (t^2 + 1), Fractional ideal (t^2 - 2*t - 1)]
             sage: all(5 in P5 for P5 in P5s)
             True
             sage: all(P5.is_prime() for P5 in P5s)
@@ -4487,7 +4487,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             sage: f = Qi.embeddings(K)[0]
             sage: a = f(2+3*i) * (2-zeta)^2
             sage: a.descend_mod_power(Qi,2)
-            [-2*i + 3, 3*i + 2]
+            [3*i + 2, 2*i - 3]
 
         An absolute example::
 
