@@ -16,10 +16,11 @@ Built-in oriented matroids
 ==========================
 
 The types of oriented matroids currently implemented into sage are:
-    - Circuit Oriented Matroids
-    - Covector Oriented Matroids
-    - Vector Oriented Matroids
-    - (Real) Hyperplane Arrangement Oriented Matroids
+
+- Circuit Oriented Matroids
+- Covector Oriented Matroids
+- Vector Oriented Matroids
+- (Real) Hyperplane Arrangement Oriented Matroids
 
 Constructing oriented matroids
 ==============================
@@ -153,7 +154,7 @@ def OrientedMatroid(data=None, groundset=None, key=None, **kwds):
 
     .. SEEALSO::
 
-        :class:`oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
+        - :class:`~oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
 
     REFERENCES:
 

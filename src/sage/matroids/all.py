@@ -14,6 +14,3 @@ from sage.matroids.oriented_matroids.all import *
 
 del lazy_import
 del install_doc
-
-# Add Oriented Matroids
-from .oriented_matroids.all import *

@@ -34,12 +34,12 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
     a pair `M = (E,\mathcal{L})` is an oriented matroid using the covectors
     axioms if (see Theorem 4.1.1 in [BLSWZ1999]_):
 
-        - `0 \in \mathcal{L}`
-        - `X \in \mathcal{L}` implies `-X \in \mathcal{L}`
-        - For all `X,Y \in \mathcal{L}`, `X \circ Y \in \mathcal{L}`
-        - For all `X,Y \in \mathcal{L}` and `e \in S(X,Y)` there exists a
-          `Z \in \mathcal{L}` such that `Z(e) = 0` and
-          `Z(f) = (X \circ Y)(f) = (Y \circ X)(f)` for all `f \notin S(X,Y)`.
+    - `0 \in \mathcal{L}`
+    - `X \in \mathcal{L}` implies `-X \in \mathcal{L}`
+    - For all `X,Y \in \mathcal{L}`, `X \circ Y \in \mathcal{L}`
+    - For all `X,Y \in \mathcal{L}` and `e \in S(X,Y)` there exists a
+      `Z \in \mathcal{L}` such that `Z(e) = 0` and
+      `Z(f) = (X \circ Y)(f) = (Y \circ X)(f)` for all `f \notin S(X,Y)`.
 
     INPUT:
 
@@ -68,21 +68,11 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
         sage: M.groundset()
         ('h1', 'h2', 'h3')
 
-
     .. SEEALSO::
 
-        :class:`oriented_matroids.oriented_matroid.OrientedMatroid`
-        :class:`oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
+        - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
     """
-
-    @staticmethod
-    def __classcall__(cls, data, groundset=None, category=None):
-        """
-        Normalize arguments and set class.
-        """
-        if category is None:
-            category = Sets()
-        return super().__classcall__(cls, data, groundset=groundset, category=category)
 
     def __init__(self, data, groundset=None, category=None):
         """

@@ -81,8 +81,8 @@ class SignedSubsetElement(Element):
 
     .. SEEALSO::
 
-        - :class:`oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
+        - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
     """
     def __init__(self, parent=None, data=None, groundset=None, positives=None, negatives=None, zeros=None):
         """

@@ -54,19 +54,10 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
 
     .. SEEALSO::
 
-        :class:`oriented_matroids.oriented_matroid.OrientedMatroid`
-        :class:`oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
-        :class:`sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement`
+        - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
+        - :class:`sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement`
     """
-
-    @staticmethod
-    def __classcall__(cls, data, groundset=None, category=None):
-        """
-        Normalize arguments and set class.
-        """
-        if category is None:
-            category = Sets()
-        return super().__classcall__(cls, data=data, groundset=groundset, category=category)
 
     def __init__(self, data, groundset=None, category=None):
         """

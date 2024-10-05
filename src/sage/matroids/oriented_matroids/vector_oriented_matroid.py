@@ -66,19 +66,10 @@ class VectorOrientedMatroid(AbstractOrientedMatroid):
 
     .. SEEALSO::
 
-        - :class:`oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
-        - :class:`oriented_matroids.signed_subset_element.SignedSubsetElement`
+        - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
+        - :class:`~oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
+        - :class:`~oriented_matroids.signed_subset_element.SignedSubsetElement`
     """
-    @staticmethod
-    def __classcall__(cls, data, groundset=None, category=None):
-        """
-        Normalize arguments and set class.
-        """
-        if category is None:
-            category = Sets()
-        return super().__classcall__(cls, data, groundset=groundset,
-                                     category=category)
 
     def __init__(self, data, groundset=None, category=None):
         """
