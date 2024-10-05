@@ -72,7 +72,6 @@ Oriented Matroids
    :maxdepth: 1
 
    sage/matroids/oriented_matroids/oriented_matroid
-   sage/matroids/oriented_matroids/abstract_oriented_matroid
 
 Representations
 ---------------

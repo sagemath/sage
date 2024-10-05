@@ -55,7 +55,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
     .. SEEALSO::
 
         - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`~oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
+        - :class:`~oriented_matroids.covector_oriented_matroid.CovectorOrientedMatroid`
         - :class:`sage.geometry.hyperplane_arrangement.arrangement.HyperplaneArrangementElement`
     """
 

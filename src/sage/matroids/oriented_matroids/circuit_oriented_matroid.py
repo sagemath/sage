@@ -18,11 +18,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
+from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
 from sage.categories.sets_cat import Sets
 
 
-class CircuitOrientedMatroid(AbstractOrientedMatroid):
+class CircuitOrientedMatroid(OrientedMatroid):
     r"""
     An oriented matroid implemented using circuit axioms.
 
@@ -82,7 +82,7 @@ class CircuitOrientedMatroid(AbstractOrientedMatroid):
         """
         Initialize ``self``.
         """
-        AbstractOrientedMatroid.__init__(self, category=category)
+        OrientedMatroid.__init__(self, category=category)
 
         # Set up our circuits
         circuits = []

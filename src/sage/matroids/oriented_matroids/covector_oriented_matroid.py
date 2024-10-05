@@ -18,11 +18,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
+from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
 from sage.categories.sets_cat import Sets
 
 
-class CovectorOrientedMatroid(AbstractOrientedMatroid):
+class CovectorOrientedMatroid(OrientedMatroid):
     r"""
     An oriented matroid implemented using covector axioms.
 
@@ -71,14 +71,13 @@ class CovectorOrientedMatroid(AbstractOrientedMatroid):
     .. SEEALSO::
 
         - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`~oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
     """
 
     def __init__(self, data, groundset=None, category=None):
         """
         Initialize ``self``.
         """
-        AbstractOrientedMatroid.__init__(self, category=category)
+        OrientedMatroid.__init__(self, category=category)
 
         # Set up our covectors
         covectors = []

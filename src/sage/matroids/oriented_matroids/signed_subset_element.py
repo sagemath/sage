@@ -1,5 +1,6 @@
 r"""
-Abstract class for oriented matroids
+
+Class for Signed Subsets
 
 AUTHORS:
 
@@ -82,7 +83,6 @@ class SignedSubsetElement(Element):
     .. SEEALSO::
 
         - :class:`~oriented_matroids.oriented_matroid.OrientedMatroid`
-        - :class:`~oriented_matroids.abstract_oriented_matroid.AbstractOrientedMatroid`
     """
     def __init__(self, parent=None, data=None, groundset=None, positives=None, negatives=None, zeros=None):
         """
@@ -295,21 +295,21 @@ class SignedSubsetElement(Element):
             +: 1,4
             -: 2,3
             0:
-            sage: from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
-            sage: AbstractOrientedMatroid.options.display = 'vector'
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: OrientedMatroid.options.display = 'vector'
             sage: SignedSubsetElement(M, data=((1,4),(2,3)))
             (1,-1,-1,1)
-            sage: AbstractOrientedMatroid.options.display = 'set'
+            sage: OrientedMatroid.options.display = 'set'
         """
-        from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
-        if AbstractOrientedMatroid.options.display == 'set':
+        from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+        if OrientedMatroid.options.display == 'set':
             p = map(str, self.positives())
             n = map(str, self.negatives())
             z = map(str, self.zeros())
             return "+: " + ','.join(p) + "\n" + \
                 "-: " + ','.join(n) + "\n" +\
                 "0: " + ','.join(z)
-        if AbstractOrientedMatroid.options.display == 'vector':
+        if OrientedMatroid.options.display == 'vector':
             return "(" + ','.join([str(self(e)) for e in self.groundset()]) + ")"
 
     def _latex_(self):
@@ -324,18 +324,18 @@ class SignedSubsetElement(Element):
             sage: M = OrientedMatroid(C, key='circuit')
             sage: latex(SignedSubsetElement(M, data=((1,4),(2,3))))
             \left( \left{1,4\right},\left{2,3\right} \right)
-            sage: from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
-            sage: AbstractOrientedMatroid.options.display = 'vector'
+            sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+            sage: OrientedMatroid.options.display = 'vector'
             sage: latex(SignedSubsetElement(M, data =((1,4),(2,3))))
             \left(1,-1,-1,1\right)
         """
-        from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
-        if AbstractOrientedMatroid.options.display == 'set':
+        from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
+        if OrientedMatroid.options.display == 'set':
             p = map(str, self.positives())
             n = map(str, self.negatives())
             return "\\left( \\left{" + ','.join(p) + \
                 "\\right},\\left{" + ','.join(n) + "\\right} \\right)"
-        if AbstractOrientedMatroid.options.display == 'vector':
+        if OrientedMatroid.options.display == 'vector':
             ground_set = [str(self(e)) for e in self.groundset()]
             return "\\left(" + ','.join(ground_set) + "\\right)"
 
@@ -439,8 +439,7 @@ class SignedSubsetElement(Element):
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
-            sage: from sage.matroids.oriented_matroids.abstract_oriented_matroid import AbstractOrientedMatroid
-            sage: AbstractOrientedMatroid.options.display='vector'
+            sage: OrientedMatroid.options.display='vector'
             sage: M = OrientedMatroid([[0],[1],[-1]], key='vector')
             sage: E1 = M.elements()[0]; E2 = M.elements()[1]
             sage: E1.composition(E2)
