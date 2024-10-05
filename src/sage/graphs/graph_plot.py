@@ -1496,7 +1496,7 @@ class GraphPlot(SageObject):
         children = {root: T.neighbors(root)}
 
         # Always make a copy of the children because they get eaten
-        stack = [[u for u in children[root]]]
+        stack = [list(children[root])]
         stick = [root]
         parent = {u: root for u in children[root]}
         pos = {}
