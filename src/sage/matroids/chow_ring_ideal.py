@@ -386,10 +386,10 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
+            sage: M1 = Matroid(graphs.CycleGraph(3))
             sage: ch = M1.chow_ring(QQ, True, 'fy')
             sage: ch.defining_ideal()._latex_()
-            '\\left(\\mathit{Bac}^{2}, \\mathit{Bac} \\mathit{Bbd}, \\mathit{Bac} \\mathit{Bbd}, \\mathit{Bbd}^{2}, \\mathit{Ac} - \\mathit{Bbd}, \\mathit{Aa} - \\mathit{Bbd}, \\mathit{Ab} - \\mathit{Bac}, \\mathit{Ad} - \\mathit{Bac}\\right)\\Bold{Q}[\\mathit{Ac}, \\mathit{Aa}, \\mathit{Ab}, \\mathit{Ad}, \\mathit{Bac}, \\mathit{Bbd}]'
+            '\\left(A_{3}^{2}, A_{3} A_{4}, A_{3} A_{5}, A_{3} A_{4}, A_{4}^{2}, A_{4} A_{5}, A_{3} A_{5}, A_{4} A_{5}, A_{5}^{2}, A_{0} - A_{4} - A_{5}, A_{1} - A_{3} - A_{5}, A_{2} - A_{3} - A_{4}\\right)\\Bold{Q}[A_{0}, A_{1}, A_{2}, A_{3}, A_{4}, A_{5}]'
         """
         from sage.misc.latex import latex
         return '\\left(%s\\right)%s' % (", ".join(latex(g)
@@ -581,10 +581,10 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
 
         EXAMPLES::
 
-            sage: M1 = Matroid(groundset='abcd', bases=['ab','ad', 'bc'])
+            sage: M1 = Matroid(graphs.CycleGraph(3))
             sage: ch = M1.chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal()._latex_()
-            '\\left(\\mathit{Aac}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Aac}^{2}, \\mathit{Aac} \\mathit{Abd}, \\mathit{Abd}^{2}, \\mathit{Abd}^{2}\\right)\\Bold{Q}[\\mathit{Aac}, \\mathit{Abd}]'
+            '\\left(A_{0}^{2}, A_{0}^{2}, A_{1}^{2}, A_{0} A_{1}, A_{2}^{2}, A_{0} A_{2}, A_{0} A_{1}, A_{0}^{2}, A_{1}^{2}, A_{0} A_{1}, A_{2}^{2}, A_{0} A_{2}, A_{0} A_{2}, A_{0}^{2}, A_{1}^{2}, A_{0} A_{1}, A_{2}^{2}, A_{0} A_{2}, A_{0} A_{1}, A_{0}^{2}, A_{0} A_{1}, A_{1}^{2}, A_{2}^{2}, A_{1} A_{2}, A_{1}^{2}, A_{0}^{2}, A_{0} A_{1}, A_{1}^{2}, A_{2}^{2}, A_{1} A_{2}, A_{1} A_{2}, A_{0}^{2}, A_{0} A_{1}, A_{1}^{2}, A_{2}^{2}, A_{1} A_{2}, A_{0} A_{2}, A_{0}^{2}, A_{0} A_{2}, A_{1}^{2}, A_{1} A_{2}, A_{2}^{2}, A_{1} A_{2}, A_{0}^{2}, A_{0} A_{2}, A_{1}^{2}, A_{1} A_{2}, A_{2}^{2}, A_{2}^{2}, A_{0}^{2}, A_{0} A_{2}, A_{1}^{2}, A_{1} A_{2}, A_{2}^{2}\\right)\\Bold{Q}[A_{0}, A_{1}, A_{2}]'
         """
         from sage.misc.latex import latex
         return '\\left(%s\\right)%s' % (", ".join(latex(g)
