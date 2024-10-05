@@ -602,7 +602,7 @@ cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
         finally:
             sig_off()
     except RuntimeError:
-        raise RuntimeError("FLINT gcd calculation failed") from None
+        raise RuntimeError("FLINT gcd calculation failed")
 
     cdef unsigned long leadcoeff = nmod_poly_get_coeff_ui(res, nmod_poly_degree(res))
     cdef unsigned long modulus = nmod_poly_modulus(res)
