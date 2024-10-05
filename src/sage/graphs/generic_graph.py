@@ -20384,6 +20384,8 @@ class GenericGraph(GenericGraph_pyx):
             ....:     print("option {} : {}".format(key, value))
             option by_component : Whether to do the spring layout by connected component -- boolean.
             option dim : The dimension of the layout -- 2 or 3.
+            option external_face : A list of the vertices of the external face of the graph, used for Tutte embedding layout.
+            option external_face_pos : A dictionary specifying the positions of the external face of the graph, used for Tutte embedding layout. If none specified, theexternal face is a regular polygon.
             option forest_roots : An iterable specifying which vertices to use as roots for the ``layout='forest'`` option. If no root is specified for a tree, then one is chosen close to the center of the tree. Ignored unless ``layout='forest'``.
             option heights : A dictionary mapping heights to the list of vertices at this height.
             option iterations : The number of times to execute the spring layout algorithm.
@@ -20393,8 +20395,6 @@ class GenericGraph(GenericGraph_pyx):
             option spring : Use spring layout to finalize the current layout.
             option tree_orientation : The direction of tree branches -- 'up', 'down', 'left' or 'right'.
             option tree_root : A vertex designation for drawing trees. A vertex of the tree to be used as the root for the ``layout='tree'`` option. If no root is specified, then one is chosen close to the center of the tree. Ignored unless ``layout='tree'``.
-            option external_face : A list of vertices to be the external face in the Tutte layout. Ignored unless ``layout='tutte'``.
-            option external_face_pos : A dictionary of positions for the external face in the Tutte layout. If none are specified, the external face is a regular polygon. Ignored unless ``layout='tutte'``
 
         Some of them only apply to certain layout algorithms. For details, see
         :meth:`.layout_acyclic`, :meth:`.layout_planar`,
@@ -21018,8 +21018,7 @@ class GenericGraph(GenericGraph_pyx):
         return {key_to_vertex[key]: pos for key, pos in positions.items()}
     
     def layout_tutte(self, external_face, external_face_pos=None, **options):
-        """
-
+        r"""
         Compute graph layout based on a Tutte embedding.
 
         The graph must be 3-connected and planar.
@@ -21028,7 +21027,7 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``external_face`` -- list; the external face to be made a polygon
 
-        - ``external_face_pos`` -- list (default: ``None``); the positions of the vertices 
+        - ``external_face_pos`` -- dictionary (default: ``None``); the positions of the vertices 
           of the external face. If ``None``, will automatically generate a unit sided regular polygon.
         
         - ``**options`` -- other parameters not used here
@@ -21036,26 +21035,27 @@ class GenericGraph(GenericGraph_pyx):
         OUTPUT: a dictionary mapping vertices to positions
 
         EXAMPLES::
-
             sage: g = graphs.WheelGraph(n=7)
-            sage: g.layout_tutte(external_face=[1, 2, 3, 4, 5, 6])
-            {1: (-0.499999999999999, 0.866025403784438),
-            2: (0.500000000000000, 0.866025403784439),
-            3: (1.00000000000000, 8.85026869717109e-17),
-            4: (0.500000000000000, -0.866025403784439),
-            5: (-0.500000000000001, -0.866025403784438),
-            6: (-1.00000000000000, 4.55896726715916e-16),
-            0: (-5.55111512312578e-17, 1.86944233679563e-16)}
+            sage: g.plot(layout='tutte', external_face=[0,1,2])                        # needs sage.plot
+            Graphics object consisting of 20 graphics primitives
             sage: g = graphs.CubeGraph(n=3, embedding=2)
-            sage: g.plot(layout='tutte', external_face=['101','111','001','011'], external_face_pos={'101':(1,0), '111':(0,0), '001':(2,1), '011':(-1,1)})
-            Launched png viewer for Graphics object consisting of 21 graphics primitives
-
+            sage: g.plot(layout='tutte', external_face=['101','111','001','011'], external_face_pos={'101':(1,0), '111':(0,0), '001':(2,1), '011':(-1,1)}) # needs sage.plot
+            Graphics object consisting of 21 graphics primitives
+            sage: g = graphs.CompleteGraph(n=5)
+            sage: g.plot(layout='tutte', external_face=[0,1,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: Graph must be planar
+            sage: g = graphs.CycleGraph(n=10)
+            sage: g.layout(layout='tutte', external_face=[0,1,2,3,4,5,6,7,8,9])
+            Traceback (most recent call last):
+            ...
+            ValueError: Graph must be 3-connected
         """
-        from sage.graphs.graph import Graph
         from sage.matrix.constructor import zero_matrix
         from sage.rings.real_mpfr import RR
         
-        if (len(external_face) < 3):
+        if len(external_face) < 3:
             raise ValueError("External face must have at least 3 vertices")
 
         if (not self.is_planar()):
@@ -21074,33 +21074,33 @@ class GenericGraph(GenericGraph_pyx):
         pos = dict()
 
         if external_face_pos is None:
-            l = len(external_face)
-            a0 = pi/l+pi/2
+            external_face_length = len(external_face)
+            a0 = pi/external_face_length + pi/2
             for i, vertex in enumerate(external_face_ordered):
-                ai = a0+pi*2*i/l
-                pos[vertex] = (cos(ai),sin(ai))
+                ai = a0 + pi*2*i/external_face_length
+                pos[vertex] = (cos(ai), sin(ai))
         else:
-            for v,p in external_face_pos.items():
+            for v, p in external_face_pos.items():
                 pos[v] = p
 
         V = self.vertices()
         n = len(V)
-        M = zero_matrix(RR,n,n)
-        b = zero_matrix(RR,n,2)
+        M = zero_matrix(RR, n, n)
+        b = zero_matrix(RR, n, 2)
 
-        vertices_to_indices = {v:i for i,v in enumerate(V)}
+        vertices_to_indices = {v:I for I, v in enumerate(V)}
         for i in range(n):
             v = V[i]
             if v in pos:
-                M[i,i] = 1
-                b[i,0] = pos[v][0]
-                b[i,1] = pos[v][1]
+                M[i, i] = 1
+                b[i, 0] = pos[v][0]
+                b[i, 1] = pos[v][1]
             else:
                 nv = self.neighbors(v)
                 for u in nv:
                     j = vertices_to_indices[u]
-                    M[i,j] = -1
-                M[i,i] = len(nv)
+                    M[i, j] = -1
+                M[i, i] = len(nv)
 
         sol = M.pseudoinverse()*b
         return {V[i]:sol[i] for i in range(n)}  
@@ -21495,11 +21495,11 @@ class GenericGraph(GenericGraph_pyx):
           (resp. downwards). Ignored unless ``layout='tree'``.
         
         - ``external_face`` -- list of vertices; the external face to be made a
-        in the Tutte layout. Ignored unless ``layout='tutte''``.
+          in the Tutte layout. Ignored unless ``layout='tutte''``.
 
         - ``external_face_pos`` -- dictionary (default: ``None``). If specified,
-        used as the positions for the external face in the Tutte layout. Ignored
-        unless ``layout='tutte'``.
+          used as the positions for the external face in the Tutte layout. Ignored
+          unless ``layout='tutte'``.
 
         - ``save_pos`` -- boolean (default: ``False``); save position computed
           during plotting
