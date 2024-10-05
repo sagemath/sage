@@ -606,7 +606,7 @@ cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
 
     cdef unsigned long leadcoeff = nmod_poly_get_coeff_ui(res, nmod_poly_degree(res))
     cdef unsigned long modulus = nmod_poly_modulus(res)
-    if n_gcd(modulus,leadcoeff) == 1:
+    if n_gcd(modulus, leadcoeff) == 1:
         nmod_poly_make_monic(res, res)
 
 cdef inline int celement_xgcd(nmod_poly_t res, nmod_poly_t s, nmod_poly_t t, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
