@@ -12,6 +12,8 @@ etc.). It also implements some iterators over all these orientations.
     :widths: 30, 70
     :delim: |
 
+    :meth:`orient` | Return an oriented version of `G` according the input function `f`.
+    :meth:`acyclic_orientations` | Return an iterator over all acyclic orientations of an undirected graph `G`.
     :meth:`strong_orientations_iterator` | Return an iterator over all strong orientations of a graph `G`
     :meth:`random_orientation` | Return a random orientation of a graph `G`
 
@@ -28,7 +30,7 @@ Methods
 # ****************************************************************************
 #       Copyright (C)      2017 Kolja Knauer <kolja.knauer@gmail.com>
 #                          2017 Petru Valicov <petru.valicov@lirmm.fr>
-#                     2017-2023 David Coudert <david.coudert@inria.fr>
+#                     2017-2024 David Coudert <david.coudert@inria.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,6 +41,172 @@ Methods
 
 from copy import copy
 from sage.graphs.digraph import DiGraph
+
+
+def orient(G, f, weighted=None, data_structure=None, sparse=None,
+           immutable=None, hash_labels=None):
+    r"""
+    Return an oriented version of `G` according the input function `f`.
+
+    INPUT:
+
+    - ``f`` -- a function that inputs an edge and outputs an orientation of this
+      edge
+
+    - ``weighted`` -- boolean (default: ``None``); weightedness for the oriented
+      digraph. By default (``None``), the graph and its orientation will behave
+      the same.
+
+    - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an alias for
+      ``data_structure="sparse"``, and ``sparse=False`` is an alias for
+      ``data_structure="dense"``. Only used when ``data_structure=None``.
+
+    - ``data_structure`` -- string (default: ``None``); one of ``'sparse'``,
+      ``'static_sparse'``, or ``'dense'``. See the documentation of
+      :class:`DiGraph`.
+
+    - ``immutable`` -- boolean (default: ``None``); whether to create a
+      mutable/immutable digraph. Only used when ``data_structure=None``.
+
+      * ``immutable=None`` (default) means that the graph and its orientation
+        will behave the same way.
+
+      * ``immutable=True`` is a shortcut for ``data_structure='static_sparse'``
+
+      * ``immutable=False`` means that the created digraph is mutable. When used
+        to orient an immutable graph, the data structure used is ``'sparse'``
+        unless anything else is specified.
+
+    - ``hash_labels`` -- boolean (default: ``None``); whether to include edge
+      labels during hashing of the oriented digraph. This parameter defaults to
+      ``True`` if the graph is weighted. This parameter is ignored when
+      parameter ``immutable`` is not ``True``. Beware that trying to hash
+      unhashable labels will raise an error.
+
+    OUTPUT: a :class:`DiGraph` object
+
+    .. NOTE::
+
+        This method behaves similarly to method
+        :meth:`~sage.graphs.generic_graph.GenericGraph.copy`. That is, the
+        returned digraph uses the same data structure by default, unless the
+        user asks to use another data structure, and the attributes of the input
+        graph are copied.
+
+    EXAMPLES::
+
+        sage: G = graphs.CycleGraph(4); G
+        Cycle graph: Graph on 4 vertices
+        sage: D = G.orient(lambda e:e if e[0] < e[1] else (e[1], e[0], e[2])); D
+        Orientation of Cycle graph: Digraph on 4 vertices
+        sage: sorted(D.edges(labels=False))
+        [(0, 1), (0, 3), (1, 2), (2, 3)]
+
+    TESTS:
+
+    We make sure that one can get an immutable orientation by providing the
+    ``data_structure`` optional argument::
+
+        sage: def foo(e):
+        ....:     return e if e[0] < e[1] else (e[1], e[0], e[2])
+        sage: G = graphs.CycleGraph(4)
+        sage: D = G.orient(foo, data_structure='static_sparse')
+        sage: D.is_immutable()
+        True
+        sage: D = G.orient(foo, immutable=True)
+        sage: D.is_immutable()
+        True
+
+    Bad input::
+
+        sage: G.orient(foo, data_structure='sparse', sparse=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: you cannot define 'immutable' or 'sparse' when 'data_structure' has a value
+        sage: G.orient(foo, data_structure='sparse', immutable=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: you cannot define 'immutable' or 'sparse' when 'data_structure' has a value
+        sage: G.orient(foo, immutable=True, sparse=False)
+        Traceback (most recent call last):
+        ...
+        ValueError: there is no dense immutable backend at the moment
+
+    Which backend? ::
+
+        sage: G.orient(foo, data_structure='sparse')._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: G.orient(foo, data_structure='dense')._backend
+        <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
+        sage: G.orient(foo, data_structure='static_sparse')._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
+        sage: G.orient(foo, immutable=True)._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
+        sage: G.orient(foo, immutable=True, sparse=True)._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
+        sage: G.orient(foo, immutable=False, sparse=True)._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: G.orient(foo, immutable=False, sparse=False)._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+    """
+    # Which data structure should be used ?
+    if data_structure is not None:
+        # data_structure is already defined so there is nothing left to do
+        # here. Did the user try to define too much ?
+        if immutable is not None or sparse is not None:
+            raise ValueError("you cannot define 'immutable' or 'sparse' "
+                             "when 'data_structure' has a value")
+    # At this point, data_structure is None.
+    elif immutable is True:
+        data_structure = 'static_sparse'
+        if sparse is False:
+            raise ValueError("there is no dense immutable backend at the moment")
+    elif immutable is False:
+        # If the user requests a mutable digraph and input is immutable, we
+        # choose the 'sparse' cgraph backend. Unless the user explicitly
+        # asked for something different.
+        if G.is_immutable():
+            data_structure = 'dense' if sparse is False else 'sparse'
+    elif sparse is True:
+        data_structure = "sparse"
+    elif sparse is False:
+        data_structure = "dense"
+
+    if data_structure is None:
+        from sage.graphs.base.dense_graph import DenseGraphBackend
+        if isinstance(G._backend, DenseGraphBackend):
+            data_structure = "dense"
+        else:
+            data_structure = "sparse"
+
+    if weighted is None:
+        weighted = G.weighted()
+
+    edges = (f(e) for e in G.edge_iterator())
+    D = DiGraph([G, edges], format='vertices_and_edges',
+                data_structure=data_structure,
+                loops=G.allows_loops(),
+                multiedges=G.allows_multiple_edges(),
+                name=f"Orientation of {G.name()}",
+                pos=copy(G._pos), weighted=weighted,
+                hash_labels=hash_labels)
+
+    attributes_to_copy = ('_assoc', '_embedding')
+    for attr in attributes_to_copy:
+        if hasattr(G, attr):
+            copy_attr = {}
+            old_attr = getattr(G, attr)
+            if isinstance(old_attr, dict):
+                for v, value in old_attr.items():
+                    try:
+                        copy_attr[v] = value.copy()
+                    except AttributeError:
+                        copy_attr[v] = copy(value)
+                setattr(D, attr, copy_attr)
+            else:
+                setattr(D, attr, copy(old_attr))
+
+    return D
 
 
 def acyclic_orientations(G):
