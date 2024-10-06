@@ -1563,7 +1563,7 @@ class GraphLatex(SageObject):
             %
             \end{tikzpicture}
 
-        For a complicated vertex, a tex box is used. ::
+        For a complicated vertex, a TeX box is used. ::
 
             sage: B = crystals.Tableaux(['B', 2], shape=[1])
             sage: latex(B)
