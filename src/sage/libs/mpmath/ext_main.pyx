@@ -1056,7 +1056,6 @@ cdef class Context:
         TESTS::
 
             sage: from mpmath import *
-            sage: mp.pretty = True
             sage: mag(10), mag(10.0), mag(mpf(10)), int(ceil(log(10,2)))
             (4, 4, 4, 4)
             sage: mag(10j), mag(10+10j)
@@ -1064,7 +1063,7 @@ cdef class Context:
             sage: mag(0.01), int(ceil(log(0.01,2)))
             (-6, -6)
             sage: mag(0), mag(inf), mag(-inf), mag(nan)
-            (-inf, +inf, +inf, nan)
+            (mpf('-inf'), mpf('+inf'), mpf('+inf'), mpf('nan'))
 
     ::
 
