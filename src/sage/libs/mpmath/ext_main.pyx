@@ -2201,12 +2201,13 @@ cdef class constant(mpf_base):
         Represent ``self`` as a string. With mp.pretty=False, the
         representation differs from that of an ordinary mpf::
 
-            sage: from mpmath import mp, pi
-            sage: mp.pretty = True
-            sage: repr(pi)
+            sage: from mpmath import mp
+            sage: mp2 = mp.clone()
+            sage: mp2.pretty = True
+            sage: repr(mp2.pi)
             '3.14159265358979'
-            sage: mp.pretty = False
-            sage: repr(pi)
+            sage: mp2.pretty = False
+            sage: repr(mp2.pi)
             '<pi: 3.14159~>'
         """
         if global_context.pretty:
@@ -2372,11 +2373,12 @@ cdef class mpc(mpnumber):
         TESTS::
 
             sage: from mpmath import mp
-            sage: mp.pretty = True
-            sage: repr(mp.mpc(2,3))
+            sage: mp2 = mp.clone()
+            sage: mp2.pretty = True
+            sage: repr(mp2.mpc(2,3))
             '(2.0 + 3.0j)'
-            sage: mp.pretty = False
-            sage: repr(mp.mpc(2,3))
+            sage: mp2.pretty = False
+            sage: repr(mp2.mpc(2,3))
             "mpc(real='2.0', imag='3.0')"
         """
         if global_context.pretty:
