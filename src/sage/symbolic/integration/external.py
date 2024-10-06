@@ -227,7 +227,6 @@ def libgiac_integrator(expression, v, a=None, b=None):
         sage: libgiac_integrator(sin(x), x)
         -cos(x)
         sage: libgiac_integrator(1/(x^2+6), x, -oo, oo)
-        No checks were made for singular points of antiderivative...
         1/6*sqrt(6)*pi
 
     TESTS::
