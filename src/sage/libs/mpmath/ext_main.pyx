@@ -983,7 +983,6 @@ cdef class Context:
         TESTS::
 
             sage: from mpmath import mp
-            sage: mp.pretty = True
             sage: (x, T) = mp._convert_param(3)
             sage: (x, type(x).__name__, T)
             (3, 'int', 'Z')
@@ -991,11 +990,11 @@ cdef class Context:
             sage: (x, type(x).__name__, T)
             (mpq(5,2), 'mpq', 'Q')
             sage: (x, T) = mp._convert_param(2.3)
-            sage: (x, type(x).__name__, T)
-            (2.3, 'mpf', 'R')
+            sage: (str(x), type(x).__name__, T)
+            ('2.3', 'mpf', 'R')
             sage: (x, T) = mp._convert_param(2+3j)
             sage: (x, type(x).__name__, T)
-            ((2.0 + 3.0j), 'mpc', 'C')
+            (mpc(real='2.0', imag='3.0'), 'mpc', 'C')
             sage: mp.pretty = False
         """
         cdef MPF v
