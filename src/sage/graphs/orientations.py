@@ -50,6 +50,8 @@ def orient(G, f, weighted=None, data_structure=None, sparse=None,
 
     INPUT:
 
+    - ``G`` -- an undirected graph
+
     - ``f`` -- a function that inputs an edge and outputs an orientation of this
       edge
 
