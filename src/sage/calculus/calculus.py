@@ -1155,7 +1155,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 ###################################################################
 # limits
 ###################################################################
-def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
+def limit(ex, v=None, a=None, dir=None, taylor=False, algorithm='maxima', **argv):
     r"""
     Return the limit as the variable `v` approaches `a`
     from the given direction.
@@ -1413,8 +1413,12 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
     if not isinstance(ex, Expression):
         ex = SR(ex)
 
-    if len(argv) != 1:
-        raise ValueError("call the limit function like this, e.g. limit(expr, x=2).")
+    if  (v is not None or a is not None):
+        if len(argv) != 0:
+            raise ValueError("if you call limit as limit(expr, x, 2) you cannot specify 'x=0'")
+        v = var(v)
+    elif len(argv) != 1:
+        raise ValueError("call the limit function like this, e.g. limit(expr, x=2), or as limit(expr, x, 2).")
     else:
         k, = argv.keys()
         v = var(k)
