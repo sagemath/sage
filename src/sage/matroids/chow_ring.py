@@ -152,8 +152,13 @@ class ChowRing(QuotientRing_generic):
             sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
             sage: ch.basis()
             [B0*B01, 1]
-            sage: ch = matroids.Wheel(3).chow_ring(ZZ, False)
+            sage: len(ch.defining_ideal().normal_basis()) == ch.basis().cardinality()
+            True
+            sage: ch = matroids.catalog.NonFano().chow_ring(QQ, False)
             [A0*A013, 1]
+            sage: len(ch.defining_ideal().normal_basis()) == ch.basis().cardinality()
+            True
+
         """
         flats = [X for i in range(1, self._matroid.rank())
                  for X in self._matroid.flats(i)] #Non empty proper flats
@@ -268,6 +273,7 @@ class ChowRing(QuotientRing_generic):
                 sage: v = ch.an_element(); v
                 A0
                 sage: v.to_vector()
+                (0, 0, 0, 1, 0, 0, 0)
             """
             P = self.parent()
             B = P.basis()
@@ -285,8 +291,9 @@ class ChowRing(QuotientRing_generic):
 
                 sage: ch = matroids.catalog.NonFano().chow_ring(QQ, True, 'fy')
                 sage: v = ch.an_element(); v
-                0
+                Ag
                 sage: v.monomial_coefficients()
+                {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0}
             """
             B = self.parent().basis()
             f = self.lift()
@@ -301,11 +308,16 @@ class ChowRing(QuotientRing_generic):
                 sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, False)
                 sage: for b in ch.basis():
                 ....:     print(b, b.degree())
-                A0*A01 2
                 1 0
+                A1 1
+                A3 1
+                A0 1
+                A2 1
+                A4 1
+                A5 1
                 sage: v = sum(ch.basis())
                 sage: v.degree()
-                2
+                1
             """
             return self.lift().degree()
 
@@ -316,13 +328,19 @@ class ChowRing(QuotientRing_generic):
 
             EXAMPLES::
 
-                ch = matroids.catalog.Fano().chow_ring(QQ, True, 'fy')
+                sage: ch = matroids.catalog.Fano().chow_ring(QQ, True, 'fy')
                 sage: for b in ch.basis():
                 ....:     print(b, b.homogeneous_degree())
-                Ba*Babf 2
-                Ba^2 2
+                1 0
+                Bb 1
+                Ba 1
+                Bc 1
+                Bd 1
+                Be 1
+                Bf 1
+                Bg 1
                 sage: v = sum(ch.basis()); v
-                Ba^2 + Ba*Babf
+                Ba + Bb + Bc + Bd + Be + Bf + Bg + 1
                 sage: v.homogeneous_degree()
                 Traceback (most recent call last):
                 ...
