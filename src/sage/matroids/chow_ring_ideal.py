@@ -622,7 +622,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
                                 term += self._flats_generator[H]
                         if term != poly_ring.zero():
                             gb.append(self._flats_generator[F]*(term ** self._matroid.rank(G))*
-                                (term**(self._matroid.rank(G)-self._matroid.rank(F))))
+                                (term**(self._matroid.rank(G) - self._matroid.rank(F))))
 
             g_basis = PolynomialSequence(poly_ring, [gb])
             return g_basis
