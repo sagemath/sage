@@ -832,7 +832,7 @@ class GraphClasses(UniqueRepresentation):
         inclusions = DB['Inclusions']['incl']
 
         # Parses the list of ISGCI small graphs
-        smallgraph_file = open(os.path.join(data_dir, _SMALLGRAPHS_FILE), 'r')
+        smallgraph_file = open(os.path.join(data_dir, _SMALLGRAPHS_FILE))
         smallgraphs = {}
 
         for line in smallgraph_file.readlines():

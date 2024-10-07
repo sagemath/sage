@@ -33,12 +33,15 @@ AUTHORS:
 - Kwankyu Lee (2024-02-14): rebased on Sphinx 7.2.6
 
 - François Bissey (2024-08-24): rebased on Sphinx 8.0.2
+
+- François Bissey (2024-09-10): Tweaks to support python 3.9 (and older sphinx) as well
 """
 
 from __future__ import annotations
 
 import functools
 import operator
+import sys
 import re
 from inspect import Parameter, Signature
 from typing import TYPE_CHECKING, Any, ClassVar, NewType, TypeVar
@@ -670,7 +673,7 @@ class Documenter:
 
         # add additional content (e.g. from document), if present
         if more_content:
-            for line, src in zip(more_content.data, more_content.items, strict=True):
+            for line, src in zip(more_content.data, more_content.items):
                 self.add_line(line, src[0], src[1])
 
     def get_object_members(self, want_all: bool) -> tuple[bool, list[ObjectMember]]:
@@ -1041,7 +1044,7 @@ class ModuleDocumenter(Documenter):
         super().add_content(None)
         self.indent = old_indent
         if more_content:
-            for line, src in zip(more_content.data, more_content.items, strict=True):
+            for line, src in zip(more_content.data, more_content.items):
                 self.add_line(line, src[0], src[1])
 
     @classmethod
@@ -1576,8 +1579,14 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
     def can_document_member(
         cls: type[Documenter], member: Any, membername: str, isattr: bool, parent: Any,
     ) -> bool:
-        return isinstance(member, type) or (
-            isattr and isinstance(member, NewType | TypeVar))
+        # support both sphinx 8 and py3.9/older sphinx
+        try:
+            result_bool = isinstance(member, type) or (
+                isattr and isinstance(member, NewType | TypeVar))
+        except:
+            result_bool = isinstance(member, type) or (
+                isattr and (inspect.isNewType(member) or isinstance(member, TypeVar)))
+        return result_bool
 
     def import_object(self, raiseerror: bool = False) -> bool:
         ret = super().import_object(raiseerror)
@@ -1650,7 +1659,12 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             # -------------------------------------------------------------------
             else:
                 self.doc_as_attr = True
-            if isinstance(self.object, NewType | TypeVar):
+            # support both sphinx 8 and py3.9/older sphinx
+            try:
+                test_bool = isinstance(self.object, NewType | TypeVar)
+            except:
+                test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
+            if test_bool:
                 modname = getattr(self.object, '__module__', self.modname)
                 if modname != self.modname and self.modname.startswith(modname):
                     bases = self.modname[len(modname):].strip('.').split('.')
@@ -1659,7 +1673,12 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         return ret
 
     def _get_signature(self) -> tuple[Any | None, str | None, Signature | None]:
-        if isinstance(self.object, NewType | TypeVar):
+        # support both sphinx 8 and py3.9/older sphinx
+        try:
+            test_bool = isinstance(self.object, NewType | TypeVar)
+        except:
+            test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
+        if test_bool:
             # Suppress signature
             return None, None, None
 
@@ -1844,14 +1863,24 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             self.directivetype = 'attribute'
         super().add_directive_header(sig)
 
-        if isinstance(self.object, NewType | TypeVar):
+        # support both sphinx 8 and py3.9/older sphinx
+        try:
+            test_bool = isinstance(self.object, NewType | TypeVar)
+        except:
+            test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
+        if test_bool:
             return
 
         if self.analyzer and '.'.join(self.objpath) in self.analyzer.finals:
             self.add_line('   :final:', sourcename)
 
         canonical_fullname = self.get_canonical_fullname()
-        if (not self.doc_as_attr and not isinstance(self.object, NewType)
+        # support both sphinx 8 and py3.9/older sphinx
+        try:
+            newtype_test = isinstance(self.object, NewType)
+        except:
+            newtype_test = inspect.isNewType(self.object)
+        if (not self.doc_as_attr and not newtype_test
                 and canonical_fullname and self.fullname != canonical_fullname):
             self.add_line('   :canonical: %s' % canonical_fullname, sourcename)
 
@@ -1903,6 +1932,28 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         if isinstance(self.object, TypeVar):
             if self.object.__doc__ == TypeVar.__doc__:
                 return []
+        # ------------------------------------------------------------------
+        # This section is kept for compatibility with python 3.9
+        # see https://github.com/sagemath/sage/pull/38549#issuecomment-2327790930
+        if sys.version_info[:2] < (3, 10):
+            if inspect.isNewType(self.object) or isinstance(self.object, TypeVar):
+                parts = self.modname.strip('.').split('.')
+                orig_objpath = self.objpath
+                for i in range(len(parts)):
+                    new_modname = '.'.join(parts[:len(parts) - i])
+                    new_objpath = parts[len(parts) - i:] + orig_objpath
+                    try:
+                        analyzer = ModuleAnalyzer.for_module(new_modname)
+                        analyzer.analyze()
+                        key = ('', new_objpath[-1])
+                        comment = list(analyzer.attr_docs.get(key, []))
+                        if comment:
+                            self.objpath = new_objpath
+                            self.modname = new_modname
+                            return [comment]
+                    except PycodeError:
+                        pass
+        # ------------------------------------------------------------------
         if self.doc_as_attr:
             # Don't show the docstring of the class when it is an alias.
             if self.get_variable_comment():
@@ -1966,7 +2017,12 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             return None
 
     def add_content(self, more_content: StringList | None) -> None:
-        if isinstance(self.object, NewType):
+        # support both sphinx 8 and py3.9/older sphinx
+        try:
+            newtype_test = isinstance(self.object, NewType)
+        except:
+            newtype_test = inspect.isNewType(self.object)
+        if newtype_test:
             if self.config.autodoc_typehints_format == "short":
                 supertype = restify(self.object.__supertype__, "smart")
             else:

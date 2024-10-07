@@ -2841,6 +2841,18 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         sage: res[0]
         Number Field in a with defining polynomial y^24 - 107010*y^22 - 24*y^21 + ...
         + 250678447193040618624307096815048024318853254384 with a = 93.32530798172420?
+
+    Test that the semantic of ``AA`` constructor does not affect this function (:issue:`36735`)::
+
+        sage: AA((-1)^(2/3))
+        1
+        sage: number_field_elements_from_algebraics([(-1)^(2/3)])
+        (Cyclotomic Field of order 6 and degree 2,
+         [zeta6 - 1],
+         Ring morphism:
+           From: Cyclotomic Field of order 6 and degree 2
+           To:   Algebraic Field
+           Defn: zeta6 |--> 0.500000000000000? + 0.866025403784439?*I)
     """
     gen = qq_generator
 
@@ -2862,15 +2874,10 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
             return x
         return QQbar(x)
 
-    # Try to cast into AA
-    try:
-        aa_numbers = [AA(_) for _ in numbers]
-        numbers = aa_numbers
-        real_case = True
-    except (ValueError, TypeError):
-        real_case = False
-    # Make the numbers algebraic
     numbers = [mk_algebraic(_) for _ in numbers]
+    real_case = all(x in AA for x in numbers)
+    if real_case:
+        numbers = [AA(x) for x in numbers]
 
     # Make the numbers have a real exact underlying field
     real_numbers = []
@@ -4484,6 +4491,26 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
                Defn: a |--> 1.732050807568878?)
         """
         return number_field_elements_from_algebraics(self, minimal=minimal, embedded=embedded, prec=prec)
+
+    def is_integral(self):
+        r"""
+        Check if this number is an algebraic integer.
+
+        EXAMPLES::
+
+            sage: QQbar(sqrt(-23)).is_integral()
+            True
+            sage: AA(sqrt(23/2)).is_integral()
+            False
+
+        TESTS:
+
+        Method should return the same value as :meth:`NumberFieldElement.is_integral`::
+
+             sage: for a in [QQbar(2^(1/3)), AA(2^(1/3)), QQbar(sqrt(1/2)), AA(1/2), AA(2), QQbar(1/2)]:
+             ....:    assert a.as_number_field_element()[1].is_integral() == a.is_integral()
+        """
+        return all(a in ZZ for a in self.minpoly())
 
     def exactify(self):
         """

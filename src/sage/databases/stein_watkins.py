@@ -347,7 +347,7 @@ def ecdb_num_curves(max_level=200000):
     """
     i = 0
     d = SteinWatkinsAllData(i)
-    v = [int(0) for _ in range(max_level + 1)]
+    v = [0 for _ in range(max_level + 1)]
     while True:
         try:
             C = next(d)

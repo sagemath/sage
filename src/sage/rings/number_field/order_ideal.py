@@ -9,13 +9,6 @@ This module implements (integral) ideals of orders in number fields.
     ideals of non-maximal orders (compared to the maximal case).
     This should hopefully change in the future.
 
-TESTS:
-
-This module is currently experimental::
-
-    sage: import sage.rings.number_field.order_ideal
-    doctest:warning ...
-
 EXAMPLES::
 
     sage: O = QuadraticField(-1).order(5*i)
@@ -74,9 +67,6 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.polynomial.polynomial_ring import polygens
 from sage.rings.ideal import Ideal_generic
-
-from sage.misc.superseded import experimental_warning
-experimental_warning(34198, 'Ideals of non-maximal orders are an experimental feature. Be wary of bugs.')
 
 import sage.rings.number_field.order
 
