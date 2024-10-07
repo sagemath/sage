@@ -27,7 +27,6 @@ def magma_free_eval(code, strip=True, columns=0):
     input code and return the answer as a string.
 
     .. WARNING::
-    
         The code must evaluate in at most 120 seconds
         and there is a limitation on the amount of RAM.
 
