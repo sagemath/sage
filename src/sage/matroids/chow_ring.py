@@ -48,8 +48,8 @@ class ChowRing(QuotientRing_generic):
 
     .. SEEALSO::
 
-        :mod:`sage.matroids.chow_ring_ideal`
-    
+        :mod:`sage.matroids.chow_ring_ideal
+
     INPUT:
 
     - ``M`` -- matroid
@@ -57,7 +57,7 @@ class ChowRing(QuotientRing_generic):
     - ``augmented`` -- boolean; when ``True``, this is the augmented
       Chow ring and if ``False``, this is the non-augmented Chow ring
     - ``presentation`` -- string (default: ``None``); one of the following:
-    
+
       * ``"fy"`` - the Feitchner-Yuzvinsky presentation
       * ``"atom-free"`` - the atom-free presentation
 
@@ -112,7 +112,7 @@ class ChowRing(QuotientRing_generic):
                 return "Augmented Chow ring of {} in Feitchner-Yuzvinsky presentation".format(self._matroid)
             elif self._presentation == 'atom-free':
                 return "Augmented Chow ring of {} in atom-free presentation".format(self._matroid)
-        return "Chow ring of {}".format(self._matroid)    
+        return "Chow ring of {}".format(self._matroid)   
 
     def _latex_(self):
         r"""
@@ -121,7 +121,7 @@ class ChowRing(QuotientRing_generic):
         EXAMPLES::
 
             sage: from sage.matroids.graphic_matroid import GraphicMatroid
-            
+
             sage: M1 = GraphicMatroid(graphs.CycleGraph(3))
             sage: ch = M1.chow_ring(QQ, True, 'fy')
             sage: ch._latex_()
@@ -150,7 +150,7 @@ class ChowRing(QuotientRing_generic):
     def basis(self):
         r"""
         Return the monomial basis of the given Chow ring.
-        
+
         EXAMPLES::
 
             sage: ch = matroids.Uniform(3, 6).chow_ring(QQ, True, 'fy')
@@ -177,7 +177,7 @@ class ChowRing(QuotientRing_generic):
                 for subset in subsets:
                     flag = True
                     sorted_list = sorted(subset, key=len)
-                    for i in range (len(sorted_list)): #Taking only chains
+                    for i in range(len(sorted_list)): #Taking only chains
                         if (i != 0) & (len(sorted_list[i]) == len(sorted_list[i-1])):
                             flag = False
                             break
@@ -204,7 +204,7 @@ class ChowRing(QuotientRing_generic):
                                                 #Generating combinations for all powers including first max_powers
                                                 expression *= flats_gen[subset[0]]**max_powers[0]
                                                 monomial_basis.append(expression)
-                
+
             elif self._presentation == 'atom-free':
                 subsets = []
                 # Generate all subsets of the frozenset using combinations
@@ -213,7 +213,7 @@ class ChowRing(QuotientRing_generic):
                 for subset in subsets:
                     flag = True
                     sorted_list = sorted(subset, key=len)
-                    for i in range (len(sorted_list)): #Taking only chains
+                    for i in range(len(sorted_list)): #Taking only chains
                         if (i != 0) & (len(sorted_list[i]) == len(sorted_list[i-1])):
                             flag = False
                             break
@@ -238,7 +238,7 @@ class ChowRing(QuotientRing_generic):
                                         expression = R.one()
                                         if sum(combination) == first_rank:
                                             for i in range(k):
-                                                expression *= flats_gen[subset[i]]**combination[i] 
+                                                expression *= flats_gen[subset[i]]**combination[i]
                                             monomial_basis.append(expression)
                             max_powers.remove(last_rank)
                             for p in max_powers:
@@ -248,13 +248,13 @@ class ChowRing(QuotientRing_generic):
                                         expression = R.one()
                                         if sum(combination) == first_rank:
                                             for i in range(len(combination)):
-                                                expression *= flats_gen[subset[i]]**combination[i] 
+                                                expression *= flats_gen[subset[i]]**combination[i]
                                             monomial_basis.append(expression)
                                         else:
                                             expression *= flats_gen[subset[k-1]]**last_rank
                                             if sum(combination) + last_rank == first_rank:
                                                 for i in range(k):
-                                                    expression *= flats_gen[subset[i]]**combination[i] 
+                                                    expression *= flats_gen[subset[i]]**combination[i]
                                             monomial_basis.append(expression)
 
         else:
@@ -267,7 +267,7 @@ class ChowRing(QuotientRing_generic):
             for subset in subsets:
                 flag = True
                 sorted_list = sorted(subset, key=len)
-                for i in range (len(sorted_list)):
+                for i in range(len(sorted_list)):
                     if (i != 0) & (len(sorted_list[i]) == len(sorted_list[i-1])):
                         flag = False
                         break
@@ -278,7 +278,7 @@ class ChowRing(QuotientRing_generic):
                     if k == 0:
                         monomial_basis.append(R.one())
                     elif k == 1 & ranks[subset[0]] == 1:
-                        monomial_basis.append(flats_gen[subset[0]])    
+                        monomial_basis.append(flats_gen[subset[0]])  
                     else:
                         for i in range(k):
                             if i == 0:
@@ -290,9 +290,8 @@ class ChowRing(QuotientRing_generic):
                                 for combination in product(*(range(1, p))):
                                     expression = R.one()
                                     for i in range(k):
-                                        expression *= flats_gen[subset[i]]**combination[i] 
+                                        expression *= flats_gen[subset[i]]**combination[i]
                                     monomial_basis.append(expression)
-
 
         from sage.sets.family import Family
         return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
@@ -369,10 +368,10 @@ class ChowRing(QuotientRing_generic):
                 ValueError: element is not homogeneous
 
             TESTS::
-              
+
                 sage: ch = matroids.Wheel(3).chow_ring(QQ, False)
                 sage: ch.zero().homogeneous_degree()
-                Traceback (most recent call last): 
+                Traceback (most recent call last):
                 ...
                 ValueError: the zero element does not have a well-defined degree
             """
