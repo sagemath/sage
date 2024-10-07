@@ -8054,14 +8054,14 @@ cdef class Matroid(SageObject):
             sage: M = matroids.catalog.Fano()
             sage: A = M.chow_ring(QQ, augmented=False); A
             Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
-             type (3, 0) over Rational Field.
+            type (3, 0) over Rational Field.
 
         The augmented Chow ring can also be constructed with the
         Feitchner-Yuzvinsky and atom-free presentation::
 
             sage: M = matroids.Wheel(3)
             sage: ch = M.chow_ring(QQ, augmented=True, presentation='fy')
-            Augmented Chow ring of Wheel(3): Regular matroid of rank 3 on 
+            Augmented Chow ring of Wheel(3): Regular matroid of rank 3 on
             6 elements with 16 bases of Feitchner-Yuzvinsky presentation
             sage: M = matroids.Uniform(3, 6)
             sage: ch = M.chow_ring(QQ, augmented=True, presentation='atom-free')
