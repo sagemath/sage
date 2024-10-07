@@ -113,7 +113,7 @@ class ChowRing(QuotientRing_generic):
                 return "Augmented Chow ring of {} in Feitchner-Yuzvinsky presentation".format(self._matroid)
             elif self._presentation == 'atom-free':
                 return "Augmented Chow ring of {} in atom-free presentation".format(self._matroid)
-        return "Chow ring of {}".format(self._matroid)   
+        return "Chow ring of {}".format(self._matroid)
 
     def _latex_(self):
         r"""
@@ -244,7 +244,7 @@ class ChowRing(QuotientRing_generic):
                 if k == 0:
                     monomial_basis.append(R.one())
                 elif k == 1 & ranks[subset[0]] == 1:
-                    monomial_basis.append(flats_gen[subset[0]])  
+                    monomial_basis.append(flats_gen[subset[0]])
                 else:
                     for i in range(k):
                         if i == 0:
