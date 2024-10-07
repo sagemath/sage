@@ -161,7 +161,7 @@ class ChowRing(QuotientRing_generic):
 
         """
         flats = [X for i in range(1, self._matroid.rank())
-                 for X in self._matroid.flats(i)] #Non empty proper flats
+                 for X in self._matroid.flats(i)] #Non empty flats
         flats_gen = self._ideal.flats_generator()
         R = self._ideal.ring()
         flats = sorted(flats, key=lambda X: (len(X), sorted(X)))
