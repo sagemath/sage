@@ -609,8 +609,6 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             flats = [X for i in range(1, self._matroid.rank())
                     for X in self._matroid.flats(i)]
             poly_ring = self.ring()
-            if frozenset() in flats: #Non empty proper flats
-                flats.remove(frozenset())
             for F in flats:
                 for G in flats:
                     if not (F > G or G > F): #Non nested flats
