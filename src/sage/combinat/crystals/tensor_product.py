@@ -1157,6 +1157,23 @@ class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
             return tex_from_array([[None]*i + list(reversed(row))
                                   for i, row in enumerate(self.rows())])
 
+        def latex_standalone(self, **kwds):
+            r"""
+            Return Standalone picture illustrating ``self``.
+
+            EXAMPLES::
+
+                sage: B = crystals.Tableaux(['Q',3], shape=[3,2,1])
+                sage: t = B.an_element()
+                sage: s = t.latex_standalone()
+                sage: _ = s.pdf(view=False)         # long time (2s), optional - latex
+
+            """
+            from sage.misc.latex_standalone import Standalone
+            if not 'standalone_config' in kwds:
+                kwds['standalone_config'] = ["border=1pt"]
+            return Standalone(self._latex_(), **kwds)
+
         def rows(self):
             """
             Return the list of rows of ``self``.

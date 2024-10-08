@@ -134,6 +134,25 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
             return r' \otimes '.join(latex(c) for c in reversed(self))
         return r' \otimes '.join(latex(c) for c in self)
 
+    def latex_standalone(self, **kwds):
+        r"""
+        Return Standalone picture illustrating ``self``.
+
+        EXAMPLES::
+
+            sage: C = crystals.Letters(["A",2])
+            sage: D = crystals.Tableaux(["A",2], shape=[2])
+            sage: E = crystals.TensorProduct(C,D)
+            sage: x = E.module_generators[0]
+            sage: s = x.latex_standalone()
+            sage: _ = s.pdf(view=False)       # long time (2s), optional - latex
+
+        """
+        from sage.misc.latex_standalone import Standalone
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
+        return Standalone(self._latex_(), **kwds)
+
     def _ascii_art_(self):
         """
         Return an ASCII art representation of ``self``.
@@ -893,6 +912,23 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
         T = Tableau(tab).conjugate()
         return tex_from_array([[letter._latex_() for letter in row] for row in T])
 
+    def latex_standalone(self, **kwds):
+        r"""
+        Return Standalone picture illustrating ``self``.
+
+        EXAMPLES::
+
+            sage: T = crystals.Tableaux(['A',3], shape = [4,2])
+            sage: t = T(rows=[[1,1,2,3],[2,3]])
+            sage: s = t.latex_standalone()
+            sage: _ = s.pdf(view=False)        # long time (2s), optional - latex
+
+        """
+        from sage.misc.latex_standalone import Standalone
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
+        return Standalone(self._latex_(), **kwds)
+
     @cached_method
     def to_tableau(self):
         """
@@ -1377,6 +1413,23 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
         """
         return self.to_tableau()._latex_()
 
+    def latex_standalone(self, **kwds):
+        r"""
+        Return Standalone picture illustrating ``self``.
+
+        EXAMPLES::
+
+            sage: C = crystals.Tableaux(['A',[1,2]], shape=[1,1])
+            sage: c = C.an_element()
+            sage: s = c.latex_standalone()
+            sage: _ = s.pdf(view=False)        # long time (2s), optional - latex
+
+        """
+        from sage.misc.latex_standalone import Standalone
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
+        return Standalone(self._latex_(), **kwds)
+
     @cached_method
     def to_tableau(self):
         """
@@ -1718,6 +1771,23 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
         from sage.combinat.output import tex_from_array
         return tex_from_array([[None]*i + list(reversed(row))
                               for i, row in enumerate(self.rows())])
+
+    def latex_standalone(self, **kwds):
+        r"""
+        Return Standalone picture illustrating ``self``.
+
+        EXAMPLES::
+
+            sage: B = crystals.infinity.Tableaux(['Q',4])
+            sage: t = B([[4,4,4,4,4,2,1],[3,3,3,3],[2,2,1],[1]])
+            sage: s = t.latex_standalone()
+            sage: _ = s.pdf(view=False)        # long time (2s), optional - latex
+
+        """
+        from sage.misc.latex_standalone import Standalone
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
+        return Standalone(self._latex_(), **kwds)
 
     def rows(self):
         """

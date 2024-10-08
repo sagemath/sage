@@ -133,6 +133,23 @@ class MVPolytope(PBWCrystalElement):
         ret += "\\end{tikzpicture}"
         return ret
 
+    def tikz(self, **kwds):
+        r"""
+        Return TikzPicture illustrating ``self``.
+
+        EXAMPLES::
+
+            sage: MV = crystals.infinity.MVPolytopes(['C', 2])
+            sage: b = MV.module_generators[0].f_string([1,2,1,2])
+            sage: t = b.tikz()
+            sage: _ = t.pdf(view=False)         # long time (2s), optional - latex
+
+        """
+        from sage.misc.latex_standalone import TikzPicture
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
+        return TikzPicture(self._latex_(), **kwds)
+
     def _polytope_vertices(self, P):
         """
         Return a list of the vertices of ``self`` in ``P``.

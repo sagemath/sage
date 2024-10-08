@@ -540,6 +540,36 @@ class GeneralizedYoungWall(CombinatorialElement):
             s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
+    def tikz(self, latex_large=False, **kwds):
+        r"""
+        Return TikzPicture illustrating ``self``.
+
+        INPUT:
+
+        - ``latex_large`` -- bool (default:``False``), whether to use the
+          output of ``latex_large`` method instead of ``_latex_`` method.
+
+        EXAMPLES::
+
+            sage: x = crystals.infinity.GeneralizedYoungWalls(3)([[],[1,0,3,2],[2,1],[3,2,1,0,3,2],[],[],[2]])
+            sage: t = x.tikz()
+            sage: _ = t.pdf(view=False)         # known bug
+
+        ::
+
+            sage: t = x.tikz(latex_large=True)
+            sage: _ = t.pdf(view=False)         # known bug
+
+        """
+        from sage.misc.latex_standalone import TikzPicture
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
+        if latex_large:
+            s = self.latex_large()
+        else:
+            s = self._latex_()
+        return TikzPicture(s, **kwds)
+
     def weight(self, root_lattice=False):
         r"""
         Return the weight of ``self``.

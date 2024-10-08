@@ -511,6 +511,23 @@ cdef class Spin(Element):
         """
         return Tableau([[i] for i in reversed(self.signature())])._latex_()
 
+    def latex_standalone(self, **kwds):
+        r"""
+        Return Standalone picture illustrating ``self``.
+
+        EXAMPLES::
+
+            sage: C = crystals.Spins(['B',3])
+            sage: b = C([1,1,-1])
+            sage: s = b.latex_standalone()
+            sage: _ = s.pdf(view=False)           # long time (2s), optional - latex
+
+        """
+        from sage.misc.latex_standalone import Standalone
+        if not 'standalone_config' in kwds:
+            kwds['standalone_config'] = ["border=1pt"]
+        return Standalone(self._latex_(), **kwds)
+
     def weight(self):
         """
         Return the weight of ``self``.
