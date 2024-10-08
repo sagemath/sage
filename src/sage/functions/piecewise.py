@@ -991,7 +991,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: q.convolution(p)
                 piecewise(x|-->(x - 3)*e^(-2) - e^(-x + 2) on (4, 5]; x)
 
-            TESTS::
+            TESTS:
 
             Check that the bugs raised in :issue:`12123` are fixed::
 
