@@ -149,7 +149,7 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
 
         """
         from sage.misc.latex_standalone import Standalone
-        if not 'standalone_config' in kwds:
+        if 'standalone_config' not in kwds:
             kwds['standalone_config'] = ["border=1pt"]
         return Standalone(self._latex_(), **kwds)
 
@@ -925,7 +925,7 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
 
         """
         from sage.misc.latex_standalone import Standalone
-        if not 'standalone_config' in kwds:
+        if 'standalone_config' not in kwds:
             kwds['standalone_config'] = ["border=1pt"]
         return Standalone(self._latex_(), **kwds)
 
@@ -1426,7 +1426,7 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
 
         """
         from sage.misc.latex_standalone import Standalone
-        if not 'standalone_config' in kwds:
+        if 'standalone_config' not in kwds:
             kwds['standalone_config'] = ["border=1pt"]
         return Standalone(self._latex_(), **kwds)
 
@@ -1785,7 +1785,7 @@ cdef class InfinityQueerCrystalOfTableauxElement(TensorProductOfQueerSuperCrysta
 
         """
         from sage.misc.latex_standalone import Standalone
-        if not 'standalone_config' in kwds:
+        if 'standalone_config' not in kwds:
             kwds['standalone_config'] = ["border=1pt"]
         return Standalone(self._latex_(), **kwds)
 

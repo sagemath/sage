@@ -987,7 +987,7 @@ class Crystals(Category_singleton):
                 sage: _ = t.pdf(view=False)         # long time (1s), optional - latex dot2tex graphviz
             """
             from sage.misc.latex_standalone import TikzPicture
-            if not 'standalone_config' in kwds:
+            if 'standalone_config' not in kwds:
                 kwds['standalone_config'] = ["border=1pt"]
             return TikzPicture(self._latex_(), **kwds)
 
