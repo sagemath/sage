@@ -99,7 +99,7 @@ for your platform and run a command like
     sudo apt-get install ...
 
 If you encounter error messages like "Unable to locate package ...", don't
-panic. You can safely remove the problematic package name from the list and
+panic. You can safely remove the problematic package names from the list and
 rerun the command.
 
 ### Preparing the macOS Platform
