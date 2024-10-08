@@ -1,16 +1,13 @@
+// This settings file is not ignored by git. It should be kept in sync with
+// the Sage github repo.
 {
-    // This settings file is not ignored by git. It should be kept in sync with
-    // the trac repo.
-    "python.defaultInterpreterPath": "./venv/bin/python3",
     "files.exclude": {
         "**/__pycache__": true,
         "src/**/*.cpp": true,
         "src/**/*.so": true
     },
     "search.exclude": {
-        // Exclude symbolic links into SAGE_ROOT/pkgs/
         "build/pkgs/*/src": true,
-        // Exclude symbolic links into SAGE_ROOT/src/
         "pkgs/sage-conf_conda/sage_root": true,
         "pkgs/sage-conf_pypi/sage_root": true,
         "pkgs/sage-docbuild/sage_docbuild": true,
