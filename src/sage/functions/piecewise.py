@@ -274,7 +274,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         OUTPUT:
 
-        A piecewise function whose operands are not piecewiese if
+        A piecewise function whose operands are not piecewise if
         possible, that is, as long as the piecewise variable is the same.
 
         EXAMPLES::
