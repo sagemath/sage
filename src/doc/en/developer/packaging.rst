@@ -140,6 +140,8 @@ the following source types:
 
    - is only used for recording the names of equivalent system packages;
 
+   - does not install anything, and is by convention an optional package;
+
    - there is no ``spkg-install`` script, and attempts to install the package
      using Sage will give an error message;
 
