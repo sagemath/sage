@@ -602,6 +602,8 @@ class PiecewiseFunction(BuiltinFunction):
             """
             result = [(domain, func) for domain, func in parameters
                       if func != 0]
+            if len(result) == len(self):
+                return self
             return piecewise(result, var=variable)
 
         def pieces(self, parameters, variable):
@@ -980,6 +982,17 @@ class PiecewiseFunction(BuiltinFunction):
                           x|-->-x + 6 on (3, 4],
                           x|-->-2*x + 10 on (4, 5]; x)
 
+            Some unbounded but convergent cases now work::
+
+                sage: p = piecewise([[(2,oo),exp(-x)]])
+                sage: q = piecewise([[[2,3],x]])
+                sage: p.convolution(q)
+                piecewise(x|-->(x - 3)*e^(-2) - e^(-x + 2) on (4, 5]; x)
+                sage: q.convolution(p)
+                piecewise(x|-->(x - 3)*e^(-2) - e^(-x + 2) on (4, 5]; x)
+
+            TESTS::
+
             Check that the bugs raised in :issue:`12123` are fixed::
 
                 sage: f = piecewise([[(-2, 2), 2]])
@@ -1003,45 +1016,56 @@ class PiecewiseFunction(BuiltinFunction):
             fd, f0 = parameters[0]
             gd, g0 = next(other.items())
             if len(f) == 1 == len(g):
-                f = f.unextend_zero()
-                g = g.unextend_zero()
                 a1 = fd[0].lower()
                 a2 = fd[0].upper()
                 b1 = gd[0].lower()
                 b2 = gd[0].upper()
-                with SR.temp_var() as tt:
-                    with SR.temp_var() as uu:
-                        i1 = f0.subs({variable: uu})
-                        i2 = g0.subs({variable: tt-uu})
-                        fg1 = definite_integral(i1*i2, uu, a1, tt-b1).subs({tt: variable})
-                        fg2 = definite_integral(i1*i2, uu, tt-b2, tt-b1).subs({tt: variable})
-                        fg3 = definite_integral(i1*i2, uu, tt-b2, a2).subs({tt: variable})
-                        fg4 = definite_integral(i1*i2, uu, a1, a2).subs({tt: variable})
-                if a1-b1 < a2-b2:
-                    if a2+b1 != a1+b2:
-                        h = piecewise([[(a1+b1, a1+b2), fg1],
-                                       [(a1+b2, a2+b1), fg2],
-                                       [(a2+b1, a2+b2), fg3]])
-                    else:
-                        h = piecewise([[(a1+b1, a1+b2), fg1],
-                                       [(a1+b2, a2+b2), fg3]])
-                else:
-                    if a1+b2 != a2+b1:
-                        h = piecewise([[(a1+b1, a2+b1), fg1],
-                                       [(a2+b1, a1+b2), fg4],
-                                       [(a1+b2, a2+b2), fg3]])
-                    else:
-                        h = piecewise([[(a1+b1, a2+b1), fg1],
-                                       [(a2+b1, a2+b2), fg3]])
-                return (piecewise([[(minus_infinity, infinity), 0]]).piecewise_add(h)).unextend_zero()
+                a1b1 = a1 + b1
+                a2b2 = a2 + b2
+                delta_a = a2 - a1
+                delta_b = b2 - b1
 
-            if len(f) > 1 or len(g) > 1:
-                z = piecewise([[(0, 0), 0]])
-                for fpiece in f.pieces():
-                    for gpiece in g.pieces():
-                        h = gpiece.convolution(fpiece)
-                        z = z.piecewise_add(h)
-                return z.unextend_zero()
+                # this fails in some unbounded cases:
+                a1b2 = a1 + b2
+                a2b1 = a2 + b1
+
+                todo = []
+                if delta_a > delta_b:
+                    if a1b2 is not minus_infinity:
+                        todo.append((a1b1, a1b2, a1, variable - b1))
+                    todo.append((a1b2, a2b1, variable - b2, variable - b1))
+                    if a2b1 is not infinity:
+                        todo.append((a2b1, a2b2, variable - b2, a2))
+                elif delta_a < delta_b:
+                    if a2b1 is not minus_infinity:
+                        todo.append((a1b1, a2b1, a1, variable - b1))
+                    todo.append((a2b1, a1b2, a1, a2))
+                    if a1b2 is not infinity:
+                        todo.append((a1b2, a2b2, variable - b2, a2))
+                else:
+                    if a2b1 is not minus_infinity:
+                        todo.append((a1b1, a2b1, a1, variable - b1))
+                        todo.append((a2b1, a2b2, variable - b2, a2))
+
+                if not todo:
+                    raise ValueError("no domain of integration")
+
+                with SR.temp_var() as uu:
+                    i1 = f0.subs({variable: uu})
+                    i2 = g0.subs({variable: variable - uu})
+                    expr = i1 * i2
+                    h = piecewise([[(start, stop),
+                                    definite_integral(expr, uu, mini, maxi)]
+                                   for start, stop, mini, maxi in todo])
+                flat_zero = piecewise([[(minus_infinity, infinity), 0]])
+                return (flat_zero.piecewise_add(h)).unextend_zero()  # why ?
+
+            z = piecewise([[(0, 0), 0]])
+            for fpiece in f.pieces():
+                for gpiece in g.pieces():
+                    h = gpiece.convolution(fpiece)
+                    z = z.piecewise_add(h)
+            return z.unextend_zero()
 
         def trapezoid(self, parameters, variable, N):
             """
