@@ -467,7 +467,7 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
     while i < length:
         u, v = E[i]
         Dg.delete_edge(u, v)
-        if not (v in Dg.depth_first_search(u)):
+        if v not in Dg.depth_first_search(u):
             # del E[i] in constant time
             E[i] = E[-1]
             E.pop()
@@ -478,7 +478,7 @@ def _strong_orientations_of_a_mixed_graph(Dg, V, E):
         else:
             Dg.add_edge(u, v)
             Dg.delete_edge(v, u)
-            if not (u in Dg.depth_first_search(v)):
+            if u not in Dg.depth_first_search(v):
                 # del E[i] in constant time
                 E[i] = E[-1]
                 E.pop()
