@@ -3,7 +3,7 @@ set -e
 
 # Create conda environment
 conda install mamba -n base -c conda-forge -y
-mamba env create --file src/environment-dev-3.11-linux.yml || mamba env update --file src/environment-dev-3.11-linux.yml
+mamba env create --file src/environment-dev-3.11-linux.yml || mamba env update --file src/environment-dev-3.11-linux.yml -y
 conda init bash
 
 # Build sage
