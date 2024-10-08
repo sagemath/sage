@@ -976,6 +976,21 @@ class Crystals(Category_singleton):
 
         latex = _latex_
 
+        def tikz(self, **kwds):
+            r"""
+            Return TikzPicture illustrating ``self``.
+
+            EXAMPLES::
+
+                sage: T = crystals.Tableaux(['A',2],shape=[1])
+                sage: t = T.tikz()
+                sage: _ = t.pdf(view=False)         # long time (1s), optional - latex dot2tex graphviz
+            """
+            from sage.misc.latex_standalone import TikzPicture
+            if not 'standalone_config' in kwds:
+                kwds['standalone_config'] = ["border=1pt"]
+            return TikzPicture(self._latex_(), **kwds)
+
         def metapost(self, filename, thicklines=False, labels=True, scaling_factor=1.0, tallness=1.0):
             r"""
             Export a file, suitable for MetaPost, to ``filename``.
