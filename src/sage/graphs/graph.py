@@ -4191,7 +4191,6 @@ class Graph(GenericGraph):
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.combinat.set_partition import SetPartitions
         from sage.misc.misc_c import prod
-        from sage.arith.misc import factorial
         from collections import Counter
 
         if t is None:
@@ -4201,7 +4200,7 @@ class Graph(GenericGraph):
         m = SymmetricFunctions(R).m()
         ret = m.zero()
         V = self.vertices()
-        M = Counter(list(self.edges(labels=False)))
+        M = Counter(self.edge_iterator(labels=False))
         fact = [1]
         fact.extend(fact[-1] * i for i in range(1, len(V)+1))
 
