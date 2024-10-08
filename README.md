@@ -62,7 +62,7 @@ supported platforms for a specific version of Sage can be found in the section
 _Availability and installation help_ of the
 [Release Tour](https://github.com/sagemath/sage/releases) for that version.
 
-Instead of your local platform, you may use online free platforms
+Instead of your local platform, you may use free online platforms
 
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/sagemath/sage/tree/master
 ) &nbsp; [![Open in GitHub Codespaces](https://img.shields.io/badge/Open_in_GitHub_Codespaces-black?logo=github)](https://codespaces.new/sagemath/sage/tree/master)
