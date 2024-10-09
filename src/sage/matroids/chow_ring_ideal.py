@@ -299,7 +299,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             sage: TestSuite(I).run(skip="_test_category")
         """
         self._matroid = M
-        self._flats = [X for i in range(1, self._matroid.rank())
+        self._flats = [X for i in range(1, self._matroid.rank() + 1)
                 for X in self._matroid.flats(i)]
         E = list(self._matroid.groundset())
         self._flats_generator = dict()
@@ -347,7 +347,6 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             A3 - B0 - B1 - B2 - B4 - B5 - B025 - B04 - B124 - B15,
             A4 - B0 - B1 - B2 - B3 - B5 - B013 - B025 - B15 - B23,
             A5 - B0 - B1 - B2 - B3 - B4 - B013 - B04 - B124 - B23]
-
         """
         E = list(self._matroid.groundset())
         flats_containing = {x: [] for x in E}
@@ -504,7 +503,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             sage: TestSuite(I).run(skip="_test_category")
         """
         self._matroid = M
-        self._flats = [X for i in range(1, self._matroid.rank())
+        self._flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)]
 
         E = list(self._matroid.groundset())
@@ -606,16 +605,14 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         """
         if algorithm == '':
             gb = []
-            flats = [X for i in range(1, self._matroid.rank())
-                    for X in self._matroid.flats(i)]
             poly_ring = self.ring()
-            for F in flats:
-                for G in flats:
+            for F in self._flats:
+                for G in self._flats:
                     if not (F > G or G > F): #Non nested flats
                         gb.append(self._flats_generator[F]*self._flats_generator[G])
                     elif F < G: #Nested flats
                         term = poly_ring.zero()
-                        for H in flats:
+                        for H in self._flats:
                             if H < F:
                                 term += self._flats_generator[H]
                         if term != poly_ring.zero():
