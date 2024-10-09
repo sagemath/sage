@@ -9547,8 +9547,8 @@ index dde3a28..87ee33b 100644
 +	.text
 +	.balign	16
 +	.private_extern	_\name
-+	.cfi_startproc
 +_\name:
++	.cfi_startproc
 +	BTI_C
 +.endm
 +
