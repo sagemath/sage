@@ -8,7 +8,7 @@ function PreparseElts(R)
 end function;
 
 intrinsic Sage(X::.) -> MonStgElt, BoolElt
-{Default way to convert a Magma object to Sage if we haven't
+{Default way to convert a Magma object to Sage if we have not
 written anything better.}
     return Sprintf("%o", X), true;
 end intrinsic;
@@ -153,16 +153,19 @@ intrinsic SageNamesHelper(X::.) -> MonStgElt
 {}
   /* XXX */
   i := NumberOfNames(X);
-  if i ge 2 then
-      return (&* [ Sprintf("%o, ", X.j) : j in [ 1..i-1 ] ]) * Sprintf("%o", X.i);
+  if "$" in Sprint(X.i) then
+    /* unnamed variables */
+    return "(" * (&* [ Sprintf("'x%o', ", j) : j in [ 1..i ] ]) * ")"
   else
-      return Sprintf("%o", X.i);
-  end if;
+    /* named variables */
+    return "(" * (&* [ Sprintf("'%o', ", X.j) : j in [ 1..i ] ]) * ")"
+  end if:
 end intrinsic;
 
 intrinsic Sage(X::RngUPol) -> MonStgElt, BoolElt
 {}
-  return Sprintf("%o['%o'.replace('$.', 'x').replace('.', '')]", Sage(BaseRing(X)), SageNamesHelper(X)), false;
+  txt := "PolynomialRing(%o, %o)";
+  return Sprintf(txt, Sage(BaseRing(X)), SageNamesHelper(X)), false;
 end intrinsic;
 
 intrinsic Sage(X::RngUPolElt) -> MonStgElt, BoolElt
@@ -173,7 +176,8 @@ end intrinsic;
 
 intrinsic Sage(X::RngMPol) -> MonStgElt, BoolElt
 {}
-  return Sprintf("%o['%o'.replace('$.', 'x').replace('.', '')]", Sage(BaseRing(X)), SageNamesHelper(X)), false;
+  txt := "PolynomialRing(%o, %o)";
+  return Sprintf(txt, Sage(BaseRing(X)), SageNamesHelper(X)), false;
 end intrinsic;
 
 intrinsic Sage(X::RngMPolElt) -> MonStgElt, BoolElt
@@ -263,4 +267,24 @@ end intrinsic;
 intrinsic Sage(X::ModTupRngElt) -> MonStgElt, BoolElt
 {}
     return Sprintf("%o(%o)", Sage(Parent(X)), Sage(ElementToSequence(X))), true;
+end intrinsic;
+
+/* Power series rings */
+
+intrinsic Sage(X::RngSerPow) -> MonStgElt, BoolElt
+{}
+  txt := "PowerSeriesRing(%o, %o)";
+  return Sprintf(txt, Sage(BaseRing(X)), SageNamesHelper(X)), false;
+end intrinsic;
+
+intrinsic Sage(X::RngSerLaur) -> MonStgElt, BoolElt
+{}
+  txt := "LaurentSeriesRing(%o, %o)";
+  return Sprintf(txt, Sage(BaseRing(X)), SageNamesHelper(X)), false;
+end intrinsic;
+
+intrinsic Sage(X::RngSerPuis) -> MonStgElt, BoolElt
+{}
+  txt := "PuiseuxSeriesRing(%o, %o)";
+  return Sprintf(txt, Sage(BaseRing(X)), SageNamesHelper(X)), false;
 end intrinsic;

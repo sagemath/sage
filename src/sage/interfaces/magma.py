@@ -221,11 +221,6 @@ import os
 
 from sage.structure.parent import Parent
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-PROMPT = ">>>"
-
-SAGE_REF = "_sage_ref"
-SAGE_REF_RE = re.compile(r'%s\d+' % SAGE_REF)
-
 from sage.env import SAGE_EXTCODE, DOT_SAGE
 import sage.misc.misc
 import sage.misc.sage_eval
@@ -233,15 +228,21 @@ import sage.interfaces.abc
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
 
+PROMPT = ">>>"
+
+SAGE_REF = "_sage_ref"
+SAGE_REF_RE = re.compile(r'%s\d+' % SAGE_REF)
+
 INTRINSIC_CACHE = '%s/magma_intrinsic_cache.sobj' % DOT_SAGE
 EXTCODE_DIR = None
 
 
-def extcode_dir(iface=None):
+def extcode_dir(iface=None) -> str:
     """
-    Return directory that contains all the Magma extcode.  This is put
-    in a writable directory owned by the user, since when attached,
-    Magma has to write sig and lck files.
+    Return directory that contains all the Magma extcode.
+
+    This is put in a writable directory owned by the user, since when
+    attached, Magma has to write sig and lck files.
 
     EXAMPLES::
 
@@ -413,7 +414,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return reduce_load_Magma, tuple([])
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         """
         Return the command in Magma that reads in the contents of the given
         file.
@@ -433,7 +434,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return 'load "%s";' % filename
 
-    def _post_process_from_file(self, s):
+    def _post_process_from_file(self, s) -> str:
         r"""
         Used internally in the Magma interface to post-process the result
         of evaluating a string using a file. For Magma what this does is
@@ -462,7 +463,7 @@ class Magma(ExtraTabCompletion, Expect):
             return ''
         return s[i + 1:]
 
-    def __getattr__(self, attrname):
+    def __getattr__(self, attrname) -> MagmaFunction:
         """
         Return a formal wrapper around a Magma function, or raise an
         :exc:`AttributeError` if attrname starts with an underscore.
@@ -494,7 +495,7 @@ class Magma(ExtraTabCompletion, Expect):
             raise AttributeError
         return MagmaFunction(self, attrname)
 
-    def eval(self, x, strip=True, **kwds):
+    def eval(self, x, strip=True, **kwds) -> str:
         """
         Evaluate the given block x of code in Magma and return the output
         as a string.
@@ -553,7 +554,7 @@ class Magma(ExtraTabCompletion, Expect):
             raise RuntimeError("Error evaluating Magma code.\nIN:%s\nOUT:%s" % (x, ans))
         return ans
 
-    def _preparse(self, s):
+    def _preparse(self, s) -> str:
         """
         All input gets preparsed by calling this function before it gets evaluated.
 
@@ -578,7 +579,7 @@ class Magma(ExtraTabCompletion, Expect):
             pass
         return s
 
-    def _start(self):
+    def _start(self) -> None:
         """
         Initialize a Magma interface instance. This involves (1) setting up
         an obfuscated prompt, and (2) attaching the MAGMA_SPEC file (see
@@ -619,7 +620,7 @@ class Magma(ExtraTabCompletion, Expect):
         if out.lower().find("error") != -1:
             raise TypeError("Error executing Magma code:\n%s" % out)
 
-    def get(self, var):
+    def get(self, var) -> str:
         """
         Get the value of the variable var.
 
@@ -1880,10 +1881,11 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
     def _sage_(self):
         """
-        Return Sage version of this object. Use self.sage() to get the Sage
-        version.
+        Return Sage version of this object.
 
-        Edit src/ext/magma/sage/basic.m to add functionality.
+        Use self.sage() to get the Sage version.
+
+        Edit ``src/sage/ext_data/magma/sage/basic.m`` to add functionality.
 
         EXAMPLES: Enumerated Sets::
 
