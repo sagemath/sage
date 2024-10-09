@@ -1314,20 +1314,21 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
                      "typed flags": typed_flags
                     }
         
-        if is_json:
-            import json
-            file = self._certs_dir() + file
-            with open(file, "w") as f:
-                json.dump(cert_dict, f, indent=2, default=str)
-        else:
-            import pickle
-            if not file.endswith(".pickle"):
-                file += ".pickle"
-            file = self._certs_dir() + file
-            with open(file, "wb") as f:
-                pickle.dump(cert_dict, f)
+        if file!="default":
+            if is_json:
+                import json
+                file = self._certs_dir() + file
+                with open(file, "w") as f:
+                    json.dump(cert_dict, f, indent=2, default=str)
+            else:
+                import pickle
+                if not file.endswith(".pickle"):
+                    file += ".pickle"
+                file = self._certs_dir() + file
+                with open(file, "wb") as f:
+                    pickle.dump(cert_dict, f)
         
-        return result
+        return cert_dict
     
     def optimize_problem(self, target_element, target_size, maximize=True, positives=None, \
                          construction=None, file=None, exact=False, denom=1024):
