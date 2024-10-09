@@ -160,7 +160,7 @@ class ChowRing(QuotientRing_generic):
             True
 
         """
-        flats = [X for i in range(1, self._matroid.rank())
+        flats = [X for i in range(1, self._matroid.rank() + 1)
                  for X in self._matroid.flats(i)] #Non empty flats
         flats_gen = self._ideal.flats_generator()
         R = self._ideal.ring()
@@ -184,8 +184,8 @@ class ChowRing(QuotientRing_generic):
                         for i in range(1, k):
                             max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
                         for p in max_powers:
-                            if p != 1 & p != 0:
-                                for combination in product(*(range(1, p))):
+                            if p != 1 | p != 0:
+                                for combination in product((range(1, p))):
                                         #Generating combinations for all powers up to max_powers
                                         expression = R.one()
                                         for i in range(k):
@@ -203,61 +203,52 @@ class ChowRing(QuotientRing_generic):
                     if subset == []:
                         monomial_basis.append(R.one())
                     else:
-                        for i in range(k-1):
+                        for i in range(k):
                             if i == 0:
                                 max_powers.append(ranks[subset[i]])
                             else:
                                 max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
-                        max_powers.append(ranks[subset[k-1]])
-                        first_rank = ranks[subset[0]] + 1
-                        last_rank = ranks[subset[k-1]]
-                        for p in max_powers:
-                            if p != 1 & p != 0:
-                                for combination in product(*(range(1, p))):
-                                    #Generating combinations for all powers from 1 to max_powers
-                                    expression = R.one()
-                                    if sum(combination) == first_rank:
-                                        for i in range(k):
-                                            expression *= flats_gen[subset[i]]**combination[i]
-                                        monomial_basis.append(expression)
-                        max_powers.remove(last_rank)
-                        for p in max_powers:
-                            if p != 1 & p != 0:
-                                for combination in product(*(range(1, p))):
-                                    #Generating all combinations including 0 power and max_power for first flat
-                                    expression = R.one()
-                                    if sum(combination) == first_rank:
-                                        for i in range(len(combination)):
-                                            expression *= flats_gen[subset[i]]**combination[i]
-                                        monomial_basis.append(expression)
-                                    else:
-                                        expression *= flats_gen[subset[k-1]]**last_rank
-                                        if sum(combination) + last_rank == first_rank:
-                                            for i in range(k):
-                                                expression *= flats_gen[subset[i]]**combination[i]
-                                        monomial_basis.append(expression)
+                        first_rank = ranks[subset[k-1]] + 1
+                        last_rank = ranks[subset[0]]
+                        for combination in product(*(range(1, p) for p in max_powers)):
+                            #Generating combinations for all powers from 1 to max_powers
+                            if sum(combination) == first_rank:
+                                expression = R.one()
+                                for i in range(k):
+                                    expression *= flats_gen[subset[i]]**combination[i]
+                                monomial_basis.append(expression)
+                        max_powers[0] = 0
+                        for combination in product(*(range(1, p) for p in max_powers)):
+                            #Generating all combinations including 0 power and max_power for first flat
+                            if sum(combination) == first_rank:
+                                expression = R.one()
+                                for i in range(len(combination)):
+                                    expression *= flats_gen[subset[i]]**combination[i]
+                                monomial_basis.append(expression)
+                            else:
+                                expression *= flats_gen[subset[0]]**last_rank
+                                if sum(combination) + last_rank == first_rank:
+                                    for i in range(k):
+                                        expression *= flats_gen[subset[i]]**combination[i]
+                                monomial_basis.append(expression)
 
         else:
             for subset in chains:
                 max_powers = []
                 k = len(subset)
-                if k == 0:
+                if (k == 0):
                     monomial_basis.append(R.one())
-                elif k == 1 & ranks[subset[0]] == 1:
-                    monomial_basis.append(flats_gen[subset[0]])
-                else:
+                elif not ((k == 1) & (ranks[subset[0]] == 1)):
                     for i in range(k):
                         if i == 0:
                             max_powers.append(ranks[subset[i]])
                         else:
                             max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
-                    for p in max_powers:
-                        if p != 1 & p != 0:
-                            for combination in product(*(range(1, p))):
-                                expression = R.one()
-                                for i in range(k):
-                                    expression *= flats_gen[subset[i]]**combination[i]
-                                monomial_basis.append(expression)
+                    for combination in product(*(range(1, p) for p in max_powers)):
+                        expression = R.one()
+                        for i in range(k):
+                            expression *= flats_gen[subset[i]]**combination[i]
+                        monomial_basis.append(expression)
 
         from sage.sets.family import Family
         return Family([self.element_class(self, mon, reduce=False) for mon in monomial_basis])
