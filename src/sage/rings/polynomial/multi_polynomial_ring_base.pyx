@@ -22,10 +22,15 @@ from sage.arith.misc import binomial
 
 from sage.rings.integer_ring import ZZ
 
-from sage.rings.polynomial import polynomial_ring
+from sage.categories.action import Action
+from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.constructor import matrix as MatrixConstructor
+from operator import matmul
+
+from sage.rings.polynomial import multi_polynomial_ideal, polynomial_ring
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
-                                          polynomial_default_category)
+   polynomial_default_category)
 
 
 def is_MPolynomialRing(x):
@@ -109,6 +114,38 @@ cdef class MPolynomialRing_base(CommutativeRing):
             False
         """
         return self.base_ring().is_integral_domain(proof)
+
+    cpdef _get_action_(self, G, op, bint self_on_left):
+        r"""
+        Return the action of ``G``  by ``op`` on ``self``.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.Sp(4,GF(2))
+            sage: R.<w,x,y,z>=GF(2)[]
+            sage: p=x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
+            sage: g=G.1
+            sage: g
+            [0 0 1 0]
+            [1 0 0 0]
+            [0 0 0 1]
+            [0 1 0 0]
+            sage: g@p
+            w*x*y*z + w*z^2
+            sage: p2=x+y^2
+            sage: g2=G.0
+            sage: g2
+            [1 0 1 1]
+            [1 0 0 1]
+            [0 1 0 1]
+            [1 1 1 1]
+            sage: g2@p2
+            x^2 + z^2 + w + z
+        """
+        from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
+        if isinstance(G, MatrixGroup_generic) and self.base_ring().has_coerce_map_from(G.base_ring()) and op == matmul and not self_on_left:
+            return MatrixPolynomialAction(G, self)
+        return super(MPolynomialRing_base, self)._get_action_(G, op, self_on_left)
 
     def is_noetherian(self):
         """
@@ -1787,3 +1824,100 @@ def unpickle_MPolynomialRing_generic(base_ring, n, names, order):
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
     return PolynomialRing(base_ring, n, names=names, order=order)
+
+class MatrixPolynomialAction(Action):
+    def __init__(self, MS, PR):
+        """
+        Initialize ``self``.
+
+        INPUT:
+
+        - ``MS`` -- the matrix space for the action
+        - ``PR`` -- the polynomial ring where the action takes place
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.Sp(4,GF(2))
+            sage: R.<w,x,y,z>=GF(2)[]
+            sage: p = x*y^2 + w*x*y*z + 4*w^2*z+2*y*w^2
+            sage: g = G.1
+            sage: from operator import matmul
+            sage: A = p.parent()._get_action_(g.parent(), matmul, False)
+            sage: TestSuite(A).run()
+        """
+        self._poly_vars = PR.gens()
+        self._vars_vector = MatrixConstructor(self._poly_vars).transpose()
+        self.MS = MS
+        self.PR = PR
+        super().__init__(MS, PR, op=matmul)
+
+    def _act_(self, mat, polynomial):
+        """
+        Return the action of the matrix ``mat`` on ``polynomial``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+            sage: R.<x, y, z> = PolynomialRing(GF(2), 3)
+            sage: M = Matrix(GF(2), [[1, 1, 0], [0, 1, 1], [1, 0, 1]])
+            sage: p = x*y + y*z + z^2
+            sage: A = MatrixPolynomialAction(M.parent(), R)  # using M.parent() to get the matrix space
+            sage: A._act_(M, p)
+            x^2 + y^2
+        """
+        assert mat.base_ring() == polynomial.base_ring()
+        vars_to_sub_module_context = mat * self._vars_vector
+        vars_to_sub_ring_context = map(PolynomialRing(mat.base_ring(), self._poly_vars), vars_to_sub_module_context)
+        substitution_dict = {v: s for v, s in zip(self._poly_vars, vars_to_sub_ring_context)}
+        return polynomial.subs(substitution_dict)
+    
+    def __eq__(self, other):
+        """
+        Check if ``self`` equals ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+            sage: M = MatrixSpace(GF(2), 2)
+            sage: R = PolynomialRing(GF(2), 2, 'x')
+            sage: A1 = MatrixPolynomialAction(M, R)
+            sage: A2 = MatrixPolynomialAction(M, R)
+            sage: A1 == A2
+            True
+        """        
+        if isinstance(other, MatrixPolynomialAction):
+            return self.MS == other.MS and self.PR == other.PR
+        return False
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+            sage: M = MatrixSpace(GF(2), 2)
+            sage: R = PolynomialRing(GF(2), 2, 'x')
+            sage: A1 = MatrixPolynomialAction(M, R)
+            sage: A2 = MatrixPolynomialAction(M, R)
+            sage: hash(A1)==hash(A2)
+            True
+        """        
+        return hash((self.MS, self.PR))
+        
+    def __reduce__(self):
+        """
+        Return data for creating a pickle of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.multi_polynomial_ring_base import MatrixPolynomialAction
+        sage: M = MatrixSpace(GF(2), 2)
+        sage: R = PolynomialRing(GF(2), 2, 'x')
+        sage: A = MatrixPolynomialAction(M, R)
+        sage: A.__reduce__()
+        (<class 'sage.rings.polynomial.multi_polynomial_ring_base.MatrixPolynomialAction'>,
+            (Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 2,
+            Multivariate Polynomial Ring in x0, x1 over Finite Field of size 2))
+        """        
+        return (type(self), (self.MS, self.PR))
