@@ -150,6 +150,15 @@ def orient(G, f, weighted=None, data_structure=None, sparse=None,
         <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
         sage: G.orient(foo, immutable=False, sparse=False)._backend
         <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: G.orient(foo, data_structure=None, immutable=None, sparse=True)._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: G.orient(foo, data_structure=None, immutable=None, sparse=False)._backend
+        <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
+        sage: G.orient(foo, data_structure=None, immutable=None, sparse=None)._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: H = Graph(data_structure='dense')
+        sage: H.orient(foo, data_structure=None, immutable=None, sparse=None)._backend
+        <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
     """
     # Which data structure should be used ?
     if data_structure is not None:
