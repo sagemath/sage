@@ -1118,10 +1118,8 @@ class EllipticCurveHom(Morphism):
         imP = self._eval(P)
         imQ = self._eval(Q)
 
-        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
-        H = AdditiveAbelianGroupWrapper(R.parent(), [R,S], [n,n])
-        vecP = H.discrete_log(imP)
-        vecQ = H.discrete_log(imQ)
+        vecP = imP.log([R, S])
+        vecQ = imQ.log([R, S])
 
         from sage.matrix.constructor import matrix
         from sage.rings.finite_rings.integer_mod_ring import Zmod
