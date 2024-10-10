@@ -938,6 +938,143 @@ class GenericGraph(GenericGraph_pyx):
 
         return self.latex_options().latex()
 
+    def tikz(self, format='dot2tex', edge_labels=None,
+            color_by_label=False, prog='dot', rankdir='down',
+            use_sage_preamble=None, **kwds):
+        r"""
+        Return a TikzPicture of the graph.
+
+        INPUT:
+
+        - ``format`` -- string (default: ``None``), ``'dot2tex'`` or
+          ``'tkz_graph'``. If ``None``, it is set to ``'dot2tex'`` if
+          dot2tex is present, otherwise it is set to ``'tkz_graph'``.
+        - ``edge_labels`` -- bool (default: ``None``), if ``None``
+          it is set to ``True`` if and only if format is ``'dot2tex'``
+        - ``color_by_label`` -- bool (default: ``False``)
+        - ``use_sage_preamble`` -- bool (default: ``None``), if ``None``
+          it is set to ``True`` if and only if format is ``'tkz_graph'``
+
+        When using format ``'dot2tex'``, the following inputs are considered:
+
+        - ``prog`` -- string (default: ``'dot'``) the program used for the
+          layout corresponding to one of the software of the graphviz
+          suite: 'dot', 'neato', 'twopi', 'circo' or 'fdp'.
+        - ``rankdir`` -- string (default: ``'down'``)
+        - ``subgraph_clusters`` -- (default: ``[]``) a list of lists of
+          vertices, if supported by the layout engine, nodes belonging to
+          the same cluster subgraph are drawn together, with the entire
+          drawing of the cluster contained within a bounding rectangle.
+
+        OUTPUT:
+
+            An instance of :mod:`sage.misc.latex_standalone.TikzPicture`.
+
+        .. NOTE::
+
+            Prerequisite: dot2tex optional Sage package and graphviz must be
+            installed when using format ``'dot2tex'``.
+
+        EXAMPLES::
+
+            sage: g = graphs.PetersenGraph()
+            sage: tikz = g.tikz()                              # optional - dot2tex graphviz
+            sage: _ = tikz.pdf()      # not tested
+
+        ::
+
+            sage: tikz = g.tikz(format='tkz_graph')
+            sage: _ = tikz.pdf()      # not tested
+
+        Using another value for ``prog``::
+
+            sage: tikz = g.tikz(prog='neato',        # long time (3s), optional - dot2tex graphviz
+            ....:               color_by_label=True)
+            sage: _ = tikz.pdf()      # not tested
+
+        Using another value for ``rankdir``::
+
+            sage: tikz = g.tikz(rankdir='right')     # long time (3s), optional - dot2tex graphviz
+            sage: _ = tikz.pdf()      # not tested
+
+        Using subgraphs clusters (broken when using labels, see
+        :issue:`22070`)::
+
+            sage: S = FiniteSetMaps(5)
+            sage: I = S((0,1,2,3,4))
+            sage: a = S((0,1,3,0,0))
+            sage: b = S((0,2,4,1,0))
+            sage: roots = [I]
+            sage: succ = lambda v: [v*a,v*b,a*v,b*v]
+            sage: R = RecursivelyEnumeratedSet(roots, succ)
+            sage: G = R.to_digraph()
+            sage: G
+            Looped multi-digraph on 27 vertices
+            sage: C = G.strongly_connected_components()
+            sage: tikz = G.tikz(subgraph_clusters=C)    # optional - dot2tex graphviz
+            sage: _ = tikz.pdf()      # not tested
+
+        An example coming from ``graphviz_string`` documentation in SageMath::
+
+            sage: # needs sage.symbolic
+            sage: f(x) = -1 / x
+            sage: g(x) = 1 / (x + 1)
+            sage: G = DiGraph()
+            sage: G.add_edges((i, f(i), f) for i in (1, 2, 1/2, 1/4))
+            sage: G.add_edges((i, g(i), g) for i in (1, 2, 1/2, 1/4))
+            sage: tikz = G.tikz(format='dot2tex')    # optional - dot2tex graphviz
+            sage: _ = tikz.pdf()                       # not tested
+            sage: def edge_options(data):
+            ....:     u, v, label = data
+            ....:     options = {"color": {f: "red", g: "blue"}[label]}
+            ....:     if (u,v) == (1/2, -2): options["label"]       = "coucou"; options["label_style"] = "string"
+            ....:     if (u,v) == (1/2,2/3): options["dot"]         = "x=1,y=2"
+            ....:     if (u,v) == (1,   -1): options["label_style"] = "latex"
+            ....:     if (u,v) == (1,  1/2): options["dir"]         = "back"
+            ....:     return options
+            sage: tikz = G.tikz(format='dot2tex',   # optional - dot2tex graphviz
+            ....:               edge_options=edge_options)
+            sage: _ = tikz.pdf()      # not tested
+
+        """
+        # use format dot2tex by default
+        if format is None:
+            from sage.features import PythonModule
+            if PythonModule("dot2tex").is_present():
+                format = 'dot2tex'
+            else:
+                format = 'tkz_graph'
+
+        # by default draw edge_labels only for dot2tex (because tkz_graph
+        # puts None everywhere which is ugly)
+        if edge_labels is None:
+            if format == 'tkz_graph':
+                edge_labels = False
+            elif format == 'dot2tex':
+                edge_labels = True
+            else:
+                raise ValueError("invalid format(={}), should be 'dot2tex'"
+                        "or 'tkz_graph'".format(format))
+
+        # by default use sage preamble only for format tkz_graph
+        if use_sage_preamble is None:
+            if format == 'tkz_graph':
+                use_sage_preamble = True
+            elif format == 'dot2tex':
+                use_sage_preamble = False
+            else:
+                raise ValueError("invalid format(={}), should be 'dot2tex'"
+                        "or 'tkz_graph'".format(format))
+
+        self.latex_options().set_options(format=format,
+                edge_labels=edge_labels, color_by_label=color_by_label,
+                prog=prog, rankdir=rankdir, **kwds)
+
+        from sage.misc.latex_standalone import TikzPicture
+        return TikzPicture(self._latex_(),
+                           standalone_config=["border=4mm"],
+                           use_sage_preamble=use_sage_preamble)
+
     def _matrix_(self, R=None, vertices=None):
         """
         Return the adjacency matrix of the graph over the specified ring.
