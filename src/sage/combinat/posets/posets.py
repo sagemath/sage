@@ -8945,8 +8945,7 @@ class FinitePosets_n(UniqueRepresentation, Parent):
             sage: list(P)
             [Finite poset containing 2 elements, Finite poset containing 2 elements]
         """
-        from sage.graphs.digraph_generators import DiGraphGenerators
-        for dig in DiGraphGenerators().nauty_posetg(f"{self._n} o"):
+        for dig in digraphs.nauty_posetg(f"{self._n} o"):
             # We need to relabel the digraph since range(self._n) must be a linear
             # extension. Too bad we need to compute this again. TODO: Fix this.
             label_dict = dict(zip(dig.topological_sort(), range(dig.order())))
