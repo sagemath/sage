@@ -4005,7 +4005,7 @@ def _finite_lattices(n):
         sage: sorted((L.cover_relations() for L in _finite_lattices(4)),
         ....:        key=len)
         [[['bottom', 0], [0, 1], [1, 'top']],
-         [['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']]]         
+         [['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']]]
     """
     if n <= 2:
         for P in Posets(n):
