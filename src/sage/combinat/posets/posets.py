@@ -8930,22 +8930,35 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         return P in FinitePosets() and P.cardinality() == self._n
 
     def __iter__(self):
-        """
+        r"""
         Return an iterator of representatives of the isomorphism classes
         of finite posets of a given size.
 
         .. NOTE::
 
-            This uses an iterator from ``nauty`` as a backend to construct
-            transitively-reduced, acyclic digraphs.
+            If the size `n\leq 16`, this uses an iterator from
+            ``nauty`` as a backend to construct only transitively-reduced,
+            acyclic digraphs. Otherwise it uses a slow naive iterator,
+            as the ``nauty`` iterator is not available.
 
         EXAMPLES::
 
             sage: P = Posets(2)
             sage: list(P)
             [Finite poset containing 2 elements, Finite poset containing 2 elements]
+
+        TESTS::
+
+            sage: it = iter(Posets(17))
+            sage: next(it)
+            Finite poset containing 17 elements
         """
-        for dig in digraphs.nauty_posetg(f"{self._n} o"):
+        if self._n <= 16:
+            it = digraphs.nauty_posetg(f"{self._n} o")
+        else:
+            it = digraphs(self._n, is_poset)
+
+        for dig in it:
             # We need to relabel the digraph since range(self._n) must be a linear
             # extension. Too bad we need to compute this again. TODO: Fix this.
             label_dict = dict(zip(dig.topological_sort(), range(dig.order())))
