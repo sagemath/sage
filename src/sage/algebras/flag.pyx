@@ -450,7 +450,7 @@ cdef class Flag(Element):
     
     vertex_number = size
     
-    cpdef blocks(self, as_tuple=False):
+    cpdef blocks(self, as_tuple=False, key=None):
         r"""
         Returns the blocks
 
@@ -463,10 +463,14 @@ cdef class Flag(Element):
             and list (or tuple) of the blocks for that signature.
         """
         if as_tuple:
+            if key != None:
+                return tuple([tuple(yy) for yy in self._blocks[key]])
             ret = {}
             for xx in self._blocks:
                 ret[xx] = tuple([tuple(yy) for yy in self._blocks[xx]])
             return ret
+        if key!=None:
+            return self._blocks[key]
         return self._blocks
     
     cpdef ftype(self):

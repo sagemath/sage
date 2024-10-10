@@ -2255,7 +2255,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         maxstrlen = max([len(xx) for xx in strs])
         flgs = self.flags()
         for ii in range(len(self)):
-            if len(self)<20:
+            if len(self)<10:
                 sttrl.append(('{:<'+str(maxstrlen)+'} - {}').format(strs[ii], str(flgs[ii])))
             else:
                 include = True
