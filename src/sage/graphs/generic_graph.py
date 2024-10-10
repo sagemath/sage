@@ -296,6 +296,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.show3d` | Plot the graph using :class:`~sage.plot.plot3d.tachyon.Tachyon`, and shows the resulting plot.
     :meth:`~GenericGraph.graphviz_string` | Return a representation in the ``dot`` language.
     :meth:`~GenericGraph.graphviz_to_file_named` | Write a representation in the ``dot`` language in a file.
+    :meth:`~GenericGraph.tikz` | Return a :class:`~sage.misc.latex_standalone.TikzPicture` object representing the (di)graph.
 
 **Algorithmically hard stuff:**
 
@@ -968,7 +969,7 @@ class GenericGraph(GenericGraph_pyx):
 
         OUTPUT:
 
-            An instance of :mod:`sage.misc.latex_standalone.TikzPicture`.
+        An instance of :mod:`sage.misc.latex_standalone.TikzPicture`.
 
         .. NOTE::
 
