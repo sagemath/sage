@@ -8961,8 +8961,9 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         for dig in it:
             # We need to relabel the digraph since range(self._n) must be a linear
             # extension. Too bad we need to compute this again. TODO: Fix this.
-            label_dict = dict(zip(dig.topological_sort(), range(dig.order())))
-            yield FinitePoset(dig.relabel(label_dict, inplace=False))
+            label_dict = dict(zip(dig.topological_sort(), range(self._n)))
+            dig.relabel(label_dict, inplace=True)
+            yield FinitePoset(dig)
 
     def cardinality(self, from_iterator=False):
         r"""
