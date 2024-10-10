@@ -8884,11 +8884,11 @@ class FinitePosets_n(UniqueRepresentation, Parent):
         sage: P.cardinality()
         5
         sage: for p in P: print(p.cover_relations())
-        []
-        [[1, 2]]
-        [[0, 1], [0, 2]]
-        [[0, 1], [1, 2]]
         [[1, 2], [0, 2]]
+        [[0, 1], [0, 2]]
+        [[0, 2]]
+        [[0, 1], [1, 2]]
+        []
     """
 
     def __init__(self, n) -> None:
@@ -8945,8 +8945,8 @@ class FinitePosets_n(UniqueRepresentation, Parent):
             sage: list(P)
             [Finite poset containing 2 elements, Finite poset containing 2 elements]
         """
-        from sage.graphs.digraph_generators import DiGraphGenerators
-        for dig in DiGraphGenerators()(self._n, is_poset):
+        from sage.graphs.digraph_generators import DiGraphGenerators as DG
+        for dig in DG().nauty_posetg(f"{self._n} o"):
             # We need to relabel the digraph since range(self._n) must be a linear
             # extension. Too bad we need to compute this again. TODO: Fix this.
             label_dict = dict(zip(dig.topological_sort(), range(dig.order())))
