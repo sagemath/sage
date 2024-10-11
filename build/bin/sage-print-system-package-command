@@ -34,7 +34,7 @@ do
             ;;
         --prompt)
             PROMPT='$ '
-            CONTINUATION='        '
+            CONTINUATION=''
             ;;
         --continuation=*)
             CONTINUATION="${1#--continuation=}"
