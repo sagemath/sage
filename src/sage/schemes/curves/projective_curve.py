@@ -1466,7 +1466,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     # make sure the defining polynomial variable names are the same for K, N
                     N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
                     return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
-        if not self.base_ring() in NumberFields():
+        if self.base_ring() not in NumberFields():
             raise NotImplementedError("the base ring of this curve must be a number field")
         if not self.is_irreducible():
             raise TypeError("this curve must be irreducible")
@@ -1499,7 +1499,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     try:
                         temp_pt = (temp_qua*temp_exc)(temp_exc.domain()(pts[i]))
                         pts.pop(i)
-                        if not PP(list(temp_pt)) in [PP(list(tpt)) for tpt in pts]:
+                        if PP(list(temp_pt)) not in [PP(list(tpt)) for tpt in pts]:
                             pts.append(temp_pt)
                     except (TypeError, ValueError):
                         pass
@@ -1519,7 +1519,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                 newpts = [PP(list(pt) + [0]) for pt in X.rational_points()]
                 # avoid duplicates
                 for pt in newpts:
-                    if not PP(list(pt)) in [PP(list(tpt)) for tpt in pts]:
+                    if PP(list(pt)) not in [PP(list(tpt)) for tpt in pts]:
                         pts.append(pt)
         return phi
 
@@ -1604,7 +1604,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
         """
         super().__init__(A, X, category=category)
 
-        if not A.base_ring() in Fields():
+        if A.base_ring() not in Fields():
             raise TypeError("curve not defined over a field")
 
         d = super(Curve_generic, self).dimension()
@@ -2296,7 +2296,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         ideal = self.defining_ideal()
         gs = self.ambient_space().gens()
         for i in range(self.ngens()):
-            if not gs[i] in ideal:
+            if gs[i] not in ideal:
                 self._open_affine = self.affine_patch(i)
                 self._open_affine_index = i
                 break
@@ -2733,7 +2733,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         # determine the affine patch where the point lies
         S = prime.ring()
         for i in range(S.ngens()):
-            if not S.gen(i) in prime:
+            if S.gen(i) not in prime:
                 break
 
         phi = self._map_to_function_field
