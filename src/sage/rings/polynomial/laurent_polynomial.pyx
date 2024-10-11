@@ -1126,7 +1126,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return self.__u.is_monomial()
 
-    def __pow__(_self, r, dummy):
+    def __pow__(_self, r, mod):
         """
         EXAMPLES::
 
@@ -1145,9 +1145,21 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             x^-8
             sage: (5*x^-4)^-3
             5*x^12
+
+        Check that using third argument raises an error::
+
+            sage: L.<x> = LaurentPolynomialRing(R)
+            sage: pow(x, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
         cdef LaurentPolynomial_univariate self = _self
         cdef long right = r
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
         if right != r:
             raise ValueError("exponent must be an integer")
         try:

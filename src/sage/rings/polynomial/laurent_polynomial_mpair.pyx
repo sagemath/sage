@@ -460,7 +460,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             return P({e: c})
         return super().__invert__()
 
-    def __pow__(LaurentPolynomial_mpair self, n, m):
+    def __pow__(LaurentPolynomial_mpair self, n, mod):
         """
         EXAMPLES::
 
@@ -480,8 +480,20 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f = (x+y+z^-1)^2
             sage: f.substitute(z=1)
             x^2 + 2*x*y + y^2 + 2*x + 2*y + 1
+
+        Check that using third argument raises an error::
+
+            sage: L.<x,y,z> = LaurentPolynomialRing(R)
+            sage: pow(x + y + z, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
         cdef LaurentPolynomial_mpair ans
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
         if n < 0:
             return ~(self ** -n)
         ans = self._new_c()

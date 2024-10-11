@@ -1671,7 +1671,7 @@ cdef class NCPolynomial_plural(RingElement):
         else:
             return (<NCPolynomialRing_plural>left._parent).fraction_field()(left,right)
 
-    def __pow__(NCPolynomial_plural self, exp, ignored):
+    def __pow__(NCPolynomial_plural self, exp, mod):
         """
         Return ``self**(exp)``.
 
@@ -1697,7 +1697,22 @@ cdef class NCPolynomial_plural(RingElement):
             Traceback (most recent call last):
             ....
             OverflowError: exponent overflow (2147483648)
+
+        Check that using third argument raises an error::
+
+            sage: A.<x,z,y> = FreeAlgebra(QQ, 3)
+            sage: P = A.g_algebra(relations={y*x:-x*y + z},  order='lex')
+            sage: P.inject_variables()
+            Defining x, z, y
+            sage: pow(x + y + z, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
         if type(exp) is not Integer:
             try:
                 exp = Integer(exp)
