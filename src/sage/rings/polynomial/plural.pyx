@@ -1403,7 +1403,7 @@ def unpickle_NCPolynomial_plural(NCPolynomialRing_plural R, d):
     cdef int _i, _e
     p = p_ISet(0,r)
     rChangeCurrRing(r)
-    for mon,c in d.iteritems():
+    for mon, c in d.items():
         m = p_Init(r)
         for i,e in mon.sparse_iter():
             _i = i
@@ -2217,6 +2217,9 @@ cdef class NCPolynomial_plural(RingElement):
 
             sage: f = (2*x*y^3*z^2 + (7)*x^2 + (3))
             sage: f.dict()
+            {(0, 0, 0): 3, (1, 2, 3): 2, (2, 0, 0): 7}
+
+            sage: f.monomial_coefficients()
             {(0, 0, 0): 3, (1, 2, 3): 2, (2, 0, 0): 7}
         """
         cdef poly *p

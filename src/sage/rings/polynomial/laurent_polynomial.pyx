@@ -218,7 +218,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         """
         return self.number_of_terms()
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         """
         Abstract ``dict`` method.
 
@@ -226,12 +226,14 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
             sage: R.<x> = LaurentPolynomialRing(ZZ)
             sage: from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial
-            sage: LaurentPolynomial.dict(x)
+            sage: LaurentPolynomial.monomial_coefficients(x)
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError
+
+    dict = monomial_coefficients
 
     def map_coefficients(self, f, new_base_ring=None):
         """
@@ -294,7 +296,8 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
             R = R.change_ring(new_base_ring)
         elif isinstance(f, Map):
             R = R.change_ring(f.codomain())
-        return R(dict([(k, f(v)) for (k, v) in self.dict().items()]))
+        return R(dict([(k, f(v))
+                       for k, v in self.monomial_coefficients().items()]))
 
 
 cdef class LaurentPolynomial_univariate(LaurentPolynomial):
@@ -838,7 +841,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         d = {repr(g): R.var(g) for g in self._parent.gens()}
         return self.subs(**d)
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         """
         Return a dictionary representing ``self``.
 
@@ -848,11 +851,18 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: Q.<t> = LaurentPolynomialRing(R)
             sage: f = (x^3 + y/t^3)^3 + t^2; f
             y^3*t^-9 + 3*x^3*y^2*t^-6 + 3*x^6*y*t^-3 + x^9 + t^2
+            sage: f.monomial_coefficients()
+            {-9: y^3, -6: 3*x^3*y^2, -3: 3*x^6*y, 0: x^9, 2: 1}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {-9: y^3, -6: 3*x^3*y^2, -3: 3*x^6*y, 0: x^9, 2: 1}
         """
-        cdef dict d = self.__u.dict()
-        return {k+self.__n: d[k] for k in d}
+        cdef dict d = self.__u.monomial_coefficients()
+        return {k + self.__n: d[k] for k in d}
+
+    dict = monomial_coefficients
 
     def coefficients(self):
         """
@@ -2136,7 +2146,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             Multivariate Polynomial Ring in t, tinv over Rational Field
         """
         dres = {}
-        for (e, c) in self.dict().items():
+        for e, c in self.monomial_coefficients().items():
             if e > 0:
                 dres[(e, 0)] = c
             else:

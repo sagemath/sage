@@ -26,6 +26,7 @@ from sage.rings.polynomial import polynomial_ring
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
                                           polynomial_default_category)
+from sage.rings.polynomial.polydict cimport ETuple
 
 
 def is_MPolynomialRing(x):
@@ -617,14 +618,15 @@ cdef class MPolynomialRing_base(CommutativeRing):
         a dict with respect to ``self.variable_names()``.
         """
         # This is probably horribly inefficient
-        from sage.rings.polynomial.polydict import ETuple
         other_vars = list(x.parent().variable_names())
-        name_mapping = [(other_vars.index(var) if var in other_vars else -1) for var in self.variable_names()]
+        name_mapping = [(other_vars.index(var) if var in other_vars else -1)
+                        for var in self.variable_names()]
         K = self.base_ring()
         D = {}
         var_range = range(len(self.variable_names()))
-        for ix, a in x.dict().iteritems():
-            ix = ETuple([0 if name_mapping[t] == -1 else ix[name_mapping[t]] for t in var_range])
+        for ix, a in x.monomial_coefficients().items():
+            ix = ETuple([0 if name_mapping[t] == -1 else ix[name_mapping[t]]
+                         for t in var_range])
             D[ix] = K(a)
         return D
 
@@ -1371,7 +1373,22 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: m = R.monomial(1,2,3)
             sage: R.monomial(*m.degrees()) == m
             True
+
+        We also allow to specify the exponents in a single tuple::
+
+            sage: R.monomial(e)
+            x*y^2*z^3
+
+        TESTS:
+
+        Check that ETuples also work::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: R.monomial(ETuple(e))
+            x*y^2*z^3
         """
+        if len(exponents) == 1 and isinstance((e := exponents[0]), (tuple, ETuple)):
+            return self({e: self.base_ring().one()})
         return self({exponents: self.base_ring().one()})
 
     def monomials_of_degree(self, degree):

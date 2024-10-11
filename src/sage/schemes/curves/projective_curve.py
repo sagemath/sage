@@ -1105,7 +1105,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             for i in range(len(L)):
                 degs[i] = min(F.degree(L[i]), degs[i])
         T = []
-        for item in G.dict().items():
+        for item in G.monomial_coefficients().items():
             tup = tuple([item[0][i] - degs[i] for i in range(len(L))])
             T.append((tup, item[1]))
         G = R(dict(T))
@@ -1280,11 +1280,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     if j == 0:
                         div_pow = min(e[1] for e in npoly.exponents())
                         npoly = PP.coordinate_ring()({(v0, v1 - div_pow, v2): g
-                                                      for (v0, v1, v2), g in npoly.dict().items()})
+                                                      for (v0, v1, v2), g in npoly.monomial_coefficients().items()})
                     else:
                         div_pow = min(e[0] for e in npoly.exponents())
                         npoly = PP.coordinate_ring()({(v0 - div_pow, v1, v2): g
-                                                      for (v0, v1, v2), g in npoly.dict().items()})
+                                                      for (v0, v1, v2), g in npoly.monomial_coefficients().items()})
                     # check the degree again
                     if npoly.degree() != d - r:
                         need_continue = True
