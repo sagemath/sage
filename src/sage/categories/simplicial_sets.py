@@ -407,13 +407,13 @@ class SimplicialSets(Category_singleton):
                 EXAMPLES::
 
                     sage: RP2 = simplicial_sets.RealProjectiveSpace(2)                  # needs sage.graphs sage.groups
-                    sage: phi = RP2.universal_cover_map(); phi                          # needs sage.graphs sage.groups
+                    sage: phi = RP2.universal_cover_map(); phi                          # needs sage.graphs sage.groups gap_package_polenta
                     Simplicial set morphism:
                       From: Simplicial set with 6 non-degenerate simplices
                       To:   RP^2
                       Defn: [(1, 1), (1, e), (f, 1), (f, e), (f * f, 1), (f * f, e)]
                             --> [1, 1, f, f, f * f, f * f]
-                    sage: phi.domain().face_data()                                      # needs sage.graphs sage.groups
+                    sage: phi.domain().face_data()                                      # needs sage.graphs sage.groups gap_package_polenta
                         {(1, 1): None,
                          (1, e): None,
                          (f, 1): ((1, e), (1, 1)),
@@ -564,7 +564,7 @@ class SimplicialSets(Category_singleton):
                     sage: RP3 = simplicial_sets.RealProjectiveSpace(3)
                     sage: C = RP3.universal_cover(); C
                     Simplicial set with 8 non-degenerate simplices
-                    sage: C.face_data()
+                    sage: C.face_data()  # needs gap_package_polenta
                     {(1, 1): None,
                      (1, e): None,
                      (f, 1): ((1, e), (1, 1)),
