@@ -99,6 +99,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
         else:
             category = polynomial_default_category(base_ring.category(), n)
         Ring.__init__(self, base_ring, names, category=category)
+        from sage.combinat.integer_vector import IntegerVectors
+        self._indices = IntegerVectors(self._ngens)
 
     def is_integral_domain(self, proof=True):
         """
