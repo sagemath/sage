@@ -3023,116 +3023,6 @@ class Graph(GenericGraph):
     # Orientations
 
     @doc_index("Connectivity, orientations, trees")
-    def minimum_outdegree_orientation(self, use_edge_labels=False, solver=None, verbose=0,
-                                      *, integrality_tolerance=1e-3):
-        r"""
-        Return an orientation of ``self`` with the smallest possible maximum
-        outdegree.
-
-        Given a Graph `G`, it is polynomial to compute an orientation `D` of the
-        edges of `G` such that the maximum out-degree in `D` is minimized. This
-        problem, though, is NP-complete in the weighted case [AMOZ2006]_.
-
-        INPUT:
-
-        - ``use_edge_labels`` -- boolean (default: ``False``)
-
-          - When set to ``True``, uses edge labels as weights to compute the
-            orientation and assumes a weight of `1` when there is no value
-            available for a given edge.
-
-          - When set to ``False`` (default), gives a weight of 1 to all the
-            edges.
-
-        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
-          Linear Programming (MILP) solver to be used. If set to ``None``, the
-          default one is used. For more information on MILP solvers and which
-          default solver is used, see the method :meth:`solve
-          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-          :class:`MixedIntegerLinearProgram
-          <sage.numerical.mip.MixedIntegerLinearProgram>`.
-
-        - ``verbose`` -- integer (default: 0); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
-
-        - ``integrality_tolerance`` -- float; parameter for use with MILP
-          solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
-
-        EXAMPLES:
-
-        Given a complete bipartite graph `K_{n,m}`, the maximum out-degree of an
-        optimal orientation is `\left\lceil \frac {nm} {n+m}\right\rceil`::
-
-            sage: g = graphs.CompleteBipartiteGraph(3,4)
-            sage: o = g.minimum_outdegree_orientation()                                 # needs sage.numerical.mip
-            sage: max(o.out_degree()) == integer_ceil((4*3)/(3+4))                      # needs sage.numerical.mip
-            True
-        """
-        self._scream_if_not_simple()
-        if self.is_directed():
-            raise ValueError("Cannot compute an orientation of a DiGraph. "
-                             "Please convert it to a Graph if you really mean it.")
-
-        if use_edge_labels:
-            from sage.rings.real_mpfr import RR
-
-            def weight(e):
-                l = self.edge_label(e)
-                return l if l in RR else 1
-        else:
-            def weight(e):
-                return 1
-
-        from sage.numerical.mip import MixedIntegerLinearProgram
-
-        p = MixedIntegerLinearProgram(maximization=False, solver=solver)
-        degree = p.new_variable(nonnegative=True)
-
-        # The orientation of an edge is boolean and indicates whether the edge
-        # uv goes from u to v ( equal to 0 ) or from v to u ( equal to 1)
-        orientation = p.new_variable(binary=True)
-
-        # Whether an edge adjacent to a vertex u counts positively or
-        # negatively. To do so, we first fix an arbitrary extremity per edge uv.
-        ext = {frozenset(e): e[0] for e in self.edge_iterator(labels=False)}
-
-        def outgoing(u, e, variable):
-            if u == ext[frozenset(e)]:
-                return variable
-            else:
-                return 1 - variable
-
-        for u in self:
-            p.add_constraint(p.sum(weight(e) * outgoing(u, e, orientation[frozenset(e)])
-                                   for e in self.edge_iterator(vertices=[u], labels=False))
-                             - degree['max'], max=0)
-
-        p.set_objective(degree['max'])
-
-        p.solve(log=verbose)
-
-        orientation = p.get_values(orientation, convert=bool, tolerance=integrality_tolerance)
-
-        # All the edges from self are doubled in O
-        # ( one in each direction )
-        from sage.graphs.digraph import DiGraph
-        O = DiGraph(self)
-
-        # Builds the list of edges that should be removed
-        edges = []
-
-        for e in self.edge_iterator(labels=None):
-            if orientation[frozenset(e)]:
-                edges.append(e[::-1])
-            else:
-                edges.append(e)
-
-        O.delete_edges(edges)
-
-        return O
-
-    @doc_index("Connectivity, orientations, trees")
     def bounded_outdegree_orientation(self, bound, solver=None, verbose=False,
                                       *, integrality_tolerance=1e-3):
         r"""
@@ -9580,6 +9470,7 @@ class Graph(GenericGraph):
     from sage.graphs.orientations import strong_orientations_iterator
     from sage.graphs.orientations import random_orientation
     from sage.graphs.orientations import acyclic_orientations
+    from sage.graphs.orientations import minimum_outdegree_orientation
     from sage.graphs.connectivity import bridges, cleave, spqr_tree
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.comparability import is_comparability
@@ -9634,6 +9525,7 @@ _additional_categories = {
     "strong_orientations_iterator" : "Connectivity, orientations, trees",
     "random_orientation"        : "Connectivity, orientations, trees",
     "acyclic_orientations"      : "Connectivity, orientations, trees",
+    "minimum_outdegree_orientation": "Connectivity, orientations, trees",
     "bridges"                   : "Connectivity, orientations, trees",
     "cleave"                    : "Connectivity, orientations, trees",
     "spqr_tree"                 : "Connectivity, orientations, trees",

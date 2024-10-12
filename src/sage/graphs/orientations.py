@@ -17,6 +17,7 @@ etc.). It also implements some iterators over all these orientations.
     :meth:`strong_orientation` | Return a strongly connected orientation of the graph `G`.
     :meth:`strong_orientations_iterator` | Return an iterator over all strong orientations of a graph `G`
     :meth:`random_orientation` | Return a random orientation of a graph `G`
+    :meth:`minimum_outdegree_orientation` | Return an orientation of `G` with the smallest possible maximum outdegree.
 
 
 Authors
@@ -872,3 +873,102 @@ def random_orientation(G):
             D.add_edge(v, u, l)
         rbits >>= 1
     return D
+
+
+def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose=0,
+                                  *, integrality_tolerance=1e-3):
+    r"""
+    Return an orientation of `G` with the smallest possible maximum outdegree.
+
+    Given a Graph `G`, it is polynomial to compute an orientation `D` of the
+    edges of `G` such that the maximum out-degree in `D` is minimized. This
+    problem, though, is NP-complete in the weighted case [AMOZ2006]_.
+
+    INPUT:
+
+    - ``use_edge_labels`` -- boolean (default: ``False``)
+
+      - When set to ``True``, uses edge labels as weights to compute the
+        orientation and assumes a weight of `1` when there is no value available
+        for a given edge.
+
+      - When set to ``False`` (default), gives a weight of 1 to all the edges.
+
+    - ``solver`` -- string (default: ``None``); specifies a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``verbose`` -- integer (default: 0); sets the level of verbosity. Set to 0
+      by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring;
+      see :meth:`MixedIntegerLinearProgram.get_values`.
+
+    EXAMPLES:
+
+    Given a complete bipartite graph `K_{n,m}`, the maximum out-degree of an
+    optimal orientation is `\left\lceil \frac {nm} {n+m}\right\rceil`::
+
+        sage: g = graphs.CompleteBipartiteGraph(3,4)
+        sage: o = g.minimum_outdegree_orientation()                                     # needs sage.numerical.mip
+        sage: max(o.out_degree()) == integer_ceil((4*3)/(3+4))                          # needs sage.numerical.mip
+        True
+    """
+    G._scream_if_not_simple()
+    if G.is_directed():
+        raise ValueError("Cannot compute an orientation of a DiGraph. "
+                         "Please convert it to a Graph if you really mean it.")
+
+    if use_edge_labels:
+        from sage.rings.real_mpfr import RR
+
+        def weight(e):
+            label = G.edge_label(e)
+            return label if label in RR else 1
+    else:
+        def weight(e):
+            return 1
+
+    from sage.numerical.mip import MixedIntegerLinearProgram
+
+    p = MixedIntegerLinearProgram(maximization=False, solver=solver)
+    degree = p.new_variable(nonnegative=True)
+
+    # The orientation of an edge is boolean and indicates whether the edge uv
+    # goes from u to v ( equal to 0 ) or from v to u ( equal to 1)
+    orientation = p.new_variable(binary=True)
+
+    # Whether an edge adjacent to a vertex u counts positively or negatively. To
+    # do so, we first fix an arbitrary extremity per edge uv.
+    ext = {frozenset(e): e[0] for e in G.edge_iterator(labels=False)}
+
+    def outgoing(u, e, variable):
+        if u == ext[frozenset(e)]:
+            return variable
+        return 1 - variable
+
+    for u in G:
+        p.add_constraint(p.sum(weight(e) * outgoing(u, e, orientation[frozenset(e)])
+                               for e in G.edge_iterator(vertices=[u], labels=False))
+                         - degree['max'], max=0)
+
+    p.set_objective(degree['max'])
+
+    p.solve(log=verbose)
+
+    orientation = p.get_values(orientation, convert=bool, tolerance=integrality_tolerance)
+
+    # All the edges from G are doubled in O ( one in each direction )
+    O = DiGraph(G)
+
+    # Builds the list of edges that should be removed
+    edges = (e[::-1] if orientation[frozenset(e)] else e
+             for e in G.edge_iterator(labels=False))
+    O.delete_edges(edges)
+
+    return O
