@@ -3020,302 +3020,6 @@ class Graph(GenericGraph):
         g.delete_edges(e for e in g.edge_iterator(labels=False) if not b[frozenset(e)])
         return g
 
-    # Orientations
-
-    @doc_index("Connectivity, orientations, trees")
-    def bounded_outdegree_orientation(self, bound, solver=None, verbose=False,
-                                      *, integrality_tolerance=1e-3):
-        r"""
-        Compute an orientation of ``self`` such that every vertex `v` has
-        out-degree less than `b(v)`
-
-        INPUT:
-
-        - ``bound`` -- maximum bound on the out-degree. Can be of three
-          different types :
-
-         * An integer `k`. In this case, computes an orientation whose maximum
-           out-degree is less than `k`.
-
-         * A dictionary associating to each vertex its associated maximum
-           out-degree.
-
-         * A function associating to each vertex its associated maximum
-           out-degree.
-
-        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
-          Linear Programming (MILP) solver to be used. If set to ``None``, the
-          default one is used. For more information on MILP solvers and which
-          default solver is used, see the method :meth:`solve
-          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-          :class:`MixedIntegerLinearProgram
-          <sage.numerical.mip.MixedIntegerLinearProgram>`.
-
-        - ``verbose`` -- integer (default: 0); sets the level of
-          verbosity. Set to 0 by default, which means quiet.
-
-        - ``integrality_tolerance`` -- float; parameter for use with MILP
-          solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
-
-        OUTPUT:
-
-        A DiGraph representing the orientation if it exists.
-        A :exc:`ValueError` exception is raised otherwise.
-
-        ALGORITHM:
-
-        The problem is solved through a maximum flow :
-
-        Given a graph `G`, we create a ``DiGraph`` `D` defined on `E(G)\cup
-        V(G)\cup \{s,t\}`. We then link `s` to all of `V(G)` (these edges having
-        a capacity equal to the bound associated to each element of `V(G)`), and
-        all the elements of `E(G)` to `t` . We then link each `v \in V(G)` to
-        each of its incident edges in `G`. A maximum integer flow of value
-        `|E(G)|` corresponds to an admissible orientation of `G`. Otherwise,
-        none exists.
-
-        EXAMPLES:
-
-        There is always an orientation of a graph `G` such that a vertex `v` has
-        out-degree at most `\lceil \frac {d(v)} 2 \rceil`::
-
-            sage: g = graphs.RandomGNP(40, .4)
-            sage: b = lambda v: integer_ceil(g.degree(v)/2)
-            sage: D = g.bounded_outdegree_orientation(b)
-            sage: all( D.out_degree(v) <= b(v) for v in g )
-            True
-
-
-        Chvatal's graph, being 4-regular, can be oriented in such a way that its
-        maximum out-degree is 2::
-
-            sage: g = graphs.ChvatalGraph()
-            sage: D = g.bounded_outdegree_orientation(2)
-            sage: max(D.out_degree())
-            2
-
-        For any graph `G`, it is possible to compute an orientation such that
-        the maximum out-degree is at most the maximum average degree of `G`
-        divided by 2. Anything less, though, is impossible.
-
-            sage: g = graphs.RandomGNP(40, .4)
-            sage: mad = g.maximum_average_degree()                                      # needs sage.numerical.mip
-
-        Hence this is possible ::
-
-            sage: d = g.bounded_outdegree_orientation(integer_ceil(mad/2))              # needs sage.numerical.mip
-
-        While this is not::
-
-            sage: try:                                                                  # needs sage.numerical.mip
-            ....:     g.bounded_outdegree_orientation(integer_ceil(mad/2-1))
-            ....:     print("Error")
-            ....: except ValueError:
-            ....:     pass
-
-        TESTS:
-
-        As previously for random graphs, but more intensively::
-
-            sage: for i in range(30):      # long time (up to 6s on sage.math, 2012)
-            ....:     g = graphs.RandomGNP(40, .4)
-            ....:     b = lambda v: integer_ceil(g.degree(v)/2)
-            ....:     D = g.bounded_outdegree_orientation(b)
-            ....:     if not (
-            ....:          all( D.out_degree(v) <= b(v) for v in g ) or
-            ....:          D.size() != g.size()):
-            ....:         print("Something wrong happened")
-        """
-        self._scream_if_not_simple()
-        from sage.graphs.digraph import DiGraph
-        n = self.order()
-
-        if not n:
-            return DiGraph()
-
-        vertices = list(self)
-        vertices_id = {y: x for x, y in enumerate(vertices)}
-
-        b = {}
-
-        # Checking the input type. We make a dictionary out of it
-        if isinstance(bound, dict):
-            b = bound
-        else:
-            try:
-                b = dict(zip(vertices, map(bound, vertices)))
-
-            except TypeError:
-                b = dict(zip(vertices, [bound]*n))
-
-        d = DiGraph()
-
-        # Adding the edges (s,v) and ((u,v),t)
-        d.add_edges(('s', vertices_id[v], b[v]) for v in vertices)
-
-        d.add_edges(((vertices_id[u], vertices_id[v]), 't', 1)
-                    for u, v in self.edges(sort=False, labels=None))
-
-        # each v is linked to its incident edges
-
-        for u, v in self.edge_iterator(labels=None):
-            u, v = vertices_id[u], vertices_id[v]
-            d.add_edge(u, (u, v), 1)
-            d.add_edge(v, (u, v), 1)
-
-        # Solving the maximum flow
-        value, flow = d.flow('s', 't', value_only=False, integer=True,
-                             use_edge_labels=True, solver=solver, verbose=verbose,
-                             integrality_tolerance=integrality_tolerance)
-
-        if value != self.size():
-            raise ValueError("No orientation exists for the given bound")
-
-        D = DiGraph()
-        D.add_vertices(vertices)
-
-        # The flow graph may not contain all the vertices, if they are
-        # not part of the flow...
-
-        for u in [x for x in range(n) if x in flow]:
-
-            for uu, vv in flow.neighbors_out(u):
-                v = vv if vv != u else uu
-                D.add_edge(vertices[u], vertices[v])
-
-        # I do not like when a method destroys the embedding ;-)
-        D.set_pos(self.get_pos())
-
-        return D
-
-    @doc_index("Connectivity, orientations, trees")
-    def orientations(self, data_structure=None, sparse=None):
-        r"""
-        Return an iterator over orientations of ``self``.
-
-        An *orientation* of an undirected graph is a directed graph such that
-        every edge is assigned a direction.  Hence there are `2^s` oriented
-        digraphs for a simple graph with `s` edges.
-
-        INPUT:
-
-        - ``data_structure`` -- one of ``'sparse'``, ``'static_sparse'``, or
-          ``'dense'``; see the documentation of :class:`Graph` or
-          :class:`DiGraph`; default is the data structure of ``self``
-
-        - ``sparse`` -- boolean (default: ``None``); ``sparse=True`` is an alias
-          for ``data_structure="sparse"``, and ``sparse=False`` is an alias for
-          ``data_structure="dense"``. By default (``None``), guess the most
-          suitable data structure.
-
-        .. WARNING::
-
-            This always considers multiple edges of graphs as distinguishable,
-            and hence, may have repeated digraphs.
-
-        .. SEEALSO::
-
-            - :meth:`~sage.graphs.graph.Graph.strong_orientation`
-            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
-            - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
-            - :meth:`~sage.graphs.orientations.random_orientation`
-
-        EXAMPLES::
-
-            sage: G = Graph([[1,2,3], [(1, 2, 'a'), (1, 3, 'b')]], format='vertices_and_edges')
-            sage: it = G.orientations()
-            sage: D = next(it)
-            sage: D.edges(sort=True)
-            [(1, 2, 'a'), (1, 3, 'b')]
-            sage: D = next(it)
-            sage: D.edges(sort=True)
-            [(1, 2, 'a'), (3, 1, 'b')]
-
-        TESTS::
-
-            sage: G = Graph()
-            sage: D = [g for g in G.orientations()]
-            sage: len(D)
-            1
-            sage: D[0]
-            Digraph on 0 vertices
-
-            sage: G = Graph(5)
-            sage: it = G.orientations()
-            sage: D = next(it)
-            sage: D.size()
-            0
-
-            sage: G = Graph([[1,2,'a'], [1,2,'b']], multiedges=True)
-            sage: len(list(G.orientations()))
-            4
-
-            sage: G = Graph([[1,2], [1,1]], loops=True)
-            sage: len(list(G.orientations()))
-            2
-
-            sage: G = Graph([[1,2],[2,3]])
-            sage: next(G.orientations())
-            Digraph on 3 vertices
-            sage: G = graphs.PetersenGraph()
-            sage: next(G.orientations())
-            An orientation of Petersen graph: Digraph on 10 vertices
-
-        An orientation must have the same ground set of vertices as the original
-        graph (:issue:`24366`)::
-
-            sage: G = Graph(1)
-            sage: next(G.orientations())
-            Digraph on 1 vertex
-        """
-        if sparse is not None:
-            if data_structure is not None:
-                raise ValueError("cannot specify both 'sparse' and 'data_structure'")
-            data_structure = "sparse" if sparse else "dense"
-        if data_structure is None:
-            from sage.graphs.base.dense_graph import DenseGraphBackend
-            from sage.graphs.base.sparse_graph import SparseGraphBackend
-            if isinstance(self._backend, DenseGraphBackend):
-                data_structure = "dense"
-            elif isinstance(self._backend, SparseGraphBackend):
-                data_structure = "sparse"
-            else:
-                data_structure = "static_sparse"
-
-        name = self.name()
-        if name:
-            name = 'An orientation of ' + name
-
-        from sage.graphs.digraph import DiGraph
-        if not self.size():
-            D = DiGraph(data=[self.vertices(sort=False), []],
-                        format='vertices_and_edges',
-                        name=name,
-                        pos=self._pos,
-                        multiedges=self.allows_multiple_edges(),
-                        loops=self.allows_loops(),
-                        data_structure=data_structure)
-            if hasattr(self, '_embedding'):
-                D._embedding = copy(self._embedding)
-            yield D
-            return
-
-        E = [[(u, v, label), (v, u, label)] if u != v else [(u, v, label)]
-             for u, v, label in self.edge_iterator()]
-        verts = self.vertices(sort=False)
-        for edges in itertools.product(*E):
-            D = DiGraph(data=[verts, edges],
-                        format='vertices_and_edges',
-                        name=name,
-                        pos=self._pos,
-                        multiedges=self.allows_multiple_edges(),
-                        loops=self.allows_loops(),
-                        data_structure=data_structure)
-            if hasattr(self, '_embedding'):
-                D._embedding = copy(self._embedding)
-            yield D
-
     # Coloring
 
     @doc_index("Basic methods")
@@ -9466,11 +9170,13 @@ class Graph(GenericGraph):
     from sage.graphs.lovasz_theta import lovasz_theta
     from sage.graphs.partial_cube import is_partial_cube
     from sage.graphs.orientations import orient
+    from sage.graphs.orientations import orientations
     from sage.graphs.orientations import strong_orientation
     from sage.graphs.orientations import strong_orientations_iterator
     from sage.graphs.orientations import random_orientation
     from sage.graphs.orientations import acyclic_orientations
     from sage.graphs.orientations import minimum_outdegree_orientation
+    from sage.graphs.orientations import bounded_outdegree_orientation
     from sage.graphs.connectivity import bridges, cleave, spqr_tree
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.comparability import is_comparability
@@ -9520,12 +9226,14 @@ _additional_categories = {
     "is_permutation"            : "Graph properties",
     "tutte_polynomial"          : "Algorithmically hard stuff",
     "lovasz_theta"              : "Leftovers",
-    "orient" : "Connectivity, orientations, trees",
+    "orient": "Connectivity, orientations, trees",
+    "orientations": "Connectivity, orientations, trees",
     "strong_orientation" : "Connectivity, orientations, trees",
     "strong_orientations_iterator" : "Connectivity, orientations, trees",
     "random_orientation"        : "Connectivity, orientations, trees",
     "acyclic_orientations"      : "Connectivity, orientations, trees",
     "minimum_outdegree_orientation": "Connectivity, orientations, trees",
+    "bounded_outdegree_orientation": "Connectivity, orientations, trees",
     "bridges"                   : "Connectivity, orientations, trees",
     "cleave"                    : "Connectivity, orientations, trees",
     "spqr_tree"                 : "Connectivity, orientations, trees",
