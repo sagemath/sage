@@ -432,6 +432,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         """
         return self.__G
 
+
 class CongruenceSubgroup(CongruenceSubgroupFromGroup):
     r"""
     One of the "standard" congruence subgroups `\Gamma_0(N)`, `\Gamma_1(N)`,
@@ -568,6 +569,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
                 return GammaH(level, [ h % level for h in H ])
         else:
             raise NotImplementedError
+
 
 def _minimize_level(G):
     r"""
