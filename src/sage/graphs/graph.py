@@ -3541,6 +3541,61 @@ class Graph(GenericGraph):
                 D._embedding = copy(self._embedding)
             yield D
 
+    @doc_index("Connectivity, orientations, trees")
+    def acyclic_orientations(self, as_reorientations=False):
+        r"""
+        Iterate over all acyclic orientations of ``self``.
+        
+        Each acyclic orientation is given as a list of edges `A` such that `DiGraph(A)` raises the DiGraph endowed with the wished acyclic orientation of ``self``.
+        If `as_reorientations` is set at `True`, then acyclic orientations are given as a dictionary that maps edges to a boolean indicating if the edge is oriented in the same direction as in the given (di)graph.
+        
+        EXAMPLES::
+                
+            sage: G = graphs.CompleteGraph(3)
+            sage: list(G.acyclic_orientations())
+            [[(0, 1), (0, 2), (1, 2)], [(0, 1), (0, 2), (2, 1)], [(0, 1), (2, 0), (2, 1)], [(1, 0), (0, 2), (1, 2)], [(1, 0), (2, 0), (1, 2)], [(1, 0), (2, 0), (2, 1)]]
+
+            sage: G = graphs.PetersenGraph()
+            sage: A = G.acyclic_orientations(as_reorientations=True)  #Put these 2 lines in a Jupyter cell and the 3 next in an other one, then run the second one several times.
+            sage: O = next(A)  #Get the next acyclic orientation of G.
+            sage: D = DiGraph([[(e[1], e[0]), e][O[e]] for e in O], pos = G.get_pos())  #Give to D the same embedding as G.
+            sage: D.graphplot(edge_colors = {'blue':[e for e in O if O[e]], 'red':[(e[1], e[0]) for e in O if not O[e]]}).plot()
+            Graphics object consisting of 26 graphics primitives
+            
+            sage: G = graphs.CompleteGraph(6)
+            sage: sum(1 for _ in G.acyclic_orientations())
+            720
+
+            sage: [G.is_clique() for G in graphs(5) if sum(1 for _ in G.acyclic_orientations()) == factorial(5)]
+            [True]
+        
+        The algorithm is a backtracking: it adds edges one by one checking if there is a cycle at each step. After finding a cycle or yielding an acyclic orientation, it backtracks.
+        This could be improved either by implementing a block-and-cut graph decomposition (i.e. 2-connected component decomposition), or by maintaining a topological order.
+
+        .. WARNING::
+            
+            Each acyclic orientation is a list of edges, if your graph has multiedges or isolated vertices, it will disapear.
+            Loops are taken in account, thus a graph with a loop will have no acyclic orientation.
+        
+        .. SEEALSO::
+        
+            - :meth:`~sage.graphs.graph.orientations`
+            - :meth:`~sage.graphs.graph.Graph.strong_orientation`
+            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
+            - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
+            - :meth:`~sage.graphs.orientations.random_orientation`
+        
+        TESTS::
+            
+            sage: list(Graph().acyclic_orientations())
+            []
+            
+            sage: list(Graph(5).acyclic_orientations())
+            []
+        """
+        from sage.graphs.orientations import AcyclicOrientations
+        return AcyclicOrientations(self, as_reorientations)
+
     # Coloring
 
     @doc_index("Basic methods")
