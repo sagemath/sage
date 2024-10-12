@@ -1186,7 +1186,8 @@ def compare_via_evaluation(left, right):
     elif isinstance(F, number_field_base.NumberField):
         for _ in range(100):
             P = E.lift_x(F.random_element(), extend=True)
-            if not P.has_finite_order():
+            # if not P.has_finite_order():
+            if P not in P.curve().torsion_points():
                 return left._eval(P) == right._eval(P)
         else:
             assert False, "couldn't find a point of infinite order"

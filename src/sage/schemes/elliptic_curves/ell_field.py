@@ -2079,18 +2079,25 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: S = list(E.isogenies_degree(5^2*11^4)); len(S), all_distinct(S)       # long time (2s)
             (15, True)
 
+        For curves over number fields, the number of distinct isogenies will usually be small::
+
+            sage: E = EllipticCurve(QQ, [0, 1, 0, -2, 0])
+            sage: len(list(E.isogenies_degree(2**1)))
+            3
+            sage: len(list(E.isogenies_degree(2**9)))
+            3
+            sage: len(list(E.isogenies_degree(2**10)))
+            1
+
         ::
 
-            sage: pol = PolynomialRing(QQ, 'x')([1, -3, 5, -5, 5, -3, 1])
+            sage: pol = PolynomialRing(QQ, 'x')([529, 782, 1])
             sage: L.<a> = NumberField(pol)
-            sage: js = hilbert_class_polynomial(-23).roots(L, multiplicities=False)
-            sage: len(js)
+            sage: E = EllipticCurve(j=-7072/1127*a + 2016)
+            sage: len(list(E.isogenies_degree(2)))
             3
-            sage: E = EllipticCurve(j=js[0])
-            sage: len(list(E.isogenies_degree(2**2)))
-            6
-            sage: len(list(E.isogenies_degree(2**5))) # long time (15s)
-            99
+            sage: len(list(E.isogenies_degree(2**5)))                                   # long time (4s)
+            3
 
         TESTS::
 
@@ -2126,7 +2133,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             """
             Data used in ``hash(phi)`` excluding the expensive `.kernel_polynomial`.
             """
-            return (phi.domain(), phi.codomain(), phi.scaling_factor())
+            return (phi.domain(), phi.codomain(), phi.degree(), phi.scaling_factor())
 
         from sage.schemes.elliptic_curves.weierstrass_morphism import identity_morphism
         from sage.structure.factorization import Factorization
@@ -2141,17 +2148,16 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         p = n[-1][0]
         seen = {}
 
-        def insert_seen(phi):
-            nonlocal seen
+        def insert_seen(phi) -> bool:
             key = compute_key(phi)
             if key not in seen:
                 seen[key] = [phi]
-                return phi
+                return True
             for psi in seen[key]:
                 if psi == phi:
-                    return
+                    return False
             seen[key].append(phi)
-            return phi
+            return True
 
         if _intermediate:
             yield identity_morphism(self)
