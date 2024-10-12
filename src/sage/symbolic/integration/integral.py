@@ -83,6 +83,10 @@ class IndefiniteIntegral(BuiltinFunction):
         # in the given order. This is an attribute of the class instead of
         # a global variable in this module to enable customization by
         # creating a subclasses which define a different set of integrators
+        #
+        # The libgiac integrator may immediately return a symbolic
+        # (unevaluated) answer if libgiac is unavailable. This essentially
+        # causes it to be skipped.
         self.integrators = [external.maxima_integrator,
                             external.libgiac_integrator,
                             external.sympy_integrator]

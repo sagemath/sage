@@ -4,8 +4,8 @@ title: SageMath
 abstract: SageMath is a free open-source mathematics software system.
 authors:
 - name: "The SageMath Developers"
-version: 10.5.beta6
+version: 10.5.beta7
 doi: 10.5281/zenodo.8042260
-date-released: 2024-09-29
+date-released: 2024-10-12
 repository-code: "https://github.com/sagemath/sage"
 url: "https://www.sagemath.org/"
