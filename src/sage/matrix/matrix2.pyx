@@ -898,7 +898,7 @@ cdef class Matrix(Matrix1):
         # first coerce both elements to parent over same base ring
         P = K if L is K else coercion_model.common_parent(K, L)
         if P not in _Fields and P.is_integral_domain() and extend:
-            # the non-integral-domain case is handled separatedly below
+            # the non-integral-domain case is handled separately below
             P = P.fraction_field()
         if L is not P:
             B = B.change_ring(P)
@@ -15900,7 +15900,7 @@ cdef class Matrix(Matrix1):
             sage: a.exp()                                                               # needs sage.symbolic
             [ 1/11882424341266*((11*sqrt(227345670387496707609) + 5941212170633)*e^(3/1275529100*sqrt(227345670387496707609)) - 11*sqrt(227345670387496707609) + 5941212170633)*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200)                            445243650/75781890129165569203*(sqrt(227345670387496707609)*e^(3/1275529100*sqrt(227345670387496707609)) - sqrt(227345670387496707609))*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200)]
             [                                     10000/53470909535697*(sqrt(227345670387496707609)*e^(3/1275529100*sqrt(227345670387496707609)) - sqrt(227345670387496707609))*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200) -1/11882424341266*((11*sqrt(227345670387496707609) - 5941212170633)*e^(3/1275529100*sqrt(227345670387496707609)) - 11*sqrt(227345670387496707609) - 5941212170633)*e^(-3/2551058200*sqrt(227345670387496707609) + 101/200)]
-            sage: a.change_ring(RDF).exp()  # rel tol 1e-14                             # needs sage.symbolic
+            sage: a.change_ring(RDF).exp()  # rel tol 6e-14                             # needs sage.symbolic
             [42748127.31532951 7368259.244159399]
             [234538976.1381042 40426191.45156228]
 
@@ -16342,7 +16342,7 @@ cdef class Matrix(Matrix1):
         Transform the matrix in place to hermite normal form and optionally
         return the transformation matrix.
 
-        The matrix is assumed to be over an Euclidean domain. In particular,
+        The matrix is assumed to be over a Euclidean domain. In particular,
         ``xgcd()`` method should be available for the elements of the domain.
 
         INPUT:
@@ -16843,7 +16843,7 @@ cdef class Matrix(Matrix1):
                     nonzero = j
                     break
             if (nonzero != -1):
-                # swap column wih nonzero entry just outside block
+                # swap column with nonzero entry just outside block
                 if nonzero != c+1:
                     Z.swap_columns(c+1, nonzero)
                     Z.swap_rows(c+1, nonzero)

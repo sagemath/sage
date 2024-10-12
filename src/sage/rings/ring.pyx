@@ -18,10 +18,10 @@ The class inheritance hierarchy is:
 
 - :class:`Ring` (to be deprecated)
 
-  - :class:`Algebra` (to be deprecated)
+  - :class:`Algebra` (deprecated and essentially removed)
   - :class:`CommutativeRing`
 
-    - :class:`NoetherianRing` (deprecated)
+    - :class:`NoetherianRing` (deprecated and essentially removed)
     - :class:`CommutativeAlgebra` (deprecated and essentially removed)
     - :class:`IntegralDomain` (deprecated)
 
@@ -70,12 +70,12 @@ This is to test a deprecation::
     sage: from sage.rings.ring import CommutativeAlgebra
     sage: class Nein(CommutativeAlgebra):
     ....:     pass
-    sage: F = Nein(QQ, QQ)
+    sage: F = Nein(QQ)
     ...:
     DeprecationWarning: use the category CommutativeAlgebras
     See https://github.com/sagemath/sage/issues/37999 for details.
     sage: F.category()
-    Category of commutative rings
+    Category of commutative algebras over Rational Field
 
     sage: from sage.rings.ring import PrincipalIdealDomain
     sage: class Non(PrincipalIdealDomain):
@@ -86,6 +86,17 @@ This is to test a deprecation::
     See https://github.com/sagemath/sage/issues/37719 for details.
     sage: F.category()
     Category of principal ideal domains
+
+    sage: from sage.rings.ring import Algebra
+    sage: class Nichts(Algebra):
+    ....:     pass
+    sage: F = Nichts(QQ)
+    ...:
+    DeprecationWarning: use the category Algebras
+    See https://github.com/sagemath/sage/issues/38502 for details.
+    sage: F.category()
+    Category of algebras over Rational Field
+
 """
 
 # ****************************************************************************
@@ -105,6 +116,8 @@ from sage.structure.parent cimport Parent
 from sage.structure.category_object cimport check_default_category
 from sage.misc.prandom import randint
 from sage.categories.rings import Rings
+from sage.categories.algebras import Algebras
+from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.dedekind_domains import DedekindDomains
@@ -142,6 +155,7 @@ cdef class Ring(ParentWithGens):
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
           running ._test_eq() . . . pass
+          running ._test_monomial_coefficients() . . . pass
           running ._test_new() . . . pass
           running ._test_nonzero_equal() . . . pass
           running ._test_not_implemented_methods() . . . pass
@@ -171,20 +185,29 @@ cdef class Ring(ParentWithGens):
     Test against another bug fixed in :issue:`9944`::
 
         sage: QQ['x'].category()
-        Join of Category of euclidean domains and Category of commutative algebras over
-         (number fields and quotient fields and metric spaces) and Category of infinite sets
+        Join of Category of euclidean domains
+            and Category of algebras with basis
+                over (number fields and quotient fields and metric spaces)
+            and Category of commutative algebras
+                over (number fields and quotient fields and metric spaces)
+            and Category of infinite sets
         sage: QQ['x','y'].category()
         Join of Category of unique factorization domains
+            and Category of algebras with basis
+                over (number fields and quotient fields and metric spaces)
             and Category of commutative algebras
                 over (number fields and quotient fields and metric spaces)
             and Category of infinite sets
         sage: PolynomialRing(MatrixSpace(QQ, 2),'x').category()                         # needs sage.modules
-        Category of infinite algebras over (finite dimensional algebras with basis over
-         (number fields and quotient fields and metric spaces) and infinite sets)
+        Category of infinite algebras with basis
+            over (finite dimensional algebras with basis
+                    over (number fields and quotient fields and metric spaces)
+                  and infinite sets)
         sage: PolynomialRing(SteenrodAlgebra(2),'x').category()                         # needs sage.combinat sage.modules
-        Category of infinite algebras over (super Hopf algebras with basis
-         over Finite Field of size 2 and supercocommutative super coalgebras
-         over Finite Field of size 2)
+        Category of infinite algebras with basis
+            over (super Hopf algebras with basis over Finite Field of size 2
+                  and supercocommutative super coalgebras
+                      over Finite Field of size 2)
 
     TESTS::
 
@@ -1147,8 +1170,7 @@ cdef class IntegralDomain(CommutativeRing):
          - ``category`` -- (default: ``None``) a category, or ``None``
 
         This method is used by all the abstract subclasses of
-        :class:`IntegralDomain`, like :class:`NoetherianRing`,
-        :class:`Field`, ... in order to
+        :class:`IntegralDomain`, like :class:`Field`, ... in order to
         avoid cascade calls Field.__init__ ->
         IntegralDomain.__init__ ->
         ...
@@ -1234,7 +1256,7 @@ cdef class NoetherianRing(CommutativeRing):
     _default_category = NoetherianRings()
 
     def __init__(self, *args, **kwds):
-        deprecation(37234, "use the category DedekindDomains")
+        deprecation(37234, "use the category NoetherianRings")
         super().__init__(*args, **kwds)
 
 
@@ -1293,6 +1315,11 @@ _Fields = Fields()
 cdef class Field(CommutativeRing):
     """
     Generic field
+
+    TESTS::
+
+        sage: QQ.is_noetherian()
+        True
     """
     _default_category = _Fields
 
@@ -1412,17 +1439,6 @@ cdef class Field(CommutativeRing):
         """
         return True
 
-    def is_noetherian(self):
-        """
-        Return ``True`` since fields are Noetherian rings.
-
-        EXAMPLES::
-
-            sage: QQ.is_noetherian()
-            True
-        """
-        return True
-
     def krull_dimension(self):
         """
         Return the Krull dimension of this field, which is 0.
@@ -1474,32 +1490,18 @@ cdef class Field(CommutativeRing):
 
 
 cdef class Algebra(Ring):
-    """
-    Generic algebra
-    """
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        """
-        Initialize ``self``.
-
-        EXAMPLES::
-
-            sage: A = Algebra(ZZ); A                                                    # needs sage.modules
-            <sage.rings.ring.Algebra object at ...>
-        """
-        # This is a low-level class. For performance, we trust that the category
-        # is fine, if it is provided. If it isn't, we use the category of Algebras(base_ring).
-        if category is None:
-            category = check_default_category(Algebras(base_ring), category)
-        Ring.__init__(self,base_ring, names=names, normalize=normalize,
-                      category=category)
+    def __init__(self, base_ring, *args, **kwds):
+        if 'category' not in kwds:
+            kwds['category'] = Algebras(base_ring)
+        deprecation(38502, "use the category Algebras")
+        super().__init__(base_ring, *args, **kwds)
 
 
 cdef class CommutativeAlgebra(CommutativeRing):
-    __default_category = _CommutativeRings
-
     def __init__(self, base_ring, *args, **kwds):
+        self._default_category = CommutativeAlgebras(base_ring)
         deprecation(37999, "use the category CommutativeAlgebras")
-        super().__init__(*args, **kwds)
+        super().__init__(base_ring, *args, **kwds)
 
 
 def is_Ring(x):

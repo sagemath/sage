@@ -68,6 +68,7 @@ from .orthogonal_arrays import wilson_construction
 # Cyclic shift of a list
 cyclic_shift = lambda l,i : l[-i:]+l[:-i]
 
+
 def _MOLS_from_string(s,k):
     r"""
     Return MOLS from a string.
@@ -90,6 +91,7 @@ def _MOLS_from_string(s,k):
         l = [ord(x) - 97 for x in l]
         matrices[i % k].append(l)
     return [Matrix(_) for _ in matrices]
+
 
 def MOLS_10_2():
     r"""
@@ -134,6 +136,7 @@ def MOLS_10_2():
                     [5,6,7,1,2,3,4,0,9,8],
                     [7,1,2,3,4,5,6,9,8,0]])]
 
+
 def MOLS_12_5():
     r"""
     Return 5 MOLS of order 12.
@@ -164,6 +167,7 @@ def MOLS_12_5():
         """
 
     return _MOLS_from_string(M,5)
+
 
 def MOLS_14_4():
     r"""
@@ -210,6 +214,7 @@ def MOLS_14_4():
 
     return _MOLS_from_string(M,4)
 
+
 def MOLS_15_4():
     r"""
     Return 4 MOLS of order 15.
@@ -248,6 +253,7 @@ def MOLS_15_4():
         """
 
     return _MOLS_from_string(M,4)
+
 
 def MOLS_18_3():
     r"""
@@ -310,6 +316,7 @@ MOLS_constructions = {
 LIST_OF_MOLS_CONSTRUCTIONS = ", ".join(":func:`{} MOLS of order {} <MOLS_{}_{}>`".format(k,n,n,k)
                                        for n,(k,_) in MOLS_constructions.items())
 
+
 def OA_7_18():
     r"""
     Return an OA(7,18).
@@ -364,6 +371,7 @@ def OA_7_18():
     M = [M[i] for i in range(len(M)) if i % 18 < 9] # only develop w.r.t the last two coordinates
     return M
 
+
 def OA_9_40():
     r"""
     Return an OA(9,40).
@@ -403,6 +411,7 @@ def OA_9_40():
     Y = [None, 0, 1, 6, 5, 4, 3, 2]
 
     return OA_n_times_2_pow_c_from_matrix(9,3,FiniteField(5),A,Y,check=False)
+
 
 def OA_7_66():
     r"""
@@ -444,6 +453,7 @@ def OA_7_66():
     PBD = [[rel[x] for x in B] for B in PBD]
     return OA_from_PBD(7,66,PBD,check=False)
 
+
 def OA_7_68():
     r"""
     Return an OA(7,68).
@@ -483,6 +493,7 @@ def OA_7_68():
     rel = dict(zip(V,range(len(V))))
     PBD = [[rel[x] for x in B] for B in PBD]
     return OA_from_PBD(7,68,PBD,check=False)
+
 
 def OA_8_69():
     r"""
@@ -556,6 +567,7 @@ def OA_8_69():
     OA = [[relabel[x] for x in B] for B in OA]
     return OA
 
+
 def OA_7_74():
     r"""
     Return an OA(7,74).
@@ -595,6 +607,7 @@ def OA_7_74():
     rel = dict(zip(V,range(len(V))))
     PBD = [[rel[x] for x in B] for B in PBD]
     return OA_from_PBD(7,74,PBD,check=False)
+
 
 def OA_8_76():
     r"""
@@ -663,6 +676,7 @@ def OA_8_76():
     OA = [[relabel[x] for x in B] for B in OA]
     return OA
 
+
 def OA_11_80():
     r"""
     Return an OA(11,80).
@@ -704,6 +718,7 @@ def OA_11_80():
     Y = [None, 0, 1, 14, 12, 7, 2, 11, 3, 6]
 
     return OA_n_times_2_pow_c_from_matrix(11,4,FiniteField(5),A,Y,check=False)
+
 
 def OA_15_112():
     r"""
@@ -751,6 +766,7 @@ def OA_15_112():
 
     return OA_n_times_2_pow_c_from_matrix(15,4,FiniteField(7),list(zip(*A)),Y,check=False)
 
+
 def OA_9_120():
     r"""
     Return an OA(9,120).
@@ -796,6 +812,7 @@ def OA_9_120():
         OA.append([i]*8+[0])
 
     return OA
+
 
 def OA_9_135():
     r"""
@@ -882,6 +899,7 @@ def OA_9_135():
     # And call Wilson's construction
     return wilson_construction(truncated_OA, 9, 16, 8, (1,)*7, check=False)
 
+
 def OA_11_160():
     r"""
     Return an OA(11,160).
@@ -924,6 +942,7 @@ def OA_11_160():
     Y = [None, 0, 1, 2, 15, 27, 22, 12, 3, 28]
 
     return OA_n_times_2_pow_c_from_matrix(11,5,FiniteField(5),list(zip(*A)),Y,check=False)
+
 
 def OA_16_176():
     r"""
@@ -978,6 +997,7 @@ def OA_16_176():
 
     Y = [None, 0, 1, 2, 8, 6, 9, 4, 10, 3, 5, 11, 13, 14, 12]
     return OA_n_times_2_pow_c_from_matrix(16,4,FiniteField(11),list(zip(*A)),Y,check=False)
+
 
 def OA_11_185():
     r"""
@@ -1042,6 +1062,7 @@ def OA_11_185():
     OA.extend([[special_set[x] for x in B] for B in orthogonal_array(11,17)])
     return OA
 
+
 def OA_10_205():
     r"""
     Return an `OA(10,205)`.
@@ -1088,7 +1109,7 @@ def OA_10_205():
     baer_subplane_size = 4**2+4+1
 
     B = [0, 1, 22, 33, 83, 122, 135, 141, 145, 159, 175, 200, 226, 229, 231, 238, 246]
-    pplane = [[(xx+i) % pplane_size for xx in B]  for i in range(pplane_size)]
+    pplane = [[(xx+i) % pplane_size for xx in B] for i in range(pplane_size)]
     baer_subplane = set([i*pplane_size/baer_subplane_size for i in range(baer_subplane_size)])
 
     p = list(baer_subplane)[0]
@@ -1122,6 +1143,7 @@ def OA_10_205():
                for i in set(range(205)).difference(blocks_of_size_9_union)])
 
     return OA
+
 
 def OA_16_208():
     r"""
@@ -1182,6 +1204,7 @@ def OA_16_208():
 
     return OA_n_times_2_pow_c_from_matrix(16,4,FiniteField(13),list(zip(*A)),Y,check=False)
 
+
 def OA_15_224():
     r"""
     Return an OA(15,224).
@@ -1229,6 +1252,7 @@ def OA_15_224():
 
     return OA_n_times_2_pow_c_from_matrix(15,5,FiniteField(7),list(zip(*A)),Y,check=False)
 
+
 def OA_11_254():
     r"""
     Return an OA(11,254).
@@ -1260,13 +1284,14 @@ def OA_11_254():
 
     # Base block of a PG(2,19)
     B = (0,1,19,28,96,118,151,153,176,202,240,254,290,296,300,307,337,361,366,369)
-    BIBD = [[(x+i) % 381 for x in B]  for i in range(381)]
+    BIBD = [[(x+i) % 381 for x in B] for i in range(381)]
 
     # We only keep points congruent to 0,1 mod 3 and relabel the PBD. The result is
     # a (254,{11,13,16})-PBD
     BIBD = [[2*(x//3)+x % 3 for x in B if x % 3 < 2] for B in BIBD]
 
     return OA_from_PBD(11,254,BIBD,check=False)
+
 
 def OA_20_352():
     r"""
@@ -1327,6 +1352,7 @@ def OA_20_352():
 
     return OA_n_times_2_pow_c_from_matrix(20,5,FiniteField(11),list(zip(*A)),Y,check=False)
 
+
 def OA_20_416():
     r"""
     Return an OA(20,416).
@@ -1386,6 +1412,7 @@ def OA_20_416():
     Y = [None, 0, 1, 2, 18, 5, 11, 4, 13, 26, 25, 29, 24, 7, 20, 19, 9, 12, 15]
 
     return OA_n_times_2_pow_c_from_matrix(20,5,FiniteField(13),list(zip(*A)),Y,check=False)
+
 
 def OA_20_544():
     r"""
@@ -1456,6 +1483,7 @@ def OA_20_544():
 
     return OA_n_times_2_pow_c_from_matrix(20,5,FiniteField(17),list(zip(*A)),Y,check=False)
 
+
 def OA_17_560():
     r"""
     Return an OA(17,560).
@@ -1515,6 +1543,7 @@ def OA_17_560():
 
     return wilson_construction(OA,k,n,m,[p**beta]*3,check=False)
 
+
 def OA_11_640():
     r"""
     Return an OA(11,640).
@@ -1556,6 +1585,7 @@ def OA_11_640():
     Y = [None, 0, 1, 2, 121, 66, 77, 78, 41, 100]
 
     return OA_n_times_2_pow_c_from_matrix(11,7,FiniteField(5),list(zip(*A)),Y,check=False)
+
 
 def OA_10_796():
     r"""
@@ -1628,6 +1658,7 @@ def OA_10_796():
 
     return OA
 
+
 def OA_10_469():
     r"""
     Return an OA(10,469).
@@ -1677,7 +1708,7 @@ def OA_10_469():
          731,824,837,848,932,1002,1051,1055,1089,1105,1145,1165,1196,1217,1226,
          1274,1281,1309,1405)
 
-    BIBD = [[(x+i) % 1407 for x in B]  for i in range(1407)]
+    BIBD = [[(x+i) % 1407 for x in B] for i in range(1407)]
 
     # Only keep points v congruent to 0 mod 3 and relabel
     PBD = [[x//3 for x in B if x % 3 == 0] for B in BIBD]
@@ -1701,6 +1732,7 @@ def OA_10_469():
         R.append(i//469)
 
     return OA
+
 
 def OA_520_plus_x(x):
     r"""
@@ -1775,6 +1807,7 @@ def OA_520_plus_x(x):
     OA.append([relabel[new_point]]*k)
     return OA
 
+
 def OA_10_520():
     r"""
     Return an OA(10,520).
@@ -1796,6 +1829,7 @@ def OA_10_520():
         True
     """
     return OA_520_plus_x(0)
+
 
 def OA_12_522():
     r"""
@@ -1819,6 +1853,7 @@ def OA_12_522():
     """
     return OA_520_plus_x(2)
 
+
 def OA_14_524():
     r"""
     Return an OA(14,524).
@@ -1840,6 +1875,7 @@ def OA_14_524():
         True
     """
     return OA_520_plus_x(4)
+
 
 def OA_15_896():
     r"""
@@ -1888,6 +1924,7 @@ def OA_15_896():
 
     return OA_n_times_2_pow_c_from_matrix(15,7,FiniteField(7),list(zip(*A)),Y,check=False)
 
+
 def OA_9_1078():
     r"""
     Return an OA(9,1078).
@@ -1917,6 +1954,7 @@ def OA_9_1078():
         True
     """
     return wilson_construction(None,9,11,89,[[(11,9)]])
+
 
 def OA_25_1262():
     r"""
@@ -1955,6 +1993,7 @@ def OA_25_1262():
 
     return OA_from_PBD(25,1262,PBD,check=False)
 
+
 def OA_9_1612():
     r"""
     Return an OA(9,1612).
@@ -1984,6 +2023,7 @@ def OA_9_1612():
         True
     """
     return wilson_construction(None,9,17,89,[[(11,9)]])
+
 
 def OA_10_1620():
     r"""
@@ -2060,6 +2100,7 @@ OA_constructions = {
 # Add this data to the module's doc
 LIST_OF_OA_CONSTRUCTIONS = ", ".join(":func:`OA({},{}) <OA_{}_{}>`".format(k,n,k,n)
                                       for n,(k,_) in OA_constructions.items())
+
 
 def QDM_19_6_1_1_1():
     r"""
@@ -2143,6 +2184,7 @@ def QDM_21_5_1_1_1():
 
     return G, Mb
 
+
 def QDM_21_6_1_1_5():
     r"""
     Return a `(21,6;1,1;5)`-quasi-difference matrix.
@@ -2182,6 +2224,7 @@ def QDM_21_6_1_1_5():
         Mb.append([f,a,b,c,d,e])
 
     return G, Mb
+
 
 def QDM_25_6_1_1_5():
     r"""
@@ -2228,6 +2271,7 @@ def QDM_25_6_1_1_5():
 
     return G, Mb
 
+
 def QDM_33_6_1_1_1():
     r"""
     Return a `(33,6;1,1;1)`-quasi-difference matrix.
@@ -2271,6 +2315,7 @@ def QDM_33_6_1_1_1():
 
     return G, Mb
 
+
 def QDM_37_6_1_1_1():
     r"""
     Return a `(37,6;1,1;1)`-quasi-difference matrix.
@@ -2309,6 +2354,7 @@ def QDM_37_6_1_1_1():
 
     return G, Mb
 
+
 def QDM_35_7_1_1_7():
     r"""
     Return a `(35,7;1,1;7)`-quasi-difference matrix.
@@ -2345,6 +2391,7 @@ def QDM_35_7_1_1_7():
             Mb.append(cyclic_shift(R,i))
 
     return G, Mb
+
 
 def QDM_45_7_1_1_9():
     r"""
@@ -2383,6 +2430,7 @@ def QDM_45_7_1_1_9():
 
     return G, Mb
 
+
 def QDM_54_7_1_1_8():
     r"""
     Return a `(54,7;1,1;8)`-quasi-difference matrix.
@@ -2419,6 +2467,7 @@ def QDM_54_7_1_1_8():
             Mb.append(cyclic_shift(R,c))
 
     return G, Mb
+
 
 def QDM_57_9_1_1_8():
     r"""
@@ -3094,15 +3143,58 @@ DF = {
            [0,2,13,18,28,30,44,48,50,51,57,61],
            [0,4,21,26,29,33,35,36,47,55,56,60]]},
 
-# a 133-cyclic set from Ken Smith database
-# see https://math.ccrwest.org/diffsets/diff_sets/DS_133_33_8_133.html
+# a (133,33,8)-cyclic difference set
+# see https://dmgordon.org/diffset
 (133,33, 8):
-  {(133,): [[0,4,7,8,15,17,19,22,24,25,29,30,38,
-             47,49,50,55,58,61,62,71,73,76,77,78,
-             82,95,111,113,114,121,123,127]]},
+  {(133,): [[1,5,14,22,25,27,29,32,34,38,
+             46,64,65,66,76,78,81,82,84,89,
+             92,93,99,103,104,106,107,112,113,122,
+             126,128,129]]},
 
-# a 901-cyclic
-# see https://math.ccrwest.org/diffsets/diff_sets/DS_901_225_56_901.html
+# a (144,66,30) non-cyclic difference set in AbelianGroup([2,8,3,3])
+# given in unpublished paper by Kroeger, Miller, Mooney, Shepard and Smith
+# see https://dmgordon.org/diffset
+(144,66,30):
+  {(2,8,3,3): [[(0,1,0,0),(0,7,0,2),(0,5,0,1),(0,3,0,0),(0,6,0,1),
+                (0,1,0,2),(0,4,0,0),(0,2,0,2),(0,6,0,0),(0,1,0,1),
+                (0,4,0,2),(0,2,0,1),(1,2,2,0),(1,3,2,0),(1,4,2,0),
+                (1,5,2,0),(1,6,2,0),(1,7,2,0),(0,6,1,2),(0,1,1,0),
+                (0,4,1,1),(0,3,1,0),(0,1,1,2),(0,4,1,0),(0,7,1,1),
+                (0,2,1,2),(0,6,1,0),(0,1,1,1),(0,2,1,1),(0,5,1,2),
+                (1,0,0,0),(1,6,0,2),(1,1,0,0),(1,4,0,1),(1,7,0,2),
+                (1,2,0,0),(1,5,0,1),(1,0,0,2),(1,3,0,0),(1,1,0,2),
+                (1,0,0,1),(1,1,0,1),(0,0,2,0),(0,6,2,2),(0,4,2,1),
+                (0,0,2,2),(0,3,2,0),(0,6,2,1),(0,2,2,2),(0,5,2,0),
+                (0,0,2,1),(0,4,2,2),(0,7,2,0),(0,2,2,1),(1,0,1,0),
+                (1,1,1,0),(1,2,1,0),(1,0,1,2),(1,3,1,0),(1,6,1,1),
+                (1,1,1,2),(1,7,1,1),(1,0,1,1),(1,1,1,1),(1,4,1,2),
+                (1,5,1,2)]]},
+
+# a (320,88,24) non-cyclic difference set in AbelianGroup([4,4,4,5]),
+# given in Arasu and Chen, Designs, Codes and Cryptography 2001
+# see https://dmgordon.org/diffset
+(320,88,24):
+    {(4,4,4,5): [[(3,3,3,0),(2,3,2,0),(3,1,3,0),(2,2,3,0),(1,3,3,0),
+                  (3,2,1,0),(2,2,2,0),(2,2,1,0),(2,1,2,0),(0,3,2,0),
+                  (2,0,3,0),(1,1,3,0),(0,2,3,0),(3,0,1,0),(1,2,1,0),
+                  (2,0,2,0),(0,2,2,0),(2,0,1,0),(0,2,1,0),(0,1,2,0),
+                  (0,0,3,0),(1,0,1,0),(0,0,2,0),(0,0,1,0),(3,3,3,1),
+                  (3,3,1,1),(3,0,3,1),(0,3,3,1),(3,0,1,1),(0,3,1,1),
+                  (1,1,2,1),(1,0,2,1),(0,1,2,1),(0,0,3,1),(1,1,0,1),
+                  (0,0,2,1),(1,0,0,1),(0,1,0,1),(0,0,1,1),(0,0,0,1),
+                  (1,1,3,2),(3,1,1,2),(2,3,3,2),(2,2,3,2),(0,3,2,2),
+                  (0,3,1,2),(0,2,1,2),(3,2,2,2),(3,1,2,2),(3,0,3,2),
+                  (2,3,0,2),(2,0,2,2),(1,2,0,2),(1,1,0,2),(1,0,1,2),
+                  (0,0,0,2),(1,1,1,3),(1,3,3,3),(3,2,1,3),(2,2,3,3),
+                  (3,0,0,3),(3,0,3,3),(1,3,0,3),(2,0,1,3),(3,2,2,3),
+                  (2,3,2,3),(0,3,3,3),(1,1,2,3),(0,2,2,3),(2,1,0,3),
+                  (0,1,1,3),(0,0,0,3),(2,0,3,4),(1,1,2,4),(0,2,1,4),
+                  (0,1,3,4),(3,2,3,4),(3,2,2,4),(2,3,2,4),(3,1,3,4),
+                  (3,3,0,4),(2,3,1,4),(1,0,1,4),(2,2,2,4),(1,3,1,4),
+                  (1,0,0,4),(0,1,0,4),(0,0,0,4)]]},
+
+# a (901,225,56)-cyclic difference set
+# see https://dmgordon.org/diffset
 (901,225,56):
   {(901,): [[  0,  1,  5,  9, 12, 13, 14, 16, 22, 25, 41, 43,
               45, 47, 53, 59, 60, 65, 69, 70, 71, 79, 80, 81,
@@ -3174,6 +3266,7 @@ def DM_12_6_1():
 
     return G,M
 
+
 def DM_21_6_1():
     r"""
     Return a `(21,6,1)`-difference matrix.
@@ -3208,6 +3301,7 @@ def DM_21_6_1():
         Mb.append([e,a,b,c,d,0])
 
     return AdditiveCyclic(21), Mb
+
 
 def DM_24_8_1():
     r"""
@@ -3256,6 +3350,7 @@ def DM_24_8_1():
 
     return G, Mb
 
+
 def DM_28_6_1():
     r"""
     Return a `(28,6,1)`-difference matrix.
@@ -3299,6 +3394,7 @@ def DM_28_6_1():
 
     return G, Mb
 
+
 def DM_33_6_1():
     r"""
     Return a `(33,6,1)`-difference matrix.
@@ -3341,6 +3437,7 @@ def DM_33_6_1():
 
     return G, Mb
 
+
 def DM_35_6_1():
     r"""
     Return a `(35,6,1)`-difference matrix.
@@ -3372,6 +3469,7 @@ def DM_35_6_1():
     G = AdditiveCyclic(35)
 
     return G, list(zip(*M))
+
 
 def DM_36_9_1():
     r"""
@@ -3426,6 +3524,7 @@ def DM_36_9_1():
 
     return G, Mb
 
+
 def DM_39_6_1():
     r"""
     Return a `(39,6,1)`-difference matrix.
@@ -3469,6 +3568,7 @@ def DM_39_6_1():
             a,b,c,d,e,f = (16*x for x in [c,a,b,f,d,e])
 
     return G,Mb
+
 
 def DM_44_6_1():
     r"""
@@ -3529,6 +3629,7 @@ def DM_44_6_1():
 
     return G2211, Mb
 
+
 def DM_45_7_1():
     r"""
     Return a `(45,7,1)`-difference matrix.
@@ -3585,6 +3686,7 @@ def DM_45_7_1():
 
     return G533, Mb
 
+
 def DM_48_9_1():
     r"""
     Return a `(48,9,1)`-difference matrix.
@@ -3633,6 +3735,7 @@ def DM_48_9_1():
             Mb.append([e+F3F16((0,w**(x+u))) for (e,x) in zip(L,V)])
 
     return F3F16, Mb
+
 
 def DM_51_6_1():
     r"""
@@ -3748,6 +3851,7 @@ def DM_52_6_1():
 
     return G, Mb
 
+
 def DM_55_7_1():
     r"""
     Return a `(55,7,1)`-difference matrix.
@@ -3786,6 +3890,7 @@ def DM_55_7_1():
             Mb.append(cyclic_shift(R,c)+[0])
 
     return G, Mb
+
 
 def DM_56_8_1():
     r"""
@@ -3834,6 +3939,7 @@ def DM_56_8_1():
 
     return G, Mb
 
+
 def DM_57_8_1():
     r"""
     Return a `(57,8,1)`-difference matrix.
@@ -3861,6 +3967,7 @@ def DM_57_8_1():
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     G = AdditiveCyclic(57)
     return G, M
+
 
 def DM_60_6_1():
     r"""
@@ -3913,6 +4020,7 @@ def DM_60_6_1():
 
     return G, M60b
 
+
 def DM_75_8_1():
     r"""
     Return a `(75,8,1)`-difference matrix.
@@ -3961,6 +4069,7 @@ def DM_75_8_1():
 
     return G, Mb
 
+
 def DM_273_17_1():
     r"""
     Return a `(273,17,1)`-difference matrix.
@@ -3988,6 +4097,7 @@ def DM_273_17_1():
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
     G = AdditiveCyclic(273)
     return G, M
+
 
 def DM_993_32_1():
     r"""
@@ -4104,7 +4214,7 @@ def RBIBD_120_8_1():
 
     # A (precomputed) set that every block of the BIBD intersects on 0 or 2 points
     hyperoval = [128, 192, 194, 4, 262, 140, 175, 48, 81, 180, 245, 271, 119, 212, 249, 189, 62, 255]
-    #for B in BIBD:
+    # for B in BIBD:
     #    len_trace = sum(x in hyperoval for x in B)
     #    assert len_trace == 0 or len_trace == 2
 
@@ -4130,6 +4240,7 @@ def RBIBD_120_8_1():
 
     equiv = [[M.nonzero_positions_in_row(x) for x in S] for S in equiv]
     return [B for S in equiv for B in S]
+
 
 def BIBD_45_9_8(from_code=False):
     r"""
@@ -4215,7 +4326,7 @@ def BIBD_66_6_1():
     Return a (66,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4239,7 +4350,7 @@ def BIBD_76_6_1():
     Return a (76,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4263,7 +4374,7 @@ def BIBD_96_6_1():
     Return a (96,6,1)-BIBD.
 
     This BIBD was obtained from La Jolla covering repository
-    (https://math.ccrwest.org/cover.html) where it is attributed to Colin Barker.
+    (https://dmgordon.org/cover) where it is attributed to Colin Barker.
 
     EXAMPLES::
 
@@ -4303,6 +4414,7 @@ def BIBD_106_6_1():
             ((0,0), ( 9,0), (21,0), (12,1), (13,1), (27,1))]
 
     return [[((x+i) % 53+y*53) for x,y in B] for i in range(53) for B in bibd]
+
 
 def BIBD_111_6_1():
     r"""
@@ -4361,6 +4473,7 @@ def BIBD_126_6_1():
                  for x,y in product(range(5),repeat=2)])
     return [[x+y*5+z*25 for x,y,z in B]
             for B in bibd]
+
 
 def BIBD_136_6_1():
     r"""
@@ -4507,13 +4620,9 @@ def HigmanSimsDesign():
     from sage.combinat.designs.block_design import WittDesign
     from .incidence_structures import IncidenceStructure
     W = WittDesign(24)
-    a,b = 0,1
-    Wa = [set(B) for B in W
-          if (a     in B and
-              b not in B)]
-    Wb = [set(B) for B in W
-          if (b     in B and
-              a not in B)]
+    a, b = 0, 1
+    Wa = [set(B) for B in W if a in B and b not in B]
+    Wb = [set(B) for B in W if b in B and a not in B]
 
     H = [[i for i, A in enumerate(Wa) if len(A & B) != 2]
          for B in Wb]
@@ -4668,6 +4777,7 @@ def BIBD_79_13_2():
     libgap.unset_global("p23Act")
     libgap.unset_global("p4Act")
     return [[int(t)-1 for t in y] for y in blocks]
+
 
 def BIBD_56_11_2():
     r"""

@@ -27,6 +27,7 @@ from .constructor import EllipticCurve
 from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
 from . import ell_generic
 
+
 class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurve_field):
 
     def __init__(self, R, data, category=None):
@@ -2662,6 +2663,7 @@ def compute_model(E, name):
         return E.montgomery_model()
 
     raise NotImplementedError(f'cannot compute {name} model')
+
 
 def point_of_order(E, n):
     r"""

@@ -274,7 +274,7 @@ class CharacterArt(SageObject):
         import fcntl
         import termios
         import struct
-        rc = fcntl.ioctl(int(0), termios.TIOCGWINSZ,
+        rc = fcntl.ioctl(0, termios.TIOCGWINSZ,
                          struct.pack('HHHH', sys.stdout.fileno(), 0, 0, 0))
         h, w, hp, wp = struct.unpack('HHHH', rc)
         return w

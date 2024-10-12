@@ -187,10 +187,10 @@ class PermutationGroup_symalt(PermutationGroup_unique):
                 try:
                     domain = Integer(domain)
                 except TypeError:
-                    raise TypeError("domain (={}) must be an integer >= 0 or a finite set (but domain has type {})".format(domain, type(domain)))
+                    raise TypeError(f"domain (={domain}) must be an integer >= 0 or a finite set (but domain has type {type(domain)})")
 
                 if domain < 0:
-                    raise ValueError("domain (={}) must be an integer >= 0 or a list".format(domain))
+                    raise ValueError(f"domain (={domain}) must be an integer >= 0 or a list")
                 domain = list(range(1, domain + 1))
             v = FiniteEnumeratedSet(domain)
         else:
@@ -273,8 +273,8 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         self._domain = domain
         self._deg = len(self._domain)
-        self._domain_to_gap = {key: i+1 for i, key in enumerate(self._domain)}
-        self._domain_from_gap = {i+1: key for i, key in enumerate(self._domain)}
+        self._domain_to_gap = {key: i + 1 for i, key in enumerate(self._domain)}
+        self._domain_from_gap = {i + 1: key for i, key in enumerate(self._domain)}
 
         # Create the generators for the symmetric group
         if self._deg <= 1:
@@ -299,7 +299,7 @@ class SymmetricGroup(PermutationGroup_symalt):
             sage: S._gap_init_()
             'SymmetricGroup(3)'
         """
-        return 'SymmetricGroup({})'.format(self.degree())
+        return f'SymmetricGroup({self.degree()})'
 
     @cached_method
     def index_set(self):
@@ -340,7 +340,7 @@ class SymmetricGroup(PermutationGroup_symalt):
             sage: A = SymmetricGroup([2,3,7]); A
             Symmetric group of order 3! as a permutation group
         """
-        return "Symmetric group of order {}! as a permutation group".format(self.degree())
+        return f"Symmetric group of order {self.degree()}! as a permutation group"
 
     def _coerce_map_from_(self, G):
         """
@@ -425,6 +425,50 @@ class SymmetricGroup(PermutationGroup_symalt):
             Finite family {2: (2,3), 3: (3,7)}
         """
         return self([(i, self._domain[self._domain.index(i)+1])], check=False)
+
+    @cached_method
+    def reflection_index_set(self):
+        r"""
+        Return the index set of the reflections of ``self``.
+
+        .. SEEALSO::
+
+            - :meth:`reflection`
+            - :meth:`reflections`
+
+        EXAMPLES::
+
+            sage: S5 = SymmetricGroup(5)
+            sage: S5.reflection_index_set()
+            (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+        """
+        return tuple(range(len(self.reflections())))
+
+    def reflection(self, i):
+        r"""
+        Return the `i`-th reflection of ``self``.
+
+        For `i` in `1,\dots,N`, this gives the `i`-th reflection of
+        ``self``.
+
+        .. SEEALSO::
+
+            - :meth:`reflections_index_set`
+            - :meth:`reflections`
+
+        EXAMPLES::
+
+            sage: S4 = SymmetricGroup(4)
+            sage: for i in S4.reflection_index_set():
+            ....:     print('%s %s'%(i, S4.reflection(i)))
+            0 (1,2)
+            1 (1,3)
+            2 (1,4)
+            3 (2,3)
+            4 (2,4)
+            5 (3,4)
+        """
+        return self.reflections()[i]
 
     def reflections(self):
         """
@@ -658,11 +702,9 @@ class SymmetricGroup(PermutationGroup_symalt):
             (3,5)
         """
         from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
-        domain = self.domain()
-        if list(domain) == list(range(1, len(domain) + 1)):
+        if all(i == j for i, j in enumerate(self.domain(), start=1)):
             return SymmetricGroupAlgebra(base_ring, self, category=category)
-        else:
-            return super().algebra(base_ring)
+        return super().algebra(base_ring)
 
     Element = SymmetricGroupElement
 
@@ -2146,7 +2188,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         for H in self:
             if H.is_isomorphic(G):
                 return H
-        raise ValueError("{} is not a transitive group of degree {}".format(G, self._degree))
+        raise ValueError(f"{G} is not a transitive group of degree {self._degree}")
 
     @cached_method
     def cardinality(self):
@@ -2652,7 +2694,7 @@ class PGL(PermutationGroup_plg):
         self._base_ring = GF(q, name=name)
         self._n = n
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         EXAMPLES::
 
@@ -2729,16 +2771,13 @@ class PSL(PermutationGroup_plg):
             q = q.cardinality()
         if q not in NonNegativeIntegers():
             raise ValueError('q must be a prime power or a finite field')
-        if n == 1:
-            id = 'Group([()])'
-        else:
-            id = 'PSL(%s,%s)' % (n, q)
+        id = 'Group([()])' if n == 1 else f'PSL({n},{q})'
         PermutationGroup_generic.__init__(self, gap_group=id)
         self._q = q
         self._base_ring = GF(q, name=name)
         self._n = n
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         EXAMPLES::
 
@@ -2794,8 +2833,8 @@ class PSL(PermutationGroup_plg):
 
         F = self.base_ring()
         q = F.order()
-        libgap.Read(str(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
-                        'hurwitz_crv_rr_sp.gap'))
+        libgap.Read(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
+                    'hurwitz_crv_rr_sp.gap')
         mults = libgap.eval(f"ram_module_hurwitz({q})")
         return mults.sage()
 
@@ -2838,8 +2877,8 @@ class PSL(PermutationGroup_plg):
             raise ValueError("degree must be 2")
         F = self.base_ring()
         q = F.order()
-        libgap.Read(str(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
-                        'modular_crv_rr_sp.gap'))
+        libgap.Read(Path(SAGE_EXTCODE) / 'gap' / 'joyner' /
+                    'modular_crv_rr_sp.gap')
         mults = libgap.eval(f"ram_module_X({q})")
         return mults.sage()
 
@@ -2895,7 +2934,7 @@ class PSp(PermutationGroup_plg):
         self._base_ring = GF(q, name=name)
         self._n = n
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         EXAMPLES::
 
@@ -3088,7 +3127,7 @@ class SuzukiGroup(PermutationGroup_unique):
         """
         return self._base_ring
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         EXAMPLES::
 

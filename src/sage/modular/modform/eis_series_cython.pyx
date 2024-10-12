@@ -107,12 +107,12 @@ cpdef Ek_ZZ(int k, int prec=10):
 
             # compute the valuation of n at p
             additional_p_powers = 0
-            temp_index = ind / p
+            temp_index = ind // p
             remainder = 0
             while not remainder:
                 additional_p_powers += 1
                 prev_index = temp_index
-                temp_index = temp_index / p
+                temp_index = temp_index // p
                 remainder = prev_index - p*temp_index
 
             # if we need a new sum, it has to be the next uncomputed one.
@@ -184,7 +184,7 @@ cpdef eisenstein_series_poly(int k, int prec=10):
     a0 = -bernoulli(k) / (2*k)
 
     cdef long p, ppow
-    for p in primes(1, prec) :
+    for p in primes(1, prec):
         ppow = p
 
         mpz_set_si(mult, p)

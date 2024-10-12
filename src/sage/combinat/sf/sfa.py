@@ -6469,6 +6469,7 @@ from sage.categories.pushout import ConstructionFunctor
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.functor import Functor
 
+
 class SymmetricFunctionsFunctor(ConstructionFunctor):
     """
     A constructor for algebras of symmetric functions.
@@ -6899,7 +6900,7 @@ def _from_polynomial(p, f):
     n = p.parent().ngens()
     if n == 1:
         d = {_Partitions.from_exp([e]): c
-             for e, c in p.dict().items()}
+             for e, c in p.monomial_coefficients().items()}
     else:
         d = {_Partitions.from_exp(e): c
              for e, c in p.iterator_exp_coeff(False)}

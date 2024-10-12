@@ -1387,7 +1387,7 @@ def order_p_automorphisms(rational_function, pre_image):
         if case == 'fix':
             T = [x[0] for x in pre_image]
         elif case == 'F-pre_images':
-            T = [x for x in pre_image[0][1]]
+            T = list(pre_image[0][1])
         else:
             T = []
 
@@ -1396,10 +1396,10 @@ def order_p_automorphisms(rational_function, pre_image):
             pt = guy[0]
             # treat case of multiple F-rational fixed points or
             #     1 F-rational fixed point with F-rational pre-images
-            if T != []:
+            if T:
                 M = [t for t in T if t != pt]
                 m = len(M)
-                if pt == [F(1),F(0)]:
+                if pt == [F(1), F(0)]:
                     for i in range(1, m):
                         s = z + M[i][0] - M[0][0]
                         if s(phi(z)) == phi(s(z)):
@@ -1407,8 +1407,8 @@ def order_p_automorphisms(rational_function, pre_image):
                 else:
                     u = F(1) / (z - pt[0])
                     u_inv = pt[0] + F(1)/z
-                    for i in range(1,m):
-                        if M[0] == [F(1),F(0)]:
+                    for i in range(1, m):
+                        if M[0] == [F(1), F(0)]:
                             uy1 = 0
                         else:
                             uy1 = u(M[0][0])

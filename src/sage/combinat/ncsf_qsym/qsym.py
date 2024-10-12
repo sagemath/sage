@@ -697,7 +697,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             -F[1, 1] + F[2]
         """
         assert self.base_ring() == f.base_ring()
-        exponent_coefficient = f.dict()
+        exponent_coefficient = f.monomial_coefficients()
         z = {}
         for e, c in exponent_coefficient.items():
             I = Compositions()([ei for ei in e if ei])
@@ -2039,7 +2039,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                         return P.zero()
                     else:
                         return x[i-1]**comp[-1] * on_basis(comp[:-1], i-1) + \
-                                                  on_basis(comp,      i-1)
+                                                  on_basis(comp, i-1)
                 return M._apply_module_morphism(self, lambda comp: on_basis(comp,n),
                                                 codomain=P)
 
