@@ -689,7 +689,7 @@ class ManifoldPoint(Element):
             diff = xs - xo
             period = periods[ind]
             if period is not None:
-                if not (diff/period in ZZ):
+                if diff/period not in ZZ:
                     return False
             else:
                 if isinstance(diff, Expression) and not diff.is_trivial_zero():

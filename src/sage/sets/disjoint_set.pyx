@@ -62,7 +62,10 @@ from sage.rings.integer cimport Integer
 from sage.structure.sage_object cimport SageObject
 from cpython.object cimport PyObject_RichCompare
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
-from sage.combinat.set_partition import SetPartition
+from sage.misc.lazy_import import LazyImport
+
+SetPartition = LazyImport('sage.combinat.set_partition', 'SetPartition')
+
 
 cpdef DisjointSet(arg):
     r"""

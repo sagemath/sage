@@ -44,7 +44,8 @@ ring::
     x - 1/6*x^3 + 1/120*x^5 - 1/5040*x^7 + 1/362880*x^9 + O(x^10)
     sage: R.<x> = PowerSeriesRing(QQ, default_prec=15)
     sage: sin(x)
-    x - 1/6*x^3 + 1/120*x^5 - 1/5040*x^7 + 1/362880*x^9 - 1/39916800*x^11 + 1/6227020800*x^13 + O(x^15)
+    x - 1/6*x^3 + 1/120*x^5 - 1/5040*x^7 + 1/362880*x^9 - 1/39916800*x^11
+    + 1/6227020800*x^13 + O(x^15)
 
 An iterated example::
 
@@ -139,8 +140,6 @@ from sage.interfaces.abc import MagmaElement
 from sage.misc.lazy_import import lazy_import
 from sage.rings import (
     integer,
-    laurent_series_ring,
-    laurent_series_ring_element,
     power_series_mpoly,
     power_series_poly,
     power_series_ring_element,
@@ -153,6 +152,7 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Expression, parent
+from sage.structure.parent import Parent
 from sage.structure.nonexact import Nonexact
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -355,7 +355,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
 
         * :func:`sage.misc.defaults.set_series_precision`
     """
-    #multivariate case:
+    # multivariate case:
     # examples for first case:
     # PowerSeriesRing(QQ,'x,y,z')
     # PowerSeriesRing(QQ,['x','y','z'])
@@ -364,7 +364,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         names = name
     if isinstance(names, (tuple, list)) and len(names) > 1 or (isinstance(names, str) and ',' in names):
         return _multi_variate(base_ring, num_gens=arg2, names=names,
-                     order=order, default_prec=default_prec, sparse=sparse)
+                              order=order, default_prec=default_prec, sparse=sparse)
     # examples for second case:
     # PowerSeriesRing(QQ,3,'t')
     if arg2 is None and num_gens is not None:
@@ -373,7 +373,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
     if (isinstance(arg2, str) and
             isinstance(names, (int, integer.Integer))):
         return _multi_variate(base_ring, num_gens=names, names=arg2,
-                     order=order, default_prec=default_prec, sparse=sparse)
+                              order=order, default_prec=default_prec, sparse=sparse)
 
     # univariate case: the arguments to PowerSeriesRing used to be
     # (base_ring, name=None, default_prec=20, names=None, sparse=False),
@@ -385,11 +385,10 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
     elif arg2 is not None:
         default_prec = arg2
 
-    ## too many things (padics, elliptic curves) depend on this behavior,
-    ## so no warning for now.
-    ##
+    # ## too many things (padics, elliptic curves) depend on this behavior,
+    # ## so no warning for now.
 
-    # if isinstance(name, (int,integer.Integer)) or isinstance(arg2,(int,integer.Integer)):
+    # if isinstance(name, (int, integer.Integer)) or isinstance(arg2, (int, integer.Integer)):
     #     deprecation(issue_number, "This behavior of PowerSeriesRing is being deprecated in favor of constructing multivariate power series rings. (See Github issue #1956.)")
 
     # the following is the original, univariate-only code
@@ -427,8 +426,9 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         raise TypeError("base_ring must be a commutative ring")
     return R
 
+
 def _multi_variate(base_ring, num_gens=None, names=None,
-                     order='negdeglex', default_prec=None, sparse=False):
+                   order='negdeglex', default_prec=None, sparse=False):
     """
     Construct multivariate power series ring.
     """
@@ -436,7 +436,7 @@ def _multi_variate(base_ring, num_gens=None, names=None,
         raise TypeError("you must specify a variable name or names")
 
     if num_gens is None:
-        if isinstance(names,str):
+        if isinstance(names, str):
             num_gens = len(names.split(','))
         elif isinstance(names, (list, tuple)):
             num_gens = len(names)
@@ -457,6 +457,7 @@ def _multi_variate(base_ring, num_gens=None, names=None,
 
 def _single_variate():
     pass
+
 
 def is_PowerSeriesRing(R):
     """
@@ -489,7 +490,8 @@ def is_PowerSeriesRing(R):
     else:
         return False
 
-class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexact):
+
+class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
     """
     A power series ring.
     """
@@ -592,9 +594,9 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         else:
             raise ValueError('unknown power series implementation: %r' % implementation)
 
-        ring.CommutativeRing.__init__(self, base_ring, names=name,
-                                      category=getattr(self, '_default_category',
-                                                       _CommutativeRings))
+        Parent.__init__(self, base=base_ring, names=name,
+                        category=getattr(self, '_default_category',
+                                         _CommutativeRings))
         Nonexact.__init__(self, default_prec)
         if implementation == 'pari':
             self.__generator = self.element_class(self, R.gen().__pari__())
@@ -832,7 +834,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         elif isinstance(f, LaurentSeries) and f.parent().power_series_ring() is self:
             return self(f.power_series(), prec, check=check)
         elif isinstance(f, MagmaElement) and str(f.Type()) == 'RngSerPowElt':
-            v = sage_eval(f.Eltseq())
+            v = sage_eval(f.Eltseq())  # could use .sage() ?
             return self(v) * (self.gen(0)**f.Valuation())
         elif isinstance(f, FractionFieldElement):
             if self.base_ring().has_coerce_map_from(f.parent()):
@@ -846,7 +848,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             if isinstance(f, SymbolicSeries):
                 if str(f.default_variable()) == self.variable_name():
                     return self.element_class(self, f.list(),
-                                          f.degree(f.default_variable()), check=check)
+                                              f.degree(f.default_variable()),
+                                              check=check)
                 else:
                     raise TypeError("Can only convert series into ring with same variable name.")
         else:
@@ -1096,6 +1099,18 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         if n != 0:
             raise IndexError("generator n>0 not defined")
         return self.__generator
+
+    def gens(self) -> tuple:
+        """
+        Return the generators of this ring.
+
+        EXAMPLES::
+
+            sage: R.<t> = PowerSeriesRing(ZZ)
+            sage: R.gens()
+            (t,)
+        """
+        return (self.__generator,)
 
     def uniformizer(self):
         """
@@ -1356,6 +1371,7 @@ class PowerSeriesRing_domain(PowerSeriesRing_generic, ring.IntegralDomain):
             # Floor division by coefficient.
             return BaseRingFloorDivAction(other, self, is_left=False)
         return super()._get_action_(other, op, self_is_left)
+
 
 class PowerSeriesRing_over_field(PowerSeriesRing_domain):
     _default_category = CompleteDiscreteValuationRings()
