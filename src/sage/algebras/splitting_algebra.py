@@ -102,7 +102,7 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
 
         return super().is_unit()
 
-    def dict(self):
+    def monomial_coefficients(self):
         r"""
         Return the dictionary of ``self`` according to its lift to the cover.
 
@@ -110,11 +110,18 @@ class SplittingAlgebraElement(PolynomialQuotientRingElement):
 
             sage: from sage.algebras.splitting_algebra import SplittingAlgebra
             sage: CR3.<e3> = SplittingAlgebra(cyclotomic_polynomial(3))
-            sage: (e3 + 42).dict()
+            sage: f = e3 + 42
+            sage: f.monomial_coefficients()
+            {0: 42, 1: 1}
+
+        ``dict`` is an alias::
+
+            sage: f.dict()
             {0: 42, 1: 1}
         """
-        return self.lift().dict()
+        return self.lift().monomial_coefficients()
 
+    dict = monomial_coefficients
 
 # ------------------------------------------------------------------------------------------------------------------
 # Parent class of the splitting algebra
@@ -282,7 +289,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             root_names_reduces.remove(root_name)
 
             P = base_ring_step[root_names_reduces[0]]
-            p = P(monic_polynomial.dict())
+            p = P(monic_polynomial.monomial_coefficients())
             q, _ = p.quo_rem(P.gen() - first_root)
 
             verbose("Invoking recursion with: %s" % (q,))
