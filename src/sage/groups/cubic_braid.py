@@ -91,6 +91,8 @@ from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPrese
 from sage.groups.braid import BraidGroup
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 try:
     from sage.libs.gap.element import GapElement
@@ -565,7 +567,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 #                  Class CubicBraidGroup
 #
 ##############################################################################
-class CubicBraidGroup(FinitelyPresentedGroup):
+class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
     r"""
     Factor groups of the Artin braid group mapping their generators to elements
     of order 3.
@@ -750,7 +752,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         n = Integer(len(names))
         if n < 1:
             raise ValueError("the number of strands must be an integer larger than one")
-
         if cbg_type is None:
             cbg_type = CubicBraidGroup.type.Coxeter
         if not isinstance(cbg_type, CubicBraidGroup.type):
@@ -1200,7 +1201,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             def transvec2mat(v, bas=bas, bform=bform, fact=1):
                 t = [x + fact*(x * bform * v) * v for x in bas]
-                return matrix(bform.base_ring(),  t)
+                return matrix(bform.base_ring(), t)
 
             # ------------------------------------------------------------------------------
             # setting the centralizing matrix for the case of projective group realization

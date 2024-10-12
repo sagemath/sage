@@ -1318,7 +1318,7 @@ class DiGraph(GenericGraph):
         if vertices in self:
             return self._backend.in_degree(vertices)
         elif labels:
-            return {v: d for v, d in self.in_degree_iterator(vertices, labels=labels)}
+            return dict(self.in_degree_iterator(vertices, labels=labels))
         return list(self.in_degree_iterator(vertices, labels=labels))
 
     def in_degree_iterator(self, vertices=None, labels=False):
@@ -1388,7 +1388,7 @@ class DiGraph(GenericGraph):
         if vertices in self:
             return self._backend.out_degree(vertices)
         elif labels:
-            return {v: d for v, d in self.out_degree_iterator(vertices, labels=labels)}
+            return dict(self.out_degree_iterator(vertices, labels=labels))
         return list(self.out_degree_iterator(vertices, labels=labels))
 
     def out_degree_iterator(self, vertices=None, labels=False):

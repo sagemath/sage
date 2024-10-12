@@ -793,7 +793,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
-            sage: TestSuite(ki_db).run()    # long time indirect doctest
+            sage: TestSuite(ki_db).run()    # optional - database_knotinfo, long time, indirect doctest
         """
         from sage.knots.knotinfo import KnotInfo
         from sage.misc.misc import some_tuples

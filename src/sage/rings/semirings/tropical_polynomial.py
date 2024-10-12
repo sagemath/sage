@@ -37,6 +37,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse
 
+
 class TropicalPolynomial(Polynomial_generic_sparse):
     r"""
     A univariate tropical polynomial.
@@ -206,7 +207,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         """
         from itertools import combinations
         tropical_roots = []
-        data = self.dict()
+        data = self.monomial_coefficients()
         R = self.parent().base()
         if len(data) == 1:
             exponent = next(iter(data))
@@ -278,7 +279,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         """
         roots = self.roots()
         R = self.parent()
-        poly = R(self.dict()[self.degree()].lift())
+        poly = R(self.monomial_coefficients()[self.degree()].lift())
         for root in roots:
             linear = R([root, 0])
             poly *= linear
@@ -320,7 +321,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             (3) * 0
         """
         from sage.structure.factorization import Factorization
-        unit = self.dict()[self.degree()]
+        unit = self.monomial_coefficients()[self.degree()]
         if self != self.split_form() or not self.roots():
             factor = [(self * self.parent(-unit.lift()), 1)]
             return Factorization(factor, unit=unit)
@@ -332,9 +333,8 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                 roots_order[root] += 1
             else:
                 roots_order[root] = 1
-        factors = []
-        for root in roots_order:
-            factors.append((R([root, 0]), roots_order[root]))
+        factors = [(R([root, 0]), roots_order[root])
+                   for root in roots_order]
         return Factorization(factors, unit=unit)
 
     def piecewise_function(self):
@@ -374,7 +374,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         from sage.sets.real_set import RealSet
 
         x = SR.var('x')
-        data = self.dict()
+        data = self.monomial_coefficients()
         R = self.parent().base()
         if not self.roots():
             f = data[0].lift()
@@ -386,10 +386,10 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             f = intercept + gradient*x
             return f
 
-        unique_root = sorted(list(set(self.roots())))
+        unique_root = sorted(set(self.roots()))
         pieces = []
         domain = []
-        for i in range(len(unique_root)+1):
+        for i in range(len(unique_root) + 1):
             if i == 0:
                 test_number = R(unique_root[i] - 1)
             elif i == len(unique_root):
@@ -537,7 +537,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             (-1)*x^3 + 2*x^2 + (-1)*x + (-3)
         """
         import re
-        if not self.dict():
+        if not self.monomial_coefficients():
             return str(self.parent().base().zero())
 
         def replace_negatives(expr):
@@ -579,12 +579,12 @@ class TropicalPolynomial(Polynomial_generic_sparse):
                 if x.find("-") == 0:
                     x = "\\left(" + x + "\\right)"
                 if n > 1:
-                    v = "|%s^{%s}" % (name, n)
+                    v = f"|{name}^{{{n}}}"
                 elif n == 1:
-                    v = "|%s" % name
+                    v = f"|{name}"
                 else:
                     v = ""
-                s += "%s %s" % (x, v)
+                s += f"{x} {v}"
         s = s.replace("|", "")
         if s == " ":
             return self.parent().base().zero()._latex_()
@@ -844,7 +844,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
         f = R.random_element(degree=degree, monic=monic, *args, **kwds)
-        new_dict = f.dict()
+        new_dict = f.monomial_coefficients()
         if monic:
             new_dict[f.degree()] = 0
         return self.element_class(self, new_dict)
@@ -968,7 +968,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
 
         result = self.one()
         for root, order in roots.items():
-            result *= self([root,0])**order
+            result *= self([root, 0])**order
         test_value = result(R(points[0][0]))
         unit = R(points[0][1] - test_value.lift())
         result *= unit

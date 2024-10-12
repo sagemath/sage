@@ -173,7 +173,6 @@ cdef extern from "m4rie/m4rie.h":
 
     void mzd_slice_row_add(mzd_slice_t *A, size_t sourcerow, size_t destrow)
 
-
     void mzd_slice_row_clear_offset(mzd_slice_t *A, size_t row, size_t coloffset)
 
     void mzd_slice_print(mzd_slice_t *A)
