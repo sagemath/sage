@@ -3023,121 +3023,6 @@ class Graph(GenericGraph):
     # Orientations
 
     @doc_index("Connectivity, orientations, trees")
-    def strong_orientation(self):
-        r"""
-        Return a strongly connected orientation of the current graph.
-
-        An orientation of an undirected graph is a digraph obtained by giving an
-        unique direction to each of its edges. An orientation is said to be
-        strong if there is a directed path between each pair of vertices.  See
-        also the :wikipedia:`Strongly_connected_component`.
-
-        If the graph is 2-edge-connected, a strongly connected orientation
-        can be found in linear time. If the given graph is not 2-connected,
-        the orientation returned will ensure that each 2-connected component
-        has a strongly connected orientation.
-
-        OUTPUT: a digraph representing an orientation of the current graph
-
-        .. NOTE::
-
-            - This method assumes the graph is connected.
-            - This time complexity is `O(n+m)` for ``SparseGraph`` and `O(n^2)`
-              for ``DenseGraph`` .
-
-        .. SEEALSO::
-
-            - :meth:`~sage.graphs.graph.Graph.orientations`
-            - :meth:`~sage.graphs.orientations.strong_orientations_iterator`
-            - :meth:`~sage.graphs.digraph_generators.DiGraphGenerators.nauty_directg`
-            - :meth:`~sage.graphs.orientations.random_orientation`
-
-        EXAMPLES:
-
-        For a 2-regular graph, a strong orientation gives to each vertex an
-        out-degree equal to 1::
-
-            sage: g = graphs.CycleGraph(5)
-            sage: g.strong_orientation().out_degree()
-            [1, 1, 1, 1, 1]
-
-        The Petersen Graph is 2-edge connected. It then has a strongly connected
-        orientation::
-
-            sage: g = graphs.PetersenGraph()
-            sage: o = g.strong_orientation()
-            sage: len(o.strongly_connected_components())
-            1
-
-        The same goes for the CubeGraph in any dimension ::
-
-            sage: all(len(graphs.CubeGraph(i).strong_orientation().strongly_connected_components()) == 1 for i in range(2,6))
-            True
-
-        A multigraph also has a strong orientation ::
-
-            sage: g = Graph([(1,2),(1,2)], multiedges=True)
-            sage: g.strong_orientation()
-            Multi-digraph on 2 vertices
-        """
-        from sage.graphs.digraph import DiGraph
-        d = DiGraph(multiedges=self.allows_multiple_edges())
-        i = 0
-
-        # The algorithm works through a depth-first search. Any edge
-        # used in the depth-first search is oriented in the direction
-        # in which it has been used. All the other edges are oriented
-        # backward
-
-        v = next(self.vertex_iterator())
-        seen = {}
-        i = 1
-
-        # Time at which the vertices have been discovered
-        seen[v] = i
-
-        # indicates the stack of edges to explore
-        next_ = self.edges_incident(v)
-
-        while next_:
-            e = next_.pop()
-
-            # Ignore loops
-            if e[0] == e[1]:
-                continue
-
-            # We assume e[0] to be a `seen` vertex
-            e = e if seen.get(e[0], False) is not False else (e[1], e[0], e[2])
-
-            # If we discovered a new vertex
-            if seen.get(e[1], False) is False:
-                d.add_edge(e)
-                next_.extend(ee for ee in self.edges_incident(e[1])
-                             if ((e[0], e[1]) != (ee[0], ee[1])) and ((e[0], e[1]) != (ee[1], ee[0])))
-                i += 1
-                seen[e[1]] = i
-
-            # Else, we orient the edges backward
-            else:
-                if seen[e[0]] < seen[e[1]]:
-                    d.add_edge(e[1], e[0], e[2])
-                else:
-                    d.add_edge(e)
-
-        # Case of multiple edges. If another edge has already been inserted, we
-        # add the new one in the opposite direction.
-        tmp = None
-        for e in self.multiple_edges():
-            if tmp == (e[0], e[1]):
-                if d.has_edge(e[0], e[1]):
-                    d.add_edge(e[1], e[0], e[2])
-                else:
-                    d.add_edge(e)
-            tmp = (e[0], e[1])
-
-        return d
-
-    @doc_index("Connectivity, orientations, trees")
     def minimum_outdegree_orientation(self, use_edge_labels=False, solver=None, verbose=0,
                                       *, integrality_tolerance=1e-3):
         r"""
@@ -9691,6 +9576,7 @@ class Graph(GenericGraph):
     from sage.graphs.lovasz_theta import lovasz_theta
     from sage.graphs.partial_cube import is_partial_cube
     from sage.graphs.orientations import orient
+    from sage.graphs.orientations import strong_orientation
     from sage.graphs.orientations import strong_orientations_iterator
     from sage.graphs.orientations import random_orientation
     from sage.graphs.orientations import acyclic_orientations
@@ -9744,6 +9630,7 @@ _additional_categories = {
     "tutte_polynomial"          : "Algorithmically hard stuff",
     "lovasz_theta"              : "Leftovers",
     "orient" : "Connectivity, orientations, trees",
+    "strong_orientation" : "Connectivity, orientations, trees",
     "strong_orientations_iterator" : "Connectivity, orientations, trees",
     "random_orientation"        : "Connectivity, orientations, trees",
     "acyclic_orientations"      : "Connectivity, orientations, trees",
