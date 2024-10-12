@@ -1,3 +1,4 @@
+# sage.doctest: optional - giac
 r"""
 Pexpect Interface to Giac
 

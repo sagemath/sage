@@ -22,6 +22,7 @@ SAGE_SPKG_CONFIGURE([giac], [
         AC_SEARCH_LIBS([ConvertUTF16toUTF8], [giac], [
         ], [sage_spkg_install_giac=yes])
        ], [sage_spkg_install_giac=yes])
+       AC_SUBST(SAGE_ENABLE_giac)
        m4_popdef([GIAC_MIN_VERSION])
        m4_popdef([GIAC_MAX_VERSION])
     ])
