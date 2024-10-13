@@ -493,9 +493,9 @@ class MatchingCoveredGraph(Graph):
                 if (G_simple.order() != M.order()) or (G_simple.order() != 2*M.size()):
                     raise ValueError("the input is not a perfect matching of the graph")
 
-                self.matching = matching
+                self._matching = matching
             else:
-                self.matching = Graph(self).matching()
+                self._matching = Graph(self).matching()
 
         else:
             raise ValueError('input data is of unknown type')
@@ -608,13 +608,13 @@ class MatchingCoveredGraph(Graph):
 
     def get_matching(self):
         r"""
-        Return ``self.matching``, which is a perfect matching of the (matching
+        Return ``self._matching``, which is a perfect matching of the (matching
         covered) graph computed at the initialization.
 
         EXAMPLES:
 
         If one specifies a perfect matching while initializing the object, the
-        value of ``self.matching`` is captures the same matching::
+        value of ``self._matching`` is captures the same matching::
 
             sage: P = graphs.PetersenGraph()
             sage: M = [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
@@ -627,7 +627,7 @@ class MatchingCoveredGraph(Graph):
         If no matching is specified while initilizing a matching covered graph,
         a perfect is computed
         :meth:`~sage.graphs.graph.Graph.matching` and that is captured as
-        ``self.matching``::
+        ``self._matching``::
 
             sage: P = graphs.PetersenGraph()
             sage: M = P.matching()
@@ -637,4 +637,4 @@ class MatchingCoveredGraph(Graph):
             sage: M == G.get_matching()
             True
         """
-        return self.matching
+        return self._matching
