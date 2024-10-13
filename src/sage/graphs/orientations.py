@@ -331,6 +331,10 @@ def orientations(G, data_structure=None, sparse=None):
         sage: G.set_embedding(embedding)
         sage: next(G.orientations()).get_embedding() == embedding
         True
+        sage: G = Graph()
+        sage: G.set_embedding({})
+        sage: next(G.orientations()).get_embedding() == {}
+        True
     """
     if sparse is not None:
         if data_structure is not None:
@@ -1085,19 +1089,18 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
     Show the influence of edge labels on the solution::
 
         sage: # needs sage.numerical.mip
-        sage: g = graphs.CycleGraph(4)
-        sage: g.add_edge(0, 2)
+        sage: g = graphs.PetersenGraph()
         sage: o = g.minimum_outdegree_orientation(use_edge_labels=False)
-        sage: o.out_degree(labels=True) == {0: 1, 1: 2, 2: 1, 3: 1}
-        True
+        sage: max(o.out_degree())
+        2
         sage: _ = [g.set_edge_label(u, v, 1) for u, v in g.edge_iterator(labels=False)]
         sage: o = g.minimum_outdegree_orientation(use_edge_labels=True)
-        sage: o.out_degree(labels=True) == {0: 1, 1: 2, 2: 1, 3: 1}
-        True
-        sage: g.set_edge_label(0, 2, 10)
+        sage: max(o.out_degree())
+        2
+        sage: g.set_edge_label(0, 1, 100)
         sage: o = g.minimum_outdegree_orientation(use_edge_labels=True)
-        sage: o.out_degree(labels=True) == {0: 1, 1: 2, 2: 0, 3: 2}
-        True
+        sage: max(o.out_degree())
+        3
 
     TESTS::
 
