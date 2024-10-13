@@ -411,7 +411,7 @@ class MatchingCoveredGraph(Graph):
         Traceback (most recent call last):
         ...
         RuntimeError: the string (graph) seems corrupt: for n = 40, the string is too short
-        
+
         sage: G = graphs.CompleteGraph(6)
         sage: M = Graph(G.matching())
         sage: M.add_edges([(0, 1), (0, 2)])
@@ -472,8 +472,8 @@ class MatchingCoveredGraph(Graph):
                 Graph.__init__(self, data, *args, **kwds)
                 success = True
 
-            except ValueError as error:
-                raise error
+            except Exception as exception:
+                raise exception
 
         elif isinstance(data, Graph):
             try:
@@ -483,8 +483,8 @@ class MatchingCoveredGraph(Graph):
                                          integrality_tolerance=integrality_tolerance)
                 success = True
 
-            except ValueError as error:
-                raise error
+            except Exception as exception:
+                raise exception
 
         if success:
             if matching:
@@ -567,8 +567,8 @@ class MatchingCoveredGraph(Graph):
             if not check:
                 raise ValueError("input graph is not matching covered")
 
-        except ValueError as error:
-            raise error
+        except Exception as exception:
+            raise exception
 
     def add_vertices(self, vertices):
         r"""
