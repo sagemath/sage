@@ -3793,7 +3793,7 @@ cdef class BinaryMatroid(LinearMatroid):
                              keep_initial_representation=False)
 
     # graphicness test
-    cpdef is_graphic(self, algorithm=None):
+    cpdef bint is_graphic(self, algorithm=None) except -1:
         r"""
         Test if the binary matroid is graphic.
 
@@ -3960,7 +3960,7 @@ cdef class BinaryMatroid(LinearMatroid):
         A_cmr = Matrix_cmr_chr_sparse(A.parent(), A)
         return A_cmr._is_binary_linear_matroid_graphic()
 
-    cpdef is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if the data obey the matroid axioms.
 
@@ -6406,7 +6406,7 @@ cdef class RegularMatroid(LinearMatroid):
 
     # representation
 
-    cpdef bint is_regular(self, **kwds) except -1:
+    cpdef bint is_regular(self, algorithm=None) except -1:
         r"""
         Return if ``self`` is regular.
 

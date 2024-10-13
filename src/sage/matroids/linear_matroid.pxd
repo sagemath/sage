@@ -174,6 +174,6 @@ cdef class RegularMatroid(LinearMatroid):
     cpdef has_line_minor(self, k, hyperlines=*, certificate=*)
     cpdef _linear_extension_chains(self, F, fundamentals=*)
 
-    cpdef bint is_regular(self) noexcept
+    cpdef bint is_regular(self, algorithm=*) except -1
     cpdef bint is_graphic(self, algorithm=*) except -1
     cpdef bint is_valid(self) noexcept
