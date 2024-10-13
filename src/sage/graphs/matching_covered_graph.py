@@ -742,6 +742,109 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('loops are not allowed in '
                              'matching covered graphs')
 
+    def delete_vertices(self, vertices):
+        r"""
+        Delete vertices (along with the incident edges) from the (matching
+        covered) graph taken from an iterable container of vertices.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.delete_vertices`
+            method to ensure that an odd order is forbidden in
+            :class:`~MatchingCoveredGraph`.
+
+        INPUT:
+
+        - ``vertices`` -- a list/ set of vertices that are to be deleted.
+
+        OUTPUT:
+
+        - Deleting a non-existent vertex will raise a :exc:`ValueError`
+          exception, in which case none of the vertices in ``vertices``
+          is deleted.
+
+        - If all of the vertices in the list/ set provided exist in the graph,
+          but the resulting graph after deletion of all of those is not
+          matching covered, then a :exc:`ValueError` exception is raised,
+          otherwise nothing is returned.
+
+        EXAMPLES:
+
+        Providing with a list of vertices with at least one non-existent
+        vertex::
+
+            sage: S = graphs.StaircaseGraph(4)
+            sage: S
+            Staircase graph: Graph on 8 vertices
+            sage: G = MatchingCoveredGraph(S)
+            sage: G
+            Matching covered staircase graph: graph on 8 vertices
+            sage: T = list(range(5, 20, 2))
+            sage: G.delete_vertices(T)
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex (9) not in the graph
+
+        Providing with a list of existent vertices whose deletion results in a
+        graph which is not matching covered::
+
+            sage: S = graphs.StaircaseGraph(4)
+            sage: S
+            Staircase graph: Graph on 8 vertices
+            sage: G = MatchingCoveredGraph(S)
+            sage: G
+            Matching covered staircase graph: graph on 8 vertices
+            sage: T = [1, 4]
+            sage: G.delete_vertices(T)
+            Traceback (most recent call last):
+            ...
+            ValueError: the resulting graph after the removal of the vertices is not matching covered
+
+        Providing with a list of existent vertices after the deletion of which
+        the resulting graph is still matching covered; note that in the
+        following example, after the deletion of two vertices from a staircase
+        graph, the resulting graph is NOT a staircase graph
+        (see :issue:`38768`)::
+
+            sage: S = graphs.StaircaseGraph(4)
+            sage: S
+            Staircase graph: Graph on 8 vertices
+            sage: G = MatchingCoveredGraph(S)
+            sage: G
+            Matching covered staircase graph: graph on 8 vertices
+            sage: T = [6, 7]
+            sage: G.delete_vertices(T)
+            sage: G  # Matching covered graph on 6 vertices
+            Matching covered staircase graph: graph on 6 vertices
+        """
+
+        for vertex in vertices:
+            if vertex not in self:
+                raise ValueError('vertex (%s) not in the graph' % str(vertex))
+
+        try:
+            G = Graph(self)
+            M = Graph(self.get_matching())
+            G_simple = G.to_simple()
+
+            if M:
+                M.delete_vertices(vertices)
+                # The resulting matching after the removal of the input vertices
+                # must be a valid perfect matching of the resulting graph obtained
+                # after the removal of the vertices
+
+                if any(d != 1 for d in G_simple.degree()) \
+                or any(not G_simple.has_edge(edge) for edge in M.edge_iterator()) \
+                or (G_simple.order() != M.order()) or (G_simple.order() != 2*M.size()):
+                    M = None
+
+            self.__init__(data=G, matching=M)
+
+        except:
+            raise ValueError('the resulting graph after the removal of '
+                             'the vertices is not matching covered')
+
     def delete_vertex(self, vertex, in_order=False):
         """
         Delete a vertex, removing all incident edges.
