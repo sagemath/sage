@@ -9177,6 +9177,7 @@ class Graph(GenericGraph):
     from sage.graphs.orientations import acyclic_orientations
     from sage.graphs.orientations import minimum_outdegree_orientation
     from sage.graphs.orientations import bounded_outdegree_orientation
+    from sage.graphs.orientations import eulerian_orientation
     from sage.graphs.connectivity import bridges, cleave, spqr_tree
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.comparability import is_comparability
@@ -9234,6 +9235,7 @@ _additional_categories = {
     "acyclic_orientations"      : "Connectivity, orientations, trees",
     "minimum_outdegree_orientation": "Connectivity, orientations, trees",
     "bounded_outdegree_orientation": "Connectivity, orientations, trees",
+    "eulerian_orientation": "Connectivity, orientations, trees",
     "bridges"                   : "Connectivity, orientations, trees",
     "cleave"                    : "Connectivity, orientations, trees",
     "spqr_tree"                 : "Connectivity, orientations, trees",
