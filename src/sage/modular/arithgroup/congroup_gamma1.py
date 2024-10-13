@@ -3,13 +3,13 @@ r"""
 Congruence subgroup `\Gamma_1(N)`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.misc.cachefunc import cached_method
@@ -44,12 +44,13 @@ def is_Gamma1(x):
     """
     from sage.misc.superseded import deprecation
     deprecation(38035, "The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.")
-    #from congroup_sl2z import is_SL2Z
-    #return (isinstance(x, Gamma1_class) or is_SL2Z(x))
+    # from congroup_sl2z import is_SL2Z
+    # return (isinstance(x, Gamma1_class) or is_SL2Z(x))
     return isinstance(x, Gamma1_class)
 
 
 _gamma1_cache = {}
+
 
 def Gamma1_constructor(N):
     r"""
@@ -487,7 +488,7 @@ class Gamma1_class(GammaH_class):
             from sage.modular.dims import CohenOesterle
             return ZZ( K(Gamma0(N).index() * (k-1)/ZZ(12)) + CohenOesterle(eps,k) )
 
-        else: #algorithm not in ["CohenOesterle", "Quer"]:
+        else:  # algorithm not in ["CohenOesterle", "Quer"]:
             raise ValueError("Unrecognised algorithm in dimension_cusp_forms")
 
     def dimension_eis(self, k=2, eps=None, algorithm='CohenOesterle'):
@@ -573,7 +574,7 @@ class Gamma1_class(GammaH_class):
             else:
                 return alpha - self.dimension_cusp_forms(k, eps)
 
-        else: #algorithm not in ["CohenOesterle", "Quer"]:
+        else:  # algorithm not in ["CohenOesterle", "Quer"]:
             raise ValueError("Unrecognised algorithm in dimension_eis")
 
     def dimension_new_cusp_forms(self, k=2, eps=None, p=0, algorithm='CohenOesterle'):
