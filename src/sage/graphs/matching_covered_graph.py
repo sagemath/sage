@@ -563,6 +563,70 @@ class MatchingCoveredGraph(Graph):
         except ValueError as error:
             raise error
 
+    def add_vertex(self, name=None):
+        r"""
+        Add a vertex to the (matching covered) graph.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.add_vertex` method
+            to ensure that isolated vertices are forbidden in
+            :class:`~MatchingCoveredGraph`.
+
+        INPUT:
+
+        - ``name`` -- an immutable object (default: ``None``); when no name is
+          specified (default), then the new vertex will be represented by the
+          least integer not already representing a vertex. ``name`` must be an
+          immutable object (e.g., an integer, a tuple, etc.).
+
+        OUTPUT:
+
+        - If ``name`` specifies an existing vertex, then nothing is done.
+          Otherwise a :exc:`ValueError` is returned since matching covered
+          graphs are free of isolated vertices.
+
+        EXAMPLES:
+
+        Adding an existing vertex::
+
+            sage: P = graphs.PetersenGraph()
+            sage: P
+            Petersen graph: Graph on 10 vertices
+            sage: G = MatchingCoveredGraph(P)
+            sage: G
+            Matching covered petersen graph: graph on 10 vertices
+            sage: # needs random
+            sage: u = random.choice(list(G))
+            sage: G.add_vertex(u)
+            sage: G
+            Matching covered petersen graph: graph on 10 vertices
+
+        Adding a new/ non-existing vertex::
+
+            sage: P = graphs.PetersenGraph()
+            sage: P
+            Petersen graph: Graph on 10 vertices
+            sage: G = MatchingCoveredGraph(P)
+            sage: G
+            Matching covered petersen graph: graph on 10 vertices
+            sage: G.add_vertex()
+            Traceback (most recent call last):
+            ...
+            ValueError: isolated vertices are not allowed in matching covered graphs
+            sage: u = 0
+            sage: while u in G:
+            ....:     u += 1
+            sage: G.add_vertex(u)
+            Traceback (most recent call last):
+            ...
+            ValueError: isolated vertices are not allowed in matching covered graphs
+        """
+        if name not in self:
+            raise ValueError('isolated vertices are not allowed in '
+                             'matching covered graphs')
+
     def allow_loops(self, new, check=True):
         r"""
         Change whether loops are allowed in (matching covered) graphs.
