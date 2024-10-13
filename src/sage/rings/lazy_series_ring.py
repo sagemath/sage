@@ -1896,10 +1896,14 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             sage: TestSuite(L).run()                                                    # needs sage.libs.singular
             sage: L.category()
             Category of infinite commutative no zero divisors algebras over
-             (unique factorization domains and commutative algebras over
+             (unique factorization domains and algebras with basis over
               (Dedekind domains and euclidean domains
-              and noetherian rings
-              and infinite enumerated sets and metric spaces)
+               and noetherian rings
+               and infinite enumerated sets and metric spaces)
+              and commutative algebras over
+               (Dedekind domains and euclidean domains
+                and noetherian rings
+                and infinite enumerated sets and metric spaces)
               and infinite sets)
 
             sage: L = LazyLaurentSeriesRing(GF(5), 't')

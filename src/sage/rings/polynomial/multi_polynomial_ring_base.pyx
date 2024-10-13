@@ -26,7 +26,7 @@ from sage.rings.polynomial import polynomial_ring
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.polynomial.polynomial_ring_constructor import (PolynomialRing,
                                           polynomial_default_category)
-from sage.rings.polynomial.polydict import ETuple
+from sage.rings.polynomial.polydict cimport ETuple
 
 
 def is_MPolynomialRing(x):
@@ -99,6 +99,8 @@ cdef class MPolynomialRing_base(CommutativeRing):
         else:
             category = polynomial_default_category(base_ring.category(), n)
         Ring.__init__(self, base_ring, names, category=category)
+        from sage.combinat.integer_vector import IntegerVectors
+        self._indices = IntegerVectors(self._ngens)
 
     def is_integral_domain(self, proof=True):
         """
@@ -619,12 +621,14 @@ cdef class MPolynomialRing_base(CommutativeRing):
         """
         # This is probably horribly inefficient
         other_vars = list(x.parent().variable_names())
-        name_mapping = [(other_vars.index(var) if var in other_vars else -1) for var in self.variable_names()]
+        name_mapping = [(other_vars.index(var) if var in other_vars else -1)
+                        for var in self.variable_names()]
         K = self.base_ring()
         D = {}
         var_range = range(len(self.variable_names()))
-        for ix, a in x.dict().iteritems():
-            ix = ETuple([0 if name_mapping[t] == -1 else ix[name_mapping[t]] for t in var_range])
+        for ix, a in x.monomial_coefficients().items():
+            ix = ETuple([0 if name_mapping[t] == -1 else ix[name_mapping[t]]
+                         for t in var_range])
             D[ix] = K(a)
         return D
 

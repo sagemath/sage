@@ -358,7 +358,7 @@ def differential_basis_baker(f):
             return None
     from sage.geometry.polyhedron.constructor import Polyhedron
 
-    D = {(k[0], k[1]): v for k, v in f.dict().items()}
+    D = {(k[0], k[1]): v for k, v in f.monomial_coefficients().items()}
     P = Polyhedron(D)
     kT = k["t"]
     # here we check the additional genericity conditions: that the polynomials
@@ -3044,7 +3044,7 @@ class RiemannSurface:
             A = PolynomialRing(self._CC, "xyz")
             aes = []
             for mp in mp_list:
-                d = mp.dict()
+                d = mp.monomial_coefficients()
                 mp = sum(
                     [
                         d[k] * CCzg.gen(0)**k[0] * CCzg.gen(1)**k[1]
