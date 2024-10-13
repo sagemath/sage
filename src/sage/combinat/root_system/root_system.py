@@ -787,6 +787,55 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         return self.dual.ambient_space(base_ring)
 
+    def coxeter_number(self):
+        """
+        Return the Coxeter number of an irreducible finite root system.
+
+        .. SEEALSO::
+
+            :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.coxeter_number`.
+
+        EXAMPLES::
+
+            sage: rt = RootSystem(['C', 5])
+            sage: rt.coxeter_number()
+            10
+        """
+        # Check if RootSystem is finite and irreducible
+        if not (self.is_finite() and self.is_irreducible()):
+            raise ValueError("the Coxeter number is defined only for finite and irreducible root systems")
+        # Hand over to CartanType method
+        return self._cartan_type.coxeter_number()
+
+    def dual_coxeter_number(self):
+        """
+        Return the dual Coxeter number of a irreducible finite root system.
+
+        The dual Coxeter number is equal to 1 plus the sum of the coefficients
+        of simple roots in the highest short root of the dual root system.
+
+        .. SEEALSO:: :meth:`~sage.combinat.root_system.cartan_type.CartanType_standard_finite.dual_coxeter_number`
+
+        EXAMPLES::
+
+            sage: rt = RootSystem(['C', 5])
+            sage: rt.dual_coxeter_number()
+            6
+
+        The dual Coxeter number is not the same concept as the Coxeter number
+        of the dual root system::
+
+            sage: rt.dual
+            Dual of root system of type ['C', 5]
+            sage: rt.dual.coxeter_number()
+            10
+        """
+        # Check if RootSystem is finite and irreducible
+        if not (self.is_finite() and self.is_irreducible()):
+            raise ValueError("the dual Coxeter number is defined only for finite and irreducible root systems")
+        # Hand over to CartanType method
+        return self._cartan_type.dual_coxeter_number()
+
 
 def WeylDim(ct, coeffs):
     """

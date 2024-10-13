@@ -2003,6 +2003,10 @@ REFERENCES:
 .. [CS2018] Craig Costello and Benjamin Smith: Montgomery curves and
             their arithmetic. J. Cryptogr. Eng. 8 (2018), 227-240.
 
+.. [CS2022] \Logan Crew, and Sophie Spirkl. *Modular relations of the Tutte symmetric function*,
+            Journal of Combinatorial Theory, Series A, Volume 187, 2022, 105572,
+            :doi:`10.1016/j.jcta.2021.105572.`
+
 .. [CST2010] Tullio Ceccherini-Silberstein, Fabio Scarabotti,
              Filippo Tolli.
              *Representation Theory of the Symmetric Groups: The
@@ -6154,6 +6158,11 @@ REFERENCES:
 .. [Sta1995] \R. P. Stanley, *A symmetric function generalization
              of the chromatic polynomial of a graph*, Adv. Math., ***111***
              no.1 (1995), 166-194. :doi:`10.1006/aima.1995.1020`.
+
+.. [Sta1998] \R. P. Stanley, *Graph colorings and related symmetric functions: 
+             ideas and applications A description of results, interesting applications,
+             & notable open problems*, Discrete Mathematics, 193, no.1-3, (1998),
+             267-286. :doi:`10.1016/S0012-365X(98)00146-0`.
 
 .. [Sta2002] Richard P. Stanley,
              *The rank and minimal border strip decompositions of a
