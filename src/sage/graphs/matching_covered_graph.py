@@ -406,6 +406,12 @@ class MatchingCoveredGraph(Graph):
         Traceback (most recent call last):
         ...
         RuntimeError: the string seems corrupt: valid characters are ?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+        sage: N = str('graph')
+        sage: J = MatchingCoveredGraph(P, matching=N)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: the string (graph) seems corrupt: for n = 40, the string is too short
+        
         sage: G = graphs.CompleteGraph(6)
         sage: M = Graph(G.matching())
         sage: M.add_edges([(0, 1), (0, 2)])
@@ -513,6 +519,7 @@ class MatchingCoveredGraph(Graph):
             sage: H = MatchingCoveredGraph(G)
             sage: H
             Matching covered complete graph: graph on 10 vertices
+
             sage: G = graphs.HexahedralGraph()
             sage: H = MatchingCoveredGraph(BipartiteGraph(G))
             sage: H  # An object of the class MatchingCoveredGraph
