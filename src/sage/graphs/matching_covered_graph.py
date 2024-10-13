@@ -742,6 +742,65 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('loops are not allowed in '
                              'matching covered graphs')
 
+    def delete_vertex(self, vertex, in_order=False):
+        """
+        Delete a vertex, removing all incident edges.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.delete_vertex`
+            method to ensure that an odd order is forbidden in
+            :class:`~MatchingCoveredGraph`.
+
+        INPUT:
+
+        - ``vertex`` -- a vertex that is to be deleted.
+
+        - ``in_order`` -- boolean (default: ``False``); if ``True``, this
+          deletes the `i`-th vertex in the sorted list of vertices, i.e.
+          ``G.vertices(sort=True)[i]``
+
+        OUTPUT:
+
+        - Deleting a non-existent vertex raises a :exc:`ValueError` exception;
+          also a (different) :exc:`ValueError` is returned on deleting an
+          existing vertex since matching covered graphs are of even order.
+
+        EXAMPLES:
+
+        Deleting a non-existent vertex::
+
+            sage: W = graphs.WheelGraph(12)
+            sage: G = MatchingCoveredGraph(W)
+            sage: u = 0
+            sage: while u in G:
+            ....:     u += 1
+            sage: G.delete_vertex(u)
+            Traceback (most recent call last):
+            ...
+            ValueError: vertex (12) not in the graph
+
+        Deleting an existing vertex::
+
+            sage: W = graphs.WheelGraph(12)
+            sage: G = MatchingCoveredGraph(W)
+            sage: # need random
+            sage: u = random.choice(list(G))
+            sage: G.delete_vertex(u)
+            Traceback (most recent call last):
+            ...
+            ValueError: odd order is not allowed for matching covered graphs
+        """
+        if in_order:
+            vertex = self.vertices(sort=True)[vertex]
+
+        if vertex not in self:
+            raise ValueError('vertex (%s) not in the graph' % str(vertex))
+
+        raise ValueError('odd order is not allowered for '
+                         'matching covered graphs')
+
     def get_matching(self):
         r"""
         Return ``self._matching``, which is a perfect matching of the (matching
