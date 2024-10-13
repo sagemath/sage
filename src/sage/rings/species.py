@@ -22,9 +22,11 @@ from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement)
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.set import Set
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, parent
+from sage.structure.factorization import Factorization
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -1585,6 +1587,45 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                 FG = [(M(*molecules), c) for M, c in FX]
                 result += P0.sum_of_terms(FG)
         return result
+
+    def factor(self):
+        r"""
+        Return the factorization of this species.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(ZZ, ["X"])
+            sage: C3 = P(CyclicPermutationGroup(3))
+            sage: X = P(SymmetricGroup(1))
+            sage: E2 = P(SymmetricGroup(2))
+            sage: f = (3*E2*X + C3)*(2*E2 + C3)
+            sage: factor(f)
+            (2*E_2 + C_3) * (3*E_2*X + C_3)
+        """
+        # find the set of atoms and fix an order
+        atoms = list(set(a for m in self.monomial_coefficients()
+                         for a in m.support()))
+        R = PolynomialRing(self.base_ring(), "x", len(atoms))
+        var_dict = dict(zip(atoms, R.gens()))
+        # create the polynomial
+        poly = R.sum(c * R.prod(var_dict[a] ** e for a, e in m.dict().items())
+                     for m, c in self)
+        factors = poly.factor()
+        unit = self.base_ring()(factors.unit())
+        if factors.universe() == self.base_ring():
+            return Factorization(factors, unit=unit)
+        P = self.parent()
+        M = P._indices
+
+        def _from_etuple(e):
+            return M.element_class(M, {a: i for a, i in zip(atoms, e) if i})
+
+        factors = [(P.sum_of_terms((_from_etuple(mon), c)
+                                   for mon, c in factor.monomial_coefficients().items()),
+                    exponent)
+                   for factor, exponent in factors]
+        return Factorization(factors, unit=unit, sort=False)
 
 
 class PolynomialSpecies(CombinatorialFreeModule):
