@@ -34,7 +34,7 @@ class MatchingCoveredGraph(Graph):
 
     - ``data`` -- can be any of the following:
 
-      - Empty or ``None`` (throws a :class:`ValueError` as the graph must be
+      - Empty or ``None`` (throws a :exc:`ValueError` as the graph must be
         nontrival).
 
       - An arbitrary graph.
@@ -67,6 +67,11 @@ class MatchingCoveredGraph(Graph):
     - ``integrality_tolerance`` -- float; parameter for use with MILP
       solvers over an inexact base ring; see
       :meth:`MixedIntegerLinearProgram.get_values`.
+
+    OUTPUT:
+
+    - An object of the class :class:`~MatchingCoveredGraph` if the input is
+      valid and the graph is matching covered, or otherwise an error is thrown.
 
     .. NOTE::
 
@@ -197,7 +202,7 @@ class MatchingCoveredGraph(Graph):
         sage: H.matching
         [(0, 3, {}), (1, 2, {})]
 
-    One may specify a matching::
+    One may specify a perfect matching::
 
         sage: P = graphs.PetersenGraph()
         sage: M = P.matching()
@@ -395,6 +400,12 @@ class MatchingCoveredGraph(Graph):
 
     Providing with a wrong matching::
 
+        sage: P = graphs.PetersenGraph()
+        sage: M = str('0')
+        sage: H = MatchingCoveredGraph(P, matching=M)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: the string seems corrupt: valid characters are ?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
         sage: G = graphs.CompleteGraph(6)
         sage: M = Graph(G.matching())
         sage: M.add_edges([(0, 1), (0, 2)])
@@ -417,7 +428,7 @@ class MatchingCoveredGraph(Graph):
 
     Note that data shall be one of empty or ``None`` or an instance of
     ``Graph`` or an instance of ``MatchingCoveredGraph``. Otherwise a
-    :class:`ValueError` is returned::
+    :exc:`ValueError` is returned::
 
         sage: D = digraphs.Complete(10)
         sage: D
@@ -512,7 +523,7 @@ class MatchingCoveredGraph(Graph):
 
     def __repr__(self):
         r"""
-        Return a short string representation of the matching covered graph.
+        Return a short string representation of the (matching covered) graph.
 
         EXAMPLES:
 
@@ -554,13 +565,13 @@ class MatchingCoveredGraph(Graph):
 
     def allow_loops(self, new, check=True):
         r"""
-        Check whether loops are allowed in (matching covered) graphs.
+        Change whether loops are allowed in (matching covered) graphs.
 
         .. NOTE::
 
             This method overwrites the
             :meth:`~sage.graphs.generic_graph.GenericGraph.allow_loops` method
-            to ensure that loops are forbidden in :class:`~BipartiteGraph`.
+            to ensure that loops are forbidden in :class:`~MatchingCoveredGraph`.
 
         INPUT:
 
@@ -571,6 +582,12 @@ class MatchingCoveredGraph(Graph):
           argument in
           :meth:`~sage.graphs.generic_graph.GenericGraph.allow_loops` method
           and is not used in this overwritten one.
+
+        OUTPUT:
+
+        - A :exc:`ValueError` is returned if ``new`` is ``True`` since a
+          matching covered graph, by definition, is free of self-loops. If
+          ``new`` is set to ``False``, there is no output.
 
         EXAMPLES:
 
