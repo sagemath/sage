@@ -292,7 +292,6 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
             False
             sage: a is c
             True
-
         """
         mc = tuple(len(v) for v in domain_partition)
         domain = list(chain(*map(sorted, domain_partition)))
@@ -586,7 +585,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
     def __contains__(self, x):
         r"""
-        Return if ``x`` is in ``self``.
+        Return whether ``x`` is in ``self``.
 
         TESTS::
 
@@ -1429,7 +1428,6 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             T^2*S + E_2(T)*S
             sage: F._compose_with_singletons(["T", "S"], [[1, 2]])
             T*E_2(S) + T*S^2
-
         """
         # TODO: possibly check that all args are compositions,
         # and that sums match cardinalities
@@ -1512,7 +1510,6 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
             sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
             -C_4 + {((1,2)(3,4),)} + E_2^2 - 2*X^2*E_2 + X^4
-
         """
         P = self.parent()
         if not self.support():
@@ -1527,7 +1524,8 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         return left.hadamard_product(right)
 
     def __call__(self, *args):
-        """
+        r"""
+        Substitute the arguments into ``self``.
 
         EXAMPLES::
 
@@ -1558,7 +1556,6 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: E2 = P(SymmetricGroup(2))
             sage: E2(q*X)
             q^2*E_2
-
         """
         P = self.parent()
         if len(args) != P._arity:
@@ -1711,7 +1708,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         return self.sum_of_terms((self._indices(H, pi), ZZ.one()) for H in Hs)
 
     def _first_ngens(self, n):
-        """
+        r"""
         Used by the preparser for ``F.<x> = ...``.
 
         We do not use the generic implementation of
@@ -1882,7 +1879,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
         """
         def stretch(c, k):
             r"""
-            Return c
+            Substitute in ``c`` all variables appearing in the
+            base ring with their ``k``-th power.
             """
             if callable(c):
                 B = self.base_ring()
