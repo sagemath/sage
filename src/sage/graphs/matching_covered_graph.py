@@ -85,7 +85,7 @@ class MatchingCoveredGraph(Graph):
         sage: G = MatchingCoveredGraph(graphs.PetersenGraph())
         sage: G
         Matching covered petersen graph: graph on 10 vertices
-        sage: G.matching
+        sage: G.get_matching()
         [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
 
         sage: G = graphs.StaircaseGraph(4)
@@ -94,7 +94,7 @@ class MatchingCoveredGraph(Graph):
         Matching covered staircase graph: graph on 8 vertices
         sage: H == G
         True
-        sage: H.matching
+        sage: H.get_matching()
         [(0, 1, None), (2, 7, None), (3, 6, None), (4, 5, None)]
 
         sage: G = Graph({0: [1, 2, 3, 4], 1: [2, 5],
@@ -104,7 +104,7 @@ class MatchingCoveredGraph(Graph):
         Matching covered graph on 6 vertices
         sage: H == G
         True
-        sage: H.matching
+        sage: H.get_matching()
         [(0, 4, None), (1, 2, None), (3, 5, None)]
 
         sage: # needs networkx
@@ -115,7 +115,7 @@ class MatchingCoveredGraph(Graph):
         Matching covered graph on 24 vertices
         sage: H == G
         True
-        sage: H.matching
+        sage: H.get_matching()
         [(4, 23, None), (6, 21, None), (11, 16, None), (7, 20, None), (10, 17, None), (1, 14, None), (2, 13, None), (8, 19, None), (9, 18, None), (3, 12, None), (5, 22, None), (0, 15, None)]
 
         sage: G = Graph('E|fG', sparse=True)
@@ -124,7 +124,7 @@ class MatchingCoveredGraph(Graph):
         Matching covered graph on 6 vertices
         sage: H == G
         True
-        sage: H.matching
+        sage: H.get_matching()
         [(0, 5, None), (1, 2, None), (3, 4, None)]
 
         sage: # needs sage.modules
@@ -153,7 +153,7 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
-        sage: H.matching
+        sage: H.get_matching()
         [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
 
         sage: # needs sage.modules
@@ -182,7 +182,7 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
-        sage: H.matching
+        sage: H.get_matching()
         [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
 
         sage: G = Graph([(0, 1), (0, 3), (0, 4), (1, 2), (1, 5), (2, 3),
@@ -190,7 +190,7 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
-        sage: H.matching
+        sage: H.get_matching()
         [(0, 4, None), (1, 5, None), (2, 6, None), (3, 7, None)]
 
         sage: # optional - python_igraph
@@ -199,7 +199,7 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H
         Matching covered graph on 4 vertices
-        sage: H.matching
+        sage: H.get_matching()
         [(0, 3, {}), (1, 2, {})]
 
     One may specify a perfect matching::
@@ -213,7 +213,7 @@ class MatchingCoveredGraph(Graph):
         Matching covered petersen graph: graph on 10 vertices
         sage: P == G
         True
-        sage: G.matching
+        sage: G.get_matching()
         [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
 
         sage: G = graphs.TruncatedBiwheelGraph(14)
@@ -225,7 +225,7 @@ class MatchingCoveredGraph(Graph):
         Matching covered truncated biwheel graph: graph on 28 vertices
         sage: H == G
         True
-        sage: H.matching == M
+        sage: H.get_matching() == M
         True
 
     TESTS:
@@ -605,3 +605,36 @@ class MatchingCoveredGraph(Graph):
         if new:
             raise ValueError('loops are not allowed in '
                              'matching covered graphs')
+
+    def get_matching(self):
+        r"""
+        Return ``self.matching``, which is a perfect matching of the (matching
+        covered) graph computed at the initialization.
+
+        EXAMPLES:
+
+        If one specifies a perfect matching while initializing the object, the
+        value of ``self.matching`` is captures the same matching::
+
+            sage: P = graphs.PetersenGraph()
+            sage: M = [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
+            sage: G = MatchingCoveredGraph(P, M)
+            sage: G.get_matching()
+            [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
+            sage: M == G.get_matching()
+            True
+
+        If no matching is specified while initilizing a matching covered graph,
+        a perfect is computed
+        :meth:`~sage.graphs.graph.Graph.matching` and that is captured as
+        ``self.matching``::
+
+            sage: P = graphs.PetersenGraph()
+            sage: M = P.matching()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.get_matching()
+            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+            sage: M == G.get_matching()
+            True
+        """
+        return self.matching
