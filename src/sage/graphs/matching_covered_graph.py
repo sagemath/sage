@@ -563,6 +563,78 @@ class MatchingCoveredGraph(Graph):
         except ValueError as error:
             raise error
 
+    def add_vertices(self, vertices):
+        r"""
+        Add vertices to the (matching covered) graph from an iterable container
+        of vertices.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.add_vertices` method
+            to ensure that isolated vertices are forbidden in
+            :class:`~MatchingCoveredGraph`.
+
+        INPUT:
+
+        - ``vertices`` -- iterator container of vertex labels. A new label is
+          created, used and returned in the output list for all ``None`` values
+          in ``vertices``.
+
+        OUTPUT:
+
+        - If all of the vertices are existing vertices of the (matching
+          covered) graph, then nothing is done; otherwise a :exc:`ValueError`
+          is returned since matching covered graphs are free of isolated
+          vertices.
+
+        EXAMPLES:
+
+        Adding a list of already existing vertices::
+
+            sage: T = graphs.TruncatedBiwheelGraph(15)
+            sage: T
+            Truncated biwheel graph: Graph on 30 vertices
+            sage: G = MatchingCoveredGraph(T)
+            sage: G
+            Matching covered truncated biwheel graph: graph on 30 vertices
+            sage: # needs random
+            sage: import random
+            sage: S = random.sample(G, 4)  # We choose 4 existing vertices
+            sage: G.add_vertices(S)
+            sage: G
+            Matching covered truncated biwheel graph: graph on 30 vertices
+
+        Adding a list of vertices in which at least one is non-existent or
+        ``None`` or possibly both::
+
+            sage: T = graphs.CompleteGraph(2)
+            sage: T
+            Truncated biwheel graph: Graph on 30 vertices
+            sage: G = MatchingCoveredGraph(T)
+            sage: G
+            Matching covered truncated biwheel graph: graph on 30 vertices
+            sage: S1 = [2, 3, 4]
+            sage: G.add_vertices(G, S1)
+            Traceback (most recent call last):
+            ...
+            ValueError: isolated vertices are not allowed in matching covered graphs
+            sage: S2 = [None, None]
+            sage: G.add_vertices(G, S2)
+            Traceback (most recent call last):
+            ...
+            ValueError: isolated vertices are not allowed in matching covered graphs
+            sage: S3 = [2, None, None, 5]
+            sage: G.add_vertices(G, S3)
+            Traceback (most recent call last):
+            ...
+            ValueError: isolated vertices are not allowed in matching covered graphs
+        """
+        for vertex in vertices:
+            if vertex not in self:
+                raise ValueError('isolated vertices are not allowed in '
+                                 'matching covered graphs')
+
     def add_vertex(self, name=None):
         r"""
         Add a vertex to the (matching covered) graph.
