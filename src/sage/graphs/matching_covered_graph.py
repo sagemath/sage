@@ -80,12 +80,18 @@ class MatchingCoveredGraph(Graph):
         sage: G = MatchingCoveredGraph(graphs.PetersenGraph())
         sage: G
         Matching covered petersen graph: graph on 10 vertices
+        sage: G.matching
+        [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+
         sage: G = graphs.StaircaseGraph(4)
         sage: H = MatchingCoveredGraph(G)
         sage: H
         Matching covered staircase graph: graph on 8 vertices
         sage: H == G
         True
+        sage: H.matching
+        [(0, 1, None), (2, 7, None), (3, 6, None), (4, 5, None)]
+
         sage: G = Graph({0: [1, 2, 3, 4], 1: [2, 5],
         ....:            2: [5], 3: [4, 5], 4: [5]})
         sage: H = MatchingCoveredGraph(G)
@@ -93,6 +99,8 @@ class MatchingCoveredGraph(Graph):
         Matching covered graph on 6 vertices
         sage: H == G
         True
+        sage: H.matching
+        [(0, 4, None), (1, 2, None), (3, 5, None)]
 
         sage: # needs networkx
         sage: import networkx
@@ -102,12 +110,17 @@ class MatchingCoveredGraph(Graph):
         Matching covered graph on 24 vertices
         sage: H == G
         True
+        sage: H.matching
+        [(4, 23, None), (6, 21, None), (11, 16, None), (7, 20, None), (10, 17, None), (1, 14, None), (2, 13, None), (8, 19, None), (9, 18, None), (3, 12, None), (5, 22, None), (0, 15, None)]
+
         sage: G = Graph('E|fG', sparse=True)
         sage: H = MatchingCoveredGraph(G)
         sage: H
         Matching covered graph on 6 vertices
         sage: H == G
         True
+        sage: H.matching
+        [(0, 5, None), (1, 2, None), (3, 4, None)]
 
         sage: # needs sage.modules
         sage: M = Matrix([(0,1,0,0,1,1,0,0,0,0),
@@ -135,6 +148,8 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
+        sage: H.matching
+        [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
 
         sage: # needs sage.modules
         sage: M = Matrix([(-1, 0, 0, 0, 1, 0, 0, 0, 0, 0,-1, 0, 0, 0, 0),
@@ -162,11 +177,16 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
+        sage: H.matching
+        [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+
         sage: G = Graph([(0, 1), (0, 3), (0, 4), (1, 2), (1, 5), (2, 3),
         ....:            (2, 6), (3, 7), (4, 5), (4, 7), (5, 6), (6, 7)])
         sage: H = MatchingCoveredGraph(G)
         sage: H == G
         True
+        sage: H.matching
+        [(0, 4, None), (1, 5, None), (2, 6, None), (3, 7, None)]
 
         sage: # optional - python_igraph
         sage: import igraph
@@ -174,22 +194,33 @@ class MatchingCoveredGraph(Graph):
         sage: H = MatchingCoveredGraph(G)
         sage: H
         Matching covered graph on 4 vertices
+        sage: H.matching
+        [(0, 3, {}), (1, 2, {})]
 
     One may specify a matching::
 
         sage: P = graphs.PetersenGraph()
         sage: M = P.matching()
+        sage: M
+        [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
         sage: G = MatchingCoveredGraph(P, matching=M)
         sage: G
         Matching covered petersen graph: graph on 10 vertices
         sage: P == G
         True
+        sage: G.matching
+        [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+
         sage: G = graphs.TruncatedBiwheelGraph(14)
         sage: M = G.matching()
+        sage: M
+        [(20, 21, None), (1, 26, None), (10, 11, None), (14, 15, None), (16, 17, None), (4, 5, None), (22, 23, None), (24, 25, None), (6, 7, None), (8, 9, None), (12, 13, None), (0, 27, None), (18, 19, None), (2, 3, None)]
         sage: H = MatchingCoveredGraph(G, M)
         sage: H
         Matching covered truncated biwheel graph: graph on 28 vertices
         sage: H == G
+        True
+        sage: H.matching == M
         True
 
     TESTS:
@@ -406,6 +437,8 @@ class MatchingCoveredGraph(Graph):
 
         See documentation ``MatchingCoveredGraph?`` for detailed information.
         """
+        success = False
+
         if kwds is None:
             kwds = {'loops': False}
         else:
@@ -418,13 +451,41 @@ class MatchingCoveredGraph(Graph):
             raise ValueError('the graph is trivial')
 
         elif isinstance(data, MatchingCoveredGraph):
-            Graph.__init__(self, data, *args, **kwds)
+            try:
+                Graph.__init__(self, data, *args, **kwds)
+                success = True
+
+            except ValueError as error:
+                raise error
 
         elif isinstance(data, Graph):
-            Graph.__init__(self, data, *args, **kwds)
-            self._upgrade_from_graph(matching=matching, algorithm=algorithm,
-                                     solver=solver, verbose=verbose,
-                                     integrality_tolerance=integrality_tolerance)
+            try:
+                Graph.__init__(self, data, *args, **kwds)
+                self._upgrade_from_graph(matching=matching, algorithm=algorithm,
+                                         solver=solver, verbose=verbose,
+                                         integrality_tolerance=integrality_tolerance)
+                success = True
+
+            except ValueError as error:
+                raise error
+
+        if success:
+            if matching:
+                # The input matching must be a valid perfect matching of the graph
+                M = Graph(matching)
+                G_simple = self.to_simple()
+
+                if any(d != 1 for d in M.degree()):
+                    raise ValueError("the input is not a matching")
+                if any(not G_simple.has_edge(edge) for edge in M.edge_iterator()):
+                    raise ValueError("the input is not a matching of the graph")
+                if (G_simple.order() != M.order()) or (G_simple.order() != 2*M.size()):
+                    raise ValueError("the input is not a perfect matching of the graph")
+
+                self.matching = matching
+            else:
+                self.matching = Graph(self).matching()
+
         else:
             raise ValueError('input data is of unknown type')
 
