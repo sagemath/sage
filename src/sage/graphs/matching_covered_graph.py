@@ -936,3 +936,86 @@ class MatchingCoveredGraph(Graph):
             True
         """
         return self._matching
+
+    def update_matching(self, matching):
+        r"""
+        Update the pefect matching captured in ``self._matching``.
+
+        INPUT:
+
+        - ``matching`` -- a perfect matching of the graph, that can be given
+          using any valid input format of :class:`~sage.graphs.graph.Graph`.
+
+        OUTPUT:
+
+        - If ``matching`` is a valid perfect matching of the graph, then
+          ``self._matching`` gets updated to this provided matching, or
+          otherwise an exception is returned.
+
+        EXAMPLES:
+
+        Providing with a valid perfect matching of the graph::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.get_matching()
+            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+            sage: M = [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
+            sage: G.update_matching(M)
+            sage: G.get_matching()
+            [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
+
+        TESTS:
+
+        Providing with a wrong matching::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.get_matching()
+            [(0, 5, None), (1, 6, None), (2, 7, None), (3, 8, None), (4, 9, None)]
+            sage: S = str('0')
+            sage: G.update_matching(S)
+            Traceback (most recent call last):
+            ...
+            RuntimeError: the string seems corrupt: valid characters are ?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+            sage: T = str('graph')
+            Traceback (most recent call last):
+            ...
+            RuntimeError: the string (graph) seems corrupt: for n = 40, the string is too short
+            sage: M = Graph(G.matching())
+            sage: M.add_edges([(0, 1), (0, 2)])
+            sage: G.update_matching(M)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching
+            sage: N = Graph(G.matching())
+            sage: N.add_edge(6, 7)
+            sage: G.update_matching(N)
+            Traceback (most recent call last):
+            ...
+            ValueError: the input is not a matching of the graph
+            sage: J = Graph()
+            sage: J.add_edges([(0, 1), (2, 3)])
+            sage: G.update_matching(J)
+            Traceback (most recent call last):
+        ...
+        ValueError: the input is not a perfect matching of the graph
+        """
+        try:
+            M = Graph(matching)
+            G = Graph(self)
+            G_simple = G.to_simple()
+
+            if any(d != 1 for d in M.degree()):
+                raise ValueError("the input is not a matching")
+
+            if any(not G_simple.has_edge(edge) for edge in M.edge_iterator()):
+                raise ValueError("the input is not a matching of the graph")
+
+            if (G_simple.order() != M.order()) or (G_simple.order() != 2*M.size()):
+                raise ValueError("the input is not a perfect matching of the graph")
+
+            self._matching = M.edges()
+
+        except Exception as exception:
+            raise exception
