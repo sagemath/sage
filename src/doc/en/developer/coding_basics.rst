@@ -1258,13 +1258,32 @@ framework. Here is a comprehensive list:
 
 - **optional/needs:** A line tagged with ``optional - FEATURE``
   or ``needs FEATURE`` is not tested unless the ``--optional=KEYWORD`` flag
-  is passed to ``sage -t`` (see
-  :ref:`section-optional-doctest-flag`). The main applications are:
+  is passed to ``sage -t`` (see :ref:`section-optional-doctest-flag`).
+
+  If ``FEATURE`` starts with an exclamation point ``!``, then the condition is
+  negated, that is, the doctest runs only if the feature is not available.
+
+  The main applications are:
 
   - **optional packages:** When a line requires an optional package to be
-    installed (e.g. the ``sloane_database`` package)::
+    installed (e.g. the ``rubiks`` package)::
+
+      sage: C = RubiksCube("R*L")
+      sage: C.solve()                    # optional - rubiks (a hybrid algorithm is used)
+      'L R'
+      sage: C.solve()                    # optional - !rubiks (GAP is used)
+      'L*R'
+
+  - **optional database:** When a line requires a database to be present::
 
       sage: SloaneEncyclopedia[60843]    # optional - sloane_database
+      [1, 6, 21, 107, 47176870]
+
+      sage: SloaneEncyclopedia[60843]    # optional - !sloane_database
+      Traceback (most recent call last):
+      ...
+      OSError: The Sloane Encyclopedia database must be installed. Use e.g.
+      'SloaneEncyclopedia.install()' to download and install it.
 
   - **internet:** For lines that require an internet connection::
 
