@@ -30,6 +30,8 @@ from sage.structure.factorization import Factorization
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
+GAP_FAIL = libgap.eval('fail')
+
 
 class ConjugacyClassOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Element,
                                                       metaclass=InheritComparisonClasscallMetaclass):
@@ -389,6 +391,76 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
         S = self.parent().grading_set()
         return S(self._mc)
 
+    def __le__(self, other):
+        r"""
+        Return if this element is less than or equal to ``other``.
+
+        ``self`` is less than or equal to ``other`` if it is
+        conjugate to a subgroup of ``other`` in the parent group.
+
+        EXAMPLES:
+
+        We create the poset of atomic species of degree four::
+
+            sage: from sage.rings.species import AtomicSpecies
+            sage: A = AtomicSpecies("X")
+            sage: P = Poset([A.subset(4), lambda b, c: b <= c])
+            sage: len(P.cover_relations())
+            7
+            sage: P.cover_relations()  # random
+            [[E_4, Eo_4],
+             [E_4, P_4],
+             [Eo_4, Pb_4],
+             [P_4, C_4],
+             [P_4, Pb_4],
+             [C_4, {((1,2)(3,4),)}],
+             [Pb_4, {((1,2)(3,4),)}]]
+
+        TESTS::
+
+            sage: [(a, b) for a, b in Subsets(A.subset(4), 2) if (a < b) != (b > a)]
+            []
+            sage: A = AtomicSpecies("X, Y")
+            sage: [(a, b) for a, b in Subsets(A.subset(3), 2) if (a < b) != (b > a)]
+            []
+        """
+        if (not isinstance(other, AtomicSpeciesElement)
+            or len(self._mc) != len(other._mc)):
+            return False
+        if self._mc != other._mc:
+            # X should come before Y
+            return (sum(self._mc) < sum(other._mc)
+                        or (sum(self._mc) == sum(other._mc)
+                            and self._mc > other._mc))
+        S = SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
+        # conjugate self and other to match S
+        g = list(chain.from_iterable(self._dompart))
+        conj_self = PermutationGroupElement(g).inverse()
+        G = libgap.ConjugateGroup(self._dis._C, conj_self)
+        h = list(chain.from_iterable(other._dompart))
+        conj_other = PermutationGroupElement(h).inverse()
+        H = libgap.ConjugateGroup(other._dis._C, conj_other)
+        return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
+
+    def __lt__(self, other):
+        r"""
+        Return if this element is less than ``other``.
+
+        ``self`` is less than or equal to ``other`` if it is
+        conjugate to a subgroup of ``other`` in the parent group.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import AtomicSpecies
+            sage: A = AtomicSpecies("X")
+            sage: A(SymmetricGroup(4)) < A(CyclicPermutationGroup(4))
+            True
+        """
+        if (not isinstance(other, AtomicSpeciesElement)
+            or len(self._mc) != len(other._mc)):
+            return False
+        return self is not other and self <= other
+
 
 class AtomicSpecies(UniqueRepresentation, Parent):
     """
@@ -634,6 +706,43 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         """
         return IntegerVectors(length=self._arity)
 
+    def subset(self, size):
+        """
+        Return the set of atomic species with given total cardinality.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import AtomicSpecies
+            sage: A = AtomicSpecies(["X", "Y"])
+            sage: sorted(A.subset(3))
+            [E_3(X), C_3(X), E_3(Y), C_3(Y)]
+        """
+        result = Set()
+        for grade in IntegerVectors(size, length=self._arity):
+            result = result.union(self.graded_component(grade))
+        return result
+
+    def graded_component(self, grade):
+        """
+        Return the set of atomic species with given multicardinality.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import AtomicSpecies
+            sage: A = AtomicSpecies(["X", "Y"])
+            sage: len(A.graded_component([2, 3]))
+            1
+            sage: A.graded_component([2, 3])  # random
+            {{((2,3)(4,5), (1,2,3)): ({4, 5}, {1, 2, 3})}}
+        """
+        assert len(grade) == self._arity
+        n = sum(grade)
+        S = SymmetricGroup(n).young_subgroup(grade)
+        dom = S.domain()
+        dompart = {i: dom[sum(grade[:i]): sum(grade[:i+1])] for i in range(len(grade))}
+        return Set([self(G, dompart) for G in S.conjugacy_classes_subgroups()
+                    if len(G.disjoint_direct_product_decomposition()) <= 1])
+
     @cached_method
     def an_element(self):
         """
@@ -767,7 +876,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: M = MolecularSpecies("X,Y")
             sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
             sage: M(G, {0: [5,6], 1: [1,2,3,4]})
-            {((1,2)(3,4),): ({}, {1, 2, 3, 4})}*E_2(X)
+            E_2(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
 
         TESTS:
 
@@ -832,7 +941,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             sage: X = SetPartitions(8, [4, 2, 2])
             sage: M((X, a), {0: X.base_set()})
-            P_4*E_4
+            E_4*P_4
 
         TESTS::
 
@@ -933,7 +1042,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             sage: from sage.rings.species import MolecularSpecies
             sage: M = MolecularSpecies(["X", "Y"])
-            sage: M.graded_component([3,2])  # random
+            sage: M.graded_component([3, 2])  # random
             {E_3(X)*Y^2, X^3*Y^2, X*E_2(X)*E_2(Y), X^3*E_2(Y),
              {((1,2,3), (1,3)(4,5)): ({1, 2, 3}, {4, 5})},
              X*{((1,2)(3,4),): ({1, 2}, {3, 4})}, X*E_2(X)*Y^2, E_3(X)*E_2(Y),
@@ -999,6 +1108,131 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             mc = sum(n * vector(a._mc) for a, n in mons.items())
             return S(mc)
 
+        def __le__(self, other):
+            r"""
+            Return if this element is less than or equal to ``other``.
+
+            ``self`` is less or equal to ``other`` if it is conjugate to
+            a subgroup of ``other`` in the parent group.
+
+            EXAMPLES:
+
+            We create the lattice of molecular species of degree four::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X")
+                sage: P = Poset([M.subset(4), lambda b, c: b <= c])
+                sage: len(P.cover_relations())
+                17
+                sage: P.cover_relations()  # random
+                [[E_4, P_4],
+                 [E_4, Eo_4],
+                 [E_4, X*E_3],
+                 [P_4, C_4],
+                 [P_4, E_2^2],
+                 [P_4, Pb_4],
+                 [C_4, {((1,2)(3,4),)}],
+                 [E_2^2, {((1,2)(3,4),)}],
+                 [E_2^2, X^2*E_2],
+                 [Eo_4, Pb_4],
+                 [Eo_4, X*C_3],
+                 [Pb_4, {((1,2)(3,4),)}],
+                 [{((1,2)(3,4),)}, X^4],
+                 [X*E_3, X^2*E_2],
+                 [X*E_3, X*C_3],
+                 [X^2*E_2, X^4],
+                 [X*C_3, X^4]]
+
+            TESTS::
+
+                sage: [(a, b) for a, b in Subsets(M.subset(4), 2) if (a < b) != (b > a)]
+                []
+
+                sage: M = MolecularSpecies("S, T")
+                sage: S = M(SymmetricGroup(1), {0: [1]})
+                sage: T = M(SymmetricGroup(1), {1: [1]})
+                sage: E2S = M(SymmetricGroup(2), {0: [1,2]})
+                sage: T * E2S < S^2 * T
+                True
+            """
+            if (not isinstance(other, MolecularSpecies.Element)
+                or len(self.grade()) != len(other.grade())):
+                return False
+            if self.grade() != other.grade():
+                # X should come before Y
+                return (sum(self.grade()) < sum(other.grade())
+                        or (sum(self.grade()) == sum(other.grade())
+                            and self.grade() > other.grade()))
+
+            S = SymmetricGroup(sum(self.grade())).young_subgroup(self.grade())
+            # conjugate self and other to match S
+            G, G_dompart = self.group_and_partition()
+            g = list(chain.from_iterable(G_dompart))
+            conj_self = PermutationGroupElement(g).inverse()
+            G = libgap.ConjugateGroup(G, conj_self)
+            H, H_dompart = other.group_and_partition()
+            h = list(chain.from_iterable(H_dompart))
+            conj_other = PermutationGroupElement(h).inverse()
+            H = libgap.ConjugateGroup(H, conj_other)
+            return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
+
+        def __lt__(self, other):
+            r"""
+            Return if this element is less than ``other``.
+
+            ``self`` is less than or equal to ``other`` if it is
+            conjugate to a subgroup of ``other`` in the parent group.
+
+            EXAMPLES::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X")
+                sage: M(SymmetricGroup(4)) < M(CyclicPermutationGroup(4))
+                True
+            """
+            if (not isinstance(other, MolecularSpecies.Element)
+                or len(self.grade()) != len(other.grade())):
+                return False
+            return self != other and self <= other
+
+        def __gt__(self, other):
+            r"""
+            Return if this element is greater than ``other``.
+
+            ``self`` is less than or equal to ``other`` if it is
+            conjugate to a subgroup of ``other`` in the parent group.
+
+            EXAMPLES::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X")
+                sage: M(SymmetricGroup(4)) > M(CyclicPermutationGroup(4))
+                False
+            """
+            if (not isinstance(other, MolecularSpecies.Element)
+                or len(self.grade()) != len(other.grade())):
+                return False
+            return other < self
+
+        def __ge__(self, other):
+            r"""
+            Return if this element is greater than or equal to ``other``.
+
+            ``self`` is less than or equal to ``other`` if it is
+            conjugate to a subgroup of ``other`` in the parent group.
+
+            EXAMPLES::
+
+                sage: from sage.rings.species import MolecularSpecies
+                sage: M = MolecularSpecies("X")
+                sage: M(SymmetricGroup(4)) >= M(CyclicPermutationGroup(4))
+                False
+            """
+            if (not isinstance(other, MolecularSpecies.Element)
+                or len(self.grade()) != len(other.grade())):
+                return False
+            return other <= self
+
         @cached_method
         def group_and_partition(self):
             """
@@ -1009,24 +1243,28 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: from sage.rings.species import MolecularSpecies
                 sage: M = MolecularSpecies("X,Y")
                 sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
-                sage: A = M(G, {0: [5,6], 1: [1,2,3,4]})
+                sage: A = M(G, {0: [5,6], 1: [1,2,3,4]}); A
+                E_2(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
                 sage: A.group_and_partition()
-                (Permutation Group with generators [(5,6), (1,2)(3,4)],
-                 (frozenset({5, 6}), frozenset({1, 2, 3, 4})))
+                (Permutation Group with generators [(3,4)(5,6), (1,2)],
+                 (frozenset({1, 2}), frozenset({3, 4, 5, 6})))
 
             TESTS::
 
-                sage: M = MolecularSpecies("X,Y")
-                sage: B = M(PermutationGroup([(1,2,3)]), {0: [1,2,3]})
+                sage: B = M(PermutationGroup([(1,2,3)]), {0: [1,2,3]}); B
+                C_3(X)
                 sage: B.group_and_partition()
                 (Permutation Group with generators [(1,2,3)],
                  (frozenset({1, 2, 3}), frozenset()))
 
+                sage: A*B
+                E_2(X)*C_3(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
                 sage: (A*B).group_and_partition()
-                (Permutation Group with generators [(7,8,9), (5,6), (1,2)(3,4)],
-                 (frozenset({5, 6, 7, 8, 9}), frozenset({1, 2, 3, 4})))
+                (Permutation Group with generators [(6,7)(8,9), (3,4,5), (1,2)],
+                 (frozenset({1, 2, 3, 4, 5}), frozenset({6, 7, 8, 9})))
 
-                sage: C = M(PermutationGroup([(2,3)]), {0: [1], 1: [2,3]})
+                sage: C = M(PermutationGroup([(2,3)]), {0: [1], 1: [2,3]}); C
+                X*E_2(Y)
                 sage: C.group_and_partition()
                 (Permutation Group with generators [(2,3)],
                  (frozenset({1}), frozenset({2, 3})))
@@ -1409,7 +1647,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: P = PolynomialSpecies(ZZ, "X")
             sage: C4 = P(CyclicPermutationGroup(4))
             sage: C4._compose_with_singletons("X, Y", [[2, 2]])
-            X^2*Y^2 + E_2(XY)
+            E_2(XY) + X^2*Y^2
 
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: F = P(PermutationGroup([[(1,2,3), (4,5,6)]]), {0: [1,2,3], 1: [4,5,6]})
@@ -1426,10 +1664,10 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             1
 
             sage: F = P(SymmetricGroup(1)) * P(SymmetricGroup(2))
-            sage: F._compose_with_singletons(["T", "S"], [[2, 1]])
-            T^2*S + E_2(T)*S
-            sage: F._compose_with_singletons(["T", "S"], [[1, 2]])
-            T*E_2(S) + T*S^2
+            sage: F._compose_with_singletons(["S", "T"], [[2, 1]])
+            T*E_2(S) + S^2*T
+            sage: F._compose_with_singletons(["S", "T"], [[1, 2]])
+            S*E_2(T) + S*T^2
         """
         # TODO: possibly check that all args are compositions,
         # and that sums match cardinalities
@@ -1497,7 +1735,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         Exercise (2.5.17) in [BLL1998]_::
 
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[2, 2]])
-            X^2*Y^2 + E_2(XY)
+            E_2(XY) + X^2*Y^2
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[3, 1]])
             X^3*Y
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, 1], [[4, 0]])
@@ -1506,12 +1744,12 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         Equation (4.60) in [ALL2002]_::
 
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, -1], [[2, 2]])
-            2*X^2*Y^2 - E_2(XY)
+            -E_2(XY) + 2*X^2*Y^2
 
         TESTS::
 
             sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
-            -C_4 + {((1,2)(3,4),)} + E_2^2 - 2*X^2*E_2 + X^4
+            -C_4 + E_2^2 + {((1,2)(3,4),)} - 2*X^2*E_2 + X^4
         """
         P = self.parent()
         if not self.support():
@@ -1547,7 +1785,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: X = P2(SymmetricGroup(1), {0: [1]})
             sage: Y = P2(SymmetricGroup(1), {1: [1]})
             sage: E2(X + Y)
-            E_2(Y) + Y*X + E_2(X)
+            E_2(X) + X*Y + E_2(Y)
 
             sage: E2(X*Y)(E2(X), E2(Y))
             {((7,8), (5,6), (3,4), (1,2), (1,3)(2,4)(5,7)(6,8)): ({1, 2, 3, 4}, {5, 6, 7, 8})}
@@ -1601,7 +1839,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: E2 = P(SymmetricGroup(2))
             sage: f = (3*E2*X + C3)*(2*E2 + C3)
             sage: factor(f)
-            (2*E_2 + C_3) * (3*E_2*X + C_3)
+            (2*E_2 + C_3) * (3*X*E_2 + C_3)
         """
         # find the set of atoms and fix an order
         atoms = list(set(a for m in self.monomial_coefficients()
@@ -1709,13 +1947,13 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: X = SetPartitions(4, 2)
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
             sage: P((X, a), {0: [1,2], 1: [3,4]})
-            X^2*E_2(Y) + E_2(XY) + E_2(X)*Y^2 + E_2(X)*E_2(Y)
+            E_2(X)*E_2(Y) + X^2*E_2(Y) + E_2(XY) + Y^2*E_2(X)
 
             sage: P = PolynomialSpecies(ZZ, ["X"])
             sage: X = SetPartitions(4, 2)
             sage: a = lambda g, x: SetPartition([[g(e) for e in b] for b in x])
             sage: P((X, a), {0: [1,2,3,4]})
-            E_3*X + P_4
+            X*E_3 + P_4
 
         The species of permutation groups::
 
@@ -1845,8 +2083,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: L1 = [P(H) for H in SymmetricGroup(3).conjugacy_classes_subgroups()]
             sage: L2 = [P(H) for H in SymmetricGroup(2).conjugacy_classes_subgroups()]
             sage: matrix([[F * G for F in L1] for G in L2])  # indirect doctest
-            [    X^5 X^3*E_2 C_3*X^2 E_3*X^2]
-            [X^3*E_2 X*E_2^2 C_3*E_2 E_3*E_2]
+            [    X^5 X^3*E_2 X^2*C_3 X^2*E_3]
+            [X^3*E_2 X*E_2^2 E_2*C_3 E_2*E_3]
 
         TESTS::
 
@@ -1871,7 +2109,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, "X")
             sage: P.powersum(0, 4)
-            4*E_4 - 4*X*E_3 + 4*X^2*E_2 - X^4 - 2*E_2^2
+            4*E_4 - 4*X*E_3 - 2*E_2^2 + 4*X^2*E_2 - X^4
         """
         assert n in ZZ and n > 0
         if n == 1:
@@ -1889,11 +2127,11 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(QQ, ["X"])
-            sage: P.exponential([3/2], [7])  # random
-            3/2*E_7 + 3/4*X*E_6 - 3/16*X^2*E_5 + 3/32*X^3*E_4 - 15/256*E_3*X^4
-             + 21/512*X^5*E_2 - 9/2048*X^7 - 15/128*X^3*E_2^2 - 3/8*E_2*E_4*X
-             + 3/32*X*E_2^3 - 3/16*X*E_3^2 + 3/4*E_2*E_5 - 3/16*E_3*E_2^2
-             + 3/4*E_3*E_4 + 9/32*E_3*E_2*X^2
+            sage: P.exponential([3/2], [7])
+            3/2*E_7 + 3/4*X*E_6 + 3/4*E_2*E_5 - 3/16*X^2*E_5 + 3/4*E_3*E_4
+             - 3/8*X*E_2*E_4 + 3/32*X^3*E_4 - 3/16*X*E_3^2 - 3/16*E_2^2*E_3
+             + 9/32*X^2*E_2*E_3 - 15/256*X^4*E_3 + 3/32*X*E_2^3
+             - 15/128*X^3*E_2^2 + 21/512*X^5*E_2 - 9/2048*X^7
 
         We support weights::
 
