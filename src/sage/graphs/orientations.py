@@ -304,6 +304,33 @@ def orientations(G, data_structure=None, sparse=None):
         sage: G = Graph(1)
         sage: next(G.orientations())
         Digraph on 1 vertex
+
+    Which backend? ::
+
+        sage: next(G.orientations(data_structure='sparse', sparse=True))._backend
+        Traceback (most recent call last):
+        ...
+        ValueError: cannot specify both 'sparse' and 'data_structure'
+        sage: next(G.orientations(sparse=True))._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: next(G.orientations(sparse=False))._backend
+        <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
+        sage: next(G.orientations())._backend
+        <sage.graphs.base.sparse_graph.SparseGraphBackend object at ...>
+        sage: G = Graph(1, data_structure='dense')
+        sage: next(G.orientations())._backend
+        <sage.graphs.base.dense_graph.DenseGraphBackend object at ...>
+        sage: G = Graph(1, data_structure='static_sparse')
+        sage: next(G.orientations())._backend
+        <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
+
+    Check that the embedding is copied::
+
+        sage: G = Graph([(0, 1), (0, 2), (1, 2)])
+        sage: embedding = {0: [1, 2], 1: [2, 0], 2: [0, 1]}
+        sage: G.set_embedding(embedding)
+        sage: next(G.orientations()).get_embedding() == embedding
+        True
     """
     if sparse is not None:
         if data_structure is not None:
@@ -676,9 +703,9 @@ def strong_orientation(G):
 
     A multigraph also has a strong orientation::
 
-        sage: g = Graph([(1,2),(1,2)], multiedges=True)
+        sage: g = Graph([(0, 1), (0, 2), (1, 2)] * 2, multiedges=True)
         sage: g.strong_orientation()
-        Multi-digraph on 2 vertices
+        Multi-digraph on 3 vertices
     """
     d = DiGraph(multiedges=G.allows_multiple_edges())
     i = 0
@@ -1054,6 +1081,32 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
         sage: o = g.minimum_outdegree_orientation()                                     # needs sage.numerical.mip
         sage: max(o.out_degree()) == integer_ceil((4*3)/(3+4))                          # needs sage.numerical.mip
         True
+
+    Show the influence of edge labels on the solution::
+
+        sage: # needs sage.numerical.mip
+        sage: g = graphs.CycleGraph(4)
+        sage: g.add_edge(0, 2)
+        sage: o = g.minimum_outdegree_orientation(use_edge_labels=False)
+        sage: o.out_degree(labels=True) == {0: 1, 1: 2, 2: 1, 3: 1}
+        True
+        sage: _ = [g.set_edge_label(u, v, 1) for u, v in g.edge_iterator(labels=False)]
+        sage: o = g.minimum_outdegree_orientation(use_edge_labels=True)
+        sage: o.out_degree(labels=True) == {0: 1, 1: 2, 2: 1, 3: 1}
+        True
+        sage: g.set_edge_label(0, 2, 10)
+        sage: o = g.minimum_outdegree_orientation(use_edge_labels=True)
+        sage: o.out_degree(labels=True) == {0: 1, 1: 2, 2: 0, 3: 2}
+        True
+
+    TESTS::
+
+        sage: from sage.graphs.orientations import minimum_outdegree_orientation
+        sage: minimum_outdegree_orientation(DiGraph())                                  # needs sage.numerical.mip
+        Traceback (most recent call last):
+        ...
+        ValueError: Cannot compute an orientation of a DiGraph.
+         Please convert it to a Graph if you really mean it.
     """
     G._scream_if_not_simple()
     if G.is_directed():
@@ -1064,7 +1117,7 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
         from sage.rings.real_mpfr import RR
 
         def weight(e):
-            label = G.edge_label(e)
+            label = G.edge_label(e[0], e[1])
             return label if label in RR else 1
     else:
         def weight(e):
@@ -1171,7 +1224,7 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
         sage: g = graphs.RandomGNP(40, .4)
         sage: b = lambda v: integer_ceil(g.degree(v)/2)
         sage: D = g.bounded_outdegree_orientation(b)
-        sage: all( D.out_degree(v) <= b(v) for v in g )
+        sage: all(D.out_degree(v) <= b(v) for v in g)
         True
 
     Chvatal's graph, being 4-regular, can be oriented in such a way that its
@@ -1201,6 +1254,16 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
         ....: except ValueError:
         ....:     pass
 
+    The bounds can be specified in different ways::
+
+        sage: g = graphs.PetersenGraph()
+        sage: b = lambda v: integer_ceil(g.degree(v)/2)
+        sage: D = g.bounded_outdegree_orientation(b)
+        sage: b_dict = {u: b(u) for u in g}
+        sage: D = g.bounded_outdegree_orientation(b_dict)
+        sage: unique_bound = 2
+        sage: D = g.bounded_outdegree_orientation(unique_bound)
+
     TESTS:
 
     As previously for random graphs, but more intensively::
@@ -1213,6 +1276,11 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
         ....:          all( D.out_degree(v) <= b(v) for v in g ) or
         ....:          D.size() != g.size()):
         ....:         print("Something wrong happened")
+
+    Empty graph::
+
+        sage: Graph().bounded_outdegree_orientation(b)
+        Digraph on 0 vertices
     """
     G._scream_if_not_simple()
     n = G.order()
