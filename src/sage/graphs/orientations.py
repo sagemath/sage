@@ -234,6 +234,8 @@ def orientations(G, data_structure=None, sparse=None):
 
     INPUT:
 
+    - ``G`` -- an undirected graph
+
     - ``data_structure`` -- one of ``'sparse'``, ``'static_sparse'``, or
       ``'dense'``; see the documentation of :class:`Graph` or :class:`DiGraph`;
       default is the data structure of `G`
@@ -630,6 +632,10 @@ def strong_orientation(G):
     returned will ensure that each 2-connected component has a strongly
     connected orientation.
 
+    INPUT:
+
+    - ``G`` -- an undirected graph
+
     OUTPUT: a digraph representing an orientation of the current graph
 
     .. NOTE::
@@ -1014,6 +1020,8 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
 
     INPUT:
 
+    - ``G`` -- an undirected graph
+
     - ``use_edge_labels`` -- boolean (default: ``False``)
 
       - When set to ``True``, uses edge labels as weights to compute the
@@ -1109,6 +1117,8 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
     than `b(v)`.
 
     INPUT:
+
+    - ``G`` -- an undirected graph
 
     - ``bound`` -- maximum bound on the out-degree. Can be of three
       different types :
@@ -1276,6 +1286,10 @@ def eulerian_orientation(G):
 
     If the graph is not Eulerian, the orientation verifies for any vertex `v`
     that `| d^+(v)-d^-(v) | \leq 1`.
+
+    INPUT:
+
+    - ``G`` -- an undirected graph
 
     ALGORITHM:
 
