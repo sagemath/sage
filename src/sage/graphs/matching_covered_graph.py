@@ -500,27 +500,6 @@ class MatchingCoveredGraph(Graph):
         else:
             raise ValueError('input data is of unknown type')
 
-    def _upgrade_from_graph(self, matching=None, algorithm='Edmonds',
-                            solver=None, verbose=0,
-                            integrality_tolerance=0.001):
-        r"""
-        Upgrade the given graph to a matching covered graph if eligible.
-
-        See documentation ``MatchingCoveredGraph?`` for detailed information.
-        """
-        try:
-            check = Graph.is_matching_covered(G=self, matching=matching,
-                                              algorithm=algorithm,
-                                              coNP_certificate=False,
-                                              solver=solver, verbose=verbose,
-                                              integrality_tolerance=integrality_tolerance)
-
-            if not check:
-                raise ValueError("input graph is not matching covered")
-
-        except ValueError as error:
-            raise error
-
     def __repr__(self):
         r"""
         Return a short string representation of the (matching covered) graph.
@@ -562,6 +541,27 @@ class MatchingCoveredGraph(Graph):
         if "matching covered" in s:
             return s.capitalize()
         return "".join(["Matching covered ", s])
+
+    def _upgrade_from_graph(self, matching=None, algorithm='Edmonds',
+                            solver=None, verbose=0,
+                            integrality_tolerance=0.001):
+        r"""
+        Upgrade the given graph to a matching covered graph if eligible.
+
+        See documentation ``MatchingCoveredGraph?`` for detailed information.
+        """
+        try:
+            check = Graph.is_matching_covered(G=self, matching=matching,
+                                              algorithm=algorithm,
+                                              coNP_certificate=False,
+                                              solver=solver, verbose=verbose,
+                                              integrality_tolerance=integrality_tolerance)
+
+            if not check:
+                raise ValueError("input graph is not matching covered")
+
+        except ValueError as error:
+            raise error
 
     def allow_loops(self, new, check=True):
         r"""
