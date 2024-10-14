@@ -175,6 +175,7 @@ except ImportError:
     LaurentSeriesRing = ()
     LaurentSeries = ()
 
+lazy_import('sage.rings.lazy_series', 'LazyPowerSeries')
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
 
@@ -853,7 +854,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
                 else:
                     raise TypeError("Can only convert series into ring with same variable name.")
         else:
-            from sage.rings.lazy_series import LazyPowerSeries
             if isinstance(f, LazyPowerSeries):
                 if prec is infinity:
                     try:
