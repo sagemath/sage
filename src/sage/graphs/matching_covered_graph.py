@@ -617,22 +617,22 @@ class MatchingCoveredGraph(Graph):
 
             sage: T = graphs.CompleteGraph(2)
             sage: T
-            Truncated biwheel graph: Graph on 30 vertices
+            Complete graph: Graph on 2 vertices
             sage: G = MatchingCoveredGraph(T)
             sage: G
-            Matching covered truncated biwheel graph: graph on 30 vertices
+            Matching covered complete graph: graph on 2 vertices
             sage: S1 = [2, 3, 4]
-            sage: G.add_vertices(G, S1)
+            sage: G.add_vertices(S1)
             Traceback (most recent call last):
             ...
             ValueError: isolated vertices are not allowed in matching covered graphs
             sage: S2 = [None, None]
-            sage: G.add_vertices(G, S2)
+            sage: G.add_vertices(S2)
             Traceback (most recent call last):
             ...
             ValueError: isolated vertices are not allowed in matching covered graphs
             sage: S3 = [2, None, None, 5]
-            sage: G.add_vertices(G, S3)
+            sage: G.add_vertices(S3)
             Traceback (most recent call last):
             ...
             ValueError: isolated vertices are not allowed in matching covered graphs
@@ -832,6 +832,7 @@ class MatchingCoveredGraph(Graph):
 
         try:
             G = Graph(self)
+            G.delete_vertices(vertices)
             M = Graph(self.get_matching())
             G_simple = G.to_simple()
 
@@ -896,6 +897,7 @@ class MatchingCoveredGraph(Graph):
             sage: W = graphs.WheelGraph(12)
             sage: G = MatchingCoveredGraph(W)
             sage: # need random
+            sage: import random
             sage: u = random.choice(list(G))
             sage: G.delete_vertex(u)
             Traceback (most recent call last):
@@ -908,7 +910,7 @@ class MatchingCoveredGraph(Graph):
         if vertex not in self:
             raise ValueError('vertex (%s) not in the graph' % str(vertex))
 
-        raise ValueError('odd order is not allowered for '
+        raise ValueError('odd order is not allowed for '
                          'matching covered graphs')
 
     def get_matching(self):
@@ -970,7 +972,7 @@ class MatchingCoveredGraph(Graph):
             sage: M = [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
             sage: G.update_matching(M)
             sage: G.get_matching()
-            [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
+            [(0, 1, None), (2, 3, None), (4, 9, None), (5, 7, None), (6, 8, None)]
 
         TESTS:
 
@@ -986,6 +988,7 @@ class MatchingCoveredGraph(Graph):
             ...
             RuntimeError: the string seems corrupt: valid characters are ?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
             sage: T = str('graph')
+            sage: G.update_matching(T)
             Traceback (most recent call last):
             ...
             RuntimeError: the string (graph) seems corrupt: for n = 40, the string is too short
@@ -996,7 +999,7 @@ class MatchingCoveredGraph(Graph):
             ...
             ValueError: the input is not a matching
             sage: N = Graph(G.matching())
-            sage: N.add_edge(6, 7)
+            sage: N.add_edge(10, 11)
             sage: G.update_matching(N)
             Traceback (most recent call last):
             ...
@@ -1005,8 +1008,8 @@ class MatchingCoveredGraph(Graph):
             sage: J.add_edges([(0, 1), (2, 3)])
             sage: G.update_matching(J)
             Traceback (most recent call last):
-        ...
-        ValueError: the input is not a perfect matching of the graph
+            ...
+            ValueError: the input is not a perfect matching of the graph
         """
         try:
             M = Graph(matching)
