@@ -85,7 +85,6 @@ objects like operation tables (e.g. the multiplication table of a group).
    sage/matrix/matrix_polynomial_dense
    sage/matrix/matrix_mpolynomial_dense
    sage/matrix/matrix_cyclo_dense
-   sage/matrix/matrix_cmr_sparse
 
    sage/matrix/operation_table
 
@@ -99,8 +98,15 @@ objects like operation tables (e.g. the multiplication table of a group).
    sage/matrix/misc_flint
    sage/matrix/symplectic_basis
    sage/matrix/compute_J_ideal
-   sage/matrix/seymour_decomposition
 
    sage/matrix/benchmark
+
+.. ONLY:: feature_sage_libs_cmr
+
+   .. toctree::
+      :maxdepth: 1
+
+      sage/matrix/seymour_decomposition
+      sage/matrix/matrix_cmr_sparse
 
 .. include:: ../footer.txt
