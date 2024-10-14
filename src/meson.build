@@ -109,13 +109,9 @@ gc = cc.find_library('gc')
 homfly = cc.find_library('homfly')
 mpc = cc.find_library('mpc')
 mpfi = cc.find_library('mpfi')
-mpc = cc.find_library('mpc')
 # Cannot be found via pkg-config (pkg-config file will be added in 4.13)
 # Test for common.h header that was added in 4.12 as a indirect version check
-gap = cc.find_library('gap', has_headers: ['gap/common.h'], required: false)
-if not gap.found()
-  gap = subproject('gap').get_variable('gap_dep')
-endif
+gap = cc.find_library('gap', has_headers: ['gap/common.h'])
 
 singular = dependency('Singular')
 

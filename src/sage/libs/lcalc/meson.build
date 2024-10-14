@@ -1,14 +1,4 @@
-# Once https://github.com/mesonbuild/meson/pull/12616 is released, we can simply do the following:
-# lcalc = dependency('lcalc', version: '>= 2.0.0')
-lcalc = dependency(
-  'lcalc',
-  version: '>= 2.0.0',
-  required: false,
-  allow_fallback: false,
-)
-if not lcalc.found()
-  lcalc = subproject('lcalc').get_variable('lcalc_dep')
-endif
+lcalc = dependency('lcalc', version: '>= 2.0.0')
 
 py.install_sources(
   '__init__.py',
