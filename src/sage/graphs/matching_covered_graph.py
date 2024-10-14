@@ -591,7 +591,8 @@ class MatchingCoveredGraph(Graph):
         OUTPUT:
 
         - If ``name`` specifies an existing vertex, then nothing is done.
-          Otherwise a :exc:`ValueError` is returned since matching covered
+          Otherwise a :exc:`ValueError` is returned with no change to the
+          existing (matching covered) graph is returned since matching covered
           graphs are free of isolated vertices.
 
         EXAMPLES:
@@ -656,8 +657,8 @@ class MatchingCoveredGraph(Graph):
 
         - If all of the vertices are existing vertices of the (matching
           covered) graph, then nothing is done; otherwise a :exc:`ValueError`
-          is returned since matching covered graphs are free of isolated
-          vertices.
+          is returned with no change to the existing (matching covered) graph
+          since matching covered graphs are free of isolated vertices.
 
         EXAMPLES:
 
@@ -728,9 +729,10 @@ class MatchingCoveredGraph(Graph):
 
         OUTPUT:
 
-        - A :exc:`ValueError` is returned if ``new`` is ``True`` since a
-          matching covered graph, by definition, is free of self-loops. If
-          ``new`` is set to ``False``, there is no output.
+        - A :exc:`ValueError` is returned with no change to the existing
+          (matching covered) graph if ``new`` is ``True`` since a matching
+          covered graph, by definition, is free of self-loops. If ``new`` is
+          set to ``False``, there is no output.
 
         EXAMPLES:
 
@@ -772,7 +774,9 @@ class MatchingCoveredGraph(Graph):
 
         - Deleting a non-existent vertex raises a :exc:`ValueError` exception;
           also a (different) :exc:`ValueError` is returned on deleting an
-          existing vertex since matching covered graphs are of even order.
+          existing vertex since matching covered graphs are of even order. In
+          both cases no modifications are made to the existing (matching
+          covered) graph.
 
         EXAMPLES:
 
@@ -833,8 +837,9 @@ class MatchingCoveredGraph(Graph):
 
         - If all of the vertices in the list/ set provided exist in the graph,
           but the resulting graph after deletion of all of those is not
-          matching covered, then a :exc:`ValueError` exception is raised,
-          otherwise nothing is returned.
+          matching covered, then a :exc:`ValueError` exception is raised
+          without any alterations to the existing (matching covered) graph,
+          otherwise the vertices are deleted and nothing is returned.
 
         EXAMPLES:
 
@@ -918,6 +923,10 @@ class MatchingCoveredGraph(Graph):
         Return ``self._matching``, which is a perfect matching of the (matching
         covered) graph computed at the initialization.
 
+        OUTPUT:
+
+        - A perfect matching of the (matching covered) graph.
+
         EXAMPLES:
 
         If one specifies a perfect matching while initializing the object, the
@@ -959,7 +968,8 @@ class MatchingCoveredGraph(Graph):
 
         - If ``matching`` is a valid perfect matching of the graph, then
           ``self._matching`` gets updated to this provided matching, or
-          otherwise an exception is returned.
+          otherwise an exception is returned without any alterations to
+          ``self._matching``.
 
         EXAMPLES:
 
