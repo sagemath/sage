@@ -210,6 +210,6 @@ for path in file_paths:
         f.write(content)
   ''',
 ]
-run_command(create_files_command)
+run_command(create_files_command, check: true)
 
 subdir('src')
