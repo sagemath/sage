@@ -19,7 +19,6 @@ extension_data = {
   'base' : files('base.pyx'),
   'implicit_surface' : files('implicit_surface.pyx'),
   'index_face_set' : files('index_face_set.pyx'),
-  'parametric_surface' : files('parametric_surface.pyx'),
   'shapes' : files('shapes.pyx'),
   'transform' : files('transform.pyx'),
 }
@@ -35,3 +34,12 @@ foreach name, pyx : extension_data
   )
 endforeach
 
+# This extension needs the interpreters, but the others don't.
+py.extension_module(
+  'parametric_surface',
+  sources: files('parametric_surface.pyx'),
+  subdir: 'sage/plot/plot3d',
+  install: true,
+  include_directories: [inc_cpython, inc_ext, inc_numpy],
+  dependencies: [py_dep, cysignals, gmp, interpreters_dep],
+)
