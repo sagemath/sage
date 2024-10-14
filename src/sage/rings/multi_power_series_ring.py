@@ -257,6 +257,8 @@ def is_MPowerSeriesRing(x):
         True
         sage: is_MPowerSeriesRing(T)
         False
+
+        sage: # needs sage.combinat
         sage: L = LazyPowerSeriesRing(QQ, 'x')
         sage: is_MPowerSeriesRing(L)
         True
@@ -836,6 +838,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: H._coerce_map_from_(PolynomialRing(ZZ,'z2,f0'))
             True
 
+            sage: # needs sage.combinat
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
             sage: R = PowerSeriesRing(QQ, names=('x','y','z'))
             sage: R.has_coerce_map_from(L)

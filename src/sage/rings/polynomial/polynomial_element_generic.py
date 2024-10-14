@@ -954,9 +954,9 @@ class Polynomial_generic_sparse(Polynomial):
         Check that :issue:`19676` is fixed::
 
             sage: S.<y> = R[]
-            sage: x.gcd(y)
+            sage: x.gcd(y)                                                              # needs sage.libs.singular
             1
-            sage: (6*x).gcd(9)
+            sage: (6*x).gcd(9)                                                          # needs sage.libs.singular
             3
 
         Check that :issue:`36427` is fixed::

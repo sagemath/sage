@@ -302,8 +302,8 @@ class LocalizationElement(IntegralDomainElement):
             True
 
             sage: R.<X, Y> = ZZ[]
-            sage: L.<x, y> = R.localization(X - Y)
-            sage: x*y/(x-y)
+            sage: L.<x, y> = R.localization(X - Y)                                      # needs sage.libs.singular
+            sage: x*y/(x-y)                                                             # needs sage.libs.singular
             x*y/(x - y)
         """
         s = "%s" % self._value
@@ -403,7 +403,7 @@ class LocalizationElement(IntegralDomainElement):
 
             sage: P.<X, Y> = QQ['x, y']
             sage: L = P.localization(X - Y)
-            sage: x, y = L.gens()
+            sage: x, y = L.gens()                                                       # needs sage.libs.singular
             sage: p = (x^2 - y^2)/(x-y)^2                                               # needs sage.libs.singular
             sage: p.factor()                                                            # needs sage.libs.singular
             (1/(x - y)) * (x + y)

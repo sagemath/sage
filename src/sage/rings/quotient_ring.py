@@ -1364,7 +1364,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
 
             sage: R.<x,y> = QQ[]
             sage: S = R.quotient([x^3, y^2])
-            sage: S.random_element()  # random
+            sage: S.random_element()  # random                                          # needs sage.libs.singular
             -8/5*xbar^2 + 3/2*xbar*ybar + 2*xbar - 4/23
 
         TESTS:
@@ -1373,7 +1373,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         ring (which would be the case if the default implementation
         of this method was inherited from generic rings)::
 
-            sage: any(S.random_element() not in ZZ for _ in range(999))
+            sage: any(S.random_element() not in ZZ for _ in range(999))                 # needs sage.libs.singular
             True
         """
         return self.retract(self.cover_ring().random_element())

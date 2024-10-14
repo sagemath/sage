@@ -170,7 +170,7 @@ def is_linearly_dependent(polys) -> bool:
         ....:      2*x^123 + x^75,
         ....:      x^147 + 2*x^123 + 2*x^75,
         ....:      2*x^147 + x^99 + x^75]
-        sage: is_linearly_dependent(B)
+        sage: is_linearly_dependent(B)                                                  # needs sage.modules
         True
     """
     if not polys:
