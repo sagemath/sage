@@ -394,6 +394,7 @@ class Permutation(CombinatorialElement):
     Generate permutations using the Steinhaus-Johnson Trotter algorithm. The
     output is not in lexicographic order::
 
+        sage: # needs sage.combinat
         sage: p = Permutation([1, 2, 3, 4], algorithm='sjt'); p
         [1, 2, 3, 4]
         sage: p = p.next(); p
@@ -405,7 +406,6 @@ class Permutation(CombinatorialElement):
         ....:     p = p.next()
         sage: p
         False
-
         sage: Permutation([1, 3, 2, 4], algorithm='sjt')
         Traceback (most recent call last):
         ...
@@ -575,13 +575,13 @@ class Permutation(CombinatorialElement):
             5. Some element may be repeated, or an element is missing, but there
             is something wrong with its length.
 
-            sage: Permutation([1, 3, 2], algorithm='sjt')
+            sage: Permutation([1, 3, 2], algorithm='sjt')                               # needs sage.combinat
             Traceback (most recent call last):
             ...
             ValueError: no internal state directions were given for non-identity
             starting permutation for Steinhaus-Johnson-Trotter algorithm
 
-            sage: Permutation([1, 3, 2], algorithm='sjt', check=False)
+            sage: Permutation([1, 3, 2], algorithm='sjt', check=False)                  # needs sage.combinat
             Traceback (most recent call last):
             ...
             ValueError: no internal state directions were given for non-identity
@@ -800,7 +800,7 @@ class Permutation(CombinatorialElement):
         EXAMPLES::
 
             sage: sigma = Permutation([3,4,1,2,5])
-            sage: sigma.order()
+            sage: sigma.order()                                                         # needs sage.combinat
             2
             sage: sigma * sigma
             [1, 2, 3, 4, 5]
@@ -854,10 +854,10 @@ class Permutation(CombinatorialElement):
             sage: p = Permutation([4,3,2,1])
             sage: next(p)
             False
-            sage: p = Permutation([1, 2, 3], algorithm='sjt')
-            sage: p = next(p); p
+            sage: p = Permutation([1, 2, 3], algorithm='sjt')                           # needs sage.combinat
+            sage: p = next(p); p                                                        # needs sage.combinat
             [1, 3, 2]
-            sage: p = next(p); p
+            sage: p = next(p); p                                                        # needs sage.combinat
             [3, 1, 2]
 
         TESTS::
@@ -865,6 +865,8 @@ class Permutation(CombinatorialElement):
             sage: p = Permutation([])
             sage: next(p)
             False
+
+            sage: # needs sage.combinat
             sage: p = Permutation([], algorithm='sjt')
             sage: next(p)
             False
@@ -944,8 +946,8 @@ class Permutation(CombinatorialElement):
             sage: p.prev()
             False
 
-            sage: p = Permutation([1,2,3], algorithm='sjt')
-            sage: p.prev()
+            sage: p = Permutation([1,2,3], algorithm='sjt')                             # needs sage.combinat
+            sage: p.prev()                                                              # needs sage.combinat
             Traceback (most recent call last):
             ...
             NotImplementedError: previous permutation for SJT algorithm is not
@@ -7197,6 +7199,7 @@ class StandardPermutations_n_abstract(Permutations):
 
         Ensure that :issue:`37284` is fixed::
 
+            sage: # needs sage.groups
             sage: PG = PermutationGroup([[(1,2,3),(5,6)],[(7,8)]])
             sage: P8 = Permutations(8)
             sage: p = PG.an_element()
