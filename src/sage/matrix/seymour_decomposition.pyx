@@ -697,15 +697,15 @@ cdef class DecompositionNode(SageObject):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
-            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
-            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
-            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            ....:           [[ 1, -1,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1],
+            ....:            [ 0,  0,  0,  1, -1,  0,  0,  0,  1,  1,  1,  1],
+            ....:            [ 0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1],
+            ....:            [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....:            [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....:            [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....:            [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....:            [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....:            [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
             sage: result, certificate = R12.is_totally_unimodular(certificate=True,
             ....:                           row_keys=['r1', 'r2', 'r3', 'r4', 'r5',
             ....:                                     'r6', 'r7', 'r8', 'r9'],
@@ -738,8 +738,8 @@ cdef class DecompositionNode(SageObject):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 6, sparse=True),
-            ....: [[1,0,1,1,0,0],[0,1,1,1,0,0],[1,0,1,0,1,1],
-            ....: [0,-1,0,-1,1,1],[1,0,1,0,1,0],[0,-1,0,-1,0,1]])
+            ....:           [[1,0,1,1,0,0], [0,1,1,1,0,0], [1,0,1,0,1,1],
+            ....:            [0,-1,0,-1,1,1], [1,0,1,0,1,0], [0,-1,0,-1,0,1]])
             sage: result, certificate = R12.is_totally_unimodular(certificate=True,
             ....:                           three_sum_strategy="Wide_Wide",
             ....:                           row_keys=range(6),
@@ -758,8 +758,8 @@ cdef class DecompositionNode(SageObject):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 6, sparse=True),
-            ....: [[1,0,1,1,0,0],[0,1,1,1,0,0],[1,0,1,0,1,1],
-            ....: [0,-1,0,-1,1,1],[1,0,1,0,1,0],[0,-1,0,-1,0,1]])
+            ....:           [[1,0,1,1,0,0], [0,1,1,1,0,0], [1,0,1,0,1,1],
+            ....:            [0,-1,0,-1,1,1], [1,0,1,0,1,0], [0,-1,0,-1,0,1]])
             sage: result, certificate = R12.is_totally_unimodular(certificate=True,
             ....:                           three_sum_strategy="Wide_Wide",
             ....:                           row_keys=range(6),
@@ -781,8 +781,8 @@ cdef class DecompositionNode(SageObject):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 6, sparse=True),
-            ....: [[1,0,1,1,0,0],[0,1,1,1,0,0],[1,0,1,0,1,1],
-            ....: [0,-1,0,-1,1,1],[1,0,1,0,1,0],[0,-1,0,-1,0,1]])
+            ....:           [[1,0,1,1,0,0], [0,1,1,1,0,0], [1,0,1,0,1,1],
+            ....:            [0,-1,0,-1,1,1], [1,0,1,0,1,0], [0,-1,0,-1,0,1]])
             sage: result, certificate = R12.is_totally_unimodular(certificate=True,
             ....:                           three_sum_strategy="Wide_Wide",
             ....:                           row_keys=range(6),
@@ -890,7 +890,7 @@ cdef class DecompositionNode(SageObject):
             )
             sage: node.child_indices()
             ((((0, 0), (0, 1), (0, 2), (0, 3)), ((0, 'a'), (0, 'b'), (0, 'c'), (0, 'd'))),
-            (((1, 'a'), (1, 'b')), ((1, 0), (1, 1), (1, 2))))
+             (((1, 'a'), (1, 'b')), ((1, 0), (1, 1), (1, 2))))
 
         ``row_keys``, ``column_keys`` of ``summands`` are disjoint::
 
@@ -2759,15 +2759,15 @@ cdef class ThreeSumNode(SumNode):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12_large = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
-            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
-            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
-            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            ....:                 [[ 1, -1,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1],
+            ....:                  [ 0,  0,  0,  1, -1,  0,  0,  0,  1,  1,  1,  1],
+            ....:                  [ 0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1],
+            ....:                  [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....:                  [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....:                  [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....:                  [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....:                  [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....:                  [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
             sage: result, certificate = R12_large.is_totally_unimodular(certificate=True)
             sage: C = certificate.child_nodes()[0]; C
             ThreeSumNode (9×12) with 2 children
@@ -2807,15 +2807,15 @@ cdef class ThreeSumNode(SumNode):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12_large = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
-            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
-            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
-            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            ....:                 [[ 1, -1,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1],
+            ....:                  [ 0,  0,  0,  1, -1,  0,  0,  0,  1,  1,  1,  1],
+            ....:                  [ 0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1],
+            ....:                  [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....:                  [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....:                  [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....:                  [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....:                  [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....:                  [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
             sage: result, certificate = R12_large.is_totally_unimodular(certificate=True,
             ....:                                 three_sum_strategy="Mixed_Mixed")
             sage: C = certificate; C
@@ -3162,7 +3162,8 @@ cdef class CographicNode(BaseGraphicNode):
             sage: G.vertices(sort=True)
             [0, 1, 2, 5, 7, 8]
             sage: G.edges(sort=True)
-            [(0, 2, None), (0, 5, None), (0, 7, None), (1, 2, None), (1, 5, None), (1, 7, None), (2, 8, None), (5, 8, None), (7, 8, None)]
+            [(0, 2, None), (0, 5, None), (0, 7, None), (1, 2, None), (1, 5, None),
+             (1, 7, None), (2, 8, None), (5, 8, None), (7, 8, None)]
 
         Directed graph::
 
@@ -3184,7 +3185,8 @@ cdef class CographicNode(BaseGraphicNode):
             sage: G.vertices(sort=True)
             [0, 1, 2, 5, 7, 8]
             sage: G.edges(sort=True)
-            [(0, 2, None), (0, 5, None), (0, 7, None), (1, 2, None), (1, 5, None), (1, 7, None), (2, 8, None), (5, 8, None), (7, 8, None)]
+            [(0, 2, None), (0, 5, None), (0, 7, None), (1, 2, None), (1, 5, None),
+             (1, 7, None), (2, 8, None), (5, 8, None), (7, 8, None)]
         """
         if self._graph is not None:
             return self._graph
@@ -3387,7 +3389,7 @@ cdef class SeriesParallelReductionNode(DecompositionNode):
         Return the core of ``self``.
 
         A :class:`SeriesParallelReductionNode` indicates that `M`
-        arises from a smaller matrix `M'` (called the core)
+        arises from a smaller matrix `M'` (called the *core*)
         by successively adding zero rows/columns,
         unit rows/columns or duplicates of existing rows/columns
         (potentially scaled with `-1`).
@@ -3400,7 +3402,7 @@ cdef class SeriesParallelReductionNode(DecompositionNode):
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 6, sparse=True),
             ....:                           [[1, 1, 1, 1, 1, 0], [1, 1, 1, 0, 0, 0],
-            ....:                            [1, 0, 1, 1, 0, 1] ,[1, 0, 0, 1, 1, 0],
+            ....:                            [1, 0, 1, 1, 0, 1], [1, 0, 0, 1, 1, 0],
             ....:                            [1, 1, 0, 0, 1, 0]]); M
             [1 1 1 1 1 0]
             [1 1 1 0 0 0]
@@ -3429,11 +3431,11 @@ cdef class R10Node(DecompositionNode):
 
         sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
         sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
-        ....:                            [[1, 0, 0, 1, 1],
-        ....:                             [1, 1, 0, 0, 1],
-        ....:                             [0, 1, 1, 0, 1],
-        ....:                             [0, 0, 1, 1, 1],
-        ....:                             [1, 1, 1, 1, 1]]); R10
+        ....:                             [[1, 0, 0, 1, 1],
+        ....:                              [1, 1, 0, 0, 1],
+        ....:                              [0, 1, 1, 0, 1],
+        ....:                              [0, 0, 1, 1, 1],
+        ....:                              [1, 1, 1, 1, 1]]); R10
         [1 0 0 1 1]
         [1 1 0 0 1]
         [0 1 1 0 1]
@@ -3455,11 +3457,11 @@ cdef class R10Node(DecompositionNode):
         False
 
         sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
-        ....:                            [[ 1,-1, 0, 0,-1],
-        ....:                             [-1, 1,-1, 0, 0],
-        ....:                             [ 0,-1, 1,-1, 0],
-        ....:                             [ 0, 0,-1, 1,-1],
-        ....:                             [-1, 0, 0,-1, 1]]); R10
+        ....:                             [[ 1,-1, 0, 0,-1],
+        ....:                              [-1, 1,-1, 0, 0],
+        ....:                              [ 0,-1, 1,-1, 0],
+        ....:                              [ 0, 0,-1, 1,-1],
+        ....:                              [-1, 0, 0,-1, 1]]); R10
         [ 1 -1  0  0 -1]
         [-1  1 -1  0  0]
         [ 0 -1  1 -1  0]
@@ -3474,11 +3476,11 @@ cdef class R10Node(DecompositionNode):
         False
 
         sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
-        ....:                            [[1, 1, 0, 0, 1],
-        ....:                             [1, 1,-1, 0, 0],
-        ....:                             [0, 1,-1,-1, 0],
-        ....:                             [0, 0, 1, 1, 1],
-        ....:                             [1, 0, 0, 1, 1]]); R10
+        ....:                             [[1, 1, 0, 0, 1],
+        ....:                              [1, 1,-1, 0, 0],
+        ....:                              [0, 1,-1,-1, 0],
+        ....:                              [0, 0, 1, 1, 1],
+        ....:                              [1, 0, 0, 1, 1]]); R10
         [ 1  1  0  0  1]
         [ 1  1 -1  0  0]
         [ 0  1 -1 -1  0]
@@ -3493,11 +3495,11 @@ cdef class R10Node(DecompositionNode):
         False
 
         sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(GF(2), 5, 5, sparse=True),
-        ....:                            [[1, 1, 0, 0, 1],
-        ....:                             [1, 1,-1, 0, 0],
-        ....:                             [0, 1,-1,-1, 0],
-        ....:                             [0, 0, 1, 1, 1],
-        ....:                             [1, 0, 0, 1, 1]]); R10
+        ....:                             [[1, 1, 0, 0, 1],
+        ....:                              [1, 1,-1, 0, 0],
+        ....:                              [0, 1,-1,-1, 0],
+        ....:                              [0, 0, 1, 1, 1],
+        ....:                              [1, 0, 0, 1, 1]]); R10
         [1 1 0 0 1]
         [1 1 1 0 0]
         [0 1 1 1 0]
@@ -3524,11 +3526,11 @@ cdef class R10Node(DecompositionNode):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
-            ....:                            [[1, 1, 1, 1, 1],
-            ....:                             [1, 1, 1, 0, 0],
-            ....:                             [1, 0, 1, 1, 0],
-            ....:                             [1, 0, 0, 1, 1],
-            ....:                             [1, 1, 0, 0, 1]]); R10
+            ....:                             [[1, 1, 1, 1, 1],
+            ....:                              [1, 1, 1, 0, 0],
+            ....:                              [1, 0, 1, 1, 0],
+            ....:                              [1, 0, 0, 1, 1],
+            ....:                              [1, 1, 0, 0, 1]]); R10
             [1 1 1 1 1]
             [1 1 1 0 0]
             [1 0 1 1 0]
@@ -3541,36 +3543,36 @@ cdef class R10Node(DecompositionNode):
             R10: Regular matroid of rank 5 on 10 elements with 162 bases
             sage: certificate._isomorphism()
             {'a': 0,
-            'b': 1,
-            'c': 2,
-            'd': 'a',
-            'e': 'b',
-            'f': 4,
-            'g': 'c',
-            'h': 'e',
-            'i': 3,
-            'j': 'd'}
-            sage: result, certificate = R10.is_totally_unimodular(certificate=True)
+             'b': 1,
+             'c': 2,
+             'd': 'a',
+             'e': 'b',
+             'f': 4,
+             'g': 'c',
+             'h': 'e',
+             'i': 3,
+             'j': 'd'}
+             sage: result, certificate = R10.is_totally_unimodular(certificate=True)
             sage: certificate._matroid()
             R10: Regular matroid of rank 5 on 10 elements with 162 bases
             sage: certificate._isomorphism()
             {'a': 0,
-            'b': 1,
-            'c': 2,
-            'd': 5,
-            'e': 6,
-            'f': 4,
-            'g': 7,
-            'h': 9,
-            'i': 3,
-            'j': 8}
+             'b': 1,
+             'c': 2,
+             'd': 5,
+             'e': 6,
+             'f': 4,
+             'g': 7,
+             'h': 9,
+             'i': 3,
+             'j': 8}
 
             sage: R10 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 5, sparse=True),
-            ....:                            [[ 1,-1, 0, 0,-1],
-            ....:                             [-1, 1,-1, 0, 0],
-            ....:                             [ 0,-1, 1,-1, 0],
-            ....:                             [ 0, 0,-1, 1,-1],
-            ....:                             [-1, 0, 0,-1, 1]]); R10
+            ....:                             [[ 1,-1, 0, 0,-1],
+            ....:                              [-1, 1,-1, 0, 0],
+            ....:                              [ 0,-1, 1,-1, 0],
+            ....:                              [ 0, 0,-1, 1,-1],
+            ....:                              [-1, 0, 0,-1, 1]]); R10
             [ 1 -1  0  0 -1]
             [-1  1 -1  0  0]
             [ 0 -1  1 -1  0]
@@ -3622,15 +3624,15 @@ cdef class PivotsNode(DecompositionNode):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
-            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
-            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
-            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            ....:           [[ 1, -1,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1],
+            ....:            [ 0,  0,  0,  1, -1,  0,  0,  0,  1,  1,  1,  1],
+            ....:            [ 0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1],
+            ....:            [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....:            [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....:            [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....:            [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....:            [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....:            [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
             sage: result, certificate = R12.is_totally_unimodular(certificate=True)
             sage: certificate
             PivotsNode (9×12)
@@ -3648,15 +3650,15 @@ cdef class PivotsNode(DecompositionNode):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
-            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
-            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
-            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            ....:           [[ 1, -1,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1],
+            ....:            [ 0,  0,  0,  1, -1,  0,  0,  0,  1,  1,  1,  1],
+            ....:            [ 0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1],
+            ....:            [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....:            [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....:            [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....:            [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....:            [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....:            [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
             sage: result, certificate = R12.is_totally_unimodular(certificate=True)
             sage: certificate
             PivotsNode (9×12)
@@ -3681,15 +3683,15 @@ cdef class PivotsNode(DecompositionNode):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
-            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
-            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
-            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            ....:           [[ 1, -1,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1],
+            ....:            [ 0,  0,  0,  1, -1,  0,  0,  0,  1,  1,  1,  1],
+            ....:            [ 0,  0,  0,  0,  0,  0,  1,  1,  1,  1,  1,  1],
+            ....:            [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....:            [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....:            [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....:            [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....:            [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....:            [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
             sage: result, certificate = R12.is_totally_unimodular(certificate=True)
             sage: certificate
             PivotsNode (9×12)
