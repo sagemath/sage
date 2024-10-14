@@ -284,8 +284,11 @@ def skipfile(filename, tested_optional_tags=False, *,
     """
     if filename.endswith('.rst.txt'):
         ext = '.rst.txt'
-    else:
-        base, ext = os.path.splitext(filename)
+    if filename.endswith('__main__.py'):
+        if log:
+            log(f"Skipping '{filename}' because it is a __main__.py file")
+        return True
+    _ , ext = os.path.splitext(filename)
     # .rst.txt appear in the installed documentation in subdirectories named "_sources"
     if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex', '.rst.txt'):
         if log:
