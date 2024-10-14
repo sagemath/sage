@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.schemes
 r"""
 Jacobians in Hess model
 

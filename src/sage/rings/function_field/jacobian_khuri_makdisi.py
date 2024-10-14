@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.schemes
 r"""
 Jacobians in Khuri-Makdisi model
 
