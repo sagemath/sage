@@ -306,7 +306,7 @@ worktree*
 builddir
 builddir-*
 build-install
-build/cp311
+build/cp*
 
 # Meson temporary files
 src/sage/interfaces/__init__.py
