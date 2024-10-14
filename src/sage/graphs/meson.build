@@ -35,6 +35,7 @@ py.install_sources(
   'independent_sets.pxd',
   'isgci.py',
   'lovasz_theta.py',
+  'matching.py',
   'mcqd.pxd',
   'orientations.py',
   'partial_cube.py',
