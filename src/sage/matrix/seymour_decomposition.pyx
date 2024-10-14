@@ -138,7 +138,7 @@ cdef class DecompositionNode(SageObject):
         cdef Matrix_cmr_chr_sparse matrix
         try:
             matrix = self.matrix()
-        except:
+        except Exception:
             raise ValueError('no Matrix_cmr_chr_sparse matrix')
         base_ring = self.base_ring()
         if base_ring.characteristic() not in [0, 2, 3] :
