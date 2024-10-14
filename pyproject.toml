@@ -3,13 +3,16 @@ build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
     'meson-python',
+    # Require 1.4.0 for better numpy integration
+    'meson >= 1.4.0',
     'cypari2 >=2.1.1',
     'cysignals >=1.11.4',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
     'cython >=3.0, != 3.0.3',
     'gmpy2 ~=2.1.b999',
     'memory_allocator',
-    'numpy >=1.19',
+    # Require 2.0.0 for better meson integration
+    'numpy >=2.0.0',
     'jinja2'
 ]
 [project]

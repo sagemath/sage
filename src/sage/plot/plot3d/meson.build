@@ -30,8 +30,8 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/plot/plot3d',
     install: true,
-    include_directories: [inc_cpython, inc_ext, inc_numpy],
-    dependencies: [py_dep, cysignals, gmp],
+    include_directories: [inc_cpython, inc_ext],
+    dependencies: [py_dep, cysignals, gmp, numpy],
   )
 endforeach
 

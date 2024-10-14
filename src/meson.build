@@ -4,18 +4,7 @@ cpp = meson.get_compiler('cpp')
 cython = meson.get_compiler('cython')
 
 # Setup dependencies that are needed by many modules
-inc_numpy = run_command(
-  py,
-  [
-    '-c',
-    '''
-import numpy
-print(numpy.get_include())
-    '''.strip(),
-  ],
-  check: true,
-).stdout().strip()
-numpy = declare_dependency(include_directories: inc_numpy)
+numpy = dependency('numpy')
 
 inc_cysignals = run_command(
   py,
