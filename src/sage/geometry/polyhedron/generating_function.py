@@ -680,7 +680,7 @@ def __generating_function_of_integral_points__(
 
     if sort_factors:
         def key(t):
-            D = t.dict().popitem()[0]
+            D = t.monomial_coefficients().popitem()[0]
             return (-sum(abs(d) for d in D), D)
         terms = sorted(terms, key=key, reverse=True)
     return Factorization([(numerator, 1)] +
@@ -748,7 +748,7 @@ def _generating_function_via_Omega_(inequalities, B, skip_indices=()):
     logger.debug('terms denominator %s', terms)
 
     def decode_factor(factor):
-        D = factor.dict()
+        D = factor.monomial_coefficients()
         assert len(D) == 1
         exponent, coefficient = next(iter(D.items()))
         return coefficient, exponent
@@ -764,7 +764,7 @@ def _generating_function_via_Omega_(inequalities, B, skip_indices=()):
                       lambda factor: factor[1] == 0)
         other_factors = tuple(factor[0] for factor in other_factors)
         numerator, factors_denominator = \
-            _Omega_(numerator.dict(), tuple(decoded_factors))
+            _Omega_(numerator.monomial_coefficients(), tuple(decoded_factors))
         terms = other_factors + factors_denominator
 
     return _simplify_(numerator, terms)

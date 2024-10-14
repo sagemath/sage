@@ -46,6 +46,7 @@ def is_SL2Z(x):
     deprecation(38035, "The function is_SL2Z is deprecated; use 'isinstance(..., SL2Z_class)' instead.")
     return isinstance(x, SL2Z_class)
 
+
 class SL2Z_class(Gamma0_class):
     r"""
     The full modular group `\SL_2(\ZZ)`, regarded as a congruence
@@ -249,6 +250,7 @@ class SL2Z_class(Gamma0_class):
 
 
 SL2Z = SL2Z_class()
+
 
 def _SL2Z_ref():
     """
