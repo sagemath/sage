@@ -2960,9 +2960,9 @@ cdef class BaseGraphicNode(DecompositionNode):
         If ``self.base_ring()`` is `\GF{2}`, then return an undirected graph.
         If ``self.base_ring()`` is `\GF{3}` or `\ZZ`, then return directed graph.
 
-        EXAMPLES::
+        EXAMPLES:
 
-        Undirected graph:
+        Undirected graph::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
@@ -2980,7 +2980,7 @@ cdef class BaseGraphicNode(DecompositionNode):
             sage: G.edges(sort=True)
             [(1, 2, None), (1, 7, None), (1, 12, None), (2, 7, None), (7, 12, None)]
 
-        Directed graph:
+        Directed graph::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
@@ -3208,9 +3208,9 @@ cdef class CographicNode(BaseGraphicNode):
         r"""
         Return the forest edges of the cograph of ``self``.
 
-        EXAMPLES::
+        EXAMPLES:
 
-        Undirected graph:
+        Undirected graph::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
@@ -3230,7 +3230,7 @@ cdef class CographicNode(BaseGraphicNode):
             sage: certificate.coforest_edges()
             ((5, 8), (5, 1), (0, 2), (2, 8))
 
-        Directed graph:
+        Directed graph::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),

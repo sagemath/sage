@@ -6352,8 +6352,8 @@ cdef class RegularMatroid(LinearMatroid):
           to check graphicness:
 
           - ``None`` -- an algorithm based on [GG2012]_.
-          - ``"cmr"`` -- an algorithm based on [BW1988b]_.
-          the optional package "cmr" is required.
+          - ``"cmr"`` -- an algorithm based on [BW1988b]_;
+            the optional package "cmr" is required.
 
         OUTPUT: boolean
 
