@@ -51,6 +51,7 @@ except ImportError:
     pari_gen = ()
 
 lazy_import('sage.rings.polynomial.laurent_polynomial_ring_base', 'LaurentPolynomialRing_generic')
+lazy_import('sage.rings.lazy_series', ['LazyPowerSeries', 'LazyLaurentSeries'])
 lazy_import('sage.rings.lazy_series_ring', ('LazyPowerSeriesRing', 'LazyLaurentSeriesRing'))
 lazy_import('sage.rings.polynomial.polynomial_ring', 'PolynomialRing_general')
 lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
@@ -517,7 +518,6 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             x^-3
         """
         from sage.rings.fraction_field_element import FractionFieldElement
-        from sage.rings.lazy_series import LazyPowerSeries, LazyLaurentSeries
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.structure.element import parent

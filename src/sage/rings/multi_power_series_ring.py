@@ -227,6 +227,7 @@ try:
 except ImportError:
     LaurentSeriesRing = ()
 
+lazy_import('sage.rings.lazy_series', 'LazyPowerSeries')
 lazy_import('sage.rings.lazy_series_ring', ('LazyPowerSeriesRing', 'LazyLaurentSeriesRing'))
 
 
@@ -881,7 +882,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
                 prec = f.prec()
             except AttributeError:
                 prec = infinity
-        from sage.rings.lazy_series import LazyPowerSeries
         if isinstance(f, LazyPowerSeries):
             if prec is infinity:
                 try:
