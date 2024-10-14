@@ -1,6 +1,9 @@
 # sage_setup: distribution = sagemath-cmr
+# sage.doctest: optional - sage.libs.cmr
 r"""
-Sparse Matrices with CMR
+Sparse Matrices from the Combinatorial Matrix Recognition Library
+
+This module is provided by the distribution :ref:`sagemath-cmr <spkg_sagemath_cmr>`.
 """
 
 # ****************************************************************************

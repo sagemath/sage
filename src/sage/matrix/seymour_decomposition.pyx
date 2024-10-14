@@ -1,6 +1,9 @@
 # sage_setup: distribution = sagemath-cmr
+# sage.doctest: optional - sage.libs.cmr
 r"""
 Seymour's decomposition of totally unimodular matrices and regular matroids
+
+This module is provided by the distribution :ref:`sagemath-cmr <spkg_sagemath_cmr>`.
 """
 
 # ****************************************************************************
