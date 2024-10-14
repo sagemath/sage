@@ -1019,10 +1019,9 @@ cdef class DecompositionNode(SageObject):
 
         .. SEEALSO::
 
-            :meth:`sage.matrix.matrix_cmr_sparse.
-            Matrix_cmr_chr_sparse._is_binary_linear_matroid_graphic`
-            :meth:`UnknownNode._is_binary_linear_matroid_graphic`
-            :meth:`_binary_linear_matroid_complete_decomposition`
+            - :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse._is_binary_linear_matroid_graphic`
+            - :meth:`UnknownNode._is_binary_linear_matroid_graphic`
+            - :meth:`_binary_linear_matroid_complete_decomposition`
 
         EXAMPLES::
 
@@ -1107,10 +1106,9 @@ cdef class DecompositionNode(SageObject):
 
         .. SEEALSO::
 
-            :meth:`sage.matrix.matrix_cmr_sparse.
-            Matrix_cmr_chr_sparse._is_binary_linear_matroid_cographic`
-            :meth:`UnknownNode._is_binary_linear_matroid_cographic`
-            :meth:`_binary_linear_matroid_complete_decomposition`
+            - :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse._is_binary_linear_matroid_cographic`
+            - :meth:`UnknownNode._is_binary_linear_matroid_cographic`
+            - :meth:`_binary_linear_matroid_complete_decomposition`
 
         EXAMPLES::
 
@@ -1189,9 +1187,8 @@ cdef class DecompositionNode(SageObject):
 
         .. SEEALSO::
 
-            :meth:`sage.matrix.matrix_cmr_sparse.
-            Matrix_cmr_chr_sparse._is_binary_linear_matroid_regular`
-            :meth:`_binary_linear_matroid_complete_decomposition`
+            - :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse._is_binary_linear_matroid_regular`
+            - :meth:`_binary_linear_matroid_complete_decomposition`
 
         EXAMPLES::
 
@@ -1452,10 +1449,9 @@ cdef class DecompositionNode(SageObject):
 
         .. SEEALSO::
 
-            :meth:`sage.matrix.matrix_cmr_sparse.
-            Matrix_cmr_chr_sparse.is_network_matrix`
-            :meth:`UnknownNode.is_network_matrix`
-            :meth:`complete_decomposition`
+            - :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse.is_network_matrix`
+            - :meth:`UnknownNode.is_network_matrix`
+            - :meth:`complete_decomposition`
 
         EXAMPLES::
 
@@ -1626,9 +1622,8 @@ cdef class DecompositionNode(SageObject):
 
         .. SEEALSO::
 
-            :meth:`sage.matrix.matrix_cmr_sparse.
-            Matrix_cmr_chr_sparse.is_totally_unimodular`
-            :meth:`complete_decomposition`
+            - :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse.is_totally_unimodular`
+            - :meth:`complete_decomposition`
 
         EXAMPLES::
 
@@ -1996,8 +1991,7 @@ cdef class UnknownNode(DecompositionNode):
 
         .. SEEALSO::
 
-            :meth:`sage.matrix.matrix_cmr_sparse.
-            Matrix_cmr_chr_sparse._is_binary_linear_matroid_graphic`
+            :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse._is_binary_linear_matroid_graphic`
 
         EXAMPLES::
 
@@ -2046,8 +2040,7 @@ cdef class UnknownNode(DecompositionNode):
 
         .. SEEALSO::
 
-            :meth:`sage.matrix.matrix_cmr_sparse.
-            Matrix_cmr_chr_sparse._is_binary_linear_matroid_cographic`
+            :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse._is_binary_linear_matroid_cographic`
 
         EXAMPLES::
 
@@ -2092,8 +2085,7 @@ cdef class UnknownNode(DecompositionNode):
 
         .. SEEALSO::
 
-            :meth:`sage.matrix.matrix_cmr_sparse.
-            Matrix_cmr_chr_sparse.is_network_matrix`
+            :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse.is_network_matrix`
 
         EXAMPLES::
 
@@ -2141,8 +2133,7 @@ cdef class UnknownNode(DecompositionNode):
 
         .. SEEALSO::
 
-            :meth:`sage.matrix.matrix_cmr_sparse.
-            Matrix_cmr_chr_sparse.is_conetwork_matrix`
+            :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse.is_conetwork_matrix`
 
         EXAMPLES::
 

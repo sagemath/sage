@@ -988,12 +988,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         - ``algorithm`` -- ``"cmr"`` or ``"direct"``
           If ``algorithm="cmr"``, then use :meth:`_three_sum_cmr`;
           If ``algorithm="direct"``, then construct three sum directly.
-        - ``verify`` -- boolean (default:``True``)
-          Whether to check the give two matrices and the related indices
+        - ``verify`` -- boolean (default: ``True``);
+          whether to check the given two matrices and the related indices
           satisfying the requirements of 3-sum
           by calling :meth:`is_three_sum_wide_wide`.
-        - ``sign_verify`` -- boolean (default:``False``)
-          Whether to check the sign correctness.
+        - ``sign_verify`` -- boolean (default: ``False``);
+          whether to check the sign correctness.
           See :meth:`is_three_sum_wide_wide`.
 
         OUTPUT: A :class:`Matrix_cmr_chr_sparse`
@@ -1205,12 +1205,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         - ``algorithm`` -- ``"cmr"`` or ``"direct"``
           If ``algorithm="cmr"``, then use :meth:`_three_sum_cmr`;
           If ``algorithm="direct"``, then construct three sum directly.
-        - ``verify`` -- boolean (default:``True``)
-          Whether to check the give two matrices and the related indices
+        - ``verify`` -- boolean (default: ``True``);
+          whether to check the give two matrices and the related indices
           satisfying the requirements of 3-sum
           by calling :meth:`is_three_sum_mixed_mixed`.
-        - ``sign_verify`` -- boolean (default:``False``)
-          Whether to check the sign correctness.
+        - ``sign_verify`` -- boolean (default: ``False``);
+          whether to check the sign correctness.
           See :meth:`is_three_sum_mixed_mixed`.
 
         OUTPUT: A :class:`Matrix_cmr_chr_sparse`
@@ -1417,13 +1417,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         - ``algorithm`` -- ``"cmr"`` or ``"direct"``
           If ``algorithm="cmr"``, then use :meth:`_three_sum_cmr`;
           If ``algorithm="direct"``, then construct three sum directly.
-        - ``verify`` -- boolean (default:``True``)
-          Whether to check the give two matrices and the related indices
+        - ``verify`` -- boolean (default: ``True``);
+          whether to check the give two matrices and the related indices
           satisfying the requirements of 3-sum
           by calling :meth:`is_three_sum_wide_wide` or
           :meth:`is_three_sum_mixed_mixed`.
-        - ``sign_verify`` -- boolean (default:``False``)
-          Whether to check the sign correctness.
+        - ``sign_verify`` -- boolean (default: ``False``);
+          whether to check the sign correctness.
           See :meth:`is_three_sum`.
 
         OUTPUT: A :class:`Matrix_cmr_chr_sparse`
@@ -1636,12 +1636,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         - ``first_columns_index`` -- the column indices of `a_2` in `M_1`
         - ``second_row_index`` -- the row index of `b_2^T` in `M_2`
         - ``second_columns_index`` -- the column indices of `b_1`  in `M_2`
-        - ``sign_verify`` -- boolean (default:``True``)
-          Whether to check the sign correctness of `\epsilon_1` and `\epsilon_2`.
+        - ``sign_verify`` -- boolean (default: ``True``);
+          whether to check the sign correctness of `\epsilon_1` and `\epsilon_2`.
 
         OUTPUT: boolean, or (boolean, string)
 
-          If it is False only because of the sign, then also output the correct sign.
+        If it is False only because of the sign, then also output the correct sign.
 
         EXAMPLES::
 
@@ -1892,12 +1892,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         - ``first_column_index`` -- the index of the column with `\epsilon_2` in `M_1`
         - ``second_row_index`` -- the index of the row with `\epsilon_1` in `M_2`
         - ``second_columns_index`` -- the indices of columns `b_1` and `b_2`  in `M_2`
-        - ``sign_verify`` -- boolean (default:``True``)
-          Whether to check the sign correctness of `\epsilon_1` and `\epsilon_2`.
+        - ``sign_verify`` -- boolean (default: ``True``);
+          whether to check the sign correctness of `\epsilon_1` and `\epsilon_2`.
 
         OUTPUT: boolean, or (boolean, string)
 
-          If it is False only because of the sign, then also output the correct sign.
+        If it is False only because of the sign, then also output the correct sign.
 
         EXAMPLES::
 
@@ -2144,12 +2144,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         - ``first_two_indices`` -- the indices of two extra rows/columns in `M_1`
         - ``second_one_index`` -- the index of one extra row/column in `M_2`
         - ``second_two_indices`` -- the indices of two extra rows/columns in `M_2`
-        - ``sign_verify`` -- boolean (default:``True``)
-          Whether to check the sign correctness.
+        - ``sign_verify`` -- boolean (default: ``True``);
+          whether to check the sign correctness.
 
         OUTPUT: boolean, or (boolean, string)
 
-          If it is False only because of the sign, then also output the correct sign.
+        If it is False only because of the sign, then also output the correct sign.
 
         EXAMPLES::
 
@@ -2658,7 +2658,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         the greatest common divisor of the determinants of all `r`-by-`r`
         submatrices of `B` is `1`. [Sch1986]_, Ch. 21.4.
 
-        .. SEEALSO:: :meth:`is_k_modular`, :meth:`is_strongly_unimodular`, :meth:`is_totally_unimodular`
+        .. SEEALSO:: :meth:`is_k_equimodular`, :meth:`is_strongly_unimodular`, :meth:`is_totally_unimodular`
 
         EXAMPLES::
 
@@ -2800,7 +2800,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         A matrix is strongly equimodular if ``self`` and ``self.transpose()``
         are both equimodular, which implies that they are equimodular for
         the same determinant gcd `k`.
-        A matrix `M` of rank-`r` is `k`-modular if the following two conditions
+        A matrix `M` of rank-`r` is `k`-equimodular if the following two conditions
         are satisfied:
 
         - for some column basis `B` of `M`, the greatest common divisor of the
@@ -3316,7 +3316,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         .. SEEALSO:: :meth:`is_network_matrix`,
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 9, sparse=True),
@@ -3425,8 +3425,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
           if the linear matroid of ``self`` over `\GF{2}` is regular;
           If not, NotImplemented.
 
-        - ``stop_when_irregular`` -- boolean (default: ``True``)
-          Whether to stop decomposing once irregularity is determined.
+        - ``stop_when_irregular`` -- boolean (default: ``True``);
+          whether to stop decomposing once irregularity is determined.
 
           For a description of other parameters, see :meth:`_set_cmr_seymour_parameters`
 
@@ -3626,7 +3626,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
           a submatrix with determinant not in `\{0, \pm1\}` if not.
 
         - ``stop_when_nonTU`` -- boolean (default: ``True``);
-          Whether to stop decomposing once not TU is determined.
+          whether to stop decomposing once not TU is determined.
 
           For a description of other parameters, see :meth:`_set_cmr_seymour_parameters`
 
@@ -3832,40 +3832,40 @@ cdef _set_cmr_seymour_parameters(CMR_SEYMOUR_PARAMS *params, dict kwds):
 
     Keyword arguments:
 
-    - ``stop_when_irregular`` -- boolean
-      Whether to stop decomposing once irregularity is determined.
+    - ``stop_when_irregular`` -- boolean;
+      whether to stop decomposing once irregularity is determined.
 
-    - ``stop_when_nongraphic`` -- boolean
-      Whether to stop decomposing once non-graphicness (or being non-network) is determined.
+    - ``stop_when_nongraphic`` -- boolean;
+      whether to stop decomposing once non-graphicness (or being non-network) is determined.
 
-    - ``stop_when_noncographic`` -- boolean
-      Whether to stop decomposing once non-cographicness (or being non-conetwork) is determined.
+    - ``stop_when_noncographic`` -- boolean;
+      whether to stop decomposing once non-cographicness (or being non-conetwork) is determined.
 
-    - ``stop_when_nongraphic_and_noncographic`` -- boolean
-      Whether to stop decomposing once non-graphicness and non-cographicness
+    - ``stop_when_nongraphic_and_noncographic`` -- boolean;
+      whether to stop decomposing once non-graphicness and non-cographicness
       (or not being network and not being conetwork) is determined.
 
     - ``series_parallel_ok`` -- boolean (default: ``True``);
-      Whether to allow series-parallel operations in the decomposition tree.
+      whether to allow series-parallel operations in the decomposition tree.
 
     - ``check_graphic_minors_planar`` -- boolean (default: ``False``);
-      Whether minors identified as graphic should still be checked for cographicness.
+      whether minors identified as graphic should still be checked for cographicness.
 
     - ``use_direct_graphicness_test`` -- boolean (default: ``True``);
-      Whether to use fast graphicness routines.
+      whether to use fast graphicness routines.
 
-    - ``prefer_graphicness`` -- boolean
-      Whether to first test for (co)graphicness (or being (co)network)
-      before applying series-parallel reductions
+    - ``prefer_graphicness`` -- boolean;
+      whether to first test for (co)graphicness (or being (co)network)
+      before applying series-parallel reductions.
 
-    - ``three_sum_pivot_children`` -- boolean
-      Whether pivots for 3-sums shall be applied such that the matrix contains
+    - ``three_sum_pivot_children`` -- boolean;
+      whether pivots for 3-sums shall be applied such that the matrix contains
       both child matrices as submatrices, if possible.
 
     - ``three_sum_strategy`` -- ``"Mixed_Mixed"`` or ``"Wide_Wide"`` or integer;
-      Whether to perform pivots to change the rank distribution, and how to construct the children.
+      whether to perform pivots to change the rank distribution, and how to construct the children.
 
-      The value is a bit-wise or of three decisions.
+      The value is a bit-wise "or" of three decisions.
 
       The first decision is that of the rank distribution:
         - CMR_SEYMOUR_THREESUM_FLAG_NO_PIVOTS to not change the rank distribution (default), or
@@ -3904,11 +3904,11 @@ cdef _set_cmr_seymour_parameters(CMR_SEYMOUR_PARAMS *params, dict kwds):
 
         ``"Wide_Wide"`` is to allow pivots and choose CMR_SEYMOUR_THREESUM_FLAG_SEYMOUR
 
-    - ``construct_leaf_graphs`` -- boolean
-      Whether to construct (co)graphs for all leaf nodes that are (co)graphic or (co)network.
+    - ``construct_leaf_graphs`` -- boolean;
+      whether to construct (co)graphs for all leaf nodes that are (co)graphic or (co)network.
 
-    - ``construct_all_graphs`` -- boolean
-      Whether to construct (co)graphs for all nodes that are (co)graphic or (co)network.
+    - ``construct_all_graphs`` -- boolean;
+      whether to construct (co)graphs for all nodes that are (co)graphic or (co)network.
     """
     CMR_CALL(CMRseymourParamsInit(params))
     params.stopWhenIrregular = kwds['stop_when_irregular']
