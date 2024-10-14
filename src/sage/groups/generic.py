@@ -1470,7 +1470,7 @@ def has_order(P, n, operation='+'):
 
         sage: R = Zmod(14981)
         sage: g = R(321)
-        sage: g.multiplicative_order()
+        sage: g.multiplicative_order()                                                  # needs sage.libs.pari
         42
         sage: has_order(g, 42, operation='*')
         True
