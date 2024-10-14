@@ -223,6 +223,7 @@ class ProductTree:
 
         EXAMPLES::
 
+            sage: # needs sage.libs.pari
             sage: from sage.rings.generic import ProductTree
             sage: vs = prime_range(100)
             sage: tree = ProductTree(vs)
@@ -232,6 +233,7 @@ class ProductTree:
         This method is faster than :func:`CRT` for repeated calls with
         the same moduli::
 
+            sage: # needs sage.libs.pari
             sage: vs = prime_range(1000,2000)
             sage: rs = lambda: [randrange(1,100) for _ in vs]
             sage: tree = ProductTree(vs)
