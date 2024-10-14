@@ -1332,7 +1332,6 @@
         "ntests": 251
     },
     "sage.modules.module": {
-        "failed": true,
         "ntests": 37
     },
     "sage.numerical.backends.generic_backend": {
@@ -1550,7 +1549,7 @@
     },
     "sage.rings.function_field.function_field": {
         "failed": true,
-        "ntests": 190
+        "ntests": 158
     },
     "sage.rings.function_field.function_field_rational": {
         "failed": true,
@@ -1583,8 +1582,7 @@
         "ntests": 7
     },
     "sage.rings.generic": {
-        "failed": true,
-        "ntests": 58
+        "ntests": 51
     },
     "sage.rings.homset": {
         "ntests": 37
@@ -1614,11 +1612,9 @@
         "ntests": 156
     },
     "sage.rings.laurent_series_ring_element": {
-        "failed": true,
-        "ntests": 381
+        "ntests": 335
     },
     "sage.rings.localization": {
-        "failed": true,
         "ntests": 110
     },
     "sage.rings.morphism": {
@@ -1627,7 +1623,7 @@
     },
     "sage.rings.multi_power_series_ring": {
         "failed": true,
-        "ntests": 229
+        "ntests": 222
     },
     "sage.rings.multi_power_series_ring_element": {
         "failed": true,
@@ -1673,7 +1669,7 @@
     },
     "sage.rings.polynomial.infinite_polynomial_ring": {
         "failed": true,
-        "ntests": 279
+        "ntests": 275
     },
     "sage.rings.polynomial.laurent_polynomial": {
         "failed": true,
@@ -1760,7 +1756,6 @@
         "ntests": 51
     },
     "sage.rings.polynomial.toy_variety": {
-        "failed": true,
         "ntests": 24
     },
     "sage.rings.power_series_mpoly": {
@@ -1772,7 +1767,7 @@
     },
     "sage.rings.power_series_ring": {
         "failed": true,
-        "ntests": 247
+        "ntests": 241
     },
     "sage.rings.power_series_ring_element": {
         "failed": true,
@@ -1813,20 +1808,8 @@
     "sage.rings.semirings.non_negative_integer_semiring": {
         "ntests": 16
     },
-    "sage.rings.semirings.tropical_mpolynomial": {
-        "failed": true,
-        "ntests": 118
-    },
-    "sage.rings.semirings.tropical_polynomial": {
-        "failed": true,
-        "ntests": 160
-    },
     "sage.rings.semirings.tropical_semiring": {
         "ntests": 120
-    },
-    "sage.rings.semirings.tropical_variety": {
-        "failed": true,
-        "ntests": 126
     },
     "sage.rings.sum_of_squares": {
         "ntests": 35
