@@ -673,6 +673,7 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         TESTS::
 
+            sage: # needs sage.schemes
             sage: E = EllipticCurve(GF(19), [1, 0])
             sage: list(E.point_homset())
             [(0 : 1 : 0), (0 : 0 : 1), (3 : 7 : 1), (3 : 12 : 1), (4 : 7 : 1),
