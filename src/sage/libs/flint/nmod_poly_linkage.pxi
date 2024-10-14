@@ -577,18 +577,37 @@ cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
         True
         sage: (G//d)*d == G
         True
+
+    Check that we catch a case where FLINT fails.  These generate the unit
+    ideal, so their GCD should be 1 (or another unit)::
+
+        sage: R.<x> = Integers(121)[]
+        sage: f = 11*x^2 + 1
+        sage: f - 61*x*f.derivative()
+        1
+        sage: gcd(f, f.derivative())
+        Traceback (most recent call last):
+        ...
+        RuntimeError: FLINT gcd calculation failed
     """
     if celement_is_zero(b, n):
         nmod_poly_set(res, a)
         return 0
 
-    # A check that the leading coefficients are invertible is *not* sufficient
+    # FLINT provides no interface for detecting errors here
     try:
         sig_on()
-        nmod_poly_gcd(res, a, b)
-        sig_off()
+        try:
+            nmod_poly_gcd(res, a, b)
+        finally:
+            sig_off()
     except RuntimeError:
-        raise ValueError("non-invertible elements encountered during GCD")
+        raise RuntimeError("FLINT gcd calculation failed")
+
+    cdef unsigned long leadcoeff = nmod_poly_get_coeff_ui(res, nmod_poly_degree(res))
+    cdef unsigned long modulus = nmod_poly_modulus(res)
+    if n_gcd(modulus, leadcoeff) == 1:
+        nmod_poly_make_monic(res, res)
 
 cdef inline int celement_xgcd(nmod_poly_t res, nmod_poly_t s, nmod_poly_t t, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """

@@ -124,6 +124,7 @@ S3mi = SL2Z([1,-1,1,0])  # the inverse of S3m in SL(2,Z)
 Lmi = SL2Z([1,-1,0,1])   # the inverse of Lm in SL(2,Z)
 Rmi = SL2Z([1,0,-1,1])   # the inverse of Rm in SL(2,Z)
 
+
 def sl2z_word_problem(A):
     r"""
     Given an element of `\SL_2(\ZZ)`, express it as a word in the generators L =
@@ -151,7 +152,7 @@ def sl2z_word_problem(A):
     output = []
 
     # If A00 is zero
-    if A[0,0] == 0:
+    if A[0, 0] == 0:
         c = A[1,1]
         if c != 1:
             A = A*Lm**(c-1)*Rm*Lmi
@@ -160,12 +161,12 @@ def sl2z_word_problem(A):
             A = A*Rm*Lmi
             output.extend([(1,-1),(0,1)])
 
-    if A[0,0] < 0:   # Make sure A00 is positive
+    if A[0, 0] < 0:   # Make sure A00 is positive
         A = SL2Z(-1)*A
         output.extend([(1,-1), (0,1), (1,-1), (0,1), (1,-1), (0,1)])
 
     if A[0,1] < 0:   # if A01 is negative make it positive
-        n = (-A[0,1]/A[0,0]).ceil()  #n s.t. 0 <= A[0,1]+n*A[0,0] < A[0,0]
+        n = (-A[0,1]/A[0,0]).ceil()  # n s.t. 0 <= A[0,1]+n*A[0,0] < A[0,0]
         A = A*Lm**n
         output.append((0, -n))
     # At this point A00>0 and A01>=0
@@ -180,10 +181,10 @@ def sl2z_word_problem(A):
             A = A*SL2Z([1,-n,0,1])
             output.append((0, n))
 
-    if A == SL2Z(1):
+    if A == SL2Z.one():
         pass       # done, so don't add R^0
-    elif A[0,0] == 0:
-        c = A[1,1]
+    elif A[0, 0] == 0:
+        c = A[1, 1]
         if c != 1:
             A = A*Lm**(c-1)*Rm*Lmi
             output.extend([(0,1-c),(1,-1),(0, 1)])
@@ -198,6 +199,7 @@ def sl2z_word_problem(A):
 
     output.reverse()
     return output
+
 
 def eval_sl2z_word(w):
     r"""
@@ -215,6 +217,7 @@ def eval_sl2z_word(w):
     w0 = Idm
     w1 = w
     return w0 * prod((mat[a[0]]**a[1] for a in w1), Idm)
+
 
 def word_of_perms(w, p1, p2):
     r"""
@@ -260,6 +263,7 @@ def word_of_perms(w, p1, p2):
 
     return M
 
+
 def _equalize_perms(l):
     r"""
     Transform a list of lists into a list of lists with identical length. Each
@@ -285,6 +289,7 @@ def _equalize_perms(l):
 # #11422, this function needs to accept two non-keyword arguments, to be
 # interpreted as L and R. Hence the order of the arguments is slightly
 # different from the class __init__ methods.
+
 
 def ArithmeticSubgroup_Permutation(
         L=None, R=None, S2=None, S3=None,
@@ -453,6 +458,7 @@ def ArithmeticSubgroup_Permutation(
         G.relabel()
 
     return G
+
 
 class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
     r"""
@@ -1484,7 +1490,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             r = R**d
             s = l**20 * r**onefifth * l**(-4) * ~r
 
-            #Congruence if the seven permutations below are trivial:
+            # Congruence if the seven permutations below are trivial:
             rel = ~a*~r*a*r
             if not rel.is_one():
                 verbose("Failed relation B1")
@@ -1852,6 +1858,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             else:
                 m += 1
         return n + m//2
+
 
 class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
     r"""

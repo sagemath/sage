@@ -127,7 +127,7 @@ class ShardPosetElement(tuple):
             sage: e1 <= e0
             False
         """
-        if type(self) is not type(other) or len(self) != len(other):
+        if not isinstance(other, ShardPosetElement) or len(self) != len(other):
             raise TypeError("these are not comparable")
         if self.runs == other.runs:
             return True
