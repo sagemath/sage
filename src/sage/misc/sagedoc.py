@@ -516,6 +516,7 @@ extlinks = {
     'doi': ('https://doi.org/%s', 'doi:%s'),
     'pari': ('https://pari.math.u-bordeaux.fr/dochtml/help/%s', 'pari:%s'),
     'mathscinet': ('https://www.ams.org/mathscinet-getitem?mr=%s', 'MathSciNet %s'),
+    'cmr': ('https://discopt.github.io/cmr/%s.html', 'CMR: %s'),
     'common_lisp': ('https://www.lispworks.com/documentation/lw50/CLHS/Body/%s.htm', 'Common Lisp: %s'),
     'ecl': ('https://ecl.common-lisp.dev/static/manual/%s.html', 'ECL: %s'),
     'gap': ('https://docs.gap-system.org/doc/ref/%s_mj.html', 'GAP: %s'),

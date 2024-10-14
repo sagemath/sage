@@ -204,6 +204,10 @@ by Sage, you can link toward it without specifying its full path:
      - ``:mathscinet:`MR0100971```
      - :mathscinet:`MR0100971`
 
+   * - :ref:`CMR <spkg_cmr>`
+     - ``:cmr:`GraphNode <structGraphNode>```
+     - :cmr:`GraphNode <structGraphNode>`
+
    * - :ref:`ECL <spkg_ecl>`
      - ``:ecl:`Manipulating-Lisp-objects```
      - :ecl:`Manipulating-Lisp-objects`
