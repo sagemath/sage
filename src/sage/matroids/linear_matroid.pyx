@@ -3814,7 +3814,7 @@ cdef class BinaryMatroid(LinearMatroid):
         OUTPUT:
 
         Boolean.
- 
+
         .. SEEALSO::
 
             :meth:`M.is_graphic() <sage.matroids.linear_matroid.
