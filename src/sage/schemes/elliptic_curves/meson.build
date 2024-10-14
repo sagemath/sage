@@ -64,8 +64,8 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/schemes/elliptic_curves',
     install: true,
-    include_directories: [inc_cpython, inc_flint, inc_rings],
-    dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfr, numpy, pari],
+    include_directories: [inc_cpython, inc_flint, inc_numpy, inc_rings],
+    dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfr, pari],
   )
 endforeach
 
