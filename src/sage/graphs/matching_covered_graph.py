@@ -849,7 +849,7 @@ class MatchingCoveredGraph(Graph):
 
             self.__init__(data=G, matching=M)
 
-        except:
+        except Exception:
             raise ValueError('the resulting graph after the removal of '
                              'the vertices is not matching covered')
 
