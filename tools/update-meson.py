@@ -135,6 +135,15 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
         src_list = ext_data[folder]
 
         cython_files = sorted(list(folder.glob("*.pyx")))
+        # Some cython files are compiled in a special way, so we don't want to add them
+        special_cython_files = {
+            "bliss.pyx",
+            "mcqd.pyx",
+            "tdlib.pyx",
+            "meataxe.pyx",
+            "sirocco.pyx",
+        }
+        cython_files = [x for x in cython_files if x.name not in special_cython_files]
         # Add all cython files that are not in the source list
         for file in cython_files:
             file_name = file.stem
@@ -143,9 +152,7 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
             token = Token("string", target.filename, 0, 0, 0, None, file_name)
             arg = ArgumentNode(Token("", target.filename, 0, 0, 0, None, "[]"))
             arg.append(
-                StringNode(
-                    Token("string", target.filename, 0, 0, 0, None, file.name)
-                )
+                StringNode(Token("string", target.filename, 0, 0, 0, None, file.name))
             )
             func = FunctionNode(_symbol("files"), _symbol("("), arg, _symbol(")"))
             target.value.args.kwargs.update({StringNode(token): func})
