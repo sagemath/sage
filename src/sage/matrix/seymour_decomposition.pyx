@@ -889,7 +889,7 @@ cdef class DecompositionNode(SageObject):
             ((((0, 0), (0, 1), (0, 2), (0, 3)), ((0, 'a'), (0, 'b'), (0, 'c'), (0, 'd'))),
             (((1, 'a'), (1, 'b')), ((1, 0), (1, 1), (1, 2))))
 
-        ``row_keys``, ``column_keys`` of ``summands`` are disjoint:
+        ``row_keys``, ``column_keys`` of ``summands`` are disjoint::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: from sage.matrix.seymour_decomposition import DecompositionNode
@@ -901,7 +901,8 @@ cdef class DecompositionNode(SageObject):
             sage: node = DecompositionNode.one_sum(*certificate.child_nodes())
             Traceback (most recent call last):
             ...
-            ValueError: keys must be disjoint, got summand_row_keys=('a', 'e'), summand_column_keys=('a', 'b')
+            ValueError: keys must be disjoint, got
+            summand_row_keys=('a', 'e'), summand_column_keys=('a', 'b')
 
             sage: result, certificate = M2.is_totally_unimodular(certificate=True,
             ....:                                                row_keys=range(4),
@@ -911,7 +912,8 @@ cdef class DecompositionNode(SageObject):
             ....:                                  column_keys='abce')
             Traceback (most recent call last):
             ...
-            ValueError: inconsistent column_keys, got column_keys=('a', 'b', 'c', 'e'), should be a permutation of ['a', 'b', 'c', 'd']
+            ValueError: inconsistent column_keys, got column_keys=('a', 'b', 'c', 'e'),
+            should be a permutation of ['a', 'b', 'c', 'd']
         """
         summand_ids = kwds.pop('summand_ids', None)
         row_keys = kwds.pop('row_keys', None)
@@ -1829,21 +1831,21 @@ cdef class DecompositionNode(SageObject):
 
         INPUT:
 
-        - ``stop_when_nonTU`` -- boolean
-        Whether to stop decomposing once being non-TU is determined.
+        - ``stop_when_nonTU`` -- boolean;
+          whether to stop decomposing once being non-TU is determined.
 
-        - ``stop_when_nonnetwork`` -- boolean
-        Whether to stop decomposing once being non-network is determined.
+        - ``stop_when_nonnetwork`` -- boolean;
+          whether to stop decomposing once being non-network is determined.
 
-        - ``stop_when_nonconetwork`` -- boolean
-        Whether to stop decomposing once being non-conetwork is determined.
+        - ``stop_when_nonconetwork`` -- boolean;
+          whether to stop decomposing once being non-conetwork is determined.
 
-        - ``stop_when_nonnetwork_and_nonconetwork`` -- boolean
-        Whether to stop decomposing once not being network
-        and not being conetwork is determined.
+        - ``stop_when_nonnetwork_and_nonconetwork`` -- boolean;
+          whether to stop decomposing once not being network
+          and not being conetwork is determined.
 
-          For a description of other parameters, see
-          :meth:`sage.matrix.matrix_cmr_sparse._set_cmr_seymour_parameters`
+        For a description of other parameters, see
+        :meth:`sage.matrix.matrix_cmr_sparse._set_cmr_seymour_parameters`.
 
         EXAMPLES::
 
@@ -3013,9 +3015,9 @@ cdef class BaseGraphicNode(DecompositionNode):
         If ``self.base_ring()`` is `\GF{2}`, then return edges.
         If ``self.base_ring()`` is `\GF{3}` or `\ZZ`, then arcs.
 
-        EXAMPLES::
+        EXAMPLES:
 
-        Undirected graph:
+        Undirected graph::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
@@ -3031,7 +3033,7 @@ cdef class BaseGraphicNode(DecompositionNode):
             sage: certificate.coforest_edges()
             ((2, 7), (1, 12))
 
-        Directed graph:
+        Directed graph::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
@@ -3143,9 +3145,9 @@ cdef class CographicNode(BaseGraphicNode):
         r"""
         Actually the cograph of matrix, in the case where it is not graphic.
 
-        EXAMPLES::
+        EXAMPLES:
 
-        Undirected graph:
+        Undirected graph::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
@@ -3169,7 +3171,7 @@ cdef class CographicNode(BaseGraphicNode):
             sage: G.edges(sort=True)
             [(0, 2, None), (0, 5, None), (0, 7, None), (1, 2, None), (1, 5, None), (1, 7, None), (2, 8, None), (5, 8, None), (7, 8, None)]
 
-        Directed graph:
+        Directed graph::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
@@ -3288,9 +3290,9 @@ cdef class PlanarNode(BaseGraphicNode):
         r"""
         Return the cograph of matrix.
 
-        EXAMPLES::
+        EXAMPLES:
 
-        Undirected graph:
+        Undirected graph::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
@@ -3313,7 +3315,7 @@ cdef class PlanarNode(BaseGraphicNode):
             sage: certificate.cograph_coforest_edges()
             ((1, 2), (2, 7), (7, 1))
 
-        Directed graph:
+        Directed graph::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),

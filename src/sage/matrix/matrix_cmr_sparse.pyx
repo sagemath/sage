@@ -2533,9 +2533,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         .. SEEALSO:: :meth:`binary_pivot`, :meth:`binary_pivots`, :meth:`ternary_pivots`
 
-        EXAMPLES::
+        EXAMPLES:
 
-        Single pivot on a `1`-entry:
+        Single pivot on a `1`-entry::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 10, 10, sparse=True), [
@@ -2572,7 +2572,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 1 -1  0  0  0  1  1 -1  1  1]
             [ 1  0  0  0  0 -1  0 -1  0  0]
 
-        Single pivot on a `-1`-entry:
+        Single pivot on a `-1`-entry::
 
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 10, 10, sparse=True), [
             ....:     [-1,  1, 0, 0, 0, -1, 0,  1, 0, 0],
@@ -2744,8 +2744,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         A matrix `M` of rank `r` is equimodular with determinant gcd `k`
         if the following two conditions are satisfied:
+
         - for some column basis `B` of `M`, the greatest common divisor of
           the determinants of all `r`-by-`r` submatrices of `B` is `k`;
+
         - the matrix `X` such that `M=BX` is totally unimodular.
 
         OUTPUT:
@@ -2800,8 +2802,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         the same determinant gcd `k`.
         A matrix `M` of rank-`r` is `k`-modular if the following two conditions
         are satisfied:
+
         - for some column basis `B` of `M`, the greatest common divisor of the
           determinants of all `r`-by-`r` submatrices of `B` is `k`;
+
         - the matrix `X` such that `M=BX` is totally unimodular.
 
         OUTPUT:
@@ -2850,8 +2854,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         A matrix `M` of rank-`r` is `k`-equimodular if the following two
         conditions are satisfied:
+
         - for some column basis `B` of `M`, the greatest common divisor of
           the determinants of all `r`-by-`r` submatrices of `B` is `k`;
+
         - the matrix `X` such that `M=BX` is totally unimodular.
 
         If the matrix has full row rank, it is `k`-equimodular if
@@ -3165,19 +3171,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     def is_network_matrix(self, *, time_limit=60.0, certificate=False,
                           row_keys=None, column_keys=None):
         r"""
-        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a network matrix.
+        Return whether the matrix ``self`` over `\GF{3}` or `\QQ` is a network matrix.
         If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
 
         Let `D = (V,A)` be a digraph and let `T` be an (arbitrarily) directed
         spanning forest of the underlying undirected graph.
         The matrix `M(D,T) \in \{-1,0,1\}^{T \times (A \setminus T)}` defined via
-        `
-        M(D,T)_{a,(v,w)} := \begin{cases}
-            +1 & \text{if the unique $v$-$w$-path in $T$ passes through $a$ forwardly}, \\
-            -1 & \text{if the unique $v$-$w$-path in $T$ passes through $a$ backwardly}, \\
-            0  & \text{otherwise}
-        \end{cases}
-        `
+
+        .. MATH::
+
+            M(D,T)_{a,(v,w)} := \begin{cases}
+                +1 & \text{if the unique $v$-$w$-path in $T$ passes through $a$ forwardly}, \\
+                -1 & \text{if the unique $v$-$w$-path in $T$ passes through $a$ backwardly}, \\
+                0  & \text{otherwise}
+            \end{cases}
+
         is called the network matrix of `D` with respect to `T`.
         A matrix `M` is called network matrix if there exists a digraph `D`
         with a directed spanning forest `T` such that `M = M(D,T)`.
@@ -3189,7 +3197,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         the support matrix of `M` for being graphic and
         uses camion for testing whether `M` is signed correctly.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
@@ -3221,11 +3229,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: K33 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 4, sparse=True),
-            ....:                           [[-1, -1, -1, -1],
-            ....:                            [ 1,  1,  0,  0],
-            ....:                            [ 0,  0,  1,  1],
-            ....:                            [ 1,  0,  1,  0],
-            ....:                            [ 0,  1,  0,  1]]); K33
+            ....:                             [[-1, -1, -1, -1],
+            ....:                              [ 1,  1,  0,  0],
+            ....:                              [ 0,  0,  1,  1],
+            ....:                              [ 1,  0,  1,  0],
+            ....:                              [ 0,  1,  0,  1]]); K33
             [-1 -1 -1 -1]
             [ 1  1  0  0]
             [ 0  0  1  1]
@@ -3612,21 +3620,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         INPUT:
 
-        - ``certificate``: ``False`` or ``True``
-          If ``True``, then return
+        - ``certificate`` -- boolean (default: ``False``);
+          if ``True``, then return
           a :class:`DecompositionNode` if ``self`` is totally unimodular;
           a submatrix with determinant not in `\{0, \pm1\}` if not.
 
-        - ``stop_when_nonTU`` -- boolean (default: ``True``)
+        - ``stop_when_nonTU`` -- boolean (default: ``True``);
           Whether to stop decomposing once not TU is determined.
 
           For a description of other parameters, see :meth:`_set_cmr_seymour_parameters`
 
         - ``row_keys`` -- a finite or enumerated family of arbitrary objects
-        that index the rows of the matrix
+          that index the rows of the matrix
 
         - ``column_keys`` -- a finite or enumerated family of arbitrary objects
-        that index the columns of the matrix
+          that index the columns of the matrix
 
         EXAMPLES::
 
@@ -3685,6 +3693,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         If the matrix is totally unimodular, it always returns
         a full decomposition as a certificate::
+
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
             ....:                           [[-1,-1,-1,-1, 0, 0, 0, 0, 0],
             ....:                            [1, 1, 0, 0, 0, 0, 0, 0, 0],
