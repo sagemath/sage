@@ -30,7 +30,7 @@ class MemoryChunkCCRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_class_members()
@@ -45,7 +45,7 @@ class MemoryChunkCCRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_call_locals()
@@ -63,7 +63,7 @@ class MemoryChunkCCRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.declare_parameter()
@@ -78,7 +78,7 @@ class MemoryChunkCCRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_argument()
@@ -93,7 +93,7 @@ class MemoryChunkCCRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.cc import *
             sage: mc = MemoryChunkCCRetval('retval', ty_mpc)
             sage: mc.pass_call_c_argument()
@@ -115,7 +115,7 @@ class CCInterpreter(StackInterpreter):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.cc import *
             sage: interp = CCInterpreter()
             sage: interp.name

@@ -31,7 +31,7 @@ class MemoryChunkPythonArguments(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPythonArguments('args', ty_python)
         """
@@ -45,7 +45,7 @@ class MemoryChunkPythonArguments(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPythonArguments('args', ty_python)
             sage: mc.init_class_members()
@@ -63,7 +63,7 @@ class MemoryChunkPythonArguments(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPythonArguments('args', ty_python)
             sage: mc.setup_args()
@@ -77,7 +77,7 @@ class MemoryChunkPythonArguments(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPythonArguments('args', ty_python)
             sage: mc.pass_argument()
@@ -100,7 +100,7 @@ class MemoryChunkPyConstant(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.name
@@ -117,7 +117,7 @@ class MemoryChunkPyConstant(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.declare_class_members()
@@ -136,7 +136,7 @@ class MemoryChunkPyConstant(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.init_class_members()
@@ -154,7 +154,7 @@ class MemoryChunkPyConstant(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.declare_parameter()
@@ -169,7 +169,7 @@ class MemoryChunkPyConstant(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.pass_argument()
@@ -212,7 +212,7 @@ class PythonInterpreter(StackInterpreter):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.python import *
             sage: interp = PythonInterpreter()
             sage: interp.name

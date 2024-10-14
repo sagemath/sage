@@ -56,7 +56,7 @@ def params_gen(**chunks):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: mc_stack = MemoryChunkScratch('stack', ty_double, is_stack=True)
         sage: mc_args = MemoryChunkArguments('args', ty_double)
         sage: mc_code = MemoryChunkConstants('code', ty_int)
@@ -186,7 +186,7 @@ class InstrSpec(object):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
         sage: pg = RDFInterpreter().pg
         sage: InstrSpec('add', pg('SS','S'), code='o0 = i0+i1;')
@@ -213,7 +213,7 @@ class InstrSpec(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
             sage: pg = RDFInterpreter().pg
             sage: InstrSpec('add', pg('SS','S'), code='o0 = i0+i1;')
@@ -288,7 +288,7 @@ class InstrSpec(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
             sage: pg = RDFInterpreter().pg
             sage: InstrSpec('add', pg('SS','S'), code='o0 = i0+i1;')
@@ -311,7 +311,7 @@ def instr_infix(name, io, op):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
         sage: pg = RDFInterpreter().pg
         sage: instr_infix('mul', pg('SS', 'S'), '*')
@@ -327,7 +327,7 @@ def instr_funcall_2args(name, io, op):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
         sage: pg = RDFInterpreter().pg
         sage: instr_funcall_2args('atan2', pg('SS', 'S'), 'atan2')
@@ -343,7 +343,7 @@ def instr_unary(name, io, op):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
         sage: pg = RDFInterpreter().pg
         sage: instr_unary('sin', pg('S','S'), 'sin(i0)')
@@ -361,7 +361,7 @@ def instr_funcall_2args_mpfr(name, io, op):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: from sage_setup.autogen.interpreters.internal.specs.rr import RRInterpreter
         sage: pg = RRInterpreter().pg
         sage: instr_funcall_2args_mpfr('add', pg('SS','S'), 'mpfr_add')
@@ -377,7 +377,7 @@ def instr_funcall_1arg_mpfr(name, io, op):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: from sage_setup.autogen.interpreters.internal.specs.rr import RRInterpreter
         sage: pg = RRInterpreter().pg
         sage: instr_funcall_1arg_mpfr('exp', pg('S','S'), 'mpfr_exp')
@@ -392,7 +392,7 @@ def instr_funcall_2args_mpc(name, io, op):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: from sage_setup.autogen.interpreters.internal.specs.cc import CCInterpreter
         sage: pg = CCInterpreter().pg
         sage: instr_funcall_2args_mpc('add', pg('SS','S'), 'mpc_add')
@@ -407,7 +407,7 @@ def instr_funcall_1arg_mpc(name, io, op):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: from sage_setup.autogen.interpreters.internal.specs.cc import CCInterpreter
         sage: pg = CCInterpreter().pg
         sage: instr_funcall_1arg_mpc('exp', pg('S','S'), 'mpc_exp')

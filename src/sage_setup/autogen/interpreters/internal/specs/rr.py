@@ -30,7 +30,7 @@ class MemoryChunkRRRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_class_members()
@@ -45,7 +45,7 @@ class MemoryChunkRRRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_call_locals()
@@ -63,7 +63,7 @@ class MemoryChunkRRRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_parameter()
@@ -78,7 +78,7 @@ class MemoryChunkRRRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.pass_argument()
@@ -93,7 +93,7 @@ class MemoryChunkRRRetval(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.pass_call_c_argument()
@@ -116,7 +116,7 @@ class RRInterpreter(StackInterpreter):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
             sage: interp = RRInterpreter()
             sage: interp.name

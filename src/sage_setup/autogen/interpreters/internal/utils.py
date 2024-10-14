@@ -118,7 +118,7 @@ def write_if_changed(fn, value):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: def last_modification(fn): return os.stat(fn).st_mtime
         sage: fn = tmp_filename('gen_interp')
         sage: write_if_changed(fn, 'Hello, world')

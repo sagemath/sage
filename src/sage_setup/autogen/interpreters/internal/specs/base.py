@@ -48,7 +48,7 @@ class InterpreterSpec(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
             sage: from sage_setup.autogen.interpreters.internal.specs.rr import RRInterpreter
             sage: interp = RDFInterpreter()
@@ -85,7 +85,7 @@ class InterpreterSpec(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
             sage: interp = RDFInterpreter()
             sage: interp.instr_descs[5].opcode
@@ -130,7 +130,7 @@ class StackInterpreter(InterpreterSpec):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rdf import RDFInterpreter
             sage: from sage_setup.autogen.interpreters.internal.specs.rr import RRInterpreter
             sage: from sage_setup.autogen.interpreters.internal.specs.element import ElementInterpreter

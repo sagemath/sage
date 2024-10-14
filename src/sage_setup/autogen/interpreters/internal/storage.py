@@ -67,7 +67,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.class_member_declarations
             ''
             sage: ty_double.class_member_initializations
@@ -104,7 +104,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.cheap_copies()
             True
             sage: ty_python.cheap_copies()
@@ -126,7 +126,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.python_refcounted()
             False
             sage: ty_python.python_refcounted()
@@ -140,7 +140,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.cython_decl_type()
             'double'
             sage: ty_python.cython_decl_type()
@@ -157,7 +157,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.cython_array_type()
             'double*'
             sage: ty_python.cython_array_type()
@@ -180,7 +180,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.needs_cython_init_clear()
             False
             sage: ty_mpfr.needs_cython_init_clear()
@@ -196,7 +196,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.c_decl_type()
             'double'
             sage: ty_python.c_decl_type()
@@ -213,7 +213,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.c_ptr_type()
             'double*'
             sage: ty_python.c_ptr_type()
@@ -231,7 +231,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.c_reference_type()
             'double*'
             sage: ty_python.c_reference_type()
@@ -248,7 +248,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.c_local_type()
             'double'
             sage: ty_python.c_local_type()
@@ -266,7 +266,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.assign_c_from_py('foo', 'bar')
             'foo = bar'
             sage: ty_python.assign_c_from_py('foo[i]', 'bar[j]')
@@ -284,7 +284,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpfr.declare_chunk_class_members('args')
             '    cdef int _n_args\n    cdef mpfr_t* _args\n'
         """
@@ -302,7 +302,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: print(ty_mpfr.alloc_chunk_data('args', 'MY_LENGTH'))
                     self._n_args = MY_LENGTH
                     self._args = <mpfr_t*>check_allocarray(self._n_args, sizeof(mpfr_t))
@@ -328,7 +328,7 @@ class StorageType(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: print(ty_double.dealloc_chunk_data('args'))
                     if self._args:
                         sig_free(self._args)
@@ -364,7 +364,7 @@ class StorageTypeAssignable(StorageType):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.class_member_declarations
             ''
             sage: ty_double.class_member_initializations
@@ -391,7 +391,7 @@ class StorageTypeAssignable(StorageType):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.cheap_copies()
             True
             sage: ty_python.cheap_copies()
@@ -405,7 +405,7 @@ class StorageTypeAssignable(StorageType):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.c_decl_type()
             'double'
             sage: ty_python.c_decl_type()
@@ -422,7 +422,7 @@ class StorageTypeAssignable(StorageType):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_double.c_local_type()
             'double'
             sage: ty_python.c_local_type()
@@ -500,7 +500,7 @@ class StorageTypePython(StorageTypeAssignable):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_python.class_member_declarations
             ''
             sage: ty_python.class_member_initializations
@@ -521,7 +521,7 @@ class StorageTypePython(StorageTypeAssignable):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_python.python_refcounted()
             True
         """
@@ -533,7 +533,7 @@ class StorageTypePython(StorageTypeAssignable):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_python.cython_decl_type()
             'object'
         """
@@ -547,7 +547,7 @@ class StorageTypePython(StorageTypeAssignable):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_python.declare_chunk_class_members('args')
             '    cdef object _list_args\n    cdef int _n_args\n    cdef PyObject** _args\n'
         """
@@ -565,7 +565,7 @@ class StorageTypePython(StorageTypeAssignable):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: print(ty_python.alloc_chunk_data('args', 'MY_LENGTH'))
                     self._n_args = MY_LENGTH
                     self._list_args = PyList_New(self._n_args)
@@ -590,7 +590,7 @@ class StorageTypePython(StorageTypeAssignable):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_python.dealloc_chunk_data('args')
             ''
         """
@@ -605,7 +605,7 @@ class StorageTypePython(StorageTypeAssignable):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_python.needs_cython_init_clear()
             True
         """
@@ -619,7 +619,7 @@ class StorageTypePython(StorageTypeAssignable):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_python.assign_c_from_py('foo[i]', 'bar[j]')
             'foo[i] = <PyObject *>bar[j]; Py_INCREF(foo[i])'
         """
@@ -633,7 +633,7 @@ class StorageTypePython(StorageTypeAssignable):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_python.cython_init('foo[i]')
             'foo[i] = NULL'
         """
@@ -646,7 +646,7 @@ class StorageTypePython(StorageTypeAssignable):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_python.cython_clear('foo[i]')
             'Py_CLEAR(foo[i])'
         """
@@ -674,7 +674,7 @@ class StorageTypeAutoReference(StorageType):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpfr.class_member_declarations
             'cdef RealField_class domain\n'
             sage: ty_mpfr.class_member_initializations
@@ -696,7 +696,7 @@ class StorageTypeAutoReference(StorageType):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpfr.c_decl_type()
             'mpfr_t'
         """
@@ -711,7 +711,7 @@ class StorageTypeAutoReference(StorageType):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpfr.c_local_type()
             'mpfr_ptr'
         """
@@ -725,7 +725,7 @@ class StorageTypeAutoReference(StorageType):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpfr.c_reference_type()
             'mpfr_t'
         """
@@ -741,7 +741,7 @@ class StorageTypeAutoReference(StorageType):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpfr.needs_cython_init_clear()
             True
         """
@@ -775,7 +775,7 @@ class StorageTypeMPFR(StorageTypeAutoReference):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpfr.class_member_declarations
             'cdef RealField_class domain\n'
             sage: ty_mpfr.class_member_initializations
@@ -812,7 +812,7 @@ class StorageTypeMPFR(StorageTypeAutoReference):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpfr.cython_init('foo[i]')
             'mpfr_init2(foo[i], self.domain.prec())'
         """
@@ -826,7 +826,7 @@ class StorageTypeMPFR(StorageTypeAutoReference):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpfr.cython_clear('foo[i]')
             'mpfr_clear(foo[i])'
         """
@@ -840,7 +840,7 @@ class StorageTypeMPFR(StorageTypeAutoReference):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpfr.assign_c_from_py('foo[i]', 'bar[j]')
             'rn = self.domain(bar[j])\nmpfr_set(foo[i], rn.value, MPFR_RNDN)'
         """
@@ -879,7 +879,7 @@ class StorageTypeMPC(StorageTypeAutoReference):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpc.class_member_declarations
             'cdef object domain\ncdef ComplexNumber domain_element\n'
             sage: ty_mpc.class_member_initializations
@@ -916,7 +916,7 @@ class StorageTypeMPC(StorageTypeAutoReference):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpc.cython_init('foo[i]')
             'mpc_init2(foo[i], self.domain_element._prec)'
         """
@@ -930,7 +930,7 @@ class StorageTypeMPC(StorageTypeAutoReference):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpc.cython_clear('foo[i]')
             'mpc_clear(foo[i])'
         """
@@ -944,7 +944,7 @@ class StorageTypeMPC(StorageTypeAutoReference):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: ty_mpc.assign_c_from_py('foo[i]', 'bar[j]')
             'cn = self.domain(bar[j])\nmpc_set_fr_fr(foo[i], cn.__re, cn.__im, MPC_RNDNN)'
         """

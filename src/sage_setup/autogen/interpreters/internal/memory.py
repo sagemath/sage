@@ -27,7 +27,7 @@ def string_of_addr(a):
 
     EXAMPLES::
 
-        sage: from sage_setup.autogen.interpreters import *
+        sage: from sage_setup.autogen.interpreters.internal import *
         sage: mc_code = MemoryChunkConstants('code', ty_int)
         sage: string_of_addr(mc_code)
         '*code++'
@@ -72,7 +72,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: mc.name
             'args'
@@ -88,7 +88,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: mc
             {MC:args}
@@ -104,7 +104,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: mc.declare_class_members()
             '    cdef int _n_args\n    cdef mpfr_t* _args\n'
@@ -119,7 +119,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: print(mc.init_class_members())
                     count = args['args']
@@ -139,7 +139,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: print(mc.dealloc_class_members())
                     if self._args:
@@ -157,7 +157,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: mc.declare_parameter()
             'mpfr_t* args'
@@ -171,7 +171,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: from sage_setup.autogen.interpreters.internal.specs.rr import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_call_locals()
@@ -186,7 +186,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkConstants('constants', ty_mpfr)
             sage: mc.pass_argument()
             'self._constants'
@@ -201,7 +201,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkConstants('constants', ty_mpfr)
             sage: mc.pass_call_c_argument()
             'self._constants'
@@ -221,7 +221,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkConstants('constants', ty_mpfr)
             sage: mc.needs_cleanup_on_error()
             False
@@ -246,7 +246,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkScratch('scratch', ty_mpfr)
             sage: mc.is_stack()
             False
@@ -268,7 +268,7 @@ class MemoryChunk(object):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkScratch('args', ty_python)
             sage: mc.is_python_refcounted_stack()
             False
@@ -297,7 +297,7 @@ class MemoryChunkLonglivedArray(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkArguments('args', ty_double)
             sage: print(mc.init_class_members())
                     count = args['args']
@@ -318,7 +318,7 @@ class MemoryChunkLonglivedArray(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: print(mc.dealloc_class_members())
                     if self._args:
@@ -336,7 +336,7 @@ class MemoryChunkLonglivedArray(MemoryChunk):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkConstants('constants', ty_mpfr)
             sage: mc.pass_argument()
             'self._constants'
@@ -360,7 +360,7 @@ class MemoryChunkConstants(MemoryChunkLonglivedArray):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkConstants('constants', ty_mpfr)
             sage: print(mc.init_class_members())
                     val = args['constants']
@@ -398,7 +398,7 @@ class MemoryChunkArguments(MemoryChunkLonglivedArray):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: print(mc.setup_args())
             cdef mpfr_t* c_args = self._args
@@ -422,7 +422,7 @@ class MemoryChunkArguments(MemoryChunkLonglivedArray):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: mc.pass_argument()
             'c_args'
@@ -449,7 +449,7 @@ class MemoryChunkScratch(MemoryChunkLonglivedArray):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkScratch('stack', ty_double, is_stack=True)
             sage: mc.name
             'stack'
@@ -469,7 +469,7 @@ class MemoryChunkScratch(MemoryChunkLonglivedArray):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkScratch('stack', ty_mpfr, is_stack=True)
             sage: mc.is_stack()
             True
@@ -489,7 +489,7 @@ class MemoryChunkScratch(MemoryChunkLonglivedArray):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkScratch('registers', ty_python)
             sage: mc.needs_cleanup_on_error()
             True
@@ -508,7 +508,7 @@ class MemoryChunkScratch(MemoryChunkLonglivedArray):
 
         EXAMPLES::
 
-            sage: from sage_setup.autogen.interpreters import *
+            sage: from sage_setup.autogen.interpreters.internal import *
             sage: mc = MemoryChunkScratch('registers', ty_python)
             sage: print(mc.handle_cleanup())
             for i in range(self._n_registers):
