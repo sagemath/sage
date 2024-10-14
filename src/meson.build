@@ -83,7 +83,6 @@ gsl = dependency(
   required: true,
 )
 gd = cc.find_library('gd')
-iml = cc.find_library('iml')
 m = cc.find_library('m')
 m4ri = cc.find_library('m4ri')
 m4rie = cc.find_library('m4rie')
