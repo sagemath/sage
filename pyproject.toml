@@ -82,8 +82,8 @@ R = [
 ]
 
 [project.readme]
-file = "README.rst"
-content-type = "text/x-rst"
+file = "README.md"
+content-type = "text/markdown"
 
 [tool.conda-lock]
 platforms = [
