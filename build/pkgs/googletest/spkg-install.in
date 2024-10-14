@@ -1,0 +1,9 @@
+# -*- shell-script -*-
+cd src
+# Need C++14, so remove our flags that force C++11
+export CXX="$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g') -std=gnu++14"
+mkdir build
+cd build
+sdh_cmake -DBUILD_SHARED_LIBS=ON ..
+sdh_make
+sdh_make_install

@@ -101,4 +101,12 @@ objects like operation tables (e.g. the multiplication table of a group).
 
    sage/matrix/benchmark
 
+.. ONLY:: feature_sage_libs_cmr
+
+   .. toctree::
+      :maxdepth: 1
+
+      sage/matrix/seymour_decomposition
+      sage/matrix/matrix_cmr_sparse
+
 .. include:: ../footer.txt

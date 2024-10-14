@@ -1,0 +1,25 @@
+From 72a78493855add45a1ec8ddcd9c1e4d1d08e7028 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Sun, 13 Oct 2024 16:27:44 -0700
+Subject: [PATCH] src/cmr/seymour_internal.h: Add missing include
+
+---
+ src/cmr/seymour_internal.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/cmr/seymour_internal.h b/src/cmr/seymour_internal.h
+index 8abefea3..10fc4815 100644
+--- a/src/cmr/seymour_internal.h
++++ b/src/cmr/seymour_internal.h
+@@ -1,6 +1,8 @@
+ #ifndef CMR_SEYMOUR_INTERNAL_H
+ #define CMR_SEYMOUR_INTERNAL_H
+ 
++#include <time.h>
++
+ #include "densematrix.h"
+ 
+ #include <cmr/matroid.h>
+-- 
+2.42.0
+

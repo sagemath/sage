@@ -1390,6 +1390,11 @@ REFERENCES:
             vol. 308, no. 1, July 1988.
             http://www.ams.org/journals/tran/1988-308-01/S0002-9947-1988-0946427-X/S0002-9947-1988-0946427-X.pdf
 
+.. [BW1988b] Robert E. Bixby, Donald K. Wagner.
+             *An Almost Linear-Time Algorithm for Graph Realization*.
+             Mathematics of Operations Research, 1988.
+             :doi:`10.1287/moor.13.1.99`
+
 .. [BW1993] Thomas Becker and Volker Weispfenning. *Groebner Bases - A
             Computational Approach To Commutative Algebra*. Springer,
             New York, 1993.
@@ -5829,6 +5834,9 @@ REFERENCES:
              subsequences*, Canadian Journal of Mathematics, Vol 13
              (1961), pp. 179--191.
 
+.. [Sch1986] Alexander Schrijver, *Theory of Linear and Integer Programming*,
+             John Wiley and Sons, 1986.
+
 .. [Sch1990] Schnyder, Walter. *Embedding Planar Graphs on the Grid*.
              Proc. 1st Annual ACM-SIAM Symposium on Discrete Algorithms,
              San Francisco (1994), pp. 138-147.
@@ -5907,7 +5915,10 @@ REFERENCES:
              spaces* in Scientific contributions in honor of Mirian
              Andrés Gómez, pp 507-519, Univ. La Rioja Serv. Publ., Logroño (2010).
 
-.. [Sey1981] \P. D. Seymour, Nowhere-zero 6-flows, J. Comb. Theory Ser B,
+.. [Sey1980] \P. D. Seymour, *Decomposition of regular matroids*,
+             J. Comb. Theory Ser B, 28 (1980), 305-359.
+
+.. [Sey1981] \P. D. Seymour, *Nowhere-zero 6-flows*, J. Comb. Theory Ser B,
              30 (1981), 130-135. :doi:`10.1016/0095-8956(81)90058-7`
 
 .. [SH1995] \C. P. Schnorr and H. H. Hörner. *Attacking the

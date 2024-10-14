@@ -22,8 +22,8 @@ cdef class GraphicMatroid(Matroid):
     cpdef _is_isomorphic(self, other, certificate=*)
     cpdef _isomorphism(self, other)
     cpdef bint is_valid(self) noexcept
-    cpdef bint is_graphic(self) noexcept
-    cpdef bint is_regular(self) noexcept
+    cpdef bint is_graphic(self, algorithm=*) except -1
+    cpdef bint is_regular(self, algorithm=*) except -1
     cpdef graph(self)
     cpdef vertex_map(self)
     cpdef list groundset_to_edges(self, X)

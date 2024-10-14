@@ -359,6 +359,30 @@ class sage__libs__braiding(PythonModule):
                               spkg='sagemath_libbraiding', type='standard')
 
 
+class sage__libs__cmr(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.cmr`
+    and other modules depending on CMR, the Combinatorial Matrix Recognition library.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__libs__cmr
+        sage: sage__libs__cmr().is_present()                                            # optional - sage.libs.cmr
+        FeatureTestResult('sage.libs.cmr', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__cmr
+            sage: isinstance(sage__libs__cmr(), sage__libs__cmr)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.cmr',
+                             [PythonModule('sage.matrix.matrix_cmr_sparse')],
+                             spkg='sagemath_cmr', type='optional')
+
+
 class sage__libs__ecl(PythonModule):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :mod:`sage.libs.ecl`.
@@ -1178,6 +1202,7 @@ def all_features():
             sage__graphs(),
             sage__groups(),
             sage__libs__braiding(),
+            sage__libs__cmr(),
             sage__libs__ecl(),
             sage__libs__flint(),
             sage__libs__gap(),

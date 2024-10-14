@@ -1,0 +1,1 @@
+$(PYTHON) cmr cysignals $(SAGE_ROOT)/pkgs/sagemath-cmr/sage/libs/cmr/*.pxd $(SAGE_ROOT)/pkgs/sagemath-cmr/sage/matrix/matrix_cmr*.pyx $(SAGE_ROOT)/pkgs/sagemath-cmr/sage/matrix/seymour*.pyx | $(PYTHON_TOOLCHAIN) sage_setup sagemath_environment cython
