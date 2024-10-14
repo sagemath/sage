@@ -60,17 +60,10 @@ pari = cc.find_library('pari')
 
 mpfr = cc.find_library('mpfr')
 
-# Once https://github.com/mesonbuild/meson/pull/12616 is released, we can simply do the following:
-# flint = dependency('flint', version : '>=3.0.0')
-flint = dependency(
-  'flint',
-  version: '>=3.0.0',
-  required: false,
-  allow_fallback: false,
-)
-if flint.found()
-  # Currently the flint pkg-config file is broken, so we manually use find_library
-  # Can be removed once we require a version of flint that ships https://github.com/flintlib/flint/pull/1647
+flint = dependency('flint', version: '>=3.0.0')
+if flint.version().version_compare('<3.1')
+  # In older versions of flint, pkg-config file is broken, so we manually use find_library
+  # This has been fixed in flint v3.1: https://github.com/flintlib/flint/pull/1647
   flint = cc.find_library('flint')
 endif
 
