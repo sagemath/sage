@@ -64,13 +64,13 @@ cdef class DecompositionNode(SageObject):
         if the base ring is `\GF(3)` or ``ZZ``, the node deals with
         the matrix decomposition.
 
-        A :class:DecompositionNode is usually created with an internal decomposition,
+        A :class:`DecompositionNode` is usually created with an internal decomposition,
         ``self._dec``, see :meth:create_DecompositionNode
         Such decomposition comes from the certificate of the
         totally unimodularity test, see
         :meth:`matrix_cmr_sparse.Matrix_cmr_chr_sparse.is_totally_unimodular`
 
-        Another usage is to create a :class:UnknownNode from a matrix.
+        Another usage is to create a :class:`UnknownNode` from a matrix.
         A root dummy decomposition is created before completing
         the decomposition, see :meth:_set_root_dec, :meth:complete_decomposition
 
@@ -383,7 +383,7 @@ cdef class DecompositionNode(SageObject):
         r"""
         Set default row and column keys.
 
-        .. SEEALSO:: :class:ElementKey
+        .. SEEALSO:: :class:`ElementKey`
 
         EXAMPLES::
 
@@ -432,7 +432,7 @@ cdef class DecompositionNode(SageObject):
             [1 0 1]
             [0 1 1]
             sage: node.morphism()._unicode_art_matrix()
-            0 1 2
+              0 1 2
             a⎛1 0 1⎞
             b⎝0 1 1⎠
         """
@@ -487,7 +487,7 @@ cdef class DecompositionNode(SageObject):
 
     def is_ternary(self):
         r"""
-        Returns true iff the decomposition is over `\mathbb{F}_3`.
+        Return whether the decomposition is over `\GF{3}`.
 
         EXAMPLES::
 
@@ -614,8 +614,8 @@ cdef class DecompositionNode(SageObject):
         r"""
         Return a tuple of the children.
 
-        The children are sorted by the inherited ordering from cmr, which
-        is their appreance in the parent.
+        The children are sorted by the ordering inherited from cmr, which
+        is their appearance in the parent.
 
         In the case of :class:`SumNode`, this is the same as :meth:`~SumNode.summands`.
 
@@ -795,11 +795,11 @@ cdef class DecompositionNode(SageObject):
 
     def one_sum(*summands, **kwds):
         r"""
-        Return a :class:OneSumNode constructed from the given nodes (summands).
+        Return a :class:`OneSumNode` constructed from the given nodes (summands).
 
         INPUT:
 
-        - ``summands`` -- decomposition nodes :class:DecompositionNode
+        - ``summands`` -- decomposition nodes :class:`DecompositionNode`
 
         - ``summand_ids`` -- a tuple or list of ids for summands
 
@@ -1284,21 +1284,21 @@ cdef class DecompositionNode(SageObject):
 
         INPUT:
 
-        - ``stop_when_irregular`` -- boolean
-        Whether to stop decomposing once irregularity is determined.
+        - ``stop_when_irregular`` -- boolean;
+          whether to stop decomposing once irregularity is determined.
 
-        - ``stop_when_nongraphic`` -- boolean
-        Whether to stop decomposing once non-graphicness is determined.
+        - ``stop_when_nongraphic`` -- boolean;
+          whether to stop decomposing once non-graphicness is determined.
 
-        - ``stop_when_noncographic`` -- boolean
-        Whether to stop decomposing once non-cographicness is determined.
+        - ``stop_when_noncographic`` -- boolean;
+          whether to stop decomposing once non-cographicness is determined.
 
-        - ``stop_when_nongraphic_and_noncographic`` -- boolean
-        Whether to stop decomposing once non-graphicness and non-cographicness
-        is determined.
+        - ``stop_when_nongraphic_and_noncographic`` -- boolean;
+          whether to stop decomposing once non-graphicness and non-cographicness
+          is determined.
 
-          For a description of other parameters, see
-          :meth:`sage.matrix.matrix_cmr_sparse._set_cmr_seymour_parameters`
+        For a description of other parameters, see
+        :meth:`sage.matrix.matrix_cmr_sparse._set_cmr_seymour_parameters`
 
         EXAMPLES::
 
@@ -1443,7 +1443,7 @@ cdef class DecompositionNode(SageObject):
 
     def is_network_matrix(self, *, decomposition=False, **kwds):
         r"""
-        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a network matrix.
+        Return whether the matrix ``self`` over `\GF{3}` or `\QQ` is a network matrix.
         If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
 
         This method is based on Seymour's decomposition.
@@ -1531,7 +1531,7 @@ cdef class DecompositionNode(SageObject):
 
     def is_conetwork_matrix(self, *, decomposition=False, **kwds):
         r"""
-        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a conetwork matrix.
+        Return whether the matrix ``self`` over `\GF{3}` or `\QQ` is a conetwork matrix.
         If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
 
         This method is based on Seymour's decomposition.
@@ -1540,10 +1540,9 @@ cdef class DecompositionNode(SageObject):
 
         .. SEEALSO::
 
-            :meth:`sage.matrix.matrix_cmr_sparse.
-            Matrix_cmr_chr_sparse.is_conetwork_matrix`
-            :meth:`UnknownNode.is_conetwork_matrix`
-            :meth:`complete_decomposition`
+            - :meth:`sage.matrix.matrix_cmr_sparse.Matrix_cmr_chr_sparse.is_conetwork_matrix`
+            - :meth:`UnknownNode.is_conetwork_matrix`
+            - :meth:`complete_decomposition`
 
         EXAMPLES::
 
@@ -2088,7 +2087,7 @@ cdef class UnknownNode(DecompositionNode):
 
     def is_network_matrix(self, *, decomposition=False, certificate=False, **kwds):
         r"""
-        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a network matrix.
+        Return whether the matrix ``self`` over `\GF{3}` or `\QQ` is a network matrix.
         If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
 
         .. SEEALSO::
@@ -2137,7 +2136,7 @@ cdef class UnknownNode(DecompositionNode):
 
     def is_conetwork_matrix(self, *, decomposition=False, certificate=False, **kwds):
         r"""
-        Return whether the matrix ``self`` over `\GF{3}` or `QQ` is a conetwork matrix.
+        Return whether the matrix ``self`` over `\GF{3}` or `\QQ` is a conetwork matrix.
         If there is some entry not in `\{-1, 0, 1\}`, return ``False``.
 
         .. SEEALSO::
@@ -2922,7 +2921,7 @@ cdef class BaseGraphicNode(DecompositionNode):
                  graph=None, forest_edges=None, coforest_edges=None,
                  row_keys=None, column_keys=None, base_ring=None):
         r"""
-        Base class for :class:GraphicNode, :class:CographicNode, and :class:PlanarNode
+        Base class for :class:`GraphicNode`, :class:`CographicNode`, and :class:`PlanarNode`
 
         If ``base_ring`` is `\GF{2}`, then it represents a graphic/cographic/planar matroid.
 
@@ -3393,7 +3392,7 @@ cdef class SeriesParallelReductionNode(DecompositionNode):
         r"""
         Return the core of ``self``.
 
-        A :class:SeriesParallelReductionNode indicates that `M`
+        A :class:`SeriesParallelReductionNode` indicates that `M`
         arises from a smaller matrix `M'` (called the core)
         by successively adding zero rows/columns,
         unit rows/columns or duplicates of existing rows/columns
