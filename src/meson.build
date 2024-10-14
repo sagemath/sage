@@ -106,7 +106,7 @@ if not linbox.found()
 endif
 braiding = cc.find_library('braiding')
 gc = cc.find_library('gc')
-homfly = cc.find_library('homfly')
+homfly = cc.find_library('homfly', has_headers: ['homfly.h'])
 mpc = cc.find_library('mpc')
 mpfi = cc.find_library('mpfi')
 # Cannot be found via pkg-config (pkg-config file will be added in 4.13)
