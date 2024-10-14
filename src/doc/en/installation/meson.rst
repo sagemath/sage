@@ -18,7 +18,15 @@ Assume we're starting from a clean repo and a fully set up conda environment::
     ```
 
 Alternatively, install all build requirements as described in section
-:ref:`section-prereqs`.
+:ref:`section-prereqs`. In the likely case that you have to install some
+dependencies manually, set the correct environment variables to point
+to the installed libraries:
+
+    ```bash
+    export C_INCLUDE_PATH=$C_INCLUDE_PATH:/your/path/to/include
+    export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/your/path/to/include
+    export LIBRARY_PATH=$LIBRARY_PATH:/your/path/to/lib
+    ```
 
 .. NOTE::
 
