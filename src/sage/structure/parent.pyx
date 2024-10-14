@@ -1151,9 +1151,9 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         Check that :issue:`32078` is fixed::
 
             sage: P = Frac(ZZ['x,y'])
-            sage: P(1) in ZZ
+            sage: P(1) in ZZ                                                            # needs sage.libs.singular
             True
-            sage: P(1/2) in ZZ
+            sage: P(1/2) in ZZ                                                          # needs sage.libs.singular
             False
 
         Check that :issue:`24209` is fixed::
@@ -2644,6 +2644,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             on elliptic curves over Finite Fields, was not used if an ``int``
             multiplied a point, resulting in a 10x slowdown for large characteristic::
 
+            sage: # needs sage.schemes
             sage: E = EllipticCurve(GF(17),[1,1])
             sage: coercion_model.discover_action(ZZ, E, operator.mul)
             Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 17
