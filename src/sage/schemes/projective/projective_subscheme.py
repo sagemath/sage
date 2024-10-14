@@ -115,8 +115,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
                 raise ValueError("%s not well defined in dimension > 1" % v)
             v = [1, 0]
         # todo: update elliptic curve stuff to take point_homset as argument
-        from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
-        if isinstance(self, EllipticCurve_generic):
+        if isinstance(self, EllipticCurve):
             try:
                 return self._point(self.point_homset(), v, check=check)
             except AttributeError:  # legacy code without point_homset
