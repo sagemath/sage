@@ -5,7 +5,7 @@
     },
     "sage.arith.misc": {
         "failed": true,
-        "ntests": 932
+        "ntests": 919
     },
     "sage.arith.numerical_approx": {
         "ntests": 1
@@ -242,7 +242,6 @@
         "ntests": 47
     },
     "sage.categories.examples.sets_with_grading": {
-        "failed": true,
         "ntests": 14
     },
     "sage.categories.facade_sets": {
@@ -416,7 +415,6 @@
         "ntests": 16
     },
     "sage.categories.homset": {
-        "failed": true,
         "ntests": 197
     },
     "sage.categories.homsets": {
@@ -506,8 +504,7 @@
         "ntests": 120
     },
     "sage.categories.modules_with_basis": {
-        "failed": true,
-        "ntests": 242
+        "ntests": 223
     },
     "sage.categories.monoid_algebras": {
         "ntests": 4
@@ -581,15 +578,13 @@
         "ntests": 9
     },
     "sage.categories.rings": {
-        "failed": true,
         "ntests": 173
     },
     "sage.categories.rngs": {
         "ntests": 6
     },
     "sage.categories.schemes": {
-        "failed": true,
-        "ntests": 41
+        "ntests": 39
     },
     "sage.categories.semigroups": {
         "ntests": 112
@@ -686,7 +681,6 @@
         "ntests": 75
     },
     "sage.combinat.composition": {
-        "failed": true,
         "ntests": 287
     },
     "sage.combinat.dlx": {
@@ -714,8 +708,7 @@
         "ntests": 9
     },
     "sage.combinat.permutation": {
-        "failed": true,
-        "ntests": 1206
+        "ntests": 1184
     },
     "sage.combinat.permutation_cython": {
         "ntests": 39
@@ -820,8 +813,7 @@
         "ntests": 23
     },
     "sage.doctest.util": {
-        "failed": true,
-        "ntests": 141
+        "ntests": 137
     },
     "sage.env": {
         "failed": true,
@@ -1057,7 +1049,7 @@
     },
     "sage.groups.generic": {
         "failed": true,
-        "ntests": 127
+        "ntests": 120
     },
     "sage.groups.group": {
         "failed": true,
@@ -1491,7 +1483,6 @@
         "ntests": 91
     },
     "sage.rings.big_oh": {
-        "failed": true,
         "ntests": 22
     },
     "sage.rings.continued_fraction": {
@@ -1572,18 +1563,6 @@
     "sage.rings.function_field.ideal_rational": {
         "ntests": 82
     },
-    "sage.rings.function_field.jacobian_base": {
-        "failed": true,
-        "ntests": 208
-    },
-    "sage.rings.function_field.jacobian_hess": {
-        "failed": true,
-        "ntests": 248
-    },
-    "sage.rings.function_field.jacobian_khuri_makdisi": {
-        "failed": true,
-        "ntests": 272
-    },
     "sage.rings.function_field.maps": {
         "ntests": 55
     },
@@ -1611,7 +1590,6 @@
         "ntests": 37
     },
     "sage.rings.ideal": {
-        "failed": true,
         "ntests": 336
     },
     "sage.rings.ideal_monoid": {
@@ -1801,11 +1779,9 @@
         "ntests": 471
     },
     "sage.rings.puiseux_series_ring": {
-        "failed": true,
         "ntests": 72
     },
     "sage.rings.puiseux_series_ring_element": {
-        "failed": true,
         "ntests": 198
     },
     "sage.rings.quotient_ring": {
