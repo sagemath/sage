@@ -1450,6 +1450,8 @@ def has_order(P, n, operation='+'):
     EXAMPLES::
 
         sage: from sage.groups.generic import has_order
+
+        sage: # needs sage.schemes
         sage: E.<P> = EllipticCurve(GF(71), [5,5])
         sage: P.order()
         57
