@@ -139,8 +139,8 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: sorted(p)   # indirect doctest
             [((0, 0, 0, 1, 0, 0, 0, 1), 2), ((0, 1, 0, 0, 0, 0, 1, 0), 1)]
         """
-        cdef dict d = self._poly.dict()
-        yield from d.iteritems()
+        cdef dict d = self._poly.monomial_coefficients()
+        yield from d.items()
 
     def _repr_(self):
         """
