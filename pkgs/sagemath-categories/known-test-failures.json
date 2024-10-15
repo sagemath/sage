@@ -1529,7 +1529,7 @@
     },
     "sage.rings.fraction_field_element": {
         "failed": true,
-        "ntests": 271
+        "ntests": 198
     },
     "sage.rings.function_field.constructor": {
         "ntests": 34
@@ -1605,7 +1605,7 @@
     },
     "sage.rings.laurent_series_ring": {
         "failed": true,
-        "ntests": 156
+        "ntests": 151
     },
     "sage.rings.laurent_series_ring_element": {
         "ntests": 335
@@ -1619,7 +1619,7 @@
     },
     "sage.rings.multi_power_series_ring": {
         "failed": true,
-        "ntests": 222
+        "ntests": 218
     },
     "sage.rings.multi_power_series_ring_element": {
         "failed": true,
@@ -1687,7 +1687,7 @@
     },
     "sage.rings.polynomial.multi_polynomial_element": {
         "failed": true,
-        "ntests": 274
+        "ntests": 251
     },
     "sage.rings.polynomial.multi_polynomial_ideal": {
         "ntests": 99
@@ -1709,7 +1709,7 @@
     },
     "sage.rings.polynomial.polynomial_element": {
         "failed": true,
-        "ntests": 1869
+        "ntests": 1844
     },
     "sage.rings.polynomial.polynomial_element_generic": {
         "failed": true,
@@ -1733,7 +1733,6 @@
         "ntests": 24
     },
     "sage.rings.polynomial.polynomial_singular_interface": {
-        "failed": true,
         "ntests": 42
     },
     "sage.rings.polynomial.symmetric_ideal": {
@@ -1832,8 +1831,7 @@
         "ntests": 167
     },
     "sage.schemes.affine.affine_subscheme": {
-        "failed": true,
-        "ntests": 88
+        "ntests": 81
     },
     "sage.schemes.generic.algebraic_scheme": {
         "failed": true,
@@ -1843,16 +1841,10 @@
         "ntests": 60
     },
     "sage.schemes.generic.divisor_group": {
-        "failed": true,
-        "ntests": 49
-    },
-    "sage.schemes.generic.glue": {
-        "failed": true,
-        "ntests": 19
+        "ntests": 40
     },
     "sage.schemes.generic.homset": {
-        "failed": true,
-        "ntests": 124
+        "ntests": 121
     },
     "sage.schemes.generic.morphism": {
         "failed": true,
