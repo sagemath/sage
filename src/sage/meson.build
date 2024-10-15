@@ -31,7 +31,7 @@ conf_data.set('SAGE_ECL_CONFIG', ecl_config.full_path())
 conf_data.set('SAGE_ARCHFLAGS', 'unset')
 # not needed when using conda, as we then don't build any pc files
 conf_data.set('SAGE_PKG_CONFIG_PATH', '')
-openmp = dependency('openmp', required: false)
+openmp = dependency('openmp', required: false, disabler: true)
 if openmp.found()
   conf_data.set('OPENMP_CFLAGS', '-fopenmp')
   conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')

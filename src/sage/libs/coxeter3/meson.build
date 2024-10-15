@@ -1,4 +1,4 @@
-coxeter3 = cc.find_library('coxeter3', required: false)
+coxeter3 = cc.find_library('coxeter3', required: false, disabler: true)
 py.install_sources(
   '__init__.py',
   'all__sagemath_coxeter3.py',
@@ -8,20 +8,16 @@ py.install_sources(
   subdir: 'sage/libs/coxeter3',
 )
 
+extension_data_cpp = {'coxeter': files('coxeter.pyx')}
 
-if coxeter3.found()
-  extension_data_cpp = {'coxeter': files('coxeter.pyx')}
-
-  foreach name, pyx : extension_data_cpp
-    py.extension_module(
-      name,
-      sources: pyx,
-      subdir: 'sage/libs/coxeter3',
-      install: true,
-      override_options: ['cython_language=cpp'],
-      include_directories: [],
-      dependencies: [py_dep, cysignals, coxeter3],
-    )
-  endforeach
-endif
-
+foreach name, pyx : extension_data_cpp
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/libs/coxeter3',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [],
+    dependencies: [py_dep, cysignals, coxeter3],
+  )
+endforeach

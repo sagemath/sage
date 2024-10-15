@@ -1,4 +1,4 @@
-tdlib = cc.find_library('tdlib', required: false)
+tdlib = cc.find_library('tdlib', required: false, disabler: true)
 # Cannot be found via pkg-config
 rw = cc.find_library('rw')
 
@@ -51,15 +51,13 @@ foreach name, pyx : extension_data_cpp
   )
 endforeach
 
-if tdlib.found()
-  py.extension_module(
-    'tdlib',
-    sources: 'tdlib.pyx',
-    subdir: 'sage/graphs/graph_decompositions',
-    install: true,
-    override_options: ['cython_language=cpp'],
-    include_directories: [inc_cpython, inc_data_structures],
-    dependencies: [py_dep, cysignals, tdlib],
-  )
-endif
+py.extension_module(
+  'tdlib',
+  sources: 'tdlib.pyx',
+  subdir: 'sage/graphs/graph_decompositions',
+  install: true,
+  override_options: ['cython_language=cpp'],
+  include_directories: [inc_cpython, inc_data_structures],
+  dependencies: [py_dep, cysignals, tdlib],
+)
 

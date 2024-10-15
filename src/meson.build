@@ -42,7 +42,7 @@ print(gmpy2.__file__.replace('__init__.py', ''))
   check: true,
 ).stdout().strip()
 gmpy2 = declare_dependency(include_directories: inc_gmpy2)
-gmp = dependency('gmp', required: true)
+gmp = dependency('gmp')
 
 inc_cypari2 = run_command(
   py,
@@ -88,19 +88,14 @@ gd = cc.find_library('gd')
 m = cc.find_library('m')
 m4ri = cc.find_library('m4ri')
 m4rie = cc.find_library('m4rie')
-mtx = cc.find_library('mtx', required: false)
+mtx = cc.find_library('mtx', required: false, disabler: true)
 png = cc.find_library('png')
 zlib = cc.find_library('z')
-intl = cc.find_library('intl', required: false)
-curl = cc.find_library('curl')
 # Cannot be found via pkg-config
 ec = cc.find_library('ec')
 ecm = cc.find_library('ecm')
-# Cannot be found via pkg-config
-glpk = cc.find_library('glpk')
 ppl = cc.find_library('ppl')
 gmpxx = cc.find_library('gmpxx')
-readline = cc.find_library('readline')
 fflas = dependency('fflas-ffpack')
 fplll = dependency('fplll')
 givaro = cc.find_library('givaro')
@@ -108,9 +103,6 @@ linbox = dependency('linbox', required: false)
 if not linbox.found()
   linbox = cc.find_library('linbox')
 endif
-braiding = cc.find_library('braiding')
-gc = cc.find_library('gc')
-homfly = cc.find_library('homfly', has_headers: ['homfly.h'])
 mpc = cc.find_library('mpc')
 mpfi = cc.find_library('mpfi')
 # Cannot be found via pkg-config (pkg-config file will be added in 4.13)
@@ -122,7 +114,7 @@ singular = dependency('Singular')
 maxima = find_program('maxima', required: true)
 
 # Cannot be found via pkg-config
-ntl = cc.find_library('ntl', required: true)
+ntl = cc.find_library('ntl')
 
 # Meson currently ignores include_directories for Cython modules, so we
 # have to add them manually.
