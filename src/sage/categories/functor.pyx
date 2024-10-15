@@ -131,12 +131,12 @@ cdef class Functor(SageObject):
           From: Univariate Polynomial Ring in x over Integer Ring
           To:   Multivariate Polynomial Ring in a, b over Rational Field
           Defn: x |--> a + b
-        sage: F(f)
+        sage: F(f)                                                                      # needs sage.libs.singular
         Ring morphism:
           From: Fraction Field of Univariate Polynomial Ring in x over Integer Ring
           To:   Fraction Field of Multivariate Polynomial Ring in a, b over Rational Field
           Defn: x |--> a + b
-        sage: F(f)(1/x)
+        sage: F(f)(1/x)                                                                 # needs sage.libs.singular
         1/(a + b)
 
     We can also apply a polynomial ring construction functor to our homomorphism. The
