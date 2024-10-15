@@ -1481,6 +1481,7 @@ def has_order(P, n, operation='+'):
 
     TESTS::
 
+        sage: # needs sage.modules
         sage: ns = [randrange(1,10**5) for _ in range(randrange(1,5))]
         sage: A = AdditiveAbelianGroup(ns)
         sage: from sage.groups.generic import has_order
