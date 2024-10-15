@@ -256,15 +256,25 @@ class PolynomialRing_general(Ring):
 
             sage: category(ZZ['x'])
             Join of Category of unique factorization domains
+             and Category of algebras with basis over
+              (Dedekind domains and euclidean domains
+               and noetherian rings and infinite enumerated sets
+               and metric spaces)
              and Category of commutative algebras over
               (Dedekind domains and euclidean domains
                and noetherian rings and infinite enumerated sets
                and metric spaces)
              and Category of infinite sets
+
             sage: category(GF(7)['x'])
             Join of Category of euclidean domains
-             and Category of commutative algebras over
-              (finite enumerated fields and subquotients of monoids and quotients of semigroups) and Category of infinite sets
+             and Category of algebras with basis over
+              (finite enumerated fields and subquotients of monoids
+               and quotients of semigroups)
+            and Category of commutative algebras over
+              (finite enumerated fields and subquotients of monoids
+               and quotients of semigroups)
+            and Category of infinite sets
 
         TESTS:
 
@@ -314,6 +324,8 @@ class PolynomialRing_general(Ring):
         self.__cyclopoly_cache = {}
         self._has_singular = False
         Ring.__init__(self, base_ring, names=name, normalize=True, category=category)
+        from sage.rings.semirings.non_negative_integer_semiring import NonNegativeIntegerSemiring
+        self._indices = NonNegativeIntegerSemiring()
         self._populate_coercion_lists_(convert_method_name='_polynomial_')
 
     def __reduce__(self):

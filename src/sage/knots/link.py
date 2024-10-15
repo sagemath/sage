@@ -1201,7 +1201,7 @@ class Link(SageObject):
             else:
                 m = matrix(ring, len(bases[(i,j)]), 0)
             complexes[i] = m.transpose()
-            if not (i-1, j) in bases:
+            if (i-1, j) not in bases:
                 complexes[i-1] = matrix(ring, len(bases[(i,j)]), 0)
         homologies = ChainComplex(complexes).homology()
         return tuple(sorted(homologies.items()))
@@ -2313,7 +2313,7 @@ class Link(SageObject):
                 while a not in par:
                     par.append(a)
                     posnext = C[(C.index(a) - 1) % 4]
-                    if tails[posnext] == C and not [posnext] in result:
+                    if tails[posnext] == C and [posnext] not in result:
                         a = posnext
                     else:
                         a = C[(C.index(a) + 1) % 4]
@@ -4447,7 +4447,7 @@ class Link(SageObject):
                     a = answer(L)
                     if a:
                         ansl.append(a)
-                return sorted(list(set(ansl)))
+                return sorted(set(ansl))
 
             if len(set(l)) == 1:
                 return answer(l[0])
