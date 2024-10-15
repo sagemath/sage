@@ -156,6 +156,28 @@ class Timer:
             Traceback (most recent call last):
             ...
             OSError: unable to access /proc/-1/stat
+
+        Or with an unparseable file (wrong number of fields, non-float
+        fields, et cetera)::
+
+            sage: from tempfile import NamedTemporaryFile
+            sage: from os import unlink
+            sage: from sage.doctest.util import Timer
+            sage: with NamedTemporaryFile(delete=False, mode="w") as f:
+            ....:     _ = f.write("1 2 3 4 5")
+            sage: cputime = Timer()._proc_stat_cpu_seconds(f.name)
+            Traceback (most recent call last):
+            ...
+            OSError: unable to parse ...
+            sage: os.unlink(f.name)
+            sage: with NamedTemporaryFile(delete=False, mode="w") as f:
+            ....:     _ = f.write("1 2 3 4 5 6 7 8 9 10 11 12 w x y z 17")
+            sage: cputime = Timer()._proc_stat_cpu_seconds(f.name)
+            Traceback (most recent call last):
+            ...
+            OSError: unable to parse ...
+            sage: os.unlink(f.name)
+
         """
         try:
             with open(path, "r") as statfile:
@@ -165,6 +187,9 @@ class Timer:
             # PermissionError: can't read the stat file
             raise OSError(f"unable to access {path}") from e
 
+        if len(stats) < 17:
+            raise OSError(f"unable to parse {path}")
+
         try:
             # These fields used to be documented in the proc(5) man
             # page, but are now most easily found in the Linux kernel
@@ -172,10 +197,9 @@ class Timer:
             # intent is to sum the user- and kernel-mode "jiffies" for
             # both the given process and its children.
             cputicks = sum( float(s) for s in stats[13:17] )
-        except (ArithmeticError, LookupError, TypeError) as e:
+        except (ArithmeticError, TypeError, ValueError) as e:
             # ArithmeticError: unexpected (non-numeric?) values in fields
-            # LookupError: missing the expected fields
-            # TypeError: fields can't be converted to float
+            # TypeError/ValueError: fields can't be converted to float
             raise OSError(f"unable to parse {path}") from e
 
         try:
