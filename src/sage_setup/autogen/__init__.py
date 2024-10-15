@@ -1,6 +1,6 @@
 import os
 
-from .interpreters.internal import rebuild
+from interpreters.internal import rebuild
 
 
 def autogen_all():
