@@ -1,11 +1,11 @@
 import os
+import logging
 import errno
 
 # Import setuptools before importing distutils, so that setuptools
 # can replace distutils by its own vendored copy.
 import setuptools
 
-from distutils import log
 from setuptools.command.build_ext import build_ext
 from distutils.dep_util import newer_group
 try:
@@ -14,6 +14,9 @@ try:
 except ImportError:
     from distutils.errors import DistutilsSetupError
 from sage_setup.run_parallel import execute_list_of_commands
+
+log = logging.getLogger(__name__)
+
 
 class sage_build_ext(build_ext):
     def finalize_options(self):

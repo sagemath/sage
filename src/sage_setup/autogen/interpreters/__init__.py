@@ -109,8 +109,7 @@ compatibility.
 # that will have to be changed.
 #####################################################################
 
-from __future__ import print_function, absolute_import
-
+import logging
 import os
 
 from os.path import getmtime
@@ -121,6 +120,8 @@ from .memory import *
 from .specs.base import *
 from .storage import *
 from .utils import *
+
+log = logging.getLogger(__name__)
 
 
 # Tuple of (filename_root, extension, method) where filename_root is the
@@ -205,7 +206,7 @@ def rebuild(dirname, force=False, interpreters=None, distribution=None):
     """
     # This line will show up in "sage -b" (once per upgrade, not every time
     # you run it).
-    print("Building interpreters for fast_callable")
+    log.info("Building interpreters for fast_callable")
 
     if interpreters is None:
         interpreters = ['CDF', 'Element', 'Python', 'RDF', 'RR', 'CC']
@@ -255,7 +256,7 @@ def rebuild(dirname, force=False, interpreters=None, distribution=None):
                         raise NeedToRebuild("-> Rebuilding interpreters because {} changed".format(src_file))
     except NeedToRebuild as E:
         # Rebuild
-        print(E)
+        log.info('%s', E)
     else:
         return  # Up-to-date
 
