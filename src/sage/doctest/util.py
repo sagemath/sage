@@ -162,7 +162,11 @@ class Timer:
             raise OSError(f"unable to access {path}") from e
 
         try:
-            # man 5 proc (linux)
+            # These fields used to be documented in the proc(5) man
+            # page, but are now most easily found in the Linux kernel
+            # documentation (Documentation/filesystems/proc.rst). The
+            # intent is to sum the user- and kernel-mode "jiffies" for
+            # both the given process and its children.
             cputicks = sum( float(s) for s in stats[13:17] )
         except (ArithmeticError, LookupError, TypeError) as e:
             # ArithmeticError: unexpected (non-numeric?) values in fields
