@@ -555,7 +555,6 @@ class MatchingCoveredGraph(Graph):
             return s.capitalize()
         return "".join(["Matching covered ", s])
 
-
     def add_edge(self, u, v=None, label=None):
         r"""
         Add an edge from vertex ``u`` to vertex ``v``.
