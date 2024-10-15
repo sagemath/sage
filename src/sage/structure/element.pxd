@@ -132,6 +132,7 @@ cpdef inline bint have_same_parent(left, right) noexcept:
 
     These have different types but the same parent::
 
+        sage: # needs sage.rings.real_mpfr
         sage: a = RLF(2)
         sage: b = exp(a)
         sage: type(a)
