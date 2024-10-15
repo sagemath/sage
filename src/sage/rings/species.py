@@ -16,6 +16,7 @@ from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_ge
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
 from sage.libs.gap.libgap import libgap
 from sage.misc.cachefunc import cached_method
+from sage.misc.fast_methods import WithEqualityById
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.modules.free_module_element import vector
 from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
@@ -28,12 +29,14 @@ from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, parent
 from sage.structure.factorization import Factorization
 from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import (UniqueRepresentation,
+                                                  WithPicklingByInitArgs)
 
 GAP_FAIL = libgap.eval('fail')
 
 
-class ConjugacyClassOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Element,
+class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element, WithEqualityById,
+                                                      WithPicklingByInitArgs,
                                                       metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A directly indecomposable conjugacy class of subgroups of a
@@ -42,6 +45,28 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Elem
     Two conjugacy classes of subgroups are equal if they have the
     same degree (say `n`) and are conjugate within `S_n`.
     """
+    @staticmethod
+    def _invariant(C):
+        r"""
+        Return an invariant of the permutation group ``C`` used for
+        hashing and as key in the cache.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import ConjugacyClassOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassOfDirectlyIndecomposableSubgroups
+            sage: G = PermutationGroup([[(1,2),(3,4)]])
+            sage: H = PermutationGroup([[(1,3),(2,4)], [(1,2),(3,4)]])
+            sage: K = PermutationGroup([[(1,2,3,4)]])
+            sage: C._invariant(G)
+            (2, (2, 2))
+            sage: C._invariant(H)
+            (4, (4,))
+            sage: C._invariant(K)
+            (4, (4,))
+        """
+        return C.cardinality(), tuple(sorted(len(o) for o in C.orbits()))
+
     @staticmethod
     def __classcall__(cls, parent, C):
         """
@@ -86,7 +111,7 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Elem
             G = PermutationGroup(G.SmallGeneratingSet().sage())
             return G.conjugate(pi.inverse())
 
-        key = C.cardinality(), tuple(sorted(len(o) for o in C.orbits()))
+        key = cls._invariant(C)
         if key in parent._cache:
             lookup = parent._cache[key]
             for elm in lookup:
@@ -95,9 +120,29 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Elem
         else:
             lookup = parent._cache[key] = []
 
-        elm = super().__classcall__(cls, parent, standardize(C))
+        elm = WithPicklingByInitArgs.__classcall__(cls, parent, standardize(C))
         lookup.append(elm)
         return elm
+
+    def __hash__(self):
+        """
+        Return a hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
+            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
+            sage: G = PermutationGroup([[(1,2),(3,4)]])
+            sage: H = PermutationGroup([[(1,3),(2,4)], [(1,2),(3,4)]])
+            sage: K = PermutationGroup([[(1,2,3,4)]])
+            sage: hash(C(G)) == hash(C(H))
+            False
+            sage: hash(C(H)) == hash(C(K))
+            True
+            sage: C(H) == C(K)
+            False
+        """
+        return hash(self._invariant(self._C))
 
     def __init__(self, parent, C):
         r"""
@@ -244,7 +289,8 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
     Element = ConjugacyClassOfDirectlyIndecomposableSubgroups
 
 
-class AtomicSpeciesElement(UniqueRepresentation, Element,
+class AtomicSpeciesElement(Element, WithEqualityById,
+                           WithPicklingByInitArgs,
                            metaclass=InheritComparisonClasscallMetaclass):
     r"""
     An atomic species.
@@ -322,7 +368,7 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
         else:
             lookup = parent._cache[key] = []
 
-        elm = super().__classcall__(cls, parent, dis, domain_partition)
+        elm = WithPicklingByInitArgs.__classcall__(cls, parent, dis, domain_partition)
         lookup.append(elm)
         return elm
 
@@ -353,6 +399,26 @@ class AtomicSpeciesElement(UniqueRepresentation, Element,
         self._dompart = domain_partition
         self._mc = tuple(len(v) for v in self._dompart)
         self._tc = sum(self._mc)
+
+    def __hash__(self):
+        """
+        Return a hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import AtomicSpecies
+            sage: A = AtomicSpecies("X")
+            sage: G = PermutationGroup([[(1,2),(3,4)]])
+            sage: H = PermutationGroup([[(1,3),(2,4)], [(1,2),(3,4)]])
+            sage: K = PermutationGroup([[(1,2,3,4)]])
+            sage: hash(A(G)) == hash(A(H))
+            False
+            sage: hash(A(H)) == hash(A(K))
+            True
+            sage: A(H) == A(K)
+            False
+        """
+        return hash((self._dis, self._dompart))
 
     def _repr_(self):
         r"""
