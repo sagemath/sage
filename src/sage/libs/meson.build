@@ -17,6 +17,7 @@ py.install_sources(
   'iml.pxd',
   'm4ri.pxd',
   'm4rie.pxd',
+  'meataxe.pxd',
   subdir: 'sage/libs',
 )
 
@@ -25,7 +26,7 @@ extension_data = {
   'homfly' : files('homfly.pyx'),
   'libecm' : files('libecm.pyx'),
   'sirocco': files('sirocco.pyx'),
-  'meataxe': files('meataxe.pxd', 'meataxe.pyx'),
+  'meataxe': files('meataxe.pyx'),
 }
 
 dependencies = [py_dep, braiding, cysignals, ecl, ecm, gc, gmp, homfly]
@@ -44,7 +45,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/libs',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: dependencies,
+    dependencies: deps,
   )
 endforeach
 
