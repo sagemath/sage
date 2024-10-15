@@ -257,7 +257,7 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = Frac(ZZ['a,b'])['x,y']
+            sage: R = Frac(ZZ['a,b'])['x,y']                                            # needs sage.libs.singular
             sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ(a, b)

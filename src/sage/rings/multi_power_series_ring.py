@@ -873,6 +873,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             Multivariate Power Series Ring in t0, t1, t2, t3, t4 over
             Integer Ring
 
+            sage: # needs sage.combinat
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
             sage: R = PowerSeriesRing(QQ, names=('x','y','z'))
             sage: R(1/(1-x-y), prec=3)
