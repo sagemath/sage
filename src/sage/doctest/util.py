@@ -192,7 +192,7 @@ class Timer:
 
         return (cputicks / hertz)
 
-    def _quick_cputime(self):
+    def _quick_cputime(self, expect_objects):
         r"""
         A fast replacement for ``sage.misc.timing.cputime``.
 
@@ -207,6 +207,12 @@ class Timer:
         be in perfect working condition -- that will often not be the
         case at the end of a doctest line.
 
+        INPUT:
+
+        - ``expect_objects`` -- list; a list of
+          :class:`sage.interfaces.expect.Expect` instances whose CPU
+          times will be included in the total
+
         OUTPUT:
 
         A float measuring the cputime in seconds of the sage process
@@ -218,7 +224,27 @@ class Timer:
         nonnegative float::
 
             sage: from sage.doctest.util import Timer
-            sage: cputime = Timer()._quick_cputime()
+            sage: from sage.interfaces.quit import expect_objects
+            sage: cputime = Timer()._quick_cputime(expect_objects)
+            sage: cputime >= 0.0
+            True
+            sage: isinstance(cputime, float)
+            True
+
+        If an error occurs in :meth:`_pid_cpu_seconds`, this function
+        should still return a valid answer, albeit one that is missing
+        timing information for the PID that failed::
+
+            sage: class FakeExpect:
+            ....:     def __call__(self):
+            ....:         return self
+            ....:     def is_running(self):
+            ....:         return True
+            ....:     def pid(self):
+            ....:         return -1
+            sage: e = FakeExpect()
+            sage: from sage.doctest.util import Timer
+            sage: cputime = Timer()._quick_cputime([e])
             sage: cputime >= 0.0
             True
             sage: isinstance(cputime, float)
@@ -232,7 +258,6 @@ class Timer:
 
         # Now try to get the times for any pexpect interfaces, since
         # they do not fall into the category above.
-        from sage.interfaces.quit import expect_objects
         for s in expect_objects:
             S = s()
             if S and S.is_running():
@@ -259,7 +284,8 @@ class Timer:
             sage: Timer().start()
             {'cputime': ..., 'walltime': ...}
         """
-        self.cputime = self._quick_cputime()
+        from sage.interfaces.quit import expect_objects
+        self.cputime = self._quick_cputime(expect_objects)
         self.walltime = walltime()
         return self
 
@@ -277,7 +303,8 @@ class Timer:
             sage: timer.stop()
             {'cputime': ..., 'walltime': ...}
         """
-        self.cputime = self._quick_cputime() - self.cputime
+        from sage.interfaces.quit import expect_objects
+        self.cputime = self._quick_cputime(expect_objects) - self.cputime
         self.walltime = walltime(self.walltime)
         return self
 
