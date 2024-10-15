@@ -142,29 +142,39 @@ class Timer:
             True
             sage: isinstance(cputime, float)
             True
+
+        We can force an ``OSError`` with an invalid PID::
+
+            sage: from sage.doctest.util import Timer
+            sage: cputime = Timer()._pid_cpu_seconds(-1)
+            Traceback (most recent call last):
+            ...
+            OSError: unable to access /proc/-1/stat
+
         """
+        path = f"/proc/{pid}/stat"
         try:
-            with open(f"/proc/{pid}/stat", "r") as statfile:
+            with open(path, "r") as statfile:
                 stats = statfile.read().split()
-        except (FileNotFoundError, PermissionError):
+        except (FileNotFoundError, PermissionError) as e:
             # FileNotFoundError: bad PID, or no /proc support
             # PermissionError: can't read the stat file
-            raise OSError
+            raise OSError(f"unable to access {path}") from e
 
         try:
             # man 5 proc (linux)
             cputicks = sum( float(s) for s in stats[13:17] )
-        except (ArithmeticError, LookupError, TypeError):
+        except (ArithmeticError, LookupError, TypeError) as e:
             # ArithmeticError: unexpected (non-numeric?) values in fields
             # LookupError: missing the expected fields
             # TypeError: fields can't be converted to float
-            raise OSError
+            raise OSError(f"unable to parse {path}") from e
 
         try:
             hertz = sysconf("SC_CLK_TCK")
-        except (ValueError):
+        except (ValueError) as e:
             # ValueError: SC_CLK_TCK doesn't exist
-            raise OSError
+            raise OSError("SC_CLK_TCK sysconf not found") from e
 
         if hertz <= 0:
             # The python documentation for os.sysconf() says, "If the
@@ -174,7 +184,7 @@ class Timer:
             # above. Nevertheless, we play it safe here and turn a -1
             # into an OSError. We check for zero, too, because we're
             # about to divide by it.
-            raise OSError
+            raise OSError("SC_CLK_TCK sysconf is nonpositive")
 
         return (cputicks / hertz)
 
