@@ -752,7 +752,7 @@ class MatchingCoveredGraph(Graph):
                              'matching covered graphs')
 
     def delete_vertex(self, vertex, in_order=False):
-        """
+        r"""
         Delete a vertex, removing all incident edges.
 
         .. NOTE::
