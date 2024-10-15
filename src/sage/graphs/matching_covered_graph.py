@@ -746,7 +746,7 @@ class MatchingCoveredGraph(Graph):
                 self.__init__(data=G, matching=self.get_matching())
             except Exception:
                 raise ValueError('the graph obtained after the addition of '
-                                 'edge (%s) is not matching covered' \
+                                 'edge (%s) is not matching covered'
                                  % str((u, v, label)))
 
         else:
@@ -754,7 +754,7 @@ class MatchingCoveredGraph(Graph):
             # Thus, the resulting graph is either disconnected
             # or has an odd order, hence not matching covered
             raise ValueError('the graph obtained after the addition of edge '
-                             '(%s) is not matching covered' \
+                             '(%s) is not matching covered'
                              % str((u, v, label)))
 
     def add_vertex(self, name=None):
