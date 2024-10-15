@@ -348,7 +348,6 @@
         "ntests": 11
     },
     "sage.categories.functor": {
-        "failed": true,
         "ntests": 128
     },
     "sage.categories.g_sets": {
@@ -556,8 +555,7 @@
         "ntests": 13
     },
     "sage.categories.quotient_fields": {
-        "failed": true,
-        "ntests": 81
+        "ntests": 77
     },
     "sage.categories.quotients": {
         "ntests": 2
@@ -1048,12 +1046,10 @@
         "ntests": 15
     },
     "sage.groups.generic": {
-        "failed": true,
-        "ntests": 120
+        "ntests": 110
     },
     "sage.groups.group": {
-        "failed": true,
-        "ntests": 51
+        "ntests": 45
     },
     "sage.groups.old": {
         "ntests": 31
@@ -1529,7 +1525,7 @@
     },
     "sage.rings.fraction_field": {
         "failed": true,
-        "ntests": 227
+        "ntests": 197
     },
     "sage.rings.fraction_field_element": {
         "failed": true,
@@ -1856,7 +1852,7 @@
     },
     "sage.schemes.generic.homset": {
         "failed": true,
-        "ntests": 128
+        "ntests": 124
     },
     "sage.schemes.generic.morphism": {
         "failed": true,
@@ -1866,7 +1862,6 @@
         "ntests": 35
     },
     "sage.schemes.generic.scheme": {
-        "failed": true,
         "ntests": 178
     },
     "sage.schemes.generic.spec": {
@@ -1879,7 +1874,6 @@
         "ntests": 99
     },
     "sage.schemes.product_projective.point": {
-        "failed": true,
         "ntests": 111
     },
     "sage.schemes.product_projective.rational_point": {
@@ -1923,8 +1917,7 @@
         "ntests": 53
     },
     "sage.sets.disjoint_set": {
-        "failed": true,
-        "ntests": 270
+        "ntests": 266
     },
     "sage.sets.disjoint_union_enumerated_sets": {
         "ntests": 61
@@ -1983,8 +1976,7 @@
         "ntests": 311
     },
     "sage.structure.coerce_actions": {
-        "failed": true,
-        "ntests": 133
+        "ntests": 128
     },
     "sage.structure.coerce_dict": {
         "failed": true,
@@ -2004,8 +1996,7 @@
         "ntests": 562
     },
     "sage.structure.element.pxd": {
-        "failed": true,
-        "ntests": 23
+        "ntests": 18
     },
     "sage.structure.element_wrapper": {
         "ntests": 160
