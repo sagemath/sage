@@ -884,8 +884,9 @@ class MatchingCoveredGraph(Graph):
         try:
             G = Graph(self)
             G.delete_vertices(vertices)
-            M = Graph(self.get_matching())
             G_simple = G.to_simple()
+
+            M = Graph(self.get_matching())
 
             if M:
                 M.delete_vertices(vertices)
