@@ -477,11 +477,17 @@ class MatchingCoveredGraph(Graph):
 
         elif isinstance(data, Graph):
             try:
-                Graph.__init__(self, data, *args, **kwds)
-                self._upgrade_from_graph(matching=matching, algorithm=algorithm,
-                                         solver=solver, verbose=verbose,
-                                         integrality_tolerance=integrality_tolerance)
-                success = True
+                check = Graph.is_matching_covered(G=data, matching=matching,
+                                                  algorithm=algorithm,
+                                                  coNP_certificate=False,
+                                                  solver=solver, verbose=verbose,
+                                                  integrality_tolerance=integrality_tolerance)
+
+                if check:
+                    Graph.__init__(self, data, *args, **kwds)
+                    success = True
+                else:
+                    raise ValueError("input graph is not matching covered")
 
             except Exception as exception:
                 raise exception
@@ -549,26 +555,6 @@ class MatchingCoveredGraph(Graph):
             return s.capitalize()
         return "".join(["Matching covered ", s])
 
-    def _upgrade_from_graph(self, matching=None, algorithm='Edmonds',
-                            solver=None, verbose=0,
-                            integrality_tolerance=0.001):
-        r"""
-        Upgrade the given graph to a matching covered graph if eligible.
-
-        See documentation ``MatchingCoveredGraph?`` for detailed information.
-        """
-        try:
-            check = Graph.is_matching_covered(G=self, matching=matching,
-                                              algorithm=algorithm,
-                                              coNP_certificate=False,
-                                              solver=solver, verbose=verbose,
-                                              integrality_tolerance=integrality_tolerance)
-
-            if not check:
-                raise ValueError("input graph is not matching covered")
-
-        except Exception as exception:
-            raise exception
 
     def add_vertex(self, name=None):
         r"""
