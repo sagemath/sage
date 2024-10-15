@@ -170,8 +170,6 @@ class ChowRing(QuotientRing_generic):
         reln = lambda x,y: x <= y
         lattice_flats = Poset((flats, reln))
         chains = lattice_flats.chains() #Only chains
-        for ch in chains:
-            print(ch)
         if self._augmented:
             if self._presentation == 'fy':
                 for subset in chains:
@@ -195,7 +193,7 @@ class ChowRing(QuotientRing_generic):
                                         monomial_basis.append(expression)
                                         if max_powers.index(p) == 0:
                                             #Generating combinations for all powers including first max_powers
-                                            expression *= flats_gen[subset[0]]**max_powers[0]
+                                            expression *= flats_gen[subset[0]]**ranks[flats[0]]
                                             monomial_basis.append(expression)
 
             elif self._presentation == 'atom-free':
@@ -222,7 +220,7 @@ class ChowRing(QuotientRing_generic):
                         max_powers[0] = 0
                         for combination in product(*(range(1, p) for p in max_powers)):
                             #Generating all combinations including 0 power and max_power for first flat
-                            if sum(combination) == first_rank:
+                            if sum(combination) <= first_rank:
                                 expression = R.one()
                                 for i in range(len(combination)):
                                     expression *= flats_gen[subset[i]]**combination[i]
