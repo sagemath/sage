@@ -105,25 +105,29 @@ class Timer:
         sage: TestSuite(Timer()).run()
     """
 
-    def _pid_cpu_seconds(self, pid):
+    def _proc_stat_cpu_seconds(self, path):
         r"""
-        Parse the ``/proc`` filesystem to get the cputime of the given
-        ``pid``.
+        Parse a "stat" file from the ``/proc`` filesystem to get
+        the cputime of a process.
 
         This also includes the times for child processes, but only
         those that have already terminated and for which ``wait()``
         was called. It is important to note that pexpect processes DO
         NOT fall into that category.
 
+        The document ``Documentation/filesystems/proc.rst`` within the
+        Linux kernel source tree defines a "stat" file.
+
         INPUT:
 
-        - ``pid`` -- nonnegative integer; the process identifier (PID)
-          of the process whose cputime you want
+        - ``path`` -- string; the path to a "stat" file on the ``/proc``
+          filesystem, typically "/proc/<pid>/stat", from which we will
+          read cputime information
 
         OUTPUT:
 
         A nonnegative float representing the number of cpu-seconds
-        used by the process associated with ``pid``. An ``OSError`` is
+        used by the process associated with ``path``. An ``OSError`` is
         raised if anything goes wrong, which typically happens on
         platforms that don't store this information under ``/proc``.
 
@@ -134,8 +138,9 @@ class Timer:
 
             sage: from sage.doctest.util import Timer
             sage: cputime = float(0.0)
+            sage: path = "/proc/1/stat"
             sage: try:
-            ....:     cputime = Timer()._pid_cpu_seconds(1)
+            ....:     cputime = Timer()._proc_stat_cpu_seconds(path)
             ....: except OSError:
             ....:     pass
             sage: cputime >= 0.0
@@ -146,13 +151,12 @@ class Timer:
         We can force an ``OSError`` with an invalid PID::
 
             sage: from sage.doctest.util import Timer
-            sage: cputime = Timer()._pid_cpu_seconds(-1)
+            sage: path = "/proc/-1/stat"
+            sage: cputime = Timer()._proc_stat_cpu_seconds(path)
             Traceback (most recent call last):
             ...
             OSError: unable to access /proc/-1/stat
-
         """
-        path = f"/proc/{pid}/stat"
         try:
             with open(path, "r") as statfile:
                 stats = statfile.read().split()
@@ -231,9 +235,9 @@ class Timer:
             sage: isinstance(cputime, float)
             True
 
-        If an error occurs in :meth:`_pid_cpu_seconds`, this function
-        should still return a valid answer, albeit one that is missing
-        timing information for the PID that failed::
+        If an error occurs in :meth:`_proc_stat_cpu_seconds`, this
+        function should still return a valid answer, albeit one that
+        is missing timing information for the PID that failed::
 
             sage: class FakeExpect:
             ....:     def __call__(self):
@@ -249,7 +253,6 @@ class Timer:
             True
             sage: isinstance(cputime, float)
             True
-
         """
         # Start by using os.times() to get the cputime for sage itself
         # and any subprocesses that have been wait()ed for and that
@@ -262,7 +265,8 @@ class Timer:
             S = s()
             if S and S.is_running():
                 try:
-                    cputime += self._pid_cpu_seconds(S.pid())
+                    path = f"/proc/{S.pid()}/stat"
+                    cputime += self._proc_stat_cpu_seconds(path)
                 except OSError:
                     # This will fail anywhere but linux/BSD, but
                     # there's no good cross-platform way to get the
