@@ -202,6 +202,7 @@ class DivisorGroup_generic(FormalSums):
 
         TESTS::
 
+            sage: # needs sage.schemes
             sage: C = EllipticCurve([2, 1])
             sage: E = EllipticCurve([1, 2])
             sage: C.divisor_group()._coerce_map_from_(E.divisor_group())
