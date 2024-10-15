@@ -266,7 +266,7 @@ class MatchingCoveredGraph(Graph):
         sage: G.add_edge(0, 0)
         Traceback (most recent call last):
         ...
-        ValueError: cannot add edge from 0 to 0 in graph without loops
+        ValueError: loops are not allowed in matching covered graphs
         sage: H = MatchingCoveredGraph(P, loops=True)
         Traceback (most recent call last):
         ...
@@ -555,6 +555,197 @@ class MatchingCoveredGraph(Graph):
             return s.capitalize()
         return "".join(["Matching covered ", s])
 
+
+    def add_edge(self, u, v=None, label=None):
+        r"""
+        Add an edge from vertex ``u`` to vertex ``v``.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.add_edge` method
+            to ensure that resultant graph is also matching covered.
+
+        INPUT:
+
+        The following forms are all accepted:
+
+        - G.add_edge(1, 2)
+        - G.add_edge((1, 2))
+        - G.add_edges([(1, 2)])
+        - G.add_edge(1, 2, 'label')
+        - G.add_edge((1, 2, 'label'))
+        - G.add_edges([(1, 2, 'label')])
+
+        OUTPUT:
+
+        - If an edge is provided with a valid format, but addition of the edge
+          leaves the resulting graph not being matching covered, a
+          :exc:`ValueError` is returned without any alteration to the existing
+          matching covered graph. If the addition of the edge preserves the
+          property of matching covered, then the graph is updated and nothing
+          is returned.
+
+        - If the edge is provided with an invalid format, a :exc:`ValueError`
+          is returned.
+
+        WARNING:
+
+        The following intuitive input results in nonintuitive output,
+        even though the resulting graph behind the intuition might be matching
+        covered::
+
+            sage: P = graphs.WheelGraph(6)
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.add_edge((1, 4), 'label')
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph obtained after the addition of edge (((1, 4), 'label', None)) is not matching covered
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
+
+        The key word ``label`` must be used::
+
+            sage: W = graphs.WheelGraph(6)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.add_edge((1, 4), label='label')
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, 'label'), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
+
+        An expression, analogous to the syntax mentioned above may be used::
+
+            sage: W = graphs.WheelGraph(6)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.add_edge(1, 4)
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
+
+            sage: W = graphs.WheelGraph(6)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.add_edge((1, 4))
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
+
+            sage: W = graphs.WheelGraph(6)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.add_edges([(1, 4)])
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
+
+            sage: W = graphs.WheelGraph(6)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.add_edge(1, 4, 'label')
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, 'label'), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
+
+            sage: W = graphs.WheelGraph(6)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.add_edge((1, 4, 'label'))
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, 'label'), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
+
+            sage: W = graphs.WheelGraph(6)
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.add_edges([(1, 4, 'label')])
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, 'label'), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
+
+        Vertex name cannot be ``None``, so::
+
+            sage: W = graphs.WheelGraph(6)
+            sage: H = MatchingCoveredGraph(W)
+            sage: H.add_edge(None, 1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph obtained after the addition of edge ((None, 1, None)) is not matching covered
+
+            sage: W = graphs.WheelGraph(6)
+            sage: H = MatchingCoveredGraph(W)
+            sage: H.add_edge(None, 7)
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph obtained after the addition of edge ((None, 7, None)) is not matching covered
+
+        EXAMPLES:
+
+        Adding an edge such that the resulting graph is matching covered::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.add_edge(1, 4)
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, None), (1, 6, None), (2, 3, None), (2, 7, None), (3, 4, None), (3, 8, None), (4, 9, None), (5, 7, None), (5, 8, None), (6, 8, None), (6, 9, None), (7, 9, None)]
+
+        Adding an edge with both the incident vertices being existent such
+        that the resulting graph is not matching covered::
+
+            sage: C = graphs.CycleGraph(4)
+            sage: G = MatchingCoveredGraph(C)
+            sage: G.add_edge(0, 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph obtained after the addition of edge ((0, 2, None)) is not matching covered
+
+        Adding an edge with exactly one incident vertex that is nonexistent
+        throws a :exc:`ValueError` exception, as the resulting graph would
+        have an odd order::
+
+            sage: C = graphs.CycleGraph(4)
+            sage: G = MatchingCoveredGraph(C)
+            sage: G.add_edge(0, 4)
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph obtained after the addition of edge ((0, 4, None)) is not matching covered
+
+        Adding an edge with both the incident vertices that is nonexistent
+        throws a :exc:`ValueError` exception, as the resulting graph would
+        have been disconnected::
+
+            sage: C = graphs.CycleGraph(4)
+            sage: G = MatchingCoveredGraph(C)
+            sage: G.add_edge(4, 5)
+            Traceback (most recent call last):
+            ...
+            ValueError: the graph obtained after the addition of edge ((4, 5, None)) is not matching covered
+        """
+        if label is None:
+            if v is None:
+                try:
+                    u, v, label = u
+                except Exception:
+                    try:
+                        u, v = u
+                    except Exception:
+                        pass
+
+        else:
+            if v is None:
+                try:
+                    u, v = u
+                except Exception:
+                    pass
+
+        if u in self and v in self:
+            if u == v:
+                raise ValueError('loops are not allowed in '
+                                 'matching covered graphs')
+            G = Graph(self)
+            G.add_edge(u, v, label=label)
+
+            try:
+                self.__init__(data=G, matching=self.get_matching())
+            except:
+                raise ValueError('the graph obtained after the addition of '
+                                 'edge (%s) is not matching covered' \
+                                 % str((u, v, label)))
+
+        else:
+            # At least one of u or v is a nonexistent vertex.
+            # Thus, the resulting graph is either disconnected
+            # or has an odd order, hence not matching covered
+            raise ValueError('the graph obtained after the addition of edge '
+                             '(%s) is not matching covered' \
+                             % str((u, v, label)))
 
     def add_vertex(self, name=None):
         r"""
