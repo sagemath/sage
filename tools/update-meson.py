@@ -142,6 +142,7 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
             "tdlib.pyx",
             "meataxe.pyx",
             "sirocco.pyx",
+            "parametric_surface.pyx",
         }
         cython_files = [x for x in cython_files if x.name not in special_cython_files]
         # Add all cython files that are not in the source list
