@@ -108,13 +108,12 @@ mpfi = cc.find_library('mpfi')
 # Cannot be found via pkg-config (pkg-config file will be added in 4.13)
 # Test for common.h header that was added in 4.12 as a indirect version check
 gap = cc.find_library('gap', has_headers: ['gap/common.h'])
-
 singular = dependency('Singular')
-
 maxima = find_program('maxima', required: true)
-
 # Cannot be found via pkg-config
 ntl = cc.find_library('ntl')
+# Cannot be found via pkg-config
+meataxe = cc.find_library('meataxe', required: false, disabler: true)
 
 # Meson currently ignores include_directories for Cython modules, so we
 # have to add them manually.

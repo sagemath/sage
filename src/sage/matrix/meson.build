@@ -1,25 +1,5 @@
-# Cannot be found via pkg-config
-meataxe = cc.find_library('meataxe', required: false, disabler: true)
 iml = cc.find_library('iml')
 
-if meataxe.found()
-  py.install_sources(
-    'all.py',
-    'all__sagemath_meataxe.py',
-    'benchmark.py',
-    'berlekamp_massey.py',
-    'compute_J_ideal.py',
-    'docs.py',
-    'matrix_integer_dense_hnf.py',
-    'matrix_integer_dense_saturation.py',
-    'matrix_misc.py',
-    'matrix_space.py',
-    'operation_table.py',
-    'special.py',
-    'symplectic_basis.py',
-    'tests.py',
-  )
-endif
 
 py.install_sources(
   'all.py',
@@ -95,14 +75,13 @@ foreach name, pyx : extension_data
     m4rie,
     mpfi,
     mpfr,
-    mtx,
     ntl,
     pari,
     png,
     zlib,
   ]
   if name == 'matrix_gfpn_dense'
-    dependencies += [meataxe]
+    dependencies += [mtx, meataxe]
   endif
 
   py.extension_module(
@@ -170,7 +149,6 @@ foreach name, pyx : extension_data_cpp
       m4rie,
       mpfi,
       mpfr,
-      mtx,
       ntl,
       pari,
       png,

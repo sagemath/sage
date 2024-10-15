@@ -21,25 +21,20 @@ extension_data = {
   'index_face_set' : files('index_face_set.pyx'),
   'shapes' : files('shapes.pyx'),
   'transform' : files('transform.pyx'),
+  'parametric_surface' : files('parametric_surface.pyx'),
 }
 
 foreach name, pyx : extension_data
+  dependencies = [py_dep, cysignals, gmp]
+  if name == 'parametric_surface'
+    dependencies += [interpreters_dep]
+  endif
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/plot/plot3d',
     install: true,
     include_directories: [inc_cpython, inc_ext, inc_numpy],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: dependencies,
   )
 endforeach
-
-# This extension needs the interpreters, but the others don't.
-py.extension_module(
-  'parametric_surface',
-  sources: files('parametric_surface.pyx'),
-  subdir: 'sage/plot/plot3d',
-  install: true,
-  include_directories: [inc_cpython, inc_ext, inc_numpy],
-  dependencies: [py_dep, cysignals, gmp, interpreters_dep],
-)

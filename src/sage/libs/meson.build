@@ -17,7 +17,6 @@ py.install_sources(
   'iml.pxd',
   'm4ri.pxd',
   'm4rie.pxd',
-  'meataxe.pxd',
   subdir: 'sage/libs',
 )
 
@@ -25,27 +24,20 @@ extension_data = {
   'ecl' : files('ecl.pyx'),
   'homfly' : files('homfly.pyx'),
   'libecm' : files('libecm.pyx'),
+  'sirocco': files('sirocco.pyx'),
+  'meataxe': files('meataxe.pxd', 'meataxe.pyx'),
 }
 
-dependencies = [
-  py_dep,
-  braiding,
-  cysignals,
-  ecl,
-  ecm,
-  gc,
-  gmp,
-  homfly,
-  mtx,
-  sirocco,
-]
-
-if sirocco.found()
-  extension_data += {'sirocco': files('sirocco.pxd', 'sirocco.pyx')}
-  dependencies += [sirocco]
-endif
+dependencies = [py_dep, braiding, cysignals, ecl, ecm, gc, gmp, homfly]
 
 foreach name, pyx : extension_data
+  deps = dependencies
+  if name == 'sirocco'
+    deps += [sirocco]
+  elif name == 'meataxe'
+    deps += [mtx, meataxe]
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
