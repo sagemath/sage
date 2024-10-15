@@ -988,7 +988,7 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DD, [dirname])
             sage: DC.expand_files_into_sources()
             sage: len(DC.sources)
-            16
+            15
             sage: DC.sources[0].options.optional
             True
 
@@ -1100,7 +1100,6 @@ class DocTestController(SageObject):
             sage.doctest.control
             sage.doctest.check_tolerance
             sage.doctest.all
-            sage.doctest.__main__
             sage.doctest
         """
         if self.options.nthreads > 1 and len(self.sources) > self.options.nthreads:
