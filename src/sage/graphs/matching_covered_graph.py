@@ -734,7 +734,7 @@ class MatchingCoveredGraph(Graph):
 
             try:
                 self.__init__(data=G, matching=self.get_matching())
-            except:
+            except Exception:
                 raise ValueError('the graph obtained after the addition of '
                                  'edge (%s) is not matching covered' \
                                  % str((u, v, label)))
