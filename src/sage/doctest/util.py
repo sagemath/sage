@@ -289,14 +289,25 @@ class Timer:
             S = s()
             if S and S.is_running():
                 try:
+                    # This will fail anywhere but linux/BSD, but
+                    # there's no good cross-platform way to get the
+                    # cputimes from pexpect interfaces without totally
+                    # mucking up the doctests.
                     path = f"/proc/{S.pid()}/stat"
                     cputime += self._proc_stat_cpu_seconds(path)
                 except OSError:
-                    # This will fail anywhere but linux/BSD, but
-                    # there's no good cross-platform way to get the
-                    # cputimes from pexpect interfaces without
-                    # totally mucking up the doctests.
-                    pass
+                    # If we're on macOS, we can fall back to using
+                    # psutil, but only if it's installed. It's usually
+                    # installed as a transitive dependency (ipython
+                    # needs it), but it isn't explicitly listed as
+                    # a dependency of sagelib.
+                    try:
+                        from psutil import Process
+                        cputime += sum(Process(S.pid()).cpu_times()[0:2])
+                    except (ImportError, ValueError):
+                        # ImportError: no psutil
+                        # ValueError: invalid (e.g. negative) PID
+                        pass
 
         return cputime
 
