@@ -109,6 +109,7 @@ cpdef DisjointSet(arg):
 
     From a set partition (see :issue:`38693`)::
 
+        sage: # needs sage.combinat
         sage: SP = SetPartition(DisjointSet(5))
         sage: DisjointSet(SP)
         {{0}, {1}, {2}, {3}, {4}}
@@ -961,8 +962,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.union(3, 4)
             sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: g = d.to_digraph()
-            sage: g                                                                     # needs sage.graphs
+            sage: g = d.to_digraph(); g                                                 # needs sage.graphs
             Looped digraph on 5 vertices
             sage: g.edges(sort=True)                                                    # needs sage.graphs
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
