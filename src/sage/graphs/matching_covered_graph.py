@@ -609,7 +609,7 @@ class MatchingCoveredGraph(Graph):
             sage: W = graphs.WheelGraph(6)
             sage: G = MatchingCoveredGraph(W)
             sage: G.add_edge((1, 4), label='label')
-            sage: G.edges(sort=False)
+            sage: G.edges(sort=False)  # No alteration to the existing graph
             [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, 'label'), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
 
         An expression, analogous to the syntax mentioned above may be used::
@@ -658,6 +658,8 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: the graph obtained after the addition of edge ((None, 1, None)) is not matching covered
+            sage: H.edges(sort=False)  # No alteration to the existing graph
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
 
             sage: W = graphs.WheelGraph(6)
             sage: H = MatchingCoveredGraph(W)
@@ -665,6 +667,8 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: the graph obtained after the addition of edge ((None, 7, None)) is not matching covered
+            sage: H.edges(sort=False)  # No alteration to the existing graph
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
 
         EXAMPLES:
 
@@ -685,6 +689,8 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: the graph obtained after the addition of edge ((0, 2, None)) is not matching covered
+            sage: G.edges(sort=False) # No alteration to the existing graph
+            [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
 
         Adding an edge with exactly one incident vertex that is nonexistent
         throws a :exc:`ValueError` exception, as the resulting graph would
@@ -696,6 +702,8 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: the graph obtained after the addition of edge ((0, 4, None)) is not matching covered
+            sage: G.edges(sort=False) # No alteration to the existing graph
+            [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
 
         Adding an edge with both the incident vertices that is nonexistent
         throws a :exc:`ValueError` exception, as the resulting graph would
@@ -707,6 +715,8 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: the graph obtained after the addition of edge ((4, 5, None)) is not matching covered
+            sage: G.edges(sort=False) # No alteration to the existing graph
+            [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
         """
         if label is None:
             if v is None:
