@@ -456,7 +456,7 @@ class StorageTypeDoubleComplex(StorageTypeSimple):
     """
     def assign_c_from_py(self, c, py):
         """
-        sage: from sage_setup.autogen.interpreters import ty_double_complex
+        sage: from sage_setup.autogen.interpreters.internal import ty_double_complex
         sage: ty_double_complex.assign_c_from_py('z_c', 'z_py')
         'z_c = CDE_to_dz(z_py)'
         """
