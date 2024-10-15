@@ -58,6 +58,7 @@ TESTS::
 
 Test that :issue:`15971` is fixed::
 
+    sage: # needs sage.libs.singular
     sage: for B in [QQ['t'], QQ['s, t'], ZZ['t'], ZZ['s, t']]:
     ....:     F = B.fraction_field()
     ....:     R = F['x, y']
@@ -251,6 +252,7 @@ class FractionField_generic(ring.Field):
 
         Test coercions::
 
+            sage: # needs sage.libs.singular
             sage: F.coerce(1)
             1
             sage: F.coerce(int(1))
@@ -260,6 +262,7 @@ class FractionField_generic(ring.Field):
 
         ::
 
+            sage: # needs sage.libs.singular
             sage: K = ZZ['x,y'].fraction_field()
             sage: x,y = K.gens()
             sage: F.coerce(F.gen())
@@ -563,6 +566,7 @@ class FractionField_generic(ring.Field):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: F = QQ['x,y'].fraction_field()
             sage: F._element_constructor_(1)
             1
@@ -870,6 +874,7 @@ class FractionField_generic(ring.Field):
 
         Test homomorphisms::
 
+            sage: # needs sage.libs.singular
             sage: phi = F.hom([2*y, x])
             sage: phi(x+y)
             x + 2*y
@@ -947,6 +952,7 @@ class FractionField_generic(ring.Field):
 
         TESTS::
 
+            sage: # needs sage.libs.singular
             sage: A.<x,y> = ZZ[]
             sage: C.<z> = Frac(A)[]
             sage: c = (2*y^2 - 11*x - 2*y + 1)/(-x^2 + x*y - 2*y^2)
