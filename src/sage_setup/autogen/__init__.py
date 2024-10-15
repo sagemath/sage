@@ -1,6 +1,6 @@
 import os
 
-from interpreters.internal import rebuild
+from sage_setup.autogen.interpreters.internal import rebuild
 
 
 def autogen_all():
@@ -11,6 +11,7 @@ def autogen_all():
     of packages built/installed by setup.py.
     """
     from sage.env import SAGE_SRC
+
     rebuild(os.path.join(SAGE_SRC, "sage", "ext", "interpreters"))
 
-    return ['sage.ext.interpreters']
+    return ["sage.ext.interpreters"]
