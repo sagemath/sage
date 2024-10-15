@@ -2100,6 +2100,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: len(list(E.isogenies_degree(2**5)))                                   # long time (4s)
             3
 
+        ::
+
+            sage: pol = PolynomialRing(QQ, 'x')([1, -3, 5, -5, 5, -3, 1])
+            sage: L.<a> = NumberField(pol)
+            sage: js = hilbert_class_polynomial(-23).roots(L, multiplicities=False)
+            sage: E = EllipticCurve(j=choice(js))
+            sage: len(list(E.isogenies_degree(2^3)))                                    # long time (9s)
+
         TESTS::
 
             sage: E = EllipticCurve(GF(next_prime(2^32)), j=1728)
