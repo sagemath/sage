@@ -701,6 +701,7 @@ class SchemeHomset_points(SchemeHomset_generic):
 
         ::
 
+            sage: # needs sage.geometry.polyhedron
             sage: P1 = toric_varieties.P1(base_ring=GF(3))
             sage: list(P1.point_homset())
             [[0 : 1], [1 : 0], [1 : 1], [1 : 2]]
