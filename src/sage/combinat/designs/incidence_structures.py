@@ -1653,7 +1653,7 @@ class IncidenceStructure:
                 for i in combinations(block, tt):
                     s[i] = s.get(i, 0) + 1
 
-            if len(set(s.values())) != 1:
+            if (len(s) != binomial(v, tt)) or (len(set(s.values())) != 1):
                 tt -= 1
                 break
 
