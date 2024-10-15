@@ -170,6 +170,8 @@ class ChowRing(QuotientRing_generic):
         reln = lambda x,y: x <= y
         lattice_flats = Poset((flats, reln))
         chains = lattice_flats.chains() #Only chains
+        for ch in chains:
+            print(ch)
         if self._augmented:
             if self._presentation == 'fy':
                 for subset in chains:
