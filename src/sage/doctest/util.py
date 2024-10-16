@@ -23,7 +23,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.timing import walltime
+from time import time as walltime
 from os import sysconf, times
 
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
@@ -345,7 +345,7 @@ class Timer:
         """
         from sage.interfaces.quit import expect_objects
         self.cputime = self._quick_cputime(expect_objects) - self.cputime
-        self.walltime = walltime(self.walltime)
+        self.walltime = walltime() - self.walltime
         return self
 
     def annotate(self, object):
