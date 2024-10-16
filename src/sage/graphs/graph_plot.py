@@ -852,7 +852,15 @@ class GraphPlot(SageObject):
                     # Now add all the loops at this vertex, varying their size
                     for lab, col, _ in local_labels:
                         x, y = self._pos[a][0], self._pos[a][1] - loop_size
-                        c = circle((x, y), loop_size, rgbcolor=col)
+
+                        estyle = self._options['edge_style']
+                        ethickness = self._options['edge_thickness']
+                        if style_key_edges is not None and ((style_key_edges and (x, y) in self._options['edge_styles']) or (not style_key_edges and lab in self._options['edge_styles'])):
+                            estyle = style_key_edges and self._options['edge_styles'][(x, y)] or self._options['edge_styles'][lab]
+                        if thickness_key_edges is not None and ((thickness_key_edges and (x, y) in self._options['edge_thicknesses']) or (not thickness_key_edges and lab in self._options['edge_thicknesses'])):
+                            ethickness = thickness_key_edges and self._options['edge_thicknesses'][(x, y)] or self._options['edge_thicknesses'][lab]
+                            
+                        c = circle((x, y), loop_size, rgbcolor=col, linestyle=estyle, thickness=ethickness)
                         self._plot_components['edges'].append(c)
                         if labels:
                             bg = self._options['edge_labels_background']
@@ -923,6 +931,9 @@ class GraphPlot(SageObject):
                         distance = float(max_dist) / len_local_labels
                     for i in range(len_local_labels // 2):
                         k = (i + 1.0) * distance
+                        estyle = self._options['edge_style']
+                        ethickness = self._options['edge_thickness']
+
                         if self._arcdigraph:
                             vr = self._vertex_radius
                             ph = self._polar_hack_for_multidigraph
@@ -930,24 +941,33 @@ class GraphPlot(SageObject):
                             odd_end = ph(odd_xy(k), p2, vr)[1]
                             even_start = ph(p1, even_xy(k), vr)[0]
                             even_end = ph(even_xy(k), p2, vr)[1]
+
                             self._plot_components['edges'].append(
                                 arrow(path=[[odd_start, odd_xy(k), odd_end]],
                                       head=local_labels[2 * i][2], zorder=1,
-                                      rgbcolor=local_labels[2 * i][1]
+                                      rgbcolor=local_labels[2 * i][1],
+                                      linestyle=estyle,
+                                      thickness=ethickness
                                       ))
                             self._plot_components['edges'].append(
                                 arrow(path=[[even_start, even_xy(k), even_end]],
                                       head=local_labels[2 * i + 1][2], zorder=1,
-                                      rgbcolor=local_labels[2 * i + 1][1]
+                                      rgbcolor=local_labels[2 * i + 1][1],
+                                      linestyle=estyle,
+                                      thickness=ethickness
                                       ))
                         else:
                             self._plot_components['edges'].append(
                                 bezier_path([[p1, odd_xy(k), p2]], zorder=1,
-                                            rgbcolor=local_labels[2 * i][1]
+                                            rgbcolor=local_labels[2 * i][1],
+                                            linestyle=estyle,
+                                            thickness=ethickness
                                             ))
                             self._plot_components['edges'].append(
                                 bezier_path([[p1, even_xy(k), p2]], zorder=1,
-                                            rgbcolor=local_labels[2 * i + 1][1]
+                                            rgbcolor=local_labels[2 * i + 1][1],
+                                            linestyle=estyle,
+                                            thickness=ethickness
                                             ))
                         if labels:
                             j = k / 2.0
