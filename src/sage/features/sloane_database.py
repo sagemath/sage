@@ -40,7 +40,7 @@ class SloaneOEIS(Feature):
 
     def _is_present(self):
         r"""
-        Return whether the database is installed.
+        Return whether the database is available.
 
         EXAMPLES::
 
@@ -48,7 +48,10 @@ class SloaneOEIS(Feature):
             sage: bool(SloaneOEIS().is_present())  # optional - !sloane_database
             False
         """
-        from sage.databases.sloane import SloaneEncyclopedia
+        try:
+            from sage.databases.sloane import SloaneEncyclopedia
+        except ImportError:
+            return False
         return SloaneEncyclopedia.is_installed()
 
 
