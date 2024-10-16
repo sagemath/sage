@@ -292,15 +292,15 @@ def count_all_local_good_types_normal_form(Q, p, k, m, zvec, nzvec):
 
     INPUT:
 
-    - ``Q`` -- quadratic form over `\ZZ` in local normal form at p with no zero blocks mod m_range
+    - ``Q`` -- quadratic form over `\ZZ` in local normal form at p with no zero blocks mod `p^k`
     - ``p`` -- prime number > 0
     - ``k`` -- integer > 0
-    - ``m`` -- integer >= 0 (depending only on mod `p^k`)
+    - ``m`` -- non-negative integer (depending only on mod `p^k`)
     - ``zvec``, ``nzvec`` -- list of integers in ``range(Q.dim())``, or ``None``
 
     OUTPUT:
 
-    an integer '\ge 0' representing the solutions of Good type.
+    a non-negative integer giving the number of solutions of Good type.
 
     EXAMPLES::
 
