@@ -709,10 +709,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
             elif self.options.gc < 0:
                 gc.disable()
 
+            from cysignals.signals import SignalError
             try:
                 # Don't blink!  This is where the user's code gets run.
                 self.compile_and_execute(example, compiler, test.globs)
-            except SystemExit:
+            except (SignalError, SystemExit):
+                # Tests can be killed by signals in unexpected places.
                 raise
             except BaseException:
                 exception = sys.exc_info()
