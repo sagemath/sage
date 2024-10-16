@@ -1461,7 +1461,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         if kernel is not None:
             # Check for multiple points or point of known order
-            kernel_is_list = isinstance(kernel, list) or isinstance(kernel, tuple)
+            kernel_is_list = isinstance(kernel, (list, tuple))
             if kernel_is_list and kernel[0] in self and len(kernel) > 1:
                 from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
                 return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
