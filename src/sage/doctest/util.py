@@ -301,14 +301,18 @@ class Timer:
                     # installed as a transitive dependency (ipython
                     # needs it), but it isn't explicitly listed as
                     # a dependency of sagelib.
-                    from psutil import NoSuchProcess, Process, ZombieProcess
                     try:
-                        cputime += sum(Process(S.pid()).cpu_times()[0:2])
-                    except (ImportError, ValueError, NoSuchProcess, ZombieProcess):
-                        # ImportError: no psutil
-                        # ValueError: invalid (e.g. negative) PID
-                        # NoSuchProcess: it's gone
-                        # ZombieProcess: PID refers to a zombie
+                        from psutil import (NoSuchProcess,
+                                            Process,
+                                            ZombieProcess)
+                        try:
+                            cputime += sum(Process(S.pid()).cpu_times()[0:2])
+                        except (ValueError, NoSuchProcess, ZombieProcess):
+                            # ValueError: invalid (e.g. negative) PID
+                            # NoSuchProcess: it's gone
+                            # ZombieProcess: PID refers to a zombie
+                            pass
+                    except ImportError:
                         pass
 
         return cputime
