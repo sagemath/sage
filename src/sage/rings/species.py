@@ -1299,7 +1299,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 return False
             return other <= self
 
-        @cached_method
         def group_and_partition(self):
             """
             Return the (transitive) permutation group corresponding to ``self``.
@@ -1347,6 +1346,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: F = M(PermutationGroup([(1,2),(3,)]))
                 sage: F.group_and_partition()[0].domain()
                 {1, 2, 3}
+
+                sage: F = M(AlternatingGroup(2))
+                sage: F.group_and_partition()[0].domain()
+                {1, 2}
             """
             def shift_gens(gens, n):
                 """
@@ -1369,19 +1372,22 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                     return a._dis._C, a._dompart
 
                 if n % 2 == 1:
+                    # split off a single monomial
                     a = list(A._monomial)[0]  # as atomic species
                     b, b_dompart = (A ** (n-1)).group_and_partition()
                     gens = a._dis._C.gens() + shift_gens(b.gens(), a._tc)
                     new_dompart = tuple([frozenset(list(p_a) + [a._tc + e for e in p_b])
                                          for p_a, p_b in zip(a._dompart, b_dompart)])
+                    domain = range(1, n * a._tc + 1)
                 else:
                     f, f_dompart = (A ** (n // 2)).group_and_partition()
                     tc = sum(len(p) for p in f_dompart)
                     gens = f.gens() + shift_gens(f.gens(), tc)
                     new_dompart = tuple([frozenset(list(p) + [tc + e for e in p])
                                          for p in f_dompart])
+                    domain = range(1, 2 * tc + 1)
 
-                G = PermutationGroup(gens)
+                G = PermutationGroup(gens, domain=domain)
                 return G, new_dompart
 
             f_dompart_list = [(A ** n).group_and_partition() for A, n in factors]
