@@ -74,7 +74,6 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.rational_field import QQ
 from sage.rings.fraction_field import FractionField
 
-
 class MPolynomial_element(MPolynomial):
     r"""
     Generic multivariate polynomial.
@@ -802,12 +801,27 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         zero = self.parent().base_ring().zero()
         return self.element().get(exp, zero)
 
-    def dict(self):
+    def monomial_coefficients(self):
         """
         Return underlying dictionary with keys the exponents and values
         the coefficients of this polynomial.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.number_field
+            sage: R.<x,y,z> = PolynomialRing(QQbar, order='lex')
+            sage: f = (x^1*y^5*z^2 + x^2*z + x^4*y^1*z^3)
+            sage: f.monomial_coefficients()
+            {(1, 5, 2): 1, (2, 0, 1): 1, (4, 1, 3): 1}
+
+        ``dict`` is an alias::
+
+            sage: f.dict()  # needs sage.rings.number_field
+            {(1, 5, 2): 1, (2, 0, 1): 1, (4, 1, 3): 1}
         """
         return self.element().dict()
+
+    dict = monomial_coefficients
 
     def __iter__(self):
         """
@@ -1854,12 +1868,12 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             <class 'sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict'>
         """
         # handle division by monomials without using Singular
-        if len(right.dict()) == 1:
+        if len(right.monomial_coefficients()) == 1:
             P = self.parent()
             ret = P(0)
-            denC,denM = next(iter(right))
-            for c,m in self:
-                t = c*m
+            denC, denM = next(iter(right))
+            for c, m in self:
+                t = c * m
                 if denC.divides(c) and P.monomial_divides(denM, m):
                     ret += P.monomial_quotient(t, right, coeff=True)
             return ret
@@ -1915,7 +1929,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         if index == -1:
             # var is not a generator; do term-by-term differentiation recursively
             # var may be, for example, a generator of the base ring
-            d = {e: x._derivative(var) for e, x in self.dict().items()}
+            d = {e: x._derivative(var))
+                 for e, x in self.monomial_coefficients().items()}
             d = polydict.PolyDict(d, check=False)
             d.remove_zeros()
             return MPolynomial_polydict(P, d)
@@ -2012,7 +2027,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             # var is not a generator; do term-by-term integration recursively
             # var may be, for example, a generator of the base ring
             d = {e: x.integral(var)
-                 for e, x in self.dict().items()}
+                 for e, x in self.monomial_coefficients().items()}
             d = polydict.PolyDict(d, check=False)
             d.remove_zeros()
         else:

@@ -1403,7 +1403,7 @@ def unpickle_NCPolynomial_plural(NCPolynomialRing_plural R, d):
     cdef int _i, _e
     p = p_ISet(0,r)
     rChangeCurrRing(r)
-    for mon,c in d.iteritems():
+    for mon, c in d.items():
         m = p_Init(r)
         for i,e in mon.sparse_iter():
             _i = i
@@ -1671,7 +1671,7 @@ cdef class NCPolynomial_plural(RingElement):
         else:
             return (<NCPolynomialRing_plural>left._parent).fraction_field()(left,right)
 
-    def __pow__(NCPolynomial_plural self, exp, ignored):
+    def __pow__(NCPolynomial_plural self, exp, mod):
         """
         Return ``self**(exp)``.
 
@@ -1697,7 +1697,22 @@ cdef class NCPolynomial_plural(RingElement):
             Traceback (most recent call last):
             ....
             OverflowError: exponent overflow (2147483648)
+
+        Check that using third argument raises an error::
+
+            sage: A.<x,z,y> = FreeAlgebra(QQ, 3)
+            sage: P = A.g_algebra(relations={y*x:-x*y + z},  order='lex')
+            sage: P.inject_variables()
+            Defining x, z, y
+            sage: pow(x + y + z, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
         if type(exp) is not Integer:
             try:
                 exp = Integer(exp)
@@ -2202,6 +2217,9 @@ cdef class NCPolynomial_plural(RingElement):
 
             sage: f = (2*x*y^3*z^2 + (7)*x^2 + (3))
             sage: f.dict()
+            {(0, 0, 0): 3, (1, 2, 3): 2, (2, 0, 0): 7}
+
+            sage: f.monomial_coefficients()
             {(0, 0, 0): 3, (1, 2, 3): 2, (2, 0, 0): 7}
         """
         cdef poly *p

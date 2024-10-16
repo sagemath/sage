@@ -44,6 +44,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 from .element import DrinfeldModularFormsElement
 
+
 class DrinfeldModularForms(Parent, UniqueRepresentation):
     r"""
     Base class for the graded ring of Drinfeld modular forms.

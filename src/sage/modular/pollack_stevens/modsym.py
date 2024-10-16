@@ -114,6 +114,7 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
     Phi = ~(q ** (k + 1) + 1 - aq) * Phi
     return Phi
 
+
 class PSModSymAction(Action):
     def __init__(self, actor, MSspace):
         r"""
