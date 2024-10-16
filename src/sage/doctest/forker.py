@@ -716,16 +716,6 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 raise
             except BaseException:
                 exception = sys.exc_info()
-                # On Python 2, the exception lives in sys.exc_info() as
-                # long we are in the same stack frame. To ensure that
-                # sig_occurred() works correctly, we need to clear the
-                # exception. This is not an issue on Python 3, where the
-                # exception is cleared as soon as we are outside of the
-                # "except" clause.
-                try:
-                    sys.exc_clear()
-                except AttributeError:
-                    pass  # Python 3
             finally:
                 if self.debugger is not None:
                     self.debugger.set_continue()  # ==== Example Finished ====
