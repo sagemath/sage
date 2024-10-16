@@ -212,7 +212,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
 from sage.rings.real_mpfr import RR
-from sage.algebras.flag import Flag
+from sage.algebras.flag import Flag, Pattern
 
 from sage.categories.sets_cat import Sets
 
@@ -443,6 +443,13 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             Theory for Graph
         """
         return 'Theory for {}'.format(self._name)
+    
+    def pattern(self, n, **kwds):
+        return Pattern(self, n, **kwds)
+    
+    p = pattern
+    P = pattern
+    Pattern = pattern
     
     def _element_constructor_(self, n, **kwds):
         r"""

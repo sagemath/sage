@@ -340,7 +340,7 @@ cdef class Flag(Element):
             numbers.append(15)
         return numbers
     
-    cpdef subflag(self, points=None, ftype_points=None):
+    cpdef subflag(self, points=None, ftype_points=None, allow_reorder=False):
         r"""
         Returns the induced subflag.
         
@@ -384,11 +384,18 @@ cdef class Flag(Element):
         """
         if ftype_points==None:
             ftype_points = self._ftype_points
+        
         if points==None:
-            points = list(range(self._n))
+            if allow_reorder:
+                points = list(ftype_points) + [ii for ii in range(self._n) if ii not in ftype_points]
+            else:
+                points = list(range(self._n))
         else:
-            points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
-        if len(points)==self._n and ftype_points==self._ftype_points:
+            if allow_reorder:
+                points = list(ftype_points) + [ii for ii in points if (ii not in ftype_points)]
+            else:
+                points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
+        if (not allow_reorder) and len(points)==self._n and ftype_points==self._ftype_points:
             return self
         blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
         new_ftype_points = [points.index(ii) for ii in ftype_points]
@@ -1107,11 +1114,8 @@ cdef class Pattern(Element):
     cdef list _ftype_points
     cdef list _not_ftype_points
     cdef dict _blocks
-    cdef dict _blocks_optional
     
     cdef Flag _ftype
-    
-    cdef _theory
     
     def __init__(self, theory, n, **params):
         self._n = int(n)
@@ -1127,26 +1131,20 @@ cdef class Pattern(Element):
         self._ftype_points = list(ftype_points)
         self._not_ftype_points = None
         self._blocks = {}
-        self._blocks_optional = {}
         for xx in theory._signature.keys():
-            print("reading params ", xx)
             self._blocks[xx] = []
-            self._blocks_optional[xx+"_o"] = []
+            self._blocks[xx+"_o"] = []
             if xx in params:
-                self._blocks[xx] = [list(yy) for yy in params[xx]]
-                print("has ", xx, " the values are ", params[xx])
+                self._blocks[xx] = [sorted(list(yy)) for yy in params[xx]]
             
             for xx_opti in [xx+"_o", xx+"_optional", xx+"_opti"]:
                 if xx_opti in params:
-                    print("has optional ", xx_opti, " the values are ", params[xx_opti])
-                    xx_oblocks = [list(yy) for yy in params[xx_opti]]
+                    xx_oblocks = [sorted(list(yy)) for yy in params[xx_opti]]
                     for ed in xx_oblocks:
                         if len(_subblock_helper(self._ftype_points, xx_oblocks))!=0:
                             raise ValueError("Can't have optional blocks in ftype")
-                    self._blocks_optional[xx+"_o"] = xx_oblocks
-        print("final data is ", self._blocks, " and ", self._blocks_optional)
+                    self._blocks[xx+"_o"] = xx_oblocks
         self._ftype = None
-        self._theory = theory
         Element.__init__(self, theory)
     
     def _repr_(self):
@@ -1181,26 +1179,32 @@ cdef class Pattern(Element):
             numbers.append(15)
         return numbers
     
-    cpdef subpattern(self, points=None, ftype_points=None):
+    cpdef subpattern(self, points=None, ftype_points=None, allow_reorder=False):
         if ftype_points==None:
             ftype_points = self._ftype_points
+        
         if points==None:
-            points = list(range(self._n))
+            if allow_reorder:
+                points = list(ftype_points) + [ii for ii in range(self._n) if ii not in ftype_points]
+            else:
+                points = list(range(self._n))
         else:
-            points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
-        if len(points)==self._n and ftype_points==self._ftype_points:
+            if allow_reorder:
+                points = list(ftype_points) + [ii for ii in points if ii not in ftype_points]
+            else:
+                points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
+        if (not allow_reorder) and len(points)==self._n and ftype_points==self._ftype_points:
             return self
         if set(ftype_points)!=set(self._ftype_points):
             raise ValueError("Subflag for patterns is not defined with different ftype!")
         blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
-        blocks_optional = {xx: _subblock_helper(points, self._blocks_optional[xx]) for xx in self._blocks_optional.keys()}
         new_ftype_points = [points.index(ii) for ii in ftype_points]
-        return self.__class__(self._theory, len(points), ftype=new_ftype_points, **(blocks|blocks_optional))
+        return Pattern(self.parent(), len(points), ftype=new_ftype_points, **blocks)
 
     subflag = subpattern
     
     def combinatorial_theory(self):
-        return self._theory
+        return self.parent()
     
     theory = combinatorial_theory
     
@@ -1218,7 +1222,7 @@ cdef class Pattern(Element):
     vertex_number = size
     
     cpdef blocks(self, as_tuple=False, key=None):
-        reblocks = self._blocks | self._blocks_optional
+        reblocks = self._blocks
         if as_tuple:
             if key != None:
                 return tuple([tuple(yy) for yy in reblocks[key]])
@@ -1234,7 +1238,7 @@ cdef class Pattern(Element):
         if self._ftype==None:
             from sage.algebras.flag import Flag
             blocks = {xx: _subblock_helper(self._ftype_points, self._blocks[xx]) for xx in self._blocks.keys()}
-            self._ftype = Flag(self._theory, len(self._ftype_points), ftype=self._ftype_points, **blocks)
+            self._ftype = Flag(self.parent(), len(self._ftype_points), ftype=self._ftype_points, **blocks)
         return self._ftype
     
     cpdef ftype_points(self):
@@ -1288,22 +1292,21 @@ cdef class Pattern(Element):
             return False
         if self.ftype() != other.ftype():
             return False
-        cdef dict sblocks = self._blocks
-        cdef dict sblockso = self._blocks_optional
+        opattern = Pattern(self.parent(), other.size(), ftype=other.ftype_points(), **other.blocks())
+        cdef dict sb = self.blocks()
         print("comparing {} and {}".format(self, other))
         for perm in itertools.permutations(other.not_ftype_points(), len(self.not_ftype_points())):
-            opermed = other.subflag(points=perm)
-            print("curent permutatiton is ", perm, " giving subflag ", opermed)
-            oblocks = opermed.blocks()
-            try:
-                oblockso = opermed._blocks_optional
-            except:
-                oblockso = {xx+"_o":[] for xx in oblocks.keys()}
-            complist = [_block_compare(sblocks[xx], sblockso[xx+"_o"], oblocks[xx], oblockso[xx+"_o"]) for xx in sblocks.keys()]
-            print("comparing each signature gives ", complist)
-            if all(complist):
+            opermed = opattern.subpattern(points=perm, allow_reorder=True)
+            ob = opermed.blocks()
+            
+            res = all([_block_compare(sb[xx], sb[xx+"_o"], ob[xx], ob[xx+"_o"]) for xx in self.parent().signature().keys()])
+            print("perm {} gives {} and compat? {}".format(perm, opermed, res))
+            if all([_block_compare(sb[xx], sb[xx+"_o"], ob[xx], ob[xx+"_o"]) for xx in self.parent().signature().keys()]):
                 return True
         return False 
     
-    cpdef compatible_flags(self):
-        return [xx for xx in self._theory.generate_flags(self._n) if self.is_compatible(xx)]
+    def compatible_flags(self):
+        ss = self
+        if len(self.ftype_points())!=0:
+            ss = self.subpattern(allow_reorder=True)
+        return [xx for xx in ss.parent().generate_flags(ss.size(), ss.ftype()) if ss.is_compatible(xx)]
