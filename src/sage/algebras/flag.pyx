@@ -1099,7 +1099,7 @@ cdef class Flag(Element):
         return (len(n1flgs), len(n2flgs), ret, valid_ftypes, valid_flag_pairs, correct_ftypes)
 
 
-cdef class Pattern:
+cdef class Pattern(Element):
     
     cdef int _n
     cdef int _ftype_size
@@ -1129,33 +1129,34 @@ cdef class Pattern:
         self._blocks = {}
         self._blocks_optional = {}
         for xx in theory._signature.keys():
+            print("reading params ", xx)
             self._blocks[xx] = []
-            self._blocks_optional[xx] = []
+            self._blocks_optional[xx+"_o"] = []
             if xx in params:
                 self._blocks[xx] = [list(yy) for yy in params[xx]]
+                print("has ", xx, " the values are ", params[xx])
             
-            for xx_opti in [xx+"_o", xx+"_optional", xx+"_opti", "o_"+xx, "optional_"+xx, "opti_"+xx]:
+            for xx_opti in [xx+"_o", xx+"_optional", xx+"_opti"]:
                 if xx_opti in params:
+                    print("has optional ", xx_opti, " the values are ", params[xx_opti])
                     xx_oblocks = [list(yy) for yy in params[xx_opti]]
                     for ed in xx_oblocks:
                         if len(_subblock_helper(self._ftype_points, xx_oblocks))!=0:
                             raise ValueError("Can't have optional blocks in ftype")
-                    self._blocks_optional[xx] = xx_oblocks
-                    break
+                    self._blocks_optional[xx+"_o"] = xx_oblocks
+        print("final data is ", self._blocks, " and ", self._blocks_optional)
         self._ftype = None
         self._theory = theory
-        #Element.__init__(self, theory)
+        Element.__init__(self, theory)
     
     def _repr_(self):
-        #TODO
         blocks = self.blocks()
-        strblocks = ', '.join([xx+'='+str(blocks[xx]) for xx in blocks.keys()])
-        if self.is_ftype():
-            return 'Ftype on {} points with {}'.format(self.size(), strblocks)
-        return 'Flag on {} points, ftype from {} with {}'.format(self.size(), self.ftype_points(), strblocks)
+        strblocks = ', '.join([xx+'='+str(blocks[xx]) for xx in blocks.keys() if not (len(blocks[xx])==0 and "_o" in xx)])
+        return 'Pattern on {} points, ftype from {} with {}'.format(self.size(), self.ftype_points(), strblocks)
+    
+    __str__ = __repr__
     
     def compact_repr(self):
-        #TODO
         blocks = self.blocks()
         ret = ["n:{}".format(self.size())]
         if len(self._ftype_points)!=0:
@@ -1172,7 +1173,6 @@ cdef class Pattern:
             
     
     def raw_numbers(self):
-        #TODO
         numbers = [self.size()] + self.ftype_points() + [15]
         blocks = self.blocks()
         for xx in blocks:
@@ -1232,8 +1232,7 @@ cdef class Pattern:
 
     cpdef ftype(self):
         if self._ftype==None:
-            if self.is_ftype():
-                self._ftype = self
+            from sage.algebras.flag import Flag
             blocks = {xx: _subblock_helper(self._ftype_points, self._blocks[xx]) for xx in self._blocks.keys()}
             self._ftype = Flag(self._theory, len(self._ftype_points), ftype=self._ftype_points, **blocks)
         return self._ftype
@@ -1291,16 +1290,20 @@ cdef class Pattern:
             return False
         cdef dict sblocks = self._blocks
         cdef dict sblockso = self._blocks_optional
+        print("comparing {} and {}".format(self, other))
         for perm in itertools.permutations(other.not_ftype_points(), len(self.not_ftype_points())):
             opermed = other.subflag(points=perm)
+            print("curent permutatiton is ", perm, " giving subflag ", opermed)
             oblocks = opermed.blocks()
             try:
                 oblockso = opermed._blocks_optional
             except:
-                oblockso = {xx:[] for xx in oblocks.keys()}
-            if all([_block_compare(sblocks[xx], sblockso[xx], oblocks[xx], oblockso[xx]) for xx in sblocks.keys()]):
+                oblockso = {xx+"_o":[] for xx in oblocks.keys()}
+            complist = [_block_compare(sblocks[xx], sblockso[xx+"_o"], oblocks[xx], oblockso[xx+"_o"]) for xx in sblocks.keys()]
+            print("comparing each signature gives ", complist)
+            if all(complist):
                 return True
         return False 
-
+    
     cpdef compatible_flags(self):
         return [xx for xx in self._theory.generate_flags(self._n) if self.is_compatible(xx)]
