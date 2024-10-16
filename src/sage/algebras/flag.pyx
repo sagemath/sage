@@ -177,8 +177,8 @@ cpdef _subblock_helper(list points, list block):
     
     TESTS::
 
-        sage: _subblock_helped([0, 2], [[0, 1, 2], [2, 4], [1, 1, 2]])
-        [[0, 1, 2]]
+        sage: _subblock_helper([0, 1, 2], [[0, 1, 2], [2, 4], [1, 1, 2]])
+        [[0, 1, 2], [1, 1, 2]]
     """
     cdef bint gd = 0
     ret = []
@@ -193,6 +193,16 @@ cpdef _subblock_helper(list points, list block):
         if gd:
             ret.append([points.index(ii) for ii in xx])
     return ret
+
+cpdef _block_compare(list block0, list allowed0, list block1, list allowed1):
+    for xx in allowed1:
+        if xx not in allowed0:
+            return False
+    symdiff = [xx for xx in block0 if xx not in block1] + [xx for xx in block1 if xx not in block0]
+    for xx in symdiff:
+        if xx not in allowed0:
+            return False
+    return True
 
 cdef class Flag(Element):
     
@@ -1087,3 +1097,210 @@ cdef class Flag(Element):
                         except:
                             ret[(n1_ind, n2_ind)] = 1
         return (len(n1flgs), len(n2flgs), ret, valid_ftypes, valid_flag_pairs, correct_ftypes)
+
+
+cdef class Pattern:
+    
+    cdef int _n
+    cdef int _ftype_size
+    
+    cdef list _ftype_points
+    cdef list _not_ftype_points
+    cdef dict _blocks
+    cdef dict _blocks_optional
+    
+    cdef Flag _ftype
+    
+    cdef _theory
+    
+    def __init__(self, theory, n, **params):
+        self._n = int(n)
+        
+        if 'ftype_points' in params:
+            ftype_points = params['ftype_points']
+        elif 'ftype' in params:
+            ftype_points = params['ftype']
+        else:
+            ftype_points = []
+        
+        self._ftype_size = len(ftype_points)
+        self._ftype_points = list(ftype_points)
+        self._not_ftype_points = None
+        self._blocks = {}
+        self._blocks_optional = {}
+        for xx in theory._signature.keys():
+            self._blocks[xx] = []
+            self._blocks_optional[xx] = []
+            if xx in params:
+                self._blocks[xx] = [list(yy) for yy in params[xx]]
+            
+            for xx_opti in [xx+"_o", xx+"_optional", xx+"_opti", "o_"+xx, "optional_"+xx, "opti_"+xx]:
+                if xx_opti in params:
+                    xx_oblocks = [list(yy) for yy in params[xx_opti]]
+                    for ed in xx_oblocks:
+                        if len(_subblock_helper(self._ftype_points, xx_oblocks))!=0:
+                            raise ValueError("Can't have optional blocks in ftype")
+                    self._blocks_optional[xx] = xx_oblocks
+                    break
+        self._ftype = None
+        self._theory = theory
+        #Element.__init__(self, theory)
+    
+    def _repr_(self):
+        #TODO
+        blocks = self.blocks()
+        strblocks = ', '.join([xx+'='+str(blocks[xx]) for xx in blocks.keys()])
+        if self.is_ftype():
+            return 'Ftype on {} points with {}'.format(self.size(), strblocks)
+        return 'Flag on {} points, ftype from {} with {}'.format(self.size(), self.ftype_points(), strblocks)
+    
+    def compact_repr(self):
+        #TODO
+        blocks = self.blocks()
+        ret = ["n:{}".format(self.size())]
+        if len(self._ftype_points)!=0:
+            ret.append("t:"+"".join(map(str, self._ftype_points)))
+        for name in self.theory()._signature.keys():
+            desc = name + ":"
+            arity = self.theory()._signature[name]
+            if arity==1:
+                desc += "".join([str(xx[0]) for xx in blocks[name]])
+            else:
+                desc += ",".join(["".join(map(str, ed)) for ed in blocks[name]])
+            ret.append(desc)
+        return "; ".join(ret)
+            
+    
+    def raw_numbers(self):
+        #TODO
+        numbers = [self.size()] + self.ftype_points() + [15]
+        blocks = self.blocks()
+        for xx in blocks:
+            for yy in blocks[xx]:
+                numbers += yy
+            numbers.append(15)
+        return numbers
+    
+    cpdef subpattern(self, points=None, ftype_points=None):
+        if ftype_points==None:
+            ftype_points = self._ftype_points
+        if points==None:
+            points = list(range(self._n))
+        else:
+            points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
+        if len(points)==self._n and ftype_points==self._ftype_points:
+            return self
+        if set(ftype_points)!=set(self._ftype_points):
+            raise ValueError("Subflag for patterns is not defined with different ftype!")
+        blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
+        blocks_optional = {xx: _subblock_helper(points, self._blocks_optional[xx]) for xx in self._blocks_optional.keys()}
+        new_ftype_points = [points.index(ii) for ii in ftype_points]
+        return self.__class__(self._theory, len(points), ftype=new_ftype_points, **(blocks|blocks_optional))
+
+    subflag = subpattern
+    
+    def combinatorial_theory(self):
+        return self._theory
+    
+    theory = combinatorial_theory
+    
+    def as_flag_algebra_element(self, basis=QQ):
+        return sum(self.compatible_flags())
+    
+    afae = as_flag_algebra_element
+    
+    def as_operand(self):
+        return self.afae(QQ)
+    
+    def size(self):
+        return self._n
+    
+    vertex_number = size
+    
+    cpdef blocks(self, as_tuple=False, key=None):
+        reblocks = self._blocks | self._blocks_optional
+        if as_tuple:
+            if key != None:
+                return tuple([tuple(yy) for yy in reblocks[key]])
+            ret = {}
+            for xx in reblocks:
+                ret[xx] = tuple([tuple(yy) for yy in reblocks[xx]])
+            return ret
+        if key!=None:
+            return reblocks[key]
+        return reblocks
+
+    cpdef ftype(self):
+        if self._ftype==None:
+            if self.is_ftype():
+                self._ftype = self
+            blocks = {xx: _subblock_helper(self._ftype_points, self._blocks[xx]) for xx in self._blocks.keys()}
+            self._ftype = Flag(self._theory, len(self._ftype_points), ftype=self._ftype_points, **blocks)
+        return self._ftype
+    
+    cpdef ftype_points(self):
+        return self._ftype_points
+    
+    cpdef not_ftype_points(self):
+        if self._not_ftype_points != None:
+            return self._not_ftype_points
+        self._not_ftype_points = [ii for ii in range(self.size()) if ii not in self._ftype_points]
+        return self._not_ftype_points
+    
+    def is_ftype(self):
+        return False
+
+    def _add_(self, other):
+        if self.ftype()!=other.ftype():
+            raise TypeError("The terms must have the same ftype")
+        return self.afae()._add_(other.afae())
+    
+    def _sub_(self, other):
+        if self.ftype()!=other.ftype():
+            raise TypeError("The terms must have the same ftype")
+        return self.afae()._sub_(other.afae())
+    
+    def _mul_(self, other):
+        if self.ftype()!=other.ftype():
+            raise TypeError("The terms must have the same ftype")
+        return self.afae()._mul_(other.afae())
+    
+    def __lshift__(self, amount):
+        return self.afae().__lshift__(amount)
+    
+    def __truediv__(self, other):
+        return self.afae().__truediv__(other)
+    
+    def project(self, ftype_inj=tuple()):
+        return self.afae().project(ftype_inj)
+    
+    def mul_project(self, other, ftype_inj=tuple()):
+        return self.afae().mul_project(other, ftype_inj)
+    
+    def density(self, other):
+        safae = self.afae()
+        oafae = safae.parent(other)
+        return self.afae().density(other)
+
+    cpdef is_compatible(self, other):
+        if self._n > other.size():
+            return False
+        if self.theory() != other.theory():
+            return False
+        if self.ftype() != other.ftype():
+            return False
+        cdef dict sblocks = self._blocks
+        cdef dict sblockso = self._blocks_optional
+        for perm in itertools.permutations(other.not_ftype_points(), len(self.not_ftype_points())):
+            opermed = other.subflag(points=perm)
+            oblocks = opermed.blocks()
+            try:
+                oblockso = opermed._blocks_optional
+            except:
+                oblockso = {xx:[] for xx in oblocks.keys()}
+            if all([_block_compare(sblocks[xx], sblockso[xx], oblocks[xx], oblockso[xx]) for xx in sblocks.keys()]):
+                return True
+        return False 
+
+    cpdef compatible_flags(self):
+        return [xx for xx in self._theory.generate_flags(self._n) if self.is_compatible(xx)]

@@ -207,8 +207,7 @@ import itertools
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.structure.element import CommutativeAlgebraElement
-from sage.rings.ring import CommutativeAlgebra
+from sage.structure.element import Element
 from sage.rings.rational_field import QQ
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.rings.integer import Integer
@@ -495,6 +494,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
             :func:`__init__` of :class:`Flag`
         """
+        if n==0:
+            #this is needed for sum to work
+            alg = FlagAlgebra(QQ, self)
+            return alg(0)
         if n in self.sizes():
             return self.element_class(self, n, **kwds)
         raise ValueError("For theory {}, size {} is not allowed.".format(self._name, n))
@@ -1986,7 +1989,7 @@ def _fraction_print(val, thr=20):
     else:
         return str(val)
 
-class FlagAlgebraElement(CommutativeAlgebraElement):
+class FlagAlgebraElement(Element):
     def __init__(self, parent, n, values):
         r"""
         Initialize a Flag Algebra Element
@@ -2015,7 +2018,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         base = parent.base()
         self._values = vector(base, values, sparse=True)
         self._ftype = parent.ftype()
-        CommutativeAlgebraElement.__init__(self, parent)
+        Element.__init__(self, parent)
     
     def ftype(self):
         r"""
@@ -2736,7 +2739,7 @@ class FlagAlgebraElement(CommutativeAlgebraElement):
         v2 = (other<<(nm-other.size())).values()
         return all([richcmp(v1[ii], v2[ii], op) for ii in range(len(v1))])
 
-class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
+class FlagAlgebra(Parent, UniqueRepresentation):
     def __init__(self, base, theory, ftype=None):
         r"""
         Initialize a FlagAlgebra
@@ -2775,10 +2778,9 @@ class FlagAlgebra(CommutativeAlgebra, UniqueRepresentation):
                 raise ValueError('{} is not a part of {}'.format(ftype, theory))
         if not base.has_coerce_map_from(QQ):
             raise ValueError('The base must contain the rationals')
-        
         self._theory = theory
         self._ftype = ftype
-        CommutativeAlgebra.__init__(self, base)
+        Parent.__init__(self, base)
     
     Element = FlagAlgebraElement
     
