@@ -2107,6 +2107,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: js = hilbert_class_polynomial(-23).roots(L, multiplicities=False)
             sage: E = EllipticCurve(j=choice(js))
             sage: len(list(E.isogenies_degree(2^3)))                                    # long time (9s)
+            10
 
         TESTS::
 
