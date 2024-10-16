@@ -334,7 +334,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
             primes = set(arg1)
             if not all([p.is_prime() for p in primes]):
                 raise ValueError("quaternion algebra constructor requires a list of primes specifying the ramification")
-            if is_RationalField(K):
+            if isinstance(K, RationalField):
                 if len(arg2) > 1 or (len(arg2) == 1 and is_odd(len(primes) + 2*arg2[0])):
                     raise ValueError("quaternion algebra over the rationals must have an even number of ramified places")
                 D = ZZ.ideal_monoid().prod(primes).gen()
