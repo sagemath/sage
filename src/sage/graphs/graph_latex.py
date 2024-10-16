@@ -207,7 +207,6 @@ document.::
     %
     \end{tikzpicture}
 
-
 EXAMPLES:
 
 This example illustrates switching between the built-in styles when using the
