@@ -8042,7 +8042,7 @@ cdef class Matroid(SageObject):
             sage: M = matroids.Wheel(2)
             sage: A = M.chow_ring(R=ZZ, augmented=False); A
             Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements with 5 bases
-            sage: A.defining_ideal()._gens_constructor()
+            sage: A.defining_ideal()._gens_constructor(A.defining_ideal().ring())
             (A23, A23, A23)
             sage: A23 = A.gen(0)
             sage: A23*A23
