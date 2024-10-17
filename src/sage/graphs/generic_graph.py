@@ -961,7 +961,9 @@ class GenericGraph(GenericGraph_pyx):
         - ``prog`` -- string (default: ``'dot'``) the program used for the
           layout corresponding to one of the software of the graphviz
           suite: 'dot', 'neato', 'twopi', 'circo' or 'fdp'.
-        - ``rankdir`` -- string (default: ``'down'``)
+        - ``rankdir`` -- string (default: ``'down'``), direction of graph layout
+          when prog is ``'dot'``, possible values are  ``'down'``,
+          ``'up'``, ``'right'`` and ``'left'``.
         - ``subgraph_clusters`` -- (default: ``[]``) a list of lists of
           vertices, if supported by the layout engine, nodes belonging to
           the same cluster subgraph are drawn together, with the entire
