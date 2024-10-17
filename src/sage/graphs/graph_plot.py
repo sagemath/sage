@@ -499,18 +499,6 @@ class GraphPlot(SageObject):
             g = graphs.PathGraph(4)
             P = g.graphplot(vertex_labels=lambda x: str(x % 2))
             sphinx_plot(P)
-            
-        For circular layout graphs, you may shift the vertex label using coordinates::
-
-            sage: g = graphs.CubeGraph(4)
-            sage: g.plot(layout='circular', vertex_label_shift=(15, 10))
-            Launched png viewer for Graphics object consisting of 49 graphics primitives
-        
-        .. PLOT::
-
-            g = graphs.CubeGraph(4)
-            P = g.graphplot(layout='circular', vertex_label_shift=(15, 10))
-            sphinx_plot(P)
         """
         # Handle base vertex options
         voptions = {}
@@ -1248,6 +1236,31 @@ class GraphPlot(SageObject):
             for u, v, l in D.edges(sort=True):
                 D.set_edge_label(u, v, f'({u},{v})')
             sphinx_plot(D.graphplot(edge_labels=True, layout='circular'))
+        
+        For graphs with ``circular`` layouts, one may shift the vertex labels by
+        specifying coordinates to shift by::
+
+            sage: D = DiGraph({
+            ....:     0: [1, 10, 19], 1: [8, 2], 2: [3, 6], 3: [19, 4],
+            ....:     4: [17, 5], 5: [6, 15], 6: [7], 7: [8, 14], 8: [9],
+            ....:     9: [10, 13], 10: [11], 11: [12, 18], 12: [16, 13],
+            ....:     13: [14], 14: [15], 15: [16], 16: [17], 17: [18],
+            ....:     18: [19], 19: []})
+            sage: for u, v, l in D.edges(sort=True):
+            ....:     D.set_edge_label(u, v, f'({u},{v})')
+            sage: D.graphplot(edge_labels=True, layout='circular', vertex_label_shift=(15,10)).show()
+
+        .. PLOT::
+
+            D = DiGraph({
+                0: [1, 10, 19], 1: [8, 2], 2: [3, 6], 3: [19, 4],
+                4: [17, 5], 5: [6, 15], 6: [7], 7: [8, 14], 8: [9],
+                9: [10, 13], 10: [11], 11: [12, 18], 12: [16, 13],
+                13: [14], 14: [15], 15: [16], 16: [17], 17: [18],
+                18: [19], 19: []})
+            for u, v, l in D.edges(sort=True):
+                D.set_edge_label(u, v, f'({u},{v})')
+            sphinx_plot(D.graphplot(edge_labels=True, layout='circular', vertex_label_shift=(15,10)))
 
         This example shows off the coloring of edges::
 
@@ -1337,6 +1350,17 @@ class GraphPlot(SageObject):
             g = Graph({0: [1], 1: [2], 2: [3], 3: [4], 4: [0]})
             P = g.graphplot(pos=pos, layout='spring', iterations=0).plot()
             sphinx_plot(P)
+
+        ::
+
+            sage: D = graphs.CubeGraph(3)
+            sage: D.graphplot(layout='planar').plot()
+            Launched png viewer for Graphics object consisting of 21 graphics primitives
+        
+        .. PLOT::
+
+            D = graphs.CubeGraph(3)
+            sphinx_plot(D.graphplot(layout='planar'))
 
         ::
 
