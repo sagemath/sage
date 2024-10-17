@@ -1057,8 +1057,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: G
             Looped multi-digraph on 27 vertices
             sage: C = G.strongly_connected_components()
-            sage: tikz = G.tikz(subgraph_clusters=C)    # optional - dot2tex graphviz
-            sage: _ = tikz.pdf()      # not tested
+            sage: tikz = G.tikz(subgraph_clusters=C)    # optional - dot2tex graphviz       # long time
+            sage: tikz.add_usepackage('amstext')        # optional - dot2tex graphviz       # long time
+            sage: _ = tikz.pdf()                        # optional - dot2tex graphviz latex # long time
 
         An example coming from ``graphviz_string`` documentation in SageMath::
 
