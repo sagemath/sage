@@ -2658,7 +2658,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             [<KnotInfo.K6_1: '6_1'>, <KnotInfo.K6_2: '6_2'>, <KnotInfo.K6_3: '6_3'>]
         """
         from sage.rings.integer import Integer
-        if not type(item) in (int, Integer):
+        if type(item) not in (int, Integer):
             raise ValueError('item must be an integer')
         l = self.list()
         max_item = len(l)
@@ -2701,7 +2701,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             return self[item]
 
         from sage.rings.integer import Integer
-        if not type(item) in (int, Integer):
+        if type(item) not in (int, Integer):
             raise ValueError('item must be an integer')
         l = self.list()
         max_item = len(l) + 1
