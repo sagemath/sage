@@ -2612,7 +2612,10 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         n = ZZ.one()
         no_progress = 0
         for p in Primes():
-            f,_ = K.defining_polynomial().change_ring(GF(p)).factor()[0]
+            try:
+                f,_ = K.defining_polynomial().change_ring(GF(p)).factor()[0]
+            except ZeroDivisionError:
+                continue
             F = GF(p).extension(f,'t')
             red = lambda elt: F(f.parent()(poly(elt)).change_ring(GF(p)) % f)
 
