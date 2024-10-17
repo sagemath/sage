@@ -220,6 +220,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
         if algorithm != 'constructed':
             return super().groebner_basis(algorithm=algorithm, *args, **kwargs)
         flats = sorted(list(self._flats_generator), key=len)
+        ranks = {F: self._matroid.rank(F) for F in flats}
         gb = list()
         R = self.ring()
         reln = lambda x,y: x <= y
@@ -231,13 +232,12 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             for x in subset:
                 term *= flats_gen[x]
             gb.append(term)
-        for i in range(len(flats)): #Reduced groebner basis by computing the sum first and then the product
+        for F in flats: #Reduced groebner basis by computing the sum first and then the product
             term = R.zero()
-            for j in range(i+1, len(flats)):
-                term += flats_gen[flats[j]]
-            for j in range(i):
-                if term != R.zero():
-                    gb.append(flats_gen[flats[j]]*(term)**(self._matroid.rank(flats[i]) - self._matroid.rank(flats[j])))
+            for G in lattice_flats.order_filter([F]):
+                term += flats_gen[G]
+            for G in lattice_flats.order_ideal([F]):
+                gb.append(flats_gen[G]*(term)**(ranks[F] - ranks[G]))
         g_basis = PolynomialSequence(R, [gb])
         return g_basis
 
