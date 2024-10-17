@@ -202,28 +202,15 @@ class ChowRing(QuotientRing_generic):
                                 max_powers.append(ranks[subset[i]])
                             else:
                                 max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
+                        ranges = [range(1, p) for p in max_powers]
+                        ranges[0] = range(1, max_powers[0] + 1)
                         first_rank = ranks[subset[k-1]] + 1
-                        last_rank = ranks[subset[0]]
-                        for combination in product(*(range(1, p) for p in max_powers)):
+                        for combination in product(*(r for r in ranges)):
                             #Generating combinations for all powers from 1 to max_powers
-                            if sum(combination) == first_rank:
+                            if sum(combination) <= first_rank:
                                 expression = R.one()
                                 for i in range(k):
                                     expression *= flats_gen[subset[i]]**combination[i]
-                                monomial_basis.append(expression)
-                        max_powers[0] = 0
-                        for combination in product(*(range(1, p) for p in max_powers)):
-                            #Generating all combinations including 0 power and max_power for first flat
-                            if sum(combination) <= first_rank:
-                                expression = R.one()
-                                for i in range(len(combination)):
-                                    expression *= flats_gen[subset[i]]**combination[i]
-                                monomial_basis.append(expression)
-                            else:
-                                expression *= flats_gen[subset[0]]**last_rank
-                                if sum(combination) + last_rank == first_rank:
-                                    for i in range(k):
-                                        expression *= flats_gen[subset[i]]**combination[i]
                                 monomial_basis.append(expression)
 
         else:
