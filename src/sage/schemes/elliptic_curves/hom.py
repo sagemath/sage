@@ -1186,7 +1186,8 @@ def compare_via_evaluation(left, right):
     elif isinstance(F, number_field_base.NumberField):
         for _ in range(100):
             P = E.lift_x(F.random_element(), extend=True)
-            if P._has_order_at_least(4*d + 1):
+            if P._has_order_at_least(4*d + 1, attempts=50):
+            # if P.height(precision=250) == 0:  # slow sometimes
                 return left._eval(P) == right._eval(P)
         else:
             assert False, "couldn't find a point of large enough order"

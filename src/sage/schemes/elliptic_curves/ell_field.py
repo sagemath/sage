@@ -2085,9 +2085,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E = EllipticCurve(QQ, [0, 1, 0, -2, 0])
             sage: len(list(E.isogenies_degree(2**1)))
             3
-            sage: len(list(E.isogenies_degree(2**9)))
+            sage: len(list(E.isogenies_degree(2**5)))
             3
-            sage: len(list(E.isogenies_degree(2**10)))
+            sage: len(list(E.isogenies_degree(2**8)))                                   # long time (8s)
             1
 
         ::
@@ -2097,7 +2097,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E = EllipticCurve(j=-7072/1127*a + 2016)
             sage: len(list(E.isogenies_degree(2)))
             3
-            sage: len(list(E.isogenies_degree(2**5)))                                   # long time (4s)
+            sage: len(list(E.isogenies_degree(2**5)))
             3
 
         ::

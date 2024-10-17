@@ -2598,15 +2598,21 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         from sage.sets.primes import Primes
         from sage.rings.finite_rings.finite_field_constructor import GF
-        if self.curve().base_field().absolute_degree() > 1:
+        field_deg = self.curve().base_field().absolute_degree()
+        if field_deg > 1:
             K = self.curve().base_field().absolute_field('T')
             _, iso = K.structure()
             E = self.curve().change_ring(iso)
             P = self.change_ring(iso)
             poly = lambda elt: elt.polynomial()
+            if field_deg == 2:
+                # Kamienny-Kenku-Momose
+                bound = min(bound, 18 + 1)
         else:
             K, E, P = QQ, self.curve(), self
             poly = lambda elt: QQ['x'](elt)
+            # Mazur
+            bound = min(bound, 12 + 1)
         assert P.curve() is E
 
         n = ZZ.one()
