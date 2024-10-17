@@ -8041,32 +8041,30 @@ cdef class Matroid(SageObject):
 
             sage: M = matroids.Wheel(2)
             sage: A = M.chow_ring(R=ZZ, augmented=False); A
-            Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements
-             with 5 bases over Integer Ring
-            sage: A._gens_constructor()                                                              # needs sage.libs.singular
+            Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements with 5 bases
+            sage: A.defining_ideal()._gens_constructor()
             (A23, A23, A23)
-            sage: A23 = A.gen(0)                                                        # needs sage.libs.singular
-            sage: A23*A23                                                               # needs sage.libs.singular
+            sage: A23 = A.gen(0)
+            sage: A23*A23
             0
 
         We construct a more interesting example using the Fano matroid::
 
             sage: M = matroids.catalog.Fano()
             sage: A = M.chow_ring(QQ, augmented=False); A
-            Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
-            type (3, 0) over Rational Field.
+            Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
 
         The augmented Chow ring can also be constructed with the
         Feitchner-Yuzvinsky and atom-free presentation::
 
             sage: M = matroids.Wheel(3)
-            sage: ch = M.chow_ring(QQ, augmented=True, presentation='fy')
+            sage: ch = M.chow_ring(QQ, augmented=True, presentation='fy'); ch
             Augmented Chow ring of Wheel(3): Regular matroid of rank 3 on
-            6 elements with 16 bases of Feitchner-Yuzvinsky presentation
+            6 elements with 16 bases in Feitchner-Yuzvinsky presentation
             sage: M = matroids.Uniform(3, 6)
-            sage: ch = M.chow_ring(QQ, augmented=True, presentation='atom-free')
+            sage: ch = M.chow_ring(QQ, augmented=True, presentation='atom-free'); ch
             Augmented Chow ring of U(3, 6): Matroid of rank 3 on 6 elements with circuit-closures
-            {3: {{0, 1, 2, 3, 4, 5}}} of atom-free presentation
+            {3: {{0, 1, 2, 3, 4, 5}}} in atom-free presentation
         """
         from sage.matroids.chow_ring import ChowRing
         return ChowRing(M=self, R=R, augmented=augmented, presentation=presentation)
