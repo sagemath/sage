@@ -1135,7 +1135,7 @@ def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check
     - ``C`` -- the matrix described above
     - ``D`` -- the matrix described above
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the resulting
-      matrix is Hadamard before returing it
+      matrix is Hadamard before returning it
 
     EXAMPLES::
 
@@ -1302,7 +1302,7 @@ def _get_baumert_hall_units(n, existence=False):
 
     - ``n`` -- integer; the size of the Baumert-Hall units
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check whether
-      the units can be contructed
+      the units can be constructed
 
     OUTPUT:
 

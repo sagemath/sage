@@ -1198,7 +1198,7 @@ class NorthwestDiagrams(Diagrams):
         Combinatorial northwest diagrams
 
     Additionally, there are natural constructions of a northwest diagram
-    given the data of a permutation (Rothe diagrams are the protypical example
+    given the data of a permutation (Rothe diagrams are the prototypical example
     of northwest diagrams), or the data of a partition of an integer, or a
     skew partition.
 
