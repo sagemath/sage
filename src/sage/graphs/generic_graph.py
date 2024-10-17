@@ -952,7 +952,11 @@ class GenericGraph(GenericGraph_pyx):
           dot2tex is present, otherwise it is set to ``'tkz_graph'``.
         - ``edge_labels`` -- bool (default: ``None``), if ``None``
           it is set to ``True`` if and only if format is ``'dot2tex'``
-        - ``color_by_label`` -- bool (default: ``False``)
+        - ``color_by_label`` -- boolean or dictionary or function (default:
+          ``False``); whether to color each edge with a different color
+          according to its label; the colors are chosen along a rainbow, unless
+          they are specified by a function or dictionary mapping labels to
+          colors;
         - ``use_sage_preamble`` -- bool (default: ``None``), if ``None``
           it is set to ``True`` if and only if format is ``'tkz_graph'``
 
@@ -991,9 +995,28 @@ class GenericGraph(GenericGraph_pyx):
 
         Using another value for ``prog``::
 
-            sage: tikz = g.tikz(prog='neato',        # long time (3s), optional - dot2tex graphviz
-            ....:               color_by_label=True)
+            sage: tikz = g.tikz(prog='neato')        # long time (1s), optional - dot2tex graphviz
             sage: _ = tikz.pdf()      # not tested
+
+        Using ``color_by_label`` with default rainbow colors::
+
+            sage: G = DiGraph({0: {1: 333, 2: 444}, 1: {0: 444}, 2: {0: 555}})
+            sage: t = G.tikz(color_by_label=True)   # optional - dot2tex graphviz        # long time
+            sage: _ = t.pdf(view=False)             # optional - dot2tex graphviz latex  # long time
+
+        Using ``color_by_label`` with colors given as a dictionary::
+
+            sage: G = DiGraph({0: {1: 333, 2: 444}, 1: {0: 444}, 2: {0: 555}})
+            sage: cbl = {333:'orange', 444: 'yellow', 555: 'purple'}
+            sage: t = G.tikz(color_by_label=cbl)   # optional - dot2tex graphviz        # long time
+            sage: _ = t.pdf(view=False)            # optional - dot2tex graphviz latex  # long time
+
+        Using ``color_by_label`` with colors given as a function::
+
+            sage: G = DiGraph({0: {1: -333, 2: -444}, 1: {0: 444}, 2: {0: 555}})
+            sage: cbl = lambda label:'green' if label >= 0 else 'orange'
+            sage: t = G.tikz(color_by_label=cbl)   # optional - dot2tex graphviz        # long time
+            sage: _ = t.pdf(view=False)            # optional - dot2tex graphviz latex  # long time
 
         Using another value for ``rankdir``::
 
