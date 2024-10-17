@@ -497,6 +497,18 @@ class GraphPlot(SageObject):
             g = graphs.PathGraph(4)
             P = g.graphplot(vertex_labels=lambda x: str(x % 2))
             sphinx_plot(P)
+            
+        For circular layout graphs, you may shift the vertex label using coordinates::
+
+            sage: g = graphs.CubeGraph(4)
+            sage: g.plot(layout='circular', vertex_label_shift=(15, 10))
+            Launched png viewer for Graphics object consisting of 49 graphics primitives
+        
+        .. PLOT::
+
+            g = graphs.CubeGraph(4)
+            P = g.graphplot(layout='circular', vertex_label_shift=(15, 10))
+            sphinx_plot(P)
         """
         # Handle base vertex options
         voptions = {}
@@ -1424,6 +1436,18 @@ class GraphPlot(SageObject):
 
         ::
 
+            sage: D = DiGraph({0:[1,2,3], 2:[1,4], 3:[0]})
+            sage: D.graphplot(label_fontsize=20).show()
+            Graphics object consisting of 8 graphics primitives
+
+        .. PLOT::
+
+            D = DiGraph({0:[1,2,3], 2:[1,4], 3:[0]})
+            sphinx_plot(D.graphplot(label_fontsize=20))
+
+
+        ::
+
             sage: D = DiGraph(multiedges=True, sparse=True)
             sage: for i in range(5):
             ....:   D.add_edge((i, i + 1, 'a'))
@@ -1471,6 +1495,26 @@ class GraphPlot(SageObject):
             ....:             edge_style='--'
             ....:            ).plot()
             Graphics object consisting of 22 graphics primitives
+
+        The ``edge_styles`` option may be provided if you need only certain edges
+        to have certain styles::
+
+            sage: GP.set_edges(edge_styles={'a':'dashed', 'g':'dotted'})
+            sage: GP.plot()
+            Graphics object consisting of 22 graphics primitives
+
+        .. PLOT::
+
+            g = Graph(loops=True, multiedges=True, sparse=True)
+            g.add_edges([(0, 0, 'a'), (0, 0, 'b'), (0, 1, 'c'),
+                         (0, 1, 'd'), (0, 1, 'e'), (0, 1, 'f'),
+                         (0, 1, 'f'), (2, 1, 'g'), (2, 2, 'h')])
+            GP = g.graphplot(vertex_size=100, edge_labels=True,
+                             color_by_label=True, edge_style='dashed')
+            GP.set_edges(edge_style='solid')
+            GP.set_edges(edge_color='black')
+            GP.set_edges(edge_styles={'a':'dashed', 'g':'dotted'})
+            sphinx_plot(GP)
 
         TESTS:
 
