@@ -227,6 +227,8 @@ graphplot_options.update({
         'cell in a different color; vertex_colors takes precedence.',
     'loop_size':
         'The radius of the smallest loop.',
+    'arrowsize':
+        'Size of arrows.',
     'dist':
         'The distance between multiedges.',
     'max_dist':
@@ -771,6 +773,10 @@ class GraphPlot(SageObject):
                 thickness_key_edges = k in self._graph.edges()
                 break
 
+        eoptions = {}
+        if 'arrowsize' in self._options:
+            eoptions['arrowsize'] = self._options['arrowsize']
+
         # Set labels param to add labels on the fly
         labels = False
         if self._options['edge_labels']:
@@ -959,14 +965,16 @@ class GraphPlot(SageObject):
                                       head=local_labels[2 * i][2], zorder=1,
                                       rgbcolor=local_labels[2 * i][1],
                                       linestyle=estyle,
-                                      thickness=ethickness
+                                      width=ethickness,
+                                      **eoptions
                                       ))
                             self._plot_components['edges'].append(
                                 arrow(path=[[even_start, even_xy(k), even_end]],
                                       head=local_labels[2 * i + 1][2], zorder=1,
                                       rgbcolor=local_labels[2 * i + 1][1],
                                       linestyle=estyle,
-                                      thickness=ethickness
+                                      width=ethickness,
+                                      **eoptions
                                       ))
                         else:
                             self._plot_components['edges'].append(
@@ -1016,7 +1024,9 @@ class GraphPlot(SageObject):
                           rgbcolor=ecolor,
                           head=ehead,
                           linestyle=estyle,
-                          thickness=ethickness))
+                          width=ethickness,
+                          **eoptions
+                          ))
                 if labels:
                     bg = self._options['edge_labels_background']
                     self._plot_components['edge_labels'].append(
@@ -1031,7 +1041,9 @@ class GraphPlot(SageObject):
                           arrowshorten=self._arrowshorten,
                           head=ehead,
                           linestyle=estyle,
-                          thickness=ethickness))
+                          width=ethickness,
+                          **eoptions
+                          ))
             else:
                 self._plot_components['edges'].append(
                     line([self._pos[a], self._pos[b]],
