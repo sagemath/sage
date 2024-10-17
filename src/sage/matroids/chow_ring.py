@@ -176,25 +176,19 @@ class ChowRing(QuotientRing_generic):
                     k = len(subset)
                     if k == 0:
                         monomial_basis.append(R.one())
-                    elif k == 1 & ranks[subset[0]] == 1:
-                        monomial_basis.append(flats_gen[subset[0]])
                     else:
                         max_powers = []
                         max_powers.append(ranks[subset[0]])
                         for i in range(1, k):
                             max_powers.append(ranks[subset[i]] - ranks[subset[i-1]])
-                        for p in max_powers:
-                            if p != 1 | p != 0:
-                                for combination in product((range(1, p))):
-                                        #Generating combinations for all powers up to max_powers
-                                        expression = R.one()
-                                        for i in range(k):
-                                            expression *= flats_gen[subset[i]]**combination[i]
-                                        monomial_basis.append(expression)
-                                        if max_powers.index(p) == 0:
-                                            #Generating combinations for all powers including first max_powers
-                                            expression *= flats_gen[subset[0]]**ranks[flats[0]]
-                                            monomial_basis.append(expression)
+                        ranges = [range(1, p) for p in max_powers]
+                        ranges[0] = range(1, max_powers[0] + 1)
+                        for combination in product(*(r for r in ranges)):
+                            #Generating combinations for all powers up to max_powers
+                            expression = R.one()
+                            for i in range(k):
+                                expression *= flats_gen[subset[i]]**combination[i]
+                            monomial_basis.append(expression)
 
             elif self._presentation == 'atom-free':
                 for subset in chains:
