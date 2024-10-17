@@ -85,7 +85,6 @@ class CDFInterpreter(StackInterpreter):
         self.c_header = ri(0,"""
             #include <stdlib.h>
             #include <complex.h>
-            #include "wrapper_cdf.h"
 
             /* On Solaris, we need to define _Imaginary_I when compiling with GCC,
              * otherwise the constant I doesn't work. The definition below is based

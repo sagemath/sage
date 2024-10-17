@@ -19,7 +19,6 @@ foreach name, pyx : extension_data
   py.extension_module(
     name,
     sources: pyx,
-    c_args: ['-D_XOPEN_SOURCE=600'],
     subdir: 'sage/stats/distributions',
     install: true,
     include_directories: [inc_cpython, inc_rings, inc_src],

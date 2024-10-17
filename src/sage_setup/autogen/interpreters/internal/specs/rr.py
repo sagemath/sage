@@ -148,7 +148,6 @@ class RRInterpreter(StackInterpreter):
             sage: print(interp.c_header)
             <BLANKLINE>
             #include <mpfr.h>
-            #include "wrapper_rr.h"
             <BLANKLINE>
 
         The function ``rr_py_call_helper`` is implemented in Cython::
@@ -188,7 +187,6 @@ class RRInterpreter(StackInterpreter):
         self.c_header = ri(0,
             '''
             #include <mpfr.h>
-            #include "wrapper_rr.h"
             ''')
 
         self.pxd_header = ri(0,

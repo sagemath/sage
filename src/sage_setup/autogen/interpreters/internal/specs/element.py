@@ -105,8 +105,6 @@ class ElementInterpreter(PythonInterpreter):
         self.chunks = [self.mc_args, self.mc_constants, self.mc_stack,
                        self.mc_domain_info, self.mc_code]
         self.c_header = ri(0, """
-            #include "wrapper_el.h"
-
             #define CHECK(x) do_check(&(x), domain)
 
             static inline int do_check(PyObject **x, PyObject *domain) {

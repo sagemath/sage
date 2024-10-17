@@ -10,11 +10,17 @@ interpreters = custom_target(
     'wrapper_rdf.pxd',
     'wrapper_rr.pxd',
     'wrapper_cc.pyx',
+    'interp_cc.c',
     'wrapper_cdf.pyx',
+    'interp_cdf.c',
     'wrapper_el.pyx',
+    'interp_el.c',
     'wrapper_py.pyx',
+    'interp_py.c',
     'wrapper_rdf.pyx',
+    'interp_rdf.c',
     'wrapper_rr.pyx',
+    'interp_rr.c',
     '__init__.py',
   ],
   input: '../../../sage_setup/autogen/interpreters/internal/__init__.py',
@@ -36,77 +42,16 @@ interpreters = custom_target(
 
 extension_data = {
   'wrapper_cc' : interpreters[7],
-  'wrapper_cdf' : interpreters[8],
-  'wrapper_el' : interpreters[9],
-  'wrapper_py' : interpreters[10],
-  'wrapper_rdf' : interpreters[11],
-  'wrapper_rr' : interpreters[12],
+  'wrapper_cdf' : interpreters[9],
+  'wrapper_el' : interpreters[11],
+  'wrapper_py' : interpreters[13],
+  'wrapper_rdf' : interpreters[15],
+  'wrapper_rr' : interpreters[17],
 }
 
-# Manually create header files, which otherwise are not found
-wrapper_el_header = custom_target(
-  'wrapper_el.h',
-  output: 'wrapper_el.h',
-  input: [interpreters[9], interpreters],
-  command: [
-    cython.cmd_array(),
-    '@INPUT0@',
-    '-o',
-    '@OUTPUT@',
-    '-I',
-    join_paths(meson.current_source_dir(), '../../../'),
-  ],
-)
-wrapper_cc_header = custom_target(
-  'wrapper_cc.h',
-  output: 'wrapper_cc.h',
-  input: [interpreters[7], interpreters],
-  command: [
-    cython.cmd_array(),
-    '@INPUT0@',
-    '-o',
-    '@OUTPUT@',
-    '-I',
-    join_paths(meson.current_source_dir(), '../../../'),
-  ],
-)
-wrapper_cdf_header = custom_target(
-  'wrapper_cdf.h',
-  output: 'wrapper_cdf.h',
-  input: [interpreters[8], interpreters],
-  command: [
-    cython.cmd_array(),
-    '@INPUT0@',
-    '-o',
-    '@OUTPUT@',
-    '-I',
-    join_paths(meson.current_source_dir(), '../../../'),
-  ],
-)
-wrapper_rr_header = custom_target(
-  'wrapper_rr.h',
-  output: 'wrapper_rr.h',
-  input: [interpreters[12], interpreters],
-  command: [
-    cython.cmd_array(),
-    '@INPUT0@',
-    '-o',
-    '@OUTPUT@',
-    '-I',
-    join_paths(meson.current_source_dir(), '../../../'),
-  ],
-)
-
 interpreters_dep = declare_dependency(
-  sources: [
-    wrapper_el_header,
-    wrapper_cc_header,
-    wrapper_cdf_header,
-    wrapper_rr_header,
-  ],
   include_directories: include_directories('.'),
 )
-
 
 foreach name, pyx : extension_data
   py.extension_module(
@@ -124,7 +69,6 @@ foreach name, pyx : extension_data
       mpc,
       mpfr,
       pari,
-      interpreters_dep,
     ],
   )
 endforeach

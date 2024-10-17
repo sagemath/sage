@@ -33,6 +33,8 @@ to the installed libraries:
     If you have previously build Sage in-place, you first have to delete the
     already compiled files, e.g. with ``shopt -s globstar`` followed by 
     ``rm src/**/*.so`` or ``for f in src/**/*.so ; do mv "$f" "$f.old"; done``.
+    Moreover, remove the old generated files with
+    ``find src/sage/ext/interpreters -type f ! -name 'meson.build' -delete``. 
     Also uninstall the 'old' sage packages with ``pip uninstall sage-conf sage-setup sagemath-standard``.
 
 To compile and install the project in editable install, just use::
