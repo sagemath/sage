@@ -941,9 +941,14 @@ class GenericGraph(GenericGraph_pyx):
 
     def tikz(self, format='dot2tex', edge_labels=None,
             color_by_label=False, prog='dot', rankdir='down',
+            standalone_config=None, usepackage=None,
+            usetikzlibrary=None, macros=None,
             use_sage_preamble=None, **kwds):
         r"""
         Return a TikzPicture of the graph.
+
+        If graphviz and dot2tex are available, it uses these packages for
+        placements of vertices and edges.
 
         INPUT:
 
@@ -957,8 +962,6 @@ class GenericGraph(GenericGraph_pyx):
           according to its label; the colors are chosen along a rainbow, unless
           they are specified by a function or dictionary mapping labels to
           colors;
-        - ``use_sage_preamble`` -- bool (default: ``None``), if ``None``
-          it is set to ``True`` if and only if format is ``'tkz_graph'``
 
         When using format ``'dot2tex'``, the following inputs are considered:
 
@@ -972,6 +975,23 @@ class GenericGraph(GenericGraph_pyx):
           vertices, if supported by the layout engine, nodes belonging to
           the same cluster subgraph are drawn together, with the entire
           drawing of the cluster contained within a bounding rectangle.
+
+        Additionnal keywords arguments are forwarded to
+        :meth:`sage.graphs.graph_latex.GraphLatex.set_option`.
+
+        The following inputs define the preamble of the latex standalone
+        document class file containing the tikzpicture:
+
+        - ``standalone_config`` -- list of strings (default: ``["border=4mm"]``);
+          latex document class standalone configuration options
+        - ``usepackage`` -- list of strings (default: ``[]``); latex
+          packages
+        - ``usetikzlibrary`` -- list of strings (default: ``[]``); tikz
+          libraries to use
+        - ``macros`` -- list of strings (default: ``[]``); list of
+          newcommands needed for the picture
+        - ``use_sage_preamble`` -- bool (default: ``None``), if ``None``
+          it is set to ``True`` if and only if format is ``'tkz_graph'``
 
         OUTPUT:
 
@@ -1082,6 +1102,10 @@ class GenericGraph(GenericGraph_pyx):
                 raise ValueError("invalid format(={}), should be 'dot2tex'"
                         "or 'tkz_graph'".format(format))
 
+        self.latex_options().set_options(format=format,
+                edge_labels=edge_labels, color_by_label=color_by_label,
+                prog=prog, rankdir=rankdir, **kwds)
+
         # by default use sage preamble only for format tkz_graph
         if use_sage_preamble is None:
             if format == 'tkz_graph':
@@ -1092,13 +1116,15 @@ class GenericGraph(GenericGraph_pyx):
                 raise ValueError("invalid format(={}), should be 'dot2tex'"
                         "or 'tkz_graph'".format(format))
 
-        self.latex_options().set_options(format=format,
-                edge_labels=edge_labels, color_by_label=color_by_label,
-                prog=prog, rankdir=rankdir, **kwds)
+        if standalone_config is None:
+            standalone_config=["border=4mm"]
 
         from sage.misc.latex_standalone import TikzPicture
         return TikzPicture(self._latex_(),
-                           standalone_config=["border=4mm"],
+                           standalone_config=standalone_config,
+                           usepackage=usepackage,
+                           usetikzlibrary=usetikzlibrary,
+                           macros=macros,
                            use_sage_preamble=use_sage_preamble)
 
     def _matrix_(self, R=None, vertices=None):
