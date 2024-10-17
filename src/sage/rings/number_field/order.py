@@ -894,7 +894,7 @@ class Order(IntegralDomain, sage.rings.abc.Order):
             gens.append(g)
             n.append(g.absolute_minpoly().degree())
             W = A.span([to_V(x) for x in monomials(gens, n)])
-            remaining = [x for x in remaining if not to_V(x) in W]
+            remaining = [x for x in remaining if to_V(x) not in W]
         return Sequence(gens, immutable=True)
 
     @cached_method
@@ -1590,7 +1590,7 @@ class Order_absolute(Order):
         if not isinstance(x, Element) or x.parent() is not self._K:
             x = self._K(x)
         V, _, embedding = self._K.vector_space()
-        if not embedding(x) in self._module_rep:
+        if embedding(x) not in self._module_rep:
             raise TypeError("Not an element of the order.")
         return self._element_type(self, x)
 

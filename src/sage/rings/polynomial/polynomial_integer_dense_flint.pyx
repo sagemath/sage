@@ -1035,7 +1035,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
-    def __pow__(Polynomial_integer_dense_flint self, exp, ignored):
+    def __pow__(Polynomial_integer_dense_flint self, exp, mod):
         """
         EXAMPLES::
 
@@ -1114,9 +1114,22 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             ...
             TypeError: no canonical coercion from Univariate Polynomial
             Ring in R over Integer Ring to Rational Field
+
+        Check that using third argument raises an error::
+
+            sage: R.<x> = PolynomialRing(ZZ, implementation='FLINT')
+            sage: pow(x, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
         cdef long nn
         cdef Polynomial_integer_dense_flint res
+
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
 
         try:
             nn = pyobject_to_long(exp)
