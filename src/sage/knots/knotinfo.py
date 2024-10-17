@@ -790,7 +790,7 @@ class KnotInfoBase(Enum):
             return (1, )
 
         braid_notation = eval_knotinfo(braid_notation)
-        if type(braid_notation) is list:
+        if type(braid_notation) in (list, tuple):
             # in some cases there are a pair of braid representations
             # in the database. If this is the case we select the
             # corresponding to the braid index.
@@ -1184,6 +1184,23 @@ class KnotInfoBase(Enum):
         return None
 
     @cached_method
+    def is_hyperbolic(self):
+        r"""
+        Return whether ``self`` is hyperbolic.
+
+        EXAMPLES::
+
+            sage: KnotInfo.K3_1.is_hyperbolic()
+            False
+            sage: KnotInfo.K5_2.is_hyperbolic()
+            True
+        """
+        geometric_type = self[self.items.geometric_type]
+        if (geometric_type == 'hyperbolic'):
+            return True
+        return False
+
+    @cached_method
     def is_alternating(self):
         r"""
         Return whether ``self`` is alternating.
@@ -1308,6 +1325,27 @@ class KnotInfoBase(Enum):
             True
         """
         return not knotinfo_bool(self[self.items.unoriented])
+
+    @cached_method
+    def cosmetic_crossing_conjecture_verified(self):
+        r"""
+        Return whether the Cosmetic Crossing Conjecture has been verified
+        for ``self``.
+
+        EXAMPLES::
+
+            sage: knots = [K for K in KnotInfo if K.is_knot() and K.crossing_number() < 10]
+            sage: all(K.cosmetic_crossing_conjecture_verified() for K in knots)
+            True
+        """
+        cosmetic_crossing = self[self.items.cosmetic_crossing]
+        if self.crossing_number() == 0:
+            return True
+        if (not cosmetic_crossing or cosmetic_crossing == 'Unknown'):
+            return False
+        verified = not knotinfo_bool(cosmetic_crossing)
+        assert(verified)
+        return verified
 
     @cached_method
     def homfly_polynomial(self, var1='v', var2='z', original=False):
