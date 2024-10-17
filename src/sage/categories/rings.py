@@ -12,12 +12,14 @@ Rings
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 from functools import reduce
+from types import GeneratorType
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
 from sage.structure.element import Element
+from sage.structure.parent import Parent
 
 
 class Rings(CategoryWithAxiom):
@@ -815,32 +817,34 @@ class Rings(CategoryWithAxiom):
             """
             Create an ideal of this ring.
 
-            .. NOTE::
-
-                The code is copied from the base class
-                :class:`~sage.rings.ring.Ring`. This is
-                because there are rings that do not inherit
-                from that class, such as matrix algebras.
-                See :issue:`7797`.
-
             INPUT:
 
-            - an element or a list/tuple/sequence of elements
-            - ``coerce`` -- boolean (default: ``True``);
-              first coerce the elements into this ring
-            - ``side`` -- (optional) string, one of ``'twosided'``
-              (default), ``'left'``, ``'right'``; determines
-              whether the resulting ideal is twosided, a left
-              ideal or a right ideal
+            - an element or a list/tuple/sequence of elements, the generators
 
-            EXAMPLES::
+            - ``coerce`` -- boolean (default: ``True``); whether to first coerce
+              the elements into this ring. This must be a keyword
+              argument. Only set it to ``False`` if you are certain that each
+              generator is already in the ring.
+
+            - ``ideal_class`` -- callable (default: ``self._ideal_class_()``);
+              this must be a keyword argument. A constructor for ideals, taking
+              the ring as the first argument and then the generators.
+              Usually a subclass of :class:`~sage.rings.ideal.Ideal_generic` or
+              :class:`~sage.rings.noncommutative_ideals.Ideal_nc`.
+
+            - Further named arguments (such as ``side`` in the case of
+              non-commutative rings) are forwarded to the ideal class.
+
+            The keyword ``side`` can be one of ``'twosided'``,
+            ``'left'``, ``'right'``. It determines whether
+            the resulting ideal is twosided, a left ideal or a right ideal.
+
+            EXAMPLES:
+
+            Matrix rings::
 
                 sage: # needs sage.modules
                 sage: MS = MatrixSpace(QQ, 2, 2)
-                sage: isinstance(MS, Ring)
-                False
-                sage: MS in Rings()
-                True
                 sage: MS.ideal(2)
                 Twosided Ideal
                 (
@@ -858,6 +862,36 @@ class Rings(CategoryWithAxiom):
                   [0 0]
                 )
                  of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
+
+            Polynomial rings::
+
+                sage: R.<x,y> = QQ[]
+                sage: R.ideal(x,y)
+                Ideal (x, y) of Multivariate Polynomial Ring in x, y over Rational Field
+                sage: R.ideal(x+y^2)
+                Ideal (y^2 + x) of Multivariate Polynomial Ring in x, y over Rational Field
+                sage: R.ideal( [x^3,y^3+x^3] )
+                Ideal (x^3, x^3 + y^3) of Multivariate Polynomial Ring in x, y over Rational Field
+
+            Non-commutative rings::
+
+                sage: A = SteenrodAlgebra(2)                                                # needs sage.combinat sage.modules
+                sage: A.ideal(A.1, A.2^2)                                                   # needs sage.combinat sage.modules
+                Twosided Ideal (Sq(2), Sq(2,2)) of mod 2 Steenrod algebra, milnor basis
+                sage: A.ideal(A.1, A.2^2, side='left')                                      # needs sage.combinat sage.modules
+                Left Ideal (Sq(2), Sq(2,2)) of mod 2 Steenrod algebra, milnor basis
+
+            TESTS:
+
+            Make sure that :issue:`11139` is fixed::
+
+                sage: R.<x> = QQ[]
+                sage: R.ideal([])
+                Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
+                sage: R.ideal(())
+                Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
+                sage: R.ideal()
+                Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
             """
             if 'coerce' in kwds:
                 coerce = kwds['coerce']
@@ -866,8 +900,7 @@ class Rings(CategoryWithAxiom):
                 coerce = True
 
             from sage.rings.ideal import Ideal_generic
-            from types import GeneratorType
-            if len(args) == 0:
+            if not args:
                 gens = [self(0)]
             else:
                 gens = args
@@ -888,27 +921,26 @@ class Rings(CategoryWithAxiom):
                         break
                     elif isinstance(first, (list, tuple, GeneratorType)):
                         gens = first
+                    elif isinstance(first, Parent) and self.has_coerce_map_from(first):
+                        gens = first.gens()  # we have a ring as argument
                     else:
-                        try:
-                            if self.has_coerce_map_from(first):
-                                gens = first.gens()  # we have a ring as argument
-                            elif isinstance(first, Element):
-                                gens = [first]
-                            else:
-                                raise ArithmeticError("there is no coercion from %s to %s" % (first, self))
-                        except TypeError:  # first may be a ring element
-                            pass
                         break
-            if coerce:
+
+            if len(gens) == 0:
+                gens = [self.zero()]
+            elif coerce:
                 gens = [self(g) for g in gens]
+
             from sage.categories.principal_ideal_domains import PrincipalIdealDomains
             if self in PrincipalIdealDomains():
                 # Use GCD algorithm to obtain a principal ideal
                 g = gens[0]
                 if len(gens) == 1:
                     try:
-                        g = g.gcd(g)  # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
-                    except (AttributeError, NotImplementedError):
+                        # note: we set g = gcd(g, g) to "canonicalize" the generator:
+                        # make polynomials monic, etc.
+                        g = g.gcd(g)
+                    except (AttributeError, NotImplementedError, IndexError):
                         pass
                 else:
                     for h in gens[1:]:
