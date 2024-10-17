@@ -4554,7 +4554,7 @@ cdef class Matrix(Matrix1):
 
         Over inexact rings:
 
-        For inexact rings one should avoid echolonizing if possible::
+        For inexact rings one should avoid echelonizing if possible::
 
             sage: A = Matrix(
             ....: [[          0.0,           0.5,  0.8090169944],
@@ -4801,7 +4801,7 @@ cdef class Matrix(Matrix1):
             :meth:`kernel` is exactly equal to :meth:`left_kernel`.
 
             For inexact rings use :meth:`right_kernel_matrix` with
-            ``basis='computed'`` to avoid echolonizing.
+            ``basis='computed'`` to avoid echelonizing.
 
         INPUT:
 
@@ -5161,6 +5161,7 @@ cdef class Matrix(Matrix1):
     def left_kernel(self, *args, **kwds):
         r"""
         Return the left kernel of this matrix, as a vector space or free module.
+
         This is the set of vectors ``x`` such that ``x*self = 0``.
 
         .. NOTE::
@@ -5169,7 +5170,7 @@ cdef class Matrix(Matrix1):
             :meth:`kernel` is exactly equal to :meth:`left_kernel`.
 
             For inexact rings use :meth:`right_kernel_matrix` with
-            ``basis='computed'`` (on the transpose of the matrix) to avoid echolonizing.
+            ``basis='computed'`` (on the transpose of the matrix) to avoid echelonizing.
 
         INPUT:
 

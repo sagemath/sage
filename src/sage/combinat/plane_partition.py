@@ -3166,7 +3166,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         n = a
         N = n // 2
         pp_matrix = [[0] * (c) for i in range(b)]
-        # creates a matrix for the plane parition populated by 0s
+        # creates a matrix for the plane partition populated by 0s
         # EX: [[0,0,0], [0,0,0], [0,0,0]]
         width = N - 1
         height = N - 1

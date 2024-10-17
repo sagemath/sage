@@ -1869,8 +1869,8 @@ def is_classical_parameters_graph(list array):
     graphs with classical parameters, then this function  returns a tuple
     consisting of the  parameters `(d, b, \alpha, \beta)` and a fourth parameter
     which is the enum ``CalssicalParametersGraph`` indicating the family with
-    the given itersection array.
-    If the array doesn't belong to any classical parameter graph, then this
+    the given intersection array.
+    If the array does not belong to any classical parameter graph, then this
     function returns ``False``.
     If the array belongs to a sporadic graph rather than a family of graphs,
     then the function returns ``False``. This is to reduce the overlap with
