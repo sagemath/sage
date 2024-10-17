@@ -275,23 +275,19 @@ class Homspace(HomsetWithBase):
         """
         return MatrixSpace(ZZ, 2*self.domain().dimension(), 2*self.codomain().dimension())
 
-    def _element_constructor_from_element_class(self, *args, **keywords):
+    def _coerce_map_from_(self, other):
+        r"""
+        TESTS::
+
+            sage: t = J0(33).hecke_operator(2)
+            sage: t.parent().has_coerce_map_from(ZZ)
+            True
         """
-        Used in the coercion framework. Unfortunately, the default method
-        would get the order of parent and data different from what is expected
-        in ``MatrixMorphism.__init__``.
+        if self.matrix_space().has_coerce_map_from(other):
+            return True
+        return super()._coerce_map_from_(other)
 
-        EXAMPLES::
-
-            sage: H = Hom(J0(11), J0(22))
-            sage: phi = H(matrix(ZZ,2,4,[5..12])); phi # indirect doctest
-            Abelian variety morphism:
-              From: Abelian variety J0(11) of dimension 1
-              To:   Abelian variety J0(22) of dimension 2
-        """
-        return self.element_class(self, *args, **keywords)
-
-    def __call__(self, M, **kwds):
+    def _element_constructor_(self, M, **kwds):
         r"""
         Create a homomorphism in this space from M. M can be any of the
         following:
