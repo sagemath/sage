@@ -340,7 +340,7 @@ cdef class Flag(Element):
             numbers.append(15)
         return numbers
     
-    cpdef subflag(self, points=None, ftype_points=None, allow_reorder=False):
+    cpdef subflag(self, points=None, ftype_points=None):
         r"""
         Returns the induced subflag.
         
@@ -386,16 +386,10 @@ cdef class Flag(Element):
             ftype_points = self._ftype_points
         
         if points==None:
-            if allow_reorder:
-                points = list(ftype_points) + [ii for ii in range(self._n) if ii not in ftype_points]
-            else:
-                points = list(range(self._n))
+            points = list(range(self._n))
         else:
-            if allow_reorder:
-                points = list(ftype_points) + [ii for ii in points if (ii not in ftype_points)]
-            else:
-                points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
-        if (not allow_reorder) and len(points)==self._n and ftype_points==self._ftype_points:
+            points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
+        if len(points)==self._n and ftype_points==self._ftype_points:
             return self
         blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
         new_ftype_points = [points.index(ii) for ii in ftype_points]
@@ -1135,11 +1129,18 @@ cdef class Pattern(Element):
             self._blocks[xx] = []
             self._blocks[xx+"_o"] = []
             if xx in params:
-                self._blocks[xx] = [sorted(list(yy)) for yy in params[xx]]
+                if theory._name in ["DiGraph", "Tournament", "Permutation"]:
+                    self._blocks[xx] = [list(yy) for yy in params[xx]]
+                else:
+                    self._blocks[xx] = [sorted(list(yy)) for yy in params[xx]]
             
             for xx_opti in [xx+"_o", xx+"_optional", xx+"_opti"]:
                 if xx_opti in params:
-                    xx_oblocks = [sorted(list(yy)) for yy in params[xx_opti]]
+                    if theory._name in ["DiGraph", "Tournament", "Permutation"]:
+                        xx_oblocks = [list(yy) for yy in params[xx_opti]]
+                    else:
+                        xx_oblocks = [sorted(list(yy)) for yy in params[xx_opti]]
+                    
                     for ed in xx_oblocks:
                         if len(_subblock_helper(self._ftype_points, xx_oblocks))!=0:
                             raise ValueError("Can't have optional blocks in ftype")
@@ -1179,29 +1180,19 @@ cdef class Pattern(Element):
             numbers.append(15)
         return numbers
     
-    cpdef subpattern(self, points=None, ftype_points=None, allow_reorder=False):
+    cpdef subpattern(self, points=None, ftype_points=None):
         if ftype_points==None:
             ftype_points = self._ftype_points
         
         if points==None:
-            if allow_reorder:
-                points = list(ftype_points) + [ii for ii in range(self._n) if ii not in ftype_points]
-            else:
-                points = list(range(self._n))
+            points = list(ftype_points) + [ii for ii in range(self._n) if ii not in ftype_points]
         else:
-            if allow_reorder:
-                points = list(ftype_points) + [ii for ii in points if ii not in ftype_points]
-            else:
-                points = [ii for ii in range(self._n) if (ii in points or ii in ftype_points)]
-        if (not allow_reorder) and len(points)==self._n and ftype_points==self._ftype_points:
-            return self
+            points = list(ftype_points) + [ii for ii in points if ii not in ftype_points]
         if set(ftype_points)!=set(self._ftype_points):
             raise ValueError("Subflag for patterns is not defined with different ftype!")
         blocks = {xx: _subblock_helper(points, self._blocks[xx]) for xx in self._blocks.keys()}
         new_ftype_points = [points.index(ii) for ii in ftype_points]
         return Pattern(self.parent(), len(points), ftype=new_ftype_points, **blocks)
-
-    subflag = subpattern
     
     def combinatorial_theory(self):
         return self.parent()
@@ -1294,19 +1285,10 @@ cdef class Pattern(Element):
             return False
         opattern = Pattern(self.parent(), other.size(), ftype=other.ftype_points(), **other.blocks())
         cdef dict sb = self.blocks()
-        print("comparing {} and {}".format(self, other))
         for perm in itertools.permutations(other.not_ftype_points(), len(self.not_ftype_points())):
-            opermed = opattern.subpattern(points=perm, allow_reorder=True)
+            opermed = opattern.subpattern(points=perm)
             ob = opermed.blocks()
-            
             res = all([_block_compare(sb[xx], sb[xx+"_o"], ob[xx], ob[xx+"_o"]) for xx in self.parent().signature().keys()])
-            print("perm {} gives {} and compat? {}".format(perm, opermed, res))
             if all([_block_compare(sb[xx], sb[xx+"_o"], ob[xx], ob[xx+"_o"]) for xx in self.parent().signature().keys()]):
                 return True
-        return False 
-    
-    def compatible_flags(self):
-        ss = self
-        if len(self.ftype_points())!=0:
-            ss = self.subpattern(allow_reorder=True)
-        return [xx for xx in ss.parent().generate_flags(ss.size(), ss.ftype()) if ss.is_compatible(xx)]
+        return False

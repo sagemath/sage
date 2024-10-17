@@ -709,68 +709,6 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         """
         return self._identifier(n, ftype_points, **blocks)
     
-    def exclude(self, flags=[]):
-        r"""
-        Exclude some induced flags from the theory
-        
-        This allows creation of CombinatorialTheory -s with excluded
-        flags. The flags are not allowed to appear as an induced
-        substructure in any of the generated flags later.
-
-        INPUT:
-
-        - ``flags`` -- list of flags or a flag (default: `[]`); 
-            The list of flags to exclude, flags are treated as
-            a singleton list
-
-        EXAMPLES::
-
-        How to create triangle-free graphs ::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]])
-            sage: GraphTheory.exclude(triangle)
-        
-        There are 14 graphs on 5 vertices without triangles ::
-        
-            sage: len(GraphTheory.generate_flags(5))
-            14
-
-        .. NOTE::
-
-            Calling :func:`exclude` again will overwrite the list
-            of excluded structures. So calling exclude() again, gives
-            back the original theory
-
-        TESTS::
-
-            sage: from sage.algebras.flag_algebras import *
-            sage: ThreeGraphTheory.exclude(ThreeGraphTheory(4))
-            sage: len(ThreeGraphTheory.generate_flags(5))
-            23
-            sage: TournamentTheory.exclude(TournamentTheory(3, edges=[[0, 1], [1, 2], [2, 0]]))
-            sage: TournamentTheory.generate_flags(5)
-            (Flag on 5 points, ftype from [] with edges=[[1, 0], [2, 0], [2, 1], [3, 0], [3, 1], [3, 2], [4, 0], [4, 1], [4, 2], [4, 3]],)
-            
-        """
-        if type(flags)==Flag:
-            if flags.unique() != None:
-                self._excluded = [flags]
-            else:
-                self._excluded = []
-        else:
-            self._excluded = [xx for xx in flags if xx.unique() != None]
-    
-    def _check_excluded(self, elms):
-        r"""
-        Helper to check the excluded structures in generation
-        """
-        flg = elms[0]
-        for xx in elms[1]:
-            if xx <= flg:
-                return False
-        return True
-    
     def _adjust_table_phi(self, table_constructor, phi_vectors_exact, test=False):
         r"""
         Helper to modify a table constructor, incorporating extra data from
@@ -1646,6 +1584,12 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     verify = verify_certificate
     
+    def match_pattern(self, pattern):
+        ss = pattern
+        if len(ss.ftype_points())!=0:
+            ss = ss.subpattern()
+        return [xx for xx in self.generate_flags(ss.size(), ss.ftype()) if ss.is_compatible(xx)]
+    
     def _gfe(self, excluded, n, ftype):
         r"""
         Cached version of generate flags excluded
@@ -1745,6 +1689,71 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         return self._gfe(tuple(self._excluded), n, ftype)
     
     generate = generate_flags
+    
+    def exclude(self, flags=[]):
+        r"""
+        Exclude some induced flags from the theory
+        
+        This allows creation of CombinatorialTheory -s with excluded
+        flags. The flags are not allowed to appear as an induced
+        substructure in any of the generated flags later.
+
+        INPUT:
+
+        - ``flags`` -- list of flags or a flag (default: `[]`); 
+            The list of flags to exclude, flags are treated as
+            a singleton list
+
+        EXAMPLES::
+
+        How to create triangle-free graphs ::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: triangle = GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]])
+            sage: GraphTheory.exclude(triangle)
+        
+        There are 14 graphs on 5 vertices without triangles ::
+        
+            sage: len(GraphTheory.generate_flags(5))
+            14
+
+        .. NOTE::
+
+            Calling :func:`exclude` again will overwrite the list
+            of excluded structures. So calling exclude() again, gives
+            back the original theory
+
+        TESTS::
+
+            sage: from sage.algebras.flag_algebras import *
+            sage: ThreeGraphTheory.exclude(ThreeGraphTheory(4))
+            sage: len(ThreeGraphTheory.generate_flags(5))
+            23
+            sage: TournamentTheory.exclude(TournamentTheory(3, edges=[[0, 1], [1, 2], [2, 0]]))
+            sage: TournamentTheory.generate_flags(5)
+            (Flag on 5 points, ftype from [] with edges=[[1, 0], [2, 0], [2, 1], [3, 0], [3, 1], [3, 2], [4, 0], [4, 1], [4, 2], [4, 3]],)
+            
+        """
+        
+        if type(flags)==Flag or type(flags)==Pattern:
+            flags = [flags]
+        self._excluded = []
+        for xx in flags:
+            if type(xx)==Flag and xx.unique() != None:
+                self._excluded.append(xx)
+            if type(xx)==Pattern:
+                self._excluded.append(xx)
+                return
+    
+    def _check_excluded(self, elms):
+        r"""
+        Helper to check the excluded structures in generation
+        """
+        flg = elms[0]
+        for xx in elms[1]:
+            if xx <= flg:
+                return False
+        return True
     
     def mul_project_table(self, n1, n2, large_ftype, ftype_inj=None, target_size=None):
         r"""
@@ -3495,12 +3504,12 @@ PermutationTheory = CombinatorialTheory('Permutation',
                                         _identify_permutation, 
                                         edges=2)
 
-OEGraphTheory = CombinatorialTheory('OEdgeGraph', 
+OEGraphTheory = CombinatorialTheory('OrderedEdgeGraph', 
                                     _generator_oe_graph, 
                                     _identify_oe_graph, 
                                     edges=2)
 
-OVGraphTheory = CombinatorialTheory('OEdgeGraph', 
+OVGraphTheory = CombinatorialTheory('OrderedVertexGraph', 
                                     _generator_ov_graph, 
                                     _identify_ov_graph, 
                                     edges=2)
