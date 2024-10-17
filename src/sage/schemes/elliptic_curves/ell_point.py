@@ -2599,7 +2599,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         from sage.sets.primes import Primes
         from sage.rings.finite_rings.finite_field_constructor import GF
         field_deg = self.curve().base_field().absolute_degree()
-        print("field_deg:", field_deg)
         if field_deg > 1:
             K = self.curve().base_field().absolute_field('T')
             _, iso = K.structure()
@@ -2615,10 +2614,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             # Mazur
             bound = min(bound, 12 + 1)
         assert P.curve() is E
-
-        if bound <= 20:
-            # fast path for testing small orders
-            return not any((P * i).is_zero() for i in range(1, bound))
 
         n = ZZ.one()
         no_progress = 0
@@ -2647,7 +2642,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                 return True
             if no_progress >= attempts:
                 return
-            print("n:", n)
 
         assert False  # unreachable unless there are only finitely many primes
 
