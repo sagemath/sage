@@ -441,7 +441,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('37a1')
-            sage: E.mwrank() #random
+            sage: E.mwrank() # random
             ...
             sage: print(E.mwrank())
             Curve [0,0,1,-1,0] :        Basic pair: I=48, J=-432
@@ -2316,7 +2316,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              over Rational Field
             sage: E1.gens() # random (if database not used)
             [(-400 : 8000 : 1), (0 : -8000 : 1)]
-            sage: E1.gens(algorithm='pari')   #random
+            sage: E1.gens(algorithm='pari')   # random
             [(-400 : 8000 : 1), (0 : -8000 : 1)]
 
         TESTS::
@@ -2334,6 +2334,13 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: P = E.lift_x(10/9)
             sage: set(E.gens()) <= set([P,-P])
             True
+
+        Check that :issue:`38813` has been fixed:
+
+            sage: set_random_seed(91390048253425197917505296851335255685)
+            sage: E = EllipticCurve([-127^2,0])
+            sage: E.gens(use_database=False, algorithm='pari', pari_effort=4)   # long time
+            [(611429153205013185025/9492121848205441 : 15118836457596902442737698070880/924793900700594415341761 : 1)]
         """
         if proof is None:
             from sage.structure.proof.proof import get_flag
@@ -2386,15 +2393,16 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             True
 
             sage: E = EllipticCurve([-127^2,0])
-            sage: E.gens(use_database=False, algorithm='pari',pari_effort=4)   # random
+            sage: E.gens(use_database=False, algorithm='pari', pari_effort=4)   # long time, random
             [(611429153205013185025/9492121848205441 : 15118836457596902442737698070880/924793900700594415341761 : 1)]
 
         TESTS::
 
+            sage: E = EllipticCurve([-127^2,0])
             sage: P = E.lift_x(611429153205013185025/9492121848205441)
-            sage: ge = set(E.gens(use_database=False, algorithm='pari',pari_effort=4))
-            sage: ge <= set([P+T for T in E.torsion_points()]
-            ....:        + [-P+T for T in E.torsion_points()])
+            sage: (set(E.gens(use_database=False, algorithm='pari', pari_effort=4))   # long time
+            ....:    <= set([P+T for T in E.torsion_points()]
+            ....:        + [-P+T for T in E.torsion_points()]))
             True
         """
         # If the optional extended database is installed and an
