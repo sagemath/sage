@@ -671,6 +671,14 @@ class MatchingCoveredGraph(Graph):
 
         EXAMPLES:
 
+        Adding an already existing edge::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.add_edge(next(G.edge_iterator()))
+            sage: P == G
+            True
+
         Adding an edge such that the resulting graph is matching covered::
 
             sage: P = graphs.PetersenGraph()
@@ -716,6 +724,16 @@ class MatchingCoveredGraph(Graph):
             ValueError: the graph obtained after the addition of edge ((4, 5, None)) is not matching covered
             sage: G.edges(sort=False) # No alteration to the existing graph
             [(0, 1, None), (0, 3, None), (1, 2, None), (2, 3, None)]
+
+        Adding a self-loop::
+
+            sage: H = graphs.HeawoodGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: v = next(G.vertex_iterator())
+            sage: G.add_edge(v, v)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
         """
         if label is None:
             if v is None:
@@ -1112,7 +1130,8 @@ class MatchingCoveredGraph(Graph):
 
         OUTPUT:
 
-        - A perfect matching of the (matching covered) graph.
+        - This method returns :class:`EdgesView` of the edges of a
+          perfect matching of the (matching covered) graph.
 
         EXAMPLES:
 
