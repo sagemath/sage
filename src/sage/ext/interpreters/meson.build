@@ -51,6 +51,7 @@ extension_data = {
 
 interpreters_dep = declare_dependency(
   include_directories: include_directories('.'),
+  sources: [interpreters[1], interpreters[2], interpreters[3], interpreters[4], interpreters[5]],
 )
 
 foreach name, pyx : extension_data
