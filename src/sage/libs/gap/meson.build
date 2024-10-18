@@ -8,13 +8,14 @@ py.install_sources(
   'gap_globals.py',
   'gap_includes.pxd',
   'operations.py',
-  'sage.gaprc',
   'saved_workspace.py',
   'test.py',
   'test_long.py',
   'util.pxd',
   subdir: 'sage/libs/gap',
 )
+
+fs.copyfile('sage.gaprc')
 
 extension_data = {
   'element' : files('element.pyx'),
