@@ -1344,7 +1344,7 @@ class KnotInfoBase(Enum):
         if (not cosmetic_crossing or cosmetic_crossing == 'Unknown'):
             return False
         verified = not knotinfo_bool(cosmetic_crossing)
-        assert(verified)
+        assert verified
         return verified
 
     @cached_method
