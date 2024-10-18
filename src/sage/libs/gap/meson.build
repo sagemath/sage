@@ -8,6 +8,7 @@ py.install_sources(
   'gap_globals.py',
   'gap_includes.pxd',
   'operations.py',
+  'sage.gaprc',
   'saved_workspace.py',
   'test.py',
   'test_long.py',
@@ -15,6 +16,7 @@ py.install_sources(
   subdir: 'sage/libs/gap',
 )
 
+# Ensure that the gaprc file is installed also in editable mode
 fs.copyfile('sage.gaprc')
 
 extension_data = {
