@@ -9,9 +9,9 @@ This is a short guide on how to build the Sage from source using Meson.
 Walkthrough
 ===========
 
-Assume we're starting from a clean repo and a fully set up conda environment::
+Assume we're starting from a clean repo and a fully set up conda environment:
         
-.. code-block:: shell
+.. CODE-BLOCK:: shell-session
 
     $ ./bootstrap-conda
     $ mamba env create --file src/environment-dev-3.11.yml --name sage-dev
@@ -22,7 +22,7 @@ Alternatively, install all build requirements as described in section
 dependencies manually, set the correct environment variables to point
 to the installed libraries:
 
-.. code-block:: shell
+.. CODE-BLOCK:: shell-session
 
     $ export C_INCLUDE_PATH=$C_INCLUDE_PATH:/your/path/to/include
     $ export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:/your/path/to/include
@@ -37,9 +37,9 @@ to the installed libraries:
     ``find src/sage/ext/interpreters -type f ! -name 'meson.build' -delete``. 
     Also uninstall the 'old' sage packages with ``pip uninstall sage-conf sage-setup sagemath-standard``.
 
-To compile and install the project in editable install, just use::
+To compile and install the project in editable install, just use:
     
-.. code-block:: shell
+.. CODE-BLOCK:: shell-session
 
     $ pip install --no-build-isolation --editable .
 
@@ -71,37 +71,37 @@ Background information
 Under the hood, pip invokes meson to configure and build the project.
 We can also use meson directly as follows.
 
-To configure the project, we need to run the following command::
+To configure the project, we need to run the following command:
 
-.. code-block:: shell
+.. CODE-BLOCK:: shell-session
 
     $ meson setup builddir --prefix=$PWD/build-install
 
 This will create a build directory ``builddir`` that will hold the build artifacts.
 The ``--prefix`` option specifies the directory where the Sage will be installed.
-To compile the project, run the following command::
+To compile the project, run the following command:
 
-.. code-block:: shell
+.. CODE-BLOCK:: shell-session
 
     $ meson compile -C builddir
 
-Installing is done with the following command::
+Installing is done with the following command:
 
-.. code-block:: shell
+.. CODE-BLOCK:: shell-session
 
     $ meson install -C builddir
 
 This will then install in the directory specified by ``--prefix``, e.g.
 ``build-install/lib/python3.11/site-packages/sage``.
-Usually, this directory is not on your Python path, so you have to use::
+Usually, this directory is not on your Python path, so you have to use:
 
-.. code-block:: shell
+.. CODE-BLOCK:: shell-session
 
     $ PYTHONPATH=build-install/lib/python3.11/site-packages ./sage
 
-Alternatively, we can still use pip to install::
+Alternatively, we can still use pip to install:
 
-.. code-block:: shell
+.. CODE-BLOCK:: shell-session
 
     $ pip install --no-build-isolation --config-settings=builddir=builddir --editable .
 
@@ -109,9 +109,9 @@ Alternatively, we can still use pip to install::
 
     Package maintainers may want to specify further build options or need
     to install to a different directory than the install prefix.
-    Both are supported naturally by Meson::
+    Both are supported naturally by Meson:
     
-    .. code-block:: shell
+    .. CODE-BLOCK:: shell-session
 
         $ meson setup builddir --prefix=/usr --libdir=... -Dcpp_args=...
         $ meson compile -C builddir
