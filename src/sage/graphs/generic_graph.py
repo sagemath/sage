@@ -1005,18 +1005,18 @@ class GenericGraph(GenericGraph_pyx):
         EXAMPLES::
 
             sage: g = graphs.PetersenGraph()
-            sage: tikz = g.tikz()                              # optional - dot2tex graphviz
-            sage: _ = tikz.pdf()      # not tested
+            sage: tikz = g.tikz()                   # optional - dot2tex graphviz        # long time
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex  # long time
 
         ::
 
             sage: tikz = g.tikz(format='tkz_graph')
-            sage: _ = tikz.pdf()      # not tested
+            sage: _ = tikz.pdf(view=False)          # optional - latex
 
         Using another value for ``prog``::
 
-            sage: tikz = g.tikz(prog='neato')        # long time (1s), optional - dot2tex graphviz
-            sage: _ = tikz.pdf()      # not tested
+            sage: tikz = g.tikz(prog='neato')       # optional - dot2tex graphviz        # long time
+            sage: _ = tikz.pdf()                    # optional - dot2tex graphviz latex  # long time
 
         Using ``color_by_label`` with default rainbow colors::
 
@@ -1028,20 +1028,20 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: G = DiGraph({0: {1: 333, 2: 444}, 1: {0: 444}, 2: {0: 555}})
             sage: cbl = {333:'orange', 444: 'yellow', 555: 'purple'}
-            sage: t = G.tikz(color_by_label=cbl)   # optional - dot2tex graphviz        # long time
-            sage: _ = t.pdf(view=False)            # optional - dot2tex graphviz latex  # long time
+            sage: t = G.tikz(color_by_label=cbl)    # optional - dot2tex graphviz        # long time
+            sage: _ = t.pdf(view=False)             # optional - dot2tex graphviz latex  # long time
 
         Using ``color_by_label`` with colors given as a function::
 
             sage: G = DiGraph({0: {1: -333, 2: -444}, 1: {0: 444}, 2: {0: 555}})
             sage: cbl = lambda label:'green' if label >= 0 else 'orange'
-            sage: t = G.tikz(color_by_label=cbl)   # optional - dot2tex graphviz        # long time
-            sage: _ = t.pdf(view=False)            # optional - dot2tex graphviz latex  # long time
+            sage: t = G.tikz(color_by_label=cbl)    # optional - dot2tex graphviz        # long time
+            sage: _ = t.pdf(view=False)             # optional - dot2tex graphviz latex  # long time
 
         Using another value for ``rankdir``::
 
-            sage: tikz = g.tikz(rankdir='right')     # long time (3s), optional - dot2tex graphviz
-            sage: _ = tikz.pdf()      # not tested
+            sage: tikz = g.tikz(rankdir='right')    # optional - dot2tex graphviz       # long time
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex # long time
 
         Using subgraphs clusters (broken when using labels, see
         :issue:`22070`)::
@@ -1057,9 +1057,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: G
             Looped multi-digraph on 27 vertices
             sage: C = G.strongly_connected_components()
-            sage: tikz = G.tikz(subgraph_clusters=C)    # optional - dot2tex graphviz       # long time
-            sage: tikz.add_usepackage('amstext')        # optional - dot2tex graphviz       # long time
-            sage: _ = tikz.pdf()                        # optional - dot2tex graphviz latex # long time
+            sage: tikz = G.tikz(subgraph_clusters=C)# optional - dot2tex graphviz       # long time
+            sage: tikz.add_usepackage('amstext')    # optional - dot2tex graphviz       # long time
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex # long time
 
         An example coming from ``graphviz_string`` documentation in SageMath::
 
@@ -1069,8 +1069,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: G = DiGraph()
             sage: G.add_edges((i, f(i), f) for i in (1, 2, 1/2, 1/4))
             sage: G.add_edges((i, g(i), g) for i in (1, 2, 1/2, 1/4))
-            sage: tikz = G.tikz(format='dot2tex')    # optional - dot2tex graphviz
-            sage: _ = tikz.pdf()                       # not tested
+            sage: tikz = G.tikz(format='dot2tex')   # optional - dot2tex graphviz       # long time
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex # long time
             sage: def edge_options(data):
             ....:     u, v, label = data
             ....:     options = {"color": {f: "red", g: "blue"}[label]}
@@ -1079,9 +1079,9 @@ class GenericGraph(GenericGraph_pyx):
             ....:     if (u,v) == (1,   -1): options["label_style"] = "latex"
             ....:     if (u,v) == (1,  1/2): options["dir"]         = "back"
             ....:     return options
-            sage: tikz = G.tikz(format='dot2tex',   # optional - dot2tex graphviz
+            sage: tikz = G.tikz(format='dot2tex',   # optional - dot2tex graphviz       # long time
             ....:               edge_options=edge_options)
-            sage: _ = tikz.pdf()      # not tested
+            sage: _ = tikz.pdf(view=False)          # optional - dot2tex graphviz latex # long time
         """
         # use format dot2tex by default
         if format is None:
