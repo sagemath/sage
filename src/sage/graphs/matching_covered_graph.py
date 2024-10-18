@@ -613,41 +613,26 @@ class MatchingCoveredGraph(Graph):
 
         An expression, analogous to the syntax mentioned above may be used::
 
-            sage: W = graphs.WheelGraph(6)
-            sage: G = MatchingCoveredGraph(W)
-            sage: G.add_edge(1, 4)
+            sage: S = graphs.StaircaseGraph(4)
+            sage: G = MatchingCoveredGraph(S)
+            sage: G.add_edge(0, 5)
             sage: G.edges(sort=False)
-            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
-
-            sage: W = graphs.WheelGraph(6)
-            sage: G = MatchingCoveredGraph(W)
-            sage: G.add_edge((1, 4))
+            [(0, 1, None), (0, 3, None), (0, 5, None), (0, 6, None), (1, 2, None), (1, 4, None), (2, 5, None), (2, 7, None), (3, 4, None), (3, 6, None), (4, 5, None), (5, 7, None), (6, 7, None)]
+            sage: G.add_edge((2, 3))
             sage: G.edges(sort=False)
-            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
-
-            sage: W = graphs.WheelGraph(6)
-            sage: G = MatchingCoveredGraph(W)
-            sage: G.add_edges([(1, 4)])
+            [(0, 1, None), (0, 3, None), (0, 5, None), (0, 6, None), (1, 2, None), (1, 4, None), (2, 3, None), (2, 5, None), (2, 7, None), (3, 4, None), (3, 6, None), (4, 5, None), (5, 7, None), (6, 7, None)]
+            sage: G.add_edges([(0, 4)])
             sage: G.edges(sort=False)
-            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
-
-            sage: W = graphs.WheelGraph(6)
-            sage: G = MatchingCoveredGraph(W)
-            sage: G.add_edge(1, 4, 'label')
+            [(0, 1, None), (0, 3, None), (0, 4, None), (0, 5, None), (0, 6, None), (1, 2, None), (1, 4, None), (2, 3, None), (2, 5, None), (2, 7, None), (3, 4, None), (3, 6, None), (4, 5, None), (5, 7, None), (6, 7, None)]
+            sage: G.add_edge(2, 4, 'label')
             sage: G.edges(sort=False)
-            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, 'label'), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
-
-            sage: W = graphs.WheelGraph(6)
-            sage: G = MatchingCoveredGraph(W)
-            sage: G.add_edge((1, 4, 'label'))
+            [(0, 1, None), (0, 3, None), (0, 4, None), (0, 5, None), (0, 6, None), (1, 2, None), (1, 4, None), (2, 3, None), (2, 4, 'label'), (2, 5, None), (2, 7, None), (3, 4, None), (3, 6, None), (4, 5, None), (5, 7, None), (6, 7, None)]
+            sage: G.add_edge((4, 6, 'label'))
             sage: G.edges(sort=False)
-            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, 'label'), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
-
-            sage: W = graphs.WheelGraph(6)
-            sage: G = MatchingCoveredGraph(W)
-            sage: G.add_edges([(1, 4, 'label')])
+            [(0, 1, None), (0, 3, None), (0, 4, None), (0, 5, None), (0, 6, None), (1, 2, None), (1, 4, None), (2, 3, None), (2, 4, 'label'), (2, 5, None), (2, 7, None), (3, 4, None), (3, 6, None), (4, 5, None), (4, 6, 'label'), (5, 7, None), (6, 7, None)]
+            sage: G.add_edges([(4, 7, 'label')])
             sage: G.edges(sort=False)
-            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 4, 'label'), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
+            [(0, 1, None), (0, 3, None), (0, 4, None), (0, 5, None), (0, 6, None), (1, 2, None), (1, 4, None), (2, 3, None), (2, 4, 'label'), (2, 5, None), (2, 7, None), (3, 4, None), (3, 6, None), (4, 5, None), (4, 6, 'label'), (4, 7, 'label'), (5, 7, None), (6, 7, None)]
 
         Vertex name cannot be ``None``, so::
 
@@ -659,13 +644,10 @@ class MatchingCoveredGraph(Graph):
             ValueError: the graph obtained after the addition of edge ((None, 1, None)) is not matching covered
             sage: H.edges(sort=False)  # No alteration to the existing graph
             [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
-
-            sage: W = graphs.WheelGraph(6)
-            sage: H = MatchingCoveredGraph(W)
-            sage: H.add_edge(None, 7)
+            sage: H.add_edge(None, None)
             Traceback (most recent call last):
             ...
-            ValueError: the graph obtained after the addition of edge ((None, 7, None)) is not matching covered
+            ValueError: the graph obtained after the addition of edge ((None, None, None)) is not matching covered
             sage: H.edges(sort=False)  # No alteration to the existing graph
             [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None), (0, 5, None), (1, 2, None), (1, 5, None), (2, 3, None), (3, 4, None), (4, 5, None)]
 
