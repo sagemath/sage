@@ -1082,7 +1082,6 @@ class GenericGraph(GenericGraph_pyx):
             sage: tikz = G.tikz(format='dot2tex',   # optional - dot2tex graphviz
             ....:               edge_options=edge_options)
             sage: _ = tikz.pdf()      # not tested
-
         """
         # use format dot2tex by default
         if format is None:
