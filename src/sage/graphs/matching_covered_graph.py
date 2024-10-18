@@ -791,8 +791,7 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(P)
             sage: G
             Matching covered petersen graph: graph on 10 vertices
-            sage: # needs random
-            sage: u = random.choice(list(G))
+            sage: u = next(G.vertex_iterator())
             sage: G.add_vertex(u)
             sage: G
             Matching covered petersen graph: graph on 10 vertices
@@ -809,9 +808,7 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: isolated vertices are not allowed in matching covered graphs
-            sage: u = 0
-            sage: while u in G:
-            ....:     u += 1
+            sage: u = 100
             sage: G.add_vertex(u)
             Traceback (most recent call last):
             ...
@@ -856,9 +853,7 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(T)
             sage: G
             Matching covered truncated biwheel graph: graph on 30 vertices
-            sage: # needs random
-            sage: import random
-            sage: S = random.sample(G, 4)  # We choose 4 existing vertices
+            sage: S = [0, 1, 2, 3]  # We choose 4 existing vertices
             sage: G.add_vertices(S)
             sage: G
             Matching covered truncated biwheel graph: graph on 30 vertices
@@ -888,10 +883,9 @@ class MatchingCoveredGraph(Graph):
             ...
             ValueError: isolated vertices are not allowed in matching covered graphs
         """
-        for vertex in vertices:
-            if vertex not in self:
-                raise ValueError('isolated vertices are not allowed in '
-                                 'matching covered graphs')
+        if any(vertex not in self for vertex in vertices):
+            raise ValueError('isolated vertices are not allowed in '
+                             'matching covered graphs')
 
     def allow_loops(self, new, check=True):
         r"""
@@ -970,21 +964,17 @@ class MatchingCoveredGraph(Graph):
 
             sage: W = graphs.WheelGraph(12)
             sage: G = MatchingCoveredGraph(W)
-            sage: u = 0
-            sage: while u in G:
-            ....:     u += 1
+            sage: u = 100
             sage: G.delete_vertex(u)
             Traceback (most recent call last):
             ...
-            ValueError: vertex (12) not in the graph
+            ValueError: vertex (100) not in the graph
 
         Deleting an existing vertex::
 
             sage: W = graphs.WheelGraph(12)
             sage: G = MatchingCoveredGraph(W)
-            sage: # need random
-            sage: import random
-            sage: u = random.choice(list(G))
+            sage: u = next(G.vertex_iterator())
             sage: G.delete_vertex(u)
             Traceback (most recent call last):
             ...
@@ -1001,8 +991,11 @@ class MatchingCoveredGraph(Graph):
 
     def delete_vertices(self, vertices):
         r"""
-        Delete vertices (along with the incident edges) from the (matching
-        covered) graph taken from an iterable container of vertices.
+        Delete specified vertices form ``self``.
+
+        This method deletes the vertices from the iterable container
+        ``vertices`` from ``self`` along with incident edges. An error is
+        raised if the resulting graph is not matching covered.
 
         .. NOTE::
 
@@ -1076,7 +1069,6 @@ class MatchingCoveredGraph(Graph):
             sage: G  # Matching covered graph on 6 vertices
             Matching covered staircase graph: graph on 6 vertices
         """
-
         for vertex in vertices:
             if vertex not in self:
                 raise ValueError('vertex (%s) not in the graph' % str(vertex))
@@ -1145,7 +1137,7 @@ class MatchingCoveredGraph(Graph):
 
     def update_matching(self, matching):
         r"""
-        Update the pefect matching captured in ``self._matching``.
+        Update the perfect matching captured in ``self._matching``.
 
         INPUT:
 
