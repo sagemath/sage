@@ -1113,7 +1113,7 @@ class GenericGraph(GenericGraph_pyx):
                 use_sage_preamble = False
 
         if standalone_config is None:
-            standalone_config=["border=4mm"]
+            standalone_config = ["border=4mm"]
 
         from sage.misc.latex_standalone import TikzPicture
         return TikzPicture(self._latex_(),
