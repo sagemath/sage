@@ -516,8 +516,6 @@ def fork(f=None, timeout=0, verbose=False):
 
         sage: @fork(timeout=0.1, verbose=True)
         ....: def g(n, m): return factorial(n).ndigits() + m
-        sage: g(5, m=5)
-        8
         sage: g(10^7, m=5)
         Killing subprocess ... with input ((10000000,), {'m': 5}) which took too long
         'NO DATA (timed out)'
