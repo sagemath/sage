@@ -8,11 +8,12 @@ requires = [
     'wheel >=0.36.2',
     'cypari2 >=2.1.1',
     'cysignals >=1.10.2',
-    # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
-    'cython >=3.0, != 3.0.3, <4.0',
+    # per https://github.com/scipy/scipy/blob/maintenance/1.13.x/pyproject.toml
+    'cython >=3.0.8,<3.1.0",
     'gmpy2 ~=2.1.b999',
     'memory_allocator',
-    'numpy >=1.19',
+    # per https://github.com/scipy/scipy/blob/maintenance/1.13.x/pyproject.toml
+    'numpy >=1.22.4',
     'pkgconfig',
     'jinja2',
 ]
