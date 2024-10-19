@@ -21,9 +21,9 @@ class ChowRing(QuotientRing_generic):
 
     .. MATH::
 
-        A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (Q_M + L_M),
+        A^*(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M),
 
-    where `(Q_M + L_M)` is the :class:`Chow ring ideal
+    where `(I_M + J_M)` is the :class:`Chow ring ideal
     <sage.matroids.chow_ring_ideal.ChowRingIdeal_nonaug>` of matroid `M`.
 
     The *augmented Chow ring of matroid* `M` in the Feitchner-Yuzvinsky presentation
