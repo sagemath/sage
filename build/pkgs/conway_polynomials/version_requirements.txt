@@ -1,1 +1,1 @@
-conway-polynomials >=0.8
+conway-polynomials
