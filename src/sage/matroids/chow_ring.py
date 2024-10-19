@@ -49,7 +49,7 @@ class ChowRing(QuotientRing_generic):
 
     .. SEEALSO::
 
-        :mod:`sage.matroids.chow_ring_ideal
+        :mod:`sage.matroids.chow_ring_ideal`
 
     INPUT:
 
@@ -120,9 +120,6 @@ class ChowRing(QuotientRing_generic):
         Return the LaTeX output of the polynomial ring and Chow ring ideal.
 
         EXAMPLES::
-
-            sage: from sage.matroids.graphic_matroid import GraphicMatroid
-
             sage: M1 = matroids.Uniform(2,5)
             sage: ch = M1.chow_ring(QQ, False)
             sage: ch._latex_()
