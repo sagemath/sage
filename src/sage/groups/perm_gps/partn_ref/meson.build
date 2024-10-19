@@ -1,4 +1,17 @@
-py.install_sources('all.py', subdir: 'sage/groups/perm_gps/partn_ref')
+py.install_sources(
+  'all.py',
+  'automorphism_group_canonical_label.pxd',
+  'canonical_augmentation.pxd',
+  'data_structures.pxd',
+  'double_coset.pxd',
+  'refinement_binary.pxd',
+  'refinement_graphs.pxd',
+  'refinement_lists.pxd',
+  'refinement_matrices.pxd',
+  'refinement_python.pxd',
+  'refinement_sets.pxd',
+  subdir: 'sage/groups/perm_gps/partn_ref',
+)
 
 extension_data = {
   'automorphism_group_canonical_label' : files(

@@ -3,9 +3,13 @@ py.install_sources(
   'all__sagemath_polyhedra.py',
   'interactive_simplex_method.py',
   'knapsack.py',
+  'linear_functions.pxd',
   'linear_tensor.py',
   'linear_tensor_constraints.py',
+  'linear_tensor_element.pxd',
+  'mip.pxd',
   'optimize.py',
+  'sdp.pxd',
   subdir: 'sage/numerical',
 )
 

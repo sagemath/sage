@@ -19,6 +19,7 @@ py.install_sources(
   'rc_infinity.py',
   'rigged_configuration_element.py',
   'rigged_configurations.py',
+  'rigged_partition.pxd',
   'tensor_product_kr_tableaux.py',
   'tensor_product_kr_tableaux_element.py',
   subdir: 'sage/combinat/rigged_configurations',

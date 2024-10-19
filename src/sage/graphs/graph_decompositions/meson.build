@@ -8,6 +8,7 @@ py.install_sources(
   'fast_digraph.pxd',
   'modular_decomposition.py',
   'rankwidth.pxd',
+  'slice_decomposition.pxd',
   'tree_decomposition.pxd',
   'vertex_separation.pxd',
   subdir: 'sage/graphs/graph_decompositions',

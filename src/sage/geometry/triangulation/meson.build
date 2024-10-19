@@ -1,7 +1,10 @@
 py.install_sources(
   'all.py',
+  'data.pxd',
   'element.py',
+  'functions.pxd',
   'point_configuration.py',
+  'triangulations.pxd',
   subdir: 'sage/geometry/triangulation',
 )
 

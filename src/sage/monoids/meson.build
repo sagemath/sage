@@ -2,6 +2,7 @@ py.install_sources(
   'all.py',
   'automatic_semigroup.py',
   'free_abelian_monoid.py',
+  'free_abelian_monoid_element.pxd',
   'free_monoid.py',
   'free_monoid_element.py',
   'hecke_monoid.py',

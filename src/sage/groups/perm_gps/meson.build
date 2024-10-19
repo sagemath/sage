@@ -3,6 +3,7 @@ py.install_sources(
   'constructor.py',
   'cubegroup.py',
   'permgroup.py',
+  'permgroup_element.pxd',
   'permgroup_morphism.py',
   'permgroup_named.py',
   'permutation_groups_catalog.py',

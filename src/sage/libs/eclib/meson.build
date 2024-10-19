@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.pxd',
   '__init__.py',
   'all.py',
   'constructor.py',

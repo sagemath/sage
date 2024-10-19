@@ -18,6 +18,7 @@ py.install_sources(
   'pieri_factors.py',
   'plot.py',
   'reflection_group_complex.py',
+  'reflection_group_element.pxd',
   'reflection_group_real.py',
   'root_lattice_realization_algebras.py',
   'root_lattice_realizations.py',

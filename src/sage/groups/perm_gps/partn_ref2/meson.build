@@ -1,4 +1,8 @@
-py.install_sources('all.py', subdir: 'sage/groups/perm_gps/partn_ref2')
+py.install_sources(
+  'all.py',
+  'refinement_generic.pxd',
+  subdir: 'sage/groups/perm_gps/partn_ref2',
+)
 
 extension_data = {'refinement_generic' : files('refinement_generic.pyx')}
 

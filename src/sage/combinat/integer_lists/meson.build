@@ -1,5 +1,7 @@
 py.install_sources(
   '__init__.py',
+  'base.pxd',
+  'invlex.pxd',
   'lists.py',
   'nn.py',
   subdir: 'sage/combinat/integer_lists',

@@ -51,7 +51,13 @@ extension_data = {
 
 interpreters_dep = declare_dependency(
   include_directories: include_directories('.'),
-  sources: [interpreters[1], interpreters[2], interpreters[3], interpreters[4], interpreters[5]],
+  sources: [
+    interpreters[1],
+    interpreters[2],
+    interpreters[3],
+    interpreters[4],
+    interpreters[5],
+  ],
 )
 
 foreach name, pyx : extension_data
@@ -61,15 +67,6 @@ foreach name, pyx : extension_data
     subdir: 'sage/ext/interpreters',
     install: true,
     include_directories: [inc_cpython, inc_ext, inc_rings, inc_src],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      gmp,
-      gsl,
-      mpc,
-      mpfr,
-      pari,
-    ],
+    dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr, pari],
   )
 endforeach

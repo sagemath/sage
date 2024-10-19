@@ -40,6 +40,7 @@ py.install_sources(
   'phc.py',
   'polymake.py',
   'povray.py',
+  'process.pxd',
   'psage.py',
   'qepcad.py',
   'qsieve.py',

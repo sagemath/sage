@@ -1,10 +1,12 @@
 py.install_sources(
   'algebra.py',
+  'algebra_elements.pxd',
   'all.py',
   'ar_quiver.py',
   'homspace.py',
   'morphism.py',
   'path_semigroup.py',
+  'paths.pxd',
   'representation.py',
   subdir: 'sage/quivers',
 )

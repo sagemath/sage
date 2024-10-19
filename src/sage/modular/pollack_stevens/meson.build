@@ -1,5 +1,6 @@
 py.install_sources(
   'all.py',
+  'dist.pxd',
   'distributions.py',
   'fund_domain.py',
   'manin_map.py',

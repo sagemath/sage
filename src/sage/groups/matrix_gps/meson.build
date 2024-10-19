@@ -5,6 +5,8 @@ py.install_sources(
   'coxeter_group.py',
   'finitely_generated.py',
   'finitely_generated_gap.py',
+  'group_element.pxd',
+  'group_element_gap.pxd',
   'heisenberg.py',
   'homset.py',
   'isometries.py',

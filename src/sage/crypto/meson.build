@@ -1,6 +1,7 @@
 py.install_sources(
   '__init__.py',
   'all.py',
+  'boolean_function.pxd',
   'cipher.py',
   'classical.py',
   'classical_cipher.py',

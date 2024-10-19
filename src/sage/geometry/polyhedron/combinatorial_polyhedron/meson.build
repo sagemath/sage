@@ -1,5 +1,13 @@
 py.install_sources(
   'all.py',
+  'base.pxd',
+  'combinatorial_face.pxd',
+  'conversions.pxd',
+  'face_data_structure.pxd',
+  'face_iterator.pxd',
+  'face_list_data_structure.pxd',
+  'list_of_faces.pxd',
+  'polyhedron_face_lattice.pxd',
   subdir: 'sage/geometry/polyhedron/combinatorial_polyhedron',
 )
 
