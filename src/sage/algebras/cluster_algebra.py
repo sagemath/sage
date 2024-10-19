@@ -355,6 +355,7 @@ mutating at the initial seed::
 # ****************************************************************************
 
 from copy import copy
+from typing import Any
 
 from sage.arith.misc import binomial
 from sage.categories.homset import Hom
@@ -461,7 +462,7 @@ class ClusterAlgebraElement(ElementWrapper):
             sage: x.d_vector()
             (1, 1, 2, -2)
         """
-        monomials = self.lift().dict()
+        monomials = self.lift().monomial_coefficients()
         minimal = map(min, zip(*monomials))
         return tuple(-vector(minimal))[:self.parent().rank()]
 
@@ -562,7 +563,7 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
         """
         deg_matrix = block_matrix([[identity_matrix(self.parent().rank()),
                                     -self.parent().b_matrix()]])
-        components = {}
+        components: dict[tuple, Any] = {}
         x = self.lift()
         monomials = x.monomials()
         for m in monomials:
@@ -614,8 +615,9 @@ class PrincipalClusterAlgebraElement(ClusterAlgebraElement):
             f_poly = components[g_vect].F_polynomial()
             g_vect = vector(g_vect)
             while f_poly != zero_U:
-                y_exp = min(f_poly.dict())
-                coeff = f_poly.dict()[y_exp]
+                coeffs = f_poly.monomial_coefficients()
+                y_exp = min(coeffs)
+                coeff = coeffs[y_exp]
                 g_theta = tuple(g_vect + B * vector(y_exp))
                 out[g_theta] = out.get(g_theta, zero_A) + A({zero_t + tuple(y_exp): coeff})
                 f_poly -= U({y_exp: coeff}) * A.theta_basis_F_polynomial(g_theta)
@@ -1432,11 +1434,11 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
              and coefficients y0, y1 over Integer Ring
         """
         var_names = self.initial_cluster_variable_names()
-        var_names = (" " if len(var_names) == 1 else "s ") + ", ".join(var_names)
+        var_names_str = (" " if len(var_names) == 1 else "s ") + ", ".join(var_names)
         coeff_names = self.coefficient_names()
         coeff_prefix = " and" + (" " if len(coeff_names) > 0 else " no ") + "coefficient"
         coeff = coeff_prefix + (" " if len(coeff_names) == 1 else "s ") + ", ".join(coeff_names) + (" " if len(coeff_names) > 0 else "")
-        return "A Cluster Algebra with cluster variable" + var_names + coeff + "over " + repr(self.scalars())
+        return "A Cluster Algebra with cluster variable" + var_names_str + coeff + "over " + repr(self.scalars())
 
     def _an_element_(self):
         r"""

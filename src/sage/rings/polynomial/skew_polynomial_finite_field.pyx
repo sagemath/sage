@@ -100,7 +100,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         N = self._parent._working_center(self.reduced_norm(var=False))
         return N.is_irreducible()
 
-
     def type(self, N):
         r"""
         Return the `N`-type of this skew polynomial (see definition below).
@@ -209,7 +208,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         self._types[N] = type
         return type
 
-
     # Finding divisors
     # ----------------
 
@@ -288,7 +286,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                 continue
             return D
 
-
     def _reduced_norm_factor_uniform(self):
         r"""
         Return a factor of the reduced norm of this skew
@@ -356,7 +353,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         for i in range(len(F)):
             if random < count[i]:
                 return F[i][0]
-
 
     def _irreducible_divisors(self, bint right):
         r"""
@@ -468,7 +464,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                     d = gcd2(mul(f,Q1), P)
                     d, _ = quo_rem2(P, d)
                     yield d
-
 
     def right_irreducible_divisor(self, uniform=False):
         r"""
@@ -617,7 +612,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             if LD.degree() == degN:
                 return LD
 
-
     def right_irreducible_divisors(self):
         r"""
         Return an iterator over all irreducible monic right divisors
@@ -686,7 +680,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         """
         return self._irreducible_divisors(False)
 
-
     def count_irreducible_divisors(self):
         r"""
         Return the number of irreducible monic divisors of
@@ -743,7 +736,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
             cardL = cardcenter**degN
             count += (cardL**m - 1) // (cardL - 1)
         return count
-
 
     # Finding factorizations
     # ----------------------
@@ -926,7 +918,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         factors.reverse()
         return Factorization(factors, sort=False, unit=unit)
 
-
     def factor(self, uniform=False):
         r"""
         Return a factorization of this skew polynomial.
@@ -993,7 +984,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
                 self._factorization = self._factor_c()
             F = self._factorization
         return F
-
 
     def count_factorizations(self):
         r"""

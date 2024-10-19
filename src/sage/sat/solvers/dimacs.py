@@ -253,7 +253,7 @@ class DIMACS(SatSolver):
         tail.close()
 
         head = open(headname,"a")
-        tail = open(self._tail.name,"r")
+        tail = open(self._tail.name)
         head.write(tail.read())
         tail.close()
         head.close()
@@ -301,7 +301,7 @@ class DIMACS(SatSolver):
         else:
             tail = self._tail
             tail.close()
-            tail = open(self._tail.name,"r")
+            tail = open(self._tail.name)
 
             clauses = []
             for line in tail.readlines():

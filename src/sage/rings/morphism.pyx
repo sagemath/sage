@@ -2277,7 +2277,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         """
         P = self.codomain()
         try:
-            return P(dict([(a, self._underlying(b)) for a,b in x.dict().items()]))
+            return P({a: self._underlying(b) for a, b in x.monomial_coefficients().items()})
         except Exception:
             pass
         try:

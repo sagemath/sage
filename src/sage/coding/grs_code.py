@@ -1531,7 +1531,7 @@ class GRSGaoDecoder(Decoder):
 
     def _partial_xgcd(self, a, b, PolRing):
         r"""
-        Perform an Euclidean algorithm on ``a`` and ``b`` until a remainder
+        Perform a Euclidean algorithm on ``a`` and ``b`` until a remainder
         has degree less than `\frac{n+k}{2}`, `n` being the dimension of the
         code, `k` its dimension, and returns `(r, s)` such that in the step
         just before termination, `r = a s + b t`.

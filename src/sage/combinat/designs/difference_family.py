@@ -123,8 +123,8 @@ def block_stabilizer(G, B):
     S = []
     for b in B:
         # fun: if we replace +(-b) with -b it completely fails!!
-        bb0 = op(b,b0) # bb0 = b-B[0]
-        if all(op(bb0,c) in B for c in B):
+        bb0 = op(b, b0)  # bb0 = b-B[0]
+        if all(op(bb0, c) in B for c in B):
             S.append(bb0)
     return S
 
@@ -279,7 +279,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
             for c in d:
                 if b == c:
                     continue
-                gg = mul(b,inv(c)) # = b-c or bc^{-1}
+                gg = mul(b, inv(c))  # = b-c or bc^{-1}
                 if gg not in tmp_counter:
                     tmp_counter[gg] = 0
                 where[gg].add(i)
@@ -319,7 +319,7 @@ def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
                         g, counter[g], sorted(where[g])))
     if too_much:
         print("Too much:")
-        for g  in too_much:
+        for g in too_much:
             print("  {} is obtained {} times in blocks {}".format(
                         g, counter[g], sorted(where[g])))
     if too_few or too_much:
@@ -388,9 +388,10 @@ def singer_difference_set(q,d):
     # build a polynomial c over GF(q) such that GF(q)[x] / (c(x)) is a
     # GF(q**(d+1)) and such that x is a multiplicative generator.
     p,e = q.factor()[0]
-    c = conway_polynomial(p,e*(d+1))
-    if e != 1:  # i.e. q is not a prime, so we factorize c over GF(q) and pick
-                # one of its factor
+    c = conway_polynomial(p, e*(d+1))
+    if e != 1:
+        # i.e. q is not a prime, so we factorize c over GF(q) and pick
+        # one of its factor
         K = GF(q,'z')
         c = c.change_ring(K).factor()[0][0]
     else:
@@ -454,7 +455,7 @@ def df_q_6_1(K, existence=False, check=True):
     xx = x**5
     to_coset = {x**i * xx**j: i for i in range(5) for j in range((v-1)/5)}
 
-    for c in to_coset: # the loop runs through all nonzero elements of K
+    for c in to_coset:  # the loop runs through all nonzero elements of K
         if c == one or c == r or c == r2:
             continue
         if len(set(to_coset[elt] for elt in (r-one, c*(r-one), c-one, c-r, c-r**2))) == 5:
@@ -796,13 +797,13 @@ def one_radical_difference_family(K, k):
         A = [r**i - 1 for i in range(1,m+1)]
     else:
         m = k // 2
-        r = x ** ((q-1) // (k-1)) # (k-1)-th root of unity
+        r = x ** ((q-1) // (k-1))  # (k-1)-th root of unity
         A = [r**i - 1 for i in range(1,m)]
         A.append(K.one())
 
     # instead of the complicated multiplicative group K^*/(±C) we use the
     # discrete logarithm to convert everything into the additive group Z/cZ
-    c = m * (q-1) // e # cardinal of ±C
+    c = m * (q-1) // e  # cardinal of ±C
     from sage.groups.generic import discrete_log
     logA = [discrete_log(a,x) % c for a in A]
 
@@ -1036,18 +1037,18 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
         96 20 4 4 1
     """
     if v <= k or k <= lmbda:
-        return (False,None) if return_parameters else False
+        return (False, None) if return_parameters else False
     k = ZZ(k)
     lmbda = ZZ(lmbda)
-    qs,r = (k - lmbda).sqrtrem() # sqrt(k-l) should be q^s
+    qs, r = (k - lmbda).sqrtrem()  # sqrt(k-l) should be q^s
     if r or (qs*(qs-1)) % lmbda:
-        return (False,None) if return_parameters else False
+        return (False, None) if return_parameters else False
 
     q = qs*(qs-1) // lmbda + 1
     if (q <= 1 or
-        v * (q-1) != qs*q * (qs*q+q-2)  or
+        v * (q-1) != qs*q * (qs*q+q-2) or
         k * (q-1) != qs * (qs*q-1)):
-        return (False,None) if return_parameters else False
+        return (False, None) if return_parameters else False
 
     # NOTE: below we compute the value of s so that qs = q^s. If the method
     # is_power_of of integers would be able to return the exponent, we could use
@@ -1057,7 +1058,7 @@ def are_mcfarland_1973_parameters(v, k, lmbda, return_parameters=False):
     p2,a2 = q.is_prime_power(get_data=True)
 
     if a1 == 0 or a2 == 0 or p1 != p2 or a1 % a2:
-        return (False,None) if return_parameters else False
+        return (False, None) if return_parameters else False
 
     return (True, (q, a1//a2)) if return_parameters else True
 
@@ -1265,10 +1266,10 @@ def turyn_1965_3x3xK(k=4):
     else:
         raise ValueError("k must be 2 or 4")
 
-    L = [[(0,1),(1,1),(2,1),(0,2),(1,2),(2,2)], # complement of y=0
-         [(0,0),(1,1),(2,2)],                   # x-y=0
-         [(0,0),(1,2),(2,1)],                   # x+y=0
-         [(0,0),(0,1),(0,2)]]                   # x=0
+    L = [[(0,1),(1,1),(2,1),(0,2),(1,2),(2,2)],  # complement of y=0
+         [(0,0),(1,1),(2,2)],                    # x-y=0
+         [(0,0),(1,2),(2,1)],                    # x+y=0
+         [(0,0),(0,1),(0,2)]]                    # x=0
 
     return G, [[G(v + k) for l, k in zip(L, K) for v in l]]
 
@@ -1835,7 +1836,7 @@ def supplementary_difference_set_from_rel_diff_set(q, existence=False, check=Tru
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     P = PolynomialRing(ZZ, 'x')
 
-    #Compute psi3, psi4
+    # Compute psi3, psi4
     hall = 0
     for d in set1:
         hall += P.monomial(d[0])
@@ -3689,7 +3690,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         3 Turyn 1965 construction
         4 McFarland 1973 construction
         5 False
-        6 Unknown
+        6 The database contains a (144,66,30)-difference family
         7 False
         8 McFarland 1973 construction
         9 Unknown
