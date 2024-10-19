@@ -44,6 +44,7 @@ EXAMPLES::
 import itertools
 
 from copy import copy
+from datetime import datetime
 from itertools import combinations
 
 from sage.combinat.permutation import Permutation
@@ -1444,33 +1445,55 @@ def conjugate_positive_form(braid):
     """
     B = braid.parent()
     d = B.strands()
-    braid1 = braid.super_summit_set()[0]
-    L1 = braid1.Tietze()
-    sg0 = braid.conjugating_braid(braid1)
-    gns = set(L1)
-    cuts = [j for j in range(d + 1) if j not in gns]
-    blocks = []
-    for i in range(len(cuts) - 1):
-        block = [j for j in L1 if cuts[i] < j < cuts[i + 1]]
-        if block:
-            blocks.append(block)
+    rnf= rightnormalform(braid)
+    ex = rnf[-1][0]
+    if ex >= 0:
+        A1 = [B(a) for a in rnf[:-1]]
+        braid1 = prod(A1, B.delta() ** ex)
+        sg0 = B.one()
+    else:
+        A = braid.super_summit_set()
+        braid1 = A[0]
+        sg0 = braid.conjugating_braid(braid1)
+    if ex > 0:
+        blocks = list(braid1.Tietze())
+    else:
+        L1 = braid1.Tietze()
+        gns = set(L1)
+        cuts = [j for j in range(d + 1) if j not in gns]
+        blocks = []
+        for i in range(len(cuts) - 1):
+            block = [j for j in L1 if cuts[i] < j < cuts[i + 1]]
+            if block:
+                blocks.append(block)
     shorts = []
+    oneblock = len(blocks) == 1
     for a in blocks:
-        A = B(a).super_summit_set()
-        res = None
-        for tau in A:
-            sg = (sg0 * B(a) / sg0).conjugating_braid(tau)
-            A1 = rightnormalform(sg)
-            par = A1[-1][0] % 2
-            A1 = [B(a) for a in A1[:-1]]
-            b = prod(A1, B.one())
-            b1 = len(b.Tietze()) / (len(A1) + 1)
-            if res is None or b1 < res[3]:
-                res = [tau, A1, par, b1]
-        if res[2] == 1:
-            r0 = res[0].Tietze()
-            res[0] = B([i.sign() * (d - abs(i)) for i in r0])
-        res0 = res[:2]
+        if sg0 == B.one():
+            res0 = [B(a), []]
+        else:
+            if not oneblock:
+                A = B(a).super_summit_set()
+            res = None
+            t0 = datetime.now()
+            for j, tau in enumerate(A):
+                if j == 1:
+                    sg = sg0
+                else:
+                    sg = (sg0 * B(a) / sg0).conjugating_braid(tau)
+                A1 = rightnormalform(sg)
+                par = A1[-1][0] % 2
+                A1 = [B(a) for a in A1[:-1]]
+                b = prod(A1, B.one())
+                b1 = len(b.Tietze()) / (len(A1) + 1)
+                if res is None or b1 < res[3]:
+                    res = [tau, A1, par, b1]
+                if (datetime.now() - t0).total_seconds() > 60:
+                    break
+            if res[2] == 1:
+                r0 = res[0].Tietze()
+                res[0] = B([i.sign() * (d - abs(i)) for i in r0])
+            res0 = res[:2]
         shorts.append(res0)
     return shorts
 
