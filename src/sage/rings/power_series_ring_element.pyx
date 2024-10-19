@@ -1045,7 +1045,7 @@ cdef class PowerSeries(AlgebraElement):
         else:
             n = int(n)
             v = {}
-            for k, x in self.dict().iteritems():
+            for k, x in self.monomial_coefficients().items():
                 if k >= n:
                     v[k-n] = x
         return self._parent(v, self.prec()-n)
@@ -2915,11 +2915,11 @@ def _solve_linear_de(R, N, L, a, b, f0):
     g = _solve_linear_de(R, N, L2, a, b, f0)
 
     term1 = R(g)  # we must not have check=False, since otherwise [..., 0, 0] is not stripped
-    term2 = R(a[:L]) #, check=False)
+    term2 = R(a[:L])  # , check=False)
     product = (term1 * term2).list()
 
     # todo: perhaps next loop could be made more efficient
-    c = b[L2 : L]
+    c = b[L2:L]
     for j in range(L2 - 1, min(L-1, len(product))):
         c[j - (L2-1)] = c[j - (L2-1)] + product[j]
 

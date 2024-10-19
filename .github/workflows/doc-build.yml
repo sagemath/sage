@@ -212,6 +212,9 @@ jobs:
             (cd doc && mv .git ../git && mv .gitattributes ../gitattributes)
             mv CHANGES.html doc
           fi
+          # Create the robots.txt file to discourage web crawlers from indexing doc preview webpages
+          echo "User-agent: *" > doc/robots.txt
+          echo "Disallow: /" >> doc/robots.txt
           # Zip everything for increased performance
           zip -r doc.zip doc
 

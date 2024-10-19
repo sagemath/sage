@@ -2211,7 +2211,7 @@ class FindStatStatistic(Element,
 
         included = _get_json(url)["included"]
         # slightly simplify the representation
-        data = {key: val for key, val in included["Statistics"][self.id_str()].items()}
+        data = dict(included["Statistics"][self.id_str()].items())
         # we replace the list of identifiers in Bibliography with the dictionary
         data["Bibliography"] = included["References"]
         return data
@@ -4002,16 +4002,17 @@ def _finite_lattices(n):
     TESTS::
 
         sage: from sage.databases.findstat import _finite_lattices
-        sage: [L.cover_relations() for L in _finite_lattices(4)]
-        [[['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']],
-         [['bottom', 0], [0, 1], [1, 'top']]]
+        sage: sorted((L.cover_relations() for L in _finite_lattices(4)),
+        ....:        key=len)
+        [[['bottom', 0], [0, 1], [1, 'top']],
+         [['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']]]
     """
     if n <= 2:
         for P in Posets(n):
             if P.is_lattice():
                 yield LatticePoset(P)
     else:
-        for P in Posets(n-2):
+        for P in Posets(n - 2):
             Q = P.with_bounds()
             if Q.is_lattice():
                 yield LatticePoset(Q)

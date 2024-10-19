@@ -769,7 +769,7 @@ class Projection(SageObject):
             [[3, 0, 1, 2]]
         """
         assert polyhedron.ambient_dim() == 2, "Requires polyhedron in 2d"
-        vertices = [v for v in polyhedron.Vrep_generator()]
+        vertices = list(polyhedron.Vrep_generator())
         vertices = cyclic_sort_vertices_2d(vertices)
         coords = []
 
@@ -802,7 +802,7 @@ class Projection(SageObject):
                                      coords[i] + shift, coords[i - 1] + shift])
 
         if polyhedron.n_lines() == 2:
-            [line1, line2] = [l for l in polyhedron.lines()]
+            line1, line2 = polyhedron.lines()
             assert len(coords) == 1, "Can have only a single vertex!"
             v = coords[0]
             l1 = line1()
@@ -848,7 +848,7 @@ class Projection(SageObject):
         faces = []
         face_inequalities = []
         for facet_equation in defining_equation():
-            vertices = [v for v in facet_equation.incident()]
+            vertices = list(facet_equation.incident())
             face_inequalities.append(facet_equation)
             vertices = cyclic_sort_vertices_2d(vertices)
             if len(vertices) >= 3:
@@ -894,7 +894,7 @@ class Projection(SageObject):
                                  coords[1] + shift, coords[0] + shift])
 
         if polyhedron.n_lines() == 2:
-            [line1, line2] = [l for l in polyhedron.line_generator()]
+            line1, line2 = polyhedron.line_generator()
             l1 = line1()
             l2 = line2()
             for v in polyhedron.vertex_generator():
