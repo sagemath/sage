@@ -1445,7 +1445,7 @@ def conjugate_positive_form(braid):
     """
     B = braid.parent()
     d = B.strands()
-    rnf= rightnormalform(braid)
+    rnf = rightnormalform(braid)
     ex = rnf[-1][0]
     if ex >= 0:
         A1 = [B(a) for a in rnf[:-1]]
