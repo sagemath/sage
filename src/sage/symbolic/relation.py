@@ -1458,7 +1458,7 @@ def _giac_solver(f, x, solution_dict=False):
         if not sols:
             return []
         if isinstance(sols[0], list):
-            return [{v: sv for v, sv in zip(x, solution)} for solution in sols]
+            return [dict(zip(x, solution)) for solution in sols]
         return [{x: sx} for sx in sols]
     return sols
 
@@ -1803,7 +1803,7 @@ def solve_ineq_fourier(ineq, vars=None):
         setvars = set([])
         for i in (ineq):
             setvars = setvars.union(set(i.variables()))
-            vars = [i for i in setvars]
+            vars = list(setvars)
     ineq0 = [i._maxima_() for i in ineq]
     ineq0[0].parent().eval("if fourier_elim_loaded#true then (fourier_elim_loaded:true,load(\"fourier_elim\"))")
     sol = ineq0[0].parent().fourier_elim(ineq0, vars)

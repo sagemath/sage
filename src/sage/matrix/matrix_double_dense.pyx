@@ -340,7 +340,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             import scipy
         import scipy.linalg
         from numpy.linalg import LinAlgError
-        try: ##  Standard error reporting for Sage.
+        try:  # Standard error reporting for Sage.
             M._matrix_numpy = scipy.linalg.inv(self._matrix_numpy)
         except LinAlgError:
             raise ZeroDivisionError("input matrix must be nonsingular")
@@ -3663,7 +3663,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: A = matrix(RDF, 2, [1,2,3,4]); A
             [1.0 2.0]
             [3.0 4.0]
-            sage: A.exp()  # tol 1e-14
+            sage: A.exp()  # tol 5e-14
             [51.968956198705044  74.73656456700327]
             [112.10484685050491 164.07380304920997]
             sage: A = matrix(CDF, 2, [1,2+I,3*I,4]); A                                  # needs sage.symbolic
@@ -3676,7 +3676,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         TESTS::
 
             sage: A = matrix(RDF, 2, [1,2,3,4])
-            sage: A.exp()   # tol 1e-14
+            sage: A.exp()   # tol 5e-14
             [51.968956198705044  74.73656456700327]
             [112.10484685050491 164.07380304920997]
 

@@ -11,6 +11,7 @@ from sage.rings.power_series_ring import PowerSeriesRing
 
 from math import sqrt
 
+
 def theta2_qexp(prec=10, var='q', K=ZZ, sparse=False):
     r"""
     Return the `q`-expansion of the series `\theta_2 = \sum_{n \text{ odd}} q^{n^2}`.
@@ -57,6 +58,7 @@ def theta2_qexp(prec=10, var='q', K=ZZ, sparse=False):
         v[m*m] = one
     R = PowerSeriesRing(K, sparse=sparse, names=var)
     return R(v, prec=prec)
+
 
 def theta_qexp(prec=10, var='q', K=ZZ, sparse=False):
     r"""
