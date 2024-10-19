@@ -1,1 +1,2 @@
-pythran >=0.12.1
+# per https://github.com/scipy/scipy/blob/maintenance/1.13.x/pyproject.toml
+pythran >=0.14
