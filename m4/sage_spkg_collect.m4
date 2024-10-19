@@ -79,8 +79,8 @@ AS_BOX([Build status for each package:                                         ]
 AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_LOG_FD
 dnl Intialize the collection variables.
 SPKGS="$1"
-dnl Obtain versions at configure time.
-AS_IF([properties=$($SAGE_BOOTSTRAP_PYTHON build/bin/sage-package properties --format=shell $SPKGS 2>& AS_MESSAGE_LOG_FD) && eval $properties], [], [
+dnl Obtain dependencies and versions at configure time.
+AS_IF([properties=$($SAGE_BOOTSTRAP_PYTHON build/bin/sage-package properties --format=shell $SPKGS 2>& AS_MESSAGE_LOG_FD) && eval $properties && dependencies=$($SAGE_BOOTSTRAP_PYTHON build/bin/sage-package dependencies --format=shell $SPKGS) && eval $dependencies], [], [
     AC_MSG_ERROR([Package directory missing. Re-run bootstrap.])dnl
 ])
 
@@ -339,31 +339,14 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
     dnl
     dnl Determine package dependencies
     dnl
-    DIR=$[path_]SPKG_NAME
-    AS_IF([test -f "$DIR/dependencies"], [dnl
-        dnl - the # symbol is treated as comment which is removed
-        AS_VAR_SET([DEPS], [`sed 's/^ *//; s/ *#.*//; q' $DIR/dependencies`])
-    ], [dnl
-        AS_VAR_SET([DEPS], [])
-    ])
-    AS_IF([test -f "$DIR/dependencies_optional"], [dnl
-        for a in $(sed 's/^ *//; s/ *#.*//; q' "$DIR/dependencies_optional"); do
-            AS_VAR_APPEND([DEPS], [' $(findstring '$a',$(OPTIONAL_INSTALLED_PACKAGES)) '])
-        done
-    ])
-    AS_CASE(["$DEPS"], [*\|*], [], [AS_VAR_APPEND([DEPS], [" |"])])
-    AS_IF([test -f "$DIR/dependencies_order_only"], [dnl
-        ADD_DEPS=$(echo $(sed 's/^ *//; s/ *#.*//; q' $DIR/dependencies_order_only))
-        AS_VAR_APPEND([DEPS], [" $ADD_DEPS"])
-    ], [dnl
-        m4_case(SPKG_SOURCE, [pip], [AS_VAR_APPEND([DEPS], [' pip'])], [:])dnl
-    ])
-    AS_IF([test -f "$DIR/dependencies_check"], [dnl
-        ADD_DEPS=$(echo $(sed 's/^ *//; s/ *#.*//; q' $DIR/dependencies_check))
-        AS_VAR_APPEND([DEPS], [' $(and $(filter-out no,$(SAGE_CHECK_]SPKG_NAME[)), '"$ADD_DEPS"')'])dnl
-    ])
-    dnl
-    SAGE_PACKAGE_DEPENDENCIES="${SAGE_PACKAGE_DEPENDENCIES}$(printf '\ndeps_')SPKG_NAME = ${DEPS}"
+    AS_VAR_COPY([BUILD_DEPS], [build_deps_]SPKG_NAME)
+    for a in [$optional_deps_]SPKG_NAME; do
+        AS_VAR_APPEND([BUILD_DEPS], [' $(optional_inst_'$a') '])
+    done
+    AS_VAR_APPEND([BUILD_DEPS], [" | $order_only_deps_]SPKG_NAME["])
+    AS_VAR_COPY([DEPS], [runtime_deps_]SPKG_NAME)
+    AS_VAR_COPY([CHECK_DEPS], [check_deps_]SPKG_NAME)
+    SAGE_PACKAGE_DEPENDENCIES="${SAGE_PACKAGE_DEPENDENCIES}$(printf '\nbuild_deps_')SPKG_NAME = ${BUILD_DEPS}$(printf '\ndeps_')SPKG_NAME = ${DEPS}$(printf '\ncheck_deps_')SPKG_NAME = ${CHECK_DEPS}"
     dnl
     dnl Determine package build rules
     m4_case(SPKG_SOURCE,
