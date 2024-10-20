@@ -69,7 +69,7 @@ def default_viewer(viewer=None):
     elif os.uname()[0] == 'Darwin':
         # Simple on OS X, since there is an open command that opens
         # anything, using the user's preferences.
-        BROWSER = 'open'
+        BROWSER = 'open -W'
         DVI_VIEWER = BROWSER
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER

@@ -201,7 +201,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
         # Convert each term to its linear function
         linear_eq = {}
-        pd = poly.dict()
+        pd = poly.monomial_coefficients()
         for key in pd:
             eq = sum(variables[i] * e for i, e in enumerate(key))
             eq += pd[key].lift()
