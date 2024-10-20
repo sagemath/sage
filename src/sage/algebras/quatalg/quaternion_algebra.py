@@ -954,7 +954,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ....:     alpha = A.random_element()
             sage: conj = [alpha * b * alpha.inverse() for b in [k,i,j]]
             sage: order_basis = tuple(conj) + (A.one(),)
-            sage: O = A.quaternion_order(basis=order_basis)
+            sage: O = A.quaternion_order(order_basis)
             sage: R = A.maximal_order(order_basis=order_basis)
             sage: O <= R and R.is_maximal()
             True
@@ -1722,31 +1722,57 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         R = magma(self.base_ring())
         return f'QuaternionAlgebra({R.name()},{self._a._magma_init_(magma)},{self._b._magma_init_(magma)})'
 
-    def quaternion_order(self, basis, check=True):
+    def quaternion_order(self, gens, check=True):
         r"""
-        Return the order of this quaternion order with given basis.
+        Return the order of this quaternion algebra generated (as a ring)
+        by the given elements. If the base ring is not `\QQ`, the given
+        elements must form a basis (as a `\ZZ`-module).
 
         INPUT:
 
-        - ``basis`` -- list of 4 elements of ``self``
+        - ``gens`` -- list of elements of ``self``
         - ``check`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
-            sage: Q.<i,j,k> = QuaternionAlgebra(-11,-1)
-            sage: Q.quaternion_order([1,i,j,k])
-            Order of Quaternion Algebra (-11, -1) with base ring Rational Field
+            sage: Q.<i,j,k> = QuaternionAlgebra(-1, -11)
+            sage: Q.quaternion_order([i,j])
+            Order of Quaternion Algebra (-1, -11) with base ring Rational Field
              with basis (1, i, j, k)
 
-        We test out ``check=False``::
+        ::
 
-            sage: Q.quaternion_order([1,i,j,k], check=False)
-            Order of Quaternion Algebra (-11, -1) with base ring Rational Field
-             with basis (1, i, j, k)
-            sage: Q.quaternion_order([i,j,k], check=False)
-            Order of Quaternion Algebra (-11, -1) with base ring Rational Field
-             with basis (i, j, k)
+            sage: Q.<i,j,k> = QuaternionAlgebra(-1, -11)
+            sage: Q.quaternion_order([i, (i+j)/2])
+            Order of Quaternion Algebra (-1, -11) with base ring Rational Field
+             with basis (1, i, 1/2*i + 1/2*j, 1/2 + 1/2*k)
+
+        ::
+
+            sage: Q.<i,j,k> = QuaternionAlgebra(-1, -11)
+            sage: Q.quaternion_order([i])
+            Traceback (most recent call last):
+            ...
+            ValueError: given elements do not generate a rank-4 subring: a basis is [1, i]
+
+        ::
+
+            sage: Q.<i,j,k> = QuaternionAlgebra(-1, -11)
+            sage: Q.quaternion_order([i, (1+k)/3])
+            Traceback (most recent call last):
+            ...
+            ValueError: given elements do not generate an order: element 1/3*i is not integral
         """
+        if self.base_ring() != QQ:
+            return QuaternionOrder(self, gens, check=check)
+
+        gens = [self.one()] + Sequence(gens, self)
+        basis = basis_for_quaternion_lattice([a*b for a in gens for b in gens])
+        if len(basis) != 4:
+            raise ValueError(f'given elements do not generate a rank-4 subring: a basis is {basis}')
+        for elt in basis:
+            if elt.reduced_norm() not in ZZ or elt.reduced_trace() not in ZZ:
+                raise ValueError(f'given elements do not generate an order: element {elt} is not integral')
         return QuaternionOrder(self, basis, check=check)
 
     def fractional_ideal(self, gens, left_order=None, right_order=None, check=True, **kwds):
@@ -1981,16 +2007,17 @@ class QuaternionOrder(Parent):
         Over QQ and number fields it is checked whether the given
         basis actually gives an order (as a module over the maximal order)::
 
+            sage: from sage.algebras.quatalg.quaternion_algebra import QuaternionOrder
             sage: A.<i,j,k> = QuaternionAlgebra(-1,-1)
-            sage: A.quaternion_order([1,i,j,i-j])
+            sage: QuaternionOrder(A, [1,i,j,i-j])
             Traceback (most recent call last):
             ...
             ValueError: basis must have rank 4
-            sage: A.quaternion_order([2,i,j,k])
+            sage: QuaternionOrder(A, [2,i,j,k])
             Traceback (most recent call last):
             ...
             ValueError: lattice must contain 1
-            sage: A.quaternion_order([1,i/2,j/2,k/2])
+            sage: QuaternionOrder(A, [1,i/2,j/2,k/2])
             Traceback (most recent call last):
             ...
             ValueError: given lattice must be a ring
@@ -2324,8 +2351,7 @@ class QuaternionOrder(Parent):
         B = V.span([V(list(g)) for g in self.basis()], ZZ)
         C = V.span([V(list(g)) for g in other.basis()], ZZ)
 
-        # todo -- A(list(e)) could be A(e)
-        return QuaternionOrder(A, [A(list(e)) for e in B.intersection(C).basis()])
+        return A.quaternion_order(B.intersection(C).basis())
 
     @cached_method
     def free_module(self):
