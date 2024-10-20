@@ -450,7 +450,7 @@ class AffinePlaneCurve(AffineCurve):
 
             sage: R.<x, y> = QQ[]
             sage: C = Curve(x^3 - y^2)
-            sage: C.plot()                                      # needs sage.plot
+            sage: C.plot()                                                              # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         A 5-nodal curve of degree 11.  This example also illustrates
@@ -465,7 +465,7 @@ class AffinePlaneCurve(AffineCurve):
 
         A line over `\mathbf{RR}`::
 
-            sage: # needs sage.symbolic sage.plot
+            sage: # needs sage.plot sage.symbolic
             sage: R.<x, y> = RR[]
             sage: C = Curve(R(y - sqrt(2)*x))
             sage: C.plot()

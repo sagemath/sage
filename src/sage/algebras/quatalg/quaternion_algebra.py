@@ -2504,7 +2504,7 @@ class QuaternionOrder(Parent):
 
         - ``basis`` -- basis for an ideal `I`
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: A.<i,j,k> = QuaternionAlgebra(17)
             sage: O = A.maximal_order()
