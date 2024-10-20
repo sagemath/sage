@@ -1537,12 +1537,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_timer=check)
             **********************************************************************
             File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
-            Warning, slow doctest:
+            Warning: slow doctest:
                 doctest_var = 42; doctest_var^2
             Test ran for 1.23s cpu, 2.50s wall
             Check ran for 2.34s cpu, 3.12s wall
         """
-        out(self._failure_header(test, example, 'Warning, slow doctest:') +
+        out(self._failure_header(test, example, 'Warning: slow doctest:') +
             ('Test ran for %.2fs cpu, %.2fs wall\nCheck ran for %.2fs cpu, %.2fs wall\n'
              % (example.cputime,
                 example.walltime,
