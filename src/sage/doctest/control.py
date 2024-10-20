@@ -639,6 +639,9 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DocTestDefaults(), [])
             sage: DC.second_on_modern_computer()   # not tested
         """
+        from sage.misc.superseded import deprecation
+        deprecation(32981, "this method is no longer used by the sage library and will eventually be removed")
+
         if len(self.stats) == 0:
             raise RuntimeError('no stored timings available')
         success = []
