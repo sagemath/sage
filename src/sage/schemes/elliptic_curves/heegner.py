@@ -4921,10 +4921,8 @@ class HeegnerQuatAlg(SageObject):
         EXAMPLES::
 
             sage: heegner_points(11).reduce_mod(3).left_orders()
-            [Order of Quaternion Algebra (-1, -3) with base ring Rational Field
-              with basis (1/2 + 1/2*j + 7*k, 1/2*i + 13/2*k, j + 3*k, 11*k),
-             Order of Quaternion Algebra (-1, -3) with base ring Rational Field
-              with basis (1/2 + 1/2*j + 7*k, 1/4*i + 1/2*j + 63/4*k, j + 14*k, 22*k)]
+            [Order of Quaternion Algebra (-1, -3) with base ring Rational Field with basis (1, 11*i, 1/2 + 2*i + 1/2*j, 17/2*i + 1/2*k),
+             Order of Quaternion Algebra (-1, -3) with base ring Rational Field with basis (1, 22*i, 1/2 + 13*i + 1/2*j, 1/2 + 83/4*i + 1/4*k)]
         """
         return [I.left_order() for I in self.right_ideals()]
 
@@ -4954,15 +4952,15 @@ class HeegnerQuatAlg(SageObject):
             sage: H.heegner_discriminants()
             [-8, -39, -43, -51, -79]
             sage: H.heegner_divisor(-8)
-            (1, 0, 0, 1, 0, 0)
+            (0, 0, 1, 0, 0, 1)
             sage: H.heegner_divisor(-39)
-            (1, 2, 2, 1, 2, 0)
+            (2, 2, 1, 2, 0, 1)
             sage: H.heegner_divisor(-43)
-            (1, 0, 0, 1, 0, 0)
+            (0, 0, 1, 0, 0, 1)
             sage: H.heegner_divisor(-51)
-            (1, 0, 0, 1, 0, 2)
+            (0, 0, 1, 0, 2, 1)
             sage: H.heegner_divisor(-79)
-            (3, 2, 2, 3, 0, 0)
+            (2, 0, 3, 2, 0, 3)
 
             sage: sum(H.heegner_divisor(-39).element())
             8
@@ -5138,10 +5136,10 @@ class HeegnerQuatAlg(SageObject):
             sage: H = heegner_points(11).reduce_mod(7)
             sage: I = H.brandt_module().right_ideals()[0]
             sage: sorted(H.cyclic_subideal_p1(I, 3).items())
-            [((0, 1), Fractional ideal (12, 132*i, 10 + 76*i + 2*j, 4 + 86*i + 2*k)),
-             ((1, 0), Fractional ideal (12, 132*i, 2 + 32*i + 2*j, 8 + 130*i + 2*k)),
-             ((1, 1), Fractional ideal (12, 132*i, 10 + 32*i + 2*j, 8 + 86*i + 2*k)),
-             ((1, 2), Fractional ideal (12, 132*i, 2 + 76*i + 2*j, 4 + 130*i + 2*k))]
+            [((0, 1), Fractional ideal (12, 132*i, 10 + 112*i + 2*j, 4 + 98*i + 2*k)),
+             ((1, 0), Fractional ideal (12, 132*i, 2 + 68*i + 2*j, 8 + 10*i + 2*k)),
+             ((1, 1), Fractional ideal (12, 132*i, 10 + 68*i + 2*j, 8 + 98*i + 2*k)),
+             ((1, 2), Fractional ideal (12, 132*i, 2 + 112*i + 2*j, 4 + 10*i + 2*k))]
             sage: len(H.cyclic_subideal_p1(I, 17))
             18
         """
@@ -5569,7 +5567,7 @@ class HeegnerQuatAlg(SageObject):
             [0, 0]
             sage: k = H.rational_kolyvagin_divisor(D, 59)
             sage: [b.dot_product(k.element().change_ring(GF(q))) for b in V.basis()]
-            [2, 0]
+            [1, 2]
         """
         if not self.satisfies_heegner_hypothesis(D, c):
             raise ValueError("D and c must be coprime to N and ell")
@@ -5611,7 +5609,7 @@ class HeegnerQuatAlg(SageObject):
             sage: N = 37; D = -7; ell = 17; c = 41; p = 3
             sage: H = heegner_points(N).reduce_mod(ell)
             sage: H.kolyvagin_point_on_curve(D, c, EllipticCurve('37a'), p)
-            [1, 1]
+            [2, 1]
         """
         k = self.rational_kolyvagin_divisor(D, c)
         V = self.modp_dual_elliptic_curve_factor(E, p, bound)
@@ -6028,8 +6026,7 @@ class HeegnerQuatAlgEmbedding(SageObject):
 
             sage: H = heegner_points(11).reduce_mod(3); R = H.left_orders()[0]
             sage: H.optimal_embeddings(-7, 2, R)[0].codomain()
-            Order of Quaternion Algebra (-1, -3) with base ring Rational Field
-             with basis (1/2 + 1/2*j + 7*k, 1/2*i + 13/2*k, j + 3*k, 11*k)
+            Order of Quaternion Algebra (-1, -3) with base ring Rational Field with basis (1, 11*i, 1/2 + 2*i + 1/2*j, 17/2*i + 1/2*k)
         """
         return self.__R
 

@@ -191,7 +191,7 @@ class DoubleCosetReduction(SageObject):
             sage: Y = BruhatTitsQuotient(5, 13)
             sage: x = Matrix(ZZ,2,2,[123,153,1231,1231])
             sage: DoubleCosetReduction(Y,x)
-            Double coset data (-1, [(4), (5), (-4), (-4)], 8)
+            Double coset data (-1, [(-3), (-3), (-1), (3)], 8)
         """
         return "Double coset data (%s, %s, %s)" % (self.sign(),
                                                    list(self.gamma), self.label)
@@ -311,11 +311,11 @@ class DoubleCosetReduction(SageObject):
             sage: Y = BruhatTitsQuotient(7, 11)
             sage: d = DoubleCosetReduction(Y,Matrix(ZZ,2,2,[123,45,88,1]))
             sage: d.igamma()
-            [6 + 6*7 + 6*7^2 + 6*7^3 + 6*7^4 + O(7^5)                                   O(7^5)]
-            [                                  O(7^5) 6 + 6*7 + 6*7^2 + 6*7^3 + 6*7^4 + O(7^5)]
+            [1 + O(7^5)     O(7^5)]
+            [    O(7^5) 1 + O(7^5)]
             sage: d.igamma(embedding = 7)
-            [6 + 6*7 + 6*7^2 + 6*7^3 + 6*7^4 + 6*7^5 + 6*7^6 + O(7^7)                                                   O(7^7)]
-            [                                                  O(7^7) 6 + 6*7 + 6*7^2 + 6*7^3 + 6*7^4 + 6*7^5 + 6*7^6 + O(7^7)]
+            [1 + O(7^7)     O(7^7)]
+            [    O(7^7) 1 + O(7^7)]
         """
         Y = self._parent
         if embedding is None:
@@ -2357,13 +2357,13 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(3,101)
             sage: X.get_embedding_matrix()
-            [    O(3) 1 + O(3) 1 + O(3) 1 + O(3)]
-            [2 + O(3)     O(3) 2 + O(3) 2 + O(3)]
-            [1 + O(3) 1 + O(3)     O(3) 2 + O(3)]
-            [1 + O(3) 2 + O(3) 2 + O(3) 2 + O(3)]
+            [1 + O(3) 1 + O(3)     O(3)     O(3)]
+            [    O(3)     O(3) 1 + O(3) 2 + O(3)]
+            [    O(3) 2 + O(3) 1 + O(3) 2 + O(3)]
+            [1 + O(3) 2 + O(3) 1 + O(3) 1 + O(3)]
             sage: X._increase_precision(5)
             sage: X.get_embedding_matrix()[0,0]
-            2*3^3 + 2*3^5 + O(3^6)
+            1 + O(3^6)
         """
         if amount >= 1:
             self.get_embedding_matrix(prec=self._prec + amount)
@@ -2494,8 +2494,8 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: f = X.get_embedding(prec = 4)
             sage: b = Matrix(ZZ,4,1,[1,2,3,4])
             sage: f(b)
-            [2 + 3*5 + 2*5^2 + 4*5^3 + O(5^4)       3 + 2*5^2 + 4*5^3 + O(5^4)]
-            [        5 + 5^2 + 3*5^3 + O(5^4)           4 + 5 + 2*5^2 + O(5^4)]
+            [          4 + 5 + 2*5^3 + O(5^4)       4 + 5 + 5^2 + 5^3 + O(5^4)]
+            [        2 + 4*5 + 3*5^2 + O(5^4) 1 + 4*5 + 4*5^2 + 2*5^3 + O(5^4)]
         """
         A = self.get_embedding_matrix(prec=prec)
         return lambda g: Matrix(self._R, 2, 2, (A * g).list())
@@ -2623,7 +2623,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,7)
             sage: X.get_eichler_order()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k)
         """
         if magma:
             if not force_computation:
@@ -2652,7 +2652,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,7)
             sage: X.get_maximal_order()
-            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j, 1/2*i + 1/2*k, j, k)
+            Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k)
         """
         if magma:
             if not force_computation:
@@ -2708,7 +2708,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(7,11)
             sage: X.get_eichler_order_basis()
-            [1/2 + 1/2*j, 1/2*i + 1/2*k, j, k]
+            [1, i, 1/2 + 1/2*j, 1/2*i + 1/2*k]
         """
         try:
             return self._B
@@ -2730,10 +2730,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: X = BruhatTitsQuotient(7,11)
             sage: X.get_eichler_order_quadform()
             Quadratic form in 4 variables over Integer Ring with coefficients:
-            [ 3 0 11 0 ]
-            [ * 3 0 11 ]
-            [ * * 11 0 ]
-            [ * * * 11 ]
+            [ 1 0 1 0 ]
+            [ * 1 0 1 ]
+            [ * * 3 0 ]
+            [ * * * 3 ]
         """
         try:
             return self._OQuadForm
@@ -2753,10 +2753,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(7,11)
             sage: X.get_eichler_order_quadmatrix()
-            [ 6  0 11  0]
-            [ 0  6  0 11]
-            [11  0 22  0]
-            [ 0 11  0 22]
+            [2 0 1 0]
+            [0 2 0 1]
+            [1 0 6 0]
+            [0 1 0 6]
         """
         try:
             return self._OM
@@ -2782,10 +2782,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: X = BruhatTitsQuotient(7,11)
             sage: X.get_units_of_order()
             [
-            [ 0]  [-2]
-            [-2]  [ 0]
-            [ 0]  [ 1]
-            [ 1], [ 0]
+            [0]  [1]
+            [1]  [0]
+            [0]  [0]
+            [0], [0]
             ]
         """
         OM = self.get_eichler_order_quadmatrix()
@@ -2839,9 +2839,9 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(3,5)
             sage: X._get_atkin_lehner_data(3)[0]
-            [ 2]
-            [ 4]
-            [-3]
+            [ 1]
+            [ 1]
+            [ 0]
             [-2]
         """
         E = self.get_edge_list()
@@ -3121,10 +3121,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: X = BruhatTitsQuotient(3,17)
             sage: X._find_lattice(Matrix(ZZ,2,2,[1,2,3,4]),Matrix(ZZ,2,2,[3,2,1,5]), True,0)
             (
-            [1 0 0 0]  [138 204 -35 102]
-            [2 3 0 0]  [204 306 -51 153]
-            [0 0 1 0]  [-35 -51  12 -34]
-            [0 0 0 1], [102 153 -34 102]
+            [1 0 0 0]  [ 14  26  29  36]
+            [0 1 0 0]  [ 26  54  59  75]
+            [0 0 1 0]  [ 29  59  80  87]
+            [1 2 1 3], [ 36  75  87 108]
             )
         """
         if as_edges:
@@ -3448,9 +3448,56 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,7)
             sage: X._find_elements_in_order(23)
-            [[2, 9, -1, -5], [0, 8, 0, -5], [-2, 9, 1, -5], [6, 7, -3, -4], [2, 5, -1, -4], [0, 6, -1, -4], [0, 8, -1, -4], [2, 9, -1, -4], [-2, 5, 1, -4], [0, 6, 1, -4], [0, 8, 1, -4], [-2, 9, 1, -4], [-6, 7, 3, -4], [7, 6, -4, -3], [7, 6, -3, -3], [6, 7, -3, -3], [0, 8, 0, -3], [-7, 6, 3, -3], [-6, 7, 3, -3], [-7, 6, 4, -3], [0, 1, -1, -2], [0, 6, -1, -2], [0, 1, 1, -2], [0, 6, 1, -2], [9, 2, -5, -1], [6, 0, -4, -1], [8, 0, -4, -1], [5, 2, -4, -1], [9, 2, -4, -1], [1, 0, -2, -1], [6, 0, -2, -1], [0, -1, -1, -1], [-1, 0, -1, -1], [5, 2, -1, -1], [2, 5, -1, -1], [0, -1, 1, -1], [1, 0, 1, -1], [-5, 2, 1, -1], [-2, 5, 1, -1], [-6, 0, 2, -1], [-1, 0, 2, -1], [-8, 0, 4, -1], [-6, 0, 4, -1], [-9, 2, 4, -1], [-5, 2, 4, -1], [-9, 2, 5, -1], [8, 0, -5, 0], [8, 0, -3, 0]]
+            [[1, 1, -2, -3],
+             [1, 2, -2, -3],
+             [-1, -1, 0, -3],
+             [1, -1, 0, -3],
+             [-1, 4, 0, -3],
+             [1, 4, 0, -3],
+             [-1, 1, 2, -3],
+             [-1, 2, 2, -3],
+             [1, 1, -3, -2],
+             [2, 1, -3, -2],
+             [1, -2, -2, -2],
+             [-2, 1, -2, -2],
+             [4, 1, -2, -2],
+             [1, 4, -2, -2],
+             [0, -3, 0, -2],
+             [-4, 1, 0, -2],
+             [4, 1, 0, -2],
+             [0, 5, 0, -2],
+             [-1, -2, 2, -2],
+             [-4, 1, 2, -2],
+             [2, 1, 2, -2],
+             [-1, 4, 2, -2],
+             [-2, 1, 3, -2],
+             [-1, 1, 3, -2],
+             [-1, -4, 0, -1],
+             [1, -4, 0, -1],
+             [-3, -3, 0, -1],
+             [3, -3, 0, -1],
+             [-3, 4, 0, -1],
+             [3, 4, 0, -1],
+             [-1, 5, 0, -1],
+             [1, 5, 0, -1],
+             [-1, -1, -3, 0],
+             [4, -1, -3, 0],
+             [-1, 1, -3, 0],
+             [4, 1, -3, 0],
+             [1, -4, -2, 0],
+             [-3, 0, -2, 0],
+             [5, 0, -2, 0],
+             [1, 4, -2, 0],
+             [-3, -3, -1, 0],
+             [4, -3, -1, 0],
+             [-4, -1, -1, 0],
+             [5, -1, -1, 0],
+             [-4, 1, -1, 0],
+             [5, 1, -1, 0],
+             [-3, 3, -1, 0],
+             [4, 3, -1, 0]]
             sage: list(X._find_elements_in_order(23,1))
-            [[1, 0, -2, -1], [1, 0, 1, -1]]
+            [[2, 1, -3, -2], [-1, 1, 3, -2]]
         """
         OQuadForm = self.get_eichler_order_quadform()
         if norm > 10 ** 3:
