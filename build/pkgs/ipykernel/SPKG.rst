@@ -4,4 +4,15 @@ ipykernel: IPython Kernel for Jupyter
 Description
 -----------
 
-This package provides the IPython kernel for Jupyter.
+IPython Kernel for Jupyter
+
+License
+-------
+
+BSD 3-Clause License
+
+Upstream Contact
+----------------
+
+https://pypi.org/project/ipykernel/
+

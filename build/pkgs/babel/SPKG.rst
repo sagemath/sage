@@ -14,5 +14,5 @@ BSD-3-Clause
 Upstream Contact
 ----------------
 
-https://pypi.org/project/Babel/
+https://pypi.org/project/babel/
 
