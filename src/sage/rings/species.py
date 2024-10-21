@@ -224,7 +224,7 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
 
             sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups(); C
-            Infinite set of conjugacy classes of directly indecomposable subgroups
+            Set of conjugacy classes of directly indecomposable subgroups
         """
         return "Set of conjugacy classes of directly indecomposable subgroups"
 
@@ -554,11 +554,12 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
     def __init__(self, names):
         r"""
-        Infinite set of multivariate atomic species.
+        Initialize the class of (multivariate) atomic species.
 
         INPUT:
 
-        - ``names`` -- an iterable of ``k`` strings for the sorts of the species
+        - ``names`` -- an iterable of ``k`` strings for the sorts of
+          the species
 
         TESTS:
 
@@ -571,6 +572,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: A2 = AtomicSpecies(["X", "Y"])
             sage: TestSuite(A1).run(skip="_test_graded_components")
             sage: TestSuite(A2).run(skip="_test_graded_components")
+
         """
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, names=names, category=category)
@@ -901,7 +903,7 @@ def _stabilizer_subgroups(G, X, a):
 
 class MolecularSpecies(IndexedFreeAbelianMonoid):
     """
-    The set of (multivariate) molecular species.
+    The monoid of (multivariate) molecular species.
     """
     @staticmethod
     def __classcall__(cls, *args, **kwds):
@@ -1534,7 +1536,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
 class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
     r"""
-    Multivariate polynomial (virtual) species.
+    A (virtual) polynomial species.
 
     TESTS::
 
