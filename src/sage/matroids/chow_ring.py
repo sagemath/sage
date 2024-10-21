@@ -17,7 +17,7 @@ class ChowRing(QuotientRing_generic):
     r"""
     The Chow ring of a matroid.
 
-    The *Chow ring of a matroid* `M` is defined as the quotient ring
+    The *Chow ring of the matroid* `M` is defined as the quotient ring
 
     .. MATH::
 
@@ -26,8 +26,8 @@ class ChowRing(QuotientRing_generic):
     where `(I_M + J_M)` is the :class:`Chow ring ideal
     <sage.matroids.chow_ring_ideal.ChowRingIdeal_nonaug>` of matroid `M`.
 
-    The *augmented Chow ring of matroid* `M` in the Feitchner-Yuzvinsky presentation
-    is the quotient ring
+    The *augmented Chow ring of matroid* `M` in the Feitchner-Yuzvinsky
+    presentation is the quotient ring
 
     .. MATH::
 
@@ -35,7 +35,7 @@ class ChowRing(QuotientRing_generic):
 
     where `(I_M + J_M)` is the :class:`augmented Chow ring ideal
     <sage.matroids.chow_ring_ideal.AugmentedChowRingIdeal_fy>` of matroid `M`
-    in Feitchner-Yuzvinsky presentation.
+    in the Feitchner-Yuzvinsky presentation.
 
     The *augmented Chow ring of atom-free presentation* is the quotient ring
 
@@ -120,6 +120,7 @@ class ChowRing(QuotientRing_generic):
         Return the LaTeX output of the polynomial ring and Chow ring ideal.
 
         EXAMPLES::
+
             sage: M1 = matroids.Uniform(2,5)
             sage: ch = M1.chow_ring(QQ, False)
             sage: ch._latex_()

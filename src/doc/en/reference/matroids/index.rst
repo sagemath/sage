@@ -65,8 +65,8 @@ Internals
    sage/matroids/set_system
    sage/matroids/unpickling
 
-   Chow rings of matroids
-   ----------------------
+Chow rings of matroids
+----------------------
 
 .. toctree::
    :maxdepth: 1
