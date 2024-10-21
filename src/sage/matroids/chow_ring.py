@@ -31,9 +31,9 @@ class ChowRing(QuotientRing_generic):
 
     .. MATH::
 
-        A(M)_R := R[y_{e_1}, \ldots, y_{e_n}, x_{F_1}, \ldots, x_{F_k}] / (I_M + J_M),
+        A(M)_R := R[y_{e_1}, \ldots, y_{e_n}, x_{F_1}, \ldots, x_{F_k}] / I_{FY}(M),
 
-    where `(I_M + J_M)` is the :class:`augmented Chow ring ideal
+    where `I_{FY}(M)` is the :class:`augmented Chow ring ideal
     <sage.matroids.chow_ring_ideal.AugmentedChowRingIdeal_fy>` of matroid `M`
     in the Feitchner-Yuzvinsky presentation.
 
@@ -41,9 +41,9 @@ class ChowRing(QuotientRing_generic):
 
     .. MATH::
 
-        A(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / I_M^{af},
+        A(M)_R := R[x_{F_1}, \ldots, x_{F_k}] / I_{af}(M),
 
-    where `I_M^{af}` is the :class:`augmented Chow ring ideal
+    where `I_{af}(M)` is the :class:`augmented Chow ring ideal
     <sage.matroids.chow_ring_ideal.AugmentedChowRingIdeal_atom_free>`
     of matroid `M` in the atom-free presentation.
 
