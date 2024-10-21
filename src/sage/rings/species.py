@@ -808,7 +808,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
                 G = x
                 pi = {0: G.domain()}
             else:
-                raise ValueError("the assignment of sorts to the domain elements must be provided")
+                return False
         else:
             G, pi = x
         if not isinstance(G, PermutationGroup_generic):
