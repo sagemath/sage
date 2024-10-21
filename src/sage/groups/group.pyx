@@ -287,7 +287,7 @@ cdef class FiniteGroup(Group):
 
     def __init__(self, base=None, category=None):
         """
-        The Python constructor
+        The Python constructor.
 
         TESTS::
 

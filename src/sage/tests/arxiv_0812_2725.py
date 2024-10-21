@@ -45,7 +45,7 @@ def CompleteMatchings(n):
 
     INPUT:
 
-    n -- nonnegative integer
+    - ``n`` -- nonnegative integer
 
     OUTPUT:
 
@@ -86,8 +86,8 @@ def matchingsset(L):
 
     INPUT:
 
-    L -- a sequence. Lists, tuples, et cetera; anything that
-    supports len() and slicing should work.
+    - ``L`` -- a sequence. Lists, tuples, et cetera; anything that
+      supports ``len()`` and slicing should work.
 
     OUTPUT:
 
@@ -122,10 +122,10 @@ def dcrossing(m_):
 
     INPUT:
 
-    m -- a matching or set partition, as a list of 2-element tuples
-    representing the edges. You'll need to call setp_to_edges() on
-    the objects returned by SetPartitions() to put them into the
-    proper format.
+    - ``m`` -- a matching or set partition, as a list of 2-element tuples
+      representing the edges. You'll need to call ``setp_to_edges()`` on
+      the objects returned by ``SetPartitions()`` to put them into the
+      proper format.
 
     OUTPUT:
 
@@ -189,7 +189,7 @@ def setp_to_edges(p):
 
     INPUT:
 
-    p -- a Sage set partition.
+    - ``p`` -- a Sage set partition
 
     OUTPUT:
 
@@ -214,7 +214,7 @@ def dcrossvec_setp(n):
 
     INPUT:
 
-    n -- a nonnegative integer.
+    - ``n`` -- nonnegative integer
 
     OUTPUT:
 
@@ -256,7 +256,7 @@ def dcrossvec_cm(n):
 
     INPUT:
 
-    n -- a nonnegative integer.
+    - ``n`` -- nonnegative integer
 
     OUTPUT:
 
@@ -311,10 +311,10 @@ def tablecolumn(n, k):
 
     INPUT:
 
-    n -- positive integer.
+    - ``n`` -- positive integer
 
-    k -- integer for which table you want: Table 1 is complete
-    matchings, Table 2 is set partitions.
+    - ``k`` -- integer for which table you want: Table 1 is complete
+      matchings, Table 2 is set partitions
 
     OUTPUT:
 

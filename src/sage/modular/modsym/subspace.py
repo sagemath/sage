@@ -37,19 +37,17 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
         """
         INPUT:
 
+        - ``ambient_hecke_module`` -- the ambient space of
+          modular symbols in which we're constructing a submodule
 
-        -  ``ambient_hecke_module`` -- the ambient space of
-           modular symbols in which we're constructing a submodule
+        - ``submodule`` -- the underlying free module of the
+          submodule
 
-        -  ``submodule`` -- the underlying free module of the
-           submodule
+        - ``dual_free_module`` -- underlying free module of
+          the dual of the submodule (optional)
 
-        -  ``dual_free_module`` -- underlying free module of
-           the dual of the submodule (optional)
-
-        -  ``check`` -- (default: ``False``) whether to check that
-           the submodule is invariant under all Hecke operators T_p.
-
+        - ``check`` -- boolean (default: ``False``); whether to check that
+          the submodule is invariant under all Hecke operators `T_p`
 
         EXAMPLES::
 
@@ -78,7 +76,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -229,7 +227,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
     def factorization(self):
         """
         Return a list of pairs `(S,e)` where `S` is simple
-        spaces of modular symbols and self is isomorphic to the direct sum
+        spaces of modular symbols and ``self`` is isomorphic to the direct sum
         of the `S^e` as a module over the *anemic* Hecke algebra
         adjoin the star involution.
 
@@ -239,7 +237,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
         The factors are sorted by dimension - don't depend on much more for
         now.
 
-        ASSUMPTION: self is a module over the anemic Hecke algebra.
+        ASSUMPTION: ``self`` is a module over the anemic Hecke algebra.
 
         EXAMPLES: Note that if the sign is 1 then the cuspidal factors
         occur twice, one with each star eigenvalue.
@@ -326,7 +324,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
     def is_cuspidal(self) -> bool:
         """
-        Return True if self is cuspidal.
+        Return ``True`` if ``self`` is cuspidal.
 
         EXAMPLES::
 
@@ -358,7 +356,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
     def is_eisenstein(self):
         """
-        Return True if self is an Eisenstein subspace.
+        Return ``True`` if ``self`` is an Eisenstein subspace.
 
         EXAMPLES::
 
@@ -381,10 +379,10 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
         INPUT:
 
-        -  ``sign`` -- int (either -1 or +1)
+        - ``sign`` -- integer (either -1 or +1)
 
-        -  ``compute_dual`` -- bool (default: ``True``) also
-           compute dual subspace. This are useful for many algorithms.
+        - ``compute_dual`` -- boolean (default: ``True``); also
+          compute dual subspace. This is useful for many algorithms.
 
         OUTPUT: subspace of modular symbols
 

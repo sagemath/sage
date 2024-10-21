@@ -31,12 +31,12 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
 
         INPUT:
 
-        - ``p`` (prime integer or pAdic ring / field) -- if ``p`` is an integer,
+        - ``p`` -- prime integer or pAdic ring / field; if ``p`` is an integer,
           constructs a ``pAdicField`` with ``p`` to compute the matrix of
-          Frobenius, otherwise uses the supplied pAdic ring or field.
+          Frobenius, otherwise uses the supplied pAdic ring or field
 
-        - ``prec`` (optional) -- if ``p`` is an prime integer, the `p`-adic
-          precision of the coefficient ring constructed.
+        - ``prec`` -- (optional) if ``p`` is an prime integer, the `p`-adic
+          precision of the coefficient ring constructed
 
         EXAMPLES::
 
@@ -68,7 +68,7 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
 
     def lseries(self, prec=53):
         """
-        Return the L-series of this hyperelliptic curve of genus 2.
+        Return the `L`-series of this hyperelliptic curve of genus 2.
 
         EXAMPLES::
 

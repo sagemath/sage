@@ -206,7 +206,7 @@ def midpoint(pointa, pointb, w):
 
     - ``pointa``, ``pointb`` -- two points in 3-dimensional space
 
-    - ``w`` -- a real weight between 0 and 1.
+    - ``w`` -- a real weight between 0 and 1
 
     If the weight is zero, the result is ``pointb``. If the weight is
     one, the result is ``pointa``.
@@ -394,7 +394,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
     cdef int realloc(self, Py_ssize_t vcount, Py_ssize_t fcount, Py_ssize_t icount) except -1:
         r"""
-        Allocates memory for vertices, faces, and face indices.  Can
+        Allocate memory for vertices, faces, and face indices.  Can
         only be called from Cython, so the doctests must be indirect.
 
         EXAMPLES::
@@ -931,7 +931,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         INPUT:
 
-        - `f` -- a function from `\RR^3` to `\ZZ`
+        - ``f`` -- a function from `\RR^3` to `\ZZ`
 
         EXAMPLES::
 
@@ -1004,9 +1004,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         - ``eps`` -- target accuracy in the intersection (default: 1.0e-6)
 
-        OUTPUT:
-
-        an ``IndexFaceSet``
+        OUTPUT: an ``IndexFaceSet``
 
         This will contain both triangular and quadrilateral faces.
 
@@ -1410,7 +1408,6 @@ cdef class IndexFaceSet(PrimitiveObject):
                 {'x': 0.0, 'y': 1.0, 'z': 1.0},
                 {'x': 1.0, 'y': 0.0, 'z': 1.0},
                 {'x': 1.0, 'y': 1.0, 'z': 0.0}]})]
-
         """
         surface = {}
 
@@ -1712,9 +1709,7 @@ cdef class IndexFaceSet(PrimitiveObject):
           the original surface so it shows, typically this value is very
           small compared to the actual object
 
-        OUTPUT:
-
-        Graphics3dGroup of stickers
+        OUTPUT: Graphics3dGroup of stickers
 
         EXAMPLES::
 
@@ -1758,8 +1753,6 @@ cdef class FaceIter:
         True
     """
     def __init__(self, face_set):
-        """
-        """
         self.set = face_set
         self.i = 0
 

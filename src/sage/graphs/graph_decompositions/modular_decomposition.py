@@ -161,14 +161,14 @@ class Node:
 
     def set_node_split(self, node_split):
         """
-        Add node_split to the node split of self.
+        Add node_split to the node split of ``self``.
 
         ``LEFT_SPLIT`` and ``RIGHT_SPLIT`` can exist together in ``self`` as
         ``BOTH_SPLIT``.
 
         INPUT:
 
-        - ``node_split`` -- node_split to be added to self
+        - ``node_split`` -- ``node_split`` to be added to ``self``
 
         EXAMPLES::
 
@@ -283,11 +283,9 @@ class Node:
 
 def create_prime_node():
     """
-    Return a prime node with no children
+    Return a prime node with no children.
 
-    OUTPUT:
-
-    A node object with node_type set as NodeType.PRIME
+    OUTPUT: a node object with ``node_type`` set as ``NodeType.PRIME``
 
     EXAMPLES::
 
@@ -301,11 +299,9 @@ def create_prime_node():
 
 def create_parallel_node():
     """
-    Return a parallel node with no children
+    Return a parallel node with no children.
 
-    OUTPUT:
-
-    A node object with node_type set as NodeType.PARALLEL
+    OUTPUT: a node object with ``node_type`` set as ``NodeType.PARALLEL``
 
     EXAMPLES::
 
@@ -319,11 +315,9 @@ def create_parallel_node():
 
 def create_series_node():
     """
-    Return a series node with no children
+    Return a series node with no children.
 
-    OUTPUT:
-
-    A node object with node_type set as NodeType.SERIES
+    OUTPUT: a node object with ``node_type`` set as ``NodeType.SERIES``
 
     EXAMPLES::
 
@@ -337,15 +331,14 @@ def create_series_node():
 
 def create_normal_node(vertex):
     """
-    Return a normal node with no children
+    Return a normal node with no children.
 
     INPUT:
 
     - ``vertex`` -- vertex number
 
-    OUTPUT:
-
-    A node object representing the vertex with node_type set as NodeType.NORMAL
+    OUTPUT: a node object representing the vertex with ``node_type`` set as
+    ``NodeType.NORMAL``
 
     EXAMPLES::
 
@@ -361,7 +354,7 @@ def create_normal_node(vertex):
 
 def print_md_tree(root):
     """
-    Print the modular decomposition tree
+    Print the modular decomposition tree.
 
     INPUT:
 
@@ -388,7 +381,7 @@ def print_md_tree(root):
 
     def recursive_print_md_tree(root, level):
         """
-        Print the modular decomposition tree at root
+        Print the modular decomposition tree at root.
 
         INPUT:
 
@@ -462,7 +455,7 @@ def gamma_classes(graph):
 
 def habib_maurer_algorithm(graph, g_classes=None):
     """
-    Compute the modular decomposition by the algorithm of Habib and Maurer
+    Compute the modular decomposition by the algorithm of Habib and Maurer.
 
     Compute the modular decomposition of the given graph by the algorithm of
     Habib and Maurer [HM1979]_ . If the graph is disconnected or its complement
@@ -484,9 +477,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
       are the gamma classes of the graph, and whose keys are a frozenset of the
       vertices corresponding to the class. Used internally.
 
-    OUTPUT:
-
-    The modular decomposition tree of the graph.
+    OUTPUT: the modular decomposition tree of the graph
 
     EXAMPLES:
 
@@ -672,9 +663,7 @@ def test_modular_decomposition(tree_root, graph):
 
     - ``graph`` -- graph whose modular decomposition tree needs to be tested
 
-    OUTPUT:
-
-    ``True`` if input tree is a modular decomposition else ``False``
+    OUTPUT: ``True`` if input tree is a modular decomposition else ``False``
 
     EXAMPLES::
 
@@ -756,7 +745,7 @@ def test_maximal_modules(tree_root, graph):
 
 def get_vertices(component_root):
     """
-    Compute the list of vertices in the (co)component
+    Compute the list of vertices in the (co)component.
 
     INPUT:
 
@@ -907,7 +896,7 @@ def form_module(index, other_index, tree_root, graph):
 # Function implemented for testing
 def test_module(module, graph):
     """
-    Test whether input module is actually a module
+    Test whether input module is actually a module.
 
     INPUT:
 
@@ -915,9 +904,7 @@ def test_module(module, graph):
 
     - ``graph`` -- input sage graph which contains the module
 
-    OUTPUT:
-
-    ``True`` if input module is a module by definition else ``False``
+    OUTPUT: ``True`` if input module is a module by definition else ``False``
 
     EXAMPLES::
 
@@ -1074,9 +1061,7 @@ def nested_tuple_to_tree(nest):
     - ``nest`` -- a nested tuple of the form returned by
       :meth:`tree_to_nested_tuple`
 
-    OUTPUT:
-
-    The root node of a modular decomposition tree.
+    OUTPUT: the root node of a modular decomposition tree
 
     EXAMPLES::
 
@@ -1147,7 +1132,7 @@ def equivalent_trees(root1, root2):
 
 def relabel_tree(root, perm):
     r"""
-    Relabel the leaves of a tree according to a dictionary
+    Relabel the leaves of a tree according to a dictionary.
 
     INPUT:
 
@@ -1226,10 +1211,10 @@ def test_gamma_modules(trials, vertices, prob, verbose=False):
 
     - ``vertices`` -- the size of the graph to use
 
-    - ``prob`` -- the probability that any given edge is in the graph.
-      See :meth:`~sage.graphs.generators.random.RandomGNP` for more details.
+    - ``prob`` -- the probability that any given edge is in the graph
+      See :meth:`~sage.graphs.generators.random.RandomGNP` for more details
 
-    - ``verbose`` -- print information on each trial.
+    - ``verbose`` -- print information on each trial
 
     EXAMPLES::
 
@@ -1290,10 +1275,10 @@ def random_md_tree(max_depth, max_fan_out, leaf_probability):
 
     INPUT:
 
-    - ``max_depth`` -- the maximum depth of the tree.
+    - ``max_depth`` -- the maximum depth of the tree
 
     - ``max_fan_out`` -- the maximum number of children a node can have
-      (must be >=4 as a prime node must have at least 4 vertices).
+      (must be >=4 as a prime node must have at least 4 vertices)
 
     - ``leaf_probability`` -- the probability that a subtree is a leaf
 

@@ -154,7 +154,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def coefficients(self):
         r"""
-        Gives a the `6` coefficients of the conic ``self``
+        Give a the `6` coefficients of the conic ``self``
         in lexicographic order.
 
         EXAMPLES::
@@ -173,7 +173,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def derivative_matrix(self):
         r"""
-        Gives the derivative of the defining polynomial of
+        Give the derivative of the defining polynomial of
         the conic ``self``, which is a linear map,
         as a `3 \times 3` matrix.
 
@@ -400,33 +400,32 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: C.<a,b,c> = Conic(GF(3), [1, 1, 1]); C                                # needs sage.libs.singular
             Projective Conic Curve over
              Finite Field of size 3 defined by a^2 + b^2 + c^2
-
         """
         return self.coordinate_ring().gens()
 
     def has_rational_point(self, point=False,
                            algorithm='default', read_cache=True):
         r"""
-        Return True if and only if the conic ``self``
+        Return ``True`` if and only if the conic ``self``
         has a point over its base field `B`.
 
-        If ``point`` is True, then returns a second output, which is
+        If ``point`` is ``True``, then returns a second output, which is
         a rational point if one exists.
 
         Points are cached whenever they are found. Cached information
-        is used if and only if ``read_cache`` is True.
+        is used if and only if ``read_cache`` is ``True``.
 
         ALGORITHM:
 
         The parameter ``algorithm`` specifies the algorithm
         to be used:
 
-        - ``'default'`` -- If the base field is real or complex,
-          use an elementary native Sage implementation.
+        - ``'default'`` -- if the base field is real or complex,
+          use an elementary native Sage implementation
 
         - ``'magma'`` (requires Magma to be installed) --
           delegates the task to the Magma computer algebra
-          system.
+          system
 
         EXAMPLES::
 
@@ -568,10 +567,10 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def has_singular_point(self, point=False):
         r"""
-        Return True if and only if the conic ``self`` has a rational
+        Return ``True`` if and only if the conic ``self`` has a rational
         singular point.
 
-        If ``point`` is True, then also return a rational singular
+        If ``point`` is ``True``, then also return a rational singular
         point (or ``None`` if no such point exists).
 
         EXAMPLES:
@@ -669,7 +668,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
               To:   Projective Conic Curve over Rational Field defined by 4*x^2 + y^2 - z^2
               Defn: Defined on coordinates by sending (x : y : z) to (1/2*z : y : x)
 
-        :class:`ValueError` is raised if the wrong codomain ``Y`` is specified:
+        :exc:`ValueError` is raised if the wrong codomain ``Y`` is specified:
 
         ::
 
@@ -713,7 +712,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
                     Polynomial Ring in t over Rational Field defined by
                     1/(t^2)*x^2 + t*y^2 - 2/(t^2)*x*z + (t + 1)/(t^2)*z^2
               Defn: Defined on coordinates by sending (x : y : z) to (t*x + z : y : z)
-
         """
         if isinstance(x, Matrix):
             from .constructor import Conic
@@ -732,7 +730,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def is_diagonal(self):
         r"""
-        Return True if and only if the conic has the form
+        Return ``True`` if and only if the conic has the form
         `a x^2 + b y^2 + c z^2`.
 
         EXAMPLES:
@@ -751,7 +749,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def is_smooth(self):
         r"""
-        Return True if and only if ``self`` is smooth.
+        Return ``True`` if and only if ``self`` is smooth.
 
         EXAMPLES:
 
@@ -918,7 +916,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: i[0](p) / i[1](p)
             x/y
 
-        A :class:`ValueError` is raised if ``self`` has no rational point ::
+        A :exc:`ValueError` is raised if ``self`` has no rational point ::
 
             sage: # needs sage.libs.pari
             sage: C = Conic(x^2 + y^2 + 7*z^2)
@@ -928,7 +926,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             ValueError: Conic Projective Conic Curve over Rational Field defined by
             x^2 + y^2 + 7*z^2 has no rational points over Rational Field!
 
-        A :class:`ValueError` is raised if ``self`` is not smooth ::
+        A :exc:`ValueError` is raised if ``self`` is not smooth ::
 
             sage: # needs sage.libs.pari
             sage: C = Conic(x^2 + y^2)
@@ -973,7 +971,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
     def point(self, v, check=True):
         r"""
-        Constructs a point on ``self`` corresponding to the input ``v``.
+        Construct a point on ``self`` corresponding to the input ``v``.
 
         If ``check`` is True, then checks if ``v`` defines a valid
         point on ``self``.
@@ -1032,7 +1030,6 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             ...
             ValueError: Conic Projective Conic Curve over Rational Field defined by
             x^2 + y^2 + z^2 has no rational points over Rational Field!
-
         """
         if not self.is_smooth():
             raise NotImplementedError("Sorry, random points not implemented "
@@ -1050,7 +1047,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         r"""
         Return a point on ``self`` defined over the base field.
 
-        This raises a :class:`ValueError` if no rational point exists.
+        This raises a :exc:`ValueError` if no rational point exists.
 
         See ``self.has_rational_point`` for the algorithm used
         and for the use of the parameters ``algorithm`` and ``read_cache``.
@@ -1202,7 +1199,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: Conic(GF(2), [1,1,1,1,1,1]).singular_point()
             (1 : 1 : 1)
 
-        :class:`ValueError` is raised if the conic has no rational
+        :exc:`ValueError` is raised if the conic has no rational
         singular point
 
         ::
@@ -1295,6 +1292,5 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
             sage: C.<p,q,r> = Conic(QQ, [1, 1, 1]); C                                   # needs sage.libs.singular
             Projective Conic Curve over Rational Field defined by p^2 + q^2 + r^2
-
         """
         return self.defining_polynomial().parent().variable_names()

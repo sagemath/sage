@@ -95,7 +95,6 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
             ....:     assert is_planar(G, set_embedding=set_embedding, set_pos=set_pos)
             ....:     assert (hasattr(G, '_embedding') and G._embedding is not None) == set_embedding, (set_embedding, set_pos)
             ....:     assert (hasattr(G, '_pos') and G._pos is not None) == set_pos, (set_embedding, set_pos)
-
     """
     g._scream_if_not_simple()
     if set_pos and not g.is_connected():
@@ -136,6 +135,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
         elif status == NONEMBEDDABLE:
             # We now know that the graph is nonplanar.
             if not kuratowski:
+                gp_Free(&theGraph)
                 return False
             # With just the current edges, we have a nonplanar graph,
             # so to isolate a kuratowski subgraph, just keep going.
@@ -151,6 +151,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False):
     if status == NONEMBEDDABLE:
         # Kuratowski subgraph isolator
         if not kuratowski:
+            gp_Free(&theGraph)
             return False
         g_dict = {}
         for i in range(1, theGraph.N + 1):

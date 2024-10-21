@@ -6,10 +6,11 @@ Elements (characters) of the dual group of a finite Abelian group
 To obtain the dual group of a finite Abelian group, use the
 :meth:`~sage.groups.abelian_gps.abelian_group.dual_group` method::
 
-    sage: F = AbelianGroup([2,3,5,7,8], names="abcde"); F
+    sage: F = AbelianGroup([2,3,5,7,8], names='abcde')
+    sage: F
     Multiplicative Abelian group isomorphic to C2 x C3 x C5 x C7 x C8
 
-    sage: Fd = F.dual_group(names="ABCDE"); Fd
+    sage: Fd = F.dual_group(names='ABCDE'); Fd
     Dual of Abelian Group isomorphic to Z/2Z x Z/3Z x Z/5Z x Z/7Z x Z/8Z
     over Cyclotomic Field of order 840 and degree 192
 
@@ -100,9 +101,9 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
 
         EXAMPLES::
 
-            sage: F = AbelianGroup(5, [2,3,5,7,8], names="abcde")
+            sage: F = AbelianGroup(5, [2,3,5,7,8], names='abcde')
             sage: a,b,c,d,e = F.gens()
-            sage: Fd = F.dual_group(names="ABCDE")
+            sage: Fd = F.dual_group(names='ABCDE')
             sage: A,B,C,D,E = Fd.gens()
             sage: A*B^2*D^7
             A*B^2
@@ -117,9 +118,9 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
 
         TESTS::
 
-            sage: F = AbelianGroup(1, [7], names="a")
+            sage: F = AbelianGroup(1, [7], names='a')
             sage: a, = F.gens()
-            sage: Fd = F.dual_group(names="A", base_ring=GF(29))
+            sage: Fd = F.dual_group(names='A', base_ring=GF(29))
             sage: A, = Fd.gens()
             sage: A(a)                                                                  # needs sage.libs.pari
             16
@@ -150,8 +151,8 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(5,[3, 5, 5, 7, 8], names="abcde")
-            sage: Gd = G.dual_group(names="abcde")
+            sage: G = AbelianGroup(5,[3, 5, 5, 7, 8], names='abcde')
+            sage: Gd = G.dual_group(names='abcde')
             sage: a,b,c,d,e = Gd.gens()
             sage: u = a^3*b*c*d^2*e^5
             sage: v = a^2*b*c^2*d^3*e^3

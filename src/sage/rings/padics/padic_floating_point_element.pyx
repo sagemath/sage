@@ -34,7 +34,7 @@ cdef extern from "transcendantal.c":
 
 cdef class PowComputer_(PowComputer_base):
     """
-    A PowComputer for a floating-point padic ring or field.
+    A PowComputer for a floating-point `p`-adic ring or field.
     """
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field):
         """
@@ -53,7 +53,7 @@ cdef class PowComputer_(PowComputer_base):
 
 cdef class pAdicFloatingPointElement(FPElement):
     """
-    Constructs new element with given parent and value.
+    Construct new element with given parent and value.
 
     INPUT:
 
@@ -138,7 +138,6 @@ cdef class pAdicFloatingPointElement(FPElement):
         0
 
     # todo: doctests for converting from other types of p-adic rings
-
     """
     def lift(self):
         r"""
@@ -146,7 +145,7 @@ cdef class pAdicFloatingPointElement(FPElement):
         precision.  If a rational is returned, its denominator will equal
         ``p^ordp(self)``.
 
-        This method will raise a :class:`ValueError` when this element
+        This method will raise a :exc:`ValueError` when this element
         is infinity.
 
         EXAMPLES::
@@ -247,9 +246,9 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         INPUT:
 
-        - ``absprec`` -- a non-negative integer (default: ``1``)
+        - ``absprec`` -- nonnegative integer (default: 1)
 
-        - ``field`` -- boolean (default ``None``); whether to return an
+        - ``field`` -- boolean (default: ``None``); whether to return an
           element of `\GF{p}` or `\ZZ / p\ZZ`
 
         - ``check_prec`` -- ignored (for compatibility with other types)
@@ -278,7 +277,7 @@ cdef class pAdicFloatingPointElement(FPElement):
             sage: b.residue()
             Traceback (most recent call last):
             ...
-            ValueError: element must have non-negative valuation in order to compute residue
+            ValueError: element must have nonnegative valuation in order to compute residue
 
         TESTS::
 
@@ -303,7 +302,7 @@ cdef class pAdicFloatingPointElement(FPElement):
         if mpz_sgn((<Integer>absprec).value) < 0:
             raise ValueError("cannot reduce modulo a negative power of p")
         if self.ordp < 0:
-            raise ValueError("element must have non-negative valuation in order to compute residue")
+            raise ValueError("element must have nonnegative valuation in order to compute residue")
         if field is None:
             field = (absprec == 1)
         elif field and absprec != 1:
@@ -327,13 +326,13 @@ cdef class pAdicFloatingPointElement(FPElement):
 
     def _exp_binary_splitting(self, aprec):
         r"""
-        Compute the exponential power series of this element
+        Compute the exponential power series of this element.
 
         This is a helper method for :meth:`exp`.
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precision to which to compute the
+        - ``aprec`` -- integer; the precision to which to compute the
           exponential
 
         .. NOTE::
@@ -365,9 +364,8 @@ cdef class pAdicFloatingPointElement(FPElement):
 
             sage: R = Zp(7,5)
             sage: x = R(7)
-            sage: x.exp(algorithm="binary_splitting")   # indirect doctest
+            sage: x.exp(algorithm='binary_splitting')   # indirect doctest
             1 + 7 + 4*7^2 + 2*7^3 + O(7^5)
-
         """
         cdef unsigned long p
         cdef unsigned long prec = aprec
@@ -388,13 +386,13 @@ cdef class pAdicFloatingPointElement(FPElement):
 
     def _exp_newton(self, aprec, log_algorithm=None):
         r"""
-        Compute the exponential power series of this element
+        Compute the exponential power series of this element.
 
         This is a helper method for :meth:`exp`.
 
         INPUT:
 
-        - ``aprec`` -- an integer; the precision to which to compute the
+        - ``aprec`` -- integer; the precision to which to compute the
           exponential
 
         - ``log_algorithm`` -- (default: ``None``) the algorithm used for
@@ -424,7 +422,7 @@ cdef class pAdicFloatingPointElement(FPElement):
             sage: # needs sage.libs.ntl
             sage: R.<w> = Zq(7^2,5)
             sage: x = R(7*w)
-            sage: x.exp(algorithm="newton")   # indirect doctest
+            sage: x.exp(algorithm='newton')   # indirect doctest
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)
         """
         cdef unsigned long p

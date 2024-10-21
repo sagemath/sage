@@ -72,7 +72,7 @@ cdef class Module(Parent):
 
     INPUT:
 
-    - ``base`` -- a ring. The base ring of the module.
+    - ``base`` -- a ring; the base ring of the module
 
     - ``category`` -- a category (default: ``None``), the category for this
       module. If ``None``, then this is set to the category of modules/vector
@@ -113,7 +113,6 @@ cdef class Module(Parent):
         sage: M.rename('toto')
         sage: h == M.__hash__()
         True
-
     """
     def __init__(self, base, category=None, names=None):
         """
@@ -125,7 +124,6 @@ cdef class Module(Parent):
             sage: M = Module(ZZ)
             sage: type(M)
             <class 'sage.modules.module.Module'>
-
         """
         from sage.categories.modules import Modules
         if category is None:
@@ -171,7 +169,6 @@ cdef class Module(Parent):
         - Simon King (2010-12)
 
         - Peter Bruin (June 2014)
-
         """
         try:
             if (isinstance(M, Module)
@@ -194,7 +191,6 @@ cdef class Module(Parent):
             Traceback (most recent call last):
             ...
             NotImplementedError: the method change_ring() has not yet been implemented
-
         """
         if R is self.base_ring():
             return self
@@ -205,7 +201,7 @@ cdef class Module(Parent):
         Return the base extension of ``self`` to `R`.
 
         This is the same as ``self.change_ring(R)`` except that a
-        :class:`TypeError` is raised if there is no canonical coerce map
+        :exc:`TypeError` is raised if there is no canonical coerce map
         from the base ring of ``self`` to `R`.
 
         INPUT:
@@ -246,7 +242,6 @@ cdef class Module(Parent):
             ...
             TypeError: Base extension of self (over 'Cyclotomic Field of order 9 and degree 6')
             to ring 'Cyclotomic Field of order 3 and degree 2' not defined.
-
         """
         if R.has_coerce_map_from(self.base_ring()):
             return self.change_ring(R)
@@ -277,7 +272,7 @@ def is_Module(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     EXAMPLES::
 
@@ -303,7 +298,7 @@ def is_VectorSpace(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     EXAMPLES::
 
@@ -325,7 +320,6 @@ def is_VectorSpace(x):
         True
         sage: is_VectorSpace(M)
         False
-
     """
     from sage.misc.superseded import deprecation_cython
     deprecation_cython(37924, "the function is_VectorSpace is deprecated; use 'isinstance(..., Module)' and check the base ring instead")

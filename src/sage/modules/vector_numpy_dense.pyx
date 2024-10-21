@@ -54,7 +54,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
     def __cinit__(self, parent, entries, coerce=True, copy=True):
         """
-        Set up a new vector
+        Set up a new vector.
 
         EXAMPLES::
 
@@ -71,7 +71,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
     cdef Vector_numpy_dense _new(self, numpy.ndarray vector_numpy):
         """
-        Return a new vector with same parent as self.
+        Return a new vector with same parent as ``self``.
         """
         cdef Vector_numpy_dense v
         v = self.__class__.__new__(self.__class__,self._parent,None,None,None)
@@ -104,19 +104,19 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
     cdef bint is_dense_c(self) noexcept:
         """
-        Return True (i.e., 1) if self is dense.
+        Return ``True`` (i.e., 1) if ``self`` is dense.
         """
         return 1
 
     cdef bint is_sparse_c(self) noexcept:
         """
-        Return True (i.e., 1) if self is sparse.
+        Return ``True`` (i.e., 1) if ``self`` is sparse.
         """
         return 0
 
     def __copy__(self, copy=True):
         """
-        Return a copy of the vector
+        Return a copy of the vector.
 
         EXAMPLES::
 
@@ -267,8 +267,9 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
         INPUT:
 
-        - ``dtype`` -- if specified, the `numpy dtype <http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html>`_
-                       of the returned array.
+        - ``dtype`` -- if specified, the `numpy dtype
+          <http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html>`_ of
+          the returned array
 
         EXAMPLES::
 

@@ -189,9 +189,7 @@ class GroupAlgebras(AlgebrasCategory):
             classes of the group, and `f_\sigma` is the sum of the
             elements in the conjugacy class of `\sigma`.
 
-            OUTPUT:
-
-            - ``tuple`` of elements of ``self``
+            OUTPUT: tuple of elements of ``self``
 
             .. WARNING::
 

@@ -495,13 +495,13 @@ cdef class LeanMatrix:
     cdef shifting_all(self, P_rows, P_cols, Q_rows, Q_cols, int m):
         r"""
         Given a partial matrix `M`. If the submatrix `M` using rows
-        `P_rows` columns `P_cols` and submatrix using rows `Q_rows` columns
-        `Q_cols` can be extended to a ``m``-separator, then it returns
-        `True, E`, where `E` is a ``m``-separator. Otherwise it returns
-        `False, None`
+        ``P_rows`` columns ``P_cols`` and submatrix using rows ``Q_rows``
+        columns ``Q_cols`` can be extended to an ``m``-separator, then it
+        returns ``True, E``, where `E` is an ``m``-separator. Otherwise it
+        returns ``False, None``.
 
-        `P_rows` and `Q_rows` must be disjoint subsets of row indices.
-        `P_cols` and `Q_cols` must be disjoint subsets of column indices.
+        ``P_rows`` and ``Q_rows`` must be disjoint subsets of row indices.
+        ``P_cols`` and ``Q_cols`` must be disjoint subsets of column indices.
 
         Internal version does not verify the above properties hold.
 
@@ -515,8 +515,9 @@ cdef class LeanMatrix:
 
         OUTPUT:
 
-        - `False, None`  -- if the input submatrices does not induce a `m``-separator.
-        - `True, E` -- if there exist a ``m``-separator ``E``.
+        - ``False, None`` -- if the input submatrices does not induce an
+          ``m``-separator
+        - ``True, E`` -- if there exists an ``m``-separator ``E``
         """
         for z in range(self.ncols()):
             if z in P_cols+Q_cols:
@@ -541,9 +542,9 @@ cdef class LeanMatrix:
         optional column `z2` attached.
         Let `E_2` be the submatrix using rows `U_2` and columns `V_1` with
         optional column `z1` attached.
-        If `E_1` and `E_2` can be extended to a ``m``-separator, then it
-        returns `True, E`, where `E` is a ``m``-separator. Otherwise it
-        returns `False, None`
+        If `E_1` and `E_2` can be extended to an ``m``-separator, then it
+        returns ``True, E``, where `E` is an ``m``-separator. Otherwise it
+        returns ``False, None``.
 
         `U_1` and `U_2` must be disjoint subsets of row indices.
         `V_1` and `V_2` must be disjoint subsets of column indices.
@@ -556,14 +557,16 @@ cdef class LeanMatrix:
         - ``V_2`` -- list of column indices of the first submatrix
         - ``U_2`` -- list of row indices of the second submatrix
         - ``V_1`` -- list of column indices of the second submatrix
-        - ``z2``  -- start by add an additional column with index `z2` to `V_2`
-        - ``z1``  -- start by add an additional column with index `z1` to `V_1`
+        - ``z2`` -- start by add an additional column with index `z2` to `V_2`
+        - ``z1`` -- start by add an additional column with index `z1` to `V_1`
         - ``m`` -- separation size
 
         OUTPUT:
 
-        - `False, None`  -- if the input submatrices does not induce a `m``-separator.
-        - `True, (X,Y)` -- row indices `X` and column indices `Y` defines a ``m``-separator.
+        - ``False, None`` -- if the input submatrices does not induce an
+          ``m``-separator
+        - ``True, (X,Y)`` -- row indices `X` and column indices `Y` defines an
+          ``m``-separator
         """
         # make copy because of destructive updates
         cdef list X_1 = list(U_1)
@@ -645,8 +648,8 @@ cdef class GenericMatrix(LeanMatrix):
     - ``nrows`` -- number of rows
     - ``ncols`` -- number of columns
     - ``M`` -- (default: ``None``) a ``Matrix`` or ``GenericMatrix`` of
-      dimensions at most ``m*n``.
-    - ``ring`` -- (default: ``None``) a Sage ring.
+      dimensions at most ``m*n``
+    - ``ring`` -- (default: ``None``) a Sage ring
 
     .. NOTE::
 
@@ -936,11 +939,11 @@ cdef class BinaryMatrix(LeanMatrix):
 
     INPUT:
 
-    - ``m`` -- Number of rows.
-    - ``n`` -- Number of columns.
-    - ``M`` -- (default: ``None``) Matrix or BinaryMatrix instance.
+    - ``m`` -- number of rows
+    - ``n`` -- number of columns
+    - ``M`` -- (default: ``None``) ``Matrix`` or ``BinaryMatrix`` instance.
       Assumption: dimensions of ``M`` are at most ``m`` by ``n``.
-    - ``ring`` -- (default: ``None``) ignored.
+    - ``ring`` -- (default: ``None``) ignored
 
     EXAMPLES::
 
@@ -1019,7 +1022,7 @@ cdef class BinaryMatrix(LeanMatrix):
 
     def __repr__(self):
         r"""
-        Return representation string
+        Return representation string.
 
         EXAMPLES::
 
@@ -1545,11 +1548,11 @@ cdef class TernaryMatrix(LeanMatrix):
 
     INPUT:
 
-    - ``m`` -- Number of rows.
-    - ``n`` -- Number of columns.
+    - ``m`` -- number of rows
+    - ``n`` -- number of columns
     - ``M`` -- (default: ``None``) ``Matrix`` or ``TernaryMatrix`` instance.
       Assumption: dimensions of ``M`` are at most ``m`` by ``n``.
-    - ``ring`` -- (default: ``None``) ignored.
+    - ``ring`` -- (default: ``None``) ignored
 
     EXAMPLES::
 
@@ -1647,7 +1650,7 @@ cdef class TernaryMatrix(LeanMatrix):
 
     def __repr__(self):
         r"""
-        Return representation string
+        Return representation string.
 
         EXAMPLES::
 
@@ -2102,13 +2105,13 @@ cdef class QuaternaryMatrix(LeanMatrix):
 
     INPUT:
 
-    - ``m`` -- Number of rows
-    - ``n`` -- Number of columns
-    - ``M`` -- (default: ``None``) A QuaternaryMatrix or LeanMatrix or (Sage)
-      Matrix instance. If not given, new matrix will be filled with zeroes.
-      Assumption: ``M`` has dimensions at most ``m`` times ``n``.
-    - ``ring`` -- (default: ``None``) A copy of GF(4). Useful for specifying
-      generator name.
+    - ``m`` -- number of rows
+    - ``n`` -- number of columns
+    - ``M`` -- (default: ``None``) ``QuaternaryMatrix`` or ``LeanMatrix`` or
+      (Sage) ``Matrix`` instance. If not given, new matrix will be filled with
+      zeroes. Assumption: ``M`` has dimensions at most ``m`` times ``n``.
+    - ``ring`` -- (default: ``None``) a copy of GF(4); useful for specifying
+      generator name
 
     EXAMPLES::
 
@@ -2223,7 +2226,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
 
     def __repr__(self):
         r"""
-        Return representation string
+        Return representation string.
 
         EXAMPLES::
 

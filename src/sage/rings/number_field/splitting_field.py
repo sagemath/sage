@@ -91,7 +91,7 @@ class SplittingData:
 
     def poldegree(self):
         """
-        Return the degree of ``self.pol``
+        Return the degree of ``self.pol``.
 
         EXAMPLES::
 
@@ -133,7 +133,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     - ``name`` -- a variable name for the number field
 
-    - ``map`` -- (default: ``False``) also return an embedding of
+    - ``map`` -- boolean (default: ``False``); also return an embedding of
       ``poly`` into the resulting field. Note that computing this
       embedding might be expensive.
 
@@ -145,14 +145,14 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
       if it can be determined that the absolute degree of the splitting
       field is strictly larger than ``abort_degree``.
 
-    - ``simplify`` -- (default: ``True``) during the algorithm, try
+    - ``simplify`` -- boolean (default: ``True``); during the algorithm, try
       to find a simpler defining polynomial for the intermediate
       number fields using PARI's ``polredbest()``.  This usually speeds
       up the computation but can also considerably slow it down.
       Try and see what works best in the given situation.
 
-    - ``simplify_all`` -- (default: ``False``) If ``True``, simplify
-      intermediate fields and also the resulting number field.
+    - ``simplify_all`` -- boolean (default: ``False``); if ``True``, simplify
+      intermediate fields and also the resulting number field
 
     OUTPUT:
 
@@ -171,7 +171,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     The ``simplify`` and ``simplify_all`` flags usually yield
     fields defined by polynomials with smaller coefficients.
-    By default, ``simplify`` is True and ``simplify_all`` is False.
+    By default, ``simplify`` is ``True`` and ``simplify_all`` is ``False``.
 
     ::
 

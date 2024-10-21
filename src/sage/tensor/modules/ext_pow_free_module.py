@@ -63,6 +63,7 @@ from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
 
+
 class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
     r"""
     Exterior power of a free module of finite rank over a commutative
@@ -160,7 +161,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
         sage: A(0) is A.zero()
         True
 
-    while non-zero elements are constructed by providing their components in a
+    while nonzero elements are constructed by providing their components in a
     given basis::
 
         sage: e
@@ -218,7 +219,6 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
         no symmetry;  antisymmetry: (0, 1)
         sage: ta == a  # equality as type-(2,0) tensors
         True
-
     """
 
     Element = AlternatingContrTensor
@@ -234,7 +234,6 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
             2nd exterior power of the Rank-3 free module M over the
              Integer Ring
             sage: TestSuite(A).run()
-
         """
         from sage.arith.misc import binomial
         from sage.typeset.unicode_characters import unicode_bigwedge
@@ -291,7 +290,6 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
             sage: a[e,0,2], a[e,1,2] = 3, -1
             sage: a.display()
             a = 3 e_0∧e_2 - e_1∧e_2
-
         """
         if isinstance(comp, (int, Integer)) and comp == 0:
             return self.zero()
@@ -339,7 +337,6 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
             on the 4-dimensional vector space M2 over the Rational Field
             sage: M2.default_basis()
             Basis (e_0,e_1,e_2,e_3) on the 4-dimensional vector space M2 over the Rational Field
-
         """
         resu = self.element_class(self._fmodule, self._degree)
         # Make sure that the base module has a default basis
@@ -366,7 +363,6 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
              module M over the Integer Ring
             sage: A(0) is A.zero()
             True
-
         """
         resu = self._element_constructor_(name='zero', latex_name='0')
         for basis in self._fmodule._known_bases:
@@ -415,7 +411,6 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
             Rank-5 free module M over the Integer Ring
             sage: A.base_module() is M
             True
-
         """
         return self._fmodule
 
@@ -436,7 +431,6 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
             2
             sage: M.exterior_power(4).degree()
             4
-
         """
         return self._degree
 
@@ -540,7 +534,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
         sage: A(0) is A.zero()
         True
 
-    while non-zero elements are constructed by providing their components in a
+    while nonzero elements are constructed by providing their components in a
     given basis::
 
         sage: e
@@ -602,7 +596,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
         a = 3 e^0∧e^1 - e^0∧e^2 + 4 e^1∧e^2
         sage: ta.symmetries() # the antisymmetry is of course preserved
         no symmetry;  antisymmetry: (0, 1)
-
     """
 
     Element = FreeModuleAltForm
@@ -618,7 +611,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
             2nd exterior power of the dual of the Rank-3 free module M over
              the Integer Ring
             sage: TestSuite(A).run()
-
         """
         from sage.arith.misc import binomial
         from sage.typeset.unicode_characters import unicode_bigwedge
@@ -675,7 +667,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
             sage: a[e,0,2], a[e,1,2] = 3, -1
             sage: a.display()
             a = 3 e^0∧e^2 - e^1∧e^2
-
         """
         if isinstance(comp, (int, Integer)) and comp == 0:
             return self.zero()
@@ -735,7 +726,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
             Alternating form of degree 2 on the 4-dimensional vector space M2 over the Rational Field
             sage: M2.default_basis()
             Basis (e_0,e_1,e_2,e_3) on the 4-dimensional vector space M2 over the Rational Field
-
         """
         resu = self.element_class(self._fmodule, self._degree)
         # Make sure that the base module has a default basis
@@ -762,7 +752,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
              the Integer Ring
             sage: A(0) is A.zero()
             True
-
         """
         resu = self._element_constructor_(name='zero', latex_name='0')
         for basis in self._fmodule._known_bases:
@@ -789,7 +778,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
             '5th exterior power of the dual of the Rank-5 free module M over the Integer Ring'
             sage: M.dual_exterior_power(21)._repr_()
             '21st exterior power of the dual of the Rank-5 free module M over the Integer Ring'
-
         """
         description = "{}".format(self._degree.ordinal_str())
         description += " exterior power of the dual of the {}".format(
@@ -813,7 +801,6 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
             Rank-5 free module M over the Integer Ring
             sage: A.base_module() is M
             True
-
         """
         return self._fmodule
 
@@ -833,6 +820,5 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
             2
             sage: M.dual_exterior_power(4).degree()
             4
-
         """
         return self._degree

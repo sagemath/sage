@@ -32,28 +32,29 @@ cdef int c_p1_normalize_int(int N, int u, int v,
                             int* uu, int* vv, int* ss,
                             int compute_s) except -1:
     r"""
-    Computes the canonical representative of
+    Compute the canonical representative of
     `\mathbb{P}^1(\ZZ/N\ZZ)` equivalent to
     `(u,v)` along with a transforming scalar.
 
     INPUT:
 
-    -  ``N`` -- an integer
+    - ``N`` -- integer
 
-    -  ``u`` -- an integer
+    - ``u`` -- integer
 
-    -  ``v`` -- an integer
+    - ``v`` -- integer
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns
+    OUTPUT:
 
-    -  ``uu`` -- an integer
+    If `\gcd(u,v,N) = 1`, then returns
 
-    -  ``vv`` -- an integer
+    - ``uu`` -- integer
 
-    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is congruent to
-       `(u,v)` (mod `N`);
+    - ``vv`` -- integer
 
-       if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
+    - ``ss`` -- integer such that `(ss*uu, ss*vv)` is congruent to `(u,v)` (mod `N`);
+
+    If `\gcd(u,v,N) \not= 1`, returns ``0, 0, 0``.
 
     If ``compute_s`` is 0, ``s`` is not computed.
     """
@@ -94,8 +95,8 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
     # Now g = s*u + t*N, so s is a "pseudo-inverse" of u mod N
     # Adjust s modulo N/g so it is coprime to N.
-    if g!=1:
-        d = N/g
+    if g != 1:
+        d = N // g
         while arith_int.c_gcd_int(s,N) != 1:
             s = (s+d) % N
 
@@ -105,8 +106,8 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
     min_v = v
     min_t = 1
-    if g!=1:
-        Ng = N/g
+    if g != 1:
+        Ng = N // g
         vNg = (v*Ng) % N
         t = 1
         for k in range(2, g + 1):
@@ -129,30 +130,29 @@ cdef int c_p1_normalize_int(int N, int u, int v,
 
 def p1_normalize_int(N, u, v):
     r"""
-    Computes the canonical representative of
+    Compute the canonical representative of
     `\mathbb{P}^1(\ZZ/N\ZZ)` equivalent to
     `(u,v)` along with a transforming scalar.
 
     INPUT:
 
+    - ``N`` -- integer
 
-    -  ``N`` -- an integer
+    - ``u`` -- integer
 
-    -  ``u`` -- an integer
+    - ``v`` -- integer
 
-    -  ``v`` -- an integer
+    OUTPUT:
 
+    If `\gcd(u,v,N) = 1`, then returns
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns
+    - ``uu`` -- integer
 
+    - ``vv`` -- integer
 
-    -  ``uu`` -- an integer
+    - ``ss`` -- integer such that `(ss*uu, ss*vv)` is congruent to `(u,v)` (mod `N`);
 
-    -  ``vv`` -- an integer
-
-    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is congruent to `(u,v)` (mod `N`);
-
-       if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
+    If `\gcd(u,v,N) \not= 1`, returns ``0, 0, 0``.
 
     EXAMPLES::
 
@@ -178,8 +178,7 @@ def p1list_int(int N):
 
     INPUT:
 
-
-    -  ``N`` -- integer (the level or modulus).
+    - ``N`` -- integer (the level or modulus)
 
     EXAMPLES::
 
@@ -271,26 +270,25 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
     INPUT:
 
+    - ``N`` -- integer (the modulus or level)
 
-    -  ``N`` -- an integer (the modulus or level)
+    - ``u`` -- integer (the first coordinate of (u:v))
 
-    -  ``u`` -- an integer (the first coordinate of (u:v))
+    - ``v`` -- integer (the second coordinate of (u:v))
 
-    -  ``v`` -- an integer (the second coordinate of (u:v))
+    - ``compute_s`` -- boolean (int)
 
-    -  ``compute_s`` -- a boolean (int)
+    OUTPUT:
 
+    If `\gcd(u,v,N) = 1`, then returns
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns
+    - ``uu`` -- integer
 
+    - ``vv`` -- integer
 
-    -  ``uu`` -- an integer
+    - ``ss`` -- integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`
 
-    -  ``vv`` -- an integer
-
-    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
-
-       if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
+    If `\gcd(u,v,N) \not= 1`, returns ``0, 0, 0``.
 
     EXAMPLES::
 
@@ -358,8 +356,8 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
     # Now g = s*u + t*N, so s is a "pseudo-inverse" of u mod N
     # Adjust s modulo N/g so it is coprime to N.
-    if g!=1:
-        d = N/g
+    if g != 1:
+        d = N // g
         while arith_int.c_gcd_int(s,N) != 1:
             s = (s+d) % N
 
@@ -370,8 +368,8 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
     min_v = v
     min_t = 1
-    if g!=1:
-        Ng = N/g
+    if g != 1:
+        Ng = N // g
         vNg = <int> ((<llong>v * <llong> Ng) % ll_N)
         t = 1
         for k in range(2, g + 1):
@@ -394,30 +392,29 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
 def p1_normalize_llong(N, u, v):
     r"""
-    Computes the canonical representative of
+    Compute the canonical representative of
     `\mathbb{P}^1(\ZZ/N\ZZ)` equivalent to
     `(u,v)` along with a transforming scalar.
 
     INPUT:
 
+    - ``N`` -- integer
 
-    -  ``N`` -- an integer
+    - ``u`` -- integer
 
-    -  ``u`` -- an integer
+    - ``v`` -- integer
 
-    -  ``v`` -- an integer
+    OUTPUT:
 
+    If `\gcd(u,v,N) = 1`, then returns
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns
+    - ``uu`` -- integer
 
+    - ``vv`` -- integer
 
-    -  ``uu`` -- an integer
+    - ``ss`` -- integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`
 
-    -  ``vv`` -- an integer
-
-    - ``ss`` -- an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
-
-       if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
+    If `\gcd(u,v,N) \not= 1`, returns ``0, 0, 0``.
 
     EXAMPLES::
 
@@ -444,8 +441,7 @@ def p1list_llong(int N):
 
     INPUT:
 
-
-    -  ``N`` -- integer (the level or modulus).
+    - ``N`` -- integer (the level or modulus)
 
     EXAMPLES::
 
@@ -506,7 +502,7 @@ def p1list(N):
 
     INPUT:
 
-    - N (integer) -- a positive integer (less than 2^31).
+    - ``N`` -- integer; a positive integer (less than 2^31)
 
     OUTPUT:
 
@@ -533,30 +529,29 @@ def p1list(N):
 
 def p1_normalize(int N, int u, int v):
     r"""
-    Computes the canonical representative of
+    Compute the canonical representative of
     `\mathbb{P}^1(\ZZ/N\ZZ)` equivalent to
     `(u,v)` along with a transforming scalar.
 
     INPUT:
 
+    - ``N`` -- integer
 
-    -  ``N`` -- an integer
+    - ``u`` -- integer
 
-    -  ``u`` -- an integer
+    - ``v`` -- integer
 
-    -  ``v`` -- an integer
+    OUTPUT:
 
+    If `\gcd(u,v,N) = 1`, then returns
 
-    OUTPUT: If gcd(u,v,N) = 1, then returns
+    - ``uu`` -- integer
 
+    - ``vv`` -- integer
 
-    -  ``uu`` -- an integer
+    - ``ss`` -- integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`
 
-    -  ``vv`` -- an integer
-
-    -  ``ss`` -- an integer such that `(ss*uu, ss*vv)` is equivalent to `(u,v)` mod `N`;
-
-       if `\gcd(u,v,N) \not= 1`, returns 0, 0, 0.
+    If `\gcd(u,v,N) \not= 1`, returns ``0, 0, 0``.
 
     EXAMPLES::
 
@@ -597,17 +592,14 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
     """
     INPUT:
 
+    - ``N``, ``u``, ``v`` -- integers
 
-    -  ``N, u, v`` -- integers
+    - ``compute_s`` -- do not compute s if ``compute_s == 0``
 
-    -  ``compute_s`` -- do not compute s if compute_s == 0.
+    - ``t_g``, ``t_a``, ``t_b`` -- integer arrays
 
-    -  ``t_g, t_a, t_b`` -- int arrays of
-
-
-    OUTPUT:
-
-    -  ``uu, vv, ss`` -- reduced representative and normalizing scalar.
+    OUTPUT: ``uu, vv, ss`` -- reduced representative and normalizing
+    scalar
     """
     cdef int d, k, g, s, t, min_v, min_t, Ng, vNg
     if N == 1:
@@ -649,8 +641,8 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
 
     # Now g = s*u + t*N, so s is a "pseudo-inverse" of u mod N
     # Adjust s modulo N/g so it is coprime to N.
-    if g!=1:
-        d = N/g
+    if g != 1:
+        d = N // g
         while t_g[s] != 1:  # while arith_int.c_gcd_int(s,N) != 1:
             s = (s+d) % N
 
@@ -660,8 +652,8 @@ cdef int p1_normalize_xgcdtable(int N, int u, int v,
 
     min_v = v
     min_t = 1
-    if g!=1:
-        Ng = N/g
+    if g != 1:
+        Ng = N // g
         vNg = (v*Ng) % N
         t = 1
         for k in range(2, g + 1):
@@ -707,11 +699,9 @@ cdef class P1List():
 
         INPUT:
 
-        -  ``N`` -- positive integer (the modulus or level).
+        - ``N`` -- positive integer (the modulus or level)
 
-        OUTPUT:
-
-        A P1List object representing `\mathbb{P}^1(\ZZ/N\ZZ)`.
+        OUTPUT: a P1List object representing `\mathbb{P}^1(\ZZ/N\ZZ)`
 
         EXAMPLES::
 
@@ -755,7 +745,7 @@ cdef class P1List():
 
     def __dealloc__(self):
         """
-        Deallocates memory for an object of the class P1List.
+        Deallocate memory for an object of the class P1List.
         """
         sig_free(self.g)
         sig_free(self.s)
@@ -848,23 +838,22 @@ cdef class P1List():
             sage: L = P1List(8)
             sage: str(L)            # indirect doctest
             'The projective line over the integers modulo 8'
-
         """
         return "The projective line over the integers modulo %s" % self.__N
 
     def lift_to_sl2z(self, int i):
         r"""
-        Lift the `i`'th element of this P1list to an element of
+        Lift the `i`-th element of this P1list to an element of
         `SL(2,\ZZ)`.
 
-        If the `i`'th element is `(c,d)`, this function computes and
+        If the `i`-th element is `(c,d)`, this function computes and
         returns a list `[a,b, c',d']` that defines a 2x2 matrix
         with determinant 1 and integer entries, such that `c=c'` (mod
         `N`) and `d=d'` (mod `N`).
 
         INPUT:
 
-        -  ``i`` -- integer (the index of the element to lift).
+        - ``i`` -- integer (the index of the element to lift)
 
         EXAMPLES::
 
@@ -897,11 +886,11 @@ cdef class P1List():
     def apply_I(self, int i):
         r"""
         Return the index of the result of applying the matrix
-        `I=[-1,0;0,1]` to the `i`'th element of this P1List.
+        `I=[-1,0;0,1]` to the `i`-th element of this P1List.
 
         INPUT:
 
-        -  ``i`` -- integer (the index of the element to act on).
+        - ``i`` -- integer (the index of the element to act on)
 
         EXAMPLES::
 
@@ -929,12 +918,11 @@ cdef class P1List():
     def apply_S(self, int i):
         r"""
         Return the index of the result of applying the matrix
-        `S=[0,-1;1,0]` to the `i`'th element of this P1List.
+        `S=[0,-1;1,0]` to the `i`-th element of this P1List.
 
         INPUT:
 
-
-        -  ``i`` -- integer (the index of the element to act on).
+        - ``i`` -- integer (the index of the element to act on)
 
         EXAMPLES::
 
@@ -962,12 +950,11 @@ cdef class P1List():
     def apply_T(self, int i):
         r"""
         Return the index of the result of applying the matrix
-        `T=[0,1;-1,-1]` to the `i`'th element of this P1List.
+        `T=[0,1;-1,-1]` to the `i`-th element of this P1List.
 
         INPUT:
 
-
-        -  ``i`` -- integer (the index of the element to act on).
+        - ``i`` -- integer (the index of the element to act on)
 
         EXAMPLES::
 
@@ -1000,14 +987,11 @@ cdef class P1List():
 
         INPUT:
 
-
-        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
-
+        - ``u``, ``v`` -- integers with `\gcd(u,v,N)=1`
 
         OUTPUT:
 
-
-        -  ``i`` -- the index of `u`, `v`, in the P1list.
+        - ``i`` -- the index of `u`, `v`, in the P1list
 
         EXAMPLES::
 
@@ -1044,16 +1028,13 @@ cdef class P1List():
 
         INPUT:
 
-
-        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
-
+        - ``u``, ``v`` -- integers with `\gcd(u,v,N)=1`
 
         OUTPUT:
 
+        - ``i`` -- the index of `u`, `v`, in the P1list
 
-        -  ``i`` -- the index of `u`, `v`, in the P1list.
-
-        -  ``s`` -- normalizing scalar.
+        - ``s`` -- normalizing scalar.
         """
         if self.__N == 1:
             # there is exactly 1 class [(0,0)].
@@ -1087,14 +1068,12 @@ cdef class P1List():
 
         INPUT:
 
-
-        - ``u``, ``v`` -- integers, with `\gcd(u,v,N)=1`, normalized so they lie in the list.
-
+        - ``u``, ``v`` -- integers with `\gcd(u,v,N)=1`, normalized so they lie
+          in the list
 
         OUTPUT:
 
-
-        -  ``i`` -- the index of `(u:v)`, in the P1list.
+        - ``i`` -- the index of `(u:v)`, in the P1list
 
         EXAMPLES::
 
@@ -1131,14 +1110,10 @@ cdef class P1List():
 
         INPUT:
 
+        - ``u``, ``v`` -- integers with `\gcd(u,v,N)=1`
 
-        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
-
-
-        OUTPUT:
-
-        - a 2-tuple ``(uu,vv)`` where `(uu:vv)` is a *normalized*
-          representative of `(u:v)`.
+        OUTPUT: a 2-tuple ``(uu,vv)`` where `(uu:vv)` is a *normalized*
+        representative of `(u:v)`
 
         NOTE: See also normalize_with_scalar() which also returns the
         normalizing scalar.
@@ -1164,9 +1139,7 @@ cdef class P1List():
 
         INPUT:
 
-
-        -  ``u, v`` -- integers, with `\gcd(u,v,N)=1`.
-
+        - ``u``, ``v`` -- integers with `\gcd(u,v,N)=1`
 
         OUTPUT:
 
@@ -1227,7 +1200,7 @@ def lift_to_sl2z_int(int c, int d, int N):
 
     INPUT:
 
-    -  ``c,d,N`` -- integers such that `\gcd(c,d,N)=1`.
+    - ``c``, ``d``, ``N`` -- integers such that `\gcd(c,d,N)=1`
 
     EXAMPLES::
 
@@ -1265,17 +1238,17 @@ def lift_to_sl2z_int(int c, int d, int N):
 
     # compute prime-to-d part of m.
     while True:
-        g = arith_int.c_gcd_int(m,d)
+        g = arith_int.c_gcd_int(m, d)
         if g == 1:
             break
-        m = m / g
+        m = m // g
 
     # compute prime-to-N part of m.
     while True:
-        g = arith_int.c_gcd_int(m,N)
+        g = arith_int.c_gcd_int(m, N)
         if g == 1:
             break
-        m = m / g
+        m = m // g
     d += N * m
     g = arith_int.c_xgcd_int(c, d, &z1, &z2)
 
@@ -1297,7 +1270,7 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
 
     INPUT:
 
-    -  ``c,d,N`` -- integers such that `\gcd(c,d,N)=1`.
+    - ``c``, ``d``, ``N`` -- integers such that `\gcd(c,d,N)=1`
 
     EXAMPLES::
 
@@ -1327,7 +1300,7 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
     g = arith_llong.c_xgcd_longlong(c, d, &z1, &z2)
 
     # We're lucky: z1*c + z2*d = 1.
-    if g==1:
+    if g == 1:
         return [z2, -z1, c, d]
 
     # Have to try harder.
@@ -1335,17 +1308,17 @@ def lift_to_sl2z_llong(llong c, llong d, int N):
 
     # compute prime-to-d part of m.
     while True:
-        g = arith_llong.c_gcd_longlong(m,d)
+        g = arith_llong.c_gcd_longlong(m, d)
         if g == 1:
             break
-        m = m / g
+        m = m // g
 
     # compute prime-to-N part of m.
     while True:
-        g = arith_llong.c_gcd_longlong(m,N)
+        g = arith_llong.c_gcd_longlong(m, N)
         if g == 1:
             break
-        m = m / g
+        m = m // g
     d += N * m
     g = arith_llong.c_xgcd_longlong(c, d, &z1, &z2)
 
@@ -1363,7 +1336,7 @@ def lift_to_sl2z(c, d, N):
 
     INPUT:
 
-    -  ``c,d,N`` -- Python ints or longs such that `\gcd(c,d,N)=1`.
+    - ``c``, ``d``, ``N`` -- python ints or longs such that `\gcd(c,d,N)=1`
 
     EXAMPLES::
 
@@ -1372,7 +1345,7 @@ def lift_to_sl2z(c, d, N):
         sage: lift_to_sl2z(2,3,6000000)
         [1, 1, 2, 3]
 
-    You will get a :class:`ValueError` exception if the input is invalid.
+    You will get a :exc:`ValueError` exception if the input is invalid.
     Note that here gcd(15,6,24)=3::
 
         sage: lift_to_sl2z(15,6,24)

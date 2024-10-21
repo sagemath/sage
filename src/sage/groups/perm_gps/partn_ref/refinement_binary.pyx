@@ -480,8 +480,8 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
 
         INPUT:
 
-        - ``partition`` -- an optional list of lists partition of the columns.
-          default is the unit partition.
+        - ``partition`` -- an optional list of lists partition of the columns
+          default is the unit partition
 
         EXAMPLES::
 
@@ -632,18 +632,17 @@ cdef int refine_by_bip_degree(PartitionStack *col_ps, void *S, int *cells_to_ref
 
     INPUT:
 
-    - col_ps -- a partition stack, whose finest partition is the partition to be refined
-    - S -- a binary code struct object
-    - cells_to_refine_by -- a list of pointers to cells to check degrees against
+    - ``col_ps`` -- a partition stack, whose finest partition is the partition to be refined
+    - ``S`` -- a binary code struct object
+    - ``cells_to_refine_by`` -- list of pointers to cells to check degrees against
       in refining the other cells (updated in place)
-    - ctrb_len -- how many cells in cells_to_refine_by
+    - ``ctrb_len`` -- how many cells in cells_to_refine_by
 
     OUTPUT:
 
     An integer $I$ invariant under the orbits of $S_n$.  That is, if $\gamma$ is a
     permutation of the columns, then
     $$ I(G, PS, cells_to_refine_by) = I( \gamma(G), \gamma(PS), \gamma(cells_to_refine_by) ) .$$
-
     """
     cdef BinaryCodeStruct BCS = <BinaryCodeStruct> S
     cdef int current_cell_against = 0
@@ -962,11 +961,11 @@ cdef inline int word_degree(PartitionStack *word_ps, BinaryCodeStruct BCS, int e
 
     INPUT:
 
-    - word_ps -- the partition stack to be checked
-    - col_ps -- corresponding partition stack on columns
-    - BCS -- a binary code struct object
-    - entry -- the position of the vertex in question in the entries of word_ps
-    - cell_index -- the starting position of the cell in question in the entries of PS
+    - ``word_ps`` -- the partition stack to be checked
+    - ``col_ps`` -- corresponding partition stack on columns
+    - ``BCS`` -- a binary code struct object
+    - ``entry`` -- the position of the vertex in question in the entries of word_ps
+    - ``cell_index`` -- the starting position of the cell in question in the entries of PS
     """
     cdef bitset_t cell, word
     cdef int h
@@ -992,11 +991,11 @@ cdef inline int col_degree(PartitionStack *col_ps, BinaryCodeStruct BCS, int ent
 
     INPUT:
 
-    - col_ps -- the partition stack to be checked
-    - word_ps -- corresponding partition stack on words
-    - BCS -- a binary code struct object
-    - entry -- the position of the vertex in question in the entries of word_ps
-    - cell_index -- the starting position of the cell in question in the entries of PS
+    - ``col_ps`` -- the partition stack to be checked
+    - ``word_ps`` -- corresponding partition stack on words
+    - ``BCS`` -- a binary code struct object
+    - ``entry`` -- the position of the vertex in question in the entries of word_ps
+    - ``cell_index`` -- the starting position of the cell in question in the entries of PS
     """
     cdef bitset_t word
     bitset_init(word, BCS.degree)
@@ -1017,9 +1016,9 @@ cdef inline int sort_by_function_codes(PartitionStack *PS, int start, int *degre
 
     INPUT:
 
-    - PS -- the partition stack to be checked
-    - start -- beginning index of the cell to be sorted
-    - degrees -- the values to be sorted by
+    - ``PS`` -- the partition stack to be checked
+    - ``start`` -- beginning index of the cell to be sorted
+    - ``degrees`` -- the values to be sorted by
     - count, count_max, output -- scratch space
     """
     cdef int i, j, max, max_location

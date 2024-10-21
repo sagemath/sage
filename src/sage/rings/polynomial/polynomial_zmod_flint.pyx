@@ -141,7 +141,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     cpdef Polynomial _new_constant_poly(self, x, Parent P):
         r"""
-        Quickly creates a new constant polynomial with value x in parent P.
+        Quickly create a new constant polynomial with value x in parent P.
 
         ASSUMPTION:
 
@@ -161,7 +161,6 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             Traceback (most recent call last):
             ...
             ValueError: invalid literal for int() with base 10: '4.1'
-
         """
         cdef type t = type(self)
         cdef Polynomial_template r = <Polynomial_template>t.__new__(t)
@@ -177,9 +176,8 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         INPUT:
 
-        - ``x`` -- a list of coefficients; the coefficients are assumed to be
-          reduced already and the list contains no trailing zeroes.
-
+        - ``x`` -- list of coefficients; the coefficients are assumed to be
+          reduced already and the list contains no trailing zeroes
 
         EXAMPLES::
 
@@ -239,7 +237,6 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             (99998, 1)
             sage: p[d], p[v]
             (2, 1)
-
         """
         sig_on()
         fmpz_poly_get_nmod_poly(&self.x, x)
@@ -276,11 +273,11 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         INPUT: **either**
 
-        - a -- ring element; need not be in the coefficient ring of the
-          polynomial.
-        - a dictionary for kwds:value pairs.  If the variable name of the
-          polynomial is a keyword it is substituted in; otherwise this
-          polynomial is returned unchanged.
+        - ``a`` -- ring element; need not be in the coefficient ring of the
+          polynomial
+        - a dictionary for kwds:value pairs; if the variable name of the
+          polynomial is a keyword it is substituted in, otherwise this
+          polynomial is returned unchanged
 
         EXAMPLES::
 
@@ -422,7 +419,6 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         This function is usually more efficient than simply doing the
         multiplication and then truncating. The function is tuned for length
         `n` about half the length of a full product.
-
 
         EXAMPLES::
 
@@ -725,7 +721,6 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             True
             sage: s.is_irreducible.cache
             True
-
         """
         if not self:
             return False
@@ -768,7 +763,19 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: P.<x> = GF(7)[]
             sage: (6*x+3).squarefree_decomposition()
             (6) * (x + 4)
+
+        Test zero polynomial::
+
+            sage: R.<x> = PolynomialRing(GF(65537), implementation="FLINT")
+            sage: R.zero().squarefree_decomposition()
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: square-free decomposition of 0 is not defined
         """
+        if self.is_zero():
+            raise ArithmeticError(
+                "square-free decomposition of 0 is not defined"
+            )
         if not self.base_ring().is_field():
             raise NotImplementedError("square free factorization of polynomials over rings with composite characteristic is not implemented")
 
@@ -810,9 +817,19 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ...
             AlarmInterrupt
 
-        """
-        R = self.base_ring()
+        Test zero polynomial::
 
+            sage: R.<x> = PolynomialRing(GF(65537), implementation="FLINT")
+            sage: R.zero().factor()
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: factorization of 0 is not defined
+
+        """
+        if self.is_zero():
+            raise ArithmeticError("factorization of 0 is not defined")
+
+        R = self.base_ring()
         if not R.is_field():
             p,e = R.characteristic().is_prime_power(get_data=True)
             if not e:
@@ -831,7 +848,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         """
         Return this polynomial divided by its leading coefficient.
 
-        Raises :class:`ValueError` if the leading coefficient is not invertible in the
+        Raises :exc:`ValueError` if the leading coefficient is not invertible in the
         base ring.
 
         EXAMPLES::
@@ -911,7 +928,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: p.reverse(degree=1.5r)
             Traceback (most recent call last):
             ...
-            ValueError: degree argument must be a non-negative integer, got 1.5
+            ValueError: degree argument must be a nonnegative integer, got 1.5
 
         Check that this implementation is compatible with the generic one::
 
@@ -924,10 +941,10 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         cdef unsigned long d
         if degree is not None:
             if degree < 0:
-                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+                raise ValueError("degree argument must be a nonnegative integer, got %s" % (degree))
             d = degree
             if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+                raise ValueError("degree argument must be a nonnegative integer, got %s" % (degree))
             nmod_poly_reverse(&res.x, &self.x, d+1) # FLINT expects length
         else:
             nmod_poly_reverse(&res.x, &self.x, nmod_poly_length(&self.x))
@@ -947,7 +964,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: f.revert_series(-1)
             Traceback (most recent call last):
             ...
-            ValueError: argument n must be a non-negative integer, got -1
+            ValueError: argument n must be a nonnegative integer, got -1
 
             sage: g = - t^3 + t^5
             sage: g.revert_series(6)
@@ -964,7 +981,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         cdef Polynomial_zmod_flint res = self._new()
         cdef unsigned long m
         if n < 0:
-            raise ValueError("argument n must be a non-negative integer, got {}".format(n))
+            raise ValueError("argument n must be a nonnegative integer, got {}".format(n))
         m = n
         if not self[0].is_zero() or not self[1].is_unit():
             raise ValueError("self must have constant coefficient 0 and a unit for coefficient {}^1".format(self.parent().gen()))
@@ -996,3 +1013,48 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         from sage.rings.polynomial.polynomial_ring_constructor import _single_variate
         R = _single_variate(parent.base_ring(), name=name, implementation='NTL')
         return parent(R(self % other).minpoly_mod(R(other)))
+
+    def compose_mod(self, other, modulus):
+        r"""
+        Compute `f(g) \bmod h`.
+
+        To be precise about the order fo compostion, given ``self``, ``other``
+        and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \bmod h(x)`.
+
+        INPUT:
+
+        - ``other`` -- a polynomial `g(x)`
+        - ``modulus`` -- a polynomial `h(x)`
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(163)[]
+            sage: f = R.random_element()
+            sage: g = R.random_element()
+            sage: g.compose_mod(g, f) == g(g) % f
+            True
+
+            sage: f = R([i for i in range(100)])
+            sage: g = R([i**2 for i in range(100)])
+            sage: h = 1 + x + x**5
+            sage: f.compose_mod(g, h)
+            82*x^4 + 56*x^3 + 45*x^2 + 60*x + 127
+            sage: f.compose_mod(g, h) == f(g) % h
+            True
+
+        AUTHORS:
+
+        - Giacomo Pope (2024-08) initial implementation
+        """
+        cdef Polynomial_zmod_flint res = self._new()
+
+        sig_on()
+        nmod_poly_compose_mod(&res.x, &(<Polynomial_zmod_flint>self).x, &(<Polynomial_zmod_flint>other).x, &(<Polynomial_zmod_flint>modulus).x)
+        sig_off()
+
+        return res
+
+    # compose_mod is the natural name from the Flint bindings, but
+    # polynomial_gf2x has modular_composition as the method name so here we
+    # allow both
+    modular_composition = compose_mod

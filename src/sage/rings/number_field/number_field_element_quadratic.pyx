@@ -228,8 +228,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     cdef _new(self):
         """
-        Quickly creates a new initialized NumberFieldElement_quadratic with the
-        same parent as self.
+        Quickly create a new initialized NumberFieldElement_quadratic with the
+        same parent as ``self``.
 
         EXAMPLES::
 
@@ -473,7 +473,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def _lift_cyclotomic_element(self, new_parent, bint check=True, int rel=0):
         """
-        Creates an element of the passed field from this field.  This
+        Create an element of the passed field from this field.  This
         is specific to creating elements in a cyclotomic field from
         elements in another cyclotomic field, in the case that
         self.number_field()._n() divides new_parent()._n().  This
@@ -944,7 +944,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def sign(self):
         r"""
-        Returns the sign of ``self`` (`0` if zero, `+1` if positive, and `-1` if negative).
+        Return the sign of ``self`` (`0` if zero, `+1` if positive, and `-1` if
+        negative).
 
         EXAMPLES::
 
@@ -1297,7 +1298,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         r"""
         Reduces into canonical form.
 
-        WARNING: this mutates self.
+        WARNING: this mutates ``self``.
         """
         cdef mpz_t gcd
         # cancel out common factors
@@ -1471,7 +1472,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: K.<sqrt5> = QuadraticField(5, embedding=AA(5).sqrt())
             sage: sqrt5*vector([1,2])
             (sqrt5, 2*sqrt5)
-
         """
         cdef NumberFieldElement_quadratic other = <NumberFieldElement_quadratic>other_m
         cdef NumberFieldElement_quadratic res = <NumberFieldElement_quadratic>self._new()
@@ -2073,7 +2073,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             Traceback (most recent call last):
             ...
             ValueError: no way to embed L into parent's base ring K
-
         """
         cdef Rational res = <Rational>Rational.__new__(Rational)
 
@@ -2189,8 +2188,9 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         INPUT:
 
         - ``var`` -- the minimal polynomial is defined over a polynomial ring
-           in a variable with this name. If not specified, this defaults to ``'x'``
-        - ``algorithm`` -- for compatibility with general number field elements; ignored
+          in a variable with this name; if not specified, this defaults to ``'x'``
+        - ``algorithm`` -- for compatibility with general number field
+          elements; ignored
 
         EXAMPLES::
 
@@ -2214,8 +2214,9 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         INPUT:
 
         - ``var`` -- the minimal polynomial is defined over a polynomial ring
-           in a variable with this name. If not specified, this defaults to ``'x'``
-        - ``algorithm`` -- for compatibility with general number field elements: and ignored
+          in a variable with this name; if not specified, this defaults to ``'x'``
+        - ``algorithm`` -- for compatibility with general number field
+          elements; ignored
 
         EXAMPLES::
 
@@ -2263,7 +2264,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def floor(self):
         r"""
-        Returns the floor of ``self``.
+        Return the floor of ``self``.
 
         EXAMPLES::
 
@@ -2729,9 +2730,9 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         INPUT:
 
         - ``var`` -- the minimal polynomial is defined over a polynomial ring
-           in a variable with this name. If not specified, this defaults to ``'x'``
-        - ``algorithm`` -- for compatibility with general number field elements; ignored
-
+          in a variable with this name; if not specified, this defaults to ``'x'``
+        - ``algorithm`` -- for compatibility with general number field
+          elements; ignored
 
         EXAMPLES::
 
@@ -2756,8 +2757,9 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         INPUT:
 
         - ``var`` -- the minimal polynomial is defined over a polynomial ring
-           in a variable with this name. If not specified, this defaults to ``'x'``
-        - ``algorithm`` -- for compatibility with general number field elements; ignored
+          in a variable with this name; if not specified, this defaults to ``'x'``
+        - ``algorithm`` -- for compatibility with general number field
+          elements; ignored
 
         EXAMPLES::
 
@@ -2850,10 +2852,10 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
 
         INPUT:
 
-        -  ``I`` -- may be an ideal of ``self.parent()``, or an
-           element or list of elements of ``self.parent()`` generating a nonzero
-           ideal. A :class:`ValueError` is raised if `I` is non-integral or is zero.
-           A :class:`ZeroDivisionError` is raised if `I + (x) \neq (1)`.
+        - ``I`` -- may be an ideal of ``self.parent()``, or an
+          element or list of elements of ``self.parent()`` generating a nonzero
+          ideal. A :exc:`ValueError` is raised if `I` is non-integral or is zero.
+          A :exc:`ZeroDivisionError` is raised if `I + (x) \neq (1)`.
 
         EXAMPLES::
 
@@ -2865,7 +2867,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
             -13
             sage: w.inverse_mod(13).parent() == OE
             True
-            sage: w.inverse_mod(2*OE)
+            sage: w.inverse_mod(2)
             Traceback (most recent call last):
             ...
             ZeroDivisionError: w is not invertible modulo Fractional ideal (2)
@@ -2957,7 +2959,7 @@ cdef class Z_to_quadratic_field_element(Morphism):
 
     def __init__(self, K):
         """
-        ``K`` is the target quadratic field
+        ``K`` is the target quadratic field.
 
         EXAMPLES::
 
@@ -3059,7 +3061,9 @@ cdef class Q_to_quadratic_field_element(Morphism):
 
     def __init__(self, K):
         """
-        ``K`` is the target quadratic field
+        INPUT:
+
+        - ``K`` -- the target quadratic field
 
         EXAMPLES::
 

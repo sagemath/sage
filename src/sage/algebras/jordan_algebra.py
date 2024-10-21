@@ -427,7 +427,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
 
         def __bool__(self) -> bool:
             """
-            Return if ``self`` is non-zero.
+            Return if ``self`` is nonzero.
 
             EXAMPLES::
 
@@ -584,9 +584,9 @@ class SpecialJordanAlgebra(JordanAlgebra):
 
             INPUT:
 
-            - ``copy`` -- (default: ``True``) if ``self`` is internally
-              represented by a dictionary ``d``, then make a copy of ``d``;
-              if ``False``, then this can cause undesired behavior by
+            - ``copy`` -- boolean (default: ``True``); if ``self`` is
+              internally represented by a dictionary ``d``, then make a copy of
+              ``d``; if ``False``, then this can cause undesired behavior by
               mutating ``d``
 
             EXAMPLES::
@@ -852,7 +852,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
 
         def __bool__(self) -> bool:
             """
-            Return if ``self`` is non-zero.
+            Return if ``self`` is nonzero.
 
             TESTS::
 
@@ -1572,7 +1572,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
 
         def __bool__(self) -> bool:
             """
-            Return if ``self`` is non-zero.
+            Return if ``self`` is nonzero.
 
             TESTS::
 

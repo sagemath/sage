@@ -88,12 +88,15 @@ cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* i
     obtain an ordered array.
 
     INPUT:
-       v -- array of mpz_t  (integer)
-       n -- integer (length of array v)
-       x -- mpz_t  (integer)
+
+    - ``v`` -- array of mpz_t  (integer)
+    - ``n`` -- integer (length of array v)
+    - ``x`` -- mpz_t  (integer)
+
     OUTPUT:
-       position of x (as a Py_ssize_t)
-       ins -- (call be pointer), the insertion point if x is not found.
+
+    position of x (as a Py_ssize_t)
+    ins -- (call be pointer), the insertion point if x is not found.
     """
     cdef Py_ssize_t i, j, k, c
     if n == 0:
@@ -128,7 +131,7 @@ cdef Py_ssize_t mpz_binary_search(mpz_t* v, Py_ssize_t n, mpz_t x, Py_ssize_t* i
 cdef int mpz_vector_get_entry(mpz_t ans, mpz_vector* v, Py_ssize_t n) except -1:
     """
     Returns the n-th entry of the sparse vector v.  This
-    would be v[n] in Python syntax.
+    would be ``v[n]`` in Python syntax.
 
     The return is done using the pointer ans, which is to an mpz_t
     that *must* have been initialized using mpz_init.
@@ -154,7 +157,7 @@ cdef bint mpz_vector_is_entry_zero_unsafe(mpz_vector* v, Py_ssize_t n) noexcept:
 
 cdef object mpz_vector_to_list(mpz_vector* v):
     """
-    Returns a Python list of 2-tuples (i,x), where x=v[i] runs
+    Return a Python list of 2-tuples (i,x), where ``x=v[i]`` runs
     through the nonzero elements of x, in order.
     """
     cdef object X
@@ -171,7 +174,7 @@ cdef object mpz_vector_to_list(mpz_vector* v):
 cdef int mpz_vector_set_entry(mpz_vector* v, Py_ssize_t n, mpz_t x) except -1:
     """
     Set the n-th component of the sparse vector v equal to x.
-    This would be v[n] = x in Python syntax.
+    This would be ``v[n] = x`` in Python syntax.
     """
     if n >= v.degree or n < 0:
         raise IndexError("Index (=%s) must be between 0 and %s." % (n, v.degree - 1))

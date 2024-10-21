@@ -57,7 +57,7 @@ class LittlewoodRichardsonTableau(SemistandardTableau):
     @staticmethod
     def __classcall_private__(cls, t, weight):
         r"""
-        Implements the shortcut ``LittlewoodRichardsonTableau(t, weight)`` to
+        Implement the shortcut ``LittlewoodRichardsonTableau(t, weight)`` to
         ``LittlewoodRichardsonTableaux(shape , weight)(t)``
         where ``shape`` is the shape of the tableau.
 
@@ -180,7 +180,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
 
     def __init__(self, shape, weight):
         r"""
-        Initializes the parent class of Littlewood-Richardson tableaux.
+        Initialize the parent class of Littlewood-Richardson tableaux.
 
         INPUT:
 

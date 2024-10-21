@@ -50,6 +50,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         pass
+
     @staticmethod
     def __classcall__(cls, Sym, base, scalar, prefix, basis_name, leading_coeff=None):
         """
@@ -147,9 +148,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         - ``self`` -- a basis determined by an orthotriangular definition
         - ``x`` -- an element of the basis `base` to which ``self`` is triangularly related
 
-        OUTPUT:
-
-        - an element of ``self`` equivalent to ``x``
+        OUTPUT: an element of ``self`` equivalent to ``x``
 
         EXAMPLES::
 
@@ -170,11 +169,9 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         INPUT:
 
         - ``self`` -- a basis determined by an orthotriangular definition
-        - ``x`` -- an element of ``self`` as a basis of the ring of symmetric functions.
+        - ``x`` -- an element of ``self`` as a basis of the ring of symmetric functions
 
-        OUTPUT:
-
-        - the element ``x`` expressed in the basis to which ``self`` is triangularly related
+        OUTPUT: the element ``x`` expressed in the basis to which ``self`` is triangularly related
 
         EXAMPLES::
 
@@ -190,13 +187,13 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
 
     def _base_cache(self, n):
         """
-        Computes the change of basis between ``self`` and base for the
+        Compute the change of basis between ``self`` and base for the
         homogeneous component of size ``n``
 
         INPUT:
 
         - ``self`` -- a basis determined by an orthotriangular definition
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -235,7 +232,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         - ``self`` -- a basis determined by an orthotriangular definition
         - ``part`` -- a partition
 
-        .. note::
+        .. NOTE::
 
            We assume that self._gram_schmidt has been called before
            self._to_base is called.
@@ -271,9 +268,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         - ``self`` -- a basis determined by an orthotriangular definition
         - ``left``, ``right`` -- elements in ``self``
 
-        OUTPUT:
-
-        - the expansion of the product of ``left`` and ``right`` in the basis ``self``.
+        OUTPUT: the expansion of the product of ``left`` and ``right`` in the basis ``self``
 
         EXAMPLES::
 
@@ -289,6 +284,8 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
 
 
 from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+
+
 class OrthotriangBasisFunctor(SymmetricFunctionsFunctor):
     """
     A constructor for algebras of symmetric functions constructed by
@@ -352,4 +349,4 @@ class OrthotriangBasisFunctor(SymmetricFunctionsFunctor):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang',  SymmetricFunctionAlgebra_orthotriang.Element)
+register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang', SymmetricFunctionAlgebra_orthotriang.Element)

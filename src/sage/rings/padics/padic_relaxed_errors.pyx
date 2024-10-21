@@ -31,10 +31,10 @@ def raise_error(error, permissive=False):
 
     INPUT:
 
-    - ``error`` -- an integer; the error code
+    - ``error`` -- integer; the error code
 
-    - ``permissive`` -- a boolean (default: ``False``); if ``True``,
-      do not raise weak errors (precision, abandon).
+    - ``permissive`` -- boolean (default: ``False``); if ``True``,
+      do not raise weak errors (precision, abandon)
 
     TESTS::
 
@@ -51,7 +51,6 @@ def raise_error(error, permissive=False):
         PrecisionError: computation has been abandoned; try to increase precision
 
         sage: raise_error(1, permissive=True)
-
     """
     if error & ERROR_UNEXPECTED:
         raise RuntimeError("error code = %s" % error)

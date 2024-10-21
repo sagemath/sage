@@ -257,6 +257,12 @@ cdef class Polynomial_GF2X(Polynomial_template):
         verbose("Res %5.3f s"%cputime(t),level=1)
         return res
 
+    # Other polynomials have compose_mod as methods following the naming of
+    # NTL/Flint bindings but the above method predates these. We expose
+    # compose_mod here so all polynomial ring elements which support this can
+    # use either name
+    compose_mod = modular_composition
+
     @cached_method
     def is_irreducible(self):
         r"""
@@ -278,7 +284,6 @@ cdef class Polynomial_GF2X(Polynomial_template):
             False
             sage: f.is_irreducible.cache
             False
-
         """
         return 0 != GF2X_IterIrredTest(self.x)
 

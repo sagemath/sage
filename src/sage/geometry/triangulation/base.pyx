@@ -51,18 +51,18 @@ cdef class Point(SageObject):
 
     INPUT:
 
-    - ``point_configuration`` -- :class:`PointConfiguration_base`. The
-      point configuration to which the point belongs.
+    - ``point_configuration`` -- :class:`PointConfiguration_base`; the
+      point configuration to which the point belongs
 
-    - ``i`` -- integer. The index of the point in the point
-      configuration.
+    - ``i`` -- integer; the index of the point in the point
+      configuration
 
-    - ``projective`` -- the projective coordinates of the point.
+    - ``projective`` -- the projective coordinates of the point
 
-    - ``affine`` -- the affine coordinates of the point.
+    - ``affine`` -- the affine coordinates of the point
 
     - ``reduced`` -- the reduced (with linearities removed)
-      coordinates of the point.
+      coordinates of the point
 
     EXAMPLES::
 
@@ -100,7 +100,7 @@ cdef class Point(SageObject):
 
     def __hash__(self):
         r"""
-        Hash value for a point in a point configuration
+        Hash value for a point in a point configuration.
 
         EXAMPLES::
 
@@ -114,9 +114,7 @@ cdef class Point(SageObject):
         r"""
         Return the point configuration to which the point belongs.
 
-        OUTPUT:
-
-        A :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
+        OUTPUT: a :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`
 
         EXAMPLES::
 
@@ -177,9 +175,7 @@ cdef class Point(SageObject):
         r"""
         Return the projective coordinates of the point in the ambient space.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -203,9 +199,7 @@ cdef class Point(SageObject):
         r"""
         Return the affine coordinates of the point in the ambient space.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -230,9 +224,7 @@ cdef class Point(SageObject):
         Return the affine coordinates of the point on the hyperplane
         spanned by the point configuration.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -257,9 +249,7 @@ cdef class Point(SageObject):
         Return the projective coordinates of the point on the hyperplane
         spanned by the point configuration.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -284,9 +274,7 @@ cdef class Point(SageObject):
         Return the affine coordinates of the point on the hyperplane
         spanned by the point configuration.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -311,9 +299,7 @@ cdef class Point(SageObject):
         Return the affine coordinates of the point on the hyperplane
         spanned by the point configuration.
 
-        OUTPUT:
-
-        A tuple containing the coordinates.
+        OUTPUT: a tuple containing the coordinates
 
         EXAMPLES::
 
@@ -339,9 +325,7 @@ cdef class Point(SageObject):
         """
         Return a string representation of the point.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -373,12 +357,12 @@ cdef class PointConfiguration_base(Parent):
 
         INPUT:
 
-        - ``points`` -- a tuple of tuples of projective coordinates
-          with ``1`` as the final coordinate.
+        - ``points`` -- tuple of tuples of projective coordinates
+          with ``1`` as the final coordinate
 
-        - ``defined_affine`` -- Boolean. Whether the point
+        - ``defined_affine`` -- boolean; whether the point
           configuration is defined as a configuration of affine (as
-          opposed to projective) points.
+          opposed to projective) points
 
         TESTS::
 
@@ -471,9 +455,7 @@ cdef class PointConfiguration_base(Parent):
         """
         Return the vector space that contains the affine points.
 
-        OUTPUT:
-
-        A vector space over the fraction field of :meth:`base_ring`.
+        OUTPUT: a vector space over the fraction field of :meth:`base_ring`
 
         EXAMPLES::
 
@@ -492,9 +474,7 @@ cdef class PointConfiguration_base(Parent):
         Return the vector space that is spanned by the homogeneous
         coordinates.
 
-        OUTPUT:
-
-        A vector space over the fraction field of :meth:`base_ring`.
+        OUTPUT: a vector space over the fraction field of :meth:`base_ring`
 
         EXAMPLES::
 
@@ -546,9 +526,7 @@ cdef class PointConfiguration_base(Parent):
         Return the base ring, that is, the ring containing the
         coordinates of the points.
 
-        OUTPUT:
-
-        A ring.
+        OUTPUT: a ring
 
         EXAMPLES::
 
@@ -570,10 +548,8 @@ cdef class PointConfiguration_base(Parent):
         """
         Return whether the configuration is defined by affine points.
 
-        OUTPUT:
-
-        Boolean. If true, the homogeneous coordinates all have `1` as
-        their last entry.
+        OUTPUT: boolean; if true, the homogeneous coordinates all have `1` as
+        their last entry
 
         EXAMPLES::
 
@@ -589,7 +565,7 @@ cdef class PointConfiguration_base(Parent):
 
     def _assert_is_affine(self):
         """
-        Raise a :class:`ValueError` if the point configuration is not
+        Raise a :exc:`ValueError` if the point configuration is not
         defined by affine points.
 
         EXAMPLES::
@@ -613,11 +589,9 @@ cdef class PointConfiguration_base(Parent):
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        The ``i``-th point of the point configuration.
+        OUTPUT: the ``i``-th point of the point configuration
 
         EXAMPLES::
 
@@ -681,17 +655,15 @@ cdef class PointConfiguration_base(Parent):
 
     def point(self, i):
         """
-        Return the i-th point of the configuration.
+        Return the `i`-th point of the configuration.
 
         Same as :meth:`__getitem__`
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        A point of the point configuration.
+        OUTPUT: a point of the point configuration
 
         EXAMPLES::
 
@@ -743,11 +715,9 @@ cdef class PointConfiguration_base(Parent):
         INPUT:
 
         - ``simplex`` -- iterable, for example a list. The elements
-          are the vertex indices of the simplex.
+          are the vertex indices of the simplex
 
-        OUTPUT:
-
-        An integer that uniquely specifies the simplex.
+        OUTPUT: integer that uniquely specifies the simplex
 
         EXAMPLES::
 
@@ -786,7 +756,7 @@ cdef class PointConfiguration_base(Parent):
 
         INPUT:
 
-        - ``s`` -- int. An integer that uniquely specifies a simplex.
+        - ``s`` -- integer that uniquely specifies a simplex
 
         OUTPUT:
 
@@ -831,12 +801,12 @@ cdef class PointConfiguration_base(Parent):
 ########################################################################
 cdef class ConnectedTriangulationsIterator(SageObject):
     r"""
-    A Python shim for the C++-class 'triangulations'
+    A Python shim for the C++-class 'triangulations'.
 
     INPUT:
 
     - ``point_configuration`` -- a
-      :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`.
+      :class:`~sage.geometry.triangulation.point_configuration.PointConfiguration`
 
     - ``seed`` -- a regular triangulation or ``None`` (default). In
       the latter case, a suitable triangulation is generated
@@ -857,7 +827,7 @@ cdef class ConnectedTriangulationsIterator(SageObject):
       integer is passed, all returned triangulations will be star with
       respect to the
 
-    - ``fine`` -- boolean (default: ``False``). Whether to return only
+    - ``fine`` -- boolean (default: ``False``); whether to return only
       fine triangulations, that is, simplicial decompositions that
       make use of all the points of the configuration.
 

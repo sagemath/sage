@@ -116,9 +116,11 @@ cdef class FpTElement(FieldElement):
         """
         INPUT:
 
-        - parent -- the Fraction field containing this element
-        - numer -- something that can be converted into the polynomial ring, giving the numerator
-        - denom -- something that can be converted into the polynomial ring, giving the numerator (default 1)
+        - ``parent`` -- the Fraction field containing this element
+        - ``numer`` -- something that can be converted into the polynomial
+          ring, giving the numerator
+        - ``denom`` -- something that can be converted into the polynomial
+          ring, giving the numerator (default: 1)
 
         EXAMPLES::
 
@@ -174,7 +176,8 @@ cdef class FpTElement(FieldElement):
 
     cdef FpTElement _new_c(self):
         """
-        Creates a new FpTElement in the same field, leaving the value to be initialized.
+        Create a new FpTElement in the same field, leaving the value to be
+        initialized.
         """
         cdef FpTElement x = <FpTElement>FpTElement.__new__(FpTElement)
         x._parent = self._parent
@@ -186,7 +189,8 @@ cdef class FpTElement(FieldElement):
 
     cdef FpTElement _copy_c(self):
         """
-        Creates a new FpTElement in the same field, with the same value as self.
+        Create a new FpTElement in the same field, with the same value as
+        ``self``.
         """
         cdef FpTElement x = <FpTElement>FpTElement.__new__(FpTElement)
         x._parent = self._parent
@@ -296,7 +300,7 @@ cdef class FpTElement(FieldElement):
 
     def valuation(self, v):
         """
-        Return the valuation of self at `v`.
+        Return the valuation of ``self`` at `v`.
 
         EXAMPLES::
 
@@ -445,7 +449,7 @@ cdef class FpTElement(FieldElement):
 
     def __neg__(self):
         """
-        Negates this element.
+        Negate this element.
 
         EXAMPLES::
 
@@ -769,12 +773,12 @@ cdef class FpTElement(FieldElement):
 
         INPUT:
 
-        -  ``extend`` -- bool (default: ``True``); if True, return a
-           square root in an extension ring, if necessary. Otherwise, raise a
-           ValueError if the square is not in the base ring.
+        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
+          square root in an extension ring, if necessary. Otherwise, raise a
+          :exc:`ValueError` if the square is not in the base ring.
 
-        -  ``all`` -- bool (default: ``False``); if True, return all
-           square roots of self, instead of just one.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return all
+          square roots of self, instead of just one
 
         EXAMPLES::
 
@@ -803,7 +807,7 @@ cdef class FpTElement(FieldElement):
 
     def __pow__(FpTElement self, Py_ssize_t e, dummy):
         r"""
-        Return the ``e``th power of this element.
+        Return the `e`-th power of this element.
 
         EXAMPLES::
 
@@ -887,11 +891,12 @@ cdef class FpT_iter:
         """
         INPUT:
 
-        - parent -- The FpT that we're iterating over.
+        - ``parent`` -- the FpT that we're iterating over
 
-        - degree -- The maximum degree of the numerator and denominator of the elements over which we iterate.
+        - ``degree`` -- the maximum degree of the numerator and denominator of
+          the elements over which we iterate
 
-        - start -- (default 0) The element on which to start.
+        - ``start`` -- (default: 0) the element on which to start
 
         EXAMPLES::
 
@@ -1030,7 +1035,7 @@ cdef class FpT_iter:
 
 cdef class Polyring_FpT_coerce(RingHomomorphism):
     """
-    This class represents the coercion map from GF(p)[t] to GF(p)(t)
+    This class represents the coercion map from GF(p)[t] to GF(p)(t).
 
     EXAMPLES::
 
@@ -1046,7 +1051,6 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
     TESTS::
 
         TestSuite(f).run()
-
     """
     cdef long p
 
@@ -1054,7 +1058,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
         """
         INPUT:
 
-        - R -- An FpT
+        - ``R`` -- an FpT
 
         EXAMPLES::
 
@@ -1219,7 +1223,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
 
 cdef class FpT_Polyring_section(Section):
     """
-    This class represents the section from GF(p)(t) back to GF(p)[t]
+    This class represents the section from GF(p)(t) back to GF(p)[t].
 
     EXAMPLES::
 
@@ -1247,7 +1251,6 @@ cdef class FpT_Polyring_section(Section):
     TESTS::
 
         sage: TestSuite(f).run(skip='_test_pickling')
-
     """
     cdef long p
 
@@ -1255,7 +1258,7 @@ cdef class FpT_Polyring_section(Section):
         """
         INPUT:
 
-        - f -- A Polyring_FpT_coerce homomorphism
+        - ``f`` -- a Polyring_FpT_coerce homomorphism
 
         EXAMPLES::
 
@@ -1348,7 +1351,7 @@ cdef class FpT_Polyring_section(Section):
 
 cdef class Fp_FpT_coerce(RingHomomorphism):
     """
-    This class represents the coercion map from GF(p) to GF(p)(t)
+    This class represents the coercion map from GF(p) to GF(p)(t).
 
     EXAMPLES::
 
@@ -1364,7 +1367,6 @@ cdef class Fp_FpT_coerce(RingHomomorphism):
     TESTS::
 
         sage: TestSuite(f).run()
-
     """
     cdef long p
 
@@ -1372,7 +1374,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism):
         """
         INPUT:
 
-        - R -- An FpT
+        - ``R`` -- an FpT
 
         EXAMPLES::
 
@@ -1521,7 +1523,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism):
 
 cdef class FpT_Fp_section(Section):
     """
-    This class represents the section from GF(p)(t) back to GF(p)[t]
+    This class represents the section from GF(p)(t) back to GF(p)[t].
 
     EXAMPLES::
 
@@ -1549,8 +1551,6 @@ cdef class FpT_Fp_section(Section):
     TESTS::
 
         sage: TestSuite(f).run(skip='_test_pickling')
-
-
     """
     cdef long p
 
@@ -1558,7 +1558,7 @@ cdef class FpT_Fp_section(Section):
         """
         INPUT:
 
-        - f -- An Fp_FpT_coerce homomorphism
+        - ``f`` -- an ``Fp_FpT_coerce`` homomorphism
 
         EXAMPLES::
 
@@ -1670,7 +1670,7 @@ cdef class FpT_Fp_section(Section):
 
 cdef class ZZ_FpT_coerce(RingHomomorphism):
     """
-    This class represents the coercion map from ZZ to GF(p)(t)
+    This class represents the coercion map from ZZ to GF(p)(t).
 
     EXAMPLES::
 
@@ -1686,7 +1686,6 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
     TESTS::
 
         sage: TestSuite(f).run()
-
     """
     cdef long p
 
@@ -1694,7 +1693,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
         """
         INPUT:
 
-        - R -- An FpT
+        - ``R`` -- an FpT
 
         EXAMPLES::
 
@@ -1910,7 +1909,7 @@ cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic) noexcept:
     """
     Set poly to the "next" polynomial: this is just counting in base p.
 
-    If monic is True then will only iterate through monic polynomials.
+    If monic is ``True`` then will only iterate through monic polynomials.
     """
     cdef long n
     cdef long a

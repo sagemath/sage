@@ -11,7 +11,7 @@ cdef extern from *:
 
 cdef object string(char* s):
     """
-    Takes a char* allocated using malloc, and converts it to a Python
+    Take a char* allocated using malloc, and converts it to a Python
     string, then deletes the allocated memory.  Also unsets the signal
     handler, so you *must* call sig_on() right before calling this!
     """
@@ -23,7 +23,7 @@ cdef object string(char* s):
 
 cdef object string_delete(char* s):
     """
-    Takes a char* allocated using C++ new, and converts it to a Python
+    Take a char* allocated using C++ new, and converts it to a Python
     string, then deletes the allocated memory.  Also unsets the signal
     handler, so you *must* call sig_on() right before calling this!
     """

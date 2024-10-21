@@ -38,7 +38,7 @@ from sage.misc.cachefunc import cached_method
 
 class FiniteSetMaps(UniqueRepresentation, Parent):
     r"""
-    Maps between finite sets
+    Maps between finite sets.
 
     Constructs the set of all maps between two sets. The sets can be
     given using any of the three following ways:
@@ -55,12 +55,12 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``domain`` -- a set, finite iterable, or integer.
+    - ``domain`` -- set, finite iterable, or integer
 
-    - ``codomain`` -- a set, finite iterable, integer, or ``None``
+    - ``codomain`` -- set, finite iterable, integer, or ``None``
       (default). In this last case, the maps are endo-maps of the domain.
 
-    - ``action`` -- ``"left"`` (default) or ``"right"``. The side
+    - ``action`` -- ``'left'`` (default) or ``'right'``. The side
       where the maps act on the domain. This is used in particular to
       define the meaning of the product (composition) of two maps.
 
@@ -157,7 +157,7 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
         sage: TestSuite(FiniteSetMaps([], [1, 2])).run()
     """
     @staticmethod
-    def __classcall_private__(cls, domain, codomain=None, action="left", category=None):
+    def __classcall_private__(cls, domain, codomain=None, action='left', category=None):
         """
         TESTS::
 
@@ -196,7 +196,7 @@ class FiniteSetMaps(UniqueRepresentation, Parent):
 
     def cardinality(self):
         """
-        The cardinality of ``self``
+        The cardinality of ``self``.
 
         EXAMPLES::
 
@@ -240,7 +240,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
 
     def domain(self):
         """
-        The domain of ``self``
+        The domain of ``self``.
 
         EXAMPLES::
 
@@ -251,7 +251,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
 
     def codomain(self):
         """
-        The codomain of ``self``
+        The codomain of ``self``.
 
         EXAMPLES::
 
@@ -292,7 +292,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
 
     def an_element(self):
         """
-        Returns a map in ``self``
+        Return a map in ``self``.
 
         EXAMPLES::
 
@@ -369,16 +369,16 @@ class FiniteSetMaps_MN(FiniteSetMaps):
 
 class FiniteSetMaps_Set(FiniteSetMaps_MN):
     """
-    The sets of all maps between two sets
+    The sets of all maps between two sets.
 
     Users should use the factory class :class:`FiniteSetMaps` to
     create instances of this class.
 
     INPUT:
 
-    - ``domain`` -- an object in the category ``FiniteSets()``.
+    - ``domain`` -- an object in the category ``FiniteSets()``
 
-    - ``codomain`` -- an object in the category ``FiniteSets()``.
+    - ``codomain`` -- an object in the category ``FiniteSets()``
 
     - ``category`` -- the category in which the sets of maps is
       constructed. It must be a sub-category of
@@ -429,7 +429,7 @@ class FiniteSetMaps_Set(FiniteSetMaps_MN):
 
     def domain(self):
         """
-        The domain of ``self``
+        The domain of ``self``.
 
         EXAMPLES::
 
@@ -440,7 +440,7 @@ class FiniteSetMaps_Set(FiniteSetMaps_MN):
 
     def codomain(self):
         """
-        The codomain of ``self``
+        The codomain of ``self``.
 
         EXAMPLES::
 
@@ -452,7 +452,7 @@ class FiniteSetMaps_Set(FiniteSetMaps_MN):
     # TODO: consistency from_dict / from_list
     def _from_list_(self, v):
         """
-        Create a function from a list
+        Create a function from a list.
 
         The list gives in the order of the element of the domain the
         rank (index) of its image in the codomain.
@@ -467,7 +467,7 @@ class FiniteSetMaps_Set(FiniteSetMaps_MN):
 
     def from_dict(self, d):
         """
-        Create a map from a dictionary
+        Create a map from a dictionary.
 
         EXAMPLES::
 
@@ -482,14 +482,14 @@ class FiniteSetMaps_Set(FiniteSetMaps_MN):
 
 class FiniteSetEndoMaps_N(FiniteSetMaps_MN):
     r"""
-    The sets of all maps from `\{1, 2, \dots, n\}` to itself
+    The sets of all maps from `\{1, 2, \dots, n\}` to itself.
 
     Users should use the factory class :class:`FiniteSetMaps` to
     create instances of this class.
 
     INPUT:
 
-    - ``n`` -- an integer.
+    - ``n`` -- integer
 
     - ``category`` -- the category in which the sets of maps is
       constructed. It must be a sub-category of ``Monoids().Finite()``
@@ -524,7 +524,7 @@ class FiniteSetEndoMaps_N(FiniteSetMaps_MN):
 
     def an_element(self):
         """
-        Returns a map in ``self``
+        Return a map in ``self``.
 
         EXAMPLES::
 
@@ -548,14 +548,14 @@ class FiniteSetEndoMaps_N(FiniteSetMaps_MN):
 
 class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
     """
-    The sets of all maps from a set to itself
+    The sets of all maps from a set to itself.
 
     Users should use the factory class :class:`FiniteSetMaps` to
     create instances of this class.
 
     INPUT:
 
-    - ``domain`` -- an object in the category ``FiniteSets()``.
+    - ``domain`` -- an object in the category ``FiniteSets()``
 
     - ``category`` -- the category in which the sets of maps is
       constructed. It must be a sub-category of ``Monoids().Finite()``

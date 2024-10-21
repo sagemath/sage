@@ -32,11 +32,11 @@ class OperationInspector(SageObject):
 
     def __init__(self, libgap_element):
         """
-        Information about operations that can act on a given LibGAP element
+        Information about operations that can act on a given LibGAP element.
 
         INPUT:
 
-        - ``libgap_element`` -- libgap element.
+        - ``libgap_element`` -- libgap element
 
         EXAMPLES::
 
@@ -49,11 +49,9 @@ class OperationInspector(SageObject):
 
     def _repr_(self):
         """
-        Return the string representation
+        Return the string representation.
 
-        OUTPUT:
-
-        String
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -67,11 +65,9 @@ class OperationInspector(SageObject):
     @property
     def obj(self):
         """
-        The first argument for the operations
+        The first argument for the operations.
 
-        OUTPUT:
-
-        A Libgap object.
+        OUTPUT: a Libgap object
 
         EXAMPLES::
 
@@ -84,11 +80,9 @@ class OperationInspector(SageObject):
 
     def operations(self):
         """
-        Return the GAP operations for :meth:`obj`
+        Return the GAP operations for :meth:`obj`.
 
-        OUTPUT:
-
-        List of GAP operations
+        OUTPUT: list of GAP operations
 
         EXAMPLES::
 
@@ -107,11 +101,9 @@ class OperationInspector(SageObject):
 
     def op_names(self):
         """
-        Return the names of the operations
+        Return the names of the operations.
 
-        OUTPUT:
-
-        List of strings
+        OUTPUT: list of strings
 
         EXAMPLES::
 

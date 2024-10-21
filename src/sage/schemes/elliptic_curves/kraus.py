@@ -109,15 +109,15 @@ def c4c6_model(c4, c6, assume_nonsingular=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``assume_nonsingular`` (boolean, default ``False``) -- if ``True``,
-      check for integrality and nosingularity.
+    - ``assume_nonsingular`` -- boolean (default: ``False``); if ``True``,
+      check for integrality and nosingularity
 
     OUTPUT:
 
     The elliptic curve with a-invariants `[0,0,0,-c_4/48,-c_6/864]`, whose
     c-invariants are the given `c_4`, `c_6`.  If the supplied invariants are
     singular, returns ``None`` when ``assume_nonsingular`` is ``False`` and
-    raises an :class:`ArithmeticError` otherwise.
+    raises an :exc:`ArithmeticError` otherwise.
 
     EXAMPLES::
 
@@ -150,7 +150,7 @@ def make_integral(a, P, e):
 
     - ``P`` -- a prime ideal of the number field
 
-    - ``e`` -- a positive integer
+    - ``e`` -- positive integer
 
     OUTPUT:
 
@@ -365,8 +365,8 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
 
     - ``P`` -- a prime ideal of the number field which divides 3
 
-    - ``assume_nonsingular`` (boolean, default ``False``) -- if ``True``,
-      check for integrality and nosingularity.
+    - ``assume_nonsingular`` -- boolean (default: ``False``); if ``True``,
+      check for integrality and nosingularity
 
     OUTPUT:
 
@@ -592,8 +592,8 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
 
     - ``a1`` -- an integral elements of a number field, or ``None`` (default)
 
-    - ``assume_nonsingular`` (boolean, default ``False``) -- if ``True``,
-      check for integrality and nonsingularity.
+    - ``assume_nonsingular`` -- boolean (default: ``False``); if ``True``,
+      check for integrality and nonsingularity
 
     OUTPUT:
 
@@ -682,8 +682,8 @@ def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
 
     - ``P`` -- a prime ideal of the number field
 
-    - ``assume_nonsingular`` (boolean, default ``False``) -- if ``True``,
-      check for integrality and nonsingularity.
+    - ``assume_nonsingular`` -- boolean (default: ``False``); if ``True``,
+      check for integrality and nonsingularity
 
     OUTPUT:
 
@@ -754,8 +754,8 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
 
     - ``c4``, ``c6`` -- elements of a number field
 
-    - ``assume_nonsingular`` (boolean, default ``False``) -- if ``True``,
-      check for integrality and nonsingularity.
+    - ``assume_nonsingular`` -- boolean (default: ``False``); if ``True``,
+      check for integrality and nonsingularity
 
     OUTPUT:
 
@@ -927,8 +927,8 @@ def semi_global_minimal_model(E, debug=False):
 
     - ``E`` -- an elliptic curve over a number field
 
-    - ``debug`` (boolean, default ``False``) -- if ``True``, prints some
-      messages about the progress of the computation.
+    - ``debug`` -- boolean (default: ``False``); if ``True``, prints some
+      messages about the progress of the computation
 
     OUTPUT:
 

@@ -53,11 +53,9 @@ class TernaryQF(SageObject):
 
     INPUT:
 
-    - ``v`` -- a list or tuple of 6 entries:  ``[a,b,c,r,s,t]``
+    - ``v`` -- list or tuple of 6 entries:  ``[a,b,c,r,s,t]``
 
-    OUTPUT:
-
-    - the ternary quadratic form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot y\cdot z + s\cdot x\cdot z + t\cdot x\cdot y`.
+    OUTPUT: the ternary quadratic form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot y\cdot z + s\cdot x\cdot z + t\cdot x\cdot y`
 
     EXAMPLES::
 
@@ -118,7 +116,7 @@ class TernaryQF(SageObject):
 
     def __hash__(self):
         """
-        Returns a hash for self.
+        Return a hash for ``self``.
 
         EXAMPLES::
 
@@ -136,7 +134,7 @@ class TernaryQF(SageObject):
 
         INPUT:
 
-        - ``n`` -- integer with `0 \leq n \leq 5`.
+        - ``n`` -- integer with `0 \leq n \leq 5`
 
         EXAMPLES::
 
@@ -427,7 +425,7 @@ class TernaryQF(SageObject):
 
     def __neg__(self):
         """
-        Return the ternary quadratic form with coefficients negatives of self.
+        Return the ternary quadratic form with coefficients negatives of ``self``.
 
         EXAMPLES::
 
@@ -952,7 +950,6 @@ class TernaryQF(SageObject):
             1
             sage: neig.count(Q2)
             3
-
         """
 
         z = self.find_zeros_mod_p(p)
@@ -1310,8 +1307,6 @@ class TernaryQF(SageObject):
             sage: Q = TernaryQF([3, 4, 5, 3, 3, 2])
             sage: Q._automorphisms_reduced_fast()
             [(1, 0, 0, 0, 1, 0, 0, 0, 1)]
-
-
         """
 
         if self._border(1):

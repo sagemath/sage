@@ -39,9 +39,7 @@ cdef class HMM_Util:
         - ``i`` -- nonnegative integer
         - ``j`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``T`` is modified
+        OUTPUT: ``T`` is modified
 
         EXAMPLES::
 
@@ -98,9 +96,7 @@ cdef class HMM_Util:
           equal to 1.  If the sum of the entries in a row is 0, replace them
           all by `1/N`.
 
-        OUTPUT:
-
-        - a :class:`TimeSeries` of length `N`
+        OUTPUT: a :class:`TimeSeries` of length `N`
 
         EXAMPLES::
 
@@ -138,9 +134,7 @@ cdef class HMM_Util:
           equal to 1.  If the sum of the entries in a row is 0, replace them
           all by `1/N`.
 
-        OUTPUT:
-
-        - a :class:`TimeSeries`
+        OUTPUT: a :class:`TimeSeries`
 
         EXAMPLES::
 

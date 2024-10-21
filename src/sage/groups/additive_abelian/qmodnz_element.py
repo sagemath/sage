@@ -77,7 +77,7 @@ class QmodnZ_Element(AdditiveGroupElement):
 
     def lift(self):
         r"""
-        Return the smallest non-negative rational number reducing to
+        Return the smallest nonnegative rational number reducing to
         this element.
 
         EXAMPLES::
@@ -110,8 +110,8 @@ class QmodnZ_Element(AdditiveGroupElement):
         r"""
         Lift to `\Z`.
 
-        This is the smallest non-negative integer reducing to this element,
-        or a :class:`ValueError` if none exists.
+        This is the smallest nonnegative integer reducing to this element,
+        or a :exc:`ValueError` if none exists.
 
         TESTS::
 
@@ -264,7 +264,7 @@ class QmodnZ_Element(AdditiveGroupElement):
             Division of `x` by `m` does not yield a well defined
             result, since there are `m` elements `y` of `\Q/n\Z`
             with the property that `x = my`.  We return the one
-            with the smallest non-negative lift.
+            with the smallest nonnegative lift.
 
         EXAMPLES::
 

@@ -101,7 +101,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         b*u^2*d + a*u*(d*u) + g*u
 
     We verify some examples of Proposition 3.5 in [BR1998]_, which states
-    that the 0-th degree part is commutative::
+    that the `0`-th degree part is commutative::
 
         sage: DU0 = [u^i * (d*u)^j * d^i for i,j in
         ....:        cartesian_product([range(3), range(3)])]

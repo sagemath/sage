@@ -26,7 +26,7 @@ def set_state(bint mode):
 
     INPUT:
 
-    - ``mode`` -- (bool); if True, enable stopgaps; otherwise, disable.
+    - ``mode`` -- boolean; if ``True``, enable stopgaps. Otherwise, disable.
 
     EXAMPLES::
 
@@ -64,9 +64,10 @@ def stopgap(message, int issue_no):
 
     INPUT:
 
-     - ``message`` -- an explanation of how an incorrect answer might be produced.
+    - ``message`` -- an explanation of how an incorrect answer might be produced
 
-     - ``issue_no`` -- an integer, giving the number of the Github issue tracking the underlying issue.
+    - ``issue_no`` -- integer; giving the number of the Github issue tracking
+      the underlying issue
 
     EXAMPLES::
 

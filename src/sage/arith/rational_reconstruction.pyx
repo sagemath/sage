@@ -36,7 +36,7 @@ cdef int mpq_rational_reconstruction(mpq_t answer, mpz_t a, mpz_t m) except -1:
     sqrt(m/2).
 
     If `m` is zero, raise :class`ZeroDivisionError`. If the rational
-    reconstruction does not exist, raise :class:`ValueError`.
+    reconstruction does not exist, raise :exc:`ValueError`.
 
     We assume that ``mpq_init`` has been called on ``answer``.
 

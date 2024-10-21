@@ -145,7 +145,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         TESTS::
 
-            sage: k.<a> = GF(2^8, impl="ntl")
+            sage: k.<a> = GF(2^8, impl='ntl')
         """
         self._parent = <FiniteField?>parent
         self._zero_element = self._new()
@@ -263,10 +263,10 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         We can coerce from PARI finite field implementations::
 
-            sage: K.<a> = GF(2^19, impl="ntl")
+            sage: K.<a> = GF(2^19, impl='ntl')
             sage: a^20
             a^6 + a^3 + a^2 + a
-            sage: M.<c> = GF(2^19, impl="pari_ffelt")
+            sage: M.<c> = GF(2^19, impl='pari_ffelt')
             sage: K(c^20)
             a^6 + a^3 + a^2 + a
         """
@@ -393,7 +393,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
         INPUT:
 
-        - ``number`` -- an integer, of size less than the cardinality
+        - ``number`` -- integer; of size less than the cardinality
 
         EXAMPLES::
 
@@ -443,12 +443,12 @@ cdef class Cache_ntl_gf2e(Cache_base):
 
     def polynomial(self):
         """
-        Returns the list of 0's and 1's giving the defining polynomial of the
+        Return the list of 0s and 1s giving the defining polynomial of the
         field.
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^20,modulus="minimal_weight")
+            sage: k.<a> = GF(2^20,modulus='minimal_weight')
             sage: k._cache.polynomial()
             [1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
         """
@@ -478,7 +478,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
     def __init__(FiniteField_ntl_gf2eElement self, parent=None ):
         """
-        Initializes an element in parent. It's much better to use
+        Initialize an element in parent. It's much better to use
         parent(<value>) or any specialized method of parent
         (one,zero,gen) instead. Do not call this constructor directly,
         it doesn't make much sense.
@@ -487,9 +487,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         - ``parent`` -- base field
 
-        OUTPUT:
-
-        A finite field element.
+        OUTPUT: a finite field element
 
         EXAMPLES::
 
@@ -506,11 +504,11 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
     def __cinit__(FiniteField_ntl_gf2eElement self, parent=None ):
         """
-        Restores the cache and constructs the underlying NTL element.
+        Restore the cache and construct the underlying NTL element.
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^8, impl="ntl") # indirect doctest
+            sage: k.<a> = GF(2^8, impl='ntl') # indirect doctest
         """
         if parent is None:
             return
@@ -595,7 +593,6 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             False
             sage: k(1).is_one()
             True
-
         """
         (<Cache_ntl_gf2e>self._parent._cache).F.restore()
         return self.x == self._cache._one_element.x
@@ -654,7 +651,6 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
             sage: GF(2^16,'a')(1).sqrt()
             1
-
         """
         # this really should be handled special, its gf2 linear after
         # all
@@ -905,7 +901,6 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             Traceback (most recent call last):
             ...
             TypeError: Cannot coerce element to an integer.
-
         """
         if self == 0:
             return int(0)
@@ -1006,13 +1001,11 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         - ``var`` -- string (default: ``'x'``)
 
-        OUTPUT:
-
-        polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 
-            sage: k.<a> = GF(2^8, impl="ntl")
+            sage: k.<a> = GF(2^8, impl='ntl')
             sage: b = a^3 + a
             sage: b.minpoly()
             x^4 + x^3 + x^2 + x + 1
@@ -1037,9 +1030,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
         - ``var`` -- string (default: ``'x'``)
 
-        OUTPUT:
-
-        polynomial
+        OUTPUT: polynomial
 
         EXAMPLES::
 
@@ -1087,7 +1078,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
     def weight(self):
         """
-        Returns the number of non-zero coefficients in the polynomial
+        Return the number of nonzero coefficients in the polynomial
         representation of ``self``.
 
         EXAMPLES::
@@ -1152,7 +1143,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         Return a string that evaluates to the GAP representation of
         this element.
 
-        A ``NotImplementedError`` is raised if
+        A :exc:`NotImplementedError` is raised if
         ``self.parent().modulus()`` is not a Conway polynomial, as
         the isomorphism of finite fields is not implemented yet.
 
@@ -1200,7 +1191,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         INPUT:
 
         - ``reverse`` -- reverse the order of the bits from little endian to
-          big endian.
+          big endian
 
         EXAMPLES::
 
@@ -1255,7 +1246,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         OUTPUT:
 
         Integer `x` such that `a^x = b`, if it exists.
-        Raises a ``ValueError`` exception if no such `x` exists.
+        Raises a :exc:`ValueError` exception if no such `x` exists.
 
         ALGORITHM: :pari:`fflog`
 

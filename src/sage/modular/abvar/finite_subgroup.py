@@ -89,15 +89,15 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.rings.abc
 
@@ -329,7 +329,7 @@ class FiniteSubgroup(Module):
         """
         Return the exponent of this finite abelian group.
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -353,9 +353,7 @@ class FiniteSubgroup(Module):
 
         INPUT:
 
-
-        -  ``other`` -- a finite group
-
+        - ``other`` -- a finite group
 
         OUTPUT: a finite group
 
@@ -441,17 +439,15 @@ class FiniteSubgroup(Module):
 
     def __mul__(self, right):
         """
-        Multiply this subgroup by the rational number right.
+        Multiply this subgroup by the rational number ``right``.
 
-        If right is an integer the result is a subgroup of self. If right
-        is a rational number `n/m`, then this group is first
+        If ``right`` is an integer the result is a subgroup of ``self``. If
+        ``right`` is a rational number `n/m`, then this group is first
         divided by `m` then multiplied by `n`.
 
         INPUT:
 
-
-        -  ``right`` -- a rational number
-
+        - ``right`` -- a rational number
 
         OUTPUT: a subgroup
 
@@ -612,7 +608,7 @@ class FiniteSubgroup(Module):
 
     def gen(self, n):
         r"""
-        Return `n^{th}` generator of self.
+        Return `n`-th generator of ``self``.
 
         EXAMPLES::
 
@@ -688,7 +684,6 @@ class FiniteSubgroup(Module):
             Traceback (most recent call last):
             ...
             ValueError: ambient abelian varieties are different
-
         """
         if isinstance(x, TorsionPoint):
             if x.parent().abelian_variety() != self.abelian_variety():
@@ -848,18 +843,15 @@ class FiniteSubgroup_lattice(FiniteSubgroup):
 
         INPUT:
 
+        - ``abvar`` -- a modular abelian variety
 
-        -  ``abvar`` -- a modular abelian variety
+        - ``lattice`` -- a lattice that contains the lattice of abvar
 
-        -  ``lattice`` -- a lattice that contains the lattice of
-           abvar
+        - ``field_of_definition`` -- the field of definition
+          of this finite group scheme
 
-        -  ``field_of_definition`` -- the field of definition
-           of this finite group scheme
-
-        -  ``check`` -- bool (default: ``True``) whether or not to
-           check that lattice contains the abvar lattice.
-
+        - ``check`` -- boolean (default: ``True``); whether or not to
+          check that lattice contains the abvar lattice
 
         EXAMPLES::
 

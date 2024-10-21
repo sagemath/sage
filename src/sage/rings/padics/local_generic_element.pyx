@@ -35,14 +35,14 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     cpdef _div_(self, right):
         r"""
-        Returns the quotient of ``self`` by ``right``.
+        Return the quotient of ``self`` by ``right``.
 
         INPUT:
 
-        - ``self`` -- a `p`-adic element.
+        - ``self`` -- a `p`-adic element
 
-        - ``right`` -- a `p`-adic element distinguishable from zero.
-          In a fixed-modulus ring, this element must be a unit.
+        - ``right`` -- a `p`-adic element distinguishable from zero;
+          in a fixed-modulus ring, this element must be a unit
 
         EXAMPLES::
 
@@ -64,11 +64,9 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def inverse_of_unit(self):
         r"""
-        Returns the inverse of ``self`` if ``self`` is a unit.
+        Return the inverse of ``self`` if ``self`` is a unit.
 
-        OUTPUT:
-
-            - an element in the same ring as ``self``
+        OUTPUT: an element in the same ring as ``self``
 
         EXAMPLES::
 
@@ -78,7 +76,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: b = a.inverse_of_unit(); b
             2 + 3 + 3^2 + 3^3 + 3^4 + O(3^5)
 
-        A ``ZeroDivisionError`` is raised if an element has no inverse in the
+        A :exc:`ZeroDivisionError` is raised if an element has no inverse in the
         ring::
 
             sage: R(3).inverse_of_unit()
@@ -113,7 +111,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         TESTS:
 
-        Test that this works for all kinds of p-adic base elements::
+        Test that this works for all kinds of `p`-adic base elements::
 
             sage: ZpCA(3,5)(2).inverse_of_unit()
             2 + 3 + 3^2 + 3^3 + 3^4 + O(3^5)
@@ -164,7 +162,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: R = QpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
             sage: (t - 1).inverse_of_unit()
             2 + 2*t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + t^9 + O(t^10)
-
         """
         if not self.is_unit():
             raise ZeroDivisionError(f"inverse of {self} does not exist")
@@ -173,7 +170,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
     def __iter__(self):
         """
         Local elements should not be iterable, so this method correspondingly
-        raises a ``TypeError``.
+        raises a :exc:`TypeError`.
 
         .. NOTE::
 
@@ -195,13 +192,12 @@ cdef class LocalGenericElement(CommutativeRingElement):
             Traceback (most recent call last):
             ...
             TypeError: this local element is not iterable
-
         """
         raise TypeError("this local element is not iterable")
 
     def slice(self, i, j, k = 1, lift_mode='simple'):
         r"""
-        Returns the sum of the `pi^{i + l \cdot k}` terms of the series
+        Return the sum of the `pi^{i + l \cdot k}` terms of the series
         expansion of this element, where pi is the uniformizer,
         for `i + l \cdot k` between ``i`` and ``j-1`` inclusive, and
         nonnegative integers `l`. Behaves analogously to the slice
@@ -209,11 +205,11 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         INPUT:
 
-        - ``i`` -- an integer; if set to ``None``, the sum will start with the
-          first non-zero term of the series.
+        - ``i`` -- integer; if set to ``None``, the sum will start with the
+          first nonzero term of the series
 
-        - ``j`` -- an integer; if set to ``None`` or `\infty`, this method
-          behaves as if it was set to the absolute precision of this element.
+        - ``j`` -- integer; if set to ``None`` or `\infty`, this method
+          behaves as if it was set to the absolute precision of this element
 
         - ``k`` -- (default: 1) a positive integer
 
@@ -358,7 +354,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: a = F(0)
             sage: a.slice(0,None)
             0
-
         """
         if k is None:
             k = 1
@@ -381,7 +376,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             start -= self.valuation()
             stop -= self.valuation()
 
-        # make sure that start and stop are non-negative
+        # make sure that start and stop are nonnegative
         if start<0:
             i += -start # fix the value of ppow below
             start = 0
@@ -413,7 +408,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def _latex_(self):
         r"""
-        Return a latex representation of self.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -438,7 +433,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     cpdef _sub_(self, right):
         r"""
-        Returns the difference between ``self`` and ``right``.
+        Return the difference between ``self`` and ``right``.
 
         EXAMPLES::
 
@@ -457,7 +452,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or positive infinity
+        - ``absprec`` -- integer or positive infinity
 
         EXAMPLES::
 
@@ -515,7 +510,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: R.<pi> = Qp(7).extension(x^3 - 7)                                     # needs sage.libs.ntl
             sage: (pi^93).add_bigoh(-10)                                                # needs sage.libs.ntl sage.symbolic
             O(pi^-10)
-
         """
         parent = self.parent()
         if absprec >= self.precision_absolute():
@@ -532,15 +526,13 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def is_integral(self):
         """
-        Returns whether self is an integral element.
+        Return whether ``self`` is an integral element.
 
         INPUT:
 
         - ``self`` -- a local ring element
 
-        OUTPUT:
-
-        - boolean -- whether ``self`` is an integral element.
+        OUTPUT: boolean; whether ``self`` is an integral element
 
         EXAMPLES::
 
@@ -557,15 +549,14 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def is_padic_unit(self):
         """
-        Returns whether self is a `p`-adic unit. That is, whether it has zero valuation.
+        Return whether ``self`` is a `p`-adic unit. That is, whether it has
+        zero valuation.
 
         INPUT:
 
         - ``self`` -- a local ring element
 
-        OUTPUT:
-
-        - boolean -- whether ``self`` is a unit
+        OUTPUT: boolean; whether ``self`` is a unit
 
         EXAMPLES::
 
@@ -614,15 +605,13 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def is_unit(self):
         """
-        Returns whether self is a unit
+        Return whether ``self`` is a unit.
 
         INPUT:
 
         - ``self`` -- a local ring element
 
-        OUTPUT:
-
-        - boolean -- whether ``self`` is a unit
+        OUTPUT: boolean; whether ``self`` is a unit
 
         .. NOTE::
 
@@ -723,24 +712,22 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         INPUT:
 
-        - ``self`` -- a `p`-adic element.
+        - ``self`` -- a `p`-adic element
 
-        - ``extend`` -- a boolean (default: ``True``); if ``True``, return a
+        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
           square root in an extension if necessary; if ``False`` and no root
-          exists in the given ring or field, raise a ValueError.
+          exists in the given ring or field, raise a :exc:`ValueError`.
 
-        - ``all`` -- a boolean (default: ``False``); if ``True``, return a
-          list of all square roots.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a
+          list of all square roots
 
-        - ``algorithm`` -- ``"pari"``, ``"sage"`` or ``None`` (default:
+        - ``algorithm`` -- ``'pari'``, ``'sage'`` or ``None`` (default:
           ``None``); Sage provides an implementation for any extension of
           `Q_p` whereas only square roots over `Q_p` is implemented in Pari;
-          the default is ``"pari"`` if the ground field is `Q_p`, ``"sage"``
+          the default is ``'pari'`` if the ground field is `Q_p`, ``'sage'``
           otherwise.
 
-        OUTPUT:
-
-        The square root or the list of all square roots of this element.
+        OUTPUT: the square root or the list of all square roots of this element
 
         .. NOTE::
 
@@ -840,16 +827,14 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def normalized_valuation(self):
         r"""
-        Returns the normalized valuation of this local ring element,
+        Return the normalized valuation of this local ring element,
         i.e., the valuation divided by the absolute ramification index.
 
         INPUT:
 
-        - ``self`` -- a local ring element.
+        - ``self`` -- a local ring element
 
-        OUTPUT:
-
-        rational -- the normalized valuation of ``self``.
+        OUTPUT: rational; the normalized valuation of ``self``
 
         EXAMPLES::
 
@@ -864,17 +849,15 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def _min_valuation(self):
         r"""
-        Returns the valuation of this local ring element.
+        Return the valuation of this local ring element.
 
         This function only differs from valuation for relaxed elements.
 
         INPUT:
 
-        - ``self`` -- a local ring element.
+        - ``self`` -- a local ring element
 
-        OUTPUT:
-
-        - integer -- the valuation of ``self``.
+        OUTPUT: integer; the valuation of ``self``
 
         EXAMPLES::
 
@@ -888,7 +871,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def euclidean_degree(self):
         r"""
-        Return the degree of this element as an element of an Euclidean domain.
+        Return the degree of this element as an element of a Euclidean domain.
 
         EXAMPLES:
 
@@ -934,9 +917,9 @@ cdef class LocalGenericElement(CommutativeRingElement):
         INPUT:
 
         - ``other`` -- an element in the same ring
-        - ``integral`` -- if True, use integral-style remainders even when the parent is a field.
-          Namely, the remainder will have no terms in its p-adic expansion above
-          the valuation of ``other``.
+        - ``integral`` -- if ``True``, use integral-style remainders even when
+          the parent is a field. Namely, the remainder will have no terms in
+          its `p`-adic expansion above the valuation of ``other``.
 
         EXAMPLES::
 
@@ -977,7 +960,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
             sage: x = Zp(3, 5).zero()
             sage: x._test_trivial_powers()
-
         """
         tester = self._tester(**options)
 
@@ -998,7 +980,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
             sage: x = Zp(3, 5).zero()
             sage: x._test_expansion()
-
         """
         tester = self._tester(**options)
 

@@ -103,7 +103,7 @@ class Core(CombinatorialElement):
             raise ValueError("%s is not a %s-core" % (part, k))
         CombinatorialElement.__init__(self, parent, core)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test for equality.
 
@@ -124,7 +124,7 @@ class Core(CombinatorialElement):
                     self.parent().k == other.parent().k)
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for un-equality.
 
@@ -170,7 +170,7 @@ class Core(CombinatorialElement):
             self._hash = hash(tuple(self._list)) + hash(self.parent().k)
         return self._hash
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Output the LaTeX representation of this core as a partition.
 
@@ -347,10 +347,12 @@ class Core(CombinatorialElement):
 
         INPUT:
 
-        - ``w`` is a tuple of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`.
-          If transposition is set to be True, then `w = [w_0,w_1]` is
+        - ``w`` -- tuple of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`.
+          If transposition is set to be ``True``, then `w = [w_0,w_1]` is
           interpreted as a transposition `t_{w_0, w_1}`
           (see :meth:`_transposition_to_reduced_word`).
+
+        - ``transposition`` -- boolean (default: ``False``)
 
         The output is the (left) action of the product of the corresponding simple transpositions
         on ``self``, that is `s_{w_1} \cdots s_{w_m}(self)`. See :meth:`affine_symmetric_group_simple_action`.
@@ -377,15 +379,14 @@ class Core(CombinatorialElement):
 
     def _transposition_to_reduced_word(self, t):
         r"""
-        Converts the transposition `t = [r,s]` to a reduced word.
+        Convert the transposition `t = [r,s]` to a reduced word.
 
         INPUT:
 
-        - a tuple `[r,s]` such that `r` and `s` are not equivalent mod `k`
+        - ``t`` -- a tuple `[r,s]` such that `r` and `s` are not equivalent mod `k`
 
-        OUTPUT:
-
-        - a list of integers in `\{0,1,\ldots,k-1\}` representing a reduced word for the transposition `t`
+        OUTPUT: list of integers in `\{0,1,\ldots,k-1\}` representing a
+        reduced word for the transposition `t`
 
         EXAMPLES::
 
@@ -426,7 +427,7 @@ class Core(CombinatorialElement):
 
         - ``other`` -- another `k`-core
 
-        OUTPUT: a boolean
+        OUTPUT: boolean
 
         This returns whether ``self`` <= ``other`` in weak order.
 
@@ -449,7 +450,7 @@ class Core(CombinatorialElement):
             ...
             ValueError: the two cores do not have the same k
         """
-        if type(self) is type(other):
+        if isinstance(other, Core):
             if self.k() != other.k():
                 raise ValueError("the two cores do not have the same k")
         else:
@@ -485,7 +486,7 @@ class Core(CombinatorialElement):
 
         - ``other`` -- another `k`-core
 
-        OUTPUT: a boolean
+        OUTPUT: boolean
 
         This returns whether ``self`` <= ``other`` in Bruhat (or strong) order.
 
@@ -504,22 +505,22 @@ class Core(CombinatorialElement):
             ...
             ValueError: the two cores do not have the same k
         """
-        if type(self) is type(other):
+        if isinstance(other, Core):
             if self.k() != other.k():
                 raise ValueError("the two cores do not have the same k")
         else:
             other = Core(other, self.k())
         return other.contains(self)
 
-    def contains(self, other):
+    def contains(self, other) -> bool:
         r"""
-        Checks whether ``self`` contains ``other``.
+        Check whether ``self`` contains ``other``.
 
         INPUT:
 
         - ``other`` -- another `k`-core or a list
 
-        OUTPUT: a boolean
+        OUTPUT: boolean
 
         This returns ``True`` if the Ferrers diagram of ``self`` contains the
         Ferrers diagram of ``other``.
@@ -631,7 +632,6 @@ class Cores_length(UniqueRepresentation, Parent):
 
             sage: C = Cores(3, 4)
             sage: TestSuite(C).run()
-
         """
         self.k = k
         self.n = n
@@ -661,7 +661,7 @@ class Cores_length(UniqueRepresentation, Parent):
 
     def from_partition(self, part):
         r"""
-        Converts the partition ``part`` into a core (as the identity map).
+        Convert the partition ``part`` into a core (as the identity map).
 
         This is the inverse method to :meth:`~sage.combinat.core.Core.to_partition`.
 

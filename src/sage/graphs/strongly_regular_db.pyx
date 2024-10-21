@@ -432,7 +432,6 @@ def is_orthogonal_polar(int v, int k, int l, int mu):
         (<function OrthogonalPolarGraph at ...>, 8, 2, '-')
         sage: is_orthogonal_polar(130,48,20,16)                                         # needs sage.rings.finite_rings
         (<function OrthogonalPolarGraph at ...>, 6, 3, '+')
-
     """
     r, s = eigenvalues(v, k, l, mu)
     if r is None:
@@ -1175,7 +1174,7 @@ def is_RSHCD(int v, int k, int l, int mu):
 
 def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
     r"""
-    Return a `(v,k,l,mu)`-strongly regular graph from a RSHCD
+    Return a `(v,k,l,mu)`-strongly regular graph from a RSHCD.
 
     This construction appears in 8.D of [BL1984]_. For more information, see
     :func:`~sage.combinat.matrices.hadamard_matrix.regular_symmetric_hadamard_matrix_with_constant_diagonal`.
@@ -1184,13 +1183,12 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
 
     - ``v``, ``k``, ``l``, ``mu`` -- integers
 
-    - ``existence`` (boolean) -- whether to return a graph or to test if Sage
-      can build such a graph.
+    - ``existence`` -- boolean; whether to return a graph or to test if Sage
+      can build such a graph
 
-    - ``check`` (boolean) -- whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES:
 
@@ -1244,7 +1242,7 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
         if list(H.column(0)[1:]).count(1) == k:
             H = -H
         G = Graph((J(n) - I(n) - H + H[0, 0]*I(n)) / 2,
-                  loops=False, multiedges=False, format="adjacency_matrix")
+                  loops=False, multiedges=False, format='adjacency_matrix')
         if check:
             assert G.is_strongly_regular(parameters=True) == (v, k, l, mu)
         return G
@@ -1612,7 +1610,6 @@ def is_switch_skewhad(int v, int k, int l, int mu):
 
         sage: from sage.graphs.strongly_regular_db import is_switch_skewhad
         sage: t = is_switch_skewhad(5,5,5,5); t                                         # needs sage.combinat sage.modules
-
     """
     from sage.combinat.matrices.hadamard_matrix import skew_hadamard_matrix
     from sage.graphs.generators.families import SwitchedSquaredSkewHadamardMatrixGraph
@@ -1719,7 +1716,6 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
         sage: t = is_nowhere0_twoweight(1800, 728, 268, 312); t                         # needs sage.libs.pari
         (<function Nowhere0WordsTwoWeightCodeGraph at ...>, 16)
         sage: t = is_nowhere0_twoweight(5,5,5,5); t                                     # needs sage.libs.pari
-
     """
     from sage.graphs.generators.classical_geometries import Nowhere0WordsTwoWeightCodeGraph
     cdef int q
@@ -1747,7 +1743,6 @@ cdef eigenvalues(int v, int k, int l, int mu):
     INPUT:
 
     - ``v``, ``k``, ``l``, ``mu`` -- integers
-
     """
     # See 1.3.1 of [Distance-regular graphs]
     b = (mu-l)
@@ -1859,7 +1854,7 @@ cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
 
     OUTPUT:
 
-    - ``(g, n)`` -- parameters of an `L_g(n)` graph, or `None`
+    - ``(g, n)`` -- parameters of an `L_g(n)` graph, or ``None``
 
     TESTS::
 
@@ -1883,7 +1878,7 @@ cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
 
 def _H_3_cayley_graph(L):
     r"""
-    return the `L`-Cayley graph of the group `H_3` from Prop. 12 in [JK2003]_.
+    Return the `L`-Cayley graph of the group `H_3` from Prop. 12 in [JK2003]_.
 
     INPUT:
 
@@ -1977,7 +1972,7 @@ def SRG_105_32_4_12():
     a = IG.automorphism_group()
     h = a.stabilizer(a.domain()[0])
     o = next(x for x in h.orbits() if len(x) == 32)[0]
-    e = a.orbit((a.domain()[0], o), action="OnSets")
+    e = a.orbit((a.domain()[0], o), action='OnSets')
     G = Graph()
     G.add_edges(e)
     G.name('Aut L(3,4) on flags')
@@ -2106,7 +2101,7 @@ def SRG_176_105_68_54():
 
 def SRG_210_99_48_45():
     r"""
-    Return a strongly regular graph with parameters `(210, 99, 48, 45)`
+    Return a strongly regular graph with parameters `(210, 99, 48, 45)`.
 
     This graph is from Example 4.2 in [KPRWZ2010]_. One considers the action of
     the symmetric group `S_7` on the 210 digraphs isomorphic to the
@@ -2371,7 +2366,7 @@ def strongly_regular_from_two_weight_code(L):
 
     INPUT:
 
-    - ``L`` -- a two-weight linear code, or its generating matrix.
+    - ``L`` -- a two-weight linear code, or its generating matrix
 
     EXAMPLES::
 
@@ -2425,7 +2420,7 @@ def SRG_416_100_36_20():
 
 def SRG_560_208_72_80():
     r"""
-    Return a `(560,208,72,80)`-strongly regular graph
+    Return a `(560,208,72,80)`-strongly regular graph.
 
     This graph is obtained as the union of 4 orbits of sets of cardinality 2
     (among the 13 that exist) of the group `Sz(8)`.
@@ -2474,8 +2469,8 @@ def strongly_regular_from_two_intersection_set(M):
 
     INPUT:
 
-    - `M` -- a `|S| \times k` matrix with entries in `F_q` representing the points of
-      the 2-intersection set. We assume that the first non-zero entry of each row is
+    - ``M`` -- a `|S| \times k` matrix with entries in `F_q` representing the points of
+      the 2-intersection set. We assume that the first nonzero entry of each row is
       equal to `1`, that is, they give points in homogeneous coordinates.
 
     The implementation does not check that `S` is actually a 2-intersection set.
@@ -2513,7 +2508,7 @@ def strongly_regular_from_two_intersection_set(M):
 
 def SRG_120_63_30_36():
     r"""
-    Return a `(120,63,30,36)`-strongly regular graph
+    Return a `(120,63,30,36)`-strongly regular graph.
 
     It is the distance-2 graph of :meth:`JohnsonGraph(10,3)
     <sage.graphs.graph_generators.GraphGenerators.JohnsonGraph>`.
@@ -2531,7 +2526,7 @@ def SRG_120_63_30_36():
 
 def SRG_126_25_8_4():
     r"""
-    Return a `(126,25,8,4)`-strongly regular graph
+    Return a `(126,25,8,4)`-strongly regular graph.
 
     It is the distance-(1 or 4) graph of :meth:`JohnsonGraph(9,4)
     <sage.graphs.graph_generators.GraphGenerators.JohnsonGraph>`.
@@ -2549,7 +2544,7 @@ def SRG_126_25_8_4():
 
 def SRG_175_72_20_36():
     r"""
-    Return a `(175,72,20,36)`-strongly regular graph
+    Return a `(175,72,20,36)`-strongly regular graph.
 
     This graph is obtained from the line graph of
     :meth:`~sage.graphs.graph_generators.GraphGenerators.HoffmanSingletonGraph`. Setting
@@ -2570,7 +2565,7 @@ def SRG_175_72_20_36():
 
 def SRG_176_90_38_54():
     r"""
-    Return a `(176,90,38,54)`-strongly regular graph
+    Return a `(176,90,38,54)`-strongly regular graph.
 
     This graph is obtained from
     :func:`~sage.graphs.strongly_regular_db.SRG_175_72_20_36`
@@ -2604,7 +2599,7 @@ def SRG_176_90_38_54():
 
 def SRG_630_85_20_10():
     r"""
-    Return a `(630,85,20,10)`-strongly regular graph
+    Return a `(630,85,20,10)`-strongly regular graph.
 
     This graph is the line graph of `pg(5,18,2)`; its point graph is
     :func:`~sage.graphs.strongly_regular_db.SRG_175_72_20_36`.
@@ -2625,7 +2620,7 @@ def SRG_630_85_20_10():
     mc = [0, 1, 5, 6, 12, 13, 16, 17, 22, 23, 29, 33, 39, 42, 47]
     assert(hs.subgraph(mc).is_regular(k=0))  # a maximum coclique
     assert(hs.subgraph(P).is_regular(k=3))
-    h = hs.automorphism_group().stabilizer(mc, action="OnSets")
+    h = hs.automorphism_group().stabilizer(mc, action='OnSets')
     l = h.orbit(tuple((x[0], x[1]) for x in hs.subgraph(P).matching()),
                 "OnSetsSets")
     return IntersectionGraph(l)
@@ -2633,7 +2628,7 @@ def SRG_630_85_20_10():
 
 def SRG_126_50_13_24():
     r"""
-    Return a `(126,50,13,24)`-strongly regular graph
+    Return a `(126,50,13,24)`-strongly regular graph.
 
     This graph is a subgraph of
     :meth:`~sage.graphs.strongly_regular_db.SRG_175_72_20_36`.
@@ -2787,24 +2782,23 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
     INPUT:
 
-    - ``v``, ``k``, ``l``, ``mu`` -- integers -- note that ``mu``, if unspecified, is
-      automatically determined from ``v``, ``k``, ``l``.
+    - ``v``, ``k``, ``l``, ``mu`` -- ``integers`` -- note that ``mu``, if unspecified, is
+      automatically determined from ``v``, ``k``, ``l``
 
-    - ``existence`` (boolean;``False``) -- instead of building the graph,
+    - ``existence`` -- boolean;``False``; instead of building the graph,
       return:
 
         - ``True`` -- meaning that a `(v,k,\lambda,\mu)`-strongly regular graph
-          exists.
+          exists
 
         - ``Unknown`` -- meaning that Sage does not know if such a strongly
-          regular graph exists (see :mod:`sage.misc.unknown`).
+          regular graph exists (see :mod:`sage.misc.unknown`)
 
-        - ``False`` -- meaning that no such strongly regular graph exists.
+        - ``False`` -- meaning that no such strongly regular graph exists
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to
-      ``True`` by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES:
 
@@ -2915,7 +2909,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
 def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=False):
     r"""
-    return a promise to build an `(v,k,l,mu)`-srg
+    Return a promise to build an `(v,k,l,mu)`-srg.
 
     Return a promise to build an `(v,k,l,mu)`-srg as a tuple `t`, with `t[0]` a
     function to evaluate on `*t[1:]`.
@@ -3053,7 +3047,7 @@ def apparently_feasible_parameters(int n):
 
     INPUT:
 
-    - ``n`` (integer) -- return all a-priori feasible tuples `(v,k,\lambda,\mu)`
+    - ``n`` -- integer; return all a-priori feasible tuples `(v,k,\lambda,\mu)`
       for `v<n`
 
     EXAMPLES:
@@ -3278,7 +3272,7 @@ cdef load_brouwer_database():
 
 def _check_database():
     r"""
-    Checks the coherence of Andries Brouwer's database with Sage.
+    Check the coherence of Andries Brouwer's database with Sage.
 
     The function also outputs some statistics on the database.
 
@@ -3292,7 +3286,6 @@ def _check_database():
         - 462 impossible entries
         - 2911 undecided entries
         - 1165 realizable entries (Sage misses ... of them)
-
     """
     global _brouwer_database
     load_brouwer_database()

@@ -302,14 +302,13 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        -  ``g`` -- defines element
+        - ``g`` -- defines element
 
-        -  ``parent`` -- defines parent group (``g`` must be in
-           parent if specified, or a :class:`TypeError` is raised)
+        - ``parent`` -- defines parent group (``g`` must be in
+          parent if specified, or a :exc:`TypeError` is raised)
 
-        -  ``check`` -- bool (default: ``True``); if ``False`` assumes ``g``
-           is a gap element in parent (if specified)
-
+        - ``check`` -- boolean (default: ``True``); if ``False`` assumes ``g``
+          is a gap element in parent (if specified)
 
         EXAMPLES:
 
@@ -611,8 +610,8 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             ...
             ValueError: invalid data to initialize a permutation
         """
-        cdef UInt2* p2
-        cdef UInt4* p4
+        cdef const UInt2* p2
+        cdef const UInt4* p4
         cdef int i
         cdef UInt d
 
@@ -990,7 +989,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        -  ``i`` -- integer
+        - ``i`` -- integer
 
         OUTPUT: a permutation group element
 
@@ -1053,9 +1052,9 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     def __call__(self, i):
         r"""
-        Return the image of the integer i under this permutation.
-        Alternately, if i is a list, tuple or string, returns the result of
-        self acting on i.
+        Return the image of the integer `i` under this permutation.
+        Alternately, if `i` is a list, tuple or string, returns the result of
+        ``self`` acting on `i`.
 
         EXAMPLES::
 
@@ -1702,7 +1701,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sign(sigma) = (-1)^{\sum_c len(c)-1}
 
 
-        where the sum is over cycles in self.
+        where the sum is over cycles in ``self``.
         """
         cdef int cycle_len_sum = 0
         cdef int i, k
@@ -1806,7 +1805,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``singletons`` -- boolean (default: ``False``) whether or not consider the
+        - ``singletons`` -- boolean (default: ``False``); whether or not consider the
           cycle that correspond to fixed point
 
         EXAMPLES::
@@ -1887,10 +1886,10 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         - ``g`` -- an element of the permutation group ``self.parent()``
 
-        - ``singletons`` -- ``True`` or ``False`` depending on whether or not
+        - ``singletons`` -- boolean depending on whether or not
           trivial cycles should be counted (default: ``True``)
 
-        - ``as_list`` -- ``True`` or ``False`` depending on whether the cycle
+        - ``as_list`` -- boolean depending on whether the cycle
           type should be returned as a :class:`list` or as a :class:`Partition`
           (default: ``False``)
 
@@ -1924,7 +1923,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             from sage.combinat.partition import _Partitions
             return _Partitions(cycle_type)
 
-    def has_descent(self, i, side="right", positive=False):
+    def has_descent(self, i, side='right', positive=False):
         r"""
         Return whether ``self`` has a left (resp. right) descent at
         position ``i``. If ``positive`` is ``True``, then test for a non
@@ -1938,8 +1937,8 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         INPUT:
 
         - ``i`` -- an element of the index set
-        - ``side`` -- ``"left"`` or ``"right"`` (default: ``"right"``)
-        - ``positive`` -- a boolean (default: ``False``)
+        - ``side`` -- ``'left'`` or ``'right'`` (default: ``'right'``)
+        - ``positive`` -- boolean (default: ``False``)
 
         EXAMPLES::
 
@@ -1950,13 +1949,13 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             False
             sage: s = S.simple_reflections()
             sage: x = s[1]*s[2]
-            sage: x.has_descent(1, side="right")
+            sage: x.has_descent(1, side='right')
             False
-            sage: x.has_descent(2, side="right")
+            sage: x.has_descent(2, side='right')
             True
-            sage: x.has_descent(1, side="left")
+            sage: x.has_descent(1, side='left')
             True
-            sage: x.has_descent(2, side="left")
+            sage: x.has_descent(2, side='left')
             False
             sage: S._test_has_descent()
 
@@ -2012,13 +2011,13 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``words`` -- a list of elements of the ambient group, generating
+        - ``words`` -- list of elements of the ambient group, generating
           a subgroup
 
-        - ``display`` -- boolean (default ``True``) whether to display
+        - ``display`` -- boolean (default: ``True``); whether to display
           additional information
 
-        - ``as_list`` -- boolean (default ``False``) whether to return
+        - ``as_list`` -- boolean (default: ``False``); whether to return
           the result as a list of pairs (generator, exponent)
 
         OUTPUT:

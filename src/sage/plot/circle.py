@@ -37,7 +37,7 @@ class Circle(GraphicPrimitive):
 
     - ``r`` -- radius of Circle object
 
-    - ``options`` -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -60,7 +60,7 @@ class Circle(GraphicPrimitive):
     """
     def __init__(self, x, y, r, options):
         """
-        Initializes base class Circle.
+        Initialize base class Circle.
 
         EXAMPLES::
 
@@ -173,8 +173,7 @@ class Circle(GraphicPrimitive):
 
         INPUT:
 
-
-        -  ``z`` -- optional 3D height above `xy`-plane.
+        - ``z`` -- (optional) 3D height above `xy`-plane
 
         EXAMPLES::
 
@@ -241,23 +240,23 @@ def circle(center, radius, **options):
 
     OPTIONS:
 
-    - ``alpha`` -- default: 1
+    - ``alpha`` -- (default: 1)
 
-    - ``fill`` -- default: ``False``
+    - ``fill`` -- (default: ``False``)
 
-    - ``thickness`` -- default: 1
+    - ``thickness`` -- (default: 1)
 
-    - ``linestyle`` -- default: ``'solid'`` (2D plotting only) The style of the
+    - ``linestyle`` -- (default: ``'solid'``) (2D plotting only) the style of the
       line, which is one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
-      or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively.
+      or ``'--'``, ``':'``, ``'-'``, ``'-.'``, respectively
 
-    - ``edgecolor`` -- default: 'blue' (2D plotting only)
+    - ``edgecolor`` -- (default: ``'blue'``) 2D plotting only
 
-    - ``facecolor`` -- default: 'blue' (2D plotting only, useful only
-      if ``fill=True``)
+    - ``facecolor`` -- (default: ``'blue'``) 2D plotting only, useful only
+      if ``fill=True``
 
     - ``rgbcolor`` -- 2D or 3D plotting.  This option overrides
-      ``edgecolor`` and ``facecolor`` for 2D plotting.
+      ``edgecolor`` and ``facecolor`` for 2D plotting
 
     - ``legend_label`` -- the label for this item in the legend
 
@@ -410,7 +409,7 @@ def circle(center, radius, **options):
 
     Verify that :issue:`36153` does not arise::
 
-        sage: C = circle((1,1), 1, legend_label="test")
+        sage: C = circle((1,1), 1, legend_label='test')
     """
     from sage.plot.all import Graphics
 

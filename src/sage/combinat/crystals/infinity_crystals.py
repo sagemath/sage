@@ -131,7 +131,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
 
     INPUT:
 
-    - ``cartan_type`` -- One of ``['A',n]``, ``['B',n]``, ``['C',n]``,
+    - ``cartan_type`` -- one of ``['A',n]``, ``['B',n]``, ``['C',n]``,
       ``['D',n]``, or ``['G',2]``, where ``n`` is a positive integer
 
     EXAMPLES::
@@ -308,7 +308,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
 
             INPUT:
 
-            - ``i`` -- An element of the index set
+            - ``i`` -- an element of the index set
 
             EXAMPLES::
 
@@ -449,7 +449,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
 
         def seg(self):
             r"""
-            Returns the statistic `\mathrm{seg}` of ``self.``
+            Return the statistic `\mathrm{seg}` of ``self``.
 
             More precisely, following [LS2012]_, define a `k`-segment of a
             tableau `T` in `\mathcal{B}(\infty)` to be a maximal string

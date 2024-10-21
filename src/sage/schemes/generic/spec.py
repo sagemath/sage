@@ -55,7 +55,7 @@ def Spec(R, S=None):
         sage: A is B
         True
 
-    A :class:`TypeError` is raised if the input is not a commutative ring::
+    A :exc:`TypeError` is raised if the input is not a commutative ring::
 
         sage: Spec(5)
         Traceback (most recent call last):

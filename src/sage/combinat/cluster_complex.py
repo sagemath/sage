@@ -75,14 +75,14 @@ class ClusterComplexFacet(SubwordComplexFacet):
         """
         if self.parent().k() != 1:
             raise NotImplementedError("not working for multi-cluster complexes")
-        F = self.parent().greedy_facet(side="positive")
+        F = self.parent().greedy_facet(side='positive')
         R = F.extended_root_configuration()
         N = len(list(F))
         return [-R[i] if i < N else R[i] for i in self]
 
     def upper_cluster(self):
         """
-        Return the part of the cluster that contains positive roots
+        Return the part of the cluster that contains positive roots.
 
         EXAMPLES::
 
@@ -174,7 +174,7 @@ class ClusterComplex(SubwordComplex):
     """
 
     @staticmethod
-    def __classcall__(cls, W, k=1, coxeter_element=None, algorithm="inductive"):
+    def __classcall__(cls, W, k=1, coxeter_element=None, algorithm='inductive'):
         r"""
         Standardize input to ensure a unique representation.
 
@@ -185,7 +185,7 @@ class ClusterComplex(SubwordComplex):
             sage: S2 = ClusterComplex(W)
             sage: S3 = ClusterComplex(CoxeterMatrix('B2'), coxeter_element=(1,2))
             sage: w = W.from_reduced_word([1,2])
-            sage: S4 = ClusterComplex('B2', coxeter_element=w, algorithm="inductive")
+            sage: S4 = ClusterComplex('B2', coxeter_element=w, algorithm='inductive')
             sage: S1 is S2 and S2 is S3 and S3 is S4
             True
         """
@@ -239,9 +239,7 @@ class ClusterComplex(SubwordComplex):
         - ``facet_test`` -- boolean (default: ``True``); tells whether
           or not the facet ``F`` should be tested before creation
 
-        OUTPUT:
-
-        The facet of ``self`` at positions given by ``F``.
+        OUTPUT: the facet of ``self`` at positions given by ``F``
 
         EXAMPLES::
 

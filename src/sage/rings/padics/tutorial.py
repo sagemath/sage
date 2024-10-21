@@ -78,7 +78,7 @@ is equivalent to specifying our element modulo
 
 The *absolute precision* of a finite approximation
 `\bar{x} \in \ZZ/p^n\ZZ` to `x \in \ZZ_p`
-is the non-negative integer `n`.
+is the nonnegative integer `n`.
 
 In the second representation, we can achieve the same thing by
 truncating a series

@@ -9,7 +9,7 @@ a natural generalization of the Iwahori-Hecke algebras of types `A` and `B`
 Soon afterwards,  Broué and Malle defined analogues of the Hecke
 algebras for all complex reflection groups
 
-Fix non-negative integers `r` an `n`. The Ariki-Koike algebras are
+Fix nonnegative integers `r` an `n`. The Ariki-Koike algebras are
 deformations of the group algebra of the complex reflection group
 `G(r, 1, n) = \ZZ / r\ZZ \wr \mathfrak{S}_n`. If `R` is a ring containing a
 *Hecke parameter* `q` and *cyclotomic parameters* `u_0, \ldots, u_{r-1}` then
@@ -466,7 +466,6 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 [Category of realizations of Ariki-Koike algebra of rank 5 and order 2
                     with q=q and u=(u0, u1, u2, u3, u4) over ...,
                  Category of finite dimensional algebras with basis over ...]
-
             """
             return [Realizations(self.base()), self.base()._category]
 
@@ -740,10 +739,10 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 for i in range(self._n):
                     r = list(self._zero_tuple) # Make a copy
                     r[i] = 1
-                    d['L%s' % (i+1)] = self.monomial( (tuple(r), self._one_perm) )
+                    d['L%s' % (i+1)] = self.monomial((tuple(r), self._one_perm))
             G = self._Pn.group_generators()
             for i in range(1, self._n):
-                d['T%s' % i] = self.monomial( (self._zero_tuple, G[i]) )
+                d['T%s' % i] = self.monomial((self._zero_tuple, G[i]))
             return Family(sorted(d), lambda i: d[i])
 
         def T(self, i=None):
@@ -898,9 +897,9 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             # combination of standard basis elements using the method and then,
             # recursively, multiply on the left and right by L1 and T2,
             # respectively. In other words, we multiply as L1*(T1*L2)*T2.
-            return ( self.monomial((L1, self._one_perm))
+            return (self.monomial((L1, self._one_perm))
                      * self._product_Tw_L(T1, L2)
-                     * self.monomial((self._zero_tuple, T2)) )
+                     * self.monomial((self._zero_tuple, T2)))
 
         def _product_LTwTv(self, L, w, v):
             r"""
@@ -936,9 +935,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             - ``w`` -- the permutation ``w``
             - ``v`` -- the permutation ``v``
 
-            OUTPUT:
-
-            The corresponding element represented as a ``dict``.
+            OUTPUT: the corresponding element represented as a ``dict``
 
             EXAMPLES::
 
@@ -963,8 +960,8 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     c = ret[p]
                     # We have to flip the side due to Sage's
                     # convention for multiplying permutations
-                    pi = p.apply_simple_reflection(i, side="left")
-                    if p.has_descent(i, side="left"):
+                    pi = p.apply_simple_reflection(i, side='left')
+                    if p.has_descent(i, side='left'):
                         iaxpy(1, {p: c * qm1, pi: c * self._q}, temp)
                     else:
                         iaxpy(1, {pi: c}, temp)
@@ -995,7 +992,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             INPUT:
 
             - ``w`` -- a permutation
-            - ``L`` -- a tuple `(a_1, \ldots, a_n)`
+            - ``L`` -- tuple `(a_1, \ldots, a_n)`
 
             EXAMPLES::
 
@@ -1027,7 +1024,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     iaxpy(c, self._product_LTwTv(tuple(L), self._Pn.simple_reflections()[i], v), iL) # need T_i*T_v
 
                     if a < b:
-                        Ls = [ list(L) for k in range(b-a) ] # make copies of L
+                        Ls = [list(L) for k in range(b-a)] # make copies of L
                         for k in range(b-a):
                             Ls[k][i-1] = a + k
                             Ls[k][i] = b - k
@@ -1035,7 +1032,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                         iaxpy(1, {(tuple(l), v): c for l in Ls}, iL)
 
                     elif a > b:
-                        Ls = [ list(L) for k in range(a-b) ] # make copies of L
+                        Ls = [list(L) for k in range(a-b)] # make copies of L
                         for k in range(a-b):
                             Ls[k][i-1] = b + k
                             Ls[k][i] = a - k
@@ -1114,25 +1111,26 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
 
             # return "small" powers of the generators without change
             if m < self._r:
-                return self.monomial( (Ltuple(0, m), self._one_perm) )
+                return self.monomial((Ltuple(0, m), self._one_perm))
 
             if i > 1:
                 si = self._Pn.simple_reflections()[i-1]
                 qsum = self.base_ring().one() - self._q**-1
                 # by calling _Li_power we avoid infinite recursion here
-                return ( self.sum_of_terms( ((Ltuple(c, m-c), si), qsum) for c in range(1, m) )
-                         + self._q**-1 * self.T(i-1) * self._Li_power(i-1, m) * self.T(i-1) )
+                return (self.sum_of_terms(((Ltuple(c, m-c), si), qsum) for c in range(1, m))
+                         + self._q**-1 * self.T(i-1) * self._Li_power(i-1, m) * self.T(i-1))
 
             # now left with the case i = 1 and m >= r
             if m > self._r:
                 return self.monomial((Ltuple(0, 1), self._one_perm)) * self._Li_power(i,m-1)
 
             z = PolynomialRing(self.base_ring(), 'DUMMY').gen()
-            p = list(prod(z - val for val in self._u))#[:-1]
-            p.pop() # remove the highest power
+            p = list(prod(z - val for val in self._u))  # [:-1]
+            p.pop()  # remove the highest power
             zero = self.base_ring().zero()
             return self._from_dict({(Ltuple(0, exp), self._one_perm): -coeff
-                                    for exp,coeff in enumerate(p) if coeff != zero},
+                                    for exp, coeff in enumerate(p)
+                                    if coeff != zero},
                                    remove_zeros=False, coerce=False)
 
         @cached_method
@@ -1298,7 +1296,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 True
             """
             ret = self.prod(self.L(i+1)**k for i,k in enumerate(m[0]))
-            return ret * self.monomial( (self._zero_tuple, m[1]) )
+            return ret * self.monomial((self._zero_tuple, m[1]))
 
         @cached_method
         def algebra_generators(self):
@@ -1341,9 +1339,9 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 return [self.T(j) for j in range(self._n)]
 
             if i == 0:
-                return self.monomial( ((1,) + self._zero_tuple[1:], self._one_perm) )
+                return self.monomial(((1,) + self._zero_tuple[1:], self._one_perm))
             s = self._Pn.simple_reflections()
-            return self.monomial( (self._zero_tuple, s[i]) )
+            return self.monomial((self._zero_tuple, s[i]))
 
         @cached_method
         def L(self, i=None):
@@ -1518,7 +1516,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 return L * M * R
 
             # The current product of T's and the type A Hecke algebra
-            tprod = [( [(k, a) for k, a in enumerate(t2) if a != 0], {s2: one} )]
+            tprod = [([(k, a) for k, a in enumerate(t2) if a != 0], {s2: one})]
 
             # s1 through t2
             for i in reversed(s1.reduced_word()):
@@ -1558,8 +1556,8 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                         c = sprod[p]
                         # We have to flip the side due to Sage's
                         # convention for multiplying permutations
-                        pj = p.apply_simple_reflection(j, side="left")
-                        if p.has_descent(j, side="left"):
+                        pj = p.apply_simple_reflection(j, side='left')
+                        if p.has_descent(j, side='left'):
                             iaxpy(1, {p: c * qm1, pj: c * self._q}, temp)
                         else:
                             iaxpy(1, {pj: c}, temp)
@@ -1603,9 +1601,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             r"""
             Return `p` such that `T0^{r-1} - p = \prod_{i=0}^{r-1} (T_0 - u_i)`.
 
-            OUTPUT:
-
-            A ``dict`` representing the polynomial `p`.
+            OUTPUT: a ``dict`` representing the polynomial `p`
 
             EXAMPLES::
 

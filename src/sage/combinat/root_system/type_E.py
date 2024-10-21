@@ -375,7 +375,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (1/2, 1/2, 1/2, 1/2, 1/2, 1/2, -1/2, -1/2)]
             sage: e.rho()
             (0, 1, 2, 3, 4, 5, 6, 23)
-
         """
         v = ZZ(1)/ZZ(2)
         # Note that
@@ -526,7 +525,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type E.
+        Return a Dynkin diagram for type E.
 
         EXAMPLES::
 
@@ -563,7 +562,6 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             [(1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1), (4, 2, 1),
              (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1), (6, 5, 1),
              (6, 7, 1), (7, 6, 1), (7, 8, 1), (8, 7, 1)]
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         g = DynkinDiagram_class(self)
@@ -639,4 +637,5 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_E', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_E',
+                           'ambient_space', AmbientSpace)

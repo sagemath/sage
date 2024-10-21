@@ -37,7 +37,7 @@ ctypedef face_list_s face_list_t[1]
 
 cdef inline int face_list_init(face_list_t faces, size_t n_faces, size_t n_atoms, size_t n_coatoms) except -1:
     """
-    Sets the initial values for a list of faces with given number of faces
+    Set the initial values for a list of faces with given number of faces
     and number of atoms.
     """
     face_list_shallow_init(faces, n_faces, n_atoms, n_coatoms)
@@ -280,9 +280,7 @@ cdef inline size_t get_next_level_fused(
     - ``new_faces`` -- needs to be of same size as ``faces``
     - ``visited_all`` -- the faces which have been visited before
 
-    OUTPUT:
-
-    - set ``new_faces`` to point to the new faces
+    OUTPUT: set ``new_faces`` to point to the new faces
 
     ALGORITHM:
 

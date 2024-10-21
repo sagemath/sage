@@ -57,6 +57,7 @@ AUTHORS:
 
 from sage.structure.unique_representation import UniqueRepresentation
 
+
 class NumberFieldStructure(UniqueRepresentation):
     r"""
     Abstract base class encapsulating information about a number fields
@@ -89,7 +90,6 @@ class NumberFieldStructure(UniqueRepresentation):
         sage: LL.<j> = NumberField(x^2 + 1, structure=NameChange(L))
         sage: KK is LL
         False
-
     """
     def __init__(self, other):
         """
@@ -100,7 +100,6 @@ class NumberFieldStructure(UniqueRepresentation):
             sage: from sage.rings.number_field.structure import NumberFieldStructure
             sage: type(NumberFieldStructure(QQ))
             <class 'sage.rings.number_field.structure.NumberFieldStructure'>
-
         """
         self.other = other
 
@@ -136,9 +135,9 @@ class NumberFieldStructure(UniqueRepresentation):
             j
             sage: K(j)
             i
-
         """
         raise NotImplementedError
+
 
 class NameChange(NumberFieldStructure):
     r"""
@@ -146,7 +145,7 @@ class NameChange(NumberFieldStructure):
 
     INPUT:
 
-    - ``other`` -- the number field from which this field has been created.
+    - ``other`` -- the number field from which this field has been created
 
     TESTS::
 
@@ -164,7 +163,6 @@ class NameChange(NumberFieldStructure):
         10
         sage: [id(v) for v in gc.get_objects() if id(v) == u]
         []
-
     """
     def create_structure(self, field):
         r"""
@@ -180,10 +178,10 @@ class NameChange(NumberFieldStructure):
              Isomorphism given by variable name change map:
               From: Cyclotomic Field of order 5 and degree 4
               To:   Number Field in a with defining polynomial x^4 + x^3 + x^2 + x + 1)
-
         """
         from . import maps
         return maps.NameChangeMap(field, self.other), maps.NameChangeMap(self.other, field)
+
 
 class AbsoluteFromRelative(NumberFieldStructure):
     r"""
@@ -192,7 +190,7 @@ class AbsoluteFromRelative(NumberFieldStructure):
 
     INPUT:
 
-    - ``other`` -- the number field from which this field has been created.
+    - ``other`` -- the number field from which this field has been created
 
     TESTS::
 
@@ -202,7 +200,6 @@ class AbsoluteFromRelative(NumberFieldStructure):
         sage: L.<b> = K.extension(x^2 - 3)
         sage: AbsoluteFromRelative(L)
         <sage.rings.number_field.structure.AbsoluteFromRelative object at 0x...>
-
     """
     def create_structure(self, field):
         r"""
@@ -221,10 +218,10 @@ class AbsoluteFromRelative(NumberFieldStructure):
               To:   Number Field in b with defining polynomial x^2 - 3 over its base field, Isomorphism map:
               From: Number Field in b with defining polynomial x^2 - 3 over its base field
               To:   Number Field in c with defining polynomial x^4 - 10*x^2 + 1)
-
         """
         from . import maps
         return maps.MapAbsoluteToRelativeNumberField(field, self.other), maps.MapRelativeToAbsoluteNumberField(self.other, field)
+
 
 class RelativeFromAbsolute(NumberFieldStructure):
     r"""
@@ -234,7 +231,7 @@ class RelativeFromAbsolute(NumberFieldStructure):
     INPUT:
 
     - ``other`` -- the (absolute) number field from which this field has been
-      created.
+      created
 
     - ``gen`` -- the generator of the intermediate field
 
@@ -243,7 +240,6 @@ class RelativeFromAbsolute(NumberFieldStructure):
         sage: from sage.rings.number_field.structure import RelativeFromAbsolute
         sage: RelativeFromAbsolute(QQ, 1/2)
         <sage.rings.number_field.structure.RelativeFromAbsolute object at 0x...>
-
     """
     def __init__(self, other, gen):
         r"""
@@ -254,7 +250,6 @@ class RelativeFromAbsolute(NumberFieldStructure):
             sage: from sage.rings.number_field.structure import RelativeFromAbsolute
             sage: type(RelativeFromAbsolute(QQ, 1/2))
             <class 'sage.rings.number_field.structure.RelativeFromAbsolute'>
-
         """
         NumberFieldStructure.__init__(self, other)
         self.gen = gen
@@ -281,7 +276,6 @@ class RelativeFromAbsolute(NumberFieldStructure):
                From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
                To:   Number Field in b with defining polynomial x + a_ over its base field
                Defn: a |--> -a_)
-
         """
         # other     field
         #    \       /
@@ -303,6 +297,7 @@ class RelativeFromAbsolute(NumberFieldStructure):
 
         return field_to_other, other_to_field
 
+
 class RelativeFromRelative(NumberFieldStructure):
     r"""
     Structure for a relative number field created from another relative number
@@ -311,7 +306,7 @@ class RelativeFromRelative(NumberFieldStructure):
     INPUT:
 
     - ``other`` -- the relative number field used in the construction, see
-      :meth:`create_structure`; there this field will be called ``field_``.
+      :meth:`create_structure`; there this field will be called ``field_``
 
     TESTS::
 
@@ -321,7 +316,6 @@ class RelativeFromRelative(NumberFieldStructure):
         sage: L.<a> = K.extension(x^2 - 2)
         sage: RelativeFromRelative(L)
         <sage.rings.number_field.structure.RelativeFromRelative object at 0x...>
-
     """
     def create_structure(self, field):
         r"""
@@ -353,7 +347,6 @@ class RelativeFromRelative(NumberFieldStructure):
               To:   Number Field in b with defining polynomial x^2 - 2*a*x + 3 over its base field
               Defn: a |--> a
                     i |--> -b + a)
-
         """
         # other and field_ are relative number fields which are isomorphic via
         # an absolute number field abs.

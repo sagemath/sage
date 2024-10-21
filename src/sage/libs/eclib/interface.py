@@ -10,7 +10,7 @@ classes. Instead, one can create an
 :class:`EllipticCurve <sage.schemes.elliptic_curves.constructor.EllipticCurve>`
 and call methods that are implemented using this module.
 
-.. note::
+.. NOTE::
 
    This interface is a direct library-level interface to ``eclib``,
    including the 2-descent program ``mwrank``.
@@ -48,10 +48,10 @@ class mwrank_EllipticCurve(SageObject):
 
     INPUT:
 
-    - ``ainvs`` (list or tuple) -- a list of 5 or less integers, the
-      coefficients of a nonsingular Weierstrass equation.
+    - ``ainvs`` -- list or tuple list of 5 or less integers, the
+      coefficients of a nonsingular Weierstrass equation
 
-    - ``verbose`` (bool, default ``False``) -- verbosity flag.  If ``True``,
+    - ``verbose`` -- boolean (default: ``False``); verbosity flag.  If ``True``,
       then all Selmer group computations will be verbose.
 
     EXAMPLES:
@@ -147,8 +147,8 @@ class mwrank_EllipticCurve(SageObject):
 
         INPUT:
 
-        - ``verbose`` (int) -- if positive, print lots of output when
-          doing 2-descent.
+        - ``verbose`` -- integer; if positive, print lots of output when
+          doing 2-descent
 
         EXAMPLES::
 
@@ -197,7 +197,7 @@ class mwrank_EllipticCurve(SageObject):
 
     def _curve_data(self):
         r"""
-        Returns the underlying :class:`_Curvedata` class for this mwrank elliptic curve.
+        Return the underlying :class:`_Curvedata` class for this mwrank elliptic curve.
 
         EXAMPLES::
 
@@ -213,7 +213,7 @@ class mwrank_EllipticCurve(SageObject):
 
     def ainvs(self):
         r"""
-        Returns the `a`-invariants of this mwrank elliptic curve.
+        Return the `a`-invariants of this mwrank elliptic curve.
 
         EXAMPLES::
 
@@ -225,7 +225,7 @@ class mwrank_EllipticCurve(SageObject):
 
     def isogeny_class(self, verbose=False):
         r"""
-        Returns the isogeny class of this mwrank elliptic curve.
+        Return the isogeny class of this mwrank elliptic curve.
 
         EXAMPLES::
 
@@ -237,7 +237,7 @@ class mwrank_EllipticCurve(SageObject):
 
     def __repr__(self):
         r"""
-        Returns the string representation of this mwrank elliptic curve.
+        Return the string representation of this mwrank elliptic curve.
 
         EXAMPLES::
 
@@ -257,42 +257,34 @@ class mwrank_EllipticCurve(SageObject):
                         ' '.join([coeff(a4), 'x']) if a4 else '',
                         ' '.join([" +" if a6 > 0 else " -", str(abs(a6))]) if a6 else ''])
 
-    def two_descent(self,
-                    verbose=True,
-                    selmer_only=False,
-                    first_limit=20,
-                    second_limit=8,
-                    n_aux=-1,
-                    second_descent=True):
+    def two_descent(self, verbose=True, selmer_only=False, first_limit=20,
+                    second_limit=8, n_aux=-1, second_descent=True):
         r"""
         Compute 2-descent data for this curve.
 
         INPUT:
 
-        - ``verbose`` (bool, default ``True``) --  print what mwrank is doing.
+        - ``verbose`` -- boolean (default: ``True``); print what mwrank is doing
 
-        - ``selmer_only`` (bool, default ``False``) -- ``selmer_only`` switch.
+        - ``selmer_only`` -- boolean (default: ``False``); ``selmer_only`` switch
 
-        - ``first_limit`` (int, default 20) -- bound on `|x|+|z|` in
-          quartic point search.
+        - ``first_limit`` -- integer (default: 20); bound on `|x|+|z|` in
+          quartic point search
 
-        - ``second_limit`` (int, default 8) -- bound on
-          `\log \max(|x|,|z|)`, i.e. logarithmic.
+        - ``second_limit`` -- integer (default: 8); bound on
+          `\log \max(|x|,|z|)`, i.e. logarithmic
 
-        - ``n_aux`` (int, default -1) -- (only relevant for general
+        - ``n_aux`` -- integer (default: -1); (only relevant for general
           2-descent when 2-torsion trivial) number of primes used for
           quartic search.  ``n_aux=-1`` causes default (8) to be used.
           Increase for curves of higher rank.
 
-        - ``second_descent`` (bool, default ``True``) -- (only relevant
+        - ``second_descent`` -- boolean (default: ``True``); (only relevant
           for curves with 2-torsion, where mwrank uses descent via
           2-isogeny) flag determining whether or not to do second
           descent.  *Default strongly recommended.*
 
-
-        OUTPUT:
-
-        Nothing -- nothing is returned.
+        OUTPUT: nothing
 
         TESTS:
 
@@ -358,7 +350,7 @@ class mwrank_EllipticCurve(SageObject):
 
     def __two_descent_data(self):
         r"""
-        Returns the 2-descent data for this elliptic curve.
+        Return the 2-descent data for this elliptic curve.
 
         EXAMPLES::
 
@@ -375,7 +367,7 @@ class mwrank_EllipticCurve(SageObject):
         Return the conductor of this curve, computed using Cremona's
         implementation of Tate's algorithm.
 
-        .. note::
+        .. NOTE::
 
            This is independent of PARI's.
 
@@ -389,7 +381,7 @@ class mwrank_EllipticCurve(SageObject):
 
     def rank(self):
         """
-        Returns the rank of this curve, computed using :meth:`two_descent()`.
+        Return the rank of this curve, computed using :meth:`two_descent()`.
 
         In general this may only be a lower bound for the rank; an
         upper bound may be obtained using the function :meth:`rank_bound()`.
@@ -411,13 +403,12 @@ class mwrank_EllipticCurve(SageObject):
             0
             sage: E.certain()
             False
-
         """
         return self.__two_descent_data().getrank()
 
     def rank_bound(self):
         """
-        Returns an upper bound for the rank of this curve, computed
+        Return an upper bound for the rank of this curve, computed
         using :meth:`two_descent()`.
 
         If the curve has no 2-torsion, this is equal to the 2-Selmer
@@ -461,13 +452,12 @@ class mwrank_EllipticCurve(SageObject):
             0
             sage: E.certain()
             False
-
         """
         return self.__two_descent_data().getrankbound()
 
     def selmer_rank(self):
         r"""
-        Returns the rank of the 2-Selmer group of the curve.
+        Return the rank of the 2-Selmer group of the curve.
 
         EXAMPLES:
 
@@ -511,7 +501,6 @@ class mwrank_EllipticCurve(SageObject):
             0
             sage: E.certain()
             False
-
         """
         return self.__two_descent_data().getselmer()
 
@@ -537,13 +526,13 @@ class mwrank_EllipticCurve(SageObject):
 
         INPUT:
 
-        - ``bound`` (int, default -1) -- If `-1`, saturate at *all*
+        - ``bound`` -- integer (default: -1); if `-1`, saturate at *all*
           primes by computing a bound on the saturation index,
           otherwise saturate at all primes up to the minimum of
-          ``bound`` and the saturation index bound.
+          ``bound`` and the saturation index bound
 
-        - ``lower`` (int, default 2) -- Only saturate at primes not
-          less than this.
+        - ``lower`` -- integer (default: 2); only saturate at primes not
+          less than this
 
         EXAMPLES:
 
@@ -585,7 +574,7 @@ class mwrank_EllipticCurve(SageObject):
 
     def certain(self):
         r"""
-        Returns ``True`` if the last :meth:`two_descent()` call provably correctly
+        Return ``True`` if the last :meth:`two_descent()` call provably correctly
         computed the rank.  If :meth:`two_descent()` hasn't been
         called, then it is first called by :meth:`certain()`
         using the default parameters.
@@ -676,21 +665,21 @@ class mwrank_MordellWeil(SageObject):
 
     INPUT:
 
-    - ``curve`` (:class:`mwrank_EllipticCurve`) -- the underlying
-      elliptic curve.
+    - ``curve`` -- :class:`mwrank_EllipticCurve`; the underlying
+      elliptic curve
 
-    - ``verbose`` (bool, default ``False``) -- verbosity flag (controls
-      amount of output produced in point searches).
+    - ``verbose`` -- boolean (default: ``False``); verbosity flag (controls
+      amount of output produced in point searches)
 
-    - ``pp`` (int, default 1) -- process points flag (if nonzero,
+    - ``pp`` -- integer (default: 1); process points flag (if nonzero,
       the points found are processed, so that at all times only a
       `\ZZ`-basis for the subgroup generated by the points found
-      so far is stored; if zero, no processing is done and all
+      so far is stored. If zero, no processing is done and all
       points found are stored).
 
-    - ``maxr`` (int, default 999) -- maximum rank (quit point
+    - ``maxr`` -- integer (default: 999); maximum rank (quit point
       searching once the points found generate a subgroup of this
-      rank; useful if an upper bound for the rank is already
+      rank. Useful if an upper bound for the rank is already
       known).
 
     EXAMPLES::
@@ -851,13 +840,13 @@ class mwrank_MordellWeil(SageObject):
 
         INPUT:
 
-        - ``v`` (list of 3-tuples or lists of ints or Integers) -- a
+        - ``v`` -- list of 3-tuples or lists of ints or Integers; a
           list of triples of integers, which define points on the
-          curve.
+          curve
 
-        - ``saturation_bound`` (int, default 0) -- saturate at primes up to
-          ``saturation_bound``, or at *all* primes if ``saturation_bound`` is -1; when ``saturation_bound``
-          is 0 (the default), do no saturation..
+        - ``saturation_bound`` -- integer (default: 0); saturate at primes up to
+          ``saturation_bound``, or at *all* primes if ``saturation_bound`` is
+          -1. When ``saturation_bound`` is 0 (the default), do no saturation.
 
         OUTPUT:
 
@@ -1001,7 +990,7 @@ class mwrank_MordellWeil(SageObject):
         Return the regulator of the points in this subgroup of
         the Mordell-Weil group.
 
-        .. note::
+        .. NOTE::
 
            ``eclib`` can compute the regulator to arbitrary precision,
            but the interface currently returns the output as a ``float``.
@@ -1026,9 +1015,7 @@ class mwrank_MordellWeil(SageObject):
         """
         Return the rank of this subgroup of the Mordell-Weil group.
 
-        OUTPUT:
-
-        (int) The rank of this subgroup of the Mordell-Weil group.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1068,7 +1055,6 @@ class mwrank_MordellWeil(SageObject):
             0.417143558758384
 
         We do in fact now have a full Mordell-Weil basis.
-
         """
         return self.__mw.rank()
 
@@ -1077,13 +1063,13 @@ class mwrank_MordellWeil(SageObject):
 
         INPUT:
 
-        - ``max_prime`` (int, default -1) -- If `-1` (the default), an
+        - ``max_prime`` -- integer (default: -1); if `-1`, an
           upper bound is computed for the primes at which the subgroup
           may not be saturated, and saturation is performed for all
           primes up to this bound.  Otherwise, the bound used is the
           minimum of ``max_prime`` and the computed bound.
 
-        - ``min_prime`` (int, default 2) -- only do saturation at
+        - ``min_prime`` -- integer (default: 2); only do saturation at
           primes no less than this.  (For example, if the points have
           been found via :meth:`two_descent` they should already be
           2-saturated so a value of 3 is appropriate.)
@@ -1092,18 +1078,18 @@ class mwrank_MordellWeil(SageObject):
 
         (3-tuple) (``ok``, ``index``, ``unsatlist``) where:
 
-        - ``ok`` (bool) -- ``True`` if and only if the saturation was
+        - ``ok`` -- boolean; ``True`` if and only if the saturation was
           provably successful at all primes attempted.  If the default
           was used for ``max_prime``, then ``True`` indicates that the
           subgroup is saturated at *all* primes.
 
-        - ``index`` (int) -- the index of the group generated by the
-          original points in their saturation.
+        - ``index`` -- integer; the index of the group generated by the
+          original points in their saturation
 
-        - ``unsatlist`` (list of ints) -- list of primes at which
-          saturation could not be proved or achieved.
+        - ``unsatlist`` -- list of ints list of primes at which
+          saturation could not be proved or achieved
 
-        .. note::
+        .. NOTE::
 
           In versions up to v20190909, ``eclib`` used floating point
           methods based on elliptic logarithms to divide points, and
@@ -1112,7 +1098,7 @@ class mwrank_MordellWeil(SageObject):
           on division polynomials, which should mean that such
           failures does not happen.
 
-        .. note::
+        .. NOTE::
 
            We emphasize that if this function returns ``True`` as the
            first return argument (``ok``), and if the default was used
@@ -1231,7 +1217,6 @@ class mwrank_MordellWeil(SageObject):
         index of the points in their saturation is at most 3, then
         proves saturation at 2 and at 3, by reducing the points modulo
         all primes of good reduction up to 11, respectively 13.
-
         """
         ok, index, unsat = self.__mw.saturate(int(max_prime), int(min_prime))
         return bool(ok), int(str(index)), unsat
@@ -1243,10 +1228,10 @@ class mwrank_MordellWeil(SageObject):
 
         INPUT:
 
-        - ``height_limit`` (float, default: 18) -- search up to this
-          logarithmic height.
+        - ``height_limit``-- float (default: 18); search up to this
+          logarithmic height
 
-        .. note::
+        .. NOTE::
 
           On 32-bit machines, this *must* be < 21.48 (`31\log(2)`) else
           `\exp(h_{\text{lim}}) > 2^{31}` and overflows.  On 64-bit machines, it
@@ -1255,15 +1240,15 @@ class mwrank_MordellWeil(SageObject):
           by (roughly) `\exp(1.5)=4.5`, so searching up to even 20
           takes a very long time.
 
-        .. note::
+        .. NOTE::
 
            The search is carried out with a quadratic sieve, using
            code adapted from a version of Michael Stoll's
            ``ratpoints`` program.  It would be preferable to use a
            newer version of ``ratpoints``.
 
-        - ``verbose`` (bool, default ``False``) -- turn verbose operation on
-          or off.
+        - ``verbose`` -- boolean (default: ``False``)turn verbose operation on
+          or off
 
         EXAMPLES:
 
@@ -1312,11 +1297,9 @@ class mwrank_MordellWeil(SageObject):
         Return a list of the generating points in this Mordell-Weil
         group.
 
-        OUTPUT:
-
-        (list) A list of lists of length 3, each holding the
+        OUTPUT: list of lists of length 3, each holding the
         primitive integer coordinates `[x,y,z]` of a generating
-        point.
+        point
 
         EXAMPLES::
 

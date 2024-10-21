@@ -40,9 +40,7 @@ def shimura_mass__maximal(self):
     quadratic lattice. This works for any totally real number field,
     but has a small technical restriction when `n` is odd.
 
-    OUTPUT:
-
-    a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -61,9 +59,7 @@ def GHY_mass__maximal(self):
 
     See [GHY, Prop 7.4 and 7.5, p121] and [GY, Thrm 10.20, p25].
 
-    OUTPUT:
-
-    a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 

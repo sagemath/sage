@@ -18,7 +18,7 @@ from sage.geometry.convex_set import ConvexSet_relatively_open
 
 class RelativeInterior(ConvexSet_relatively_open):
     r"""
-    The relative interior of a polyhedron or cone
+    The relative interior of a polyhedron or cone.
 
     This class should not be used directly. Use methods
     :meth:`~sage.geometry.polyhedron.Polyhedron_base.relative_interior`,
@@ -44,7 +44,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         INPUT:
 
         - ``polyhedron`` -- an instance of :class:`Polyhedron_base` or
-          :class:`ConvexRationalPolyhedralCone`.
+          :class:`ConvexRationalPolyhedralCone`
 
         TESTS::
 
@@ -217,11 +217,9 @@ class RelativeInterior(ConvexSet_relatively_open):
 
     def is_universe(self):
         r"""
-        Return whether ``self`` is the whole ambient space
+        Return whether ``self`` is the whole ambient space.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -241,9 +239,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         r"""
         Return whether ``self`` is closed.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -371,7 +367,7 @@ class RelativeInterior(ConvexSet_relatively_open):
 
         INPUT:
 
-        - ``scalar`` -- A scalar
+        - ``scalar`` -- a scalar
 
         EXAMPLES::
 
@@ -407,7 +403,7 @@ class RelativeInterior(ConvexSet_relatively_open):
 
         - ``linear_transf`` -- a matrix
         - ``**kwds`` -- passed to the :meth:`linear_transformation` method of
-          the closure of ``self``.
+          the closure of ``self``
 
         EXAMPLES::
 

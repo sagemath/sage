@@ -329,7 +329,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
     An instance of this class is a tensor field along a differentiable
     manifold `U` with values on a parallelizable manifold `M`, via a
     differentiable map `\Phi: U \rightarrow M`. More precisely, given two
-    non-negative integers `k` and `l` and a differentiable map
+    nonnegative integers `k` and `l` and a differentiable map
 
     .. MATH::
 
@@ -613,7 +613,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         sage: h[0,0], h[0,1], h[2,0] = 1+t, t^2, sin(t)
         sage: h.display()
         h = (t + 1) ∂/∂x⊗∂/∂x + t^2 ∂/∂x⊗∂/∂y + sin(t) ∂/∂z⊗∂/∂x
-
     """
     def __init__(self, vector_field_module, tensor_type, name=None,
                  latex_name=None, sym=None, antisym=None):
@@ -639,7 +638,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             Free module T^(0,2)(M) of type-(0,2) tensors fields on the
              2-dimensional differentiable manifold M
             sage: TestSuite(t).run()
-
         """
         FreeModuleTensor.__init__(self, vector_field_module, tensor_type,
                                   name=name, latex_name=latex_name,
@@ -673,7 +671,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             sage: t  # indirect doctest
             Tensor field t of type (1,1) on the 2-dimensional differentiable
              manifold M
-
         """
         return TensorField._repr_(self)
 
@@ -692,7 +689,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
              manifold M
             sage: type(t._new_instance()) is type(t)
             True
-
         """
         return type(self)(self._fmodule, self._tensor_type, sym=self._sym,
                           antisym=self._antisym)
@@ -707,7 +703,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             sage: X.<x,y> = M.chart()  # makes M parallelizable
             sage: t = M.tensor_field(1,1, name='t')
             sage: t._init_derived()
-
         """
         FreeModuleTensor._init_derived(self)
         TensorField._init_derived(self)
@@ -722,7 +717,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: ``True``) determines whether the
+        - ``del_restrictions`` -- boolean (default: ``True``); determines whether the
           restrictions of ``self`` to subdomains are deleted
 
         TESTS::
@@ -731,7 +726,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             sage: X.<x,y> = M.chart()  # makes M parallelizable
             sage: t = M.tensor_field(1,1, name='t')
             sage: t._del_derived()
-
         """
         FreeModuleTensor._del_derived(self)
         TensorField._del_derived(self)
@@ -755,7 +749,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             (Coordinate frame (M, (∂/∂x,∂/∂y)), Chart (M, (x, y)))
             sage: t._preparse_display(X)  # passing a chart instead of a frame
             (Coordinate frame (M, (∂/∂x,∂/∂y)), Chart (M, (x, y)))
-
         """
         if basis is None:
             basis = self._fmodule._def_basis
@@ -834,7 +827,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             ...
             ValueError: no basis could be found for computing the components
              in the Vector frame (M, (e_0,e_1))
-
         """
         if basis is None:
             basis = self._fmodule._def_basis
@@ -923,7 +915,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             ...
             ValueError: no basis could be found for computing the components
              in the Vector frame (M, (e_0,e_1))
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -1014,7 +1005,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             t = 2 ∂/∂y⊗dx
             sage: t.display(e)
             t = x e_0⊗e^1
-
         """
         if basis is None:
             basis = self._fmodule._def_basis
@@ -1101,7 +1091,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             t = 2 ∂/∂y⊗dx
             sage: t.display(e)
             t = x e_0⊗e^1
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -1170,7 +1159,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             3-indices components w.r.t. Vector frame (M, (e_1,e_2))
             sage: t.comp(e)[:]
             [[[0, 0], [0, 0]], [[x - 3, 0], [0, 0]]]
-
         """
         if basis is None:
             basis = self._fmodule._def_basis
@@ -1242,7 +1230,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             sage: c.display(a._common_coord_frame(c))
             c = (1/2*x^2 - 1/2*y^2 + 1/2*x + 1/2*y + 1/2) ∂/∂x
              + (-1/2*x^2 + 1/2*y^2 + 1/2*x + 1/2*y + 1/2) ∂/∂y
-
         """
         from sage.manifolds.differentiable.vectorframe import CoordFrame
         # Compatibility checks:
@@ -1405,7 +1392,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             sage: om.lie_der(v) == (v.contract(0, om.exterior_derivative(), 0)
             ....:                   + om(v).exterior_derivative())
             True
-
         """
         if vector._tensor_type != (1,0):
             raise TypeError("the argument must be a vector field")
@@ -1429,12 +1415,12 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
             # get n processes
             nproc = Parallelism().get('tensor')
-            if nproc != 1 :
+            if nproc != 1:
 
                 # Parallel computation
                 lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                ind_list = [ind for ind in resc.non_redundant_index_generator()]
-                ind_step = max(1, int(len(ind_list)/nproc))
+                ind_list = list(resc.non_redundant_index_generator())
+                ind_step = max(1, len(ind_list) // nproc)
                 local_list = lol(ind_list, ind_step)
                 # list of input parameters:
                 listParalInput = [(self, vector, coord_frame, chart, ind_part) for ind_part in local_list]
@@ -1538,9 +1524,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
           being the differentiable map `S \rightarrow M` associated
           with the tensor field
 
-        OUTPUT:
-
-        - instance of :class:`TensorFieldParal` representing the restriction
+        OUTPUT: instance of :class:`TensorFieldParal` representing the restriction
 
         EXAMPLES:
 
@@ -1580,7 +1564,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
             sage: v.restrict(M) is v
             True
-
         """
         if (subdomain == self._domain
                 and (dest_map is None or dest_map == self._vmodule._dest_map)):
@@ -1720,7 +1703,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             True
             sage: s == t(v)  # indirect doctest
             True
-
         """
         from sage.categories.homset import End
         p = len(args)
@@ -1819,7 +1801,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
             :meth:`sage.manifolds.differentiable.tensorfield.TensorField.contract`
             for more examples.
-
         """
         # This is to ensure the call to the TensorField version instead of
         # the FreeModuleTensor one
@@ -1872,7 +1853,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
              + (x*y + y^2) dy⊗dx + (-x^3 - x^2*y) dy⊗dy
             sage: s == f*a
             True
-
         """
         # This is to ensure the call to the TensorField version instead of
         # the FreeModuleTensor one
@@ -1900,12 +1880,12 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         - ``chart`` -- (default: ``None``) chart specifying the coordinate
           expression of the components; if ``None``, the default chart of the
           tensor field domain is used
-        - ``coordinate_labels`` -- (default: ``True``) boolean; if ``True``,
+        - ``coordinate_labels`` -- boolean (default: ``True``); if ``True``,
           coordinate symbols are used by default (instead of integers) as
           index labels whenever ``frame`` is a coordinate frame
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero components are displayed
-        - ``only_nonredundant`` -- (default: ``False``) boolean; if ``True``,
+        - ``only_nonredundant`` -- boolean (default: ``False``); if ``True``,
           only nonredundant components are displayed in case of symmetries
 
         EXAMPLES:
@@ -1995,7 +1975,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             t^01_0 = (u^2 - v^2)/(u^2 + 2*u*v + v^2 + 8)
             t^10_0 = (u^2 - v^2)/(u^2 + 2*u*v + v^2 + 8)
             t^11_1 = -12/(u^2 + 2*u*v + v^2 + 8)
-
         """
         from sage.misc.latex import latex
         from sage.manifolds.differentiable.vectorframe import CoordFrame
@@ -2132,7 +2111,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             True
             sage: vp.display()
             v = (1/6*pi + 1) ∂/∂x + 1/36*pi^2 ∂/∂y
-
         """
         if point not in self._domain:
             raise ValueError("the {} is not in the domain of ".format(point) +
@@ -2170,9 +2148,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
         - ``mapping`` -- differentiable map `\Phi: U \rightarrow M`
 
-        OUTPUT:
-
-        - tensor field `\tilde t` along `U` defined above.
+        OUTPUT: tensor field `\tilde t` along `U` defined above
 
         EXAMPLES:
 
@@ -2226,7 +2202,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
              differentiable manifold M
             sage: aU.at(p) == a.at(Phi(p))
             True
-
         """
         dom = self._domain
         if self._ambient_domain is not dom:
@@ -2329,7 +2304,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             [0 1 0 0]
             sage: all([g_ser[1] == h1, g_ser[2] == h2])
             True
-
         """
         from sage.tensor.modules.comp import Components
         orderp1 = order + 1
@@ -2407,7 +2381,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             [ e  1  e  0]
             [ 0  e  1  e]
             [ 0  0  e  1]
-
         """
         series = self.series_expansion(symbol, order)
         return sum(symbol**i * s for i, s in enumerate(series))
@@ -2439,7 +2412,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         - ``order`` -- integer; the order `n` of the expansion, defined as the
           degree of the polynomial representing the truncated power series in
           ``symbol``
-        - ``truncate`` -- (default: ``False``) determines whether the
+        - ``truncate`` -- boolean (default: ``False``); determines whether the
           components of ``self`` are replaced by their expansions to the
           given order
 
@@ -2467,7 +2440,6 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             [ e  1  e  0]
             [ 0  e  1  e]
             [ 0  0  e  1]
-
         """
         for frame in self._components:
             for ind in self._components[frame].non_redundant_index_generator():

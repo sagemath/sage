@@ -51,13 +51,11 @@ def bdd_norm_pr_gens_iq(K, norm_list):
 
     INPUT:
 
-    - `K` -- an imaginary quadratic number field
+    - ``K`` -- an imaginary quadratic number field
 
-    - ``norm_list`` -- a list of positive integers
+    - ``norm_list`` -- list of positive integers
 
-    OUTPUT:
-
-    - a dictionary of number field elements, keyed by norm
+    OUTPUT: dictionary of number field elements, keyed by norm
 
     EXAMPLES:
 
@@ -115,13 +113,11 @@ def bdd_height_iq(K, height_bound):
 
     INPUT:
 
-    - `K` -- an imaginary quadratic number field
+    - ``K`` -- an imaginary quadratic number field
 
     - ``height_bound`` -- a real number
 
-    OUTPUT:
-
-    - an iterator of number field elements
+    OUTPUT: an iterator of number field elements
 
     EXAMPLES::
 
@@ -220,13 +216,11 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
 
     INPUT:
 
-    - `K` -- a number field
+    - ``K`` -- a number field
 
-    - ``norm_list`` -- a list of positive integers
+    - ``norm_list`` -- list of positive integers
 
-    OUTPUT:
-
-    - a dictionary of number field elements, keyed by norm
+    OUTPUT: dictionary of number field elements, keyed by norm
 
     EXAMPLES:
 
@@ -254,7 +248,6 @@ def bdd_norm_pr_ideal_gens(K, norm_list):
         sage: key = ZZ(28)
         sage: b[key]
         [157*g^4 - 139*g^3 - 369*g^2 + 848*g + 158, g^4 + g^3 - g - 7]
-
     """
     negative_norm_units = K.elements_of_norm(-1)
     gens = {}
@@ -286,9 +279,7 @@ def integer_points_in_polytope(matrix, interval_radius):
 
     - ``interval_radius`` -- a real number
 
-    OUTPUT:
-
-    - a list of tuples of integers
+    OUTPUT: list of tuples of integers
 
     EXAMPLES:
 
@@ -371,9 +362,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     - ``precision`` -- (default: 53) positive integer
 
-    OUTPUT:
-
-    an iterator of number field elements
+    OUTPUT: an iterator of number field elements
 
     EXAMPLES:
 

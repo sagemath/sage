@@ -124,8 +124,8 @@ Conversions::
 
     sage: maxima(hypergeometric([1, 1, 1], [3, 3, 3], x))                               # needs sage.symbolic
     hypergeometric([1,1,1],[3,3,3],_SAGE_VAR_x)
-    sage: hypergeometric((5, 4), (4, 4), 3)._sympy_()                                   # needs sympy sage.symbolic
-    hyper((5, 4), (4, 4), 3)
+    sage: hypergeometric((5,), (4,), 3)._sympy_()                                   # needs sympy sage.symbolic
+    hyper((5,), (4,), 3)
     sage: hypergeometric((5, 4), (4, 4), 3)._mathematica_init_()                        # needs sage.symbolic
     'HypergeometricPFQ[{5,4},{4,4},3]'
 
@@ -275,9 +275,9 @@ class Hypergeometric(BuiltinFunction):
 
         INPUT:
 
-        - ``a`` -- a list or tuple of parameters
-        - ``b`` -- a list or tuple of parameters
-        - ``z`` -- a number or symbolic expression
+        - ``a`` -- list or tuple of parameters
+        - ``b`` -- list or tuple of parameters
+        - ``z`` -- number or symbolic expression
 
         EXAMPLES::
 
@@ -296,6 +296,11 @@ class Hypergeometric(BuiltinFunction):
         The only simplification that is done automatically is returning 1
         if ``z`` is 0. For other simplifications use the
         ``simplify_hypergeometric`` method.
+
+        TESTS::
+
+            sage: hypergeometric([2, 3, 4], [4, 1], 1)
+            hypergeometric((2, 3, 4), (4, 1), 1)
         """
         return BuiltinFunction.__call__(self,
                                         SR._force_pyobject(a),
@@ -308,7 +313,6 @@ class Hypergeometric(BuiltinFunction):
 
             sage: latex(hypergeometric([1, 1], [2], -1))                                # needs sage.symbolic
             \,_2F_1\left(\begin{matrix} 1,1 \\ 2 \end{matrix} ; -1 \right)
-
         """
         aa = ",".join(latex(c) for c in a)
         bb = ",".join(latex(c) for c in b)
@@ -371,7 +375,6 @@ class Hypergeometric(BuiltinFunction):
             0.693147180559945
             sage: hypergeometric([], [], RealField(100)(1))                             # needs sage.rings.real_mpfr sage.symbolic
             2.7182818284590452353602874714
-
         """
         if not isinstance(a, tuple) or not isinstance(b, tuple):
             raise TypeError("The first two parameters must be of type list")
@@ -461,23 +464,21 @@ class Hypergeometric(BuiltinFunction):
             """
             aa = list(a)  # tuples are immutable
             bb = list(b)
-            p = pp = len(aa)
             q = qq = len(bb)
             i = 0
             while i < qq and aa:
-                bbb = bb[i]
-                if bbb in aa:
-                    aa.remove(bbb)
-                    bb.remove(bbb)
-                    pp -= 1
+                bbi = bb[i]
+                if bbi in aa:
+                    aa.remove(bbi)
+                    bb.remove(bbi)
                     qq -= 1
                 else:
                     i += 1
-            if (pp, qq) != (p, q):
+            if qq != q:
                 return hypergeometric(aa, bb, z)
             return self
 
-        def is_termwise_finite(self, a, b, z):
+        def is_termwise_finite(self, a, b, z) -> bool:
             """
             Determine whether all terms of ``self`` are finite.
 
@@ -517,8 +518,6 @@ class Hypergeometric(BuiltinFunction):
             """
             if z == 0:
                 return 0 not in b
-            if abs(z) == Infinity:
-                return False
             if abs(z) == Infinity:
                 return False
             for bb in b:
@@ -1039,7 +1038,6 @@ class Hypergeometric_M(BuiltinFunction):
                 (a, b, z)
                 sage: hypergeometric_M(a, b, z).generalized()                           # needs sage.symbolic
                 hypergeometric((a,), (b,), z)
-
             """
             return hypergeometric([a], [b], z)
 
@@ -1151,7 +1149,6 @@ class Hypergeometric_U(BuiltinFunction):
                 2*hypergeometric((1, -1), (), -2)
                 sage: hypergeometric_U(3, I, 2).generalized()
                 1/8*hypergeometric((3, -I + 4), (), -1/2)
-
             """
             return z ** (-a) * hypergeometric([a, a - b + 1], [], -z ** (-1))
 

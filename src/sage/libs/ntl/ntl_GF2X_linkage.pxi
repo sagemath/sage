@@ -349,7 +349,6 @@ cdef inline int celement_pow(GF2X_c* res, GF2X_c* x, long e, GF2X_c *modulus, lo
         x
         sage: pow(x^2+1, 2, x^2+x+1)
         x + 1
-
     """
     cdef GF2XModulus_c mod
     cdef GF2X_c xmod

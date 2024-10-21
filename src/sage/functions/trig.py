@@ -573,7 +573,7 @@ class Function_arcsin(GinacFunction):
         GinacFunction.__init__(self, 'arcsin', latex_name=r"\arcsin",
                 conversions=dict(maxima='asin', sympy='asin',
                                  mathematica='ArcSin',
-                                 fricas="asin", giac="asin"))
+                                 fricas='asin', giac='asin'))
 
 
 arcsin = asin = Function_arcsin()
@@ -763,7 +763,6 @@ class Function_arccot(GinacFunction):
             (0.5535743588970452-0.4023594781085251j)
             sage: arccot(1.+I)                                                          # needs sage.symbolic
             0.553574358897045 - 0.402359478108525*I
-
         """
         GinacFunction.__init__(self, 'arccot', latex_name=r"\operatorname{arccot}",
                 conversions=dict(maxima='acot', sympy='acot',
@@ -927,7 +926,6 @@ class Function_arctan2(GinacFunction):
         rays through the origin.
 
         Note that the `y`-coordinate is by convention the first input.
-
 
         EXAMPLES:
 

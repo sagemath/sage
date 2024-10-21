@@ -237,11 +237,7 @@ class GraphPaths_common:
             [[2, 3, 4], [2, 4]]
         """
         source_paths = self.outgoing_paths(source)
-        paths = []
-        for path in source_paths:
-            if path[-1] == target:
-                paths.append(path)
-        return paths
+        return [path for path in source_paths if path[-1] == target]
 
     def paths(self):
         """

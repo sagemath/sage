@@ -439,7 +439,7 @@ cdef class BinaryTree:
         """
         return self.head == NULL
 
-    def keys(BinaryTree self, order="inorder"):
+    def keys(BinaryTree self, order='inorder'):
         """
         Return the keys sorted according to "order" parameter.
 
@@ -458,7 +458,7 @@ cdef class BinaryTree:
 
         return binary_tree_list(self.head, LIST_KEYS + o)
 
-    def values(BinaryTree self, order="inorder"):
+    def values(BinaryTree self, order='inorder'):
         """
         Return the keys sorted according to "order" parameter.
 

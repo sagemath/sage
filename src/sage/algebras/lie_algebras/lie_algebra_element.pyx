@@ -36,7 +36,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
     # Need to bypass the coercion model
     def __mul__(left, right):
         """
-        If we are multiplying two non-zero elements, automatically
+        If we are multiplying two nonzero elements, automatically
         lift up to the universal enveloping algebra.
 
         EXAMPLES::
@@ -264,7 +264,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
     """
     def __bool__(self):
         """
-        Return if ``self`` is non-zero.
+        Return if ``self`` is nonzero.
 
         EXAMPLES::
 
@@ -306,7 +306,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
     # Need to bypass the coercion model
     def __mul__(left, right):
         """
-        If we are multiplying two non-zero elements, automatically
+        If we are multiplying two nonzero elements, automatically
         lift up to the universal enveloping algebra.
 
         .. TODO::
@@ -476,7 +476,7 @@ cdef class LieAlgebraMatrixWrapper(LieAlgebraElementWrapper):
 
         EXAMPLES::
 
-            sage: L = lie_algebras.Heisenberg(QQ, 1, representation="matrix")
+            sage: L = lie_algebras.Heisenberg(QQ, 1, representation='matrix')
             sage: z = L.z()
             sage: z.value.is_immutable()
             True
@@ -584,7 +584,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
           represented by a dictionary ``d``, then make a copy of ``d``;
           if ``False``, then this can cause undesired behavior by
           mutating ``d``

@@ -1,6 +1,7 @@
 # sage_setup: distribution = sagemath-pari
 cimport cython
 
+
 @cython.binding(True)
 def frobenius_unram(self, arithmetic=True):
     """
@@ -9,7 +10,7 @@ def frobenius_unram(self, arithmetic=True):
 
     INPUT:
 
-    - ``self`` -- an element of an unramified extension.
+    - ``self`` -- an element of an unramified extension
     - ``arithmetic`` -- whether to apply the arithmetic Frobenius (acting
       by raising to the `p`-th power on the residue field). If ``False`` is
       provided, the image of geometric Frobenius (raising to the `(1/p)`-th
@@ -40,7 +41,7 @@ def frobenius_unram(self, arithmetic=True):
         sage: c.frobenius().frobenius()
         (a + 1)*7^-1 + O(7^3)
 
-    An error will be raised if the parent of self is a ramified extension::
+    An error will be raised if the parent of ``self`` is a ramified extension::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = Qp(5).extension(x^2 - 5)
@@ -56,7 +57,6 @@ def frobenius_unram(self, arithmetic=True):
         sage: x = R.random_element()
         sage: x.frobenius(arithmetic=false).frobenius() == x
         True
-
     """
     if self == 0:
         return self
@@ -96,9 +96,9 @@ def norm_unram(self, base = None):
 
     INPUT:
 
-    - ``base`` -- a subfield of the parent `L` of this element.
-                  The norm is the relative norm from ``L`` to ``base``.
-                  Defaults to the absolute norm down to `\QQ_p` or `\ZZ_p`.
+    - ``base`` -- a subfield of the parent `L` of this element; the norm is the
+      relative norm from ``L`` to ``base``. Defaults to the absolute norm down
+      to `\QQ_p` or `\ZZ_p`.
 
     EXAMPLES::
 

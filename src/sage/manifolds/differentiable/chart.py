@@ -76,16 +76,15 @@ class DiffChart(Chart):
       method for computations involving coordinates of the chart; must be
       one of
 
-      - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
-      - ``'sympy'``: SymPy
-      - ``None``: the default of
-        :class:`~sage.manifolds.calculus_method.CalculusMethod` will be
-        used
+      - ``'SR'`` -- Sage's default symbolic engine (Symbolic Ring)
+      - ``'sympy'`` -- SymPy
+      - ``None`` -- the default of :class:`~sage.manifolds.calculus_method.CalculusMethod`
+        will be used
     - ``names`` -- (default: ``None``) unused argument, except if
       ``coordinates`` is not provided; it must then be a tuple containing
       the coordinate symbols (this is guaranteed if the shortcut operator
       ``<,>`` is used).
-    - ``coord_restrictions``: Additional restrictions on the coordinates.
+    - ``coord_restrictions`` -- additional restrictions on the coordinates.
       A restriction can be any symbolic equality or inequality involving
       the coordinates, such as ``x > y`` or ``x^2 + y^2 != 0``. The items
       of the list (or set or frozenset) ``coord_restrictions`` are combined
@@ -274,7 +273,6 @@ class DiffChart(Chart):
 
         :class:`~sage.manifolds.differentiable.chart.RealDiffChart` for charts
         on differentiable manifolds over `\RR`.
-
     """
     def __init__(self, domain, coordinates, calc_method=None, periods=None, coord_restrictions=None):
         r"""
@@ -291,7 +289,6 @@ class DiffChart(Chart):
             sage: assumptions() # no assumptions on x,y set by X._init_coordinates
             []
             sage: TestSuite(X).run()
-
         """
         super().__init__(domain, coordinates, calc_method=calc_method,
                          periods=periods, coord_restrictions=coord_restrictions)
@@ -406,7 +403,6 @@ class DiffChart(Chart):
 
             sage: M.atlas()
             [Chart (R^2, (x, y)), Chart (U, (r, phi)), Chart (U, (x, y))]
-
         """
         dom1 = self.domain()
         dom2 = other.domain()
@@ -463,7 +459,6 @@ class DiffChart(Chart):
             sage: ey(M.scalar_field(y)).display()
             1: M → ℝ
                (x, y) ↦ 1
-
         """
         return self._frame
 
@@ -512,7 +507,6 @@ class DiffChart(Chart):
             sage: dy(ey).display()
             dy(∂/∂y): M → ℝ
                (x, y) ↦ 1
-
         """
         return self._coframe
 
@@ -563,7 +557,6 @@ class DiffChart(Chart):
             sage: B = M.open_subset('B')
             sage: X_B = X.restrict(B, abs(z1)^2 + abs(z2)^2 < 1); X_B
             Chart (B, (z1, z2))
-
         """
         if subset == self.domain():
             return self
@@ -601,9 +594,7 @@ class DiffChart(Chart):
         - ``right`` -- (default: ``None``) string to concatenate to the
           right of each coordinate functions of the chart
 
-        OUTPUT:
-
-        - a list of symbolic expressions with the desired names
+        OUTPUT: list of symbolic expressions with the desired names
 
         EXAMPLES:
 
@@ -614,25 +605,24 @@ class DiffChart(Chart):
             sage: cart.<X,Y,Z> = R3.chart()
             sage: D = cart.symbolic_velocities(); D
             [DX, DY, DZ]
-            sage: D = cart.symbolic_velocities(left='d', right="/dt"); D
+            sage: D = cart.symbolic_velocities(left='d', right='/dt'); D
             Traceback (most recent call last):
             ...
             ValueError: The name "dX/dt" is not a valid Python
              identifier.
-            sage: D = cart.symbolic_velocities(left='d', right="_dt"); D
+            sage: D = cart.symbolic_velocities(left='d', right='_dt'); D
             [dX_dt, dY_dt, dZ_dt]
             sage: D = cart.symbolic_velocities(left='', right="'"); D
             Traceback (most recent call last):
             ...
             ValueError: The name "X'" is not a valid Python
              identifier.
-            sage: D = cart.symbolic_velocities(left='', right="_dot"); D
+            sage: D = cart.symbolic_velocities(left='', right='_dot'); D
             [X_dot, Y_dot, Z_dot]
             sage: R.<t> = manifolds.RealLine()
             sage: canon_chart = R.default_chart()
             sage: D = canon_chart.symbolic_velocities() ; D
             [Dt]
-
         """
 
         from sage.symbolic.ring import var
@@ -729,16 +719,15 @@ class RealDiffChart(DiffChart, RealChart):
       method for computations involving coordinates of the chart; must be
       one of
 
-      - ``'SR'``: Sage's default symbolic engine (Symbolic Ring)
-      - ``'sympy'``: SymPy
-      - ``None``: the default of
-        :class:`~sage.manifolds.calculus_method.CalculusMethod` will be
-        used
+      - ``'SR'`` -- Sage's default symbolic engine (Symbolic Ring)
+      - ``'sympy'`` -- SymPy
+      - ``None`` -- the default of :class:`~sage.manifolds.calculus_method.CalculusMethod`
+        will be used
     - ``names`` -- (default: ``None``) unused argument, except if
       ``coordinates`` is not provided; it must then be a tuple containing
       the coordinate symbols (this is guaranteed if the shortcut operator
       ``<,>`` is used).
-    - ``coord_restrictions``: Additional restrictions on the coordinates.
+    - ``coord_restrictions`` -- additional restrictions on the coordinates.
       A restriction can be any symbolic equality or inequality involving
       the coordinates, such as ``x > y`` or ``x^2 + y^2 != 0``. The items
       of the list (or set or frozenset) ``coord_restrictions`` are combined
@@ -973,7 +962,6 @@ class RealDiffChart(DiffChart, RealChart):
 
     Chart grids can be drawn in 2D or 3D graphics thanks to the method
     :meth:`~sage.manifolds.chart.RealChart.plot`.
-
     """
     def __init__(self, domain, coordinates, calc_method=None,
                  bounds=None, periods=None, coord_restrictions=None):
@@ -992,7 +980,6 @@ class RealDiffChart(DiffChart, RealChart):
             sage: assumptions()  # assumptions set in X._init_coordinates
             [x is real, y is real]
             sage: TestSuite(X).run()
-
         """
         RealChart.__init__(self, domain, coordinates, calc_method=calc_method,
                            bounds=bounds, periods=periods, coord_restrictions=coord_restrictions)
@@ -1062,7 +1049,6 @@ class RealDiffChart(DiffChart, RealChart):
             sage: a = M.point((3/2,0))
             sage: a in A
             True
-
         """
         if subset == self.domain():
             return self
@@ -1130,7 +1116,6 @@ class DiffCoordChange(CoordChange):
         sage: X_to_Y.display()
         u = x + y
         v = x - y
-
     """
     def __init__(self, chart1, chart2, *transformations):
         r"""
@@ -1151,7 +1136,6 @@ class DiffCoordChange(CoordChange):
         .. TODO::
 
             fix _test_pickling
-
         """
         CoordChange.__init__(self, chart1, chart2, *transformations)
         # Jacobian matrix:
@@ -1218,7 +1202,6 @@ class DiffCoordChange(CoordChange):
 
             sage: parent(X_to_Y.jacobian()[0,0])
             Ring of chart functions on Chart (M, (x, y))
-
         """
         return self._jacobian  # has been computed in __init__
 
@@ -1253,6 +1236,5 @@ class DiffCoordChange(CoordChange):
 
             sage: parent(X_to_Y.jacobian_det())
             Ring of chart functions on Chart (M, (x, y))
-
         """
         return self._transf.jacobian_det()

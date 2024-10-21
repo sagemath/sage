@@ -1361,7 +1361,7 @@ cdef class LetterTuple(Element):
 
     cpdef _richcmp_(left, right, int op):
         """
-        Check comparison between ``left`` and ``right`` based on ``op``
+        Check comparison between ``left`` and ``right`` based on ``op``.
 
         EXAMPLES::
 
@@ -2826,7 +2826,7 @@ cdef class LetterWrapped(Element):
 
     cpdef _richcmp_(left, right, int op):
         """
-        Check comparison between ``left`` and ``right`` based on ``op``
+        Check comparison between ``left`` and ``right`` based on ``op``.
 
         EXAMPLES::
 

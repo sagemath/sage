@@ -49,7 +49,7 @@ class Ellipse(GraphicPrimitive):
     """
     def __init__(self, x, y, r1, r2, angle, options):
         """
-        Initializes base class ``Ellipse``.
+        Initialize base class ``Ellipse``.
 
         TESTS::
 
@@ -249,22 +249,22 @@ def ellipse(center, r1, r2, angle=0, **options):
 
     OPTIONS:
 
-    - ``alpha`` -- (default: 1); transparency
+    - ``alpha`` -- (default: 1) transparency
 
-    - ``fill`` -- (default: ``False``); whether to fill the ellipse or not
+    - ``fill`` -- (default: ``False``) whether to fill the ellipse or not
 
-    - ``thickness`` -- (default: 1); thickness of the line
+    - ``thickness`` -- (default: 1) thickness of the line
 
-    - ``linestyle`` -- (default: ``'solid'``); The style of the line, which is one
+    - ``linestyle`` -- (default: ``'solid'``) the style of the line, which is one
       of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or ``'--'``,
-      ``':'``, ``'-'``, ``'-.'``,  respectively.
+      ``':'``, ``'-'``, ``'-.'``,  respectively
 
-    - ``edgecolor`` -- (default: 'black'); color of the contour
+    - ``edgecolor`` -- (default: ``'black'``) color of the contour
 
-    - ``facecolor`` -- (default: 'red'); color of the filling
+    - ``facecolor`` -- (default: ``'red'``) color of the filling
 
     - ``rgbcolor`` -- 2D or 3D plotting.  This option overrides
-      ``edgecolor`` and ``facecolor`` for 2D plotting.
+      ``edgecolor`` and ``facecolor`` for 2D plotting
 
     - ``legend_label`` -- the label for this item in the legend
 
@@ -286,17 +286,17 @@ def ellipse(center, r1, r2, angle=0, **options):
     More complicated examples with tilted axes and drawing options::
 
         sage: from math import pi
-        sage: ellipse((0,0), 3, 1, pi/6, fill=True, alpha=0.3, linestyle="dashed")
+        sage: ellipse((0,0), 3, 1, pi/6, fill=True, alpha=0.3, linestyle='dashed')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-        E = ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle="dashed")
+        E = ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle='dashed')
         sphinx_plot(E)
 
     other way to indicate dashed linestyle::
 
-        sage: ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle="--")
+        sage: ellipse((0,0),3,1,pi/6,fill=True,alpha=0.3,linestyle='--')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -351,7 +351,7 @@ def ellipse(center, r1, r2, angle=0, **options):
 
     Verify that :issue:`36153` does not arise::
 
-        sage: E = ellipse((0,0), 2, 1, legend_label="test")
+        sage: E = ellipse((0,0), 2, 1, legend_label='test')
     """
     from sage.plot.all import Graphics
     g = Graphics()

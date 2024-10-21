@@ -138,22 +138,21 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
 
     def __init__(self, ambient_space, basis, check):
         r"""
-        Return the Submodule of (Hecke) forms in ``ambient_space`` for the given ``basis``.
+        Return the Submodule of (Hecke) forms in ``ambient_space`` for the
+        given ``basis``.
 
         INPUT:
 
-        - ``ambient_space``  -- An ambient forms space.
+        - ``ambient_space`` -- an ambient forms space
 
-        - ``basis``          -- A tuple of (not necessarily linearly independent)
-                                elements of ``ambient_space``.
+        - ``basis`` -- a tuple of (not necessarily linearly independent)
+          elements of ``ambient_space``
 
-        - ``check``          -- If ``True`` (default) then a maximal linearly
-                                independent subset of ``basis`` is chosen. Otherwise
-                                it is assumed that ``basis`` is linearly independent.
+        - ``check`` -- if ``True`` (default) then a maximal linearly
+          independent subset of ``basis`` is chosen. Otherwise it is assumed
+          that ``basis`` is linearly independent.
 
-        OUTPUT:
-
-        The corresponding submodule.
+        OUTPUT: the corresponding submodule
 
         EXAMPLES::
 
@@ -384,7 +383,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
 
         INPUT:
 
-        - ``v`` -- An element of ``self``.
+        - ``v`` -- an element of ``self``
 
         OUTPUT:
 

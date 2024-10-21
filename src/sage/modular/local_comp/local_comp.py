@@ -38,6 +38,7 @@ lazy_import('sage.rings.qqbar', 'QQbar')
 from .type_space import TypeSpace
 from .smoothchar import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic, SmoothCharacterGroupRamifiedQuadratic
 
+
 def LocalComponent(f, p, twist_factor=None):
     r"""
     Calculate the local component at the prime `p` of the automorphic
@@ -45,11 +46,11 @@ def LocalComponent(f, p, twist_factor=None):
 
     INPUT:
 
-    - ``f`` (:class:`~sage.modular.modform.element.Newform`) a newform of weight `k \ge 2`
-    - ``p`` (integer) a prime
-    - ``twist_factor`` (integer) an integer congruent to `k` modulo 2 (default: `k - 2`)
+    - ``f`` -- (:class:`~sage.modular.modform.element.Newform`) a newform of weight `k \ge 2`
+    - ``p`` -- integer; prime
+    - ``twist_factor`` -- integer congruent to `k` modulo 2 (default: `k - 2`)
 
-    .. note::
+    .. NOTE::
 
         The argument ``twist_factor`` determines the choice of normalisation: if it is
         set to `j \in \ZZ`, then the central character of `\pi_{f, \ell}` maps `\ell`
@@ -116,6 +117,7 @@ def LocalComponent(f, p, twist_factor=None):
     mintwist = LocalComponent(g, p, twist_factor)
     return ImprimitiveLocalComponent(f, p, twist_factor, mintwist, chi)
 
+
 class LocalComponentBase(SageObject):
     r"""
     Base class for local components of newforms. Not to be directly instantiated; use the :func:`~LocalComponent` constructor function.
@@ -170,7 +172,7 @@ class LocalComponentBase(SageObject):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -299,7 +301,7 @@ class LocalComponentBase(SageObject):
 
     def __ne__(self, other):
         """
-        Return True if ``self != other``.
+        Return ``True`` if ``self != other``.
 
         EXAMPLES::
 
@@ -317,6 +319,7 @@ class LocalComponentBase(SageObject):
         """
         return not (self == other)
 
+
 class PrimitiveLocalComponent(LocalComponentBase):
     r"""
     Base class for primitive (twist-minimal) local components.
@@ -324,7 +327,7 @@ class PrimitiveLocalComponent(LocalComponentBase):
 
     def is_primitive(self):
         r"""
-        Return True if this local component is primitive (has minimal level
+        Return ``True`` if this local component is primitive (has minimal level
         among its character twists).
 
         EXAMPLES::
@@ -346,6 +349,7 @@ class PrimitiveLocalComponent(LocalComponentBase):
             True
         """
         return self
+
 
 class PrincipalSeries(PrimitiveLocalComponent):
     r"""
@@ -400,6 +404,7 @@ class PrincipalSeries(PrimitiveLocalComponent):
         """
         pass
 
+
 class UnramifiedPrincipalSeries(PrincipalSeries):
     r"""
     An unramified principal series representation of `{\rm GL}_2(\QQ_p)`
@@ -446,7 +451,7 @@ class UnramifiedPrincipalSeries(PrincipalSeries):
         `\pi_{f, p}` is equal to the principal series `\pi(\chi_1, \chi_2)`.
         These are the unramified characters mapping `p` to the roots of the Satake polynomial,
         so in most cases (but not always) they will be defined over an
-        extension of the coefficient field of self.
+        extension of the coefficient field of ``self``.
 
         EXAMPLES::
 
@@ -469,6 +474,7 @@ class UnramifiedPrincipalSeries(PrincipalSeries):
             d = self.coefficient_field().extension(f, 'd').gen()
         G = SmoothCharacterGroupQp(self.prime(), d.parent())
         return Sequence([G.character(0, [d]), G.character(0, [self.newform()[self.prime()] - d])], cr=True, universe=G)
+
 
 class PrimitivePrincipalSeries(PrincipalSeries):
     r"""
@@ -500,6 +506,7 @@ class PrimitivePrincipalSeries(PrincipalSeries):
         chi1 = G.character(0, [self.newform()[self.prime()]]) * G.norm_character()**t
         chi2 = G.character(0, [self.prime()]) * self.central_character() / chi1
         return Sequence([chi1, chi2], cr=True, universe=G)
+
 
 class PrimitiveSpecial(PrimitiveLocalComponent):
     r"""
@@ -586,6 +593,7 @@ class PrimitiveSpecial(PrimitiveLocalComponent):
         w = QQbar(p)**(self.twist_factor() / ZZ(2))
         for sigma in K.embeddings(QQbar):
             assert sigma(c1(p)).abs() == w
+
 
 class PrimitiveSupercuspidal(PrimitiveLocalComponent):
     r"""
@@ -972,6 +980,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
         for sigma in K.embeddings(QQbar):
             assert sigma(c1(p)).abs() == sigma(c2(p)).abs() == w
 
+
 class ImprimitiveLocalComponent(LocalComponentBase):
     r"""
     A smooth representation which is not of minimal level among its character
@@ -992,7 +1001,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
 
     def is_primitive(self):
         r"""
-        Return True if this local component is primitive (has minimal level
+        Return ``True`` if this local component is primitive (has minimal level
         among its character twists).
 
         EXAMPLES::

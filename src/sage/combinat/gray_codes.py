@@ -22,7 +22,7 @@ def product(m):
 
     INPUT:
 
-    - ``m`` -- a list or tuple of positive integers that correspond to the size
+    - ``m`` -- list or tuple of positive integers that correspond to the size
       of the sets in the product
 
     EXAMPLES::
@@ -120,9 +120,9 @@ def combinations(n,t):
 
     INPUT:
 
-    - ``n`` -- (integer or ``Infinity``) -- size of the ground set
+    - ``n`` -- integer or ``Infinity``; size of the ground set
 
-    - ``t`` -- (integer) -- size of the subsets
+    - ``t`` -- integer; size of the subsets
 
     EXAMPLES::
 
@@ -194,7 +194,6 @@ def combinations(n,t):
         Traceback (most recent call last):
         ...
         AssertionError: t(=6) must be >=0 and <=n(=5)
-
     """
     from sage.rings.infinity import Infinity
     t = int(t)

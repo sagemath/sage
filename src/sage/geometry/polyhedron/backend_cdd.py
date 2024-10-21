@@ -35,8 +35,8 @@ class Polyhedron_cdd(Polyhedron_base):
         INPUT:
 
         - ``vertices`` -- list of point. Each point can be specified
-           as any iterable container of
-           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
+          as any iterable container of
+          :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
         - ``rays`` -- list of rays. Each ray can be specified as any
           iterable container of
@@ -46,8 +46,8 @@ class Polyhedron_cdd(Polyhedron_base):
           any iterable container of
           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to print
-          verbose output for debugging purposes.
+        - ``verbose`` -- boolean (default: ``False``); whether to print
+          verbose output for debugging purposes
 
         EXAMPLES::
 
@@ -98,8 +98,8 @@ class Polyhedron_cdd(Polyhedron_base):
           as any iterable container of
           :meth:`~sage.geometry.polyhedron.base.base_ring` elements.
 
-        - ``verbose`` -- boolean (default: ``False``). Whether to print
-          verbose output for debugging purposes.
+        - ``verbose`` -- boolean (default: ``False``); whether to print
+          verbose output for debugging purposes
 
         EXAMPLES::
 
@@ -194,7 +194,6 @@ class Polyhedron_cdd(Polyhedron_base):
             sage: Polyhedron_cdd._parse_block(cddout, 'HEADER', parser)
             INTRO: [['intro', '0', '1', '2']]
             DATA: [['data', '0', '1', '2'], ['data', '3', '4', '5']]
-
         """
         try:
             block = cddout[cddout.index(header)+1:]
@@ -408,16 +407,16 @@ class Polyhedron_cdd(Polyhedron_base):
 
 class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
     """
-    Polyhedra over QQ with cdd
+    Polyhedra over QQ with cdd.
 
     INPUT:
 
     - ``parent`` -- the parent, an instance of
-      :class:`~sage.geometry.polyhedron.parent.Polyhedra`.
+      :class:`~sage.geometry.polyhedron.parent.Polyhedra`
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``.
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``.
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 

@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-modules
-def create_RealField(prec=53, type="MPFR", rnd="RNDN", sci_not=0):
+def create_RealField(prec=53, type='MPFR', rnd='RNDN', sci_not=0):
     """
     Create a real field with given precision, type, rounding mode and
     scientific notation.
@@ -8,7 +8,7 @@ def create_RealField(prec=53, type="MPFR", rnd="RNDN", sci_not=0):
 
     INPUT:
 
-    - ``prec`` -- a positive integer
+    - ``prec`` -- positive integer
 
     - ``type`` -- type of real field:
 
@@ -27,9 +27,7 @@ def create_RealField(prec=53, type="MPFR", rnd="RNDN", sci_not=0):
 
     - ``sci_not`` -- boolean, whether to use scientific notation for printing
 
-    OUTPUT:
-
-    the appropriate real field
+    OUTPUT: the appropriate real field
 
     EXAMPLES::
 

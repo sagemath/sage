@@ -212,7 +212,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         Traceback (most recent call last):
         ...
         ValueError: the components of an immutable element cannot be changed
-
     """
     def __init__(self, parent, name=None, latex_name=None):
         r"""
@@ -239,7 +238,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             sage: A = M.mixed_form_algebra()
             sage: F = A([x, omega, eta], name='F')
             sage: TestSuite(F).run(skip='_test_pickling')
-
         """
         if parent is None:
             raise ValueError("a parent must be provided")
@@ -278,7 +276,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             [Scalar field A_0 on the 2-dimensional differentiable manifold M,
              1-form A_1 on the 2-dimensional differentiable manifold M,
              2-form A_2 on the 2-dimensional differentiable manifold M]
-
         """
         self._comp = []
         for i in self.irange():
@@ -316,7 +313,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             Mixed differential form one along the 2-sphere S^2 of radius 1
              smoothly embedded in the Euclidean space E^3 with values on the
              Euclidean space E^3 via the map iota
-
         """
         desc = "Mixed differential form "
         if self._name is not None:
@@ -344,7 +340,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             '\\omega'
             sage: latex(omega)  # indirect doctest
             \omega
-
         """
         if self._name is None:
             return r'\text{' + repr(self) + r'}'
@@ -366,7 +361,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             True
             sage: F1.parent() is F.parent()
             True
-
         """
         return type(self)(self.parent(), name=name, latex_name=latex_name)
 
@@ -418,7 +412,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             F = (1/4*u + 1/4*v) du + (1/4*u + 1/4*v) dv + u*v du∧dv
             sage: F.display_expansion(e_xy)
             F = x dx + (2*x^2 - 2*y^2) dx∧dy
-
         """
         from sage.misc.latex import latex
         from sage.typeset.unicode_characters import unicode_wedge
@@ -530,7 +523,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
              manifold M
             sage: F.display() # display names of homogeneous components
             F = f + omega + eta
-
         """
         from sage.misc.latex import latex
         from sage.tensor.modules.format_utilities import FormattedExpansion
@@ -575,8 +567,8 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         - ``name`` -- (default: ``None``) name given to the mixed form
         - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           mixed form; if none is provided, the LaTeX symbol is set to ``name``
-        - ``apply_to_comp`` -- (default: ``True``) if ``True`` all homogeneous
-          components will be renamed accordingly; if ``False`` only the mixed
+        - ``apply_to_comp`` -- boolean (default: ``True``); if ``True`` all homogeneous
+          components will be renamed accordingly. If ``False`` only the mixed
           form will be renamed
 
         EXAMPLES:
@@ -666,7 +658,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             True
             sage: F.is_zero()  # indirect doctest
             False
-
         """
         if self._is_zero:
             return False
@@ -684,7 +675,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
 
         - ``other`` -- a mixed form
         - ``op`` -- comparison operator for which ``self`` and ``other`` shall
-          be compared with.
+          be compared with
 
         TESTS::
 
@@ -713,14 +704,13 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             sage: F == G  # False since G has not been defined on V
             False
             sage: G.set_restriction(F.restrict(V))
-            sage: F == G  # True now
+            sage: F == G  # ``True`` now
             True
             sage: H = M.mixed_form([f, 0, 0])
             sage: F != H  # this is fixed by issue #30108
             True
             sage: F.parent().zero() == 0
             True
-
         """
         from sage.structure.richcmp import op_NE, op_EQ
         if op == op_NE:
@@ -788,7 +778,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             True
             sage: Z._add_(A) == A
             True
-
         """
         # Case zero:
         if self._is_zero:
@@ -862,7 +851,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             True
             sage: Z._sub_(A) == -A
             True
-
         """
         # Case zero:
         if self._is_zero:
@@ -978,7 +966,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             x∧A = x^2 + x^2 dx + x*z dx∧dz
             sage: F = A*eta; F.display_expansion()
             A∧eta = x*y dy + x*y dx∧dy - y*z dx∧dy∧dz
-
         """
         # Case zero:
         if self._is_zero or other._is_zero:
@@ -1030,7 +1017,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
              differentiable manifold M
             sage: A.display_expansion()
             y∧(x∧F) = x^2*y^2 dx
-
         """
         try:
             if other.is_trivial_zero():
@@ -1109,7 +1095,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
 
             sage: F.exterior_derivative() is dF
             True
-
         """
         resu = self._new_instance()
         resu[0] = self._domain.zero_scalar_field()
@@ -1179,7 +1164,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             True
             sage: A is B
             False
-
         """
         resu = self._new_instance()
         resu._comp = [form.copy() for form in self]
@@ -1190,7 +1174,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
 
     def __setitem__(self, index, values):
         r"""
-        Sets a component with respect to some vector frame.
+        Set a component with respect to some vector frame.
 
         - ``index`` -- list of indices; if ``[:]`` is provided, all the
           components are set
@@ -1211,7 +1195,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             A = f + a + b
             sage: A.display_expansion()
             A = x + y dx + x*y dx∧dy
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -1262,7 +1245,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             [Scalar field f on the 2-dimensional differentiable manifold M,
              1-form a on the 2-dimensional differentiable manifold M,
              2-form b on the 2-dimensional differentiable manifold M]
-
         """
         if self._comp is None:
             self._init_comp()
@@ -1318,7 +1300,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             A = u/(u^2 + v^2) - (u^2*v - v^3)/(u^6 + 3*u^4*v^2 + 3*u^2*v^4 + v^6) du - 2*u*v^2/(u^6 + 3*u^4*v^2 + 3*u^2*v^4 + v^6) dv
             sage: A.restrict(U) == AU
             True
-
         """
         if not isinstance(rst, MixedForm):
             raise TypeError("the argument must be a mixed form")
@@ -1346,9 +1327,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
           used, `\Phi` being the differentiable map `S \rightarrow M` associated
           with the mixed form
 
-        OUTPUT:
-
-        - :class:`MixedForm` representing the restriction
+        OUTPUT: :class:`MixedForm` representing the restriction
 
         EXAMPLES:
 
@@ -1393,7 +1372,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
              differentiable manifold M]
             sage: FV.display_expansion(e_uv)
             F = u^2/(u^4 + 2*u^2*v^2 + v^4) - (u^2*v^2 - v^4)/(u^8 + 4*u^6*v^2 + 6*u^4*v^4 + 4*u^2*v^6 + v^8) du - 2*u*v^3/(u^8 + 4*u^6*v^2 + 6*u^4*v^4 + 4*u^2*v^6 + v^8) dv - u^2*v^2/(u^12 + 6*u^10*v^2 + 15*u^8*v^4 + 20*u^6*v^6 + 15*u^4*v^8 + 6*u^2*v^10 + v^12) du∧dv
-
         """
         resu = type(self)(subdomain.mixed_form_algebra(dest_map=dest_map),
                           name=self._name, latex_name=self._latex_name)
@@ -1449,7 +1427,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             F = x + x dx - x*y/(x^8 + 4*x^6*y^2 + 6*x^4*y^4 + 4*x^2*y^6 + y^8) dx∧dy
             sage: F.display_expansion(e_uv)
             F = u/(u^2 + v^2) - (u^3 - u*v^2)/(u^6 + 3*u^4*v^2 + 3*u^2*v^4 + v^6) du - 2*u^2*v/(u^6 + 3*u^4*v^2 + 3*u^2*v^4 + v^6) dv + u*v du∧dv
-
         """
         if chart is None:
             chart = frame._chart
@@ -1480,7 +1457,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             [0, 1, 2, 3]
             sage: list(a.irange(2))
             [2, 3]
-
         """
         return self.parent().irange(start=start)
 
@@ -1500,7 +1476,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             A = A_0 + A_1 + A_2
             sage: A.display_expansion()
             A = x^2 - y dx + x dy + (x - y) dx∧dy
-
         """
         return self[i]
 
@@ -1521,7 +1496,6 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             True
             sage: f.is_immutable()
             False
-
         """
         for form in self:
             form.set_immutable()

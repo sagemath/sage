@@ -169,7 +169,7 @@ layout_options = {
         'Which graphviz layout program to use -- one of '
         '"circo", "dot", "fdp", "neato", or "twopi".',
     'by_component':
-        'Whether to do the spring layout by connected component -- a boolean.'}
+        'Whether to do the spring layout by connected component -- boolean.'}
 
 graphplot_options = layout_options.copy()
 
@@ -1034,7 +1034,6 @@ class GraphPlot(SageObject):
             P = C.graphplot(vertex_labels=False, vertex_size=0,
                             graph_border=True)
             sphinx_plot(P)
-
         """
         # Setting the default values if needed
         for k, value in DEFAULT_SHOW_OPTIONS.items():
@@ -1335,7 +1334,7 @@ class GraphPlot(SageObject):
 
             t = DiGraph('JCC???@A??GO??CO??GO??')
             sphinx_plot(t.graphplot(layout='tree', tree_root=0,
-                                    tree_orientation="up"))
+                                    tree_orientation='up'))
 
         More examples::
 
@@ -1468,7 +1467,7 @@ class GraphPlot(SageObject):
 
         INPUT:
 
-        - ``root`` -- the root vertex.
+        - ``root`` -- the root vertex
 
         - ``orientation`` -- whether to place the root at the top or at the
           bottom:
@@ -1493,7 +1492,7 @@ class GraphPlot(SageObject):
         children = {root: T.neighbors(root)}
 
         # Always make a copy of the children because they get eaten
-        stack = [[u for u in children[root]]]
+        stack = [list(children[root])]
         stick = [root]
         parent = {u: root for u in children[root]}
         pos = {}

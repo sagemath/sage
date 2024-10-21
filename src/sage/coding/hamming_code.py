@@ -34,9 +34,9 @@ class HammingCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``base_field`` -- the base field over which ``self`` is defined.
+    - ``base_field`` -- the base field over which ``self`` is defined
 
-    - ``order`` -- the order of ``self``.
+    - ``order`` -- the order of ``self``
 
     EXAMPLES::
 
@@ -148,7 +148,6 @@ class HammingCode(AbstractLinearCode):
             [1 0 1 1 0 1 0 1 1 1 0 1 1]
             [0 1 1 2 0 0 1 1 2 0 1 1 2]
             [0 0 0 0 1 1 1 1 1 2 2 2 2]
-
         """
         n = self.length()
         F = self.base_field()

@@ -562,8 +562,8 @@ class EllipticCurveHom(Morphism):
 
         INPUT:
 
-        - ``prec`` -- (default: 20), the precision with which the
-          computations in the formal group are carried out.
+        - ``prec`` -- (default: 20) the precision with which the
+          computations in the formal group are carried out
 
         EXAMPLES::
 

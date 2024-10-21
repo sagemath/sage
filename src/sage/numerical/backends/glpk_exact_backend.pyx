@@ -16,7 +16,6 @@ AUTHORS:
 ##############################################################################
 
 cdef class GLPKExactBackend(GLPKBackend):
-
     """
     MIP Backend that runs the GLPK solver in exact rational simplex mode.
 
@@ -32,11 +31,11 @@ cdef class GLPKExactBackend(GLPKBackend):
     """
     def __cinit__(self, maximization = True):
         """
-        Constructor
+        Constructor.
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(solver="GLPK/exact")
+            sage: p = MixedIntegerLinearProgram(solver='GLPK/exact')
         """
         # inherited __cinit__ is called automatically
         import sage.numerical.backends.glpk_backend as glpk_backend
@@ -59,17 +58,17 @@ cdef class GLPKExactBackend(GLPKBackend):
 
         - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``)
 
-        - ``integer`` -- ``True`` if the variable is integer (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integer (default: ``False``)
 
         - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` -- an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``)
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
@@ -127,17 +126,17 @@ cdef class GLPKExactBackend(GLPKBackend):
 
         - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``)
 
-        - ``integer`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` -- optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
-        OUTPUT: The index of the variable created last.
+        OUTPUT: the index of the variable created last
 
         EXAMPLES::
 
@@ -167,9 +166,9 @@ cdef class GLPKExactBackend(GLPKBackend):
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``vtype`` (integer) :
+        - ``vtype`` -- integer:
 
             *  1  Integer
             *  0  Binary

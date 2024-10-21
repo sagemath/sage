@@ -6,7 +6,7 @@ This module implements :class:`GenericGraphBackend` (the base class for
 backends).
 
 Any graph backend must redefine the following methods (for which
-:class:`GenericGraphBackend` raises a :class:`NotImplementedError`)
+:class:`GenericGraphBackend` raises a :exc:`NotImplementedError`)
 
 .. csv-table::
     :class: contentstable
@@ -70,7 +70,6 @@ cdef class GenericGraphBackend(SageObject):
     TESTS::
 
         sage: import sage.graphs.base.graph_backends
-
     """
     _loops = False
     _multiple_edges = False
@@ -129,9 +128,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``name`` -- vertex label
 
-        OUTPUT:
-
-        If ``name=None``, the new vertex name is returned, ``None`` otherwise.
+        OUTPUT: if ``name=None``, the new vertex name is returned, ``None`` otherwise
 
         TESTS::
 
@@ -177,9 +174,7 @@ cdef class GenericGraphBackend(SageObject):
         - ``v`` -- a vertex label
         - ``directed`` -- boolean
 
-        OUTPUT:
-
-        degree of `v`
+        OUTPUT: degree of `v`
 
         TESTS::
 
@@ -193,7 +188,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def in_degree(self, v):
         r"""
-        Return the in-degree of `v`
+        Return the in-degree of `v`.
 
         INPUT:
 
@@ -211,7 +206,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def out_degree(self, v):
         r"""
-        Return the out-degree of `v`
+        Return the out-degree of `v`.
 
         INPUT:
 
@@ -314,9 +309,7 @@ cdef class GenericGraphBackend(SageObject):
         - ``u``, ``v`` -- vertex labels
         - ``l`` -- label
 
-        OUTPUT:
-
-            boolean
+        OUTPUT: boolean
 
         TESTS::
 
@@ -336,8 +329,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``v`` -- vertex label
 
-        OUTPUT:
-            boolean
+        OUTPUT: boolean
 
         TESTS::
 
@@ -360,7 +352,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
         - ``labels`` -- boolean
 
         OUTPUT:
@@ -387,12 +379,11 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
         - ``labels`` -- boolean
 
-        OUTPUT:
-            a generator which yields edges, with or without labels
-            depending on the labels parameter.
+        OUTPUT: a generator which yields edges, with or without labels
+        depending on the labels parameter
 
         TESTS::
 
@@ -413,7 +404,7 @@ cdef class GenericGraphBackend(SageObject):
 
         INPUT:
 
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
         - ``labels`` -- boolean
 
         OUTPUT:
@@ -443,9 +434,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``v`` -- vertex label
 
-        OUTPUT:
-
-            a generator which yields vertex labels
+        OUTPUT: a generator which yields vertex labels
 
         TESTS::
 
@@ -468,9 +457,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``v`` -- vertex label
 
-        OUTPUT:
-
-            a generator which yields vertex labels
+        OUTPUT: a generator which yields vertex labels
 
         TESTS::
 
@@ -493,9 +480,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``v`` -- vertex label
 
-        OUTPUT:
-
-            a generator which yields vertex labels
+        OUTPUT: a generator which yields vertex labels
 
         TESTS::
 
@@ -515,9 +500,7 @@ cdef class GenericGraphBackend(SageObject):
 
         - ``verts`` -- vertex labels
 
-        OUTPUT:
-
-            a generator which yields vertices
+        OUTPUT: a generator which yields vertices
 
         TESTS::
 
@@ -531,7 +514,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def loops(self, new=None):
         """
-        Get/set whether or not self allows loops.
+        Get/set whether or not ``self`` allows loops.
 
         INPUT:
 
@@ -555,7 +538,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def multiple_edges(self, new=None):
         """
-        Get/set whether or not self allows multiple edges.
+        Get/set whether or not ``self`` allows multiple edges.
 
         INPUT:
 
@@ -579,7 +562,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def name(self, new=None):
         """
-        Get/set name of self.
+        Get/set name of ``self``.
 
         INPUT:
 
@@ -603,7 +586,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def num_edges(self, directed):
         """
-        Return the number of edges in ``self``
+        Return the number of edges in ``self``.
 
         INPUT:
 
@@ -625,7 +608,7 @@ cdef class GenericGraphBackend(SageObject):
 
     def num_verts(self):
         """
-        Return the number of vertices in ``self``
+        Return the number of vertices in ``self``.
 
         TESTS::
 
@@ -758,7 +741,7 @@ cdef class GenericGraphBackend(SageObject):
 
 def unpickle_graph_backend(directed, vertices, edges, kwds):
     r"""
-    Return a backend from its pickled data
+    Return a backend from its pickled data.
 
     This methods is defined because Python's pickling mechanism can only build
     objects from a pair ``(f,args)`` by running ``f(*args)``. In particular,

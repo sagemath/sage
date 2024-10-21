@@ -55,7 +55,7 @@ class BarChart(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 

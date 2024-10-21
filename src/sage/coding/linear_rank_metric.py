@@ -143,8 +143,8 @@ def to_matrix_representation(v, sub_field=None, basis=None):
 
     - ``v`` -- a vector over some field `\GF{q^m}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`. If not
-      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, given that `q = p^s`, let
@@ -176,6 +176,7 @@ def to_matrix_representation(v, sub_field=None, basis=None):
     m = base_field.degree()//sub_field.degree()
     extension, to_big_field, from_big_field = base_field.vector_space(sub_field, basis, map=True)
     return matrix(sub_field, m, n, lambda i, j: from_big_field(v[j])[i])
+
 
 def from_matrix_representation(w, base_field=None, basis=None):
     r"""
@@ -236,8 +237,8 @@ def rank_weight(c, sub_field=None, basis=None):
 
     - ``c`` -- a vector over some field `\GF{q^m}`; or a matrix over `\GF{q}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`. If not
-      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, given that `q = p^s`, let
@@ -256,6 +257,7 @@ def rank_weight(c, sub_field=None, basis=None):
         c = to_matrix_representation(c, sub_field, basis)
     return c.rank()
 
+
 def rank_distance(a, b, sub_field=None, basis=None):
     r"""
     Return the rank of ``a`` - ``b`` as a matrix over ``sub_field``.
@@ -273,8 +275,8 @@ def rank_distance(a, b, sub_field=None, basis=None):
 
     - ``b`` -- a vector over some field `\GF{q^m}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`. If not
-      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, given that `q = p^s`, let
@@ -707,7 +709,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
                 from sage.matrix.constructor import matrix
                 generator = matrix(base_field, gen_basis)
                 if generator.nrows() == 0:
-                    raise ValueError("this linear code contains no non-zero vector")
+                    raise ValueError("this linear code contains no nonzero vector")
         except AttributeError:
             # Assume input is an AbstractLinearRankMetricCode, extract its generator matrix
             generator = generator.generator_matrix()
@@ -760,7 +762,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
           will be returned if default value is kept.
 
         - ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used.
+          encoder that is used
 
         EXAMPLES::
 
@@ -791,7 +793,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
 
         INPUT:
 
-        - ``code`` -- A code associated to this decoder
+        - ``code`` -- a code associated to this decoder
 
         EXAMPLES::
 
@@ -855,9 +857,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
 
         - ``r`` -- a codeword of ``self``
 
-        OUTPUT:
-
-        - a vector of ``self``'s message space
+        OUTPUT: a vector of ``self``'s message space
 
         EXAMPLES::
 

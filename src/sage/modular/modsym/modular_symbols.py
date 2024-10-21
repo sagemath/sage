@@ -270,8 +270,8 @@ class ModularSymbol(SageObject):
 
         INPUT:
 
-        - ``g`` -- a list ``[a,b,c,d]``, corresponding to the 2x2 matrix
-          `\begin{pmatrix} a & b \\ c & d \end{pmatrix} \in {\rm GL}_2(\QQ)`.
+        - ``g`` -- list ``[a,b,c,d]``, corresponding to the 2x2 matrix
+          `\begin{pmatrix} a & b \\ c & d \end{pmatrix} \in {\rm GL}_2(\QQ)`
 
         OUTPUT:
 

@@ -23,7 +23,7 @@ from sage.modular.modform.element import Newform
 from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class, GammaH_class
 
 from .abvar import ModularAbelianVariety_modsym_abstract
-from . import homspace
+from sage.modular.abvar import homspace
 lazy_import('sage.databases.cremona', 'cremona_letter_code')
 
 
@@ -37,7 +37,8 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         newform `f`.
 
         INPUT:
-            f -- a newform
+
+        - ``f`` -- a newform
 
         EXAMPLES::
 
@@ -124,9 +125,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         Return canonical label that defines this newform modular
         abelian variety.
 
-        OUTPUT:
-
-        string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -147,9 +146,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         """
         Return factor number.
 
-        OUTPUT:
-
-        int
+        OUTPUT: int
 
         EXAMPLES::
 

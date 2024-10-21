@@ -670,17 +670,28 @@ Deprecation
 ===========
 
 When making a **backward-incompatible** modification in Sage, the old code should
-keep working and display a message indicating how it should be updated/written
-in the future. We call this a *deprecation*.
+keep working and a message indicating how the code should be updated/written
+in the future should be displayed somewhere. We call this *deprecation*. We explain
+how to do the deprecation, the deprecation policy, below.
+
+Any class, function, method, or attribute defined in a file under
+:sage_root:`src/sage` is subject to the deprecation policy. If its name starts
+with an underscore, then it is considered internal, and exempt from the
+deprecation policy.
 
 .. NOTE::
 
-    Deprecated code can only be removed one year after the first
-    stable release in which it appeared.
+    A deprecated class, function, method, or attribute can only be removed one
+    year after the first stable release in which it appeared.
 
-Each deprecation warning contains the number of the GitHub PR that defines
-it. We use 666 in the examples below. For each entry, consult the function's
-documentation for more information on its behaviour and optional arguments.
+When a deprecated function, method, or attribute is used, a deprecation warning
+is issued. The warning message contains the number of the GitHub PR that
+implemented the deprecation. We use 12345 in the examples below.
+
+.. NOTE::
+
+    For deprecation tools used in the examples, consult the tool's documentation for more
+    information on its behaviour and optional arguments.
 
 * **Rename a keyword:** by decorating a function/method with
   :class:`~sage.misc.decorators.rename_keyword`, any user calling
@@ -689,7 +700,7 @@ documentation for more information on its behaviour and optional arguments.
   .. CODE-BLOCK:: python
 
       from sage.misc.decorators import rename_keyword
-      @rename_keyword(deprecation=666, my_old_keyword='my_new_keyword')
+      @rename_keyword(deprecation=12345, my_old_keyword='my_new_keyword')
       def my_function(my_new_keyword=True):
           return my_new_keyword
 
@@ -703,7 +714,7 @@ documentation for more information on its behaviour and optional arguments.
       def my_new_function():
           ...
 
-      my_old_function = deprecated_function_alias(666, my_new_function)
+      my_old_function = deprecated_function_alias(12345, my_new_function)
 
 * **Moving an object to a different module:**
   if you rename a source file or move some function (or class) to a
@@ -715,7 +726,7 @@ documentation for more information on its behaviour and optional arguments.
   .. CODE-BLOCK:: python
 
     from sage.misc.lazy_import import lazy_import
-    lazy_import('sage.new.module.name', 'name_of_the_function', deprecation=666)
+    lazy_import('sage.new.module.name', 'name_of_the_function', deprecation=12345)
 
   You can also lazily import everything using ``*`` or a few functions
   using a tuple:
@@ -723,8 +734,8 @@ documentation for more information on its behaviour and optional arguments.
   .. CODE-BLOCK:: python
 
     from sage.misc.lazy_import import lazy_import
-    lazy_import('sage.new.module.name', '*', deprecation=666)
-    lazy_import('sage.other.module', ('func1', 'func2'), deprecation=666)
+    lazy_import('sage.new.module.name', '*', deprecation=12345)
+    lazy_import('sage.other.module', ('func1', 'func2'), deprecation=12345)
 
 * **Remove a name from a global namespace:** this is when you want to
   remove a name from a global namespace (say, ``sage.all`` or some
@@ -738,7 +749,7 @@ documentation for more information on its behaviour and optional arguments.
   .. CODE-BLOCK:: python
 
     from sage.misc.lazy_import import lazy_import as _lazy_import
-    _lazy_import('sage.some.package', 'some_function', deprecation=666)
+    _lazy_import('sage.some.package', 'some_function', deprecation=12345)
 
 * **Any other case:** if none of the cases above apply, call
   :func:`~sage.misc.superseded.deprecation` in the function that you want to
@@ -748,18 +759,51 @@ documentation for more information on its behaviour and optional arguments.
   .. CODE-BLOCK:: python
 
       from sage.misc.superseded import deprecation
-      deprecation(666, "Do not use your computer to compute 1+1. Use your brain.")
+      deprecation(12345, "Do not use your computer to compute 1 + 1. Use your brain.")
 
-Note that these decorators only work for (pure) Python. There is no implementation
-of decorators in Cython. Hence, when in need to rename a keyword/function/method/...
-in a Cython (.pyx) file and/or to deprecate something, forget about decorators and
-just use :func:`~sage.misc.superseded.deprecation_cython` instead. The usage of
-:func:`~sage.misc.superseded.deprecation_cython` is exactly the same as
-:func:`~sage.misc.superseded.deprecation`.
+.. NOTE::
+
+    These decorators only work for Python. There is no implementation
+    of decorators in Cython. Hence, when in need to rename a keyword/function/method/...
+    in a Cython (.pyx) file and/or to deprecate something, forget about decorators and
+    just use :func:`~sage.misc.superseded.deprecation_cython` instead. The usage of
+    :func:`~sage.misc.superseded.deprecation_cython` is exactly the same as
+    :func:`~sage.misc.superseded.deprecation`.
+
+When a class is renamed or removed, it should be deprecated unless it is
+internal. A class is internal if its name starts with an underscore, or experts
+(authors and reviewers of a PR making changes to the class) agree that the
+class is unlikely to be directly imported by user code. Otherwise, or if experts
+disagree, it is public.
+
+As a class is imported rather than run by user code, there are some technical
+difficulties in using the above deprecation tools. Instead we follow
+the procedure below:
+
+* **Renaming a class:** rename ``OldClass`` to ``NewClass`` and add an
+  alias ``OldClass = NewClass``:
+
+  .. CODE-BLOCK:: python
+
+    class NewClass:
+        ...
+
+    OldClass = NewClass   # OldClass is deprecated. See Issue 12345.
+
+* **Removing a class:**  add a comment:
+
+  .. CODE-BLOCK:: python
+
+    # OldClass is deprecated. See Issue 12345.
+
+    class OldClass:
+
+In both cases, make it sure to display the change in the "Deprecations"
+section of the release notes of the next stable release.
 
 
 Experimental/unstable code
---------------------------
+==========================
 
 You can mark your newly created code (classes/functions/methods) as
 experimental/unstable. In this case, no deprecation warning is needed
@@ -780,7 +824,7 @@ reviewing process.
   .. CODE-BLOCK:: python
 
       from sage.misc.superseded import experimental
-      @experimental(66666)
+      @experimental(12345)
       def experimental_function():
           # do something
 
@@ -792,7 +836,7 @@ reviewing process.
 
       from sage.misc.superseded import experimental
       class experimental_class(SageObject):
-          @experimental(66666)
+          @experimental(12345)
           def __init__(self, some, arguments):
               # do something
 
@@ -803,7 +847,7 @@ reviewing process.
   .. CODE-BLOCK:: python
 
       from sage.misc.superseded import experimental_warning
-      experimental_warning(66666, 'This code is not foolproof.')
+      experimental_warning(12345, 'This code is not foolproof.')
 
 
 Using optional packages

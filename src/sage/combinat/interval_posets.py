@@ -96,15 +96,15 @@ class TamariIntervalPoset(Element,
 
     INPUT:
 
-    - ``size`` -- an integer, the size of the interval-posets (number of
+    - ``size`` -- integer; the size of the interval-posets (number of
       vertices)
 
-    - ``relations`` -- a list (or tuple) of pairs ``(a,b)`` (themselves
+    - ``relations`` -- list (or tuple) of pairs ``(a,b)`` (themselves
       lists or tuples), each representing a relation of the form
-      '`a` precedes `b`' in the poset.
+      '`a` precedes `b`' in the poset
 
-    - ``check`` -- (default: ``True``) whether to check the interval-poset
-      condition or not.
+    - ``check`` -- boolean (default: ``True``); whether to check the
+      interval-poset condition or not
 
     .. WARNING::
 
@@ -275,7 +275,7 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``D`` -- a dictionary with a list of latex parameters to change
+        - ``D`` -- dictionary with a list of latex parameters to change
 
         EXAMPLES::
 
@@ -723,7 +723,7 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``v`` -- an integer representing a vertex of ``self``
+        - ``v`` -- integer representing a vertex of ``self``
           (between 1 and ``size``)
 
         OUTPUT:
@@ -762,7 +762,7 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``v`` -- an integer representing a vertex of ``self``
+        - ``v`` -- integer representing a vertex of ``self``
           (between 1 and ``size``)
 
         EXAMPLES::
@@ -859,7 +859,7 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``v`` -- an integer representing a vertex of ``self``
+        - ``v`` -- integer representing a vertex of ``self``
           (between 1 and ``size``)
 
         OUTPUT:
@@ -898,7 +898,7 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``v`` -- an integer representing a vertex of ``self`` (between
+        - ``v`` -- integer representing a vertex of ``self`` (between
           1 and ``size``)
 
         EXAMPLES::
@@ -1945,8 +1945,8 @@ class TamariIntervalPoset(Element,
 
         INPUT:
 
-        - ``start`` -- an integer, the starting vertex (inclusive)
-        - ``end`` -- an integer, the ending vertex (not inclusive)
+        - ``start`` -- integer; the starting vertex (inclusive)
+        - ``end`` -- integer; the ending vertex (not inclusive)
 
         EXAMPLES::
 
@@ -2512,9 +2512,7 @@ class TamariIntervalPoset(Element,
         For the number of terms, you can use instead the method
         :meth:`number_of_new_components`.
 
-        OUTPUT:
-
-        a list of new interval-posets.
+        OUTPUT: list of new interval-posets
 
         .. SEEALSO::
 
@@ -2862,7 +2860,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``size`` -- (optional) an integer
+    - ``size`` -- integer (optional)
 
     OUTPUT:
 
@@ -2943,10 +2941,10 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
                                      description='the default value for the line width as a'
                                                  'multiple of the tikz scale when latexed',
                                      checker=lambda x: True)  # More trouble than it's worth to check
-        latex_color_decreasing = dict(default="red",
+        latex_color_decreasing = dict(default='red',
                                     description='the default color of decreasing relations when latexed',
                                     checker=lambda x: True)  # More trouble than it's worth to check
-        latex_color_increasing = dict(default="blue",
+        latex_color_increasing = dict(default='blue',
                                     description='the default color of increasing relations when latexed',
                                     checker=lambda x: True)  # More trouble than it's worth to check
         latex_hspace = dict(default=1,
@@ -3410,8 +3408,8 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
         INPUT:
 
-        a minimal Schnyder wood, given as a graph with colored and
-        oriented edges, without the three exterior unoriented edges
+        - ``graph`` -- a minimal Schnyder wood, given as a graph with colored
+          and oriented edges, without the three exterior unoriented edges
 
         The three boundary vertices must be -1, -2 and -3.
 
@@ -3421,9 +3419,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         Beware that the embedding convention used here is the opposite of
         the one used by the plot method.
 
-        OUTPUT:
-
-        a Tamari interval-poset
+        OUTPUT: a Tamari interval-poset
 
         EXAMPLES:
 
@@ -3558,7 +3554,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
 
     def __call__(self, *args, **keywords):
         r"""
-        Allows for a poset to be directly transformed into an interval-poset.
+        Allow for a poset to be directly transformed into an interval-poset.
 
         It is some kind of coercion but cannot be made through the coercion
         system because posets do not have parents.

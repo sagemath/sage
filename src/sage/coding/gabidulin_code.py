@@ -208,7 +208,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
             if not len(evaluation_points) == length:
                 raise ValueError("the number of evaluation points should be equal to the length of the code")
             for i in range(length):
-                if not evaluation_points[i] in base_field:
+                if evaluation_points[i] not in base_field:
                     raise ValueError("evaluation point does not belong to the 'base field'")
             basis = self.matrix_form_of_vector(vector(evaluation_points))
             if basis.rank() != length:
@@ -258,9 +258,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
 
         - ``other`` -- another Gabidulin Code object
 
-        OUTPUT:
-
-        - ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -400,7 +398,7 @@ class GabidulinVectorEvaluationEncoder(Encoder):
 
         INPUT:
 
-        - ``code`` -- the associated code of this encoder.
+        - ``code`` -- the associated code of this encoder
 
         EXAMPLES::
 
@@ -468,9 +466,7 @@ class GabidulinVectorEvaluationEncoder(Encoder):
 
         - ``other`` -- another Gabidulin Generator Matrix Encoder
 
-        OUTPUT:
-
-        - ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -626,9 +622,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
         - ``other`` -- another Gabidulin Polynomial Evaluation Encoder
 
-        OUTPUT:
-
-        - ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -667,7 +661,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         C = self.code()
         return C.base_field()['x', C.twisting_homomorphism()]
 
-    def encode(self, p, form="vector"):
+    def encode(self, p, form='vector'):
         """
         Transform the polynomial ``p`` into a codeword of :meth:`code`.
 
@@ -681,11 +675,9 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
         - ``form`` -- type parameter taking strings "vector" or "matrix"
           as values and converting the output codeword into the respective form
-          (default: "vector")
+          (default: ``'vector'``)
 
-        OUTPUT:
-
-        - a codeword corresponding to `p` in vector or matrix form
+        OUTPUT: a codeword corresponding to `p` in vector or matrix form
 
         EXAMPLES::
 
@@ -856,9 +848,7 @@ class GabidulinGaoDecoder(Decoder):
 
         - ``other`` -- another Gabidulin Gao Decoder
 
-        OUTPUT:
-
-        - ``True`` or ``False``
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -895,9 +885,7 @@ class GabidulinGaoDecoder(Decoder):
         - ``d_stop`` -- the number of iterations for which the algorithm
           is to be run
 
-        OUTPUT:
-
-        - ``r_c`` -- right linearized remainder of `a` and `b`
+        OUTPUT: ``r_c`` -- right linearized remainder of `a` and `b`
 
         - ``u_c`` -- right linearized quotient of `a` and `b`
 
@@ -996,9 +984,7 @@ class GabidulinGaoDecoder(Decoder):
 
         - ``r`` -- received codeword
 
-        OUTPUT:
-
-        - the decoded codeword corresponding to the received codeword
+        OUTPUT: the decoded codeword corresponding to the received codeword
 
         EXAMPLES::
 
@@ -1029,9 +1015,7 @@ class GabidulinGaoDecoder(Decoder):
 
         - ``r`` -- received codeword
 
-        OUTPUT:
-
-        - the message corresponding to the received codeword
+        OUTPUT: the message corresponding to the received codeword
 
         EXAMPLES::
 

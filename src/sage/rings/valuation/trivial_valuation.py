@@ -249,7 +249,7 @@ class TrivialDiscretePseudoValuation(TrivialDiscretePseudoValuation_base, Infini
 
 class TrivialDiscreteValuation(TrivialDiscretePseudoValuation_base, DiscreteValuation):
     r"""
-    The trivial valuation that is zero on non-zero elements.
+    The trivial valuation that is zero on nonzero elements.
 
     EXAMPLES::
 

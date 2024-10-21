@@ -32,16 +32,16 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
     """
     def __init__(self, poly, prec, print_mode, names, element_class):
         """
-        Initializes ``self``.
+        Initialize ``self``.
 
         INPUT:
 
-        - ``poly`` -- Polynomial defining this extension.
-        - ``prec`` -- The precision cap
-        - ``print_mode`` -- a dictionary with print options
+        - ``poly`` -- polynomial defining this extension
+        - ``prec`` -- the precision cap
+        - ``print_mode`` -- dictionary with print options
         - ``names`` -- a 4-tuple, (``variable_name``, ``residue_name``,
           ``unramified_subextension_variable_name``, ``uniformizer_name``)
-        - ``element_class`` -- the class for elements of this unramified extension.
+        - ``element_class`` -- the class for elements of this unramified extension
 
         EXAMPLES::
 
@@ -101,7 +101,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
     def residue_class_field(self):
         """
-        Returns the residue class field.
+        Return the residue class field.
 
         EXAMPLES::
 
@@ -142,7 +142,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         INPUT:
 
-        - ``K`` -- a subring/subfield (defaults to the base ring).
+        - ``K`` -- a subring/subfield (defaults to the base ring)
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
     #def galois_group(self):
     #    r"""
-    #    Returns the Galois group of self's fraction field over Qp.
+    #    Returns the Galois group of ``self``'s fraction field over Qp.
     #    """
     #    ##
     #    ## If K is a number field, then K.galois_group() can return
@@ -183,7 +183,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         INPUT:
 
-        - ``K`` -- a subring/subfield (defaults to the base ring).
+        - ``K`` -- a subring/subfield (defaults to the base ring)
 
         EXAMPLES::
 
@@ -214,7 +214,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
     @cached_method
     def _frob_gen(self, arithmetic=True):
         """
-        Return frobenius of the generator for this unramified extension
+        Return frobenius of the generator for this unramified extension.
 
         EXAMPLES::
 
@@ -295,9 +295,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
 
         - ``self`` -- a `p`-adic ring
 
-        OUTPUT:
-
-        boolean -- whether ``self`` has primitive `p`-th root of unity.
+        OUTPUT: boolean; whether ``self`` has primitive `p`-th root of unity
 
         EXAMPLES::
 
@@ -316,11 +314,9 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         INPUT:
 
         - ``self`` -- a `p`-adic ring
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 

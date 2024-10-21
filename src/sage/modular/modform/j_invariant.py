@@ -7,6 +7,7 @@ from .eis_series import eisenstein_series_qexp
 from .vm_basis import delta_qexp
 from sage.rings.rational_field import QQ
 
+
 def j_invariant_qexp(prec=10, K=QQ):
     r"""
     Return the `q`-expansion of the `j`-invariant to

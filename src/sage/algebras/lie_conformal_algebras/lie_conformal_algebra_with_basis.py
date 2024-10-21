@@ -56,7 +56,7 @@ class LieConformalAlgebraWithBasis(CombinatorialFreeModule):
     def __init__(self, R, basis_keys=None, element_class=None, category=None,
                  prefix=None, **kwds):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

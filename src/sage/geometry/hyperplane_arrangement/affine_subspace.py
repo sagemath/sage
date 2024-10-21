@@ -83,9 +83,7 @@ class AffineSubspace(SageObject):
 
     - ``V`` -- vector subspace
 
-    OUTPUT:
-
-    Affine subspace parallel to ``V`` and passing through ``p``.
+    OUTPUT: affine subspace parallel to ``V`` and passing through ``p``
 
     EXAMPLES::
 
@@ -137,9 +135,7 @@ class AffineSubspace(SageObject):
         r"""
         String representation for an :class:`AffineSubspace`.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -160,9 +156,7 @@ class AffineSubspace(SageObject):
 
         - ``other`` -- an :class:`AffineSubspace`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -187,9 +181,7 @@ class AffineSubspace(SageObject):
 
         - ``other`` -- an :class:`AffineSubspace`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -213,9 +205,7 @@ class AffineSubspace(SageObject):
 
         - ``other`` -- an :class:`AffineSubspace`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -244,9 +234,7 @@ class AffineSubspace(SageObject):
 
         - ``other`` -- an :class:`AffineSubspace`
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -275,9 +263,7 @@ class AffineSubspace(SageObject):
 
         - ``q`` -- point as a list/tuple/iterable
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -295,9 +281,7 @@ class AffineSubspace(SageObject):
         r"""
         Return the linear part of the affine space.
 
-        OUTPUT:
-
-        A vector subspace of the ambient space.
+        OUTPUT: a vector subspace of the ambient space
 
         EXAMPLES::
 
@@ -317,9 +301,7 @@ class AffineSubspace(SageObject):
         r"""
         Return a point ``p`` in the affine space.
 
-        OUTPUT:
-
-        A point of the affine space as a vector in the ambient space.
+        OUTPUT: a point of the affine space as a vector in the ambient space
 
         EXAMPLES::
 
@@ -334,9 +316,7 @@ class AffineSubspace(SageObject):
         r"""
         Return the dimension of the affine space.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

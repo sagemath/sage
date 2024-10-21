@@ -25,7 +25,7 @@ def conway_polynomial(p, n):
     Return the Conway polynomial of degree `n` over ``GF(p)``.
 
     If the requested polynomial is not known, this function raises a
-    ``RuntimeError`` exception.
+    :exc:`RuntimeError` exception.
 
     INPUT:
 
@@ -202,9 +202,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         - ``n`` -- positive integer
 
-        OUTPUT:
-
-        - a pseudo-Conway polynomial of degree `n` for the prime `p`.
+        OUTPUT: a pseudo-Conway polynomial of degree `n` for the prime `p`
 
         ALGORITHM:
 
@@ -308,14 +306,11 @@ def _find_pow_of_frobenius(p, n, x, y):
     - ``n`` -- positive integer
 
     - ``x`` -- an element of a field `K` of `p^n` elements so that
-      the multiplicative order of `x` is `p^n - 1`.
+      the multiplicative order of `x` is `p^n - 1`
 
-    - ``y`` -- an element of `K` with the same minimal polynomial as
-      `x`.
+    - ``y`` -- an element of `K` with the same minimal polynomial as `x`
 
-    OUTPUT:
-
-    - an element `i` of the integers modulo `n` such that `x = y^{p^i}`.
+    OUTPUT: an element `i` of the integers modulo `n` such that `x = y^{p^i}`
 
     EXAMPLES::
 
@@ -326,7 +321,6 @@ def _find_pow_of_frobenius(p, n, x, y):
         sage: y = x^27
         sage: _find_pow_of_frobenius(3, 14, x, y)
         11
-
     """
     from .integer_mod import mod
     for i in range(n):
@@ -353,7 +347,6 @@ def _crt_non_coprime(running, a):
         Traceback (most recent call last):
         ...
         AssertionError
-
     """
     g = running.modulus().gcd(a.modulus())
     if g == 1:
@@ -390,12 +383,12 @@ def _frobenius_shift(K, generators, check_only=False):
 
     - ``K`` -- a finite field of degree `n` over its prime field
 
-    - ``generators`` -- a dictionary, indexed by prime divisors `q` of
+    - ``generators`` -- dictionary, indexed by prime divisors `q` of
       `n`, whose entries are elements of `K` satisfying the `n/q`
-      pseudo-Conway polynomial.
+      pseudo-Conway polynomial
 
     - ``check_only`` -- if ``True``, just check that the given
-      generators form a compatible system.
+      generators form a compatible system
 
     EXAMPLES::
 
@@ -417,7 +410,6 @@ def _frobenius_shift(K, generators, check_only=False):
         13
         sage: _find_pow_of_frobenius(2, 12, x12, generators[5])
         8
-
     """
     if len(generators) == 1:
         return generators
@@ -436,7 +428,7 @@ def _frobenius_shift(K, generators, check_only=False):
                 q, x = compatible[m].popitem()
             except KeyError:
                 break
-            for qq, xx in compatible[m].items():
+            for xx in compatible[m].values():
                 assert x == xx
         return
     crt = {}

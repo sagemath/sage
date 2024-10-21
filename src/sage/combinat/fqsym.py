@@ -56,7 +56,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                          Permutations(),
                                          category=FQSymBases(alg),
-                                         bracket="", prefix=self._prefix)
+                                         bracket='', prefix=self._prefix)
 
     def _coerce_map_from_(self, R):
         r"""
@@ -801,9 +801,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the F basis
+            OUTPUT: an element of the F basis
 
             TESTS::
 
@@ -833,9 +831,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the G basis
+            OUTPUT: an element of the G basis
 
             TESTS::
 
@@ -912,10 +908,10 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             F = self.realization_of().F()
             phi = F.module_morphism(self._F_to_M_on_basis, codomain=self,
-                                    unitriangular="lower")
+                                    unitriangular='lower')
             phi.register_as_coercion()
             phi_i = self.module_morphism(self._M_to_F_on_basis, codomain=F,
-                                         unitriangular="lower")
+                                         unitriangular='lower')
             phi_i.register_as_coercion()
 
         def _element_constructor_(self, x):
@@ -1019,9 +1015,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the M basis
+            OUTPUT: an element of the M basis
 
             TESTS::
 
@@ -1048,9 +1042,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the F basis
+            OUTPUT: an element of the F basis
 
             ALGORITHM:
 
@@ -1239,7 +1231,7 @@ class FQSymBases(Category_realization_of_parent):
 
     def __init__(self, base):
         r"""
-        Initialize the bases of an `FQSym`
+        Initialize the bases of an `FQSym`.
 
         INPUT:
 

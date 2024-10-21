@@ -168,7 +168,6 @@ class FunctionFieldExtensionFactory(UniqueFactory):
             sage: N.<z> = K.extension(z - 1)
             sage: M is N
             False
-
         """
         if names is None:
             names = polynomial.variable_name()

@@ -5,6 +5,7 @@ Ensure that ``functools.partial`` is correctly handled by
 """
 from functools import partial
 
+
 def base(x):
     """
     Test function to make sure

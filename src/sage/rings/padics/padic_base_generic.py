@@ -37,7 +37,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def __init__(self, p, prec, print_mode, names, element_class):
         """
-        Initialization
+        Initialization.
 
         TESTS::
 
@@ -89,7 +89,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def _repr_(self, do_latex=False):
         r"""
-        Returns a print representation of this p-adic ring or field.
+        Return a print representation of this `p`-adic ring or field.
 
         EXAMPLES::
 
@@ -144,9 +144,9 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def exact_field(self):
         """
-        Returns the rational field.
+        Return the rational field.
 
-        For compatibility with extensions of p-adics.
+        For compatibility with extensions of `p`-adics.
 
         EXAMPLES::
 
@@ -158,7 +158,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def exact_ring(self):
         """
-        Returns the integer ring.
+        Return the integer ring.
 
         EXAMPLES::
 
@@ -170,7 +170,8 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def is_isomorphic(self, ring):
         r"""
-        Returns whether ``self`` and ``ring`` are isomorphic, i.e. whether ``ring`` is an implementation of `\ZZ_p` for the same prime as ``self``.
+        Return whether ``self`` and ``ring`` are isomorphic, i.e. whether
+        ``ring`` is an implementation of `\ZZ_p` for the same prime as ``self``.
 
         INPUT:
 
@@ -178,9 +179,8 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         - ``ring`` -- a ring
 
-        OUTPUT:
-
-        - ``boolean`` -- whether ``ring`` is an implementation of \ZZ_p` for the same prime as ``self``.
+        OUTPUT: ``boolean`` -- whether ``ring`` is an implementation of \ZZ_p`
+        for the same prime as ``self``
 
         EXAMPLES::
 
@@ -191,7 +191,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def gen(self, n=0):
         """
-        Returns the ``nth`` generator of this extension.  For base
+        Return the `n`-th generator of this extension.  For base
         rings/fields, we consider the generator to be the prime.
 
         EXAMPLES::
@@ -205,13 +205,14 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def modulus(self, exact=False):
         r"""
-        Returns the polynomial defining this extension.
+        Return the polynomial defining this extension.
 
-        For compatibility with extension fields; we define the modulus to be x-1.
+        For compatibility with extension fields; we define the modulus to be `x-1`.
 
         INPUT:
 
-        - ``exact`` -- boolean (default ``False``), whether to return a polynomial with integer entries.
+        - ``exact`` -- boolean (default: ``False``); whether to return a
+          polynomial with integer entries
 
         EXAMPLES::
 
@@ -222,7 +223,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def absolute_discriminant(self):
         """
-        Returns the absolute discriminant of this `p`-adic ring
+        Return the absolute discriminant of this `p`-adic ring.
 
         EXAMPLES::
 
@@ -233,7 +234,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def discriminant(self, K=None):
         """
-        Returns the discriminant of this `p`-adic ring over ``K``
+        Return the discriminant of this `p`-adic ring over ``K``.
 
         INPUT:
 
@@ -243,8 +244,8 @@ class pAdicBaseGeneric(pAdicGeneric):
 
         OUTPUT:
 
-        - integer -- the discriminant of this ring over ``K`` (or the
-          absolute discriminant if ``K`` is ``None``)
+        integer; the discriminant of this ring over ``K`` (or the absolute
+        discriminant if ``K`` is ``None``)
 
         EXAMPLES::
 
@@ -258,7 +259,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def is_abelian(self):
         """
-        Returns whether the Galois group is abelian, i.e. ``True``.
+        Return whether the Galois group is abelian, i.e. ``True``.
         #should this be automorphism group?
 
         EXAMPLES::
@@ -270,7 +271,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def is_normal(self):
         """
-        Returns whether or not this is a normal extension, i.e. ``True``.
+        Return whether or not this is a normal extension, i.e. ``True``.
 
         EXAMPLES::
 
@@ -281,7 +282,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def uniformizer(self):
         """
-        Returns a uniformizer for this ring.
+        Return a uniformizer for this ring.
 
         EXAMPLES::
 
@@ -293,7 +294,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def uniformizer_pow(self, n):
         """
-        Returns the ``nth`` power of the uniformizer of ``self`` (as
+        Return the `n`-th power of the uniformizer of ``self`` (as
         an element of ``self``).
 
         EXAMPLES::
@@ -308,7 +309,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def _uniformizer_print(self):
         """
-        Returns how the uniformizer is supposed to print.
+        Return how the uniformizer is supposed to print.
 
         EXAMPLES::
 
@@ -319,7 +320,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def has_pth_root(self):
         r"""
-        Returns whether or not `\ZZ_p` has a primitive `p^{th}`
+        Return whether or not `\ZZ_p` has a primitive `p`-th
         root of unity.
 
         EXAMPLES::
@@ -333,19 +334,18 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def has_root_of_unity(self, n):
         r"""
-        Returns whether or not `\ZZ_p` has a primitive `n^{th}`
+        Return whether or not `\ZZ_p` has a primitive `n`-th
         root of unity.
 
         INPUT:
 
         - ``self`` -- a `p`-adic ring
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         OUTPUT:
 
-        - ``boolean`` -- whether ``self`` has primitive `n^{th}` root
-          of unity
+        boolean; whether ``self`` has primitive `n`-th root of unity
 
         EXAMPLES::
 
@@ -362,19 +362,18 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def zeta(self, n=None):
         r"""
-        Returns a generator of the group of roots of unity.
+        Return a generator of the group of roots of unity.
 
         INPUT:
 
         - ``self`` -- a `p`-adic ring
 
-        - ``n`` -- an integer or ``None`` (default: ``None``)
+        - ``n`` -- integer or ``None`` (default: ``None``)
 
         OUTPUT:
 
-        - ``element`` -- a generator of the `n^{th}` roots of unity,
-          or a generator of the full group of roots of unity if ``n``
-          is ``None``
+        ``element``; a generator of the `n`-th roots of unity, or a generator
+        of the full group of roots of unity if ``n`` is ``None``
 
         EXAMPLES::
 
@@ -395,7 +394,7 @@ class pAdicBaseGeneric(pAdicGeneric):
 
     def zeta_order(self):
         """
-        Returns the order of the group of roots of unity.
+        Return the order of the group of roots of unity.
 
         EXAMPLES::
 
@@ -421,7 +420,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         INPUT:
 
         - ``max_points`` -- the maximum number or points to plot,
-          which controls the depth of recursion (default 2500)
+          which controls the depth of recursion (default: 2500)
 
         - ``**args`` -- color, size, etc. that are passed to the
           underlying point graphics objects

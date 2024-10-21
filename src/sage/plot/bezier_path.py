@@ -39,18 +39,17 @@ class BezierPath(GraphicPrimitive_xydata):
 
     We use :func:`bezier_path` to actually plot Bezier curves::
 
-        sage: bezier_path([[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]], linestyle="dashed")
+        sage: bezier_path([[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]], linestyle='dashed')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
-         P = bezier_path([[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]], linestyle="dashed")
+         P = bezier_path([[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]], linestyle='dashed')
          sphinx_plot(P)
-
     """
     def __init__(self, path, options):
         """
-        Returns a graphics primitive of a path of Bezier curves.
+        Return a graphics primitive of a path of Bezier curves.
 
         EXAMPLES::
 
@@ -98,7 +97,7 @@ class BezierPath(GraphicPrimitive_xydata):
 
     def _allowed_options(self):
         """
-        Returns a dict of allowed options for ``bezier_path``.
+        Return a dict of allowed options for ``bezier_path``.
 
         EXAMPLES::
 
@@ -112,7 +111,6 @@ class BezierPath(GraphicPrimitive_xydata):
             ('rgbcolor', 'The color as an RGB tuple.'),
             ('thickness', 'How thick the border of the polygon is.'),
             ('zorder', 'The layer level in which to draw')]
-
         """
         return {'alpha': 'How transparent the line is.',
                 'fill': 'Whether or not to fill the polygon.',
@@ -125,7 +123,7 @@ class BezierPath(GraphicPrimitive_xydata):
 
     def _plot3d_options(self, options=None):
         """
-        Updates ``BezierPath`` options to those allowed by 3D implementation.
+        Update ``BezierPath`` options to those allowed by 3D implementation.
 
         EXAMPLES::
 
@@ -159,9 +157,9 @@ class BezierPath(GraphicPrimitive_xydata):
 
     def plot3d(self, z=0, **kwds):
         """
-        Returns a 3D plot (Jmol) of the Bezier path.  Since a ``BezierPath``
+        Return a 3D plot (Jmol) of the Bezier path.  Since a ``BezierPath``
         primitive contains only `x,y` coordinates, the path will be drawn in
-        some plane (default is `z=0`).  To create a Bezier path with nonzero
+        some plane (default: `z=0`).  To create a Bezier path with nonzero
         (and nonidentical) `z` coordinates in the path and control points, use
         the function :func:`~sage.plot.plot3d.shapes2.bezier3d` instead of
         :func:`bezier_path`.
@@ -189,7 +187,6 @@ class BezierPath(GraphicPrimitive_xydata):
         .. PLOT::
 
             sphinx_plot(bezier3d([[(0,0,0),(1,0,0),(0,1,0),(0,1,1)]]))
-
         """
         from sage.plot.plot3d.shapes2 import bezier3d
         options = self._plot3d_options()
@@ -256,7 +253,7 @@ class BezierPath(GraphicPrimitive_xydata):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
@@ -277,7 +274,7 @@ class BezierPath(GraphicPrimitive_xydata):
 @options(alpha=1, fill=False, thickness=1, rgbcolor=(0,0,0), zorder=2, linestyle='solid')
 def bezier_path(path, **options):
     """
-    Returns a Graphics object of a Bezier path corresponding to the
+    Return a Graphics object of a Bezier path corresponding to the
     path parameter.  The path is a list of curves, and each curve is
     a list of points.  Each point is a tuple ``(x,y)``.
 
@@ -313,11 +310,11 @@ def bezier_path(path, **options):
         p5 = (0,4)
         path = [[p1, c1, c2, p2], [c3, c4, p3], [c5, p4], [p5]]
         P = bezier_path(path)
-        P += line([p1,c1], color="red", linestyle="dashed")
-        P += line([p2,c2], color="red", linestyle="dashed")
-        P += line([p2,c3], color="red", linestyle="dashed")
-        P += line([p3,c4], color="red", linestyle="dashed")
-        P += line([p3,c5], color="red", linestyle="dashed")
+        P += line([p1,c1], color='red', linestyle='dashed')
+        P += line([p2,c2], color='red', linestyle='dashed')
+        P += line([p2,c3], color='red', linestyle='dashed')
+        P += line([p3,c4], color='red', linestyle='dashed')
+        P += line([p3,c5], color='red', linestyle='dashed')
         P += text("c1", c1, horizontal_alignment='left')
         P += text("c2", c2, horizontal_alignment='right')
         P += text("c3", c3, horizontal_alignment='left', vertical_alignment='bottom')
@@ -340,14 +337,14 @@ def bezier_path(path, **options):
 
     INPUT:
 
-    - ``path`` -- a list of lists of tuples (see above)
-    - ``alpha`` -- default: 1
-    - ``fill`` -- default: ``False``
-    - ``thickness`` -- default: 1
-    - ``linestyle`` -- default: ``'solid'``, The style of the line, which is one
-       of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or ``'--'``,
-       ``':'``, ``'-'``, ``'-.'``, respectively.
-    - ``rgbcolor`` -- default: (0,0,0)
+    - ``path`` -- list of lists of tuples (see above)
+    - ``alpha`` -- (default: 1)
+    - ``fill`` -- (default: ``False``)
+    - ``thickness`` -- (default: 1)
+    - ``linestyle`` -- (default: ``'solid'``) the style of the line, which is one
+      of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``, or ``'--'``,
+      ``':'``, ``'-'``, ``'-.'``, respectively
+    - ``rgbcolor`` -- (default: (0,0,0))
     - ``zorder`` -- the layer in which to draw
 
     EXAMPLES::

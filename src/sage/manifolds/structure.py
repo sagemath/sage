@@ -56,7 +56,6 @@ class TopologicalStructure(Singleton):
             sage: from sage.categories.manifolds import Manifolds
             sage: TopologicalStructure().subcategory(Manifolds(RR))
             Category of manifolds over Real Field with 53 bits of precision
-
         """
         return cat
 
@@ -81,7 +80,6 @@ class RealTopologicalStructure(Singleton):
             sage: from sage.categories.manifolds import Manifolds
             sage: RealTopologicalStructure().subcategory(Manifolds(RR))
             Category of manifolds over Real Field with 53 bits of precision
-
         """
         return cat
 
@@ -106,7 +104,6 @@ class DifferentialStructure(Singleton):
             sage: from sage.categories.manifolds import Manifolds
             sage: DifferentialStructure().subcategory(Manifolds(RR))
             Category of manifolds over Real Field with 53 bits of precision
-
         """
         return cat
 
@@ -131,7 +128,6 @@ class RealDifferentialStructure(Singleton):
             sage: from sage.categories.manifolds import Manifolds
             sage: RealDifferentialStructure().subcategory(Manifolds(RR))
             Category of manifolds over Real Field with 53 bits of precision
-
         """
         return cat
 
@@ -155,7 +151,6 @@ class PseudoRiemannianStructure(Singleton):
             sage: from sage.categories.manifolds import Manifolds
             sage: PseudoRiemannianStructure().subcategory(Manifolds(RR))
             Category of manifolds over Real Field with 53 bits of precision
-
         """
         return cat
 
@@ -179,7 +174,6 @@ class RiemannianStructure(Singleton):
             sage: from sage.categories.manifolds import Manifolds
             sage: RiemannianStructure().subcategory(Manifolds(RR))
             Category of manifolds over Real Field with 53 bits of precision
-
         """
         return cat
 
@@ -203,7 +197,6 @@ class LorentzianStructure(Singleton):
             sage: from sage.categories.manifolds import Manifolds
             sage: LorentzianStructure().subcategory(Manifolds(RR))
             Category of manifolds over Real Field with 53 bits of precision
-
         """
         return cat
 
@@ -227,6 +220,5 @@ class DegenerateStructure(Singleton):
             sage: from sage.categories.manifolds import Manifolds
             sage: DegenerateStructure().subcategory(Manifolds(RR))
             Category of manifolds over Real Field with 53 bits of precision
-
         """
         return cat

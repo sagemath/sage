@@ -173,12 +173,6 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     :meth:`~sage.graphs.traversals.maximum_cardinality_search_M` graph traversal
     and has time complexity in `O(|V|\cdot|E|)`.
 
-    .. NOTE::
-        As the graph is converted to a short_digraph (with
-        ``sort_neighbors=True``), the complexity has an extra
-        `O(|V|+|E|\log{|E|})` for ``SparseGraph`` and `O(|V|^2\log{|E|})` for
-        ``DenseGraph``.
-
     If the graph is not connected, we insert empty separators between the lists
     of separators of each connected components. See the examples below for more
     details.
@@ -465,8 +459,7 @@ def atoms_and_clique_separators(G, tree=False, rooted_tree=False, separators=Fal
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex,
-                       sort_neighbors=True)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
 
     # variables for the manipulation of the short digraph
     cdef uint32_t** p_vertices = sd.neighbors

@@ -77,15 +77,15 @@ class EuclideanGroup(AffineGroup):
 
     - Degree and base ring:
 
-      * ``degree`` -- An integer. The degree of the affine group, that
-        is, the dimension of the affine space the group is acting on.
+      * ``degree`` -- integer; the degree of the affine group, that
+        is, the dimension of the affine space the group is acting on
 
-      * ``ring`` -- A ring or an integer. The base ring of the affine
+      * ``ring`` -- a ring or an integer; the base ring of the affine
         space. If an integer is given, it must be a prime power and
         the corresponding finite field is constructed.
 
-      * ``var`` -- (default: ``'a'``) Keyword argument to specify the finite
-        field generator name in the case where ``ring`` is a prime power.
+      * ``var`` -- (default: ``'a'``) keyword argument to specify the finite
+        field generator name in the case where ``ring`` is a prime power
 
     EXAMPLES::
 
@@ -171,7 +171,7 @@ class EuclideanGroup(AffineGroup):
 
         OUTPUT:
 
-        The return value is ignored. You must raise a :class:`TypeError` if
+        The return value is ignored. You must raise a :exc:`TypeError` if
         the input does not define a valid group element.
 
         TESTS::

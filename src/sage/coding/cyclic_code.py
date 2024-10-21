@@ -104,11 +104,9 @@ def _to_complete_list(poly, length):
 
     - ``poly`` -- a polynomial
 
-    - ``length`` -- an integer
+    - ``length`` -- integer
 
-    OUTPUT:
-
-    - the list of coefficients
+    OUTPUT: the list of coefficients
 
     EXAMPLES::
 
@@ -149,11 +147,11 @@ def bch_bound(n, D, arithmetic=False):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    - ``D`` -- a list of integers
+    - ``D`` -- list of integers
 
-    - ``arithmetic`` -- (default: ``False``), if it is set to ``True``, then it
+    - ``arithmetic`` -- (default: ``False``) if it is set to ``True``, then it
       computes the BCH bound using the longest arithmetic sequence definition
 
     OUTPUT:
@@ -231,23 +229,23 @@ class CyclicCode(AbstractLinearCode):
     INPUT:
 
     - ``generator_pol`` -- (default: ``None``) the generator polynomial
-      of ``self``. That is, the highest-degree monic polynomial which divides
-      every polynomial representation of a codeword in ``self``.
+      of ``self``; that is, the highest-degree monic polynomial which divides
+      every polynomial representation of a codeword in ``self``
 
-    - ``length`` -- (default: ``None``) the length of ``self``. It has to be
-      bigger than the degree of ``generator_pol``.
+    - ``length`` -- (default: ``None``) the length of ``self``; it has to be
+      bigger than the degree of ``generator_pol``
 
-    - ``code`` -- (default: ``None``) a linear code.
+    - ``code`` -- (default: ``None``) a linear code
 
-    - ``check`` -- (default: ``False``) a boolean representing whether the
-      cyclicity of ``self`` must be checked while finding the generator
-      polynomial. See :meth:`find_generator_polynomial` for details.
+    - ``check`` -- boolean (default: ``False``);  whether the cyclicity of
+      ``self`` must be checked while finding the generator polynomial. See
+      :meth:`find_generator_polynomial` for details.
 
     - ``D`` -- (default: ``None``) a list of integers between ``0`` and
       ``length-1``, corresponding to (a subset of) the defining set of the code.
       Will be modified if it is not cyclotomic-closed.
 
-    - ``field`` -- (default: ``None``) the base field of ``self``.
+    - ``field`` -- (default: ``None``) the base field of ``self``
 
     - ``primitive_root`` -- (default: ``None``) the primitive root of
       the splitting field which contains the roots of the generator polynomial.
@@ -489,7 +487,7 @@ class CyclicCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between CyclicCode objects.
+        Test equality between CyclicCode objects.
 
         INPUT:
 
@@ -592,7 +590,7 @@ class CyclicCode(AbstractLinearCode):
 
         INPUT:
 
-        - ``primitive_root`` (optional) -- a primitive root of the extension
+        - ``primitive_root`` -- (optional) a primitive root of the extension
           field
 
         EXAMPLES:
@@ -766,7 +764,7 @@ class CyclicCode(AbstractLinearCode):
 
         INPUT:
 
-        - ``arithmetic`` -- (default: ``False``), if it is set to ``True``,
+        - ``arithmetic`` -- (default: ``False``) if it is set to ``True``,
           then it computes the BCH bound using the longest arithmetic sequence
           definition
 
@@ -826,7 +824,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder
+    - ``code`` -- the associated code of this encoder
 
     EXAMPLES::
 
@@ -858,7 +856,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between CyclicCodePolynomialEncoder objects.
+        Test equality between CyclicCodePolynomialEncoder objects.
 
         EXAMPLES::
 
@@ -909,15 +907,13 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def encode(self, p):
         r"""
-        Transforms ``p`` into an element of the associated code of ``self``.
+        Transform `p` into an element of the associated code of ``self``.
 
         INPUT:
 
-        - ``p`` -- A polynomial from ``self`` message space
+        - ``p`` -- a polynomial from ``self`` message space
 
-        OUTPUT:
-
-        - A codeword in associated code of ``self``
+        OUTPUT: a codeword in associated code of ``self``
 
         EXAMPLES::
 
@@ -945,11 +941,9 @@ class CyclicCodePolynomialEncoder(Encoder):
 
         INPUT:
 
-        - ``c`` -- A vector with the same length as the code
+        - ``c`` -- a vector with the same length as the code
 
-        OUTPUT:
-
-        - An element of the message space
+        OUTPUT: an element of the message space
 
         EXAMPLES::
 
@@ -969,7 +963,7 @@ class CyclicCodePolynomialEncoder(Encoder):
 
     def message_space(self):
         r"""
-        Return the message space of ``self``
+        Return the message space of ``self``.
 
         EXAMPLES::
 
@@ -999,7 +993,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder
+    - ``code`` -- the associated code of this encoder
 
     EXAMPLES::
 
@@ -1032,7 +1026,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between CyclicCodeVectorEncoder objects.
+        Test equality between CyclicCodeVectorEncoder objects.
 
         EXAMPLES::
 
@@ -1083,15 +1077,13 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def encode(self, m):
         r"""
-        Transforms ``m`` into an element of the associated code of ``self``.
+        Transform `m` into an element of the associated code of ``self``.
 
         INPUT:
 
         - ``m`` -- an element from ``self``'s message space
 
-        OUTPUT:
-
-        - A codeword in the associated code of ``self``
+        OUTPUT: a codeword in the associated code of ``self``
 
         EXAMPLES::
 
@@ -1124,11 +1116,9 @@ class CyclicCodeVectorEncoder(Encoder):
 
         INPUT:
 
-        - ``c`` -- A vector with the same length as the code
+        - ``c`` -- a vector with the same length as the code
 
-        OUTPUT:
-
-        - An element of the message space
+        OUTPUT: an element of the message space
 
         EXAMPLES::
 
@@ -1151,7 +1141,7 @@ class CyclicCodeVectorEncoder(Encoder):
     @cached_method
     def generator_matrix(self):
         r"""
-        Return a generator matrix of ``self``
+        Return a generator matrix of ``self``.
 
         EXAMPLES::
 
@@ -1176,7 +1166,7 @@ class CyclicCodeVectorEncoder(Encoder):
 
     def message_space(self):
         r"""
-        Return the message space of ``self``
+        Return the message space of ``self``.
 
         EXAMPLES::
 
@@ -1198,9 +1188,9 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this decoder.
+    - ``code`` -- the associated code of this decoder
 
-    - ``**kwargs`` -- All extra arguments are forwarded to the BCH decoder
+    - ``**kwargs`` -- all extra arguments are forwarded to the BCH decoder
 
     EXAMPLES::
 
@@ -1226,7 +1216,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between CyclicCodeSurroundingBCHDecoder objects.
+        Test equality between CyclicCodeSurroundingBCHDecoder objects.
 
         EXAMPLES::
 

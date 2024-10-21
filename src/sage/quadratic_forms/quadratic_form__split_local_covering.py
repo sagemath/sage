@@ -37,9 +37,9 @@ def cholesky_decomposition(self, bit_prec=53):
 
     INPUT:
 
-    - ``bit_prec`` -- a natural number (default 53)
+    - ``bit_prec`` -- a natural number (default: 53)
 
-    OUTPUT: an upper triangular real matrix of precision ``bit_prec``.
+    OUTPUT: an upper triangular real matrix of precision ``bit_prec``
 
 
     .. TODO::
@@ -47,7 +47,7 @@ def cholesky_decomposition(self, bit_prec=53):
         If we only care about working over the real double field (``RDF``), then we
         can use the method :meth:`cholesky` present for square matrices over that.
 
-    .. note::
+    .. NOTE::
 
         There is a note in the original code reading
 
@@ -55,7 +55,6 @@ def cholesky_decomposition(self, bit_prec=53):
 
             Finds the Cholesky decomposition of a quadratic form -- as an upper-triangular matrix!
             (It's assumed to be global, hence twice the form it refers to.)  <-- Python revision asks:  Is this true?!? =|
-
 
     EXAMPLES::
 
@@ -119,7 +118,7 @@ def vectors_by_length(self, bound):
 
     INPUT:
 
-    - ``bound`` -- an integer `\geq 0`
+    - ``bound`` -- integer `\geq 0`
 
     OUTPUT:
 
@@ -279,7 +278,7 @@ def complementary_subform_to_vector(self, v):
 
     INPUT:
 
-    - ``v`` -- a list of ``self.dim()`` integers
+    - ``v`` -- list of ``self.dim()`` integers
 
     OUTPUT: a :class:`QuadraticForm` over `\ZZ`
 
@@ -313,7 +312,7 @@ def complementary_subform_to_vector(self, v):
     # Copy the quadratic form
     Q = deepcopy(self)
 
-    # Find the first non-zero component of v, and call it nz  (Note: 0 <= nz < n)
+    # Find the first nonzero component of v, and call it nz  (Note: 0 <= nz < n)
     nz = 0
     while nz < n and v[nz] == 0:
         nz += 1
@@ -357,7 +356,7 @@ def complementary_subform_to_vector(self, v):
 
 def split_local_cover(self):
     r"""
-    Tries to find subform of the given (positive definite quaternary)
+    Try to find subform of the given (positive definite quaternary)
     quadratic form `Q` of the form
 
     .. MATH::

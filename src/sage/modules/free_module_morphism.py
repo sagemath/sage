@@ -74,15 +74,15 @@ def is_FreeModuleMorphism(x):
 
 class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
-    def __init__(self, parent, A, side="left"):
+    def __init__(self, parent, A, side='left'):
         """
         INPUT:
 
-            -  ``parent`` -- a homspace in a (sub) category of free modules
+            - ``parent`` -- a homspace in a (sub) category of free modules
 
-            -  ``A`` -- matrix
+            - ``A`` -- matrix
 
-            - side -- side of the vectors acted on by the matrix  (default: ``"left"``)
+            - ``side`` -- side of the vectors acted on by the matrix  (default: ``'left'``)
 
         EXAMPLES::
 
@@ -182,7 +182,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             [1 0 0]
             Domain:   Ambient free module of rank 3 over the principal ideal domain Integer Ring
             Codomain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
-            sage: h2 = V.hom([V.1, V.2, V.0], side="right"); h2
+            sage: h2 = V.hom([V.1, V.2, V.0], side='right'); h2
             Free module morphism defined as left-multiplication by the matrix
             [0 0 1]
             [1 0 0]
@@ -249,7 +249,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         """
         Given a submodule V of the codomain of self, return the
         inverse image of V under self, i.e., the biggest submodule of
-        the domain of self that maps into V.
+        the domain of ``self`` that maps into V.
 
         EXAMPLES:
 
@@ -321,7 +321,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
             sage: V = ZZ^2
             sage: m = matrix(2, [1, 1, 0, 1])
-            sage: h = V.hom(m, side="right")
+            sage: h = V.hom(m, side='right')
             sage: h
             Free module morphism defined as left-multiplication by the matrix
             [1 1]
@@ -454,7 +454,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         ::
 
             sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side="right").lift(V.0 + V.1)
+            sage: V.hom(m, side='right').lift(V.0 + V.1)
             (0, 1)
             sage: V.hom(m).lift(V.0 + V.1)
             (1, 0)
@@ -489,12 +489,12 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
     def eigenvalues(self, extend=True):
         r"""
-        Returns a list with the eigenvalues of the endomorphism of vector spaces.
+        Return a list with the eigenvalues of the endomorphism of vector spaces.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``) decides if base field
-          extensions should be considered or not.
+        - ``extend`` -- boolean (default: ``True``); decides if base field
+          extensions should be considered or not
 
         EXAMPLES:
 
@@ -524,12 +524,12 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
     def eigenvectors(self, extend=True):
         """
-        Computes the subspace of eigenvectors of a given eigenvalue.
+        Compute the subspace of eigenvectors of a given eigenvalue.
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``True``) decides if base field
-          extensions should be considered or not.
+        - ``extend`` -- boolean (default: ``True``); decides if base field
+          extensions should be considered or not
 
         OUTPUT:
 
@@ -560,7 +560,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
             sage: V = QQ^2
             sage: m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side="right").eigenvectors()                                 # needs sage.rings.number_field
+            sage: V.hom(m, side='right').eigenvectors()                                 # needs sage.rings.number_field
             [(1, [ (1, 0) ], 2)]
             sage: V.hom(m).eigenvectors()                                               # needs sage.rings.number_field
             [(1, [ (0, 1) ], 2)]
@@ -588,12 +588,10 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         INPUT:
 
-        - ``extend`` -- (default: ``True``) determines if field
+        - ``extend`` -- boolean (default: ``True``); determines if field
           extensions should be considered
 
-        OUTPUT:
-
-        - a list of pairs ``(eigenvalue, eigenspace)``
+        OUTPUT: a list of pairs ``(eigenvalue, eigenspace)``
 
         EXAMPLES::
 
@@ -635,7 +633,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         ::
 
             sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])
-            sage: V.hom(m, side="right").eigenspaces()                                  # needs sage.rings.number_field
+            sage: V.hom(m, side='right').eigenspaces()                                  # needs sage.rings.number_field
             [(1, Vector space of degree 2 and dimension 1 over Rational Field
                   Basis matrix:
                   [1 0])]
@@ -713,12 +711,12 @@ class BaseIsomorphism1D(Morphism):
 
 class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):
     """
-    An isomorphism from a ring to its 1-dimensional free module
+    An isomorphism from a ring to its 1-dimensional free module.
 
     INPUT:
 
     - ``parent`` -- the homset
-    - ``basis`` -- (default 1) an invertible element of the ring
+    - ``basis`` -- (default: 1) an invertible element of the ring
 
     EXAMPLES::
 
@@ -770,12 +768,12 @@ class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):
 
 class BaseIsomorphism1D_from_FM(BaseIsomorphism1D):
     """
-    An isomorphism to a ring from its 1-dimensional free module
+    An isomorphism to a ring from its 1-dimensional free module.
 
     INPUT:
 
     - ``parent`` -- the homset
-    - ``basis`` -- (default 1) an invertible element of the ring
+    - ``basis`` -- (default: 1) an invertible element of the ring
 
     EXAMPLES::
 

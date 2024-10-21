@@ -177,7 +177,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
         self.q = q
         SymmetricFunctionAlgebra_multiplicative.__init__(self, sym,
             basis_name="Hecke character with q={}".format(self.q),
-            prefix="qbar")
+            prefix='qbar')
         self._p = sym.power()
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
@@ -207,11 +207,11 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
     def _p_to_qbar_on_generator(self, n):
         r"""
-        Convert `p_n` to ``self``
+        Convert `p_n` to ``self``.
 
         INPUT:
 
-        - ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -239,7 +239,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``mu`` -- a partition or a list of non-negative integers
+        - ``mu`` -- a partition or a list of nonnegative integers
 
         EXAMPLES::
 
@@ -261,7 +261,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -291,7 +291,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
 
         INPUT:
 
-        - ``mu`` -- a partition or a list of non-negative integers
+        - ``mu`` -- a partition or a list of nonnegative integers
 
         EXAMPLES::
 

@@ -154,8 +154,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``base_ring`` -- the base ring of the divisor group. Usually, this is
-          `\ZZ` (default) or `\QQ`.
+        - ``base_ring`` -- the base ring of the divisor group; usually, this is
+          `\ZZ` (default) or `\QQ`
 
         OUTPUT: the divisor group of the curve
 
@@ -276,9 +276,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
         r"""
         Return the subscheme of singular points of this curve.
 
-        OUTPUT:
-
-        - a subscheme in the ambient space of this curve.
+        OUTPUT: a subscheme in the ambient space of this curve
 
         EXAMPLES::
 
@@ -316,10 +314,10 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``F`` -- (default: None) field over which to find the singular
+        - ``F`` -- (default: ``None``) field over which to find the singular
           points; if not given, the base ring of this curve is used
 
-        OUTPUT: a list of points in the ambient space of this curve
+        OUTPUT: list of points in the ambient space of this curve
 
         EXAMPLES::
 
@@ -363,13 +361,13 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``P`` -- (default: None) a point on this curve
+        - ``P`` -- (default: ``None``) a point on this curve
 
         OUTPUT:
 
-        A boolean. If a point ``P`` is provided, and if ``P`` lies on this
-        curve, returns True if ``P`` is a singular point of this curve, and
-        False otherwise. If no point is provided, returns True or False
+        boolean; if a point ``P`` is provided, and if ``P`` lies on this
+        curve, returns ``True`` if ``P`` is a singular point of this curve, and
+        ``False`` otherwise. If no point is provided, returns ``True`` or False
         depending on whether this curve is or is not singular, respectively.
 
         EXAMPLES::
@@ -396,9 +394,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``C`` -- a curve in the same ambient space as this curve.
+        - ``C`` -- a curve in the same ambient space as this curve
 
-        - ``P`` -- a point in the ambient space of this curve.
+        - ``P`` -- a point in the ambient space of this curve
 
         EXAMPLES::
 
@@ -451,11 +449,11 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         - ``C`` -- a curve in the same ambient space as this curve
 
-        - ``F`` -- (default: None); field over which to compute the
+        - ``F`` -- (default: ``None``) field over which to compute the
           intersection points; if not specified, the base ring of this curve is
           used
 
-        OUTPUT: a list of points in the ambient space of this curve
+        OUTPUT: list of points in the ambient space of this curve
 
         EXAMPLES::
 

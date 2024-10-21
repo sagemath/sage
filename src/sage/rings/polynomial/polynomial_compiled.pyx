@@ -21,8 +21,8 @@ from sage.misc.binary_tree cimport BinaryTree
 
 cdef class CompiledPolynomialFunction:
     """
-    Builds a reasonably optimized directed acyclic graph representation
-    for a given polynomial.  A CompiledPolynomialFunction is callable from
+    Build a reasonably optimized directed acyclic graph representation
+    for a given polynomial.  A ``CompiledPolynomialFunction`` is callable from
     python, though it is a little faster to call the eval function from
     pyrex.
 
@@ -96,7 +96,6 @@ cdef class CompiledPolynomialFunction:
           forthcoming) requires the gaps to considered in order, and adds
           additional dummies as it goes.  Hence, the gaps are put into a
           binary tree.
-
         """
         cdef generic_pd max_gap, dag
         cdef BinaryTree gaps

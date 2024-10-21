@@ -43,10 +43,10 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
 
     INPUT:
 
-    - ``R``: a commutative ring.
-    - ``ngens``: a positive Integer (default ``1``); the number of
-      non-central generators of this Lie conformal algebra.
-    - ``gram_matrix``: a symmetric square matrix with coefficients
+    - ``R`` -- a commutative ring
+    - ``ngens`` -- a positive Integer (default: ``1``); the number of
+      non-central generators of this Lie conformal algebra
+    - ``gram_matrix`` -- a symmetric square matrix with coefficients
       in ``R`` (default: ``identity_matrix(ngens)``); the Gram
       matrix of the inner product
 
@@ -86,7 +86,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
                  index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -126,7 +126,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
         names,index_set = standardize_names_index_set(names=names,
                                                       index_set=index_set,
                                                       ngens=ngens)
-        fermiondict = { (i,j): {0: {('K',0): gram_matrix[index_set.rank(i),
+        fermiondict = {(i,j): {0: {('K', 0): gram_matrix[index_set.rank(i),
                     index_set.rank(j)]}} for i in index_set for j in index_set}
 
         from sage.rings.rational_field import QQ

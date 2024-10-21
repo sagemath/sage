@@ -185,13 +185,13 @@ class SemistandardSuperTableau(Tableau):
             Traceback (most recent call last):
             ...
             ValueError: the entries of a semistandard super tableau must be
-            non-negative primed integers
+            nonnegative primed integers
         """
         super().check()
         for row in self:
             if not all(isinstance(c, PrimedEntry) and c > 0 for c in row):
                 raise ValueError("the entries of a semistandard super tableau"
-                                 " must be non-negative primed integers")
+                                 " must be nonnegative primed integers")
             if any(row[c] > row[c + 1] for c in range(len(row) - 1)):
                 raise ValueError("the entries in each row of a semistandard"
                                  " super tableau must be weakly increasing")
@@ -420,7 +420,7 @@ class SemistandardSuperTableaux_all(SemistandardSuperTableaux):
 
     def __init__(self):
         r"""
-        Initializes the class of all semistandard super tableaux.
+        Initialize the class of all semistandard super tableaux.
 
         TESTS::
 
@@ -456,7 +456,7 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
 
     INPUT:
 
-    - ``n`` -- a non-negative integer or a partition.
+    - ``n`` -- a nonnegative integer or a partition
 
     EXAMPLES::
 
@@ -520,12 +520,12 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
             sage: StandardSuperTableaux(-1)
             Traceback (most recent call last):
             ...
-            ValueError: the argument must be a non-negative integer or a
+            ValueError: the argument must be a nonnegative integer or a
             partition
             sage: StandardSuperTableaux([[1]])
             Traceback (most recent call last):
             ...
-            ValueError: the argument must be a non-negative integer or a
+            ValueError: the argument must be a nonnegative integer or a
             partition
         """
         from sage.combinat.partition import _Partitions
@@ -542,7 +542,7 @@ class StandardSuperTableaux(SemistandardSuperTableaux, Parent):
                                       "partitions is not implemented yet")
 
         if not isinstance(n, (int, Integer)) or n < 0:
-            raise ValueError("the argument must be a non-negative integer"
+            raise ValueError("the argument must be a nonnegative integer"
                              " or a partition")
 
         return StandardSuperTableaux_size(n)
@@ -602,7 +602,7 @@ class StandardSuperTableaux_all(StandardSuperTableaux,
 
     def __init__(self):
         r"""
-        Initializes the class of all standard super tableaux.
+        Initialize the class of all standard super tableaux.
 
         TESTS::
 
@@ -655,7 +655,7 @@ class StandardSuperTableaux_size(StandardSuperTableaux,
 
     def __init__(self, n):
         r"""
-        Initializes the class of all standard super tableaux of size ``n``.
+        Initialize the class of all standard super tableaux of size ``n``.
 
         TESTS::
 
@@ -736,7 +736,7 @@ class StandardSuperTableaux_shape(StandardSuperTableaux):
 
     def __init__(self, p):
         r"""
-        Initializes the class of all standard super tableaux of a given shape.
+        Initialize the class of all standard super tableaux of a given shape.
 
         TESTS::
 

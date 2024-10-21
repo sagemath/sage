@@ -92,7 +92,7 @@ class MobilePoset(FinitePoset):
 
         INPUT:
 
-        - ``ribbon`` -- a list of elements that form a ribbon in your poset
+        - ``ribbon`` -- list of elements that form a ribbon in your poset
 
         TESTS::
 

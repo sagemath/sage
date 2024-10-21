@@ -83,7 +83,6 @@ class Parallelism(Singleton, SageObject):
     Switching off all parallelizations::
 
         sage: Parallelism().set(nproc=1)
-
     """
     def __init__(self):
         r"""
@@ -105,7 +104,6 @@ class Parallelism(Singleton, SageObject):
         The test suite is passed::
 
             sage: TestSuite(par).run()
-
         """
         self._default = ncpus()
         # default number of proc. used in parallelizations
@@ -122,7 +120,6 @@ class Parallelism(Singleton, SageObject):
 
             sage: Parallelism()._repr_()
             'Number of processes for parallelization:\n - linbox computations: 1\n - tensor computations: 1'
-
         """
         resu = "Number of processes for parallelization:\n"
         for field in sorted(self._nproc):
@@ -165,7 +162,6 @@ class Parallelism(Singleton, SageObject):
              - tensor computations: 1
             sage: Parallelism().get_default()  # random (depends on the computer)
             8
-
         """
         self._default = ncpus()
         for field in self._nproc:
@@ -234,7 +230,6 @@ class Parallelism(Singleton, SageObject):
             Number of processes for parallelization:
              - linbox computations: 1
              - tensor computations: 1
-
         """
         if field is None:
             for fi in self._nproc:
@@ -278,7 +273,6 @@ class Parallelism(Singleton, SageObject):
             sage: Parallelism().set('tensor', nproc=4)
             sage: Parallelism().get('tensor')
             4
-
         """
         if field not in self._nproc:
             raise KeyError("entry for field {} is not ".format(field) +
@@ -306,7 +300,6 @@ class Parallelism(Singleton, SageObject):
             sage: Parallelism().set(nproc=4)
             sage: Parallelism().get_all()
             {'linbox': 4, 'tensor': 4}
-
         """
         return self._nproc
 
@@ -340,7 +333,6 @@ class Parallelism(Singleton, SageObject):
             sage: Parallelism().set_default()
             sage: Parallelism().get_default()  # random (depends on the computer)
             8
-
         """
         if nproc is None:
             self._default = ncpus()
@@ -368,6 +360,5 @@ class Parallelism(Singleton, SageObject):
             sage: Parallelism().set_default(nproc=4)
             sage: Parallelism().get_default()
             4
-
         """
         return self._default

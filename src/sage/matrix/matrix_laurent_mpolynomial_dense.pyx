@@ -77,11 +77,9 @@ cdef class Matrix_laurent_mpolynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        An ideal on the base ring.
+        OUTPUT: an ideal on the base ring
 
         EXAMPLES::
 
@@ -108,7 +106,6 @@ cdef class Matrix_laurent_mpolynomial_dense(Matrix_generic_dense):
             (1,)
             sage: [R.ideal(M.minors(i)) == M._fitting_ideal(4 - i) for i in range(5)]
             [True, True, True, True, True]
-
         """
         R = self.base_ring()
         S = R.polynomial_ring()

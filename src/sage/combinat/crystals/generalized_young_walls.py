@@ -248,8 +248,8 @@ class GeneralizedYoungWall(CombinatorialElement):
 
         INPUT:
 
-        - `a` -- list of the form ``['s',j,k]`` where `s` is a string, `j` is an integer
-          and `k` is an integer
+        - ``a`` -- list of the form ``['s',j,k]`` where `s` is a string, `j` is
+          an integer and `k` is an integer
 
         EXAMPLES::
 
@@ -548,7 +548,7 @@ class GeneralizedYoungWall(CombinatorialElement):
         INPUT:
 
         - ``root_lattice`` -- boolean determining whether weight should appear
-          in root lattice or not in extended affine weight lattice.
+          in root lattice or not in extended affine weight lattice
 
         EXAMPLES::
 

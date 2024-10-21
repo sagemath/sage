@@ -63,7 +63,7 @@ cdef class Vector_real_double_dense(Vector_double_dense):
 
     def stats_skew(self):
         """
-        Computes the skewness of a data set.
+        Compute the skewness of a data set.
 
         For normally distributed data, the skewness should be about
         0. A skewness value > 0 means that there is more weight in the
@@ -81,7 +81,7 @@ cdef class Vector_real_double_dense(Vector_double_dense):
 
     def __reduce__(self):
         """
-        Pickling
+        Pickling.
 
         EXAMPLES::
 

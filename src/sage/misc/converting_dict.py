@@ -62,9 +62,9 @@ class KeyConvertingDict(dict):
     INPUT:
 
     - ``key_conversion_function`` -- a function which will be
-      applied to all method arguments which represent keys.
-    - ``data`` -- optional dictionary or sequence of key-value pairs
-      to initialize this mapping.
+      applied to all method arguments which represent keys
+    - ``data`` -- (optional) dictionary or sequence of key-value pairs
+      to initialize this mapping
 
     EXAMPLES::
 
@@ -105,7 +105,7 @@ class KeyConvertingDict(dict):
 
         INPUT:
 
-        - ``key`` -- A value identifying the element, will be converted.
+        - ``key`` -- a value identifying the element, will be converted
 
         EXAMPLES::
 
@@ -124,8 +124,8 @@ class KeyConvertingDict(dict):
 
         INPUT:
 
-        - ``key`` -- A value identifying the element, will be converted.
-        - ``value`` -- The associated value, will be left unmodified.
+        - ``key`` -- a value identifying the element, will be converted
+        - ``value`` -- the associated value, will be left unmodified
 
         EXAMPLES::
 
@@ -144,7 +144,7 @@ class KeyConvertingDict(dict):
 
         INPUT:
 
-        - ``key`` -- A value identifying the element, will be converted.
+        - ``key`` -- a value identifying the element, will be converted
 
         EXAMPLES::
 
@@ -164,7 +164,7 @@ class KeyConvertingDict(dict):
 
         INPUT:
 
-        - ``key`` -- A value identifying the element, will be converted.
+        - ``key`` -- a value identifying the element, will be converted
 
         EXAMPLES::
 
@@ -185,8 +185,8 @@ class KeyConvertingDict(dict):
 
         INPUT:
 
-        - ``key`` -- A value identifying the element, will be converted.
-        - ``default`` -- The value to return if the element is not mapped, optional.
+        - ``key`` -- a value identifying the element, will be converted
+        - ``default`` -- the value to return if the element is not mapped, optional
 
         EXAMPLES::
 
@@ -212,8 +212,8 @@ class KeyConvertingDict(dict):
 
         INPUT:
 
-        - ``key`` -- A value identifying the element, will be converted.
-        - ``default`` -- The value to associate with the key.
+        - ``key`` -- a value identifying the element, will be converted
+        - ``default`` -- the value to associate with the key
 
         EXAMPLES::
 
@@ -233,10 +233,10 @@ class KeyConvertingDict(dict):
 
         INPUT:
 
-        - ``key`` -- A value identifying the element, will be converted.
-        - ``args`` -- A single dict or sequence of pairs.
-        - ``kwds`` -- Named elements require that the conversion
-          function accept strings.
+        - ``key`` -- a value identifying the element, will be converted
+        - ``args`` -- a single dict or sequence of pairs
+        - ``kwds`` -- named elements require that the conversion
+          function accept strings
 
         EXAMPLES::
 

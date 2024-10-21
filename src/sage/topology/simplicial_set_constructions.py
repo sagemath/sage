@@ -248,7 +248,7 @@ class PullbackOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
 
         INPUT:
 
-        - ``maps`` -- a list or tuple of morphisms of simplicial sets
+        - ``maps`` -- list or tuple of morphisms of simplicial sets
 
         If only a single map `f: X \to Y` is given, then return
         `X`. If no maps are given, return the one-point simplicial
@@ -382,7 +382,7 @@ class PullbackOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         EXAMPLES::
 
@@ -438,7 +438,7 @@ class PullbackOfSimplicialSets_finite(PullbackOfSimplicialSets, SimplicialSet_fi
 
         INPUT:
 
-        - ``maps`` -- a list or tuple of morphisms of simplicial sets
+        - ``maps`` -- list or tuple of morphisms of simplicial sets
 
         EXAMPLES::
 
@@ -664,7 +664,7 @@ class PullbackOfSimplicialSets_finite(PullbackOfSimplicialSets, SimplicialSet_fi
         INPUT:
 
         - ``maps`` -- maps from a simplicial set `Z` to the "factors"
-          `X_i` forming the pullback.
+          `X_i` forming the pullback
 
         If the pullback `P` is formed by maps `f_i: X_i \to Y`, then
         given maps `g_i: Z \to X_i` such that `f_i g_i = f_j g_j` for
@@ -742,7 +742,7 @@ class Factors:
 
         INPUT:
 
-        - ``i`` -- integer, the index of the factor
+        - ``i`` -- integer; the index of the factor
 
         EXAMPLES::
 
@@ -785,7 +785,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
 
         INPUT:
 
-        - ``factors`` -- a list or tuple of simplicial sets
+        - ``factors`` -- list or tuple of simplicial sets
 
         Return the product of the simplicial sets in ``factors``.
 
@@ -923,9 +923,9 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
 
         INPUT:
 
-        - ``i`` -- integer, the index of the factor
+        - ``i`` -- integer; the index of the factor
 
-        - ``as_subset`` -- boolean, optional (default ``False``)
+        - ``as_subset`` -- boolean (default: ``False``)
 
         If ``as_subset`` is ``True``, return the `i`-th factor as a
         subsimplicial set of the product, identifying it with its
@@ -974,7 +974,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         EXAMPLES::
 
@@ -991,7 +991,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
 
     def _latex_(self):
         r"""
-        LaTeX representation
+        LaTeX representation.
 
         EXAMPLES::
 
@@ -1053,7 +1053,7 @@ class ProductOfSimplicialSets_finite(ProductOfSimplicialSets, PullbackOfSimplici
 
         INPUT:
 
-        - ``i`` -- integer, the index of the projection map
+        - ``i`` -- integer; the index of the projection map
 
         EXAMPLES::
 
@@ -1160,8 +1160,8 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
 
         INPUT:
 
-        - ``maps`` -- a list or tuple of morphisms of simplicial sets
-        - ``vertex_name`` -- optional, default ``None``
+        - ``maps`` -- list or tuple of morphisms of simplicial sets
+        - ``vertex_name`` -- (default: ``None``)
 
         If only a single map `f: X \to Y` is given, then return
         `Y`. If no maps are given, return the empty simplicial
@@ -1368,7 +1368,7 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         EXAMPLES::
 
@@ -1429,8 +1429,8 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
 
         INPUT:
 
-        - ``maps`` -- a list or tuple of morphisms of simplicial sets
-        - ``vertex_name`` -- optional, default ``None``
+        - ``maps`` -- list or tuple of morphisms of simplicial sets
+        - ``vertex_name`` -- (default: ``None``)
 
         EXAMPLES::
 
@@ -1625,12 +1625,12 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
 
     def universal_property(self, *maps):
         r"""
-        Return the map induced by ``maps``
+        Return the map induced by ``maps``.
 
         INPUT:
 
         - ``maps`` -- maps "factors" `Y_i` forming the pushout to a
-          fixed simplicial set `Z`.
+          fixed simplicial set `Z`
 
         If the pushout `P` is formed by maps `f_i: X \to Y_i`, then
         given maps `g_i: Y_i \to Z` such that `g_i f_i = g_j f_j` for
@@ -1699,7 +1699,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
 
         - ``inclusion`` -- inclusion map of a subcomplex (=
           subsimplicial set) of a simplicial set
-        - ``vertex_name`` -- optional, default ``'*'``
+        - ``vertex_name`` -- string (default: ``'*'``)
 
         A subcomplex `A` comes equipped with the inclusion map `A \to
         X` to its ambient complex `X`, and this constructs the
@@ -1831,7 +1831,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         EXAMPLES::
 
@@ -1843,7 +1843,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
 
     def _latex_(self):
         r"""
-        LaTeX representation
+        LaTeX representation.
 
         EXAMPLES::
 
@@ -1939,7 +1939,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
 
         INPUT:
 
-        - ``factors`` -- a list or tuple of simplicial sets
+        - ``factors`` -- list or tuple of simplicial sets
 
         Return the smash product of the simplicial sets in
         ``factors``: the smash product `X \wedge Y` is defined to be
@@ -1966,7 +1966,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         EXAMPLES::
 
@@ -1982,7 +1982,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
 
     def _latex_(self):
         r"""
-        LaTeX representation
+        LaTeX representation.
 
         EXAMPLES::
 
@@ -2015,7 +2015,7 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
 
         INPUT:
 
-        - ``factors`` -- a list or tuple of simplicial sets
+        - ``factors`` -- list or tuple of simplicial sets
 
         Return the wedge of the simplicial sets in ``factors``: the
         wedge sum `X \vee Y` is formed by taking the disjoint
@@ -2073,7 +2073,7 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         EXAMPLES::
 
@@ -2088,7 +2088,7 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
 
     def _latex_(self):
         r"""
-        LaTeX representation
+        LaTeX representation.
 
         EXAMPLES::
 
@@ -2110,7 +2110,7 @@ class WedgeOfSimplicialSets_finite(WedgeOfSimplicialSets, PushoutOfSimplicialSet
 
         INPUT:
 
-        - ``factors`` -- a tuple of simplicial sets
+        - ``factors`` -- tuple of simplicial sets
 
         If there are no factors, a point is returned.
 
@@ -2212,7 +2212,7 @@ class DisjointUnionOfSimplicialSets(PushoutOfSimplicialSets, Factors):
 
         INPUT:
 
-        - ``factors`` -- a list or tuple of simplicial sets
+        - ``factors`` -- list or tuple of simplicial sets
 
         Discard any factors which are empty and return the disjoint
         union of the remaining simplicial sets in ``factors``.  The
@@ -2282,7 +2282,7 @@ class DisjointUnionOfSimplicialSets(PushoutOfSimplicialSets, Factors):
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         EXAMPLES::
 
@@ -2298,7 +2298,7 @@ class DisjointUnionOfSimplicialSets(PushoutOfSimplicialSets, Factors):
 
     def _latex_(self):
         r"""
-        LaTeX representation
+        LaTeX representation.
 
         EXAMPLES::
 
@@ -2321,7 +2321,7 @@ class DisjointUnionOfSimplicialSets_finite(DisjointUnionOfSimplicialSets,
 
         INPUT:
 
-        - ``factors`` -- a tuple of simplicial sets
+        - ``factors`` -- tuple of simplicial sets
 
         Return the disjoint union of the simplicial sets in
         ``factors``.  The disjoint union comes equipped with a map
@@ -2374,7 +2374,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
 
         INPUT:
 
-        - ``base`` -- return the cone on this simplicial set.
+        - ``base`` -- return the cone on this simplicial set
 
         Add a point `*` (which will become the base point) and for
         each simplex `\sigma` in ``base``, add both `\sigma` and a
@@ -2441,7 +2441,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         EXAMPLES::
 
@@ -2452,7 +2452,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
 
     def _latex_(self):
         r"""
-        LaTeX representation
+        LaTeX representation.
 
         EXAMPLES::
 
@@ -2469,7 +2469,7 @@ class ConeOfSimplicialSet_finite(ConeOfSimplicialSet, SimplicialSet_finite):
 
         INPUT:
 
-        - ``base`` -- return the cone on this simplicial set.
+        - ``base`` -- return the cone on this simplicial set
 
         Add a point `*` (which will become the base point) and for
         each simplex `\sigma` in ``base``, add both `\sigma` and a
@@ -2563,7 +2563,7 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
 
         INPUT:
 
-        - ``base`` -- return the cone on this simplicial set.
+        - ``base`` -- return the cone on this simplicial set
 
         Start with the unreduced cone: take ``base`` and add a point
         `*` (which will become the base point) and for each simplex
@@ -2631,7 +2631,7 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
 
     def _repr_(self):
         """
-        Print representation
+        Print representation.
 
         EXAMPLES::
 
@@ -2643,7 +2643,7 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
 
     def _latex_(self):
         r"""
-        LaTeX representation
+        LaTeX representation.
 
         EXAMPLES::
 
@@ -2661,7 +2661,7 @@ class ReducedConeOfSimplicialSet_finite(ReducedConeOfSimplicialSet,
 
         INPUT:
 
-        - ``base`` -- return the cone on this simplicial set.
+        - ``base`` -- return the cone on this simplicial set
 
         Start with the unreduced cone: take ``base`` and add a point
         `*` (which will become the base point) and for each simplex
@@ -2730,7 +2730,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
 
         INPUT:
 
-        - ``base`` -- return the suspension of this simplicial set.
+        - ``base`` -- return the suspension of this simplicial set
 
         If this simplicial set ``X=base`` is not pointed, or if it is
         itself an unreduced suspension, return the unreduced
@@ -2829,8 +2829,8 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
 
         INPUT:
 
-        - ``output_type`` -- either ``"latex"`` for LaTeX output or
-          anything else for ``str`` output.
+        - ``output_type`` -- either ``'latex'`` for LaTeX output or
+          anything else for ``str`` output
 
         We use `S` to denote unreduced suspension, `\Sigma` for
         reduced suspension.
@@ -2871,7 +2871,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
 
     def _repr_(self):
         r"""
-        Print representation
+        Print representation.
 
         We use `S` to denote unreduced suspension, `\Sigma` for
         reduced suspension.
@@ -2891,7 +2891,7 @@ class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
 
     def _latex_(self):
         r"""
-        LaTeX representation
+        LaTeX representation.
 
         We use `S` to denote unreduced suspension, `\Sigma` for
         reduced suspension.
@@ -2921,7 +2921,7 @@ class SuspensionOfSimplicialSet_finite(SuspensionOfSimplicialSet,
         r"""
         INPUT:
 
-        - ``base`` -- return the suspension of this finite simplicial set.
+        - ``base`` -- return the suspension of this finite simplicial set
 
         See :class:`SuspensionOfSimplicialSet` for more information.
 

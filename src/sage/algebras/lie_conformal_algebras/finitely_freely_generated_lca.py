@@ -36,7 +36,7 @@ class FinitelyFreelyGeneratedLCA(FreelyGeneratedLieConformalAlgebra):
                  element_class=None, prefix=None, names=None, latex_names=None,
                  **kwds):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

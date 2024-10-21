@@ -33,9 +33,9 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
     INPUT:
 
-     - ``family``  -- a list (or iterable or family) of enumerated sets
-     - ``keepkey`` -- a boolean
-     - ``facade``  -- a boolean
+    - ``family`` -- list (or iterable or family) of enumerated sets
+    - ``keepkey`` -- boolean
+    - ``facade`` -- boolean
 
     This models the enumerated set obtained by concatenating together
     the specified ordered sets. The latter are supposed to be pairwise
@@ -228,7 +228,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
     We skip ``_test_an_element`` because the coercion framework does not
     currently allow a tuple to be returned for facade parents::
 
-        sage: TestSuite(Ukeep).run(skip="_test_an_element")                             # needs sage.combinat
+        sage: TestSuite(Ukeep).run(skip='_test_an_element')                             # needs sage.combinat
 
     The following three lines are required for the pickling tests,
     because the classes ``MyUnion`` and ``UnionOfSpecialSets`` have
@@ -240,7 +240,6 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
 
         sage: TestSuite(pp).run()
         sage: TestSuite(psp).run()
-
     """
 
     @staticmethod
@@ -438,7 +437,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
     @cached_method
     def cardinality(self):
         """
-        Returns the cardinality of this disjoint union.
+        Return the cardinality of this disjoint union.
 
         EXAMPLES:
 
@@ -466,7 +465,6 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                 ....:         Family(NonNegativeIntegers(), lambda x: []))
                 sage: U.cardinality()  # Should be 0!
                 +Infinity
-
         """
         if self._family.cardinality() == Infinity:
             return Infinity

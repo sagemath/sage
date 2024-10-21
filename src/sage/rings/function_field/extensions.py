@@ -83,7 +83,6 @@ class ConstantFieldExtension(FunctionFieldExtension):
     - ``F`` -- a function field whose constant field is `k`
 
     - ``k_ext`` -- an extension of `k`
-
     """
     def __init__(self, F, k_ext):
         """

@@ -39,7 +39,7 @@ from sage.interfaces.gap_workspace import prepare_workspace_dir
 
 cdef class ObjWrapper():
     """
-    Wrapper for GAP master pointers
+    Wrapper for GAP master pointers.
 
     EXAMPLES::
 
@@ -56,13 +56,11 @@ cdef class ObjWrapper():
 
         INPUT:
 
-        - ``lhs``, ``rhs`` -- :class:`ObjWrapper`.
+        - ``lhs``, ``rhs`` -- :class:`ObjWrapper`
 
-        - ``op`` -- integer. The comparison operation to be performed.
+        - ``op`` -- integer; the comparison operation to be performed
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -92,7 +90,7 @@ cdef class ObjWrapper():
 
     def __hash__(self):
         """
-        Return a hash value
+        Return a hash value.
 
         EXAMPLES::
 
@@ -298,7 +296,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
 
     INPUT:
 
-    - ``gap_string`` -- string. A valid statement in GAP.
+    - ``gap_string`` -- string; a valid statement in GAP
 
     OUTPUT:
 
@@ -371,7 +369,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # here if the error handler was set; but in case it wasn't
         # let's still check the result...
         nresults = GAP_LenList(result)
-        if nresults > 1:  # to mimick the old libGAP
+        if nresults > 1:  # to mimic the old libGAP
             # TODO: Get rid of this restriction eventually?
             raise GAPError("can only evaluate a single statement")
 
@@ -434,7 +432,7 @@ cdef void error_handler() noexcept with gil:
     """
     The libgap error handler.
 
-    If an error occurred, we raise a ``GAPError``; when the original
+    If an error occurred, we raise a :exc:`GAPError`; when the original
     ``GAP_EvalString`` returns, this exception will be seen.
 
     TODO: We should probably prevent re-entering this function if we

@@ -157,14 +157,13 @@ def init_sage(controller=None):
         sage: from sympy.printing.pretty.pretty import PrettyPrinter
         sage: s = sympify('+x^'.join(str(i) for i in range(30)))
         sage: print(PrettyPrinter(settings={'wrap_line': True}).doprint(s))
-         29    28    27    26    25    24    23    22    21    20    19    18    17
-        x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   +
+         29    28    27    26    25    24    23    22    21    20    19    18    17...
+        x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x   + x...
         <BLANKLINE>
-         16    15    14    13    12    11    10    9    8    7    6    5    4    3
-        x   + x   + x   + x   + x   + x   + x   + x  + x  + x  + x  + x  + x  + x  + x
+        ... 16    15    14    13    12    11    10    9    8    7    6    5    4    3...
+        ...x   + x   + x   + x   + x   + x   + x   + x  + x  + x  + x  + x  + x  + x...
         <BLANKLINE>
-        2
-          + x
+        ...
 
     The displayhook sorts dictionary keys to simplify doctesting of
     dictionary output::
@@ -261,7 +260,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
 
     INPUT: see :func:`warnings.showwarning`.
 
-    OUTPUT: None
+    OUTPUT: none
 
     EXAMPLES::
 
@@ -315,10 +314,10 @@ class SageSpoofInOut(SageObject):
     INPUT:
 
     - ``outfile`` -- (default: ``tempfile.TemporaryFile()``) a seekable open file
-      object to which stdout and stderr should be redirected.
+      object to which stdout and stderr should be redirected
 
     - ``infile`` -- (default: ``open(os.devnull)``) an open file object
-      from which stdin should be redirected.
+      from which stdin should be redirected
 
     EXAMPLES::
 
@@ -478,7 +477,7 @@ class SageSpoofInOut(SageObject):
 
     def getvalue(self):
         r"""
-        Gets the value that has been printed to ``outfile`` since the
+        Get the value that has been printed to ``outfile`` since the
         last time this function was called.
 
         EXAMPLES::
@@ -529,10 +528,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
           :class:`doctest.OutputChecker`
 
         - ``verbose`` -- boolean, determines whether verbose printing
-          is enabled.
+          is enabled
 
-        - ``optionflags`` -- Controls the comparison with the expected
-          output.  See :mod:`testmod` for more information.
+        - ``optionflags`` -- controls the comparison with the expected
+          output.  See :mod:`testmod` for more information
 
         - ``baseline`` -- dictionary, the ``baseline_stats`` value
 
@@ -854,7 +853,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
     def run(self, test, compileflags=0, out=None, clear_globs=True):
         """
-        Runs the examples in a given doctest.
+        Run the examples in a given doctest.
 
         This function replaces :class:`doctest.DocTestRunner.run`
         since it needs to handle spoofing. It also leaves the display
@@ -864,14 +863,14 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``test`` -- an instance of :class:`doctest.DocTest`
 
-        - ``compileflags`` -- int (default: 0) the set of compiler flags used to
-          execute examples (passed in to the :func:`compile`).
+        - ``compileflags`` -- integer (default: 0) the set of compiler flags
+          used to execute examples (passed in to the :func:`compile`)
 
         - ``out`` -- a function for writing the output (defaults to
-          :func:`sys.stdout.write`).
+          :func:`sys.stdout.write`)
 
-        - ``clear_globs`` -- boolean (default: ``True``): whether to clear
-          the namespace after running this doctest.
+        - ``clear_globs`` -- boolean (default: ``True``); whether to clear
+          the namespace after running this doctest
 
         OUTPUT:
 
@@ -1054,7 +1053,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
     def compile_and_execute(self, example, compiler, globs):
         """
-        Runs the given example, recording dependencies.
+        Run the given example, recording dependencies.
 
         Rather than using a basic dictionary, Sage's doctest runner
         uses a :class:`sage.doctest.util.RecordingDict`, which records
@@ -1073,16 +1072,14 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         INPUT:
 
-        - ``example`` -- a :class:`doctest.Example` instance.
+        - ``example`` -- a :class:`doctest.Example` instance
 
         - ``compiler`` -- a callable that, applied to example,
           produces a code object
 
-        - ``globs`` -- a dictionary in which to execute the code.
+        - ``globs`` -- dictionary in which to execute the code
 
-        OUTPUT:
-
-        - the output of the compiled code snippet.
+        OUTPUT: the output of the compiled code snippet
 
         EXAMPLES::
 
@@ -1198,11 +1195,9 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``test`` -- a :class:`doctest.DocTest` instance
 
-        - ``example`` -- a :class:`doctest.Example` instance in ``test``.
+        - ``example`` -- a :class:`doctest.Example` instance in ``test``
 
-        OUTPUT:
-
-        - a string used for reporting that the given example failed.
+        OUTPUT: string used for reporting that the given example failed
 
         EXAMPLES::
 
@@ -1311,9 +1306,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
 
-        OUTPUT:
-
-        - prints a report to ``out``
+        OUTPUT: prints a report to ``out``
 
         EXAMPLES::
 
@@ -1355,17 +1348,13 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
 
-        - ``got`` -- a string, the result of running ``example``
+        - ``got`` -- string; the result of running ``example``
 
-        - ``check_duration`` -- number (default: ``0``) time spent for checking
+        - ``check_duration`` -- number (default: ``0``); time spent for checking
           the test output
 
-        OUTPUT:
-
-        - prints a report to ``out``
-
-        - if in debugging mode, starts an IPython prompt at the point
-          of the failure
+        OUTPUT: prints a report to ``out``; if in debugging mode, starts an
+        IPython prompt at the point of the failure
 
         EXAMPLES::
 
@@ -1400,13 +1389,11 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
 
-        - ``got`` -- a string, the result of running ``example``
+        - ``got`` -- string, the result of running ``example``
 
-        - ``globs`` -- a dictionary of globals, used if in debugging mode
+        - ``globs`` -- dictionary of globals, used if in debugging mode
 
-        OUTPUT:
-
-        - prints a report to ``out``
+        OUTPUT: prints a report to ``out``
 
         EXAMPLES::
 
@@ -1532,14 +1519,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
 
-        - ``got`` -- a string, the result of running ``example``
+        - ``got`` -- string; the result of running ``example``
 
-        - ``check_duration`` -- number (default: ``0``) time spent for checking
+        - ``check_duration`` -- number (default: ``0``); time spent for checking
           the test output
 
-        OUTPUT:
-
-        - prints a report to ``out``
+        OUTPUT: prints a report to ``out``
 
         EXAMPLES::
 
@@ -1583,9 +1568,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         - ``exc_info`` -- the result of ``sys.exc_info()``
 
-        OUTPUT:
-
-        - prints a report to ``out``
+        OUTPUT: prints a report to ``out``
 
         - if in debugging mode, starts PDB with the given traceback
 
@@ -1666,11 +1649,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         INPUT:
 
-        - ``D`` -- a dictionary to update with cputime and walltime
+        - ``D`` -- dictionary to update with cputime and walltime
 
-        OUTPUT:
-
-        - the number of failures (or False if there is no failure attribute)
+        OUTPUT: the number of failures (or ``False`` if there is no failure
+        attribute)
 
         EXAMPLES::
 
@@ -1728,7 +1710,7 @@ def dummy_handler(sig, frame):
 
 class DocTestDispatcher(SageObject):
     """
-    Creates parallel :class:`DocTestWorker` processes and dispatches
+    Create parallel :class:`DocTestWorker` processes and dispatches
     doctesting tasks.
     """
     def __init__(self, controller):
@@ -1827,8 +1809,8 @@ class DocTestDispatcher(SageObject):
         canceled::
 
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with NTF(suffix=".py", mode="w+t") as f1, \
-            ....:      NTF(suffix=".py", mode="w+t") as f2:
+            sage: with NTF(suffix='.py', mode='w+t') as f1, \
+            ....:      NTF(suffix='.py', mode='w+t') as f2:
             ....:     _ = f1.write("'''\nsage: import time; time.sleep(60)\n'''")
             ....:     f1.flush()
             ....:     _ = f2.write("'''\nsage: True\nFalse\n'''")
@@ -1857,7 +1839,6 @@ class DocTestDispatcher(SageObject):
                1 of   1 in ...
                 [1 test, 1 failure, ... s]
             Killing test ...
-
         """
         opt = self.controller.options
 
@@ -1974,8 +1955,7 @@ class DocTestDispatcher(SageObject):
                                 # has the messages pipe open).
                                 # Adjust deadline to read all messages:
                                 newdeadline = now + die_timeout
-                                if w.deadline > newdeadline:
-                                    w.deadline = newdeadline
+                                w.deadline = min(w.deadline, newdeadline)
                             new_workers.append(w)
                         else:
                             # Save the result and output of the worker
@@ -2072,8 +2052,7 @@ class DocTestDispatcher(SageObject):
                     # The master pselect() call
                     rlist = [w.rmessages for w in workers if w.rmessages is not None]
                     tmout = min(w.deadline for w in workers) - now
-                    if tmout > 5:  # Wait at most 5 seconds
-                        tmout = 5
+                    tmout = min(tmout, 5)
                     rlist, _, _, _ = sel.pselect(rlist, timeout=tmout)
 
                     # Read messages
@@ -2182,10 +2161,10 @@ class DocTestWorker(Process):
 
     - ``source`` -- a :class:`DocTestSource` instance
 
-    - ``options`` -- an object representing doctest options.
+    - ``options`` -- an object representing doctest options
 
-    - ``funclist`` -- a list of callables to be called at the start of
-      the child process.
+    - ``funclist`` -- list of callables to be called at the start of
+      the child process
 
     - ``baseline`` -- dictionary, the ``baseline_stats`` value
 
@@ -2256,7 +2235,7 @@ class DocTestWorker(Process):
 
     def run(self):
         """
-        Runs the :class:`DocTestTask` under its own PGID.
+        Run the :class:`DocTestTask` under its own PGID.
 
         TESTS::
 
@@ -2512,9 +2491,9 @@ class DocTestTask():
 
     INPUT:
 
-    - ``source`` -- a :class:`sage.doctest.sources.DocTestSource` instance.
+    - ``source`` -- a :class:`sage.doctest.sources.DocTestSource` instance
 
-    - ``verbose`` -- boolean, controls reporting of progress by :class:`doctest.DocTestRunner`.
+    - ``verbose`` -- boolean, controls reporting of progress by :class:`doctest.DocTestRunner`
 
     EXAMPLES::
 
@@ -2558,18 +2537,18 @@ class DocTestTask():
 
         INPUT:
 
-        - ``options`` -- an object representing doctest options.
+        - ``options`` -- an object representing doctest options
 
         - ``outtmpfile`` -- a seekable file that's used by the doctest
-          runner to redirect stdout and stderr of the doctests.
+          runner to redirect stdout and stderr of the doctests
 
         - ``msgfile`` -- a file or pipe to send doctest messages about
-          doctest failures (or all tests in verbose mode).
+          doctest failures (or all tests in verbose mode)
 
         - ``result_queue`` -- an instance of :class:`multiprocessing.Queue`
-          to store the doctest result. For testing, this can also be None.
+          to store the doctest result. For testing, this can also be ``None``
 
-        - ``baseline`` -- a dictionary, the ``baseline_stats`` value.
+        - ``baseline`` -- dictionary, the ``baseline_stats`` value
 
         OUTPUT:
 

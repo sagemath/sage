@@ -40,21 +40,21 @@ class FusionRing(WeylCharacterRing):
     INPUT:
 
     - ``ct`` -- the Cartan type of a simple (finite-dimensional) Lie algebra
-    - ``k`` -- a nonnegative integer
-    - ``conjugate`` -- (default ``False``) set ``True`` to obtain
+    - ``k`` -- nonnegative integer
+    - ``conjugate`` -- (default: ``False``) set ``True`` to obtain
       the complex conjugate ring
-    - ``cyclotomic_order`` -- (default computed depending on ``ct`` and ``k``)
-    - ``fusion_labels`` --  (default None) either a tuple of strings to use as labels of the
+    - ``cyclotomic_order`` -- (default: computed depending on ``ct`` and ``k``)
+    - ``fusion_labels`` -- (default: ``None``) either a tuple of strings to use as labels of the
       basis of simple objects, or a string from which the labels will be
       constructed
-    - ``inject_variables`` -- (default ``False``): use with ``fusion_labels``.
+    - ``inject_variables`` -- (default: ``False``) use with ``fusion_labels``.
       If ``inject_variables`` is ``True``, the fusion labels will be variables
       that can be accessed from the command line
 
     The cyclotomic order is an integer `N` such that all computations
     will return elements of the cyclotomic field of `N`-th roots of unity.
     Normally you will never need to change this but consider changing it
-    if :meth:`root_of_unity` raises a :class:`ValueError`.
+    if :meth:`root_of_unity` raises a :exc:`ValueError`.
 
     This algebra has a basis (sometimes called *primary fields* but here
     called *simple objects*) indexed by the weights of level `\leq k`.
@@ -137,15 +137,15 @@ class FusionRing(WeylCharacterRing):
     as the Grothendieck ring of a *modular tensor category* (MTC). These
     include twist methods :meth:`Element.twist` and :meth:`Element.ribbon`
     for its elements related to the ribbon structure, and the
-    S-matrix :meth:`s_ij`.
+    `S`-matrix :meth:`s_ij`.
 
-    There are two natural normalizations of the S-matrix. Both
+    There are two natural normalizations of the `S`-matrix. Both
     are explained in Chapter 3 of [BaKi2001]_. The one that is computed
     by the method :meth:`s_matrix`, or whose individual entries
     are computed by :meth:`s_ij` is denoted `\tilde{s}` in
     [BaKi2001]_. It is not unitary.
 
-    The unitary S-matrix is `s=D^{-1/2}\tilde{s}` where
+    The unitary `S`-matrix is `s=D^{-1/2}\tilde{s}` where
 
     .. MATH::
 
@@ -155,7 +155,7 @@ class FusionRing(WeylCharacterRing):
     `d_i(V)` the *quantum dimension*. We will call quantity `D`
     the *global quantum dimension* and `\sqrt{D}` the
     *total quantum order*. They are  computed by :meth:`global_q_dimension`
-    and :meth:`total_q_order`. The unitary S-matrix `s` may be obtained
+    and :meth:`total_q_order`. The unitary `S`-matrix `s` may be obtained
     using :meth:`s_matrix` with the option ``unitary=True``.
 
     Let us check the Verlinde formula, which is [DFMS1996]_ (16.3). This
@@ -167,7 +167,7 @@ class FusionRing(WeylCharacterRing):
 
     where `N^k_{ij}` are the fusion coefficients, i.e. the structure
     constants of the fusion ring, and ``I`` is the unit object.
-    The S-matrix has the property that if `i*` denotes the dual
+    The `S`-matrix has the property that if `i*` denotes the dual
     object of `i`, implemented in Sage as ``i.dual()``, then
 
     .. MATH::
@@ -181,7 +181,7 @@ class FusionRing(WeylCharacterRing):
 
         N_{ijk} = \sum_l \frac{s(i, \ell)\, s(j, \ell)\, s(k, \ell)}{s(I, \ell)},
 
-    In this formula `s` is the normalized unitary S-matrix
+    In this formula `s` is the normalized unitary `S`-matrix
     denoted `s` in [BaKi2001]_. We may define a function that
     corresponds to the right-hand side, except using
     `\tilde{s}` instead of `s`::
@@ -258,9 +258,9 @@ class FusionRing(WeylCharacterRing):
         T = \begin{pmatrix} 1 & 1\\ &1 \end{pmatrix}
 
     subject to the relations `(ST)^3 = S^2`, `S^2T = TS^2`, and `S^4 = I`.
-    Let `s` be the normalized S-matrix, and
+    Let `s` be the normalized `S`-matrix, and
     `t` the diagonal matrix whose entries are the twists of the simple
-    objects. Let `s` the unitary S-matrix and `t` the matrix of twists,
+    objects. Let `s` the unitary `S`-matrix and `t` the matrix of twists,
     and `C` the conjugation matrix :meth:`conj_matrix`. Let
 
     .. MATH::
@@ -300,7 +300,7 @@ class FusionRing(WeylCharacterRing):
         True
     """
     @staticmethod
-    def __classcall__(cls, ct, k, base_ring=ZZ, prefix=None, style="coroots", conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
+    def __classcall__(cls, ct, k, base_ring=ZZ, prefix=None, style='coroots', conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
         """
         Normalize input to ensure a unique representation.
 
@@ -308,7 +308,7 @@ class FusionRing(WeylCharacterRing):
 
             sage: F1 = FusionRing('B3', 2)
             sage: F2 = FusionRing(CartanType('B3'), QQ(2), ZZ)
-            sage: F3 = FusionRing(CartanType('B3'), int(2), style="coroots")
+            sage: F3 = FusionRing(CartanType('B3'), int(2), style='coroots')
             sage: F1 is F2 and F2 is F3
             True
 
@@ -388,7 +388,7 @@ class FusionRing(WeylCharacterRing):
 
         INPUT:
 
-        - ``max_strands`` -- (default: 6): maximum number of braid group strands
+        - ``max_strands`` -- (default: 6) maximum number of braid group strands
         - ``anyon`` -- (optional) run this test on this particular simple object
 
         Create a braid group representation using :meth:`get_braid_generators`
@@ -443,8 +443,8 @@ class FusionRing(WeylCharacterRing):
         INPUT:
 
         - ``labels`` -- (default: ``None``) a list of strings or string
-        - ``inject_variables`` -- (default: ``False``) if ``True``, then
-          inject the variable names into the global namespace; note that
+        - ``inject_variables`` -- boolean (default: ``False``); if ``True``,
+          then inject the variable names into the global namespace; note that
           this could override objects already defined
 
         If ``labels`` is a list, the length of the list must equal the
@@ -510,7 +510,7 @@ class FusionRing(WeylCharacterRing):
         r"""
         Return a cyclotomic field large enough to
         contain the `2 \ell`-th roots of unity, as well as
-        all the S-matrix entries.
+        all the `S`-matrix entries.
 
         EXAMPLES::
 
@@ -555,7 +555,7 @@ class FusionRing(WeylCharacterRing):
 
         EXAMPLES::
 
-            sage: A13 = FusionRing("A1", 3, fusion_labels="a", inject_variables=True)
+            sage: A13 = FusionRing("A1", 3, fusion_labels='a', inject_variables=True)
             sage: A13.fvars_field()
             Cyclotomic Field of order 40 and degree 16
             sage: A13.field()
@@ -635,7 +635,6 @@ class FusionRing(WeylCharacterRing):
             is *not* cached. Caching of
             :meth:`CombinatorialFreeModule.get_order` causes inconsistent
             results after calling :meth:`CombinatorialFreeModule.set_order`.
-
         """
         if self._order is None:
             self.set_order(self.basis().keys().list())
@@ -775,7 +774,7 @@ class FusionRing(WeylCharacterRing):
 
         This is the same as `N_{ij}^{k\ast}`, where `N_{ij}^k` are
         the structure coefficients of the ring (see :meth:`Nk_ij`),
-        and `k\ast`` denotes the dual element. The coefficient `N_{ijk}`
+        and `k\ast` denotes the dual element. The coefficient `N_{ijk}`
         is unchanged under permutations of the three basis vectors.
 
         EXAMPLES::
@@ -816,11 +815,11 @@ class FusionRing(WeylCharacterRing):
     @cached_method
     def s_ij(self, elt_i, elt_j, base_coercion=True):
         r"""
-        Return the element of the S-matrix of this fusion ring corresponding to
+        Return the element of the `S`-matrix of this fusion ring corresponding to
         the given elements.
 
-        This is the unnormalized S-matrix, denoted `\tilde{s}_{ij}`
-        in [BaKi2001]_ . To obtain the normalized S-matrix, divide by
+        This is the unnormalized `S`-matrix, denoted `\tilde{s}_{ij}`
+        in [BaKi2001]_ . To obtain the normalized `S`-matrix, divide by
         :meth:`global_q_dimension()` or use :meth:`S_matrix()` with
         the option ``unitary=True``.
 
@@ -855,7 +854,7 @@ class FusionRing(WeylCharacterRing):
 
     def s_ijconj(self, elt_i, elt_j, base_coercion=True):
         """
-        Return the conjugate of the element of the S-matrix given by
+        Return the conjugate of the element of the `S`-matrix given by
         ``self.s_ij(elt_i, elt_j, base_coercion=base_coercion)``.
 
         See :meth:`s_ij`.
@@ -896,12 +895,12 @@ class FusionRing(WeylCharacterRing):
 
     def s_matrix(self, unitary=False, base_coercion=True):
         r"""
-        Return the S-matrix of this fusion ring.
+        Return the `S`-matrix of this fusion ring.
 
         OPTIONAL:
 
-        - ``unitary`` -- (default: ``False``) set to ``True`` to obtain
-          the unitary S-matrix
+        - ``unitary`` -- boolean (default: ``False``); set to ``True`` to
+          obtain the unitary `S`-matrix
 
         Without the ``unitary`` parameter, this is the matrix denoted
         `\widetilde{s}` in [BaKi2001]_.
@@ -1115,7 +1114,7 @@ class FusionRing(WeylCharacterRing):
             return k <= 2
 
     ###################################
-    ### Braid group representations ###
+    #   Braid group representations   #
     ###################################
 
     def get_computational_basis(self, a, b, n_strands):
@@ -1212,9 +1211,9 @@ class FusionRing(WeylCharacterRing):
 
         INPUT:
 
-        - ``mapper`` -- a string specifying the name of a function defined
+        - ``mapper`` -- string specifying the name of a function defined
           in the ``fast_parallel_fusion_ring_braid_repn`` module
-        - ``input_args`` -- a tuple of arguments to be passed to mapper
+        - ``input_args`` -- tuple of arguments to be passed to mapper
 
         This method applies the mapper in parallel if a ``worker_pool``
         is provided.
@@ -1264,8 +1263,8 @@ class FusionRing(WeylCharacterRing):
                             total_charge_anyon,
                             n_strands,
                             checkpoint=False,
-                            save_results="",
-                            warm_start="",
+                            save_results='',
+                            warm_start='',
                             use_mp=True,
                             verbose=True):
         r"""
@@ -1278,8 +1277,8 @@ class FusionRing(WeylCharacterRing):
 
         - ``fusing_anyon`` -- a basis element of ``self``
         - ``total_charge_anyon`` -- a basis element of ``self``
-        - ``n_strands`` -- a positive integer greater than 2
-        - ``checkpoint`` -- (default: ``False``) a boolean indicating
+        - ``n_strands`` -- positive integer greater than 2
+        - ``checkpoint`` -- boolean (default: ``False``);
           whether the F-matrix solver should pickle checkpoints
         - ``save_results`` -- (optional) a string indicating the name of
           a file in which to pickle computed F-symbols for later use
@@ -1288,10 +1287,10 @@ class FusionRing(WeylCharacterRing):
           The pickle may be a checkpoint generated by the solver, or
           a file containing solver results. If all F-symbols are known,
           we don't run the solver again.
-        - ``use_mp`` -- (default: ``True``) a boolean indicating whether
+        - ``use_mp`` -- boolean (default: ``True``); whether
           to use multiprocessing to speed up the computation; this is
           highly recommended.
-        - ``verbose`` -- (default: ``True``) boolean indicating whether
+        - ``verbose`` -- boolean (default: ``True``); whether
           to be verbose with the computation
 
         For more information on the optional parameters, see
@@ -1399,7 +1398,7 @@ class FusionRing(WeylCharacterRing):
 
         EXAMPLES::
 
-            sage: F41 = FusionRing("F4", 1, fusion_labels="f", inject_variables=True)
+            sage: F41 = FusionRing("F4", 1, fusion_labels='f', inject_variables=True)
             sage: f1*f1
             f0 + f1
             sage: comp, sig = F41.get_braid_generators(f1, f0, 4, verbose=False)
@@ -1466,7 +1465,7 @@ class FusionRing(WeylCharacterRing):
 
             INPUT:
 
-            - ``reduced`` -- (default: ``True``) boolean; if ``True``
+            - ``reduced`` -- boolean (default: ``True``); if ``True``
               then return the twist reduced modulo 2
 
             EXAMPLES::

@@ -119,9 +119,9 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
 
         INPUT:
 
-        - ``parent`` -- Parent for this element
+        - ``parent`` -- parent for this element
 
-        - ``list``   -- The list of KR tableaux elements
+        - ``list`` -- the list of KR tableaux elements
 
         EXAMPLES::
 
@@ -325,12 +325,10 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
 
         INPUT:
 
-        - ``display_steps`` -- (default: ``False``) Boolean which indicates
-          if we want to output each step in the algorithm.
+        - ``display_steps`` -- boolean (default: ``False``); whether to output
+          each step in the algorithm
 
-        OUTPUT:
-
-        The rigged configuration corresponding to ``self``.
+        OUTPUT: the rigged configuration corresponding to ``self``
 
         EXAMPLES:
 

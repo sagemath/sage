@@ -379,15 +379,15 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
                         continue
                     basis_pivots.add(p)
                     if self._sparse:
-                        added.append(self.element_class( self, build_assoc(cur_mat[i]) ))
+                        added.append(self.element_class(self, build_assoc(cur_mat[i])))
                     else:
-                        added.append(self.element_class( self, self._assoc(cur_mat[i].list()) ))
+                        added.append(self.element_class(self, self._assoc(cur_mat[i].list())))
                 cur_mat = cur_mat.submatrix(nrows=len(pivots))
         if self._sparse:
-            basis = [self.element_class( self, build_assoc(cur_mat[i]) )
+            basis = [self.element_class(self, build_assoc(cur_mat[i]))
                      for i in range(cur_mat.rank())]
         else:
-            basis = [self.element_class( self, self._assoc(cur_mat[i].list()) )
+            basis = [self.element_class(self, self._assoc(cur_mat[i].list()))
                      for i in range(cur_mat.rank())]
         return Family(basis)
 
@@ -978,7 +978,7 @@ class e8(ExceptionalMatrixLieAlgebra):
 
         We skip the not implemented methods test as it takes too much time::
 
-            sage: TestSuite(g).run(skip="_test_not_implemented_methods")  # long time
+            sage: TestSuite(g).run(skip='_test_not_implemented_methods')  # long time
         """
         ct = CartanType(['E', 8])
         g = LieAlgebraChevalleyBasis(R, ct)
@@ -1077,7 +1077,7 @@ class g2(ExceptionalMatrixLieAlgebra):
 
 
 #######################################
-## Compact real form
+# Compact real form
 
 class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
     r"""
@@ -1558,7 +1558,7 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
 
 
 #######################################
-## Chevalley Basis
+# Chevalley Basis
 
 class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
     r"""
@@ -1642,7 +1642,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
                     raise ValueError("not a valid Dynkin orientation")
             else:
                 from sage.graphs.graph import Graph
-                G = Graph(epsilon, multiedges=True, loops=True, format="list_of_edges")
+                G = Graph(epsilon, multiedges=True, loops=True, format='list_of_edges')
                 if (G.has_multiple_edges() or G.has_loops()
                     or cartan_type.dynkin_diagram().to_undirected() != G.to_simple()):
                     raise ValueError("not a valid Dynkin orientation")
@@ -2054,7 +2054,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         #   enough in the ambient space to correctly convert things to do
         #   the scalar product.
         alc = wt.parent().simple_coroots()
-        return R(wt.scalar( alc[aci[m]] ))
+        return R(wt.scalar(alc[aci[m]]))
 
     def affine(self, kac_moody=True):
         r"""
@@ -2098,8 +2098,8 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
         INPUT:
 
-        - ``str_keys`` -- (default: ``False``) set to ``True`` to have the
-          indices indexed by strings instead of simple (co)roots
+        - ``str_keys`` -- boolean (default: ``False``); set to ``True`` to have
+          the indices indexed by strings instead of simple (co)roots
 
         EXAMPLES::
 
@@ -2197,7 +2197,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
         INPUT:
 
-        - ``pos`` -- (default: ``True``) if ``True``, then return
+        - ``pos`` -- boolean (default: ``True``); if ``True``, then return
           `e_{\theta}`, otherwise return `f_{\theta}`
 
         EXAMPLES::

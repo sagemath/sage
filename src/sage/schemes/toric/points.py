@@ -53,10 +53,9 @@ class InfinitePointEnumerator:
 
         INPUT:
 
-        - ``fan`` -- fan of the toric variety.
+        - ``fan`` -- fan of the toric variety
 
-        - ``ring`` -- infinite base ring over which to enumerate
-          points.
+        - ``ring`` -- infinite base ring over which to enumerate points
 
         TESTS::
 
@@ -83,7 +82,7 @@ class InfinitePointEnumerator:
         """
         Iterate over the points.
 
-        OUTPUT: Iterator over points.
+        OUTPUT: iterator over points
 
         EXAMPLES::
 
@@ -116,9 +115,9 @@ class NaiveFinitePointEnumerator:
 
         INPUT:
 
-        - ``fan`` -- fan of the toric variety.
+        - ``fan`` -- fan of the toric variety
 
-        - ``ring`` -- finite base ring over which to enumerate points.
+        - ``ring`` -- finite base ring over which to enumerate points
 
         EXAMPLES::
 
@@ -137,7 +136,7 @@ class NaiveFinitePointEnumerator:
         """
         Return all rays (real and virtual).
 
-        OUTPUT: Tuple of rays of the fan.
+        OUTPUT: tuple of rays of the fan
 
         EXAMPLES::
 
@@ -171,15 +170,15 @@ class NaiveFinitePointEnumerator:
     @cached_method
     def roots(self, n):
         """
-        Return the n-th roots in the base field
+        Return the `n`-th roots in the base field.
 
         INPUT:
 
-        - ``n`` integer.
+        - ``n`` -- integer
 
         OUTPUT:
 
-        Tuple containing all n-th roots (not only the primitive
+        Tuple containing all `n`-th roots (not only the primitive
         ones). In particular, 1 is included.
 
         EXAMPLES::
@@ -197,7 +196,7 @@ class NaiveFinitePointEnumerator:
 
     def _Chow_group_free(self):
         r"""
-        Return the relations coming from the free part of the Chow group
+        Return the relations coming from the free part of the Chow group.
 
         OUTPUT:
 
@@ -298,9 +297,7 @@ class NaiveFinitePointEnumerator:
         """
         Return the orbit of homogeneous coordinates under rescalings.
 
-        OUTPUT:
-
-        The set of all homogeneous coordinates that are equivalent to ``point``.
+        OUTPUT: the set of all homogeneous coordinates that are equivalent to ``point``
 
         EXAMPLES::
 
@@ -323,7 +320,7 @@ class NaiveFinitePointEnumerator:
 
     def cone_iter(self):
         """
-        Iterate over all cones of the fan
+        Iterate over all cones of the fan.
 
         OUTPUT:
 
@@ -361,7 +358,7 @@ class NaiveFinitePointEnumerator:
         This method does NOT identify homogeneous coordinates that are
         equivalent by a homogeneous rescaling.
 
-        OUTPUT: An iterator over the points.
+        OUTPUT: an iterator over the points
 
         EXAMPLES::
 
@@ -403,7 +400,7 @@ class NaiveFinitePointEnumerator:
         rescalings, and returns precisely one representative per
         orbit.
 
-        OUTPUT: An iterator over points.
+        OUTPUT: an iterator over points
 
         EXAMPLES::
 
@@ -436,7 +433,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         """
         Return the multiplicative generator of the finite field.
 
-        OUTPUT: A finite field element.
+        OUTPUT: a finite field element
 
         EXAMPLES::
 
@@ -458,9 +455,9 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
         INPUT:
 
-        - ``n`` integer.
+        - ``n`` -- integer
 
-        OUTPUT: A multiplicative generator for :meth:`roots`.
+        OUTPUT: a multiplicative generator for :meth:`roots`
 
         EXAMPLES::
 
@@ -491,7 +488,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
     def _Chow_group_free_generators(self):
         r"""
-        Return generators for :meth:`_Chow_group_free_generators`
+        Return generators for :meth:`_Chow_group_free_generators`.
 
         OUTPUT:
 
@@ -520,7 +517,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
     def _Chow_group_torsion_generators(self):
         r"""
-        Return generators for :meth:`Chow_group_torsion`
+        Return generators for :meth:`Chow_group_torsion`.
 
         OUTPUT:
 
@@ -556,12 +553,12 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
     def log(self, z):
         """
-        Return the component-wise log of ``z``
+        Return the component-wise log of ``z``.
 
         INPUT:
 
-        - ``z`` -- a list/tuple/iterable of non-zero finite field
-          elements.
+        - ``z`` -- list/tuple/iterable of nonzero finite field
+          elements
 
         OUTPUT:
 
@@ -591,11 +588,11 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
     def exp(self, powers):
         """
-        Return the component-wise exp of ``z``
+        Return the component-wise exp of ``z``.
 
         INPUT:
 
-        - ``powers`` -- a list/tuple/iterable of integers.
+        - ``powers`` -- list/tuple/iterable of integers
 
         OUTPUT:
 
@@ -704,7 +701,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         rescalings, and returns precisely one representative per
         orbit.
 
-        OUTPUT: Iterator over points.
+        OUTPUT: iterator over points
 
         EXAMPLES::
 
@@ -740,7 +737,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
         """
         Return the cardinality of the point set.
 
-        OUTPUT: An integer. The number of points.
+        OUTPUT: integer; the number of points
 
         EXAMPLES::
 
@@ -765,10 +762,10 @@ class NaiveSubschemePointEnumerator:
 
         INPUT:
 
-        - ``polynomials`` -- list/tuple/iterable of polynomials. The
-          defining polynomials.
+        - ``polynomials`` -- list/tuple/iterable of polynomials; the
+          defining polynomials
 
-        - ``ambient`` -- enumerator for ambient space points.
+        - ``ambient`` -- enumerator for ambient space points
 
         TESTS::
 
@@ -813,15 +810,15 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
 
     def inhomogeneous_equations(self, ring, nonzero_coordinates, cokernel):
         """
-        Inhomogenize the defining polynomials
+        Inhomogenize the defining polynomials.
 
         INPUT:
 
         - ``ring`` -- the polynomial ring for inhomogeneous
-          coordinates.
+          coordinates
 
         - ``nonzero_coordinates`` -- list of integers. The indices of
-          the non-zero homogeneous coordinates in the patch.
+          the nonzero homogeneous coordinates in the patch
 
         - ``cokernel`` -- the logs of the nonzero coordinates of
           all distinct points as a cokernel. See
@@ -889,7 +886,7 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
 
     def solutions(self, inhomogeneous_equations, log_range):
         """
-        Parallel version of :meth:`solutions_serial`
+        Parallel version of :meth:`solutions_serial`.
 
         INPUT/OUTPUT:
 
@@ -926,22 +923,20 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
 
     def homogeneous_coordinates(self, log_t, nonzero_coordinates, cokernel):
         """
-        Convert the log of inhomogeneous coordinates back to homogeneous coordinates
+        Convert the log of inhomogeneous coordinates back to homogeneous coordinates.
 
         INPUT:
 
-        - ``log_t`` -- log of inhomogeneous coordinates of a point.
+        - ``log_t`` -- log of inhomogeneous coordinates of a point
 
         - ``nonzero_coordinates`` -- the nonzero homogeneous
-          coordinates in the patch.
+          coordinates in the patch
 
         - ``cokernel`` -- the logs of the nonzero coordinates of
           all distinct points as a cokernel. See
           :meth:`FiniteFieldPointEnumerator.cone_points_iter`.
 
-        OUTPUT:
-
-        The same point, but as a tuple of homogeneous coordinates.
+        OUTPUT: the same point, but as a tuple of homogeneous coordinates
 
         EXAMPLES::
 
@@ -1000,7 +995,7 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
         """
         Return the cardinality of the point set.
 
-        OUTPUT: An integer. The number of points.
+        OUTPUT: integer; the number of points
 
         EXAMPLES::
 

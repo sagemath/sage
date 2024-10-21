@@ -116,11 +116,9 @@ cpdef double odlyzko_bound_totallyreal(int n) noexcept:
 
     INPUT:
 
-    - ``n`` -- (integer) the degree
+    - ``n`` -- integer; the degree
 
-    OUTPUT:
-
-    a lower bound on the root discriminant (as a real number)
+    OUTPUT: a lower bound on the root discriminant (as a real number)
 
     EXAMPLES::
 
@@ -174,28 +172,28 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
 
     INPUT:
 
-    - ``n`` -- (integer) the degree
-    - ``B`` -- (integer) the discriminant bound
-    - ``a`` -- (list, default: ``[]``) the coefficient list to begin with
+    - ``n`` -- integer; the degree
+    - ``B`` -- integer; the discriminant bound
+    - ``a`` -- list (default: ``[]``); the coefficient list to begin with
     - ``verbose`` -- (integer or string, default: 0) if ``verbose == 1``
       (or ``2``), then print to the screen (really) verbosely; if verbose is
       a string, then print verbosely to the file specified by verbose.
-    - ``return_seqs`` -- (boolean, default ``False``) If ``True``, then return
-      the polynomials as sequences (for easier exporting to a file).
+    - ``return_seqs`` -- boolean (default: ``False``); if ``True``, then return
+      the polynomials as sequences (for easier exporting to a file)
     - ``phc`` -- boolean or integer (default: ``False``)
-    - ``keep_fields`` -- (boolean or integer, default: ``False``) If
+    - ``keep_fields`` -- boolean or integer (default: ``False``); if
       ``keep_fields`` is ``True``, then keep fields up to ``B*log(B)``; if
       ``keep_fields`` is an integer, then keep fields up to that integer.
-    - ``t_2`` -- (boolean or integer, default: ``False``) If ``t_2 = T``, then
-      keep only polynomials with t_2 norm >= T.
-    - ``just_print`` -- (boolean, default: ``False``): if ``just_print`` is not
+    - ``t_2`` -- boolean or integer (default: ``False``); if ``t_2 = T``, then
+      keep only polynomials with ``t_2 norm >= T``
+    - ``just_print`` -- boolean (default: ``False``); if ``just_print`` is not
       ``False``, instead of creating a sorted list of totally real number
       fields, we simply write each totally real field we find to the file
       whose filename is given by ``just_print``. In this case, we don't
       return anything.
-    - ``return_pari_objects`` -- (boolean, default: ``True``) if
+    - ``return_pari_objects`` -- boolean (default: ``True``); if
       both ``return_seqs`` and ``return_pari_objects`` are ``False`` then
-      it returns the elements as Sage objects; otherwise it returns PARI
+      it returns the elements as Sage objects. Otherwise it returns PARI
       objects.
 
     OUTPUT:
@@ -238,7 +236,6 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         Univariate Polynomial Ring in x over Rational Field
         sage: enumerate_totallyreal_fields_prim(2, 10, return_seqs=True)[1][0][1][0].parent()
         Rational Field
-
     """
 
     cdef pari_gen B_pari, d, d_poly, keepB, nf, t2val, ngt2, ng

@@ -210,7 +210,6 @@ class Section(ModuleElementWithMutability):
         Traceback (most recent call last):
         ...
         ValueError: the name of an immutable element cannot be changed
-
     """
     def __init__(self, section_module, name=None, latex_name=None):
         r"""
@@ -238,7 +237,6 @@ class Section(ModuleElementWithMutability):
             sage: s in C0
             True
             sage: TestSuite(s).run()
-
         """
         ModuleElementWithMutability.__init__(self, section_module)
         self._smodule = section_module
@@ -288,7 +286,6 @@ class Section(ModuleElementWithMutability):
             True
             sage: s.is_zero()  # indirect doctest
             False
-
         """
         if self._is_zero:
             return False
@@ -318,7 +315,6 @@ class Section(ModuleElementWithMutability):
             sage: s # indirect doctest
             Section s on the 3-dimensional differentiable manifold M with values
              in the real vector bundle E of rank 2
-
         """
         desc = "Section "
         if self._name is not None:
@@ -342,7 +338,6 @@ class Section(ModuleElementWithMutability):
             '\\sigma'
             sage: latex(sigma) # indirect doctest
             \sigma
-
         """
         if self._latex_name is None:
             return r'\text{' + str(self) + r'}'
@@ -359,7 +354,6 @@ class Section(ModuleElementWithMutability):
             sage: E = M.vector_bundle(2, 'E')
             sage: s = E.section(name='s')
             sage: s._init_derived()
-
         """
         self._restrictions = {} # dict. of restrictions of self on subdomains
                                 # of self._domain, with the subdomains as keys
@@ -376,7 +370,6 @@ class Section(ModuleElementWithMutability):
             sage: E = M.vector_bundle(2, 'E')
             sage: s = E.section(name='s')
             sage: s._del_derived()
-
         """
         if del_restrictions:
             self._restrictions.clear()
@@ -416,7 +409,6 @@ class Section(ModuleElementWithMutability):
              the real vector bundle E of rank 2
             sage: latex(s)
             a
-
         """
         if self.is_immutable():
             raise ValueError("the name of an immutable element "
@@ -450,7 +442,6 @@ class Section(ModuleElementWithMutability):
             True
             sage: s1.parent() is s.parent()
             True
-
         """
         return type(self)(self._smodule)
 
@@ -474,7 +465,6 @@ class Section(ModuleElementWithMutability):
             sage: s._del_restrictions()
             sage: s._restrictions
             {}
-
         """
         self._restrictions.clear()
         self._extensions_graph = {self._domain: self}
@@ -518,7 +508,6 @@ class Section(ModuleElementWithMutability):
             sage: s._init_components({(f, Y): [t, v^3]})
             sage: s.display(f, Y)
             s = t f_0 + v^3 f_1
-
         """
         comp0 = comp[0]
         self._is_zero = False  # a priori
@@ -559,7 +548,6 @@ class Section(ModuleElementWithMutability):
             sage: z = C0_U.zero()
             sage: z.domain()
             Open subset U of the 3-dimensional topological manifold M
-
         """
         return self._domain
 
@@ -582,7 +570,6 @@ class Section(ModuleElementWithMutability):
             Module C^0(U;E) of sections on the Open subset U of the
              3-dimensional topological manifold M with values in the real vector
              bundle E of rank 2
-
         """
         return self._smodule
 
@@ -620,7 +607,6 @@ class Section(ModuleElementWithMutability):
             s = (x + y) (phi_U^*e_1) + x (phi_U^*e_2)
             sage: s.restrict(U) == sU
             True
-
         """
         if self.is_immutable():
             raise ValueError("the restrictions of an immutable element "
@@ -641,9 +627,7 @@ class Section(ModuleElementWithMutability):
           :class:`~sage.manifolds.differentiable.manifold.DifferentiableManifold`;
           open subset `U` of the section domain `S`
 
-        OUTPUT:
-
-        - :class:`Section` representing the restriction
+        OUTPUT: :class:`Section` representing the restriction
 
         EXAMPLES:
 
@@ -709,7 +693,6 @@ class Section(ModuleElementWithMutability):
             True
             sage: sU.restrict(U) is sU
             True
-
         """
         if subdomain == self._domain:
             return self
@@ -838,7 +821,6 @@ class Section(ModuleElementWithMutability):
             ...
             ValueError: no basis could be found for computing the components in
              the Trivialization frame (E|_V, ((phi_V^*e_1),(phi_V^*e_2)))
-
         """
         if basis is None:
             basis = self._smodule.default_frame()
@@ -910,8 +892,6 @@ class Section(ModuleElementWithMutability):
             ...
             ValueError: no basis could be found for computing the components in
              the Trivialization frame (E|_V, ((phi_V^*e_1),(phi_V^*e_2)))
-
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -983,7 +963,6 @@ class Section(ModuleElementWithMutability):
 
             sage: s.display(fS)
             s = (u + v) (phi_V^*e_1)
-
         """
         if basis is None:
             basis = self._smodule.default_frame()
@@ -1049,7 +1028,6 @@ class Section(ModuleElementWithMutability):
 
             sage: s.display(fS)
             s = (u + v) (phi_V^*e_1)
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -1131,7 +1109,6 @@ class Section(ModuleElementWithMutability):
              (phi_V^*e_2)
 
         and `a` is defined on the entire manifold `S^2`.
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -1157,7 +1134,7 @@ class Section(ModuleElementWithMutability):
 
         - ``frame`` -- local frame `e` in which the components are to be set
         - ``subdomain`` -- open subset of `e`'s domain in which the
-          components have additional expressions.
+          components have additional expressions
 
         EXAMPLES:
 
@@ -1215,7 +1192,6 @@ class Section(ModuleElementWithMutability):
             S^2 → ℝ
             on U: (x, y) ↦ y
             on V: (u, v) ↦ v/(u^2 + v^2)
-
         """
         if self.is_immutable():
             raise ValueError("the expressions of an immutable element "
@@ -1293,7 +1269,6 @@ class Section(ModuleElementWithMutability):
             True
             sage: s.restrict(U).comp() is s.comp(e)
             True
-
         """
         if basis is None:
             basis = self._smodule.default_frame()
@@ -1394,7 +1369,6 @@ class Section(ModuleElementWithMutability):
 
             sage: s.disp(fS)
             s = v/(u^2 + v^2) (phi_V^*e_1) + u/(u^2 + v^2) (phi_V^*e_2)
-
         """
         if frame is None:
             frame = self._smodule.default_frame()
@@ -1421,7 +1395,7 @@ class Section(ModuleElementWithMutability):
         - ``chart`` -- (default: ``None``) chart specifying the coordinate
           expression of the components; if ``None``, the default chart of the
           section domain is used
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero components are displayed
 
         EXAMPLES:
@@ -1450,7 +1424,6 @@ class Section(ModuleElementWithMutability):
         See documentation of
         :meth:`sage.manifolds.section.TrivialSection.display_comp`
         for more options.
-
         """
         if frame is None:
             frame = self._smodule.default_frame()
@@ -1521,7 +1494,6 @@ class Section(ModuleElementWithMutability):
             s = 4 (phi_V^*e_1) + 8 (phi_V^*e_2)
             sage: p.coord(c_uv) # to check the above expression
             (5, -1)
-
         """
         if point not in self._domain:
             raise ValueError("the {} is not a point in the ".format(point) +
@@ -1570,7 +1542,6 @@ class Section(ModuleElementWithMutability):
             [Scalar field on the 3-dimensional topological manifold M,
              Scalar field on the 3-dimensional topological manifold M,
              Scalar field on the 3-dimensional topological manifold M]
-
         """
         if isinstance(args, str): # section with specified indices
             return TensorWithIndices(self, args).update()
@@ -1592,7 +1563,7 @@ class Section(ModuleElementWithMutability):
 
     def __setitem__(self, args, value):
         r"""
-        Sets a component with respect to some local frame.
+        Set a component with respect to some local frame.
 
         INPUT:
 
@@ -1623,7 +1594,6 @@ class Section(ModuleElementWithMutability):
             sage: s.__setitem__(slice(None), [x+y, 3*y^2, x*y])
             sage: s.display()
             s = (x + y) e_0 + 3*y^2 e_1 + x*y e_2
-
         """
         if isinstance(args, list):  # case of [[...]] syntax
             if not isinstance(args[0], (int, Integer, slice)):
@@ -1692,7 +1662,6 @@ class Section(ModuleElementWithMutability):
             t = 2 (phi_U^*e_1) + (-y + 1) (phi_U^*e_2)
             sage: s == t
             False
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -1760,7 +1729,6 @@ class Section(ModuleElementWithMutability):
             2 (phi_U^*e_1) + (-y + 1) (phi_U^*e_2)
             sage: t == s
             False
-
         """
         resu = self._new_instance()
         # set resu name
@@ -1815,7 +1783,6 @@ class Section(ModuleElementWithMutability):
             sage: sorted(t._common_subdomains(s), key=str)
             [Open subset U of the 2-dimensional topological manifold M,
              Open subset V of the 2-dimensional topological manifold M]
-
         """
         resu = []
         for dom in self._restrictions:
@@ -1831,9 +1798,7 @@ class Section(ModuleElementWithMutability):
 
         - ``other`` -- a section or 0
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
 
         TESTS::
 
@@ -1870,7 +1835,6 @@ class Section(ModuleElementWithMutability):
             False
             sage: s.parent().zero() == 0
             True
-
         """
         if other is self:
             return True
@@ -1950,7 +1914,6 @@ class Section(ModuleElementWithMutability):
             False
             sage: s != 0
             True
-
         """
         return not (self == other)
 
@@ -1958,9 +1921,7 @@ class Section(ModuleElementWithMutability):
         r"""
         Unary plus operator.
 
-        OUTPUT:
-
-        - an exact copy of ``self``
+        OUTPUT: an exact copy of ``self``
 
         TESTS::
 
@@ -1986,7 +1947,6 @@ class Section(ModuleElementWithMutability):
              in the real vector bundle E of rank 2
             sage: t.display(fU)
             +s = x (phi_U^*e_1) + (phi_U^*e_2)
-
         """
         resu = self._new_instance()
         for dom, rst in self._restrictions.items():
@@ -2001,9 +1961,7 @@ class Section(ModuleElementWithMutability):
         r"""
         Unary minus operator.
 
-        OUTPUT:
-
-        - the tensor field `-T`, where `T` is ``self``
+        OUTPUT: the tensor field `-T`, where `T` is ``self``
 
         TESTS::
 
@@ -2037,7 +1995,6 @@ class Section(ModuleElementWithMutability):
             -s = (-1/2*u - 1/2*v) (phi_V^*e_1) + (-1/4*u^2 - 1/2*u*v - 1/4*v^2) (phi_V^*e_2)
             sage: s == -t  # indirect doctest
             True
-
         """
         resu = self._new_instance()
         for dom, rst in self._restrictions.items():
@@ -2058,9 +2015,7 @@ class Section(ModuleElementWithMutability):
 
         - ``other`` -- a section, in the same section module as ``self``
 
-        OUTPUT:
-
-        - the section resulting from the addition of ``self`` and ``other``
+        OUTPUT: the section resulting from the addition of ``self`` and ``other``
 
         TESTS::
 
@@ -2102,7 +2057,6 @@ class Section(ModuleElementWithMutability):
             True
             sage: z._add_(s) == s
             True
-
         """
         # Case zero:
         if self._is_zero:
@@ -2129,9 +2083,7 @@ class Section(ModuleElementWithMutability):
 
         - ``other`` -- a section in the same section module as ``self``
 
-        OUTPUT:
-
-        - the section resulting from the subtraction of ``other`` from ``self``
+        OUTPUT: the section resulting from the subtraction of ``other`` from ``self``
 
         TESTS::
 
@@ -2171,7 +2123,6 @@ class Section(ModuleElementWithMutability):
             True
             sage: z._sub_(s) == -s
             True
-
         """
         # Case zero:
         if self._is_zero:
@@ -2192,7 +2143,7 @@ class Section(ModuleElementWithMutability):
 
     def _rmul_(self, scalar):
         r"""
-        Reflected multiplication operator: performs ``scalar * self``
+        Reflected multiplication operator: performs ``scalar * self``.
 
         This is actually the multiplication by an element of the ring over
         which the tensor field module is constructed.
@@ -2202,9 +2153,7 @@ class Section(ModuleElementWithMutability):
         - ``scalar`` -- scalar field in the scalar field algebra over which
           the module containing ``self`` is defined
 
-        OUTPUT:
-
-        - the tensor field ``scalar * self``
+        OUTPUT: the tensor field ``scalar * self``
 
         TESTS::
 
@@ -2251,7 +2200,6 @@ class Section(ModuleElementWithMutability):
             True
             sage: z._rmul_(g) == z
             True
-
         """
         ###
         # Case zero:
@@ -2296,7 +2244,6 @@ class Section(ModuleElementWithMutability):
             True
             sage: sU.is_immutable()
             True
-
         """
         for rst in self._restrictions.values():
             rst.set_immutable()
@@ -2382,7 +2329,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
          manifold S^3 with values in the real vector bundle E of rank 3
         sage: isinstance(s.parent(), FiniteRankFreeModule)
         True
-
     """
     def __init__(self, section_module, name=None, latex_name=None):
         r"""
@@ -2408,7 +2354,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             Free module C^0(M;E) of sections on the 2-dimensional topological
              manifold M with values in the real vector bundle E of rank 2
             sage: TestSuite(s).run()
-
         """
         FiniteRankFreeModuleElement.__init__(self, section_module,
                                              name=name, latex_name=latex_name)
@@ -2431,7 +2376,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             sage: e = E.local_frame('e') # makes E trivial
             sage: s = E.section(name='s')
             sage: s._init_derived()
-
         """
         FiniteRankFreeModuleElement._init_derived(self)
         Section._init_derived(self)
@@ -2442,7 +2386,7 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: ``True``) determines whether the
+        - ``del_restrictions`` -- boolean (default: ``True``); determines whether the
           restrictions of ``self`` to subdomains are deleted
 
         TESTS::
@@ -2452,7 +2396,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             sage: e = E.local_frame('e') # makes E trivial
             sage: s = E.section(name='s')
             sage: s._del_derived()
-
         """
         FiniteRankFreeModuleElement._del_derived(self)
         Section._del_derived(self, del_restrictions=del_restrictions)
@@ -2476,7 +2419,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             sage: s  # indirect doctest
             Section s on the 2-dimensional topological manifold M with values in
              the real vector bundle E of rank 2
-
         """
         return Section._repr_(self)
 
@@ -2496,7 +2438,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
              the real vector bundle E of rank 2
             sage: type(s._new_instance()) is type(s)
             True
-
         """
         return type(self)(self._smodule)
 
@@ -2567,7 +2508,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             ...
             ValueError: no basis could be found for computing the components
              in the Local frame (E|_M, (f_0,f_1))
-
         """
         if basis is None:
             basis = self._smodule.default_frame()
@@ -2655,7 +2595,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             ...
             ValueError: no basis could be found for computing the components
              in the Local frame (E|_M, (f_0,f_1))
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -2743,7 +2682,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             s = 2 e_0
             sage: s.display(f)
             s = x f_0
-
         """
         if basis is None:
             basis = self._smodule.default_frame()
@@ -2829,7 +2767,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             s = 2 e_0
             sage: s.display(f)
             s = x f_0
-
         """
         if self.is_immutable():
             raise ValueError("the components of an immutable element "
@@ -2895,7 +2832,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             1-index components w.r.t. Local frame (E|_M, (f_1,f_2))
             sage: s.comp(f)[:]
             [x - 3, 0]
-
         """
         if basis is None:
             basis = self._smodule.default_frame()
@@ -2921,9 +2857,7 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
           :class:`~sage.manifolds.differentiable.manifold.DifferentiableManifold`;
           open subset `U` of the section module domain `S`
 
-        OUTPUT:
-
-        - instance of :class:`TrivialSection` representing the restriction
+        OUTPUT: instance of :class:`TrivialSection` representing the restriction
 
         EXAMPLES:
 
@@ -2965,7 +2899,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
 
             sage: s.restrict(M) is s
             True
-
         """
         if subdomain == self._domain:
             return self
@@ -3055,7 +2988,7 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
         - ``chart`` -- (default: ``None``) chart specifying the coordinate
           expression of the components; if ``None``, the default chart of the
           section module domain is used
-        - ``only_nonzero`` -- (default: ``False``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``False``); if ``True``, only
           nonzero components are displayed
 
         EXAMPLES:
@@ -3109,7 +3042,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             s^0 = 4*u/(u^2 - 2*u*v + v^2 + 4)
             s^1 = 0
             s^2 = 1/4*u^2 - 1/4*v^2
-
         """
         if frame is None:
                 frame = self._smodule.default_basis()
@@ -3161,7 +3093,6 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
             Fiber of E at Point p on the 2-dimensional topological manifold M
             sage: sp.display()
             s = 3 e_0 + 4 e_1
-
         """
         if point not in self._domain:
             raise ValueError("the {} is not in the domain of ".format(point) +

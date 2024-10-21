@@ -30,10 +30,10 @@ def variable_names(n, name=None):
 
     INPUT:
 
-    - ``n`` a non-negative Integer; the number of variable names to
-       output
+    - ``n`` -- a nonnegative Integer; the number of variable names to
+      output
     - ``names`` a string (default: ``None``); the root of the variable
-      name.
+      name
 
     EXAMPLES::
 
@@ -62,10 +62,10 @@ def latex_variable_names(n, name=None):
 
     INPUT:
 
-    - ``n`` a non-negative Integer; the number of variable names to
+    - ``n`` -- a nonnegative Integer; the number of variable names to
       output
     - ``names`` a string (default: ``None``); the root of the variable
-      name.
+      name
 
     EXAMPLES::
 

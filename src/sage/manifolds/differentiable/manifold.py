@@ -635,7 +635,6 @@ class DifferentiableManifold(TopologicalManifold):
     category::
 
         sage: TestSuite(M).run()
-
     """
     def __init__(self, n, name, field, structure, base_manifold=None,
                  diff_degree=infinity, latex_name=None, start_index=0,
@@ -665,7 +664,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: U.category() is M.category().Subobjects()
             True
             sage: TestSuite(U).run()
-
         """
         if base_manifold is None:
             if category is None:
@@ -732,7 +730,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: M = Manifold(2, 'M', structure='differentiable', diff_degree=3)
             sage: M.diff_degree()
             3
-
         """
         return self._diff_degree
 
@@ -748,7 +745,7 @@ class DifferentiableManifold(TopologicalManifold):
         INPUT:
 
         - ``name`` -- name given to the open subset
-        - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           subset; if none is provided, it is set to ``name``
         - ``coord_def`` -- (default: {}) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
@@ -757,9 +754,7 @@ class DifferentiableManifold(TopologicalManifold):
         - ``supersets`` -- (default: only ``self``) list of sets that the
           new open subset is a subset of
 
-        OUTPUT:
-
-        - the open subset, as an instance of :class:`DifferentiableManifold`
+        OUTPUT: the open subset, as an instance of :class:`DifferentiableManifold`
 
         EXAMPLES:
 
@@ -833,7 +828,6 @@ class DifferentiableManifold(TopologicalManifold):
             False
             sage: M((-1/2,1/3)) in U
             True
-
         """
         resu = DifferentiableManifold(self._dim, name, self._field,
                                       self._structure, base_manifold=self._manifold,
@@ -853,7 +847,7 @@ class DifferentiableManifold(TopologicalManifold):
         INPUT:
 
         - ``resu`` -- an instance of :class:`TopologicalManifold` or
-          a subclass.
+          a subclass
 
         - ``coord_def`` -- (default: ``{}``) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
@@ -960,7 +954,6 @@ class DifferentiableManifold(TopologicalManifold):
         See the documentation of class
         :class:`~sage.manifolds.differentiable.diff_map.DiffMap` for more
         examples.
-
         """
         homset = Hom(self, codomain)
         if coord_functions is None:
@@ -1056,7 +1049,6 @@ class DifferentiableManifold(TopologicalManifold):
         See the documentation of class
         :class:`~sage.manifolds.differentiable.diff_map.DiffMap` for more
         examples.
-
         """
         if codomain is None:
             codomain = self
@@ -1092,7 +1084,7 @@ class DifferentiableManifold(TopologicalManifold):
         - ``name`` -- name given to the total space
         - ``field`` -- (default: ``'real'``) topological field giving the
           vector space structure to the fibers
-        - ``latex_name`` -- optional LaTeX name for the total space
+        - ``latex_name`` -- (optional) LaTeX name for the total space
 
         OUTPUT:
 
@@ -1105,7 +1097,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: M.vector_bundle(2, 'E')
             Differentiable real vector bundle E -> M of rank 2 over the base
              space 2-dimensional differentiable manifold M
-
         """
         from sage.manifolds.differentiable.vector_bundle \
                                                import DifferentiableVectorBundle
@@ -1136,7 +1127,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: M = Manifold(2, 'M')
             sage: TM = M.tangent_bundle(); TM
             Tangent bundle TM over the 2-dimensional differentiable manifold M
-
         """
         return self.tensor_bundle(1, 0, dest_map=dest_map)
 
@@ -1165,7 +1155,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: cTM = M.cotangent_bundle(); cTM
             Cotangent bundle T*M over the 2-dimensional differentiable
              manifold M
-
         """
         return self.tensor_bundle(0, 1, dest_map=dest_map)
 
@@ -1216,7 +1205,6 @@ class DifferentiableManifold(TopologicalManifold):
 
             :class:`~sage.manifolds.differentiable.vector_bundle.TensorBundle`
             for more examples and documentation.
-
         """
         if dest_map is None:
             dest_map = self.identity_map()
@@ -1252,7 +1240,7 @@ class DifferentiableManifold(TopologicalManifold):
           identity map (case of vector fields *on* `M`), otherwise
           ``dest_map`` must be a
           :class:`~sage.manifolds.differentiable.diff_map.DiffMap`
-        - ``force_free`` -- (default: ``False``) if set to ``True``, force
+        - ``force_free`` -- boolean (default: ``False``); if set to ``True``, force
           the construction of a *free* module (this implies that `N` is
           parallelizable)
 
@@ -1378,7 +1366,6 @@ class DifferentiableManifold(TopologicalManifold):
             True
             sage: M.is_manifestly_parallelizable()
             True
-
         """
         from sage.manifolds.differentiable.vectorfield_module import \
                                        VectorFieldModule, VectorFieldFreeModule
@@ -1451,7 +1438,6 @@ class DifferentiableManifold(TopologicalManifold):
              3-dimensional differentiable manifold M
             sage: TU.an_element().display()
             2 ∂/∂x⊗∂/∂x⊗dx
-
         """
         return self.vector_field_module(dest_map=dest_map).tensor_module(*tensor_type)
 
@@ -1510,7 +1496,6 @@ class DifferentiableManifold(TopologicalManifold):
 
             sage: M.diff_form_module(2) is M.diff_form_module(2)
             True
-
         """
         return self.vector_field_module(dest_map=dest_map).dual_exterior_power(degree)
 
@@ -1559,7 +1544,6 @@ class DifferentiableManifold(TopologicalManifold):
 
             sage: M.mixed_form_algebra() is M.mixed_form_algebra()
             True
-
         """
         vmodule = self.vector_field_module(dest_map=dest_map)
         return MixedFormAlgebra(vmodule)
@@ -1622,7 +1606,6 @@ class DifferentiableManifold(TopologicalManifold):
 
             sage: M.multivector_module(2) is M.multivector_module(2)
             True
-
         """
         return self.vector_field_module(dest_map=dest_map).exterior_power(degree)
 
@@ -1772,7 +1755,6 @@ class DifferentiableManifold(TopologicalManifold):
         For more examples, see
         :class:`~sage.manifolds.differentiable.vectorfield.VectorField` and
         :class:`~sage.manifolds.differentiable.vectorfield.VectorFieldParal`.
-
         """
         name = kwargs.pop('name', None)
         latex_name = kwargs.pop('latex_name', None)
@@ -1792,7 +1774,7 @@ class DifferentiableManifold(TopologicalManifold):
         take its values on another manifold. More precisely, if `M` is
         the current manifold, `N` a differentiable manifold,
         `\Phi:\  M \rightarrow N` a differentiable map and `(k,l)`
-        a pair of non-negative integers, a *tensor field of type* `(k,l)`
+        a pair of nonnegative integers, a *tensor field of type* `(k,l)`
         *along* `M` *with values on* `N` is a differentiable map
 
         .. MATH::
@@ -1891,7 +1873,6 @@ class DifferentiableManifold(TopologicalManifold):
         For more examples, see
         :class:`~sage.manifolds.differentiable.tensorfield.TensorField` and
         :class:`~sage.manifolds.differentiable.tensorfield_paral.TensorFieldParal`.
-
         """
         k = args[0]
         l = args[1]
@@ -2058,7 +2039,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: s2[:]
             [-1 -1]
             [ 3 10]
-
         """
         name = kwargs.pop('name', None)
         latex_name = kwargs.pop('latex_name', None)
@@ -2079,7 +2059,7 @@ class DifferentiableManifold(TopologicalManifold):
         multivector field take its values on another manifold. More
         precisely, if `M` is the current manifold, `N` a differentiable
         manifold, `\Phi:\  M \rightarrow N` a differentiable map and `p`
-        a non-negative integer, a *multivector field of degree* `p` (or
+        a nonnegative integer, a *multivector field of degree* `p` (or
         `p`-*vector field*) *along* `M` *with values on* `N` is a
         differentiable map
 
@@ -2163,7 +2143,6 @@ class DifferentiableManifold(TopologicalManifold):
         :class:`~sage.manifolds.differentiable.multivectorfield.MultivectorField`
         and
         :class:`~sage.manifolds.differentiable.multivectorfield.MultivectorFieldParal`.
-
         """
         degree = args[0]
         name = kwargs.pop('name', None)
@@ -2185,7 +2164,7 @@ class DifferentiableManifold(TopologicalManifold):
         differential form take its values on another manifold. More
         precisely, if `M` is the current manifold, `N` a differentiable
         manifold, `\Phi:\  M \rightarrow N` a differentiable map and `p`
-        a non-negative integer, a *differential form of degree* `p` (or
+        a nonnegative integer, a *differential form of degree* `p` (or
         `p`-*form*) *along* `M` *with values on* `N` is a differentiable
         map
 
@@ -2267,7 +2246,6 @@ class DifferentiableManifold(TopologicalManifold):
         For more examples, see
         :class:`~sage.manifolds.differentiable.diff_form.DiffForm` and
         :class:`~sage.manifolds.differentiable.diff_form.DiffFormParal`.
-
         """
         degree = args[0]
         name = kwargs.pop('name', None)
@@ -2365,7 +2343,6 @@ class DifferentiableManifold(TopologicalManifold):
         For more examples, see
         :class:`~sage.manifolds.differentiable.diff_form.DiffForm` and
         :class:`~sage.manifolds.differentiable.diff_form.DiffFormParal`.
-
         """
         name = kwargs.pop('name', None)
         latex_name = kwargs.pop('latex_name', None)
@@ -2445,7 +2422,6 @@ class DifferentiableManifold(TopologicalManifold):
         See the documentation of class
         :class:`~sage.manifolds.differentiable.mixed_form.MixedForm` for
         more examples.
-
         """
         algebra = self.mixed_form_algebra(dest_map=dest_map)
         resu = algebra.element_class(algebra, name=name, latex_name=latex_name)
@@ -2473,7 +2449,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: omega.set_comp()[1,2] = -1
             sage: omega.display()
             omega = -dq∧dp
-
         """
         return self.vector_field_module().symplectic_form(name, latex_name)
 
@@ -2497,7 +2472,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: poisson.set_comp()[1,2] = -1
             sage: poisson.display()
             varpi = -e_q∧e_p
-
         """
         return self.vector_field_module().poisson_tensor(name, latex_name)
 
@@ -2592,7 +2566,6 @@ class DifferentiableManifold(TopologicalManifold):
         :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismField`
         and
         :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismFieldParal`.
-
         """
         name = kwargs.pop('name', None)
         latex_name = kwargs.pop('latex_name', None)
@@ -2669,7 +2642,6 @@ class DifferentiableManifold(TopologicalManifold):
 
         For more examples, see
         :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismField`.
-
         """
         vmodule = self.vector_field_module(dest_map)
         return vmodule.identity_map()
@@ -2723,7 +2695,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: M.orientation()
             [Coordinate frame (U, (∂/∂x,∂/∂y)),
              Coordinate frame (V, (∂/∂u,∂/∂v))]
-
         """
         from .vectorframe import VectorFrame
         chart_type = self._structure.chart
@@ -2819,7 +2790,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: W = U.intersection(V, name='W')
             sage: W.orientation()
             [Vector frame (W, (∂/∂x,∂/∂y))]
-
         """
         if not self._orientation:
             # try to get an orientation from super domains:
@@ -2874,7 +2844,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: c_xy.<x,y> = M.chart()
             sage: M.default_frame()
             Coordinate frame (M, (∂/∂x,∂/∂y))
-
         """
         return self._def_frame
 
@@ -2900,7 +2869,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: M.set_default_frame(e)
             sage: M.default_frame()
             Vector frame (M, (e_0,e_1))
-
         """
         from sage.manifolds.differentiable.vectorframe import VectorFrame
         if not isinstance(frame, VectorFrame):
@@ -2970,7 +2938,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: M.change_of_frame(c_xy.frame(), c_uv.frame()) is \
             ....:  XM.change_of_basis(c_xy.frame(), c_uv.frame())
             True
-
         """
         if (frame1, frame2) not in self._frame_changes:
             raise ValueError("the change of frame from {} to {}".format(frame1, frame2) +
@@ -2992,7 +2959,7 @@ class DifferentiableManifold(TopologicalManifold):
           :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismFieldParal`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: ``True``) -- if set to True, the inverse
+        - ``compute_inverse`` -- boolean (default: ``True``); if set to True, the inverse
           automorphism is computed and the change from basis `(f_i)` to `(e_i)`
           is set to it in the internal dictionary ``self._frame_changes``
 
@@ -3018,7 +2985,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: M.change_of_frame(e,f)[e,:]
             [1 2]
             [0 3]
-
         """
         from sage.manifolds.differentiable.automorphismfield import AutomorphismFieldParal
         fmodule = frame1._fmodule
@@ -3173,7 +3139,6 @@ class DifferentiableManifold(TopologicalManifold):
             For more options, in particular for the choice of symbols and
             indices, see
             :class:`~sage.manifolds.differentiable.vectorframe.VectorFrame`.
-
         """
         from sage.manifolds.differentiable.vectorframe import VectorFrame
         # Input processing
@@ -3242,7 +3207,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: M._set_covering_frame(e)
             sage: M._covering_frames
             [Vector frame (M, (e_0,e_1))]
-
         """
         self._covering_frames.append(frame)
         self._parallelizable_parts = set([self])
@@ -3255,9 +3219,7 @@ class DifferentiableManifold(TopologicalManifold):
         r"""
         Return the list of vector frames defined on open subsets of ``self``.
 
-        OUTPUT:
-
-        - list of vector frames defined on open subsets of ``self``
+        OUTPUT: list of vector frames defined on open subsets of ``self``
 
         EXAMPLES:
 
@@ -3278,7 +3240,6 @@ class DifferentiableManifold(TopologicalManifold):
             [Coordinate frame (R^2, (∂/∂x,∂/∂y)),
              Vector frame (R^2, (e_0,e_1)),
              Coordinate frame (U, (∂/∂x,∂/∂y))]
-
         """
         return list(self._frames)
 
@@ -3286,9 +3247,7 @@ class DifferentiableManifold(TopologicalManifold):
         r"""
         Return the list of coframes defined on open subsets of ``self``.
 
-        OUTPUT:
-
-        - list of coframes defined on open subsets of ``self``
+        OUTPUT: list of coframes defined on open subsets of ``self``
 
         EXAMPLES:
 
@@ -3313,7 +3272,6 @@ class DifferentiableManifold(TopologicalManifold):
              Coframe (R^2, (e^0,e^1)),
              Coordinate coframe (U, (dx,dy)),
              Coframe (U, (e^0,e^1))]
-
         """
         return list(self._coframes)
 
@@ -3365,7 +3323,6 @@ class DifferentiableManifold(TopologicalManifold):
             True
             sage: M.changes_of_frame()[(f,e)] == a^(-1)
             True
-
         """
         return self._frame_changes.copy()
 
@@ -3398,7 +3355,6 @@ class DifferentiableManifold(TopologicalManifold):
             sage: X.<t,x,y,z> = N.chart()
             sage: N.is_manifestly_parallelizable()
             True
-
         """
         return bool(self._covering_frames)
 
@@ -3438,7 +3394,6 @@ class DifferentiableManifold(TopologicalManifold):
 
             :class:`~sage.manifolds.differentiable.tangent_space.TangentSpace`
             for more examples.
-
         """
         from sage.manifolds.point import ManifoldPoint
         from sage.manifolds.differentiable.tangent_space import TangentSpace
@@ -3471,7 +3426,7 @@ class DifferentiableManifold(TopologicalManifold):
           in both cases, if the dimension of the manifold is 1, a single
           coordinate expression can be passed instead of a tuple with
           a single element
-        - ``param`` -- a tuple of the type ``(t, t_min, t_max)``, where
+        - ``param`` -- tuple of the type ``(t, t_min, t_max)``, where
 
           * ``t`` is the curve parameter used in ``coord_expression``;
           * ``t_min`` is its minimal value;
@@ -3487,9 +3442,7 @@ class DifferentiableManifold(TopologicalManifold):
         - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
           the curve; if none is provided, ``name`` will be used
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.curve.DifferentiableCurve`
+        OUTPUT: :class:`~sage.manifolds.differentiable.curve.DifferentiableCurve`
 
         EXAMPLES:
 
@@ -3521,7 +3474,6 @@ class DifferentiableManifold(TopologicalManifold):
 
             :class:`~sage.manifolds.differentiable.curve.DifferentiableCurve`
             for more examples, including plots.
-
         """
         from sage.manifolds.differentiable.examples.real_line import RealLine
         if not isinstance(param, (tuple, list)):
@@ -3567,7 +3519,7 @@ class DifferentiableManifold(TopologicalManifold):
           equations on the velocities only
         - ``velocities`` -- list of the symbolic expressions used in
           ``equations_rhs`` to denote the velocities
-        - ``curve_param`` -- a tuple of the type ``(t, t_min, t_max)``,
+        - ``curve_param`` -- tuple of the type ``(t, t_min, t_max)``,
           where
 
           * ``t`` is the symbolic variable used in ``equations_rhs`` to
@@ -3585,9 +3537,7 @@ class DifferentiableManifold(TopologicalManifold):
         - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
           the curve; if none is provided, ``name`` will be used
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedCurve`
+        OUTPUT: :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedCurve`
 
         EXAMPLES:
 
@@ -3641,7 +3591,6 @@ class DifferentiableManifold(TopologicalManifold):
              by default...
             sage: tgt_vec[:]    # abs tol 1e-12
             [-0.8481007454066425, 0.5298350137284363, 1.0]
-
         """
 
         from sage.manifolds.differentiable.examples.real_line import RealLine
@@ -3680,7 +3629,7 @@ class DifferentiableManifold(TopologicalManifold):
         - ``affine_connection`` --
           :class:`~sage.manifolds.differentiable.affine_connection.AffineConnection`;
           affine connection with respect to which the curve is autoparallel
-        - ``curve_param`` -- a tuple of the type ``(t, t_min, t_max)``,
+        - ``curve_param`` -- tuple of the type ``(t, t_min, t_max)``,
           where
 
           * ``t`` is the symbolic variable to be used as the parameter
@@ -3701,9 +3650,7 @@ class DifferentiableManifold(TopologicalManifold):
         - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
           the curve; if none is provided, ``name`` will be used
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedAutoparallelCurve`
+        OUTPUT: :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedAutoparallelCurve`
 
         EXAMPLES:
 
@@ -3776,7 +3723,6 @@ class DifferentiableManifold(TopologicalManifold):
              by default...
             sage: tgt_vec[:]    # abs tol 1e-12
             [1.000000000000011, 1.148779968412235]
-
         """
 
         from sage.manifolds.differentiable.examples.real_line import RealLine
@@ -3817,7 +3763,7 @@ class DifferentiableManifold(TopologicalManifold):
         - ``metric`` --
           :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`
           metric with respect to which the curve is a geodesic
-        - ``curve_param`` -- a tuple of the type ``(t, t_min, t_max)``,
+        - ``curve_param`` -- tuple of the type ``(t, t_min, t_max)``,
           where
 
           * ``t`` is the symbolic variable to be used as the parameter
@@ -3838,9 +3784,7 @@ class DifferentiableManifold(TopologicalManifold):
         - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
           the curve; if none is provided, ``name`` will be used
 
-        OUTPUT:
-
-        - :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedGeodesic`
+        OUTPUT: :class:`~sage.manifolds.differentiable.integrated_curve.IntegratedGeodesic`
 
         EXAMPLES:
 
@@ -3898,7 +3842,6 @@ class DifferentiableManifold(TopologicalManifold):
              by default...
             sage: tgt_vec[:]    # abs tol 1e-12
             [-1.0907409234671228, 0.6205670379855032]
-
         """
         from sage.manifolds.differentiable.examples.real_line import RealLine
         from sage.manifolds.differentiable.manifold_homset import IntegratedGeodesicSet
@@ -3950,7 +3893,6 @@ class DifferentiableManifold(TopologicalManifold):
 
             :class:`~sage.manifolds.differentiable.affine_connection.AffineConnection`
             for more examples.
-
         """
         from sage.manifolds.differentiable.affine_connection import \
                                                                AffineConnection
@@ -4003,7 +3945,6 @@ class DifferentiableManifold(TopologicalManifold):
 
             :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`
             for more examples.
-
         """
         vmodule = self.vector_field_module(dest_map)
         return vmodule.metric(name, signature=signature, latex_name=latex_name)
@@ -4063,7 +4004,6 @@ class DifferentiableManifold(TopologicalManifold):
 
             :class:`~sage.manifolds.differentiable.metric.DegenerateMetric`
             for more examples.
-
         """
         vmodule = self.vector_field_module(dest_map)
         dim = vmodule.ambient_domain().dimension()
@@ -4116,7 +4056,6 @@ class DifferentiableManifold(TopologicalManifold):
 
             :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`
             for more examples.
-
         """
         vmodule = self.vector_field_module(dest_map)
         dim = vmodule.ambient_domain().dimension()
@@ -4138,7 +4077,7 @@ class DifferentiableManifold(TopologicalManifold):
         INPUT:
 
         - ``name`` -- name given to the metric
-        - ``signature`` -- (default: 'positive') sign of the metric
+        - ``signature`` -- (default: ``'positive'``) sign of the metric
           signature:
 
           * if set to 'positive', the signature is n-2, where n is the
@@ -4182,7 +4121,6 @@ class DifferentiableManifold(TopologicalManifold):
             g = dt⊗dt - dx⊗dx - dy⊗dy - dz⊗dz
             sage: g.signature()
             -2
-
         """
         vmodule = self.vector_field_module(dest_map)
         dim = vmodule.ambient_domain().dimension()
@@ -4217,7 +4155,6 @@ class DifferentiableManifold(TopologicalManifold):
 
         - :class:`~sage.manifolds.differentiable.tangent_vector.TangentVector`
           representing the tangent vector at point `p`
-
 
         EXAMPLES:
 
@@ -4283,7 +4220,6 @@ class DifferentiableManifold(TopologicalManifold):
             Traceback (most recent call last):
             ...
             ValueError: 2 components must be provided
-
         """
         basis = kwargs.pop('basis', None)
         name = kwargs.pop('name', None)

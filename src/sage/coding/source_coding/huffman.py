@@ -46,7 +46,7 @@ def frequency_table(string):
 
     INPUT:
 
-    - ``string`` -- a string of symbols over some alphabet.
+    - ``string`` -- string of symbols over some alphabet
 
     OUTPUT:
 
@@ -109,7 +109,7 @@ class Huffman(SageObject):
       - A dictionary that associates to each symbol of an alphabet a numeric
         value. If we consider the frequency of each alphabetic symbol, then
         ``source`` is considered as the frequency table of the alphabet with
-        each numeric (non-negative integer) value being the number of
+        each numeric (nonnegative integer) value being the number of
         occurrences of a symbol. The numeric values can also represent weights
         of the symbols. In that case, the numeric values are not necessarily
         integers, but can be real numbers.
@@ -259,7 +259,7 @@ class Huffman(SageObject):
 
     def _build_code_from_tree(self, tree, d, prefix):
         r"""
-        Builds the Huffman code corresponding to a given tree and prefix.
+        Build the Huffman code corresponding to a given tree and prefix.
 
         INPUT:
 
@@ -267,7 +267,7 @@ class Huffman(SageObject):
 
         - ``d`` -- the dictionary to fill
 
-        - ``prefix`` (string) -- binary string which is the prefix
+        - ``prefix`` -- string; binary string which is the prefix
           of any element of the tree
 
         EXAMPLES::
@@ -293,15 +293,15 @@ class Huffman(SageObject):
 
     def _build_code(self, dic):
         r"""
-        Constructs a Huffman code corresponding to an alphabet with the given
+        Construct a Huffman code corresponding to an alphabet with the given
         weight table.
 
         INPUT:
 
-        - ``dic`` -- a dictionary that associates to each symbol of an alphabet
+        - ``dic`` -- dictionary that associates to each symbol of an alphabet
           a numeric value. If we consider the frequency of each alphabetic
           symbol, then ``dic`` is considered as the frequency table of the
-          alphabet with each numeric (non-negative integer) value being the
+          alphabet with each numeric (nonnegative integer) value being the
           number of occurrences of a symbol. The numeric values can also
           represent weights of the symbols. In that case, the numeric values
           are not necessarily integers, but can be real numbers. In general,
@@ -378,11 +378,9 @@ class Huffman(SageObject):
 
         INPUT:
 
-        - ``string`` -- a string of symbols over an alphabet.
+        - ``string`` -- string of symbols over an alphabet
 
-        OUTPUT:
-
-        - A Huffman encoding of ``string``.
+        OUTPUT: a Huffman encoding of ``string``
 
         EXAMPLES:
 
@@ -405,11 +403,9 @@ class Huffman(SageObject):
 
         INPUT:
 
-        - ``string`` -- a string of Huffman encodings.
+        - ``string`` -- string of Huffman encodings
 
-        OUTPUT:
-
-        - The Huffman decoding of ``string``.
+        OUTPUT: the Huffman decoding of ``string``
 
         EXAMPLES:
 
@@ -454,15 +450,13 @@ class Huffman(SageObject):
 
     def encoding_table(self):
         r"""
-        Returns the current encoding table.
+        Return the current encoding table.
 
         INPUT:
 
         - None.
 
-        OUTPUT:
-
-        - A dictionary associating an alphabetic symbol to a Huffman encoding.
+        OUTPUT: a dictionary associating an alphabetic symbol to a Huffman encoding
 
         EXAMPLES::
 
@@ -497,15 +491,13 @@ class Huffman(SageObject):
 
     def tree(self):
         r"""
-        Returns the Huffman tree corresponding to the current encoding.
+        Return the Huffman tree corresponding to the current encoding.
 
         INPUT:
 
         - None.
 
-        OUTPUT:
-
-        - The binary tree representing a Huffman code.
+        OUTPUT: the binary tree representing a Huffman code
 
         EXAMPLES::
 
@@ -522,24 +514,22 @@ class Huffman(SageObject):
         g.add_edges(self._generate_edges(self._tree))
         return g
 
-    def _generate_edges(self, tree, parent="", bit=""):
+    def _generate_edges(self, tree, parent='', bit=''):
         """
         Generate the edges of the given Huffman tree.
 
         INPUT:
 
-        - ``tree`` -- a Huffman binary tree.
+        - ``tree`` -- a Huffman binary tree
 
         - ``parent`` -- (default: empty string) a parent vertex with exactly
-          two children.
+          two children
 
         - ``bit`` -- (default: empty string) the bit signifying either the
-          left or right branch. The bit "0" denotes the left branch and "1"
-          denotes the right branch.
+          left or right branch; the bit '0' denotes the left branch and '1'
+          denotes the right branch
 
-        OUTPUT:
-
-        - An edge list of the Huffman binary tree.
+        OUTPUT: an edge list of the Huffman binary tree
 
         EXAMPLES::
 
@@ -555,8 +545,8 @@ class Huffman(SageObject):
             u = parent
         s = "".join([parent, bit])
         try:
-            left = self._generate_edges(tree[0], parent=s, bit="0")
-            right = self._generate_edges(tree[1], parent=s, bit="1")
+            left = self._generate_edges(tree[0], parent=s, bit='0')
+            right = self._generate_edges(tree[1], parent=s, bit='1')
             L = [(u, s)] if s != "" else []
             return left + right + L
         except TypeError:

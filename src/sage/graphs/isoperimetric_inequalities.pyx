@@ -111,8 +111,7 @@ def cheeger_constant(g):
     cdef unsigned long vmin = 1   # value of the volume for the min
     cdef int i
 
-    init_short_digraph(sd, g, edge_labelled=False, vertex_list=list(g),
-                       sort_neighbors=False)
+    init_short_digraph(sd, g, edge_labelled=False, vertex_list=list(g))
 
     subgraph = <int *> check_malloc(sd.n * sizeof(int))
     bitsubgraph = <int *> check_malloc(sd.n * sizeof(int))
@@ -246,8 +245,7 @@ def edge_isoperimetric_number(g):
     cdef int u = 0                  # current vertex
     cdef int i
 
-    init_short_digraph(sd, g, edge_labelled=False, vertex_list=list(g),
-                       sort_neighbors=False)
+    init_short_digraph(sd, g, edge_labelled=False, vertex_list=list(g))
 
     cdef unsigned long bmin = sd.neighbors[1] - sd.neighbors[0]  # value of boundary for the min
     cdef unsigned long vmin = 1  # value of the volume for the min

@@ -56,13 +56,11 @@ def triangulation_render_2d(triangulation, **kwds):
 
     INPUT:
 
-    - ``triangulation`` -- a :class:`Triangulation`.
+    - ``triangulation`` -- a :class:`Triangulation`
 
-    - ``**kwds`` -- keywords that are passed on to the graphics primitives.
+    - ``**kwds`` -- keywords that are passed on to the graphics primitives
 
-    OUTPUT:
-
-    A 2-d graphics object.
+    OUTPUT: a 2-d graphics object
 
     EXAMPLES::
 
@@ -117,13 +115,11 @@ def triangulation_render_3d(triangulation, **kwds):
 
     INPUT:
 
-    - ``triangulation`` -- a :class:`Triangulation`.
+    - ``triangulation`` -- a :class:`Triangulation`
 
-    - ``**kwds`` -- keywords that are  passed on to the graphics primitives.
+    - ``**kwds`` -- keywords that are  passed on to the graphics primitives
 
-    OUTPUT:
-
-    A 3-d graphics object.
+    OUTPUT: a 3-d graphics object
 
     EXAMPLES::
 
@@ -237,9 +233,9 @@ class Triangulation(Element):
           by the correspondence :meth:`PointConfiguration.simplex_to_int`. In the second
           case, a simplex is specified by listing the indices of the included points.
 
-        - ``check`` -- boolean. Whether to perform checks that the
+        - ``check`` -- boolean; whether to perform checks that the
           triangulation is, indeed, a triangulation of the point
-          configuration.
+          configuration
 
         NOTE:
 
@@ -271,7 +267,7 @@ class Triangulation(Element):
 
     def point_configuration(self):
         """
-        Returns the point configuration underlying the triangulation.
+        Return the point configuration underlying the triangulation.
 
         EXAMPLES::
 
@@ -340,15 +336,15 @@ class Triangulation(Element):
 
     def __getitem__(self, i):
         """
-        Access the point indices of the i-th simplex of the triangulation.
+        Access the point indices of the `i`-th simplex of the triangulation.
 
         INPUT:
 
-        - ``i`` -- integer. The index of a simplex.
+        - ``i`` -- integer; the index of a simplex
 
         OUTPUT:
 
-        A tuple of integers. The vertex indices of the i-th simplex.
+        A tuple of integers. The vertex indices of the `i`-th simplex.
 
         EXAMPLES::
 
@@ -434,9 +430,7 @@ class Triangulation(Element):
         that is, the total volume of all simplices containing `p_i`.
         See also [GKZ1994]_ page 220 equation 1.4.
 
-        OUTPUT:
-
-        The phi vector of self.
+        OUTPUT: the phi vector of self
 
         EXAMPLES::
 
@@ -457,9 +451,7 @@ class Triangulation(Element):
         r"""
         Return the enumerated simplices.
 
-        OUTPUT:
-
-        A tuple of integers that uniquely specifies the triangulation.
+        OUTPUT: a tuple of integers that uniquely specifies the triangulation
 
         EXAMPLES::
 
@@ -514,7 +506,7 @@ class Triangulation(Element):
         coordinates of the points are shifted so that the apex of the
         fan is the origin of the coordinate system.
 
-        .. note:: If the set of cones over the simplices is not a fan, a
+        .. NOTE:: If the set of cones over the simplices is not a fan, a
             suitable exception is raised.
 
         EXAMPLES::
@@ -559,9 +551,7 @@ class Triangulation(Element):
         r"""
         Return ``self`` as an (abstract) simplicial complex.
 
-        OUTPUT:
-
-        A :class:`~sage.topology.simplicial_complex.SimplicialComplex`.
+        OUTPUT: a :class:`~sage.topology.simplicial_complex.SimplicialComplex`
 
         EXAMPLES::
 
@@ -661,9 +651,7 @@ class Triangulation(Element):
         r"""
         Return the boundary of ``self`` as an (abstract) simplicial complex.
 
-        OUTPUT:
-
-        A :class:`~sage.topology.simplicial_complex.SimplicialComplex`.
+        OUTPUT: a :class:`~sage.topology.simplicial_complex.SimplicialComplex`
 
         EXAMPLES::
 
@@ -919,7 +907,6 @@ class Triangulation(Element):
             sage: t = p.triangulate()
             sage: t.adjacency_graph()                                                   # needs sage.graphs
             Graph on 8 vertices
-
         """
         vertices = [Set(_) for _ in list(self)]
         from sage.graphs.graph import Graph

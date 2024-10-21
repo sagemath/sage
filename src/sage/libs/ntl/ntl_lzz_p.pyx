@@ -179,7 +179,7 @@ cdef class ntl_zz_p():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -260,7 +260,7 @@ cdef class ntl_zz_p():
 
     def __pow__(ntl_zz_p self, long n, ignored):
         """
-        Return the n-th nonnegative power of self.
+        Return the `n`-th nonnegative power of ``self``.
 
         EXAMPLES::
 
@@ -303,7 +303,7 @@ cdef class ntl_zz_p():
 
     def __neg__(self):
         """
-        Return the negative of self.
+        Return the negative of ``self``.
 
         EXAMPLES::
 
@@ -319,7 +319,7 @@ cdef class ntl_zz_p():
 
     def __richcmp__(ntl_zz_p self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -350,7 +350,7 @@ cdef class ntl_zz_p():
 
     def __int__(self):
         """
-        Return self as an int.
+        Return ``self`` as an int.
 
         EXAMPLES::
 
@@ -381,7 +381,7 @@ cdef class ntl_zz_p():
 
     def is_zero(self):
         """
-        Return True exactly if this element is 0.
+        Return ``True`` exactly if this element is 0.
 
         EXAMPLES::
 
@@ -397,7 +397,7 @@ cdef class ntl_zz_p():
 
     def is_one(self):
         """
-        Return True exactly if this element is 1.
+        Return ``True`` exactly if this element is 1.
 
         EXAMPLES::
 

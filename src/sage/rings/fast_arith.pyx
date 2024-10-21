@@ -54,25 +54,25 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
 
     INPUT:
 
-    - ``start`` -- integer, lower bound (default: 1)
+    - ``start`` -- integer; lower bound (default: 1)
 
-    - ``stop`` -- integer, upper bound
+    - ``stop`` -- integer; upper bound
 
-    - ``algorithm`` -- optional string (default: ``None``), one of:
+    - ``algorithm`` -- string (default: ``None``), one of:
 
-      - ``None``: Use  algorithm ``"pari_primes"`` if ``stop`` <= 436273009
-        (approximately 4.36E8). Otherwise use algorithm ``"pari_isprime"``.
+      - ``None``: Use  algorithm ``'pari_primes'`` if ``stop`` <= 436273009
+        (approximately 4.36E8). Otherwise use algorithm ``'pari_isprime'``.
 
-      - ``"pari_primes"``: Use PARI's :pari:`primes` function to generate all
+      - ``'pari_primes'``: Use PARI's :pari:`primes` function to generate all
         primes from 2 to stop. This is fast but may crash if there is
         insufficient memory. Raises an error if ``stop`` > 436273009.
 
-      - ``"pari_isprime"``: Wrapper for ``list(primes(start, stop))``. Each (odd)
+      - ``'pari_isprime'``: Wrapper for ``list(primes(start, stop))``. Each (odd)
         integer in the specified range is tested for primality by applying PARI's
         :pari:`isprime` function. This is slower but will work for much larger input.
 
-    - ``py_ints`` -- optional boolean (default ``False``), return Python ints rather
-      than Sage Integers (faster). Ignored unless algorithm ``"pari_primes"`` is being
+    - ``py_ints`` -- boolean (default: ``False``); return Python ints rather
+      than Sage Integers (faster). Ignored unless algorithm ``'pari_primes'`` is being
       used.
 
     EXAMPLES::
@@ -91,7 +91,7 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         [5, 7]
         sage: prime_range(-100,10,"pari_isprime")
         [2, 3, 5, 7]
-        sage: prime_range(2,2,algorithm="pari_isprime")
+        sage: prime_range(2,2,algorithm='pari_isprime')
         []
         sage: prime_range(10**16,10**16+100,"pari_isprime")
         [10000000000000061, 10000000000000069, 10000000000000079, 10000000000000099]
@@ -99,7 +99,7 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         [1000000000000000000000000000057, 1000000000000000000000000000099]
         sage: type(prime_range(8)[0])
         <class 'sage.rings.integer.Integer'>
-        sage: type(prime_range(8,algorithm="pari_isprime")[0])
+        sage: type(prime_range(8,algorithm='pari_isprime')[0])
         <class 'sage.rings.integer.Integer'>
 
     .. NOTE::
@@ -135,7 +135,7 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
 
         sage: prime_range(436273009, 436273010)
         [436273009]
-        sage: prime_range(436273009, 436273010, algorithm="pari_primes")
+        sage: prime_range(436273009, 436273010, algorithm='pari_primes')
         Traceback (most recent call last):
         ...
         ValueError: algorithm "pari_primes" is limited to primes larger than 436273008

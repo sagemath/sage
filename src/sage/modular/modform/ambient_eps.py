@@ -95,6 +95,7 @@ from . import ambient_R
 from . import cuspidal_submodule
 from . import eisenstein_submodule
 
+
 class ModularFormsAmbient_eps(ModularFormsAmbient):
     """
     A space of modular forms with character.
@@ -103,7 +104,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         """
         Create an ambient modular forms space with character.
 
-        .. note::
+        .. NOTE::
 
            The base ring must be of characteristic 0.  The ambient_R
            Python module is used for computing in characteristic p,
@@ -111,7 +112,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
         INPUT:
 
-        - ``weight`` -- int
+        - ``weight`` -- integer
 
         - ``character`` -- dirichlet.DirichletCharacter
 
@@ -261,10 +262,10 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
     def hecke_module_of_level(self, N):
         r"""
-        Return the Hecke module of level N corresponding to self, which is the
-        domain or codomain of a degeneracy map from self. Here N must be either
-        a divisor or a multiple of the level of self, and a multiple of the
-        conductor of the character of self.
+        Return the Hecke module of level N corresponding to ``self``, which is the
+        domain or codomain of a degeneracy map from ``self``. Here N must be either
+        a divisor or a multiple of the level of ``self``, and a multiple of the
+        conductor of the character of ``self``.
 
         EXAMPLES::
 

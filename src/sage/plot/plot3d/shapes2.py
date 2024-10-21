@@ -53,15 +53,15 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
 
     INPUT:
 
-    - ``points`` -- a list of at least 2 points
+    - ``points`` -- list of at least 2 points
 
     - ``thickness`` -- (default: 1)
 
-    - ``radius`` -- (default: None)
+    - ``radius`` -- (default: ``None``)
 
     - ``arrow_head`` -- (default: ``False``)
 
-    - ``color`` -- a string (``"red"``, ``"green"`` etc)
+    - ``color`` -- string (``'red'``, ``'green'`` etc)
       or a tuple (r, g, b) with r, g, b numbers between 0 and 1
 
     - ``opacity`` -- (default: 1) if less than 1 then is
@@ -196,7 +196,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
 
 
 @rename_keyword(alpha='opacity')
-@options(opacity=1, color="blue", aspect_ratio=[1, 1, 1], thickness=2)
+@options(opacity=1, color='blue', aspect_ratio=[1, 1, 1], thickness=2)
 def bezier3d(path, **options):
     """
     Draw a 3-dimensional bezier path.
@@ -206,18 +206,18 @@ def bezier3d(path, **options):
 
     INPUT:
 
-    -  ``path`` -- a list of curves, which each is a list of points. See further
-        detail below.
+    - ``path`` -- list of curves, which each is a list of points. See further
+        detail below
 
-    -  ``thickness`` -- (default: 2)
+    - ``thickness`` -- (default: 2)
 
-    -  ``color`` -- a string (``"red"``, ``"green"`` etc)
-       or a tuple (r, g, b) with r, g, b numbers between 0 and 1
+    - ``color`` -- string (``'red'``, ``'green'`` etc)
+      or a tuple (r, g, b) with r, g, b numbers between 0 and 1
 
-    -  ``opacity`` -- (default: 1) if less than 1 then is
-       transparent
+    - ``opacity`` -- (default: 1) if less than 1 then is
+      transparent
 
-    -  ``aspect_ratio`` -- (default: [1,1,1])
+    - ``aspect_ratio`` -- (default: [1,1,1])
 
     The path is a list of curves, and each curve is a list of points.
     Each point is a tuple (x,y,z).
@@ -417,10 +417,10 @@ def frame3d(lower_left, upper_right, **kwds):
     INPUT:
 
     - ``lower_left`` -- the lower left corner of the frame, as a
-      list, tuple, or vector.
+      list, tuple, or vector
 
     - ``upper_right`` -- the upper right corner of the frame, as a
-      list, tuple, or vector.
+      list, tuple, or vector
 
     EXAMPLES:
 
@@ -438,8 +438,10 @@ def frame3d(lower_left, upper_right, **kwds):
     """
     x0, y0, z0 = lower_left
     x1, y1, z1 = upper_right
-    L1 = line3d([(x0, y0, z0), (x0, y1, z0), (x1, y1, z0), (x1, y0, z0),  (x0, y0, z0),  # top square
-                 (x0, y0, z1), (x0, y1, z1), (x1, y1, z1), (x1, y0, z1),  (x0, y0, z1)],  # bottom square
+    L1 = line3d([(x0, y0, z0), (x0, y1, z0), (x1, y1, z0),
+                 (x1, y0, z0), (x0, y0, z0),  # top square
+                 (x0, y0, z1), (x0, y1, z1), (x1, y1, z1),
+                 (x1, y0, z1), (x0, y0, z1)],  # bottom square
                 **kwds)
     # 3 additional lines joining top to bottom
     v2 = line3d([(x0, y1, z0), (x0, y1, z1)], **kwds)
@@ -463,10 +465,10 @@ def frame_labels(lower_left, upper_right,
     INPUT:
 
     - ``lower_left`` -- the lower left corner of the frame, as a
-      list, tuple, or vector.
+      list, tuple, or vector
 
     - ``upper_right`` -- the upper right corner of the frame, as a
-      list, tuple, or vector.
+      list, tuple, or vector
 
     - ``label_lower_left`` -- the label for the lower left corner
       of the frame, as a list, tuple, or vector.  This label must actually
@@ -477,7 +479,7 @@ def frame_labels(lower_left, upper_right,
       have all coordinates greater than the coordinates of the other label.
 
     - ``eps`` -- (default: 1) a parameter for how far away from the frame
-      to put the labels.
+      to put the labels
 
     EXAMPLES:
 
@@ -554,22 +556,22 @@ def ruler(start, end, ticks=4, sub_ticks=4, absolute=False, snap=False, **kwds):
     INPUT:
 
     - ``start`` -- the beginning of the ruler, as a list,
-      tuple, or vector.
+      tuple, or vector
 
     - ``end`` -- the end of the ruler, as a list, tuple,
-      or vector.
+      or vector
 
     - ``ticks`` -- (default: 4) the number of major ticks
-      shown on the ruler.
+      shown on the ruler
 
     - ``sub_ticks`` -- (default: 4) the number of shown
-      subdivisions between each major tick.
+      subdivisions between each major tick
 
-    - ``absolute`` -- (default: ``False``) if ``True``, makes a huge ruler
-      in the direction of an axis.
+    - ``absolute`` -- boolean (default: ``False``); if ``True``, makes a huge ruler
+      in the direction of an axis
 
-    - ``snap`` -- (default: ``False``) if ``True``, snaps to an implied
-      grid.
+    - ``snap`` -- boolean (default: ``False``); if ``True``, snaps to an implied
+      grid
 
     EXAMPLES:
 
@@ -686,16 +688,16 @@ def ruler_frame(lower_left, upper_right, ticks=4, sub_ticks=4, **kwds):
     INPUT:
 
     - ``lower_left`` -- the lower left corner of the frame, as a
-      list, tuple, or vector.
+      list, tuple, or vector
 
     - ``upper_right`` -- the upper right corner of the frame, as a
-      list, tuple, or vector.
+      list, tuple, or vector
 
     - ``ticks`` -- (default: 4) the number of major ticks
-      shown on each ruler.
+      shown on each ruler
 
     - ``sub_ticks`` -- (default: 4) the number of shown
-      subdivisions between each major tick.
+      subdivisions between each major tick
 
     EXAMPLES:
 
@@ -737,7 +739,7 @@ def sphere(center=(0, 0, 0), size=1, **kwds):
 
     -  `(x,y,z)` -- center (default: (0,0,0))
 
-    -  ``size`` -- the radius (default: 1)
+    - ``size`` -- the radius (default: 1)
 
     EXAMPLES: A simple sphere::
 
@@ -796,11 +798,11 @@ def text3d(txt, x_y_z, **kwds):
 
     INPUT:
 
-    -  ``txt`` -- some text
+    - ``txt`` -- some text
 
-    -  ``(x,y,z)`` -- position tuple `(x,y,z)`
+    - ``x_y_z`` -- position tuple `(x,y,z)`
 
-    -  ``**kwds`` -- standard 3d graphics options
+    - ``**kwds`` -- standard 3d graphics options
 
     EXAMPLES:
 
@@ -860,7 +862,6 @@ def text3d(txt, x_y_z, **kwds):
         sage: def echo(o):
         ....:     return text3d("Echo!", (0, 0, o), opacity=o)
         sage: show(sum([echo(o) for o in (0.1, 0.2, .., 1)]), viewer='threejs')
-
     """
     (x, y, z) = x_y_z
     if 'color' not in kwds and 'rgbcolor' not in kwds:
@@ -878,9 +879,9 @@ class Point(PrimitiveObject):
 
     INPUT:
 
-    -  ``center`` -- point (3-tuple)
+    - ``center`` -- point (3-tuple)
 
-    -  ``size`` -- (default: 1)
+    - ``size`` -- (default: 1)
 
     EXAMPLES:
 
@@ -910,7 +911,7 @@ class Point(PrimitiveObject):
 
     def bounding_box(self):
         """
-        Returns the lower and upper corners of a 3-D bounding box for ``self``.
+        Return the lower and upper corners of a 3-D bounding box for ``self``.
 
         This is used for rendering and ``self`` should fit entirely within this
         box.  In this case, we simply return the center of the point.
@@ -1000,7 +1001,6 @@ class Point(PrimitiveObject):
             sage: P.threejs_repr(P.default_render_params())
             [('point',
               {'color': '#6666ff', 'opacity': 1.0, 'point': (0.0, 0.0, 0.0), 'size': 5.0})]
-
         """
         transform = render_params.transform
         center = tuple(float(coord) for coord in self.loc)
@@ -1039,9 +1039,9 @@ class Line(PrimitiveObject):
     - ``thickness`` -- (default: 5) diameter of the line
 
     - ``corner_cutoff`` -- (default: 0.5) threshold for
-      smoothing (see :meth:`corners`).
+      smoothing (see :meth:`corners`)
 
-    - ``arrow_head`` -- (default: ``False``) if ``True`` make
+    - ``arrow_head`` -- boolean (default: ``False``); if ``True`` make
       this curve into an arrow
 
     The parameter ``corner_cutoff`` is a bound for the cosine of the
@@ -1215,13 +1215,13 @@ class Line(PrimitiveObject):
 
         INPUT:
 
-        - ``corner_cutoff`` -- (default: ``None``) If the
+        - ``corner_cutoff`` -- (default: ``None``) if the
           cosine of the angle between adjacent line segments is smaller than
           this bound, then there will be a sharp corner in the path.
           Otherwise, the path is smoothed. If ``None``,
           then the default value 0.5 is used.
 
-        - ``max_len`` -- (default: ``None``) Maximum number
+        - ``max_len`` -- (default: ``None``) maximum number
           of points allowed in a single path. If this is set, this
           creates corners at smooth points in order to break the path
           into smaller pieces.
@@ -1374,7 +1374,6 @@ class Line(PrimitiveObject):
             sage: A_repr = A.threejs_repr(A.default_render_params())
             sage: A_repr == L_repr
             True
-
         """
         reprs = []
         points = [tuple(float(coord) for coord in p) for p in self.points]
@@ -1415,16 +1414,16 @@ def point3d(v, size=5, **kwds):
 
     INPUT:
 
-    -  ``v`` -- a point or list of points
+    - ``v`` -- a point or list of points
 
-    -  ``size`` -- (default: 5) size of the point (or
-       points)
+    - ``size`` -- (default: 5) size of the point (or
+      points)
 
-    -  ``color`` -- a string (``"red"``, ``"green"`` etc)
-       or a tuple (r, g, b) with r, g, b numbers between 0 and 1
+    - ``color`` -- string (``'red'``, ``'green'`` etc)
+      or a tuple (r, g, b) with r, g, b numbers between 0 and 1
 
-    -  ``opacity`` -- (default: 1) if less than 1 then is
-       transparent
+    - ``opacity`` -- (default: 1) if less than 1 then is
+      transparent
 
     EXAMPLES::
 

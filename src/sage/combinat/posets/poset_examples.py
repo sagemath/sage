@@ -134,7 +134,7 @@ def check_int(n, minimum=0):
         sage: check_int(-1)
         Traceback (most recent call last):
         ...
-        ValueError: number of elements must be a non-negative integer, not -1
+        ValueError: number of elements must be a nonnegative integer, not -1
 
         sage: check_int(1, 3)
         Traceback (most recent call last):
@@ -144,10 +144,10 @@ def check_int(n, minimum=0):
         sage: check_int('junk')
         Traceback (most recent call last):
         ...
-        ValueError: number of elements must be a non-negative integer, not junk
+        ValueError: number of elements must be a nonnegative integer, not junk
     """
     if minimum == 0:
-        msg = "a non-negative integer"
+        msg = "a nonnegative integer"
     else:
         msg = f"an integer at least {minimum}"
     if n not in NonNegativeIntegers() or n < minimum:
@@ -283,11 +283,11 @@ class Posets(metaclass=ClasscallMetaclass):
 
     @staticmethod
     def ChainPoset(n, facade=None):
-        """
-        Return a chain (a totally ordered poset) containing ``n`` elements.
+        r"""
+        Return a chain (a totally ordered poset) containing `n` elements.
 
-        - ``n`` (an integer) -- number of elements.
-        - ``facade`` (boolean) -- whether to make the returned poset a
+        - ``n`` -- integer; number of elements
+        - ``facade`` -- boolean; whether to make the returned poset a
           facade poset (see :mod:`sage.categories.facade_sets`); the
           default behaviour is the same as the default behaviour of
           the :func:`~sage.combinat.posets.posets.Poset` constructor
@@ -334,8 +334,8 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` (an integer) -- number of elements
-        - ``facade`` (boolean) -- whether to make the returned poset a
+        - ``n`` -- integer; number of elements
+        - ``facade`` -- boolean; whether to make the returned poset a
           facade poset (see :mod:`sage.categories.facade_sets`); the
           default behaviour is the same as the default behaviour of
           the :func:`~sage.combinat.posets.posets.Poset` constructor
@@ -377,7 +377,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``facade`` (boolean) -- whether to make the returned poset a
+        - ``facade`` -- boolean; whether to make the returned poset a
           facade poset (see :mod:`sage.categories.facade_sets`); the
           default behaviour is the same as the default behaviour of
           the :func:`~sage.combinat.posets.posets.Poset` constructor
@@ -415,7 +415,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         - ``n`` -- number of elements, an integer at least 3
 
-        - ``facade`` (boolean) -- whether to make the returned poset a
+        - ``facade`` -- boolean; whether to make the returned poset a
           facade poset (see :mod:`sage.categories.facade_sets`); the
           default behaviour is the same as the default behaviour of
           the :func:`~sage.combinat.posets.posets.Poset` constructor
@@ -447,7 +447,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         - ``n`` -- number of elements, an integer at least 2
 
-        - ``facade`` (boolean) -- whether to make the returned poset a
+        - ``facade`` -- boolean; whether to make the returned poset a
           facade poset (see :mod:`sage.categories.facade_sets`); the
           default behaviour is the same as the default behaviour of
           the :func:`~sage.combinat.posets.posets.Poset` constructor
@@ -473,8 +473,8 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- an integer
-        - ``facade`` (boolean) -- whether to make the returned poset a
+        - ``n`` -- integer
+        - ``facade`` -- boolean; whether to make the returned poset a
           facade poset (see :mod:`sage.categories.facade_sets`); the
           default behaviour is the same as the default behaviour of
           the :func:`~sage.combinat.posets.posets.Poset` constructor
@@ -579,7 +579,6 @@ class Posets(metaclass=ClasscallMetaclass):
             Finite poset containing 15 elements
             sage: len(P.cover_relations())
             17
-
         """
         def lower_covers(partition):
             r"""
@@ -615,7 +614,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -689,8 +688,8 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         Return a product of chains.
 
-        - ``chain_lengths`` -- A list of nonnegative integers; number of
-          elements in each chain.
+        - ``chain_lengths`` -- list of nonnegative integers; number of
+          elements in each chain
 
         - ``facade`` -- boolean; whether to make the returned poset a
           facade poset (see :mod:`sage.categories.facade_sets`); the
@@ -742,7 +741,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- number of elements, a non-negative integer
+        - ``n`` -- number of elements, a nonnegative integer
 
         - ``p`` -- a probability, a real number between 0 and 1 (inclusive)
 
@@ -802,11 +801,11 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- number of elements, a non-negative integer
+        - ``n`` -- number of elements, a nonnegative integer
 
         - ``p`` -- a probability, a positive real number less than one
 
-        - ``properties`` -- a list of properties for the lattice. Currently
+        - ``properties`` -- list of properties for the lattice. Currently
           implemented:
 
           * ``None``, no restrictions for lattices to create
@@ -939,7 +938,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -1020,16 +1019,14 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- an integer `\ge 2`, dimension of the constructed poset
+        - ``n`` -- integer `\ge 2`; dimension of the constructed poset
 
         - ``facade`` -- boolean; whether to make the returned poset a
           facade poset (see :mod:`sage.categories.facade_sets`); the
           default behaviour is the same as the default behaviour of
           the :func:`~sage.combinat.posets.posets.Poset` constructor
 
-        OUTPUT:
-
-        The standard example of a poset of dimension `n`.
+        OUTPUT: the standard example of a poset of dimension `n`
 
         EXAMPLES::
 
@@ -1086,7 +1083,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         - ``end`` -- list permutation (same n, of course)
 
-        .. note::
+        .. NOTE::
 
            Must have ``start`` <= ``end``.
 
@@ -1121,15 +1118,15 @@ class Posets(metaclass=ClasscallMetaclass):
         return Poset(nodes)
 
     @staticmethod
-    def SymmetricGroupWeakOrderPoset(n, labels="permutations", side="right"):
+    def SymmetricGroupWeakOrderPoset(n, labels='permutations', side='right'):
         r"""
         The poset of permutations of `\{ 1, 2, \ldots, n \}` with respect
         to the weak order (also known as the permutohedron order, cf.
         :meth:`~sage.combinat.permutation.Permutation.permutohedron_lequal`).
 
-        The optional variable ``labels`` (default: ``"permutations"``)
+        The optional variable ``labels`` (default: ``'permutations'``)
         determines the labelling of the elements if `n < 10`. The optional
-        variable ``side`` (default: ``"right"``) determines whether the
+        variable ``side`` (default: ``'right'``) determines whether the
         right or the left permutohedron order is to be used.
 
         EXAMPLES::
@@ -1184,13 +1181,13 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- Defines the number (n-1) of layers in the poset.
+        - ``n`` -- defines the number (n-1) of layers in the poset
 
-        - ``colors`` -- The colors that define the covering relations of the
-          poset. Colors used are 'green', 'red', 'yellow', 'orange', 'silver',
-          and 'blue'.
+        - ``colors`` -- the colors that define the covering relations of the
+          poset; colors used are 'green', 'red', 'yellow', 'orange', 'silver',
+          and 'blue'
 
-        - ``labels`` -- Keyword variable used to determine whether the poset
+        - ``labels`` -- keyword variable used to determine whether the poset
           is labeled with integers or tuples.  To label with integers, the
           method should be called with ``labels='integers'``.  Otherwise, the
           labeling will default to tuples.
@@ -1313,13 +1310,13 @@ class Posets(metaclass=ClasscallMetaclass):
         return W.noncrossing_partition_lattice()
 
     @staticmethod
-    def SymmetricGroupAbsoluteOrderPoset(n, labels="permutations"):
+    def SymmetricGroupAbsoluteOrderPoset(n, labels='permutations'):
         r"""
         Return the poset of permutations with respect to absolute order.
 
         INPUT:
 
-        - ``n`` --  a positive integer
+        - ``n`` -- a positive integer
 
         - ``label`` -- (default: ``'permutations'``) a label for the elements
           of the poset returned by the function; the options are
@@ -1335,9 +1332,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
             sage: posets.SymmetricGroupAbsoluteOrderPoset(4)                            # needs sage.groups
             Finite poset containing 24 elements
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="cycles")           # needs sage.groups
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels='cycles')           # needs sage.groups
             Finite poset containing 6 elements
-            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels="reduced_words")    # needs sage.groups
+            sage: posets.SymmetricGroupAbsoluteOrderPoset(3, labels='reduced_words')    # needs sage.groups
             Finite poset containing 6 elements
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -1363,8 +1360,8 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- nonnegative integer, number of elements in the poset
-        - ``m`` -- nonnegative integer (default 1), how frequently down
+        - ``n`` -- nonnegative integer; number of elements in the poset
+        - ``m`` -- nonnegative integer (default: 1); how frequently down
           steps occur
 
         OUTPUT:
@@ -1410,9 +1407,9 @@ class Posets(metaclass=ClasscallMetaclass):
         INPUT:
 
         - ``lam`` -- a partition
-        - ``dual`` -- (default: ``False``) determines the orientation
-          of the poset; if ``True``, then it is a join semilattice,
-          otherwise it is a meet semilattice
+        - ``dual`` -- boolean (default: ``False``); determines the orientation
+          of the poset. If ``True``, then it is a join semilattice,
+          otherwise it is a meet semilattice.
 
         EXAMPLES::
 
@@ -1430,9 +1427,8 @@ class Posets(metaclass=ClasscallMetaclass):
         if dual:
             def cell_geq(a, b):
                 """
-                Nested function that returns `True` if the cell `a` is
-                to the right or below
-                the cell `b` in the (English) Young diagram.
+                Nested function that returns ``True`` if the cell `a` is to the
+                right or below the cell `b` in the (English) Young diagram.
                 """
                 return ((a[0] == b[0] + 1 and a[1] == b[1]) or
                         (a[1] == b[1] + 1 and a[0] == b[0]))
@@ -1440,7 +1436,7 @@ class Posets(metaclass=ClasscallMetaclass):
         else:
             def cell_leq(a, b):
                 """
-                Nested function that returns `True` if the cell `a` is
+                Nested function that returns ``True`` if the cell `a` is
                 to the left or above
                 the cell `b` in the (English) Young diagram.
                 """
@@ -1458,7 +1454,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -1582,7 +1578,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 
@@ -1607,7 +1603,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         A permutation `u = u_1 \cdots u_n` contains the pattern
         `v = v_1 \cdots v_m` if there is a (not necessarily consecutive)
@@ -1722,7 +1718,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         - ``bottom``, ``top`` -- permutations where ``top`` contains
            ``bottom`` as a pattern
-        - ``pos`` -- a list of indices indicating a distinguished copy of
+        - ``pos`` -- list of indices indicating a distinguished copy of
            ``bottom`` inside ``top`` (indexed starting at 0)
 
         For further information (and picture illustrating included example),
@@ -1805,7 +1801,7 @@ class Posets(metaclass=ClasscallMetaclass):
         INPUT:
 
         - ``ribbon`` -- a finite poset that is a ribbon
-        - ``hangers`` -- a dictionary mapping an element on the ribbon
+        - ``hangers`` -- dictionary mapping an element on the ribbon
           to a list of d-complete posets that it covers
         - ``anchor`` -- (optional) a ``tuple`` (``ribbon_elmt``,
           ``anchor_elmt``, ``anchor_poset``), where ``anchor_elmt`` covers
@@ -1864,7 +1860,7 @@ def _random_lattice(n, p):
 
     INPUT:
 
-    - ``n`` -- number of elements, a non-negative integer
+    - ``n`` -- number of elements, a nonnegative integer
     - ``p`` -- a number at least zero and less than one; higher number
       means more covering relations
 
@@ -1936,7 +1932,7 @@ def _random_dismantlable_lattice(n):
 
     INPUT:
 
-    - ``n`` -- number of elements, a non-negative integer
+    - ``n`` -- number of elements, a nonnegative integer
 
     OUTPUT:
 
@@ -1979,7 +1975,7 @@ def _random_planar_lattice(n):
 
     INPUT:
 
-    - ``n`` -- number of elements, a non-negative integer
+    - ``n`` -- number of elements, a nonnegative integer
 
     OUTPUT:
 
@@ -2030,7 +2026,7 @@ def _random_distributive_lattice(n):
 
     INPUT:
 
-    - ``n`` -- number of elements, a non-negative integer
+    - ``n`` -- number of elements, a nonnegative integer
 
     OUTPUT:
 
@@ -2087,7 +2083,7 @@ def _random_stone_lattice(n):
 
     INPUT:
 
-    - ``n`` -- number of elements, a non-negative integer
+    - ``n`` -- number of elements, a nonnegative integer
 
     OUTPUT:
 

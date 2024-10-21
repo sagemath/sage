@@ -187,18 +187,18 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     INPUT:
 
     - ``G_in`` -- a Sage graph
-    - ``partition`` -- a list of lists representing a partition of the vertices
-    - ``lab`` -- if True, compute and return the canonical label in addition to the
+    - ``partition`` -- list of lists representing a partition of the vertices
+    - ``lab`` -- if ``True``, compute and return the canonical label in addition to the
       automorphism group
-    - ``dig`` -- set to True for digraphs and graphs with loops.  If True, does not
+    - ``dig`` -- set to ``True`` for digraphs and graphs with loops;  if ``True``, does not
       use optimizations based on Lemma 2.25 in [1] that are valid only for
-      simple graphs.
+      simple graphs
     - ``dict_rep`` -- if ``True``, return a dictionary with keys the vertices of the
       input graph G_in and values elements of the set the permutation group
       acts on.  (The point is that graphs are arbitrarily labelled, often
       0..n-1, and permutation groups always act on 1..n.  This dictionary
       maps vertex labels (such as 0..n-1) to the domain of the permutations.)
-    - ``certificate`` -- if ``True``, return the permutation from G to its canonical label.
+    - ``certificate`` -- if ``True``, return the permutation from G to its canonical label
     - ``verbosity`` -- currently ignored
     - ``use_indicator_function`` -- option to turn off indicator function
       (``True`` is generally faster)
@@ -519,7 +519,7 @@ cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, 
       refined
     - ``S`` -- a graph struct object, which contains scratch space, the graph in
       question, and some flags
-    - ``cells_to_refine_by`` -- a list of pointers to cells to check degrees against
+    - ``cells_to_refine_by`` -- list of pointers to cells to check degrees against
       in refining the other cells (updated in place). Must be allocated to
       length at least the degree of PS, since the array may grow
     - ``ctrb_len`` -- how many cells in cells_to_refine_by
@@ -780,7 +780,6 @@ def all_labeled_graphs(n):
         3 4
         4 11
         5 34
-
     """
     from sage.graphs.graph import Graph
     TE = []
@@ -802,7 +801,7 @@ def all_labeled_graphs(n):
 
 def random_tests(num=10, n_max=60, perms_per_graph=5):
     """
-    Tests to make sure that C(gamma(G)) == C(G) for random permutations gamma
+    Test to make sure that C(gamma(G)) == C(G) for random permutations gamma
     and random graphs G, and that isomorphic returns an isomorphism.
 
     INPUT:
@@ -1301,7 +1300,6 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
         1044
         sage: generate_dense_graphs_edge_addition(8,0)  # long time (about 14 seconds at 2.4 GHz)
         12346
-
     """
     from sage.graphs.graph import Graph
     cdef iterator *graph_iterator
@@ -1574,7 +1572,6 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
         sage: from sage.groups.perm_gps.partn_ref.refinement_graphs import generate_dense_graphs_vert_addition
         sage: generate_dense_graphs_vert_addition(10, base_G=Graph('HEhf^rs'))
         11
-
     """
     from sage.graphs.graph import Graph
     cdef iterator *graph_iterator

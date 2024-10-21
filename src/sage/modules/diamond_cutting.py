@@ -138,11 +138,9 @@ def diamond_cut(V, GM, C, verbose=False):
 
     - ``C`` -- radius to use in cutting algorithm
 
-    - ``verbose`` -- (default: ``False``) whether to print debug information
+    - ``verbose`` -- boolean (default: ``False``); whether to print debug information
 
-    OUTPUT:
-
-    A :class:`Polyhedron` instance.
+    OUTPUT: a :class:`Polyhedron` instance
 
     EXAMPLES::
 
@@ -235,7 +233,7 @@ def diamond_cut(V, GM, C, verbose=False):
 
 def calculate_voronoi_cell(basis, radius=None, verbose=False):
     """
-    Calculate the Voronoi cell of the lattice defined by basis
+    Calculate the Voronoi cell of the lattice defined by basis.
 
     INPUT:
 
@@ -245,9 +243,7 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
 
     - ``verbose`` -- whether to print debug information
 
-    OUTPUT:
-
-    A :class:`Polyhedron` instance.
+    OUTPUT: a :class:`Polyhedron` instance
 
     EXAMPLES::
 

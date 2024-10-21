@@ -42,8 +42,8 @@ cdef inline void set_ntl_matrix_modn_dense_float(mat_ZZ_p_c& A, ntl_ZZ_pContext_
 
     INPUT:
 
-    - A -- NTL matrix
-    - m -- Sage matrix
+    - ``A`` -- NTL matrix
+    - ``m`` -- Sage matrix
     """
     cdef size_t i, j
     cdef ntl_ZZ_p tmp
@@ -59,8 +59,8 @@ cdef inline void set_ntl_matrix_modn_dense_double(mat_ZZ_p_c& A, ntl_ZZ_pContext
 
     INPUT:
 
-    - A -- NTL matrix
-    - m -- Sage matrix
+    - ``A`` -- NTL matrix
+    - ``m`` -- Sage matrix
     """
     cdef size_t i, j
     cdef ntl_ZZ_p tmp
@@ -76,8 +76,8 @@ cdef inline void set_ntl_matrix_modn_generic_dense(mat_ZZ_p_c& A, ntl_ZZ_pContex
 
     INPUT:
 
-    - A -- NTL matrix
-    - m -- Sage matrix
+    - ``A`` -- NTL matrix
+    - ``m`` -- Sage matrix
     """
     cdef size_t i, j
     cdef ntl_ZZ_p tmp
@@ -93,8 +93,8 @@ cdef inline void set_ntl_matrix_modn_dense(mat_ZZ_p_c& A, ntl_ZZ_pContext_class 
 
     INPUT:
 
-    - A -- NTL matrix
-    - m -- Sage matrix
+    - ``A`` -- NTL matrix
+    - ``m`` -- Sage matrix
     """
     if isinstance(m, Matrix_modn_dense_float):
         set_ntl_matrix_modn_dense_float(A, c, m)

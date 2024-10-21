@@ -64,7 +64,7 @@ Computation of a modular cohomology ring of a non prime power group in
 characteristic 2::
 
     sage: H = CohomologyRing(libgap.AlternatingGroup(6),
-    ....:                    GroupName="A(6)", prime=2,
+    ....:                    GroupName='A(6)', prime=2,
     ....:                    from_scratch=True)
     sage: H.make()
     sage: print(H)

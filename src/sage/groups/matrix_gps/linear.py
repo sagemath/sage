@@ -90,13 +90,13 @@ def GL(n, R, var='a'):
 
     INPUT:
 
-    - ``n`` -- a positive integer.
+    - ``n`` -- positive integer
 
-    - ``R`` -- ring or an integer. If an integer is specified, the
-      corresponding finite field is used.
+    - ``R`` -- ring or an integer; if an integer is specified, the
+      corresponding finite field is used
 
     - ``var`` -- variable used to represent generator of the finite
-      field, if needed.
+      field, if needed
 
     EXAMPLES::
 
@@ -311,7 +311,7 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
                 raise TypeError('matrix must have determinant one')
         else:
             if x.determinant() == 0:
-                raise TypeError('matrix must non-zero determinant')
+                raise TypeError('matrix must nonzero determinant')
 
     def order(self):
         r"""

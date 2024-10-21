@@ -19,8 +19,8 @@ the additional constraints that:
 * the last element of `X` is -1
 * the last element of `U` is 1
 
-The nonperiodic autocorrelation of a familiy of sequences `X=\{A_1, A_2, ..., A_n\}` is defined as
-(see Definition 7.2 of [Seb2017]_):
+The nonperiodic autocorrelation of a familiy of sequences
+`X=\{A_1, A_2, ..., A_n\}` is defined as (see Definition 7.2 of [Seb2017]_):
 
 .. MATH::
 
@@ -56,10 +56,11 @@ def _nonperiodic_autocorrelation(sequences, j):
 
     INPUT:
 
-    - ``sequences`` -- either a single sequence or a list of sequences for which we want
-      to compute the nonperiodic autocorrelation.
+    - ``sequences`` -- either a single sequence or a list of sequences for
+      which we want to compute the nonperiodic autocorrelation
 
-    - ``j`` -- integer, the parameter `j` used when calculating the nonperiodic autocorrelation.
+    - ``j`` -- integer; the parameter `j` used when calculating the nonperiodic
+      autocorrelation
     """
     if not isinstance(sequences[0], list):
         sequences = [sequences]
@@ -81,10 +82,10 @@ def is_skew(seq, verbose=False):
 
     INPUT:
 
-    - ``seq`` -- the sequence that should be checked.
+    - ``seq`` -- the sequence that should be checked
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function
+      will be verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
 
@@ -127,10 +128,10 @@ def is_symmetric(seq, verbose=False) -> bool:
 
     INPUT:
 
-    - ``seq`` -- the sequence that should be checked.
+    - ``seq`` -- the sequence that should be checked
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will be
+      verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
 
@@ -177,10 +178,10 @@ def is_T_sequences_set(sequences, verbose=False):
 
     INPUT:
 
-    - ``sequences`` -- a list of four sequences.
+    - ``sequences`` -- list of four sequences
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function will be
+      verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
 
@@ -190,7 +191,8 @@ def is_T_sequences_set(sequences, verbose=False):
         True
         sage: seqs = [[1, 1, 0, 1, 0], [0, 0, 1, 0, 0], [0, 0, 0, 1, -1], [0, 0, 0, 0, 0]]
         sage: is_T_sequences_set(seqs, verbose=True)
-        There should  be exactly a nonzero element at every index, found 2 such elemnents at index 3
+        There should be exactly a nonzero element at every index, found 2 such
+         elements at index 3
         False
 
 
@@ -227,7 +229,7 @@ def is_T_sequences_set(sequences, verbose=False):
             tot += abs(seq[i])
         if tot != 1:
             if verbose:
-                print(f"There should  be exactly a nonzero element at every index, found {tot} such elemnents at index {i}")
+                print(f"There should be exactly a nonzero element at every index, found {tot} such elements at index {i}")
             return False
 
     for j in range(1, t):
@@ -248,10 +250,10 @@ def turyn_sequences_smallcases(l, existence=False):
 
     INPUT:
 
-    - ``l`` -- integer, the length of the Turyn sequences.
+    - ``l`` -- integer; the length of the Turyn sequences
 
-    - ``existence`` -- boolean (default: ``False``). If true, only return whether the
-      Turyn sequences are available for the given length.
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
+      whether the Turyn sequences are available for the given length
 
     EXAMPLES:
 
@@ -316,9 +318,11 @@ def T_sequences_construction_from_base_sequences(base_sequences, check=True):
 
     INPUT:
 
-    - ``base_sequences`` -- the base sequences that should be used to construct the T-sequences.
+    - ``base_sequences`` -- the base sequences that should be used to construct
+      the T-sequences
 
-    - ``check`` -- boolean, if true (default) checks that the sequences created are T-sequences before returning them.
+    - ``check`` -- boolean (default: ``True``); check that the sequences
+      created are T-sequences before returning them
 
     EXAMPLES::
 
@@ -395,9 +399,11 @@ def T_sequences_construction_from_turyn_sequences(turyn_sequences, check=True):
 
     INPUT:
 
-    - ``turyn_sequences`` -- the Turyn sequences that should be used to construct the T-sequences .
+    - ``turyn_sequences`` -- the Turyn sequences that should be used to
+      construct the T-sequences
 
-    - ``check`` -- boolean, if true (default) checks that the sequences created are T-sequences before returning them.
+    - ``check`` -- boolean (default: ``True``); check that the sequences
+      created are T-sequences before returning them
 
     EXAMPLES::
 
@@ -464,12 +470,13 @@ def T_sequences_smallcases(t, existence=False, check=True):
 
     INPUT:
 
-    - ``t`` -- integer, the length of the T-sequences to construct.
+    - ``t`` -- integer; the length of the T-sequences to construct
 
-    - ``existence`` -- boolean (default false). If true, this method only returns whether a T-sequences of
-      the given size can be constructed.
+    - ``existence`` -- boolean (default: ``False``); if ``True``, this method
+      only returns whether a T-sequences of the given size can be constructed
 
-    - ``check`` -- boolean, if true (default) check that the sequences are T-sequences before returning them.
+    - ``check`` -- boolean (default: ``True``); check that the sequences are
+      T-sequences before returning them
 
     EXAMPLES:
 
@@ -554,10 +561,13 @@ def T_sequences_smallcases(t, existence=False, check=True):
 
 
 def base_sequences_construction(turyn_type_seqs, check=True):
-    r"""Construct base sequences of length `2n-1, 2n-1, n, n` from Turyn type sequences of length `n,n,n,n-1`.
+    r"""
+    Construct base sequences of length `2n-1, 2n-1, n, n` from Turyn type
+    sequences of length `n,n,n,n-1`.
 
-    Given Turyn type sequences `X, Y, Z, W` of length `n,n,n,n-1`, Theorem 1 of [KTR2005]_  shows that the
-    following are base sequences of length `2n-1, 2n-1, n, n`:
+    Given Turyn type sequences `X, Y, Z, W` of length `n,n,n,n-1`, Theorem 1 of
+    [KTR2005]_  shows that the following are base sequences of length
+    `2n-1, 2n-1, n, n`:
 
     .. MATH::
 
@@ -570,12 +580,13 @@ def base_sequences_construction(turyn_type_seqs, check=True):
 
     INPUT:
 
-    - ``turyn_type_seqs`` -- The list of 4 Turyn type sequences that should be used to construct the base sequences.
+    - ``turyn_type_seqs`` -- the list of 4 Turyn type sequences that should be
+      used to construct the base sequences
 
-    - ``check`` -- boolean, if True (default) check that the resulting sequences are base sequences
-      before returning them.
+    - ``check`` -- boolean (default: ``True``); check that the resulting
+      sequences are base sequences before returning them
 
-    OUTPUT: A list containing the four base sequences.
+    OUTPUT: list containing the four base sequences
 
     EXAMPLES::
 
@@ -619,8 +630,8 @@ def base_sequences_construction(turyn_type_seqs, check=True):
 def is_base_sequences_tuple(base_sequences, verbose=False):
     r"""Check if the given sequences are base sequences.
 
-    Four (-1, +1) sequences `A, B, C, D` of length `n+p, n+p, n, n` are called base sequences if
-    for all `j \ge 1`:
+    Four (-1, +1) sequences `A, B, C, D` of length `n+p, n+p, n, n` are called
+    base sequences if for all `j \ge 1`:
 
     .. MATH::
 
@@ -630,10 +641,10 @@ def is_base_sequences_tuple(base_sequences, verbose=False):
 
     INPUT:
 
-    - ``base_sequences`` -- The list of 4 sequences that should be checked.
+    - ``base_sequences`` -- the list of 4 sequences that should be checked
 
-    - ``verbose`` -- a boolean (default false). If true the function will be verbose
-      when the sequences do not satisfy the contraints.
+    - ``verbose`` -- boolean (default: ``False``); if ``True`` the function
+      will be verbose when the sequences do not satisfy the contraints
 
     EXAMPLES::
 
@@ -705,10 +716,10 @@ def turyn_type_sequences_smallcases(n, existence=False):
 
     INPUT:
 
-    - ``n`` -- integer, the length of the Turyn type sequences.
+    - ``n`` -- integer; the length of the Turyn type sequences
 
-    - ``existence`` -- boolean (default: ``False``). If true, only return whether the
-      Turyn type sequences are available for the given length.
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only return
+      whether the Turyn type sequences are available for the given length
 
     EXAMPLES:
 
@@ -735,12 +746,14 @@ def turyn_type_sequences_smallcases(n, existence=False):
     ALGORITHM:
 
     The Turyn type sequences are stored in hexadecimal format.
-    Given `n` hexadecimal digits `h_1, h_2,...,h_n`, it is possible to get the Turyn type sequences
-    by converting each `h_i` (`1 \le i \le n-1`) into a four digits binary number. Then, the j-th binary digit is
-    `0` if the i-th number in the j-th sequence is `1`, and it is `1` if the number in the sequence is -1.
+    Given `n` hexadecimal digits `h_1, h_2,...,h_n`, it is possible to get the
+    Turyn type sequences by converting each `h_i` (`1 \le i \le n-1`) into a
+    four digits binary number. Then, the `j`-th binary digit is `0` if the `i`-th
+    number in the `j`-th sequence is `1`, and it is `1` if the number in the
+    sequence is -1.
 
-    For the n-th digit, it should be converted to a 3 digits binary number, and then the same mapping
-    as before can be used (see also [BDKR2013]_).
+    For the `n`-th digit, it should be converted to a 3 digits binary number, and
+    then the same mapping as before can be used (see also [BDKR2013]_).
     """
     def convertLists(hexstring):
         seqs = [Sequence([]), Sequence([]), Sequence([]), Sequence([])]
@@ -791,30 +804,33 @@ def turyn_type_sequences_smallcases(n, existence=False):
 def base_sequences_smallcases(n, p, existence=False, check=True):
     r"""Construct base sequences of length `n+p, n+p, n, n` from available data.
 
-    The function uses the construction :func:`base_sequences_construction`, together with
-    Turyn type sequences from :func:`turyn_type_sequences_smallcases` to construct base sequences
-    with `p = n-1`.
+    The function uses the construction :func:`base_sequences_construction`,
+    together with Turyn type sequences from :func:`turyn_type_sequences_smallcases`
+    to construct base sequences with `p = n-1`.
 
-    Furthermore, this function uses also Turyn sequences (i.e. base sequences with `p=1`) from
-    :func:`turyn_sequences_smallcases`.
+    Furthermore, this function uses also Turyn sequences (i.e. base sequences
+    with `p=1`) from :func:`turyn_sequences_smallcases`.
 
     INPUT:
 
-    - ``n`` -- integer, the length of the last two base sequences.
+    - ``n`` -- integer; the length of the last two base sequences
 
-    - ``p`` -- integer, `n+p` will be the length of the first two base sequences.
+    - ``p`` -- integer; `n+p` will be the length of the first two base
+      sequences
 
-    - ``existence`` -- boolean (default: ``False``). If True, the function will only check whether the base
-      sequences can be constructed.
+    - ``existence`` -- boolean (default: ``False``); if ``True``, the function
+      will only check whether the base sequences can be constructed
 
-    - ``check`` -- boolean, if True (default) check that the resulting sequences are base sequences
-      before returning them.
+    - ``check`` -- boolean (default: ``True``); check that the resulting
+      sequences are base sequences before returning them
 
     OUTPUT:
 
-    If ``existence`` is ``False``, the function returns a list containing the four base sequences, or raises
-    an error if the base sequences cannot be constructed. If ``existence`` is ``True``, the function returns a
-    boolean, which is ``True`` if the base sequences can be constructed and ``False`` otherwise.
+    If ``existence`` is ``False``, the function returns a list containing the
+    four base sequences, or raises an error if the base sequences cannot be
+    constructed. If ``existence`` is ``True``, the function returns a boolean,
+    which is ``True`` if the base sequences can be constructed and ``False``
+    otherwise.
 
     EXAMPLES::
 

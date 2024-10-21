@@ -11,7 +11,7 @@ can be identified with the set of morphisms `Spec(K) \to X`. In Sage
 the rational points are implemented by such scheme morphisms. This is
 done by :class:`SchemeHomset_points` and its subclasses.
 
-.. note::
+.. NOTE::
 
     You should not create the Hom-sets manually. Instead, use the
     :meth:`~sage.structure.parent.Hom` method that is inherited by all
@@ -92,7 +92,7 @@ class SchemeHomset_points_spec(SchemeHomset_generic):
         """
         Return a string representation of a homset.
 
-        OUTPUT: A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -179,9 +179,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
         by lowering the tolerance.
 
 
-        INPUT:
-
-        kwds:
+        INPUT: keyword arguments:
 
         - ``bound`` -- real number (default: 0). The bound for the
           height of the coordinates. Only used for subschemes with
@@ -191,15 +189,13 @@ class SchemeHomset_points_affine(SchemeHomset_points):
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
-          for enumeration over number fields.
+        - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+          algorithm-4 for enumeration over number fields
 
         - ``precision`` -- the precision to use for computing the elements of
-          bounded height of number fields.
+          bounded height of number fields
 
-        OUTPUT:
-
-        - a list of rational points of a affine scheme
+        OUTPUT: list of rational points of a affine scheme
 
         .. WARNING::
 
@@ -384,7 +380,7 @@ class SchemeHomset_points_affine(SchemeHomset_points):
           For numerically inexact fields, points are on the subscheme if they
           satisfy the equations to within tolerance.
 
-        OUTPUT: A list of points in the ambient space.
+        OUTPUT: list of points in the ambient space
 
         .. WARNING::
 

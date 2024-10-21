@@ -36,12 +36,11 @@ class Sage(ExtraTabCompletion, Expect):
 
     INPUT:
 
-
-    -  ``server`` -- (optional); if specified runs Sage on a
-       remote machine with address. You must have ssh keys setup so you
-       can login to the remote machine by typing "ssh remote_machine" and
-       no password, call _install_hints_ssh() for hints on how to do
-       that.
+    - ``server`` -- (optional) if specified runs Sage on a
+      remote machine with address. You must have ssh keys setup so you
+      can login to the remote machine by typing "ssh remote_machine" and
+      no password, call _install_hints_ssh() for hints on how to do
+      that.
 
 
     The version of Sage should be the same as on the local machine,
@@ -127,8 +126,7 @@ class Sage(ExtraTabCompletion, Expect):
 
     The double quotes are needed because the call to s3 first evaluates
     its arguments using the s interpreter, so the call to s3 is passed
-    ``s('"x"')``, which is the string ``"x"``
-    in the s interpreter.
+    ``s('"x"')``, which is the string ``'x'`` in the s interpreter.
     """
     def __init__(self,
                  logfile=None,
@@ -247,7 +245,6 @@ class Sage(ExtraTabCompletion, Expect):
 
             sage: sage0(axiom(x^2+1)) #optional - axiom
             x^2 + 1
-
         """
         if isinstance(x, ExpectElement):
             if x.parent() is self:
@@ -290,7 +287,7 @@ class Sage(ExtraTabCompletion, Expect):
 
     def preparse(self, x):
         """
-        Returns the preparsed version of the string s.
+        Return the preparsed version of the string s.
 
         EXAMPLES::
 
@@ -309,11 +306,9 @@ class Sage(ExtraTabCompletion, Expect):
 
         INPUT:
 
+        - ``line`` -- input line of code
 
-        -  ``line`` -- input line of code
-
-        -  ``strip`` -- ignored
-
+        - ``strip`` -- ignored
 
         EXAMPLES::
 
@@ -356,8 +351,8 @@ class Sage(ExtraTabCompletion, Expect):
         """
         Clear the variable named var.
 
-        Note that the exact format of the NameError for a cleared variable
-        is slightly platform dependent, see :issue:`10539`.
+        Note that the exact format of the :exc:`NameError` for a cleared
+        variable is slightly platform dependent, see :issue:`10539`.
 
         EXAMPLES::
 
@@ -460,7 +455,7 @@ class SageElement(ExpectElement):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Disable rich output
+        Disable rich output.
 
         This is necessary because otherwise our :meth:`__getattr__`
         would be called.
@@ -504,7 +499,7 @@ class SageElement(ExpectElement):
 
     def _sage_(self):
         """
-        Return local copy of self.
+        Return local copy of ``self``.
 
         EXAMPLES::
 

@@ -70,20 +70,18 @@ cdef class CGraph:
 
     cpdef bint has_vertex(self, int n) except -1:
         """
-        Determine whether the vertex ``n`` is in ``self``.
+        Determine whether the vertex `n` is in ``self``.
 
         This method is different from :meth:`check_vertex`. The current method
-        returns a boolean to signify whether or not ``n`` is a vertex of this
+        returns a boolean to signify whether or not `n` is a vertex of this
         graph. On the other hand, :meth:`check_vertex` raises an error if
-        ``n`` is not a vertex of this graph.
+        `n` is not a vertex of this graph.
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer representing a vertex
+        - ``n`` -- nonnegative integer representing a vertex
 
-        OUTPUT:
-
-        - ``True`` if ``n`` is a vertex of this graph; ``False`` otherwise.
+        OUTPUT: ``True`` if `n` is a vertex of this graph; ``False`` otherwise
 
         .. SEEALSO::
 
@@ -129,20 +127,18 @@ cdef class CGraph:
 
     cpdef check_vertex(self, int n):
         """
-        Check that ``n`` is a vertex of ``self``.
+        Check that `n` is a vertex of ``self``.
 
         This method is different from :meth:`has_vertex`. The current method
-        raises an error if ``n`` is not a vertex of this graph. On the other
+        raises an error if `n` is not a vertex of this graph. On the other
         hand, :meth:`has_vertex` returns a boolean to signify whether or not
-        ``n`` is a vertex of this graph.
+        `n` is a vertex of this graph.
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer representing a vertex
+        - ``n`` -- nonnegative integer representing a vertex
 
-        OUTPUT:
-
-        - Raise an error if ``n`` is not a vertex of this graph
+        OUTPUT: raise an error if `n` is not a vertex of this graph
 
         .. SEEALSO::
 
@@ -190,7 +186,7 @@ cdef class CGraph:
 
     cdef int add_vertex_unsafe(self, int k) except -1:
         """
-        Add the vertex ``k`` to the graph.
+        Add the vertex `k` to the graph.
 
         INPUT:
 
@@ -205,7 +201,7 @@ cdef class CGraph:
           allocation is already full or the vertex is out of range
 
         - nonnegative integer -- this vertex is now guaranteed to be in the
-          graph.
+          graph
 
         .. WARNING::
 
@@ -224,7 +220,7 @@ cdef class CGraph:
 
     def add_vertex(self, int k=-1):
         """
-        Adds vertex ``k`` to the graph.
+        Add vertex ``k`` to the graph.
 
         INPUT:
 
@@ -236,15 +232,15 @@ cdef class CGraph:
         OUTPUT:
 
         - ``-1`` -- indicates that no vertex was added because the current
-          allocation is already full or the vertex is out of range.
+          allocation is already full or the vertex is out of range
 
         - nonnegative integer -- this vertex is now guaranteed to be in the
-          graph.
+          graph
 
         .. SEEALSO::
 
             - ``add_vertex_unsafe`` -- add a vertex to a graph. This method is
-              potentially unsafe. You should instead use :meth:`add_vertex`.
+              potentially unsafe. You should instead use :meth:`add_vertex`
 
             - ``add_vertices`` -- add a bunch of vertices to a graph
 
@@ -436,18 +432,18 @@ cdef class CGraph:
 
     cpdef del_vertex(self, int v):
         """
-        Delete the vertex ``v``, along with all edges incident to it.
+        Delete the vertex `v`, along with all edges incident to it.
 
-        If ``v`` is not in ``self``, fails silently.
+        If `v` is not in ``self``, fails silently.
 
         INPUT:
 
-        - ``v`` -- a nonnegative integer representing a vertex
+        - ``v`` -- nonnegative integer representing a vertex
 
         .. SEEALSO::
 
             - ``del_vertex_unsafe`` -- delete a vertex from a graph. This method
-              is potentially unsafe. Use :meth:`del_vertex` instead.
+              is potentially unsafe. Use :meth:`del_vertex` instead
 
         EXAMPLES:
 
@@ -586,10 +582,6 @@ cdef class CGraph:
         """
         Return a list of the vertices in ``self``.
 
-        OUTPUT:
-
-        - A list of all vertices in this graph
-
         EXAMPLES::
 
             sage: from sage.graphs.base.sparse_graph import SparseGraph
@@ -625,7 +617,7 @@ cdef class CGraph:
 
         OUTPUT:
 
-        - Raise a :class:`NotImplementedError`. This method is not implemented
+        - Raise a :exc:`NotImplementedError`. This method is not implemented
           in this base class. A child class should provide a suitable
           implementation.
 
@@ -732,7 +724,7 @@ cdef class CGraph:
 
         INPUT:
 
-        - ``u``, ``v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- nonnegative integers; must be in self
 
         EXAMPLES:
 
@@ -830,9 +822,9 @@ cdef class CGraph:
 
         INPUT:
 
-        - ``u`` -- integer; the tail of an arc.
+        - ``u`` -- integer; the tail of an arc
 
-        - ``v`` -- integer; the head of an arc.
+        - ``v`` -- integer; the head of an arc
 
         EXAMPLES:
 
@@ -898,13 +890,13 @@ cdef class CGraph:
 
         INPUT:
 
-         - ``u``, ``v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- nonnegative integers; must be in self
 
         OUTPUT: one of
 
-        - positive integer -- indicates that there is a label on ``(u, v)``.
+        - positive integer -- indicates that there is a label on ``(u, v)``
 
-        - ``0`` -- either the arc ``(u, v)`` is unlabeled, or there is no arc at all.
+        - ``0`` -- either the arc ``(u, v)`` is unlabeled, or there is no arc at all
 
         EXAMPLES::
 
@@ -928,7 +920,6 @@ cdef class CGraph:
             sage: G.add_arc_label(1,2,2)
             sage: G.arc_label(1,2)
             2
-
         """
         self.check_vertex(u)
         self.check_vertex(v)
@@ -936,7 +927,7 @@ cdef class CGraph:
 
     cpdef list all_arcs(self, int u, int v):
         """
-        Gives the labels of all arcs ``(u, v)``. An unlabeled arc is interpreted as
+        Give the labels of all arcs ``(u, v)``. An unlabeled arc is interpreted as
         having label 0.
 
         EXAMPLES::
@@ -952,7 +943,6 @@ cdef class CGraph:
             sage: G.add_arc_label(1,2,4)
             sage: G.all_arcs(1,2)
             [4, 3, 3, 2, 2, 2, 1]
-
         """
         cdef int size, num_arcs, i
         cdef int *arc_labels
@@ -980,9 +970,9 @@ cdef class CGraph:
 
         INPUT:
 
-         - ``u``, ``v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- nonnegative integers; must be in self
 
-         - ``l`` -- a positive integer label, or zero for no label
+        - ``l`` -- positive integer label, or zero for no label
 
         EXAMPLES::
 
@@ -999,7 +989,6 @@ cdef class CGraph:
             sage: G.del_arc_label(0,1,0)
             sage: G.all_arcs(0,1)
             [3, 2, 1]
-
         """
         self.check_vertex(u)
         self.check_vertex(v)
@@ -1013,9 +1002,9 @@ cdef class CGraph:
 
         INPUT:
 
-         - ``u``, ``v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- nonnegative integers; must be in self
 
-         - ``l`` -- a positive integer label, or zero for no label
+        - ``l`` -- positive integer label, or zero for no label
 
         EXAMPLES::
 
@@ -1031,7 +1020,6 @@ cdef class CGraph:
             True
             sage: G.has_arc_label(0,1,3)
             False
-
         """
         self.check_vertex(u)
         self.check_vertex(v)
@@ -1055,7 +1043,7 @@ cdef class CGraph:
 
         INPUT:
 
-        - ``u`` -- non-negative integer; must be in self
+        - ``u`` -- nonnegative integer; must be in self
 
         - ``neighbors`` -- pointer to an (allocated) integer array
 
@@ -1067,7 +1055,6 @@ cdef class CGraph:
 
         - ``-1`` -- indicates that the array has been filled with neighbors, but
           there were more
-
         """
         cdef int num_nbrs = 0
         cdef int l
@@ -1093,7 +1080,7 @@ cdef class CGraph:
 
         INPUT:
 
-        - ``v`` -- non-negative integer; must be in self
+        - ``v`` -- nonnegative integer; must be in self
 
         - ``neighbors`` -- pointer to an (allocated) integer array
 
@@ -1105,7 +1092,6 @@ cdef class CGraph:
 
         - ``-1`` -- indicates that the array has been filled with neighbors, but
           there were more
-
         """
         cdef int num_nbrs = 0
         cdef int l
@@ -1156,10 +1142,9 @@ cdef class CGraph:
 
         .. SEEALSO::
 
-            - :meth:`adjacency_sequence_in` -- Similar method for
+            - :meth:`adjacency_sequence_in` -- similar method for
             ``(vertices[i],v)`` instead of ``(v,vertices[i])`` (the difference
             only matters for digraphs)
-
         """
         cdef int i
         for i in range(n):
@@ -1196,7 +1181,7 @@ cdef class CGraph:
 
         .. SEEALSO::
 
-            - :meth:`adjacency_sequence_out` -- Similar method for ``(v,
+            - :meth:`adjacency_sequence_out` -- similar method for ``(v,
             vertices[i])`` instead of ``(vertices[i], v)`` (the difference only
             matters for digraphs)
         """
@@ -1268,7 +1253,7 @@ cdef class CGraph:
 
         OUTPUT:
 
-        - Raise :class:`NotImplementedError`. This method is not implemented at
+        - Raise :exc:`NotImplementedError`. This method is not implemented at
           the :class:`CGraph` level. A child class should provide a suitable
           implementation.
 
@@ -1384,7 +1369,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
     def c_graph(self):
         r"""
-        Return the ``._cg`` and ``._cg_rev`` attributes
+        Return the ``._cg`` and ``._cg_rev`` attributes.
 
         .. NOTE::
 
@@ -1537,9 +1522,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         """
         Return the number of vertices in ``self``.
 
-        OUTPUT:
-
-        - The order of this graph.
+        OUTPUT: the order of this graph
 
         .. SEEALSO::
 
@@ -1679,9 +1662,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         - ``v`` -- any object
 
-        OUTPUT:
-
-        - ``True`` if ``v`` is a vertex of this graph; ``False`` otherwise
+        OUTPUT: ``True`` if ``v`` is a vertex of this graph; ``False`` otherwise
 
         EXAMPLES::
 
@@ -1702,7 +1683,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         INPUT:
 
         - ``name`` -- the vertex to be added (must be hashable). If ``None``,
-          a new name is created.
+          a new name is created
 
         OUTPUT:
 
@@ -1849,9 +1830,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         - ``vertices`` -- iterator of vertex labels
 
-        OUTPUT:
-
-        - Same as for :meth:`del_vertex`.
+        OUTPUT: same as for :meth:`del_vertex`
 
         .. SEEALSO::
 
@@ -1999,9 +1978,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         - ``directed`` -- boolean; whether to take into account the
           orientation of this graph in counting the degree of ``v``
 
-        OUTPUT:
-
-        - The degree of vertex ``v``
+        OUTPUT: the degree of vertex ``v``
 
         EXAMPLES::
 
@@ -2132,11 +2109,11 @@ cdef class CGraphBackend(GenericGraphBackend):
 
     def out_degree(self, v):
         r"""
-        Return the out-degree of ``v``
+        Return the out-degree of ``v``.
 
         INPUT:
 
-        - ``v`` -- a vertex of the graph.
+        - ``v`` -- a vertex of the graph
 
         EXAMPLES::
 
@@ -2159,7 +2136,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
     def in_degree(self, v):
         r"""
-        Return the in-degree of ``v``
+        Return the in-degree of ``v``.
 
         INPUT:
 
@@ -2187,9 +2164,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         - ``v`` -- a vertex of this graph
 
-        OUTPUT:
-
-        - An iterator over the neighbors the vertex ``v``
+        OUTPUT: an iterator over the neighbors the vertex ``v``
 
         .. SEEALSO::
 
@@ -2239,9 +2214,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         - ``v`` -- a vertex of this graph
 
-        OUTPUT:
-
-        - An iterator over the in-neighbors of the vertex ``v``
+        OUTPUT: an iterator over the in-neighbors of the vertex ``v``
 
         .. SEEALSO::
 
@@ -2282,9 +2255,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         - ``v`` -- a vertex of this graph
 
-        OUTPUT:
-
-        - An iterator over the out-neighbors of the vertex ``v``
+        OUTPUT: an iterator over the out-neighbors of the vertex ``v``
 
         .. SEEALSO::
 
@@ -2345,7 +2316,6 @@ cdef class CGraphBackend(GenericGraphBackend):
              (2, 3, None),
              (4, 5, None),
              (5, 6, None)]
-
         """
         cdef object u, v, l, e
         for e in edges:
@@ -2360,15 +2330,15 @@ cdef class CGraphBackend(GenericGraphBackend):
 
     cpdef add_edge(self, object u, object v, object l, bint directed):
         """
-        Add the edge ``(u,v)`` to self.
+        Add the edge ``(u,v)`` to ``self``.
 
         INPUT:
 
-         - ``u``, ``v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
-         - ``l`` -- the edge label
+        - ``l`` -- the edge label
 
-         - ``directed`` -- if False, also add ``(v,u)``
+        - ``directed`` -- if ``False``, also add ``(v,u)``
 
         .. NOTE::
 
@@ -2479,7 +2449,6 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: D.del_edges([(0,1), (2,3), (4,5), (5,6)], False)
             sage: list(D.iterator_edges(range(9), True))
             []
-
         """
         cdef object u, v, l, e
         for e in edges:
@@ -2610,7 +2579,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
     cdef list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL):
         """
-        Gives the labels of all arcs from ``u`` to ``v``.
+        Give the labels of all arcs from ``u`` to ``v``.
 
         ``u`` and ``v`` are the integers corresponding to vertices.
 
@@ -2635,7 +2604,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
 
         - ``labels`` -- boolean, whether to return labels as well
 
@@ -2672,7 +2641,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
 
         - ``labels`` -- boolean, whether to return labels as well
 
@@ -2700,9 +2669,9 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-         - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
 
-         - ``labels`` -- boolean, whether to return labels as well
+        - ``labels`` -- boolean, whether to return labels as well
 
         EXAMPLES::
 
@@ -2723,7 +2692,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
 
         - ``labels`` -- boolean, whether to return labels as well
 
@@ -2746,7 +2715,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         INPUT:
 
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
 
         - ``labels`` -- boolean, whether to return labels as well
 
@@ -2961,9 +2930,9 @@ cdef class CGraphBackend(GenericGraphBackend):
         INPUT:
 
         - ``other`` -- a (mutable) subclass of :class:`CGraphBackend`
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
 
-        .. NOTE:
+        .. NOTE::
 
             ``other`` is assumed to be the empty graph.
 
@@ -3165,10 +3134,10 @@ cdef class CGraphBackend(GenericGraphBackend):
         INPUT:
 
         - ``other`` -- a (mutable) subclass of :class:`CGraphBackend`
-        - ``vertices`` -- a list of vertex labels
+        - ``vertices`` -- list of vertex labels
         - ``modus`` -- integer representing the modus:
           - ``0`` -- initialize ``other`` to be the subgraph induced by the vertices;
-            see :meth:`subgraph_given_vertices``
+            see :meth:`subgraph_given_vertices`
           - ``1`` -- test whether subgraph of ``self`` induced by the vertices is a subgraph of ``other``
           - ``2`` -- as ``1`` but ignore the labels
         """
@@ -3368,7 +3337,6 @@ cdef class CGraphBackend(GenericGraphBackend):
             []
             sage: G._backend.shortest_path_special(1, 4, exclude_vertices=[2], exclude_edges=[(2, 3)])
             [1, 5, 6, 7, 4]
-
         """
         cdef bint exclude_v = exclude_vertices
         cdef bint exclude_e = exclude_edges
@@ -3545,7 +3513,6 @@ cdef class CGraphBackend(GenericGraphBackend):
             [0, 1]
             sage: G.shortest_path_length(0, 1)
             1
-
         """
         if x == y:
             if distance_flag:
@@ -3703,7 +3670,7 @@ cdef class CGraphBackend(GenericGraphBackend):
           instead of the path.
 
         - ``reduced_weight`` -- dictionary (default: ``None``); a dictionary
-          that takes as input an edge ``(u, v)`` and outputs its reduced weight.
+          that takes as input an edge ``(u, v)`` and outputs its reduced weight
 
         OUTPUT:
 
@@ -3724,7 +3691,6 @@ cdef class CGraphBackend(GenericGraphBackend):
             [1, 2, 3, 4]
             sage: G._backend.bidirectional_dijkstra_special(1, 4, weight_function=lambda e:e[2],  include_vertices=[1, 5, 6, 4])
             [1, 5, 6, 4]
-
         """
         cdef bint exclude_v = exclude_vertices
         cdef bint exclude_e = exclude_edges
@@ -4706,7 +4672,7 @@ cdef class Search_iterator:
     search. The class does not build all at once in memory the whole list of
     visited vertices. The class maintains the following variables:
 
-    - ``graph`` -- a graph whose vertices are to be iterated over.
+    - ``graph`` -- a graph whose vertices are to be iterated over
 
     - ``direction`` -- integer; this determines the position at which vertices
       to be visited are removed from the list. For breadth-first search (BFS),
@@ -4717,11 +4683,11 @@ cdef class Search_iterator:
       value ``direction=-1``. In this case, we use a stack to maintain the list
       of vertices to visit.
 
-    - ``stack`` -- a list of vertices to visit, used only when ``direction=-1``
+    - ``stack`` -- list of vertices to visit, used only when ``direction=-1``
 
     - ``queue`` -- a queue of vertices to visit, used only when ``direction=0``
 
-    - ``seen`` -- a list of vertices that are already visited
+    - ``seen`` -- list of vertices that are already visited
 
     - ``test_out`` -- boolean; whether we want to consider the out-neighbors
       of the graph to be traversed. For undirected graphs, we consider both
@@ -4765,7 +4731,7 @@ cdef class Search_iterator:
 
         - ``v`` -- a vertex in ``graph`` from which to start the traversal
 
-        - ``direction`` -- integer (default: ``0``); this determines the
+        - ``direction`` -- integer (default: `0`); this determines the
           position at which vertices to be visited are removed from the
           list. For breadth-first search (BFS), element removal follow a
           first-in first-out (FIFO) protocol, as signified by the value
@@ -4823,7 +4789,6 @@ cdef class Search_iterator:
 
             sage: DiGraph([(1, 2)], immutable=True).connected_components(sort=True)
             [[1, 2]]
-
         """
         self.graph = graph
         self.direction = direction
@@ -5026,7 +4991,7 @@ cdef inline bint _reorganize_edge(object v, object u, const int modus) noexcept:
       - ``2`` -- unsorted edges of an undirected graph
       - ``3`` -- sorted edges of an undirected graph
 
-    OUTPUT: Boolean according the modus:
+    OUTPUT: boolean according the modus:
 
     - ``modus == 0`` -- ``False``
     - ``modus == 1`` -- ``True``

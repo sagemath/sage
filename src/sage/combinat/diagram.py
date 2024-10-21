@@ -337,12 +337,9 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
 
         lr = r'\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}'
 
-        array = []
-        for i in range(self._n_rows):
-            row = []
-            for j in range(self._n_cols):
-                row.append("\\phantom{x}" if (i, j) in self else None)
-            array.append(row)
+        array = [[("\\phantom{x}" if (i, j) in self else None)
+                  for j in range(self._n_cols)]
+                 for i in range(self._n_rows)]
 
         def end_line(r):
             # give the line ending to row ``r``
@@ -482,7 +479,7 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             sage: D = Diagram([(0,0), (0,-3), (2,2), (2,4)])
             Traceback (most recent call last):
             ...
-            ValueError: diagrams must be indexed by non-negative integers
+            ValueError: diagrams must be indexed by nonnegative integers
 
         The next example fails because one cell is indexed by rational
         numbers::
@@ -490,12 +487,12 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             sage: D = Diagram([(0,0), (0,3), (2/3,2), (2,4)])
             Traceback (most recent call last):
             ...
-            ValueError: diagrams must be indexed by non-negative integers
+            ValueError: diagrams must be indexed by nonnegative integers
         """
         from sage.sets.non_negative_integers import NonNegativeIntegers
         NN = NonNegativeIntegers()
         if not all(i in NN for c in self._cells for i in c):
-            raise ValueError("diagrams must be indexed by non-negative integers")
+            raise ValueError("diagrams must be indexed by nonnegative integers")
 
     def specht_module(self, base_ring=None):
         r"""
@@ -554,7 +551,6 @@ class Diagrams(UniqueRepresentation, Parent):
         sage: D = Dgms([(0,0), (0,3), (2,2), (2,4)])
         sage: D.parent()
         Combinatorial diagrams
-
     """
 
     def __init__(self, category=None):
@@ -892,7 +888,7 @@ class NorthwestDiagram(Diagram, metaclass=InheritComparisonClasscallMetaclass):
             sage: NorthwestDiagram([(0,1/2)])
             Traceback (most recent call last):
             ...
-            ValueError: diagrams must be indexed by non-negative integers
+            ValueError: diagrams must be indexed by nonnegative integers
         """
         from itertools import combinations
         Diagram.check(self)

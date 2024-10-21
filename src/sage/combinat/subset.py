@@ -51,7 +51,7 @@ def Subsets(s, k=None, submultiset=False):
     r"""
     Return the combinatorial class of the subsets of the finite set
     ``s``. The set can be given as a list, Set or any iterable
-    convertible to a set. Alternatively, a non-negative integer `n`
+    convertible to a set. Alternatively, a nonnegative integer `n`
     can be provided in place of ``s``; in this case, the result is
     the combinatorial class of the subsets of the set
     `\{1,2,\dots,n\}` (i.e. of the Sage ``range(1,n+1)``).
@@ -154,7 +154,7 @@ def Subsets(s, k=None, submultiset=False):
 
     if isinstance(s, (int, Integer)):
         if s < 0:
-            raise ValueError("s must be non-negative")
+            raise ValueError("s must be nonnegative")
         from sage.sets.integer_range import IntegerRange
         s = IntegerRange(1,s+1)
 
@@ -255,7 +255,7 @@ class Subsets_s(Parent):
 
     def __eq__(self, other):
         r"""
-        Equality test
+        Equality test.
 
         TESTS::
 
@@ -272,7 +272,7 @@ class Subsets_s(Parent):
 
     def __ne__(self, other):
         r"""
-        Difference test
+        Difference test.
 
         TESTS::
 
@@ -322,8 +322,10 @@ class Subsets_s(Parent):
             True
             sage: 2 in S
             False
+            sage: {1, 2} in S
+            True
         """
-        if value not in Sets():
+        if value not in Sets() and not isinstance(value, (set, frozenset)):
             return False
         return all(v in self._s for v in value)
 
@@ -358,7 +360,7 @@ class Subsets_s(Parent):
 
     def first(self):
         """
-        Returns the first subset of ``s``. Since we aren't restricted to
+        Return the first subset of ``s``. Since we aren't restricted to
         subsets of a certain size, this is always the empty set.
 
         EXAMPLES::
@@ -396,7 +398,6 @@ class Subsets_s(Parent):
             [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
             sage: [sub for sub in Subsets([1,2,3,3])]
             [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
-
         """
         k = ZZ_0
         while k <= self._s.cardinality():
@@ -475,7 +476,6 @@ class Subsets_s(Parent):
             Traceback (most recent call last):
             ...
             IndexError: index out of range
-
         """
         r = Integer(r)
         if r >= self.cardinality() or r < 0:
@@ -525,7 +525,7 @@ class Subsets_s(Parent):
 
     def _an_element_(self):
         """
-        Returns an example of subset.
+        Return an example of subset.
 
         EXAMPLES::
 
@@ -555,7 +555,6 @@ class Subsets_s(Parent):
             sage: Y = Subsets(0)
             sage: Y.lattice()                                                           # needs sage.combinat sage.graphs
             Finite lattice containing 1 elements
-
         """
         S = self.underlying_set()
         return S.subsets_lattice()
@@ -606,7 +605,7 @@ class Subsets_sk(Subsets_s):
         Subsets_s.__init__(self, s)
         self._k = Integer(k)
         if self._k < 0:
-            raise ValueError("the integer k (={}) should be non-negative".format(k))
+            raise ValueError("the integer k (={}) should be nonnegative".format(k))
 
     def _repr_(self):
         """
@@ -633,7 +632,7 @@ class Subsets_sk(Subsets_s):
 
     def __eq__(self, other):
         r"""
-        Equality test
+        Equality test.
 
         TESTS::
 
@@ -648,7 +647,7 @@ class Subsets_sk(Subsets_s):
 
     def __ne__(self, other):
         r"""
-        Difference test
+        Difference test.
 
         TESTS::
 
@@ -761,7 +760,7 @@ class Subsets_sk(Subsets_s):
 
     def __iter__(self):
         """
-        Iterates through the subsets of s of size k.
+        Iterate through the subsets of s of size k.
 
         EXAMPLES::
 
@@ -859,7 +858,7 @@ class Subsets_sk(Subsets_s):
 
     def an_element(self):
         """
-        Returns an example of subset.
+        Return an example of subset.
 
         EXAMPLES::
 
@@ -896,7 +895,7 @@ def list_to_dict(l):
 
     INPUT:
 
-    a list ``l`` with possibly repeated elements
+    - ``l`` -- list with possibly repeated elements
 
     The keys are the elements of ``l`` (in the same order in which they appear)
     and values are the multiplicities of each element in ``l``.
@@ -1324,7 +1323,6 @@ class SubMultiset_sk(SubMultiset_s):
 
             sage: Subsets([3,2,2], submultiset=True).list()
             [[], [3], [2], [3, 2], [2, 2], [3, 2, 2]]
-
         """
         from sage.combinat.integer_vector import IntegerVectors
         elts = self._keys
@@ -1480,7 +1478,7 @@ def powerset(X):
 
     INPUT:
 
-    -  ``X`` -- an iterable
+    - ``X`` -- an iterable
 
     OUTPUT: iterator of lists
 

@@ -56,7 +56,7 @@ cdef class MatrixWindow:
     cpdef MatrixWindow matrix_window(MatrixWindow self, Py_ssize_t row, Py_ssize_t col,
                                     Py_ssize_t n_rows, Py_ssize_t n_cols):
         """
-        Returns a matrix window relative to this window of the
+        Return a matrix window relative to this window of the
         underlying matrix.
         """
         if row == 0 and col == 0 and n_rows == self._nrows and n_cols == self._ncols:
@@ -122,13 +122,13 @@ cdef class MatrixWindow:
 
     cpdef matrix(MatrixWindow self):
         """
-        Returns the underlying matrix that this window is a view of.
+        Return the underlying matrix that this window is a view of.
         """
         return self._matrix
 
     cpdef to_matrix(MatrixWindow self):
         """
-        Returns an actual matrix object representing this view.
+        Return an actual matrix object representing this view.
         """
         cdef MatrixWindow w
         a = self._matrix.new_matrix(self._nrows, self._ncols)  # zero matrix

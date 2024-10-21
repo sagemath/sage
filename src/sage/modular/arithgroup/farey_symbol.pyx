@@ -111,7 +111,7 @@ cdef class Farey:
 
     INPUT:
 
-    - `G` -- an arithmetic subgroup of `\PSL_2(\ZZ)`
+    - ``G`` -- an arithmetic subgroup of `\PSL_2(\ZZ)`
 
     EXAMPLES:
 
@@ -280,7 +280,7 @@ cdef class Farey:
             [ -3   1]
             [-40  13]
         """
-        gens_dict = {g:i+1 for i,g in enumerate(self.generators())}
+        gens_dict = {g: i+1 for i, g in enumerate(self.generators())}
         ans = []
         for pm in self.pairing_matrices():
             a, b, c, d = pm.matrix().list()
@@ -306,12 +306,8 @@ cdef class Farey:
     @cached_method
     def _get_minus_one(self):
         r"""
-        If -I belongs to self, return a Tietze word representing it.
-
-        OUTPUT:
-
-        A Tietze word representing the element -I if it belongs to self.
-        Otherwise return []
+        If -I belongs to ``self``, return a Tietze word representing it.
+        Otherwise return ``[]``.
 
         EXAMPLES::
 
@@ -336,7 +332,7 @@ cdef class Farey:
             sage: (-g.matrix()).is_one()
             True
         """
-        for i,g in enumerate(self.generators()):
+        for i, g in enumerate(self.generators()):
             m = g.matrix()
             if (-m).is_one():
                 return [i + 1]
@@ -347,33 +343,36 @@ cdef class Farey:
                 return 3 * [i + 1]
         return []
 
-    def word_problem(self, M, output = 'standard', check = True):
+    def word_problem(self, M, output='standard', check=True):
         r"""
         Solve the word problem (up to sign) using this Farey symbol.
 
         INPUT:
 
-        - ``M`` -- An element `M` of `\SL_2(\ZZ)`.
-        - ``output`` -- (default: ``'standard'``) Should be one of ``'standard'``,
-          ``'syllables'``, ``'gens'``.
-        - ``check`` -- (default: ``True``) Whether to check for correct input and output.
+        - ``M`` -- an element `M` of `\SL_2(\ZZ)`
+
+        - ``output`` -- (default: ``'standard'``) should be one of
+          ``'standard'``, ``'syllables'``, ``'gens'``.
+
+        - ``check`` -- boolean (default: ``True``); whether to check for
+          correct input and output
 
         OUTPUT:
 
         A solution to the word problem for the matrix `M`.
         The format depends on the ``output`` parameter, as follows.
 
-        - ``standard`` returns the so called the Tietze representation,
-          consists of a tuple of nonzero integers `i`, where if `i` > 0
-          then it indicates the `i`th generator (that is, ``self.generators()[0]``
-          would correspond to `i` = 1), and if `i` < 0 then it indicates
-          the inverse of the `i`-th generator.
-        - ``syllables`` returns a tuple of tuples of the form `(i,n)`, where
-          `(i,n)` represents ``self.generators()[i] ^ n``,
+        - ``'standard'`` returns the so called Tietze representation,
+          which consists of a tuple of nonzero integers.  A positive
+          integer `i` indicates the `i`-th generator (that is,
+          ``self.generators()[i-1]``), while a negative integer `i`
+          indicates the inverse of the `i`-th generator.
+        - ``'syllables'`` returns a tuple of tuples of the form
+          `(i, n)`, where `(i, n)` represents ``self.generators()[i] ^ n``,
           whose product equals `M` up to sign.
-        - ``gens`` returns tuple of tuples of the form `(g,n)`,
-          `(g,n)` such that the product of the matrices `g^n`
-          equals `M` up to sign.
+        - ``'gens'`` returns a tuple of pairs `(g, n)`, where `g` is a
+          matrix and `n` an integer, such that the product of the
+          matrices `g^n` equals `M` up to sign.
 
         EXAMPLES::
 
@@ -389,7 +388,7 @@ cdef class Farey:
             sage: g
             [-5048053   586303]
             [-5558280   645563]
-            sage: F.word_problem(g, output = 'gens')
+            sage: F.word_problem(g, output='gens')
             ((
             [109 -10]
             [120 -11], 1
@@ -406,7 +405,7 @@ cdef class Farey:
             [17 -2]
             [60 -7], 1
             ))
-            sage: F.word_problem(g, output = 'syllables')
+            sage: F.word_problem(g, output='syllables')
             ((3, 1), (10, 2), (8, -1), (5, 1))
 
         TESTS:
@@ -417,7 +416,7 @@ cdef class Farey:
             sage: G = Gamma0(10)
             sage: F = G.farey_symbol()
             sage: g = G([-701,-137,4600,899])
-            sage: g1 = prod(F.generators()[i]**a for i,a in F.word_problem(g, output = 'syllables'))
+            sage: g1 = prod(F.generators()[i]**a for i, a in F.word_problem(g, output='syllables'))
             sage: g == g1
             True
 
@@ -430,15 +429,16 @@ cdef class Farey:
         Check that :issue:`20347` is solved::
 
             sage: from sage.misc.misc_c import prod
-            sage: G = ArithmeticSubgroup_Permutation(S2="(1,2)(3,4)",S3="(1,2,3)")
+            sage: G = ArithmeticSubgroup_Permutation(S2="(1,2)(3,4)", S3="(1,2,3)")
             sage: S = G.farey_symbol()
-            sage: g1,g2 = S.generators()
+            sage: g1, g2 = S.generators()
             sage: g = g1^3 * g2^-2 * g1 * g2
             sage: S.word_problem(g)
             (2, 2, 2, 1, 1, 1, 2, 1, 2)
-            sage: h = prod(S.generators()[i]**a for i,a in S.word_problem(g, output = 'syllables'))
+            sage: h = prod(S.generators()[i]**a for i, a in S.word_problem(g, output='syllables'))
             sage: g == h
             True
+
         """
         if output not in ['standard', 'syllables', 'gens']:
             raise ValueError('Unrecognized output format')
@@ -468,7 +468,7 @@ cdef class Farey:
         if sgn == -1:
             beta, mbeta = mbeta, beta
 
-        gens_dict = {g:i+1 for i,g in enumerate(self.generators())}
+        gens_dict = {g: i+1 for i, g in enumerate(self.generators())}
         extra_tietze = []
         if beta.is_one():
             found = True
@@ -505,17 +505,17 @@ cdef class Farey:
             for i in range(len(tietze)):
                 t = tietze[i]
                 tmp = tmp * gens[t-1] if t > 0 else tmp * gens[-t-1]**-1
-            assert tmp.matrix() == M.matrix(),'%s %s %s' % (tietze, tmp.matrix(),M.matrix())
+            assert tmp.matrix() == M.matrix(), '%s %s %s' % (tietze, tmp.matrix(), M.matrix())
         if output == 'standard':
             return tuple(tietze)
         if output == 'syllables':
-            return tuple((a-1,len(list(g))) if a > 0 else (-a-1,-len(list(g))) for a,g in groupby(tietze))
+            return tuple((a-1, len(list(g))) if a > 0 else (-a-1, -len(list(g))) for a, g in groupby(tietze))
         else:  # output == 'gens'
-            return tuple((gens[a-1],len(list(g))) if a > 0 else (gens[-a-1],-len(list(g))) for a, g in groupby(tietze))
+            return tuple((gens[a-1], len(list(g))) if a > 0 else (gens[-a-1], -len(list(g))) for a, g in groupby(tietze))
 
     def __contains__(self, M):
         r"""
-        Tests if element is in the arithmetic group of the Farey symbol
+        Test if element is in the arithmetic group of the Farey symbol
         via LLT algorithm.
 
         EXAMPLES::
@@ -537,7 +537,7 @@ cdef class Farey:
 
     def __richcmp__(self, other, op):
         r"""
-        Compare self to others.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -568,7 +568,6 @@ cdef class Farey:
 
             sage: FareySymbol(Gamma0(4)).__reduce__()
             (<class 'sage.modular.arithgroup.farey_symbol.Farey'>, ...))
-
         """
         return Farey, (self.group, self.this_ptr.dumps())
 
@@ -594,14 +593,14 @@ cdef class Farey:
 
         INPUT:
 
-        - ``forced_format`` -- A format string ('plain' or 'xymatrix')
-                               or ``None``.
+        - ``forced_format`` -- a format string ('plain' or 'xymatrix')
+          or ``None``
 
         EXAMPLES::
 
-            sage: FareySymbol(Gamma0(11))._latex_(forced_format = 'plain')
+            sage: FareySymbol(Gamma0(11))._latex_(forced_format='plain')
             '\\left( -\\infty\\underbrace{\\quad}_{1} 0\\underbrace{\\quad}_{2} \\frac{1}{3}\\underbrace{\\quad}_{3} \\frac{1}{2}\\underbrace{\\quad}_{2} \\frac{2}{3}\\underbrace{\\quad}_{3} 1\\underbrace{\\quad}_{1} \\infty\\right)'
-            sage: FareySymbol(Gamma0(11))._latex_(forced_format = 'xymatrix')
+            sage: FareySymbol(Gamma0(11))._latex_(forced_format='xymatrix')
             '\\begin{xy}\\xymatrix{& -\\infty \\ar@{-}@/_1pc/[r]_{1}& 0 \\ar@{-}@/_1pc/[r]_{2}& \\frac{1}{3} \\ar@{-}@/_1pc/[r]_{3}& \\frac{1}{2} \\ar@{-}@/_1pc/[r]_{2}& \\frac{2}{3} \\ar@{-}@/_1pc/[r]_{3}& 1 \\ar@{-}@/_1pc/[r]_{1}& \\infty }\\end{xy}'
 
             sage: 'xymatrix' in FareySymbol(Gamma0(11))._latex_()
@@ -909,23 +908,23 @@ cdef class Farey:
 
         OPTIONS:
 
-        - ``fill`` -- boolean (default ``True``) fill the fundamental domain
+        - ``fill`` -- boolean (default: ``True``); fill the fundamental domain
 
-        - ``linestyle`` -- string (default: 'solid') The style of the line,
+        - ``linestyle`` -- string (default: ``'solid'``); the style of the line,
           which is one of 'dashed', 'dotted', 'solid', 'dashdot', or '--',
           ':', '-', '-.', respectively
 
-        - ``color`` -- (default: 'lightgray') fill color; fill
-          color for odd part of Dedekind tesselation.
+        - ``color`` -- (default: ``'lightgray'``) fill color for odd part of
+          Dedekind tesselation
 
-        - ``show_pairing`` -- boolean (default: ``True``) flag for pairing
+        - ``show_pairing`` -- boolean (default: ``True``); flag for pairing
 
-        - ``tesselation`` -- (default: 'Dedekind') The type of
+        - ``tesselation`` -- (default: ``'Dedekind'``) the type of
           hyperbolic tesselation which is one of
-          'coset', 'Dedekind' or ``None`` respectively
+          ``'coset'``, ``'Dedekind'`` or ``None`` respectively
 
         - ``color_even`` -- fill color for even parts of Dedekind
-          tesselation (default 'white'); ignored for other tesselations
+          tesselation (default: ``'white'``); ignored for other tesselations
 
         - ``thickness`` -- float (default: `1`) the thickness of the line
 

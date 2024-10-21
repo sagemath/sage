@@ -47,10 +47,7 @@ cdef inline bint creduce(celement out, celement a, long prec, PowComputer_ prime
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
-    OUTPUT:
-
-    ``True`` if the reduction is zero, ``False`` otherwise
-
+    OUTPUT: ``True`` if the reduction is zero, ``False`` otherwise
     """
     cdef celement ared = a % prime_pow.modulus
     if ared is a and out is not a:
@@ -84,10 +81,7 @@ cdef inline bint creduce_small(celement out, celement a, long prec, PowComputer_
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
-    OUTPUT:
-
-    ``True`` if the reduction is zero, ``False`` otherwise
-
+    OUTPUT: ``True`` if the reduction is zero, ``False`` otherwise
     """
     return creduce(out, a, prec, prime_pow)
 
@@ -113,7 +107,6 @@ cdef inline long cvaluation(celement a, long prec, PowComputer_ prime_pow) excep
 
     The number of times the uniformizer divides ``a``, or ``prec`` if that is
     higher.
-
     """
     C = a._coeffs
     if not C:
@@ -149,8 +142,7 @@ cdef inline int cshift(celement shifted, celement rem, celement a, long n, long 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
     - ``reduce_afterward`` -- whether to :meth:`creduce` ``shifted`` before
-      returning.
-
+      returning
     """
     cdef long v
     notrunc = False
@@ -207,7 +199,7 @@ cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowC
     - ``prime_pow`` -- the ``PowComputer`` for the ring
 
     - ``reduce_afterward`` -- whether to :meth:`creduce` ``out`` before
-      returning.
+      returning
     """
     cdef long q, r
 
@@ -250,7 +242,6 @@ cdef inline int cinvert(celement out, celement a, long prec, PowComputer_ prime_
     - ``prec`` -- a ``long``, ``out`` is reduced to this precision
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     out._coeffs = prime_pow.invert(a, prec)._coeffs
     creduce(out, out, prec, prime_pow)
@@ -274,7 +265,6 @@ cdef inline int cdivunit(celement out, celement a, celement b, long prec, PowCom
       determined
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     binv = prime_pow.invert(b, prec)
     cmul(out, a, binv, prec, prime_pow)
@@ -294,7 +284,6 @@ cdef inline int cpow(celement out, celement a, mpz_t n, long prec, PowComputer_ 
     - ``prec`` -- a ``long``, the working absolute precision
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     cdef Integer zn = PY_NEW(Integer)
     mpz_set(zn.value, n)
@@ -340,13 +329,13 @@ cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, 
 
 cdef inline cexpansion_getitem(celement value, long m, PowComputer_ prime_pow):
     """
-    Return the `m`th `p`-adic digit in the ``simple_mode`` expansion.
+    Return the `m`-th `p`-adic digit in the ``simple_mode`` expansion.
 
     INPUT:
 
-    - ``value`` -- the `p`-adic element whose expansion is desired.
-    - ``m`` -- a non-negative integer: which entry in the `p`-adic expansion to return.
-    - ``prime_pow`` -- A ``PowComputer`` holding `p`-adic data.
+    - ``value`` -- the `p`-adic element whose expansion is desired
+    - ``m`` -- nonnegative integer; which entry in the `p`-adic expansion to return
+    - ``prime_pow`` -- a ``PowComputer`` holding `p`-adic data
     """
     R = value.base_ring()
     p = R.prime()
@@ -368,14 +357,13 @@ cdef int cteichmuller(celement out, celement value, long prec, PowComputer_ prim
     INPUT:
 
     - ``out`` -- a ``celement`` which is set to a `q-1`-th root of unity
-      congruent to ``value`` modulo π; or 0 if `a \equiv 0 \pmod{π}`.
+      congruent to ``value`` modulo π; or 0 if `a \equiv 0 \pmod{π}`
 
     - ``value`` -- n ``celement``, the element mod π to lift
 
     - ``prec`` -- a ``long``, the precision to which to lift
 
     - ``prime_pow`` -- the ``PowComputer`` of the ring
-
     """
     if value[0].valuation() > 0:
         out._coeffs = []
@@ -388,8 +376,8 @@ cdef list ccoefficients(celement x, long valshift, long prec, PowComputer_ prime
 
     INPUT:
 
-    - ``x`` -- a ``celement`` giving the underlying `p`-adic element, or possibly its unit part.
-    - ``valshift`` -- a long giving the power of the uniformizer to shift `x` by.
+    - ``x`` -- a ``celement`` giving the underlying `p`-adic element, or possibly its unit part
+    - ``valshift`` -- a long giving the power of the uniformizer to shift `x` by
     - ``prec`` -- a long, the (relative) precision desired, used in rational reconstruction
     - ``prime_pow`` -- the Powcomputer of the ring
     """

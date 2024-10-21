@@ -46,7 +46,8 @@ lazy_import('sage.rings.number_field.number_field', 'NumberField')
 
 def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False, iso_type=False):
     r"""
-    Compute the automorphism group for ``rational_function`` via the method of fixed points
+    Compute the automorphism group for ``rational_function`` via the method of
+    fixed points.
 
     ALGORITHM:
 
@@ -56,13 +57,14 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
 
     - ``rational_function`` -- Rational Function defined over `\ZZ` or `\QQ`
 
-    - ``return_functions`` -- Boolean value; ``True`` will return elements in the automorphism group
-        as linear fractional transformations. ``False`` will return elements as `PGL_2` matrices
+    - ``return_functions`` -- boolean value; ``True`` will return elements in
+      the automorphism group as linear fractional transformations. ``False``
+      will return elements as `PGL_2` matrices.
 
-    - ``iso_type`` -- Boolean; ``True`` will cause the classification of the finite automorphism
-        group to also be returned
+    - ``iso_type`` -- boolean; ``True`` will cause the classification of the
+      finite automorphism group to also be returned
 
-    OUTPUT: a list of automorphisms that make up the automorphism group
+    OUTPUT: list of automorphisms that make up the automorphism group
     of ``rational_function``
 
     EXAMPLES::
@@ -411,11 +413,11 @@ def CRT_helper(automorphisms, moduli):
 
     INPUT:
 
-    - ``automorphisms`` -- a list of lists of automorphisms over various `Zmod(p^k)`
+    - ``automorphisms`` -- list of lists of automorphisms over various `Zmod(p^k)`
 
     - ``moduli`` -- list of the various `p^k`
 
-    OUTPUT: a list of automorphisms over `Zmod(M)`
+    OUTPUT: list of automorphisms over `Zmod(M)`
 
     EXAMPLES::
 
@@ -460,15 +462,16 @@ def CRT_automorphisms(automorphisms, order_elts, degree, moduli):
 
     INPUT:
 
-    - ``automorphisms`` -- a list of lists of automorphisms over various `Zmod(p^k)`
+    - ``automorphisms`` -- list of lists of automorphisms over various `Zmod(p^k)`
 
-    - ``order_elts`` -- a list of lists of the orders of the elements of ``automorphisms``
+    - ``order_elts`` -- list of lists of the orders of the elements of ``automorphisms``
 
-    - ``degree`` -- a positive integer
+    - ``degree`` -- positive integer
 
     - ``moduli`` -- list of prime powers, i.e., `p^k`
 
-    OUTPUT: a list containing a list of automorphisms over `Zmod(M)` and the product of the moduli
+    OUTPUT: list containing a list of automorphisms over `Zmod(M)` and the
+    product of the moduli
 
     EXAMPLES::
 
@@ -504,17 +507,17 @@ def valid_automorphisms(automorphisms_CRT, rational_function, ht_bound, M,
 
     INPUT:
 
-    - ``automorphisms`` -- a list of lists of automorphisms over various `Zmod(p^k)`
+    - ``automorphisms`` -- list of lists of automorphisms over various `Zmod(p^k)`
 
-    - ``rational_function`` -- A one variable rational function
+    - ``rational_function`` -- a one variable rational function
 
-    - ``ht_bound`` -- a positive integer
+    - ``ht_bound`` -- positive integer
 
-    - ``M`` -- a positive integer, a product of prime powers
+    - ``M`` -- positive integer, a product of prime powers
 
-    - ``return_functions`` -- (default: ``False``) boolean
+    - ``return_functions`` -- boolean (default: ``False``)
 
-    OUTPUT: a list of automorphisms over `\ZZ`
+    OUTPUT: list of automorphisms over `\ZZ`
 
     EXAMPLES::
 
@@ -559,15 +562,15 @@ def remove_redundant_automorphisms(automorphisms, order_elts, moduli, integral_a
 
     INPUT:
 
-    - ``automorphisms`` -- a list of lists of automorphisms
+    - ``automorphisms`` -- list of lists of automorphisms
 
-    - ``order_elts`` -- a list of lists of the orders of the elements of ``automorphisms``
+    - ``order_elts`` -- list of lists of the orders of the elements of ``automorphisms``
 
-    - ``moduli`` -- a list of prime powers
+    - ``moduli`` -- list of prime powers
 
     - ``integral_autos`` -- list of known automorphisms
 
-    OUTPUT: a list of automorphisms
+    OUTPUT: list of automorphisms
 
     EXAMPLES::
 
@@ -632,10 +635,11 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
     - ``prime_lower_bound`` -- (default: 4) a positive integer; a lower bound for the primes to use for
       the Chinese Remainder Theorem step
 
-    - ``return_functions`` -- (default: ``True``) boolean; ``True`` returns linear fractional transformations
-      False returns elements of `PGL(2,\QQ)`
+    - ``return_functions`` -- boolean (default: ``True``); ``True`` returns
+      linear fractional transformations ``False`` returns elements of `PGL(2,\QQ)`
 
-    - ``iso_type`` -- (default: ``False``) boolean; ``True`` returns the isomorphism type of the automorphism group
+    - ``iso_type`` -- boolean (default: ``False``); ``True`` returns the
+      isomorphism type of the automorphism group
 
     OUTPUT: a complete list of automorphisms of ``rational_function``
 
@@ -841,14 +845,16 @@ def automorphism_group_FF(rational_function, absolute=False, iso_type=False, ret
     - ``rational_function`` -- a rational function defined over the fraction field
         of a polynomial ring in one variable with finite field coefficients
 
-    - ``absolute`` -- (default: ``False``) boolean; ``True`` returns the absolute automorphism group and a field of definition
+    - ``absolute`` -- boolean (default: ``False``); ``True`` returns the
+      absolute automorphism group and a field of definition
 
-    - ``iso_type`` -- (default: ``False``) boolean; ``True`` returns the isomorphism type of the automorphism group
+    - ``iso_type`` -- boolean (default: ``False``); ``True`` returns the
+      isomorphism type of the automorphism group
 
-    - ``return_functions`` -- (default: ``False``) boolean; ``True`` returns linear fractional transformations
-      False returns elements of `PGL(2)`
+    - ``return_functions`` -- boolean (default: ``False``); ``True`` returns
+      linear fractional transformations ``False`` returns elements of `PGL(2)`
 
-    OUTPUT: a list of automorphisms of ``rational_function``
+    OUTPUT: list of automorphisms of ``rational_function``
 
     EXAMPLES::
 
@@ -1089,7 +1095,7 @@ def three_stable_points(rational_function, invariant_list):
     - ``rational_function`` -- rational function `\phi` defined over finite
       field `E`
 
-    - ``invariant_list`` -- a list of at least `3` points of `\mathbb{P}^1(E)` that
+    - ``invariant_list`` -- list of at least `3` points of `\mathbb{P}^1(E)` that
       is stable under `Aut_{\phi}(E)`
 
     OUTPUT: list of automorphisms
@@ -1382,7 +1388,7 @@ def order_p_automorphisms(rational_function, pre_image):
         if case == 'fix':
             T = [x[0] for x in pre_image]
         elif case == 'F-pre_images':
-            T = [x for x in pre_image[0][1]]
+            T = list(pre_image[0][1])
         else:
             T = []
 
@@ -1391,10 +1397,10 @@ def order_p_automorphisms(rational_function, pre_image):
             pt = guy[0]
             # treat case of multiple F-rational fixed points or
             #     1 F-rational fixed point with F-rational pre-images
-            if T != []:
+            if T:
                 M = [t for t in T if t != pt]
                 m = len(M)
-                if pt == [F(1),F(0)]:
+                if pt == [F(1), F(0)]:
                     for i in range(1, m):
                         s = z + M[i][0] - M[0][0]
                         if s(phi(z)) == phi(s(z)):
@@ -1402,8 +1408,8 @@ def order_p_automorphisms(rational_function, pre_image):
                 else:
                     u = F(1) / (z - pt[0])
                     u_inv = pt[0] + F(1)/z
-                    for i in range(1,m):
-                        if M[0] == [F(1),F(0)]:
+                    for i in range(1, m):
+                        if M[0] == [F(1), F(0)]:
                             uy1 = 0
                         else:
                             uy1 = u(M[0][0])
@@ -1461,7 +1467,7 @@ def automorphisms_fixing_pair(rational_function, pair, quad):
 
     - ``pair`` -- a pair of points of `\mathbb{P}^1(E)`
 
-    - ``quad`` -- Boolean: an indicator if this is a quadratic pair of points
+    - ``quad`` -- boolean; an indicator if this is a quadratic pair of points
 
     OUTPUT: set of automorphisms with order prime to characteristic defined over `E` that fix
     the pair, excluding the identity
@@ -1705,7 +1711,7 @@ def which_group(list_of_elements):
     - ``list_of_elements`` -- a finite list of elements of `PGL(2,K)`
       that we know a priori form a group
 
-    OUTPUT: a string -- the isomorphism type of the group
+    OUTPUT: string; the isomorphism type of the group
 
     EXAMPLES::
 
@@ -1836,7 +1842,7 @@ def conjugating_set_initializer(f, g):
       of which no `n+1` are linearly dependent. Used to specify a possible conjugation
       from `f` to `g`.
 
-    - ``possible_targets`` -- a list of tuples of the form (``points``, ``repeated``). ``points``
+    - ``possible_targets`` -- list of tuples of the form (``points``, ``repeated``). ``points``
       is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
       specifies how many points in ``source`` have points in ``points`` as their possible target.
 
@@ -2061,12 +2067,12 @@ def greedy_independence_check(P, repeated_mult, point_to_mult):
 
     - ``P`` -- a projective space
 
-    - ``repeated_mult`` -- a dictionary of integers to lists of points of
+    - ``repeated_mult`` -- dictionary of integers to lists of points of
       the projective space ``P``. The list of points should be conjugation
       invariant. The keys are considered as weights, and this function attempts
       to minimize the total weight
 
-    - ``point_to_mult`` -- a dictionary of points of ``P`` to tuples of the form
+    - ``point_to_mult`` -- dictionary of points of ``P`` to tuples of the form
       (multiplier, level), where multiplier is the characteristic polynomial
       of the multiplier of the point, and level is the number of preimages
       taken to find the point
@@ -2079,9 +2085,9 @@ def greedy_independence_check(P, repeated_mult, point_to_mult):
     Otherwise, a tuple of the form (``source``, ``corresponding``) is returned.
 
     - ``source`` -- the set `U` of the conjugation invariant pair. A set of `n+2` points
-      of the domain of `f`, of which no `n+1` are linearly dependent.
+      of the domain of `f`, of which no `n+1` are linearly dependent
 
-    - ``corresponding`` -- a list of tuples of the form ((multiplier, level), repeat) where the
+    - ``corresponding`` -- list of tuples of the form ((multiplier, level), repeat) where the
       (multiplier, level) pair is the multiplier of a point in ``source`` and repeat
       specifies how many points in source have that (multiplier, level) pair. This
       information specifies the set `V` of the invariant pair.
@@ -2139,14 +2145,14 @@ def conjugating_set_helper(f, g, num_cpus, source, possible_targets):
 
     - ``num_cpus`` -- the number of threads to run in parallel
 
-    - ``source`` -- a list of `n+2` conjugation invariant points, of which
-      no `n+1` are linearly dependent.
+    - ``source`` -- list of `n+2` conjugation invariant points, of which
+      no `n+1` are linearly dependent
 
-    - ``possible_targets`` -- a list of tuples of the form (``points``, ``repeated``). ``points``
+    - ``possible_targets`` -- list of tuples of the form (``points``, ``repeated``). ``points``
       is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
       specifies how many points in ``source`` have points in ``points`` as their possible target.
 
-    OUTPUT: a list of elements of PGL which conjugate ``f`` to ``g``.
+    OUTPUT: list of elements of PGL which conjugate ``f`` to ``g``
 
     EXAMPLES::
 
@@ -2283,14 +2289,14 @@ def is_conjugate_helper(f, g, num_cpus, source, possible_targets):
 
     - ``num_cpus`` -- the number of threads to run in parallel
 
-    - ``source`` -- a list of `n+2` conjugation invariant points, of which
-      no `n+1` are linearly dependent.
+    - ``source`` -- list of `n+2` conjugation invariant points, of which
+      no `n+1` are linearly dependent
 
-    - ``possible_targets`` -- a list of tuples of the form (``points``, ``repeated``). ``points``
+    - ``possible_targets`` -- list of tuples of the form (``points``, ``repeated``). ``points``
       is a list of ``points`` which are possible targets for point(s) in ``source``. ``repeated``
       specifies how many points in ``source`` have points in ``points`` as their possible target.
 
-    OUTPUT: ``True`` if ``f`` is conjugate to ``g``, ``False`` otherwise.
+    OUTPUT: ``True`` if ``f`` is conjugate to ``g``, ``False`` otherwise
 
     EXAMPLES::
 

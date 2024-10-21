@@ -404,7 +404,7 @@ cpdef __matrix_from_rows_of_matrices(X):
     INPUT:
 
     - ``X`` -- a nonempty list of matrices of the same size mod a
-       single modulus `n`
+      single modulus `n`
 
     EXAMPLES::
 
@@ -413,9 +413,9 @@ cpdef __matrix_from_rows_of_matrices(X):
         sage: all(list(Y[i]) == X[i].list() for i in range(10))
         True
 
-    OUTPUT: A single matrix mod ``p`` whose ``i``-th row is ``X[i].list()``.
+    OUTPUT: a single matrix mod ``p`` whose ``i``-th row is ``X[i].list()``.
 
-    .. note::
+    .. NOTE::
 
          Do not call this function directly but use the static method
          ``Matrix_modn_dense_float/double._matrix_from_rows_of_matrices``
@@ -855,10 +855,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             A.subdivide(*self.subdivisions())
         return A
 
-
     cpdef _add_(self, right):
         r"""
-        Add two dense matrices over `\Z/n\Z`
+        Add two dense matrices over `\Z/n\Z`.
 
         INPUT:
 
@@ -899,10 +898,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         sig_off()
         return M
 
-
     cpdef _sub_(self, right):
         r"""
-        Subtract two dense matrices over `\Z/n\Z`
+        Subtract two dense matrices over `\Z/n\Z`.
 
         EXAMPLES::
 
@@ -990,7 +988,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     cdef _matrix_times_matrix_(self, Matrix right):
         """
-        return ``self*right``
+        Return ``self*right``.
 
         INPUT:
 
@@ -1148,7 +1146,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     cdef _vector_times_matrix_(self, Vector v):
         """
-        ``v*self``
+        Return ``v*self``.
 
         INPUT:
 
@@ -1175,7 +1173,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: v = random_vector(Integers(16337), 10)                                # needs sage.rings.finite_rings
             sage: matrix(v*A) == matrix(v)*A
             True
-
         """
         if not isinstance(v, Vector_modn_dense):
             return (self.new_matrix(1,self._nrows, entries=v.list()) * self)[0]
@@ -1205,7 +1202,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     cdef _matrix_times_vector_(self, Vector v):
         """
-        ``self*v``
+        Return ``self*v``.
 
         EXAMPLES::
 
@@ -1382,7 +1379,6 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             (y,)
             sage: A._cache['charpoly_linbox'].variables()
             (x,)
-
         """
         cache_key = 'charpoly_%s' % algorithm
         g = self.fetch(cache_key)
@@ -1407,10 +1403,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         self.cache(cache_key, g)
         return g
 
-
     def minpoly(self, var='x', algorithm='linbox', proof=None):
         """
-        Returns the minimal polynomial of`` self``.
+        Return the minimal polynomial of ``self``.
 
         INPUT:
 
@@ -1419,7 +1414,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         - ``algorithm`` -- ``generic`` or ``linbox`` (default:
           ``linbox``)
 
-        - ``proof`` -- (default: ``True``); whether to provably return
+        - ``proof`` -- (default: ``True``) whether to provably return
           the true minimal polynomial; if ``False``, we only guarantee
           to return a divisor of the minimal polynomial.  There are
           also certainly cases where the computed results is
@@ -1546,7 +1541,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     def _charpoly_linbox(self, var='x'):
         """
-        Computes the characteristic polynomial using LinBox. No checks
+        Compute the characteristic polynomial using LinBox. No checks
         are performed.
 
         This function is called internally by ``charpoly``.
@@ -1579,7 +1574,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         r = R(v)
         return r
 
-    def echelonize(self, algorithm="linbox_noefd", **kwds):
+    def echelonize(self, algorithm='linbox_noefd', **kwds):
         """
         Put ``self`` in reduced row echelon form.
 
@@ -1594,23 +1589,21 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
           - ``linbox_noefd`` -- uses the FFPACK directly, less memory and faster (default)
 
           - ``gauss`` -- uses a custom slower `O(n^3)` Gauss
-            elimination implemented in Sage.
+            elimination implemented in Sage
 
           - ``all`` -- compute using both algorithms and verify that
-            the results are the same.
+            the results are the same
 
         - ``**kwds`` -- these are all ignored
 
-        OUTPUT:
+        OUTPUT: ``self`` is put in reduced row echelon form
 
-        - ``self`` is put in reduced row echelon form.
+        - the rank of ``self`` is computed and cached
 
-        - the rank of self is computed and cached
+        - the pivot columns of ``self`` are computed and cached
 
-        - the pivot columns of self are computed and cached.
-
-        - the fact that self is now in echelon form is recorded and
-          cached so future calls to echelonize return immediately.
+        - the fact that ``self`` is now in echelon form is recorded and
+          cached so future calls to echelonize return immediately
 
         EXAMPLES::
 
@@ -1854,7 +1847,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     def right_kernel_matrix(self, algorithm='linbox', basis='echelon'):
         r"""
-        Returns a matrix whose rows form a basis for the right kernel
+        Return a matrix whose rows form a basis for the right kernel
         of ``self``.
 
         If the base ring is the ring of integers modulo a composite,
@@ -1963,7 +1956,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     def hessenbergize(self):
         """
-        Transforms self in place to its Hessenberg form.
+        Transform ``self`` in place to its Hessenberg form.
 
         EXAMPLES::
 
@@ -2033,19 +2026,19 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     def _charpoly_hessenberg(self, var):
         """
-        Transforms self in place to its Hessenberg form then computes
+        Transform ``self`` in place to its Hessenberg form then computes
         and returns the coefficients of the characteristic polynomial
         of this matrix.
 
         INPUT:
 
-        - ``var`` -- name of the indeterminate of the charpoly.
+        - ``var`` -- name of the indeterminate of the charpoly
 
         OUTPUT:
 
            The characteristic polynomial is represented as a vector of
            ints, where the constant term of the characteristic
-           polynomial is the 0th coefficient of the vector.
+           polynomial is the `0`-th coefficient of the vector.
 
         EXAMPLES::
 
@@ -2294,9 +2287,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         - ``row1``, ``row2`` -- the two rows to be transformed (within
           ``self``)
 
-        -``start_col`` -- the column of the pivots in ``row1`` and
-         ``row2``. It is assumed that all entries before ``start_col``
-         in ``row1`` and ``row2`` are zero.
+        - ``start_col`` -- the column of the pivots in ``row1`` and
+          ``row2``. It is assumed that all entries before ``start_col``
+          in ``row1`` and ``row2`` are zero.
 
         OUTPUT:
 
@@ -2536,14 +2529,12 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         INPUT:
 
-        - ``density`` -- Integer; proportion (roughly) to be considered
-           for changes
-        - ``nonzero`` -- Bool (default: ``False``); whether the new
-           entries are forced to be non-zero
+        - ``density`` -- integer; proportion (roughly) to be considered
+          for changes
+        - ``nonzero`` -- boolean (default: ``False``); whether the new
+          entries are forced to be nonzero
 
-        OUTPUT:
-
-        -  None, the matrix is modified in-space
+        OUTPUT: none, the matrix is modified in-space
 
         EXAMPLES::
 
@@ -2651,11 +2642,11 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     def _magma_init_(self, magma):
         """
-        Returns a string representation of ``self`` in Magma form.
+        Return a string representation of ``self`` in Magma form.
 
         INPUT:
 
-        -  ``magma`` -- a Magma session
+        - ``magma`` -- a Magma session
 
         OUTPUT: string
 
@@ -2968,16 +2959,16 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
     def submatrix(self, Py_ssize_t row=0, Py_ssize_t col=0,
                         Py_ssize_t nrows=-1, Py_ssize_t ncols=-1):
         r"""
-        Return the matrix constructed from self using the specified
+        Return the matrix constructed from ``self`` using the specified
         range of rows and columns.
 
         INPUT:
 
-        - ``row``, ``col`` -- index of the starting row and column.
-          Indices start at zero
+        - ``row``, ``col`` -- index of the starting row and column;
+          indices start at zero
 
         - ``nrows``, ``ncols`` -- (optional) number of rows and columns to
-          take. If not provided, take all rows below and all columns to
+          take; if not provided, take all rows below and all columns to
           the right of the starting entry
 
         .. SEEALSO::
@@ -3066,9 +3057,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [2 3], [6 7], [10 11], [14 15]
             ]
 
-        OUTPUT:
-
-        - ``list`` -- a list of matrices
+        OUTPUT: list of matrices
         """
         if nrows * ncols != self._ncols:
             raise ValueError("nrows * ncols must equal self's number of columns")
@@ -3085,7 +3074,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     def matrix_from_columns(self, columns):
         """
-        Return the matrix constructed from self using columns with indices
+        Return the matrix constructed from ``self`` using columns with indices
         in the columns list.
 
         EXAMPLES::
@@ -3115,7 +3104,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     def matrix_from_rows(self, rows):
         """
-        Return the matrix constructed from self using rows with indices in
+        Return the matrix constructed from ``self`` using rows with indices in
         the rows list.
 
         EXAMPLES::
@@ -3144,7 +3133,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     def matrix_from_rows_and_columns(self, rows, columns):
         """
-        Return the matrix constructed from self from the given rows and
+        Return the matrix constructed from ``self`` from the given rows and
         columns.
 
         EXAMPLES::

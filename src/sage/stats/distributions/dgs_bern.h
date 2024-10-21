@@ -53,7 +53,7 @@
 /**
    Number of bits sampled at once in ``dgs_bern_uniform_t``
 
-   .. note::
+   .. NOTE::
 
       We want machine independent behaviour at least for the MP functions, so we pick 32.
 */
@@ -75,7 +75,7 @@
 /**
    Balanced Bernoulli distribution.
 
-   .. note::
+   .. NOTE::
 
        This implementation is faster than ``dgs_bern_mp_t``
 
@@ -113,7 +113,7 @@ typedef struct {
 
    :param length: number of bits to sample from GMP (or 0 for automatic choice)
 
-   .. note::
+   .. NOTE::
 
        Clear with ``dgs_bern_uniform_clear()``.
 
@@ -202,7 +202,7 @@ typedef struct {
 
    :param p: sampler will return 1 with probability `p` and 0 with probability `1-p`.
 
-   .. note::
+   .. NOTE::
 
        Clear with ``dgs_bern_mp_clear()``.
 
@@ -247,7 +247,7 @@ typedef struct {
 
    :param p: sampler will return 1 with probability `p` and 0 with probability `1-p`.
 
-   .. note::
+   .. NOTE::
 
        Clear with ``dgs_bern_dp_clear()``.
 
@@ -261,7 +261,7 @@ dgs_bern_dp_t *dgs_bern_dp_init(double p);
 
    :param self: Bernoulli state
 
-  .. note::
+  .. NOTE::
 
       Uses libc ``random()``.
 
@@ -309,7 +309,7 @@ typedef struct {
    :param f: samplers return 1 with probability `exp(-x/f)`
    :param l: we support inputs to call `x` up to `2^l-1`
 
-   .. note::
+   .. NOTE::
 
        Clear ``dgs_bern_exp_mp_clear()``.
 
@@ -369,7 +369,7 @@ typedef struct {
    :param f: samplers return 1 with probability `exp(-x/f)`
    :param l: we support inputs to call `x` up to `2^l-1`
 
-   .. note::
+   .. NOTE::
 
        Clear ``dgs_bern_exp_mp_clear()``.
 

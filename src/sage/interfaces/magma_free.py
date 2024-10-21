@@ -27,8 +27,10 @@ def magma_free_eval(code, strip=True, columns=0):
     Use the free online MAGMA calculator to evaluate the given
     input code and return the answer as a string.
 
-    LIMITATIONS: The code must evaluate in at most 20 seconds
-    and there is a limitation on the amount of RAM.
+    .. WARNING::
+
+        The code must evaluate in at most 120 seconds
+        and there is a limitation on the amount of RAM.
 
     EXAMPLES::
 

@@ -91,14 +91,14 @@ def is_ModularFormElement(x):
 def delta_lseries(prec=53, max_imaginary_part=0,
                   max_asymp_coeffs=40, algorithm=None):
     r"""
-    Return the L-series of the modular form `\Delta`.
+    Return the `L`-series of the modular form `\Delta`.
 
-    If algorithm is "gp", this returns an interface to Tim
-    Dokchitser's program for computing with the L-series of the
+    If algorithm is ``'gp'``, this returns an interface to Tim
+    Dokchitser's program for computing with the `L`-series of the
     modular form `\Delta`.
 
-    If algorithm is "pari", this returns instead an interface to Pari's
-    own general implementation of L-functions.
+    If algorithm is ``'pari'``, this returns instead an interface to Pari's
+    own general implementation of `L`-functions.
 
     INPUT:
 
@@ -108,11 +108,11 @@ def delta_lseries(prec=53, max_imaginary_part=0,
 
     - ``max_asymp_coeffs`` -- integer
 
-    - ``algorithm`` -- optional string: 'gp' (default), 'pari'
+    - ``algorithm`` -- string; ``'gp'`` (default), ``'pari'``
 
     OUTPUT:
 
-    The L-series of `\Delta`.
+    The `L`-series of `\Delta`.
 
     EXAMPLES::
 
@@ -176,7 +176,7 @@ class ModularForm_abstract(ModuleElement):
 
     def level(self):
         """
-        Return the level of self.
+        Return the level of ``self``.
 
         EXAMPLES::
 
@@ -222,7 +222,7 @@ class ModularForm_abstract(ModuleElement):
 
     def __call__(self, x, prec=None):
         """
-        Evaluate the q-expansion of this modular form at x.
+        Evaluate the `q`-expansion of this modular form at x.
 
         EXAMPLES::
 
@@ -240,7 +240,7 @@ class ModularForm_abstract(ModuleElement):
     @cached_method
     def valuation(self):
         """
-        Return the valuation of self (i.e. as an element of the power
+        Return the valuation of ``self`` (i.e. as an element of the power
         series ring in q).
 
         EXAMPLES::
@@ -274,7 +274,7 @@ class ModularForm_abstract(ModuleElement):
 
     def __eq__(self, other):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -295,7 +295,7 @@ class ModularForm_abstract(ModuleElement):
 
     def __ne__(self, other):
         """
-        Return True if ``self != other``.
+        Return ``True`` if ``self != other``.
 
         EXAMPLES::
 
@@ -383,7 +383,7 @@ class ModularForm_abstract(ModuleElement):
 
     def __getitem__(self, n):
         """
-        Returns the `q^n` coefficient of the `q`-expansion of self or
+        Return the `q^n` coefficient of the `q`-expansion of ``self`` or
         returns a list containing the `q^i` coefficients of self
         where `i` is in slice `n`.
 
@@ -411,11 +411,11 @@ class ModularForm_abstract(ModuleElement):
 
     def coefficient(self, n):
         r"""
-        Return the `n`-th coefficient of the `q`-expansion of self.
+        Return the `n`-th coefficient of the `q`-expansion of ``self``.
 
         INPUT:
 
-        - ``n`` -- non-negative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -438,7 +438,7 @@ class ModularForm_abstract(ModuleElement):
     def padded_list(self, n):
         """
         Return a list of length n whose entries are the first n
-        coefficients of the q-expansion of self.
+        coefficients of the `q`-expansion of ``self``.
 
         EXAMPLES::
 
@@ -451,7 +451,7 @@ class ModularForm_abstract(ModuleElement):
 
     def _latex_(self):
         """
-        Return the LaTeX expression of self.
+        Return the LaTeX expression of ``self``.
 
         EXAMPLES::
 
@@ -465,7 +465,7 @@ class ModularForm_abstract(ModuleElement):
 
     def character(self, compute=True):
         """
-        Return the character of self. If ``compute=False``, then this will
+        Return the character of ``self``. If ``compute=False``, then this will
         return None unless the form was explicitly created as an element of a
         space of forms with character, skipping the (potentially expensive)
         computation of the matrices of the diamond operators.
@@ -563,7 +563,7 @@ class ModularForm_abstract(ModuleElement):
             sage: f.q_expansion(-1)
             Traceback (most recent call last):
             ...
-            ValueError: prec (= -1) must be non-negative
+            ValueError: prec (= -1) must be nonnegative
         """
         if prec is None:
             prec = self.parent().prec()
@@ -653,7 +653,7 @@ class ModularForm_abstract(ModuleElement):
 
         INPUT:
 
-        - ``d`` -- a positive integer exactly dividing the level `N`
+        - ``d`` -- positive integer exactly dividing the level `N`
           of ``self``, i.e. `d` divides `N` and is coprime to `N/d`
           (default: `d = N`)
 
@@ -667,7 +667,7 @@ class ModularForm_abstract(ModuleElement):
         specified, and in (a suitable extension of) the base field of
         ``self`` otherwise.
 
-        If ``self`` is not an eigenform for `W_d`, a :class:`ValueError` is
+        If ``self`` is not an eigenform for `W_d`, a :exc:`ValueError` is
         raised.
 
         .. SEEALSO::
@@ -752,7 +752,7 @@ class ModularForm_abstract(ModuleElement):
         linear combinations of the real and the imaginary period of `E`::
 
             sage: s = E.modular_symbol(sign=+1)
-            sage: t = E.modular_symbol(sign=-1, implementation="sage")
+            sage: t = E.modular_symbol(sign=-1, implementation='sage')
             sage: s(3/11), t(3/11)
             (1/10, 1/2)
             sage: s(3/11)*omega1 + t(3/11)*2*omega2.imag()*I
@@ -805,7 +805,6 @@ class ModularForm_abstract(ModuleElement):
             sage: M = Gamma0(19)([10, 1, 19, 2])
             sage: E.newform().period(M)  # abs tol 1e-14
             -1.35975973348831 + 1.09365931898146e-16*I
-
         """
         R = RealField(prec)
 
@@ -854,29 +853,29 @@ class ModularForm_abstract(ModuleElement):
     def lseries(self, embedding=0, prec=53, max_imaginary_part=0,
                 max_asymp_coeffs=40):
         r"""
-        Return the L-series of the weight k cusp form
+        Return the `L`-series of the weight k cusp form
         `f` on `\Gamma_0(N)`.
 
         This actually returns an interface to Tim Dokchitser's program for
-        computing with the L-series of the cusp form.
+        computing with the `L`-series of the cusp form.
 
         INPUT:
 
         - ``embedding`` -- either an embedding of the coefficient field of self
           into `\CC`, or an integer `i` between 0 and D-1 where D is the degree
           of the coefficient field (meaning to pick the `i`-th embedding).
-          (Default: 0)
+          (default: 0)
 
-        - ``prec`` -- integer (bits precision). Default: 53.
+        - ``prec`` -- integer (default: 53); bits precision
 
-        - ``max_imaginary_part`` -- real number. Default: 0.
+        - ``max_imaginary_part`` -- real number (default: 0)
 
-        - ``max_asymp_coeffs`` -- integer. Default: 40.
+        - ``max_asymp_coeffs`` -- integer (default: 40)
 
         For more information on the significance of the last three arguments,
         see :mod:`~sage.lfunctions.dokchitser`.
 
-        .. note::
+        .. NOTE::
 
             If an explicit embedding is given, but this embedding is specified
             to smaller precision than ``prec``, it will be automatically
@@ -884,7 +883,7 @@ class ModularForm_abstract(ModuleElement):
 
         OUTPUT:
 
-        The L-series of the cusp form, as a
+        The `L`-series of the cusp form, as a
         :class:`sage.lfunctions.dokchitser.Dokchitser` object.
 
         EXAMPLES::
@@ -926,7 +925,7 @@ class ModularForm_abstract(ModuleElement):
             sage: f.lseries(embedding=1)(1)
             0.298115272465799 + 0.0402203326076732*I
 
-        We compute with the L-series of the Eisenstein series `E_4`::
+        We compute with the `L`-series of the Eisenstein series `E_4`::
 
             sage: f = ModularForms(1,4).0
             sage: L = f.lseries()
@@ -1038,18 +1037,18 @@ class ModularForm_abstract(ModuleElement):
 
     def symsquare_lseries(self, chi=None, embedding=0, prec=53):
         r"""
-        Compute the symmetric square L-series of this modular form, twisted by
+        Compute the symmetric square `L`-series of this modular form, twisted by
         the character `\chi`.
 
         INPUT:
 
-        - ``chi`` -- Dirichlet character to twist by, or None (default None,
-          interpreted as the trivial character).
+        - ``chi`` -- Dirichlet character to twist by, or ``None`` (default:
+          ``None``), interpreted as the trivial character)
         - ``embedding`` -- embedding of the coefficient field into `\RR` or
           `\CC`, or an integer `i` (in which case take the `i`-th embedding)
-        - ``prec`` -- The desired precision in bits (default 53).
+        - ``prec`` -- the desired precision in bits (default: 53)
 
-        OUTPUT: The symmetric square L-series of the cusp form, as a
+        OUTPUT: the symmetric square `L`-series of the cusp form, as a
         :class:`sage.lfunctions.dokchitser.Dokchitser` object.
 
         EXAMPLES::
@@ -1171,7 +1170,7 @@ class ModularForm_abstract(ModuleElement):
 
         Only implemented for N = 1 at present. It is assumed that `f` has real
         coefficients. The norm is computed as a special value of the symmetric
-        square L-function, using the identity
+        square `L`-function, using the identity
 
         .. MATH::
 
@@ -1179,10 +1178,10 @@ class ModularForm_abstract(ModuleElement):
 
         INPUT:
 
-        - ``embedding``: embedding of the coefficient field into `\RR` or
+        - ``embedding`` -- embedding of the coefficient field into `\RR` or
           `\CC`, or an integer `i` (interpreted as the `i`-th embedding)
           (default: 0)
-        - ``prec`` (integer, default 53): precision in bits
+        - ``prec`` -- integer (default: 53); precision in bits
 
         EXAMPLES::
 
@@ -1218,7 +1217,7 @@ class ModularForm_abstract(ModuleElement):
         This function takes as input a modular form, ``self`` and a
         Dirichlet character ``eps`` and returns an integer bound such
         that if ``self`` and its twist by ``eps`` have the same
-        q-expansion up to this bound, then they are equal.
+        `q`-expansion up to this bound, then they are equal.
 
         The bound is taken from [Mu1997]_. See also [Shi1971]_, Proposition
         3.64.
@@ -1227,9 +1226,7 @@ class ModularForm_abstract(ModuleElement):
 
         - ``eps`` -- a Dirichlet character
 
-        OUTPUT:
-
-        A positive integer.
+        OUTPUT: a positive integer
 
         EXAMPLES:
 
@@ -1269,9 +1266,7 @@ class ModularForm_abstract(ModuleElement):
         r"""
         Return whether the modular form ``self`` has complex multiplication.
 
-        OUTPUT:
-
-        Boolean
+        OUTPUT: boolean
 
         .. SEEALSO::
 
@@ -1387,13 +1382,13 @@ class Newform(ModularForm_abstract):
 
         INPUT:
 
-        - ``parent`` -- An ambient cuspidal space of modular forms for
-          which self is a newform.
+        - ``parent`` -- an ambient cuspidal space of modular forms for
+          which ``self`` is a newform
 
-        - ``component`` -- A simple component of a cuspidal modular
-          symbols space of any sign corresponding to this newform.
+        - ``component`` -- a simple component of a cuspidal modular
+          symbols space of any sign corresponding to this newform
 
-        - ``check`` -- If check is ``True``, check that parent and
+        - ``check`` -- if check is ``True``, check that parent and
           component have the same weight, level, and character, that
           component has sign 1 and is simple, and that the types are
           correct on all inputs.
@@ -1430,9 +1425,9 @@ class Newform(ModularForm_abstract):
         self.__hecke_eigenvalue_field = extension_field
 
     def _name(self):
-        """
+        r"""
         Return the name of the generator of the Hecke eigenvalue field
-        of self. Note that a name exists even when this field is QQ.
+        of ``self``. Note that a name exists even when this field is `\QQ`.
 
         EXAMPLES::
 
@@ -1443,7 +1438,7 @@ class Newform(ModularForm_abstract):
 
     def _compute_q_expansion(self, prec):
         """
-        Return the q-expansion of self to precision prec.
+        Return the `q`-expansion of ``self`` to precision ``prec``.
 
         EXAMPLES::
 
@@ -1457,7 +1452,7 @@ class Newform(ModularForm_abstract):
 
     def __eq__(self, other):
         """
-        Return True if self equals other, and False otherwise.
+        Return ``True`` if ``self`` equals ``other``, and ``False`` otherwise.
 
         EXAMPLES::
 
@@ -1483,7 +1478,6 @@ class Newform(ModularForm_abstract):
             q - 4*q^2 + 16*q^4 - 14*q^5 + O(q^6)
             sage: f == g
             True
-
         """
         if (not isinstance(other, ModularForm_abstract) or self.weight() != other.weight()):
             return False
@@ -1505,7 +1499,7 @@ class Newform(ModularForm_abstract):
     @cached_method
     def abelian_variety(self):
         """
-        Return the abelian variety associated to self.
+        Return the abelian variety associated to ``self``.
 
         EXAMPLES::
 
@@ -1517,7 +1511,6 @@ class Newform(ModularForm_abstract):
             Traceback (most recent call last):
             ...
             TypeError: f must have weight 2
-
         """
         from sage.modular.abvar.abvar_newform import ModularAbelianVariety_newform
         return ModularAbelianVariety_newform(self)
@@ -1541,15 +1534,13 @@ class Newform(ModularForm_abstract):
 
     def coefficient(self, n):
         """
-        Return the coefficient of `q^n` in the power series of self.
+        Return the coefficient of `q^n` in the power series of ``self``.
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
-        OUTPUT:
-
-        - the coefficient of `q^n` in the power series of self.
+        OUTPUT: the coefficient of `q^n` in the power series of ``self``
 
         EXAMPLES::
 
@@ -1599,7 +1590,7 @@ class Newform(ModularForm_abstract):
         Find an element of the ambient space of modular forms which
         represents this newform.
 
-        .. note::
+        .. NOTE::
 
            This can be quite expensive. Also, the polynomial defining
            the field of Hecke eigenvalues should be considered random,
@@ -1711,7 +1702,7 @@ class Newform(ModularForm_abstract):
 
     def _defining_modular_symbols(self):
         """
-        Return the modular symbols space corresponding to self.
+        Return the modular symbols space corresponding to ``self``.
 
         EXAMPLES::
 
@@ -1781,12 +1772,12 @@ class Newform(ModularForm_abstract):
 
         - ``self`` -- a newform `f`
 
-        - ``Q`` -- an integer exactly dividing the level of ``self``
+        - ``Q`` -- integer exactly dividing the level of ``self``
 
         .. NOTE::
 
             This method assumes that the `Q`-th coefficient in the
-            `q`-expansion of ``self`` is non-zero.
+            `q`-expansion of ``self`` is nonzero.
 
         TESTS::
 
@@ -1830,7 +1821,7 @@ class Newform(ModularForm_abstract):
 
         - ``self`` -- a newform `f`
 
-        - ``Q`` -- a positive integer exactly dividing the level of ``self``
+        - ``Q`` -- positive integer exactly dividing the level of ``self``
 
         .. NOTE::
 
@@ -1987,8 +1978,8 @@ class Newform(ModularForm_abstract):
 
         INPUT:
 
-        - ``d`` -- a positive integer exactly dividing the level `N` of `f`,
-          i.e. `d` divides `N` and is coprime to `N/d`. The default is `d = N`.
+        - ``d`` -- positive integer exactly dividing the level `N` of `f`,
+          i.e., `d` divides `N` and is coprime to `N/d`; the default is `d = N`
 
           If `d` does not divide `N` exactly, then it will be replaced with a
           multiple `D` of `d` such that `D` exactly divides `N` and `D` has the
@@ -1996,10 +1987,10 @@ class Newform(ModularForm_abstract):
           divide `N`.
 
         - ``normalization`` -- either ``'analytic'`` (the default) or
-          ``'arithmetic'``; see below.
+          ``'arithmetic'``; see below
 
         - ``embedding`` -- (optional) embedding of the coefficient field of `f`
-          into another ring. Ignored if `'normalization='arithmetic'``.
+          into another ring; ignored if ``'normalization='arithmetic'``
 
         OUTPUT:
 
@@ -2258,7 +2249,6 @@ class Newform(ModularForm_abstract):
         AUTHORS:
 
         - Peter Bruin (April 2015)
-
         """
         from sage.modular.all import CuspForms
         R = coercion_model.common_parent(self.base_ring(), chi.base_ring())
@@ -2433,16 +2423,15 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         INPUT:
 
-        - ``parent`` -- ModularForms (an ambient space of modular forms)
+        - ``parent`` -- :class:`ModularFormsSpace` (an ambient space of modular
+          forms)
 
         - ``x`` -- a vector on the basis for parent
 
         - ``check`` -- if check is ``True``, check the types of the
-          inputs.
+          inputs
 
-        OUTPUT:
-
-        - ``ModularFormElement`` -- a modular form
+        OUTPUT: ``ModularFormElement`` -- a modular form
 
         EXAMPLES::
 
@@ -2458,7 +2447,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
     def _compute_q_expansion(self, prec):
         """
-        Computes the q-expansion of self to precision prec.
+        Compute the `q`-expansion of ``self`` to precision ``prec``.
 
         EXAMPLES::
 
@@ -2473,7 +2462,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
     def _add_(self, other):
         """
-        Add self to other.
+        Add ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -2492,10 +2481,10 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
     def __mul__(self, other):
         r"""
-        Calculate the product self * other.
+        Calculate the product ``self * other``.
 
         This tries to determine the
-        characters of self and other, in order to avoid having to compute a
+        characters of ``self`` and ``other``, in order to avoid having to compute a
         (potentially very large) Gamma1 space. Note that this might lead to
         a modular form that is defined with respect to a larger subgroup than
         the factors are.
@@ -2587,8 +2576,8 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         INPUT:
 
-        - ``d`` -- a positive integer exactly dividing the level `N` of
-          ``self``, i.e. `d` divides `N` and is coprime to `N/d`. (Default: `d
+        - ``d`` -- positive integer exactly dividing the level `N` of
+          ``self``, i.e. `d` divides `N` and is coprime to `N/d`. (default: `d
           = N`)
 
         - ``embedding`` -- ignored (but accepted for compatibility with
@@ -2597,7 +2586,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         OUTPUT:
 
         The Atkin-Lehner eigenvalue of `W_d` on ``self``. If ``self`` is not an
-        eigenform for `W_d`, a :class:`ValueError` is raised.
+        eigenform for `W_d`, a :exc:`ValueError` is raised.
 
         .. SEEALSO::
 
@@ -2708,7 +2697,6 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         - \L. J. P. Kilford (2009-08-28)
 
         - Peter Bruin (2015-03-30)
-
         """
         from sage.modular.all import CuspForms, ModularForms
         R = coercion_model.common_parent(self.base_ring(), chi.base_ring())
@@ -2768,7 +2756,7 @@ class ModularFormElement_elliptic_curve(Newform):
 
     def elliptic_curve(self):
         """
-        Return elliptic curve associated to self.
+        Return elliptic curve associated to ``self``.
 
         EXAMPLES::
 
@@ -2825,7 +2813,7 @@ class ModularFormElement_elliptic_curve(Newform):
 
         INPUT:
 
-        - ``d`` -- a positive integer exactly dividing the level `N` of
+        - ``d`` -- positive integer exactly dividing the level `N` of
           ``self``, i.e. `d` divides `N` and is coprime to `N/d`. (Defaults to
           `d = N` if not given.)
 
@@ -2925,7 +2913,7 @@ class EisensteinSeries(ModularFormElement):
 
     def _compute_q_expansion(self, prec=None):
         """
-        Compute the q-expansion of self to precision prec.
+        Compute the `q`-expansion of ``self`` to precision ``prec``.
 
         EXAMPLES::
 
@@ -2952,7 +2940,6 @@ class EisensteinSeries(ModularFormElement):
             [-9*zeta10^3 + 1,
              16*zeta10^2 + 4*zeta10 + 1,
              25*zeta10^3 - 25*zeta10^2 + 25*zeta10 - 24]
-
         """
         if self.weight() == 2 and (self.__chi.is_trivial() and self.__psi.is_trivial()):
             return self.__compute_weight2_trivial_character(X)
@@ -2961,7 +2948,7 @@ class EisensteinSeries(ModularFormElement):
 
     def __compute_weight2_trivial_character(self, X):
         r"""
-        Compute coefficients for self an Eisenstein series of the form
+        Compute coefficients for ``self`` an Eisenstein series of the form
         `E_2 - t*E_2(q^t)`. Computes `a_n` for each `n \in X`.
 
         EXAMPLES::
@@ -3058,7 +3045,7 @@ class EisensteinSeries(ModularFormElement):
 
     def chi(self):
         """
-        Return the parameter chi associated to self.
+        Return the parameter chi associated to ``self``.
 
         EXAMPLES::
 
@@ -3069,7 +3056,7 @@ class EisensteinSeries(ModularFormElement):
 
     def psi(self):
         """
-        Return the parameter psi associated to self.
+        Return the parameter psi associated to ``self``.
 
         EXAMPLES::
 
@@ -3080,7 +3067,7 @@ class EisensteinSeries(ModularFormElement):
 
     def t(self):
         """
-        Return the parameter t associated to self.
+        Return the parameter t associated to ``self``.
 
         EXAMPLES::
 
@@ -3091,7 +3078,7 @@ class EisensteinSeries(ModularFormElement):
 
     def parameters(self):
         """
-        Return chi, psi, and t, which are the defining parameters of self.
+        Return chi, psi, and t, which are the defining parameters of ``self``.
 
         EXAMPLES::
 
@@ -3125,7 +3112,7 @@ class EisensteinSeries(ModularFormElement):
     @cached_method
     def character(self):
         """
-        Return the character associated to self.
+        Return the character associated to ``self``.
 
         EXAMPLES::
 
@@ -3155,7 +3142,7 @@ class EisensteinSeries(ModularFormElement):
 
     def new_level(self):
         """
-        Return level at which self is new.
+        Return level at which ``self`` is new.
 
         EXAMPLES::
 
@@ -3218,13 +3205,11 @@ class GradedModularFormElement(ModuleElement):
         INPUT:
 
         - ``parent`` -- an object of the class ``ModularFormsRing``
-        - ``forms_datum`` -- a dictionary ``{k_1:f_1, k_2:f_2, ..., k_n:f_n}``
+        - ``forms_datum`` -- dictionary ``{k_1:f_1, k_2:f_2, ..., k_n:f_n}``
           or a list ``[f_1, f_2,..., f_n]`` where `f_i` is a modular form of
           weight `k_i`
 
-        OUTPUT:
-
-        A ``GradedModularFormElement`` corresponding to `f_1 + f_2 + ... + f_n`
+        OUTPUT: a ``GradedModularFormElement`` corresponding to `f_1 + f_2 + ... + f_n`
 
         TESTS::
 
@@ -3307,7 +3292,7 @@ class GradedModularFormElement(ModuleElement):
 
     def __bool__(self):
         r"""
-        Return "True" if ``self`` is non-zero and "False" otherwise.
+        Return "True" if ``self`` is nonzero and "False" otherwise.
 
         EXAMPLES::
 
@@ -3318,13 +3303,12 @@ class GradedModularFormElement(ModuleElement):
             True
             sage: bool(M(ModularForms(1,6).0))
             True
-
         """
         return bool(self._forms_dictionary)
 
     def is_zero(self):
         r"""
-        Return "True" if the graded form is 0 and "False" otherwise
+        Return "True" if the graded form is 0 and "False" otherwise.
 
         EXAMPLES::
 
@@ -3341,7 +3325,7 @@ class GradedModularFormElement(ModuleElement):
 
     def is_one(self):
         r"""
-        Return "True" if the graded form is 1 and "False" otherwise
+        Return "True" if the graded form is 1 and "False" otherwise.
 
         EXAMPLES::
 
@@ -3406,7 +3390,7 @@ class GradedModularFormElement(ModuleElement):
 
     def _repr_(self):
         r"""
-        The string representation of self.
+        The string representation of ``self``.
 
         EXAMPLES::
 
@@ -3437,8 +3421,8 @@ class GradedModularFormElement(ModuleElement):
 
         INPUT:
 
-        - ``weight`` -- An integer corresponding to the weight of the
-          homogeneous component of the given graded modular form.
+        - ``weight`` -- integer corresponding to the weight of the
+          homogeneous component of the given graded modular form
 
         EXAMPLES::
 
@@ -3467,18 +3451,18 @@ class GradedModularFormElement(ModuleElement):
             sage: f[-1]
             Traceback (most recent call last):
             ...
-            ValueError: the weight must be non-negative
+            ValueError: the weight must be nonnegative
         """
         if not isinstance(weight, (int, Integer)):
             raise KeyError("the weight must be an integer")
         if weight < 0:
-            raise ValueError("the weight must be non-negative")
+            raise ValueError("the weight must be nonnegative")
         return self._forms_dictionary.get(weight, self.parent().zero())
     homogeneous_component = __getitem__  # alias
 
     def __call__(self, x, prec=None):
         r"""
-        Evaluate the q-expansion of this graded modular form at x.
+        Evaluate the `q`-expansion of this graded modular form at x.
 
         EXAMPLES::
 
@@ -3526,7 +3510,7 @@ class GradedModularFormElement(ModuleElement):
 
     def __neg__(self):
         r"""
-        The negation of self.
+        The negation of ``self``.
 
         TESTS::
 
@@ -3580,13 +3564,13 @@ class GradedModularFormElement(ModuleElement):
 
     def _lmul_(self, c):
         r"""
-        The left action of the base ring on self.
+        The left action of the base ring on ``self``.
 
         INPUT:
 
         - ``c`` -- an element of the base ring of self
 
-        OUTPUT: A ``GradedModularFormElement``.
+        OUTPUT: a ``GradedModularFormElement``
 
         TESTS::
 
@@ -3609,7 +3593,7 @@ class GradedModularFormElement(ModuleElement):
 
     def _richcmp_(self, other, op):
         r"""
-        Compare self with other.
+        Compare ``self`` with ``other``.
 
         TESTS::
 
@@ -3689,7 +3673,8 @@ class GradedModularFormElement(ModuleElement):
 
     def is_homogeneous(self):
         r"""
-        Return True if the graded modular form is homogeneous, i.e. if it is a modular forms of a certain weight.
+        Return ``True`` if the graded modular form is homogeneous, i.e. if it
+        is a modular forms of a certain weight.
 
         An alias of this method is ``is_modular_form``
 
@@ -3715,10 +3700,11 @@ class GradedModularFormElement(ModuleElement):
 
         INPUT:
 
-        - ``names`` -- a list or tuple of names (strings), or a comma separated string;
-        - ``gens`` -- (list) a list of generator of ``self``.
+        - ``names`` -- list or tuple of names (strings), or a comma separated
+          string
+        - ``gens`` -- (list) a list of generator of ``self``
 
-        OUTPUT: A polynomial in the variables ``names``
+        OUTPUT: a polynomial in the variables ``names``
 
         TESTS::
 
@@ -3795,13 +3781,14 @@ class GradedModularFormElement(ModuleElement):
 
         INPUT:
 
-        - ``names`` -- a list or tuple of names (strings), or a comma separated string. Correspond
-          to the names of the variables;
-        - ``gens`` -- (default: None) a list of generator of the parent of ``self``. If set to ``None``,
-          the list returned by :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
+        - ``names`` -- list or tuple of names (strings), or a comma separated
+          string; corresponds to the names of the variables
+        - ``gens`` -- (default: ``None``) a list of generator of the parent of
+          ``self``. If set to ``None``, the list returned by
+          :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead
 
-        OUTPUT: A polynomial in the variables ``names``
+        OUTPUT: a polynomial in the variables ``names``
 
         EXAMPLES::
 
@@ -3868,9 +3855,9 @@ class GradedModularFormElement(ModuleElement):
 
         INPUT:
 
-        - ``name`` (str, default: 'E2') -- the name of the weight 2 Eisenstein
-           series generating the graded algebra of quasimodular forms over the
-           ring of modular forms.
+        - ``name``-- string (default: ``'E2'``); the name of the weight 2
+          Eisenstein series generating the graded algebra of quasimodular forms
+          over the ring of modular forms
 
         OUTPUT: a :class:`sage.modular.quasimodform.element.QuasiModularFormsElement`
 

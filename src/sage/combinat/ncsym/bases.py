@@ -38,7 +38,7 @@ class NCSymBasis_abstract(CombinatorialFreeModule, BindableClass):
 
         INPUT:
 
-        - ``x`` -- a set partition or list of lists of integers
+        - ``x`` -- set partition or list of lists of integers
 
         EXAMPLES::
 
@@ -64,9 +64,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
         Return the super categories of bases of (the Hopf dual of) the
         symmetric functions in non-commuting variables.
 
-        OUTPUT:
-
-        - a list of categories
+        OUTPUT: list of categories
 
         TESTS::
 
@@ -125,11 +123,11 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
 
         def __getitem__(self, i):
             """
-            Return the basis element indexed by ``i``.
+            Return the basis element indexed by `i`.
 
             INPUT:
 
-            - ``i`` -- a set partition or a list of list of integers
+            - ``i`` -- set partition or a list of list of integers
 
             EXAMPLES::
 
@@ -154,9 +152,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
             r"""
             Return the index of the basis element containing `1`.
 
-            OUTPUT:
-
-            - The empty set partition
+            OUTPUT: the empty set partition
 
             EXAMPLES::
 
@@ -176,11 +172,9 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - either the ``0`` or the ``1`` of the base ring of ``self``
+            OUTPUT: either the `0` or the `1` of the base ring of ``self``
 
             EXAMPLES::
 
@@ -214,9 +208,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
             - ``y`` -- an element of the dual of symmetric functions in
               non-commuting variables
 
-            OUTPUT:
-
-            - an element of the base ring of ``self``
+            OUTPUT: an element of the base ring of ``self``
 
             EXAMPLES::
 
@@ -245,12 +237,12 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
             INPUT:
 
             - ``basis`` -- a basis of the dual Hopf algebra
-            - ``degree`` -- a non-negative integer
+            - ``degree`` -- nonnegative integer
 
             OUTPUT:
 
-            - the matrix of scalar products between the basis ``self`` and the
-              basis ``basis`` in the dual Hopf algebra of degree ``degree``
+            The matrix of scalar products between the basis ``self`` and the
+            basis ``basis`` in the dual Hopf algebra of degree ``degree``.
 
             EXAMPLES:
 
@@ -352,9 +344,7 @@ class NCSymBases(Category_realization_of_parent):
         Return the super categories of bases of the Hopf dual of the
         symmetric functions in non-commuting variables.
 
-        OUTPUT:
-
-        - a list of categories
+        OUTPUT: list of categories
 
         TESTS::
 
@@ -396,9 +386,7 @@ class NCSymBases(Category_realization_of_parent):
 
             - ``f`` -- a symmetric function
 
-            OUTPUT:
-
-            - an element of ``self``
+            OUTPUT: an element of ``self``
 
             EXAMPLES::
 
@@ -445,12 +433,10 @@ class NCSymBases(Category_realization_of_parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
-            - ``i`` -- a positive integer
+            - ``A`` -- set partition
+            - ``i`` -- positive integer
 
-            OUTPUT:
-
-            - an element of ``self``
+            OUTPUT: an element of ``self``
 
             EXAMPLES::
 
@@ -472,9 +458,7 @@ class NCSymBases(Category_realization_of_parent):
 
             - ``i`` -- the indices of an element of the basis of ``self``
 
-            OUTPUT:
-
-            - an element of the tensor squared of ``self``
+            OUTPUT: an element of the tensor squared of ``self``
 
             EXAMPLES::
 
@@ -493,9 +477,7 @@ class NCSymBases(Category_realization_of_parent):
             `\otimes` ``self`` by extending it by linearity. Otherwise, this uses
             :meth:`internal_coproduct_by_coercion()`, if available.
 
-            OUTPUT:
-
-            - an element of the tensor squared of ``self``
+            OUTPUT: an element of the tensor squared of ``self``
 
             EXAMPLES::
 
@@ -518,9 +500,7 @@ class NCSymBases(Category_realization_of_parent):
 
             - ``x`` -- an element of ``self``
 
-            OUTPUT:
-
-            - an element of the tensor squared of ``self``
+            OUTPUT: an element of the tensor squared of ``self``
 
             EXAMPLES::
 
@@ -588,9 +568,7 @@ class NCSymBases(Category_realization_of_parent):
             multiplicity of `i` in `\mu`.  For other bases this map is extended
             linearly.
 
-            OUTPUT:
-
-            - an element of the symmetric functions in the monomial basis
+            OUTPUT: an element of the symmetric functions in the monomial basis
 
             EXAMPLES::
 
@@ -682,9 +660,7 @@ class NCSymBases(Category_realization_of_parent):
 
             and the map is extended linearly.
 
-            OUTPUT:
-
-            - an element of the tensor square of the basis of ``self``
+            OUTPUT: an element of the tensor square of the basis of ``self``
 
             EXAMPLES::
 
@@ -707,9 +683,7 @@ class NCSymBases(Category_realization_of_parent):
 
             and the result is extended linearly.
 
-            OUTPUT:
-
-            - an element in the same basis as ``self``
+            OUTPUT: an element in the same basis as ``self``
 
             EXAMPLES::
 
@@ -754,9 +728,7 @@ class MultiplicativeNCSymBases(Category_realization_of_parent):
         Return the super categories of bases of the Hopf dual of the
         symmetric functions in non-commuting variables.
 
-        OUTPUT:
-
-        - a list of categories
+        OUTPUT: list of categories
 
         TESTS::
 
@@ -796,9 +768,7 @@ class MultiplicativeNCSymBases(Category_realization_of_parent):
 
             - ``A``, ``B`` -- set partitions
 
-            OUTPUT:
-
-            - an element in the basis ``self``
+            OUTPUT: an element in the basis ``self``
 
             EXAMPLES::
 
@@ -859,9 +829,7 @@ class NCSymDualBases(Category_realization_of_parent):
         Return the super categories of bases of the Hopf dual of the
         symmetric functions in non-commuting variables.
 
-        OUTPUT:
-
-        - a list of categories
+        OUTPUT: list of categories
 
         TESTS::
 

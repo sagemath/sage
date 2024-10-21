@@ -93,7 +93,7 @@ class SimplicialComplexHomset(sage.categories.homset.Homset):
         """
         INPUT:
 
-        - ``f`` -- a dictionary with keys exactly the vertices of the domain
+        - ``f`` -- dictionary with keys exactly the vertices of the domain
           and values vertices of the codomain
 
         EXAMPLES::

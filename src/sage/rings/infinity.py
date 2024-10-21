@@ -667,7 +667,7 @@ class UnsignedInfinityRing_class(Singleton, Parent):
 
     def _element_constructor_(self, x):
         """
-        The element constructor
+        The element constructor.
 
         TESTS::
 
@@ -936,7 +936,7 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
 
     def _sympy_(self):
         """
-        Converts ``unsigned_infinity`` to sympy ``zoo``.
+        Convert ``unsigned_infinity`` to sympy ``zoo``.
 
         EXAMPLES::
 
@@ -1127,7 +1127,7 @@ class InfinityRing_class(Singleton, CommutativeRing):
 
     def _element_constructor_(self, x):
         """
-        The element constructor
+        The element constructor.
 
         TESTS::
 
@@ -1630,7 +1630,7 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
 
     def _sympy_(self):
         """
-        Converts ``-oo`` to sympy ``-oo``.
+        Convert ``-oo`` to sympy ``-oo``.
 
         Then you don't have to worry which ``oo`` you use, like in these
         examples:
@@ -1645,7 +1645,6 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
             True
             sage: bool((-oo)._sympy_() == -sympy.oo)
             True
-
         """
         import sympy
         return -sympy.oo
@@ -1732,7 +1731,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
 
     def _sympy_(self):
         """
-        Converts ``oo`` to sympy ``oo``.
+        Convert ``oo`` to sympy ``oo``.
 
         Then you don't have to worry which ``oo`` you use, like in these
         examples:
@@ -1770,7 +1769,7 @@ minus_infinity = InfinityRing.gen(1)
 
 def test_comparison(ring):
     """
-    Check comparison with infinity
+    Check comparison with infinity.
 
     INPUT:
 
@@ -1849,7 +1848,7 @@ def test_signed_infinity(pos_inf):
 
     INPUT:
 
-    - ``pos_inf`` -- a representation of positive infinity.
+    - ``pos_inf`` -- a representation of positive infinity
 
     OUTPUT:
 

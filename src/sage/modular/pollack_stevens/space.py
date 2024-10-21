@@ -94,7 +94,7 @@ class PollackStevensModularSymbols_factory(UniqueFactory):
 
     - ``sign`` -- integer; -1, 0, 1
 
-    - ``base_ring`` --  ring or ``None``
+    - ``base_ring`` -- ring or ``None``
 
     - ``p`` -- prime or ``None``
 
@@ -108,7 +108,7 @@ class PollackStevensModularSymbols_factory(UniqueFactory):
     They are only relevant if ``coefficients`` is ``None``, in which case the
     coefficient module is inferred from the other data.
 
-    .. note::
+    .. NOTE::
 
         We emphasize that in the Pollack-Stevens notation, the
         ``weight`` is the usual weight minus 2, so a classical weight
@@ -178,7 +178,7 @@ class PollackStevensModularSymbols_factory(UniqueFactory):
 
         - ``version`` -- the version of the object to create
 
-        - ``key`` -- a tuple of parameters, as created by :meth:`create_key`
+        - ``key`` -- tuple of parameters, as created by :meth:`create_key`
 
         EXAMPLES::
 
@@ -206,7 +206,7 @@ class PollackStevensModularSymbolspace(Module):
 
     - ``coefficients`` -- a coefficient module
 
-    - ``sign`` -- (default: 0); 0, -1, or 1
+    - ``sign`` -- (default: 0) 0, -1, or 1
 
     EXAMPLES::
 
@@ -257,7 +257,7 @@ class PollackStevensModularSymbolspace(Module):
 
     def _element_constructor_(self, data):
         r"""
-        Construct an element of self from data.
+        Construct an element of ``self`` from data.
 
         EXAMPLES::
 
@@ -271,7 +271,7 @@ class PollackStevensModularSymbolspace(Module):
         elif isinstance(data, ManinMap):
             pass
         else:
-            # a dict, or a single distribution specifying a constant symbol, etc
+            # a dict, or a single distribution specifying a constant symbol, etc.
             data = ManinMap(self._coefficients, self._source, data)
 
         if data._codomain != self._coefficients:
@@ -329,9 +329,7 @@ class PollackStevensModularSymbolspace(Module):
         r"""
         Return the domain of the modular symbols in this space.
 
-        OUTPUT:
-
-        A :class:`sage.modular.pollack_stevens.fund_domain.PollackStevensModularDomain`
+        OUTPUT: a :class:`sage.modular.pollack_stevens.fund_domain.PollackStevensModularDomain`
 
         EXAMPLES::
 
@@ -395,7 +393,7 @@ class PollackStevensModularSymbolspace(Module):
 
     def ngens(self):
         r"""
-        Returns the number of generators defining this space.
+        Return the number of generators defining this space.
 
         EXAMPLES::
 
@@ -578,9 +576,7 @@ class PollackStevensModularSymbolspace(Module):
 
         - ``new_base_ring`` -- a ring
 
-        OUTPUT:
-
-        A space of modular symbols to which our space specializes.
+        OUTPUT: a space of modular symbols to which our space specializes
 
         EXAMPLES::
 
@@ -593,7 +589,6 @@ class PollackStevensModularSymbolspace(Module):
             5-adic Ring with capped absolute precision 20
             sage: M._specialize_parent_space(QQ).base_ring()
             Rational Field
-
         """
         return PollackStevensModularSymbols(self.group(), coefficients=self.coefficient_module().specialize(new_base_ring), sign=self.sign())
 
@@ -608,9 +603,7 @@ class PollackStevensModularSymbolspace(Module):
         - ``M`` -- precision cap
         - ``new_base_ring`` -- ring
 
-        OUTPUT:
-
-        A space of distribution valued modular symbols.
+        OUTPUT: a space of distribution valued modular symbols
 
         EXAMPLES::
 
@@ -623,7 +616,6 @@ class PollackStevensModularSymbolspace(Module):
             TypeError: Coefficient module must be a Symk
             sage: PollackStevensModularSymbols(Gamma1(3), weight=1)._lift_parent_space(17,10,Qp(17))
             Space of overconvergent modular symbols for Congruence Subgroup Gamma1(3) with sign 0 and values in Space of 17-adic distributions with k=1 action and precision cap 10
-
         """
         if self.coefficient_module().is_symk():
             return PollackStevensModularSymbols(self.group(), coefficients=self.coefficient_module().lift(p, M, new_base_ring), sign=self.sign())
@@ -638,9 +630,7 @@ class PollackStevensModularSymbolspace(Module):
 
         - ``new_base_ring`` -- a ring
 
-        OUTPUT:
-
-        A space of modular symbols over the specified base.
+        OUTPUT: a space of modular symbols over the specified base
 
         EXAMPLES::
 
@@ -650,7 +640,6 @@ class PollackStevensModularSymbolspace(Module):
             Space of modular symbols for Congruence Subgroup Gamma(6) with sign 0 and values in Sym^4 Q^2
             sage: M.change_ring(Qp(5,8))
             Space of modular symbols for Congruence Subgroup Gamma(6) with sign 0 and values in Sym^4 Q_5^2
-
         """
         return PollackStevensModularSymbols(self.group(), coefficients=self.coefficient_module().change_ring(new_base_ring), sign=self.sign())
 
@@ -658,9 +647,7 @@ class PollackStevensModularSymbolspace(Module):
         r"""
         Return the cusps associated to an element of a congruence subgroup.
 
-        OUTPUT:
-
-        an element of the modular symbol space
+        OUTPUT: an element of the modular symbol space
 
         This returns a "typical" element of this space; in this case
         the constant map sending every element to an element of the
@@ -689,15 +676,13 @@ class PollackStevensModularSymbolspace(Module):
 
     def random_element(self, M=None):
         r"""
-        Return a random overconvergent modular symbol in this space with `M` moments
+        Return a random overconvergent modular symbol in this space with `M` moments.
 
         INPUT:
 
         - ``M`` -- positive integer
 
-        OUTPUT:
-
-        An element of the modular symbol space with `M` moments
+        OUTPUT: an element of the modular symbol space with `M` moments
 
         Returns a random element in this space by randomly choosing
         values of distributions on all but one divisor, and solves the
@@ -812,9 +797,7 @@ def cusps_from_mat(g):
 
     - ``g`` -- an element of a congruence subgroup or a matrix
 
-    OUTPUT:
-
-    A tuple of cusps associated to ``g``.
+    OUTPUT: a tuple of cusps associated to ``g``
 
     EXAMPLES::
 
@@ -866,13 +849,11 @@ def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
       the plus (if ``sign`` == 1) or the minus (if ``sign`` == -1) modular
       symbol. The default of 0 returns the sum of the plus and minus symbols.
 
-    - ``implementation`` --  either 'eclib' (default) or 'sage'. This
+    - ``implementation`` -- either ``'eclib'`` (default) or ``'sage'``. This
       determines which implementation of the underlying classical
       modular symbols is used.
 
-    OUTPUT:
-
-    The overconvergent modular symbol associated to ``E``
+    OUTPUT: the overconvergent modular symbol associated to ``E``
 
     EXAMPLES::
 
@@ -915,14 +896,15 @@ def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
     return V(val)
 
 
-def ps_modsym_from_simple_modsym_space(A, name="alpha"):
+def ps_modsym_from_simple_modsym_space(A, name='alpha'):
     r"""
-    Returns some choice -- only well defined up a nonzero scalar (!) -- of an overconvergent modular symbol that corresponds to ``A``.
+    Return some choice -- only well defined up a nonzero scalar (!) -- of an
+    overconvergent modular symbol that corresponds to ``A``.
 
     INPUT:
 
     - ``A`` -- nonzero simple Hecke equivariant new space of modular symbols,
-      which need not be cuspidal.
+      which need not be cuspidal
 
     OUTPUT:
 

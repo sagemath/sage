@@ -350,7 +350,7 @@ class HallAlgebra(CombinatorialFreeModule):
         S = self.tensor_square()
         if all(x == 1 for x in la):
             n = len(la)
-            return S.sum_of_terms([( (Partition([1]*r), Partition([1]*(n-r))), self._q**(-r*(n-r)) )
+            return S.sum_of_terms([((Partition([1]*r), Partition([1]*(n-r))), self._q**(-r*(n-r)))
                                    for r in range(n+1)], distinct=True)
 
         I = HallAlgebraMonomials(self.base_ring(), self._q)
@@ -483,9 +483,9 @@ class HallAlgebra(CombinatorialFreeModule):
                 (4*q^2 + 9)/(q^2 - q)
             """
             q = self.parent()._q
-            f = lambda la: ~( q**(sum(la) + 2*la.weighted_size())
+            f = lambda la: ~(q**(sum(la) + 2*la.weighted_size())
                               * prod(prod((1 - q**-i) for i in range(1,k+1))
-                                     for k in la.to_exp()) )
+                                     for k in la.to_exp()))
             y = self.parent()(y)
             ret = q.parent().zero()
             for mx, cx in self:
@@ -688,7 +688,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
              + (q^-1)*I[1, 1] # I[1] + I[2] # I[1] + I[2, 1] # I[]
         """
         S = self.tensor_square()
-        return S.prod(S.sum_of_terms([( (Partition([r]), Partition([n-r]) ), self._q**(-r*(n-r)) )
+        return S.prod(S.sum_of_terms([((Partition([r]), Partition([n-r])), self._q**(-r*(n-r)))
                                       for r in range(n+1)], distinct=True) for n in a)
 
     def antipode_on_basis(self, a):

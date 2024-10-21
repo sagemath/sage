@@ -59,7 +59,6 @@ cdef extern from "ntlwrap.h":
     void GF2XModulus_build "build"(GF2XModulus_c F, GF2X_c f) # MUST be called before using the modulus
     long GF2XModulus_deg "deg"(GF2XModulus_c F)
 
-
     GF2X_c GF2XModulus_GF2X "GF2X" (GF2XModulus_c m)
 
     GF2X_c GF2X_IrredPolyMod "IrredPolyMod" (GF2X_c g, GF2XModulus_c F)
@@ -72,7 +71,6 @@ cdef extern from "ntlwrap.h":
     void GF2X_PowerXMod_long_pre "PowerXMod"(GF2X_c x, long e, GF2XModulus_c F)
     void GF2X_PowerXPlusAMod_pre "PowerXPlusAMod"(GF2X_c x, GF2_c a, GF2_c e, GF2XModulus_c F)
     void GF2X_PowerXPlusAMod_long_pre "PowerXPlusAMod"(GF2X_c x, GF2_c a, long e, GF2XModulus_c F)
-
 
     # x = g(h) mod f; deg(h) < n
     void GF2X_CompMod "CompMod"(GF2X_c x, GF2X_c g, GF2X_c h, GF2XModulus_c F)

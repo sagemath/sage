@@ -563,7 +563,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
         INPUT:
 
         - ``N`` -- a subgroup
-        - ``check`` -- bool (default: ``True``) check if `N` is normal
+        - ``check`` -- boolean (default: ``True``); check if `N` is normal
 
         EXAMPLES::
 
@@ -585,7 +585,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
 
         INPUT:
 
-        - ``gens`` -- a list of elements coercible into this group
+        - ``gens`` -- list of elements coercible into this group
 
         OUTPUT: a subgroup
 
@@ -627,7 +627,7 @@ class AbelianGroupGap(AbelianGroup_gap):
 
     INPUT:
 
-    - ``generator_orders`` -- a list of nonnegative integers where `0`
+    - ``generator_orders`` -- list of nonnegative integers where `0`
       gives a factor isomorphic to `\ZZ`
 
     OUTPUT: an abelian group
@@ -858,11 +858,12 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
         """
         Convert an element of the ambient group into this subgroup.
 
-        The terminology comes from the category framework and the more general notion of a subquotient.
+        The terminology comes from the category framework and the more general
+        notion of a subquotient.
 
         INPUT:
 
-        - ``x`` -- an element of the ambient group that actually lies in this subgroup.
+        - ``x`` -- an element of the ambient group that actually lies in this subgroup
 
         OUTPUT: the corresponding element of this subgroup
 

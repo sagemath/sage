@@ -77,25 +77,22 @@ lazy_import("sage.modules.free_module_element", "vector")
 
 
 class BinaryRecurrenceSequence(SageObject):
-
     """
     Create a linear binary recurrence sequence defined by initial conditions
     `u_0` and `u_1` and recurrence relation `u_{n+2} = b*u_{n+1}+c*u_n`.
 
     INPUT:
 
-    - ``b`` -- an integer (partially determining the recurrence relation)
+    - ``b`` -- integer; (partially determining the recurrence relation)
 
-    - ``c`` -- an integer (partially determining the recurrence relation)
+    - ``c`` -- integer; (partially determining the recurrence relation)
 
-    - ``u0`` -- an integer (the 0th term of the binary recurrence sequence)
+    - ``u0`` -- integer; (the `0`-th term of the binary recurrence sequence)
 
-    - ``u1`` -- an integer (the 1st term of the binary recurrence sequence)
+    - ``u1`` -- integer; (the `1`-st term of the binary recurrence sequence)
 
-
-    OUTPUT:
-
-    - An integral linear binary recurrence sequence defined by ``u0``, ``u1``, and `u_{n+2} = b*u_{n+1}+c*u_n`
+    OUTPUT: an integral linear binary recurrence sequence defined by `u_0`,
+    `u_1`, and `u_{n+2} = b u_{n+1}+c u_n`
 
     .. SEEALSO::
 
@@ -107,7 +104,6 @@ class BinaryRecurrenceSequence(SageObject):
         sage: R
         Binary recurrence sequence defined by: u_n = 3 * u_{n-1} + 3 * u_{n-2};
         With initial conditions: u_0 = 2, and u_1 = 1
-
     """
 
     def __init__(self, b, c, u0=0, u1=1):
@@ -165,17 +161,17 @@ class BinaryRecurrenceSequence(SageObject):
 
     def __call__(self, n, modulus=0):
         """
-        Give the nth term of a binary recurrence sequence, possibly mod some modulus.
+        Give the `n`-th term of a binary recurrence sequence, possibly mod some modulus.
 
         INPUT:
 
-        - ``n`` -- an integer (the index of the term in the binary recurrence sequence)
+        - ``n`` -- integer; the index of the term in the binary recurrence sequence
 
         - ``modulus`` -- a natural number (optional --  default value is 0)
 
         OUTPUT:
 
-        - An integer (the nth term of the binary recurrence sequence modulo ``modulus``)
+        - An integer (the `n`-th term of the binary recurrence sequence modulo ``modulus``)
 
         EXAMPLES::
 
@@ -209,13 +205,20 @@ class BinaryRecurrenceSequence(SageObject):
         More concretely, there are 4 classes of degeneracy, that can all be formulated
         in terms of the matrix `F = [[0,1], [c, b]]`.
 
-        - `F` is singular --  this corresponds to ``c`` = 0, and thus `\\alpha*\\beta = 0`. This sequence is geometric after term ``u0`` and so we call it ``quasigeometric``.
+        - `F` is singular -- this corresponds to ``c`` = 0, and thus
+          `\\alpha*\\beta = 0`. This sequence is geometric after term ``u0``
+          and so we call it ``quasigeometric``
 
-        - `v = [[u_0], [u_1]]` is an eigenvector of `F` -- this corresponds to a ``geometric`` sequence with `a*b = 0`.
+        - `v = [[u_0], [u_1]]` is an eigenvector of `F` -- this corresponds to
+          a ``geometric`` sequence with `a*b = 0`
 
-        - `F` is nondiagonalizable -- this corresponds to `\\alpha = \\beta`.  This sequence will be the point-wise product of an arithmetic and geometric sequence.
+        - `F` is nondiagonalizable -- this corresponds to `\\alpha = \\beta`.
+          This sequence will be the point-wise product of an arithmetic and
+          geometric sequence.
 
-        - `F^k` is scalar, for some `k>1` -- this corresponds to `\\alpha/\\beta` a `k` th root of unity. This sequence is a union of several geometric sequences, and so we again call it ``quasigeometric``.
+        - `F^k` is scalar, for some `k>1` -- this corresponds to
+          `\\alpha/\\beta` a `k` th root of unity. This sequence is a union of
+          several geometric sequences, and so we again call it ``quasigeometric``.
 
         EXAMPLES::
 
@@ -356,11 +359,9 @@ class BinaryRecurrenceSequence(SageObject):
 
         INPUT:
 
-        - ``m`` -- an integer (modulo which the period of the recurrence relation is calculated).
+        - ``m`` -- integer; modulo which the period of the recurrence relation is calculated
 
-        OUTPUT:
-
-        - The integer (the period of the sequence modulo m)
+        OUTPUT: integer (the period of the sequence modulo m)
 
         EXAMPLES:
 
@@ -499,23 +500,24 @@ class BinaryRecurrenceSequence(SageObject):
 
     def pthpowers(self, p, Bound):
         """
-        Find the indices of proveably all pth powers in the recurrence sequence bounded by Bound.
+        Find the indices of proveably all `p`-th powers in the recurrence sequence
+        bounded by Bound.
 
-        Let `u_n` be a binary recurrence sequence.  A ``p`` th power in `u_n` is a solution
-        to `u_n = y^p` for some integer `y`.  There are only finitely many ``p`` th powers in
-        any recurrence sequence [SS1983]_.
+        Let `u_n` be a binary recurrence sequence.  A ``p`` th power in `u_n`
+        is a solution to `u_n = y^p` for some integer `y`.  There are only
+        finitely many ``p`` th powers in any recurrence sequence [SS1983]_.
 
         INPUT:
 
         - ``p`` -- a rational prime integer (the fixed p in `u_n = y^p`)
 
-        - ``Bound`` -- a natural number (the maximum index `n` in `u_n = y^p` that is checked).
+        - ``Bound`` -- a natural number (the maximum index `n` in `u_n = y^p` that is checked)
 
         OUTPUT:
 
-        - A list of the indices of all ``p`` th powers less bounded by
-          ``Bound``. If the sequence is degenerate and there are many
-          ``p`` th powers, raises :class:`ValueError`.
+        A list of the indices of all ``p`` th powers less bounded by
+        ``Bound``. If the sequence is degenerate and there are many
+        ``p`` th powers, raises :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -532,7 +534,7 @@ class BinaryRecurrenceSequence(SageObject):
             [1]
 
         If the sequence is degenerate, and there are no ``p`` th powers, returns `[]`.  Otherwise, if
-        there are many ``p`` th powers, raises :class:`ValueError`.
+        there are many ``p`` th powers, raises :exc:`ValueError`.
 
         ::
 
@@ -746,19 +748,17 @@ class BinaryRecurrenceSequence(SageObject):
 
 
 def _prime_powers(N):
-    """
-    Find the prime powers dividing ``N``.
+    r"""
+    Find the prime powers dividing `N`.
 
-    In other words, if `N = q_1^(e_1)q_2^(e_2)...q_n^(e_n)`, it returns
-    `[q_1^(e_1),q_2^(e_2),...,q_n^(e_n)]`.
+    In other words, if `N = q_1^{e_1} q_2^{e_2} \cdots q_n^{e_n}`, it returns
+    `[q_1^{e_1}, q_2^{e_2}, \ldots, q_n^{e_n}]`.
 
     INPUT:
 
-    - ``N`` -- an integer
+    - ``N`` -- integer
 
-    OUTPUT:
-
-    - A list of the prime powers dividing N.
+    OUTPUT: list of the prime powers dividing N
 
     EXAMPLES::
 
@@ -773,15 +773,13 @@ def _prime_powers(N):
 
 def _largest_ppower_divisor(N):
     """
-    Find the largest prime power divisor of N.
+    Find the largest prime power divisor of `N`.
 
     INPUT:
 
-    - ``N`` -- an integer
+    - ``N`` -- integer
 
-    OUTPUT:
-
-    The largest prime power dividing ``N``.
+    OUTPUT: the largest prime power dividing `N`
 
     EXAMPLES::
 
@@ -795,12 +793,12 @@ def _largest_ppower_divisor(N):
 
 def _goodness(n, R, p):
     """
-    Return the goodness of ``n`` for the sequence ``R`` and the prime ``p`` -- that is the largest
-    non-``p`` prime power dividing ``period(n)``.
+    Return the goodness of `n` for the sequence `R` and the prime `p` -- that is the largest
+    non-`p` prime power dividing ``period(n)``.
 
     INPUT:
 
-    - ``n`` --  an integer
+    - ``n`` -- an integer
 
     - ``R`` -- an object in the class ``BinaryRecurrenceSequence``
 
@@ -828,9 +826,9 @@ def _goodness(n, R, p):
 
 
 def _next_good_prime(p, R, qq, patience, qqold):
-    """
-    Find the next prime `\\ell` which is good by ``qq`` but not by ``qqold``, 1 mod ``p``, and for which
-    ``b^2+4*c`` is a square mod `\\ell`, for the sequence ``R`` if it is possible in runtime patience.
+    r"""
+    Find the next prime `\ell` which is good by ``qq`` but not by ``qqold``, 1 mod ``p``, and for which
+    ``b^2+4*c`` is a square mod `\ell`, for the sequence ``R`` if it is possible in runtime patience.
 
     INPUT:
 
@@ -842,12 +840,11 @@ def _next_good_prime(p, R, qq, patience, qqold):
 
     - ``patience`` -- a real number
 
-    - ``qqold`` --  a perfect power less than or equal to ``qq``
+    - ``qqold`` -- a perfect power less than or equal to ``qq``
 
-    OUTPUT:
-
-    - A prime `\\ell` such that `\\ell` is 1 mod ``p``, ``b^2+4*c`` is a square mod `\\ell` and the period of `\\ell` has ``goodness`` by ``qq`` but not ``qqold``, if patience has not be surpased.  Otherwise ``False``.
-
+    OUTPUT: a prime `\ell` such that `\ell` is 1 mod `p`, `b^2+4 c` is a
+    square mod `\ell` and the period of `\ell` has ``goodness`` by ``qq`` but
+    not ``qqold``, if patience has not be surpased; otherwise ``False``
 
     EXAMPLES::
 
@@ -858,7 +855,6 @@ def _next_good_prime(p, R, qq, patience, qqold):
         29
         sage: sage.combinat.binary_recurrence_sequences._next_good_prime(7,R,2,100,2)        #ran out of patience, as qqold == qq, so no primes work
         False
-
     """
     # We are looking for pth powers in R.
     # Our primes must be good by qq, but not qqold.
@@ -929,15 +925,13 @@ def _is_p_power_mod(a, p, N):
 
     INPUT:
 
-    - ``a`` -- an integer
+    - ``a`` -- integer
 
     - ``p`` -- a rational prime number
 
-    - ``N`` -- a positive integer
+    - ``N`` -- positive integer
 
-    OUTPUT:
-
-    - True if ``a`` is a ``p`` th power modulo ``N``; False otherwise.
+    OUTPUT: ``True`` if `a` is a `p`-th power modulo `N`; ``False`` otherwise
 
     EXAMPLES::
 
@@ -1029,17 +1023,15 @@ def _estimated_time(M2, M1, length, p):
 
     INPUT:
 
-    - ``M2`` -- an integer (the new modulus)
+    - ``M2`` -- integer; (the new modulus)
 
-    - ``M1`` -- an integer (the old modulus)
+    - ``M1`` -- integer; (the old modulus)
 
-    - ``length`` -- a list (the current length of the list of congruences mod ``M1``)
+    - ``length`` -- list (the current length of the list of congruences mod ``M1``)
 
-    - ``p`` --  a prime
+    - ``p`` -- a prime
 
-    OUTPUT:
-
-    - The estimated run time of the "CRT" step to combine consistent congruences.
+    OUTPUT: the estimated run time of the "CRT" step to combine consistent congruences
 
     EXAMPLES::
 
@@ -1114,17 +1106,15 @@ def _find_cong1(p, R, ell):
 
 def _is_p_power(a, p) -> bool:
     """
-    Determine whether ``a`` is a perfect ``p`` th power.
+    Determine whether `a` is a perfect `p`-th power.
 
     INPUT:
 
-    - ``a`` -- an integer
+    - ``a`` -- integer
 
     - ``p`` -- a prime number
 
-    OUTPUT:
-
-    boolean, whether ``a`` is a ``p`` th power
+    OUTPUT: boolean
 
     EXAMPLES::
 

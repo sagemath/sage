@@ -76,7 +76,7 @@ cdef class ntl_ZZ_pEContext_class():
 
     def __repr__(self):
         """
-        Returns a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -87,7 +87,7 @@ cdef class ntl_ZZ_pEContext_class():
 
     def get_pc(self):
         """
-        Returns the ZZ_pContext contained within self.
+        Return the ZZ_pContext contained within ``self``.
 
         EXAMPLES::
 
@@ -100,7 +100,7 @@ cdef class ntl_ZZ_pEContext_class():
 
     def polynomial(self):
         """
-        Returns the ZZ_pX polynomial defining self.
+        Return the ZZ_pX polynomial defining ``self``.
 
         EXAMPLES::
 
@@ -112,7 +112,7 @@ cdef class ntl_ZZ_pEContext_class():
 
     def restore(self):
         """
-        Manually sets the global NTL modulus to be self.
+        Manually set the global NTL modulus to be ``self``.
 
         This should be done automatically by all of the NTL wrapper classes.
 
@@ -125,7 +125,7 @@ cdef class ntl_ZZ_pEContext_class():
 
     cdef void restore_c(self) noexcept:
         """
-        Sets the global NTL modulus to be self.
+        Set the global NTL modulus to be ``self``.
 
         CRUCIAL: If you are writing your own classes that use ZZ_p_c, ZZ_pX_c, ZZ_pE_c, ZZ_pEX_c
         then you MUST restore the context before calling off to NTL for anything.  If the context has been
@@ -139,9 +139,9 @@ cdef class ntl_ZZ_pEContext_class():
     #    from ntl_ZZ_pX import ntl_ZZ_pX
     #    return ntl_ZZ_pX(v,modulus=self)
 
-    def ZZ_pE(self,v = None):
+    def ZZ_pE(self, v = None):
         """
-        Returns a ZZ_pE object with modulus self out of the data v.
+        Return a ZZ_pE object with modulus ``self`` out of the data v.
 
         EXAMPLES::
 
@@ -154,7 +154,7 @@ cdef class ntl_ZZ_pEContext_class():
 
     def ZZ_pEX(self, v = None):
         """
-        Returns a ZZ_pE object with modulus self out of the data v.
+        Return a ZZ_pE object with modulus ``self`` out of the data v.
 
         EXAMPLES::
 
@@ -208,7 +208,7 @@ cdef class ntl_ZZ_pEContext_class():
 
 def ntl_ZZ_pEContext( ntl_ZZ_pX f):
     """
-    Creates an ntl_ZZ_pEContext.
+    Create an ntl_ZZ_pEContext.
 
     Such an object must be created before any ZZ_pE or ZZ_pEX objects can be used.
 

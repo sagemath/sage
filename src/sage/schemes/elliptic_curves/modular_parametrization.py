@@ -113,7 +113,7 @@ class ModularParameterization:
 
     def __eq__(self, other):
         r"""
-        Compares two modular parametrizations by simply comparing the elliptic curves.
+        Compare two modular parametrizations by simply comparing the elliptic curves.
 
         EXAMPLES::
 
@@ -254,7 +254,9 @@ class ModularParameterization:
         the number of significant terms.  This means that X will be given up
         to O(q^(prec-2)) and Y will be given up to O(q^(prec-3)).
 
-        OUTPUT: A list of two Laurent series ``[X(x),Y(x)]`` of degrees -2, -3
+        OUTPUT:
+
+        A list of two Laurent series [`X(x)`,`Y(x)`] of degrees `-2`, `-3`,
         respectively, which satisfy the equation of the elliptic curve.
         There are modular functions on `\Gamma_0(N)` where `N` is the
         conductor.

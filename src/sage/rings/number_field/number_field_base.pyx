@@ -257,9 +257,7 @@ cdef class NumberField(Field):
 
             :meth:`~bach_bound`
 
-        OUTPUT:
-
-        symbolic expression or Rational
+        OUTPUT: symbolic expression or Rational
 
         EXAMPLES:
 
@@ -337,9 +335,7 @@ cdef class NumberField(Field):
 
             :meth:`~minkowski_bound`
 
-        OUTPUT:
-
-        symbolic expression or the Integer 1
+        OUTPUT: symbolic expression or the Integer 1
 
         EXAMPLES:
 
@@ -417,9 +413,7 @@ cdef class NumberField(Field):
         r"""
         Return an interval approximation of the generator of this number field.
 
-        OUTPUT:
-
-        A real interval element with precision `53 \times 2^i`.
+        OUTPUT: a real interval element with precision `53 \times 2^i`
 
         EXAMPLES::
 

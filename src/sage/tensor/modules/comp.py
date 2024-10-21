@@ -212,7 +212,7 @@ But unformatted outputs still are::
     [  0   0   0]
 
 Internally, the components are stored as a dictionary (:attr:`_comp`) whose
-keys are the indices; only the non-zero components are stored::
+keys are the indices; only the nonzero components are stored::
 
     sage: a[:]
     [0.000000000000000 0.000000000000000 0.000000000000000]
@@ -403,7 +403,7 @@ class Components(SageObject):
         [  0   0   0]
 
     Internally, the components are stored as a dictionary (:attr:`_comp`) whose
-    keys are the indices; only the non-zero components are stored::
+    keys are the indices; only the nonzero components are stored::
 
         sage: a[:]
         [0.000000000000000 0.000000000000000 0.000000000000000]
@@ -491,7 +491,6 @@ class Components(SageObject):
          [[-6, 0, 18], [-3, 0, 9], [-12, 0, 36]]]
         sage: d[0,1,2] == a[0]*b[1]*a[2]
         True
-
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
                  output_formatter=None):
@@ -501,7 +500,6 @@ class Components(SageObject):
             sage: from sage.tensor.modules.comp import Components
             sage: Components(ZZ, [1,2,3], 2)
             2-indices components w.r.t. [1, 2, 3]
-
         """
         # For efficiency, no test is performed regarding the type and range of
         # the arguments:
@@ -563,13 +561,12 @@ class Components(SageObject):
             sage: c = Components(ZZ, [1,2,3], 2)
             sage: c._repr_symmetry()
             ('', '')
-
         """
         return "", ""
 
     def _new_instance(self):
         r"""
-        Creates a :class:`Components` instance of the same number of indices
+        Create a :class:`Components` instance of the same number of indices
         and w.r.t. the same frame.
 
         This method must be redefined by derived classes of
@@ -581,7 +578,6 @@ class Components(SageObject):
             sage: c = Components(ZZ, [1,2,3], 2)
             sage: c._new_instance()
             2-indices components w.r.t. [1, 2, 3]
-
         """
         return Components(self._ring, self._frame, self._nid, self._sindex,
                           self._output_formatter)
@@ -610,7 +606,6 @@ class Components(SageObject):
             True
             sage: b is a  # b is a distinct object
             False
-
         """
         result = self._new_instance()
         for ind, val in self._comp.items():
@@ -622,7 +617,7 @@ class Components(SageObject):
 
     def _del_zeros(self):
         r"""
-        Deletes all the zeros in the dictionary :attr:`_comp`
+        Delete all the zeros in the dictionary :attr:`_comp`.
 
         NB: The use case of this method must be rare because zeros are not
             stored in :attr:`_comp`.
@@ -635,7 +630,6 @@ class Components(SageObject):
             sage: c._del_zeros()
             sage: c._comp
             {(0, 1): 3, (1, 2): -5}
-
         """
         # The zeros are first searched; they are deleted in a second stage, to
         # avoid changing the dictionary while it is read
@@ -648,16 +642,14 @@ class Components(SageObject):
 
     def _check_indices(self, indices):
         r"""
-        Check the validity of a list of indices and returns a tuple from it
+        Check the validity of a list of indices and returns a tuple from it.
 
         INPUT:
 
         - ``indices`` -- list of indices (possibly a single integer if
-          self is a 1-index object)
+          ``self`` is a 1-index object)
 
-        OUTPUT:
-
-        - a tuple containing valid indices
+        OUTPUT: a tuple containing valid indices
 
         EXAMPLES::
 
@@ -681,7 +673,6 @@ class Components(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: wrong number of indices: 2 expected, while 3 are provided
-
         """
         if isinstance(indices, (int, Integer)):
             ind = (indices,)
@@ -701,12 +692,12 @@ class Components(SageObject):
 
     def __getitem__(self, args):
         r"""
-        Returns the component corresponding to the given indices.
+        Return the component corresponding to the given indices.
 
         INPUT:
 
         - ``args`` -- list of indices (possibly a single integer if
-          self is a 1-index object) or the character ``:`` for the full list
+          ``self`` is a 1-index object) or the character ``:`` for the full list
           of components
 
         OUTPUT:
@@ -738,7 +729,6 @@ class Components(SageObject):
             [ 0  0  0]
             [ 0  0 -4]
             [ 0  0  0]
-
         """
         no_format = self._output_formatter is None
         format_type = None # default value, possibly redefined below
@@ -789,9 +779,9 @@ class Components(SageObject):
 
         INPUT:
 
-        - ``ind_slice`` --  a slice object. Unless the dimension is 1,
-          this must be ``[:]``.
-        - ``no_format`` -- (default: ``True``) determines whether some
+        - ``ind_slice`` -- a slice object; unless the dimension is 1,
+          this must be ``[:]``
+        - ``no_format`` -- boolean (default: ``True``); determines whether some
           formatting of the components is to be performed
         - ``format_type`` -- (default: ``None``) argument to be passed
           to the formatting function ``self._output_formatter``, as the
@@ -880,7 +870,6 @@ class Components(SageObject):
             [0, 0, 0]
             sage: c._gen_list([0,1])
             5
-
         """
         if len(ind) == self._nid:
             if no_format:
@@ -896,12 +885,12 @@ class Components(SageObject):
 
     def __setitem__(self, args, value):
         r"""
-        Sets the component corresponding to the given indices.
+        Set the component corresponding to the given indices.
 
         INPUT:
 
         - ``args`` -- list of indices (possibly a single integer if
-          self is a 1-index object); if ``[:]`` is provided, all the
+          ``self`` is a 1-index object); if ``[:]`` is provided, all the
           components are set
         - ``value`` -- the value to be set or a list of values if
           ``args = [:]`` (``slice(None)``)
@@ -925,7 +914,6 @@ class Components(SageObject):
             [0 1 2]
             [3 4 5]
             [6 7 8]
-
         """
         format_type = None # default value, possibly redefined below
         if isinstance(args, list):  # case of [[...]] syntax
@@ -981,7 +969,7 @@ class Components(SageObject):
 
         INPUT:
 
-        - ``ind_slice`` --  a slice object
+        - ``ind_slice`` -- a slice object
         - ``format_type`` -- format possibly used to construct a ring element
         - ``values`` -- list of values for the components : the full list if
           ``ind_slice = [:]``, in the form ``T[i][j]...`` for the
@@ -997,7 +985,6 @@ class Components(SageObject):
             [0 1 2]
             [3 4 5]
             [6 7 8]
-
         """
         si = self._sindex
         nsi = si + self._dim
@@ -1044,7 +1031,6 @@ class Components(SageObject):
             [-1 -2 -3]
             [ 4  5  6]
             [ 7 -8  9]
-
         """
         if len(ind) == self._nid:
             if format_type is not None:
@@ -1079,7 +1065,6 @@ class Components(SageObject):
             ((1, 0, 1), 5),
             ((1, 1, 0), 5),
             ((1, 1, 1), 3)]
-
         """
         for ind in self.index_generator():
             val = self[ind]
@@ -1121,9 +1106,9 @@ class Components(SageObject):
           ``None``, integers labels are used
         - ``format_spec`` -- (default: ``None``) format specification passed
           to the output formatter declared at the construction of the object
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero components are displayed
-        - ``only_nonredundant`` -- (default: ``False``) boolean; if ``True``,
+        - ``only_nonredundant`` -- boolean (default: ``False``); if ``True``,
           only nonredundant components are displayed in case of symmetries
 
         EXAMPLES:
@@ -1239,7 +1224,6 @@ class Components(SageObject):
             sage: c[0] = SR.var('t', domain='real')                                     # needs sage.symbolic
             sage: c.display('c')                                                        # needs sage.symbolic
             c_0 = t
-
         """
         from sage.misc.latex import latex
         from sage.tensor.modules.format_utilities import FormattedExpansion
@@ -1338,9 +1322,7 @@ class Components(SageObject):
           position of the last index of set 1 (since the two sets are adjacent)
         - ``pos3`` -- 1 plus position of the last index of set 2
 
-        OUTPUT:
-
-        - Components with index set 1 permuted with index set 2.
+        OUTPUT: components with index set 1 permuted with index set 2
 
         EXAMPLES:
 
@@ -1375,7 +1357,6 @@ class Components(SageObject):
             24
             sage: d[1,2,0,1]
             24
-
         """
         result = self._new_instance()
         for ind, val in self._comp.items():
@@ -1424,7 +1405,6 @@ class Components(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: cannot compare a set of components to a number
-
         """
         if not self._comp:
             return True
@@ -1444,11 +1424,9 @@ class Components(SageObject):
 
         INPUT:
 
-        - ``other`` -- a set of components or 0
+        - ``other`` -- set of components or 0
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is equal to ``other``,  or ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is equal to ``other``,  or ``False`` otherwise
 
         EXAMPLES::
 
@@ -1469,7 +1447,6 @@ class Components(SageObject):
             sage: v = Components(ZZ, [1,2,3], 1)
             sage: c.__eq__(v)
             False
-
         """
         if isinstance(other, (int, Integer)): # other is 0
             if other == 0:
@@ -1495,11 +1472,10 @@ class Components(SageObject):
 
         INPUT:
 
-        - ``other`` -- a set of components or 0
+        - ``other`` -- set of components or 0
 
-        OUTPUT:
-
-        - True if ``self`` is different from ``other``,  or False otherwise
+        OUTPUT: ``True`` if ``self`` is different from ``other``, or ``False``
+        otherwise
 
         EXAMPLES::
 
@@ -1515,7 +1491,6 @@ class Components(SageObject):
             True
             sage: c.__ne__(c1)
             True
-
         """
         return not self == other
 
@@ -1523,9 +1498,7 @@ class Components(SageObject):
         r"""
         Unary plus operator.
 
-        OUTPUT:
-
-        - an exact copy of ``self``
+        OUTPUT: an exact copy of ``self``
 
         EXAMPLES::
 
@@ -1540,7 +1513,6 @@ class Components(SageObject):
             True
             sage: a == c
             True
-
         """
         return self.copy()
 
@@ -1548,9 +1520,7 @@ class Components(SageObject):
         r"""
         Unary minus operator.
 
-        OUTPUT:
-
-        - the opposite of the components represented by ``self``
+        OUTPUT: the opposite of the components represented by ``self``
 
         EXAMPLES::
 
@@ -1563,7 +1533,6 @@ class Components(SageObject):
             [-5, 0, 4]
             sage: a == -c
             True
-
         """
         result = self._new_instance()
         for ind, val in self._comp.items():
@@ -1579,9 +1548,7 @@ class Components(SageObject):
         - ``other`` -- components of the same number of indices and defined
           on the same frame as ``self``
 
-        OUTPUT:
-
-        - components resulting from the addition of ``self`` and ``other``
+        OUTPUT: components resulting from the addition of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -1609,7 +1576,6 @@ class Components(SageObject):
             sage: b.__add__(a) == s  # test of commutativity of parallel comput.
             True
             sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
-
         """
         if isinstance(other, (int, Integer)) and other == 0:
             return +self
@@ -1634,7 +1600,7 @@ class Components(SageObject):
         if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-            ind_list = [ind for ind in other._comp]
+            ind_list = list(other._comp)
             ind_step = max(1, int(len(ind_list)/nproc/2))
             local_list = lol(ind_list, ind_step)
             # list of input parameters
@@ -1660,7 +1626,7 @@ class Components(SageObject):
 
     def __radd__(self, other):
         r"""
-        Reflected addition (addition on the right to `other``)
+        Reflected addition (addition on the right to ``other``).
 
         EXAMPLES::
 
@@ -1679,7 +1645,6 @@ class Components(SageObject):
             1-index components w.r.t. [1, 2, 3]
             sage: s == a
             True
-
         """
         return self + other
 
@@ -1691,9 +1656,7 @@ class Components(SageObject):
 
         - ``other`` -- components, of the same type as ``self``
 
-        OUTPUT:
-
-        - components resulting from the subtraction of ``other`` from ``self``
+        OUTPUT: components resulting from the subtraction of ``other`` from ``self``
 
         EXAMPLES::
 
@@ -1723,7 +1686,6 @@ class Components(SageObject):
             sage: b.__sub__(a) == -s # test of parallel comput.
             True
             sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
-
         """
         if isinstance(other, (int, Integer)) and other == 0:
             return +self
@@ -1753,7 +1715,6 @@ class Components(SageObject):
             [-1, 0, 3]
             sage: s == -a
             True
-
         """
         return (-self) + other
 
@@ -1765,9 +1726,7 @@ class Components(SageObject):
 
         - ``other`` -- components, on the same frame as ``self``
 
-        OUTPUT:
-
-        - the tensor product of ``self`` by ``other``
+        OUTPUT: the tensor product of ``self`` by ``other``
 
         EXAMPLES::
 
@@ -1825,7 +1784,6 @@ class Components(SageObject):
             sage: s_par[:] == s[:]
             True
             sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
-
         """
         if not isinstance(other, Components):
             raise TypeError("the second argument for the tensor product " +
@@ -1865,7 +1823,7 @@ class Components(SageObject):
                 if nproc != 1:
                     # Parallel computation
                     lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                    ind_list = [ind for ind in result.non_redundant_index_generator()]
+                    ind_list = list(result.non_redundant_index_generator())
                     ind_step = max(1, int(len(ind_list)/nproc))
                     local_list = lol(ind_list, ind_step)
                     # list of input parameters:
@@ -1937,7 +1895,6 @@ class Components(SageObject):
             True
             sage: a.__rmul__(0) == 0
             True
-
         """
         if isinstance(other, Components):
             raise NotImplementedError("left tensor product not implemented")
@@ -1966,7 +1923,6 @@ class Components(SageObject):
             True
             sage: 3*s == a
             True
-
         """
         if isinstance(other, Components):
             raise NotImplementedError("division by an object of type " +
@@ -2031,7 +1987,6 @@ class Components(SageObject):
             [12, 24, 36]
             sage: [sum(a[i,j,j] for j in range(3)) for i in range(3)]  # check
             [12, 24, 36]
-
         """
         if self._nid < 2:
             raise ValueError("contraction can be performed only on " +
@@ -2081,9 +2036,7 @@ class Components(SageObject):
           is not provided, a single contraction on the first index position of
           ``other`` is assumed
 
-        OUTPUT:
-
-        - set of components resulting from the contraction
+        OUTPUT: set of components resulting from the contraction
 
         EXAMPLES:
 
@@ -2219,7 +2172,6 @@ class Components(SageObject):
             sage: a.contract(1, 0, b, 1, 0)
             4
             sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
-
         """
         #
         # Treatment of the input
@@ -2393,7 +2345,7 @@ class Components(SageObject):
             # parallel computation
             nproc = Parallelism().get('tensor')
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-            ind_list = [ind for ind in res.non_redundant_index_generator()]
+            ind_list = list(res.non_redundant_index_generator())
             ind_step = max(1, int(len(ind_list)/nproc/2))
             local_list = lol(ind_list, ind_step)
 
@@ -2455,9 +2407,7 @@ class Components(SageObject):
         r"""
         Generator of indices.
 
-        OUTPUT:
-
-        - an iterable index
+        OUTPUT: an iterable index
 
         EXAMPLES:
 
@@ -2475,7 +2425,6 @@ class Components(SageObject):
             sage: list(c.index_generator())
             [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0),
              (2, 1), (2, 2)]
-
         """
         si = self._sindex
         imax = self._dim - 1 + si
@@ -2500,9 +2449,7 @@ class Components(SageObject):
         Only versions for derived classes with symmetries or antisymmetries
         are not trivial.
 
-        OUTPUT:
-
-        - an iterable index
+        OUTPUT: an iterable index
 
         EXAMPLES:
 
@@ -2632,7 +2579,6 @@ class Components(SageObject):
             sage: all(s[i,j,k] == (c[i,j,k]+c[k,j,i])/2   # Check of the result:
             ....:     for i in range(3) for j in range(3) for k in range(3))
             True
-
         """
         from sage.combinat.permutation import Permutations
         if not pos:
@@ -2665,7 +2611,7 @@ class Components(SageObject):
 
     def antisymmetrize(self, *pos):
         r"""
-        Antisymmetrization over the given index positions
+        Antisymmetrization over the given index positions.
 
         INPUT:
 
@@ -2673,10 +2619,8 @@ class Components(SageObject):
           (with the convention position=0 for the first slot); if none, the
           antisymmetrization is performed over all the indices
 
-        OUTPUT:
-
-        - an instance of :class:`CompWithSym` describing the antisymmetrized
-          components.
+        OUTPUT: an instance of :class:`CompWithSym` describing the
+        antisymmetrized components
 
         EXAMPLES:
 
@@ -2783,7 +2727,6 @@ class Components(SageObject):
             True
             sage: c.antisymmetrize(2,0) == c.antisymmetrize(0,2)
             True
-
         """
         from sage.combinat.permutation import Permutations
         if not pos:
@@ -2834,7 +2777,6 @@ class Components(SageObject):
 
             sage: matrix(c) == c._matrix_()
             True
-
         """
         from sage.matrix.constructor import matrix
         if self._nid != 2:
@@ -3052,7 +2994,6 @@ class CompWithSym(Components):
             sage: from sage.tensor.modules.comp import CompWithSym
             sage: C = CompWithSym(ZZ, [1,2,3], 4, sym=(0,1), antisym=(2,3))
             sage: TestSuite(C).run()
-
         """
         Components.__init__(self, ring, frame, nb_indices, start_index,
                             output_formatter)
@@ -3190,7 +3131,6 @@ class CompWithSym(Components):
             sage: c = CompWithSym(ZZ, [1,2,3], 4, sym=(0,1))
             sage: a = c._new_instance() ; a
             4-indices components w.r.t. [1, 2, 3], with symmetry on the index positions (0, 1)
-
         """
         return CompWithSym(self._ring, self._frame, self._nid, self._sindex,
                           self._output_formatter, self._sym, self._antisym)
@@ -3204,7 +3144,7 @@ class CompWithSym(Components):
         INPUT:
 
         - ``indices`` -- list of indices (possibly a single integer if
-          self is a 1-index object)
+          ``self`` is a 1-index object)
 
         OUTPUT:
 
@@ -3231,7 +3171,6 @@ class CompWithSym(Components):
             (-1, (0, 1, 1, 2))
             sage: c._ordered_indices([0,1,2,2])
             (0, None)
-
         """
         from sage.combinat.permutation import Permutation
         ind = list(self._check_indices(indices))
@@ -3272,7 +3211,7 @@ class CompWithSym(Components):
         INPUT:
 
         - ``args`` -- list of indices (possibly a single integer if
-          self is a 1-index object) or the character ``:`` for the full list
+          ``self`` is a 1-index object) or the character ``:`` for the full list
           of components
 
         OUTPUT:
@@ -3296,7 +3235,6 @@ class CompWithSym(Components):
             -5
             sage: c[0,1,2,1]
             -5
-
         """
         no_format = self._output_formatter is None
         format_type = None # default value, possibly redefined below
@@ -3333,7 +3271,7 @@ class CompWithSym(Components):
                 else:
                     return self._output_formatter(self._ring.zero(),
                                                  format_type)
-            else: # non zero value
+            else: # nonzero value
                 if no_format:
                     if sign == 1:
                         return self._comp[ind]
@@ -3354,12 +3292,12 @@ class CompWithSym(Components):
 
     def __setitem__(self, args, value):
         r"""
-        Sets the component corresponding to the given indices.
+        Set the component corresponding to the given indices.
 
         INPUT:
 
         - ``args`` -- list of indices (possibly a single integer if
-          self is a 1-index object) ; if ``[:]`` is provided, all the
+          ``self`` is a 1-index object) ; if ``[:]`` is provided, all the
           components are set
         - ``value`` -- the value to be set or a list of values if
           ``args = [:]``
@@ -3383,7 +3321,6 @@ class CompWithSym(Components):
             Traceback (most recent call last):
             ...
             ValueError: by antisymmetry, the component cannot have a nonzero value for the indices (2, 2)
-
         """
         format_type = None # default value, possibly redefined below
         if isinstance(args, list):  # case of [[...]] syntax
@@ -3457,9 +3394,7 @@ class CompWithSym(Components):
           the last index of set 1 (since the two sets are adjacent)
         - ``pos3`` -- 1 + position of the last index of set 2
 
-        OUTPUT:
-
-        - Components with index set 1 permuted with index set 2.
+        OUTPUT: components with index set 1 permuted with index set 2
 
         EXAMPLES:
 
@@ -3488,7 +3423,6 @@ class CompWithSym(Components):
             3
             sage: c1[2,1,0]
             -3
-
         """
         result = self._new_instance()
         # The symmetries:
@@ -3519,9 +3453,7 @@ class CompWithSym(Components):
         - ``other`` -- components of the same number of indices and defined
           on the same frame as ``self``
 
-        OUTPUT:
-
-        - components resulting from the addition of ``self`` and ``other``
+        OUTPUT: components resulting from the addition of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -3567,7 +3499,6 @@ class CompWithSym(Components):
             sage: s_par[:] == s[:]
             True
             sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
-
         """
         if isinstance(other, (int, Integer)) and other == 0:
             return +self
@@ -3596,7 +3527,7 @@ class CompWithSym(Components):
                     # Parallel computation
                     lol = lambda lst, sz: [lst[i:i+sz] for i in
                                            range(0, len(lst), sz)]
-                    ind_list = [ind for ind in other._comp]
+                    ind_list = list(other._comp)
                     ind_step = max(1, int(len(ind_list)/nproc/2))
                     local_list = lol(ind_list, ind_step)
                     # list of input parameters
@@ -3650,7 +3581,7 @@ class CompWithSym(Components):
         if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-            ind_list = [ind for ind in result.non_redundant_index_generator()]
+            ind_list = list(result.non_redundant_index_generator())
             ind_step = max(1, int(len(ind_list)/nproc/2))
             local_list = lol(ind_list, ind_step)
             # definition of the list of input parameters
@@ -3680,9 +3611,7 @@ class CompWithSym(Components):
 
         - ``other`` -- components, on the same frame as ``self``
 
-        OUTPUT:
-
-        - the tensor product of ``self`` by ``other``
+        OUTPUT: the tensor product of ``self`` by ``other``
 
         EXAMPLES::
 
@@ -3728,7 +3657,6 @@ class CompWithSym(Components):
             sage: s2_par[:] == s2[:]
             True
             sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
-
         """
         if not isinstance(other, Components):
             raise TypeError("the second argument for the tensor product " +
@@ -3756,7 +3684,7 @@ class CompWithSym(Components):
         if nproc != 1:
             # Parallel computation
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-            ind_list = [ind for ind in self._comp]
+            ind_list = list(self._comp)
             ind_step = max(1, int(len(ind_list)/nproc))
             local_list = lol(ind_list, ind_step)
             # list of input parameters:
@@ -3889,7 +3817,6 @@ class CompWithSym(Components):
             [-3  3 -1]
             sage: [[sum(c[i,k,k,j] for k in range(3)) for j in range(3)] for i in range(3)]  # check
             [[0, 0, 0], [-2, 1, 0], [-3, 3, -1]]
-
         """
         if self._nid < 2:
             raise TypeError("contraction can be performed only on " +
@@ -3995,9 +3922,7 @@ class CompWithSym(Components):
         Generator of indices, with only ordered indices in case of symmetries,
         so that only non-redundant indices are generated.
 
-        OUTPUT:
-
-        - an iterable index
+        OUTPUT: an iterable index
 
         EXAMPLES:
 
@@ -4064,7 +3989,6 @@ class CompWithSym(Components):
             sage: c = CompFullyAntiSym(QQ, V.basis(), 5)
             sage: list(c.non_redundant_index_generator())  # nothing since c is identically zero in this case (for 5 > 4)
             []
-
         """
         if self._nid == 0 or self._dim == 0:
             return
@@ -4080,7 +4004,7 @@ class CompWithSym(Components):
                         if ind[isym[k-1]] == imax:
                             return
                         ind[pos] = ind[isym[k-1]] + 1
-            if not any([pos in isym for isym in sym]) and not any([pos in isym for isym in antisym]):
+            if not any(pos in isym for isym in sym) and not any(pos in isym for isym in antisym):
                 sym.append([pos]) # treat non-symmetrized indices as being symmetrized with themselves
         while True:
             yield tuple(ind)
@@ -4335,7 +4259,6 @@ class CompWithSym(Components):
             ], with symmetry on the index positions (1, 2)
             sage: s == 0 # because (1,2) are involved in the original antisymmetry
             True
-
         """
         from sage.combinat.permutation import Permutations
         if not pos:
@@ -4596,7 +4519,6 @@ class CompWithSym(Components):
             -2
             sage: s[2,1,0,1]  # the antisymmetry (0,2) holds
             -27/2
-
         """
         from sage.combinat.permutation import Permutations
 
@@ -4742,7 +4664,7 @@ class CompFullySym(CompWithSym):
         [-2  0  3]
         [ 0  3  0]
 
-    Internally, only non-redundant and non-zero components are stored::
+    Internally, only non-redundant and nonzero components are stored::
 
         sage: c._comp  # random output order of the component dictionary
         {(0, 0): 1, (0, 1): -2, (1, 2): 3}
@@ -4829,7 +4751,6 @@ class CompFullySym(CompWithSym):
         ], with symmetry on the index positions (0, 1)
         sage: 2*b1 + a == a + 2*b1
         True
-
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
                  output_formatter=None):
@@ -4839,7 +4760,6 @@ class CompFullySym(CompWithSym):
             sage: from sage.tensor.modules.comp import CompFullySym
             sage: C = CompFullySym(ZZ, (1,2,3), 2)
             sage: TestSuite(C).run()
-
         """
         CompWithSym.__init__(self, ring, frame, nb_indices, start_index,
                              output_formatter, sym=range(nb_indices))
@@ -4854,13 +4774,12 @@ class CompFullySym(CompWithSym):
             sage: c = CompFullySym(ZZ, (1,2,3), 4)
             sage: c._repr_symmetry()
             ('Fully symmetric ', '')
-
         """
         return "Fully symmetric ", ""
 
     def _new_instance(self):
         r"""
-        Creates a :class:`CompFullySym` instance w.r.t. the same frame,
+        Create a :class:`CompFullySym` instance w.r.t. the same frame,
         and with the same number of indices.
 
         EXAMPLES::
@@ -4869,7 +4788,6 @@ class CompFullySym(CompWithSym):
             sage: c = CompFullySym(ZZ, (1,2,3), 4)
             sage: c._new_instance()
             Fully symmetric 4-indices components w.r.t. (1, 2, 3)
-
         """
         return CompFullySym(self._ring, self._frame, self._nid, self._sindex,
                             self._output_formatter)
@@ -4881,7 +4799,7 @@ class CompFullySym(CompWithSym):
         INPUT:
 
         - ``args`` -- list of indices (possibly a single integer if
-          self is a 1-index object) or the character ``:`` for the full list
+          ``self`` is a 1-index object) or the character ``:`` for the full list
           of components
 
         OUTPUT:
@@ -4903,7 +4821,6 @@ class CompFullySym(CompWithSym):
             [0 4 0]
             [4 0 0]
             [0 0 0]
-
         """
         no_format = self._output_formatter is None
         format_type = None # default value, possibly redefined below
@@ -4933,7 +4850,7 @@ class CompFullySym(CompWithSym):
             return self._get_list(indices, no_format, format_type)
 
         ind = self._ordered_indices(indices)[1]  # [0]=sign is not used
-        if ind in self._comp: # non zero value
+        if ind in self._comp: # nonzero value
             if no_format:
                 return self._comp[ind]
             elif format_type is None:
@@ -4952,13 +4869,13 @@ class CompFullySym(CompWithSym):
 
     def __setitem__(self, args, value):
         r"""
-        Sets the component corresponding to the given indices.
+        Set the component corresponding to the given indices.
 
         INPUT:
 
         - ``indices`` -- list of indices (possibly a single integer if
-          self is a 1-index object) ; if [:] is provided, all the components
-          are set.
+          ``self`` is a 1-index object); if [:] is provided, all the components
+          are set
         - ``value`` -- the value to be set or a list of values if
           ``args = [:]``
 
@@ -4981,7 +4898,6 @@ class CompFullySym(CompWithSym):
             [1 2 3]
             [2 4 5]
             [3 5 6]
-
         """
         format_type = None # default value, possibly redefined below
         if isinstance(args, list):  # case of [[...]] syntax
@@ -5035,9 +4951,7 @@ class CompFullySym(CompWithSym):
         - ``other`` -- components of the same number of indices and defined
           on the same frame as ``self``
 
-        OUTPUT:
-
-        - components resulting from the addition of ``self`` and ``other``
+        OUTPUT: components resulting from the addition of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -5102,7 +5016,6 @@ class CompFullySym(CompWithSym):
             sage: s_par == c.__add__(a)  # test of commutativity of parallel comput.
             True
             sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
-
         """
         if isinstance(other, (int, Integer)) and other == 0:
             return +self
@@ -5127,7 +5040,7 @@ class CompFullySym(CompWithSym):
                 # parallel sum
                 lol = lambda lst, sz: [lst[i:i+sz] for i
                                        in range(0, len(lst), sz)]
-                ind_list = [ind for ind in other._comp]
+                ind_list = list(other._comp)
                 ind_step = max(1, int(len(ind_list)/nproc/2))
                 local_list = lol(ind_list, ind_step)
                 # definition of the list of input parameters
@@ -5196,7 +5109,7 @@ class CompFullyAntiSym(CompWithSym):
         [  -3    0   -1]
         [-1/2    1    0]
 
-    Internally, only non-redundant and non-zero components are stored::
+    Internally, only non-redundant and nonzero components are stored::
 
         sage: c._comp # random output order of the component dictionary
         {(0, 1): 3, (0, 2): 1/2, (1, 2): -1}
@@ -5288,7 +5201,6 @@ class CompFullyAntiSym(CompWithSym):
         ], with antisymmetry on the index positions (0, 1)
         sage: 2*b1 + a == a + 2*b1
         True
-
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
                  output_formatter=None):
@@ -5298,7 +5210,6 @@ class CompFullyAntiSym(CompWithSym):
             sage: from sage.tensor.modules.comp import CompFullyAntiSym
             sage: C = CompFullyAntiSym(ZZ, (1,2,3), 2)
             sage: TestSuite(C).run()
-
         """
         CompWithSym.__init__(self, ring, frame, nb_indices, start_index,
                              output_formatter, antisym=range(nb_indices))
@@ -5313,13 +5224,12 @@ class CompFullyAntiSym(CompWithSym):
             sage: c = CompFullyAntiSym(ZZ, (1,2,3), 4)
             sage: c._repr_symmetry()
             ('Fully antisymmetric ', '')
-
         """
         return "Fully antisymmetric ", ""
 
     def _new_instance(self):
         r"""
-        Creates a :class:`CompFullyAntiSym` instance w.r.t. the same frame,
+        Create a :class:`CompFullyAntiSym` instance w.r.t. the same frame,
         and with the same number of indices.
 
         EXAMPLES::
@@ -5328,7 +5238,6 @@ class CompFullyAntiSym(CompWithSym):
             sage: c = CompFullyAntiSym(ZZ, (1,2,3), 4)
             sage: c._new_instance()
             Fully antisymmetric 4-indices components w.r.t. (1, 2, 3)
-
         """
         return CompFullyAntiSym(self._ring, self._frame, self._nid, self._sindex,
                                 self._output_formatter)
@@ -5342,9 +5251,7 @@ class CompFullyAntiSym(CompWithSym):
         - ``other`` -- components of the same number of indices and defined
           on the same frame as ``self``
 
-        OUTPUT:
-
-        - components resulting from the addition of ``self`` and ``other``
+        OUTPUT: components resulting from the addition of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -5401,7 +5308,6 @@ class CompFullyAntiSym(CompWithSym):
             sage: s_par == a + c
             True
             sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
-
         """
         if isinstance(other, (int, Integer)) and other == 0:
             return +self
@@ -5425,7 +5331,7 @@ class CompFullyAntiSym(CompWithSym):
             if nproc != 1:
                 # Parallel computation
                 lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                ind_list = [ind for ind in other._comp]
+                ind_list = list(other._comp)
                 ind_step = max(1, int(len(ind_list)/nproc/2))
                 local_list = lol(ind_list, ind_step)
                 # list of input parameters
@@ -5556,7 +5462,6 @@ class CompFullyAntiSym(CompWithSym):
             360
             sage: c == a.contract(0, 1, 2, 3, b, 0, 1, 2, 3)
             True
-
         """
         from sage.arith.misc import factorial
         # Sanity checks:
@@ -5600,6 +5505,7 @@ class CompFullyAntiSym(CompWithSym):
         return res
 
 #******************************************************************************
+
 
 class KroneckerDelta(CompFullySym):
     r"""
@@ -5657,7 +5563,6 @@ class KroneckerDelta(CompFullySym):
         sage: d = KroneckerDelta(QQ, V.basis(), output_formatter=str)
         sage: d[:]
         [['1', '0', '0'], ['0', '1', '0'], ['0', '0', '1']]
-
     """
     def __init__(self, ring, frame, start_index=0, output_formatter=None):
         r"""
@@ -5666,7 +5571,6 @@ class KroneckerDelta(CompFullySym):
             sage: from sage.tensor.modules.comp import KroneckerDelta
             sage: d = KroneckerDelta(ZZ, (1,2,3))
             sage: TestSuite(d).run()
-
         """
         CompFullySym.__init__(self, ring, frame, 2, start_index,
                               output_formatter)
@@ -5682,14 +5586,13 @@ class KroneckerDelta(CompFullySym):
             sage: from sage.tensor.modules.comp import KroneckerDelta
             sage: KroneckerDelta(ZZ, (1,2,3))
             Kronecker delta of size 3x3
-
         """
         n = str(self._dim)
         return "Kronecker delta of size " + n + "x" + n
 
     def __setitem__(self, args, value):
         r"""
-        Should not be used (the components of a Kronecker delta are constant)
+        Should not be used (the components of a Kronecker delta are constant).
 
         EXAMPLES::
 
@@ -5699,6 +5602,5 @@ class KroneckerDelta(CompFullySym):
             Traceback (most recent call last):
             ...
             TypeError: the components of a Kronecker delta cannot be changed
-
         """
         raise TypeError("the components of a Kronecker delta cannot be changed")

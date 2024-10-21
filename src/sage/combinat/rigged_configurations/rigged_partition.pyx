@@ -361,13 +361,11 @@ cdef class RiggedPartition(SageObject):
 
         INPUT:
 
-        - ``end_column`` -- The index of the column to end at
+        - ``end_column`` -- the index of the column to end at
 
-        - ``t`` -- The scaling factor
+        - ``t`` -- the scaling factor
 
-        OUTPUT:
-
-        - The number of cells
+        OUTPUT: the number of cells
 
         EXAMPLES::
 
@@ -406,12 +404,10 @@ cdef class RiggedPartition(SageObject):
 
         INPUT:
 
-        - ``max_width`` -- The maximum width (i.e. row length) that we can
+        - ``max_width`` -- the maximum width (i.e. row length) that we can
           insert the cell at
 
-        OUTPUT:
-
-        - The width of the row we inserted at.
+        OUTPUT: the width of the row we inserted at
 
         EXAMPLES::
 
@@ -563,7 +559,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
 
         INPUT:
 
-        - ``half_width_boxes`` -- (Default: ``True``) Display the partition
+        - ``half_width_boxes`` -- (default: ``True``) display the partition
           using half width boxes
 
         EXAMPLES::
@@ -612,7 +608,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
 
         INPUT:
 
-        - ``half_width_boxes`` -- (default: ``True``) display the partition
+        - ``half_width_boxes`` -- boolean (default: ``True``); display the partition
           using half width boxes
 
         EXAMPLES::

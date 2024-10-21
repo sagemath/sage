@@ -43,7 +43,7 @@ def classical_modular_polynomial(l, j=None):
 
     INPUT:
 
-    - ``l`` -- positive integer.
+    - ``l`` -- positive integer
     - ``j`` -- either ``None`` or a ring element:
 
       * if ``None`` is given, the original modular polynomial

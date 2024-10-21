@@ -34,7 +34,7 @@ class BraidMoveCalculator:
             sage: from sage.combinat.root_system.braid_move_calculator import BraidMoveCalculator
             sage: W = CoxeterGroup(['C',3])
             sage: B = BraidMoveCalculator(W)
-            sage: TestSuite(B).run(skip="_test_pickling")
+            sage: TestSuite(B).run(skip='_test_pickling')
         """
         self.coxeter_matrix = coxeter_group.coxeter_matrix()
 

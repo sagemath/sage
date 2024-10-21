@@ -86,11 +86,11 @@ class LatticeEuclideanGroupElement(SageObject):
 
     def __call__(self, x):
         """
-        Return the image of ``x``
+        Return the image of ``x``.
 
         INPUT:
 
-        - ``x`` -- a vector or lattice polytope.
+        - ``x`` -- a vector or lattice polytope
 
         EXAMPLES::
 
@@ -116,7 +116,7 @@ class LatticeEuclideanGroupElement(SageObject):
 
     def _repr_(self):
         r"""
-        Return a string representation
+        Return a string representation.
 
         EXAMPLES::
 
@@ -131,7 +131,7 @@ class LatticeEuclideanGroupElement(SageObject):
 
     def domain_dim(self):
         """
-        Return the dimension of the domain lattice
+        Return the dimension of the domain lattice.
 
         EXAMPLES::
 
@@ -151,7 +151,7 @@ class LatticeEuclideanGroupElement(SageObject):
 
     def codomain_dim(self):
         """
-        Return the dimension of the codomain lattice
+        Return the dimension of the codomain lattice.
 
         EXAMPLES::
 

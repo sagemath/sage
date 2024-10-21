@@ -242,7 +242,7 @@ def _to_graph6(graphs, file=None, output_list=False, sparse=False):
 
 def to_graphics_array(graph_list, **kwds):
     """
-    Draw all graphs in a graphics array
+    Draw all graphs in a graphics array.
 
     INPUT:
 

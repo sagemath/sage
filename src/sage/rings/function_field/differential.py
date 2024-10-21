@@ -248,7 +248,7 @@ class FunctionFieldDifferential(ModuleElement):
 
     def _div_(self, other):
         """
-        Return the quotient of ``self`` and ``other``
+        Return the quotient of ``self`` and ``other``.
 
         INPUT:
 
@@ -428,9 +428,7 @@ class FunctionFieldDifferential(ModuleElement):
 
         - ``place`` -- a place of the function field
 
-        OUTPUT:
-
-        - an element of the residue field of the place
+        OUTPUT: an element of the residue field of the place
 
         EXAMPLES:
 
@@ -473,7 +471,6 @@ class FunctionFieldDifferential(ModuleElement):
             sage: d = w.divisor()
             sage: sum([QQ(w.residue(p)) for p in d.support()])
             0
-
         """
         R,fr_R,to_R = place._residue_field()
 

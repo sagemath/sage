@@ -384,7 +384,7 @@ cdef class Polynomial_complex_arb(Polynomial):
         r"""
         Compute the Euclidean division of this ball polynomial by ``divisor``.
 
-        Raises a ``ZeroDivisionError`` when the divisor is zero or its leading
+        Raises a :exc:`ZeroDivisionError` when the divisor is zero or its leading
         coefficient contains zero. Returns a pair (quotient, remainder)
         otherwise.
 
@@ -595,7 +595,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         INPUT:
 
-        - ``expo`` -- non-negative integer exponent
+        - ``expo`` -- nonnegative integer exponent
         - ``n`` -- truncation order
 
         EXAMPLES::

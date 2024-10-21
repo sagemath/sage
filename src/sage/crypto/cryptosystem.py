@@ -79,15 +79,15 @@ class Cryptosystem(Set_generic):
 
     INPUT:
 
-    - ``plaintext_space`` -- the plaintext alphabet.
+    - ``plaintext_space`` -- the plaintext alphabet
 
-    - ``ciphertext_space`` -- the ciphertext alphabet.
+    - ``ciphertext_space`` -- the ciphertext alphabet
 
-    - ``key_space`` -- the key alphabet.
+    - ``key_space`` -- the key alphabet
 
-    - ``block_length`` -- (default: 1) the block length.
+    - ``block_length`` -- (default: 1) the block length
 
-    - ``period`` -- (default: ``None``) the period.
+    - ``period`` -- (default: ``None``) the period
 
     EXAMPLES:
 
@@ -112,15 +112,15 @@ class Cryptosystem(Set_generic):
 
         INPUT:
 
-        - ``plaintext_space`` -- the plaintext alphabet.
+        - ``plaintext_space`` -- the plaintext alphabet
 
-        - ``ciphertext_space`` -- the ciphertext alphabet.
+        - ``ciphertext_space`` -- the ciphertext alphabet
 
-        - ``key_space`` -- the key alphabet.
+        - ``key_space`` -- the key alphabet
 
-        - ``block_length`` -- (default: 1) the block length.
+        - ``block_length`` -- (default: 1) the block length
 
-        - ``period`` -- (default: ``None``) the period.
+        - ``period`` -- (default: ``None``) the period
 
         EXAMPLES:
 
@@ -159,7 +159,7 @@ class Cryptosystem(Set_generic):
 
         INPUT:
 
-        - ``right`` -- a ``Cryptosystem`` object.
+        - ``right`` -- a ``Cryptosystem`` object
 
         EXAMPLES:
 

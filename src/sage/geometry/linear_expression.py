@@ -104,9 +104,7 @@ class LinearExpression(ModuleElement):
         """
         Return the coefficient vector.
 
-        OUTPUT:
-
-        The coefficient vector of the linear expression.
+        OUTPUT: the coefficient vector of the linear expression
 
         EXAMPLES::
 
@@ -125,9 +123,7 @@ class LinearExpression(ModuleElement):
         """
         Return the constant term.
 
-        OUTPUT:
-
-        The constant term of the linear expression.
+        OUTPUT: the constant term of the linear expression
 
         EXAMPLES::
 
@@ -226,12 +222,10 @@ class LinearExpression(ModuleElement):
         - ``include_constant`` -- whether to include the constant
           term
 
-        - ``multiplication`` -- string (default: ``*``); the
+        - ``multiplication`` -- string (default: ``'*'``); the
           multiplication symbol to use
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -360,9 +354,7 @@ class LinearExpression(ModuleElement):
 
         - ``base_ring`` -- a ring; the new base ring
 
-        OUTPUT:
-
-        A new linear expression over the new base ring.
+        OUTPUT: a new linear expression over the new base ring
 
         EXAMPLES::
 
@@ -428,9 +420,7 @@ class LinearExpression(ModuleElement):
         - ``point`` -- list/tuple/iterable of coordinates; the
           coordinates of a point
 
-        OUTPUT:
-
-        The linear expression `Ax + b` evaluated at the point `x`.
+        OUTPUT: the linear expression `Ax + b` evaluated at the point `x`
 
         EXAMPLES::
 
@@ -511,7 +501,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
         """
         from sage.sets.family import Family
         gens = self.gens()
-        d = {i: g for i, g in enumerate(gens)}
+        d = dict(enumerate(gens))
         d['b'] = self.element_class(self, self.ambient_module().zero(),
                                     self.base_ring().one())
         return Family(list(range(len(gens))) + ['b'], lambda i: d[i])
@@ -521,9 +511,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
         """
         Return the number of linear variables.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -539,9 +527,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
         """
         Return the generators of ``self``.
 
-        OUTPUT:
-
-        A tuple of linear expressions, one for each linear variable.
+        OUTPUT: a tuple of linear expressions, one for each linear variable
 
         EXAMPLES::
 
@@ -562,9 +548,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        A linear expression.
+        OUTPUT: a linear expression
 
         EXAMPLES::
 
@@ -753,9 +737,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -774,9 +756,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
 
         - ``base_ring`` -- a ring; the new base ring
 
-        OUTPUT:
-
-        A new linear expression over the new base ring.
+        OUTPUT: a new linear expression over the new base ring
 
         EXAMPLES::
 

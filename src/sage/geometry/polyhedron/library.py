@@ -120,7 +120,6 @@ def zero_sum_projection(d, base_ring=None):
         sage: zero_sum_projection(3, base_ring=AA)                                      # needs sage.rings.number_field
         [ 0.7071067811865475? -0.7071067811865475?                    0]
         [ 0.4082482904638630?  0.4082482904638630? -0.8164965809277260?]
-
     """
     from sage.matrix.constructor import matrix
     from sage.modules.free_module_element import vector
@@ -136,10 +135,10 @@ def project_points(*points, **kwds):
 
     INPUT:
 
-    - ``points``... -- the points to project.
+    - ``points``... -- the points to project
 
     - ``base_ring`` -- (defaults to ``RDF`` if keyword is ``None`` or not
-      provided in ``kwds``) the base ring to use.
+      provided in ``kwds``) the base ring to use
 
     The projection is isometric to the orthogonal projection on the hyperplane
     made of zero sum vector. Hence, if the set of points have all equal sums,
@@ -184,7 +183,6 @@ def project_points(*points, **kwds):
         sage: for i in range(len(V)):                                                   # needs sage.combinat sage.rings.number_field
         ....:     for j in range(len(V)):
         ....:         assert (V[i]-V[j]).norm() == (P[i]-P[j]).norm()
-
     """
     if not points:
         return []
@@ -209,10 +207,10 @@ def gale_transform_to_polytope(vectors, base_ring=None, backend=None):
 
     - ``vectors`` -- the vectors of the Gale transform
 
-    - ``base_ring`` -- string (default: `None`);
+    - ``base_ring`` -- string (default: ``None``);
       the base ring to be used for the construction
 
-    - ``backend`` -- string (default: `None`);
+    - ``backend`` -- string (default: ``None``);
       the backend to use to create the polytope
 
     .. NOTE::
@@ -334,15 +332,15 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
 
     - ``vectors`` -- the ordered vectors of the Gale transform
 
-    - ``base_ring`` -- string (default: `None`);
+    - ``base_ring`` -- string (default: ``None``);
       the base ring to be used for the construction
 
-    - ``backend`` -- string (default: `None`);
+    - ``backend`` -- string (default: ``None``);
       the backend to be use to construct a polyhedral,
       used internally in case the center is not the origin,
       see :func:`~sage.geometry.polyhedron.constructor.Polyhedron`
 
-    OUTPUT: An ordered point configuration as list of vectors.
+    OUTPUT: an ordered point configuration as list of vectors
 
     .. NOTE::
 
@@ -501,17 +499,17 @@ class Polytopes:
 
         INPUT:
 
-        - ``n`` -- a positive integer, the number of vertices.
+        - ``n`` -- positive integer; the number of vertices
 
-        - ``exact`` -- (boolean, default ``True``) if ``False`` floating point
-          numbers are used for coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` floating point
+          numbers are used for coordinates
 
         - ``base_ring`` -- a ring in which the coordinates will lie. It is
           ``None`` by default. If it is not provided and ``exact`` is ``True``
           then it will be the field of real algebraic number, if ``exact`` is
           ``False`` it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -580,9 +578,9 @@ class Polytopes:
 
         INPUT:
 
-        - ``n`` -- a positive integer giving the size of the permutation matrices.
+        - ``n`` -- positive integer giving the size of the permutation matrices
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         .. SEEALSO::
 
@@ -633,21 +631,21 @@ class Polytopes:
 
         INPUT:
 
-        - ``dim`` -- The dimension of the simplex, a positive
-          integer.
+        - ``dim`` -- the dimension of the simplex, a positive
+          integer
 
-        - ``project`` -- (boolean, default ``False``) if ``True``, the polytope
+        - ``project`` -- boolean (default: ``False``); if ``True``, the polytope
           is (isometrically) projected to a vector space of dimension
           ``dim-1``.  This corresponds to the projection given by the matrix
           from :func:`zero_sum_projection`.  By default, this operation turns
           the coordinates into floating point approximations (see
           ``base_ring``).
 
-        - ``base_ring`` -- the base ring to use to create the polytope.
-          If ``project`` is ``False``, this defaults to `\ZZ`.
+        - ``base_ring`` -- the base ring to use to create the polytope;
+          if ``project`` is ``False``, this defaults to `\ZZ`.
           Otherwise, it defaults to ``RDF``.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         .. SEEALSO::
 
@@ -706,8 +704,8 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- (optional) the ring in which the coordinates will
           belong to.  Note that this ring must contain `\sqrt(5)`. If it is not
@@ -715,7 +713,7 @@ class Polytopes:
           `\QQ[\sqrt(5)]` and if ``exact=False`` it will be the real double
           field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -760,8 +758,7 @@ class Polytopes:
             sage: TestSuite(ico).run()
 
             sage: ico = polytopes.icosahedron(exact=False)                              # needs sage.groups
-            sage: TestSuite(ico).run(skip="_test_lawrence")                             # needs sage.groups
-
+            sage: TestSuite(ico).run(skip='_test_lawrence')                             # needs sage.groups
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -789,8 +786,8 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- (optional) the ring in which the coordinates will
           belong to.  Note that this ring must contain `\sqrt(5)`. If it is not
@@ -798,7 +795,7 @@ class Polytopes:
           `\QQ[\sqrt(5)]` and if ``exact=False`` it will be the real double
           field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -840,15 +837,15 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -912,15 +909,15 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -970,7 +967,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         .. SEEALSO::
 
@@ -1018,7 +1015,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         .. SEEALSO::
 
@@ -1066,15 +1063,15 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\sqrt{2}]` and if ``exact=False`` it
           will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1100,7 +1097,6 @@ class Polytopes:
             sage: co.f_vector()                 # optional - pynormaliz                 # needs sage.rings.number_field
             (1, 24, 36, 14, 1)
             sage: TestSuite(co).run()           # optional - pynormaliz                 # needs sage.rings.number_field
-
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -1130,7 +1126,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         .. SEEALSO::
 
@@ -1174,7 +1170,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1220,7 +1216,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1264,7 +1260,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1307,15 +1303,15 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
           coordinates instead of floating point approximations
 
-        - ``base_ring`` -- the field to use. If ``None`` (the default),
+        - ``base_ring`` -- the field to use; if ``None`` (the default),
           construct the exact number field needed (if ``exact`` is ``True``) or
-          default to ``RDF`` (if ``exact`` is ``True``).
+          default to ``RDF`` (if ``exact`` is ``True``)
 
-        - ``backend`` -- the backend to use to create the polytope.  If
-          ``None`` (the default), the backend will be selected automatically.
+        - ``backend`` -- the backend to use to create the polytope; if
+          ``None`` (the default), the backend will be selected automatically
 
         EXAMPLES::
 
@@ -1362,7 +1358,6 @@ class Polytopes:
             sage: sc = polytopes.snub_cube(exact=True, backend='normaliz')      # optional - pynormaliz, needs sage.groups sage.rings.number_field
             sage: sc.f_vector()                                                 # optional - pynormaliz, needs sage.groups sage.rings.number_field
             (1, 24, 60, 38, 1)
-
         """
         def construct_z(field):
             # z here is the reciprocal of the tribonacci constant, that is, the
@@ -1413,15 +1408,15 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1456,7 +1451,6 @@ class Polytopes:
             sage: bb.base_ring()
             Number Field in sqrt5 with defining polynomial x^2 - 5
              with sqrt5 = 2.236067977499790?
-
         """
         return self.icosahedron(exact=exact, base_ring=base_ring, backend=backend).truncation()
 
@@ -1470,10 +1464,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1531,15 +1525,15 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
-        - ``base_ring`` -- the ring in which the coordinates will belong to.
+        - ``base_ring`` -- the ring in which the coordinates will belong to
           If it is not provided and ``exact=True`` it will be a the number
           field `\QQ[\phi]` where `\phi` is the golden ratio and if
           ``exact=False`` it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1605,15 +1599,15 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1658,7 +1652,6 @@ class Polytopes:
             sage: td.base_ring()
             Number Field in sqrt5 with defining polynomial x^2 - 5
              with sqrt5 = 2.236067977499790?
-
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -1694,15 +1687,15 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1737,7 +1730,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1776,15 +1769,15 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1821,7 +1814,6 @@ class Polytopes:
             sage: rid.base_ring()
             Number Field in sqrt5 with defining polynomial x^2 - 5
              with sqrt5 = 2.236067977499790?
-
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -1856,15 +1848,15 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) If ``False`` use an
-          approximate ring for the coordinates.
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use an
+          approximate ring for the coordinates
 
         - ``base_ring`` -- the ring in which the coordinates will belong to. If
           it is not provided and ``exact=True`` it will be a the number field
           `\QQ[\phi]` where `\phi` is the golden ratio and if ``exact=False``
           it will be the real double field.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -1899,7 +1891,6 @@ class Polytopes:
             (1, 120, 180, 62, 1)
             sage: ti.base_ring()                                                  # optional - pynormaliz
             Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-
         """
         if base_ring is None and exact:
             from sage.rings.number_field.number_field import QuadraticField
@@ -1938,10 +1929,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``base_ring`` -- the ring in which the coordinates will belong to. If
-          it is not provided it will be the real double field.
+        - ``base_ring`` -- the ring in which the coordinates will belong to; if
+          it is not provided it will be the real double field
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES:
 
@@ -1974,7 +1965,6 @@ class Polytopes:
             (1, 60, 150, 92, 1)
             sage: sd.base_ring()                            # not tested
             Real Double Field
-
         """
         if base_ring is None:
             from sage.rings.real_double import RDF as base_ring
@@ -2013,7 +2003,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2062,10 +2052,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2091,10 +2081,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2120,10 +2110,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2149,10 +2139,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2189,10 +2179,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
           coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2223,10 +2213,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2249,10 +2239,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
           coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2313,10 +2303,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``False`` use floating
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use floating
           point approximations instead of exact coordinates
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2399,7 +2389,7 @@ class Polytopes:
 
         INPUT:
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2434,13 +2424,13 @@ class Polytopes:
 
         INPUT:
 
-        - ``dim`` -- positive integer. the dimension of the polytope.
+        - ``dim`` -- positive integer; the dimension of the polytope
 
-        - ``n`` -- positive integer. the number of vertices.
+        - ``n`` -- positive integer; the number of vertices
 
-        - ``base_ring`` -- either ``QQ`` (default) or ``RDF``.
+        - ``base_ring`` -- either ``QQ`` (default) or ``RDF``
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2475,13 +2465,13 @@ class Polytopes:
 
         - ``n`` -- the numbers ``(1,...,n)`` are permuted
 
-        - ``project`` -- (boolean, default ``False``) if ``True``, the polytope
+        - ``project`` -- boolean (default: ``False``); if ``True``, the polytope
           is (isometrically) projected to a vector space of dimension
           ``dim-1``.  This operation turns the coordinates into floating point
           approximations and corresponds to the projection given by the matrix
           from :func:`zero_sum_projection`.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2526,13 +2516,13 @@ class Polytopes:
 
         - ``n`` -- integer
 
-        - ``project`` -- (boolean, default ``False``) if ``True``, the polytope
+        - ``project`` -- boolean (default: ``False``); if ``True``, the polytope
           is (isometrically) projected to a vector space of dimension
           ``dim-1``.  This operation turns the coordinates into floating point
           approximations and corresponds to the projection given by the matrix
           from :func:`zero_sum_projection`.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2596,7 +2586,7 @@ class Polytopes:
             eqns = ((-tri(n),) + tuple(1 for _ in range(n)),)
 
             return parent([verts, [], []], [ieqs, eqns],
-                          Vrep_minimal=True, Hrep_minimal=True, pref_rep="Hrep")
+                          Vrep_minimal=True, Hrep_minimal=True, pref_rep='Hrep')
 
     def generalized_permutahedron(self, coxeter_type, point=None, exact=True, regular=False, backend=None):
         r"""
@@ -2610,17 +2600,17 @@ class Polytopes:
         INPUT:
 
         - ``coxeter_type`` -- a Coxeter type; given as a pair [type,rank],
-          where type is a letter and rank is the number of generators.
+          where type is a letter and rank is the number of generators
 
-        - ``point`` -- a list (default: ``None``); a point given by its
+        - ``point`` -- list (default: ``None``); a point given by its
           coordinates in the weight basis. If ``None`` is given, the point
           `(1, 1, 1, \ldots)` is used.
 
-        - ``exact`` -- (boolean, default ``True``) if ``False`` use floating
+        - ``exact`` -- boolean (default: ``True``); if ``False`` use floating
           point approximations instead of exact coordinates
 
         - ``regular`` -- boolean (default: ``False``); whether to apply a
-          linear transformation making the vertex figures isometric.
+          linear transformation making the vertex figures isometric
 
         - ``backend`` -- backend to use to create the polytope; (default:
           ``None``)
@@ -2856,10 +2846,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2889,10 +2879,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2929,10 +2919,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2957,10 +2947,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``False``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``False``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -2996,10 +2986,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -3024,10 +3014,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -3052,10 +3042,10 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -3080,13 +3070,13 @@ class Polytopes:
 
         INPUT:
 
-        - ``exact`` -- (boolean, default ``True``) if ``True`` use exact
-          coordinates instead of floating point approximations.
+        - ``exact`` -- boolean (default: ``True``); if ``True`` use exact
+          coordinates instead of floating point approximations
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
-        - ``construction`` -- the construction to use (string, default 'coxeter');
-          the other possibility is 'as_permutahedron'.
+        - ``construction`` -- string (default: ``'coxeter'``); the construction to use.
+          The other possibility is 'as_permutahedron'.
 
         EXAMPLES:
 
@@ -3169,21 +3159,21 @@ class Polytopes:
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the hypercube.
+        - ``dim`` -- integer; the dimension of the hypercube
 
-        - ``intervals`` -- (default = None). It takes the following
+        - ``intervals`` -- (default: ``None``) it takes the following
           possible inputs:
 
           - If ``None`` (the default), it returns the `\pm 1`-cube of
             dimension ``dim``.
 
-          - ``'zero_one'`` -- (string). Return the `0/1`-cube.
+          - ``'zero_one'`` -- string; return the `0/1`-cube
 
           - a list of length ``dim``. Its elements are pairs of
             numbers `(a,b)` with `a < b`. The cube will be the product of
             these intervals.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES:
 
@@ -3357,16 +3347,14 @@ class Polytopes:
           - If the input is ``None`` (the default), returns the convex hull of
             the eight `\pm 1` vectors of length three.
 
-          - ``'zero_one'`` -- (string). Return the `0/1`-cube.
+          - ``'zero_one'`` -- string; return the `0/1`-cube
 
           - a list of 3 lists of length 2. The cube will be a product of
             these three intervals.
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
-        OUTPUT:
-
-        A cube as a polyhedron object.
+        OUTPUT: a cube as a polyhedron object
 
         EXAMPLES:
 
@@ -3408,9 +3396,9 @@ class Polytopes:
 
         INPUT:
 
-        - ``dim`` -- integer. The dimension of the cross-polytope.
+        - ``dim`` -- integer; the dimension of the cross-polytope
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 
@@ -3452,9 +3440,9 @@ class Polytopes:
 
         INPUT:
 
-        - ``generators`` -- a list of vectors of same dimension
+        - ``generators`` -- list of vectors of same dimension
 
-        - ``backend`` -- the backend to use to create the polytope.
+        - ``backend`` -- the backend to use to create the polytope
 
         EXAMPLES::
 

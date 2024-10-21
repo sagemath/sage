@@ -654,12 +654,10 @@ class KRTableauxTypeVertical(KirillovReshetikhinTableaux):
 
         INPUT:
 
-        - ``weight`` -- The weight of the highest weight KR tableau (the
+        - ``weight`` -- the weight of the highest weight KR tableau (the
           conjugate of the shape of the KR crystal's tableau)
 
-        OUTPUT:
-
-        - A `r \times s` tableau
+        OUTPUT: a `r \times s` tableau
 
         EXAMPLES::
 
@@ -782,11 +780,9 @@ class KRTableauxTypeHorizonal(KirillovReshetikhinTableaux):
 
         INPUT:
 
-        - ``shape`` -- The shape of the KR crystal's tableau
+        - ``shape`` -- the shape of the KR crystal's tableau
 
-        OUTPUT:
-
-        - A `r \times s` tableau
+        OUTPUT: a `r \times s` tableau
 
         EXAMPLES::
 
@@ -880,12 +876,10 @@ class KRTableauxTypeBox(KRTableauxTypeVertical):
 
         INPUT:
 
-        - ``weight`` -- The weight of the highest weight KR tableau (the
+        - ``weight`` -- the weight of the highest weight KR tableau (the
           conjugate of the shape of the KR crystal's tableau)
 
-        OUTPUT:
-
-        - A `r \times s` tableau
+        OUTPUT: a `r \times s` tableau
 
         EXAMPLES::
 
@@ -1220,8 +1214,8 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
 
         INPUT:
 
-        - ``rows`` -- (Default: ``True``) Set to ``True`` if the resulting
-          array is by row, otherwise it is by column.
+        - ``rows`` -- boolean (default: ``True``); set to ``True`` if the
+          resulting array is by row, otherwise it is by column
 
         EXAMPLES::
 
@@ -1288,9 +1282,9 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
 
         INPUT:
 
-        - ``index_set`` -- (Default: ``None``) Return the highest weight
-          with respect to the index set. If ``None`` is passed in, then this
-          uses the classical index set.
+        - ``index_set`` -- (default: ``None``) return the highest weight
+          with respect to the index set; if ``None`` is passed in, then this
+          uses the classical index set
 
         OUTPUT:
 
@@ -1590,8 +1584,8 @@ class KRTableauxSpinElement(KirillovReshetikhinTableauxElement):
 
         INPUT:
 
-        - ``rows`` -- (Default: ``True``) Set to ``True`` if the resulting
-          array is by row, otherwise it is by column.
+        - ``rows`` -- boolean (default: ``True``); set to ``True`` if the
+          resulting array is by row, otherwise it is by column
 
         EXAMPLES::
 

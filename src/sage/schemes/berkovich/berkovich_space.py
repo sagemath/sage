@@ -135,11 +135,11 @@ class Berkovich_Cp(Berkovich):
 
     def is_padic_base(self):
         """
-        Return ``True`` if this Berkovich space is backed by a p-adic field.
+        Return ``True`` if this Berkovich space is backed by a `p`-adic field.
 
         OUTPUT:
 
-        - ``True`` if this Berkovich space was created with a p-adic field.
+        - ``True`` if this Berkovich space was created with a `p`-adic field.
         - ``False`` otherwise.
 
         EXAMPLES::
@@ -183,7 +183,7 @@ class Berkovich_Cp(Berkovich):
         r"""
         The ideal which defines an embedding of the ``base_ring`` into `\CC_p`.
 
-        If this Berkovich space is backed by a p-adic field, then an embedding is
+        If this Berkovich space is backed by a `p`-adic field, then an embedding is
         already specified, and this returns ``None``.
 
         OUTPUT:
@@ -192,7 +192,7 @@ class Berkovich_Cp(Berkovich):
 
         - A prime of `\QQ` if ``base_ring`` is `\QQ`.
 
-        - ``None`` if ``base_ring`` is a p-adic field.
+        - ``None`` if ``base_ring`` is a `p`-adic field.
 
         EXAMPLES::
 
@@ -313,14 +313,14 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
     for all `f \in \CC_p[x]`.
 
     We can represent the Berkovich affine line in two separate ways:
-    either using a p-adic field to represent elements or using
+    either using a `p`-adic field to represent elements or using
     a number field to represent elements while storing an ideal
     of the ring of integers of the number field, which specifies
     an embedding of the number field into `\CC_p`. See the examples.
 
     INPUT:
 
-    - ``base`` -- Three cases:
+    - ``base`` -- three cases:
 
       * a prime number `p`. Centers of elements are then represented
         as points of `\QQ_p`.
@@ -368,8 +368,8 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
         Type I point centered at 2 + O(3)
 
     Note that this point has very low precision, as ``B`` was initialized
-    with a p-adic field of capped-relative precision one. For high precision,
-    pass in a high precision p-adic field::
+    with a `p`-adic field of capped-relative precision one. For high precision,
+    pass in a high precision `p`-adic field::
 
         sage: B = Berkovich_Cp_Affine(Qp(3, 1000)); B
         Affine Berkovich line over Cp(3) of precision 1000
@@ -400,7 +400,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
     ring of integers of the number field. Specifying the ideal uniquely
     specifies an embedding of the number field into `\CC_p`.
 
-    Unlike in the case where Berkovich space is backed by a p-adic
+    Unlike in the case where Berkovich space is backed by a `p`-adic
     field, any point of a Berkovich space backed by a number field
     must be centered at a point of that number field::
 
@@ -522,14 +522,14 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
     of the Berkovich affine line.
 
     We can represent the Berkovich projective line in two separate ways:
-    either using a p-adic field to represent elements or using
+    either using a `p`-adic field to represent elements or using
     a number field to represent elements while storing an ideal
     of the ring of integers of the number field, which specifies
     an embedding of the number field into `\CC_p`. See the examples.
 
     INPUT:
 
-    - ``base`` -- Three cases:
+    - ``base`` -- three cases:
 
       * a prime number `p`. Centers of elements are then represented
         as points of projective space of dimension 1 over `\QQ_p`.
@@ -564,7 +564,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
 
     For details about element construction, see the documentation of
     :class:`Berkovich_Element_Cp_Projective`. Initializing a Berkovich projective
-    line by passing in a p-adic space looks the same::
+    line by passing in a `p`-adic space looks the same::
 
         sage: B = Berkovich_Cp_Projective(Qp(3)); B
         Projective Berkovich line over Cp(3) of precision 20
@@ -601,7 +601,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
     of the number field. Specifying the ideal uniquely specifies
     an embedding of the number field into `\CC_p`.
 
-    Unlike in the case where Berkovich space is backed by a p-adic
+    Unlike in the case where Berkovich space is backed by a `p`-adic
     field, any point of a Berkovich space backed by a number field
     must be centered at a point of that number field::
 
@@ -684,7 +684,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
         r"""
         The base ring of this Berkovich Space.
 
-        OUTPUT: A field.
+        OUTPUT: a field
 
         EXAMPLES::
 

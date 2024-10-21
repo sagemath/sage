@@ -18,9 +18,9 @@ def p_saturation(A, p, proof=True):
     """
     INPUT:
 
-    - A -- a matrix over ZZ
-    - p -- a prime
-    - proof -- bool (default: ``True``)
+    - ``A`` -- a matrix over ZZ
+    - ``p`` -- a prime
+    - ``proof`` -- boolean (default: ``True``)
 
     OUTPUT:
 
@@ -73,12 +73,10 @@ def random_sublist_of_size(k, n):
     """
     INPUT:
 
-    - k -- an integer
-    - n -- an integer
+    - ``k`` -- integer
+    - ``n`` -- integer
 
-    OUTPUT:
-
-    a randomly chosen sublist of range(k) of size n.
+    OUTPUT: a randomly chosen sublist of ``range(k)`` of size `n`
 
     EXAMPLES::
 
@@ -120,17 +118,15 @@ def random_sublist_of_size(k, n):
 
 def solve_system_with_difficult_last_row(B, A):
     """
-    Solve the matrix equation B*Z = A when the last row of `B`
+    Solve the matrix equation ``B*Z = A`` when the last row of `B`
     contains huge entries.
 
     INPUT:
 
-    - B -- a square n x n nonsingular matrix with painful big bottom row.
-    - A -- an n x k matrix.
+    - ``B`` -- a square n x n nonsingular matrix with painful big bottom row
+    - ``A`` -- an n x k matrix
 
-    OUTPUT:
-
-    the unique solution to B*Z = A.
+    OUTPUT: the unique solution to ``B*Z = As``
 
     EXAMPLES::
 
@@ -187,21 +183,19 @@ def solve_system_with_difficult_last_row(B, A):
     return X
 
 def saturation(A, proof=True, p=0, max_dets=5):
-    """
-    Compute a saturation matrix of A.
+    r"""
+    Compute a saturation matrix of `A`.
 
     INPUT:
 
-    - A     -- a matrix over ZZ
-    - proof -- bool (default: ``True``)
-    - p     -- int (default: 0); if not 0 only guarantees that output is
-      p-saturated
-    - max_dets -- int (default: 4) max number of dets of submatrices to
-      compute.
+    - ``A`` -- a matrix over `\ZZ`
+    - ``proof`` -- boolean (default: ``True``)
+    - ``p`` -- integer (default: 0); if not 0 only guarantees that output is
+      `p`-saturated
+    - ``max_dets`` -- integer (default: 4); max number of dets of submatrices to
+      compute
 
-    OUTPUT:
-
-    matrix -- saturation of the matrix A.
+    OUTPUT: matrix; saturation of the matrix `A`
 
     EXAMPLES::
 
@@ -300,9 +294,7 @@ def index_in_saturation(A, proof=True):
 
     - ``proof`` -- boolean (``True`` or ``False``)
 
-    OUTPUT:
-
-    An integer
+    OUTPUT: integer
 
     EXAMPLES::
 

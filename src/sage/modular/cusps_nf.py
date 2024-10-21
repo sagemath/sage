@@ -95,7 +95,7 @@ def list_of_representatives(N):
 
     INPUT:
 
-    - ``N`` -- an ideal of a number field.
+    - ``N`` -- an ideal of a number field
 
     OUTPUT:
 
@@ -125,9 +125,7 @@ def NFCusps(number_field):
 
     - ``number_field`` -- a number field
 
-    OUTPUT:
-
-    The set of cusps over the given number field.
+    OUTPUT: the set of cusps over the given number field
 
     EXAMPLES::
 
@@ -239,13 +237,12 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
             Number Field Cusps
             sage: kCusps.rename(); kCusps
             Set of all cusps of Number Field in a with defining polynomial x^2 + 2
-
         """
         return "Set of all cusps of %s" % self.number_field()
 
     def _latex_(self):
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -333,13 +330,13 @@ class NFCusp(Element):
 
     INPUT:
 
-    - ``number_field`` -- the number field over which the cusp is defined.
+    - ``number_field`` -- the number field over which the cusp is defined
 
     - ``a`` -- it can be a number field element (integral or not), or
-      a number field cusp.
+      a number field cusp
 
     - ``b`` -- (optional) when present, it must be either Infinity or
-      coercible to an element of the number field.
+      coercible to an element of the number field
 
     - ``lreps`` -- (optional) a list of chosen representatives for all the
       ideal classes of the field. When given, the representative of the cusp
@@ -787,8 +784,8 @@ class NFCusp(Element):
 
         INPUT:
 
-        - ``g`` -- a list of integral elements [a, b, c, d] that are the
-          entries of a 2x2 matrix.
+        - ``g`` -- list of integral elements [a, b, c, d] that are the
+          entries of a 2x2 matrix
 
         OUTPUT:
 
@@ -912,13 +909,11 @@ class NFCusp(Element):
         INPUT:
 
         - ``other`` -- a number field cusp or a list of two number field
-          elements which define a cusp.
+          elements which define a cusp
 
         - ``N`` -- an ideal of the number field (level)
 
-        OUTPUT:
-
-        - bool -- ``True`` if the cusps are equivalent.
+        OUTPUT: boolean; ``True`` if the cusps are equivalent
 
         - a transformation matrix -- (if ``Transformation=True``) a list of
           integral elements [a, b, c, d] which are the entries of a 2x2 matrix
@@ -1030,11 +1025,9 @@ def Gamma0_NFCusps(N):
 
     INPUT:
 
-    - ``N`` -- an integral ideal of the number field k (the level).
+    - ``N`` -- an integral ideal of the number field k (the level)
 
-    OUTPUT:
-
-    A list of inequivalent number field cusps.
+    OUTPUT: list of inequivalent number field cusps
 
     EXAMPLES::
 
@@ -1123,11 +1116,9 @@ def number_of_Gamma0_NFCusps(N):
 
     INPUT:
 
-    - ``N`` -- a number field ideal.
+    - ``N`` -- a number field ideal
 
-    OUTPUT:
-
-    integer -- the number of orbits of cusps under Gamma0(N)-action.
+    OUTPUT: integer; the number of orbits of cusps under Gamma0(N)-action
 
     EXAMPLES::
 
@@ -1165,10 +1156,10 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
 
     INPUT:
 
-    - ``N`` -- number field ideal.
+    - ``N`` -- number field ideal
 
-    - ``nlists`` -- optional (default 1). The number of lists of prime ideals
-      we want.
+    - ``nlists`` -- (default: 1) the number of lists of prime ideals
+      we want
 
     OUTPUT:
 
@@ -1224,7 +1215,7 @@ def units_mod_ideal(I):
 
     INPUT:
 
-    - ``I`` -- number field ideal.
+    - ``I`` -- number field ideal
 
     OUTPUT:
 

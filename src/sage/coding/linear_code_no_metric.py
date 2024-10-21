@@ -141,7 +141,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
     def __init__(self, base_field, length, default_encoder_name, default_decoder_name, metric='Hamming'):
         """
-        Initializes mandatory parameters that any linear code shares.
+        Initialize mandatory parameters that any linear code shares.
 
         This method only exists for inheritance purposes as it initializes
         parameters that need to be known by every linear code. The class
@@ -232,7 +232,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
           will be used if default value is kept.
 
         - ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used.
+          encoder that is used
 
         EXAMPLES::
 
@@ -247,7 +247,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
     def __eq__(self, other):
         r"""
-        Tests equality between two linear codes.
+        Test equality between two linear codes.
 
         EXAMPLES::
 
@@ -283,9 +283,10 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
     def __ne__(self, other):
         r"""
-        Tests inequality of ``self`` and ``other``.
+        Test inequality of ``self`` and ``other``.
 
-        This is a generic implementation, which returns the inverse of ``__eq__`` for self.
+        This is a generic implementation, which returns the inverse of
+        ``__eq__`` for ``self``.
 
         EXAMPLES::
 
@@ -391,9 +392,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         r"""
         Return a basis of ``self``.
 
-        OUTPUT:
-
-        -  ``Sequence`` -- an immutable sequence whose universe is ambient space of ``self``.
+        OUTPUT: ``Sequence`` -- an immutable sequence whose universe is ambient space of ``self``
 
         EXAMPLES::
 
@@ -464,9 +463,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         - ``r`` -- a vector of the same length as ``self``
 
-        OUTPUT:
-
-        - a column vector
+        OUTPUT: a column vector
 
         EXAMPLES::
 
@@ -498,7 +495,8 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
     def __contains__(self, v):
         r"""
-        Return True if `v` can be coerced into ``self``. Otherwise, returns False.
+        Return ``True`` if `v` can be coerced into ``self``.
+        Otherwise, return ``False``.
 
         EXAMPLES::
 
@@ -561,14 +559,12 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         INPUT:
 
-        - ``return_permutation`` -- (default: ``True``) if ``True``, the column
-          permutation which brings ``self`` into the returned code is also
-          returned.
+        - ``return_permutation`` -- boolean (default: ``True``); if ``True``,
+          the column permutation which brings ``self`` into the returned code
+          is also returned
 
-        OUTPUT:
-
-        - A :class:`LinearCode` whose :meth:`systematic_generator_matrix` is
-          guaranteed to be of the form `[I \vert A]`.
+        OUTPUT: a :class:`LinearCode` whose :meth:`systematic_generator_matrix`
+        is guaranteed to be of the form `[I \vert A]`.
 
         EXAMPLES::
 
@@ -657,9 +653,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         is called an information set if the corresponding columns
         form a square matrix of full rank.
 
-        OUTPUT:
-
-        - Information set of a systematic generator matrix of the code.
+        OUTPUT: information set of a systematic generator matrix of the code
 
         EXAMPLES::
 
@@ -683,10 +677,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         - A list of positions, i.e. integers in the range 0 to `n-1` where `n`
           is the length of ``self``.
 
-        OUTPUT:
-
-        - A boolean indicating whether the positions form an information set.
-
+        OUTPUT: boolean indicating whether the positions form an information set
 
         EXAMPLES::
 
@@ -723,7 +714,6 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: L = list(C)
             sage: L[10].is_immutable()
             True
-
         """
         from sage.modules.finite_submodule_iter import \
                                                 FiniteFieldsubspace_iterator
@@ -756,7 +746,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
            ``[i*a^0 * G[0] + a^0*G[1] for i in range(p)]``,
 
         and so on.
-        Hence the `i`-th element can be obtained by the p-adic expansion
+        Hence the `i`-th element can be obtained by the `p`-adic expansion
         of `i` as ``[i_0, i_1, ...,i_{m-1}, i_m, i_{m+1}, ..., i_{km-1}].``
 
         The element that is generated is:
@@ -801,7 +791,6 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
             sage: C[0].is_immutable()
             True
-
         """
         # IMPORTANT: If the __iter__() function implementation is changed
         # then the implementation here must also be changed so that
@@ -1051,14 +1040,14 @@ class LinearCodeSystematicEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder.
+    - ``code`` -- the associated code of this encoder
 
     - ``systematic_positions`` -- (default: ``None``) the positions in codewords that
       should correspond to the message symbols. A list of `k` distinct integers in
       the range 0 to `n-1` where `n` is the length of the code and `k` its
-      dimension. The 0th symbol of a message will then be at position
+      dimension. The `0`-th symbol of a message will then be at position
       ``systematic_positions[0]``, the 1st index at position
-      ``systematic_positions[1]``, etc. A :class:`ValueError` is raised at
+      ``systematic_positions[1]``, etc. A :exc:`ValueError` is raised at
       construction time if the supplied indices do not form an information set.
 
     EXAMPLES:
@@ -1154,7 +1143,7 @@ class LinearCodeSystematicEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between LinearCodeSystematicEncoder objects.
+        Test equality between LinearCodeSystematicEncoder objects.
 
         EXAMPLES::
 
@@ -1286,7 +1275,7 @@ class LinearCodeSystematicEncoder(Encoder):
 
     def systematic_permutation(self):
         r"""
-        Return a permutation which would take the systematic positions into [0,..,k-1]
+        Return a permutation which would take the systematic positions into [0,..,k-1].
 
         EXAMPLES::
 

@@ -167,9 +167,7 @@ class Hyperplane(LinearExpression):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -183,9 +181,7 @@ class Hyperplane(LinearExpression):
         r"""
         Return a LaTeX representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -209,9 +205,7 @@ class Hyperplane(LinearExpression):
         """
         Return the normal vector.
 
-        OUTPUT:
-
-        A vector over the base ring.
+        OUTPUT: a vector over the base ring
 
         EXAMPLES::
 
@@ -229,9 +223,7 @@ class Hyperplane(LinearExpression):
         """
         Return the index of the largest entry of the normal vector.
 
-        OUTPUT:
-
-        An integer. The index of the largest entry.
+        OUTPUT: integer; the index of the largest entry
 
         EXAMPLES::
 
@@ -266,9 +258,7 @@ class Hyperplane(LinearExpression):
 
         - ``q`` -- point (as a vector, list, or tuple)
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -288,9 +278,7 @@ class Hyperplane(LinearExpression):
         """
         Return the hyperplane as a polyhedron.
 
-        OUTPUT:
-
-        A :func:`~sage.geometry.polyhedron.constructor.Polyhedron` instance.
+        OUTPUT: a :func:`~sage.geometry.polyhedron.constructor.Polyhedron` instance
 
         EXAMPLES::
 
@@ -427,9 +415,7 @@ class Hyperplane(LinearExpression):
         r"""
         The dimension of the hyperplane.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -449,9 +435,7 @@ class Hyperplane(LinearExpression):
         - ``other`` -- a hyperplane, a polyhedron, or something that
           defines a polyhedron
 
-        OUTPUT:
-
-        A polyhedron.
+        OUTPUT: a polyhedron
 
         EXAMPLES::
 
@@ -485,7 +469,7 @@ class Hyperplane(LinearExpression):
         A vector in the ambient vector space that lies on the
         hyperplane.
 
-        In finite characteristic, a :class:`ValueError` is raised if the
+        In finite characteristic, a :exc:`ValueError` is raised if the
         the norm of the hyperplane normal is zero.
 
         EXAMPLES::
@@ -635,9 +619,7 @@ class Hyperplane(LinearExpression):
         """
         Plot the hyperplane.
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 
@@ -717,9 +699,7 @@ class AmbientVectorSpace(LinearExpressionModule):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -737,9 +717,7 @@ class AmbientVectorSpace(LinearExpressionModule):
         """
         Return the ambient space dimension.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -761,9 +739,7 @@ class AmbientVectorSpace(LinearExpressionModule):
 
         - ``base_ring`` -- a ring; the new base ring
 
-        OUTPUT:
-
-        A new :class:`AmbientVectorSpace`.
+        OUTPUT: a new :class:`AmbientVectorSpace`
 
         EXAMPLES::
 

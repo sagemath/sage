@@ -3,10 +3,10 @@
 r"""
 Routines for computing special values of `L`-functions
 
-- :func:`gamma__exact` -- Exact values of the `\Gamma` function at integers and half-integers
-- :func:`zeta__exact` -- Exact values of the Riemann `\zeta` function at critical values
-- :func:`quadratic_L_function__exact` -- Exact values of the Dirichlet L-functions of quadratic characters at critical values
-- :func:`quadratic_L_function__numerical` -- Numerical values of the Dirichlet L-functions of quadratic characters in the domain of convergence
+- :func:`gamma__exact` -- exact values of the `\Gamma` function at integers and half-integers
+- :func:`zeta__exact` -- exact values of the Riemann `\zeta` function at critical values
+- :func:`quadratic_L_function__exact` -- exact values of the Dirichlet `L`-functions of quadratic characters at critical values
+- :func:`quadratic_L_function__numerical` -- numerical values of the Dirichlet `L`-functions of quadratic characters in the domain of convergence
 """
 
 import sage.rings.abc
@@ -98,7 +98,7 @@ def gamma__exact(n):
 
 def zeta__exact(n):
     r"""
-    Return the exact value of the Riemann Zeta function
+    Return the exact value of the Riemann Zeta function.
 
     The argument must be a critical value, namely either positive even
     or negative odd.
@@ -270,7 +270,7 @@ def quadratic_L_function__exact(n, d):
 
 def quadratic_L_function__numerical(n, d, num_terms=1000):
     """
-    Evaluate the Dirichlet L-function (for quadratic character) numerically
+    Evaluate the Dirichlet `L`-function (for quadratic character) numerically
     (in a very naive way).
 
     EXAMPLES:

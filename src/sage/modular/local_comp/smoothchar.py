@@ -99,7 +99,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
 
     def _check_level(self):
         r"""
-        Checks that this character has the level it claims to have, and if not,
+        Check that this character has the level it claims to have, and if not,
         decrement the level appropriately. This is called by :meth:`__init__`.
 
         EXAMPLES::
@@ -267,7 +267,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
 
     def _mul_(self, other):
         r"""
-        Product of self and other.
+        Product of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -288,7 +288,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
 
     def __invert__(self):
         r"""
-        Multiplicative inverse of self.
+        Multiplicative inverse of ``self``.
 
         EXAMPLES::
 
@@ -380,7 +380,7 @@ class SmoothCharacterGroupGeneric(Parent):
         r"""
         Construct an element of this group from ``x`` (possibly noncanonically).
         This only works if ``x`` is a character of a field containing the field of
-        self, whose values lie in a field that can be converted into self.
+        ``self``, whose values lie in a field that can be converted into ``self``.
 
         EXAMPLES::
 
@@ -496,7 +496,6 @@ class SmoothCharacterGroupGeneric(Parent):
             sage: G = SmoothCharacterGroupUnramifiedQuadratic(3, QQ)
             sage: G.character(0, [1]).base_extend(K)
             Character of unramified extension Q_3(s)* (s^2 + 2*s + 2 = 0), of level 0, mapping 3 |--> 1
-
         """
         return (isinstance(other, SmoothCharacterGroupGeneric)
                 and other.number_field() == self.number_field()
@@ -548,7 +547,6 @@ class SmoothCharacterGroupGeneric(Parent):
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Rational Field to Ring of integers modulo 3
-
         """
         if not ring.has_coerce_map_from(self.base_ring()):
             ring.coerce(self.base_ring().an_element())
@@ -559,7 +557,7 @@ class SmoothCharacterGroupGeneric(Parent):
     @abstract_method
     def _field_name(self):
         r"""
-        A string representing the name of the p-adic field of which this is the
+        A string representing the name of the `p`-adic field of which this is the
         character group. To be overridden by derived subclasses.
 
         EXAMPLES::
@@ -574,7 +572,7 @@ class SmoothCharacterGroupGeneric(Parent):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -588,7 +586,7 @@ class SmoothCharacterGroupGeneric(Parent):
     def ideal(self, level):
         r"""
         Return the ``level``-th power of the maximal ideal of the ring of
-        integers of the p-adic field. Since we approximate by using number
+        integers of the `p`-adic field. Since we approximate by using number
         field arithmetic, what is actually returned is an ideal in a number
         field.
 
@@ -685,14 +683,14 @@ class SmoothCharacterGroupGeneric(Parent):
 
         INPUT:
 
-        - ``level`` (integer) an integer `\ge 0`
-        - ``values_on_gens`` (sequence) a sequence of elements of length equal
+        - ``level`` -- integer an integer `\ge 0`
+        - ``values_on_gens`` -- sequence a sequence of elements of length equal
           to the length of ``self.unit_gens(level)``. The values should be
           convertible (that is, possibly noncanonically) into the base ring of self; they
           should all be units, and all but the last must be roots of unity (of
           the orders given by ``self.exponents(level)``.
 
-        .. note::
+        .. NOTE::
 
             The character returned may have level less than ``level`` in general.
 
@@ -944,7 +942,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         Return the group of characters of the same field but with values in a
         different ring. This need not have anything to do with the original
         base ring, and in particular there won't generally be a coercion map
-        from self to the new group -- use
+        from ``self`` to the new group -- use
         :meth:`~SmoothCharacterGroupGeneric.base_extend` if you want this.
 
         EXAMPLES::
@@ -1025,7 +1023,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
 
         INPUT:
 
-        - ``c`` (integer) an integer `\ge 1`
+        - ``c`` -- integer `\ge 1`
 
         EXAMPLES::
 
@@ -1105,6 +1103,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         ram = [self.from_dirichlet(chi) for chi in DirichletGroup(self.prime() ** q, QQ) if not chi.is_trivial()]
         nr = self.character(0, [-1])
         return sorted([nr] + list(ram) + [f*nr for f in ram])
+
 
 class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
     r"""
@@ -1306,16 +1305,16 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
 
         INPUT:
 
-        - ``chi``: a smooth character of `\QQ_p`, where `p` is the residue
-          characteristic of `F`, with values in the base ring of self (or some
+        - ``chi`` -- a smooth character of `\QQ_p`, where `p` is the residue
+          characteristic of `F`, with values in the base ring of ``self`` (or some
           other ring coercible to it)
-        - ``level``: the level of the new character (which should be at least
+        - ``level`` -- the level of the new character (which should be at least
           the level of ``chi``)
-        - ``vals``: a list of elements of the base ring of self (or some other
+        - ``vals`` -- a list of elements of the base ring of ``self`` (or some other
           ring coercible to it), specifying values on the quotients returned by
-          :meth:`quotient_gens`.
+          :meth:`quotient_gens`
 
-        A :class:`ValueError` will be raised if `x^t \ne \chi(\alpha^t)`, where `t`
+        A :exc:`ValueError` will be raised if `x^t \ne \chi(\alpha^t)`, where `t`
         is the smallest integer such that `\alpha^t` is congruent modulo
         `p^{\rm level}` to an element of `\QQ_p`.
 
@@ -1394,6 +1393,7 @@ class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
             raise ValueError("Invalid values for extension")
         return chiE
 
+
 class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
     r"""
     The group of smooth characters of `\QQ_{p^2}^\times`, where `\QQ_{p^2}` is
@@ -1433,7 +1433,7 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
         Return the character group of the same field, but with values in a
         different coefficient ring. This need not have anything to do with the
         original base ring, and in particular there won't generally be a
-        coercion map from self to the new group -- use
+        coercion map from ``self`` to the new group -- use
         :meth:`~SmoothCharacterGroupGeneric.base_extend` if you want this.
 
         EXAMPLES::
@@ -1622,10 +1622,10 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
 
         INPUT:
 
-        - ``prime`` -- a prime integer
+        - ``prime`` -- prime integer
         - ``flag`` -- either 0 or 1
         - ``base_ring`` -- a ring
-        - ``names`` -- a variable name (default ``s``)
+        - ``names`` -- a variable name (default: ``'s'``)
 
         If ``flag`` is 0, return the group of characters of the multiplicative
         group of the field `\QQ_p(\sqrt{p})`. If ``flag`` is 1, use the
@@ -1677,7 +1677,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
         Return the character group of the same field, but with values in a
         different coefficient ring. This need not have anything to do with the
         original base ring, and in particular there won't generally be a
-        coercion map from self to the new group -- use
+        coercion map from ``self`` to the new group -- use
         :meth:`~SmoothCharacterGroupGeneric.base_extend` if you want this.
 
         EXAMPLES::

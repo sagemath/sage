@@ -25,7 +25,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson"):
+def mass__by_Siegel_densities(self, odd_algorithm='Pall', even_algorithm='Watson'):
     """
     Return the mass of transformations (det 1 and -1).
 
@@ -35,9 +35,10 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
 
     INPUT:
 
-    - ``odd_algorithm`` -- algorithm to be used when `p>2`; ``"Pall"`` (only one choice for now)
-    - ``even_algorithm`` -- algorithm to be used when `p=2`;
-      either ``"Kitaoka"`` or ``"Watson"`` (the default)
+    - ``odd_algorithm`` -- algorithm to be used when `p>2`; ``'Pall'`` (only
+      one choice for now)
+    - ``even_algorithm`` -- algorithm to be used when `p=2`; either
+      ``'Kitaoka'`` or ``'Watson'`` (the default)
 
     REFERENCES:
 
@@ -128,7 +129,7 @@ def Pall_mass_density_at_odd_prime(self, p):
 
     - ``p`` -- a prime number > 2
 
-    OUTPUT: a rational number.
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -269,7 +270,6 @@ def Kitaoka_mass_at_2(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.Kitaoka_mass_at_2()   # WARNING:  WE NEED TO CHECK THIS CAREFULLY!
         1/2
-
     """
     # Make a 0-dim'l quadratic form (for initialization purposes)
     Null_Form = deepcopy(self)
@@ -354,7 +354,7 @@ def mass_at_two_by_counting_mod_power(self, k):
 
     INPUT:
 
-    - ``k`` -- an integer `\geq 1`
+    - ``k`` -- integer `\geq 1`
 
     OUTPUT: a rational number
 

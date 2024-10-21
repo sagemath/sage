@@ -283,9 +283,9 @@ class HeckeModuleElement(ModuleElement):
 
     def is_new(self, p=None) -> bool:
         r"""
-        Return ``True`` if this element is p-new.
+        Return ``True`` if this element is `p`-new.
 
-        If p is ``None``, return ``True`` if the element is new.
+        If `p` is ``None``, return ``True`` if the element is new.
 
         EXAMPLES::
 
@@ -300,9 +300,9 @@ class HeckeModuleElement(ModuleElement):
 
     def is_old(self, p=None) -> bool:
         r"""
-        Return ``True`` if this element is p-old.
+        Return ``True`` if this element is `p`-old.
 
-        If p is ``None``, return ``True`` if the element is old.
+        If `p` is ``None``, return ``True`` if the element is old.
 
         EXAMPLES::
 

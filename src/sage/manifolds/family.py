@@ -64,7 +64,6 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
         Traceback (most recent call last):
         ...
         TypeError: all objects must have the same manifold
-
     """
     def __init__(self, objects=(), keys=None):
         r"""
@@ -90,7 +89,6 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
             <generator object ...>
             sage: ManifoldSubsetFiniteFamily(gen)
             Set {I, M} of subsets of the 2-dimensional topological manifold M
-
         """
         if isinstance(objects, dict):
             dictionary = objects
@@ -125,7 +123,6 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
             sage: B = M.subset('B')
             sage: ManifoldObjectFiniteFamily([A, B]).__repr__()           # indirect doctest
             'Set {A, B} of objects of the 2-dimensional topological manifold M'
-
         """
         return "objects"
 
@@ -164,7 +161,6 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
             sage: B = M.subset('B')
             sage: ManifoldObjectFiniteFamily([A, B]).__repr__()
             'Set {A, B} of objects of the 2-dimensional topological manifold M'
-
         """
         if self:
             return "Set {} of {} of the {}".format(self._name, self._repr_object_type(), self._manifold)
@@ -217,7 +213,6 @@ class ManifoldSubsetFiniteFamily(ManifoldObjectFiniteFamily):
         Traceback (most recent call last):
         ...
         TypeError: all open subsets must have the same manifold
-
     """
 
     @classmethod
@@ -258,7 +253,6 @@ class ManifoldSubsetFiniteFamily(ManifoldObjectFiniteFamily):
             sage: B = M.subset('B')
             sage: ManifoldSubsetFiniteFamily([A, B]).__repr__()           # indirect doctest
             'Set {A, B} of subsets of the 2-dimensional topological manifold M'
-
         """
         if all(subset.is_open() for subset in self):
             return "open subsets"

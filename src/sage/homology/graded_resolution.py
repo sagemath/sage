@@ -102,12 +102,11 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
     - ``degrees`` -- (default: a list with all entries `1`) a list of integers
       or integer vectors giving degrees of variables of `S`
 
-    - ``shifts`` -- a list of integers or integer vectors giving shifts of
+    - ``shifts`` -- list of integers or integer vectors giving shifts of
       degrees of `n` summands of the free module `M`; this is a list of zero
       degrees of length `n` by default
 
-    - ``name`` -- a string; name of the base ring
-
+    - ``name`` -- string; name of the base ring
     """
     def __init__(self, module, degrees=None, shifts=None, name='S', **kwds):
         r"""
@@ -338,7 +337,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
             sage: M = matrix([[x^3, 3*x^3, 5*x^3],
             ....:             [0, x, 2*x]])
             sage: res = FreeResolution(M, graded=True)
-            sage: TestSuite(res).run(skip="_test_pickling")
+            sage: TestSuite(res).run(skip='_test_pickling')
         """
         super().__init__(module, degrees=degrees, *args, **kwds)
 
@@ -423,11 +422,11 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
     - ``degrees`` -- (default: a list with all entries `1`) a list of integers
       or integer vectors giving degrees of variables of `S`
 
-    - ``shifts`` -- a list of integers or integer vectors giving shifts of
+    - ``shifts`` -- list of integers or integer vectors giving shifts of
       degrees of `n` summands of the free module `M`; this is a list of zero
       degrees of length `n` by default
 
-    - ``name`` -- a string; name of the base ring
+    - ``name`` -- string; name of the base ring
 
     - ``algorithm`` -- Singular algorithm to compute a resolution of ``ideal``
 

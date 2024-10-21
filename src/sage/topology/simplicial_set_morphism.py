@@ -82,11 +82,11 @@ class SimplicialSetHomset(Homset):
         r"""
         INPUT:
 
-        - ``f`` -- a dictionary with keys the simplices of the domain
+        - ``f`` -- dictionary with keys the simplices of the domain
           and values simplices of the codomain
 
-        - ``check`` -- optional, default ``True``. Pass this to the
-          morphism constructor.
+        - ``check`` -- boolean (default ``True``); pass this to the
+          morphism constructor
 
         EXAMPLES::
 
@@ -152,9 +152,8 @@ class SimplicialSetHomset(Homset):
 
         INPUT:
 
-        - ``point`` -- optional, default ``None``. If specified, it
-          must be a 0-simplex in the codomain, and it will be the
-          target of the constant map.
+        - ``point`` -- (default: ``None``) if specified, it must be a 0-simplex
+          in the codomain, and it will be the target of the constant map
 
         If ``point`` is specified, it is the target of the constant
         map. Otherwise, if the codomain is pointed, the target is its
@@ -301,7 +300,7 @@ class SimplicialSetHomset(Homset):
 
     def _latex_(self):
         r"""
-        LaTeX representation
+        LaTeX representation.
 
         EXAMPLES::
 
@@ -322,17 +321,16 @@ class SimplicialSetMorphism(Morphism):
 
         INPUT:
 
-        - ``data`` -- optional. Dictionary defining the map.
+        - ``data`` -- (optional) dictionary defining the map
         - ``domain`` -- simplicial set
         - ``codomain`` -- simplicial set
-        - ``constant`` -- optional: if not ``None``, then this should
+        - ``constant`` -- (default: ``None``) if not ``None``, then this should
           be a vertex in the codomain, in which case return the
-          constant map with this vertex as the target.
-        - ``identity`` -- optional: if ``True``, return the identity
-          morphism.
-        - ``check`` -- optional, default ``True``. If ``True``, check
-          that this is actually a morphism: it commutes with the face
-          maps.
+          constant map with this vertex as the target
+        - ``identity`` -- boolean (default: ``False``); if ``True``, return the
+          identity morphism
+        - ``check`` -- boolean (default: ``True``); if ``True``, check
+          that this is actually a morphism: it commutes with the face maps
 
         So to define a map, you must specify ``domain`` and
         ``codomain``. If the map is constant, specify the target (a
@@ -601,9 +599,11 @@ class SimplicialSetMorphism(Morphism):
 
     def __call__(self, x):
         """
-        INPUT: a simplex of the domain.
+        Return the image of ``x`` under this morphism.
 
-        Return its image under this morphism.
+        INPUT:
+
+        - ``x`` -- a simplex of the domain
 
         EXAMPLES::
 
@@ -818,10 +818,11 @@ class SimplicialSetMorphism(Morphism):
         if self._is_identity:
             return True
         domain = self.domain()
-        for n in range(domain.dimension()+1):
-            input = domain.n_cells(n)
-            output = {self(sigma) for sigma in input if self(sigma).is_nondegenerate()}
-            if len(input) > len(output):
+        for n in range(domain.dimension() + 1):
+            domain_cells = domain.n_cells(n)
+            output = {self(sigma) for sigma in domain_cells
+                      if self(sigma).is_nondegenerate()}
+            if len(domain_cells) > len(output):
                 return False
         return True
 
@@ -912,7 +913,7 @@ class SimplicialSetMorphism(Morphism):
         INPUT:
 
         - ``others`` -- morphisms of simplicial sets, the domains of
-          which must all equal that of ``self``.
+          which must all equal that of ``self``
 
         This returns the pushout as a simplicial set. See
         :class:`sage.topology.simplicial_set_constructions.PushoutOfSimplicialSets`
@@ -947,7 +948,7 @@ class SimplicialSetMorphism(Morphism):
         INPUT:
 
         - ``others`` -- morphisms of simplicial sets, the codomains of
-          which must all equal that of ``self``.
+          which must all equal that of ``self``
 
         This returns the pullback as a simplicial set. See
         :class:`sage.topology.simplicial_set_constructions.PullbackOfSimplicialSets`
@@ -1127,7 +1128,7 @@ class SimplicialSetMorphism(Morphism):
         r"""
         Return the product of this map with ``others``.
 
-        - ``others`` -- morphisms of simplicial sets.
+        - ``others`` -- morphisms of simplicial sets
 
         If the relevant maps are `f_i: X_i \to Y_i`, this returns the
         natural map `\prod X_i \to \prod Y_i`.
@@ -1153,7 +1154,7 @@ class SimplicialSetMorphism(Morphism):
         r"""
         Return the coproduct of this map with ``others``.
 
-        - ``others`` -- morphisms of simplicial sets.
+        - ``others`` -- morphisms of simplicial sets
 
         If the relevant maps are `f_i: X_i \to Y_i`, this returns the
         natural map `\amalg X_i \to \amalg Y_i`.
@@ -1180,7 +1181,7 @@ class SimplicialSetMorphism(Morphism):
 
         INPUT:
 
-        - ``n`` (optional) -- non-negative integer, default 1
+        - ``n`` -- nonnegative integer (default: 1)
 
         EXAMPLES::
 
@@ -1245,7 +1246,7 @@ class SimplicialSetMorphism(Morphism):
 
         - ``n`` -- the dimension
 
-        - ``domain`` -- optional, the domain. Specify this to
+        - ``domain`` -- (optional) the domain. Specify this to
           explicitly specify the domain; otherwise, Sage will attempt
           to compute it. Specifying this can be useful if the domain
           is built as a pushout or pullback, so trying to compute it
@@ -1253,7 +1254,7 @@ class SimplicialSetMorphism(Morphism):
           infinite recursion. (Users should not have to specify this,
           but it may be useful for developers.)
 
-        - ``codomain`` -- optional, the codomain.
+        - ``codomain`` -- (optional) the codomain
 
         EXAMPLES::
 
@@ -1304,10 +1305,10 @@ class SimplicialSetMorphism(Morphism):
         INPUT:
 
         - ``base_ring`` -- default ``ZZ``
-        - ``augmented`` -- boolean, default ``False``. If ``True``,
-          return the augmented complex.
-        - ``cochain`` -- boolean, default ``False``. If ``True``,
-          return the cochain complex.
+        - ``augmented`` -- boolean (default: ``False``); if ``True``,
+          return the augmented complex
+        - ``cochain`` -- boolean (default: ``False``); if ``True``,
+          return the cochain complex
 
         EXAMPLES::
 
@@ -1374,14 +1375,14 @@ class SimplicialSetMorphism(Morphism):
 
     def induced_homology_morphism(self, base_ring=None, cohomology=False):
         """
-        Return the map in (co)homology induced by this map
+        Return the map in (co)homology induced by this map.
 
         INPUT:
 
         - ``base_ring`` -- must be a field (default: ``QQ``)
 
-        - ``cohomology`` -- boolean (default: ``False``). If
-          ``True``, the map induced in cohomology rather than homology.
+        - ``cohomology`` -- boolean (default: ``False``); if
+          ``True``, the map induced in cohomology rather than homology
 
         EXAMPLES::
 

@@ -47,7 +47,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
 
     EXAMPLES::
 
-        sage: W = WeylGroup("B3",prefix="s")
+        sage: W = WeylGroup("B3",prefix='s')
         sage: [s1,s2,s3] = W.simple_reflections()
         sage: R.<q> = LaurentPolynomialRing(QQ)
         sage: KL = KazhdanLusztigPolynomial(W,q)
@@ -67,7 +67,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: W = WeylGroup("B3",prefix="s")
+            sage: W = WeylGroup("B3",prefix='s')
             sage: R.<q> = LaurentPolynomialRing(QQ)
             sage: KL = KazhdanLusztigPolynomial(W,q)
             sage: TestSuite(KL).run()
@@ -96,7 +96,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: R.<q>=QQ[]
-            sage: W = WeylGroup("A2", prefix="s")
+            sage: W = WeylGroup("A2", prefix='s')
             sage: [s1,s2]=W.simple_reflections()
             sage: KL = KazhdanLusztigPolynomial(W, q)
             sage: [KL.R(x,s2*s1) for x in [1,s1,s2,s1*s2]]
@@ -115,7 +115,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
                 return self._base_ring.one()
             else:
                 return self._base_ring.zero()
-        s = self._coxeter_group.simple_reflection(y.first_descent(side="left"))
+        s = self._coxeter_group.simple_reflection(y.first_descent(side='left'))
         if (s*x).length() < x.length():
             ret = self.R(s*x,s*y)
             if self._trace:
@@ -142,7 +142,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: R.<q> = QQ[]
-            sage: W = WeylGroup("A2", prefix="s")
+            sage: W = WeylGroup("A2", prefix='s')
             sage: [s1,s2] = W.simple_reflections()
             sage: KL = KazhdanLusztigPolynomial(W, q)
             sage: [KL.R_tilde(x,s2*s1) for x in [1,s1,s2,s1*s2]]
@@ -156,7 +156,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
             return self._base_ring.zero()
         if x == y:
             return self._base_ring.one()
-        s = self._coxeter_group.simple_reflection(y.first_descent(side="right"))
+        s = self._coxeter_group.simple_reflection(y.first_descent(side='right'))
         if (x * s).length() < x.length():
             ret = self.R_tilde(x * s, y * s)
             if self._trace:
@@ -188,7 +188,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         EXAMPLES::
 
             sage: R.<q> = QQ[]
-            sage: W = WeylGroup("A3", prefix="s")
+            sage: W = WeylGroup("A3", prefix='s')
             sage: [s1,s2,s3] = W.simple_reflections()
             sage: KL = KazhdanLusztigPolynomial(W, q)
             sage: KL.P(s2,s2*s1*s3*s2)

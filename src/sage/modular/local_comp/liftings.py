@@ -88,7 +88,7 @@ def lift_matrix_to_sl2z(A, N):
 
     - ``A`` -- list of 4 integers defining a `2 \times 2` matrix
 
-    - `N` -- positive integer
+    - ``N`` -- positive integer
 
     EXAMPLES::
 

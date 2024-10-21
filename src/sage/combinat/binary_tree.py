@@ -66,8 +66,8 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
       be shortened to ``BinaryTree([None,None])``. It is also allowed to
       abbreviate ``[None, None]`` by ``[]``.
 
-    - ``check`` -- (default: ``True``) whether check for binary should be
-      performed or not.
+    - ``check`` -- boolean (default: ``True``); whether check for binary should
+      be performed or not
 
     EXAMPLES::
 
@@ -708,10 +708,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``with_leaves`` -- (default: ``True``) a Boolean, determining
-          whether the resulting graph will be formed from the leaves
-          and the nodes of ``self`` (if ``True``), or only from the
-          nodes of ``self`` (if ``False``)
+        - ``with_leaves`` -- boolean (default: ``True``); whether the resulting
+          graph will be formed from the leaves and the nodes of ``self`` (if
+          ``True``), or only from the nodes of ``self`` (if ``False``)
 
         EXAMPLES::
 
@@ -871,7 +870,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t1.show()                                                             # needs sage.plot
         """
         try:
-            self.graph(with_leaves=with_leaves).show(layout='tree', tree_root=0, tree_orientation="down")
+            self.graph(with_leaves=with_leaves).show(layout='tree', tree_root=0, tree_orientation='down')
         except RuntimeError:
             # This is for the border case BinaryTree().show().
             self.graph(with_leaves=with_leaves).show()
@@ -944,7 +943,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         self._require_mutable()
         self.__init__(self.parent(), None)
 
-    def _to_dyck_word_rec(self, usemap="1L0R"):
+    def _to_dyck_word_rec(self, usemap='1L0R'):
         r"""
         EXAMPLES::
 
@@ -1150,7 +1149,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         b = other.to_132_avoiding_permutation()
         return a.permutohedron_join(b).binary_search_tree_shape(left_to_right=False)
 
-    def tamari_meet(self, other, side="right"):
+    def tamari_meet(self, other, side='right'):
         r"""
         Return the meet of the binary trees ``self`` and ``other``
         (of equal size) in the `n`-th Tamari poset (where `n` is
@@ -1239,13 +1238,14 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         return from_tamari_sorting_tuple(meet)
 
     @combinatorial_map(name="to Dyck paths: up step, left tree, down step, right tree")
-    def to_dyck_word(self, usemap="1L0R"):
+    def to_dyck_word(self, usemap='1L0R'):
         r"""
         Return the Dyck word associated with ``self`` using the given map.
 
         INPUT:
 
-        - ``usemap`` -- a string, either ``1L0R``, ``1R0L``, ``L1R0``, ``R1L0``
+        - ``usemap`` -- string; either ``'1L0R'``, ``'1R0L'``, ``'L1R0'``,
+          ``'R1L0'``
 
         The bijection is defined recursively as follows:
 
@@ -1295,7 +1295,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             raise ValueError("%s is not a correct map" % usemap)
         return DyckWord(self._to_dyck_word_rec(usemap))
 
-    def _to_ordered_tree(self, bijection="left", root=None):
+    def _to_ordered_tree(self, bijection='left', root=None):
         r"""
         Internal recursive method to obtain an ordered tree from a binary
         tree.
@@ -1305,16 +1305,16 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: bt = BinaryTree([[],[]])
             sage: bt._to_ordered_tree()
             [[], [[]]]
-            sage: bt._to_ordered_tree(bijection="right")
+            sage: bt._to_ordered_tree(bijection='right')
             [[[]], []]
-            sage: bt._to_ordered_tree(bijection="none")
+            sage: bt._to_ordered_tree(bijection='none')
             Traceback (most recent call last):
             ...
             ValueError: the bijection argument should be either left or right
             sage: bt = BinaryTree([[[], [[], None]], [[], []]])
             sage: bt._to_ordered_tree()
             [[], [[], []], [[], [[]]]]
-            sage: bt._to_ordered_tree(bijection="right")
+            sage: bt._to_ordered_tree(bijection='right')
             [[[[]], [[]]], [[]], []]
         """
         close_root = False
@@ -1379,7 +1379,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: bt.to_ordered_tree_right_branch()
             [[[[]], [[]]], [[]], []]
         """
-        return self._to_ordered_tree(bijection="right")
+        return self._to_ordered_tree(bijection='right')
 
     def _postfix_word(self, left_first=True, start=1):
         r"""
@@ -1427,7 +1427,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``reverse`` -- boolean (default ``False``) if ``True``,
+        - ``reverse`` -- boolean (default: ``False``); if ``True``,
           return instead the result for the left-right symmetric of the
           binary tree
 
@@ -1545,10 +1545,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``with_leaves`` -- (default: ``False``) a Boolean, determining
-          whether the resulting graph will be formed from the leaves
-          and the nodes of ``self`` (if ``True``), or only from the
-          nodes of ``self`` (if ``False``)
+        - ``with_leaves`` -- boolean (default: ``False``); whether the
+          resulting graph will be formed from the leaves and the nodes of
+          ``self`` (if ``True``), or only from the nodes of ``self`` (if
+          ``False``)
 
         EXAMPLES::
 
@@ -1593,9 +1593,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         method provides the coordinates of this depiction, with the
         root as the top-left vertex.
 
-        OUTPUT:
-
-        a list of pairs of integers.
+        OUTPUT: list of pairs of integers
 
         Every vertex of the binary tree is mapped to a pair of
         integers. The conventions are the following. The root has
@@ -1635,11 +1633,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``shift`` -- an integer (default 0)
+        - ``shift`` -- integer (default: 0)
 
-        OUTPUT:
-
-        list of tilting coordinates and number of leaves
+        OUTPUT: list of tilting coordinates and number of leaves
 
         EXAMPLES::
 
@@ -1675,13 +1671,13 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``with_leaves`` -- (default: ``False``) a Boolean, determining
-          whether the resulting poset will be formed from the leaves
-          and the nodes of ``self`` (if ``True``), or only from the
-          nodes of ``self`` (if ``False``)
-        - ``root_to_leaf`` -- (default: ``False``) a Boolean,
-          determining whether the poset orientation should be from root
-          to leaves (if ``True``) or from leaves to root (if ``False``).
+        - ``with_leaves`` -- boolean (default: ``False``); whether the
+          resulting poset will be formed from the leaves and the nodes of
+          ``self`` (if ``True``), or only from the nodes of ``self`` (if
+          ``False``)
+        - ``root_to_leaf`` -- boolean (default: ``False``); whether the poset
+          orientation should be from root to leaves (if ``True``) or from
+          leaves to root (if ``False``)
 
         EXAMPLES::
 
@@ -2530,12 +2526,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``side`` -- (default: 'left') set to 'left' to obtain a left
-          comb, and to 'right' to obtain a right comb.
+        - ``side`` -- (default: ``'left'``) set to ``'left'`` to obtain a left
+          comb, and to ``'right'`` to obtain a right comb
 
-        OUTPUT:
-
-        A list of binary trees.
+        OUTPUT: list of binary trees
 
         .. SEEALSO::
 
@@ -2672,9 +2666,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         composing it. A left (resp. right) branch is maximal if it is not
         included in a strictly longer left (resp. right) branch.
 
-        OUTPUT:
-
-        A list of two integers
+        OUTPUT: list of two integers
 
         EXAMPLES::
 
@@ -2823,7 +2815,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
           set to be the indeterminate `q` in the polynomial ring
           `\ZZ[q]`)
 
-        - ``q_factor`` -- a Boolean (default: ``False``) which
+        - ``q_factor`` -- a Boolean (default: ``False``); which
           determines whether to compute `h_{q} (T)` or to
           compute `f_{q} (T)` (namely, `h_{q} (T)` is obtained when
           ``q_factor == False``, and `f_{q} (T)` is obtained when
@@ -3675,9 +3667,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         `T` which does not have 2 children. The resulting tree will
         have `2n + 1` nodes.
 
-        OUTPUT:
-
-        A full binary tree. See :meth:`is_full` for the definition of full.
+        OUTPUT: a full binary tree. See :meth:`is_full` for the definition of full
 
         .. SEEALSO::
 
@@ -3717,7 +3707,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
             sage: BinaryTree(None).to_full()
             [., .]
-
         """
         if self.is_empty():
             return BinaryTree("[.,.]")
@@ -3739,9 +3728,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
             bt == bt.prune().to_full()
 
-        OUTPUT:
-
-        A binary tree.
+        OUTPUT: a binary tree
 
         .. SEEALSO::
 
@@ -3939,8 +3926,8 @@ class BinaryTrees(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``size`` -- (optional) an integer
-    - ``full`` -- (optional) a boolean
+    - ``size`` -- integer (optional)
+    - ``full`` -- boolean (optional)
 
     OUTPUT:
 
@@ -4052,7 +4039,7 @@ def from_tamari_sorting_tuple(key):
 
     INPUT:
 
-    - ``key`` -- a tuple of integers
+    - ``key`` -- tuple of integers
 
     EXAMPLES::
 
@@ -4239,7 +4226,7 @@ class BinaryTrees_size(BinaryTrees):
 
     def cardinality(self):
         """
-        The cardinality of ``self``
+        The cardinality of ``self``.
 
         This is a Catalan number.
 
@@ -4488,7 +4475,7 @@ class FullBinaryTrees_size(BinaryTrees):
 
     def cardinality(self):
         r"""
-        The cardinality of ``self``
+        The cardinality of ``self``.
 
         This is a Catalan number.
 
@@ -4642,10 +4629,10 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
       anyway!).
 
     - ``label`` -- (default: ``None``) the label to be put on the root
-      of this tree.
+      of this tree
 
-    - ``check`` -- (default: ``True``) whether checks should be
-      performed or not.
+    - ``check`` -- boolean (default: ``True``); whether checks should be
+      performed or not
 
     .. TODO::
 
@@ -4657,7 +4644,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
 
         sage: LabelledBinaryTree(None)
         .
-        sage: LabelledBinaryTree(None, label="ae")    # not well supported
+        sage: LabelledBinaryTree(None, label='ae')    # not well supported
         'ae'
         sage: LabelledBinaryTree([])
         None[., .]
@@ -5196,7 +5183,7 @@ class LabelledBinaryTrees(LabelledOrderedTrees):
         t = LT([], label=3)
         t1 = LT([t, t], label=42)
         t2 = LT([[], []], label=5)
-        return LT([t1, t2], label="toto")
+        return LT([t1, t2], label='toto')
 
     def unlabelled_trees(self):
         """
@@ -5242,9 +5229,9 @@ def binary_search_tree_shape(w, left_to_right=True):
 
     INPUT:
 
-    - ``w`` -- a list of integers
+    - ``w`` -- list of integers
 
-    - ``left_to_right`` -- boolean (default ``True``)
+    - ``left_to_right`` -- boolean (default: ``True``)
 
     OUTPUT: a non labelled binary tree
 

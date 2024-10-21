@@ -41,7 +41,7 @@ class DensityPlot(GraphicPrimitive):
 
     - ``yrange`` -- tuple of 2 floats indicating range for vertical direction
 
-    - ``options`` -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -66,7 +66,7 @@ class DensityPlot(GraphicPrimitive):
     """
     def __init__(self, xy_data_array, xrange, yrange, options):
         """
-        Initializes base class DensityPlot.
+        Initialize base class ``DensityPlot``.
 
         EXAMPLES::
 
@@ -86,7 +86,7 @@ class DensityPlot(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
@@ -180,12 +180,11 @@ def density_plot(f, xrange, yrange, **options):
       Colormap. Type: ``import matplotlib.cm; matplotlib.cm.datad.keys()``
       for available colormap names.
 
-    - ``interpolation`` -- string (default: ``'catrom'``), the interpolation
+    - ``interpolation`` -- string (default: ``'catrom'``); the interpolation
       method to use: ``'bilinear'``, ``'bicubic'``, ``'spline16'``,
       ``'spline36'``, ``'quadric'``, ``'gaussian'``, ``'sinc'``,
       ``'bessel'``, ``'mitchell'``, ``'lanczos'``, ``'catrom'``,
       ``'hermite'``, ``'hanning'``, ``'hamming'``, ``'kaiser'``
-
 
     EXAMPLES:
 
@@ -291,7 +290,7 @@ def density_plot(f, xrange, yrange, **options):
         sage: density_plot((x*y)^(1/2), (x,0,3), (y,0,500), aspect_ratio=.01)
         Graphics object consisting of 1 graphics primitive
 
-    Default ``aspect_ratio`` is ``"automatic"``, and that should work too::
+    Default ``aspect_ratio`` is ``'automatic'``, and that should work too::
 
         sage: density_plot((x*y)^(1/2), (x,0,3), (y,0,500))
         Graphics object consisting of 1 graphics primitive

@@ -77,7 +77,7 @@ from sage.rings.polynomial.polynomial_element cimport Polynomial
 
 class EvaluationAGCodeEncoder(Encoder):
     """
-    Encoder of an evaluation AG code
+    Encoder of an evaluation AG code.
 
     INPUT:
 
@@ -1465,7 +1465,7 @@ cdef class Decoder_K():
         - ``detect_Q_polynomial`` -- boolean; if ``True``, a Q-polynomial is
           detected for fast decoding
 
-        If decoding fails for some reason, ``DecodingError`` is raised. The
+        If decoding fails for some reason, :exc:`DecodingError` is raised. The
         message contained in the exception indicates the type of the decoding
         failure.
 
@@ -1812,13 +1812,13 @@ cdef class EvaluationAGCodeDecoder_K(Decoder_K):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
     - ``Q`` -- a rational place not in ``pls``
 
-    - ``verbose`` -- if ``True``, verbose information is printed.
+    - ``verbose`` -- if ``True``, verbose information is printed
 
     EXAMPLES::
 
@@ -2067,7 +2067,7 @@ cdef class DifferentialAGCodeDecoder_K(Decoder_K):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2321,7 +2321,7 @@ cdef class Decoder_K_extension():
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2539,7 +2539,7 @@ cdef class EvaluationAGCodeDecoder_K_extension(Decoder_K_extension):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2593,7 +2593,7 @@ cdef class DifferentialAGCodeDecoder_K_extension(Decoder_K_extension):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 

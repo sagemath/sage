@@ -62,7 +62,7 @@ class AbstractArgument(MultiplicativeGroupElement):
 
     - ``element`` -- an element of parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -109,7 +109,7 @@ class AbstractArgument(MultiplicativeGroupElement):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         INPUT:
 
@@ -397,13 +397,13 @@ class UnitCirclePoint(AbstractArgument):
 
     - ``exponent`` -- a number (of a subset of the reals)
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     @staticmethod
     def _normalize_(exponent):
         r"""
-        Normalizes the given exponent so that it is in `[0,1)`.
+        Normalize the given exponent so that it is in `[0,1)`.
 
         INPUT:
 
@@ -1044,7 +1044,7 @@ class ArgumentByElement(AbstractArgument):
 
     - ``element`` -- a nonzero element of the parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -1065,7 +1065,7 @@ class ArgumentByElement(AbstractArgument):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         This is the identity for :class:`ArgumentByElement`.
 
@@ -1381,7 +1381,7 @@ class Sign(AbstractArgument):
 
     - ``element`` -- a nonzero element of the parent's base
 
-    - ``normalize`` -- a boolean (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
     """
 
     def __init__(self, parent, element, normalize=True):
@@ -1403,7 +1403,7 @@ class Sign(AbstractArgument):
     @staticmethod
     def _normalize_(element):
         r"""
-        Normalizes the given element.
+        Normalize the given element.
 
         This is the identity for :class:`Sign`.
 
@@ -1698,7 +1698,7 @@ class ArgumentGroupFactory(UniqueFactory):
       The factory will analyze ``data`` and interpret it as
       ``specification`` or ``domain``.
 
-    - ``specification`` -- a string
+    - ``specification`` -- string
 
       The following is possible:
 
@@ -1714,12 +1714,12 @@ class ArgumentGroupFactory(UniqueFactory):
         a string representing a SageMath parent which is interpreted as
         ``domain``
 
-    - ``domain`` -- a SageMath parent representing a subset of the complex plane.
-      An instance of :class:`ArgumentByElementGroup` will be created with the given
-      ``domain``.
+    - ``domain`` -- a SageMath parent representing a subset of the complex plane;
+      an instance of :class:`ArgumentByElementGroup` will be created with the given
+      ``domain``
 
-    - ``exponents`` -- a SageMath parent representing a subset of the reals.
-      An instance of :class`UnitCircleGroup` will be created with the given
+    - ``exponents`` -- a SageMath parent representing a subset of the reals;
+      an instance of :class`UnitCircleGroup` will be created with the given
       ``exponents``
 
     Exactly one of ``data``, ``specification``, ``exponents`` has to be provided.

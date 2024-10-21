@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-symbolics
-# distutils: sources = sage/symbolic/ginac/add.cpp sage/symbolic/ginac/archive.cpp sage/symbolic/ginac/assume.cpp sage/symbolic/ginac/basic.cpp sage/symbolic/ginac/cmatcher.cpp sage/symbolic/ginac/constant.cpp sage/symbolic/ginac/context.cpp sage/symbolic/ginac/ex.cpp sage/symbolic/ginac/expair.cpp sage/symbolic/ginac/expairseq.cpp sage/symbolic/ginac/exprseq.cpp sage/symbolic/ginac/fderivative.cpp sage/symbolic/ginac/function.cpp sage/symbolic/ginac/function_info.cpp sage/symbolic/ginac/infinity.cpp sage/symbolic/ginac/infoflagbase.cpp sage/symbolic/ginac/inifcns.cpp sage/symbolic/ginac/inifcns_comb.cpp sage/symbolic/ginac/inifcns_gamma.cpp sage/symbolic/ginac/inifcns_hyperb.cpp sage/symbolic/ginac/inifcns_hyperg.cpp sage/symbolic/ginac/inifcns_nstdsums.cpp sage/symbolic/ginac/inifcns_orthopoly.cpp sage/symbolic/ginac/inifcns_trans.cpp sage/symbolic/ginac/inifcns_trig.cpp sage/symbolic/ginac/inifcns_zeta.cpp sage/symbolic/ginac/lst.cpp sage/symbolic/ginac/matrix.cpp sage/symbolic/ginac/mpoly-giac.cpp sage/symbolic/ginac/mpoly-ginac.cpp sage/symbolic/ginac/mpoly-singular.cpp sage/symbolic/ginac/mpoly.cpp sage/symbolic/ginac/mul.cpp sage/symbolic/ginac/normal.cpp sage/symbolic/ginac/numeric.cpp sage/symbolic/ginac/operators.cpp sage/symbolic/ginac/order.cpp sage/symbolic/ginac/power.cpp sage/symbolic/ginac/print.cpp sage/symbolic/ginac/pseries.cpp sage/symbolic/ginac/py_funcs.cpp sage/symbolic/ginac/registrar.cpp sage/symbolic/ginac/relational.cpp sage/symbolic/ginac/remember.cpp sage/symbolic/ginac/sum.cpp sage/symbolic/ginac/symbol.cpp sage/symbolic/ginac/templates.cpp sage/symbolic/ginac/upoly-ginac.cpp sage/symbolic/ginac/useries.cpp sage/symbolic/ginac/utils.cpp sage/symbolic/ginac/wildcard.cpp
+# distutils: sources = sage/symbolic/ginac/add.cpp sage/symbolic/ginac/archive.cpp sage/symbolic/ginac/assume.cpp sage/symbolic/ginac/basic.cpp sage/symbolic/ginac/cmatcher.cpp sage/symbolic/ginac/constant.cpp sage/symbolic/ginac/context.cpp sage/symbolic/ginac/ex.cpp sage/symbolic/ginac/expair.cpp sage/symbolic/ginac/expairseq.cpp sage/symbolic/ginac/exprseq.cpp sage/symbolic/ginac/fderivative.cpp sage/symbolic/ginac/function.cpp sage/symbolic/ginac/function_info.cpp sage/symbolic/ginac/infinity.cpp sage/symbolic/ginac/infoflagbase.cpp sage/symbolic/ginac/inifcns.cpp sage/symbolic/ginac/inifcns_comb.cpp sage/symbolic/ginac/inifcns_gamma.cpp sage/symbolic/ginac/inifcns_hyperb.cpp sage/symbolic/ginac/inifcns_hyperg.cpp sage/symbolic/ginac/inifcns_nstdsums.cpp sage/symbolic/ginac/inifcns_orthopoly.cpp sage/symbolic/ginac/inifcns_trans.cpp sage/symbolic/ginac/inifcns_trig.cpp sage/symbolic/ginac/inifcns_zeta.cpp sage/symbolic/ginac/lst.cpp sage/symbolic/ginac/matrix.cpp sage/symbolic/ginac/mpoly-ginac.cpp sage/symbolic/ginac/mpoly-singular.cpp sage/symbolic/ginac/mpoly.cpp sage/symbolic/ginac/mul.cpp sage/symbolic/ginac/normal.cpp sage/symbolic/ginac/numeric.cpp sage/symbolic/ginac/operators.cpp sage/symbolic/ginac/order.cpp sage/symbolic/ginac/power.cpp sage/symbolic/ginac/print.cpp sage/symbolic/ginac/pseries.cpp sage/symbolic/ginac/py_funcs.cpp sage/symbolic/ginac/registrar.cpp sage/symbolic/ginac/relational.cpp sage/symbolic/ginac/remember.cpp sage/symbolic/ginac/sum.cpp sage/symbolic/ginac/symbol.cpp sage/symbolic/ginac/templates.cpp sage/symbolic/ginac/upoly-ginac.cpp sage/symbolic/ginac/useries.cpp sage/symbolic/ginac/utils.cpp sage/symbolic/ginac/wildcard.cpp
 # distutils: language = c++
 # distutils: libraries = flint gmp SINGULAR_LIBRARIES
 # distutils: extra_compile_args = -std=c++11 SINGULAR_CFLAGS
@@ -157,8 +157,8 @@ Test that :issue:`20784` is fixed (equations should stay unevaluated)::
 
 Many tests about comparison.
 
-Use :func:`sage.symbolic.expression.mixed_order`` instead of
-the operators <=, <, etc. to compare symbolic expressions when
+Use :func:`sage.symbolic.expression.mixed_order` instead of
+the operators ``<=``, ``<``, etc. to compare symbolic expressions when
 you do not want to get a formal inequality::
 
     sage: from sage.symbolic.expression import mixed_order
@@ -411,7 +411,7 @@ from sage.symbolic.symbols import symbol_table, register_symbol  # used to be de
 
 cpdef bint is_SymbolicEquation(x) noexcept:
     """
-    Return True if *x* is a symbolic equation.
+    Return ``True`` if ``x`` is a symbolic equation.
 
     This function is deprecated.
 
@@ -442,7 +442,6 @@ cpdef bint is_SymbolicEquation(x) noexcept:
 
         sage: is_SymbolicEquation(SR(2) == SR(3))
         True
-
     """
     from sage.misc.superseded import deprecation
     deprecation(35505,
@@ -485,7 +484,7 @@ def _dict_update_check_duplicate(dict d1, dict d2):
     Merge the dictionary ``d2`` into ``d1`` and check for duplicates.
 
     The two dictionaries must be of the form ``{expr: replacement}``. This
-    function throws a :class:`ValueError` if any expressions are substituted
+    function throws a :exc:`ValueError` if any expressions are substituted
     for twice.
 
     EXAMPLES:
@@ -520,7 +519,6 @@ def _dict_update_check_duplicate(dict d1, dict d2):
         Traceback (most recent call last):
         ...
         ValueError: duplicate substitution for a, got values 1 and 2
-
     """
     # We need to check for duplicates in a predictable order so that
     # errors are reported reliably. We only need to sort one of the
@@ -553,11 +551,9 @@ def _subs_make_dict(s):
 
     INPUT:
 
-    -  ``s`` -- A representation of a substitution.
+    - ``s`` -- a representation of a substitution
 
-    OUTPUT:
-
-    A dictionary of substitutions.
+    OUTPUT: a dictionary of substitutions
 
     EXAMPLES:
 
@@ -588,7 +584,7 @@ def _subs_make_dict(s):
         sage: actual == expected
         True
 
-    Check that a :class:`TypeError` is raised if the input is not valid::
+    Check that a :exc:`TypeError` is raised if the input is not valid::
 
         sage: _subs_make_dict(1)
         Traceback (most recent call last):
@@ -630,11 +626,9 @@ def _subs_fun_make_dict(s):
 
     INPUT:
 
-    -  ``s`` -- A representation of a substitution.
+    - ``s`` -- a representation of a substitution
 
-    OUTPUT:
-
-    A dictionary of substitutions.
+    OUTPUT: a dictionary of substitutions
 
     EXAMPLES:
 
@@ -667,7 +661,7 @@ def _subs_fun_make_dict(s):
         sage: actual == expected
         True
 
-    Check that a :class:`TypeError` is raised if the input is not valid::
+    Check that a :exc:`TypeError` is raised if the input is not valid::
 
         sage: _subs_fun_make_dict(1)
         Traceback (most recent call last):
@@ -712,7 +706,7 @@ cdef class Expression(Expression_abc):
 
         The Python object corresponding to this expression, assuming
         this expression is a single numerical value or an infinity
-        representable in Python. Otherwise, a :class:`TypeError` is raised.
+        representable in Python. Otherwise, a :exc:`TypeError` is raised.
 
         EXAMPLES::
 
@@ -805,7 +799,7 @@ cdef class Expression(Expression_abc):
          * 0  - as pickle version number
                 in case we decide to change the pickle format in the feature
          * names of symbols of this expression
-         * a string representation of self stored in a Pynac archive.
+         * a string representation of ``self`` stored in a Pynac archive.
 
         TESTS::
 
@@ -964,7 +958,6 @@ cdef class Expression(Expression_abc):
             sage: with SR.temp_var() as t: pass
             sage: symbols_copy == SR.symbols
             True
-
         """
         from sage.symbolic.ring import SR
         SR.cleanup_var(self)
@@ -1067,12 +1060,10 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``use_unicode`` -- boolean. Whether to allow unicode instead
-          of 7-bit clean output.
+        - ``use_unicode`` -- boolean; whether to allow unicode instead
+          of 7-bit clean output
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1219,7 +1210,6 @@ cdef class Expression(Expression_abc):
 
             sage: var('ξ')._maxima_()
             _SAGE_VAR_ξ
-
         """
         if session is None:
             # This chooses the Maxima interface used by calculus
@@ -1464,7 +1454,6 @@ cdef class Expression(Expression_abc):
             <mi>&pi;</mi>
             sage: mathml(pi+2)
             MATHML version of the string pi + 2
-
         """
         from sage.misc.mathml import mathml
         try:
@@ -1926,11 +1915,9 @@ cdef class Expression(Expression_abc):
         """
         Return float conversion of ``self``, assuming ``self`` is constant.
 
-        Otherwise, raise a :class:`TypeError`.
+        Otherwise, raise a :exc:`TypeError`.
 
-        OUTPUT:
-
-        A ``float``. Double precision evaluation of ``self``.
+        OUTPUT: a ``float``. Double precision evaluation of ``self``
 
         EXAMPLES::
 
@@ -1990,7 +1977,6 @@ cdef class Expression(Expression_abc):
             pi
             sage: type(_)
             <class 'sympy.core.numbers.Pi'>
-
         """
         from sage.symbolic.expression_conversions import sympy_converter
         return sympy_converter(self)
@@ -2003,7 +1989,6 @@ cdef class Expression(Expression_abc):
 
             sage: pi._fricas_()                                                 # optional - fricas
             %pi
-
         """
         from sage.symbolic.expression_conversions import fricas_converter
         return fricas_converter(self)
@@ -2309,7 +2294,7 @@ cdef class Expression(Expression_abc):
             sage: x == 0
             x == 0
 
-        In particular, it does not return a bool, so the following check does
+        In particular, it does not return a boolean, so the following check does
         not hold anymore::
 
             sage: (not x) == (x != 0)
@@ -2318,7 +2303,6 @@ cdef class Expression(Expression_abc):
         TESTS::
 
             sage: x._test_nonzero_equal()
-
         """
         pass
 
@@ -2331,8 +2315,8 @@ cdef class Expression(Expression_abc):
 
             sage: (x > 2).assume()
 
-        Bool returns True below if the inequality is *definitely* known to
-        be True.
+        ``bool`` returns ``True`` below if the inequality is *definitely* known
+        to be true.
 
         ::
 
@@ -2341,7 +2325,7 @@ cdef class Expression(Expression_abc):
             sage: bool(x < 0)
             False
 
-        This may or may not be True, so bool returns False::
+        This may or may not be True, so ``bool`` returns False::
 
             sage: bool(x > 3)
             False
@@ -2524,7 +2508,7 @@ cdef class Expression(Expression_abc):
 
     def is_algebraic(self):
         """
-        Return True if this expression is known to be algebraic.
+        Return ``True`` if this expression is known to be algebraic.
 
         EXAMPLES::
 
@@ -2583,7 +2567,7 @@ cdef class Expression(Expression_abc):
 
     def is_real(self):
         """
-        Return True if this expression is known to be a real number.
+        Return ``True`` if this expression is known to be a real number.
 
         EXAMPLES::
 
@@ -2658,7 +2642,7 @@ cdef class Expression(Expression_abc):
 
     def is_positive(self):
         """
-        Return True if this expression is known to be positive.
+        Return ``True`` if this expression is known to be positive.
 
         EXAMPLES::
 
@@ -2754,7 +2738,7 @@ cdef class Expression(Expression_abc):
 
     def is_negative(self):
         """
-        Return True if this expression is known to be negative.
+        Return ``True`` if this expression is known to be negative.
 
         EXAMPLES::
 
@@ -2785,7 +2769,7 @@ cdef class Expression(Expression_abc):
 
     def is_integer(self):
         """
-        Return True if this expression is known to be an integer.
+        Return ``True`` if this expression is known to be an integer.
 
         EXAMPLES::
 
@@ -2812,7 +2796,7 @@ cdef class Expression(Expression_abc):
 
     def is_symbol(self):
         """
-        Return True if this symbolic expression consists of only a symbol, i.e.,
+        Return ``True`` if this symbolic expression consists of only a symbol, i.e.,
         a symbolic variable.
 
         EXAMPLES::
@@ -2899,7 +2883,7 @@ cdef class Expression(Expression_abc):
         """
         A Pynac numeric is an object you can do arithmetic with
         that is not a symbolic variable, function, or constant.
-        Return True if this expression only consists of a numeric object.
+        Return ``True`` if this expression only consists of a numeric object.
 
         EXAMPLES::
 
@@ -2916,17 +2900,15 @@ cdef class Expression(Expression_abc):
 
     def is_terminating_series(self):
         """
-        Return True if ``self`` is a series without order term.
+        Return ``True`` if ``self`` is a series without order term.
 
         A series is terminating if it can be represented exactly,
         without requiring an order term. You can explicitly
         request terminating series by setting the order to
         positive infinity.
 
-        OUTPUT:
-
-        Boolean. Whether ``self`` was constructed by :meth:`series`
-        and has no order term.
+        OUTPUT: boolean; whether ``self`` was constructed by :meth:`series`
+        and has no order term
 
         EXAMPLES::
 
@@ -3135,7 +3117,6 @@ cdef class Expression(Expression_abc):
             ...
             NotImplementedError: is_square() not implemented for non-constant
             or relational elements of Symbolic Ring
-
         """
         if self.is_constant() and not self.is_relational():
             # The square root of any "number" is in SR... just call
@@ -3168,7 +3149,7 @@ cdef class Expression(Expression_abc):
     def left_hand_side(self):
         """
         If ``self`` is a relational expression, return the left hand side
-        of the relation.  Otherwise, raise a :class:`ValueError`.
+        of the relation.  Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -3190,7 +3171,7 @@ cdef class Expression(Expression_abc):
     def right_hand_side(self):
         """
         If ``self`` is a relational expression, return the right hand side
-        of the relation.  Otherwise, raise a :class:`ValueError`.
+        of the relation.  Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -3302,7 +3283,7 @@ cdef class Expression(Expression_abc):
 
     def __bool__(self):
         """
-        Return True unless this symbolic expression can be shown by Sage
+        Return ``True`` unless this symbolic expression can be shown by Sage
         to be zero.  Note that deciding if an expression is zero is
         undecidable in general.
 
@@ -3542,28 +3523,26 @@ cdef class Expression(Expression_abc):
         test this relation after casting into the domain.
 
         Because the interval fields never return false positives, we can be
-        assured that if True or False is returned (and proof is False) then
-        the answer is correct.
+        assured that if ``True`` or ``False`` is returned (and proof is
+        ``False``) then the answer is correct.
 
         INPUT:
 
-        - ``ntests`` -- (default ``20``) the number of iterations to run
+        - ``ntests`` -- (default: 20) the number of iterations to run
         - ``domain`` -- (optional) the domain from which to draw the random
           values defaults to ``CIF`` for equality testing and ``RIF`` for
           order testing
-        - ``proof`` -- (default ``True``) if ``False`` and the domain is an
+        - ``proof`` -- (default: ``True``) if ``False`` and the domain is an
           interval field, regard overlapping (potentially equal) intervals as
           equal, and return ``True`` if all tests succeeded.
 
-        OUTPUT:
+        OUTPUT: boolean or ``NotImplemented``, meaning
 
-        Boolean or ``NotImplemented``, meaning
+        - ``True`` -- this relation holds in the domain and has no variables
 
-        - ``True`` -- this relation holds in the domain and has no variables.
+        - ``False`` -- a contradiction was found
 
-        - ``False`` -- a contradiction was found.
-
-        - ``NotImplemented`` -- no contradiction found.
+        - ``NotImplemented`` -- no contradiction found
 
         EXAMPLES::
 
@@ -3624,7 +3603,6 @@ cdef class Expression(Expression_abc):
             sage: v = -53985/17179869184
             sage: bool(abs(t) < 1.213*2^-56*v^4)
             True
-
         """
         cdef int k, eq_count = 0
         cdef bint is_interval
@@ -3728,7 +3706,7 @@ cdef class Expression(Expression_abc):
         """
         Return the negated version of ``self``.
 
-        This is the relation that is ``False`` iff self is ``True``.
+        This is the relation that is ``False`` iff ``self`` is ``True``.
 
         EXAMPLES::
 
@@ -3778,7 +3756,7 @@ cdef class Expression(Expression_abc):
 
     def is_unit(self):
         """
-        Return True if this expression is a unit of the symbolic ring.
+        Return ``True`` if this expression is a unit of the symbolic ring.
 
         Note that a proof may be attempted to get the result. To avoid
         this use ``(ex-1).is_trivial_zero()``.
@@ -4251,11 +4229,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``right`` -- A :class:`Expression` instance.
+        - ``right`` -- a :class:`Expression` instance
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4279,11 +4255,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``right`` -- A :class:`Expression` instance.
+        - ``right`` -- a :class:`Expression` instance
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -4305,9 +4279,7 @@ cdef class Expression(Expression_abc):
         r"""
         Return ``self`` raised to the power ``other``.
 
-        OUTPUT:
-
-        A symbolic expression
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -4493,7 +4465,7 @@ cdef class Expression(Expression_abc):
 
         Check that :issue:`31137` is also fixed::
 
-            sage: _ = var('A, L, G, R, f, k, n, q, u, beta, gamma', domain="positive")
+            sage: _ = var('A, L, G, R, f, k, n, q, u, beta, gamma', domain='positive')
             sage: a = I*R^2*f^3*k*q*A*u
             sage: b = 2*pi*L*R^2*G*f^4*k^2*q - 2*pi*L*R^2*G*f^4*q - 2*pi*L*R^2*beta^2*G*q
             sage: c = (2*I*pi*L*R^2*beta*gamma*q + 2*I*pi*L*R*(beta + q))*G*f^3
@@ -4759,7 +4731,6 @@ cdef class Expression(Expression_abc):
             of scalar fields on Euclidean spaces (and more generally
             pseudo-Riemannian manifolds), in particular for computing the
             gradient in curvilinear coordinates.
-
         """
         from sage.modules.free_module_element import vector
         if variables is None:
@@ -4798,13 +4769,11 @@ cdef class Expression(Expression_abc):
           such as ``x == 5``; if an equality is given, the
           expansion is around the value on the right hand side
           of the equality
-        - ``order`` -- an integer; if nothing given, it is set
+        - ``order`` -- integer; if nothing given, it is set
           to the global default (``20``), which can be changed
           using :func:`set_series_precision`
 
-        OUTPUT:
-
-        A power series.
+        OUTPUT: a power series
 
         To truncate the power series and obtain a normal expression, use the
         :meth:`truncate` command.
@@ -4939,9 +4908,7 @@ cdef class Expression(Expression_abc):
           around the value on the right hand side of the equality,
           otherwise at ``0``.
 
-        OUTPUT:
-
-        The residue of ``self``.
+        OUTPUT: the residue of ``self``
 
         Say, ``symbol`` is ``x == a``, then this function calculates
         the residue of ``self`` at `x=a`, i.e., the coefficient of
@@ -5009,7 +4976,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``*args`` -- the following notation is supported
+        - ``*args`` -- the following notation is supported
 
            - ``x``, ``a``, ``n`` -- variable, point, degree
 
@@ -5085,11 +5052,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``self`` -- a series as output by the :meth:`series` command.
+        - ``self`` -- a series as output by the :meth:`series` command
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -5253,26 +5218,24 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``full`` -- (default: ``False``) To enhance user control
-           of simplification, this function expands only one level at a time
-           by default, expanding sums of angles or multiple angles. To obtain
-           full expansion into sines and cosines immediately, set the optional
-           parameter full to ``True``.
+        - ``full`` -- boolean (default: ``False``); to enhance user control
+          of simplification, this function expands only one level at a time
+          by default, expanding sums of angles or multiple angles. To obtain
+          full expansion into sines and cosines immediately, set the optional
+          parameter full to ``True``.
 
-        - ``half_angles`` -- (default: ``False``) If ``True``, causes
-          half-angles to be simplified away.
+        - ``half_angles`` -- boolean (default: ``False``); if ``True``, causes
+          half-angles to be simplified away
 
-        -  ``plus`` -- (default: ``True``) Controls the sum rule;
-           expansion of sums (e.g. `\sin(x + y)`) will take place only
-           if ``plus`` is ``True``.
+        - ``plus`` -- boolean (default: ``True``); controls the sum rule.
+          Expansion of sums (e.g. `\sin(x + y)`) will take place only if
+          ``plus`` is ``True``.
 
-        -  ``times`` -- (default: ``True``) Controls the product
-           rule, expansion of products (e.g. `\sin(2 x)`) will take place only
-           if ``times`` is ``True``.
+        - ``times`` -- boolean (default: ``True``); controls the product
+          rule, expansion of products (e.g. `\sin(2 x)`) will take place only
+          if ``times`` is ``True``.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -5340,9 +5303,7 @@ cdef class Expression(Expression_abc):
           these transformations. If not specified, all variables are
           used.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -5378,12 +5339,10 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``pattern`` -- a symbolic expression, possibly containing wildcards
-           to match for
+        - ``pattern`` -- a symbolic expression, possibly containing wildcards
+          to match for
 
         OUTPUT:
-
-        One of
 
         ``None`` if there is no match, or a dictionary mapping the
         wildcards to the matching values if a match was found. Note
@@ -5888,12 +5847,12 @@ cdef class Expression(Expression_abc):
 
         if kwds:
             # Ensure that the keys are symbolic variables.
-            varkwds = {self._parent.var(k): v for k,v in kwds.iteritems()}
+            varkwds = {self._parent.var(k): v for k,v in kwds.items()}
             # Check for duplicate
             _dict_update_check_duplicate(sdict, varkwds)
 
         cdef GExMap smap
-        for k, v in sdict.iteritems():
+        for k, v in sdict.items():
             smap.insert(make_pair((<Expression>self.coerce_in(k))._gobj,
                                   (<Expression>self.coerce_in(v))._gobj))
         res = self._gobj.subs_map(smap, 0)
@@ -6041,7 +6000,7 @@ cdef class Expression(Expression_abc):
 
         if kwds:
             # Ensure that the keys are functions.
-            funkwds = {_find_func(k): v for k,v in kwds.iteritems()}
+            funkwds = {_find_func(k): v for k,v in kwds.items()}
             # Check for duplicate
             _dict_update_check_duplicate(sdict, funkwds)
 
@@ -6124,6 +6083,44 @@ cdef class Expression(Expression_abc):
         from sage.symbolic.expression_conversions import DeMoivre
         return DeMoivre(self, force)()
 
+    def half_angle(self):
+        """
+        Replace all occurrences of trigonometric (or hyperbolic)
+        functions by rational fractions of the (hyperbolic) tangent
+        of half the original argument.
+
+        This can help highlight the algebraic structure of an expression,
+        which can be useful e.g. for integration.
+
+        This method has no direct relation with the ``half_angles``
+        argument of the :meth:`trig_expand` method.
+
+        EXAMPLES::
+
+            sage: x, t = var("x, t")
+            sage: cos(x).half_angle().subs(tan(x/2) == t)
+            -(t^2 - 1)/(t^2 + 1)
+
+        Note that this structure highlighting works better after expansion::
+
+            sage: x, t = var("x, t")
+            sage: a = (cos(3*x)/(4-cos(x)))
+            sage: b = a.trig_expand()
+            sage: a.half_angle().subs(tan(x/2) == t).simplify_full()
+            (2*(t^2 + 1)*cos(3/2*x)^2 - t^2 - 1)/(5*t^2 + 3)
+            sage: b.half_angle().subs(tan(x/2) == t).simplify_full()
+            -(t^6 - 15*t^4 + 15*t^2 - 1)/(5*t^6 + 13*t^4 + 11*t^2 + 3)
+
+        TESTS::
+
+            sage: all((u(x) == u(x).half_angle()).subs(x == 2*x).trig_simplify()
+            ....:     for u in (sin, cos, tan, csc, sec, cot,
+            ....:               sinh, cosh, tanh, csch, sech, coth))
+            True
+        """
+        from sage.symbolic.expression_conversions import HalfAngle
+        return HalfAngle(self)()
+
     def substitution_delayed(self, pattern, replacement):
         """
         Replace all occurrences of pattern by the result of replacement.
@@ -6134,18 +6131,15 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``pattern`` -- an :class:`Expression`, usually
-          containing wildcards.
+        - ``pattern`` -- an :class:`Expression`, usually containing wildcards
 
-        - ``replacement`` -- a function. Its argument is a dictionary
+        - ``replacement`` -- a function; its argument is a dictionary
           mapping the wildcard occurring in ``pattern`` to the actual
           values.  If it returns ``None``, this occurrence of ``pattern`` is
           not replaced. Otherwise, it is replaced by the output of
           ``replacement``.
 
-        OUTPUT:
-
-        An :class:`Expression`.
+        OUTPUT: an :class:`Expression`
 
         EXAMPLES::
 
@@ -6201,7 +6195,6 @@ cdef class Expression(Expression_abc):
             (x, y)
             sage: sin(x+y^z).variables()
             (x, y, z)
-
         """
         from sage.symbolic.ring import SR
         cdef GExSet sym_set
@@ -6259,7 +6252,6 @@ cdef class Expression(Expression_abc):
             sage: g = f.function(x)
             sage: g.arguments()
             (x,)
-
         """
         try:
             return self._parent.arguments()
@@ -6813,7 +6805,6 @@ cdef class Expression(Expression_abc):
 
             sage: a = (x^2).power(2, hold=True); a.unhold()
             x^4
-
         """
         cdef Expression nexp = self.coerce_in(exp)
         return new_Expression_from_GEx(self._parent,
@@ -6875,7 +6866,6 @@ cdef class Expression(Expression_abc):
 
             sage: a = x.mul(x, hold=True); a.unhold()
             x^2
-
         """
         nargs = [self.coerce_in(x) for x in args]
         cdef GExVector vec
@@ -6898,9 +6888,7 @@ cdef class Expression(Expression_abc):
 
         - ``n`` -- expression, default 1
 
-        OUTPUT:
-
-        A symbolic expression. The coefficient of `s^n`.
+        OUTPUT: a symbolic expression. The coefficient of `s^n`
 
         Sometimes it may be necessary to expand or factor first, since this
         is not done automatically.
@@ -6997,17 +6985,15 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``x`` -- optional variable.
+        - ``x`` -- (optional) variable
 
-        OUTPUT:
-
-        Depending on the value of ``sparse``,
+        OUTPUT: depending on the value of ``sparse``,
 
         - A list of pairs ``(expr, n)``, where ``expr`` is a symbolic
           expression and ``n`` is a power (``sparse=True``, default)
 
         - A list of expressions where the ``n``-th element is the coefficient of
-          ``x^n`` when self is seen as polynomial in ``x`` (``sparse=False``).
+          ``x^n`` when ``self`` is seen as polynomial in ``x`` (``sparse=False``).
 
         EXAMPLES::
 
@@ -7124,12 +7110,12 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``x`` -- optional variable.
+        - ``x`` -- (optional) variable
 
         OUTPUT:
 
         A list of expressions where the ``n``-th element is the coefficient of
-        ``x^n`` when self is seen as polynomial in ``x``.
+        ``x^n`` when ``self`` is seen as polynomial in ``x``.
 
         EXAMPLES::
 
@@ -7181,8 +7167,8 @@ cdef class Expression(Expression_abc):
 
     def trailing_coefficient(self, s):
         """
-        Return the trailing coefficient of s in self, i.e., the coefficient
-        of the smallest power of s in self.
+        Return the trailing coefficient of s in ``self``, i.e., the coefficient
+        of the smallest power of s in ``self``.
 
         EXAMPLES::
 
@@ -7212,9 +7198,7 @@ cdef class Expression(Expression_abc):
         """
         Return the exponent of the lowest power of ``s`` in ``self``.
 
-        OUTPUT:
-
-        An integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -7245,9 +7229,7 @@ cdef class Expression(Expression_abc):
         """
         Return the exponent of the highest power of ``s`` in ``self``.
 
-        OUTPUT:
-
-        An integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -7284,7 +7266,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``s`` -- a symbolic expression.
+        - ``s`` -- a symbolic expression
 
         OUTPUT:
 
@@ -7323,7 +7305,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``s`` -- a symbolic expression.
+        - ``s`` -- a symbolic expression
 
         OUTPUT:
 
@@ -7368,7 +7350,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``s`` -- a symbolic expression.
+        - ``s`` -- a symbolic expression
 
         OUTPUT:
 
@@ -7497,9 +7479,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``base_ring`` -- (optional) the base ring for the polynomial
+        - ``base_ring`` -- (optional) the base ring for the polynomial
 
-        -  ``ring`` -- (optional) the parent for the polynomial
+        - ``ring`` -- (optional) the parent for the polynomial
 
         .. warning::
 
@@ -7522,7 +7504,7 @@ cdef class Expression(Expression_abc):
             [[-5, 0], [6, 2]]
             sage: g.polynomial(QQ).list()
             [-5, 0, 6]
-            sage: g.polynomial(QQ).dict()
+            sage: g.polynomial(QQ).monomial_coefficients()
             {0: -5, 2: 6}
 
         ::
@@ -7589,7 +7571,6 @@ cdef class Expression(Expression_abc):
             sage: B = f.polynomial(ring=SR['x,y'])
             sage: B.coefficients()
             [a, 3]
-
         """
         from sage.symbolic.expression_conversions import polynomial
         return polynomial(self, base_ring=base_ring, ring=ring)
@@ -7601,9 +7582,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``base_ring`` -- (optional) the base ring for the polynomial
+        - ``base_ring`` -- (optional) the base ring for the polynomial
 
-        -  ``ring`` -- (optional) the parent for the polynomial
+        - ``ring`` -- (optional) the parent for the polynomial
 
         You can specify either the base ring (``base_ring``) you want
         the output Laurent polynomial to be over, or you can specify the full
@@ -7711,10 +7692,10 @@ cdef class Expression(Expression_abc):
             TypeError: y is not a variable of Multivariate Polynomial Ring in x over Ring of integers modulo 4
         """
         from sage.symbolic.ring import SR
-        from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
         base_ring = R.base_ring()
         if base_ring == SR:
-            if is_MPolynomialRing(R):
+            if isinstance(R, MPolynomialRing_base):
                 return R({tuple([0]*R.ngens()):self})
             else:
                 return R([self])
@@ -8028,15 +8009,14 @@ cdef class Expression(Expression_abc):
         """
         Return the lcm of ``self`` and ``b``.
 
-        The lcm is computed from the gcd of ``self`` and ``b``
-        implicitly from the
-        relation self * b = gcd(self, b) * lcm(self, b).
+        The lcm is computed from the gcd of ``self`` and ``b`` implicitly from
+        the relation ``self * b = gcd(self, b) * lcm(self, b)``.
 
         .. NOTE::
 
             In agreement with the convention in use for integers, if
-            self * b == 0, then gcd(self, b) == max(self, b) and
-            lcm(self, b) == 0.
+            ``self * b == 0``, then ``gcd(self, b) == max(self, b)`` and
+            ``lcm(self, b) == 0``.
 
         .. NOTE::
 
@@ -8087,7 +8067,6 @@ cdef class Expression(Expression_abc):
             (x, 0)
             sage: gcd(SR(0), SR(0)), lcm(SR(0), SR(0))
             (0, 0)
-
         """
         sb = self * b
         try:
@@ -8133,7 +8112,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``s`` -- the symbol whose coefficients will be collected.
+        - ``s`` -- the symbol whose coefficients will be collected
 
         OUTPUT:
 
@@ -8431,20 +8410,19 @@ cdef class Expression(Expression_abc):
             1
             sage: SR(2).step(hold=True)
             unit_step(2)
-
         """
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_step, self._gobj, hold))
 
     def csgn(self, hold=False):
         """
-        Return the sign of self, which is -1 if self < 0, 0 if self ==
-        0, and 1 if self > 0, or unevaluated when self is a nonconstant
-        symbolic expression.
+        Return the sign of ``self``, which is -1 if ``self < 0``, 0 if
+        ``self == 0``, and 1 if ``self > 0``, or unevaluated when ``self`` is a
+        nonconstant symbolic expression.
 
-        If self is not real, return the complex half-plane (left or right)
-        in which the number lies.  If self is pure imaginary, return the sign
-        of the imaginary part of self.
+        If ``self`` is not real, return the complex half-plane (left or right)
+        in which the number lies.  If ``self`` is pure imaginary, return the sign
+        of the imaginary part of ``self``.
 
         EXAMPLES::
 
@@ -8477,7 +8455,6 @@ cdef class Expression(Expression_abc):
 
             sage: SR(I).csgn(hold=True)
             csgn(I)
-
         """
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_csgn, self._gobj, hold))
@@ -8526,7 +8503,6 @@ cdef class Expression(Expression_abc):
 
             sage: a = SR(I).conjugate(hold=True); a.unhold()
             -I
-
         """
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_conjugate, self._gobj, hold))
@@ -8710,7 +8686,7 @@ cdef class Expression(Expression_abc):
 
     def sqrt(self, hold=False):
         """
-        Return the square root of this expression
+        Return the square root of this expression.
 
         EXAMPLES::
 
@@ -8831,7 +8807,7 @@ cdef class Expression(Expression_abc):
 
     def cos(self, hold=False):
         """
-        Return the cosine of self.
+        Return the cosine of ``self``.
 
         EXAMPLES::
 
@@ -8997,7 +8973,7 @@ cdef class Expression(Expression_abc):
 
     def arccos(self, hold=False):
         """
-        Return the arc cosine of self.
+        Return the arc cosine of ``self``.
 
         EXAMPLES::
 
@@ -9047,7 +9023,7 @@ cdef class Expression(Expression_abc):
 
     def arctan(self, hold=False):
         """
-        Return the arc tangent of self.
+        Return the arc tangent of ``self``.
 
         EXAMPLES::
 
@@ -9096,7 +9072,7 @@ cdef class Expression(Expression_abc):
 
     def arctan2(self, x, hold=False):
         """
-        Return the inverse of the 2-variable tan function on self and x.
+        Return the inverse of the 2-variable tan function on ``self`` and ``x``.
 
         EXAMPLES::
 
@@ -9200,7 +9176,7 @@ cdef class Expression(Expression_abc):
 
     def sinh(self, hold=False):
         r"""
-        Return sinh of self.
+        Return sinh of ``self``.
 
         We have `\sinh(x) = (e^{x} - e^{-x})/2`.
 
@@ -9258,7 +9234,7 @@ cdef class Expression(Expression_abc):
 
     def cosh(self, hold=False):
         r"""
-        Return cosh of self.
+        Return cosh of ``self``.
 
         We have `\cosh(x) = (e^{x} + e^{-x})/2`.
 
@@ -9314,7 +9290,7 @@ cdef class Expression(Expression_abc):
 
     def tanh(self, hold=False):
         r"""
-        Return tanh of self.
+        Return tanh of ``self``.
 
         We have `\tanh(x) = \sinh(x) / \cosh(x)`.
 
@@ -9368,7 +9344,7 @@ cdef class Expression(Expression_abc):
 
     def arcsinh(self, hold=False):
         """
-        Return the inverse hyperbolic sine of self.
+        Return the inverse hyperbolic sine of ``self``.
 
         EXAMPLES::
 
@@ -9470,7 +9446,7 @@ cdef class Expression(Expression_abc):
 
     def arctanh(self, hold=False):
         """
-        Return the inverse hyperbolic tangent of self.
+        Return the inverse hyperbolic tangent of ``self``.
 
         EXAMPLES::
 
@@ -9526,9 +9502,9 @@ cdef class Expression(Expression_abc):
                 g_hold_wrapper(g_atanh, self._gobj, hold))
 
     def exp(self, hold=False):
-        """
-        Return exponential function of self, i.e., e to the
-        power of self.
+        r"""
+        Return exponential function of ``self``, i.e., `e` to the
+        power of ``self``.
 
         EXAMPLES::
 
@@ -9583,7 +9559,7 @@ cdef class Expression(Expression_abc):
 
     def log(self, b=None, hold=False):
         """
-        Return the logarithm of self.
+        Return the logarithm of ``self``.
 
         EXAMPLES::
 
@@ -9688,11 +9664,9 @@ cdef class Expression(Expression_abc):
 
     def factorial(self, hold=False):
         """
-        Return the factorial of self.
+        Return the factorial of ``self``.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -9734,9 +9708,7 @@ cdef class Expression(Expression_abc):
         """
         Return binomial coefficient "self choose k".
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -9788,9 +9760,7 @@ cdef class Expression(Expression_abc):
         """
         Return the order of the expression, as in big oh notation.
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -9810,7 +9780,7 @@ cdef class Expression(Expression_abc):
 
     def gamma(self, *, hold=False):
         """
-        Return the Gamma function evaluated at self.
+        Return the Gamma function evaluated at ``self``.
 
         EXAMPLES::
 
@@ -9920,7 +9890,7 @@ cdef class Expression(Expression_abc):
     def default_variable(self):
         """
         Return the default variable, which is by definition the first
-        variable in self, or `x` is there are no variables in self.
+        variable in ``self``, or `x` if there are no variables in ``self``.
         The result is cached.
 
         EXAMPLES::
@@ -9986,7 +9956,7 @@ cdef class Expression(Expression_abc):
 
     def normalize(self):
         """
-        Return this expression normalized as a fraction
+        Return this expression normalized as a fraction.
 
         .. SEEALSO::
 
@@ -10032,7 +10002,6 @@ cdef class Expression(Expression_abc):
             (e^(4*pi) - 1)/e^(2*pi)
 
         ALGORITHM: Uses GiNaC.
-
         """
         cdef GEx r
         sig_on()
@@ -10044,11 +10013,11 @@ cdef class Expression(Expression_abc):
 
     def numerator(self, bint normalize = True):
         """
-        Return the numerator of this symbolic expression
+        Return the numerator of this symbolic expression.
 
         INPUT:
 
-        - ``normalize`` -- (default: ``True``) a boolean.
+        - ``normalize`` -- boolean (default: ``True``)
 
         If ``normalize`` is ``True``, the expression is first normalized to
         have it as a fraction before getting the numerator.
@@ -10140,11 +10109,11 @@ cdef class Expression(Expression_abc):
 
     def denominator(self, bint normalize=True):
         """
-        Return the denominator of this symbolic expression
+        Return the denominator of this symbolic expression.
 
         INPUT:
 
-        - ``normalize`` -- (default: ``True``) a boolean.
+        - ``normalize`` -- boolean (default: ``True``)
 
         If ``normalize`` is ``True``, the expression is first normalized to
         have it as a fraction before getting the denominator.
@@ -10231,11 +10200,11 @@ cdef class Expression(Expression_abc):
 
     def numerator_denominator(self, bint normalize=True):
         """
-        Return the numerator and the denominator of this symbolic expression
+        Return the numerator and the denominator of this symbolic expression.
 
         INPUT:
 
-        - ``normalize`` -- (default: ``True``) a boolean.
+        - ``normalize`` -- boolean (default: ``True``)
 
         If ``normalize`` is ``True``, the expression is first normalized to
         have it as a fraction before getting the numerator and denominator.
@@ -10340,11 +10309,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``var`` -- variable name or string (default: first variable)
+        - ``var`` -- variable name or string (default: first variable)
 
-        OUTPUT:
-
-        A symbolic expression
+        OUTPUT: a symbolic expression
 
         .. SEEALSO:: :meth:`partial_fraction_decomposition`
 
@@ -10382,11 +10349,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``var`` -- variable name or string (default: first variable)
+        - ``var`` -- variable name or string (default: first variable)
 
-        OUTPUT:
-
-        A list of symbolic expressions
+        OUTPUT: list of symbolic expressions
 
         .. SEEALSO:: :meth:`partial_fraction`
 
@@ -10450,7 +10415,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``self`` -- the expression to convert.
+        - ``self`` -- the expression to convert
 
         OUTPUT:
 
@@ -10532,7 +10497,7 @@ cdef class Expression(Expression_abc):
         INPUT:
 
         - ``self`` -- an expression with held operations
-        - ``exclude`` -- (default: None) a list of operators to exclude from
+        - ``exclude`` -- (default: ``None``) a list of operators to exclude from
           evaluation. Excluding arithmetic operators does not yet work (see
           :issue:`10169`).
 
@@ -10623,11 +10588,11 @@ cdef class Expression(Expression_abc):
             1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
             sage: ex.simplify()
             1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
-            sage: ex.simplify(algorithm="sympy")
+            sage: ex.simplify(algorithm='sympy')
             I*(x^2 + sqrt(x^2 - 1)*x - 1)/(x + sqrt(x^2 - 1))
-            sage: ex.simplify(algorithm="giac")
+            sage: ex.simplify(algorithm='giac')
             I*sqrt(x^2 - 1)
-            sage: ex.simplify(algorithm="fricas")  # optional - fricas
+            sage: ex.simplify(algorithm='fricas')  # optional - fricas
             (I*x^2 + I*sqrt(x^2 - 1)*x - I)/(x + sqrt(x^2 - 1))
 
         TESTS:
@@ -10659,7 +10624,7 @@ cdef class Expression(Expression_abc):
         """
         Apply :meth:`simplify_factorial`, :meth:`simplify_rectform`,
         :meth:`simplify_trig`, :meth:`simplify_rational`, and
-        then :meth:`expand_sum` to self (in that order).
+        then :meth:`expand_sum` to ``self`` (in that order).
 
         ALIAS: ``simplify_full`` and ``full_simplify`` are the same.
 
@@ -10777,7 +10742,6 @@ cdef class Expression(Expression_abc):
             -2*((x + 1)*e^(-x) - 1)*e^x/x^2
             sage: (2 * hypergeometric_U(1, 3, x)).simplify_hypergeometric()
             2*(x + 1)/x^2
-
         """
         from sage.functions.hypergeometric import (hypergeometric,
                                                    hypergeometric_M,
@@ -10828,7 +10792,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``self`` -- the expression to simplify.
+        - ``self`` -- the expression to simplify
 
         - ``complexity_measure`` -- (default:
           ``sage.symbolic.complexity_measures.string_length``) a
@@ -10884,7 +10848,6 @@ cdef class Expression(Expression_abc):
             sage: g = f.simplify_rectform(complexity_measure = None)
             sage: bool(g == f.rectform())
             True
-
         """
         simplified_expr = self.rectform()
 
@@ -10904,7 +10867,7 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``self`` -- the expression to convert.
+        - ``self`` -- the expression to convert
 
         OUTPUT:
 
@@ -10972,7 +10935,6 @@ cdef class Expression(Expression_abc):
             x
             sage: assumptions()
             []
-
         """
         from sage.symbolic.assumptions import assume, assumptions, forget
         from sage.calculus.calculus import maxima
@@ -11017,9 +10979,9 @@ cdef class Expression(Expression_abc):
 
         - ``self`` -- symbolic expression
 
-        - ``expand`` -- (default: ``True``) if True, expands trigonometric
-          and hyperbolic functions of sums of angles and of multiple
-          angles occurring in ``self`` first. For best results,
+        - ``expand`` -- boolean (default: ``True``); if ``True``, expands
+          trigonometric and hyperbolic functions of sums of angles and of
+          multiple angles occurring in ``self`` first. For best results,
           ``self`` should be expanded. See also :meth:`expand_trig` to
           get more controls on this expansion.
 
@@ -11065,18 +11027,18 @@ cdef class Expression(Expression_abc):
 
         - ``self`` -- symbolic expression
 
-        - ``algorithm`` -- (default: 'full') string which switches the
+        - ``algorithm`` -- (default: ``'full'``) string which switches the
           algorithm for simplifications. Possible values are
 
-          - 'simple' (simplify rational functions into quotient of two
-            polynomials),
+          - ``'simple'`` (simplify rational functions into quotient of two
+            polynomials)
 
-          - 'full' (apply repeatedly, if necessary)
+          - ``'full'`` (apply repeatedly, if necessary)
 
-          - 'noexpand' (convert to common denominator and add)
+          - ``'noexpand'`` (convert to common denominator and add)
 
-        - ``map`` -- (default: ``False``) if ``True``, the result is an
-          expression whose leading operator is the same as that of the
+        - ``map`` -- boolean (default: ``False``); if ``True``, the result is
+          an expression whose leading operator is the same as that of the
           expression ``self`` but whose subparts are the results of
           applying simplification rules to the corresponding subparts
           of the expressions.
@@ -11213,7 +11175,6 @@ cdef class Expression(Expression_abc):
             gamma(4/3)
             sage: gamma(4/3).full_simplify()
             1/3*gamma(1/3)
-
         """
         return self.parent()(self._maxima_().makefact().factcomb().minfactorial())
 
@@ -11508,7 +11469,7 @@ cdef class Expression(Expression_abc):
 
         - ``self`` -- expression to be simplified
 
-        - ``algorithm`` -- (default: None) optional, governs the condition
+        - ``algorithm`` -- (default: ``None``) governs the condition
           on `a` and `c` which must be satisfied to contract expression
           `a \log(b) + c \log(d)`. Values are
 
@@ -11656,16 +11617,16 @@ cdef class Expression(Expression_abc):
 
         - ``self`` -- expression to be simplified
 
-        - ``algorithm`` -- (default: 'products') optional, governs which
+        - ``algorithm`` -- (default: ``'products'``) governs which
           expression is expanded. Possible values are
 
-          - 'nothing' (no expansion),
+          - ``'nothing'`` (no expansion),
 
-          - 'powers' (log(a^r) is expanded),
+          - ``'powers'`` (log(a^r) is expanded),
 
-          - 'products' (like 'powers' and also log(a*b) are expanded),
+          - ``'products'`` (like 'powers' and also log(a*b) are expanded),
 
-          - 'all' (all possible expansion).
+          - ``'all'`` (all possible expansion).
 
           See also examples below.
 
@@ -11779,12 +11740,12 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        - ``recursive`` -- (default : True) the distribution proceeds
-          along the subtrees of the expression.
+        - ``recursive`` -- (default: ``True``) the distribution proceeds
+          along the subtrees of the expression
 
         TESTS:
 
-            sage: var("j,k,p,q", domain="integer")
+            sage: var("j,k,p,q", domain='integer')
             (j, k, p, q)
             sage: X,Y,Z,f,g = function("X,Y,Z,f,g")
             sage: var("x,a,b")
@@ -11875,15 +11836,13 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
+        - ``self`` -- a symbolic expression
 
-        -  ``self`` -- a symbolic expression
-
-        -  ``dontfactor`` -- list (default: ``[]``), a list of
-           variables with respect to which factoring is not to occur.
-           Factoring also will not take place with respect to any variables
-           which are less important (using the variable ordering assumed for
-           CRE form) than those on the 'dontfactor' list.
-
+        - ``dontfactor`` -- list (default: ``[]``); a list of
+          variables with respect to which factoring is not to occur.
+          Factoring also will not take place with respect to any variables
+          which are less important (using the variable ordering assumed for
+          CRE form) than those on the 'dontfactor' list.
 
         EXAMPLES::
 
@@ -11965,9 +11924,9 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``self`` -- a symbolic expression
+        - ``self`` -- a symbolic expression
 
-        -  ``dontfactor`` -- see docs for :meth:`factor`
+        - ``dontfactor`` -- see docs for :meth:`factor`
 
         .. NOTE::
 
@@ -12061,12 +12020,10 @@ cdef class Expression(Expression_abc):
         INPUT:
 
         - ``self`` -- the symbolic expression converting from
-        - ``target`` -- (default None) the symbolic expression
+        - ``target`` -- (default: ``None``) the symbolic expression
           converting to
 
-        OUTPUT:
-
-        A symbolic expression.
+        OUTPUT: a symbolic expression
 
         EXAMPLES::
 
@@ -12081,7 +12038,7 @@ cdef class Expression(Expression_abc):
             sage: a - a.convert()
             0
 
-        Raises ValueError if self and target are not convertible::
+        Raises :exc:`ValueError` if ``self`` and ``target`` are not convertible::
 
             sage: units.mass.kilogram.convert(units.length.foot)
             Traceback (most recent call last):
@@ -12150,13 +12107,13 @@ cdef class Expression(Expression_abc):
         - ``x`` -- variable to view the function in terms of
           (use default variable if not given)
 
-        - ``explicit_solutions`` -- bool (default ``True``); require that
+        - ``explicit_solutions`` -- boolean (default: ``True``); require that
           roots be explicit rather than implicit
 
-        - ``multiplicities`` -- bool (default ``True``); when ``True``, return
+        - ``multiplicities`` -- boolean (default: ``True``); when ``True``, return
           multiplicities
 
-        - ``ring`` -- a ring (default ``None``): if not ``None``, convert
+        - ``ring`` -- a ring (default: ``None``); if not ``None``, convert
           ``self`` to a polynomial over ``ring`` and find roots over ``ring``
 
         OUTPUT:
@@ -12325,28 +12282,28 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``x`` -- variable(s) to solve for
+        - ``x`` -- variable(s) to solve for
 
-        -  ``multiplicities`` -- bool (default: ``False``); if ``True``,
-           return corresponding multiplicities.  This keyword is
-           incompatible with ``to_poly_solve=True`` and does not make
-           any sense when solving an inequality.
+        - ``multiplicities`` -- boolean (default: ``False``); if ``True``,
+          return corresponding multiplicities.  This keyword is
+          incompatible with ``to_poly_solve=True`` and does not make
+          any sense when solving an inequality.
 
-        -  ``solution_dict`` -- bool (default: ``False``); if ``True`` or non-zero,
-           return a list of dictionaries containing solutions. Not used
-           when solving an inequality.
+        - ``solution_dict`` -- boolean (default: ``False``); if ``True`` or nonzero,
+          return a list of dictionaries containing solutions. Not used
+          when solving an inequality.
 
-        -  ``explicit_solutions`` -- bool (default: ``False``); require that
-           all roots be explicit rather than implicit. Not used
-           when solving an inequality.
+        - ``explicit_solutions`` -- boolean (default: ``False``); require that
+          all roots be explicit rather than implicit. Not used
+          when solving an inequality.
 
-        -  ``to_poly_solve`` -- bool (default: ``False``) or string; use
-           Maxima's ``to_poly_solver`` package to search for more possible
-           solutions, but possibly encounter approximate solutions.
-           This keyword is incompatible with ``multiplicities=True``
-           and is not used when solving an inequality. Setting ``to_poly_solve``
-           to ``'force'`` omits Maxima's solve command (useful when
-           some solutions of trigonometric equations are lost).
+        - ``to_poly_solve`` -- boolean (default: ``False``) or string; use
+          Maxima's ``to_poly_solver`` package to search for more possible
+          solutions, but possibly encounter approximate solutions.
+          This keyword is incompatible with ``multiplicities=True``
+          and is not used when solving an inequality. Setting ``to_poly_solve``
+          to ``'force'`` omits Maxima's solve command (useful when
+          some solutions of trigonometric equations are lost).
 
         EXAMPLES::
 
@@ -12512,22 +12469,22 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``a``, ``b`` -- endpoints of the interval
+        - ``a``, ``b`` -- endpoints of the interval
 
-        -  ``var`` -- optional variable
+        - ``var`` -- (optional) variable
 
-        -  ``xtol, rtol`` -- the routine converges when a root
-           is known to lie within ``xtol`` of the value return. Should be >= 0. The
-           routine modifies this to take into account the relative precision
-           of doubles.
+        - ``xtol, rtol`` -- the routine converges when a root is known to lie
+          within ``xtol`` of the value return. Should be nonnegative. The
+          routine modifies this to take into account the relative precision of
+          doubles.
 
-        -  ``maxiter`` -- integer; if convergence is not
-           achieved in maxiter iterations, an error is raised. Must be >= 0.
+        - ``maxiter`` -- integer; if convergence is not achieved in maxiter
+          iterations, an error is raised. Must be nonnegative.
 
-        -  ``full_output`` -- bool (default: ``False``), if ``True``,
-           also return object that contains information about convergence.
+        - ``full_output`` -- boolean (default: ``False``); if ``True``,
+          also return object that contains information about convergence
 
-        - ``imaginary_tolerance`` -- (default: ``1e-8``); if an imaginary
+        - ``imaginary_tolerance`` -- (default: ``1e-8``) if an imaginary
           number arises (due, for example, to numerical issues), this
           tolerance specifies how large it has to be in magnitude before
           we raise an error. In other words, imaginary parts smaller than
@@ -12641,7 +12598,6 @@ cdef class Expression(Expression_abc):
             sage: f = (sqrt(x) - I).abs()
             sage: f.find_root(-2, 2, rtol=1e-6)  # abs tol 1e-6                         # needs scipy
             -1.0000000049668551
-
         """
         if is_a_relational(self._gobj) and self.operator() is not operator.eq:
             raise ValueError("Symbolic equation must be an equality.")
@@ -12698,22 +12654,20 @@ cdef class Expression(Expression_abc):
 
         INPUT:
 
-        -  ``a`` -- real number; left endpoint of interval on which to
-           minimize
+        - ``a`` -- real number; left endpoint of interval on which to minimize
 
-        -  ``b`` -- real number; right endpoint of interval on which to
-           minimize
+        - ``b`` -- real number; right endpoint of interval on which to minimize
 
-        -  ``var`` -- variable (default: first variable in self); the
-           variable in self to maximize over
+        - ``var`` -- variable (default: first variable in ``self``); the
+          variable in ``self`` to maximize over
 
-        -  ``tol`` -- positive real (default: 1.48e-08); the convergence
-           tolerance
+        - ``tol`` -- positive real (default: 1.48e-08); the convergence
+          tolerance
 
-        -  ``maxfun`` -- natural number (default: 500); maximum function
-           evaluations
+        - ``maxfun`` -- natural number (default: 500); maximum function
+          evaluations
 
-        - ``imaginary_tolerance`` -- (default: ``1e-8``); if an imaginary
+        - ``imaginary_tolerance`` -- (default: ``1e-8``) if an imaginary
           number arises (due, for example, to numerical issues), this
           tolerance specifies how large it has to be in magnitude before
           we raise an error. In other words, imaginary parts smaller than
@@ -12723,11 +12677,11 @@ cdef class Expression(Expression_abc):
 
         A tuple ``(minval, x)``, where
 
-        - ``minval`` -- float. The minimum value that self takes on in
-          the interval ``[a,b]``.
+        - ``minval`` -- float; the minimum value that ``self`` takes on in
+          the interval ``[a,b]``
 
-        - ``x`` -- float. The point at which self takes on the minimum
-          value.
+        - ``x`` -- float; the point at which ``self`` takes on the minimum
+          value
 
         EXAMPLES::
 
@@ -12978,18 +12932,18 @@ cdef class Expression(Expression_abc):
     ############
     def sum(self, *args, **kwds):
         r"""
-        Return the symbolic sum `\sum_{v = a}^b` ``self``
+        Return the symbolic sum `\sum_{v = a}^b` ``self``.
 
         with respect to the variable `v` with endpoints
         `a` and `b`.
 
         INPUT:
 
-        -  ``v`` -- a variable or variable name
+        - ``v`` -- a variable or variable name
 
-        -  ``a`` -- lower endpoint of the sum
+        - ``a`` -- lower endpoint of the sum
 
-        -  ``b`` -- upper endpoint of the sum
+        - ``b`` -- upper endpoint of the sum
 
         - ``algorithm`` -- (default: ``'maxima'``)  one of
 
@@ -13178,7 +13132,7 @@ cdef class Expression(Expression_abc):
           - ``'giac'`` -- (optional) use Giac
           - ``'sympy'`` -- use SymPy
 
-        - ``hold`` -- (default: ``False``) if ``True``, don't evaluate
+        - ``hold`` -- boolean (default: ``False``); if ``True``, don't evaluate
 
         TESTS:
 
@@ -13463,15 +13417,17 @@ cdef class Expression(Expression_abc):
 
     def implicit_derivative(self, Y, X, n=1):
         """
-        Return the `n`-th derivative of `Y` with respect to `X` given implicitly by this expression.
+        Return the `n`-th derivative of `Y` with respect to `X` given
+        implicitly by this expression.
 
         INPUT:
 
-        - ``Y`` -- The dependent variable of the implicit expression.
+        - ``Y`` -- the dependent variable of the implicit expression
 
-        - ``X`` -- The independent variable with respect to which the derivative is taken.
+        - ``X`` -- the independent variable with respect to which the
+          derivative is taken
 
-        - ``n`` -- (default: 1) the order of the derivative.
+        - ``n`` -- (default: 1) the order of the derivative
 
         EXAMPLES::
 
@@ -13827,15 +13783,15 @@ cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=Tr
 
     INPUT:
 
-    - ``parent`` -- a symbolic ring.
+    - ``parent`` -- a symbolic ring
 
-    - ``x`` -- a Python object.
+    - ``x`` -- a Python object
 
-    - ``force`` -- bool, default ``True``, if True, the Python object
-      is taken as is without attempting coercion or list traversal.
+    - ``force`` -- boolean (default: ``True``); if ``True``, the Python object
+      is taken as is without attempting coercion or list traversal
 
-    - ``recursive`` -- bool, default ``True``, disables recursive
-      traversal of lists.
+    - ``recursive`` -- boolean (default: ``True``); disables recursive
+      traversal of lists
 
     EXAMPLES::
 
@@ -13897,13 +13853,11 @@ cpdef new_Expression_wild(parent, unsigned int n=0):
 
     INPUT:
 
-    - ``parent`` -- a symbolic ring.
+    - ``parent`` -- a symbolic ring
 
-    - ``n`` -- a nonnegative integer.
+    - ``n`` -- nonnegative integer
 
-    OUTPUT:
-
-    - ``n``-th wildcard expression.
+    OUTPUT: n-th wildcard expression
 
     EXAMPLES::
 

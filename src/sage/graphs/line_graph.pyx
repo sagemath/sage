@@ -135,7 +135,7 @@ def is_line_graph(g, certificate=False):
 
     INPUT:
 
-    - ``certificate`` (boolean) -- whether to return a certificate along with
+    - ``certificate`` -- boolean; whether to return a certificate along with
       the boolean result. Here is what happens when ``certificate = True``:
 
       - If the graph is not a line graph, the method returns a pair ``(b,
@@ -294,12 +294,12 @@ def line_graph(g, labels=True):
 
     .. SEEALSO::
 
-        - The :mod:`line_graph <sage.graphs.line_graph>` module.
+        - The :mod:`line_graph <sage.graphs.line_graph>` module
 
         - :meth:`~sage.graphs.graph_generators.GraphGenerators.line_graph_forbidden_subgraphs`
-          -- the forbidden subgraphs of a line graph.
+          -- the forbidden subgraphs of a line graph
 
-        - :meth:`~Graph.is_line_graph` -- tests whether a graph is a line graph.
+        - :meth:`~Graph.is_line_graph` -- tests whether a graph is a line graph
 
     EXAMPLES::
 
@@ -422,7 +422,7 @@ def root_graph(g, verbose=False):
     - ``g`` -- a graph
 
     - ``verbose`` -- boolean (default: ``False``); display some information
-      about what is happening inside of the algorithm.
+      about what is happening inside of the algorithm
 
     .. WARNING::
 

@@ -244,9 +244,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         - any object that can converted into a complex number
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -260,7 +258,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
     def point_test(self, p):  # Abstract
         r"""
         Test whether a point is in the model.  If the point is in the
-        model, do nothing.  Otherwise, raise a :class:`ValueError`.
+        model, do nothing.  Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -284,9 +282,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         - any object that can converted into a complex number
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -298,7 +294,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
     def bdry_point_test(self, p):  # Abstract
         r"""
         Test whether a point is in the model.  If the point is in the
-        model, do nothing; otherwise raise a :class:`ValueError`.
+        model, do nothing; otherwise raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -319,11 +315,9 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         INPUT:
 
-        - a matrix that represents an isometry in the appropriate model
+        - ``A`` -- a matrix that represents an isometry in the appropriate model
 
-        OUTPUT:
-
-        - boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -340,7 +334,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         Test whether an isometry ``A`` is in the model.
 
         If the isometry is in the model, do nothing. Otherwise, raise
-        a :class:`ValueError`.
+        a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -370,9 +364,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         - a point in hyperbolic space or on the ideal boundary
 
-        OUTPUT:
-
-        - a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint`
+        OUTPUT: a :class:`~sage.geometry.hyperbolic_space.hyperbolic_point.HyperbolicPoint`
 
         EXAMPLES:
 
@@ -407,7 +399,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             sage: HyperbolicPlane().HM().get_point((0,0,1))
             Point in HM (0, 0, 1)
 
-            sage: p = HyperbolicPlane().UHP().get_point(I, color="red")
+            sage: p = HyperbolicPlane().UHP().get_point(I, color='red')
             sage: p.graphics_options()
             {'color': 'red'}
 
@@ -566,7 +558,6 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             sage: h = HyperbolicPlane().PD().random_geodesic()
             sage: all( e.coordinates().abs() <= 1 for e in h.endpoints() )
             True
-
         """
         R = self.realization_of().a_realization()
         g_ends = [R.random_point(**kwargs) for k in range(2)]
@@ -581,9 +572,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         - ``preserve_orientation`` -- if ``True`` return an
           orientation-preserving isometry
 
-        OUTPUT:
-
-        - a hyperbolic isometry
+        OUTPUT: a hyperbolic isometry
 
         EXAMPLES::
 
@@ -611,9 +600,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
 
         - ``a``, ``b`` -- a point or geodesic
 
-        OUTPUT:
-
-        - the hyperbolic distance
+        OUTPUT: the hyperbolic distance
 
         EXAMPLES::
 
@@ -718,9 +705,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         - ``end`` -- the end ideal point coordinates of the geodesic
         - ``p`` -- the coordinates of the point
 
-        OUTPUT:
-
-        - the hyperbolic distance
+        OUTPUT: the hyperbolic distance
 
         EXAMPLES::
 
@@ -797,7 +782,7 @@ class HyperbolicModelUHP(HyperbolicModel):
             sage: TestSuite(UHP).run()
         """
         HyperbolicModel.__init__(self, space,
-                                 name="Upper Half Plane Model", short_name="UHP",
+                                 name="Upper Half Plane Model", short_name='UHP',
                                  bounded=True, conformal=True, dimension=2,
                                  isometry_group="PSL(2, \\RR)", isometry_group_is_projective=True)
 
@@ -978,9 +963,7 @@ class HyperbolicModelUHP(HyperbolicModel):
         - ``end`` -- the end ideal point coordinates of the geodesic
         - ``p`` -- the coordinates of the point
 
-        OUTPUT:
-
-        - the hyperbolic distance
+        OUTPUT: the hyperbolic distance
 
         EXAMPLES::
 
@@ -1100,9 +1083,7 @@ class HyperbolicModelUHP(HyperbolicModel):
         - ``preserve_orientation`` -- if ``True`` return an
           orientation-preserving isometry
 
-        OUTPUT:
-
-        - a hyperbolic isometry
+        OUTPUT: a hyperbolic isometry
 
         EXAMPLES::
 
@@ -1174,7 +1155,7 @@ class HyperbolicModelPD(HyperbolicModel):
         # name should really be 'Poincaré Disk Model', but utf8 is not
         # accepted by repr
         HyperbolicModel.__init__(self, space,
-                                 name='Poincare Disk Model', short_name="PD",
+                                 name='Poincare Disk Model', short_name='PD',
                                  bounded=True, conformal=True, dimension=2,
                                  isometry_group="PU(1, 1)",
                                  isometry_group_is_projective=True)
@@ -1300,7 +1281,7 @@ class HyperbolicModelKM(HyperbolicModel):
             sage: TestSuite(KM).run()
         """
         HyperbolicModel.__init__(self, space,
-                                 name="Klein Disk Model", short_name="KM",
+                                 name="Klein Disk Model", short_name='KM',
                                  bounded=True, conformal=False, dimension=2,
                                  isometry_group="PSO(2, 1)", isometry_group_is_projective=True)
 
@@ -1423,7 +1404,7 @@ class HyperbolicModelHM(HyperbolicModel):
             sage: TestSuite(HM).run()
         """
         HyperbolicModel.__init__(self, space,
-                                 name="Hyperboloid Model", short_name="HM",
+                                 name="Hyperboloid Model", short_name='HM',
                                  bounded=False, conformal=True, dimension=2,
                                  isometry_group="SO(2, 1)", isometry_group_is_projective=False)
 

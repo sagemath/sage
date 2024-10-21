@@ -158,7 +158,6 @@ class SageSet(Set):
             Traceback (most recent call last):
             ...
             TypeError: did not evaluate to a bool: None
-
         """
         if element.is_symbol:
             # keep symbolic

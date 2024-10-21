@@ -56,7 +56,7 @@ cdef class TreeIterator:
 
     def __init__(self, int vertices):
         r"""
-        Initializes an iterator over all trees with `n` vertices.
+        Initialize an iterator over all trees with `n` vertices.
 
         EXAMPLES::
 
@@ -94,7 +94,7 @@ cdef class TreeIterator:
 
     def __iter__(self):
         r"""
-        Returns an iterator over all the trees with `n` vertices.
+        Return an iterator over all the trees with `n` vertices.
 
         EXAMPLES::
 
@@ -107,7 +107,7 @@ cdef class TreeIterator:
 
     def __next__(self):
         r"""
-        Returns the next tree with `n` vertices
+        Return the next tree with `n` vertices.
 
         EXAMPLES::
 

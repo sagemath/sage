@@ -172,7 +172,7 @@ def hall_polynomial(nu, mu, la, q=None):
         for k in range(n):
             r.append(r[-1] + sum(exp_mu[k:]) - sum(exp_nu[k:]))
         # Now, r is [r_0, r_1, ..., r_n].
-        exp_nu += [0]*(n - len(exp_nu)) # Pad with 0's until it has length n
+        exp_nu += [0]*(n - len(exp_nu)) # Pad with 0s until it has length n
         # Note that all -1 for exp_nu is due to indexing
         t = sum((r[k-2] - r[k-1])*(sum(exp_nu[k-1:]) - r[k-1]) for k in range(2,n+1))
         if t < 0:

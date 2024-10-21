@@ -136,7 +136,7 @@ class FreeMonoidElement(MonoidElement):
 
     def _latex_(self) -> str:
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 

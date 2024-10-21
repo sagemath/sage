@@ -46,14 +46,14 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSets
 
 lazy_import("sage.combinat.yang_baxter_graph", "YangBaxterGraph_partition")
-lazy_import("sage.groups.perm_gps.constructor", "PermutationGroupElement", as_="PermutationConstructor")
+lazy_import("sage.groups.perm_gps.constructor", "PermutationGroupElement", as_='PermutationConstructor')
 lazy_import("sage.symbolic.ring", "SR")
 
 
 # #### Constructor function ################################################
 
 
-def SymmetricGroupRepresentation(partition, implementation="specht",
+def SymmetricGroupRepresentation(partition, implementation='specht',
         ring=None, cache_matrices=True):
     r"""
     The irreducible representation of the symmetric group corresponding to
@@ -63,15 +63,15 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
 
     - ``partition`` -- a partition of a positive integer
 
-    - ``implementation`` -- string (default: ``"specht"``), one of:
+    - ``implementation`` -- string (default: ``'specht'``); one of:
 
-      * ``"seminormal"`` -- for Young's seminormal representation
-      * ``"orthogonal"`` -- for Young's orthogonal representation
-      * ``"specht"`` -- for Specht's representation
+      * ``'seminormal'`` -- for Young's seminormal representation
+      * ``'orthogonal'`` -- for Young's orthogonal representation
+      * ``'specht'`` -- for Specht's representation
 
     - ``ring`` -- the ring over which the representation is defined
 
-    - ``cache_matrices`` -- boolean (default: ``True``) if ``True``, then any
+    - ``cache_matrices`` -- boolean (default: ``True``); if ``True``, then any
       representation matrices that are computed are cached
 
     EXAMPLES:
@@ -180,7 +180,7 @@ def SymmetricGroupRepresentation(partition, implementation="specht",
     return Rep(partition)
 
 
-def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
+def SymmetricGroupRepresentations(n, implementation='specht', ring=None,
         cache_matrices=True):
     r"""
     Irreducible representations of the symmetric group.
@@ -189,15 +189,15 @@ def SymmetricGroupRepresentations(n, implementation="specht", ring=None,
 
     - ``n`` -- positive integer
 
-    - ``implementation`` -- string (default: ``"specht"``), one of:
+    - ``implementation`` -- string (default: ``'specht'``); one of:
 
-      * ``"seminormal"`` -- for Young's seminormal representation
-      * ``"orthogonal"`` -- for Young's orthogonal representation
-      * ``"specht"`` -- for Specht's representation
+      * ``'seminormal'`` -- for Young's seminormal representation
+      * ``'orthogonal'`` -- for Young's orthogonal representation
+      * ``'specht'`` -- for Specht's representation
 
     - ``ring`` -- the ring over which the representation is defined
 
-    - ``cache_matrices`` -- boolean (default: ``True``) if ``True``, then any
+    - ``cache_matrices`` -- boolean (default: ``True``); if ``True``, then any
       representation matrices that are computed are cached
 
     EXAMPLES:
@@ -1025,6 +1025,8 @@ def partition_to_vector_of_contents(partition, reverse=False):
 
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.combinat.specht_module import SymmetricGroupRepresentation as SymmetricGroupRepresentation_mixin
+
+
 class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricGroupRepresentation_mixin):
     r"""
     A Garsia-Procesi module.

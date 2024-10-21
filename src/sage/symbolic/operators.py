@@ -124,7 +124,6 @@ class FDerivativeOperator():
            sage: op = FDerivativeOperator(f, [0])
            sage: op(1)
            D[0](f)(1)
-
         """
         if (not all(isinstance(x, Expression) and x.is_symbol() for x in args) or
                 len(args) != len(set(args))):
@@ -227,7 +226,6 @@ class DerivativeOperator():
         diff(f(x, y), x, y)
         sage: D[0, 1](f)(x, x^2)
         D[0, 1](f)(x, x^2)
-
     """
     class DerivativeOperatorWithParameters():
         def __init__(self, parameter_set):

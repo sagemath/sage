@@ -194,7 +194,7 @@ cdef extern from "misc.h":
      int giacgencmp( gen & , gen & , context *) except +
      int giacgenrichcmp( gen & , gen & , int, context *) except +
      #NB: we use the following multiplication otherwise some  giac errors make python quit:
-     #l=giac([1,2]); l.tranpose()*l
+     #l=giac([1,2]); l.transpose()*l
      gen GIAC_giacmul "giacmul"( gen & , gen & , context *) except +
      gen GIAC_giacdiv "giacdiv"( gen & , gen & , context *) except +
      gen GIAC_giacmod "giacmod"( gen & , gen & , context *) except +

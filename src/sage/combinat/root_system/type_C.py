@@ -213,7 +213,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type C.
+        Return a Dynkin diagram for type C.
 
         EXAMPLES::
 
@@ -307,10 +307,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         n = self.n
-        return CartanTypeFolded(self, ['A', 2*n-1],
-            [[i, 2*n-i] for i in range(1, n)] + [[n]])
+        return CartanTypeFolded(self, ['A', 2*n - 1],
+                                [[i, 2*n - i] for i in range(1, n)] + [[n]])
 
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_C', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_C',
+                           'ambient_space', AmbientSpace)

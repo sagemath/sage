@@ -27,7 +27,7 @@ class FunctorialCompositionStructure(GenericSpeciesStructure):
 class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
     def __init__(self, F, G, min=None, max=None, weight=None):
         """
-        Returns the functorial composition of two species.
+        Return the functorial composition of two species.
 
         EXAMPLES::
 
@@ -125,7 +125,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
 
     def weight_ring(self):
         """
-        Returns the weight ring for this species. This is determined by
+        Return the weight ring for this species. This is determined by
         asking Sage's coercion model what the result is when you multiply
         (and add) elements of the weight rings for each of the operands.
 

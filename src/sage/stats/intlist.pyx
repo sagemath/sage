@@ -53,7 +53,6 @@ cdef class IntList:
 
             sage: stats.IntList(5)     # indirect test
             [0, 0, 0, 0, 0]
-
         """
         self._values = NULL
 
@@ -63,7 +62,7 @@ cdef class IntList:
 
         INPUT:
 
-        - values -- int, long, Integer, list of integers, or a TimeSeries
+        - ``values`` -- int, long, Integer, list of integers, or a TimeSeries
 
         If the input is a time series or list of floats, then the
         integer parts of the entries are taken (not the floor).
@@ -122,7 +121,7 @@ cdef class IntList:
 
     def __richcmp__(IntList self, other, int op):
         """
-        Compare self and other.  This has the same semantics
+        Compare ``self`` and ``other``.  This has the same semantics
         as list comparison.
 
         EXAMPLES::
@@ -189,7 +188,7 @@ cdef class IntList:
 
         INPUT:
 
-        - i -- integer or slice
+        - ``i`` -- integer or slice
 
         EXAMPLES::
 
@@ -253,8 +252,8 @@ cdef class IntList:
 
         INPUT:
 
-            - i -- an integer
-            - x -- an int
+            - ``i`` -- integer
+            - ``x`` -- integer
 
         EXAMPLES::
 
@@ -296,8 +295,8 @@ cdef class IntList:
             sage: loads(dumps(v)) == v
             True
 
-        Note that dumping and loading with compress False is much faster, though
-        dumping with compress True can save a lot of space::
+        Note that dumping and loading with compress ``False`` is much faster,
+        though dumping with compress ``True`` can save a lot of space::
 
             sage: v = stats.IntList([1..10^5])
             sage: loads(dumps(v, compress=False),compress=False) == v
@@ -380,9 +379,7 @@ cdef class IntList:
         """
         Return the number of entries in this time series.
 
-        OUTPUT:
-
-        Python integer
+        OUTPUT: Python integer
 
         EXAMPLES::
 
@@ -397,7 +394,7 @@ cdef class IntList:
 
     def __add__(left, right):
         """
-        Concatenate the integer lists self and right.
+        Concatenate the integer lists ``self`` and ``right``.
 
         EXAMPLES::
 
@@ -418,17 +415,17 @@ cdef class IntList:
     def min(self, bint index=False):
         """
         Return the smallest value in this integer list.  If this
-        series has length 0 we raise a :class:`ValueError`.
+        series has length 0 we raise a :exc:`ValueError`.
 
         INPUT:
 
-        - ``index`` -- bool (default: ``False``); if ``True``, also return
-          index of minimal entry.
+        - ``index`` -- boolean (default: ``False``); if ``True``, also return
+          index of minimal entry
 
         OUTPUT:
 
-        - float -- smallest value
-        - integer -- index of smallest value; only returned if
+        - ``float`` -- smallest value
+        - ``integer`` -- index of smallest value; only returned if
           ``index=True``
 
         EXAMPLES::
@@ -456,17 +453,17 @@ cdef class IntList:
     def max(self, bint index=False):
         """
         Return the largest value in this time series. If this series
-        has length 0 we raise a :class:`ValueError`
+        has length 0 we raise a :exc:`ValueError`
 
         INPUT:
 
-        - ``index`` -- bool (default: ``False``); if ``True``, also return
-          index of maximum entry.
+        - ``index`` -- boolean (default: ``False``); if ``True``, also return
+          index of maximum entry
 
         OUTPUT:
 
-        - int -- largest value
-        - int -- index of largest value; only returned if ``index=True``
+        - integer -- largest value
+        - integer -- index of largest value; only returned if ``index=True``
 
         EXAMPLES::
 
@@ -552,11 +549,9 @@ cdef IntList new_int_list(Py_ssize_t length):
 
     INPUT:
 
-        - length -- a nonnegative integer
+    - ``length`` -- nonnegative integer
 
-    OUTPUT:
-
-        - an IntList.
+    OUTPUT: an IntList
     """
     if length < 0:
         raise ValueError("length must be nonnegative")

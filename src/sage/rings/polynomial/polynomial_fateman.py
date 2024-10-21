@@ -17,9 +17,11 @@ from math import ceil as pyceil
 
 def _mul_fateman_to_int2(f_list, g_list):
     """
-    Convert a polynomial to an integer by evaluating it
+    Convert a polynomial to an integer by evaluating it.
 
-    INPUT: p, a list of integers
+    INPUT:
+
+    - ``f_list``, ``g_list`` -- lists of integers
 
     OUTPUT: padding
     """
@@ -31,11 +33,10 @@ def _mul_fateman_to_int2(f_list, g_list):
 
 def _mul_fateman_to_poly(number, padding):
     """
-    Converts a number to a polynomial, according to a padding.
+    Convert a number to a polynomial, according to a padding.
 
-    OUTPUT:
-
-    a list containing the coefficient of a polynomial of degree len(list)
+    OUTPUT: list containing the coefficient of a polynomial of degree
+    ``len(list)``
     """
     coeffs = []
     flag = 0

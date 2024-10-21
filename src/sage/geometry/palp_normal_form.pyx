@@ -43,9 +43,9 @@ def _palp_PM_max(Matrix_integer_dense PM, check=False):
 
     INPUT:
 
-    - ``check`` -- Boolean (default: ``False``), whether to return
+    - ``check`` -- boolean (default: ``False``); whether to return
       the permutations leaving the maximal vertex-facet pairing
-      matrix invariant.
+      matrix invariant
 
     OUTPUT:
 
@@ -351,15 +351,13 @@ def _palp_canonical_order(vertices, PM_max, permutations):
 
     INPUT:
 
-    - ``vertices`` -- iterable of iterables. The vertices.
+    - ``vertices`` -- iterable of iterables; the vertices
 
     - ``PM_max`` -- the maximal vertex-facet pairing matrix
 
-    - ``permutation`` -- the permutations of the vertices yielding ``PM_max``.
+    - ``permutation`` -- the permutations of the vertices yielding ``PM_max``
 
-    OUTPUT:
-
-    The PALP normal form as an iterable of integer vectors.
+    OUTPUT: the PALP normal form as an iterable of integer vectors
 
     TESTS::
 

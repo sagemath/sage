@@ -41,7 +41,7 @@ cdef class TropicalSemiringElement(Element):
 
     cdef TropicalSemiringElement _new(self):
         """
-        Return a new tropical semiring element with parent ``self`.
+        Return a new tropical semiring element with parent ``self``.
         """
         cdef TropicalSemiringElement x
         x = TropicalSemiringElement.__new__(TropicalSemiringElement)
@@ -469,8 +469,8 @@ class TropicalSemiring(Parent, UniqueRepresentation):
     INPUT:
 
     - ``base`` -- the base ordered additive semigroup `R`
-    - ``use_min`` -- (default: ``True``) if ``True``, then the semiring uses
-      `a \oplus b = \min(a, b)`; otherwise uses `a \oplus b = \max(a, b)`
+    - ``use_min`` -- boolean (default: ``True``); if ``True``, then the semiring uses
+      `a \oplus b = \min(a, b)`. Otherwise uses `a \oplus b = \max(a, b)`.
 
     EXAMPLES::
 

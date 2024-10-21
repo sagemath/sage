@@ -277,11 +277,9 @@ def select(P):
 
     INPUT:
 
-    - ``P`` -- a list of critical pairs
+    - ``P`` -- list of critical pairs
 
-    OUTPUT:
-
-    an element of P
+    OUTPUT: an element of P
 
     EXAMPLES::
 
@@ -316,12 +314,10 @@ def update(G, B, h):
     INPUT:
 
     - ``G`` -- an intermediate Groebner basis
-    - ``B`` -- a list of critical pairs
+    - ``B`` -- list of critical pairs
     - ``h`` -- a polynomial
 
-    OUTPUT:
-
-    ``G,B`` where ``G`` and ``B`` are updated
+    OUTPUT: ``G,B`` where ``G`` and ``B`` are updated
 
     EXAMPLES::
 

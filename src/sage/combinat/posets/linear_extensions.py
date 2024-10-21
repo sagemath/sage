@@ -53,7 +53,7 @@ class LinearExtensionOfPoset(ClonableArray,
 
     INPUT:
 
-    - ``linear_extension`` -- a list of the elements of `P`
+    - ``linear_extension`` -- list of the elements of `P`
     - ``poset`` -- the underlying poset `P`
 
     .. SEEALSO:: :class:`~sage.combinat.posets.posets.Poset`, :class:`LinearExtensionsOfPoset`
@@ -94,11 +94,12 @@ class LinearExtensionOfPoset(ClonableArray,
     @staticmethod
     def __classcall_private__(cls, linear_extension, poset):
         r"""
-        Implements the shortcut ``LinearExtensionOfPoset(linear_extension, poset)`` to ``LinearExtensionsOfPoset(poset)(linear_extension)``
+        Implement the shortcut ``LinearExtensionOfPoset(linear_extension, poset)``
+        to ``LinearExtensionsOfPoset(poset)(linear_extension)``.
 
         INPUT:
 
-        - ``linear_extension`` -- a list of elements of ``poset``
+        - ``linear_extension`` -- list of elements of ``poset``
         - ``poset`` -- a finite poset
 
         .. TODO:: check whether this method is still useful
@@ -132,7 +133,7 @@ class LinearExtensionOfPoset(ClonableArray,
 
     def check(self):
         r"""
-        Checks whether ``self`` is indeed a linear extension of the underlying poset.
+        Check whether ``self`` is indeed a linear extension of the underlying poset.
 
         TESTS::
 
@@ -321,7 +322,8 @@ class LinearExtensionOfPoset(ClonableArray,
 
         INPUT:
 
-        - `i` -- an integer between `1` and `n-1`, where `n` is the cardinality of the poset.
+        - ``i`` -- integer between `1` and `n-1`, where `n` is the
+          cardinality of the poset
 
         The operator `\tau_i` on a linear extension `\pi` of a poset
         `P` interchanges positions `i` and `i+1` if the result is
@@ -473,12 +475,12 @@ class LinearExtensionOfPoset(ClonableArray,
 
 class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
     """
-    The set of all linear extensions of a finite poset
+    The set of all linear extensions of a finite poset.
 
     INPUT:
 
     - ``poset`` -- a poset `P` of size `n`
-    - ``facade`` -- a boolean (default: ``False``)
+    - ``facade`` -- boolean (default: ``False``)
 
     .. SEEALSO::
 
@@ -541,7 +543,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: TestSuite(L).run()                                                    # needs sage.modules
 
             sage: L = P.linear_extensions(facade=True)
-            sage: TestSuite(L).run(skip="_test_an_element")                             # needs sage.modules
+            sage: TestSuite(L).run(skip='_test_an_element')                             # needs sage.modules
         """
         self._poset = poset
         self._is_facade = facade
@@ -661,7 +663,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
     def __iter__(self):
         r"""
-        Iterates through the linear extensions of the underlying poset.
+        Iterate through the linear extensions of the underlying poset.
 
         EXAMPLES::
 
@@ -702,7 +704,6 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
             sage: [p for p in Permutations(list(P)) if list(p) in L]
             [[1, 2, 3, 4, 6, 12], [1, 2, 3, 6, 4, 12], [1, 2, 4, 3, 6, 12], [1, 3, 2, 4, 6, 12], [1, 3, 2, 6, 4, 12]]
-
         """
         if not self._is_facade:
             return super().__contains__(obj)
@@ -711,12 +712,12 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
 
     def markov_chain_digraph(self, action='promotion', labeling='identity'):
         r"""
-        Return the digraph of the action of generalized promotion or tau on ``self``
+        Return the digraph of the action of generalized promotion or tau on ``self``.
 
         INPUT:
 
-        - ``action`` -- 'promotion' or 'tau' (default: 'promotion')
-        - ``labeling`` -- 'identity' or 'source' (default: 'identity')
+        - ``action`` -- 'promotion' or 'tau' (default: ``'promotion'``)
+        - ``labeling`` -- 'identity' or 'source' (default: ``'identity'``)
 
         .. TODO::
 
@@ -802,26 +803,29 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
                 for i in R:
                     child = getattr(x, action)(i + 1)
                     d[x][child] += [i + 1]
-        G = DiGraph(d, format="dict_of_dicts")
+        G = DiGraph(d, format='dict_of_dicts')
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex", edge_labels=True,
+            G.set_latex_options(format='dot2tex', edge_labels=True,
                                 color_by_label={1: "blue", 2: "red",
                                                 3: "green", 4: "yellow"})
         return G
 
     def markov_chain_transition_matrix(self, action='promotion', labeling='identity'):
         r"""
-        Return the transition matrix of the Markov chain for the action of generalized promotion or tau on ``self``
+        Return the transition matrix of the Markov chain for the action of
+        generalized promotion or tau on ``self``.
 
         INPUT:
 
         - ``action`` -- ``'promotion'`` or ``'tau'`` (default: ``'promotion'``)
         - ``labeling`` -- ``'identity'`` or ``'source'`` (default: ``'identity'``)
 
-        This method yields the transition matrix of the Markov chain defined by the action of the generalized
-        promotion operator `\partial_i` (resp. `\tau_i`) on the set of linear extensions of a finite poset.
-        Here the transition from the linear extension `\pi` to `\pi'`, where `\pi' = \pi \partial_i`
-        (resp. `\pi'= \pi \tau_i`) is counted with weight `x_i` (resp. `x_{\pi_i}` if ``labeling`` is set to ``source``).
+        This method yields the transition matrix of the Markov chain defined by
+        the action of the generalized promotion operator `\partial_i` (resp.
+        `\tau_i`) on the set of linear extensions of a finite poset. Here the
+        transition from the linear extension `\pi` to `\pi'`, where
+        `\pi' = \pi \partial_i` (resp. `\pi'= \pi \tau_i`) is counted with
+        weight `x_i` (resp. `x_{\pi_i}` if ``labeling`` is set to ``source``).
 
         EXAMPLES::
 
@@ -856,7 +860,6 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             [            0            x0             0            x2      -x1 - x3]
 
         .. SEEALSO:: :meth:`markov_chain_digraph`, :meth:`promotion`, :meth:`tau`
-
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.matrix.constructor import matrix

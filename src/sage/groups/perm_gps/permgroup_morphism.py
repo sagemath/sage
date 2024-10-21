@@ -248,8 +248,8 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         r"""
         Some python code for wrapping GAP's ``GroupHomomorphismByImages``
         function but only for permutation groups. Can be expensive if G is
-        large. This returns "fail" if gens does not generate self or if the map
-        does not extend to a group homomorphism, self - other.
+        large. This returns "fail" if gens does not generate ``self`` or if the map
+        does not extend to a group homomorphism, ``self`` - ``other``.
 
         EXAMPLES::
 

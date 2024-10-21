@@ -104,6 +104,8 @@ from sage.schemes.elliptic_curves.weierstrass_morphism \
 # Private function for parsing input to determine the type of
 # algorithm
 #
+
+
 def _isogeny_determine_algorithm(E, kernel):
     r"""
     Helper function to infer the algorithm to be used from the
@@ -122,9 +124,7 @@ def _isogeny_determine_algorithm(E, kernel):
     - ``kernel`` -- either a list of points on ``E``, or a univariate
       polynomial or list of coefficients of a univariate polynomial
 
-    OUTPUT:
-
-    (string) Either ``"velu"`` or ``"kohel"``.
+    OUTPUT: string; either ``'velu'`` or ``'kohel'``.
 
     EXAMPLES:
 
@@ -174,6 +174,7 @@ def _isogeny_determine_algorithm(E, kernel):
 
     raise ValueError("invalid parameters to EllipticCurveIsogeny constructor")
 
+
 def isogeny_codomain_from_kernel(E, kernel):
     r"""
     Compute the isogeny codomain given a kernel.
@@ -186,9 +187,7 @@ def isogeny_codomain_from_kernel(E, kernel):
                     or a kernel polynomial (specified as either a
                     univariate polynomial or a coefficient list)
 
-    OUTPUT:
-
-    (elliptic curve) The codomain of the separable normalized isogeny
+    OUTPUT: elliptic curve) The codomain of the separable normalized isogeny
     defined by this kernel.
 
     EXAMPLES::
@@ -228,6 +227,7 @@ def isogeny_codomain_from_kernel(E, kernel):
         return compute_codomain_kohel(E, kernel)
 
     raise NotImplementedError
+
 
 def compute_codomain_formula(E, v, w):
     r"""
@@ -269,6 +269,7 @@ def compute_codomain_formula(E, v, w):
 
     return EllipticCurve([a1, a2, a3, A4, A6])
 
+
 def compute_vw_kohel_even_deg1(x0, y0, a1, a2, a4):
     r"""
     Compute Vélu's `(v,w)` using Kohel's formulas for isogenies of
@@ -280,9 +281,7 @@ def compute_vw_kohel_even_deg1(x0, y0, a1, a2, a4):
 
     - ``a1``, ``a2``, ``a4`` -- invariants of `E`
 
-    OUTPUT:
-
-    (tuple) Vélu's isogeny parameters `(v,w)`.
+    OUTPUT: Vélu's isogeny parameters `(v,w)`.
 
     EXAMPLES:
 
@@ -306,6 +305,7 @@ def compute_vw_kohel_even_deg1(x0, y0, a1, a2, a4):
     w = x0 * v
     return v, w
 
+
 def compute_vw_kohel_even_deg3(b2, b4, s1, s2, s3):
     r"""
     Compute Vélu's `(v,w)` using Kohel's formulas for isogenies of
@@ -318,9 +318,7 @@ def compute_vw_kohel_even_deg3(b2, b4, s1, s2, s3):
     - ``s1``, ``s2``, ``s3`` -- signed coefficients of the 2-division
       polynomial of `E`
 
-    OUTPUT:
-
-    (tuple) Vélu's isogeny parameters `(v,w)`.
+    OUTPUT: Vélu's isogeny parameters `(v,w)`.
 
     EXAMPLES:
 
@@ -345,6 +343,7 @@ def compute_vw_kohel_even_deg3(b2, b4, s1, s2, s3):
     w = 3*(s1**3 - 3*s1*s2 + 3*s3) + (b2*temp1 + b4*s1)/2
     return v, w
 
+
 def compute_vw_kohel_odd(b2, b4, b6, s1, s2, s3, n):
     r"""
     Compute Vélu's `(v,w)` using Kohel's formulas for isogenies of odd
@@ -357,11 +356,9 @@ def compute_vw_kohel_odd(b2, b4, b6, s1, s2, s3, n):
     - ``s1``, ``s2``, ``s3`` -- signed coefficients of lowest powers
       of `x` in the kernel polynomial
 
-    - ``n`` (integer) -- the degree
+    - ``n`` -- integer; the degree
 
-    OUTPUT:
-
-    (tuple) Vélu's isogeny parameters `(v,w)`.
+    OUTPUT: Vélu's isogeny parameters `(v,w)`
 
     EXAMPLES:
 
@@ -385,6 +382,7 @@ def compute_vw_kohel_odd(b2, b4, b6, s1, s2, s3, n):
     w = 10*(s1**3 - 3*s1*s2 + 3*s3) + 2*b2*(s1**2 - 2*s2) + 3*b4*s1 + n*b6
     return v, w
 
+
 def compute_codomain_kohel(E, kernel):
     r"""
     Compute the codomain from the kernel polynomial using Kohel's
@@ -394,13 +392,11 @@ def compute_codomain_kohel(E, kernel):
 
     - ``E`` -- domain elliptic curve
 
-    - ``kernel`` (polynomial or list) -- the kernel polynomial, or a
+    - ``kernel`` -- polynomial or list; the kernel polynomial, or a
       list of its coefficients
 
-    OUTPUT:
-
-    (elliptic curve) The codomain elliptic curve of the isogeny
-    defined by ``kernel``.
+    OUTPUT: elliptic curve; the codomain elliptic curve of the isogeny
+    defined by ``kernel``
 
     EXAMPLES::
 
@@ -495,6 +491,7 @@ def compute_codomain_kohel(E, kernel):
 
     return compute_codomain_formula(E, v, w)
 
+
 def two_torsion_part(E, psi):
     r"""
     Return the greatest common divisor of ``psi`` and the 2-torsion
@@ -506,10 +503,7 @@ def two_torsion_part(E, psi):
 
     - ``psi`` -- a univariate polynomial over the base field of ``E``
 
-    OUTPUT:
-
-    (polynomial) The `\gcd` of ``psi`` and the 2-torsion polynomial
-    of ``E``.
+    OUTPUT: polynomial; the `\gcd` of ``psi`` and the 2-torsion polynomial of ``E``
 
     EXAMPLES:
 
@@ -551,14 +545,13 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
     INPUT:
 
-    - ``E`` -- an elliptic curve, the domain of the isogeny to
-      initialize.
+    - ``E`` -- an elliptic curve; the domain of the isogeny to initialize
 
-    - ``kernel`` -- a kernel: either a point on ``E``, a list of
+    - ``kernel`` -- a kernel; either a point on ``E``, a list of
       points on ``E``, a monic kernel polynomial, or ``None``.
       If initializing from a domain/codomain, this must be ``None``.
 
-    - ``codomain`` -- an elliptic curve (default: ``None``).
+    - ``codomain`` -- an elliptic curve (default: ``None``)
 
       - If ``kernel`` is ``None``, then ``degree`` must be given as well
         and the given ``codomain`` must be the codomain of a cyclic,
@@ -569,7 +562,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         this case, the isogeny is post-composed with an isomorphism so
         that the codomain equals the given curve.
 
-    - ``degree`` -- an integer (default: ``None``).
+    - ``degree`` -- integer (default: ``None``)
 
       - If ``kernel`` is ``None``, then this is the degree of the isogeny
         from ``E`` to ``codomain``.
@@ -578,20 +571,20 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         whether or not to skip a `\gcd` of the given kernel polynomial
         with the two-torsion polynomial of ``E``.
 
-    - ``model`` -- a string (default: ``None``).  Supported values
+    - ``model`` -- string (default: ``None``); supported values
       (cf. :func:`~sage.schemes.elliptic_curves.ell_field.compute_model`):
 
-      - ``"minimal"``: If ``E`` is a curve over the rationals or
+      - ``'minimal'`` -- if ``E`` is a curve over the rationals or
         over a number field, then the codomain is a global minimal
         model where this exists.
 
-      - ``"short_weierstrass"``: The codomain is a short Weierstrass curve,
+      - ``'short_weierstrass'`` -- the codomain is a short Weierstrass curve,
         assuming one exists.
 
-      - ``"montgomery"``: The codomain is an (untwisted) Montgomery
+      - ``'montgomery'`` -- the codomain is an (untwisted) Montgomery
         curve, assuming one exists over this field.
 
-    - ``check`` (default: ``True``) -- check whether the input is valid.
+    - ``check`` -- boolean (default: ``True``); check whether the input is valid.
       Setting this to ``False`` can lead to significant speedups.
 
     EXAMPLES:
@@ -1107,9 +1100,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         - ``P`` -- a sequence of 3 coordinates defining a point on ``self``
 
-        OUTPUT:
-
-        The result of evaluating ``self`` at the given point.
+        OUTPUT: the result of evaluating ``self`` at the given point
 
         EXAMPLES::
 
@@ -1258,7 +1249,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             (0 : 1 : 1)
             sage: Q.order()
             +Infinity
-
         """
         if P.is_zero():
             return self._codomain(0)
@@ -1469,7 +1459,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         Return the rational maps of the isogeny as a LaTeX string.
 
         This function returns a latex string representing the isogeny
-        self as the `x` and `y` coordinate rational functions.
+        ``self`` as the `x` and `y` coordinate rational functions.
 
         EXAMPLES::
 
@@ -1650,7 +1640,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         INPUT:
 
-        - ``precomputed_maps`` (default ``None``) -- tuple `(X,Y)`
+        - ``precomputed_maps`` -- (default: ``None``) tuple `(X,Y)`
           of rational functions in `x,y`
 
         EXAMPLES:
@@ -3446,8 +3436,7 @@ def compute_isogeny_bmss(E1, E2, l):
     sprec = 8
     while sprec < 4 * l:
         assert sprec % 2 == 0
-        if sprec > 2 * l:
-            sprec = 2 * l
+        sprec = min(sprec, 2 * l)
         # s1 => s1 + x^k s2
         # 2 s1' s2' - dG/dS(x, s1) s2 = G(x, s1) - s1'2
         s1 = S
@@ -3478,6 +3467,7 @@ def compute_isogeny_bmss(E1, E2, l):
     ker = Rx(Q).reverse(degree=l//2)
     return ker.monic()
 
+
 def compute_isogeny_stark(E1, E2, ell):
     r"""
     Return the kernel polynomial of an isogeny of degree ``ell``
@@ -3485,20 +3475,18 @@ def compute_isogeny_stark(E1, E2, ell):
 
     INPUT:
 
-    - ``E1``  -- domain elliptic curve in short Weierstrass form
+    - ``E1`` -- domain elliptic curve in short Weierstrass form
 
-    - ``E2``  -- codomain elliptic curve in short Weierstrass form
+    - ``E2`` -- codomain elliptic curve in short Weierstrass form
 
     - ``ell`` -- the degree of an isogeny from ``E1`` to ``E2``
 
-    OUTPUT:
-
-    The kernel polynomial of an isogeny from ``E1`` to ``E2``.
+    OUTPUT: the kernel polynomial of an isogeny from ``E1`` to ``E2``
 
     .. NOTE::
 
         If there is no degree-``ell``, cyclic, separable, normalized
-        isogeny from ``E1`` to ``E2``, a :class:`ValueError` will be
+        isogeny from ``E1`` to ``E2``, a :exc:`ValueError` will be
         raised.
 
     ALGORITHM:
@@ -3606,24 +3594,22 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
 
     INPUT:
 
-    - ``E1``        -- domain elliptic curve in short Weierstrass form
+    - ``E1`` -- domain elliptic curve in short Weierstrass form
 
-    - ``E2``        -- codomain elliptic curve in short Weierstrass form
+    - ``E2`` -- codomain elliptic curve in short Weierstrass form
 
-    - ``ell``       -- the degree of an isogeny from ``E1`` to ``E2``
+    - ``ell`` -- the degree of an isogeny from ``E1`` to ``E2``
 
     - ``algorithm`` -- ``None`` (default, choose automatically) or
-                       ``"bmss"`` (:func:`compute_isogeny_bmss`) or
-                       ``"stark"`` (:func:`compute_isogeny_stark`)
+      ``'bmss'`` (:func:`compute_isogeny_bmss`) or
+      ``'stark'`` (:func:`compute_isogeny_stark`)
 
-    OUTPUT:
-
-    The kernel polynomial of an isogeny from ``E1`` to ``E2``.
+    OUTPUT: the kernel polynomial of an isogeny from ``E1`` to ``E2``
 
     .. NOTE::
 
         If there is no degree-``ell``, cyclic, separable, normalized
-        isogeny from ``E1`` to ``E2``, a :class:`ValueError` will be
+        isogeny from ``E1`` to ``E2``, a :exc:`ValueError` will be
         raised.
 
     EXAMPLES::
@@ -3684,6 +3670,7 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         return compute_isogeny_stark(E1, E2, ell).radical()
 
     raise NotImplementedError(f'unknown algorithm {algorithm}')
+
 
 def compute_intermediate_curves(E1, E2):
     r"""
@@ -3781,6 +3768,7 @@ def compute_intermediate_curves(E1, E2):
     urst = [w for w in _isomorphisms(E2w, E2) if w[0] == 1][0]
     post_iso = WeierstrassIsomorphism(E2w, urst, E2)
     return E1w, E2w, pre_iso, post_iso
+
 
 def compute_sequence_of_maps(E1, E2, ell):
     r"""
@@ -3881,6 +3869,7 @@ def compute_sequence_of_maps(E1, E2, ell):
 
 # Utility functions for manipulating isogeny degree matrices
 
+
 def fill_isogeny_matrix(M):
     """
     Return a filled isogeny matrix giving all degrees from one giving only prime degrees.
@@ -3888,14 +3877,14 @@ def fill_isogeny_matrix(M):
     INPUT:
 
     - ``M`` -- a square symmetric matrix whose off-diagonal `i`, `j`
-      entry is either a prime `l` if the `i`'th and `j`'th curves
+      entry is either a prime `l` if the `i`-th and `j`-th curves
       have an `l`-isogeny between them, otherwise `0`
 
     OUTPUT:
 
-    (matrix) A square matrix with entries `1` on the diagonal, and in
+    A square matrix with entries `1` on the diagonal, and in
     general the `i`, `j` entry is `d>0` if `d` is the minimal degree
-    of an isogeny from the `i`'th to the `j`'th curve.
+    of an isogeny from the `i`-th to the `j`-th curve.
 
     EXAMPLES::
 
@@ -3940,6 +3929,7 @@ def fill_isogeny_matrix(M):
         M2 = pr(M0, M1)
     return M1
 
+
 def unfill_isogeny_matrix(M):
     """
     Reverses the action of ``fill_isogeny_matrix``.
@@ -3950,7 +3940,7 @@ def unfill_isogeny_matrix(M):
 
     OUTPUT:
 
-    (matrix) A square symmetric matrix obtained from ``M`` by
+    A square symmetric matrix obtained from ``M`` by
     replacing non-prime entries with `0`.
 
     EXAMPLES::

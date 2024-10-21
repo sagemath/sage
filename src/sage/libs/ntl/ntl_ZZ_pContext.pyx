@@ -70,7 +70,7 @@ cdef class ntl_ZZ_pContext_class():
 
     def __repr__(self):
         """
-        Returns a print representation of self.
+        Return a print representation of ``self``.
 
         EXAMPLES::
 
@@ -165,10 +165,11 @@ cdef class ntl_ZZ_pContext_factory():
 
     cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v):
         """
-        Creates a new ZZ_pContext.
+        Create a new ZZ_pContext.
 
         INPUT:
-        v -- an ntl_ZZ
+
+        - ``v`` -- an ntl_ZZ
         """
         cdef ntl_ZZ_pContext_class context
         if v in self.context_dict:

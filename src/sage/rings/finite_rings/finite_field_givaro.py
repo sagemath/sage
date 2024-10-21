@@ -40,7 +40,7 @@ class FiniteField_givaro(FiniteField):
     - ``name`` -- (default: ``'a'``) variable used for
       :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.poly_repr()`
 
-    - ``modulus`` -- A minimal polynomial to use for reduction.
+    - ``modulus`` -- a minimal polynomial to use for reduction
 
     - ``repr`` -- (default: ``'poly'``) controls the way elements are printed
       to the user:
@@ -52,15 +52,13 @@ class FiniteField_givaro(FiniteField):
       - 'poly': repr is
         :meth:`~sage.rings.finite_rings.element_givaro.FiniteField_givaroElement.poly_repr()`
 
-    - cache -- (default: ``False``) if ``True`` a cache of all elements of
-      this field is created. Thus, arithmetic does not create new elements
-      which speeds calculations up. Also, if many elements are needed during a
-      calculation this cache reduces the memory requirement as at most
+    - ``cache`` -- boolean (default: ``False``); if ``True`` a cache of all
+      elements of this field is created. Thus, arithmetic does not create new
+      elements which speeds calculations up. Also, if many elements are needed
+      during a calculation this cache reduces the memory requirement as at most
       :meth:`order` elements are created.
 
-    OUTPUT:
-
-    Givaro finite field with characteristic `p` and cardinality `p^n`.
+    OUTPUT: Givaro finite field with characteristic `p` and cardinality `p^n`
 
     EXAMPLES:
 
@@ -105,7 +103,7 @@ class FiniteField_givaro(FiniteField):
         sage: GF(1009, impl='givaro', modulus='conway').modulus()
         x + 998
     """
-    def __init__(self, q, name="a", modulus=None, repr="poly", cache=False):
+    def __init__(self, q, name='a', modulus=None, repr='poly', cache=False):
         """
         Initialize ``self``.
 
@@ -162,9 +160,7 @@ class FiniteField_givaro(FiniteField):
         """
         Return the cardinality of this field.
 
-        OUTPUT:
-
-        Integer -- the number of elements in ``self``.
+        OUTPUT: integer; the number of elements in ``self``
 
         EXAMPLES::
 
@@ -179,9 +175,7 @@ class FiniteField_givaro(FiniteField):
         r"""
         If the cardinality of ``self`` is `p^n`, then this returns `n`.
 
-        OUTPUT:
-
-        Integer -- the degree
+        OUTPUT: integer; the degree
 
         EXAMPLES::
 
@@ -335,10 +329,10 @@ class FiniteField_givaro(FiniteField):
 
         We can coerce from PARI finite field implementations::
 
-            sage: K.<a> = GF(3^10, impl="givaro")
+            sage: K.<a> = GF(3^10, impl='givaro')
             sage: a^20
             2*a^9 + 2*a^8 + a^7 + 2*a^5 + 2*a^4 + 2*a^3 + 1
-            sage: M.<c> = GF(3^10, impl="pari_ffelt")
+            sage: M.<c> = GF(3^10, impl='pari_ffelt')
             sage: K(c^20)
             2*a^9 + 2*a^8 + a^7 + 2*a^5 + 2*a^4 + 2*a^3 + 1
 
@@ -410,7 +404,7 @@ class FiniteField_givaro(FiniteField):
 
     def prime_subfield(self):
         r"""
-        Return the prime subfield `\GF{p}` of self if ``self`` is `\GF{p^n}`.
+        Return the prime subfield `\GF{p}` of ``self`` if ``self`` is `\GF{p^n}`.
 
         EXAMPLES::
 
@@ -441,9 +435,7 @@ class FiniteField_givaro(FiniteField):
 
         - ``n`` -- log representation of a finite field element
 
-        OUTPUT:
-
-        integer representation of a finite field element.
+        OUTPUT: integer representation of a finite field element
 
         EXAMPLES::
 
@@ -465,9 +457,7 @@ class FiniteField_givaro(FiniteField):
 
         - ``n`` -- integer representation of a finite field element
 
-        OUTPUT:
-
-        log representation of ``n``
+        OUTPUT: log representation of ``n``
 
         EXAMPLES::
 
@@ -578,7 +568,7 @@ class FiniteField_givaro(FiniteField):
         """
         INPUT:
 
-        -  ``n`` -- an integer (default: 1)
+        - ``n`` -- integer (default: 1)
 
         OUTPUT:
 

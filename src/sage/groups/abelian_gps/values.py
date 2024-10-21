@@ -85,19 +85,19 @@ def AbelianGroupWithValues(values, n, gens_orders=None, names='f', check=False, 
 
     INPUT:
 
-    - ``values`` -- a list/tuple/iterable of values that you want to
+    - ``values`` -- list/tuple/iterable of values that you want to
       associate to the generators
 
-    - ``n`` -- integer (optional). If not specified, will be derived
-       from ``gens_orders``
+    - ``n`` -- integer (optional); if not specified, will be derived
+      from ``gens_orders``
 
-    - ``gens_orders`` -- a list of non-negative integers in the form
+    - ``gens_orders`` -- list of nonnegative integers in the form
        `[a_0, a_1, \dots, a_{n-1}]`, typically written in increasing
        order. This list is padded with zeros if it has length less
        than n. The orders of the commuting generators, with `0`
        denoting an infinite cyclic factor.
 
-    -  ``names`` -- (optional) names of generators
+    - ``names`` -- (optional) names of generators
 
     - ``values_group`` -- a parent or ``None`` (default). The common
       parent of the values. This might be a group, but can also just
@@ -359,12 +359,12 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
     INPUT:
 
     - ``generator_orders`` -- tuple of integers; the orders of the
-      generators.
+      generators
 
     - ``names`` -- string or list of strings; the names for the generators
 
     - ``values`` -- tuple the same length as the number of
-      generators; the values assigned to the generators.
+      generators; the values assigned to the generators
 
     - ``values_group`` -- the common parent of the values
 

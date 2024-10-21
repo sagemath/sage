@@ -55,7 +55,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
     def _dual_basis_default(self):
         """
-        Returns the default value for ``self.dual_basis()``
+        Return the default value for ``self.dual_basis()``.
 
         This method returns the dual basis to the elementary basis
         with respect to the standard scalar product, that is the
@@ -72,20 +72,18 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             sage: e._dual_basis_default() is e.dual_basis()
             True
         """
-        return self.dual_basis(scalar=None, prefix="f", basis_name="forgotten")
+        return self.dual_basis(scalar=None, prefix='f', basis_name='forgotten')
 
     def coproduct_on_generators(self, i):
         r"""
-        Returns the coproduct on ``self[i]``.
+        Return the coproduct on ``self[i]``.
 
         INPUT:
 
         - ``self`` -- an elementary basis of the symmetric functions
-        - ``i`` -- a nonnegative integer
+        - ``i`` -- nonnegative integer
 
-        OUTPUT:
-
-        - returns the coproduct on the elementary generator `e(i)`
+        OUTPUT: the coproduct on the elementary generator `e(i)`
 
         EXAMPLES::
 
@@ -223,7 +221,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
             INPUT:
 
-            - ``n`` -- a positive integer
+            - ``n`` -- positive integer
 
             OUTPUT:
 
@@ -278,7 +276,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -338,12 +336,12 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
             INPUT:
 
-            - ``n`` (default: ``infinity``) -- a nonnegative integer or
+            - ``n`` -- (default: ``infinity``) a nonnegative integer or
               ``infinity``, specifying whether to compute the principal
               specialization of order ``n`` or the stable principal
               specialization.
 
-            - ``q`` (default: ``None``) -- the value to use for `q`; the
+            - ``q`` -- (default: ``None``) the value to use for `q`; the
               default is to create a ring of polynomials in ``q``
               (or a field of rational functions in ``q``) over the
               given coefficient ring.
@@ -379,7 +377,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
                 sage: e.zero().principal_specialization(3)
                 0
-
             """
             from sage.combinat.q_analogues import q_binomial
 
@@ -456,10 +453,10 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
             INPUT:
 
-            - ``t`` (default: ``None``) -- the value to use for `t`;
-              the default is to create a ring of polynomials in ``t``.
+            - ``t`` -- (default: ``None``) the value to use for `t`.
+              The default is to create a ring of polynomials in `t`.
 
-            - ``q`` (default: `1`) -- the value to use for `q`.  If
+            - ``q`` -- (default: `1`) the value to use for `q`.  If
               ``q`` is ``None``, then a ring (or fraction field) of
               polynomials in ``q`` is created.
 
@@ -477,7 +474,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
                 sage: e.zero().exponential_specialization()
                 0
-
             """
             from sage.combinat.q_analogues import q_factorial
 
@@ -526,4 +522,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.sf.elementary', 'SymmetricFunctionAlgebraElement_elementary',  SymmetricFunctionAlgebra_elementary.Element)
+register_unpickle_override('sage.combinat.sf.elementary',
+                           'SymmetricFunctionAlgebraElement_elementary',
+                           SymmetricFunctionAlgebra_elementary.Element)

@@ -57,7 +57,7 @@ else:
 
 def find_library(name):
     """
-    Returns the shared library filename for a given library.
+    Return the shared library filename for a given library.
 
     The library name is given without any prefixes or suffixes--(e.g.
     just "Singular", not "libSingular", as shared library naming is
@@ -71,7 +71,6 @@ def find_library(name):
         sage: from sage.misc.compat import find_library
         sage: find_library('giac')                                                      # needs sage.libs.giac
         '...giac...'
-
     """
 
     result = _find_library(name)

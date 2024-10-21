@@ -149,7 +149,6 @@ class Function_exp_integral_e(BuiltinFunction):
 
     Numerical evaluation is handled using mpmath, but symbolics are handled
     by Sage and Maxima.
-
     """
     def __init__(self):
         """
@@ -161,7 +160,6 @@ class Function_exp_integral_e(BuiltinFunction):
             exp_integral_e(1, 0)
             sage: exp_integral_e(1, x)._sympy_()                                        # needs sage.symbolic
             expint(1, x)
-
         """
         BuiltinFunction.__init__(self, "exp_integral_e", nargs=2,
                                  conversions=dict(maxima='expintegral_e',
@@ -309,7 +307,6 @@ class Function_exp_integral_e1(BuiltinFunction):
 
     Numerical evaluation is handled using mpmath, but symbolics are handled
     by Sage and Maxima.
-
     """
     def __init__(self):
         """
@@ -321,7 +318,6 @@ class Function_exp_integral_e1(BuiltinFunction):
             exp_integral_e1(1)
             sage: exp_integral_e1(x)._sympy_()                                          # needs sympy sage.symbolic
             expint(1, x)
-
         """
         BuiltinFunction.__init__(self, "exp_integral_e1", nargs=1,
                                  conversions=dict(maxima='expintegral_e1',
@@ -335,7 +331,6 @@ class Function_exp_integral_e1(BuiltinFunction):
             0.000281624451981418 - 0.179324535039359*I
             sage: exp_integral_e1(RealField(200)(0.5))                                  # needs sage.rings.real_mpfr
             0.55977359477616081174679593931508523522684689031635351524829
-
         """
         return _mpmath_call(_mpmath_e1, z, parent=parent)
 
@@ -366,7 +361,6 @@ class Function_exp_integral_e1(BuiltinFunction):
             sage: f = exp_integral_e1(x^2)
             sage: f.diff(x)
             -2*e^(-x^2)/x
-
         """
         return -exp(-z)/z
 
@@ -425,8 +419,6 @@ class Function_log_integral(BuiltinFunction):
     - mpmath documentation: `logarithmic-integral`_
 
     .. _`logarithmic-integral`: http://mpmath.org/doc/current/functions/expintegrals.html#logarithmic-integral
-
-
     """
     def __init__(self):
         r"""
@@ -465,7 +457,6 @@ class Function_log_integral(BuiltinFunction):
             2.16358859466719
             sage: log_integral(0)                                                       # needs mpmath
             0
-
         """
         # Special case z = 0
         if isinstance(z, Expression):
@@ -482,7 +473,6 @@ class Function_log_integral(BuiltinFunction):
             78627.5491594622
             sage: log_integral(RealField(200)(1e6))                                     # needs sage.rings.real_mpfr
             78627.549159462181919862910747947261161321874382421767074759
-
         """
         return _mpmath_call(_mpmath_li, z, parent=parent)
 
@@ -500,7 +490,6 @@ class Function_log_integral(BuiltinFunction):
             sage: f = log_integral(x^2)
             sage: f.diff(x)
             2*x/log(x^2)
-
         """
         return 1/log(z)
 
@@ -643,7 +632,6 @@ class Function_log_integral_offset(BuiltinFunction):
 
             sage: latex(log_integral_offset)
             \operatorname{log\_integral\_offset}
-
         """
         BuiltinFunction.__init__(self, "log_integral_offset", nargs=1,
                                  latex_name=r'\operatorname{log\_integral\_offset}',
@@ -660,7 +648,6 @@ class Function_log_integral_offset(BuiltinFunction):
             1.11842481454970
             sage: log_integral_offset(2)                                                # needs mpmath
             0
-
         """
         if z == 2:
             return SR(0)
@@ -678,7 +665,6 @@ class Function_log_integral_offset(BuiltinFunction):
             78626.503995682064427078066159058066548185351766843615873183
             sage: li(4.5) - li(2.0) - Li(4.5)                                           # needs mpmath
             0.000000000000000
-
         """
         return _mpmath_call(_mpmath_li, z, offset=True, parent=parent)
 
@@ -801,7 +787,6 @@ class Function_sin_integral(BuiltinFunction):
     - mpmath documentation: `si`_
 
     .. _`si`: http://mpmath.org/doc/current/functions/expintegrals.html#si
-
     """
     def __init__(self):
         """
@@ -836,7 +821,6 @@ class Function_sin_integral(BuiltinFunction):
             1.84865252799947
             sage: sin_integral(0)                                                       # needs mpmath
             0
-
         """
         if isinstance(z, Expression):
             if z.is_trivial_zero():
@@ -889,7 +873,6 @@ class Function_sin_integral(BuiltinFunction):
             sage: f = sin_integral(x^2)
             sage: f.diff(x)
             2*sin(x^2)/x
-
         """
         return sin(z)/z
 
@@ -979,7 +962,6 @@ class Function_cos_integral(BuiltinFunction):
     - mpmath documentation: `ci`_
 
     .. _`ci`: http://mpmath.org/doc/current/functions/expintegrals.html#ci
-
     """
     def __init__(self):
         """
@@ -1013,7 +995,6 @@ class Function_cos_integral(BuiltinFunction):
             -22.4486352650389239795759024568
             sage: cos_integral(ComplexField(100)(I))                                    # needs sage.symbolic
             0.83786694098020824089467857943 + 1.5707963267948966192313216916*I
-
         """
         return _mpmath_call(_mpmath_ci, z, parent=parent)
 
@@ -1031,7 +1012,6 @@ class Function_cos_integral(BuiltinFunction):
             sage: f = cos_integral(x^2)
             sage: f.diff(x)
             2*cos(x^2)/x
-
         """
         return cos(z)/z
 
@@ -1117,7 +1097,6 @@ class Function_sinh_integral(BuiltinFunction):
     - mpmath documentation: `shi`_
 
     .. _`shi`: http://mpmath.org/doc/current/functions/expintegrals.html#shi
-
     """
     def __init__(self):
         """
@@ -1129,7 +1108,6 @@ class Function_sinh_integral(BuiltinFunction):
             sinh_integral(1)
             sage: sinh_integral(x)._sympy_()                                            # needs sympy sage.symbolic
             Shi(x)
-
         """
         BuiltinFunction.__init__(self, "sinh_integral", nargs=1,
                                  latex_name=r'\operatorname{Shi}',
@@ -1148,7 +1126,6 @@ class Function_sinh_integral(BuiltinFunction):
             4.97344047585981
             sage: sinh_integral(0)                                                      # needs mpmath
             0
-
         """
         # special case: z = 0
         if isinstance(z, Expression):
@@ -1165,7 +1142,6 @@ class Function_sinh_integral(BuiltinFunction):
             1.00000000000000000000055555556e-10
             sage: sinh_integral(ComplexField(100)(I))                                   # needs sage.symbolic
             0.94608307036718301494135331382*I
-
         """
         return _mpmath_call(_mpmath_shi, z, parent=parent)
 
@@ -1183,7 +1159,6 @@ class Function_sinh_integral(BuiltinFunction):
             sage: f = sinh_integral(ln(x))
             sage: f.diff(x)
             1/2*(x^2 - 1)/(x^2*log(x))
-
         """
         return sinh(z)/z
 
@@ -1265,7 +1240,6 @@ class Function_cosh_integral(BuiltinFunction):
     - mpmath documentation: `chi`_
 
     .. _`chi`: http://mpmath.org/doc/current/functions/expintegrals.html#chi
-
     """
     def __init__(self):
         """
@@ -1277,7 +1251,6 @@ class Function_cosh_integral(BuiltinFunction):
             cosh_integral(1)
             sage: cosh_integral(x)._sympy_()                                            # needs sage.symbolic
             Chi(x)
-
         """
         BuiltinFunction.__init__(self, "cosh_integral", nargs=1,
                                  latex_name=r'\operatorname{Chi}',
@@ -1293,7 +1266,6 @@ class Function_cosh_integral(BuiltinFunction):
             -22.4486352650389239795709024568
             sage: cosh_integral(ComplexField(100)(I))                                   # needs sage.symbolic
             0.33740392290096813466264620389 + 1.5707963267948966192313216916*I
-
         """
         return _mpmath_call(_mpmath_chi, z, parent=parent)
 
@@ -1311,7 +1283,6 @@ class Function_cosh_integral(BuiltinFunction):
             sage: f = cosh_integral(ln(x))
             sage: f.diff(x)
             1/2*(x^2 + 1)/(x^2*log(x))
-
         """
         return cosh(z)/z
 
@@ -1441,7 +1412,7 @@ Ei = exp_integral_ei = Function_exp_integral()
 # moved here from sage/functions/transcendental.py
 def exponential_integral_1(x, n=0):
     r"""
-    Returns the exponential integral `E_1(x)`. If the optional
+    Return the exponential integral `E_1(x)`. If the optional
     argument `n` is given, computes list of the first
     `n` values of the exponential integral
     `E_1(x m)`.
@@ -1459,8 +1430,7 @@ def exponential_integral_1(x, n=0):
     - ``n`` -- (default: 0) a nonnegative integer; if
       nonzero, then return a list of values ``E_1(x*m)`` for m =
       1,2,3,...,n. This is useful, e.g., when computing derivatives of
-      L-functions.
-
+      `L`-functions.
 
     OUTPUT:
 

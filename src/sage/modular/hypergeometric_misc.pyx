@@ -7,7 +7,8 @@ from cpython cimport array
 from cysignals.signals cimport sig_check
 from sage.rings.integer cimport Integer
 
-cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
+cpdef hgm_coeffs(long long p, unsigned int f,
+                 int prec, gamma, m, int D,
                  gtable, int gtable_prec, bint use_longs):
     r"""
     Compute coefficients for the hypergeometric trace formula.
@@ -36,8 +37,8 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
     """
     from sage.rings.padics.factory import Zp
 
-    cdef int gl, j, k, l, v, gv
-    cdef long long i, q1, w, w1, w2, q2, r, r1
+    cdef int gl, j, k, v, gv
+    cdef long long i, l, q1, w, w1, w2, q2, r, r1
     cdef bint flip, use_longlongs
 
     q1 = p ** f - 1

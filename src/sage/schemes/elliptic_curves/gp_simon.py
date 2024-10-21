@@ -17,31 +17,20 @@ Denis Simon's PARI scripts
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from pathlib import Path
 
-from sage.structure.parent_gens import localvars
+from cypari2.handle_error import PariError
 
-from sage.interfaces.gp import Gp
-from sage.misc.sage_eval import sage_eval
+from sage.env import SAGE_EXTCODE
+from sage.libs.pari import pari
 from sage.misc.randstate import current_randstate
+from sage.misc.superseded import deprecation
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+from sage.structure.parent_gens import localvars
 
 
-gp = None
-def init():
-    """
-    Function to initialize the gp process
-    """
-    global gp
-    if gp is None:
-        import os
-        from sage.env import DOT_SAGE
-        logfile = os.path.join(DOT_SAGE, 'gp-simon.log')
-        gp = Gp(script_subdirectory='simon', logfile=logfile)
-        gp.read("ellQ.gp")
-        gp.read("ell.gp")
-        gp.read("qfsolve.gp")
-        gp.read("resultant3.gp")
+simon_dir = Path(SAGE_EXTCODE) / 'pari' / 'simon'
 
 
 def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
@@ -58,6 +47,9 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         sage: import sage.schemes.elliptic_curves.gp_simon
         sage: E = EllipticCurve('389a1')
         sage: sage.schemes.elliptic_curves.gp_simon.simon_two_descent(E)
+        doctest:warning...:
+        DeprecationWarning: please use the 2-descent algorithm over QQ inside pari
+        See https://github.com/sagemath/sage/issues/38461 for details.
         (2, 2, [(5/4 : 5/8 : 1), (-3/4 : 7/8 : 1)])
 
     TESTS::
@@ -93,37 +85,38 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         sage: E.simon_two_descent()                             # long time
         (0, 2, [])
     """
-    init()
+    pari.read(simon_dir / "ellQ.gp")
+    pari.read(simon_dir / "ell.gp")
+    pari.read(simon_dir / "qfsolve.gp")
+    pari.read(simon_dir / "resultant3.gp")
 
-    current_randstate().set_seed_gp(gp)
+    current_randstate().set_seed_pari()
 
     K = E.base_ring()
     K_orig = K
+    E_orig = E
+
     # The following is to correct the bug at #5204: the gp script
     # fails when K is a number field whose generator is called 'x'.
     # It also deals with relative number fields.
-    E_orig = E
+
     if K is not QQ:
         K = K_orig.absolute_field('a')
+        y = K.gen()
         from_K, to_K = K.structure()
         E = E_orig.change_ring(to_K)
-        known_points = [P.change_ring(to_K) for P in known_points]
-        # Simon's program requires that this name be y.
         with localvars(K.polynomial().parent(), 'y'):
-            gp.eval("K = bnfinit(%s);" % K.polynomial())
-            if verbose >= 2:
-                print("K = bnfinit(%s);" % K.polynomial())
-        gp.eval("%s = Mod(y,K.pol);" % K.gen())
-        if verbose >= 2:
-            print("%s = Mod(y,K.pol);" % K.gen())
+            # Simon's program requires that this name be y.
+            K_pari = pari.bnfinit(K.polynomial())
+        known_points = [P.change_ring(to_K) for P in known_points]
     else:
+        deprecation(38461, "please use the 2-descent algorithm over QQ inside pari")
         from_K = lambda x: x
-        to_K = lambda x: x
 
-    # The block below mimics the defaults in Simon's scripts, and needs to be changed
-    # when these are updated.
+    # The block below mimics the defaults in Simon's scripts.
+    # They need to be changed when these are updated.
     if K is QQ:
-        cmd = 'ellQ_ellrank(%s, %s);' % (list(E.ainvs()), [P.__pari__() for P in known_points])
+        over_QQ = True
         if lim1 is None:
             lim1 = 5
         if lim3 is None:
@@ -131,7 +124,7 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         if limtriv is None:
             limtriv = 3
     else:
-        cmd = 'bnfellrank(K, %s, %s);' % (list(E.ainvs()), [P.__pari__() for P in known_points])
+        over_QQ = False
         if lim1 is None:
             lim1 = 2
         if lim3 is None:
@@ -139,29 +132,21 @@ def simon_two_descent(E, verbose=0, lim1=None, lim3=None, limtriv=None,
         if limtriv is None:
             limtriv = 2
 
-    gp('DEBUGLEVEL_ell=%s; LIM1=%s; LIM3=%s; LIMTRIV=%s; MAXPROB=%s; LIMBIGPRIME=%s;' % (
-       verbose, lim1, lim3, limtriv, maxprob, limbigprime))
+    pari('DEBUGLEVEL_ell=%s; LIM1=%s; LIM3=%s; LIMTRIV=%s; MAXPROB=%s; LIMBIGPRIME=%s;' % (
+        verbose, lim1, lim3, limtriv, maxprob, limbigprime))
 
-    if verbose >= 2:
-        print(cmd)
-    s = gp.eval('ans=%s;' % cmd)
-    if s.find(" *** ") != -1:
-        raise RuntimeError("\n%s\nAn error occurred while running Simon's 2-descent program" % s)
-    if verbose > 0:
-        print(s)
-    v = gp.eval('ans')
-    if v == 'ans': # then the call to ellQ_ellrank() or bnfellrank() failed
-        raise RuntimeError("An error occurred while running Simon's 2-descent program")
-    if verbose >= 2:
-        print("v = %s" % v)
+    try:
+        if over_QQ:
+            ans = pari("ellQ_ellrank")(E, known_points)
+        else:
+            ans = pari("bnfellrank")(K_pari, E, known_points)
+    except PariError as err:
+        raise RuntimeError("an error occurred while running Simon's 2-descent program") from err
 
-    # pari represents field elements as Mod(poly, defining-poly)
-    # so this function will return the respective elements of K
-    def _gp_mod(*args):
-        return args[0]
-    ans = sage_eval(v, {'Mod': _gp_mod, 'y': K.gen(0)})
-    lower = ZZ(ans[0])
-    upper = ZZ(ans[1])
-    points = [E_orig([from_K(c) for c in list(P)]) for P in ans[2]]
+    loc = {} if over_QQ else {'y': y}
+    lower, upper, pts = ans.sage(locals=loc)
+    lower = ZZ(lower)
+    upper = ZZ(upper)
+    points = [E_orig([from_K(c) for c in P]) for P in pts]
     points = [P for P in points if P.has_infinite_order()]
     return lower, upper, points

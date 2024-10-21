@@ -121,7 +121,6 @@ class Trivialization(UniqueRepresentation, SageObject):
         [0, 1]
         sage: fU[1].comp(fV.restrict(W))[:]
         [1, 0]
-
     """
 
     def __init__(self, vector_bundle, name, domain, latex_name=None):
@@ -134,7 +133,6 @@ class Trivialization(UniqueRepresentation, SageObject):
             sage: E = M.vector_bundle(2, 'E')
             sage: phi = E.trivialization('phi')
             sage: TestSuite(phi).run()
-
         """
         self._name = name
         if latex_name is None:
@@ -163,7 +161,6 @@ class Trivialization(UniqueRepresentation, SageObject):
             sage: phi = E.trivialization('phi', domain=M)
             sage: phi._repr_()
             'Trivialization (phi, E|_M)'
-
         """
         desc = "Trivialization ("
         desc += self._name + ", "
@@ -181,7 +178,6 @@ class Trivialization(UniqueRepresentation, SageObject):
             sage: phi = E.trivialization('phi', domain=M, latex_name=r'\varphi')
             sage: phi._latex_()
             '\\varphi : E |_{M} \\to M \\times \\Bold{R}^1'
-
         """
         latex = self._latex_name + r' : '
         latex += r'{} |_{{{}}} \to {} \times {}^{}'.format(self._vbundle._latex_name,
@@ -201,7 +197,6 @@ class Trivialization(UniqueRepresentation, SageObject):
             sage: phi = E.trivialization('phi', domain=U)
             sage: phi.base_space()
             2-dimensional topological manifold M
-
         """
         return self._base_space
 
@@ -231,7 +226,6 @@ class Trivialization(UniqueRepresentation, SageObject):
             sage: phi_U.transition_map(phi_V, 1)
             Transition map from Trivialization (phi_U, E|_U) to Trivialization
              (phi_V, E|_V)
-
         """
         return TransitionMap(self, other, transf,
                              compute_inverse=compute_inverse)
@@ -249,7 +243,6 @@ class Trivialization(UniqueRepresentation, SageObject):
             sage: phi.vector_bundle()
             Topological real vector bundle E -> M of rank 2 over the base space
              2-dimensional topological manifold M
-
         """
         return self._vbundle
 
@@ -265,7 +258,6 @@ class Trivialization(UniqueRepresentation, SageObject):
             sage: phi = E.trivialization('phi', domain=U)
             sage: phi.domain()
             Open subset U of the 2-dimensional topological manifold M
-
         """
         return self._domain
 
@@ -288,7 +280,6 @@ class Trivialization(UniqueRepresentation, SageObject):
             sage: phi = E.trivialization('phi')
             sage: phi.frame()
             Trivialization frame (E|_M, ((phi^*e_1),(phi^*e_2)))
-
         """
         return self._frame
 
@@ -307,7 +298,6 @@ class Trivialization(UniqueRepresentation, SageObject):
             sage: phi = E.trivialization('phi')
             sage: phi.coframe()
             Trivialization coframe (E|_M, ((phi^*e^1),(phi^*e^2)))
-
         """
         return self._frame._coframe
 
@@ -345,7 +335,7 @@ class TransitionMap(SageObject):
       or coordinate functions (:class:`~sage.manifolds.chart_func.ChartFunction`),
       or a bundle automorphism
       (:class:`~sage.tensor.modules.free_module_automorphism.FreeModuleAutomorphism`)
-    - ``compute_inverse`` -- (default: ``True``) determines whether the inverse
+    - ``compute_inverse`` -- boolean (default: ``True``); determines whether the inverse
       shall be computed or not
 
     EXAMPLES:
@@ -370,7 +360,6 @@ class TransitionMap(SageObject):
         sage: phi_U_to_phi_V
         Transition map from Trivialization (phi_U, E|_U) to Trivialization
          (phi_V, E|_V)
-
     """
     def __init__(self, triv1, triv2, transf, compute_inverse=True):
         r"""
@@ -393,7 +382,6 @@ class TransitionMap(SageObject):
             sage: phi_V = E.trivialization('phi_V', domain=V)
             sage: phi_U_to_phi_V = phi_U.transition_map(phi_V, [[0,1],[1,0]])
             sage: TestSuite(phi_U_to_phi_V).run()
-
         """
         bs1 = triv1.base_space()
         bs2 = triv2.base_space()
@@ -463,7 +451,6 @@ class TransitionMap(SageObject):
             sage: phi_U_to_phi_V # indirect doctest
             Transition map from Trivialization (phi_U, E|_U) to Trivialization
              (phi_V, E|_V)
-
         """
         desc = "Transition map from {} to {}".format(self._triv1, self._triv2)
         return desc
@@ -492,7 +479,6 @@ class TransitionMap(SageObject):
             sage: latex(phi_U_to_phi_V)
             \varphi_V\circ \varphi_U^{-1}:U\cap V\times \Bold{R}^2 \to U\cap
              V\times \Bold{R}^2
-
         """
         vspace_lname = r'\times {}^{}'.format(self._triv1._base_field._latex_(),
                                               self._bdl_rank)
@@ -553,7 +539,6 @@ class TransitionMap(SageObject):
             sage: aut.display(phi_U.frame().restrict(W))
             phi_U^(-1)*phi_V = (phi_U^*e_1)⊗(phi_U^*e^2) +
              (phi_U^*e_2)⊗(phi_U^*e^1)
-
         """
         return self._automorphism
 
@@ -578,7 +563,6 @@ class TransitionMap(SageObject):
             Transition map from Trivialization (phi_V, E|_V) to Trivialization (phi_U, E|_U)
             sage: phi_V_to_phi_U.automorphism() == phi_U_to_phi_V.automorphism().inverse()
             True
-
         """
         if self._inverse is None:
             self._vbundle.set_change_of_frame(self._frame1, self._frame2,
@@ -593,9 +577,7 @@ class TransitionMap(SageObject):
         r"""
         Return the determinant of ``self``.
 
-        OUTPUT:
-
-        - An instance of :class:`~sage.manifolds.scalarfield.ScalarField`.
+        OUTPUT: an instance of :class:`~sage.manifolds.scalarfield.ScalarField`
 
         EXAMPLES::
 
@@ -624,7 +606,6 @@ class TransitionMap(SageObject):
             det(phi_U^(-1)*phi_V): W → ℝ
                  (x, y) ↦ -1
                  (u, v) ↦ -1
-
         """
         aut = self._automorphism
         det = aut.det()
@@ -689,7 +670,6 @@ class TransitionMap(SageObject):
             zero: W → ℝ
                 (x, y) ↦ 0
                 (u, v) ↦ 0
-
         """
         return self._automorphism.matrix(self._frame1)
 
@@ -720,7 +700,6 @@ class TransitionMap(SageObject):
             sage: phi_U_to_psi_V = phi_U.transition_map(psi_V, [[1,2],[3,-2]])
             sage: phi_U_to_phi_V == phi_U_to_psi_V
             False
-
         """
         if other is self:
             return True
@@ -748,6 +727,5 @@ class TransitionMap(SageObject):
             sage: phi_U_to_phi_V_1 = phi_U.transition_map(phi_V, [[1,2],[2,-1]])
             sage: phi_U_to_phi_V != phi_U_to_phi_V_1
             True
-
         """
         return not (self == other)

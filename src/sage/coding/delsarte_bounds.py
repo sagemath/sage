@@ -51,7 +51,7 @@ def krawtchouk(n, q, l, x, check=True):
 
     - ``n``, ``q``, ``x`` -- arbitrary numbers
 
-    - ``l`` -- a nonnegative integer
+    - ``l`` -- nonnegative integer
 
     - ``check`` -- check the input for correctness. ``True`` by
       default. Otherwise, pass it as it is. Use ``check=False`` at
@@ -136,7 +136,7 @@ def eberlein(n, w, k, u, check=True):
 
     - ``w``, ``k``, ``x`` -- arbitrary numbers
 
-    - ``n`` -- a nonnegative integer
+    - ``n`` -- nonnegative integer
 
     - ``check`` -- check the input for correctness. ``True`` by
       default. Otherwise, pass it as it is. Use ``check=False`` at
@@ -234,7 +234,7 @@ def _delsarte_LP_building(n, d, d_star, q, isinteger, solver, maxc=0):
 
 def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
     r"""
-    LP builder for Delsarte's LP for constant weight codes
+    LP builder for Delsarte's LP for constant weight codes.
 
     It is used in :func:`delsarte_bound_constant_weight_code`; not exported.
 
@@ -291,7 +291,7 @@ def _delsarte_cwc_LP_building(n, d, w, solver, isinteger):
 
 
 def delsarte_bound_constant_weight_code(n, d, w, return_data=False,
-                                        solver="PPL", isinteger=False):
+                                        solver='PPL', isinteger=False):
     r"""
     Find the Delsarte bound on a constant weight code.
 
@@ -363,9 +363,9 @@ def delsarte_bound_constant_weight_code(n, d, w, return_data=False,
 
 
 def delsarte_bound_hamming_space(n, d, q, return_data=False,
-                                 solver="PPL", isinteger=False):
+                                 solver='PPL', isinteger=False):
     r"""
-    Find the Delsarte bound on codes in ``H_q^n`` of minimal distance ``d``
+    Find the Delsarte bound on codes in ``H_q^n`` of minimal distance ``d``.
 
     Find the Delsarte bound [De1973]_ on the size of codes in
     the Hamming space ``H_q^n`` of minimal distance ``d``.
@@ -447,14 +447,14 @@ def delsarte_bound_hamming_space(n, d, q, return_data=False,
 
 
 def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_data=False,
-                                          solver="PPL", isinteger=False):
+                                          solver='PPL', isinteger=False):
     r"""
     Find a modified Delsarte bound on additive codes in Hamming space `H_q^n` of minimal distance `d`.
 
     Find the Delsarte LP bound on ``F_{q_base}``-dimension of additive
     codes in Hamming space `H_q^n` of minimal distance ``d`` with
     minimal distance of the dual code at least ``d_star``.  If
-    ``q_base`` is set to non-zero, then ``q`` is a power of
+    ``q_base`` is set to nonzero, then ``q`` is a power of
     ``q_base``, and the code is, formally, linear over
     ``F_{q_base}``. Otherwise it is assumed that ``q_base==q``.
 
@@ -467,10 +467,10 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
     - ``q`` -- the size of the alphabet
 
     - ``d_star`` -- the (lower bound on) minimal distance of the dual code;
-      only makes sense for additive codes.
+      only makes sense for additive codes
 
     - ``q_base`` -- if ``0``, the code is assumed to be linear. Otherwise,
-      ``q=q_base^m`` and the code is linear over ``F_{q_base}``.
+      ``q=q_base^m`` and the code is linear over ``F_{q_base}``
 
     - ``return_data`` -- if ``True``, return a triple ``(W,LP,bound)``,
       where ``W`` is a weights vector, and ``LP`` the Delsarte bound
@@ -484,7 +484,7 @@ def delsarte_bound_additive_hamming_space(n, d, q, d_star=1, q_base=0, return_da
       list), you are on your own!
 
     - ``isinteger`` -- if ``True``, uses an integer programming solver (ILP),
-      rather that an LP solver. Can be very slow if set to ``True``.
+      rather that an LP solver (can be very slow if set to ``True``)
 
     EXAMPLES:
 
@@ -641,7 +641,7 @@ def _delsarte_Q_LP_building(q, d, solver, isinteger):
 
 
 def delsarte_bound_Q_matrix(q, d, return_data=False,
-                            solver="PPL", isinteger=False):
+                            solver='PPL', isinteger=False):
     r"""
     Delsarte bound on a code with Q matrix ``q`` and lower bound on min. dist. ``d``.
 

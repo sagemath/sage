@@ -70,9 +70,7 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
     - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    OUTPUT:
-
-    - A sage Rational
+    OUTPUT: a sage Rational
 
     TESTS::
 
@@ -140,9 +138,7 @@ cdef Integer si2sa_ZZ(number *n, ring *_ring):
     - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    OUTPUT:
-
-    - A sage Integer
+    OUTPUT: a sage Integer
 
 
     TESTS::
@@ -175,11 +171,9 @@ cdef FFgivE si2sa_GFqGivaro(number *n, ring *_ring, Cache_givaro cache):
     - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``cache`` -- A Givaro number field
+    - ``cache`` -- a Givaro number field
 
-    OUTPUT:
-
-        - A sage element of ``cache``
+    OUTPUT: a sage element of ``cache``
 
     TESTS::
 
@@ -231,11 +225,9 @@ cdef FFgf2eE si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache):
     - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``cache`` -- A ntl_gf2e number field
+    - ``cache`` -- a ntl_gf2e number field
 
-    OUTPUT:
-
-    - A sage element of ``cache``
+    OUTPUT: a sage element of ``cache``
 
 
     TESTS::
@@ -282,11 +274,9 @@ cdef object si2sa_GFq_generic(number *n, ring *_ring, object base):
     - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` -- A sage finite field
+    - ``base`` -- a sage finite field
 
-    OUTPUT:
-
-    - A sage element of ``base``
+    OUTPUT: a sage element of ``base``
 
     TESTS::
 
@@ -346,11 +336,9 @@ cdef object si2sa_transext_QQ(number *n, ring *_ring, object base):
     - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` -- A sage FractionField
+    - ``base`` -- a sage FractionField
 
-    OUTPUT:
-
-    - A sage element of ``base``
+    OUTPUT: a sage element of ``base``
 
     TESTS::
 
@@ -435,11 +423,9 @@ cdef object si2sa_transext_FF(number *n, ring *_ring, object base):
     - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` -- A sage FractionField
+    - ``base`` -- a sage FractionField
 
-    OUTPUT:
-
-    - A sage element of ``base``
+    OUTPUT: a sage element of ``base``
 
     TESTS::
 
@@ -515,11 +501,9 @@ cdef object si2sa_NF(number *n, ring *_ring, object base):
     - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` -- A sage NumberField
+    - ``base`` -- a sage NumberField
 
-    OUTPUT:
-
-    - A sage element of ``base``
+    OUTPUT: a sage element of ``base``
 
 
     TESTS::
@@ -580,11 +564,9 @@ cdef inline object si2sa_ZZmod(number *n, ring *_ring, object base):
     - ``_ ring`` -- a (pointer to) a singular ring, in whose coefficient field
       lives ``n``
 
-    - ``base`` -- A sage IntegerModRing
+    - ``base`` -- a sage IntegerModRing
 
-    OUTPUT:
-
-    - A sage element of ``base``
+    OUTPUT: a sage element of ``base``
 
     TESTS::
 
@@ -933,7 +915,7 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring) noexcept:
 
     INPUT:
 
-    - ``quo`` -- a sage integer
+    - ``quo`` -- sage integer
 
     - ``_ ring`` -- a (pointer to) a singular ring, where the resul will live
 
@@ -1207,8 +1189,8 @@ cdef number *sa2si_transext_QQ(object elem, ring *_ring) noexcept:
     if nMapFuncPtr is NULL:
         raise RuntimeError("Failed to determine nMapFuncPtr")
 
-    numerdic = elem.numerator().dict()
-    denomdic = elem.denominator().dict()
+    numerdic = elem.numerator().monomial_coefficients()
+    denomdic = elem.denominator().monomial_coefficients()
 
     if numerdic and not isinstance(list(numerdic)[0], (tuple, ETuple)):
         numerdic = {(k,):b for k,b in numerdic.items()}
@@ -1322,8 +1304,8 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
     if nMapFuncPtr is NULL:
         raise RuntimeError("Failed to determine nMapFuncPtr")
 
-    numerdic = elem.numerator().dict()
-    denomdic = elem.denominator().dict()
+    numerdic = elem.numerator().monomial_coefficients()
+    denomdic = elem.denominator().monomial_coefficients()
 
     if numerdic and not isinstance(list(numerdic)[0], (tuple, ETuple)):
         numerdic = {(k,):b for k,b in numerdic.items()}
@@ -1340,11 +1322,11 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
             a = _ring.cf.cfParameter(j+1, _ring.cf)
             for k in range(ex):
                 aux1 = naCoeff
-                naCoeff = _ring.cf.cfMult(aux1, a ,_ring.cf)
+                naCoeff = _ring.cf.cfMult(aux1, a, _ring.cf)
                 _ring.cf.cfDelete(&aux1, _ring.cf)
             _ring.cf.cfDelete(&a, _ring.cf)
         aux2 = numerator
-        numerator = _ring.cf.cfAdd(aux2, naCoeff,_ring.cf)
+        numerator = _ring.cf.cfAdd(aux2, naCoeff, _ring.cf)
         _ring.cf.cfDelete(&naCoeff, _ring.cf)
         _ring.cf.cfDelete(&aux2, _ring.cf)
 
@@ -1357,7 +1339,7 @@ cdef number *sa2si_transext_FF(object elem, ring *_ring) noexcept:
                 a = _ring.cf.cfParameter(j+1, _ring.cf)
                 for k in range(ex):
                     aux1 = naCoeff
-                    naCoeff = _ring.cf.cfMult(aux1, a ,_ring.cf)
+                    naCoeff = _ring.cf.cfMult(aux1, a, _ring.cf)
                     _ring.cf.cfDelete(&aux1, _ring.cf)
                 _ring.cf.cfDelete(&a, _ring.cf)
             aux2 = denominator
@@ -1444,11 +1426,11 @@ cdef number *sa2si_NF(object elem, ring *_ring) noexcept:
     rComplete(qqr,1)
     qqr.ShortOut = 0
 
-    nMapFuncPtr =  naSetMap( qqr.cf , _ring.cf ) # choose correct mapping function
+    nMapFuncPtr =  naSetMap(qqr.cf, _ring.cf)  # choose correct mapping function
     cdef poly *_p
     for i from 0 <= i < len(elem):
         nlCoeff = nlInit2gmp( mpq_numref((<Rational>elem[i]).value), mpq_denref((<Rational>elem[i]).value),  qqr.cf )
-        naCoeff = nMapFuncPtr(nlCoeff, qqr.cf , _ring.cf )
+        naCoeff = nMapFuncPtr(nlCoeff, qqr.cf, _ring.cf)
         nlDelete(&nlCoeff, _ring.cf)
 
         # faster would be to assign the coefficient directly
@@ -1567,9 +1549,9 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         _name = omStrDup("a")
         _ext_names = <char**>omAlloc0(sizeof(char*))
         _ext_names[0] = omStrDup(_name)
-        _cf = nInitChar( n_Z, NULL) # integer coefficient ring
-        ZZr = rDefault (_cf ,1, _ext_names)
-        rComplete(ZZr,1)
+        _cf = nInitChar(n_Z, NULL)  # integer coefficient ring
+        ZZr = rDefault (_cf, 1, _ext_names)
+        rComplete(ZZr, 1)
         ZZr.ShortOut = 0
 
         nn = nrzInit(0, ZZr.cf)
@@ -1582,7 +1564,7 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
 
 cdef object si2sa(number *n, ring *_ring, object base):
     r"""
-    Create a sage number from a singular one
+    Create a sage number from a singular one.
 
     INPUT:
 
@@ -1637,10 +1619,10 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
 
     INPUT:
 
-    - ``elem`` -- a sage element from a parent. The parent must have a
-      corresponding singular coefficient type.
+    - ``elem`` -- a sage element from a parent; the parent must have a
+      corresponding singular coefficient type
 
-    - ``_ring`` -- a (pointer to) the singular ring where the result will live.
+    - ``_ring`` -- a (pointer to) the singular ring where the result will live
 
     OUTPUT:
 
@@ -1681,7 +1663,7 @@ cdef number *sa2si(Element elem, ring * _ring) noexcept:
 
 cdef object si2sa_intvec(intvec *v):
     r"""
-    create a sage tuple from a singular vector of integers
+    Create a sage tuple from a singular vector of integers.
 
     INPUT:
 
@@ -1699,7 +1681,7 @@ cdef object si2sa_intvec(intvec *v):
 
 cdef object si2sa_bigintvec(bigintmat *v):
     r"""
-    create a sage tuple from a singular vector of big integers
+    Create a sage tuple from a singular vector of big integers.
 
     INPUT:
 
@@ -1727,13 +1709,13 @@ from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
 
 cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     """
-    Raise an ``OverflowError`` if e is > max degree per variable.
+    Raise an :exc:`OverflowError` if e is > max degree per variable.
 
     INPUT:
 
-    - ``e`` -- some integer representing a degree.
+    - ``e`` -- some integer representing a degree
 
-    - ``_ring`` -- a pointer to some ring.
+    - ``_ring`` -- a pointer to some ring
 
     Whether an overflow occurs or not partially depends
 
@@ -1742,7 +1724,6 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
     for at least 4 variables on 64-bit and 2 variables on 32-bit,
     which in both cases makes a maximal default exponent of
     2^16-1.
-
 
     EXAMPLES::
 
@@ -1840,9 +1821,7 @@ def get_resource(id):
     - ``id`` -- a single-character string; see
       https://github.com/Singular/Singular/blob/spielwiese/resources/feResource.cc
 
-    OUTPUT:
-
-    A string, or ``None``.
+    OUTPUT: string or ``None``
 
     EXAMPLES::
 

@@ -197,7 +197,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy``, ignored optional argument.
+        - ``copy`` -- ignored optional argument
 
         EXAMPLES::
 
@@ -308,7 +308,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - singular -- \Singular interface instance (default: None)
+        - ``singular`` -- \Singular interface instance (default: ``None``)
 
         EXAMPLES::
 

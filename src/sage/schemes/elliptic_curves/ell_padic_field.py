@@ -1,7 +1,7 @@
 # sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.padics
 """
-Elliptic curves over padic fields
+Elliptic curves over `p`-adic fields
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -31,7 +31,7 @@ from sage.schemes.hyperelliptic_curves.hyperelliptic_padic_field import Hyperell
 
 class EllipticCurve_padic_field(EllipticCurve_field, HyperellipticCurve_padic_field):
     """
-    Elliptic curve over a padic field.
+    Elliptic curve over a `p`-adic field.
 
     EXAMPLES::
 

@@ -24,9 +24,10 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 
+
 def is_Hypersurface(self):
     """
-    Return True if ``self`` is a hypersurface, i.e. an object of the type
+    Return ``True`` if ``self`` is a hypersurface, i.e. an object of the type
     :class:`ProjectiveHypersurface` or :class:`AffineHypersurface`.
 
     EXAMPLES::

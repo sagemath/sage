@@ -96,7 +96,7 @@ cdef Matrix_generic_dense acb_mat_to_matrix(acb_mat_t source, Parent CIF):
 
     - ``source`` -- an ``acb_mat_t``
 
-    - ``precision`` -- a positive integer.
+    - ``precision`` -- positive integer
 
     OUTPUT:
 
@@ -182,7 +182,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         EXAMPLES:
@@ -265,7 +265,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         - ``j`` -- column
 
-        - ``x`` -- must be ComplexBall! The value to set self[i,j] to.
+        - ``x`` -- must be ComplexBall! The value to set ``self[i,j]`` to.
 
         EXAMPLES::
 
@@ -651,7 +651,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         TESTS::
 
-            sage: mat.charpoly(algorithm="hessenberg")
+            sage: mat.charpoly(algorithm='hessenberg')
             x^5 + ([-1.8 +/- 0.04...])*x^4 + ([0.3 +/- 0.08...])*x^3
             + ([+/- 0.0...])*x^2 + ([+/- ...e-4])*x + [+/- ...e-6]
             sage: mat.charpoly('y')

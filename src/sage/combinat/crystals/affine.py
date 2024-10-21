@@ -234,7 +234,7 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
 
     def __contains__(self, x):
         r"""
-        Checks whether ``x`` is an element of ``self``.
+        Check whether `x` is an element of ``self``.
 
         EXAMPLES::
 
@@ -443,7 +443,7 @@ class AffineCrystalFromClassicalElement(ElementWrapper):
 
     def phi(self, i):
         r"""
-        Returns the maximal time the crystal operator `f_i` can be applied to self.
+        Return the maximal time the crystal operator `f_i` can be applied to ``self``.
 
         EXAMPLES::
 
@@ -538,7 +538,7 @@ class AffineCrystalFromClassicalAndPromotion(AffineCrystalFromClassical):
     - ``automorphism, inverse_automorphism`` -- a function on the
       elements of the ``classical_crystal``
 
-    - ``dynkin_node`` -- an integer specifying the classical node in the
+    - ``dynkin_node`` -- integer specifying the classical node in the
       image of the zero node under the automorphism sigma
 
     EXAMPLES::

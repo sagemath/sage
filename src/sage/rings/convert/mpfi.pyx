@@ -53,16 +53,16 @@ cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1:
 
     INPUT:
 
-    - ``re`` -- a pre-initialized MPFI interval.
+    - ``re`` -- a pre-initialized MPFI interval
 
-    - ``im`` -- a pre-initialized MPFI interval or NULL.
+    - ``im`` -- a pre-initialized MPFI interval or NULL
 
-    - ``x`` -- any Sage or Python object to be converted to an interval.
+    - ``x`` -- any Sage or Python object to be converted to an interval
 
     - ``field`` -- a ``RealIntervalField`` or ``ComplexIntervalField``
-      of the right precision (real or complex doesn't matter).
+      of the right precision (real or complex doesn't matter)
 
-    - ``base`` -- base to use for string conversion.
+    - ``base`` -- base to use for string conversion
 
     OUTPUT:
 

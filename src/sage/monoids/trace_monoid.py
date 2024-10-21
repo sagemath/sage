@@ -110,7 +110,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             return "1"
         return f"[{self.value}]"
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Compare two traces by their lexicographic normal forms.
 
@@ -132,9 +132,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         r"""
         Return the lexicographic normal form of ``self``.
 
-        OUTPUT:
-
-        A free monoid element.
+        OUTPUT: a free monoid element
 
         EXAMPLES::
 
@@ -150,13 +148,11 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         """
         return self.value
 
-    def foata_normal_form(self):
+    def foata_normal_form(self) -> tuple:
         r"""
         Return the Foata normal form of ``self``.
 
-        OUTPUT:
-
-        Tuple of free monoid elements.
+        OUTPUT: tuple of free monoid elements
 
         EXAMPLES::
 
@@ -187,9 +183,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         r"""
         Return flatten list of generator numbers representing the trace.
 
-        OUTPUT:
-
-        A list of generator indexes.
+        OUTPUT: list of generator indexes
 
         TESTS::
 
@@ -211,9 +205,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         generators are connected by edges which
         direction depend on the generator position in the trace.
 
-        OUTPUT:
-
-        Directed graph of generator indexes.
+        OUTPUT: directed graph of generator indexes
 
         EXAMPLES::
 
@@ -238,7 +230,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         return DiGraph(graph)
 
     @cached_method
-    def hasse_diagram(self, algorithm="naive"):
+    def hasse_diagram(self, algorithm='naive'):
         r"""
         Return Hasse diagram of the trace.
 
@@ -250,9 +242,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
           that will be used to compute Hasse diagram; there are two
           variants: ``'naive'`` and ``'min'``.
 
-        OUTPUT:
-
-        Directed graph of generator indexes.
+        OUTPUT: directed graph of generator indexes
 
         .. SEEALSO::
 
@@ -291,9 +281,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         r"""
         Return Hasse diagram of the trace.
 
-        OUTPUT:
-
-        Directed graph of generator indexes.
+        OUTPUT: directed graph of generator indexes
 
         .. SEEALSO::
 
@@ -313,12 +301,12 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         elements.reverse()
         independence = self.parent()._independence
         reachable = {}
-        min = set()
+        mini = set()
         graph = DiGraph({})
 
         for i, x in enumerate(elements):
             reachable[i] = set()
-            front = min.copy()
+            front = mini.copy()
             while front:
                 used = set()
                 for j in list(front):
@@ -327,14 +315,14 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
                         graph.add_edge(i, j)
                         reachable[i].add(j)
                         reachable[i].update(reachable[j])
-                        if j in min:
-                            min.remove(j)
+                        if j in mini:
+                            mini.remove(j)
                         used.add(j)
                 forbidden = set(chain.from_iterable(reachable[v] for v in used))
                 front = {dest for _, dest in graph.outgoing_edges(front, labels=False)}
                 front = front - forbidden
 
-            min.add(i)
+            mini.add(i)
 
         length = len(elements)
         graph.relabel(length - 1 - i for i in range(length))
@@ -349,9 +337,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         In loop check for every two pair of edges if they
         have common vertex, remove their transitive edge.
 
-        OUTPUT:
-
-        Directed graph of generator indexes.
+        OUTPUT: directed graph of generator indexes
 
         .. SEEALSO::
 
@@ -382,9 +368,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         r"""
         Return alphabet of ``self``.
 
-        OUTPUT:
-
-        A set of free monoid generators.
+        OUTPUT: a set of free monoid generators
 
         EXAMPLES::
 
@@ -406,9 +390,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         - ``letters`` -- set of generators; defines set of letters that will be
           used to filter the trace
 
-        OUTPUT:
-
-        A trace
+        OUTPUT: a trace
 
         EXAMPLES::
 
@@ -451,7 +433,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
     Return a free partially commuting monoid (trace monoid) on `n` generators
     over independence relation `I`.
 
-    We construct a trace monoid by specifing:
+    We construct a trace monoid by specifying:
 
     - a free monoid and independence relation
     - or generator names and independence relation,
@@ -514,7 +496,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
 
         rels = set()
         gen_from_str = {names[i]: gen for i, gen in enumerate(M.gens())}
-        for (x, y) in I:
+        for x, y in I:
             try:
                 if isinstance(x, str):
                     x = gen_from_str[x]
@@ -532,7 +514,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
 
         return super().__classcall__(cls, M, I, names)
 
-    def __init__(self, M, I, names):
+    def __init__(self, M, I, names) -> None:
         r"""
         Initialize ``self``.
 
@@ -612,9 +594,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         Return generator stacks formed from trace
         subelements with respect to non-commutativity.
 
-        OUTPUT:
-
-        Used generators and list of stacks as tuple.
+        OUTPUT: used generators and list of stacks as tuple
 
         ALGORITHM:
 
@@ -655,9 +635,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         Return lexicographic normal form of the free monoid
         element in free monoid terms.
 
-        OUTPUT:
-
-        Trace monoid element.
+        OUTPUT: trace monoid element
 
         ALGORITHM:
 
@@ -696,7 +674,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         return prod(elements)
 
     @cached_method
-    def _compute_foata_normal_form(self, x):
+    def _compute_foata_normal_form(self, x) -> tuple:
         r"""
         Return Foata normal form of the monoid element.
 
@@ -771,7 +749,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         r"""
         Return independence relation over the monoid.
 
-        OUTPUT: set of commuting generator pairs.
+        OUTPUT: set of commuting generator pairs
 
         EXAMPLES::
 
@@ -789,9 +767,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         r"""
         Return dependence relation over the monoid.
 
-        OUTPUT:
-
-        Set of non-commuting generator pairs.
+        OUTPUT: set of non-commuting generator pairs
 
         EXAMPLES::
 
@@ -820,7 +796,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         """
         return Graph({frozenset((e1, e2)) if e1 != e2 else (e1, e2)
                       for e1, e2 in self.dependence()}, loops=True,
-                     format="list_of_edges",
+                     format='list_of_edges',
                      immutable=True)
 
     @cached_method
@@ -828,9 +804,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         r"""
         Return the digraph of independence relations.
 
-        OUTPUT:
-
-        Independence graph with generators as vertices.
+        OUTPUT: independence graph with generators as vertices
 
         TESTS::
 
@@ -853,9 +827,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         where `c_i` equals to number of full subgraphs
         of size `i` in the independence graph.
 
-        OUTPUT:
-
-        A rational function in ``t`` with coefficients in the integer ring.
+        OUTPUT: a rational function in ``t`` with coefficients in the integer ring
 
         EXAMPLES::
 
@@ -945,11 +917,11 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
                           if not ((list(word.value)[-1][0], suffix.value) in self._independence
                                   and list(word.value)[-1][0] > suffix.value)])
 
-    def _sorted_independence(self):
+    def _sorted_independence(self) -> list:
         r"""
         Return independence relation over the monoid.
 
-        OUTPUT: sorted list of sorted commuting generator pairs.
+        OUTPUT: sorted list of sorted commuting generator pairs
 
         EXAMPLES::
 
@@ -980,7 +952,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
                                                             ", ".join(f"{{{x}, {y}}}"
                                                                       for (x, y) in self._sorted_independence()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of trace monoids.
 

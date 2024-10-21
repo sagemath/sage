@@ -19,30 +19,12 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 #############################################################################
+from pathlib import Path
 
-from sage.interfaces.gp import Gp
-from sage.misc.sage_eval import sage_eval
+from sage.env import SAGE_EXTCODE
+from sage.libs.pari import pari
 
-_gp = None
-
-
-def gp():
-    r"""
-    Return a copy of the GP interpreter with the appropriate files loaded.
-
-    EXAMPLES::
-
-        sage: import sage.modular.buzzard
-        sage: sage.modular.buzzard.gp()
-        PARI/GP interpreter
-    """
-    global _gp
-    if _gp is None:
-        _gp = Gp(script_subdirectory='buzzard')
-        _gp.read("DimensionSk.g")
-        _gp.read("genusn.g")
-        _gp.read("Tpprog.g")
-    return _gp
+buzzard_dir = Path(SAGE_EXTCODE) / "pari" / "buzzard"
 
 # def buzzard_dimension_cusp_forms(eps, k):
 #     r"""
@@ -74,7 +56,7 @@ def gp():
 
 def buzzard_tpslopes(p, N, kmax):
     r"""
-    Return a vector of length kmax, whose `k`'th entry
+    Return a vector of length kmax, whose `k`-th entry
     (`0 \leq k \leq k_{max}`) is the conjectural sequence
     of valuations of eigenvalues of `T_p` on forms of level
     `N`, weight `k`, and trivial character.
@@ -87,6 +69,7 @@ def buzzard_tpslopes(p, N, kmax):
 
         sage: from sage.modular.buzzard import buzzard_tpslopes
         sage: c = buzzard_tpslopes(2,1,50)
+        ...
         sage: c[50]
         [4, 8, 13]
 
@@ -108,7 +91,10 @@ def buzzard_tpslopes(p, N, kmax):
 
     - William Stein (2006-03-17): small Sage wrapper of Buzzard's scripts
     """
-    v = gp().eval('tpslopes(%s, %s, %s)' % (p, N, kmax))
-    v = sage_eval(v)
-    v.insert(0, [])   # so v[k] = info about weight k (since python is 0-based)
+    pari.read(buzzard_dir / "DimensionSk.g")
+    pari.read(buzzard_dir / "genusn.g")
+    pari.read(buzzard_dir / "Tpprog.g")
+    # v = pari.tpslopes(p, N, kmax).sage()
+    v = pari('tpslopes(%s, %s, %s)' % (p, N, kmax)).sage()
+    v.insert(0, [])   # so that v[k] = info about weight k
     return v

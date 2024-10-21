@@ -51,9 +51,9 @@ def produce_latex_macro(name, *sample_args):
 
     INPUT:
 
-    -  ``name`` -- name of macro to be defined, also name of corresponding Sage object
+    - ``name`` -- name of macro to be defined, also name of corresponding Sage object
 
-    -  ``sample_args`` -- (optional) sample arguments for this Sage object
+    - ``sample_args`` -- (optional) sample arguments for this Sage object
 
     EXAMPLES::
 
@@ -122,7 +122,7 @@ def convert_latex_macro_to_mathjax(macro):
 
     INPUT:
 
-    -  ``macro`` -- LaTeX macro definition
+    - ``macro`` -- LaTeX macro definition
 
     See the web page
     https://docs.mathjax.org/en/latest/input/tex/macros.html for a

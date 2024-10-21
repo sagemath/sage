@@ -153,7 +153,7 @@ cdef class ntl_ZZX():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -168,7 +168,7 @@ cdef class ntl_ZZX():
 
     def __copy__(self):
         """
-        Return a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -203,7 +203,7 @@ cdef class ntl_ZZX():
 
     cdef void setitem_from_int(ntl_ZZX self, long i, int value) noexcept:
         r"""
-        Sets ith coefficient to value.
+        Set `i`-th coefficient to value.
 
         AUTHOR: David Harvey (2006-08-05)
         """
@@ -248,7 +248,7 @@ cdef class ntl_ZZX():
 
     cdef int getitem_as_int(ntl_ZZX self, long i) noexcept:
         r"""
-        Returns ith coefficient as C int.
+        Return `i`-th coefficient as C int.
         Return value is only valid if the result fits into an int.
 
         AUTHOR: David Harvey (2006-08-05)
@@ -337,7 +337,7 @@ cdef class ntl_ZZX():
 
     def __truediv__(ntl_ZZX self, ntl_ZZX other):
         """
-        Compute quotient self / other, if the quotient is a polynomial.
+        Compute quotient ``self / other``, if the quotient is a polynomial.
         Otherwise an Exception is raised.
 
         EXAMPLES::
@@ -395,8 +395,8 @@ cdef class ntl_ZZX():
 
     def quo_rem(self, ntl_ZZX other):
         """
-        Returns the unique integral q and r such that self = q*other +
-        r, if they exist.  Otherwise raises an Exception.
+        Return the unique integral q and r such that ``self = q*other +
+        r``, if they exist.  Otherwise raises an Exception.
 
         EXAMPLES::
 
@@ -431,7 +431,7 @@ cdef class ntl_ZZX():
 
     def __pow__(ntl_ZZX self, long n, ignored):
         """
-        Return the n-th nonnegative power of self.
+        Return the `n`-th nonnegative power of ``self``.
 
         EXAMPLES::
 
@@ -456,7 +456,7 @@ cdef class ntl_ZZX():
 
     def __richcmp__(ntl_ZZX self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -483,7 +483,7 @@ cdef class ntl_ZZX():
 
     def is_zero(self):
         """
-        Return True exactly if this polynomial is 0.
+        Return ``True`` exactly if this polynomial is 0.
 
         EXAMPLES::
 
@@ -500,7 +500,7 @@ cdef class ntl_ZZX():
 
     def is_one(self):
         """
-        Return True exactly if this polynomial is 1.
+        Return ``True`` exactly if this polynomial is 1.
 
         EXAMPLES::
 
@@ -515,7 +515,7 @@ cdef class ntl_ZZX():
 
     def is_monic(self):
         """
-        Return True exactly if this polynomial is monic.
+        Return ``True`` exactly if this polynomial is monic.
 
         EXAMPLES::
 
@@ -538,7 +538,7 @@ cdef class ntl_ZZX():
 
     def __neg__(self):
         """
-        Return the negative of self.
+        Return the negative of ``self``.
 
         EXAMPLES::
 
@@ -639,7 +639,7 @@ cdef class ntl_ZZX():
 
     def pseudo_quo_rem(self, ntl_ZZX other):
         r"""
-        Performs pseudo-division: computes q and r with deg(r) <
+        Perform pseudo-division: computes q and r with deg(r) <
         deg(b), and \code{LeadCoeff(b)\^(deg(a)-deg(b)+1) a = b q + r}.
         Only the classical algorithm is used.
 
@@ -681,7 +681,7 @@ cdef class ntl_ZZX():
 
     def lcm(self, ntl_ZZX other):
         """
-        Return the least common multiple of self and other.
+        Return the least common multiple of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -818,7 +818,7 @@ cdef class ntl_ZZX():
 
     def is_x(self):
         """
-        True if this is the polynomial "x".
+        ``True`` if this is the polynomial "x".
 
         EXAMPLES::
 
@@ -934,8 +934,8 @@ cdef class ntl_ZZX():
 
     def invert_and_truncate(self, long m):
         """
-        Compute and return the inverse of self modulo `x^m`.
-        The constant term of self must be 1 or -1.
+        Compute and return the inverse of ``self`` modulo `x^m`.
+        The constant term of ``self`` must be 1 or -1.
 
         EXAMPLES::
 
@@ -956,8 +956,8 @@ cdef class ntl_ZZX():
 
     def multiply_mod(self, ntl_ZZX other, ntl_ZZX modulus):
         """
-        Return self*other % modulus.  The modulus must be monic with
-        deg(modulus) > 0, and self and other must have smaller degree.
+        Return ``self*other % modulus``.  The modulus must be monic with
+        deg(modulus) > 0, and ``self`` and ``other`` must have smaller degree.
 
         EXAMPLES::
 
@@ -974,7 +974,7 @@ cdef class ntl_ZZX():
         """
         Return the trace of this polynomial modulus the modulus.
         The modulus must be monic, and of positive degree bigger
-        than the degree of self.
+        than the degree of ``self``.
 
         EXAMPLES::
 
@@ -998,7 +998,7 @@ cdef class ntl_ZZX():
             sage: f.trace_list()
             [5, 0, -6, 0, 10]
 
-        The input polynomial must be monic or a :class:`ValueError` is raised::
+        The input polynomial must be monic or a :exc:`ValueError` is raised::
 
             sage: f = ntl.ZZX([1,2,0,3,0,2])
             sage: f.trace_list()
@@ -1017,7 +1017,7 @@ cdef class ntl_ZZX():
 
     def resultant(self, ntl_ZZX other, proof=None):
         """
-        Return the resultant of self and other.  If proof = False (the
+        Return the resultant of ``self`` and ``other``.  If proof = False (the
         default is proof=None, see proof.polynomial or sage.structure.proof,
         but the global default is True), then this function may use a
         randomized strategy that errors with probability no more than
@@ -1042,7 +1042,7 @@ cdef class ntl_ZZX():
         Return the norm of this polynomial modulo the modulus.
 
         The modulus must be monic, and of positive degree strictly
-        greater than the degree of self.  If proof=False (the default
+        greater than the degree of ``self``.  If proof=False (the default
         is proof=None, see proof.polynomial or sage.structure.proof,
         but the global default is proof=True) then it may use a
         randomized strategy that errors with probability no more than
@@ -1097,7 +1097,7 @@ cdef class ntl_ZZX():
         """
         Return the characteristic polynomial of this polynomial modulo
         the modulus.  The modulus must be monic of degree bigger than
-        self. If proof=False (the default is proof=None, see
+        ``self``. If proof=False (the default is proof=None, see
         proof.polynomial or sage.structure.proof, but the global
         default is proof=True), then this function may use a
         randomized strategy that errors with probability no more than
@@ -1109,7 +1109,6 @@ cdef class ntl_ZZX():
             sage: mod = ntl.ZZX([-5,2,0,0,1])
             sage: f.charpoly_mod(mod)
             [-8846 -594 -60 14 1]
-
         """
         proof = proof_flag(proof)
         sig_on()
@@ -1119,7 +1118,7 @@ cdef class ntl_ZZX():
         """
         Return the minimal polynomial of this polynomial modulo the
         modulus.  The modulus must be monic of degree bigger than
-        self.  In all cases, this function may use a randomized
+        ``self``.  In all cases, this function may use a randomized
         strategy that errors with probability no more than `2^{-80}`.
 
         EXAMPLES::
@@ -1177,11 +1176,11 @@ cdef class ntl_ZZX():
 
     def squarefree_decomposition(self):
         """
-        Returns the square-free decomposition of self (a partial
+        Return the square-free decomposition of ``self`` (a partial
         factorization into square-free, relatively prime polynomials)
         as a list of 2-tuples, where the first element in each tuple
         is a factor, and the second is its exponent.
-        Assumes that self is primitive.
+        Assumes that ``self`` is primitive.
 
         EXAMPLES::
 

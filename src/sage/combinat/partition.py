@@ -7,8 +7,8 @@ non-increasing list of positive integers (the *parts* of the
 partition) with total sum `n`.
 
 A partition can be depicted by a diagram made of rows of cells,
-where the number of cells in the `i^{th}` row starting from
-the top is the `i^{th}` part of the partition.
+where the number of cells in the `i`-th row starting from
+the top is the `i`-th part of the partition.
 
 The coordinate system related to a partition applies from the top
 to the bottom and from left to right. So, the corners of the
@@ -331,7 +331,7 @@ class Partition(CombinatorialElement):
 
     A partition is often represented as a diagram consisting of **cells**,
     or **boxes**, placed in rows on top of each other such that the number of
-    cells in the `i^{th}` row, reading from top to bottom, is the `i^{th}`
+    cells in the `i`-th row, reading from top to bottom, is the `i`-th
     part of the partition. The rows are left-justified (and become shorter
     and shorter the farther down one goes). This diagram is called the
     **Young diagram** of the partition, or more precisely its Young diagram
@@ -521,7 +521,7 @@ class Partition(CombinatorialElement):
         Initialize ``self``.
 
         We assume that ``mu`` is a weakly decreasing list of
-        non-negative elements in ``ZZ``.
+        nonnegative elements in ``ZZ``.
 
         EXAMPLES::
 
@@ -852,7 +852,7 @@ class Partition(CombinatorialElement):
             \end{array}$}
             }
 
-            sage: Partitions.options(latex="young_diagram", convention="french")
+            sage: Partitions.options(latex='young_diagram', convention='french')
             sage: Partitions.options.latex='exp_high'; latex(mu)      # indirect doctest
             2,1
             sage: Partitions.options.latex='exp_low'; latex(mu)       # indirect doctest
@@ -973,7 +973,7 @@ class Partition(CombinatorialElement):
         EXAMPLES::
 
             sage: mu = Partition([5,5,2,1])
-            sage: Partitions.options(diagram_str='*', convention="english")
+            sage: Partitions.options(diagram_str='*', convention='english')
             sage: print(mu.ferrers_diagram())
             *****
             *****
@@ -1464,10 +1464,10 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``h`` -- An integer `h \geq 1`.  The (*minimum*) height of the
-          rectangle.
+        - ``h`` -- integer `h \geq 1`;  the (*minimum*) height of the
+          rectangle
 
-        - ``w`` -- An integer `w \geq 1`.  The width of the rectangle.
+        - ``w`` -- integer `w \geq 1`;  the width of the rectangle
 
         EXAMPLES::
 
@@ -1655,16 +1655,16 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``min`` -- (default ``[]``, the empty partition) The
-          'minimum partition' that ``next_within_bounds(self)`` must contain.
+        - ``min`` -- (default: ``[]``, the empty partition) the
+          'minimum partition' that ``next_within_bounds(self)`` must contain
 
-        - ``max`` -- (default ``None``) The 'maximum partition' that
-          ``next_within_bounds(self)`` must be contained in.  If set to ``None``,
-          then there is no restriction.
+        - ``max`` -- (default: ``None``) the 'maximum partition' that
+          ``next_within_bounds(self)`` must be contained in;  if set to ``None``,
+          then there is no restriction
 
-        - ``partition_type`` -- (default ``None``) The type of partitions
-          allowed.  For example, 'strict' for strictly decreasing partitions, or
-          ``None`` to allow any valid partition.
+        - ``partition_type`` -- (default: ``None``) the type of partitions
+          allowed;  for example, 'strict' for strictly decreasing partitions, or
+          ``None`` to allow any valid partition
 
         EXAMPLES::
 
@@ -1708,7 +1708,7 @@ class Partition(CombinatorialElement):
         # if there is no max, the next partition just tacks a '1' on to the end!
         if max is None:
             return _Partitions(p + [1])
-        # extend p and min to include 0's at the end
+        # extend p and min to include 0s at the end
         p = p + [0] * (len(max) - len(p))
         min = min + [0] * (len(max) - len(min))
         # finally, run the algo to find next_p
@@ -1851,7 +1851,7 @@ class Partition(CombinatorialElement):
         return list(self.down())
 
     @combinatorial_map(name="cell poset")
-    def cell_poset(self, orientation="SE"):
+    def cell_poset(self, orientation='SE'):
         """
         Return the Young diagram of ``self`` as a poset. The optional
         keyword variable ``orientation`` determines the order relation
@@ -1860,10 +1860,10 @@ class Partition(CombinatorialElement):
         The poset always uses the set of cells of the Young diagram
         of ``self`` as its ground set. The order relation of the poset
         depends on the ``orientation`` variable (which defaults to
-        ``"SE"``). Concretely, ``orientation`` has to be specified to
-        one of the strings ``"NW"``, ``"NE"``, ``"SW"``, and ``"SE"``,
+        ``'SE'``). Concretely, ``orientation`` has to be specified to
+        one of the strings ``'NW'``, ``'NE'``, ``'SW'``, and ``'SE'``,
         standing for "northwest", "northeast", "southwest" and
-        "southeast", respectively. If ``orientation`` is ``"SE"``, then
+        "southeast", respectively. If ``orientation`` is ``'SE'``, then
         the order relation of the poset is such that a cell `u` is
         greater or equal to a cell `v` in the poset if and only if `u`
         lies weakly southeast of `v` (this means that `u` can be
@@ -2063,7 +2063,6 @@ class Partition(CombinatorialElement):
             ([2, 1, 0], [2, 1, 0])
             sage: Partition([9,1,1,1,1,1,1]).frobenius_coordinates()
             ([8], [6])
-
         """
         mu = self
         muconj = mu.conjugate()     # Naive implementation
@@ -2356,7 +2355,7 @@ class Partition(CombinatorialElement):
 
     def get_part(self, i, default=Integer(0)):
         r"""
-        Return the `i^{th}` part of ``self``, or ``default`` if it does
+        Return the `i`-th part of ``self``, or ``default`` if it does
         not exist.
 
         EXAMPLES::
@@ -2600,7 +2599,7 @@ class Partition(CombinatorialElement):
         northwestern most cell in English notation) of `\lambda` is less
         than `n`, including the empty partition.
 
-        The map `\sigma_n` sends a partition (with non-zero entries)
+        The map `\sigma_n` sends a partition (with nonzero entries)
         `(\lambda_1, \lambda_2, \ldots, \lambda_m) \in Y_n` to the partition
         `(\lambda_2 + 1, \lambda_3 + 1, \ldots, \lambda_m + 1,
         \underbrace{1, 1, \ldots, 1}_{n - m - \lambda_1\text{ ones}})`.
@@ -2775,7 +2774,7 @@ class Partition(CombinatorialElement):
         r"""
         Return the initial column tableau of shape ``self``.
 
-        The initial column tableau of shape self is the standard tableau
+        The initial column tableau of shape ``self`` is the standard tableau
         that has the numbers `1` to `n`, where `n` is the :meth:`size` of ``self``,
         entered in order from top to bottom and then left to right down the
         columns of ``self``.
@@ -2948,10 +2947,10 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``e`` -- a nonnegative integer; ``0`` is considered as `\infty`
+        - ``e`` -- nonnegative integer; `0` is considered as `\infty`
           (analogous to the characteristic of a ring)
-        - ``ladder_sizes`` -- (default: ``False``) if ``True``, also return
-          the sizes of the ladders
+        - ``ladder_sizes`` -- boolean (default: ``False``); if ``True``, also
+          return the sizes of the ladders
 
         .. SEEALSO::
 
@@ -3010,7 +3009,7 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``e`` -- a nonnegative integer; if ``0``, then we
+        - ``e`` -- nonnegative integer; if ``0``, then we
           set ``e = self.size() + 1``
 
         EXAMPLES::
@@ -3142,9 +3141,7 @@ class Partition(CombinatorialElement):
 
         - ``e`` -- an  integer  `e > 1`
 
-        OUTPUT:
-
-        A non-negative integer.
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -3178,11 +3175,9 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``p`` -- a prime integer
+        - ``p`` -- prime integer
 
-        OUTPUT:
-
-        A non-negative integer
+        OUTPUT: nonnegative integer
 
         The degree of a partition `\lambda` is the sum of the
         `e`-:meth:`degree` of the standard tableaux of shape `\lambda`, for
@@ -3224,9 +3219,7 @@ class Partition(CombinatorialElement):
 
         - ``i``, ``j`` -- two integers
 
-        OUTPUT:
-
-        An integer or a :class:`ValueError`
+        OUTPUT: integer or a :exc:`ValueError`
 
         EXAMPLES::
 
@@ -3285,9 +3278,7 @@ class Partition(CombinatorialElement):
 
         - ``i``, ``j`` -- two integers
 
-        OUTPUT:
-
-        A list of pairs of integers
+        OUTPUT: list of pairs of integers
 
         EXAMPLES::
 
@@ -3318,9 +3309,7 @@ class Partition(CombinatorialElement):
 
         - ``i``, ``j`` -- two integers
 
-        OUTPUT:
-
-        An integer or a :class:`ValueError`
+        OUTPUT: integer or a :exc:`ValueError`
 
         EXAMPLES::
 
@@ -3380,9 +3369,7 @@ class Partition(CombinatorialElement):
 
         - ``i``, ``j`` -- two integers
 
-        OUTPUT:
-
-        A list of pairs of integers
+        OUTPUT: list of pairs of integers
 
         EXAMPLES::
 
@@ -3954,7 +3941,7 @@ class Partition(CombinatorialElement):
 
         - ``e`` -- the quantum characteristic
 
-        - ``multicharge`` -- the multicharge (default `(0,)`)
+        - ``multicharge`` -- the multicharge (default: `(0,)`)
 
         OUTPUT:
 
@@ -4022,12 +4009,10 @@ class Partition(CombinatorialElement):
 
         - ``e`` -- the quantum characteristic
 
-        - ``multicharge`` -- the multicharge (default `(0,)`)
+        - ``multicharge`` -- the multicharge (default: `(0,)`)
 
-        OUTPUT:
-
-        - a non-negative integer, which is the defect of the block
-          containing the partition ``self``
+        OUTPUT: nonnegative integer, which is the defect of the block
+        containing the partition ``self``
 
         EXAMPLES::
 
@@ -4119,7 +4104,7 @@ class Partition(CombinatorialElement):
         Return ``True`` is this is an ``e``-regular partition.
 
         A partition is `e`-regular if it does not have `e` equal
-        non-zero parts.
+        nonzero parts.
 
         EXAMPLES::
 
@@ -4375,8 +4360,8 @@ class Partition(CombinatorialElement):
         that in English convention, a 1 corresponds to an East step, and
         a 0 corresponds to a North step.
 
-        Note that every full `0-1` sequence starts with infinitely many 0's and
-        ends with infinitely many 1's.
+        Note that every full `0-1` sequence starts with infinitely many 0s and
+        ends with infinitely many 1s.
 
         One place where these arise is in the affine symmetric group where
         one takes an affine permutation `w` and every `i` such that
@@ -4391,7 +4376,7 @@ class Partition(CombinatorialElement):
         OUTPUT:
 
         The finite `0-1` sequence is obtained from the full `0-1`
-        sequence by omitting all heading 0's and trailing 1's. The
+        sequence by omitting all heading 0s and trailing 1s. The
         output sequence is finite, starts with a 1 and ends with a
         0 (unless it is empty, for the empty partition). Its length
         is the sum of the first part of the partition with the
@@ -4688,11 +4673,9 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``k`` -- a non-negative integer
+        - ``k`` -- nonnegative integer
 
-        OUTPUT:
-
-        - a partition
+        OUTPUT: a partition
 
         EXAMPLES::
 
@@ -4769,7 +4752,7 @@ class Partition(CombinatorialElement):
 
     def to_core(self, k):
         r"""
-        Maps the `k`-bounded partition ``self`` to its corresponding `k+1`-core.
+        Map the `k`-bounded partition ``self`` to its corresponding `k+1`-core.
 
         See also :meth:`k_skew`.
 
@@ -4788,7 +4771,7 @@ class Partition(CombinatorialElement):
 
     def from_kbounded_to_reduced_word(self, k):
         r"""
-        Maps a `k`-bounded partition to a reduced word for an element in
+        Map a `k`-bounded partition to a reduced word for an element in
         the affine permutation group.
 
         This uses the fact that there is a bijection between `k`-bounded
@@ -4824,7 +4807,7 @@ class Partition(CombinatorialElement):
 
     def from_kbounded_to_grassmannian(self, k):
         r"""
-        Maps a `k`-bounded partition to a Grassmannian element in
+        Map a `k`-bounded partition to a Grassmannian element in
         the affine Weyl group of type `A_k^{(1)}`.
 
         For details, see the documentation of the method
@@ -5365,11 +5348,9 @@ class Partition(CombinatorialElement):
 
         - ``smaller`` -- a partition (default: an empty list ``[]``)
 
-        - `k` -- a positive integer (default: 1)
+        - ``k`` -- positive integer (default: 1)
 
-        OUTPUT:
-
-        The number of such paths
+        OUTPUT: the number of such paths
 
         EXAMPLES:
 
@@ -5515,7 +5496,7 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - variable -- a variable (default: ``'x'`` in the symbolic ring)
+        - ``variable`` -- a variable (default: ``'x'`` in the symbolic ring)
 
         EXAMPLES::
 
@@ -5576,11 +5557,10 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``directed`` -- (default: ``False``) whether to have the dual
-          equivalence graph be directed (where we have a directed edge
-          `S \to T` if `i` appears to the left of `i+1` in the
-          reading word of `T`; otherwise we have the directed edge
-          `T \to S`)
+        - ``directed`` -- boolean (default: ``False``); whether to have the
+          dual equivalence graph be directed (where we have a directed edge
+          `S \to T` if `i` appears to the left of `i+1` in the reading word of
+          `T`; otherwise we have the directed edge `T \to S`)
 
         - ``coloring`` -- (optional) a function which sends each
           integer `i > 1` to a color (as a string, e.g., ``'red'`` or
@@ -5659,7 +5639,7 @@ class Partition(CombinatorialElement):
                 elif isinstance(coloring, dict):
                     d = coloring
                     coloring = lambda x: d[x]
-                G.set_latex_options(format="dot2tex",
+                G.set_latex_options(format='dot2tex',
                                     edge_labels=True,
                                     color_by_label=coloring)
             return G
@@ -5692,11 +5672,11 @@ class Partition(CombinatorialElement):
 
         if directed:
             from sage.graphs.digraph import DiGraph
-            self._DDEG = DiGraph([T, edges], format="vertices_and_edges",
+            self._DDEG = DiGraph([T, edges], format='vertices_and_edges',
                                  immutable=True, multiedges=True)
         else:
             from sage.graphs.graph import Graph
-            self._DEG = Graph([T, edges], format="vertices_and_edges",
+            self._DEG = Graph([T, edges], format='vertices_and_edges',
                               immutable=True, multiedges=True)
         return self.dual_equivalence_graph(directed, coloring)
 
@@ -6197,7 +6177,7 @@ class Partitions(UniqueRepresentation, Parent):
             kwargs['max_slope'] = min(0, kwargs.get('max_slope', 0))
 
             if kwargs.get('min_slope', -float('inf')) > 0:
-                raise ValueError("the minimum slope must be non-negative")
+                raise ValueError("the minimum slope must be nonnegative")
 
             if 'outer' in kwargs:
                 kwargs['max_length'] = min(len(kwargs['outer']),
@@ -6242,8 +6222,8 @@ class Partitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``is_infinite`` -- (Default: ``False``) If ``True``, then the number
-          of partitions in this set is infinite.
+        - ``is_infinite`` -- boolean (default: ``False``); if ``True``, then
+          the number of partitions in this set is infinite
 
         EXAMPLES::
 
@@ -6262,7 +6242,7 @@ class Partitions(UniqueRepresentation, Parent):
     # add options to class
     class options(GlobalOptions):
         r"""
-        Sets and displays the global options for elements of the partition,
+        Set and display the global options for elements of the partition,
         skew partition, and partition tuple classes.  If no parameters are
         set, then the function returns a copy of the options dictionary.
 
@@ -6291,13 +6271,13 @@ class Partitions(UniqueRepresentation, Parent):
             <4,2,2,1>
             sage: Partitions.options(latex=lambda mu: '\\Diagram{%s}' % ','.join('%s'%m for m in mu._list)); latex(P)
             \Diagram{4,2,2,1}
-            sage: Partitions.options(display="diagram", diagram_str="#")
+            sage: Partitions.options(display='diagram', diagram_str='#')
             sage: P
             ####
             ##
             ##
             #
-            sage: Partitions.options(diagram_str="*", convention="french")
+            sage: Partitions.options(diagram_str='*', convention='french')
             sage: print(P.ferrers_diagram())
             *
             **
@@ -6394,7 +6374,6 @@ class Partitions(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             ValueError: all parts of [3/2] should be nonnegative integers
-
         """
         if isinstance(lst, PartitionTuple):
             if lst.level() != 1:
@@ -6449,7 +6428,6 @@ class Partitions(UniqueRepresentation, Parent):
 
             sage: 0 in P
             False
-
         """
         if isinstance(x, Partition):
             return True
@@ -6462,7 +6440,7 @@ class Partitions(UniqueRepresentation, Parent):
         r"""
         Return ``self`` if no arguments are given.
 
-        Otherwise, it raises a :class:`ValueError`.
+        Otherwise, it raises a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -6613,11 +6591,11 @@ class Partitions_all(Partitions):
         Return a partition corresponding to a sequence of beta numbers.
 
         A sequence of beta numbers is a strictly increasing sequence
-        `0 \leq b_1 < \cdots < b_k` of non-negative integers. The
+        `0 \leq b_1 < \cdots < b_k` of nonnegative integers. The
         corresponding partition `\mu = (\mu_k, \ldots, \mu_1)` is
         given by `\mu_i = [1,i) \setminus \{ b_1, \ldots, b_i \}`. This gives
-        a bijection from the set of partitions with at most `k` non-zero parts
-        to the set of strictly increasing sequences of non-negative integers
+        a bijection from the set of partitions with at most `k` nonzero parts
+        to the set of strictly increasing sequences of nonnegative integers
         of length `k`.
 
         EXAMPLES::
@@ -6659,8 +6637,8 @@ class Partitions_all(Partitions):
         that in English convention, a 1 corresponds to an East step, and
         a 0 corresponds to a North step.
 
-        Note that every full `0-1` sequence starts with infinitely many 0's and
-        ends with infinitely many 1's.
+        Note that every full `0-1` sequence starts with infinitely many 0s and
+        ends with infinitely many 1s.
 
         .. SEEALSO::
 
@@ -6668,8 +6646,8 @@ class Partitions_all(Partitions):
 
         INPUT:
 
-        The input should be a finite sequence of 0's and 1's. The
-        heading 0's and trailing 1's will be discarded.
+        The input should be a finite sequence of 0s and 1s. The
+        heading 0s and trailing 1s will be discarded.
 
         EXAMPLES::
 
@@ -6680,7 +6658,7 @@ class Partitions_all(Partitions):
             sage: Partitions().from_zero_one([1, 1, 1, 1, 0, 1, 0])
             [5, 4]
 
-        Heading 0's and trailing 1's are correctly handled::
+        Heading 0s and trailing 1s are correctly handled::
 
             sage: Partitions().from_zero_one([0,0,1,1,1,1,0,1,0,1,1,1])
             [5, 4]
@@ -6888,12 +6866,12 @@ class Partitions_n(Partitions):
 
         INPUT:
 
-        - ``algorithm``  -- (default: ``'flint'``)
+        - ``algorithm`` -- (default: ``'flint'``)
 
           - ``'flint'`` -- use FLINT (currently the fastest)
           - ``'gap'`` -- use GAP (VERY *slow*)
           - ``'pari'`` -- use PARI. Speed seems the same as GAP until
-            `n` is in the thousands, in which case PARI is faster.
+            `n` is in the thousands, in which case PARI is faster
 
         It is possible to associate with every partition of the integer `n` a
         conjugacy class of permutations in the symmetric group on `n` points
@@ -7033,15 +7011,15 @@ class Partitions_n(Partitions):
 
         ALGORITHM:
 
-         - It is a python Implementation of RANDPAR, see [NW1978]_.  The
-           complexity is unknown, there may be better algorithms.
+        - It is a python Implementation of RANDPAR, see [NW1978]_.  The
+          complexity is unknown, there may be better algorithms.
 
            .. TODO::
 
                Check in Knuth AOCP4.
 
-         - There is also certainly a lot of room for optimizations, see
-           comments in the code.
+        - There is also certainly a lot of room for optimizations, see
+          comments in the code.
 
         AUTHOR:
 
@@ -7194,7 +7172,6 @@ class Partitions_n(Partitions):
 
             sage: all(isinstance(i, Integer) for p in Partitions(4) for i in p)
             True
-
         """
         for p in ZS1_iterator(self.n):
             yield self.element_class(self, [Integer(i) for i in p])
@@ -7334,7 +7311,6 @@ class Partitions_nk(Partitions):
             sage: partitions = Partitions(9, length=3)
             sage: all(isinstance(i, Integer) for p in partitions for i in p)
             True
-
         """
         for p in ZS1_iterator_nk(self.n - self.k, self.k):
             v = [Integer(i + 1) for i in p]
@@ -7566,7 +7542,6 @@ class Partitions_parts_in(Partitions):
             sage: p._findfirst(0, p.parts[:])
             []
             sage: p._findfirst(p.n, [10])
-
         """
         if n == 0:
             return []
@@ -7622,7 +7597,7 @@ class Partitions_parts_in(Partitions):
 
         - ``n`` -- nonnegative integer
 
-        - ``parts`` -- a sorted list of positive integers.
+        - ``parts`` -- a sorted list of positive integers
 
         OUTPUT:
 
@@ -7676,15 +7651,15 @@ class Partitions_parts_in(Partitions):
 
     def _fast_iterator(self, n, parts):
         """
-        A fast iterator for the partitions of ``n`` which returns lists and
+        A fast iterator for the partitions of `n` which returns lists and
         not partition types. This function is not intended to be called
         directly.
 
         INPUT:
 
-        - ``n`` -- nonnegative integer.
+        - ``n`` -- nonnegative integer
 
-        - ``parts`` -- a list of parts to use. This list will be
+        - ``parts`` -- list of parts to use. This list will be
           destroyed, so pass things here with ``foo[:]`` (or something
           equivalent) if you want to preserve your list. In particular,
           the ``__iter__`` method needs to use ``self.parts[:]``, or else we
@@ -7719,20 +7694,18 @@ class Partitions_parts_in(Partitions):
 
     def _other_iterator(self, n, parts):
         """
-        A fast iterator for the partitions of ``n`` which returns lists and
+        A fast iterator for the partitions of `n` which returns lists and
         not partition types. This function is not intended to be called
         directly.
 
         INPUT:
 
-        - ``n`` -- nonnegative integer.
+        - ``n`` -- nonnegative integer
 
-        - ``parts`` -- a list of parts to use.
+        - ``parts`` -- list of parts to use
 
-        OUTPUT:
-
-        A generator object for partitions of `n` with parts in
-        ``parts``.
+        OUTPUT: a generator object for partitions of `n` with parts in
+        ``parts``
 
         EXAMPLES::
 
@@ -7819,7 +7792,7 @@ class Partitions_starting(Partitions):
 
     def __contains__(self, x):
         """
-        Checks if ``x`` is contained in ``self``.
+        Check if ``x`` is contained in ``self``.
 
         EXAMPLES::
 
@@ -7897,7 +7870,7 @@ class Partitions_ending(Partitions):
 
     def __init__(self, n, ending_partition):
         """
-        Initializes ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 
@@ -7933,7 +7906,7 @@ class Partitions_ending(Partitions):
 
     def __contains__(self, x):
         """
-        Checks if ``x`` is contained in ``self``.
+        Check if ``x`` is contained in ``self``.
 
         EXAMPLES::
 
@@ -8027,7 +8000,7 @@ class PartitionsInBox(Partitions):
 
     def __contains__(self, x):
         """
-        Checks if ``x`` is contained in ``self``.
+        Check if ``x`` is contained in ``self``.
 
         EXAMPLES::
 
@@ -8104,7 +8077,6 @@ class PartitionsInBox(Partitions):
             ....:     len(PartitionsInBox(a, b).list())
             ....:     for a in range(6) for b in range(6))
             True
-
         """
         return binomial(self.h + self.w, self.w)
 
@@ -8258,8 +8230,7 @@ class RegularPartitions(Partitions):
             yield []
             return
 
-        if n < max_part:
-            max_part = n
+        max_part = min(n, max_part)
         bdry = self._ell - 1
 
         for i in reversed(range(1, max_part + 1)):
@@ -8450,8 +8421,7 @@ class RegularPartitions_truncated(RegularPartitions):
                 yield [n]
             return
 
-        if n < max_part:
-            max_part = n
+        max_part = min(n, max_part)
         bdry = self._ell - 1
 
         for i in reversed(range(1, max_part + 1)):
@@ -8636,7 +8606,6 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
             sage: P = Partitions(5, regular=1)
             sage: P.cardinality()                                                       # needs sage.libs.flint
             0
-
         """
         if self._ell > self.n:
             return Partitions_n.cardinality(self)
@@ -8701,7 +8670,6 @@ class OrderedPartitions(Partitions):
         [[9, 1], [8, 2], [7, 3], [6, 4], [5, 5], [4, 6], [3, 7], [2, 8], [1, 9]]
         sage: OrderedPartitions(4).list()                                               # needs sage.libs.gap
         [[4], [3, 1], [2, 2], [2, 1, 1], [1, 3], [1, 2, 1], [1, 1, 2], [1, 1, 1, 1]]
-
     """
 
     @staticmethod
@@ -8887,7 +8855,6 @@ class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
             ....:     len(PartitionsGreatestLE(n, a).list())
             ....:     for n in range(20) for a in range(6))
             True
-
         """
         return sum(number_of_partitions_length(self.n, i) for i in range(self.k+1))
 
@@ -8933,7 +8900,6 @@ class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
 
         sage: PartitionsGreatestEQ(10, 2).first().parent()
         Partitions...
-
     """
 
     def __init__(self, n, k):
@@ -8977,7 +8943,6 @@ class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
             ....:     len(PartitionsGreatestEQ(n, a).list())
             ....:     for n in range(20) for a in range(6))
             True
-
         """
         if not self.n:
             return 1
@@ -9100,8 +9065,7 @@ class RestrictedPartitions_generic(Partitions):
             yield []
             return
 
-        if n < max_part:
-            max_part = n
+        max_part = min(n, max_part)
 
         for i in range(max_part, 0, -1):
             for p in self._fast_iterator(n-i, i):
@@ -9277,15 +9241,15 @@ def number_of_partitions(n, algorithm='default'):
 
     INPUT:
 
-    -  ``n`` -- an integer
+    - ``n`` -- integer
 
-    -  ``algorithm`` -- (default: 'default')
+    - ``algorithm`` -- (default: ``'default'``)
        [Will be deprecated except in Partition().cardinality() ]
 
-       -  ``'default'`` -- If ``k`` is not ``None``, then use Gap (very slow).
-          If  ``k`` is ``None``, use FLINT.
+       - ``'default'`` -- if ``k`` is not ``None``, then use Gap (very slow);
+          if  ``k`` is ``None``, use FLINT
 
-       -  ``'flint'`` -- use FLINT
+       - ``'flint'`` -- use FLINT
 
     EXAMPLES::
 
@@ -9294,7 +9258,7 @@ def number_of_partitions(n, algorithm='default'):
         sage: len(v)
         7
 
-    The input must be a nonnegative integer or a :class:`ValueError` is raised.
+    The input must be a nonnegative integer or a :exc:`ValueError` is raised.
 
     ::
 
@@ -9370,7 +9334,6 @@ def number_of_partitions(n, algorithm='default'):
         sage: n = 100000000 + randint(0,100000000)
         sage: number_of_partitions( n - (n % 385) + 369) % 385 == 0     # long time (4s on sage.math, 2011)
         True
-
     """
     n = ZZ(n)
     if n < 0:

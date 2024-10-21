@@ -85,7 +85,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
     def _repr_(self):
         """
-        Return string representation of self.
+        Return string representation of ``self``.
 
         EXAMPLES::
 
@@ -99,7 +99,6 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: with localvars(A, ['a','b','c']):
             ....:    print(-x+3*y*z)
             -a + 3*b*c
-
         """
         v = sorted(self._monomial_coefficients.items())
         P = self.parent()
@@ -111,7 +110,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
     def _latex_(self):
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 

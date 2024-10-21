@@ -68,11 +68,9 @@ class HallLittlewood(UniqueRepresentation):
 
     def __repr__(self):
         r"""
-        A string representing the family of Hall-Littlewood symmetric function bases
+        A string representing the family of Hall-Littlewood symmetric function bases.
 
-        OUTPUT:
-
-        - a string representing the class
+        OUTPUT: string representing the class
 
         EXAMPLES::
 
@@ -117,16 +115,12 @@ class HallLittlewood(UniqueRepresentation):
 
     def symmetric_function_ring( self ):
         r"""
-        The ring of symmetric functions associated to the class of Hall-Littlewood
-        symmetric functions
+        Return the ring of symmetric functions associated to the class of
+        Hall-Littlewood symmetric functions.
 
         INPUT:
 
         - ``self`` -- a class of Hall-Littlewood symmetric function bases
-
-        OUTPUT:
-
-        - returns the ring of symmetric functions
 
         EXAMPLES::
 
@@ -138,16 +132,12 @@ class HallLittlewood(UniqueRepresentation):
 
     def base_ring( self ):
         r"""
-        Returns the base ring of the symmetric functions where the
-        Hall-Littlewood symmetric functions live
+        Return the base ring of the symmetric functions where the
+        Hall-Littlewood symmetric functions live.
 
         INPUT:
 
         - ``self`` -- a class of Hall-Littlewood symmetric function bases
-
-        OUTPUT:
-
-        The base ring of the symmetric functions.
 
         EXAMPLES::
 
@@ -167,9 +157,7 @@ class HallLittlewood(UniqueRepresentation):
 
         - ``self`` -- a class of Hall-Littlewood symmetric function bases
 
-        OUTPUT:
-
-        The class of the Hall-Littlewood `P` basis.
+        OUTPUT: the class of the Hall-Littlewood `P` basis
 
         EXAMPLES::
 
@@ -320,7 +308,7 @@ class HallLittlewood(UniqueRepresentation):
 
     def Q(self):
         r"""
-        Returns the algebra of symmetric functions in Hall-Littlewood `Q`
+        Return the algebra of symmetric functions in Hall-Littlewood `Q`
         basis. This is the same as the `Q` basis in John Stembridge's SF
         examples file.
 
@@ -331,9 +319,7 @@ class HallLittlewood(UniqueRepresentation):
 
         - ``self`` -- a class of Hall-Littlewood symmetric function bases
 
-        OUTPUT:
-
-        - returns the class of the Hall-Littlewood `Q` basis
+        OUTPUT: the class of the Hall-Littlewood `Q` basis
 
         EXAMPLES::
 
@@ -347,7 +333,7 @@ class HallLittlewood(UniqueRepresentation):
 
     def Qp(self):
         r"""
-        Returns the algebra of symmetric functions in Hall-Littlewood `Q^\prime` (Qp)
+        Return the algebra of symmetric functions in Hall-Littlewood `Q^\prime` (Qp)
         basis. This is dual to the Hall-Littlewood `P` basis with respect to
         the standard scalar product.
 
@@ -358,9 +344,7 @@ class HallLittlewood(UniqueRepresentation):
 
         - ``self`` -- a class of Hall-Littlewood symmetric function bases
 
-        OUTPUT:
-
-        - returns the class of the Hall-Littlewood `Qp`-basis
+        OUTPUT: the class of the Hall-Littlewood `Qp`-basis
 
         EXAMPLES::
 
@@ -430,16 +414,14 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _s_to_self(self, x):
         r"""
-        Isomorphism from the Schur basis into ``self``
+        Isomorphism from the Schur basis into ``self``.
 
         INPUT:
 
         - ``self`` -- a Hall-Littlewood symmetric function basis
         - ``x`` -- an element of the Schur basis
 
-        OUTPUT:
-
-        - an element of ``self`` equivalent to ``x``
+        OUTPUT: an element of ``self`` equivalent to ``x``
 
         EXAMPLES::
 
@@ -458,16 +440,14 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _self_to_s(self, x):
         r"""
-        Isomorphism from ``self`` to the Schur basis
+        Isomorphism from ``self`` to the Schur basis.
 
         INPUT:
 
         - ``self`` -- a Hall-Littlewood symmetric function basis
         - ``x`` -- an element of the basis ``self``
 
-        OUTPUT:
-
-        - an element of the Schur basis equivalent to ``x``
+        OUTPUT: an element of the Schur basis equivalent to ``x``
 
         EXAMPLES::
 
@@ -487,14 +467,14 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def transition_matrix(self, basis, n):
         r"""
-        Returns the transitions matrix between ``self`` and ``basis`` for the
+        Return the transitions matrix between ``self`` and ``basis`` for the
         homogeneous component of degree ``n``.
 
         INPUT:
 
         - ``self`` -- a Hall-Littlewood symmetric function basis
         - ``basis`` -- another symmetric function basis
-        - ``n`` -- a non-negative integer representing the degree
+        - ``n`` -- nonnegative integer representing the degree
 
         OUTPUT:
 
@@ -547,9 +527,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
         - ``left`` -- an element of the basis ``self``
         - ``right`` -- another symmetric function
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -570,15 +548,13 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def hall_littlewood_family(self):
         r"""
-        The family of Hall-Littlewood bases associated to ``self``
+        The family of Hall-Littlewood bases associated to ``self``.
 
         INPUT:
 
         - ``self`` -- a Hall-Littlewood symmetric function basis
 
-        OUTPUT:
-
-        - returns the class of Hall-Littlewood bases
+        OUTPUT: the class of Hall-Littlewood bases
 
         EXAMPLES::
 
@@ -595,17 +571,15 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         def expand(self, n, alphabet='x'):
             r"""
-            Expands the symmetric function as a symmetric polynomial in ``n`` variables.
+            Expand the symmetric function as a symmetric polynomial in ``n`` variables.
 
             INPUT:
 
             - ``self`` -- an element of a Hall-Littlewood basis
-            - ``n`` -- a positive integer
-            - ``alphabet`` -- a string representing a variable name (default: 'x')
+            - ``n`` -- positive integer
+            - ``alphabet`` -- string representing a variable name (default: ``'x'``)
 
-            OUTPUT:
-
-            - returns a symmetric polynomial of ``self`` in ``n`` variables
+            OUTPUT: a symmetric polynomial of ``self`` in ``n`` variables
 
             EXAMPLES::
 
@@ -629,7 +603,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         def scalar(self, x, zee=None):
             r"""
-            Returns standard scalar product between ``self`` and ``x``.
+            Return standard scalar product between ``self`` and ``x``.
 
             This is the default implementation that converts both ``self`` and ``x``
             into Schur functions and performs the scalar product that basis.
@@ -642,9 +616,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             - ``self`` -- an element of a Hall-Littlewood basis
             - ``x`` -- another symmetric element of the symmetric functions
 
-            OUTPUT:
-
-            - returns the scalar product between ``self`` and ``x``
+            OUTPUT: the scalar product between ``self`` and ``x``
 
             EXAMPLES::
 
@@ -668,7 +640,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         def scalar_hl(self, x, t=None):
             r"""
-            Returns the Hall-Littlewood (with parameter ``t``) scalar product
+            Return the Hall-Littlewood (with parameter ``t``) scalar product
             of ``self`` and ``x``.
 
             The Hall-Littlewood scalar product is defined in Macdonald's
@@ -685,9 +657,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             - ``t`` -- an optional parameter, if this parameter is not specified then
               the value of the ``t`` from the basis is used in the calculation
 
-            OUTPUT:
-
-            - returns the Hall-Littlewood scalar product between ``self`` and ``x``
+            OUTPUT: the Hall-Littlewood scalar product between ``self`` and ``x``
 
             EXAMPLES::
 
@@ -728,7 +698,7 @@ class HallLittlewood_p(HallLittlewood_generic):
 
     def __init__(self, hall_littlewood):
         r"""
-        A class with methods for working with the Hall-Littlewood `P` basis
+        A class with methods for working with the Hall-Littlewood `P` basis.
 
         The `P` basis is calculated from the Schur basis using the functions
         in :meth:`sage.combinat.sf.kfpoly`.  These functions calculate Kostka-Foulkes polynomials
@@ -785,7 +755,7 @@ class HallLittlewood_p(HallLittlewood_generic):
 
     def _s_to_self_base(self, part):
         r"""
-        Returns a function which gives the coefficient of a partition
+        Return a function which gives the coefficient of a partition
         in the expansion of the Schur functions ``s(part)`` in the Hall-Littlewood
         `P` basis.
 
@@ -817,7 +787,7 @@ class HallLittlewood_p(HallLittlewood_generic):
 
     def _s_cache(self, n):
         r"""
-        Computes the change of basis between the `P` polynomials and the
+        Compute the change of basis between the `P` polynomials and the
         Schur functions for partitions of size ``n``.
 
         Uses the fact that the transformation matrix is upper-triangular in
@@ -899,7 +869,7 @@ class HallLittlewood_q(HallLittlewood_generic):
 
     def _p_to_q_normalization(self, m):
         r"""
-        Returns the scalar coefficient on self(m) when converting from the
+        Return the scalar coefficient on self(m) when converting from the
         `Q` basis to the `P` basis. Note that this assumes that ``m`` is a
         Partition object.
 
@@ -988,7 +958,7 @@ class HallLittlewood_qp(HallLittlewood_generic):
 
     def _to_s(self, part):
         r"""
-        Returns a function which gives the coefficient of a partition
+        Return a function which gives the coefficient of a partition
         in the Schur expansion of ``self(part)``.
 
         INPUT:
@@ -1022,7 +992,7 @@ class HallLittlewood_qp(HallLittlewood_generic):
 
     def _s_cache(self, n):
         r"""
-        Computes the change of basis between the `Q^\prime` polynomials and the
+        Compute the change of basis between the `Q^\prime` polynomials and the
         Schur functions for partitions of size ``n``.
 
         Uses the fact that the transformation matrix is lower-triangular in
@@ -1031,7 +1001,7 @@ class HallLittlewood_qp(HallLittlewood_generic):
         INPUT:
 
         - ``self`` -- an instance of the Hall-Littlewood `P` basis
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         EXAMPLES::
 

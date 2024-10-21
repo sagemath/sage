@@ -74,12 +74,13 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
 
     - ``B1`` -- bound for step 1 of ECM
 
-    - ``verbose`` (default: ``False``) -- print some debugging information
+    - ``verbose`` -- boolean (default: ``False``); print some debugging
+      information
 
     OUTPUT:
 
     Either ``(False, None)`` if no factor was found, or ``(True, f)``
-    if the factor ``f`` was found.
+    if the factor `f` was found.
 
     EXAMPLES::
 

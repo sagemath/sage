@@ -271,7 +271,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type F.
+        Return a Dynkin diagram for type F.
 
         EXAMPLES::
 
@@ -281,7 +281,6 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             F4
             sage: f.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 1), (2, 3, 2), (3, 2, 1), (3, 4, 1), (4, 3, 1)]
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         g = DynkinDiagram_class(self)
@@ -367,7 +366,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             4   3   2   1
             F4 relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
         """
-        return self.relabel({1:4, 2:3, 3:2, 4:1})
+        return self.relabel({1: 4, 2: 3, 3: 2, 4: 1})
 
     def _default_folded_cartan_type(self):
         """
@@ -384,4 +383,5 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_F', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_F',
+                           'ambient_space', AmbientSpace)

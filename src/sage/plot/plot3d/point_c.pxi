@@ -111,7 +111,7 @@ cdef inline void point_c_middle(point_c* res, point_c P, point_c Q, double a) no
 
 cdef inline void point_c_transform(point_c* res, double* M, point_c P) noexcept:
     """
-    M is a flattened 4x4 matrix, row major, representing an Euclidean Transformation.
+    M is a flattened 4x4 matrix, row major, representing a Euclidean Transformation.
     Operate on P as a point.
     """
     res.x = M[0]*P.x + M[1]*P.y + M[2]*P.z + M[3]
@@ -120,7 +120,7 @@ cdef inline void point_c_transform(point_c* res, double* M, point_c P) noexcept:
 
 cdef inline void point_c_stretch(point_c* res, double* M, point_c P) noexcept:
     """
-    M is a flattened 4x4 matrix, row major, representing an Euclidean Transformation.
+    M is a flattened 4x4 matrix, row major, representing a Euclidean Transformation.
     Operate on P as a vector (i.e. ignore the translation component)
     """
     res.x = M[0]*P.x + M[1]*P.y + M[2]*P.z

@@ -42,46 +42,46 @@ cdef class CVXPYBackend:
 
     Using the default solver determined by CVXPY::
 
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY"); p.solve()
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY'); p.solve()
         0.0
 
     Using a specific solver::
 
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/OSQP"); p.solve()
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/OSQP'); p.solve()
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/ECOS"); p.solve()
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/ECOS'); p.solve()
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/SCS"); p.solve()
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/SCS'); p.solve()
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/SciPy/HiGHS"); p.solve()
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/SciPy/HiGHS'); p.solve()
         0.0
 
     Open-source solvers provided by optional packages::
 
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK"); p.solve()             # needs cvxopt
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/GLPK'); p.solve()             # needs cvxopt
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLPK_MI"); p.solve()          # needs cvxopt
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/GLPK_MI'); p.solve()          # needs cvxopt
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CVXOPT"); p.solve()           # needs cvxopt
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/CVXOPT'); p.solve()           # needs cvxopt
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/GLOP"); p.solve()            # optional - ortools
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/GLOP'); p.solve()            # optional - ortools
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/PDLP"); p.solve()            # optional - ortools
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/PDLP'); p.solve()            # optional - ortools
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CBC"); p.solve()             # optional - cylp
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/CBC'); p.solve()             # optional - cylp
         0.0
 
     Non-free solvers::
 
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/Gurobi"); p.solve()          # optional - gurobi
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/Gurobi'); p.solve()          # optional - gurobi
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/CPLEX"); p.solve()           # optional - cplex
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/CPLEX'); p.solve()           # optional - cplex
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/MOSEK"); p.solve()           # optional - mosek
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/MOSEK'); p.solve()           # optional - mosek
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/SCIP"); p.solve()            # optional - pyscipopt
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/SCIP'); p.solve()            # optional - pyscipopt
         0.0
-        sage: p = MixedIntegerLinearProgram(solver="CVXPY/XPRESS"); p.solve()          # optional - xpress
+        sage: p = MixedIntegerLinearProgram(solver='CVXPY/XPRESS'); p.solve()          # optional - xpress
         0.0
         sage: p = MixedIntegerLinearProgram(solver="CVXPY/NAG"); p.solve()             # optional - naginterfaces
         0.0
@@ -89,25 +89,25 @@ cdef class CVXPYBackend:
 
     def __cinit__(self, maximization=True, base_ring=None, cvxpy_solver=None, cvxpy_solver_args=None):
         """
-        Cython constructor
+        Cython constructor.
 
         INPUT:
 
-        - ``maximization`` (boolean, default: ``True``) -- Whether this is a
-          maximization or minimization problem.
+        - ``maximization``-- boolean (default: ``True``); whether this is a
+          maximization or minimization problem
 
-        - ``base_ring`` (optional): Must be ``RDF`` if provided.
+        - ``base_ring`` -- (optional) must be ``RDF`` if provided
 
-        - ``cvxpy_solver (optional): Passed to :meth:`cvxpy.Problem.solve` as the
-          parameter ``solver``.
+        - ``cvxpy_solver`` -- (optional) passed to :meth:`cvxpy.Problem.solve`
+          as the parameter ``solver``
 
-        - ``cvxpy_solver_args`` (optional dict): Passed to :meth:`cvxpy.Problem.solve`
-          as additional keyword arguments.
+        - ``cvxpy_solver_args`` -- dictionary (optional); passed to
+          :meth:`cvxpy.Problem.solve` as additional keyword arguments
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
         """
         if base_ring is None:
             base_ring = RDF
@@ -144,12 +144,12 @@ cdef class CVXPYBackend:
 
     cpdef __copy__(self):
         """
-        Returns a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = MixedIntegerLinearProgram(solver="CVXPY")
+            sage: p = MixedIntegerLinearProgram(solver='CVXPY')
             sage: b = p.new_variable()
             sage: p.add_constraint(b[1] + b[2] <= 6)
             sage: p.set_objective(b[1] + b[2])
@@ -197,26 +197,25 @@ cdef class CVXPYBackend:
 
         - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``)
 
-        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``)
 
         - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0)
 
-        - ``name`` -- an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``)
 
-        - ``coefficients`` -- (optional) an iterable of pairs ``(i, v)``. In each
-          pair, ``i`` is a row index (integer) and ``v`` is a
-          value (element of :meth:`base_ring`).
+        - ``coefficients`` -- (optional) an iterable of pairs ``(i, v)``; in each
+          pair, ``i`` is a row index (integer) and ``v`` is a value (element of :meth:`base_ring`)
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.ncols()
             0
             sage: p.add_variable()
@@ -288,18 +287,18 @@ cdef class CVXPYBackend:
 
     cpdef set_verbosity(self, int level):
         """
-        Set the log (verbosity) level
+        Set the log (verbosity) level.
 
         This is currently ignored.
 
         INPUT:
 
-        - ``level`` (integer) -- From 0 (no verbosity) to 3.
+        - ``level`` -- integer; from 0 (no verbosity) to 3
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.set_verbosity(2)
         """
         pass
@@ -315,17 +314,17 @@ cdef class CVXPYBackend:
           value (element of :meth:`base_ring`).
 
         - ``lower_bound`` -- element of :meth:`base_ring` or
-          ``None``. The lower bound.
+          ``None``; the lower bound
 
         - ``upper_bound`` -- element of :meth:`base_ring` or
-          ``None``. The upper bound.
+          ``None``; the upper bound
 
-        - ``name`` -- string or ``None``. Optional name for this row.
+        - ``name`` -- string or ``None``; optional name for this row
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variables(5)
             4
             sage: index = p.nrows()
@@ -369,11 +368,11 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``indices`` (list of integers) -- this list contains the
+        - ``indices`` -- list of integers; this list contains the
           indices of the constraints in which the variable's
           coefficient is nonzero
 
-        - ``coeffs`` (list of real values) -- associates a coefficient
+        - ``coeffs`` -- list of real values; associates a coefficient
           to the variable in each of the constraints in which it
           appears. Namely, the i-th entry of ``coeffs`` corresponds to
           the coefficient of the variable in the constraint
@@ -387,7 +386,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.ncols()
             0
             sage: p.nrows()
@@ -416,15 +415,16 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``coeff`` -- a list of real values, whose ith element is the
-          coefficient of the ith variable in the objective function.
+        - ``coeff`` -- list of real values, whose i-th element is the
+          coefficient of the i-th variable in the objective function
 
-        - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
+        - ``d`` -- double; the constant term in the linear function (set to `0`
+          by default)
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variables(5)
             4
             sage: p.set_objective([1, 1, 2, 1, 3])
@@ -448,7 +448,7 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``sense`` (integer) :
+        - ``sense`` -- integer:
 
             * +1 => Maximization
             * -1 => Minimization
@@ -456,7 +456,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.is_maximization()
             True
             sage: p.set_sense(-1)
@@ -472,19 +472,19 @@ cdef class CVXPYBackend:
 
     cpdef objective_coefficient(self, int variable, coeff=None):
         """
-        Set or get the coefficient of a variable in the objective function
+        Set or get the coefficient of a variable in the objective function.
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``coeff`` (double) -- its coefficient or ``None`` for
+        - ``coeff`` -- double; its coefficient or ``None`` for
           reading (default: ``None``)
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variable()
             0
             sage: p.objective_coefficient(0)
@@ -518,7 +518,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_linear_constraints(5, 0, None)
             sage: p.add_col(list(range(5)), list(range(5)))
             Traceback (most recent call last):
@@ -556,7 +556,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variables(2)
             1
             sage: p.add_linear_constraint([(0,1), (1,2)], None, 3)
@@ -583,7 +583,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variables(2)
             1
             sage: p.add_linear_constraint([(0,1), (1, 2)], None, 3)
@@ -606,7 +606,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.ncols()
             0
             sage: p.add_variables(2)
@@ -623,7 +623,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.nrows()
             0
             sage: p.add_linear_constraints(2, 0, None)
@@ -639,7 +639,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.is_maximization()
             True
             sage: p.set_sense(-1)
@@ -650,17 +650,17 @@ cdef class CVXPYBackend:
 
     cpdef problem_name(self, name=None):
         """
-        Return or define the problem's name
+        Return or define the problem's name.
 
         INPUT:
 
-        - ``name`` (``str``) -- the problem's name. When set to
+        - ``name`` -- string; the problem's name. When set to
           ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.problem_name("There_once_was_a_french_fry")
             sage: print(p.problem_name())
             There_once_was_a_french_fry
@@ -675,11 +675,11 @@ cdef class CVXPYBackend:
 
     cpdef row(self, int i):
         """
-        Return a row
+        Return a row.
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -691,7 +691,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variables(5)
             4
             sage: index = p.nrows()
@@ -715,7 +715,7 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -726,7 +726,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variables(5)
             4
             sage: index = p.nrows()
@@ -744,7 +744,7 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id.
+        - ``index`` -- integer; the variable's id
 
         OUTPUT:
 
@@ -755,7 +755,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -772,12 +772,12 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.ncols()
             0
             sage: p.add_variable()
@@ -793,12 +793,12 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.ncols()
             0
             sage: p.add_variable()
@@ -814,12 +814,12 @@ cdef class CVXPYBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.ncols()
             0
             sage: p.add_variable()
@@ -831,16 +831,16 @@ cdef class CVXPYBackend:
 
     cpdef row_name(self, int index):
         """
-        Return the ``index`` th row name
+        Return the ``index``-th row name.
 
         INPUT:
 
-        - ``index`` (integer) -- the row's id
+        - ``index`` -- integer; the row's id
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_linear_constraint([], 2, 2)
             sage: p.row_name(0)
             'constraint_0'
@@ -849,19 +849,19 @@ cdef class CVXPYBackend:
 
     cpdef col_name(self, int index):
         """
-        Return the ``index`` th col name
+        Return the ``index``-th col name.
 
         INPUT:
 
-        - ``index`` (integer) -- the col's id
+        - ``index`` -- integer; the col's id
 
-        - ``name`` (``char *``) -- its name. When set to ``NULL``
-          (default), the method returns the current name.
+        - ``name`` -- (``char *``) its name; when set to ``NULL``
+          (default), the method returns the current name
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variable()
             0
             sage: p.col_name(0)
@@ -871,11 +871,11 @@ cdef class CVXPYBackend:
 
     cpdef variable_upper_bound(self, int index, value=False):
         """
-        Return or define the upper bound on a variable
+        Return or define the upper bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not upper bound. When set to ``None``
@@ -884,7 +884,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)
@@ -903,11 +903,11 @@ cdef class CVXPYBackend:
 
     cpdef variable_lower_bound(self, int index, value=False):
         """
-        Return or define the lower bound on a variable
+        Return or define the lower bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not lower bound. When set to ``None``
@@ -916,7 +916,7 @@ cdef class CVXPYBackend:
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="CVXPY")
+            sage: p = get_solver(solver='CVXPY')
             sage: p.add_variable()
             0
             sage: p.col_bounds(0)

@@ -56,9 +56,9 @@ class CartesianProduct(UniqueRepresentation, Parent):
         r"""
         INPUT:
 
-         - ``sets`` -- a tuple of parents
-         - ``category`` -- a subcategory of ``Sets().CartesianProducts()``
-         - ``flatten`` -- a boolean (default: ``False``)
+        - ``sets`` -- tuple of parents
+        - ``category`` -- a subcategory of ``Sets().CartesianProducts()``
+        - ``flatten`` -- boolean (default: ``False``)
 
         ``flatten`` is current ignored, and reserved for future use.
 
@@ -83,11 +83,11 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, x):
         r"""
-        Construct an element of a Cartesian product from a list or iterable
+        Construct an element of a Cartesian product from a list or iterable.
 
         INPUT:
 
-        - ``x`` -- a list (or iterable)
+        - ``x`` -- list (or iterable)
 
         Each component of `x` is converted to the corresponding
         Cartesian factor.
@@ -212,7 +212,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: C = Sets().CartesianProducts().example(); C
-            The Cartesian product of (Set of prime numbers (basic implementation), An example of an infinite enumerated set: the non negative integers, An example of a finite enumerated set: {1,2,3})
+            The Cartesian product of (Set of prime numbers (basic implementation), An example of an infinite enumerated set: the nonnegative integers, An example of a finite enumerated set: {1,2,3})
             sage: x = C.an_element(); x
             (47, 42, 1)
             sage: pi = C.cartesian_projection(1)
@@ -317,7 +317,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             EXAMPLES::
 
                 sage: C = Sets().CartesianProducts().example(); C
-                The Cartesian product of (Set of prime numbers (basic implementation), An example of an infinite enumerated set: the non negative integers, An example of a finite enumerated set: {1,2,3})
+                The Cartesian product of (Set of prime numbers (basic implementation), An example of an infinite enumerated set: the nonnegative integers, An example of a finite enumerated set: {1,2,3})
                 sage: x = C.an_element(); x
                 (47, 42, 1)
                 sage: x.cartesian_projection(1)
@@ -336,7 +336,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
                 sage: C = Sets().CartesianProducts().example(); C
                 The Cartesian product of
                 (Set of prime numbers (basic implementation),
-                 An example of an infinite enumerated set: the non negative integers,
+                 An example of an infinite enumerated set: the nonnegative integers,
                  An example of a finite enumerated set: {1,2,3})
                 sage: c = C.an_element(); c
                 (47, 42, 1)

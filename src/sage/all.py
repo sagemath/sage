@@ -28,7 +28,8 @@ except for the known bad apples::
     sage: def is_not_allowed(frame):
     ....:     module = inspect.getmodule(frame)
     ....:     if module is None: return False
-    ....:     return not any(module.__name__.startswith(name) for name in allowed)
+    ....:     return not any(module.__name__.startswith(name)
+    ....:                    for name in allowed)
     sage: [inspect.getmodule(f).__name__ for f in frames if is_not_allowed(f)]
     []
 
@@ -57,13 +58,13 @@ import os
 import operator
 import math
 
-################ end setup warnings ###############################
+# ############### end setup warnings ###############################
 
 # includes .all__sagemath_objects, .all__sagemath_environment
 from sage.all__sagemath_repl import *
 from sage.all__sagemath_modules import *
 
-###################################################################
+# ##################################################################
 
 import sage.misc.lazy_import
 
@@ -120,7 +121,7 @@ from sage.combinat.all import Posets  # so that sage.combinat.all.Posets wins ov
 
 
 ###########################################################
-# WARNING:
+#    WARNING:
 # DO *not* import numpy / matplotlib / networkx here!!
 # Each takes a surprisingly long time to initialize,
 # and that initialization should be done more on-the-fly
@@ -136,24 +137,29 @@ copyright = license
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.categories.category', 'Sets', Sets)
+register_unpickle_override('sage.categories.category_types', 'HeckeModules',
+                           HeckeModules)
+register_unpickle_override('sage.categories.category_types', 'Objects',
+                           Objects)
+register_unpickle_override('sage.categories.category_types', 'Rings',
+                           Rings)
+register_unpickle_override('sage.categories.category_types', 'Fields',
+                           Fields)
+register_unpickle_override('sage.categories.category_types', 'VectorSpaces',
+                           VectorSpaces)
 register_unpickle_override('sage.categories.category_types',
-                           'HeckeModules', HeckeModules)
-register_unpickle_override('sage.categories.category_types', 'Objects', Objects)
-register_unpickle_override('sage.categories.category_types', 'Rings', Rings)
-register_unpickle_override('sage.categories.category_types', 'Fields', Fields)
+                           'Schemes_over_base',
+                           sage.categories.schemes.Schemes_over_base)
 register_unpickle_override('sage.categories.category_types',
-                           'VectorSpaces', VectorSpaces)
-register_unpickle_override('sage.categories.category_types',
-                           'Schemes_over_base', sage.categories.schemes.Schemes_over_base)
-register_unpickle_override('sage.categories.category_types',
-                           'ModularAbelianVarieties', ModularAbelianVarieties)
+                           'ModularAbelianVarieties',
+                           ModularAbelianVarieties)
 register_unpickle_override('sage.libs.pari.gen_py', 'pari', pari)
 
 # Cache the contents of star imports.
 sage.misc.lazy_import.save_cache_file()
 
 
-# Debugging for Singular, see trac #10903
+# ##### Debugging for Singular, see issue #10903
 # from sage.libs.singular.ring import poison_currRing
 # sys.settrace(poison_currRing)
 

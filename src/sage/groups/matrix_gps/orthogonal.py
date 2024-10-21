@@ -113,7 +113,7 @@ def normalize_args_e(degree, ring, e):
 
     - ``ring`` -- a ring; the base ring of the affine space
 
-    - ``e`` -- integer, one of `+1`, `0`, `-1`.  Only relevant for
+    - ``e`` -- integer; one of `+1`, `0`, `-1`.  Only relevant for
       finite fields and if the degree is even. A parameter that
       distinguishes inequivalent invariant forms.
 

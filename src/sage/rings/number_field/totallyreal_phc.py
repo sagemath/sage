@@ -29,12 +29,10 @@ def coefficients_to_power_sums(n, m, a):
 
     INPUT:
 
-    - ``n`` -- integer, the degree
-    - ``a`` -- list of integers, the coefficients
+    - ``n`` -- integer; the degree
+    - ``a`` -- list of integers; the coefficients
 
-    OUTPUT:
-
-    list of integers.
+    OUTPUT: list of integers
 
     .. NOTE::
 
@@ -65,12 +63,10 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
 
     INPUT:
 
-    - k -- integer, the index of the next coefficient
-    - a -- list of integers, the coefficients
+    - ``k`` -- integer; the index of the next coefficient
+    - ``a`` -- list of integers; the coefficients
 
-    OUTPUT:
-
-    the lower and upper bounds as real numbers.
+    OUTPUT: the lower and upper bounds as real numbers
 
     .. NOTE::
 
@@ -129,7 +125,7 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
 
         os.remove(tmpfile + '.phc')
         os.popen('phc -b ' + tmpfile + ' ' + tmpfile + '.phc')
-        f = open(tmpfile + '.phc', 'r')
+        f = open(tmpfile + '.phc')
         f_str = f.read()
         pos = f_str.find('= real ')
         crits = []

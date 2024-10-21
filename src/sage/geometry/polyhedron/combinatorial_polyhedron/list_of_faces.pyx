@@ -181,7 +181,7 @@ cdef class ListOfFaces:
 
     cpdef ListOfFaces __copy__(self):
         r"""
-        Return a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -424,7 +424,7 @@ cdef class ListOfFaces:
 
     cdef void delete_faces_unsafe(self, bint *delete, face_t face) noexcept:
         r"""
-        Deletes face ``i`` if and only if ``delete[i]``.
+        Delete face ``i`` if and only if ``delete[i]``.
 
         Alternatively, deletes all faces such that the ``i``-th bit in ``face`` is not set.
 
@@ -479,7 +479,7 @@ cdef class ListOfFaces:
 
     def matrix(self):
         r"""
-        Obtain the matrix of self.
+        Obtain the matrix of ``self``.
 
         Each row represents a face and each column an atom.
 
@@ -538,7 +538,7 @@ cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep
     - ``face`` -- face in Vrepresentation or ``NULL``
     - ``dual`` -- boolean
 
-    OUTPUT: A tuple of new facets and new Vrepresentation as :class:`ListOfFaces`.
+    OUTPUT: a tuple of new facets and new Vrepresentation as :class:`ListOfFaces`.
     """
     cdef ListOfFaces new_facets, new_Vrep
     cdef bint* delete

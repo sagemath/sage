@@ -255,7 +255,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         INPUT:
 
         - ``A`` -- one of several possible inputs representing
-          a morphism from this vector space homspace.
+          a morphism from this vector space homspace:
 
           - a vector space morphism in this homspace
           - a matrix representation relative to the bases of the vector spaces,
@@ -263,13 +263,12 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
           - a list or tuple containing images of the domain's basis vectors
           - a function from the domain to the codomain
 
-        - ``check`` (default: ``True``) -- ``True`` or ``False``, required for
-          compatibility with calls from
-          :meth:`sage.structure.parent.Parent.hom`.
+        - ``check`` -- boolean (default: ``True``); required for compatibility
+          with calls from :meth:`sage.structure.parent.Parent.hom`
 
-        - the keyword ``side`` can be assigned the values ``"left"`` or
-          ``"right"``. It corresponds to the side of vectors relative to the
-          matrix.
+        - the keyword ``side`` can be assigned the values ``'left'`` or
+          ``'right'``; it corresponds to the side of vectors relative to the
+          matrix
 
         EXAMPLES::
 
@@ -372,7 +371,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
             sage: H.zero().is_zero()
             True
 
-        Previously the above code resulted in a :class:`TypeError` because the
+        Previously the above code resulted in a :exc:`TypeError` because the
         dimensions of the matrix were incorrect.
         """
         from .vector_space_morphism import VectorSpaceMorphism

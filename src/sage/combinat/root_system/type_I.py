@@ -80,7 +80,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
 
     def coxeter_diagram(self):
         """
-        Returns the Coxeter matrix for this type.
+        Return the Coxeter matrix for this type.
 
         EXAMPLES::
 

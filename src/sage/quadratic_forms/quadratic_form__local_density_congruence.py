@@ -35,9 +35,9 @@ def count_modp_solutions__by_Gauss_sum(self, p, m):
 
     - ``p`` -- a prime number > 2
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
-    OUTPUT: an integer `\geq 0`
+    OUTPUT: integer `\geq 0`
 
     EXAMPLES::
 
@@ -76,7 +76,7 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
 
     - ``p`` -- a prime number
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -112,7 +112,7 @@ def local_good_density_congruence_odd(self, p, m, Zvec, NZvec):
     UnitVec = Set(i for i in range(n) if self[i, i] % p)
     NonUnitVec = Set(range(n)) - UnitVec
 
-    #  Take cases on the existence of additional non-zero congruence conditions (mod p)
+    #  Take cases on the existence of additional nonzero congruence conditions (mod p)
     UnitVec_minus_Zvec = list(UnitVec - Set(Zvec))
     NonUnitVec_minus_Zvec = list(NonUnitVec - Set(Zvec))
     Q_Unit_minus_Zvec = self.extract_variables(UnitVec_minus_Zvec)
@@ -172,7 +172,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
 
     - ``p`` -- a prime number
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -238,7 +238,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
     if (NZvec is not None) and (len(Set(NZvec) + Sn) > n):
         raise RuntimeError("NZvec must be a subset of {0, ..., n-1}.")
 
-    #  Find the indices of x for which the associated Jordan blocks are non-zero mod 8    TODO: Move this to special Jordan block code separately!
+    #  Find the indices of x for which the associated Jordan blocks are nonzero mod 8    TODO: Move this to special Jordan block code separately!
     #  -------------------------------------------------------------------------------
     Not8vec = []
     for i in range(n):
@@ -294,7 +294,7 @@ def local_good_density_congruence_even(self, m, Zvec, NZvec):
     verbose("Z_Is8 = " + str(Z_Is8))
     verbose("Is8_minus_Z = " + str(Is8_minus_Z))
 
-    # Take cases on the existence of additional non-zero congruence conditions (mod 2)
+    # Take cases on the existence of additional nonzero congruence conditions (mod 2)
     if NZvec is None:
         total = (4 ** len(Z_Is8)) * (8 ** len(Is8_minus_Z)) \
             * Q_Not8.count_congruence_solutions__good_type(2, 3, m, list(Z_Not8), None)
@@ -338,7 +338,7 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - ``p`` -- a prime number
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -359,7 +359,6 @@ def local_good_density_congruence(self, p, m, Zvec=None, NZvec=None):
         1
         sage: Q.local_good_density_congruence(3, 1, None, None)
         8/9
-
     """
     #  DIAGNOSTIC
     verbose(" In local_good_density_congruence with ")
@@ -409,7 +408,7 @@ def local_zero_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - ``p`` -- a prime number
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -482,7 +481,7 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - ``p`` -- a prime number
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -561,7 +560,7 @@ def local_badI_density_congruence(self, p, m, Zvec=None, NZvec=None):
     S0 = []
     S1_empty_flag = True
     # This is used to check if we should be computing BI solutions at all!
-    # (We should really to this earlier, but S1 must be non-zero to proceed.)
+    # (We should really to this earlier, but S1 must be nonzero to proceed.)
 
     #  Find the valuation of each variable (which will be the same over 2x2 blocks),
     #  remembering those of valuation 0 and if an entry of valuation 1 exists.
@@ -645,7 +644,7 @@ def local_badII_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - ``p`` -- a prime number
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -791,7 +790,7 @@ def local_bad_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - ``p`` -- a prime number
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -849,7 +848,7 @@ def local_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - ``p`` -- a prime number
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 
@@ -921,7 +920,7 @@ def local_primitive_density_congruence(self, p, m, Zvec=None, NZvec=None):
 
     - ``p`` -- a prime number
 
-    - ``m`` -- an integer
+    - ``m`` -- integer
 
     - ``Zvec``, ``NZvec`` -- non-repeating lists of integers in ``range(self.dim())`` or ``None``
 

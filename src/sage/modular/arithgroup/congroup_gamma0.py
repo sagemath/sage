@@ -9,8 +9,8 @@ Congruence subgroup `\Gamma_0(N)`
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import kronecker_symbol, divisors, euler_phi, gcd, moebius
 from sage.misc.cachefunc import cached_method
@@ -27,7 +27,7 @@ from .congroup_generic import CongruenceSubgroup
 
 def is_Gamma0(x):
     """
-    Return True if x is a congruence subgroup of type Gamma0.
+    Return ``True`` if x is a congruence subgroup of type Gamma0.
 
     EXAMPLES::
 
@@ -48,6 +48,8 @@ def is_Gamma0(x):
 
 
 _gamma0_cache = {}
+
+
 def Gamma0_constructor(N):
     """
     Return the congruence subgroup Gamma0(N).
@@ -111,7 +113,6 @@ class Gamma0_class(GammaH_class):
         Modular Symbols subspace of dimension 5 of
          Modular Symbols space of dimension 18 for Gamma_0(100)
           of weight 2 with sign 1 over Rational Field
-
     """
 
     def __init__(self, level):
@@ -145,11 +146,11 @@ class Gamma0_class(GammaH_class):
         # be done if needed by the _generators_for_H and _list_of_elements_in_H
         # methods.
         #
-        #GammaH_class.__init__(self, level, [int(x) for x in IntegerModRing(level).unit_gens()])
+        # GammaH_class.__init__(self, level, [int(x) for x in IntegerModRing(level).unit_gens()])
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -160,7 +161,7 @@ class Gamma0_class(GammaH_class):
 
     def __reduce__(self):
         """
-        Used for pickling self.
+        Used for pickling ``self``.
 
         EXAMPLES::
 
@@ -171,7 +172,7 @@ class Gamma0_class(GammaH_class):
 
     def _latex_(self):
         r"""
-        Return the \LaTeX representation of self.
+        Return the \LaTeX representation of ``self``.
 
         EXAMPLES::
 
@@ -185,8 +186,8 @@ class Gamma0_class(GammaH_class):
     @cached_method
     def _generators_for_H(self):
         """
-        Return generators for the subgroup H of the units mod
-        self.level() that defines self.
+        Return generators for the subgroup `H` of the units mod
+        ``self.level()`` that defines ``self``.
 
         EXAMPLES::
 
@@ -200,7 +201,7 @@ class Gamma0_class(GammaH_class):
     @cached_method
     def _list_of_elements_in_H(self):
         """
-        Returns a sorted list of Python ints that are representatives
+        Return a sorted list of Python ints that are representatives
         between 0 and N-1 of the elements of H.
 
         EXAMPLES::
@@ -246,10 +247,10 @@ class Gamma0_class(GammaH_class):
 
     def is_even(self):
         r"""
-        Return True precisely if this subgroup contains the matrix -1.
+        Return ``True`` precisely if this subgroup contains the matrix -1.
 
         Since `\Gamma0(N)` always contains the matrix -1, this always
-        returns True.
+        returns ``True``.
 
         EXAMPLES::
 
@@ -262,7 +263,7 @@ class Gamma0_class(GammaH_class):
 
     def is_subgroup(self, right):
         """
-        Return True if self is a subgroup of right.
+        Return ``True`` if ``self`` is a subgroup of ``right``.
 
         EXAMPLES::
 
@@ -332,21 +333,21 @@ class Gamma0_class(GammaH_class):
                 yield SL2Z(lift_to_sl2z(z[0], z[1], N))
 
     @cached_method
-    def generators(self, algorithm="farey"):
+    def generators(self, algorithm='farey'):
         r"""
         Return generators for this congruence subgroup.
 
         INPUT:
 
-        - ``algorithm`` (string): either ``"farey"`` (default) or
-          ``"todd-coxeter"``.
+        - ``algorithm`` -- string; either ``'farey'`` (default) or
+          ``'todd-coxeter'``
 
-        If ``algorithm`` is set to ``"farey"``, then the generators will be
+        If ``algorithm`` is set to ``'farey'``, then the generators will be
         calculated using Farey symbols, which will always return a *minimal*
         generating set. See :mod:`~sage.modular.arithgroup.farey_symbol` for
         more information.
 
-        If ``algorithm`` is set to ``"todd-coxeter"``, a simpler algorithm
+        If ``algorithm`` is set to ``'todd-coxeter'``, a simpler algorithm
         based on Todd-Coxeter enumeration will be used. This tends to return
         far larger sets of generators.
 
@@ -357,7 +358,7 @@ class Gamma0_class(GammaH_class):
             [1 1]  [-1  1]
             [0 1], [-3  2]
             ]
-            sage: Gamma0(3).generators(algorithm="todd-coxeter")
+            sage: Gamma0(3).generators(algorithm='todd-coxeter')
             [
             [1 1]  [-1  0]  [ 1 -1]  [1 0]  [1 1]  [-1  0]  [ 1  0]
             [0 1], [ 0 -1], [ 0  1], [3 1], [0 1], [ 3 -1], [-3  1]
@@ -391,7 +392,7 @@ class Gamma0_class(GammaH_class):
     def gamma_h_subgroups(self):
         r"""
         Return the subgroups of the form `\Gamma_H(N)` contained
-        in self, where `N` is the level of self.
+        in ``self``, where `N` is the level of ``self``.
 
         EXAMPLES::
 
@@ -447,9 +448,9 @@ class Gamma0_class(GammaH_class):
     def _find_cusps(self):
         r"""
         Return an ordered list of inequivalent cusps for self, i.e. a
-        set of representatives for the orbits of self on
+        set of representatives for the orbits of ``self`` on
         `\mathbb{P}^1(\QQ)`.  These are returned in a reduced
-        form; see self.reduce_cusp for the definition of reduced.
+        form; see ``self.reduce_cusp`` for the definition of reduced.
 
         ALGORITHM:
             Uses explicit formulae specific to `\Gamma_0(N)`: a reduced cusp on
@@ -556,7 +557,7 @@ class Gamma0_class(GammaH_class):
 
     def index(self):
         r"""
-        Return the index of self in the full modular group.
+        Return the index of ``self`` in the full modular group.
 
         This is given by
 
@@ -580,12 +581,12 @@ class Gamma0_class(GammaH_class):
 
         INPUT:
 
-        - `k` -- an integer (default: 2), the weight. Not fully
+        - ``k`` -- integer (default: 2); the weight. Not fully
           implemented for `k = 1`.
-        - `p` -- integer (default: 0); if nonzero, compute the
-          `p`-new subspace.
+        - ``p`` -- integer (default: 0); if nonzero, compute the
+          `p`-new subspace
 
-        OUTPUT: Integer
+        OUTPUT: integer
 
         ALGORITHM:
 

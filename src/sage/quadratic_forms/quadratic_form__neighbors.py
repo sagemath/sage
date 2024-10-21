@@ -19,7 +19,7 @@ def find_primitive_p_divisible_vector__random(self, p):
     """
     Find a random `p`-primitive vector in `L/pL` whose value is `p`-divisible.
 
-    .. note::
+    .. NOTE::
 
         Since there are about `p^{(n-2)}` of these lines, we have a `1/p`
         chance of randomly finding an appropriate vector.
@@ -60,7 +60,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     value is `p`-divisible, where the last vector returned was `v`.  For
     an initial call, no `v` needs to be passed.
 
-    Return vectors whose last non-zero entry is normalized to 0 or 1 (so no
+    Return vectors whose last nonzero entry is normalized to 0 or 1 (so no
     lines are counted repeatedly).  The ordering is by increasing the
     first non-normalized entry.  If we have tested all (lines of)
     vectors, then return None.
@@ -98,12 +98,12 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
     if n <= 1:
         raise NotImplementedError("Sorry -- Not implemented yet!")
 
-    # Look for the last non-zero entry (which must be 1)
+    # Look for the last nonzero entry (which must be 1)
     nz = n - 1
     while w[nz] == 0:
         nz += -1
 
-    # Test that the last non-zero entry is 1 (to detect tampering).
+    # Test that the last nonzero entry is 1 (to detect tampering).
     if w[nz] != 1:
         print("Warning: The input vector to QuadraticForm.find_primitive_p_divisible_vector__next() is not normalized properly.")
 
@@ -125,7 +125,7 @@ def find_primitive_p_divisible_vector__next(self, p, v=None):
                 w[j] = 0
 
             if nz != 0:
-                # Move the non-zero normalized index over by one, or
+                # Move the nonzero normalized index over by one, or
                 # return the zero vector
                 w[nz - 1] = 1
                 nz += -1
@@ -154,8 +154,8 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
 
     - ``p`` -- a prime number
     - ``y`` -- a vector with `q(y) \in p \ZZ`
-    - ``odd`` -- (default: ``False``) if `p=2`, return also odd neighbors
-    - ``return_matrix`` -- (boolean, default ``False``) return
+    - ``odd`` -- boolean (default: ``False``); if `p=2`, return also odd neighbors
+    - ``return_matrix`` -- boolean (default: ``False``); return
       the transformation matrix instead of the quadratic form
 
     EXAMPLES::
@@ -260,7 +260,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=None,
 
     INPUT:
 
-    - ``seeds`` -- a list of quadratic forms in the same genus
+    - ``seeds`` -- list of quadratic forms in the same genus
 
     - ``p`` -- a prime number
 
@@ -273,7 +273,7 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=None,
     - ``max_random_trys`` -- (default: ``1000``) the maximum number of neighbors
       computed for a single lattice
 
-    OUTPUT: a list of quadratic forms
+    OUTPUT: list of quadratic forms
 
     EXAMPLES::
 
@@ -387,7 +387,7 @@ def orbits_lines_mod_p(self, p):
 
     - ``p`` -- a prime number
 
-    OUTPUT: a list of vectors over ``GF(p)``
+    OUTPUT: list of vectors over ``GF(p)``
 
     EXAMPLES::
 

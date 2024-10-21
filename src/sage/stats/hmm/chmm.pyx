@@ -77,7 +77,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
     - ``A`` -- matrix; the `N \times N` transition matrix
     - ``B`` -- list of pairs ``(mu, sigma)`` that define the distributions
     - ``pi`` -- initial state probabilities
-    - ``normalize`` -- bool (default: ``True``)
+    - ``normalize`` -- boolean (default: ``True``)
 
     EXAMPLES:
 
@@ -165,11 +165,11 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         INPUT:
 
-        - ``A`` -- a list of lists or a square `N \times N` matrix, whose
+        - ``A`` -- list of lists or a square `N \times N` matrix, whose
           `(i,j)` entry gives the probability of transitioning from
           state `i` to state `j`.
 
-        - ``B`` -- a list of `N` pairs ``(mu, std)``, where if ``B[i]=(mu,std)``,
+        - ``B`` -- list of `N` pairs ``(mu, std)``, where if ``B[i]=(mu,std)``,
           then the probability distribution associated with state `i`
           normal with mean ``mu`` and standard deviation ``std``.
 
@@ -177,7 +177,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
           state, i.e., ``pi[i]`` is the probability of starting in
           state `i`.
 
-        - ``normalize`` -- bool (default: ``True``); if given, input is
+        - ``normalize`` -- boolean (default: ``True``); if given, input is
           normalized to define valid probability distributions,
           e.g., the entries of `A` are made nonnegative and the rows
           sum to 1.
@@ -344,8 +344,8 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         INPUT:
 
         - ``length`` -- positive integer
-        - ``starting_state`` -- int (or ``None``); if specified then generate
-          a sequence using this model starting with the given state
+        - ``starting_state`` -- integer (or ``None``); if specified then
+          generate a sequence using this model starting with the given state
           instead of the initial probabilities to determine the
           starting state.
 
@@ -535,9 +535,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         - ``obs`` -- sequence of observations
 
-        OUTPUT:
-
-        float
+        OUTPUT: float
 
         EXAMPLES::
 
@@ -562,7 +560,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         INPUT:
 
-        - ``obs`` -- an integer list of observation states.
+        - ``obs`` -- integer list of observation states
 
         OUTPUT:
 
@@ -625,11 +623,11 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         OUTPUT:
 
-        - list -- "the" most probable sequence of hidden states, i.e.,
-          the Viterbi path.
+        - ``list`` -- "the" most probable sequence of hidden states, i.e.,
+          the Viterbi path
 
-        - float -- log of probability that the observed sequence
-          was produced by the Viterbi sequence of states.
+        - ``float`` -- log of probability that the observed sequence
+          was produced by the Viterbi sequence of states
 
         EXAMPLES:
 
@@ -773,8 +771,8 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         - TimeSeries alpha with alpha_t(i) = alpha[t*N + i]
         - TimeSeries scale with scale[t] the scaling at step t
-        - float -- log_probability of the observation sequence
-          being produced by the model.
+        - ``float`` -- log_probability of the observation sequence
+          being produced by the model
         """
         cdef Py_ssize_t i, j, t, T = len(obs)
         cdef int N = self.N
@@ -862,7 +860,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         - ``obs`` -- a time series of emissions
 
-        - ``max_iter`` -- integer (default: 500) maximum number
+        - ``max_iter`` -- integer (default: 500); maximum number
           of Baum-Welch steps to take
 
         - ``log_likelihood_cutoff`` -- positive float (default: 1e-4);
@@ -874,7 +872,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
           reestimating, the standard deviation of emissions is not
           allowed to be less than ``min_sd``.
 
-        - ``fix_emissions`` -- bool (default: ``False``); if ``True``, do not
+        - ``fix_emissions`` -- boolean (default: ``False``); if ``True``, do not
           change emissions when updating
 
         OUTPUT:
@@ -1050,7 +1048,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
     INPUT:
 
-    - ``A``  -- matrix; the `N \times N` transition matrix
+    - ``A`` -- matrix; the `N \times N` transition matrix
 
     - ``B`` -- list of mixture definitions for each state.  Each
       state may have a varying number of gaussians with selection
@@ -1058,7 +1056,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
     - ``pi`` -- initial state probabilities
 
-    - ``normalize`` -- bool (default: ``True``); if given, input is
+    - ``normalize`` -- boolean (default: ``True``); if given, input is
       normalized to define valid probability distributions,
       e.g., the entries of `A` are made nonnegative and the rows
       sum to 1, and the probabilities in ``pi`` are normalized.
@@ -1167,7 +1165,8 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
     def __richcmp__(self, other, op):
         r"""
-        Compare self and other, which must both be GaussianMixtureHiddenMarkovModel's.
+        Compare ``self`` and ``other``, which must both be
+        ``GaussianMixtureHiddenMarkovModel``s.
 
         EXAMPLES::
 
@@ -1196,9 +1195,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
         - ``i`` -- integer
 
-        OUTPUT:
-
-        a Gaussian mixture distribution object
+        OUTPUT: a Gaussian mixture distribution object
 
         EXAMPLES::
 
@@ -1232,11 +1229,9 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
 
     def emission_parameters(self):
         r"""
-        Returns a list of all the emission distributions.
+        Return a list of all the emission distributions.
 
-        OUTPUT:
-
-        list of Gaussian mixtures
+        OUTPUT: list of Gaussian mixtures
 
         EXAMPLES::
 
@@ -1304,7 +1299,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         - ``alpha`` -- TimeSeries
         - ``beta`` -- TimeSeries
         - ``obs`` -- TimeSeries
-        - ``j`` -- int
+        - ``j`` -- integer
 
         OUTPUT:
 
@@ -1352,7 +1347,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         INPUT:
 
         - ``obs`` -- a time series of emissions
-        - ``max_iter`` -- integer (default: 1000) maximum number
+        - ``max_iter`` -- integer (default: 1000); maximum number
           of Baum-Welch steps to take
         - ``log_likelihood_cutoff`` -- positive float (default: 1e-12);
           the minimal improvement in likelihood with respect to
@@ -1361,7 +1356,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         - ``min_sd`` -- positive float (default: 0.01); when
           reestimating, the standard deviation of emissions is not
           allowed to be less than ``min_sd``.
-        - ``fix_emissions`` -- bool (default: ``False``); if ``True``, do not
+        - ``fix_emissions`` -- boolean (default: ``False``); if ``True``, do not
           change emissions when updating
 
         OUTPUT:

@@ -68,7 +68,7 @@ cdef class SatSolver:
 
         INPUT:
 
-        - ``lits`` -- a tuple of integers != 0
+        - ``lits`` -- tuple of nonzero integers
 
         .. NOTE::
 
@@ -112,7 +112,7 @@ cdef class SatSolver:
 
         INPUT:
 
-        - ``filename`` -- The name of a file as a string or a file object
+        - ``filename`` -- the name of a file as a string or a file object
 
         EXAMPLES::
 
@@ -270,7 +270,6 @@ cdef class SatSolver:
             If ``filename`` points to a writable file, then the list of original
             clauses is written to that file in DIMACS format.
 
-
         EXAMPLES::
 
             sage: from sage.sat.solvers.satsolver import SatSolver
@@ -321,58 +320,58 @@ def SAT(solver=None, *args, **kwds):
 
     INPUT:
 
-    - ``solver`` (string) -- select a solver. Admissible values are:
+    - ``solver`` -- string; select a solver. Admissible values are:
 
-        - ``"cryptominisat"`` -- note that the pycryptosat package must be
-          installed.
+        - ``'cryptominisat'`` -- note that the pycryptosat package must be
+          installed
 
-        - ``"picosat"`` -- note that the pycosat package must be installed.
+        - ``'picosat'`` -- note that the pycosat package must be installed
 
-        - ``"glucose"`` -- note that the glucose package must be installed.
+        - ``'glucose'`` -- note that the glucose package must be installed
 
-        - ``"glucose-syrup"`` -- note that the glucose package must be installed.
+        - ``'glucose-syrup'`` -- note that the glucose package must be installed
 
-        - ``"LP"`` -- use :class:`~sage.sat.solvers.sat_lp.SatLP` to solve the
-          SAT instance.
+        - ``'LP'`` -- use :class:`~sage.sat.solvers.sat_lp.SatLP` to solve the
+          SAT instance
 
-        - ``None`` (default) -- use CryptoMiniSat if available, else PicoSAT if
-          available, and a LP solver otherwise.
+        - ``None`` -- default; use CryptoMiniSat if available, else PicoSAT if
+          available, and a LP solver otherwise
 
     EXAMPLES::
 
-        sage: SAT(solver="LP")                                                          # needs sage.numerical.mip
+        sage: SAT(solver='LP')                                                          # needs sage.numerical.mip
         an ILP-based SAT Solver
 
     TESTS::
 
-        sage: SAT(solver="Wouhouuuuuu")
+        sage: SAT(solver='Wouhouuuuuu')
         Traceback (most recent call last):
         ...
         ValueError: Solver 'Wouhouuuuuu' is not available
 
     Forcing CryptoMiniSat::
 
-        sage: SAT(solver="cryptominisat")                                   # optional - pycryptosat
+        sage: SAT(solver='cryptominisat')                                   # optional - pycryptosat
         CryptoMiniSat solver: 0 variables, 0 clauses.
 
     Forcing PicoSat::
 
-        sage: SAT(solver="picosat")                                         # optional - pycosat
+        sage: SAT(solver='picosat')                                         # optional - pycosat
         PicoSAT solver: 0 variables, 0 clauses.
 
     Forcing Glucose::
 
-        sage: SAT(solver="glucose")
+        sage: SAT(solver='glucose')
         DIMACS Solver: 'glucose -verb=0 -model {input}'
 
     Forcing Glucose Syrup::
 
-        sage: SAT(solver="glucose-syrup")
+        sage: SAT(solver='glucose-syrup')
         DIMACS Solver: 'glucose-syrup -model -verb=0 {input}'
 
     Forcing Kissat::
 
-        sage: SAT(solver="kissat")
+        sage: SAT(solver='kissat')
         DIMACS Solver: 'kissat -q {input}'
     """
     if solver is None:

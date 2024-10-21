@@ -42,7 +42,7 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
     def __init__(self, R, index_set=None, central_elements=None, category=None,
                  element_class=None, prefix=None, **kwds):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 

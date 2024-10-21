@@ -17,21 +17,21 @@ Methods index
     :widths: 30, 70
     :delim: |
 
-    :meth:`~GLPKGraphBackend.add_vertex`          | Adds an isolated vertex to the graph.
-    :meth:`~GLPKGraphBackend.add_vertices`        | Adds vertices from an iterable container of vertices.
-    :meth:`~GLPKGraphBackend.set_vertex_demand`   | Sets the vertex parameters.
-    :meth:`~GLPKGraphBackend.set_vertices_demand` | Sets the parameters of selected vertices.
-    :meth:`~GLPKGraphBackend.get_vertex`          | Returns a specific vertex as a ``dict`` Object.
-    :meth:`~GLPKGraphBackend.get_vertices`        | Returns a dictionary of the dictionaries associated to each vertex.
-    :meth:`~GLPKGraphBackend.vertices`            | Returns a ``list`` of all vertices.
-    :meth:`~GLPKGraphBackend.delete_vertex`       | Removes a vertex from the graph.
-    :meth:`~GLPKGraphBackend.delete_vertices`     | Removes vertices from the graph.
-    :meth:`~GLPKGraphBackend.add_edge`            | Adds an edge between vertices ``u`` and ``v``.
-    :meth:`~GLPKGraphBackend.add_edges`           | Adds edges to the graph.
-    :meth:`~GLPKGraphBackend.get_edge`            | Returns an edge connecting two vertices.
-    :meth:`~GLPKGraphBackend.edges`               | Returns a ``list`` of all edges in the graph.
-    :meth:`~GLPKGraphBackend.delete_edge`         | Deletes an edge from the graph.
-    :meth:`~GLPKGraphBackend.delete_edges`        | Deletes edges from the graph.
+    :meth:`~GLPKGraphBackend.add_vertex`          | Add an isolated vertex to the graph.
+    :meth:`~GLPKGraphBackend.add_vertices`        | Add vertices from an iterable container of vertices.
+    :meth:`~GLPKGraphBackend.set_vertex_demand`   | Set the vertex parameters.
+    :meth:`~GLPKGraphBackend.set_vertices_demand` | Set the parameters of selected vertices.
+    :meth:`~GLPKGraphBackend.get_vertex`          | Return a specific vertex as a dictionary Object.
+    :meth:`~GLPKGraphBackend.get_vertices`        | Return a dictionary of the dictionaries associated to each vertex.
+    :meth:`~GLPKGraphBackend.vertices`            | Return a ``list`` of all vertices.
+    :meth:`~GLPKGraphBackend.delete_vertex`       | Remove a vertex from the graph.
+    :meth:`~GLPKGraphBackend.delete_vertices`     | Remove vertices from the graph.
+    :meth:`~GLPKGraphBackend.add_edge`            | Add an edge between vertices ``u`` and ``v``.
+    :meth:`~GLPKGraphBackend.add_edges`           | Add edges to the graph.
+    :meth:`~GLPKGraphBackend.get_edge`            | Return an edge connecting two vertices.
+    :meth:`~GLPKGraphBackend.edges`               | Return a ``list`` of all edges in the graph.
+    :meth:`~GLPKGraphBackend.delete_edge`         | Delete an edge from the graph.
+    :meth:`~GLPKGraphBackend.delete_edges`        | Delete edges from the graph.
 
 **Graph writing operations:**
 
@@ -40,10 +40,10 @@ Methods index
     :widths: 30, 70
     :delim: |
 
-    :meth:`~GLPKGraphBackend.write_graph`    | Writes the graph to a plain text file.
-    :meth:`~GLPKGraphBackend.write_ccdata`   | Writes the graph to a text file in DIMACS format.
-    :meth:`~GLPKGraphBackend.write_mincost`  | Writes the mincost flow problem data to a text file in DIMACS format.
-    :meth:`~GLPKGraphBackend.write_maxflow`  | Writes the maximum flow problem data to a text file in DIMACS format.
+    :meth:`~GLPKGraphBackend.write_graph`    | Write the graph to a plain text file.
+    :meth:`~GLPKGraphBackend.write_ccdata`   | Write the graph to a text file in DIMACS format.
+    :meth:`~GLPKGraphBackend.write_mincost`  | Write the mincost flow problem data to a text file in DIMACS format.
+    :meth:`~GLPKGraphBackend.write_maxflow`  | Write the maximum flow problem data to a text file in DIMACS format.
 
 **Network optimization operations:**
 
@@ -52,9 +52,9 @@ Methods index
     :widths: 30, 70
     :delim: |
 
-    :meth:`~GLPKGraphBackend.mincost_okalg`  | Finds solution to the mincost problem with the out-of-kilter algorithm.
-    :meth:`~GLPKGraphBackend.maxflow_ffalg`  | Finds solution to the maxflow problem with Ford-Fulkerson algorithm.
-    :meth:`~GLPKGraphBackend.cpp`            | Solves the critical path problem of a project network.
+    :meth:`~GLPKGraphBackend.mincost_okalg`  | Find solution to the mincost problem with the out-of-kilter algorithm.
+    :meth:`~GLPKGraphBackend.maxflow_ffalg`  | Find solution to the maxflow problem with Ford-Fulkerson algorithm.
+    :meth:`~GLPKGraphBackend.cpp`            | Solve the critical path problem of a project network.
 
 Classes and methods
 -------------------
@@ -80,14 +80,14 @@ from sage.numerical.mip import MIPSolverException
 
 cdef class GLPKGraphBackend():
     """
-    GLPK Backend for access to GLPK graph functions
+    GLPK Backend for access to GLPK graph functions.
 
     The constructor can either be called without arguments (which results in an
     empty graph) or with arguments to read graph data from a file.
 
     INPUT:
 
-    - ``data`` -- a filename or a :class:`Graph` object.
+    - ``data`` -- a filename or a :class:`Graph` object
 
     - ``format`` -- when ``data`` is a filename, specifies the format of the
       data read from a file.  The ``format`` parameter is a string and can take
@@ -144,7 +144,7 @@ cdef class GLPKGraphBackend():
 
             * edges -- The edge values used in the algorithms are read from the
               edges labels (and left undefined if the edge labels are equal to
-              ``None``). To be defined, the labels must be ``dict`` objects with
+              ``None``). To be defined, the labels must be dictionary objects with
               keys "low", "cap" and "cost". See :meth:`get_edge` for details.
 
     EXAMPLES:
@@ -186,7 +186,7 @@ cdef class GLPKGraphBackend():
 
     def __cinit__(self, data = None, format = "plain"):
         """
-        Constructor
+        Constructor.
 
         The constructor can either be called without arguments creating an empty
         graph or with arguments to read graph data from a file or a Sage
@@ -234,17 +234,17 @@ cdef class GLPKGraphBackend():
 
     cpdef add_vertex(self, name=None):
         """
-        Adds an isolated vertex to the graph.
+        Add an isolated vertex to the graph.
 
         If the vertex already exists, nothing is done.
 
         INPUT:
 
-        - ``name`` -- ``str`` of max 255 chars length. If no name is
-           specified, then the vertex will be represented by the string
-           representation of the ID of the vertex or - if this already exists -
-           a string representation of the least integer not already representing
-           a vertex.
+        - ``name`` -- string of max 255 chars length. If no name is
+          specified, then the vertex will be represented by the string
+          representation of the ID of the vertex or - if this already exists -
+          a string representation of the least integer not already representing
+          a vertex.
 
         OUTPUT:
 
@@ -288,7 +288,7 @@ cdef class GLPKGraphBackend():
 
     cpdef __add_vertices_sage(self, g):
         """
-        Adds vertices to the GLPK Graph.
+        Add vertices to the GLPK Graph.
 
         This function is only used when importing a
         :class:`~sage.graphs.generic_graph.GenericGraph` object.
@@ -330,14 +330,14 @@ cdef class GLPKGraphBackend():
 
     cpdef list add_vertices(self, vertices):
         """
-        Adds vertices from an iterable container of vertices.
+        Add vertices from an iterable container of vertices.
 
         Vertices that already exist in the graph will not be added again.
 
         INPUT:
 
-        - ``vertices`` -- iterator of vertex labels (``str``).  A label can be
-          ``None``.
+        - ``vertices`` -- iterator of vertex labels (string); a label can be
+          ``None``
 
         OUTPUT:
 
@@ -382,11 +382,11 @@ cdef class GLPKGraphBackend():
 
     cpdef set_vertex_demand(self, vertex, demand):
         """
-        Sets the demand of the vertex in a mincost flow algorithm.
+        Set the demand of the vertex in a mincost flow algorithm.
 
         INPUT:
 
-        - ``vertex`` -- Name of the vertex
+        - ``vertex`` -- name of the vertex
 
         - ``demand`` -- the numerical value representing demand of the vertex in
           a mincost flow algorithm (it could be for instance `-1` to represent a
@@ -419,11 +419,11 @@ cdef class GLPKGraphBackend():
 
     cpdef set_vertices_demand(self, list pairs):
         """
-        Sets the parameters of selected vertices.
+        Set the parameters of selected vertices.
 
         INPUT:
 
-        - ``pairs`` -- A list of pairs ``(vertex, demand)`` associating a demand
+        - ``pairs`` -- list of pairs ``(vertex, demand)`` associating a demand
           to each vertex. For more information, see the documentation of
           :meth:`set_vertex_demand`.
 
@@ -447,16 +447,16 @@ cdef class GLPKGraphBackend():
 
     cpdef dict get_vertex(self, vertex):
         """
-        Returns a specific vertex as a ``dict`` Object.
+        Return a specific vertex as a dictionary Object.
 
         INPUT:
 
-        - ``vertex`` -- The vertex label as ``str``.
+        - ``vertex`` -- the vertex label as string
 
         OUTPUT:
 
-        The vertex as a ``dict`` object or ``None`` if the vertex does not
-        exist. The ``dict`` contains the values used or created by the different
+        The vertex as a dictionary object or ``None`` if the vertex does not
+        exist. The dictionary contains the values used or created by the different
         algorithms. The values associated with the keys following keys contain:
 
             * "rhs"  -- The supply / demand value the vertex (mincost alg)
@@ -485,16 +485,16 @@ cdef class GLPKGraphBackend():
         cdef c_v_data * vdata = <c_v_data *> vert.data
 
         return {
-            "rhs" : vdata.rhs,
-            "pi"  : vdata.pi,
-            "cut" : vdata.cut,
-            "es"  : vdata.es,
-            "ls"  : vdata.ls
+            "rhs": vdata.rhs,
+            "pi": vdata.pi,
+            "cut": vdata.cut,
+            "es": vdata.es,
+            "ls": vdata.ls
             }
 
     cpdef dict get_vertices(self, verts):
         """
-        Returns a dictionary of the dictionaries associated to each vertex.
+        Return a dictionary of the dictionaries associated to each vertex.
 
         INPUT:
 
@@ -523,7 +523,7 @@ cdef class GLPKGraphBackend():
 
     cpdef list vertices(self):
         """
-        Returns the list of all vertices
+        Return the list of all vertices.
 
         .. NOTE::
 
@@ -555,25 +555,25 @@ cdef class GLPKGraphBackend():
 
     cpdef add_edge(self, u, v, dict params=None):
         """
-        Adds an edge between vertices ``u`` and ``v``.
+        Add an edge between vertices ``u`` and ``v``.
 
         Allows adding an edge and optionally providing parameters used by the
         algorithms. If a vertex does not exist it is created.
 
         INPUT:
 
-        - ``u`` -- The name (as ``str``) of the tail vertex
+        - ``u`` -- the name (as string) of the tail vertex
 
-        - ``v`` -- The name (as ``str``) of the head vertex
+        - ``v`` -- the name (as string) of the head vertex
 
-        - ``params`` -- An optional ``dict`` containing the edge parameters used
+        - ``params`` -- an optional dictionary containing the edge parameters used
           for the algorithms. The following keys are used:
 
-            * ``low`` -- The minimum flow through the edge
+            * ``low`` -- the minimum flow through the edge
 
-            * ``cap`` -- The maximum capacity of the edge
+            * ``cap`` -- the maximum capacity of the edge
 
-            * ``cost`` -- The cost of transporting one unit through the edge
+            * ``cost`` -- the cost of transporting one unit through the edge
 
         EXAMPLES::
 
@@ -619,14 +619,14 @@ cdef class GLPKGraphBackend():
 
     cpdef list add_edges(self, edges):
         """
-        Adds edges to the graph.
+        Add edges to the graph.
 
         INPUT:
 
-        - ``edges`` -- An iterable container of pairs of the form ``(u, v)``,
-          where ``u`` is name (as ``str``) of the tail vertex and ``v`` is the
-          name (as ``str``) of the head vertex or an iterable container of
-          triples of the form ``(u, v, params)`` where params is a ``dict`` as
+        - ``edges`` -- an iterable container of pairs of the form ``(u, v)``,
+          where ``u`` is name (as string) of the tail vertex and ``v`` is the
+          name (as string) of the head vertex or an iterable container of
+          triples of the form ``(u, v, params)`` where params is a dictionary as
           described in ``add_edge``.
 
         EXAMPLES::
@@ -657,7 +657,7 @@ cdef class GLPKGraphBackend():
 
     cpdef __add_edges_sage(self, g):
         """
-        Adds edges to the Graph.
+        Add edges to the Graph.
 
         This function is only used when importing a ``GenericGraph``.
 
@@ -712,7 +712,7 @@ cdef class GLPKGraphBackend():
 
     cpdef tuple get_edge(self, u, v):
         """
-        Returns an edge connecting two vertices.
+        Return an edge connecting two vertices.
 
         .. NOTE::
 
@@ -721,19 +721,19 @@ cdef class GLPKGraphBackend():
 
         INPUT:
 
-        - ``u`` -- Name (as ``str``) of the tail vertex
-        - ``v`` -- Name (as ``str``) of the head vertex
+        - ``u`` -- name (as string) of the tail vertex
+        - ``v`` -- name (as string) of the head vertex
 
         OUTPUT:
 
         A ``triple`` describing if edge was found or ``None`` if not. The third
-        value of the triple is a ``dict`` containing the following edge
+        value of the triple is a dictionary containing the following edge
         parameters:
 
-            * ``low``  -- The minimum flow through the edge
-            * ``cap``  -- The maximum capacity of the edge
-            * ``cost`` -- The cost of transporting one unit through the edge
-            * ``x`` -- The actual flow through the edge after solving
+            * ``low`` -- the minimum flow through the edge
+            * ``cap`` -- the maximum capacity of the edge
+            * ``cost`` -- the cost of transporting one unit through the edge
+            * ``x`` -- the actual flow through the edge after solving
 
         EXAMPLES::
 
@@ -768,11 +768,9 @@ cdef class GLPKGraphBackend():
 
     cpdef list edges(self):
         """
-        Returns a ``list`` of all edges in the graph
+        Return a ``list`` of all edges in the graph.
 
-        OUTPUT:
-
-        A ``list`` of ``triples`` representing the edges of the graph.
+        OUTPUT: a ``list`` of ``triples`` representing the edges of the graph
 
         EXAMPLES::
 
@@ -823,7 +821,7 @@ cdef class GLPKGraphBackend():
 
         INPUT:
 
-        - ``vert`` -- The name (as ``str``) of the vertex to delete.
+        - ``vert`` -- the name (as string) of the vertex to delete
 
         EXAMPLES::
 
@@ -859,7 +857,7 @@ cdef class GLPKGraphBackend():
 
         INPUT:
 
-        - ``verts`` -- iterable container containing names (as ``str``) of the
+        - ``verts`` -- iterable container containing names (as string) of the
           vertices to delete
 
         EXAMPLES::
@@ -897,15 +895,15 @@ cdef class GLPKGraphBackend():
 
     cpdef delete_edge(self, u, v, dict params=None):
         """
-        Deletes an edge from the graph.
+        Delete an edge from the graph.
 
         If an edge does not exist it is ignored.
 
         INPUT:
 
-        - ``u`` -- The name (as ``str``) of the tail vertex of the edge
-        - ``v`` -- The name (as ``str``) of the tail vertex of the edge
-        - ``params`` -- ``params`` -- An optional ``dict`` containing the edge
+        - ``u`` -- the name (as string) of the tail vertex of the edge
+        - ``v`` -- the name (as string) of the tail vertex of the edge
+        - ``params`` -- an optional dictionary containing the edge
           parameters (see :meth:`add_edge`). If this parameter
           is not provided, all edges connecting ``u`` and ``v`` are deleted.
           Otherwise only edges with matching parameters are deleted.
@@ -976,13 +974,13 @@ cdef class GLPKGraphBackend():
 
     def delete_edges(self, edges):
         """
-        Deletes edges from the graph.
+        Delete edges from the graph.
 
         Non existing edges are ignored.
 
         INPUT:
 
-        - ``edges`` -- An iterable container of edges.
+        - ``edges`` -- an iterable container of edges
 
         .. SEEALSO::
 
@@ -1009,15 +1007,13 @@ cdef class GLPKGraphBackend():
 
     cpdef int _find_vertex(self, name) noexcept:
         """
-        Returns the index of a vertex specified by a name
+        Return the index of a vertex specified by a name
 
         INPUT:
 
-        - ``name`` -- Name of the vertex
+        - ``name`` -- name of the vertex
 
-        OUTPUT:
-
-        The index of the vertex or ``-1`` if the vertex is not found
+        OUTPUT: the index of the vertex or ``-1`` if the vertex is not found
 
         EXAMPLES::
 
@@ -1042,9 +1038,7 @@ cdef class GLPKGraphBackend():
 
         - ``fname`` -- full name of the file
 
-        OUTPUT:
-
-        Zero if the operations was successful otherwise nonzero
+        OUTPUT: zero if the operations was successful otherwise nonzero
 
         EXAMPLES::
 
@@ -1074,9 +1068,7 @@ cdef class GLPKGraphBackend():
 
         - ``fname`` -- full name of the file
 
-        OUTPUT:
-
-        Zero if the operations was successful otherwise nonzero
+        OUTPUT: zero if the operations was successful otherwise nonzero
 
         EXAMPLES::
 
@@ -1100,11 +1092,9 @@ cdef class GLPKGraphBackend():
 
         INPUT:
 
-        - ``fname`` -- Full name of file
+        - ``fname`` -- full name of file
 
-        OUTPUT:
-
-        Zero if successful, otherwise nonzero
+        OUTPUT: zero if successful, otherwise nonzero
 
         EXAMPLES::
 
@@ -1199,11 +1189,11 @@ cdef class GLPKGraphBackend():
 
         INPUT:
 
-        - ``fname`` -- Full name of file
+        - ``fname`` -- full name of file
 
         OUTPUT:
 
-        ``Zero`` if successful, otherwise ``non-zero``
+        ``Zero`` if successful, otherwise ``nonzero``
 
         EXAMPLES::
 
@@ -1225,7 +1215,6 @@ cdef class GLPKGraphBackend():
             Writing maximum flow problem data to ...
             6 lines were written
             0
-
         """
 
         if self.graph.nv <= 0:
@@ -1241,8 +1230,8 @@ cdef class GLPKGraphBackend():
 
         INPUT:
 
-        - ``u`` -- Name (as ``str``) of the tail vertex. Default is ``None``.
-        - ``v`` -- Name (as ``str``) of the head vertex. Default is ``None``.
+        - ``u`` -- name (as string) of the tail vertex; default is ``None``
+        - ``v`` -- name (as string) of the head vertex; default is ``None``
 
         If ``u`` or ``v`` are ``None``, the currently stored values for the
         head or tail vertex are used. This behavior is useful when reading
@@ -1250,16 +1239,14 @@ cdef class GLPKGraphBackend():
         ``u`` and ``v``, the head and tail vertex are stored for
         later use.
 
-        OUTPUT:
-
-        The solution to the maxflow problem, i.e. the maximum flow.
+        OUTPUT: the solution to the maxflow problem, i.e. the maximum flow
 
         .. NOTE::
 
-            * If the source or sink vertex does not exist, an ``IndexError`` is
+            * If the source or sink vertex does not exist, an :exc:`IndexError` is
               raised.
 
-            * If the source and sink are identical, a ``ValueError`` is raised.
+            * If the source and sink are identical, a :exc:`ValueError` is raised.
 
             * This method raises ``MIPSolverException`` exceptions when the
               solution cannot be computed for any reason (none exists, or the
@@ -1325,11 +1312,9 @@ cdef class GLPKGraphBackend():
 
     cpdef double cpp(self) noexcept:
         r"""
-        Solves the critical path problem of a project network.
+        Solve the critical path problem of a project network.
 
-        OUTPUT:
-
-        The length of the critical path of the network
+        OUTPUT: the length of the critical path of the network
 
         EXAMPLES::
 

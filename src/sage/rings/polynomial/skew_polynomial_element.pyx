@@ -135,7 +135,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         INPUT:
 
-        - ``exp`` -- an integer
+        - ``exp`` -- integer
 
         - ``modulus`` -- a skew polynomial in the same ring as ``self``
 
@@ -277,9 +277,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         - ``eval_pt`` -- element of the base ring of ``self``
 
-        OUTPUT:
-
-        The operator evaluation of ``self`` at ``eval_pt``.
+        OUTPUT: the operator evaluation of ``self`` at ``eval_pt``
 
         .. TODO::
 
@@ -340,9 +338,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         - ``eval_pt`` -- element of the base ring of ``self``
 
-        OUTPUT:
-
-        The value of the polynomial at the point specified by the argument.
+        OUTPUT: the value of the polynomial at the point specified by the argument
 
         EXAMPLES::
 
@@ -389,7 +385,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         INPUT:
 
-        - `n` -- an integer, the power of conjugation
+        - ``n`` -- integer; the power of conjugation
 
         EXAMPLES::
 
@@ -435,9 +431,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         - ``eval_pts`` -- list of points at which ``self`` is to be evaluated
 
-        OUTPUT:
-
-        List of values of ``self`` at the ``eval_pts``.
+        OUTPUT: list of values of ``self`` at the ``eval_pts``
 
         .. TODO::
 

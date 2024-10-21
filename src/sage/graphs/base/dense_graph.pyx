@@ -145,8 +145,8 @@ cdef class DenseGraph(CGraph):
 
     INPUT:
 
-    - ``nverts`` -- non-negative integer; the number of vertices
-    - ``extra_vertices`` -- non-negative integer (default: 10); how many extra
+    - ``nverts`` -- nonnegative integer; the number of vertices
+    - ``extra_vertices`` -- nonnegative integer (default: 10); how many extra
       vertices to allocate
     - ``verts`` -- list (default: ``None``); optional list of vertices to add
     - ``arcs`` -- list (default: ``None``); optional list of arcs to add
@@ -156,7 +156,6 @@ cdef class DenseGraph(CGraph):
     ``extra_vertices`` can be freely added without reallocation. See top level
     documentation for more details. The input ``verts`` and ``arcs`` are mainly
     for use in pickling.
-
     """
     def __cinit__(self, int nverts, int extra_vertices=10, verts=None, arcs=None, directed=True):
         """
@@ -301,8 +300,7 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u``, ``v`` -- non-negative integers
-
+        - ``u``, ``v`` -- nonnegative integers
         """
         if unlikely(l):
             raise ValueError("cannot add a labeled arc to an unlabeled graph")
@@ -317,14 +315,14 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u``, ``v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- nonnegative integers, must be in self
 
-        - ``l`` -- a positive integer label, or zero for no label, or ``-1`` for any label
+        - ``l`` -- positive integer label, or zero for no label, or ``-1`` for any label
 
         OUTPUT:
-            0 -- False
-            1 -- True
 
+        - 0 -- False
+        - 1 -- True
         """
         if unlikely(l > 0):
             raise ValueError("cannot locate labeled arc in unlabeled graph")
@@ -350,8 +348,7 @@ cdef class DenseGraph(CGraph):
 
         INPUT:
 
-        - ``u``, ``v`` -- non-negative integers, must be in self
-
+        - ``u``, ``v`` -- nonnegative integers, must be in self
         """
         self._del_arc_unsafe(u, v)
         if u != v and not self._directed:
@@ -367,7 +364,7 @@ cdef class DenseGraph(CGraph):
 
     cdef int all_arcs_unsafe(self, int u, int v, int* labels, int size) except -1:
         """
-        Gives the labels of all arcs (u, v).
+        Give the labels of all arcs (u, v).
 
         INPUT:
 
@@ -376,12 +373,9 @@ cdef class DenseGraph(CGraph):
         - ``labels`` -- must be a pointer to an (allocated) integer array
         - ``size`` -- the length of the array
 
-        OUTPUT:
-
-        - integer -- the number of arcs ``(u, v)``
-          ``-1`` -- indicates that the array has been filled with labels, but
-          there were more
-
+        OUTPUT: integer; the number of arcs ``(u, v)``.
+        ``-1`` -- indicates that the array has been filled with labels, but
+        there were more.
         """
         if self.has_arc_unsafe(u, v):
             if size > 0:
@@ -393,7 +387,7 @@ cdef class DenseGraph(CGraph):
 
     def complement(self):
         r"""
-        Replace the graph with its complement
+        Replace the graph with its complement.
 
         .. NOTE::
 
@@ -572,7 +566,6 @@ cdef class DenseGraphBackend(CGraphBackend):
         Traceback (most recent call last):
         ...
         TypeError: an integer is required
-
     """
 
     def __init__(self, n, directed=True):
@@ -585,7 +578,6 @@ cdef class DenseGraphBackend(CGraphBackend):
             sage: D.add_edge(0, 1, None, False)
             sage: list(D.iterator_edges(range(9), True))
             [(0, 1, None)]
-
         """
         self._cg = DenseGraph(n, directed=directed)
         self._directed = directed
@@ -623,7 +615,7 @@ cdef class DenseGraphBackend(CGraphBackend):
         INPUT:
 
         - ``edges`` -- an iterable of edges to be added; each edge can either be
-           of the form ``(u, v)`` or ``(u, v, l)``
+          of the form ``(u, v)`` or ``(u, v, l)``
 
         - ``directed`` -- if ``False``, adds ``(v, u)`` as well as ``(u, v)``
 
@@ -638,7 +630,6 @@ cdef class DenseGraphBackend(CGraphBackend):
              (2, 3, None),
              (4, 5, None),
              (5, 6, None)]
-
         """
         for e in edges:
             u, v = e[:2]
@@ -679,7 +670,6 @@ cdef class DenseGraphBackend(CGraphBackend):
             Traceback (most recent call last):
             ...
             LookupError: (2, 4) is not an edge of the graph
-
         """
         if not self.has_edge(u, v, None):
             raise LookupError("({0}, {1}) is not an edge of the graph".format(repr(u), repr(v)))
@@ -705,7 +695,6 @@ cdef class DenseGraphBackend(CGraphBackend):
             sage: D.add_edges([(0, 1), (2, 3), (4, 5), (5, 6)], False)
             sage: D.has_edge(0, 1, None)
             True
-
         """
         cdef int u_int = self.get_vertex_checked(u)
         cdef int v_int = self.get_vertex_checked(v)
@@ -738,7 +727,6 @@ cdef class DenseGraphBackend(CGraphBackend):
             NotImplementedError: dense graphs do not support multiple edges
             sage: G.multiple_edges(None)
             False
-
         """
         if new is None:
             return False

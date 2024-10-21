@@ -83,6 +83,8 @@ cdef extern from "ntlwrap.h":
     void ZZ_pEX_DivRem_pre "DivRem"(ZZ_pEX_c q, ZZ_pEX_c r, ZZ_pEX_c a, ZZ_pEX_Modulus_c F)
     void ZZ_pEX_div_pre "div"(ZZ_pEX_c q, ZZ_pEX_c a, ZZ_pEX_Modulus_c F)
 
+    void ZZ_pEX_CompMod "CompMod"(ZZ_pEX_c x, ZZ_pEX_c f, ZZ_pEX_c g, ZZ_pEX_Modulus_c F)
+
     void ZZ_pEX_MinPolyMod "MinPolyMod"(ZZ_pEX_c h, ZZ_pEX_c g, ZZ_pEX_c f)
     void ZZ_pEX_MinPolyMod_pre "MinPolyMod"(ZZ_pEX_c h, ZZ_pEX_c g, ZZ_pEX_Modulus_c F)
 

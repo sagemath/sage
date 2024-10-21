@@ -36,13 +36,13 @@ from sage.typeset.unicode_art import UnicodeArt, unicode_art
 
 class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     r"""
-    Class for free modules with a named basis
+    Class for free modules with a named basis.
 
     INPUT:
 
     - ``R`` -- base ring
 
-    - ``basis_keys`` -- list, tuple, family, set, etc. defining the
+    - ``basis_keys`` -- list; tuple, family, set, etc. defining the
       indexing set for the basis of this module
 
     - ``element_class`` -- the class of which elements of this module
@@ -227,8 +227,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     involves comparison by equality (not identity). Hence, the last line of
     the following example used to fail with an assertion error::
 
-        sage: F = CombinatorialFreeModule(ZZ, [1,2,3], prefix="F")
-        sage: G = CombinatorialFreeModule(ZZ, [1,2,3,4], prefix="G")
+        sage: F = CombinatorialFreeModule(ZZ, [1,2,3], prefix='F')
+        sage: G = CombinatorialFreeModule(ZZ, [1,2,3,4], prefix='G')
         sage: f =   F.monomial(1) + 2 * F.monomial(2)
         sage: g = 2*G.monomial(3) +     G.monomial(4)
         sage: tensor([f, g])
@@ -262,7 +262,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     We check that issue :issue:`28681` is fixed::
 
-        sage: F = CombinatorialFreeModule(ZZ, ZZ); F.rename("F")
+        sage: F = CombinatorialFreeModule(ZZ, ZZ); F.rename('F')
         sage: FF = tensor((F,F))
         sage: cartesian_product((FF,FF))
         F # F (+) F # F
@@ -338,7 +338,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     @lazy_attribute
     def element_class(self):
         """
-        The (default) class for the elements of this parent
+        The (default) class for the elements of this parent.
 
         Overrides :meth:`Parent.element_class` to force the
         construction of Python class. This is currently needed to
@@ -468,7 +468,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
     def construction(self):
         """
-        The construction functor and base ring for self.
+        The construction functor and base ring for ``self``.
 
         EXAMPLES::
 
@@ -695,8 +695,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         A coercion between free modules with the same indices exists
         whenever a coercion map is defined between their base rings::
 
-            sage: F = CombinatorialFreeModule(ZZ, ["a", "b"]);      F.rename("F")
-            sage: G = CombinatorialFreeModule(QQ, ["a", "b"]);      G.rename("G")
+            sage: F = CombinatorialFreeModule(ZZ, ["a", "b"]);      F.rename('F')
+            sage: G = CombinatorialFreeModule(QQ, ["a", "b"]);      G.rename('G')
             sage: G(F.monomial("a"))
             B['a']
             sage: G(-3*F.monomial("a"))
@@ -704,7 +704,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         Otherwise, there is no conversion between distinct free modules::
 
-            sage: H = CombinatorialFreeModule(ZZ, ["a", "b", "c"]); H.rename("H")
+            sage: H = CombinatorialFreeModule(ZZ, ["a", "b", "c"]); H.rename('H')
             sage: H(F.monomial("a"))
             Traceback (most recent call last):
             ...
@@ -721,7 +721,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         The following originally used to yield ``p[[2]] # p[[2]]``, and if
         there was no natural coercion between ``s`` and ``p``, this would
-        raise a :class:`NotImplementedError`.
+        raise a :exc:`NotImplementedError`.
         Since :issue:`15305`, this takes the
         coercion between ``s`` and ``p`` and lifts it to the tensor product. ::
 
@@ -924,7 +924,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         Set the order of the elements of the basis.
 
         If :meth:`set_order` has not been called, then the ordering is
-        the one used in the generation of the elements of self's
+        the one used in the generation of the elements of ``self``'s
         associated enumerated set.
 
         .. WARNING::
@@ -1159,8 +1159,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         INPUT:
 
-        - ``terms`` -- a list (or iterable) of pairs ``(index, coeff)``
-        - ``distinct`` -- (default: ``False``) whether the indices are
+        - ``terms`` -- list (or iterable) of pairs ``(index, coeff)``
+        - ``distinct`` -- boolean (default: ``False``); whether the indices are
           guaranteed to be distinct
 
         EXAMPLES::
@@ -1209,14 +1209,14 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         INPUT:
 
-        - ``d`` -- a dictionary ``{index: coeff}`` where each ``index`` is
+        - ``d`` -- dictionary ``{index: coeff}`` where each ``index`` is
           the index of a basis element and each ``coeff`` belongs to the
           coefficient ring ``self.base_ring()``
 
-        - ``coerce`` -- a boolean (default: ``False``), whether to coerce
+        - ``coerce`` -- boolean (default: ``False``); whether to coerce
           the coefficients ``coeff`` to the coefficient ring
 
-        - ``remove_zeros`` -- a boolean (default: ``True``), if some
+        - ``remove_zeros`` -- boolean (default: ``True``); if some
           coefficients ``coeff`` may be zero and should therefore be removed
 
         EXAMPLES::
@@ -1265,14 +1265,14 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
 class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
     """
-    Tensor Product of Free Modules
+    Tensor Product of Free Modules.
 
     EXAMPLES:
 
     We construct two free modules, assign them short names, and construct their tensor product::
 
-        sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename("F")
-        sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename("G")
+        sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename('F')
+        sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename('G')
         sage: T = tensor([F, G]); T
         F # G
 
@@ -1307,7 +1307,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
     The tensor product is associative and flattens sub tensor products::
 
-        sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename("H")
+        sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename('H')
         sage: tensor([F, tensor([G, H])])
         F # G # H
         sage: tensor([tensor([F, G]), H])
@@ -1397,8 +1397,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
             sage: F = CombinatorialFreeModule(ZZ, [1,2,3])
             sage: G = CombinatorialFreeModule(ZZ, [1,2,3,8])
-            sage: F.rename("F")
-            sage: G.rename("G")
+            sage: F.rename('F')
+            sage: G.rename('G')
             sage: T = tensor([F, G])
             sage: T # indirect doctest
             F # G
@@ -1427,9 +1427,9 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: F = CombinatorialFreeModule(ZZ, [1,2])
-            sage: F.rename("F")
+            sage: F.rename('F')
             sage: G = CombinatorialFreeModule(ZZ, [3,4])
-            sage: G.rename("G")
+            sage: G.rename('G')
             sage: T = tensor([F, G]); T
             F # G
             sage: T.tensor_factors()
@@ -1442,7 +1442,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         TESTS::
 
             sage: R = NonCommutativeSymmetricFunctions(QQ).R()                      # needs sage.combinat
-            sage: Partitions.options(diagram_str="#", convention="french")          # needs sage.combinat
+            sage: Partitions.options(diagram_str='#', convention='french')          # needs sage.combinat
             sage: s = ascii_art(tensor((R[1,2], R[3,1,2]))); s                      # needs sage.combinat
             R   # R
              #     ###
@@ -1471,7 +1471,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         TESTS::
 
             sage: R = NonCommutativeSymmetricFunctions(QQ).R()                      # needs sage.combinat
-            sage: Partitions.options(diagram_str="#", convention="french")          # needs sage.combinat
+            sage: Partitions.options(diagram_str='#', convention='french')          # needs sage.combinat
             sage: s = unicode_art(tensor((R[1,2], R[3,1,2]))); s                    # needs sage.combinat
             R    ⊗ R
              ┌┐     ┌┬┬┐
@@ -1502,8 +1502,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
             sage: F = CombinatorialFreeModule(ZZ, [1,2,3])
             sage: G = CombinatorialFreeModule(ZZ, [1,2,3,8])
-            sage: F.rename("F")
-            sage: G.rename("G")
+            sage: F.rename('F')
+            sage: G.rename('G')
             sage: latex(tensor([F, F, G])) # indirect doctest
             \text{\texttt{F}} \otimes \text{\texttt{F}} \otimes \text{\texttt{G}}
             sage: F._latex_ = lambda : "F"
@@ -1519,8 +1519,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         """
         TESTS::
 
-            sage: F = CombinatorialFreeModule(ZZ, [1,2,3], prefix="F")
-            sage: G = CombinatorialFreeModule(ZZ, [1,2,3,4], prefix="G")
+            sage: F = CombinatorialFreeModule(ZZ, [1,2,3], prefix='F')
+            sage: G = CombinatorialFreeModule(ZZ, [1,2,3,4], prefix='G')
             sage: f =   F.monomial(1) + 2 * F.monomial(2)
             sage: g = 2*G.monomial(3) +     G.monomial(4)
             sage: tensor([f, g]) # indirect doctest
@@ -1553,17 +1553,17 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
         r"""
         INPUT:
 
-         - ``modules`` -- a tuple `(F_1,\dots,F_n)` of
-           free modules whose tensor product is self
+        - ``modules`` -- tuple `(F_1,\dots,F_n)` of
+          free modules whose tensor product is self
 
         Returns the canonical multilinear morphism from
         `F_1 \times \dots \times F_n` to `F_1 \otimes \dots \otimes F_n`
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename("G")
-            sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename("H")
+            sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename('G')
+            sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename('H')
 
             sage: f =   F.monomial(1) + 2*F.monomial(2)
             sage: g = 2*G.monomial(3) +   G.monomial(4)
@@ -1600,14 +1600,14 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
     def _tensor_of_elements(self, elements):
         """
-        Returns the tensor product of the specified elements.
+        Return the tensor product of the specified elements.
         The result should be in ``self``.
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename("G")
-            sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename("H")
+            sage: F = CombinatorialFreeModule(ZZ, [1,2]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [3,4]); G.rename('G')
+            sage: H = CombinatorialFreeModule(ZZ, [5,6]); H.rename('H')
 
             sage: f =   F.monomial(1) + 2 * F.monomial(2)
             sage: g = 2*G.monomial(3) +     G.monomial(4)
@@ -1703,17 +1703,16 @@ class CartesianProductWithFlattening:
         """
         INPUT:
 
-         - ``flatten`` -- a tuple of booleans
+        - ``flatten`` -- tuple of booleans
 
         This constructs a callable which accepts ``len(flatten)``
         arguments, and builds a tuple out them. When ``flatten[i]``,
-        the i-th argument itself should be a tuple which is flattened
+        the `i`-th argument itself should be a tuple which is flattened
         in the result.
 
             sage: from sage.combinat.free_module import CartesianProductWithFlattening
             sage: CartesianProductWithFlattening([True, False, True, True])
             <sage.combinat.free_module.CartesianProductWithFlattening object at ...>
-
         """
         self._flatten = flatten
 
@@ -1727,7 +1726,6 @@ class CartesianProductWithFlattening:
             (1, 2, (3, 4), 5, 6, 7, 8)
             sage: cp((1,2,3), 4, (5,6), (7,8))
             (1, 2, 3, 4, 5, 6, 7, 8)
-
         """
         return sum((i if flatten else (i,)
                     for (i, flatten) in zip(indices, self._flatten)), ())
@@ -1739,15 +1737,15 @@ CombinatorialFreeModule.Tensor = CombinatorialFreeModule_Tensor
 
 class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
     """
-    An implementation of Cartesian products of modules with basis
+    An implementation of Cartesian products of modules with basis.
 
     EXAMPLES:
 
     We construct two free modules, assign them short names, and construct their Cartesian product::
 
-        sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-        sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
-        sage: H = CombinatorialFreeModule(ZZ, [4,7]); H.rename("H")
+        sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+        sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
+        sage: H = CombinatorialFreeModule(ZZ, [4,7]); H.rename('H')
         sage: S = cartesian_product([F, G])
         sage: S
         F (+) G
@@ -1802,7 +1800,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
     def _sets_keys(self):
         """
-        In waiting for self._sets.keys()
+        In waiting for ``self._sets.keys()``.
 
         TESTS::
 
@@ -1821,7 +1819,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
             sage: F = CombinatorialFreeModule(ZZ, [2,4,5])
             sage: CP = cartesian_product([F, F]); CP  # indirect doctest
             Free module generated by {2, 4, 5} over Integer Ring (+) Free module generated by {2, 4, 5} over Integer Ring
-            sage: F.rename("F"); CP
+            sage: F.rename('F'); CP
             F (+) F
         """
         from sage.categories.cartesian_product import cartesian_product
@@ -1837,12 +1835,12 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         INPUT:
 
-         - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
+            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
             sage: S = cartesian_product([F, G])
             sage: phi = S.cartesian_embedding(0)
             sage: phi(F.monomial(4) + 2 * F.monomial(5))
@@ -1871,12 +1869,12 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         INPUT:
 
-         - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
+            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
             sage: S = cartesian_product([F, G])
             sage: x = S.monomial((0,4)) + 2 * S.monomial((0,5)) + 3 * S.monomial((1,6))
             sage: S.cartesian_projection(0)(x)
@@ -1905,8 +1903,8 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
+            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
             sage: S = cartesian_product([F, G])
             sage: f =   F.monomial(4) + 2*F.monomial(5)
             sage: g = 2*G.monomial(4) +   G.monomial(6)
@@ -1944,8 +1942,8 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename("F")
-            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename("G")
+            sage: F = CombinatorialFreeModule(ZZ, [4,5]); F.rename('F')
+            sage: G = CombinatorialFreeModule(ZZ, [4,6]); G.rename('G')
             sage: S = cartesian_product([F, G])
             sage: S.cartesian_factors()
             (F, G)

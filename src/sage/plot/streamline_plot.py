@@ -57,7 +57,6 @@ class StreamlinePlot(GraphicPrimitive):
             sage: x, y = var('x y')
             sage: P = streamline_plot((sin(x), cos(y)), (x,-3,3), (y,-3,3))
             sage: Q = loads(dumps(P))
-
         """
         self.xpos_array = xpos_array
         self.ypos_array = ypos_array
@@ -67,7 +66,7 @@ class StreamlinePlot(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
@@ -86,7 +85,7 @@ class StreamlinePlot(GraphicPrimitive):
 
     def _allowed_options(self):
         """
-        Returns a dictionary with allowed options for StreamlinePlot.
+        Return a dictionary with allowed options for ``StreamlinePlot``.
 
         EXAMPLES::
 
@@ -128,7 +127,6 @@ class StreamlinePlot(GraphicPrimitive):
                 zorder         The layer level in which to draw
             <BLANKLINE>
             20
-
         """
         return "StreamlinePlot defined by a {} x {} vector grid".format(
                self._options['plot_points'], self._options['plot_points'])
@@ -274,7 +272,6 @@ def streamline_plot(f_g, xrange, yrange, **options):
         Streamlines currently pass close to ``start_points`` but do
         not necessarily pass directly through them. That is part of
         the behavior of matplotlib, not an error on your part.
-
     """
     # Parse the function input
     if isinstance(f_g, (list, tuple)):

@@ -457,7 +457,7 @@ class A000004(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -562,11 +562,9 @@ class A000008(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -614,11 +612,9 @@ class A000009(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -714,9 +710,7 @@ class A000796(SloaneSequence):
 
         - ``n`` -- positive integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -817,11 +811,9 @@ class A003418(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -874,11 +866,9 @@ class A007318(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -939,11 +929,9 @@ class A008275(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1016,11 +1004,9 @@ class A008277(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1062,7 +1048,7 @@ class A008277(SloaneSequence):
 
     def s2(self, n, k):
         """
-        Returns the Stirling number S2(n,k) of the 2nd kind.
+        Return the Stirling number S2(n,k) of the 2nd kind.
 
         EXAMPLES::
 
@@ -1094,11 +1080,9 @@ class A049310(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1161,16 +1145,14 @@ class A000010(SloaneSequence):
         to `n`. Number of totatives of `n`.
 
         Euler totient function `\phi(n)`: count numbers `n`
-        and prime to `n`. euler_phi is a standard Sage function
-        implemented in PARI
+        and prime to `n`. ``euler_phi`` is a standard Sage function
+        implemented in PARI.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1225,11 +1207,9 @@ class A000007(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1276,11 +1256,9 @@ class A005843(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1331,11 +1309,9 @@ class A000035(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1387,11 +1363,9 @@ class A000169(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1444,9 +1418,7 @@ class A000272(SloaneSequence):
 
         - ``n`` -- integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1498,11 +1470,9 @@ class A000312(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1556,11 +1526,9 @@ class A001477(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1611,11 +1579,9 @@ class A004526(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1664,11 +1630,9 @@ class A000326(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1721,11 +1685,9 @@ class A002378(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1777,11 +1739,9 @@ class A002620(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1830,11 +1790,9 @@ class A005408(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -1881,20 +1839,18 @@ class A005408(SloaneSequence):
 class A000012(SloaneSequence):
     def __init__(self):
         r"""
-        The all 1's sequence.
+        The all 1s sequence.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
             sage: a = sloane.A000012; a
-            The all 1's sequence.
+            The all 1s sequence.
             sage: a(1)
             1
             sage: a(2007)
@@ -1913,9 +1869,9 @@ class A000012(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A000012._repr_()
-            "The all 1's sequence."
+            'The all 1s sequence.'
         """
-        return "The all 1's sequence."
+        return 'The all 1s sequence.'
 
     def _eval(self, n):
         """
@@ -1930,20 +1886,18 @@ class A000012(SloaneSequence):
 class A000120(SloaneSequence):
     def __init__(self):
         r"""
-        1's-counting sequence: number of 1's in binary expansion of `n`.
+        1s-counting sequence: number of 1s in binary expansion of `n`.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
             sage: a = sloane.A000120;a
-            1's-counting sequence: number of 1's in binary expansion of n.
+            1s-counting sequence: number of 1s in binary expansion of n.
             sage: a(0)
             0
             sage: a(2)
@@ -1964,9 +1918,9 @@ class A000120(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A000120._repr_()
-            "1's-counting sequence: number of 1's in binary expansion of n."
+            '1s-counting sequence: number of 1s in binary expansion of n.'
         """
-        return "1's-counting sequence: number of 1's in binary expansion of n."
+        return '1s-counting sequence: number of 1s in binary expansion of n.'
 
     def f(self, n):
         """
@@ -1997,15 +1951,13 @@ class A010060(SloaneSequence):
         Let `A_k` denote the first `2^k` terms; then
         `A_0 = 0`, and for `k \ge 0`,
         `A_{k+1} = A_k B_k`, where `B_k` is obtained
-        from `A_k` by interchanging 0's and 1's.
+        from `A_k` by interchanging 0s and 1s.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2050,20 +2002,18 @@ class A010060(SloaneSequence):
 class A000069(SloaneSequence):
     def __init__(self):
         r"""
-        Odious numbers: odd number of 1's in binary expansion.
+        Odious numbers: odd number of 1s in binary expansion.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
             sage: a = sloane.A000069; a
-            Odious numbers: odd number of 1's in binary expansion.
+            Odious numbers: odd number of 1s in binary expansion.
             sage: a(0)
             1
             sage: a(2)
@@ -2082,9 +2032,9 @@ class A000069(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A000069._repr_()
-            "Odious numbers: odd number of 1's in binary expansion."
+            'Odious numbers: odd number of 1s in binary expansion.'
         """
-        return "Odious numbers: odd number of 1's in binary expansion."
+        return 'Odious numbers: odd number of 1s in binary expansion.'
 
     def _eval(self, n):
         """
@@ -2099,20 +2049,18 @@ class A000069(SloaneSequence):
 class A001969(SloaneSequence):
     def __init__(self):
         r"""
-        Evil numbers: even number of 1's in binary expansion.
+        Evil numbers: even number of 1s in binary expansion.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
             sage: a = sloane.A001969;a
-            Evil numbers: even number of 1's in binary expansion.
+            Evil numbers: even number of 1s in binary expansion.
             sage: a(0)
             0
             sage: a(1)
@@ -2135,9 +2083,9 @@ class A001969(SloaneSequence):
         EXAMPLES::
 
             sage: sloane.A001969._repr_()
-            "Evil numbers: even number of 1's in binary expansion."
+            'Evil numbers: even number of 1s in binary expansion.'
         """
-        return "Evil numbers: even number of 1's in binary expansion."
+        return 'Evil numbers: even number of 1s in binary expansion.'
 
     def _eval(self, n):
         """
@@ -2156,11 +2104,9 @@ class A000290(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2209,11 +2155,9 @@ class A000225(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2263,11 +2207,9 @@ class A000015(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2321,15 +2263,13 @@ class A000015(SloaneSequence):
 class A000016(SloaneSequence):
     def __init__(self):
         r"""
-        Sloane's A000016
+        Sloane's A000016.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2385,11 +2325,9 @@ class A000032(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2451,11 +2389,9 @@ class A004086(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2507,11 +2443,9 @@ class A002113(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2601,11 +2535,9 @@ class A000030(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2662,11 +2594,9 @@ class A000040(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2718,11 +2648,9 @@ class A002808(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2807,11 +2735,9 @@ class A018252(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2865,11 +2791,9 @@ class A000043(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -2931,11 +2855,9 @@ class A000668(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3000,11 +2922,9 @@ class A000396(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3056,11 +2976,9 @@ class A005100(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3148,11 +3066,9 @@ class A005101(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3240,11 +3156,9 @@ class A002110(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3294,11 +3208,9 @@ class A000720(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3351,11 +3263,9 @@ class A064553(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3406,11 +3316,9 @@ class A001055(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3489,11 +3397,9 @@ class A006530(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3544,15 +3450,13 @@ class A006530(SloaneSequence):
 class A000961(SloaneSequence):
     def __init__(self):
         r"""
-        Prime powers
+        Prime powers.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3633,15 +3537,13 @@ class A000961(SloaneSequence):
 class A005117(SloaneSequence):
     def __init__(self):
         r"""
-        Square-free numbers
+        Square-free numbers.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3727,11 +3629,9 @@ class A020639(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3817,11 +3717,9 @@ class A000041(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3879,11 +3777,9 @@ class A000045(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -3935,7 +3831,7 @@ class A000045(SloaneSequence):
 
     def fib(self):
         """
-        Returns a generator over all Fibonacci numbers, starting with 0.
+        Return a generator over all Fibonacci numbers, starting with 0.
 
         EXAMPLES::
 
@@ -3981,11 +3877,9 @@ class A000108(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4035,11 +3929,9 @@ class A001006(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4088,11 +3980,9 @@ class A000079(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4141,11 +4031,9 @@ class A000578(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4196,11 +4084,9 @@ class A000244(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4251,11 +4137,9 @@ class A000302(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4304,11 +4188,9 @@ class A000583(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4355,18 +4237,16 @@ class A000583(SloaneSequence):
 class A000142(SloaneSequence):
     def __init__(self):
         r"""
-        Factorial numbers: `n! = 1 \cdot 2 \cdot 3 \cdots n`
+        Factorial numbers: `n! = 1 \cdot 2 \cdot 3 \cdots n`.
 
         Order of symmetric group `S_n`, number of permutations of
         `n` letters.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4415,11 +4295,9 @@ class A000085(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4469,11 +4347,9 @@ class A001189(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4526,11 +4402,9 @@ class A000670(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4583,11 +4457,9 @@ class A006318(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4639,11 +4511,9 @@ class A000165(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4693,11 +4563,9 @@ class A001147(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4746,11 +4614,9 @@ class A006882(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4849,11 +4715,9 @@ class A000984(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4901,11 +4765,9 @@ class A001405(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -4953,11 +4815,9 @@ class A000292(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5005,11 +4865,9 @@ class A000330(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5126,11 +4984,9 @@ class A000153(ExtremesOfPermanentsSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5179,11 +5035,9 @@ class A000255(ExtremesOfPermanentsSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5237,11 +5091,9 @@ class A000261(ExtremesOfPermanentsSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5299,9 +5151,7 @@ class A001909(ExtremesOfPermanentsSequence):
 
         - ``n`` -- positive integer >= 2
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5357,11 +5207,9 @@ class A001910(ExtremesOfPermanentsSequence):
 
         INPUT:
 
-        - ``n`` -- positive integer >= 3
+        - ``n`` -- positive integer `\geq 3`
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5442,11 +5290,9 @@ class A090010(ExtremesOfPermanentsSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5506,11 +5352,9 @@ class A055790(ExtremesOfPermanentsSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5571,11 +5415,9 @@ class A090012(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5644,11 +5486,9 @@ class A090013(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5717,11 +5557,9 @@ class A090014(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5790,11 +5628,9 @@ class A090015(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5865,11 +5701,9 @@ class A090016(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5926,15 +5760,13 @@ class A000166(SloaneSequence):
         permutations of `n` elements with no fixed points.
 
         With offset 1 also the permanent of a (0,1)-matrix of order
-        `n` with `n` 0's not on a line.
+        `n` with `n` 0s not on a line.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -5992,11 +5824,9 @@ class A000203(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6052,11 +5882,9 @@ class A001157(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6105,11 +5933,9 @@ class A008683(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6159,11 +5985,9 @@ class A000204(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6222,11 +6046,9 @@ class A000217(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6279,11 +6101,9 @@ class A000124(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6333,11 +6153,9 @@ class A002275(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6451,11 +6269,9 @@ class A001110(RecurrenceSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6514,11 +6330,9 @@ class A051959(RecurrenceSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6571,7 +6385,7 @@ class A051959(RecurrenceSequence):
 class A001221(SloaneSequence):
     def __init__(self):
         r"""
-        Number of different prime divisors of `n`
+        Number of different prime divisors of `n`.
 
         Also called omega(n) or `\omega(n)`. Maximal number of
         terms in any factorization of `n`. Number of prime powers
@@ -6579,11 +6393,9 @@ class A001221(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6641,11 +6453,9 @@ class A001222(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6703,9 +6513,7 @@ class A046660(SloaneSequence):
 
     - ``n`` -- positive integer
 
-    OUTPUT:
-
-    - ``integer`` -- function value
+    OUTPUT: integer; function value
 
     EXAMPLES::
 
@@ -6757,11 +6565,9 @@ class A001227(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6823,11 +6629,9 @@ class A001358(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6923,11 +6727,9 @@ class A001694(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -6993,8 +6795,7 @@ class A001694(SloaneSequence):
         # This is naive -- too slow; too much overhead
         #  return [i for i in range(self._n, self._n+how_many) if self.is_powerful(i)]
 
-        if n < 4:
-            n = 4
+        n = max(n, 4)
         # Use PARI directly -- much faster.
         from sage.libs.pari.all import pari
         L = pari('v=listcreate(); for(i=%s,%s,if(vecmin(factor(i)[,2])>1,listput(v,i))); v' % (n, m))
@@ -7049,11 +6850,9 @@ class A001694(SloaneSequence):
 
         INPUT:
 
-        - `n` -- integer
+        - ``n`` -- integer
 
-        OUTPUT:
-
-        ``True`` if `n` is a powerful number, else ``False``
+        OUTPUT: ``True`` if `n` is a powerful number, else ``False``
 
         EXAMPLES::
 
@@ -7078,16 +6877,14 @@ class A001836(SloaneSequence):
         Numbers `n` such that `\phi(2n-1) < \phi(2n)`,
         where `\phi` is Euler's totient function.
 
-        Euler's totient function is also known as euler_phi, euler_phi is
-        a standard Sage function.
+        Euler's totient function is also known as ``euler_phi``; ``euler_phi``
+        is a standard Sage function.
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7181,8 +6978,8 @@ class A001836(SloaneSequence):
 # a group of sequences uses this function:
 def recur_gen2(a0, a1, a2, a3):
     r"""
-    homogeneous general second-order linear recurrence generator with
-    fixed coefficients
+    Homogeneous general second-order linear recurrence generator with
+    fixed coefficients.
 
     a(0) = a0, a(1) = a1, a(n) = a2\*a(n-1) + a3\*a(n-2)
 
@@ -7252,11 +7049,9 @@ class A001906(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7301,11 +7096,9 @@ class A001333(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7351,11 +7144,9 @@ class A001045(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7404,11 +7195,9 @@ class A000129(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7451,11 +7240,9 @@ class A001109(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7503,11 +7290,9 @@ class A015521(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7551,11 +7336,9 @@ class A015523(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7599,11 +7382,9 @@ class A015530(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7649,11 +7430,9 @@ class A015531(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7701,11 +7480,9 @@ class A015551(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7783,11 +7560,9 @@ class A082411(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7838,11 +7613,9 @@ class A083103(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7895,11 +7668,9 @@ class A083104(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -7946,11 +7717,9 @@ class A083105(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8004,11 +7773,9 @@ class A083216(RecurrenceSequence2):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8052,11 +7819,9 @@ class A061084(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8110,7 +7875,7 @@ class A061084(SloaneSequence):
 # a group of sequences uses this function:
 def recur_gen3(a0, a1, a2, a3, a4, a5):
     r"""
-    homogeneous general third-order linear recurrence generator with
+    Homogeneous general third-order linear recurrence generator with
     fixed coefficients
 
     a(0) = a0, a(1) = a1, a(2) = a2, a(n) = a3\*a(n-1) + a4\*a(n-2) +
@@ -8138,11 +7903,9 @@ class A000213(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8222,11 +7985,9 @@ class A000073(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8306,7 +8067,7 @@ def perm_mh(m, h):
     INPUT:
 
     - ``m`` -- positive integer
-    - ``h`` -- non negative integer
+    - ``h`` -- nonnegative integer
 
     OUTPUT: permanent of the `m \times (m+h)` matrix, etc.
 
@@ -8334,7 +8095,7 @@ def perm_mh(m, h):
 
 class A079922(SloaneSequence):
     r"""
-    function returns solutions to the Dancing School problem with
+    Function returns solutions to the Dancing School problem with
     `n` girls and `n+3` boys.
 
     The value is `per(B)`, the permanent of the (0,1)-matrix
@@ -8349,9 +8110,7 @@ class A079922(SloaneSequence):
 
     - ``n`` -- positive integer
 
-    OUTPUT:
-
-    - ``integer`` -- function value
+    OUTPUT: integer; function value
 
     EXAMPLES::
 
@@ -8403,7 +8162,7 @@ class A079922(SloaneSequence):
 
 class A079923(SloaneSequence):
     r"""
-    function returns solutions to the Dancing School problem with
+    Function returns solutions to the Dancing School problem with
     `n` girls and `n+4` boys.
 
     The value is `per(B)`, the permanent of the (0,1)-matrix
@@ -8419,9 +8178,7 @@ class A079923(SloaneSequence):
 
     - ``n`` -- positive integer
 
-    OUTPUT:
-
-    - ``integer`` -- function value
+    OUTPUT: integer; function value
 
     EXAMPLES::
 
@@ -8495,11 +8252,9 @@ class A109814(SloaneSequence):
 
     INPUT:
 
-    - ``n`` -- non negative integer
+    - ``n`` -- nonnegative integer
 
-    OUTPUT:
-
-    - ``integer`` -- function value
+    OUTPUT: integer; function value
 
     EXAMPLES::
 
@@ -8560,8 +8315,7 @@ class A109814(SloaneSequence):
                 continue
             # d is odd divisor
             k = min(d, 2 * n // d)
-            if k > m:
-                m = k
+            m = max(k, m)
         return ZZ(m)
 
 
@@ -8580,11 +8334,9 @@ class A111774(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8688,11 +8440,9 @@ class A111774(SloaneSequence):
 
         INPUT:
 
-        - `n` -- positive integer
+        - ``n`` -- positive integer
 
-        OUTPUT:
-
-        ``True`` if `n` is not prime and not a power of 2
+        OUTPUT: ``True`` if `n` is not prime and not a power of 2
 
         EXAMPLES::
 
@@ -8732,11 +8482,9 @@ class A111775(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8821,11 +8569,9 @@ class A111787(SloaneSequence):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 
@@ -8940,11 +8686,9 @@ class A000110(ExponentialNumbers):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- `B_n`
+        OUTPUT: integer; `B_n`
 
         EXAMPLES::
 
@@ -8994,11 +8738,9 @@ class A000587(ExponentialNumbers):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- `C_n`
+        OUTPUT: integer; `C_n`
 
         EXAMPLES::
 
@@ -9039,11 +8781,9 @@ class A000100(SloaneSequence):
         r"""
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``integer`` -- function value
+        OUTPUT: integer; function value
 
         EXAMPLES::
 

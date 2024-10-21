@@ -73,40 +73,39 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         then the output is a boolean ``out`` saying whether ``self``
         has a rational point.
 
-        If ``point`` or ``obstruction`` is True, then the output is
+        If ``point`` or ``obstruction`` is ``True``, then the output is
         a pair ``(out, S)``, where ``out`` is as above and:
 
-        - if ``point`` is True and ``self`` has a rational point,
+        - if ``point`` is ``True`` and ``self`` has a rational point,
           then ``S`` is a rational point,
 
-        - if ``obstruction`` is True, ``self`` has no rational point,
+        - if ``obstruction`` is ``True``, ``self`` has no rational point,
           then ``S`` is a prime or infinite place of `B` such that no
           rational point exists over the completion at ``S``.
 
         Points and obstructions are cached whenever they are found.
         Cached information is used for the output if available, but only
-        if ``read_cache`` is True.
+        if ``read_cache`` is ``True``.
 
         ALGORITHM:
 
         The parameter ``algorithm``
         specifies the algorithm to be used:
 
-        - ``'rnfisnorm'`` -- Use PARI's ``rnfisnorm``
+        - ``'rnfisnorm'`` -- use PARI's ``rnfisnorm``
           (cannot be combined with ``obstruction = True``)
 
-        - ``'local'`` -- Check if a local solution exists for all primes
-          and infinite places of `B` and apply the Hasse principle.
-          (Cannot be combined with ``point = True``.)
+        - ``'local'`` -- check if a local solution exists for all primes
+          and infinite places of `B` and apply the Hasse principle
+          (cannot be combined with ``point = True``)
 
-        - ``'default'`` -- Use algorithm ``'rnfisnorm'`` first.
+        - ``'default'`` -- use algorithm ``'rnfisnorm'`` first.
           Then, if no point exists and obstructions are requested, use
           algorithm ``'local'`` to find an obstruction.
 
         - ``'magma'`` (requires Magma to be installed) --
           delegates the task to the Magma computer algebra
-          system.
-
+          system
 
         EXAMPLES:
 
@@ -124,9 +123,9 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: C = Conic(K, [1, 3, -5])
             sage: C.has_rational_point(point=True, obstruction=True)
             (False, Fractional ideal (-i - 2))
-            sage: C.has_rational_point(algorithm="rnfisnorm")
+            sage: C.has_rational_point(algorithm='rnfisnorm')
             False
-            sage: C.has_rational_point(algorithm="rnfisnorm", obstruction=True,
+            sage: C.has_rational_point(algorithm='rnfisnorm', obstruction=True,
             ....:                      read_cache=False)
             Traceback (most recent call last):
             ...
@@ -224,7 +223,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
                     return False, self._local_obstruction
                 else:
                     return False
-            # `_(in)finite_obstructions` is `None` if the cache is empty,
+            # `_(in)finite_obstructions` is ``None`` if the cache is empty,
             # so we explicitly check against a list:
             if (not point) and self._finite_obstructions == [] and \
                self._infinite_obstructions == []:
@@ -392,7 +391,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
 
         If the base field is `\QQ`, then the infinite place is denoted `-1`.
 
-        The parameters ``finite`` and ``infinite`` (both True by default) are
+        The parameters ``finite`` and ``infinite`` (both ``True`` by default) are
         used to specify whether to look at finite and/or infinite places.
         Note that ``finite = True`` involves factorization of the determinant
         of ``self``, hence may be slow.

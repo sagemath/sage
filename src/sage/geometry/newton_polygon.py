@@ -37,7 +37,7 @@ class NewtonPolygon_element(Element):
 
         INPUT:
 
-        - polyhedron -- a polyhedron defining the Newton polygon
+        - ``polyhedron`` -- a polyhedron defining the Newton polygon
 
         TESTS:
 
@@ -88,15 +88,13 @@ class NewtonPolygon_element(Element):
 
     def vertices(self, copy=True):
         """
-        Returns the list of vertices of this Newton polygon
+        Return the list of vertices of this Newton polygon.
 
         INPUT:
 
-        - ``copy`` -- a boolean (default: ``True``)
+        - ``copy`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        The list of vertices of this Newton polygon (or a copy of it
+        OUTPUT: the list of vertices of this Newton polygon (or a copy of it
         if ``copy`` is set to True)
 
         EXAMPLES::
@@ -127,7 +125,7 @@ class NewtonPolygon_element(Element):
     @cached_method
     def last_slope(self):
         """
-        Returns the last (infinite) slope of this Newton polygon
+        Return the last (infinite) slope of this Newton polygon
         if it is infinite and ``+Infinity`` otherwise.
 
         EXAMPLES::
@@ -157,11 +155,11 @@ class NewtonPolygon_element(Element):
 
     def slopes(self, repetition=True):
         """
-        Returns the slopes of this Newton polygon
+        Return the slopes of this Newton polygon.
 
         INPUT:
 
-        - ``repetition`` -- a boolean (default: ``True``)
+        - ``repetition`` -- boolean (default: ``True``)
 
         OUTPUT:
 
@@ -197,15 +195,13 @@ class NewtonPolygon_element(Element):
 
     def _add_(self, other):
         """
-        Returns the convex hull of ``self`` and ``other``
+        Return the convex hull of ``self`` and ``other``.
 
         INPUT:
 
         - ``other`` -- a Newton polygon
 
-        OUTPUT:
-
-        The Newton polygon, which is the convex hull of this Newton polygon and ``other``
+        OUTPUT: the Newton polygon, which is the convex hull of this Newton polygon and ``other``
 
         EXAMPLES::
 
@@ -223,15 +219,13 @@ class NewtonPolygon_element(Element):
 
     def _mul_(self, other):
         """
-        Returns the Minkowski sum of ``self`` and ``other``
+        Return the Minkowski sum of ``self`` and ``other``.
 
         INPUT:
 
         - ``other`` -- a Newton polygon
 
-        OUTPUT:
-
-        The Newton polygon, which is the Minkowski sum of this Newton polygon and ``other``.
+        OUTPUT: the Newton polygon, which is the Minkowski sum of this Newton polygon and ``other``
 
         .. NOTE::
 
@@ -264,15 +258,13 @@ class NewtonPolygon_element(Element):
 
     def __pow__(self, exp, ignored=None):
         """
-        Returns ``self`` dilated by ``exp``
+        Return ``self`` dilated by ``exp``.
 
         INPUT:
 
-        - ``exp`` -- a positive integer
+        - ``exp`` -- positive integer
 
-        OUTPUT:
-
-        This Newton polygon scaled by a factor ``exp``.
+        OUTPUT: this Newton polygon scaled by a factor ``exp``
 
         .. NOTE::
 
@@ -293,15 +285,13 @@ class NewtonPolygon_element(Element):
 
     def __lshift__(self, i):
         """
-        Returns ``self`` shifted by `(0,i)`
+        Return ``self`` shifted by `(0,i)`.
 
         INPUT:
 
         - ``i`` -- a rational number
 
-        OUTPUT:
-
-        This Newton polygon shifted by the vector `(0,i)`
+        OUTPUT: this Newton polygon shifted by the vector `(0,i)`
 
         EXAMPLES::
 
@@ -317,15 +307,13 @@ class NewtonPolygon_element(Element):
 
     def __rshift__(self, i):
         """
-        Returns ``self`` shifted by `(0,-i)`
+        Return ``self`` shifted by `(0,-i)`.
 
         INPUT:
 
         - ``i`` -- a rational number
 
-        OUTPUT:
-
-        This Newton polygon shifted by the vector `(0,-i)`
+        OUTPUT: this Newton polygon shifted by the vector `(0,-i)`
 
         EXAMPLES::
 
@@ -341,15 +329,13 @@ class NewtonPolygon_element(Element):
 
     def __call__(self, x):
         """
-        Returns `self(x)`
+        Return `self(x)`.
 
         INPUT:
 
         - ``x`` -- a real number
 
-        OUTPUT:
-
-        The value of this Newton polygon at abscissa `x`
+        OUTPUT: the value of this Newton polygon at abscissa `x`
 
         EXAMPLES::
 
@@ -477,27 +463,27 @@ class NewtonPolygon_element(Element):
             (xstart,ystart) = vertices[0]
             (xend,yend) = vertices[-1]
             if self.last_slope() is Infinity:
-                return line([(xstart, ystart+1), (xstart,ystart+0.5)], linestyle="--", **kwargs) \
+                return line([(xstart, ystart+1), (xstart,ystart+0.5)], linestyle='--', **kwargs) \
                      + line([(xstart, ystart+0.5)] + vertices + [(xend, yend+0.5)], **kwargs) \
-                     + line([(xend, yend+0.5), (xend, yend+1)], linestyle="--", **kwargs)
+                     + line([(xend, yend+0.5), (xend, yend+1)], linestyle='--', **kwargs)
             else:
-                return line([(xstart, ystart+1), (xstart,ystart+0.5)], linestyle="--", **kwargs) \
+                return line([(xstart, ystart+1), (xstart,ystart+0.5)], linestyle='--', **kwargs) \
                      + line([(xstart, ystart+0.5)] + vertices + [(xend+0.5, yend + 0.5*self.last_slope())], **kwargs) \
-                     + line([(xend+0.5, yend + 0.5*self.last_slope()), (xend+1, yend+self.last_slope())], linestyle="--", **kwargs)
+                     + line([(xend+0.5, yend + 0.5*self.last_slope()), (xend+1, yend+self.last_slope())], linestyle='--', **kwargs)
 
     def reverse(self, degree=None):
         r"""
-        Returns the symmetric of ``self``
+        Return the symmetric of ``self``.
 
         INPUT:
 
-        - ``degree`` -- an integer (default: the top right abscissa of
+        - ``degree`` -- integer (default: the top right abscissa of
           this Newton polygon)
 
         OUTPUT:
 
         The image this Newton polygon under the symmetry
-        '(x,y) \mapsto (degree-x, y)`
+        '(x,y) \mapsto (degree-x, y)`.
 
         EXAMPLES::
 
@@ -531,20 +517,18 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
 
     INPUT:
 
-    - ``arg`` -- a list/tuple/iterable of vertices or of
-      slopes. Currently, slopes must be rational numbers.
+    - ``arg`` -- list/tuple/iterable of vertices or of
+      slopes. Currently, slopes must be rational numbers
 
-    - ``sort_slopes`` -- boolean (default: ``True``). Specifying
-      whether slopes must be first sorted
+    - ``sort_slopes`` -- boolean (default: ``True``);  whether slopes must be
+      first sorted
 
     - ``last_slope`` -- rational or infinity (default:
-      ``Infinity``). The last slope of the Newton polygon
+      ``Infinity``); the last slope of the Newton polygon
 
-    OUTPUT:
+    OUTPUT: the corresponding Newton polygon
 
-    The corresponding Newton polygon.
-
-    .. note::
+    .. NOTE::
 
         By convention, a Newton polygon always contains the point
         at infinity `(0, \infty)`. These polygons are attached to
@@ -653,8 +637,8 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
 
     def _repr_(self):
         """
-        Returns the string representation of this parent,
-        which is ``Parent for Newton polygons``
+        Return the string representation of this parent,
+        which is ``Parent for Newton polygons``.
 
         TESTS:
 
@@ -669,7 +653,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
 
     def _an_element_(self):
         """
-        Returns a Newton polygon (which is the empty one)
+        Return a Newton polygon (which is the empty one).
 
         TESTS:
 
@@ -685,8 +669,8 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
 
         - ``arg`` -- an argument describing the Newton polygon
 
-        - ``sort_slopes`` -- boolean (default: ``True``). Specifying
-          whether slopes must be first sorted
+        - ``sort_slopes`` -- boolean (default: ``True``); whether
+          slopes must be first sorted
 
         - ``last_slope`` -- rational or infinity (default:
           ``Infinity``). The last slope of the Newton polygon
@@ -704,9 +688,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
 
         - a list/tuple/iterable of slopes
 
-        OUTPUT:
-
-        The corresponding Newton polygon.
+        OUTPUT: the corresponding Newton polygon
 
         For more informations, see :class:`ParentNewtonPolygon`.
 

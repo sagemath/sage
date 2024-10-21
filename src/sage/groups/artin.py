@@ -22,13 +22,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.groups.free_group import FreeGroup
-from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
+from sage.groups.free_group import FreeGroup
+from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
+from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import Infinity
 from sage.structure.richcmp import richcmp, rich_to_bool
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class ArtinGroupElement(FinitelyPresentedGroupElement):
@@ -52,7 +53,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT: a string; a valid LaTeX math command sequence
+        OUTPUT: string; a valid LaTeX math command sequence
 
         TESTS::
 
@@ -336,7 +337,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
         return tuple([-delta] + form)
 
 
-class ArtinGroup(FinitelyPresentedGroup):
+class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
     r"""
     An Artin group.
 
@@ -516,7 +517,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return the number of elements of ``self``.
 
-        OUTPUT: Infinity
+        OUTPUT: infinity
 
         EXAMPLES::
 
@@ -539,7 +540,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return an isomorphic permutation group.
 
-        This raises a :class:`ValueError` error since Artin groups are
+        This raises a :exc:`ValueError` error since Artin groups are
         infinite and have no corresponding permutation group.
 
         EXAMPLES::

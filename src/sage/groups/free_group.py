@@ -64,7 +64,7 @@ AUTHORS:
 from sage.categories.groups import Groups
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import CachedRepresentation
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element import GapElement
 from sage.rings.integer import Integer
@@ -73,6 +73,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.structure.sequence import Sequence
 from sage.structure.element import coercion_model, parent
+from sage.structure.richcmp import richcmp, richcmp_method
 
 
 def is_FreeGroup(x):
@@ -116,7 +117,7 @@ def _lexi_gen(zeroes=False):
 
     Python generator object which outputs a character from the alphabet on each
     ``next()`` call in lexicographical order. The integer `i` is appended
-    to the output string on the `i^{th}` iteration through the alphabet.
+    to the output string on the `i`-th iteration through the alphabet.
 
     EXAMPLES::
 
@@ -143,7 +144,6 @@ def _lexi_gen(zeroes=False):
         sage: ls = [next(test) for i in range(500)]
         sage: ls[234], ls[260]
         ('a9', 'a10')
-
     """
     count = Integer(0)
     while True:
@@ -244,7 +244,7 @@ class FreeGroupElement(ElementLibGAP):
         r"""
         Return a LaTeX representation.
 
-        OUTPUT: a string; a valid LaTeX math command sequence
+        OUTPUT: string; a valid LaTeX math command sequence
 
         EXAMPLES::
 
@@ -363,14 +363,14 @@ class FreeGroupElement(ElementLibGAP):
           derivative will be computed. If this is `x_j`, then the
           method will return `\partial_j`.
 
-        - ``im_gens`` (optional) -- the images of the generators
+        - ``im_gens`` -- (optional) the images of the generators
           (given as a list or iterable). This is the list
           `(a_1, a_2, \ldots, a_n)`.
           If not provided, it defaults to
           `(x_1, x_2, \ldots, x_n)` in the group ring
           `\ZZ [F]`.
 
-        - ``ring`` (optional) -- the ring in which the elements
+        - ``ring`` -- (optional) the ring in which the elements
           of the list  `(a_1, a_2, \ldots, a_n)` lie. If not
           provided, this ring is inferred from these elements.
 
@@ -489,7 +489,7 @@ class FreeGroupElement(ElementLibGAP):
         OUTPUT:
 
         The tuple of syllables. Each syllable is given as a pair
-        `(x_i, e_i)` consisting of a generator and a non-zero integer.
+        `(x_i, e_i)` consisting of a generator and a nonzero integer.
 
         EXAMPLES::
 
@@ -607,7 +607,7 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
     - ``index_set`` -- (optional) an index set for the generators; if
       specified then the optional keyword ``abelian`` can be used
 
-    - ``abelian`` -- (default: ``False``) whether to construct a free
+    - ``abelian`` -- boolean (default: ``False``); whether to construct a free
       abelian group or a free group
 
     .. NOTE::
@@ -674,58 +674,13 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
 
         from sage.groups.indexed_free_group import IndexedFreeGroup
         return IndexedFreeGroup(index_set, names=names, **kwds)
-    return FreeGroup_class(names)
+    return FreeGroup_class(names, **kwds)
 
 
-def wrap_FreeGroup(libgap_free_group):
+@richcmp_method
+class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
     """
-    Wrap a LibGAP free group.
-
-    This function changes the comparison method of
-    ``libgap_free_group`` to comparison by Python ``id``. If you want
-    to put the LibGAP free group into a container (set, dict) then you
-    should understand the implications of
-    :meth:`~sage.libs.gap.element.GapElement._set_compare_by_id`. To
-    be safe, it is recommended that you just work with the resulting
-    Sage :class:`FreeGroup_class`.
-
-    INPUT:
-
-    - ``libgap_free_group`` -- a LibGAP free group
-
-    OUTPUT: a Sage :class:`FreeGroup_class`
-
-    EXAMPLES:
-
-    First construct a LibGAP free group::
-
-        sage: F = libgap.FreeGroup(['a', 'b'])
-        sage: type(F)
-        <class 'sage.libs.gap.element.GapElement'>
-
-    Now wrap it::
-
-        sage: from sage.groups.free_group import wrap_FreeGroup
-        sage: wrap_FreeGroup(F)
-        Free Group on generators {a, b}
-
-    TESTS:
-
-    Check that we can do it twice (see :issue:`12339`) ::
-
-        sage: G = libgap.FreeGroup(['a', 'b'])
-        sage: wrap_FreeGroup(G)
-        Free Group on generators {a, b}
-    """
-    assert libgap_free_group.IsFreeGroup()
-    libgap_free_group._set_compare_by_id()
-    names = tuple( str(g) for g in libgap_free_group.GeneratorsOfGroup() )
-    return FreeGroup_class(names, libgap_free_group)
-
-
-class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
-    """
-    A class that wraps GAP's FreeGroup
+    A class that wraps GAP's FreeGroup.
 
     See :func:`FreeGroup` for details.
 
@@ -738,13 +693,13 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
     """
     Element = FreeGroupElement
 
-    def __init__(self, generator_names, libgap_free_group=None):
+    def __init__(self, generator_names, gap_group=None):
         """
         Python constructor.
 
         INPUT:
 
-        - ``generator_names`` -- a tuple of strings; the names of the
+        - ``generator_names`` -- tuple of strings; the names of the
           generators
 
         - ``libgap_free_group`` -- a LibGAP free group (default: ``None``);
@@ -759,15 +714,55 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G.variable_names()
             ('a', 'b')
         """
-        self._assign_names(generator_names)
-        if libgap_free_group is None:
-            libgap_free_group = libgap.FreeGroup(generator_names)
-        ParentLibGAP.__init__(self, libgap_free_group)
+        if gap_group is None:
+            gap_group = libgap.FreeGroup(generator_names)
+        ParentLibGAP.__init__(self, gap_group)
         if not generator_names:
             cat = Groups().Finite()
         else:
             cat = Groups().Infinite()
         Group.__init__(self, category=cat)
+        self._gen_names = generator_names
+        try:
+            self._assign_names(generator_names)
+        except ValueError:
+            pass
+
+    def __hash__(self):
+        """
+        Make hashable.
+
+        EXAMPLES::
+
+            sage: F = FreeGroup(3)
+            sage: F.__hash__() == hash(F._gen_names)
+            True
+        """
+        return hash(self._gen_names)
+
+    def __richcmp__(self, other, op):
+        """
+        Rich comparison of ``self`` and ``other``.
+
+        EXAMPLES::
+
+            sage: G1 = FreeGroup('a, b')
+            sage: gg = libgap.FreeGroup('x', 'y')
+            sage: G2 = FreeGroup('a, b', gap_group=gg)
+            sage: G1 == G2
+            True
+            sage: G1 is G2
+            False
+            sage: G3 = FreeGroup('x, y')
+            sage: G1 == G3
+            False
+            sage: G2 == G3
+            False
+        """
+        if not isinstance(other, self.__class__):
+            from sage.structure.richcmp import op_NE
+            return (op == op_NE)
+        return richcmp(self._gen_names, other._gen_names, op)
 
     def _repr_(self):
         """
@@ -779,7 +774,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G._repr_()
             'Free Group on generators {a, b}'
         """
-        return 'Free Group on generators {' + ', '.join(self.variable_names()) + '}'
+        return 'Free Group on generators {' + ', '.join(self._gen_names) + '}'
 
     def rank(self):
         """
@@ -813,7 +808,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G._gap_init_()
             'FreeGroup(["x0", "x1", "x2"])'
         """
-        gap_names = [ '"' + s + '"' for s in self.variable_names() ]
+        gap_names = ['"' + s + '"' for s in self._gen_names]
         gen_str = ', '.join(gap_names)
         return 'FreeGroup(['+gen_str+'])'
 
@@ -869,9 +864,9 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
         except AttributeError:
             return self.element_class(self, x, **kwds)
         if isinstance(P, FreeGroup_class):
-            names = {P._names[abs(i)-1] for i in x.Tietze()}
-            if names.issubset(self._names):
-                return self([i.sign()*(self._names.index(P._names[abs(i)-1])+1)
+            names = {P._gen_names[abs(i)-1] for i in x.Tietze()}
+            if names.issubset(self._gen_names):
+                return self([i.sign()*(self._gen_names.index(P._gen_names[abs(i)-1])+1)
                              for i in x.Tietze()])
             else:
                 raise ValueError('generators of %s not in the group' % x)
@@ -908,7 +903,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         INPUT:
 
-        - ``relations`` -- a list/tuple/iterable with the elements of
+        - ``relations`` -- list/tuple/iterable with the elements of
           the free group
         - further named arguments, that are passed to the constructor
           of a finitely presented group

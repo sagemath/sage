@@ -52,7 +52,7 @@ import copy
 lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
-def WeakTableau(t, k, inner_shape=[], representation="core"):
+def WeakTableau(t, k, inner_shape=[], representation='core'):
     r"""
     This is the dispatcher method for the element class of weak `k`-tableaux.
 
@@ -86,7 +86,7 @@ def WeakTableau(t, k, inner_shape=[], representation="core"):
       (default: ``[]``)
 
     - ``representation`` -- 'core', 'bounded', or 'factorized_permutation'
-      (default: 'core')
+      (default: ``'core'``)
 
     EXAMPLES:
 
@@ -112,7 +112,7 @@ def WeakTableau(t, k, inner_shape=[], representation="core"):
 
     Next we create the analogue of the first example in bounded representation::
 
-        sage: tb = WeakTableau([[1,1,2],[2,3],[3]], 3, representation="bounded")
+        sage: tb = WeakTableau([[1,1,2],[2,3],[3]], 3, representation='bounded')
         sage: tb.shape()
         [3, 2, 1]
         sage: tb.weight()
@@ -197,7 +197,7 @@ def WeakTableau(t, k, inner_shape=[], representation="core"):
         raise NotImplementedError("The representation option needs to be 'core', 'bounded', or 'factorized_permutation'")
 
 
-def WeakTableaux(k, shape , weight, representation="core"):
+def WeakTableaux(k, shape , weight, representation='core'):
     r"""
     This is the dispatcher method for the parent class of weak `k`-tableaux.
 
@@ -361,7 +361,7 @@ class WeakTableau_abstract(ClonableList,
             ([5, 2, 1], [1, 1])
             sage: t.size()
             4
-            sage: t = WeakTableau([[1,1,2],[2,3],[3]], 3, representation="bounded")
+            sage: t = WeakTableau([[1,1,2],[2,3],[3]], 3, representation='bounded')
             sage: t.shape()
             [3, 2, 1]
             sage: t.size()
@@ -487,7 +487,7 @@ class WeakTableau_abstract(ClonableList,
 
         INPUT:
 
-        - ``representation`` -- 'core', 'bounded', or 'factorized_permutation' (default: 'core')
+        - ``representation`` -- 'core', 'bounded', or 'factorized_permutation' (default: ``'core'``)
 
         EXAMPLES::
 
@@ -615,7 +615,7 @@ class WeakTableaux_abstract(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``representation`` -- 'core', 'bounded', or 'factorized_permutation' (default: 'core')
+        - ``representation`` -- 'core', 'bounded', or 'factorized_permutation' (default: ``'core'``)
 
         EXAMPLES::
 
@@ -671,8 +671,9 @@ class WeakTableau_core(WeakTableau_abstract):
     @staticmethod
     def __classcall_private__(cls, t, k):
         r"""
-        Implements the shortcut ``WeakTableau_core(t, k)`` to ``WeakTableaux_core(k, shape , weight)(t)``
-        where ``shape`` is the shape of the tableau and ``weight`` is its weight.
+        Implement the shortcut ``WeakTableau_core(t, k)`` to
+        ``WeakTableaux_core(k, shape , weight)(t)`` where ``shape`` is the
+        shape of the tableau and ``weight`` is its weight.
 
         TESTS::
 
@@ -912,9 +913,7 @@ class WeakTableau_core(WeakTableau_abstract):
 
         - ``v`` -- a label of a cell in ``self``
 
-        OUTPUT:
-
-        - a list of residues
+        OUTPUT: list of residues
 
         EXAMPLES::
 
@@ -941,9 +940,7 @@ class WeakTableau_core(WeakTableau_abstract):
 
         - ``v`` -- a label of a cell in ``self``
 
-        OUTPUT:
-
-        - dictionary assigning coordinates in ``self`` to residues
+        OUTPUT: dictionary assigning coordinates in ``self`` to residues
 
         EXAMPLES::
 
@@ -976,9 +973,7 @@ class WeakTableau_core(WeakTableau_abstract):
 
         - ``self`` -- a weak `k`-tableau in core representation with partition weight
 
-        OUTPUT:
-
-        - a list of lists of coordinates
+        OUTPUT: list of lists of coordinates
 
         .. WARNING::
 
@@ -1037,18 +1032,16 @@ class WeakTableau_core(WeakTableau_abstract):
             out.append(standard_cells)
         return out
 
-    def k_charge(self, algorithm="I"):
+    def k_charge(self, algorithm='I'):
         r"""
         Return the `k`-charge of ``self``.
 
         INPUT:
 
-        - ``algorithm`` -- (default: "I") if "I", computes `k`-charge using the `I`
+        - ``algorithm`` -- (default: ``'I'``) if "I", computes `k`-charge using the `I`
           algorithm, otherwise uses the `J`-algorithm
 
-        OUTPUT:
-
-        - a nonnegative integer
+        OUTPUT: nonnegative integer
 
         For the definition of `k`-charge and the various algorithms to compute it see
         Section 3.3 of [LLMSSZ2013]_.
@@ -1085,9 +1078,7 @@ class WeakTableau_core(WeakTableau_abstract):
 
         For the definition of `k`-charge and the `I`-algorithm see Section 3.3 of [LLMSSZ2013]_.
 
-        OUTPUT:
-
-        - a nonnegative integer
+        OUTPUT: nonnegative integer
 
         .. SEEALSO:: :meth:`k_charge` and :meth:`k_charge_J`
 
@@ -1131,9 +1122,7 @@ class WeakTableau_core(WeakTableau_abstract):
 
         For the definition of `k`-charge and the `J`-algorithm see Section 3.3 of [LLMSSZ2013]_.
 
-        OUTPUT:
-
-        - a nonnegative integer
+        OUTPUT: nonnegative integer
 
         .. SEEALSO:: :meth:`k_charge` and :meth:`k_charge_I`
 
@@ -1190,9 +1179,7 @@ class WeakTableau_core(WeakTableau_abstract):
         - ``sw`` -- one of the subwords of standard cells of ``self``
         - ``r`` -- nonnegative integer
 
-        OUTPUT:
-
-        - a nonnegative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -1266,7 +1253,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
 
     def __init__(self, k, shape, weight):
         r"""
-        Initializes the parent class of (skew) weak `k`-tableaux in core representation.
+        Initialize the parent class of (skew) weak `k`-tableaux in core representation.
 
         INPUT:
 
@@ -1335,9 +1322,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
         - ``c`` -- a cell in the lattice
         - ``ha`` -- another cell in the lattice with bigger row and smaller column than `c`
 
-        OUTPUT:
-
-        - a nonnegative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -1355,9 +1340,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
 
         - ``cr``, ``r`` -- nonnegative integers between `0` and `k`
 
-        OUTPUT:
-
-        - a positive integer
+        OUTPUT: positive integer
 
         EXAMPLES::
 
@@ -1382,8 +1365,9 @@ class WeakTableau_bounded(WeakTableau_abstract):
     @staticmethod
     def __classcall_private__(cls, t, k):
         r"""
-        Implements the shortcut ``WeakTableau_bounded(t, k)`` to ``WeakTableaux_bounded(k, shape, weight)(t)``
-        where ``shape`` is the shape of the tableau and ``weight`` is its weight.
+        Implement the shortcut ``WeakTableau_bounded(t, k)`` to
+        ``WeakTableaux_bounded(k, shape, weight)(t)`` where ``shape`` is the
+        shape of the tableau and ``weight`` is its weight.
 
         TESTS::
 
@@ -1565,7 +1549,7 @@ class WeakTableau_bounded(WeakTableau_abstract):
 
     def _is_k_tableau(self):
         r"""
-        Checks whether ``self`` is a valid weak `k`-tableau.
+        Check whether ``self`` is a valid weak `k`-tableau.
 
         EXAMPLES::
 
@@ -1663,12 +1647,10 @@ class WeakTableau_bounded(WeakTableau_abstract):
 
         INPUT:
 
-        - ``algorithm`` -- (default: "I") if "I", computes `k`-charge using the `I`
+        - ``algorithm`` -- (default: ``'I'``) if "I", computes `k`-charge using the `I`
           algorithm, otherwise uses the `J`-algorithm
 
-        OUTPUT:
-
-        - a nonnegative integer
+        OUTPUT: nonnegative integer
 
         For the definition of `k`-charge and the various algorithms to compute it see Section 3.3 of [LLMSSZ2013]_.
 
@@ -1734,7 +1716,7 @@ class WeakTableaux_bounded(WeakTableaux_abstract):
 
     def __init__(self, k, shape, weight):
         r"""
-        Initializes the parent class of (skew) weak `k`-tableaux in bounded representation.
+        Initialize the parent class of (skew) weak `k`-tableaux in bounded representation.
 
         INPUT:
 
@@ -1810,9 +1792,9 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
 
         INPUT:
 
-        - ``t`` -- a list of reduced words or a list of elements in the Weyl group of type
+        - ``t`` -- list of reduced words or a list of elements in the Weyl group of type
           `A_k^{(1)}`
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
         EXAMPLES::
 
@@ -1843,7 +1825,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
     @staticmethod
     def __classcall_private__(cls, t, k, inner_shape=[]):
         r"""
-        Implements the shortcut ``WeakTableau_factorized_permutation(t, k)`` to
+        Implement the shortcut ``WeakTableau_factorized_permutation(t, k)`` to
         ``WeakTableaux_factorized_permutation(k, shape, weight)(t)``
         where ``shape`` is the shape of the tableau as a `(k+1)`-core (or a tuple of
         `(k+1)`-cores if the tableau is skew) and ``weight`` is its weight.
@@ -2004,7 +1986,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
 
     def _is_k_tableau(self):
         r"""
-        Checks whether ``self`` is a valid weak `k`-tableau.
+        Check whether ``self`` is a valid weak `k`-tableau.
 
         EXAMPLES::
 
@@ -2095,9 +2077,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
         r"""
         Return the `k`-charge of ``self``.
 
-        OUTPUT:
-
-        - a nonnegative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -2157,7 +2137,7 @@ class WeakTableaux_factorized_permutation(WeakTableaux_abstract):
 
     def __init__(self, k, shape, weight):
         r"""
-        Initializes the parent class of weak `k`-tableaux in factorized permutation representation.
+        Initialize the parent class of weak `k`-tableaux in factorized permutation representation.
 
         INPUT:
 
@@ -2491,11 +2471,9 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``self`` -- a list of lists representing a potential *standard* marked tableau
+        - ``self`` -- list of lists representing a potential *standard* marked tableau
 
-        OUTPUT:
-
-        - a boolean, ``True`` if the marks are properly placed in the tableau
+        OUTPUT: boolean; ``True`` if the marks are properly placed in the tableau
 
         EXAMPLES::
 
@@ -2552,9 +2530,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         less than or equal to `i` for each `i`) is a `k+1`-core and that the length
         of the `i+1`-restricted core is the length of the `i`-restricted core plus 1.
 
-        OUTPUT:
-
-        - a boolean, ``True`` means the standard strong marked tableau is valid
+        OUTPUT: boolean; ``True`` means the standard strong marked tableau is valid
 
         EXAMPLES::
 
@@ -2596,9 +2572,8 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         - ``mu`` -- a vector of weights
 
-        OUTPUT:
-
-        - a boolean, ``True`` means the underlying column strict strong marked tableau is valid
+        OUTPUT: boolean; ``True`` means the underlying column strict strong
+        marked tableau is valid
 
         EXAMPLES::
 
@@ -2685,18 +2660,18 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
             sage: T = StrongTableau([[-1,-2,3],[-3]],2)
             sage: T
             [[-1, -2, 3], [-3]]
-            sage: Tableaux.options(display="diagram")
+            sage: Tableaux.options(display='diagram')
             sage: T
              -1 -2  3
              -3
-            sage: Tableaux.options(convention="French")
+            sage: Tableaux.options(convention='French')
             sage: T
              -3
              -1 -2  3
-            sage: Tableaux.options(display="compact")
+            sage: Tableaux.options(display='compact')
             sage: T
             -1,-2,3/-3
-            sage: Tableaux.options(display="list",convention="English")
+            sage: Tableaux.options(display='list',convention='English')
         """
         return self.parent().options._dispatch(self, '_repr_', 'display')
 
@@ -2710,11 +2685,9 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``v`` -- an integer representing the label in the standard tableau
+        - ``v`` -- integer representing the label in the standard tableau
 
-        OUTPUT:
-
-        - a pair of the coordinates of the marked cell with entry ``v``
+        OUTPUT: a pair of the coordinates of the marked cell with entry ``v``
 
         EXAMPLES::
 
@@ -2749,11 +2722,9 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``v`` -- an integer representing the label in the standard tableau
+        - ``v`` -- integer representing the label in the standard tableau
 
-        OUTPUT:
-
-        - an integer representing the residue of the location of the mark
+        OUTPUT: integer representing the residue of the location of the mark
 
         EXAMPLES::
 
@@ -2840,12 +2811,10 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``v`` -- an integer indicating the label in the standard tableau
+        - ``v`` -- integer indicating the label in the standard tableau
 
-        OUTPUT:
-
-        - a pair of integers indicating the coordinates of the head of the highest
-          ribbon with label ``v``
+        OUTPUT: a pair of integers indicating the coordinates of the head of
+        the highest ribbon with label ``v``
 
         EXAMPLES::
 
@@ -2884,12 +2853,10 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``v`` -- an integer representing the label in the standard tableau
+        - ``v`` -- integer representing the label in the standard tableau
 
-        OUTPUT:
-
-        - an integer representing the content of the head of the highest
-          ribbon with label ``v``
+        OUTPUT: an integer representing the content of the head of the highest
+        ribbon with label ``v``
 
         EXAMPLES::
 
@@ -2960,12 +2927,10 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``v`` -- an integer label
+        - ``v`` -- integer label
 
-        OUTPUT:
-
-        - a list of pairs of integers of the coordinates of the heads of the ribbons
-          with label ``v``
+        OUTPUT: a list of pairs of integers of the coordinates of the heads of
+        the ribbons with label ``v``
 
         EXAMPLES::
 
@@ -3004,11 +2969,10 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``v`` -- an integer label
+        - ``v`` -- integer label
 
-        OUTPUT:
-
-        - a list of integers of the content of the heads of the ribbons with label ``v``
+        OUTPUT: list of integers of the content of the heads of the ribbons
+        with label ``v``
 
         EXAMPLES::
 
@@ -3044,11 +3008,9 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``diag`` -- an integer indicating the diagonal
+        - ``diag`` -- integer indicating the diagonal
 
-        OUTPUT:
-
-        - a list (perhaps empty) of labels on the diagonal ``diag``
+        OUTPUT: list (perhaps empty) of labels on the diagonal ``diag``
 
         EXAMPLES::
 
@@ -3081,11 +3043,9 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``diag`` -- an integer indicating the diagonal
+        - ``diag`` -- integer indicating the diagonal
 
-        OUTPUT:
-
-        - a list (perhaps empty) of labels on the diagonal ``diag``
+        OUTPUT: list (perhaps empty) of labels on the diagonal ``diag``
 
         EXAMPLES::
 
@@ -3162,10 +3122,8 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         - ``v`` -- the label of the standard marked tableau
 
-        OUTPUT:
-
-        - a non-negative integer representing the number of rows
-          occupied by the ribbon which is marked
+        OUTPUT: nonnegative integer representing the number of rows
+        occupied by the ribbon which is marked
 
         EXAMPLES::
 
@@ -3203,10 +3161,8 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         - ``v`` -- the label of the standard marked tableau
 
-        OUTPUT:
-
-        - a non-negative integer representing the number of connected
-          components
+        OUTPUT: nonnegative integer representing the number of connected
+        components
 
         EXAMPLES::
 
@@ -3249,9 +3205,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         recover the strong tableau one would need the intermediate shapes and the
         :meth:`content_of_marked_head` for each pair of adjacent shapes in the list.
 
-        OUTPUT:
-
-        - a list of lists of integers representing `k+1`-cores
+        OUTPUT: list of lists of integers representing `k+1`-cores
 
         EXAMPLES::
 
@@ -3293,7 +3247,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
               3
               3
               3
-            sage: Tableaux.options(convention="French")
+            sage: Tableaux.options(convention='French')
             sage: T.pp()
               3
               3
@@ -3303,7 +3257,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
              -1 -2
               .  .
               .  . -1 -2
-            sage: Tableaux.options(convention="English")
+            sage: Tableaux.options(convention='English')
         """
         print(self._repr_diagram())
 
@@ -3372,11 +3326,11 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``form`` -- optional argument to indicate 'inner', 'outer' or 'skew' (default : 'outer')
+        - ``form`` -- argument to indicate ``'inner'``, ``'outer'`` or
+          ``'skew'`` (default: ``'outer'``)
 
-        OUTPUT:
-
-        - a `k+1`-core or a pair of `k+1`-cores if form is not 'inner' or 'outer'
+        OUTPUT: a `k+1`-core or a pair of `k+1`-cores if form is not
+        ``'inner'`` or ``'outer'``
 
         EXAMPLES::
 
@@ -3401,12 +3355,10 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         r"""
         Return the weight of the tableau.
 
-        The weight is a list of non-negative integers indicating the number of 1s,
+        The weight is a list of nonnegative integers indicating the number of 1s,
         number of 2s, number of 3s, etc.
 
-        OUTPUT:
-
-        - a list of non-negative integers
+        OUTPUT: list of nonnegative integers
 
         EXAMPLES::
 
@@ -3436,9 +3388,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         .. SEEALSO:: :meth:`sage.combinat.core.Core.length`
 
-        OUTPUT:
-
-        - a non-negative integer
+        OUTPUT: nonnegative integer
 
         EXAMPLES::
 
@@ -3460,9 +3410,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         """
         Return the marked column strict (possibly skew) tableau as a list of lists.
 
-        OUTPUT:
-
-        - a list of lists of integers or ``None``
+        OUTPUT: list of lists of integers or ``None``
 
         EXAMPLES::
 
@@ -3495,9 +3443,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         Return the list of lists of the rows of the tableau where the markings have been
         removed.
 
-        OUTPUT:
-
-        - a list of lists of integers or ``None``
+        OUTPUT: list of lists of integers or ``None``
 
         EXAMPLES::
 
@@ -3526,9 +3472,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         Internally, for a strong tableau the standard strong tableau and its weight
         is stored separately.  This method returns the underlying standard part.
 
-        OUTPUT:
-
-        - a list of lists of integers or ``None``
+        OUTPUT: list of lists of integers or ``None``
 
         EXAMPLES::
 
@@ -3554,9 +3498,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         is stored separately.  This method returns the underlying standard part as a
         ``StrongTableau``.
 
-        OUTPUT:
-
-        - a strong tableau with standard weight
+        OUTPUT: a strong tableau with standard weight
 
         EXAMPLES::
 
@@ -3584,9 +3526,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         Return the list of lists of the rows of the tableau where the markings have been
         removed.
 
-        OUTPUT:
-
-        - a list of lists of integers or ``None``
+        OUTPUT: list of lists of integers or ``None``
 
         EXAMPLES::
 
@@ -3651,11 +3591,9 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``r`` -- an integer
+        - ``r`` -- integer
 
-        OUTPUT:
-
-        - A strong tableau
+        OUTPUT: a strong tableau
 
         EXAMPLES::
 
@@ -3684,7 +3622,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
     def set_weight( self, mu ):
         """
-        Sets a new weight ``mu`` for ``self``.
+        Set a new weight ``mu`` for ``self``.
 
         This method first tests if the underlying standard tableau is column-strict with
         respect to the weight ``mu``.  If it is, then it changes the weight and returns
@@ -3692,7 +3630,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``mu`` -- a list of non-negative integers representing the new weight
+        - ``mu`` -- list of nonnegative integers representing the new weight
 
         EXAMPLES::
 
@@ -3729,11 +3667,9 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         INPUT:
 
-        - ``tij`` -- a transposition represented as a pair `(i, j)`.
+        - ``tij`` -- a transposition represented as a pair `(i, j)`
 
-        OUTPUT:
-
-        - ``self`` after it has been modified by the action of the transposition ``tij``
+        OUTPUT: ``self`` after it has been modified by the action of the transposition ``tij``
 
         EXAMPLES::
 
@@ -3770,9 +3706,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         Return list of all strong tableaux obtained from ``self`` by extending to a core
         which follows the shape of ``self`` in the strong order.
 
-        OUTPUT:
-
-        - a list of strong tableaux which follow ``self`` in strong order
+        OUTPUT: list of strong tableaux which follow ``self`` in strong order
 
         EXAMPLES::
 
@@ -3818,9 +3752,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
         - ``v`` -- a label of the standard part of the tableau
 
-        OUTPUT:
-
-        - an integer value representing the spin of the ribbon with label ``v``.
+        OUTPUT: integer value representing the spin of the ribbon with label ``v``
 
         EXAMPLES::
 
@@ -3861,9 +3793,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         where the sum is over all column strict marked strong `k`-tableaux
         of shape `\lambda` and partition content.
 
-        OUTPUT:
-
-        - an integer value representing the spin.
+        OUTPUT: integer value representing the spin
 
         EXAMPLES::
 
@@ -3902,9 +3832,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         which when applied to the left of an empty tableau gives the corresponding strong
         standard tableau.
 
-        OUTPUT:
-
-        - a list of pairs of values ``[i,j]`` representing the transpositions `t_{ij}`
+        OUTPUT: list of pairs of values ``[i,j]`` representing the transpositions `t_{ij}`
 
         EXAMPLES::
 
@@ -4015,9 +3943,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         r"""
         Return the outer shape of the class of strong tableaux.
 
-        OUTPUT:
-
-        - a `k+1`-core
+        OUTPUT: a `k+1`-core
 
         EXAMPLES::
 
@@ -4034,9 +3960,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         r"""
         Return the inner shape of the class of strong tableaux.
 
-        OUTPUT:
-
-        - a `k+1`-core
+        OUTPUT: a `k+1`-core
 
         EXAMPLES::
 
@@ -4056,9 +3980,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         If the ``self`` has an inner shape return a pair consisting of an inner and
         an outer shape.  If the inner shape is empty then return only the outer shape.
 
-        OUTPUT:
-
-        - a `k+1`-core or a pair of `k+1`-cores
+        OUTPUT: a `k+1`-core or a pair of `k+1`-cores
 
         EXAMPLES::
 
@@ -4126,8 +4048,8 @@ class StrongTableaux(UniqueRepresentation, Parent):
         INPUT:
 
         - ``k``, ``size`` -- positive integers
-        - ``outer_shape`` -- a list representing a `k+1`-core (default: ``None``)
-        - ``inner_shape`` -- a list representing a `k+1`-core (default: ``[]``)
+        - ``outer_shape`` -- list representing a `k+1`-core (default: ``None``)
+        - ``inner_shape`` -- list representing a `k+1`-core (default: ``[]``)
 
         OUTPUT:
 
@@ -4175,13 +4097,11 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``unmarkedT`` -- a list of lists representing a strong unmarked tableau
-        - ``k`` -- a positive integer
-        - ``weight`` -- a list of non-negative integers indicating the weight
+        - ``unmarkedT`` -- list of lists representing a strong unmarked tableau
+        - ``k`` -- positive integer
+        - ``weight`` -- list of nonnegative integers indicating the weight
 
-        OUTPUT:
-
-        - an iterator that returns ``StrongTableau`` objects
+        OUTPUT: an iterator that returns ``StrongTableau`` objects
 
         EXAMPLES::
 
@@ -4235,14 +4155,12 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``unmarkedT`` -- a list of lists which is a partially marked strong `k`-tableau
-        - ``marking`` -- a list of pairs of coordinates where cells are to be marked
-        - ``k`` -- a positive integer
-        - ``weight`` -- a tuple of the weight of the output tableau
+        - ``unmarkedT`` -- list of lists which is a partially marked strong `k`-tableau
+        - ``marking`` -- list of pairs of coordinates where cells are to be marked
+        - ``k`` -- positive integer
+        - ``weight`` -- tuple of the weight of the output tableau
 
-        OUTPUT:
-
-        - a ``StrongTableau`` object
+        OUTPUT: a ``StrongTableau`` object
 
         EXAMPLES::
 
@@ -4281,11 +4199,9 @@ class StrongTableaux(UniqueRepresentation, Parent):
         - ``Tlist`` -- a partial standard strong `k`-tableau as a list of lists
         - ``tij`` -- a pair of integers representing a transposition
         - ``v`` -- the label to add to the tableau
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
-        OUTPUT:
-
-        - a list of lists, in particular, it is ``Tlist``
+        OUTPUT: list of lists, in particular, it is ``Tlist``
 
         EXAMPLES::
 
@@ -4332,11 +4248,9 @@ class StrongTableaux(UniqueRepresentation, Parent):
         INPUT:
 
         - ``Tlist`` -- a filling of a `k+1`-core as a list of lists
-        - ``k`` -- an integer
+        - ``k`` -- integer
 
-        OUTPUT:
-
-        - a list of strong tableaux which follow ``Tlist`` in strong order
+        OUTPUT: list of strong tableaux which follow ``Tlist`` in strong order
 
         EXAMPLES::
 
@@ -4379,10 +4293,10 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` -- a positive integer
-        - ``size`` -- a positive integer
-        - ``outer_shape`` -- a list which is a `k+1`-core (default: ``None``)
-        - ``inner_shape`` -- a list which is a `k+1`-core (default: ``[]``)
+        - ``k`` -- positive integer
+        - ``size`` -- positive integer
+        - ``outer_shape`` -- list which is a `k+1`-core (default: ``None``)
+        - ``inner_shape`` -- list which is a `k+1`-core (default: ``[]``)
 
         OUTPUT:
 
@@ -4484,11 +4398,9 @@ class StrongTableaux(UniqueRepresentation, Parent):
         INPUT:
 
         - ``T`` -- a non-empty column strict tableau as a list of lists
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
-        OUTPUT:
-
-        - a list of pairs of values ``[i,j]`` representing the transpositions `t_{ij}`
+        OUTPUT: list of pairs of values ``[i,j]`` representing the transpositions `t_{ij}`
 
         EXAMPLES::
 
@@ -4562,13 +4474,11 @@ class StrongTableaux(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``transeq`` -- a sequence of transpositions `t_{ij}` (a list of pairs).
+        - ``transeq`` -- a sequence of transpositions `t_{ij}` (a list of pairs)
         - ``emptyTableau`` -- (default: ``[]``) an empty list or a skew strong tableau
           possibly consisting of ``None`` entries
 
-        OUTPUT:
-
-        - a ``StrongTableau`` object
+        OUTPUT: a ``StrongTableau`` object
 
         EXAMPLES::
 
@@ -4608,9 +4518,7 @@ def nabs(v):
 
     - ``v`` -- either an integer or ``None``
 
-    OUTPUT:
-
-    - either a non-negative integer or ``None``
+    OUTPUT: either a nonnegative integer or ``None``
 
     EXAMPLES::
 
@@ -4634,9 +4542,7 @@ def intermediate_shapes(t):
     shapes, where the `i`-th shape is given by the shape of the subtableau on letters
     `1, 2, \ldots, i`.  The output is the list of these shapes.
 
-    OUTPUT:
-
-    - a list of lists representing partitions
+    OUTPUT: list of lists representing partitions
 
     EXAMPLES::
 

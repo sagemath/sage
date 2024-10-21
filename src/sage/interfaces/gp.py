@@ -168,14 +168,18 @@ class Gp(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``stacksize`` (int, default 10000000) -- the initial PARI
-          stacksize in bytes (default 10MB)
-        - ``script_subdirectory`` (string, default None) -- name of the subdirectory of SAGE_EXTCODE/pari from which to read scripts
-        - ``logfile`` (string, default None) -- log file for the pexpect interface
+        - ``stacksize`` -- integer (default: 10000000); the initial PARI
+          stacksize in bytes (default: 10MB)
+        - ``script_subdirectory`` -- string (default: ``None``); name of the
+          subdirectory of ``SAGE_EXTCODE/pari`` from which to read scripts
+        - ``logfile`` -- string (default: ``None``); log file for the pexpect
+          interface
         - ``server`` -- name of remote server
         - ``server_tmpdir`` -- name of temporary directory on remote server
-        - ``init_list_length`` (int, default 1024) -- length of initial list of local variables.
-        - ``seed`` (int, default random) -- random number generator seed for pari
+        - ``init_list_length`` -- integer (default: 1024); length of initial
+          list of local variables
+        - ``seed`` -- integer (default: random); random number generator seed
+          for pari
 
         EXAMPLES::
 
@@ -194,14 +198,18 @@ class Gp(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``stacksize`` (int, default 10000000) -- the initial PARI
-          stacksize in bytes (default 10MB)
-        - ``script_subdirectory`` (string, default None) -- name of the subdirectory of SAGE_EXTCODE/pari from which to read scripts
-        - ``logfile`` (string, default None) -- log file for the pexpect interface
+        - ``stacksize`` -- integer (default: 10000000); the initial PARI
+          stacksize in bytes (default: 10MB)
+        - ``script_subdirectory`` -- string (default: ``None``); name of the
+          subdirectory of SAGE_EXTCODE/pari from which to read scripts
+        - ``logfile`` -- string (default: ``None``); log file for the pexpect
+          interface
         - ``server`` -- name of remote server
         - ``server_tmpdir`` -- name of temporary directory on remote server
-        - ``init_list_length`` (int, default 1024) -- length of initial list of local variables.
-        - ``seed`` (int,default random nonzero 31 bit integer) -- value of random seed
+        - ``init_list_length`` -- integer (default: 1024); length of initial
+          list of local variables.
+        - ``seed`` -- integer (default random nonzero 31 bit integer); value of
+          random seed
 
         EXAMPLES::
 
@@ -291,7 +299,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def _function_class(self):
         """
-        Returns the GpFunction class.
+        Return the GpFunction class.
 
         EXAMPLES::
 
@@ -304,7 +312,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def _quit_string(self):
         """
-        Returns the string used to quit the GP interpreter.
+        Return the string used to quit the GP interpreter.
 
         EXAMPLES::
 
@@ -325,7 +333,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def _read_in_file_command(self, filename):
         r"""
-        Returns the string used to read filename into GP.
+        Return the string used to read filename into GP.
 
         EXAMPLES::
 
@@ -377,7 +385,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def set_precision(self, prec):
         """
-        Sets the PARI precision (in decimal digits) for real
+        Set the PARI precision (in decimal digits) for real
         computations, and returns the old value.
 
         .. NOTE::
@@ -416,7 +424,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def set_series_precision(self, prec=None):
         """
-        Sets the PARI power series precision, and returns the old precision.
+        Set the PARI power series precision, and returns the old precision.
 
         EXAMPLES::
 
@@ -467,9 +475,8 @@ class Gp(ExtraTabCompletion, Expect):
 
         INPUT:
 
-
-        -  ``t`` -- (default: None); if not None, then returns
-           time since t
+        - ``t`` -- (default: ``None``) if not None, then returns
+          time since t
 
 
         .. warning::
@@ -502,9 +509,9 @@ class Gp(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``var`` (string) -- the name of a PARI gp
-          configuration variable.  (See ``gp.default()`` for a list.)
-        - ``value`` -- the value to set the variable to.
+        - ``var`` -- string; the name of a PARI gp
+          configuration variable (see ``gp.default()`` for a list)
+        - ``value`` -- the value to set the variable to
 
         EXAMPLES::
 
@@ -527,12 +534,10 @@ class Gp(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``var`` (string) -- the name of a PARI gp
-          configuration variable.  (See ``gp.default()`` for a list.)
+        - ``var`` -- string; the name of a PARI gp
+          configuration variable (see ``gp.default()`` for a list)
 
-        OUTPUT:
-
-        (string) the value of the variable.
+        OUTPUT: string; the value of the variable
 
         EXAMPLES::
 
@@ -554,7 +559,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``var`` (string) -- a valid GP variable identifier
+        - ``var`` -- string; a valid GP variable identifier
         - ``value`` -- a value for the variable
 
         EXAMPLES::
@@ -574,7 +579,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``var`` (string) -- a valid GP variable identifier
+        - ``var`` -- string; a valid GP variable identifier
 
         EXAMPLES::
 
@@ -590,7 +595,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         INPUT:
 
-        - ``var`` (string) -- a valid GP variable identifier
+        - ``var`` -- string; a valid GP variable identifier
 
         EXAMPLES::
 
@@ -674,7 +679,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def version(self):
         """
-        Returns the version of GP being used.
+        Return the version of GP being used.
 
         EXAMPLES::
 
@@ -685,7 +690,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def _object_class(self):
         """
-        Returns the GpElement class.
+        Return the GpElement class.
 
         EXAMPLES::
 
@@ -698,7 +703,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def _function_element_class(self):
         """
-        Returns the GpFunctionElement class.
+        Return the GpFunctionElement class.
 
         EXAMPLES::
 
@@ -711,7 +716,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def _true_symbol(self):
         """
-        Returns the symbol used for truth in GP.
+        Return the symbol used for truth in GP.
 
         EXAMPLES::
 
@@ -727,7 +732,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def _false_symbol(self):
         """
-        Returns the symbol used for falsity in GP.
+        Return the symbol used for falsity in GP.
 
         EXAMPLES::
 
@@ -743,7 +748,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def _equality_symbol(self):
         """
-        Returns the symbol used for equality in GP.
+        Return the symbol used for equality in GP.
 
         EXAMPLES::
 
@@ -759,7 +764,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def _exponent_symbol(self):
         """
-        Returns the symbol to denote the exponent of a number in GP.
+        Return the symbol to denote the exponent of a number in GP.
 
         EXAMPLES::
 
@@ -776,7 +781,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def help(self, command):
         r"""
-        Returns GP's help for ``command``.
+        Return GP's help for ``command``.
 
         EXAMPLES::
 
@@ -787,7 +792,7 @@ class Gp(ExtraTabCompletion, Expect):
 
     def new_with_bits_prec(self, s, precision=0):
         r"""
-        Creates a GP object from s with ``precision`` bits of
+        Create a GP object from s with ``precision`` bits of
         precision. GP actually automatically increases this precision to
         the nearest word (i.e. the next multiple of 32 on a 32-bit machine,
         or the next multiple of 64 on a 64-bit machine).
@@ -956,11 +961,11 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
     def _complex_mpfr_field_(self, CC):
         """
-        Return ComplexField element of self.
+        Return ComplexField element of ``self``.
 
         INPUT:
 
-        - ``CC`` -- a Complex or Real Field.
+        - ``CC`` -- a Complex or Real Field
 
         EXAMPLES::
 
@@ -983,7 +988,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
     def _complex_double_(self, CDF):
         """
-        Returns this value as a CDF element.
+        Return this value as a CDF element.
 
         EXAMPLES::
 
@@ -1047,7 +1052,7 @@ GpFunction = ExpectFunction
 
 def is_GpElement(x):
     """
-    Return True if ``x`` is of type :class:`GpElement`
+    Return ``True`` if ``x`` is of type :class:`GpElement`.
 
     This function is deprecated; use :func:`isinstance`
     (of :class:`sage.interfaces.abc.GpElement`) instead.
@@ -1075,7 +1080,7 @@ gp = Gp(logfile=os.path.join(DOT_SAGE, 'gp-expect.log'))
 
 def reduce_load_GP():
     """
-    Returns the GP interface object defined in sage.interfaces.gp.
+    Return the GP interface object defined in ``sage.interfaces.gp``.
 
     EXAMPLES::
 

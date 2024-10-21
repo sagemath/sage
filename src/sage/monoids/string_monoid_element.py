@@ -31,8 +31,6 @@ from .free_monoid_element import FreeMonoidElement
 
 
 def is_StringMonoidElement(x):
-    r"""
-    """
     from sage.misc.superseded import deprecation
     deprecation(38280,
                 "The function is_StringMonoidElement is deprecated; "
@@ -41,8 +39,6 @@ def is_StringMonoidElement(x):
 
 
 def is_AlphabeticStringMonoidElement(x):
-    r"""
-    """
     from sage.misc.superseded import deprecation
     deprecation(38280,
                 "The function is_AlphabeticStringMonoidElement is deprecated; "
@@ -53,8 +49,6 @@ def is_AlphabeticStringMonoidElement(x):
 
 
 def is_BinaryStringMonoidElement(x):
-    r"""
-    """
     from sage.misc.superseded import deprecation
     deprecation(38280,
                 "The function is_BinaryStringMonoidElement is deprecated; "
@@ -65,8 +59,6 @@ def is_BinaryStringMonoidElement(x):
 
 
 def is_OctalStringMonoidElement(x):
-    r"""
-    """
     from sage.misc.superseded import deprecation
     deprecation(38280,
                 "The function is_OctalStringMonoidElement is deprecated; "
@@ -77,8 +69,6 @@ def is_OctalStringMonoidElement(x):
 
 
 def is_HexadecimalStringMonoidElement(x):
-    r"""
-    """
     from sage.misc.superseded import deprecation
     deprecation(38280,
                 "The function is_HexadecimalStringMonoidElement is deprecated; "
@@ -89,8 +79,6 @@ def is_HexadecimalStringMonoidElement(x):
 
 
 def is_Radix64StringMonoidElement(x):
-    r"""
-    """
     from sage.misc.superseded import deprecation
     deprecation(38280,
                 "The function is_Radix64StringMonoidElement is deprecated; "
@@ -165,7 +153,7 @@ class StringMonoidElement(FreeMonoidElement):
 
     def _latex_(self):
         """
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -216,12 +204,12 @@ class StringMonoidElement(FreeMonoidElement):
             sage: x**(-1)
             Traceback (most recent call last):
             ...
-            IndexError: Argument n (= -1) must be non-negative.
+            IndexError: Argument n (= -1) must be nonnegative.
         """
         if not isinstance(n, (int, Integer)):
             raise TypeError("Argument n (= %s) must be an integer." % n)
         if n < 0:
-            raise IndexError("Argument n (= %s) must be non-negative." % n)
+            raise IndexError("Argument n (= %s) must be nonnegative." % n)
         elif n == 0:
             return self.parent()('')
         elif n == 1:
@@ -469,7 +457,7 @@ class StringMonoidElement(FreeMonoidElement):
 
         INPUT:
 
-        - ``length`` -- (default ``1``) if ``length=1`` then consider the
+        - ``length`` -- (default: ``1``) if ``length=1`` then consider the
           probability space of monogram frequency, i.e. probability
           distribution of single characters. If ``length=2`` then consider
           the probability space of digram frequency, i.e. probability
@@ -477,7 +465,7 @@ class StringMonoidElement(FreeMonoidElement):
           supports the generation of probability spaces for monogram
           frequency (``length=1``) and digram frequency (``length=2``).
 
-        - ``prec`` -- (default ``0``) a non-negative integer representing
+        - ``prec`` -- (default: ``0``) a nonnegative integer representing
           the precision (in number of bits) of a floating-point number. The
           default value ``prec=0`` means that we use 53 bits to represent
           the mantissa of a floating-point number. For more information on

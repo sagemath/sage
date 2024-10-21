@@ -27,11 +27,11 @@ from .set import Set, Set_base, Set_boolean_operators, Set_add_sub_operators
 class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_operators,
                    UniqueRepresentation):
     r"""
-    Set of elements of a universe that satisfy given predicates
+    Set of elements of a universe that satisfy given predicates.
 
     INPUT:
 
-    - ``universe`` -- a set
+    - ``universe`` -- set
 
     - ``*predicates`` -- callables
 
@@ -71,7 +71,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         sage: # needs sage.geometry.polyhedron
         sage: P = polytopes.cube(); P
         A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-        sage: P.rename("P")
+        sage: P.rename('P')
         sage: P_inter_B = ConditionSet(P, lambda x: x.norm() < 1.2); P_inter_B
         { x ∈ P : <function <lambda> at 0x...>(x) }
         sage: vector([1, 0, 0]) in P_inter_B
@@ -218,7 +218,6 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
 
             sage: preparse("Q3.<x,y,z> = ConditionSet(QQ^3)")
             "Q3 = ConditionSet(QQ**Integer(3), names=('x', 'y', 'z',)); (x, y, z,) = Q3._first_ngens(3)"
-
         """
         return self.arguments()
 
@@ -322,7 +321,6 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             Traceback (most recent call last):
             ...
             ValueError: 3 does not satisfy the condition
-
         """
         try:
             universe_element_constructor = self._universe._element_constructor_
@@ -376,7 +374,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         r"""
         Return an element of ``self``.
 
-        This may raise :class:`NotImplementedError`.
+        This may raise :exc:`NotImplementedError`.
 
         TESTS::
 
@@ -521,7 +519,6 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             { x ∈ Integer Ring : <function is_odd at 0x...>(x) }
             sage: list(Odds.iterator_range(stop=6))
             [1, -1, 3, -3, 5, -5]
-
         """
         for x in self._universe:
             if x in self:

@@ -147,7 +147,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
             sage: from sage.matroids.advanced import *
             sage: M = BasisExchangeMatroid(groundset=[1, 2, 3], rank=2)
-            sage: TestSuite(M).run(skip="_test_pickling")
+            sage: TestSuite(M).run(skip='_test_pickling')
 
         .. NOTE::
 
@@ -200,7 +200,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``mapping`` -- a Python object such that ``mapping[e]`` is the new
           label of `e`
 
-        OUTPUT: ``None``
+        OUTPUT: none
 
         .. NOTE::
 
@@ -653,7 +653,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__max_independent(self._output, self._input)
         return self.__unpack(self._output)
 
-    cpdef int _rank(self, frozenset F):
+    cpdef int _rank(self, frozenset F) except? -1:
         """
         Compute the rank of a subset of the groundset.
 
@@ -797,7 +797,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__max_coindependent(self._output, self._input)
         return self.__unpack(self._output)
 
-    cpdef int _corank(self, frozenset F):
+    cpdef int _corank(self, frozenset F) noexcept:
         """
         Return the corank of a set.
 
@@ -806,7 +806,7 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``F`` -- an object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT: integer; the corank of ``F``
+        OUTPUT: integer; the corank of `F`
 
         EXAMPLES::
 
@@ -941,7 +941,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__augment(self._output, self._input, self._input2)
         return self.__unpack(self._output)
 
-    cpdef bint _is_independent(self, frozenset F):
+    cpdef bint _is_independent(self, frozenset F) noexcept:
         """
         Test if input is independent.
 
@@ -1504,6 +1504,8 @@ cdef class BasisExchangeMatroid(Matroid):
         - ``k`` -- integer (optional); if specified, return the size-`k`
           independent sets of the matroid
 
+        OUTPUT: :class:`SetSystem`
+
         EXAMPLES::
 
             sage: M = matroids.catalog.Fano()
@@ -2002,7 +2004,7 @@ cdef class BasisExchangeMatroid(Matroid):
         INPUT:
 
         - ``other`` -- matroid
-        - ``morphism`` -- a dictionary mapping the groundset of ``self`` to
+        - ``morphism`` -- dictionary mapping the groundset of ``self`` to
           the groundset of ``other``
 
         OUTPUT: boolean
@@ -2230,7 +2232,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         return self._characteristic_setsystem()._isomorphism(other._characteristic_setsystem(), PS, PO) is not None
 
-    cpdef bint is_valid(self):
+    cpdef bint is_valid(self) noexcept:
         r"""
         Test if the data obey the matroid axioms.
 

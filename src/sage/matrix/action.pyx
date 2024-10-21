@@ -268,7 +268,6 @@ cdef class MatrixMatrixAction(MatrixMulAction):
             [ 5360  7303]
             [ 8168 11143]
             [11056 15077]
-
         """
         cdef Matrix A = <Matrix>g
         cdef Matrix B = <Matrix>s
@@ -440,7 +439,7 @@ cdef class MatrixPolymapAction(MatrixMulAction):
 
     cpdef _act_(self, mat, f):
         """
-        Call the action
+        Call the action.
 
         INPUT:
 

@@ -264,10 +264,17 @@ def is_FunctionField(x):
 
         sage: from sage.rings.function_field.function_field import is_FunctionField
         sage: is_FunctionField(QQ)
+        doctest:warning...
+        DeprecationWarning: The function is_FunctionField is deprecated; use '... in FunctionFields()' instead.
+        See https://github.com/sagemath/sage/issues/38289 for details.
         False
         sage: is_FunctionField(FunctionField(QQ, 't'))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38289,
+                "The function is_FunctionField is deprecated; "
+                "use '... in FunctionFields()' instead.")
     if isinstance(x, FunctionField):
         return True
     return x in FunctionFields()
@@ -439,9 +446,7 @@ class FunctionField(Field):
 
         - ``names`` -- string or tuple of length 1 that names the variable `y`
 
-        OUTPUT:
-
-        - a function field
+        OUTPUT: a function field
 
         EXAMPLES::
 
@@ -476,9 +481,7 @@ class FunctionField(Field):
           basis is really linearly independent and that the module it spans is
           closed under multiplication, and contains the identity element.
 
-        OUTPUT:
-
-        - an order in the function field
+        OUTPUT: an order in the function field
 
         EXAMPLES::
 
@@ -801,17 +804,15 @@ class FunctionField(Field):
 
     def _intermediate_fields(self, base):
         """
-        Return the fields which lie in between base and the function field in the
-        tower of function fields.
+        Return the fields which lie in between base and the function field in
+        the tower of function fields.
 
         INPUT:
 
         - ``base`` -- function field, either this field or a field from which
           this field has been created as an extension
 
-        OUTPUT:
-
-        - a list of fields; the first entry is this field, the last entry is ``base``
+        OUTPUT: list of fields; the first entry is this field, the last entry is ``base``
 
         EXAMPLES::
 
@@ -847,7 +848,7 @@ class FunctionField(Field):
             ...
             TypeError: base must be a function field
         """
-        if not is_FunctionField(base):
+        if base not in FunctionFields():
             raise TypeError("base must be a function field")
 
         ret = [self]
@@ -1000,7 +1001,6 @@ class FunctionField(Field):
 
             sage: v = L.valuation(x); v                                                 # needs sage.rings.function_field
             (x)-adic valuation
-
         """
         from sage.rings.function_field.valuation import FunctionFieldValuation
         return FunctionFieldValuation(self, prime)
@@ -1236,7 +1236,7 @@ class FunctionField(Field):
 
         INPUT:
 
-        - ``a`` and ``b`` -- elements of this function field
+        - ``a``, ``b`` -- elements of this function field
 
         - ``P`` -- a place of this function field
 

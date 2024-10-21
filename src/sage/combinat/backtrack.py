@@ -153,7 +153,7 @@ class PositiveIntegerSemigroup(UniqueRepresentation, RecursivelyEnumeratedSet_fo
 
     def children(self, x):
         r"""
-        Return the single child ``x+1`` of the integer ``x``
+        Return the single child ``x+1`` of the integer ``x``.
 
         EXAMPLES::
 

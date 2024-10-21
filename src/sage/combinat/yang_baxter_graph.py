@@ -44,9 +44,7 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
       tuples of the form `(v, l)` where `v` is a successor of `u` and `l` is
       the label of the edge from `u` to `v`.
 
-    OUTPUT:
-
-    - Either:
+    OUTPUT: either:
 
       - :class:`YangBaxterGraph_partition` -- if partition is defined
       - :class:`YangBaxterGraph_generic` -- if partition is ``None``
@@ -127,8 +125,8 @@ class YangBaxterGraph_generic(SageObject):
 
         - ``root`` -- the root vertex of the graph
 
-        - ``operators`` -- a list of callables that map vertices to (new)
-          vertices.
+        - ``operators`` -- list of callables that map vertices to (new)
+          vertices
 
         .. NOTE::
 
@@ -414,7 +412,7 @@ class YangBaxterGraph_generic(SageObject):
 
         INPUT:
 
-        - ``sort`` -- boolean (default ``False``) whether to sort the vertices
+        - ``sort`` -- boolean (default: ``False``); whether to sort the vertices
 
         EXAMPLES::
 
@@ -457,9 +455,7 @@ class YangBaxterGraph_generic(SageObject):
         - ``relabel_operator`` -- function mapping a vertex and a label to
           the image of the vertex
 
-        OUTPUT:
-
-        - dictionary pairing vertices with the corresponding image of ``v``
+        OUTPUT: dictionary pairing vertices with the corresponding image of ``v``
 
         EXAMPLES::
 
@@ -489,10 +485,10 @@ class YangBaxterGraph_generic(SageObject):
 
         INPUT:
 
-        - ``v`` -- tuple, Permutation, ...
+        - ``v`` -- tuple, Permutation, etc.
 
         - ``inplace`` -- if ``True``, modifies ``self``; otherwise returns a
-          modified copy of ``self``.
+          modified copy of ``self``
 
         EXAMPLES::
 
@@ -524,7 +520,7 @@ class YangBaxterGraph_generic(SageObject):
 
         INPUT:
 
-        - ``edge_dict`` -- a dictionary keyed by the (unlabelled) edges.
+        - ``edge_dict`` -- dictionary keyed by the (unlabelled) edges
 
         EXAMPLES::
 
@@ -679,9 +675,9 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         INPUT:
 
-        - ``i`` -- positive integer between 1 and len(u)-1, inclusive
+        - ``i`` -- positive integer between ``1`` and ``len(u)-1``, inclusive
 
-        - ``u`` -- tuple, list, permutation, ....
+        - ``u`` -- tuple, list, permutation, etc.
 
         EXAMPLES::
 
@@ -710,9 +706,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         - ``v`` -- an object
 
-        OUTPUT:
-
-        - dictionary pairing vertices with the corresponding image of ``v``
+        OUTPUT: dictionary pairing vertices with the corresponding image of ``v``
 
         EXAMPLES::
 
@@ -736,10 +730,10 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
         INPUT:
 
-        - ``v`` -- tuple, Permutation, ...
+        - ``v`` -- tuple, Permutation, etc.
 
         - ``inplace`` -- if ``True``, modifies ``self``; otherwise
-          returns a modified copy of ``self``.
+          returns a modified copy of ``self``
 
         EXAMPLES::
 
@@ -878,8 +872,8 @@ class SwapOperator(SageObject):
 
     def position(self):
         r"""
-        ``self`` is the operator that swaps positions ``i`` and ``i+1``. This
-        method returns ``i``.
+        Return ``i`` where ``self`` is the operator that swaps positions ``i``
+        and ``i+1``.
 
         EXAMPLES::
 
@@ -914,7 +908,7 @@ class SwapIncreasingOperator(SwapOperator):
 
         - ``i`` -- positive integer between ``1`` and ``len(u)-1``, inclusive
 
-        - ``u`` -- tuple, list, permutation, ....
+        - ``u`` -- tuple, list, permutation, etc.
 
         EXAMPLES::
 

@@ -16,7 +16,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     cdef reset_current_basis(self)
 
-    cpdef bint _is_basis(self, frozenset X)
+    cpdef bint _is_basis(self, frozenset X) noexcept
 
     cpdef bases_count(self)
     cpdef SetSystem bases(self)

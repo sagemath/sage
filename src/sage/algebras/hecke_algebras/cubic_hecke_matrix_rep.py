@@ -62,7 +62,7 @@ class RepresentationType(Enum):
     r"""
     Enum class to select a representation type for the cubic Hecke algebra.
 
-    - ``RegularLeft``  -- left regular representations
+    - ``RegularLeft`` -- left regular representations
     - ``RegularRight`` -- right regular representations
     - ``SplitIrredMarin`` -- split irreducible representations obtained from
       Ivan Marin's data
@@ -492,7 +492,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
         - ``item`` -- an :class:`AbsIrreducibeRep` specifying an
           absolute irreducible representation of the cubic Hecke algebra;
           alternatively, it can be specified by list index
-          (see :meth:`internal_index` repectively :meth:`gap_index`)
+          (see :meth:`internal_index` respectively :meth:`gap_index`)
 
         OUTPUT:
 
@@ -552,7 +552,7 @@ class CubicHeckeMatrixRep(Matrix_generic_dense):
 
         OUTPUT:
 
-        An instance of :class:`Matrix_generic_dense` with exactly one non zero block
+        An instance of :class:`Matrix_generic_dense` with exactly one nonzero block
         according to ``irr``.
 
         EXAMPLES::
@@ -587,7 +587,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
 
     INPUT:
 
-    - ``cubic_hecke_algebra``  -- (optional)
+    - ``cubic_hecke_algebra`` -- (optional)
       :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`
       must be given if ``element`` fails to be an instance of its element class
     - ``representation_type`` -- (default: ``RepresentationType.SplitIrredChevie``)
@@ -595,7 +595,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
     - ``subdivide`` -- boolean (default: ``False``); whether or not to subdivide
       the resulting matrices
 
-    - ``original`` -- boolean (default: ``False``) if ``True``, the matrix
+    - ``original`` -- boolean (default: ``False``); if ``True``, the matrix
       will have coefficients in the generic base / extension ring
 
     EXAMPLES::
@@ -733,7 +733,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
           :class:`~sage.algebras.hecke_algebras.cubic_hecke_algebra.CubicHeckeAlgebra`
           or an element whose parent is a :class:`MatrixSpace`
 
-        EXAMLPES::
+        EXAMPlES::
 
             sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
             sage: CHA3.<c1, c2> = algebras.CubicHecke(3)
@@ -787,7 +787,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
         This method needs to be overloaded here since
         :class:`MatrixSpace` has an own implementation of it.
 
-        EXAMLPES::
+        EXAMPLES::
 
             sage: import sage.algebras.hecke_algebras.cubic_hecke_matrix_rep as chmr
             sage: CHA2.<c1> = algebras.CubicHecke(2)
@@ -817,9 +817,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
 
         - ``mat`` -- matrix over the original base ring
 
-        OUTPUT:
-
-        ``mat`` over the base ring of ``self``
+        OUTPUT: matrix over the base ring of ``self``
 
         EXAMPLES::
 

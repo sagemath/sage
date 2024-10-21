@@ -163,15 +163,12 @@ class PosetElement(Element):
             sage: P(0)._cmp(P(0))
             0
             sage: P(1)._cmp(P(2))
-
         """
         return self.parent().compare_elements(self, other)
 
     def __lt__(self, other):
         """
-        TESTS
-
-        ::
+        TESTS::
 
             sage: dag = DiGraph({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
             sage: P = Poset(dag, facade = False)
@@ -186,9 +183,7 @@ class PosetElement(Element):
 
     def __le__(self, other):
         """
-        TESTS
-
-        ::
+        TESTS::
 
             sage: dag = DiGraph({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
             sage: P = Poset(dag, facade = False)
@@ -205,9 +200,7 @@ class PosetElement(Element):
 
     def __gt__(self, other):
         """
-        TESTS
-
-        ::
+        TESTS::
 
             sage: dag = DiGraph({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
             sage: P = Poset(dag)
@@ -222,9 +215,7 @@ class PosetElement(Element):
 
     def __ge__(self, other):
         """
-        TESTS
-
-        ::
+        TESTS::
 
             sage: dag = DiGraph({0:[2,3], 1:[3,4], 2:[5], 3:[5], 4:[5]})
             sage: P = Poset(dag)

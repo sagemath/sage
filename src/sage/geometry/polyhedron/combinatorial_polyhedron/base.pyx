@@ -12,11 +12,11 @@ the ridges and the face lattice.
 
 Terminology used in this module:
 
-- Vrep                  -- ``[vertices, rays, lines]`` of the polyhedron.
-- Hrep                  -- inequalities and equations of the polyhedron.
-- Facets                -- facets of the polyhedron.
-- Vrepresentation       -- represents a face by the list of Vrep it contains.
-- Hrepresentation       -- represents a face by a list of Hrep it is contained in.
+- Vrep                  -- ``[vertices, rays, lines]`` of the polyhedron
+- Hrep                  -- inequalities and equations of the polyhedron
+- Facets                -- facets of the polyhedron
+- Vrepresentation       -- represents a face by the list of Vrep it contains
+- Hrepresentation       -- represents a face by a list of Hrep it is contained in
 - bit representation    -- represents incidences as bitset, where each bit
   represents one incidence. There might be trailing zeros, to fit alignment
   requirements.  In most instances, faces are represented by the bit
@@ -542,7 +542,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cdef _init_from_ListOfFaces(self, ListOfFaces facets, ListOfFaces Vrep):
         """
-        Initialize self from two ``ListOfFaces``.
+        Initialize ``self`` from two ``ListOfFaces``.
         """
         self._bitrep_facets = facets
         self._bitrep_Vrep = Vrep
@@ -1313,7 +1313,7 @@ cdef class CombinatorialPolyhedron(SageObject):
                       if edge[0] in vertices and edge[1] in vertices)
 
         from sage.graphs.graph import Graph
-        return Graph([vertices, edges], format="vertices_and_edges")
+        return Graph([vertices, edges], format='vertices_and_edges')
 
     graph = vertex_graph
 
@@ -1394,7 +1394,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         - ``add_equations`` -- if ``True``, then equations of the polyhedron
           will be added (only applicable when ``names`` is ``True``)
 
-        - ``names`` -- boolean (default: `True`);
+        - ``names`` -- boolean (default: ``True``);
           if ``False``, then the facets are given by their indices
 
         - ``algorithm`` -- string (optional);
@@ -1608,7 +1608,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             # i.e. (1,2) instead of (('f1',), ('f2',)).
             V = list(v[0] for v in V)
         from sage.graphs.graph import Graph
-        return Graph([V, E], format="vertices_and_edges")
+        return Graph([V, E], format='vertices_and_edges')
 
     @cached_method
     def vertex_facet_graph(self, names=True):
@@ -1806,14 +1806,14 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         INPUT:
 
-        - ``args`` -- integers (optional); specify an entry of the
-          flag-f-vector; must be an increasing sequence of integers
+        - ``args`` -- integer (optional); specify an entry of the
+          flag-f-vector (must be an increasing sequence of integers)
 
         OUTPUT:
 
         - a dictionary, if no arguments were given
 
-        - an Integer, if arguments were given
+        - an integer, if arguments were given
 
         EXAMPLES:
 
@@ -2699,9 +2699,7 @@ cdef class CombinatorialPolyhedron(SageObject):
           * ``'dual'`` -- start with the vertices
           * ``None`` -- choose automatically
 
-        OUTPUT:
-
-        - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`
+        OUTPUT: :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`
 
         .. NOTE::
 
@@ -2812,9 +2810,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         r"""
         Generate the face-lattice.
 
-        OUTPUT:
-
-        - :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
+        OUTPUT: :class:`~sage.combinat.posets.lattices.FiniteLatticePoset`
 
         .. NOTE::
 
@@ -3197,7 +3193,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     def _test_a_maximal_chain(self, tester=None, **options):
         """
-        Run tests on the method :meth:`.a_maximal_chain`
+        Run tests on the method :meth:`.a_maximal_chain`.
 
         TESTS::
 
@@ -3277,7 +3273,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     def is_compact(self):
         r"""
-        Return whether the polyhedron is compact
+        Return whether the polyhedron is compact.
 
         EXAMPLES::
 
@@ -3339,7 +3335,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cpdef CombinatorialPolyhedron dual(self):
         r"""
-        Return the dual/polar of self.
+        Return the dual/polar of ``self``.
 
         Only defined for bounded polyhedra.
 
@@ -3619,9 +3615,7 @@ cdef class CombinatorialPolyhedron(SageObject):
           * ``'edges'``
           * ``'ridges'``
 
-        OUTPUT:
-
-        Either ``'primal'`` or ``'dual'``.
+        OUTPUT: either ``'primal'`` or ``'dual'``
 
         EXAMPLES::
 

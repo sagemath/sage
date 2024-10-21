@@ -1,7 +1,7 @@
 # sage_setup: distribution = sagemath-pari
 """
 This file provides the declaration for the RelaxedElement class,
-which collects common functionality for the different relaxed p-adic
+which collects common functionality for the different relaxed `p`-adic
 template classes.
 
 It is included in padic_relaxed_element.pxd and should be included

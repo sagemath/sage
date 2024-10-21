@@ -67,7 +67,7 @@ cdef boost_graph_from_sage_graph(BoostGenGraph *g, g_sage, vertex_to_int, revers
 
     - ``g_sage`` -- a Sage graph
 
-    - ``vertex_to_int`` -- a dictionary; it is a mapping from the vertex set of
+    - ``vertex_to_int`` -- dictionary; it is a mapping from the vertex set of
       ``g_sage`` to `(0, \ldots, n-1)`
 
     - ``reverse`` -- boolean (default: ``False``); when set to ``True``, the
@@ -110,7 +110,7 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
 
     - ``g_sage`` -- a Sage graph
 
-    - ``vertex_to_int`` -- a dictionary; it is a mapping from the vertex set of
+    - ``vertex_to_int`` -- dictionary; it is a mapping from the vertex set of
       ``g_sage`` to `(0, \ldots, n-1)`
 
     - ``weight_function`` -- function (default: ``None``); a function which
@@ -318,7 +318,7 @@ cpdef clustering_coeff(g, vertices=None):
     With labels::
 
         sage: g.relabel(list("abcdefghiklm"))
-        sage: clustering_coeff(g, vertices="abde")
+        sage: clustering_coeff(g, vertices='abde')
         (0.5, {'a': 0.5, 'b': 0.5, 'd': 0.5, 'e': 0.5})
     """
     from sage.graphs.graph import Graph
@@ -506,7 +506,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
     Use Boost heuristics to approximate the bandwidth of the input graph.
 
     The bandwidth `bw(M)` of a matrix `M` is the smallest integer `k` such that
-    all non-zero entries of `M` are at distance `k` from the diagonal. The
+    all nonzero entries of `M` are at distance `k` from the diagonal. The
     bandwidth `bw(g)` of an undirected graph `g` is the minimum bandwidth of
     the adjacency matrix of `g`, over all possible relabellings of its vertices
     (for more information, see the
@@ -579,7 +579,6 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
         (0, [])
         sage: bandwidth_heuristics(graphs.RandomGNM(10,0))                              # needs networkx
         (0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
-
     """
     from sage.graphs.graph import Graph
 
@@ -1054,8 +1053,8 @@ cdef get_predecessors(BoostWeightedGraph g, result, int_to_v, directed, weight_t
 
     - ``result`` -- the matrix of shortest distances
 
-    - ``int_to_v`` -- a list; it is a mapping from `(0, \ldots, n-1)`
-      to the vertex set of the original sage graph.
+    - ``int_to_v`` -- list; it is a mapping from `(0, \ldots, n-1)`
+      to the vertex set of the original sage graph
 
     - ``directed`` -- boolean; whether the input graph is directed
 
@@ -1439,9 +1438,7 @@ cpdef johnson_closeness_centrality(g, weight_function=None):
       ``g`` are used, if ``g.weighted()==True``, otherwise all edges have
       weight 1.
 
-    OUTPUT:
-
-    A dictionary associating each vertex ``v`` to its closeness centrality.
+    OUTPUT: a dictionary associating each vertex ``v`` to its closeness centrality
 
     EXAMPLES:
 
@@ -1661,7 +1658,7 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
 
     INPUT:
 
-    - ``g`` -- the input Sage graph.
+    - ``g`` -- the input Sage graph
 
     - ``vertex_list`` -- list (default: ``None``); a list of `n` vertices
       specifying a mapping from `(0, \ldots, n-1)` to vertex labels in `g`. When
@@ -1851,7 +1848,7 @@ cpdef radius_DHV(g, weight_function=None, check_weight=True):
       weight 1.
 
     - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
-      that the ``weight_function`` outputs a number for each edge.
+      that the ``weight_function`` outputs a number for each edge
 
     EXAMPLES::
 
@@ -1882,7 +1879,6 @@ cpdef radius_DHV(g, weight_function=None, check_weight=True):
         Traceback (most recent call last):
         ...
         TypeError: this method works for undirected graphs only
-
     """
     if g.is_directed():
         raise TypeError("this method works for undirected graphs only")
@@ -2173,11 +2169,11 @@ cdef tuple diameter_lower_bound_2Dsweep(BoostVecWeightedDiGraphU g_boost,
 
     INPUT:
 
-    - ``g_boost`` -- a boost weighted digraph.
+    - ``g_boost`` -- a boost weighted digraph
 
-    - ``rev_g_boost`` -- a copy of ``g_boost`` with edges reversed.
+    - ``rev_g_boost`` -- a copy of ``g_boost`` with edges reversed
 
-    - ``source`` -- starting node for forward and backward distance computation.
+    - ``source`` -- starting node for forward and backward distance computation
 
     - ``algorithm`` -- string; algorithm for computing single source shortest
       distances. If ``g_boost`` contains negative edge weights then it will be
@@ -2335,11 +2331,11 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
 
     INPUT:
 
-    - ``g_boost`` -- a boost weighted digraph.
+    - ``g_boost`` -- a boost weighted digraph
 
-    - ``rev_g_boost`` -- a copy of ``g_boost`` with edges reversed.
+    - ``rev_g_boost`` -- a copy of ``g_boost`` with edges reversed
 
-    - ``source`` -- starting node for forward and backward distance computation.
+    - ``source`` -- starting node for forward and backward distance computation
 
     - ``algorithm`` -- string; algorithm for computing single source shortest
       distances. If ``g_boost`` contains negative edge weights then it will be
@@ -2513,16 +2509,16 @@ cpdef diameter(G, algorithm=None, source=None,
 
     INPUT:
 
-    - ``G`` -- the input sage digraph.
+    - ``G`` -- the input sage digraph
 
     - ``algorithm`` -- string (default: ``None``); specifies the algorithm to
       use among:
 
-      - ``'2Dsweep'`` -- Computes lower bound on the diameter of a weighted
+      - ``'2Dsweep'`` -- computes lower bound on the diameter of a weighted
         directed graph using the weighted version of the algorithm proposed in
         [Broder2000]_. See the code's documentation for more details.
 
-      - ``'DiFUB'`` -- Computes the diameter of a weighted directed graph
+      - ``'DiFUB'`` -- computes the diameter of a weighted directed graph
         using the weighted version of the algorithm proposed in [CGLM2012]_.
         See the code's documentation for more details.
 
@@ -2536,7 +2532,7 @@ cpdef diameter(G, algorithm=None, source=None,
       weight 1.
 
     - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
-      that the ``weight_function`` outputs a number for each edge.
+      that the ``weight_function`` outputs a number for each edge
 
     EXAMPLES::
 
@@ -2913,7 +2909,7 @@ cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
       weight 1.
 
     - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
-      that the ``weight_function`` outputs a number for each edge.
+      that the ``weight_function`` outputs a number for each edge
 
     EXAMPLES:
 
@@ -2947,12 +2943,12 @@ cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
 
     TESTS:
 
-    Using ``"Dijkstra"`` on a graph with negative weights::
+    Using ``'Dijkstra'`` on a graph with negative weights::
 
         sage: g = Graph([(0, 1, -1), (1, 2, 1)])
         sage: def weight_of(e):
         ....:     return e[2]
-        sage: wiener_index(g, algorithm="Dijkstra", weight_function=weight_of)
+        sage: wiener_index(g, algorithm='Dijkstra', weight_function=weight_of)
         Traceback (most recent call last):
         ...
         RuntimeError: Dijkstra algorithm does not work with negative weights, use Bellman-Ford instead
@@ -2962,7 +2958,7 @@ cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
         sage: g = DiGraph([(0, 1, -1), (1, 2, -1), (2, 0, -1)])
         sage: def weight_of(e):
         ....:     return e[2]
-        sage: wiener_index(g, algorithm="Bellman-Ford", weight_function=weight_of)
+        sage: wiener_index(g, algorithm='Bellman-Ford', weight_function=weight_of)
         Traceback (most recent call last):
         ...
         ValueError: the graph contains a negative cycle

@@ -269,7 +269,7 @@ cpdef executor(tuple params):
     Execute a function registered in this module's ``mappers``
     in a worker process, and supply the ``FusionRing`` parameter by
     constructing a reference to the FMatrix object in the worker's memory
-    adress space from its ``id``.
+    address space from its ``id``.
 
     .. NOTE::
 
@@ -311,7 +311,7 @@ cpdef _unflatten_entries(fusion_ring, list entries):
     Restore cyclotomic coefficient object from its tuple of rational
     coefficients representation.
 
-    Used to circumvent pickling issue introduced by PARI settigs
+    Used to circumvent pickling issue introduced by PARI settings
     in :issue:`30537`.
 
     EXAMPLES::

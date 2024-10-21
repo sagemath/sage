@@ -9,5 +9,6 @@ AUTHORS:
 - Martin Albrecht (2012): first version
 """
 
+
 class ANF2CNFConverter():
     pass

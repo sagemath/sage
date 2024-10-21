@@ -17,15 +17,13 @@ def parallel_iter(f, inputs):
     INPUT:
 
     - ``f`` -- a Python function that can be pickled using
-      the pickle_function command.
+      the ``pickle_function`` command
 
-    - ``inputs`` -- a list of pickleable pairs (args, kwds), where
-      args is a tuple and kwds is a dictionary.
+    - ``inputs`` -- list of pickleable pairs (args, kwds), where
+      args is a tuple and kwds is a dictionary
 
-    OUTPUT:
-
-    - iterator over 2-tuples ``(inputs[i], f(inputs[i]))``, where the
-      order may be completely random
+    OUTPUT: iterator over 2-tuples ``(inputs[i], f(inputs[i]))``, where the
+    order may be completely random
 
     EXAMPLES::
 

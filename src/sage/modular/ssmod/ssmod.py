@@ -101,9 +101,7 @@ def Phi2_quad(J3, ssJ1, ssJ2):
 
     - ``ssJ2``, ``ssJ2`` -- supersingular j-invariants over the finite field
 
-    OUTPUT:
-
-    - polynomial -- defined over the finite field
+    OUTPUT: polynomial; defined over the finite field
 
     EXAMPLES:
 
@@ -120,7 +118,7 @@ def Phi2_quad(J3, ssJ1, ssJ2):
         sage: sage.modular.ssmod.ssmod.Phi2_quad(X, F(8), j_in)
         x^2 + 31*x + 31
 
-    .. note::
+    .. NOTE::
 
         Given a root (j1,j2) to the polynomial `Phi_2(J1,J2)`, the pairs
         (j2,j3) not equal to (j2,j1) which solve `Phi_2(j2,j3)` are roots of
@@ -165,9 +163,7 @@ def Phi_polys(L, x, j):
 
     - ``j`` -- supersingular j-invariant over the finite field
 
-    OUTPUT:
-
-    - polynomial -- defined over the finite field
+    OUTPUT: polynomial; defined over the finite field
 
     EXAMPLES:
 
@@ -205,13 +201,11 @@ def dimension_supersingular_module(prime, level=1):
 
     INPUT:
 
-    - ``prime`` -- integer, prime
+    - ``prime`` -- integer; prime
 
-    - ``level`` -- integer, positive
+    - ``level`` -- integer; positive
 
-    OUTPUT:
-
-    - dimension -- integer, nonnegative
+    OUTPUT: dimension; integer, nonnegative
 
     EXAMPLES:
 
@@ -260,11 +254,9 @@ def supersingular_D(prime):
 
     INPUT:
 
-    - prime -- integer, prime
+    - ``prime`` -- integer, prime
 
-    OUTPUT:
-
-    - D -- integer, negative
+    OUTPUT: d; integer, negative
 
     EXAMPLES:
 
@@ -305,7 +297,7 @@ def supersingular_j(FF):
 
     INPUT:
 
-    - ``FF``  -- finite field with p^2 elements, where p is a prime number
+    - ``FF`` -- finite field with p^2 elements, where p is a prime number
 
     OUTPUT:
 
@@ -420,7 +412,7 @@ class SupersingularModule(HeckeModule_free_module):
 
     def _repr_(self) -> str:
         """
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -505,9 +497,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        OUTPUT:
-
-        - integer -- dimension, nonnegative
+        OUTPUT: integer; dimension, nonnegative
 
         EXAMPLES::
 
@@ -554,9 +544,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        OUTPUT:
-
-        - integer -- the level, positive
+        OUTPUT: integer; the level, positive
 
         EXAMPLES::
 
@@ -580,9 +568,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        OUTPUT:
-
-        - integer -- characteristic, positive
+        OUTPUT: integer; characteristic, positive
 
         EXAMPLES::
 
@@ -606,9 +592,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        OUTPUT:
-
-        - integer -- weight, positive
+        OUTPUT: integer; weight, positive
 
         EXAMPLES::
 
@@ -631,7 +615,7 @@ class SupersingularModule(HeckeModule_free_module):
 
         INPUT:
 
-        -  ``self`` -- SupersingularModule object
+        - ``self`` -- SupersingularModule object
 
         OUTPUT:
 
@@ -784,11 +768,9 @@ class SupersingularModule(HeckeModule_free_module):
 
         - ``self`` -- SupersingularModule object
 
-        - ``L`` -- integer, positive
+        - ``L`` -- integer; positive
 
-        OUTPUT:
-
-        - matrix -- sparse integer matrix
+        OUTPUT: matrix; sparse integer matrix
 
         EXAMPLES:
 
@@ -815,7 +797,7 @@ class SupersingularModule(HeckeModule_free_module):
             [1 1 0 1 0 1]
             [1 1 1 0 1 0]
 
-        .. note::
+        .. NOTE::
 
             The first list --- list_j --- returned by the supersingular_points
             function are the rows *and* column indexes of the above hecke

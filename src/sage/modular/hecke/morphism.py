@@ -104,21 +104,23 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         ...
         TypeError: Incompatible composition of morphisms: domain of left morphism must be codomain of right.
     """
-    def __init__(self, parent, A, name='', side="left"):
+    def __init__(self, parent, A, name='', side='left'):
         """
         INPUT:
 
         -  ``parent`` -- ModularSymbolsHomspace
 
-        -  ``A`` -- Matrix
+        - ``A`` -- matrix
 
-        -  ``name`` -- str (defaults to '') name of the morphism
+        - ``name`` -- string (default: ``''``); name of the morphism
            (used for printing)
+
+        - ``side`` -- string (default: ``'left'``)
 
         EXAMPLES::
 
             sage: M = ModularSymbols(6)
-            sage: t = M.Hom(M)(matrix(QQ,3,3,srange(9)), name="spam"); t
+            sage: t = M.Hom(M)(matrix(QQ,3,3,srange(9)), name='spam'); t
             Hecke module morphism spam defined by the matrix
             [0 1 2]
             [3 4 5]
@@ -140,7 +142,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         EXAMPLES::
 
             sage: M = ModularSymbols(6)
-            sage: t = M.Hom(M)(matrix(QQ,3,3,srange(9)), name="spam"); t
+            sage: t = M.Hom(M)(matrix(QQ,3,3,srange(9)), name='spam'); t
             Hecke module morphism spam defined by ...
             sage: t.name()
             'spam'
@@ -153,7 +155,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 

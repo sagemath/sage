@@ -27,9 +27,11 @@ from sage.symbolic.operators import arithmetic_operators
 #########
 # Sympy #
 #########
+
+
 class SympyConverter(Converter):
     """
-    Converts any expression to SymPy.
+    Convert any expression to SymPy.
 
     EXAMPLES::
 
@@ -53,7 +55,6 @@ class SympyConverter(Converter):
         True
         sage: (x+I)._sympy_()
         x + I
-
     """
     def __init__(self):
         """
@@ -61,7 +62,7 @@ class SympyConverter(Converter):
 
             sage: from sage.symbolic.expression_conversions import SympyConverter
             sage: s = SympyConverter()  # indirect doctest
-            sage: TestSuite(s).run(skip="_test_pickling")
+            sage: TestSuite(s).run(skip='_test_pickling')
         """
         from sage.interfaces.sympy import sympy_init
         sympy_init()

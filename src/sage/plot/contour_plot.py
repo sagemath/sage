@@ -41,7 +41,7 @@ class ContourPlot(GraphicPrimitive):
 
     - ``yrange`` -- tuple of 2 floats indicating range for vertical direction
 
-    - ``options`` -- dict of valid plot options to pass to constructor
+    - ``options`` -- dictionary of valid plot options to pass to constructor
 
     EXAMPLES:
 
@@ -251,11 +251,11 @@ def contour_plot(f, xrange, yrange, **options):
 
     The following inputs must all be passed in as named parameters:
 
-    - ``plot_points``  -- integer (default: 100); number of points to plot
+    - ``plot_points`` -- integer (default: 100); number of points to plot
       in each direction of the grid.  For old computers, 25 is fine, but
       should not be used to verify specific intersection points.
 
-    - ``fill`` -- bool (default: ``True``), whether to color in the area
+    - ``fill`` -- boolean (default: ``True``); whether to color in the area
       between contour lines
 
     - ``cmap`` -- a colormap (default: ``'gray'``), the name of
@@ -270,25 +270,25 @@ def contour_plot(f, xrange, yrange, **options):
       is passed (or the option is not given), then the number of contour
       lines is determined automatically, and is usually about 5.
 
-    - ``linewidths`` -- integer or list of integer (default: None), if
+    - ``linewidths`` -- integer or list of integer (default: ``None``), if
       a single integer all levels will be of the width given,
       otherwise the levels will be plotted with the width in the order
       given.  If the list is shorter than the number of contours, then
       the widths will be repeated cyclically.
 
-    - ``linestyles`` -- string or list of strings (default: None), the
-      style of the lines to be plotted, one of: ``"solid"``, ``"dashed"``,
-      ``"dashdot"``, ``"dotted"``, respectively ``"-"``, ``"--"``,
-      ``"-."``, ``":"``.  If the list is shorter than the number of
+    - ``linestyles`` -- string or list of strings (default: ``None``), the
+      style of the lines to be plotted, one of: ``'solid'``, ``'dashed'``,
+      ``'dashdot'``, ``'dotted'``, respectively ``'-'``, ``'--'``,
+      ``'-.'``, ``':'``.  If the list is shorter than the number of
       contours, then the styles will be repeated cyclically.
 
-    - ``labels`` -- boolean (default: ``False``) Show level labels or not.
+    - ``labels`` -- boolean (default: ``False``); show level labels or not
 
       The following options are to adjust the style and placement of
       labels, they have no effect if no labels are shown.
 
-      - ``label_fontsize`` -- integer (default: 9), the font size of
-        the labels.
+      - ``label_fontsize`` -- integer (default: 9); the font size of
+        the labels
 
       - ``label_colors`` -- string or sequence of colors (default:
         None) If a string, gives the name of a single color with which
@@ -300,36 +300,36 @@ def contour_plot(f, xrange, yrange, **options):
         otherwise True), controls whether the underlying contour is
         removed or not.
 
-      - ``label_inline_spacing`` -- integer (default: 3), When inline,
+      - ``label_inline_spacing`` -- integer (default: 3); when inline,
         this is the amount of contour that is removed from each side,
         in pixels.
 
-      - ``label_fmt`` -- a format string (default: "%1.2f"), this is
+      - ``label_fmt`` -- a format string (default: ``"%1.2f"``), this is
         used to get the label text from the level.  This can also be a
         dictionary with the contour levels as keys and corresponding
         text string labels as values.  It can also be any callable which
         returns a string when called with a numeric contour level.
 
-    - ``colorbar`` -- boolean (default: ``False``) Show a colorbar or not.
+    - ``colorbar`` -- boolean (default: ``False``); show a colorbar or not
 
       The following options are to adjust the style and placement of
       colorbars.  They have no effect if a colorbar is not shown.
 
-      - ``colorbar_orientation`` -- string (default: 'vertical'),
+      - ``colorbar_orientation`` -- string (default: ``'vertical'``),
         controls placement of the colorbar, can be either 'vertical'
         or 'horizontal'
 
       - ``colorbar_format`` -- a format string, this is used to format
-        the colorbar labels.
+        the colorbar labels
 
-      - ``colorbar_spacing`` -- string (default: 'proportional').  If
+      - ``colorbar_spacing`` -- string (default: ``'proportional'``); if
         'proportional', make the contour divisions proportional to
         values.  If 'uniform', space the colorbar divisions uniformly,
         without regard for numeric values.
 
     - ``legend_label`` -- the label for this item in the legend
 
-    -  ``region`` -- (default: None) If region is given, it must be a function
+    - ``region`` -- (default: ``None``) if region is given, it must be a function
         of two variables. Only segments of the surface where region(x,y)
         returns a number >0 will be included in the plot.
 
@@ -881,7 +881,6 @@ def contour_plot(f, xrange, yrange, **options):
         sage: x,y = SR.var('x,y', domain='real')
         sage: contour_plot(log(x) + log(y), (-1, 5), (-1, 5))
         Graphics object consisting of 1 graphics primitive
-
     """
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
@@ -951,7 +950,7 @@ def contour_plot(f, xrange, yrange, **options):
             # ...make it actually the const_z0 function.
             xy_data_array.fill(z0)
 
-            # We're going to set fill=True in a momemt, so we need to
+            # We're going to set fill=True in a moment, so we need to
             # prepend an entry to the cmap so that the user's original
             # cmap winds up in the right place.
             if "cmap" in options:
@@ -1059,21 +1058,21 @@ def implicit_plot(f, xrange, yrange, **options):
       in each direction of the grid
 
     - ``fill`` -- boolean (default: ``False``); if ``True``, fill the region
-      `f(x, y) < 0`.
+      `f(x, y) < 0`
 
-    - ``fillcolor`` -- string (default: ``'blue'``), the color of the region
+    - ``fillcolor`` -- string (default: ``'blue'``); the color of the region
       where `f(x,y) < 0` if ``fill = True``. Colors are defined in
       :mod:`sage.plot.colors`; try ``colors?`` to see them all.
 
-    - ``linewidth`` -- integer (default: None), if a single integer all levels
+    - ``linewidth`` -- integer (default: ``None``); if a single integer all levels
       will be of the width given, otherwise the levels will be plotted with the
       widths in the order given.
 
-    - ``linestyle`` -- string (default: None), the style of the line to be
-      plotted, one of: ``"solid"``, ``"dashed"``, ``"dashdot"`` or
-      ``"dotted"``, respectively ``"-"``, ``"--"``, ``"-."``, or ``":"``.
+    - ``linestyle`` -- string (default: ``None``); the style of the line to be
+      plotted, one of: ``'solid'``, ``'dashed'``, ``'dashdot'`` or
+      ``'dotted'``, respectively ``'-'``, ``'--'``, ``'-.'``, or ``':'``.
 
-    - ``color`` -- string (default: ``'blue'``), the color of the plot. Colors
+    - ``color`` -- string (default: ``'blue'``); the color of the plot. Colors
       are defined in :mod:`sage.plot.colors`; try ``colors?`` to see them all.
       If ``fill = True``, then this sets only the color of the border of the
       plot. See ``fillcolor`` for setting the color of the fill region.
@@ -1086,17 +1085,17 @@ def implicit_plot(f, xrange, yrange, **options):
       ``basex`` sets the base of the logarithm along the horizontal
       axis and ``basey`` sets the base along the vertical axis.
 
-    - ``scale`` -- (default: ``"linear"``) string. The scale of the axes.
-      Possible values are ``"linear"``, ``"loglog"``, ``"semilogx"``,
-      ``"semilogy"``.
+    - ``scale`` -- (default: ``'linear'``) string. The scale of the axes.
+      Possible values are ``'linear'``, ``'loglog'``, ``'semilogx'``,
+      ``'semilogy'``.
 
       The scale can be also be given as single argument that is a list
       or tuple ``(scale, base)`` or ``(scale, basex, basey)``.
 
-      The ``"loglog"`` scale sets both the horizontal and vertical axes to
-      logarithmic scale. The ``"semilogx"`` scale sets the horizontal axis
-      to logarithmic scale. The ``"semilogy"`` scale sets the vertical axis
-      to logarithmic scale. The ``"linear"`` scale is the default value
+      The ``'loglog'`` scale sets both the horizontal and vertical axes to
+      logarithmic scale. The ``'semilogx'`` scale sets the horizontal axis
+      to logarithmic scale. The ``'semilogy'`` scale sets the vertical axis
+      to logarithmic scale. The ``'linear'`` scale is the default value
       when :class:`~sage.plot.graphics.Graphics` is initialized.
 
     .. WARNING::
@@ -1190,13 +1189,13 @@ def implicit_plot(f, xrange, yrange, **options):
 
     You can even change the color of the plot::
 
-        sage: implicit_plot(x^2 + y^2 == 2, (x,-3,3), (y,-3,3), color="red")
+        sage: implicit_plot(x^2 + y^2 == 2, (x,-3,3), (y,-3,3), color='red')
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
 
         x, y =var("x y")
-        g = implicit_plot(x**2 + y**2 == 2, (x,-3,3), (y,-3,3), color="red")
+        g = implicit_plot(x**2 + y**2 == 2, (x,-3,3), (y,-3,3), color='red')
         sphinx_plot(g)
 
     The color of the fill region can be changed::
@@ -1207,7 +1206,7 @@ def implicit_plot(f, xrange, yrange, **options):
     .. PLOT::
 
         x, y =var("x y")
-        g = implicit_plot(x**2 + y**2 == 2, (x,-3,3), (y,-3,3), fill=True, fillcolor="red")
+        g = implicit_plot(x**2 + y**2 == 2, (x,-3,3), (y,-3,3), fill=True, fillcolor='red')
         sphinx_plot(g)
 
     Here is a beautiful (and long) example which also tests that all
@@ -1398,14 +1397,14 @@ def implicit_plot(f, xrange, yrange, **options):
 def region_plot(f, xrange, yrange, **options):
     r"""
     ``region_plot`` takes a boolean function of two variables, `f(x, y)`
-    and plots the region where f is True over the specified
+    and plots the region where f is ``True`` over the specified
     ``xrange`` and ``yrange`` as demonstrated below.
 
     ``region_plot(f, (xmin,xmax), (ymin,ymax), ...)``
 
     INPUT:
 
-    - ``f`` -- a boolean function or a list of boolean functions of
+    - ``f`` -- boolean function or a list of boolean functions of
       two variables
 
     - ``(xmin, xmax)`` -- 2-tuple, the range of ``x`` values OR 3-tuple
@@ -1414,7 +1413,7 @@ def region_plot(f, xrange, yrange, **options):
     - ``(ymin, ymax)`` -- 2-tuple, the range of ``y`` values OR 3-tuple
       ``(y,ymin,ymax)``
 
-    - ``plot_points``  -- integer (default: 100); number of points to plot
+    - ``plot_points`` -- integer (default: 100); number of points to plot
       in each direction of the grid
 
     - ``incol`` -- a color (default: ``'blue'``), the color inside the region
@@ -1430,11 +1429,11 @@ def region_plot(f, xrange, yrange, **options):
        (``'black'`` if ``borderwidth`` or ``borderstyle`` is specified but
        not ``bordercol``)
 
-    - ``borderstyle``  -- string (default: ``'solid'``), one of ``'solid'``,
+    - ``borderstyle`` -- string (default: ``'solid'``); one of ``'solid'``,
       ``'dashed'``, ``'dotted'``, ``'dashdot'``, respectively ``'-'``,
-      ``'--'``, ``':'``, ``'-.'``.
+      ``'--'``, ``':'``, ``'-.'``
 
-    - ``borderwidth``  -- integer (default: ``None``), the width of the
+    - ``borderwidth`` -- integer (default: ``None``); the width of the
       border in pixels
 
     - ``alpha`` -- (default: 1) how transparent the fill is; a number
@@ -1448,19 +1447,18 @@ def region_plot(f, xrange, yrange, **options):
       ``basex`` sets the base of the logarithm along the horizontal
       axis and ``basey`` sets the base along the vertical axis.
 
-    - ``scale`` -- (default: ``"linear"``) string. The scale of the axes.
-      Possible values are ``"linear"``, ``"loglog"``, ``"semilogx"``,
-      ``"semilogy"``.
+    - ``scale`` -- string (default: ``'linear'``); the scale of the axes.
+      Possible values are ``'linear'``, ``'loglog'``, ``'semilogx'``,
+      ``'semilogy'``.
 
       The scale can be also be given as single argument that is a list
       or tuple ``(scale, base)`` or ``(scale, basex, basey)``.
 
-      The ``"loglog"`` scale sets both the horizontal and vertical axes to
-      logarithmic scale. The ``"semilogx"`` scale sets the horizontal axis
-      to logarithmic scale. The ``"semilogy"`` scale sets the vertical axis
-      to logarithmic scale. The ``"linear"`` scale is the default value
+      The ``'loglog'`` scale sets both the horizontal and vertical axes to
+      logarithmic scale. The ``'semilogx'`` scale sets the horizontal axis
+      to logarithmic scale. The ``'semilogy'`` scale sets the vertical axis
+      to logarithmic scale. The ``'linear'`` scale is the default value
       when :class:`~sage.plot.graphics.Graphics` is initialized.
-
 
     EXAMPLES:
 

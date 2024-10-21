@@ -49,7 +49,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
     @classmethod
     def smallest_base_ring(cls, cartan_type=None):
         """
-        Returns the smallest base ring the ambient space can be defined upon
+        Return the smallest base ring the ambient space can be defined upon.
 
         .. SEEALSO:: :meth:`~sage.combinat.root_system.ambient_space.AmbientSpace.smallest_base_ring`
 
@@ -124,7 +124,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (1, 0, 0, -1),
              (0, 1, 0, -1),
              (0, 0, 1, -1)]
-
         """
         res = []
         for j in range(self.n):
@@ -149,16 +148,15 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: e = RootSystem(['A',3]).ambient_lattice()
             sage: e.fundamental_weights()
             Finite family {1: (1, 0, 0, 0), 2: (1, 1, 0, 0), 3: (1, 1, 1, 0)}
-
         """
         return self.sum(self.monomial(j) for j in range(i))
 
     def det(self, k=1):
         """
-        returns the vector (1, ... ,1) which in the ['A',r]
+        Return the vector (1, ... ,1) which in the ['A',r]
         weight lattice, interpreted as a weight of GL(r+1,CC)
         is the determinant. If the optional parameter k is
-        given, returns (k, ... ,k), the k-th power of the
+        given, returns (k, ... ,k), the `k`-th power of the
         determinant.
 
         EXAMPLES::
@@ -177,7 +175,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, Ca
 
 class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType_simple):
     """
-    Cartan Type `A_n`
+    Cartan Type `A_n`.
 
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
@@ -251,7 +249,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
 
     def dynkin_diagram(self):
         """
-        Returns the Dynkin diagram of type A.
+        Return the Dynkin diagram of type A.
 
         EXAMPLES::
 
@@ -339,11 +337,12 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
             label = lambda i: i
         if node is None:
             node = self._ascii_art_node
-        ret = "---".join(node(label(i)) for i in range(1,n+1)) + "\n"
-        ret += "".join("{!s:4}".format(label(i)) for i in range(1,n+1))
+        ret = "---".join(node(label(i)) for i in range(1, n + 1)) + "\n"
+        ret += "".join("{!s:4}".format(label(i)) for i in range(1, n + 1))
         return ret
 
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_A', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_A',
+                           'ambient_space', AmbientSpace)

@@ -70,7 +70,7 @@ class AutomorphismField(TensorField):
     - ``name`` -- (default: ``None``) name given to the field
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the field;
       if none is provided, the LaTeX symbol is set to ``name``
-    - ``is_identity`` -- (default: ``False``) determines whether the
+    - ``is_identity`` -- boolean (default: ``False``); determines whether the
       constructed object is a field of identity automorphisms
 
     EXAMPLES:
@@ -137,7 +137,6 @@ class AutomorphismField(TensorField):
 
         sage: ia is ~a
         True
-
     """
     def __init__(self, vector_field_module, name=None, latex_name=None):
         r"""
@@ -183,7 +182,6 @@ class AutomorphismField(TensorField):
         .. TODO::
 
             Fix ``_test_pickling`` (in the superclass :class:`TensorField`).
-
         """
         TensorField.__init__(self, vector_field_module, (1,1), name=name,
                              latex_name=latex_name,
@@ -206,7 +204,6 @@ class AutomorphismField(TensorField):
             sage: a  # indirect doctest
             Field of tangent-space automorphisms a on the 2-dimensional
              differentiable manifold M
-
         """
         description = "Field of tangent-space "
         if self is self.parent().one():
@@ -226,7 +223,6 @@ class AutomorphismField(TensorField):
             sage: M = Manifold(2, 'M')
             sage: a = M.automorphism_field(name='a')
             sage: a._init_derived()
-
         """
         TensorField._init_derived(self)
         self._inverse = None  # inverse not set yet
@@ -240,7 +236,6 @@ class AutomorphismField(TensorField):
             sage: M = Manifold(2, 'M')
             sage: a = M.automorphism_field(name='a')
             sage: a._del_derived()
-
         """
         # First delete the derived quantities pertaining to the mother class:
         TensorField._del_derived(self)
@@ -313,7 +308,6 @@ class AutomorphismField(TensorField):
             ...
             ValueError: the components of an immutable element cannot be
              changed
-
         """
         comp = super().set_comp(basis=basis)
         self._is_identity = False  # a priori
@@ -386,7 +380,6 @@ class AutomorphismField(TensorField):
             ...
             ValueError: the components of an immutable element cannot be
              changed
-
         """
         comp = super().add_comp(basis=basis)
         self._is_identity = False  # a priori
@@ -406,7 +399,6 @@ class AutomorphismField(TensorField):
              differentiable manifold M
             sage: a._new_instance().parent() is a.parent()
             True
-
         """
         return type(self)(self._vmodule)
 
@@ -484,7 +476,6 @@ class AutomorphismField(TensorField):
             True
             sage: s.restrict(U) == a(z, w.restrict(U))
             True
-
         """
         if self._is_identity:
             if len(arg) == 1:
@@ -556,7 +547,6 @@ class AutomorphismField(TensorField):
             sage: one = Id.copy('1'); one
             Field of tangent-space automorphisms 1 on the 2-dimensional
              differentiable manifold M
-
         """
         copy = super().copy(name=name, latex_name=latex_name)
         copy._is_identity = self._is_identity
@@ -630,7 +620,6 @@ class AutomorphismField(TensorField):
 
             sage: ia is ~a
             True
-
         """
         if self._is_identity:
             return self
@@ -710,7 +699,6 @@ class AutomorphismField(TensorField):
             sage: w.add_comp_by_continuation(e_uv, U.intersection(V), c_uv)
             sage: s(w) == a(b(w))  # long time
             True
-
         """
         # No need for consistency check since self and other are guaranteed
         # to have the same parent. In particular, they are defined on the same
@@ -767,7 +755,6 @@ class AutomorphismField(TensorField):
             True
             sage: s = a.__mul__(w); s  # tensor product
             Tensor field of type (2,1) on the 2-dimensional differentiable manifold M
-
         """
         if isinstance(other, AutomorphismField):
             return self._mul_(other)  # general linear group law
@@ -804,7 +791,6 @@ class AutomorphismField(TensorField):
             sage: a *= b
             sage: a == s
             True
-
         """
         return self.__mul__(other)
 
@@ -827,9 +813,7 @@ class AutomorphismField(TensorField):
           subdomain of ``self._codomain``; if ``None``, the restriction
           of ``self.base_module().destination_map()`` to `V` is used
 
-        OUTPUT:
-
-        - a :class:`AutomorphismField` representing the restriction
+        OUTPUT: a :class:`AutomorphismField` representing the restriction
 
         EXAMPLES:
 
@@ -898,7 +882,6 @@ class AutomorphismField(TensorField):
             sage: id.restrict(W)[eS_W,:]
             [1 0]
             [0 1]
-
         """
         if subdomain == self._domain:
             return self
@@ -1004,7 +987,6 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
 
         sage: inv is ~rot
         True
-
     """
     def __init__(self, vector_field_module, name=None, latex_name=None):
         r"""
@@ -1039,7 +1021,6 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             [1 0]
             [0 1]
             sage: TestSuite(b).run()
-
         """
         FreeModuleAutomorphism.__init__(self, vector_field_module,
                                         name=name, latex_name=latex_name)
@@ -1067,7 +1048,6 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             sage: a  # indirect doctest
             Field of tangent-space automorphisms a on the 2-dimensional
              differentiable manifold M
-
         """
         description = "Field of tangent-space "
         if self is self.parent().one():
@@ -1084,8 +1064,8 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: ``True``) determines whether the
-          restrictions of ``self`` to subdomains are deleted.
+        - ``del_restrictions`` -- boolean (default: ``True``); determines whether the
+          restrictions of ``self`` to subdomains are deleted
 
         TESTS::
 
@@ -1093,7 +1073,6 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             sage: X.<x,y> = M.chart()
             sage: a = M.automorphism_field(name='a')
             sage: a._del_derived()
-
         """
         # Delete the derived quantities pertaining to the mother classes:
         FreeModuleAutomorphism._del_derived(self)
@@ -1133,7 +1112,6 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             sage: s.display()
             a(z,v): U → ℝ
                (x, y) ↦ 2*x*y^2 + x
-
         """
         if len(arg) == 1:
             # the automorphism acting as such (map of a vector field to a
@@ -1189,7 +1167,6 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
 
             sage: b is ~a
             True
-
         """
         from sage.matrix.constructor import matrix
         from sage.tensor.modules.comp import Components
@@ -1263,9 +1240,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
           ``self._codomain``; if ``None``, the restriction of
           ``self.base_module().destination_map()`` to `V` is used
 
-        OUTPUT:
-
-        - a :class:`AutomorphismFieldParal` representing the restriction
+        OUTPUT: a :class:`AutomorphismFieldParal` representing the restriction
 
         EXAMPLES:
 
@@ -1298,7 +1273,6 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
             [0 1]
             sage: id.restrict(D) == D.tangent_identity_field()
             True
-
         """
         if subdomain == self._domain:
             return self
@@ -1388,7 +1362,6 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
              2-dimensional differentiable manifold M
             sage: idp * ap == ap
             True
-
         """
         if point not in self._domain:
             raise TypeError("the {} is not in the domain of the {}".format(

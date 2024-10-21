@@ -35,7 +35,6 @@ cpdef int bitcount(n) noexcept:
         2
         sage: bitcount(2L)
         2
-
     """
     cdef Integer m
     if isinstance(n, Integer):
@@ -64,7 +63,6 @@ cpdef isqrt(n):
         3
         sage: isqrt(10L)
         3
-
     """
     cdef Integer m, y
     if isinstance(n, Integer):

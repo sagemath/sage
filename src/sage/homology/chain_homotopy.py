@@ -65,7 +65,7 @@ class ChainHomotopy(Morphism):
 
     - ``matrices`` -- dictionary of matrices, keyed by dimension
     - ``f`` -- chain map `C \to D`
-    - ``g`` (optional) -- chain map `C \to D`
+    - ``g`` -- (optional) chain map `C \to D`
 
     The dictionary ``matrices`` defines ``H`` by specifying the matrix
     defining it in each degree: the entry `m` corresponding to key `i`

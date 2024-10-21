@@ -18,7 +18,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     cpdef bint is_zero(self) noexcept
     cpdef bint is_one(self) noexcept
- 
+
     cdef _left_quo_rem(self, OrePolynomial other)
     cdef _right_quo_rem(self, OrePolynomial other)
     cdef OrePolynomial _left_lcm_cofactor(self, OrePolynomial other)
@@ -39,7 +39,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
     cdef list _mul_list(self, list A)
     cpdef _mul_(self, other)
 
-    cpdef dict dict(self)
+    cpdef dict monomial_coefficients(self)
     cpdef list list(self, bint copy=*)
 
 

@@ -45,7 +45,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
           which lives in ``parent``
 
         - ``check`` -- if ``True``, check that parent is an arithmetic
-          subgroup, and that `x` defines a matrix of determinant `1`.
+          subgroup, and that `x` defines a matrix of determinant `1`
 
         We tend not to create elements of arithmetic subgroups that are not
         SL2Z, in order to avoid coercion issues (that is, the other arithmetic
@@ -161,8 +161,8 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
     cpdef _richcmp_(self, right_r, int op):
         """
-        Compare self to right, where right is guaranteed to have the same
-        parent as self.
+        Compare ``self`` to ``right``, where ``right`` is guaranteed to have
+        the same parent as ``self``.
 
         EXAMPLES::
 
@@ -207,7 +207,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
 
     cpdef _mul_(self, right):
         """
-        Return self * right.
+        Return ``self * right``.
 
         EXAMPLES::
 

@@ -33,8 +33,8 @@ from sage.rings.fraction_field import FractionField_generic
 
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
 from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
@@ -60,9 +60,9 @@ def Conic(base_field, F=None, names=None, unique=True):
 
     INPUT:
 
-    - ``base_field`` -- The base field of the conic.
+    - ``base_field`` -- the base field of the conic
 
-    - ``names`` -- a list, tuple, or comma separated string
+    - ``names`` -- list, tuple, or comma separated string
       of three variable names specifying the names
       of the coordinate functions of the ambient
       space `\Bold{P}^3`. If not specified or read
@@ -90,13 +90,11 @@ def Conic(base_field, F=None, names=None, unique=True):
                    If ``F`` is a list of 5 points in the plane, then the output
                    is a conic through those points.
 
-    - ``unique`` -- Used only if ``F`` is a list of points in the plane.
-      If the conic through the points is not unique, then
-      raise :class:`ValueError` if and only if ``unique`` is ``True``
+    - ``unique`` -- used only if ``F`` is a list of points in the plane;
+      if the conic through the points is not unique, then
+      raise :exc:`ValueError` if and only if ``unique`` is ``True``
 
-    OUTPUT:
-
-    A plane projective conic curve defined by ``F`` over a field.
+    OUTPUT: a plane projective conic curve defined by ``F`` over a field
 
     EXAMPLES:
 
@@ -243,7 +241,7 @@ def Conic(base_field, F=None, names=None, unique=True):
             return ProjectiveConic_rational_field(P2, F)
         if isinstance(base_field, NumberField):
             return ProjectiveConic_number_field(P2, F)
-        if isinstance(base_field, FractionField_generic) and (is_PolynomialRing(base_field.ring()) or is_MPolynomialRing(base_field.ring())):
+        if isinstance(base_field, FractionField_generic) and (isinstance(base_field.ring(), PolynomialRing_general) or isinstance(base_field.ring(), MPolynomialRing_base)):
             return ProjectiveConic_rational_function_field(P2, F)
 
         return ProjectiveConic_field(P2, F)

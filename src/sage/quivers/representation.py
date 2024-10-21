@@ -482,16 +482,16 @@ class QuiverRepFactory(UniqueFactory):
     are ignored; the keywords are only checked in the event that the argument
     list does not have enough entries after ``P``.
 
-    - ``spaces`` -- dict (default: empty); a dictionary associating to each
-      vertex a free module over the base ring `k`.  Not all vertices must be
-      specified; unspecified vertices are automatically set to `k^0`.  Keys
-      of the dictionary  that don't correspond to vertices are ignored.
+    - ``spaces`` -- dictionary (default: empty) associating to each vertex a
+      free module over the base ring `k`.  Not all vertices must be specified;
+      unspecified vertices are automatically set to `k^0`.  Keys of the
+      dictionary  that don't correspond to vertices are ignored.
 
-    - ``maps`` -- dict (default: empty); a dictionary associating to each edge
-      a map whose domain and codomain are the spaces associated to the initial
-      and terminal vertex of the edge respectively.  Not all edges must be
-      specified; unspecified edges are automatically set to the zero map.
-      Keys of the dictionary that don't correspond to edges are ignored.
+    - ``maps`` -- dictionary (default: empty) associating to each edge a map
+      whose domain and codomain are the spaces associated to the initial and
+      terminal vertex of the edge respectively.  Not all edges must be
+      specified; unspecified edges are automatically set to the zero map. Keys
+      of the dictionary that don't correspond to edges are ignored.
 
     The second option is the ``paths`` option which creates a module by
     generating a right ideal from a list of paths.  Thus the basis elements
@@ -504,7 +504,7 @@ class QuiverRepFactory(UniqueFactory):
     - ``basis`` -- list; a nonempty list of paths in the quiver ``Q``.
       Entries that do not represent valid paths are ignored and duplicate
       paths are deleted.  There must be at least one valid path in the list
-      or a :class:`ValueError` is raised.  The closure of this list under right
+      or a :exc:`ValueError` is raised.  The closure of this list under right
       multiplication forms the basis of the resulting representation.
 
     The third option is the ``dual paths`` option which creates the dual of
@@ -518,18 +518,16 @@ class QuiverRepFactory(UniqueFactory):
     - ``basis`` -- list; a nonempty list of paths in the quiver ``Q``.
       Entries that do not represent valid paths are ignored and duplicate
       paths are deleted.  There must be at least one valid path in the list
-      or a :class:`ValueError` is raised.  The closure of this list under left
+      or a :exc:`ValueError` is raised.  The closure of this list under left
       multiplication of edges forms the basis of  the resulting representation.
 
     Using the second and third options requires that the following keyword be
     passed to the constructor.  This must be passed as a keyword.
 
-    - ``option`` -- string (default: ``None``), either ``'values'`` or
-      ``'paths'`` or ``'dual paths'``. ``None`` is equivalent to ``'values'``.
+    - ``option`` -- string (default: ``None``); either ``'values'`` or
+      ``'paths'`` or ``'dual paths'``. ``None`` is equivalent to ``'values'``
 
-    OUTPUT:
-
-    - :class:`QuiverRep`
+    OUTPUT: :class:`QuiverRep`
 
     EXAMPLES::
 
@@ -575,7 +573,8 @@ class QuiverRepFactory(UniqueFactory):
     In the following example, the 3rd and 4th paths are actually the same,
     so the duplicate is removed::
 
-        sage: N = Q1.representation(QQ, [[(1, 1)], [(2, 2)], [(1, 2, 'a')], [(1, 2, 'a')]], option='paths')
+        sage: N = Q1.representation(QQ, [[(1, 1)], [(2, 2)], [(1, 2, 'a')],
+        ....:                           [(1, 2, 'a')]], option='paths')
         sage: N.dimension()
         3
 
@@ -609,9 +608,7 @@ class QuiverRepFactory(UniqueFactory):
 
         See the class documentation.
 
-        OUTPUT:
-
-        - tuple
+        OUTPUT: tuple
 
         EXAMPLES::
 
@@ -765,9 +762,7 @@ class QuiverRepFactory(UniqueFactory):
         - ``version`` -- the version of sage, this is currently ignored
         - ``key`` -- tuple
 
-        OUTPUT:
-
-        - :class:`QuiverRep_generic` or :class:`QuiverRep_with_path_basis`
+        OUTPUT: :class:`QuiverRep_generic` or :class:`QuiverRep_with_path_basis`
 
         EXAMPLES::
 
@@ -827,20 +822,18 @@ class QuiverRepElement(ModuleElement):
 
     INPUT:
 
-    - ``module`` -- :class:`QuiverRep` (default: ``None``), the module to
+    - ``module`` -- :class:`QuiverRep` (default: ``None``); the module to
       which the element belongs
 
-    - ``elements`` -- dict (default: empty), a dictionary associating to each
-      vertex a vector or an object from which sage can create a vector.
-      Not all vertices must be specified, unspecified vertices will be
-      assigned the zero vector of the space associated to that vertex in
-      the given module.  Keys that do not correspond to a vertex are ignored.
+    - ``elements`` -- dictionary (default: empty) associating to each vertex a
+      vector or an object from which sage can create a vector. Not all vertices
+      must be specified, unspecified vertices will be assigned the zero vector
+      of the space associated to that vertex in the given module.  Keys that do
+      not correspond to a vertex are ignored.
 
-    - ``name`` -- string (default: ``None``), the name of the element
+    - ``name`` -- string (default: ``None``); the name of the element
 
-    OUTPUT:
-
-    - :class:`QuiverRepElement`
+    OUTPUT: :class:`QuiverRepElement`
 
     .. NOTE::
 
@@ -988,7 +981,7 @@ class QuiverRepElement(ModuleElement):
 
     def __mul__(self, other):
         """
-        Implements ``*`` for right multiplication by quiver algebra elements.
+        Implement ``*`` for right multiplication by quiver algebra elements.
 
         TESTS::
 
@@ -1128,9 +1121,7 @@ class QuiverRepElement(ModuleElement):
         """
         Return the quiver of the representation.
 
-        OUTPUT:
-
-        - :class:`DiGraph`, the quiver of the representation
+        OUTPUT: :class:`DiGraph`, the quiver of the representation
 
         EXAMPLES::
 
@@ -1148,11 +1139,9 @@ class QuiverRepElement(ModuleElement):
 
         INPUT:
 
-        - ``vertex`` -- integer, a vertex of the quiver
+        - ``vertex`` -- integer; a vertex of the quiver
 
-        OUTPUT:
-
-        - vector, the vector assigned to the given vertex
+        OUTPUT: the vector assigned to the given vertex
 
         EXAMPLES::
 
@@ -1180,7 +1169,7 @@ class QuiverRepElement(ModuleElement):
         - ``vector`` -- a vector or an object from which the space
           associated to the given vertex in the parent can create a vector
 
-        - ``vertex`` -- integer, a vertex of the quiver
+        - ``vertex`` -- integer; a vertex of the quiver
 
         .. WARNING::
 
@@ -1214,10 +1203,8 @@ class QuiverRepElement(ModuleElement):
         """
         Test whether ``self`` is zero.
 
-        OUTPUT:
-
-        - bool, ``True`` if the element is the zero element, ``False``
-          otherwise
+        OUTPUT: boolean, ``True`` if the element is the zero element, ``False``
+        otherwise
 
         EXAMPLES::
 
@@ -1251,9 +1238,7 @@ class QuiverRepElement(ModuleElement):
         The support is the set of vertices to which a nonzero vector is
         associated.
 
-        OUTPUT:
-
-        - list, the support
+        OUTPUT: list; the support
 
         EXAMPLES::
 
@@ -1321,22 +1306,18 @@ class QuiverRep_generic(WithEqualityById, Module):
 
     - ``P`` -- the path semigroup of the quiver `Q` of the representation
 
-    - ``spaces`` -- dict (default: empty), a dictionary associating to each
-      vertex a free module over the base ring `k`.  Not all vertices need
-      to be specified, unspecified vertices are automatically set to
-      `k^0`.  Keys of the dictionary that don't correspond to vertices are
-      ignored.
+    - ``spaces`` -- dictionary (default: empty) associating to each vertex a
+      free module over the base ring `k`.  Not all vertices need to be
+      specified, unspecified vertices are automatically set to `k^0`.  Keys of
+      the dictionary that don't correspond to vertices are ignored.
 
-    - ``maps`` -- dict (default: empty), a dictionary associating to each
-      edge a map whose domain and codomain are the spaces associated to
-      the initial and terminal vertex of the edge respectively.  Not all
-      edges need to be specified, unspecified edges are automatically set
-      to the zero map.  Keys of the dictionary that don't correspond to
-      edges are ignored.
+    - ``maps`` -- dictionary (default: empty) associating to each edge a map
+      whose domain and codomain are the spaces associated to the initial and
+      terminal vertex of the edge respectively.  Not all edges need to be
+      specified, unspecified edges are automatically set to the zero map.  Keys
+      of the dictionary that don't correspond to edges are ignored.
 
-    OUTPUT:
-
-    - :class:`QuiverRep`
+    OUTPUT: :class:`QuiverRep`
 
     EXAMPLES::
 
@@ -1578,11 +1559,9 @@ class QuiverRep_generic(WithEqualityById, Module):
 
         INPUT:
 
-        - ``domain`` -= a Sage object
+        - ``domain`` -- a Sage object
 
-        OUTPUT:
-
-        - :class:`QuiverRepHom` or bool
+        OUTPUT: :class:`QuiverRepHom` or boolean
 
         TESTS::
 
@@ -1660,7 +1639,7 @@ class QuiverRep_generic(WithEqualityById, Module):
 
         INPUT:
 
-        - ``vertex`` -- integer, a vertex of the quiver of the module
+        - ``vertex`` -- integer; a vertex of the quiver of the module
 
         EXAMPLES::
 
@@ -1696,9 +1675,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         Return the quiver of the representation.
 
-        OUTPUT:
-
-        - :class:`DiGraph`
+        OUTPUT: :class:`DiGraph`
 
         EXAMPLES::
 
@@ -1713,9 +1690,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         r"""
         Return the quiver path algebra acting on this representation.
 
-        OUTPUT:
-
-        - a quiver path algebra
+        OUTPUT: a quiver path algebra
 
         EXAMPLES::
 
@@ -1780,9 +1755,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         Return the dimension vector of the representation.
 
-        OUTPUT:
-
-        - tuple
+        OUTPUT: tuple
 
         .. NOTE::
 
@@ -1808,9 +1781,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         Test whether the representation is zero.
 
-        OUTPUT:
-
-        - bool
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1832,9 +1803,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         Test whether the representation is simple.
 
-        OUTPUT:
-
-        - bool
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1852,9 +1821,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         Test whether the representation is semisimple.
 
-        OUTPUT:
-
-        - bool
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1874,9 +1841,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         Return an element of ``self``.
 
-        OUTPUT:
-
-        - :class:`QuiverRepElement`
+        OUTPUT: :class:`QuiverRepElement`
 
         EXAMPLES::
 
@@ -2032,9 +1997,7 @@ class QuiverRep_generic(WithEqualityById, Module):
           coefficient of the `i`-th basis vector in the linear
           combination.
 
-        OUTPUT:
-
-        - :class:`QuiverRepElement`
+        OUTPUT: :class:`QuiverRepElement`
 
         EXAMPLES::
 
@@ -2073,10 +2036,9 @@ class QuiverRep_generic(WithEqualityById, Module):
         - ``elements`` -- a collection of QuiverRepElements (default:
           empty list), each should be an element of ``self``
 
-        - ``spaces`` -- dictionary (default: empty), this dictionary
-          should contain entries of the form ``{v: S}`` where `v` is a
-          vertex of the quiver and `S` is a subspace of the vector space
-          associated to `v`
+        - ``spaces`` -- dictionary (default: empty); should contain entries of
+          the form ``{v: S}`` where `v` is a vertex of the quiver and `S` is a
+          subspace of the vector space associated to `v`
 
         OUTPUT:
 
@@ -2185,13 +2147,11 @@ class QuiverRep_generic(WithEqualityById, Module):
           associated to each edge `e` of ``sub`` is the restriction of
           the map associated to `e` in ``self``
 
-        - ``check`` -- bool; if ``True`` then ``sub`` is checked to verify
+        - ``check`` -- boolean; if ``True`` then ``sub`` is checked to verify
           that it is indeed a submodule of ``self`` and an error is raised
           if it is not
 
-        OUTPUT:
-
-        - :class:`QuiverRep`, the quotient module ``self / sub``
+        OUTPUT: :class:`QuiverRep`, the quotient module ``self / sub``
 
         .. NOTE::
 
@@ -2258,9 +2218,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         The socle of ``self``.
 
-        OUTPUT:
-
-        - :class:`QuiverRep`, the socle
+        OUTPUT: :class:`QuiverRep`; the socle
 
         EXAMPLES::
 
@@ -2282,9 +2240,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         Return the Jacobson radical of ``self``.
 
-        OUTPUT:
-
-        - :class:`QuiverRep`, the Jacobson radical
+        OUTPUT: :class:`QuiverRep`; the Jacobson radical
 
         EXAMPLES::
 
@@ -2306,9 +2262,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         Return the top of ``self``.
 
-        OUTPUT:
-
-        - :class:`QuiverRep`, the quotient of ``self`` by its radical
+        OUTPUT: :class:`QuiverRep`; the quotient of ``self`` by its radical
 
         EXAMPLES::
 
@@ -2325,9 +2279,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         """
         Return the zero submodule of ``self``.
 
-        OUTPUT:
-
-        - :class:`QuiverRep`, the zero submodule of ``self``.
+        OUTPUT: :class:`QuiverRep`; the zero submodule of ``self``
 
         EXAMPLES::
 
@@ -2347,9 +2299,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         Compute the linear dual `Hom_k(M, k)` of the module
         `M =` ``self`` over the base ring `k`.
 
-        OUTPUT:
-
-        - :class:`QuiverRep`, the dual representation
+        OUTPUT: :class:`QuiverRep`; the dual representation
 
         .. NOTE::
 
@@ -2401,16 +2351,14 @@ class QuiverRep_generic(WithEqualityById, Module):
 
         INPUT:
 
-        - ``basis`` -- bool; if ``False``, then only the module is
+        - ``basis`` -- boolean; if ``False``, then only the module is
           returned.  If ``True``, then a tuple is returned.  The first
           element is the :class:`QuiverRep` and the second element is a
           dictionary which associates to each vertex a list.  The elements
           of this list are the homomorphisms which correspond to the basis
           elements of that vertex in the module.
 
-        OUTPUT:
-
-        - :class:`QuiverRep` or tuple
+        OUTPUT: :class:`QuiverRep` or tuple
 
         .. NOTE::
 
@@ -2454,7 +2402,7 @@ class QuiverRep_generic(WithEqualityById, Module):
 
         - ``modules`` -- :class:`QuiverRep` or list of :class:`QuiverRep`'s
 
-        - ``return_maps`` -- Boolean (default: ``False``); if ``False``, then
+        - ``return_maps`` -- boolean (default: ``False``); if ``False``, then
           the output is a single QuiverRep object which is the direct sum
           of ``self`` with the given module or modules.  If ``True``, then
           the output is a list ``[sum, iota, pi]``.  The first entry
@@ -2465,9 +2413,7 @@ class QuiverRep_generic(WithEqualityById, Module):
           The summands are ordered as given with ``self`` being the zeroth
           summand.
 
-        OUTPUT:
-
-        - :class:`QuiverRep` or tuple
+        OUTPUT: :class:`QuiverRep` or tuple
 
         EXAMPLES::
 
@@ -2620,9 +2566,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         If `p^t` is the algebraic dual of `p` then define
         `\mbox{Tr} M = \mbox{coker} p^t`.
 
-        OUTPUT:
-
-        - :class:`QuiverRep`
+        OUTPUT: :class:`QuiverRep`
 
         EXAMPLES::
 
@@ -2862,7 +2806,7 @@ class QuiverRep_with_path_basis(QuiverRep_generic):
 
         - ``element`` -- :class:`QuiverRepElement`; an element of ``self``
 
-        - ``edge`` -- An edge of the quiver (a tuple) or a list of edges in
+        - ``edge`` -- an edge of the quiver (a tuple) or a list of edges in
           the quiver.  Such a list can be empty (in which case no action
           is performed) and can contain trivial paths (tuples of the form
           `(v, v)` where `v` is a vertex of the quiver)

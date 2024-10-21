@@ -96,7 +96,7 @@ cdef class GroebnerStrategy(SageObject):
 
         Check that :issue:`27508` is fixed::
 
-            sage: R2.<x,y> = PolynomialRing(QQ, 2, order="lex")
+            sage: R2.<x,y> = PolynomialRing(QQ, 2, order='lex')
             sage: I2 = R2.ideal(["x^2 - x", "y^2 - y"])
             sage: R2("x^2 + y").mod(I2), R2("x + y^2").mod(I2)
             (x + y, x + y)
@@ -352,7 +352,6 @@ cdef class NCGroebnerStrategy(SageObject):
             Defining x1, x2, x3, x4, x5, x6
             sage: I.reduce(x1*x2*x3 + x2^2*x4)
             x1*x2*x3
-
         """
         if not isinstance(L, NCPolynomialIdeal):
             raise TypeError("First parameter must be an ideal in a g-algebra.")
@@ -455,7 +454,6 @@ cdef class NCGroebnerStrategy(SageObject):
             sage: strat = NCGroebnerStrategy(I)
             sage: strat.ideal() == I
             True
-
         """
         return self._ideal
 
@@ -530,7 +528,6 @@ cdef class NCGroebnerStrategy(SageObject):
             x*y^2
             sage: ST.normal_form(x*y^2)
             y*z
-
         """
         if unlikely(p._parent is not self._parent):
             raise TypeError("parent(p) must be the same as this object's parent.")

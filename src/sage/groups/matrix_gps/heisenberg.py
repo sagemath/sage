@@ -123,7 +123,7 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
             sage: H = groups.matrix.Heisenberg(n=2, R=4)
             sage: TestSuite(H).run()  # long time
             sage: H = groups.matrix.Heisenberg(n=3)
-            sage: TestSuite(H).run(max_runs=30, skip="_test_elements")  # long time
+            sage: TestSuite(H).run(max_runs=30, skip='_test_elements')  # long time
             sage: H = groups.matrix.Heisenberg(n=2, R=GF(4))
             sage: TestSuite(H).run()  # long time
 

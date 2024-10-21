@@ -43,7 +43,7 @@ coefficients in `L`), `a \otimes b \mapsto [a_\lambda b]` satisfying
 
    `T` is usually called the *translation operation* or the *derivative*.
    For an element `a \in L` we will say that `Ta` is the *derivative of*
-   `a`. We define the *n-th products* `a_{(n)} b` for `a,b \in L` by
+   `a`. We define the *`n`-th products* `a_{(n)} b` for `a,b \in L` by
 
    .. MATH::
 
@@ -64,8 +64,7 @@ coefficients in `L`), `a \otimes b \mapsto [a_\lambda b]` satisfying
 .. NOTE::
 
     In the literature arbitrary gradings are allowed. In this
-    implementation we only support non-negative rational gradings.
-
+    implementation we only support nonnegative rational gradings.
 
 EXAMPLES:
 
@@ -191,7 +190,7 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
       ring of this Lie conformal algebra. Behaviour is undefined
       if it is not a field of characteristic zero.
 
-    - ``arg0`` -- a dictionary (default: ``None``);
+    - ``arg0`` -- dictionary (default: ``None``);
       a dictionary containing the `\lambda` brackets of the
       generators of this Lie conformal algebra. The keys of this
       dictionary are pairs of either names or indices of the
@@ -199,7 +198,7 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
       pair of generators ``'a'`` and ``'b'``, the value of
       ``arg0[('a','b')]`` is a dictionary whose keys are positive
       integer numbers and the corresponding value for the
-      key ``j`` is a dictionary itself representing the j-th product
+      key ``j`` is a dictionary itself representing the `j`-th product
       `a_{(j)}b`. Thus, for a positive integer number `j`, the
       value of ``arg0[('a','b')][j]`` is a dictionary whose entries
       are pairs ``('c',n)`` where ``'c'`` is the name of a generator
@@ -217,19 +216,18 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
       pair (besides the ones defined by skew-symmetry) is assumed
       to have vanishing `\lambda`-bracket.
 
-    - ``names`` -- tuple of ``str`` (default: ``None``); the list of
+    - ``names`` -- tuple of strings (default: ``None``); the list of
       names for generators of this Lie conformal algebra. Do not
       include central elements in this list.
 
-    - ``central_elements`` -- tuple of ``str`` (default: ``None``);
-      A list of names for central elements of this Lie conformal
-      algebra.
+    - ``central_elements`` -- tuple of strings (default: ``None``);
+      a list of names for central elements of this Lie conformal algebra
 
     - ``index_set`` -- enumerated set (default: ``None``); an
       indexing set for the generators of this Lie conformal algebra.
       Do not include central elements in this list.
 
-    - ``weights`` -- tuple of non-negative rational numbers
+    - ``weights`` -- tuple of nonnegative rational numbers
       (default: ``None``); a list of degrees for this Lie
       conformal algebra.
       The returned Lie conformal algebra is H-Graded. This tuple
@@ -245,18 +243,18 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
       ``LieConformalAlgebras(R).Super()``, even if all generators
       are even.
 
-    - ``category`` The category that this Lie conformal algebra
-      belongs to.
+    - ``category`` -- the category that this Lie conformal algebra
+      belongs to
 
     In addition we accept the following keywords:
 
-    - ``graded`` -- a boolean (default: ``False``);
+    - ``graded`` -- boolean (default: ``False``);
       if ``True``, the returned algebra is H-Graded.
       If ``weights`` is not specified, all non-central generators
       are assigned degree `1`. This keyword is ignored if
       ``weights`` is specified
 
-    - ``super`` -- a boolean (default: ``False``);
+    - ``super`` -- boolean (default: ``False``);
       if ``True``, the returned algebra is a super
       Lie conformal algebra even if all generators are even.
       If ``parity`` is not specified, all generators are
@@ -311,8 +309,9 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
     """
     @staticmethod
     def __classcall_private__(cls, R=None, arg0=None, index_set=None,
-        central_elements=None, category=None, prefix=None,
-        names=None, latex_names=None, parity=None, weights=None, **kwds):
+                              central_elements=None, category=None,
+                              prefix=None, names=None, latex_names=None,
+                              parity=None, weights=None, **kwds):
         """
         Lie conformal algebra factory.
 

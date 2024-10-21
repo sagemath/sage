@@ -554,7 +554,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         INPUT:
 
-        - ``as_linear_functionals`` -- (default:``False``) flag whether
+        - ``as_linear_functionals`` -- boolean (default: ``False``); whether
           to return the hyperplane or its linear functional in the basis
           dual to the given root basis
 
@@ -627,7 +627,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         INPUT:
 
         - ``i`` -- an index in the index set
-        - ``as_linear_functionals`` -- (default:``False``) flag whether
+        - ``as_linear_functionals`` -- boolean (default: ``False``); whether
           to return the hyperplane or its linear functional in the basis
           dual to the given root basis
 
@@ -856,7 +856,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
     @cached_method
     def is_crystallographic(self):
         r"""
-        Return ``True`` if self is crystallographic.
+        Return ``True`` if ``self`` is crystallographic.
 
         This is, if the field of definition is the rational field.
 
@@ -972,7 +972,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         # This can be converted to usual GAP
         S = str(gap3('List(ConjugacyClasses(%s),Representative)' % self._gap_group._name))
-        return sage_eval(_gap_return(S), {'self': self})
+        return [self(w, check=False) for w in _gap_return(S)]
 
     def conjugacy_classes(self):
         r"""
@@ -1123,9 +1123,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         Return the reflection eigenvalues of ``self`` as a finite family
         indexed by the class representatives of ``self``.
 
-        OUTPUT:
-
-        - list with entries `k/n` representing the eigenvalue `\zeta_n^k`.
+        OUTPUT: list with entries `k/n` representing the eigenvalue `\zeta_n^k`
 
         EXAMPLES::
 
@@ -1174,8 +1172,8 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         INPUT:
 
-        - ``is_class_representative`` -- boolean (default ``True``) whether to
-          compute instead on the conjugacy class representative.
+        - ``is_class_representative`` -- boolean (default: ``True``) whether to
+          compute instead on the conjugacy class representative
 
         .. SEEALSO:: :meth:`reflection_eigenvalues_family`
 
@@ -1494,7 +1492,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
     def apply_vector_field(self, f, vf=None):
         r"""
-        Returns a rational function obtained by applying the vector
+        Return a rational function obtained by applying the vector
         field ``vf`` to the rational function ``f``.
 
         If ``vf`` is not given, the primitive vector field is used.
@@ -1791,7 +1789,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
         INPUT:
 
-        - ``refl_repr`` -- a dictionary representing the matrices of the
+        - ``refl_repr`` -- dictionary representing the matrices of the
           generators of ``self`` with keys given by the index set, or
           ``None`` to reset to the default reflection representation
 
@@ -2003,7 +2001,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
             INPUT:
 
-            - ``in_unitary_group`` -- (default: ``False``) if ``True``,
+            - ``in_unitary_group`` -- boolean (default: ``False``); if ``True``,
               the reflection length is computed in the unitary group
               which is the dimension of the move space of ``self``
 
@@ -2071,11 +2069,11 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
             INPUT:
 
-            - ``which_primitive`` -- (default:``1``) for which power of
+            - ``which_primitive`` -- (default: ``1``) for which power of
               the first primitive ``h``-th root of unity to look as a
               reflection eigenvalue for a regular element
 
-            - ``is_class_representative`` -- boolean (default ``True``) whether
+            - ``is_class_representative`` -- boolean (default: ``True``); whether
               to compute instead on the conjugacy class representative
 
             .. SEEALSO::
@@ -2141,7 +2139,7 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
             INPUT:
 
             - ``h`` -- the order of the eigenvalue
-            - ``is_class_representative`` -- boolean (default ``True``) whether
+            - ``is_class_representative`` -- boolean (default: ``True``); whether
               to compute instead on the conjugacy class representative
 
             EXAMPLES::

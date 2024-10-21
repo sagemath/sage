@@ -122,7 +122,6 @@ def OP_represent(int n, merges, perm):
         8 -> 8, root: size=1, mcr=8, rank=0
         Deallocating OrbitPartition.
         Done.
-
     """
     cdef int i
     print("Allocating OrbitPartition...")
@@ -456,7 +455,6 @@ def PS_represent(partition, splits):
         0100000000
         Deallocating PartitionStacks.
         Done.
-
     """
     cdef int i, n = sum([len(cell) for cell in partition])
     cdef int *gamma
@@ -780,7 +778,7 @@ cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size) noexcept:
 
 cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level) noexcept:
     """
-    Creates a copy of the first `level` levels of SC. Must have 0 < level.
+    Create a copy of the first `level` levels of SC. Must have 0 < level.
 
     Return a null pointer in case of allocation failure.
     """
@@ -1355,7 +1353,6 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     test_stab_chain_fns_7(n, 0, 1, 1)
         sage: test_stab_chain_fns_7(20, 1, 1, 1)
         sage: test_stab_chain_fns_7(20, 0, 1, 1)
-
     """
     if gap:
         from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -1624,11 +1621,10 @@ cdef int sort_by_function(PartitionStack *PS, int start, int *degrees) noexcept:
 
     INPUT:
 
-    - PS -- the partition stack to be checked
-    - start -- beginning index of the cell to be sorted
-    - degrees -- the values to be sorted by, must have extra scratch space for a
+    - ``PS`` -- the partition stack to be checked
+    - ``start`` -- beginning index of the cell to be sorted
+    - ``degrees`` -- the values to be sorted by, must have extra scratch space for a
       total of `3*n+1`
-
     """
     cdef int n = PS.degree
     cdef int i, j, max, max_location

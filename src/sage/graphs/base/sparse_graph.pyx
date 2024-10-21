@@ -236,23 +236,22 @@ cdef class SparseGraph(CGraph):
 
     INPUT:
 
-     - ``nverts`` -- non-negative integer, the number of vertices.
+    - ``nverts`` -- nonnegative integer, the number of vertices
 
-     - ``expected_degree`` -- non-negative integer (default: 16), expected upper
-        bound on degree of vertices.
+    - ``expected_degree`` -- nonnegative integer (default: 16); expected upper
+      bound on degree of vertices
 
-     - ``extra_vertices`` -- non-negative integer (default: 0), how many extra
-        vertices to allocate.
+    - ``extra_vertices`` -- nonnegative integer (default: 0); how many extra
+      vertices to allocate
 
-     - ``verts`` -- optional list of vertices to add
+    - ``verts`` -- (optional) list of vertices to add
 
-     - ``arcs`` -- optional list of arcs to add
+    - ``arcs`` -- (optional) list of arcs to add
 
     The first ``nverts`` are created as vertices of the graph, and the next
     ``extra_vertices`` can be freely added without reallocation. See top level
     documentation for more details. The input ``verts`` and ``arcs`` are mainly
     for use in pickling.
-
     """
 
     def __cinit__(self, int nverts, int expected_degree=16, int extra_vertices=10,
@@ -380,7 +379,7 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-         - ``total`` -- integer, the total size to make the array
+        - ``total`` -- integer; the total size to make the array
 
         Returns -1 and fails if reallocation would destroy any active vertices.
 
@@ -415,7 +414,6 @@ cdef class SparseGraph(CGraph):
             sage: S.realloc(30)
             sage: S.current_allocation()
             30
-
         """
         if not total:
             raise RuntimeError('Sparse graphs must allocate space for vertices!')
@@ -583,16 +581,16 @@ cdef class SparseGraph(CGraph):
 
     cdef int del_arc_unsafe(self, int u, int v) except -1:
         """
-        Deletes *all* arcs from u to v.
+        Delete *all* arcs from u to v.
 
         INPUT:
 
-        - ``u``, ``v`` -- non-negative integers
+        - ``u``, ``v`` -- nonnegative integers
 
         OUTPUT:
-            0 -- No error.
-            1 -- No arc to delete.
 
+        - 0 -- no error
+        - 1 -- no arc to delete
         """
         cdef int n_arcs = self._del_arc_unsafe(u, v, self.vertices)
         if u != v or self.is_directed():
@@ -723,11 +721,11 @@ cdef class SparseGraph(CGraph):
 
     cpdef int out_degree(self, int u) noexcept:
         """
-        Returns the out-degree of ``v``
+        Return the out-degree of ``v``
 
         INPUT:
 
-         - ``u`` -- integer
+        - ``u`` -- integer
 
         EXAMPLES::
 
@@ -793,11 +791,11 @@ cdef class SparseGraph(CGraph):
 
     cpdef int in_degree(self, int v) noexcept:
         """
-        Returns the in-degree of ``v``
+        Return the in-degree of ``v``
 
         INPUT:
 
-         - ``v`` -- integer
+        - ``v`` -- integer
 
         EXAMPLES::
 
@@ -865,12 +863,11 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-        - ``u``, ``v`` -- non-negative integers
+        - ``u``, ``v`` -- nonnegative integers
 
-        - ``l`` -- a positive integer label, or zero for no label
+        - ``l`` -- positive integer label, or zero for no label
 
-        OUTPUT: ``0`` -- No error.
-
+        OUTPUT: ``0`` -- no error
         """
         self._add_arc_label_unsafe(u, v, l, self.vertices)
         if u != v or self.is_directed():
@@ -892,9 +889,9 @@ cdef class SparseGraph(CGraph):
 
         INPUT:
 
-         - ``u``, ``v`` -- non-negative integers, must be in self
+        - ``u``, ``v`` -- nonnegative integers, must be in ``self``
 
-         - ``l`` -- a positive integer label, or zero for no label
+        - ``l`` -- positive integer label, or zero for no label
 
         EXAMPLES::
 
@@ -931,10 +928,9 @@ cdef class SparseGraph(CGraph):
 
         OUTPUT: one of
 
-        - positive integer -- indicates that there is a label on ``(u, v)``.
+        - positive integer -- indicates that there is a label on ``(u, v)``
 
         - ``0`` -- either the arc ``(u, v)`` is unlabeled, or there is no arc at all.
-
         """
         cdef int i = (u * self.hash_length) + (v & self.hash_mask)
         cdef int compared
@@ -953,7 +949,7 @@ cdef class SparseGraph(CGraph):
 
     cdef int all_arcs_unsafe(self, int u, int v, int *arc_labels, int size) except -1:
         """
-        Gives the labels of all arcs (u, v).
+        Give the labels of all arcs (u, v).
 
         INPUT:
 
@@ -962,12 +958,9 @@ cdef class SparseGraph(CGraph):
         - ``arc_labels`` -- must be a pointer to an (allocated) integer array
         - ``size`` -- the length of the array
 
-        OUTPUT:
-
-        - integer -- the number of arcs ``(u, v)``
-          ``-1`` -- indicates that the array has been filled with labels, but
-          there were more
-
+        OUTPUT: integer; the number of arcs ``(u, v)``.
+        ``-1`` -- indicates that the array has been filled with labels, but
+        there were more.
         """
         cdef int i = (u * self.hash_length) + (v & self.hash_mask), j
         cdef int compared, num_arcs
@@ -1036,8 +1029,9 @@ cdef class SparseGraph(CGraph):
         Delete an arc (u, v) with label l.
 
         OUTPUT:
-            0 -- No error.
-            1 -- No arc with label l.
+
+        - 0 -- no error
+        - 1 -- no arc with label l
         """
         cdef int i = (u * self.hash_length) + (v & self.hash_mask)
         cdef SparseGraphBTNode **old_parent = parent
@@ -1091,13 +1085,13 @@ cdef class SparseGraph(CGraph):
         - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
           number of vertices
 
-        - ``l`` -- a positive integer label, or zero for no label
+        - ``l`` -- positive integer label, or zero for no label
 
         OUTPUT: one of
 
-        - ``0`` -- No error
+        - ``0`` -- no error
 
-        - ``1`` -- No arc with label ``l``
+        - ``1`` -- no arc with label ``l``
         """
         if self._del_arc_label_unsafe(u, v, l, self.vertices):
             return 1  # indicate an error
@@ -1124,13 +1118,13 @@ cdef class SparseGraph(CGraph):
         - ``u``, ``v`` -- integers from `0`, ..., `n-1`, where `n` is the
           number of vertices
 
-        - ``l`` -- a positive integer label, or zero for no label, or ``-1`` for any label
+        - ``l`` -- positive integer label, or zero for no label, or ``-1`` for any label
 
         OUTPUT: one of
 
-        - ``0`` -- False
+        - ``0`` -- false
 
-        - ``1`` -- True
+        - ``1`` -- true
         """
         cdef int i = (u * self.hash_length) + (v & self.hash_mask)
         cdef int compared
@@ -1250,7 +1244,6 @@ cdef class SparseGraphBackend(CGraphBackend):
         Traceback (most recent call last):
         ...
         TypeError: an integer is required
-
     """
 
     def __init__(self, int n, directed=True):
@@ -1263,7 +1256,6 @@ cdef class SparseGraphBackend(CGraphBackend):
             sage: D.add_edge(0,1,None,False)
             sage: list(D.iterator_edges(range(9), True))
             [(0, 1, None)]
-
         """
         self._cg = SparseGraph(n, directed=directed)
         self._directed = directed
@@ -1306,7 +1298,7 @@ cdef class SparseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``u``, ``v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
         EXAMPLES::
 
@@ -1334,15 +1326,15 @@ cdef class SparseGraphBackend(CGraphBackend):
 
     def has_edge(self, object u, object v, object l):
         """
-        Returns whether this graph has edge ``(u,v)`` with label ``l``. If ``l``
+        Return whether this graph has edge ``(u,v)`` with label ``l``. If ``l``
         is ``None``, return whether this graph has an edge ``(u,v)`` with any
         label.
 
         INPUT:
 
-         - ``u``, ``v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
-         - ``l`` -- the edge label, or ``None``
+        - ``l`` -- the edge label, or ``None``
 
         EXAMPLES::
 
@@ -1350,7 +1342,6 @@ cdef class SparseGraphBackend(CGraphBackend):
             sage: D.add_edges([(0,1), (2,3), (4,5), (5,6)], False)
             sage: D.has_edge(0,1,None)
             True
-
         """
         cdef int u_int = self.get_vertex_checked(u)
         cdef int v_int = self.get_vertex_checked(v)
@@ -1379,7 +1370,7 @@ cdef class SparseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``new`` -- boolean (to set) or ``None`` (to get)
+        - ``new`` -- boolean (to set) or ``None`` (to get)
 
         EXAMPLES::
 
@@ -1394,7 +1385,6 @@ cdef class SparseGraphBackend(CGraphBackend):
             sage: G.add_edge(0,1,0,True)
             sage: list(G.iterator_out_edges(range(9), True))
             [(0, 1, 0)]
-
         """
         if new is None:
             return self._multiple_edges
@@ -1406,11 +1396,11 @@ cdef class SparseGraphBackend(CGraphBackend):
 
         INPUT:
 
-         - ``u``, ``v`` -- the vertices of the edge
+        - ``u``, ``v`` -- the vertices of the edge
 
-         - ``l`` -- the edge label
+        - ``l`` -- the edge label
 
-         - ``directed`` -- if ``False``, also set ``(v,u)`` with label ``l``
+        - ``directed`` -- if ``False``, also set ``(v,u)`` with label ``l``
 
         EXAMPLES::
 
@@ -1425,7 +1415,6 @@ cdef class SparseGraphBackend(CGraphBackend):
             sage: G.set_edge_label(2,1,'b',True)
             sage: list(G.iterator_out_edges(range(9), True))
             [(1, 2, 'a')]
-
         """
         if not self.has_edge(u, v, None):
             return

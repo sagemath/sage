@@ -34,7 +34,7 @@ def dhsw_snf(mat, verbose=False):
 
     INPUT:
 
-    - ``mat`` -- an integer matrix, either sparse or dense.
+    - ``mat`` -- integer matrix, either sparse or dense
 
     (They use the transpose of the matrix considered here, so they use
     rows instead of columns.)
@@ -57,7 +57,7 @@ def dhsw_snf(mat, verbose=False):
     Suppose that there were `N` of these.
 
     The resulting matrix should be much smaller; we then feed it
-    to Sage's ``elementary_divisors`` function, and prepend `N` 1's to
+    to Sage's ``elementary_divisors`` function, and prepend `N` 1s to
     account for the rows deleted in the previous step.
 
     EXAMPLES::

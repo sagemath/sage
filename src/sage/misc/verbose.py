@@ -113,29 +113,26 @@ LEVEL = 0  # default
 verbose_files = []
 
 
-def verbose(mesg="", t=0, level=1, caller_name=None):
+def verbose(mesg='', t=0, level=1, caller_name=None):
     """
     Print a message if the current verbosity is at least level.
 
     INPUT:
 
+    - ``mesg`` -- string; a message to print
 
-    -  ``mesg`` -- str, a message to print
+    - ``t`` -- integer (optional); if included, will also print ``cputime(t)``,
+      which is the time since time ``t``. Thus ``t`` should have been obtained
+      with ``t=cputime()``
 
-    -  ``t`` -- int, optional, if included, will also print
-       cputime(t), - which is the time since time t. Thus t should have
-       been obtained with t=cputime()
+    - ``level`` -- integer (default: 1); the verbosity level of
+      what we are printing
 
-    -  ``level`` -- int, (default: 1) the verbosity level of
-       what we are printing
+    - ``caller_name`` -- string (default: ``None``); the name
+      of the calling function. In most cases Python can deduce this, so
+      it need not be provided.
 
-    -  ``caller_name`` -- string (default: None), the name
-       of the calling function; in most cases Python can deduce this, so
-       it need not be provided.
-
-
-    OUTPUT: possibly prints a message to stdout; also returns
-    cputime()
+    OUTPUT: possibly prints a message to stdout; also returns ``cputime()``
 
     EXAMPLES::
 
@@ -191,13 +188,13 @@ def set_verbose(level, files='all'):
 
     INPUT:
 
-    - ``level`` -- an integer between 0 and 2, inclusive.
+    - ``level`` -- integer between 0 and 2, inclusive
 
-    - ``files`` (default: 'all'): list of files to make verbose, or
-       'all' to make ALL files verbose (the default).
+    - ``files`` -- (default: ``'all'``) list of files to make verbose, or
+      'all' to make ALL files verbose (the default)
 
     OUTPUT: changes the state of the verbosity flag and possibly
-    appends to the list of files that are verbose.
+    appends to the list of files that are verbose
 
     EXAMPLES::
 
@@ -222,9 +219,6 @@ def set_verbose(level, files='all'):
 
 
 def set_verbose_files(file_name):
-    """
-
-    """
     if not isinstance(file_name, list):
         file_name = [file_name]
     global verbose_files
@@ -232,16 +226,10 @@ def set_verbose_files(file_name):
 
 
 def get_verbose_files():
-    """
-
-    """
     return verbose_files
 
 
 def unset_verbose_files(file_name):
-    """
-
-    """
     if not isinstance(file_name, list):
         file_name = [file_name]
     for X in file_name:
@@ -251,10 +239,6 @@ def unset_verbose_files(file_name):
 def get_verbose():
     """
     Return the global Sage verbosity level.
-
-    INPUT: int level: an integer between 0 and 2, inclusive.
-
-    OUTPUT: changes the state of the verbosity flag.
 
     EXAMPLES::
 

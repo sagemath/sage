@@ -21,15 +21,15 @@ AUTHORS:
 - Reimundo Heluani (2020-06-15): Initial implementation.
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2020 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .abelian_lie_conformal_algebra import AbelianLieConformalAlgebra as Abelian
 from .affine_lie_conformal_algebra import AffineLieConformalAlgebra as Affine
@@ -41,14 +41,3 @@ from .n2_lie_conformal_algebra import N2LieConformalAlgebra as N2
 from .neveu_schwarz_lie_conformal_algebra import NeveuSchwarzLieConformalAlgebra as NeveuSchwarz
 from .virasoro_lie_conformal_algebra import VirasoroLieConformalAlgebra as Virasoro
 from .weyl_lie_conformal_algebra import WeylLieConformalAlgebra as Weyl
-
-assert Abelian
-assert Affine
-assert BosonicGhosts
-assert FermionicGhosts
-assert FreeBosons
-assert FreeFermions
-assert N2
-assert NeveuSchwarz
-assert Virasoro
-assert Weyl

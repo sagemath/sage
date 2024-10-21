@@ -362,13 +362,13 @@ class SixVertexModel(UniqueRepresentation, Parent):
 
       There are also the following predefined boundary conditions:
 
-      * ``'ice'`` -- The top and bottom boundary conditions are outward and the
+      * ``'ice'`` -- the top and bottom boundary conditions are outward and the
         left and right boundary conditions are inward; this gives the square
         ice model. Also called domain wall boundary conditions.
-      * ``'domain wall'`` -- Same as ``'ice'``.
-      * ``'alternating'`` -- The boundary conditions alternate between inward
+      * ``'domain wall'`` -- same as ``'ice'``.
+      * ``'alternating'`` -- the boundary conditions alternate between inward
         and outward.
-      * ``'free'`` -- There are no boundary conditions.
+      * ``'free'`` -- there are no boundary conditions.
 
     EXAMPLES:
 

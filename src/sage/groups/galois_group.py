@@ -38,7 +38,7 @@ def _alg_key(self, algorithm=None, recompute=False):
         sage: R.<x> = ZZ[]
         sage: K.<a> = NumberField(x^3 + 2*x + 2)                                        # needs sage.rings.number_field
         sage: G = K.galois_group()                                                      # needs sage.rings.number_field
-        sage: _alg_key(G, algorithm="pari", recompute=True)                             # needs sage.rings.number_field
+        sage: _alg_key(G, algorithm='pari', recompute=True)                             # needs sage.rings.number_field
         'pari'
     """
     if recompute:
@@ -57,7 +57,7 @@ class _GMixin:
     @lazy_attribute
     def _default_algorithm(self):
         """
-        A string, the default algorithm used for computing the Galois group
+        A string, the default algorithm used for computing the Galois group.
 
         EXAMPLES::
 

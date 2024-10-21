@@ -143,11 +143,10 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
     - ``ret`` -- a pointer to a Singular polynomial to store the result in
     - ``p`` -- a Singular polynomial
     - ``r`` -- a Singular ring
-    - ``args`` -- a list/tuple of elements which can be converted to
-      Singular polynomials using the ``(get_element)`` function
-      provided.
+    - ``args`` -- list/tuple of elements which can be converted to Singular
+      polynomials using the ``(get_element)`` function provided
     - ``(*get_element)`` -- a function to turn a Sage element into a
-      Singular element.
+      Singular element
 
     EXAMPLES::
 
@@ -179,7 +178,7 @@ cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
 
     Loop (at most 30 times) until we have 6 consecutive zeros when
     calling ``leak(10000)``. Depending on the operating system, it is
-    possible to have several non-zero leak values in the beginning, but
+    possible to have several nonzero leak values in the beginning, but
     after a while we should get only zeros. The fact that we require 6
     zeros also means that Singular's pre-allocated buckets should not
     be sufficient if there really would be a memory leak. ::
@@ -469,7 +468,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         sage: latex(10*x^2 + 1/2*y)
         10 x^{2} + \frac{1}{2} y
 
-    Demonstrate that coefficients over non-atomic representated rings are
+    Demonstrate that coefficients over non-atomic represented rings are
     properly parenthesized (:issue:`11186`)::
 
         sage: # needs sage.symbolic
@@ -593,7 +592,7 @@ cdef int singular_polynomial_length_bounded(poly *p, int bound) noexcept:
     INPUT:
 
     - ``p`` -- a Singular polynomial
-    - ``bound`` -- an integer > 0
+    - ``bound`` -- integer > 0
     """
     cdef int count = 0
     while p != NULL and count < bound:
@@ -622,7 +621,7 @@ cdef int singular_polynomial_subst(poly **p, int var_index, poly *value, ring *r
     INPUT:
 
     - ``p`` -- a polynomial
-    - ``var_index`` -- an integer < ngens (zero based indexing)
+    - ``var_index`` -- integer < ngens (zero based indexing)
     - ``value`` -- a polynomial
     - ``r`` -- a ring
     """

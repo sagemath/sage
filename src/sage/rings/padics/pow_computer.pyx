@@ -4,8 +4,8 @@ PowComputer
 
 A class for computing and caching powers of the same integer.
 
-This class is designed to be used as a field of p-adic rings and
-fields.  Since elements of p-adic rings and fields need to use powers
+This class is designed to be used as a field of `p`-adic rings and
+fields.  Since elements of `p`-adic rings and fields need to use powers
 of p over and over, this class precomputes and stores powers of p.
 There is no reason that the base has to be prime however.
 
@@ -64,26 +64,26 @@ cdef class PowComputer_class(SageObject):
 
     def __init__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
         """
-        Initializes self.
+        Initialize ``self``.
 
         INPUT:
 
-            * prime -- the prime that is the base of the exponentials
-              stored in this pow_computer.
+        - ``prime`` -- the prime that is the base of the exponentials
+          stored in this ``pow_computer``
 
-            * cache_limit -- how high to cache powers of prime.
+        - ``cache_limit`` -- how high to cache powers of prime
 
-            * prec_cap -- data stored for p-adic elements using this
-              pow_computer (so they have C-level access to fields
-              common to all elements of the same parent).
+        - ``prec_cap`` -- data stored for `p`-adic elements using this
+          ``pow_computer`` (so they have C-level access to fields
+          common to all elements of the same parent)
 
-            * ram_prec_cap -- prec_cap * e
+        - ``ram_prec_cap`` -- prec_cap * e
 
-            * in_field -- same idea as prec_cap
+        - ``in_field`` -- same idea as prec_cap
 
-            * poly -- same idea as prec_cap
+        - ``poly`` -- same idea as prec_cap
 
-            * shift_seed -- same idea as prec_cap
+        - ``shift_seed`` -- same idea as prec_cap
 
         EXAMPLES::
 
@@ -100,7 +100,7 @@ cdef class PowComputer_class(SageObject):
 
     def __richcmp__(self, other, int op):
         """
-        Compares ``self`` to ``other``.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -143,7 +143,7 @@ cdef class PowComputer_class(SageObject):
 
     cdef Integer pow_Integer(self, long n):
         """
-        Returns self.prime^n
+        Return ``self.prime^n``.
 
         EXAMPLES::
 
@@ -157,7 +157,7 @@ cdef class PowComputer_class(SageObject):
 
     def pow_Integer_Integer(self, n):
         """
-        Tests the pow_Integer function.
+        Test the ``pow_Integer`` function.
 
         EXAMPLES::
 
@@ -242,14 +242,14 @@ cdef class PowComputer_class(SageObject):
         m = Integer(m)
         n = Integer(n)
         if m < 0 or n < 0:
-            raise ValueError("m, n must be non-negative")
+            raise ValueError("m, n must be nonnegative")
         cdef Integer ans = PY_NEW(Integer)
         mpz_mul(ans.value, self.pow_mpz_t_tmp(mpz_get_ui((<Integer>m).value)), self.pow_mpz_t_tmp(mpz_get_ui((<Integer>n).value)))
         return ans
 
     def _pow_mpz_t_tmp_test(self, n):
         """
-        Tests the pow_mpz_t_tmp function.
+        Test the ``pow_mpz_t_tmp`` function.
 
         EXAMPLES::
 
@@ -281,7 +281,7 @@ cdef class PowComputer_class(SageObject):
 
     cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
-        Returns a pointer to self.prime^self.prec_cap as an ``mpz_srcptr``.
+        Return a pointer to ``self.prime^self.prec_cap`` as an ``mpz_srcptr``.
 
         EXAMPLES::
 
@@ -293,7 +293,7 @@ cdef class PowComputer_class(SageObject):
 
     def _pow_mpz_t_top_test(self):
         """
-        Tests the pow_mpz_t_top function.
+        Test the ``pow_mpz_t_top`` function.
 
         EXAMPLES::
 
@@ -312,7 +312,7 @@ cdef class PowComputer_class(SageObject):
 
     def _repr_(self):
         """
-        Returns a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -323,7 +323,7 @@ cdef class PowComputer_class(SageObject):
 
     def _prime(self):
         """
-        Returns the base that the PowComputer is exponentiating.
+        Return the base that the ``PowComputer`` is exponentiating.
 
         EXAMPLES::
 
@@ -335,7 +335,7 @@ cdef class PowComputer_class(SageObject):
 
     def _in_field(self):
         """
-        Returns whether or not self is attached to a field.
+        Return whether or not ``self`` is attached to a field.
 
         EXAMPLES::
 
@@ -347,7 +347,7 @@ cdef class PowComputer_class(SageObject):
 
     def _cache_limit(self):
         """
-        Returns the limit to which powers of prime are computed.
+        Return the limit to which powers of prime are computed.
 
         EXAMPLES::
 
@@ -362,8 +362,8 @@ cdef class PowComputer_class(SageObject):
 
     def _prec_cap(self):
         """
-        Returns prec_cap, a single value that for which
-        ``self._prime()^prec_cap`` is stored
+        Return ``prec_cap``, a single value that for which
+        ``self._prime()^prec_cap`` is stored.
 
         EXAMPLES::
 
@@ -378,7 +378,7 @@ cdef class PowComputer_class(SageObject):
 
     def _top_power(self):
         """
-        Returns ``self._prime()^self._prec_cap()``
+        Return ``self._prime()^self._prec_cap()``.
 
         EXAMPLES::
 
@@ -393,7 +393,7 @@ cdef class PowComputer_class(SageObject):
 
     def __call__(self, n):
         """
-        Returns ``self.prime^n``.
+        Return ``self.prime^n``.
 
         EXAMPLES::
 
@@ -429,14 +429,13 @@ cdef class PowComputer_class(SageObject):
 cdef class PowComputer_base(PowComputer_class):
     def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
         """
-        Allocates a PowComputer_base.
+        Allocate a ``PowComputer_base``.
 
         EXAMPLES::
 
             sage: PC = PowComputer(5, 7, 10)
             sage: PC(3)
             125
-
         """
         cdef Py_ssize_t i
 
@@ -553,7 +552,7 @@ cdef class PowComputer_base(PowComputer_class):
 
     cdef mpz_srcptr pow_mpz_t_top(self) noexcept:
         """
-        Returns a pointer to self.prime^self.prec_cap as an ``mpz_srcptr``.
+        Return a pointer to ``self.prime^self.prec_cap`` as an ``mpz_srcptr``.
 
         EXAMPLES::
 
@@ -565,7 +564,7 @@ cdef class PowComputer_base(PowComputer_class):
 
     cdef mpz_srcptr pow_mpz_t_tmp(self, long n) except NULL:
         """
-        Computes self.prime^n.
+        Compute ``self.prime^n``.
 
         EXAMPLES::
 
@@ -575,11 +574,10 @@ cdef class PowComputer_base(PowComputer_class):
             sage: PC._pow_mpz_t_tmp_test(-1)
             Traceback (most recent call last):
             ...
-            ValueError: n must be non-negative
-
+            ValueError: n must be nonnegative
         """
         if n < 0:
-            raise ValueError("n must be non-negative")
+            raise ValueError("n must be nonnegative")
         if n <= self.cache_limit:
             return self.small_powers[n]
         if n == self.prec_cap:
@@ -598,7 +596,7 @@ cdef class PowComputer_base(PowComputer_class):
 pow_comp_cache = {}
 cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec_cap, in_field, prec_type=None):
     """
-    Returns a PowComputer.
+    Return a ``PowComputer``.
 
     EXAMPLES::
 
@@ -607,9 +605,9 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
         81
     """
     if cache_limit < 0:
-        raise ValueError("cache_limit must be non-negative")
+        raise ValueError("cache_limit must be nonnegative")
     if prec_cap < 0:
-        raise ValueError("prec_cap must be non-negative")
+        raise ValueError("prec_cap must be nonnegative")
     if mpz_cmp_si((<Integer>prec_cap).value, maxpreccap) >= 0:
         raise ValueError("cannot create p-adic parents with precision cap larger than (1 << (sizeof(long)*8 - 2))")
 
@@ -637,18 +635,17 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
 
 def PowComputer(m, cache_limit, prec_cap, in_field = False, prec_type=None):
     r"""
-    Returns a PowComputer that caches the values `1, m, m^2, \ldots, m^{C}`,
+    Return a ``PowComputer`` that caches the values `1, m, m^2, \ldots, m^{C}`,
     where `C` is ``cache_limit``.
 
-    Once you create a PowComputer, merely call it to get values out.
+    Once you create a ``PowComputer``, merely call it to get values out.
 
-    You can input any integer, even if it's outside of the precomputed
-    range.
+    You can input any integer, even if it's outside of the precomputed range.
 
     INPUT:
 
-        * m -- An integer, the base that you want to exponentiate.
-        * cache_limit -- A positive integer that you want to cache powers up to.
+    - ``m`` -- integer; the base that you want to exponentiate
+    - ``cache_limit`` -- positive integer; that you want to cache powers up to
 
     EXAMPLES::
 

@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sagemath-coxeter3 ~= 10.5b0
+sagemath-coxeter3 ~= 10.5b7

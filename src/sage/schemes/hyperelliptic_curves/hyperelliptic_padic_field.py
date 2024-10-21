@@ -51,7 +51,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         INPUT:
 
-        - P and Q points on self in the same residue disc
+        - ``P``, ``Q`` -- points on ``self`` in the same residue disc
 
         OUTPUT:
 
@@ -150,9 +150,9 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def weierstrass_points(self):
         """
-        Return the Weierstrass points of self defined over self.base_ring(),
-        that is, the point at infinity and those points in the support
-        of the divisor of `y`
+        Return the Weierstrass points of ``self`` defined over
+        ``self.base_ring()``, that is, the point at infinity and those points
+        in the support of the divisor of `y`.
 
         EXAMPLES::
 
@@ -169,7 +169,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def is_in_weierstrass_disc(self, P):
         """
-        Checks if `P` is in a Weierstrass disc
+        Check if `P` is in a Weierstrass disc.
 
         EXAMPLES::
 
@@ -199,7 +199,8 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def is_weierstrass(self, P):
         """
-        Checks if `P` is a Weierstrass point (i.e., fixed by the hyperelliptic involution)
+        Check if `P` is a Weierstrass point (i.e., fixed by the hyperelliptic
+        involution).
 
         EXAMPLES::
 
@@ -229,8 +230,8 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def find_char_zero_weier_point(self, Q):
         """
-        Given `Q` a point on self in a Weierstrass disc, finds the
-        center of the Weierstrass disc (if defined over self.base_ring())
+        Given `Q` a point on ``self`` in a Weierstrass disc, finds the
+        center of the Weierstrass disc (if defined over ``self.base_ring()``).
 
         EXAMPLES::
 
@@ -264,7 +265,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def residue_disc(self, P):
         """
-        Gives the residue disc of `P`
+        Give the residue disc of `P`.
 
         EXAMPLES::
 
@@ -310,7 +311,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def is_same_disc(self, P, Q):
         """
-        Checks if `P,Q` are in same residue disc
+        Check if `P,Q` are in same residue disc.
 
         EXAMPLES::
 
@@ -339,13 +340,11 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         INPUT:
 
-        - F a list of functions `f_i`
-        - P a point on self
-        - Q a point on self (in the same residue disc as P)
+        - ``F`` -- list of functions `f_i`
+        - ``P`` -- point on ``self``
+        - ``Q`` -- point on ``self`` (in the same residue disc as `P`)
 
-        OUTPUT:
-
-        The integrals `\int_P^Q f_i dx/2y`
+        OUTPUT: the integrals `\int_P^Q f_i dx/2y`
 
         EXAMPLES::
 
@@ -374,7 +373,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             Traceback (most recent call last):
             ...
             ValueError: (11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)) and (0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)) are not in the same residue disc
-
         """
         x, y, z = self.local_analytic_interpolation(P, Q)  #homogeneous coordinates
         x = x/z
@@ -403,12 +401,10 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         INPUT:
 
-        - P a point on self
-        - Q a point on self (in the same residue disc as P)
+        - ``P`` -- point on ``self``
+        - ``Q`` -- point on ``self`` (in the same residue disc as `P`)
 
-        OUTPUT:
-
-        The integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
+        OUTPUT: the integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
 
         EXAMPLES::
 
@@ -437,7 +433,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             Traceback (most recent call last):
             ...
             ValueError: (11^-2 + O(11^3) : 11^-5 + 8*11^-2 + O(11^0) : 1 + O(11^5)) and (0 : 3 + 8*11 + 2*11^2 + 8*11^3 + 2*11^4 + O(11^5) : 1 + O(11^5)) are not in the same residue disc
-
         """
         if P == Q:
             V = VectorSpace(self.base_ring(), 2*self.genus())
@@ -478,17 +473,16 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def coleman_integrals_on_basis(self, P, Q, algorithm=None):
         r"""
-        Computes the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
+        Compute the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`.
 
         INPUT:
 
-        - P point on self
-        - Q point on self
-        - algorithm (optional) = None (uses Frobenius) or teichmuller (uses Teichmuller points)
+        - ``P`` -- point on ``self``
+        - ``Q`` -- point on ``self``
+        - ``algorithm`` -- ``None`` (default, uses Frobenius) or teichmuller
+          (uses Teichmuller points)
 
-        OUTPUT:
-
-        the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
+        OUTPUT: the Coleman integrals `\{\int_P^Q x^i dx/2y \}_{i=0}^{2g-1}`
 
         EXAMPLES::
 
@@ -706,14 +700,13 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         INPUT:
 
-        - w differential (if one of P,Q is Weierstrass, w must be odd)
-        - P point on self
-        - Q point on self
-        - algorithm (optional) = None (uses Frobenius) or teichmuller (uses Teichmuller points)
+        - ``w`` -- differential (if one of P,Q is Weierstrass, w must be odd)
+        - ``P`` -- point on ``self``
+        - ``Q`` -- point on ``self``
+        - ``algorithm`` -- ``None`` (default, uses Frobenius) or teichmuller
+          (uses Teichmuller points)
 
-        OUTPUT:
-
-        the Coleman integral `\int_P^Q w`
+        OUTPUT: the Coleman integral `\int_P^Q w`
 
         EXAMPLES:
 
@@ -838,7 +831,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         - Robert Bradshaw (2007-03)
         - Kiran Kedlaya (2008-05)
         - Jennifer Balakrishnan (2010-02)
-
         """
         # TODO: implement Jacobians and show the relationship directly
         import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
@@ -873,7 +865,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def frobenius(self, P=None):
         """
-        Returns the `p`-th power lift of Frobenius of `P`
+        Return the `p`-th power lift of Frobenius of `P`.
 
         EXAMPLES::
 
@@ -964,7 +956,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def newton_sqrt(self, f, x0, prec):
         r"""
-        Takes the square root of the power series `f` by Newton's method
+        Take the square root of the power series `f` by Newton's method.
 
         NOTE:
 
@@ -1010,11 +1002,9 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         INPUT:
 
-        - deg: the degree of the ramified extension
+        - ``deg`` -- the degree of the ramified extension
 
-        OUTPUT:
-
-        ``self`` over `\QQ_p(p^(1/deg))`
+        OUTPUT: ``self`` over `\QQ_p(p^(1/deg))`
 
         EXAMPLES::
 
@@ -1029,7 +1019,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         AUTHOR:
 
         - Jennifer Balakrishnan
-
         """
         from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
         K = self.base_ring()
@@ -1046,16 +1035,15 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def get_boundary_point(self, curve_over_extn, P):
         """
-        Given self over an extension field, find a point in the disc of `P` near the boundary
+        Given ``self`` over an extension field, find a point in the disc of `P`
+        near the boundary.
 
         INPUT:
 
-        - curve_over_extn: self over a totally ramified extension
-        - P: Weierstrass point
+        - ``curve_over_extn`` -- ``self`` over a totally ramified extension
+        - ``P`` -- Weierstrass point
 
-        OUTPUT:
-
-        a point in the disc of `P` near the boundary
+        OUTPUT: a point in the disc of `P` near the boundary
 
         EXAMPLES::
 
@@ -1073,7 +1061,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         AUTHOR:
 
         - Jennifer Balakrishnan
-
         """
         J = curve_over_extn.base_ring()
         a = J.gen()
@@ -1083,17 +1070,15 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def P_to_S(self, P, S):
         r"""
-        Given a finite Weierstrass point `P` and a point `S`
-        in the same disc, computes the Coleman integrals `\{\int_P^S x^i dx/2y \}_{i=0}^{2g-1}`
+        Given a finite Weierstrass point `P` and a point `S` in the same disc,
+        compute the Coleman integrals `\{\int_P^S x^i dx/2y \}_{i=0}^{2g-1}`.
 
         INPUT:
 
-        - P: finite Weierstrass point
-        - S: point in disc of P
+        - ``P`` -- finite Weierstrass point
+        - ``S`` -- point in disc of `P`
 
-        OUTPUT:
-
-        Coleman integrals `\{\int_P^S x^i dx/2y \}_{i=0}^{2g-1}`
+        OUTPUT: Coleman integrals `\{\int_P^S x^i dx/2y \}_{i=0}^{2g-1}`
 
         EXAMPLES::
 
@@ -1110,7 +1095,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         AUTHOR:
 
         - Jennifer Balakrishnan
-
         """
         prec = self.base_ring().precision_cap()
         deg = (S[0]).parent().defining_polynomial().degree()
@@ -1124,18 +1108,16 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
     def coleman_integral_P_to_S(self, w, P, S):
         r"""
         Given a finite Weierstrass point `P` and a point `S`
-        in the same disc, computes the Coleman integral `\int_P^S w`
+        in the same disc, compute the Coleman integral `\int_P^S w`.
 
         INPUT:
 
-        - w: differential
-        - P: Weierstrass point
-        - S: point in the same disc of P (S is defined over an extension of `\QQ_p`; coordinates
-          of S are given in terms of uniformizer `a`)
+        - ``w`` -- differential
+        - ``P`` -- Weierstrass point
+        - ``S`` -- point in the same disc of `P` (S is defined over an extension
+          of `\QQ_p`; coordinates of S are given in terms of uniformizer `a`)
 
-        OUTPUT:
-
-        Coleman integral `\int_P^S w` in terms of `a`
+        OUTPUT: Coleman integral `\int_P^S w` in terms of `a`
 
         EXAMPLES::
 
@@ -1156,7 +1138,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         AUTHOR:
 
         - Jennifer Balakrishnan
-
         """
         prec = self.base_ring().precision_cap()
         deg = S[0].parent().defining_polynomial().degree()
@@ -1168,20 +1149,20 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def S_to_Q(self, S, Q):
         r"""
-        Given `S` a point on self over an extension field, computes the
-        Coleman integrals `\{\int_S^Q x^i dx/2y \}_{i=0}^{2g-1}`
+        Given `S` a point on ``self`` over an extension field, compute the
+        Coleman integrals `\{\int_S^Q x^i dx/2y \}_{i=0}^{2g-1}`.
 
         **one should be able to feed `S,Q` into coleman_integral,
         but currently that segfaults**
 
         INPUT:
 
-        - S: a point with coordinates in an extension of `\QQ_p` (with unif. a)
-        - Q: a non-Weierstrass point defined over `\QQ_p`
+        - ``S`` -- a point with coordinates in an extension of `\QQ_p` (with unif. a)
+        - ``Q`` -- a non-Weierstrass point defined over `\QQ_p`
 
         OUTPUT:
 
-        the Coleman integrals `\{\int_S^Q x^i dx/2y \}_{i=0}^{2g-1}` in terms of `a`
+        The Coleman integrals `\{\int_S^Q x^i dx/2y \}_{i=0}^{2g-1}` in terms of `a`.
 
         EXAMPLES::
 
@@ -1206,7 +1187,6 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         AUTHOR:
 
         - Jennifer Balakrishnan
-
         """
         FS = self.frobenius(S)
         FS = (FS[0],FS[1])
@@ -1253,20 +1233,18 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def coleman_integral_S_to_Q(self, w, S, Q):
         r"""
-        Compute the Coleman integral `\int_S^Q w`
+        Compute the Coleman integral `\int_S^Q w`.
 
         **one should be able to feed `S,Q` into coleman_integral,
         but currently that segfaults**
 
         INPUT:
 
-        - w: a differential
-        - S: a point with coordinates in an extension of `\QQ_p`
-        - Q: a non-Weierstrass point defined over `\QQ_p`
+        - ``w`` -- a differential
+        - ``S`` -- a point with coordinates in an extension of `\QQ_p`
+        - ``Q`` -- a non-Weierstrass point defined over `\QQ_p`
 
-        OUTPUT:
-
-        the Coleman integral `\int_S^Q w`
+        OUTPUT: the Coleman integral `\int_S^Q w`
 
         EXAMPLES::
 
@@ -1309,15 +1287,15 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
     def coleman_integral_from_weierstrass_via_boundary(self, w, P, Q, d):
         r"""
-        Computes the Coleman integral `\int_P^Q w` via a boundary point
+        Compute the Coleman integral `\int_P^Q w` via a boundary point
         in the disc of `P`, defined over a degree `d` extension
 
         INPUT:
 
-        - w: a differential
-        - P: a Weierstrass point
-        - Q: a non-Weierstrass point
-        - d: degree of extension where coordinates of boundary point lie
+        - ``w`` -- a differential
+        - ``P`` -- a Weierstrass point
+        - ``Q`` -- a non-Weierstrass point
+        - ``d`` -- degree of extension where coordinates of boundary point lie
 
         OUTPUT:
 

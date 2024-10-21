@@ -152,7 +152,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
         INPUT:
 
-        - ``point``, ``line``, ``polygon`` -- Parameters to pass to
+        - ``point``, ``line``, ``polygon`` -- parameters to pass to
           point (0d), line (1d), and polygon (2d) plot commands.
           Allowed values are:
 
@@ -165,7 +165,7 @@ class Polyhedron_base6(Polyhedron_base5):
           * ``False``: Switches off the drawing of the corresponding
             graphics object
 
-        - ``wireframe``, ``fill`` -- Similar to ``point``, ``line``,
+        - ``wireframe``, ``fill`` -- similar to ``point``, ``line``,
           and ``polygon``, but ``fill`` is used for the graphics
           objects in the dimension of the polytope (or of dimension 2
           for higher dimensional polytopes) and ``wireframe`` is used
@@ -173,13 +173,13 @@ class Polyhedron_base6(Polyhedron_base5):
           (default: 'green' for ``fill`` and 'blue' for ``wireframe``)
 
         - ``position`` -- positive number; the position to take the projection
-          point in Schlegel diagrams.
+          point in Schlegel diagrams
 
-        - ``orthonormal`` -- Boolean (default: ``True``); whether to use
-          orthonormal projections.
+        - ``orthonormal`` -- boolean (default: ``True``); whether to use
+          orthonormal projections
 
         - ``**kwds`` -- optional keyword parameters that are passed to
-          all graphics objects.
+          all graphics objects
 
         OUTPUT:
 
@@ -325,15 +325,15 @@ class Polyhedron_base6(Polyhedron_base5):
 
         Draw in red without wireframe::
 
-            sage: for p in square.plot(wireframe=False, fill="red"):                    # needs sage.plot
+            sage: for p in square.plot(wireframe=False, fill='red'):                    # needs sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Polygon defined by 4 points
 
-            sage: for p in line.plot(wireframe=False, fill="red"):                      # needs sage.plot
+            sage: for p in line.plot(wireframe=False, fill='red'):                      # needs sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Line defined by 2 points
 
-            sage: for p in point.plot(wireframe=False, fill="red"):                     # needs sage.plot
+            sage: for p in point.plot(wireframe=False, fill='red'):                     # needs sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 1 point(s)
 
@@ -458,7 +458,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
     def show(self, **kwds):
         r"""
-        Display graphics immediately
+        Display graphics immediately.
 
         This method attempts to display the graphics immediately,
         without waiting for the currently running code (if any) to
@@ -468,8 +468,8 @@ class Polyhedron_base6(Polyhedron_base5):
 
         INPUT:
 
-        - ``kwds`` -- optional keyword arguments. See :meth:`plot` for
-          the description of available options.
+        - ``kwds`` -- optional keyword arguments; see :meth:`plot` for
+          the description of available options
 
         OUTPUT:
 
@@ -496,28 +496,26 @@ class Polyhedron_base6(Polyhedron_base5):
 
         INPUT:
 
-        - ``view`` -- list (default: [0,0,1]) representing the rotation axis (see note below).
-        - ``angle`` -- integer (default: 0) angle of rotation in degree from 0 to 360 (see note
-          below).
-        - ``scale`` -- integer (default: 1) specifying the scaling of the tikz picture.
-        - ``edge_color`` -- string (default: 'blue!95!black') representing colors which tikz
-          recognize.
-        - ``facet_color`` -- string (default: 'blue!95!black') representing colors which tikz
-          recognize.
-        - ``vertex_color`` -- string (default: 'green') representing colors which tikz
-          recognize.
+        - ``view`` -- list (default: [0,0,1]) representing the rotation axis (see note below)
+        - ``angle`` -- integer (default: 0); angle of rotation in degree from 0 to 360 (see note
+          below)
+        - ``scale`` -- integer (default: 1); the scaling of the tikz picture
+        - ``edge_color`` -- string (default: ``'blue!95!black'``); representing colors which tikz
+          recognizes
+        - ``facet_color`` -- string (default: ``'blue!95!black'``); representing colors which tikz
+          recognizes
+        - ``vertex_color`` -- string (default: ``'green'``); representing colors which tikz
+          recognizes
         - ``opacity`` -- real number (default: 0.8) between 0 and 1 giving the opacity of
-          the front facets.
-        - ``axis`` -- Boolean (default: ``False``) draw the axes at the origin or not.
-        - ``output_type`` -- string (default: ``None``), valid values
+          the front facets
+        - ``axis`` -- boolean (default: ``False``); draw the axes at the origin or not
+        - ``output_type`` -- string (default: ``None``); valid values
           are ``None`` (deprecated), ``'LatexExpr'`` and ``'TikzPicture'``,
           whether to return a LatexExpr object (which inherits from Python
           str) or a ``TikzPicture`` object from module
           :mod:`sage.misc.latex_standalone`
 
-        OUTPUT:
-
-        - LatexExpr object or TikzPicture object
+        OUTPUT: LatexExpr object or TikzPicture object
 
         .. NOTE::
 
@@ -550,7 +548,6 @@ class Polyhedron_base6(Polyhedron_base5):
 
             Jmol performs a rotation of ``angle`` degrees along the
             vector [x,y,z] and show the result from the z-axis.
-
 
         EXAMPLES::
 
@@ -612,7 +609,6 @@ class Polyhedron_base6(Polyhedron_base5):
             \end{tikzpicture}
             \end{document}
             sage: path_to_file = t.pdf()        # not tested
-
         """
         return self.projection().tikz(view, angle, scale,
                                       edge_color, facet_color,
@@ -621,7 +617,7 @@ class Polyhedron_base6(Polyhedron_base5):
 
     def _rich_repr_(self, display_manager, **kwds):
         r"""
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -836,17 +832,15 @@ class Polyhedron_base6(Polyhedron_base5):
 
         INPUT:
 
-        - ``facet`` -- a :class:`~sage.geometry.polyhedron.face.PolyhedronFace`.
-          The facet into which the Schlegel diagram is created. The default is the first facet.
+        - ``facet`` -- a :class:`~sage.geometry.polyhedron.face.PolyhedronFace`
+          The facet into which the Schlegel diagram is created. The default is the first facet
 
         - ``position`` -- a positive number. Determines a relative distance
           from the barycenter of ``facet``. A value close to 0 will place the
           projection point close to the facet and a large value further away.
           Default is `1`. If the given value is too large, an error is returned.
 
-        OUTPUT:
-
-        A :class:`~sage.geometry.polyhedron.plot.Projection` object.
+        OUTPUT: a :class:`~sage.geometry.polyhedron.plot.Projection` object
 
         EXAMPLES::
 
@@ -1100,10 +1094,10 @@ class Polyhedron_base6(Polyhedron_base5):
 
         INPUT:
 
-        - ``as_polyhedron`` (or ``as_convex_set``) -- (boolean or the default
-          ``None``) and
+        - ``as_polyhedron``, ``as_convex_set`` -- boolean or the default
+          ``None``; one of the two to be set
 
-        - ``as_affine_map`` -- (boolean, default ``False``) control the output
+        - ``as_affine_map`` -- boolean (default: ``False``); control the output
 
           The default ``as_polyhedron=None`` translates to
           ``as_polyhedron=not as_affine_map``,
@@ -1121,7 +1115,7 @@ class Polyhedron_base6(Polyhedron_base5):
           both are returned, encapsulated in an instance of
           :class:`~sage.geometry.convex_set.AffineHullProjectionData`.
 
-        - ``return_all_data`` -- (boolean, default ``False``)
+        - ``return_all_data`` -- boolean (default: ``False``)
 
           If set, then ``as_polyhedron`` and ``as_affine_map`` will set
           (possibly overridden) and additional (internal) data concerning
@@ -1131,7 +1125,7 @@ class Polyhedron_base6(Polyhedron_base5):
           this case.
 
         - ``orthogonal`` -- boolean (default: ``False``); if ``True``,
-          provide an orthogonal transformation.
+          provide an orthogonal transformation
 
         - ``orthonormal`` -- boolean (default: ``False``); if ``True``,
           provide an orthonormal transformation. If the base ring does not
@@ -1604,11 +1598,11 @@ class Polyhedron_base6(Polyhedron_base5):
           of the ambient dimension (default: the manifold of ``ambient_chart``, if provided;
           otherwise, a new instance of ``EuclideanSpace``).
 
-        - ``ambient_chart`` -- a chart on ``ambient_space``.
+        - ``ambient_chart`` -- a chart on ``ambient_space``
 
-        - ``names`` -- names for the coordinates on the affine hull.
+        - ``names`` -- names for the coordinates on the affine hull
 
-        - optional arguments accepted by :meth:`affine_hull_projection`.
+        - optional arguments accepted by :meth:`affine_hull_projection`
 
         The default chart is determined by the optional arguments of
         :meth:`affine_hull_projection`.
@@ -1670,7 +1664,6 @@ class Polyhedron_base6(Polyhedron_base5):
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
             sage: cube.affine_hull_manifold()                                           # needs sage.symbolic
             Euclidean space E^3
-
         """
         if ambient_space is None:
             if ambient_chart is not None:
@@ -1691,7 +1684,7 @@ class Polyhedron_base6(Polyhedron_base5):
         from sage.manifolds.manifold import Manifold
         if name is None:
             name, latex_name = self._affine_hull_name_latex_name()
-        H = Manifold(self.dim(), name, ambient=ambient_space, structure="Riemannian",
+        H = Manifold(self.dim(), name, ambient=ambient_space, structure='Riemannian',
                      latex_name=latex_name, start_index=start_index)
         if names is None:
             names = tuple(f'x{i}' for i in range(self.dim()))

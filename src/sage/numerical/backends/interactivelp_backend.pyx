@@ -44,7 +44,7 @@ cdef class InteractiveLPBackend:
 
     def __cinit__(self, maximization = True, base_ring = None):
         """
-        Cython constructor
+        Cython constructor.
 
         EXAMPLES::
 
@@ -84,7 +84,7 @@ cdef class InteractiveLPBackend:
 
     cpdef __copy__(self):
         """
-        Returns a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -109,9 +109,7 @@ cdef class InteractiveLPBackend:
         """
         Return the base ring.
 
-        OUTPUT:
-
-        A ring. The coefficients that the chosen solver supports.
+        OUTPUT: a ring; the coefficients that the chosen solver supports
 
         EXAMPLES::
 
@@ -132,9 +130,7 @@ cdef class InteractiveLPBackend:
 
         - ``upper_bound`` -- the upper bound of the variable
 
-        OUTPUT:
-
-        - a string, one of "", "<=", ">="
+        OUTPUT: string, one of ``''``, ``'<='``, ``'>='``
 
         The function raises an error if this pair of bounds cannot be
         represented by an `InteractiveLPProblem` variable type.
@@ -190,21 +186,21 @@ cdef class InteractiveLPBackend:
 
         - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``)
 
-        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``)
 
         - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0)
 
-        - ``name`` -- an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``)
 
         - ``coefficients`` -- (optional) an iterable of pairs ``(i, v)``. In each
           pair, ``i`` is a variable index (integer) and ``v`` is a
           value (element of :meth:`base_ring`).
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
@@ -263,9 +259,9 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``vtype`` (integer) :
+        - ``vtype`` -- integer:
 
             *  1  Integer
             *  0  Binary
@@ -313,7 +309,7 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``sense`` (integer) :
+        - ``sense`` -- integer:
 
             * +1 => Maximization
             * -1 => Minimization
@@ -344,9 +340,9 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``coeff`` (double) -- its coefficient
+        - ``coeff`` -- double; its coefficient
 
         EXAMPLES::
 
@@ -372,11 +368,12 @@ cdef class InteractiveLPBackend:
 
     cpdef objective_constant_term(self, d=None):
         """
-        Set or get the constant term in the objective function
+        Set or get the constant term in the objective function.
 
         INPUT:
 
-        - ``d`` (double) -- its coefficient.  If `None` (default), return the current value.
+        - ``d`` -- double; its coefficient. If ``None`` (default), return the
+          current value.
 
         EXAMPLES::
 
@@ -402,10 +399,11 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``coeff`` -- a list of real values, whose i-th element is the
-          coefficient of the i-th variable in the objective function.
+        - ``coeff`` -- list of real values, whose i-th element is the
+          coefficient of the i-th variable in the objective function
 
-        - ``d`` (real) -- the constant term in the linear function (set to `0` by default)
+        - ``d`` -- real; the constant term in the linear function (set to `0`
+          by default)
 
         EXAMPLES::
 
@@ -438,7 +436,6 @@ cdef class InteractiveLPBackend:
             sage: p.set_objective(-x - y - 7)
             sage: p.solve()
             -47/5
-
         """
         A, b, _, x, constraint_types, variable_types, problem_type, ring, _ = self._AbcxCVPRd()
         c = coeff
@@ -448,11 +445,11 @@ cdef class InteractiveLPBackend:
 
     cpdef set_verbosity(self, int level):
         """
-        Set the log (verbosity) level
+        Set the log (verbosity) level.
 
         INPUT:
 
-        - ``level`` (integer) -- From 0 (no verbosity) to 3.
+        - ``level`` -- integer; from 0 (no verbosity) to 3
 
         EXAMPLES::
 
@@ -468,11 +465,11 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``i`` -- index of the constraint to remove.
+        - ``i`` -- index of the constraint to remove
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(solver="InteractiveLP")
+            sage: p = MixedIntegerLinearProgram(solver='InteractiveLP')
             sage: v = p.new_variable(nonnegative=True)
             sage: x,y = v[0], v[1]
             sage: p.add_constraint(2*x + 3*y, max = 6)
@@ -507,12 +504,12 @@ cdef class InteractiveLPBackend:
           value (element of :meth:`base_ring`).
 
         - ``lower_bound`` -- element of :meth:`base_ring` or
-          ``None``. The lower bound.
+          ``None``; the lower bound
 
         - ``upper_bound`` -- element of :meth:`base_ring` or
-          ``None``. The upper bound.
+          ``None``; the upper bound
 
-        - ``name`` -- string or ``None``. Optional name for this row.
+        - ``name`` -- string or ``None``; optional name for this row
 
         EXAMPLES::
 
@@ -563,11 +560,11 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``indices`` (list of integers) -- this list contains the
+        - ``indices`` -- list of integers; this list contains the
           indices of the constraints in which the variable's
           coefficient is nonzero
 
-        - ``coeffs`` (list of real values) -- associates a coefficient
+        - ``coeffs`` -- list of real values; associates a coefficient
           to the variable in each of the constraints in which it
           appears. Namely, the i-th entry of ``coeffs`` corresponds to
           the coefficient of the variable in the constraint
@@ -575,8 +572,7 @@ cdef class InteractiveLPBackend:
 
         .. NOTE::
 
-            ``indices`` and ``coeffs`` are expected to be of the same
-            length.
+            ``indices`` and ``coeffs`` are expected to be of the same length.
 
         EXAMPLES::
 
@@ -742,11 +738,11 @@ cdef class InteractiveLPBackend:
 
     cpdef problem_name(self, name=None):
         """
-        Return or define the problem's name
+        Return or define the problem's name.
 
         INPUT:
 
-        - ``name`` (``str``) -- the problem's name. When set to
+        - ``name`` -- string; the problem's name. When set to
           ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
@@ -767,11 +763,11 @@ cdef class InteractiveLPBackend:
 
     cpdef row(self, int i):
         """
-        Return a row
+        Return a row.
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -805,7 +801,7 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -840,7 +836,7 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id.
+        - ``index`` -- integer; the variable's id
 
         OUTPUT:
 
@@ -876,7 +872,7 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -888,7 +884,6 @@ cdef class InteractiveLPBackend:
             0
             sage: p.is_variable_binary(0)
             False
-
         """
         return False
 
@@ -898,7 +893,7 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -919,7 +914,7 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -931,17 +926,16 @@ cdef class InteractiveLPBackend:
             0
             sage: p.is_variable_continuous(0)
             True
-
         """
         return True
 
     cpdef row_name(self, int index):
         """
-        Return the ``index`` th row name
+        Return the ``index``-th row name.
 
         INPUT:
 
-        - ``index`` (integer) -- the row's id
+        - ``index`` -- integer; the row's id
 
         EXAMPLES::
 
@@ -950,26 +944,25 @@ cdef class InteractiveLPBackend:
             sage: p.add_linear_constraints(1, 2, None, names=['Empty constraint 1'])
             sage: p.row_name(0)
             'Empty constraint 1'
-
         """
         return self.row_names[index]
 
     cpdef col_name(self, int index):
         """
-        Return the ``index``-th column name
+        Return the ``index``-th column name.
 
         INPUT:
 
-        - ``index`` (integer) -- the column id
+        - ``index`` -- integer; the column id
 
-        - ``name`` (``char *``) -- its name. When set to ``NULL``
-          (default), the method returns the current name.
+        - ``name`` -- (``char *``) its name; when set to ``NULL``
+          (default), the method returns the current name
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
             sage: p = get_solver(solver = "InteractiveLP")
-            sage: p.add_variable(name="I_am_a_variable")
+            sage: p.add_variable(name='I_am_a_variable')
             0
             sage: p.col_name(0)
             'I_am_a_variable'
@@ -978,11 +971,11 @@ cdef class InteractiveLPBackend:
 
     cpdef variable_upper_bound(self, int index, value=False):
         """
-        Return or define the upper bound on a variable
+        Return or define the upper bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not upper bound. When set to ``False``
@@ -1022,11 +1015,11 @@ cdef class InteractiveLPBackend:
 
     cpdef variable_lower_bound(self, int index, value=False):
         """
-        Return or define the lower bound on a variable
+        Return or define the lower bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has no lower bound. When set to ``False``
@@ -1073,12 +1066,12 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(maximization=True,\
-                                                solver="InteractiveLP")
+                                                solver='InteractiveLP')
             sage: x = p.new_variable(nonnegative=True)
             sage: p.add_constraint(-x[0] + x[1] <= 2)
             sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)
@@ -1103,12 +1096,12 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(maximization=True,\
-                                                solver="InteractiveLP")
+                                                solver='InteractiveLP')
             sage: x = p.new_variable(nonnegative=True)
             sage: p.add_constraint(-x[0] + x[1] <= 2)
             sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)
@@ -1133,12 +1126,12 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(maximization=True,\
-                                                solver="InteractiveLP")
+                                                solver='InteractiveLP')
             sage: x = p.new_variable(nonnegative=True)
             sage: p.add_constraint(-x[0] + x[1] <= 2)
             sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)
@@ -1163,12 +1156,12 @@ cdef class InteractiveLPBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(maximization=True,\
-                                                solver="InteractiveLP")
+                                                solver='InteractiveLP')
             sage: x = p.new_variable(nonnegative=True)
             sage: p.add_constraint(-x[0] + x[1] <= 2)
             sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)
@@ -1193,7 +1186,7 @@ cdef class InteractiveLPBackend:
         EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(maximization=True,\
-                                                solver="InteractiveLP")
+                                                solver='InteractiveLP')
             sage: x = p.new_variable(nonnegative=True)
             sage: p.add_constraint(-x[0] + x[1] <= 2)
             sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)
@@ -1216,19 +1209,17 @@ cdef class InteractiveLPBackend:
             sage: lp, basis = p.interactive_lp_problem()
             sage: lp.dictionary(*basis).basic_solution()
             (17/8, 0)
-
         """
         return self.final_dictionary
 
     cpdef interactive_lp_problem(self):
-
         """
         Return the :class:`InteractiveLPProblem` object associated with this backend.
 
         EXAMPLES::
 
             sage: p = MixedIntegerLinearProgram(maximization=True,\
-                                                solver="InteractiveLP")
+                                                solver='InteractiveLP')
             sage: x = p.new_variable(nonnegative=True)
             sage: p.add_constraint(-x[0] + x[1] <= 2)
             sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)

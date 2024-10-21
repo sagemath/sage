@@ -165,9 +165,8 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             The dual basis to the `\mathbf{w}` basis is the monomial basis
             of the symmetric functions in non-commuting variables.
 
-            OUTPUT:
-
-            - the monomial basis of the symmetric functions in non-commuting variables
+            OUTPUT: the monomial basis of the symmetric functions in
+            non-commuting variables
 
             EXAMPLES::
 
@@ -199,9 +198,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
             - ``A``, ``B`` -- set partitions
 
-            OUTPUT:
-
-            - an element of the `\mathbf{w}` basis
+            OUTPUT: an element of the `\mathbf{w}` basis
 
             EXAMPLES::
 
@@ -258,7 +255,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             OUTPUT:
 
@@ -287,11 +284,9 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
-            OUTPUT:
-
-            - an element in the basis ``self``
+            OUTPUT: an element in the basis ``self``
 
             EXAMPLES::
 
@@ -322,9 +317,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             - ``y`` -- an element of the symmetric functions in non-commuting
               variables
 
-            OUTPUT:
-
-            - an element of the base ring of ``self``
+            OUTPUT: an element of the base ring of ``self``
 
             EXAMPLES::
 
@@ -361,11 +354,9 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``la`` -- an integer partition
+            - ``la`` -- integer partition
 
-            OUTPUT:
-
-            - an element of ``self``
+            OUTPUT: an element of ``self``
 
             EXAMPLES::
 
@@ -394,7 +385,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
             INPUT:
 
-            - ``A`` -- a set partition
+            - ``A`` -- set partition
 
             EXAMPLES::
 
@@ -444,8 +435,8 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
 
                 INPUT:
 
-                - ``n`` -- an integer
-                - ``letter`` -- (default: ``'x'``) a string
+                - ``n`` -- integer
+                - ``letter`` -- string (default: ``'x'``)
 
                 OUTPUT:
 

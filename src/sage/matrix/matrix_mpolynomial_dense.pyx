@@ -130,9 +130,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
         This returns a list, of the position of the first nonzero entry in each
         row of the echelon form.
 
-        OUTPUT:
-
-        A list of Python ints.
+        OUTPUT: list of Python ints
 
         EXAMPLES::
 
@@ -159,7 +157,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
     def echelonize(self, algorithm='row_reduction', **kwds):
         """
-        Transform self into a matrix in echelon form over the same base ring as
+        Transform ``self`` into a matrix in echelon form over the same base ring as
         ``self``.
 
         If Gauss-Bareiss algorithm is chosen, column swaps are recorded and can
@@ -389,12 +387,12 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         nr,nc = self.nrows(),self.ncols()
         F = self.base_ring().base_ring()
-        cdef Matrix d = matrix(F,nr,nc)
+        cdef Matrix d = matrix(F, nr, nc)
         start_row = 0
 
         for r from 0 <= r < nr:
             for c from 0 <= c < nc:
-                p = self.get_unsafe(r,c)
+                p = self.get_unsafe(r, c)
                 if p.is_constant():
                     d.set_unsafe(r, c, p.constant_coefficient())
 
@@ -405,13 +403,13 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
                     r = rc
                     break
             if r!=-1:
-                a_inverse = ~self.get_unsafe(r,c)
-                self.rescale_row_c(r, a_inverse , c)
+                a_inverse = ~self.get_unsafe(r, c)
+                self.rescale_row_c(r, a_inverse, c)
                 self.swap_rows_c(r, start_row)
 
                 for i from 0 <= i < nr:
                     if i != start_row:
-                        minus_b = -self.get_unsafe(i,c)
+                        minus_b = -self.get_unsafe(i, c)
                         self.add_multiple_of_row(i, start_row, minus_b, 0)
 
                 start_row +=1
@@ -419,21 +417,21 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
                 d = d._parent(0)
                 for i from start_row <= i < nr:
                     for j from c+1 <= j < nc:
-                        if self.get_unsafe(i,j).is_constant():
-                            d.set_unsafe(i,j, self.get_unsafe(i,j).constant_coefficient())
+                        if self.get_unsafe(i, j).is_constant():
+                            d.set_unsafe(i, j, self.get_unsafe(i, j).constant_coefficient())
 
-        self.cache('in_echelon_form_row_reduction',True)
+        self.cache('in_echelon_form_row_reduction', True)
 
     def swapped_columns(self):
         """
-        Return which columns were swapped during the Gauss-Bareiss reduction
+        Return which columns were swapped during the Gauss-Bareiss reduction.
 
         OUTPUT:
 
         Return a tuple representing the column swaps during the last application
         of the Gauss-Bareiss algorithm (see :meth:`echelon_form` for details).
 
-        The tuple as length equal to the rank of self and the value at the
+        The tuple as length equal to the rank of ``self`` and the value at the
         `i`-th position indicates the source column which was put as the `i`-th
         column.
 
@@ -460,11 +458,9 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        An ideal on the base ring.
+        OUTPUT: an ideal on the base ring
 
         EXAMPLES::
 
@@ -486,7 +482,6 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             Ideal (1) of Multivariate Polynomial Ring in x, y, z over Rational Field
             sage: [R.ideal(M.minors(i)) == M._fitting_ideal(4 - i) for i in range(5)]
             [True, True, True, True, True]
-
         """
         minor = singular_function("minor")
         R = self.base_ring()

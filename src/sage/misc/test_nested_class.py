@@ -160,8 +160,8 @@ class B:
 class ABB:
     class B:
         """
-        This class is broken and can't be pickled.
-        A warning is emmited during compilation.
+        This class is broken and cannot be pickled.
+        A warning is emitted during compilation.
         """
         pass
 

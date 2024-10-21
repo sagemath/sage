@@ -6,25 +6,24 @@ Scheme obtained by gluing two other schemes
 #*******************************************************************************
 #  Copyright (C) 2006 William Stein
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*******************************************************************************
 
-from . import morphism
-from . import scheme
+from sage.misc.lazy_import import lazy_import
+from sage.schemes.generic.scheme import Scheme
 
-class GluedScheme(scheme.Scheme):
+lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
+
+
+class GluedScheme(Scheme):
     r"""
     INPUT:
 
+    - ``f`` -- open immersion from a scheme `U` to a scheme `X`
 
-    -  ``f`` -- open immersion from a scheme `U` to a scheme
-       `X`
+    - ``g`` -- open immersion from `U` to a scheme `Y`
 
-    -  ``g`` -- open immersion from `U` to a scheme `Y`
-
-
-    OUTPUT: The scheme obtained by gluing `X` and `Y` along the open set
-    `U`.
+    OUTPUT: the scheme obtained by gluing `X` and `Y` along the open set `U`
 
     .. NOTE::
 
@@ -49,9 +48,9 @@ class GluedScheme(scheme.Scheme):
     """
     def __init__(self, f, g, check=True):
         if check:
-            if not morphism.is_SchemeMorphism(f):
+            if not isinstance(f, SchemeMorphism):
                 raise TypeError("f (=%s) must be a scheme morphism" % f)
-            if not morphism.is_SchemeMorphism(g):
+            if not isinstance(g, SchemeMorphism):
                 raise TypeError("g (=%s) must be a scheme morphism" % g)
             if f.domain() != g.domain():
                 raise ValueError("f (=%s) and g (=%s) must have the same domain" % (f,g))

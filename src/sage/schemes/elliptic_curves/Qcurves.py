@@ -33,15 +33,15 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
 
     INPUT:
 
-    - ``E`` (elliptic curve) -- an elliptic curve over a number field.
+    - ``E`` -- elliptic curve over a number field
 
-    - ``maxp`` (int, default 100): bound on primes used for checking
+    - ``maxp`` -- integer (default: 100); bound on primes used for checking
       necessary local conditions.  The result will not depend on this,
       but using a larger value may return ``False`` faster.
 
-    - ``certificate`` (bool, default ``False``): if ``True`` then a
+    - ``certificate`` -- boolean (default: ``False``); if ``True`` then a
       second value is returned giving a certificate for the
-      `\QQ`-curve property.
+      `\QQ`-curve property
 
     OUTPUT:
 
@@ -83,7 +83,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
     the conductor norm.
 
     3. For all primes `p\mid N` check that the valuations of `j` at
-    all `P\mid p` are either all negative or all non-negative; if not,
+    all `P\mid p` are either all negative or all nonnegative; if not,
     return ``False``.
 
     4. For `p\le maxp`, `p\not\mid N`, check that either `E` is
@@ -403,13 +403,13 @@ def Step4Test(E, B, oldB=0, verbose=False):
 
     INPUT:
 
-    - `E` (elliptic curve): an elliptic curve defined over a number field
+    - ``E`` -- elliptic curve defined over a number field
 
-    - `B` (integer): upper bound on primes to test
+    - ``B`` -- integer; upper bound on primes to test
 
-    - ``oldB`` (integer, default 0): lower bound on primes to test
+    - ``oldB`` -- integer (default: 0); lower bound on primes to test
 
-    - ``verbose`` (boolean, default ``False``): verbosity flag
+    - ``verbose`` -- boolean (default: ``False``); verbosity flag
 
     OUTPUT:
 
@@ -497,9 +497,9 @@ def conjugacy_test(jlist, verbose=False):
 
     INPUT:
 
-    - ``jlist`` (list): a list of algebraic numbers in the same field
+    - ``jlist`` -- list of algebraic numbers in the same field
 
-    - ``verbose`` (boolean, default ``False``): verbosity flag
+    - ``verbose`` -- boolean (default: ``False``); verbosity flag
 
     OUTPUT:
 

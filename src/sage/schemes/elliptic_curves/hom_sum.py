@@ -561,7 +561,6 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         the standard Weierstrass differentials on `E_i` defined by
         `\mathrm dx/(2y+a_1x+a_3)`.
 
-
         EXAMPLES::
 
             sage: E = EllipticCurve(GF(101), [5,5])

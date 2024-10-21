@@ -55,21 +55,20 @@ from sage.rings.integer_ring import ZZ
 from sage.arith.misc import kronecker as kro
 from sage.structure.sage_object import SageObject
 
+
 def reduce_mod_q(x, amodq):
     r"""The reduction of ``x`` modulo the prime ideal defined by ``amodq``.
 
     INPUT:
 
-    - ``x`` -- an element of a  number field `K`.
+    - ``x`` -- an element of a  number field `K`
 
     - ``amodq`` -- an element of `GF(q)` which is a root mod `q` of
       the defining polynomial of `K`.  This defines a degree 1 prime
       ideal `Q=(q,\alpha-a)` of `K=\QQ(\alpha)`, where `a \bmod q` =
       ``amodq``.
 
-    OUTPUT:
-
-    The image of ``x`` in the residue field of `K` at the prime `Q`.
+    OUTPUT: the image of ``x`` in the residue field of `K` at the prime `Q`
 
     EXAMPLES::
 
@@ -91,15 +90,16 @@ def reduce_mod_q(x, amodq):
     except AttributeError: # in case x is in QQ
         return Fq(x)
 
+
 class EllipticCurveSaturator(SageObject):
     r"""
     Class for saturating points on an elliptic curve over a number field.
 
     INPUT:
 
-    - ``E`` -- an elliptic curve defined over a number field, or `\QQ`.
+    - ``E`` -- an elliptic curve defined over a number field, or `\QQ`
 
-    - ``verbose`` (boolean, default ``False``) -- verbosity flag.
+    - ``verbose`` -- boolean (default: ``False``); verbosity flag
 
     .. NOTE::
 
@@ -113,9 +113,9 @@ class EllipticCurveSaturator(SageObject):
 
         INPUT:
 
-        - ``E`` -- an elliptic curve defined over a number field.
+        - ``E`` -- an elliptic curve defined over a number field
 
-        - ``verbose`` (boolean, default ``False``) -- verbosity flag.
+        - ``verbose`` -- boolean (default: ``False``); verbosity flag
         """
         self._verbose = verbose
         self._curve = E
@@ -144,7 +144,7 @@ class EllipticCurveSaturator(SageObject):
         INPUT:
 
         - ``q`` -- a prime number not dividing the defining polynomial
-          of ``self.__field``.
+          of ``self.__field``
 
         OUTPUT:
 
@@ -212,9 +212,9 @@ class EllipticCurveSaturator(SageObject):
 
         INPUT:
 
-        - ``Plist`` (list) -- a list of independent points on one elliptic curve.
+        - ``Plist`` -- list of independent points on one elliptic curve
 
-        - ``p`` (integer) -- a prime number.
+        - ``p`` -- integer; a prime number
 
         OUTPUT:
 
@@ -303,12 +303,12 @@ class EllipticCurveSaturator(SageObject):
 
         INPUT:
 
-        - ``Plist`` (list) -- a list of independent points on one elliptic curve.
+        - ``Plist`` -- list of independent points on one elliptic curve
 
-        - ``p`` (integer) -- a prime number.
+        - ``p`` -- integer; a prime number
 
-        - ``sieve`` (boolean) -- if True, use a sieve (when there are at
-          least 2 points); otherwise test all combinations.
+        - ``sieve`` -- boolean; if ``True``, use a sieve (when there are at
+          least 2 points), otherwise test all combinations
 
         .. NOTE::
 
@@ -341,7 +341,7 @@ class EllipticCurveSaturator(SageObject):
             False
 
         Here we see an example where 19-saturation is proved, with the
-        verbose flag set to True so that we can see what is going on::
+        verbose flag set to ``True`` so that we can see what is going on::
 
             sage: saturator = EllipticCurveSaturator(EK, verbose=True)
             sage: saturator.p_saturation([P, Q, R], 19)
@@ -574,7 +574,7 @@ class EllipticCurveSaturator(SageObject):
                                 # really is p*R.  Now to enlarge the
                                 # span, we may replce the j'th point
                                 # in Plist with R, where v[j] is
-                                # non-zero.
+                                # nonzero.
                                 if verbose:
                                     print("-- points were not {}-saturated, gaining index {}".format(p,p))
                                 j = next(i for i,x in enumerate(v) if x)
@@ -588,16 +588,17 @@ class EllipticCurveSaturator(SageObject):
                         rankA = newrank
                         count = 0
 
+
 def p_projections(Eq, Plist, p, debug=False):
     r"""
 
     INPUT:
 
-    - ``Eq`` -- An elliptic curve over a finite field.
+    - ``Eq`` -- an elliptic curve over a finite field
 
-    - ``Plist`` -- a list of points on `Eq`.
+    - ``Plist`` -- list of points on `Eq`
 
-    - ``p`` -- a prime number.
+    - ``p`` -- a prime number
 
     OUTPUT:
 

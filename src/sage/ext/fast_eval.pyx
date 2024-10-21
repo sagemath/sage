@@ -44,7 +44,7 @@ def fast_float(f, *vars, expect_one_var=False):
 
     INPUT:
 
-    - ``f``    -- an expression
+    - ``f`` -- an expression
     - ``vars`` -- the names of the arguments
     - ``expect_one_var`` -- don't give deprecation warning if ``vars`` is
       omitted, as long as expression has only one var

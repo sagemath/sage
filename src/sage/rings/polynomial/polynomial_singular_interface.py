@@ -176,7 +176,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
 class PolynomialRing_singular_repr:
     """
-    Implements methods to convert polynomial rings to Singular.
+    Implement methods to convert polynomial rings to Singular.
 
     This class is a base class for all univariate and multivariate
     polynomial rings which support conversion from and to Singular
@@ -225,7 +225,7 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(GF(127), 'x', implementation="singular")           # needs sage.libs.singular
+            sage: R = PolynomialRing(GF(127), 'x', implementation='singular')           # needs sage.libs.singular
             sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
@@ -234,7 +234,7 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(QQ, 'x', implementation="singular")                # needs sage.libs.singular
+            sage: R = PolynomialRing(QQ, 'x', implementation='singular')                # needs sage.libs.singular
             sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
@@ -457,7 +457,7 @@ def can_convert_to_singular(R):
 
 class Polynomial_singular_repr:
     """
-    Implements coercion of polynomials to Singular polynomials.
+    Implement coercion of polynomials to Singular polynomials.
 
     This class is a base class for all (univariate and multivariate)
     polynomial classes which support conversion from and to
@@ -483,7 +483,7 @@ def _singular_func(self, singular=None):
 
     INPUT:
 
-    - ``singular`` -- Singular instance to use.
+    - ``singular`` -- Singular instance to use
 
     EXAMPLES::
 

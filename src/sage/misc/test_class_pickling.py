@@ -9,12 +9,12 @@ class bar:
 
 def metaclass(name, bases):
     """
-    Creates a new class in this metaclass
+    Create a new class in this metaclass.
 
     INPUT:
 
-    - name -- a string
-    - bases -- a tuple of classes
+    - ``name`` -- string
+    - ``bases`` -- tuple of classes
 
     EXAMPLES::
 
@@ -27,7 +27,6 @@ def metaclass(name, bases):
         <class 'sage.misc.test_class_pickling.Metaclass'>
         sage: c.__bases__
         (<...sage.misc.test_class_pickling.bar...>, <... 'object'>)
-
     """
     print("constructing class")
     result = Metaclass(name, bases, {})

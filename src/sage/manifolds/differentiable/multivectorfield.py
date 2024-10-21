@@ -153,7 +153,6 @@ class MultivectorField(TensorField):
         sage: s.display(eV)
         f*(a∧b) = (1/2*u^5 - 1/2*u^3*v^2 - 1/2*u^2*v^3 + u^3 + 1/2*(u^4 + 2*u^2)*v)
           ∂/∂u∧∂/∂v
-
     """
     def __init__(self, vector_field_module, degree, name=None, latex_name=None):
         r"""
@@ -194,7 +193,6 @@ class MultivectorField(TensorField):
         .. TODO::
 
             Fix ``_test_pickling`` (in the superclass :class:`TensorField`).
-
         """
         TensorField.__init__(self, vector_field_module, (degree, 0), name=name,
                              latex_name=latex_name, antisym=range(degree),
@@ -218,7 +216,6 @@ class MultivectorField(TensorField):
             sage: b = M.multivector_field(2)
             sage: b._repr_()
             '2-vector field on the 3-dimensional differentiable manifold M'
-
         """
         description = "{}-vector field ".format(self._tensor_rank)
         if self._name is not None:
@@ -240,7 +237,6 @@ class MultivectorField(TensorField):
             True
             sage: a1.parent() is a.parent()
             True
-
         """
         return type(self)(self._vmodule, self._tensor_rank)
 
@@ -248,9 +244,7 @@ class MultivectorField(TensorField):
         r"""
         Return the degree of ``self``.
 
-        OUTPUT:
-
-        - integer `p` such that ``self`` is a `p`-vector field
+        OUTPUT: integer `p` such that ``self`` is a `p`-vector field
 
         EXAMPLES::
 
@@ -263,7 +257,6 @@ class MultivectorField(TensorField):
             Vector field on the 3-dimensional differentiable manifold M
             sage: b.degree()
             1
-
         """
         return self._tensor_rank
 
@@ -306,7 +299,6 @@ class MultivectorField(TensorField):
             a∧b = (-x^3 - (x - 1)*y^2) ∂/∂x∧∂/∂y
             sage: c.display(e_uv)
             a∧b = (-v^2 + u) ∂/∂u∧∂/∂v
-
         """
         from sage.typeset.unicode_characters import unicode_wedge
         from sage.tensor.modules.format_utilities import is_atomic
@@ -459,7 +451,6 @@ class MultivectorField(TensorField):
             True
             sage: s.restrict(V) == 2 * a[[e_uv,1,2]] * b[[e_uv,1,2]]
             True
-
         """
         from sage.tensor.modules.format_utilities import is_atomic
         if self._domain.is_subset(form._domain):
@@ -632,7 +623,6 @@ class MultivectorField(TensorField):
 
             :meth:`MultivectorFieldParal.bracket` for more examples and check
             of standards identities involving the Schouten-Nijenhuis bracket
-
         """
         from sage.manifolds.differentiable.scalarfield import DiffScalarField
         pp = self._tensor_rank
@@ -755,7 +745,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         sage: type(a.comp())
         <class 'sage.tensor.modules.comp.CompFullyAntiSym'>
 
-    Setting a component with repeated indices to a non-zero value results in
+    Setting a component with repeated indices to a nonzero value results in
     an error::
 
         sage: a[1,1] = 3
@@ -864,7 +854,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
         sage: ab.lie_der(a)
         2-vector field on the 3-dimensional differentiable manifold R3
-
     """
     def __init__(self, vector_field_module, degree, name=None,
                  latex_name=None):
@@ -893,7 +882,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             True
             sage: a1.parent() is a.parent()
             True
-
         """
         AlternatingContrTensor.__init__(self, vector_field_module, degree,
                                         name=name, latex_name=latex_name)
@@ -922,7 +910,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: b = M.multivector_field(2)
             sage: b._repr_()
             '2-vector field on the 3-dimensional differentiable manifold M'
-
         """
         description = "{}-vector field ".format(self._tensor_rank)
         if self._name is not None:
@@ -945,7 +932,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             True
             sage: a1.parent() is a.parent()
             True
-
         """
         return type(self)(self._fmodule, self._tensor_rank)
 
@@ -960,7 +946,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: X.<x,y,z> = M.chart()  # makes M parallelizable
             sage: a = M.multivector_field(2, name='a')
             sage: a._init_derived()
-
         """
         TensorFieldParal._init_derived(self)
 
@@ -970,7 +955,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
         INPUT:
 
-        - ``del_restrictions`` -- (default: ``True``) determines whether the
+        - ``del_restrictions`` -- boolean (default: ``True``); determines whether the
           restrictions of ``self`` to subdomains are deleted
 
         TESTS::
@@ -979,7 +964,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: X.<x,y,z> = M.chart()  # makes M parallelizable
             sage: a = M.multivector_field(2, name='a')
             sage: a._del_derived()
-
         """
         TensorFieldParal._del_derived(self, del_restrictions=del_restrictions)
 
@@ -1008,7 +992,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             True
             sage: s == a(b,c)  # indirect doctest
             True
-
         """
         return TensorFieldParal.__call__(self, *args)
 
@@ -1060,7 +1043,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             True
             sage: s == f.wedge(b)
             True
-
         """
         if other._tensor_rank == 0:  # wedge product with a scalar field
             return self * other
@@ -1178,7 +1160,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: f = X.coframe()[1]  # 1-form dx
             sage: v.interior_product(f)
             Scalar field zero on the 4-dimensional differentiable manifold M
-
         """
         if self._domain.is_subset(form._domain):
             if not self._ambient_domain.is_subset(form._ambient_domain):
@@ -1418,7 +1399,6 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: d_ac = d.bracket(a.bracket(c))
             sage: a_cd + c_da - d_ac == 0
             True
-
         """
         from itertools import combinations
         from sage.combinat.permutation import Permutation

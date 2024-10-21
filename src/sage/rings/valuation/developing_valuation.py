@@ -68,7 +68,6 @@ class DevelopingValuation(DiscretePseudoValuation):
     TESTS::
 
         sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
-
     """
     def __init__(self, parent, phi):
         r"""
@@ -79,13 +78,12 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: from sage.rings.valuation.developing_valuation import DevelopingValuation
             sage: isinstance(v, DevelopingValuation)
             True
-
         """
         DiscretePseudoValuation.__init__(self, parent)
 
         domain = parent.domain()
-        from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-        if not is_PolynomialRing(domain) or not domain.ngens() == 1:
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        if not isinstance(domain, PolynomialRing_general) or not domain.ngens() == 1:
             raise TypeError("domain must be a univariate polynomial ring but %r is not" % (domain,))
 
         phi = domain.coerce(phi)
@@ -105,7 +103,6 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v = GaussValuation(S)                                                 # needs sage.libs.ntl
             sage: v.phi()                                                               # needs sage.libs.ntl
             (1 + O(2^5))*x
-
         """
         return self._phi
 
@@ -119,7 +116,7 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         INPUT:
 
-        - ``f`` -- a non-zero polynomial in the domain of this valuation
+        - ``f`` -- a nonzero polynomial in the domain of this valuation
 
         EXAMPLES::
 
@@ -131,12 +128,11 @@ class DevelopingValuation(DiscretePseudoValuation):
             1
             sage: v.effective_degree(2*x + 1)
             0
-
         """
         f = self.domain().coerce(f)
 
         if f.is_zero():
-            raise ValueError("the effective degree is only defined for non-zero polynomials")
+            raise ValueError("the effective degree is only defined for nonzero polynomials")
 
         if valuations is None:
             valuations = list(self.valuations(f))
@@ -162,7 +158,6 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v = GaussValuation(S)
             sage: v._pow(2*x + 1, 10, effective_degree=0, error=5)
             1 + O(2^5)
-
         """
         if e == 0:
             return self.domain().one()
@@ -200,7 +195,6 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: v = v.augmentation( x^2 + x + 1, 1)
             sage: list(v.coefficients(f))
             [(1 + O(2^5))*x + 2 + O(2^5), 1 + O(2^5)]
-
         """
         domain = self.domain()
         f = domain.coerce(f)
@@ -253,7 +247,6 @@ class DevelopingValuation(DiscretePseudoValuation):
             Finite Newton polygon with 2 vertices: (0, 0), (1, 1)
             sage: v.newton_polygon( f * v.phi()^3 )                                     # needs sage.geometry.polyhedron
             Finite Newton polygon with 2 vertices: (3, 3), (4, 4)
-
         """
         f = self.domain().coerce(f)
 
@@ -288,7 +281,6 @@ class DevelopingValuation(DiscretePseudoValuation):
             3
             sage: v(S.zero())
             +Infinity
-
         """
         f = self.domain().coerce(f)
 
@@ -326,7 +318,6 @@ class DevelopingValuation(DiscretePseudoValuation):
             sage: f = x^2 + 2*x + 16
             sage: list(v.valuations(f))
             [4, 1, 0]
-
         """
 
     def _test_effective_degree(self, **options):

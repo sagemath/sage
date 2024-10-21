@@ -37,8 +37,8 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
 
     - ``A`` -- a finite-dimensional algebra
     - ``gens`` -- the generators of this ideal
-    - ``given_by_matrix`` -- (default: ``False``) whether the basis matrix is
-      given by ``gens``
+    - ``given_by_matrix`` -- boolean (default: ``False``); whether the basis
+      matrix is given by ``gens``
 
     EXAMPLES::
 
@@ -58,7 +58,7 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
             ....:                                      Matrix([[0, 1], [0, 0]])],
             ....:                              category=cat)
             sage: I = A.ideal(A([0,1]))
-            sage: TestSuite(I).run(skip="_test_category")  # Currently ideals are not using the category framework
+            sage: TestSuite(I).run(skip='_test_category')  # Currently ideals are not using the category framework
         """
         k = A.base_ring()
         n = A.degree()
@@ -81,7 +81,7 @@ class FiniteDimensionalAlgebraIdeal(Ideal_generic):
 
     def _richcmp_(self, other, op):
         r"""
-        Comparisons
+        Comparisons.
 
         TESTS::
 

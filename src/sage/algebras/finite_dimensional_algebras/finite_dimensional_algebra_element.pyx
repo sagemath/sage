@@ -32,7 +32,6 @@ cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A
         sage: x = B([1,2,3])
         sage: loads(dumps(x)) == x      # indirect doctest
         True
-
     """
     cdef FiniteDimensionalAlgebraElement x = A.element_class.__new__(A.element_class)
     AlgebraElement.__init__(x, A)
@@ -146,7 +145,6 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             True
             sage: loads(dumps(x)) is x
             False
-
         """
         return unpickle_FiniteDimensionalAlgebraElement, (self._parent, self._vector, self.__matrix)
 
@@ -173,7 +171,6 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
             sage: x.vector()
             (1, 1, 1)
-
         """
         self._parent, D = state
         v = D.pop('_vector')
@@ -340,7 +337,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
     def __getitem__(self, m):
         """
-        Return the `m`-th coefficient of ``self``
+        Return the `m`-th coefficient of ``self``.
 
         EXAMPLES::
 

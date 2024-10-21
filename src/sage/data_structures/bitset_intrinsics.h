@@ -248,7 +248,7 @@ static inline int _sparse_bitset_cmp(mp_limb_t* a, mp_bitcnt_t* a_non_zero_chunk
 
 static inline long _bitset_first_in_limb_nonzero(mp_limb_t limb){
     /*
-    Given a non-zero limb of a bitset, return the index of the first
+    Given a nonzero limb of a bitset, return the index of the first
     nonzero bit.
     */
 #if (__BMI__) && (GMP_LIMB_BITS == 64) && (INTPTR_MAX == INT64_MAX)

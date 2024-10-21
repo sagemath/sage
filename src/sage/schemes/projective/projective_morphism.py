@@ -294,9 +294,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``x`` -- a point or subscheme in domain of this map.
+        - ``x`` -- a point or subscheme in domain of this map
 
-        - ``check`` -- Boolean; if `False` assume that ``x`` is a point.
+        - ``check`` -- boolean; if ``False`` assume that ``x`` is a point
 
         EXAMPLES::
 
@@ -510,7 +510,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     def __eq__(self, right):
         """
-        Tests the equality of two projective morphisms.
+        Test the equality of two projective morphisms.
 
         INPUT:
 
@@ -561,7 +561,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     def __ne__(self, right):
         """
-        Tests the inequality of two projective morphisms.
+        Test the inequality of two projective morphisms.
 
         INPUT:
 
@@ -599,7 +599,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     def _matrix_times_polymap_(self, mat, h):
         """
-        Multiplies the morphism on the left by a matrix ``mat``.
+        Multiply the morphism on the left by a matrix ``mat``.
 
         INPUT:
 
@@ -644,7 +644,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
     def _polymap_times_matrix_(self, mat, h):
         """
-        Multiplies the morphism on the right by a matrix ``mat``.
+        Multiply the morphism on the right by a matrix ``mat``.
 
         INPUT:
 
@@ -692,9 +692,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         """
         Return this endomorphism as a :class:`DynamicalSystem_projective`.
 
-        OUTPUT:
-
-        - :class:`DynamicalSystem_projective`
+        OUTPUT: :class:`DynamicalSystem_projective`
 
         EXAMPLES::
 
@@ -743,16 +741,14 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         """
         Scale each coordinate by a factor of ``t``.
 
-        A :class:`TypeError` occurs if the point is not in the coordinate ring
+        A :exc:`TypeError` occurs if the point is not in the coordinate ring
         of the parent after scaling.
 
         INPUT:
 
-        - ``t`` -- a ring element.
+        - ``t`` -- a ring element
 
-        OUTPUT:
-
-        - None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -816,19 +812,15 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         absolute value less than or equal to 1.
         Only supported when the base ring is a number field.
 
-        INPUT:
-
-        kwds:
+        INPUT: keyword arguments:
 
         - ``ideal`` -- (optional) a prime ideal of the base ring of this
-          morphism.
+          morphism
 
         - ``valuation`` -- (optional) a valuation of the base ring of this
-          morphism.
+          morphism
 
-        OUTPUT:
-
-        - None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -1065,9 +1057,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         The degree is defined as the degree of the homogeneous
         polynomials that are the coordinates of this map.
 
-        OUTPUT:
-
-        - A positive integer
+        OUTPUT: positive integer
 
         EXAMPLES::
 
@@ -1116,12 +1106,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers.  If ``n`` is an integer, then the two values of
-            the tuple are assumed to be the same.
+        - ``n`` -- tuple of nonnegative integers; if ``n`` is an integer, then
+          the two values of the tuple are assumed to be the same
 
-        OUTPUT:
-
-        - :class:`SchemeMorphism_polynomial_affine_space`.
+        OUTPUT: :class:`SchemeMorphism_polynomial_affine_space`
 
         EXAMPLES::
 
@@ -1258,9 +1246,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         the defining polynomials is the unit ideal
         (no common zeros of the defining polynomials).
 
-        OUTPUT:
-
-        - Boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1319,11 +1305,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1421,14 +1405,12 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1480,14 +1462,12 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``i`` -- an integer.
+        - ``i`` -- integer
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1531,7 +1511,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         This is the vanishing of the maximal minors of the Jacobian matrix.
         Not implemented for subvarieties.
 
-        OUTPUT: an ideal in the coordinate ring of the domain of this map.
+        OUTPUT: an ideal in the coordinate ring of the domain of this map
 
         EXAMPLES::
 
@@ -1583,13 +1563,11 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         INPUT:
 
-        - ``Q`` -- a rational point or subscheme in the domain of this map.
+        - ``Q`` -- a rational point or subscheme in the domain of this map
 
-        - ``k`` -- positive integer.
+        - ``k`` -- positive integer
 
-        OUTPUT:
-
-        - a list of rational points or a subscheme in the domain of this map.
+        OUTPUT: a list of rational points or a subscheme in the domain of this map
 
         EXAMPLES::
 
@@ -1946,7 +1924,6 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
               x*z - y*z,
               x^2 - y^2,
               z^2
-
         """
         from sage.misc.superseded import deprecation
         deprecation(29145, "The meaning of indeterminacy_locus() has changed. Read the docstring.")
@@ -2067,7 +2044,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         the base ring is a number field, QQbar, a finite field, or algebraic
         closure of a finite field.
 
-        OUTPUT: A scheme morphism.
+        OUTPUT: a scheme morphism
 
         EXAMPLES::
 

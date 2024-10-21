@@ -30,12 +30,10 @@ class VoronoiDiagram(SageObject):
 
     INPUT:
 
-    - ``points`` -- a list of points. Any valid input for the
-      :class:`PointConfiguration` will do.
+    - ``points`` -- list of points; any valid input for the
+      :class:`PointConfiguration` will do
 
-    OUTPUT:
-
-    An instance of the VoronoiDiagram class.
+    OUTPUT: an instance of the VoronoiDiagram class
 
     EXAMPLES:
 
@@ -252,11 +250,9 @@ class VoronoiDiagram(SageObject):
         - ``cell_colors`` -- (default: ``None``) provide the colors for the cells, either as
           dictionary. Randomly colored cells are provided with ``None``.
         - ``**kwds`` -- optional keyword parameters, passed on as arguments for
-          plot().
+          plot()
 
-        OUTPUT:
-
-        A graphics object.
+        OUTPUT: a graphics object
 
         EXAMPLES::
 

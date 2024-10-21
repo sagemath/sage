@@ -74,7 +74,7 @@ class MatchingGame(SageObject):
 
     Two potential inputs are accepted (see below to see the effect of each):
 
-    - ``reviewer/suitors_preferences`` -- a dictionary containing the
+    - ``reviewer/suitors_preferences`` -- dictionary containing the
       preferences of all players:
 
       * key - each reviewer/suitors
@@ -82,8 +82,8 @@ class MatchingGame(SageObject):
 
     OR:
 
-    - ``integer`` -- an integer simply representing the number of reviewers
-      and suitors.
+    - ``integer`` -- integer simply representing the number of reviewers
+      and suitors
 
     To implement the above game in Sage::
 
@@ -1026,7 +1026,7 @@ class Player():
 
     def __lt__(self, other):
         """
-        Tests less than inequality of two players. Allows for players to be
+        Test less than inequality of two players. Allows for players to be
         sorted on their names.
 
         TESTS::
@@ -1052,7 +1052,7 @@ class Player():
 
     def __gt__(self, other):
         """
-        Tests greater than inequality of two players. Allows for players to be
+        Test greater than inequality of two players. Allows for players to be
         sorted on their names.
 
         TESTS::
@@ -1078,7 +1078,7 @@ class Player():
 
     def __ge__(self, other):
         """
-        Tests greater than or equal inequality of two players. Allows for
+        Test greater than or equal inequality of two players. Allows for
         players to be sorted on their names.
 
         TESTS::
@@ -1114,7 +1114,7 @@ class Player():
 
     def __le__(self, other):
         """
-        Tests less than or equal inequality of two players. Allows for
+        Test less than or equal inequality of two players. Allows for
         players to be sorted on their names.
 
         TESTS::
@@ -1150,7 +1150,7 @@ class Player():
 
     def __ne__(self, other):
         """
-        Tests inequality of two players. Allows for
+        Test inequality of two players. Allows for
         players to be sorted on their names.
 
         TESTS::

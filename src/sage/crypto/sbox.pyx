@@ -130,7 +130,7 @@ cdef class SBox(SageObject):
         - ``S`` -- a finite iterable defining the S-box with integer or
           finite field elements
 
-        - ``big_endian`` -- (default: ``True``) controls whether bits
+        - ``big_endian`` -- boolean (default: ``True``); controls whether bits
           shall be ordered in big endian order
 
         EXAMPLES:
@@ -276,7 +276,7 @@ cdef class SBox(SageObject):
 
         INPUT:
 
-        - ``x`` -- an integer
+        - ``x`` -- integer
 
         - ``n`` -- bit length (optional)
 
@@ -418,7 +418,7 @@ cdef class SBox(SageObject):
             sage: all([x == id(x) for x in k])
             True
 
-        Some examples for inputs that throw an :class:`TypeError`::
+        Some examples for inputs that throw an :exc:`TypeError`::
 
             sage: S([1]*10^6)
             Traceback (most recent call last):
@@ -446,7 +446,6 @@ cdef class SBox(SageObject):
                     return K(self._S_list[<Integer> X])
                 except TypeError:
                     raise TypeError("cannot apply SBox to %s" % (X,))
-                raise TypeError("the characteristic of the base field must be 2")
             V = None
             try:
                 V = K.vector_space(map=False)
@@ -564,7 +563,7 @@ cdef class SBox(SageObject):
 
     def derivative(self, u):
         r"""
-        Return the derivative in direction of ``u``
+        Return the derivative in direction of ``u``.
 
         INPUT:
 
@@ -747,7 +746,7 @@ cdef class SBox(SageObject):
         return self.maximal_difference_probability_absolute() / (2.0**self.output_size())
 
     @cached_method
-    def linear_approximation_table(self, scale="absolute_bias"):
+    def linear_approximation_table(self, scale='absolute_bias'):
         r"""
         Return linear approximation table (LAT) `A` for this S-box.
 
@@ -792,13 +791,13 @@ cdef class SBox(SageObject):
             [ 0 -2 -2  0  0 -2  2  0]
             [ 0 -2  2  0 -2  0  0 -2]
 
-            sage: lat_abs_bias/(1 << S.input_size()) == S.linear_approximation_table(scale="bias")
+            sage: lat_abs_bias/(1 << S.input_size()) == S.linear_approximation_table(scale='bias')
             True
 
-            sage: lat_abs_bias/(1 << (S.input_size()-1)) == S.linear_approximation_table(scale="correlation")
+            sage: lat_abs_bias/(1 << (S.input_size()-1)) == S.linear_approximation_table(scale='correlation')
             True
 
-            sage: lat_abs_bias*2 == S.linear_approximation_table(scale="fourier_coefficient")
+            sage: lat_abs_bias*2 == S.linear_approximation_table(scale='fourier_coefficient')
             True
 
         According to this table the first bit of the input is equal
@@ -947,8 +946,8 @@ cdef class SBox(SageObject):
 
         - ``degree`` -- (default: ``2``) integer > 0
 
-        - ``groebner`` -- (default: ``False``) calculate a reduced Groebner
-          basis of the spanning polynomials to obtain more polynomials
+        - ``groebner`` -- boolean (default: ``False``); calculate a reduced
+          Groebner basis of the spanning polynomials to obtain more polynomials
 
         EXAMPLES::
 
@@ -1064,7 +1063,7 @@ cdef class SBox(SageObject):
         field is of degree ``m``.
 
         If the output length does not match the input length then a
-        :class:`TypeError` is raised.
+        :exc:`TypeError` is raised.
 
         INPUT:
 
@@ -1134,13 +1133,13 @@ cdef class SBox(SageObject):
           represents a variable and the sign of an integer indicates
           inversion
 
-        - ``symbolic`` -- a string that can be parsed by the
+        - ``symbolic`` -- string that can be parsed by the
           ``SymbolicLogic`` package
 
-        - ``dimacs`` -- a string in DIMACS format which is the gold
+        - ``dimacs`` -- string in DIMACS format which is the gold
           standard for SAT-solver input (cf. http://www.satlib.org/)
 
-        - ``dimacs_headless`` -- a string in DIMACS format, but without
+        - ``dimacs_headless`` -- string in DIMACS format, but without
           the header; this is useful for concatenation of outputs
 
         EXAMPLES:
@@ -1591,7 +1590,7 @@ cdef class SBox(SageObject):
 
     def boomerang_uniformity(self):
         """
-        Return the boomerang uniformity
+        Return the boomerang uniformity.
 
         The boomerang uniformity is defined as the highest entry in the
         boomerang connectivity table, ignoring the first row and column.
@@ -1805,7 +1804,7 @@ cdef class SBox(SageObject):
         Return the inverse of this S-Box.
 
         Note that the S-Box must be invertible, otherwise it will raise
-        a :class:`TypeError`.
+        a :exc:`TypeError`.
 
         EXAMPLES::
 

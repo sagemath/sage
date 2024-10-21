@@ -31,7 +31,7 @@ from sage.rings.rational_field import QQ
 
 class WeightLatticeRealizations(Category_over_base_ring):
     r"""
-    The category of weight lattice realizations over a given base ring
+    The category of weight lattice realizations over a given base ring.
 
     A *weight lattice realization* `L` over a base ring `R` is a free
     module (or vector space if `R` is a field) endowed with an embedding
@@ -134,14 +134,14 @@ class WeightLatticeRealizations(Category_over_base_ring):
         @abstract_method
         def fundamental_weight(self, i):
             r"""
-            Returns the `i^{th}` fundamental weight
+            Return the `i`-th fundamental weight.
 
             INPUT:
 
             - ``i`` -- an element of the index set
 
             By a slight notational abuse, for an affine type this method
-            should also accept ``"delta"`` as input, and return the image
+            should also accept ``'delta'`` as input, and return the image
             of `\delta` of the extended weight lattice in this
             realization.
 
@@ -170,7 +170,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
         def is_extended(self):
             """
-            Return whether this is a realization of the extended weight lattice
+            Return whether this is a realization of the extended weight lattice.
 
             .. SEEALSO:: :class:`sage.combinat.root_system.weight_space.WeightSpace`
 
@@ -192,7 +192,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
         def __init_extra__(self):
             r"""
-            Registers the embedding of the weight lattice into ``self``
+            Registers the embedding of the weight lattice into ``self``.
 
             Also registers the embedding of the weight space over the same
             base field `K` into ``self`` if `K` is not `\ZZ`.
@@ -212,7 +212,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: L(Lambda[2])
                 (0, 1, -1, 0)
 
-            .. note::
+            .. NOTE::
 
                 More examples are given in :class:`WeightLatticeRealizations`;
                 The embeddings are systematically tested in
@@ -237,7 +237,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
         def _test_weight_lattice_realization(self, **options):
             """
-            Runs sanity checks on this weight lattice realization
+            Run sanity checks on this weight lattice realization.
 
             - scalar products between the fundamental weights and simple coroots
             - embeddings from the weight lattice and weight space
@@ -308,7 +308,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
         @cached_method
         def fundamental_weights(self):
             r"""
-            Returns the family `(\Lambda_i)_{i\in I}` of the fundamental weights.
+            Return the family `(\Lambda_i)_{i\in I}` of the fundamental weights.
 
             EXAMPLES::
 
@@ -324,7 +324,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
         @cached_method
         def simple_root(self, i):
             r"""
-            Returns the `i`-th simple root
+            Return the `i`-th simple root.
 
             This default implementation takes the `i`-th simple root in
             the weight lattice and embeds it in ``self``.
@@ -533,7 +533,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
         def dynkin_diagram_automorphism_of_alcove_morphism(self, f):
             r"""
-            Return the Dynkin diagram automorphism induced by an alcove morphism
+            Return the Dynkin diagram automorphism induced by an alcove morphism.
 
             INPUT:
 
@@ -664,11 +664,11 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
         def _test_reduced_word_of_translation(self, elements=None, **options):
             r"""
-            Tests the method :meth:`reduced_word_of_translation`.
+            Test the method :meth:`reduced_word_of_translation`.
 
             INPUT:
 
-            - ``options`` -- any keyword arguments accepted by :meth:`_tester`.
+            - ``options`` -- any keyword arguments accepted by :meth:`_tester`
 
             EXAMPLES::
 
@@ -771,7 +771,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             simple coroot associated to `\alpha_{i_k}`.
 
             This function returns a list of the form `[+1,+1,-1,...]`,
-            where the `k^{th}` entry denotes whether the `k^{th}` step was
+            where the `k`-th entry denotes whether the `k`-th step was
             positive or negative.
 
             See equation 3.4, of Ram: Alcove walks ..., :arxiv:`math/0601343v1`
@@ -848,7 +848,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
         def embed_at_level(self, x, level=1):
             r"""
-            Embed the classical weight `x` in the level ``level`` hyperplane
+            Embed the classical weight `x` in the level ``level`` hyperplane.
 
             This is achieved by translating the straightforward
             embedding of `x` by `c\Lambda_0` for `c` some appropriate
@@ -857,7 +857,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             INPUT:
 
             - ``x`` -- an element of the corresponding classical weight/ambient lattice
-            - ``level`` -- an integer or element of the base ring (default: 1)
+            - ``level`` -- integer or element of the base ring (default: 1)
 
             EXAMPLES::
 
@@ -974,7 +974,6 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 [  0   2   2   1]
                 [  0   2   4   1]
                 [1/2   1   1   0]
-
             """
             from sage.matrix.constructor import matrix
             ct = self.cartan_type()
@@ -1101,7 +1100,6 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: all(s1(ct) == s2(ct)                                              # needs sage.graphs
                 ....:     for ct in CartanType.samples(finite=True, crystallographic=True))
                 True
-
             """
             P = self.parent()
             ct = P.cartan_type()

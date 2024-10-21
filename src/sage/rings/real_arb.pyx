@@ -95,7 +95,7 @@ above warning, inexact balls are not considered equal to themselves)::
     sage: a == b
     False
 
-A ball is non-zero in the sense of comparison if and only if it does not
+A ball is nonzero in the sense of comparison if and only if it does not
 contain zero. ::
 
     sage: a = RBF(RIF(-0.5, 0.5))
@@ -242,11 +242,11 @@ cdef void mpfi_to_arb(arb_t target, const mpfi_t source, const long precision) n
 
     INPUT:
 
-    - ``target`` -- an ``arb_t``.
+    - ``target`` -- an ``arb_t``
 
-    - ``source`` -- an ``mpfi_t``.
+    - ``source`` -- an ``mpfi_t``
 
-    - ``precision`` -- an integer `\ge 2`.
+    - ``precision`` -- integer `\ge 2`
 
     TESTS::
 
@@ -286,18 +286,17 @@ cdef int arb_to_mpfi(mpfi_t target, arb_t source, const long precision) except -
 
     INPUT:
 
-    - ``target`` -- an ``mpfi_t``.
+    - ``target`` -- an ``mpfi_t``
 
-    - ``source`` -- an ``arb_t``.
+    - ``source`` -- an ``arb_t``
 
-    - ``precision`` -- an integer `\ge 2`.
+    - ``precision`` -- integer `\ge 2`
 
     EXAMPLES::
 
         sage: RIF(RBF(2)**(2**100))
         [5.8756537891115869e1388255822130839282 .. +infinity] # 64-bit
         [2.098... .. +infinity]                               # 32-bit
-
     """
     cdef mpfr_t left
     cdef mpfr_t right
@@ -324,7 +323,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
 
     INPUT:
 
-    - ``precision`` -- an integer `\ge 2`.
+    - ``precision`` -- integer `\ge 2`
 
     EXAMPLES::
 
@@ -397,7 +396,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
 
         INPUT:
 
-        - ``precision`` -- an integer `\ge 2`.
+        - ``precision`` -- integer `\ge 2`
 
         EXAMPLES::
 
@@ -419,7 +418,6 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             Real ball field with 53 bits of precision
             sage: RBF.base_ring()
             Real ball field with 53 bits of precision
-
         """
         if precision < 2:
             raise ValueError("precision must be at least 2")
@@ -542,7 +540,6 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             [-3.932239737431101 +/- 5.58e-16]
             sage: v.overlaps(RealBallField(100)(3/2).zetaderiv(1))                      # needs sage.symbolic
             True
-
         """
         # Symbolic expressions are handled in a special way, see
         # Expression._arb_(). A call like RBF(expr, rad) converts expr to a
@@ -1119,7 +1116,6 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             Traceback (most recent call last):
             ...
             ValueError: expected a nonnegative index
-
         """
         cdef RealBall res
         cdef Integer n_as_Integer = ZZ.coerce(n)
@@ -1139,9 +1135,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         r"""
         Return the relative accuracy of exact elements measured in bits.
 
-        OUTPUT:
-
-        An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1196,7 +1190,7 @@ def create_RealBall(parent, serialized):
 
 cdef class RealBall(RingElement):
     """
-    Hold one ``arb_t``
+    Hold one ``arb_t``.
 
     EXAMPLES::
 
@@ -1236,12 +1230,12 @@ cdef class RealBall(RingElement):
 
         INPUT:
 
-        - ``parent`` -- a :class:`RealBallField`.
+        - ``parent`` -- a :class:`RealBallField`
 
-        - ``mid`` (optional) --  ball midpoint, see examples below. If omitted,
+        - ``mid`` -- (optional) ball midpoint, see examples below. If omitted,
           initialize the ball to zero, ignoring the ``rad`` argument.
 
-        - ``rad`` (optional) -- a :class:`RealNumber` or a Python float, ball
+        - ``rad`` -- (optional) a :class:`RealNumber` or a Python float, ball
           radius. If the midpoint is not exactly representable in
           floating-point, the radius is adjusted to account for the roundoff
           error.
@@ -1525,9 +1519,7 @@ cdef class RealBall(RingElement):
         """
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1572,9 +1564,7 @@ cdef class RealBall(RingElement):
         """
         Return a :mod:`real interval <sage.rings.real_mpfi>` containing this ball.
 
-        OUTPUT:
-
-        A :class:`~sage.rings.real_mpfi.RealIntervalFieldElement`.
+        OUTPUT: a :class:`~sage.rings.real_mpfi.RealIntervalFieldElement`
 
         EXAMPLES::
 
@@ -1603,7 +1593,6 @@ cdef class RealBall(RingElement):
             Traceback (most recent call last):
             ...
             ValueError: [3.141592653589793 +/- ...e-16] does not contain a unique integer
-
         """
         cdef Integer res
         cdef fmpz_t tmp
@@ -1871,13 +1860,11 @@ cdef class RealBall(RingElement):
 
         INPUT:
 
-        - ``test_zero`` (boolean, default ``False``) -- if ``True``,
+        - ``test_zero`` -- boolean (default: ``False``); if ``True``,
           make sure that the returned lower bound is positive, raising
           an error if the ball contains zero.
 
-        OUTPUT:
-
-        A ball with zero radius
+        OUTPUT: a ball with zero radius
 
         EXAMPLES::
 
@@ -1911,9 +1898,7 @@ cdef class RealBall(RingElement):
         """
         Return an upper bound for the absolute value of this ball.
 
-        OUTPUT:
-
-        A ball with zero radius
+        OUTPUT: a ball with zero radius
 
         EXAMPLES::
 
@@ -1937,13 +1922,11 @@ cdef class RealBall(RingElement):
 
         INPUT:
 
-        - ``rnd`` (string) -- rounding mode for the parent of the result (does
+        - ``rnd`` -- string; rounding mode for the parent of the result (does
           not affect its value!), see
           :meth:`sage.rings.real_mpfi.RealIntervalFieldElement.upper`
 
-        OUTPUT:
-
-        A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1965,13 +1948,11 @@ cdef class RealBall(RingElement):
 
         INPUT:
 
-        - ``rnd`` (string) -- rounding mode for the parent of the result (does
+        - ``rnd`` -- string; rounding mode for the parent of the result (does
           not affect its value!), see
           :meth:`sage.rings.real_mpfi.RealIntervalFieldElement.lower`
 
-        OUTPUT:
-
-        A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -1991,13 +1972,11 @@ cdef class RealBall(RingElement):
 
         INPUT:
 
-        - ``rnd`` (string) -- rounding mode for the parent of the resulting
+        - ``rnd`` -- string; rounding mode for the parent of the resulting
           floating-point numbers (does not affect their values!), see
           :meth:`sage.rings.real_mpfi.RealIntervalFieldElement.upper`
 
-        OUTPUT:
-
-        A pair of real numbers.
+        OUTPUT: a pair of real numbers
 
         EXAMPLES::
 
@@ -2155,12 +2134,10 @@ cdef class RealBall(RingElement):
 
         INPUT:
 
-        - ``ampl`` -- A real ball (or an object that can be coerced to a real
-          ball).
+        - ``ampl`` -- a real ball (or an object that can be coerced to a real
+          ball)
 
-        OUTPUT:
-
-        A new real ball.
+        OUTPUT: a new real ball
 
         EXAMPLES::
 
@@ -2622,7 +2599,6 @@ cdef class RealBall(RingElement):
 
             sage: b.contains_exact(1r)
             True
-
         """
         cdef fmpz_t tmpz
         cdef fmpq_t tmpq
@@ -2733,7 +2709,7 @@ cdef class RealBall(RingElement):
 
         .. WARNING::
 
-            Contrary to the usual convention, a return value of True does
+            Contrary to the usual convention, a return value of ``True`` does
             not imply that all points of the ball satisfy the predicate.
             This is due to the way comparisons with symbolic infinities work in
             sage.
@@ -2800,7 +2776,6 @@ cdef class RealBall(RingElement):
             nan
             sage: RBF(RIF(-0.1,0.1))
             [+/- 0.101]
-
         """
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -3056,7 +3031,7 @@ cdef class RealBall(RingElement):
 
         INPUT:
 
-        - ``shift`` -- integer, may be negative.
+        - ``shift`` -- integer; may be negative
 
         EXAMPLES::
 
@@ -3109,7 +3084,7 @@ cdef class RealBall(RingElement):
 
         INPUT:
 
-        - ``shift`` -- integer, may be negative.
+        - ``shift`` -- integer; may be negative
 
         EXAMPLES::
 
@@ -3140,7 +3115,7 @@ cdef class RealBall(RingElement):
 
         INPUT:
 
-        - ``base`` (optional, positive real ball or number) -- if ``None``,
+        - ``base`` -- (optional) positive real ball or number; if ``None``,
           return the natural logarithm ``ln(self)``, otherwise, return the
           general logarithm ``ln(self)/ln(base)``
 
@@ -3538,7 +3513,7 @@ cdef class RealBall(RingElement):
 
     def erfi(self):
         """
-        Imaginary error function
+        Imaginary error function.
 
         EXAMPLES::
 
@@ -3553,7 +3528,7 @@ cdef class RealBall(RingElement):
 
     def Ei(self):
         """
-        Exponential integral
+        Exponential integral.
 
         EXAMPLES::
 
@@ -3573,7 +3548,7 @@ cdef class RealBall(RingElement):
 
     def Si(self):
         """
-        Sine integral
+        Sine integral.
 
         EXAMPLES::
 
@@ -3595,7 +3570,7 @@ cdef class RealBall(RingElement):
 
     def Ci(self):
         """
-        Cosine integral
+        Cosine integral.
 
         EXAMPLES::
 
@@ -3617,7 +3592,7 @@ cdef class RealBall(RingElement):
 
     def Shi(self):
         """
-        Hyperbolic sine integral
+        Hyperbolic sine integral.
 
         EXAMPLES::
 
@@ -3639,7 +3614,7 @@ cdef class RealBall(RingElement):
 
     def Chi(self):
         """
-        Hyperbolic cosine integral
+        Hyperbolic cosine integral.
 
         EXAMPLES::
 
@@ -3661,7 +3636,7 @@ cdef class RealBall(RingElement):
 
     def li(self):
         """
-        Logarithmic integral
+        Logarithmic integral.
 
         EXAMPLES::
 
@@ -3685,7 +3660,7 @@ cdef class RealBall(RingElement):
 
     def Li(self):
         """
-        Offset logarithmic integral
+        Offset logarithmic integral.
 
         EXAMPLES::
 
@@ -3702,11 +3677,11 @@ cdef class RealBall(RingElement):
 
     def beta(self, a, z=1):
         """
-        (Incomplete) beta function
+        (Incomplete) beta function.
 
         INPUT:
 
-        - ``a``, ``z`` (optional) -- real balls
+        - ``a``, ``z`` -- (optional) real balls
 
         OUTPUT:
 
@@ -3741,7 +3716,7 @@ cdef class RealBall(RingElement):
 
     def gamma(self, a=None):
         r"""
-        Image of this ball by the (upper incomplete) Euler Gamma function
+        Image of this ball by the (upper incomplete) Euler Gamma function.
 
         For `a` real, return the upper incomplete Gamma function
         `\Gamma(self,a)`.
@@ -3783,7 +3758,7 @@ cdef class RealBall(RingElement):
 
     def gamma_inc_lower(self, a):
         r"""
-        Image of this ball by the lower incomplete Euler Gamma function
+        Image of this ball by the lower incomplete Euler Gamma function.
 
         For `a` real, return the lower incomplete Gamma function
         of `\Gamma(self,a)`.
@@ -3807,7 +3782,7 @@ cdef class RealBall(RingElement):
         """
         Return the image of this ball by the logarithmic Gamma function.
 
-        The complex branch structure is assumed, so if ``self`` <= 0, the result
+        The complex branch structure is assumed, so if ``self <= 0``, the result
         is an indeterminate interval.
 
         EXAMPLES::
@@ -3863,7 +3838,7 @@ cdef class RealBall(RingElement):
 
     cpdef RealBall psi(self):
         """
-        Compute the digamma function with argument self.
+        Compute the digamma function with argument ``self``.
 
         EXAMPLES::
 
@@ -3912,7 +3887,7 @@ cdef class RealBall(RingElement):
 
     def zetaderiv(self, k):
         r"""
-        Return the image of this ball by the k-th derivative of the Riemann
+        Return the image of this ball by the `k`-th derivative of the Riemann
         zeta function.
 
         For a more flexible interface, see the low-level method

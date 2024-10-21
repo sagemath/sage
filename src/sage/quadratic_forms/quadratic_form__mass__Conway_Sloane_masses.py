@@ -33,11 +33,9 @@ def parity(self, allow_rescaling_flag=True):
     INPUT:
 
     - ``self`` -- a quadratic form with base ring `\ZZ`, which we may
-      require to have integer Gram matrix.
+      require to have integer Gram matrix
 
-    OUTPUT:
-
-    One of the strings: "even" or "odd"
+    OUTPUT: one of the strings: ``'even'`` or ``'odd'``
 
     EXAMPLES::
 
@@ -145,7 +143,6 @@ def is_odd(self, allow_rescaling_flag=True):
         sage: Q = QuadraticForm(ZZ, 2, [1, 1, 1])
         sage: Q.is_odd()
         False
-
     """
     return self.parity(allow_rescaling_flag) == "odd"
 
@@ -160,7 +157,7 @@ def conway_species_list_at_odd_prime(self, p):
     number is always positive, otherwise it may be positive or
     negative (or zero, but that is considered positive by convention).
 
-    .. NOTE:
+    .. NOTE::
 
         The species of a zero dimensional form is always 0+, so we
         interpret the return value of zero as positive here! =)
@@ -169,7 +166,7 @@ def conway_species_list_at_odd_prime(self, p):
 
     - ``p`` -- a positive prime number
 
-    OUTPUT: a list of integers
+    OUTPUT: list of integers
 
     EXAMPLES::
 
@@ -184,7 +181,6 @@ def conway_species_list_at_odd_prime(self, p):
         [5, 2]
         sage: Q.conway_species_list_at_odd_prime(5)
         [-6, 1]
-
     """
     # Sanity Check:
     if not (p > 2 and is_prime(p)):
@@ -235,7 +231,7 @@ def conway_species_list_at_2(self):
         The species of a zero dimensional form is always 0+, so we
         interpret the return value of zero as positive here! =)
 
-    OUTPUT: a list of integers
+    OUTPUT: list of integers
 
     EXAMPLES::
 
@@ -248,7 +244,6 @@ def conway_species_list_at_2(self):
         sage: Q = DiagonalQuadraticForm(ZZ, range(1,8))
         sage: Q.conway_species_list_at_2()
         [1, 3, 1, 1, 1]
-
     """
     # Some useful variables
     n = self.dim()
@@ -314,7 +309,7 @@ def conway_octane_of_this_unimodular_Jordan_block_at_2(self):
     unimodular blocks of size `\leq 2` and the `1 \times 1` blocks are all in the upper
     leftmost position.
 
-    OUTPUT: an integer `0 \leq x \leq 7`
+    OUTPUT: integer `0 \leq x \leq 7`
 
     EXAMPLES::
 

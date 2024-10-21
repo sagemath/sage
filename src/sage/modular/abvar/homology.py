@@ -70,16 +70,16 @@ class Homology(HeckeModule_free_module):
     action.
     """
     def hecke_polynomial(self, n, var='x'):
-        """
-        Return the n-th Hecke polynomial in the given variable.
+        r"""
+        Return the `n`-th Hecke polynomial in the given variable.
 
         INPUT:
 
-        -  ``n`` -- positive integer
+        - ``n`` -- positive integer
 
-        -  ``var`` -- string (default: 'x') the variable name
+        - ``var`` -- string (default: ``'x'``); the variable name
 
-        OUTPUT: a polynomial over ZZ in the given variable
+        OUTPUT: a polynomial over `\ZZ` in the given variable
 
         EXAMPLES::
 
@@ -143,7 +143,7 @@ class Homology_abvar(Homology):
 
     def _repr_(self):
         """
-        Return string representation of self. This must be defined in the
+        Return string representation of ``self``. This must be defined in the
         derived class.
 
         EXAMPLES::
@@ -159,7 +159,7 @@ class Homology_abvar(Homology):
 
     def gens(self):
         """
-        Return generators of self.
+        Return generators of ``self``.
 
         This is not yet implemented!
 
@@ -175,7 +175,7 @@ class Homology_abvar(Homology):
 
     def gen(self, n):
         """
-        Return `n^{th}` generator of self.
+        Return `n`-th generator of ``self``.
 
         This is not yet implemented!
 
@@ -249,14 +249,12 @@ class Homology_abvar(Homology):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         INPUT:
 
-
-        -  ``n`` -- a positive integer
-
+        - ``n`` -- positive integer
 
         OUTPUT: a matrix over the coefficient ring of this homology group
 
@@ -300,14 +298,13 @@ class Homology_abvar(Homology):
 
         INPUT:
 
+        - ``U`` -- submodule of ambient free module (or
+          something that defines one)
 
-        -  ``U`` -- submodule of ambient free module (or
-           something that defines one)
-
-        -  ``check`` -- currently ignored.
+        - ``check`` -- currently ignored
 
 
-        .. note::
+        .. NOTE::
 
            We do *not* check that U is invariant under all Hecke
            operators.
@@ -348,9 +345,7 @@ class IntegralHomology(Homology_abvar):
 
         INPUT:
 
-
-        -  ``abvar`` -- a modular abelian variety
-
+        - ``abvar`` -- a modular abelian variety
 
         EXAMPLES::
 
@@ -379,7 +374,7 @@ class IntegralHomology(Homology_abvar):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         EXAMPLES::
@@ -399,7 +394,7 @@ class IntegralHomology(Homology_abvar):
 
     def hecke_polynomial(self, n, var='x'):
         """
-        Return the n-th Hecke polynomial on this integral homology group.
+        Return the `n`-th Hecke polynomial on this integral homology group.
 
         EXAMPLES::
 
@@ -426,9 +421,7 @@ class RationalHomology(Homology_abvar):
 
         INPUT:
 
-
-        -  ``abvar`` -- a modular abelian variety
-
+        - ``abvar`` -- a modular abelian variety
 
         EXAMPLES::
 
@@ -455,7 +448,7 @@ class RationalHomology(Homology_abvar):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         EXAMPLES::
@@ -480,7 +473,7 @@ class RationalHomology(Homology_abvar):
 
     def hecke_polynomial(self, n, var='x'):
         """
-        Return the n-th Hecke polynomial on this rational homology group.
+        Return the `n`-th Hecke polynomial on this rational homology group.
 
         EXAMPLES::
 
@@ -507,11 +500,9 @@ class Homology_over_base(Homology_abvar):
 
         INPUT:
 
+        - ``abvar`` -- a modular abelian variety
 
-        -  ``abvar`` -- a modular abelian variety
-
-        -  ``base_ring`` -- a commutative ring
-
+        - ``base_ring`` -- a commutative ring
 
         EXAMPLES::
 
@@ -529,7 +520,7 @@ class Homology_over_base(Homology_abvar):
 
     def _repr_(self):
         """
-        Return string representation of self.
+        Return string representation of ``self``.
 
         EXAMPLES::
 
@@ -541,7 +532,7 @@ class Homology_over_base(Homology_abvar):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         EXAMPLES::
@@ -568,13 +559,11 @@ class Homology_submodule(Homology):
 
         INPUT:
 
+        - ``ambient`` -- the homology of some modular abelian
+          variety with ring coefficients
 
-        -  ``ambient`` -- the homology of some modular abelian
-           variety with ring coefficients
-
-        -  ``submodule`` -- a submodule of the free module
-           underlying ambient
-
+        - ``submodule`` -- a submodule of the free module
+          underlying ambient
 
         EXAMPLES::
 

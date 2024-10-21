@@ -123,7 +123,6 @@ class DegenerateManifold(DifferentiableManifold):
             sage: M.metric()
             degenerate metric g on the 3-dimensional degenerate_metric manifold M
             sage: TestSuite(M).run()
-
         """
         if base_manifold and not isinstance(base_manifold, DegenerateManifold):
             raise TypeError("the argument 'base_manifold' must be a " +
@@ -250,7 +249,6 @@ class DegenerateManifold(DifferentiableManifold):
 
             sage: M.metric('g') is M.metric()
             True
-
         """
         if signature is None:
             signature = self._metric_signature
@@ -288,7 +286,7 @@ class DegenerateManifold(DifferentiableManifold):
         INPUT:
 
         - ``name`` -- name given to the open subset
-        - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           subset; if none is provided, it is set to ``name``
         - ``coord_def`` -- (default: {}) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
@@ -338,7 +336,6 @@ class DegenerateManifold(DifferentiableManifold):
             g = -dx⊗dx + dy⊗dy
             sage: gV is g.restrict(V)
             True
-
         """
         resu = DegenerateManifold(self._dim, name,
                                         metric_name=self._metric_name,
@@ -392,7 +389,7 @@ class TangentTensor(TensorFieldParal):
         Section of the lightcone of the Minkowski space with a hyperplane
         passing through the origin::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v> = S.chart()
@@ -428,14 +425,13 @@ class TangentTensor(TensorFieldParal):
             sqrt(u^2 + v^2) ∂/∂t
             sage: T2(xi.along(Phi)).display()
             sqrt(u^2 + v^2) ∂/∂t
-
     """
     def __init__(self, tensor, embedding, screen=None):
         r"""
 
         TESTS::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -457,7 +453,6 @@ class TangentTensor(TensorFieldParal):
             Tensor field of type (1,1) along the degenerate hypersurface S embedded in
             4-dimensional differentiable manifold M with values on the 4-dimensional
             Lorentzian manifold M
-
         """
         if not isinstance(tensor, TensorField):
             raise TypeError("the second argument must be a tensor field")
@@ -488,7 +483,7 @@ class TangentTensor(TensorFieldParal):
 
         TESTS::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(3, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v,w> = S.chart()
@@ -510,7 +505,6 @@ class TangentTensor(TensorFieldParal):
             Vector field along the degenerate hypersurface S embedded in
             4-dimensional differentiable manifold M with values on the 4-dimensional
             Lorentzian manifold M
-
         """
         for vector in args:
             try:
@@ -535,7 +529,7 @@ class TangentTensor(TensorFieldParal):
         Section of the lightcone of the Minkowski space with a hyperplane
         passing through the origin::
 
-            sage: M = Manifold(4, 'M', structure="Lorentzian")
+            sage: M = Manifold(4, 'M', structure='Lorentzian')
             sage: X.<t,x,y,z> = M.chart()
             sage: S = Manifold(2, 'S', ambient=M, structure='degenerate_metric')
             sage: X_S.<u,v> = S.chart()
@@ -558,6 +552,5 @@ class TangentTensor(TensorFieldParal):
             False
             sage: T3 is T1
             True
-
         """
         return self._tensor

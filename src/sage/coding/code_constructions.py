@@ -179,9 +179,12 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
     else:
         return False
 
+
 def _lift2smallest_field(a):
     """
-    INPUT: a is an element of a finite field GF(q)
+    INPUT:
+
+    - ``a`` -- an element of a finite field GF(q)
 
     OUTPUT: the element b of the smallest subfield F of GF(q) for
     which F(b)=a.
@@ -217,7 +220,7 @@ def _lift2smallest_field(a):
 
 def permutation_action(g, v):
     r"""
-    Returns permutation of rows `g * v`.
+    Return permutation of rows `g * v`.
 
     Works on lists, matrices,
     sequences and vectors (by permuting coordinates). The code requires
@@ -326,9 +329,10 @@ def walsh_matrix(m0):
 
 ##################### main constructions #####################
 
+
 def DuadicCodeEvenPair(F,S1,S2):
     r"""
-    Constructs the "even pair" of duadic codes associated to the
+    Construct the "even pair" of duadic codes associated to the
     "splitting" (see the docstring for ``_is_a_splitting``
     for the definition) S1, S2 of n.
 
@@ -375,9 +379,10 @@ def DuadicCodeEvenPair(F,S1,S2):
     C2 = CyclicCode(length=n, generator_pol=gg2)
     return C1,C2
 
+
 def DuadicCodeOddPair(F,S1,S2):
     """
-    Constructs the "odd pair" of duadic codes associated to the
+    Construct the "odd pair" of duadic codes associated to the
     "splitting" S1, S2 of n.
 
     .. warning::
@@ -430,6 +435,7 @@ def DuadicCodeOddPair(F,S1,S2):
     C2 = CyclicCode(length=n, generator_pol=gg2)
     return C1,C2
 
+
 def ExtendedQuadraticResidueCode(n,F):
     r"""
     The extended quadratic residue code (or XQR code) is obtained from
@@ -439,14 +445,12 @@ def ExtendedQuadraticResidueCode(n,F):
 
     INPUT:
 
+    - ``n`` -- an odd prime
 
-    -  ``n`` -- an odd prime
+    - ``F`` -- a finite prime field whose order must be a
+      quadratic residue modulo `n`
 
-    -  ``F`` -- a finite prime field whose order must be a
-       quadratic residue modulo `n`.
-
-
-    OUTPUT: Returns an extended quadratic residue code.
+    OUTPUT: an extended quadratic residue code
 
     EXAMPLES::
 
@@ -472,6 +476,7 @@ def ExtendedQuadraticResidueCode(n,F):
     C = QuadraticResidueCodeOddPair(n,F)[0]
     return C.extended_code()
 
+
 def from_parity_check_matrix(H):
     r"""
     Return the linear code that has ``H`` as a parity check matrix.
@@ -495,12 +500,13 @@ def from_parity_check_matrix(H):
     Cd = LinearCode(H)
     return Cd.dual_code()
 
+
 def QuadraticResidueCode(n,F):
     r"""
     A quadratic residue code (or QR code) is a cyclic code whose
     generator polynomial is the product of the polynomials
     `x-\alpha^i` (`\alpha` is a primitive
-    `n`'th root of unity; `i` ranges over the set of
+    `n`-th root of unity; `i` ranges over the set of
     quadratic residues modulo `n`).
 
     See :class:`QuadraticResidueCodeEvenPair` and
@@ -508,14 +514,12 @@ def QuadraticResidueCode(n,F):
 
     INPUT:
 
+    - ``n`` -- an odd prime
 
-    -  ``n`` -- an odd prime
+    - ``F`` -- a finite prime field whose order must be a
+      quadratic residue modulo `n`
 
-    -  ``F`` -- a finite prime field whose order must be a
-       quadratic residue modulo `n`.
-
-
-    OUTPUT: Returns a quadratic residue code.
+    OUTPUT: a quadratic residue code
 
     EXAMPLES::
 
@@ -540,6 +544,7 @@ def QuadraticResidueCode(n,F):
     """
     return QuadraticResidueCodeOddPair(n,F)[0]
 
+
 def QuadraticResidueCodeEvenPair(n,F):
     r"""
     Quadratic residue codes of a given odd prime length and base ring
@@ -549,7 +554,7 @@ def QuadraticResidueCodeEvenPair(n,F):
     quadratic residue mod `n`.
 
     They are constructed as "even-like" duadic codes associated the
-    splitting `(Q,N)` mod `n`, where `Q` is the set of non-zero quadratic
+    splitting `(Q,N)` mod `n`, where `Q` is the set of nonzero quadratic
     residues and `N` is the non-residues.
 
     EXAMPLES::
@@ -599,8 +604,8 @@ def QuadraticResidueCodeEvenPair(n,F):
     if n <= 2 or not n.is_prime():
         raise ValueError("the argument n must be an odd prime")
     Q = quadratic_residues(n)
-    Q.remove(0)       # non-zero quad residues
-    N = [x for x in srange(1, n) if x not in Q]   # non-zero quad non-residues
+    Q.remove(0)       # nonzero quad residues
+    N = [x for x in srange(1, n) if x not in Q]   # nonzero quad non-residues
     if q not in Q:
         raise ValueError("the order of the finite field must be a quadratic residue modulo n")
     return DuadicCodeEvenPair(F,Q,N)
@@ -615,7 +620,7 @@ def QuadraticResidueCodeOddPair(n,F):
     quadratic residue mod `n`.
 
     They are constructed as "odd-like" duadic codes associated the
-    splitting `(Q,N)` mod `n`, where `Q` is the set of non-zero quadratic
+    splitting `(Q,N)` mod `n`, where `Q` is the set of nonzero quadratic
     residues and `N` is the non-residues.
 
     EXAMPLES::
@@ -659,8 +664,8 @@ def QuadraticResidueCodeOddPair(n,F):
     if n <= 2 or not n.is_prime():
         raise ValueError("the argument n must be an odd prime")
     Q = quadratic_residues(n)
-    Q.remove(0)       # non-zero quad residues
-    N = [x for x in srange(1, n) if x not in Q]   # non-zero quad non-residues
+    Q.remove(0)       # nonzero quad residues
+    N = [x for x in srange(1, n) if x not in Q]   # nonzero quad non-residues
     if q not in Q:
         raise ValueError("the order of the finite field must be a quadratic residue modulo n")
     return DuadicCodeOddPair(F,Q,N)
@@ -691,6 +696,7 @@ def random_linear_code(F, length, dimension):
         if G.rank() == dimension:
             return LinearCode(G)
 
+
 def ToricCode(P,F):
     r"""
     Let `P` denote a list of lattice points in
@@ -715,15 +721,12 @@ def ToricCode(P,F):
 
     INPUT:
 
+    - ``P`` -- all the integer lattice points in a polytope
+      defining the toric variety
 
-    -  ``P`` -- all the integer lattice points in a polytope
-       defining the toric variety.
+    - ``F`` -- a finite field
 
-    -  ``F`` -- a finite field.
-
-
-    OUTPUT: Returns toric code with length n = , dimension k over field
-    F.
+    OUTPUT: toric code with length `n`, dimension `k` over field `F`
 
     EXAMPLES::
 
@@ -732,7 +735,7 @@ def ToricCode(P,F):
          [36, 5] linear code over GF(7)
          sage: C.minimum_distance()                                                     # needs sage.groups
          24
-         sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
+         sage: C.minimum_distance(algorithm='guava')  # optional - gap_package_guava
          ...24
          sage: C = codes.ToricCode([[-2,-2],[-1,-2],[-1,-1],[-1,0],
          ....:                      [0,-1],[0,0],[0,1],[1,-1],[1,0]], GF(5))
@@ -740,7 +743,7 @@ def ToricCode(P,F):
          [16, 9] linear code over GF(5)
          sage: C.minimum_distance()                                                     # needs sage.groups
          6
-         sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
+         sage: C.minimum_distance(algorithm='guava')  # optional - gap_package_guava
          6
          sage: C = codes.ToricCode([[0,0],[1,1],[1,2],[1,3],[1,4],[2,1],
          ....:                      [2,2],[2,3],[3,1],[3,2],[4,1]], GF(8,"a"))

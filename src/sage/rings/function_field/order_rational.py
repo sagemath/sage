@@ -84,7 +84,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         except TypeError:
             raise TypeError("unable to convert to an element of {}".format(F))
 
-        if not f.denominator() in self.function_field().constant_base_field():
+        if f.denominator() not in self.function_field().constant_base_field():
             raise TypeError("%r is not an element of %r" % (f,self))
 
         return f
@@ -288,7 +288,6 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
             sage: K, fr_K, to_K = O._residue_field_global(_f)                                       # needs sage.modules
             sage: all(to_K(fr_K(e)) == e for e in K)                                                # needs sage.modules
             True
-
         """
         # polynomial ring over the base field
         R = self._ring
@@ -495,7 +494,8 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
     def gen(self, n=0):
         """
-        Return the ``n``-th generator of self. Since there is only one generator ``n`` must be 0.
+        Return the `n`-th generator of ``self``. Since there is only one
+        generator `n` must be `0`.
 
         EXAMPLES::
 

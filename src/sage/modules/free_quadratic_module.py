@@ -92,13 +92,13 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
 
     - ``base_ring`` -- a commutative ring
 
-    - ``rank`` -- a nonnegative integer
+    - ``rank`` -- nonnegative integer
 
     - ``inner_product_matrix`` -- the inner product matrix
 
-    - ``sparse`` -- bool; (default ``False``)
+    - ``sparse`` -- boolean (default: ``False``)
 
-    - ``inner_product_ring`` -- the inner product codomain ring; (default ``None``)
+    - ``inner_product_ring`` -- the inner product codomain ring (default: ``None``)
 
     OUTPUT:
 
@@ -210,7 +210,7 @@ def QuadraticSpace(K, dimension, inner_product_matrix, sparse=False):
         (0, 0, 1)
         ]
 
-    The base must be a field or a :class:`TypeError` is raised::
+    The base must be a field or a :exc:`TypeError` is raised::
 
         sage: QuadraticSpace(ZZ, 5, identity_matrix(ZZ,2))
         Traceback (most recent call last):
@@ -319,7 +319,7 @@ class FreeQuadraticModule_generic(free_module.FreeModule_generic):
 
         - ``base_ring`` -- a commutative ring
 
-        - ``rank`` -- a non-negative integer
+        - ``rank`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -740,10 +740,10 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
 
         - ``gens`` -- list of vectors
 
-        - ``check`` -- bool (default: ``True``): whether or not to coerce
+        - ``check`` -- boolean (default: ``True``); whether or not to coerce
           entries of gens into base field
 
-        - ``already_echelonized`` -- bool (default: ``False``): set this if
+        - ``already_echelonized`` -- boolean (default: ``False``); set this if
           you know the gens are already in echelon form
 
         EXAMPLES::
@@ -780,10 +780,10 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
 
         - ``basis`` -- list of vectors
 
-        - ``check`` -- bool (default: ``True``): whether or not to coerce
+        - ``check`` -- boolean (default: ``True``); whether or not to coerce
           entries of gens into base field
 
-        - ``already_echelonized`` -- bool (default: ``False``): set this if
+        - ``already_echelonized`` -- boolean (default: ``False``); set this if
           you know the gens are already in echelon form
 
         EXAMPLES::
@@ -800,7 +800,7 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
             [3 3 0]
 
         The basis vectors must be linearly independent or a
-        :class:`ValueError` exception is raised::
+        :exc:`ValueError` exception is raised::
 
             sage: W.span_of_basis([[2,2,2], [3,3,3]])
             Traceback (most recent call last):
@@ -832,7 +832,7 @@ class FreeQuadraticModule_ambient(free_module.FreeModule_ambient,
 
         - ``base_ring`` -- a commutative ring
 
-        - ``rank`` -- a non-negative integer
+        - ``rank`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -1048,11 +1048,11 @@ class FreeQuadraticModule_ambient_pid(free_module.FreeModule_ambient_pid,
 
         - ``base_ring`` -- a principal ideal domain
 
-        - ``rank`` -- a non-negative integer
+        - ``rank`` -- nonnegative integer
 
-        - ``sparse`` -- bool (default: ``False``)
+        - ``sparse`` -- boolean (default: ``False``)
 
-        - ``inner_product_matrix`` -- bool (default: ``None``)
+        - ``inner_product_matrix`` -- boolean (default: ``None``)
 
         EXAMPLES::
 
@@ -1132,9 +1132,9 @@ class FreeQuadraticModule_ambient_field(free_module.FreeModule_ambient_field,
 
         - ``base_field`` -- a field
 
-        - ``dimension`` -- a non-negative integer
+        - ``dimension`` -- nonnegative integer
 
-        - ``sparse`` -- bool (default: ``False``)
+        - ``sparse`` -- boolean (default: ``False``)
 
         EXAMPLES::
 
@@ -1350,7 +1350,7 @@ class FreeQuadraticModule_submodule_with_basis_pid(free_module.FreeModule_submod
         element of ``self`` into a vector over the fraction field of `R`,
         then taking the resulting `R`-module.
 
-        This raises a :class:`TypeError` if coercion is not possible.
+        This raises a :exc:`TypeError` if coercion is not possible.
 
         INPUT:
 

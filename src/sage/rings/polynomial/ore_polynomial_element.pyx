@@ -275,7 +275,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     cdef OrePolynomial _new_c(self, list coeffs, Parent P, char check=0):
         r"""
-        Fast creation of a new Ore polynomial
+        Fast creation of a new Ore polynomial.
 
         .. NOTE::
 
@@ -286,7 +286,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     cpdef OrePolynomial _new_constant_poly(self, RingElement a, Parent P, char check=0):
         r"""
-        Fast creation of a new constant Ore polynomial
+        Fast creation of a new constant Ore polynomial.
 
         EXAMPLES::
 
@@ -308,7 +308,7 @@ cdef class OrePolynomial(AlgebraElement):
         r"""
         Set the ``n``-th coefficient of ``self``.
 
-        This always raises an ``IndexError``, since polynomials are immutable in
+        This always raises an :exc:`IndexError`, since polynomials are immutable in
         Sage.
 
         EXAMPLES::
@@ -584,7 +584,7 @@ cdef class OrePolynomial(AlgebraElement):
     cpdef _mod_(self, other):
         r"""
         Return the remainder in the *right* Euclidean division of
-        ``self`` by ``other```.
+        ``self`` by ``other``.
 
         TESTS::
 
@@ -661,9 +661,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -697,9 +695,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -747,9 +743,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -783,9 +777,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        OUTPUT:
-
-        Return ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1441,7 +1433,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         - ``other`` -- an Ore polynomial in the same ring as ``self``
 
-        - ``monic`` -- a boolean (default: ``True``); whether the right lcm
+        - ``monic`` -- boolean (default: ``True``); whether the right lcm
           should be normalized to be monic
 
         EXAMPLES::
@@ -1947,7 +1939,7 @@ cdef class OrePolynomial(AlgebraElement):
         r"""
         Return the coefficients of the monomials appearing in ``self``.
 
-        If ``sparse=True`` (the default), return only the non-zero coefficients.
+        If ``sparse=True`` (the default), return only the nonzero coefficients.
         Otherwise, return the same value as ``self.list()``.
 
         .. NOTE::
@@ -1969,7 +1961,7 @@ cdef class OrePolynomial(AlgebraElement):
 
     def number_of_terms(self):
         r"""
-        Return the number of non-zero coefficients of ``self``.
+        Return the number of nonzero coefficients of ``self``.
 
         This is also known as the weight, hamming weight or sparsity.
 
@@ -2141,7 +2133,7 @@ cdef class OrePolynomial(AlgebraElement):
 
         INPUT:
 
-        - ``n`` -- (default: ``None``); if given, an integer that
+        - ``n`` -- (default: ``None``) if given, an integer that
           is at least `0`
 
         EXAMPLES::
@@ -2201,7 +2193,7 @@ cdef void lmul_gen(list A, Morphism m, d) noexcept:
 
     INPUT:
 
-    - ``A`` -- a list of coefficients
+    - ``A`` -- list of coefficients
 
     - ``m`` -- the twisting morphism of the Ore polynomial ring
 
@@ -2442,11 +2434,9 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
-        OUTPUT:
-
-        - the ``n``-th coefficient of ``self``
+        OUTPUT: the ``n``-th coefficient of ``self``
 
         EXAMPLES::
 
@@ -2492,7 +2482,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         else:
             return (<OrePolynomial_generic_dense>self)._coeffs
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         r"""
         Return a dictionary representation of ``self``.
 
@@ -2502,6 +2492,11 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x',sigma]
             sage: a = x^2012 + t*x^1006 + t^3 + 2*t
+            sage: a.monomial_coefficients()
+            {0: t^3 + 2*t, 1006: t, 2012: 1}
+
+        ``dict`` is an alias::
+
             sage: a.dict()
             {0: t^3 + 2*t, 1006: t, 2012: 1}
         """
@@ -2513,6 +2508,8 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             if c:
                 X[i] = c
         return X
+
+    dict = monomial_coefficients
 
     cpdef Integer degree(self):
         r"""
@@ -2635,7 +2632,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
     def valuation(self):
         r"""
-        Return the minimal degree of a non-zero monomial of ``self``.
+        Return the minimal degree of a nonzero monomial of ``self``.
 
         By convention, the zero Ore polynomial has valuation `+\infty`.
 
@@ -2857,7 +2854,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
         r"""
         Return the coefficients of the monomials appearing in ``self``.
 
-        If ``sparse=True`` (the default), return only the non-zero coefficients.
+        If ``sparse=True`` (the default), return only the nonzero coefficients.
         Otherwise, return the same value as ``self.list()``.
 
         EXAMPLES::
@@ -2886,7 +2883,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
         - ``s`` -- an element in the base ring
 
-        - ``var`` -- a string; the variable name
+        - ``var`` -- string; the variable name
 
         EXAMPLES::
 
@@ -3051,10 +3048,10 @@ cdef class OrePolynomialBaseringInjection(Morphism):
 
         INPUT:
 
-        - ``domain`` -- a ring `R`. This will be the domain of the injection.
+        - ``domain`` -- a ring `R`; this will be the domain of the injection
 
-        - ``codomain`` -- an Ore polynomial ring over ``domain``. This will be
-          the codomain.
+        - ``codomain`` -- an Ore polynomial ring over ``domain``; this will be
+          the codomain
 
         TESTS::
 
@@ -3106,9 +3103,7 @@ cdef class OrePolynomialBaseringInjection(Morphism):
 
         - ``e`` -- element belonging to the base ring according to ``self``
 
-        OUTPUT:
-
-        The Ore polynomial corresponding to `e` according to ``self``.
+        OUTPUT: the Ore polynomial corresponding to `e` according to ``self``
 
         TESTS::
 

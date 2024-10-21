@@ -388,7 +388,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
 
         INPUT:
 
-        - ``name`` -- string (default: `None`); name of the generator
+        - ``name`` -- string (default: ``None``); name of the generator
           of the residue field
 
         EXAMPLES::

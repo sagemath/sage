@@ -46,10 +46,10 @@ class DyckPath(PathTableau):
 
     INPUT:
 
-    * a sequence of nonnegative integers
-    * a two row standard skew tableau
-    * a Dyck word
-    * a noncrossing perfect matching
+    - a sequence of nonnegative integers
+    - a two row standard skew tableau
+    - a Dyck word
+    - a noncrossing perfect matching
 
     EXAMPLES::
 
@@ -273,7 +273,7 @@ class DyckPath(PathTableau):
     @combinatorial_map(name='to Dyck word')
     def to_DyckWord(self):
         r"""
-        Converts ``self`` to a Dyck word.
+        Convert ``self`` to a Dyck word.
 
         EXAMPLES::
 

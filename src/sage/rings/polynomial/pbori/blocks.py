@@ -105,8 +105,8 @@ def shift(f, i):
 
 
 class AdderBlock(AlternatingBlock):
-    def __init__(self, adder_bits, sums="s", carries="c", input1="a",
-                 input2="b", start_index=0):
+    def __init__(self, adder_bits, sums='s', carries='c', input1='a',
+                 input2='b', start_index=0):
         AlternatingBlock.__init__(self, (sums, carries, input1, input2),
                                   adder_bits, start_index=start_index,
                                   reverse=True)
@@ -155,11 +155,14 @@ class HigherOrderBlock:
 
     For each dimension a separate start_index and size can be specified.
 
-    var_name : variables will be called <var_name>(multiindex), where multiindex is a tuple of the size <size_tuple>
+    var_name : variables will be called <var_name>(multiindex), where
+    multiindex is a tuple of the size <size_tuple>
 
-    size_tuple : specifies the sizes of the ranges of each component of the multi-indices
+    size_tuple : specifies the sizes of the ranges of each component of the
+    multi-indices
 
-    start_index_tuple : the multi-indices will be of the form start_index_tuple + a, where a is a multi-index with non-negative components
+    start_index_tuple : the multi-indices will be of the form
+    start_index_tuple + a, where a is a multi-index with nonnegative components
     """
     def __init__(self, var_name, size_tuple, start_index_tuple=None,
                  reverse=False):
@@ -196,7 +199,7 @@ class HigherOrderBlock:
 
 
 class InOutBlock:
-    def __init__(self, out_size, in_size, output="out", input="in",
+    def __init__(self, out_size, in_size, output='out', input='in',
                  in_start_index=0, out_start_index=0,
                  out_reverse=False, in_reverse=False):
         self.output = Block(var_name=output, start_index=out_start_index,

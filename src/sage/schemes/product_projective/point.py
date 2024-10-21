@@ -53,12 +53,12 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``parent`` -- Hom-set.
+        - ``parent`` -- Hom-set
 
-        - ``polys`` -- anything that defines a point in the class.
+        - ``polys`` -- anything that defines a point in the class
 
-        - ``check`` -- Boolean. Whether or not to perform input checks.
-          (Default: ``True``)
+        - ``check`` -- boolean (default: ``True``); whether or not to perform
+          input checks
 
         EXAMPLES::
 
@@ -111,11 +111,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``i`` -- integer.
+        - ``i`` -- integer
 
-        OUTPUT:
-
-        The projective space point that is the ``i``-th coordinate.
+        OUTPUT: the projective space point that is the ``i``-th coordinate
 
         EXAMPLES::
 
@@ -134,7 +132,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Return a string representation of this point.
 
-        OUTPUT: String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -154,9 +152,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         - ``other`` -- another point
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -208,9 +204,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Return a copy of this point.
 
-        OUTPUT:
-
-        - a point in the same space as third point.
+        OUTPUT: a point in the same space as third point
 
         EXAMPLES::
 
@@ -229,7 +223,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Iterate over the coordinates of the point.
 
-        OUTPUT: An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -263,7 +257,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         """
         Compute the hash value of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -305,7 +299,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Remove common factors (componentwise) from the coordinates of this point (including `-1`).
 
-        OUTPUT: None.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -320,18 +314,16 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
     def dehomogenize(self, L):
         r"""
-        Dehomogenize `k^{th}` point at `L[k]^{th}` coordinate.
+        Dehomogenize `k`-th point at `L[k]`-th coordinate.
 
         This function computes the appropriate affine patch using ``L``
         and then returns the dehomogenized point on of this affine space.
 
         INPUT:
 
-        - ``L`` -- a list of non-negative integers
+        - ``L`` -- list of nonnegative integers
 
-        OUTPUT:
-
-        - :class:`SchemeMorphism_point_affine`.
+        OUTPUT: :class:`SchemeMorphism_point_affine`
 
         EXAMPLES::
 
@@ -369,7 +361,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         r"""
         Scale the coordinates of the point by ``t``, done componentwise.
 
-        A :class:`TypeError` occurs if the point is not in the base ring
+        A :exc:`TypeError` occurs if the point is not in the base ring
         of the codomain after scaling.
 
         INPUT:
@@ -400,15 +392,15 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``R`` -- ring.
+        - ``R`` -- ring
 
         kwds:
 
-        - ``check`` -- Boolean.
+        - ``check`` -- boolean
 
-        - ``embedding`` -- field embedding from the base ring of this point to ``R``.
+        - ``embedding`` -- field embedding from the base ring of this point to ``R``
 
-        OUTPUT: :class:`ProductProjectiveSpaces_point`.
+        OUTPUT: :class:`ProductProjectiveSpaces_point`
 
         EXAMPLES::
 
@@ -433,9 +425,9 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -485,12 +477,12 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -525,9 +517,9 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
 
         INPUT:
 
-        - ``X`` -- a subscheme in the same ambient space as the codomain of this point.
+        - ``X`` -- a subscheme in the same ambient space as the codomain of this point
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -550,7 +542,7 @@ class ProductProjectiveSpaces_point_field(ProductProjectiveSpaces_point_ring):
         This uses the subscheme implementation of multiplicity. This point must be a point
         on a subscheme of a product of projective spaces.
 
-        OUTPUT: an integer.
+        OUTPUT: integer
 
         EXAMPLES::
 

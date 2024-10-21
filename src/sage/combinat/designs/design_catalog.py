@@ -73,7 +73,7 @@ which queries the LJCR.
 REFERENCES:
 
 .. [1] La Jolla Covering Repository,
-  https://math.ccrwest.org/cover.html
+  https://dmgordon.org/cover
 """
 from sage.misc.lazy_import import lazy_import
 

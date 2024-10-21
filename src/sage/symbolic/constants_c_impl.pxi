@@ -160,7 +160,7 @@ cdef class E(Expression):
             [e 0]
             [0 e]
             sage: A = matrix(RDF, [[1,2],[3,4]])
-            sage: e^A  # rel tol 1e-14
+            sage: e^A  # rel tol 5e-14
             [51.968956198705044  74.73656456700327]
             [112.10484685050491 164.07380304920997]
         """

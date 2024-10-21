@@ -55,9 +55,9 @@ def interval_roots(p, rts, prec):
     and a precision.
 
     We attempt to verify that the estimated roots are in fact distinct
-    roots of the polynomial, using interval arithmetic of precision prec.
+    roots of the polynomial, using interval arithmetic of precision ``prec``.
     If we succeed, we return a list of intervals bounding the roots; if we
-    fail, we return None.
+    fail, we return ``None``.
 
     EXAMPLES::
 

@@ -229,7 +229,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
     def highest_weight(self):
         """
-        Returns the highest weight of ``self``.
+        Return the highest weight of ``self``.
 
         EXAMPLES::
 
@@ -467,7 +467,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         INPUT:
 
-        - ``n`` -- a tuple representing a weight
+        - ``n`` -- tuple representing a weight
 
         EXAMPLES::
 
@@ -822,7 +822,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         INPUT:
 
-        - ``n`` -- a tuple representing a weight `\mu`.
+        - ``n`` -- tuple representing a weight `\mu`
 
         EXAMPLES::
 
@@ -865,7 +865,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             sage: L = RootSystem("B3~").weight_lattice(extended=True)
             sage: Lambda = L.fundamental_weights()
             sage: delta = L.null_root()
-            sage: W = L.weyl_group(prefix="s")
+            sage: W = L.weyl_group(prefix='s')
             sage: [s0,s1,s2,s3] = W.simple_reflections()
             sage: V = IntegrableRepresentation(Lambda[0])
             sage: V.mult(Lambda[2] - 2*delta)
@@ -1032,8 +1032,8 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         OPTIONAL:
 
-        - ``mu`` -- a weight; or alternatively:
-        - ``n`` -- a tuple representing a weight `\mu`.
+        - ``mu`` -- a weight, or alternatively,
+        - ``n`` -- tuple representing a weight `\mu`
 
         If no optional parameter is specified, this returns `m_\Lambda`.
         If ``mu`` is specified, it returns `m_{\Lambda,\mu}`. You may
@@ -1047,7 +1047,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             sage: [V.modular_characteristic(x) for x in V.dominant_maximal_weights()]
             [11/56, -1/280, 111/280]
         """
-        if type(mu) is tuple:
+        if isinstance(mu, tuple):
             n = mu
         else:
             n = self.from_weight(mu)
@@ -1083,7 +1083,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         - ``i`` -- (default: 0) an element of the index set
         - ``weyl_character_ring`` -- a WeylCharacterRing
-        - ``sequence`` -- a dictionary
+        - ``sequence`` -- dictionary
         - ``depth`` -- (default: 5) an upper bound for `k` determining
           how many terms to give
 
@@ -1127,7 +1127,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Thus we have a branching to
         `\mathfrak{sl}(2) \times \mathfrak{sl}(2) \times \mathfrak{sl}(2)`::
 
-            sage: A1xA1xA1 = WeylCharacterRing("A1xA1xA1",style="coroots")              # needs sage.libs.gap
+            sage: A1xA1xA1 = WeylCharacterRing("A1xA1xA1",style='coroots')              # needs sage.libs.gap
             sage: V.branch(i=2,weyl_character_ring=A1xA1xA1)                            # needs sage.libs.gap
             [A1xA1xA1(1,0,0),
              A1xA1xA1(0,1,2),
@@ -1148,7 +1148,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             O---O---O=>=O---O
             0   1   2   3   4
             F4~
-            sage: A1xC3=WeylCharacterRing("A1xC3",style="coroots")
+            sage: A1xC3=WeylCharacterRing("A1xC3",style='coroots')
             sage: A1xC3.dynkin_diagram()
             O
             1
@@ -1177,13 +1177,12 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             [1, 3, 4, 7, 13, 19, 29, 43, 62, 90, 126, 174, 239, 325, 435, 580]
             sage: oeis(r)                                                        # optional -- internet
             0: A029552: Expansion of phi(x) / f(-x) in powers of x where phi(), f() are Ramanujan theta functions.
-
         """
         if i is None:
             i = self._cartan_type.special_node()
         if i == self._cartan_type.special_node() or self._cartan_type.type() == 'A':
             if weyl_character_ring is None:
-                weyl_character_ring = WeylCharacterRing(self._cartan_type.classical(), style="coroots")
+                weyl_character_ring = WeylCharacterRing(self._cartan_type.classical(), style='coroots')
             if weyl_character_ring.cartan_type() != self._cartan_type.classical():
                 raise ValueError("Cartan type of WeylCharacterRing must be %s" % self.cartan_type().classical())
         elif weyl_character_ring is None:

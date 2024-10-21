@@ -611,7 +611,7 @@ optional Sage package Mathics installed.
 
     def _function_call_string(self, function, args, kwds):
         """
-        Returns the string used to make function calls.
+        Return the string used to make function calls.
 
         EXAMPLES::
 
@@ -657,7 +657,7 @@ optional Sage package Mathics installed.
         return "]"
 
     # #########################################
-    # System -- change directory, etc
+    # System -- change directory, etc.
     # #########################################
     def chdir(self, dir):
         """
@@ -709,7 +709,7 @@ optional Sage package Mathics installed.
 
     def _exponent_symbol(self):
         r"""
-        Returns the symbol used to denote the exponent of a number in
+        Return the symbol used to denote the exponent of a number in
         Mathics.
 
         EXAMPLES::
@@ -736,7 +736,6 @@ optional Sage package Mathics installed.
 
             sage: mathics._object_class()
             <class 'sage.interfaces.mathics.MathicsElement'>
-
         """
         return MathicsElement
 
@@ -869,7 +868,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         r"""
         Return a list of all methods of this object.
 
-        .. note::
+        .. NOTE::
 
            Currently returns all methods of :class:`mathics.expression.Expression`.
 
@@ -1049,7 +1048,6 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             bla
             sage: bla^2 - mb
             0
-
         """
         if locals:
             # if locals are given we use `_sage_repr`
@@ -1100,9 +1098,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         """
         Test whether the mathics expression is graphics.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1114,14 +1110,14 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
     def save_image(self, filename, ImageSize=600):
         r"""
-        Save a mathics graphics
+        Save a mathics graphics.
 
         INPUT:
 
-        - ``filename`` -- string. The filename to save as. The
-          extension determines the image file format.
+        - ``filename`` -- string; the filename to save as. The
+          extension determines the image file format
 
-        - ``ImageSize`` -- integer. The size of the resulting image.
+        - ``ImageSize`` -- integer; the size of the resulting image
 
         EXAMPLES::
 
@@ -1138,7 +1134,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -1181,7 +1177,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
         INPUT:
 
-        - ``ImageSize`` -- integer. The size of the resulting image.
+        - ``ImageSize`` -- integer; the size of the resulting image
 
         OUTPUT:
 
@@ -1248,7 +1244,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
     def n(self, *args, **kwargs):
         r"""
-        Numerical approximation by converting to Sage object first
+        Numerical approximation by converting to Sage object first.
 
         Convert the object into a Sage object and return its numerical
         approximation. See documentation of the function

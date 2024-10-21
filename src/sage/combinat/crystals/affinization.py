@@ -86,7 +86,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
         We skip the Stembridge axioms test since this is an abstract crystal::
 
             sage: A = crystals.KirillovReshetikhin(['A',2,1], 2, 2).affinization()
-            sage: TestSuite(A).run(skip="_test_stembridge_local_axioms") # long time
+            sage: TestSuite(A).run(skip='_test_stembridge_local_axioms') # long time
         """
         if not B.cartan_type().is_affine():
             raise ValueError("must be an affine crystal")

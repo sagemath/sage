@@ -149,7 +149,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         sage: CIF.category()
         Category of infinite fields
-        sage: TestSuite(CIF).run(skip="_test_gcd_vs_xgcd")
+        sage: TestSuite(CIF).run(skip='_test_gcd_vs_xgcd')
 
     TESTS:
 
@@ -196,7 +196,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         from sage.categories.fields import Fields
         Field.__init__(self, self.real_field(), ("I",), False,
                 category=Fields().Infinite())
-        self._populate_coercion_lists_(convert_method_name="_complex_mpfi_")
+        self._populate_coercion_lists_(convert_method_name='_complex_mpfi_')
 
     def __reduce__(self):
         """
@@ -211,7 +211,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
     def construction(self):
         """
-        Returns the functorial construction of this complex interval field,
+        Return the functorial construction of this complex interval field,
         namely as the algebraic closure of the real interval field with
         the same precision.
 
@@ -255,7 +255,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
     def prec(self):
         """
-        Returns the precision of ``self`` (in bits).
+        Return the precision of ``self`` (in bits).
 
         EXAMPLES::
 
@@ -268,7 +268,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
     def to_prec(self, prec):
         """
-        Returns a complex interval field with the given precision.
+        Return a complex interval field with the given precision.
 
         EXAMPLES::
 
@@ -626,7 +626,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
     def pi(self):
         r"""
-        Returns `\pi` as an element in the complex (interval) field.
+        Return `\pi` as an element in the complex (interval) field.
 
         EXAMPLES::
 
@@ -660,11 +660,9 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         INPUT:
 
-        - ``n`` -- an integer (default: 2)
+        - ``n`` -- integer (default: 2)
 
-        OUTPUT:
-
-        A complex `n`-th root of unity.
+        OUTPUT: a complex `n`-th root of unity
 
         EXAMPLES::
 

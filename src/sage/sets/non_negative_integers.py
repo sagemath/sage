@@ -17,9 +17,9 @@ from sage.rings.integer import Integer
 
 class NonNegativeIntegers(UniqueRepresentation, Parent):
     r"""
-    The enumerated set of non negative integers.
+    The enumerated set of nonnegative integers.
 
-    This class implements the set of non negative integers, as an
+    This class implements the set of nonnegative integers, as an
     enumerated set (see :class:`InfiniteEnumeratedSets
     <sage.categories.infinite_enumerated_sets.InfiniteEnumeratedSets>`).
 
@@ -124,8 +124,8 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, i):
         """
-        Constructs an element of self from an integer, testing that
-        this integer is indeed non negative.
+        Construct an element of ``self`` from an integer, testing that
+        this integer is indeed nonnegative.
 
         EXAMPLES::
 

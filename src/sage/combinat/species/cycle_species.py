@@ -45,7 +45,7 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
 
     def permutation_group_element(self):
         """
-        Returns this cycle as a permutation group element.
+        Return this cycle as a permutation group element.
 
         EXAMPLES::
 
@@ -60,7 +60,7 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
 
     def transport(self, perm):
         """
-        Returns the transport of this structure along the permutation
+        Return the transport of this structure along the permutation
         perm.
 
         EXAMPLES::
@@ -81,7 +81,7 @@ class CycleSpeciesStructure(GenericSpeciesStructure):
 
     def automorphism_group(self):
         """
-        Returns the group of permutations whose action on this structure
+        Return the group of permutations whose action on this structure
         leave it fixed.
 
         EXAMPLES::
@@ -118,7 +118,7 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the species of cycles.
+        Return the species of cycles.
 
         EXAMPLES::
 
@@ -202,7 +202,7 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _order(self):
         """
-        Returns the order of the generating series.
+        Return the order of the generating series.
 
         EXAMPLES::
 

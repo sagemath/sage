@@ -15,7 +15,6 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
         sage: A = matrix.random(CDF, ZZ.random_element(5), sparse=True)
         sage: A.__class__
         <class 'sage.matrix.matrix_double_sparse.Matrix_double_sparse'>
-
     """
 
     def is_hermitian(self, tolerance=1e-12):
@@ -24,7 +23,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
         entry-wise ``tolerance``.
 
         A matrix is said to be Hermitian if it is equal to its
-        conjugate-transpose. We default to a small but non-zero
+        conjugate-transpose. We default to a small but nonzero
         entry-wise tolerance because, otherwise, numerical issues
         can cause false negatives (Issue #33023).
 
@@ -37,9 +36,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
           tolerate between entries of the given matrix and its conjugate-
           transpose.
 
-        OUTPUT:
-
-        A boolean, either ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -55,7 +52,6 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: A = matrix.random(CDF, 2, sparse=True)
             sage: (A*A.conjugate_transpose()).is_hermitian()
             True
-
         """
         return self._is_hermitian(skew=False, tolerance=tolerance)
 
@@ -66,7 +62,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         A matrix is said to be skew-Hermitian if it is equal to the
         negation of its conjugate-transpose. We default to a small but
-        non-zero entry-wise tolerance because, otherwise, numerical
+        nonzero entry-wise tolerance because, otherwise, numerical
         issues can cause false negatives (Issue #33023).
 
         Otherwise this method is identical to the superclass method,
@@ -79,9 +75,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
           tolerate between entries of the given matrix and the
           negation of its conjugate-transpose.
 
-        OUTPUT:
-
-        A boolean, either ``True`` or ``False``.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -97,17 +91,14 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: A = matrix.random(CDF, 2, sparse=True)
             sage: (A - A.conjugate_transpose()).is_skew_hermitian()
             True
-
         """
         return self._is_hermitian(skew=True, tolerance=tolerance)
 
     def cholesky(self):
         r"""
-        Returns the Cholesky decomposition of a Hermitian matrix.
+        Return the Cholesky decomposition of a Hermitian matrix.
 
-        INPUT:
-
-        A positive-definite matrix over ``RDF`` or ``CDF``.
+        Applies to a positive-definite matrix over ``RDF`` or ``CDF``.
 
         OUTPUT:
 
@@ -120,7 +111,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         where `L^\ast` is the conjugate-transpose. If the matrix is
         not positive-definite (for example, if it is not Hermitian)
-        then a ``ValueError`` results.
+        then a :exc:`ValueError` results.
 
         ALGORITHM:
 
@@ -246,7 +237,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
         cvx_L = cholmod.getfactor(cvx_symbolic)
 
         # The (I[k],J[k]) entry of cvx_L has value V[k]. But beware that V
-        # contains only the non-zero entries of the matrix; as a result, the
+        # contains only the nonzero entries of the matrix; as a result, the
         # dict below contains keys only for those nonzero entries.
         L = self.matrix_space()({
           (cvx_L.I[k], cvx_L.J[k]): cvx_L.V[k]

@@ -2141,7 +2141,7 @@ cdef inline int prepare_face_iterator_for_partial_job(
     The first digit determines which facet to visit.
     The next digit determines which facet of the facet should be visited.
 
-    OUTPUT: ``1`` if the job exists and ``0`` otherwise.
+    OUTPUT: ``1`` if the job exists and ``0`` otherwise
 
     In addition, the first job treating a face will "visit" this face
     and increase the corresponding entry of the f-vector.

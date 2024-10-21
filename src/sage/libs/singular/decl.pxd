@@ -152,7 +152,6 @@ cdef extern from "singular/Singular/libsingular.h":
         void    (*cfWrite)(number* a, const n_Procs_s* r)
         void    (*cfNormalize)(number* a,  const n_Procs_s* r)
 
-
         bint (*cfDivBy)(number* a, number* b, const n_Procs_s* r)
         bint (*cfEqual)(number* a,number* b, const n_Procs_s* )
         bint (*cfIsZero)(number* a, const n_Procs_s* ) # algebraic number comparison with zero
@@ -160,7 +159,6 @@ cdef extern from "singular/Singular/libsingular.h":
         bint (*cfIsMOne)(number* a, const n_Procs_s* )
         bint (*cfGreaterZero)(number* a, const n_Procs_s* )
         void (*cfPower)(number* a, int i, number* * result,  const n_Procs_s* r) # algebraic number power
-
 
         ring *extRing
         int ch
@@ -211,7 +209,6 @@ cdef extern from "singular/Singular/libsingular.h":
 
         int pCompIndex # index of components
         unsigned long bitmask # mask for getting single exponents
-
 
         n_Procs_s*    cf # coefficient field/ring
         int ref
@@ -426,6 +423,7 @@ cdef extern from "singular/Singular/libsingular.h":
     cdef int si_opt_2    #  previously 'verbose'
     cdef void * currentVoice
     cdef int myynest
+    cdef int printlevel
 
     ctypedef char * const_char_ptr "const char *"
     cdef extern void (*WerrorS_callback)(const_char_ptr)
@@ -793,7 +791,6 @@ cdef extern from "singular/Singular/libsingular.h":
 
     number *nlCopy(number *)
 
-
     # number to integer handle
 
     long SR_TO_INT(number *)
@@ -812,7 +809,6 @@ cdef extern from "singular/Singular/libsingular.h":
     # ideal destructor
 
     void id_Delete(ideal **, ring *)
-
 
     # lifting
 

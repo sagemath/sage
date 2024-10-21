@@ -104,7 +104,7 @@ class SuffixTrie(SageObject):
         Process a letter. That is, modify the current suffix trie producing
         the suffix trie for ``self.word() + letter``.
 
-        .. note::
+        .. NOTE::
 
            ``letter`` must occur within the alphabet of the word.
 
@@ -144,7 +144,7 @@ class SuffixTrie(SageObject):
         Modify ``self`` to produce the suffix trie for ``self.word() +
         letter``.
 
-        .. note::
+        .. NOTE::
 
            ``letter`` must occur within the alphabet of the word.
 
@@ -603,7 +603,7 @@ class ImplicitSuffixTree(SageObject):
 
         This corresponds to the algorithm "update" in [Ukko1995]_.
 
-        .. note::
+        .. NOTE::
 
            This function is a helper and does not update ``self._data`` and
            ``self._word``.
@@ -834,9 +834,8 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``word_labels`` -- boolean (default: ``False``) if ``False``, labels
-           the edges by pairs `(i, j)`; if ``True``, labels the edges by
-           ``word[i:j]``.
+        - ``word_labels`` -- boolean (default: ``False``); if ``False``, labels
+          the edges by pairs `(i, j)`. If ``True``, labels the edges by ``word[i:j]``
 
         EXAMPLES::
 
@@ -867,14 +866,13 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``word_labels`` -- boolean (default: ``False``) if ``False``, labels
-           the edges by pairs `(i, j)`; if ``True``, labels the edges by
-           ``word[i:j]``.
-        -  ``layout`` -- (default: ``'tree'``)
-        -  ``tree_root`` -- (default: 0)
-        -  ``tree_orientation`` -- (default: ``'up'``)
-        -  ``vertex_colors`` -- (default: ``None``)
-        -  ``edge_labels`` -- (default: ``True``)
+        - ``word_labels`` -- boolean (default: ``False``); if ``False``, labels
+          the edges by pairs `(i, j)`; if ``True``, labels the edges by ``word[i:j]``
+        - ``layout`` -- (default: ``'tree'``)
+        - ``tree_root`` -- (default: 0)
+        - ``tree_orientation`` -- (default: ``'up'``)
+        - ``vertex_colors`` -- (default: ``None``)
+        - ``edge_labels`` -- (default: ``True``)
 
         EXAMPLES::
 
@@ -909,9 +907,8 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``word_labels`` -- (default: ``None``) if ``False``, labels the
-           edges by pairs `(i, j)`; if ``True``, labels the edges by
-           ``word[i:j]``.
+        - ``word_labels`` -- (default: ``None``) if ``False``, labels the edges
+          by pairs `(i, j)`; if ``True``, labels the edges by ``word[i:j]``
 
         EXAMPLES::
 
@@ -1151,13 +1148,13 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``n`` -- an integer, or ``None``.
+        - ``n`` -- integer or ``None``
 
         OUTPUT:
 
-        -  If ``n`` is an integer, returns the number of distinct factors
-           of length ``n``. If ``n`` is ``None``, returns the total number of
-           distinct factors.
+        If ``n`` is an integer, returns the number of distinct factors
+        of length ``n``. If ``n`` is ``None``, returns the total number of
+        distinct factors.
 
         EXAMPLES::
 
@@ -1237,13 +1234,13 @@ class ImplicitSuffixTree(SageObject):
 
         INPUT:
 
-        -  ``n`` -- an integer, or ``None``.
+        - ``n`` -- integer or ``None``
 
         OUTPUT:
 
-        -  If ``n`` is an integer, returns an iterator over all distinct
-           factors of length ``n``. If ``n`` is ``None``, returns an iterator
-           generating all distinct factors.
+        If ``n`` is an integer, returns an iterator over all distinct
+        factors of length ``n``. If ``n`` is ``None``, returns an iterator
+        generating all distinct factors.
 
         EXAMPLES::
 
@@ -1469,7 +1466,7 @@ class ImplicitSuffixTree(SageObject):
 
         def condition1_square_pairs(i):
             r"""
-            Computes the squares that have their center (the last letter of the
+            Compute the squares that have their center (the last letter of the
             first  occurrence of ``w`` in ``ww``) in the `i`-th block of the
             LZ-decomposition and that start in the `i`-th block and end in the
             `(i+1)`-th.
@@ -1627,7 +1624,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         We skip the ``_test_and_split`` test because it is not a test meant
         for the ``TestSuite``::
 
-            sage: TestSuite(DST).run(skip="_test_and_split")
+            sage: TestSuite(DST).run(skip='_test_and_split')
 
         Test that we do not allow ``'$'`` to appear in the word::
 
@@ -1687,7 +1684,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
 
             - ``node`` -- a node of ``self``
             - ``parent`` -- the parent of a node in ``self``
-            - ``head`` -- a tuple indicating the head of the list ``P(node)``
+            - ``head`` -- tuple indicating the head of the list ``P(node)``
 
             OUTPUT: ``(i, pos)``, the new head of ``P(node)``
             """
@@ -1812,8 +1809,8 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
 
             INPUT:
 
-            - ``current_node`` -- The node to treat
-            - ``(i, j)`` -- Pair of index such that the path from 0 to
+            - ``current_node`` -- the node to treat
+            - ``(i, j)`` -- pair of index such that the path from 0 to
               ``current_node`` reads ``self.word()[i:j]``
             """
 
@@ -1833,7 +1830,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         treat_node(0, 0, 0)
         return labeling
 
-    def square_vocabulary(self, output="pair"):
+    def square_vocabulary(self, output='pair'):
         r"""
         Return the list of distinct squares of ``self.word``.
 
@@ -1844,7 +1841,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
 
         INPUT:
 
-        - ``output`` -- (default: ``"pair"``) either ``"pair"`` or ``"word"``
+        - ``output`` -- (default: ``'pair'``) either ``'pair'`` or ``'word'``
 
         EXAMPLES::
 
@@ -1853,7 +1850,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
             sage: sorted(DecoratedSuffixTree(w).square_vocabulary())
             [(0, 0), (0, 2), (2, 2)]
             sage: w = Word('00110011010')
-            sage: sorted(DecoratedSuffixTree(w).square_vocabulary(output="word"))
+            sage: sorted(DecoratedSuffixTree(w).square_vocabulary(output='word'))
             [word: , word: 00, word: 00110011, word: 01100110, word: 1010, word: 11]
         """
         def treat_node(current_node, i, j):

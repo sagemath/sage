@@ -28,8 +28,8 @@ class WordDatatype_callable(WordDatatype):
         INPUT:
 
         - ``parent`` -- a parent
-        -  ``callable`` -- a callable defined on ``range(stop=length)``
-        -  ``length`` -- (default: ``None``) nonnegative integer or ``None``
+        - ``callable`` -- a callable defined on ``range(stop=length)``
+        - ``length`` -- (default: ``None``) nonnegative integer or ``None``
 
         EXAMPLES::
 
@@ -324,8 +324,8 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
         INPUT:
 
         - ``parent`` -- a parent
-        -  ``callable`` -- a callable defined on ``range(stop=length)``
-        -  ``length`` -- (default: ``None``) nonnegative integer or ``None``
+        - ``callable`` -- a callable defined on ``range(stop=length)``
+        - ``length`` -- (default: ``None``) nonnegative integer or ``None``
 
         EXAMPLES::
 
@@ -546,7 +546,6 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
             sage: w = Word(range(5)) + Word('abcde')
             sage: w.__reduce__()
             (Finite words over Set of Python objects of class 'object', ([0, 1, 2, 3, 4, 'a', 'b', 'c', 'd', 'e'],))
-
         """
         from sage.misc.fpickle import pickle_function
         try:
@@ -591,12 +590,12 @@ class WordDatatype_iter(WordDatatype):
         INPUT:
 
         - ``parent`` -- a parent
-        -  ``iter`` -- an iterator
-        -  ``length`` -- (default: ``None``) the length of the word
+        - ``iter`` -- an iterator
+        - ``length`` -- (default: ``None``) the length of the word
 
         EXAMPLES::
 
-            sage: w = Word(iter("abbabaab"), length="unknown", caching=False); w
+            sage: w = Word(iter("abbabaab"), length='unknown', caching=False); w
             word: abbabaab
             sage: isinstance(w, sage.combinat.words.word_infinite_datatypes.WordDatatype_iter)
             True
@@ -605,14 +604,14 @@ class WordDatatype_iter(WordDatatype):
             sage: w.length()
             8
             sage: s = "abbabaabbaababbabaababbaabbabaabbaababbaabbabaabab"
-            sage: w = Word(iter(s), length="unknown", caching=False); w
+            sage: w = Word(iter(s), length='unknown', caching=False); w
             word: abbabaabbaababbabaababbaabbabaabbaababba...
             sage: w.length() is None
             True
 
         ::
 
-            sage: w = Word(iter("abbabaab"), length="finite", caching=False); w
+            sage: w = Word(iter("abbabaab"), length='finite', caching=False); w
             word: abbabaab
             sage: isinstance(w, sage.combinat.words.word_infinite_datatypes.WordDatatype_iter)
             True
@@ -669,7 +668,7 @@ class WordDatatype_iter(WordDatatype):
 
         A word from an iterator without a length specified::
 
-            sage: w = Word(iter("abbabaabbaab"), length="finite", caching=False); w
+            sage: w = Word(iter("abbabaabbaab"), length='finite', caching=False); w
             word: abbabaabbaab
 
         Test getitems with indexes::
@@ -924,19 +923,19 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
         INPUT:
 
         - ``parent`` -- a parent
-        -  ``iter`` -- an iterator
-        -  ``length`` -- (default: ``None``) the length of the word
+        - ``iter`` -- an iterator
+        - ``length`` -- (default: ``None``) the length of the word
 
         EXAMPLES::
 
             sage: import itertools
             sage: Word(itertools.cycle("abbabaab"))
             word: abbabaababbabaababbabaababbabaababbabaab...
-            sage: w = Word(iter("abbabaab"), length="finite"); w
+            sage: w = Word(iter("abbabaab"), length='finite'); w
             word: abbabaab
             sage: w.length()
             8
-            sage: w = Word(iter("abbabaab"), length="unknown"); w
+            sage: w = Word(iter("abbabaab"), length='unknown'); w
             word: abbabaab
             sage: w.length()
             8
@@ -991,7 +990,7 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
 
         A word from an iterator without a length specified::
 
-            sage: w = Word(iter("abbabaabbaab"), length="unknown"); w
+            sage: w = Word(iter("abbabaabbaab"), length='unknown'); w
             word: abbabaabbaab
 
         Test getitems with indexes::
@@ -1016,50 +1015,50 @@ class WordDatatype_iter_with_caching(WordDatatype_iter):
 
         Suffixes::
 
-            sage: w = Word(iter("abbabaabbaab"), length="finite")
+            sage: w = Word(iter("abbabaabbaab"), length='finite')
             sage: w[0:]
             word: abbabaabbaab
-            sage: w = Word(iter("abbabaabbaab"), length="finite")
+            sage: w = Word(iter("abbabaabbaab"), length='finite')
             sage: w[1:]
             word: bbabaabbaab
 
         Prefixes::
 
-            sage: w = Word(iter("abbabaabbaab"), length="finite")
+            sage: w = Word(iter("abbabaabbaab"), length='finite')
             sage: w[:0]
             word:
-            sage: w = Word(iter("abbabaabbaab"), length="finite")
+            sage: w = Word(iter("abbabaabbaab"), length='finite')
             sage: w[:5]
             word: abbab
 
         With positive steps::
 
-            sage: w = Word(iter("abbabaabbaab"), length="unknown")
+            sage: w = Word(iter("abbabaabbaab"), length='unknown')
             sage: w[::2]
             word: abbaba
 
         With a negative start position, the word must be expanded! ::
 
-            sage: w = Word(iter("abbabaabbaab"), length="finite")
+            sage: w = Word(iter("abbabaabbaab"), length='finite')
             sage: w[-2:]
             word: ab
-            sage: w = Word(iter("abbabaabbaab"), length="finite")
+            sage: w = Word(iter("abbabaabbaab"), length='finite')
             sage: w[-20:]
             word: abbabaabbaab
 
         With a negative stop position, the word must be expanded! ::
 
-            sage: w = Word(iter("abbabaabbaab"), length="finite")
+            sage: w = Word(iter("abbabaabbaab"), length='finite')
             sage: w[:-1]
             word: abbabaabbaa
-            sage: w = Word(iter("abbabaabbaab"), length="unknown")
+            sage: w = Word(iter("abbabaabbaab"), length='unknown')
             sage: w[:-10]
             word: ab
 
         With a negative step, the word may or may not be expanded;
         it depends on the slice::
 
-            sage: w = Word(iter("abbabaabbaab"), length="finite")
+            sage: w = Word(iter("abbabaabbaab"), length='finite')
             sage: w[::-2]
             word: babaab
             sage: w = Word(iter("abbabaabbaab"))

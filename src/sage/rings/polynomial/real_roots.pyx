@@ -323,15 +323,15 @@ cdef class interval_bernstein_polynomial:
 
     cdef void update_variations(self, interval_bernstein_polynomial bp1, interval_bernstein_polynomial bp2) noexcept:
         """
-        Update the max_variations of bp1 and bp2 (which are assumed to be
-        the result of splitting this polynomial).
+        Update the max_variations of ``bp1`` and ``bp2`` (which are assumed to
+        be the result of splitting this polynomial).
 
-        If we knew the number of variations of self, bp1, and bp2 exactly,
-        we would have
-          self.variations == bp1.variations + bp2.variations + 2*n
+        If we knew the number of variations of ``self``, ``bp1``, and ``bp2``
+        exactly, we would have
+          ``self.variations == bp1.variations + bp2.variations + 2*n``
         for some nonnegative integer n.  Thus, we can use our information
-        on min and max variations on self and bp1 (or bp2) to refine the range
-        on bp2 (or bp1).
+        on min and max variations on ``self`` and ``bp1`` (or ``bp2``) to
+        refine the range on ``bp2`` (or ``bp1``).
         """
         if self.max_variations - bp1.min_variations < bp2.max_variations:
             bp2.max_variations = self.max_variations - bp1.min_variations
@@ -698,7 +698,8 @@ cdef class interval_bernstein_polynomial_integer(interval_bernstein_polynomial):
         OUTPUT:
 
         - ``bp1``, ``bp2`` -- the new interval Bernstein polynomials
-        - ``ok`` -- a boolean; True if the sign of the original polynomial at mid is known
+        - ``ok`` -- boolean; ``True`` if the sign of the original polynomial at
+          mid is known
 
         EXAMPLES::
 
@@ -1489,7 +1490,6 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
         with intervals, not exactly, we cannot necessarily compute the exact
         number of sign variations; instead, we compute lower and upper
         bounds on this number.
-
         """
         cdef numpy.ndarray[double, ndim=1] cd = self.coeffs._vector_numpy
 
@@ -1573,7 +1573,8 @@ cdef class interval_bernstein_polynomial_float(interval_bernstein_polynomial):
         OUTPUT:
 
         - ``bp1``, ``bp2`` -- the new interval Bernstein polynomials
-        - ``ok`` -- a boolean; ``True`` if the sign of the original polynomial at ``mid`` is known
+        - ``ok`` -- boolean; ``True`` if the sign of the original polynomial at
+          ``mid`` is known
 
         EXAMPLES::
 
@@ -1971,7 +1972,7 @@ def bitsize_doctest(n):
 
 def degree_reduction_next_size(n):
     """
-    Given n (a polynomial degree), returns either a smaller integer or None.
+    Given n (a polynomial degree), returns either a smaller integer or ``None``.
     This defines the sequence of degrees followed by our degree reduction
     implementation.
 
@@ -2576,7 +2577,7 @@ class bernstein_polynomial_factory_intlist(bernstein_polynomial_factory):
 
     def __init__(self, coeffs):
         """
-        Initializes a bernstein_polynomial_factory_intlist,
+        Initialize a ``bernstein_polynomial_factory_intlist``,
         given a list of integer coefficients.
 
         EXAMPLES::
@@ -2602,7 +2603,7 @@ class bernstein_polynomial_factory_intlist(bernstein_polynomial_factory):
 
     def coeffs_bitsize(self):
         """
-        Computes the approximate log2 of the maximum of the absolute
+        Compute the approximate log2 of the maximum of the absolute
         values of the coefficients.
 
         EXAMPLES::
@@ -2655,7 +2656,7 @@ class bernstein_polynomial_factory_ratlist(bernstein_polynomial_factory):
 
     def __init__(self, coeffs):
         """
-        Initializes a bernstein_polynomial_factory_intlist,
+        Initialize a ``bernstein_polynomial_factory_intlist``,
         given a list of rational coefficients.
 
         EXAMPLES::
@@ -2681,7 +2682,7 @@ class bernstein_polynomial_factory_ratlist(bernstein_polynomial_factory):
 
     def coeffs_bitsize(self):
         """
-        Computes the approximate log2 of the maximum of the absolute
+        Compute the approximate log2 of the maximum of the absolute
         values of the coefficients.
 
         EXAMPLES::
@@ -2741,7 +2742,7 @@ class bernstein_polynomial_factory_ar(bernstein_polynomial_factory):
 
     def __init__(self, poly, neg):
         """
-        Initializes a bernstein_polynomial_factory_ar,
+        Initialize a ``bernstein_polynomial_factory_ar``,
         given a polynomial with algebraic real coefficients.
         If neg is True, then gives the Bernstein polynomial for
         the negative half-line; if neg is False, the positive.
@@ -2786,7 +2787,7 @@ class bernstein_polynomial_factory_ar(bernstein_polynomial_factory):
 
     def coeffs_bitsize(self):
         """
-        Computes the approximate log2 of the maximum of the absolute
+        Compute the approximate log2 of the maximum of the absolute
         values of the coefficients.
 
         EXAMPLES::
@@ -3568,7 +3569,7 @@ cdef class island:
 
     def less_bits(self, ancestors, interval_bernstein_polynomial bp):
         """
-        Heuristically pushes lower-precision polynomials on
+        Heuristically push lower-precision polynomials on
         the polynomial stack.  See the class documentation for class
         island for more information.
         """
@@ -4559,7 +4560,7 @@ def max_bitsize_intvec_doctest(b):
 
 def dprod_imatrow_vec(Matrix_integer_dense m, Vector_integer_dense v, int k):
     """
-    Computes the dot product of row k of the matrix m with the vector v
+    Compute the dot product of row k of the matrix m with the vector v
     (that is, compute one element of the product m*v).
 
     If v has more elements than m has columns, then elements of v are

@@ -45,7 +45,8 @@ def is_mutation_finite(M, nr_of_checks=None):
 
     INPUT:
 
-    - ``nr_of_checks`` -- (default: ``None``) number of mutations applied. Standard is 500*(number of vertices of self).
+    - ``nr_of_checks`` -- number of mutations applied (default: ``None``);
+      standard is 500*(number of vertices of self)
 
     ALGORITHM:
 
@@ -810,9 +811,9 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
     INPUT:
 
-    - ``ret_conn_vert`` -- boolean (default: ``False``). If ``True``,
+    - ``ret_conn_vert`` -- boolean (default: ``False``); if ``True``,
       returns 'connecting vertices', technical information that is
-      used in the algorithm.
+      used in the algorithm
 
     A brief description of the algorithm::
 
@@ -1246,7 +1247,7 @@ def load_data(n, user=True):
 
     INPUT:
 
-    - ``user`` -- boolean (default: ``True``) whether to look at user
+    - ``user`` -- boolean (default: ``True``); whether to look at user
       data. If not, only consider the optional package.
 
     EXAMPLES::
@@ -1337,10 +1338,10 @@ def _mutation_type_from_data(n, dig6, compute_if_necessary=True):
 
 def _mutation_type_test(n):
     """
-    Tests all quivers (of the given types) of rank n to check that
+    Test all quivers (of the given types) of rank n to check that
     mutation_type() works.
 
-    Affine type D does not return True since this test is not implemented.
+    Affine type D does not return ``True`` since this test is not implemented.
 
     EXAMPLES::
 
@@ -1419,10 +1420,10 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
 
     INPUT:
 
-    - ``mt`` something that can be turned into a QuiverMutationType
-    - ``k`` (integer) the number of tests performed for each quiver of rank ``n``
-    - ``mut_class`` is given, this mutation class is used
-    - ``nr_mut`` (integer, default:5) the number of mutations performed before
+    - ``mt`` something that can be turned into a ``QuiverMutationType``
+    - ``k`` -- integer; the number of tests performed for each quiver of rank ``n``
+    - ``mut_class`` -- if given, this mutation class is used
+    - ``nr_mut`` -- integer (default: 5); the number of mutations performed before
       testing
 
     The idea of this random test is to start with a mutation type
@@ -1513,9 +1514,9 @@ def _random_multi_tests(n, k, nr_mut=5):
 
     INPUT:
 
-    - ``n`` (integer) -- the rank of the mutation types to test
-    - ``k`` (integer) -- the number of tests performed for each quiver of rank ``n``
-    - ``nr_mut`` (integer, default:5) -- the number of mutations performed before testing
+    - ``n`` -- integer; the rank of the mutation types to test
+    - ``k`` -- integer; the number of tests performed for each quiver of rank ``n``
+    - ``nr_mut`` -- integer (default: 5); the number of mutations performed before testing
 
     TESTS::
 

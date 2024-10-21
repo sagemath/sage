@@ -97,11 +97,10 @@ class GenericDeclaration(UniqueRepresentation):
 
     INPUT:
 
-    -  ``var`` -- the variable about which assumptions are
-       being made
+    - ``var`` -- the variable about which assumptions are being made
 
-    -  ``assumption`` -- a string containing a Maxima feature, either user
-       defined or in the list given by ``maxima('features')``
+    - ``assumption`` -- string containing a Maxima feature, either user
+      defined or in the list given by ``maxima('features')``
 
     EXAMPLES::
 
@@ -128,7 +127,6 @@ class GenericDeclaration(UniqueRepresentation):
 
         sage: GenericDeclaration(x, 'integer') is GenericDeclaration(SR.var("x"), 'integer')
         True
-
     """
 
     def __init__(self, var, assumption):
@@ -140,11 +138,10 @@ class GenericDeclaration(UniqueRepresentation):
 
         INPUT:
 
-        -  ``var`` -- the variable about which assumptions are
-           being made
+        - ``var`` -- the variable about which assumptions are being made
 
-        -  ``assumption`` -- a Maxima feature, either user
-           defined or in the list given by ``maxima('features')``
+        - ``assumption`` -- a Maxima feature, either user
+          defined or in the list given by ``maxima('features')``
 
         EXAMPLES::
 
@@ -198,7 +195,7 @@ class GenericDeclaration(UniqueRepresentation):
 
     def _validate_feature(self):
         """
-        Check if this assumption is a known maxima feature, raise an error otherwise
+        Check if this assumption is a known maxima feature, raise an error otherwise.
 
         EXAMPLES::
 
@@ -331,8 +328,8 @@ class GenericDeclaration(UniqueRepresentation):
 
         INPUT:
 
-        - ``soln`` -- Either a dictionary with variables as keys or a symbolic
-          relation with a variable on the left hand side.
+        - ``soln`` -- either a dictionary with variables as keys or a symbolic
+          relation with a variable on the left hand side
 
         EXAMPLES::
 
@@ -457,16 +454,14 @@ def assume(*args):
       The two types can be combined, but a symbolic inequality cannot
       appear in the middle of a list of variables.
 
-    OUTPUT:
-
-    If everything goes as planned, there is no output.
+    OUTPUT: if everything goes as planned, there is no output
 
     If you assume something that is not one of the two forms above, then
-    an :class:`AttributeError` is raised as we try to call its ``assume``
+    an :exc:`AttributeError` is raised as we try to call its ``assume``
     method.
 
     If you make inconsistent assumptions (for example, that ``x`` is
-    both even and odd), then a :class:`ValueError` is raised.
+    both even and odd), then a :exc:`ValueError` is raised.
 
     .. WARNING::
 
@@ -631,7 +626,7 @@ def assume(*args):
         True
         sage: forget()
 
-    Ensure that an :class:`AttributeError` is raised if we are given junk::
+    Ensure that an :exc:`AttributeError` is raised if we are given junk::
 
         sage: assume(3)
         Traceback (most recent call last):
@@ -687,8 +682,7 @@ def forget(*args):
 
     INPUT:
 
-    -  ``*args`` -- assumptions (default: forget all
-       assumptions)
+    - ``*args`` -- assumptions (default: forget all assumptions)
 
     EXAMPLES:
 
@@ -736,11 +730,9 @@ def assumptions(*args):
 
     INPUT:
 
-    - ``args`` -- list of variables which can be empty.
+    - ``args`` -- list of variables which can be empty
 
-    OUTPUT:
-
-    - list of assumptions on variables. If args is empty it returns all
+    OUTPUT: list of assumptions on variables; if ``args`` is empty it returns all
       assumptions
 
     EXAMPLES::
@@ -862,11 +854,11 @@ class assuming:
 
     INPUT:
 
-    - ``*args`` -- assumptions (same format as for :func:`assume`).
+    - ``*args`` -- assumptions (same format as for :func:`assume`)
 
-    - ``replace`` -- a boolean (default : ``False``).
-        Specifies whether the new assumptions are added to (default)
-        or replace (if ``replace=True``) the current assumption set.
+    - ``replace`` -- boolean (default: ``False``); specifies whether the new
+      assumptions are added to (default) or replace (if ``replace=True``) the
+      current assumption set
 
     OUTPUT:
 

@@ -8,9 +8,7 @@ AUTHORS:
 """
 
 from cysignals.memory cimport check_allocarray, sig_free
-
 from sage.libs.gmp.mpz cimport *
-
 from sage.rings.integer cimport Integer
 
 
@@ -21,13 +19,11 @@ def expnums(int n, int aa):
 
     INPUT:
 
+    - ``n`` -- C machine int
 
-    -  ``n`` -- C machine int
+    - ``aa`` -- C machine int
 
-    -  ``aa`` -- C machine int
-
-
-    OUTPUT: A list of length `n`.
+    OUTPUT: list of length `n`
 
     ALGORITHM: We use the same integer addition algorithm as GAP. This
     is an extension of Bell's triangle to the general case of

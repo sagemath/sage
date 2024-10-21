@@ -65,7 +65,7 @@ class FqfIsometry(AbelianGroupAutomorphism):
 
     - ``parent`` -- the parent :class:`~FqfOrthogonalGroup`
     - ``x`` -- a libgap element
-    - ``check`` -- bool (default: ``True``)
+    - ``check`` -- boolean (default: ``True``)
 
     EXAMPLES::
 
@@ -276,7 +276,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
 
         INPUT:
 
-        Something that acts on the domain.
+        - ``f`` -- something that acts on the domain
 
         EXAMPLES::
 
@@ -388,10 +388,10 @@ class ActionOnFqf(Action):
 
     INPUT:
 
-    - ``orthogonal_grp`` --  an instance of :class:`GroupOfIsometries`
+    - ``orthogonal_grp`` -- an instance of :class:`GroupOfIsometries`
     - ``fqf`` -- a torsion quadratic module
-    - ``on_subquotient`` -- bool (default: ``False``)
-    - ``is_left`` -- bool (default: ``False``)
+    - ``on_subquotient`` -- boolean (default: ``False``)
+    - ``is_left`` -- boolean (default: ``False``)
 
     EXAMPLES::
 
@@ -408,7 +408,7 @@ class ActionOnFqf(Action):
     """
     def __init__(self, orthogonal_grp, fqf, on_subquotient=False, is_left=False):
         r"""
-        Initialize the action
+        Initialize the action.
 
         TESTS::
 
@@ -496,12 +496,10 @@ def _isom_fqf(A, B=None):
     - ``A`` -- a torsion quadratic module
     - ``B`` -- (default: ``None``) a torsion quadratic module
 
-    OUTPUT:
-
-    A list of generators of the orthogonal group of A.
+    OUTPUT: list of generators of the orthogonal group of A
 
     If ``B`` is given, this returns instead a single isometry of `A` and `B`
-    or raises a :class:`ValueError` if `A` and `B` are not isometric.
+    or raises a :exc:`ValueError` if `A` and `B` are not isometric.
 
     EXAMPLES::
 
@@ -526,9 +524,9 @@ def _isom_fqf(A, B=None):
         INPUT:
 
         - ``G`` -- an fqf_orthognal group
-        - ``L`` -- a list of tuples of elements of the domain of ``G``
+        - ``L`` -- list of tuples of elements of the domain of ``G``
 
-        A list of orbit representatives of `L`
+        OUTPUT: list of orbit representatives of `L`
         """
         D = G.invariant_form()
         A = G.domain()

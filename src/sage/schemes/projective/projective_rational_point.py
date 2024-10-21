@@ -81,14 +81,14 @@ def enum_projective_rational_field(X, B):
 
     INPUT:
 
-    - ``X`` --  a scheme or set of abstract rational points of a scheme.
+    - ``X`` -- a scheme or set of abstract rational points of a scheme
 
-    - ``B`` --  a positive integer bound.
+    - ``B`` -- a positive integer bound
 
     OUTPUT:
 
-    - a list containing the projective points of ``X`` of height up to ``B``,
-      sorted.
+    A list containing the projective points of ``X`` of height up to ``B``,
+    sorted.
 
     EXAMPLES::
 
@@ -172,20 +172,18 @@ def enum_projective_number_field(X, **kwds):
     This is an implementation of the revised algorithm (Algorithm 4) in
     [DK2013]_. Algorithm 5 is used for imaginary quadratic fields.
 
-    INPUT:
-
-    kwds:
+    INPUT: keyword arguments:
 
     - ``bound`` -- a real number
 
-    - ``tolerance`` -- a rational number in (0,1] used in doyle-krumm algorithm-4
+    - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+      algorithm-4
 
-    - ``precision`` -- the precision to use for computing the elements of bounded height of number fields.
+    - ``precision`` -- the precision to use for computing the elements of
+      bounded height of number fields
 
-    OUTPUT:
-
-     - a list containing the projective points of ``X`` of absolute height up to ``B``,
-       sorted.
+    OUTPUT: a sorted list containing the projective points of ``X`` of absolute
+    height up to ``B``
 
     EXAMPLES::
 
@@ -239,13 +237,13 @@ def enum_projective_finite_field(X):
 
     INPUT:
 
-    - ``X`` --  a scheme defined over a finite field or a set of abstract
-      rational points of such a scheme.
+    - ``X`` -- a scheme defined over a finite field or a set of abstract
+      rational points of such a scheme
 
     OUTPUT:
 
-    - a list containing the projective points of ``X`` over the finite field,
-      sorted.
+    A list containing the projective points of ``X`` over the finite field,
+    sorted.
 
     EXAMPLES::
 
@@ -315,7 +313,7 @@ def enum_projective_finite_field(X):
 
 def sieve(X, bound):
     r"""
-    Returns the list of all projective, rational points on scheme ``X`` of
+    Return the list of all projective, rational points on scheme ``X`` of
     height up to ``bound``.
 
     Height of a projective point `X = (x_1, x_2,\dots, x_n)` is given by
@@ -338,12 +336,12 @@ def sieve(X, bound):
 
     - ``X`` -- a scheme with ambient space defined over projective space
 
-    - ``bound`` -- a positive integer bound
+    - ``bound`` -- positive integer bound
 
     OUTPUT:
 
-    - a list containing the projective rational points of ``X`` of height
-      up to ``bound``, sorted
+    A list containing the projective rational points of ``X`` of height
+    up to ``bound``, sorted
 
     EXAMPLES::
 
@@ -403,7 +401,7 @@ def sieve(X, bound):
 
     def sufficient_primes(x):
         r"""
-        Returns a list of primes whose product is > `x`
+        Return a list of primes whose product is > `x`.
         """
         small_primes = [2,3]
         prod_primes = 6

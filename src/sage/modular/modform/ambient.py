@@ -120,7 +120,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def _repr_(self):
         """
-        Return string representation of self.
+        Return string representation of ``self``.
 
         EXAMPLES::
 
@@ -160,9 +160,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
         INPUT:
 
-
-        -  ``R`` -- ring
-
+        - ``R`` -- ring
 
         EXAMPLES::
 
@@ -209,8 +207,8 @@ class ModularFormsAmbient(space.ModularFormsSpace,
     def hecke_module_of_level(self, N):
         r"""
         Return the Hecke module of level N corresponding to self, which is the
-        domain or codomain of a degeneracy map from self. Here N must be either
-        a divisor or a multiple of the level of self.
+        domain or codomain of a degeneracy map from ``self``. Here N must be either
+        a divisor or a multiple of the level of ``self``.
 
         EXAMPLES::
 
@@ -230,7 +228,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def _degeneracy_raising_matrix(self, M, t):
         r"""
-        Calculate the matrix of the degeneracy map from self to M corresponding
+        Calculate the matrix of the degeneracy map from ``self`` to M corresponding
         to `f(q) \mapsto f(q^t)`. Here the level of M should be a multiple of
         the level of self, and t should divide the quotient.
 
@@ -289,9 +287,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def is_ambient(self):
         """
-        Return True if this an ambient space of modular forms.
+        Return ``True`` if this an ambient space of modular forms.
 
-        This is an ambient space, so this function always returns True.
+        This is an ambient space, so this function always returns ``True``.
 
         EXAMPLES::
 
@@ -366,11 +364,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
         INPUT:
 
+        - ``new_prec`` -- positive integer (default: ``None``)
 
-        -  ``new_prec`` -- positive integer (default: None)
-
-
-        OUTPUT: if new_prec is None, returns the current precision.
+        OUTPUT: if ``new_prec`` is ``None``, returns the current precision
 
         EXAMPLES::
 
@@ -469,10 +465,8 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
         INPUT:
 
-
-        -  ``p`` -- (default: None), if specified return only
-           the `p`-new submodule.
-
+        - ``p`` -- (default: ``None``), if specified return only
+          the `p`-new submodule
 
         EXAMPLES::
 
@@ -519,7 +513,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def _q_expansion(self, element, prec):
         r"""
-        Return the q-expansion of a particular element of this space of
+        Return the `q`-expansion of a particular element of this space of
         modular forms, where the element should be a vector, list, or tuple
         (not a ModularFormElement). Here element should have length =
         self.dimension(). If element = [ a_i ] and self.basis() = [ v_i
@@ -527,11 +521,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
         INPUT:
 
+        - ``element`` -- vector, list or tuple
 
-        -  ``element`` -- vector, list or tuple
-
-        -  ``prec`` -- desired precision of q-expansion
-
+        - ``prec`` -- desired precision of `q`-expansion
 
         EXAMPLES::
 
@@ -680,7 +672,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
     @cached_method
     def eisenstein_params(self):
         """
-        Return parameters that define all Eisenstein series in self.
+        Return parameters that define all Eisenstein series in ``self``.
 
         OUTPUT: an immutable Sequence
 
@@ -753,12 +745,12 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def _compute_hecke_matrix(self, n):
         """
-        Compute the matrix of the Hecke operator T_n acting on self.
+        Compute the matrix of the Hecke operator `T_n` acting on ``self``.
 
-        NOTE:
+        .. NOTE::
 
-        If self is a level 1 space, the much faster Victor Miller basis
-        is used for this computation.
+            If ``self`` is a level 1 space, the much faster Victor Miller basis
+            is used for this computation.
 
         EXAMPLES::
 
@@ -831,7 +823,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
 
     def hecke_polynomial(self, n, var='x'):
         r"""
-        Compute the characteristic polynomial of the Hecke operator T_n acting
+        Compute the characteristic polynomial of the Hecke operator `T_n` acting
         on this space. Except in level 1, this is computed via modular symbols,
         and in particular is faster to compute than the matrix itself.
 

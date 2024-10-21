@@ -17,7 +17,7 @@ Image Sets
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.categories.map import Map
 from sage.categories.poor_man_map import PoorManMap
@@ -52,7 +52,7 @@ class ImageSubobject(Parent):
       - ``None`` (default): infer from ``map`` or default to ``False``
       - ``False``: do not assume that ``map`` is injective
       - ``True``: ``map`` is known to be injective
-      - ``"check"``: raise an error when ``map`` is not injective
+      - ``'check'``: raise an error when ``map`` is not injective
 
     - ``inverse`` -- a function (optional); a map from `f(X)` to `X`
 

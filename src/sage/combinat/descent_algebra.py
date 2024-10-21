@@ -67,7 +67,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
     - ``R`` -- the base ring
 
-    - ``n`` -- a nonnegative integer
+    - ``n`` -- nonnegative integer
 
     REFERENCES:
 
@@ -220,7 +220,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             [D{}]
         """
 
-        def __init__(self, alg, prefix="D"):
+        def __init__(self, alg, prefix='D'):
             r"""
             Initialize ``self``.
 
@@ -233,7 +233,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                              SubsetsSorted(range(1, alg._n)),
                                              category=DescentAlgebraBases(alg),
-                                             bracket="", prefix=prefix)
+                                             bracket='', prefix=prefix)
 
             # Change of basis:
             B = alg.B()
@@ -423,7 +423,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
         The basis element `B_p` is denoted `\Xi^p` in [Sch2004]_.
 
         By using compositions of `n`, the product `B_p B_q` becomes a
-        sum over the non-negative-integer matrices `M` with row sum `p`
+        sum over the nonnegative-integer matrices `M` with row sum `p`
         and column sum `q`. The summand corresponding to `M` is `B_c`,
         where `c` is the composition obtained by reading `M` row-by-row
         from left-to-right and top-to-bottom and removing all zeroes.
@@ -439,7 +439,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
              B[2, 1, 1], B[2, 2], B[3, 1], B[4]]
         """
 
-        def __init__(self, alg, prefix="B"):
+        def __init__(self, alg, prefix='B'):
             r"""
             Initialize ``self``.
 
@@ -452,7 +452,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                              Compositions(alg._n),
                                              category=DescentAlgebraBases(alg),
-                                             bracket="", prefix=prefix)
+                                             bracket='', prefix=prefix)
 
             S = NonCommutativeSymmetricFunctions(alg.base_ring()).Complete()
             self.module_morphism(self.to_nsym,
@@ -672,7 +672,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             [I[1, 1, 1, 1], I[1, 1, 2], I[1, 2, 1], I[1, 3], I[2, 1, 1], I[2, 2], I[3, 1], I[4]]
         """
 
-        def __init__(self, alg, prefix="I"):
+        def __init__(self, alg, prefix='I'):
             r"""
             Initialize ``self``.
 
@@ -685,7 +685,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                              Compositions(alg._n),
                                              category=DescentAlgebraBases(alg),
-                                             bracket="", prefix=prefix)
+                                             bracket='', prefix=prefix)
 
             # Change of basis:
             B = alg.B()
@@ -744,7 +744,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
         def one_basis(self):
             """
             The element `1` is not (generally) a basis vector in the `I`
-            basis, thus this raises a :class:`TypeError`.
+            basis, thus this raises a :exc:`TypeError`.
 
             EXAMPLES::
 

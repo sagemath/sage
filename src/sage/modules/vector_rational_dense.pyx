@@ -235,7 +235,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy``, ignored optional argument.
+        - ``copy`` -- ignored optional argument
 
         EXAMPLES::
 

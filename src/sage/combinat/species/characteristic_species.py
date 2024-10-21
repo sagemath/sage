@@ -76,7 +76,7 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
 
     def automorphism_group(self):
         """
-        Returns the group of permutations whose action on this structure
+        Return the group of permutations whose action on this structure
         leave it fixed. For the characteristic species, there is only one
         structure, so every permutation is in its automorphism group.
 
@@ -170,7 +170,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _order(self):
         """
-        Returns the order of the generating series.
+        Return the order of the generating series.
 
         EXAMPLES::
 
@@ -213,7 +213,7 @@ class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _equation(self, var_mapping):
         """
-        Returns the right hand side of an algebraic equation satisfied by
+        Return the right hand side of an algebraic equation satisfied by
         this species. This is a utility function called by the
         algebraic_equation_system method.
 
@@ -236,7 +236,7 @@ CharacteristicSpecies_class = CharacteristicSpecies
 class EmptySetSpecies(CharacteristicSpecies):
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the empty set species.
+        Return the empty set species.
 
         This species has exactly one structure on the empty set. It is
         the same (and is implemented) as ``CharacteristicSpecies(0)``.
@@ -280,7 +280,7 @@ EmptySetSpecies_class = EmptySetSpecies._cached_constructor = EmptySetSpecies
 class SingletonSpecies(CharacteristicSpecies):
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the species of singletons.
+        Return the species of singletons.
 
         This species has exactly one structure on a set of size `1`. It
         is the same (and is implemented) as ``CharacteristicSpecies(1)``.

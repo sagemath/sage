@@ -45,11 +45,9 @@ def _calc_factlist(nn):
 
     INPUT:
 
-    - ``nn`` -- integer, highest factorial to be computed
+    - ``nn`` -- integer; highest factorial to be computed
 
-    OUTPUT:
-
-    list of integers -- the list of precomputed factorials
+    OUTPUT: list of integers -- the list of precomputed factorials
 
     EXAMPLES:
 
@@ -71,10 +69,10 @@ def wigner_3j(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
 
     INPUT:
 
-    -  ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` -- integer or half integer
+    - ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` -- integer or half integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -216,10 +214,10 @@ def clebsch_gordan(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
 
     INPUT:
 
-    -  ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` -- integer or half integer
+    - ``j_1``, ``j_2``, ``j_3``, ``m_1``, ``m_2``, ``m_3`` -- integer or half integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -265,17 +263,15 @@ def _big_delta_coeff(aa, bb, cc, prec=None):
 
     INPUT:
 
-    -  ``aa`` -- first angular momentum, integer or half integer
+    - ``aa`` -- first angular momentum, integer or half integer
 
-    -  ``bb`` -- second angular momentum, integer or half integer
+    - ``bb`` -- second angular momentum, integer or half integer
 
-    -  ``cc`` -- third angular momentum, integer or half integer
+    - ``cc`` -- third angular momentum, integer or half integer
 
-    -  ``prec`` -- precision of the ``sqrt()`` calculation
+    - ``prec`` -- precision of the ``sqrt()`` calculation
 
-    OUTPUT:
-
-    double - Value of the Delta coefficient
+    OUTPUT: double - Value of the Delta coefficient
 
     EXAMPLES::
 
@@ -318,10 +314,10 @@ def racah(aa, bb, cc, dd, ee, ff, prec=None):
 
     INPUT:
 
-    -  ``aa``, ..., ``ff`` -- integer or half integer
+    - ``aa``, ..., ``ff`` -- integer or half integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -391,10 +387,10 @@ def wigner_6j(j_1, j_2, j_3, j_4, j_5, j_6, prec=None):
 
     INPUT:
 
-    -  ``j_1``, ..., ``j_6`` -- integer or half integer
+    - ``j_1``, ..., ``j_6`` -- integer or half integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -466,7 +462,7 @@ def wigner_6j(j_1, j_2, j_3, j_4, j_5, j_6, prec=None):
     - additional 6 symmetries [Reg1959]_ giving rise to 144 symmetries
       in total
 
-    - only non-zero if any triple of `j`'s fulfill a triangle relation
+    - only nonzero if any triple of `j`'s fulfill a triangle relation
 
     ALGORITHM:
 
@@ -488,10 +484,10 @@ def wigner_9j(j_1, j_2, j_3, j_4, j_5, j_6, j_7, j_8, j_9, prec=None):
 
     INPUT:
 
-    -  ``j_1``, ..., ``j_9`` -- integer or half integer
+    - ``j_1``, ..., ``j_9`` -- integer or half integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -579,10 +575,10 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
 
     INPUT:
 
-    -  ``l_1``, ``l_2``, ``l_3``, ``m_1``, ``m_2``, ``m_3`` -- integer
+    - ``l_1``, ``l_2``, ``l_3``, ``m_1``, ``m_2``, ``m_3`` -- integer
 
-    -  ``prec`` -- precision, default: ``None``. Providing a precision can
-       drastically speed up the calculation.
+    - ``prec`` -- precision (default: ``None``); providing a precision can
+      drastically speed up the calculation
 
     OUTPUT:
 
@@ -661,7 +657,7 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
     - zero for violating any one of the conditions: `l_1 \ge |m_1|`,
       `l_2 \ge |m_2|`, `l_3 \ge |m_3|`
 
-    - non-zero only for an even sum of the `l_i`, i.e.
+    - nonzero only for an even sum of the `l_i`, i.e.
       `J=l_1+l_2+l_3=2n` for `n` in `\Bold{N}`
 
     ALGORITHM:

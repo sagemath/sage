@@ -41,7 +41,6 @@ def BezoutianQuadraticForm(f, g):
     AUTHORS:
 
     - Fernando Rodriguez-Villegas, Jonathan Hanke -- added on 11/9/2008
-
     """
     # Check that f and g are polynomials with a common base ring
     if not isinstance(f, Polynomial) or not isinstance(g, Polynomial):
@@ -70,13 +69,13 @@ def BezoutianQuadraticForm(f, g):
 
 def HyperbolicPlane_quadratic_form(R, r=1):
     """
-    Constructs the direct sum of `r` copies of the quadratic form `xy`
+    Construct the direct sum of `r` copies of the quadratic form `xy`
     representing a hyperbolic plane defined over the base ring `R`.
 
     INPUT:
 
-    - ``R``: a ring
-    - ``n`` (integer, default 1) number of copies
+    - ``R`` -- a ring
+    - ``n`` -- integer (default: 1); number of copies
 
     EXAMPLES::
 

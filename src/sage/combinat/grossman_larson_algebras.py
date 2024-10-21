@@ -203,7 +203,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
 
         cat = HopfAlgebras(R).WithBasis().Graded()
         CombinatorialFreeModule.__init__(self, R, Trees,
-                                         latex_prefix="",
+                                         latex_prefix='',
                                          sorting_key=key,
                                          category=cat)
 
@@ -268,7 +268,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- a nonnegative integer
+        - ``i`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -337,7 +337,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - `R` -- a ring
+        - ``R`` -- a ring
 
         EXAMPLES::
 

@@ -92,7 +92,6 @@ def generalised_quadrangle_with_spread(const int s, const int t,
         RuntimeError: Sage can't build a GQ of order (3, 4) with a spread
         sage: designs.generalised_quadrangle_with_spread(3, 4, existence=True)
         Unknown
-
     """
     from sage.combinat.designs.incidence_structures import IncidenceStructure
     from sage.misc.unknown import Unknown
@@ -188,9 +187,7 @@ def dual_GQ_ovoid(GQ, O):
 
     - ``O`` -- iterable; the iterable of blocks we want to compute the dual
 
-    OUTPUT:
-
-    A pair ``(D, S)`` where ``D`` is the dual of ``GQ`` and
+    OUTPUT: a pair ``(D, S)`` where ``D`` is the dual of ``GQ`` and
     ``S`` is the dual of ``O``
 
     EXAMPLES::
@@ -216,7 +213,6 @@ def dual_GQ_ovoid(GQ, O):
         (2, 4)
         sage: is_GQ_with_spread(*t)
         True
-
     """
     from sage.combinat.designs.incidence_structures import IncidenceStructure
 
@@ -249,7 +245,7 @@ def generalised_quadrangle_hermitian_with_ovoid(const int q):
 
     A pair ``(D, O)`` where ``D`` is an IncidenceStructure representing the
     generalised quadrangle and ``O`` is a list of points of ``D`` which
-    constitute an ovoid of ``D``
+    constitute an ovoid of ``D``.
 
     EXAMPLES::
 

@@ -72,11 +72,9 @@ class FreeAbelianMonoidFactory(UniqueFactory):
 
     INPUT:
 
+    - ``n`` -- integer
 
-    -  ``n`` -- integer
-
-    -  ``names`` -- names of generators
-
+    - ``names`` -- names of generators
 
     OUTPUT: free abelian monoid
 
@@ -117,7 +115,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
     Return a free abelian monoid on `n` generators or with the generators
     indexed by a set `I`.
 
-    We construct free abelian monoids by specifing either:
+    We construct free abelian monoids by specifying either:
 
     - the number of generators and/or the names of the generators
     - the indexing set for the generators (this ignores the other two inputs)
@@ -127,11 +125,9 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
     - ``index_set`` -- an indexing set for the generators; if an integer,
       then this becomes `\{0, 1, \ldots, n-1\}`
 
-    -  ``names`` -- names of generators
+    - ``names`` -- names of generators
 
-    OUTPUT:
-
-    A free abelian monoid.
+    OUTPUT: a free abelian monoid
 
     EXAMPLES::
 
@@ -164,7 +160,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
 
 def is_FreeAbelianMonoid(x):
     """
-    Return True if `x` is a free abelian monoid.
+    Return ``True`` if `x` is a free abelian monoid.
 
     EXAMPLES::
 
@@ -232,7 +228,7 @@ class FreeAbelianMonoid_class(Parent):
 
     def __contains__(self, x):
         """
-        Return True if `x` is an element of this abelian monoid.
+        Return ``True`` if `x` is an element of this abelian monoid.
 
         EXAMPLES::
 

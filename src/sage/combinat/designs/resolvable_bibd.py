@@ -66,16 +66,16 @@ def resolvable_balanced_incomplete_block_design(v,k,existence=False):
 
     INPUT:
 
-    - ``v``, ``k`` (integers)
+    - ``v``, ``k`` -- integers
 
-    - ``existence`` (boolean) -- instead of building the design, return:
+    - ``existence`` -- boolean; instead of building the design, return:
 
         - ``True`` -- meaning that Sage knows how to build the design
 
         - ``Unknown`` -- meaning that Sage does not know how to build the
-          design, but that the design may exist (see :mod:`sage.misc.unknown`).
+          design, but that the design may exist (see :mod:`sage.misc.unknown`)
 
-        - ``False`` -- meaning that the design does not exist.
+        - ``False`` -- meaning that the design does not exist
 
     .. SEEALSO::
 
@@ -151,10 +151,10 @@ def kirkman_triple_system(v,existence=False):
 
     INPUT:
 
-    - `n` (integer)
+    - ``n`` -- integer
 
-    - ``existence`` (boolean; ``False`` by default) -- whether to build the
-      `KTS(n)` or only answer whether it exists.
+    - ``existence`` -- boolean (default: ``False``); whether to build the
+      `KTS(n)` or only answer whether it exists
 
     .. SEEALSO::
 
@@ -312,14 +312,14 @@ def kirkman_triple_system(v,existence=False):
             b.remove(8)
         X = sum(X, []) + [8]
         gdd4.relabel({v:i for i,v in enumerate(X)})
-        gdd4 = gdd4.is_resolvable(True)[1] # the relabeled classes
+        gdd4 = gdd4.is_resolvable(True)[1]  # the relabeled classes
 
         X = [B for B in gdd7 if 14 in B]
         for b in X:
             b.remove(14)
         X = sum(X, []) + [14]
         gdd7.relabel({v:i for i,v in enumerate(X)})
-        gdd7 = gdd7.is_resolvable(True)[1] # the relabeled classes
+        gdd7 = gdd7.is_resolvable(True)[1]  # the relabeled classes
 
         # The first parallel class contains 01(n'-1), the second contains
         # 23(n'-1), etc..
@@ -375,10 +375,10 @@ def v_4_1_rbibd(v,existence=False):
 
     INPUT:
 
-    - `n` (integer)
+    - ``n`` -- integer
 
-    - ``existence`` (boolean; ``False`` by default) -- whether to build the
-      design or only answer whether it exists.
+    - ``existence`` -- boolean (default: ``False``); whether to build the
+      design or only answer whether it exists
 
     .. SEEALSO::
 
@@ -442,7 +442,7 @@ def v_4_1_rbibd(v,existence=False):
 
 def PBD_4_7(v,check=True, existence=False):
     r"""
-    Return a `(v,\{4,7\})`-PBD
+    Return a `(v,\{4,7\})`-PBD.
 
     For all `v` such that `n\equiv 1\pmod{3}` and `n\neq 10,19, 31` there exists
     a `(v,\{4,7\})`-PBD. This is proved in Proposition IX.4.5 from [BJL99]_,
@@ -574,7 +574,7 @@ def PBD_4_7(v,check=True, existence=False):
         # On these groups a (15+7,{4,7})-PBD is pasted, in such a way that the 7
         # new points are a set of the final PBD
         PBD22 = PBD_4_7(15+7)
-        S = next(SS for SS in PBD22 if len(SS) == 7) # a set of size 7
+        S = next(SS for SS in PBD22 if len(SS) == 7)  # a set of size 7
         PBD22.relabel({v:i for i,v in enumerate([i for i in range(15+7) if i not in S] + S)})
 
         for B in PBD22:
@@ -705,12 +705,11 @@ def PBD_4_7_from_Y(gdd,check=True):
 
     INPUT:
 
-    - ``gdd`` -- a `(v,\{4,5,7\},Y)`-GDD where `Y=\NN-\{3,6,10\}`.
+    - ``gdd`` -- a `(v,\{4,5,7\},Y)`-GDD where `Y=\NN-\{3,6,10\}`
 
-    - ``check`` -- (boolean) Whether to check that output is correct before
-      returning it. As this is expected to be useless (but we are cautious
-      guys), you may want to disable it whenever you want speed. Set to ``True``
-      by default.
+    - ``check`` -- boolean (default: ``True``); whether to check that output is
+      correct before returning it. As this is expected to be useless, you may
+      want to disable it whenever you want speed.
 
     EXAMPLES::
 
@@ -743,19 +742,19 @@ def PBD_4_7_from_Y(gdd,check=True):
             raise RuntimeError("A group has size {} but I do not know how to "
                                "build a ({},[4,7])-PBD".format(gs,3*gs+1))
 
-    GDD = {} # the GDD we will need
+    GDD = {}  # the GDD we will need
     if 4 in block_sizes:
-        #GDD[4] = GDD_from_BIBD(3*4,4)
+        # GDD[4] = GDD_from_BIBD(3*4,4)
         GDD[4] = group_divisible_design(3*4,K=[4],G=[3])
     if 5 in block_sizes:
-        #GDD[5] = GDD_from_BIBD(3*5,4)
+        # GDD[5] = GDD_from_BIBD(3*5,4)
         GDD[5] = group_divisible_design(3*5,K=[4],G=[3])
     if 7 in block_sizes:
         # It is obtained from a PBD_4_7(22) by removing a point only contained
         # in sets of size 4
         GDD[7] = PBD_4_7(22)
         x = set(range(22)).difference(*[S for S in GDD[7] if len(S) != 4]).pop()
-        relabel = sum((S for S in GDD[7] if x in S),[]) # the groups must be 012,345,...
+        relabel = sum((S for S in GDD[7] if x in S),[])  # the groups must be 012,345,...
         relabel = [xx for xx in relabel if xx != x]+[x]
         GDD[7].relabel({v:i for i,v in enumerate(relabel)})
         GDD[7] = [S for S in GDD[7] if 21 not in S]

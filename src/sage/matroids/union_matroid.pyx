@@ -57,9 +57,7 @@ cdef class MatroidUnion(Matroid):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -70,7 +68,7 @@ cdef class MatroidUnion(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X):
+    cpdef int _rank(self, frozenset X) except? -1:
         r"""
         Return the rank of a set ``X``.
 
@@ -136,7 +134,7 @@ cdef class MatroidSum(Matroid):
 
     INPUT:
 
-    - ``matroids`` -- a iterator of matroids.
+    - ``matroids`` -- iterator of matroids
 
     OUTPUT:
 
@@ -188,9 +186,7 @@ cdef class MatroidSum(Matroid):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -201,7 +197,7 @@ cdef class MatroidSum(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X):
+    cpdef int _rank(self, frozenset X) except? -1:
         r"""
         Return the rank of a set ``X``.
 
@@ -244,7 +240,7 @@ cdef class PartitionMatroid(Matroid):
 
     INPUT:
 
-    - ``partition`` -- an iterator of disjoint sets.
+    - ``partition`` -- iterator of disjoint sets
 
     OUTPUT:
 
@@ -285,9 +281,7 @@ cdef class PartitionMatroid(Matroid):
 
         The groundset is the set of elements that comprise the matroid.
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -298,7 +292,7 @@ cdef class PartitionMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef int _rank(self, frozenset X):
+    cpdef int _rank(self, frozenset X) except? -1:
         r"""
         Return the rank of a set ``X``.
 

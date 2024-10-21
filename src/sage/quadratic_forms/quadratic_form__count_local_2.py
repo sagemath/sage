@@ -39,15 +39,14 @@ def count_congruence_solutions_as_vector(self, p, k, m, zvec, nzvec):
     INPUT:
 
     - ``p`` -- prime number > 0
-    - ``k`` -- an integer > 0
-    - ``m`` -- an integer (depending only on mod `p^k`)
+    - ``k`` -- integer > 0
+    - ``m`` -- integer (depending only on mod `p^k`)
     - ``zvec``, ``nzvec`` -- lists of integers in ``range(self.dim())``, or ``None``
 
     OUTPUT:
 
     a list of six integers `\geq 0` representing the solution types:
     [All, Good, Zero, Bad, BadI, BadII]
-
 
     EXAMPLES::
 
@@ -64,7 +63,6 @@ def count_congruence_solutions_as_vector(self, p, k, m, zvec, nzvec):
         [6, 6, 0, 0, 0, 0]
         sage: Q.count_congruence_solutions_as_vector(3, 1, 0, None, None)
         [15, 12, 1, 2, 0, 2]
-
     """
     return CountAllLocalTypesNaive(self, p, k, m, zvec, nzvec)
 
@@ -83,9 +81,9 @@ def count_congruence_solutions(self, p, k, m, zvec, nzvec):
 
     - ``p`` -- prime number > 0
 
-    - ``k`` -- an integer > 0
+    - ``k`` -- integer > 0
 
-    - ``m`` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- integer (depending only on mod `p^k`)
 
     - ``zvec``, ``nzvec`` -- lists of integers in ``range(self.dim())``, or ``None``
 
@@ -108,9 +106,9 @@ def count_congruence_solutions__good_type(self, p, k, m, zvec, nzvec):
 
     - ``p`` -- prime number > 0
 
-    - ``k`` -- an integer > 0
+    - ``k`` -- integer > 0
 
-    - ``m`` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- integer (depending only on mod `p^k`)
 
     - ``zvec``, ``nzvec`` -- lists of integers up to dim(`Q`)
 
@@ -133,9 +131,9 @@ def count_congruence_solutions__zero_type(self, p, k, m, zvec, nzvec):
 
     - ``p`` -- prime number > 0
 
-    - ``k`` -- an integer > 0
+    - ``k`` -- integer > 0
 
-    - ``m`` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- integer (depending only on mod `p^k`)
 
     - ``zvec``, ``nzvec`` -- lists of integers up to dim(`Q`)
 
@@ -158,9 +156,9 @@ def count_congruence_solutions__bad_type(self, p, k, m, zvec, nzvec):
 
     - ``p`` -- prime number > 0
 
-    - ``k`` -- an integer > 0
+    - ``k`` -- integer > 0
 
-    - ``m`` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- integer (depending only on mod `p^k`)
 
     - ``zvec``, ``nzvec`` -- lists of integers up to dim(`Q`)
 
@@ -183,9 +181,9 @@ def count_congruence_solutions__bad_type_I(self, p, k, m, zvec, nzvec):
 
     - ``p`` -- prime number > 0
 
-    - ``k`` -- an integer > 0
+    - ``k`` -- integer > 0
 
-    - ``m`` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- integer (depending only on mod `p^k`)
 
     - ``zvec``, ``nzvec`` -- lists of integers up to dim(`Q`)
 
@@ -208,9 +206,9 @@ def count_congruence_solutions__bad_type_II(self, p, k, m, zvec, nzvec):
 
     - ``p`` -- prime number > 0
 
-    - ``k`` -- an integer > 0
+    - ``k`` -- integer > 0
 
-    - ``m`` -- an integer (depending only on mod `p^k`)
+    - ``m`` -- integer (depending only on mod `p^k`)
 
     - ``zvec``, ``nzvec`` -- lists of integers up to dim(`Q`)
 

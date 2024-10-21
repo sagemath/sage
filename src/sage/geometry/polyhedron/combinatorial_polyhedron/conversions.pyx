@@ -108,9 +108,7 @@ cdef int Vrep_list_to_bit_rep(tuple Vrep_list, face_t output) except -1:
     - ``vertex_list`` -- tuple of pairwise distinct positive integers that fit into ``output``
     - ``output`` -- an already initialized face
 
-    OUTPUT:
-
-    - ``output`` is filled
+    OUTPUT: ``output`` is filled
 
     EXAMPLES::
 
@@ -159,16 +157,14 @@ cdef int incidences_to_bit_rep(tuple incidences, face_t output) except -1:
     Convert a tuple of incidences into Bit-representation.
 
     Store it in ``output``. Each entry in ``incidences`` represents a bit in
-    ``output``. It is set to ``1``, iff the entry in ``incidences`` is non-zero.
+    ``output``. It is set to ``1``, iff the entry in ``incidences`` is nonzero.
 
     INPUT:
 
     - ``incidences`` -- tuple of integers representing incidences that fit into ``output``
     - ``output`` -- an already initialized face
 
-    OUTPUT:
-
-    - ``output`` is filled
+    OUTPUT: ``output`` is filled
 
     EXAMPLES::
 
@@ -201,9 +197,7 @@ def incidence_matrix_to_bit_rep_of_facets(Matrix_dense matrix):
       with columns corresponding to equations deleted
       of type :class:`sage.matrix.matrix_dense.Matrix_dense`
 
-    OUTPUT:
-
-    - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
+    OUTPUT: :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
 
     EXAMPLES::
 
@@ -278,9 +272,7 @@ def incidence_matrix_to_bit_rep_of_Vrep(Matrix_dense matrix):
       with columns corresponding to equations deleted
       of type :class:`sage.matrix.matrix_dense.Matrix_dense`
 
-    OUTPUT:
-
-    - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
+    OUTPUT: :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
 
     EXAMPLES::
 
@@ -325,7 +317,7 @@ def incidence_matrix_to_bit_rep_of_Vrep(Matrix_dense matrix):
 
 def facets_tuple_to_bit_rep_of_facets(tuple facets_input, size_t n_Vrep):
     r"""
-    Initializes facets in Bit-representation as :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
+    Initialize facets in Bit-representation as :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`.
 
     INPUT:
 
@@ -333,9 +325,7 @@ def facets_tuple_to_bit_rep_of_facets(tuple facets_input, size_t n_Vrep):
       Vrep must be exactly ``range(n_Vrep)``
     - ``n_Vrep``
 
-    OUTPUT:
-
-    - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
+    OUTPUT: :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
 
     EXAMPLES::
 
@@ -378,10 +368,7 @@ def facets_tuple_to_bit_rep_of_Vrep(tuple facets_input, size_t n_Vrep):
       Vrep must be exactly ``range(n_Vrep)``
     - ``n_Vrep``
 
-    OUTPUT:
-
-    - :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
-
+    OUTPUT: :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
 
     EXAMPLES::
 
@@ -433,9 +420,9 @@ def _bit_rep_to_Vrep_list_wrapper(ListOfFaces faces, index=0):
     INPUT:
 
     - ``faces`` -- a :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces`
-    - ``index`` -- (default: ``0``); the face to obtain
+    - ``index`` -- (default: ``0``) the face to obtain
 
-    OUTPUT: The face as tuple of integers.
+    OUTPUT: the face as tuple of integers
 
     EXAMPLES::
 

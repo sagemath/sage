@@ -520,7 +520,7 @@ block_description = r"""
 Block term order defined by term orders `<_1, <_2, \dots, <_n`.
 
 `x^a < x^b` if and only if `a = b` with respect to the first `n-1` term orders and `a <_n b`
-with respect to the `n`th term order `<_n`.
+with respect to the `n`-th term order `<_n`.
 """
 
 description_mapping = {
@@ -574,13 +574,13 @@ class TermOrder(SageObject):
 
         INPUT:
 
-        - ``name`` -- name of the term order (default: lex)
+        - ``name`` -- name of the term order (default: ``'lex'``)
 
-        - ``n`` -- number of variables (default is `0`) weights for
+        - ``n`` -- number of variables (default: `0`) weights for
           weighted degree orders. The weights are converted to
           integers and must be positive.
 
-        - ``force`` -- ignore unknown term orders.
+        - ``force`` -- ignore unknown term orders
 
         See the ``sage.rings.polynomial.term_order`` module
         for help which names and orders are available.
@@ -624,7 +624,7 @@ class TermOrder(SageObject):
             (Degree reverse lexicographic term order of length 5,
              Degree lexicographic term order of length 2)
 
-        .. note::
+        .. NOTE::
 
            The optional `n` parameter is not necessary if only
            non-block orders like `deglex` are
@@ -633,7 +633,7 @@ class TermOrder(SageObject):
 
         TESTS:
 
-        We demonstrate that non-positive weights are refused and non-integral weights
+        We demonstrate that nonpositive weights are refused and non-integral weights
         are converted to integers (and potentially rounded)::
 
             sage: N.<a,b,c> = PolynomialRing(QQ, 3, order=TermOrder('wdeglex',[-1,2,-3]))
@@ -865,7 +865,7 @@ class TermOrder(SageObject):
 
     def __hash__(self):
         r"""
-        A hash function
+        A hash function.
 
         EXAMPLES::
 
@@ -875,7 +875,7 @@ class TermOrder(SageObject):
 
     def __copy(self, other):
         """
-        Copy other term order to self.
+        Copy ``other`` term order to ``self``.
 
         EXAMPLES::
 
@@ -994,7 +994,6 @@ class TermOrder(SageObject):
             False
             sage: x > 1                                                                 # needs sage.rings.number_field
             True
-
         """
         return (sum(f.nonzero_values(sort=False)), f)
 
@@ -1014,7 +1013,6 @@ class TermOrder(SageObject):
             False
             sage: x > 1                                                                 # needs sage.rings.number_field
             True
-
         """
         return (sum(f.nonzero_values(sort=False)),
                 f.reversed().emul(-1))
@@ -1892,7 +1890,6 @@ class TermOrder(SageObject):
             sage: t.matrix()                                                            # needs sage.modules
             [1 2]
             [0 1]
-
         """
         return self._matrix
 
@@ -1979,7 +1976,7 @@ class TermOrder(SageObject):
 
     def __add__(self, other):
         """
-        Construct a block order combining self and other.
+        Construct a block order combining ``self`` and ``other``.
 
         INPUT:
 
@@ -2020,7 +2017,7 @@ class TermOrder(SageObject):
 
     def __getitem__(self, i):
         r"""
-        Return the i-th block of this term order.
+        Return the `i`-th block of this term order.
 
         INPUT:
 
@@ -2160,7 +2157,7 @@ class TermOrder(SageObject):
 
 def termorder_from_singular(S):
     """
-    Return the Sage term order of the basering in the given Singular interface
+    Return the Sage term order of the basering in the given Singular interface.
 
     INPUT:
 

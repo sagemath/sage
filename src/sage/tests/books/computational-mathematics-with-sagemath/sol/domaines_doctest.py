@@ -40,12 +40,12 @@ Sage example in ./sol/domaines.tex, line 70::
 Sage example in ./sol/domaines.tex, line 80::
 
   sage: E = CombinatorialFreeModule(QQ, [1,2,3])
-  sage: H = Hom(E,E); H.rename("H")
+  sage: H = Hom(E,E); H.rename('H')
   sage: C = E.category(); C
   Category of finite dimensional vector spaces with basis over Rational Field
   sage: phi1 = E.module_morphism(on_basis=lambda i: E.term(i), codomain=E)
   sage: phi2 = E.module_morphism(on_basis=lambda i: E.term(i),
-  ....:                          triangular="lower", codomain=E)
+  ....:                          triangular='lower', codomain=E)
   sage: phi3 = E.module_morphism(diagonal=lambda i: 1, codomain=E,
   ....:                          category=C)
   sage: phi1.parent() == phi2.parent() == phi3.parent() == H

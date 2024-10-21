@@ -12,7 +12,6 @@ AUTHORS:
 
 - Golam Mortuza Hossain (2009-06-26): initial version
 
-
 EXAMPLES:
 
 Dirac delta function::
@@ -65,7 +64,7 @@ class FunctionDiracDelta(BuiltinFunction):
 
     INPUT:
 
-    -  ``x`` -- a real number or a symbolic expression
+    - ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -94,7 +93,6 @@ class FunctionDiracDelta(BuiltinFunction):
     REFERENCES:
 
     - :wikipedia:`Dirac_delta_function`
-
     """
     def __init__(self):
         r"""
@@ -102,7 +100,7 @@ class FunctionDiracDelta(BuiltinFunction):
 
         INPUT:
 
-        -  ``x`` -- a real number or a symbolic expression
+        - ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -131,7 +129,7 @@ class FunctionDiracDelta(BuiltinFunction):
         """
         INPUT:
 
-        -  ``x`` -- a real number or a symbolic expression
+        - ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -182,7 +180,7 @@ class FunctionHeaviside(GinacFunction):
 
     INPUT:
 
-    -  ``x`` -- a real number or a symbolic expression
+    - ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -232,7 +230,6 @@ class FunctionHeaviside(GinacFunction):
     REFERENCES:
 
     -  :wikipedia:`Heaviside_function`
-
     """
     def __init__(self):
         r"""
@@ -240,7 +237,7 @@ class FunctionHeaviside(GinacFunction):
 
         INPUT:
 
-        -  ``x`` -- a real number or a symbolic expression
+        - ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -263,7 +260,7 @@ class FunctionHeaviside(GinacFunction):
             sage: h(pi).numerical_approx()
             1.00000000000000
         """
-        GinacFunction.__init__(self, "heaviside", latex_name="H",
+        GinacFunction.__init__(self, "heaviside", latex_name='H',
                                conversions=dict(maxima='hstep',
                                                 mathematica='HeavisideTheta',
                                                 sympy='Heaviside',
@@ -271,7 +268,7 @@ class FunctionHeaviside(GinacFunction):
 
     def _derivative_(self, x, diff_param=None):
         """
-        Derivative of Heaviside step function
+        Derivative of Heaviside step function.
 
         EXAMPLES::
 
@@ -290,7 +287,7 @@ class FunctionUnitStep(GinacFunction):
 
     INPUT:
 
-    -  ``x`` -- a real number or a symbolic expression
+    - ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -331,7 +328,7 @@ class FunctionUnitStep(GinacFunction):
 
         INPUT:
 
-        -  ``x`` -- a real number or a symbolic expression
+        - ``x`` -- a real number or a symbolic expression
 
         EXAMPLES::
 
@@ -359,7 +356,7 @@ class FunctionUnitStep(GinacFunction):
 
     def _derivative_(self, x, diff_param=None):
         """
-        Derivative of unit step function
+        Derivative of unit step function.
 
         EXAMPLES::
 
@@ -378,7 +375,7 @@ class FunctionSignum(BuiltinFunction):
 
     INPUT:
 
-    -  ``x`` -- a real number or a symbolic expression
+    - ``x`` -- a real number or a symbolic expression
 
     DEFINITION:
 
@@ -428,7 +425,6 @@ class FunctionSignum(BuiltinFunction):
     REFERENCES:
 
     - :wikipedia:`Sign_function`
-
     """
     def __init__(self):
         r"""
@@ -451,7 +447,7 @@ class FunctionSignum(BuiltinFunction):
                 conversions=dict(maxima='signum', mathematica='Sign',
                                  sympy='sign', giac='sign',
                                  fricas='(x+->abs(x)/x)'),
-                alt_name="sign")
+                alt_name='sign')
 
     def _eval_(self, x):
         """
@@ -518,7 +514,7 @@ class FunctionSignum(BuiltinFunction):
         if bool(approx_x.imag() == 0):      # x is real
             if bool(approx_x.real() == 0):  # x is zero
                 return ZZ(0)
-            # Now we have a non-zero real
+            # Now we have a nonzero real
             if bool((approx_x**(0.5)).imag() == 0):  # Check: x > 0
                 return ZZ(1)
             else:
@@ -527,7 +523,7 @@ class FunctionSignum(BuiltinFunction):
 
     def _derivative_(self, x, diff_param=None):
         """
-        Derivative of sgn function
+        Derivative of sgn function.
 
         EXAMPLES::
 
@@ -548,8 +544,8 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
     INPUT:
 
-    -  ``m`` -- a number or a symbolic expression
-    -  ``n`` -- a number or a symbolic expression
+    - ``m`` -- a number or a symbolic expression
+    - ``n`` -- a number or a symbolic expression
 
     DEFINITION:
 
@@ -571,7 +567,6 @@ class FunctionKroneckerDelta(BuiltinFunction):
     REFERENCES:
 
     - :wikipedia:`Kronecker_delta`
-
     """
     def __init__(self):
         r"""
@@ -647,14 +642,14 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
     def _derivative_(self, *args, **kwds):
         """
-        Derivative of Kronecker delta
+        Derivative of Kronecker delta.
 
         EXAMPLES::
 
             sage: kronecker_delta(x, 1).diff(x)                                         # needs sage.symbolic
             0
         """
-        # Kronecker delta is non-zero (but finite) only in the set of
+        # Kronecker delta is nonzero (but finite) only in the set of
         # zero-measure unlike Dirac delta. Consequently, it is null
         # for the purpose of integration/differentiation. For *discrete sum*
         # Kronecker delta is however non-trivial.
@@ -662,7 +657,7 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
     def _print_latex_(self, m, n, **kwds):
         r"""
-        Return latex expression
+        Return latex expression.
 
         EXAMPLES::
 

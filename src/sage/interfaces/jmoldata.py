@@ -53,7 +53,7 @@ class JmolData(SageObject):
 
     def is_jvm_available(self):
         """
-        Returns True if the Java Virtual Machine is available and False if not.
+        Return ``True`` if the Java Virtual Machine is available and ``False`` if not.
 
         EXAMPLES:
 
@@ -82,7 +82,6 @@ class JmolData(SageObject):
             sage: JData = JmolData()
             sage: JData.jmolpath()  # needs jmol
             '.../JmolData.jar'
-
         """
         jmolpath = JmolDataJar().absolute_filename()
 
@@ -90,7 +89,7 @@ class JmolData(SageObject):
 
     def is_jmol_available(self):
         """
-        Returns True if jmol is available and False if not.
+        Return ``True`` if jmol is available and ``False`` if not.
 
         EXAMPLES:
 
@@ -121,24 +120,22 @@ class JmolData(SageObject):
 
         INPUT:
 
-        - targetfile -- the full path to the file where the image
-          should be written.
+        - ``targetfile`` -- the full path to the file where the image
+          should be written
 
-        - datafile -- full path to the data file Jmol can read or
-          text of a script telling Jmol what to read or load.
+        - ``datafile`` -- full path to the data file Jmol can read or
+          text of a script telling Jmol what to read or load
 
-        - datafile_cmd -- (default ``'script'``)  ``'load'`` or ``'script'``
-          should be ``"load"`` for a data file.
+        - ``datafile_cmd`` -- (default: ``'script'``)  ``'load'`` or ``'script'``
+          should be ``'load'`` for a data file
 
-        - image_type -- (default ``"PNG"``) ``'PNG'`` ``'JPG'`` or ``'GIF'``
+        - ``image_type`` -- (default: ``"PNG"``) ``'PNG'`` ``'JPG'`` or ``'GIF'``
 
-        - figsize -- number (default 5) equal to (pixels/side)/100
+        - ``figsize`` -- number (default: 5) equal to (pixels/side)/100
 
-        OUTPUT:
+        OUTPUT: image file, .png, .gif or .jpg (default: .png)
 
-        Image file, .png, .gif or .jpg (default .png)
-
-        .. note::
+        .. NOTE::
 
             Examples will generate an error message if a functional Java Virtual Machine (JVM)
             is not installed on the machine the Sage instance is running on.
@@ -148,7 +145,7 @@ class JmolData(SageObject):
             Programmers using this module should check that the JVM is
             available before making calls to avoid the user getting
             error messages.  Check for the JVM using the function
-            :meth:`is_jvm_available`, which returns True if a JVM is available.
+            :meth:`is_jvm_available`, which returns ``True`` if a JVM is available.
 
         EXAMPLES:
 
@@ -172,12 +169,12 @@ class JmolData(SageObject):
             sage: JData = JmolData()
             sage: D = dodecahedron()                                                    # needs sage.plot
             sage: from tempfile import NamedTemporaryFile
-            sage: archive = NamedTemporaryFile(suffix=".zip")
+            sage: archive = NamedTemporaryFile(suffix='.zip')
             sage: D.export_jmol(archive.name)                                           # needs sage.plot
             sage: archive_native = archive.name
             sage: script  = f'set defaultdirectory "f{archive_native}"\n'
             sage: script += 'script SCRIPT\n'
-            sage: with NamedTemporaryFile(suffix=".png") as testfile:   # optional - java, needs sage.plot
+            sage: with NamedTemporaryFile(suffix='.png') as testfile:   # optional - java, needs sage.plot
             ....:     JData.export_image(targetfile=testfile.name,
             ....:                        datafile=script,
             ....:                        image_type="PNG")
@@ -197,7 +194,7 @@ class JmolData(SageObject):
         imagescript = 'write {} {!r}\n'.format(image_type, target_native)
         size_arg = "%sx%s" % (figsize * 100, figsize * 100)
         # Scratch file for Jmol errors
-        scratchout = tmp_filename(ext=".txt")
+        scratchout = tmp_filename(ext='.txt')
         with open(scratchout, 'w') as jout:
             # Now call the java application and write the file.
             env = dict(os.environ)

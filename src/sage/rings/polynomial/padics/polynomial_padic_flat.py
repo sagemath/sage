@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-pari
 """
-p-adic Flat Polynomials
+`p`-adic Flat Polynomials
 """
 
 # ****************************************************************************

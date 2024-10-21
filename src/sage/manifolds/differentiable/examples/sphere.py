@@ -285,7 +285,6 @@ class Sphere(PseudoRiemannianSubmanifold):
         coordinates and their transition maps is computational complex in
         higher dimensions. Henceforth, high computation times are expected with
         increasing dimension.
-
     """
     @staticmethod
     def __classcall_private__(cls, n=None, radius=1, ambient_space=None,
@@ -309,7 +308,6 @@ class Sphere(PseudoRiemannianSubmanifold):
             2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3
             sage: S._first_ngens(2)
             (x, y)
-
         """
         if n is None:
             if names is None:
@@ -343,7 +341,6 @@ class Sphere(PseudoRiemannianSubmanifold):
             Riemannian metric g on the 2-sphere S^2 of radius 1 smoothly
              embedded in the Euclidean space E^3
             sage: TestSuite(S2).run()
-
         """
         # radius
         if radius <= 0:
@@ -412,7 +409,6 @@ class Sphere(PseudoRiemannianSubmanifold):
             iota: S^2 → E^3
              on A: (theta, phi) ↦ (x, y, z) = (cos(phi)*sin(theta),
              sin(phi)*sin(theta), cos(theta))
-
         """
         name = 'iota'
         latex_name = r'\iota'
@@ -430,7 +426,6 @@ class Sphere(PseudoRiemannianSubmanifold):
             '2-sphere S^2_3 of radius 3 smoothly embedded in the Euclidean space E^3'
             sage: S2_3  # indirect doctest
             2-sphere S^2_3 of radius 3 smoothly embedded in the Euclidean space E^3
-
         """
         s = "{}-sphere {} of radius {} smoothly embedded in " \
             "the {}".format(self._dim, self._name, self._radius, self._ambient)
@@ -444,7 +439,7 @@ class Sphere(PseudoRiemannianSubmanifold):
 
         INPUT:
 
-        - ``coord_name`` --  string describing the type of coordinates
+        - ``coord_name`` -- string describing the type of coordinates
         - ``names`` -- (default: ``None``) must be a tuple containing
           the coordinate symbols for the first chart in the list; if
           ``None``, the standard convention is used
@@ -462,7 +457,6 @@ class Sphere(PseudoRiemannianSubmanifold):
             sage: stereo_charts = S1.coordinate_charts('stereographic', names=['a'])
             sage: stereo_charts
             [Chart (S^1-{NP}, (a,)), Chart (S^1-{SP}, (ap,))]
-
         """
         if coord_name not in self._coordinates:
             if coord_name not in self._init_coordinates:
@@ -488,7 +482,6 @@ class Sphere(PseudoRiemannianSubmanifold):
             sage: S2.<u,v> = manifolds.Sphere(2)
             sage: S2._first_ngens(2)
             (u, v)
-
         """
         return self._def_chart[:]
 
@@ -508,7 +501,6 @@ class Sphere(PseudoRiemannianSubmanifold):
              Open subset S^2-{NP,SP} of the Euclidean 2-sphere S^2 of radius 1,
              Open subset S^2-{NP} of the Euclidean 2-sphere S^2 of radius 1,
              Open subset S^2-{SP} of the Euclidean 2-sphere S^2 of radius 1})
-
         """
         # without north pole:
         name = self._name + '-{NP}'
@@ -552,7 +544,6 @@ class Sphere(PseudoRiemannianSubmanifold):
             (cos(phi)*sin(theta) + 1, sin(phi)*sin(theta) + 2, cos(theta) + 3)
             sage: S2c._shift_coords(coordfunc, s='-')
             (cos(phi)*sin(theta), sin(phi)*sin(theta), cos(theta))
-
         """
         cart = self._ambient.cartesian_coordinates()
         c_coords = cart(self._center)
@@ -587,7 +578,6 @@ class Sphere(PseudoRiemannianSubmanifold):
              Chart (A, (phi,)),
              Chart (A, (y1,)),
              Chart (A, (yp1,))]
-
         """
         # speed-up via simplification method...
         self.set_simplify_function(lambda expr: expr.simplify_trig())
@@ -741,7 +731,6 @@ class Sphere(PseudoRiemannianSubmanifold):
             Chart (S^3-{NP}, (y1, y2, y3))
             sage: S3.stereographic_coordinates(pole='south')
             Chart (S^3-{SP}, (yp1, yp2, yp3))
-
         """
         coordinates = 'stereographic'
         if coordinates not in self._coordinates:
@@ -857,7 +846,6 @@ class Sphere(PseudoRiemannianSubmanifold):
 
             sage: spher.coord_range()
             chi: (0, pi); theta: (0, pi); phi: [-pi, pi] (periodic)
-
         """
         coordinates = 'spherical'
         if coordinates not in self._coordinates:
@@ -907,7 +895,6 @@ class Sphere(PseudoRiemannianSubmanifold):
 
             sage: S1.metric().display()
             g = dphi⊗dphi
-
         """
         # speed-up via simplification method...
         self.set_simplify_function(lambda expr: expr.simplify_rational())
@@ -1007,7 +994,6 @@ class Sphere(PseudoRiemannianSubmanifold):
             Chart (S^1-{NP}, (y1,))
             sage: S1.coord_change(spher, stereoN.restrict(A))
             Change of coordinates from Chart (A, (phi,)) to Chart (A, (y1,))
-
         """
         # speed-up via simplification method...
         self.set_simplify_function(lambda expr: expr.simplify())
@@ -1109,7 +1095,6 @@ class Sphere(PseudoRiemannianSubmanifold):
 
             sage: S2_r.dist(p, q)
             pi*r
-
         """
         from sage.functions.trig import acos
         # get Euclidean points:
@@ -1147,7 +1132,6 @@ class Sphere(PseudoRiemannianSubmanifold):
              Euclidean space E^4
             sage: S2_r.radius()
             r
-
         """
         return self._radius
 
@@ -1167,7 +1151,6 @@ class Sphere(PseudoRiemannianSubmanifold):
 
             sage: S.euler_characteristic()
             2
-
         """
         from sage.topology.simplicial_complex_examples import Sphere as SymplicialSphere
         return SymplicialSphere(self._dim)
@@ -1196,6 +1179,5 @@ class Sphere(PseudoRiemannianSubmanifold):
             on A: (theta, phi) ↦ (x, y, z) = (cos(phi)*sin(theta) + 1,
                                                  sin(phi)*sin(theta) + 2,
                                                  cos(theta) + 3)
-
         """
         return self._center

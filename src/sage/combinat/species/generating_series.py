@@ -146,7 +146,7 @@ class OrdinaryGeneratingSeriesRing(LazyPowerSeriesRing):
 
             sage: OrdinaryGeneratingSeriesRing.options._reset()  # reset options
         """
-        super().__init__(base_ring, names="z")
+        super().__init__(base_ring, names='z')
 
     Element = OrdinaryGeneratingSeries
 
@@ -273,7 +273,7 @@ class ExponentialGeneratingSeriesRing(LazyPowerSeriesRing):
 
             sage: ExponentialGeneratingSeriesRing.options._reset()  # reset options
         """
-        super().__init__(base_ring, names="z")
+        super().__init__(base_ring, names='z')
 
     Element = ExponentialGeneratingSeries
 

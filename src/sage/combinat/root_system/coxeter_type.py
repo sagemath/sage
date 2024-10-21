@@ -70,11 +70,11 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``finite`` -- a boolean or ``None`` (default: ``None``)
+        - ``finite`` -- boolean or ``None`` (default: ``None``)
 
-        - ``affine`` -- a boolean or ``None`` (default: ``None``)
+        - ``affine`` -- boolean or ``None`` (default: ``None``)
 
-        - ``crystallographic`` -- a boolean or ``None`` (default: ``None``)
+        - ``crystallographic`` -- boolean or ``None`` (default: ``None``)
 
         The sample contains all the exceptional finite and affine
         Coxeter types, as well as typical representatives of the

@@ -15,6 +15,7 @@ from .lfsr import lfsr_sequence
 from .cipher import SymmetricKeyCipher
 from sage.monoids.string_monoid_element import StringMonoidElement
 
+
 class LFSRCipher(SymmetricKeyCipher):
     def __init__(self, parent, poly, IS):
         """
@@ -22,13 +23,11 @@ class LFSRCipher(SymmetricKeyCipher):
 
         INPUT:
 
+        - ``parent`` -- parent
 
-        -  ``parent`` -- parent
+        - ``poly`` -- connection polynomial
 
-        -  ``poly`` -- connection polynomial
-
-        -  ``IS`` -- initial state
-
+        - ``IS`` -- initial state
 
         EXAMPLES::
 
@@ -65,17 +64,15 @@ class LFSRCipher(SymmetricKeyCipher):
         """
         SymmetricKeyCipher.__init__(self, parent, key=(poly, IS))
 
-    def __call__(self, M, mode="ECB"):
+    def __call__(self, M, mode='ECB'):
         r"""
         Generate key stream from the binary string ``M``.
 
         INPUT:
 
+        - ``M`` -- a StringMonoidElement
 
-        -  ``M`` -- a StringMonoidElement
-
-        -  ``mode`` -- ignored (default: 'ECB')
-
+        - ``mode`` -- ignored (default: ``'ECB'``)
 
         EXAMPLES::
 
@@ -148,6 +145,7 @@ class LFSRCipher(SymmetricKeyCipher):
         """
         return self.key()[1]
 
+
 class ShrinkingGeneratorCipher(SymmetricKeyCipher):
     def __init__(self, parent, e1, e2):
         """
@@ -155,13 +153,11 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
 
         INPUT:
 
+        - ``parent`` -- parent
 
-        -  ``parent`` -- parent
+        - ``poly`` -- connection polynomial
 
-        -  ``poly`` -- connection polynomial
-
-        -  ``IS`` -- initial state
-
+        - ``IS`` -- initial state
 
         EXAMPLES::
 
@@ -223,15 +219,13 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
         """
         return self.key()[1]
 
-    def __call__(self, M, mode="ECB"):
+    def __call__(self, M, mode='ECB'):
         r"""
         INPUT:
 
+        - ``M`` -- a StringMonoidElement
 
-        -  ``M`` -- a StringMonoidElement
-
-        -  ``mode`` -- ignored (default: 'ECB')
-
+        - ``mode`` -- ignored (default: ``'ECB'``)
 
         EXAMPLES::
 

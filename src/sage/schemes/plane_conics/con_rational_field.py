@@ -97,16 +97,16 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         The parameter ``algorithm``
         specifies the algorithm to be used:
 
-        - ``'qfsolve'`` -- Use PARI/GP function :pari:`qfsolve`
+        - ``'qfsolve'`` -- use PARI/GP function :pari:`qfsolve`
 
-        - ``'rnfisnorm'`` -- Use PARI's function :pari:`rnfisnorm`
+        - ``'rnfisnorm'`` -- use PARI's function :pari:`rnfisnorm`
           (cannot be combined with ``obstruction = True``)
 
-        - ``'local'`` -- Check if a local solution exists for all primes
+        - ``'local'`` -- check if a local solution exists for all primes
           and infinite places of `\QQ` and apply the Hasse principle
           (cannot be combined with ``point = True``)
 
-        - ``'default'`` -- Use ``'qfsolve'``
+        - ``'default'`` -- use ``'qfsolve'``
 
         - ``'magma'`` (requires Magma to be installed) --
           delegates the task to the Magma computer algebra system.
@@ -358,7 +358,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: i[0](p) / i[1](p)
             x/y
 
-        A :class:`ValueError` is raised if ``self`` has no rational point ::
+        A :exc:`ValueError` is raised if ``self`` has no rational point ::
 
             sage: # needs sage.libs.pari
             sage: C = Conic(x^2 + 2*y^2 + z^2)
@@ -368,7 +368,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             ValueError: Conic Projective Conic Curve over Rational Field defined
             by x^2 + 2*y^2 + z^2 has no rational points over Rational Field!
 
-        A :class:`ValueError` is raised if ``self`` is not smooth ::
+        A :exc:`ValueError` is raised if ``self`` is not smooth ::
 
             sage: # needs sage.libs.pari
             sage: C = Conic(x^2 + y^2)

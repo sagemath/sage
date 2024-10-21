@@ -5,6 +5,7 @@ cdef struct pair_s:
     size_t first
     size_t second
 
+
 @cython.final
 cdef class ListOfPairs:
     cdef pair_s** _lists

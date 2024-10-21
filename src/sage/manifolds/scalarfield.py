@@ -1105,7 +1105,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
         sage: TestSuite(f).run()
         sage: TestSuite(zer).run()
-
     """
 
     _name: Optional[str]
@@ -1128,7 +1127,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             Algebra of scalar fields on the 2-dimensional topological
              manifold M
             sage: TestSuite(f).run()
-
         """
         super().__init__(parent)  # both super classes have same signature
         domain = parent._domain
@@ -1260,7 +1258,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: f == 0
             True
-
         """
         if self._is_zero:
             return True
@@ -1319,7 +1316,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: f == 1
             True
-
         """
         return all(func.is_trivial_one() for func in self._express.values())
 
@@ -1339,7 +1335,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             sage: zero = M.scalar_field_algebra().zero()
             sage: zero.is_unit()
             False
-
         """
         if self._is_zero:
             return False
@@ -1354,9 +1349,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
         - ``other`` -- a scalar field (or something else)
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is equal to ``other``, ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is equal to ``other``, ``False`` otherwise
 
         TESTS::
 
@@ -1375,7 +1368,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: h == 1
             True
-
         """
         from sage.manifolds.differentiable.mixed_form import MixedForm
 
@@ -1414,9 +1406,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
         - ``other`` -- a scalar field
 
-        OUTPUT:
-
-        - ``True`` if ``self`` differs from ``other``, ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` differs from ``other``, ``False`` otherwise
 
         TESTS::
 
@@ -1447,7 +1437,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             sage: f._init_derived()
         """
         self._restrictions = {}
-        # dict. of restrictions of self on subsets
+        # dict. of restrictions of ``self`` on subsets
         # of self._domain, with the subsets as keys
 
     def _del_derived(self):
@@ -1547,7 +1537,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             Scalar field f on the 2-dimensional topological manifold M
             sage: latex(f)
             \Phi
-
         """
         if self.is_immutable():
             raise ValueError("the name of an immutable element "
@@ -1583,7 +1572,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             sage: g = f.restrict(U)
             sage: g.domain()
             Open subset U of the 2-dimensional topological manifold M
-
         """
         return self._domain
 
@@ -1598,7 +1586,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             sage: f = M.scalar_field(x+2*y)
             sage: f.codomain()
             Real Field with 53 bits of precision
-
         """
         return self._domain.base_field()
 
@@ -1628,7 +1615,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: g is f
             False
-
         """
         result = type(self)(self.parent(), name=name, latex_name=latex_name)
         for chart, funct in self._express.items():
@@ -1679,7 +1665,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
                (x, y) ↦ x*y^2
             sage: f == g
             False
-
         """
         if self.is_immutable():
             raise ValueError("the expressions of an immutable element "
@@ -1756,7 +1741,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             Change of coordinates from Chart (M, (T, X)) to Chart (M, (t, x))
             sage: f.coord_function(o2)
             -T^2 + X^2
-
         """
         if chart is None:
             chart = self._domain._def_chart
@@ -1859,7 +1843,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             <class 'sympy.core.mul.Mul'>
             sage: f.expr()  # note the SymPy exponent notation
             x*y**2
-
         """
         return self.coord_function(chart, from_chart).expr()
 
@@ -1912,7 +1895,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             ...
             ValueError: the expressions of an immutable element cannot be
              changed
-
         """
         if self.is_immutable():
             raise ValueError("the expressions of an immutable element "
@@ -1976,7 +1958,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             ...
             ValueError: the expressions of an immutable element cannot be
              changed
-
         """
         if self.is_immutable():
             raise ValueError("the expressions of an immutable element "
@@ -2046,7 +2027,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             f: S^2 → ℝ
             on U: (x, y) ↦ arctan(x^2 + y^2)
             on V: (u, v) ↦ arctan(1/(u^2 + v^2))
-
         """
         if self.is_immutable():
             raise ValueError("the expressions of an immutable element "
@@ -2084,7 +2064,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             on U: (x, y) ↦ x^2 + y
             sage: f.restrict(U) == g
             True
-
         """
         if self.is_immutable():
             raise ValueError("the expressions of an immutable element "
@@ -2295,7 +2274,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
              topological manifold M
             sage: M.zero_scalar_field().restrict(U) is U.zero_scalar_field()
             True
-
         """
         if subdomain == self._domain:
             return self
@@ -2427,7 +2405,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             [Chart (W, (x, y))]
             sage: h.expr(c_xy_W)
             x + 2*y
-
         """
         if not isinstance(other, ScalarField):
             raise TypeError("the second argument must be a scalar field")
@@ -2484,9 +2461,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
           are known is searched, starting from the default chart
           of ``self._domain``
 
-        OUTPUT:
-
-        - value at ``p``
+        OUTPUT: value at ``p``
 
         EXAMPLES::
 
@@ -2514,7 +2489,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             -21
             sage: p.coord(Y)
             (-3, 7)
-
         """
         # ! # it should be "if p not in self_domain:" instead, but this test is
         # skipped for efficiency
@@ -2568,7 +2542,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         - ``codomain_subset`` -- an instance of
           :class:`~sage.sets.real_set.RealSet`
         - ``name`` -- string; name (symbol) given to the subset
-        - ``latex_name`` --  (default: ``None``) string; LaTeX symbol to
+        - ``latex_name`` -- string (default: ``None``); LaTeX symbol to
           denote the subset; if none are provided, it is set to ``name``
 
         OUTPUT:
@@ -2603,9 +2577,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Unary plus operator.
 
-        OUTPUT:
-
-        - an exact copy of the scalar field
+        OUTPUT: an exact copy of the scalar field
 
         TESTS::
 
@@ -2616,7 +2588,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             Scalar field +f on the 2-dimensional topological manifold M
             sage: g == f
             True
-
         """
         result = type(self)(self.parent())
         for chart in self._express:
@@ -2631,9 +2602,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Unary minus operator.
 
-        OUTPUT:
-
-        - the negative of the scalar field
+        OUTPUT: the negative of the scalar field
 
         TESTS::
 
@@ -2647,7 +2616,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
                (x, y) ↦ -x - y
             sage: g.__neg__() == f
             True
-
         """
         result = type(self)(self.parent())
         for chart in self._express:
@@ -2688,7 +2656,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: f._add_(M.zero_scalar_field()) == f
             True
-
         """
         # Trivial cases:
         if self.is_trivial_zero():
@@ -2737,7 +2704,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: f._sub_(M.zero_scalar_field()) == f
             True
-
         """
         # Trivial cases:
         if self.is_trivial_zero():
@@ -2790,7 +2756,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: f._mul_(M.one_scalar_field()) == f
             True
-
         """
         # Trivial cases:
         if self.is_trivial_zero() or other.is_trivial_zero():
@@ -2883,9 +2848,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
           field on which the manifold is constructed (possibly represented
           by a symbolic expression)
 
-        OUTPUT:
-
-        - the scalar field ``number * self``
+        OUTPUT: the scalar field ``number * self``
 
         TESTS::
 
@@ -2910,7 +2873,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: f._lmul_(1) == f
             True
-
         """
         # Trivial cases:
         try:
@@ -3002,9 +2964,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Exponential of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\exp f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\exp f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3037,7 +2997,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: exp(M.constant_scalar_field(1)) == M.constant_scalar_field(e)
             True
-
         """
         name, latex_name = self._function_name("exp", r"\exp")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3049,9 +3008,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Natural logarithm of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\ln f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\ln f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3070,7 +3027,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
             sage: exp(log(f)) == f
             True
-
         """
         name, latex_name = self._function_name("ln", r"\ln")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3120,7 +3076,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: pow(pow(f, 1/2), 2) == f
             True
-
         """
         from sage.misc.latex import latex
         if self._name is None:
@@ -3141,9 +3096,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Square root of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\sqrt f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\sqrt f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3165,7 +3118,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: sqrt(M.zero_scalar_field()) == M.zero_scalar_field()
             True
-
         """
         name, latex_name = self._function_name("sqrt", r"\sqrt",
                                                parentheses=False)
@@ -3178,9 +3130,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Cosine of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\cos f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\cos f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3201,7 +3151,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: cos(M.constant_scalar_field(pi/2)) == M.zero_scalar_field()
             True
-
         """
         name, latex_name = self._function_name("cos", r"\cos")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3213,9 +3162,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Sine of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\sin f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\sin f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3236,7 +3183,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: sin(M.constant_scalar_field(pi/2)) == M.constant_scalar_field(1)
             True
-
         """
         name, latex_name = self._function_name("sin", r"\sin")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3248,9 +3194,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Tangent of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\tan f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\tan f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3273,7 +3217,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: tan(M.constant_scalar_field(pi/4)) == M.constant_scalar_field(1)
             True
-
         """
         name, latex_name = self._function_name("tan", r"\tan")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3285,9 +3228,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Arc cosine of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\arccos f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\arccos f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3317,7 +3258,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: arccos(M.zero_scalar_field()) == M.constant_scalar_field(pi/2)
             True
-
         """
         name, latex_name = self._function_name("arccos", r"\arccos")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3329,9 +3269,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Arc sine of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\arcsin f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\arcsin f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3361,7 +3299,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: arcsin(M.constant_scalar_field(1)) == M.constant_scalar_field(pi/2)
             True
-
         """
         name, latex_name = self._function_name("arcsin", r"\arcsin")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3373,9 +3310,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Arc tangent of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\arctan f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\arctan f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3405,7 +3340,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: arctan(M.constant_scalar_field(1)) == M.constant_scalar_field(pi/4)
             True
-
         """
         name, latex_name = self._function_name("arctan", r"\arctan")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3417,9 +3351,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Hyperbolic cosine of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\cosh f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\cosh f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3438,7 +3370,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
             sage: cosh(M.zero_scalar_field()) == M.constant_scalar_field(1)
             True
-
         """
         name, latex_name = self._function_name("cosh", r"\cosh")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3450,9 +3381,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Hyperbolic sine of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\sinh f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\sinh f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3471,7 +3400,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
             sage: sinh(M.zero_scalar_field()) == M.zero_scalar_field()
             True
-
         """
         name, latex_name = self._function_name("sinh", r"\sinh")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3483,9 +3411,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         r"""
         Hyperbolic tangent of the scalar field.
 
-        OUTPUT:
-
-        - the scalar field `\tanh f`, where `f` is the current scalar field
+        OUTPUT: the scalar field `\tanh f`, where `f` is the current scalar field
 
         EXAMPLES::
 
@@ -3506,7 +3432,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: tanh(M.zero_scalar_field()) == M.zero_scalar_field()
             True
-
         """
         name, latex_name = self._function_name("tanh", r"\tanh")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3549,7 +3474,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: arccosh(M.constant_scalar_field(1)) == M.zero_scalar_field()
             True
-
         """
         name, latex_name = self._function_name("arccosh", r"\,\mathrm{arccosh}")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3592,7 +3516,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: arcsinh(M.zero_scalar_field()) == M.zero_scalar_field()
             True
-
         """
         name, latex_name = self._function_name("arcsinh", r"\,\mathrm{arcsinh}")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3637,7 +3560,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: arctanh(M.constant_scalar_field(1/2)) == M.constant_scalar_field(log(3)/2)
             True
-
         """
         name, latex_name = self._function_name("arctanh", r"\,\mathrm{arctanh}")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3666,7 +3588,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             sage: g.display()
             abs(f): M → ℝ
                (x, y) ↦ abs(x)*abs(y)
-
         """
         name, latex_name = self._function_name("abs", r"\,\mathrm{abs}")
         resu = type(self)(self.parent(), name=name, latex_name=latex_name)
@@ -3708,7 +3629,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
              The order of the big `O` in the power series expansion is `n+1`,
              where `n` is ``order``.
 
-        - ``truncate`` -- (default: ``False``) determines whether the
+        - ``truncate`` -- boolean (default: ``False``); determines whether the
           coordinate expressions of ``self`` are replaced by their expansions
           to the given order
 
@@ -3723,7 +3644,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             sage: f.set_calc_order(t, 2, truncate=True)
             sage: f.expr()
             1/2*t^2*x^2 - t*x + 1
-
         """
         for expr in self._express.values():
             expr._expansion_symbol = symbol
@@ -3749,7 +3669,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
             True
             sage: f.restrict(V).is_immutable()
             True
-
         """
         for rst in self._restrictions.values():
             rst.set_immutable()
@@ -3782,7 +3701,6 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
             sage: {f: 1}[f]
             1
-
         """
         if self.is_mutable():
             raise ValueError('element must be immutable in order to be '

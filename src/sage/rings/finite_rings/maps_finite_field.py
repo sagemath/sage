@@ -41,7 +41,6 @@ class FiniteFieldVectorSpaceIsomorphism(Morphism):
             Isomorphism:
               From: Vector space of dimension 1 over Finite Field in z4 of size 2^4
               To:   Finite Field in z4 of size 2^4
-
         """
         s = "Isomorphism:"
         s += "\n  From: {}".format(self.domain())

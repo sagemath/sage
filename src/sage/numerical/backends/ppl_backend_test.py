@@ -10,4 +10,4 @@ class TestPPLBackend(GenericBackendTests):
 
     @pytest.fixture
     def backend(self) -> GenericBackend:
-        return MixedIntegerLinearProgram(solver="PPL").get_backend()
+        return MixedIntegerLinearProgram(solver='PPL').get_backend()

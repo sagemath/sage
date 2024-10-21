@@ -41,13 +41,13 @@ class SageSpawn(spawn):
         """
         Spawn a subprocess in a pseudo-tty.
 
-        - ``*args``, ``**kwds``: see :class:`pexpect.spawn`.
+        - ``*args``, ``**kwds`` -- see :class:`pexpect.spawn`
 
         - ``name`` -- human-readable name for this process, used for
-          display purposes only.
+          display purposes only
 
         - ``quit_string`` -- (default: ``None``) if not ``None``, send
-          this string to the child process before killing it.
+          this string to the child process before killing it
 
         EXAMPLES::
 
@@ -218,7 +218,7 @@ class SagePtyProcess(PtyProcess):
         INPUT:
 
         - ``interval`` -- (default: 5) how much seconds to wait between
-          sending two signals.
+          sending two signals
 
         EXAMPLES:
 

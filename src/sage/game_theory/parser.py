@@ -297,7 +297,7 @@ class Parser():
         nice_stuff = []
         for gambitstrategy in self.raw_string:
             gambitstrategy = list(gambitstrategy)
-            profile = [tuple(gambitstrategy[:len(gambit_game.players[int(0)].strategies)])]
+            profile = [tuple(gambitstrategy[:len(gambit_game.players[0].strategies)])]
             for player in list(gambit_game.players)[1:]:
                 previousplayerstrategylength = len(profile[-1])
                 profile.append(tuple(gambitstrategy[previousplayerstrategylength: previousplayerstrategylength + len(player.strategies)]))

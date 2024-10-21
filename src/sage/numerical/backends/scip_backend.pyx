@@ -28,7 +28,6 @@ from pyscipopt import Model
 
 
 cdef class SCIPBackend(GenericBackend):
-
     """
     MIP Backend that uses the SCIP solver.
 
@@ -36,17 +35,17 @@ cdef class SCIPBackend(GenericBackend):
 
     General backend testsuite::
 
-        sage: p = MixedIntegerLinearProgram(solver="SCIP")
-        sage: TestSuite(p.get_backend()).run(skip="_test_pickling")
+        sage: p = MixedIntegerLinearProgram(solver='SCIP')
+        sage: TestSuite(p.get_backend()).run(skip='_test_pickling')
     """
 
     def __cinit__(self, maximization=True):
         """
-        Constructor
+        Constructor.
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(solver="SCIP")
+            sage: p = MixedIntegerLinearProgram(solver='SCIP')
         """
         self.model = Model('')
         if maximization:
@@ -66,7 +65,7 @@ cdef class SCIPBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: lp = get_solver(solver="SCIP")
+            sage: lp = get_solver(solver='SCIP')
             sage: lp.add_variables(3)
             2
             sage: lp.add_linear_constraint(zip([0, 1, 2], [8, 6, 1]), None, 48)
@@ -110,17 +109,17 @@ cdef class SCIPBackend(GenericBackend):
 
         - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``)
 
-        - ``integer`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is binary (default: ``False``)
 
         - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` -- an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``)
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
@@ -179,13 +178,13 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef set_variable_type(self, int variable, int vtype):
         """
-        Set the type of a variable
+        Set the type of a variable.
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``vtype`` (integer):
+        - ``vtype`` -- integer:
 
             *  1  Integer
             *  0  Binary
@@ -214,7 +213,7 @@ cdef class SCIPBackend(GenericBackend):
 
         INPUT:
 
-        - ``sense`` (integer):
+        - ``sense`` -- integer:
 
             * +1 => Maximization
             * -1 => Minimization
@@ -240,13 +239,13 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef objective_coefficient(self, int variable, coeff=None):
         """
-        Set or get the coefficient of a variable in the objective function
+        Set or get the coefficient of a variable in the objective function.
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``coeff`` (double) -- its coefficient or ``None`` for
+        - ``coeff`` -- double; its coefficient or ``None`` for
           reading (default: ``None``)
 
         EXAMPLES::
@@ -273,11 +272,11 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef problem_name(self, name=None):
         """
-        Return or define the problem's name
+        Return or define the problem's name.
 
         INPUT:
 
-        - ``name`` (``str``) -- the problem's name. When set to
+        - ``name`` -- string; the problem's name. When set to
           ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
@@ -299,10 +298,11 @@ cdef class SCIPBackend(GenericBackend):
 
         INPUT:
 
-        - ``coeff`` -- a list of real values, whose ith element is the
-          coefficient of the ith variable in the objective function.
+        - ``coeff`` -- list of real values, whose i-th element is the
+          coefficient of the i-th variable in the objective function
 
-        - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
+        - ``d`` -- double; the constant term in the linear function (set to `0`
+          by default)
 
         EXAMPLES::
 
@@ -321,11 +321,11 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef set_verbosity(self, int level):
         """
-        Set the verbosity level
+        Set the verbosity level.
 
         INPUT:
 
-        - ``level`` (integer) -- From 0 (no verbosity) to 1.
+        - ``level`` -- integer; from 0 (no verbosity) to 1
 
         EXAMPLES::
 
@@ -349,7 +349,7 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef remove_constraint(self, int i):
         r"""
-        Remove a constraint from self.
+        Remove a constraint from ``self``.
 
         INPUT:
 
@@ -372,7 +372,7 @@ cdef class SCIPBackend(GenericBackend):
 
         Removing fancy constraints does not make Sage crash::
 
-            sage: MixedIntegerLinearProgram(solver="SCIP").remove_constraint(-2)
+            sage: MixedIntegerLinearProgram(solver='SCIP').remove_constraint(-2)
             Traceback (most recent call last):
             ...
             ValueError: The constraint's index i must satisfy 0 <= i < number_of_constraints
@@ -471,11 +471,11 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef row(self, int index):
         r"""
-        Return a row
+        Return a row.
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -512,7 +512,7 @@ cdef class SCIPBackend(GenericBackend):
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -545,7 +545,7 @@ cdef class SCIPBackend(GenericBackend):
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id.
+        - ``index`` -- integer; the variable's id
 
         OUTPUT:
 
@@ -580,15 +580,15 @@ cdef class SCIPBackend(GenericBackend):
 
         INPUT:
 
-        - ``indices`` (list of integers) -- this list contains the
+        - ``indices`` -- list of integers; this list contains the
           indices of the constraints in which the variable's
           coefficient is nonzero
 
-        - ``coeffs`` (list of real values) -- associates a coefficient
+        - ``coeffs`` -- list of real values; associates a coefficient
           to the variable in each of the constraints in which it
-          appears. Namely, the ith entry of ``coeffs`` corresponds to
+          appears. Namely, the i-th entry of ``coeffs`` corresponds to
           the coefficient of the variable in the constraint
-          represented by the ith entry in ``indices``.
+          represented by the i-th entry in ``indices``.
 
         .. NOTE::
 
@@ -746,7 +746,7 @@ cdef class SCIPBackend(GenericBackend):
 
             sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
-            sage: p = MixedIntegerLinearProgram(solver="SCIP")
+            sage: p = MixedIntegerLinearProgram(solver='SCIP')
             sage: p.solver_parameter("limits/gap", 100)
             sage: b = p.new_variable(binary=True)
             sage: p.set_objective(p.sum(b[v] for v in g))
@@ -781,7 +781,7 @@ cdef class SCIPBackend(GenericBackend):
 
             sage: # needs sage.graphs
             sage: g = graphs.CubeGraph(9)
-            sage: p = MixedIntegerLinearProgram(solver="SCIP")
+            sage: p = MixedIntegerLinearProgram(solver='SCIP')
             sage: p.solver_parameter("limits/gap", 100)
             sage: b = p.new_variable(binary=True)
             sage: p.set_objective(p.sum(b[v] for v in g))
@@ -917,11 +917,11 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef col_name(self, int index):
         """
-        Return the ``index``th col name
+        Return the ``index``-th col name.
 
         INPUT:
 
-        - ``index`` (integer) -- the col's id
+        - ``index`` -- integer; the col's id
 
         EXAMPLES::
 
@@ -936,11 +936,11 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef row_name(self, int index):
         """
-        Return the ``index`` th row name
+        Return the ``index``-th row name.
 
         INPUT:
 
-        - ``index`` (integer) -- the row's id
+        - ``index`` -- integer; the row's id
 
         EXAMPLES::
 
@@ -958,7 +958,7 @@ cdef class SCIPBackend(GenericBackend):
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -980,7 +980,7 @@ cdef class SCIPBackend(GenericBackend):
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -1002,7 +1002,7 @@ cdef class SCIPBackend(GenericBackend):
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -1038,11 +1038,11 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef variable_upper_bound(self, int index, value=False):
         """
-        Return or define the upper bound on a variable
+        Return or define the upper bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not upper bound. When set to ``False``
@@ -1064,7 +1064,7 @@ cdef class SCIPBackend(GenericBackend):
 
         :issue:`14581`::
 
-            sage: P = MixedIntegerLinearProgram(solver="SCIP")
+            sage: P = MixedIntegerLinearProgram(solver='SCIP')
             sage: x = P["x"]
             sage: P.set_max(x, 0)
             sage: P.get_max(x)
@@ -1072,7 +1072,7 @@ cdef class SCIPBackend(GenericBackend):
 
         Check that :issue:`10232` is fixed::
 
-            sage: p = get_solver(solver="SCIP")
+            sage: p = get_solver(solver='SCIP')
             sage: p.variable_upper_bound(2)
             Traceback (most recent call last):
             ...
@@ -1099,11 +1099,11 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef variable_lower_bound(self, int index, value=False):
         """
-        Return or define the lower bound on a variable
+        Return or define the lower bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not lower bound. When set to ``False``
@@ -1125,7 +1125,7 @@ cdef class SCIPBackend(GenericBackend):
 
         :issue:`14581`::
 
-            sage: P = MixedIntegerLinearProgram(solver="SCIP")
+            sage: P = MixedIntegerLinearProgram(solver='SCIP')
             sage: x = P["x"]
             sage: P.set_min(x, 5)
             sage: P.set_min(x, 0)
@@ -1134,7 +1134,7 @@ cdef class SCIPBackend(GenericBackend):
 
         Check that :issue:`10232` is fixed::
 
-            sage: p = get_solver(solver="SCIP")
+            sage: p = get_solver(solver='SCIP')
             sage: p.variable_lower_bound(2)
             Traceback (most recent call last):
             ...
@@ -1161,11 +1161,11 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef write_cip(self, filename):
         """
-        Write the problem to a .cip file
+        Write the problem to a ``.cip`` file.
 
         INPUT:
 
-        - ``filename`` (string)
+        - ``filename`` -- string
 
         EXAMPLES::
 
@@ -1176,7 +1176,7 @@ cdef class SCIPBackend(GenericBackend):
             sage: p.add_linear_constraint([[0, 1], [1, 2]], None, 3)
             sage: p.set_objective([2, 5])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".cip") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix='.cip') as f:
             ....:     p.write_cip(f.name)
             wrote problem to file ...
         """
@@ -1184,11 +1184,11 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef write_lp(self, filename):
         """
-        Write the problem to a .lp file
+        Write the problem to a ``.lp`` file.
 
         INPUT:
 
-        - ``filename`` (string)
+        - ``filename`` -- string
 
         EXAMPLES::
 
@@ -1199,7 +1199,7 @@ cdef class SCIPBackend(GenericBackend):
             sage: p.add_linear_constraint([[0, 1], [1, 2]], None, 3)
             sage: p.set_objective([2, 5])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".lp") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix='.lp') as f:
             ....:     p.write_lp(f.name)
             wrote problem to file ...
         """
@@ -1213,11 +1213,11 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef write_mps(self, filename, int modern):
         """
-        Write the problem to a .mps file
+        Write the problem to a ``.mps`` file.
 
         INPUT:
 
-        - ``filename`` (string)
+        - ``filename`` -- string
 
         EXAMPLES::
 
@@ -1228,7 +1228,7 @@ cdef class SCIPBackend(GenericBackend):
             sage: p.add_linear_constraint([[0, 1], [1, 2]], None, 3)
             sage: p.set_objective([2, 5])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".mps") as f:
+            sage: with tempfile.NamedTemporaryFile(suffix='.mps') as f:
             ....:     p.write_mps(f.name, 2)
             wrote problem to file ...
         """
@@ -1242,7 +1242,7 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef __copy__(self):
         """
-        Return a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -1263,19 +1263,19 @@ cdef class SCIPBackend(GenericBackend):
 
     cpdef solver_parameter(self, name, value=None):
         """
-        Return or define a solver parameter
+        Return or define a solver parameter.
 
         INPUT:
 
-        - ``name`` (string) -- the parameter
+        - ``name`` -- string; the parameter
 
         - ``value`` -- the parameter's value if it is to be defined,
-          or ``None`` (default) to obtain its current value.
+          or ``None`` (default) to obtain its current value
 
         EXAMPLES:
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="SCIP")
+            sage: p = get_solver(solver='SCIP')
             sage: p.solver_parameter("limits/time", 1)
             sage: p.solver_parameter("limits/time")
             1.0

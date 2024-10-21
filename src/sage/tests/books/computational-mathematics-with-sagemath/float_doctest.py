@@ -263,7 +263,7 @@ Sage example in ./float.tex, line 1564::
 
   sage: r3 = RIF(sqrt(3)); r3
   1.732050807568877?
-  sage: print(r3.str(style="brackets"))
+  sage: print(r3.str(style='brackets'))
   [1.7320508075688769 .. 1.7320508075688775]
 
 Sage example in ./float.tex, line 1602::

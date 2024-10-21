@@ -91,7 +91,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
     - ``M`` -- matroid (default: ``None``)
     - ``groundset`` -- groundset of a matroid (default: ``None``)
-    - ``circuit_closures`` -- dict (default: ``None``); the collection of
+    - ``circuit_closures`` -- dictionary (default: ``None``); the collection of
       circuit closures of a matroid presented as a dictionary whose keys are
       ranks, and whose values are sets of circuit closures of the specified rank
 
@@ -180,7 +180,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return frozenset(self._groundset)
 
-    cpdef int _rank(self, frozenset X):
+    cpdef int _rank(self, frozenset X) except? -1:
         """
         Return the rank of a set ``X``.
 
@@ -222,7 +222,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return self._matroid_rank
 
-    cpdef bint _is_independent(self, frozenset F):
+    cpdef bint _is_independent(self, frozenset F) noexcept:
         """
         Test if input is independent.
 

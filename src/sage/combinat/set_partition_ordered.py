@@ -331,7 +331,7 @@ class OrderedSetPartition(ClonableArray,
 
         INPUT:
 
-        - ``osps`` -- a list (or iterable) of ordered set partitions
+        - ``osps`` -- list (or iterable) of ordered set partitions
 
         EXAMPLES::
 
@@ -939,7 +939,7 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
             return OrderedSetPartitions_all()
         if isinstance(s, (int, Integer)):
             if s < 0:
-                raise ValueError("s must be non-negative")
+                raise ValueError("s must be nonnegative")
             s = frozenset(range(1, s + 1))
         else:
             s = frozenset(s)

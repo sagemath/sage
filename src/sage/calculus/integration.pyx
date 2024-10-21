@@ -73,7 +73,7 @@ def numerical_integral(func, a, b=None,
 
     INPUT:
 
-    - ``a``, ``b`` -- The interval of integration, specified as two
+    - ``a``, ``b`` -- the interval of integration, specified as two
       numbers or as a tuple/list with the first element the lower bound
       and the second element the upper bound.  Use ``+Infinity`` and
       ``-Infinity`` for plus or minus infinity.
@@ -88,7 +88,7 @@ def numerical_integral(func, a, b=None,
     - ``eps_abs``, ``eps_rel`` -- sets the absolute and relative error
       tolerances which satisfies the relation ``|RESULT - I|  <= max(eps_abs,
       eps_rel * |I|)``, where ``I = \int_a^b f(x) d x``.
-    - ``rule`` -- This controls the Gauss-Kronrod rule used in the adaptive integration:
+    - ``rule`` -- this controls the Gauss-Kronrod rule used in the adaptive integration:
 
       * rule=1 -- 15 point rule
       * rule=2 -- 21 point rule
@@ -254,7 +254,6 @@ def numerical_integral(func, a, b=None,
         sage: h(x) = x
         sage: numerical_integral(h,0,1)[0] # abs tol 1e-8
         0.5
-
     """
     cdef double abs_err  # step size
     cdef double result

@@ -60,7 +60,7 @@ square in `\RR^3`: the same unit square as ``S1``, but embedded in
 ``S1`` (in fact, they're "cubically equivalent"), and this is
 reflected in the fact that they have isomorphic homology groups.
 
-.. note::
+.. NOTE::
 
    This class derives from
    :class:`~sage.homology.cell_complex.GenericCellComplex`, and so
@@ -100,14 +100,17 @@ class Cube(SageObject):
     is a 3-dimensional cube (since one of the intervals is degenerate)
     embedded in `\RR^4`.
 
-    :param data: list or tuple of terms of the form ``(i,i+1)`` or
-      ``(i,i)`` or ``(i,)`` -- the last two are degenerate intervals.
-    :return: an elementary cube
+    INPUT:
+
+    - ``data`` -- list or tuple of terms of the form ``(i,i+1)`` or
+      ``(i,i)`` or ``(i,)``; the last two are degenerate intervals
+
+    OUTPUT: an elementary cube
 
     Each cube is stored in a standard form: a tuple of tuples, with a
     nondegenerate interval ``[j,j]`` represented by ``(j,j)``, not
     ``(j,)``.  (This is so that for any interval ``I``, ``I[1]`` will
-    produce a value, not an :class:`IndexError`.)
+    produce a value, not an :exc:`IndexError`.)
 
     EXAMPLES::
 
@@ -179,7 +182,7 @@ class Cube(SageObject):
 
     def is_face(self, other):
         """
-        Return True iff this cube is a face of other.
+        Return ``True`` iff this cube is a face of other.
 
         EXAMPLES::
 
@@ -210,9 +213,11 @@ class Cube(SageObject):
         """
         Translate ``self`` by ``vec``.
 
-        :param vec: anything which can be converted to a tuple of integers
-        :return: the translation of ``self`` by ``vec``
-        :rtype: Cube
+        INPUT:
+
+        - ``vec`` -- anything which can be converted to a tuple of integers
+
+        OUTPUT: cube; the translation of ``self`` by ``vec``
 
         If ``vec`` is shorter than the list of intervals forming the
         cube, pad with zeroes, and similarly if the cube's defining
@@ -238,10 +243,13 @@ class Cube(SageObject):
 
     def __getitem__(self, n):
         """
-        Return the nth interval in this cube.
+        Return the `n`-th interval in this cube.
 
-        :param n: an integer
-        :return: tuple representing the `n`-th interval in the cube.
+        INPUT:
+
+        - ``n`` -- integer
+
+        OUTPUT: tuple representing the `n`-th interval in the cube
 
         EXAMPLES::
 
@@ -272,8 +280,11 @@ class Cube(SageObject):
         Cube obtained by concatenating the underlying tuples of the
         two arguments.
 
-        :param other: another cube
-        :return: the product of ``self`` and ``other``, as a Cube
+        INPUT:
+
+        - ``other`` -- another cube
+
+        OUTPUT: the product of ``self`` and ``other``, as a Cube
 
         EXAMPLES::
 
@@ -334,15 +345,18 @@ class Cube(SageObject):
 
     def face(self, n, upper=True):
         """
-        The nth primary face of this cube.
+        The `n`-th primary face of this cube.
 
-        :param n: an integer between 0 and one less than the dimension
+        INPUT:
+
+        - ``n`` -- integer between 0 and one less than the dimension
           of this cube
-        :param upper: if True, return the "upper" nth primary face;
-          otherwise, return the "lower" nth primary face.
-        :type upper: boolean; optional, default=True
-        :return: the cube obtained by replacing the nth non-degenerate
-          interval with either its upper or lower endpoint.
+        - ``upper`` -- boolean (default=True);if ``True``, return the "upper"
+          `n`-th primary face; otherwise, return the "lower" `n`-th primary
+          face
+
+        OUTPUT: the cube obtained by replacing the `n`-th non-degenerate
+        interval with either its upper or lower endpoint.
 
         EXAMPLES::
 
@@ -360,10 +374,10 @@ class Cube(SageObject):
             sage: C.face(3)
             Traceback (most recent call last):
             ...
-            ValueError: can only compute the nth face if 0 <= n < dim
+            ValueError: can only compute the n-th face if 0 <= n < dim
         """
         if n < 0 or n >= self.dimension():
-            raise ValueError("can only compute the nth face if 0 <= n < dim")
+            raise ValueError("can only compute the n-th face if 0 <= n < dim")
         idx = self.nondegenerate_intervals()[n]
         t = self.__tuple
         if upper:
@@ -408,12 +422,15 @@ class Cube(SageObject):
         Given two cubes ``self`` and ``other``, describe how to
         transform them so that they become equal.
 
-        :param other: a cube of the same dimension as ``self``
-        :return: a triple ``(insert_self, insert_other, translate)``.
-          ``insert_self`` is a tuple with entries ``(index, (list of
-          degenerate intervals))``.  ``insert_other`` is similar.
-          ``translate`` is a tuple of integers, suitable as a second
-          argument for the ``_translate`` method.
+        INPUT:
+
+        - ``other`` -- a cube of the same dimension as ``self``
+
+        OUTPUT: a triple ``(insert_self, insert_other, translate)``.
+        ``insert_self`` is a tuple with entries ``(index, (list of
+        degenerate intervals))``.  ``insert_other`` is similar.
+        ``translate`` is a tuple of integers, suitable as a second
+        argument for the ``_translate`` method.
 
         To do this, ``self`` and ``other`` must have the same
         dimension; degenerate intervals from ``other`` are added to
@@ -616,11 +633,13 @@ class Cube(SageObject):
 
     def __eq__(self, other):
         """
-        Return True iff this cube is the same as ``other``: that is,
+        Return ``True`` iff this cube is the same as ``other``: that is,
         if they are the product of the same intervals in the same
         order.
 
-        :param other: another cube
+        INPUT:
+
+        - ``other`` -- another cube
 
         EXAMPLES::
 
@@ -637,9 +656,11 @@ class Cube(SageObject):
 
     def __ne__(self, other):
         """
-        Return True iff this cube is not equal to ``other``.
+        Return ``True`` iff this cube is not equal to ``other``.
 
-        :param other: another cube
+        INPUT:
+
+        - ``other`` -- another cube
 
         EXAMPLES::
 
@@ -656,10 +677,12 @@ class Cube(SageObject):
 
     def __lt__(self, other):
         """
-        Return True iff the tuple for this cube is less than that for
+        Return ``True`` iff the tuple for this cube is less than that for
         ``other``.
 
-        :param other: another cube
+        INPUT:
+
+        - ``other`` -- another cube
 
         EXAMPLES::
 
@@ -742,10 +765,12 @@ class CubicalComplex(GenericCellComplex):
     r"""
     Define a cubical complex.
 
-    :param maximal_faces: set of maximal faces
-    :param maximality_check: see below
-    :type maximality_check: boolean; optional, default: ``True``
-    :return: a cubical complex
+    INPUT:
+
+    - ``maximal_faces`` -- set of maximal faces
+    - ``maximality_check`` -- boolean (default: ``True``); see below
+
+    OUTPUT: a cubical complex
 
     ``maximal_faces`` should be a list or tuple or set (or anything
     which may be converted to a set) of "cubes": instances of the
@@ -919,7 +944,7 @@ class CubicalComplex(GenericCellComplex):
         The set of maximal cells (with respect to inclusion) of this
         cubical complex.
 
-        :return: Set of maximal cells
+        OUTPUT: set of maximal cells
 
         This just returns the set of cubes used in defining the
         cubical complex, so if the complex was defined with no
@@ -939,12 +964,12 @@ class CubicalComplex(GenericCellComplex):
 
     def __eq__(self, other):
         r"""
-        Return True if the set of maximal cells is the same for
+        Return ``True`` if the set of maximal cells is the same for
         ``self`` and ``other``.
 
-        :param other: another cubical complex
-        :return: True if the set of maximal cells is the same for ``self`` and ``other``
-        :rtype: bool
+        INPUT:
+
+        - ``other`` -- another cubical complex
 
         EXAMPLES::
 
@@ -962,11 +987,11 @@ class CubicalComplex(GenericCellComplex):
 
     def __ne__(self, other):
         r"""
-        Return True if ``self`` and ``other`` are not equal.
+        Return ``True`` if ``self`` and ``other`` are not equal.
 
-        :param other: another cubical complex
-        :return: True if the complexes are not equal
-        :rtype: bool
+        INPUT:
+
+        - ``other`` -- another cubical complex
 
         EXAMPLES::
 
@@ -997,9 +1022,11 @@ class CubicalComplex(GenericCellComplex):
 
     def is_subcomplex(self, other):
         r"""
-        Return True if ``self`` is a subcomplex of ``other``.
+        Return ``True`` if ``self`` is a subcomplex of ``other``.
 
-        :param other: a cubical complex
+        INPUT:
+
+        - ``other`` -- a cubical complex
 
         Each maximal cube of ``self`` must be a face of a maximal cube
         of ``other`` for this to be True.
@@ -1049,10 +1076,13 @@ class CubicalComplex(GenericCellComplex):
         If the optional argument ``subcomplex`` is present, then
         return only the faces which are *not* in the subcomplex.
 
-        :param subcomplex: a subcomplex of this cubical complex
-        :type subcomplex: a cubical complex; optional, default None
-        :return: cells of this complex not contained in ``subcomplex``
-        :rtype: dictionary
+        INPUT:
+
+        - ``subcomplex`` -- a subcomplex of this cubical complex (default:
+          ``None``)
+
+        OUTPUT: dictionary; the cells of this complex not contained in
+        ``subcomplex``
 
         EXAMPLES::
 
@@ -1108,12 +1138,13 @@ class CubicalComplex(GenericCellComplex):
         return the ``n``-dimensional cubes which are *not* in the
         subcomplex.
 
-        :param n: dimension
-        :type n: integer
-        :param subcomplex: a subcomplex of this cubical complex
-        :type subcomplex: a cubical complex; optional, default None
-        :return: cells in dimension ``n``
-        :rtype: set
+        INPUT:
+
+        - ``n`` -- integer; dimension
+        - ``subcomplex`` -- a subcomplex of this cubical complex (default:
+          ``None``)
+
+        OUTPUT: set; cells in dimension ``n``
 
         EXAMPLES::
 
@@ -1136,33 +1167,29 @@ class CubicalComplex(GenericCellComplex):
         r"""
         The chain complex associated to this cubical complex.
 
-        :param dimensions: if None, compute the chain complex in all
-           dimensions.  If a list or tuple of integers, compute the
-           chain complex in those dimensions, setting the chain groups
-           in all other dimensions to zero.  NOT IMPLEMENTED YET: this
-           function always returns the entire chain complex
-        :param base_ring: commutative ring
-        :type base_ring: optional, default ZZ
-        :param subcomplex: a subcomplex of this cubical complex.
-           Compute the chain complex relative to this subcomplex.
-        :type subcomplex: optional, default empty
-        :param augmented: If True, return the augmented chain complex
-           (that is, include a class in dimension `-1` corresponding
-           to the empty cell).  This is ignored if ``dimensions`` is
-           specified.
-        :type augmented: boolean; optional, default: ``False``
-        :param cochain: If True, return the cochain complex (that is,
-           the dual of the chain complex).
-        :type cochain: boolean; optional, default: ``False``
-        :param verbose: If True, print some messages as the chain
-           complex is computed.
-        :type verbose: boolean; optional, default: ``False``
-        :param check: If True, make sure that the chain complex
-           is actually a chain complex: the differentials are
-           composable and their product is zero.
-        :type check: boolean; optional, default: ``False``
+        INPUT:
 
-        .. note::
+        - ``dimensions`` -- if ``None``, compute the chain complex in all
+          dimensions.  If a list or tuple of integers, compute the
+          chain complex in those dimensions, setting the chain groups
+          in all other dimensions to zero.  NOT IMPLEMENTED YET: this
+          function always returns the entire chain complex
+        - ``base_ring`` -- commutative ring (default: ZZ)
+        - ``subcomplex`` -- a subcomplex of this cubical complex (default: empty).
+          Compute the chain complex relative to this subcomplex.
+        - ``augmented`` -- boolean (default: ``False``); if ``True``, return
+          the augmented chain complex (that is, include a class in dimension
+          `-1` corresponding to the empty cell).  This is ignored if
+          ``dimensions`` is specified.
+        - ``cochain`` -- boolean (default: ``False``); if ``True``, return the
+          cochain complex (that is, the dual of the chain complex).
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print some
+          messages as the chain complex is computed.
+        - ``check`` -- boolean (default: ``False``); if ``True``, make sure
+          that the chain complex is actually a chain complex: the differentials
+          are composable and their product is zero.
+
+        .. NOTE::
 
            If subcomplex is nonempty, then the argument ``augmented``
            has no effect: the chain complex relative to a nonempty
@@ -1293,7 +1320,7 @@ class CubicalComplex(GenericCellComplex):
         - ``dim`` -- integer between 0 and one more than the
           dimension of this cube
 
-        OUTPUT: a list containing triples ``(coeff, left, right)``
+        OUTPUT: list containing triples ``(coeff, left, right)``
 
         EXAMPLES::
 
@@ -1311,9 +1338,11 @@ class CubicalComplex(GenericCellComplex):
         r"""
         The n-skeleton of this cubical complex.
 
-        :param n: dimension
-        :type n: non-negative integer
-        :return: cubical complex
+        INPUT:
+
+        - ``n`` -- nonnegative integer; dimension
+
+        OUTPUT: cubical complex
 
         EXAMPLES::
 
@@ -1356,10 +1385,10 @@ class CubicalComplex(GenericCellComplex):
 
     def is_pure(self):
         """
-        True iff this cubical complex is pure: that is,
+        Return ``True`` iff this cubical complex is pure: that is,
         all of its maximal faces have the same dimension.
 
-        .. warning::
+        .. WARNING::
 
            This may give the wrong answer if the cubical complex
            was constructed with ``maximality_check`` set to False.
@@ -1382,7 +1411,9 @@ class CubicalComplex(GenericCellComplex):
 
         NOT IMPLEMENTED.
 
-        :param other: another cubical complex
+        INPUT:
+
+        - ``other`` -- another cubical complex
 
         EXAMPLES::
 
@@ -1425,8 +1456,9 @@ class CubicalComplex(GenericCellComplex):
 
         NOT IMPLEMENTED
 
-        :param n: suspend this many times
-        :type n: positive integer; optional, default 1
+        INPUT:
+
+        - ``n`` -- positive integer (default: 1); suspend this many times
 
         The suspension is the complex formed by taking the join of the
         original complex with a two-point complex (the 0-sphere).
@@ -1442,7 +1474,7 @@ class CubicalComplex(GenericCellComplex):
             NotImplementedError: suspensions are not implemented for cubical complexes
         """
 #         if n<0:
-#             raise ValueError, "n must be non-negative."
+#             raise ValueError, "n must be nonnegative."
 #         if n==0:
 #             return self
 #         if n==1:
@@ -1454,7 +1486,9 @@ class CubicalComplex(GenericCellComplex):
         r"""
         Return the product of this cubical complex with another one.
 
-        :param other: another cubical complex
+        INPUT:
+
+        - ``other`` -- another cubical complex
 
         EXAMPLES::
 
@@ -1470,7 +1504,9 @@ class CubicalComplex(GenericCellComplex):
         """
         The disjoint union of this cubical complex with another one.
 
-        :param right: the other cubical complex (the right-hand factor)
+        INPUT:
+
+        - ``right`` -- the other cubical complex (the right-hand factor)
 
         Algorithm: first embed both complexes in d-dimensional
         Euclidean space.  Then embed in (1+d)-dimensional space,
@@ -1500,7 +1536,9 @@ class CubicalComplex(GenericCellComplex):
         The wedge (one-point union) of this cubical complex with
         another one.
 
-        :param right: the other cubical complex (the right-hand factor)
+        INPUT:
+
+        - ``right`` -- the other cubical complex (the right-hand factor)
 
         Algorithm: if ``self`` is embedded in `d` dimensions and
         ``other`` in `n` dimensions, embed them in `d+n` dimensions:
@@ -1508,7 +1546,7 @@ class CubicalComplex(GenericCellComplex):
         last `n`, translating them so that they have the origin as a
         common vertex.
 
-        .. note::
+        .. NOTE::
 
             This operation is not well-defined if ``self`` or
             ``other`` is not path-connected.
@@ -1533,14 +1571,17 @@ class CubicalComplex(GenericCellComplex):
 
     def connected_sum(self, other):
         """
-        Return the connected sum of self with other.
+        Return the connected sum of ``self`` with ``other``.
 
-        :param other: another cubical complex
-        :return: the connected sum ``self # other``
+        INPUT:
+
+        - ``other`` -- another cubical complex
+
+        OUTPUT: the connected sum ``self # other``
 
         .. warning::
 
-           This does not check that self and other are manifolds, only
+           This does not check that ``self`` and ``other`` are manifolds, only
            that their facets all have the same dimension.  Since a
            (more or less) random facet is chosen from each complex and
            then glued together, this method may return random
@@ -1610,9 +1651,11 @@ class CubicalComplex(GenericCellComplex):
         """
         Translate ``self`` by ``vec``.
 
-        :param vec: anything which can be converted to a tuple of integers
-        :return: the translation of ``self`` by ``vec``
-        :rtype: cubical complex
+        INPUT:
+
+        - ``vec`` -- anything which can be converted to a tuple of integers
+
+        OUTPUT: cubical complex; the translation of ``self`` by ``vec``
 
         If ``vec`` is shorter than the list of intervals forming the
         complex, pad with zeroes, and similarly if the complexes
@@ -1641,8 +1684,7 @@ class CubicalComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` -- coefficient ring (default:
-          ``QQ``). Must be a field.
+        - ``base_ring`` -- coefficient ring (default: ``QQ``); must be a field
 
         Denote by `C` the chain complex associated to this cubical
         complex. The algebraic topological model is a chain complex
@@ -1692,7 +1734,7 @@ class CubicalComplex(GenericCellComplex):
 
     def _simplicial_(self):
         r"""
-        Simplicial complex constructed from self.
+        Simplicial complex constructed from ``self``.
 
         ALGORITHM:
 
@@ -1795,8 +1837,9 @@ class CubicalComplexExamples:
         A cubical complex representation of the `n`-dimensional sphere,
         formed by taking the boundary of an `(n+1)`-dimensional cube.
 
-        :param n: the dimension of the sphere
-        :type n: non-negative integer
+        INPUT:
+
+        - ``n`` -- nonnegative integer; the dimension of the sphere
 
         EXAMPLES::
 
@@ -1867,12 +1910,13 @@ class CubicalComplexExamples:
 
     def SurfaceOfGenus(self, g, orientable=True):
         """
-        A surface of genus g as a cubical complex.
+        A surface of genus `g` as a cubical complex.
 
-        :param g: the genus
-        :type g: non-negative integer
-        :param orientable: whether the surface should be orientable
-        :type orientable: bool, optional, default: ``True``
+        INPUT:
+
+        - ``g`` -- nonnegative integer; the genus
+        - ``orientable`` -- boolean (default: ``True``); whether the surface
+          should be orientable
 
         In the orientable case, return a sphere if `g` is zero, and
         otherwise return a `g`-fold connected sum of a torus with
@@ -1892,9 +1936,9 @@ class CubicalComplexExamples:
         try:
             g = Integer(g)
         except TypeError:
-            raise ValueError("genus must be a non-negative integer")
+            raise ValueError("genus must be a nonnegative integer")
         if g < 0:
-            raise ValueError("genus must be a non-negative integer")
+            raise ValueError("genus must be a nonnegative integer")
         if g == 0:
             if not orientable:
                 raise ValueError("no non-orientable surface of genus zero")
@@ -1913,8 +1957,9 @@ class CubicalComplexExamples:
         r"""
         A cubical complex representation of an `n`-dimensional cube.
 
-        :param n: the dimension
-        :type n: non-negative integer
+        INPUT:
+
+        - ``n`` -- nonnegative integer; the dimension
 
         EXAMPLES::
 

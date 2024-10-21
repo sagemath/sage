@@ -38,15 +38,15 @@ cdef class ContainChildren():
 
     INPUT:
 
-    - ``exitcode`` -- (integer, default 0) exit code to use when a
+    - ``exitcode`` -- integer (default: 0); exit code to use when a
       child process tries to exit the with block normally (not due to
       an exception)
 
-    - ``exceptcode`` -- (integer, default 1) exit code to use when a
+    - ``exceptcode`` -- integer (default: 1); exit code to use when a
       child process tries to exit the with block due to an exception
 
-    - ``silent`` -- (boolean, default ``False``) if ``False``, print
-      exceptions raised by the child process.
+    - ``silent`` -- boolean (default: ``False``); if ``False``, print
+      exceptions raised by the child process
 
     EXAMPLES::
 
@@ -187,7 +187,7 @@ def terminate(sp, interval=1, signals=[signal.SIGTERM, signal.SIGKILL]):
     INPUT:
 
     - ``sp`` -- a `subprocess.Popen` instance
-    - ``interval`` -- (float, default 1) interval in seconds between
+    - ``interval`` -- float (default: 1); interval in seconds between
       termination attempts
     - ``signals`` -- (list, default [signal.SIGTERM, signal.SIGKILL]) the
       signals to send the process in order to terminate it

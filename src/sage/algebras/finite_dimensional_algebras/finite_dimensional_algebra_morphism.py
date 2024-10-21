@@ -30,7 +30,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
     - ``f`` -- matrix of the underlying `k`-linear map
 
     - ``unitary`` -- boolean (default: ``True``); if ``True`` and ``check``
-      is also ``True``, raise a :class:`ValueError` unless ``A`` and ``B`` are
+      is also ``True``, raise a :exc:`ValueError` unless ``A`` and ``B`` are
       unitary and ``f`` respects unit elements
 
     - ``check`` -- boolean (default: ``True``); check whether the given
@@ -68,7 +68,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
             ....:                                   Matrix([[0, 1], [0, 0]])])
             sage: H = Hom(A, B)
             sage: phi = FiniteDimensionalAlgebraMorphism(H, Matrix([[1, 0]]))
-            sage: TestSuite(phi).run(skip="_test_category")
+            sage: TestSuite(phi).run(skip='_test_category')
         """
         A = parent.domain()
         B = parent.codomain()
@@ -179,9 +179,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
 
         - ``I`` -- ``FiniteDimensionalAlgebraIdeal``, an ideal of ``self.codomain()``
 
-        OUTPUT:
-
-        :class:`FiniteDimensionalAlgebraIdeal`, the inverse image of `I` under ``self``.
+        OUTPUT: :class:`FiniteDimensionalAlgebraIdeal`, the inverse image of `I` under ``self``
 
         EXAMPLES::
 

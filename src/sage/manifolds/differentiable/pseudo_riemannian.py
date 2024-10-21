@@ -410,7 +410,6 @@ class PseudoRiemannianManifold(DifferentiableManifold):
         Lorentzian metric g on the 4-dimensional Lorentzian manifold M
         sage: M.metric().signature()
         -2
-
     """
     def __init__(self, n, name, metric_name=None, signature=None,
                  base_manifold=None, diff_degree=infinity, latex_name=None,
@@ -431,7 +430,6 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             sage: M.metric()
             Pseudo-Riemannian metric g on the 4-dimensional pseudo-Riemannian manifold M
             sage: TestSuite(M).run()
-
         """
         if base_manifold and not isinstance(base_manifold, PseudoRiemannianManifold):
             raise TypeError("the argument 'base_manifold' must be a " +
@@ -565,7 +563,6 @@ class PseudoRiemannianManifold(DifferentiableManifold):
 
             sage: h = M.metric('h', signature=1); h
             Lorentzian metric h on the 3-dimensional Riemannian manifold M
-
         """
         if name is None or name == self._metric_name:
             # Default metric associated with the manifold
@@ -670,7 +667,6 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             3-vector field on the 3-dimensional Riemannian manifold M
             sage: eps3.display()
             ∂/∂x∧∂/∂y∧∂/∂z
-
         """
         return self.metric().volume_form(contra=contra)
 
@@ -688,7 +684,7 @@ class PseudoRiemannianManifold(DifferentiableManifold):
         INPUT:
 
         - ``name`` -- name given to the open subset
-        - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
+        - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
           subset; if none is provided, it is set to ``name``
         - ``coord_def`` -- (default: {}) definition of the subset in
           terms of coordinates; ``coord_def`` must a be dictionary with keys
@@ -739,7 +735,6 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             g = dx⊗dx + dy⊗dy
             sage: gV is g.restrict(V)
             True
-
         """
         resu = PseudoRiemannianManifold(self._dim, name,
                                         metric_name=self._metric_name,

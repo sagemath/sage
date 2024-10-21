@@ -48,7 +48,7 @@ class AffinePermutation(ClonableArray):
 
     def __init__(self, parent, lst, check=True):
         r"""
-        Initialize ``self``
+        Initialize ``self``.
 
         INPUT:
 
@@ -150,7 +150,7 @@ class AffinePermutation(ClonableArray):
 
         INPUT:
 
-        - ``q`` -- An element of ``self.parent()``
+        - ``q`` -- an element of ``self.parent()``
 
         EXAMPLES::
 
@@ -160,7 +160,6 @@ class AffinePermutation(ClonableArray):
             Type A affine permutation with window [-1, 3, 0, 6, 5, 4, 10, 9]
             sage: p.apply_simple_reflection(1, 'right')
             Type A affine permutation with window [-1, 3, 0, 6, 5, 4, 10, 9]
-
         """
         return self.__rmul__(q)
 
@@ -184,7 +183,7 @@ class AffinePermutation(ClonableArray):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
         - ``side`` -- (default: ``'right'``) determines whether to apply the
           reflection on the ``'right'`` or ``'left'``
 
@@ -220,7 +219,7 @@ class AffinePermutation(ClonableArray):
         """
         return self.value(i)
 
-    def is_i_grassmannian(self, i=0, side="right") -> bool:
+    def is_i_grassmannian(self, i=0, side='right') -> bool:
         r"""
         Test whether ``self`` is `i`-grassmannian, i.e., either is the
         identity or has ``i`` as the sole descent.
@@ -259,7 +258,7 @@ class AffinePermutation(ClonableArray):
         """
         return tuple(range(self.k+1))
 
-    def lower_covers(self,side="right"):
+    def lower_covers(self, side='right'):
         r"""
         Return lower covers of ``self``.
 
@@ -282,7 +281,7 @@ class AffinePermutation(ClonableArray):
 
     def is_one(self) -> bool:
         r"""
-        Tests whether the affine permutation is the identity.
+        Test whether the affine permutation is the identity.
 
         EXAMPLES::
 
@@ -298,7 +297,7 @@ class AffinePermutation(ClonableArray):
 
     def reduced_word(self):
         r"""
-        Returns a reduced word for the affine permutation.
+        Return a reduced word for the affine permutation.
 
         EXAMPLES::
 
@@ -501,7 +500,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -580,7 +579,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -600,7 +599,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -676,11 +675,11 @@ class AffinePermutationTypeA(AffinePermutation):
           (default: ``'decreasing'``); chooses whether to find increasing
           or decreasing sets
 
-        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) chooses
+        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``); chooses
           whether to find maximal sets starting from the left or the right
 
-        - ``verbose`` -- True or False.  If True, outputs information about how
-          the cyclically increasing element was found.
+        - ``verbose`` -- boolean;  if ``True``, outputs information about how
+          the cyclically increasing element was found
 
         EXAMPLES::
 
@@ -744,8 +743,8 @@ class AffinePermutationTypeA(AffinePermutation):
         - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``) chooses
           whether to find maximal sets starting from the left or the right
 
-        - ``verbose`` -- (default: ``False``) print extra information while
-          finding the decomposition
+        - ``verbose`` -- boolean (default: ``False``); print extra information
+          while finding the decomposition
 
         EXAMPLES::
 
@@ -907,7 +906,7 @@ class AffinePermutationTypeA(AffinePermutation):
                 if m != -1 and c[i] - (i - m) >= c[m]:
                     return False
                 m = i
-        # now check m (the last non-zero) against first non-zero.
+        # now check m (the last nonzero) against first nonzero.
         d = self.n - (m - firstnonzero)
         return not c[firstnonzero] - d >= c[m]
 
@@ -918,11 +917,11 @@ class AffinePermutationTypeA(AffinePermutation):
 
         INPUT:
 
-        - ``typ`` -- ``'increasing'`` or ``'decreasing'`` (default: ``'decreasing'``.)
-          Chooses whether to find increasing or decreasing sets.
+        - ``typ`` -- ``'increasing'`` or ``'decreasing'`` (default: ``'decreasing'``);
+          chooses whether to find increasing or decreasing sets
 
-        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``.)  Chooses whether to
-          find maximal sets starting from the left or the right.
+        - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``); chooses
+          whether to find maximal sets starting from the left or the right
 
         EXAMPLES::
 
@@ -937,7 +936,7 @@ class AffinePermutationTypeA(AffinePermutation):
 
     def to_core(self, typ='decreasing', side='right'):
         r"""
-        Returns the core associated to the dominant element obtained by sorting
+        Return the core associated to the dominant element obtained by sorting
         the Lehmer code.
 
         INPUT:
@@ -945,7 +944,7 @@ class AffinePermutationTypeA(AffinePermutation):
         - ``typ`` -- ``'increasing'`` or ``'decreasing'`` (default: ``'decreasing'``.)
 
         - ``side`` -- ``'right'`` or ``'left'`` (default: ``'right'``.)  Chooses whether to
-          find maximal sets starting from the left or the right.
+          find maximal sets starting from the left or the right
 
         EXAMPLES::
 
@@ -1120,7 +1119,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
     def position(self, i):
         r"""
-        Find the position `j` such the ``self.value(j)=i``
+        Find the position `j` such the ``self.value(j)=i``.
 
         EXAMPLES::
 
@@ -1232,7 +1231,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1253,7 +1252,7 @@ class AffinePermutationTypeC(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1415,7 +1414,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1434,7 +1433,7 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1590,7 +1589,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1611,7 +1610,7 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1792,7 +1791,7 @@ class AffinePermutationTypeG(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -1813,7 +1812,7 @@ class AffinePermutationTypeG(AffinePermutation):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -2068,7 +2067,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def weyl_group(self):
         r"""
-        Returns the Weyl Group of the same type as ``self``.
+        Return the Weyl Group of the same type as ``self``.
 
         EXAMPLES::
 
@@ -2080,7 +2079,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def classical(self):
         r"""
-        Returns the finite permutation group.
+        Return the finite permutation group.
 
         EXAMPLES::
 
@@ -2094,7 +2093,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def cartan_type(self):
         r"""
-        Returns the Cartan type of ``self``.
+        Return the Cartan type of ``self``.
 
         EXAMPLES::
 
@@ -2105,7 +2104,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def cartan_matrix(self):
         r"""
-        Returns the Cartan matrix of ``self``.
+        Return the Cartan matrix of ``self``.
 
         EXAMPLES::
 
@@ -2168,7 +2167,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
         Return a random affine permutation of length ``n``.
 
         If ``n`` is not specified, then ``n`` is chosen as a random
-        non-negative integer in `[0, 1000]`.
+        nonnegative integer in `[0, 1000]`.
 
         Starts at the identity, then chooses an upper cover at random.
         Not very uniform: actually constructs a uniformly random reduced word
@@ -2193,7 +2192,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
 
     def from_word(self, w):
         r"""
-        Builds an affine permutation from a given word.
+        Build an affine permutation from a given word.
         Note: Already in category as ``from_reduced_word``, but this is less
         typing!
 
@@ -2209,7 +2208,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
     @cached_method
     def _an_element_(self):
         r"""
-        Returns a Coxeter element.
+        Return a Coxeter element.
 
         EXAMPLES::
 

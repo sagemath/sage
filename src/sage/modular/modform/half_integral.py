@@ -17,6 +17,7 @@ from . import constructor
 from .theta import theta2_qexp, theta_qexp
 from copy import copy
 
+
 def half_integral_weight_modform_basis(chi, k, prec):
     r"""
     A basis for the space of weight `k/2` forms with character
@@ -29,9 +30,9 @@ def half_integral_weight_modform_basis(chi, k, prec):
 
     - ``k`` -- an odd integer > 1
 
-    - ``prec`` -- a positive integer
+    - ``prec`` -- positive integer
 
-    OUTPUT: a list of power series
+    OUTPUT: list of power series
 
     .. warning::
 

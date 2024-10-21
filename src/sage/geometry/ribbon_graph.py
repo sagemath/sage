@@ -40,13 +40,13 @@ def _find(l, k):
 
     INPUT:
 
-    - ``l`` -- a list of lists
+    - ``l`` -- list of lists
     - ``k`` -- a candidate to be in a list in ``l``
 
     OUTPUT:
 
     A list with two integers describing the position of the first
-    instance of `k`` in ``l``.
+    instance of ``k`` in ``l``.
 
     TESTS::
 
@@ -75,11 +75,9 @@ def _clean(l):
 
     INPUT:
 
-    - ``l`` -- a list of lists
+    - ``l`` -- list of lists
 
-    OUTPUT:
-
-    - a list which is a copy of ``l`` with all empty sublists removed
+    OUTPUT: list which is a copy of ``l`` with all empty sublists removed
 
     EXAMPLES::
 
@@ -410,12 +408,10 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``k`` -- non-negative integer; the position in `\rho` of the
+        - ``k`` -- nonnegative integer; the position in `\rho` of the
           transposition that is going to be contracted
 
-        OUTPUT:
-
-        - a ribbon graph resulting from the contraction of that edge
+        OUTPUT: a ribbon graph resulting from the contraction of that edge
 
         EXAMPLES:
 
@@ -610,7 +606,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        - ``g`` -- non-negative integer representing the genus of the
+        - ``g`` -- nonnegative integer representing the genus of the
           thickening of the ribbon graph
 
         EXAMPLES::
@@ -1049,7 +1045,6 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             Ribbon graph of genus 1 and 1 boundary components
             (1,2,3)(4,5,6)
             (1,4)(2,5)(3,6)
-
         """
         #First we compute the vertices of valency 1 and store them in val_one.
         aux_sigma = [list(x) for x in self._sigma.cycle_tuples()]
@@ -1091,7 +1086,7 @@ def make_ribbon(g, r):
 
     INPUT:
 
-    - ``g`` -- non-negative integer representing the genus of the
+    - ``g`` -- nonnegative integer representing the genus of the
       thickening
 
     - ``r`` -- positive integer representing the number of boundary
@@ -1133,7 +1128,6 @@ def make_ribbon(g, r):
         (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,33,31)(16,32,34,17,18,19,20,21,22,23,24,25,26,27,28,29,30)
         sage: R.rho()
         (1,16)(2,17)(3,18)(4,19)(5,20)(6,21)(7,22)(8,23)(9,24)(10,25)(11,26)(12,27)(13,28)(14,29)(15,30)(31,32)(33,34)
-
     """
     #Initialize the two vertices of sigma and the edge joining them
     repr_sigma = [[1],[2*g+2]]
@@ -1177,8 +1171,8 @@ def bipartite_ribbon_graph(p, q):
 
     INPUT:
 
-    - ``p`` -- a positive integer
-    - ``q`` -- a positive integer
+    - ``p`` -- positive integer
+    - ``q`` -- positive integer
 
     EXAMPLES::
 
@@ -1206,7 +1200,6 @@ def bipartite_ribbon_graph(p, q):
         Ribbon graph of genus 9 and 1 boundary components
         (1,2,3,4,5,6,7)(8,9,10,11,12,13,14)(15,16,17,18,19,20,21)(22,23,24,25,26,27,28)(29,30,31,32)(33,34,35,36)(37,38,39,40)(41,42,43,44)(45,46,47,48)(49,50,51,52)(53,54,55,56)
         (1,32)(2,36)(3,40)(4,44)(5,48)(6,52)(7,56)(8,31)(9,35)(10,39)(11,43)(12,47)(13,51)(14,55)(15,30)(16,34)(17,38)(18,42)(19,46)(20,50)(21,54)(22,29)(23,33)(24,37)(25,41)(26,45)(27,49)(28,53)
-
     """
     sigma = []
     rho = []

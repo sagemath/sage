@@ -209,7 +209,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             return self.imag()
         raise IndexError("i must be between 0 and 1.")
 
-    def __reduce__( self ):
+    def __reduce__(self):
         """
         Pickling support.
 
@@ -272,7 +272,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         INPUT:
 
         - ``parent`` -- :class:`~sage.rings.real_mpfr.RealField_class`,
-          target parent.
+          target parent
 
         EXAMPLES::
 
@@ -533,7 +533,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
     def overlaps(self, ComplexIntervalFieldElement other):
         """
-        Return ``True`` if ``self`` and other are intervals with at least
+        Return ``True`` if ``self`` and ``other`` are intervals with at least
         one value in common.
 
         EXAMPLES::
@@ -855,19 +855,19 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         Note that ``x^2`` is not the same as ``x*x``::
 
             sage: a = CIF(RIF(-1,1))
-            sage: print((a^2).str(style="brackets"))
+            sage: print((a^2).str(style='brackets'))
             [0.0000000000000000 .. 1.0000000000000000]
-            sage: print((a*a).str(style="brackets"))
+            sage: print((a*a).str(style='brackets'))
             [-1.0000000000000000 .. 1.0000000000000000]
             sage: a = CIF(0, RIF(-1,1))
-            sage: print((a^2).str(style="brackets"))
+            sage: print((a^2).str(style='brackets'))
             [-1.0000000000000000 .. -0.0000000000000000]
-            sage: print((a*a).str(style="brackets"))
+            sage: print((a*a).str(style='brackets'))
             [-1.0000000000000000 .. 1.0000000000000000]
             sage: a = CIF(RIF(-1,1), RIF(-1,1))
-            sage: print((a^2).str(style="brackets"))
+            sage: print((a^2).str(style='brackets'))
             [-1.0000000000000000 .. 1.0000000000000000] + [-2.0000000000000000 .. 2.0000000000000000]*I
-            sage: print((a*a).str(style="brackets"))
+            sage: print((a*a).str(style='brackets'))
             [-2.0000000000000000 .. 2.0000000000000000] + [-2.0000000000000000 .. 2.0000000000000000]*I
 
         We can take very high powers::
@@ -877,7 +877,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: s = RealField(27, rnd="RNDZ")(1/2)^(1/3)
             sage: a = CIF(RIF(-s/2,s/2), RIF(-s, s))
             sage: r = a^(10^10000)
-            sage: print(r.str(style="brackets"))
+            sage: print(r.str(style='brackets'))
             [-2.107553304e1028 .. 2.107553304e1028] + [-2.107553304e1028 .. 2.107553304e1028]*I
 
         TESTS::
@@ -974,13 +974,13 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
     def _interface_init_(self, I=None):
         """
-        Raise a ``TypeError``.
+        Raise a :exc:`TypeError`.
 
         This function would return the string representation of ``self``
         that makes sense as a default representation of a complex
         interval in other computer algebra systems. But, most other
         computer algebra systems do not support interval arithmetic,
-        so instead we just raise a ``TypeError``.
+        so instead we just raise a :exc:`TypeError`.
 
         Define the appropriate ``_cas_init_`` function if there is a
         computer algebra system you would like to support.
@@ -993,7 +993,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             ...
             TypeError
 
-        Here a conversion to Maxima happens, which results in a ``TypeError``::
+        Here a conversion to Maxima happens, which results in a :exc:`TypeError`::
 
             sage: a = CIF(2.3)
             sage: maxima(a)                                                             # needs sage.symbolic
@@ -1572,7 +1572,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
     def multiplicative_order(self):
         """
         Return the multiplicative order of this complex number, if known,
-        or raise a ``NotImplementedError``.
+        or raise a :exc:`NotImplementedError`.
 
         EXAMPLES::
 
@@ -1615,7 +1615,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
         The argument (angle) of the complex number, normalized
         so that `-\pi < \theta.lower() \leq \pi`.
 
-        We raise a ``ValueError`` if the interval strictly contains 0,
+        We raise a :exc:`ValueError` if the interval strictly contains 0,
         or if the interval contains only 0.
 
         .. WARNING::
@@ -1855,8 +1855,8 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         INPUT:
 
-        - ``all`` -- bool (default: ``False``); if ``True``, return a list
-          of all square roots.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a list
+          of all square roots
 
         EXAMPLES::
 
@@ -2390,6 +2390,7 @@ cdef _circle_invert_standard(
     if crosses_NE_diagonal:
         mpfr_clear(min2)
 
+
 def make_ComplexIntervalFieldElement0( fld, re, im ):
     """
     Construct a :class:`ComplexIntervalFieldElement` for pickling.
@@ -2411,16 +2412,16 @@ def create_ComplexIntervalFieldElement(s_real, s_imag=None, int pad=0, min_prec=
 
     INPUT:
 
-    - ``s_real`` -- a string that defines a real number (or something whose
+    - ``s_real`` -- string that defines a real number (or something whose
       string representation defines a number)
 
-    - ``s_imag`` -- a string that defines a real number (or something whose
+    - ``s_imag`` -- string that defines a real number (or something whose
       string representation defines a number)
 
-    - ``pad`` -- an integer at least 0.
+    - ``pad`` -- integer at least 0
 
     - ``min_prec`` -- number will have at least this many bits of precision,
-      no matter what.
+      no matter what
 
     EXAMPLES::
 
@@ -2455,7 +2456,6 @@ def create_ComplexIntervalFieldElement(s_real, s_imag=None, int pad=0, min_prec=
         ....:         assert c_CIFE(0,s).imag()-1 != 0
         ....:     except TypeError:
         ....:         pass
-
     """
     if s_imag is None:
         s_imag = 0

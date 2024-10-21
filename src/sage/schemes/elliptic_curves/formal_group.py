@@ -119,7 +119,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting power series will have precision prec, but
+            The resulting power series will have precision ``prec``, but
             its parent PowerSeriesRing will have default precision 20
             (or whatever the default default is).
 
@@ -252,7 +252,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting series will have precision prec, but its
+            The resulting series will have precision ``prec``, but its
             parent PowerSeriesRing will have default precision 20 (or
             whatever the default default is).
 
@@ -290,7 +290,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting series will have precision prec, but its
+            The resulting series will have precision ``prec``, but its
             parent PowerSeriesRing will have default precision 20 (or
             whatever the default default is).
 
@@ -339,7 +339,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting series will have precision prec, but its
+            The resulting series will have precision ``prec``, but its
             parent PowerSeriesRing will have default precision 20 (or
             whatever the default default is).
 
@@ -418,7 +418,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting power series will have precision prec, but
+            The resulting power series will have precision ``prec``, but
             its parent PowerSeriesRing will have default precision 20
             (or whatever the default default is).
 
@@ -580,7 +580,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         .. WARNING::
 
-            The resulting power series will have precision prec, but
+            The resulting power series will have precision ``prec``, but
             its parent PowerSeriesRing will have default precision 20
             (or whatever the default default is).
 

@@ -257,7 +257,6 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             ....:     P = PolynomialRing(F, 'x')
             ....:     f = P.random_element(8)
             ....:     assert f(b) == sum(c * b^i for i, c in enumerate(f))
-
         """
         cdef ntl_ZZ_pE _a
         cdef ZZ_pE_c c_b
@@ -319,17 +318,17 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         K = self._parent.base_ring()
         return K(K.polynomial_ring()(ZZ_pE_c_to_list(r)))
 
-    def is_irreducible(self, algorithm="fast_when_false", iter=1):
+    def is_irreducible(self, algorithm='fast_when_false', iter=1):
         r"""
         Return ``True`` precisely when ``self`` is irreducible over its base ring.
 
         INPUT:
 
-        - ``algorithm`` -- a string (default ``"fast_when_false"``),
+        - ``algorithm`` -- string (default: ``'fast_when_false'``);
           there are 3 available algorithms:
-          ``"fast_when_true"``, ``"fast_when_false"``, and ``"probabilistic".``
+          ``'fast_when_true'``, ``'fast_when_false'``, and ``'probabilistic'``
 
-        - ``iter`` -- (default: 1) if the algorithm is ``"probabilistic"``,
+        - ``iter`` -- (default: 1) if the algorithm is ``'probabilistic'``,
           defines the number of iterations. The error probability is bounded
           by `q^{\text{-iter}}` for polynomials in `\GF{q}[x]`.
 
@@ -338,18 +337,18 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: K.<a> = GF(next_prime(2**60)**3)
             sage: R.<x> = PolynomialRing(K, implementation='NTL')
             sage: P = x^3 + (2-a)*x + 1
-            sage: P.is_irreducible(algorithm="fast_when_false")
+            sage: P.is_irreducible(algorithm='fast_when_false')
             True
-            sage: P.is_irreducible(algorithm="fast_when_true")
+            sage: P.is_irreducible(algorithm='fast_when_true')
             True
-            sage: P.is_irreducible(algorithm="probabilistic")
+            sage: P.is_irreducible(algorithm='probabilistic')
             True
             sage: Q = (x^2+a)*(x+a^3)
-            sage: Q.is_irreducible(algorithm="fast_when_false")
+            sage: Q.is_irreducible(algorithm='fast_when_false')
             False
-            sage: Q.is_irreducible(algorithm="fast_when_true")
+            sage: Q.is_irreducible(algorithm='fast_when_true')
             False
-            sage: Q.is_irreducible(algorithm="probabilistic")
+            sage: Q.is_irreducible(algorithm='probabilistic')
             False
         """
         self._parent._modulus.restore()
@@ -520,7 +519,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: f.reverse(degree=-5)
             Traceback (most recent call last):
             ...
-            ValueError: degree argument must be a non-negative integer, got -5
+            ValueError: degree argument must be a nonnegative integer, got -5
 
         Check that this implementation is compatible with the generic one::
 
@@ -542,10 +541,10 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         cdef unsigned long d
         if degree is not None:
             if degree < 0:
-                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+                raise ValueError("degree argument must be a nonnegative integer, got %s" % (degree))
             d = degree
             if d != degree:
-                raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
+                raise ValueError("degree argument must be a nonnegative integer, got %s" % (degree))
             ZZ_pEX_reverse_hi(r.x, (<Polynomial_ZZ_pEX> self).x, d)
         else:
             ZZ_pEX_reverse(r.x, (<Polynomial_ZZ_pEX> self).x)
@@ -597,7 +596,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         """
         self._parent._modulus.restore()
 
-        # Ensure precision is non-negative
+        # Ensure precision is nonnegative
         if prec <= 0:
             raise ValueError("the precision must be positive, got {}".format(prec))
 
@@ -713,3 +712,67 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             ZZ_pEX_PowerMod_ZZ_pre(r.x, y, e_ZZ, mod)
         sig_off()
         return r
+
+    def compose_mod(self, other, modulus):
+        r"""
+        Compute `f(g) \bmod h`.
+
+        To be precise about the order fo compostion, given ``self``, ``other``
+        and ``modulus`` as `f(x)`, `g(x)` and `h(x)` compute `f(g(x)) \bmod h(x)`.
+
+        INPUT:
+
+        - ``other`` -- a polynomial `g(x)`
+        - ``modulus`` -- a polynomial `h(x)`
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(3**6)[]
+            sage: f = R.random_element()
+            sage: g = R.random_element()
+            sage: g.compose_mod(g, f) == g(g) % f
+            True
+
+            sage: F.<z3> = GF(3**6)
+            sage: R.<x> = F[]
+            sage: f = 2*z3^2*x^2 + (z3 + 1)*x + z3^2 + 2
+            sage: g = (z3^2 + 2*z3)*x^2 + (2*z3 + 2)*x + 2*z3^2 + z3 + 2
+            sage: h = (2*z3 + 2)*x^2 + (2*z3^2 + 1)*x + 2*z3^2 + z3 + 2
+            sage: f.compose_mod(g, h)
+            (z3^5 + z3^4 + z3^3 + z3^2 + z3)*x + z3^5 + z3^3 + 2*z3 + 2
+            sage: f.compose_mod(g, h) == f(g) % h
+            True
+
+        AUTHORS:
+
+        - Giacomo Pope (2024-08) initial implementation
+        """
+        self._parent._modulus.restore()
+
+        # Ensure all the parents match
+        if other.parent() is not self._parent:
+            other = self._parent.coerce(other)
+        if modulus.parent() is not self._parent:
+            modulus = self._parent.coerce(modulus)
+
+        # Create the output polynomial
+        cdef Polynomial_ZZ_pEX r
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+
+        # Create ZZ_pEX_Modulus type from modulus input
+        cdef ZZ_pEX_Modulus_c mod
+        ZZ_pEX_Modulus_build(mod, (<Polynomial_ZZ_pEX>modulus).x)
+
+        # Compute f(g) mod h
+        sig_on()
+        ZZ_pEX_CompMod(r.x, (<Polynomial_ZZ_pEX>self).x, (<Polynomial_ZZ_pEX>(other % modulus)).x, mod)
+        sig_off()
+
+        return r
+
+    # compose_mod is the natural name from the NTL bindings, but polynomial_gf2x
+    # has modular_composition as the method name so here we allow both
+    modular_composition = compose_mod

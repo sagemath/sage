@@ -25,10 +25,10 @@ def reset(vars=None, attached=False):
 
     INPUT:
 
-    - ``vars`` -- a list, or space or comma separated string (default:
-      ``None``), variables to restore
+    - ``vars`` -- list or space or comma separated string (default:
+      ``None``); variables to restore
 
-    - ``attached`` -- boolean (default: ``False``), if ``vars`` is not ``None``,
+    - ``attached`` -- boolean (default: ``False``); if ``vars`` is not ``None``,
       whether to detach all attached files
 
     EXAMPLES::
@@ -101,8 +101,8 @@ def restore(vars=None):
 
     INPUT:
 
-    - ``vars`` -- string or list (default: ``None``), if not ``None``, restores
-      just the given variables to the default value.
+    - ``vars`` -- string or list (default: ``None``); if not ``None``, restores
+      just the given variables to the default value
 
     EXAMPLES::
 

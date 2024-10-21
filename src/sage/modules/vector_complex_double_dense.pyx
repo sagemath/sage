@@ -72,7 +72,7 @@ cdef class Vector_complex_double_dense(Vector_double_dense):
 
     def __reduce__(self):
         """
-        Pickling
+        Pickling.
 
         EXAMPLES::
 

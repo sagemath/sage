@@ -102,12 +102,10 @@ def collect_small_blocks(G):
 
     INPUT:
 
-    - ``G`` -- a block_diagonal matrix consisting of
+    - ``G`` -- a ``block_diagonal`` matrix consisting of
       `1` by `1` and `2` by `2` blocks
 
-    OUTPUT:
-
-    - a list of `1` by `1` and `2` by `2` matrices -- the blocks
+    OUTPUT: list of `1` by `1` and `2` by `2` matrices; the blocks
 
     EXAMPLES::
 
@@ -133,7 +131,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
     r"""
     Return the transformation to the `p`-adic normal form of a symmetric matrix.
 
-    Two ``p-adic`` quadratic forms are integrally equivalent if and only if
+    Two ```p`-adic`` quadratic forms are integrally equivalent if and only if
     their Gram matrices have the same normal form.
 
     Let `p` be odd and `u` be the smallest non-square modulo `p`.
@@ -174,8 +172,8 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
     - ``G`` -- a symmetric `n` by `n` matrix in `\QQ`
     - ``p`` -- a prime number -- it is not checked whether it is prime
     - ``precision`` -- if not set, the minimal possible is taken
-    - ``partial`` --  boolean (default: ``False``) if set, only the
-      partial normal form is returned.
+    - ``partial`` -- boolean (default: ``False``); if set, only the
+      partial normal form is returned
 
     OUTPUT:
 
@@ -301,7 +299,7 @@ def _find_min_p(G, cnt, lower_bound=0):
 
     - ``G`` -- a symmetric `n` by `n` matrix in `\QQ_p`
     - ``cnt`` -- start search from this index
-    - ``lower_bound`` -- an integer (default: ``0``)
+    - ``lower_bound`` -- integer (default: 0)
       a lower bound for the valuations used for optimization
 
     OUTPUT:
@@ -364,7 +362,7 @@ def _get_small_block_indices(G):
 
     - ``G`` -- a block_diagonal matrix consisting of `1` by `1` and `2` by `2` blocks
 
-    OUTPUT: a list of integers
+    OUTPUT: list of integers
 
     EXAMPLES::
 
@@ -399,9 +397,9 @@ def _get_homogeneous_block_indices(G):
     INPUT:
 
     - ``G`` -- a block diagonal matrix over the `p`-adics
-      with blocks of size at most `2`.
+      with blocks of size at most `2`
 
-    OUTPUT: a list of integers
+    OUTPUT: list of integers
 
     EXAMPLES::
 
@@ -560,7 +558,7 @@ def _jordan_odd_adic(G):
 
     INPUT:
 
-    - a symmetric matrix over `\ZZ_p` of type ``'fixed-mod'``
+    - ``G`` -- a symmetric matrix over `\ZZ_p` of type ``'fixed-mod'``
 
     OUTPUT:
 
@@ -742,10 +740,6 @@ def _min_nonsquare(p):
 
     - ``p`` -- a prime number
 
-    OUTPUT:
-
-    - ``a`` -- the minimal nonsquare mod `p`
-
     EXAMPLES::
 
         sage: from sage.quadratic_forms.genera.normal_form import _min_nonsquare
@@ -772,8 +766,8 @@ def _normalize(G, normal_odd=True):
 
     - ``G`` -- a symmetric matrix over `\ZZ_p` in jordan form --
       the output of :meth:`p_adic_normal_form` or :meth:`_jordan_2_adic`
-    - ``normal_odd`` -- bool (default: ``True``) if true and `p` is odd,
-      compute a normal form.
+    - ``normal_odd`` -- boolean (default: ``True``); if ``True`` and `p` is odd,
+      compute a normal form
 
     OUTPUT:
 
@@ -989,12 +983,12 @@ def _normalize_odd_2x2(G):
     INPUT:
 
     - ``G`` -- a multiple of the `2` by `2` identity_matrix
-      over the `p`-adics for `p` odd.
+      over the `p`-adics for `p` odd
 
     OUTPUT:
 
-    - A transformation matrix ``B`` such that
-      ``B * G * B.T`` is the identity matrix
+    A transformation matrix ``B`` such that ``B * G * B.T`` is the identity
+    matrix.
 
     EXAMPLES::
 
@@ -1122,15 +1116,15 @@ def _relations(G, n):
 
     INPUT:
 
-    - ``n`` -- an integer between 1 and 10 -- the number of the relation
+    - ``n`` -- integer between 1 and 10 -- the number of the relation
     - ``G`` -- a block diagonal matrix consisting of blocks of types `U, V, W`
       the left side of the relation. If ``G`` does not match `n` then the
       results are unpredictable.
 
     OUTPUT:
 
-    - square matrix ``B`` such that ``B * G * B.T`` is the right side of the
-      relation which consists of blocks of types `U`, `V`, `W` again
+    Square matrix ``B`` such that ``B * G * B.T`` is the right side of the
+    relation which consists of blocks of types `U`, `V`, `W` again.
 
     EXAMPLES::
 
@@ -1386,11 +1380,9 @@ def _two_adic_normal_forms(G, partial=False):
     INPUT:
 
     - ``G`` -- block diagonal matrix with blocks of type `U`, `V`, `W`
-    - ``partial`` -- bool (default: ``False``)
+    - ``partial`` -- boolean (default: ``False``)
 
-    OUTPUT:
-
-    - ``D``, ``B`` -- such that ``D = B * G * B.T``
+    OUTPUT: ``D``, ``B``; such that ``D = B * G * B.T``
 
     EXAMPLES::
 

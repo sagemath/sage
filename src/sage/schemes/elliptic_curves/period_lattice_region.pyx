@@ -73,7 +73,7 @@ cdef class PeriodicRegion:
 
     def is_empty(self):
         """
-        Returns whether this region is empty.
+        Return whether this region is empty.
 
         EXAMPLES::
 
@@ -92,10 +92,10 @@ cdef class PeriodicRegion:
 
     def _ensure_full(self):
         """
-        Ensure the bitmap in self.data represents the entire fundamental
+        Ensure the bitmap in ``self.data`` represents the entire fundamental
         parallelogram, expanding symmetry by duplicating data if necessary.
 
-        Mutates and returns self.
+        Mutates and returns ``self``.
 
         EXAMPLES::
 
@@ -127,7 +127,7 @@ cdef class PeriodicRegion:
 
     def ds(self):
         """
-        Returns the sides of each parallelogram tile.
+        Return the sides of each parallelogram tile.
 
         EXAMPLES::
 
@@ -156,12 +156,12 @@ cdef class PeriodicRegion:
 
         INPUT:
 
-        - ``condition`` (function) -- a boolean-valued function on `\CC`.
+        - ``condition`` -- boolean-valued function on `\CC`
 
         OUTPUT:
 
-        True or False according to whether the condition holds for all
-        lines on the boundary.
+        boolean according to whether the condition holds for all lines on the
+        boundary.
 
         EXAMPLES::
 
@@ -190,15 +190,13 @@ cdef class PeriodicRegion:
 
         INPUT:
 
-        - ``condition`` (function, default None) -- if not None, only
-          keep tiles in the refinement which satisfy the condition.
+        - ``condition`` -- function (default: ``None``); if not ``None``, only
+          keep tiles in the refinement which satisfy the condition
 
-        - ``times`` (int, default 1) -- the number of times to refine;
-          each refinement step halves the mesh size.
+        - ``times`` -- integer (default: 1); the number of times to refine.
+          Each refinement step halves the mesh size.
 
-        OUTPUT:
-
-        The refined PeriodicRegion.
+        OUTPUT: the refined PeriodicRegion
 
         EXAMPLES::
 
@@ -244,7 +242,7 @@ cdef class PeriodicRegion:
 
     def expand(self, bint corners=True):
         """
-        Returns a region containing this region by adding all neighbors of
+        Return a region containing this region by adding all neighbors of
         internal tiles.
 
         EXAMPLES::
@@ -317,7 +315,7 @@ cdef class PeriodicRegion:
 
     def __contains__(self, z):
         """
-        Returns whether this region contains the given point.
+        Return whether this region contains the given point.
 
         EXAMPLES::
 
@@ -368,7 +366,7 @@ cdef class PeriodicRegion:
 
     def __truediv__(self, unsigned int n):
         """
-        Returns a new region of the same resolution that is the image
+        Return a new region of the same resolution that is the image
         of this region under the map z -> z/n.
 
         The resolution is the same, so some detail may be lost.  The result is
@@ -446,7 +444,7 @@ cdef class PeriodicRegion:
 
     def __invert__(self):
         """
-        Returns the complement of this region.
+        Return the complement of this region.
 
         EXAMPLES::
 
@@ -468,7 +466,7 @@ cdef class PeriodicRegion:
 
     def __and__(left, right):
         """
-        Returns the intersection of left and right.
+        Return the intersection of ``left`` and ``right``.
 
         EXAMPLES::
 
@@ -495,7 +493,8 @@ cdef class PeriodicRegion:
 
     def __xor__(left, right):
         """
-        Returns the union of left and right less the intersection of left and right.
+        Return the union of ``left`` and ``right`` minus the intersection of
+        ``left`` and ``right``.
 
         EXAMPLES::
 
@@ -563,7 +562,7 @@ cdef class PeriodicRegion:
 
     def border(self, raw=True):
         """
-        Returns the boundary of this region as set of tile boundaries.
+        Return the boundary of this region as set of tile boundaries.
 
         If raw is true, returns a list with respect to the internal bitmap,
         otherwise returns complex intervals covering the border.

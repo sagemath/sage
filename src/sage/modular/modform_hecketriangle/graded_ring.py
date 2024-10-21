@@ -84,13 +84,13 @@ class QuasiMeromorphicModularFormsRing(FormsRing_abstract, UniqueRepresentation)
 
         INPUT:
 
-        - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: ``ZZ``).
+        - ``base_ring`` -- the base_ring (default: ``ZZ``)
 
-        - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: ``False``).
-                            This is mainly used by the spaces of homogeneous elements.
+        - ``red_hom`` -- if ``True`` then results of binary operations are
+          considered homogeneous whenever it makes sense (default: ``False``).
+          This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
 
@@ -147,13 +147,13 @@ class QuasiWeakModularFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         INPUT:
 
-        - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: ``ZZ``).
+        - ``base_ring`` -- the base_ring (default: ``ZZ``)
 
-        - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: ``False``).
-                            This is mainly used by the spaces of homogeneous elements.
+        - ``red_hom`` -- if ``True`` then results of binary operations are
+          considered homogeneous whenever it makes sense (default: ``False``).
+          This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
 
@@ -207,13 +207,13 @@ class QuasiModularFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         INPUT:
 
-        - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: ``ZZ``).
+        - ``base_ring`` -- the base_ring (default: ``ZZ``)
 
-        - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: ``False``).
-                            This is mainly used by the spaces of homogeneous elements.
+        - ``red_hom`` -- if ``True`` then results of binary operations are
+          considered homogeneous whenever it makes sense (default: ``False``).
+          This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
 
@@ -267,13 +267,13 @@ class QuasiCuspFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         INPUT:
 
-        - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: ``ZZ``).
+        - ``base_ring`` -- the base_ring (default: ``ZZ``)
 
-        - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: ``False``).
-                            This is mainly used by the spaces of homogeneous elements.
+        - ``red_hom`` -- if ``True`` then results of binary operations are
+          considered homogeneous whenever it makes sense (default: ``False``).
+          This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
 
@@ -327,13 +327,13 @@ class MeromorphicModularFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         INPUT:
 
-        - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: ``ZZ``).
+        - ``base_ring`` -- the base_ring (default: ``ZZ``)
 
-        - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: ``False``).
-                            This is mainly used by the spaces of homogeneous elements.
+        - ``red_hom`` -- if ``True`` then results of binary operations are
+          considered homogeneous whenever it makes sense (default: ``False``).
+          This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
 
@@ -387,13 +387,13 @@ class WeakModularFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         INPUT:
 
-        - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: ``ZZ``).
+        - ``base_ring`` -- the base_ring (default: ``ZZ``)
 
-        - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: ``False``).
-                            This is mainly used by the spaces of homogeneous elements.
+        - ``red_hom`` -- if ``True`` then results of binary operations are
+          considered homogeneous whenever it makes sense (default: ``False``).
+          This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
 
@@ -446,13 +446,13 @@ class ModularFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         INPUT:
 
-        - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: ``ZZ``).
+        - ``base_ring`` -- the base_ring (default: ``ZZ``)
 
-        - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: ``False``).
-                            This is mainly used by the spaces of homogeneous elements.
+        - ``red_hom`` -- if ``True`` then results of binary operations are
+          considered homogeneous whenever it makes sense (default: ``False``).
+          This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
 
@@ -506,13 +506,13 @@ class CuspFormsRing(FormsRing_abstract, UniqueRepresentation):
 
         INPUT:
 
-        - ``group``      -- The Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
+        - ``group`` -- the Hecke triangle group (default: ``HeckeTriangleGroup(3)``)
 
-        - ``base_ring``  -- The base_ring (default: ``ZZ``).
+        - ``base_ring`` -- the base_ring (default: ``ZZ``)
 
-        - ``red_hom``    -- If True then results of binary operations are considered
-                            homogeneous whenever it makes sense (default: ``False``).
-                            This is mainly used by the spaces of homogeneous elements.
+        - ``red_hom`` -- if ``True`` then results of binary operations are
+          considered homogeneous whenever it makes sense (default: ``False``).
+          This is mainly used by the spaces of homogeneous elements.
 
         OUTPUT:
 

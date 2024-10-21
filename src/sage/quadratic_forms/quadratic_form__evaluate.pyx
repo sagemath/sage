@@ -24,7 +24,7 @@ def QFEvaluateVector(Q, v):
     INPUT:
 
     - ``Q`` -- :class:`QuadraticForm` over a base ring `R`
-    - ``v`` -- a tuple or list (or column matrix) of ``Q.dim()`` elements of `R`
+    - ``v`` -- tuple or list (or column matrix) of ``Q.dim()`` elements of `R`
 
     OUTPUT: an element of `R`
 
@@ -49,7 +49,6 @@ cdef QFEvaluateVector_cdef(Q, v):
     r"""
     Routine to quickly evaluate a quadratic form `Q` on a vector `v`.  See
     the Python wrapper function :meth:`QFEvaluate` above for details.
-
     """
     # If we are passed a matrix A, return the quadratic form Q(A(x))
     # (In matrix notation: A^t * Q * A)
@@ -116,7 +115,6 @@ cdef QFEvaluateMatrix_cdef(Q, M, Q2):
     r"""
     Routine to quickly evaluate a quadratic form `Q` on a matrix `M`.  See
     the Python wrapper function :func:`QFEvaluateMatrix` above for details.
-
     """
     # Create the new quadratic form
     n = Q.dim()

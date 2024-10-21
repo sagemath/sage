@@ -30,9 +30,9 @@ class FunctionFieldIdeal_rational(FunctionFieldIdeal):
 
     INPUT:
 
-    - ``ring`` -- the maximal order of the rational function field.
+    - ``ring`` -- the maximal order of the rational function field
 
-    - ``gen`` -- generator of the ideal, an element of the function field.
+    - ``gen`` -- generator of the ideal, an element of the function field
 
     EXAMPLES::
 

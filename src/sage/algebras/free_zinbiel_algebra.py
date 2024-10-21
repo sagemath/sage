@@ -536,7 +536,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         The things that coerce into ``self`` are
 
         - free Zinbiel algebras whose set `E` of labels is
-          a subset of the corresponding self of ``set`, and whose base
+          a subset of the corresponding ``self`` of ``set``, and whose base
           ring has a coercion map into ``self.base_ring()``
 
         EXAMPLES::

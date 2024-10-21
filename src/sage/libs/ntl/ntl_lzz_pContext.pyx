@@ -71,7 +71,7 @@ cdef class ntl_zz_pContext_class():
 
     def modulus(self):
         """
-        Print the modulus for self.
+        Print the modulus for ``self``.
 
         EXAMPLES::
 

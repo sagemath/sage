@@ -20,7 +20,7 @@ from sage.schemes.generic.scheme import Scheme
 
 def is_AmbientSpace(x):
     """
-    Return True if `x` is an ambient space.
+    Return ``True`` if `x` is an ambient space.
 
     EXAMPLES::
 
@@ -47,9 +47,9 @@ class AmbientSpace(Scheme):
 
     INPUT:
 
-    -  ``n`` -- dimension
+    - ``n`` -- dimension
 
-    -  ``R`` -- ring
+    - ``R`` -- ring
     """
     def __init__(self, n, R=ZZ):
         """
@@ -124,7 +124,7 @@ class AmbientSpace(Scheme):
     def _check_satisfies_equations(self, v):
         """
         Verify that the coordinates of v define a point on this scheme, or
-        raise a TypeError.
+        raise a :exc:`TypeError`.
 
         TESTS::
 
@@ -139,17 +139,15 @@ class AmbientSpace(Scheme):
 
     def _validate(self, polynomials):
         """
-        If ``polynomials`` is a tuple of valid polynomial functions on self,
-        return ``polynomials``, otherwise raise TypeError.
+        If ``polynomials`` is a tuple of valid polynomial functions on
+        ``self``, return ``polynomials``, otherwise raise :exc:`TypeError`.
 
         INPUT:
 
         - ``polynomials`` -- tuple of polynomials in the coordinate ring of
-            self
+          ``self``
 
-        OUTPUT:
-
-        - tuple of polynomials in the coordinate ring of self
+        OUTPUT: tuple of polynomials in the coordinate ring of ``self``
 
         TESTS::
 
@@ -171,9 +169,7 @@ class AmbientSpace(Scheme):
 
         - ``R`` -- commutative ring
 
-        OUTPUT:
-
-        - ambient space over ``R``
+        OUTPUT: ambient space over ``R``
 
         .. NOTE::
 
@@ -218,15 +214,13 @@ class AmbientSpace(Scheme):
         INPUT:
 
         - ``R`` -- a commutative ring, such that there is a natural map from
-          the base ring of self to ``R``.
+          the base ring of ``self`` to ``R``
 
-        OUTPUT:
-
-        - an ambient space over ``R`` of the same structure as ``self``.
+        OUTPUT: an ambient space over ``R`` of the same structure as ``self``
 
         .. NOTE::
 
-            A :class:`ValueError` is raised if there is no such natural map.
+            A :exc:`ValueError` is raised if there is no such natural map.
             If you need to drop this condition, use ``self.change_ring(R)``.
 
         EXAMPLES::
@@ -272,8 +266,8 @@ class AmbientSpace(Scheme):
 
     def defining_polynomials(self):
         """
-        Return the defining polynomials of the scheme self.  Since
-        self is an ambient space, this is an empty list.
+        Return the defining polynomials of the scheme ``self``.  Since
+        ``self`` is an ambient space, this is an empty list.
 
         EXAMPLES::
 
@@ -312,7 +306,7 @@ class AmbientSpace(Scheme):
     def gen(self, n=0):
         """
         Return the `n`-th generator of the coordinate ring of the
-        scheme self.
+        scheme ``self``.
 
         EXAMPLES::
 
@@ -325,7 +319,7 @@ class AmbientSpace(Scheme):
     def gens(self):
         """
         Return the generators of the coordinate ring of the scheme
-        self.
+        ``self``.
 
         EXAMPLES::
 
@@ -341,7 +335,7 @@ class AmbientSpace(Scheme):
     def ngens(self):
         """
         Return the number of generators of the coordinate ring of the
-        scheme self.
+        scheme ``self``.
 
         EXAMPLES::
 

@@ -201,7 +201,7 @@ class HyperbolicArc(HyperbolicArcCore):
 
             sage: from sage.plot.hyperbolic_arc import HyperbolicArc
             sage: arc = HyperbolicArc(0, 1/2+I*sqrt(3)/2, "UHP", {})
-            sage: TestSuite(arc).run(skip="_test_pickling")  # no equality implemented
+            sage: TestSuite(arc).run(skip='_test_pickling')  # no equality implemented
         """
         if model == "HM":
             raise ValueError("the hyperboloid model is not supported")
@@ -231,8 +231,8 @@ class HyperbolicArc(HyperbolicArcCore):
 
 
 @rename_keyword(color='rgbcolor')
-@options(alpha=1, fill=False, thickness=1, rgbcolor="blue", zorder=2, linestyle='solid')
-def hyperbolic_arc(a, b, model="UHP", **options):
+@options(alpha=1, fill=False, thickness=1, rgbcolor='blue', zorder=2, linestyle='solid')
+def hyperbolic_arc(a, b, model='UHP', **options):
     r"""
     Plot an arc from ``a`` to ``b`` in hyperbolic plane.
 
@@ -250,11 +250,11 @@ def hyperbolic_arc(a, b, model="UHP", **options):
 
     OPTIONS:
 
-    - ``alpha`` -- default: 1
+    - ``alpha`` -- (default: 1)
 
-    - ``thickness`` -- default: 1
+    - ``thickness`` -- (default: 1)
 
-    - ``rgbcolor`` -- default: ``'blue'``
+    - ``rgbcolor`` -- (default: ``'blue'``)
 
     - ``linestyle`` -- (default: ``'solid'``) the style of the line, which
       is one of ``'dashed'``, ``'dotted'``, ``'solid'``, ``'dashdot'``,
@@ -321,9 +321,9 @@ def hyperbolic_arc(a, b, model="UHP", **options):
         sage: z4 = CC((0.6*cos(3*pi/4),0.6*sin(3*pi/4)))
         sage: z5 = CC(-0.5,0.5)
         sage: z6 = CC(0.5,-0.5)
-        sage: a1 = hyperbolic_arc(z1, z2, model="PD", color="red")
-        sage: a2 = hyperbolic_arc(z3, z4, model="PD", color="green")
-        sage: a3 = hyperbolic_arc(z5, z6, model="PD", linestyle="--")
+        sage: a1 = hyperbolic_arc(z1, z2, model='PD', color='red')
+        sage: a2 = hyperbolic_arc(z3, z4, model='PD', color='green')
+        sage: a3 = hyperbolic_arc(z5, z6, model='PD', linestyle='--')
         sage: a1 + a2 + a3
         Graphics object consisting of 6 graphics primitives
 
@@ -335,9 +335,9 @@ def hyperbolic_arc(a, b, model="UHP", **options):
         z4 = CC((0.6*cos(3*pi/4),0.6*sin(3*pi/4)))
         z5 = CC(-0.5,0.5)
         z6 = CC(0.5,-0.5)
-        a1 = hyperbolic_arc(z1, z2, model="PD", color="red")
-        a2 = hyperbolic_arc(z3, z4, model="PD", color="green")
-        a3 = hyperbolic_arc(z5, z6, model="PD", linestyle="--")
+        a1 = hyperbolic_arc(z1, z2, model='PD', color='red')
+        a2 = hyperbolic_arc(z3, z4, model='PD', color='green')
+        a3 = hyperbolic_arc(z5, z6, model='PD', linestyle='--')
         P = a1 + a2 + a3
         sphinx_plot(P)
 
@@ -345,9 +345,9 @@ def hyperbolic_arc(a, b, model="UHP", **options):
     model (note that these are *not* the image of those arcs when
     changing between the models)::
 
-        sage: a1 = hyperbolic_arc(z1, z2, model="KM", color="red")
-        sage: a2 = hyperbolic_arc(z3, z4, model="KM", color="green")
-        sage: a3 = hyperbolic_arc(z5, z6, model="KM", linestyle="--")
+        sage: a1 = hyperbolic_arc(z1, z2, model='KM', color='red')
+        sage: a2 = hyperbolic_arc(z3, z4, model='KM', color='green')
+        sage: a3 = hyperbolic_arc(z5, z6, model='KM', linestyle='--')
         sage: a1 + a2 + a3
         Graphics object consisting of 6 graphics primitives
 
@@ -359,9 +359,9 @@ def hyperbolic_arc(a, b, model="UHP", **options):
         z4 = CC((0.6*cos(3*pi/4),0.6*sin(3*pi/4)))
         z5 = CC(-0.5,0.5)
         z6 = CC(0.5,-0.5)
-        a1 = hyperbolic_arc(z1, z2, model="KM", color="red")
-        a2 = hyperbolic_arc(z3, z4, model="KM", color="green")
-        a3 = hyperbolic_arc(z5, z6, model="KM", linestyle="--")
+        a1 = hyperbolic_arc(z1, z2, model='KM', color='red')
+        a2 = hyperbolic_arc(z3, z4, model='KM', color='green')
+        a3 = hyperbolic_arc(z5, z6, model='KM', linestyle='--')
         P = a1 + a2 + a3
         sphinx_plot(P)
 
@@ -370,14 +370,14 @@ def hyperbolic_arc(a, b, model="UHP", **options):
 
         sage: a = (1,2,sqrt(6))
         sage: b = (-2,-3,sqrt(14))
-        sage: hyperbolic_arc(a, b, model="HM")
+        sage: hyperbolic_arc(a, b, model='HM')
         Graphics3d Object
 
     .. PLOT::
 
        a = (1,2,sqrt(6))
        b = (-2,-3,sqrt(14))
-       sphinx_plot(hyperbolic_arc(a, b, model="HM"))
+       sphinx_plot(hyperbolic_arc(a, b, model='HM'))
     """
     from sage.plot.graphics import Graphics
 

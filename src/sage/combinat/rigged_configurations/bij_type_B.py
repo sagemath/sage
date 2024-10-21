@@ -55,9 +55,9 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
 
         INPUT:
 
-        - ``tp_krt`` -- A tensor product of KR tableaux
+        - ``tp_krt`` -- a tensor product of KR tableaux
 
-        - ``verbose`` -- (Default: ``False``) Display each step in the
+        - ``verbose`` -- (default: ``False``) display each step in the
           bijection
 
         EXAMPLES::
@@ -554,9 +554,9 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) display each step in the
+        - ``verbose`` -- boolean (default: ``False``); display each step in the
           bijection
-        - ``build_graph`` -- (default: ``False``) build the graph of each
+        - ``build_graph`` -- boolean (default: ``False``); build the graph of each
           step of the bijection
 
         EXAMPLES::
@@ -740,7 +740,7 @@ class RCToKRTBijectionTypeB(RCToKRTBijectionTypeC):
             from sage.graphs.dot2tex_utils import have_dot2tex
             self._graph = DiGraph(self._graph)
             if have_dot2tex():
-                self._graph.set_latex_options(format="dot2tex", edge_labels=True)
+                self._graph.set_latex_options(format='dot2tex', edge_labels=True)
 
         return self.KRT(pathlist=ret_crystal_path)
 

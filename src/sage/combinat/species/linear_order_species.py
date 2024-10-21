@@ -36,7 +36,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
 
     def transport(self, perm):
         """
-        Returns the transport of this structure along the permutation
+        Return the transport of this structure along the permutation
         perm.
 
         EXAMPLES::
@@ -52,7 +52,7 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
 
     def automorphism_group(self):
         """
-        Returns the group of permutations whose action on this structure
+        Return the group of permutations whose action on this structure
         leave it fixed. For the species of linear orders, there is no
         non-trivial automorphism.
 
@@ -82,7 +82,7 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the species of linear orders.
+        Return the species of linear orders.
 
         EXAMPLES::
 

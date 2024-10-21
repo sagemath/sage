@@ -52,7 +52,6 @@ cdef inline int cconstruct(celement value, PowComputer_ prime_pow) except -1:
         For Polynomial elements, this function calls the ``__init__`` method of
         ``celement``. When creating ``celement`` instances, we use ``__new__`` which
         does not call ``__init__``, because of the metaclass that we are using.
-
     """
     value.__init__(prime_pow.poly_ring)
 
@@ -70,7 +69,6 @@ cdef inline int cdestruct(celement value, PowComputer_ prime_pow) except -1:
 
         This function has no effect for polynomials. There is no manual garbage
         collection necessary, as ``celement`` is a managed Python type.
-
     """
     pass
 
@@ -101,7 +99,6 @@ cdef inline int ccmp(celement a, celement b, long prec, bint reduce_a, bint redu
     - ``reduce_b`` -- whether ``b`` is already reduced with respect to ``prec``
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     if not (reduce_a or reduce_b):
         return 0 if a == b else 1
@@ -143,7 +140,6 @@ cdef inline long cremove(celement out, celement a, long prec, PowComputer_ prime
 
     The number of times the uniformizer divides ``a``, or ``prec`` if ``a`` is
     zero.
-
     """
     if a == 0:
         return prec
@@ -163,7 +159,6 @@ cdef inline bint cisunit(celement a, PowComputer_ prime_pow) except -1:
     - ``a`` -- the ``celement`` to test
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     return cvaluation(a, 1, prime_pow) == 0
 
@@ -182,7 +177,6 @@ cdef inline int cneg(celement out, celement a, long prec, PowComputer_ prime_pow
     - ``prec`` -- a ``long``, the precision
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     cdef celement ma = -a
     if ma is a:
@@ -207,7 +201,6 @@ cdef inline int cadd(celement out, celement a, celement b, long prec, PowCompute
     - ``prec`` -- a ``long``, the precision
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     cdef celement sm = a + b
     if sm is a or sm is b:
@@ -232,7 +225,6 @@ cdef inline int csub(celement out, celement a, celement b, long prec, PowCompute
     - ``prec`` -- a ``long``, the precision
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     cdef celement df = a - b
     if df is a or df is b:
@@ -257,7 +249,6 @@ cdef inline int cmul(celement out, celement a, celement b, long prec, PowCompute
     - ``prec`` -- a ``long``, the precision
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     cdef celement pd = a*b
     if pd is a or pd is b:
@@ -274,7 +265,6 @@ cdef inline int csetone(celement out, PowComputer_ prime_pow) except -1:
     - ``out`` -- the ``celement`` in which to store 1
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     out._coeffs = [prime_pow.base_ring(1)]
 
@@ -287,7 +277,6 @@ cdef inline int csetzero(celement out, PowComputer_ prime_pow) except -1:
     - ``out`` -- the ``celement`` in which to store 0
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     out._coeffs = []
 
@@ -300,7 +289,6 @@ cdef inline bint cisone(celement a, PowComputer_ prime_pow) except -1:
     - ``a`` -- the element to test
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     return a.is_one()
 
@@ -313,7 +301,6 @@ cdef inline bint ciszero(celement a, PowComputer_ prime_pow) except -1:
     - ``a`` -- the element to test
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     return a.is_zero()
 
@@ -328,7 +315,6 @@ cdef inline int ccopy(celement out, celement a, PowComputer_ prime_pow) except -
     - ``a`` -- the element from which to copy
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     out._coeffs = a._coeffs[:]
 
@@ -338,10 +324,9 @@ cdef inline cpickle(celement a, PowComputer_ prime_pow):
 
     INPUT:
 
-    - ``a`` the element to pickle
+    - ``a`` -- the element to pickle
 
-    - ``prime_pow`` the ``PowComputer`` for the ring
-
+    - ``prime_pow`` -- the ``PowComputer`` for the ring
     """
     return a._coeffs
 
@@ -356,7 +341,6 @@ cdef inline int cunpickle(celement out, x, PowComputer_ prime_pow) except -1:
     - ``x`` -- the result of `meth`:cpickle
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     out._coeffs = x
 
@@ -373,7 +357,6 @@ cdef inline long chash(celement a, long ordp, long prec, PowComputer_ prime_pow)
     - ``prec`` -- the precision as a ``long``
 
     - ``prime_pow`` -- the ``PowComputer`` for the ring
-
     """
     if ciszero(a, prime_pow):
         return 0
@@ -397,7 +380,6 @@ cdef int cconv(celement out, x, long prec, long valshift, PowComputer_ prime_pow
       the result in ``out``
 
     - ``prime_pow`` -- a ``PowComputer`` for the ring
-
     """
     cdef celement xx, shift
     if valshift < 0:
@@ -450,7 +432,6 @@ cdef inline long cconv_mpz_t(celement out, mpz_t x, long prec, bint absolute, Po
 
     If ``absolute`` is ``False``, the valuation that was extracted (``maxordp``
     when `x = 0`).
-
     """
     cdef long valuation = maxordp
 
@@ -483,7 +464,6 @@ cdef inline int cconv_mpz_t_out(mpz_t out, celement x, long valshift, long prec,
     -` ``prec`` -- a ``long``, the precision of ``x`` and ``out``
 
     - ``prime_pow`` -- a ``PowComputer`` for the ring
-
     """
     cdef Integer n
 
@@ -528,7 +508,6 @@ cdef inline long cconv_mpq_t(celement out, mpq_t x, long prec, bint absolute, Po
 
     If ``absolute`` is ``False``, the valuation that was extracted (``maxordp``
     when `x = 0`)
-
     """
     cdef Rational r = PY_NEW(Rational)
     mpq_set(r.value, x)
@@ -556,7 +535,6 @@ cdef inline int cconv_mpq_t_out(mpq_t out, celement x, long valshift, long prec,
     - ``prec`` -- a long, the precision of ``x``; ignored
 
     - ``prime_pow`` -- a ``PowComputer`` for the ring
-
     """
     cdef Rational c
 

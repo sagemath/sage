@@ -25,12 +25,12 @@ myR = R()
 
 def ttest(x, y, conf_level=0.95, **kw):
     """
-    T-Test using R
+    T-Test using R.
 
     INPUT:
 
     - ``x``, ``y`` -- vectors of same length
-    - conf_level -- confidence level of the interval, [0,1) in percent
+    - ``conf_level`` -- confidence level of the interval, [0,1) in percent
 
     OUTPUT:
 

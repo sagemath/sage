@@ -133,7 +133,7 @@ class FunctionFieldDivisor(ModuleElement):
 
     - ``parent`` -- divisor group
 
-    - ``data`` -- dict of place and multiplicity pairs
+    - ``data`` -- dictionary of place and multiplicity pairs
 
     EXAMPLES::
 
@@ -468,7 +468,7 @@ class FunctionFieldDivisor(ModuleElement):
 
     def is_effective(self):
         """
-        Return ``True`` if this divisor has non-negative multiplicity at all
+        Return ``True`` if this divisor has nonnegative multiplicity at all
         places.
 
         EXAMPLES::

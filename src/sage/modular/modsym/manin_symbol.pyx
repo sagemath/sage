@@ -93,7 +93,6 @@ cdef class ManinSymbol(Element):
         sage: s = ManinSymbol(m,(2,2,3))
         sage: s.parent()
         Manin Symbol List of weight 8 for Gamma0(5)
-
     """
     def __init__(self, parent, t):
         r"""
@@ -119,7 +118,6 @@ cdef class ManinSymbol(Element):
             sage: m = ManinSymbolList_gamma0(5,8)
             sage: s = ManinSymbol(m,(2,2,3)); s
             [X^2*Y^4,(2,3)]
-
         """
         Element.__init__(self, parent)
         (i, u, v) = t
@@ -139,7 +137,6 @@ cdef class ManinSymbol(Element):
             sage: s = ManinSymbol(m, (2, 2, 3))
             sage: loads(dumps(s))
             (2,3)
-
         """
         return ManinSymbol, (self.parent(), self.tuple())
 
@@ -155,7 +152,6 @@ cdef class ManinSymbol(Element):
             sage: s = ManinSymbol(m,(2,2,3))
             sage: loads(dumps(s))
             (2,3)
-
         """
         self._parent = state['_ManinSymbol__parent']
         (self.i, self.u, self.v) = state['_ManinSymbol__t']
@@ -294,7 +290,7 @@ cdef class ManinSymbol(Element):
 
     def apply(self, a,b,c,d):
         """
-        Return the image of self under the matrix `[a,b;c,d]`.
+        Return the image of ``self`` under the matrix `[a,b;c,d]`.
 
         Not implemented for raw ManinSymbol objects, only for members
         of ManinSymbolLists.
@@ -343,7 +339,6 @@ cdef class ManinSymbol(Element):
             [X^2*Y^4,(2,3)]
             sage: s.lift_to_sl2z()
             [1, 1, 2, 3]
-
         """
         if N is None:
             N = self.level()
@@ -422,7 +417,6 @@ cdef class ManinSymbol(Element):
             sage: s = ManinSymbol(m,(2,2,3))
             sage: s.weight()
             8
-
         """
         return self.parent().weight()
 
@@ -438,7 +432,6 @@ cdef class ManinSymbol(Element):
             sage: s = ManinSymbol(m,(2,2,3))
             sage: s.level()
             5
-
         """
         return self.parent().level()
 
@@ -457,8 +450,6 @@ cdef class ManinSymbol(Element):
             sage: s = ManinSymbol(m,(2,2,3))
             sage: s.modular_symbol_rep()
              144*X^6*{1/3, 1/2} - 384*X^5*Y*{1/3, 1/2} + 424*X^4*Y^2*{1/3, 1/2} - 248*X^3*Y^3*{1/3, 1/2} + 81*X^2*Y^4*{1/3, 1/2} - 14*X*Y^5*{1/3, 1/2} + Y^6*{1/3, 1/2}
-
-
         """
         # TODO: It would likely be much better to do this slightly more directly
         from sage.modular.modsym.modular_symbols import ModularSymbol

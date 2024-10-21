@@ -56,9 +56,9 @@ cdef class ntl_mat_GF2():
 
         INPUT:
 
-        - nrows -- number of rows
-        - ncols -- number of columns
-        - v     -- either a list or a matrix over GF(2^x)
+        - ``nrows`` -- number of rows
+        - ``ncols`` -- number of columns
+        - ``v`` -- either a list or a matrix over GF(2^x)
 
         EXAMPLES::
 
@@ -245,7 +245,7 @@ cdef class ntl_mat_GF2():
 
     def __richcmp__(ntl_mat_GF2 self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -523,7 +523,7 @@ cdef class ntl_mat_GF2():
 
     def IsIdent(self, n = -1):
         """
-        test if this matrix is the n x n identity matrix.
+        Test if this matrix is the n x n identity matrix.
 
         EXAMPLES::
 
@@ -543,7 +543,7 @@ cdef class ntl_mat_GF2():
 
     def IsDiag(self, long n, ntl_GF2 d):
         """
-        test if X is an  n x n diagonal matrix with d on diagonal.
+        Test if X is an  n x n diagonal matrix with d on diagonal.
 
         EXAMPLES::
 
@@ -588,7 +588,7 @@ cdef class ntl_mat_GF2():
 
     def kernel(self):
         """
-        Computes a basis for the kernel of the map x -> x*A. where x
+        Compute a basis for the kernel of the map x -> x*A. where x
         is a row vector.
 
         EXAMPLES::

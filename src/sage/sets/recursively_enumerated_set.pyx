@@ -30,7 +30,7 @@ structure, such as not containing an oriented cycle, that does not
 help with the enumeration.
 
 In this example, the seed is 0 and the successor function is either ``+2``
-or ``+3``. This is the set of non negative linear combinations of 2 and 3::
+or ``+3``. This is the set of nonnegative linear combinations of 2 and 3::
 
     sage: def succ(a):
     ....:     return [a + 2, a + 3]
@@ -315,24 +315,24 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
     - ``seeds`` -- list (or iterable) of hashable objects
     - ``successors`` -- function (or callable) returning a list (or iterable) of
       hashable objects
-    - ``structure`` -- string (default: ``None``), structure of the
+    - ``structure`` -- string (default: ``None``); structure of the
       set, possible values are:
 
-      - ``None`` -- nothing is known about the structure of the set.
+      - ``None`` -- nothing is known about the structure of the set
       - ``'forest'`` -- if the ``successors`` function generates a *forest*, that
-        is, each element can be reached uniquely from a seed.
+        is, each element can be reached uniquely from a seed
       - ``'graded'`` -- if the ``successors`` function is *graded*, that is, all
-        paths from a seed to a given element have equal length.
+        paths from a seed to a given element have equal length
       - ``'symmetric'`` -- if the relation is *symmetric*, that is,
         ``y in successors(x)`` if and only if ``x in successors(y)``
 
     - ``enumeration`` -- ``'depth'``, ``'breadth'``, ``'naive'`` or ``None``
-      (default: ``None``). The default enumeration for the
-      ``__iter__`` function.
-    - ``max_depth`` -- integer (default: ``float("inf")``), limit
+      (default: ``None``); the default enumeration for the
+      ``__iter__`` function
+    - ``max_depth`` -- integer (default: ``float("inf")``); limit
       the search to a certain depth, currently works only for breadth first
       search
-    - ``post_process`` -- (default: ``None``), for forest only
+    - ``post_process`` -- (default: ``None``) for forest only
     - ``facade`` -- (default: ``None``)
     - ``category`` -- (default: ``None``)
 
@@ -717,9 +717,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         It is currently implemented only for graded or symmetric structure.
 
-        OUTPUT:
-
-        An iterator of sets.
+        OUTPUT: an iterator of sets
 
         EXAMPLES::
 
@@ -746,9 +744,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -774,9 +770,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        An iterator.
+        OUTPUT: an iterator
 
         EXAMPLES::
 
@@ -931,12 +925,10 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
         - ``max_depth`` -- (default: ``self._max_depth``) specifies the
           maximal depth for which outgoing edges of elements are computed
-        - ``loops`` -- (default: ``True``) option for the digraph
-        - ``multiedges`` -- (default: ``True``) option of the digraph
+        - ``loops`` -- boolean (default: ``True``); option for the digraph
+        - ``multiedges`` -- boolean (default: ``True``); option of the digraph
 
-        OUTPUT:
-
-        A directed graph
+        OUTPUT: a directed graph
 
         .. WARNING::
 
@@ -1105,9 +1097,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         The enumeration remembers only the last two graded components
         generated since the structure is symmetric.
 
-        OUTPUT:
-
-        An iterator of sets.
+        OUTPUT: an iterator of sets
 
         EXAMPLES::
 
@@ -1190,9 +1180,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -1252,9 +1240,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
         - ``A`` -- set, the set of elements of depth n-1
         - ``B`` -- set, the set of elements of depth n
 
-        OUTPUT:
-
-        - ``C`` -- set, the set of elements of depth n+1
+        OUTPUT: ``C``; the set of elements of depth n+1
 
         .. TODO::
 
@@ -1363,9 +1349,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
         The algorithm remembers only the current graded component generated
         since the structure is graded.
 
-        OUTPUT:
-
-        An iterator of sets.
+        OUTPUT: an iterator of sets
 
         EXAMPLES::
 
@@ -1417,9 +1401,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         - ``depth`` -- integer
 
-        OUTPUT:
-
-        A set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -1473,9 +1455,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         - ``B`` -- set, the set of elements of depth `n`
 
-        OUTPUT:
-
-        - ``C`` -- set, the set of elements of depth `n+1`
+        OUTPUT: ``C``; the set of elements of depth `n+1`
 
         .. TODO::
 
@@ -1532,7 +1512,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
 
     INPUT:
 
-    - ``roots`` -- a list (or iterable)
+    - ``roots`` -- list (or iterable)
     - ``children`` -- a function returning a list (or iterable)
     - ``algorithm`` -- ``'depth'`` or ``'breadth'`` (default: ``'depth'``)
 
@@ -1626,7 +1606,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
 
     INPUT:
 
-    - ``roots`` -- a list (or iterable)
+    - ``roots`` -- list (or iterable)
     - ``children`` -- a function returning a list (or iterable, or iterator)
     - ``post_process`` -- a function defined over the nodes of the
       forest (default: no post processing)
@@ -1856,7 +1836,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
     @abstract_method
     def children(self, x):
         r"""
-        Return the children of the element ``x``
+        Return the children of the element ``x``.
 
         The result can be a list, an iterable, an iterator, or even a
         generator.
@@ -1909,7 +1889,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
 
     def depth_first_search_iterator(self):
         r"""
-        Return a depth first search iterator over the elements of ``self``
+        Return a depth first search iterator over the elements of ``self``.
 
         EXAMPLES::
 
@@ -1924,7 +1904,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
 
     def breadth_first_search_iterator(self):
         r"""
-        Return a breadth first search iterator over the elements of ``self``
+        Return a breadth first search iterator over the elements of ``self``.
 
         EXAMPLES::
 
@@ -2117,7 +2097,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
                    reduce_function = None,
                    reduce_init = None):
         r"""
-        Apply a Map/Reduce algorithm on ``self``
+        Apply a Map/Reduce algorithm on ``self``.
 
         INPUT:
 
@@ -2126,12 +2106,12 @@ class RecursivelyEnumeratedSet_forest(Parent):
           the constant function ``1``.
 
         - ``reduce_function`` -- the reduce function (e.g.: the addition of a
-          monoid). The default value is ``+``.
+          monoid); the default value is ``+``
 
         - ``reduce_init`` -- the initialisation of the reduction (e.g.: the
-          neutral element of the monoid). The default value is ``0``.
+          neutral element of the monoid); the default value is ``0``
 
-        .. note::
+        .. NOTE::
 
             the effect of the default values is to compute the cardinality
             of ``self``.

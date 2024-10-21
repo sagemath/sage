@@ -360,7 +360,7 @@ class Function_gamma_inc(BuiltinFunction):
 
             sage: var('t')                                                              # needs sage.symbolic
             t
-            sage: integrate(-exp(-x)*x^(t-1), x, algorithm="fricas")            # optional - fricas, needs sage.symbolic
+            sage: integrate(-exp(-x)*x^(t-1), x, algorithm='fricas')            # optional - fricas, needs sage.symbolic
             gamma(t, x)
 
         .. SEEALSO::
@@ -817,7 +817,7 @@ class Function_psi1(GinacFunction):
 class Function_psi2(GinacFunction):
     def __init__(self):
         r"""
-        Derivatives of the digamma function `\psi(x)`. T
+        Derivatives of the digamma function `\psi(x)`.
 
         EXAMPLES::
 
@@ -980,7 +980,7 @@ class Function_beta(GinacFunction):
 
         GiNaC is used to compute `\operatorname{B}(p,q)`.  However, complex inputs
         are not yet handled in general.  When GiNaC raises an error on
-        such inputs, we raise a NotImplementedError.
+        such inputs, we raise a :exc:`NotImplementedError`.
 
         If either input is 1, GiNaC returns the reciprocal of the
         other.  In other cases, GiNaC uses one of the following
@@ -1006,10 +1006,9 @@ class Function_beta(GinacFunction):
 
         INPUT:
 
-        -  ``p`` -- number or symbolic expression
+        - ``p`` -- number or symbolic expression
 
-        -  ``q`` -- number or symbolic expression
-
+        - ``q`` -- number or symbolic expression
 
         OUTPUT: number or symbolic expression (if input is symbolic)
 

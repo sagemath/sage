@@ -46,11 +46,11 @@ class Test:
 
         INPUT:
 
-        - levels --  list or int
-        - weights -- list or int
-        - onlyg0 -- bool, if True only select Gamma0 spaces for testing
-        - onlyg1 -- bool, if True only select Gamma1 spaces for testing
-        - onlychar -- bool, if True only selects spaces with character for testing
+        - ``levels`` -- list or integer
+        - ``weights`` -- list or integer
+        - ``onlyg0`` -- boolean; if ``True`` only select Gamma0 spaces for testing
+        - ``onlyg1`` -- boolean; if ``True`` only select Gamma1 spaces for testing
+        - ``onlychar`` -- boolean; if ``True`` only selects spaces with character for testing
 
         EXAMPLES::
 
@@ -93,7 +93,7 @@ class Test:
     def _modular_symbols_space(self):
         """
         Generate a random space of modular symbols subject to
-        the conditions of self.
+        the conditions of ``self``.
 
         EXAMPLES::
 
