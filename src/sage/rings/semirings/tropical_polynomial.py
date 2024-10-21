@@ -207,7 +207,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         """
         from itertools import combinations
         tropical_roots = []
-        data = self.dict()
+        data = self.monomial_coefficients()
         R = self.parent().base()
         if len(data) == 1:
             exponent = next(iter(data))
@@ -279,7 +279,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         """
         roots = self.roots()
         R = self.parent()
-        poly = R(self.dict()[self.degree()].lift())
+        poly = R(self.monomial_coefficients()[self.degree()].lift())
         for root in roots:
             linear = R([root, 0])
             poly *= linear
@@ -321,7 +321,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             (3) * 0
         """
         from sage.structure.factorization import Factorization
-        unit = self.dict()[self.degree()]
+        unit = self.monomial_coefficients()[self.degree()]
         if self != self.split_form() or not self.roots():
             factor = [(self * self.parent(-unit.lift()), 1)]
             return Factorization(factor, unit=unit)
@@ -374,7 +374,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         from sage.sets.real_set import RealSet
 
         x = SR.var('x')
-        data = self.dict()
+        data = self.monomial_coefficients()
         R = self.parent().base()
         if not self.roots():
             f = data[0].lift()
@@ -537,7 +537,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             (-1)*x^3 + 2*x^2 + (-1)*x + (-3)
         """
         import re
-        if not self.dict():
+        if not self.monomial_coefficients():
             return str(self.parent().base().zero())
 
         def replace_negatives(expr):
@@ -844,7 +844,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         R = PolynomialRing(self.base().base_ring(), self.variable_names())
         f = R.random_element(degree=degree, monic=monic, *args, **kwds)
-        new_dict = f.dict()
+        new_dict = f.monomial_coefficients()
         if monic:
             new_dict[f.degree()] = 0
         return self.element_class(self, new_dict)

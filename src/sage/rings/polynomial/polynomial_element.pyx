@@ -76,7 +76,6 @@ from sage.arith.power cimport generic_power
 from sage.arith.misc import crt
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.mrange import cartesian_product_iterator
-from sage.misc.superseded import deprecated_function_alias
 from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
@@ -174,7 +173,6 @@ cpdef is_Polynomial(f):
         sage: is_Polynomial(f)
         False
     """
-    from sage.misc.superseded import deprecation
     deprecation(32709, "the function is_Polynomial is deprecated; use isinstance(x, sage.rings.polynomial.polynomial_element.Polynomial) instead")
 
     return isinstance(f, Polynomial)
@@ -862,7 +860,7 @@ cdef class Polynomial(CommutativePolynomial):
                         return R(pol)
                     if pol._parent.is_sparse():
                         coeff_sparse = {}
-                        coeff_dict = <dict> pol.dict()
+                        coeff_dict = <dict> pol.monomial_coefficients()
                         for i in coeff_dict:
                             coeff_sparse[i * d] = coeff_dict[i]
                         return R(coeff_sparse, check=False)
@@ -883,7 +881,7 @@ cdef class Polynomial(CommutativePolynomial):
                 if a.is_monomial():
                     etup = ETuple((<MPolynomial> a).degrees())
                     if pol._parent.is_sparse():
-                        coeff_dict = <dict> pol.dict()
+                        coeff_dict = <dict> pol.monomial_coefficients()
                         return R({etup.emul(key): coeff_dict[key] for key in coeff_dict})
                     # Dense version
                     return R({etup.emul(i): c for i, c in enumerate(pol)})
@@ -2648,7 +2646,6 @@ cdef class Polynomial(CommutativePolynomial):
         # ensure that the degree is positive.
         degree = ZZ(degree)
         if degree < 0:
-            from sage.misc.superseded import deprecation
             deprecation(37170, "negative ``degree`` will be disallowed. Instead use the bool `assume_equal_deg`.")
             degree = -degree
             assume_equal_deg = True
@@ -2931,7 +2928,7 @@ cdef class Polynomial(CommutativePolynomial):
                 q = right
                 sparse = self.parent().is_sparse()
                 if sparse:
-                    d = self.dict()
+                    d = self.monomial_coefficients()
                 else:
                     c = self.list(copy=False)
                 while q > 0:
@@ -3883,7 +3880,7 @@ cdef class Polynomial(CommutativePolynomial):
         cdef dict D = {}
         cdef tuple leftovers = (0,) * (len(variables) - len(prev_variables) - 1)
         for k in range(len(mpolys)):
-            for i,a in mpolys[k].iteritems():
+            for i, a in mpolys[k].items():
                 j = ETuple((k,) + leftovers)
                 D[i + j] = a
 
@@ -4464,7 +4461,7 @@ cdef class Polynomial(CommutativePolynomial):
                       if self.get_unsafe(n) else zero for n in range(self.degree() + 1)]
         return S(p)
 
-    def dict(self):
+    def monomial_coefficients(self):
         """
         Return a sparse dictionary representation of this univariate
         polynomial.
@@ -4473,6 +4470,11 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: R.<x> = QQ[]
             sage: f = x^3 + -1/7*x + 13
+            sage: f.monomial_coefficients()
+            {0: 13, 1: -1/7, 3: 1}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {0: 13, 1: -1/7, 3: 1}
         """
@@ -4484,6 +4486,8 @@ cdef class Polynomial(CommutativePolynomial):
             if c:
                 X[i] = c
         return X
+
+    dict = monomial_coefficients
 
     def factor(self, **kwargs):
         r"""
@@ -10595,7 +10599,7 @@ cdef class Polynomial(CommutativePolynomial):
             R = R.change_ring(new_base_ring)
         elif isinstance(f, Map):
             R = R.change_ring(f.codomain())
-        return R({k: f(v) for k, v in self.dict().items()})
+        return R({k: f(v) for k, v in self.monomial_coefficients().items()})
 
     def is_cyclotomic(self, certificate=False, algorithm='pari'):
         r"""
@@ -12683,11 +12687,11 @@ cpdef list _dict_to_list(dict x, zero):
     if isinstance(n, tuple): # a mpoly dict
         n = n[0]
         v = [zero] * (n+1)
-        for i, z in x.iteritems():
+        for i, z in x.items():
             v[i[0]] = z
     else:
         v = [zero] * (n+1)
-        for i, z in x.iteritems():
+        for i, z in x.items():
             v[i] = z
     return v
 

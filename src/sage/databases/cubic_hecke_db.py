@@ -117,7 +117,9 @@ def simplify(mat):
     d = mat.dict()
     if isinstance(B, CubicHeckeExtensionRing):
         # Laurent polynomial cannot be reconstructed from string
-        res = {k: {tuple(j): u.dict() for j, u in v.dict().items()} for k, v in d.items()}
+        res = {k: {tuple(j): u.monomial_coefficients()
+                   for j, u in v.monomial_coefficients().items()}
+               for k, v in d.items()}
     else:
         res = {k: str(v) for k, v in d.items()}
     return res

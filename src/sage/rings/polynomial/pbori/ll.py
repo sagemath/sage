@@ -79,7 +79,7 @@ def eliminate(polys, on_the_fly=False, prot=False, reduction_function=None,
         lm = p.lex_lead()
         if lm.deg() == 1:
 
-            if not (lm in linear_leading_monomials):
+            if lm not in linear_leading_monomials:
                 linear_leading_monomials.add(lm)
                 linear_leads.append(p)
             else:
