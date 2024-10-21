@@ -4929,7 +4929,7 @@ REFERENCES:
             Int. Math. Res. Not. IMRN, 2015, 3121-3149.
 
 .. [MM2022] Matthew Mastroeni and Jason McCullough. Chow rings of matroids are
-            koszul. *Mathematische Annalen*, 387(3–4):1819–1851, November 2022.
+            Koszul. *Mathematische Annalen*, 387(3-4):1819-1851, November 2022.
 
 .. [MMRS2022] Ruslan G. Marzo, Rafael A. Melo,  Celso C. Ribeiro and
               Marcio C. Santos: *New formulations and branch-and-cut procedures
