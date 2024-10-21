@@ -262,7 +262,7 @@ REFERENCES:
              369–379. https://doi.org/10.1007/BF02677478
         
 .. [ANR2023] Robert Angarone, Anastasia Nathanson, and Victor Reiner. *Chow rings of
-             matroids as permutation representations*, 2023. :arxiv: `2309.14312`.
+             matroids as permutation representations*, 2023. :arxiv:`2309.14312`.
 
 .. [AP1986] \S. Arnborg, A. Proskurowski,
             *Characterization and Recognition of Partial 3-Trees*,
@@ -4928,8 +4928,8 @@ REFERENCES:
 .. [MM2015] \J. Matherne and \G. Muller, *Computing upper cluster algebras*,
             Int. Math. Res. Not. IMRN, 2015, 3121-3149.
 
-.. [MM2022] Matthew Mastroeni and Jason McCullough. Chow rings of matroids are
-            Koszul. *Mathematische Annalen*, 387(3-4):1819-1851, November 2022.
+.. [MM2022] Matthew Mastroeni and Jason McCullough. *Chow rings of matroids are
+            Koszul*. Mathematische Annalen, 387(3-4):1819-1851, November 2022.
 
 .. [MMRS2022] Ruslan G. Marzo, Rafael A. Melo,  Celso C. Ribeiro and
               Marcio C. Santos: *New formulations and branch-and-cut procedures
