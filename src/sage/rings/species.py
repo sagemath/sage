@@ -189,8 +189,7 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
         self._cache = dict()
 
     def _element_constructor_(self, x):
-        r"""
-        Construct a conjugacy class from ``x``.
+        r"""Construct a conjugacy class from ``x``.
 
         INPUT:
 
@@ -207,6 +206,31 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             ((1,2,3),)
             sage: C(PermutationGroup([[(1,3),(4,7)],[(2,5),(6,8)], [(1,4),(2,5),(3,7)]]))
             ((5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6))
+
+        TESTS:
+
+        Providing a group that decomposes as a direct product raises
+        an error::
+
+            sage: C(PermutationGroup([[(1,2,3),(4,5)]]))
+            Traceback (most recent call last):
+            ...
+            ValueError: Permutation Group with generators [(1,2,3)(4,5)] is not directly indecomposable
+
+        Check some trivial cases::
+
+            sage: C(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to convert 0 to Set of conjugacy classes of
+             directly indecomposable subgroups
+
+            sage: C(groups.presentation.KleinFour())
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to convert Finitely presented group
+             < a, b | a^2, b^2, a^-1*b^-1*a*b > to Set of conjugacy classes of
+             directly indecomposable subgroups
         """
         if parent(x) == self:
             return x
@@ -628,6 +652,43 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: G = PermutationGroup([[(1,3),(5,7)]], domain=[1,3,5,7])
             sage: A(G, ([1,3], [5,7]))
             {((1,2)(3,4),): ({1, 2}, {3, 4})}
+
+        Test that errors are raised on some possible misuses::
+
+            sage: A = AtomicSpecies("X, Y")
+            sage: G = PermutationGroup([[(1,2), (3,4,5,6)]])
+            sage: a = A(G, {0:[1,2], 1:[3,4,5,6]})
+            sage: A(a, {0:[3,4,5,6], 1:[1,2]})
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot reassign sorts to an atomic species
+
+            sage: A(G)
+            Traceback (most recent call last):
+            ...
+            ValueError: the assignment of sorts to the domain elements must be
+             provided
+
+            sage: A(G, {0:[1,2], 1:[]})
+            Traceback (most recent call last):
+            ...
+            ValueError: values of pi (=dict_values([[1, 2], []])) must
+             partition the domain of G (={1, 2, 3, 4, 5, 6})
+
+            sage: A(G, {1:[1,2], 2:[3,4,5,6]})
+            Traceback (most recent call last):
+            ...
+            ValueError: keys of pi (=dict_keys([1, 2])) must be in range(2)
+
+            sage: A(G, {0:[1], 1:[2,3,4,5,6]})
+            Traceback (most recent call last):
+            ...
+            ValueError: All elements of orbit (1, 2) must have the same sort
+
+            sage: A(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: 0 must be a permutation group
         """
         if parent(G) == self:
             if pi is not None:
@@ -751,14 +812,15 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         else:
             G, pi = x
         if not isinstance(G, PermutationGroup_generic):
-            raise ValueError(f"{G} must be a permutation group")
+            return False
         if not set(pi.keys()).issubset(range(self._arity)):
-            raise ValueError(f"keys of pi (={pi.keys()}) must be in range({self._arity})")
-        if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
-            raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
+            return False
+        if (sum(len(p) for p in pi.values()) != len(G.domain())
+            or set(chain.from_iterable(pi.values())) != set(G.domain())):
+            return False
         for orbit in G.orbits():
             if not any(set(orbit).issubset(p) for p in pi.values()):
-                raise ValueError(f"All elements of orbit {orbit} must have the same sort")
+                return False
         return len(G.disjoint_direct_product_decomposition()) <= 1
 
     def grading_set(self):
@@ -1033,6 +1095,36 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: G = PermutationGroup([[(1,3),(5,7)]], domain=[1,3,5,7])
             sage: M(G, ([1,3], [5,7]))
             E_2(XY)
+
+            sage: G = PermutationGroup([[(1,2), (3,4,5,6)]])
+            sage: a = M(G, {0:[1,2], 1:[3,4,5,6]})
+            sage: M(a, {0:[3,4,5,6], 1:[1,2]})
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot reassign sorts to a molecular species
+
+            sage: M(G)
+            Traceback (most recent call last):
+            ...
+            ValueError: the assignment of sorts to the domain elements must be
+             provided
+
+            sage: M(G, {0:[1,2], 1:[]})
+            Traceback (most recent call last):
+            ...
+            ValueError: values of pi (=dict_values([[1, 2], []])) must
+             partition the domain of G (={1, 2, 3, 4, 5, 6})
+
+            sage: M(G, {1:[1,2], 2:[3,4,5,6]})
+            Traceback (most recent call last):
+            ...
+            ValueError: keys of pi (=dict_keys([1, 2])) must be in range(2)
+
+            sage: M(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: 0 must be a permutation group or a pair specifying a
+             group action on the given domain pi=None
         """
         if parent(G) == self:
             if pi is not None:
@@ -1048,10 +1140,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             elif not isinstance(pi, dict):
                 pi = {i: v for i, v in enumerate(pi)}
             domain = [e for p in pi.values() for e in p]
-            if len(domain) != len(set(domain)):
-                raise ValueError("each domain element must have exactly one sort")
-            if set(G.domain()) != set(domain):
-                raise ValueError("each element of the domain of the group must have one sort")
+            if len(domain) != len(set(domain)) or set(G.domain()) != set(domain):
+                raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
             components = G.disjoint_direct_product_decomposition()
             elm = self.one()
             for component in components:
@@ -1064,7 +1154,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 elm *= self.gen(self._indices(H, dompart))
             return elm
 
-        X, a = G
+        try:
+            X, a = G
+        except TypeError:
+            raise ValueError(f"{G} must be a permutation group or a pair specifying a group action on the given domain pi={pi}")
         L = [len(pi.get(i, [])) for i in range(self._arity)]
         S = SymmetricGroup(sum(L)).young_subgroup(L)
         H = _stabilizer_subgroups(S, X, a)
