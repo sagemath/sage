@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.gap
 r"""
 Hecke triangle group elements
@@ -16,6 +17,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.geometry.abc
+
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
@@ -26,7 +29,6 @@ from sage.rings.infinity import infinity
 from sage.rings.cc import CC
 
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
-from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
 
 lazy_import('sage.rings.qqbar', 'AA')
 
@@ -3164,11 +3166,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         if tau.parent() == self.parent():
             return self*tau*self.inverse()
 
-        # if tau is a point of HyperbolicPlane then we use it's coordinates in the UHP model
+        # if tau is a point of HyperbolicPlane then we use its coordinates in the UHP model
         model = None
-        if (tau in HyperbolicPlane()):
-            model = tau.model()
-            tau = tau.to_model('UHP').coordinates()
+        if isinstance(tau.parent(), sage.geometry.abc.HyperbolicSpace):
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+            if tau in HyperbolicPlane():
+                model = tau.model()
+                tau = tau.to_model('UHP').coordinates()
 
         a, b, c, d = self._matrix.list()
 
@@ -3185,6 +3189,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         if model is None:
             return result
         else:
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
             return HyperbolicPlane().UHP().get_point(result).to_model(model)
 
     def _act_on_(self, other, self_on_left):
@@ -3222,10 +3227,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: G.U()*p
             lam
         """
-
-        if (self_on_left):
-            if (other == infinity or other in CC or other in HyperbolicPlane()):
+        if self_on_left:
+            if other == infinity or other in CC:
                 return self.acton(other)
+            if isinstance(other.parent(), sage.geometry.abc.HyperbolicSpace):
+                from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+                if other in HyperbolicPlane():
+                    return self.acton(other)
         return None
 
     def slash(self, f, tau=None, k=None):
@@ -3312,8 +3320,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             except (ValueError, TypeError, AttributeError):
                 raise ValueError("f={} is not a rational function or a polynomial in one variable, so tau has to be specified explicitly!".format(f))
 
-        if (tau in HyperbolicPlane()):
-            tau = tau.to_model('UHP').coordinates()
+        if isinstance(tau.parent(), sage.geometry.abc.HyperbolicSpace):
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+            if tau in HyperbolicPlane():
+                tau = tau.to_model('UHP').coordinates()
 
         return (self.c()*tau + self.d())**(-k) * f(self.acton(tau))
 

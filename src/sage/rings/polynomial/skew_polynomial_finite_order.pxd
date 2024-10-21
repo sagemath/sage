@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.rings.polynomial.skew_polynomial_element cimport SkewPolynomial_generic_dense
 
 cdef class SkewPolynomial_finite_order_dense (SkewPolynomial_generic_dense):

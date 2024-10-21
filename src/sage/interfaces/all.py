@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # interfaces to other interpreters
 
 # import problems

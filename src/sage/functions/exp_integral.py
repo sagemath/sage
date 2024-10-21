@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Exponential integrals
 
@@ -62,8 +63,8 @@ lazy_import('sage.rings.real_mpfr', 'RealField')
 
 lazy_import('sage.symbolic.ring', 'SR')
 
-lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
-lazy_import('mpmath',
+lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
+lazy_import('sage.libs.mpmath.all',
             ['chi', 'ci', 'e1', 'ei', 'expint', 'ei', 'li', 'shi', 'si'],
             as_=['_mpmath_chi', '_mpmath_ci', '_mpmath_e1', '_mpmath_ei', '_mpmath_expint',
                  '_mpmath_ei', '_mpmath_li', '_mpmath_shi', '_mpmath_si'])
@@ -222,7 +223,7 @@ class Function_exp_integral_e(BuiltinFunction):
             sage: exp_integral_e(1, RealField(100)(1))                                  # needs sage.rings.real_mpfr
             0.21938393439552027367716377546
         """
-        return _mpmath_utils_call(_mpmath_expint, n, z, parent=parent)
+        return _mpmath_call(_mpmath_expint, n, z, parent=parent)
 
     def _print_latex_(self, n, z):
         r"""
@@ -331,7 +332,7 @@ class Function_exp_integral_e1(BuiltinFunction):
             sage: exp_integral_e1(RealField(200)(0.5))                                  # needs sage.rings.real_mpfr
             0.55977359477616081174679593931508523522684689031635351524829
         """
-        return _mpmath_utils_call(_mpmath_e1, z, parent=parent)
+        return _mpmath_call(_mpmath_e1, z, parent=parent)
 
     def _print_latex_(self, z):
         r"""
@@ -473,7 +474,7 @@ class Function_log_integral(BuiltinFunction):
             sage: log_integral(RealField(200)(1e6))                                     # needs sage.rings.real_mpfr
             78627.549159462181919862910747947261161321874382421767074759
         """
-        return _mpmath_utils_call(_mpmath_li, z, parent=parent)
+        return _mpmath_call(_mpmath_li, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -665,7 +666,7 @@ class Function_log_integral_offset(BuiltinFunction):
             sage: li(4.5) - li(2.0) - Li(4.5)                                           # needs mpmath
             0.000000000000000
         """
-        return _mpmath_utils_call(_mpmath_li, z, offset=True, parent=parent)
+        return _mpmath_call(_mpmath_li, z, offset=True, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -854,7 +855,7 @@ class Function_sin_integral(BuiltinFunction):
             sage: sin_integral(-1e23)                                                   # needs mpmath
             -1.57079632679490
         """
-        return _mpmath_utils_call(_mpmath_si, z, parent=parent)
+        return _mpmath_call(_mpmath_si, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -995,7 +996,7 @@ class Function_cos_integral(BuiltinFunction):
             sage: cos_integral(ComplexField(100)(I))                                    # needs sage.symbolic
             0.83786694098020824089467857943 + 1.5707963267948966192313216916*I
         """
-        return _mpmath_utils_call(_mpmath_ci, z, parent=parent)
+        return _mpmath_call(_mpmath_ci, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1142,7 +1143,7 @@ class Function_sinh_integral(BuiltinFunction):
             sage: sinh_integral(ComplexField(100)(I))                                   # needs sage.symbolic
             0.94608307036718301494135331382*I
         """
-        return _mpmath_utils_call(_mpmath_shi, z, parent=parent)
+        return _mpmath_call(_mpmath_shi, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1266,7 +1267,7 @@ class Function_cosh_integral(BuiltinFunction):
             sage: cosh_integral(ComplexField(100)(I))                                   # needs sage.symbolic
             0.33740392290096813466264620389 + 1.5707963267948966192313216916*I
         """
-        return _mpmath_utils_call(_mpmath_chi, z, parent=parent)
+        return _mpmath_call(_mpmath_chi, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1385,7 +1386,7 @@ class Function_exp_integral(BuiltinFunction):
             sage: Ei(3+I).n()
             7.82313467600158 + 6.09751978399231*I
         """
-        return _mpmath_utils_call(_mpmath_ei, x, parent=parent)
+        return _mpmath_call(_mpmath_ei, x, parent=parent)
 
     def _derivative_(self, x, diff_param=None):
         """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: depends = NTL/ZZ.h
 
 from sage.libs.ntl.types cimport ZZ_c

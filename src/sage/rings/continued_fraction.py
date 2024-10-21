@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Continued fractions
 
@@ -2255,7 +2256,6 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
             sage: -continued_fraction(l)                                                # needs sage.combinat
             [-1; 5, 9, 16, 8, 2, 15, 13, 13, 15, 2, 8, 16, 9, 4, 1, 0, 1, 4, 9...]
         """
-        from sage.combinat.words.word import Word
         _w = self._w
         if _w[1] == 1:
             _w = Word((-_w[0] - 1, _w[2] + 1)).concatenate(Word(_w[3:]))

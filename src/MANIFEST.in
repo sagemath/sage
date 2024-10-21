@@ -2,6 +2,7 @@ include VERSION.txt
 
 recursive-include sage *.pxi *.pxd *.h *.hpp
 
+graft sage
 prune sage/ext/interpreters   # In particular, __init__.py must not be present in the distribution; or sage_setup.autogen.interpreters.rebuild will not generate the code
 prune sage_docbuild
 prune doc

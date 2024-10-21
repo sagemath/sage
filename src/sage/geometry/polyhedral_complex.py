@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.graphs
 r"""
 Finite polyhedral complexes
@@ -2327,6 +2328,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: simplicial_pc.is_simplicial_complex()
             True
 
+            sage: # needs sage.symbolic
             sage: fan = PolyhedralComplex([Polyhedron(rays=square_vertices)])
             sage: fan.is_polyhedral_fan() and not fan.is_simplicial_fan()
             True
@@ -2345,6 +2347,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: simplicial_fan.is_simplicial_fan()
             True
 
+            sage: # needs sage.symbolic
             sage: halfspace = PolyhedralComplex([Polyhedron(rays=[(0, 0, 1)],
             ....:             lines=[(1, 0, 0), (0, 1, 0)])])
             sage: halfspace.is_simplicial_fan()

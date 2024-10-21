@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 This file provides the declaration for the pAdicTemplateElement class,
 which collects common functionality for the different `p`-adic template

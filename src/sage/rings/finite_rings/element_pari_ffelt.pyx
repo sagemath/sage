@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 """
 Finite field elements implemented via PARI's FFELT type
 

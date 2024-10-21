@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Arbitrary precision floating point complex numbers using GNU MPFR
 
@@ -50,7 +51,7 @@ from sage.rings.complex_double cimport ComplexDoubleElement
 from sage.rings.real_mpfr cimport RealNumber
 from sage.libs.gsl.complex cimport *
 
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
+from sage.libs.mpmath.sage_utils cimport mpfr_to_mpfval
 from sage.rings.integer_ring import ZZ
 
 cimport gmpy2

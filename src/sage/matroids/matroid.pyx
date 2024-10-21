@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 The abstract Matroid class
 
@@ -3797,9 +3798,9 @@ cdef class Matroid(SageObject):
         a function, and many other types of maps::
 
             sage: M = matroids.catalog.Fano()
-            sage: P = PermutationGroup([[('a', 'b', 'c'),                               # needs sage.rings.finite_rings
+            sage: P = PermutationGroup([[('a', 'b', 'c'),                               # needs sage.groups
             ....:                        ('d', 'e', 'f'), ('g')]]).gen()
-            sage: M.is_isomorphism(M, P)                                                # needs sage.rings.finite_rings
+            sage: M.is_isomorphism(M, P)                                                # needs sage.groups
             True
 
             sage: M = matroids.catalog.Pappus()
@@ -7999,7 +8000,7 @@ cdef class Matroid(SageObject):
 
             sage: from sage.matroids.advanced import setprint
             sage: M = matroids.catalog.Fano()
-            sage: setprint(M.flat_cover())                                              # needs sage.rings.finite_rings
+            sage: setprint(M.flat_cover())                                              # needs sage.numerical.mip
             [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'},
              {'b', 'c', 'd'}, {'b', 'e', 'g'}, {'c', 'f', 'g'},
              {'d', 'e', 'f'}]
@@ -8225,11 +8226,11 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.catalog.TernaryDowling3()
-            sage: M.show(B=['a','b','c'])                                               # needs sage.plot sage.rings.finite_rings
-            sage: M.show(B=['a','b','c'], lineorders=[['f','e','i']])                   # needs sage.plot sage.rings.finite_rings
-            sage: pos = {'a':(0,0), 'b': (0,1), 'c':(1,0), 'd':(1,1),                   # needs sage.plot
+            sage: M.show(B=['a','b','c'])                                               # needs sage.plot
+            sage: M.show(B=['a','b','c'], lineorders=[['f','e','i']])                   # needs sage.plot
+            sage: pos = {'a':(0,0), 'b': (0,1), 'c':(1,0), 'd':(1,1),
             ....:        'e':(1,-1), 'f':(-1,1), 'g':(-1,-1),'h':(2,0), 'i':(0,2)}
-            sage: M.show(pos_method=1, pos_dict=pos, lims=[-3,3,-3,3])                  # needs sage.plot sage.rings.finite_rings
+            sage: M.show(pos_method=1, pos_dict=pos, lims=[-3,3,-3,3])                  # needs sage.plot
         """
         if self.rank() > 3:
             raise NotImplementedError

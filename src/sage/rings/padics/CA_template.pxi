@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 Capped absolute template for complete discrete valuation rings
 

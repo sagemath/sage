@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Multiplicative Abelian Groups
 
@@ -124,8 +125,7 @@ EXAMPLE 1:
 We create an abelian group in zero or more variables; the syntax ``T(1)``
 creates the identity element even in the rank zero case::
 
-    sage: T = AbelianGroup(0, [])
-    sage: T
+    sage: T = AbelianGroup(0, []); T
     Trivial Abelian group
     sage: T.gens()
     ()
@@ -137,14 +137,12 @@ EXAMPLE 2:
 An Abelian group uses a multiplicative representation of elements, but
 the underlying representation is lists of integer exponents::
 
-    sage: F = AbelianGroup(5, [3,4,5,5,7], names = list("abcde"))
-    sage: F
+    sage: F = AbelianGroup(5, [3,4,5,5,7], names=list("abcde")); F
     Multiplicative Abelian group isomorphic to C3 x C4 x C5 x C5 x C7
     sage: (a,b,c,d,e) = F.gens()
     sage: a*b^2*e*d
     a*b^2*d*e
-    sage: x = b^2*e*d*a^7
-    sage: x
+    sage: x = b^2*e*d*a^7; x
     a*b^2*d*e
     sage: x.list()
     [1, 2, 0, 1, 1]
@@ -1366,6 +1364,9 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             Traceback (most recent call last):
             ...
             ValueError: subgroups order must be positive or None
+
+            sage: AbelianGroup([1,3,0,1]).number_of_subgroups(order=3)                  # needs sage.libs.gap
+            1
         """
         if not self.is_finite():
             if order is None:

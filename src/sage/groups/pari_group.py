@@ -1,4 +1,5 @@
-# sage.doctest: needs sage.libs.pari
+# sage_setup: distribution = sagemath-pari
+# sage.doctest: needs sage.groups sage.libs.pari
 r"""
 PARI Groups
 

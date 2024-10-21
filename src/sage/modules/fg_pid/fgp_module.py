@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Finitely generated modules over a PID
 
@@ -220,7 +221,7 @@ from .fgp_element import DEBUG, FGP_Element
 from .fgp_morphism import FGP_Morphism, FGP_Homset
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.arith.functions import lcm
+from sage.arith.functions import lcm, LCM_list
 from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecated_function_alias
 from sage.matrix.constructor import matrix
@@ -1463,9 +1464,18 @@ class FGP_Module_class(Module):
         # This matrix T gives each basis element of self._V in terms
         # of our new optimized V, modulo the W's.
         A = V.basis_matrix().stack(self._W.basis_matrix())
-        B, d = A._clear_denom()
+        if A.base_ring() is ZZ:
+            B, d = A, 1
+        else:
+            try:
+                # Use fast routine specific to Matrix_rational_dense
+                B, d = A._clear_denom()
+            except AttributeError:
+                d = LCM_list(coeff.denominator()
+                             for key, coeff in A.items())
+                B = d * A
         H, U = B.hermite_form(transformation=True)
-        Y = H.solve_left(d*self._V.basis_matrix())
+        Y = H.solve_left(d * self._V.basis_matrix())
         T = Y * U.matrix_from_columns(range(V.rank()))
         self.__T = T
 

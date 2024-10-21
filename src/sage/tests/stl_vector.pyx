@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 # distutils: language = c++
 """
 Example of a class wrapping an STL vector

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.rings.number_field
 r"""
 Embeddings into ambient fields
@@ -494,10 +495,13 @@ def root_from_approx(f, a):
         return LazyAlgebraic(CLF, f, a, prec=0)
     # p-adic lazy, when implemented, would go here
     else:
-        from sage.symbolic.relation import test_relation_maxima
         rel = (f(a) != 0)
-        if (rel is True
-            or (not isinstance(rel, bool) and test_relation_maxima(rel))):
+        if rel is False:
+            return a
+        if rel is True:
+            raise ValueError("{} is not a root of {}".format(a, f))
+        from sage.symbolic.relation import test_relation_maxima
+        if test_relation_maxima(rel):
             raise ValueError("{} is not a root of {}".format(a, f))
         return a
 

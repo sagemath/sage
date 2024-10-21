@@ -841,7 +841,7 @@ cdef class SageObject:
         EXAMPLES::
 
             sage: n = -3/7
-            sage: n._magma_init_(magma)
+            sage: n._magma_init_(magma)           # optional - magma
             '-3/7'
 
         Some other examples that illustrate conversion to Magma.

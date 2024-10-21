@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-flint
+
 cdef double eval_seq_as_poly(int *f, int n, double x) noexcept
 cdef double newton(int *f, int *df, int n, double x0, double eps) noexcept
 cdef void newton_in_intervals(int *f, int *df, int n, double *beta, double eps, double *rts) noexcept

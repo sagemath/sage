@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.modules (because __init__ constructs a vector space)
 r"""
 Orders of function fields: basis

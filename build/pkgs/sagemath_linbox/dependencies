@@ -1,0 +1,1 @@
+$(PYTHON) cypari memory_allocator sagemath_categories sagemath_flint sagemath_modules iml linbox m4ri m4rie | $(PYTHON_TOOLCHAIN) sage_setup sagemath_environment cython pkgconfig

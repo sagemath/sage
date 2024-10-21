@@ -930,6 +930,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         # PARI minicurve for computing a_p coefficients
         self._e = E.pari_mincurve()
 
+        from sage.symbolic.constants import pi, euler_gamma
         self._pi = RDF(pi)
         self._euler_gamma = RDF(euler_gamma)
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 from sage.libs.gmp.types cimport mpz_t
 from sage.libs.flint.types cimport fmpz_poly_t
 

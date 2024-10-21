@@ -1,0 +1,165 @@
+{
+    "sage.algebras.iwahori_hecke_algebra": {
+        "failed": true,
+        "ntests": 679
+    },
+    "sage.categories.coxeter_groups": {
+        "ntests": 200
+    },
+    "sage.combinat.kazhdan_lusztig": {
+        "failed": true,
+        "ntests": 26
+    },
+    "sage.combinat.root_system.ambient_space": {
+        "ntests": 78
+    },
+    "sage.combinat.root_system.braid_orbit": {
+        "ntests": 11
+    },
+    "sage.combinat.root_system.cartan_matrix": {
+        "failed": true,
+        "ntests": 166
+    },
+    "sage.combinat.root_system.cartan_type": {
+        "failed": true,
+        "ntests": 456
+    },
+    "sage.combinat.root_system.coxeter_matrix": {
+        "failed": true,
+        "ntests": 177
+    },
+    "sage.combinat.root_system.coxeter_type": {
+        "ntests": 81
+    },
+    "sage.combinat.root_system.dynkin_diagram": {
+        "failed": true,
+        "ntests": 143
+    },
+    "sage.combinat.root_system.integrable_representations": {
+        "failed": true,
+        "ntests": 141
+    },
+    "sage.combinat.root_system.non_symmetric_macdonald_polynomials": {
+        "failed": true,
+        "ntests": 491
+    },
+    "sage.combinat.root_system.reflection_group_c": {
+        "failed": true,
+        "ntests": 41
+    },
+    "sage.combinat.root_system.reflection_group_element": {
+        "ntests": 19
+    },
+    "sage.combinat.root_system.root_lattice_realization_algebras": {
+        "failed": true,
+        "ntests": 303
+    },
+    "sage.combinat.root_system.root_lattice_realizations": {
+        "failed": true,
+        "ntests": 545
+    },
+    "sage.combinat.root_system.root_space": {
+        "failed": true,
+        "ntests": 78
+    },
+    "sage.combinat.root_system.root_system": {
+        "failed": true,
+        "ntests": 122
+    },
+    "sage.combinat.root_system.type_A": {
+        "ntests": 48
+    },
+    "sage.combinat.root_system.type_A_affine": {
+        "ntests": 29
+    },
+    "sage.combinat.root_system.type_A_infinity": {
+        "ntests": 37
+    },
+    "sage.combinat.root_system.type_B": {
+        "ntests": 39
+    },
+    "sage.combinat.root_system.type_BC_affine": {
+        "ntests": 41
+    },
+    "sage.combinat.root_system.type_B_affine": {
+        "ntests": 26
+    },
+    "sage.combinat.root_system.type_C": {
+        "ntests": 40
+    },
+    "sage.combinat.root_system.type_C_affine": {
+        "ntests": 22
+    },
+    "sage.combinat.root_system.type_D": {
+        "ntests": 41
+    },
+    "sage.combinat.root_system.type_D_affine": {
+        "ntests": 22
+    },
+    "sage.combinat.root_system.type_E": {
+        "ntests": 52
+    },
+    "sage.combinat.root_system.type_E_affine": {
+        "ntests": 23
+    },
+    "sage.combinat.root_system.type_F": {
+        "ntests": 39
+    },
+    "sage.combinat.root_system.type_F_affine": {
+        "ntests": 18
+    },
+    "sage.combinat.root_system.type_G": {
+        "ntests": 34
+    },
+    "sage.combinat.root_system.type_G_affine": {
+        "ntests": 18
+    },
+    "sage.combinat.root_system.type_H": {
+        "ntests": 21
+    },
+    "sage.combinat.root_system.type_I": {
+        "ntests": 20
+    },
+    "sage.combinat.root_system.type_Q": {
+        "ntests": 25
+    },
+    "sage.combinat.root_system.type_affine": {
+        "failed": true,
+        "ntests": 72
+    },
+    "sage.combinat.root_system.type_dual": {
+        "ntests": 126
+    },
+    "sage.combinat.root_system.type_folded": {
+        "ntests": 38
+    },
+    "sage.combinat.root_system.type_marked": {
+        "failed": true,
+        "ntests": 119
+    },
+    "sage.combinat.root_system.type_reducible": {
+        "ntests": 82
+    },
+    "sage.combinat.root_system.type_relabel": {
+        "failed": true,
+        "ntests": 135
+    },
+    "sage.combinat.root_system.type_super_A": {
+        "ntests": 127
+    },
+    "sage.combinat.root_system.weight_lattice_realizations": {
+        "failed": true,
+        "ntests": 181
+    },
+    "sage.combinat.root_system.weight_space": {
+        "failed": true,
+        "ntests": 92
+    },
+    "sage.libs.coxeter3.coxeter": {
+        "ntests": 254
+    },
+    "sage.libs.coxeter3.coxeter_group": {
+        "failed": true,
+        "ntests": 141
+    }
+}

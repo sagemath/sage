@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Power Series Rings
 
@@ -40,10 +41,10 @@ changed. To work with different default precision, create a new power series
 ring::
 
     sage: R.<x> = PowerSeriesRing(QQ, default_prec=10)
-    sage: sin(x)
+    sage: x.sin()
     x - 1/6*x^3 + 1/120*x^5 - 1/5040*x^7 + 1/362880*x^9 + O(x^10)
     sage: R.<x> = PowerSeriesRing(QQ, default_prec=15)
-    sage: sin(x)
+    sage: x.sin()
     x - 1/6*x^3 + 1/120*x^5 - 1/5040*x^7 + 1/362880*x^9 - 1/39916800*x^11
     + 1/6227020800*x^13 + O(x^15)
 

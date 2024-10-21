@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Generic structures for linear codes of any metric

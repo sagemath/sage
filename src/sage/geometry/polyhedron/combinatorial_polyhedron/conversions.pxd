@@ -1,5 +1,5 @@
+# sage_setup: distribution = sagemath-polyhedra
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport face_t
-
 
 cdef int Vrep_list_to_bit_rep(tuple Vrep_list, face_t output) except -1
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.rings.finite_rings.stdint cimport *
 
 cdef struct c_vector_modint:

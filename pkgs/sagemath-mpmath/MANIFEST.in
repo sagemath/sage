@@ -1,0 +1,26 @@
+prune sage
+
+include VERSION.txt
+include vendor.txt
+
+# these are currently shipped by sagemath-modules, which depends on sagemath-mpmath!
+include sage/libs/mpfr/*.pxd            # FIXME
+include sage/rings/real_mpfr.pxd        # FIXME
+include sage/rings/complex_mpfr.pxd        # FIXME
+
+graft sage/libs/mpmath
+
+global-exclude *.c
+global-exclude *.cpp
+
+global-exclude all__sagemath*.py
+global-include all__sagemath_mpmath.py
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

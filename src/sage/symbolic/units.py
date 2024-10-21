@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 Units of measurement
 

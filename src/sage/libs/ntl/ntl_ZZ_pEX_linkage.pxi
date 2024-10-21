@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 r"""
 Linkage for arithmetic with NTL's ZZ_pEX elements.
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 """
 A class to keep information about faces of a polyhedron
 

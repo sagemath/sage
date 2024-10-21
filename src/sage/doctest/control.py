@@ -1,4 +1,5 @@
 # sage_setup: distribution = sagemath-repl
+# sage.doctest: needs sage.all
 """
 Classes involved in doctesting
 
@@ -492,7 +493,7 @@ class DocTestController(SageObject):
                         if pkg.name in options.hide:
                             continue
                         # Skip features for which we have a more specific runtime feature test.
-                        if pkg.name in ['bliss', 'coxeter3', 'mcqd', 'meataxe', 'sirocco', 'tdlib']:
+                        if pkg.name in ['bliss', 'coxeter3', 'mcqd', 'meataxe', 'mpmath', 'sirocco', 'tdlib']:
                             continue
                         if pkg.is_installed() and pkg.installed_version == pkg.remote_version:
                             options.optional.add(pkg.name)
@@ -608,7 +609,7 @@ class DocTestController(SageObject):
             sage: DC.options.warn_long = 5.0
             sage: DC._init_warn_long()
             sage: DC.options.warn_long    # existing command-line options are not changed
-            5.00000000000000
+            5.0...
         """
         # default is -1.0
         if self.options.warn_long >= 0:     # Specified on the command line
@@ -674,10 +675,10 @@ class DocTestController(SageObject):
 
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
             sage: DC = DocTestController(DocTestDefaults(), [])
-            sage: 'BipartiteGraph' in DC.load_environment().__dict__
+            sage: 'BipartiteGraph' in DC.load_environment().__dict__                    # needs sage.graphs
             True
             sage: DC = DocTestController(DocTestDefaults(environment='sage.doctest.all'), [])
-            sage: 'BipartiteGraph' in  DC.load_environment().__dict__
+            sage: 'BipartiteGraph' in  DC.load_environment().__dict__                   # needs sage.graphs
             False
             sage: 'run_doctests' in DC.load_environment().__dict__
             True

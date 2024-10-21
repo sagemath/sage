@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 """
 Parser For gambit And lrs Nash Equilibria
 """

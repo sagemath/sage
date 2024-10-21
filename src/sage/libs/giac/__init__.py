@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-giac
 """
 Wrappers for Giac functions
 
@@ -164,6 +165,8 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
     EXAMPLES::
 
         sage: from sage.libs.giac import groebner_basis as gb_giac
+
+        sage: # needs sage.rings.finite_rings
         sage: P = PolynomialRing(GF(previous_prime(2**31)), 6, 'x')
         sage: I = sage.rings.ideal.Cyclic(P)
         sage: B = gb_giac(I.gens())
@@ -175,6 +178,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
 
     Elimination ideals can be computed by passing ``elim_variables``::
 
+        sage: # needs sage.rings.finite_rings
         sage: P = PolynomialRing(GF(previous_prime(2**31)), 5, 'x')
         sage: I = sage.rings.ideal.Cyclic(P)
         sage: B = gb_giac(I.gens(), elim_variables=[P.gen(0), P.gen(2)])

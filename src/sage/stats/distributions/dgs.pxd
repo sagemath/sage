@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 AUTHOR: Martin Albrecht <martinralbrecht@googlemail.com>
 """
@@ -7,7 +8,7 @@ from sage.libs.gmp.random cimport gmp_randstate_t
 from sage.libs.mpfr.types cimport mpfr_t
 from libc.stdint cimport uint64_t
 
-cdef extern from "sage/stats/distributions/dgs.h":
+cdef extern from "dgs.h":
     int DGS_BERN_UNIFORM_DEFAULT_LENGTH
     int DGS_BERN_UNIFORM_MAX_LENGTH
 

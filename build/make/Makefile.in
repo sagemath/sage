@@ -141,12 +141,34 @@ PYPI_WHEEL_PACKAGES = $(PYPI_NOARCH_WHEEL_PACKAGES) \
 	sagemath_objects			\
 	sagemath_repl				\
 	sagemath_categories			\
+	sagemath_modules			\
+	sagemath_plot				\
+	sagemath_polyhedra			\
+	sagemath_graphs				\
+	sagemath_combinat			\
+	sagemath_schemes			\
+	sagemath_giac				\
+	sagemath_flint				\
+	sagemath_pari				\
+	sagemath_gap				\
+	sagemath_homfly				\
+	sagemath_linbox				\
+	sagemath_ntl				\
+	sagemath_brial				\
+	sagemath_eclib				\
+	sagemath_lcalc				\
+	sagemath_libbraiding			\
+	sagemath_libecm				\
 	sagemath_bliss 				\
 	sagemath_mcqd 				\
 	sagemath_tdlib				\
 	sagemath_coxeter3 			\
 	sagemath_sirocco			\
-	sagemath_meataxe
+	sagemath_meataxe			\
+	sagemath_symbolics			\
+	sagemath_glpk				\
+	sagemath_mpmath				\
+	sagemath_standard_no_symbolics
 
 # sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib
 WHEEL_PACKAGES = $(PYPI_WHEEL_PACKAGES)		\
@@ -187,7 +209,6 @@ $(foreach pkgname,$(PIP_PACKAGES),\
 $(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/.dummy:
 	touch $@
 
-
 # Filtered by installation tree
 $(foreach tree,SAGE_LOCAL SAGE_VENV SAGE_DOCS, \
     $(eval $(tree)_INSTALLED_PACKAGE_INSTS = \
@@ -199,6 +220,9 @@ $(foreach tree,SAGE_LOCAL SAGE_VENV SAGE_DOCS, \
                          $(if $(findstring $(tree),$(trees_$(pkgname))), \
                               $(inst_$(pkgname))))))
 
+# Optional dependencies
+$(foreach pkgname,$(INSTALLED_PACKAGES),\
+    $(eval optional_inst_$(pkgname) = $(inst_$(pkgname))))
 
 ###############################################################################
 
@@ -548,10 +572,11 @@ debug-check:
 #
 # Positional arguments:
 #     $(1): package name
+#     $(2): empty or one of "build_", "check_"
 pkg_deps = \
 	$(if $(filter gcc,$(1)),,$$(GCC_DEP))\
-	$(foreach dep,$(deps_$(1)),\
-        $(if $(value inst_$(dep)),$$(inst_$(dep)),$(dep)))
+	$(foreach dep,$($(2)deps_$(1)),\
+            $(if $(value inst_$(dep)),$$(inst_$(dep)),$(dep)))
 
 # ============================= normal packages ==============================
 # Generate build rules for 'normal' packages; this template is used to generate
@@ -599,62 +624,73 @@ pkg_deps = \
 # Positional arguments:
 #     $(1): package name
 #     $(2): package version
-#     $(3): package dependencies
-#     $(4): package tree variable
+#     $(3): package build dependencies
+#     $(4): package dependencies
+#     $(5): package check dependencies
+#     $(6): package tree variable
 
 define NORMAL_PACKAGE_templ ##########################################
 
 $(1)-build-deps: $(3)
 
-$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
-	+$(MAKE_REC) $(1)-$(4)-no-deps
+$(1)-deps: $(1)-build-deps $(4)
 
-$(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
+$$($(6))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(4) $(3) $(if $(check_deps_$(1)),$$(and $$(filter-out no,$$(SAGE_CHECK_$(1))),$(5)))
+	+$(MAKE_REC) $(1)-$(6)-no-deps
 
-$(1)-ensure: $(inst_$(1))
+$(1): $$($(6))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
-$(1)-$(4)-no-deps:
-	+@if [ -z '$$($(4))' ]; then \
-	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
-	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
+$(1)-ensure: $$(inst_$(1))
+
+$(1)-$(6)-build-no-deps:
+	+@if [ -z '$$($(6))' ]; then \
+	    echo "Error: The installation tree $(6) has been disabled" 2>&1; \
+	    echo "$$($(6)_DISABLED_MESSAGE)" 2>&1; \
 	    exit 1; \
-	else \
-	    sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
+	fi
+
+$(1)-build-no-deps: $(1)-$(6)-build-no-deps
+
+$(1)-$(6)-no-deps: $(1)-$(6)-build-no-deps
+	+@sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$(SAGE_SRC)/bin:$$($(6))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
 		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
-		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
-	fi
+		$(1)-$(2) $$($(6))' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
 
-$(1)-no-deps: $(1)-$(4)-no-deps
+$(1)-no-deps: $(1)-$(6)-no-deps
 
-$(1)-$(4)-check:
-	$(PLUS)@sage-logger -p 'PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) --check-only $(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'
+$(1)-$(6)-check:
+	$(PLUS)@sage-logger -p 'PATH=$$(SAGE_SRC)/bin:$$($(6))/bin:$$$$PATH $$(SAGE_SPKG) --check-only $(1)-$(2) $$($(6))' '$$(SAGE_LOGS)/$(1)-$(2).log'
 
-$(1)-check: $(1)-$(4)-check
+$(1)-check: $(1)-$(6)-check
 
-$(1)-$(4)-uninstall:
-	if [ -d '$$($(4))' ]; then \
+$(1)-$(6)-uninstall:
+	if [ -d '$$($(6))' ]; then \
 	    sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
-		$(1) '$$($(4))'; \
+		$(1) '$$($(6))'; \
 	fi
 
-$(1)-uninstall: $(1)-$(4)-uninstall
+$(1)-uninstall: $(1)-$(6)-uninstall
 
 $(1)-clean: $(1)-uninstall
 
-.PHONY: $(1) $(1)-$(4)-uninstall $(1)-uninstall $(1)-clean $(1)-build-deps $(1)-no-deps
+.PHONY: $(1) $(1)-$(6)-uninstall $(1)-uninstall $(1)-clean $(1)-build-deps $(1)-no-deps
 endef #################################################################
 
 $(foreach pkgname, $(NORMAL_PACKAGES),\
     $(foreach tree, $(trees_$(pkgname)), \
 	$(eval $(call NORMAL_PACKAGE_templ,$(pkgname),$(vers_$(pkgname)),\
-	                                   $(call pkg_deps,$(pkgname)),$(tree)))))
+	                                   $(call pkg_deps,$(pkgname),build_),\
+	                                   $(call pkg_deps,$(pkgname)),\
+	                                   $(call pkg_deps,$(pkgname),check_),$(tree)))))
 
 ifdef DEBUG_RULES
 $(info # Rules for standard packages)
 $(foreach pkgname, $(NORMAL_PACKAGES),\
     $(foreach tree, $(trees_$(pkgname)), \
 	$(info $(call NORMAL_PACKAGE_templ,$(pkgname),$(vers_$(pkgname)),\
-	                                   $(call pkg_deps,$(pkgname)),$(tree)))))
+	                                   $(call pkg_deps,$(pkgname),build_),\
+	                                   $(call pkg_deps,$(pkgname)),\
+	                                   $(call pkg_deps,$(pkgname),check_),$(tree)))))
 endif
 
 # ================================ pip packages ===============================
@@ -669,14 +705,17 @@ endif
 
 # Positional arguments:
 #     $(1): package name
-#     $(2): package dependencies
+#     $(2): package build dependencies
+#     $(3): package dependencies
 define PIP_PACKAGE_templ
 $(1)-build-deps: $(2)
 
-$(1): $(2)
+$(1)-deps: $(1)-build-deps $(3)
+
+$(1): $(3) $(2)
 	+$(MAKE_REC) $(1)-no-deps
 
-$(1)-ensure: $(inst_$(1))
+$(1)-ensure: $$(inst_$(1))
 
 $(1)-no-deps:
 	$(AM_V_at)sage-logger -p 'sage --pip install -r "$$(SAGE_ROOT)/build/pkgs/$(1)/requirements.txt"' '$$(SAGE_LOGS)/$(1).log'
@@ -690,12 +729,14 @@ $(1)-clean: $(1)-uninstall
 endef
 
 $(foreach pkgname,$(PIP_PACKAGES),\
-	$(eval $(call PIP_PACKAGE_templ,$(pkgname),$(call pkg_deps,$(pkgname)))))
+	$(eval $(call PIP_PACKAGE_templ,$(pkgname),$(call pkg_deps,$(pkgname),build_),\
+	                                           $(call pkg_deps,$(pkgname)))))
 
 ifdef DEBUG_RULES
 $(info # Rules for pip packages)
 $(foreach pkgname,$(PIP_PACKAGES),\
-	$(info $(call PIP_PACKAGE_templ,$(pkgname),$(call pkg_deps,$(pkgname)))))
+	$(info $(call PIP_PACKAGE_templ,$(pkgname),$(call pkg_deps,$(pkgname),build_),\
+	                                           $(call pkg_deps,$(pkgname)))))
 endif
 
 # ============================= script packages ==============================
@@ -772,11 +813,13 @@ $(1)-uninstall: $(1)-$(4)-uninstall
 
 $(1)-clean: $(1)-uninstall
 
-$(1)-sdist: FORCE python_build sage_setup cython
+$(1)-sdist: FORCE python_build sage_setup cython meson_python
 	$(AM_V_at) cd '$$(SAGE_ROOT)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
+		export CXXFLAGS="$$$$CXXFLAGS $$$$(echo "$$$$CXX" | sed -En "s/.*(-std=[a-z0-9+]*).*/\1/p")" && \
+		export CXX=$$$$(echo "$$$$CXX" | sed 's/-std=[a-z0-9+]*//g') && \
 		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-src'
 
 # Recursive tox invocation
@@ -795,13 +838,13 @@ endef
 
 $(foreach pkgname,$(SCRIPT_PACKAGES),\
     $(foreach tree, $(trees_$(pkgname)), \
-	$(eval $(call SCRIPT_PACKAGE_templ,$(pkgname),$(vers_$(pkgname)),$(call pkg_deps,$(pkgname)),$(tree)))))
+	$(eval $(call SCRIPT_PACKAGE_templ,$(pkgname),$(vers_$(pkgname)),$(call pkg_deps,$(pkgname),build_),$(tree)))))
 
 ifdef DEBUG_RULES
 $(info # Rules for script packages)
 $(foreach pkgname,$(SCRIPT_PACKAGES),\
     $(foreach tree, $(trees_$(pkgname)), \
-	$(info $(call SCRIPT_PACKAGE_templ,$(pkgname),$(vers_$(pkgname)),$(call pkg_deps,$(pkgname)),$(tree)))))
+	$(info $(call SCRIPT_PACKAGE_templ,$(pkgname),$(vers_$(pkgname)),$(call pkg_deps,$(pkgname),build_),$(tree)))))
 endif
 
 # sagelib depends on this so that its install script is always executed

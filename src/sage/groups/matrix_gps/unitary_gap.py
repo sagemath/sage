@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Unitary Groups `GU(n,q)` and `SU(n,q)` with GAP

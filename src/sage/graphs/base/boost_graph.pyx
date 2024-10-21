@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Interface to run Boost algorithms
 
@@ -1025,9 +1026,13 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
     else:
         correct_type = int
     # Needed for rational curves.
-    from sage.rings.real_mpfr import RealNumber, RR
-    if correct_type == RealNumber:
-        correct_type = RR
+    try:
+        from sage.rings.real_mpfr import RealNumber, RR
+    except ImportError:
+        pass
+    else:
+        if correct_type == RealNumber:
+            correct_type = RR
 
     import sys
     for v in range(g.num_verts()):
@@ -1226,9 +1231,13 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
     else:
         correct_type = int
     # Needed for rational curves.
-    from sage.rings.real_mpfr import RealNumber, RR
-    if correct_type == RealNumber:
-        correct_type = RR
+    try:
+        from sage.rings.real_mpfr import RealNumber, RR
+    except ImportError:
+        pass
+    else:
+        if correct_type == RealNumber:
+            correct_type = RR
 
     import sys
     if distances:
@@ -1382,9 +1391,13 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
     else:
         correct_type = int
     # Needed for rational curves.
-    from sage.rings.real_mpfr import RealNumber, RR
-    if correct_type == RealNumber:
-        correct_type = RR
+    try:
+        from sage.rings.real_mpfr import RealNumber, RR
+    except ImportError:
+        pass
+    else:
+        if correct_type == RealNumber:
+            correct_type = RR
 
     import sys
     if distances:

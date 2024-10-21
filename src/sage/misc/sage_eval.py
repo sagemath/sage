@@ -172,7 +172,16 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     if locals is None:
         locals = {}
 
-    import sage.all
+    try:
+        import sage.all as toplevel
+    except ImportError:
+        try:
+            import sage.all__sagemath_modules as toplevel
+        except ImportError:
+            try:
+                import sage.all__sagemath_categories as toplevel
+            except ImportError:
+                import sage.all__sagemath_objects as toplevel
     if cmds:
         cmd_seq = cmds + '\n_sage_eval_returnval_ = ' + source
         if preparse:
@@ -182,10 +191,10 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
             source = preparser.preparse(source)
 
     if cmds:
-        exec(cmd_seq, sage.all.__dict__, locals)
+        exec(cmd_seq, toplevel.__dict__, locals)
         return locals['_sage_eval_returnval_']
     else:
-        return eval(source, sage.all.__dict__, locals)
+        return eval(source, toplevel.__dict__, locals)
 
 
 def sageobj(x, vars=None):

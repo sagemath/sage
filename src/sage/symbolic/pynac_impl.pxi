@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 Pynac interface
 """
@@ -43,8 +44,13 @@ from sage.libs.gmp.all cimport *
 from sage.libs.gsl.types cimport *
 from sage.libs.gsl.complex cimport *
 from sage.libs.gsl.gamma cimport gsl_sf_lngamma_complex_e
-from sage.libs.mpmath import utils as mpmath_utils
-from sage.libs.pari.all import pari
+from sage.libs.mpmath.sage_utils import call as _mpmath_call
+from sage.libs.mpmath.all import (
+    loggamma as _mpmath_loggamma,
+    polylog as _mpmath_polylog,
+    psi as _mpmath_psi,
+    stieltjes as _mpmath_stieltjes
+)
 from sage.misc.persist import loads, dumps
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer, smallInteger
@@ -56,6 +62,11 @@ from sage.rings.cc import CC
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element cimport Element, parent
 from sage.symbolic.function cimport Function
+
+try:
+    from sage.libs.pari.all import pari
+except ImportError:
+    pass
 
 #################################################################
 # Symbolic function helpers
@@ -1628,12 +1639,11 @@ cdef py_stieltjes(x):
     n = ZZ(x)
     if n < 0:
         raise ValueError("Stieltjes constant of negative index")
-    import mpmath
     if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(mpmath.stieltjes, n, prec=prec)
+    return _mpmath_call(_mpmath_stieltjes, n, prec=prec)
 
 
 def py_stieltjes_for_doctests(x):
@@ -1989,8 +1999,6 @@ cdef py_lgamma(x):
         sage: py_lgamma(ComplexField(100).0)
         -0.65092319930185633888521683150 - 1.8724366472624298171188533494*I
     """
-    from mpmath import loggamma
-
     try:
         return x.log_gamma()
     except AttributeError:
@@ -1998,7 +2006,7 @@ cdef py_lgamma(x):
     try:
         return RR(x).log_gamma()
     except TypeError:
-        return mpmath_utils.call(loggamma, x, parent=parent(x))
+        return _mpmath_call(_mpmath_loggamma, x, parent=parent(x))
 
 
 def py_lgamma_for_doctests(x):
@@ -2132,12 +2140,11 @@ cdef py_li(x, n, parent):
         sage: py_li(0, 1, float)
         0.000000000000000
     """
-    import mpmath
     try:
         prec = parent.prec()
     except AttributeError:
         prec = 53
-    return mpmath_utils.call(mpmath.polylog, n, x, prec=prec)
+    return _mpmath_call(_mpmath_polylog, n, x, prec=prec)
 
 
 def py_li_for_doctests(x, n, parent):
@@ -2168,12 +2175,11 @@ cdef py_psi(x):
         sage: euler_gamma.n()
         0.577215664901533
     """
-    import mpmath
     if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(mpmath.psi, 0, x, prec=prec)
+    return _mpmath_call(_mpmath_psi, 0, x, prec=prec)
 
 
 def py_psi_for_doctests(x):
@@ -2197,12 +2203,11 @@ cdef py_psi2(n, x):
         sage: py_psi2(2, 1)
         -2.40411380631919
     """
-    import mpmath
     if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(mpmath.psi, n, x, prec=prec)
+    return _mpmath_call(_mpmath_psi, n, x, prec=prec)
 
 
 def py_psi2_for_doctests(n, x):
@@ -2226,12 +2231,11 @@ cdef py_li2(x):
         sage: py_li2(-1.1)
         -0.890838090262283
     """
-    import mpmath
     if isinstance(x, Element) and hasattr((<Element>x)._parent, 'prec'):
         prec = (<Element>x)._parent.prec()
     else:
         prec = 53
-    return mpmath_utils.call(mpmath.polylog, 2, x, prec=prec)
+    return _mpmath_call(_mpmath_polylog, 2, x, prec=prec)
 
 
 def py_li2_for_doctests(x):
@@ -2468,8 +2472,12 @@ def init_pynac_I():
         ((3*I + 4)*x - 5)*x
     """
     global pynac_I
-    from sage.rings.number_field.number_field import GaussianField
-    pynac_I = GaussianField().gen()
+    try:
+        from sage.rings.number_field.number_field import GaussianField
+        pynac_I = GaussianField().gen()
+    except ImportError:
+        from sage.rings.cc import CC
+        pynac_I = CC(0, 1)
     ginac_pyinit_I(pynac_I)
     from sage.symbolic.ring import SR
     return new_Expression_from_GEx(SR, g_I)

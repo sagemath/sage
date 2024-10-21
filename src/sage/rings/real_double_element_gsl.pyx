@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Double Precision Real Numbers, implementation using GSL
 """
@@ -532,18 +533,6 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         a = self._new_c(gsl_sf_sin(self._value) / cos)
         return a
 
-    def sincos(self):
-        """
-        Return a pair consisting of the sine and cosine of ``self``.
-
-        EXAMPLES::
-
-            sage: t = RDF.pi()/6
-            sage: t.sincos()
-            (0.49999999999999994, 0.8660254037844387)
-        """
-        return self.sin(), self.cos()
-
     def hypot(self, other):
         r"""
         Compute the value `\sqrt{s^2 + o^2}` where `s` is ``self`` and `o`
@@ -561,45 +550,6 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         a = self._new_c(gsl_sf_hypot(self._value, float(other)))
         sig_off()
         return a
-
-    def arccos(self):
-        """
-        Return the inverse cosine of ``self``.
-
-        EXAMPLES::
-
-            sage: q = RDF.pi()/3
-            sage: i = q.cos()
-            sage: i.arccos() == q
-            True
-        """
-        return self._new_c(libc.math.acos(self._value))
-
-    def arcsin(self):
-        """
-        Return the inverse sine of ``self``.
-
-        EXAMPLES::
-
-            sage: q = RDF.pi()/5
-            sage: i = q.sin()
-            sage: i.arcsin() == q
-            True
-        """
-        return self._new_c(libc.math.asin(self._value))
-
-    def arctan(self):
-        """
-        Return the inverse tangent of ``self``.
-
-        EXAMPLES::
-
-            sage: q = RDF.pi()/5
-            sage: i = q.tan()
-            sage: i.arctan() == q
-            True
-        """
-        return self._new_c(libc.math.atan(self._value))
 
     def cosh(self):
         """
@@ -678,45 +628,6 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             4.440892098500626e-16
         """
         return self._new_c(gsl_atanh(self._value))
-
-    def sech(self):
-        r"""
-        Return the hyperbolic secant of ``self``.
-
-        EXAMPLES::
-
-            sage: RDF(pi).sech()
-            0.08626673833405443
-            sage: CDF(pi).sech()
-            0.08626673833405443
-        """
-        return 1/self.cosh()
-
-    def csch(self):
-        r"""
-        Return the hyperbolic cosecant of ``self``.
-
-        EXAMPLES::
-
-            sage: RDF(pi).csch()
-            0.08658953753004694
-            sage: CDF(pi).csch()  # rel tol 1e-15
-            0.08658953753004696
-        """
-        return 1/self.sinh()
-
-    def coth(self):
-        r"""
-        Return the hyperbolic cotangent of ``self``.
-
-        EXAMPLES::
-
-            sage: RDF(pi).coth()
-            1.003741873197321
-            sage: CDF(pi).coth()
-            1.0037418731973213
-        """
-        return self.cosh() / self.sinh()
 
     def erf(self):
         """

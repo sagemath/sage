@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-flint
+
 from sage.libs.flint.types cimport fmpz_poly_t
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial

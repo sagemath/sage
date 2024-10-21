@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Finitely Generated Matrix Groups
 
@@ -19,8 +20,8 @@ The finitely generated matrix groups can also be constructed as
 subgroups of matrix groups::
 
     sage: SL2Z = SL(2, ZZ)
-    sage: S, T = SL2Z.gens()
-    sage: SL2Z.subgroup([T^2])
+    sage: S, T = SL2Z.gens()                                                            # needs sage.libs.gap
+    sage: SL2Z.subgroup([T^2])                                                          # needs sage.libs.gap
     Subgroup with 1 generators (
     [1 2]
     [0 1]
@@ -159,6 +160,7 @@ def QuaternionMatrixGroupGF3():
     elements commonly called `I` and `J`, while `K`
     is the product of `I` and `J`. ::
 
+        sage: # needs sage.libs.gap
         sage: from sage.groups.matrix_gps.finitely_generated import QuaternionMatrixGroupGF3
 
         sage: # needs sage.libs.gap

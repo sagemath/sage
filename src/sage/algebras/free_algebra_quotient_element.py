@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 """
 Free algebra quotient elements
@@ -36,8 +37,9 @@ def is_FreeAlgebraQuotientElement(x):
     """
     EXAMPLES::
 
+        sage: from sage.algebras.free_algebra_quotient_element import is_FreeAlgebraQuotientElement
         sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)
-        sage: sage.algebras.free_algebra_quotient_element.is_FreeAlgebraQuotientElement(i)
+        sage: is_FreeAlgebraQuotientElement(i)
         doctest:warning...
         DeprecationWarning: The function is_FreeAlgebraQuotientElement is deprecated;
         use 'isinstance(..., FreeAlgebraQuotientElement)' instead.
@@ -46,9 +48,9 @@ def is_FreeAlgebraQuotientElement(x):
 
     Of course this is testing the data type::
 
-        sage: sage.algebras.free_algebra_quotient_element.is_FreeAlgebraQuotientElement(1)
+        sage: is_FreeAlgebraQuotientElement(1)
         False
-        sage: sage.algebras.free_algebra_quotient_element.is_FreeAlgebraQuotientElement(H(1))
+        sage: is_FreeAlgebraQuotientElement(H(1))
         True
     """
     from sage.misc.superseded import deprecation
@@ -65,10 +67,11 @@ class FreeAlgebraQuotientElement(AlgebraElement):
 
         EXAMPLES::
 
+            sage: from sage.algebras.free_algebra_quotient import FreeAlgebraQuotientElement
             sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(ZZ)
-            sage: sage.algebras.free_algebra_quotient.FreeAlgebraQuotientElement(H, i)
+            sage: FreeAlgebraQuotientElement(H, i)
             i
-            sage: a = sage.algebras.free_algebra_quotient.FreeAlgebraQuotientElement(H, 1); a
+            sage: a = FreeAlgebraQuotientElement(H, 1); a
             1
             sage: a in H
             True

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 """
 Braid groups
 
@@ -1190,7 +1191,6 @@ class Braid(FiniteTypeArtinGroupElement):
               [(2, [((1, 1), [], [([(0, 0), (1, 2)], 0), ([(0, 2), (1, 0)], 0)])])])]
         """
         from sage.graphs.graph import Graph
-        from sage.functions.generalized import sgn
         crossinglist = self.Tietze()
         ncross = len(crossinglist)
         writhe = 0
@@ -1201,7 +1201,7 @@ class Braid(FiniteTypeArtinGroupElement):
         first_crossing_in_row = [None] * self.strands()
         crossings = [None] * ncross
         for i, cr in enumerate(crossinglist):
-            writhe = writhe + sgn(cr)
+            writhe = writhe + cr.sign()
             prevabove = last_crossing_in_row[abs(cr) - 1]
             prevbelow = last_crossing_in_row[abs(cr)]
             if prevabove is None:
@@ -1246,7 +1246,7 @@ class Braid(FiniteTypeArtinGroupElement):
             v = v + [0]*(ncross - len(v))
             G = Graph()
             for j, cr in enumerate(crossings):
-                if (v[j]*2-1)*sgn(cr["cr"]) == -1:  # oriented resolution
+                if (v[j]*2-1) * cr["cr"].sign() == -1: # oriented resolution
                     G.add_edge((j, cr["next_above"], abs(cr["cr"]) - 1), (j, 1))
                     G.add_edge((cr["prev_above"], j, abs(cr["cr"]) - 1), (j, 1))
                     G.add_edge((j, cr["next_below"], abs(cr["cr"])), (j, 3))

@@ -36,7 +36,10 @@ language to separate multiple commands.
 # ****************************************************************************
 
 
+from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.repl.rich_output.display_manager import get_display_manager
+
+lazy_import('sage.interfaces.interface', 'Interface')
 
 
 LINE_DOCSTRING = """
@@ -98,7 +101,7 @@ class InterfaceMagic():
         except ImportError:
             return
         for name, obj in sage.interfaces.all.__dict__.items():
-            if isinstance(obj, (sage.interfaces.interface.Interface, sage.misc.lazy_import.LazyImport)):
+            if isinstance(obj, (Interface, LazyImport)):
                 yield cls(name, obj)
 
     @classmethod

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Set systems
 
@@ -723,7 +724,7 @@ cdef class SetSystem:
             sage: N = Matroid(ring=GF(5), reduced_matrix=[[1,0,1],[0,1,1],[1,1,0]])
             sage: M.is_field_isomorphic(N)
             False
-            sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))     # needs sage.combinat
+            sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))
             False
         """
         cdef long v

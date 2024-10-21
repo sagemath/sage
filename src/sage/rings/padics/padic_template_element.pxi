@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 This file gives a class from which all the `p`-adic templates inherit.
 
@@ -24,6 +25,8 @@ AUTHORS:
 
 from cpython.long cimport *
 
+import itertools
+
 from sage.libs.gmp.all cimport *
 import sage.rings.finite_rings.integer_mod
 from cypari2.types cimport *
@@ -38,8 +41,6 @@ from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.padics.misc import trim_zeros
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.structure.element import canonical_coercion
-
-import itertools
 
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
 cdef long minusmaxordp = -maxordp

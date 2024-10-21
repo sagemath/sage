@@ -181,7 +181,7 @@ jobs:
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
-      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib
+      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib brial
       CIBW_BUILD: "*${{ matrix.build }}*"
       # Disable building PyPy wheels on all platforms
       CIBW_SKIP: "pp*"
@@ -255,6 +255,10 @@ jobs:
         run: |
           "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*bliss*
 
+      - name: sagemath-brial
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*brial*
+
       - name: sagemath-coxeter3
         run: |
           "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*coxeter3*
@@ -262,6 +266,13 @@ jobs:
       - name: sagemath-mcqd
         run: |
           "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*mcqd*
+
+      - name: sagemath-tdlib
+        run: |
+          case "${{ matrix.arch }}" in
+              sagemath*tdlib:i686) ;;  # broken - boost-related
+              *) "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*tdlib*
+          esac
 
       - uses: actions/upload-artifact@v4
         with:

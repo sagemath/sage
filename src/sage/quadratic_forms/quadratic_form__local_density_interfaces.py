@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+# sage.doctest: needs sage.libs.pari sage.modules
 """
 Local Density Interfaces
 """
@@ -93,7 +95,7 @@ def local_primitive_density(self, p, m):
         [ * 10 5 6 ]
         [ * * 15 8 ]
         [ * * * 20 ]
-        sage: Q.theta_series(20)                                                        # needs sage.libs.pari
+        sage: Q.theta_series(20)
         1 + 2*q^5 + 2*q^10 + 2*q^14 + 2*q^15 + 2*q^16 + 2*q^18 + O(q^20)
         sage: Q.local_normal_form(2)
         Quadratic form in 4 variables over Integer Ring with coefficients:

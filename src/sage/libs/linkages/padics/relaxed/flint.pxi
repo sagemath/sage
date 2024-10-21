@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 r"""
 This linkage file implements the relaxed padics API using flint.
 
@@ -21,7 +22,7 @@ from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.fmpz_poly_sage cimport *
 
-cdef extern from "sage/libs/linkages/padics/relaxed/flint_helper.c":
+cdef extern from "flint_helper.c":
     cdef void flint_randseed(flint_rand_t state, ulong seed1, ulong seed2)
     cdef fmpz* get_coeff(fmpz_poly_t poly, slong i)
     cdef void get_slice(fmpz_poly_t slice, fmpz_poly_t poly, slong start, slong length)

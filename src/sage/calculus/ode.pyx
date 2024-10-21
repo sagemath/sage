@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Solving ODE numerically by GSL
 

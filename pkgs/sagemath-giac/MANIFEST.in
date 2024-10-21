@@ -1,0 +1,18 @@
+include VERSION.txt
+
+prune sage
+global-include    all__sagemath_giac.py
+
+graft             sage/libs/giac
+
+global-exclude *.c
+global-exclude *.cpp
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

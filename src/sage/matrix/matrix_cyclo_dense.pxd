@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-linbox
+
 from sage.libs.gmp.types cimport mpz_t
 from sage.matrix.matrix_dense cimport Matrix_dense
 from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense

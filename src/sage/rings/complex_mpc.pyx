@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Arbitrary precision floating point complex numbers using GNU MPC
 
@@ -70,7 +71,6 @@ from sage.libs.mpfr cimport *
 from sage.libs.mpc cimport *
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
-from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.map cimport Map
 
 try:

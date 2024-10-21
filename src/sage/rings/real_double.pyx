@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Double precision floating point real numbers
 
@@ -1897,6 +1898,96 @@ cdef class RealDoubleElement(FieldElement):
         """
         return self.nth_root(3)
 
+    def sincos(self):
+        """
+        Return a pair consisting of the sine and cosine of ``self``.
+
+        EXAMPLES::
+
+            sage: t = RDF.pi()/6
+            sage: t.sincos()
+            (0.49999999999999994, 0.8660254037844387)
+        """
+        return self.sin(), self.cos()
+
+    def arccos(self):
+        """
+        Return the inverse cosine of ``self``.
+
+        EXAMPLES::
+
+            sage: q = RDF.pi()/3
+            sage: i = q.cos()
+            sage: i.arccos() == q
+            True
+        """
+        return self._new_c(libc.math.acos(self._value))
+
+    def arcsin(self):
+        """
+        Return the inverse sine of ``self``.
+
+        EXAMPLES::
+
+            sage: q = RDF.pi()/5
+            sage: i = q.sin()
+            sage: i.arcsin() == q
+            True
+        """
+        return self._new_c(libc.math.asin(self._value))
+
+    def arctan(self):
+        """
+        Return the inverse tangent of ``self``.
+
+        EXAMPLES::
+
+            sage: q = RDF.pi()/5
+            sage: i = q.tan()
+            sage: i.arctan() == q
+            True
+        """
+        return self._new_c(libc.math.atan(self._value))
+
+    def sech(self):
+        r"""
+        Return the hyperbolic secant of ``self``.
+
+        EXAMPLES::
+
+            sage: RDF(pi).sech()                                                        # needs sage.symbolic
+            0.08626673833405443
+            sage: CDF(pi).sech()                                                        # needs sage.symbolic
+            0.08626673833405443
+        """
+        return 1/self.cosh()
+
+    def csch(self):
+        r"""
+        Return the hyperbolic cosecant of ``self``.
+
+        EXAMPLES::
+
+            sage: RDF(pi).csch()                                                        # needs sage.symbolic
+            0.08658953753004694
+            sage: CDF(pi).csch()  # rel tol 1e-15                                       # needs sage.symbolic
+            0.08658953753004696
+        """
+        return 1/self.sinh()
+
+    def coth(self):
+        r"""
+        Return the hyperbolic cotangent of ``self``.
+
+        EXAMPLES::
+
+            sage: RDF(pi).coth()                                                        # needs sage.symbolic
+            1.003741873197321
+            sage: CDF(pi).coth()                                                        # needs sage.symbolic
+            1.0037418731973213
+        """
+        return self.cosh() / self.sinh()
+
     def agm(self, other):
         r"""
         Return the arithmetic-geometric mean of ``self`` and ``other``. The
@@ -1957,6 +2048,200 @@ cdef class RealDoubleElement(FieldElement):
         return sage.arith.misc.algdep(self, n)
 
     algdep = algebraic_dependency
+
+    # The following methods are redefined by RealDoubleElement_gsl.
+    # In the doctests, we invoke the methods defined here explicitly.
+
+    cpdef _pow_(self, other):
+        """
+        Return ``self`` raised to the real double power ``other``.
+
+        EXAMPLES::
+
+            sage: a = RDF('1.23456')
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: RealDoubleElement._pow_(a, a)
+            1.2971114817819216
+
+        TESTS::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: RealDoubleElement._pow_(RDF(0), RDF(0.5))
+            0.0
+            sage: RealDoubleElement._pow_(RDF(0), RDF(1/2))
+            0.0
+            sage: RealDoubleElement._pow_(RDF(0), RDF(0))
+            1.0
+            sage: RealDoubleElement._pow_(RDF(0), RDF(-1))
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: 0.0 cannot be raised to a negative power
+            sage: RealDoubleElement._pow_(RDF(-1), RDF(0))
+            1.0
+            sage: RealDoubleElement._pow_(RDF(-1), RDF(1))
+            -1.0
+            sage: RealDoubleElement._pow_(RDF(-1), RDF(0.5))
+            Traceback (most recent call last):
+            ...
+            ValueError: negative number cannot be raised to a fractional power
+        """
+        cdef double v = self._value
+        if v >= 0:
+            if v == 1:
+                return self
+            elif other == 0:
+                return self._new_c(1.0)
+            elif v == 0:
+                if other < 0:
+                    raise ZeroDivisionError("0.0 cannot be raised to a negative power")
+                return self
+        else:  # v < 0
+            expmod2 = libc.math.fmod(other, 2.0)
+            if expmod2 != 0.0 and expmod2 != 1.0:
+                raise ValueError("negative number cannot be raised to a fractional power")
+        return self._new_c(self._value ** (<RealDoubleElement>other)._value)
+
+    def cos(self):
+        """
+        Return the cosine of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: t = RDF.pi()/2
+            sage: RealDoubleElement.cos(t)
+            6.123233995736766e-17
+        """
+        return self._new_c(libc.math.cos(self._value))
+
+    def sin(self):
+        """
+        Return the sine of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: RealDoubleElement.sin(RDF(2))
+            0.9092974268256817
+        """
+        return self._new_c(libc.math.sin(self._value))
+
+    def tan(self):
+        """
+        Return the tangent of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: q = RDF.pi()/3
+            sage: RealDoubleElement.tan(q)
+            1.7320508075688767
+            sage: q = RDF.pi()/6
+            sage: RealDoubleElement.tan(q)
+            0.5773502691896257
+        """
+        return self._new_c(libc.math.tan(self._value))
+
+    def hypot(self, other):
+        r"""
+        Compute the value `\sqrt{s^2 + o^2}` where `s` is ``self`` and `o`
+        is ``other`` in such a way as to avoid overflow.
+
+        EXAMPLES::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: x = RDF(4e300); y = RDF(3e300)
+            sage: RealDoubleElement.hypot(x, y)
+            5e+300
+            sage: sqrt(x^2+y^2) # overflow
+            +infinity
+        """
+        return self._new_c(libc.math.hypot(self._value, float(other)))
+
+    def cosh(self):
+        """
+        Return the hyperbolic cosine of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: q = RDF.pi()/12
+            sage: RealDoubleElement.cosh(q)
+            1.0344656400955106
+        """
+        return self._new_c(libc.math.cosh(self._value))
+
+    def sinh(self):
+        """
+        Return the hyperbolic sine of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: q = RDF.pi()/12
+            sage: RealDoubleElement.sinh(q)
+            0.26480022760227073
+        """
+        return self._new_c(libc.math.sinh(self._value))
+
+    def tanh(self):
+        """
+        Return the hyperbolic tangent of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: q = RDF.pi()/12
+            sage: RealDoubleElement.tanh(q)
+            0.25597778924568454
+        """
+        return self._new_c(libc.math.tanh(self._value))
+
+    def acosh(self):
+        """
+        Return the hyperbolic inverse cosine of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: q = RDF.pi()/2
+            sage: i = RealDoubleElement.cosh(q); i
+            2.5091784786580567
+            sage: abs(RealDoubleElement.acosh(i) - q) < 1e-15
+            True
+        """
+        return self._new_c(libc.math.acosh(self._value))
+
+    def arcsinh(self):
+        """
+        Return the hyperbolic inverse sine of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: q = RDF.pi()/2
+            sage: i = RealDoubleElement.sinh(q); i
+            2.3012989023072947
+            sage: abs(RealDoubleElement.arcsinh(i) - q) < 1e-15
+            True
+        """
+        return self._new_c(libc.math.asinh(self._value))
+
+    def arctanh(self):
+        """
+        Return the hyperbolic inverse tangent of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: q = RDF.pi()/2
+            sage: i = RealDoubleElement.tanh(q); i
+            0.9171523356672744
+            sage: RealDoubleElement.arctanh(i) - q  # rel tol 1
+            4.440892098500626e-16
+        """
+        return self._new_c(libc.math.atanh(self._value))
+
 
 cdef class ToRDF(Morphism):
     def __init__(self, R):

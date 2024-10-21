@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Isogenies
 
@@ -191,6 +192,7 @@ def isogeny_codomain_from_kernel(E, kernel):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import isogeny_codomain_from_kernel
         sage: E = EllipticCurve(GF(7), [1,0,1,0,1])
         sage: R.<x> = GF(7)[]
@@ -398,6 +400,7 @@ def compute_codomain_kohel(E, kernel):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_codomain_kohel
         sage: E = EllipticCurve(GF(19), [1,2,3,4,5])
         sage: phi = EllipticCurveIsogeny(E, [9,1])
@@ -3705,6 +3708,7 @@ def compute_intermediate_curves(E1, E2):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_intermediate_curves
         sage: E = EllipticCurve(GF(83), [1,0,1,1,0])
         sage: R.<x> = GF(83)[]; f = x + 24

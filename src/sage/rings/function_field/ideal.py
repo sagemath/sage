@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Ideals of function fields
 
@@ -467,7 +468,7 @@ class FunctionFieldIdeal(Element):
             sage: I.divisor()
             2*Place (1/x)
 
-            sage: # needs sage.rings.function_field
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<T> = PolynomialRing(K)
             sage: F.<y> = K.extension(T^3 - x^2*(x^2 + x + 1)^2)
             sage: O = F.maximal_order()
@@ -476,14 +477,14 @@ class FunctionFieldIdeal(Element):
             2*Place (x, (1/(x^3 + x^2 + x))*y^2)
              + 2*Place (x^2 + x + 1, (1/(x^3 + x^2 + x))*y^2)
 
-            sage: # needs sage.rings.function_field
+            sage: # needs sage.modules sage.rings.function_field
             sage: Oinf = F.maximal_order_infinite()
             sage: I = Oinf.ideal(y)
             sage: I.divisor()
             -2*Place (1/x, 1/x^4*y^2 + 1/x^2*y + 1)
              - 2*Place (1/x, 1/x^2*y + 1)
 
-            sage: # needs sage.rings.function_field
+            sage: # needs sage.modules sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: O = L.maximal_order()
@@ -492,7 +493,7 @@ class FunctionFieldIdeal(Element):
             - Place (x, x*y)
              + 2*Place (x + 1, x*y)
 
-            sage: # needs sage.rings.function_field
+            sage: # needs sage.modules sage.rings.function_field
             sage: Oinf = L.maximal_order_infinite()
             sage: I = Oinf.ideal(y)
             sage: I.divisor()

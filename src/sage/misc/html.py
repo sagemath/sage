@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 HTML Fragments
 
@@ -22,7 +23,6 @@ renderable in a browser-based notebook with the help of MathJax.
 import re
 
 from sage.misc.latex import latex
-from sage.misc.sage_eval import sage_eval
 from sage.structure.sage_object import SageObject
 
 macro_regex = re.compile(r'\\newcommand{(?P<name>\\[a-zA-Z]+)}(\[.+\])?{(?P<definition>.+)}')
@@ -491,6 +491,7 @@ class HTMLFragmentFactory(SageObject):
             sage: html.eval('<sage>a</sage>', locals={'a': 456})
             \(456\)
         """
+        from sage.misc.sage_eval import sage_eval
         if locals is None:
             from sage.repl.user_globals import get_globals
             locals = get_globals()

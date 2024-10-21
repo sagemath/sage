@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 "Birch and Swinnerton-Dyer formulas"
 
 from sage.arith.misc import prime_divisors

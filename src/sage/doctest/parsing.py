@@ -560,7 +560,7 @@ def parse_tolerance(source, want):
         0
         sage: marked.rel_tol
         0
-        sage: marked.abs_tol
+        sage: marked.abs_tol                                                            # needs sage.rings.real_mpfr
         0.010000000000000000000...?
     """
     # regular expressions
@@ -870,7 +870,7 @@ class SageDocTestParser(doctest.DocTestParser):
             '0.893515349287690\n'
             sage: type(ex.want)
             <class 'sage.doctest.marked_output.MarkedOutput'>
-            sage: ex.want.tol
+            sage: ex.want.tol                                                           # needs sage.rings.real_interval_field
             2.000000000000000000...?e-11
 
         You can use continuation lines::
@@ -1106,7 +1106,8 @@ class SageDocTestParser(doctest.DocTestParser):
                 if not first_example_in_block:
                     first_example_in_block = item
                     first_example_in_block_index = len(filtered)
-                update_tag_counts(optional_tags)
+                if not re.match(r'\s*sage:\s*(#|from |import |class |def |\w+\s*=\s*(polygen|lambda ))', item.source):
+                    update_tag_counts(optional_tags)
                 optional_tags.update(persistent_optional_tags)
                 item.optional_tags = frozenset(optional_tags)
                 item.probed_tags = set()
@@ -1208,6 +1209,8 @@ class SageOutputChecker(doctest.OutputChecker):
         '0.893515349287690\n'
         sage: type(ex.want)
         <class 'sage.doctest.marked_output.MarkedOutput'>
+
+        sage: # needs sage.rings.real_interval_field
         sage: ex.want.tol
         2.000000000000000000...?e-11
         sage: OC.check_output(ex.want, '0.893515349287690', optflag)

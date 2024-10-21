@@ -92,6 +92,19 @@ if [ "$1" = "-advanced" -o "$1" = "--advanced" ]; then
     exit 0
 fi
 
+# Delegation
+
+if [ "$1" = '-distribution' -o "$1" = '--distribution' ]; then
+    distribution=$(echo "$2" | cut -f1 -d'[' | tr _ -)
+    case "$2" in
+        *\[*\]) extras_suffix=-$(echo "$2" | cut -f2 -d'[' | sed 's/,/--/;s/]//;');;
+        *)    extras_suffix=
+    esac
+    shift 2
+
+    exec "$SAGE_ROOT"/pkgs/$distribution/.tox/sagepython-sagewheels-nopypi-norequirements$extras_suffix/bin/sage "$@"
+fi
+
 #####################################################################
 # Package handling
 #####################################################################

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Lazy Series
 
@@ -221,12 +222,12 @@ Check that we can invert matrices::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.arith.functions import lcm
+from sage.arith.misc import divisors, factorial, moebius
+from sage.arith.power import generic_power
 from sage.structure.element import Element, parent
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.misc.misc_c import prod
-from sage.arith.power import generic_power
-from sage.arith.functions import lcm
-from sage.arith.misc import divisors, factorial, moebius
 from sage.combinat.partition import Partition, Partitions
 from sage.misc.derivative import derivative_parse
 from sage.categories.integral_domains import IntegralDomains
@@ -3043,10 +3044,10 @@ class LazyCauchyProductSeries(LazyModuleElement):
 
         Check products with exact series::
 
-            sage: L([1], constant=3)^2
+            sage: L([1], constant=3)^2                                                  # needs sage.symbolic
             1 + 6*z + 15*z^2 + 24*z^3 + 33*z^4 + 42*z^5 + 51*z^6 + O(z^7)
 
-            sage: (1+z) * L([1,0,1], constant=1)
+            sage: (1+z) * L([1,0,1], constant=1)                                        # needs sage.symbolic
             1 + z + z^2 + 2*z^3 + 2*z^4 + 2*z^5 + O(z^6)
 
         Check that :issue:`36154` is fixed::
@@ -3672,7 +3673,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: log(1+z)[0:6] == log(1+x).series(x, 6).coefficients(sparse=False)     # needs sage.symbolic
             True
 
-            sage: log(z)
+            sage: log(z)                                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: can only compose with a positive valuation series

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Constructions of quadratic forms
 """

@@ -1,1 +1,3 @@
+include VERSION.txt
+
 include bin/sage-env-config

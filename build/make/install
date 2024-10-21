@@ -78,7 +78,7 @@ look_for_errors() {
     for f in `ls -tr $1 2>/dev/null`; do
         # Look for recent error message in log file.
         # Note that "tail -n 20 ..." doesn't work on Solaris.
-        if tail -$2 $f 2>/dev/null | grep "$3" &>/dev/null; then
+        if tail -$2 $f 2>/dev/null | grep -E "$3" &>/dev/null; then
             base_f=`basename $f .log`
             # stat(1) is not portable between Linux and macOS, so we extract it from ls -lf
             timestamp=`ls -l $f | awk -F' ' '{print $6, $7, $8}'` 2> /dev/null
@@ -113,7 +113,7 @@ The following package(s) may have failed to build (not necessarily
 during this run of 'make $@'):
 EOF
 
-    look_for_errors "$SAGE_LOGS/*.log" 20 "^Error" package >&2
+    look_for_errors "$SAGE_LOGS/*.log" 20 "^(Error|Failure building)" package >&2
 
     cat >&2 <<EOF
 
@@ -129,7 +129,7 @@ EOF
 elif [ "$SAGE_CHECK" = "warn" ]; then
     echo "SAGE_CHECK=warn, so scanning the log files. This may take a few seconds."
     # The following warning message must be consistent with SAGE_ROOT/build/bin/sage-spkg (see trac:32781)
-    warnings=`look_for_errors "$SAGE_LOGS/*.log" 20 "^Warning: Failures testing package" package`
+    warnings=`look_for_errors "$SAGE_LOGS/*.log" 50 "^Warning: [Ff]ailures " package`
     if [ -n "$warnings" ]; then
         cat >&2 <<EOF
 ***************************************************************

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Lattice and reflexive polytopes
 
@@ -1317,7 +1318,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                     parts[1] = "reflexive"
                     if self.dim() == 2 or self.index.is_in_cache():
                         parts.insert(-1, "#%d" % self.index())
-            except ValueError:
+            except (ValueError, FileNotFoundError):
                 pass
             if isinstance(self.lattice(), ToricLattice_generic):
                 parts.append(str(self.lattice()))

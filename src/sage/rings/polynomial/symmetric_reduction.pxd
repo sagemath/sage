@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 cdef class SymmetricReductionStrategy:
     cdef list _lm
     cdef list _lengths

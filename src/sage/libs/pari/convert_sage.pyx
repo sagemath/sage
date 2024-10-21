@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 Convert PARI objects to Sage types
 """
@@ -317,7 +318,7 @@ cpdef gen_to_sage(Gen z, locals=None):
     elif t == t_VECSMALL:
         return z.python_list_small()
     elif t == t_MAT:
-        from .convert_sage_matrix import gen_to_sage_matrix
+        from sage.libs.pari.convert_sage_matrix import gen_to_sage_matrix
         return gen_to_sage_matrix(z, locals)
     elif t == t_PADIC:
         p = z.padicprime()

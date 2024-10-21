@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Logarithmic functions
 
@@ -28,9 +29,9 @@ lazy_import('sage.rings.complex_double', 'CDF')
 
 lazy_import('sage.libs.flint.arith_sage', 'harmonic_number', as_='_flint_harmonic_number')
 
-lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
-lazy_import('mpmath', 'harmonic', as_='_mpmath_harmonic')
-lazy_import('mpmath', 'lambertw', as_='_mpmath_lambertw')
+lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
+lazy_import('sage.libs.mpmath.all', 'harmonic', as_='_mpmath_harmonic')
+lazy_import('sage.libs.mpmath.all', 'lambertw', as_='_mpmath_lambertw')
 
 lazy_import('sympy', 'polylog', as_='_sympy_polylog')
 lazy_import('sympy', 'sympify', as_='_sympify')
@@ -811,7 +812,7 @@ class Function_lambert_w(BuiltinFunction):
         elif R is complex or R is CDF:
             return R(_scipy_lambertw(z, n))
         else:
-            return _mpmath_utils_call(_mpmath_lambertw, z, n, parent=R)
+            return _mpmath_call(_mpmath_lambertw, z, n, parent=R)
 
     def _derivative_(self, n, z, diff_param=None):
         r"""
@@ -1373,7 +1374,7 @@ class Function_harmonic_number(BuiltinFunction):
             sage: harmonic_number(1.0*I)                                                # needs sage.symbolic
             0.671865985524010 + 1.07667404746858*I
         """
-        return _mpmath_utils_call(_mpmath_harmonic, z, parent=parent)
+        return _mpmath_call(_mpmath_harmonic, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         """

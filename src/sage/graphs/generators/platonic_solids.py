@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 1-skeletons of Platonic solids
 

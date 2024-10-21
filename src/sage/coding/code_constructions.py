@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Linear code constructors that do not preserve the structural information
@@ -99,7 +100,7 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
         sage: _is_a_splitting([1,3,4],[2,5,6],7)
         False
 
-        sage: for P in SetPartitions(6,[3,3]):
+        sage: for P in SetPartitions(6,[3,3]):                                          # needs sage.combiant
         ....:     res,aut= _is_a_splitting(P[0],P[1],7,return_automorphism=True)
         ....:     if res:
         ....:         print((aut, P))

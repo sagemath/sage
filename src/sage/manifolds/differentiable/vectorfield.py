@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Vector Fields
 
@@ -550,7 +551,7 @@ class VectorField(MultivectorField):
 
         We cannot make a 4D plot directly::
 
-            sage: v.plot()
+            sage: v.plot()                                                              # needs sage.plot
             Traceback (most recent call last):
             ...
             ValueError: the number of ambient coordinates must be either 2 or 3, not 4

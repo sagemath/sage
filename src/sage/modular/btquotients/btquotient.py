@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.pari
 r"""
 Quotients of the Bruhat-Tits tree
@@ -1463,6 +1464,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         if use_magma or self._Nplus != 1 or self._p == 2:
             try:
                 if magma_session is None:
+                    from sage.interfaces.magma import magma
                     self._magma = magma
                 else:
                     self._magma = magma_session
@@ -2334,6 +2336,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                         n_iters += 1
                         verbose('Restarting magma...')
                         self._magma.quit()
+                        from sage.interfaces.magma import magma
                         self._magma = magma
                         self._magma.function_call('SetSeed', n_iters, nvals=0)
                         self._order_is_initialized = False

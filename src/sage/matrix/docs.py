@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Matrices over an arbitrary ring
 

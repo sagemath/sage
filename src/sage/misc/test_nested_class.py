@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Test for nested class Parent
 

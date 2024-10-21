@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Big O for various types (power series, `p`-adics, etc.)
 

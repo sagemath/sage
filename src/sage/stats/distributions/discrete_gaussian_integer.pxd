@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-modules
+
 from sage.rings.integer cimport Integer
 from sage.rings.real_mpfr cimport RealNumber
 from sage.stats.distributions.dgs cimport dgs_disc_gauss_mp_t, dgs_disc_gauss_dp_t

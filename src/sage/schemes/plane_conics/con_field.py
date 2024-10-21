@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Projective plane conics over a field
 
@@ -1134,7 +1135,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: G = Conic([L.gen(), 30, -21])
             sage: G.has_rational_point(algorithm='magma')       # optional - magma
             False
-            sage: G.has_rational_point(read_cache=False)        # needs sage.libs.pari
+            sage: G.has_rational_point(read_cache=False)                                # needs sage.libs.pari
             False
             sage: G.has_rational_point(algorithm='local',
             ....:                      read_cache=False)

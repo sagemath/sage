@@ -108,6 +108,9 @@ class TrivialUniqueRepresentation(metaclass=TrivialClasscallMetaClass):
         return cached
 
 
+_spkg_type_warnings = []
+
+
 class Feature(TrivialUniqueRepresentation):
     r"""
     A feature of the runtime environment.
@@ -164,11 +167,10 @@ class Feature(TrivialUniqueRepresentation):
             pass
         else:
             if spkg and (t := spkg_type(spkg)) not in (type, None):
-                from warnings import warn
-                warn(f'Feature {name} is declared {type}, '
-                     f'but it is provided by {spkg}, '
-                     f'which is declared {t} in SAGE_ROOT/build/pkgs',
-                     stacklevel=3)
+                _spkg_type_warnings.append(
+                    f'Feature {name} is declared {type}, '
+                    f'but it is provided by {spkg}, '
+                    f'which is declared {t} in SAGE_ROOT/build/pkgs')
 
     def is_present(self):
         r"""
@@ -318,9 +320,10 @@ class Feature(TrivialUniqueRepresentation):
             sage: from sage.features.sagemath import sage__rings__function_field
             sage: sage__rings__function_field().joined_features()
             [Feature('sage.rings.function_field.function_field_polymod'),
-            Feature('sage.libs.singular'),
-            Feature('sage.libs.singular.singular'),
-            Feature('sage.interfaces.singular')]
+             Feature('sage.libs.singular'),
+             Feature('sage.libs.singular.singular'),
+             Feature('sage.interfaces.singular'),
+             Feature('sage.rings.polynomial.plural')]
             sage: from sage.features.interfaces import Mathematica
             sage: Mathematica().joined_features()
             []

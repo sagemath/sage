@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 from sage.symbolic.ring import var as _var
 
 a = _var('a')

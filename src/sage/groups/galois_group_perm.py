@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 r"""
 Galois groups of field extensions as permutation groups
 """

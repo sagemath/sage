@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-combinat
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Family Games America's Quantumino solver
 
@@ -52,7 +54,7 @@ the following 3d picture. They will show up in 3D in your default (=Jmol)
 viewer::
 
     sage: from sage.games.quantumino import show_pentaminos
-    sage: show_pentaminos()
+    sage: show_pentaminos()                                                             # needs sage.plot
     Graphics3d Object
 
 To solve the puzzle where the pentamino numbered 12 is put aside::
@@ -62,12 +64,12 @@ To solve the puzzle where the pentamino numbered 12 is put aside::
     sage: s                                               # long time (<1s)
     Quantumino state where the following pentamino is put aside :
     Polyomino: [(0, 0, 0), (1, 0, 0), (1, 1, 0), (1, 1, 1), (2, 1, 1)], Color: blue
-    sage: s.show3d()                                      # long time (<1s)
+    sage: s.show3d()                            # long time (<1s)                       # needs sage.plot
     Graphics3d Object
 
 To remove the frame::
 
-    sage: s.show3d().show(frame=False)                    # long time (<1s)
+    sage: s.show3d().show(frame=False)          # long time (<1s)                       # needs sage.plot
 
 To solve the puzzle where the pentamino numbered 7 is put aside::
 
@@ -75,7 +77,7 @@ To solve the puzzle where the pentamino numbered 7 is put aside::
     sage: s                                               # long time (<1s)
     Quantumino state where the following pentamino is put aside :
     Polyomino: [(0, 0, 0), (0, 1, 0), (0, 2, 0), (0, 2, 1), (1, 0, 0)], Color: orange
-    sage: s.show3d()                                      # long time (<1s)
+    sage: s.show3d()                            # long time (<1s)                       # needs sage.plot
     Graphics3d Object
 
 The solution is iterable. This may be used to explicitly list the positions of each
@@ -117,12 +119,12 @@ because it needs to create the complete data to describe the problem::
 To get the solution inside other boxes::
 
     sage: s = next(QuantuminoSolver(7, box=(4,4,5)).solve())        # not tested (2s)
-    sage: s.show3d()                                                # not tested (<1s)
+    sage: s.show3d()                            # not tested (<1s)                      # needs sage.plot
 
 ::
 
     sage: s = next(QuantuminoSolver(7, box=(2,2,20)).solve())       # not tested (1s)
-    sage: s.show3d()                                                # not tested (<1s)
+    sage: s.show3d()                            # not tested (<1s)                      # needs sage.plot
 
 If there are no solution, a StopIteration error is raised::
 

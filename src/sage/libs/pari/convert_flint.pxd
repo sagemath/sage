@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 from cypari2.types cimport GEN
 from cypari2.gen cimport Gen
 from sage.libs.flint.types cimport fmpz_t, fmpz_mat_t, fmpq_t, fmpq_mat_t

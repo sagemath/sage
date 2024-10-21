@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.numerical.mip
 r"""
 Delsarte (or linear programming) bounds

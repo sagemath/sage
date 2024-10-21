@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 from libc.stdint cimport uint32_t, uint64_t
 from sage.data_structures.binary_matrix cimport *
 

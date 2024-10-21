@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Fano toric varieties
@@ -546,8 +547,10 @@ def CPRFanoToricVariety(Delta=None,
         # single facet of Delta_polar, otherwise they do not form a
         # subdivision of the face fan of Delta_polar
         if check:
-            facet_sets = [frozenset(facet.ambient_point_indices())
-                          for facet in Delta_polar.facets()]
+            ambient_points = Delta_polar.ambient().points()
+            facet_sets = [frozenset(Pindex for Pindex, point in enumerate(ambient_points)
+                                    if normal*point + Delta_polar.facet_constant(Hindex) == 0)
+                          for Hindex, normal in enumerate(Delta_polar.facet_normals())]
             for chart in charts:
                 is_bad = True
                 for fset in facet_sets:

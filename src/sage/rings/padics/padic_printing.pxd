@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 from sage.structure.sage_object cimport SageObject
 from sage.rings.padics.pow_computer cimport PowComputer_class
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement

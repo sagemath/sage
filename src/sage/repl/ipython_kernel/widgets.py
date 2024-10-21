@@ -193,7 +193,7 @@ class EvalWidget(TransformWidget):
             sage: w.get_value()
             42
             sage: w.get_interact_value()
-            42.0000000000000
+            42.0...
         """
         return sage_eval(self.value, get_globals())
 

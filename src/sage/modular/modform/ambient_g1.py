@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Modular forms for `\Gamma_1(N)` and `\Gamma_H(N)` over `\QQ`
 

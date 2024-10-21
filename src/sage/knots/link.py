@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs sage.groups
 r"""
 Links
@@ -1244,7 +1245,6 @@ class Link(SageObject):
 
         The Hopf link::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(2)
             sage: b = B([1, 1])
             sage: K = Link(b)
@@ -1662,7 +1662,6 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L._homology_generators()
@@ -1702,7 +1701,6 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L.seifert_matrix()
@@ -1865,7 +1863,6 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L.signature()
@@ -1908,7 +1905,7 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules sage.rings.number_field
+            sage: # needs sage.rings.number_field
             sage: B = BraidGroup(4)
             sage: K = Knot(B([1,1,1,2,-1,2,-3,2,-3]))
             sage: omega = QQbar.zeta(3)
@@ -1934,7 +1931,6 @@ class Link(SageObject):
         We begin by computing the Alexander polynomial for the
         figure-eight knot::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(3)
             sage: L = Link(B([1, -2, 1, -2]))
             sage: L.alexander_polynomial()
@@ -1945,12 +1941,11 @@ class Link(SageObject):
             sage: L = Link([[3,1,2,4],[8,9,1,7],[5,6,7,3],[4,18,6,5],
             ....:           [17,19,8,18],[9,10,11,14],[10,12,13,11],
             ....:           [12,19,15,13],[20,16,14,15],[16,20,17,2]])
-            sage: L.alexander_polynomial()                                              # needs sage.modules
+            sage: L.alexander_polynomial()
             1
 
         Some additional examples::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(2)
             sage: L = Link(B([1]))
             sage: L.alexander_polynomial()
@@ -1966,7 +1961,6 @@ class Link(SageObject):
         When the Seifert surface is disconnected, the Alexander
         polynomial is defined to be `0`::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([1,3]))
             sage: L.alexander_polynomial()
@@ -1974,7 +1968,6 @@ class Link(SageObject):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 3, 1, 3]))
             sage: L.alexander_polynomial()
@@ -2012,7 +2005,6 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(3)
             sage: L = Link(B([1, -2, 1, -2]))
             sage: L.conway_polynomial()
@@ -2116,7 +2108,6 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(4)
             sage: L = Link(B([-1, 2, 1, 2]))
             sage: L.determinant()
@@ -2134,7 +2125,6 @@ class Link(SageObject):
 
         TESTS::
 
-            sage: # needs sage.modules
             sage: B = BraidGroup(3)
             sage: Link(B([1, 2, 1, -2, -1])).determinant()
             0

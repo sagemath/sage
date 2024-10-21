@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Elements lying in extension of rings
 
@@ -325,7 +326,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: f = E(1)
             sage: g = f.in_base(); g
             1
-            sage: g.parent()
+            sage: g.parent()                                                            # needs sage.rings.number_field
             Finite Field in z2 of size 5^2
 
         TESTS::

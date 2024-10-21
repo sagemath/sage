@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 Lattice precision for the parents ``ZpLC``/``QpLC`` and ``ZpLF``/``QpLF``
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Access functions to online databases for coding theory
@@ -7,6 +8,11 @@ from sage.misc.lazy_import import lazy_import
 # Import the following function so that it is available as
 # - sage.coding.databases.self_dual_binary_codes
 # - codes.databases.self_dual_binary_codes (which functions as a catalog).
+lazy_import('sage.coding.self_dual_codes', 'self_dual_binary_codes')
+
+# Import the following function so that it is available as
+# sage.codes.databases.self_dual_binary_codes sage.codes.databases functions
+# somewhat like a catalog in this respect.
 lazy_import('sage.coding.self_dual_codes', 'self_dual_binary_codes')
 
 del lazy_import

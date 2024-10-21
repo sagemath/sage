@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Generic Multivariate Polynomials
 
@@ -2277,14 +2278,14 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         R = self.parent()
         try:
             R._singular_().set_ring()
-        except TypeError:
+        except (TypeError, ImportError):
             f = self.parent().flattening_morphism()
             if f.domain() != f.codomain():
                 g = f.section()
                 q,r = f(self).quo_rem(f(right))
                 return g(q), g(r)
             else:
-                raise
+                raise TypeError
         else:
             X = self._singular_().division(right._singular_())
             return R(X[1][1,1]), R(X[2][1])

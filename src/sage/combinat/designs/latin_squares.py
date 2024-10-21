@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.modules
 r"""
 Mutually Orthogonal Latin Squares (MOLS)

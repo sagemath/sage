@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage_setup: distribution = sagemath-modules
+# sage.doctest: needs sage.rings.finite_rings
 """
 Lean matrices
 
@@ -2749,6 +2750,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: M = Matroid(graphs.CompleteGraph(4).incidence_matrix(oriented=True),  # indirect doctest
         ....:             regular=True)
         sage: M.is_isomorphic(matroids.Wheel(3))
@@ -3179,6 +3181,7 @@ cdef class RationalMatrix(LeanMatrix):
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: M = Matroid(graphs.CompleteGraph(4).incidence_matrix(oriented=True))  # indirect doctest
         sage: M.is_isomorphic(matroids.Wheel(3))
         True

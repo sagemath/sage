@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 """
 Wrapper for Singular's Polynomial Arithmetic
 
@@ -470,6 +471,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
     Demonstrate that coefficients over non-atomic represented rings are
     properly parenthesized (:issue:`11186`)::
 
+        sage: # needs sage.symbolic
         sage: x = var('x')
         sage: K.<z> = QQ.extension(x^2 + x + 1)
         sage: P.<v,w> = K[]

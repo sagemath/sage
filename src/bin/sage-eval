@@ -2,7 +2,10 @@
 
 import sys
 from sage.all import *
-from sage.calculus.predefined import x
+try:
+    from sage.calculus.predefined import x
+except ImportError:
+    pass
 from sage.repl.preparse import preparse
 
 if len(sys.argv) > 1:

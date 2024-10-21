@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Helper classes to implement tensor operations
 

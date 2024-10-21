@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Fock Space
@@ -464,7 +465,7 @@ class FockSpace(Parent, UniqueRepresentation):
              of Univariate Polynomial Ring in q over Integer Ring
              in the lower global crystal basis
         """
-        from sage.misc.misc import inject_variable
+        from sage.misc.globals import inject_variable
         for shorthand in ['A', 'F', 'G']:
             realization = getattr(self, shorthand)()
             if verbose:

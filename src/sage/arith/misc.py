@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Miscellaneous arithmetic functions
 
@@ -6271,7 +6272,7 @@ def gauss_sum(char_value, finite_field):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari sage.rings.number_field
+        sage: # needs sage.libs.gap sage.libs.pari
         sage: from sage.arith.misc import gauss_sum
         sage: F = GF(5); q = 5
         sage: zq = UniversalCyclotomicField().zeta(q - 1)
@@ -6284,7 +6285,7 @@ def gauss_sum(char_value, finite_field):
         sage: [g*g.conjugate() for g in L]
         [1, 5, 5, 5, 1]
 
-        sage: # needs sage.libs.pari sage.rings.number_field
+        sage: # needs sage.libs.gap sage.rings.finite_rings
         sage: F = GF(11**2); q = 11**2
         sage: zq = UniversalCyclotomicField().zeta(q - 1)
         sage: g = gauss_sum(zq**4, F)
@@ -6293,8 +6294,9 @@ def gauss_sum(char_value, finite_field):
 
     TESTS::
 
-        sage: # needs sage.libs.pari sage.rings.number_field
         sage: F = GF(11); q = 11
+
+        sage: # needs sage.libs.gap sage.libs.pari
         sage: zq = UniversalCyclotomicField().zeta(q - 1)
         sage: gauss_sum(zq**2, F).n(60)
         2.6361055643248352 + 2.0126965627574471*I

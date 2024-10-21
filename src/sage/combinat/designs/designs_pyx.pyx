@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Cython functions for combinatorial designs
 
@@ -272,9 +273,10 @@ def is_orthogonal_array(OA, int k, int n, int t=2, verbose=False, terminology='O
     cardinality of the relabeling group which is `S_2^3 \times S_3` and has
     cardinality `48`::
 
+        sage: # needs sage.schemes
         sage: from itertools import product
         sage: n = 0
-        sage: for a in product(product((0,1), repeat=3), repeat=4):                     # needs sage.schemes
+        sage: for a in product(product((0,1), repeat=3), repeat=4):
         ....:     if is_orthogonal_array(a,3,2):
         ....:          n += 1
         sage: n

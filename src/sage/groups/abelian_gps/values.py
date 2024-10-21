@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Multiplicative Abelian Groups With Values
 

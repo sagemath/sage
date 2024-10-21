@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 Ideals in Tate algebra
 
@@ -691,7 +692,7 @@ cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval):
 
     TESTS::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: cython('''                                                                # optional - sage.misc.cython
         ....: from sage.rings.tate_algebra_ideal cimport reduce
         ....: def python_reduce(gb, v, stopval):
         ....:     return reduce(gb, v, stopval)

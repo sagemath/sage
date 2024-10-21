@@ -1,6 +1,11 @@
 # https://github.com/scipy/scipy/issues/16536 - meson breaks when CXX="g++ -std=gnu++11"
 export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
 
+# https://github.com/sagemath/sage/issues/36342
+if [ "$UNAME" = "Darwin" ]; then
+    export LDFLAGS="$LDFLAGS -Wl,-ld_classic"
+fi
+
 cd src/
 
 # mesonpy enforces the build-system requirements, including the strict version pins of numpy

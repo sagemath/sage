@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Orthogonal Linear Groups
 
@@ -325,7 +326,7 @@ def GO(n, R, e=0, var='a', invariant_form=None):
 
         sage: # needs sage.libs.gap
         sage: TestSuite(GO3).run()
-        sage: groups.matrix.GO(2, 3, e=-1)
+        sage: groups.matrix.GO(2, 3, e=-1)                                              # needs sage.rings.finite_rings
         General Orthogonal Group of degree 2 and form parameter -1 over Finite Field of size 3
     """
     return _OG(n, R, False, e=e, var=var, invariant_form=invariant_form)

@@ -1,10 +1,29 @@
 cd src
 
+# For meson
+export CXXFLAGS="$CXXFLAGS $(echo "$CXX" | sed -En "s/.*(-std=[a-z0-9+]*).*/\1/p")"
+export CXX=$(echo "$CXX" | sed 's/-std=[a-z0-9+]*//g')
+export CYTHON=sage-cython
+export CYTHON_FOR_BUILD=sage-cython
+
+
 export PIP_NO_INDEX=true
+
+if [ -r vendor.txt ]; then
+    export PIP_FIND_LINKS="file://$SAGE_DISTFILES"
+    vendoring sync
+fi
+
 export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
 
-# First build the sdist, then build the wheel from the sdist.
-# https://pypa-build.readthedocs.io/en/latest/#python--m-build
-# (Important because sagemath-objects uses MANIFEST.in for filtering.)
-# Do not install the wheel.
-sdh_build_and_store_wheel --sdist-then-wheel .
+if [ "$SAGE_WHEELS" = yes ]; then
+    rm -Rf build
+    sdh_build_wheel --no-build-isolation --config-settings setup-args="--native-file=$(pwd)/sage-cython-native-file.ini" --config-settings build-dir=meson-build
+    if [ "$SAGE_EDITABLE" = yes ]; then
+        # Do not install the wheel
+        wheel=$(cd "$DIST_DIR" && sdh_store_wheel . >&2 && echo $wheel)
+    else
+        wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel . >&2 && echo $wheel)
+    fi
+    ls -l "$wheel"
+fi

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 # cython: binding=True
 # sage.doctest: needs sage.plot
 r"""

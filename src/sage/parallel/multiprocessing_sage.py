@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Parallel Iterator built using Python's multiprocessing module
 """
@@ -11,7 +12,6 @@ Parallel Iterator built using Python's multiprocessing module
 #                  https://www.gnu.org/licenses/
 ################################################################################
 
-from multiprocessing import Pool
 from functools import partial
 from sage.misc.fpickle import pickle_function, call_pickled_function
 from . import ncpus
@@ -63,6 +63,8 @@ def parallel_iter(processes, f, inputs):
         sage: v.sort(); v
         [(((2,), {}), 4), (((3,), {}), 6)]
     """
+    from multiprocessing import Pool
+
     if processes == 0:
         processes = ncpus.ncpus()
     p = Pool(processes)

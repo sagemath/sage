@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-mpmath
 """
 Faster versions of some key functions in mpmath.libmp
 """
@@ -60,14 +61,14 @@ def mpf_sqrt(tuple x, int prec, str rnd='d'):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import mpf_sqrt, from_float, to_float
+        sage: from sage.libs.mpmath._vendor.mpmath.libmp import mpf_sqrt, from_float, to_float
         sage: x = from_float(2)
         sage: y = mpf_sqrt(x, 53, 'n')
         sage: to_float(y)
         1.4142135623730951
     """
     if x[0]:
-        import mpmath.libmp as libmp
+        import sage.libs.mpmath._vendor.mpmath.libmp as libmp
         raise libmp.ComplexResult("square root of a negative number")
     cdef MPopts opts
     MPF_set_tuple(&tmp1, x)
@@ -83,14 +84,14 @@ def mpf_log(tuple x, int prec, str rnd='d'):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import mpf_log, from_float, to_float
+        sage: from sage.libs.mpmath._vendor.mpmath.libmp import mpf_log, from_float, to_float
         sage: x = from_float(2)
         sage: y = mpf_log(x, 53, 'n')
         sage: to_float(y)
         0.6931471805599453
     """
     if x[0]:
-        import mpmath.libmp as libmp
+        import sage.libs.mpmath._vendor.mpmath.libmp as libmp
         raise libmp.ComplexResult("logarithm of a negative number")
     cdef MPopts opts
     MPF_set_tuple(&tmp1, x)
@@ -106,7 +107,7 @@ def mpf_exp(tuple x, int prec, str rnd='d'):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import mpf_exp, from_float, to_float
+        sage: from sage.libs.mpmath._vendor.mpmath.libmp import mpf_exp, from_float, to_float
         sage: x = from_float(2)
         sage: z = mpf_exp(x, 53, 'n')
         sage: to_float(z)
@@ -126,7 +127,7 @@ def mpf_cos(tuple x, int prec, str rnd='d'):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import mpf_cos, from_float, to_float
+        sage: from sage.libs.mpmath._vendor.mpmath.libmp import mpf_cos, from_float, to_float
         sage: x = from_float(1)
         sage: y = mpf_cos(x, 53, 'n')
         sage: to_float(y)
@@ -146,7 +147,7 @@ def mpf_sin(tuple x, int prec, str rnd='d'):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import mpf_sin, from_float, to_float
+        sage: from sage.libs.mpmath._vendor.mpmath.libmp import mpf_sin, from_float, to_float
         sage: x = from_float(1)
         sage: y = mpf_sin(x, 53, 'n')
         sage: to_float(y)
@@ -166,7 +167,7 @@ def mpc_sqrt(tuple z, int prec, str rnd='d'):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import mpc_sqrt, from_float, to_float
+        sage: from sage.libs.mpmath._vendor.mpmath.libmp import mpc_sqrt, from_float, to_float
         sage: z = from_float(-2), from_float(0)
         sage: re, im = mpc_sqrt(z, 53, 'n')
         sage: to_float(re), to_float(im)
@@ -189,7 +190,7 @@ def mpc_exp(tuple z, int prec, str rnd='d'):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import mpc_exp, from_float, to_float
+        sage: from sage.libs.mpmath._vendor.mpmath.libmp import mpc_exp, from_float, to_float
         sage: z = from_float(0), from_float(1)
         sage: re, im = mpc_exp(z, 53, 'n')
         sage: to_float(re), to_float(im)
@@ -212,7 +213,7 @@ def mpf_pow(tuple x, tuple y, int prec, str rnd='d'):
 
     EXAMPLES::
 
-        sage: from mpmath.libmp import mpf_pow, from_float, to_float
+        sage: from sage.libs.mpmath._vendor.mpmath.libmp import mpf_pow, from_float, to_float
         sage: x = from_float(2)
         sage: y = from_float(3)
         sage: z = mpf_pow(x, y, 53, 'n')
@@ -225,6 +226,6 @@ def mpf_pow(tuple x, tuple y, int prec, str rnd='d'):
     opts.rounding = rndmode_from_python(rnd)
     opts.prec = prec
     if MPF_pow(&tmp1, &tmp1, &tmp2, opts):
-        import mpmath.libmp as libmp
+        import sage.libs.mpmath._vendor.mpmath.libmp as libmp
         raise libmp.ComplexResult("negative number raised to a fractional power")
     return MPF_to_tuple(&tmp1)

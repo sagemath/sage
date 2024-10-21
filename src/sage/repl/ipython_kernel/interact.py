@@ -177,8 +177,13 @@ class sage_interactive(interactive):
             return input_grid(abbrev.nrows(), abbrev.ncols(),
                               default=abbrev.list(), to_value=abbrev.parent())
 
-        if isinstance(abbrev, Color):
-            return SageColorPicker(value=abbrev.html_color())
+        try:
+            from sage.plot.colors import Color
+        except ImportError:
+            pass
+        else:
+            if isinstance(abbrev, Color):
+                return SageColorPicker(value=abbrev.html_color())
         # Get widget from IPython if possible
         widget = super().widget_from_single_value(abbrev, *args, **kwds)
         if widget is not None or isinstance(abbrev, Iterable):
@@ -233,6 +238,8 @@ class sage_interactive(interactive):
         # Numerically evaluate symbolic expressions
 
         def n(x):
+            import sage.rings.abc
+
             if isinstance(parent(x), sage.rings.abc.SymbolicRing):
                 return x.numerical_approx()
             else:

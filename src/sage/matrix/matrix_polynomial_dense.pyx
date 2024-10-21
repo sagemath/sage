@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Dense matrices over univariate polynomials over fields
 
@@ -894,13 +895,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [5*x^2 + 2*x + 5         5*x + 5         2*x + 4]
             [5*x^3 + 2*x + 1 2*x^2 + 2*x + 5           4*x^2]
 
-            sage: V = Matrix([[3*x^2 + 4*x + 1, 4*x]])
-            sage: A[:2,:].solve_left_series_trunc(V*A[:2,:], 4) == V
+            sage: V = Matrix([[3*x^2 + 4*x + 1, 4*x]])                                  # needs sage.rings.finite_rings
+            sage: A[:2,:].solve_left_series_trunc(V*A[:2,:], 4) == V                    # needs sage.rings.finite_rings
             True
 
-            sage: A[1,:] = (x+1) * A[0,:]; A[2,:] = (x+5) * A[0,:]
-            sage: B = (3*x^3+x^2+2)*A[0,:]
-            sage: A.solve_left_series_trunc(B, 6)
+            sage: A[1,:] = (x+1) * A[0,:]; A[2,:] = (x+5) * A[0,:]                      # needs sage.rings.finite_rings
+            sage: B = (3*x^3+x^2+2)*A[0,:]                                              # needs sage.rings.finite_rings
+            sage: A.solve_left_series_trunc(B, 6)                                       # needs sage.rings.finite_rings
             [4*x^2 + 6*x + 2       3*x^2 + x               0]
 
         .. SEEALSO::
@@ -2670,7 +2671,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: A == B*Q+R and all(rdegR[i] < rdegB[i] for i in range(3))
             True
 
-            sage: A[:2,:].left_quo_rem(B)
+            sage: A[:2,:].left_quo_rem(B)                                               # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: row dimension of self should be the row dimension of
@@ -2692,7 +2693,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: all([rdegR[i] < rdegB[i] for i in range(len(rdegR))])
             True
 
-            sage: A.left_quo_rem(B[:,:2])
+            sage: A.left_quo_rem(B[:,:2])                                               # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: division of these matrices does not admit a remainder

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Elements of graded rings of modular forms for Hecke triangle groups
@@ -15,8 +16,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.functions.log import exp
-from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+import sage.geometry.abc
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_import import lazy_import
@@ -1334,8 +1335,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         i = QuadraticField(-1, 'I').gen()
 
         # if tau is a point of HyperbolicPlane then we use it's coordinates in the UHP model
-        if (tau in HyperbolicPlane()):
-            tau = tau.to_model('UHP').coordinates()
+        if isinstance(tau.parent(), sage.geometry.abc.HyperbolicSpace):
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+            if tau in HyperbolicPlane():
+                tau = tau.to_model('UHP').coordinates()
 
         if self.is_zero():
             return infinity
@@ -2136,13 +2139,15 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         i = QuadraticField(-1, 'I').gen()
 
-        # if tau is a point of HyperbolicPlane then we use it's coordinates in the UHP model
-        if (tau in HyperbolicPlane()):
-            tau = tau.to_model('UHP').coordinates()
+        # if tau is a point of HyperbolicPlane then we use its coordinates in the UHP model
+        if isinstance(tau.parent(), sage.geometry.abc.HyperbolicSpace):
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+            if tau in HyperbolicPlane():
+                tau = tau.to_model('UHP').coordinates()
 
-        if (prec is None):
+        if prec is None:
             prec = self.parent().default_prec()
-        if (num_prec is None):
+        if num_prec is None:
             num_prec = self.parent().default_num_prec()
 
         # In case the order is known

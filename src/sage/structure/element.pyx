@@ -3291,13 +3291,13 @@ cdef class CommutativeRingElement(RingElement):
             x
             sage: f = x^2 - 4*x + 4; f.sqrt(all=True)
             [x - 2, -x + 2]
-            sage: sqrtx = x.sqrt(name='y'); sqrtx
+            sage: sqrtx = x.sqrt(name='y'); sqrtx                                       # needs sage.libs.singular
             y
-            sage: sqrtx^2
+            sage: sqrtx^2                                                               # needs sage.libs.singular
             x
-            sage: x.sqrt(all=true, name='y')
+            sage: x.sqrt(all=true, name='y')                                            # needs sage.libs.singular
             [y, -y]
-            sage: x.sqrt(extend=False, all=True)
+            sage: x.sqrt(extend=False, all=True)                                        # needs sage.libs.singular
             []
             sage: x.sqrt()
             Traceback (most recent call last):

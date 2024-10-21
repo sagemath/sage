@@ -1,1 +1,1 @@
- sagemath_objects | $(PYTHON_TOOLCHAIN) sagemath_environment sage_setup cython pkgconfig python_build $(PYTHON)
+ sagemath_objects | $(PYTHON_TOOLCHAIN) sagemath_environment sage_setup cython pkgconfig python_build meson_python $(PYTHON)

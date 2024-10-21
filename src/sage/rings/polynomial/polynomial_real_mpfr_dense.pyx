@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Dense univariate polynomials over `\RR`, implemented using MPFR
 

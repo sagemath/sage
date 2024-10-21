@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs
 r"""
 Finite simplicial complexes
@@ -926,9 +927,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     or e.g. the simplicial complex of all 168 hyperovals of the projective plane of order 4::
 
-        sage: l = designs.ProjectiveGeometryDesign(2, 1, GF(4,name='a'))                # needs sage.rings.finite_rings
+        sage: # needs sage.combinat sage.rings.finite_rings
+        sage: l = designs.ProjectiveGeometryDesign(2, 1, GF(4,name='a'))
         sage: f = lambda S: not any(len(set(S).intersection(x))>2 for x in l)
-        sage: SimplicialComplex(from_characteristic_function=(f, l.ground_set()))       # needs sage.rings.finite_rings, long time
+        sage: SimplicialComplex(from_characteristic_function=(f, l.ground_set()))       # long time
         Simplicial complex with 21 vertices and 168 facets
 
     TESTS:

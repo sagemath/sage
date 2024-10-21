@@ -471,8 +471,8 @@ cpdef bint is_numpy_type(t) noexcept:
 
 cpdef bint is_mpmath_type(t) noexcept:
     r"""
-    Check whether the type ``t`` is a type whose name starts with either
-    ``mpmath.`` or ``sage.libs.mpmath.``.
+    Check whether the type ``t`` is a type whose name starts with
+    ``sage.libs.mpmath.``.
 
     EXAMPLES::
 
@@ -480,12 +480,12 @@ cpdef bint is_mpmath_type(t) noexcept:
         sage: from sage.structure.coerce import is_mpmath_type
         sage: is_mpmath_type(int)
         False
-        sage: import mpmath
-        sage: is_mpmath_type(mpmath.mpc(2))
+        sage: import sage.libs.mpmath.all
+        sage: is_mpmath_type(sage.libs.mpmath.all.mpc(2))
         False
-        sage: is_mpmath_type(type(mpmath.mpc(2)))
+        sage: is_mpmath_type(type(sage.libs.mpmath.all.mpc(2)))
         True
-        sage: is_mpmath_type(type(mpmath.mpf(2)))
+        sage: is_mpmath_type(type(sage.libs.mpmath.all.mpf(2)))
         True
     """
     return isinstance(t, type) and \

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Implementation of the command ``sage --fiximports``.
 
@@ -299,7 +300,7 @@ def process_line(location, line, replacements, row_index, verbose=False):
         sage: from sage.misc.replace_dot_all import *
         sage: location = os.path.join(sage.env.SAGE_SRC, 'sage', 'plot', 'arc.py')
         sage: replacements = find_replacements(location, package_regex='sage[.]plot[.]all', verbose=True); replacements
-        [[477, 24, 'from sage.plot.graphics import Graphics']]
+        [[478, 24, 'from sage.plot.graphics import Graphics']]
         sage: with open(location, "r") as file:
         ....:     lines = file.readlines()
         sage: row_index, col_number, *_ = replacements[0]

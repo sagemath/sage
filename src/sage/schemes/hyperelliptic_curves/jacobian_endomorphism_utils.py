@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Some functions regarding geometric endomorphism rings of Jacobians of
 hyperelliptic curves.

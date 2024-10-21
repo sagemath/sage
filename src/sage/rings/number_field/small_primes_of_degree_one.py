@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 r"""
 Small primes of degree one
 

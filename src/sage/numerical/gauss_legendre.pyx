@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Gauss-Legendre Integration for Vector-Valued Functions
 

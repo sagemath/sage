@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-flint
+
 # Deprecated header file; use sage/libs/flint/arf.pxd instead
 # See https://github.com/sagemath/sage/pull/36449
 

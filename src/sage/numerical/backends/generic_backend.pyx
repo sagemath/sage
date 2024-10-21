@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.geometry.polyhedron
 r"""
 Generic Backend for LP solvers
 
@@ -1682,7 +1684,11 @@ def default_mip_solver(solver=None):
             raise ValueError("Gurobi is not available. Please refer to the documentation to install it.")
 
     elif solver == "Glpk" or solver == "Glpk/exact":
-        default_solver = solver
+        try:
+            from sage.numerical.backends.glpk_backend import GLPKBackend
+            default_solver = solver
+        except ImportError:
+            raise ValueError("GLPK is not available. Please refer to the documentation to install it.")
 
     elif solver == "Interactivelp":
         default_solver = solver

@@ -2,10 +2,22 @@ prune sage
 
 graft sage/doctest
 graft sage/repl
+graft sage/tests
+
 include sage/misc/banner.py
 include sage/misc/sagedoc.py
 include sage/misc/sage_input.py
 include sage/misc/sage_eval.py
+
+include sage/misc/explain_pickle.py
+include sage/misc/trace.py
+include sage/misc/profiler.py
+include sage/misc/dev_tools.py
+include sage/misc/edit_module.py
+include sage/misc/pager.py
+
+include sage/misc/cython.py
+include sage/misc/inline_fortran.py
 
 include VERSION.txt
 

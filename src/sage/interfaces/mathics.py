@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Interface to Mathics
 
@@ -1058,7 +1059,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         if self.is_inexact():
             m = self.to_mpmath()
             if self is not m and m is not None:
-                from sage.libs.mpmath.utils import mpmath_to_sage
+                from sage.libs.mpmath.sage_utils import mpmath_to_sage
                 return mpmath_to_sage(m, self.get_precision())
         s = self.to_sympy()
         if self is not s and s is not None:

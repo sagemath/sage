@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.numerical.mip
 r"""
 Solve SAT problems Integer Linear Programming

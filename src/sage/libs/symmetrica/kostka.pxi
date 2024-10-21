@@ -1,3 +1,6 @@
+# sage_setup: distribution = sagemath-combinat
+# sage.doctest: needs sage.combinat sage.modules
+
 from cpython.object cimport *
 from cysignals.signals cimport sig_on, sig_off
 

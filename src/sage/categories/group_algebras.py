@@ -78,7 +78,7 @@ class GroupAlgebras(AlgebrasCategory):
         [0 0 1]
         sage: A = SymmetricGroupAlgebra(QQ, 4)                                          # needs sage.combinat
         sage: x = Permutation([4,3,2,1])
-        sage: A.product_on_basis(x, x)                                                  # needs sage.combinat
+        sage: A.product_on_basis(x, x)
         [1, 2, 3, 4]
 
         sage: C = GroupAlgebras(ZZ)

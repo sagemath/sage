@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Various families of graphs
 
@@ -3071,10 +3072,10 @@ def petersen_family(generate=False):
         [Petersen graph: Graph on 10 vertices,
          Complete graph: Graph on 6 vertices,
          Multipartite Graph with set sizes [3, 3, 1]: Graph on 7 vertices,
-         Graph on 8 vertices,
-         Graph on 9 vertices,
-         Graph on 7 vertices,
-         Graph on 8 vertices]
+                                                      Graph on 8 vertices,
+                                                      Graph on 9 vertices,
+                                                      Graph on 7 vertices,
+                                                      Graph on 8 vertices]
 
     The two different inputs generate the same graphs::
 

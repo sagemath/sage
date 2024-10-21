@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.pari
 r"""
 Elements of Quotients of Univariate Polynomial Rings
@@ -561,15 +562,17 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
 
         f = R.hom([alpha], F, check=False)
 
-        from sage.rings.number_field.number_field_rel import NumberField_relative
-        if isinstance(F, NumberField_relative):
-
-            base_map = F.base_field().hom([R.base_ring().gen()])
-            g = F.Hom(R)(x, base_map)
-
+        try:
+            from sage.rings.number_field.number_field_rel import NumberField_relative
+        except ImportError:
+            pass
         else:
-            g = F.hom([x], R, check=False)
+            if isinstance(F, NumberField_relative):
+                base_map = F.base_field().hom([R.base_ring().gen()])
+                g = F.Hom(R)(x, base_map)
+                return F, f, g
 
+        g = F.hom([x], R, check=False)
         return F, f, g
 
     def charpoly(self, var):

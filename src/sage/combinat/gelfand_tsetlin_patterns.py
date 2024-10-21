@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Gelfand-Tsetlin Patterns
 
@@ -520,7 +521,7 @@ class GelfandTsetlinPattern(ClonableArray,
 
             sage: G = GelfandTsetlinPattern([[3,2,0],[2.2,0],[2]])
             sage: G.bender_knuth_involution(2)
-            [[3, 2, 0], [2.80000000000000, 2], [2]]
+            [[3, 2, 0], [2.8..., 2], [2]]
 
         TESTS::
 
@@ -591,7 +592,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
         sage: G = GelfandTsetlinPatterns(3,3)
         sage: c = 0
-        sage: from sage.combinat.crystals.kirillov_reshetikhin import partitions_in_box
+        sage: from sage.combinat.partition import partitions_in_box
         sage: for p in partitions_in_box(3,3):
         ....:    S = SemistandardTableaux(p, max_entry=3)
         ....:    c += S.cardinality()
@@ -805,7 +806,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
             sage: L = list(GelfandTsetlinPatterns(3,3))
             sage: c = 0
-            sage: from sage.combinat.crystals.kirillov_reshetikhin import partitions_in_box
+            sage: from sage.combinat.partition import partitions_in_box
             sage: for p in partitions_in_box(3,3):
             ....:    S = SemistandardTableaux(p, max_entry=3)
             ....:    c += S.cardinality()

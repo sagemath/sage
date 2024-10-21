@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Spheres smoothly embedded in Euclidean Space
 

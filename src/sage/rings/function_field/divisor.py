@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.rings.finite_rings               (because all doctests use finite fields)
 # sage.doctest: needs sage.rings.function_field    (because almost all doctests use function field extensions)
 """

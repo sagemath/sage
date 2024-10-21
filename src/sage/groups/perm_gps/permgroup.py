@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 r"""
 Permutation groups
 
@@ -3441,14 +3442,15 @@ class PermutationGroup_generic(FiniteGroup):
 
         EXAMPLES::
 
+            sage: # optional - gap_package_hap
             sage: G = SymmetricGroup(5)
-            sage: G.homology(7)                              # optional - gap_package_hap
+            sage: G.homology(7)
             Multiplicative Abelian group isomorphic to C2 x C2 x C4 x C3 x C5
-            sage: G.homology(7,2)                              # optional - gap_package_hap
+            sage: G.homology(7,2)
             Multiplicative Abelian group isomorphic to C2 x C2 x C2 x C2 x C2
-            sage: G.homology(7,3)                              # optional - gap_package_hap
+            sage: G.homology(7,3)
             Multiplicative Abelian group isomorphic to C3
-            sage: G.homology(7,5)                              # optional - gap_package_hap
+            sage: G.homology(7,5)
             Multiplicative Abelian group isomorphic to C5
 
         REFERENCES:

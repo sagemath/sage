@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs
 r"""
 Examples of simplicial sets.
@@ -145,7 +146,7 @@ class Nerve(SimplicialSet_arbitrary):
         EXAMPLES::
 
             sage: G3 = groups.permutation.Cyclic(3)                                     # needs sage.groups
-            sage: hash(G3.nerve()) # random                                             # needs sage.groups
+            sage: hash(G3.nerve())  # random                                            # needs sage.groups
             17
 
         Different instances yield different base points, hence different hashes::

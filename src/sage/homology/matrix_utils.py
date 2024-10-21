@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Utility Functions for Matrices
 

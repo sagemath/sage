@@ -122,7 +122,7 @@ mpmath
 .. toctree::
    :maxdepth: 1
 
-   sage/libs/mpmath/utils
+   sage/libs/mpmath/sage_utils
 
 NTL
 ---

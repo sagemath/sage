@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 This linkage file implements the API for unramified extensions of the padics
 using FLINT's fmpz_poly_t.

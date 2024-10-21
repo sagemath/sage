@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Extension of rings
 
@@ -1938,6 +1939,7 @@ cdef class RingExtension_generic(CommutativeRing):
 
         ::
 
+            sage: # needs sage.rings.finite_rings
             sage: F = GF(11)
             sage: A.<x> = F[]
             sage: K = Frac(F).over(F)
@@ -1954,6 +1956,7 @@ cdef class RingExtension_generic(CommutativeRing):
 
             Ensure issue :issue:`34692` is fixed::
 
+            sage: # needs sage.rings.finite_rings
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
             sage: k = Frac(FqX)

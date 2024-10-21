@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 from sage.libs.singular.decl cimport skStrategy, ring
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport \

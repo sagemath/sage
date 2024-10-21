@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 """
 Artin Groups
 
@@ -61,6 +62,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             sage: b._latex_()                                                           # needs sage.rings.number_field
             '\\sigma_{1}\\sigma_{2}\\sigma_{3}\\sigma_{1}^{-1}\\sigma_{2}\\sigma_{3}^{-1}'
 
+            sage: # needs sage.graphs
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, 3, -1, 2, -3])
             sage: b._latex_()
@@ -91,6 +93,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             sage: b.exponent_sum()
             0
 
+            sage: # needs sage.graphs
             sage: B = BraidGroup(5)
             sage: b = B([1, 4, -3, 2])
             sage: b.exponent_sum()
@@ -132,6 +135,8 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             [3, 2, 1]
             sage: c.coxeter_group_element(W=SymmetricGroup(4))
             (1,4,3,2)
+
+            sage: # needs sage.graphs
             sage: A.<s1,s2,s3> = BraidGroup(4)
             sage: c = s1 * s2 * s3^-1
             sage: c0 = c.coxeter_group_element(); c0
@@ -145,6 +150,8 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             sage: # needs sage.rings.number_field
             sage: B(b1)
             s1*s2*s3*s2
+
+            sage: # needs sage.graphs
             sage: A(c0)
             s1*s2*s3
             sage: A(c0) == A(c1)
@@ -243,10 +250,10 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
 
             sage: B = BraidGroup(4)
             sage: b = B([1, 2, 3, -1, 2, -3])
-            sage: b.left_normal_form()
+            sage: b.left_normal_form()                                                  # needs sage.libs.braiding
             (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1, s0*s1*s2*s1*s0, s0*s2*s1)
             sage: c = B([1])
-            sage: c.left_normal_form()
+            sage: c.left_normal_form()                                                  # needs sage.libs.braiding
             (1, s0)
         """
         lnfp = self._left_normal_form_coxeter()
@@ -430,11 +437,12 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
             sage: ArtinGroup(['A',3]) is BraidGroup(4, 's1,s2,s3')                      # needs sage.rings.number_field
             True
 
+            sage: # needs sage.graphs sage.rings.number_field
             sage: G = graphs.PathGraph(3)
             sage: CM = CoxeterMatrix([[1,-1,2],[-1,1,-1],[2,-1,1]], index_set=G.vertices(sort=True))
-            sage: A = groups.misc.Artin(CM)                                             # needs sage.rings.number_field
-            sage: Ap = groups.misc.RightAngledArtin(G, 's')                             # needs sage.rings.number_field
-            sage: A is Ap                                                               # needs sage.rings.number_field
+            sage: A = groups.misc.Artin(CM)
+            sage: Ap = groups.misc.RightAngledArtin(G, 's')
+            sage: A is Ap
             True
         """
         coxeter_data = CoxeterMatrix(coxeter_data)
@@ -513,6 +521,7 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
             sage: Gamma = graphs.CycleGraph(5)
             sage: G = RightAngledArtinGroup(Gamma)
             sage: G.cardinality()

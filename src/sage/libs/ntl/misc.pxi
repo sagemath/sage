@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: depends = NTL/ZZ.h
 
 from cysignals.memory cimport sig_free

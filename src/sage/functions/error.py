@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Error functions
 
@@ -53,7 +54,7 @@ lazy_import('sage.functions.trig', ['sin', 'cos'])
 
 lazy_import('sage.symbolic.constants', ['I', 'pi'])
 
-lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
 lazy_import('sage.libs.mpmath.all', 'erf', as_='_mpmath_erf')
 lazy_import('sage.libs.mpmath.all', 'erfc', as_='_mpmath_erfc')
 lazy_import('sage.libs.mpmath.all', 'erfi', as_='_mpmath_erfi')
@@ -265,7 +266,7 @@ class Function_erf(BuiltinFunction):
 
             sage: gp.set_real_precision(59)  # random                                   # needs sage.libs.pari
             38
-            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200))                   # needs mpmath sage.libs.pari
+            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200))                   # needs sage.libs.mpmath sage.libs.pari
             0.84270079294971486934122063508260925929606699796630290845994
             0.84270079294971486934122063508260925929606699796630290845994
 
@@ -283,7 +284,7 @@ class Function_erf(BuiltinFunction):
             [0.99999999999846254020557196514981165651 +/- 7.33e-39]
         """
         R = parent or s_parent(x)
-        y = _mpmath_utils_call(_mpmath_erf, x, parent=R)
+        y = _mpmath_call(_mpmath_erf, x, parent=R)
         return y
 
     def _derivative_(self, x, diff_param=None):
@@ -373,7 +374,7 @@ class Function_erfi(BuiltinFunction):
             -0.99532226501895273416206925637*I
         """
         R = parent or s_parent(x)
-        return _mpmath_utils_call(_mpmath_erfi, x, parent=R)
+        return _mpmath_call(_mpmath_erfi, x, parent=R)
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -476,7 +477,7 @@ class Function_erfc(BuiltinFunction):
             1.0000000000000000000000000000 - 1.2969597307176392315279409506e6*I
         """
         R = parent or s_parent(x)
-        return _mpmath_utils_call(_mpmath_erfc, x, parent=R)
+        return _mpmath_call(_mpmath_erfc, x, parent=R)
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -564,7 +565,7 @@ class Function_erfinv(BuiltinFunction):
             0.17914345462129167649274901663
         """
         R = parent or s_parent(x)
-        return _mpmath_utils_call(_mpmath_erfinv, x, parent=R)
+        return _mpmath_call(_mpmath_erfinv, x, parent=R)
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -669,7 +670,7 @@ class Function_Fresnel_sin(BuiltinFunction):
             sage: fresnel_sin(1.0+2*I)                                                  # needs sage.symbolic
             36.7254648839914 + 15.5877511044046*I
         """
-        return _mpmath_utils_call(_mpmath_fresnels, x, parent=parent)
+        return _mpmath_call(_mpmath_fresnels, x, parent=parent)
 
     def _derivative_(self, x, diff_param=None):
         """
@@ -767,7 +768,7 @@ class Function_Fresnel_cos(BuiltinFunction):
             sage: fresnel_cos(1.0+2*I)                                                  # needs sage.symbolic
             16.0878713741255 - 36.2256879928817*I
         """
-        return _mpmath_utils_call(_mpmath_fresnelc, x, parent=parent)
+        return _mpmath_call(_mpmath_fresnelc, x, parent=parent)
 
     def _derivative_(self, x, diff_param=None):
         """

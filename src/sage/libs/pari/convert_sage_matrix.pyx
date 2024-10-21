@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.modules
 
 from cypari2.gen cimport Gen
@@ -11,7 +12,7 @@ from sage.matrix.args cimport (MatrixArgs, MA_ENTRIES_SEQ_SEQ,
                                MA_ENTRIES_SEQ_FLAT, MA_ENTRIES_CALLABLE,
                                MA_ENTRIES_UNKNOWN, MA_ENTRIES_SCALAR)
 
-from .convert_sage cimport gen_to_sage
+from sage.libs.pari.convert_sage cimport gen_to_sage
 
 
 def gen_to_sage_matrix(Gen z, locals=None):

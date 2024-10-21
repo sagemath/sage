@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Linear matroids
 
@@ -581,7 +582,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: R = GF(7)
             sage: A = Matrix(R, [[1, 0, 6, 1, 2],[6, 1, 0, 0, 1],[0, 6, 3, 6, 0]])
             sage: M = LinearMatroid(reduced_matrix=A)
-            sage: M.representation(lift_map=lift_map('sru'))                            # needs sage.rings.finite_rings
+            sage: M.representation(lift_map=lift_map('sru'))                            # needs sage.rings.number_field
             [     1      0      0      1      0      1      1      1]
             [     0      1      0 -z + 1      1      0      0      1]
             [     0      0      1      0      1      -1 z - 1      0]
@@ -3709,7 +3710,7 @@ cdef class BinaryMatroid(LinearMatroid):
         2 x 12 BinaryMatrix
         [110011001100]
         [001100110011]
-        sage: sorted(Npp._matrix_().rows())                                             # needs sage.rings.finite_rings
+        sage: sorted(Npp._matrix_().rows())
         [(1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0), (0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1)]
         """
         if self._eq_part is None:

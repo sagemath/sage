@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-flint
+
 from sage.libs.flint.types cimport nmod_poly_t, nmod_poly_struct, fmpz_poly_t
 from sage.structure.parent cimport Parent
 from sage.rings.integer cimport Integer

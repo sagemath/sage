@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Tangent Vectors
 
@@ -394,7 +395,7 @@ class TangentVector(FiniteRankFreeModuleElement):
         This plot involves only the components `v^t`,  `v^x` and `v^z` of `v`.
         A nice 3D view atop the coordinate grid is obtained via::
 
-            sage: (X.plot(ambient_coords=(t,x,z))  # long time                          # needs sage.plot
+            sage: (X.plot(ambient_coords=(t,x,z))       # long time                     # needs sage.plot
             ....:  + v.plot(ambient_coords=(t,x,z),
             ....:           label_offset=0.5, width=6))
             Graphics3d Object
@@ -428,8 +429,8 @@ class TangentVector(FiniteRankFreeModuleElement):
             Tangent vector ∂/∂ph at Point p on the 2-dimensional differentiable
              manifold S^2
             sage: graph_v = v.plot(mapping=F)                                           # needs sage.plot
-            sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)  # long time, needs sage.plot
-            sage: graph_v + graph_S2                                        # long time, needs sage.plot
+            sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)      # long time, needs sage.plot
+            sage: graph_v + graph_S2            # long time                             # needs sage.plot
             Graphics3d Object
 
         .. PLOT::

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 cdef extern from "triangulations.h":
     ctypedef void* triangulations_ptr
     cdef triangulations_ptr init_triangulations \

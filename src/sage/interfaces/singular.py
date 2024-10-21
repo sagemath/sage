@@ -1639,14 +1639,14 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             br = QQ
         elif charstr[0].startswith('Float'):
             from sage.rings.real_mpfr import RealField
-            from sage.functions.other import ceil
+            from sage.arith.misc import integer_ceil as ceil
             from sage.misc.functional import log
             prec = singular.eval('ringlist(basering)[1][2][1]')
             br = RealField(ceil((ZZ(prec) + 1) / log(2, 10)))
             is_extension = False
         elif charstr[0] == 'complex':
             from sage.rings.complex_mpfr import ComplexField
-            from sage.functions.other import ceil
+            from sage.arith.misc import integer_ceil as ceil
             from sage.misc.functional import log
             prec = singular.eval('ringlist(basering)[1][2][1]')
             br = ComplexField(ceil((ZZ(prec) + 1) / log(2, 10)))

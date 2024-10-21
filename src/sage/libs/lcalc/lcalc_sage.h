@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-lcalc
+ */
 #include "lcalc/L.h"
 int *new_ints(int l)
 {

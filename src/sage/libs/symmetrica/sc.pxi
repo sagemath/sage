@@ -1,3 +1,6 @@
+# sage_setup: distribution = sagemath-combinat
+# sage.doctest: needs sage.combinat sage.modules
+
 cdef extern from 'symmetrica/def.h':
     INT chartafel(OP degree, OP result)
     INT charvalue(OP irred, OP cls, OP result, OP table)
@@ -55,14 +58,16 @@ def charvalue_symmetrica(irred, cls, table=None):
     EXAMPLES::
 
         sage: n = 3
-        sage: m = matrix([[symmetrica.charvalue(irred, cls) for cls in Partitions(n)] for irred in Partitions(n)]); m
+        sage: m = matrix([[symmetrica.charvalue(irred, cls) for cls in Partitions(n)]
+        ....:             for irred in Partitions(n)]); m
         [ 1  1  1]
         [-1  0  2]
         [ 1 -1  1]
         sage: m == symmetrica.chartafel(n)
         True
         sage: n = 4
-        sage: m = matrix([[symmetrica.charvalue(irred, cls) for cls in Partitions(n)] for irred in Partitions(n)])
+        sage: m = matrix([[symmetrica.charvalue(irred, cls) for cls in Partitions(n)]
+        ....:             for irred in Partitions(n)])
         sage: m == symmetrica.chartafel(n)
         True
     """

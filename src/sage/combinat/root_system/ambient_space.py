@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Ambient lattices and ambient spaces
 """

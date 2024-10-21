@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Set of homomorphisms between two schemes
 

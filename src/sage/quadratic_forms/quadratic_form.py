@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Quadratic forms overview
 
@@ -420,6 +421,7 @@ class QuadraticForm(SageObject):
         reduced_binary_form, \
         minkowski_reduction, \
         minkowski_reduction_for_4vars__SP
+
     # Wrappers for Conway-Sloane genus routines (in ./genera/)
     lazy_import('sage.quadratic_forms.quadratic_form__genus', [
         'global_genus_symbol',

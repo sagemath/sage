@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Standalone LaTeX Document class and TikzPicture
 
@@ -1577,8 +1578,8 @@ class TikzPicture(Standalone):
             sage: roots = [I]
             sage: succ = lambda v: [v*a,v*b,a*v,b*v]
             sage: R = RecursivelyEnumeratedSet(roots, succ)
-            sage: G = R.to_digraph()                                                    # needs sage.graphs
-            sage: G                                                                     # needs sage.graphs
+            sage: G = R.to_digraph()                                                    # needs sage.combinat sage.graphs
+            sage: G                                                                     # needs sage.combinat sage.graphs
             Looped multi-digraph on 27 vertices
             sage: C = G.strongly_connected_components()                                 # needs sage.graphs
             sage: tikz = TikzPicture.from_graph(G,                              # optional - dot2tex graphviz, needs sage.graphs

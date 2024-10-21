@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-modules
+
 from sage.matrix.matrix_double_dense cimport Matrix_double_dense
 
 

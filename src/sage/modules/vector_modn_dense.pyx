@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Vectors with integer mod `n` entries, with small `n`
 

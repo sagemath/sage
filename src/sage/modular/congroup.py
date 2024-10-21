@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 ###########################################################
 # Re-bindings for unpickling
 #

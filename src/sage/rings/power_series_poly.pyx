@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Power Series Methods
 
@@ -1080,7 +1081,7 @@ cdef class PowerSeries_poly(PowerSeries):
             f2 = f.__pari__()
             g = f2.serreverse()
             return PowerSeries_poly(f.parent(), g.Vec(-out_prec), out_prec)
-        except (TypeError,ValueError,AttributeError,PariError):
+        except (TypeError, ValueError, AttributeError, PariError, ModuleNotFoundError):
             # if pari fails, continue with Lagrange inversion
             from sage.misc.verbose import verbose
             verbose("passing to pari failed; trying Lagrange inversion")
@@ -1142,18 +1143,18 @@ cdef class PowerSeries_poly(PowerSeries):
         EXAMPLES::
 
             sage: z = PowerSeriesRing(QQ, 'z').gen()
-            sage: exp(z).pade(4, 0)
+            sage: z.exp().pade(4, 0)
             1/24*z^4 + 1/6*z^3 + 1/2*z^2 + z + 1
-            sage: exp(z).pade(1, 1)
+            sage: z.exp().pade(1, 1)
             (-z - 2)/(z - 2)
-            sage: exp(z).pade(3, 3)
+            sage: z.exp().pade(3, 3)
             (-z^3 - 12*z^2 - 60*z - 120)/(z^3 - 12*z^2 + 60*z - 120)
-            sage: log(1-z).pade(4, 4)
+            sage: (1 - z).log().pade(4, 4)
             (25/6*z^4 - 130/3*z^3 + 105*z^2 - 70*z)/(z^4 - 20*z^3 + 90*z^2
             - 140*z + 70)
-            sage: sqrt(1+z).pade(3, 2)
+            sage: (1 + z).sqrt().pade(3, 2)
             (1/6*z^3 + 3*z^2 + 8*z + 16/3)/(z^2 + 16/3*z + 16/3)
-            sage: exp(2*z).pade(3, 3)
+            sage: (2*z).exp().pade(3, 3)
             (-z^3 - 6*z^2 - 15*z - 15)/(z^3 - 6*z^2 + 15*z - 15)
 
         TESTS:
@@ -1162,8 +1163,8 @@ cdef class PowerSeries_poly(PowerSeries):
 
             sage: # needs sage.rings.real_mpfr
             sage: R.<z> = RR[[]]
-            sage: f = exp(2*z)
-            sage: f.pade(3, 3) # abs tol 1e-10
+            sage: f = (2*z).exp()
+            sage: f.pade(3, 3)  # abs tol 1e-10
             (-z^3 - 6.0*z^2 - 15.0*z - 15.0)/(z^3 - 6.0*z^2 + 15.0*z - 15.0)
 
         When precision is too low::

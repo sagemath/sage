@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Plane quartic curves over a general ring
 

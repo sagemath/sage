@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Base Class to Support Method Decorators
 

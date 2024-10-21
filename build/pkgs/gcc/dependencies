@@ -1,4 +1,4 @@
-| $(MP_LIBRARY) mpfr mpc zlib xz
+| $(MP_LIBRARY) mpfr mpc zlib xz zstd
 
 ------------------------------------------------------------------------
 NOTE: all dependencies of GCC must be order-only dependencies

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Abelian group elements
 
@@ -17,16 +18,13 @@ EXAMPLES:
 
 Recall an example from abelian groups::
 
-    sage: F = AbelianGroup(5,[4,5,5,7,8],names = list("abcde"))
+    sage: F = AbelianGroup(5, [4,5,5,7,8], names=list("abcde"))
     sage: (a,b,c,d,e) = F.gens()
-    sage: x = a*b^2*e*d^20*e^12
-    sage: x
+    sage: x = a*b^2*e*d^20*e^12; x
     a*b^2*d^6*e^5
-    sage: x = a^10*b^12*c^13*d^20*e^12
-    sage: x
+    sage: x = a^10*b^12*c^13*d^20*e^12; x
     a^2*b^2*c^3*d^6*e^4
-    sage: y = a^13*b^19*c^23*d^27*e^72
-    sage: y
+    sage: y = a^13*b^19*c^23*d^27*e^72; y
     a*b^4*c^3*d^6
     sage: x*y
     a^3*b*c*d^5*e^4

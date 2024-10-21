@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 # cython: old_style_globals=True
 """
 Symbolic variables

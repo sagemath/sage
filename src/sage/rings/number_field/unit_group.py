@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 r"""
 Units and `S`-unit groups of number fields
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Common words
 
@@ -1147,7 +1148,7 @@ class WordGenerator:
         if not 0 <= alpha <= 1:
             raise ValueError("parameter alpha (=%s) must be in [0,1]" % alpha)
 
-        from sage.functions.other import floor
+        from sage.arith.misc import integer_floor as floor
         from sage.combinat.words.alphabet import build_alphabet
         if alphabet is None or alphabet in ((0, 1), [0, 1]):
             alphabet = build_alphabet([0, 1])
@@ -1205,8 +1206,9 @@ class WordGenerator:
         if not 0 <= alpha <= 1:
             raise ValueError("parameter alpha (=%s) must be in [0,1]" % alpha)
 
-        from sage.functions.other import ceil
+        from sage.arith.misc import integer_ceil as ceil
         from sage.combinat.words.alphabet import build_alphabet
+
         if alphabet is None or alphabet in ((0, 1), [0, 1]):
             alphabet = build_alphabet([0, 1])
             s = lambda n: ceil(alpha*(n+1) + rho) - ceil(alpha*n + rho)

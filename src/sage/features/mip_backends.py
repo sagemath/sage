@@ -97,7 +97,7 @@ class CVXOPT(JoinFeature):
         TESTS::
 
             sage: from sage.features.mip_backends import CVXOPT
-            sage: CVXOPT()._is_present()  # optional - cvxopt
+            sage: CVXOPT()._is_present()                                                # needs cvxopt
             FeatureTestResult('cvxopt', True)
         """
         JoinFeature.__init__(self, 'cvxopt',

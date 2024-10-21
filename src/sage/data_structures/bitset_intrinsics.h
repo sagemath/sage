@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-categories
+ */
 #ifndef SAGE_BITSET_INTRINSICS
 #define SAGE_BITSET_INTRINSICS
 

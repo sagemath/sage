@@ -24,6 +24,12 @@ def all_features():
         sage: from sage.features.all import all_features
         sage: sorted(all_features(), key=lambda f: f.name)  # random
         [...Feature('sage.combinat')...]
+
+    TESTS::
+
+        sage: from sage.features import _spkg_type_warnings
+        sage: for a in _spkg_type_warnings:
+        ....:     print(a)
     """
     import pkgutil
     import importlib
@@ -55,13 +61,13 @@ def module_feature(module_name):
     EXAMPLES::
 
         sage: from sage.features.all import module_feature
-        sage: module_feature('sage.combinat.tableau')                                   # needs sage.combinat
+        sage: module_feature('sage.combinat.tableau')
         Feature('sage.combinat')
-        sage: module_feature('sage.combinat.posets.poset')                              # needs sage.graphs
+        sage: module_feature('sage.combinat.posets.poset')
         Feature('sage.graphs')
-        sage: module_feature('sage.schemes.toric.variety')                              # needs sage.geometry.polyhedron
+        sage: module_feature('sage.schemes.toric.variety')
         Feature('sage.geometry.polyhedron')
-        sage: module_feature('scipy')                                                   # needs scipy
+        sage: module_feature('scipy')
         Feature('scipy')
         sage: print(module_feature('sage.structure.element'))
         None

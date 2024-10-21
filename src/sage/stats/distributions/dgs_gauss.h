@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-modules
+ */
 /**
    Discrete Gaussians over the Integers.
 

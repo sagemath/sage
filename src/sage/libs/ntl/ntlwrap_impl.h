@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-ntl
+ */
 #ifndef _SAGE_NTLWRAP_CPP
 #define _SAGE_NTLWRAP_CPP
 #include "ntlwrap.h"

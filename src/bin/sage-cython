@@ -1,39 +1,26 @@
-#!/usr/bin/env sage-python
+#!/usr/bin/env python
 
-# This script is a deprecated wrapper around the "cython" program.
-# It is deprecated since Issue #27041 (Sage 8.7) because one should
+# This script is a wrapper around the "cython" program.
+# It was deprecated in Issue #27041 (Sage 8.7) because one should
 # simply use "cython" directly. We display deprecation messages whenever
 # "sage-cython" does something different from plain "cython".
 #
 # A stronger deprecation warning was added in #29923 (Sage 9.2).
+#
+# In Sage 10.3, the deprecated functionality is removed permanently.
+# However, the script is un-deprecated and re-purposed as a temporary workaround
+# for defects in Cython 3.0.x support for PEP 420 implicit namespace packages,
+# see https://github.com/sagemath/sage/pull/36228
+#
+# This script can be used as a replacement for "cython".
+# For example, to have meson use it, set the environment variable
+# CYTHON to sage-cython./
+# https://github.com/mesonbuild/meson/blob/e4bbc630b67ef97ad842badd00855e64cff12e13/mesonbuild/envconfig.py#L91
 
-import os
-import sys
-args = sys.argv[1:]
+from sage.misc.package_dir import cython_namespace_package_support
 
-sys.stderr.write("WARNING: the script sage-cython is deprecated; use cython instead.\n")
+# console scripts declared in https://github.com/cython/cython/blob/master/setup.py#L68
+from Cython.Compiler.Main import setuptools_main
 
-from sage.env import SAGE_SRC
-
-# args can have length 0, in case we're printing a usage message (see trac 12207)
-pyx_file = os.path.abspath(args[-1]) if len(args) else None
-include_sage_flags = False
-
-if pyx_file and pyx_file.startswith(SAGE_SRC):
-    sys.stderr.write("WARNING: in the future, sage --cython will not add special flags for files in Sage sources.\n")
-    include_sage_flags = True
-
-if '-sage' in args:
-    sys.stderr.write("WARNING: sage --cython -sage is deprecated.\n")
-    include_sage_flags = True
-    args.remove('-sage')
-elif '-no-sage' in args:
-    sys.stderr.write("WARNING: sage --cython -no-sage is deprecated, remove the -no-sage flag.\n")
-    include_sage_flags = False
-    args.remove('-no-sage')
-
-if include_sage_flags:
-    args = ['--embed-positions', '-I%s' % SAGE_SRC] + args
-
-args.insert(0, 'sage-cython')
-os.execlp('cython', *args)
+with cython_namespace_package_support():
+     setuptools_main()

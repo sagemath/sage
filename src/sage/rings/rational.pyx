@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # distutils: libraries = NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -66,6 +67,8 @@ import operator
 import fractions
 
 import sage.rings.rational_field
+
+cimport sage.rings.integer as integer
 
 from sage.arith.long cimport integer_check_long_py
 from sage.categories.morphism cimport Morphism
@@ -598,7 +601,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         elif isinstance(x, integer.Integer):
             set_from_Integer(self, x)
 
-        elif isinstance(x, sage.rings.real_mpfr.RealNumber):
+        elif isinstance(x, RealNumber_classes):
 
             if x == 0:
                 mpq_set_si(self.value, 0, 1)
@@ -674,14 +677,23 @@ cdef class Rational(sage.structure.element.FieldElement):
             mpq_set(self.value, temp_rational.value)
 
         elif isinstance(x, (float, sage.rings.real_double.RealDoubleElement)):
-            self.__set_value(sage.rings.real_mpfr.RealNumber(sage.rings.real_mpfr.RR, x), base)
+            try:
+                from sage.rings.real_mpfr import RR, RealNumber
+            except ImportError:
+                if base:
+                    raise
+                from fractions import Fraction
+                self.__set_value(Fraction.from_float(float(x)), 0)
+            else:
+                self.__set_value(RealNumber(RR, x), base)
 
         elif is_numpy_type(type(x)):
             import numpy
             if isinstance(x, numpy.integer):
                 self.__set_value(integer.Integer(x), base)
             elif isinstance(x, numpy.floating):
-                self.__set_value(sage.rings.real_mpfr.RR(x), base)
+                from sage.rings.real_mpfr import RR
+                self.__set_value(RR(x), base)
             else:
                 raise TypeError("unable to convert {!r} to a rational".format(x))
 

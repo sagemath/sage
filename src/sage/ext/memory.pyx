@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 Low-level memory allocation functions
 

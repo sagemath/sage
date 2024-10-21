@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Classes for symbolic functions
 
@@ -155,6 +156,7 @@ try:
         get_sfunction_from_hash, get_sfunction_from_serial as get_sfunction_from_serial
     )
 except ImportError:
+    call_registered_function = None
     register_or_update_function = None
 
 
@@ -403,7 +405,7 @@ cdef class Function(SageObject):
         except AttributeError:
             return NotImplemented
 
-    def __call__(self, *args, bint coerce=True, bint hold=False):
+    def __call__(self, *args, bint coerce=True, bint hold=False, dont_call_method_on_arg=None):
         """
         Evaluates this function at the given arguments.
 
@@ -524,6 +526,19 @@ cdef class Function(SageObject):
         # if the given input is a symbolic expression, we don't convert it back
         # to a numeric type at the end
         symbolic_input = any(isinstance(arg, Expression) for arg in args)
+
+        if call_registered_function is None:
+            try:
+                evalf = self._evalf_
+            except AttributeError:
+                if len(args) == 1 and not dont_call_method_on_arg:
+                    method = getattr(args[0], self._name, None)
+                    if callable(method):
+                        return method()
+            else:
+                result = evalf(*args)
+                if result is not None:
+                    return result
 
         from sage.symbolic.ring import SR
 
@@ -804,14 +819,13 @@ cdef class Function(SageObject):
             123
             sage: del mpmath.noMpmathFn
         """
-        import mpmath
-        from sage.libs.mpmath.utils import mpmath_to_sage, sage_to_mpmath
-        prec = mpmath.mp.prec
-        args = [mpmath_to_sage(x, prec)
-                if isinstance(x, (mpmath.mpf, mpmath.mpc)) else x
+        from sage.libs.mpmath.all import mp, mpf, mpc
+        from sage.libs.mpmath.sage_utils import mpmath_to_sage, sage_to_mpmath
+        args = [mpmath_to_sage(x, mp.prec)
+                if isinstance(x, (mpf, mpc)) else x
                 for x in args]
         res = self(*args)
-        res = sage_to_mpmath(res, prec)
+        res = sage_to_mpmath(res, mp.prec)
         return res
 
 
@@ -993,7 +1007,7 @@ cdef class BuiltinFunction(Function):
                 import numpy as module
                 custom = self._eval_numpy_
             elif any(is_mpmath_type(type(arg)) for arg in args):
-                import mpmath as module
+                import sage.libs.mpmath.all as module
                 custom = self._eval_mpmath_
             elif all(isinstance(arg, float) for arg in args):
                 # We do not include the factorial here as
@@ -1044,7 +1058,7 @@ cdef class BuiltinFunction(Function):
             res = self._evalf_try_(*args)
             if res is None:
                 res = super().__call__(
-                        *args, coerce=coerce, hold=hold)
+                        *args, coerce=coerce, hold=hold, dont_call_method_on_arg=dont_call_method_on_arg)
 
         # Convert the output back to the corresponding
         # Python type if possible.
@@ -1073,17 +1087,16 @@ cdef class BuiltinFunction(Function):
             return res
 
         p = res.parent()
-        from sage.rings.complex_double import CDF
         from sage.rings.integer_ring import ZZ
-        from sage.rings.real_double import RDF
         if ZZ.has_coerce_map_from(p):
             return int(res)
-        elif RDF.has_coerce_map_from(p):
+        from sage.rings.real_double import RDF
+        if RDF.has_coerce_map_from(p):
             return float(res)
-        elif CDF.has_coerce_map_from(p):
+        from sage.rings.complex_double import CDF
+        if CDF.has_coerce_map_from(p):
             return complex(res)
-        else:
-            return res
+        return res
 
     cdef _is_registered(self):
         """

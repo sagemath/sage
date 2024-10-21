@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Module of trace monoids (free partially commutative monoids).
 

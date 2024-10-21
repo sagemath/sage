@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Interface to the Sage cleaner
 

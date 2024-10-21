@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 
 cdef class TreeIterator:
     cdef int vertices

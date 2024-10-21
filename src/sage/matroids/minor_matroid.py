@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Minors of matroids
 

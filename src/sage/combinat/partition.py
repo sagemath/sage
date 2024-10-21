@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Integer partitions
 
@@ -9404,6 +9405,19 @@ def number_of_partitions_length(n, k, algorithm='hybrid'):
         # Fall back to GAP
     from sage.libs.gap.libgap import libgap
     return ZZ(libgap.NrPartitions(ZZ(n), ZZ(k)))
+
+
+def partitions_in_box(r, s):
+    """
+    Return all partitions in a box of width ``s`` and height ``r``.
+
+    EXAMPLES::
+
+        sage: sage.combinat.partition.partitions_in_box(3,2)
+        [[], [1], [2], [1, 1], [2, 1], [1, 1, 1], [2, 2], [2, 1, 1],
+        [2, 2, 1], [2, 2, 2]]
+    """
+    return [x for n in range(r*s + 1) for x in Partitions(n, max_part=s, max_length=r)]
 
 
 ##########

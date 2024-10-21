@@ -138,7 +138,7 @@ class JoinFeature(Feature):
             sage: f.unhide()
             sage: f.is_present()    # optional sage.groups
             FeatureTestResult('sage.groups', True)
-            sage: f._features[0].is_present() # optional sage.groups
+            sage: f._features[0].is_present()                                           # needs sage.groups
             FeatureTestResult('sage.groups.perm_gps.permgroup', True)
         """
         for f in self._features:

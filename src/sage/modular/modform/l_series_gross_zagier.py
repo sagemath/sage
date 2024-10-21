@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 from sage.lfunctions.dokchitser import Dokchitser

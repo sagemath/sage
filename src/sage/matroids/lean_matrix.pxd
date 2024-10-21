@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.data_structures.bitset cimport bitset_t
 from sage.libs.gmp.types cimport mpq_t
 

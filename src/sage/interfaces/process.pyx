@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Utilities for subprocess management
 """

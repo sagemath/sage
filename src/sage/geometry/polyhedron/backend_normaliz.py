@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: optional - pynormaliz
 """
 The Normaliz backend for polyhedral computations

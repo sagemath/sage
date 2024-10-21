@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-flint
+
 from sage.libs.mpfi.types cimport mpfi_ptr
 
 cdef int mpfi_set_sage(mpfi_ptr re, mpfi_ptr im, x, field, int base) except -1

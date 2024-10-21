@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Derivations
 
@@ -2313,8 +2314,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
 
             sage: R.<x,y> = ZZ[]
             sage: theta = R.hom([y,x])
-            sage: d = R.derivation(x, twist=theta)
-            sage: d
+            sage: d = R.derivation(x, twist=theta); d
             x*([x |--> y, y |--> x] - id)
 
             sage: D = d.extend_to_fraction_field(); D                                   # needs sage.libs.singular

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 # distutils: extra_compile_args = NTL_CFLAGS M4RI_CFLAGS
 # distutils: libraries = iml NTL_LIBRARIES gmp m CBLAS_LIBRARIES
 # distutils: library_dirs = NTL_LIBDIR CBLAS_LIBDIR
@@ -2109,6 +2110,45 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ans = H_m
         self.cache(key, ans)
         return ans
+
+    def _echelonize_ring(self, **kwds):
+        r"""
+        Echelonize self in place, where the base ring of self is assumed to
+        be a ring (not a field).
+
+        EXAMPLES::
+
+            sage: a = matrix(ZZ, 3, 4, [1..12], sparse=False); a
+            [ 1  2  3  4]
+            [ 5  6  7  8]
+            [ 9 10 11 12]
+            sage: a._echelonize_ring()
+            sage: a
+            [ 1  2  3  4]
+            [ 0  4  8 12]
+            [ 0  0  0  0]
+        """
+        self.check_mutability()
+        cdef Matrix d, a
+        cdef Py_ssize_t r, c
+        cdef bint transformation = 'transformation' in kwds and kwds['transformation']
+
+        if 'include_zero_rows' in kwds and not kwds['include_zero_rows']:
+            raise ValueError("cannot echelonize in place and delete zero rows")
+        if transformation:
+            d, a = self.echelon_form(**kwds)
+        else:
+            d = self.echelon_form(**kwds)
+        for c from 0 <= c < self.ncols():
+            for r from 0 <= r < self.nrows():
+                self.set_unsafe(r, c, d.get_unsafe(r,c))
+        self.clear_cache()
+        self.cache('pivots', d.pivots())
+        self.cache('in_echelon_form', True)
+        if transformation:
+            return a
+        else:
+            return
 
     def saturation(self, p=0, proof=None, max_dets=5):
         r"""

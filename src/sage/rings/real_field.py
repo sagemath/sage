@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 def create_RealField(prec=53, type='MPFR', rnd='RNDN', sci_not=0):
     """
     Create a real field with given precision, type, rounding mode and

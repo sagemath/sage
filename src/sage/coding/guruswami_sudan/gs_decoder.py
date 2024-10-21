@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.modules sage.rings.finite_rings sage.symbolic
 r"""
 Guruswami-Sudan decoder for (Generalized) Reed-Solomon codes
@@ -33,7 +34,7 @@ from sage.coding.guruswami_sudan.interpolation import gs_interpolation_linalg, g
 from sage.coding.guruswami_sudan.utils import (johnson_radius,
                                                gilt,
                                                solve_degree2_to_integer_range)
-from sage.functions.other import floor
+from sage.misc.lazy_import import lazy_import
 from sage.misc.functional import sqrt
 
 

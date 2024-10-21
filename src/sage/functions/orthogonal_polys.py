@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Orthogonal polynomials
 
@@ -414,7 +415,7 @@ lazy_import('sage.rings.real_mpfr', 'RR')
 lazy_import('sage.symbolic.ring', 'SR')
 lazy_import('sage.calculus.calculus', 'maxima', as_='_maxima')
 
-lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
 lazy_import('sage.libs.mpmath.all', 'chebyt', as_='_mpmath_chebyt')
 lazy_import('sage.libs.mpmath.all', 'chebyu', as_='_mpmath_chebyu')
 lazy_import('sage.libs.mpmath.all', 'laguerre', as_='_mpmath_laguerre')
@@ -633,8 +634,8 @@ class ChebyshevFunction(OrthogonalFunction):
 
         # n is not an integer and neither n nor x is symbolic.
         # We assume n and x are real/complex and evaluate numerically
+        import sage.libs.mpmath.all as mpmath
         try:
-            import sage.libs.mpmath.all as mpmath
             return self._evalf_(n, x)
         except mpmath.NoConvergence:
             warnings.warn("mpmath failed, keeping expression unevaluated",
@@ -801,7 +802,7 @@ class Func_chebyshev_T(ChebyshevFunction):
         if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
             raise TypeError("cannot evaluate chebyshev_T with parent {}".format(real_parent))
 
-        return _mpmath_utils_call(_mpmath_chebyt, n, x, parent=real_parent)
+        return _mpmath_call(_mpmath_chebyt, n, x, parent=real_parent)
 
     def eval_formula(self, n, x):
         """
@@ -1171,7 +1172,7 @@ class Func_chebyshev_U(ChebyshevFunction):
         if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
             raise TypeError("cannot evaluate chebyshev_U with parent {}".format(real_parent))
 
-        return _mpmath_utils_call(_mpmath_chebyu, n, x, parent=real_parent)
+        return _mpmath_call(_mpmath_chebyu, n, x, parent=real_parent)
 
     def _eval_special_values_(self, n, x):
         """
@@ -1460,7 +1461,7 @@ class Func_legendre_Q(BuiltinFunction):
         if ret is not None:
             return ret
 
-        return _mpmath_utils_call(_mpmath_legenq, n, 0, x, parent=parent)
+        return _mpmath_call(_mpmath_legenq, n, 0, x, parent=parent)
 
     def eval_recursive(self, n, arg, **kwds):
         """
@@ -1838,7 +1839,7 @@ class Func_assoc_legendre_P(BuiltinFunction):
             sage: gen_legendre_P(2/3, 1, 0.)                                            # needs mpmath
             -0.773063511309286
         """
-        return _mpmath_utils_call(_mpmath_legenp, n, m, x, parent=parent)
+        return _mpmath_call(_mpmath_legenp, n, m, x, parent=parent)
 
     def eval_gen_poly(self, n, m, arg, **kwds):
         r"""
@@ -1979,7 +1980,7 @@ class Func_assoc_legendre_Q(BuiltinFunction):
         if ret is not None:
             return ret
 
-        return _mpmath_utils_call(_mpmath_legenq, n, m, x, parent=parent)
+        return _mpmath_call(_mpmath_legenq, n, m, x, parent=parent)
 
     def eval_recursive(self, n, m, x, **kwds):
         """
@@ -2512,9 +2513,9 @@ class Func_laguerre(OrthogonalFunction):
         if n < 0:
             # work around mpmath issue 307
             from sage.functions.log import exp
-            return exp(x) * _mpmath_utils_call(_mpmath_laguerre, -n-1, 0, -x, parent=the_parent)
+            return exp(x) * _mpmath_call(_mpmath_laguerre, -n-1, 0, -x, parent=the_parent)
         else:
-            return _mpmath_utils_call(_mpmath_laguerre, n, 0, x, parent=the_parent)
+            return _mpmath_call(_mpmath_laguerre, n, 0, x, parent=the_parent)
 
     def _derivative_(self, n, x, *args, **kwds):
         """
@@ -2648,13 +2649,13 @@ class Func_gen_laguerre(OrthogonalFunction):
 
             sage: gen_laguerre(100, 1, RealField(300)(pi))                              # needs sage.symbolic
             -0.89430788373354541911...
-            sage: gen_laguerre(10,1/2,1.+I)                                             # needs sage.symbolic
+            sage: gen_laguerre(10, 1/2, 1. + I)                                         # needs sage.symbolic
             5.34469635574906 + 5.23754057922902*I
         """
         the_parent = kwds.get('parent', None)
         if the_parent is None:
             the_parent = parent(x)
-        return _mpmath_utils_call(_mpmath_laguerre, n, a, x, parent=the_parent)
+        return _mpmath_call(_mpmath_laguerre, n, a, x, parent=the_parent)
 
     def _derivative_(self, n, a, x, diff_param):
         """

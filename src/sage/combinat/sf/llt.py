@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 LLT symmetric functions
@@ -639,19 +640,20 @@ class LLT_spin(LLT_generic):
         TESTS::
 
             sage: HSp3 = SymmetricFunctions(FractionField(QQ['t'])).llt(3).hspin()
-            sage: TestSuite(HSp3).run(skip = ["_test_associativity", "_test_distributivity", "_test_prod"]) # products are too expensive, long time (10s on sage.math, 2012)
-            sage: TestSuite(HSp3).run(elements = [HSp3.t*HSp3[1,1]+HSp3.t*HSp3[2], HSp3[1]+(1+HSp3.t)*HSp3[1,1]])  # long time (depends on previous)
+            sage: TestSuite(HSp3).run(skip=["_test_associativity", "_test_distributivity", "_test_prod"])  # products are too expensive, long time (10s on sage.math, 2012)
+            sage: TestSuite(HSp3).run(elements=[HSp3.t*HSp3[1,1]+HSp3.t*HSp3[2], HSp3[1]+(1+HSp3.t)*HSp3[1,1]])  # long time (depends on previous)
 
         ::
 
-            sage: HS3t2 = SymmetricFunctions(QQ).llt(3,t=2).hspin()
-            sage: TestSuite(HS3t2).run() # products are too expensive, long time (7s on sage.math, 2012)
+            sage: HS3t2 = SymmetricFunctions(QQ).llt(3, t=2).hspin()
+            sage: TestSuite(HS3t2).run()  # products are too expensive, long time (7s on sage.math, 2012)
 
         ::
 
-            sage: HS3x = SymmetricFunctions(FractionField(QQ['x'])).llt(3,t=x).hspin()
-            sage: TestSuite(HS3x).run(skip = ["_test_associativity", "_test_distributivity", "_test_prod"]) # products are too expensive, long time (4s on sage.math, 2012)
-            sage: TestSuite(HS3x).run(elements = [HS3x.t*HS3x[1,1]+HS3x.t*HS3x[2], HS3x[1]+(1+HS3x.t)*HS3x[1,1]])  # long time (depends on previous)
+            sage: R.<x> = QQ[]
+            sage: HS3x = SymmetricFunctions(FractionField(R)).llt(3, t=x).hspin()
+            sage: TestSuite(HS3x).run(skip=["_test_associativity", "_test_distributivity", "_test_prod"])  # products are too expensive, long time (4s on sage.math, 2012)
+            sage: TestSuite(HS3x).run(elements=[HS3x.t*HS3x[1,1]+HS3x.t*HS3x[2], HS3x[1]+(1+HS3x.t)*HS3x[1,1]])  # long time (depends on previous)
         """
         level = llt._k
         if level not in hsp_to_m_cache:
@@ -708,19 +710,20 @@ class LLT_cospin(LLT_generic):
         TESTS::
 
             sage: HCosp3 = SymmetricFunctions(FractionField(QQ['t'])).llt(3).hcospin()
-            sage: TestSuite(HCosp3).run(skip = ["_test_associativity", "_test_distributivity", "_test_prod"]) # products are too expensive, long time (11s on sage.math, 2012)
-            sage: TestSuite(HCosp3).run(elements = [HCosp3.t*HCosp3[1,1]+HCosp3.t*HCosp3[2], HCosp3[1]+(1+HCosp3.t)*HCosp3[1,1]])  # long time (depends on previous)
+            sage: TestSuite(HCosp3).run(skip=["_test_associativity", "_test_distributivity", "_test_prod"])  # products are too expensive, long time (11s on sage.math, 2012)
+            sage: TestSuite(HCosp3).run(elements=[HCosp3.t*HCosp3[1,1]+HCosp3.t*HCosp3[2], HCosp3[1]+(1+HCosp3.t)*HCosp3[1,1]])  # long time (depends on previous)
 
         ::
 
-            sage: HC3t2 = SymmetricFunctions(QQ).llt(3,t=2).hcospin()
-            sage: TestSuite(HC3t2).run() # products are too expensive, long time (6s on sage.math, 2012)
+            sage: HC3t2 = SymmetricFunctions(QQ).llt(3, t=2).hcospin()
+            sage: TestSuite(HC3t2).run()  # products are too expensive, long time (6s on sage.math, 2012)
 
         ::
 
-            sage: HC3x = SymmetricFunctions(FractionField(QQ['x'])).llt(3,t=x).hcospin()
-            sage: TestSuite(HC3x).run(skip = ["_test_associativity", "_test_distributivity", "_test_prod"]) # products are too expensive, long time (5s on sage.math, 2012)
-            sage: TestSuite(HC3x).run(elements = [HC3x.t*HC3x[1,1]+HC3x.t*HC3x[2], HC3x[1]+(1+HC3x.t)*HC3x[1,1]])  # long time (depends on previous)
+            sage: R.<x> = QQ[]
+            sage: HC3x = SymmetricFunctions(FractionField(R)).llt(3, t=x).hcospin()
+            sage: TestSuite(HC3x).run(skip=["_test_associativity", "_test_distributivity", "_test_prod"])  # products are too expensive, long time (5s on sage.math, 2012)
+            sage: TestSuite(HC3x).run(elements=[HC3x.t*HC3x[1,1]+HC3x.t*HC3x[2], HC3x[1]+(1+HC3x.t)*HC3x[1,1]])  # long time (depends on previous)
         """
         level = llt._k
         if level not in hcosp_to_m_cache:
