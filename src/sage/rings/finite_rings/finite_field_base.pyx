@@ -1948,6 +1948,8 @@ cdef class FiniteField(Field):
               To:   Algebraic closure of Finite Field of size 2
               Defn: a |--> ...
         """
+        if self.characteristic() != K.characteristic():
+            raise ValueError(f'no embedding from {self} to {K}: incompatible characteristics')
         try:
             return super().an_embedding(K)
         except (NotImplementedError, ValueError):
@@ -1985,42 +1987,9 @@ cdef class FiniteField(Field):
                From: Finite Field in z2 of size 2^2
                To:   Algebraic closure of Finite Field of size 2
                Defn: z2 |--> z2 + 1]
-
-        ::
-
-            sage: CyclotomicField(5).embeddings(QQbar)
-            [
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Algebraic Field
-              Defn: zeta5 |--> 0.3090169943749474? + 0.9510565162951536?*I,
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Algebraic Field
-              Defn: zeta5 |--> -0.8090169943749474? + 0.5877852522924731?*I,
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Algebraic Field
-              Defn: zeta5 |--> -0.8090169943749474? - 0.5877852522924731?*I,
-            Ring morphism:
-              From: Cyclotomic Field of order 5 and degree 4
-              To:   Algebraic Field
-              Defn: zeta5 |--> 0.3090169943749474? - 0.9510565162951536?*I
-            ]
-            sage: CyclotomicField(3).embeddings(CyclotomicField(7))
-            [ ]
-            sage: CyclotomicField(3).embeddings(CyclotomicField(6))
-            [
-            Ring morphism:
-              From: Cyclotomic Field of order 3 and degree 2
-              To:   Cyclotomic Field of order 6 and degree 2
-              Defn: zeta3 |--> zeta6 - 1,
-            Ring morphism:
-              From: Cyclotomic Field of order 3 and degree 2
-              To:   Cyclotomic Field of order 6 and degree 2
-              Defn: zeta3 |--> -zeta6
-            ]
         """
+        if self.characteristic() != K.characteristic():
+            return []
         if K not in FiniteFields():
             from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
             if not isinstance(K, AlgebraicClosureFiniteField_generic):

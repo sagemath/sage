@@ -1526,6 +1526,9 @@ cdef class Field(CommutativeRing):
               To:   Cyclotomic Field of order 6 and degree 2
               Defn: zeta3 -> zeta6 - 1
         """
+        if self.characteristic() != K.characteristic():
+            raise ValueError(f'no embedding from {self} to {K}: incompatible characteristics')
+
         H = self.Hom(K)
         try:
             return H.natural_map()
