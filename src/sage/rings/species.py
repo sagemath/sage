@@ -171,7 +171,7 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element, WithEqualityById,
             sage: C(G)
             ((5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6))
         """
-        return f"{self._C.gens()}"
+        return repr(self._C.gens())
 
 
 class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Parent):
@@ -226,7 +226,7 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups(); C
             Infinite set of conjugacy classes of directly indecomposable subgroups
         """
-        return "Infinite set of conjugacy classes of directly indecomposable subgroups"
+        return "Set of conjugacy classes of directly indecomposable subgroups"
 
     def __iter__(self):
         r"""
@@ -843,9 +843,9 @@ def _stabilizer_subgroups(G, X, a):
 
     INPUT:
 
-    - ``G``, the acting group
-    - ``X``, the set ``G`` is acting on
-    - ``a``, the (left) action
+    - ``G`` -- the acting group
+    - ``X`` -- the set ``G`` is acting on
+    - ``a`` -- the (left) action
 
     EXAMPLES::
 
@@ -1128,7 +1128,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             INPUT:
 
-            - ``x``, a dictionary mapping atomic species to exponents
+            - ``x`` -- a dictionary mapping atomic species to exponents
 
             EXAMPLES::
 
@@ -1775,20 +1775,18 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
     def _compose_with_weighted_singletons(self, names, multiplicities, degrees):
         r"""
         Compute the composition with
-        `(\sum_j m_{1,j} X_{1,j}, \sum_j m_{2,j} X_{2,j}, \dots)`
+        `(\sum_j m_{1,j} X_{1,j}, \sum_j m_{2,j} X_{2,j}, \ldots)`
         in the specified degrees.
 
         The `k`-sort species ``self`` should be homogeneous.
 
         INPUT:
 
-            - ``names``, the (flat) list of names of the result
-
-            - ``multiplicities``, a (flat) list of constants
-
-            - ``degrees``, a `k`-tuple of compositions `c_1,
-              \dots, c_k`, such that the size of `c_i` is the
-              degree of self in sort `i`.
+        - ``names`` -- the (flat) list of names of the result
+        - ``multiplicities`` -- a (flat) list of constants
+        - ``degrees`` -- a `k`-tuple of compositions `c_1,
+          \ldots, c_k`, such that the size of `c_i` is the
+          degree of ``self`` in sort `i`
 
         EXAMPLES:
 
@@ -1975,7 +1973,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, base_ring,
                                          basis_keys=MolecularSpecies(names),
                                          category=category,
-                                         element_class=self.Element,
                                          prefix='', bracket=False)
         self._arity = len(names)
 
@@ -2114,7 +2111,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
     @cached_method
     def one_basis(self):
         r"""
-        Returns SymmetricGroup(0), which indexes the one of this algebra,
+        Return ``SymmetricGroup(0)``, which indexes the one of this algebra,
         as per :meth:`AlgebrasWithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::
@@ -2133,6 +2130,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
     def an_element(self):
         """
         Return an element of ``self``.
+
+        EXAMPLES::
 
             sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, "X")
@@ -2165,7 +2164,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: type(list(X^2)[0][1])
             <class 'sage.rings.integer.Integer'>
         """
-        return self._from_dict({H * K: ZZ(1)})
+        return self.element_class(self, {H * K: ZZ.one()})
 
     @cached_method
     def powersum(self, s, n):
@@ -2183,7 +2182,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P.powersum(0, 4)
             4*E_4 - 4*X*E_3 - 2*E_2^2 + 4*X^2*E_2 - X^4
         """
-        assert n in ZZ and n > 0
+        if not (n in ZZ and n > 0):
+            raise ValueError("n must be a positive integer")
         if n == 1:
             return self(SymmetricGroup(1), {s: [1]})
         return (ZZ(n) * self(SymmetricGroup(n), {s: range(1, n+1)})
