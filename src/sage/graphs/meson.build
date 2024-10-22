@@ -1,4 +1,3 @@
-bliss = cc.find_library('bliss', required: false, disabler: true)
 mcqd = cc.find_library('mcqd', required: false, disabler: true)
 cliquer = cc.find_library('cliquer')
 
@@ -7,7 +6,6 @@ planarity = cc.find_library('planarity')
 
 py.install_sources(
   'all.py',
-  'all__sagemath_bliss.py',
   'all__sagemath_mcqd.py',
   'all__sagemath_tdlib.py',
   'bipartite_graph.py',
@@ -114,16 +112,6 @@ foreach name, pyx : extension_data_cpp
 endforeach
 
 py.extension_module(
-  'bliss',
-  sources: files('bliss.pyx'),
-  subdir: 'sage/graphs',
-  install: true,
-  override_options: ['cython_language=cpp'],
-  include_directories: [inc_cpython, inc_data_structures, inc_flint, inc_rings],
-  dependencies: [py_dep, cysignals, bliss],
-)
-
-py.extension_module(
   'mcqd',
   sources: files('mcqd.pyx'),
   subdir: 'sage/graphs',
@@ -134,5 +122,8 @@ py.extension_module(
 )
 
 subdir('base')
+if get_option('extension_bliss_install')
+  subdir('bliss')
+endif
 subdir('generators')
 subdir('graph_decompositions')

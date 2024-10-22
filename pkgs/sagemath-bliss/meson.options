@@ -1,0 +1,1 @@
+option('extension_bliss_standalone', type : 'boolean', value : true)

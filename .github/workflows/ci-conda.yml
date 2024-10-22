@@ -92,6 +92,12 @@ jobs:
         env:
           SAGE_NUM_THREADS: 5
 
+      - name: Build optional modules
+        shell: bash -l {0}
+        run: |
+          mamba install -y bliss
+          pip install --no-build-isolation --no-deps -v -v ./pkgs/sagemath-bliss
+
       - name: Verify dependencies
         if: success() || failure()
         shell: bash -l {0}

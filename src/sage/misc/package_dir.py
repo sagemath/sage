@@ -480,8 +480,7 @@ if __name__ == '__main__':
     distribution = args.set or args.add or ''
 
     if distribution == 'all':
-        distributions = ["sagemath-bliss",
-                         "sagemath-coxeter3",
+        distributions = ["sagemath-coxeter3",
                          "sagemath-mcqd",
                          "sagemath-meataxe",
                          "sagemath-sirocco",

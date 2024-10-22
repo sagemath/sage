@@ -26,7 +26,6 @@ sage_conf            @ file://${SAGE_ROOT}/pkgs/sage-conf
 sage_docbuild        @ file://${SAGE_ROOT}/pkgs/sage-docbuild
 sage_setup           @ file://${SAGE_ROOT}/pkgs/sage-setup
 sage_sws2rst         @ file://${SAGE_ROOT}/pkgs/sage-sws2rst
-sagemath-bliss       @ file://${SAGE_ROOT}/pkgs/sagemath-bliss
 sagemath-categories  @ file://${SAGE_ROOT}/pkgs/sagemath-categories
 sagemath-coxeter3    @ file://${SAGE_ROOT}/pkgs/sagemath-coxeter3
 sagemath-environment @ file://${SAGE_ROOT}/pkgs/sagemath-environment

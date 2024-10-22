@@ -88,7 +88,6 @@ endforeach
 py.install_sources(
   config_file,
   'all.py',
-  'all__sagemath_bliss.py',
   'all__sagemath_categories.py',
   'all__sagemath_coxeter3.py',
   'all__sagemath_environment.py',

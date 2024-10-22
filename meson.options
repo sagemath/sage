@@ -1,0 +1,6 @@
+# Settings controlling the build of the optional extensions
+# xyz_install: whether to install the extension as part of the monolithic build
+# xyz_standalone: whether the extension is currently built as a standalone package
+
+option('extension_bliss_install', type : 'boolean', value : true)
+option('extension_bliss_standalone', type : 'boolean', value : false)

@@ -1,7 +1,7 @@
+# Only needed for correct compilation during testing
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
 # distutils: libraries = bliss
-# sage_setup: distribution = sagemath-bliss
 
 r"""
 Interface with bliss: graph (iso/auto)morphism
@@ -60,7 +60,7 @@ cdef extern from "bliss/digraph.hh" namespace "bliss":
         const unsigned int* canonical_form(Stats&)
         unsigned int get_hash()
 
-cdef extern from "bliss_cpp/bliss_find_automorphisms.h":
+cdef extern from "find_automorphisms.h":
 
     void bliss_find_automorphisms(Graph*, void (*)(void*, unsigned int, const unsigned int*), void*, Stats&)
     void bliss_find_automorphisms(Digraph*, void (*)(void*, unsigned int, const unsigned int*), void*, Stats&)
