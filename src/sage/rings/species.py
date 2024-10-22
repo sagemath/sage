@@ -410,11 +410,10 @@ class AtomicSpeciesElement(Element, WithEqualityById,
 
         INPUT:
 
-            - ``dis``, a :class:`ConjugacyClassOfDirectlyIndecomposableSubgroups`
-
-            - ``domain_partition``, a dict representing the
-              assignment of each element of the domain of ``dis`` to
-              a "variable".
+        - ``dis`` -- :class:`ConjugacyClassOfDirectlyIndecomposableSubgroups`
+        - ``domain_partition`` -- ``dict`` representing the
+          assignment of each element of the domain of ``dis`` to
+          a "variable"
 
         TESTS::
 
@@ -634,12 +633,11 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``G`` - an element of ``self`` (in this case pi must be ``None``)
-          or a permutation group.
-
-        - ``pi`` - a `k`-tuple or list of iterables or a dict mapping
-          sorts to iterables whose union is the domain.  If `k=1`,
-          `pi` can be omitted.
+        - ``G`` -- element of ``self`` (in this case ``pi`` must be ``None``)
+          or permutation group
+        - ``pi`` -- `k`-tuple or list of iterables or a dict mapping
+          sorts to iterables whose union is the domain; if `k=1`,
+          ``pi`` can be omitted
 
         EXAMPLES::
 
@@ -1052,12 +1050,12 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
         INPUT:
 
-        - ``G`` - an element of ``self`` (in this case pi must be ``None``)
-          or a permutation group, or a pair ``(X, a)`` consisting of a
-          finite set and a transitive action.
-        - ``pi`` - a dict mapping sorts to iterables whose union is the
-          domain of ``G`` (if ``G`` is a permutation group) or `X` (if ``G``)
-          is a pair ``(X, a)``. If `k=1`, `pi` can be omitted.
+        - ``G`` -- element of ``self`` (in this case ``pi`` must be ``None``)
+          permutation group, or pair ``(X, a)`` consisting of a
+          finite set and a transitive action
+        - ``pi`` -- ``dict`` mapping sorts to iterables whose union is the
+          domain of ``G`` (if ``G`` is a permutation group) or `X` (if ``G``
+          is a pair ``(X, a)``); if `k=1`, ``pi`` can be omitted
 
         EXAMPLES:
 
@@ -2103,12 +2101,12 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``G`` - an element of ``self`` (in this case pi must be ``None``)
-          or a permutation group, or a pair ``(X, a)`` consisting of a
-          finite set and an action.
-        - ``pi`` - a dict mapping sorts to iterables whose union is the
-          domain of ``G`` (if ``G`` is a permutation group) or `X` (if ``G``)
-          is a pair ``(X, a)``. If `k=1`, `pi` can be omitted.
+        - ``G`` -- element of ``self`` (in this case ``pi`` must be ``None``)
+          permutation group, or pair ``(X, a)`` consisting of a
+          finite set and an action
+        - ``pi`` -- ``dict`` mapping sorts to iterables whose union is the
+          domain of ``G`` (if ``G`` is a permutation group) or `X` (if ``G``
+          is a pair ``(X, a)``); if `k=1`, ``pi`` can be omitted
 
         EXAMPLES::
 
