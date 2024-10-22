@@ -1394,6 +1394,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 return False
             return other <= self
 
+        @cached_method
         def group_and_partition(self):
             """
             Return the (transitive) permutation group corresponding to ``self``.
