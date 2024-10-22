@@ -1402,8 +1402,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
         @cached_method
         def group_and_partition(self):
-            """
-            Return the (transitive) permutation group corresponding to ``self``.
+            r"""
+            Return the (transitive) permutation group
+            corresponding to ``self``, together with the partition of
+            the domain into sorts.
 
             EXAMPLES::
 
@@ -1416,6 +1418,15 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 (Permutation Group with generators [(3,4)(5,6), (1,2)],
                  (frozenset({1, 2}), frozenset({3, 4, 5, 6})))
 
+            Note that we cannot rely on blocks of the partition being
+            consecutive::
+
+                sage: A = M(PermutationGroup([(3,4)]), {0:[1,3,4], 1:[2]})
+                sage: A
+                X*Y*E_2(X)
+                sage: A.group_and_partition()[1]
+                (frozenset({1, 3, 4}), frozenset({2}))
+
             TESTS::
 
                 sage: B = M(PermutationGroup([(1,2,3)]), {0: [1,2,3]}); B
@@ -1424,7 +1435,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 (Permutation Group with generators [(1,2,3)],
                  (frozenset({1, 2, 3}), frozenset()))
 
-                sage: A*B
+                sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
+                sage: A = M(G, {0: [5,6], 1: [1,2,3,4]})
+                sage: A * B
                 E_2(X)*C_3(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
                 sage: (A*B).group_and_partition()
                 (Permutation Group with generators [(6,7)(8,9), (3,4,5), (1,2)],
