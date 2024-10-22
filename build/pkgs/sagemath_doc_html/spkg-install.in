@@ -1,19 +1,13 @@
 cd src
 
-if [ "$SAGE_WHEELS" = yes ]; then
-    # Needed because we have trees.txt, which directs us to $SAGE_LOCAL/...
-    export PIP_FIND_LINKS=$SAGE_VENV/var/lib/sage/wheels
-    # Build a wheel using pypa/build.
-    # --wheel:                 Build the wheel directly. We do not go through the sdist
-    #                          because meson insists on packaging the latest commit, not
-    #                          the contents of the working copy.
-    # --skip-dependency-check: meson_python declares the Python package 'meson' as
-    #                          a dependency, but we have installed meson as a non-Python
-    #                          package.
-    DIST_DIR="$(mktemp -d)"
-    python3 -m build --wheel --no-isolation --skip-dependency-check --outdir "$DIST_DIR"/dist . || sdh_die "Failure building wheel"
-    wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel --prefix="$SAGE_LOCAL" . >&2 && echo $wheel)
-    ls -l "$wheel"
+# Needed because we have trees.txt, which directs us to $SAGE_LOCAL/...
+export PIP_FIND_LINKS=$SAGE_VENV/var/lib/sage/wheels
+
+if [ "$SAGE_EDITABLE" = yes ]; then
+    sdh_pip_editable_install .
+    if [ "$SAGE_WHEELS" = yes ]; then
+        sdh_build_and_store_wheel .
+    fi
 else
-    (cd doc && $MAKE doc-html) || sdh_die "Failure building HTML documentation"
+    sdh_pip_install .
 fi
