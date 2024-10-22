@@ -209,17 +209,12 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import CommutativeAlgebraElement
 from sage.rings.ring import CommutativeAlgebra
-from sage.rings.rational_field import QQ
-from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.rings.integer import Integer
-from sage.rings.real_mpfr import RR
+from sage.all import QQ, NN, RR, Integer
 from sage.algebras.flag import Flag
 
 from sage.categories.sets_cat import Sets
 
-from sage.modules.free_module_element import vector
-from sage.matrix.constructor import matrix
-from sage.matrix.special import diagonal_matrix
+from sage.all import vector, matrix, diagonal_matrix
 
 from sage.misc.prandom import randint
 from sage.arith.misc import falling_factorial, binomial

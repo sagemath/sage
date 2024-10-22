@@ -167,7 +167,7 @@ AUTHORS:
 # ****************************************************************************
 
 import itertools
-from sage.rings.rational_field import QQ
+from sage.all import QQ
 from cysignals.signals cimport sig_check
 from sage.structure.element cimport Element
 
