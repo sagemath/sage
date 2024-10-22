@@ -168,8 +168,22 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             self._init(parent.degree(), parent, parent.base_ring().order())
 
     def __init__(self, parent, x, coerce=True, copy=True):
+        """
+        Create an element.
+
+        Note that ``coerce=False`` is dangerous::
+
+            sage: V = VectorSpace(GF(7), 3)
+            sage: v = V([2, 9, -5], coerce=False)
+            sage: v[0] == v[1]
+            False
+            sage: v[0]+1 == v[1]+1
+            True
+            sage: v[0] == v[2]
+            False
+        """
         cdef Py_ssize_t i
-        cdef mod_int a, p
+        cdef mod_int a
         if isinstance(x, xrange):
             x = tuple(x)
         if isinstance(x, (list, tuple)):
@@ -177,10 +191,9 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
                 raise TypeError("x must be a list of the right length")
             if coerce:
                 R = parent.base_ring()
-                p = R.order()
                 for i from 0 <= i < self._degree:
                     a = int(R(x[i]))
-                    self._entries[i] = a % p
+                    self._entries[i] = a
             else:
                 for i from 0 <= i < self._degree:
                     self._entries[i] = x[i]
