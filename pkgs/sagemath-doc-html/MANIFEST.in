@@ -1,4 +1,0 @@
-graft doc
-# Exclude what is removed by 'make clean' in doc/Makefile
-prune doc/en/reference/sage
-prune doc/en/reference/*/sage
