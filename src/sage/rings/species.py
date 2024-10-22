@@ -103,7 +103,7 @@ class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element, WithEqualityById,
         def standardize(C):
             if not C.degree():
                 return SymmetricGroup(0)
-            # an directly indecomposable group is transitive, so we
+            # a directly indecomposable group is transitive, so we
             # can use the gap group without worrying about the domain
             G = C.gap()
             sorted_orbits = sorted(G.Orbits().sage(), key=len, reverse=True)
@@ -183,13 +183,14 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
 
             sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: TestSuite(C).run(max_runs=5) # It takes far too long otherwise
+            sage: TestSuite(C).run(max_runs=5) # it takes far too long otherwise
         """
         Parent.__init__(self, category=InfiniteEnumeratedSets())
         self._cache = dict()
 
     def _element_constructor_(self, x):
-        r"""Construct a conjugacy class from ``x``.
+        r"""
+        Construct a conjugacy class from ``x``.
 
         INPUT:
 
@@ -257,7 +258,7 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
         An iterator over all conjugacy classes of directly indecomposable
         subgroups.
 
-        TESTS::
+        EXAMPLES::
 
             sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
             sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
@@ -269,6 +270,13 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
             ((1,2),)
             ((1,2,3),)
             ((2,3), (1,2,3))
+
+        TESTS::
+
+            sage: it = iter(C)
+            sage: l = [next(it) for _ in range(100)]  # long time
+            sage: len(set(l)) == len(l)  # long time
+            True
         """
         n = 0
         while True:
