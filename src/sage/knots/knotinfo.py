@@ -1332,6 +1332,16 @@ class KnotInfoBase(Enum):
         Return whether the Cosmetic Crossing Conjecture has been verified
         for ``self``.
 
+        From the KnotInfo `description page <https://knotinfo.math.indiana.edu/descriptions/cosmetic_crossing.html>`__:
+
+            A crossing change in a diagram of a knot ``K`` is called cosmetic if
+            the resulting diagram also represents ``K``. The cosmetic crossing
+            conjecture posits that for any knot ``K``, the only cosmetic crossing
+            changes are nugatory, i.e. there exists an embedded 2-sphere in
+            ``S3`` which intersects K only at the two points of the relevant
+            crossing. Conversely, it is not hard to see that any nugatory
+            crossing change is cosmetic.
+
         EXAMPLES::
 
             sage: knots = [K for K in KnotInfo if K.is_knot() and K.crossing_number() < 10]
