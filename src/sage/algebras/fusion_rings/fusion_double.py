@@ -98,7 +98,7 @@ class FusionDouble(CombinatorialFreeModule):
     ::
 
         sage: G1 = SymmetricGroup(3)
-        sage: H1 = FusionDouble(G1, prefix="u", inject_variables=True)
+        sage: H1 = FusionDouble(G1, prefix='u', inject_variables=True)
         sage: F = H1.get_fmatrix()
 
     The above commands create the F-matrix. You can compute all of the
@@ -131,13 +131,12 @@ class FusionDouble(CombinatorialFreeModule):
     EXAMPLES::
 
         sage: G = SmallPermutationGroup(16,9)
-        sage: F = FusionDouble(G, prefix="b",inject_variables=True)
+        sage: F = FusionDouble(G, prefix='b', inject_variables=True)
         sage: b13^2 # long time (4s)
         b0 + b2 + b4 + b15 + b16 + b17 + b18 + b24 + b26 + b27
-
     """
     @staticmethod
-    def __classcall_private__(cls, G, prefix="s", inject_variables=False):
+    def __classcall_private__(cls, G, prefix='s', inject_variables=False):
         """
         Normalize input to ensure a unique representation.
 
@@ -153,7 +152,7 @@ class FusionDouble(CombinatorialFreeModule):
             F.inject_variables()
         return F
 
-    def __init__(self, G, prefix="s"):
+    def __init__(self, G, prefix='s'):
         """
         EXAMPLES::
 
@@ -211,7 +210,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: F = FusionDouble(DiCyclicGroup(3), prefix="d")
+            sage: F = FusionDouble(DiCyclicGroup(3), prefix='d')
             sage: F.inject_variables()
             sage: d0 + d1 + d5
             d0 + d1 + d5
@@ -237,22 +236,22 @@ class FusionDouble(CombinatorialFreeModule):
     @cached_method
     def s_ij(self, i, j, unitary=False, base_coercion=True):
         r"""
-        Return the element of the S-matrix of this fusion ring
+        Return the element of the `S`-matrix of this fusion ring
         corresponding to the given elements.
 
-        Without the unitary option set true, this is the unnormalized S-matrix
+        Without the unitary option set true, this is the unnormalized `S`-matrix
         entry, denoted `\tilde{s}_{ij}`, in [BaKi2001]_ Chapter 3. The
-        normalized S-matrix entries are denoted `s_{ij}`.
+        normalized `S`-matrix entries are denoted `s_{ij}`.
 
         INPUT:
 
         - ``i``, ``j``, -- a pair of basis elements
-        - ``unitary`` -- (default: ``False``) set to ``True`` to obtain
-          the unitary S-matrix
+        - ``unitary`` -- boolean (default: ``False``); set to ``True`` to
+          obtain the unitary `S`-matrix
 
         EXAMPLES::
 
-            sage: D = FusionDouble(SymmetricGroup(3), prefix="t", inject_variables=True)
+            sage: D = FusionDouble(SymmetricGroup(3), prefix='t', inject_variables=True)
             sage: [D.s_ij(t2, x) for x in D.basis()]
             [2, 2, 4, 0, 0, -2, -2, -2]
             sage: [D.s_ij(t2, x, unitary=True) for x in D.basis()]
@@ -280,7 +279,7 @@ class FusionDouble(CombinatorialFreeModule):
 
     def s_ijconj(self, i, j, unitary=False, base_coercion=True):
         r"""
-        Return the conjugate of the element of the S-matrix given by
+        Return the conjugate of the element of the `S`-matrix given by
         ``self.s_ij(elt_i, elt_j, base_coercion=base_coercion)``.
 
         .. SEEALSO::
@@ -289,7 +288,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: P=FusionDouble(CyclicPermutationGroup(3),prefix="p",inject_variables=True)
+            sage: P=FusionDouble(CyclicPermutationGroup(3),prefix='p',inject_variables=True)
             sage: P.s_ij(p1,p3)
             zeta3
             sage: P.s_ijconj(p1,p3)
@@ -299,12 +298,12 @@ class FusionDouble(CombinatorialFreeModule):
 
     def s_matrix(self, unitary=False, base_coercion=True):
         r"""
-        Return the S-matrix of this fusion ring.
+        Return the `S`-matrix of this fusion ring.
 
         OPTIONAL:
 
-        - ``unitary`` -- (default: ``False``) set to ``True`` to obtain
-          the unitary S-matrix
+        - ``unitary`` -- boolean (default: ``False``); set to ``True`` to
+          obtain the unitary `S`-matrix
 
         Without the ``unitary`` parameter, this is the matrix denoted
         `\widetilde{s}` in [BaKi2001]_.
@@ -329,7 +328,6 @@ class FusionDouble(CombinatorialFreeModule):
             [ 1/3  1/3 -1/3    0    0  2/3 -1/3 -1/3]
             [ 1/3  1/3 -1/3    0    0 -1/3 -1/3  2/3]
             [ 1/3  1/3 -1/3    0    0 -1/3  2/3 -1/3]
-
         """
         b = self.basis()
         S = matrix([[self.s_ij(b[x], b[y], unitary=unitary, base_coercion=base_coercion)
@@ -349,11 +347,11 @@ class FusionDouble(CombinatorialFreeModule):
 
         where `s_0` is the unit element (assuming ``prefix='s'``).
         Method of computation is through the Verlinde formula,
-        deducing the values from the known values of the S-matrix.
+        deducing the values from the known values of the `S`-matrix.
 
         EXAMPLES::
 
-            sage: A = FusionDouble(AlternatingGroup(4),prefix="a",inject_variables=True)
+            sage: A = FusionDouble(AlternatingGroup(4),prefix='a',inject_variables=True)
             sage: [A.N_ijk(a10,a11,x) for x in A.basis()]
             [0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
 
@@ -379,7 +377,7 @@ class FusionDouble(CombinatorialFreeModule):
         INPUT:
 
         - ``i``, ``j``, ``k`` -- basis elements
-        - ``use_characters`` -- (default: ``False``) see the algorithm
+        - ``use_characters`` -- boolean (default: ``False``); see the algorithm
           description below
 
         ALGORITHM:
@@ -423,7 +421,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = FusionDouble(AlternatingGroup(4),prefix="aa",inject_variables=True)
+            sage: A = FusionDouble(AlternatingGroup(4),prefix='aa',inject_variables=True)
             sage: [A.Nk_ij(aa8,aa10,x) for x in A.basis()]
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1]
 
@@ -473,7 +471,7 @@ class FusionDouble(CombinatorialFreeModule):
     @cached_method
     def field(self):
         """
-        Returns a cyclotomic field large enough to contain the values
+        Return a cyclotomic field large enough to contain the values
         of R-matrices and twists that can arise for this fusion ring.
 
         EXAMPLES::
@@ -546,7 +544,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: C = FusionDouble(SymmetricGroup(3),prefix="c",inject_variables=True)
+            sage: C = FusionDouble(SymmetricGroup(3),prefix='c',inject_variables=True)
             sage: c4*c5
             c3 + c4
             sage: [C.r_matrix(c4,c5,k) for k in [c3,c4]]
@@ -654,7 +652,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: FusionDouble(CyclicPermutationGroup(2), prefix="h").one()
+            sage: FusionDouble(CyclicPermutationGroup(2), prefix='h').one()
             h1
         """
         return self._unit_index
@@ -668,7 +666,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: K = FusionDouble(CyclicPermutationGroup(3),prefix="k")
+            sage: K = FusionDouble(CyclicPermutationGroup(3),prefix='k')
             sage: [(x,K.dual(x)) for x in K.basis()]
             [(k0, k0),
             (k1, k2),
@@ -693,11 +691,12 @@ class FusionDouble(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``a`, ``b`` -- keys for the dictionary ``self._names`` representing simple objects
+        - ``a``, ``b`` -- keys for the dictionary ``self._names`` representing
+          simple objects
 
         EXAMPLES::
 
-            sage: Q=FusionDouble(SymmetricGroup(3),prefix="q",inject_variables=True)
+            sage: Q=FusionDouble(SymmetricGroup(3),prefix='q',inject_variables=True)
             sage: q3*q4
             q1 + q2 + q5 + q6 + q7
             sage: Q._names
@@ -744,7 +743,7 @@ class FusionDouble(CombinatorialFreeModule):
 
             EXAMPLES::
 
-                sage: H = FusionDouble(CyclicPermutationGroup(2), prefix="g", inject_variables=True)
+                sage: H = FusionDouble(CyclicPermutationGroup(2), prefix='g', inject_variables=True)
                 sage: [x.is_simple_object() for x in [g0, g1, g0+g1]]
                 [True, True, False]
             """
@@ -762,7 +761,7 @@ class FusionDouble(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: G = QuaternionGroup()
-                sage: H = FusionDouble(G, prefix="e", inject_variables=True)
+                sage: H = FusionDouble(G, prefix='e', inject_variables=True)
                 sage: e10.g()
                 (1,3)(2,4)(5,7)(6,8)
                 sage: e10.char()
@@ -784,7 +783,7 @@ class FusionDouble(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: G = DihedralGroup(5)
-                sage: H = FusionDouble(G, prefix="f", inject_variables=True)
+                sage: H = FusionDouble(G, prefix='f', inject_variables=True)
                 sage: f10.g()
                 (1,2,3,4,5)
                 sage: f10.char()
@@ -854,7 +853,7 @@ class FusionDouble(CombinatorialFreeModule):
             EXAMPLES::
 
                 sage: G = CyclicPermutationGroup(4)
-                sage: H = FusionDouble(G, prefix="j")
+                sage: H = FusionDouble(G, prefix='j')
                 sage: [x for x in H.basis() if x == x.dual()]
                 [j0, j1, j8, j9]
 

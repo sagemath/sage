@@ -27,7 +27,8 @@ from sage.misc.rest_index_of_methods import gen_rest_table_index
 from sage.rings.integer_ring import ZZ
 
 lazy_import('sage.combinat.posets.hasse_cython_flint',
-            ['moebius_matrix_fast', 'coxeter_matrix_fast'])
+            ['moebius_matrix_fast', 'coxeter_matrix_fast',
+             'chain_poly'])
 lazy_import('sage.matrix.constructor', 'matrix')
 lazy_import('sage.rings.finite_rings.finite_field_constructor', 'GF')
 
@@ -74,7 +75,7 @@ class HasseDiagram(DiGraph):
     The Hasse diagram of a poset. This is just a transitively-reduced,
     directed, acyclic graph without loops or multiple edges.
 
-    .. note::
+    .. NOTE::
 
        We assume that ``range(n)`` is a linear extension of the poset.
        That is, ``range(n)`` is the vertex set and a topological sort of
@@ -103,7 +104,7 @@ class HasseDiagram(DiGraph):
 
     def linear_extension(self):
         r"""
-        Return a linear extension
+        Return a linear extension.
 
         EXAMPLES::
 
@@ -293,7 +294,7 @@ class HasseDiagram(DiGraph):
         Return ``True`` if i is less than or equal to j in the poset, and
         ``False`` otherwise.
 
-        .. note::
+        .. NOTE::
 
             If the :meth:`lequal_matrix` has been computed, then this method is
             redefined to use the cached data (see :meth:`_alternate_is_lequal`).
@@ -611,9 +612,9 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        -  ``x`` -- any element of the poset
+        - ``x`` -- any element of the poset
 
-        -  ``y`` -- any element of the poset
+        - ``y`` -- any element of the poset
 
         .. NOTE::
 
@@ -645,9 +646,9 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        -  ``x`` -- any element of the poset
+        - ``x`` -- any element of the poset
 
-        -  ``y`` -- any element of the poset
+        - ``y`` -- any element of the poset
 
         .. SEEALSO:: :meth:`interval`
 
@@ -1035,15 +1036,13 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``algorithm`` -- optional, ``'recursive'``, ``'matrix'``
-          or ``'cython'`` (default)
+        - ``algorithm`` -- ``'recursive'``, ``'matrix'`` or ``'cython'``
+          (default)
 
         This uses either the recursive formula, a generic matrix inversion
         or a specific matrix inversion coded in Cython.
 
-        OUTPUT:
-
-        a dense matrix for the algorithm ``cython``, a sparse matrix otherwise
+        OUTPUT: a dense matrix for the algorithm ``cython``, a sparse matrix otherwise
 
         .. NOTE::
 
@@ -1150,7 +1149,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``algorithm`` -- optional, ``'cython'`` (default) or ``'matrix'``
+        - ``algorithm`` -- ``'cython'`` (default) or ``'matrix'``
 
         This uses either a specific matrix code in Cython, or generic matrices.
 
@@ -1167,7 +1166,7 @@ class HasseDiagram(DiGraph):
             [-1  1  1  0 -1]
             [-1  1  0  1 -1]
             sage: P.__dict__['coxeter_transformation'].clear_cache()
-            sage: P.coxeter_transformation(algorithm="matrix") == M
+            sage: P.coxeter_transformation(algorithm='matrix') == M
             True
 
         TESTS::
@@ -1178,7 +1177,7 @@ class HasseDiagram(DiGraph):
             sage: M**8 == 1
             True
             sage: P.__dict__['coxeter_transformation'].clear_cache()
-            sage: P.coxeter_transformation(algorithm="banana")
+            sage: P.coxeter_transformation(algorithm='banana')
             Traceback (most recent call last):
             ...
             ValueError: unknown algorithm
@@ -1368,7 +1367,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``boolean`` -- optional flag (default ``False``) telling whether to
+        - ``boolean`` -- flag (default: ``False``); whether to
           return a matrix with coefficients in `\GF(2)` or in `\ZZ`
 
         .. SEEALSO::
@@ -1664,7 +1663,7 @@ class HasseDiagram(DiGraph):
     @lazy_attribute
     def _join(self):
         r"""
-        Computes a matrix whose ``(x,y)``-entry is the join of ``x``
+        Compute a matrix whose ``(x,y)``-entry is the join of ``x``
         and ``y`` in ``self`` if the join exists; and `-1` otherwise.
 
         EXAMPLES::
@@ -1873,11 +1872,11 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``return_list``, a boolean. If ``False`` (the default), return
-          an element that is not the top neither the bottom element of the
-          lattice, but is comparable to all elements of the lattice, if
-          the lattice is vertically decomposable and ``None`` otherwise.
-          If ``True``, return list of decomposition elements.
+        - ``return_list`` -- boolean (default: ``False``); if ``False`` (the
+          default), return an element that is not the top neither the bottom
+          element of the lattice, but is comparable to all elements of the
+          lattice, if the lattice is vertically decomposable and ``None``
+          otherwise. If ``True``, return list of decomposition elements.
 
         EXAMPLES::
 
@@ -1956,7 +1955,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``element`` -- an element of the lattice.
+        - ``element`` -- an element of the lattice
 
         OUTPUT:
 
@@ -1989,9 +1988,7 @@ class HasseDiagram(DiGraph):
         r"""
         Return an iterator over orthocomplementations of the lattice.
 
-        OUTPUT:
-
-        An iterator that gives plain list of integers.
+        OUTPUT: an iterator that gives plain list of integers
 
         EXAMPLES::
 
@@ -2164,8 +2161,8 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``upper``, a Boolean -- if ``True``, test whether the lattice is
-          upper semimodular; otherwise test whether the lattice is
+        - ``upper`` -- boolean; if ``True``, test whether the lattice is
+          upper semimodular. Otherwise test whether the lattice is
           lower semimodular.
 
         OUTPUT:
@@ -2209,7 +2206,7 @@ class HasseDiagram(DiGraph):
         r"""
         Return an iterator over the antichains of the poset.
 
-        .. note::
+        .. NOTE::
 
             The algorithm is based on Freese-Jezek-Nation p. 226.
             It does a depth first search through the set of all
@@ -2264,7 +2261,7 @@ class HasseDiagram(DiGraph):
 
     def are_incomparable(self, i, j):
         """
-        Return whether ``i`` and ``j`` are incomparable in the poset
+        Return whether ``i`` and ``j`` are incomparable in the poset.
 
         INPUT:
 
@@ -2290,11 +2287,11 @@ class HasseDiagram(DiGraph):
 
     def are_comparable(self, i, j):
         """
-        Return whether ``i`` and ``j`` are comparable in the poset
+        Return whether ``i`` and ``j`` are comparable in the poset.
 
         INPUT:
 
-         - ``i``, ``j`` -- vertices of this Hasse diagram
+        - ``i``, ``j`` -- vertices of this Hasse diagram
 
         EXAMPLES::
 
@@ -2318,11 +2315,11 @@ class HasseDiagram(DiGraph):
 
     def antichains(self, element_class=list):
         """
-        Return all antichains of ``self``, organized as a prefix tree
+        Return all antichains of ``self``, organized as a prefix tree.
 
         INPUT:
 
-        - ``element_class`` -- (default:list) an iterable type
+        - ``element_class`` -- (default: ``list``) an iterable type
 
         EXAMPLES::
 
@@ -2365,7 +2362,7 @@ class HasseDiagram(DiGraph):
           (default: ``None``)
 
         - ``conversion`` -- (default: ``None``) used to pass
-           the list of elements of the poset in their fixed order
+          the list of elements of the poset in their fixed order
 
         OUTPUT:
 
@@ -2416,6 +2413,23 @@ class HasseDiagram(DiGraph):
         .. SEEALSO:: :meth:`antichains`
         """
         return IncreasingChains(self._leq_storage, element_class, exclude, conversion)
+
+    def chain_polynomial(self):
+        """
+        Return the chain polynomial of the poset.
+
+        The coefficient of `q^k` is the number of chains of `k`
+        elements in the poset. List of coefficients of this polynomial
+        is also called a *f-vector* of the poset.
+
+        EXAMPLES::
+
+            sage: P = posets.ChainPoset(3)
+            sage: H = P._hasse_diagram
+            sage: t = H.chain_polynomial(); t
+            q^3 + 3*q^2 + 3*q + 1
+        """
+        return chain_poly(self._leq_storage)._sage_('q')  # noqa: F821
 
     def is_linear_interval(self, t_min, t_max) -> bool:
         """
@@ -2490,9 +2504,7 @@ class HasseDiagram(DiGraph):
         Thus each edge represents a cover relation in the Hasse diagram.
         We represent his as the tuple `(w, x, y, z)`.
 
-        OUTPUT:
-
-        A tuple with
+        OUTPUT: a tuple with
 
         - a list of all diamonds in the Hasse Diagram,
         - a boolean checking that every `w,x,y` that form a ``V``, there is a
@@ -2622,9 +2634,7 @@ class HasseDiagram(DiGraph):
         - ``elms`` -- elements already in sublattice; use set() at start
         - ``min_e`` -- smallest new element to add for new sublattices
 
-        OUTPUT:
-
-        List of sublattices as sets of integers.
+        OUTPUT: list of sublattices as sets of integers
 
         EXAMPLES::
 
@@ -3146,9 +3156,9 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - ``parts`` -- a list of lists; congruences to add
+        - ``parts`` -- list of lists; congruences to add
         - ``start`` -- a disjoint set; already computed congruence (or ``None``)
-        - ``stop_pairs`` -- a list of pairs; list of pairs for stopping computation
+        - ``stop_pairs`` -- list of pairs; list of pairs for stopping computation
 
         OUTPUT:
 

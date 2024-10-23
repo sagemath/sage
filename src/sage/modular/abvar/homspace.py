@@ -187,7 +187,7 @@ from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 
 
-from . import morphism
+from sage.modular.abvar import morphism
 
 from sage.rings.infinity import Infinity
 
@@ -210,11 +210,9 @@ class Homspace(HomsetWithBase):
 
         INPUT:
 
+        - ``domain, codomain`` -- modular abelian varieties
 
-        -  ``domain, codomain`` -- modular abelian varieties
-
-        -  ``cat`` -- category
-
+        - ``cat`` -- category
 
         EXAMPLES::
 
@@ -409,10 +407,7 @@ class Homspace(HomsetWithBase):
 
         INPUT:
 
-
-        -  ``g`` -- a matrix or morphism or object with a list
-           method
-
+        - ``g`` -- a matrix or morphism or object with a list method
 
         OUTPUT: a matrix
 
@@ -482,11 +477,11 @@ class Homspace(HomsetWithBase):
 
     def gen(self, i=0):
         """
-        Return i-th generator of ``self``.
+        Return `i`-th generator of ``self``.
 
         INPUT:
 
-        -  ``i`` -- an integer
+        - ``i`` -- integer
 
         OUTPUT: a morphism
 
@@ -588,8 +583,8 @@ class Homspace(HomsetWithBase):
         """
         For internal use.
 
-        Calculate generators for self, assuming that self is a product of
-        simple factors.
+        Calculate generators for ``self``, assuming that ``self`` is a product
+        of simple factors.
 
         EXAMPLES::
 
@@ -759,10 +754,10 @@ class EndomorphismSubring(Homspace):
 
         INPUT:
 
-        -  ``A`` -- an abelian variety
+        - ``A`` -- an abelian variety
 
-        -  ``gens`` -- (default: ``None``); optional; if given
-           should be a tuple of the generators as matrices
+        - ``gens`` -- (default: ``None``) if given
+          should be a tuple of the generators as matrices
 
         EXAMPLES::
 
@@ -854,11 +849,11 @@ class EndomorphismSubring(Homspace):
 
         INPUT:
 
-        -  ``other`` -- another endomorphism subring of the
-           same abelian variety
+        - ``other`` -- another endomorphism subring of the
+          same abelian variety
 
-        -  ``check`` -- bool (default: ``True``); whether to do some
-           type and other consistency checks
+        - ``check`` -- boolean (default: ``True``); whether to do some
+          type and other consistency checks
 
         EXAMPLES::
 
@@ -907,7 +902,7 @@ class EndomorphismSubring(Homspace):
         Return the discriminant of this ring, which is the discriminant of
         the trace pairing.
 
-        .. note::
+        .. NOTE::
 
            One knows that for modular abelian varieties, the
            endomorphism ring should be isomorphic to an order in a
@@ -947,14 +942,12 @@ class EndomorphismSubring(Homspace):
 
         INPUT:
 
-        - ``check_every`` -- integer (default: 1) If this integer is positive,
+        - ``check_every`` -- integer (default: 1); if this integer is positive,
           this integer determines how many Hecke operators we add in before
           checking to see if the submodule spanned so far is maximal and
-          saturated.
+          saturated
 
-        OUTPUT:
-
-        - The image of the Hecke algebra as a subring of ``self``.
+        OUTPUT: the image of the Hecke algebra as a subring of ``self``
 
         EXAMPLES::
 

@@ -59,24 +59,24 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from sage.matrix.constructor        import matrix
-from sage.modular.arithgroup.all    import Gamma0_class
-from sage.modular.cusps             import Cusp
-from sage.rings.infinity            import infinity
-from sage.rings.integer_ring        import ZZ
-from sage.rings.rational_field      import QQ
+from sage.matrix.constructor import matrix
+from sage.modular.arithgroup.all import Gamma0_class
+from sage.modular.cusps import Cusp
+from sage.rings.infinity import infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
-from .finite_subgroup               import FiniteSubgroup
+from .finite_subgroup import FiniteSubgroup
 
 
 class CuspidalSubgroup_generic(FiniteSubgroup):
@@ -87,16 +87,10 @@ class CuspidalSubgroup_generic(FiniteSubgroup):
 
         INPUT:
 
+        - ``rational_only`` -- boolean (default: ``False``); if
+          ``True``, only use rational cusps
 
-        -  ``rational_only`` -- bool (default: ``False``); if
-           ``True``, only use rational cusps.
-
-
-        OUTPUT:
-
-
-        -  ``list`` -- list of vectors
-
+        OUTPUT: list of vectors
 
         EXAMPLES::
 
@@ -216,9 +210,7 @@ class CuspidalSubgroup(CuspidalSubgroup_generic):
         Returned cached tuple of vectors that define elements of the
         rational homology that generate this finite subgroup.
 
-        OUTPUT:
-
-        -  ``tuple`` -- cached
+        OUTPUT: tuple (cached)
 
         EXAMPLES::
 
@@ -347,21 +339,18 @@ class RationalCuspidalSubgroup(CuspidalSubgroup_generic):
 
 def is_rational_cusp_gamma0(c, N, data):
     """
-    Return True if the rational number c is a rational cusp of level N.
+    Return ``True`` if the rational number c is a rational cusp of level N.
 
     This uses remarks in Glenn Steven's Ph.D. thesis.
 
     INPUT:
 
+    - ``c`` -- a cusp
 
-    -  ``c`` -- a cusp
+    - ``N`` -- positive integer
 
-    -  ``N`` -- a positive integer
-
-    -  ``data`` -- the list [n for n in range(2,N) if
-       gcd(n,N) == 1], which is passed in as a parameter purely for
-       efficiency reasons.
-
+    - ``data`` -- the list [n for n in range(2,N) if gcd(n,N) == 1], which is
+      passed in as a parameter purely for efficiency reasons.
 
     EXAMPLES::
 

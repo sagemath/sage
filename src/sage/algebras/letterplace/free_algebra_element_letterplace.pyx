@@ -29,7 +29,8 @@ poly_reduce = singular_function("NF")
 # Free algebra elements
 cdef class FreeAlgebraElement_letterplace(AlgebraElement):
     """
-    Weighted homogeneous elements of a free associative unital algebra (letterplace implementation)
+    Weighted homogeneous elements of a free associative unital algebra
+    (letterplace implementation).
 
     EXAMPLES::
 
@@ -60,17 +61,16 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         z*z*y*x
         sage: ((x*y)^3).degree()
         9
-
     """
     def __init__(self, A, x, check=True):
         """
         INPUT:
 
-        - A free associative unital algebra in letterplace implementation, `A`.
-        - A homogeneous polynomial that can be coerced into the currently
-          used polynomial ring of `A`.
-        - ``check`` (optional bool, default ``True``): Do not attempt the
-          above coercion (for internal use only).
+        - ``A`` - a free associative unital algebra in letterplace implementation
+        - ``x`` -- a homogeneous polynomial that can be coerced into the currently
+          used polynomial ring of `A`
+        - ``check`` -- boolean (default: ``True``); do not attempt the
+          above coercion (for internal use only)
 
         TESTS::
 
@@ -85,7 +85,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             -x*y + y*x
             sage: loads(dumps(p)) == p
             True
-
         """
         cdef FreeAlgebra_letterplace P = A
         if check:
@@ -131,7 +130,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
     def __iter__(self):
         """
-        Iterates over the pairs "tuple of exponents, coefficient".
+        Iterate over the pairs "tuple of exponents, coefficient".
 
         EXAMPLES::
 
@@ -140,8 +139,8 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: sorted(p)   # indirect doctest
             [((0, 0, 0, 1, 0, 0, 0, 1), 2), ((0, 1, 0, 0, 0, 0, 1, 0), 1)]
         """
-        cdef dict d = self._poly.dict()
-        yield from d.iteritems()
+        cdef dict d = self._poly.monomial_coefficients()
+        yield from d.items()
 
     def _repr_(self):
         """
@@ -401,7 +400,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
     def lm_divides(self, FreeAlgebraElement_letterplace p):
         """
-        Tell whether or not the leading monomial of self divides the
+        Tell whether or not the leading monomial of ``self`` divides the
         leading monomial of another element.
 
         .. NOTE::
@@ -468,7 +467,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
             sage: -(3*x*y+2*z^2)
             -3*x*y - 2*z*z
-
         """
         return FreeAlgebraElement_letterplace(self._parent, -self._poly,
                                               check=False)
@@ -586,7 +584,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
             sage: (x*y+z)*z   # indirect doctest
             x*y*z + z*z
-
         """
         cdef FreeAlgebraElement_letterplace left = self
         cdef FreeAlgebraElement_letterplace right = other
@@ -644,9 +641,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         the commutative polynomial ring that is currently used to
         implement the multiplication in the free algebra.
 
-        OUTPUT:
-
-        The twosided reduction of this element by the argument.
+        OUTPUT: the twosided reduction of this element by the argument
 
         .. NOTE::
 
@@ -713,12 +708,10 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
         INPUT:
 
-        A twosided homogeneous ideal `I` of the parent `F` of
-        this element, `x`.
+        - ``I`` -- a twosided homogeneous ideal of the parent `F` of
+          this element, `x`
 
-        OUTPUT:
-
-        The normal form of `x` wrt. `I`.
+        OUTPUT: the normal form of `x` wrt. `I`
 
         .. NOTE::
 

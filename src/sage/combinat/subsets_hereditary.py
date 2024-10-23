@@ -26,12 +26,12 @@ def subsets_with_hereditary_property(f, X, max_obstruction_size=None, ncpus=1):
 
     INPUT:
 
-    - ``f`` -- a boolean function which takes as input a list of elements from
-      ``X``.
+    - ``f`` -- boolean function which takes as input a list of elements from
+      ``X``
 
-    - ``X`` -- a list/iterable.
+    - ``X`` -- list/iterable
 
-    - ``max_obstruction_size`` (integer) -- if you know that there is
+    - ``max_obstruction_size`` -- integer; if you know that there is
       a `k` such that `f(S)` is true if and only if `f(S')` is true
       for all `S'\subseteq S` with `S'\leq k`, set
       ``max_obstruction_size=k``. It may dramatically decrease the

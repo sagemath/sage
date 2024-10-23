@@ -54,7 +54,7 @@ def Minkowski(positive_spacelike=True, names=None):
 
     INPUT:
 
-    - ``positive_spacelike`` -- (default: ``True``) if ``False``, then
+    - ``positive_spacelike`` -- boolean (default: ``True``); if ``False``, then
       the spacelike vectors yield a negative sign (i.e., the signature
       is `(+ - - - )`)
     - ``names`` -- (default: ``None``) name of the coordinates,
@@ -93,7 +93,7 @@ def Minkowski(positive_spacelike=True, names=None):
     g[1,1], g[2,2], g[3,3] = sgn, sgn, sgn
     return M
 
-def Kerr(m=1, a=0, coordinates="BL", names=None):
+def Kerr(m=1, a=0, coordinates='BL', names=None):
     """
     Generate a Kerr spacetime.
 
@@ -109,15 +109,13 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
       (`c=1`, `G=1`)
     - ``a`` -- (default: ``0``) angular momentum in natural units; if set to
       ``0``, the resulting spacetime corresponds to a Schwarzschild black hole
-    - ``coordinates`` -- (default: ``"BL"``) either ``"BL"`` for
-      Boyer-Lindquist coordinates or ``"Kerr"`` for Kerr coordinates (3+1
+    - ``coordinates`` -- (default: ``'BL'``) either ``'BL'`` for
+      Boyer-Lindquist coordinates or ``'Kerr'`` for Kerr coordinates (3+1
       version)
     - ``names`` -- (default: ``None``) name of the coordinates,
       automatically set by the shortcut operator
 
-    OUTPUT:
-
-    - Lorentzian manifold
+    OUTPUT: Lorentzian manifold
 
     EXAMPLES::
 
@@ -153,7 +151,7 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
     The Kerr spacetime in Kerr coordinates::
 
         sage: m, a = var('m, a')
-        sage: K.<t, r, th, ph> = manifolds.Kerr(m, a, coordinates="Kerr")
+        sage: K.<t, r, th, ph> = manifolds.Kerr(m, a, coordinates='Kerr')
         sage: K
         4-dimensional Lorentzian manifold M
         sage: K.atlas()
@@ -176,7 +174,7 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
     from sage.misc.functional import sqrt
     from sage.functions.trig import cos, sin
     from sage.manifolds.manifold import Manifold
-    M = Manifold(4, 'M', structure="Lorentzian")
+    M = Manifold(4, 'M', structure='Lorentzian')
     if coordinates == "Kerr":
         if names is None:
             names = (r't:(-oo,+oo)', r'r:(0,+oo)', r'th:(0,pi):\theta',
@@ -233,9 +231,7 @@ def Torus(R=2, r=1, names=None):
     - ``names`` -- (default: ``None``) name of the coordinates,
       automatically set by the shortcut operator
 
-    OUTPUT:
-
-    - Riemannian manifold
+    OUTPUT: Riemannian manifold
 
     EXAMPLES::
 
@@ -257,7 +253,7 @@ def Torus(R=2, r=1, names=None):
     from sage.manifolds.manifold import Manifold
     from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
     E = EuclideanSpace(3, symbols='X Y Z')
-    M = Manifold(2, 'T', ambient=E, structure="Riemannian")
+    M = Manifold(2, 'T', ambient=E, structure='Riemannian')
     if names is None:
         names = ("th", "ph")
     names = tuple([names[i] + ":(-pi,pi):periodic" for i in range(2)])
@@ -278,16 +274,14 @@ def RealProjectiveSpace(dim=2):
     This is the topological space of lines through the origin in
     `\RR^{d+1}`. The standard atlas consists of `d+2` charts, which sends
     the set `U_i = \{[x_1, x_2, \ldots, x_{d+1}] : x_i \neq 0 \}` to
-    `k^{d}` by dividing by `x_i` and omitting the `i`th coordinate
+    `k^{d}` by dividing by `x_i` and omitting the `i`-th coordinate
     `x_i/x_i = 1`.
 
     INPUT:
 
     - ``dim`` -- (default: ``2``) the dimension of projective space
 
-    OUTPUT:
-
-    - ``P`` -- the projective space `\Bold{RP}^d` where `d =` ``dim``.
+    OUTPUT: ``P`` -- the projective space `\Bold{RP}^d` where `d =` ``dim``
 
     EXAMPLES::
 
@@ -356,7 +350,6 @@ def RealProjectiveSpace(dim=2):
         False
         sage: C0(p)
         (1/3,)
-
     """
 
     from sage.manifolds.manifold import Manifold

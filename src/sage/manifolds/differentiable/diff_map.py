@@ -82,11 +82,11 @@ class DiffMap(ContinuousMap):
     - ``name`` -- (default: ``None``) name given to the differentiable map
     - ``latex_name`` -- (default: ``None``) LaTeX symbol to denote the
       differentiable map; if ``None``, the LaTeX symbol is set to ``name``
-    - ``is_isomorphism`` -- (default: ``False``) determines whether the
-      constructed object is a isomorphism (i.e. a diffeomorphism); if set to
+    - ``is_isomorphism`` -- boolean (default: ``False``); determines whether the
+      constructed object is a isomorphism (i.e. a diffeomorphism). If set to
       ``True``, then the manifolds `M` and `N` must have the same dimension.
-    - ``is_identity`` -- (default: ``False``) determines whether the
-      constructed object is the identity map; if set to ``True``,
+    - ``is_identity`` -- boolean (default: ``False``); determines whether the
+      constructed object is the identity map. If set to ``True``,
       then `N` must be `M` and the entry ``coord_functions`` is not used.
 
     .. NOTE::
@@ -397,7 +397,6 @@ class DiffMap(ContinuousMap):
         True
         sage: ~id is id
         True
-
     """
     def __init__(self, parent, coord_functions=None, name=None,
                  latex_name=None, is_isomorphism=False, is_identity=False):
@@ -426,7 +425,6 @@ class DiffMap(ContinuousMap):
             Id_M: M → M
                (x, y) ↦ (x, y)
             sage: TestSuite(f).run()
-
         """
         ContinuousMap.__init__(self, parent, coord_functions=coord_functions,
                                name=name, latex_name=latex_name,
@@ -465,7 +463,6 @@ class DiffMap(ContinuousMap):
             sage: f = Hom(M,M)({}, name='f', is_identity=True)
             sage: f._repr_()
             'Identity map f of the 2-dimensional differentiable manifold M'
-
         """
         if self._is_identity:
             return "Identity map " + self._name + \
@@ -499,7 +496,6 @@ class DiffMap(ContinuousMap):
             sage: f._restrictions
             {}
             sage: f._inverse
-
         """
         ContinuousMap._init_derived(self)
         # derived quantities of the mother class
@@ -522,7 +518,6 @@ class DiffMap(ContinuousMap):
             Diffeomorphism of the 2-dimensional differentiable manifold M
             sage: f._del_derived()
             sage: f._inverse  # has been set to None by _del_derived()
-
         """
         ContinuousMap._del_derived(self)  # derived quantities of the mother
                                           # class
@@ -596,7 +591,6 @@ class DiffMap(ContinuousMap):
             [ 1 -2]
             [-1  2]
             [ 4 -3]
-
         """
         image_point = self(point)
         tsp_image = image_point._manifold.tangent_space(image_point)
@@ -776,7 +770,6 @@ class DiffMap(ContinuousMap):
             <class 'sage.symbolic.expression.Expression'>
             sage: bool( JJ[2,0] == J[2][0].expr() )
             True
-
         """
         dom1 = self._domain
         dom2 = self._codomain
@@ -821,9 +814,7 @@ class DiffMap(ContinuousMap):
           `\Phi`; if none is provided, the codomain's default chart is
           assumed
 
-        OUTPUT:
-
-        - the matrix `J` defined above
+        OUTPUT: the matrix `J` defined above
 
         EXAMPLES:
 
@@ -845,7 +836,6 @@ class DiffMap(ContinuousMap):
             [   2*x -3*y^2]
             sage: J.parent()
             Full MatrixSpace of 3 by 2 dense matrices over Symbolic Ring
-
         """
         from sage.matrix.constructor import matrix
         diff_funct = self.differential_functions(chart1, chart2)
@@ -954,7 +944,6 @@ class DiffMap(ContinuousMap):
             sage: gM = F.pullback(g)
             sage: gM.display()
             (2*cos(t) + 2) dt⊗dt
-
         """
         if not hasattr(tensor_or_codomain_subset, '_domain'):
             return super().pullback(tensor_or_codomain_subset,
@@ -985,10 +974,7 @@ class DiffMap(ContinuousMap):
             - ``chart1`` -- chart on the domain of ``diff_map``
             - ``chart2`` -- chart on the codomain of ``diff_map``
 
-            OUTPUT:
-
-            - the pull back of ``tensor`` by ``diff_map``
-
+            OUTPUT: the pull back of ``tensor`` by ``diff_map``
             """
             dom1 = diff_map._domain
             dom2 = diff_map._codomain
@@ -1038,8 +1024,8 @@ class DiffMap(ContinuousMap):
             if nproc != 1:
                 # Parallel computation
                 lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                ind_list = [ind for ind in ptcomp.non_redundant_index_generator()]
-                ind_step = max(1, int(len(ind_list)/nproc/2))
+                ind_list = list(ptcomp.non_redundant_index_generator())
+                ind_step = max(1, (len(ind_list) // nproc) // 2)
                 local_list = lol(ind_list, ind_step)
                 # list of input parameters
                 listParalInput = [(tcomp, chart1, chart2, coord2_1, jacob,
@@ -1209,7 +1195,6 @@ class DiffMap(ContinuousMap):
              the 3-dimensional differentiable manifold R^3
             sage: pu.display()
             Psi_*(u) = -sin(t) ∂/∂x + cos(t) ∂/∂y + ∂/∂z
-
         """
         from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
         from sage.tensor.modules.comp import (
@@ -1281,7 +1266,7 @@ class DiffMap(ContinuousMap):
                                  "the {} by the {}".format(tensor, self))
         # Vector field module for the result:
         fmodule2 = dom1.vector_field_module(dest_map=self)
-        #
+
         frame2 = fmodule2.basis(from_frame=chart2.frame())
         si1 = dom1.start_index()
         si2 = fmodule2._sindex

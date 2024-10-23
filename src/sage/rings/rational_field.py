@@ -294,7 +294,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         Return the number of elements in ``self``.
 
-        Since this does not have a size, this throws a ``TypeError``.
+        Since this does not have a size, this throws a :exc:`TypeError`.
 
         EXAMPLES::
 
@@ -410,7 +410,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def __iter__(self):
         r"""
-        Creates an iterator that generates the rational numbers without
+        Create an iterator that generates the rational numbers without
         repetition, in order of the height.
 
         See also :meth:`range_by_height()`.
@@ -496,8 +496,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         if end is None:
             end = start
             start = 1
-        if start < 1:
-            start = 1
+        start = max(start, 1)
         for height in ZZ.range(start, end):
             if height == 1:
                 yield self(0)
@@ -516,13 +515,11 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         INPUT:
 
-        - ``B`` -- a positive integer; upper bound on the primes generated.
+        - ``B`` -- positive integer; upper bound on the primes generated
 
-        OUTPUT:
+        OUTPUT: an iterator over all integer primes less than or equal to `B`
 
-        An iterator over all integer primes less than or equal to `B`.
-
-        .. note::
+        .. NOTE::
 
             This function exists for compatibility with the related number
             field method, though it returns prime integers, not ideals.
@@ -730,12 +727,12 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         INPUT:
 
-        -  ``p`` -- a prime integer.
+        - ``p`` -- prime integer
 
-        -  ``check`` (default ``True``) -- if ``True``, check the primality of
-           `p`, else do not.
+        - ``check`` -- (default: ``True``) if ``True``, check the primality of
+           `p`, else do not
 
-        OUTPUT: The residue field at this prime.
+        OUTPUT: the residue field at this prime
 
         EXAMPLES::
 
@@ -758,12 +755,12 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         INPUT:
 
-        - ``S`` -- a list of rational primes, the infinite place as real
+        - ``S`` -- list of rational primes, the infinite place as real
           embedding of `\QQ` or as `-1`
-        - ``b`` -- a non-zero rational number which is a non-square locally
-          at every prime in ``S``.
-        - ``check`` -- ``bool`` (default: ``True``) perform additional checks on
-          input and confirm the output.
+        - ``b`` -- a nonzero rational number which is a non-square locally
+          at every prime in ``S``
+        - ``check`` -- boolean (default: ``True``); perform additional checks on
+          input and confirm the output
 
         OUTPUT:
 
@@ -834,7 +831,6 @@ class RationalField(Singleton, number_field_base.NumberField):
         AUTHORS:
 
         - Simon Brandhorst, Juanita Duque, Anna Haensch, Manami Roy, Sandi Rudzinski (10-24-2017)
-
         """
         from sage.arith.misc import hilbert_symbol, is_prime
         from sage.matrix.constructor import matrix
@@ -933,7 +929,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     def gen(self, n=0):
         r"""
-        Return the ``n``-th generator of `\QQ`.
+        Return the n-th generator of `\QQ`.
 
         There is only the 0-th generator, which is 1.
 
@@ -1116,7 +1112,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
             sage: QQ.polynomial()
             x
-
         """
         from sage.rings.polynomial.polynomial_ring import polygen
         return polygen(self)
@@ -1141,7 +1136,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         See :func:`TestSuite` for a typical use case.
 
-        OUTPUT: An iterator over 100 elements of `\QQ`.
+        OUTPUT: an iterator over 100 elements of `\QQ`
 
         EXAMPLES::
 
@@ -1187,13 +1182,13 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         INPUT:
 
-        -  ``num_bound`` -- a positive integer, specifying a bound
-           on the absolute value of the numerator.
-           If absent, no bound is enforced.
+        - ``num_bound`` -- positive integer, specifying a bound
+          on the absolute value of the numerator.
+          If absent, no bound is enforced.
 
-        -  ``den_bound`` -- a positive integer, specifying a bound
-           on the value of the denominator.
-           If absent, the bound for the numerator will be reused.
+        - ``den_bound`` -- positive integer, specifying a bound
+          on the value of the denominator.
+          If absent, the bound for the numerator will be reused.
 
         Any extra positional or keyword arguments are passed through to
         :meth:`sage.rings.integer_ring.IntegerRing_class.random_element`.
@@ -1255,8 +1250,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         INPUT:
 
-        -  ``n`` -- integer (default: 2) order of the root of
-           unity
+        - ``n`` -- integer (default: 2); order of the root of unity
 
         EXAMPLES::
 
@@ -1284,13 +1278,13 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         INPUT:
 
-        - ``S`` -- a set of primes
+        - ``S`` -- set of primes
 
-        - ``m`` -- a positive integer
+        - ``m`` -- positive integer
 
         - ``proof`` -- ignored
 
-        - ``orders`` (default ``False``) -- if ``True``, output two lists, the
+        - ``orders`` -- (default: ``False``) if ``True``, output two lists, the
           generators and their orders
 
         OUTPUT:
@@ -1332,7 +1326,6 @@ class RationalField(Singleton, number_field_base.NumberField):
             ([-1, 2, 3, 5, 7], [2, 2, 2, 2, 2])
             sage: QQ.selmer_generators((2,3,5,7,), 3, orders=True)
             ([2, 3, 5, 7], [3, 3, 3, 3])
-
         """
         gens = list(S)
         ords = [ZZ(m)] * len(S)
@@ -1353,9 +1346,9 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         INPUT:
 
-        - ``S`` -- a set of primes
+        - ``S`` -- set of primes
 
-        - ``m`` -- a positive integer
+        - ``m`` -- positive integer
 
         - ``proof`` -- ignored
 
@@ -1389,7 +1382,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         INPUT:
 
-        - ``S`` -- a list of prime numbers
+        - ``S`` -- list of prime numbers
 
         - ``p`` -- a prime number
 
@@ -1445,7 +1438,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: fromQS2((0,1,1))
             -7
 
-        The map ``fromQS2`` is only well-defined modulo `p`'th powers
+        The map ``fromQS2`` is only well-defined modulo `p`-th powers
         (in this case, modulo squares)::
 
             sage: toQS2(-5/7)                                                           # needs sage.modules sage.rings.number_field
@@ -1463,7 +1456,6 @@ class RationalField(Singleton, number_field_base.NumberField):
             ...
             ValueError: argument 210 should have valuations divisible by 2
             at all primes in [5, 7]
-
         """
         from sage.rings.number_field.selmer_group import pSelmerGroup
         return pSelmerGroup(self, S, p)
@@ -1476,7 +1468,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         - ``a`` -- an element of ``self``
         - ``p`` -- a prime ideal or a prime number
-        - ``check`` -- (default: ``True``); check if `p` is prime
+        - ``check`` -- (default: ``True``) check if `p` is prime
 
         REFERENCE:
 
@@ -1572,7 +1564,6 @@ class RationalField(Singleton, number_field_base.NumberField):
            Fraction Integer
            sage: fricas(QQ)   #optional - fricas # indirect doctest
            Fraction(Integer)
-
         """
         return 'Fraction Integer'
 
@@ -1586,7 +1577,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
             sage: polymake(QQ)    #optional - jupymake # indirect doctest
             Rational
-
         """
         return '"Rational"'
 
@@ -1683,7 +1673,6 @@ class RationalField(Singleton, number_field_base.NumberField):
 
             :meth:`NumberField_generic.valuation() <sage.rings.number_field.number_field.NumberField_generic.valuation>`,
             :meth:`IntegerRing_class.valuation() <sage.rings.integer_ring.IntegerRing_class.valuation>`
-
         """
         from sage.rings.padics.padic_valuation import pAdicValuation
         return pAdicValuation(self, p)

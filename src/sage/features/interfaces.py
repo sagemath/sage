@@ -91,6 +91,23 @@ class InterfaceFeature(Feature):
                                      reason=f"Interface {interface} is not functional: {exception}")
 
 
+class Mathics(InterfaceFeature):
+    r"""
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.mathics.Mathics`
+    is present and functional.
+
+    EXAMPLES::
+
+        sage: from sage.features.interfaces import Mathics
+        sage: Mathics().is_present()  # not tested
+        FeatureTestResult('mathics', False)
+    """
+
+    @staticmethod
+    def __classcall__(cls):
+        return InterfaceFeature.__classcall__(cls, 'mathics', 'sage.interfaces.mathics')
+
+
 # The following are provided by external software only (no SPKG)
 
 class Magma(InterfaceFeature):
@@ -223,6 +240,7 @@ def all_features():
         [Feature('magma'),
          Feature('matlab'),
          Feature('mathematica'),
+         Feature('mathics'),
          Feature('maple'),
          Feature('macaulay2'),
          Feature('octave'),
@@ -231,6 +249,7 @@ def all_features():
     return [Magma(),
             Matlab(),
             Mathematica(),
+            Mathics(),
             Maple(),
             Macaulay2(),
             Octave(),

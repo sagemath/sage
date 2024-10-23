@@ -30,7 +30,7 @@ def lcm(a, b=None):
 
     - ``a``, ``b`` -- two elements of a ring with lcm or
 
-    - ``a`` -- a list, tuple or iterable of elements of a ring with lcm
+    - ``a`` -- list; tuple or iterable of elements of a ring with lcm
 
     OUTPUT:
 

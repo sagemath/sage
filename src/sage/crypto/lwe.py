@@ -257,10 +257,10 @@ class LWE(SageObject):
         - ``q`` -- modulus typically > n (integer > 0)
         - ``D`` -- an error distribution such as an instance of
           :class:`DiscreteGaussianDistributionIntegerSampler` or :class:`UniformSampler`
-        - ``secret_dist`` -- distribution of the secret (default: 'uniform'); one of
+        - ``secret_dist`` -- distribution of the secret (default: ``'uniform'``); one of
 
-          - "uniform" -- secret follows the uniform distribution in `\Zmod{q}`
-          - "noise" -- secret follows the noise distribution
+          - ``'uniform'`` -- secret follows the uniform distribution in `\Zmod{q}`
+          - ``'noise'`` -- secret follows the noise distribution
           - ``(lb, ub)`` -- the secret is chosen uniformly from ``[lb,...,ub]``
             including both endpoints
 
@@ -399,6 +399,7 @@ class Regev(LWE):
         D = DiscreteGaussianDistributionIntegerSampler(s/sqrt(2*pi.n()), q)
         LWE.__init__(self, n=n, q=q, D=D, secret_dist=secret_dist, m=m)
 
+
 class LindnerPeikert(LWE):
     """
     LWE oracle with parameters as in [LP2011]_.
@@ -464,9 +465,9 @@ class UniformNoiseLWE(LWE):
         - ``n`` -- security parameter (integer >= 89)
         - ``instance`` -- one of
 
-          - "key" -- the LWE-instance that hides the secret key is generated
-          - "encrypt" -- the LWE-instance that hides the message is generated
-            (default: ``key``)
+          - ``'key'`` -- the LWE-instance that hides the secret key is generated
+          - ``'encrypt'`` -- the LWE-instance that hides the message is generated
+            (default: ``'key'``)
 
         - ``m`` -- number of allowed samples or ``None`` in which case ``m`` is
           chosen as in [CGW2013]_.  (default: ``None``)
@@ -511,6 +512,7 @@ class UniformNoiseLWE(LWE):
             LWE.__init__(self, n=n1, q=q, D=D, secret_dist='noise', m=m)
         else:
             raise TypeError("Parameter instance=%s not understood." % (instance))
+
 
 class RingLWE(SageObject):
     """
@@ -607,6 +609,7 @@ class RingLWE(SageObject):
         a = self.R_q.random_element()
         return vector(a), vector(a * (self.__s) + self.D())
 
+
 class RingLindnerPeikert(RingLWE):
     """
     Ring-LWE oracle with parameters as in [LP2011]_.
@@ -649,6 +652,7 @@ class RingLindnerPeikert(RingLWE):
         stddev = s/sqrt(2*pi.n())
         D = DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], n, stddev)
         RingLWE.__init__(self, N=N, q=q, D=D, poly=None, secret_dist='noise', m=m)
+
 
 class RingLWEConverter(SageObject):
     """
@@ -709,9 +713,9 @@ class RingLWEConverter(SageObject):
             sage: lwe = RingLWEConverter(rlwe)
             sage: lwe
             RingLWEConverter(RingLWE(20, 257, Discrete Gaussian sampler for polynomials of degree < 8 with σ=5.000000 in each component, x^8 - x^6 + x^4 - x^2 + 1, 'uniform', None))
-
         """
         return "RingLWEConverter(%s)" % str(self.ringlwe)
+
 
 def samples(m, n, lwe, seed=None, balanced=False, **kwds):
     """
@@ -749,7 +753,6 @@ def samples(m, n, lwe, seed=None, balanced=False, **kwds):
         sage: samples(2, 20, 'LindnerPeikert')
         [((506, 1205, 398, 0, 337, 106, 836, 75, 1242, 642, 840, 262, 1823, 1798, 1831, 1658, 1084, 915, 1994, 163), 1447),
          ((463, 250, 1226, 1906, 330, 933, 1014, 1061, 1322, 2035, 1849, 285, 1993, 1975, 864, 1341, 41, 1955, 1818, 1357), 312)]
-
     """
     if seed is not None:
         set_random_seed(seed)
@@ -803,7 +806,7 @@ def balance_sample(s, q=None):
         ....:     assert all(-257//2 <= c <= 257//2 for bi in b for c in bi)
         ....:     assert all(s[i][j] == b[i][j] % 257 for i in range(2) for j in range(8))
 
-    .. note::
+    .. NOTE::
 
         This function is useful to convert between Sage's standard
         representation of elements in `\Zmod{q}` as integers between 0 and q-1

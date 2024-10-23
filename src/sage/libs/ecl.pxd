@@ -147,7 +147,6 @@ cdef extern from "ecl/ecl.h":
     ecl_character ecl_char(cl_object s, cl_index i)
     ecl_character ecl_char_set(cl_object s, cl_index i, ecl_character c)
 
-
     # S-expr evaluation and function calls
 
     cl_object cl_safe_eval(cl_object form, cl_object env, cl_object value)

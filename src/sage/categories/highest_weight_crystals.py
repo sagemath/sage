@@ -80,7 +80,7 @@ class HighestWeightCrystals(Category_singleton):
 
     def example(self):
         """
-        Returns an example of highest weight crystals, as per
+        Return an example of highest weight crystals, as per
         :meth:`Category.example`.
 
         EXAMPLES::
@@ -114,13 +114,12 @@ class HighestWeightCrystals(Category_singleton):
         @cached_method
         def highest_weight_vectors(self):
             r"""
-            Returns the highest weight vectors of ``self``
+            Return the highest weight vectors of ``self``.
 
             This default implementation selects among the module
             generators those that are highest weight, and caches the result.
             A crystal element `b` is highest weight if `e_i(b)=0` for all `i` in the
             index set.
-
 
             EXAMPLES::
 
@@ -140,7 +139,7 @@ class HighestWeightCrystals(Category_singleton):
 
         def highest_weight_vector(self):
             r"""
-            Returns the highest weight vector if there is a single one;
+            Return the highest weight vector if there is a single one;
             otherwise, raises an error.
 
             Caveat: this assumes that :meth:`.highest_weight_vectors`
@@ -191,10 +190,10 @@ class HighestWeightCrystals(Category_singleton):
 
             INPUT:
 
-            - ``index_set`` -- (Default: ``None``) The index set; if ``None``
+            - ``index_set`` -- (default: ``None``) the index set; if ``None``
               then use the index set of the crystal
 
-            - ``max_depth`` -- (Default: infinity) The maximum depth to build
+            - ``max_depth`` -- (default: infinity) the maximum depth to build
 
             EXAMPLES::
 
@@ -254,13 +253,13 @@ class HighestWeightCrystals(Category_singleton):
 
             - ``q`` -- the (generic) parameter `q`
 
-            - ``prec`` -- (default: ``None``) The precision of the power
+            - ``prec`` -- (default: ``None``) the precision of the power
               series ring to use if the crystal is not known to be finite
               (i.e. the number of terms returned).
               If ``None``, then the result is returned as a lazy power series.
 
-            - ``use_product`` -- (default: ``False``) if we have a finite
-              crystal and ``True``, use the product formula
+            - ``use_product`` -- boolean (default: ``False``); if we have a
+              finite crystal and ``True``, use the product formula
 
             EXAMPLES::
 
@@ -412,7 +411,7 @@ class HighestWeightCrystals(Category_singleton):
             The sole purpose of this method is to construct the homset as a
             :class:`~sage.categories.highest_weight_crystals.HighestWeightCrystalHomset`.
             If ``category`` is specified and is not a subcategory of
-            :class:`HighestWeightCrystals`, a :class:`TypeError` is raised
+            :class:`HighestWeightCrystals`, a :exc:`TypeError` is raised
             instead
 
             This method is not meant to be called directly. Please use
@@ -522,7 +521,7 @@ class HighestWeightCrystals(Category_singleton):
             G = DiGraph(d)
             from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
-                G.set_latex_options(format="dot2tex",
+                G.set_latex_options(format='dot2tex',
                                     edge_labels=True,
                                     color_by_label=self.cartan_type()._index_set_coloring)
             return G
@@ -670,7 +669,7 @@ class HighestWeightCrystals(Category_singleton):
 
         class ParentMethods:
             """
-            Implements operations on tensor products of crystals.
+            Implement operations on tensor products of crystals.
             """
             @cached_method
             def highest_weight_vectors(self):
@@ -855,7 +854,8 @@ class HighestWeightCrystalMorphism(CrystalMorphismByGenerators):
       for the weight, `\varepsilon` and `\varphi`
     - ``gens`` -- (optional) a list of generators to define the morphism;
       the default is to use the highest weight vectors of the crystal
-    - ``check`` -- (default: ``True``) check if the crystal morphism is valid
+    - ``check`` -- boolean (default: ``True``); check if the crystal morphism
+      is valid
     """
     def __init__(self, parent, on_gens, cartan_type=None,
                  virtualization=None, scaling_factors=None,

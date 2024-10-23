@@ -296,7 +296,7 @@ cdef class MatrixArgs:
 
     Test invalid input::
 
-        sage: MatrixArgs(ZZ, 2, 2, entries="abcd").finalized()
+        sage: MatrixArgs(ZZ, 2, 2, entries='abcd').finalized()
         Traceback (most recent call last):
         ...
         TypeError: unable to convert 'abcd' to a matrix
@@ -473,7 +473,7 @@ cdef class MatrixArgs:
 
     def __iter__(self):
         """
-        Default iteration (dense with conversion)
+        Default iteration (dense with conversion).
 
         EXAMPLES::
 
@@ -486,14 +486,14 @@ cdef class MatrixArgs:
 
     def iter(self, bint convert=True, bint sparse=False):
         """
-        Iteration over the entries in the matrix
+        Iteration over the entries in the matrix.
 
         INPUT:
 
-        - ``convert`` -- If ``True``, the entries are converted to the
-          base right. If ``False``, the entries are returned as given.
+        - ``convert`` -- if ``True``, the entries are converted to the
+          base right; if ``False``, the entries are returned as given
 
-        - ``sparse`` -- See OUTPUT below.
+        - ``sparse`` -- see OUTPUT below
 
         OUTPUT: iterator
 
@@ -765,7 +765,7 @@ cdef class MatrixArgs:
 
         INPUT:
 
-        - ``immutable`` -- boolean; if ``True``, the result will be immutable.
+        - ``immutable`` -- boolean; if ``True``, the result will be immutable
 
         OUTPUT: an element of ``self.space``
 
@@ -819,8 +819,8 @@ cdef class MatrixArgs:
 
         INPUT:
 
-        - ``convert`` -- If ``True``, the entries are converted to the base
-          ring. Otherwise, the entries are returned as given.
+        - ``convert`` -- if ``True``, the entries are converted to the base
+          ring; otherwise, the entries are returned as given
 
         .. NOTE::
 
@@ -857,7 +857,7 @@ cdef class MatrixArgs:
 
         cdef list L
         if self.typ == MA_ENTRIES_SEQ_FLAT and not convert:
-            # Try to re-use existing list
+            # Try to reuse existing list
             if type(self.entries) is not list:
                 L = list(self.entries)
             else:
@@ -881,7 +881,7 @@ cdef class MatrixArgs:
         """
         Return the entries of the matrix as a :class:`dict`.
 
-        The keys of this :class:`dict` are the non-zero positions ``(i,j)``. The
+        The keys of this :class:`dict` are the nonzero positions ``(i,j)``. The
         corresponding value is the entry at that position. Zero values are skipped.
 
         If ``convert`` is ``True``, the entries are converted to the base
@@ -1500,6 +1500,21 @@ cdef class MatrixArgs:
             Traceback (most recent call last):
             ...
             NameError: name 'a' is not defined
+
+        Check that :issue:`38221` is fixed::
+
+            sage: # needs sage.groups
+            sage: G = CyclicPermutationGroup(7)
+            sage: R = GF(2)
+            sage: A = G.algebra(R)
+            sage: matrix(A, 3, 3, A.zero())
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
+            sage: matrix(A, 3, 3, A.one())
+            [()  0  0]
+            [ 0 ()  0]
+            [ 0  0 ()]
         """
         # Check basic Python types. This is very fast, so it doesn't
         # hurt to do these first.
@@ -1524,6 +1539,8 @@ cdef class MatrixArgs:
         cdef bint is_elt = isinstance(self.entries, Element)
         if is_elt and isinstance(self.entries, Matrix):
             return MA_ENTRIES_MATRIX
+        if is_elt and self.base is not None and self.entries.parent() == self.base:
+            return MA_ENTRIES_SCALAR
         t = type(self.entries)
         try:
             f = t._matrix_
