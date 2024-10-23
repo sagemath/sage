@@ -13,7 +13,7 @@ platforms = {
     "linux-aarch64": "linux-aarch64",
     "osx-64": "macos-x86_64",
     "osx-arm64": "macos",
-    # "win-64": "win",
+    "win-64": "win",
 }
 pythons = ["3.9", "3.10", "3.11"]
 tags = ["", "-dev"]
@@ -21,7 +21,12 @@ tags = ["", "-dev"]
 for platform_key, platform_value in platforms.items():
     for python in pythons:
         for tag in tags:
-            env_file = root_dir / f"environment{tag}-{python}.yml"
+            if platform_key == "win-64":
+                if tag == "-dev":
+                    continue
+                env_file = root_dir / f"environment-win-{python}.yml"
+            else:
+                env_file = root_dir / f"environment{tag}-{python}.yml"
             lock_file = root_dir / f"environment{tag}-{python}-{platform_value}"
             lock_file_gen = root_dir / f"environment{tag}-{python}-{platform_value}.yml"
 
