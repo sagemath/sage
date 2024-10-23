@@ -2641,13 +2641,14 @@ class BipartiteGraph(Graph):
             sage: C = B.canonical_label()
             sage: C.left, C.right
             ({0, 1}, {2, 3})
-            sage: B.canonical_label(certificate=True)
-            (Bipartite graph on 4 vertices, {0: 0, 1: 1, 2: 2, 3: 3})
+            sage: C, certificate = B.canonical_label(certificate=True)
+            sage: C.left, C.right
+            ({0, 1}, {2, 3})
             sage: C = B.canonical_label(edge_labels=True)
             sage: C.left, C.right
             ({0, 1}, {2, 3})
             sage: B.allow_multiple_edges(True)
-            sage: B.add_edges(G.edges())
+            sage: B.add_edges(B.edges())
             sage: C = B.canonical_label()
             sage: C.left, C.right
             ({0, 1}, {2, 3})
