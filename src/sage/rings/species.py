@@ -29,6 +29,7 @@ from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, parent
 from sage.structure.factorization import Factorization
 from sage.structure.parent import Parent
+from sage.structure.richcmp import op_LT, op_LE, op_EQ, op_NE, op_GT, op_GE
 from sage.structure.unique_representation import (UniqueRepresentation,
                                                   WithPicklingByInitArgs)
 
@@ -486,19 +487,23 @@ class AtomicSpeciesElement(Element, WithEqualityById,
         S = self.parent().grading_set()
         return S(self._mc)
 
-    def __le__(self, other):
+    def _richcmp_(self, other, op):
         r"""
-        Return if this element is less than or equal to ``other``.
+        Compare ``self`` with ``other`` with respect to the comparison
+        operator ``op``.
 
         ``self`` is less than or equal to ``other`` if it is
         conjugate to a subgroup of ``other`` in the parent group.
 
-        EXAMPLES:
-
-        We create the poset of atomic species of degree four::
+        EXAMPLES::
 
             sage: from sage.rings.species import AtomicSpecies
             sage: A = AtomicSpecies("X")
+            sage: A(DihedralGroup(4)) < A(CyclicPermutationGroup(4))
+            True
+
+        We create the poset of atomic species of degree four::
+
             sage: P = Poset([A.subset(4), lambda b, c: b <= c])
             sage: len(P.cover_relations())
             7
@@ -519,42 +524,33 @@ class AtomicSpeciesElement(Element, WithEqualityById,
             sage: [(a, b) for a, b in Subsets(A.subset(3), 2) if (a < b) != (b > a)]
             []
         """
-        if (not isinstance(other, AtomicSpeciesElement)
-            or len(self._mc) != len(other._mc)):
-            return False
-        if self._mc != other._mc:
-            # X should come before Y
-            return (sum(self._mc) < sum(other._mc)
+        if op is op_EQ:
+            return self is other
+        if op is op_NE:
+            return self is not other
+        if op is op_LE:
+            return self is other or self < other
+        if op is op_GE:
+            return other <= self
+        if op is op_GT:
+            return other < self
+        if op is op_LT:
+            if len(self._mc) != len(other._mc):
+                return False
+            if self._mc != other._mc:
+                # X should come before Y
+                return (sum(self._mc) < sum(other._mc)
                         or (sum(self._mc) == sum(other._mc)
                             and self._mc > other._mc))
-        S = SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
-        # conjugate self and other to match S
-        g = list(chain.from_iterable(self._dompart))
-        conj_self = PermutationGroupElement(g).inverse()
-        G = libgap.ConjugateGroup(self._dis._C, conj_self)
-        h = list(chain.from_iterable(other._dompart))
-        conj_other = PermutationGroupElement(h).inverse()
-        H = libgap.ConjugateGroup(other._dis._C, conj_other)
-        return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
-
-    def __lt__(self, other):
-        r"""
-        Return if this element is less than ``other``.
-
-        ``self`` is less than or equal to ``other`` if it is
-        conjugate to a subgroup of ``other`` in the parent group.
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import AtomicSpecies
-            sage: A = AtomicSpecies("X")
-            sage: A(SymmetricGroup(4)) < A(CyclicPermutationGroup(4))
-            True
-        """
-        if (not isinstance(other, AtomicSpeciesElement)
-            or len(self._mc) != len(other._mc)):
-            return False
-        return self is not other and self <= other
+            S = SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
+            # conjugate self and other to match S
+            g = list(chain.from_iterable(self._dompart))
+            conj_self = PermutationGroupElement(g).inverse()
+            G = libgap.ConjugateGroup(self._dis._C, conj_self)
+            h = list(chain.from_iterable(other._dompart))
+            conj_other = PermutationGroupElement(h).inverse()
+            H = libgap.ConjugateGroup(other._dis._C, conj_other)
+            return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
 
 class AtomicSpecies(UniqueRepresentation, Parent):
@@ -1292,19 +1288,23 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             mc = sum(n * vector(a._mc) for a, n in mons.items())
             return S(mc)
 
-        def __le__(self, other):
+        def _richcmp_(self, other, op):
             r"""
-            Return if this element is less than or equal to ``other``.
+            Compare ``self`` with ``other`` with respect to the
+            comparison operator ``op``.
 
-            ``self`` is less or equal to ``other`` if it is conjugate to
-            a subgroup of ``other`` in the parent group.
+            ``self`` is less than or equal to ``other`` if it is
+            conjugate to a subgroup of ``other`` in the parent group.
 
-            EXAMPLES:
-
-            We create the lattice of molecular species of degree four::
+            EXAMPLES::
 
                 sage: from sage.rings.species import MolecularSpecies
                 sage: M = MolecularSpecies("X")
+                sage: M(DihedralGroup(4)) < M(CyclicPermutationGroup(4))
+                True
+
+            We create the lattice of molecular species of degree four::
+
                 sage: P = Poset([M.subset(4), lambda b, c: b <= c])
                 sage: len(P.cover_relations())
                 17
@@ -1339,83 +1339,34 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: T * E2S < S^2 * T
                 True
             """
-            if (not isinstance(other, MolecularSpecies.Element)
-                or len(self.grade()) != len(other.grade())):
-                return False
-            if self.grade() != other.grade():
-                # X should come before Y
-                return (sum(self.grade()) < sum(other.grade())
-                        or (sum(self.grade()) == sum(other.grade())
-                            and self.grade() > other.grade()))
+            if op is op_EQ or op is op_NE:
+                return super()._richcmp_(other, op)
+            if op is op_LE:
+                return self == other or self < other
+            if op is op_GE:
+                return other <= self
+            if op is op_GT:
+                return other < self
+            if op is op_LT:
+                if len(self.grade()) != len(other.grade()):
+                    return False
+                if self.grade() != other.grade():
+                    # X should come before Y
+                    return (sum(self.grade()) < sum(other.grade())
+                            or (sum(self.grade()) == sum(other.grade())
+                                and self.grade() > other.grade()))
 
-            S = SymmetricGroup(sum(self.grade())).young_subgroup(self.grade())
-            # conjugate self and other to match S
-            G, G_dompart = self.group_and_partition()
-            g = list(chain.from_iterable(G_dompart))
-            conj_self = PermutationGroupElement(g).inverse()
-            G = libgap.ConjugateGroup(G, conj_self)
-            H, H_dompart = other.group_and_partition()
-            h = list(chain.from_iterable(H_dompart))
-            conj_other = PermutationGroupElement(h).inverse()
-            H = libgap.ConjugateGroup(H, conj_other)
-            return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
-
-        def __lt__(self, other):
-            r"""
-            Return if this element is less than ``other``.
-
-            ``self`` is less than or equal to ``other`` if it is
-            conjugate to a subgroup of ``other`` in the parent group.
-
-            EXAMPLES::
-
-                sage: from sage.rings.species import MolecularSpecies
-                sage: M = MolecularSpecies("X")
-                sage: M(SymmetricGroup(4)) < M(CyclicPermutationGroup(4))
-                True
-            """
-            if (not isinstance(other, MolecularSpecies.Element)
-                or len(self.grade()) != len(other.grade())):
-                return False
-            return self != other and self <= other
-
-        def __gt__(self, other):
-            r"""
-            Return if this element is greater than ``other``.
-
-            ``self`` is less than or equal to ``other`` if it is
-            conjugate to a subgroup of ``other`` in the parent group.
-
-            EXAMPLES::
-
-                sage: from sage.rings.species import MolecularSpecies
-                sage: M = MolecularSpecies("X")
-                sage: M(SymmetricGroup(4)) > M(CyclicPermutationGroup(4))
-                False
-            """
-            if (not isinstance(other, MolecularSpecies.Element)
-                or len(self.grade()) != len(other.grade())):
-                return False
-            return other < self
-
-        def __ge__(self, other):
-            r"""
-            Return if this element is greater than or equal to ``other``.
-
-            ``self`` is less than or equal to ``other`` if it is
-            conjugate to a subgroup of ``other`` in the parent group.
-
-            EXAMPLES::
-
-                sage: from sage.rings.species import MolecularSpecies
-                sage: M = MolecularSpecies("X")
-                sage: M(SymmetricGroup(4)) >= M(CyclicPermutationGroup(4))
-                False
-            """
-            if (not isinstance(other, MolecularSpecies.Element)
-                or len(self.grade()) != len(other.grade())):
-                return False
-            return other <= self
+                S = SymmetricGroup(sum(self.grade())).young_subgroup(self.grade())
+                # conjugate self and other to match S
+                G, G_dompart = self.group_and_partition()
+                g = list(chain.from_iterable(G_dompart))
+                conj_self = PermutationGroupElement(g).inverse()
+                G = libgap.ConjugateGroup(G, conj_self)
+                H, H_dompart = other.group_and_partition()
+                h = list(chain.from_iterable(H_dompart))
+                conj_other = PermutationGroupElement(h).inverse()
+                H = libgap.ConjugateGroup(H, conj_other)
+                return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
         @cached_method
         def group_and_partition(self):
