@@ -2068,7 +2068,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
                          raise_on_failure=is_sub_testsuite)
 
     def _tensor(self, tensor_type, name=None, latex_name=None, sym=None,
-               antisym=None):
+               antisym=None, implementation=None):
         r"""
         Construct a tensor on the free module ``self``.
 
@@ -2116,21 +2116,25 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
             tensor_type[0] + tensor_type[1], sym, antisym)
         # Special cases:
         if tensor_type == (1,0):
-            return self.element_class(self, name=name, latex_name=latex_name)
+            return self.element_class(self, name=name, latex_name=latex_name,
+                                      implementation=implementation)
         elif tensor_type == (0,1):
-            return self.linear_form(name=name, latex_name=latex_name)
+            return self.linear_form(name=name, latex_name=latex_name,
+                                    implementation=implementation)
         elif tensor_type[0] == 0 and tensor_type[1] > 1 and antisym:
             if len(antisym[0]) == tensor_type[1]:
                 return self.alternating_form(tensor_type[1], name=name,
-                                             latex_name=latex_name)
+                                             latex_name=latex_name,
+                                             implementation=implementation)
         elif tensor_type[0] > 1 and tensor_type[1] == 0 and antisym:
             if len(antisym[0]) == tensor_type[0]:
                 return self.alternating_contravariant_tensor(tensor_type[0],
-                                           name=name, latex_name=latex_name)
+                                           name=name, latex_name=latex_name,
+                                           implementation=implementation)
         # Generic case:
         return self.tensor_module(*tensor_type).element_class(self,
                                  tensor_type, name=name, latex_name=latex_name,
-                                 sym=sym, antisym=antisym)
+                                 sym=sym, antisym=antisym, implementation=implementation)
 
     def tensor(self, *args, **kwds):
         r"""
@@ -2317,7 +2321,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         return resu
 
     def alternating_contravariant_tensor(self, degree, name=None,
-                                         latex_name=None):
+                            latex_name=None, implementation=None):
         r"""
         Construct an alternating contravariant tensor on the free module.
 
@@ -2367,11 +2371,12 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         """
         if degree == 1:
             return self.element_class(self, name=name,
-                                      latex_name=latex_name)
+                    latex_name=latex_name, implementation=implementation)
         return self.exterior_power(degree).element_class(self, degree,
-                                       name=name, latex_name=latex_name)
+                                       name=name, latex_name=latex_name,
+                                       implementation=implementation)
 
-    def alternating_form(self, degree, name=None, latex_name=None):
+    def alternating_form(self, degree, name=None, latex_name=None, implementation=None):
         r"""
         Construct an alternating form on the free module.
 
@@ -2432,9 +2437,10 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
                 raise NotImplementedError('{} apparently '.format(self._ring) +
                                           'does not provide generic elements')
         return self.dual_exterior_power(degree).element_class(self, degree,
-                                              name=name, latex_name=latex_name)
+                                              name=name, latex_name=latex_name,
+                                              implementation=implementation)
 
-    def linear_form(self, name=None, latex_name=None):
+    def linear_form(self, name=None, latex_name=None, implementation=None):
         r"""
         Construct a linear form on the free module ``self``.
 
@@ -2484,7 +2490,8 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         for more documentation.
         """
         return self.dual_exterior_power(1).element_class(self, 1, name=name,
-                                                         latex_name=latex_name)
+                                                         latex_name=latex_name,
+                                                         implementation=implementation)
 
     def automorphism(self, matrix=None, basis=None, name=None,
                      latex_name=None):

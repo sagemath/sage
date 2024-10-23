@@ -200,8 +200,7 @@ from sage.parallel.parallelism import Parallelism
 from sage.rings.integer import Integer
 from sage.structure.element import ModuleElementWithMutability
 from sage.tensor.modules.comp import (
-    CompFullyAntiSym,
-    CompFullySym,
+    get_components_class,
     Components,
     CompWithSym,
 )
@@ -275,6 +274,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         sym=None,
         antisym=None,
         parent=None,
+        implementation=None,
     ):
         r"""
         TESTS::
@@ -306,6 +306,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         self._is_zero = False # a priori, may be changed below or via
                               # method __bool__()
         self._name = name
+        self._implementation = implementation
         if latex_name is None:
             self._latex_name = self._name
         else:
@@ -969,22 +970,22 @@ class FreeModuleTensor(ModuleElementWithMutability):
         """
         fmodule = self._fmodule  # the base free module
         if not self._sym and not self._antisym:
-            return Components(fmodule._ring, basis, self._tensor_rank,
-                              start_index=fmodule._sindex,
-                              output_formatter=fmodule._output_formatter)
+            components_class = get_components_class(implementation=self._implementation)
+            return components_class(fmodule._ring, basis, self._tensor_rank,
+                            start_index=fmodule._sindex, output_formatter=fmodule._output_formatter)
         for isym in self._sym:
             if len(isym) == self._tensor_rank:
-                return CompFullySym(fmodule._ring, basis, self._tensor_rank,
-                                    start_index=fmodule._sindex,
-                                    output_formatter=fmodule._output_formatter)
+                components_class = get_components_class(sym="fullysym", implementation=self._implementation)
+                return components_class(fmodule._ring, basis, self._tensor_rank,
+                            start_index=fmodule._sindex, output_formatter=fmodule._output_formatter)
         for isym in self._antisym:
             if len(isym) == self._tensor_rank:
-                return CompFullyAntiSym(fmodule._ring, basis, self._tensor_rank,
-                                        start_index=fmodule._sindex,
-                                     output_formatter=fmodule._output_formatter)
-        return CompWithSym(fmodule._ring, basis, self._tensor_rank,
-                           start_index=fmodule._sindex,
-                           output_formatter=fmodule._output_formatter,
+                components_class = get_components_class(sym="fullyantisym", implementation=self._implementation)
+                return components_class(fmodule._ring, basis, self._tensor_rank,
+                            start_index=fmodule._sindex, output_formatter=fmodule._output_formatter)
+        components_class = get_components_class(sym="sym", implementation=self._implementation)
+        return components_class(fmodule._ring, basis, self._tensor_rank,
+                           start_index=fmodule._sindex, output_formatter=fmodule._output_formatter,
                            sym=self._sym, antisym=self._antisym)
 
     def components(self, basis=None, from_basis=None) -> Components:

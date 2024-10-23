@@ -253,6 +253,45 @@ from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
 from operator import itemgetter
 
+def get_components_class(sym=None, implementation=None) -> type:
+    r"""
+    Return a component class according to the input.
+
+    INPUT:
+
+    - ``sym`` -- (``None`` or string) symmetry of component class.
+
+    - ``implementation`` -- (``None`` or string) a possible implementation.
+    """
+    if implementation is None:
+        if sym is None:
+            return Components
+        elif sym == "sym":
+            return CompWithSym
+        elif sym == "fullysym":
+            return CompFullySym
+        elif sym == "fullyantisym":
+            return CompFullyAntiSym
+        elif sym == "kroneckerdelta":
+            return KroneckerDelta
+
+    if implementation == "numpy":
+        try:
+            from . import comp_numpy
+        except:
+            raise ImportError('file comp_numpy does not exist')
+        if sym is None:
+            return comp_numpy.ComponentNumpy
+        elif sym == "sym":
+            return comp_numpy.CompNumpyWithSym
+        elif sym == "fullysym":
+            return comp_numpy.CompNumpyFullySym
+        elif sym == "fullyantisym":
+            return comp_numpy.CompNumpyFullyAntiSym
+        elif sym == "kroneckerdelta":
+            return comp_numpy.KroneckerDeltaNumpy
+
+    raise ValueError('sym must be numpy or None.')
 
 class Components(SageObject):
     r"""
@@ -578,7 +617,7 @@ class Components(SageObject):
             sage: c._new_instance()
             2-indices components w.r.t. [1, 2, 3]
         """
-        return Components(self._ring, self._frame, self._nid, self._sindex,
+        return self.__class__(self._ring, self._frame, self._nid, self._sindex,
                           self._output_formatter)
 
     def copy(self):

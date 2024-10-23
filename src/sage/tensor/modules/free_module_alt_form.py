@@ -38,7 +38,7 @@ REFERENCES:
 #******************************************************************************
 
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
-from sage.tensor.modules.comp import Components, CompFullyAntiSym
+from sage.tensor.modules.comp import get_components_class
 
 
 class FreeModuleAltForm(FreeModuleTensor):
@@ -212,7 +212,7 @@ class FreeModuleAltForm(FreeModuleTensor):
         sage: s.display(e)
         zero = 0
     """
-    def __init__(self, fmodule, degree, name=None, latex_name=None):
+    def __init__(self, fmodule, degree, name=None, latex_name=None, implementation=None):
         r"""
         Initialize ``self``.
 
@@ -237,7 +237,8 @@ class FreeModuleAltForm(FreeModuleTensor):
         FreeModuleTensor.__init__(self, fmodule, (0,degree), name=name,
                                   latex_name=latex_name,
                                   antisym=range(degree),
-                                  parent=fmodule.dual_exterior_power(degree))
+                                  parent=fmodule.dual_exterior_power(degree),
+                                  implementation=implementation)
 
     def _repr_(self):
         r"""
@@ -323,11 +324,11 @@ class FreeModuleAltForm(FreeModuleTensor):
         """
         fmodule = self._fmodule  # the base free module
         if self._tensor_rank == 1:
-            return Components(fmodule._ring, basis, 1,
+            return get_components_class(implementation=self._implementation)(fmodule._ring, basis, 1,
                               start_index=fmodule._sindex,
                               output_formatter=fmodule._output_formatter)
 
-        return CompFullyAntiSym(fmodule._ring, basis, self._tensor_rank,
+        return get_components_class(sym="fullyantisym", implementation=self._implementation)(fmodule._ring, basis, self._tensor_rank,
                                 start_index=fmodule._sindex,
                                 output_formatter=fmodule._output_formatter)
 
@@ -660,7 +661,7 @@ class FreeModuleAltForm(FreeModuleTensor):
             raise ValueError("no common basis for the exterior product")
         cmp_s = self._components[basis]
         cmp_o = other._components[basis]
-        cmp_r = CompFullyAntiSym(fmodule._ring, basis, rank_r,
+        cmp_r = get_components_class(sym="fullyantisym", implementation=self._implementation)(fmodule._ring, basis, rank_r,
                                  start_index=fmodule._sindex,
                                  output_formatter=fmodule._output_formatter)
         for ind_s, val_s in cmp_s._comp.items():

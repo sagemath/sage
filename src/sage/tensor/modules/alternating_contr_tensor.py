@@ -37,7 +37,7 @@ REFERENCES:
 #******************************************************************************
 
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
-from sage.tensor.modules.comp import Components, CompFullyAntiSym
+from sage.tensor.modules.comp import get_components_class, CompFullyAntiSym
 
 
 class AlternatingContrTensor(FreeModuleTensor):
@@ -178,7 +178,7 @@ class AlternatingContrTensor(FreeModuleTensor):
         sage: s.display(e)
         b∧b = 0
     """
-    def __init__(self, fmodule, degree, name=None, latex_name=None):
+    def __init__(self, fmodule, degree, name=None, latex_name=None, implementation=None):
         r"""
         Initialize ``self``.
 
@@ -203,7 +203,8 @@ class AlternatingContrTensor(FreeModuleTensor):
         FreeModuleTensor.__init__(self, fmodule, (degree,0), name=name,
                                   latex_name=latex_name,
                                   antisym=range(degree),
-                                  parent=fmodule.exterior_power(degree))
+                                  parent=fmodule.exterior_power(degree),
+                                  implementation=implementation)
 
     def _repr_(self):
         r"""
@@ -285,11 +286,11 @@ class AlternatingContrTensor(FreeModuleTensor):
         """
         fmodule = self._fmodule  # the base free module
         if self._tensor_rank == 1:
-            return Components(fmodule._ring, basis, 1,
+            return get_components_class(implementation=self._implementation)(fmodule._ring, basis, 1,
                               start_index=fmodule._sindex,
                               output_formatter=fmodule._output_formatter)
 
-        return CompFullyAntiSym(fmodule._ring, basis, self._tensor_rank,
+        return get_components_class(sym="fullyantisym", implementation=self._implementation)(fmodule._ring, basis, self._tensor_rank,
                                 start_index=fmodule._sindex,
                                 output_formatter=fmodule._output_formatter)
 
