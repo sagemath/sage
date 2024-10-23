@@ -379,10 +379,8 @@ class AtomicSpeciesElement(Element, WithEqualityById,
         domain = list(chain(*map(sorted, domain_partition)))
 
         def is_equal(elm):
-            # check if multicardinalities match
-            if elm._mc != mc:
-                return False
-            # If they do, construct the mapping between the groups
+            # mc and dis match because they are part of the key, we
+            # construct the mapping between the groups
             elm_domain = list(chain(*map(sorted, elm._dompart)))
             mapping = libgap.MappingPermListList(elm_domain, domain)
             G = PermutationGroup(gap_group=libgap.ConjugateGroup(elm._dis._C,
@@ -805,6 +803,25 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: G.disjoint_direct_product_decomposition()
             {{1, 2}, {3, 4}}
             sage: G in A
+            False
+
+        For convenience, directly indecomposable permutation groups
+        are regarded as being in `AtomicSpecies`::
+
+            sage: G = PermutationGroup([(1,2)])
+            sage: G in AtomicSpecies("X")
+            True
+            sage: G in AtomicSpecies("X, Y")
+            False
+            sage: (G, {0: [1,2]}) in AtomicSpecies("X, Y")
+            True
+            sage: (G, {3: [1,2]}) in AtomicSpecies("X, Y")
+            False
+            sage: (G, {0: [1]}) in AtomicSpecies("X, Y")
+            False
+            sage: (G, {0: [1], 1: [2]}) in AtomicSpecies("X, Y")
+            False
+            sage: (0, {0: []}) in AtomicSpecies("X, Y")
             False
         """
         if parent(x) == self:
