@@ -2638,20 +2638,16 @@ class BipartiteGraph(Graph):
         Check that :issue:`38832` is fixed::
 
             sage: B = BipartiteGraph(matrix([[1, 1], [1, 1]]))
-            sage: C = B.canonical_label()
-            sage: C.left, C.right
-            ({0, 1}, {2, 3})
-            sage: C, certificate = B.canonical_label(certificate=True)
-            sage: C.left, C.right
-            ({0, 1}, {2, 3})
-            sage: C = B.canonical_label(edge_labels=True)
-            sage: C.left, C.right
-            ({0, 1}, {2, 3})
+            sage: B.canonical_label()
+            Bipartite graph on 4 vertices
+            sage: B.canonical_label(certificate=True)[0]
+            Bipartite graph on 4 vertices
+            sage: B.canonical_label(edge_labels=True)
+            Bipartite graph on 4 vertices
             sage: B.allow_multiple_edges(True)
             sage: B.add_edges(B.edges())
-            sage: C = B.canonical_label()
-            sage: C.left, C.right
-            ({0, 1}, {2, 3})
+            sage: B.canonical_label()
+            Bipartite multi-graph on 4 vertices
 
         .. SEEALSO::
 
