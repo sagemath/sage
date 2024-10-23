@@ -17,18 +17,23 @@ print(numpy.get_include())
 ).stdout().strip()
 numpy = declare_dependency(include_directories: inc_numpy)
 
-inc_cysignals = run_command(
-  py,
-  [
-    '-c',
-    '''
-import cysignals
-print(cysignals.__file__.replace('__init__.py', ''))
-    '''.strip(),
-  ],
-  check: true,
-).stdout().strip()
-cysignals = declare_dependency(include_directories: inc_cysignals)
+if is_windows
+  # Not yet available on Windows
+  cysignals = disabler()
+else
+  inc_cysignals = run_command(
+    py,
+    [
+      '-c',
+      '''
+  import cysignals
+  print(cysignals.__file__.replace('__init__.py', ''))
+      '''.strip(),
+    ],
+    check: false,
+  ).stdout().strip()
+  cysignals = declare_dependency(include_directories: inc_cysignals)
+endif
 
 inc_gmpy2 = run_command(
   py,
@@ -44,18 +49,23 @@ print(gmpy2.__file__.replace('__init__.py', ''))
 gmpy2 = declare_dependency(include_directories: inc_gmpy2)
 gmp = dependency('gmp')
 
-inc_cypari2 = run_command(
-  py,
-  [
-    '-c',
-    '''
-import cypari2
-print(cypari2.__file__.replace('__init__.py', ''))
-    '''.strip(),
-  ],
-  check: true,
-).stdout().strip()
-cypari2 = declare_dependency(include_directories: inc_cypari2)
+if is_windows
+  # Not yet available on Windows
+  cypari2 = disabler()
+else
+  inc_cypari2 = run_command(
+    py,
+    [
+      '-c',
+      '''
+  import cypari2
+  print(cypari2.__file__.replace('__init__.py', ''))
+      '''.strip(),
+    ],
+    check: true,
+  ).stdout().strip()
+  cypari2 = declare_dependency(include_directories: inc_cypari2)
+endif
 pari = cc.find_library('pari')
 
 mpfr = cc.find_library('mpfr')
@@ -96,8 +106,8 @@ ec = cc.find_library('ec')
 ecm = cc.find_library('ecm')
 ppl = cc.find_library('ppl')
 gmpxx = cc.find_library('gmpxx')
-fflas = dependency('fflas-ffpack')
-fplll = dependency('fplll')
+fflas = dependency('fflas-ffpack', required: not is_windows, disabler: true)
+fplll = dependency('fplll', required: not is_windows, disabler: true)
 givaro = cc.find_library('givaro')
 linbox = dependency('linbox', required: false)
 if not linbox.found()
@@ -108,8 +118,8 @@ mpfi = cc.find_library('mpfi')
 # Cannot be found via pkg-config (pkg-config file will be added in 4.13)
 # Test for common.h header that was added in 4.12 as a indirect version check
 gap = cc.find_library('gap', has_headers: ['gap/common.h'])
-singular = dependency('Singular')
-maxima = find_program('maxima', required: true)
+singular = dependency('Singular', required: not is_windows, disabler: true)
+maxima = find_program('maxima', required: not is_windows, disabler: true)
 # Cannot be found via pkg-config
 ntl = cc.find_library('ntl')
 # Cannot be found via pkg-config

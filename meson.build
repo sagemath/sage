@@ -12,6 +12,8 @@ py_module = import('python')
 py = py_module.find_installation(pure: false)
 py_dep = py.dependency()
 
+is_windows = host_machine.system() == 'windows'
+
 # Additional targets
 py_with_pytest = py_module.find_installation(
   required: false,

@@ -26,7 +26,7 @@ conf_data.set('SAGE_KENZO_FAS', '\'${prefix}\'/lib/ecl/kenzo.fas')
 # It can be found, so we don't have to set anything here:
 conf_data.set('NTL_INCDIR', '')
 conf_data.set('NTL_LIBDIR', '')
-ecl_config = find_program('ecl-config', required: true)
+ecl_config = find_program('ecl-config', required: not is_windows, disabler: true)
 conf_data.set('SAGE_ECL_CONFIG', ecl_config.full_path())
 conf_data.set('SAGE_ARCHFLAGS', 'unset')
 # not needed when using conda, as we then don't build any pc files
@@ -36,7 +36,7 @@ if openmp.found()
   conf_data.set('OPENMP_CFLAGS', '-fopenmp')
   conf_data.set('OPENMP_CXXFLAGS', '-fopenmp')
 endif
-gap_exe = find_program('gap')
+gap_exe = find_program('gap', required: not is_windows, disabler: true)
 if gap_exe.found()
   gaprun = run_command(
     gap_exe,
@@ -50,9 +50,9 @@ if gap_exe.found()
   )
   gap_root_paths = gaprun.stdout().strip()
   gap_root_paths = '${prefix}/lib/gap;${prefix}/share/gap;' + gaprun.stdout().strip()
+  conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
 endif
-conf_data.set('GAP_ROOT_PATHS', gap_root_paths)
-ecm_bin = find_program(['ecm', 'gmp-ecm'], required: true)
+ecm_bin = find_program(['ecm', 'gmp-ecm'], required: not is_windows, disabler: true)
 conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
 
 config_file = configure_file(
