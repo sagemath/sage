@@ -839,7 +839,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: L.closest_vector(t)
             (1326, 1349, 1339, 1345)
 
-            sage: # checking that the other algorithms work
+            sage: # Checking that the other algorithms work
             sage: L.approximate_closest_vector(t, algorithm='nearest_plane')
             (1326, 1349, 1339, 1345)
             sage: L.approximate_closest_vector(t, algorithm='rounding_off')
@@ -848,7 +848,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         if delta is None:
             delta = ZZ(99)/ZZ(100)
 
-        # bound checks on delta are performed in is_LLL_reduced
+        # Bound checks on delta are performed in is_LLL_reduced
         if not self._reduced_basis.is_LLL_reduced(delta=delta):
             self.LLL(*args, delta=delta, **kwargs)
 
@@ -859,11 +859,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             L = matrix(QQ, B.nrows()+1, B.ncols()+1)
             L.set_block(0, 0, B)
             L.set_block(B.nrows(), 0, matrix(t))
-            weight = (B[-1]*B[-1]).isqrt()+1  # norm of the largest vector
+            weight = (B[-1]*B[-1]).isqrt()+1  # Norm of the largest vector
             L[-1, -1] = weight
 
-            # the vector should be the last row but we iterate
-            # just in case
+            # The vector should be the last row but we iterate just in case
             for v in reversed(L.LLL(delta=delta, *args, **kwargs).rows()):
                 if abs(v[-1]) == weight:
                     return t - v[:-1]*v[-1].sign()
