@@ -2633,11 +2633,29 @@ class BipartiteGraph(Graph):
             sage: C.right
             {4, 5, 6}
 
+        TESTS:
+
+        Check that :issue:`38832` is fixed::
+
+            sage: B = BipartiteGraph(matrix([[1, 1], [1, 1]]))
+            sage: C = B.canonical_label()
+            sage: C.left, C.right
+            ({0, 1}, {2, 3})
+            sage: B.canonical_label(certificate=True)
+            (Bipartite graph on 4 vertices, {0: 0, 1: 1, 2: 2, 3: 3})
+            sage: C = B.canonical_label(edge_labels=True)
+            sage: C.left, C.right
+            ({0, 1}, {2, 3})
+            sage: B.allow_multiple_edges(True)
+            sage: B.add_edges(G.edges())
+            sage: C = B.canonical_label()
+            sage: C.left, C.right
+            ({0, 1}, {2, 3})
+
         .. SEEALSO::
 
             :meth:`~sage.graphs.generic_graph.GenericGraph.canonical_label()`
         """
-
         if certificate:
             C, cert = GenericGraph.canonical_label(self, partition=partition,
                                                    certificate=certificate,
@@ -2669,6 +2687,8 @@ class BipartiteGraph(Graph):
                 cert = {v: c[G_to[relabeling[v]]] for v in self}
 
             else:
+                if partition is None:
+                    partition = self.bipartition()
                 G_vertices = list(chain(*partition))
                 G_to = {u: i for i, u in enumerate(G_vertices)}
                 H = Graph(len(G_vertices))
