@@ -1918,6 +1918,75 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         mzd_free(A)
         self.cache('rank', r)
         return r
+    
+    def _solve_right_general(self, B, check=True):
+        """
+        Solve the matrix equation AX = B for X using the M4RI library.
+
+        INPUT:
+
+        - ``B`` -- a matrix
+        - ``check`` -- boolean (default: ``True``); whether to check if the
+          matrix equation has a solution
+
+        EXAMPLES::
+
+            sage: A = matrix(GF(2), [[1, 0], [0, 1], [1, 1]])
+            sage: A.solve_right(vector([1, 1, 0]))
+            (1, 1)
+            sage: A.solve_right(vector([1, 1, 1]))
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+        
+        TESTS::
+
+            sage: n = 128
+            sage: m = 128
+            sage: A = random_matrix(GF(2), n, m)
+            sage: B = A * random_vector(GF(2), m)
+            sage: A * A.solve_right(B) == B
+            True
+            sage: m = 64
+            sage: A = random_matrix(GF(2), n, m)
+            sage: B = A * random_vector(GF(2), m)
+            sage: A * A.solve_right(B) == B
+            True
+            sage: m = 256
+            sage: A = random_matrix(GF(2), n, m)
+            sage: B = A * random_vector(GF(2), m)
+            sage: A * A.solve_right(B) == B
+            True
+        """
+        cdef Matrix_mod2_dense X  # the solution
+
+        cdef mzd_t *B_entries = (<Matrix_mod2_dense>B)._entries
+        cdef rci_t rows = self._entries.nrows
+        if self._entries.nrows < self._entries.ncols:
+            rows = self._entries.ncols  # mzd_solve_left requires ncols <= nrows
+
+        cdef mzd_t *lhs = mzd_init(rows, self._entries.ncols)
+        mzd_copy(lhs, self._entries)
+        cdef mzd_t *rhs = mzd_init(rows, B_entries.ncols)
+        mzd_copy(rhs, B_entries)
+
+        sig_on()
+        # although it is called mzd_solve_left, it does the same thing as solve_right
+        ret = mzd_solve_left(lhs, rhs, 0, check)
+        sig_off()
+        mzd_free(lhs)
+
+        if ret == 0:
+            # solution is placed in rhs
+            X = self.new_matrix(nrows=self._entries.ncols, ncols=B_entries.ncols)
+            rhs.nrows = self._entries.ncols
+            mzd_copy(X._entries, rhs)
+            mzd_free(rhs)
+            return X
+        else:
+            mzd_free(rhs)
+            raise ValueError("matrix equation has no solutions")
+
 
     def _right_kernel_matrix(self, **kwds):
         r"""
