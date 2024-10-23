@@ -1918,7 +1918,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         mzd_free(A)
         self.cache('rank', r)
         return r
-    
+
     def _solve_right_general(self, B, check=True):
         """
         Solve the matrix equation AX = B for X using the M4RI library.
@@ -1938,7 +1938,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solutions
-        
+
         TESTS::
 
             sage: n = 128
@@ -1986,7 +1986,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         else:
             mzd_free(rhs)
             raise ValueError("matrix equation has no solutions")
-
 
     def _right_kernel_matrix(self, **kwds):
         r"""
