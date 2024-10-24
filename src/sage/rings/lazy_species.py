@@ -139,6 +139,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E(C).isotype_generating_series()
             1 + X + 2*X^2 + 3*X^3 + 5*X^4 + 7*X^5 + 11*X^6 + O(X^7)
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: L2 = LazySpecies(QQ, "X, Y")
             sage: P2 = PolynomialSpecies(QQ, "X, Y")
             sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
@@ -185,6 +186,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: C.generating_series()
             X + 1/2*X^2 + 1/3*X^3 + 1/4*X^4 + 1/5*X^5 + 1/6*X^6 + O(X^7)
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: L2 = LazySpecies(QQ, "X, Y")
             sage: P2 = PolynomialSpecies(QQ, "X, Y")
             sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
@@ -236,6 +238,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: s(C.cycle_index_series()[5])
             s[1, 1, 1, 1, 1] + s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[5]
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: L = LazySpecies(ZZ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: L2 = LazySpecies(QQ, "X, Y")
@@ -344,6 +347,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
              ((2, 3, 1), X^3),
              ((1, 3, 2), X^3)]
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: L2 = LazySpecies(QQ, "X, Y")
             sage: P2 = PolynomialSpecies(QQ, "X, Y")
             sage: X = L2(P2(SymmetricGroup(1), {0: [1]}))
@@ -432,6 +436,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E2(E2)
             P_4 + O^11
 
+            sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(QQ, "X")
             sage: Gc = L(lambda n: sum(P(G.automorphism_group()) for G in graphs(n) if G.is_connected()) if n else 0)
             sage: E = L(lambda n: SymmetricGroup(n))
