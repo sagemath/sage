@@ -4122,407 +4122,99 @@ class Graph(GenericGraph):
             ret += M.term(sigma.to_composition(), t**asc(sigma))
         return ret
 
-    @doc_index("Leftovers")
-    def matching(self, value_only=False, algorithm='Edmonds',
-                 use_edge_labels=False, solver=None, verbose=0,
-                 *, integrality_tolerance=1e-3):
+    @doc_index("Coloring")
+    def tutte_symmetric_function(self, R=None, t=None):
         r"""
-        Return a maximum weighted matching of the graph represented by the list
-        of its edges.
+        Return the Tutte symmetric function of ``self``.
 
-        For more information, see the :wikipedia:`Matching_(graph_theory)`.
-
-        Given a graph `G` such that each edge `e` has a weight `w_e`, a maximum
-        matching is a subset `S` of the edges of `G` of maximum weight such that
-        no two edges of `S` are incident with each other.
-
-        As an optimization problem, it can be expressed as:
+        Let `G` be a graph. The Tutte symmetric function `XB_G` of the graph
+        `G` was introduced in [Sta1998]_. We present the equivalent definition
+        given in [CS2022]_.
 
         .. MATH::
 
-            \mbox{Maximize : }&\sum_{e\in G.edges()} w_e b_e\\
-            \mbox{Such that : }&\forall v \in G,
-            \sum_{(u,v)\in G.edges()} b_{(u,v)}\leq 1\\
-            &\forall x\in G, b_x\mbox{ is a binary variable}
+            XB_G = \sum_{\pi \vdash V} (1+t)^{e(\pi)} \tilde{m}_{\lambda(\pi)},
+
+        where the sum ranges over all set-partitions `\pi` of the vertex set
+        `V`, `\lambda(\pi)` is the partition determined by the sizes of the
+        blocks of `\pi`, and `e(\pi)` is the number of edges whose endpoints
+        lie in the same block of `\pi`. In particular, the coefficients of
+        `XB_G` when expanded in terms of augmented monomial symmetric functions
+        are polynomials in `t` with non-negative integer coefficients.
+
+        For an integer partition `\lambda = 1^{r_1}2^{r_2}\cdots` expressed in
+        the exponential notation, the augmented monomial symmetric function
+        is defined as
+
+        .. MATH::
+
+            \tilde{m}_{\lambda} = \left(\prod_{i} r_i! \right) m_{\lambda}.
 
         INPUT:
 
-        - ``value_only`` -- boolean (default: ``False``); when set to ``True``,
-          only the cardinal (or the weight) of the matching is returned
+        - ``R`` -- (default: the parent of ``t``) the base ring for the symmetric
+          functions
 
-        - ``algorithm`` -- string (default: ``'Edmonds'``)
+        - ``t`` -- (default: `t` in `\ZZ[t]`) the parameter `t`
 
-          - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX
+        EXAMPLES::
 
-          - ``'LP'`` uses a Linear Program formulation of the matching problem
+            sage: p = SymmetricFunctions(ZZ).p()                                        # needs sage.combinat sage.modules
+            sage: G = Graph([[1,2],[2,3],[3,4],[4,1],[1,3]])
+            sage: XB_G = G.tutte_symmetric_function(); XB_G                             # needs sage.combinat sage.modules
+            24*m[1, 1, 1, 1] + (10*t+12)*m[2, 1, 1] + (4*t^2+10*t+6)*m[2, 2]
+             + (2*t^3+8*t^2+10*t+4)*m[3, 1]
+             + (t^5+5*t^4+10*t^3+10*t^2+5*t+1)*m[4]
+            sage: p(XB_G)                                                               # needs sage.combinat sage.modules
+            p[1, 1, 1, 1] + 5*t*p[2, 1, 1] + 2*t^2*p[2, 2]
+             + (2*t^3+8*t^2)*p[3, 1] + (t^5+5*t^4+8*t^3)*p[4]
 
-        - ``use_edge_labels`` -- boolean (default: ``False``)
+        Graphs are allowed to have multiedges and loops::
 
-          - when set to ``True``, computes a weighted matching where each edge
-            is weighted by its label (if an edge has no label, `1` is assumed)
+            sage: G = Graph([[1,2],[2,3],[2,3]], multiedges = True)
+            sage: XB_G = G.tutte_symmetric_function(); XB_G                             # needs sage.combinat sage.modules
+            6*m[1, 1, 1] + (t^2+3*t+3)*m[2, 1] + (t^3+3*t^2+3*t+1)*m[3]
 
-          - when set to ``False``, each edge has weight `1`
+        We check that at `t = -1`, we recover the usual chromatic symmetric
+        function::
 
-        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
-          Linear Programming (MILP) solver to be used. If set to ``None``, the
-          default one is used. For more information on MILP solvers and which
-          default solver is used, see the method :meth:`solve
-          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-          :class:`MixedIntegerLinearProgram
-          <sage.numerical.mip.MixedIntegerLinearProgram>`.
-
-        - ``verbose`` -- integer (default: 0); sets the level of verbosity:
-          set to 0 by default, which means quiet (only useful when ``algorithm
-          == "LP"``)
-
-        - ``integrality_tolerance`` -- float; parameter for use with MILP
-          solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
-
-        OUTPUT:
-
-        - When ``value_only=False`` (default), this method returns an
-          :class:`EdgesView` containing the edges of a maximum matching of `G`.
-
-        - When ``value_only=True``, this method returns the sum of the
-          weights (default: ``1``) of the edges of a maximum matching of `G`.
-          The type of the output may vary according to the type of the edge
-          labels and the algorithm used.
-
-        ALGORITHM:
-
-        The problem is solved using Edmond's algorithm implemented in NetworkX,
-        or using Linear Programming depending on the value of ``algorithm``.
-
-        EXAMPLES:
-
-        Maximum matching in a Pappus Graph::
-
-           sage: g = graphs.PappusGraph()
-           sage: g.matching(value_only=True)                                            # needs sage.networkx
-           9
-
-        Same test with the Linear Program formulation::
-
-           sage: g = graphs.PappusGraph()
-           sage: g.matching(algorithm='LP', value_only=True)                            # needs sage.numerical.mip
-           9
-
-        .. PLOT::
-
-            g = graphs.PappusGraph()
-            sphinx_plot(g.plot(edge_colors={"red":g.matching()}))
-
-        TESTS:
-
-        When ``use_edge_labels`` is set to ``False``, with Edmonds' algorithm
-        and LP formulation::
-
-            sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
-            sage: sorted(g.matching())                                                  # needs sage.networkx
-            [(0, 1, 0), (2, 3, -5)]
-            sage: sorted(g.matching(algorithm='LP'))                                    # needs sage.numerical.mip
-            [(0, 1, 0), (2, 3, -5)]
-
-        When ``use_edge_labels`` is set to ``True``, with Edmonds' algorithm and
-        LP formulation::
-
-            sage: g = Graph([(0,1,0), (1,2,999), (2,3,-5)])
-            sage: g.matching(use_edge_labels=True)                                      # needs sage.networkx
-            [(1, 2, 999)]
-            sage: g.matching(algorithm='LP', use_edge_labels=True)                      # needs sage.numerical.mip
-            [(1, 2, 999)]
-
-        With loops and multiedges::
-
-            sage: edge_list = [(0,0,5), (0,1,1), (0,2,2), (0,3,3), (1,2,6)
-            ....: , (1,2,3), (1,3,3), (2,3,3)]
-            sage: g = Graph(edge_list, loops=True, multiedges=True)
-            sage: m = g.matching(use_edge_labels=True)                                  # needs sage.networkx
-            sage: type(m)                                                               # needs sage.networkx
-            <class 'sage.graphs.views.EdgesView'>
-            sage: sorted(m)                                                             # needs sage.networkx
-            [(0, 3, 3), (1, 2, 6)]
-
-        TESTS:
-
-        If ``algorithm`` is set to anything different from ``'Edmonds'`` or
-        ``'LP'``, an exception is raised::
-
-           sage: g = graphs.PappusGraph()
-           sage: g.matching(algorithm='somethingdifferent')
-           Traceback (most recent call last):
-           ...
-           ValueError: algorithm must be set to either "Edmonds" or "LP"
+            sage: G = Graph([[1,2],[1,2],[2,3],[3,4],[4,5]], multiedges=True)
+            sage: XB_G = G.tutte_symmetric_function(t=-1); XB_G                         # needs sage.combinat sage.modules
+            120*m[1, 1, 1, 1, 1] + 36*m[2, 1, 1, 1] + 12*m[2, 2, 1]
+             + 2*m[3, 1, 1] + m[3, 2]
+            sage: X_G = G.chromatic_symmetric_function(); X_G                           # needs sage.combinat sage.modules
+            p[1, 1, 1, 1, 1] - 4*p[2, 1, 1, 1] + 3*p[2, 2, 1] + 3*p[3, 1, 1]
+             - 2*p[3, 2] - 2*p[4, 1] + p[5]
+            sage: XB_G == X_G                                                           # needs sage.combinat sage.modules
+            True
         """
-        from sage.rings.real_mpfr import RR
+        from sage.combinat.sf.sf import SymmetricFunctions
+        from sage.combinat.set_partition import SetPartitions
+        from sage.misc.misc_c import prod
+        from collections import Counter
 
-        def weight(x):
-            if x in RR:
-                return x
-            else:
-                return 1
+        if t is None:
+            t = ZZ['t'].gen()
+        if R is None:
+            R = t.parent()
+        m = SymmetricFunctions(R).m()
+        ret = m.zero()
+        V = self.vertices()
+        M = Counter(self.edge_iterator(labels=False))
+        fact = [1]
+        fact.extend(fact[-1] * i for i in range(1, len(V)+1))
 
-        W = {}
-        L = {}
-        for u, v, l in self.edge_iterator():
-            if u is v:
-                continue
-            fuv = frozenset((u, v))
-            if fuv not in L or (use_edge_labels and W[fuv] < weight(l)):
-                L[fuv] = l
-                if use_edge_labels:
-                    W[fuv] = weight(l)
+        def mono(pi):
+            arcs = 0
+            for s in pi:
+                for u in s:
+                    arcs += sum(M[(u, v)] for v in s if self.has_edge(u, v))
+            return arcs
 
-        if algorithm == "Edmonds":
-            import networkx
-            g = networkx.Graph()
-            if use_edge_labels:
-                for (u, v), w in W.items():
-                    g.add_edge(u, v, weight=w)
-            else:
-                for u, v in L:
-                    g.add_edge(u, v)
-            d = networkx.max_weight_matching(g)
-            if value_only:
-                if use_edge_labels:
-                    return sum(W[frozenset(e)] for e in d)
-                return Integer(len(d))
-
-            return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in d],
-                                   format='list_of_edges'))
-
-        elif algorithm == "LP":
-            g = self
-            from sage.numerical.mip import MixedIntegerLinearProgram
-            # returns the weight of an edge considering it may not be
-            # weighted ...
-            p = MixedIntegerLinearProgram(maximization=True, solver=solver)
-            b = p.new_variable(binary=True)
-            if use_edge_labels:
-                p.set_objective(p.sum(w * b[fe] for fe, w in W.items()))
-            else:
-                p.set_objective(p.sum(b[fe] for fe in L))
-            # for any vertex v, there is at most one edge incident to v in
-            # the maximum matching
-            for v in g:
-                p.add_constraint(p.sum(b[frozenset(e)] for e in self.edge_iterator(vertices=[v], labels=False)
-                                       if e[0] != e[1]), max=1)
-
-            p.solve(log=verbose)
-            b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
-            if value_only:
-                if use_edge_labels:
-                    return sum(w for fe, w in W.items() if b[fe])
-                return Integer(sum(1 for fe in L if b[fe]))
-
-            return EdgesView(Graph([(u, v, L[frozenset((u, v))])
-                                    for u, v in L if b[frozenset((u, v))]],
-                                   format='list_of_edges'))
-
-        raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
-
-    @doc_index("Leftovers")
-    def is_factor_critical(self, matching=None, algorithm='Edmonds', solver=None, verbose=0,
-                           *, integrality_tolerance=0.001):
-        r"""
-        Check whether this graph is factor-critical.
-
-        A graph of order `n` is factor-critical if every subgraph of `n-1`
-        vertices have a perfect matching, hence `n` must be odd. See
-        :wikipedia:`Factor-critical_graph` for more details.
-
-        This method implements the algorithm proposed in [LR2004]_ and we assume
-        that a graph of order one is factor-critical. The time complexity of the
-        algorithm is linear if a near perfect matching is given as input (i.e.,
-        a matching such that all vertices but one are incident to an edge of the
-        matching). Otherwise, the time complexity is dominated by the time
-        needed to compute a maximum matching of the graph.
-
-        INPUT:
-
-        - ``matching`` -- (default: ``None``) a near perfect matching of the
-          graph, that is a matching such that all vertices of the graph but one
-          are incident to an edge of the matching. It can be given using any
-          valid input format of :class:`~sage.graphs.graph.Graph`.
-
-          If set to ``None``, a matching is computed using the other parameters.
-
-        - ``algorithm`` -- string (default: ``'Edmonds'``); the algorithm to use
-          to compute a maximum matching of the graph among
-
-          - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX
-
-          - ``'LP'`` uses a Linear Program formulation of the matching problem
-
-        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
-          Linear Programming (MILP) solver to be used. If set to ``None``, the
-          default one is used. For more information on MILP solvers and which
-          default solver is used, see the method :meth:`solve
-          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-          :class:`MixedIntegerLinearProgram
-          <sage.numerical.mip.MixedIntegerLinearProgram>`.
-
-        - ``verbose`` -- integer (default: 0); sets the level of verbosity:
-          set to 0 by default, which means quiet (only useful when ``algorithm
-          == "LP"``)
-
-        - ``integrality_tolerance`` -- float; parameter for use with MILP
-          solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
-
-        EXAMPLES:
-
-        Odd length cycles and odd cliques of order at least 3 are
-        factor-critical graphs::
-
-            sage: [graphs.CycleGraph(2*i + 1).is_factor_critical() for i in range(5)]   # needs networkx
-            [True, True, True, True, True]
-            sage: [graphs.CompleteGraph(2*i + 1).is_factor_critical() for i in range(5)]            # needs networkx
-            [True, True, True, True, True]
-
-        More generally, every Hamiltonian graph with an odd number of vertices
-        is factor-critical::
-
-            sage: G = graphs.RandomGNP(15, .2)
-            sage: G.add_path([0..14])
-            sage: G.add_edge(14, 0)
-            sage: G.is_hamiltonian()
-            True
-            sage: G.is_factor_critical()                                                # needs networkx
-            True
-
-        Friendship graphs are non-Hamiltonian factor-critical graphs::
-
-            sage: [graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5)]             # needs networkx
-            [True, True, True, True]
-
-        Bipartite graphs are not factor-critical::
-
-            sage: G = graphs.RandomBipartite(randint(1, 10), randint(1, 10), .5)        # needs numpy
-            sage: G.is_factor_critical()                                                # needs numpy
-            False
-
-        Graphs with even order are not factor critical::
-
-            sage: G = graphs.RandomGNP(10, .5)
-            sage: G.is_factor_critical()
-            False
-
-        One can specify a matching::
-
-            sage: F = graphs.FriendshipGraph(4)
-            sage: M = F.matching()                                                      # needs networkx
-            sage: F.is_factor_critical(matching=M)                                      # needs networkx
-            True
-            sage: F.is_factor_critical(matching=Graph(M))                               # needs networkx
-            True
-
-        TESTS:
-
-        Giving a wrong matching::
-
-            sage: G = graphs.RandomGNP(15, .3)
-            sage: while not G.is_biconnected():
-            ....:     G = graphs.RandomGNP(15, .3)
-            sage: M = G.matching()                                                      # needs networkx
-            sage: G.is_factor_critical(matching=M[:-1])                                 # needs networkx
-            Traceback (most recent call last):
-            ...
-            ValueError: the input is not a near perfect matching of the graph
-            sage: G.is_factor_critical(matching=G.edges(sort=True))
-            Traceback (most recent call last):
-            ...
-            ValueError: the input is not a matching
-            sage: M = [(2*i, 2*i + 1) for i in range(9)]
-            sage: G.is_factor_critical(matching=M)
-            Traceback (most recent call last):
-            ...
-            ValueError: the input is not a matching of the graph
-        """
-        if self.order() == 1:
-            return True
-
-        # The graph must have an odd number of vertices, be 2-edge connected, so
-        # without bridges, and not bipartite
-        if (not self.order() % 2 or not self.is_connected() or
-                list(self.bridges()) or self.is_bipartite()):
-            return False
-
-        if matching:
-            # We check that the input matching is a valid near perfect matching
-            # of the graph.
-            M = Graph(matching)
-            if any(d != 1 for d in M.degree()):
-                raise ValueError("the input is not a matching")
-            if not M.is_subgraph(self, induced=False):
-                raise ValueError("the input is not a matching of the graph")
-            if (self.order() != M.order() + 1) or (self.order() != 2*M.size() + 1):
-                raise ValueError("the input is not a near perfect matching of the graph")
-        else:
-            # We compute a maximum matching of the graph
-            M = Graph(self.matching(algorithm=algorithm, solver=solver, verbose=verbose,
-                                    integrality_tolerance=integrality_tolerance))
-
-            # It must be a near-perfect matching
-            if self.order() != M.order() + 1:
-                return False
-
-        # We find the unsaturated vertex u, i.e., the only vertex of the graph
-        # not in M
-        for u in self:
-            if u not in M:
-                break
-
-        # We virtually build an M-alternating tree T
-        from queue import Queue
-        Q = Queue()
-        Q.put(u)
-        even = set([u])
-        odd = set()
-        pred = {u: u}
-        rank = {u: 0}
-
-        while not Q.empty():
-            x = Q.get()
-            for y in self.neighbor_iterator(x):
-                if y in odd:
-                    continue
-                elif y in even:
-                    # Search for the nearest common ancestor t of x and y
-                    P = [x]
-                    R = [y]
-                    while P[-1] != R[-1]:
-                        if rank[P[-1]] > rank[R[-1]]:
-                            P.append(pred[P[-1]])
-                        elif rank[P[-1]] < rank[R[-1]]:
-                            R.append(pred[R[-1]])
-                        else:
-                            P.append(pred[P[-1]])
-                            R.append(pred[R[-1]])
-                    t = P.pop()
-                    R.pop()
-                    # Set t as pred of all vertices of the chains and add
-                    # vertices marked odd to the queue
-                    for a in itertools.chain(P, R):
-                        pred[a] = t
-                        rank[a] = rank[t] + 1
-                        if a in odd:
-                            even.add(a)
-                            odd.discard(a)
-                            Q.put(a)
-                else:  # y has not been visited yet
-                    z = next(M.neighbor_iterator(y))
-                    odd.add(y)
-                    even.add(z)
-                    Q.put(z)
-                    pred[y] = x
-                    pred[z] = y
-                    rank[y] = rank[x] + 1
-                    rank[z] = rank[y] + 1
-
-        # The graph is factor critical if all vertices are marked even
-        return len(even) == self.order()
+        for pi in SetPartitions(V):
+            pa = pi.to_partition()
+            ret += prod(fact[i] for i in pa.to_exp()) * m[pa] * (1+t)**mono(pi)
+        return ret
 
     @doc_index("Algorithmically hard stuff")
     def has_homomorphism_to(self, H, core=False, solver=None, verbose=0,
@@ -6367,7 +6059,7 @@ class Graph(GenericGraph):
                 T.append([x, y, z])
 
         T = TwoGraph(T)
-        T.relabel({i: v for i, v in enumerate(self)})
+        T.relabel(dict(enumerate(self)))
 
         return T
 
@@ -9017,221 +8709,6 @@ class Graph(GenericGraph):
         return T.charpoly('t').reverse()
 
     @doc_index("Leftovers")
-    def perfect_matchings(self, labels=False):
-        r"""
-        Return an iterator over all perfect matchings of the graph.
-
-        ALGORITHM:
-
-        Choose a vertex `v`, then recurse through all edges incident to `v`,
-        removing one edge at a time whenever an edge is added to a matching.
-
-        INPUT:
-
-        - ``labels`` -- boolean (default: ``False``); when ``True``, the edges
-          in each perfect matching are triples (containing the label as the
-          third element), otherwise the edges are pairs.
-
-        .. SEEALSO::
-
-            :meth:`matching`
-
-        EXAMPLES::
-
-            sage: G=graphs.GridGraph([2,3])
-            sage: for m in G.perfect_matchings():
-            ....:     print(sorted(m))
-            [((0, 0), (0, 1)), ((0, 2), (1, 2)), ((1, 0), (1, 1))]
-            [((0, 0), (1, 0)), ((0, 1), (0, 2)), ((1, 1), (1, 2))]
-            [((0, 0), (1, 0)), ((0, 1), (1, 1)), ((0, 2), (1, 2))]
-
-            sage: G = graphs.CompleteGraph(4)
-            sage: for m in G.perfect_matchings(labels=True):
-            ....:     print(sorted(m))
-            [(0, 1, None), (2, 3, None)]
-            [(0, 2, None), (1, 3, None)]
-            [(0, 3, None), (1, 2, None)]
-
-            sage: G = Graph([[1,-1,'a'], [2,-2, 'b'], [1,-2,'x'], [2,-1,'y']])
-            sage: sorted(sorted(m) for m in G.perfect_matchings(labels=True))
-            [[(-2, 1, 'x'), (-1, 2, 'y')], [(-2, 2, 'b'), (-1, 1, 'a')]]
-
-            sage: G = graphs.CompleteGraph(8)
-            sage: mpc = G.matching_polynomial().coefficients(sparse=False)[0]           # needs sage.libs.flint
-            sage: len(list(G.perfect_matchings())) == mpc                               # needs sage.libs.flint
-            True
-
-            sage: G = graphs.PetersenGraph().copy(immutable=True)
-            sage: [sorted(m) for m in G.perfect_matchings()]
-            [[(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)],
-             [(0, 1), (2, 7), (3, 4), (5, 8), (6, 9)],
-             [(0, 4), (1, 2), (3, 8), (5, 7), (6, 9)],
-             [(0, 4), (1, 6), (2, 3), (5, 8), (7, 9)],
-             [(0, 5), (1, 2), (3, 4), (6, 8), (7, 9)],
-             [(0, 5), (1, 6), (2, 7), (3, 8), (4, 9)]]
-
-            sage: list(Graph().perfect_matchings())
-            [[]]
-
-            sage: G = graphs.CompleteGraph(5)
-            sage: list(G.perfect_matchings())
-            []
-        """
-        if not self:
-            yield []
-            return
-        if self.order() % 2 or any(len(cc) % 2 for cc in self.connected_components(sort=False)):
-            return
-
-        def rec(G):
-            """
-            Iterator over all perfect matchings of a simple graph `G`.
-            """
-            if not G:
-                yield []
-                return
-            if G.order() % 2 == 0:
-                v = next(G.vertex_iterator())
-                Nv = list(G.neighbor_iterator(v))
-                G.delete_vertex(v)
-                for u in Nv:
-                    Nu = list(G.neighbor_iterator(u))
-                    G.delete_vertex(u)
-                    for partial_matching in rec(G):
-                        partial_matching.append((u, v))
-                        yield partial_matching
-                    G.add_vertex(u)
-                    G.add_edges((u, nu) for nu in Nu)
-                G.add_vertex(v)
-                G.add_edges((v, nv) for nv in Nv)
-
-        # We create a mutable copy of the graph and remove its loops, if any
-        G = self.copy(immutable=False)
-        G.allow_loops(False)
-
-        # We create a mapping from frozen unlabeled edges to (labeled) edges.
-        # This ease for instance the manipulation of multiedges (if any)
-        edges = {}
-        for e in G.edges(sort=False, labels=labels):
-            f = frozenset(e[:2])
-            if f in edges:
-                edges[f].append(e)
-            else:
-                edges[f] = [e]
-
-        # We now get rid of multiple edges, if any
-        G.allow_multiple_edges(False)
-
-        # For each unlabeled matching, we yield all its possible labelings
-        for m in rec(G):
-            yield from itertools.product(*[edges[frozenset(e)] for e in m])
-
-    @doc_index("Leftovers")
-    def has_perfect_matching(self, algorithm='Edmonds', solver=None, verbose=0,
-                             *, integrality_tolerance=1e-3):
-        r"""
-        Return whether this graph has a perfect matching.
-        INPUT:
-
-        - ``algorithm`` -- string (default: ``'Edmonds'``)
-
-          - ``'Edmonds'`` uses Edmonds' algorithm as implemented in NetworkX to
-            find a matching of maximal cardinality, then check whether this
-            cardinality is half the number of vertices of the graph.
-
-          - ``'LP_matching'`` uses a Linear Program to find a matching of
-            maximal cardinality, then check whether this cardinality is half the
-            number of vertices of the graph.
-
-          - ``'LP'`` uses a Linear Program formulation of the perfect matching
-            problem: put a binary variable ``b[e]`` on each edge `e`, and for
-            each vertex `v`, require that the sum of the values of the edges
-            incident to `v` is 1.
-
-        - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
-          Linear Programming (MILP) solver to be used. If set to ``None``, the
-          default one is used. For more information on MILP solvers and which
-          default solver is used, see the method :meth:`solve
-          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
-          :class:`MixedIntegerLinearProgram
-          <sage.numerical.mip.MixedIntegerLinearProgram>`.
-
-        - ``verbose`` -- integer (default: 0); sets the level of verbosity:
-          set to 0 by default, which means quiet (only useful when
-          ``algorithm == "LP_matching"`` or ``algorithm == "LP"``)
-
-        - ``integrality_tolerance`` -- float; parameter for use with MILP
-          solvers over an inexact base ring; see
-          :meth:`MixedIntegerLinearProgram.get_values`.
-
-        OUTPUT: boolean
-
-        EXAMPLES::
-
-            sage: graphs.PetersenGraph().has_perfect_matching()                         # needs networkx
-            True
-            sage: graphs.WheelGraph(6).has_perfect_matching()                           # needs networkx
-            True
-            sage: graphs.WheelGraph(5).has_perfect_matching()                           # needs networkx
-            False
-            sage: graphs.PetersenGraph().has_perfect_matching(algorithm='LP_matching')  # needs sage.numerical.mip
-            True
-            sage: graphs.WheelGraph(6).has_perfect_matching(algorithm='LP_matching')    # needs sage.numerical.mip
-            True
-            sage: graphs.WheelGraph(5).has_perfect_matching(algorithm='LP_matching')
-            False
-            sage: graphs.PetersenGraph().has_perfect_matching(algorithm='LP_matching')  # needs sage.numerical.mip
-            True
-            sage: graphs.WheelGraph(6).has_perfect_matching(algorithm='LP_matching')    # needs sage.numerical.mip
-            True
-            sage: graphs.WheelGraph(5).has_perfect_matching(algorithm='LP_matching')
-            False
-
-        TESTS::
-
-            sage: G = graphs.EmptyGraph()
-            sage: all(G.has_perfect_matching(algorithm=algo)                            # needs networkx
-            ....:     for algo in ['Edmonds', 'LP_matching', 'LP'])
-            True
-
-        Be careful with isolated vertices::
-
-            sage: G = graphs.PetersenGraph()
-            sage: G.add_vertex(11)
-            sage: any(G.has_perfect_matching(algorithm=algo)                            # needs networkx
-            ....:     for algo in ['Edmonds', 'LP_matching', 'LP'])
-            False
-        """
-        if self.order() % 2:
-            return False
-        if algorithm == "Edmonds":
-            return len(self) == 2*self.matching(value_only=True,
-                                                use_edge_labels=False,
-                                                algorithm='Edmonds')
-        elif algorithm == "LP_matching":
-            return len(self) == 2*self.matching(value_only=True,
-                                                use_edge_labels=False,
-                                                algorithm='LP',
-                                                solver=solver,
-                                                verbose=verbose,
-                                                integrality_tolerance=integrality_tolerance)
-        elif algorithm == "LP":
-            from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
-            p = MixedIntegerLinearProgram(solver=solver)
-            b = p.new_variable(binary=True)
-            for v in self:
-                edges = self.edges_incident(v, labels=False)
-                if not edges:
-                    return False
-                p.add_constraint(p.sum(b[frozenset(e)] for e in edges) == 1)
-            try:
-                p.solve(log=verbose)
-                return True
-            except MIPSolverException:
-                return False
-        raise ValueError('algorithm must be set to "Edmonds", "LP_matching" or "LP"')
-
-    @doc_index("Leftovers")
     def effective_resistance(self, i, j, *, base_ring=None):
         r"""
         Return the effective resistance between nodes `i` and `j`.
@@ -10213,7 +9690,10 @@ class Graph(GenericGraph):
     from sage.graphs.tutte_polynomial import tutte_polynomial
     from sage.graphs.lovasz_theta import lovasz_theta
     from sage.graphs.partial_cube import is_partial_cube
-    from sage.graphs.orientations import strong_orientations_iterator, random_orientation, acyclic_orientations
+    from sage.graphs.orientations import orient
+    from sage.graphs.orientations import strong_orientations_iterator
+    from sage.graphs.orientations import random_orientation
+    from sage.graphs.orientations import acyclic_orientations
     from sage.graphs.connectivity import bridges, cleave, spqr_tree
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.comparability import is_comparability
@@ -10229,6 +9709,12 @@ class Graph(GenericGraph):
     from sage.graphs.graph_coloring import fractional_chromatic_number
     from sage.graphs.graph_coloring import fractional_chromatic_index
     from sage.graphs.hyperbolicity import hyperbolicity
+    from sage.graphs.matching import has_perfect_matching
+    from sage.graphs.matching import is_bicritical
+    from sage.graphs.matching import is_factor_critical
+    from sage.graphs.matching import is_matching_covered
+    from sage.graphs.matching import matching
+    from sage.graphs.matching import perfect_matchings
 
 
 _additional_categories = {
@@ -10257,6 +9743,7 @@ _additional_categories = {
     "is_permutation"            : "Graph properties",
     "tutte_polynomial"          : "Algorithmically hard stuff",
     "lovasz_theta"              : "Leftovers",
+    "orient" : "Connectivity, orientations, trees",
     "strong_orientations_iterator" : "Connectivity, orientations, trees",
     "random_orientation"        : "Connectivity, orientations, trees",
     "acyclic_orientations"      : "Connectivity, orientations, trees",
@@ -10277,7 +9764,13 @@ _additional_categories = {
     "fractional_chromatic_number" : "Coloring",
     "fractional_chromatic_index" : "Coloring",
     "geodetic_closure"          : "Leftovers",
-    "hyperbolicity"              : "Distances",
+    "hyperbolicity"             : "Distances",
+    "has_perfect_matching"      : "Matching",
+    "is_bicritical"             : "Matching",
+    "is_factor_critical"        : "Matching",
+    "is_matching_covered"       : "Matching",
+    "matching"                  : "Matching",
+    "perfect_matchings"         : "Matching"
     }
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}", gen_thematic_rest_table_index(Graph, _additional_categories))

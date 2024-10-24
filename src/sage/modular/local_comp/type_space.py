@@ -62,6 +62,7 @@ def example_type_space(example_no=0):
         # a ramified (odd p-power level) case
         return TypeSpace(Newform_constructor('27a'), 3)
 
+
 def find_in_space(f, A, base_extend=False):
     r"""
     Given a Newform object `f`, and a space `A` of modular symbols of the same
@@ -146,6 +147,7 @@ def find_in_space(f, A, base_extend=False):
             + "got dimension %s (should be %s)" % (D.dimension(), expected_dimension) )
 
     return D
+
 
 class TypeSpace(SageObject):
     r"""
@@ -401,12 +403,11 @@ class TypeSpace(SageObject):
             V = A.submodule(VV, check=False)
 
         D = V.decomposition()[0]
-        #if len(D.star_eigenvalues()) == 2:
+        # if len(D.star_eigenvalues()) == 2:
         #    D = D.sign_submodule(1)
         D1 = D.modular_symbols_of_sign(1)
         M = ModularForms(D1.group(), D1.weight(), D1.base_ring())
-        ff = Newform(M, D1, names='a')
-        return ff
+        return Newform(M, D1, names='a')
 
     #####################################
     # The group action on the type space.
@@ -634,7 +635,7 @@ class TypeSpace(SageObject):
         mats = self._intertwining_basis(a)
         V = self.t_space.nonembedded_free_module()
         v = self.eigensymbol_subspace().gen(0)
-        w = V.submodule_with_basis([m * v for m in mats]).coordinates(v) #v * self.e_space.diamond_eigenvalue(crt(a, 1, f, self.tame_level())))
+        w = V.submodule_with_basis([m * v for m in mats]).coordinates(v)  # v * self.e_space.diamond_eigenvalue(crt(a, 1, f, self.tame_level())))
         self._a = a
         self._amat = sum([mats[i] * w[i] for i in range(len(mats))])
 

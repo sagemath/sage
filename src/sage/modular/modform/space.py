@@ -1698,15 +1698,15 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         M = self.modular_symbols(sign=1)
         factors = M.cuspidal_subspace().new_subspace().decomposition()
-        large_dims = [ X.dimension() for X in factors if X.dimension() != 1 ]
-        if len(large_dims) > 0 and names is None:
+        large_dims = [X.dimension() for X in factors if X.dimension() != 1]
+        if large_dims and names is None:
             raise ValueError("Please specify a name to be used when generating names for generators of Hecke eigenvalue fields corresponding to the newforms.")
         elif names is None:
             # In this case, we don't need a variable name, so insert
             # something to get passed along below
             names = 'a'
-        return [ Newform(self, factors[i], names=(names+str(i)) )
-                 for i in range(len(factors)) ]
+        return [Newform(self, factors[i], names=names + str(i))
+                for i in range(len(factors))]
 
     @cached_method
     def eisenstein_submodule(self):
