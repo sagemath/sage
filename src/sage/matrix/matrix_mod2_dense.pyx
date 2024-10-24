@@ -1958,9 +1958,13 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A * A.solve_right(B) == B
             True
         """
-        cdef Matrix_mod2_dense X  # the solution
-
         cdef mzd_t *B_entries = (<Matrix_mod2_dense>B)._entries
+
+        cdef Matrix_mod2_dense X  # the solution
+        X = self.new_matrix(nrows=self._entries.ncols, ncols=B_entries.ncols)
+        if self._entries.nrows == 0 or self._entries.ncols == 0:
+            # special case: empty matrix
+            return X
         cdef rci_t rows = self._entries.nrows
         if self._entries.nrows < self._entries.ncols:
             rows = self._entries.ncols  # mzd_solve_left requires ncols <= nrows
@@ -1979,7 +1983,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
             if ret == 0:
                 # solution is placed in rhs
-                X = self.new_matrix(nrows=self._entries.ncols, ncols=B_entries.ncols)
                 rhs.nrows = self._entries.ncols
                 mzd_copy(X._entries, rhs)
                 return X
