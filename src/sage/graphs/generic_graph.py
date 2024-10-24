@@ -939,7 +939,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return self.latex_options().latex()
 
-    def tikz(self, format='dot2tex', edge_labels=None,
+    def tikz(self, format=None, edge_labels=None,
             color_by_label=False, prog='dot', rankdir='down',
             standalone_config=None, usepackage=None,
             usetikzlibrary=None, macros=None,
