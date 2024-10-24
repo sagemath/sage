@@ -405,7 +405,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             return TropicalSurface(self)
         return TropicalVariety(self)
 
-    def Newton_polytope(self):
+    def newton_polytope(self):
         """
         Return the Newton polytope of ``self``.
 
@@ -413,11 +413,11 @@ class TropicalMPolynomial(MPolynomial_polydict):
         corresponding to the exponents of the monomials of tropical
         polynomial.
 
-        OUTPUT: :class:`sage.geometry.polyhedron.constructor.Polyhedron`
+        OUTPUT: :class:`~sage.geometry.polyhedron.constructor.Polyhedron`
 
         EXAMPLES:
 
-        Newton polytope for a two-variable tropical polynomial::
+        A Newton polytope for a two-variable tropical polynomial::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
@@ -434,7 +434,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             p1 = x + y
             sphinx_plot(p1.Newton_polytope().plot())
 
-        Newton polytope in three dimension::
+        A Newton polytope in three dimension::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
@@ -468,7 +468,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
         the intersection of multiple components. Edges of the dual
         subdivision correspond to the individual components.
 
-        OUTPUT: :class:`sage.geometry.polyhedral_complex.PolyhedralComplex`
+        OUTPUT: :class:`~sage.geometry.polyhedral_complex.PolyhedralComplex`
 
         EXAMPLES:
 
@@ -506,9 +506,9 @@ class TropicalMPolynomial(MPolynomial_polydict):
 
         A subdivision with many faces, not all of which are triangles::
 
-            sage: p3 = R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2 \
-            ....:     + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4 \
-            ....:     + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4
+            sage: p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x^2 + x*y + R(1)*y^2
+            ....:      + R(2)*x^3 + x^2*y + x*y^2 + R(4)*y^3 + R(8)*x^4
+            ....:      + R(4)*x^3*y + x^2*y^2 + R(2)*x*y^3 + y^4)
             sage: p3.dual_subdivision().plot()
             Graphics object consisting of 10 graphics primitives
 
@@ -518,9 +518,9 @@ class TropicalMPolynomial(MPolynomial_polydict):
             T = TropicalSemiring(QQ,  use_min=False)
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
-            p3 = R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2 \
-                 + R(2)*x**3 + x**2*y + x*y**2 + R(4)*y**3 + R(8)*x**4 \
-                 + R(4)*x**3*y + x**2*y**2 + R(2)*x*y**3 + y**4
+            p3 = (R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2
+                  + R(2)*x**3 + x**2*y + x*y**2 + R(4)*y**3 + R(8)*x**4
+                  + R(4)*x**3*y + x**2*y**2 + R(2)*x*y**3 + y**4)
             sphinx_plot(p3.dual_subdivision().plot())
 
         Dual subdivision of a tropical surface::

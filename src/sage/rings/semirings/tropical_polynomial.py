@@ -11,6 +11,8 @@ EXAMPLES::
     sage: R.<x> = PolynomialRing(T)
     sage: x.parent()
     Univariate Tropical Polynomial Semiring in x over Rational Field
+    sage: (R(3)*x + R(1)) * (x^2 + x)
+    3*x^3 + 3*x^2 + 1*x
     sage: (x^2 + x + R(0))^2
     0*x^4 + 0*x^3 + 0*x^2 + 0*x + 0
 
@@ -166,7 +168,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         Return the list of all tropical roots of ``self``, counted with
         multiplicity.
 
-        OUTPUT: A list of tropical numbers
+        OUTPUT: a list of tropical numbers
 
         ALGORITHM:
 
@@ -344,7 +346,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         its corresponding linear function. Next, we must determine which
         term achieves the minimum (maximum) at each interval.
 
-        OUTPUT: A piecewise function
+        OUTPUT: a piecewise function
 
         EXAMPLES::
 

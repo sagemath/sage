@@ -544,7 +544,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         Suppose `L` is an intersection lying within the components
         `S_1, ldots, S_k` with respective weights `w_1, ldots, w_k`.
         This `L` is a linear structure in `\RR^{n-1}` and has `n-1`
-        direction vectors `d_1,d_2,\dots, d_{n-1}`. Each component
+        direction vectors `d_1,d_2,\ldots, d_{n-1}`. Each component
         `S_1, ldots, S_k` has a normal vector `n_1, \ldots, n_k`.
         Then, we scale each normal vector to an integer vector such
         that the greatest common divisor of its elements is 1.
@@ -674,7 +674,6 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
         WV = {i: [] for i in range(len(line_comps))}
         for k, index in line_comps.items():
-
             # Calculate direction vector of the line
             dir_vecs = []
             line = index_line[k][0]
@@ -1230,7 +1229,7 @@ class TropicalCurve(TropicalVariety):
         Return all vertices of ``self``, which is the point where three or
         more edges intersect.
 
-        OUTPUT: A set of `(x,y)` points
+        OUTPUT: a set of `(x,y)` points
 
         EXAMPLES::
 
@@ -1307,11 +1306,11 @@ class TropicalCurve(TropicalVariety):
         that vertex and points in the direction of the edge.
 
         Suppose `v` is a vertex adjacent to the edges `e_1, ldots, e_k`
-        with respective weights `w_1, ldots, w_k`. Every edge `e_i` is
+        with respective weights `w_1, \ldots, w_k`. Every edge `e_i` is
         contained in a line (component) defined by an equation. Therefore,
-        there exists a unique integer vector `v_i=(\alpha, \beta)` in
+        there exists a unique integer vector `v_i = (\alpha, \beta)` in
         the direction of `e_i` such that `\gcd(\alpha, \beta)=1`. Then,
-        each vertex `v` yield the vectors `w_1v_1,ldots,w_kv_k`.
+        each vertex `v` yield the vectors `w_1 v_1, ldots, w_k v_k`.
         These vectors will satisfy the following balancing condition:
         `\sum_{i=1}^k w_i v_i = 0`.
 
@@ -1428,7 +1427,10 @@ class TropicalCurve(TropicalVariety):
         Let `t(C)` be the number of trivalent vertices, and let `r(C)` be
         the number of unbounded edges of `C`. The genus of simple tropical
         curve `C` is defined by the formula:
-        `g(C) = \frac{1}{2}t(C) - \frac{1}{2}r(C) + 1`.
+
+        .. MATH::
+
+            g(C) = \frac{1}{2}t(C) - \frac{1}{2}r(C) + 1.
 
         EXAMPLES::
 
@@ -1518,7 +1520,7 @@ class TropicalCurve(TropicalVariety):
         r"""
         Return the intervals of each component's parameter of ``self``.
 
-        OUTPUT: A list of ``RealSet``
+        OUTPUT: a list of ``RealSet``
 
         EXAMPLES::
 
@@ -1617,9 +1619,9 @@ class TropicalCurve(TropicalVariety):
             T = TropicalSemiring(QQ)
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
-            p2 = R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2 \
-            + R(2)*x**3 + x**2*y + x*y**2 + R(4)*y**3 + R(8)*x**4 \
-            + R(4)*x**3*y + x**2*y**2 + R(2)*x*y**3 + y**4
+            p2 = (R(8) + R(4)*x + R(2)*y + R(1)*x**2 + x*y + R(1)*y**2
+                 + R(2)*x**3 + x**2*y + x*y**2 + R(4)*y**3 + R(8)*x**4
+                 + R(4)*x**3*y + x**2*y**2 + R(2)*x*y**3 + y**4)
             sphinx_plot(p2.tropical_variety().plot())
         """
         from sage.plot.plot import plot
