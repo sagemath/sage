@@ -1970,22 +1970,24 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         cdef mzd_t *rhs = mzd_init(rows, B_entries.ncols)
         mzd_copy(rhs, B_entries)
 
-        sig_on()
-        # although it is called mzd_solve_left, it does the same thing as solve_right
-        ret = mzd_solve_left(lhs, rhs, 0, check)
-        sig_off()
-        mzd_free(lhs)
+        cdef int ret
+        try:
+            sig_on()
+            # although it is called mzd_solve_left, it does the same thing as solve_right
+            ret = mzd_solve_left(lhs, rhs, 0, check)
+            sig_off()
 
-        if ret == 0:
-            # solution is placed in rhs
-            X = self.new_matrix(nrows=self._entries.ncols, ncols=B_entries.ncols)
-            rhs.nrows = self._entries.ncols
-            mzd_copy(X._entries, rhs)
+            if ret == 0:
+                # solution is placed in rhs
+                X = self.new_matrix(nrows=self._entries.ncols, ncols=B_entries.ncols)
+                rhs.nrows = self._entries.ncols
+                mzd_copy(X._entries, rhs)
+                return X
+            else:
+                raise ValueError("matrix equation has no solutions")
+        finally:
+            mzd_free(lhs)
             mzd_free(rhs)
-            return X
-        else:
-            mzd_free(rhs)
-            raise ValueError("matrix equation has no solutions")
 
     def _right_kernel_matrix(self, **kwds):
         r"""
