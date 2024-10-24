@@ -518,7 +518,10 @@ class AtomicSpeciesElement(Element, WithEqualityById,
 
         TESTS::
 
+            sage: A = AtomicSpecies("X")
             sage: [(a, b) for a, b in Subsets(A.subset(4), 2) if (a < b) != (b > a)]
+            []
+            sage: [(a, b) for a, b in Subsets(A.subset(4), 2) if (a <= b) != (b >= a)]
             []
             sage: A = AtomicSpecies("X, Y")
             sage: [(a, b) for a, b in Subsets(A.subset(3), 2) if (a < b) != (b > a)]
@@ -535,8 +538,7 @@ class AtomicSpeciesElement(Element, WithEqualityById,
         if op is op_GT:
             return other < self
         if op is op_LT:
-            if len(self._mc) != len(other._mc):
-                return False
+            # the arities match because the parents are equal
             if self._mc != other._mc:
                 # X should come before Y
                 return (sum(self._mc) < sum(other._mc)
@@ -1331,6 +1333,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
                 sage: [(a, b) for a, b in Subsets(M.subset(4), 2) if (a < b) != (b > a)]
                 []
+                sage: [(a, b) for a, b in Subsets(M.subset(4), 2) if (a <= b) != (b >= a)]
+                []
 
                 sage: M = MolecularSpecies("S, T")
                 sage: S = M(SymmetricGroup(1), {0: [1]})
@@ -1348,8 +1352,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             if op is op_GT:
                 return other < self
             if op is op_LT:
-                if len(self.grade()) != len(other.grade()):
-                    return False
+                # the arities match because the parents are equal
                 if self.grade() != other.grade():
                     # X should come before Y
                     return (sum(self.grade()) < sum(other.grade())
