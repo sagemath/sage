@@ -1196,7 +1196,7 @@ class KnotInfoBase(Enum):
             True
         """
         geometric_type = self[self.items.geometric_type]
-        if (geometric_type == 'hyperbolic'):
+        if geometric_type == 'hyperbolic':
             return True
         return False
 
@@ -1351,7 +1351,7 @@ class KnotInfoBase(Enum):
         cosmetic_crossing = self[self.items.cosmetic_crossing]
         if self.crossing_number() == 0:
             return True
-        if (not cosmetic_crossing or cosmetic_crossing == 'Unknown'):
+        if not cosmetic_crossing or cosmetic_crossing == 'Unknown':
             return False
         verified = not knotinfo_bool(cosmetic_crossing)
         assert verified
