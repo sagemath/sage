@@ -1390,7 +1390,7 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         F = self.residue_ring().coerce(F)
 
         from sage.categories.fields import Fields
-        if not self.domain().base_ring() in Fields():
+        if self.domain().base_ring() not in Fields():
             raise NotImplementedError("only implemented for polynomial rings over fields")
 
         if F.is_constant():
@@ -1481,7 +1481,7 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         F = self.residue_ring().coerce(F)
 
         from sage.categories.fields import Fields
-        if not self.domain().base_ring() in Fields():
+        if self.domain().base_ring() not in Fields():
             raise NotImplementedError("only implemented for polynomial rings over fields")
 
         if check:

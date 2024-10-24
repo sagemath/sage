@@ -245,7 +245,8 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.blocks_and_cuts_tree` | Compute the blocks-and-cuts tree of the graph.
     :meth:`~GenericGraph.is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
     :meth:`~GenericGraph.`is_edge_cut` | Check whether the input edges form an edge cut.
-    :meth:`~GenericGraph.is_cut_vertex` | Return ``True`` if the input vertex is a cut-vertex.
+    :meth:`~GenericGraph.is_cut_vertex` | Check whether the input vertex is a cut-vertex.
+    :meth:`~GenericGraph.is_vertex_cut` | Check whether the input vertices form a vertex cut.
     :meth:`~GenericGraph.edge_cut` | Return a minimum edge cut between vertices `s` and `t`
     :meth:`~GenericGraph.vertex_cut` | Return a minimum vertex cut between non-adjacent vertices `s` and `t`
     :meth:`~GenericGraph.flow` | Return a maximum flow in the graph from ``x`` to ``y``
@@ -7512,7 +7513,7 @@ class GenericGraph(GenericGraph_pyx):
            sage: g.edge_cut(1, 2, value_only=True, algorithm='LP')                      # needs sage.numerical.mip
            3
 
-        :issue:`12797`::
+        Check that :issue:`12797` and :issue:`38713` are fixed::
 
             sage: G = Graph([(0, 3, 1), (0, 4, 1), (1, 2, 1), (2, 3, 1), (2, 4, 1)])
             sage: G.edge_cut(0, 1, value_only=False, use_edge_labels=True)
@@ -7521,7 +7522,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.edge_cut(0, 1, value_only=False, use_edge_labels=True)
             [1, [(2, 1, 1)]]
             sage: G.edge_cut(0, 1, value_only=False, use_edge_labels=True, algorithm='LP')          # needs sage.numerical.mip
-            (1, [(2, 1)])
+            (1, [(2, 1, 1)])
         """
         self._scream_if_not_simple(allow_loops=True)
         if vertices:
@@ -7574,9 +7575,10 @@ class GenericGraph(GenericGraph_pyx):
         # frozensets otherwise
         if g.is_directed():
             def good_edge(e):
-                return e
+                return (e[0], e[1])
         else:
-            good_edge = frozenset
+            def good_edge(e):
+                return frozenset((e[0], e[1]))
 
         # Some vertices belong to part 1, others to part 0
         p.add_constraint(v[s], min=0, max=0)
@@ -7589,7 +7591,7 @@ class GenericGraph(GenericGraph_pyx):
 
             # Adjacent vertices can belong to different parts only if the
             # edge that connects them is part of the cut
-            for x, y in g.edge_iterator(labels=None):
+            for x, y in g.edge_iterator(labels=False):
                 p.add_constraint(v[x] + b[good_edge((x, y))] - v[y], min=0)
 
         else:
@@ -7597,7 +7599,7 @@ class GenericGraph(GenericGraph_pyx):
             p.set_objective(p.sum(weight(w) * b[good_edge((x, y))] for x, y, w in g.edge_iterator()))
             # Adjacent vertices can belong to different parts only if the
             # edge that connects them is part of the cut
-            for x, y in g.edge_iterator(labels=None):
+            for x, y in g.edge_iterator(labels=False):
                 p.add_constraint(v[x] + b[good_edge((x, y))] - v[y], min=0)
                 p.add_constraint(v[y] + b[good_edge((x, y))] - v[x], min=0)
 
@@ -7612,7 +7614,7 @@ class GenericGraph(GenericGraph_pyx):
             return obj
 
         answer = [obj]
-        answer.append([e for e in g.edge_iterator(labels=False) if b[good_edge(e)]])
+        answer.append([e for e in g.edge_iterator(labels=True) if b[good_edge(e)]])
 
         if vertices:
             v = p.get_values(v, convert=bool, tolerance=integrality_tolerance)
@@ -18926,7 +18928,7 @@ class GenericGraph(GenericGraph_pyx):
             # Non-existing start vertex is detected later if distance > 0.
             if not distance:
                 for v in queue:
-                    if not v[0] in self:
+                    if v[0] not in self:
                         raise LookupError("start vertex ({0}) is not a vertex of the graph".format(v[0]))
 
             for v, d in queue:
@@ -22676,7 +22678,7 @@ class GenericGraph(GenericGraph_pyx):
             for f in edge_option_functions:
                 edge_options.update(f((u, v, label)))
 
-            if not edge_options['edge_string'] in ['--', '->']:
+            if edge_options['edge_string'] not in ['--', '->']:
                 raise ValueError("edge_string(='{}') in edge_options dict for "
                                  "the edge ({}, {}) should be '--' or '->'"
                                  .format(edge_options['edge_string'], u, v))
@@ -22761,7 +22763,7 @@ class GenericGraph(GenericGraph_pyx):
               node_2 -- node_3 [label="foo"];
             }
         """
-        with open(filename, 'wt') as file:
+        with open(filename, "w") as file:
             file.write(self.graphviz_string(**options))
 
     # Spectrum
@@ -25003,6 +25005,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.connectivity import is_cut_edge
     from sage.graphs.connectivity import is_edge_cut
     from sage.graphs.connectivity import is_cut_vertex
+    from sage.graphs.connectivity import is_vertex_cut
     from sage.graphs.connectivity import edge_connectivity
     from sage.graphs.connectivity import vertex_connectivity
     from sage.graphs.distances_all_pairs import szeged_index
