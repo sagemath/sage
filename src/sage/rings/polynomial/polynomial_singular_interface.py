@@ -424,6 +424,21 @@ def can_convert_to_singular(R):
         sage: R.<x,y> = Zmod(10^20 + 1)[]
         sage: R._has_singular
         True
+
+    Check for :issue:`38849`::
+        sage: # needs sage.rings.finite_rings
+        sage: R.<x,y> = GF(163)[]
+        sage: R._has_singular
+        True
+        sage: R.<x,y> = GF(2**127 - 1)[]
+        sage: R._has_singular
+        False
+        sage: R.<x,y> = Zmod(2**10)[]
+        sage: R._has_singular
+        True
+        sage: R.<x,y> = Zmod(2**100)[]
+        sage: R._has_singular
+        False
     """
     if R.ngens() == 0:
         return False
@@ -431,11 +446,10 @@ def can_convert_to_singular(R):
     base_ring = R.base_ring()
     if (base_ring is ZZ
         or isinstance(base_ring, RationalField)
-        or isinstance(base_ring, (sage.rings.abc.IntegerModRing,
-                                  sage.rings.abc.RealField, sage.rings.abc.ComplexField,
+        or isinstance(base_ring, (sage.rings.abc.RealField, sage.rings.abc.ComplexField,
                                   sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))):
         return True
-    elif isinstance(base_ring, FiniteField):
+    elif isinstance(base_ring, (sage.rings.abc.IntegerModRing, FiniteField)):
         return base_ring.characteristic() <= 2147483647
     elif isinstance(base_ring, NumberField):
         return base_ring.is_absolute()
