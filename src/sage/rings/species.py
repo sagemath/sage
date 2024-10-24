@@ -234,8 +234,6 @@ class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Pa
              < a, b | a^2, b^2, a^-1*b^-1*a*b > to Set of conjugacy classes of
              directly indecomposable subgroups
         """
-        if parent(x) == self:
-            return x
         if isinstance(x, PermutationGroup_generic):
             if len(x.disjoint_direct_product_decomposition()) > 1:
                 raise ValueError(f"{x} is not directly indecomposable")
@@ -660,6 +658,8 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: A = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[(1,2), (3,4,5,6)]])
             sage: a = A(G, {0:[1,2], 1:[3,4,5,6]})
+            sage: A(a) == a
+            True
             sage: A(a, {0:[3,4,5,6], 1:[1,2]})
             Traceback (most recent call last):
             ...
@@ -693,9 +693,8 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             ValueError: 0 must be a permutation group
         """
         if parent(G) == self:
-            if pi is not None:
-                raise ValueError("cannot reassign sorts to an atomic species")
-            return G
+            # pi cannot be None because of framework
+            raise ValueError("cannot reassign sorts to an atomic species")
         if not isinstance(G, PermutationGroup_generic):
             raise ValueError(f"{G} must be a permutation group")
         if pi is None:
@@ -808,6 +807,8 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
             sage: G = PermutationGroup([(1,2)])
             sage: G in AtomicSpecies("X")
+            True
+            sage: A(G) in A
             True
             sage: G in AtomicSpecies("X, Y")
             False
@@ -1119,6 +1120,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
             sage: G = PermutationGroup([[(1,2), (3,4,5,6)]])
             sage: a = M(G, {0:[1,2], 1:[3,4,5,6]})
+            sage: M(a) == a
+            True
             sage: M(a, {0:[3,4,5,6], 1:[1,2]})
             Traceback (most recent call last):
             ...
@@ -1148,9 +1151,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
              group action on the given domain pi=None
         """
         if parent(G) == self:
-            if pi is not None:
-                raise ValueError("cannot reassign sorts to a molecular species")
-            return G
+            # pi cannot be None because of framework
+            raise ValueError("cannot reassign sorts to a molecular species")
 
         if isinstance(G, PermutationGroup_generic):
             if pi is None:
@@ -1496,6 +1498,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             r"""
             Return the cycle index of ``self``.
 
+            This is essentially a variant of
+            :meth:`~sage.categories.finite_permutation_groups.FinitePermutationGroups.ParentMethods.cycle_index`
+            for subgroups of a Young subgroup of the symmetric group.
+
             EXAMPLES::
 
                 sage: from sage.rings.species import MolecularSpecies
@@ -1504,6 +1510,24 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: A = M(G, {0: [5,6], 1: [1,2,3,4]})
                 sage: A.cycle_index()
                 1/4*p[1, 1] # p[1, 1, 1, 1] + 1/4*p[1, 1] # p[2, 2] + 1/4*p[2] # p[1, 1, 1, 1] + 1/4*p[2] # p[2, 2]
+
+            TESTS:
+
+            Check that we support different parents::
+
+                sage: F = CombinatorialFreeModule(QQ, Partitions())
+                sage: P = A.cycle_index(parent=tensor([F, F]))
+                sage: P
+                1/4*B[[1, 1]] # B[[1, 1, 1, 1]] + 1/4*B[[1, 1]] # B[[2, 2]] + 1/4*B[[2]] # B[[1, 1, 1, 1]] + 1/4*B[[2]] # B[[2, 2]]
+                sage: P.parent() is tensor([F, F])
+                True
+
+            This parent should be a module with basis indexed by partitions::
+
+                sage: A.cycle_index(parent=QQ)
+                Traceback (most recent call last):
+                  ...
+                ValueError: `parent` should be a module with basis indexed by partitions
             """
             k = self.parent()._arity
             if parent is None:
@@ -1577,6 +1601,20 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 Traceback (most recent call last):
                 ...
                 ValueError: number of args must match arity of self
+
+                sage: M.one()(2)
+                Traceback (most recent call last):
+                ...
+                ValueError: all args must be molecular species
+
+                sage: M2 = MolecularSpecies("X, Y")
+                sage: X2 = M2(SymmetricGroup(1), {0: [1]})
+                sage: Y2 = M2(SymmetricGroup(1), {1: [1]})
+                sage: X = M(SymmetricGroup(1))
+                sage: (X2*Y2)(X2, X)
+                Traceback (most recent call last):
+                ...
+                ValueError: all args must have the same parent
             """
             if len(args) != self.parent()._arity:
                 raise ValueError("number of args must match arity of self")
@@ -1737,10 +1775,19 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: (X*E2).hadamard_product(X*E2)
             X*E_2 + X^3
 
+            sage: C3.hadamard_product(E2^2)
+            0
+
         TESTS::
 
             sage: C3.hadamard_product(-C3)
             -2*C_3
+
+            sage: Q = PolynomialSpecies(ZZ, ["Y"])
+            sage: P.one().hadamard_product(Q.one())
+            Traceback (most recent call last):
+            ...
+            ValueError: the factors of a Hadamard product must have the same parent
         """
         P = self.parent()
         if P is not other.parent():
