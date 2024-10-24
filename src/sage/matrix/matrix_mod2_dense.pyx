@@ -1964,6 +1964,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         X = self.new_matrix(nrows=self._entries.ncols, ncols=B_entries.ncols)
         if self._entries.ncols == 0 or B_entries.ncols == 0:
             # special case: empty matrix
+            if B != 0:
+                raise ValueError("matrix equation has no solutions")
             return X
         cdef rci_t rows = self._entries.nrows
         if self._entries.nrows < self._entries.ncols:
