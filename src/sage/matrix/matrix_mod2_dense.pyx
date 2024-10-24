@@ -1962,7 +1962,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         cdef Matrix_mod2_dense X  # the solution
         X = self.new_matrix(nrows=self._entries.ncols, ncols=B_entries.ncols)
-        if self._entries.nrows == 0 or self._entries.ncols == 0:
+        if self._entries.ncols == 0 or B_entries.ncols == 0:
             # special case: empty matrix
             return X
         cdef rci_t rows = self._entries.nrows
