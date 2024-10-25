@@ -581,7 +581,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
               3: [(0, 1, 1), (0, 0, -1), (0, -1, 0)]})
 
         TESTS:
-        
+
         Checking the balance condition of weight vectors::
 
             sage: T = TropicalSemiring(QQ)
