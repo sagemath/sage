@@ -7543,6 +7543,22 @@ class GenericGraph(GenericGraph_pyx):
                 p.add_constraint(pos[root, c] + BFS[u] <= pos[u, c])
 
         # We now solve this program and extract the solution
+
+        from sage.numerical.backends.glpk_backend import GLPKBackend
+        if isinstance(p.get_backend(), GLPKBackend):
+            # The MIP approach with GLPK is prone to compiler and
+            # optimization-level weirdness on some hardware:
+            #
+            #   * https://github.com/sagemath/sage/issues/34575
+            #   * https://github.com/sagemath/sage/issues/38831
+            #
+            # Disabling the presolver manages to perturb reality just
+            # enough in the one scenario that we doctest explicitly to
+            # "fix" the problem. It's also limited enough in scope
+            # that it probably hasn't badly broken some other use
+            # case.
+            p.solver_parameter("presolve_intopt", False)
+
         try:
             p.solve(log=verbose)
         except MIPSolverException:
