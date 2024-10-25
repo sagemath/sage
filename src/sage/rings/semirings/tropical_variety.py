@@ -580,22 +580,18 @@ class TropicalVariety(UniqueRepresentation, SageObject):
               2: [(1, 0, 2), (0, 0, -2), (-1, 0, 0)],
               3: [(0, 1, 1), (0, 0, -1), (0, -1, 0)]})
 
-        Weight vectors of tropical hypersurface::
+        Checking the balance condition of weight vectors::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<a,b,c,d> = PolynomialRing(T)
-            sage: p1 = R(2)*a*b + R(3)*a*c + R(-1)*c^2 + R(-1/3)*a*d
-            sage: tv = p1.tropical_variety()
-            sage: tv.weight_vectors()
-            ({0: ((u1, u3 - 7/3, u3 - 10/3, u3), {u1 <= u3 - 22/3}),
-              1: ((u2 - 4, u2 + 1, u2, u3), {u2 <= u3 - 10/3}),
-              2: ((2*u1 - u3 - 2/3, u3 - 7/3, u1, u3), {u3 - 10/3 <= u1}),
-              3: ((u3 - 22/3, u2, u3 - 10/3, u3), {u3 - 7/3 <= u2})},
-             {0: [0, 2, 4], 1: [0, 1, 3], 2: [1, 2, 5], 3: [3, 4, 5]},
-             {0: [(0, -1, -1, 2), (0, -1, 2, -1), (0, 2, -1, -1)],
-              1: [(2, -1, -1, 0), (-3, 3, 0, 0), (1, -2, 1, 0)],
-              2: [(1, -5, -2, 6), (-2, -1, 4, -1), (1, 6, -2, -5)],
-              3: [(1, 0, 1, -2), (2, 0, -1, -1), (-3, 0, 0, 3)]})
+            sage: balance_list = []
+            sage: for _ in range(5):
+            ....:   f = R.random_element()
+            ....:   vec = f.tropical_variety().weight_vectors()[2].values()
+            ....:   balance = all(a == vector([0,0,0,0]) for a in [sum(lst) for lst in vec])
+            ....:   balance_list.append(balance)
+            sage: all(balance == True for balance in balance_list)
+            True
         """
         from sage.symbolic.ring import SR
         from sage.symbolic.relation import solve
@@ -603,6 +599,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         from sage.arith.misc import gcd
         from sage.matrix.constructor import matrix
         from sage.modules.free_module_element import vector, zero_vector
+        from itertools import combinations
 
         dim = self.dimension()
         t = SR.var('t')
@@ -659,11 +656,9 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                             is_unique = False
                             break
                 if is_unique:
-                    new_eqn = [eq.subs(convert_tu) for eq in eqn]
-                    new_eqn = tuple(new_eqn)
+                    new_eqn = tuple([eq.subs(convert_tu) for eq in eqn])
                     cdns = line[1]
-                    new_cdn = [cdn.subs(convert_tu) for cdn in cdns]
-                    new_cdn = set(new_cdn)
+                    new_cdn = set([cdn.subs(convert_tu) for cdn in cdns])
                     unique_line.add(new_eqn)
                     index_line[index] = tuple([new_eqn, new_cdn])
                     line_comps[index] = [i]
@@ -672,8 +667,8 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                     match_key = [k for k, v in index_line.items() if v[0] == tuple(new_line)][0]
                     line_comps[match_key].append(i)
 
-        WV = {i: [] for i in range(len(line_comps))}
-        for k, index in line_comps.items():
+        WV = {i: [] for i in range(len(line_comps)) if len(line_comps[i]) > 1}
+        for k in WV:
             # Calculate direction vector of the line
             dir_vecs = []
             line = index_line[k][0]
@@ -690,7 +685,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
             # Calculate the outgoing normal vector of each surface in the
             # direction of the line
-            for i in index:
+            for i in line_comps[k]:
                 surface = self._hypersurface[i][0]
                 drv_vectors = []
                 for vpar in self._vars:
@@ -725,11 +720,17 @@ class TropicalVariety(UniqueRepresentation, SageObject):
                 weight_vec *= order
                 WV[k].append(weight_vec)
 
-            for i in range(len(WV[k])):
-                test_vectors = [v for v in WV[k]]
-                test_vectors[i] = -test_vectors[i]
-                if sum(test_vectors) == zero_vector(QQ, dim):
-                    WV[k] = test_vectors
+            balance = False
+            for i in range(1, len(WV[k])+1):
+                for j in combinations(range(len(WV[k])), i):
+                    test_vectors = [v for v in WV[k]]
+                    for idx in j:
+                        test_vectors[idx] = -test_vectors[idx]
+                    if sum(test_vectors) == zero_vector(QQ, dim):
+                        WV[k] = test_vectors
+                        balance = True
+                        break
+                if balance:
                     break
 
         return index_line, line_comps, WV

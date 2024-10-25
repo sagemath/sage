@@ -152,7 +152,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
     Another way to represent tropical curve is through dual subdivision,
     which is a subdivision of Newton polytope of tropical polynomial::
 
-        sage: p1.Newton_polytope()
+        sage: p1.newton_polytope()
         A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 3 vertices
         sage: p1.dual_subdivision()
         Polyhedral complex with 1 maximal cell
@@ -422,7 +422,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y> = PolynomialRing(T)
             sage: p1 = x + y
-            sage: p1.Newton_polytope()
+            sage: p1.newton_polytope()
             A 1-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices
 
         .. PLOT::
@@ -432,14 +432,14 @@ class TropicalMPolynomial(MPolynomial_polydict):
             R = PolynomialRing(T, ('x,y'))
             x, y = R.gen(), R.gen(1)
             p1 = x + y
-            sphinx_plot(p1.Newton_polytope().plot())
+            sphinx_plot(p1.newton_polytope().plot())
 
         A Newton polytope in three dimension::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<x,y,z> = PolynomialRing(T)
             sage: p1 = x^2 + x*y*z + x + y + z + R(0)
-            sage: p1.Newton_polytope()
+            sage: p1.newton_polytope()
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 5 vertices
 
         .. PLOT::
@@ -449,7 +449,7 @@ class TropicalMPolynomial(MPolynomial_polydict):
             R = PolynomialRing(T, ('x,y,z'))
             x, y, z = R.gen(), R.gen(1), R.gen(2)
             p1 = x**2 + x*y*z + x + y + z + R(0)
-            sphinx_plot(p1.Newton_polytope().plot())
+            sphinx_plot(p1.newton_polytope().plot())
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
 
