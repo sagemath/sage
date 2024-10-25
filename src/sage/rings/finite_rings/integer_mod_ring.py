@@ -1728,7 +1728,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         ALGORITHM:
 
-        The algorithm is adapted from [Gouvea], section 4.5, and [Coh1993],
+        The algorithm is adapted from [Gou2020]_, section 4.5, and [Coh1993]_,
         section 3.5.3.  It is a combination of the Chinese Remainder Theorem
         and Hensel's lemma.  As a base case, if $N$ is prime, then we find
         roots by factoring $f$.  If $N$ is a prime power $p^e$, then we find
