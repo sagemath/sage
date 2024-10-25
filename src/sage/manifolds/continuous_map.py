@@ -1063,7 +1063,7 @@ class ContinuousMap(Morphism):
 
         EXAMPLES:
 
-        A simple reparamentrization::
+        A simple reparametrization::
 
             sage: R.<t> = manifolds.RealLine()
             sage: I = R.open_interval(0, 2*pi)
