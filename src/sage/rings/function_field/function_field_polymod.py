@@ -560,6 +560,7 @@ class FunctionField_polymod(FunctionField):
             return ZZ(1)
         return self._polynomial.degree() * self.base_field().degree(base)
 
+
     def _repr_(self):
         """
         Return the string representation of the function field.
@@ -571,7 +572,22 @@ class FunctionField_polymod(FunctionField):
             sage: L._repr_()
             'Function field in y defined by y^5 - 2*x*y + (-x^4 - 1)/x'
         """
-        return "Function field in %s defined by %s" % (self.variable_name(), self._polynomial)
+        return (f"Function field in {self.variable_name()} defined by "
+                f"{self._polynomial}")
+
+    def _latex_(self):
+        r"""
+        Return the LaTeX representation of the function field.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+            sage: L.<y> = K.extension(y^5 - (x^3 + 2*x*y + 1/x))
+            sage: latex(L)
+            \text{Function field in } y \text{ defined by } y^{5} - 2 x y + \frac{-x^{4} - 1}{x}
+        """
+        return (fr"\text{{Function field in }} {self.variable_name()} "
+                fr"\text{{ defined by }} {self._polynomial._latex_()}")
 
     def base_field(self):
         """
