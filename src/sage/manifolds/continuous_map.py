@@ -34,6 +34,7 @@ REFERENCES:
 from sage.categories.homset import Hom
 from sage.categories.morphism import Morphism
 
+
 class ContinuousMap(Morphism):
     r"""
     Continuous map between two topological manifolds.
