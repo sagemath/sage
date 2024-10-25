@@ -560,7 +560,6 @@ class FunctionField_polymod(FunctionField):
             return ZZ(1)
         return self._polynomial.degree() * self.base_field().degree(base)
 
-
     def _repr_(self):
         """
         Return the string representation of the function field.
