@@ -484,7 +484,7 @@ class SimplicialSets(Category_singleton):
                         char[s] = G.one()
 
                 for d in range(1, self.dimension() + 1):
-                    for s in self.n_cells(d):
+                    for s in self.all_n_simplices(d):
                         if s not in char.keys():
                             if d == 1 and s.is_degenerate():
                                 char[s] = G.one()
@@ -575,6 +575,16 @@ class SimplicialSets(Category_singleton):
                      (f * f * f, e): ((f * f, 1), s_0 (f, e), s_1 (f, e), (f * f, e))}
                     sage: C.fundamental_group()
                     Finitely presented group <  |  >
+
+                TESTS::
+
+                    sage: RP2 = simplicial_sets.RealProjectiveSpace(2)
+                    sage: S3 = simplicial_sets.Sphere(3)
+                    sage: X = S3.wedge(RP2)
+                    sage: XU = X.universal_cover()
+                    sage: [XU.homology(i) for i in range(5)]
+                    [0, 0, Z, Z x Z, 0]
+
                 """
                 return self.universal_cover_map().domain()
 
