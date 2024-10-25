@@ -1730,41 +1730,45 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         The algorithm is adapted from [Gou2020]_, section 4.5, and [Coh1993]_,
         section 3.5.3.  It is a combination of the Chinese Remainder Theorem
-        and Hensel's lemma.  As a base case, if $N$ is prime, then we find
-        roots by factoring $f$.  If $N$ is a prime power $p^e$, then we find
-        roots modulo $p$ and lift them.  Finally, for general $N$, we first
-        factor the modulus $N$ into prime powers, list all roots modulo those
+        and Hensel's lemma.  As a base case, if `N` is prime, then we find
+        roots by factoring `f`.  If `N` is a prime power `p^e`, then we find
+        roots modulo `p` and lift them.  Finally, for general `N`, we first
+        factor the modulus `N` into prime powers, list all roots modulo those
         prime powers, and combine the roots using the Chinese Remainder
         Theorem.
 
-        Suppose that we are trying to find roots modulo $p^e$ and that $r$ is
-        a root of $f(x)$ modulo $p$.  The easy case is when $f'(r) \not\equiv
-        0 \pmod{p}$, for then Hensel's lemma implies that there is a unique
-        $r_e \in \mathbf{Z}/p^e\mathbf{Z}$ with $r_e \equiv r \pmod{p}$.
-        Moreover, this $r_e$ can be found by applying Newton's method for
+        Suppose that we are trying to find roots modulo `p^e` and that `r` is
+        a root of `f(x)` modulo `p`.  The easy case is when `f'(r) \not\equiv
+        0 \pmod{p}`, for then Hensel's lemma implies that there is a unique
+        `r_e \in \mathbf{Z}/p^e\mathbf{Z}` with `r_e \equiv r \pmod{p}`.
+        Moreover, this `r_e` can be found by applying Newton's method for
         numerically approximating roots.  Each iteration of Newton's method
         doubles the precision to which the root is known.
 
-        But if $f'(r) \equiv 0 \pmod{p}$, then this is no longer true.  In
-        fact, in this case roots modulo $p^e$ are not the same as $p$-adic
+        But if `f'(r) \equiv 0 \pmod{p}`, then this is no longer true.  In
+        fact, in this case roots modulo `p^e` are not the same as `p`-adic
         roots, and finding all the latter does not guarantee that we have
-        found all the former.  For example, if $f(x) = 2x$ and $p = 2$, then
-        there is only one $p$-adic root, namely zero.  But the roots of $2x
-        \equiv 0 \pmod{2^k}$ are $0$ and $2^{k-1}$; the former lifts to two
-        roots modulo $2^{k+1}$, namely $0$ and $2^k$, while the latter does
-        not lift at all.  We handle this case by lifting one power at a time.
-        While we can no longer use Newton's method to solve for a lift, the
-        Taylor series it is based on still yields constraints on the roots
-        modulo $p^{k+1}$:  If $r_k$ is a root of $f$ modulo $p^k$, then either
-        every lift of $r_k$ to $\mathbf{Z}/p^{k+1}\mathbf{Z}$ is a root of $f$
-        modulo $p^{k+1}$ or none of them are.  Consequently we may find roots
-        modulo $p^e$ by lifting one power at a time.
+        found all the former.  For example, if `f(x) = 2x` and `p = 2`, then
+        there is only one `p`-adic root, namely zero.  But the solutions of
+        `2x \equiv 0 \pmod{2^k}` are `0` and `2^{k-1}`; the former lifts to
+        two roots modulo `2^{k+1}`, namely `0` and `2^k`, while the latter
+        does not lift at all.  We handle this case by lifting one power at a
+        time.  While we can no longer use Newton's method to solve for a lift,
+        the Taylor series it is based on still yields constraints on the roots
+        modulo `p^{k+1}`:  If `r_k` is a root of `f` modulo `p^k`, then either
+        every lift of `r_k` to `\mathbf{Z}/p^{k+1}\mathbf{Z}` is a root of `f`
+        modulo `p^{k+1}` or none of them are.  Consequently we may find roots
+        modulo `p^e` by lifting one power at a time.
 
-        When $f'(r) \equiv 0 \pmod{p}$, Hensel's lemma still applies once we
-        are close enough to a $p$-adic root (see [Gouvea], problem 120).
-        However, it seems delicate to use this to find all roots modulo $p^e$
-        (consider our earlier example of $f(x) = 2x$).  For that reason, this
-        method presently does not attempt to apply Hensel's lemma in this way.
+        When `f'(r) \equiv 0 \pmod{p}`, an alternative approach is to change
+        variables, factor out the root, and then factor out powers of `p`.
+        This has the advantage that it will eventually reach a situation where
+        the lift converges quadratically, but it is not presently implemented.
+        A different form of Hensel's lemma applies once we are close enough to
+        a `p`-adic root (see [Gou2020]_, problem 120), but it seems delicate
+        to use it directly to find all roots modulo `p^e` (consider our
+        earlier example of `f(x) = 2x`), so we do not presently attempt to
+        apply Hensel's lemma in this way.
 
         EXAMPLES::
 
