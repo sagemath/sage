@@ -261,7 +261,9 @@ class Function_tan(GinacFunction):
             sage: tan(2+I).imag().n()                                                   # needs sage.symbolic
             1.16673625724092
         """
-        GinacFunction.__init__(self, 'tan', latex_name=r"\tan")
+        GinacFunction.__init__(self, 'tan', latex_name=r"\tan", 
+                               conversions=dict(maxima='tan', mathematica='Tan',
+                                 giac='tan', fricas='tan', sympy='tan'))
 
 
 tan = Function_tan()
@@ -349,7 +351,9 @@ class Function_cot(GinacFunction):
             sage: cot(1.+I)                                                             # needs sage.symbolic
             0.217621561854403 - 0.868014142895925*I
         """
-        GinacFunction.__init__(self, 'cot', latex_name=r"\cot")
+        GinacFunction.__init__(self, 'cot', latex_name=r"\cot", 
+                               conversions=dict(maxima='cot', mathematica='Cot',
+                                 giac='cot', fricas='cot', sympy='cot'))
 
     def _eval_numpy_(self, x):
         """
@@ -421,7 +425,9 @@ class Function_sec(GinacFunction):
             sage: sec(complex(1,1))     # rel tol 1e-15                                 # needs sage.rings.complex_double
             (0.49833703055518686+0.5910838417210451j)
         """
-        GinacFunction.__init__(self, 'sec', latex_name=r"\sec")
+        GinacFunction.__init__(self, 'sec', latex_name=r"\sec", 
+                               conversions=dict(maxima='sec', mathematica='Sec',
+                                 giac='sec', fricas='sec', sympy='sec'))
 
     def _eval_numpy_(self, x):
         """
@@ -493,7 +499,9 @@ class Function_csc(GinacFunction):
             sage: csc(complex(1,1))     # rel tol 1e-15                                 # needs sage.rings.complex_double
             (0.6215180171704284-0.30393100162842646j)
         """
-        GinacFunction.__init__(self, 'csc', latex_name=r"\csc")
+        GinacFunction.__init__(self, 'csc', latex_name=r"\csc", 
+                               conversions=dict(maxima='csc', mathematica='Csc',
+                                 giac='csc', fricas='csc', sympy='csc'))
 
     def _eval_numpy_(self, x):
         """
