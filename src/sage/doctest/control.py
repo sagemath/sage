@@ -588,36 +588,38 @@ class DocTestController(SageObject):
 
     def _init_warn_long(self):
         """
-        Pick a suitable default for the ``--warn-long`` option if not specified.
+        Pick a suitable default for the ``--warn-long`` option if not
+        specified.
 
         It is desirable to have all tests (even ``# long`` ones)
         finish in less than about 5 seconds. Longer tests typically
         don't add coverage, they just make testing slow.
 
-        The default used here is 60 seconds on a modern computer. It
-        should eventually be lowered to 5 seconds, but its best to
-        boil the frog slowly.
+        The default used here is 5 seconds, unless `--long` was used,
+        in which case it is 30 seconds.
 
-        The stored timings are used to adjust this limit according to
-        the machine running the tests.
+        TESTS:
 
-        EXAMPLES::
+        Ensure that the user's command-line options are not changed::
 
-            sage: from sage.doctest.control import DocTestDefaults, DocTestController
+            sage: from sage.doctest.control import (DocTestDefaults,
+            ....:                                   DocTestController)
             sage: DC = DocTestController(DocTestDefaults(), [])
             sage: DC.options.warn_long = 5.0
             sage: DC._init_warn_long()
-            sage: DC.options.warn_long    # existing command-line options are not changed
+            sage: DC.options.warn_long
             5.00000000000000
         """
         # default is -1.0
         if self.options.warn_long >= 0:     # Specified on the command line
             return
-        try:
-            self.options.warn_long = 60.0 * self.second_on_modern_computer()
-        except RuntimeError as err:
-            if not sage.doctest.DOCTEST_MODE:
-                print(err)   # No usable timing information
+
+        # The developer's guide says that even a "long time" test
+        # should ideally complete in under five seconds, so we're
+        # being rather generous here.
+        self.options.warn_long = 5.0
+        if self.options.long:
+            self.options.warn_long = 30.0
 
     def second_on_modern_computer(self):
         """
@@ -637,6 +639,9 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DocTestDefaults(), [])
             sage: DC.second_on_modern_computer()   # not tested
         """
+        from sage.misc.superseded import deprecation
+        deprecation(32981, "this method is no longer used by the sage library and will eventually be removed")
+
         if len(self.stats) == 0:
             raise RuntimeError('no stored timings available')
         success = []
@@ -1152,7 +1157,7 @@ class DocTestController(SageObject):
             sage: DC.run_doctests()
             Doctesting 1 file.
             sage -t .../sage/rings/homset.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1229,7 +1234,7 @@ class DocTestController(SageObject):
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../rings/all.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1433,7 +1438,7 @@ class DocTestController(SageObject):
             Running doctests with ID ...
             Doctesting 1 file.
             sage -t .../sage/sets/non_negative_integers.py
-                [... tests, ... s]
+                [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1457,7 +1462,7 @@ class DocTestController(SageObject):
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
-                [0 tests, ... s]
+                [0 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1483,7 +1488,7 @@ class DocTestController(SageObject):
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
-                [4 tests, ... s]
+                [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1501,7 +1506,7 @@ class DocTestController(SageObject):
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
-                [4 tests, ... s]
+                [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1519,7 +1524,7 @@ class DocTestController(SageObject):
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
-                [4 tests, ... s]
+                [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
@@ -1627,7 +1632,7 @@ def run_doctests(module, options=None):
         Running doctests with ID ...
         Doctesting 1 file.
         sage -t .../sage/rings/all.py
-            [... tests, ... s]
+            [... tests, ...s wall]
         ----------------------------------------------------------------------
         All tests passed!
         ----------------------------------------------------------------------
