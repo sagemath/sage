@@ -1356,7 +1356,7 @@ class KnotInfoBase(Enum):
         verified = not knotinfo_bool(cosmetic_crossing)
         if not knotinfo_bool(cosmetic_crossing):
             return True
-        raise AssertionError('This seems to be a negative example to the conjecture')
+        raise AssertionError(f'{self} is a counterexample to the cosmetic crossing conjecture')
 
     @cached_method
     def homfly_polynomial(self, var1='v', var2='z', original=False):
