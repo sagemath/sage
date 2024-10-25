@@ -150,7 +150,7 @@ def unpickle_function(name, nargs, latex_name, conversions, evalf_params_first,
     return function_factory(*args)
 
 
-def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
+def function(s, **kwds) -> SymbolicFunction | list[SymbolicFunction]:
     r"""
     Create a formal symbolic function with the name *s*.
 

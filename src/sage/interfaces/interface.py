@@ -444,9 +444,12 @@ class Interface(WithEqualityById, ParentWithBase):
             sage: symbols[operator.eq]
             '=='
         """
-        return dict([(operator.eq, self._equality_symbol()), (operator.ne, self._inequality_symbol()),
-                     (operator.lt, self._lessthan_symbol()), (operator.le, "<="),
-                     (operator.gt, self._greaterthan_symbol()), (operator.ge, ">=")])
+        return {operator.eq: self._equality_symbol(),
+                operator.ne: self._inequality_symbol(),
+                operator.lt: self._lessthan_symbol(),
+                operator.le: "<=",
+                operator.gt: self._greaterthan_symbol(),
+                operator.ge: ">="}
 
     def _exponent_symbol(self):
         """

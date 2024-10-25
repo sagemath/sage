@@ -362,7 +362,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         return super().__call__(values)
 
 
-class RewritingSystem():
+class RewritingSystem:
     """
     A class that wraps GAP's rewriting systems.
 

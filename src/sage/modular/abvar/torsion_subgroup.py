@@ -468,7 +468,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             return self._multiple_of_order_proof_false
 
         # The Gamma0 and Gamma1 case
-        if all((isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class) for G in A.groups())):
+        if all(isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class) for G in A.groups()):
             self._multiple_of_order = self.multiple_of_order_using_frobp()
             return self._multiple_of_order
 
@@ -569,7 +569,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
             T = ZZ(1)
             self.__multiple_of_order_using_frobp = T
             return T
-        if not all((isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class) for G in A.groups())):
+        if not all(isinstance(G, Gamma0_class) or isinstance(G, Gamma1_class) for G in A.groups()):
             raise NotImplementedError("torsion multiple only implemented for Gamma0 and Gamma1")
 
         bnd = ZZ(0)

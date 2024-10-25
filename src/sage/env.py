@@ -337,7 +337,7 @@ def get_cblas_pc_module_name() -> str:
     """
     import pkgconfig
     cblas_pc_modules = CBLAS_PC_MODULES.split(':')
-    return next((blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib)))
+    return next(blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib))
 
 
 default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',

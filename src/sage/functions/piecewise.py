@@ -319,7 +319,7 @@ class PiecewiseFunction(BuiltinFunction):
                           for domain, func in parameters],
                          var=variable)
 
-    class EvaluationMethods():
+    class EvaluationMethods:
 
         def __pow__(self, parameters, variable, n):
             """

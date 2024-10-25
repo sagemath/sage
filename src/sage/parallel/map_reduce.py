@@ -628,7 +628,7 @@ class AbortError(Exception):
     pass
 
 
-class ActiveTaskCounterDarwin():
+class ActiveTaskCounterDarwin:
     r"""
     Handling the number of active tasks.
 
@@ -741,7 +741,7 @@ class ActiveTaskCounterDarwin():
             self._active_tasks.value = 0
 
 
-class ActiveTaskCounterPosix():
+class ActiveTaskCounterPosix:
     r"""
     Handling the number of active tasks.
 
@@ -884,7 +884,7 @@ ActiveTaskCounter = (ActiveTaskCounterDarwin if sys.platform == 'darwin'
 # ActiveTaskCounter = ActiveTaskCounterDarwin  # to debug Darwin implementation
 
 
-class RESetMapReduce():
+class RESetMapReduce:
     r"""
     Map-Reduce on recursively enumerated sets.
 
