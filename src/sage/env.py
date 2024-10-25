@@ -8,10 +8,14 @@ environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
 
     sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
     sage: from subprocess import check_output
-    sage: environment = "sage.all"
-    sage: cmd = f"from {environment} import SAGE_ROOT, SAGE_LOCAL; print((SAGE_ROOT, SAGE_LOCAL))"
+    sage: module_name = "sage.all"   # hide .all import from the linter
+    sage: cmd  = f"from {module_name} import SAGE_ROOT, SAGE_LOCAL;"
+    sage: cmd +=  "from os.path import samefile;"
+    sage: cmd += f"s1 = samefile(SAGE_ROOT, '{SAGE_ROOT}');"
+    sage: cmd += f"s2 = samefile(SAGE_LOCAL, '{SAGE_LOCAL}');"
+    sage: cmd += "print(s1 and s2);"
     sage: out = check_output([sys.executable, "-c", cmd], env=env).decode().strip()   # long time
-    sage: out == repr((SAGE_ROOT, SAGE_LOCAL))                                        # long time
+    sage: out == "True"                                                               # long time
     True
 
 AUTHORS:
