@@ -759,7 +759,7 @@ class MatchingCoveredGraph(Graph):
         Adding a self-loop::
 
             sage: H = graphs.HeawoodGraph()
-            sage: G = MatchingCoveredGraph(P)
+            sage: G = MatchingCoveredGraph(H)
             sage: v = next(G.vertex_iterator())
             sage: G.add_edge(v, v)
             Traceback (most recent call last):
@@ -851,12 +851,6 @@ class MatchingCoveredGraph(Graph):
 
         Adding a new/ non-existing vertex::
 
-            sage: P = graphs.PetersenGraph()
-            sage: P
-            Petersen graph: Graph on 10 vertices
-            sage: G = MatchingCoveredGraph(P)
-            sage: G
-            Matching covered petersen graph: graph on 10 vertices
             sage: G.add_vertex()
             Traceback (most recent call last):
             ...
