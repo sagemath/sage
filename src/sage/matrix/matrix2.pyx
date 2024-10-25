@@ -12524,7 +12524,7 @@ cdef class Matrix(Matrix1):
                 _, SA = A.jordan_form(transformation=True)
                 _, SB = B.jordan_form(transformation=True)
                 return (True, SB * SA.inverse())
-            except (ValueError, RuntimeError, NotImplementedError):
+            except (ValueError, RuntimeError, NotImplementedError, TypeError):
                 raise RuntimeError('unable to compute transformation for similar matrices')
 
     def symplectic_form(self):
@@ -17098,7 +17098,7 @@ cdef class Matrix(Matrix1):
             sage: A.eigenvalues()
             Traceback (most recent call last):
             ...
-            NotImplementedError: algebraic closures of finite fields are only implemented for prime fields
+            TypeError: no canonical coercion from Finite Field in a of size 5^4 to Finite Field in z4 of size 5^4
 
         Subdivisions are optional.  ::
 
@@ -17460,7 +17460,7 @@ cdef class Matrix(Matrix1):
             sage: A.eigenvalues()
             Traceback (most recent call last):
             ...
-            NotImplementedError: algebraic closures of finite fields are only implemented for prime fields
+            TypeError: no canonical coercion from Finite Field in a of size 7^2 to Finite Field in z2 of size 7^2
 
         Companion matrices may be selected as any one of four different types.
         See the documentation for the companion matrix constructor,
