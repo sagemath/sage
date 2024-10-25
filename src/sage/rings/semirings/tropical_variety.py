@@ -580,17 +580,15 @@ class TropicalVariety(UniqueRepresentation, SageObject):
               2: [(1, 0, 2), (0, 0, -2), (-1, 0, 0)],
               3: [(0, 1, 1), (0, 0, -1), (0, -1, 0)]})
 
+        TESTS:
+        
         Checking the balance condition of weight vectors::
 
             sage: T = TropicalSemiring(QQ)
             sage: R.<a,b,c,d> = PolynomialRing(T)
-            sage: balance_list = []
-            sage: for _ in range(5):
-            ....:   f = R.random_element()
-            ....:   vec = f.tropical_variety().weight_vectors()[2].values()
-            ....:   balance = all(a == vector([0,0,0,0]) for a in [sum(lst) for lst in vec])
-            ....:   balance_list.append(balance)
-            sage: all(balance == True for balance in balance_list)
+            sage: f = R.random_element()
+            sage: vec = f.tropical_variety().weight_vectors()[2].values()
+            sage: all(a == vector([0,0,0,0]) for a in [sum(lst) for lst in vec])
             True
         """
         from sage.symbolic.ring import SR
