@@ -284,8 +284,11 @@ def skipfile(filename, tested_optional_tags=False, *,
     """
     if filename.endswith('.rst.txt'):
         ext = '.rst.txt'
-    else:
-        base, ext = os.path.splitext(filename)
+    if filename.endswith('__main__.py'):
+        if log:
+            log(f"Skipping '{filename}' because it is a __main__.py file")
+        return True
+    _ , ext = os.path.splitext(filename)
     # .rst.txt appear in the installed documentation in subdirectories named "_sources"
     if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex', '.rst.txt'):
         if log:
@@ -990,7 +993,7 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DD, [dirname])
             sage: DC.expand_files_into_sources()
             sage: len(DC.sources)
-            16
+            15
             sage: DC.sources[0].options.optional
             True
 
@@ -1102,7 +1105,6 @@ class DocTestController(SageObject):
             sage.doctest.control
             sage.doctest.check_tolerance
             sage.doctest.all
-            sage.doctest.__main__
             sage.doctest
         """
         if self.options.nthreads > 1 and len(self.sources) > self.options.nthreads:
