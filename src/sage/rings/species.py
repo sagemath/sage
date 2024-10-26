@@ -226,7 +226,6 @@ class AtomicSpeciesElement(Element, WithEqualityById,
             False
             sage: hash(A(H)) == hash(A(K))
             False
-
         """
         return hash((self._dis, self._dompart))
 
@@ -379,7 +378,6 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: A2 = AtomicSpecies(["X", "Y"])
             sage: TestSuite(A1).run(skip="_test_graded_components")
             sage: TestSuite(A2).run(skip="_test_graded_components")
-
         """
         category = SetsWithGrading().Infinite()
         Parent.__init__(self, names=names, category=category)
@@ -946,7 +944,6 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             ...
             ValueError: 0 must be a permutation group or a pair specifying a
              group action on the given domain pi=None
-
         """
         if parent(G) == self:
             # pi cannot be None because of framework
@@ -1718,10 +1715,17 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         INPUT:
 
         - ``names`` -- the (flat) list of names of the result
-        - ``multiplicities`` -- a (flat) list of constants
-        - ``degrees`` -- a `k`-tuple of compositions `c_1,
-          \ldots, c_k`, such that the size of `c_i` is the
-          degree of ``self`` in sort `i`
+        - ``multiplicities`` -- a (flat) list of constants, of the
+          same length as ``names``
+        - ``degrees`` -- a `k`-tuple of compositions `c_1, \ldots,
+          c_k`, such that the size of `c_i` is the degree of ``self``
+          in sort `i`, and the total length of the compositions is
+          the number of names
+
+        ..TODO::
+
+            once this is thoroughly tested, there should be an
+            optional keyword parameter to skip the checks
 
         EXAMPLES:
 
@@ -1755,11 +1759,51 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
             sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
             -C_4 + E_2^2 + {((1,2)(3,4),)} - 2*X^2*E_2 + X^4
+
+            sage: C4._compose_with_weighted_singletons(["X"], [-1, 0], [[4]])
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of names must match the number of multiplicities
+
+            sage: C4._compose_with_weighted_singletons(["X"], [-1], [[2,2]])
+            Traceback (most recent call last):
+            ...
+            ValueError: the total length of the compositions must match the number of names
+
+            sage: C4._compose_with_weighted_singletons(["X"], [-1], [[4], []])
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of compositions should be the arity of self
+
+            sage: C4._compose_with_weighted_singletons(["X"], [-1], [[3]])
+            Traceback (most recent call last):
+            ...
+            ValueError: the size of the i-th composition should be the degree in sort i
+
+            sage: P.zero()._compose_with_weighted_singletons(["X"], [-1], [[1]])
+            Traceback (most recent call last):
+            ...
+            ValueError: the size of the i-th composition should be the degree in sort i, which is zero
+
+            sage: P.zero()._compose_with_weighted_singletons(["X"], [-1], [[0]])
+            0
         """
+        if len(names) != len(multiplicities):
+            raise ValueError("the number of names must match the number of multiplicities")
+        if sum(len(c) for c in degrees) != len(names):
+            raise ValueError("the total length of the compositions must match the number of names")
+        P = self.parent()
+        if len(degrees) != P._arity:
+            raise ValueError("the number of compositions should be the arity of self")
+        mc_s = set(m.grade() for m in self.support())
+        if len(mc_s) > 1:
+            raise ValueError("self should be homogeneous with respect to all sorts")
         if not self.support():
-            return self.parent().zero()  # TODO: testme
-        if not self.is_homogeneous():
-            raise ValueError("element is not homogeneous")  # TODO: testme
+            if any(sum(c) for c in degrees):
+                raise ValueError("the size of the i-th composition should be the degree in sort i, which is zero")
+            return P.zero()
+        if not all(sum(c) == d for c, d in zip(degrees, list(mc_s)[0])):
+            raise ValueError("the size of the i-th composition should be the degree in sort i")
 
         left = self._compose_with_singletons(names, degrees)
         P = left.parent()
@@ -1800,16 +1844,42 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: E2 = P(SymmetricGroup(2))
             sage: E2(q*X)
             q^2*E_2
+
+        TESTS::
+
+            sage: P = PolynomialSpecies(QQ, "X")
+            sage: P.one()()
+            Traceback (most recent call last):
+            ...
+            ValueError: number of args must match arity of self
+
+            sage: P.one()(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the args must be PolynomialSpecies
+
+            sage: P = PolynomialSpecies(QQ, "X, Y")
+            sage: Q.<X> = PolynomialSpecies(QQ)
+            sage: R.<Y> = PolynomialSpecies(QQ)
+            sage: P.one()(X, Y)
+            Traceback (most recent call last):
+            ...
+            ValueError: all args must have the same parent
+
+            sage: P.zero()(X, X)
+            0
         """
         P = self.parent()
         if len(args) != P._arity:
-            raise ValueError("number of args must match arity of self")  # TODO: testme
+            raise ValueError("number of args must match arity of self")
         if len(set(arg.parent() for arg in args)) > 1:
-            raise ValueError("all args must have the same parent")  # TODO: testme
+            raise ValueError("all args must have the same parent")
 
         P0 = args[0].parent()
+        if not isinstance(P0, PolynomialSpecies):
+            raise ValueError("the args must be PolynomialSpecies")
         if not self.support():
-            return P0.zero()  # TODO: testme
+            return P0.zero()
 
         args = [sorted(g, key=lambda x: x[0].grade()) for g in args]
         multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
@@ -1818,10 +1888,10 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         names = ["X%s" % i for i in range(sum(len(arg) for arg in args))]
 
         result = P0.zero()
-        for n in F_degrees:
-            F = P.sum_of_terms((M, c) for M, c in self if M.grade() == n)
-            for degrees in cartesian_product([IntegerVectors(n_i, length=len(arg))
-                                              for n_i, arg in zip(n, args)]):
+        for mc in F_degrees:
+            F = P.sum_of_terms((M, c) for M, c in self if M.grade() == mc)
+            for degrees in cartesian_product([IntegerVectors(d, length=len(arg))
+                                              for d, arg in zip(mc, args)]):
                 # each degree is a weak composition of the degree of F in sort i
                 FX = F._compose_with_weighted_singletons(names,
                                                          multiplicities,
@@ -2151,7 +2221,6 @@ class PolynomialSpecies(CombinatorialFreeModule):
             Traceback (most recent call last):
             ...
             ValueError: n must be a positive integer
-
         """
         if n not in ZZ or n <= 0:
             raise ValueError("n must be a positive integer")
