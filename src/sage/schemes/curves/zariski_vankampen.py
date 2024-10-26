@@ -1136,7 +1136,7 @@ def vertical_lines_in_braidmon(pols) -> list:
     OUTPUT:
 
     A list with the indices of the vertical lines in ``flist`` if there is
-    no other componnet with vertical asymptote; otherwise it returns an empty
+    no other component with vertical asymptote; otherwise it returns an empty
     list.
 
     EXAMPLES::

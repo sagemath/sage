@@ -36,6 +36,7 @@ Define methods relying on :mod:`sage.graphs`.
 from sage.misc.cachefunc import cached_method
 from .base3 import Polyhedron_base3
 
+
 class Polyhedron_base4(Polyhedron_base3):
     """
     Methods relying on :mod:`sage.graphs`.
