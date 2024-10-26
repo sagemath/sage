@@ -1914,6 +1914,11 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: f = (3*E2*X + C3)*(2*E2 + C3)
             sage: factor(f)
             (2*E_2 + C_3) * (3*X*E_2 + C_3)
+
+        TESTS::
+
+            sage: P(6).factor()
+            2 * 3
         """
         # find the set of atoms and fix an order
         atoms = list(set(a for m in self.monomial_coefficients()
@@ -1925,8 +1930,6 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                      for m, c in self)
         factors = poly.factor()
         unit = self.base_ring()(factors.unit())
-        if factors.universe() == self.base_ring():
-            return Factorization(factors, unit=unit)  # TODO: testme
         P = self.parent()
         M = P._indices
 
