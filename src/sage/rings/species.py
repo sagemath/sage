@@ -1,7 +1,6 @@
 from itertools import accumulate, chain
 
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.modules import Modules
 from sage.categories.monoids import Monoids
 from sage.categories.sets_cat import cartesian_product
@@ -36,290 +35,6 @@ from sage.structure.unique_representation import (UniqueRepresentation,
 GAP_FAIL = libgap.eval('fail')
 
 
-class ConjugacyClassOfDirectlyIndecomposableSubgroups(Element, WithEqualityById,
-                                                      WithPicklingByInitArgs,
-                                                      metaclass=InheritComparisonClasscallMetaclass):
-    r"""
-    A directly indecomposable conjugacy class of subgroups of a
-    symmetric group.
-
-    Two conjugacy classes of subgroups are equal if they have the
-    same degree (say `n`) and are conjugate within `S_n`.
-    """
-    @staticmethod
-    def _invariant(C):
-        r"""
-        Return an invariant of the permutation group ``C`` used for
-        hashing and as key in the cache.
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import ConjugacyClassOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassOfDirectlyIndecomposableSubgroups
-            sage: G = PermutationGroup([[(1,2),(3,4)]])
-            sage: H = PermutationGroup([[(1,3),(2,4)], [(1,2),(3,4)]])
-            sage: K = PermutationGroup([[(1,2,3,4)]])
-            sage: C._invariant(G)
-            (2, (2, 2))
-            sage: C._invariant(H)
-            (4, (4,))
-            sage: C._invariant(K)
-            (4, (4,))
-        """
-        return C.cardinality(), tuple(sorted(len(o) for o in C.orbits()))
-
-    @staticmethod
-    def __classcall__(cls, parent, C):
-        """
-        Normalize the input for unique representation.
-
-        TESTS::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-
-        Check that the domain is standardized::
-
-            sage: G = PermutationGroup([("a", "b", "c"), ("d", "a"), ("d", "b"), ("d", "c")])
-            sage: C(G)
-            ((2,4,3), (1,2))
-
-            sage: G = PermutationGroup([[(1,2),(3,4),(5,6),(7,8,9,10)]]); G
-            Permutation Group with generators [(1,2)(3,4)(5,6)(7,8,9,10)]
-            sage: H = PermutationGroup([[(1,2,3,4),(5,6),(7,8),(9,10)]]); H
-            Permutation Group with generators [(1,2,3,4)(5,6)(7,8)(9,10)]
-            sage: C(G) is C(H)
-            True
-
-        Two different transitive groups with the same cardinality::
-
-            sage: a = C(PermutationGroup([[(1,3),(2,4)], [(1,4),(2,3)]]))
-            sage: b = C(PermutationGroup([[(1,3,2,4)]]))
-            sage: a == b
-            False
-        """
-        def is_equal(elm):
-            return SymmetricGroup(elm._C.degree()).are_conjugate(elm._C, C)
-
-        def standardize(C):
-            if not C.degree():
-                return SymmetricGroup(0)
-            # a directly indecomposable group is transitive, so we
-            # can use the gap group without worrying about the domain
-            G = C.gap()
-            sorted_orbits = sorted(G.Orbits().sage(), key=len, reverse=True)
-            pi = PermutationGroupElement([e for o in sorted_orbits for e in o])
-            G = PermutationGroup(G.SmallGeneratingSet().sage())
-            return G.conjugate(pi.inverse())
-
-        key = cls._invariant(C)
-        if key in parent._cache:
-            lookup = parent._cache[key]
-            for elm in lookup:
-                if is_equal(elm):
-                    return elm
-        else:
-            lookup = parent._cache[key] = []
-
-        elm = WithPicklingByInitArgs.__classcall__(cls, parent, standardize(C))
-        lookup.append(elm)
-        return elm
-
-    def __hash__(self):
-        """
-        Return a hash of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: G = PermutationGroup([[(1,2),(3,4)]])
-            sage: H = PermutationGroup([[(1,3),(2,4)], [(1,2),(3,4)]])
-            sage: K = PermutationGroup([[(1,2,3,4)]])
-            sage: hash(C(G)) == hash(C(H))
-            False
-            sage: hash(C(H)) == hash(C(K))
-            True
-            sage: C(H) == C(K)
-            False
-        """
-        return hash(self._invariant(self._C))
-
-    def __init__(self, parent, C):
-        r"""
-        Initialize a conjugacy class of directly indecomposable subgroups
-        of a symmetric group.
-
-        TESTS::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: G = C(PermutationGroup([[(1,2),(3,4)],[(1,2),(5,6)]]))
-            sage: TestSuite(G).run()
-        """
-        Element.__init__(self, parent)
-        self._C = C
-
-    def _repr_(self):
-        r"""
-        Return a string representation of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: G = PermutationGroup([[(1,3),(4,7)], [(2,5),(6,8)], [(1,4),(2,5),(3,7)]])
-            sage: C(G)
-            ((5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6))
-        """
-        return repr(self._C.gens())
-
-
-class ConjugacyClassesOfDirectlyIndecomposableSubgroups(UniqueRepresentation, Parent):
-    def __init__(self):
-        r"""
-        Conjugacy classes of directly indecomposable subgroups of a symmetric group.
-
-        TESTS::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: TestSuite(C).run(max_runs=5) # it takes far too long otherwise
-        """
-        Parent.__init__(self, category=InfiniteEnumeratedSets())
-        self._cache = dict()
-
-    def _element_constructor_(self, x):
-        r"""
-        Construct a conjugacy class from ``x``.
-
-        INPUT:
-
-        - ``x``, an element of ``self`` or a directly indecomposable
-          permutation group.
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: C(PermutationGroup([("a", "b", "c")]))
-            ((1,2,3),)
-            sage: C(PermutationGroup([(1, 3, 5)], domain=[1,3,5]))
-            ((1,2,3),)
-            sage: C(PermutationGroup([[(1,3),(4,7)],[(2,5),(6,8)], [(1,4),(2,5),(3,7)]]))
-            ((5,6)(7,8), (1,2)(3,4), (1,3)(2,4)(5,6))
-
-        TESTS:
-
-        Providing a group that decomposes as a direct product raises
-        an error::
-
-            sage: C(PermutationGroup([[(1,2,3),(4,5)]]))
-            Traceback (most recent call last):
-            ...
-            ValueError: Permutation Group with generators [(1,2,3)(4,5)] is not directly indecomposable
-
-        Check some trivial cases::
-
-            sage: C(0)
-            Traceback (most recent call last):
-            ...
-            ValueError: unable to convert 0 to Set of conjugacy classes of
-             directly indecomposable subgroups
-
-            sage: C(groups.presentation.KleinFour())
-            Traceback (most recent call last):
-            ...
-            ValueError: unable to convert Finitely presented group
-             < a, b | a^2, b^2, a^-1*b^-1*a*b > to Set of conjugacy classes of
-             directly indecomposable subgroups
-        """
-        if isinstance(x, PermutationGroup_generic):
-            if len(x.disjoint_direct_product_decomposition()) > 1:
-                raise ValueError(f"{x} is not directly indecomposable")
-            return self.element_class(self, x)
-        raise ValueError(f"unable to convert {x} to {self}")
-
-    def _repr_(self):
-        r"""
-        Return the string representation for ``self``.
-
-        TESTS::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups(); C
-            Set of conjugacy classes of directly indecomposable subgroups
-        """
-        return "Set of conjugacy classes of directly indecomposable subgroups"
-
-    def __iter__(self):
-        r"""
-        An iterator over all conjugacy classes of directly indecomposable
-        subgroups.
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: it = iter(C)
-            sage: for i in range(5):
-            ....:     print(next(it))
-            ()
-            ((),)
-            ((1,2),)
-            ((1,2,3),)
-            ((2,3), (1,2,3))
-
-        TESTS::
-
-            sage: it = iter(C)
-            sage: l = [next(it) for _ in range(100)]  # long time
-            sage: len(set(l)) == len(l)  # long time
-            True
-        """
-        n = 0
-        while True:
-            for G in SymmetricGroup(n).conjugacy_classes_subgroups():
-                if len(G.disjoint_direct_product_decomposition()) <= 1:
-                    yield self._element_constructor_(G)
-            n += 1
-
-    def __contains__(self, G):
-        r"""
-        Return if ``G`` is in ``self``.
-
-        TESTS::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: G = PermutationGroup([[(1,2)], [(3,4)]]); G
-            Permutation Group with generators [(3,4), (1,2)]
-            sage: G.disjoint_direct_product_decomposition()
-            {{1, 2}, {3, 4}}
-            sage: G in C
-            False
-        """
-        if parent(G) == self:
-            return True
-        return len(G.disjoint_direct_product_decomposition()) <= 1
-
-    @cached_method
-    def an_element(self):
-        r"""
-        Return an element of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import ConjugacyClassesOfDirectlyIndecomposableSubgroups
-            sage: C = ConjugacyClassesOfDirectlyIndecomposableSubgroups()
-            sage: C.an_element()
-            ((),)
-        """
-        return self._element_constructor_(SymmetricGroup(1))
-
-    Element = ConjugacyClassOfDirectlyIndecomposableSubgroups
-
-
 class AtomicSpeciesElement(Element, WithEqualityById,
                            WithPicklingByInitArgs,
                            metaclass=InheritComparisonClasscallMetaclass):
@@ -331,17 +46,27 @@ class AtomicSpeciesElement(Element, WithEqualityById,
     conjugating element.
     """
     @staticmethod
-    def __classcall__(cls, parent, dis, domain_partition):
+    def __classcall__(cls, parent, C, dom_part):
         r"""
         Normalize the input for unique representation.
 
         TESTS::
 
             sage: from sage.rings.species import AtomicSpecies
-            sage: A = AtomicSpecies("X, Y")
+            sage: A = AtomicSpecies("X")
+            sage: G = PermutationGroup([(2,3), (1,2,3)])
+            sage: A(G)
+            E_3
+            sage: G = CyclicPermutationGroup(4)
+            sage: A(G)
+            C_4
+            sage: G = PermutationGroup([[(1,2), (3,4)], [(1,4), (2,3)]])
+            sage: A(G)
+            Pb_4
 
         Check that the domain is irrelevant::
 
+            sage: A = AtomicSpecies("X, Y")
             sage: G = PermutationGroup([[("a", "b", "c", "d"), ("e", "f")]])
             sage: a = A(G, {0: "abcd", 1: "ef"}); a  # random
             {((1,2,3,4)(5,6),): ({1, 2, 3, 4}, {5, 6})}
@@ -374,30 +99,71 @@ class AtomicSpeciesElement(Element, WithEqualityById,
             sage: a is c
             True
         """
-        mc = tuple(len(v) for v in domain_partition)
-        domain = list(chain(*map(sorted, domain_partition)))
+        # a directly indecomposable group has no fixed points, so we
+        # can use the gap group without worrying about the domain
+        G = C.gap()
+        dom_part = [[ZZ(C._domain_to_gap[e]) for e in b]
+                    for b in dom_part]
+        orbits = sorted(G.Orbits().sage(), key=len, reverse=True)
+        for orbit in orbits:
+            if not any(set(orbit).issubset(p) for p in dom_part):
+                o = [C._domain_from_gap[e] for e in orbit]
+                raise ValueError(f"All elements of orbit {o} must have the same sort")
+        n = C.degree()
+        S = SymmetricGroup(n)
 
-        def is_equal(elm):
-            # mc and dis match because they are part of the key, we
-            # construct the mapping between the groups
-            elm_domain = list(chain(*map(sorted, elm._dompart)))
-            mapping = libgap.MappingPermListList(elm_domain, domain)
-            G = PermutationGroup(gap_group=libgap.ConjugateGroup(elm._dis._C,
-                                                                 mapping),
-                                 domain=elm._dis._C.domain())
-            # The conjugated group must be exactly equal to the other group
-            return G == dis._C
+        def new_dis():
+            """
+            Return a representative ``dis`` in the conjugacy
+            class of subgroups conjugate to ``C``, together with the
+            conjugating map ``mp``
+            """
+            if not n:
+                return S, PermutationGroupElement([])
+            # create a group conjugate to `C` whose orbits
+            # consist of contiguous sets of numbers, with larger
+            # orbits having smaller numbers, and compute a small
+            # generating set
+            mp = PermutationGroupElement([e for o in orbits for e in o]).inverse().gap()
+            H = PermutationGroup(G.SmallGeneratingSet().sage())
+            return H.conjugate(mp), mp
 
+        key = C.cardinality(), tuple(len(o) for o in orbits)
+        if key in parent._dis_cache:
+            lookup_dis = parent._dis_cache[key]
+            for dis in lookup_dis:
+                mp = libgap.RepresentativeAction(S, G, dis)
+                if mp != GAP_FAIL:
+                    break
+            else:
+                dis, mp = new_dis()
+                lookup_dis.append(dis)
+        else:
+            dis, mp = new_dis()
+            lookup_dis = parent._dis_cache[key] = [dis]
+
+        dom_part = [[ZZ(e ** mp) for e in b] for b in dom_part]
+        mc = tuple([len(b) for b in dom_part])
         key = mc, dis
         if key in parent._cache:
             lookup = parent._cache[key]
-            for elm in lookup:
-                if is_equal(elm):
-                    return elm
+            if parent._arity == 1 and lookup:
+                assert len(lookup) == 1
+                return lookup[0]
+            else:
+                domain = list(chain(*map(sorted, dom_part)))
+                for elm in lookup:
+                    # check whether the assignment to sorts given by
+                    # dom_part and by elm._dompart are the same
+                    elm_domain = list(chain(*map(sorted, elm._dompart)))
+                    mp = libgap.MappingPermListList(elm_domain, domain)
+                    if all(g ** mp in dis for g in dis.gens()):
+                        return elm
         else:
             lookup = parent._cache[key] = []
 
-        elm = WithPicklingByInitArgs.__classcall__(cls, parent, dis, domain_partition)
+        dom_part = tuple([frozenset(b) for b in dom_part])
+        elm = WithPicklingByInitArgs.__classcall__(cls, parent, dis, dom_part)
         lookup.append(elm)
         return elm
 
@@ -432,6 +198,11 @@ class AtomicSpeciesElement(Element, WithEqualityById,
         """
         Return a hash of ``self``.
 
+        ..TODO::
+
+            Why does the hash not come from
+            :class:`~sage.misc.fast_methods.WithEqualityById`?
+
         EXAMPLES::
 
             sage: from sage.rings.species import AtomicSpecies
@@ -442,9 +213,8 @@ class AtomicSpeciesElement(Element, WithEqualityById,
             sage: hash(A(G)) == hash(A(H))
             False
             sage: hash(A(H)) == hash(A(K))
-            True
-            sage: A(H) == A(K)
             False
+
         """
         return hash((self._dis, self._dompart))
 
@@ -464,10 +234,10 @@ class AtomicSpeciesElement(Element, WithEqualityById,
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})}
         """
         if self.parent()._arity == 1:
-            return "{" + f"{self._dis}" + "}"
+            return "{" + f"{self._dis.gens()}" + "}"
         dompart = ', '.join("{" + repr(sorted(b))[1:-1] + "}"
                             for b in self._dompart)
-        return "{" + f"{self._dis}: ({dompart})" + "}"
+        return "{" + f"{self._dis.gens()}: ({dompart})" + "}"
 
     def grade(self):
         r"""
@@ -546,10 +316,10 @@ class AtomicSpeciesElement(Element, WithEqualityById,
             # conjugate self and other to match S
             g = list(chain.from_iterable(self._dompart))
             conj_self = PermutationGroupElement(g).inverse()
-            G = libgap.ConjugateGroup(self._dis._C, conj_self)
+            G = libgap.ConjugateGroup(self._dis, conj_self)
             h = list(chain.from_iterable(other._dompart))
             conj_other = PermutationGroupElement(h).inverse()
-            H = libgap.ConjugateGroup(other._dis._C, conj_other)
+            H = libgap.ConjugateGroup(other._dis, conj_other)
             return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
 
@@ -603,6 +373,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         Parent.__init__(self, names=names, category=category)
         self._arity = len(names)
         self._cache = dict()
+        self._dis_cache = dict()
         self._renamed = set()  # the degrees that have been renamed already
 
     def _repr_(self):
@@ -685,7 +456,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: A(G, {0:[1], 1:[2,3,4,5,6]})
             Traceback (most recent call last):
             ...
-            ValueError: All elements of orbit (1, 2) must have the same sort
+            ValueError: All elements of orbit [1, 2] must have the same sort
 
             sage: A(0)
             Traceback (most recent call last):
@@ -708,17 +479,8 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             raise ValueError(f"keys of pi (={pi.keys()}) must be in range({self._arity})")
         if sum(len(p) for p in pi.values()) != len(G.domain()) or set(chain.from_iterable(pi.values())) != set(G.domain()):
             raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
-        for orbit in G.orbits():
-            if not any(set(orbit).issubset(p) for p in pi.values()):
-                raise ValueError(f"All elements of orbit {orbit} must have the same sort")
-        # TODO: perhaps move to AtomicSpeciesElement.__classcall__
-        dis_elm = ConjugacyClassesOfDirectlyIndecomposableSubgroups()(G)
-        mapping = {v: i for i, v in enumerate(G.domain(), 1)}
-        sorted_orbits = sorted(G.orbits(), key=len, reverse=True)
-        mapping2 = PermutationGroupElement([mapping[e] for o in sorted_orbits for e in o]).inverse()
-        dompart = [frozenset(mapping2(mapping[x]) for x in pi.get(k, []))
-                   for k in range(self._arity)]
-        elm = self.element_class(self, dis_elm, tuple(dompart))
+        dom_part = [pi.get(s, []) for s in range(self._arity)]
+        elm = self.element_class(self, G, dom_part)
         if elm._tc not in self._renamed:
             self._rename(elm._tc)
         return elm
@@ -1066,12 +828,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
         INPUT:
 
-        - ``G`` -- element of ``self`` (in this case ``pi`` must be ``None``)
-          permutation group, or pair ``(X, a)`` consisting of a
-          finite set and a transitive action
-        - ``pi`` -- ``dict`` mapping sorts to iterables whose union is the
-          domain of ``G`` (if ``G`` is a permutation group) or `X` (if ``G``
-          is a pair ``(X, a)``); if `k=1`, ``pi`` can be omitted
+        - ``G`` -- element of ``self`` (in this case ``pi`` must be
+          ``None``) permutation group, or pair ``(X, a)`` consisting
+          of a finite set and a transitive action
+
+        - ``pi`` -- ``dict`` mapping sorts to iterables whose union
+          is the domain of ``G`` (if ``G`` is a permutation group) or
+          `X` (if ``G`` is a pair ``(X, a)``); if `k=1` and ``G`` is
+          a permutation group, ``pi`` can be omitted
 
         EXAMPLES:
 
@@ -1101,7 +865,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: M(CyclicPermutationGroup(4), {0: [1,2], 1: [3,4]})
             Traceback (most recent call last):
             ...
-            ValueError: All elements of orbit (1, 2, 3, 4) must have the same sort
+            ValueError: All elements of orbit [1, 2, 3, 4] must have the same sort
 
             sage: G = PermutationGroup([[(2,3),(4,5)]], domain=[2,3,4,5])
             sage: M(G, {0: [2, 3], 1: [4, 5]})
@@ -1149,6 +913,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             ...
             ValueError: 0 must be a permutation group or a pair specifying a
              group action on the given domain pi=None
+
         """
         if parent(G) == self:
             # pi cannot be None because of framework
@@ -1174,7 +939,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                                      domain=component)
                 dompart = {k: [e for e in v if e in component]
                            for k, v in pi.items()}
-                elm *= self.gen(self._indices(H, dompart))
+                a = self._indices(H, dompart)
+                elm *= self.gen(a)
             return elm
 
         try:
@@ -1457,13 +1223,13 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 A, n = factors[0]
                 if n == 1:
                     a = list(A._monomial)[0]  # as atomic species
-                    return a._dis._C, a._dompart
+                    return a._dis, a._dompart
 
                 if n % 2 == 1:
                     # split off a single monomial
                     a = list(A._monomial)[0]  # as atomic species
                     b, b_dompart = (A ** (n-1)).group_and_partition()
-                    gens = a._dis._C.gens() + shift_gens(b.gens(), a._tc)
+                    gens = a._dis.gens() + shift_gens(b.gens(), a._tc)
                     new_dompart = tuple([frozenset(list(p_a) + [a._tc + e for e in p_b])
                                          for p_a, p_b in zip(a._dompart, b_dompart)])
                     domain = range(1, n * a._tc + 1)
@@ -1623,7 +1389,9 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             if not all(isinstance(arg, MolecularSpecies.Element) for arg in args):
                 raise ValueError("all args must be molecular species")
 
-            # TODO: What happens if in F(G), G has a constant part? E(1+X)?
+            # TODO: the case that G in F(G) has a constant part and F
+            # is a polynomial species is not yet covered - see
+            # section 4.3 of [ALL2002]_
             Mlist = [None for _ in range(sum(self.grade()))]
             G, dompart = self.group_and_partition()
             for i, v in enumerate(dompart):
@@ -1817,9 +1585,10 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                 # loop over representatives
                 new = P.zero()
                 for tau, _ in taus:
-                    F = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
-                    new += P(PermutationGroup(gap_group=F, domain=range(1, tc + 1)),
-                             dompart)
+                    G_H = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
+                    K = PermutationGroup(gap_group=G_H, domain=range(1, tc + 1))
+                    F = P(K, dompart)
+                    new += F
                 result += c * d * new
 
         return result
@@ -1956,14 +1725,14 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         P = self.parent()
         if not self.support():
-            return P.zero()
+            return P.zero()  # TODO: testme
         if not self.is_homogeneous():
-            raise ValueError("element is not homogeneous")
+            raise ValueError("element is not homogeneous")  # TODO: testme
 
         left = self._compose_with_singletons(names, degrees)
         Pn = left.parent()
-        right = Pn.exponential(multiplicities,
-                               list(chain.from_iterable(degrees)))
+        right = Pn._exponential(multiplicities,
+                                list(chain.from_iterable(degrees)))
         return left.hadamard_product(right)
 
     def __call__(self, *args):
@@ -2002,13 +1771,13 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         """
         P = self.parent()
         if len(args) != P._arity:
-            raise ValueError("number of args must match arity of self")
+            raise ValueError("number of args must match arity of self")  # TODO: testme
         if len(set(arg.parent() for arg in args)) > 1:
-            raise ValueError("all args must have the same parent")
+            raise ValueError("all args must have the same parent")  # TODO: testme
 
         P0 = args[0].parent()
         if not self.support():
-            return P0.zero()
+            return P0.zero()  # TODO: testme
 
         args = [sorted(g, key=lambda x: x[0].grade()) for g in args]
         multiplicities = list(chain.from_iterable([[c for _, c in g] for g in args]))
@@ -2055,7 +1824,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         factors = poly.factor()
         unit = self.base_ring()(factors.unit())
         if factors.universe() == self.base_ring():
-            return Factorization(factors, unit=unit)
+            return Factorization(factors, unit=unit)  # TODO: testme
         P = self.parent()
         M = P._indices
 
@@ -2168,11 +1937,26 @@ class PolynomialSpecies(CombinatorialFreeModule):
             ....:     return next(K for K in X if K == H)
             sage: P((X, act), {0: range(1, n+1)})
             4*E_4 + 4*P_4 + E_2^2 + 2*X*E_3
+
+        TESTS::
+
+            sage: P = PolynomialSpecies(ZZ, "X, Y")
+            sage: G = PermutationGroup([(1,2), (3,4)])
+            sage: P(G)
+            Traceback (most recent call last):
+            ...
+            ValueError: the assignment of sorts to the domain elements must be provided
+            sage: f = P(G, {0: [1, 2], 1: [3, 4]})
+            sage: P(f) is f
+            True
+            sage: P(f, {0: [1,2,3,4]})
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot reassign sorts to a polynomial species
         """
         if parent(G) == self:
-            if pi is not None:
-                raise ValueError("cannot reassign sorts to a polynomial species")
-            return G
+            # pi cannot be None because of framework
+            raise ValueError("cannot reassign sorts to a polynomial species")
         if isinstance(G, PermutationGroup_generic):
             if pi is None:
                 if self._arity == 1:
@@ -2217,6 +2001,11 @@ class PolynomialSpecies(CombinatorialFreeModule):
             sage: P = PolynomialSpecies(ZZ, ["X", "Y"])
             sage: P.change_ring(QQ)
             Polynomial species in X, Y over Rational Field
+
+        TESTS::
+
+            sage: P.change_ring(ZZ) is P
+            True
         """
         if R is self.base_ring():
             return self
@@ -2300,7 +2089,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         return self.element_class(self, {H * K: ZZ.one()})
 
     @cached_method
-    def powersum(self, s, n):
+    def _powersum(self, s, n):
         r"""
         Return the combinatorial powersum species `P_n(X_s)`.
 
@@ -2308,31 +2097,49 @@ class PolynomialSpecies(CombinatorialFreeModule):
         coefficient of `t^n/n` in `\log E(tX)`, where `E` is the
         species of sets.
 
+        ..TODO::
+
+           this is really a univariate species, so it would be better
+           to have a fast way to change all the variables of a
+           univariate species into a new sort.
+
         EXAMPLES::
 
             sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(ZZ, "X")
-            sage: P.powersum(0, 4)
+            sage: P._powersum(0, 4)
             4*E_4 - 4*X*E_3 - 2*E_2^2 + 4*X^2*E_2 - X^4
+
+        TESTS::
+
+            sage: P._powersum(0, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: n must be a positive integer
+
         """
-        if not (n in ZZ and n > 0):
+        if n not in ZZ or n <= 0:
             raise ValueError("n must be a positive integer")
         if n == 1:
             return self(SymmetricGroup(1), {s: [1]})
         return (ZZ(n) * self(SymmetricGroup(n), {s: range(1, n+1)})
                 - sum(self(SymmetricGroup(i), {s: range(1, i+1)})
-                      * self.powersum(s, n-i)
+                      * self._powersum(s, n-i)
                       for i in range(1, n)))
 
-    def exponential(self, multiplicities, degrees):
+    def _exponential(self, multiplicities, degrees):
         r"""
         Return `E(\sum_i m_i X_i)` in the specified degrees.
+
+        ..TODO::
+
+            rethink the signature
 
         EXAMPLES::
 
             sage: from sage.rings.species import PolynomialSpecies
             sage: P = PolynomialSpecies(QQ, ["X"])
-            sage: P.exponential([3/2], [7])
+            sage: P._exponential([3/2], [7])
             3/2*E_7 + 3/4*X*E_6 + 3/4*E_2*E_5 - 3/16*X^2*E_5 + 3/4*E_3*E_4
              - 3/8*X*E_2*E_4 + 3/32*X^3*E_4 - 3/16*X*E_3^2 - 3/16*E_2^2*E_3
              + 9/32*X^2*E_2*E_3 - 15/256*X^4*E_3 + 3/32*X*E_2^3
@@ -2342,23 +2149,23 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             sage: R.<q> = QQ[]
             sage: P = PolynomialSpecies(R, ["X"])
-            sage: P.exponential([1], [2])
+            sage: P._exponential([1], [2])
             E_2
 
-            sage: P.exponential([1+q], [3])
+            sage: P._exponential([1+q], [3])
             (q^3+1)*E_3 + (q^2+q)*X*E_2
 
-            sage: P.exponential([1-q], [2])
+            sage: P._exponential([1-q], [2])
             (-q^2+1)*E_2 + (q^2-q)*X^2
 
             sage: P = PolynomialSpecies(R, ["X", "Y"])
-            sage: P.exponential([1, q], [2, 2])
+            sage: P._exponential([1, q], [2, 2])
             q^2*E_2(X)*E_2(Y)
 
         TESTS::
 
             sage: P = PolynomialSpecies(QQ, ["X"])
-            sage: P.exponential([1], [0]).parent()
+            sage: P._exponential([1], [0]).parent()
             Polynomial species in X over Rational Field
         """
         def stretch(c, k):
@@ -2379,7 +2186,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
             """
             return self.sum(~ mu.centralizer_size()
                             * self.prod(stretch(c, k)
-                                        * self.powersum(s, k) for k in mu)
+                                        * self._powersum(s, k) for k in mu)
                             for mu in Partitions(d))
 
         return self.prod(factor(s, multiplicities[s], degrees[s])
