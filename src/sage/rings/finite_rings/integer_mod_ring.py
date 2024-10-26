@@ -1740,7 +1740,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         Suppose that we are trying to find roots modulo `p^e` and that `r` is
         a root of `f(x)` modulo `p`.  The easy case is when `f'(r) \not\equiv
         0 \pmod{p}`, for then Hensel's lemma implies that there is a unique
-        `r_e \in \mathbf{Z}/p^e\mathbf{Z}` with `r_e \equiv r \pmod{p}`.
+        `r_e \in \Zmod{p^e}` with `r_e \equiv r \pmod{p}`.
         Moreover, this `r_e` can be found by applying Newton's method for
         numerically approximating roots.  Each iteration of Newton's method
         doubles the precision to which the root is known.
@@ -1756,7 +1756,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         time.  While we can no longer use Newton's method to solve for a lift,
         the Taylor series it is based on still yields constraints on the roots
         modulo `p^{k+1}`:  If `r_k` is a root of `f` modulo `p^k`, then either
-        every lift of `r_k` to `\mathbf{Z}/p^{k+1}\mathbf{Z}` is a root of `f`
+        every lift of `r_k` to `\Zmod{p^{k + 1}}` is a root of `f`
         modulo `p^{k+1}` or none of them are.  Consequently we may find roots
         modulo `p^e` by lifting one power at a time.
 
