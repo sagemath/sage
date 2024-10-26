@@ -112,7 +112,7 @@ def reproducible_repr(val):
     return repr(val)
 
 
-class AttributeAccessTracerHelper():
+class AttributeAccessTracerHelper:
 
     def __init__(self, delegate, prefix="  ", reads=True):
         r"""
@@ -223,7 +223,7 @@ class AttributeAccessTracerHelper():
         setattr(self.delegate, name, val)
 
 
-class AttributeAccessTracerProxy():
+class AttributeAccessTracerProxy:
 
     def __init__(self, delegate, **kwds):
         r"""

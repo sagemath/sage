@@ -2,6 +2,8 @@
 Utility functions for GAP
 """
 
+# hi
+
 #*****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun.name@gmail.com>
 #
