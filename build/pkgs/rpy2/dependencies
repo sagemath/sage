@@ -1,4 +1,4 @@
- r cffi tzlocal pytz jinja2 | $(PYTHON_TOOLCHAIN) pycparser $(PYTHON)
+cffi tzlocal pytz jinja2 | $(PYTHON_TOOLCHAIN) pycparser $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

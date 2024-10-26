@@ -1,2 +1,2 @@
 # This file is updated on every release by the sage-update-version script
-sage-sws2rst ~= 10.5b5
+sage-sws2rst ~= 10.5b7

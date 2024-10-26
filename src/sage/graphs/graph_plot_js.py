@@ -317,13 +317,13 @@ def gen_html_code(G,
                                    "edge_thickness": int(edge_thickness)})
 
     from sage.env import SAGE_EXTCODE, SAGE_SHARE
-    with open(Path(SAGE_EXTCODE) / "graphs" / "graph_plot_js.html", 'r') as f:
+    with open(Path(SAGE_EXTCODE) / "graphs" / "graph_plot_js.html") as f:
         js_code = f.read().replace("// GRAPH_DATA_HEREEEEEEEEEEE", string)
 
     # Add d3.js script depending on whether d3js package is installed.
     d3js_filepath = Path(SAGE_SHARE) / 'd3js' / 'd3.min.js'
     if d3js_filepath.exists():
-        with open(d3js_filepath, 'r') as d3js_code_file:
+        with open(d3js_filepath) as d3js_code_file:
             d3js_script = '<script>' + d3js_code_file.read() + '</script>'
     else:
         d3js_script = '<script src="http://d3js.org/d3.v3.min.js"></script>'

@@ -2064,7 +2064,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
                 faces.append(self)
                 for face in dfaces:
                     L.add_edge(face_to_index[face], next_index)
-            D = {i:f for i,f in enumerate(faces)}
+            D = dict(enumerate(faces))
             L.relabel(D)
             return FinitePoset(L, faces, key=id(self))
 

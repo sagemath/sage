@@ -303,13 +303,13 @@ class WeilPolynomials_iter():
             coefflist.append(j)
             modlist.append(k)
         # Remove cofactor from initial coefficients
-        if num_cofactor == 1: #cofactor x + sqrt(q)
+        if num_cofactor == 1:  # cofactor x + sqrt(q)
             for i in range(1, len(coefflist)):
                 coefflist[i] -= coefflist[i-1]*q.sqrt()
-        elif num_cofactor == 2: #cofactor x + sqrt(q)
+        elif num_cofactor == 2:  # cofactor x + sqrt(q)
             for i in range(1, len(coefflist)):
                 coefflist[i] += coefflist[i-1]*q.sqrt()
-        elif num_cofactor == 3: #cofactor x^2 - q
+        elif num_cofactor == 3:  # cofactor x^2 - q
             for i in range(2, len(coefflist)):
                 coefflist[i] += coefflist[i-2]*q
         # Asymmetrize initial coefficients
