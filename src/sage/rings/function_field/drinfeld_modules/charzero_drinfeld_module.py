@@ -31,6 +31,7 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
 
+
 class DrinfeldModule_charzero(DrinfeldModule):
     r"""
     This class implements Drinfeld `\mathbb{F}_q[T]`-modules defined
