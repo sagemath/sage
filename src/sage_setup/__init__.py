@@ -92,7 +92,7 @@ def sage_setup(distributions, *,
             log.info("Generating auto-generated sources")
             # from sage_setup.autogen import autogen_all
             # autogen_all()
-            from sage_setup.autogen.interpreters import rebuild
+            from sage_setup.autogen.interpreters.internal import rebuild
             rebuild(os.path.join("sage", "ext", "interpreters"),
                     interpreters=interpreters,
                     distribution=distributions[0], force=True)
