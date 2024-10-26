@@ -75,13 +75,14 @@ Check that Cython source code appears in tracebacks::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
-    sage: print("dummy line"); shell.run_cell('1/0') # see #25320 for the reason of the `...` and the dummy line in this test
+    sage: print("dummy line"); shell.run_cell('1/0') # known bug (meson doesn't include the Cython source code) # see #25320 for the reason of the `...` and the dummy line in this test
     dummy line
     ...
     ZeroDivisionError...Traceback (most recent call last)
     ...
     ----> 1 Integer(1)/Integer(0)
-    .../sage/rings/integer.pyx... in sage.rings.integer.Integer...div...
+    ...
+    ...integer.pyx... in sage.rings.integer.Integer...div...
     ...
     -> ...                  raise ZeroDivisionError("rational division by zero")
        ....:            x = <Rational> Rational.__new__(Rational)
@@ -197,7 +198,7 @@ def preparser(on=True):
 ##############################
 # Sage[Terminal]InteractiveShell
 ##############################
-class SageShellOverride():
+class SageShellOverride:
     """
     Mixin to override methods in IPython's [Terminal]InteractiveShell
     classes.

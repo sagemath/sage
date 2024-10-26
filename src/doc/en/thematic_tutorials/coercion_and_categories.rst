@@ -121,6 +121,7 @@ This base class provides a lot more methods than a general parent::
      '_pseudo_fraction_field',
      '_zero_element',
      'algebraic_closure',
+     'an_embedding',
      'base_extend',
      'divides',
      'epsilon',

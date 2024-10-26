@@ -75,6 +75,7 @@ from sage.categories.sets_cat import Sets
 from sage.manifolds.family import ManifoldObjectFiniteFamily, ManifoldSubsetFiniteFamily
 from sage.manifolds.point import ManifoldPoint
 
+
 class ManifoldSubset(UniqueRepresentation, Parent):
     r"""
     Subset of a topological manifold.

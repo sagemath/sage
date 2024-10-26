@@ -1001,7 +1001,7 @@ cdef class Graphics3d(SageObject):
     # Instead, the tachyon aspectratio is set to match nonsquare
     # drawing area in "figsize".
 
-    # Parameters are mostly taken from tachyion.py,
+    # Parameters are mostly taken from tachyon.py,
     # but camera_center is renamed camera_position.
     # Apparently reST strips () from default parameters in the automatic documentation.
     # Thus, I replaced () by [] as default values.

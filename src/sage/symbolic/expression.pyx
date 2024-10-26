@@ -10589,7 +10589,7 @@ cdef class Expression(Expression_abc):
             1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
             sage: ex.simplify(algorithm='sympy')
             I*(x^2 + sqrt(x^2 - 1)*x - 1)/(x + sqrt(x^2 - 1))
-            sage: ex.simplify(algorithm='giac')
+            sage: ex.simplify(algorithm='giac')  # needs giac
             I*sqrt(x^2 - 1)
             sage: ex.simplify(algorithm='fricas')  # optional - fricas
             (I*x^2 + I*sqrt(x^2 - 1)*x - I)/(x + sqrt(x^2 - 1))
@@ -13045,6 +13045,7 @@ cdef class Expression(Expression_abc):
 
         Use Giac to perform this summation::
 
+            sage: # needs giac
             sage: (sum(1/(1+k^2), k, -oo, oo, algorithm = 'giac')).factor()
             pi*(e^(2*pi) + 1)/((e^pi + 1)*(e^pi - 1))
 
@@ -13196,9 +13197,16 @@ cdef class Expression(Expression_abc):
             sage: integral(f, z)
             (x, y) |--> (x + y)*z
 
-        We check that :issue:`13097` is resolved::
+        We check that :issue:`13097` is resolved (sage doesn't
+        crash). If giac is available, you may even get a usable
+        answer::
 
-            sage: integrate(ln(1+4/5*sin(x)), x, -3.1415, 3.1415)  # tol 10e-6
+            sage: f = ln(1+4/5*sin(x))
+            sage: integrate(f, x, -3.1415, 3.1415)  # random
+            integrate(log(4/5*sin(x) + 1), x, -3.14150000000000,
+            3.14150000000000)
+            sage: # needs sage.libs.giac
+            sage: integrate(f, x, -3.1415, 3.1415)  # tol 10e-6
             -1.40205228301000
         """
         from sage.symbolic.integration.integral import \

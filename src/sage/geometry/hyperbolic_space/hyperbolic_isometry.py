@@ -620,6 +620,7 @@ class HyperbolicIsometry(Morphism):
         fp = self._cached_isometry.attracting_fixed_point()
         return self.domain().get_point(fp)
 
+
 class HyperbolicIsometryUHP(HyperbolicIsometry):
     r"""
     Create a hyperbolic isometry in the UHP model.
@@ -881,6 +882,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             return self.domain().get_point(infinity)
         return self.domain().get_point(v[0] / v[1])
 
+
 class HyperbolicIsometryPD(HyperbolicIsometry):
     r"""
     Create a hyperbolic isometry in the PD model.
@@ -981,6 +983,7 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
         """
         return bool(A[1][0] == A[0][1].conjugate() and A[1][1] == A[0][0].conjugate()
                     and abs(A[0][0]) - abs(A[0][1]) != 0)
+
 
 class HyperbolicIsometryKM(HyperbolicIsometry):
     r"""

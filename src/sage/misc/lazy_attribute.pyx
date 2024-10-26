@@ -66,8 +66,8 @@ cdef class _lazy_attribute():
 
             sage: Parent.element_class
             <sage.misc.lazy_attribute.lazy_attribute object at 0x...>
-            sage: Parent.element_class.__doc__[91:147]
-            'The (default) class for the elements of this parent.\n\n   '
+            sage: "The (default) class for the elements of this parent" in Parent.element_class.__doc__
+            True
             sage: Parent.element_class.__name__
             'element_class'
             sage: Parent.element_class.__module__

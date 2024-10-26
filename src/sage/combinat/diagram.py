@@ -1198,7 +1198,7 @@ class NorthwestDiagrams(Diagrams):
         Combinatorial northwest diagrams
 
     Additionally, there are natural constructions of a northwest diagram
-    given the data of a permutation (Rothe diagrams are the protypical example
+    given the data of a permutation (Rothe diagrams are the prototypical example
     of northwest diagrams), or the data of a partition of an integer, or a
     skew partition.
 
@@ -1222,7 +1222,7 @@ class NorthwestDiagrams(Diagrams):
     To turn a Ferrers diagram into a northwest diagram, we may call
     :meth:`from_partition`. This will return a Ferrer's diagram in the
     set of all northwest diagrams. For many use-cases it is probably better
-    to get Ferrer's diagrams by the corresponding method on partitons, namely
+    to get Ferrer's diagrams by the corresponding method on partitions, namely
     :meth:`sage.combinat.partitions.Partitions.ferrers_diagram`::
 
         sage: mu = Partition([7,3,1,1])

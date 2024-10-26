@@ -474,7 +474,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
 
 class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation_abstract):
     r"""
-    Return a faithful reprensetation of a nilpotent Lie algebra
+    Return a faithful representation of a nilpotent Lie algebra
     constructed using the PBW basis.
 
     Let `L` be a `k`-step nilpotent Lie algebra. Define a weight function

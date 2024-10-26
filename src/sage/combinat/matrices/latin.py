@@ -2443,7 +2443,7 @@ def p3_group_bitrade_generators(p):
     EXAMPLES::
 
         sage: from sage.combinat.matrices.latin import *
-        sage: p3_group_bitrade_generators(3)
+        sage: p3_group_bitrade_generators(3)  # random output
         ((2,6,7)(3,8,9),
          (1,2,3)(4,7,8)(5,6,9),
          (1,9,2)(3,7,4)(5,8,6),

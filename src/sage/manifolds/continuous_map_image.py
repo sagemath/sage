@@ -19,6 +19,7 @@ subset of `N`.
 
 from sage.manifolds.subset import ManifoldSubset
 
+
 class ImageManifoldSubset(ManifoldSubset):
     r"""
     Subset of a topological manifold that is a continuous image of a manifold subset.

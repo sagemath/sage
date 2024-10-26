@@ -72,6 +72,7 @@ individual functions and the references therein.
 # the top-level non-underscore functions defined in this module.
 #
 
+
 def _preprocess_args(ambient_dim, lattice):
     r"""
     Preprocess arguments for cone-constructing functions.

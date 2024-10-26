@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.giac
 """
 Wrappers for Giac functions
 

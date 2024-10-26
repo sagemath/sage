@@ -500,7 +500,7 @@ cdef class FvarsHandler:
         else:
             self.fvars = np.ndarray((self.ngens, ), dtype=self.fvars_t)
             self.child_id = 0
-        # Populate with initialziation data
+        # Populate with initialization data
         for sextuple, fvar in init_data.items():
             if isinstance(fvar, MPolynomial_libsingular):
                 fvar = _flatten_coeffs(poly_to_tup(fvar))

@@ -4399,7 +4399,7 @@ class BTerm(TermWithCoefficient):
             ...
             ValueError: B-Term has valid_from variables defined which do not occur in the term.
         """
-        # BTerms must have positive cofficients
+        # BTerms must have positive coefficients
         coefficient = abs(kwds['coefficient'])
 
         super().__init__(parent=parent, growth=growth, coefficient=coefficient)

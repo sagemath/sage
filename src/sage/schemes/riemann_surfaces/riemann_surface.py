@@ -1010,7 +1010,7 @@ class RiemannSurface:
         INPUT:
 
         - ``edge`` -- tuple ``(z_start, z_end)`` indicating the straight line
-          over which to perform the homotopy continutation
+          over which to perform the homotopy continuation
 
         OUTPUT:
 
@@ -3013,7 +3013,7 @@ class RiemannSurface:
                 return newg
 
         # As multiple calls of the minimal polynomial and it's derivative will
-        # be required for the homotopy continuaiton, we create fast-callable
+        # be required for the homotopy continuation, we create fast-callable
         # versions of these.
         fc_mp_list = [fast_callable(mp, domain=self._CC) for mp in mp_list]
         fc_dmp_list = [
@@ -3024,7 +3024,7 @@ class RiemannSurface:
             prec = self._prec
         # tau here is playing the role of the desired error.
         tau = self._RR(2)**(-prec + 3)
-        one = self._RR(1)
+        one = self._RR.one()
         la = self._RR.pi() / 2
 
         # Cutoffs are used to allow us to not have to integrate as close into

@@ -26,7 +26,7 @@ from sage.rings.complex_mpfr import ComplexField
 from sage.rings.power_series_ring import PowerSeriesRing
 
 
-class lfun_generic():
+class lfun_generic:
     r"""
     Create a PARI `L`-function (:pari:`lfun` instance).
 

@@ -166,11 +166,10 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
                 {'a': 2, 'b': 0, 'c': 1, 'd': 5}
             """
             d = {a: 0 for a in parent.alphabet}
-            for a, c in iterable:
-                d[a] = c
+            d.update(iterable)
             ElementWrapper.__init__(self, parent, d)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             EXAMPLES::
 
@@ -182,8 +181,9 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
                 0
             """
             d = self.value
-            result = ' + '.join( ("%s*%s" % (d[a],a) if d[a] != 1 else a) for a in sorted(d.keys()) if d[a] != 0)
-            return '0' if result == '' else result
+            result = ' + '.join(("%s*%s" % (d[a], a) if d[a] != 1 else a)
+                                for a in sorted(d.keys()) if d[a] != 0)
+            return '0' if not result else result
 
         def __hash__(self):
             """

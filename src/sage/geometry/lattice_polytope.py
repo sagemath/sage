@@ -415,6 +415,7 @@ def ReflexivePolytope(dim, n):
 # Sequences of reflexive polytopes
 _rp = [None] * 4
 
+
 def ReflexivePolytopes(dim):
     r"""
     Return the sequence of all 2- or 3-dimensional reflexive polytopes.
@@ -493,6 +494,7 @@ def is_LatticePolytope(x):
     from sage.misc.superseded import deprecation
     deprecation(34307, "is_LatticePolytope is deprecated, use isinstance instead")
     return isinstance(x, LatticePolytopeClass)
+
 
 @richcmp_method
 class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.LatticePolytope):
@@ -4981,6 +4983,7 @@ class NefPartition(SageObject, Hashable):
 
 
 _palp_dimension = None
+
 
 def _palp(command, polytopes, reduce_dimension=False):
     r"""

@@ -3908,7 +3908,7 @@ class Link(SageObject):
         to the given braid in the following sense. If both braids have the same
         number of strands it is checked if they are conjugated to each other in
         their common braid group (Markov move I).  If the number of strands differs,
-        the braid having less strands is extended by Markov moves II (appendening
+        the braid having less strands is extended by Markov moves II (appending
         the largest generator or its inverse recursively) until a common braid
         group can be achieved, where conjugation is tested.
 

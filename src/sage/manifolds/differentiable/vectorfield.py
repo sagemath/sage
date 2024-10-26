@@ -1376,6 +1376,7 @@ class VectorField(MultivectorField):
 
 #******************************************************************************
 
+
 class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
                        VectorField):
     r"""

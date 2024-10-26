@@ -669,10 +669,7 @@ def format(s, embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import format
-        sage: identity_matrix(2).rook_vector.__doc__[191:263]                           # needs sage.modules
-        'Let `A` be an `m` by `n` (0,1)-matrix. We identify `A` with a chessboard'
-
-        sage: format(identity_matrix(2).rook_vector.__doc__[191:263])                   # needs sage.modules
+        sage: format('Let `A` be an `m` by `n` (0,1)-matrix. We identify `A` with a chessboard')
         'Let A be an m by n (0,1)-matrix. We identify A with a chessboard\n'
 
     If the first line of the string is 'nodetex', remove 'nodetex' but

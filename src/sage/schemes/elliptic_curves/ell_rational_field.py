@@ -2694,7 +2694,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         .. NOTE::
 
-            In versons of ``eclib`` up to ``v20190909``, division of
+            In versions of ``eclib`` up to ``v20190909``, division of
             points in ``eclib`` was done using floating point methods,
             without automatic handling of precision, so that
             `p`-saturation sometimes failed unless

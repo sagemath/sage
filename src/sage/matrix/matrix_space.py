@@ -383,7 +383,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             return Matrix_generic_dense
 
         if implementation == 'gap':
-            from .matrix_gap import Matrix_gap
+            from sage.matrix.matrix_gap import Matrix_gap
             return Matrix_gap
 
         raise ValueError("unknown matrix implementation %r over %r" % (implementation, R))

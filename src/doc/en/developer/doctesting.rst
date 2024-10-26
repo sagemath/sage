@@ -745,10 +745,10 @@ In order to run the long tests as well, do the following::
         cpu time: 25.2 seconds
         cumulative wall time: 34.7 seconds
 
-To find tests that take longer than the allowed time use the
-``--warn-long`` flag.  Without any options it will cause tests to
-print a warning if they take longer than 1.0 second. Note that this is
-a warning, not an error::
+To find tests that take longer than a specified amount of CPU time,
+use the ``--warn-long`` flag.  Without any options, it will cause a
+warning to be printed if any tests take longer than one
+cpu-second. Note that this is a warning, not an error::
 
     [roed@localhost sage]$ ./sage -t --warn-long src/sage/rings/factorint.pyx
     Running doctests with ID 2012-07-14-03-27-03-2c952ac1.
@@ -758,22 +758,22 @@ a warning, not an error::
     File "src/sage/rings/factorint.pyx", line 125, in sage.rings.factorint.base_exponent
     Failed example:
         base_exponent(-4)
-    Test ran for 4.09 s
+    Test ran for 4.09 cpu seconds
     **********************************************************************
     File "src/sage/rings/factorint.pyx", line 153, in sage.rings.factorint.factor_aurifeuillian
     Failed example:
         fa(2^6+1)
-    Test ran for 2.22 s
+    Test ran for 2.22 cpu seconds
     **********************************************************************
     File "src/sage/rings/factorint.pyx", line 155, in sage.rings.factorint.factor_aurifeuillian
     Failed example:
         fa(2^58+1)
-    Test ran for 2.22 s
+    Test ran for 2.22 cpu seconds
     **********************************************************************
     File "src/sage/rings/factorint.pyx", line 163, in sage.rings.factorint.factor_aurifeuillian
     Failed example:
         fa(2^4+1)
-    Test ran for 2.25 s
+    Test ran for 2.25 cpu seconds
     **********************************************************************
     ----------------------------------------------------------------------
     All tests passed!
@@ -792,12 +792,12 @@ You can also pass in an explicit amount of time::
     File "tests.py", line 240, in sage.rings.tests.test_random_elements
     Failed example:
         sage.rings.tests.test_random_elements(trials=1000)  # long time (5 seconds)
-    Test ran for 13.36 s
+    Test ran for 13.36 cpu seconds
     **********************************************************************
     File "tests.py", line 283, in sage.rings.tests.test_random_arith
     Failed example:
         sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?)
-    Test ran for 12.42 s
+    Test ran for 12.42 cpu seconds
     **********************************************************************
     ----------------------------------------------------------------------
     All tests passed!

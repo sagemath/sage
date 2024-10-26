@@ -33,6 +33,7 @@ from sage.manifolds.differentiable.manifold import DifferentiableManifold
 from sage.manifolds.structure import RealDifferentialStructure
 from sage.categories.manifolds import Manifolds
 
+
 class OpenInterval(DifferentiableManifold):
     r"""
     Open interval as a 1-dimensional differentiable manifold over `\RR`.

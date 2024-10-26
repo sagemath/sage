@@ -47,7 +47,7 @@ from sage.features.gfan import GfanExecutable
 from sage.misc.decorators import rename_keyword
 
 
-class Gfan():
+class Gfan:
     """
     Interface to Anders Jensen's Groebner Fan program.
     """

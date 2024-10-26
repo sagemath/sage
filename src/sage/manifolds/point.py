@@ -92,6 +92,7 @@ from sage.misc.decorators import options
 from sage.symbolic.expression import Expression
 from sage.rings.integer_ring import ZZ
 
+
 class ManifoldPoint(Element):
     r"""
     Point of a topological manifold.

@@ -2218,7 +2218,7 @@ cdef _circle_invert_standard(
     # crosses the x-Axis, the north east or south east diagonal, respectively.
     #
     # Given standard form, the input also has to cross the north east
-    # diagonal and x-Axis if it corsses the south east diagonal.
+    # diagonal and x-Axis if it crosses the south east diagonal.
     #
     # Thus, we are left with five cases:
     #

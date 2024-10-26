@@ -34,6 +34,7 @@ from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 if TYPE_CHECKING:
     from sage.manifolds.point import ManifoldPoint
 
+
 class TangentSpace(FiniteRankFreeModule):
     r"""
     Tangent space to a differentiable manifold at a given point.

@@ -1108,7 +1108,7 @@ unsigned matrix::rank() const
  *  more than once.  According to W.M.Gentleman and S.C.Johnson this algorithm
  *  is better than elimination schemes for matrices of sparse multivariate
  *  polynomials and also for matrices of dense univariate polynomials if the
- *  matrix' dimesion is larger than 7.
+ *  matrix' dimension is larger than 7.
  *
  *  @return the determinant as a new expression (in expanded form)
  *  @see matrix::determinant() */

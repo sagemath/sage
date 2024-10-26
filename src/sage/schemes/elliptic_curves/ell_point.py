@@ -1148,12 +1148,19 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
           3
           sage: [(Q,Q._order) for Q in P.division_points(4)]
           [((-2 : -7 : 1), 6), ((1 : 2 : 1), 6), ((4 : -7 : 1), 3), ((13 : 38 : 1), 6)]
+
+        Check for :issue:`38796`::
+
+            sage: E = EllipticCurve(GF(127), [1,1])
+            sage: P = E(72, 24)
+            sage: [-1*Q for Q in P.division_points(-1)]
+            [(72 : 24 : 1)]
         """
         # Coerce the input m to an integer
         m = Integer(m)
         # Check for trivial cases of m = 1, -1 and 0.
         if m == 1 or m == -1:
-            return [self]
+            return [m*self]
         if m == 0:
             if self == 0:  # then every point Q is a solution, but...
                 return [self]

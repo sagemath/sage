@@ -21,6 +21,7 @@ from sage.symbolic.ring import SR
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.manifolds.vector_bundle_fiber_element import VectorBundleFiberElement
 
+
 class VectorBundleFiber(FiniteRankFreeModule):
     r"""
     Fiber of a given vector bundle at a given point.

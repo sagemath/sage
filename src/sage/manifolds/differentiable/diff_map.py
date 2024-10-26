@@ -43,6 +43,7 @@ if TYPE_CHECKING:
     from sage.manifolds.point import ManifoldPoint
     from sage.tensor.modules.free_module_morphism import FiniteRankFreeModuleMorphism
 
+
 class DiffMap(ContinuousMap):
     r"""
     Differentiable map between two differentiable manifolds.

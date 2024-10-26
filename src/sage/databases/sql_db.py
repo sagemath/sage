@@ -254,7 +254,7 @@ def construct_skeleton(database):
         exe1 = cur.execute("PRAGMA table_info(%s)" % table[0])
         for col in exe1.fetchall():
             if not col[2]:
-                typ = u'NOTYPE'
+                typ = 'NOTYPE'
             else:
                 typ = col[2]
             skeleton[table[0]][col[1]] = {'sql':typ,
@@ -482,7 +482,7 @@ class SQLQuery(SageObject):
         else:
             self.__query_string__ = kwds['query_string']
             if 'param_tuple' in kwds:
-                self.__param_tuple__ = tuple((str(x) for x in kwds['param_tuple']))
+                self.__param_tuple__ = tuple(str(x) for x in kwds['param_tuple'])
             else:
                 self.__param_tuple__ = tuple()
             return
@@ -2164,7 +2164,7 @@ class SQLDatabase(SageObject):
         if self.__read_only__:
             raise RuntimeError('Cannot add rows to read only database.')
         quest = '(' + ', '.join('?' for i in rows[0]) + ')'
-        strows = [tuple((str(entry) for entry in row)) for row in rows]
+        strows = [tuple(str(entry) for entry in row) for row in rows]
 
         if entry_order is not None:
             self.__connection__.executemany('INSERT INTO ' + table_name

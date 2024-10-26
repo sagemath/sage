@@ -41,6 +41,7 @@ from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
 from sage.manifolds.vector_bundle_fiber import VectorBundleFiber
 
+
 class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
     r"""
     An instance of this class is a topological vector bundle `E \to B` over a

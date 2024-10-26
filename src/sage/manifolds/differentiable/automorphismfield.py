@@ -28,6 +28,7 @@ from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
 
+
 class AutomorphismField(TensorField):
     r"""
     Field of automorphisms of tangent spaces to a generic (a priori

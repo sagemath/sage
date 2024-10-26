@@ -34,6 +34,7 @@ from sage.categories.modules import Modules
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.manifolds.section import Section, TrivialSection
 
+
 class SectionModule(UniqueRepresentation, Parent):
     r"""
     Module of sections over a vector bundle `E \to M` of class `C^k` on a domain
@@ -475,6 +476,7 @@ class SectionModule(UniqueRepresentation, Parent):
         self._def_frame = basis
 
 #******************************************************************************
+
 
 class SectionFreeModule(FiniteRankFreeModule):
     r"""

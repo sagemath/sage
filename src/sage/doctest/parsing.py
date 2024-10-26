@@ -652,7 +652,7 @@ def reduce_hex(fingerprints):
     return "%032x" % res
 
 
-class OriginalSource():
+class OriginalSource:
     r"""
     Context swapping out the pre-parsed source with the original for
     better reporting.
