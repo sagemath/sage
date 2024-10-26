@@ -1160,18 +1160,18 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
 
                 S = SymmetricGroup(sum(self.grade())).young_subgroup(self.grade())
                 # conjugate self and other to match S
-                G, G_dompart = self.group_and_partition()
+                G, G_dompart = self.permutation_group()
                 g = list(chain.from_iterable(G_dompart))
                 conj_self = PermutationGroupElement(g).inverse()
                 G = libgap.ConjugateGroup(G, conj_self)
-                H, H_dompart = other.group_and_partition()
+                H, H_dompart = other.permutation_group()
                 h = list(chain.from_iterable(H_dompart))
                 conj_other = PermutationGroupElement(h).inverse()
                 H = libgap.ConjugateGroup(H, conj_other)
                 return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
 
         @cached_method
-        def group_and_partition(self):
+        def permutation_group(self):
             r"""
             Return the (transitive) permutation group
             corresponding to ``self``, together with the partition of
@@ -1184,7 +1184,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: G = PermutationGroup([[(1,2),(3,4)], [(5,6)]])
                 sage: A = M(G, {0: [5,6], 1: [1,2,3,4]}); A
                 E_2(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
-                sage: A.group_and_partition()
+                sage: A.permutation_group()
                 (Permutation Group with generators [(3,4)(5,6), (1,2)],
                  (frozenset({1, 2}), frozenset({3, 4, 5, 6})))
 
@@ -1194,14 +1194,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: A = M(PermutationGroup([(3,4)]), {0:[1,3,4], 1:[2]})
                 sage: A
                 X*Y*E_2(X)
-                sage: A.group_and_partition()[1]
+                sage: A.permutation_group()[1]
                 (frozenset({1, 3, 4}), frozenset({2}))
 
             TESTS::
 
                 sage: B = M(PermutationGroup([(1,2,3)]), {0: [1,2,3]}); B
                 C_3(X)
-                sage: B.group_and_partition()
+                sage: B.permutation_group()
                 (Permutation Group with generators [(1,2,3)],
                  (frozenset({1, 2, 3}), frozenset()))
 
@@ -1209,31 +1209,31 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: A = M(G, {0: [5,6], 1: [1,2,3,4]})
                 sage: A * B
                 E_2(X)*C_3(X)*{((1,2)(3,4),): ({}, {1, 2, 3, 4})}
-                sage: (A*B).group_and_partition()
+                sage: (A*B).permutation_group()
                 (Permutation Group with generators [(6,7)(8,9), (3,4,5), (1,2)],
                  (frozenset({1, 2, 3, 4, 5}), frozenset({6, 7, 8, 9})))
 
                 sage: C = M(PermutationGroup([(2,3)]), {0: [1], 1: [2,3]}); C
                 X*E_2(Y)
-                sage: C.group_and_partition()
+                sage: C.permutation_group()
                 (Permutation Group with generators [(2,3)],
                  (frozenset({1}), frozenset({2, 3})))
 
-                sage: (C^3).group_and_partition()
+                sage: (C^3).permutation_group()
                 (Permutation Group with generators [(8,9), (6,7), (4,5)],
                  (frozenset({1, 2, 3}), frozenset({4, 5, 6, 7, 8, 9})))
 
                 sage: M = MolecularSpecies("X")
                 sage: F = M(SymmetricGroup(1)) * M(SymmetricGroup(2))
-                sage: F.group_and_partition()
+                sage: F.permutation_group()
                 (Permutation Group with generators [(2,3)], (frozenset({1, 2, 3}),))
 
                 sage: F = M(PermutationGroup([(1,2),(3,)]))
-                sage: F.group_and_partition()[0].domain()
+                sage: F.permutation_group()[0].domain()
                 {1, 2, 3}
 
                 sage: F = M(AlternatingGroup(2))
-                sage: F.group_and_partition()[0].domain()
+                sage: F.permutation_group()[0].domain()
                 {1, 2}
             """
             def shift_gens(gens, n):
@@ -1259,13 +1259,13 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 if n % 2 == 1:
                     # split off a single monomial
                     a = list(A._monomial)[0]  # as atomic species
-                    b, b_dompart = (A ** (n-1)).group_and_partition()
+                    b, b_dompart = (A ** (n-1)).permutation_group()
                     gens = a._dis.gens() + shift_gens(b.gens(), a._tc)
                     new_dompart = tuple([frozenset(list(p_a) + [a._tc + e for e in p_b])
                                          for p_a, p_b in zip(a._dompart, b_dompart)])
                     domain = range(1, n * a._tc + 1)
                 else:
-                    f, f_dompart = (A ** (n // 2)).group_and_partition()
+                    f, f_dompart = (A ** (n // 2)).permutation_group()
                     tc = sum(len(p) for p in f_dompart)
                     gens = f.gens() + shift_gens(f.gens(), tc)
                     new_dompart = tuple([frozenset(list(p) + [tc + e for e in p])
@@ -1275,7 +1275,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 G = PermutationGroup(gens, domain=domain)
                 return G, new_dompart
 
-            f_dompart_list = [(A ** n).group_and_partition() for A, n in factors]
+            f_dompart_list = [(A ** n).permutation_group() for A, n in factors]
             f_list = [f for f, _ in f_dompart_list]
             dompart_list = [f_dompart for _, f_dompart in f_dompart_list]
             tc_list = list(accumulate([sum(len(p) for p in f_dompart)
@@ -1333,7 +1333,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             elif parent not in Modules.WithBasis:
                 raise ValueError("`parent` should be a module with basis indexed by partitions")
             base_ring = parent.base_ring()
-            G, dompart = self.group_and_partition()
+            G, dompart = self.permutation_group()
             pi = {}
             for i, s in enumerate(dompart):
                 pi.update({e: i for e in s})
@@ -1424,7 +1424,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             # is a polynomial species is not yet covered - see
             # section 4.3 of [ALL2002]_
             Mlist = [None for _ in range(sum(self.grade()))]
-            G, dompart = self.group_and_partition()
+            G, dompart = self.permutation_group()
             for i, v in enumerate(dompart):
                 for k in v:
                     Mlist[k - 1] = args[i]
@@ -1444,7 +1444,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             P = args[0].parent()
             pi = {i: [] for i in range(P._arity)}
             for start, M in zip(starts, Mlist):
-                K, K_dompart = M.group_and_partition()
+                K, K_dompart = M.permutation_group()
                 for i, v in enumerate(K_dompart):
                     pi[i].extend([start + k for k in v])
                 for gen in K.gens():
@@ -1599,7 +1599,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             tc = sum(mc)
             S = SymmetricGroup(tc).young_subgroup(mc)
             # conjugate L and R to match S
-            G, dompart = L.group_and_partition()
+            G, dompart = L.permutation_group()
             g = list(chain.from_iterable(dompart))
             conj_L = PermutationGroupElement(g).inverse()
             G = libgap.ConjugateGroup(G, conj_L)
@@ -1608,7 +1608,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             for R, d in other:
                 if mc != R.grade():
                     continue
-                G_R, dompart_R = R.group_and_partition()
+                G_R, dompart_R = R.permutation_group()
                 g = list(chain.from_iterable(dompart_R))
                 conj_R = PermutationGroupElement(g).inverse()
                 H = libgap.ConjugateGroup(G_R, conj_R)
@@ -1685,7 +1685,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
         for M, c in self:
             # Create group of the composition
             # conjugate self.group() so that [1..k] is sort 1, [k+1,..] is sort 2, so on
-            G, dompart = M.group_and_partition()
+            G, dompart = M.permutation_group()
             conj = PermutationGroupElement(list(chain.from_iterable(dompart))).inverse()
             G = libgap.ConjugateGroup(G, conj)
 
