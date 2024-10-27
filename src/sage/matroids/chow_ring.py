@@ -178,16 +178,17 @@ class ChowRing(QuotientRing_generic):
             sage: set(ch.defining_ideal().normal_basis()) == set(ch.basis())
             True
         """
-        flats = [X for i in range(1, self._matroid.rank() + 1)
-                 for X in self._matroid.flats(i)] #Non empty flats
+        F = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        H.delete_vertex(self._ideal.matroid().flats(0)[0])  # remove the empty flat
+        lattice_flats = Poset(H)
+        flats = list(lattice_flats)
         flats_gen = self._ideal.flats_generator()
         R = self._ideal.ring()
-        flats = sorted(flats, key=lambda X: (len(X), sorted(X)))
+        flats.sort(key=lambda X: (len(X), sorted(X)))
         ranks = {F: self._matroid.rank(F) for F in flats}
         monomial_basis = []
-        reln = lambda x,y: x <= y
-        lattice_flats = Poset((flats, reln))
-        chains = lattice_flats.chains() #Only chains
+        chains = lattice_flats.chains()  #Only chains
         if self._augmented:
             if self._presentation == 'fy':
                 for subset in chains:
