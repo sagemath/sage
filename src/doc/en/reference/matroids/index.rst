@@ -34,6 +34,15 @@ Concrete implementations
    sage/matroids/rank_matroid
    sage/matroids/graphic_matroid
 
+Chow rings of matroids
+----------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/matroids/chow_ring_ideal
+   sage/matroids/chow_ring
+
 Abstract matroid classes
 ------------------------
 
@@ -64,14 +73,5 @@ Internals
    sage/matroids/matroids_plot_helpers
    sage/matroids/set_system
    sage/matroids/unpickling
-
-Chow rings of matroids
-----------------------
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/matroids/chow_ring_ideal
-   sage/matroids/chow_ring
 
 .. include:: ../footer.txt
