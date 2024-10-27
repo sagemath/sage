@@ -8527,7 +8527,7 @@ class Graph(GenericGraph):
               resistances
 
             * :meth:`effective_resistance` --
-              compuetes effective resistance for a single node pair
+              computes effective resistance for a single node pair
 
             * See :wikipedia:`Resistance_distance` for more details.
 

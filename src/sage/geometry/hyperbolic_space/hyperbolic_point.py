@@ -74,6 +74,7 @@ from sage.functions.other import real, imag
 
 from sage.geometry.hyperbolic_space.hyperbolic_isometry import HyperbolicIsometry
 
+
 class HyperbolicPoint(Element):
     r"""
     Abstract base class for hyperbolic points.  This class should never
