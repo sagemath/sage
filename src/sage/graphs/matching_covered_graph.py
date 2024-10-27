@@ -810,6 +810,271 @@ class MatchingCoveredGraph(Graph):
                              '(%s) is not matching covered'
                              % str((u, v, label)))
 
+    def add_edges(self, edges, loops=False):
+        r"""
+        Add edges from an iterable container.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.generic_graph.GenericGraph.add_edges` method
+            to ensure that resultant graph is also matching covered.
+
+        INPUT:
+
+        - ``edges`` -- an iterable of edges, given either as ``(u, v)``
+          or ``(u, v, 'label')``
+
+        - ``loops`` -- boolean (default: ``False``); note that this shall
+          always be set to either ``False`` or ``None`` (since matching covered
+          graphs are free of loops), in which case all the loops
+          ``(v, v, 'label')`` are removed from the iterator. If ``loops`` is
+          set to ``True``, a :exc:`ValueError` is thrown.
+
+        OUTPUT:
+
+        - If ``loops`` is set to ``True``, a :exc:`ValueError` is returned.
+
+        - If ``edges`` is provided with a valid format, but addition of the
+          edges leave the resulting graph not being matching covered, a
+          :exc:`ValueError` is returned without any alteration to the existing
+          matching covered graph. If the addition of the edges preserves the
+          property of matching covered, then the graph is updated and nothing
+          is returned.
+
+        - If ``edges`` is provided with an invalid format, a :exc:`ValueError`
+          is returned.
+
+        EXAMPLES:
+
+        Adding some edges, the incident vertices of each of which are existent,
+        such that the resulting graph is matching covered::
+
+            sage: S = graphs.StaircaseGraph(4)
+            sage: G = MatchingCoveredGraph(S)
+            sage: F = [(0, 4), (2, 4), (4, 6), (4, 7)]
+            sage: G.add_edges(F)
+            sage: G.edges(sort=True)
+            [(0, 1, None), (0, 3, None), (0, 4, None), (0, 6, None),
+             (1, 2, None), (1, 4, None), (2, 4, None), (2, 5, None),
+             (2, 7, None), (3, 4, None), (3, 6, None), (4, 5, None),
+             (4, 6, None), (4, 7, None), (5, 7, None), (6, 7, None)]
+
+        Adding some edges, at least one of the incident vertices of some of
+        which are nonexistent such that the resulting graph is matching
+        covered::
+
+            sage: C = graphs.CycleGraph(8)
+            sage: G = MatchingCoveredGraph(C)
+            sage: F = [(0, 9), (1, 8), (2, 9), (3, 8),
+            ....:      (4, 9), (5, 8), (6, 9), (7, 8)]
+            sage: G.add_edges(F)
+            sage: G.edges(sort=True)
+            [(0, 1, None), (0, 7, None), (0, 9, None), (1, 2, None),
+             (1, 8, None), (2, 3, None), (2, 9, None), (3, 4, None),
+             (3, 8, None), (4, 5, None), (4, 9, None), (5, 6, None),
+             (5, 8, None), (6, 7, None), (6, 9, None), (7, 8, None)]
+            sage: G.is_isomorphic(graphs.BiwheelGraph(5))
+            True
+
+        Adding a removable double ear to a matching covered graph::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: F = {(0, 8, None), (1, 10), (4, 11, 'label'),
+            ....:      (5, 9), (8, 9), (10, 11)}
+            sage: G.add_edges(F)
+            sage: G.edges(sort=True)
+            [(0, 1, None), (0, 3, None), (0, 4, None), (0, 8, None),
+             (1, 2, None), (1, 5, None), (1, 10, None), (2, 3, None),
+             (2, 6, None), (3, 7, None), (4, 5, None), (4, 7, None),
+             (4, 11, 'label'), (5, 6, None), (5, 9, None), (6, 7, None),
+             (8, 9, None), (10, 11, None)]
+
+        Adding some edges, the incident vertices of each of which are existent,
+        such that the resulting graph is NOT matching covered::
+
+            sage: C = graphs.CycleGraph(6)
+            sage: G = MatchingCoveredGraph(C)
+            sage: F = [(0, 2), (3, 5)]
+            sage: G.add_edges(F)
+            Traceback (most recent call last):
+            ...
+            ValueError: the resulting graph after the addition ofthe edges is not matching covered
+
+        Adding some edges, at least one of the incident vertices of some of
+        which are nonexistent such that the resulting graph is NOT matching
+        covered::
+
+            sage: H = graphs.HexahedralGraph()
+            sage: G = MatchingCoveredGraph(H)
+            sage: F = {(0, 5), (2, 7)}
+            sage: G.add_edges(F)
+            Traceback (most recent call last):
+            ...
+            ValueError: the resulting graph after the addition ofthe edges is not matching covered
+            sage: J = [(u, 8) for u in range(8)]
+            sage: G.add_edges(J)
+            Traceback (most recent call last):
+            ...
+            ValueError: odd order is not allowed for matching covered graphs
+
+        Setting the parameter ``loops`` to either ``False`` or ``None``::
+
+            sage: W = graphs.WheelGraph(6)
+            sage: G = MatchingCoveredGraph(W)
+            sage: F = [(0, 0), (1, 3), (2, 4)]
+            sage: G.add_edges(edges=F, loops=False)
+            sage: G.edges(sort=True)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None),
+             (0, 5, None), (1, 2, None), (1, 3, None), (1, 5, None),
+             (2, 3, None), (2, 4, None), (3, 4, None), (4, 5, None)]
+            sage: J = [(1, 1), (3, 5)]
+            sage: G.add_edges(edges=J, loops=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+            sage: G.edges(sort=True)
+            [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None),
+             (0, 5, None), (1, 2, None), (1, 3, None), (1, 5, None),
+             (2, 3, None), (2, 4, None), (3, 4, None), (4, 5, None)]
+
+        Setting the parameter ``loops`` to ``True``::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: F = [(0, 0), (0, 2), (0, 3)]
+            sage: G.add_edges(edges=F, loops=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: loops are not allowed in matching covered graphs
+
+        Adding a multiple edge::
+
+            sage: S = graphs.StaircaseGraph(4)
+            sage: G = MatchingCoveredGraph(S)
+            sage: G.allow_multiple_edges(True)
+            sage: F = [(0, 1, 'label'), (0, 4), (1, 2)]
+            sage: G.add_edges(F)
+            sage: G.edges(sort=False)
+            [(0, 1, None), (0, 1, 'label'), (0, 3, None), (0, 4, None),
+             (0, 6, None), (1, 2, None), (1, 2, None), (1, 4, None),
+             (2, 5, None), (2, 7, None), (3, 4, None), (3, 6, None),
+             (4, 5, None), (5, 7, None), (6, 7, None)]
+
+        TESTS:
+
+        Providing with an edge in ``edges`` that has 0 values to unpack::
+
+            sage: W = graphs.WagnerGraph()
+            sage: G = MatchingCoveredGraph(W)
+            sage: G.add_edges([()])
+            Traceback (most recent call last):
+            ...
+            ValueError: need more than 0 values to unpack
+
+        Providing with an edge in ``edges`` that has precisely one value to unpack::
+
+            sage: T = graphs.TruncatedBiwheelGraph(10)
+            sage: G = MatchingCoveredGraph(T)
+            sage: G.add_edges([(0, )])
+            Traceback (most recent call last):
+            ...
+            ValueError: need more than 1 value to unpack
+
+        Providing with an edge in ``edges`` that has more than 3 values to unpack::
+
+            sage: B = graphs.BiwheelGraph(5)
+            sage: G = MatchingCoveredGraph(B)
+            sage: G.add_edges([(0, 1, 2, 3, 4)])
+            Traceback (most recent call last):
+            ...
+            ValueError: too many values to unpack (expected 2)
+
+        Providing with an edge of unknown data type::
+
+            sage: M = graphs.MurtyGraph()
+            sage: G = MatchingCoveredGraph(M)
+            sage: F = ['', 'edge', None, 1234]
+            sage: G.add_edges(F)
+            Traceback (most recent call last):
+            ...
+            TypeError: input edges is of unknown type
+        """
+        if loops:
+            raise ValueError('loops are not allowed in '
+                             'matching covered graphs')
+
+        for edge in edges:
+            if isinstance(edge, tuple):
+                if len(edge) == 0:
+                    raise ValueError('need more than 0 values to unpack')
+
+                elif len(edge) == 1:
+                    raise ValueError('need more than 1 value to unpack')
+
+                elif len(edge) > 3:
+                    raise ValueError('too many values to unpack (expected 2)')
+
+            else:
+                raise TypeError('input edges is of unknown type')
+
+        # Remove potentially duplicated edges
+        edges = list(set(edges))
+
+        # Remove all the loops from edges
+        for edge in edges:
+            if edge[0] == edge[1]:
+                edges.remove(edge)
+
+        # Check if all the incident vertices of the input edges are existent
+        new_vertices = list(set([x for u, v, *_ in edges for x in [u, v]]))
+
+        for vertex in new_vertices[:]:
+            if vertex in self:
+                new_vertices.remove(vertex)
+
+        # Throw error if the no. of new vertices is odd
+        if len(new_vertices)%2:
+            raise ValueError('odd order is not allowed for '
+                             'matching covered graphs')
+
+        try:
+            G = Graph(self, multiedges=self.allows_multiple_edges())
+            G.add_edges(edges=edges, loops=loops)
+
+            # Check if G has a vertex with at most 1 neighbor
+            if any(len(G.neighbors(v)) <= 1 for v in G):
+                raise ValueError('the resulting graph after the addition of'
+                                 'the edges is not matching covered')
+
+            # If all the vertices are existent, the existing perfect matching
+            # can be used.
+            if not new_vertices:
+                self.__init__(data=G, matching=self.get_matching())
+
+            else:
+                # Check if the existing perfect matching may be extended to a
+                # perfect matching of the new graph
+                edges_with_two_new_vertices = []
+
+                for edge in edges:
+                    if edge[0] in new_vertices and edge[1] in new_vertices:
+                        edges_with_two_new_vertices.append(edge)
+
+                H = Graph(data=edges_with_two_new_vertices, format='list_of_edges')
+                M = Graph(self.get_matching()).union(Graph(H.matching()))
+
+                # Check if M is a perfect matching of the resulting graph
+                if (G.order() != 2*M.size()):
+                    M = None
+
+                self.__init__(data=G, matching=M)
+
+        except Exception:
+            raise ValueError('the resulting graph after the addition of'
+                             'the edges is not matching covered')
+
     def add_vertex(self, name=None):
         r"""
         Add a vertex to the (matching covered) graph.
