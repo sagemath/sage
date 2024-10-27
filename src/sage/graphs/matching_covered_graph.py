@@ -451,7 +451,7 @@ class MatchingCoveredGraph(Graph):
         sage: G = MatchingCoveredGraph(D)
         Traceback (most recent call last):
         ...
-        ValueError: input data is of unknown type
+        TypeError: input data is of unknown type
     """
 
     def __init__(self, data=None, matching=None, algorithm='Edmonds',
@@ -522,7 +522,7 @@ class MatchingCoveredGraph(Graph):
                 self._matching = Graph(self).matching()
 
         else:
-            raise ValueError('input data is of unknown type')
+            raise TypeError('input data is of unknown type')
 
     def __repr__(self):
         r"""
@@ -791,11 +791,12 @@ class MatchingCoveredGraph(Graph):
             # TODO: A ligher incremental method to check whether the new graph
             # is matching covered instead of creating a new graph and checking
 
-            G = Graph(self)
+            G = Graph(self, multiedges=self.allows_multiple_edges())
             G.add_edge(u, v, label=label)
 
             try:
                 self.__init__(data=G, matching=self.get_matching())
+
             except Exception:
                 raise ValueError('the graph obtained after the addition of '
                                  'edge (%s) is not matching covered'
@@ -1122,7 +1123,7 @@ class MatchingCoveredGraph(Graph):
                 raise ValueError('vertex (%s) not in the graph' % str(vertex))
 
         try:
-            G = Graph(self, multiedges=False)
+            G = Graph(self, multiedges=self.allows_multiple_edges())
             G.delete_vertices(vertices)
 
             M = Graph(self.get_matching())
