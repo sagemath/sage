@@ -1335,6 +1335,14 @@ class MatchingCoveredGraph(Graph):
 
         EXAMPLES:
 
+        Providing with an empty list of vertices::
+
+            sage: C = graphs.CycleGraph(6)
+            sage: G = MatchingCoveredGraph(C)
+            sage: G.delete_vertices([])
+            sage: G == C
+            True
+
         Providing with a list of vertices with at least one non-existent
         vertex::
 
@@ -1349,6 +1357,18 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: vertex (9) not in the graph
+
+        Removing an odd no. of distinct vertices from
+        a matching covered graph::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: S = [0, 1, 2, 10, 10, 100]
+            sage: G.delete_vertices(S)
+            Traceback (most recent call last):
+            ...
+            ValueError: an odd no. of distinct vertices can not be
+            removed from a matching covered graph
 
         Providing with a list of existent vertices whose deletion results in a
         graph which is not matching covered::
@@ -1383,6 +1403,16 @@ class MatchingCoveredGraph(Graph):
             sage: G  # Matching covered graph on 6 vertices
             Matching covered staircase graph: graph on 6 vertices
         """
+        if not vertices:   # do nothing
+            return
+
+        # Remove potentially duplicated vertices
+        vertices = set(vertices)
+
+        if len(vertices) % 2:  # try to remove an odd number of vertices
+            raise ValueError('an odd no. of distinct vertices can not be '
+                             'removed from a matching covered graph')
+
         for vertex in vertices:
             if vertex not in self:
                 raise ValueError('vertex (%s) not in the graph' % str(vertex))
