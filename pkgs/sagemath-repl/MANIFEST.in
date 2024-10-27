@@ -18,6 +18,11 @@ include sage/misc/pager.py
 
 include sage/misc/cython.py
 include sage/misc/inline_fortran.py
+# expect_objects from sage.interfaces.quit is needed to compute the
+# CPU time used by each doctest. We include sage.interfaces.cleaner
+# because it is conditionally imported by sage.interfaces.quit.
+include sage/interfaces/quit.py
+include sage/interfaces/cleaner.py
 
 include VERSION.txt
 

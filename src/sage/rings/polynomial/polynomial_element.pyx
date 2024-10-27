@@ -7178,9 +7178,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: f = R('e*i') * x + x^2
             sage: f._giac_init_()
             '((1)*1)*sageVARx^2+((1)*sageVARe*sageVARi)*sageVARx'
-            sage: giac(f)
+            sage: giac(f)  # needs giac
             sageVARx^2+sageVARe*sageVARi*sageVARx
-            sage: giac(R.zero())
+            sage: giac(R.zero())  # needs giac
             0
         """
         g = 'sageVAR' + self.variable_name()

@@ -270,7 +270,7 @@ jobs:
       - name: sagemath-tdlib
         run: |
           case "${{ matrix.arch }}" in
-              sagemath*tdlib:i686) ;;  # broken - boost-related
+              i686) ;;  # broken - boost-related
               *) "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*tdlib*
           esac
 

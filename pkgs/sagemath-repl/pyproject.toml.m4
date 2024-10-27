@@ -49,6 +49,7 @@ py-modules = [
 ]
 packages = [
     "sage.doctest",
+    "sage.interfaces",
     "sage.repl",
     "sage.repl.display",
     "sage.repl.ipython_kernel",

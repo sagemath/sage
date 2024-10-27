@@ -528,7 +528,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
 
     def _repr_(self):
         r"""
-        Return a string represemtation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 

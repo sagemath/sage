@@ -239,7 +239,7 @@ class CNFEncoder(ANF2CNFConverter):
         while not rest.empty():
             l = choose(rest)
             l_variables = set(l.variables())
-            block_dict = dict([(v, 1 if v in l_variables else 0) for v in variables])
+            block_dict = {v: (1 if v in l_variables else 0) for v in variables}
             l = l.set()
             self.random_generator.shuffle(variables)
             for v in variables:
