@@ -35,7 +35,8 @@ from sage.structure.unique_representation import (UniqueRepresentation,
 GAP_FAIL = libgap.eval('fail')
 
 
-class AtomicSpeciesElement(Element, WithEqualityById,
+class AtomicSpeciesElement(WithEqualityById,
+                           Element,
                            WithPicklingByInitArgs,
                            metaclass=InheritComparisonClasscallMetaclass):
     r"""
@@ -206,29 +207,6 @@ class AtomicSpeciesElement(Element, WithEqualityById,
         self._mc = tuple([len(v) for v in self._dompart])
         self._tc = sum(self._mc)
 
-    def __hash__(self):
-        """
-        Return a hash of ``self``.
-
-        ..TODO::
-
-            Why does the hash not come from
-            :class:`~sage.misc.fast_methods.WithEqualityById`?
-
-        EXAMPLES::
-
-            sage: from sage.rings.species import AtomicSpecies
-            sage: A = AtomicSpecies("X")
-            sage: G = PermutationGroup([[(1,2),(3,4)]])
-            sage: H = PermutationGroup([[(1,3),(2,4)], [(1,2),(3,4)]])
-            sage: K = PermutationGroup([[(1,2,3,4)]])
-            sage: hash(A(G)) == hash(A(H))
-            False
-            sage: hash(A(H)) == hash(A(K))
-            False
-        """
-        return hash((self._dis, self._dompart))
-
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
@@ -266,10 +244,9 @@ class AtomicSpeciesElement(Element, WithEqualityById,
         S = self.parent().grading_set()
         return S(self._mc)
 
-    def _richcmp_(self, other, op):
+    def __lt__(self, other):
         r"""
-        Compare ``self`` with ``other`` with respect to the comparison
-        operator ``op``.
+        Return whether ``self`` is less than ``other``.
 
         ``self`` is less than or equal to ``other`` if it is
         conjugate to a subgroup of ``other`` in the parent group.
@@ -306,32 +283,34 @@ class AtomicSpeciesElement(Element, WithEqualityById,
             sage: [(a, b) for a, b in Subsets(A.subset(3), 2) if (a < b) != (b > a)]
             []
         """
-        if op is op_EQ:
-            return self is other
-        if op is op_NE:
-            return self is not other
-        if op is op_LE:
-            return self is other or self < other
-        if op is op_GE:
-            return other <= self
-        if op is op_GT:
-            return other < self
-        if op is op_LT:
-            # the arities match because the parents are equal
-            if self._mc != other._mc:
-                # X should come before Y
-                return (sum(self._mc) < sum(other._mc)
-                        or (sum(self._mc) == sum(other._mc)
-                            and self._mc > other._mc))
-            S = SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
-            # conjugate self and other to match S
-            g = list(chain.from_iterable(self._dompart))
-            conj_self = PermutationGroupElement(g).inverse()
-            G = libgap.ConjugateGroup(self._dis, conj_self)
-            h = list(chain.from_iterable(other._dompart))
-            conj_other = PermutationGroupElement(h).inverse()
-            H = libgap.ConjugateGroup(other._dis, conj_other)
-            return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
+        # the arities match because the parents are equal
+        if self._mc != other._mc:
+            # X should come before Y
+            return (sum(self._mc) < sum(other._mc)
+                    or (sum(self._mc) == sum(other._mc)
+                        and self._mc > other._mc))
+        S = SymmetricGroup(sum(self._mc)).young_subgroup(self._mc)
+        # conjugate self and other to match S
+        g = list(chain.from_iterable(self._dompart))
+        conj_self = PermutationGroupElement(g).inverse()
+        G = libgap.ConjugateGroup(self._dis, conj_self)
+        h = list(chain.from_iterable(other._dompart))
+        conj_other = PermutationGroupElement(h).inverse()
+        H = libgap.ConjugateGroup(other._dis, conj_other)
+        return GAP_FAIL != libgap.ContainedConjugates(S, G, H, True)
+
+    def __le__(self, other):
+        r"""
+        Return whether ``self`` is less than or equal to ``other``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import AtomicSpecies
+            sage: A = AtomicSpecies("X")
+            sage: A(SymmetricGroup(3)) <= A(SymmetricGroup(3))
+            True
+        """
+        return self is other or self < other
 
 
 class AtomicSpecies(UniqueRepresentation, Parent):
