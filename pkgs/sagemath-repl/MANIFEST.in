@@ -7,6 +7,12 @@ include sage/misc/sagedoc.py
 include sage/misc/sage_input.py
 include sage/misc/sage_eval.py
 
+# expect_objects from sage.interfaces.quit is needed to compute the
+# CPU time used by each doctest. We include sage.interfaces.cleaner
+# because it is conditionally imported by sage.interfaces.quit.
+include sage/interfaces/quit.py
+include sage/interfaces/cleaner.py
+
 include VERSION.txt
 
 global-exclude all__*.py
