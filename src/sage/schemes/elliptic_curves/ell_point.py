@@ -2611,7 +2611,8 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         else:
             K, E, P = QQ, self.curve(), self
             poly = lambda elt: QQ['x'](elt)
-            # Mazur
+            # Mazur / Ogg's torsion conjecture
+            # Torsion points can only have order <= 12, so order of > 12 -> infinite order
             bound = min(bound, 12 + 1)
         assert P.curve() is E
 
