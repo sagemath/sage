@@ -1576,12 +1576,10 @@ class MatchingCoveredGraph(Graph):
             if any(d != 1 for d in M.degree()):
                 raise ValueError("the input is not a matching")
 
-            G = Graph(self, multiedges=False)
-
-            if any(not G.has_edge(edge) for edge in M.edge_iterator()):
+            if any(not self.has_edge(edge) for edge in M.edge_iterator()):
                 raise ValueError("the input is not a matching of the graph")
 
-            if (G.order() != M.order()):
+            if (self.order() != M.order()):
                 raise ValueError("the input is not a perfect matching of the graph")
 
             self._matching = M.edges()
