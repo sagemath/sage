@@ -409,8 +409,10 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
             sage: P = L.primes_above(2)[0]
-            sage: P.relative_norm()
+            sage: rn = P.relative_norm(); rn # random
             Fractional ideal (6*a - 2)
+            sage: rn in [K.ideal(6*a - 2), K.ideal(-6*a -2)]
+            True
         """
         L = self.number_field()
         K = L.base_field()
@@ -528,8 +530,10 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
             sage: P = L.primes_above(2)[0]
-            sage: P.ideal_below()
+            sage: ib = P.ideal_below(); ib # random
             Fractional ideal (6*a - 2)
+            sage: ib in [K.ideal(6*a - 2), K.ideal(-6*a -2)]
+            True
         """
         L = self.number_field()
         K = L.base_field()

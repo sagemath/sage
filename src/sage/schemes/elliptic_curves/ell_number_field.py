@@ -1487,8 +1487,10 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: EllipticCurve([i, i - 1, i + 1, 24*i + 15, 14*i + 35]).conductor()
             Fractional ideal (3*i + 21)
             sage: K.<a> = NumberField(x^2 - x + 3)
-            sage: EllipticCurve([1 + a, -1 + a, 1 + a, -11 + a, 5 - 9*a]).conductor()
-            Fractional ideal (-6*a)
+            sage: cond = EllipticCurve([1 + a, -1 + a, 1 + a, -11 + a, 5 - 9*a]).conductor(); cond # random
+            Fractional ideal (6*a)
+            sage: cond == K.ideal(6*a)
+            True
 
         A not so well known curve with everywhere good reduction::
 
