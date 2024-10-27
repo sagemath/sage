@@ -1577,6 +1577,16 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: C3.hadamard_product(E2^2)
             0
 
+        We can create the table of marks for the symmetric group::
+
+            sage: E3 = P(SymmetricGroup(3))
+            sage: C = [X^3, X*E2, C3, E3]
+            sage: table([(b, [(a.hadamard_product(b)).coefficient(b.support()[0]) for a in C]) for b in C])
+              X^3     [6, 3, 2, 1]
+              X*E_2   [0, 1, 0, 1]
+              C_3     [0, 0, 2, 1]
+              E_3     [0, 0, 0, 1]
+
         TESTS::
 
             sage: C3.hadamard_product(-C3)
