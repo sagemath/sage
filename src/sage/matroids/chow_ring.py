@@ -59,7 +59,8 @@ class ChowRing(QuotientRing_generic):
     - ``R`` -- commutative ring
     - ``augmented`` -- boolean; when ``True``, this is the augmented
       Chow ring and if ``False``, this is the non-augmented Chow ring
-    - ``presentation`` -- string (default: ``None``); one of the following:
+    - ``presentation`` -- string (default: ``None``); one of the following
+      (ignored if ``augmented=False``)
 
       * ``"fy"`` - the Feitchner-Yuzvinsky presentation
       * ``"atom-free"`` - the atom-free presentation
