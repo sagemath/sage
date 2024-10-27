@@ -847,6 +847,14 @@ class MatchingCoveredGraph(Graph):
 
         EXAMPLES:
 
+        Providing with an empty list of edges::
+
+            sage: C = graphs.CycleGraph(6)
+            sage: G = MatchingCoveredGraph(C)
+            sage: G.add_edges([])
+            sage: G == C
+            True
+
         Adding some edges, the incident vertices of each of which are existent,
         such that the resulting graph is matching covered::
 
@@ -1004,6 +1012,9 @@ class MatchingCoveredGraph(Graph):
         if loops:
             raise ValueError('loops are not allowed in '
                              'matching covered graphs')
+
+        if not edges:  # do nothing
+            return
 
         for edge in edges:
             if isinstance(edge, tuple):
