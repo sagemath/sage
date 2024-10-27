@@ -592,7 +592,7 @@ def _polar_graph(m, q, g, intersection_size=None):
     # and the points there
     sp = [libgap.Elements(libgap.Basis(x))[0] for x in libgap.Elements(s.Subspaces(1))]
     h = libgap.Set([libgap.Position(V, x) for x in sp])  # indices of the points in s
-    L = libgap.Orbit(gp, h, libgap.OnSets)  # orbit on these subspaces
+    L = [tuple(o) for o in libgap.Orbit(gp, h, libgap.OnSets)]  # orbit on these subspaces
     if intersection_size is None:
         G = Graph()
         for x in L:  # every pair of points in the subspace is adjacent to each other in G
