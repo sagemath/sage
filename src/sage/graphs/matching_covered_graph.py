@@ -1354,6 +1354,17 @@ class MatchingCoveredGraph(Graph):
             sage: G == C
             True
 
+        Removing all the existent vertices::
+
+            sage: M = graphs.MoebiusLadderGraph(10)
+            sage: G = MatchingCoveredGraph(M)
+            sage: S = list(G.vertices())
+            sage: G.delete_vertices(S)
+            Traceback (most recent call last):
+            ...
+            ValueError: the resulting graph after the removal of the vertices
+            is trivial, therefore is not matching covered
+
         Providing with a list of vertices with at least one non-existent
         vertex::
 
@@ -1428,20 +1439,24 @@ class MatchingCoveredGraph(Graph):
             if vertex not in self:
                 raise ValueError('vertex (%s) not in the graph' % str(vertex))
 
+        if self.order() == len(vertices):
+            raise ValueError('the resulting graph after the removal of the '
+                             'vertices is trivial, therefore is not '
+                             'matching covered')
+
         try:
             G = Graph(self, multiedges=self.allows_multiple_edges())
             G.delete_vertices(vertices)
 
             M = Graph(self.get_matching())
 
-            if M:
-                M.delete_vertices(vertices)
-                # The resulting matching after the removal of the input vertices
-                # must be a valid perfect matching of the resulting graph obtained
-                # after the removal of the vertices
+            M.delete_vertices(vertices)
+            # The resulting matching after the removal of the input vertices
+            # must be a valid perfect matching of the resulting graph obtained
+            # after the removal of the vertices
 
-                if (G.order() != 2*M.size()):
-                    M = None
+            if (G.order() != 2*M.size()):
+                M = None
 
             self.__init__(data=G, matching=M)
 
