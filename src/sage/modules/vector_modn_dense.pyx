@@ -184,7 +184,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         cdef Py_ssize_t i
         cdef mod_int a
-        if isinstance(x, xrange):
+        if isinstance(x, range):
             x = tuple(x)
         if isinstance(x, (list, tuple)):
             if len(x) != self._degree:
