@@ -486,6 +486,16 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         sage: vector(S, 3)                                                              # needs sage.rings.finite_rings
         ...
         (0, 0, 0)
+
+    We check that ``sparse`` is respected for numpy arrays::
+
+        sage: # needs numpy
+        sage: import numpy
+        sage: a = numpy.array([1,2,3], dtype=numpy.float64)
+        sage: v = vector(a, sparse=True); v
+        (1.0, 2.0, 3.0)
+        sage: v.is_sparse()
+        True
     """
     from sage.modules.free_module import FreeModule
     # We first efficiently handle the important special case of the zero vector
@@ -563,7 +573,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     except ImportError:
         pass
     else:
-        if isinstance(v, ndarray):
+        if isinstance(v, ndarray) and not sparse:
             if len(v.shape) != 1:
                 raise TypeError("cannot convert %r-dimensional array to a vector" % len(v.shape))
             from sage.modules.free_module import VectorSpace
@@ -1007,20 +1017,20 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         EXAMPLES::
 
             sage: v = vector(ZZ, 4, range(4))
-            sage: giac(v) + v                                                           # needs sage.libs.giac
+            sage: giac(v) + v                                                           # needs giac
             [0,2,4,6]
 
         ::
 
             sage: v = vector(QQ, 3, [2/3, 0, 5/4])
-            sage: giac(v)                                                               # needs sage.libs.giac
+            sage: giac(v)                                                               # needs giac
             [2/3,0,5/4]
 
         ::
 
             sage: P.<x> = ZZ[]
             sage: v = vector(P, 3, [x^2 + 2, 2*x + 1, -2*x^2 + 4*x])
-            sage: giac(v)                                                               # needs sage.libs.giac
+            sage: giac(v)                                                               # needs giac
             [sageVARx^2+2,2*sageVARx+1,-2*sageVARx^2+4*sageVARx]
         """
         return self.list()

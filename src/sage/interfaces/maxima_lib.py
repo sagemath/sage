@@ -1244,8 +1244,8 @@ sage_op_dict = {
     sage.functions.other.conjugate: "$CONJUGATE",
 }
 # we compile the dictionary
-sage_op_dict = dict([(k, EclObject(sage_op_dict[k])) for k in sage_op_dict])
-max_op_dict = dict([(sage_op_dict[k], k) for k in sage_op_dict])
+sage_op_dict = {k: EclObject(sage_op_dict[k]) for k in sage_op_dict}
+max_op_dict = {sage_op_dict[k]: k for k in sage_op_dict}
 
 
 # Here we correct the dictionaries for some simple operators
@@ -1437,7 +1437,7 @@ def max_at_to_sage(expr):
         subsvalues = {v.lhs(): v.rhs() for v in max_to_sr(subsarg)}
     else:
         v = max_to_sr(subsarg)
-        subsvalues = dict([(v.lhs(), v.rhs())])
+        subsvalues = {v.lhs(): v.rhs()}
     return SR(arg).subs(subsvalues)
 
 

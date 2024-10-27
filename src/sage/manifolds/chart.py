@@ -3270,6 +3270,7 @@ class RealChart(Chart):
 
 # *****************************************************************************
 
+
 class CoordChange(SageObject):
     r"""
     Transition map between two charts of a topological manifold.
