@@ -1755,6 +1755,17 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             sage: C4._compose_with_weighted_singletons(["X", "Y"], [1, -1], [[2, 2]])
             -E_2(XY) + 2*X^2*Y^2
 
+        A bivariate example::
+
+            sage: P.<X, Y> = PolynomialSpecies(QQ)
+            sage: F = E2(X)*E2(Y) + X^2*Y^2
+            sage: F._compose_with_weighted_singletons(["X0", "X1", "Y0"], [1, 1, 1], [[1, 1], [2]])
+            X0*X1*E_2(Y0) + 2*X0*X1*Y0^2
+
+            sage: Q.<X0, X1, Y0> = PolynomialSpecies(QQ)
+            sage: F(X0 + X1, Y0)
+            E_2(X0)*E_2(Y0) + X0^2*Y0^2 + X0*X1*E_2(Y0) + 2*X0*X1*Y0^2 + E_2(X1)*E_2(Y0) + X1^2*Y0^2
+
         TESTS::
 
             sage: (C4+E2^2)._compose_with_weighted_singletons(["X"], [-1], [[4]])
@@ -1780,6 +1791,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
             ...
             ValueError: the size of the i-th composition should be the degree in sort i
 
+            sage: P = PolynomialSpecies(QQ, "X")
             sage: P.zero()._compose_with_weighted_singletons(["X"], [-1], [[1]])
             Traceback (most recent call last):
             ...
@@ -1787,6 +1799,12 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
 
             sage: P.zero()._compose_with_weighted_singletons(["X"], [-1], [[0]])
             0
+
+            sage: P.<X, Y> = PolynomialSpecies(QQ)
+            sage: (X^2*Y + X*Y^2)._compose_with_weighted_singletons(["X0", "X1"], [1, 1], [[2], [1]])
+            Traceback (most recent call last):
+            ...
+            ValueError: self should be homogeneous with respect to all sorts
         """
         if len(names) != len(multiplicities):
             raise ValueError("the number of names must match the number of multiplicities")
