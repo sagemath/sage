@@ -130,7 +130,10 @@ class ChowRing(QuotientRing_generic):
             '\\Bold{Q}[A_{0}, A_{1}, A_{2}, A_{3}, A_{4}, A_{01234}] / I_{M} + J_{M} of matroid \\begin{array}{l}\n\\text{\\texttt{U(2,{ }5):{ }Matroid{ }of{ }rank{ }2{ }on{ }5{ }elements{ }with{ }circuit{-}closures}}\\\\\n\\text{\\texttt{{\\char`\\{}2:{ }{\\char`\\{}{\\char`\\{}0,{ }1,{ }2,{ }3,{ }4{\\char`\\}}{\\char`\\}}{\\char`\\}}}}\n\\end{array}'
         """
         from sage.misc.latex import latex
-        return "{} / {}".format(latex(self._ideal.ring()), latex(self._ideal))
+        base = "A({})_{{{}}}"
+        if self._augmented:
+            base += "^*"
+        return base.format(latex(self.matroid()), latex(self.base_ring()))
 
     def _coerce_map_from_base_ring(self):
         r"""
