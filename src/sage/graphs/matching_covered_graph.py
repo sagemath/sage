@@ -1046,7 +1046,7 @@ class MatchingCoveredGraph(Graph):
                 new_vertices.remove(vertex)
 
         # Throw error if the no. of new vertices is odd
-        if len(new_vertices)%2:
+        if len(new_vertices) % 2:
             raise ValueError('odd order is not allowed for '
                              'matching covered graphs')
 
