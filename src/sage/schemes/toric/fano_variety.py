@@ -532,9 +532,8 @@ def CPRFanoToricVariety(Delta=None,
             raise ValueError("the origin (point #%d) cannot be used for a "
                 "coordinate!\nGot: %s"
                 % (Delta_polar.origin(), coordinate_points))
-    point_to_ray = {}
-    for n, point in enumerate(coordinate_points):
-        point_to_ray[point] = n
+    point_to_ray = {point: n
+                    for n, point in enumerate(coordinate_points)}
     # This can be simplified if LatticePolytopeClass is adjusted.
     rays = [Delta_polar.point(p) for p in coordinate_points]
     # Check/normalize charts and construct the fan based on them.
@@ -1229,9 +1228,8 @@ class CPRFanoToricVariety_field(ToricVariety_field):
                              "subdivision!" % Delta_polar.origin())
         if new_points:
             coordinate_points = coordinate_points + new_points
-            point_to_ray = {}
-            for n, point in enumerate(coordinate_points):
-                point_to_ray[point] = n
+            point_to_ray = {point: n
+                            for n, point in enumerate(coordinate_points)}
         else:
             point_to_ray = self._point_to_ray
         new_rays = [Delta_polar.point(point) for point in new_points]

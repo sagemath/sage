@@ -430,6 +430,7 @@ def external_ray(theta, **kwds):
                 pixel[int(k[0]), int(k[1])] = tuple(ray_color)
     return M
 
+
 def kneading_sequence(theta):
     r"""
     Determines the kneading sequence for an angle theta in RR/ZZ which

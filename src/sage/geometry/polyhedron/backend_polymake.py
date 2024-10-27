@@ -724,6 +724,8 @@ class Polyhedron_polymake(Polyhedron_base):
         tester.assertEqual(P.AFFINE_HULL, P1.AFFINE_HULL)
 
 #########################################################################
+
+
 class Polyhedron_QQ_polymake(Polyhedron_polymake, Polyhedron_QQ):
     r"""
     Polyhedra over `\QQ` with polymake.
