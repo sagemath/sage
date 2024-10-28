@@ -7755,9 +7755,9 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
     # Check for overflow
     if sx > 1024:
         if resultsign < 0:
-            return -1.0/0.0
+            return float('-inf')
         else:
-            return 1.0/0.0
+            return float('inf')
 
     # General case
 
