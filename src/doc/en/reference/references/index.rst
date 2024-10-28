@@ -260,7 +260,7 @@ REFERENCES:
 .. [Ang1997] B. Anglès. 1997. *On some characteristic polynomials attached to
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
              369–379. https://doi.org/10.1007/BF02677478
-        
+
 .. [ANR2023] Robert Angarone, Anastasia Nathanson, and Victor Reiner. *Chow rings of
              matroids as permutation representations*, 2023. :arxiv:`2309.14312`.
 

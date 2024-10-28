@@ -192,7 +192,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             I_{M} + J_{M} of matroid \text{\texttt{Matroid{ }of{ }rank{ }2{ }on{ }4{ }elements{ }with{ }3{ }bases}}
         """
         from sage.misc.latex import latex
-        return 'I_{M} + J_{M} of matroid ' + (latex(self._matroid))
+        return 'I_{M} + J_{M} of matroid '.format(latex(self._matroid))
 
     def groebner_basis(self, algorithm='', *args, **kwargs):
         r"""
@@ -328,7 +328,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         """
         self._matroid = M
         self._flats = [X for i in range(self._matroid.rank() + 1)
-                for X in self._matroid.flats(i)]
+                       for X in self._matroid.flats(i)]
         E = list(self._matroid.groundset())
         self._flats_generator = dict()
         try:
@@ -337,9 +337,9 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             poly_ring = PolynomialRing(R, names_groundset + names_flats) #self.ring()
         except ValueError: #variables are not proper names
             poly_ring = PolynomialRing(R, 'A', len(E) + len(self._flats))
-        for i,x in enumerate(E):
+        for i, x in enumerate(E):
             self._flats_generator[x] = poly_ring.gens()[i]
-        for i,F in enumerate(self._flats):
+        for i, F in enumerate(self._flats):
             self._flats_generator[F] = poly_ring.gens()[len(E) + i]
         MPolynomialIdeal.__init__(self, poly_ring, self._gens_constructor(poly_ring))
 
@@ -396,7 +396,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             term += self._flats_generator[F]
             for G in self._flats:
                     if not (F <= G or G < F):
-                        Q.append(self._flats_generator[F] * self._flats_generator[G]) #Quadratic Generators
+                        Q.append(self._flats_generator[F] * self._flats_generator[G])  # Quadratic generators
         L.append(term)
 
         for x in E:
@@ -432,7 +432,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
             I_{FY} of matroid \text{\texttt{Graphic{ }matroid{ }of{ }rank{ }2{ }on{ }3{ }elements}}
         """
         from sage.misc.latex import latex
-        return 'I_{FY} of matroid ' + (latex(self._matroid))
+        return 'I_{{FY}}({})'.format((latex(self._matroid)))
 
     def groebner_basis(self, algorithm='', *args, **kwargs):
         r"""
@@ -562,16 +562,16 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
              A0*A2 + A2*A3, A1*A2 + A2*A3]
         """
         E = list(self._matroid.groundset())
-        Q = [] #Quadratic Generators
+        Q = []  # Quadratic generators
         flats_containing = {x: [] for x in E}
         for F in self._flats:
             for x in F:
                 flats_containing[x].append(F)
         for F in self._flats:
             for G in self._flats:
-                if not (G >= F or F > G): #generators for every pair of non-nested flats
-                        Q.append(self._flats_generator[F]*self._flats_generator[G])
-            for x in E: #generators for every set of flats containing element
+                if not (G >= F or F > G): # generators for every pair of non-nested flats
+                        Q.append(self._flats_generator[F] * self._flats_generator[G])
+            for x in E: # generators for every set of flats containing element
                 term = poly_ring.zero()
                 for H in flats_containing[x]:
                     term += self._flats_generator[H]
@@ -605,7 +605,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             I_{af} of matroid \text{\texttt{Graphic{ }matroid{ }of{ }rank{ }2{ }on{ }3{ }elements}}
         """
         from sage.misc.latex import latex
-        return 'I_{af} of matroid ' + latex(self._matroid)
+        return 'I_{af} of matroid '.format(latex(self._matroid))
 
     def groebner_basis(self, algorithm='', *args, **kwargs):
         """
