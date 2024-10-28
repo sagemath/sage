@@ -1359,6 +1359,58 @@ cdef class Field(CommutativeRing):
         """
         raise NotImplementedError("Algebraic closures of general fields not implemented.")
 
+    def an_embedding(self, K):
+        r"""
+        Return some embedding of this field into another field `K`,
+        and raise a :class:`ValueError` if none exists.
+
+        EXAMPLES::
+
+            sage: GF(2).an_embedding(GF(4))
+            Ring morphism:
+              From: Finite Field of size 2
+              To:   Finite Field in z2 of size 2^2
+              Defn: 1 |--> 1
+            sage: GF(4).an_embedding(GF(8))
+            Traceback (most recent call last):
+            ...
+            ValueError: no embedding from Finite Field in z2 of size 2^2 to Finite Field in z3 of size 2^3
+            sage: GF(4).an_embedding(GF(16))
+            Ring morphism:
+              From: Finite Field in z2 of size 2^2
+              To:   Finite Field in z4 of size 2^4
+              Defn: z2 |--> z4^2 + z4
+
+        ::
+
+            sage: CyclotomicField(5).an_embedding(QQbar)
+            Coercion map:
+              From: Cyclotomic Field of order 5 and degree 4
+              To:   Algebraic Field
+            sage: CyclotomicField(3).an_embedding(CyclotomicField(7))
+            Traceback (most recent call last):
+            ...
+            ValueError: no embedding from Cyclotomic Field of order 3 and degree 2 to Cyclotomic Field of order 7 and degree 6
+            sage: CyclotomicField(3).an_embedding(CyclotomicField(6))
+            Generic morphism:
+              From: Cyclotomic Field of order 3 and degree 2
+              To:   Cyclotomic Field of order 6 and degree 2
+              Defn: zeta3 -> zeta6 - 1
+        """
+        if self.characteristic() != K.characteristic():
+            raise ValueError(f'no embedding from {self} to {K}: incompatible characteristics')
+
+        H = self.Hom(K)
+        try:
+            return H.natural_map()
+        except TypeError:
+            pass
+        from sage.categories.sets_cat import EmptySetError
+        try:
+            return H.an_element()
+        except EmptySetError:
+            raise ValueError(f'no embedding from {self} to {K}')
+
 
 cdef class Algebra(Ring):
     def __init__(self, base_ring, *args, **kwds):
