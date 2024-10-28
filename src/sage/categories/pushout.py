@@ -3055,13 +3055,11 @@ class QuotientFunctor(ConstructionFunctor):
             codomain = self.codomain().join([self.codomain(), other.codomain()])
         # Get the optional arguments:
         as_field = self.as_field or other.as_field
-        kwds = {}
-        for k,v in self.kwds.items():
-            kwds[k] = v
-        for k,v in other.kwds.items():
+        kwds = dict(self.kwds)
+        for k, v in other.kwds.items():
             if k == 'category':
                 if kwds[k] is not None:
-                    kwds[k] = v.join([v,kwds[k]])
+                    kwds[k] = v.join([v, kwds[k]])
                 else:
                     kwds[k] = v
                 continue
