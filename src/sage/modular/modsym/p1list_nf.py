@@ -122,16 +122,18 @@ class MSymbol(SageObject):
 
     INPUT:
 
-    -  ``N`` -- integral ideal (the modulus or level).
+    - ``N`` -- integral ideal (the modulus or level)
 
     - ``c`` -- integral element of the underlying number field or an MSymbol of
-      level N.
+      level N
 
     - ``d`` -- (optional) when present, it must be an integral element such
-      that `\langle c\rangle + \langle d\rangle + N = R`, where `R` is the corresponding ring of integers.
+      that `\langle c\rangle + \langle d\rangle + N = R`, where `R` is the
+      corresponding ring of integers
 
-    - ``check`` -- bool (default ``True``). If ``check=False`` the constructor does
-      not check the condition `\langle c\rangle + \langle d\rangle + N = R`.
+    - ``check`` -- boolean (default: ``True``); if ``check=False`` the
+      constructor does not check the condition
+      `\langle c\rangle + \langle d\rangle + N = R`
 
     OUTPUT:
 
@@ -232,7 +234,7 @@ class MSymbol(SageObject):
 
     def _latex_(self):
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -384,7 +386,7 @@ class MSymbol(SageObject):
 
         INPUT:
 
-        - ``with_scalar`` -- bool (default ``False``)
+        - ``with_scalar`` -- boolean (default: ``False``)
 
         OUTPUT:
 
@@ -484,7 +486,7 @@ class P1NFList(SageObject):
 
     INPUT:
 
-    -  ``N`` - integral ideal (the modulus or level).
+    - ``N`` -- integral ideal (the modulus or level)
 
     OUTPUT:
 
@@ -618,12 +620,12 @@ class P1NFList(SageObject):
         INPUT:
 
         - ``c`` -- integral element of the underlying number field, or an
-          MSymbol.
+          MSymbol
 
         - ``d`` -- (optional) when present, it must be an integral element of
-          the number field such that `(c, d)` defines an M-symbol of level `N`.
+          the number field such that `(c, d)` defines an M-symbol of level `N`
 
-        - ``with_scalar`` -- bool (default ``False``)
+        - ``with_scalar`` -- boolean (default: ``False``)
 
         OUTPUT:
 
@@ -690,18 +692,18 @@ class P1NFList(SageObject):
         INPUT:
 
         - ``c`` -- integral element of the corresponding number field, or an
-          :class:`MSymbol`.
+          :class:`MSymbol`
 
         - ``d`` -- (optional) when present, it must be an integral element of
-          the number field such that `(c, d)` defines an M-symbol of level `N`.
+          the number field such that `(c, d)` defines an M-symbol of level `N`
 
-        - ``with_scalar`` -- bool (default ``False``)
+        - ``with_scalar`` -- boolean (default: ``False``)
 
         OUTPUT:
 
-        - ``u`` - the normalizing scalar (only if ``with_scalar=True``)
+        - ``u`` -- the normalizing scalar (only if ``with_scalar=True``)
 
-        - ``i`` - the index of `(c, d)` in the list.
+        - ``i`` -- the index of `(c, d)` in the list
 
         EXAMPLES::
 
@@ -774,15 +776,13 @@ class P1NFList(SageObject):
         INPUT:
 
         - ``c`` -- integral element of the corresponding number field, or a
-          normalized :class:`MSymbol`.
+          normalized :class:`MSymbol`
 
         - ``d`` -- (optional) when present, it must be an integral element of
           the number field such that `(c, d)` defines a normalized M-symbol of
-          level `N`.
+          level `N`
 
-        OUTPUT:
-
-        - ``i`` - the index of `(c, d)` in the list.
+        OUTPUT: ``i`` -- the index of `(c, d)` in the list
 
         EXAMPLES::
 
@@ -916,19 +916,19 @@ class P1NFList(SageObject):
 
     def apply_T_alpha(self, i, alpha=1):
         r"""
-        Applies the matrix `T_{alpha}` = [1, `alpha`, 0, 1] to the `i`-th M-Symbol of
-        the list.
+        Applies the matrix `T_{alpha}` = [1, `alpha`, 0, 1] to the `i`-th
+        M-Symbol of the list.
 
         INPUT:
 
         - ``i`` -- integer
 
-        - ``alpha`` -- (default 1) element of the corresponding ring of integers
+        - ``alpha`` -- (default: 1) element of the corresponding ring of integers
 
         OUTPUT:
 
         integer -- the index of the M-Symbol obtained by the right action of
-        the matrix `T_{alpha}` = [1, `alpha`, 0, 1] on the i-th M-Symbol.
+        the matrix `T_{alpha}` = [1, `alpha`, 0, 1] on the `i`-th M-Symbol.
 
         EXAMPLES::
 
@@ -963,7 +963,7 @@ class P1NFList(SageObject):
 
         - ``e1`` -- unit
 
-        - ``e2`` -- unit (default 1)
+        - ``e2`` -- unit (default: 1)
 
         OUTPUT:
 
@@ -1013,7 +1013,7 @@ def p1NFlist(N):
 
     INPUT:
 
-    -  ``N`` - integral ideal (the level or modulus).
+    - ``N`` -- integral ideal (the level or modulus)
 
     EXAMPLES::
 
@@ -1072,7 +1072,6 @@ def lift_to_sl2_Ok(N, c, d):
     A list `[a, b, c', d']` of integral elements that are the entries of
     a `2\times 2` matrix with determinant 1. The lower two entries are congruent to
     `c`, `d` modulo the ideal `N`.
-
 
     EXAMPLES::
 

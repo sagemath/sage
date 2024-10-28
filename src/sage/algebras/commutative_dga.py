@@ -114,11 +114,9 @@ def sorting_keys(element):
 
     INPUT:
 
-    - ``element`` - A CohomologyClass
+    - ``element`` -- a CohomologyClass
 
-    OUTPUT:
-
-    Its coordinates in the corresponding ``cohomology_raw`` quotient vector space
+    OUTPUT: its coordinates in the corresponding ``cohomology_raw`` quotient vector space
 
     EXAMPLES::
 
@@ -261,7 +259,7 @@ class Differential(UniqueRepresentation, Morphism,
         We skip the category test because homsets/morphisms aren't
         proper parents/elements yet::
 
-            sage: TestSuite(d).run(skip="_test_category")
+            sage: TestSuite(d).run(skip='_test_category')
 
         An error is raised if the differential `d` does not have
         degree 1 or if `d \circ d` is not zero::
@@ -433,7 +431,6 @@ class Differential(UniqueRepresentation, Morphism,
             Vector space of degree 2 and dimension 0 over Rational Field
             Basis matrix:
             []
-
         """
         A = self.domain()
         F = A.base_ring()
@@ -614,7 +611,7 @@ class Differential_multigraded(Differential):
         We skip the category test because homsets/morphisms aren't
         proper parents/elements yet::
 
-            sage: TestSuite(d).run(skip="_test_category")
+            sage: TestSuite(d).run(skip='_test_category')
         """
         Differential.__init__(self, A, im_gens)
 
@@ -643,10 +640,10 @@ class Differential_multigraded(Differential):
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` -- (default: ``False``) if ``True``,
-          return the matrix corresponding to total degree ``n``
+        - ``total`` -- boolean (default: ``False``); if ``True``,
+          return the matrix corresponding to total degree `n`
 
-        If ``n`` is an integer rather than a multi-index, then the
+        If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
 
         EXAMPLES::
@@ -686,19 +683,19 @@ class Differential_multigraded(Differential):
 
     def coboundaries(self, n, total=False):
         """
-        The ``n``-th coboundary group of the algebra.
+        The `n`-th coboundary group of the algebra.
 
         This is a vector space over the base field `F`, and it is
         returned as a subspace of the vector space `F^d`, where the
-        ``n``-th homogeneous component has dimension `d`.
+        `n`-th homogeneous component has dimension `d`.
 
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` (default ``False``) -- if ``True``, return the
-          coboundaries in total degree ``n``
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
+          coboundaries in total degree `n`
 
-        If ``n`` is an integer rather than a multi-index, then the
+        If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
 
         EXAMPLES::
@@ -733,19 +730,19 @@ class Differential_multigraded(Differential):
 
     def cocycles(self, n, total=False):
         r"""
-        The ``n``-th cocycle group of the algebra.
+        The `n`-th cocycle group of the algebra.
 
         This is a vector space over the base field `F`, and it is
         returned as a subspace of the vector space `F^d`, where the
-        ``n``-th homogeneous component has dimension `d`.
+        `n`-th homogeneous component has dimension `d`.
 
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` -- (default: ``False``) if ``True``, return the
-          cocycles in total degree ``n``
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
+          cocycles in total degree `n`
 
-        If ``n`` is an integer rather than a multi-index, then the
+        If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
 
         EXAMPLES::
@@ -778,7 +775,7 @@ class Differential_multigraded(Differential):
 
     def cohomology_raw(self, n, total=False):
         r"""
-        The ``n``-th cohomology group of the algebra.
+        The `n`-th cohomology group of the algebra.
 
         This is a vector space over the base ring, and it is returned
         as the quotient cocycles/coboundaries.
@@ -786,10 +783,10 @@ class Differential_multigraded(Differential):
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` -- (default: ``False``) if ``True``, return the
-          cohomology in total degree ``n``
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
+          cohomology in total degree `n`
 
-        If ``n`` is an integer rather than a multi-index, then the
+        If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
 
         .. SEEALSO::
@@ -822,7 +819,7 @@ class Differential_multigraded(Differential):
 
     def cohomology(self, n, total=False):
         r"""
-        The ``n``-th cohomology group of the algebra.
+        The `n`-th cohomology group of the algebra.
 
         This is a vector space over the base ring, defined as the
         quotient cocycles/coboundaries. The elements of the quotient
@@ -832,10 +829,10 @@ class Differential_multigraded(Differential):
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` -- (default: ``False``) if ``True``, return the
-          cohomology in total degree ``n``
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
+          cohomology in total degree `n`
 
-        If ``n`` is an integer rather than a multi-index, then the
+        If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
 
         .. SEEALSO::
@@ -889,11 +886,11 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
       1, and if both ``names`` and ``degrees`` are omitted, an error is
       raised.
 
-    - ``R`` (optional, default None) -- the ring over which the
+    - ``R`` -- (default: ``None``) the ring over which the
       algebra is defined: if this is specified, the algebra is defined
       to be ``R/I``.
 
-    - ``I`` (optional, default None) -- an ideal in ``R``. It is
+    - ``I`` -- (default: ``None``) an ideal in `R`. It is
       should include, among other relations, the squares of the
       generators of odd degree
 
@@ -1086,7 +1083,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
     @cached_method
     def _basis_for_free_alg(self, n):
         r"""
-        Basis of the associated free commutative DGA in degree ``n``.
+        Basis of the associated free commutative DGA in degree `n`.
 
         That is, ignore the relations when computing the basis:
         compute the basis of the free commutative DGA with generators
@@ -1096,9 +1093,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         - ``n`` -- integer
 
-        OUTPUT:
-
-        Tuple of basis elements in degree ``n``, as tuples of exponents.
+        OUTPUT: tuple of basis elements in degree `n`, as tuples of exponents
 
         EXAMPLES::
 
@@ -1164,7 +1159,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
     def basis(self, n):
         """
-        Return a basis of the ``n``-th homogeneous component of ``self``.
+        Return a basis of the `n`-th homogeneous component of ``self``.
 
         EXAMPLES::
 
@@ -1202,7 +1197,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         - ``I`` -- a two-sided homogeneous ideal of this algebra
 
-        - ``check`` -- (default: ``True``) if ``True``, check whether
+        - ``check`` -- boolean (default: ``True``); if ``True``, check whether
           ``I`` is generated by homogeneous elements
 
         EXAMPLES::
@@ -1350,7 +1345,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         INPUT:
 
-        - ``diff`` -- a dictionary defining a differential
+        - ``diff`` -- dictionary defining a differential
 
         The keys of the dictionary are generators of the algebra, and
         the associated values are their targets under the
@@ -1380,7 +1375,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         INPUT:
 
-        - ``differential`` -- a dictionary defining a differential or
+        - ``differential`` -- dictionary defining a differential or
           a map defining a valid differential
 
         The keys of the dictionary are generators of the algebra, and
@@ -1494,7 +1489,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             INPUT:
 
-            - ``total`` -- boolean (default ``False``); only used in the
+            - ``total`` -- boolean (default: ``False``); only used in the
               multi-graded case, in which case if ``True``, check to see
               if ``self`` is homogeneous with respect to total degree
 
@@ -1546,7 +1541,6 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             Return the homogeneous parts of the element. The result is given as
             a dictionary indexed by degree.
 
-
             EXAMPLES::
 
                 sage: A.<e1,e2,e3,e4,e5> = GradedCommutativeAlgebra(QQ)
@@ -1593,9 +1587,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             - ``values`` -- (optional) either the values in which the variables
               will be evaluated or a dictionary
 
-            OUTPUT:
-
-            this element evaluated at the given values
+            OUTPUT: this element evaluated at the given values
 
             EXAMPLES::
 
@@ -1663,21 +1655,19 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             Return the coefficients of this homogeneous element with
             respect to the basis in its degree.
 
-            For example, if this is the sum of the 0th and 2nd basis
+            For example, if this is the sum of the `0`-th and `2`-nd basis
             elements, return the list ``[1, 0, 1]``.
 
             Raise an error if the element is not homogeneous.
 
             INPUT:
 
-            - ``total`` -- boolean (default ``False``); this
+            - ``total`` -- boolean (default: ``False``); this
               is only used in the multi-graded case, in which case if
               ``True``, it returns the coefficients with respect to
               the basis for the total degree of this element
 
-            OUTPUT:
-
-            A list of elements of the base field.
+            OUTPUT: list of elements of the base field
 
             EXAMPLES::
 
@@ -1717,7 +1707,7 @@ class GCAlgebra_multigraded(GCAlgebra):
 
     - ``base`` -- the base field
 
-    - ``degrees`` -- a tuple or list specifying the degrees of the
+    - ``degrees`` -- tuple or list specifying the degrees of the
       generators
 
     - ``names`` -- (optional) names of the generators: a list of
@@ -1815,7 +1805,7 @@ class GCAlgebra_multigraded(GCAlgebra):
 
         - ``I`` -- a two-sided homogeneous ideal of this algebra
 
-        - ``check`` -- (default: ``True``) if ``True``, check whether
+        - ``check`` -- boolean (default: ``True``); if ``True``, check whether
           ``I`` is generated by homogeneous elements
 
         EXAMPLES::
@@ -1870,13 +1860,13 @@ class GCAlgebra_multigraded(GCAlgebra):
 
     def basis(self, n, total=False):
         """
-        Basis in degree ``n``.
+        Basis in degree `n`.
 
         - ``n`` -- degree or integer
-        - ``total`` (optional, default False) -- if True, return the
-          basis in total degree ``n``.
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
+          basis in total degree `n`
 
-        If ``n`` is an integer rather than a multi-index, then the
+        If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
 
         EXAMPLES::
@@ -1887,12 +1877,13 @@ class GCAlgebra_multigraded(GCAlgebra):
             sage: A.basis(2, total=True)
             [a^2, a*b, b^2, c]
 
-        Since 2 is a not a multi-index, we don't need to specify ``total=True``::
+        Since 2 is a not a multi-index, we don't need to specify that ``total``
+        is ``True``::
 
             sage: A.basis(2)
             [a^2, a*b, b^2, c]
 
-        If ``total==True``, then ``n`` can still be a tuple, list,
+        If ``total`` is ``True``, then `n` can still be a tuple, list,
         etc., and its total degree is used instead::
 
             sage: A.basis((1,1), total=True)
@@ -1911,7 +1902,7 @@ class GCAlgebra_multigraded(GCAlgebra):
 
         INPUT:
 
-        - ``diff`` -- a dictionary defining a differential
+        - ``diff`` -- dictionary defining a differential
 
         The keys of the dictionary are generators of the algebra, and
         the associated values are their targets under the
@@ -1937,7 +1928,7 @@ class GCAlgebra_multigraded(GCAlgebra):
 
         INPUT:
 
-        - ``differential`` -- a dictionary defining a differential or
+        - ``differential`` -- dictionary defining a differential or
           a map defining a valid differential
 
         The keys of the dictionary are generators of the algebra, and
@@ -2091,7 +2082,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
     def __init__(self, A, differential):
         """
-        Initialize ``self``
+        Initialize ``self``.
 
         INPUT:
 
@@ -2137,7 +2128,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         INPUT:
 
-        - ``differential`` -- a dictionary defining a differential or
+        - ``differential`` -- dictionary defining a differential or
           a map defining a valid differential
 
         The keys of the dictionary are generators of the algebra, and
@@ -2172,7 +2163,6 @@ class DifferentialGCAlgebra(GCAlgebra):
             y --> 0
             z --> 0
             t --> 0
-
         """
         return self.graded_commutative_algebra().cdg_algebra(differential)
 
@@ -2225,7 +2215,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         - ``I`` -- a two-sided homogeneous ideal of this algebra
 
-        - ``check`` -- (default: ``True``) if ``True``, check whether
+        - ``check`` -- boolean (default: ``True``); if ``True``, check whether
           ``I`` is generated by homogeneous elements
 
         EXAMPLES::
@@ -2289,11 +2279,11 @@ class DifferentialGCAlgebra(GCAlgebra):
 
     def coboundaries(self, n):
         """
-        The ``n``-th coboundary group of the algebra.
+        The `n`-th coboundary group of the algebra.
 
         This is a vector space over the base field `F`, and it is
         returned as a subspace of the vector space `F^d`, where the
-        ``n``-th homogeneous component has dimension `d`.
+        `n`-th homogeneous component has dimension `d`.
 
         INPUT:
 
@@ -2318,11 +2308,11 @@ class DifferentialGCAlgebra(GCAlgebra):
 
     def cocycles(self, n):
         """
-        The ``n``-th cocycle group of the algebra.
+        The `n`-th cocycle group of the algebra.
 
         This is a vector space over the base field `F`, and it is
         returned as a subspace of the vector space `F^d`, where the
-        ``n``-th homogeneous component has dimension `d`.
+        `n`-th homogeneous component has dimension `d`.
 
         INPUT:
 
@@ -2343,7 +2333,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
     def cohomology_raw(self, n):
         """
-        The ``n``-th cohomology group of ``self``.
+        The `n`-th cohomology group of ``self``.
 
         This is a vector space over the base ring, and it is returned
         as the quotient cocycles/coboundaries.
@@ -2375,7 +2365,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
     def cohomology(self, n):
         """
-        The ``n``-th cohomology group of ``self``.
+        The `n`-th cohomology group of ``self``.
 
         This is a vector space over the base ring, defined as the
         quotient cocycles/coboundaries. The elements of the quotient
@@ -2446,7 +2436,7 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         ALGORITHM:
 
-        Reduce a basis of the `n`'th cohomology modulo all the degree `n`
+        Reduce a basis of the `n`-th cohomology modulo all the degree `n`
         products of the lower degree cohomologies.
 
         EXAMPLES::
@@ -2500,7 +2490,6 @@ class DifferentialGCAlgebra(GCAlgebra):
             sage: B = A.cdg_algebra(d)
             sage: B.cohomology_generators(3)
             {1: [e1 - e2, e3, e4], 2: [e1*e3, e1*e4]}
-
         """
         if not (max_degree in ZZ and max_degree > 0):
             raise ValueError('the given maximal degree must be a '
@@ -2539,14 +2528,14 @@ class DifferentialGCAlgebra(GCAlgebra):
 
     def minimal_model(self, i=3, max_iterations=3, partial_result=False):
         r"""
-        Try to compute a map from a ``i``-minimal gcda that is a
-        ``i``-quasi-isomorphism to self.
+        Try to compute a map from a `i`-minimal gcda that is a
+        `i`-quasi-isomorphism to ``self``.
 
         INPUT:
 
         - ``i`` -- integer (default: `3`); degree to which the result is
           required to induce an isomorphism in cohomology, and the domain is
-          required to be minimal.
+          required to be minimal
 
         - ``max_iterations`` -- integer (default: `3`); the number of
           iterations of the method at each degree. If the algorithm does not
@@ -2554,8 +2543,8 @@ class DifferentialGCAlgebra(GCAlgebra):
           or the partial result computed up to that point is returned, deppending
           on the ``partial_result`` flag.
 
-        - ``partial_result``  -- boolean (default: ``False``); wether to return
-          the partial result if the ``max_iterations`` limit is reached.
+        - ``partial_result`` -- boolean (default: ``False``); whether to return
+          the partial result if the ``max_iterations`` limit is reached
 
         OUTPUT:
 
@@ -2596,7 +2585,6 @@ class DifferentialGCAlgebra(GCAlgebra):
             Free module generated by {[x2_0]} over Rational Field
             sage: [p(g.representative()) for g in T.cohomology(2).basis().keys()]
             [z]
-
 
 
             sage: A.<e1, e2, e3, e4, e5, e6, e7> = GradedCommutativeAlgebra(QQ)
@@ -2743,7 +2731,6 @@ class DifferentialGCAlgebra(GCAlgebra):
         - [Fel2001]_
 
         - [Man2019]_
-
         """
         max_degree = int(i)
         if max_degree < 1:
@@ -2887,12 +2874,12 @@ class DifferentialGCAlgebra(GCAlgebra):
     def cohomology_algebra(self, max_degree=3):
         """
         Compute a CDGA with trivial differential, that is isomorphic to the cohomology of
-        self up to``max_degree``
+        ``self`` up to``max_degree``
 
         INPUT:
 
         - ``max_degree`` -- integer (default: `3`); degree to which the result is required to
-          be isomorphic to self's cohomology.
+          be isomorphic to ``self``'s cohomology
 
         EXAMPLES::
 
@@ -3006,7 +2993,6 @@ class DifferentialGCAlgebra(GCAlgebra):
         REFERENCES:
 
         For a precise definition and properties, see [Man2019]_ .
-
         """
         self.minimal_model(max_degree, max_iterations)
         return {i: self._numerical_invariants[i]
@@ -3325,19 +3311,19 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
 
     def coboundaries(self, n, total=False):
         """
-        The ``n``-th coboundary group of the algebra.
+        The `n`-th coboundary group of the algebra.
 
         This is a vector space over the base field `F`, and it is
         returned as a subspace of the vector space `F^d`, where the
-        ``n``-th homogeneous component has dimension `d`.
+        `n`-th homogeneous component has dimension `d`.
 
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` (default ``False``) -- if ``True``, return the
-          coboundaries in total degree ``n``
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
+          coboundaries in total degree `n`
 
-        If ``n`` is an integer rather than a multi-index, then the
+        If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
 
         EXAMPLES::
@@ -3357,19 +3343,19 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
 
     def cocycles(self, n, total=False):
         r"""
-        The ``n``-th cocycle group of the algebra.
+        The `n`-th cocycle group of the algebra.
 
         This is a vector space over the base field `F`, and it is
         returned as a subspace of the vector space `F^d`, where the
-        ``n``-th homogeneous component has dimension `d`.
+        `n`-th homogeneous component has dimension `d`.
 
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` -- (default: ``False``) if ``True``, return the
-          cocycles in total degree ``n``
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
+          cocycles in total degree `n`
 
-        If ``n`` is an integer rather than a multi-index, then the
+        If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
 
         EXAMPLES::
@@ -3389,7 +3375,7 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
 
     def cohomology_raw(self, n, total=False):
         """
-        The ``n``-th cohomology group of the algebra.
+        The `n`-th cohomology group of the algebra.
 
         This is a vector space over the base ring, and it is returned
         as the quotient cocycles/coboundaries.
@@ -3399,10 +3385,10 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` -- (default: ``False``) if ``True``, return the
-          cohomology in total degree ``n``
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
+          cohomology in total degree `n`
 
-        If ``n`` is an integer rather than a multi-index, then the
+        If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
 
         EXAMPLES::
@@ -3431,7 +3417,7 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
 
     def cohomology(self, n, total=False):
         """
-        The ``n``-th cohomology group of the algebra.
+        The `n`-th cohomology group of the algebra.
 
         This is a vector space over the base ring, defined as the
         quotient cocycles/coboundaries. The elements of the quotient
@@ -3443,10 +3429,10 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
         INPUT:
 
         - ``n`` -- degree
-        - ``total`` -- (default: ``False``) if ``True``, return the
-          cohomology in total degree ``n``
+        - ``total`` -- boolean (default: ``False``); if ``True``, return the
+          cohomology in total degree `n`
 
-        If ``n`` is an integer rather than a multi-index, then the
+        If `n` is an integer rather than a multi-index, then the
         total degree is used in that case as well.
 
         EXAMPLES::
@@ -3507,7 +3493,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
 
     - ``ring`` -- a graded commutative algebra
 
-    - ``relations`` -- a list or tuple of elements of ``ring``
+    - ``relations`` -- list or tuple of elements of ``ring``
 
     EXAMPLES:
 
@@ -3734,7 +3720,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
               Defn: (x, y) --> (x, x)
             sage: f.is_graded()
             False
-            sage: TestSuite(f).run(skip="_test_category")
+            sage: TestSuite(f).run(skip='_test_category')
 
         Since `x^2=0` but `y^2 \neq 0`, the following does not define a valid morphism::
 
@@ -3796,7 +3782,6 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
             Graded Commutative Algebra endomorphism of Graded Commutative Algebra
              with generators ('e1',) in degrees (1,) over Rational Field
               Defn: (e1,) --> (2*e1,)
-
         """
         domain = parent.domain()
         codomain = parent.codomain()
@@ -3892,7 +3877,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
 
         INPUT:
 
-        - ``total`` (optional, default ``False``) -- if ``True``, use
+        - ``total`` -- boolean (default: ``False``); if ``True``, use
           the total degree to determine whether the morphism is graded
           (relevant only in the multigraded case)
 
@@ -4117,7 +4102,6 @@ class CohomologyClass(SageObject, CachedRepresentation):
            e5 --> e1*e2
            e6 --> e1*e2 + e3*e4
           Defn: (x1_0, x1_1, x1_2, x1_3, y1_0, y1_1) --> (e1, e2, e3, e4, e5, -e5 + e6)
-
     """
     def __init__(self, x, cdga=None):
         """
@@ -4185,11 +4169,11 @@ def exterior_algebra_basis(n, degrees):
 
     INPUT:
 
-    - ``n`` - integer
-    - ``degrees`` - iterable of integers
+    - ``n`` -- integer
+    - ``degrees`` -- iterable of integers
 
     Return list of lists, each list representing exponents for the
-    corresponding generators. (So each list consists of 0's and 1's.)
+    corresponding generators. (So each list consists of 0s and 1s.)
 
     EXAMPLES::
 
@@ -4231,7 +4215,7 @@ def total_degree(deg):
 
     INPUT:
 
-    - ``deg`` -- an element of a free abelian group.
+    - ``deg`` -- an element of a free abelian group
 
     In fact, ``deg`` could be an integer, a Python int, a list, a
     tuple, a vector, etc. This function returns the sum of the

@@ -41,7 +41,10 @@ def change_support(perm, support, change_perm=None):
         (3,4,5)
     """
     if change_perm is None:
-        change_perm = prod([PermutationGroupElement((i+1,support[i])) for i in range(len(support)) if i+1 != support[i]],  PermutationGroupElement([], SymmetricGroup(support)))
+        change_perm = prod([PermutationGroupElement((i+1, support[i]))
+                            for i in range(len(support))
+                            if i+1 != support[i]],
+                           PermutationGroupElement([], SymmetricGroup(support)))
 
     if isinstance(perm, PermutationGroup_generic):
         return PermutationGroup([change_support(g, support, change_perm) for g in perm.gens()])

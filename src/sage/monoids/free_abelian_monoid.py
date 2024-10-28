@@ -71,11 +71,9 @@ class FreeAbelianMonoidFactory(UniqueFactory):
 
     INPUT:
 
+    - ``n`` -- integer
 
-    -  ``n`` - integer
-
-    -  ``names`` - names of generators
-
+    - ``names`` -- names of generators
 
     OUTPUT: free abelian monoid
 
@@ -116,7 +114,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
     Return a free abelian monoid on `n` generators or with the generators
     indexed by a set `I`.
 
-    We construct free abelian monoids by specifing either:
+    We construct free abelian monoids by specifying either:
 
     - the number of generators and/or the names of the generators
     - the indexing set for the generators (this ignores the other two inputs)
@@ -126,11 +124,9 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
     - ``index_set`` -- an indexing set for the generators; if an integer,
       then this becomes `\{0, 1, \ldots, n-1\}`
 
-    -  ``names`` -- names of generators
+    - ``names`` -- names of generators
 
-    OUTPUT:
-
-    A free abelian monoid.
+    OUTPUT: a free abelian monoid
 
     EXAMPLES::
 
@@ -163,12 +159,16 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
 
 def is_FreeAbelianMonoid(x):
     """
-    Return True if `x` is a free abelian monoid.
+    Return ``True`` if `x` is a free abelian monoid.
 
     EXAMPLES::
 
         sage: from sage.monoids.free_abelian_monoid import is_FreeAbelianMonoid
         sage: is_FreeAbelianMonoid(5)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeAbelianMonoid is deprecated;
+        use 'isinstance(..., FreeAbelianMonoid_class)' instead
+        See https://github.com/sagemath/sage/issues/37897 for details.
         False
         sage: is_FreeAbelianMonoid(FreeAbelianMonoid(7,'a'))
         True
@@ -177,6 +177,8 @@ def is_FreeAbelianMonoid(x):
         sage: is_FreeAbelianMonoid(FreeMonoid(0,''))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37897, "the function is_FreeAbelianMonoid is deprecated; use 'isinstance(..., FreeAbelianMonoid_class)' instead")
     return isinstance(x, FreeAbelianMonoid_class)
 
 
@@ -225,7 +227,7 @@ class FreeAbelianMonoid_class(Parent):
 
     def __contains__(self, x):
         """
-        Return True if `x` is an element of this abelian monoid.
+        Return ``True`` if `x` is an element of this abelian monoid.
 
         EXAMPLES::
 

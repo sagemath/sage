@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Join features
 """
@@ -97,36 +98,6 @@ class JoinFeature(Feature):
                 return test
         return FeatureTestResult(self, True)
 
-    def is_functional(self):
-        r"""
-        Test whether the join feature is functional.
-
-        This method is deprecated. Use :meth:`Feature.is_present` instead.
-
-        EXAMPLES::
-
-            sage: from sage.features.latte import Latte
-            sage: Latte().is_functional()  # optional - latte_int
-            doctest:warning...
-            DeprecationWarning: method JoinFeature.is_functional; use is_present instead
-            See https://github.com/sagemath/sage/issues/33114 for details.
-            FeatureTestResult('latte_int', True)
-        """
-        try:
-            from sage.misc.superseded import deprecation
-        except ImportError:
-            # The import can fail because sage.misc.superseded is provided by
-            # the distribution sagemath-objects, which is not an
-            # install-requires of the distribution sagemath-environment.
-            pass
-        else:
-            deprecation(33114, 'method JoinFeature.is_functional; use is_present instead')
-        for f in self._features:
-            test = f.is_functional()
-            if not test:
-                return test
-        return FeatureTestResult(self, True)
-
     def hide(self):
         r"""
         Hide this feature and all its joined features.
@@ -154,8 +125,6 @@ class JoinFeature(Feature):
         r"""
         Revert what :meth:`hide` did.
 
-        OUTPUT: The number of events a present feature has been hidden.
-
         EXAMPLES::
 
             sage: from sage.features.sagemath import sage__groups
@@ -167,14 +136,11 @@ class JoinFeature(Feature):
             FeatureTestResult('sage.groups.perm_gps.permgroup', False)
 
             sage: f.unhide()
-            4
             sage: f.is_present()    # optional sage.groups
             FeatureTestResult('sage.groups', True)
             sage: f._features[0].is_present() # optional sage.groups
             FeatureTestResult('sage.groups.perm_gps.permgroup', True)
         """
-        num_hidings = 0
         for f in self._features:
-            num_hidings += f.unhide()
-        num_hidings += super().unhide()
-        return num_hidings
+            f.unhide()
+        super().unhide()

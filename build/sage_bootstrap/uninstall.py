@@ -24,7 +24,9 @@ This performs two types of uninstallation:
        are also removed.
 """
 # ****************************************************************************
-#       Copyright (C) 2017 Erik M. Bray <erik.m.bray@gmail.com>
+#       Copyright (C) 2017-2018 Erik M. Bray <erik.m.bray@gmail.com>
+#                     2019      Jeroen Demeyer
+#                     2021-2022 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -247,7 +249,7 @@ def run_spkg_script(spkg_name, path, script_name,
             log_file = pth.join(log_directory, script + '.log')
             subprocess.check_call(['sage-logger', '-p', script, log_file])
         else:
-            subprocess.check_call([script])
+            subprocess.check_call(['sage-logger', '-P', script_name, script])
     elif if_does_not_exist == 'ignore':
         pass
     elif if_does_not_exist == 'log':

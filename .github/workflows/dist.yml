@@ -37,41 +37,44 @@ jobs:
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
       - name: make dist (--disable-download-from-upstream-url)
+        id: make_dist
         run: |
           ./bootstrap -D && ./configure --disable-download-from-upstream-url && make dist
         env:
           MAKE: make -j8
-      - name: make dist (--enable-download-from-upstream-url)
-        if: failure()
+      - name: make download (--disable-download-from-upstream-url)
+        id: make_download
         run: |
-          ./configure && make dist
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
         env:
           MAKE: make -j8
-      - uses: actions/upload-artifact@v3
+      - name: Reconfigure with --enable-download-from-upstream-url
+        if: (success() || failure()) && (steps.make_dist.outcome != 'success' || steps.make_download.outcome != 'success')
+        run: |
+          ./configure
+      - name: make dist (--enable-download-from-upstream-url)
+        if: (success() || failure()) && steps.make_dist.outcome != 'success'
+        run: |
+          make dist
+        env:
+          MAKE: make -j8
+      - name: make download (--enable-download-from-upstream-url)
+        if: (success() || failure()) && steps.make_download.outcome != 'success'
+        run: |
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge --allow-upstream"
+        env:
+          MAKE: make -j8
+      - name: Remove what cannot be distributed
+        if: success() || failure()
+        run: |
+          rm -f upstream/*do-not-distribute*
+      - uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
           path: |
             dist/*.tar.gz
             upstream
           name: release_dist
-
-  release:
-
-    needs: release_dist
-    runs-on: ubuntu-latest
-    if: (success() || failure()) && github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: release_dist
-      - uses: softprops/action-gh-release@v1
-        with:
-          generate_release_notes: true
-          files: |
-            dist/*
-            upstream/*
-    permissions:
-      contents: write
 
   sdists_for_pypi:
 
@@ -91,7 +94,7 @@ jobs:
           make pypi-sdists V=0
           (mkdir dist && mv upstream/sage*.tar.gz dist/)
           ls -l dist
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: "dist/*.tar.gz"
           name: dist
@@ -103,42 +106,103 @@ jobs:
           verbose: true
         if: env.CAN_DEPLOY == 'true'
 
+  release:
+
+    needs: [release_dist, sdists_for_pypi]
+    runs-on: ubuntu-latest
+    if: (success() || failure()) && github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release_dist
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
+          files: |
+            dist/*
+            upstream/*
+    permissions:
+      contents: write
+
+  noarch_wheels_for_pypi:
+
+    runs-on: ubuntu-latest
+    env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install bootstrap prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+      - name: make pypi-noarch-wheels
+        run: |
+          ./bootstrap
+          ./configure
+          make pypi-noarch-wheels V=0
+          (mkdir dist && mv venv/var/lib/sage/wheels/sage*-none-any.whl dist/)
+          ls -l dist
+      - uses: actions/upload-artifact@v4
+        with:
+          path: "dist/*.whl"
+          name: noarch-wheels
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          skip-existing: true
+          verbose: true
+        if: env.CAN_DEPLOY == 'true'
+
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}, arch ${{ matrix.arch }}
+    name: wheels ${{ matrix.build }}*_${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     needs: sdists_for_pypi
     strategy:
       fail-fast: false
       matrix:
+        os:      [ubuntu-latest]
+        arch:    [x86_64, i686, aarch64]
+        build:   [manylinux, musllinux]
         include:
-          - os: ubuntu-latest
+          - os: macos-13
             arch: x86_64
-          - os: ubuntu-latest
-            arch: i686
-          - os: macos-latest
-            arch: x86_64
+            build: macosx
           - os: macos-14
             arch: arm64
+            build: macosx
     env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
-      TARGETS_PRE: gmpy2-build-deps
+      TARGETS_PRE: gmp mpfr mpc bliss coxeter3 mcqd meataxe sirocco boost_cropped tdlib
+      CIBW_BUILD: "*${{ matrix.build }}*"
       # Disable building PyPy wheels on all platforms
-      # Disable musllinux until #33083 provides alpine package information
-      CIBW_SKIP: "pp* *-musllinux*"
+      CIBW_SKIP: "pp*"
       #
       CIBW_ARCHS: ${{ matrix.arch }}
       # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
-      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.9, <3.12"
+      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.9, <3.13"
       # Environment during wheel build
-      CIBW_ENVIRONMENT: "PATH=$(pwd)/local/bin:$PATH CPATH=$(pwd)/local/include:$CPATH LIBRARY_PATH=$(pwd)/local/lib:$LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/local/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal"
+      CIBW_ENVIRONMENT: "PATH=$(pwd)/prefix/bin:$PATH CPATH=$(pwd)/prefix/include:$CPATH LIBRARY_PATH=$(pwd)/prefix/lib:$LIBRARY_PATH LD_LIBRARY_PATH=$(pwd)/prefix/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/prefix/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt PIP_FIND_LINKS=file://$(pwd)/wheelhouse SAGE_NUM_THREADS=6"
       # Use 'build', not 'pip wheel'
       CIBW_BUILD_FRONTEND: build
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v3
+      - name: Set up QEMU
+        if: runner.os == 'Linux' && matrix.arch != 'x86_64' && matrix.arch != 'i686'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
@@ -151,41 +215,72 @@ jobs:
           python-version: "3.8 - 3.12"
           update-environment: false
 
-      - name: Build platform wheels
+      - name: Bootstrap
+        run: |
+          export PATH=$(pwd)/build/bin:$PATH
+          eval $(sage-print-system-package-command auto --sudo --yes --no-install-recommends --spkg install _bootstrap)
+          ./bootstrap
+
+      - name: Unpack and prepare
         # We build the wheels from the sdists so that MANIFEST filtering becomes effective.
         # But we must run cibuildwheel with the unpacked source directory, not a tarball,
         # so that SAGE_ROOT is copied into the build containers.
         #
         # In the CIBW_BEFORE_ALL phase, we install libraries using the Sage distribution.
         # https://cibuildwheel.readthedocs.io/en/stable/options/#before-all
-        # This is unfortunately repeated for each of the packages that we build wheels for
+        # For Linux, this is repeated for each of the packages that we build wheels for
         # because CIBW starts with a fresh container on each invocation.
+        # Therefore we cache it in a directory mounted from the host: /host
+        # https://cibuildwheel.pypa.io/en/stable/faq/#linux-builds-in-containers
+        #
+        # omit sagemath-{meataxe,sirocco} for now -- needs sagemath-modules
         run: |
-          "${{ steps.python.outputs.python-path }}" -m pip install pipx
+          "${{ steps.python.outputs.python-path }}" -m pip install cibuildwheel==2.18.0
           export PATH=build/bin:$PATH
-          export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && ./bootstrap && ./configure --enable-build-as-root && make -j4 V=0 $TARGETS_PRE"
+          echo CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || $(sage-print-system-package-command alpine --yes --no-install-recommends install $(sage-get-system-packages alpine $SPKGS)) || echo error ignored) ) && if cp /host/sage-\$AUDITWHEEL_PLAT/config.status . 2>/dev/null; then chmod +x config.status; fi && if [ -x ./config.status ]; then ./config.status; else ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && '--prefix=/host/sage-\$AUDITWHEEL_PLAT' || '' }} && cp config.status prefix/; fi && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && (echo \"sage_conf @ file://\$(pwd)/pkgs/sage-conf\" && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt" >> "$GITHUB_ENV"
           mkdir -p unpacked
-          for pkg in sagemath-objects sagemath-categories; do
-              (cd unpacked && tar xfz - ) < dist/$pkg*.tar.gz
-              "${{ steps.python.outputs.python-path }}" -m pipx run cibuildwheel==2.17.0 unpacked/$pkg*
+          for sdist in dist/$pkg*.tar.gz; do
+              (cd unpacked && tar xfz - ) < $sdist
           done
 
-      - uses: actions/upload-artifact@v3
+      - name: sagemath-objects
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*objects*
+
+      - name: sagemath-categories
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*categories*
+
+      - name: sagemath-bliss
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*bliss*
+
+      - name: sagemath-coxeter3
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*coxeter3*
+
+      - name: sagemath-mcqd
+        run: |
+          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*mcqd*
+
+      - uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.arch }}-wheels
           path: ./wheelhouse/*.whl
 
   upload_wheels:
+    # This needs to be a separate job because pypa/gh-action-pypi-publish cannot run on macOS
     needs: build_wheels
     runs-on: ubuntu-latest
     env:
       CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
     steps:
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: wheels
+          pattern: "*-*-*-wheels"
           path: wheelhouse
+          merge-multiple: true
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:

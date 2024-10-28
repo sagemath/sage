@@ -20,16 +20,13 @@ def combine(reductors, p, reduce=None):
 
 def llredsb_Cudd_style(polys):
 
-    if polys:
-        reductors = Polynomial(polys[0].ring().one()).set()
-    else:
-        reductors = None
+    reductors = Polynomial(polys[0].ring().one()).set() if polys else None
 
     linear_lead = sorted(polys, key=lead_index, reverse=True)
-    assert len(set(p.lex_lead() for p in linear_lead)) == len(polys)
+    assert len({p.lex_lead() for p in linear_lead}) == len(polys)
     assert not any(p.constant() for p in polys)
     assert len([p for p in polys if p.lex_lead_deg() == 1]) == len(polys)
-    assert len(set(p.navigation().value() for p in polys)) == len(polys)
+    assert len({p.navigation().value() for p in polys}) == len(polys)
     for p in linear_lead:
         reductors = combine(reductors, p, reduce=ll_red_nf_redsb)
     return reductors
@@ -38,26 +35,20 @@ def llredsb_Cudd_style(polys):
 def ll_encode(polys, reduce=False, prot=False, reduce_by_linear=True):
     polys = [Polynomial(p) for p in polys]
     linear_lead = sorted(polys, key=lead_index, reverse=True)
-    assert len(set(p.lex_lead() for p in linear_lead)) == len(polys)
+    assert len({p.lex_lead() for p in linear_lead}) == len(polys)
     assert not any(p.constant() for p in polys)
     assert len([p for p in polys if p.lex_lead_deg() == 1]) == len(polys)
-    assert len(set(p.navigation().value() for p in polys)) == len(polys)
+    assert len({p.navigation().value() for p in polys}) == len(polys)
     if (not reduce) and reduce_by_linear:
         linear_polys = [p for p in polys if p.deg() == 1]
         if linear_polys:
             linear_ll = ll_encode(linear_polys, reduce=True,
-                reduce_by_linear=False)
+                                  reduce_by_linear=False)
             polys = [p.lex_lead() + ll_red_nf_redsb(p + p.lex_lead(),
-                linear_ll) for p in polys]
-    if reduce:
-        reduce = ll_red_nf_redsb
-    else:
-        reduce = None
+                                                    linear_ll) for p in polys]
+    reduce = ll_red_nf_redsb if reduce else None
 
-    if polys:
-        reductors = Polynomial(polys[0].ring().one()).set()
-    else:
-        reductors = None
+    reductors = Polynomial(polys[0].ring().one()).set() if polys else None
 
     last = None
     counter = 0
@@ -119,11 +110,11 @@ def eliminate(polys, on_the_fly=False, prot=False, reduction_function=None,
         reduced_list = []
         reductors = ll_encode(linear_leads, reduce=(not on_the_fly), prot=prot)
         for p in rest:
-            p = reduction_function(p, reductors)
-            if p.is_one():
-                reduced_list = [p]
+            rp = reduction_function(p, reductors)
+            if rp.is_one():
+                reduced_list = [rp]
                 break
-            reduced_list.append(p)
+            reduced_list.append(rp)
 
     return (linear_leads, llnf, reduced_list)
 
@@ -145,7 +136,7 @@ def eliminate_ll_ranked(ll_system, to_reduce,
 
     ll_ranks = rank(ll_system)
     add_vars = set(used_vars_set(to_reduce).variables()).difference(ll_ranks.
-        keys())
+                                                                    keys())
     for v in add_vars:
         ll_ranks[v] = -1
 
@@ -182,10 +173,11 @@ def eliminate_ll_ranked(ll_system, to_reduce,
 
     def map_back(p):
         return substitute_variables(from_ring, map_back_vec, p)
+
     try:
         ll_opt_encoded = ll_encode([map_from(p) for p in ll_system],
-            prot=False,
-            reduce=reduce_ll_system)
+                                   prot=False,
+                                   reduce=reduce_ll_system)
 
         def llnf(p):
             return map_back(reduction_function(map_from(p), ll_opt_encoded))
@@ -195,7 +187,7 @@ def eliminate_ll_ranked(ll_system, to_reduce,
     return (llnf, opt_eliminated)
 
 
-class RingMap():
+class RingMap:
     r"""
     Define a mapping between two rings by common variable names.
 

@@ -155,7 +155,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         ##############
         # Dual bases #
         ##############
-        elif sfa.is_SymmetricFunction(x) and hasattr(x, 'dual'):
+        elif isinstance(x, sfa.SymmetricFunctionAlgebra_generic.Element) and hasattr(x, 'dual'):
             # Check to see if it is the dual of some other basis
             # If it is, try to coerce its corresponding element
             # in the other basis

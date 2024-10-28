@@ -14,7 +14,6 @@ AUTHORS:
 .. TODO::
 
     Smooth triangles using vertex normals
-
 """
 # ****************************************************************************
 #      Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -197,6 +196,7 @@ cdef inline format_pmesh_face(face_c face, int has_color):
     # PyBytes_FromFormat is almost twice as slow
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
+
 def midpoint(pointa, pointb, w):
     """
     Return the weighted mean of two points in 3-space.
@@ -205,7 +205,7 @@ def midpoint(pointa, pointb, w):
 
     - ``pointa``, ``pointb`` -- two points in 3-dimensional space
 
-    - ``w`` -- a real weight between 0 and 1.
+    - ``w`` -- a real weight between 0 and 1
 
     If the weight is zero, the result is ``pointb``. If the weight is
     one, the result is ``pointa``.
@@ -393,7 +393,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
     cdef int realloc(self, Py_ssize_t vcount, Py_ssize_t fcount, Py_ssize_t icount) except -1:
         r"""
-        Allocates memory for vertices, faces, and face indices.  Can
+        Allocate memory for vertices, faces, and face indices.  Can
         only be called from Cython, so the doctests must be indirect.
 
         EXAMPLES::
@@ -512,9 +512,9 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         INPUT:
 
-        ``threshold`` -- the minimum cosine of the angle between adjacent
-        faces a higher threshold separates more, all faces if >= 1, no
-        faces if <= -1
+        - ``threshold`` -- the minimum cosine of the angle between adjacent
+          faces a higher threshold separates more, all faces if >= 1, no
+          faces if <= -1
         """
         cdef Py_ssize_t i, j, k
         cdef face_c *face
@@ -930,7 +930,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         INPUT:
 
-        - `f` -- a function from `\RR^3` to `\ZZ`
+        - ``f`` -- a function from `\RR^3` to `\ZZ`
 
         EXAMPLES::
 
@@ -1003,9 +1003,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         - ``eps`` -- target accuracy in the intersection (default: 1.0e-6)
 
-        OUTPUT:
-
-        an ``IndexFaceSet``
+        OUTPUT: an ``IndexFaceSet``
 
         This will contain both triangular and quadrilateral faces.
 
@@ -1409,7 +1407,6 @@ cdef class IndexFaceSet(PrimitiveObject):
                 {'x': 0.0, 'y': 1.0, 'z': 1.0},
                 {'x': 1.0, 'y': 0.0, 'z': 1.0},
                 {'x': 1.0, 'y': 1.0, 'z': 0.0}]})]
-
         """
         surface = {}
 
@@ -1711,9 +1708,7 @@ cdef class IndexFaceSet(PrimitiveObject):
           the original surface so it shows, typically this value is very
           small compared to the actual object
 
-        OUTPUT:
-
-        Graphics3dGroup of stickers
+        OUTPUT: Graphics3dGroup of stickers
 
         EXAMPLES::
 
@@ -1757,8 +1752,6 @@ cdef class FaceIter:
         True
     """
     def __init__(self, face_set):
-        """
-        """
         self.set = face_set
         self.i = 0
 

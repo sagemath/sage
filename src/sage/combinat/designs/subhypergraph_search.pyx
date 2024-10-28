@@ -31,20 +31,20 @@ over `|V(H_1)|` points. In particular, two sets of distinct cardinalities
 require the same memory space. A hypergraph is a C struct with the following
 fields:
 
-* ``n,m`` (``int``) -- number of points and edges.
+* ``n``, ``m`` -- (``int``) number of points and edges
 
-* ``limbs`` (``int``) -- number of 64-bits blocks per set.
+* ``limbs`` -- (``int``) number of 64-bits blocks per set
 
-* ``set_space`` (``uint64_t *``) -- address of the memory used to store the
-  sets.
+* ``set_space`` -- (``uint64_t *``) address of the memory used to store the
+  sets
 
-* ``sets`` (``uint64_t **``) -- ``sets[i]`` points toward the ``limbs``
+* ``sets`` -- (``uint64_t **``) ``sets[i]`` points toward the ``limbs``
   blocks encoding set `i`. Note also that ``sets[i][limbs]`` is equal to the
   cardinality of ``set[i]``, so that ``sets`` has length
   ``m*(limbs+1)*sizeof(uint64_t)``.
 
-* ``names`` (``int *``) -- associates an integer 'name' to each of the ``n``
-  points.
+* ``names`` -- (``int *``) associates an integer 'name' to each of the ``n``
+  points
 
 The operations used on this data structure are:
 
@@ -133,7 +133,7 @@ cdef inline int bs_get(uint64_t * bitset, int index) noexcept:
     r"""
     Return a bit of a bitset
     """
-    return (bitset[index/64]>>(index%64))&1
+    return (bitset[index//64]>>(index%64))&1
 
 cdef inline void bs_set(uint64_t * bitset, int index, int bit) noexcept:
     r"""
@@ -142,8 +142,8 @@ cdef inline void bs_set(uint64_t * bitset, int index, int bit) noexcept:
     "bit" *MUST* be equal to either 0 or to 1. The code does not involve any
     "if".
     """
-    bitset[index/64] &= ~((<uint64_t> 1)<<index%64)
-    bitset[index/64] |= (<uint64_t> bit)<<index%64
+    bitset[index//64] &= ~((<uint64_t> 1)<<index%64)
+    bitset[index//64] |= (<uint64_t> bit)<<index%64
 
 cdef inline int bs_issubset64(uint64_t * b1, uint64_t b2, int limbs) noexcept:
     r"""
@@ -180,7 +180,7 @@ cdef hypergraph h_init(int n,list H) noexcept:
     cdef hypergraph h
     h.n          = n
     h.m          = len(H)
-    h.limbs      = (n+63)/64 # =ceil(n/64)
+    h.limbs      = (n+63) // 64  # =ceil(n/64)
     h.names      = <int *>  sig_malloc(sizeof(int)*n)
     h.sets       = <uint64_t **> sig_malloc(h.m*sizeof(uint64_t *))
     h.set_space  = <uint64_t *>  sig_calloc(h.m*(h.limbs+1),sizeof(uint64_t))
@@ -249,7 +249,7 @@ cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp):
 
 cdef void trace_hypergraph64(hypergraph * h, int n, hypergraph * tmp) noexcept:
     r"""
-    Stores in `tmp` the trace of the sets on {0,...,n-1} in h1.
+    Store in `tmp` the trace of the sets on `\{0, \ldots, n-1\}` in h1.
 
     Note that the size of the sets are kept as they are, i.e. the size of a set
     stored in tmp is what it was in h. This is useful information we use to cut
@@ -426,7 +426,7 @@ cdef class SubHypergraphSearch:
 
     def relabel_heuristic(self):
         r"""
-        Relabels `H_2` in order to make the algorithm faster.
+        Relabel `H_2` in order to make the algorithm faster.
 
         Objective: we try to pick an ordering `p_1,...,p_k` of the points of
         `H_2` that maximizes the number of sets involving the first points in
@@ -474,7 +474,7 @@ cdef class SubHypergraphSearch:
 
     def __iter__(self):
         r"""
-        Iterates over all copies of h2 in h1.
+        Iterate over all copies of h2 in h1.
 
         EXAMPLES:
 

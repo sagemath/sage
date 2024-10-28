@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of msolve
 
@@ -40,8 +40,8 @@ class msolve(Executable):
             sage: isinstance(msolve(), msolve)
             True
         """
-        Executable.__init__(self, "msolve", executable="msolve",
-                            url="https://msolve.lip6.fr/")
+        Executable.__init__(self, "msolve", executable='msolve',
+                            url='https://msolve.lip6.fr/')
 
     def is_functional(self):
         r"""
@@ -57,7 +57,7 @@ class msolve(Executable):
 
 #        if msolve_out.returncode != 0:
 #            return FeatureTestResult(self, False, reason="msolve -h returned "
-#                                f"non-zero exit status {msolve_out.returncode}")
+#                                f"nonzero exit status {msolve_out.returncode}")
         if (msolve_out.stdout[:46] !=
               b'\nmsolve library for polynomial system solving\n'):
             return FeatureTestResult(self, False,

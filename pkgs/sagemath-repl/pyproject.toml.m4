@@ -13,8 +13,10 @@ description = "Sage: Open Source Mathematics Software: IPython kernel, Sage prep
 dependencies = [
     SPKG_INSTALL_REQUIRES_sagemath_objects
     SPKG_INSTALL_REQUIRES_sagemath_environment
+    SPKG_INSTALL_REQUIRES_ipykernel
     SPKG_INSTALL_REQUIRES_ipython
     SPKG_INSTALL_REQUIRES_ipywidgets
+    SPKG_INSTALL_REQUIRES_jupyter_client
 ]
 dynamic = ["version"]
 include(`pyproject_toml_metadata.m4')dnl'

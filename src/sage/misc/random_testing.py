@@ -21,10 +21,10 @@ def random_testing(fn):
 
     INPUT:
 
-        - ``fn`` - The function that we are wrapping for random testing.
+    - ``fn`` -- the function that we are wrapping for random testing
 
     The resulting function will take two additional arguments, *seed*
-    (default ``None``) and *print_seed* (default ``False``).  The
+    (default: ``None``) and *print_seed* (default: ``False``).  The
     result will set the random number seed to the given seed value (or
     to a truly random value, if *seed* is not specified), then call
     the original function.  If *print_seed* is true, then the seed will

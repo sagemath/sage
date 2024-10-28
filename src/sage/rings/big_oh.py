@@ -1,5 +1,5 @@
 """
-Big O for various types (power series, p-adics, etc.)
+Big O for various types (power series, `p`-adics, etc.)
 
 .. SEEALSO::
 

@@ -60,7 +60,7 @@ class IndefiniteIntegral(BuiltinFunction):
         Check for :issue:`28913`::
 
             sage: Ex = (1-2*x^(1/3))^(3/4)/x
-            sage: integrate(Ex, x, algorithm="giac")  # long time
+            sage: integrate(Ex, x, algorithm='giac')  # long time
             4*(-2*x^(1/3) + 1)^(3/4) + 6*arctan((-2*x^(1/3) + 1)^(1/4)) - 3*log((-2*x^(1/3) + 1)^(1/4) + 1) + 3*log(abs((-2*x^(1/3) + 1)^(1/4) - 1))
 
         Check for :issue:`29833`::
@@ -68,15 +68,16 @@ class IndefiniteIntegral(BuiltinFunction):
             sage: (x,a,b)=var('x a b')
             sage: assume(b > 0)
             sage: f = (exp((x-a)/b) + 1)**(-1)
-            sage: (f*f).integrate(x, algorithm="mathematica_free") # optional -- internet
+            sage: (f*f).integrate(x, algorithm='mathematica_free') # optional -- internet
             -b*log(e^(a/b) + e^(x/b)) + x + b/(e^(-(a - x)/b) + 1)
 
-        Check for :issue:`25119`::
+        After :issue:`25119` we can integrate the following function,
+        although giac and sympy give different-looking answers::
 
             sage: result = integrate(sqrt(x^2)/x,x)
             ...
-            sage: result
-            x*sgn(x)
+            sage: result in [x*sgn(x), sqrt(x^2)]
+            True
         """
         # The automatic evaluation routine will try these integrators
         # in the given order. This is an attribute of the class instead of
@@ -392,9 +393,7 @@ def _normalize_integral_input(f, v, a=None, b=None):
 
     If the input contains endpoints, both endpoints must be given.
 
-    OUTPUT:
-
-    - a tuple of ``f``, ``v``, ``a``, and ``b``.
+    OUTPUT: a tuple of ``f``, ``v``, ``a``, and ``b``
 
     EXAMPLES::
 
@@ -452,28 +451,28 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     INPUT:
 
-    - ``v`` - a variable or variable name.  This can also be a tuple of
-      the variable (optional) and endpoints (i.e., ``(x,0,1)`` or ``(0,1)``).
+    - ``v`` -- a variable or variable name; this can also be a tuple of
+      the variable (optional) and endpoints (i.e., ``(x,0,1)`` or ``(0,1)``)
 
-    - ``a`` - (optional) lower endpoint of definite integral
+    - ``a`` -- (optional) lower endpoint of definite integral
 
-    - ``b`` - (optional) upper endpoint of definite integral
+    - ``b`` -- (optional) upper endpoint of definite integral
 
-    - ``algorithm`` - (default: 'maxima', 'libgiac' and 'sympy') one of
+    - ``algorithm`` -- (default: ``'maxima'``, ``'libgiac'`` and ``'sympy'``) one of
 
-       - 'maxima' - use maxima
+      - ``'maxima'`` -- use maxima
 
-       - 'sympy' - use sympy (also in Sage)
+      - ``'sympy'`` -- use sympy (also in Sage)
 
-       - 'mathematica_free' - use http://integrals.wolfram.com/
+      - ``'mathematica_free'`` -- use http://integrals.wolfram.com/
 
-       - 'fricas' - use FriCAS (the optional fricas spkg has to be installed)
+      - ``'fricas'`` -- use FriCAS (the optional fricas spkg has to be installed)
 
-       - 'giac' - use Giac
+      - ``'giac'`` -- use Giac
 
-       - 'libgiac' - use libgiac
+      - ``'libgiac'`` -- use libgiac
 
-    To prevent automatic evaluation use the ``hold`` argument.
+    To prevent automatic evaluation, use the ``hold`` argument.
 
     .. SEEALSO::
 
@@ -596,7 +595,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         sage: _ = var('x, y, z')
         sage: f = sin(x^2) + y^z
-        sage: g = mathematica(f)                           # optional - mathematica
+        sage: g = mathematica(f)                            # optional - mathematica
         sage: print(g)                                      # optional - mathematica
                   z        2
                  y  + Sin[x ]
@@ -605,14 +604,17 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
                  x y  + Sqrt[--] FresnelS[Sqrt[--] x]
                              2                 Pi
         sage: print(f.integral(x))
-        x*y^z + 1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x) + (I - 1)*sqrt(2)*erf((1/2*I - 1/2)*sqrt(2)*x) - (I - 1)*sqrt(2)*erf(sqrt(-I)*x) + (I + 1)*sqrt(2)*erf((-1)^(1/4)*x))
+        x*y^z + 1/16*sqrt(pi)*((I + 1)*sqrt(2)*erf((1/2*I + 1/2)*sqrt(2)*x)
+                                + (I - 1)*sqrt(2)*erf((1/2*I - 1/2)*sqrt(2)*x)
+                                - (I - 1)*sqrt(2)*erf(sqrt(-I)*x)
+                                + (I + 1)*sqrt(2)*erf((-1)^(1/4)*x))
 
     Alternatively, just use algorithm='mathematica_free' to integrate via Mathematica
     over the internet (does NOT require a Mathematica license!)::
 
         sage: _ = var('x, y, z')  # optional - internet
         sage: f = sin(x^2) + y^z   # optional - internet
-        sage: f.integrate(x, algorithm="mathematica_free")   # optional - internet
+        sage: f.integrate(x, algorithm='mathematica_free')   # optional - internet
         x*y^z + sqrt(1/2)*sqrt(pi)*fresnel_sin(sqrt(2)*x/sqrt(pi))
 
     We can also use Sympy::
@@ -624,7 +626,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: _ = var('y, z')
         sage: (x^y - z).integrate(y)
         -y*z + x^y/log(x)
-        sage: (x^y - z).integrate(y, algorithm="sympy")                                 # needs sympy
+        sage: (x^y - z).integrate(y, algorithm='sympy')                                 # needs sympy
         -y*z + cases(((log(x) != 0, x^y/log(x)), (1, y)))
 
     We integrate the above function in Maple now::
@@ -658,13 +660,16 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
     An example of an integral that fricas can integrate::
 
         sage: f(x) = sqrt(x+sqrt(1+x^2))/x
-        sage: integrate(f(x), x, algorithm="fricas")      # optional - fricas
-        2*sqrt(x + sqrt(x^2 + 1)) - 2*arctan(sqrt(x + sqrt(x^2 + 1))) - log(sqrt(x + sqrt(x^2 + 1)) + 1) + log(sqrt(x + sqrt(x^2 + 1)) - 1)
+        sage: integrate(f(x), x, algorithm='fricas')      # optional - fricas
+        2*sqrt(x + sqrt(x^2 + 1)) - 2*arctan(sqrt(x + sqrt(x^2 + 1)))
+         - log(sqrt(x + sqrt(x^2 + 1)) + 1) + log(sqrt(x + sqrt(x^2 + 1)) - 1)
 
     where the default integrator obtains another answer::
 
         sage: integrate(f(x), x)  # long time
-        1/8*sqrt(x)*gamma(1/4)*gamma(-1/4)^2*hypergeometric((-1/4, -1/4, 1/4), (1/2, 3/4), -1/x^2)/(pi*gamma(3/4))
+        1/8*sqrt(x)*gamma(1/4)*gamma(-1/4)^2*hypergeometric((-1/4, -1/4, 1/4),
+                                                            (1/2, 3/4),
+                                                            -1/x^2)/(pi*gamma(3/4))
 
     The following definite integral is not found by maxima::
 
@@ -679,9 +684,9 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     Both fricas and sympy give the correct result::
 
-        sage: integrate(f(x), x, 1, 2, algorithm="fricas")  # optional - fricas
+        sage: integrate(f(x), x, 1, 2, algorithm='fricas')  # optional - fricas
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
-        sage: integrate(f(x), x, 1, 2, algorithm="sympy")                               # needs sympy
+        sage: integrate(f(x), x, 1, 2, algorithm='sympy')                               # needs sympy
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
 
     Using Giac to integrate the absolute value of a trigonometric expression::
@@ -713,7 +718,10 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         sage: assume(a>0)
         sage: integrate(1/(x^3 *(a+b*x)^(1/3)), x)
-        2/9*sqrt(3)*b^2*arctan(1/3*sqrt(3)*(2*(b*x + a)^(1/3) + a^(1/3))/a^(1/3))/a^(7/3) - 1/9*b^2*log((b*x + a)^(2/3) + (b*x + a)^(1/3)*a^(1/3) + a^(2/3))/a^(7/3) + 2/9*b^2*log((b*x + a)^(1/3) - a^(1/3))/a^(7/3) + 1/6*(4*(b*x + a)^(5/3)*b^2 - 7*(b*x + a)^(2/3)*a*b^2)/((b*x + a)^2*a^2 - 2*(b*x + a)*a^3 + a^4)
+        2/9*sqrt(3)*b^2*arctan(1/3*sqrt(3)*(2*(b*x + a)^(1/3) + a^(1/3))/a^(1/3))/a^(7/3)
+         - 1/9*b^2*log((b*x + a)^(2/3) + (b*x + a)^(1/3)*a^(1/3) + a^(2/3))/a^(7/3)
+         + 2/9*b^2*log((b*x + a)^(1/3) - a^(1/3))/a^(7/3) + 1/6*(4*(b*x + a)^(5/3)*b^2
+         - 7*(b*x + a)^(2/3)*a*b^2)/((b*x + a)^2*a^2 - 2*(b*x + a)*a^3 + a^4)
 
     TESTS:
 
@@ -863,7 +871,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         sage: N(integrate(sin(x^2)/(x^2), x, 1, infinity), prec=54)
         0.285736646322853
-        sage: N(integrate(sin(x^2)/(x^2), x, 1, infinity))  # known bug (non-zero imag part)
+        sage: N(integrate(sin(x^2)/(x^2), x, 1, infinity))  # known bug (nonzero imag part)
         0.285736646322853
 
     Check that :issue:`14209` is fixed::
@@ -1038,7 +1046,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: var('a d x c')
         (a, d, x, c)
         sage: f = (I*a*tan(d*x + c) + a)^3*tan(d*x + c)
-        sage: integrate(f, x, algorithm="fricas")  # optional - fricas
+        sage: integrate(f, x, algorithm='fricas')  # optional - fricas
         -2/3*(24*a^3*e^(4*I*d*x + 4*I*c) + 33*a^3*e^(2*I*d*x + 2*I*c) + 13*a^3 + 6*(a^3*e^(6*I*d*x + 6*I*c) + 3*a^3*e^(4*I*d*x + 4*I*c) + 3*a^3*e^(2*I*d*x + 2*I*c) + a^3)*log(e^(2*I*d*x + 2*I*c) + 1))/(d*e^(6*I*d*x + 6*I*c) + 3*d*e^(4*I*d*x + 4*I*c) + 3*d*e^(2*I*d*x + 2*I*c) + d)
 
     The fundamental theorem of calculus holds for elliptic integrals

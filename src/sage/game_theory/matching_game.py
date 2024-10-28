@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 """
 Matching games
 
@@ -72,7 +73,7 @@ class MatchingGame(SageObject):
 
     Two potential inputs are accepted (see below to see the effect of each):
 
-    - ``reviewer/suitors_preferences`` -- a dictionary containing the
+    - ``reviewer/suitors_preferences`` -- dictionary containing the
       preferences of all players:
 
       * key - each reviewer/suitors
@@ -80,8 +81,8 @@ class MatchingGame(SageObject):
 
     OR:
 
-    - ``integer`` -- an integer simply representing the number of reviewers
-      and suitors.
+    - ``integer`` -- integer simply representing the number of reviewers
+      and suitors
 
     To implement the above game in Sage::
 
@@ -124,7 +125,7 @@ class MatchingGame(SageObject):
 
     Matchings have a natural representations as bipartite graphs::
 
-        sage: plot(m)
+        sage: plot(m)                                                                   # needs sage.plot
         Graphics object consisting of 13 graphics primitives
 
     The above plots the bipartite graph associated with the matching.
@@ -508,14 +509,14 @@ class MatchingGame(SageObject):
             sage: revr = {3: (0, 1),
             ....:         4: (1, 0)}
             sage: g = MatchingGame([suit, revr])
-            sage: plot(g)
+            sage: plot(g)                                                               # needs sage.plot
             Traceback (most recent call last):
             ...
             ValueError: game has not been solved yet
 
             sage: g.solve()
             {0: 3, 1: 4}
-            sage: plot(g)
+            sage: plot(g)                                                               # needs sage.plot
             Graphics object consisting of 7 graphics primitives
         """
         pl = self.bipartite_graph()
@@ -1024,7 +1025,7 @@ class Player():
 
     def __lt__(self, other):
         """
-        Tests less than inequality of two players. Allows for players to be
+        Test less than inequality of two players. Allows for players to be
         sorted on their names.
 
         TESTS::
@@ -1050,7 +1051,7 @@ class Player():
 
     def __gt__(self, other):
         """
-        Tests greater than inequality of two players. Allows for players to be
+        Test greater than inequality of two players. Allows for players to be
         sorted on their names.
 
         TESTS::
@@ -1076,7 +1077,7 @@ class Player():
 
     def __ge__(self, other):
         """
-        Tests greater than or equal inequality of two players. Allows for
+        Test greater than or equal inequality of two players. Allows for
         players to be sorted on their names.
 
         TESTS::
@@ -1112,7 +1113,7 @@ class Player():
 
     def __le__(self, other):
         """
-        Tests less than or equal inequality of two players. Allows for
+        Test less than or equal inequality of two players. Allows for
         players to be sorted on their names.
 
         TESTS::
@@ -1148,7 +1149,7 @@ class Player():
 
     def __ne__(self, other):
         """
-        Tests inequality of two players. Allows for
+        Test inequality of two players. Allows for
         players to be sorted on their names.
 
         TESTS::

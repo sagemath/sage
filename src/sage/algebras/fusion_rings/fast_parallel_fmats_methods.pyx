@@ -399,14 +399,14 @@ cdef list compute_gb(factory, tuple args):
     cdef MPolynomialRing_libsingular R = PolynomialRing(factory._FR.field(), len(sorted_vars), 'a', order=term_order)
 
     # Zip tuples into R and compute Groebner basis
-    cdef idx_map = {old : new for new, old in enumerate(sorted_vars)}
+    cdef idx_map = {old: new for new, old in enumerate(sorted_vars)}
     nvars = len(sorted_vars)
     F = factory.field()
     cdef list polys = list()
     for eq_tup in eqns:
         eq_tup = _unflatten_coeffs(F, eq_tup)
         polys.append(_tup_to_poly(resize(eq_tup, idx_map, nvars), parent=R))
-    gb = Ideal(sorted(polys)).groebner_basis(algorithm="libsingular:slimgb")
+    gb = Ideal(sorted(polys)).groebner_basis(algorithm='libsingular:slimgb')
 
     # Change back to fmats poly ring and append to temp_eqns
     cdef dict inv_idx_map = {v: k for k, v in idx_map.items()}
@@ -455,12 +455,12 @@ cpdef executor(tuple params):
     Execute a function defined in this module
     (``sage.algebras.fusion_rings.fast_parallel_fmats_methods``) in a worker
     process, and supply the factory parameter by constructing a reference
-    to the ``FMatrix`` object in the worker's memory adress space from
+    to the ``FMatrix`` object in the worker's memory address space from
     its ``id``.
 
     INPUT:
 
-    - ``params`` -- a tuple ``((fn_name, fmats_id), fn_args)`` where
+    - ``params`` -- tuple ``((fn_name, fmats_id), fn_args)`` where
       ``fn_name`` is the name of the function to be executed, ``fmats_id``
       is the ``id`` of the :class:`FMatrix` object, and ``fn_args`` is a
       tuple containing all arguments to be passed to the function ``fn_name``.

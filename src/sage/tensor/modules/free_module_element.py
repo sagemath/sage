@@ -16,7 +16,6 @@ REFERENCES:
 - Chap. 12 of J. M. Lee: *Introduction to Smooth Manifolds* [Lee2013]_ (only
   when the free module is a vector space)
 - Chap. 2 of B. O'Neill: *Semi-Riemannian Geometry* [ONe1983]_
-
 """
 
 #******************************************************************************
@@ -192,7 +191,6 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
          module M over the Integer Ring
         sage: s.display()
         a∧b = -2 e_0∧e_1 - 6 e_0∧e_2 + 7 e_1∧e_2
-
     """
 
     def __init__(
@@ -209,7 +207,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
             sage: e = M.basis('e')
             sage: v = FiniteRankFreeModuleElement(M, name='v')
             sage: v[e,:] = (-2, 1, 3)
-            sage: TestSuite(v).run(skip="_test_category") # see below
+            sage: TestSuite(v).run(skip='_test_category') # see below
 
         In the above test suite, _test_category fails because v is not an
         instance of v.parent().category().element_class. Actually module
@@ -219,7 +217,6 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
             sage: v1 = M.element_class(M, name='v')
             sage: v1[e,:] = (-2, 1, 3)
             sage: TestSuite(v1).run()
-
         """
         AlternatingContrTensor.__init__(self, fmodule, 1, name=name,
                                         latex_name=latex_name)
@@ -234,7 +231,6 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
             sage: e = M.basis('e')
             sage: M([1,-2,3], name='v')
             Element v of the Rank-3 free module M over the Integer Ring
-
         """
         description = "Element "
         if self._name is not None:
@@ -253,9 +249,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
 
         - ``basis`` -- basis of the free module on which ``self`` is defined
 
-        OUTPUT:
-
-        - an instance of :class:`~sage.tensor.modules.comp.Components`
+        OUTPUT: an instance of :class:`~sage.tensor.modules.comp.Components`
 
         EXAMPLES::
 
@@ -267,7 +261,6 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
              Rank-3 free module M over the Integer Ring
             sage: type(v._new_comp(e))
             <class 'sage.tensor.modules.comp.Components'>
-
         """
         fmodule = self._fmodule  # the base free module
         return Components(fmodule._ring, basis, 1, start_index=fmodule._sindex,
@@ -286,6 +279,5 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
             Element of the Rank-3 free module M over the Integer Ring
             sage: v._new_instance().parent() is v.parent()
             True
-
         """
         return self.__class__(self._fmodule)

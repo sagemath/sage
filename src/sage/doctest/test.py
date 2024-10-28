@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Test the doctesting framework
 
@@ -265,7 +266,7 @@ after the ``die_timeout`` given above (10 seconds)::
 
 If the child process is dead and removed, the last output should be as above.
 However, the child process interrupted its parent process (see
-``"interrupt_diehard.rst"``), and became an orphan process. Depending on the
+``'interrupt_diehard.rst'``), and became an orphan process. Depending on the
 system, an orphan process may eventually become a zombie process instead of
 being removed, and then the last output would just be a blank. Hence the ``#
 random`` tag.

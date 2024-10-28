@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Examples of Sandpile
 
@@ -52,15 +51,9 @@ class SandpileExamples:
     """
     def __call__(self):
         r"""
-        If sandpiles() is executed, return a helpful message.
+        If ``sandpiles()`` is executed, return a helpful message.
 
-        INPUT:
-
-        None
-
-        OUTPUT:
-
-        None
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -79,11 +72,9 @@ class SandpileExamples:
 
         INPUT:
 
-        -  ``n`` -- positive integer
+        - ``n`` -- positive integer
 
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -101,11 +92,9 @@ class SandpileExamples:
 
         INPUT:
 
-        -  ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -126,13 +115,7 @@ class SandpileExamples:
         """
         Sandpile on the diamond graph.
 
-        INPUT:
-
-        None
-
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -148,11 +131,9 @@ class SandpileExamples:
 
         INPUT:
 
-        -  ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -184,11 +165,9 @@ class SandpileExamples:
 
         INPUT:
 
-        -  ``m``, ``n`` -- negative integers
+        - ``m``, ``n`` -- negative integers
 
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -212,13 +191,7 @@ class SandpileExamples:
         """
         Sandpile on the House graph.
 
-        INPUT:
-
-        None
-
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 
@@ -234,11 +207,9 @@ class SandpileExamples:
 
         INPUT:
 
-        -  ``n`` -- a non-negative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - Sandpile
+        OUTPUT: Sandpile
 
         EXAMPLES::
 

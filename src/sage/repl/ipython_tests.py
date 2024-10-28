@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 '''
 Tests for the IPython integration
 
@@ -10,15 +11,15 @@ calls when you ask for the single-questionmark help, like `foo?` ::
     sage: shell.run_cell(u'%pinfo dummy')
     Signature:      dummy(argument, optional=None)
     Docstring:
-       Dummy Docstring Title
+       Dummy Docstring Title.
     <BLANKLINE>
        Dummy docstring explanation.
     <BLANKLINE>
        INPUT:
     <BLANKLINE>
-       ... "argument" -- anything. Dummy argument.
+       ... "argument" -- anything; dummy argument
     <BLANKLINE>
-       ... "optional" -- anything (optional). Dummy optional.
+       ... "optional" -- anything (optional); dummy optional
     <BLANKLINE>
        EXAMPLES...
     <BLANKLINE>
@@ -34,7 +35,7 @@ Next, test the pinfo magic for Cython code::
     sage: shell.run_cell(u'from sage.tests.stl_vector import stl_int_vector')
     sage: shell.run_cell(u'%pinfo stl_int_vector')
     ...
-       Example class wrapping an STL vector
+       Example class wrapping an STL vector.
     <BLANKLINE>
        EXAMPLES...
     <BLANKLINE>
@@ -53,7 +54,7 @@ Next, test the ``pinfo`` magic for ``R`` interface code, see :issue:`26906`::
     ...
     String form:     lm
     File:            .../sage/interfaces/r.py
-    Docstring:
+    Docstring:...
     title
     *****
     <BLANKLINE>
@@ -72,15 +73,15 @@ calls when you ask for the double-questionmark help, like `foo??` ::
     Source:
     def dummy(argument, optional=None):
         """
-        Dummy Docstring Title
+        Dummy Docstring Title.
     <BLANKLINE>
         Dummy docstring explanation.
     <BLANKLINE>
         INPUT:
     <BLANKLINE>
-        - ``argument`` -- anything. Dummy argument.
+        - ``argument`` -- anything; dummy argument
     <BLANKLINE>
-        - ``optional`` -- anything (optional). Dummy optional.
+        - ``optional`` -- anything (optional); dummy optional
     <BLANKLINE>
         EXAMPLES::
     <BLANKLINE>
@@ -99,7 +100,7 @@ Next, test the pinfo2 magic for Cython code::
     ...
     cdef class stl_int_vector(SageObject):
         """
-        Example class wrapping an STL vector
+        Example class wrapping an STL vector.
     <BLANKLINE>
         EXAMPLES::
     <BLANKLINE>
@@ -143,15 +144,15 @@ Test that there are no warnings being ignored internally::
 
 def dummy(argument, optional=None):
     """
-    Dummy Docstring Title
+    Dummy Docstring Title.
 
     Dummy docstring explanation.
 
     INPUT:
 
-    - ``argument`` -- anything. Dummy argument.
+    - ``argument`` -- anything; dummy argument
 
-    - ``optional`` -- anything (optional). Dummy optional.
+    - ``optional`` -- anything (optional); dummy optional
 
     EXAMPLES::
 

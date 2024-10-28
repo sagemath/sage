@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.modules
 r"""
 Example of a finite dimensional algebra with basis

@@ -2,7 +2,7 @@
 List plots
 """
 
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix
 from sage.rings.real_double import RDF
 from sage.misc.superseded import deprecation
@@ -15,18 +15,18 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
 
     INPUT:
 
-    - ``v`` - something that defines a set of points in 3 space:
+    - ``v`` -- something that defines a set of points in 3 space:
 
       - a matrix
 
       - a list of 3-tuples
 
-      - a list of lists (all of the same length) - this is treated the same as
-        a matrix.
+      - a list of lists (all of the same length) -- this is treated the same as
+        a matrix
 
     OPTIONAL KEYWORDS:
 
-    - ``interpolation_type`` - 'linear', 'clough' (CloughTocher2D), 'spline'
+    - ``interpolation_type`` -- 'linear', 'clough' (CloughTocher2D), 'spline'
 
       'linear' will perform linear interpolation
 
@@ -35,26 +35,26 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
       Clough-Tocher scheme.  The interpolant is guaranteed to be
       continuously differentiable.  The gradients of the interpolant
       are chosen so that the curvature of the interpolating surface is
-      approximatively minimized.
+      approximately minimized.
 
       The option 'spline' interpolates using a bivariate B-spline.
 
       When v is a matrix the default is to use linear interpolation, when
       v is a list of points the default is 'clough'.
 
-    - ``degree`` - an integer between 1 and 5, controls the degree of spline
+    - ``degree`` -- integer between 1 and 5, controls the degree of spline
       used for spline interpolation. For data that is highly oscillatory
       use higher values
 
-    - ``point_list`` - If point_list=True is passed, then if the array
+    - ``point_list`` -- if ``point_list=True`` is passed, then if the array
       is a list of lists of length three, it will be treated as an
       array of points rather than a 3xn array.
 
-    - ``num_points`` - Number of points to sample interpolating
+    - ``num_points`` -- number of points to sample interpolating
       function in each direction, when ``interpolation_type`` is not
       ``default``. By default for an `n\times n` array this is `n`.
 
-    - ``**kwds`` - all other arguments are passed to the surface function
+    - ``**kwds`` -- all other arguments are passed to the surface function
 
     OUTPUT: a 3d plot
 
@@ -262,7 +262,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         if txtr == "automatic":
             txtr = "lightblue"
         kwds['color'] = txtr
-    if is_Matrix(v):
+    if isinstance(v, Matrix):
         if (interpolation_type == 'default' or
                 interpolation_type == 'linear' and 'num_points' not in kwds):
             return list_plot3d_matrix(v, **kwds)
@@ -308,7 +308,7 @@ def list_plot3d_matrix(m, **kwds):
 
     OPTIONAL KEYWORDS:
 
-    - ``**kwds`` - all other arguments are passed to the surface function
+    - ``**kwds`` -- all other arguments are passed to the surface function
 
     OUTPUT: a 3d plot
 
@@ -392,12 +392,12 @@ def list_plot3d_array_of_arrays(v, interpolation_type, **kwds):
 
     INPUT:
 
-    - ``v`` - a list of lists, all the same length
-    - ``interpolation_type`` - (default: 'linear')
+    - ``v`` -- list of lists, all the same length
+    - ``interpolation_type`` -- (default: ``'linear'``)
 
     OPTIONAL KEYWORDS:
 
-    - ``**kwds`` - all other arguments are passed to the surface function
+    - ``**kwds`` -- all other arguments are passed to the surface function
 
     OUTPUT: a 3d plot
 
@@ -474,15 +474,15 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
       When ``v`` is a matrix the default is to use linear interpolation, when
       ``v`` is a list of points the default is ``'clough'``.
 
-    - ``degree`` -- an integer between 1 and 5, controls the degree of spline
+    - ``degree`` -- integer between 1 and 5, controls the degree of spline
       used for spline interpolation. For data that is highly oscillatory
       use higher values
 
-    - ``point_list`` -- If ``point_list=True`` is passed, then if the array
+    - ``point_list`` -- if ``point_list=True`` is passed, then if the array
       is a list of lists of length three, it will be treated as an
       array of points rather than a `3\times n` array.
 
-    - ``num_points`` -- Number of points to sample interpolating
+    - ``num_points`` -- number of points to sample interpolating
       function in each direction.  By default for an `n\times n`
       array this is `n`.
 

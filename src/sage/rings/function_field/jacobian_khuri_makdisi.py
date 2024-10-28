@@ -66,7 +66,6 @@ space associated with certain multiple of `B` (depending on the model). This
 allows representing points of Jacobian as matrices once we fix a basis of the
 Riemann-Roch space.
 
-
 EXAMPLES::
 
     sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
@@ -108,7 +107,6 @@ EXAMPLES::
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
-
 """
 
 # ****************************************************************************
@@ -171,7 +169,6 @@ class JacobianPoint(JacobianPoint_base):
         [0 0 0 1 0 0 0 0 5]
         [0 0 0 0 0 1 0 0 5]
         [0 0 0 0 0 0 1 0 4]
-
     """
     def __init__(self, parent, w):
         """
@@ -339,7 +336,7 @@ class JacobianPoint(JacobianPoint_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -362,7 +359,7 @@ class JacobianPoint(JacobianPoint_base):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -496,20 +493,20 @@ class JacobianGroupEmbedding(Map):
 
     EXAMPLES::
 
-        sage: k = GF(7)
+        sage: k = GF(5)
         sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
-        sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+        sage: C = Curve(x^3 + z^3 - y^2*z, P2)
         sage: h = C.function(y/x).divisor_of_poles()
         sage: J = C.jacobian(model='km_large', base_div=h)
         sage: G1 = J.group()
-        sage: K = k.extension(3)
-        sage: G3 = J.group(K)
-        sage: G3.coerce_map_from(G1)
+        sage: K = k.extension(2)
+        sage: G2 = J.group(K)
+        sage: G2.coerce_map_from(G1)
         Jacobian group embedding map:
           From: Group of rational points of Jacobian
-           over Finite Field of size 7 (Khuri-Makdisi large model)
+                over Finite Field of size 5 (Khuri-Makdisi large model)
           To:   Group of rational points of Jacobian
-           over Finite Field in z3 of size 7^3 (Khuri-Makdisi large model)
+                over Finite Field in z2 of size 5^2 (Khuri-Makdisi large model)
     """
     def __init__(self, base_group, extension_group):
         """
@@ -517,15 +514,15 @@ class JacobianGroupEmbedding(Map):
 
         TESTS::
 
-            sage: k = GF(7)
+            sage: k = GF(5)
             sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: C = Curve(x^3 + z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
             sage: J = C.jacobian(model='km_large', base_div=h)
             sage: G1 = J.group()
-            sage: K = k.extension(3)
-            sage: G3 = J.group(K)
-            sage: map = G3.coerce_map_from(G1)
+            sage: K = k.extension(2)
+            sage: G2 = J.group(K)
+            sage: map = G2.coerce_map_from(G1)
             sage: TestSuite(map).run(skip=['_test_category', '_test_pickling'])
         """
         F_ext = extension_group._function_field
@@ -541,20 +538,20 @@ class JacobianGroupEmbedding(Map):
 
         TESTS::
 
-            sage: k = GF(7)
+            sage: k = GF(5)
             sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: C = Curve(x^3 + z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
             sage: J = C.jacobian(model='km_large', base_div=h)
             sage: G1 = J.group()
-            sage: K = k.extension(3)
-            sage: G3 = J.group(K)
-            sage: G3.coerce_map_from(G1)  # indirect doctest
+            sage: K = k.extension(2)
+            sage: G2 = J.group(K)
+            sage: G2.coerce_map_from(G1)  # indirect doctest
             Jacobian group embedding map:
               From: Group of rational points of Jacobian
-                    over Finite Field of size 7 (Khuri-Makdisi large model)
+                    over Finite Field of size 5 (Khuri-Makdisi large model)
               To:   Group of rational points of Jacobian
-                    over Finite Field in z3 of size 7^3 (Khuri-Makdisi large model)
+                    over Finite Field in z2 of size 5^2 (Khuri-Makdisi large model)
         """
         return 'Jacobian group embedding'
 
@@ -564,16 +561,16 @@ class JacobianGroupEmbedding(Map):
 
         TESTS::
 
-            sage: k = GF(7)
+            sage: k = GF(5)
             sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: C = Curve(x^3 + z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
             sage: J = C.jacobian(model='km_large', base_div=h)
             sage: G1 = J.group()
-            sage: K = k.extension(3)
-            sage: G3 = J.group(K)
-            sage: m = G3.coerce_map_from(G1)
-            sage: m(G1.zero()) == G3.zero()
+            sage: K = k.extension(2)
+            sage: G2 = J.group(K)
+            sage: m = G2.coerce_map_from(G1)
+            sage: m(G1.zero()) == G2.zero()
             True
         """
         w = (x._w).change_ring(self._K_ext)
@@ -895,7 +892,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
             sage: b = C([0,0,1]).place()
             sage: J = C.jacobian(model='km_large', base_div=3*b)
             sage: G = J.group()
-            sage: len([pt for pt in G])
+            sage: len([pt for pt in G])  # long time
             11
         """
         d0 = self._base_div.degree()

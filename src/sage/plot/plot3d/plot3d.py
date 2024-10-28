@@ -147,15 +147,16 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .tri_plot import TrianglePlot
-from .index_face_set import IndexFaceSet
-from .shapes import arrow3d
-from .base import Graphics3dGroup
-from sage.plot.colors import rainbow
-from .texture import Texture
-
-from sage.functions.trig import cos, sin
+from sage.misc.lazy_import import lazy_import
 from sage.misc.sageinspect import sage_getargspec, is_function_or_cython_function
+from sage.plot.colors import rainbow
+from sage.plot.plot3d.base import Graphics3dGroup
+from sage.plot.plot3d.index_face_set import IndexFaceSet
+from sage.plot.plot3d.shapes import arrow3d
+from sage.plot.plot3d.texture import Texture
+from sage.plot.plot3d.tri_plot import TrianglePlot
+
+lazy_import("sage.functions.trig", ["cos", "sin"])
 
 
 class _Coordinates:
@@ -168,11 +169,10 @@ class _Coordinates:
 
     INPUT:
 
-     - ``dep_var`` -- the dependent variable (the function value will be
+    - ``dep_var`` -- the dependent variable (the function value will be
 
-     - ``indep_vars`` -- a list of independent variables (the parameters will be
-       substituted for these)
-
+    - ``indep_vars`` -- list of independent variables (the parameters will be
+      substituted for these)
     """
     def __init__(self, dep_var, indep_vars):
         """
@@ -233,11 +233,11 @@ class _Coordinates:
 
         INPUT:
 
-         - ``func`` -- function in this coordinate space; corresponds
-           to the independent variable
+        - ``func`` -- function in this coordinate space; corresponds
+          to the independent variable
 
-         - ``params`` -- the parameters of ``func``; corresponds to
-           the dependent variables
+        - ``params`` -- the parameters of ``func``; corresponds to
+          the dependent variables
 
         EXAMPLES::
 
@@ -315,12 +315,11 @@ class _Coordinates:
             sage: f=scipy.interpolate.RectBivariateSpline(v_phi,v_theta,m_r).ev
             sage: spherical_plot3d(f,(0,2*pi),(0,pi))
             Graphics3d Object
-
         """
         from sage.structure.element import Expression
-        from sage.rings.real_mpfr import is_RealNumber
-        from sage.rings.integer import is_Integer
-        if params is not None and (isinstance(func, Expression) or is_RealNumber(func) or is_Integer(func)):
+        from sage.rings.real_mpfr import RealNumber
+        from sage.rings.integer import Integer
+        if params is not None and (isinstance(func, Expression) or isinstance(func, RealNumber) or isinstance(func, Integer)):
             return self.transform(**{
                 self.dep_var: func,
                 self.indep_vars[0]: params[0],
@@ -434,13 +433,13 @@ class _ArbitraryCoordinates(_Coordinates):
 
         INPUT:
 
-         - ``custom_trans`` - A 3-tuple of transformation
-           functions.
+        - ``custom_trans`` -- a 3-tuple of transformation
+          functions
 
-         - ``dep_var`` - The dependent (function) variable.
+        - ``dep_var`` -- the dependent (function) variable
 
-         - ``indep_vars`` - a list of the two other independent
-           variables.
+        - ``indep_vars`` -- list of the two other independent
+          variables
 
         EXAMPLES::
 
@@ -752,9 +751,7 @@ class TrivialTriangleFactory:
 
         - ``color`` -- ignored
 
-        OUTPUT:
-
-        - the list ``[a,b,c]``
+        OUTPUT: the list ``[a,b,c]``
 
         TESTS::
 
@@ -781,9 +778,7 @@ class TrivialTriangleFactory:
 
         - ``color`` -- ignored
 
-        OUTPUT:
-
-        - the list ``[a,b,c]``
+        OUTPUT: the list ``[a,b,c]``
 
         TESTS::
 
@@ -805,30 +800,30 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
 
     INPUT:
 
-    -  ``f`` -- a symbolic expression or function of 2
-       variables
+    - ``f`` -- a symbolic expression or function of 2
+      variables
 
-    -  ``urange`` -- a 2-tuple (u_min, u_max) or a 3-tuple
-       (u, u_min, u_max)
+    - ``urange`` -- a 2-tuple (u_min, u_max) or a 3-tuple
+      (u, u_min, u_max)
 
-    -  ``vrange`` -- a 2-tuple (v_min, v_max) or a 3-tuple
-       (v, v_min, v_max)
+    - ``vrange`` -- a 2-tuple (v_min, v_max) or a 3-tuple
+      (v, v_min, v_max)
 
-    -  ``adaptive`` -- (default: False) whether to use
-       adaptive refinement to draw the plot (slower, but may look better).
-       This option does NOT work in conjunction with a transformation
-       (see below).
+    - ``adaptive`` -- boolean (default: ``False``); whether to use
+      adaptive refinement to draw the plot (slower, but may look better).
+      This option does NOT work in conjunction with a transformation
+      (see below).
 
-    -  ``mesh`` -- bool (default: False) whether to display
-       mesh grid lines
+    - ``mesh`` -- boolean (default: ``False``); whether to display
+      mesh grid lines
 
-    -  ``dots`` -- bool (default: False) whether to display
-       dots at mesh grid points
+    - ``dots`` -- boolean (default: ``False``); whether to display
+      dots at mesh grid points
 
-    -  ``plot_points`` -- (default: "automatic") initial number of sample
-       points in each direction; an integer or a pair of integers
+    - ``plot_points`` -- (default: ``'automatic'``) initial number of sample
+      points in each direction; an integer or a pair of integers
 
-    - ``transformation`` -- (default: None) a transformation to
+    - ``transformation`` -- (default: ``None``) a transformation to
       apply. May be a 3 or 4-tuple (x_func, y_func, z_func,
       independent_vars) where the first 3 items indicate a
       transformation to Cartesian coordinates (from your coordinate
@@ -955,7 +950,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
 
     We draw two parametric surfaces and a transparent plane::
 
-        sage: L = plot3d(lambda x,y: 0, (-5,5), (-5,5), color="lightblue", opacity=0.8)
+        sage: L = plot3d(lambda x,y: 0, (-5,5), (-5,5), color='lightblue', opacity=0.8)
         sage: P = plot3d(lambda x,y: 4 - x^3 - y^2, (-2,2), (-2,2), color='green')
         sage: Q = plot3d(lambda x,y: x^3 + y^2 - 4, (-2,2), (-2,2), color='orange')
         sage: L + P + Q
@@ -963,7 +958,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
 
     .. PLOT::
 
-        L = plot3d(lambda x,y: 0, (-5,5), (-5,5), color="lightblue", opacity=0.8)
+        L = plot3d(lambda x,y: 0, (-5,5), (-5,5), color='lightblue', opacity=0.8)
         P = plot3d(lambda x,y: 4 - x**3 - y**2, (-2,2), (-2,2), color='green')
         Q = plot3d(lambda x,y: x**3 + y**2 - 4, (-2,2), (-2,2), color='orange')
         sphinx_plot(L + P + Q)
@@ -1124,7 +1119,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     return P
 
 
-def plot3d_adaptive(f, x_range, y_range, color="automatic",
+def plot3d_adaptive(f, x_range, y_range, color='automatic',
                     grad_f=None,
                     max_bend=.5, max_depth=5, initial_depth=4, num_colors=128, **kwds):
     r"""
@@ -1135,21 +1130,20 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
 
     INPUT:
 
-
     - ``f`` -- a symbolic function or a Python function of 3 variables
 
     - ``x_range`` -- x range of values: 2-tuple (xmin,
-       xmax) or 3-tuple (x,xmin,xmax)
+      xmax) or 3-tuple (x,xmin,xmax)
 
     - ``y_range`` -- y range of values: 2-tuple (ymin, ymax) or 3-tuple
-       (y,ymin,ymax)
+      (y,ymin,ymax)
 
     - ``grad_f`` -- gradient of f as a Python function
 
-    - ``color`` -- "automatic" - a rainbow of num_colors colors
+    - ``color`` -- "automatic"; a rainbow of num_colors colors
 
     - ``num_colors`` -- (default: 128) number of colors to use with default
-       color
+      color
 
     - ``max_bend`` -- (default: 0.5)
 
@@ -1173,10 +1167,8 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
         from sage.plot.plot3d.plot3d import plot3d_adaptive
         x, y = var('x,y')
         sphinx_plot(plot3d_adaptive(sin(x*y), (x,-pi,pi), (y,-pi,pi), initial_depth=5))
-
     """
-    if initial_depth >= max_depth:
-        max_depth = initial_depth
+    max_depth = max(max_depth, initial_depth)
 
     from sage.plot.misc import setup_for_eval_on_grid
     g, ranges = setup_for_eval_on_grid(f, [x_range,y_range], plot_points=2)
@@ -1325,7 +1317,6 @@ def spherical_plot3d(f, urange, vrange, **kwds):
 
         x, y = var('x,y')
         sphinx_plot(spherical_plot3d(1 + 2*cos(2*y), (x, 0, 3*pi/2), (y, 0, pi)))
-
     """
     return plot3d(f, urange, vrange, transformation=Spherical('radius', ['azimuth', 'inclination']), **kwds)
 
@@ -1407,7 +1398,7 @@ def cylindrical_plot3d(f, urange, vrange, **kwds):
 
 def axes(scale=1, radius=None, **kwds):
     """
-    Creates basic axes in three dimensions.  Each axis is a three
+    Create basic axes in three dimensions.  Each axis is a three
     dimensional arrow object.
 
     INPUT:

@@ -10,7 +10,7 @@ five coefficients `[a_1,a_2,a_3,a_4,a_6]` in `R` given by
 
 Note that the (usual) scheme-theoretic definition of an elliptic curve over `R`
 would require the discriminant to be a unit in `R`; Sage only imposes that the
-discriminant is non-zero. Also note that in Magma, "Weierstrass Model" refers
+discriminant is nonzero. Also note that in Magma, "Weierstrass Model" refers
 to a model with `a_1=a_2=a_3=0`, which is called *Short Weierstrass Model* in
 Sage; these do not always exist in characteristics 2 and 3.
 
@@ -98,10 +98,15 @@ def is_EllipticCurve(x):
         sage: from sage.schemes.elliptic_curves.ell_generic import is_EllipticCurve
         sage: E = EllipticCurve([1,2,3/4,7,19])
         sage: is_EllipticCurve(E)
+        doctest:warning...
+        DeprecationWarning: The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.
+        See https://github.com/sagemath/sage/issues/38022 for details.
         True
         sage: is_EllipticCurve(0)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38022, "The function is_EllipticCurve is deprecated; use 'isinstance(..., EllipticCurve_generic)' instead.")
     return isinstance(x, EllipticCurve_generic)
 
 
@@ -128,8 +133,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - ``K`` -- a ring
 
-        - ``ainvs`` -- a list or tuple `[a_1, a_2, a_3, a_4, a_6]` of
-          Weierstrass coefficients.
+        - ``ainvs`` -- list or tuple `[a_1, a_2, a_3, a_4, a_6]` of
+          Weierstrass coefficients
 
         .. NOTE::
 
@@ -267,7 +272,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         Internal function. Return a latex string for this elliptic curve.
 
-        Users will normally use latex() instead.
+        Users will normally use :func:`latex` instead.
 
         EXAMPLES::
 
@@ -429,7 +434,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def __contains__(self, P):
         """
-        Return True if and only if P is a point on the elliptic curve.
+        Return ``True`` if and only if P is a point on the elliptic curve.
 
         P just has to be something that can be coerced to a point.
 
@@ -456,10 +461,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 P = self(P)
             except TypeError:
                 return False
-        if P.curve() == self:
-            return True
-        x, y, a = P[0], P[1], self.ainvs()
-        return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
+        return P.curve() == self
 
     def __call__(self, *args, **kwds):
         r"""
@@ -490,7 +492,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E([0,1,0])
             (0 : 1 : 0)
 
-        Over a field, points are normalized so the 3rd entry (if non-zero)
+        Over a field, points are normalized so the 3rd entry (if nonzero)
         is 1::
 
             sage: E(105, -69, 125)
@@ -526,7 +528,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: P + P
             (0 : 1 : 0)
 
-        Another example involving p-adics::
+        Another example involving `p`-adics::
 
             sage: E = EllipticCurve('37a1')
             sage: P = E([0,0]); P
@@ -572,10 +574,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         P = args[0]
         if isinstance(P, groups.AdditiveAbelianGroupElement) and isinstance(P.parent(),ell_torsion.EllipticCurveTorsionSubgroup):
             return self(P.element())
-        if isinstance(args[0],
-                      (ell_point.EllipticCurvePoint_field,
-                       ell_point.EllipticCurvePoint_number_field,
-                       ell_point.EllipticCurvePoint)):
+        if isinstance(args[0], ell_point.EllipticCurvePoint):
             if P.curve() is self:
                 return P
             # check if denominator of the point contains a factor of the
@@ -603,13 +602,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - R -- a point on an elliptic curve
-        - p -- a prime
+        - ``R`` -- a point on an elliptic curve
+        - ``p`` -- a prime
 
-        OUTPUT:
-
-        S -- the corresponding point of the elliptic curve containing
-             R, but reduced modulo p
+        OUTPUT: S; the corresponding point of the elliptic curve containing
+        R, but reduced modulo p
 
         EXAMPLES:
 
@@ -646,7 +643,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def is_x_coord(self, x):
         r"""
-        Return True if ``x`` is the `x`-coordinate of a point on this curve.
+        Return ``True`` if ``x`` is the `x`-coordinate of a point on this curve.
 
         .. NOTE::
 
@@ -724,13 +721,13 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``x`` -- an element of the base ring of the curve, or of an extension.
+        - ``x`` -- an element of the base ring of the curve, or of an extension
 
-        - ``all`` (bool, default False) -- if True, return a (possibly
-          empty) list of all points; if False, return just one point,
-          or raise a :class:`ValueError` if there are none.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a
+          (possibly empty) list of all points; if ``False``, return just one
+          point, or raise a :exc:`ValueError` if there are none.
 
-        - ``extend`` (bool, default False) --
+        - ``extend`` -- boolean (default: ``False``);
 
           - if ``False``, extend the base if necessary and possible to
             include `x`, and only return point(s) defined over this
@@ -1030,11 +1027,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def is_on_curve(self, x, y):
         r"""
-        Return True if `(x,y)` is an affine point on this curve.
+        Return ``True`` if `(x,y)` is an affine point on this curve.
 
         INPUT:
 
-        - ``x``, ``y`` -- elements of the base ring of the curve.
+        - ``x``, ``y`` -- elements of the base ring of the curve
 
         EXAMPLES::
 
@@ -1499,7 +1496,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``r``, ``s``, ``t`` -- three elements of the base ring.
+        - ``r``, ``s``, ``t`` -- three elements of the base ring
 
         OUTPUT:
 
@@ -1529,7 +1526,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``u`` -- an invertible element of the base ring.
+        - ``u`` -- an invertible element of the base ring
 
         OUTPUT:
 
@@ -1684,7 +1681,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def division_polynomial_0(self, n, x=None):
         r"""
-        Return the `n^{th}` torsion (division) polynomial, without
+        Return the `n`-th torsion (division) polynomial, without
         the 2-torsion factor if `n` is even, as a polynomial in `x`.
 
         These are the polynomials `g_n` defined in [MT1991]_, but with
@@ -1706,10 +1703,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - ``n`` -- positive integer, or the special values ``-1`` and ``-2``
           which mean `B_6 = (2y + a_1 x + a_3)^2` and `B_6^2` respectively (in
-          the notation of [MT1991]_); or a list of integers.
+          the notation of [MT1991]_), or a list of integers
 
         - ``x`` -- a ring element to use as the "x" variable or ``None``
-          (default: ``None``). If ``None``, then a new polynomial ring will
+          (default: ``None``); if ``None``, then a new polynomial ring will
           be constructed over the base ring of the elliptic curve, and its
           generator will be used as ``x``. Note that ``x`` does not need to
           be a generator of a polynomial ring; any ring element is ok. This
@@ -1865,7 +1862,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``x`` -- optional ring element to use as the `x` variable.
+        - ``x`` -- (optional) ring element to use as the `x` variable.
           If ``x`` is ``None``, then a new polynomial ring will be
           constructed over the base ring of the elliptic curve, and
           its generator will be used as ``x``. Note that ``x`` does
@@ -1888,16 +1885,16 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def division_polynomial(self, m, x=None, two_torsion_multiplicity=2, force_evaluate=None):
         r"""
-        Return the `m^{th}` division polynomial of this elliptic
+        Return the `m`-th division polynomial of this elliptic
         curve evaluated at `x`.
 
         The division polynomial is cached if `x` is ``None``.
 
         INPUT:
 
-        - ``m`` -- positive integer.
+        - ``m`` -- positive integer
 
-        - ``x`` -- optional ring element to use as the `x` variable.
+        - ``x`` -- (optional) ring element to use as the `x` variable.
           If `x` is ``None`` (omitted), then a new polynomial ring will be
           constructed over the base ring of the elliptic curve, and its
           generator will be used as `x`. Note that `x` does not need to
@@ -1926,7 +1923,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
           When `x` is not ``None``, it should be a tuple of length 2, and
           the evaluation of such a polynomial at `x` is returned.
 
-        - ``force_evaluate`` (optional) -- 0, 1, or 2
+        - ``force_evaluate`` -- (optional) 0, 1, or 2
 
           By default, this method makes use of previously cached generic
           division polynomials to compute the value of the polynomial at
@@ -2114,7 +2111,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``n``, ``x`` -- as described in :meth:`division_polynomial_0`.
+        - ``n``, ``x`` -- as described in :meth:`division_polynomial_0`
 
         If ``x`` is ``None``, the result is cached.  This is so that on calling
         ``P.division_points(n)`` for the same `n` and different points `P` (on
@@ -2238,7 +2235,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``n``, ``x`` -- as described in :meth:`division_polynomial_0`.
+        - ``n``, ``x`` -- as described in :meth:`division_polynomial_0`
 
         If ``x`` is ``None``, the result is cached.  This is so that on calling
         ``P.division_points(n)`` for the same `n` and different points `P` (on
@@ -2322,7 +2319,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def multiplication_by_m(self, m, x_only=False):
         r"""
-        Return the multiplication-by-`m` map from ``self`` to ``self``
+        Return the multiplication-by-`m` map from ``self`` to ``self``.
 
         The result is a pair of rational functions in two variables
         `x`, `y` (or a rational function in one variable `x` if
@@ -2330,11 +2327,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``m`` -- a nonzero integer
+        - ``m`` -- nonzero integer
 
-        - ``x_only`` -- boolean (default: ``False``) if ``True``, return
-          only the `x`-coordinate of the map (as a rational function
-          in one variable).
+        - ``x_only`` -- boolean (default: ``False``); if ``True``, return only
+          the `x`-coordinate of the map (as a rational function in one variable)
 
         OUTPUT:
 
@@ -2458,7 +2454,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         p = self.base_ring().characteristic()
 
         if m == 0:
-            raise ValueError("m must be a non-zero integer")
+            raise ValueError("m must be a nonzero integer")
 
         if x_only:
             x = polygen(self.base_ring(), 'x')
@@ -2532,7 +2528,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``m`` -- a nonzero integer
+        - ``m`` -- nonzero integer
 
         OUTPUT:
 
@@ -2694,7 +2690,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``other`` -- an elliptic curve isomorphic to ``self``.
+        - ``other`` -- an elliptic curve isomorphic to ``self``
 
         OUTPUT:
 
@@ -2702,7 +2698,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         .. NOTE::
 
-            If the curves in question are not isomorphic, a ``ValueError``
+            If the curves in question are not isomorphic, a :exc:`ValueError`
             is raised.
 
         EXAMPLES::
@@ -2746,13 +2742,13 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``field`` (default ``None``) -- a field into which the
+        - ``field`` -- (default: ``None``) a field into which the
           coefficients of the curve may be coerced (by default, uses
-          the base field of the curve).
+          the base field of the curve)
 
         OUTPUT:
 
-        (list) A list of :class:`~wm.WeierstrassIsomorphism` objects
+        A list of :class:`~wm.WeierstrassIsomorphism` objects
         consisting of all the isomorphisms from the curve ``self`` to
         itself defined over ``field``.
 
@@ -2829,15 +2825,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``other`` -- another elliptic curve.
+        - ``other`` -- another elliptic curve
 
-        - ``field`` (default ``None``) -- a field into which the
+        - ``field`` -- (default: ``None``) a field into which the
           coefficients of the curves may be coerced (by default, uses
-          the base field of the curves).
+          the base field of the curves)
 
         OUTPUT:
 
-        (list) A list of :class:`~wm.WeierstrassIsomorphism` objects consisting of all
+        A list of :class:`~wm.WeierstrassIsomorphism` objects consisting of all
         the isomorphisms from the curve ``self`` to the curve
         ``other`` defined over ``field``.
 
@@ -2886,15 +2882,15 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``other`` -- another elliptic curve.
+        - ``other`` -- another elliptic curve
 
-        - ``field`` (default None) -- a field into which the
+        - ``field`` -- (default: ``None``) a field into which the
           coefficients of the curves may be coerced (by default, uses
           the base field of the curves).
 
         OUTPUT:
 
-        (bool) True if there is an isomorphism from curve ``self`` to
+        boolean; ``True`` if there is an isomorphism from curve ``self`` to
         curve ``other`` defined over ``field``.
 
         EXAMPLES::
@@ -2908,7 +2904,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.is_isomorphic(F.change_ring(CC))
             False
         """
-        if not is_EllipticCurve(other):
+        if not isinstance(other, EllipticCurve_generic):
             return False
         if field is None:
             if self.base_ring() != other.base_ring():
@@ -2926,7 +2922,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def change_weierstrass_model(self, *urst):
         r"""
-        Return a new Weierstrass model of ``self`` under the standard transformation `(u,r,s,t)`
+        Return a new Weierstrass model of ``self`` under the standard
+        transformation `(u,r,s,t)`.
 
         .. MATH::
 
@@ -2951,16 +2948,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     def short_weierstrass_model(self, complete_cube=True):
         """
-        Return a short Weierstrass model for self.
+        Return a short Weierstrass model for ``self``.
 
         INPUT:
 
-        - ``complete_cube`` -- boolean (default: True); for
-          meaning, see below.
+        - ``complete_cube`` -- boolean (default: ``True``); for
+          meaning, see below
 
-        OUTPUT:
-
-        An elliptic curve.
+        OUTPUT: an elliptic curve
 
         If ``complete_cube=True``: Return a model of the form
         `y^2 = x^3 + a*x + b` for this curve. The characteristic
@@ -3272,10 +3267,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``xmin, xmax`` -- (optional) points will be computed at
-          least within this range, but possibly farther.
+        - ``xmin``, ``xmax`` -- (optional) points will be computed at
+          least within this range, but possibly farther
 
-        - ``components`` -- a string, one of the following:
+        - ``components`` -- string; one of the following:
 
           - ``both`` -- (default), scale so that both bounded and
             unbounded components appear
@@ -3285,7 +3280,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             component.
 
           - ``unbounded`` -- scale the plot to show the unbounded
-            component, including the two flex points.
+            component, including the two flex points
 
         - ``plot_points`` -- passed to
           :func:`sage.plot.generate_plot_points`
@@ -3492,10 +3487,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         INPUT:
 
-        - ``p`` (integer) -- a prime number.
+        - ``p`` -- integer; a prime number
 
-        - ``m`` (integer or None) -- if not None, the `p`-primary torsion will
-          be assumed to have order at most `p^m`.
+        - ``m`` -- integer or ``None``; if not ``None``, the `p`-primary
+          torsion will be assumed to have order at most `p^m`
 
         OUTPUT:
 

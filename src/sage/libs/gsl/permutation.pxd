@@ -58,7 +58,6 @@ cdef extern from "gsl/gsl_permutation.h":
   size_t  gsl_permutation_canonical_cycles(gsl_permutation * q)
 
 
-
 # Applying Permutations
 cdef extern from "gsl/gsl_permute_double.h":
   int  gsl_permute(size_t * p, double * data, size_t stride, size_t n)
