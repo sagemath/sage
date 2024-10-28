@@ -89,11 +89,15 @@ gsl = dependency(
   required: true,
 )
 gd = cc.find_library('gd')
-m = cc.find_library('m')
+# Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
+m = cc.find_library('m', required : false)
 m4ri = cc.find_library('m4ri')
 m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
 mtx = cc.find_library('mtx', required: false, disabler: true)
-png = cc.find_library('png')
+png = cc.find_library('png', required: false)
+if not png.found()
+  png = cc.find_library('png16')
+endif
 zlib = cc.find_library('z')
 # Cannot be found via pkg-config
 ec = cc.find_library('ec', required: not is_windows, disabler: true)

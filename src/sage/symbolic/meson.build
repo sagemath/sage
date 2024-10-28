@@ -49,14 +49,8 @@ foreach name, pyx : extension_data
     ],
     dependencies: [
       py_dep,
-      cypari2,
       cysignals,
-      flint,
       gmp,
-      gsl,
-      mpfr,
-      pari,
-      singular,
     ],
   )
 endforeach
@@ -136,14 +130,9 @@ foreach name, pyx : extension_data_cpp
     ],
     dependencies: [
       py_dep,
-      cypari2,
       cysignals,
       gmp,
-      flint,
       gsl,
-      m,
-      mpfr,
-      pari,
       singular,
     ],
   )

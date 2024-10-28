@@ -98,29 +98,19 @@ extension_data = {
 foreach name, pyx : extension_data
   dependencies = [
     py_dep,
-    blas,
-    cypari2,
     cysignals,
-    fflas,
-    flint,
-    gd,
-    givaro,
     gmp,
-    gmpxx,
-    iml,
-    linbox,
-    m,
-    m4ri,
-    m4rie,
-    mpfi,
-    mpfr,
-    ntl,
-    pari,
-    png,
-    zlib,
   ]
   if name == 'matrix_gfpn_dense'
     dependencies += [mtx, meataxe]
+  elif name == 'matrix_gap'
+    dependencies += [gap]
+  elif name == 'misc_mpfr'
+    dependencies += [mpfr]
+  elif name == 'matrix_complex_ball_dense'
+    dependencies += [mpfi]
+  elif name == 'misc_flint' or name == 'matrix_rational_sparse'
+    dependencies += [flint]
   endif
 
   py.extension_module(
