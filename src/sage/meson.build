@@ -56,7 +56,7 @@ ecm_bin = find_program(['ecm', 'gmp-ecm'], required: not is_windows, disabler: t
 conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
 
 config_file = configure_file(
-  input: '../../pkgs/sage-conf_conda/_sage_conf/_conf.py.in',
+  input: '../../pkgs/sage-conf/_sage_conf/_conf.py.in',
   output: 'config.py',
   install_dir: py.get_install_dir() / 'sage',
   install: true,

@@ -37,7 +37,7 @@ endif
 
 # Workaround for missing init files (Cython doesn't handle namespace packages well)
 create_files_command = [
-  'python3',
+  py,
   '-c',
   '''
 import os

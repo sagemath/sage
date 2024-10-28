@@ -90,7 +90,6 @@ blas_order += ['cblas', 'openblas', 'OpenBLAS', 'flexiblas', 'blis', 'blas']
 blas = dependency(blas_order)
 gsl = dependency(
   'gsl',
-  fallback: ['gsl', 'gsl_dep'],
   version: '>=2.5',
   required: true,
 )
