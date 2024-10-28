@@ -15,7 +15,8 @@
         "pkgs/sage-conf_pypi/sage_root": true,
         "pkgs/sage-docbuild/sage_docbuild": true,
         "pkgs/sage-setup/sage_setup": true,
-        "pkgs/sagemath-*/sage": true
+        "pkgs/sagemath-*/sage": true,
+        "pkgs/sagemath-*/sage_setup": true
     },
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
