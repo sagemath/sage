@@ -924,7 +924,7 @@ class Rings(CategoryWithAxiom):
                     else:
                         break
 
-            if len(gens) == 0:
+            if not gens:
                 gens = [self.zero()]
             elif coerce:
                 gens = [self(g) for g in gens]
