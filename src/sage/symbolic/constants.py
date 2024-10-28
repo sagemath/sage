@@ -229,12 +229,13 @@ constants_name_table[repr(infinity)] = infinity
 constants_name_table[repr(unsigned_infinity)] = unsigned_infinity
 constants_name_table[repr(minus_infinity)] = minus_infinity
 
-I = init_pynac_I()
+#I = init_pynac_I()
+I = 1
 
 register_symbol(infinity, {'maxima': 'inf'}, 0)
 register_symbol(minus_infinity, {'maxima': 'minf'}, 0)
 register_symbol(unsigned_infinity, {'maxima': 'infinity'}, 0)
-register_symbol(I, {'mathematica': 'I'}, 0)
+#register_symbol(I, {'mathematica': 'I'}, 0)
 register_symbol(True, {'giac': 'true',
                        'mathematica': 'True',
                        'maxima': 'true'}, 0)

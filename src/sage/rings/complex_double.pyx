@@ -74,9 +74,10 @@ from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.libs.gsl.complex cimport *
 
-cdef extern from "<complex.h>":
-    double complex csqrt(double complex)
-    double cabs(double complex)
+#ctypedef np.complex128_t cdouble
+# cdef extern from "<complex.h>":
+#     cdouble csqrt(cdouble)
+#     double cabs(cdouble)
 
 import sage.rings.abc
 cimport sage.rings.integer
@@ -2324,22 +2325,22 @@ cdef class ComplexDoubleElement(FieldElement):
         if algorithm=="optimal":
             while True:
                 a1 = (a+b)/2
-                b1 = csqrt(a*b)
-                r = b1/a1
-                d  = cabs(r-1)
-                e  = cabs(r+1)
-                if e < d:
-                    b1=-b1
-                    d = e
-                if d < eps: return ComplexDoubleElement_from_doubles(a1.real, a1.imag)
-                a, b = a1, b1
+                # b1 = csqrt(a*b)
+                # r = b1/a1
+                # d  = cabs(r-1)
+                # e  = cabs(r+1)
+                # if e < d:
+                #     b1=-b1
+                #     d = e
+                # if d < eps: return ComplexDoubleElement_from_doubles(a1.real, a1.imag)
+                # a, b = a1, b1
 
         elif algorithm=="principal":
             while True:
                 a1 = (a+b)/2
-                b1 = csqrt(a*b)
-                if cabs((b1/a1)-1) < eps: return ComplexDoubleElement_from_doubles(a1.real, a1.imag)
-                a, b = a1, b1
+                # b1 = csqrt(a*b)
+                # if cabs((b1/a1)-1) < eps: return ComplexDoubleElement_from_doubles(a1.real, a1.imag)
+                # a, b = a1, b1
 
         else:
             raise ValueError("agm algorithm must be one of 'pari', 'optimal', 'principal'")
