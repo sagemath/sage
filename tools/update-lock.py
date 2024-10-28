@@ -1,4 +1,6 @@
+#!/usr/bin/env python3
 # pyright: strict
+
 import argparse
 import subprocess
 from pathlib import Path
@@ -45,11 +47,11 @@ parser = argparse.ArgumentParser(
     description="Update lock files under requirements using pip-tools compile."
 )
 parser.add_argument(
-    "sourcedir", help="The source directory of the pyproject.toml file."
+    "sourcedir", help="Source directory", nargs="?", default=".", type=Path
 )
-args = parser.parse_args()
+options = parser.parse_args()
 
-pyproject_file = Path(args.sourcedir) / "pyproject.toml"
+pyproject_file = Path(options.sourcedir) / "pyproject.toml"
 with pyproject_file.open("r") as f:
     pyproject = toml.load(f)
 
