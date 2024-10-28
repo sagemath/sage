@@ -273,6 +273,8 @@ dependencies:
   - matplotlib-inline=0.1.7=pyhd8ed1ab_0
   - maxima=5.47.0=h2bbcd85_2
   - memory-allocator=0.1.3=py39h0f82c59_0
+  - meson=1.5.2=pyhd8ed1ab_0
+  - meson-python=0.15.0=pyh0c530f3_0
   - metis=5.1.0=h13dd4ca_1007
   - mistune=3.0.2=pyhd8ed1ab_0
   - more-itertools=10.3.0=pyhd8ed1ab_0

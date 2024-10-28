@@ -96,6 +96,9 @@ echo >&2 $0:$LINENO: generate conda environment files
         for pkg in $BOOTSTRAP_SYSTEM_PACKAGES; do
             echo "  - $pkg"
         done
+    ) > environment-template.yml
+    (
+        sed 's/name: sage-build/name: sage/' environment-template.yml
         echo "  - meson"
         echo "  - meson-python"
         echo "  - pytest"
