@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 The symbolic ring
 """
@@ -32,7 +31,6 @@ The symbolic ring
 # ****************************************************************************
 
 from sage.rings.integer cimport Integer
-from sage.rings.ring cimport CommutativeRing
 
 import sage.rings.abc
 
@@ -45,7 +43,9 @@ from sage.symbolic.expression cimport (
     new_Expression_symbol,
 )
 
+from sage.categories.commutative_rings import CommutativeRings
 from sage.structure.element cimport Element, Expression
+from sage.structure.parent cimport Parent
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 
@@ -71,6 +71,8 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         Initialize the Symbolic Ring.
 
+        This is a commutative ring of symbolic expressions and functions.
+
         EXAMPLES::
 
             sage: SR
@@ -81,11 +83,10 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: isinstance(SR, sage.symbolic.ring.SymbolicRing)
             True
             sage: TestSuite(SR).run(skip=['_test_divides'])
-
         """
         if base_ring is None:
             base_ring = self
-        CommutativeRing.__init__(self, base_ring)
+        Parent.__init__(self, base_ring, category=CommutativeRings())
         self._populate_coercion_lists_(convert_method_name='_symbolic_')
         self.symbols = {}
 
@@ -98,9 +99,9 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         return the_SymbolicRing, tuple()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -158,7 +159,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: SR.has_coerce_map_from(pari)
             False
 
-        Check if arithmetic with bools works (see :trac:`9560`)::
+        Check if arithmetic with bools works (see :issue:`9560`)::
 
             sage: SR.has_coerce_map_from(bool)
             True
@@ -205,20 +206,20 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
             return False
         else:
-            from sage.rings.fraction_field import is_FractionField
-            from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-            from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+            from sage.rings.fraction_field import FractionField_generic
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+            from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
             from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
             from sage.rings.infinity import InfinityRing, UnsignedInfinityRing
             from sage.rings.real_lazy import RLF, CLF
             from sage.rings.finite_rings.finite_field_base import FiniteField
 
-            from .subring import GenericSymbolicSubring
+            from sage.symbolic.subring import GenericSymbolicSubring
 
             if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
                 return R not in (RLF, CLF)
-            elif is_PolynomialRing(R) or is_MPolynomialRing(R) or is_FractionField(R) or isinstance(R, LaurentPolynomialRing_generic):
+            elif isinstance(R, PolynomialRing_general) or isinstance(R, MPolynomialRing_base) or isinstance(R, FractionField_generic) or isinstance(R, LaurentPolynomialRing_generic):
                 base = R.base_ring()
                 return base is not self and self.has_coerce_map_from(base)
             elif (R is InfinityRing or R is UnsignedInfinityRing
@@ -339,7 +340,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             TypeError: unsupported operand type(s) for ** or pow(): 'R' and 'sage.rings.rational.Rational'
 
-        Check that :trac:`22068` is fixed::
+        Check that :issue:`22068` is fixed::
 
             sage: _ = var('x')
             sage: sin(x).subs(x=RR('NaN'))
@@ -353,7 +354,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: sin(x).subs(x=complex('NaN'))
             sin(NaN)
 
-        Check that :trac:`24072` is solved::
+        Check that :issue:`24072` is solved::
 
             sage: x = polygen(GF(3))
             sage: a = SR.var('a')
@@ -362,7 +363,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             TypeError: positive characteristic not allowed in symbolic computations
 
-        Check support for unicode characters (:trac:`29280`)::
+        Check support for unicode characters (:issue:`29280`)::
 
             sage: SR('λ + 2λ')
             3*λ
@@ -382,13 +383,13 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         INPUT:
 
-        - ``x`` - a Python object.
+        - ``x`` -- a Python object
 
-        - ``force`` - bool, default ``False``, if True, the Python object
-          is taken as is without attempting coercion or list traversal.
+        - ``force`` -- boolean (default: ``False``); if ``True``, the Python object
+          is taken as is without attempting coercion or list traversal
 
-        - ``recursive`` - bool, default ``True``, disables recursive
-          traversal of lists.
+        - ``recursive`` -- boolean (default: ``True``); disables recursive
+          traversal of lists
 
         EXAMPLES::
 
@@ -440,11 +441,9 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         INPUT:
 
-        - ``n`` - a nonnegative integer
+        - ``n`` -- nonnegative integer
 
-        OUTPUT:
-
-        - ``n``-th wildcard expression
+        OUTPUT: n-th wildcard expression
 
         EXAMPLES::
 
@@ -461,12 +460,12 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         TESTS:
 
-        Check that :trac:`15047` is fixed::
+        Check that :issue:`15047` is fixed::
 
             sage: latex(SR.wild(0))
             \$0
 
-        Check that :trac:`21455` is fixed::
+        Check that :issue:`21455` is fixed::
 
             sage: coth(SR.wild(0))
             coth($0)
@@ -475,7 +474,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
     def __contains__(self, x):
         r"""
-        True if there is an element of the symbolic ring that is equal to x
+        ``True`` if there is an element of the symbolic ring that is equal to x
         under ``==``.
 
         EXAMPLES:
@@ -509,9 +508,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         Return the characteristic of the symbolic ring, which is 0.
 
-        OUTPUT:
-
-        - a Sage integer
+        OUTPUT: a Sage integer
 
         EXAMPLES::
 
@@ -536,7 +533,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
     def is_field(self, proof=True):
         """
-        Returns True, since the symbolic expression ring is (for the most
+        Return ``True``, since the symbolic expression ring is (for the most
         part) a field.
 
         EXAMPLES::
@@ -599,7 +596,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         TESTS:
 
-        Test that :trac:`32404` is fixed::
+        Test that :issue:`32404` is fixed::
 
             sage: SR0 = SR.subring(no_variables=True)
             sage: SR0.I().parent()
@@ -760,13 +757,11 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         - ``n`` -- (optional) positive integer; number of symbolic variables, indexed from `0` to `n-1`
 
-        - ``domain`` -- (optional) specify the domain of the variable(s); it is the complex plane
+        - ``domain`` -- (optional) specify the domain of the variable(s); it is None
           by default, and possible options are (non-exhaustive list, see note below):
           ``'real'``, ``'complex'``, ``'positive'``, ``'integer'`` and ``'noninteger'``
 
-        OUTPUT:
-
-        Symbolic expression or tuple of symbolic expressions.
+        OUTPUT: symbolic expression or tuple of symbolic expressions
 
         .. SEEALSO::
 
@@ -780,7 +775,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         EXAMPLES:
 
-        Create a variable `zz` (complex by default)::
+        Create a variable `zz`::
 
             sage: zz = SR.var('zz'); zz
             zz
@@ -832,7 +827,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             ValueError: The name "x,y" is not a valid Python identifier.
 
-        Check that :trac:`17206` is fixed::
+        Check that :issue:`17206` is fixed::
 
             sage: var1 = var('var1', latex_name=r'\sigma^2_1'); latex(var1)
             {\sigma^2_1}
@@ -851,7 +846,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             ValueError: cannot specify n for multiple symbol names
 
-        Check that :trac:`28353` is fixed: Constructions that suggest multiple
+        Check that :issue:`28353` is fixed: Constructions that suggest multiple
         variables but actually only give one variable name return a 1-tuple::
 
             sage: SR.var(['x'])
@@ -1050,22 +1045,20 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         Choose one of the following keywords to create a subring.
 
-        - ``accepting_variables`` (default: ``None``) -- a tuple or other
+        - ``accepting_variables`` -- (default: ``None``) a tuple or other
           iterable of variables. If specified, then a symbolic subring of
           expressions in only these variables is created.
 
-        - ``rejecting_variables`` (default: ``None``) -- a tuple or other
+        - ``rejecting_variables`` -- (default: ``None``) a tuple or other
           iterable of variables. If specified, then a symbolic subring of
           expressions in variables distinct to these variables is
           created.
 
-        - ``no_variables`` (default: ``False``) -- a boolean. If set,
+        - ``no_variables`` -- boolean (default: ``False``); if set,
           then a symbolic subring of constant expressions (i.e.,
           expressions without a variable) is created.
 
-        OUTPUT:
-
-        A ring.
+        OUTPUT: a ring
 
         EXAMPLES:
 
@@ -1133,7 +1126,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         if self is not SR:
             raise NotImplementedError('cannot create subring of %s' % (self,))
-        from .subring import SymbolicSubring
+        from sage.symbolic.subring import SymbolicSubring
         return SymbolicSubring(*args, **kwds)
 
     def _fricas_init_(self):
@@ -1157,26 +1150,28 @@ cdef class NumpyToSRMorphism(Morphism):
 
     TESTS:
 
-    We check that :trac:`8949` and :trac:`9769` are fixed (see also :trac:`18076`)::
+    We check that :issue:`8949` and :issue:`9769` are fixed (see also :issue:`18076`)::
 
-        sage: import numpy
+        sage: import numpy                                                              # needs numpy
+        sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
+        ....:     numpy.set_printoptions(legacy="1.25")                                 # needs numpy
         sage: f(x) = x^2
-        sage: f(numpy.int8('2'))
+        sage: f(numpy.int8('2'))                                                        # needs numpy
         4
-        sage: f(numpy.int32('3'))
+        sage: f(numpy.int32('3'))                                                       # needs numpy
         9
 
     Note that the answer is a Sage integer and not a numpy type::
 
-        sage: a = f(numpy.int8('2')).pyobject()
-        sage: type(a)
+        sage: a = f(numpy.int8('2')).pyobject()                                         # needs numpy
+        sage: type(a)                                                                   # needs numpy
         <class 'sage.rings.integer.Integer'>
 
     This behavior also applies to standard functions::
 
         sage: cos(int('2'))
         cos(2)
-        sage: numpy.cos(int('2'))
+        sage: numpy.cos(int('2'))                                                       # needs numpy
         -0.4161468365471424
     """
     cdef _intermediate_ring
@@ -1188,10 +1183,11 @@ cdef class NumpyToSRMorphism(Morphism):
 
         INPUT:
 
-        - ``numpy_type`` - a numpy number type
+        - ``numpy_type`` -- a numpy number type
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: import numpy
             sage: from sage.symbolic.ring import NumpyToSRMorphism
             sage: f = NumpyToSRMorphism(numpy.float64)
@@ -1200,7 +1196,7 @@ cdef class NumpyToSRMorphism(Morphism):
             sage: _.parent()
             Symbolic Ring
 
-            sage: NumpyToSRMorphism(str)
+            sage: NumpyToSRMorphism(str)                                                # needs numpy
             Traceback (most recent call last):
             ...
             TypeError: <... 'str'> is not a numpy number type
@@ -1227,17 +1223,16 @@ cdef class NumpyToSRMorphism(Morphism):
         This should be called when coercing or converting a NumPy
         float or complex to the Symbolic Ring::
 
+            sage: # needs numpy
             sage: import numpy
             sage: SR(numpy.int32('1')).pyobject().parent()
             Integer Ring
             sage: SR(numpy.int64('-2')).pyobject().parent()
             Integer Ring
-
             sage: SR(numpy.float16('1')).pyobject().parent()
             Real Double Field
             sage: SR(numpy.float64('2.0')).pyobject().parent()
             Real Double Field
-
             sage: SR(numpy.complex64(1jr)).pyobject().parent()
             Complex Double Field
         """
@@ -1252,6 +1247,7 @@ cdef class UnderscoreSageMorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sympy
             sage: import sympy
             sage: from sage.symbolic.ring import UnderscoreSageMorphism
             sage: b = sympy.var('b')
@@ -1274,9 +1270,9 @@ cdef class UnderscoreSageMorphism(Morphism):
         This should be called when coercing or converting a SymPy
         object to the Symbolic Ring::
 
-            sage: import sympy
-            sage: b = sympy.var('b')
-            sage: bool(SR(b) == SR(b._sage_()))
+            sage: import sympy                                                          # needs sympy
+            sage: b = sympy.var('b')                                                    # needs sympy
+            sage: bool(SR(b) == SR(b._sage_()))                                         # needs sympy
             True
         """
         return self.codomain()(a._sage_())
@@ -1300,33 +1296,6 @@ def the_SymbolicRing():
     return SR
 
 
-def is_SymbolicExpressionRing(R):
-    """
-    Return True if ``R`` is the symbolic expression ring.
-
-    This function is deprecated.  Instead, either use ``R is SR`` (to
-    test whether ``R`` is the unique symbolic ring ``SR``); or
-    ``isinstance`` with :class:`~sage.rings.abc.SymbolicRing`
-    (when also symbolic subrings and callable symbolic rings should
-    be accepted).
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.ring import is_SymbolicExpressionRing
-        sage: is_SymbolicExpressionRing(ZZ)
-        doctest:warning...
-        DeprecationWarning: is_SymbolicExpressionRing is deprecated;
-        use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead
-        See https://github.com/sagemath/sage/issues/32665 for details.
-        False
-        sage: is_SymbolicExpressionRing(SR)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32665, 'is_SymbolicExpressionRing is deprecated; use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead')
-    return R is SR
-
-
 def var(name, **kwds):
     """
     EXAMPLES::
@@ -1344,7 +1313,7 @@ def var(name, **kwds):
     TESTS:
 
     These examples test that variables can only be made from valid
-    identifiers.  See :trac:`7496` (and :trac:`9724`) for details::
+    identifiers.  See :issue:`7496` (and :issue:`9724`) for details::
 
         sage: var(' ')
         Traceback (most recent call last):
@@ -1364,11 +1333,9 @@ def isidentifier(x):
 
     INPUT:
 
-    - ``x`` -- a string
+    - ``x`` -- string
 
-    OUTPUT:
-
-    Boolean. Whether the string ``x`` can be used as a variable name.
+    OUTPUT: boolean; whether the string ``x`` can be used as a variable name
 
     This function should return ``False`` for keywords, so we can not
     just use the ``isidentifier`` method of strings,

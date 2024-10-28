@@ -64,13 +64,13 @@ def lift_to_gamma1(g, m, n):
     """
     if m == 1:
         return [ZZ.one(), ZZ.zero(), ZZ.zero(), ZZ.one()]
-    a, b, c, d = [ZZ(x) for x in g]
+    a, b, c, d = (ZZ(x) for x in g)
     det = (a * d - b * c) % m
     if det != 1:
         raise ValueError("Determinant is {0} mod {1}, should be 1".format(det, m))
     c2 = crt(c, 0, m, n)
     d2 = crt(d, 1, m, n)
-    a3,b3,c3,d3 = [ZZ(_) for _ in lift_to_sl2z(c2, d2, m * n)]
+    a3,b3,c3,d3 = (ZZ(_) for _ in lift_to_sl2z(c2, d2, m * n))
     r = (a3*b - b3*a) % m
     return [a3 + r * c3, b3 + r * d3, c3, d3]
 
@@ -87,7 +87,7 @@ def lift_matrix_to_sl2z(A, N):
 
     - ``A`` -- list of 4 integers defining a `2 \times 2` matrix
 
-    - `N` -- positive integer
+    - ``N`` -- positive integer
 
     EXAMPLES::
 

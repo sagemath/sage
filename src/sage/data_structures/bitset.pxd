@@ -7,15 +7,15 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .bitset_base cimport bitset_t
+from sage.data_structures.bitset_base cimport bitset_t
 
 # Python layer over bitset_t
 cdef class FrozenBitset:
     cdef bitset_t _bitset
     cdef FrozenBitset _new(self,long int capacity)
     cpdef FrozenBitset _larger_capacity_(self, long size)
-    cpdef long capacity(self)
-    cpdef bint isempty(self)
+    cpdef long capacity(self) noexcept
+    cpdef bint isempty(self) noexcept
     cpdef bint issubset(self, FrozenBitset other) except -1
     cpdef bint issuperset(self, FrozenBitset other) except -1
     cpdef bint isdisjoint(self, FrozenBitset other) except -1

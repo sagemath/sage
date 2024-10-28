@@ -16,7 +16,7 @@ from sage.combinat.root_system.root_system import RootSystem
 
 class CartanType(CartanType_standard_finite):
     """
-    Cartan Type `Q_n`
+    Cartan Type `Q_n`.
 
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
@@ -60,7 +60,7 @@ class CartanType(CartanType_standard_finite):
             'Q4'
         """
         format = '%s%s' if compact else "['%s', %s]"
-        return format%(self.letter, self.n+1)
+        return format % (self.letter, self.n+1)
 
     def __reduce__(self):
         """

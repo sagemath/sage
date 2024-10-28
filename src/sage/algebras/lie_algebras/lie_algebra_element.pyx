@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat
 """
 Lie Algebra Elements
 
@@ -35,7 +35,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
     # Need to bypass the coercion model
     def __mul__(left, right):
         """
-        If we are multiplying two non-zero elements, automatically
+        If we are multiplying two nonzero elements, automatically
         lift up to the universal enveloping algebra.
 
         EXAMPLES::
@@ -156,10 +156,6 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
             PBW[-1] + PBW[0] - 3*PBW[1]
         """
         UEA = self._parent.universal_enveloping_algebra()
-        try:
-            gen_dict = UEA.algebra_generators()
-        except (TypeError, AttributeError):
-            gen_dict = UEA.gens_dict()
         s = UEA.zero()
         if not self:
             return s
@@ -167,9 +163,14 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
         #   does not match the generators index set of the UEA.
         if hasattr(self._parent, '_UEA_names_map'):
             names_map = self._parent._UEA_names_map
+            gen_dict = UEA.gens_dict()
             for t, c in self._monomial_coefficients.items():
                 s += c * gen_dict[names_map[t]]
         else:
+            try:
+                gen_dict = UEA.algebra_generators()
+            except (TypeError, AttributeError):
+                gen_dict = UEA.gens_dict()
             for t, c in self._monomial_coefficients.items():
                 s += c * gen_dict[t]
         return s
@@ -262,7 +263,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
     """
     def __bool__(self):
         """
-        Return if ``self`` is non-zero.
+        Return if ``self`` is nonzero.
 
         EXAMPLES::
 
@@ -304,7 +305,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
     # Need to bypass the coercion model
     def __mul__(left, right):
         """
-        If we are multiplying two non-zero elements, automatically
+        If we are multiplying two nonzero elements, automatically
         lift up to the universal enveloping algebra.
 
         .. TODO::
@@ -474,7 +475,7 @@ cdef class LieAlgebraMatrixWrapper(LieAlgebraElementWrapper):
 
         EXAMPLES::
 
-            sage: L = lie_algebras.Heisenberg(QQ, 1, representation="matrix")
+            sage: L = lie_algebras.Heisenberg(QQ, 1, representation='matrix')
             sage: z = L.z()
             sage: z.value.is_immutable()
             True
@@ -542,7 +543,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         x_lift = (<LieSubalgebraElementWrapper> x).value
         return type(self)(self._parent, self.value._bracket_(x_lift))
 
-    def to_vector(self, order=None, sparse=False):
+    def _vector_(self, sparse=False, order=None):
         r"""
         Return the vector in ``g.module()`` corresponding to the
         element ``self`` of ``g`` (where ``g`` is the parent of ``self``).
@@ -572,6 +573,8 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         """
         return self._parent.module()(self.value.to_vector(sparse=sparse))
 
+    to_vector = _vector_
+
     cpdef dict monomial_coefficients(self, bint copy=True):
         r"""
         Return a dictionary whose keys are indices of basis elements
@@ -580,7 +583,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
           represented by a dictionary ``d``, then make a copy of ``d``;
           if ``False``, then this can cause undesired behavior by
           mutating ``d``
@@ -832,7 +835,22 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             if v != zero:
                 yield (I[i], v)
 
-    cpdef to_vector(self, bint sparse=False):
+    cpdef _vector_(self, bint sparse=False, order=None):
+        """
+        Return ``self`` as a vector.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: a = x + 3*y - z/5
+            sage: vector(a)
+            (1, 3, -1/5)
+        """
+        if sparse:
+            return self.value.sparse_vector()
+        return self.value
+
+    cpdef to_vector(self, bint sparse=False, order=None):
         """
         Return ``self`` as a vector.
 
@@ -843,9 +861,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             sage: a.to_vector()
             (1, 3, -1/2)
         """
-        if sparse:
-            return self.value.sparse_vector()
-        return self.value
+        return self._vector_(sparse=sparse)
 
     def lift(self):
         """
@@ -1232,9 +1248,9 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
         return type(self)(self._parent, negate(self._t_dict),
                           -self._c_coeff, -self._d_coeff)
 
-    cpdef _acted_upon_(self, x, bint self_on_left):
+    cpdef _acted_upon_(self, scalar, bint self_on_left):
         """
-        Return ``self`` acted upon by ``x``.
+        Return ``self`` acted upon by ``scalar``.
 
         EXAMPLES::
 
@@ -1246,9 +1262,21 @@ cdef class UntwistedAffineLieAlgebraElement(Element):
             sage: -2 * x
             (-2*E[alpha[1]])#t^0 + (-2*h1)#t^-1 + -6*c + 4/5*d
         """
-        return type(self)(self._parent, scal(x, self._t_dict, self_on_left),
-                          x * self._c_coeff,
-                          x * self._d_coeff)
+        # This was copied and IDK if it still applies (TCS):
+        # With the current design, the coercion model does not have
+        # enough information to detect apriori that this method only
+        # accepts scalars; so it tries on some elements(), and we need
+        # to make sure to report an error.
+        scalar_parent = parent(scalar)
+        if scalar_parent != self._parent.base_ring():
+            # Temporary needed by coercion (see Polynomial/FractionField tests).
+            if self._parent.base_ring().has_coerce_map_from(scalar_parent):
+                scalar = self._parent.base_ring()(scalar)
+            else:
+                return None
+        return type(self)(self._parent, scal(scalar, self._t_dict, self_on_left),
+                          scalar * self._c_coeff,
+                          scalar * self._d_coeff)
 
     cpdef monomial_coefficients(self, bint copy=True):
         """
@@ -1660,6 +1688,25 @@ cdef class LieGenerator(LieObject):
             ('x',)
         """
         return self._word
+
+    cpdef lift(self, dict UEA_gens_dict):
+        """
+        Lift ``self`` to the universal enveloping algebra.
+
+        ``UEA_gens_dict`` should be the dictionary for the
+        generators of the universal enveloping algebra.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, 'x,y,z')
+            sage: Lyn = L.Lyndon()
+            sage: x,y,z = Lyn.gens()
+            sage: x.lift()
+            x
+            sage: x.lift().parent()
+            Free Algebra on 3 generators (x, y, z) over Rational Field
+        """
+        return UEA_gens_dict[self._name]
 
 cdef class LieBracket(LieObject):
     """

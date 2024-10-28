@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Unique factorization domains
 """
@@ -33,7 +34,6 @@ class UniqueFactorizationDomains(Category_singleton):
     TESTS::
 
         sage: TestSuite(UniqueFactorizationDomains()).run()
-
     """
 
     def super_categories(self):
@@ -65,7 +65,7 @@ class UniqueFactorizationDomains(Category_singleton):
         """
         EXAMPLES::
 
-            sage: GF(4, "a") in UniqueFactorizationDomains()                            # optional - sage.rings.finite_rings
+            sage: GF(4, "a") in UniqueFactorizationDomains()                            # needs sage.rings.finite_rings
             True
             sage: QQ in UniqueFactorizationDomains()
             True
@@ -126,7 +126,6 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: UFD = UniqueFactorizationDomains()
                 sage: Parent(QQ, category=UFD).is_unique_factorization_domain()
                 True
-
             """
             return True
 
@@ -136,7 +135,7 @@ class UniqueFactorizationDomains(Category_singleton):
 
             INPUT:
 
-            - ``f``, ``g`` -- two polynomials defined over this UFD.
+            - ``f``, ``g`` -- two polynomials defined over this UFD
 
             .. NOTE::
 
@@ -160,14 +159,14 @@ class UniqueFactorizationDomains(Category_singleton):
                 sage: (-x^2 - 4*x - 5)^(3-2+1) * p == quo*q + rem
                 True
 
-            Check that :trac:`23620` has been resolved::
+            Check that :issue:`23620` has been resolved::
 
-                sage: R.<x> = ZpFM(2)[]                                                 # optional - sage.rings.padics
-                sage: f = 2*x + 2                                                       # optional - sage.rings.padics
-                sage: g = 4*x + 2                                                       # optional - sage.rings.padics
-                sage: f.gcd(g).parent() is R                                            # optional - sage.rings.padics
+                sage: # needs sage.rings.padics
+                sage: R.<x> = ZpFM(2)[]
+                sage: f = 2*x + 2
+                sage: g = 4*x + 2
+                sage: f.gcd(g).parent() is R
                 True
-
             """
             if f.degree() < g.degree():
                 A,B = g, f
@@ -292,7 +291,6 @@ class UniqueFactorizationDomains(Category_singleton):
 
                 sage: squarefree_part(pol)
                 37*x^3 - 1369/21*x^2 + 703/21*x - 37/7
-
             """
             decomp = self.squarefree_decomposition()
-            return prod(fac for fac, mult in decomp if mult%2 == 1)
+            return prod(fac for fac, mult in decomp if mult % 2 == 1)

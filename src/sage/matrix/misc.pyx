@@ -18,9 +18,9 @@ from sage.modules.vector_rational_sparse cimport *
 from sage.rings.integer cimport Integer
 from sage.rings.rational_field import QQ
 
-from .matrix0 cimport Matrix
-from .matrix_integer_sparse cimport Matrix_integer_sparse
-from .matrix_rational_sparse cimport Matrix_rational_sparse
+from sage.matrix.matrix0 cimport Matrix
+from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
+from sage.matrix.matrix_rational_sparse cimport Matrix_rational_sparse
 
 matrix_integer_dense_rational_reconstruction = \
   LazyImport('sage.matrix.misc_flint', 'matrix_integer_dense_rational_reconstruction',
@@ -47,7 +47,7 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
 
     TESTS:
 
-    Check that :trac:`9345` is fixed::
+    Check that :issue:`9345` is fixed::
 
         sage: A = random_matrix(ZZ, 3, sparse=True)
         sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 0)
@@ -124,16 +124,17 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
 
 def matrix_rational_echelon_form_multimodular(Matrix self, height_guess=None, proof=None):
     """
-    Returns reduced row-echelon form using a multi-modular
-    algorithm.  Does not change self.
+    Return reduced row-echelon form using a multi-modular
+    algorithm.  Does not change ``self``.
 
     REFERENCE: Chapter 7 of Stein's "Explicitly Computing Modular Forms".
 
     INPUT:
 
-    - height_guess -- integer or None
-    - proof -- boolean or None (default: None, see proof.linear_algebra or
-      sage.structure.proof). Note that the global Sage default is proof=True
+    - ``height_guess`` -- integer or ``None``
+    - ``proof`` -- boolean or ``None`` (default: ``None``, see
+      ``proof.linear_algebra`` or ``sage.structure.proof``). Note that the
+      global Sage default is proof=True
 
     OUTPUT: a pair consisting of a matrix in echelon form and a tuple of pivot
     positions.

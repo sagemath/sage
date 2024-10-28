@@ -65,13 +65,13 @@ AUTHORS:
 
 See also the functions :func:`cremona_curves` and :func:`cremona_optimal_curves`
 which enable easy looping through the Cremona elliptic curve database.
-
 """
 
 import os
 from ast import literal_eval
 
 from .constructor import EllipticCurve
+
 
 class EllipticCurves:
     def rank(self, rank, tors=0, n=10, labels=False):
@@ -81,18 +81,16 @@ class EllipticCurves:
 
         INPUT:
 
-        - ``rank`` (int) -- the desired rank
+        - ``rank`` -- integer; the desired rank
 
-        - ``tors`` (int, default 0) -- the desired torsion order (ignored if 0)
+        - ``tors`` -- integer (default: 0); the desired torsion order (ignored if 0)
 
-        - ``n`` (int, default 10) -- the maximum number of curves returned.
+        - ``n`` -- integer (default: 10); the maximum number of curves returned
 
-        - ``labels`` (bool, default False) -- if True, return Cremona
-          labels instead of curves.
+        - ``labels`` -- boolean (default: ``False``); if ``True``, return Cremona
+          labels instead of curves
 
-        OUTPUT:
-
-        (list) A list at most `n` of elliptic curves of required rank.
+        OUTPUT: list at most `n` of elliptic curves of required rank
 
         EXAMPLES::
 
@@ -132,11 +130,13 @@ class EllipticCurves:
             sage: elliptic_curves.rank(6, n=3, labels=True)
             []
         """
-        from sage.env import ELLCURVE_DATA_DIR
-        data = os.path.join(ELLCURVE_DATA_DIR, 'rank%s' % rank)
+        from sage.features.databases import DatabaseEllcurves
+        db = DatabaseEllcurves()
+        data = os.path.join(os.path.dirname(db.absolute_filename()),
+                            f'rank{rank}')
         try:
             f = open(data)
-        except IOError:
+        except OSError:
             return []
         v = []
         tors = int(tors)

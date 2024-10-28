@@ -2,24 +2,25 @@
 Arithmetic functions using the arb library
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from ..flint.types cimport ulong
-from ..flint.fmpq cimport fmpq_t, fmpq_init, fmpq_clear, fmpq_get_mpq
-from .bernoulli cimport bernoulli_fmpq_ui
-from .acb_modular cimport acb_modular_hilbert_class_poly
+from sage.libs.flint.types cimport ulong
+from sage.libs.flint.fmpq cimport fmpq_t, fmpq_init, fmpq_clear, fmpq_get_mpq
+from sage.libs.arb.bernoulli cimport bernoulli_fmpq_ui
+from sage.libs.arb.acb_modular cimport acb_modular_hilbert_class_poly
 from sage.rings.rational cimport Rational
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
+
 
 def bernoulli(n):
     """
@@ -68,7 +69,7 @@ def hilbert_class_polynomial(D):
 
     - ``D`` -- negative integer
 
-    OUTPUT: an integer polynomial.
+    OUTPUT: integer polynomial
 
     EXAMPLES::
 
@@ -81,5 +82,5 @@ def hilbert_class_polynomial(D):
     cdef long n = D
     cdef Polynomial_integer_dense_flint poly
     poly = PolynomialRing(ZZ, "x", implementation="FLINT")()
-    acb_modular_hilbert_class_poly(poly.__poly, n)
+    acb_modular_hilbert_class_poly(poly._poly, n)
     return poly

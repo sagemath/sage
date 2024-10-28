@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 `q`-Analogues
 """
@@ -10,16 +9,16 @@ r"""
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
-from sage.misc.cachefunc import cached_function
-from sage.misc.misc_c import prod
-from sage.structure.element import parent
-from sage.rings.integer_ring import ZZ
 from sage.combinat.dyck_word import DyckWords
 from sage.combinat.partition import _Partitions
+from sage.misc.cachefunc import cached_function
+from sage.misc.misc_c import prod
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+from sage.rings.polynomial.polynomial_ring import polygen
+from sage.structure.element import parent
 
 
 def q_int(n, q=None):
@@ -47,7 +46,7 @@ def q_int(n, q=None):
         sage: q_int(3)
         q^2 + q + 1
         sage: q_int(-3)
-        (-q^2 - q - 1)/q^3
+        -q^-3 - q^-2 - q^-1
         sage: p = ZZ['p'].0
         sage: q_int(3,p)
         p^2 + p + 1
@@ -58,27 +57,28 @@ def q_int(n, q=None):
 
     TESTS:
 
-    We check that :trac:`15805` is fixed::
+    We check that :issue:`15805` is fixed::
 
         sage: q_int(0).parent()
         Univariate Polynomial Ring in q over Integer Ring
 
-    We check that :trac:`25715` is fixed::
+    We check that :issue:`25715` is fixed::
 
         sage: q_int(0, 3r)
         0
-
     """
     if n not in ZZ:
-        raise ValueError('%s must be an integer' % n)
-
+        raise ValueError(f'{n} must be an integer')
     if q is None:
-        q = ZZ['q'].gen()
-    if n == 0:  # Special case
+        if n >= 0:
+            q = polygen(ZZ, 'q')
+        else:
+            q = LaurentPolynomialRing(ZZ, 'q').gen()
+    if n == 0:
         return parent(q)(0)
     if n > 0:
         return sum(q**i for i in range(n))
-    return -q**n*sum(q**i for i in range(-n))
+    return -q**n * sum(q**i for i in range(-n))
 
 
 def q_factorial(n, q=None):
@@ -105,8 +105,8 @@ def q_factorial(n, q=None):
         sage: q_factorial(3, p)
         p^3 + 2*p^2 + 2*p + 1
 
-    The `q`-analogue of `n!` is only defined for `n` a non-negative
-    integer (:trac:`11411`)::
+    The `q`-analogue of `n!` is only defined for `n` a nonnegative
+    integer (:issue:`11411`)::
 
         sage: q_factorial(-2)
         Traceback (most recent call last):
@@ -144,7 +144,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     INPUT:
 
-    - ``n, k`` -- the values `n` and `k` defined above
+    - ``n``, ``k`` -- the values `n` and `k` defined above
 
     - ``q`` -- (default: ``None``) the variable `q`; if ``None``, then use a
       default variable in `\ZZ[q]`
@@ -188,12 +188,19 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         sage: g.parent()
         Univariate Polynomial Ring in q over Integer Ring
 
-    The `q`-binomial coefficient vanishes unless `0 \leq k \leq n`::
+    For `n \geq 0`, the `q`-binomial coefficient vanishes unless `0 \leq k \leq n`::
 
         sage: q_binomial(4,5)
         0
         sage: q_binomial(5,-1)
         0
+
+    For `k \geq 0`, the `q`-binomial coefficient is extended as a polynomial in `n`::
+
+        sage: q_binomial(-4,1)
+        -q^-4 - q^-3 - q^-2 - q^-1
+        sage: q_binomial(-2,3)
+        -q^-9 - q^-8 - q^-7 - q^-6
 
     Other variables can be used, given as third parameter::
 
@@ -211,7 +218,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         2
         sage: q_binomial(4,2,3.14)
         152.030056160000
-        sage: R = GF(25, 't')
+        sage: R = GF((5, 2), 't')
         sage: t = R.gen(0)
         sage: q_binomial(6, 3, t)
         2*t + 3
@@ -239,27 +246,27 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         ...
         TypeError: no conversion of this rational to integer
 
-    One checks that `n` is nonnegative::
+    One checks that either `k` or `n` is nonnegative::
 
-        sage: q_binomial(-4,1)
+        sage: q_binomial(-4,-1)
         Traceback (most recent call last):
         ...
-        ValueError: n must be nonnegative
+        ValueError: either k or n must be nonnegative
 
     This also works for variables in the symbolic ring::
 
-        sage: z = var('z')                                                              # optional - sage.symbolic
-        sage: factor(q_binomial(4, 2, z))                                               # optional - sage.symbolic
+        sage: z = var('z')                                                              # needs sage.symbolic
+        sage: factor(q_binomial(4, 2, z))                                               # needs sage.symbolic
         (z^2 + z + 1)*(z^2 + 1)
 
     This also works for complex roots of unity::
 
-        sage: q_binomial(10, 4, QQbar(I))                                               # optional - sage.rings.number_field
+        sage: q_binomial(10, 4, QQbar(I))                                               # needs sage.rings.number_field
         2
 
-    Note that the symbolic computation works (see :trac:`14982`)::
+    Note that the symbolic computation works (see :issue:`14982`)::
 
-        sage: q_binomial(10, 4, I)                                                      # optional - sage.rings.number_field
+        sage: q_binomial(10, 4, I)                                                      # needs sage.rings.number_field
         2
 
     Check that the algorithm does not matter::
@@ -282,9 +289,9 @@ def q_binomial(n, k, q=None, algorithm='auto'):
     Check that arbitrary polynomials work::
 
         sage: R.<x> = ZZ[]
-        sage: q_binomial(2, 1, x^2 - 1, algorithm="naive")
+        sage: q_binomial(2, 1, x^2 - 1, algorithm='naive')
         x^2
-        sage: q_binomial(2, 1, x^2 - 1, algorithm="cyclotomic")
+        sage: q_binomial(2, 1, x^2 - 1, algorithm='cyclotomic')
         x^2
 
     Check that the parent is always the parent of ``q``::
@@ -298,7 +305,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     ::
 
-        sage: q_binomial(2, 1, x^2 - 1, algorithm="quantum")
+        sage: q_binomial(2, 1, x^2 - 1, algorithm='quantum')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm 'quantum'
@@ -316,19 +323,24 @@ def q_binomial(n, k, q=None, algorithm='auto'):
     # sanity checks
     n = ZZ(n)
     k = ZZ(k)
-    if n < 0:
-        raise ValueError('n must be nonnegative')
-
-    k = min(n - k, k)  # Pick the smallest k
+    if k < 0 and n < 0:
+        raise ValueError('either k or n must be nonnegative')
 
     # polynomiality test
     if q is None:
-        from sage.rings.polynomial.polynomial_ring import polygen
-        q = polygen(ZZ, name='q')
         is_polynomial = True
+        if n >= 0:
+            q = polygen(ZZ, 'q')
+        else:
+            q = LaurentPolynomialRing(ZZ, 'q').gen()
     else:
         from sage.rings.polynomial.polynomial_element import Polynomial
         is_polynomial = isinstance(q, Polynomial)
+
+    if n < 0:
+        return (-1)**k * q**(k * n - (k * k - k) // 2) * q_binomial(-n + k - 1, k, q=q)
+
+    k = min(n - k, k)  # Pick the smallest k
 
     # We support non-Sage Elements too, where parent(q) is really
     # type(q). The calls R(0) and R(1) should work in all cases to
@@ -355,12 +367,12 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     # the algorithms
     while algorithm == 'naive':
-        denom = prod(one - q**i for i in range(1, k+1))
+        denom = prod(one - q**i for i in range(1, k + 1))
         if not denom:  # q is a root of unity, use the cyclotomic algorithm
             algorithm = 'cyclotomic'
             break
         else:
-            num = prod(one - q**i for i in range(n-k+1, n+1))
+            num = prod(one - q**i for i in range(n - k + 1, n + 1))
             try:
                 try:
                     return num // denom
@@ -452,9 +464,15 @@ def q_multinomial(seq, q=None, binomial_algorithm='auto'):
 gaussian_multinomial = q_multinomial
 
 
-def q_catalan_number(n, q=None):
+def q_catalan_number(n, q=None, m=1):
     """
     Return the `q`-Catalan number of index `n`.
+
+    INPUT:
+
+    - ``q`` -- (optional) variable
+
+    - ``m`` -- (optional) integer; to get instead the ``m``-Fuss-Catalan numbers
 
     If `q` is unspecified, then it defaults to using the generator `q` for
     a univariate polynomial ring over the integers.
@@ -467,19 +485,23 @@ def q_catalan_number(n, q=None):
         sage: from sage.combinat.q_analogues import q_catalan_number
         sage: q_catalan_number(4)
         q^12 + q^10 + q^9 + 2*q^8 + q^7 + 2*q^6 + q^5 + 2*q^4 + q^3 + q^2 + 1
+
         sage: p = ZZ['p'].0
-        sage: q_catalan_number(4,p)
+        sage: q_catalan_number(4, p)
         p^12 + p^10 + p^9 + 2*p^8 + p^7 + 2*p^6 + p^5 + 2*p^4 + p^3 + p^2 + 1
 
+        sage: q_catalan_number(3, m=2)
+        q^12 + q^10 + q^9 + q^8 + q^7 + 2*q^6 + q^5 + q^4 + q^3 + q^2 + 1
+
+    TESTS:
+
     The `q`-Catalan number of index `n` is only defined for `n` a
-    nonnegative integer (:trac:`11411`)::
+    nonnegative integer (:issue:`11411`)::
 
         sage: q_catalan_number(-2)
         Traceback (most recent call last):
         ...
         ValueError: argument (-2) must be a nonnegative integer
-
-    TESTS::
 
         sage: q_catalan_number(3).parent()
         Univariate Polynomial Ring in q over Integer Ring
@@ -489,10 +511,12 @@ def q_catalan_number(n, q=None):
     if n in ZZ:
         if n in {0, 1}:
             return q_int(1, q)
-        elif n >= 2:
-            return (prod(q_int(j, q) for j in range(n + 2, 2 * n + 1)) //
-                    prod(q_int(j, q) for j in range(2, n + 1)))
-    raise ValueError("argument (%s) must be a nonnegative integer" % n)
+        if n >= 2:
+            return (prod(q_int(j, q)
+                         for j in range(m * n + 2, (m + 1) * n + 1)) //
+                    prod(q_int(j, q)
+                         for j in range(2, n + 1)))
+    raise ValueError(f"argument ({n}) must be a nonnegative integer")
 
 
 def qt_catalan_number(n):
@@ -512,7 +536,7 @@ def qt_catalan_number(n):
         q^6 + q^5*t + q^4*t^2 + q^3*t^3 + q^2*t^4 + q*t^5 + t^6 + q^4*t + q^3*t^2 + q^2*t^3 + q*t^4 + q^3*t + q^2*t^2 + q*t^3
 
     The `q,t`-Catalan number of index `n` is only defined for `n` a
-    nonnegative integer (:trac:`11411`)::
+    nonnegative integer (:issue:`11411`)::
 
         sage: qt_catalan_number(-2)
         Traceback (most recent call last):
@@ -578,10 +602,10 @@ def q_pochhammer(n, a, q=None):
         1
         sage: q_pochhammer(0, 1)
         1
-        sage: q_pochhammer(0, var('a'))                                                 # optional - sage.symbolic
+        sage: q_pochhammer(0, var('a'))                                                 # needs sage.symbolic
         1
 
-    We check that :trac:`25715` is fixed::
+    We check that :issue:`25715` is fixed::
 
         sage: q_pochhammer(0, 3r)
         1
@@ -591,7 +615,7 @@ def q_pochhammer(n, a, q=None):
     - :wikipedia:`Q-Pochhammer_symbol`
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = polygen(ZZ, 'q')
     if n not in ZZ:
         raise ValueError("{} must be an integer".format(n))
     R = parent(q)
@@ -622,8 +646,7 @@ def q_jordan(t, q=None):
 
     INPUT:
 
-    -  ``t`` -- an integer partition, or an argument accepted by
-       :class:`Partition`
+    - ``t`` -- integer partition, or an argument accepted by :class:`Partition`
 
     - ``q`` -- (default: ``None``) the variable `q`; if ``None``, then use a
       default variable in `\ZZ[q]`
@@ -637,7 +660,7 @@ def q_jordan(t, q=None):
         [615195, 40635, 5643, 2331, 1491, 515, 147, 87, 47, 11, 1]
         sage: q_jordan([3,2,1])
         16*q^4 + 24*q^3 + 14*q^2 + 5*q + 1
-        sage: q_jordan([2,1], x)                                                        # optional - sage.symbolic
+        sage: q_jordan([2,1], x)                                                        # needs sage.symbolic
         2*x + 1
 
     If the partition is trivial (i.e. has only one part), we get
@@ -660,13 +683,13 @@ def q_jordan(t, q=None):
     - Xavier Caruso (2012-06-29)
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = polygen(ZZ, 'q')
 
     if all(part == 0 for part in t):
         return parent(q)(1)
     tj = 0
     res = parent(q)(0)
-    for i in range(len(t)-1, -1, -1):
+    for i in range(len(t) - 1, -1, -1):
         ti = t[i]
         if ti > tj:
             tp = list(t)
@@ -784,7 +807,7 @@ def q_subgroups_of_abelian_group(la, mu, q=None, algorithm='birkhoff'):
         sage: q_subgroups_of_abelian_group([2], [1,1], algorithm='delsarte')
         0
 
-    Check that :trac:`25715` is fixed::
+    Check that :issue:`25715` is fixed::
 
         sage: parent(q_subgroups_of_abelian_group([2], [1], algorithm='delsarte'))
         Univariate Polynomial Ring in q over Integer Ring
@@ -800,7 +823,7 @@ def q_subgroups_of_abelian_group(la, mu, q=None, algorithm='birkhoff'):
        Mathematical Society 101, no. 4 (1987): 771-775.
        :doi:`10.1090/S0002-9939-1987-0911049-8`
 
-    .. [Delsarte48] \S. Delsarte, *Fonctions de Möbius Sur Les Groupes Abeliens
+    .. [Delsarte48] \S. Delsarte, *Fonctions de Möbius Sur Les Groupes Abéliens
        Finis*, Annals of Mathematics, second series, Vol. 45, No. 3, (Jul 1948),
        pp. 600-609. http://www.jstor.org/stable/1969047
 
@@ -810,7 +833,7 @@ def q_subgroups_of_abelian_group(la, mu, q=None, algorithm='birkhoff'):
     - Tomer Bauer (2013, 2018): Implemented the Birkhoff algorithm and refactoring
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = polygen(ZZ, 'q')
     la_c = _Partitions(la).conjugate()
     mu_c = _Partitions(mu).conjugate()
     k = mu_c.length()
@@ -822,7 +845,7 @@ def q_subgroups_of_abelian_group(la, mu, q=None, algorithm='birkhoff'):
 
     if algorithm == 'delsarte':
         def F(args):
-            prd = lambda j: prod(args[j]-q**i for i in range(mu_c[j+1],mu_c[j]))
+            prd = lambda j: prod(args[j]-q**i for i in range(mu_c[j+1], mu_c[j]))
             F1 = prod(args[i]**mu_c[i+1] * prd(i) for i in range(k-1))
             return F1 * prod(args[k-1]-q**i for i in range(mu_c[k-1]))
 
@@ -847,9 +870,9 @@ def q_stirling_number1(n, k, q=None):
 
     INPUT:
 
-    - ``n``, ``k`` -- integers with ``1 <= k <= n``
+    - ``n``, ``k`` -- integers with `1 \leq k \leq n`
 
-    - ``q`` -- optional variable (default `q`)
+    - ``q`` -- variable (default: `q`)
 
     OUTPUT: a polynomial in the variable `q`
 
@@ -865,13 +888,13 @@ def q_stirling_number1(n, k, q=None):
         sage: q_stirling_number1(4,2)
         q^3 + 3*q^2 + 4*q + 3
 
-        sage: all(stirling_number1(6,k) == q_stirling_number1(6,k)(1)
-        ....:     for k in range(1,7))
+        sage: all(stirling_number1(6,k) == q_stirling_number1(6,k)(1)                   # needs sage.libs.gap
+        ....:     for k in range(1,6))
         True
 
         sage: x = polygen(QQ['q'],'x')
         sage: S = sum(q_stirling_number1(5,k)*x**k for k in range(1, 6))
-        sage: factor(S)
+        sage: factor(S)                                                                 # needs sage.libs.singular
         x * (x + 1) * (x + q + 1) * (x + q^2 + q + 1) * (x + q^3 + q^2 + q + 1)
 
     TESTS::
@@ -881,7 +904,7 @@ def q_stirling_number1(n, k, q=None):
         ...
         ValueError: q-Stirling numbers are not defined for n < 0
 
-    We check that :trac:`25715` is fixed::
+    We check that :issue:`25715` is fixed::
 
         sage: q_stirling_number1(2,1,1r)
         1
@@ -893,7 +916,7 @@ def q_stirling_number1(n, k, q=None):
     - [Ca1954]_
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = polygen(ZZ, 'q')
     if n < 0:
         raise ValueError('q-Stirling numbers are not defined for n < 0')
     if n == 0 == k:
@@ -913,9 +936,9 @@ def q_stirling_number2(n, k, q=None):
 
     INPUT:
 
-    - ``n``, ``k`` -- integers with ``1 <= k <= n``
+    - ``n``, ``k`` -- integers with `1 \leq k \leq n`
 
-    - ``q`` -- optional variable (default `q`)
+    - ``q`` -- variable (default: `q`)
 
     OUTPUT: a polynomial in the variable `q`
 
@@ -943,7 +966,7 @@ def q_stirling_number2(n, k, q=None):
         ...
         ValueError: q-Stirling numbers are not defined for n < 0
 
-    We check that :trac:`25715` is fixed::
+    We check that :issue:`25715` is fixed::
 
         sage: q_stirling_number2(1,0).parent()
         Univariate Polynomial Ring in q over Integer Ring
@@ -955,7 +978,7 @@ def q_stirling_number2(n, k, q=None):
     - [Mil1978]_
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = polygen(ZZ, 'q')
     if n < 0:
         raise ValueError('q-Stirling numbers are not defined for n < 0')
     if n == 0 == k:
@@ -964,3 +987,92 @@ def q_stirling_number2(n, k, q=None):
         return parent(q)(0)
     return (q**(k-1)*q_stirling_number2(n - 1, k - 1, q=q) +
             q_int(k, q=q) * q_stirling_number2(n - 1, k, q=q))
+
+
+def number_of_irreducible_polynomials(n, q=None, m=1):
+    r"""
+    Return the number of monic irreducible polynomials of degree ``n``
+    in ``m`` variables over the finite field with ``q`` elements.
+
+    If ``q`` is not given, the result is returned as an integer-valued
+    polynomial in `\QQ[q]`.
+
+    INPUT:
+
+    - ``n`` -- positive integer
+    - ``q`` -- ``None`` (default) or a prime power
+    - ``m`` -- positive integer (default: `1`)
+
+    OUTPUT: integer or integer-valued polynomial over `\QQ`
+
+    EXAMPLES::
+
+        sage: number_of_irreducible_polynomials(8, q=2)
+        30
+        sage: number_of_irreducible_polynomials(9, q=9)
+        43046640
+        sage: number_of_irreducible_polynomials(5, q=11, m=3)
+        2079650567184059145647246367401741345157369643207055703168
+
+    ::
+
+        sage: poly = number_of_irreducible_polynomials(12); poly
+        1/12*q^12 - 1/12*q^6 - 1/12*q^4 + 1/12*q^2
+        sage: poly(5) == number_of_irreducible_polynomials(12, q=5)
+        True
+        sage: poly = number_of_irreducible_polynomials(5, m=3); poly
+        q^55 + q^54 + q^53 + q^52 + q^51 + q^50 + ... + 1/5*q^5 - 1/5*q^3 - 1/5*q^2 - 1/5*q
+        sage: poly(11) == number_of_irreducible_polynomials(5, q=11, m=3)
+        True
+
+    This function is *much* faster than enumerating the polynomials::
+
+        sage: num = number_of_irreducible_polynomials(99, q=101)
+        sage: num.bit_length()
+        653
+
+    ALGORITHM:
+
+    In the univariate case, classical formula
+    `\frac1n \sum_{d\mid n} \mu(n/d) q^d`
+    using the Möbius function `\mu`;
+    see :func:`moebius`.
+
+    In the multivariate case, formula from [Bodin2007]_,
+    independently [Alekseyev2006]_.
+    """
+    n = ZZ(n)
+    if n <= 0:
+        raise ValueError('n must be positive')
+    if m <= 0:
+        raise ValueError('m must be positive')
+
+    if q is None:
+        from sage.rings.rational_field import QQ
+        q = QQ['q'].gen()  # we produce an integer-valued polynomial in q, but it does not necessarily have integer coefficients
+
+    if m == 1:
+        from sage.arith.misc import moebius
+        r = sum((moebius(n//d) * q**d for d in n.divisors()), parent(q).zero())
+        return r // n
+
+    from sage.functions.other import binomial
+    from sage.combinat.partition import Partitions
+
+    def monic_reducible(irreducible, d):
+        """
+        Compute the number of monic reducible polynomials of degree `d`
+        given the numbers of irreducible polynomials up to degree `d-1`.
+        """
+        res = 0
+        for p in Partitions(d+1, max_part=d):
+            res += prod(binomial(r+t-1, t) for r, t in zip(irreducible, p.to_exp(d)))
+        return res
+
+    r = []
+    for d in range(n):
+        monic = (q**binomial(d + m, m - 1) - 1) * q**binomial(d + m, m) // (q - 1)
+        reducible = monic_reducible(r, d)
+        r.append(monic - reducible)
+
+    return r[-1]

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs
+# sage.doctest: needs sage.graphs
 r"""
 Finite polyhedral complexes
 
@@ -110,9 +110,11 @@ Classes and functions
 # ****************************************************************************
 
 from copy import copy
+
+import sage.geometry.abc
+
 from sage.topology.cell_complex import GenericCellComplex
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.polyhedron.base import is_Polyhedron
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.graphs.graph import Graph
@@ -148,7 +150,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     INPUT:
 
-    - ``maximal_cells`` -- a list, a tuple, or a dictionary (indexed by
+    - ``maximal_cells`` -- list, tuple, or dictionary (indexed by
       dimension) of cells of the Complex. Each cell is of class
       :class:`Polyhedron` of the same ambient dimension. To set up a
       :class:PolyhedralComplex, it is sufficient to provide the maximal
@@ -163,7 +165,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     - ``face_to_face_check`` -- boolean (default: ``False``);
       if ``True``, then the constructor checks whether the cells
-      are face-to-face, and it raises a ``ValueError`` if they are not
+      are face-to-face, and it raises a :exc:`ValueError` if they are not
 
     - ``is_mutable`` and ``is_immutable`` -- boolean (default: ``True`` and
       ``False`` respectively); set ``is_mutable=False`` or ``is_immutable=True``
@@ -173,15 +175,15 @@ class PolyhedralComplex(GenericCellComplex):
       computations on Sage polyhedra; if it is not given, then each cell has
       its own backend; otherwise it must be one of the following:
 
-      * ``'ppl'`` - the Parma Polyhedra Library
+      * ``'ppl'`` -- the Parma Polyhedra Library
 
-      * ``'cdd'`` - CDD
+      * ``'cdd'`` -- CDD
 
-      * ``'normaliz'`` - normaliz
+      * ``'normaliz'`` -- normaliz
 
-      * ``'polymake'`` - polymake
+      * ``'polymake'`` -- polymake
 
-      * ``'field'`` - a generic Sage implementation
+      * ``'field'`` -- a generic Sage implementation
 
     - ``ambient_dim`` -- integer (optional); used to set up an empty
       complex in the intended ambient space
@@ -203,7 +205,7 @@ class PolyhedralComplex(GenericCellComplex):
          (A vertex at (0, 1/4),),
          (A vertex at (1/7, 2/7),),
          (A vertex at (1/3, 1/3),)]
-        sage: pc.plot()  # optional - sage.plot
+        sage: pc.plot()                                                                 # needs sage.plot
         Graphics object consisting of 10 graphics primitives
         sage: pc.is_pure()
         True
@@ -308,7 +310,7 @@ class PolyhedralComplex(GenericCellComplex):
                 ambient_dim = next(iter(cells_dict[self._dim])).ambient_dim()
         self._ambient_dim = ambient_dim
         self._maximal_cells = cells_dict
-        if not all((is_Polyhedron(cell) and
+        if not all((isinstance(cell, sage.geometry.abc.Polyhedron) and
                    cell.ambient_dim() == self._ambient_dim)
                    for cell in self.maximal_cell_iterator()):
             raise ValueError("the given cells are not polyhedra " +
@@ -392,7 +394,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (default ``True``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``True``); if ``True``, return
           cells in increasing order of dimension, thus starting with the
           zero-dimensional cells; otherwise it returns cells in decreasing
           order of dimension
@@ -415,8 +417,7 @@ class PolyhedralComplex(GenericCellComplex):
             dim_index = reversed(dim_index)
         for d in dim_index:
             if d in cells:
-                for c in cells[d]:
-                    yield c
+                yield from cells[d]
 
     def _n_cells_sorted(self, n, subcomplex=None):
         """
@@ -424,7 +425,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
         - ``subcomplex`` -- (optional) if a subcomplex is given then
           return the cells which are **not** in this subcomplex
 
@@ -508,7 +509,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``increasing`` -- (optional, default ``False``) if ``True``, return
+        - ``increasing`` -- boolean (default: ``False``); if ``True``, return
           maximal cells in increasing order of dimension.
           Otherwise it returns cells in decreasing order of dimension.
 
@@ -543,8 +544,7 @@ class PolyhedralComplex(GenericCellComplex):
             dim_index = reversed(dim_index)
         for d in dim_index:
             if d in maximal_cells:
-                for c in maximal_cells[d]:
-                    yield c
+                yield from maximal_cells[d]
 
     def n_maximal_cells(self, n):
         r"""
@@ -552,7 +552,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. NOTE::
 
@@ -594,7 +594,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- (non-negative integer) the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. WARNING::
 
@@ -730,15 +730,15 @@ class PolyhedralComplex(GenericCellComplex):
           can be passed to :func:`exploded_plot`:
 
           - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
-          - ``sticky_vertices`` -- (default: ``False``) boolean or dict.
-            Whether to draw line segments between shared vertices of the given polyhedra.
+          - ``sticky_vertices`` -- (default: ``False``) boolean or dict;
+            whether to draw line segments between shared vertices of the given polyhedra.
             A dict gives options for :func:`sage.plot.line`.
           - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is
             a vertex of some of the polyhedra, whether to draw line segments connecting the
             ``center`` to the shifted copies of these vertices.
             A dict gives options for :func:`sage.plot.line`.
 
-        - ``color`` -- (default: ``None``) if ``"rainbow"``, assign a different color
+        - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different color
           to every maximal cell; otherwise, passed on to
           :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
 
@@ -752,17 +752,17 @@ class PolyhedralComplex(GenericCellComplex):
             sage: p3 = Polyhedron(vertices=[(0, 0), (0, 2), (-1, 1)])
             sage: pc1 = PolyhedralComplex([p1, p2, p3, -p1, -p2, -p3])
             sage: bb = dict(xmin=-2, xmax=2, ymin=-3, ymax=3, axes=False)
-            sage: g0 = pc1.plot(color='rainbow', **bb)                                 # optional - sage.plot
-            sage: g1 = pc1.plot(explosion_factor=0.5, **bb)                            # optional - sage.plot
-            sage: g2 = pc1.plot(explosion_factor=1, color='rainbow', alpha=0.5, **bb)  # optional - sage.plot
+            sage: g0 = pc1.plot(color='rainbow', **bb)                                  # needs sage.plot
+            sage: g1 = pc1.plot(explosion_factor=0.5, **bb)                             # needs sage.plot
+            sage: g2 = pc1.plot(explosion_factor=1, color='rainbow', alpha=0.5, **bb)   # needs sage.plot
             sage: graphics_array([g0, g1, g2]).show(axes=False)                        # not tested
 
             sage: pc2 = PolyhedralComplex([polytopes.hypercube(3)])
             sage: pc3 = pc2.subdivide(new_vertices=[(0, 0, 0)])
-            sage: g3 = pc3.plot(explosion_factor=1, color='rainbow',                   # optional - sage.plot
+            sage: g3 = pc3.plot(explosion_factor=1, color='rainbow',                    # needs sage.plot
             ....:               alpha=0.5, axes=False, online=True)
             sage: pc4 = pc2.subdivide(make_simplicial=True)
-            sage: g4 = pc4.plot(explosion_factor=1, center=(1, -1, 1), fill='blue',    # optional - sage.plot
+            sage: g4 = pc4.plot(explosion_factor=1, center=(1, -1, 1), fill='blue',     # needs sage.plot
             ....:              wireframe='white', point={'color':'red', 'size':10},
             ....:              alpha=0.6, online=True)
             sage: pc5 = PolyhedralComplex([
@@ -773,9 +773,8 @@ class PolyhedralComplex(GenericCellComplex):
             ....:         Polyhedron(rays=[[-1,0,0], [0,-1,0], [0,0,1]]),
             ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,-1]]),
             ....:         Polyhedron(rays=[[-1,0,0], [0,1,0], [0,0,1]])])
-            sage: g5 = pc5.plot(explosion_factor=0.3, color='rainbow', alpha=0.8,      # optional - sage.plot
+            sage: g5 = pc5.plot(explosion_factor=0.3, color='rainbow', alpha=0.8,       # needs sage.plot
             ....:               point={'size': 20}, axes=False, online=True)
-
         """
         if self.dimension() > 3:
             raise ValueError("cannot plot in high dimension")
@@ -932,8 +931,11 @@ class PolyhedralComplex(GenericCellComplex):
             sage: pc = PolyhedralComplex([
             ....:         Polyhedron(vertices=[(1/3, 1/3), (0, 0), (1, 2)]),
             ....:         Polyhedron(vertices=[(1, 2), (0, 0), (0, 1/2)])])
-            sage: pc._an_element_().vertices_list()
+            sage: element = pc._an_element_().vertices_list()
+            sage: element   # random output (one of the two maximal cells)
             [[0, 0], [0, 1/2], [1, 2]]
+            sage: element in ([[0, 0], [0, 1/2], [1, 2]], [[0, 0], [1/3, 1/3], [1, 2]])
+            True
         """
         try:
             return next(self.maximal_cell_iterator(increasing=False))
@@ -943,7 +945,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     def __contains__(self, x):
         """
-        True if ``x`` is a polyhedron which is contained in this complex.
+        Return ``True`` if ``x`` is a polyhedron which is contained in this complex.
 
         EXAMPLES::
 
@@ -961,7 +963,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: (0, 0) in pc  # not a polyhedron
             False
         """
-        if not is_Polyhedron(x):
+        if not isinstance(x, sage.geometry.abc.Polyhedron):
             return False
         dim = x.dimension()
         return dim in self.cells() and x in self.cells()[dim]
@@ -969,7 +971,7 @@ class PolyhedralComplex(GenericCellComplex):
     def __call__(self, x):
         """
         If ``x`` is a polyhedron in this complex, return it.
-        Otherwise, raise a ``ValueError``.
+        Otherwise, raise a :exc:`ValueError`.
 
         EXAMPLES::
 
@@ -1001,7 +1003,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: poset
             Finite poset containing 11 elements
             sage: d = {i: i.vertices_matrix() for i in poset}
-            sage: poset.plot(element_labels=d)  # optional - sage.plot
+            sage: poset.plot(element_labels=d)                                          # needs sage.plot
             Graphics object consisting of 28 graphics primitives
 
         For a nonbounded polyhedral complex::
@@ -1059,7 +1061,7 @@ class PolyhedralComplex(GenericCellComplex):
 
     def is_compact(self):
         """
-        Test for boundedness of the polyhedral complex
+        Test for boundedness of the polyhedral complex.
 
         EXAMPLES::
 
@@ -1074,10 +1076,10 @@ class PolyhedralComplex(GenericCellComplex):
 
     def graph(self):
         """
-        The 1-skeleton of this polyhedral complex, as a graph.
+        Return the 1-skeleton of this polyhedral complex, as a graph.
 
-        The vertices of the graph are of type ``vector``. Raises
-        a ``NotImplementedError`` if the polyhedral complex is unbounded.
+        The vertices of the graph are of type ``vector``. This raises
+        a :exc:`NotImplementedError` if the polyhedral complex is unbounded.
 
         .. WARNING::
 
@@ -1316,7 +1318,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``n`` -- non-negative integer; the dimension
+        - ``n`` -- nonnegative integer; the dimension
 
         .. SEEALSO::
 
@@ -1673,9 +1675,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         - ``right`` -- the other polyhedral complex (the right-hand factor)
 
-        OUTPUT:
-
-        - the product ``self x right``
+        OUTPUT: the product ``self x right``
 
         EXAMPLES::
 
@@ -2030,7 +2030,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         if self._is_immutable:
             raise ValueError("this polyhedral complex is not mutable")
-        if not is_Polyhedron(cell) or cell.ambient_dim() != self._ambient_dim:
+        if not isinstance(cell, sage.geometry.abc.Polyhedron) or cell.ambient_dim() != self._ambient_dim:
             raise ValueError("the given cell is not a polyhedron " +
                              "in the same ambient space")
         # if cell is already in self, do nothing.
@@ -2074,8 +2074,7 @@ class PolyhedralComplex(GenericCellComplex):
                 raise ValueError("the cell is not face-to-face with complex")
         # update dim and maximal cells
         d = cell.dimension()
-        if d > self._dim:
-            self._dim = d
+        self._dim = max(d, self._dim)
         maximal_cells = poset.maximal_elements()    # a list
         self._maximal_cells = cells_list_to_cells_dict(maximal_cells)
         # update convexity if self was known to be convex, reset otherwise.
@@ -2136,7 +2135,7 @@ class PolyhedralComplex(GenericCellComplex):
 
         TESTS:
 
-        Check that ValueError and empty complex are treated properly::
+        Check that :exc:`ValueError` and empty complex are treated properly::
 
             sage: p = Polyhedron(vertices=[[1]])
             sage: pc = PolyhedralComplex([p])
@@ -2193,7 +2192,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         if self._is_immutable:
             raise ValueError("this polyhedral complex is not mutable")
-        if not is_Polyhedron(cell) or cell.ambient_dim() != self._ambient_dim:
+        if not isinstance(cell, sage.geometry.abc.Polyhedron) or cell.ambient_dim() != self._ambient_dim:
             raise ValueError("the given cell is not a polyhedron " +
                              "in the same ambient space")
         # if cell is not in self, delete nothing.
@@ -2459,7 +2458,7 @@ class PolyhedralComplex(GenericCellComplex):
             return PolyhedralComplex(cones, maximality_check=False,
                                      backend=self._backend)
         else:
-            # TODO: `self`` is unbounded, make it projectively simplicial.
+            # TODO: ``self`` is unbounded, make it projectively simplicial.
             # (1) homogenize self of dim d to fan in space of dim d+1;
             # (2) call fan.subdivide(make_simplicial=True);
             # (3) take section back to the space of dim d.
@@ -2503,28 +2502,35 @@ def exploded_plot(polyhedra, *,
                   center=None, explosion_factor=1, sticky_vertices=False,
                   sticky_center=True, point=None, **kwds):
     r"""
-    Return a plot of several ``polyhedra`` in one figure with extra space between them.
+    Return a plot of several ``polyhedra`` in one figure with extra space
+    between them.
 
     INPUT:
 
-    - ``polyhedra`` -- an iterable of :class:`~sage.geometry.polyhedron.base.Polyhedron_base` objects
+    - ``polyhedra`` -- an iterable of
+      :class:`~sage.geometry.polyhedron.base.Polyhedron_base` objects
 
-    - ``center`` -- (default: ``None``, denoting the origin) the center of explosion
+    - ``center`` -- (default: ``None``, denoting the origin) the center of
+      explosion
 
-    - ``explosion_factor`` -- (default: 1) a nonnegative number; translate polyhedra by this
-      factor of the distance from ``center`` to their center
+    - ``explosion_factor`` -- (default: 1) a nonnegative number; translate
+      polyhedra by this factor of the distance from ``center`` to their center
 
-    - ``sticky_vertices`` -- (default: ``False``) boolean or dict. Whether to draw line segments between shared
-      vertices of the given polyhedra. A dict gives options for :func:`sage.plot.line`.
+    - ``sticky_vertices`` -- (default: ``False``) boolean or dict; whether to
+      draw line segments between shared vertices of the given polyhedra. A dict
+      gives options for :func:`sage.plot.line`.
 
-    - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center`` is a vertex of some
-      of the polyhedra, whether to draw line segments connecting the ``center`` to the shifted copies
-      of these vertices. A dict gives options for :func:`sage.plot.line`.
+    - ``sticky_center`` -- (default: ``True``) boolean or dict. When ``center``
+      is a vertex of some of the polyhedra, whether to draw line segments
+      connecting the ``center`` to the shifted copies of these vertices. A dict
+      gives options for :func:`sage.plot.line`.
 
-    - ``color`` -- (default: ``None``) if ``"rainbow"``, assign a different color to every maximal cell and
-      every vertex; otherwise, passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+    - ``color`` -- (default: ``None``) if ``'rainbow'``, assign a different
+      color to every maximal cell and every vertex; otherwise, passed on to
+      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
 
-    - other keyword arguments are passed on to :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`.
+    - other keyword arguments are passed on to
+      :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.plot`
 
     EXAMPLES::
 
@@ -2532,11 +2538,11 @@ def exploded_plot(polyhedra, *,
         sage: p1 = Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)])
         sage: p2 = Polyhedron(vertices=[(1, 2), (0, 0), (0, 2)])
         sage: p3 = Polyhedron(vertices=[(0, 0), (1, 1), (2, 0)])
-        sage: exploded_plot([p1, p2, p3])                                       # optional - sage.plot
+        sage: exploded_plot([p1, p2, p3])                                               # needs sage.plot
         Graphics object consisting of 20 graphics primitives
-        sage: exploded_plot([p1, p2, p3], center=(1, 1))                        # optional - sage.plot
+        sage: exploded_plot([p1, p2, p3], center=(1, 1))                                # needs sage.plot
         Graphics object consisting of 19 graphics primitives
-        sage: exploded_plot([p1, p2, p3], center=(1, 1), sticky_vertices=True)  # optional - sage.plot
+        sage: exploded_plot([p1, p2, p3], center=(1, 1), sticky_vertices=True)          # needs sage.plot
         Graphics object consisting of 23 graphics primitives
     """
     from sage.plot.colors import rainbow

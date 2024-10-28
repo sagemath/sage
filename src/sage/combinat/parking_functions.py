@@ -63,7 +63,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
@@ -132,12 +132,10 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
     - ``area_sequence`` -- (default: ``None``) an area sequence of a Dyck path
 
-    - ``labelled_dyck_word`` -- (default: ``None``) a Dyck word with 1's
+    - ``labelled_dyck_word`` -- (default: ``None``) a Dyck word with 1s
       replaced by labelling
 
-    OUTPUT:
-
-    A parking function
+    OUTPUT: a parking function
 
     EXAMPLES::
 
@@ -222,11 +220,17 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             <class 'sage.combinat.parking_functions.ParkingFunctions_n_with_category.element_class'>
             sage: type(b)
             <class 'sage.combinat.parking_functions.ParkingFunctions_n_with_category.element_class'>
+
+        Some checks for more general inputs::
+
+            sage: PF = ParkingFunction((1, 1, 2, 2, 5, 6))
+            sage: PF = ParkingFunction(Permutation([4,2,3,1]))
         """
-        if isinstance(lst, ParkingFunction):
-            lst = list(lst)
         if not isinstance(lst, list):
-            raise TypeError('input must be a list')
+            try:
+                lst = list(lst)
+            except TypeError:
+                raise TypeError('input must be convertible to a list')
         if parent is None:
             parent = ParkingFunctions_n(len(lst))
         ClonableArray.__init__(self, parent, lst)
@@ -358,7 +362,6 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         means that car 2 takes spots 1, car 4 takes spot 2, ..., car 1
         takes spot 6 and car 7 takes spot 7.
 
-
         OUTPUT:
 
         - the permutation of cars corresponding to the parking function
@@ -396,7 +399,6 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         means that car 1 through 4 parked in their preferred spots,
         car 5 had to park one spot farther (jumped or was displaced by one
         spot), car 6 had to jump 3 spots, and car 7 had to jump two spots.
-
 
         OUTPUT:
 
@@ -456,10 +458,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         ``lucky_cars(PF) = [1, 2, 7]`` means that cars 1, 2 and 7 parked in
         their preferred spots and all the other cars did not.
 
-
-        OUTPUT:
-
-        - the cars that can park in their preferred spots
+        OUTPUT: the cars that can park in their preferred spots
 
         EXAMPLES::
 
@@ -484,9 +483,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         Return the number of cars that parked in their preferred parking spots
         (see [Shin]_ p. 33).
 
-        OUTPUT:
-
-        - the number of cars that parked in their preferred parking spots
+        OUTPUT: the number of cars that parked in their preferred parking spots
 
         EXAMPLES::
 
@@ -512,8 +509,8 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         OUTPUT:
 
-        - the pairs `(i, j)` such that `i < j`, and `i^{th}` area = `j^{th}` area,
-          and `i^{th}` label < `j^{th}` label
+        The pairs `(i, j)` such that `i < j`, and `i`-th area = `j`-th area,
+        and `i`-th label < `j`-th label
 
         EXAMPLES::
 
@@ -542,8 +539,8 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         OUTPUT:
 
-        - the pairs `(i, j)` such that `i < j`, and `i^{th}` area = `j^{th}` area +1,
-          and `i^{th}` label > `j^{th}` label
+        The pairs `(i, j)` such that `i < j`, and `i`-th area = `j`-th area +1,
+        and `i`-th label > `j`-th label
 
         EXAMPLES::
 
@@ -570,9 +567,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         Return the descent inversion pairs of a labelled Dyck path
         corresponding to the parking function.
 
-        OUTPUT:
-
-        - the primary and secondary diversion pairs
+        OUTPUT: the primary and secondary diversion pairs
 
         EXAMPLES::
 
@@ -598,9 +593,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         Same as the cardinality of :meth:`dinversion_pairs`.
 
-        OUTPUT:
-
-        - the number of dinversion pairs
+        OUTPUT: the number of dinversion pairs
 
         EXAMPLES::
 
@@ -691,7 +684,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
             Here we use the standard convention that descent labels
             start at `1`. This behaviour has been changed in
-            :trac:`20555`.
+            :issue:`20555`.
 
         For example, ``ides(PF) = [2, 3, 4, 6]`` means that descents are at
         the 2nd, 3rd, 4th and 6th positions in the inverse of the
@@ -789,9 +782,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         r"""
         Return the labelling of the support Dyck path of the parking function.
 
-        OUTPUT:
-
-        - the labelling of the Dyck path
+        OUTPUT: the labelling of the Dyck path
 
         EXAMPLES::
 
@@ -816,9 +807,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         Return the area sequence of the support Dyck path of the
         parking function.
 
-        OUTPUT:
-
-        - the area sequence of the Dyck path
+        OUTPUT: the area sequence of the Dyck path
 
         EXAMPLES::
 
@@ -873,9 +862,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         r"""
         Return the support Dyck word of the parking function.
 
-        OUTPUT:
-
-        - the Dyck word of the corresponding parking function
+        OUTPUT: the Dyck word of the corresponding parking function
 
         .. SEEALSO:: :meth:`DyckWord`
 
@@ -966,9 +953,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         Return the non-decreasing parking function which underlies the
         parking function.
 
-        OUTPUT:
-
-        - a sorted parking function
+        OUTPUT: a sorted parking function
 
         .. SEEALSO:: :meth:`NonDecreasingParkingFunction`
 
@@ -1010,29 +995,30 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         - ``R`` -- (default: ``R = QQ['q','t'].fraction_field()``) the
           base ring to do the calculations over
 
-        OUTPUT:
-
-        - an element of the quasisymmetric functions over the ring ``R``
+        OUTPUT: an element of the quasisymmetric functions over the ring ``R``
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: R = QQ['q','t'].fraction_field()
             sage: (q,t) = R.gens()
-            sage: cqf = sum(t**PF.area()*PF.characteristic_quasisymmetric_function() for PF in ParkingFunctions(3)); cqf
-            (q^3+q^2*t+q*t^2+t^3+q*t)*F[1, 1, 1] + (q^2+q*t+t^2+q+t)*F[1, 2] + (q^2+q*t+t^2+q+t)*F[2, 1] + F[3]
+            sage: cqf = sum(t**PF.area() * PF.characteristic_quasisymmetric_function()
+            ....:           for PF in ParkingFunctions(3)); cqf
+            (q^3+q^2*t+q*t^2+t^3+q*t)*F[1, 1, 1] + (q^2+q*t+t^2+q+t)*F[1, 2]
+             + (q^2+q*t+t^2+q+t)*F[2, 1] + F[3]
             sage: s = SymmetricFunctions(R).s()
             sage: s(cqf.to_symmetric_function())
             (q^3+q^2*t+q*t^2+t^3+q*t)*s[1, 1, 1] + (q^2+q*t+t^2+q+t)*s[2, 1] + s[3]
-            sage: s(cqf.to_symmetric_function()).nabla(power = -1)
+            sage: s(cqf.to_symmetric_function()).nabla(power=-1)
             s[1, 1, 1]
 
         ::
 
             sage: p = ParkingFunction([3, 1, 2])
-            sage: p.characteristic_quasisymmetric_function()
+            sage: p.characteristic_quasisymmetric_function()                            # needs sage.modules
             q*F[2, 1]
             sage: pf = ParkingFunction([1,2,7,2,1,2,3,2,1])
-            sage: pf.characteristic_quasisymmetric_function()
+            sage: pf.characteristic_quasisymmetric_function()                           # needs sage.modules
             q^2*F[1, 1, 1, 2, 1, 3]
         """
         from sage.combinat.ncsf_qsym.qsym import QuasiSymmetricFunctions
@@ -1054,7 +1040,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         - ``underpath`` -- if the length of the parking function is
           less than or equal to 9 then display the labels under the
-          path if ``underpath`` is True otherwise display them to the
+          path if ``underpath`` is ``True`` otherwise display them to the
           right of the path (default: ``True``)
 
         EXAMPLES::
@@ -1321,7 +1307,7 @@ class ParkingFunctions(UniqueRepresentation, Parent):
             return ParkingFunctions_all()
 
         if not isinstance(n, (Integer, int)) or n < 0:
-            raise ValueError("%s is not a non-negative integer" % n)
+            raise ValueError("%s is not a nonnegative integer" % n)
         return ParkingFunctions_n(n)
 
 
@@ -1451,7 +1437,7 @@ class ParkingFunctions_n(ParkingFunctions):
 
     TESTS:
 
-    Check that :trac:`15216` is fixed::
+    Check that :issue:`15216` is fixed::
 
         sage: PF = ParkingFunctions()
         sage: PF3 = ParkingFunctions(3)

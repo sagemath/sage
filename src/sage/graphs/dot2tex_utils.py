@@ -16,12 +16,12 @@ from sage.misc.cachefunc import cached_function
 @cached_function
 def have_dot2tex():
     """
-    Returns whether ``dot2tex`` >= 2.8.7 and graphviz are installed
-    and functional
+    Return whether ``dot2tex`` >= 2.8.7 and graphviz are installed
+    and functional.
 
     EXAMPLES::
 
-        sage: sage.graphs.dot2tex_utils.have_dot2tex() # optional - dot2tex graphviz
+        sage: sage.graphs.dot2tex_utils.have_dot2tex()  # optional - dot2tex graphviz
         True
         sage: sage.graphs.dot2tex_utils.have_dot2tex() in [True, False]
         True
@@ -29,19 +29,19 @@ def have_dot2tex():
     try:
         import dot2tex
         # Test for this required feature from dot2tex 2.8.7
-        return dot2tex.dot2tex("graph {}", format="positions") == {}
+        return dot2tex.dot2tex("graph {}", format='positions') == {}
     except (Exception, SystemExit):
         return False
 
 
 def assert_have_dot2tex():
     """
-    Tests whether ``dot2tex`` >= 2.8.7 and graphviz are installed and
-    functional, and raises an error otherwise
+    Test whether ``dot2tex`` >= 2.8.7 and graphviz are installed and
+    functional, and raises an error otherwise.
 
     EXAMPLES::
 
-        sage: sage.graphs.dot2tex_utils.assert_have_dot2tex() # optional - dot2tex graphviz
+        sage: sage.graphs.dot2tex_utils.assert_have_dot2tex()  # optional - dot2tex graphviz
     """
     check_error_string = """
 An error occurs while testing the dot2tex installation.
@@ -63,7 +63,7 @@ for installation instructions.
         print(import_error_string)
         raise  # re-raise current exception
     else:
-        if dot2tex.dot2tex("graph {}", format="positions") != {}:
+        if dot2tex.dot2tex("graph {}", format='positions') != {}:
             raise RuntimeError(check_error_string)
 
 

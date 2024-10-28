@@ -103,7 +103,7 @@ class Line(GraphicPrimitive_xydata):
             0.5
             sage: m.thickness
             10
-            sage: L = line([(1,1), (1,2), (2,2), (2,1)], linestyle=":")
+            sage: L = line([(1,1), (1,2), (2,2), (2,1)], linestyle=':')
             sage: L.plot3d()
             Traceback (most recent call last):
             ...
@@ -131,9 +131,9 @@ class Line(GraphicPrimitive_xydata):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('37a').plot(thickness=5).plot3d()
-            sage: F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)
-            sage: E + F  # long time (5s on sage.math, 2012)
+            sage: E = EllipticCurve('37a').plot(thickness=5).plot3d()                   # needs sage.schemes
+            sage: F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)                # needs sage.schemes
+            sage: E + F                         # long time (5s on sage.math, 2012), needs sage.schemes
             Graphics3d Object
 
         .. PLOT::
@@ -141,7 +141,6 @@ class Line(GraphicPrimitive_xydata):
             E = EllipticCurve('37a').plot(thickness=5).plot3d()
             F = EllipticCurve('37a').plot(thickness=5).plot3d(z=2)
             sphinx_plot(E+F)
-
         """
         from sage.plot.plot3d.shapes2 import line3d
         options = self._plot3d_options()
@@ -166,11 +165,9 @@ class Line(GraphicPrimitive_xydata):
 
         INPUT:
 
-        - ``i`` -- an integer between 0 and the number of points minus 1
+        - ``i`` -- integer between 0 and the number of points minus 1
 
-        OUTPUT:
-
-        A 2-tuple of floats.
+        OUTPUT: 2-tuple of floats
 
         EXAMPLES::
 
@@ -193,7 +190,7 @@ class Line(GraphicPrimitive_xydata):
 
         INPUT:
 
-        - ``i`` -- an integer between 0 and the number of points on the
+        - ``i`` -- integer between 0 and the number of points on the
           line minus 1
 
         - ``point`` -- a 2-tuple of floats
@@ -276,13 +273,13 @@ class Line(GraphicPrimitive_xydata):
 
 def line(points, **kwds):
     """
-    Returns either a 2-dimensional or 3-dimensional line depending
+    Return either a 2-dimensional or 3-dimensional line depending
     on value of points.
 
     INPUT:
 
-    -  ``points`` - either a single point (as a tuple), a list of
-       points, a single complex number, or a list of complex numbers.
+    - ``points`` -- either a single point (as a tuple), a list of
+      points, a single complex number, or a list of complex numbers
 
     For information regarding additional arguments, see either line2d?
     or line3d?.
@@ -323,8 +320,8 @@ def line2d(points, **options):
 
     INPUT:
 
-    -  ``points`` - either a single point (as a tuple), a list of
-       points, a single complex number, or a list of complex numbers.
+    - ``points`` -- either a single point (as a tuple), a list of
+      points, a single complex number, or a list of complex numbers
 
     Type ``line2d.options`` for a dictionary of the default options for
     lines.  You can change this to change the defaults for all future
@@ -332,39 +329,39 @@ def line2d(points, **options):
 
     INPUT:
 
-    - ``alpha`` -- How transparent the line is
+    - ``alpha`` -- how transparent the line is
 
-    - ``thickness`` -- How thick the line is
+    - ``thickness`` -- how thick the line is
 
-    - ``rgbcolor`` -- The color as an RGB tuple
+    - ``rgbcolor`` -- the color as an RGB tuple
 
-    - ``hue`` -- The color given as a hue
+    - ``hue`` -- the color given as a hue
 
-    - ``legend_color`` -- The color of the text in the legend
+    - ``legend_color`` -- the color of the text in the legend
 
     - ``legend_label`` -- the label for this item in the legend
 
 
     Any MATPLOTLIB line option may also be passed in.  E.g.,
 
-    - ``linestyle`` - (default: "-") The style of the line, which is one of
-       - ``"-"`` or ``"solid"``
-       - ``"--"`` or ``"dashed"``
-       - ``"-."`` or ``"dash dot"``
-       - ``":"`` or ``"dotted"``
+    - ``linestyle`` -- (default: ``'-'``) the style of the line, which is one of
+       - ``'-'`` or ``'solid'``
+       - ``'--'`` or ``'dashed'``
+       - ``'-.'`` or ``'dash dot'``
+       - ``':'`` or ``'dotted'``
        - ``"None"`` or ``" "`` or ``""`` (nothing)
 
-       The linestyle can also be prefixed with a drawing style (e.g., ``"steps--"``)
+       The linestyle can also be prefixed with a drawing style (e.g., ``'steps--'``)
 
-       - ``"default"`` (connect the points with straight lines)
-       - ``"steps"`` or ``"steps-pre"`` (step function; horizontal
+       - ``'default'`` (connect the points with straight lines)
+       - ``'steps'`` or ``'steps-pre'`` (step function; horizontal
          line is to the left of point)
-       - ``"steps-mid"`` (step function; points are in the middle of
+       - ``'steps-mid'`` (step function; points are in the middle of
          horizontal lines)
-       - ``"steps-post"`` (step function; horizontal line is to the
+       - ``'steps-post'`` (step function; horizontal line is to the
          right of point)
 
-    - ``marker``  - The style of the markers, which is one of
+    - ``marker``  -- the style of the markers, which is one of
        - ``"None"`` or ``" "`` or ``""`` (nothing) -- default
        - ``","`` (pixel), ``"."`` (point)
        - ``"_"`` (horizontal line), ``"|"`` (vertical line)
@@ -389,16 +386,16 @@ def line2d(points, **options):
 
     A line with no points or one point::
 
-        sage: line([])      #returns an empty plot
+        sage: line([])      # returns an empty plot
         Graphics object consisting of 0 graphics primitives
-        sage: import numpy; line(numpy.array([]))
+        sage: import numpy; line(numpy.array([]))                                       # needs numpy
         Graphics object consisting of 0 graphics primitives
         sage: line([(1,1)])
         Graphics object consisting of 1 graphics primitive
 
     A line with numpy arrays::
 
-        sage: line(numpy.array([[1,2], [3,4]]))
+        sage: line(numpy.array([[1,2], [3,4]]))                                         # needs numpy
         Graphics object consisting of 1 graphics primitive
 
     A line with a legend::
@@ -442,7 +439,9 @@ def line2d(points, **options):
 
     A blue conchoid of Nicomedes::
 
-        sage: L = [[1+5*cos(pi/2+pi*i/100), tan(pi/2+pi*i/100)*(1+5*cos(pi/2+pi*i/100))] for i in range(1,100)]
+        sage: from math import pi
+        sage: L = [[1 + 5*cos(pi/2+pi*i/100),
+        ....:       tan(pi/2+pi*i/100) * (1+5*cos(pi/2+pi*i/100))] for i in range(1,100)]
         sage: line(L, rgbcolor=(1/4,1/8,3/4))
         Graphics object consisting of 1 graphics primitive
 
@@ -454,7 +453,7 @@ def line2d(points, **options):
     A line with 2 complex points::
 
         sage: i = CC(0,1)
-        sage: line([1+i, 2+3*i])
+        sage: line([1 + i, 2 + 3*i])
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -466,7 +465,8 @@ def line2d(points, **options):
     A blue hypotrochoid (3 leaves)::
 
         sage: n = 4; h = 3; b = 2
-        sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
+        sage: L = [[n*cos(pi*i/100) + h*cos((n/b)*pi*i/100),
+        ....:       n*sin(pi*i/100) - h*sin((n/b)*pi*i/100)] for i in range(200)]
         sage: line(L, rgbcolor=(1/4,1/4,3/4))
         Graphics object consisting of 1 graphics primitive
 
@@ -482,7 +482,8 @@ def line2d(points, **options):
     A blue hypotrochoid (4 leaves)::
 
         sage: n = 6; h = 5; b = 2
-        sage: L = [[n*cos(pi*i/100)+h*cos((n/b)*pi*i/100),n*sin(pi*i/100)-h*sin((n/b)*pi*i/100)] for i in range(200)]
+        sage: L = [[n*cos(pi*i/100) + h*cos((n/b)*pi*i/100),
+        ....:       n*sin(pi*i/100) - h*sin((n/b)*pi*i/100)] for i in range(200)]
         sage: line(L, rgbcolor=(1/4,1/4,3/4))
         Graphics object consisting of 1 graphics primitive
 
@@ -493,7 +494,8 @@ def line2d(points, **options):
 
     A red limacon of Pascal::
 
-        sage: L = [[sin(pi*i/100)+sin(pi*i/50),-(1+cos(pi*i/100)+cos(pi*i/50))] for i in range(-100,101)]
+        sage: L = [[sin(pi*i/100) + sin(pi*i/50),
+        ....:       -(1 + cos(pi*i/100) + cos(pi*i/50))] for i in range(-100,101)]
         sage: line(L, rgbcolor=(1,1/4,1/2))
         Graphics object consisting of 1 graphics primitive
 
@@ -504,7 +506,8 @@ def line2d(points, **options):
 
     A light green trisectrix of Maclaurin::
 
-        sage: L = [[2*(1-4*cos(-pi/2+pi*i/100)^2),10*tan(-pi/2+pi*i/100)*(1-4*cos(-pi/2+pi*i/100)^2)] for i in range(1,100)]
+        sage: L = [[2 * (1-4*cos(-pi/2+pi*i/100)^2),
+        ....:       10 * tan(-pi/2+pi*i/100) * (1-4*cos(-pi/2+pi*i/100)^2)] for i in range(1,100)]
         sage: line(L, rgbcolor=(1/4,1,1/8))
         Graphics object consisting of 1 graphics primitive
 
@@ -530,8 +533,8 @@ def line2d(points, **options):
 
     A red plot of the Jacobi elliptic function `\text{sn}(x,2)`, `-3 < x < 3`::
 
-        sage: L = [(i/100.0, real_part(jacobi('sn', i/100.0, 2.0))) for i in
-        ....:      range(-300, 300, 30)]
+        sage: L = [(i/100.0, real_part(jacobi('sn', i/100.0, 2.0)))
+        ....:      for i in range(-300, 300, 30)]
         sage: line(L, rgbcolor=(3/4, 1/4, 1/8))
         Graphics object consisting of 1 graphics primitive
 
@@ -543,7 +546,7 @@ def line2d(points, **options):
     A red plot of `J`-Bessel function `J_2(x)`, `0 < x < 10`::
 
         sage: L = [(i/10.0, bessel_J(2,i/10.0)) for i in range(100)]
-        sage: line(L, rgbcolor=(3/4,1/4,5/8))
+        sage: line(L, rgbcolor=(3/4, 1/4, 5/8))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -553,10 +556,11 @@ def line2d(points, **options):
 
     A purple plot of the Riemann zeta function `\zeta(1/2 + it)`, `0 < t < 30`::
 
+        sage: # needs sage.libs.pari sage.rings.complex_double
         sage: i = CDF.gen()
         sage: v = [zeta(0.5 + n/10 * i) for n in range(300)]
         sage: L = [(z.real(), z.imag()) for z in v]
-        sage: line(L, rgbcolor=(3/4,1/2,5/8))
+        sage: line(L, rgbcolor=(3/4, 1/2, 5/8))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -568,8 +572,9 @@ def line2d(points, **options):
 
     A purple plot of the Hasse-Weil `L`-function `L(E, 1 + it)`, `-1 < t < 10`::
 
+        sage: # needs sage.schemes
         sage: E = EllipticCurve('37a')
-        sage: vals = E.lseries().values_along_line(1-I, 1+10*I, 100) # critical line
+        sage: vals = E.lseries().values_along_line(1-I, 1+10*I, 100)  # critical line
         sage: L = [(z[1].real(), z[1].imag()) for z in vals]
         sage: line(L, rgbcolor=(3/4,1/2,5/8))
         Graphics object consisting of 1 graphics primitive
@@ -583,6 +588,7 @@ def line2d(points, **options):
 
     A red, blue, and green "cool cat"::
 
+        sage: # needs sage.symbolic
         sage: G = plot(-cos(x), -2, 2, thickness=5, rgbcolor=(0.5,1,0.5))
         sage: P = polygon([[1,2], [5,6], [5,0]], rgbcolor=(1,0,0))
         sage: Q = polygon([(-x,y) for x,y in P[0]], rgbcolor=(0,0,1))
@@ -598,7 +604,7 @@ def line2d(points, **options):
 
     TESTS:
 
-    Check that :trac:`13690` is fixed. The legend label should have circles
+    Check that :issue:`13690` is fixed. The legend label should have circles
     as markers.::
 
         sage: line(enumerate(range(2)), marker='o', legend_label='circle')

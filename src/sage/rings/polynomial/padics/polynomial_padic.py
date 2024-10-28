@@ -9,7 +9,6 @@ AUTHORS:
 - Jeroen Demeyer (2013-11-22): initial version, split off from other
   files, made Polynomial_padic the common base class for all p-adic
   polynomials.
-
 """
 
 #*****************************************************************************
@@ -36,7 +35,7 @@ class Polynomial_padic(Polynomial):
         r"""
         EXAMPLES::
 
-            sage: R.<w> = PolynomialRing(Zp(5, prec=5, type = 'capped-abs', print_mode = 'val-unit'))
+            sage: R.<w> = PolynomialRing(Zp(5, prec=5, type='capped-abs', print_mode='val-unit'))
             sage: f = 24 + R(4/3)*w + w^4
             sage: f._repr()
             '(1 + O(5^5))*w^4 + O(5^5)*w^3 + O(5^5)*w^2 + (1043 + O(5^5))*w + 24 + O(5^5)'
@@ -45,6 +44,7 @@ class Polynomial_padic(Polynomial):
 
         TESTS::
 
+            sage: # needs sage.libs.ntl
             sage: k = Qp(5,10)
             sage: R.<x> = k[]
             sage: f = R([k(0,-3), 0, k(0,-1)]); f
@@ -97,6 +97,7 @@ class Polynomial_padic(Polynomial):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.ntl
             sage: K = Zp(13,7)
             sage: R.<t> = K[]
             sage: f = 13^7*t^3 + K(169,4)*t - 13^4
@@ -109,6 +110,7 @@ class Polynomial_padic(Polynomial):
             sage: f.content()
             O(13^3)
 
+            sage: # needs sage.libs.ntl
             sage: P.<x> = ZZ[]
             sage: f = x + 2
             sage: f.content()
@@ -125,6 +127,7 @@ class Polynomial_padic(Polynomial):
         content is only defined up to multiplication with a unit. However, we
         return `\pi^k` where `k` is the minimal valuation of any coefficient::
 
+            sage: # needs sage.libs.ntl
             sage: K = Qp(13,7)
             sage: R.<t> = K[]
             sage: f = 13^7*t^3 + K(169,4)*t - 13^-4
@@ -139,7 +142,6 @@ class Polynomial_padic(Polynomial):
             sage: f = 13*t^3 + K(0,1)*t
             sage: f.content()
             13 + O(13^8)
-
         """
         if self.is_zero():
             return self[0]
@@ -152,7 +154,8 @@ class Polynomial_padic(Polynomial):
 
         EXAMPLES::
 
-            sage: R.<t> = PolynomialRing(Qp(3,3,print_mode='terse',print_pos=False))
+            sage: # needs sage.libs.ntl
+            sage: R.<t> = PolynomialRing(Qp(3, 3, print_mode='terse', print_pos=False))
             sage: pol = t^8 - 1
             sage: for p,e in pol.factor():
             ....:     print("{} {}".format(e, p))
@@ -161,9 +164,8 @@ class Polynomial_padic(Polynomial):
             1 (1 + O(3^3))*t^2 + (5 + O(3^3))*t - 1 + O(3^3)
             1 (1 + O(3^3))*t^2 + (-5 + O(3^3))*t - 1 + O(3^3)
             1 (1 + O(3^3))*t^2 + O(3^3)*t + 1 + O(3^3)
-            sage: R.<t> = PolynomialRing(Qp(5,6,print_mode='terse',print_pos=False))
-            sage: pol = 100 * (5*t - 1) * (t - 5)
-            sage: pol
+            sage: R.<t> = PolynomialRing(Qp(5, 6, print_mode='terse', print_pos=False))
+            sage: pol = 100 * (5*t - 1) * (t - 5); pol
             (500 + O(5^9))*t^2 + (-2600 + O(5^8))*t + 500 + O(5^9)
             sage: pol.factor()
             (500 + O(5^9)) * ((1 + O(5^5))*t - 1/5 + O(5^5)) * ((1 + O(5^6))*t - 5 + O(5^6))
@@ -174,9 +176,9 @@ class Polynomial_padic(Polynomial):
         part is a `p`-adic unit and the power of `p` is considered to be
         a factor::
 
-            sage: R.<t> = PolynomialRing(Zp(5,6,print_mode='terse',print_pos=False))
-            sage: pol = 100 * (5*t - 1) * (t - 5)
-            sage: pol
+            sage: # needs sage.libs.ntl
+            sage: R.<t> = PolynomialRing(Zp(5, 6, print_mode='terse', print_pos=False))
+            sage: pol = 100 * (5*t - 1) * (t - 5); pol
             (500 + O(5^9))*t^2 + (-2600 + O(5^8))*t + 500 + O(5^9)
             sage: pol.factor()
             (4 + O(5^6)) * (5 + O(5^7))^2 * ((1 + O(5^6))*t - 5 + O(5^6)) * ((5 + O(5^6))*t - 1 + O(5^6))
@@ -186,47 +188,54 @@ class Polynomial_padic(Polynomial):
         In the following example, the discriminant is zero, so the `p`-adic
         factorization is not well defined::
 
-            sage: factor(t^2)
+            sage: factor(t^2)                                                           # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             PrecisionError: p-adic factorization not well-defined since
             the discriminant is zero up to the requestion p-adic precision
 
-        An example of factoring a constant polynomial (see :trac:`26669`)::
+        An example of factoring a constant polynomial (see :issue:`26669`)::
 
-            sage: R.<x> = Qp(5)[]
-            sage: R(2).factor()
+            sage: R.<x> = Qp(5)[]                                                       # needs sage.libs.ntl
+            sage: R(2).factor()                                                         # needs sage.libs.ntl
             2 + O(5^20)
 
         More examples over `\ZZ_p`::
 
-            sage: R.<w> = PolynomialRing(Zp(5, prec=6, type = 'capped-abs', print_mode = 'val-unit'))
-            sage: f = w^5-1
-            sage: f.factor()
-            ((1 + O(5^6))*w + 3124 + O(5^6)) * ((1 + O(5^6))*w^4 + (12501 + O(5^6))*w^3 + (9376 + O(5^6))*w^2 + (6251 + O(5^6))*w + 3126 + O(5^6))
+            sage: R.<w> = PolynomialRing(Zp(5, prec=6, type='capped-abs', print_mode='val-unit'))
+            sage: f = w^5 - 1
+            sage: f.factor()                                                            # needs sage.libs.ntl
+            ((1 + O(5^6))*w + 3124 + O(5^6))
+            * ((1 + O(5^6))*w^4 + (12501 + O(5^6))*w^3 + (9376 + O(5^6))*w^2
+                 + (6251 + O(5^6))*w + 3126 + O(5^6))
 
-        See :trac:`4038`::
+        See :issue:`4038`::
 
-            sage: E = EllipticCurve('37a1')
-            sage: K =Qp(7,10)
-            sage: EK = E.base_extend(K)
+            sage: # needs sage.libs.ntl sage.schemes
             sage: E = EllipticCurve('37a1')
             sage: K = Qp(7,10)
             sage: EK = E.base_extend(K)
             sage: g = EK.division_polynomial_0(3)
             sage: g.factor()
-            (3 + O(7^10)) * ((1 + O(7^10))*x + 1 + 2*7 + 4*7^2 + 2*7^3 + 5*7^4 + 7^5 + 5*7^6 + 3*7^7 + 5*7^8 + 3*7^9 + O(7^10)) * ((1 + O(7^10))*x^3 + (6 + 4*7 + 2*7^2 + 4*7^3 + 7^4 + 5*7^5 + 7^6 + 3*7^7 + 7^8 + 3*7^9 + O(7^10))*x^2 + (6 + 3*7 + 5*7^2 + 2*7^4 + 7^5 + 7^6 + 2*7^8 + 3*7^9 + O(7^10))*x + 2 + 5*7 + 4*7^2 + 2*7^3 + 6*7^4 + 3*7^5 + 7^6 + 4*7^7 + O(7^10))
+            (3 + O(7^10))
+            * ((1 + O(7^10))*x
+                 + 1 + 2*7 + 4*7^2 + 2*7^3 + 5*7^4 + 7^5 + 5*7^6 + 3*7^7 + 5*7^8 + 3*7^9 + O(7^10))
+            * ((1 + O(7^10))*x^3
+                 + (6 + 4*7 + 2*7^2 + 4*7^3 + 7^4 + 5*7^5
+                      + 7^6 + 3*7^7 + 7^8 + 3*7^9 + O(7^10))*x^2
+                 + (6 + 3*7 + 5*7^2 + 2*7^4 + 7^5 + 7^6 + 2*7^8 + 3*7^9 + O(7^10))*x
+                 + 2 + 5*7 + 4*7^2 + 2*7^3 + 6*7^4 + 3*7^5 + 7^6 + 4*7^7 + O(7^10))
 
         TESTS:
 
-        Check that :trac:`13293` is fixed::
+        Check that :issue:`13293` is fixed::
 
-            sage: R.<T> = Qp(3)[]
-            sage: f = 1926*T^2 + 312*T + 387
-            sage: f.factor()
+            sage: R.<T> = Qp(3)[]                                                       # needs sage.libs.ntl
+            sage: f = 1926*T^2 + 312*T + 387                                            # needs sage.libs.ntl
+            sage: f.factor()                                                            # needs sage.libs.ntl
             (3^2 + 2*3^3 + 2*3^4 + 3^5 + 2*3^6 + O(3^22)) * ((1 + O(3^19))*T + 2*3^-1 + 3 + 3^2 + 2*3^5 + 2*3^6 + 2*3^7 + 3^8 + 3^9 + 2*3^11 + 3^15 + 3^17 + O(3^19)) * ((1 + O(3^20))*T + 2*3 + 3^2 + 3^3 + 3^5 + 2*3^6 + 2*3^7 + 3^8 + 3^10 + 3^11 + 2*3^12 + 2*3^14 + 2*3^15 + 2*3^17 + 2*3^18 + O(3^20))
 
-        Check that :trac:`24065` is fixed::
+        Check that :issue:`24065` is fixed::
 
             sage: R = Zp(2, type='fixed-mod', prec=3)
             sage: P.<x> = R[]
@@ -260,35 +269,34 @@ class Polynomial_padic(Polynomial):
 
         INPUT:
 
-        * ``names`` -- name of the generator of the extension
+        - ``names`` -- name of the generator of the extension
 
-        * ``check_irreducible`` -- check whether the polynomial is irreducible
+        - ``check_irreducible`` -- check whether the polynomial is irreducible
 
-        * ``kwds`` -- see :meth:`sage.ring.padics.padic_generic.pAdicGeneric.extension`
+        - ``kwds`` -- see :meth:`sage.rings.padics.padic_generic.pAdicGeneric.extension`
 
         EXAMPLES::
 
-            sage: R.<x> = Qp(3,5,print_mode='digits')[]
-            sage: f = x^2 - 3
-            sage: f.root_field('x')
+            sage: R.<x> = Qp(3,5,print_mode='digits')[]                                 # needs sage.libs.ntl
+            sage: f = x^2 - 3                                                           # needs sage.libs.ntl
+            sage: f.root_field('x')                                                     # needs sage.libs.ntl
             3-adic Eisenstein Extension Field in x defined by x^2 - 3
 
         ::
 
-            sage: R.<x> = Qp(5,5,print_mode='digits')[]
-            sage: f = x^2 - 3
-            sage: f.root_field('x', print_mode='bars')
+            sage: R.<x> = Qp(5,5,print_mode='digits')[]                                 # needs sage.libs.ntl
+            sage: f = x^2 - 3                                                           # needs sage.libs.ntl
+            sage: f.root_field('x', print_mode='bars')                                  # needs sage.libs.ntl
             5-adic Unramified Extension Field in x defined by x^2 - 3
 
         ::
 
-            sage: R.<x> = Qp(11,5,print_mode='digits')[]
-            sage: f = x^2 - 3
-            sage: f.root_field('x', print_mode='bars')
+            sage: R.<x> = Qp(11,5,print_mode='digits')[]                                # needs sage.libs.ntl
+            sage: f = x^2 - 3                                                           # needs sage.libs.ntl
+            sage: f.root_field('x', print_mode='bars')                                  # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             ValueError: polynomial must be irreducible
-
         """
 
         if check_irreducible and not self.is_irreducible():
@@ -307,7 +315,7 @@ def _pari_padic_factorization_to_sage(G, R, leading_coeff):
 
     INPUT:
 
-    - ``G`` -- PARI factorization matrix, returned by ``factorpadic``.
+    - ``G`` -- PARI factorization matrix, returned by ``factorpadic``
 
     - ``R`` -- polynomial ring to be used as parent ring of the factors
 
@@ -315,10 +323,7 @@ def _pari_padic_factorization_to_sage(G, R, leading_coeff):
       was factored. This can belong to any ring which can be coerced
       into ``R.base_ring()``.
 
-    OUTPUT:
-
-    - A Sage :class:`Factorization`.
-
+    OUTPUT: a Sage :class:`Factorization`
     """
     B = R.base_ring()
     p = B.prime()

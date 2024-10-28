@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 r"""
 Graphics 3D object for representing and triangulating isosurfaces
 
@@ -96,7 +97,7 @@ DEFAULT_PLOT_POINTS = 40
 
 cdef double nan = float(RDF('NaN'))
 
-cdef inline bint marching_has_edge(double a, double b, double contour, double *f, bint *has_nan):
+cdef inline bint marching_has_edge(double a, double b, double contour, double *f, bint *has_nan) noexcept:
     if isnan(a) or isnan(b):
         has_nan[0] = True
         return False
@@ -110,10 +111,10 @@ cdef inline bint marching_has_edge(double a, double b, double contour, double *f
     return True
 
 # Returns 0 or 1
-cdef inline int marching_is_inside(double v, double contour):
+cdef inline int marching_is_inside(double v, double contour) noexcept:
     return isnan(v) or v < contour
 
-cdef void interpolate_point_c(point_c *result, double frac, point_c *inputs):
+cdef void interpolate_point_c(point_c *result, double frac, point_c *inputs) noexcept:
     result[0].x = inputs[0].x + frac*(inputs[1].x - inputs[0].x)
     result[0].y = inputs[0].y + frac*(inputs[1].y - inputs[0].y)
     result[0].z = inputs[0].z + frac*(inputs[1].z - inputs[0].z)
@@ -132,7 +133,7 @@ cdef class VertexInfo:
     # This point in "evaluation space"
     cdef point_c eval_pt
 
-    cdef void update_eval_pt(self, point_c *eval_min, point_c *eval_scale):
+    cdef void update_eval_pt(self, point_c *eval_min, point_c *eval_scale) noexcept:
         """
         Use eval_min and eval_scale to transform self.pt into evaluation space
         and store the result in self.eval_pt.
@@ -467,6 +468,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: cube_marcher.y_vertices.tolist()
             [[[<1.0, 0.5, 0.0>, None]], [[None, None]]]
             sage: cube_marcher.x_vertices.any() # This shouldn't affect the X vertices.
+            ...
         """
         (self.y_vertices, self.y_vertices_swapped) = \
             (self.y_vertices_swapped, self.y_vertices)
@@ -521,7 +523,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                     if not(self.color_function is None):
                         self.apply_color_func(&v.color, self.color_function,
                                               self.colormap, v)
-                    y_vertices[y,z] = v
+                    y_vertices[y,z] = <object>v
                 else:
                     y_vertices[y,z] = None
 
@@ -555,7 +557,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                     if not(self.color_function is None):
                         self.apply_color_func(&v.color, self.color_function,
                                               self.colormap, v)
-                    z_vertices[y,z] = v
+                    z_vertices[y,z] = <object>v
                 else:
                     z_vertices[y,z] = None
 
@@ -573,6 +575,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             sage: cube_marcher.x_vertices.tolist()
             [[None, None], [None, <1.5, 1.0, 1.0>]]
             sage: cube_marcher.y_vertices.any() or cube_marcher.z_vertices.any() # This shouldn't affect the Y or Z vertices.
+            ...
         """
         cdef bint has_prev = (_prev is not None)
         cdef bint has_next = (_next is not None)
@@ -630,11 +633,11 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                     if not(self.color_function is None):
                         self.apply_color_func(&v.color, self.color_function,
                                               self.colormap, v)
-                    x_vertices[y,z] = v
+                    x_vertices[y,z] = <object>v
                 else:
                     x_vertices[y,z] = None
 
-    cdef bint in_region(self, VertexInfo v):
+    cdef bint in_region(self, VertexInfo v) noexcept:
         return (self.region(v.eval_pt.x, v.eval_pt.y, v.eval_pt.z) > 0)
 
     cdef apply_point_func(self, point_c *pt, fn, VertexInfo v):
@@ -848,18 +851,18 @@ cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
     """
     INPUT:
 
-    -  ``f`` - a (fast!) callable function
+    - ``f`` -- a (fast!) callable function
 
-    -  ``xrange`` - a 2-tuple (x_min, x_max)
+    - ``xrange`` -- a 2-tuple (x_min, x_max)
 
-    -  ``yrange`` - a 2-tuple (y_min, y_may)
+    - ``yrange`` -- a 2-tuple (y_min, y_may)
 
-    -  ``zrange`` - a 2-tuple (z_min, z_maz)
+    - ``zrange`` -- a 2-tuple (z_min, z_maz)
 
-    -  ``plot_points`` - a triple of integers indicating the number of
-       function evaluations in each direction.
+    - ``plot_points`` -- a triple of integers indicating the number of
+      function evaluations in each direction
 
-    -  ``cube_marchers`` - a list of cube marchers, one for each contour.
+    - ``cube_marchers`` -- list of cube marchers, one for each contour
 
     OUTPUT:
 
@@ -944,7 +947,7 @@ cdef class ImplicitSurface(IndexFaceSet):
     cdef readonly tuple plot_points
 
     def __init__(self, f, xrange, yrange, zrange,
-                 contour=0, plot_points="automatic",
+                 contour=0, plot_points='automatic',
                  region=None, smooth=True, gradient=None,
                  **kwds):
         """
@@ -1196,7 +1199,6 @@ cdef class ImplicitSurface(IndexFaceSet):
             sage: len(G.vertex_list()) > 0, len(G.face_list()) > 0
             (True, True)
             sage: G.show() # This should be fast, since the mesh is already triangulated.
-
         """
         if self.fcount != 0 and not force:
             # The mesh is already triangulated

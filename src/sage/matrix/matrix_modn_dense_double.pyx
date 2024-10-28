@@ -47,7 +47,7 @@ include "matrix_modn_dense_template.pxi"
 
 cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
     r"""
-    Dense matrices over `\ZZ/n\ZZ` for `n < 94906266` using LinBox's ``Modular<double>``
+    Dense matrices over `\ZZ/n\ZZ` for `n < 94906266` using LinBox's ``Modular<double>``.
 
     These are matrices with integer entries mod ``n`` represented as
     floating-point numbers in a 64-bit word for use with LinBox routines.
@@ -61,7 +61,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
     def __cinit__(self):
         """
-        The Cython constructor
+        The Cython constructor.
 
         TESTS::
 
@@ -73,9 +73,9 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
         # note that INTEGER_MOD_INT32_LIMIT is ceil(sqrt(2^31-1)) < 94906266
         self._fits_int32 = ((<Matrix_modn_dense_template>self).p <= INTEGER_MOD_INT32_LIMIT)
 
-    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         r"""
-        Set the (i,j) entry of self to the int value.
+        Set the (i,j) entry of ``self`` to the int value.
 
         EXAMPLES::
 

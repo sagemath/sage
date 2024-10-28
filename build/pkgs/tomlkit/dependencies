@@ -1,4 +1,0 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN) poetry_core
-
-----------
-All lines of this file are ignored except the first.

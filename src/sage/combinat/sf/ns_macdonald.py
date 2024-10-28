@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Non-symmetric Macdonald Polynomials
 """
@@ -35,7 +36,7 @@ class LatticeDiagram(CombinatorialObject):
 
     def __getitem__(self, i):
         """
-        Return the `i^{th}` entry of ``self``.
+        Return the `i`-th entry of ``self``.
 
         Note that the indexing for lattice diagrams starts at `1`.
 
@@ -158,7 +159,7 @@ class LatticeDiagram(CombinatorialObject):
 
     def boxes_same_and_lower_right(self, ii, jj):
         """
-        Return a list of the boxes of ``self`` that are in row ``jj``
+        Return an iterator of the boxes of ``self`` that are in row ``jj``
         but not identical with ``(ii, jj)``, or lie in the row
         ``jj - 1`` (the row directly below ``jj``; this might be the
         basement) and strictly to the right of ``(ii, jj)``.
@@ -167,26 +168,23 @@ class LatticeDiagram(CombinatorialObject):
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
             sage: a = a.shape()
-            sage: a.boxes_same_and_lower_right(1,1)
+            sage: list(a.boxes_same_and_lower_right(1,1))
             [(2, 1), (3, 1), (6, 1), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0)]
-            sage: a.boxes_same_and_lower_right(1,2)
+            sage: list(a.boxes_same_and_lower_right(1,2))
             [(3, 2), (6, 2), (2, 1), (3, 1), (6, 1)]
-            sage: a.boxes_same_and_lower_right(3,3)
+            sage: list(a.boxes_same_and_lower_right(3,3))
             [(6, 2)]
-            sage: a.boxes_same_and_lower_right(2,3)
+            sage: list(a.boxes_same_and_lower_right(2,3))
             [(3, 3), (3, 2), (6, 2)]
         """
-        res = []
         # Add all of the boxes in the same row
         for i in range(1, len(self) + 1):
             if self[i] >= jj and i != ii:
-                res.append((i, jj))
+                yield (i, jj)
 
         for i in range(ii + 1, len(self) + 1):
             if self[i] >= jj - 1:
-                res.append((i, jj - 1))
-
-        return res
+                yield (i, jj - 1)
 
 
 class AugmentedLatticeDiagramFilling(CombinatorialObject):
@@ -442,7 +440,7 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
     def reading_word(self):
         """
         Return the reading word of ``self``, obtained by reading the boxes
-        entries of self from right to left, starting in the upper right.
+        entries of ``self`` from right to left, starting in the upper right.
 
         EXAMPLES::
 
@@ -533,8 +531,8 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         EXAMPLES::
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
-            sage: q,t = var('q,t')                                                      # optional - sage.symbolic
-            sage: a.coeff(q,t)                                                          # optional - sage.symbolic
+            sage: q,t = var('q,t')                                                      # needs sage.symbolic
+            sage: a.coeff(q,t)                                                          # needs sage.symbolic
             (t - 1)^4/((q^2*t^3 - 1)^2*(q*t^2 - 1)^2)
         """
         res = 1
@@ -554,8 +552,8 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         EXAMPLES::
 
             sage: a = AugmentedLatticeDiagramFilling([[1,6],[2],[3,4,2],[],[],[5,5]])
-            sage: q,t = var('q,t')                                                      # optional - sage.symbolic
-            sage: a.coeff_integral(q,t)                                                 # optional - sage.symbolic
+            sage: q,t = var('q,t')                                                      # needs sage.symbolic
+            sage: a.coeff_integral(q,t)                                                 # needs sage.symbolic
             (q^2*t^3 - 1)^2*(q*t^2 - 1)^2*(t - 1)^4
         """
         res = 1
@@ -806,15 +804,15 @@ def _check_muqt(mu, q, t, pi=None):
 
     ::
 
-        sage: q,t = var('q,t')                                                          # optional - sage.symbolic
-        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,None)                            # optional - sage.symbolic
+        sage: q,t = var('q,t')                                                          # needs sage.symbolic
+        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,None)                            # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: you must specify either both q and t or neither of them
 
     ::
 
-        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,2)                               # optional - sage.symbolic
+        sage: P, q, t, n, R, x = _check_muqt([0,0,1],q,2)                               # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: the parents of q and t must be the same

@@ -1,9 +1,11 @@
+# sage.doctest: needs sage.libs.flint
 r"""
 `q`-expansion of `j`-invariant
 """
 from .eis_series import eisenstein_series_qexp
 from .vm_basis import delta_qexp
 from sage.rings.rational_field import QQ
+
 
 def j_invariant_qexp(prec=10, K=QQ):
     r"""

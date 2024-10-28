@@ -15,7 +15,6 @@ AUTHORS:
   documentation below is based on Dokchitser's docs).
 
 - William Stein (2006-03-08): Sage interface
-
 """
 
 # ****************************************************************************
@@ -35,7 +34,6 @@ import string
 from sage.structure.sage_object import SageObject
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.integer import Integer
-from sage.misc.sage_eval import sage_eval
 from sage.misc.verbose import verbose
 import sage.interfaces.gp
 from sage.env import SAGE_EXTCODE
@@ -43,7 +41,7 @@ from sage.env import SAGE_EXTCODE
 
 class Dokchitser(SageObject):
     r"""
-    Dokchitser's `L`-functions Calculator
+    Dokchitser's `L`-functions Calculator.
 
     Create a Dokchitser `L`-series with
 
@@ -52,24 +50,24 @@ class Dokchitser(SageObject):
 
     where
 
-    - ``conductor`` -- integer, the conductor
+    - ``conductor`` -- integer; the conductor
 
     - ``gammaV`` -- list of Gamma-factor parameters, e.g. [0] for
-      Riemann zeta, [0,1] for ell.curves, (see examples).
+      Riemann zeta, [0,1] for ell.curves, (see examples)
 
     - ``weight`` -- positive real number, usually an integer e.g. 1 for
       Riemann zeta, 2 for `H^1` of curves/`\QQ`
 
     - ``eps`` -- complex number; sign in functional equation
 
-    - ``poles`` -- (default: []) list of points where `L^*(s)` has
+    - ``poles`` -- (default: ``[]``) list of points where `L^*(s)` has
       (simple) poles; only poles with `Re(s)>weight/2` should be
       included
 
     - ``residues`` -- vector of residues of `L^*(s)` in those poles or
-      set residues='automatic' (default value)
+      set ``residues='automatic'`` (default)
 
-    - ``prec`` -- integer (default: 53) number of *bits* of precision
+    - ``prec`` -- integer (default: 53); number of *bits* of precision
 
     RIEMANN ZETA FUNCTION:
 
@@ -233,7 +231,7 @@ class Dokchitser(SageObject):
     def gp(self):
         """
         Return the gp interpreter that is used to implement this Dokchitser
-        L-function.
+        `L`-function.
 
         EXAMPLES::
 
@@ -255,7 +253,7 @@ class Dokchitser(SageObject):
             template = string.Template(tf.read())
 
         from tempfile import NamedTemporaryFile
-        with NamedTemporaryFile(suffix=".gp", mode="w+t") as f:
+        with NamedTemporaryFile(suffix='.gp', mode='w+t') as f:
             f.write(template.substitute(i=str(self.__instance)))
             f.flush()
             self.__gp.read(f.name)
@@ -366,7 +364,7 @@ class Dokchitser(SageObject):
             4
 
         Verify that ``num_coeffs`` works with non-real spectral
-        parameters, e.g. for the L-function of the level 10 Maass form
+        parameters, e.g. for the `L`-function of the level 10 Maass form
         with eigenvalue 2.7341055592527126::
 
             sage: ev = 2.7341055592527126
@@ -389,21 +387,20 @@ class Dokchitser(SageObject):
 
         INPUT:
 
-        -  ``v`` -- list of complex numbers or string (pari function of k)
+        - ``v`` -- list of complex numbers or string (pari function of k)
 
-        -  ``cutoff`` -- real number = 1 (default: 1)
+        - ``cutoff`` -- real number (default: 1)
 
-        -  ``w`` -- list of complex numbers or string (pari function of k)
+        - ``w`` -- list of complex numbers or string (pari function of k)
 
-        -  ``pari_precode`` -- some code to execute in pari
-           before calling initLdata
+        - ``pari_precode`` -- some code to execute in pari
+          before calling initLdata
 
-        -  ``max_imaginary_part`` -- (default: 0): redefine if
-           you want to compute L(s) for s having large imaginary part,
+        - ``max_imaginary_part`` -- (default: 0) redefine if
+          you want to compute L(s) for s having large imaginary part
 
-        -  ``max_asymp_coeffs`` -- (default: 40): at most this
-           many terms are generated in asymptotic series for phi(t) and
-           G(s,t).
+        - ``max_asymp_coeffs`` -- (default: 40) at most this
+          many terms are generated in asymptotic series for phi(t) and G(s,t)
 
         EXAMPLES::
 
@@ -411,18 +408,18 @@ class Dokchitser(SageObject):
             sage: pari_precode = 'tau(n)=(5*sigma(n,3)+7*sigma(n,5))*n/12 - 35*sum(k=1,n-1,(6*k-4*(n-k))*sigma(k,3)*sigma(n-k,5))'
             sage: L.init_coeffs('tau(k)', pari_precode=pari_precode)
 
-        Evaluate the resulting L-function at a point, and compare with
-        the answer that one gets "by definition" (of L-function
+        Evaluate the resulting `L`-function at a point, and compare with
+        the answer that one gets "by definition" (of `L`-function
         attached to a modular form)::
 
             sage: L(14)
             0.998583063162746
             sage: a = delta_qexp(1000)
-            sage: sum(a[n]/float(n)^14 for n in range(1,1000))
-            0.9985830631627459
+            sage: sum(a[n]/float(n)^14 for n in reversed(range(1,1000)))
+            0.9985830631627461
 
         Illustrate that one can give a list of complex numbers for v
-        (see :trac:`10937`)::
+        (see :issue:`10937`)::
 
             sage: L2 = Dokchitser(conductor=1, gammaV=[0,1], weight=12, eps=1)
             sage: L2.init_coeffs(list(delta_qexp(1000))[1:])
@@ -432,7 +429,7 @@ class Dokchitser(SageObject):
         TESTS:
 
         Verify that setting the `w` parameter does not raise an error
-        (see :trac:`10937`).  Note that the meaning of `w` does not seem to
+        (see :issue:`10937`).  Note that the meaning of `w` does not seem to
         be documented anywhere in Dokchitser's package yet, so there is
         no claim that the example below is meaningful! ::
 
@@ -468,21 +465,17 @@ class Dokchitser(SageObject):
             raise TypeError("v (=%s) must be a list, tuple, or string" % v)
         else:
             CC = self.__CC
-            v = ','.join([CC(a)._pari_init_() for a in v])
+            v = ','.join(CC(a)._pari_init_() for a in v)
             self._gp_eval('Avec = [%s]' % v)
             if w is None:
                 self._gp_call_inst('initLdata', '"Avec[k]"', cutoff)
             else:
-                w = ','.join([CC(a)._pari_init_() for a in w])
+                w = ','.join(CC(a)._pari_init_() for a in w)
                 self._gp_eval('Bvec = [%s]' % w)
                 self._gp_call_inst('initLdata', '"Avec[k]"', cutoff,
                                    '"Bvec[k]"')
         self.__init = (v, cutoff, w, pari_precode, max_imaginary_part,
                        max_asymp_coeffs)
-
-    def __to_CC(self, s):
-        s = s.replace('.E', '.0E').replace(' ', '')
-        return self.__CC(sage_eval(s, locals={'I': self.__CC.gen(0)}))
 
     def _clear_value_cache(self):
         del self.__values
@@ -491,7 +484,7 @@ class Dokchitser(SageObject):
         r"""
         INPUT:
 
-        -  ``s`` -- complex number
+        - ``s`` -- complex number
 
         .. NOTE::
 
@@ -517,6 +510,7 @@ class Dokchitser(SageObject):
         except KeyError:
             pass
         z = self._gp_call_inst('L', s)
+        CC = self.__CC
         if 'pole' in z:
             print(z)
             raise ArithmeticError
@@ -527,10 +521,10 @@ class Dokchitser(SageObject):
             i = z.rfind('\n')
             msg = z[:i].replace('digits', 'decimal digits')
             verbose(msg, level=-1)
-            ans = self.__to_CC(z[i + 1:])
+            ans = CC(z[i + 1:])
             self.__values[s] = ans
             return ans
-        ans = self.__to_CC(z)
+        ans = CC(z)
         self.__values[s] = ans
         return ans
 
@@ -575,14 +569,11 @@ class Dokchitser(SageObject):
 
         INPUT:
 
-        -  ``a`` -- complex number (default: 0); point about
-           which to expand
+        - ``a`` -- complex number (default: 0); point about which to expand
 
-        -  ``k`` -- integer (default: 6), series is
-           `O(``var``^k)`
+        - ``k`` -- integer (default: 6); series is `O(``var``^k)`
 
-        -  ``var`` -- string (default: 'z'), variable of power
-           series
+        - ``var`` -- string (default: ``'z'``); variable of power series
 
         EXAMPLES::
 
@@ -602,13 +593,13 @@ class Dokchitser(SageObject):
             sage: L.taylor_series(1,3)
             ...e-82 + (...e-82)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
 
-        Check that :trac:`25402` is fixed::
+        Check that :issue:`25402` is fixed::
 
             sage: L = EllipticCurve("24a1").modular_form().lseries()
             sage: L.taylor_series(-1, 3)
             0.000000000000000 - 0.702565506265199*z + 0.638929001045535*z^2 + O(z^3)
 
-        Check that :trac:`25965` is fixed::
+        Check that :issue:`25965` is fixed::
 
             sage: L2 = EllipticCurve("37a1").modular_form().lseries(); L2
             L-series associated to the cusp form q - 2*q^2 - 3*q^3 + 2*q^4 - 2*q^5 + O(q^6)
@@ -646,26 +637,26 @@ class Dokchitser(SageObject):
         and also determines the residues if ``self.poles !=
         []`` and residues='automatic'.
 
-        More specifically: for `T>1` (default 1.2),
+        More specifically: for `T>1` (default: 1.2),
         ``self.check_functional_equation(T)`` should ideally
         return 0 (to the current precision).
 
-        -  if what this function returns does not look like 0 at all,
-           probably the functional equation is wrong (i.e. some of the
-           parameters gammaV, conductor etc., or the coefficients are wrong),
+        - if what this function returns does not look like 0 at all,
+          probably the functional equation is wrong (i.e. some of the
+          parameters gammaV, conductor etc., or the coefficients are wrong),
 
-        -  if checkfeq(T) is to be used, more coefficients have to be
-           generated (approximately T times more), e.g. call cflength(1.3),
-           initLdata("a(k)",1.3), checkfeq(1.3)
+        - if checkfeq(T) is to be used, more coefficients have to be
+          generated (approximately T times more), e.g. call cflength(1.3),
+          initLdata("a(k)",1.3), checkfeq(1.3)
 
-        -  T=1 always (!) returns 0, so T has to be away from 1
+        - T=1 always (!) returns 0, so T has to be away from 1
 
-        -  default value `T=1.2` seems to give a reasonable
-           balance
+        - default value `T=1.2` seems to give a reasonable
+          balance
 
-        -  if you don't have to verify the functional equation or the
-           L-values, call num_coeffs(1) and initLdata("a(k)",1), you need
-           slightly less coefficients.
+        - if you don't have to verify the functional equation or the
+          L-values, call num_coeffs(1) and initLdata("a(k)",1), you need
+          slightly less coefficients.
 
         EXAMPLES::
 
@@ -699,8 +690,8 @@ class Dokchitser(SageObject):
 
         INPUT:
 
-        -  ``coefgrow`` -- string that evaluates to a PARI
-           function of n that defines a coefgrow function.
+        - ``coefgrow`` -- string that evaluates to a PARI function of n that
+          defines a coefgrow function
 
         EXAMPLES::
 

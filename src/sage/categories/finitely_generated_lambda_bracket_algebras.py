@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Finitely Generated Lambda bracket Algebras
 
@@ -20,6 +21,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.lambda_bracket_algebras import LambdaBracketAlgebras
 
+
 class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
     """
     The category of finitely generated lambda bracket algebras.
@@ -27,7 +29,7 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
     EXAMPLES::
 
         sage: from sage.categories.lambda_bracket_algebras import LambdaBracketAlgebras
-        sage: LambdaBracketAlgebras(QQbar).FinitelyGenerated()                          # optional - sage.rings.number_field
+        sage: LambdaBracketAlgebras(QQbar).FinitelyGenerated()                          # needs sage.rings.number_field
         Category of finitely generated lambda bracket algebras over Algebraic Field
     """
     _base_category_class_and_axiom = (LambdaBracketAlgebras, "FinitelyGeneratedAsLambdaBracketAlgebra")
@@ -39,12 +41,12 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: Vir = lie_conformal_algebras.Virasoro(QQ)                         # optional - sage.combinat sage.modules
-                sage: Vir.ngens()                                                       # optional - sage.combinat sage.modules
+                sage: Vir = lie_conformal_algebras.Virasoro(QQ)                         # needs sage.combinat sage.modules
+                sage: Vir.ngens()                                                       # needs sage.combinat sage.modules
                 2
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A2')                       # optional - sage.combinat sage.modules
-                sage: V.ngens()                                                         # optional - sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A2')                       # needs sage.combinat sage.modules
+                sage: V.ngens()                                                         # needs sage.combinat sage.modules
                 9
             """
             return len(self.gens())
@@ -55,12 +57,13 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')                       # optional - sage.combinat sage.modules
-                sage: V.gens()                                                          # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')
+                sage: V.gens()
                 (B[alpha[1]], B[alphacheck[1]], B[-alpha[1]], B['K'])
-                sage: V.gen(0)                                                          # optional - sage.combinat sage.modules
+                sage: V.gen(0)
                 B[alpha[1]]
-                sage: V.1                                                               # optional - sage.combinat sage.modules
+                sage: V.1
                 B[alphacheck[1]]
             """
             return self.gens()[i]
@@ -74,11 +77,11 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1',                       # optional - sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1',                       # needs sage.combinat sage.modules
                 ....:                                   names=('e', 'h', 'f'))
-                sage: V.some_elements()                                                 # optional - sage.combinat sage.modules
+                sage: V.some_elements()                                                 # needs sage.combinat sage.modules
                 [e, h, f, K, ...]
-                sage: all(v.parent() is V for v in V.some_elements())                   # optional - sage.combinat sage.modules
+                sage: all(v.parent() is V for v in V.some_elements())                   # needs sage.combinat sage.modules
                 True
             """
             S = list(self.gens())
@@ -93,8 +96,8 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
         EXAMPLES::
 
-            sage: LieConformalAlgebras(QQbar).FinitelyGenerated().Graded()              # optional - sage.rings.number_field
-            Category of H-graded finitely generated lie conformal algebras
+            sage: LieConformalAlgebras(QQbar).FinitelyGenerated().Graded()              # needs sage.rings.number_field
+            Category of H-graded finitely generated Lie conformal algebras
              over Algebraic Field
         """
         def _repr_object_names(self):
@@ -103,7 +106,7 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()     # optional - sage.rings.number_field
+                sage: LieConformalAlgebras(QQbar).WithBasis().FinitelyGenerated().Graded()          # needs sage.rings.number_field
                 Category of H-graded finitely generated Lie conformal algebras with basis over Algebraic Field
             """
             return "H-graded {}".format(self.base_category()._repr_object_names())

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Interacts for the Sage Jupyter notebook
 
@@ -22,18 +22,6 @@ EXAMPLES::
       x: IntSlider(value=5, description='x', max=10)
     sage: f.widget.children
     (IntSlider(value=5, description='x', max=10), Output())
-
-.. ONLY:: html
-
-    .. JUPYTER-EXECUTE::
-        :hide-code:
-        :hide-output:
-
-        from sage.repl.ipython_kernel.interact import interact
-        @interact
-        def f(x=(0, 10)):
-            pass
-
 """
 
 # ****************************************************************************
@@ -46,16 +34,18 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from ipywidgets.widgets import SelectionSlider, ValueWidget, ToggleButtons
-from ipywidgets.widgets.interaction import interactive, signature
 from collections import OrderedDict
 from collections.abc import Iterable, Iterator
-from .widgets import EvalText, SageColorPicker
-from .widgets_sagenb import input_grid
-from sage.structure.element import parent
+
+from ipywidgets.widgets import SelectionSlider, ValueWidget, ToggleButtons
+from ipywidgets.widgets.interaction import interactive, signature
+
 import sage.rings.abc
+
 from sage.misc.lazy_import import lazy_import
-from sage.structure.element import Matrix
+from sage.repl.ipython_kernel.widgets import EvalText, SageColorPicker
+from sage.structure.element import Matrix, parent
+
 lazy_import("sage.plot.colors", "Color")
 
 
@@ -67,26 +57,16 @@ class sage_interactive(interactive):
     EXAMPLES::
 
         sage: from sage.repl.ipython_kernel.interact import sage_interactive
-        sage: def myfunc(x=10, y="hello", z=None): pass
+        sage: def myfunc(x=10, y='hello', z=None): pass
         sage: sage_interactive(myfunc, x=(0,100), z=["one", "two", "three"])
         ...Interactive function <function myfunc at ...> with 3 widgets
           x: IntSlider(value=10, description='x')
           y: Text(value='hello', description='y')
           z: Dropdown(description='z', options=('one', 'two', 'three'), value=None)
-
-    .. ONLY:: html
-
-        .. JUPYTER-EXECUTE::
-            :hide-code:
-            :hide-output:
-
-            from sage.repl.ipython_kernel.interact import sage_interactive
-            def myfunc(x=10, y="hello", z=None): pass
-            sage_interactive(myfunc, x=(0,100), z=["one", "two", "three"])
     """
     def __init__(self, *args, **kwds):
         """
-        See :class:`ipywidgets.widgets.interaction.interactive`
+        See :class:`ipywidgets.widgets.interaction.interactive`.
 
         TESTS::
 
@@ -182,18 +162,21 @@ class sage_interactive(interactive):
             sage: from sage.repl.ipython_kernel.interact import sage_interactive
             sage: sage_interactive.widget_from_single_value("sin(x)")
             ...Text(value='sin(x)')
-            sage: sage_interactive.widget_from_single_value(sin(x))
+            sage: sage_interactive.widget_from_single_value(sin(x))                     # needs sage.symbolic
             ...EvalText(value='sin(x)')
-            sage: from sage.plot.colors import Color
-            sage: sage_interactive.widget_from_single_value(matrix([[1, 2], [3, 4]]))
+            sage: sage_interactive.widget_from_single_value(matrix([[1, 2], [3, 4]]))   # needs sage.modules
             ...Grid(value=[[1, 2], [3, 4]], children=(Label(value=''), VBox(children=(EvalText(value='1', layout=Layout(max_width='5em')), EvalText(value='3', layout=Layout(max_width='5em')))), VBox(children=(EvalText(value='2', layout=Layout(max_width='5em')), EvalText(value='4', layout=Layout(max_width='5em'))))))
-            sage: sage_interactive.widget_from_single_value(Color('cornflowerblue'))
+            sage: from sage.plot.colors import Color                                    # needs sage.plot
+            sage: sage_interactive.widget_from_single_value(Color('cornflowerblue'))    # needs sage.plot
             ...SageColorPicker(value='#6495ed')
         """
         # Support Sage matrices and colors
         if isinstance(abbrev, Matrix):
+            from .widgets_sagenb import input_grid
+
             return input_grid(abbrev.nrows(), abbrev.ncols(),
                               default=abbrev.list(), to_value=abbrev.parent())
+
         if isinstance(abbrev, Color):
             return SageColorPicker(value=abbrev.html_color())
         # Get widget from IPython if possible
@@ -226,15 +209,15 @@ class sage_interactive(interactive):
             ...IntSlider(value=3, max=10)
             sage: sage_interactive.widget_from_tuple((2, [('one', 1), ('two', 2), ('three', 3)]))
             ...Dropdown(index=1, options=(('one', 1), ('two', 2), ('three', 3)), value=2)
-            sage: sage_interactive.widget_from_tuple( (sqrt(2), pi) )
+            sage: sage_interactive.widget_from_tuple( (sqrt(2), pi) )                   # needs sage.symbolic
             ...FloatSlider(value=2.277903107981444, max=3.141592653589793, min=1.4142135623730951)
 
         TESTS:
 
         Symbolic subrings::
 
-            sage: SCR = SR.subring(no_variables=True)
-            sage: sage_interactive.widget_from_tuple( (SCR(sqrt(2)), SCR(pi)) )
+            sage: SCR = SR.subring(no_variables=True)                                   # needs sage.symbolic
+            sage: sage_interactive.widget_from_tuple( (SCR(sqrt(2)), SCR(pi)) )         # needs sage.symbolic
             ...FloatSlider(value=2.277903107981444, max=3.141592653589793, min=1.4142135623730951)
         """
         # Support (description, abbrev)

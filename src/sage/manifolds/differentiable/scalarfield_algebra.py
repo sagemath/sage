@@ -18,7 +18,6 @@ REFERENCES:
 - [KN1963]_
 - [Lee2013]_
 - [ONe1983]_
-
 """
 
 #******************************************************************************
@@ -35,6 +34,7 @@ from sage.rings.infinity import infinity
 from sage.symbolic.ring import SymbolicRing
 from sage.manifolds.scalarfield_algebra import ScalarFieldAlgebra
 from sage.manifolds.differentiable.scalarfield import DiffScalarField
+
 
 class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
     r"""
@@ -368,7 +368,6 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
     It is passed also for `C^k(W)`::
 
         sage: TestSuite(CW).run()
-
     """
 
     Element = DiffScalarField
@@ -389,7 +388,6 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             sage: type(CM).__base__
             <class 'sage.manifolds.differentiable.scalarfield_algebra.DiffScalarFieldAlgebra'>
             sage: TestSuite(CM).run()
-
         """
         ScalarFieldAlgebra.__init__(self, domain)
 
@@ -397,7 +395,7 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
 
     def _coerce_map_from_(self, other):
         r"""
-        Determine whether coercion to self exists from other parent
+        Determine whether coercion to ``self`` exists from other parent.
 
         TESTS::
 
@@ -418,7 +416,6 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             False
             sage: CU._coerce_map_from_(CM)
             True
-
         """
         from sage.manifolds.chart_func import ChartFunctionRing
 
@@ -448,7 +445,6 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             'Algebra of differentiable scalar fields on the 2-dimensional differentiable manifold M'
             sage: repr(CM)  # indirect doctest
             'Algebra of differentiable scalar fields on the 2-dimensional differentiable manifold M'
-
         """
         return "Algebra of differentiable scalar fields on " + \
                "the {}".format(self._domain)
@@ -465,12 +461,11 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
             'C^{\\infty}\\left(M\\right)'
             sage: latex(CM)  # indirect doctest
             C^{\infty}\left(M\right)
-
         """
         degree = self._domain.diff_degree()
         if degree == infinity:
             latex_degree = r"\infty"  # to skip the "+" in latex(infinity)
         else:
             latex_degree = "{}".format(degree)
-        return r"C^{" + latex_degree + r"}\left("  + self._domain._latex_() + \
+        return r"C^{" + latex_degree + r"}\left(" + self._domain._latex_() + \
                r"\right)"

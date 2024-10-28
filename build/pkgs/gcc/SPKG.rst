@@ -6,7 +6,7 @@ Description
 
 This package represents the required C and C++ compilers.
 
-- GCC (GNU Compiler Collection) versions 8.x to 12.x are supported.
+- GCC (GNU Compiler Collection) versions 8.x (>= 8.4.0) to 13.x are supported.
 
 - Clang (LLVM) is also supported.
 
@@ -25,7 +25,7 @@ need to run::
 Vendor and versions of the C and C++ compilers should match.
 
 Users of older Linux distributions (in particular, ``ubuntu-xenial``
-or older, ``debian-stretch`` or older, ``linuxmint-18`` or older)
+or older, ``debian-buster`` or older, ``linuxmint-18`` or older)
 should upgrade their systems before attempting to install Sage from
 source.  Users of ``ubuntu-bionic``, ``linuxmint-19.x``, and
 ``opensuse-15.x`` can install a versioned ``gcc`` system package
@@ -61,9 +61,9 @@ you need a recent version of Xcode.
 (Installing the
 ``gfortran`` SPKG becomes a no-op in this case.)
 
-Building Sage from source on Apple Silicon (M1/M2) requires the use of
-Apple's Command Line Tools, and those tools include a suitable
-compiler. Sage's ``gcc`` SPKG is not suitable for M1/M2; building it
+Building Sage from source on Apple Silicon (M1, M2, M3, M4; arm64) requires
+the use of Apple's Command Line Tools, and those tools include a suitable
+compiler. Sage's ``gcc`` SPKG is not suitable for Apple Silicon; building it
 will likely fail.
 
 License

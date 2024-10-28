@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Regular polygons in the upper half model for hyperbolic plane
 
@@ -16,16 +17,18 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.matrix.constructor import matrix
+from sage.misc.decorators import options, rename_keyword
+from sage.misc.functional import is_odd
+from sage.misc.lazy_import import lazy_import
 from sage.plot.hyperbolic_polygon import HyperbolicPolygon
-from sage.plot.all import Graphics
+from sage.plot.plot import Graphics
 from sage.rings.cc import CC
 from sage.rings.integer import Integer
-from sage.misc.decorators import options, rename_keyword
-from sage.symbolic.constants import pi, e
-from sage.functions.hyperbolic import arccosh
-from sage.functions.trig import sin, cos, cot
-from sage.misc.functional import is_odd
-from sage.matrix.constructor import matrix
+
+lazy_import("sage.functions.hyperbolic", "arccosh")
+lazy_import("sage.functions.trig", ["sin", "cos", "cot"])
+lazy_import("sage.symbolic.constants", ["pi", "e"])
 
 
 class HyperbolicRegularPolygon(HyperbolicPolygon):
@@ -41,7 +44,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
 
     - ``i_angle`` -- interior angle of the polygon
 
-    - ``center``-- center point as a complex number of the polygon
+    - ``center`` -- center point as a complex number of the polygon
 
     EXAMPLES:
 
@@ -58,7 +61,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
 
         A(\mathcal{P}) = \pi(s-2) - s \cdot \alpha > 0,
 
-    where `s` is ``sides`` and `\alpha` is ``i_angle`. This raises an error if
+    where `s` is ``sides`` and `\alpha` is ``i_angle``. This raises an error if
     the ``i_angle`` is less than the minimum to generate a compact polygon::
 
         sage: from sage.plot.hyperbolic_regular_polygon import HyperbolicRegularPolygon
@@ -109,14 +112,14 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
         """
         self.center = CC(center)
         if self.center.imag() <= 0:
-            raise ValueError("center: %s is not a valid point in the upper half plane model of the hyperbolic plane"%(self.center))
+            raise ValueError("center: %s is not a valid point in the upper half plane model of the hyperbolic plane" % (self.center))
         if sides < 3:
             raise ValueError("degenerated polygons (sides<=2) are not supported")
         if i_angle <= 0 or i_angle >= pi:
-            raise ValueError("interior angle %s must be in (0, pi) interval"%(i_angle))
+            raise ValueError("interior angle %s must be in (0, pi) interval" % (i_angle))
         if pi*(sides-2) - sides*i_angle <= 0:
             raise ValueError("there exists no hyperbolic regular compact polygon,"
-                             " for sides=%s the interior angle must be less than %s"%(sides, pi * (sides-2) / sides))
+                             " for sides={} the interior angle must be less than {}".format(sides, pi * (sides-2) / sides))
         self.sides = sides
         self.i_angle = i_angle
         beta = 2 * pi / self.sides # compute the rotation angle to be used ahead
@@ -150,7 +153,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
             new_z_k = self._i_rotation(z_k[-1], beta).n(digits=8)
             z_k = z_k + [new_z_k]
             d_z_k = d_z_k + [new_z_k * scale + h_disp]
-            r_z_k=[-(new_z_k).conjugate() * scale + h_disp] + r_z_k
+            r_z_k = [-(new_z_k).conjugate() * scale + h_disp] + r_z_k
         if is_odd(self.sides):
             HyperbolicPolygon.__init__(self, d_z_k + r_z_k, "UHP", options)
         else:
@@ -167,8 +170,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
             sage: HyperbolicRegularPolygon(5,pi/2,I, {})
             Hyperbolic regular polygon (sides=5, i_angle=1/2*pi, center=1.00000000000000*I)
         """
-        return ("Hyperbolic regular polygon (sides=%s, i_angle=%s, center=%s)"
-                % (self.sides, self.i_angle, self.center))
+        return ("Hyperbolic regular polygon (sides={}, i_angle={}, center={})".format(self.sides, self.i_angle, self.center))
 
     def _i_rotation(self, z, alpha):
         r"""
@@ -177,14 +179,12 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
 
         INPUT:
 
-        - ``z``-- point in the upper complex halfplane to which
+        - ``z`` -- point in the upper complex halfplane to which
           apply the isometry
 
-        - ``alpha``-- angle of rotation (radians, counterclockwise)
+        - ``alpha`` -- angle of rotation (radians, counterclockwise)
 
-        OUTPUT:
-
-        - rotated point in the upper complex halfplane
+        OUTPUT: rotated point in the upper complex halfplane
 
         TESTS::
 
@@ -199,8 +199,9 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
         G = matrix([[_c, _s], [-_s, _c]])
         return (G[0][0] * z + G[0][1]) / (G[1][0] * z + G[1][1])
 
+
 @rename_keyword(color='rgbcolor')
-@options(alpha=1, fill=False, thickness=1, rgbcolor="blue", zorder=2,
+@options(alpha=1, fill=False, thickness=1, rgbcolor='blue', zorder=2,
          linestyle='solid')
 def hyperbolic_regular_polygon(sides, i_angle, center=CC(0,1), **options):
     r"""
@@ -216,18 +217,18 @@ def hyperbolic_regular_polygon(sides, i_angle, center=CC(0,1), **options):
 
     - ``i_angle`` -- interior angle of the polygon
 
-    - ``center``  -- (default: `i`) hyperbolic center point
+    - ``center`` -- (default: `i`) hyperbolic center point
       (complex number) of the polygon
 
     OPTIONS:
 
-    - ``alpha`` -- default: 1
+    - ``alpha`` -- (default: 1)
 
-    - ``fill`` -- default: ``False``
+    - ``fill`` -- (default: ``False``)
 
-    - ``thickness`` -- default: 1
+    - ``thickness`` -- (default: 1)
 
-    - ``rgbcolor`` -- default: ``'blue'``
+    - ``rgbcolor`` -- (default: ``'blue'``)
 
     - ``linestyle`` -- (default: ``'solid'``) the style of the line,
       which can be one of the following:
@@ -268,7 +269,7 @@ def hyperbolic_regular_polygon(sides, i_angle, center=CC(0,1), **options):
 
         A(\mathcal{P}) = \pi(s-2) - s \cdot \alpha > 0,
 
-    where `s` is ``sides`` and `\alpha` is ``i_angle`. This raises an error if
+    where `s` is ``sides`` and `\alpha` is ``i_angle``. This raises an error if
     the ``i_angle`` is less than the minimum to generate a compact polygon::
 
         sage: hyperbolic_regular_polygon(4, pi/2)

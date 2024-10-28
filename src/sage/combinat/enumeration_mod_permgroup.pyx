@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Tools for enumeration modulo the action of a permutation group
 """
@@ -14,12 +15,12 @@ from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 
 cpdef list all_children(ClonableIntArray v, int max_part):
     r"""
-    Returns all the children of an integer vector (:class:`~sage.structure.list_clone.ClonableIntArray`)
+    Return all the children of an integer vector (:class:`~sage.structure.list_clone.ClonableIntArray`)
     ``v`` in the tree of enumeration by lexicographic order. The children of
     an integer vector ``v`` whose entries have the sum `n` are all integer
     vectors of sum `n+1` which follow ``v`` in the lexicographic order.
 
-    That means this function adds `1` on the last non zero entries and the
+    That means this function adds `1` on the last nonzero entries and the
     following ones. For an integer vector `v` such that
 
     .. MATH::
@@ -56,7 +57,7 @@ cpdef list all_children(ClonableIntArray v, int max_part):
             all_children.append(child)
     return all_children
 
-cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step):
+cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step) noexcept:
     r"""
     Partial comparison of the two lists according the lexicographic
     order. It compares the ``step``-th first entries.
@@ -85,13 +86,14 @@ cpdef int lex_cmp_partial(ClonableIntArray v1, ClonableIntArray v2, int step):
             return -1
     return 0
 
-cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2):
+cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2) noexcept:
     """
     Lexicographic comparison of :class:`~sage.structure.list_clone.ClonableIntArray`.
 
     INPUT:
 
-    Two instances `v_1, v_2` of :class:`~sage.structure.list_clone.ClonableIntArray`
+    - ``v1``, ``v2`` -- two instances of
+      :class:`~sage.structure.list_clone.ClonableIntArray`
 
     OUTPUT:
 
@@ -117,7 +119,6 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2):
         -1
         sage: lex_cmp(v3, v1)
         1
-
     """
     cdef int i
     cdef int step = min(v1._len,v2._len)
@@ -138,7 +139,7 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2):
 
 cpdef bint is_canonical(list sgs, ClonableIntArray v) except -1:
     r"""
-    Returns ``True`` if the integer vector `v` is maximal with respect to
+    Return ``True`` if the integer vector `v` is maximal with respect to
     the lexicographic order in its orbit under the action of the
     permutation group whose strong generating system is ``sgs``. Such
     vectors are said to be canonical.
@@ -185,7 +186,7 @@ cpdef bint is_canonical(list sgs, ClonableIntArray v) except -1:
 
 cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIntArray v):
     r"""
-    Returns the maximal vector for the lexicographic order living in
+    Return the maximal vector for the lexicographic order living in
     the orbit of `v` under the action of the permutation group whose
     strong generating system is ``sgs``. The maximal vector is also
     called "canonical". Hence, this method returns the canonical
@@ -231,7 +232,7 @@ cpdef ClonableIntArray canonical_representative_of_orbit_of(list sgs, ClonableIn
 
 cpdef list canonical_children(list sgs, ClonableIntArray v, int max_part):
     r"""
-    Returns the canonical children of the integer vector ``v``. This
+    Return the canonical children of the integer vector ``v``. This
     function computes all children of the integer vector ``v`` via the
     function :func:`all_children` and returns from this list only
     these which are canonicals identified via the function
@@ -252,7 +253,7 @@ cpdef list canonical_children(list sgs, ClonableIntArray v, int max_part):
 
 cpdef set orbit(list sgs, ClonableIntArray v):
     r"""
-    Returns the orbit of the integer vector ``v`` under the action of the
+    Return the orbit of the integer vector ``v`` under the action of the
     permutation group whose strong generating system is ``sgs``.
 
     NOTE:

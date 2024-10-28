@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
 Graftal Lace Cellular Automata
 
@@ -35,7 +34,7 @@ class GraftalLaceCellularAutomata(SageObject):
 
     INPUT:
 
-    - ``rule`` -- a list of length 8 with integer entries `0 \leq x < 8`
+    - ``rule`` -- list of length 8 with integer entries `0 \leq x < 8`
 
     EXAMPLES::
 
@@ -67,7 +66,7 @@ class GraftalLaceCellularAutomata(SageObject):
 
         sage: G = cellular_automata.GraftalLace([2,0,3,3,6,0,2,7])
         sage: G.evolve(20)
-        sage: G.plot()
+        sage: G.plot()                                                                  # needs sage.plot
         Graphics object consisting of 842 graphics primitives
 
     .. PLOT::
@@ -106,7 +105,6 @@ class GraftalLaceCellularAutomata(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: invalid rule
-
         """
         if len(rule) != 8 or any(x not in range(8) for x in rule):
             raise ValueError("invalid rule")
@@ -365,24 +363,24 @@ class GraftalLaceCellularAutomata(SageObject):
             number = len(self._states)
 
         space = len(self._states[:number]) * 2 - 1
-        ret = UnicodeArt([u' '*space + u'◾'])
+        ret = UnicodeArt([' '*space + '◾'])
         space += 1
         for i,state in enumerate(self._states[:number]):
-            temp = u' '*(space-2)
-            last = u' '
+            temp = ' '*(space-2)
+            last = ' '
             for x in state:
                 if x & 0x4:
-                    if last == u'╱':
-                        temp += u'╳'
+                    if last == '╱':
+                        temp += '╳'
                     else:
-                        temp += u'╲'
+                        temp += '╲'
                 else:
                     temp += last
-                temp += u'│' if x & 0x2 else ' '
-                last = u'╱' if x & 0x1 else ' '
+                temp += '│' if x & 0x2 else ' '
+                last = '╱' if x & 0x1 else ' '
             ret *= UnicodeArt([temp + last])
             space -= 1
-            ret *= UnicodeArt([u' '*space + u' '.join(u'◾' for dummy in range(2*i+1))])
+            ret *= UnicodeArt([' '*space + ' '.join('◾' for dummy in range(2*i+1))])
             space -= 1
         return ret
 
@@ -398,7 +396,7 @@ class GraftalLaceCellularAutomata(SageObject):
 
             sage: G = cellular_automata.GraftalLace([5,1,2,5,4,5,5,0])
             sage: G.evolve(20)
-            sage: G.plot()
+            sage: G.plot()                                                              # needs sage.plot
             Graphics object consisting of 865 graphics primitives
         """
         if number is None:

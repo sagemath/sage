@@ -1,0 +1,7 @@
+# 1.8 is known good version.
+# Per https://docs.scipy.org/doc/scipy/dev/core-dev/index.html#version-numbering
+# and https://docs.scipy.org/doc/scipy/dev/core-dev/index.html#deprecations,
+# deprecations cannot be introduced in micro releases.
+# SciPy devs wait "at least 6 months", "in practice two (minor) releases"
+# from deprecation to removal of a feature.
+scipy >=1.5

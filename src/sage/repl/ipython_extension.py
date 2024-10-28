@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Sage's IPython Extension
 
@@ -70,17 +71,18 @@ from sage.env import SAGE_IMPORTALL, SAGE_STARTUP_FILE
 from sage.misc.lazy_import import LazyImport
 from sage.misc.misc import run_once
 
+
 @magics_class
 class SageMagics(Magics):
 
     @line_magic
     def crun(self, s):
         r"""
-        Profile C function calls
+        Profile C function calls.
 
         INPUT:
 
-        - ``s`` -- string. Sage command to profile.
+        - ``s`` -- string; Sage command to profile
 
         EXAMPLES::
 
@@ -103,7 +105,7 @@ class SageMagics(Magics):
         This is designed to be used from the command line as
         ``%runfile /path/to/file``.
 
-        - ``s`` -- string. The file to be loaded.
+        - ``s`` -- string; the file to be loaded
 
         EXAMPLES::
 
@@ -136,7 +138,7 @@ class SageMagics(Magics):
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with NTF(mode="w+t", suffix=".py", delete=False) as f:
+            sage: with NTF(mode='w+t', suffix='.py', delete=False) as f:
             ....:     _ = f.write('a = 2\n')
             sage: shell.run_cell('%attach ' + f.name)
             sage: shell.run_cell('a')
@@ -168,7 +170,7 @@ class SageMagics(Magics):
 
         - ``args`` -- string. The file to be interactively loaded
 
-        .. note::
+        .. NOTE::
 
             Currently, this cannot be completely doctested as it
             relies on :func:`raw_input`.
@@ -221,8 +223,8 @@ class SageMagics(Magics):
         That means you do not have to use :func:`ascii_art` to get an ASCII art
         output::
 
-            sage: shell.run_cell("i = var('i')")
-            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')
+            sage: shell.run_cell("i = var('i')")                                        # needs sage.symbolic
+            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # needs sage.symbolic
                  10       9       8       7       6       5       4      3      2
             100*x   + 81*x  + 64*x  + 49*x  + 36*x  + 25*x  + 16*x  + 9*x  + 4*x  + x
 
@@ -230,14 +232,14 @@ class SageMagics(Magics):
 
             sage: shell.run_cell('%display text plain')
             sage: shell.run_cell('%display plain')        # shortcut for "text plain"
-            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')
+            sage: shell.run_cell('sum(i^2*x^i, i, 0, 10)')                              # needs sage.symbolic
             100*x^10 + 81*x^9 + 64*x^8 + 49*x^7 + 36*x^6 + 25*x^5 + 16*x^4 + 9*x^3 + 4*x^2 + x
 
         Sometime you could have to use a special output width and you
         could specify it::
 
             sage: shell.run_cell('%display ascii_art')
-            sage: shell.run_cell('StandardTableaux(4).list()')
+            sage: shell.run_cell('StandardTableaux(4).list()')                          # needs sage.combinat
             [
             [                                                                  1  4    1  3
             [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
@@ -248,7 +250,7 @@ class SageMagics(Magics):
                3       3 ]
                4   ,   4 ]
             sage: shell.run_cell('%display ascii_art 50')
-            sage: shell.run_cell('StandardTableaux(4).list()')
+            sage: shell.run_cell('StandardTableaux(4).list()')                          # needs sage.combinat
             [
             [
             [                 1  3  4    1  2  4    1  2  3
@@ -333,31 +335,30 @@ class SageMagics(Magics):
     @cell_magic
     def cython(self, line, cell):
         """
-        Cython cell magic
+        Cython cell magic.
 
         This is syntactic sugar on the
         :func:`~sage.misc.cython.cython_compile` function.
 
         INPUT:
 
-        - ``line`` -- ignored.
+        - ``line`` -- ignored
 
-        - ``cell`` -- string. The Cython source code to process.
+        - ``cell`` -- string; the Cython source code to process
 
-        OUTPUT:
-
-        None. The Cython code is compiled and loaded.
+        OUTPUT: none; the Cython code is compiled and loaded
 
         EXAMPLES::
 
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
-            sage: shell.run_cell('''
+            sage: shell.run_cell(                                                       # needs sage.misc.cython
+            ....: '''
             ....: %%cython
             ....: def f():
             ....:     print('test')
             ....: ''')
-            sage: f()
+            sage: f()                                                                   # needs sage.misc.cython
             test
         """
         from sage.misc.cython import cython_compile
@@ -373,16 +374,15 @@ class SageMagics(Magics):
 
         INPUT:
 
-        - ``line`` -- ignored.
+        - ``line`` -- ignored
 
-        - ``cell`` -- string. The Cython source code to process.
+        - ``cell`` -- string; the Cython source code to process
 
-        OUTPUT:
-
-        None. The Fortran code is compiled and loaded.
+        OUTPUT: none; the Fortran code is compiled and loaded
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: from sage.repl.interpreter import get_test_shell
             sage: shell = get_test_shell()
             sage: shell.run_cell('''
@@ -418,7 +418,7 @@ class SageMagics(Magics):
         return fortran(cell)
 
 
-class SageCustomizations():
+class SageCustomizations:
 
     def __init__(self, shell=None):
         """
@@ -485,9 +485,9 @@ class SageCustomizations():
         Run Sage's initial startup file.
         """
         try:
-            with open(SAGE_STARTUP_FILE, 'r') as f:
+            with open(SAGE_STARTUP_FILE) as f:
                 self.shell.run_cell(f.read(), store_history=False)
-        except IOError:
+        except OSError:
             pass
 
     def init_inspector(self):
@@ -507,7 +507,7 @@ class SageCustomizations():
 
         TESTS:
 
-        Check that :trac:`31951` is fixed::
+        Check that :issue:`31951` is fixed::
 
              sage: from IPython import get_ipython
              sage: ip = get_ipython()

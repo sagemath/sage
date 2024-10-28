@@ -23,7 +23,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson"):
+def mass__by_Siegel_densities(self, odd_algorithm='Pall', even_algorithm='Watson'):
     """
     Return the mass of transformations (det 1 and -1).
 
@@ -33,9 +33,10 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
 
     INPUT:
 
-    - ``odd_algorithm`` -- algorithm to be used when `p>2`; ``"Pall"`` (only one choice for now)
-    - ``even_algorithm`` -- algorithm to be used when `p=2`;
-      either ``"Kitaoka"`` or ``"Watson"`` (the default)
+    - ``odd_algorithm`` -- algorithm to be used when `p>2`; ``'Pall'`` (only
+      one choice for now)
+    - ``even_algorithm`` -- algorithm to be used when `p=2`; either
+      ``'Kitaoka'`` or ``'Watson'`` (the default)
 
     REFERENCES:
 
@@ -47,17 +48,17 @@ def mass__by_Siegel_densities(self, odd_algorithm="Pall", even_algorithm="Watson
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1,1])
-        sage: m = Q.mass__by_Siegel_densities(); m                                  # optional - sage.symbolic
+        sage: m = Q.mass__by_Siegel_densities(); m                                      # needs sage.symbolic
         1/384
-        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)                             # optional - sage.symbolic
+        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)                                 # needs sage.symbolic
         0
 
     ::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: m = Q.mass__by_Siegel_densities(); m                                  # optional - sage.symbolic
+        sage: m = Q.mass__by_Siegel_densities(); m                                      # needs sage.symbolic
         1/48
-        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)                             # optional - sage.symbolic
+        sage: m - (2^Q.dim() * factorial(Q.dim()))^(-1)                                 # needs sage.symbolic
         0
     """
     from sage.symbolic.constants import pi
@@ -126,7 +127,7 @@ def Pall_mass_density_at_odd_prime(self, p):
 
     - ``p`` -- a prime number > 2
 
-    OUTPUT: a rational number.
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -181,7 +182,7 @@ def Watson_mass_at_2(self):
     EXAMPLES::
 
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
-        sage: Q.Watson_mass_at_2()  # WARNING:  WE NEED TO CHECK THIS CAREFULLY!    # optional - sage.symbolic
+        sage: Q.Watson_mass_at_2()  # WARNING:  WE NEED TO CHECK THIS CAREFULLY!        # needs sage.symbolic
         384
     """
     from sage.functions.all import sgn
@@ -197,8 +198,8 @@ def Watson_mass_at_2(self):
     s_max = max(scale_list)
 
     # Step 1: Compute dictionaries of the diagonal block and 2x2 block for each scale
-    diag_dict = dict((i, Null_Form) for i in range(s_min - 2, s_max + 4))     # Initialize with the zero form
-    dim2_dict = dict((i, Null_Form) for i in range(s_min, s_max + 4))       # Initialize with the zero form
+    diag_dict = {i: Null_Form for i in range(s_min - 2, s_max + 4)}     # Initialize with the zero form
+    dim2_dict = {i: Null_Form for i in range(s_min, s_max + 4)}       # Initialize with the zero form
     for s, L in Jordan_Blocks:
         i = 0
         while i < L.dim() - 1 and L[i, i + 1] == 0:      # Find where the 2x2 blocks start
@@ -210,8 +211,8 @@ def Watson_mass_at_2(self):
             diag_dict[s] = L
 
     # Step 2: Compute three dictionaries of invariants (for n_j, m_j, nu_j)
-    n_dict = dict((j, 0) for j in range(s_min + 1, s_max + 2))
-    m_dict = dict((j, 0) for j in range(s_min, s_max + 4))
+    n_dict = {j: 0 for j in range(s_min + 1, s_max + 2)}
+    m_dict = {j: 0 for j in range(s_min, s_max + 4)}
     for s, L in Jordan_Blocks:
         n_dict[s + 1] = L.dim()
         if diag_dict[s].dim() == 0:
@@ -219,8 +220,8 @@ def Watson_mass_at_2(self):
         else:
             m_dict[s + 1] = ZZ(L.dim() - 1) // ZZ(2)
 
-    nu_dict = dict((j, n_dict[j + 1] - 2 * m_dict[j + 1])
-                   for j in range(s_min, s_max + 1))
+    nu_dict = {j: n_dict[j + 1] - 2 * m_dict[j + 1]
+               for j in range(s_min, s_max + 1)}
     nu_dict[s_max + 1] = 0
 
     # Step 3: Compute the e_j dictionary
@@ -267,7 +268,6 @@ def Kitaoka_mass_at_2(self):
         sage: Q = DiagonalQuadraticForm(ZZ, [1,1,1])
         sage: Q.Kitaoka_mass_at_2()   # WARNING:  WE NEED TO CHECK THIS CAREFULLY!
         1/2
-
     """
     # Make a 0-dim'l quadratic form (for initialization purposes)
     Null_Form = deepcopy(self)
@@ -280,8 +280,8 @@ def Kitaoka_mass_at_2(self):
     s_max = max(scale_list)
 
     # Step 1: Compute dictionaries of the diagonal block and 2x2 block for each scale
-    diag_dict = dict((i, Null_Form) for i in range(s_min - 2, s_max + 4))   # Initialize with the zero form
-    dim2_dict = dict((i, Null_Form) for i in range(s_min, s_max + 4))       # Initialize with the zero form
+    diag_dict = {i: Null_Form for i in range(s_min - 2, s_max + 4)}   # Initialize with the zero form
+    dim2_dict = {i: Null_Form for i in range(s_min, s_max + 4)}       # Initialize with the zero form
     for s, L in Jordan_Blocks:
         i = 0
         while i < L.dim() - 1 and L[i, i + 1] == 0:      # Find where the 2x2 blocks start
@@ -352,7 +352,7 @@ def mass_at_two_by_counting_mod_power(self, k):
 
     INPUT:
 
-    - ``k`` -- an integer `\geq 1`
+    - ``k`` -- integer `\geq 1`
 
     OUTPUT: a rational number
 

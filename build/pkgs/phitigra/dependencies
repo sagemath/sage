@@ -1,4 +1,4 @@
-$(PYTHON) ipywidgets pillow numpy | $(PYTHON_TOOLCHAIN)
+ ipywidgets pillow numpy | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 These dependencies include the install-requires of ipycanvas.
 ----------

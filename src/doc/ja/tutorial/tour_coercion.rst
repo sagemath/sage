@@ -99,7 +99,9 @@ Sageのクラス階層と圏の階層構造にはそれなりに類似が見ら�
     sage: Rings()
     Category of rings
     sage: ZZ.category()
-    Join of Category of euclidean domains
+    Join of Category of Dedekind domains
+        and Category of euclidean domains
+        and Category of noetherian rings
         and Category of infinite enumerated sets
         and Category of metric spaces
     sage: ZZ.category().is_subcategory(Rings())
@@ -122,7 +124,6 @@ Sageにおけるペアレント構造は，Pythonオブジェクトとして唯�
 
     sage: RR['x','y'] is RR['x','y']
     True
-
 
 
 型とペアレント
@@ -195,7 +196,6 @@ Sageにも *型変換* と *型強制* の考えは取り込まれている．
 * 環 ``R1`` の元 ``r1`` が何とか他の環 ``R2`` の元と見なしうるなら， ``r1`` と ``R2`` の任意の元に対する全ての算術演算が許される．単位元は全ての体と多くの環に存在し，全て等価と見なしうる．
 
 と考える立場もありうる．
-
 
 
 Sageが宗とするのは歩み寄りだ．

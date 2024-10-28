@@ -9,10 +9,9 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .data_structures cimport *
-
+from sage.groups.perm_gps.partn_ref.data_structures cimport *
 
 # name of the three functions to customize
-cdef int refine_list(PartitionStack *, void *, int *, int)
-cdef int compare_lists(int *, int *, void *, void *, int)
-cdef bint all_list_children_are_equivalent(PartitionStack *, void *)
+cdef int refine_list(PartitionStack *, void *, int *, int) noexcept
+cdef int compare_lists(int *, int *, void *, void *, int) noexcept
+cdef bint all_list_children_are_equivalent(PartitionStack *, void *) noexcept

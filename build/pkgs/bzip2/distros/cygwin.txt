@@ -1,1 +1,2 @@
-bzip2 libbz2-devel
+bzip2
+libbz2-devel

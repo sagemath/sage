@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fast Rank Two Crystals
 """
@@ -41,10 +42,10 @@ class FastCrystal(UniqueRepresentation, Parent):
 
     - ``cartan_type`` -- the Cartan type and must be either type `A_2`, `B_2`, or `C_2`
 
-    - ``shape`` -- A shape is of the form ``[l1,l2]`` where ``l1`` and ``l2``
+    - ``shape`` -- a shape is of the form ``[l1,l2]`` where ``l1`` and ``l2``
       are either integers or (in type `B_2`) half integers such that
       ``l1 - l2`` is integral. It is assumed that ``l1 >= l2 >= 0``. If
-      ``l1`` and ``l2` are integers, this will produce a crystal
+      ``l1`` and ``l2`` are integers, this will produce a crystal
       isomorphic to the one obtained by
       ``crystals.Tableaux(type, shape=[l1,l2])``. Furthermore
       ``crystals.FastRankTwo(['B', 2], l1+1/2, l2+1/2)`` produces a crystal
@@ -100,9 +101,9 @@ class FastCrystal(UniqueRepresentation, Parent):
          [2, 1, 0]]
     """
     @staticmethod
-    def __classcall__(cls, cartan_type, shape, format="string"):
+    def __classcall__(cls, cartan_type, shape, format='string'):
         """
-        Normalize the input arguments to ensure unique representation
+        Normalize the input arguments to ensure unique representation.
 
         EXAMPLES::
 
@@ -153,14 +154,14 @@ class FastCrystal(UniqueRepresentation, Parent):
         self.shape = shape
 
         for i in range(self.size):
-            target = [x for x in self.delpat[i]]
+            target = list(self.delpat[i])
 
             target[0] = target[0]-1
             e1 = None if target not in self.delpat else self.delpat.index(target)
             target[0] = target[0]+1+1
             f1 = None if target not in self.delpat else self.delpat.index(target)
 
-            target = [x for x in self.gampat[i]]
+            target = list(self.gampat[i])
             target[0] = target[0]-1
             e2 = None if target not in self.gampat else self.gampat.index(target)
             target[0] = target[0]+1+1
@@ -168,14 +169,14 @@ class FastCrystal(UniqueRepresentation, Parent):
 
             self._rootoperators.append([e1,f1,e2,f2])
 
-        if int(2*l1)%2 == 0:
-            l1_str = "%d"%l1
-            l2_str = "%d"%l2
+        if int(2*l1) % 2 == 0:
+            l1_str = "%d" % l1
+            l2_str = "%d" % l2
         else:
-            assert self._cartan_type[0] == 'B' and int(2*l2)%2 == 1
-            l1_str = "%d/2"%int(2*l1)
-            l2_str = "%d/2"%int(2*l2)
-        self.rename("The fast crystal for %s2 with shape [%s,%s]"%(ct[0],l1_str,l2_str))
+            assert self._cartan_type[0] == 'B' and int(2*l2) % 2 == 1
+            l1_str = "%d/2" % int(2*l1)
+            l2_str = "%d/2" % int(2*l2)
+        self.rename("The fast crystal for %s2 with shape [%s,%s]" % (ct[0],l1_str,l2_str))
         self.module_generators = [self(0)]
         # self._digraph = ClassicalCrystal.digraph(self)
         self._digraph = super().digraph()
@@ -260,7 +261,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
     def digraph(self):
         """
-        Return the digraph associated to self.
+        Return the digraph associated to ``self``.
 
         EXAMPLES::
 
@@ -272,7 +273,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
     def cmp_elements(self, x,y):
         r"""
-        Return True if and only if there is a path from x to y in the
+        Return ``True`` if and only if there is a path from `x` to `y` in the
         crystal graph.
 
         Because the crystal graph is classical, it is a directed acyclic
@@ -317,7 +318,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         def weight(self):
             """
-            Return the weight of self.
+            Return the weight of ``self``.
 
             EXAMPLES::
 
@@ -402,7 +403,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         def e(self, i):
             """
-            Return the action of `e_i` on self.
+            Return the action of `e_i` on ``self``.
 
             EXAMPLES::
 
@@ -421,7 +422,7 @@ class FastCrystal(UniqueRepresentation, Parent):
 
         def f(self, i):
             """
-            Return the action of `f_i` on self.
+            Return the action of `f_i` on ``self``.
 
             EXAMPLES::
 

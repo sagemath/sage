@@ -1,3 +1,0 @@
-cd src
-# Use --no-build-isolation because we have a different version of jupyter_packaging
-eval sdh_pip_install --no-build-isolation --config-settings "--global-option=--skip-npm" .

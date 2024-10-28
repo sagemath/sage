@@ -50,7 +50,7 @@ number = 0
 
 
 class PSage(Sage):
-    def __init__(self,  **kwds):
+    def __init__(self, **kwds):
         if 'server' in kwds:
             raise NotImplementedError("PSage doesn't work on remote server yet.")
         Sage.__init__(self, **kwds)
@@ -72,9 +72,8 @@ class PSage(Sage):
             sage: from sage.interfaces.psage import PSage
             sage: PSage()                                   # indirect doctest
             A running non-blocking (parallel) instance of Sage (number ...)
-
         """
-        return 'A running non-blocking (parallel) instance of Sage (number %s)'%(self._number)
+        return 'A running non-blocking (parallel) instance of Sage (number %s)' % (self._number)
 
     def _unlock(self):
         self._locked = False
@@ -97,7 +96,7 @@ class PSage(Sage):
                 if fobj.read() != '__locked__':
                     return False
         except FileNotFoundError:
-            # Directory may have already been deleted :trac:`30730`
+            # Directory may have already been deleted :issue:`30730`
             return False
         # looks like we are locked, but check health first
         try:
@@ -111,7 +110,7 @@ class PSage(Sage):
         """
         TESTS:
 
-        Check that :trac:`29989` is fixed::
+        Check that :issue:`29989` is fixed::
 
             sage: PSage().__del__()
         """
@@ -124,19 +123,21 @@ class PSage(Sage):
             pass
 
         if not (self._expect is None):
-            cmd = 'kill -9 %s'%self._expect.pid
+            cmd = 'kill -9 %s' % self._expect.pid
             os.system(cmd)
 
     def eval(self, x, strip=True, **kwds):
         """
-            x -- code
-            strip --ignored
+        INPUT:
+
+        - ``x`` -- code
+        - ``strip`` --ignored
         """
         if self.is_locked():
             return "<<currently executing code>>"
         if self._locked:
             self._locked = False
-            #self._expect.expect('__unlocked__')
+            # self._expect.expect('__unlocked__')
             self.expect().send('\n')
             self.expect().expect(self._prompt)
             self.expect().expect(self._prompt)
@@ -158,7 +159,7 @@ class PSage(Sage):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s=%s'%(var,value)
+        cmd = '%s=%s' % (var, value)
         self._send_nowait(cmd)
         time.sleep(0.02)
 
@@ -181,6 +182,7 @@ class PSage(Sage):
 
     def _object_class(self):
         return PSageElement
+
 
 class PSageElement(SageElement):
     def is_locked(self):

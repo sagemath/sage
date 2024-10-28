@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Type spaces of newforms
 
@@ -11,7 +12,6 @@ space* of `f` is the span of the modular eigensymbols corresponding to all of
 these twists, which lie in a space of modular symbols for a suitable `\Gamma_H`
 subgroup. This space is the key to computing the isomorphism class of the local
 component of the newform at `p`.
-
 """
 
 import operator
@@ -61,6 +61,7 @@ def example_type_space(example_no=0):
     elif example_no == 3:
         # a ramified (odd p-power level) case
         return TypeSpace(Newform_constructor('27a'), 3)
+
 
 def find_in_space(f, A, base_extend=False):
     r"""
@@ -147,6 +148,7 @@ def find_in_space(f, A, base_extend=False):
 
     return D
 
+
 class TypeSpace(SageObject):
     r"""
     The modular symbol type space associated to a newform, at a prime dividing
@@ -183,7 +185,7 @@ class TypeSpace(SageObject):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -272,7 +274,7 @@ class TypeSpace(SageObject):
 
     def eigensymbol_subspace(self):
         r"""
-        Return the subspace of self corresponding to the plus eigensymbols of
+        Return the subspace of ``self`` corresponding to the plus eigensymbols of
         `f` and its Galois conjugates (as a subspace of the vector space
         returned by :meth:`~free_module`).
 
@@ -331,7 +333,7 @@ class TypeSpace(SageObject):
     @cached_method
     def is_minimal(self):
         r"""
-        Return True if there exists a newform `g` of level strictly smaller
+        Return ``True`` if there exists a newform `g` of level strictly smaller
         than `N`, and a Dirichlet character `\chi` of `p`-power conductor, such
         that `f = g \otimes \chi` where `f` is the form of which this is the
         type space. To find such a form, use :meth:`~minimal_twist`.
@@ -370,7 +372,7 @@ class TypeSpace(SageObject):
             sage: TypeSpace(g, 7).is_minimal()
             True
 
-        Test that :trac:`13158` is fixed::
+        Test that :issue:`13158` is fixed::
 
             sage: f = Newforms(256,names='a')[0]
             sage: T = TypeSpace(f,2)                            # long time
@@ -401,12 +403,11 @@ class TypeSpace(SageObject):
             V = A.submodule(VV, check=False)
 
         D = V.decomposition()[0]
-        #if len(D.star_eigenvalues()) == 2:
+        # if len(D.star_eigenvalues()) == 2:
         #    D = D.sign_submodule(1)
         D1 = D.modular_symbols_of_sign(1)
         M = ModularForms(D1.group(), D1.weight(), D1.base_ring())
-        ff = Newform(M, D1, names='a')
-        return ff
+        return Newform(M, D1, names='a')
 
     #####################################
     # The group action on the type space.
@@ -634,7 +635,7 @@ class TypeSpace(SageObject):
         mats = self._intertwining_basis(a)
         V = self.t_space.nonembedded_free_module()
         v = self.eigensymbol_subspace().gen(0)
-        w = V.submodule_with_basis([m * v for m in mats]).coordinates(v) #v * self.e_space.diamond_eigenvalue(crt(a, 1, f, self.tame_level())))
+        w = V.submodule_with_basis([m * v for m in mats]).coordinates(v)  # v * self.e_space.diamond_eigenvalue(crt(a, 1, f, self.tame_level())))
         self._a = a
         self._amat = sum([mats[i] * w[i] for i in range(len(mats))])
 
@@ -735,7 +736,6 @@ class TypeSpace(SageObject):
             sage: T._unif_ramified()
             [-1  0]
             [ 0 -1]
-
         """
         p = self.prime()
         k = self.form().weight()

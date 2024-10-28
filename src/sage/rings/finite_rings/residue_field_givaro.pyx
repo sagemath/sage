@@ -33,18 +33,19 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: R.<x> = QQ[]
-        sage: K.<a> = NumberField(x^3 - 7)                                              # optional - sage.rings.number_field
-        sage: P = K.ideal(29).factor()[0][0]                                            # optional - sage.rings.number_field
-        sage: k = K.residue_field(P)                                                    # optional - sage.rings.number_field
-        sage: k.degree()                                                                # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(x^3 - 7)
+        sage: P = K.ideal(29).factor()[0][0]
+        sage: k = K.residue_field(P)
+        sage: k.degree()
         2
-        sage: OK = K.maximal_order()                                                    # optional - sage.rings.number_field
-        sage: c = OK(a)                                                                 # optional - sage.rings.number_field
-        sage: b = k(c)                                                                  # optional - sage.rings.number_field
-        sage: b*c^2                                                                     # optional - sage.rings.number_field
+        sage: OK = K.maximal_order()
+        sage: c = OK(a)
+        sage: b = k(c)
+        sage: b*c^2
         7
-        sage: b*c                                                                       # optional - sage.rings.number_field
+        sage: b*c
         13*abar + 5
 
         sage: R.<t> = GF(7)[]; P = R.ideal(t^2 + 4)
@@ -70,14 +71,14 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
 
         - ``to_order`` -- the map from a lattice in that vector space to the maximal order
 
-        - ``PB`` -- a matrix used in defining the reduction and lifting maps.
+        - ``PB`` -- a matrix used in defining the reduction and lifting maps
 
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # optional - sage.rings.number_field
-            sage: P = K.ideal(61).factor()[0][0]                                        # optional - sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # needs sage.rings.number_field
+            sage: P = K.ideal(61).factor()[0][0]                                        # needs sage.rings.number_field
+            sage: k = K.residue_field(P)                                                # needs sage.rings.number_field
 
             sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field(); type(k)
             <class 'sage.rings.finite_rings.residue_field_givaro.ResidueFiniteField_givaro_with_category'>
@@ -103,25 +104,26 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
         """
         INPUT:
 
-            - ``x`` -- Something to cast into ``self``.
+            - ``x`` -- something to cast into ``self``
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]
-            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)                                 # optional - sage.rings.number_field
-            sage: P = K.ideal(61).factor()[0][0]                                        # optional - sage.rings.number_field
-            sage: k = K.residue_field(P)                                                # optional - sage.rings.number_field
-            sage: k(77*a^7 + 4)                                                         # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^4 + 3*x^2 - 17)
+            sage: P = K.ideal(61).factor()[0][0]
+            sage: k = K.residue_field(P)
+            sage: k(77*a^7 + 4)
             2*abar + 4
-            sage: V = k.vector_space(map=False); v = V([3,-2])                          # optional - sage.rings.number_field
+            sage: V = k.vector_space(map=False); v = V([3,-2])
             sage: type(k.convert_map_from(V))
             <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
-            sage: k(v) # indirect doctest
+            sage: k(v)  # indirect doctest
             59*abar + 3
 
             sage: R.<t> = GF(3)[]; P = R.ideal(t^4 - t^3 + t + 1); k.<a> = P.residue_field()
             sage: V = k.vector_space(map=False); v = V([0,1,2,3])
-            sage: k(v) # indirect doctest
+            sage: k(v)  # indirect doctest
             2*a^2 + a
         """
         try:

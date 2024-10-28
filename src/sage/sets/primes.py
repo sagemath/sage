@@ -66,18 +66,18 @@ class Primes(Set_generic, UniqueRepresentation):
             sage: P = Primes(); P
             Set of all prime numbers: 2, 3, 5, 7, ...
 
-            sage: Q = Primes(proof = False); Q
+            sage: Q = Primes(proof=False); Q
             Set of all prime numbers: 2, 3, 5, 7, ...
 
         TESTS::
 
             sage: P.category()
             Category of facade infinite enumerated sets
-            sage: TestSuite(P).run()
+            sage: TestSuite(P).run()                                                    # needs sage.libs.pari
 
             sage: Q.category()
             Category of facade infinite enumerated sets
-            sage: TestSuite(Q).run()
+            sage: TestSuite(Q).run()                                                    # needs sage.libs.pari
 
         The set of primes can be compared to various things,
         but is only equal to itself::
@@ -123,7 +123,7 @@ class Primes(Set_generic, UniqueRepresentation):
             False
             sage: 1.5 in P
             False
-            sage: e in P
+            sage: e in P                                                                # needs sage.symbolic
             False
         """
         try:
@@ -164,7 +164,7 @@ class Primes(Set_generic, UniqueRepresentation):
         EXAMPLES::
 
             sage: P = Primes()
-            sage: P.next(5)
+            sage: P.next(5)                                                             # needs sage.libs.pari
             7
         """
         pr = pr.next_prime(self.__proof)
@@ -177,11 +177,11 @@ class Primes(Set_generic, UniqueRepresentation):
         EXAMPLES::
 
             sage: P = Primes()
-            sage: P.unrank(0)
+            sage: P.unrank(0)                                                           # needs sage.libs.pari
             2
-            sage: P.unrank(5)
+            sage: P.unrank(5)                                                           # needs sage.libs.pari
             13
-            sage: P.unrank(42)
+            sage: P.unrank(42)                                                          # needs sage.libs.pari
             191
         """
         return nth_prime(n + 1)

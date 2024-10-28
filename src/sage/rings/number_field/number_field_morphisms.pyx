@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field
 r"""
 Embeddings into ambient fields
 
@@ -67,11 +68,9 @@ cdef class NumberFieldEmbedding(Morphism):
 
         INPUT:
 
-        ``_slots`` -- a dictionary
+        - ``_slots`` -- dictionary
 
-        OUTPUT:
-
-        The given dictionary, with the generator image added.
+        OUTPUT: the given dictionary, with the generator image added
 
         EXAMPLES::
 
@@ -98,7 +97,7 @@ cdef class NumberFieldEmbedding(Morphism):
 
         INPUT:
 
-        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- dictionary providing values for the c(p)def slots of ``self``
 
         EXAMPLES::
 
@@ -190,7 +189,6 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
           From: Number Field in i with defining polynomial x^2 + 1 with i = I
           To:   Number Field in i with defining polynomial x^2 + 1 with i = -I
           Defn: i -> -i
-
     """
     cdef readonly ambient_field
 
@@ -230,7 +228,7 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
             'Number Field in a with defining polynomial x^3 + 2 with a = -1.259921049894873?' and
             'Number Field in a with defining polynomial x^3 + 2 with a = 0.6299605249474365? + 1.091123635971722?*I'
 
-        The following was fixed to raise a ``TypeError`` in :trac:`15331`::
+        The following was fixed to raise a :exc:`TypeError` in :issue:`15331`::
 
             sage: L.<i> = NumberField(x^2 + 1)
             sage: K = NumberField(L(i/2+3).minpoly(), names=('i0',), embedding=L(i/2+3))
@@ -238,7 +236,6 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
             Traceback (most recent call last):
             ...
             TypeError: No embedding available for Number Field in i with defining polynomial x^2 + 1
-
         """
         if ambient_field is None:
             if K.coerce_embedding() is None:
@@ -443,6 +440,7 @@ cpdef closest(target, values, margin=1):
         else:
             return None
 
+
 def root_from_approx(f, a):
     """
     Return an exact root of the polynomial `f` closest to `a`.
@@ -480,13 +478,12 @@ def root_from_approx(f, a):
         sage: root_from_approx(x^2 + 1, CC(0))
         -1*I
 
-        sage: root_from_approx(x^2 - 2, sqrt(2))
+        sage: root_from_approx(x^2 - 2, sqrt(2))                                        # needs sage.symbolic
         sqrt(2)
-        sage: root_from_approx(x^2 - 2, sqrt(3))
+        sage: root_from_approx(x^2 - 2, sqrt(3))                                        # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: sqrt(3) is not a root of x^2 - 2
-
     """
     P = a.parent()
     if P.is_exact() and not f(a):
@@ -503,6 +500,7 @@ def root_from_approx(f, a):
             or (not isinstance(rel, bool) and test_relation_maxima(rel))):
             raise ValueError("{} is not a root of {}".format(a, f))
         return a
+
 
 def create_embedding_from_approx(K, gen_image):
     """
@@ -597,7 +595,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
             ...
             TypeError: The zeta_order of the new field must be a multiple of the zeta_order of the original.
 
-        Check that :trac:`13765` is fixed::
+        Check that :issue:`13765` is fixed::
 
             sage: z3=(CC(-1)^(1/3))^2
             sage: Ka.<a>=CyclotomicField(3,embedding=z3)
@@ -615,7 +613,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
             -1
         """
         Morphism.__init__(self, K, L)
-        from .number_field import NumberField_cyclotomic
+        from sage.rings.number_field.number_field import NumberField_cyclotomic
         if not isinstance(K, NumberField_cyclotomic) or not isinstance(L, NumberField_cyclotomic):
             raise TypeError("CyclotomicFieldEmbedding only valid for cyclotomic fields.")
         Kn = K._n()
@@ -631,11 +629,9 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
 
         INPUT:
 
-        ``_slots`` -- a dictionary
+        - ``_slots`` -- dictionary
 
-        OUTPUT:
-
-        The given dictionary, with _gen_image and ratio added.
+        OUTPUT: the given dictionary, with _gen_image and ratio added
 
         EXAMPLES::
 
@@ -662,7 +658,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
 
         INPUT:
 
-        ``_slots`` -- a dictionary providing values for the c(p)def slots of self.
+        - ``_slots`` -- dictionary providing values for the c(p)def slots of ``self``
 
         EXAMPLES::
 
@@ -731,7 +727,7 @@ cdef class CyclotomicFieldConversion(Map):
         ...
         ValueError: Element z1 has no image in the codomain
 
-    Tests from :trac:`29511`::
+    Tests from :issue:`29511`::
 
         sage: K.<z> = CyclotomicField(12)
         sage: K1.<z1> = CyclotomicField(3)

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs
 """
 Coxeter Matrices
 """
@@ -22,14 +23,16 @@ from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
+from sage.misc.lazy_import import lazy_import
 from sage.matrix.matrix_generic_dense import Matrix_generic_dense
-from sage.graphs.graph import Graph
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
 from sage.rings.infinity import infinity
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.root_system.coxeter_type import CoxeterType
+
+lazy_import('sage.graphs.graph', 'Graph')
 
 
 class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
@@ -847,6 +850,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: CoxeterType(['A', 2, 1]).bilinear_form()
             [   1 -1/2 -1/2]
             [-1/2    1 -1/2]
@@ -1074,7 +1078,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
         ....:     if C.is_finite() or C.is_affine():
         ....:         assert recognized_type == C.coxeter_type()
 
-    We check the rank 2 cases (:trac:`20419`)::
+    We check the rank 2 cases (:issue:`20419`)::
 
         sage: for i in range(2, 10):
         ....:     M = matrix([[1,i],[i,1]])
@@ -1091,7 +1095,7 @@ def recognize_coxeter_type_from_matrix(coxeter_matrix, index_set):
         Coxeter type of ['A', 1, 1]
 
     Check that this works for reducible types with relabellings
-    (:trac:`24892`)::
+    (:issue:`24892`)::
 
         sage: CM = CoxeterMatrix([[1,2,5],[2,1,2],[5,2,1]]); CM
         [1 2 5]

@@ -36,7 +36,7 @@ def find_min(vect):
 
     INPUT:
 
-    - ``vec`` -- A list of integers
+    - ``vec`` -- list of integers
 
     OUTPUT:
 
@@ -52,11 +52,11 @@ def find_min(vect):
         [0, 1, 0]
     """
     i = len(vect)
-    while vect[i-1]==0 and i>0:
-        i=i-1
+    while vect[i-1] == 0 and i > 0:
+        i = i-1
     min = [0]*len(vect)
-    if i>0:
-        min[i-1]=1
+    if i > 0:
+        min[i-1] = 1
     return min
 
 
@@ -68,8 +68,8 @@ def IntegerVectorsIterator(vect, min=None):
 
     INPUT:
 
-    - ``vect`` -- A list of non-negative integers
-    - ``min`` -- A list of non-negative integers dominated elementwise by ``vect``
+    - ``vect`` -- list of nonnegative integers
+    - ``min`` -- list of nonnegative integers dominated elementwise by ``vect``
 
     OUTPUT:
 
@@ -169,16 +169,18 @@ class VectorPartitions(UniqueRepresentation, Parent):
     Class of all vector partitions of ``vec`` with all parts greater than
     or equal to ``min`` in lexicographic order, with parts from ``parts``.
 
-    A vector partition of ``vec`` is a list of vectors with non-negative
+    A vector partition of ``vec`` is a list of vectors with nonnegative
     integer entries whose sum is ``vec``.
 
     INPUT:
 
-    - ``vec`` - Integer vector
-    - ``min`` - Integer vector dominated elementwise by ``vec``
-    - ``parts`` - Finite list of possible parts
-    - ``distinct`` - Boolean, set to ``True`` if only vector partitions with distinct parts are enumerated
-    - ``is_repeatable`` - Boolean function on ``parts`` which gives ``True`` in parts that can be repeated
+    - ``vec`` -- integer vector
+    - ``min`` -- integer vector dominated elementwise by ``vec``
+    - ``parts`` -- finite list of possible parts
+    - ``distinct`` -- boolean, set to ``True`` if only vector partitions with
+      distinct parts are enumerated
+    - ``is_repeatable`` -- boolean function on ``parts`` which gives ``True``
+      in parts that can be repeated
 
     EXAMPLES:
 
@@ -238,7 +240,6 @@ class VectorPartitions(UniqueRepresentation, Parent):
         sage: Vector_Partitions = VectorPartitions([2,2], parts=[[0,1],[1,0],[1,1]], is_repeatable=lambda vec: sum(vec)%2!=0)
         sage: list(Vector_Partitions)
         [[[0, 1], [0, 1], [1, 0], [1, 0]], [[0, 1], [1, 0], [1, 1]]]
-
     """
     @staticmethod
     def __classcall_private__(cls, vec, min=None, parts=None, distinct=False, is_repeatable=None):
@@ -315,7 +316,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
             for part in self._parts: # choose the first part
                 if tuple(part) == self._vec:
                     yield self.element_class(self, [list(part)])
-                elif any(part[i]>self._vec[i] for i in range(len(self._vec))):
+                elif any(part[i] > self._vec[i] for i in range(len(self._vec))):
                     pass
                 else:# recursively find all possibilities for the rest of the vector partition
                     new_vec = tuple(self._vec[i]-part[i] for i in range(len(self._vec)))

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Magmas
 """
@@ -255,7 +256,7 @@ class Magmas(Category_singleton):
 
                 The use of this shorthand should be reserved for casual
                 interactive use or when there is no risk of ambiguity.
-                """
+            """
             from sage.categories.additive_magmas import AdditiveMagmas
             if self.is_subcategory(AdditiveMagmas()):
                 raise ValueError("FinitelyGenerated is ambiguous for {}.\nPlease use explicitly one of the FinitelyGeneratedAsXXX methods".format(self))
@@ -323,7 +324,7 @@ class Magmas(Category_singleton):
 
             This axiom is in fact only meaningful for
             :class:`semigroups <Semigroups>`. This stub definition is
-            here as a workaround for :trac:`20515`, in order to define
+            here as a workaround for :issue:`20515`, in order to define
             the `J`-trivial axiom as the intersection of the `L` and
             `R`-trivial axioms.
 
@@ -379,15 +380,15 @@ class Magmas(Category_singleton):
                 Return ``True`` if ``self`` is a field.
 
                 For a magma algebra `RS` this is always false unless
-                `S` is trivial and the base ring `R`` is a field.
+                `S` is trivial and the base ring `R` is a field.
 
                 EXAMPLES::
 
-                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # optional - sage.groups
+                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
                     True
-                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # optional - sage.groups
+                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.combinat sage.groups
                     False
-                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # optional - sage.groups
+                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
                     False
                 """
                 if not self.base_ring().is_field(proof):
@@ -438,7 +439,7 @@ class Magmas(Category_singleton):
             def extra_super_categories(self):
                 r"""
                 Implement the fact that a Cartesian product of commutative
-                additive magmas is still an commutative additive magmas.
+                additive magmas is still a commutative additive magmas.
 
                 EXAMPLES::
 
@@ -540,8 +541,8 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: S = SymmetricGroup(2)                                         # optional - sage.groups
-                    sage: S.is_empty()                                                  # optional - sage.groups
+                    sage: S = SymmetricGroup(2)                                         # needs sage.groups
+                    sage: S.is_empty()                                                  # needs sage.groups
                     False
 
                     sage: M = Monoids().example()
@@ -550,7 +551,7 @@ class Magmas(Category_singleton):
 
                 TESTS::
 
-                    sage: S.is_empty.__module__                                         # optional - sage.groups
+                    sage: S.is_empty.__module__                                         # needs sage.groups
                     'sage.categories.magmas'
                     sage: M.is_empty.__module__
                     'sage.categories.magmas'
@@ -638,7 +639,7 @@ class Magmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: cartesian_product([QQ, ZZ, RR]).one()
+                        sage: cartesian_product([QQ, ZZ, RR]).one()                     # needs sage.rings.real_mpfr
                         (1, 1, 1.00000000000000)
                     """
                     return self._cartesian_product_of_elements(
@@ -665,21 +666,21 @@ class Magmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: C = cartesian_product([QQ, ZZ, RR, GF(5)])                # optional - sage.rings.finite_rings
-                        sage: c = C([2,-1,2,2]); c                                      # optional - sage.rings.finite_rings
+                        sage: C = cartesian_product([QQ, ZZ, RR, GF(5)])
+                        sage: c = C([2,-1,2,2]); c                                      # needs sage.rings.real_mpfr
                         (2, -1, 2.00000000000000, 2)
-                        sage: ~c                                                        # optional - sage.rings.finite_rings
+                        sage: ~c                                                        # needs sage.rings.real_mpfr
                         (1/2, -1, 0.500000000000000, 3)
 
                     This fails as soon as one of the entries is not
                     invertible::
 
-                        sage: ~C([0,2,2,2])                                             # optional - sage.rings.finite_rings
+                        sage: ~C([0,2,2,2])
                         Traceback (most recent call last):
                         ...
                         ZeroDivisionError: rational division by zero
 
-                        sage: ~C([2,2,2,2])                                             # optional - sage.rings.finite_rings
+                        sage: ~C([2,2,2,2])                                             # needs sage.rings.real_mpfr
                         (1/2, 1/2, 0.500000000000000, 3)
                     """
                     # variant without coercion:
@@ -724,11 +725,12 @@ class Magmas(Category_singleton):
 
                     EXAMPLES::
 
-                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup  # optional - sage.combinat sage.groups
-                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()          # optional - sage.combinat sage.groups
-                        sage: PvW0 in Magmas().Unital().Realizations()                  # optional - sage.combinat sage.groups
+                        sage: # needs sage.combinat sage.groups
+                        sage: from sage.combinat.root_system.extended_affine_weyl_group import ExtendedAffineWeylGroup
+                        sage: PvW0 = ExtendedAffineWeylGroup(['A',2,1]).PvW0()
+                        sage: PvW0 in Magmas().Unital().Realizations()
                         True
-                        sage: PvW0.one()                                                # optional - sage.combinat sage.groups
+                        sage: PvW0.one()
                         1
                     """
                     return self(self.realization_of().a_realization().one())
@@ -833,9 +835,9 @@ class Magmas(Category_singleton):
 
         def multiplication_table(self, names='letters', elements=None):
             r"""
-            Returns a table describing the multiplication operation.
+            Return a table describing the multiplication operation.
 
-            .. note:: The order of the elements in the row and column
+            .. NOTE:: The order of the elements in the row and column
               headings is equal to the order given by the table's
               :meth:`~sage.matrix.operation_table.OperationTable.list`
               method.  The association can also be retrieved with the
@@ -844,22 +846,22 @@ class Magmas(Category_singleton):
 
             INPUT:
 
-            - ``names`` - the type of names used
+            - ``names`` -- the type of names used
 
-              * ``'letters'`` - lowercase ASCII letters are used
+              * ``'letters'`` -- lowercase ASCII letters are used
                 for a base 26 representation of the elements'
                 positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading 'a's.
-              * ``'digits'`` - base 10 representation of the
+              * ``'digits'`` -- base 10 representation of the
                 elements' positions in the list given by
                 :meth:`~sage.matrix.operation_table.OperationTable.column_keys`,
                 padded to a common width with leading zeros.
-              * ``'elements'`` - the string representations
+              * ``'elements'`` -- the string representations
                 of the elements themselves.
               * a list - a list of strings, where the length
                 of the list equals the number of elements.
-            - ``elements`` - default = ``None``.  A list of
+            - ``elements`` -- (default: ``None``) a list of
               elements of the magma, in forms that can be
               coerced into the structure, eg. their string
               representations. This may be used to impose an
@@ -884,8 +886,8 @@ class Magmas(Category_singleton):
             The default is to represent elements as lowercase
             ASCII letters.  ::
 
-                sage: G = CyclicPermutationGroup(5)                                     # optional - sage.groups
-                sage: G.multiplication_table()                                          # optional - sage.groups
+                sage: G = CyclicPermutationGroup(5)                                     # needs sage.groups
+                sage: G.multiplication_table()                                          # needs sage.groups
                 *  a b c d e
                  +----------
                 a| a b c d e
@@ -902,10 +904,10 @@ class Magmas(Category_singleton):
 
                 sage: from sage.categories.examples.finite_semigroups import LeftRegularBand
                 sage: L = LeftRegularBand(('a', 'b'))
-                sage: T = L.multiplication_table(names='digits')                        # optional - sage.modules
-                sage: T.column_keys()                                                   # optional - sage.modules
+                sage: T = L.multiplication_table(names='digits')                        # needs sage.modules
+                sage: T.column_keys()                                                   # needs sage.modules
                 ('a', 'ab', 'b', 'ba')
-                sage: T                                                                 # optional - sage.modules
+                sage: T                                                                 # needs sage.modules
                 *  0 1 2 3
                  +--------
                 0| 0 1 1 1
@@ -918,7 +920,7 @@ class Magmas(Category_singleton):
 
                 sage: L = LeftRegularBand(('a', 'b', 'c'))
                 sage: elts = sorted(L.list())
-                sage: L.multiplication_table(elements=elts)                             # optional - sage.modules
+                sage: L.multiplication_table(elements=elts)                             # needs sage.modules
                 *  a b c d e f g h i j k l m n o
                  +------------------------------
                 a| a b c d e b b c c c d d e e e
@@ -947,7 +949,7 @@ class Magmas(Category_singleton):
 
                 sage: L = LeftRegularBand(('a','b','c'))
                 sage: elts=['a', 'c', 'ac', 'ca']
-                sage: L.multiplication_table(names='elements', elements=elts)           # optional - sage.modules
+                sage: L.multiplication_table(names='elements', elements=elts)           # needs sage.modules
                    *   'a'  'c' 'ac' 'ca'
                     +--------------------
                  'a'|  'a' 'ac' 'ac' 'ac'
@@ -960,16 +962,17 @@ class Magmas(Category_singleton):
             :class:`~sage.matrix.operation_table.OperationTable` for more
             comprehensive documentation. ::
 
-                sage: G = AlternatingGroup(3)                                           # optional - sage.groups
-                sage: T = G.multiplication_table()                                      # optional - sage.groups sage.modules
-                sage: T.column_keys()                                                   # optional - sage.groups sage.modules
+                sage: # needs sage.groups sage.modules
+                sage: G = AlternatingGroup(3)
+                sage: T = G.multiplication_table()
+                sage: T.column_keys()
                 ((), (1,2,3), (1,3,2))
-                sage: T.translation()                                                   # optional - sage.groups sage.modules
+                sage: T.translation()
                 {'a': (), 'b': (1,2,3), 'c': (1,3,2)}
-                sage: T.change_names(['x', 'y', 'z'])                                   # optional - sage.groups sage.modules
-                sage: T.translation()                                                   # optional - sage.groups sage.modules
+                sage: T.change_names(['x', 'y', 'z'])
+                sage: T.translation()
                 {'x': (), 'y': (1,2,3), 'z': (1,3,2)}
-                sage: T                                                                 # optional - sage.groups sage.modules
+                sage: T
                 *  x y z
                  +------
                 x| x y z
@@ -984,15 +987,13 @@ class Magmas(Category_singleton):
         @abstract_method(optional=True)
         def _mul_(self, right):
             """
-            Product of two elements
+            Product of two elements.
 
             INPUT:
 
             - ``self``, ``right`` -- two elements with the same parent
 
-            OUTPUT:
-
-            - an element of the same parent
+            OUTPUT: an element of the same parent
 
             EXAMPLES::
 
@@ -1028,7 +1029,6 @@ class Magmas(Category_singleton):
                 'x'
                 sage: x.is_idempotent()
                 True
-
             """
             return self * self == self
 
@@ -1084,12 +1084,13 @@ class Magmas(Category_singleton):
                     sage: x * x
                     (1/4, 1, 1)
 
-                    sage: A = SymmetricGroupAlgebra(QQ, 3)                              # optional - sage.groups
-                    sage: x = cartesian_product([A([1,3,2]), A([2,3,1])])               # optional - sage.groups
-                    sage: y = cartesian_product([A([1,3,2]), A([2,3,1])])               # optional - sage.groups
-                    sage: cartesian_product([A,A]).product(x,y)                         # optional - sage.groups
+                    sage: # needs sage.groups sage.modules
+                    sage: A = SymmetricGroupAlgebra(QQ, 3)
+                    sage: x = cartesian_product([A([1,3,2]), A([2,3,1])])
+                    sage: y = cartesian_product([A([1,3,2]), A([2,3,1])])
+                    sage: cartesian_product([A,A]).product(x,y)
                     B[(0, [1, 2, 3])] + B[(1, [3, 1, 2])]
-                    sage: x*y                                                           # optional - sage.groups
+                    sage: x*y
                     B[(0, [1, 2, 3])] + B[(1, [3, 1, 2])]
                 """
                 prods = ((a * b) for a, b in zip(left.cartesian_factors(),
@@ -1138,9 +1139,9 @@ class Magmas(Category_singleton):
 
                 Here is a more elaborate example involving a sub algebra::
 
-                    sage: Z = SymmetricGroup(5).algebra(QQ).center()                    # optional - sage.groups
-                    sage: B = Z.basis()                                                 # optional - sage.groups
-                    sage: B[3] * B[2]                                                   # optional - sage.groups
+                    sage: Z = SymmetricGroup(5).algebra(QQ).center()                    # needs sage.combinat sage.groups
+                    sage: B = Z.basis()                                                 # needs sage.combinat sage.groups
+                    sage: B[3] * B[2]                                                   # needs sage.combinat sage.groups
                     4*B[2] + 6*B[3] + 5*B[6]
                 """
                 assert x in self
@@ -1162,20 +1163,20 @@ class Magmas(Category_singleton):
 
                 EXAMPLES::
 
-                    sage: Out = Sets().WithRealizations().example().Out(); Out          # optional - sage.combinat sage.modules
+                    sage: # needs sage.combinat sage.modules
+                    sage: Out = Sets().WithRealizations().example().Out(); Out
                     The subset algebra of {1, 2, 3} over Rational Field
                      in the Out basis
-                    sage: Out.product                                                   # optional - sage.combinat sage.modules
+                    sage: Out.product
                     <bound method Magmas.Realizations.ParentMethods.product_by_coercion
                      of The subset algebra of {1, 2, 3} over Rational Field
                       in the Out basis>
-                    sage: Out.product.__module__                                        # optional - sage.combinat sage.modules
+                    sage: Out.product.__module__
                     'sage.categories.magmas'
-                    sage: x = Out.an_element()                                          # optional - sage.combinat sage.modules
-                    sage: y = Out.an_element()                                          # optional - sage.combinat sage.modules
-                    sage: Out.product(x, y)                                             # optional - sage.combinat sage.modules
+                    sage: x = Out.an_element()
+                    sage: y = Out.an_element()
+                    sage: Out.product(x, y)
                     Out[{}] + 4*Out[{1}] + 9*Out[{2}] + Out[{1, 2}]
-
                 """
                 R = self.realization_of().a_realization()
                 return self(R(left) * R(right))

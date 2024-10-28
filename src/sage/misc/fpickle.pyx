@@ -61,6 +61,7 @@ def reduce_code(co):
 
 copyreg.pickle(types.CodeType, reduce_code)
 
+
 def pickle_function(func):
     """
     Pickle the Python function func.  This is not a normal pickle; you
@@ -73,11 +74,9 @@ def pickle_function(func):
 
     INPUT:
 
-        func -- a Python function
+    - ``func`` -- a Python function
 
-    OUTPUT:
-
-        a string
+    OUTPUT: string
 
     EXAMPLES::
 
@@ -107,11 +106,13 @@ def unpickle_function(pickled):
 
 
 def call_pickled_function(fpargs):
-    import sage.all
-    from sage.misc.fpickle import unpickle_function  # used below
+    try:
+        import sage.all as toplevel
+    except ImportError:
+        import sage.all__sagemath_categories as toplevel
     (fp, (args, kwds)) = fpargs
-    f = eval("unpickle_function(fp)", sage.all.__dict__, {'fp': fp})
-    res = eval("f(*args, **kwds)", sage.all.__dict__,
+    f = eval("unpickle_function(fp)", toplevel.__dict__, {'fp': fp})
+    res = eval("f(*args, **kwds)", toplevel.__dict__,
                {'args': args, 'kwds': kwds, 'f': f})
     return ((args, kwds), res)
 
@@ -122,10 +123,12 @@ def call_pickled_function(fpargs):
 def pickleMethod(method):
     'support function for copyreg to pickle method refs'
 
-    # Note: On Python 3 there is no .im_class but we can get the instance's
-    # class through .__self__.__class__
-    cls = getattr(method, 'im_class', method.__self__.__class__)
-    return (unpickleMethod, (method.__func__.__name__, method.__self__, cls))
+    if isinstance(method.__self__, type):
+        # This is a class method, so get it from the type directly
+        return (getattr, (method.__self__, method.__func__.__name__))
+    else:
+        cls = method.__self__.__class__
+        return (unpickleMethod, (method.__func__.__name__, method.__self__, cls))
 
 
 def unpickleMethod(im_name,
@@ -137,10 +140,7 @@ def unpickleMethod(im_name,
         if __self__ is None:
             return unbound
 
-        # Note: On Python 2 "unbound methods" are just functions, so they don't
-        # have a __func__
-        bound = types.MethodType(getattr(unbound, '__func__', unbound),
-                                 __self__)
+        bound = types.MethodType(unbound, __self__)
         return bound
     except AttributeError:
         assert __self__ is not None, "No recourse: no instance to guess from."
@@ -148,11 +148,8 @@ def unpickleMethod(im_name,
         # changed around since we pickled this method, we may still be
         # able to get it by looking on the instance's current class.
         unbound = getattr(__self__.__class__, im_name)
-        if __self__ is None:
-            return unbound
 
-        bound = types.MethodType(getattr(unbound, '__func__', unbound),
-                                 __self__)
+        bound = types.MethodType(unbound, __self__)
         return bound
 
 

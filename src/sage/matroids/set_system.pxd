@@ -9,7 +9,7 @@ cdef class SetSystem:
     cdef bitset_t _temp
 
     cdef copy(self)
-    cdef _relabel(self, l)
+    cdef _relabel(self, mapping)
     cpdef _complements(self)
 
     cdef resize(self, k=*)
@@ -21,7 +21,7 @@ cdef class SetSystem:
 
     cdef list _incidence_count(self, E)
     cdef SetSystem _groundset_partition(self, SetSystem P, list cnt)
-    cdef long subset_characteristic(self, SetSystem P, long e)
+    cdef long subset_characteristic(self, SetSystem P, long e) noexcept
     cdef subsets_partition(self, SetSystem P=*, E=*)
     cdef _distinguish(self, Py_ssize_t v)
     cpdef is_connected(self)

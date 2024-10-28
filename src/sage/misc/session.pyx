@@ -27,7 +27,7 @@ This saves a dictionary with ``w`` as one of the keys::
 
     sage: z = load(os.path.join(d.name, 'session'))
     sage: list(z)
-    ['d', 'w']
+    ['w', 'd']
     sage: z['w']
     2/3
 
@@ -68,17 +68,19 @@ AUTHOR:
 import builtins
 import types
 
-# We want the caller's locals, but locals() is emulated in Cython
-cdef caller_locals = builtins.locals
-
 # Sage imports
 from sage.misc.persist import load, save, loads, dumps
+from sage.misc.lazy_import import LazyImport
+
+# We want the caller's locals, but locals() is emulated in Cython
+cdef caller_locals = builtins.locals
 
 # This module-scope variables is used to save the
 # global state of the sage environment at the moment
 # before the user starts typing or running code.
 
 state_at_init = None
+
 
 def init(state=None):
     """
@@ -87,8 +89,8 @@ def init(state=None):
 
     INPUT:
 
-    - ``state`` -- a dictionary or ``None``; if ``None`` the :func:`locals()`
-      of the caller is used.
+    - ``state`` -- dictionary or ``None``; if ``None`` the :func:`locals()`
+      of the caller is used
 
     EXAMPLES::
 
@@ -122,12 +124,10 @@ def _is_new_var(x, v, hidden):
 
     - ``v`` -- object
 
-    - ``hidden`` -- bool; if ``True``, always return ``False`` on variables
-      that start with ``_``)
+    - ``hidden`` -- boolean; if ``True``, always return ``False`` on variables
+      that start with ``_``
 
-    OUTPUT:
-
-    A bool
+    OUTPUT: boolean
 
     EXAMPLES:
 
@@ -161,24 +161,26 @@ def _is_new_var(x, v, hidden):
     # definitely new.
     if x not in state_at_init:
         return True
+    # A lazy import that was there at init time is not new
+    if isinstance(v, LazyImport):
+        return False
     # A variable could also be new even if it was there at init, say if
     # its value changed.
-    return x not in state_at_init or state_at_init[x] is not v
+    return state_at_init[x] is not v
+
 
 def show_identifiers(hidden=False):
     r"""
-    Returns a list of all variable names that have been defined during
+    Return a list of all variable names that have been defined during
     this session.  By default, this returns only those identifiers
     that don't start with an underscore.
 
     INPUT:
 
-    - ``hidden`` -- bool (Default: ``False``); If ``True``, also return
-      identifiers that start with an underscore.
+    - ``hidden`` -- boolean (default: ``False``); if ``True``, also return
+      identifiers that start with an underscore
 
-    OUTPUT:
-
-    A list of variable names
+    OUTPUT: list of variable names
 
     EXAMPLES:
 
@@ -194,7 +196,7 @@ def show_identifiers(hidden=False):
         sage: a = 10
         sage: factor = 20
         sage: show_identifiers()
-        ['a', 'factor']
+        ['factor', 'a']
 
     To get the actual value of a variable from the list, use the
     :func:`globals()` function.::
@@ -208,7 +210,7 @@ def show_identifiers(hidden=False):
 
         sage: _hello = 10
         sage: show_identifiers()
-        ['a', 'factor']
+        ['factor', 'a']
         sage: '_hello' in show_identifiers(hidden=True)
         True
 
@@ -216,19 +218,13 @@ def show_identifiers(hidden=False):
     least in command line mode.::
 
         sage: show_identifiers(hidden=True)        # random output
-        ['__', '_i', '_6', '_4', '_3', '_1', '_ii', '__doc__', '__builtins__', '___', '_9', '__name__', '_', 'a', '_i12', '_i14', 'factor', '__file__', '_hello', '_i13', '_i11', '_i10', '_i15', '_i5', '_13', '_10', '_iii', '_i9', '_i8', '_i7', '_i6', '_i4', '_i3', '_i2', '_i1', '_init_cmdline', '_14']
+        ['__builtin__', '_ih', '_oh', '_dh', 'exit', 'quit', '_', '__', '___',
+        '_i', '_ii', '_iii', '_i1', 'factor', '_i2', '_2', '_i3', 'a', '_i4',
+        '_i5', '_5', '_i6', '_6', '_i7', '_hello', '_i8', '_8', '_i9', '_9',
+        '_i10']
     """
-    from sage.doctest.forker import DocTestTask
     state = caller_locals()
-    # Ignore extra variables injected into the global namespace by the doctest
-    # runner
-    _none = object()
-
-    def _in_extra_globals(name, val):
-        return val == DocTestTask.extra_globals.get(name, _none)
-
-    return sorted([x for x, v in state.items() if _is_new_var(x, v, hidden)
-                   and not _in_extra_globals(x, v)])
+    return [x for x, v in state.items() if _is_new_var(x, v, hidden)]
 
 
 def save_session(name='sage_session', verbose=False):
@@ -260,15 +256,13 @@ def save_session(name='sage_session', verbose=False):
 
     INPUT:
 
-        - ``name`` -- string (default: 'sage_session') name of ``sobj``
-          to save the session to.
+        - ``name`` -- string (default: ``'sage_session'``); name of ``sobj``
+          to save the session to
 
-        - ``verbose`` -- bool (default: ``False``) if ``True``, print
-          info about why certain variables can't be saved.
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print
+          info about why certain variables can't be saved
 
-    OUTPUT:
-
-        - Creates a file and returns silently.
+    OUTPUT: creates a file and returns silently
 
     EXAMPLES:
 
@@ -291,28 +285,44 @@ def save_session(name='sage_session', verbose=False):
         sage: f = lambda x : x^2
         sage: save_session(tmp_f)
         sage: save_session(tmp_f, verbose=True)
-        Saving...
-        Not saving f: f is a function, method, class or type
         ...
+        Not saving f: f is a function or method
 
     Something similar happens for cython-defined functions::
 
         sage: g = cython_lambda('double x', 'x*x + 1.5')
         sage: save_session(tmp_f, verbose=True)
-        Saving...
-        Not saving g: g is a function, method, class or type
         ...
+        Not saving g: g is a cython function or method
+
+    And the same for a lazy import::
+
+        sage: from sage.misc.lazy_import import LazyImport
+        sage: lazy_ZZ = LazyImport('sage.rings.integer_ring', 'ZZ')
+        sage: save_session(tmp_f, verbose=True)
+        ...
+        Not saving lazy_ZZ: lazy_ZZ is a lazy import
     """
     state = caller_locals()
     # This dict D will contain the session -- as a dict -- that we will save to disk.
     D = {}
     # We iterate only over the new variables that were defined in this
     # session, since those are the only ones we will save.
-    for k in show_identifiers(hidden = True):
+    for k in show_identifiers(hidden=True):
         try:
             x = state[k]
-            if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType, type)):
-                raise TypeError('{} is a function, method, class or type'.format(k))
+
+            if isinstance(x, type):
+                raise TypeError('{} is a class or type'.format(k))
+
+            if isinstance(x, (types.FunctionType, types.BuiltinFunctionType, types.BuiltinMethodType)):
+                raise TypeError('{} is a function or method'.format(k))
+
+            if getattr(type(x), '__name__', None) == 'cython_function_or_method':
+                raise TypeError('{} is a cython function or method'.format(k))
+
+            if isinstance(x, LazyImport):
+                raise TypeError('{} is a lazy import'.format(k))
 
             # We attempt to pickle *and* unpickle every variable to
             # make *certain* that we can pickled D at the end below.

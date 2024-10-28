@@ -1,5 +1,4 @@
 #!/usr/bin/env sage-python
-
 """
 Given the output of doctest and a file, adjust the doctests so they won't fail.
 
@@ -31,13 +30,15 @@ AUTHORS::
 # ****************************************************************************
 
 import itertools
+import json
 import os
 import re
 import shlex
 import subprocess
 import sys
 
-from argparse import ArgumentParser, FileType
+from argparse import ArgumentParser
+from collections import defaultdict
 from pathlib import Path
 
 from sage.doctest.control import DocTestDefaults, DocTestController
@@ -45,13 +46,16 @@ from sage.doctest.parsing import parse_file_optional_tags, parse_optional_tags, 
 from sage.env import SAGE_ROOT
 from sage.features import PythonModule
 from sage.features.all import all_features, module_feature, name_feature
+from sage.misc.cachefunc import cached_function
 from sage.misc.temporary_file import tmp_filename
 
 parser = ArgumentParser(description="Given an input file with doctests, this creates a modified file that passes the doctests (modulo any raised exceptions). By default, the input file is modified. You can also name an output file.")
 parser.add_argument('-l', '--long', dest='long', action="store_true", default=False,
                     help="include tests tagged '# long time'")
-parser.add_argument("--distribution", type=str, default='',
-                    help="distribution package to test, e.g., 'sagemath-graphs', 'sagemath-combinat[modules]'; sets defaults for --venv and --environment")
+parser.add_argument("--distribution", type=str, default=[], action='append',
+                    help="distribution package to test, e.g., 'sagemath-graphs', 'sagemath-combinat[modules]'; sets defaults for --venv and --environment. This option can be repeated to test several distributions")
+parser.add_argument("--fixed-point", default=False, action="store_true",
+                    help="whether to repeat until stable")
 parser.add_argument("--venv", type=str, default='',
                     help="directory name of a venv where 'sage -t' is to be run")
 parser.add_argument("--environment", type=str, default='',
@@ -63,31 +67,37 @@ parser.add_argument("--full-tracebacks", default=False, action="store_true",
 parser.add_argument("--only-tags", default=False, action="store_true",
                     help="only add '# optional/needs' tags where needed, ignore other failures")
 parser.add_argument("--probe", metavar="FEATURES", type=str, default='',
-                    help="check whether '# optional/needs' tags are still needed, remove these")
+                    help="check whether '# optional/needs' tags are still needed, remove those not needed")
 parser.add_argument("--keep-both", default=False, action="store_true",
                     help="do not replace test results; duplicate the test instead, showing both results, and mark both copies '# optional'")
 parser.add_argument("--overwrite", default=False, action="store_true",
                     help="never interpret a second filename as OUTPUT; overwrite the source files")
 parser.add_argument("--no-overwrite", default=False, action="store_true",
                     help="never interpret a second filename as OUTPUT; output goes to files named INPUT.fixed")
+parser.add_argument("--update-known-test-failures", default=False, action="store_true",
+                    help="update the file pkgs/DISTRIBUTION/known-test-failures.json")
+parser.add_argument("--verbose", default=False, action="store_true",
+                    help="show details of all changes; implies --no-diff")
+parser.add_argument("--no-diff", default=False, action="store_true",
+                    help="don't show the 'git diff' of the modified files")
 parser.add_argument("filename", nargs='*', help="input filenames; or (deprecated) INPUT_FILENAME OUTPUT_FILENAME if exactly two filenames are given and neither --overwrite nor --no-overwrite is present",
                     type=str)
 
-args = parser.parse_args()
-
-
 runtest_default_environment = "sage.repl.ipython_kernel.all_jupyter"
 
-def default_venv_environment_from_distribution():
-    if args.distribution:
-        # shortcuts / variants
-        args.distribution = args.distribution.replace('_', '-')
-        if not (args.distribution.startswith('sagemath-')
-                or args.distribution.startswith('sage-')):
-            args.distribution = f'sagemath-{args.distribution}'
-        # extras
-        m = re.fullmatch(r'([^[]*)(\[([^]]*)\])?', args.distribution)
-        plain_distribution, extras = m.group(1), m.group(3)
+def plain_distribution_and_extras(distribution):
+    # shortcuts / variants
+    distribution = distribution.replace('_', '-')
+    if not (distribution.startswith('sagemath-')
+            or distribution.startswith('sage-')):
+        distribution = f'sagemath-{distribution}'
+    # extras
+    m = re.fullmatch(r'([^[]*)(\[([^]]*)\])?', distribution)
+    return m.group(1), m.group(3)
+
+def default_venv_environment_from_distribution(distribution):
+    if distribution:
+        plain_distribution, extras = plain_distribution_and_extras(distribution)
         tox_env_name = 'sagepython-sagewheels-nopypi-norequirements'
         if extras:
             tox_env_name += '-' + extras.replace(',', '-')
@@ -98,56 +108,83 @@ def default_venv_environment_from_distribution():
         default_environment = runtest_default_environment
     return default_venv, default_environment
 
-default_venv, default_environment = default_venv_environment_from_distribution()
 
-if not args.venv:
-    args.venv = default_venv
-if not args.environment:
-    args.environment = default_environment
+@cached_function
+def venv_explainer(distribution, venv=None, environment=None):
+    venv_explainers = []
+    default_venv, default_environment = default_venv_environment_from_distribution(distribution)
+    if venv:
+        if m := re.search(f'pkgs/(sage[^/]*)/[.]tox/((sagepython|sagewheels|nopypi|norequirements)-*)*([^/]*)$',
+                          venv):
+            distribution, extras = m.group(1), m.group(4)
+            if extras:
+                distribution += '[' + extras.replace('-', ',') + ']'
+            default_venv_given_distribution, default_environment_given_distribution = default_venv_environment_from_distribution(distribution)
 
-if args.distribution or args.venv != default_venv or args.environment != default_environment:
-    args.keep_both = args.full_tracebacks = True
+            if (Path(venv).resolve() == Path(default_venv_given_distribution).resolve()
+                    or not environment or environment == default_environment_given_distribution):
+                venv_explainers.append(f'--distribution {shlex.quote(distribution)}')
+                default_venv, default_environment = default_venv_given_distribution, default_environment_given_distribution
 
-venv_explainers = []
+    if venv and Path(venv).resolve() != Path(default_venv).resolve():
+        venv_explainers.append(f'--venv {shlex.quote(venv)}')
+    if environment and environment != default_environment:
+        venv_explainers.append(f'--environment {environment}')
 
-if args.venv:
-    if m := re.search(f'pkgs/(sage[^/]*)/[.]tox/((sagepython|sagewheels|nopypi|norequirements)-*)*([^/]*)$',
-                      args.venv):
-        args.distribution, extras = m.group(1), m.group(4)
-        if extras:
-            args.distribution += '[' + extras.replace('-', ',') + ']'
-        default_venv_given_distribution, default_environment_given_distribution = default_venv_environment_from_distribution()
-
-        if (Path(args.venv).resolve() == Path(default_venv_given_distribution).resolve()
-                or args.environment == default_environment_given_distribution):
-            venv_explainers.append(f'--distribution {shlex.quote(args.distribution)}')
-            default_venv, default_environment = default_venv_given_distribution, default_environment_given_distribution
-
-if Path(args.venv).resolve() != Path(default_venv).resolve():
-    venv_explainers.append(f'--venv {shlex.quote(args.venv)}')
-if args.environment != default_environment:
-    venv_explainers.append(f'--environment {args.environment}')
-
-if venv_explainers:
-    venv_explainer = ' (with ' + ' '.join(venv_explainers) + ')'
-else:
-    venv_explainer = ''
+    if venv_explainers:
+        return ' (with ' + ' '.join(venv_explainers) + ')'
+    return ''
 
 
-def process_block(block, src_in_lines, file_optional_tags):
+sep = "**********************************************************************\n"
+
+
+def process_block(block, src_in_lines, file_optional_tags, venv_explainer=''):
+    if args.verbose:
+        print(sep + block.rstrip())
+
     # Extract the line, what was expected, and was got.
     if not (m := re.match('File "([^"]*)", line ([0-9]+), in ', block)):
         return
+
+    def print_line(num):
+        if args.verbose and (src := src_in_lines[num]):
+            if src:
+                for line in src.split('\n'):
+                    line = line.strip()
+                    if line.startswith("sage: ") or line.startswith("....: "):
+                        line = line[6:]
+                    print(f"    {line}")  # indent to match the displayed "Example" in the sage-runtest message
+
+    def update_line(num, new, message=None):
+        src_in_lines[num] = new
+        if args.verbose and message:
+            print(f"sage-fixdoctests: {message}")
+            print_line(num)
+
+    def append_to_line(num, new, message=None):
+        update_line(num, src_in_lines[num] + new, message=message)
+
+    def prepend_to_line(num, new, message=None):
+        update_line(num, new + src_in_lines[num], message=message)
+
+    def update_line_optional_tags(num, *args, message=None, **kwds):
+        update_line(num,
+                    update_optional_tags(src_in_lines[num], *args, **kwds),
+                    message=message)
+
     filename = m.group(1)
     first_line_num = line_num = int(m.group(2))  # 1-based line number of the first line of the example
 
     if m := re.search(r"using.*block-scoped tag.*'(sage: .*)'.*to avoid repeating the tag", block):
         indent = (len(src_in_lines[first_line_num - 1]) - len(src_in_lines[first_line_num - 1].lstrip()))
-        src_in_lines[line_num - 2] += '\n' + ' ' * indent + m.group(1)
+        append_to_line(line_num - 2, '\n' + ' ' * indent + m.group(1),
+                       message="Adding this block-scoped tag")
+        print_line(first_line_num - 1)
 
     if m := re.search(r"updating.*block-scoped tag.*'sage: (.*)'.*to avoid repeating the tag", block):
-        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                tags=parse_optional_tags('# ' + m.group(1)))
+        update_line_optional_tags(first_line_num - 1, tags=parse_optional_tags('# ' + m.group(1)),
+                                  message="Adding this tag to the existing block-scoped tag")
 
     if m := re.search(r"referenced here was set only in doctest marked '# (optional|needs)[-: ]*([^;']*)", block):
         optional = m.group(2).split()
@@ -155,13 +192,13 @@ def process_block(block, src_in_lines, file_optional_tags):
             # This happens due to a virtual doctest in src/sage/repl/user_globals.py
             return
         optional = set(optional) - set(file_optional_tags)
-        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                add_tags=optional)
+        update_line_optional_tags(first_line_num - 1, add_tags=optional,
+                                  message=f"Adding the tag(s) {optional}")
 
     if m := re.search(r"tag '# (optional|needs)[-: ]([^;']*)' may no longer be needed", block):
         optional = m.group(2).split()
-        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                remove_tags=optional)
+        update_line_optional_tags(first_line_num - 1, remove_tags=optional,
+                                  message=f"Removing the tag(s) {optional}")
 
     if m2 := re.search('(Expected:|Expected nothing|Exception raised:)\n', block):
         m1 = re.search('Failed example:\n', block)
@@ -189,17 +226,21 @@ def process_block(block, src_in_lines, file_optional_tags):
         return
 
     # Error testing.
-    if m := re.search(r"(?:ModuleNotFoundError: No module named|ImportError: cannot import name '([^']*)' from) '([^']*)'", block):
+    if m := re.search(r"(?:ModuleNotFoundError: No module named|ImportError: cannot import name '(.*?)' from) '(.*?)'|AttributeError: module '(.*)?' has no attribute '(.*?)'", block):
         if m.group(1):
             # "ImportError: cannot import name 'function_field_polymod' from 'sage.rings.function_field' (unknown location)"
             module = m.group(2) + '.' + m.group(1)
-        else:
+        elif m.group(2):
+            # "ModuleNotFoundError: No module named ..."
             module = m.group(2)
+        else:
+            # AttributeError: module 'sage.rings' has no attribute 'qqbar'
+            module = m.group(3) + '.' + m.group(4)
         asked_why = re.search('#.*(why|explain)', src_in_lines[first_line_num - 1])
         optional = module_feature(module)
         if optional and optional.name not in file_optional_tags:
-            src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                    add_tags=[optional.name])
+            update_line_optional_tags(first_line_num - 1, add_tags=[optional.name],
+                                      message=f"Module '{module}' may be provided by feature '{optional.name}'; adding this tag")
             if not asked_why:
                 # When no explanation has been demanded,
                 # we just mark the doctest with the feature
@@ -225,23 +266,30 @@ def process_block(block, src_in_lines, file_optional_tags):
             if (last_frame >= 0
                     and (index_NameError := got.rfind("NameError:")) >= 0
                     and got[last_frame:].startswith('File "<doctest')):
-                # NameError from top level, so keep it brief
+                if args.verbose:
+                    print("sage-fixdoctests: This is a NameError from the top level of the doctest")  # so we keep it brief
                 if m := re.match("NameError: name '(.*)'", got[index_NameError:]):
                     name = m.group(1)
-                    if name == 'x':  # Don't mark it '# needs sage.symbolic'; that's almost always wrong
+                    if name in ['I', 'i']:
+                        add_tags = ['sage.symbolic']  # This is how we mark it currently (2023-08)
+                    elif len(name) >= 2 and (feature := name_feature(name)) and feature.name != 'sage.all':
+                        # Don't mark use of 'x' '# needs sage.symbolic'; that's almost always wrong
+                        # Likewise for variables like 'R', 'r'
+                        add_tags = [feature.name]                   # FIXME: This feature may actually already be present in line, block, or file. Move this lookup code into the doctester and issue more specific instructions
+                    elif args.only_tags:
+                        if args.verbose:
+                            print("sage-fixdoctests: No feature providing this global is known; no action because of --only-tags")
                         return
-                    if feature := name_feature(name):
-                        add_tags = [feature.name]
                     else:
-                        if args.only_tags:
-                            return
-                        add_tags = [f"NameError: '{name}'{venv_explainer}"]
+                        add_tags = [f"NameError ('{name}', {venv_explainer.lstrip().lstrip('(')}"]
                 else:
                     if args.only_tags:
+                        if args.verbose:
+                            print("sage-fixdoctests: No feature providing this global is known; no action because of --only-tags")
                         return
                     add_tags = [f"NameError{venv_explainer}"]
-                src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                        add_tags=add_tags)
+                update_line_optional_tags(first_line_num - 1, add_tags=add_tags,
+                                          message=f"Adding tag {add_tags}")
                 return
             got = got.splitlines()
         else:
@@ -252,9 +300,14 @@ def process_block(block, src_in_lines, file_optional_tags):
         got = ['']
     else:
         expected, got = block.split('\nGot:\n')
+        got = re.sub(r'(doctest:warning).*^( *DeprecationWarning:)',
+                     r'\1...\n\2',
+                     got, 1, re.DOTALL | re.MULTILINE)
         got = got.splitlines()      # got can't be the empty string
 
     if args.only_tags:
+        if args.verbose:
+            print("sage-fixdoctests: No action because of --only-tags")
         return
 
     expected = expected.splitlines()
@@ -263,11 +316,11 @@ def process_block(block, src_in_lines, file_optional_tags):
         test_lines = ([update_optional_tags(src_in_lines[first_line_num - 1],
                                             add_tags=[f'GOT{venv_explainer}'])]
                       + src_in_lines[first_line_num : line_num])
-        src_in_lines[first_line_num - 1] = update_optional_tags(src_in_lines[first_line_num - 1],
-                                                                add_tags=['EXPECTED'])
+        update_line_optional_tags(first_line_num - 1, add_tags=['EXPECTED'],
+                                  message="Marking the doctest with idempotent tag EXPECTED, creating another copy with idempotent tag GOT")
         indent = (len(src_in_lines[line_num - 1]) - len(src_in_lines[line_num - 1].lstrip()))
         line_num += len(expected)  # skip to the last line of the expected output
-        src_in_lines[line_num - 1] += '\n'.join([''] + test_lines)  # 2nd copy of the test
+        append_to_line(line_num - 1, '\n'.join([''] + test_lines))  # 2nd copy of the test
         # now line_num is the last line of the 2nd copy of the test
         expected = []
 
@@ -275,7 +328,9 @@ def process_block(block, src_in_lines, file_optional_tags):
     # and match indentation with line number line_num-1
     if not expected:
         indent = (len(src_in_lines[first_line_num - 1]) - len(src_in_lines[first_line_num - 1].lstrip()))
-        src_in_lines[line_num - 1] += '\n' + '\n'.join('%s%s' % (' ' * indent, line.lstrip()) for line in got)
+        append_to_line(line_num - 1,
+                       '\n' + '\n'.join('%s%s' % (' ' * indent, line.lstrip()) for line in got),
+                       message="Adding the new output")
         return
 
     # Guess how much extra indenting ``got`` needs to match with the indentation
@@ -297,17 +352,18 @@ def process_block(block, src_in_lines, file_optional_tags):
                              '<' * 40, '\n'.join(got), '<' * 40))
         return
 
-    # If we got something when we expected nothing then we delete the line from the
+    # If we got nothing when we expected something then we delete the line from the
     # output, otherwise, add all of what we `got` onto the end of src_in_lines[line_num]
     if got == ['']:
-        src_in_lines[line_num] = None
+        update_line(line_num, None,
+                    message="Expected something, got nothing; deleting the old output")
     else:
-        src_in_lines[line_num] = '\n'.join((' ' * indent + got[i])
-                                           for i in range(len(got)))
+        update_line(line_num, '\n'.join((' ' * indent + got[i]) for i in range(len(got))),
+                    message="Replacing the old expected output with the new output")
 
     # Mark any remaining `expected` lines as ``None`` so as to preserve the line numbering
     for i in range(1, len(expected)):
-        src_in_lines[line_num + i] = None
+        update_line(line_num + i, None)
 
 
 # set input and output files
@@ -322,31 +378,36 @@ def output_filename(filename):
         return filename + ".fixed"
     return filename
 
-# Test the doctester, putting the output of the test into sage's temporary directory
-if args.no_test:
-    doc_out = ''
-else:
-    executable = f'{os.path.relpath(args.venv)}/bin/sage' if args.venv else 'sage'
-    environment_args = f'--environment {args.environment} ' if args.environment != runtest_default_environment else ''
+
+tested_doctesters = set()
+venv_files = {}          # distribution -> files that are not yet known to be fixed points in venv; we add and remove items
+venv_ignored_files = {}  # distribution -> files that should be ignored; we only add items
+unprocessed_files = set()
+
+
+class BadDistribution(Exception):
+    pass
+
+
+def doctest_blocks(args, input_filenames, distribution=None, venv=None, environment=None):
+    executable = f'{os.path.relpath(venv)}/bin/sage' if venv else 'sage'
+    environment_args = f'--environment {environment} ' if environment and environment != runtest_default_environment else ''
     long_args = f'--long ' if args.long else ''
     probe_args = f'--probe {shlex.quote(args.probe)} ' if args.probe else ''
-    lib_args = f'--if-installed ' if args.venv else ''
+    lib_args = f'--if-installed ' if venv else ''
     doc_file = tmp_filename()
-    if args.venv or environment_args:
-       input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
-       cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}{lib_args}{shlex.quote(input)}'
-       print(f'Running "{cmdline}"')
-       if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
-           print(f'Doctester exited with error status {status}')
-           sys.exit(status)
+    if venv or environment_args:
+        # Test the doctester, putting the output of the test into sage's temporary directory
+        input = os.path.join(os.path.relpath(SAGE_ROOT), 'src', 'sage', 'version.py')
+        cmdline = f'{shlex.quote(executable)} -t {environment_args}{long_args}{probe_args}'.rstrip()
+        if cmdline not in tested_doctesters:
+            if args.verbose:
+                print(f'sage-fixdoctests: Checking whether the doctester "{cmdline}" works')
+            cmdline += f' {shlex.quote(input)}'
+            if status := os.waitstatus_to_exitcode(os.system(f'{cmdline} > {shlex.quote(doc_file)}')):
+                raise BadDistribution(f"Doctester exited with error status {status}")
+            tested_doctesters.add(cmdline)
     # Run the doctester, putting the output of the test into sage's temporary directory
-    if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
-        print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
-              "this is deprecated. To pass two input filenames, use the option --overwrite.")
-
-        input_filenames = [args.filename[0]]
-    else:
-        input_filenames = args.filename
     input_args = " ".join(shlex.quote(f) for f in input_filenames)
     cmdline = f'{shlex.quote(executable)} -t -p {environment_args}{long_args}{probe_args}{lib_args}{input_args}'
     print(f'Running "{cmdline}"')
@@ -355,19 +416,21 @@ else:
     with open(doc_file, 'r') as doc:
         doc_out = doc.read()
 
-    # echo control messages
-    for m in re.finditer('^Skipping .*', doc_out, re.MULTILINE):
+    # Remove skipped files, echo control messages
+    for m in re.finditer(r"^Skipping '(.*?)'.*$", doc_out, re.MULTILINE):
         print('sage-runtests: ' + m.group(0))
+        if distribution is not None:
+            venv_files[distribution].discard(m.group(1))
+            venv_ignored_files[distribution].add(m.group(1))
 
-sep = "**********************************************************************\n"
-doctests = doc_out.split(sep)
+    return doc_out.split(sep)
 
-seen = set()
 
 def block_filename(block):
     if not (m := re.match('File "([^"]*)", line ([0-9]+), in ', block)):
         return None
     return m.group(1)
+
 
 def expanded_filename_args():
     DD = DocTestDefaults(optional='all', warn_long=10000)
@@ -377,7 +440,12 @@ def expanded_filename_args():
     for source in DC.sources:
         yield source.path
 
-def process_grouped_blocks(grouped_iterator):
+
+def process_grouped_blocks(grouped_iterator, distribution=None, venv=None, environment=None):
+
+    seen = set()
+
+    explainer = venv_explainer(distribution, venv, environment)
 
     for input, blocks in grouped_iterator:
 
@@ -392,9 +460,15 @@ def process_grouped_blocks(grouped_iterator):
         src_in_lines = src_in.splitlines()
         shallow_copy_of_src_in_lines = list(src_in_lines)
         file_optional_tags = set(parse_file_optional_tags(enumerate(src_in_lines)))
+        persistent_tags_counts = defaultdict(int)
+        tags_counts = defaultdict(int)
 
         for block in blocks:
-            process_block(block, src_in_lines, file_optional_tags)
+            try:
+                process_block(block, src_in_lines, file_optional_tags, venv_explainer=explainer)
+            except Exception:
+                print('sage-fixdoctests: Failure to process block')
+                print(block)
 
         # Now source line numbers do not matter any more, and lines can be real lines again
         src_in_lines = list(itertools.chain.from_iterable(
@@ -403,6 +477,7 @@ def process_grouped_blocks(grouped_iterator):
 
         # Remove duplicate optional tags and rewrite all '# optional' that should be '# needs'
         persistent_optional_tags = {}
+        persistent_optional_tags_counted = False
         for i, line in enumerate(src_in_lines):
             if m := re.match(' *sage: *(.*)#', line):
                 tags, line_sans_tags, is_persistent = parse_optional_tags(line, return_string_sans_tags=True)
@@ -410,8 +485,9 @@ def process_grouped_blocks(grouped_iterator):
                     persistent_optional_tags = {tag: explanation
                                                 for tag, explanation in tags.items()
                                                 if explanation or tag not in file_optional_tags}
+                    persistent_optional_tags_counted = False
                     line = update_optional_tags(line, tags=persistent_optional_tags, force_rewrite='standard')
-                    if not line.rstrip():
+                    if re.fullmatch(' *sage: *', line):
                         # persistent (block-scoped or file-scoped) tag was removed, so remove the whole line
                         line = None
                 else:
@@ -420,13 +496,23 @@ def process_grouped_blocks(grouped_iterator):
                             if explanation or (tag not in file_optional_tags
                                                and tag not in persistent_optional_tags)}
                     line = update_optional_tags(line, tags=tags, force_rewrite='standard')
+                    if not persistent_optional_tags_counted:
+                        persistent_tags_counts[frozenset(persistent_optional_tags)] += 1
+                        persistent_optional_tags_counted = True
+                    tags_counts[frozenset(tags)] += 1
                 src_in_lines[i] = line
             elif line.strip() in ['', '"""', "'''"]:    # Blank line or end of docstring
                 persistent_optional_tags = {}
+                persistent_optional_tags_counted = False
+            elif re.match(' *sage: ', line):
+                if not persistent_optional_tags_counted:
+                    persistent_tags_counts[frozenset(persistent_optional_tags)] += 1
+                    persistent_optional_tags_counted = True
+                tags_counts[frozenset()] += 1
 
         if src_in_lines != shallow_copy_of_src_in_lines:
             if (output := output_filename(input)) is None:
-                print(f"Not saving modifications made in '{input}'")
+                print(f"sage-fixdoctests: Not saving modifications made in '{input}'")
             else:
                 with open(output, 'w') as test_output:
                     for line in src_in_lines:
@@ -435,16 +521,171 @@ def process_grouped_blocks(grouped_iterator):
                         test_output.write(line)
                         test_output.write('\n')
                 # Show summary of changes
-                if input != output :
-                    print("The fixed doctests have been saved as '{0}'.".format(output))
+                if input != output:
+                    print("sage-fixdoctests: The fixed doctests have been saved as '{0}'.".format(output))
                 else:
                     relative = os.path.relpath(output, SAGE_ROOT)
-                    print(f"The input file '{output}' has been overwritten.")
-                    if not relative.startswith('..'):
+                    print(f"sage-fixdoctests: The input file '{output}' has been overwritten.")
+                    if not args.no_diff and not relative.startswith('..'):
                         subprocess.call(['git', '--no-pager', 'diff', relative], cwd=SAGE_ROOT)
+            for other_distribution, file_set in venv_files.items():
+                if input not in venv_ignored_files[other_distribution]:
+                    file_set.add(input)
         else:
-            print(f"No fixes made in '{input}'")
+            print(f"sage-fixdoctests: No fixes made in '{input}'")
+            if distribution is not None:
+                venv_files[distribution].discard(input)
 
-process_grouped_blocks(
-    itertools.chain(itertools.groupby(doctests, block_filename),
-                    ((filename, []) for filename in expanded_filename_args())))
+        unprocessed_files.discard(input)
+
+        if args.verbose:
+            if file_optional_tags:
+                print(f"File tags: ")
+                print(f"       {' '.join(sorted(file_optional_tags))}")
+            if persistent_tags_counts:
+                print(f"Doctest blocks by persistent tags: ")
+                for tags, count in sorted(persistent_tags_counts.items(),
+                                          key=lambda i: i[1], reverse=True):
+                    print(f"{count:6} {' '.join(sorted(tags)) or '(untagged)'}")
+            if tags_counts:
+                print(f"Doctest examples by tags: ")
+                for tags, count in sorted(tags_counts.items(),
+                                          key=lambda i: i[1], reverse=True):
+                    print(f"{count:6} {' '.join(sorted(tags)) or '(untagged)'}")
+
+
+def fix_with_distribution(file_set, distribution=None, verbose=False):
+    if verbose:
+        print("#" * 78)
+        print(f"sage-fixdoctests: Fixing with --distribution={shlex.quote(distribution)}")
+    default_venv, default_environment = default_venv_environment_from_distribution(distribution)
+    venv = args.venv or default_venv
+    environment = args.environment or default_environment
+    file_set_to_process = sorted(file_set)
+    file_set.clear()
+    try:
+        doctests = doctest_blocks(args, file_set_to_process,
+                                  distribution=distribution, venv=venv, environment=environment)
+        process_grouped_blocks(itertools.groupby(doctests, block_filename),  # modifies file_set
+                               distribution=distribution, venv=venv, environment=environment)
+    except BadDistribution as e:
+        if args.ignore_bad_distributions:
+            print(f"sage-fixdoctests: {e}, ignoring")
+        else:
+            sys.exit(f"sage-fixdoctests: {e}")
+
+
+if __name__ == "__main__":
+
+    args = parser.parse_args()
+
+    if args.verbose:
+        args.no_diff = True
+
+    args.ignore_bad_distributions = False  # This could also be a switch
+
+    args.update_failures_distribution = args.distribution
+
+    if args.distribution == ['all']:
+        args.distribution = ['sagemath-categories',
+                             '']  # monolithic distribution
+        args.update_failures_distribution = args.distribution + ['sagemath-repl',    # not included above because it knows too little and complains too much
+                                                                 ]
+
+        args.ignore_bad_distributions = True
+
+    if not args.filename:
+        if not args.update_known_test_failures:
+            sys.exit("sage-fixdoctests: At least one filename is required when --update-known-test-failures is not used")
+        if not args.distribution:
+            sys.exit("sage-fixdoctests: At least one --distribution argument is required for --update-known-test-failures")
+
+    if args.distribution or args.venv or args.environment:
+        args.keep_both = args.full_tracebacks = True
+
+    if len(args.distribution) > 1:
+        if args.venv or args.environment:
+            sys.exit("sage-fixdoctests: at most one --distribution argument can be combined with --venv and --environment")
+    elif not args.distribution:
+        args.distribution = ['']
+
+    if len(args.filename) == 2 and not args.overwrite and not args.no_overwrite:
+        print("sage-fixdoctests: When passing two filenames, the second one is taken as an output filename; "
+              "this is deprecated. To pass two input filenames, use the option --overwrite.")
+        input_filenames = [args.filename[0]]
+    else:
+        input_filenames = args.filename
+
+    try:
+        unprocessed_files = set(expanded_filename_args())
+        for distribution in args.distribution:
+            venv_files[distribution] = set(unprocessed_files)  # make copies
+            venv_ignored_files[distribution] = set()
+        if args.no_test:
+            pass
+        elif len(args.distribution) == 1 and not args.fixed_point:
+            fix_with_distribution(set(unprocessed_files), args.distribution[0])
+        else:
+            for distribution, file_set in venv_files.items():
+                fix_with_distribution(file_set, distribution, verbose=True)
+            if args.fixed_point:
+                if args.probe:
+                    print(f"sage-fixdoctests: Turning off --probe for the following iterations")
+                    # This forces convergence to a fixed point
+                    args.probe = ''
+                while True:
+                    # Run a distribution with largest number of files remaining to be checked
+                    # because of the startup overhead of sage-runtests
+                    distribution, file_set = max(venv_files.items(), key=lambda df: len(df[1]))
+                    if not file_set:
+                        break
+                    while file_set:
+                        fix_with_distribution(file_set, distribution, verbose=True)
+                        # Immediately re-run with the same distribution to continue chains of
+                        # "NameError" / "variable was set only in doctest" fixes
+
+        # Each file must be processed by process_grouped_blocks at least once to clean up tags,
+        # even if sage-runtest does not have any complaints.
+        if unprocessed_files:
+            print(f"sage-fixdoctests: Processing unprocessed files")
+            process_grouped_blocks([(filename, [])
+                                    for filename in unprocessed_files])
+
+        if args.fixed_point:
+            print(f"sage-fixdoctests: Fixed point reached")
+
+        if args.update_known_test_failures:
+            if args.update_failures_distribution == ['']:
+                print("sage-fixdoctests: Ignoring switch --update-known-test-failures because no --distribution was given")
+            else:
+                for distribution in sorted(args.update_failures_distribution):
+                    if distribution == '':
+                        continue
+                    plain_distribution, extras = plain_distribution_and_extras(distribution)
+                    default_venv, _ = default_venv_environment_from_distribution(distribution)
+                    venv = args.venv or default_venv
+                    try:
+                        stats_filename = os.path.join(default_venv, '.sage/timings2.json')
+                        with open(stats_filename, 'r') as stats_file:
+                            stats = json.load(stats_file)
+                    except FileNotFoundError:
+                        print(f"sage-fixdoctests: {os.path.relpath(stats_filename, SAGE_ROOT)} "
+                              "does not exist (ignoring)")
+                    else:
+                        for d in stats.values():
+                            del d['walltime']
+                        stats = {k: d for k, d in stats.items()
+                                 if d.get('failed') or d.get('ntests', True)}
+                        if extras:
+                            extras_suffix = '--' + '--'.join(extras.split(','))
+                        else:
+                            extras_suffix = ''
+                        failures_file = os.path.join(SAGE_ROOT, 'pkgs', plain_distribution,
+                                                     f'known-test-failures{extras_suffix}.json')
+                        with open(failures_file, 'w') as f:
+                            json.dump(stats, f, sort_keys=True, indent=4)
+                        print(f"sage-fixdoctests: Updated {os.path.relpath(failures_file, SAGE_ROOT)}")
+
+    except Exception:
+        print(f"sage-fixdoctests: Internal error")
+        raise

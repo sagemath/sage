@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Brent Yorgey's fast algorithm for integer vector (multiset) partitions.
 
@@ -38,7 +37,7 @@ cdef list vector_halve(list v):
 
     INPUT:
 
-    - ``v`` -- list of non-negative integers, understood as a vector
+    - ``v`` -- list of nonnegative integers, understood as a vector
 
     OUTPUT:
 
@@ -83,11 +82,11 @@ def recursive_within_from_to(list m, list s, list e, bint useS, bint useE):
 
     INPUT:
 
-    - ``m`` -- list of non-negative integers, understood as a vector
-    - ``s`` -- list of non-negative integers, understood as a vector
-    - ``e`` -- list of non-negative integers, understood as a vector
-    - ``useS``  -- boolean
-    - ``useE``  -- boolean
+    - ``m`` -- list of nonnegative integers, understood as a vector
+    - ``s`` -- list of nonnegative integers, understood as a vector
+    - ``e`` -- list of nonnegative integers, understood as a vector
+    - ``useS`` -- boolean
+    - ``useE`` -- boolean
 
     EXAMPLES::
 
@@ -126,18 +125,19 @@ def recursive_within_from_to(list m, list s, list e, bint useS, bint useE):
     if len(m) == 1:
         # We use this style of Cython code for now in order to get this to convert
         #   to an optimized pure C for loop. See Cython github issue #532.
-        #for x in range(start, end - 1, -1):
+        # for x in range(start, end - 1, -1):
         for x from start >= x >= end by 1:
             yield [x]  # we know the answer for singletons
     else:
         # We use this style of Cython code for now in order to get this to convert
         #   to an optimized pure C for loop. See Cython github issue #532.
-        #for x in range(start, end - 1, -1):
+        # for x in range(start, end - 1, -1):
         for x from start >= x >= end by 1:
             useSS = useS and x == <Py_ssize_t> s[0]
             useEE = useE and x == <Py_ssize_t> e[0]
             for o in recursive_within_from_to(m[1:], s[1:], e[1:], useSS, useEE):
                 yield [x] + o
+
 
 def within_from_to(list m, list s, list e):
     r"""
@@ -148,9 +148,9 @@ def within_from_to(list m, list s, list e):
 
     INPUT:
 
-    - ``m`` -- list of non-negative integers, understood as a vector
-    - ``s`` -- list of non-negative integers, understood as a vector
-    - ``e`` -- list of non-negative integers, understood as a vector
+    - ``m`` -- list of nonnegative integers, understood as a vector
+    - ``s`` -- list of nonnegative integers, understood as a vector
+    - ``e`` -- list of nonnegative integers, understood as a vector
 
     EXAMPLES::
 
@@ -229,6 +229,7 @@ def within_from_to(list m, list s, list e):
         return
     yield from recursive_within_from_to(m, ss, e, True, True)
 
+
 cdef inline list vector_sub(list a, list b):
     """
     Return ``a - b`` considered as vectors.
@@ -241,6 +242,7 @@ cdef inline list vector_sub(list a, list b):
         ret.append((<Py_ssize_t> a[i]) - (<Py_ssize_t> b[i]))
     return ret
 
+
 def recursive_vector_partitions(list v, list vL):
     r"""
     Iterate over a lexicographically ordered list of lists, each list
@@ -251,8 +253,8 @@ def recursive_vector_partitions(list v, list vL):
 
     INPUT:
 
-    - ``v`` -- list of non-negative integers, understood as a vector
-    - ``vL`` -- list of non-negative integers, understood as a vector
+    - ``v`` -- list of nonnegative integers, understood as a vector
+    - ``vL`` -- list of nonnegative integers, understood as a vector
 
     EXAMPLES::
 
@@ -282,15 +284,13 @@ def fast_vector_partitions(v, min_vals=None):
 
     INPUT:
 
-    - ``v`` -- list of non-negative integers, understood as the vector
+    - ``v`` -- list of nonnegative integers, understood as the vector
       to be partitioned
 
-    - ``min_vals`` -- optional list of non-negative integers, of same
+    - ``min_vals`` -- (optional) list of nonnegative integers, of same
       length as ``v``
 
-    OUTPUT:
-
-    A list of lists, each representing a vector partition of ``v``.
+    OUTPUT: list of lists, each representing a vector partition of ``v``
 
     If ``min_vals`` is given, only partitions with parts ``p >= min_vals`` in
     the lexicographic ordering will appear.

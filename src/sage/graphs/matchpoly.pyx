@@ -1,4 +1,5 @@
 # cython: binding=True
+# sage.doctest: needs sage.libs.flint sage.graphs
 """
 Matching polynomial
 
@@ -9,7 +10,7 @@ This module contains the following methods:
     :widths: 30, 70
     :delim: |
 
-    :meth:`matching_polynomial` | Computes the matching polynomial of a given graph
+    :meth:`matching_polynomial` | Compute the matching polynomial of a given graph.
     :meth:`complete_poly` | Compute the matching polynomial of the complete graph on `n` vertices.
 
 AUTHORS:
@@ -44,13 +45,15 @@ from sage.rings.integer cimport Integer
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
+
 
 x = polygen(ZZ, 'x')
 
 
 def matching_polynomial(G, complement=True, name=None):
     r"""
-    Computes the matching polynomial of the graph `G`.
+    Compute the matching polynomial of the graph `G`.
 
     If `p(G, k)` denotes the number of `k`-matchings (matchings with `k` edges)
     in `G`, then the matching polynomial is defined as [God1993]_:
@@ -61,11 +64,11 @@ def matching_polynomial(G, complement=True, name=None):
 
     INPUT:
 
-    - ``complement`` - (default: ``True``) whether to use Godsil's duality
+    - ``complement`` -- boolean (default: ``True``); whether to use Godsil's duality
       theorem to compute the matching polynomial from that of the graphs
-      complement (see ALGORITHM).
+      complement (see ALGORITHM)
 
-    - ``name`` - optional string for the variable name in the polynomial
+    - ``name`` -- (optional) string for the variable name in the polynomial
 
     .. NOTE::
 
@@ -203,7 +206,7 @@ def matching_polynomial(G, complement=True, name=None):
 
     TESTS:
 
-    Non-integer labels should work, (:trac:`15545`)::
+    Non-integer labels should work, (:issue:`15545`)::
 
         sage: G = Graph(10)
         sage: G.add_vertex((0,1))
@@ -216,14 +219,14 @@ def matching_polynomial(G, complement=True, name=None):
 
     cdef int i, j, d
     cdef fmpz_poly_t pol
-    cdef nverts = G.num_verts()
+    cdef int nverts = G.num_verts()
 
     # Using Godsil's duality theorem when the graph is dense
 
     if complement and G.density() > 0.5:  # this cutoff could probably be tuned
         f_comp = matching_polynomial(G.complement()).list()
         f = x.parent().zero()
-        for i from 0 <= i <= nverts / 2:  # implicit floor
+        for i in range(nverts // 2 + 1):
             j = nverts - 2 * i
             f += complete_poly(j) * f_comp[j] * (-1)**i
         return f
@@ -347,7 +350,7 @@ def complete_poly(n):
     return b
 
 
-cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol):
+cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int depth, fmpz_poly_t pol) noexcept:
     """
     Add matching polynomial to pol via recursion.
 
@@ -388,7 +391,7 @@ cdef void delete_and_add(int **edges, int nverts, int nedges, int totverts, int 
     cdef int edge1 = edges1[nedges]
     cdef int edge2 = edges2[nedges]
     cdef int new_nedges = 0
-    cdef int i, new_edge1, new_edge2
+    cdef int i
 
     # The new edges are all the edges that are not incident with (edge1, edge2)
 

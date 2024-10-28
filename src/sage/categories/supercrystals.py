@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.graphs sage.combinat
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.graphs sage.combinat
 r"""
 Supercrystals
 """
@@ -20,6 +21,7 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.crystals import Crystals
 from sage.categories.tensor import TensorProductsCategory
+
 
 class SuperCrystals(Category_singleton):
     def super_categories(self):
@@ -119,7 +121,7 @@ class SuperCrystals(Category_singleton):
                         edge_opts['label'] = LatexExpr(str(l))
                     return edge_opts
 
-                G.set_latex_options(format="dot2tex", edge_labels=True, edge_options=edge_options)
+                G.set_latex_options(format='dot2tex', edge_labels=True, edge_options=edge_options)
                 return G
 
             def genuine_highest_weight_vectors(self):

@@ -1,4 +1,4 @@
-$(PYTHON) cysignals pplpy $(SAGE_SRC)/sage/rings/integer.pxd $(SAGE_SRC)/sage/ext/stdsage.pxd | $(PYTHON_TOOLCHAIN) $(SAGERUNTIME)
+ cysignals pplpy $(SAGE_SRC)/sage/rings/integer.pxd $(SAGE_SRC)/sage/ext/stdsage.pxd | $(PYTHON_TOOLCHAIN) $(SAGERUNTIME) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

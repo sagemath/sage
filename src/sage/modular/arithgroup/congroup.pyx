@@ -52,9 +52,9 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
 
     INPUT:
 
-    - ``N`` -- int
-    - ``M`` -- int (divisor of `N`)
-    - ``t`` -- int (divisor of `N/M`)
+    - ``N`` -- integer
+    - ``M`` -- integer (divisor of `N`)
+    - ``t`` -- integer (divisor of `N/M`)
 
     OUTPUT:
 
@@ -116,7 +116,7 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
     # total number of coset representatives that we'll find
     n = Gamma0(N).index() / Gamma0(M).index()
     k = 0   # number found so far
-    Ndivt = N / t
+    Ndivt = N // t
     R = <int*>check_allocarray(4 * n, sizeof(int))
     halfmax = 2*(n+10)
     while k < n:
@@ -126,13 +126,13 @@ def degeneracy_coset_representatives_gamma0(int N, int M, int t):
         g = arith_int.c_xgcd_int(-cc,dd,&bb,&aa)
         if g == 0:
             continue
-        cc = cc / g
+        cc = cc // g
         if cc % M != 0:
             continue
-        dd = dd / g
+        dd = dd // g
         # Test if we've found a new coset representative.
         is_new = 1
-        for i from 0 <= i < k:
+        for i in range(k):
             j = 4*i
             if (R[j+1]*aa - R[j]*bb) % t == 0 and \
                (R[j+3]*cc - R[j+2]*dd) % Ndivt == 0:
@@ -165,9 +165,9 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
 
     INPUT:
 
-    - ``N`` -- int
-    - ``M`` -- int (divisor of `N`)
-    - ``t`` -- int (divisor of `N/M`)
+    - ``N`` -- integer
+    - ``M`` -- integer (divisor of `N`)
+    - ``t`` -- integer (divisor of `N/M`)
 
     OUTPUT:
 
@@ -217,7 +217,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
     # total number of coset representatives that we'll find
     n = Gamma1(N).index() / Gamma1(M).index()
     d = arith_int.c_gcd_int(t, N // t)
-    n = n / d
+    n = n // d
     k = 0   # number found so far
     Ndivt = N // t
     R = <int*>check_allocarray(4 * n, sizeof(int))
@@ -229,15 +229,15 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
         g = arith_int.c_xgcd_int(-cc, dd, &bb, &aa)
         if g == 0:
             continue
-        cc = cc / g
+        cc = cc // g
         if cc % M != 0:
             continue
-        dd = dd / g
+        dd = dd // g
         if M != 1 and dd % M != 1:
             continue
         # Test if we've found a new coset representative.
         is_new = 1
-        for i from 0 <= i < k:
+        for i in range(k):
             j = 4*i
             if (R[j] - aa) % t == 0 and \
                (R[j+1] - bb) % t == 0 and \
@@ -258,7 +258,7 @@ def degeneracy_coset_representatives_gamma1(int N, int M, int t):
 
     # Return the list left multiplied by T.
     S = []
-    for i from 0 <= i < k:
+    for i in range(k):
         j = 4*i
         S.append([R[j], R[j+1], R[j+2]*t, R[j+3]*t])
     sig_free(R)
@@ -288,7 +288,7 @@ def generators_helper(coset_reps, level):
 
     EXAMPLES::
 
-        sage: Gamma0(7).generators(algorithm="todd-coxeter") # indirect doctest
+        sage: Gamma0(7).generators(algorithm='todd-coxeter') # indirect doctest
         [
         [1 1]  [-1  0]  [ 1 -1]  [1 0]  [1 1]  [-3 -1]  [-2 -1]  [-5 -1]
         [0 1], [ 0 -1], [ 0  1], [7 1], [0 1], [ 7  2], [ 7  3], [21  4],

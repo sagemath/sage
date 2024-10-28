@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+rm -f "$SAGE_LOCAL/bin/frobby"

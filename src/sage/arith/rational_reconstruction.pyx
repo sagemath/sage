@@ -9,9 +9,9 @@ AUTHORS:
 - ??? (2006 or before)
 
 - Jeroen Demeyer (2014-10-20): move this function from ``gmp.pxi``,
-  simplify and fix some bugs, see :trac:`17180`
+  simplify and fix some bugs, see :issue:`17180`
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 ???
 #       Copyright (C) 2014 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -19,8 +19,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -34,8 +34,8 @@ cdef int mpq_rational_reconstruction(mpq_t answer, mpz_t a, mpz_t m) except -1:
     such that the numerator and denominator of the result is bounded by
     sqrt(m/2).
 
-    If `m` is zero, raise ``ZeroDivisionError``. If the rational
-    reconstruction does not exist, raise ``ValueError``.
+    If `m` is zero, raise :class`ZeroDivisionError`. If the rational
+    reconstruction does not exist, raise :exc:`ValueError`.
 
     We assume that ``mpq_init`` has been called on ``answer``.
 

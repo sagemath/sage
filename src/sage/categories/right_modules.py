@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Right modules
 """
@@ -8,8 +9,9 @@ Right modules
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_over_base_ring
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+
 
 ##?class RightModules(Category_over_base_rng):
 class RightModules(Category_over_base_ring):

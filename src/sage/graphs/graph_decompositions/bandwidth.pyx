@@ -6,7 +6,7 @@ Definition
 ----------
 
 The bandwidth `bw(M)` of a matrix `M` is the smallest integer `k` such that all
-non-zero entries of `M` are at distance `k` from the diagonal. The bandwidth
+nonzero entries of `M` are at distance `k` from the diagonal. The bandwidth
 `bw(G)` of an undirected graph `G` is the minimum bandwidth of the adjacency
 matrix of `G`, over all possible relabellings of its vertices.
 
@@ -209,7 +209,6 @@ def bandwidth(G, k=None):
         Traceback (most recent call last):
         ...
         ValueError: this method only works on unweighted graphs
-
     """
     if G.is_directed():
         raise ValueError("this method only works on undirected graphs")
@@ -294,7 +293,7 @@ cdef bint bandwidth_C(int n, int k,
                       index_t * left_to_order,     # begins with the assigned vertices, ends with the others
                       index_t * index_array_tmp,   # tmp space
                       range_t ** ith_range_array,  # array of ranges, for every step of the algorithm
-                      range_t * range_array_tmp):  # tmp space
+                      range_t * range_array_tmp) noexcept:  # tmp space
 
     cdef int i, v
     cdef int pi  # the position for which a vertex is being chosen
@@ -366,7 +365,7 @@ cdef bint bandwidth_C(int n, int k,
             # swap back
             left_to_order[i], left_to_order[current[i]] = left_to_order[current[i]], left_to_order[i]
 
-cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_array_tmp, index_t * index_array_tmp):
+cdef bint is_matching_feasible(int n, range_t * range_array, range_t * range_array_tmp, index_t * index_array_tmp) noexcept:
     r"""
     Test if the matching is feasible
 

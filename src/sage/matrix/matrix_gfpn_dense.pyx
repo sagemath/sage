@@ -22,7 +22,6 @@ characteristic two.
 AUTHORS:
 
 - Simon King (2015-09): initial version
-
 """
 
 # ***************************************************************************
@@ -55,7 +54,7 @@ from sage.misc.randstate import current_randstate
 from sage.misc.randstate cimport randstate
 from sage.structure.element cimport Element, Matrix
 from sage.structure.richcmp import rich_to_bool
-from .args cimport MatrixArgs_init
+from sage.matrix.args cimport MatrixArgs_init
 
 from libc.string cimport memset, memcpy
 
@@ -110,8 +109,8 @@ cdef class FieldConverter_class:
         """
         INPUT:
 
-        A finite field with Givaro implementation and at most 251
-        elements. These assumptions are not tested.
+        - ``field`` -- a finite field with Givaro implementation and at most 251
+          elements. These assumptions are not tested.
 
         EXAMPLES::
 
@@ -122,7 +121,7 @@ cdef class FieldConverter_class:
         self.field = field._cache.fetch_int
         self.zero_FEL = self.field_to_fel(field.zero())
 
-    cpdef fel_to_field(self, FEL x):
+    cpdef fel_to_field(self, FEL x) noexcept:
         """
         Fetch a python int into the field.
 
@@ -159,7 +158,7 @@ cdef class FieldConverter_class:
             sage: C.field_to_fel('foo')
             Traceback (most recent call last):
             ...
-            AttributeError: 'str' object has no attribute 'to_integer'
+            AttributeError: 'str' object has no attribute 'to_integer'...
         """
         return FfFromInt(x.to_integer())
 
@@ -203,8 +202,8 @@ cdef class PrimeFieldConverter_class(FieldConverter_class):
         """
         INPUT:
 
-        A finite *prime* field with at most 251 elements.
-        This assumption is not tested.
+        - ``field`` -- a finite *prime* field with at most 251 elements.
+          This assumption is not tested.
 
         EXAMPLES::
 
@@ -214,7 +213,7 @@ cdef class PrimeFieldConverter_class(FieldConverter_class):
         """
         self.field = field
 
-    cpdef fel_to_field(self, FEL x):
+    cpdef fel_to_field(self, FEL x) noexcept:
         """
         Fetch a python int into the field.
 
@@ -253,7 +252,7 @@ cdef class PrimeFieldConverter_class(FieldConverter_class):
 
 
 cdef dict _converter_cache = {}
-cdef FieldConverter_class FieldConverter(field):
+cdef FieldConverter_class FieldConverter(field) noexcept:
     """
     Return a :class:`FieldConverter_class` or :class:`PrimeFieldConverter_class` instance,
     depending whether the field is prime or not.
@@ -267,7 +266,6 @@ cdef FieldConverter_class FieldConverter(field):
         sage: A = MS.random_element()
         sage: A*2 == A+A
         True
-
     """
     try:
         return _converter_cache[field]
@@ -282,7 +280,7 @@ cdef FieldConverter_class FieldConverter(field):
 ##
 ######################################
 
-cdef Matrix_gfpn_dense new_mtx(Matrix_t* mat, Matrix_gfpn_dense template):
+cdef Matrix_gfpn_dense new_mtx(Matrix_t* mat, Matrix_gfpn_dense template) noexcept:
     """
     Create a new ``Matrix_gfpn_dense`` from a meataxe matrix
 
@@ -344,7 +342,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
     The documentation of the ``__init__`` methods shows further
     ways of creating a :class:`Matrix_gfpn_dense` instance.
     However, these should only be of internal use.
-
     """
 ##################
 ## Init, Dealloc, Copy
@@ -378,7 +375,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         - ``coerce`` -- ignored
 
-        - ``mutable`` -- if False, the resulting matrix cannot be
+        - ``mutable`` -- if ``False``, the resulting matrix cannot be
           changed, and it can be used as key in a Python dictionary
 
         EXAMPLES::
@@ -550,7 +547,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         else:
             return mtx_unpickle, (0, 0, 0, '', not self._is_immutable)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Get an element without checking.
 
@@ -564,14 +561,13 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [      0       1       2]
             [      z   z + 1   z + 2]
             [    2*z 2*z + 1 2*z + 2]
-
         """
         if self.Data == NULL:
             raise IndexError("Matrix is empty")
         FfSetField(self.Data.Field)
         return self._converter.fel_to_field(FfExtract(MatGetPtr(self.Data,i), j))
 
-    cdef inline int get_unsafe_int(self, Py_ssize_t i, Py_ssize_t j):
+    cdef inline int get_unsafe_int(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         # NOTE:
         # It is essential that you call FfSetField and FfSetNoc YOURSELF
         # and that you assert that the matrix is not empty!
@@ -593,7 +589,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         FfSetField(self.Data.Field)
         return FfExtract(MatGetPtr(self.Data,i), j) == self._converter.zero_FEL
 
-    cpdef Matrix_gfpn_dense get_slice(self, Py_ssize_t i, Py_ssize_t j):
+    cpdef Matrix_gfpn_dense get_slice(self, Py_ssize_t i, Py_ssize_t j) noexcept:
         """
         Return a horizontal slice of this matrix.
 
@@ -618,7 +614,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [2 3 4]
             sage: type(_) is MTX
             True
-
         """
         if not 0 <= i < j <= self.Data.Nor:
             raise IndexError("Indices i={}, j={} violate the condition 0 < i < j < {}".format(i,j,self.Data.Nor))
@@ -630,7 +625,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
         """
         Set values without bound checking.
 
@@ -653,7 +648,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [0 0 0 0 0 0 0 0 0]
             [0 0 0 0 0 0 0 0 0]
             [0 0 0 0 0 0 0 0 0]
-
         """
         # ASSUMPTION: value's parent is the base ring
         if self.Data == NULL:
@@ -661,14 +655,14 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         FfSetField(self.Data.Field)
         FfInsert(MatGetPtr(self.Data,i), j, self._converter.field_to_fel(value))
 
-    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
+    cdef void set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value) noexcept:
         # NOTE:
         # It is essential that you call FfSetField and FfSetNoc YOURSELF
         # and that you assert that the matrix is not empty!
         # This method is here for speed!
         FfInsert(FfGetPtr(self.Data.Data,i), j, FfFromInt(value))
 
-    cdef set_slice_unsafe(self, Py_ssize_t i, Matrix_gfpn_dense S):
+    cdef set_slice_unsafe(self, Py_ssize_t i, Matrix_gfpn_dense S) noexcept:
         # Overwrite the self[i:i+S.nrows()] by the contents of S.
         #
         # NOTE:
@@ -686,10 +680,10 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         INPUT:
 
-        - ``density`` (optional real number between zero and one) --
-          the expected density of the resulting matrix
-        - ``nonzero`` (optional bool, default ``False``) --
-          If true, all inserted marks are non-zero.
+        - ``density`` -- (optional) real number between zero and one the
+          expected density of the resulting matrix
+        - ``nonzero`` -- boolean (default: ``False``); if ``True``, all
+          inserted marks are nonzero
 
         EXAMPLES::
 
@@ -708,7 +702,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS:
 
-        The following tests against a bug that was fixed in :trac:`23352`.
+        The following tests against a bug that was fixed in :issue:`23352`.
         This test could fail for some seed, but it would be highly unlikely::
 
             sage: MS = MatrixSpace(GF(9,'x'),1,5)
@@ -730,7 +724,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         x = self.Data.Data
         cdef int nr = self.Data.Nor
         cdef int nc = self.Data.Noc
-        cdef int i, j, k
+        cdef int i, j
 
         FfSetField(fl)
         FfSetNoc(nc)
@@ -807,7 +801,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
 ##################
 ## comparison
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare two :class:`Matrix_gfpn_dense` matrices.
 
@@ -866,15 +860,15 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             return rich_to_bool(op, -1)
         return rich_to_bool(op, 0)
 
-    cpdef list _rowlist_(self, i, j=-1):
+    cpdef list _rowlist_(self, i, j=-1) noexcept:
         """
         Return rows as a flat list of python ints.
 
         INPUT:
 
-        - `i`: Index of the first row to be extracted
-        - `j` (optional, default -1): -1, or index of the last
-          row to be extracted.
+        - ``i`` -- index of the first row to be extracted
+        - ``j`` -- (default: -1) -1, or index of the last
+          row to be extracted
 
         OUTPUT:
 
@@ -901,7 +895,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [['15', '14', '1', '0', '10'],
              ['24', '13', '20', '1', '16'],
              ['18', '8', '7', '6', '17']]
-
         """
         cdef int k
         if self.Data:
@@ -966,7 +959,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
 #########################
 ## Arithmetics
-    cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col):
+    cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col) noexcept:
         """
         Rescale row number `i` in-place by multiplication with the scalar `s`.
 
@@ -999,7 +992,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS:
 
-        The following tests against bugs fixed in :trac:`25490`. It shows
+        The following tests against bugs fixed in :issue:`25490`. It shows
         that the optional argument ``start_col`` is correctly dealt with,
         in an example where several marks are packed into one byte, and
         so that temporarily the current field and row size are changed.
@@ -1021,7 +1014,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [      1       2       y   y + 1   y + 2]
             [    2*y 2*y + 1 2*y + 2       0       1]
             [      2       y   y + 1   y + 2     2*y]
-
         """
         if self.Data == NULL or start_col >= self.Data.Noc:
             return
@@ -1042,7 +1034,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             FfSetNoc(noc)
             FfMulRow(row_head, c)
 
-    cdef add_multiple_of_row_c(self,  Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col):
+    cdef add_multiple_of_row_c(self, Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col) noexcept:
         """
         Add the ``multiple``-fold of row ``row_from`` in-place to row ``row_to``, beginning with ``start_col``
 
@@ -1066,7 +1058,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS:
 
-        The following tests against bugs fixed at :trac:`25490`. It demonstrates
+        The following tests against bugs fixed at :issue:`25490`. It demonstrates
         that the optional argument ``start_col`` is correctly dealt with,
         in a situation where several marks are packed into one byte
         and the current field and row size are temporarily changed.
@@ -1090,7 +1082,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [      2       y   y + 1   y + 2     2*y]
             sage: y-(2*y+1)/y
             2
-
         """
         if self.Data == NULL or start_col >= self.Data.Noc:
             return
@@ -1112,7 +1103,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             FfSetNoc(noc)
             FfAddMulRow(row_to_head, row_from_head, c)
 
-    cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2):
+    cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2) noexcept:
         """
         Swap the rows ``row1`` and ``row2`` in-place.
 
@@ -1133,7 +1124,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [    2*x 2*x + 1 2*x + 2 2*x + 3 2*x + 4]
             [      x   x + 1   x + 2   x + 3   x + 4]
             [    4*x 4*x + 1 4*x + 2 4*x + 3 4*x + 4]
-
         """
         if not self.Data:
             raise ValueError("This matrix is empty")
@@ -1150,13 +1140,12 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: K.<x> = GF(125)
             sage: MatrixSpace(K,7,7)(x).trace()
             2*x
-
         """
         if self._nrows != self._ncols:
             raise ValueError("self must be a square matrix")
         return self._converter.fel_to_field(MatTrace(self.Data))
 
-    cdef _stack_impl(self, bottom):
+    cdef _stack_impl(self, bottom) noexcept:
         r"""
         Stack ``self`` on top of ``bottom``.
 
@@ -1173,7 +1162,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [      0       1       2       x   x + 1   x + 2     2*x 2*x + 1 2*x + 2]
             [      0       1       2       x   x + 1   x + 2     2*x 2*x + 1 2*x + 2]
 
-        Check that we can stack a vector (:trac:`31708`)::
+        Check that we can stack a vector (:issue:`31708`)::
 
             sage: R.<a> = GF(3^3)
             sage: M = matrix(R, [[1,1],[0,a+1]])
@@ -1197,7 +1186,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         """
         TESTS::
 
@@ -1208,7 +1197,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [    2*x       1       2]
             [      x       1   x + 2]
             [    2*x 2*x + 1   x + 2]
-
         """
         cdef Matrix_gfpn_dense Self = self
         cdef Matrix_gfpn_dense Right = right
@@ -1224,7 +1212,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         """
         TESTS::
 
@@ -1235,7 +1223,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [      x       1       2]
             [      x 2*x + 1   x + 2]
             [    2*x 2*x + 1       2]
-
         """
         cdef Matrix_gfpn_dense Self = self
         cdef Matrix_gfpn_dense Right = right
@@ -1267,13 +1254,12 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: N = MatrixSpace(GF(125,'x'),10,30).random_element()
             sage: M + (-N) == M - N == -(N - M)
             True
-
         """
         if self.Data == NULL:
             raise ValueError("The matrix must not be empty")
         return self._lmul_(self._base_ring(-1))
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         EXAMPLES::
 
@@ -1293,11 +1279,10 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS:
 
-        Make sure that :trac:`25076` remains fixed::
+        Make sure that :issue:`25076` remains fixed::
 
             sage: M == M*int(4) == int(4)*M
             True
-
         """
         if self.Data == NULL:
             return self.__copy__()
@@ -1316,7 +1301,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         # asymptotically faster. So, we used it by default.
         return 0
 
-    cpdef Matrix_gfpn_dense _multiply_classical(Matrix_gfpn_dense self, Matrix_gfpn_dense right):
+    cpdef Matrix_gfpn_dense _multiply_classical(Matrix_gfpn_dense self, Matrix_gfpn_dense right) noexcept:
         """
         Multiplication using the cubic school book multiplication algorithm.
 
@@ -1330,7 +1315,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: N = MatrixSpace(GF(9,'x'),500,2000).random_element()
             sage: M*N == M._multiply_classical(N)
             True
-
         """
         "multiply two meataxe matrices by the school book algorithm"
         if self.Data == NULL or right.Data == NULL:
@@ -1345,14 +1329,14 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cpdef Matrix_gfpn_dense _multiply_strassen(Matrix_gfpn_dense self, Matrix_gfpn_dense right, cutoff=0):
+    cpdef Matrix_gfpn_dense _multiply_strassen(Matrix_gfpn_dense self, Matrix_gfpn_dense right, cutoff=0) noexcept:
         """
         Matrix multiplication using the asymptotically fast Strassen-Winograd algorithm.
 
         INPUT:
 
         - ``right`` -- a matrix of dimensions suitable to do multiplication
-        - ``cutoff`` (optional integer) -- indicates the minimal size of submatrices
+        - ``cutoff`` -- (optional integer) indicates the minimal size of submatrices
           that will be considered in the divide-and-conquer algorithm. The size is
           *not* expressed by the number of rows/columns, but the rowsize expressed
           in bytes. Depending on the base field, one byte may represent up to eight
@@ -1366,7 +1350,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: N = MatrixSpace(GF(9,'x'),600,1500).random_element()
             sage: M._multiply_strassen(N) == M._multiply_strassen(N,80) == M._multiply_strassen(N,2)
             True
-
         """
         if self.Data == NULL or right.Data == NULL:
             raise ValueError("The matrices must not be empty")
@@ -1381,7 +1364,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    cdef _mul_long(self, long n):
+    cdef _mul_long(self, long n) noexcept:
         """
         Multiply an MTX matrix with a field element represented by an integer.
 
@@ -1392,15 +1375,13 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             True
             sage: M*int(-1)+M == 0
             True
-
         """
         if self.Data == NULL:
             raise ValueError("The matrix must not be empty")
-        cdef Matrix_gfpn_dense left
         FfSetField(self.Data.Field)
         cdef FEL r
         with cython.cdivision(False):
-            r = FfFromInt(n%FfChar)
+            r = FfFromInt(n % FfChar)
         sig_on()
         try:
             mat = MatDup(self.Data)
@@ -1429,7 +1410,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [      0   x + 2 2*x + 1]
             [      1       x 2*x + 2]
             [      2   x + 1     2*x]
-
         """
         if self.Data == NULL:
             return self.__copy__()
@@ -1475,7 +1455,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: Division by zero in file matinv.c (line 50)
-
         """
         if self.Data == NULL:
             raise ValueError("The matrix must not be empty")
@@ -1507,7 +1486,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [      2     2*x]
             [      x 2*x + 1]
             [  x + 1 2*x + 2]
-
         """
         if self.Data == NULL:
             raise ValueError("The matrix must not be empty")
@@ -1534,7 +1512,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             True
             sage: M^103 == 1
             False
-
         """
         if self.Data == NULL:
             raise ValueError("The matrix must not be empty")
@@ -1585,7 +1562,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: M.left_kernel_matrix()
             [0 0 0 0 1 0 0 0 0 0]
             [0 0 0 0 0 0 0 1 0 0]
-
         """
         cdef Matrix_gfpn_dense OUT = self.fetch("left_kernel_matrix")
         if OUT is not None:
@@ -1601,7 +1577,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         self.cache("left_kernel_matrix", OUT)
         return OUT
 
-    cpdef _echelon_in_place(self, str algorithm):
+    cpdef _echelon_in_place(self, str algorithm) noexcept:
         """
         Change this matrix into echelon form, using classical
         Gaussian elimination, and return the pivots.
@@ -1610,7 +1586,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
             Use :meth:`_echelon_in_place_classical`, which can take the
             keyword ``reduced``.
-
 
         EXAMPLES::
 
@@ -1652,9 +1627,9 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         INPUT:
 
-        - ``reduced`` (optional, default ``True``) -- will result
+        - ``reduced`` -- boolean (default: ``True``); will result
           in the row-reduced echelon form (otherwise, only a
-          semi-echelon form results).
+          semi-echelon form results)
 
         EXAMPLES::
 
@@ -1743,7 +1718,6 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: M
             [      1       0 3*a + 4 2*a + 2]
             [      0       1     2*a 3*a + 3]
-
         """
         if self._nrows == 0 or self._ncols == 0:
             self.cache('in_echelon_form',True)
@@ -1809,7 +1783,9 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         self.cache('in_echelon_form',True)
         return self._cache['pivots']
 
+
 from sage.misc.superseded import deprecation_cython as deprecation
+
 
 def mtx_unpickle(f, int nr, int nc, data, bint m):
     r"""
@@ -1839,7 +1815,7 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
     TESTS:
 
     We test that a pickle created by one machine can be understood
-    by other machines with different architecture (see :trac:`23411`).
+    by other machines with different architecture (see :issue:`23411`).
     Internally, a row is stored in a memory block of length a multiple
     of ``sizeof(long)``, which may be machine dependent, but in a pickle,
     only the bytes actually containing data of the row are stored, which
@@ -1897,7 +1873,7 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
         [0 0 0 0 0]
         [0 0 0 0 0]
 
-    We test further corner cases. A ``ValueError`` is raised if the number
+    We test further corner cases. A :exc:`ValueError` is raised if the number
     of bytes in the pickle does not comply with either the old or the new
     pickle format (we test several code paths here)::
 

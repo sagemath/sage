@@ -38,6 +38,7 @@ def refine_root(ip, ipd, irt, fld):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: from sage.rings.polynomial.refine_root import refine_root
         sage: x = polygen(ZZ)
         sage: p = x^9 - 1
@@ -74,7 +75,7 @@ def refine_root(ip, ipd, irt, fld):
     # unless either the real or imaginary component of the root is zero.
     # If the real or imaginary component is zero, then we could spend
     # a long time computing closer and closer approximations to that
-    # component.  (This doesn't happen for non-zero components, because
+    # component.  (This doesn't happen for nonzero components, because
     # of the imprecision of floating-point numbers combined with the
     # outward interval rounding; but close to zero, MPFI provides
     # extremely precise numbers.)

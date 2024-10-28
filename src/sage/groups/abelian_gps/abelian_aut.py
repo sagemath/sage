@@ -55,8 +55,8 @@ or create subgroups and do the same for them::
 
 Only automorphism groups of finite abelian groups are supported::
 
-    sage: G = AbelianGroupGap([0,2])        # optional gap_packages
-    sage: autG = G.aut()                    # optional gap_packages
+    sage: G = AbelianGroupGap([0,2])        # optional - gap_package_polycyclic
+    sage: autG = G.aut()                    # optional - gap_package_polycyclic
     Traceback (most recent call last):
     ...
     ValueError: only finite abelian groups are supported
@@ -94,7 +94,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
 
     - ``x`` -- a libgap element
     - ``parent`` -- the parent :class:`~AbelianGroupAutomorphismGroup_gap`
-    - ``check`` -- bool (default:True) checks if ``x`` is an element
+    - ``check`` -- boolean (default: ``True``); checks if ``x`` is an element
       of the group
 
     EXAMPLES::
@@ -176,9 +176,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
         The `i`-th row is the exponent vector of
         the image of the `i`-th generator.
 
-        OUTPUT:
-
-        - a square matrix over the integers
+        OUTPUT: a square matrix over the integers
 
         EXAMPLES::
 
@@ -298,7 +296,7 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
             # Also conversions between the domains use the smith gens.
             if x.domain().invariants() != self.domain().gens_orders():
                 raise ValueError("invariants of domains must agree")
-            if not x.domain()==x.codomain():
+            if not x.domain() == x.codomain():
                 raise ValueError("domain and codomain do not agree")
             if not x.kernel().invariants() == ():
                 raise ValueError("not an automorphism")
@@ -315,9 +313,7 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
 
         - ``S`` -- anything
 
-        OUTPUT:
-
-        Boolean or nothing
+        OUTPUT: boolean or nothing
 
         EXAMPLES::
 
@@ -485,7 +481,7 @@ class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
     INPUT:
 
     - ``ambient`` -- the ambient group
-    - ``generators`` -- a tuple of gap elements of the ambient group
+    - ``generators`` -- tuple of gap elements of the ambient group
 
     EXAMPLES::
 

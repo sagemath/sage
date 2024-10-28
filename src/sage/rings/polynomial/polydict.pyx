@@ -44,7 +44,7 @@ from pprint import pformat
 from sage.misc.latex import latex
 
 
-cpdef int gen_index(PolyDict x):
+cpdef int gen_index(PolyDict x) noexcept:
     r"""
     Return the index of the variable represented by ``x`` or ``-1`` if ``x``
     is not a monomial of degree one.
@@ -71,7 +71,8 @@ cpdef int gen_index(PolyDict x):
 
 cpdef ETuple monomial_exponent(PolyDict p):
     r"""
-    Return the unique exponent of ``p`` if it is a monomial or raise a ``ValueError``.
+    Return the unique exponent of ``p`` if it is a monomial or raise a
+    :exc:`ValueError`.
 
     EXAMPLES::
 
@@ -102,7 +103,7 @@ cdef class PolyDict:
 
     No arithmetic operation on :class:`PolyDict` clear zero coefficients as of
     now there is no reliable way of testing it in the most general setting, see
-    :trac:`35319`. For removing zero coefficients from a :class:`PolyDict` you
+    :issue:`35319`. For removing zero coefficients from a :class:`PolyDict` you
     can use the method :meth:`remove_zeros` which can be parametrized by a zero
     test.
     """
@@ -110,10 +111,10 @@ cdef class PolyDict:
         """
         INPUT:
 
-        - ``pdict`` -- dict or list, which represents a multi-variable
+        - ``pdict`` -- dictionary or list, which represents a multi-variable
           polynomial with the distribute representation (a copy is made)
 
-        - ``zero`` --  deprecated
+        - ``zero`` -- deprecated
 
         - ``remove_zero`` -- deprecated
 
@@ -122,7 +123,7 @@ cdef class PolyDict:
         - ``force_etuples`` -- deprecated
 
         - ``check`` -- if set to ``False`` then assumes that the exponents are
-          all valid ``ETuple``; in that case the construction is a bit faster.
+          all valid ``ETuple``; in that case the construction is a bit faster
 
         EXAMPLES::
 
@@ -133,7 +134,7 @@ cdef class PolyDict:
             sage: PolyDict({(2, 3): 0, (1, 2): 3, (2, 1): 4})
             PolyDict with representation {(1, 2): 3, (2, 1): 4, (2, 3): 0}
 
-            sage: PolyDict({(0, 0): RIF(-1,1)})
+            sage: PolyDict({(0, 0): RIF(-1,1)})                                         # needs sage.rings.real_interval_field
             PolyDict with representation {(0, 0): 0.?}
 
         TESTS::
@@ -200,7 +201,7 @@ cdef class PolyDict:
 
         INPUT:
 
-        - ``zero_test`` -- optional function that performs test to zero of a coefficient
+        - ``zero_test`` -- (optional) function that performs test to zero of a coefficient
 
         EXAMPLES::
 
@@ -275,7 +276,7 @@ cdef class PolyDict:
 
     def coerce_coefficients(self, A):
         r"""
-        Coerce the coefficients in the parent ``A``
+        Coerce the coefficients in the parent ``A``.
 
         EXAMPLES::
 
@@ -612,7 +613,7 @@ cdef class PolyDict:
 
         INPUT:
 
-        - ``degrees`` -- a list of degree restrictions; list elements are None
+        - ``degrees`` -- list of degree restrictions; list elements are ``None``
           if the variable in that position should be unrestricted
 
         EXAMPLES::
@@ -671,7 +672,7 @@ cdef class PolyDict:
                 ans[ETuple(t)] = self.__repn[S]
         return self._new(ans)
 
-    def is_homogeneous(self):
+    def is_homogeneous(self, tuple w=None):
         r"""
         Return whether this polynomial is homogeneous.
 
@@ -687,12 +688,20 @@ cdef class PolyDict:
         """
         if not self.__repn:
             return True
+        cdef size_t s
         it = iter(self.__repn)
-        cdef size_t s = (<ETuple> next(it)).unweighted_degree()
-        for elt in it:
-            if (<ETuple> elt).unweighted_degree() != s:
-                return False
-        return True
+        if w is None:
+            s = (<ETuple> next(it)).unweighted_degree()
+            for elt in it:
+                if (<ETuple> elt).unweighted_degree() != s:
+                    return False
+            return True
+        else:
+            s = (<ETuple> next(it)).weighted_degree(w)
+            for elt in it:
+                if (<ETuple> elt).weighted_degree(w) != s:
+                    return False
+            return True
 
     def is_constant(self):
         """
@@ -758,8 +767,8 @@ cdef class PolyDict:
         INPUT:
 
         - ``vars`` -- list
-        - ``atomic_exponents`` -- bool (default: ``True``)
-        - ``atomic_coefficients`` -- bool (default: ``True``)
+        - ``atomic_exponents`` -- boolean (default: ``True``)
+        - ``atomic_coefficients`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -770,7 +779,7 @@ cdef class PolyDict:
 
         TESTS:
 
-        We check that the issue on :trac:`9478` is resolved::
+        We check that the issue on :issue:`9478` is resolved::
 
             sage: R2.<a> = QQ[]
             sage: R3.<xi, x> = R2[]
@@ -779,9 +788,9 @@ cdef class PolyDict:
 
         TESTS:
 
-        Check that :trac:`29604` is fixed::
+        Check that :issue:`29604` is fixed::
 
-            sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])                        # optional - sage.rings.finite_rings
+            sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])
             'x'
         """
         if not self:
@@ -799,7 +808,9 @@ cdef class PolyDict:
             ring = self.__repn[E[0]].parent()
             pos_one = ring.one()
             neg_one = -pos_one
-        except AttributeError:
+        except (AttributeError, ArithmeticError):
+            # AritchmeticError occurs when self.__repn[E[0]] is a tropical
+            # semiring element
             # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
@@ -851,8 +862,8 @@ cdef class PolyDict:
         INPUT:
 
         - ``vars`` -- list
-        - ``atomic_exponents`` -- bool (default: ``True``)
-        - ``atomic_coefficients`` -- bool (default: ``True``)
+        - ``atomic_exponents`` -- boolean (default: ``True``)
+        - ``atomic_coefficients`` -- boolean (default: ``True``)
 
         EXAMPLES::
 
@@ -869,16 +880,18 @@ cdef class PolyDict:
 
         We make sure that intervals are correctly represented. ::
 
-            sage: f = PolyDict({(2, 3): RIF(1/2,3/2), (1, 2): RIF(-1,1)})
-            sage: f.poly_repr(['x', 'y'])
+            sage: f = PolyDict({(2, 3): RIF(1/2,3/2), (1, 2): RIF(-1,1)})               # needs sage.rings.real_interval_field
+            sage: f.poly_repr(['x', 'y'])                                               # needs sage.rings.real_interval_field
             '1.?*x^2*y^3 + 0.?*x*y^2'
 
         TESTS:
 
-        Check that :trac:`29604` is fixed::
+        Check that :issue:`29604` is fixed::
 
-            sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])
+            sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])                    # needs sage.rings.finite_rings
             'x'
+
+            sage: # needs sage.modules
             sage: P.<x,y> = LaurentPolynomialRing(GF(2), 2)
             sage: P.gens()
             (x, y)
@@ -898,7 +911,9 @@ cdef class PolyDict:
             ring = self.__repn[E[0]].parent()
             pos_one = ring.one()
             neg_one = -pos_one
-        except AttributeError:
+        except (AttributeError, ArithmeticError):
+            # AritchmeticError occurs when self.__repn[E[0]] is a tropical
+            # semiring element
             # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
@@ -950,7 +965,7 @@ cdef class PolyDict:
 
     def __iadd__(PolyDict self, PolyDict other):
         r"""
-        Inplace addition
+        Inplace addition.
 
         EXAMPLES::
 
@@ -1001,9 +1016,9 @@ cdef class PolyDict:
             sage: f + g
             PolyDict with representation {(1, 1): 3, (1, 2): 3, (1, 5): -3, (2, 1): 4, (2, 3): 0}
 
-            sage: K = GF(2)                                                             # optional - sage.rings.finite_rings
-            sage: f = PolyDict({(1, 1): K(1)})                                          # optional - sage.rings.finite_rings
-            sage: f + f                                                                 # optional - sage.rings.finite_rings
+            sage: K = GF(2)
+            sage: f = PolyDict({(1, 1): K(1)})
+            sage: f + f
             PolyDict with representation {(1, 1): 0}
         """
         cdef dict D = self.__repn
@@ -1024,7 +1039,7 @@ cdef class PolyDict:
 
         The algorithm do not test whether a product of coefficients is zero
         or whether a final coefficient is zero because there is no reliable way
-        to do so in general (eg power series ring or p-adic rings).
+        to do so in general (eg power series ring or `p`-adic rings).
 
         EXAMPLES:
 
@@ -1071,14 +1086,16 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
-            sage: f.scalar_rmult(y)                                                     # optional - sage.groups
+
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.combinat
+            sage: f = PolyDict({(2, 3): x})                                             # needs sage.combinat
+            sage: f.scalar_rmult(y)                                                     # needs sage.combinat
             PolyDict with representation {(2, 3): x*y}
+
             sage: f = PolyDict({(2,3):2, (1, 2): 3, (2, 1): 4})
             sage: f.scalar_rmult(-2)
             PolyDict with representation {(1, 2): -6, (2, 1): -8, (2, 3): -4}
-            sage: f.scalar_rmult(RIF(-1,1))
+            sage: f.scalar_rmult(RIF(-1,1))                                             # needs sage.rings.real_interval_field
             PolyDict with representation {(1, 2): 0.?e1, (2, 1): 0.?e1, (2, 3): 0.?e1}
         """
         cdef dict v = {}
@@ -1093,14 +1110,16 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2,3):x})                                               # optional - sage.groups
-            sage: f.scalar_lmult(y)                                                     # optional - sage.groups
+
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.combinat
+            sage: f = PolyDict({(2,3):x})                                               # needs sage.combinat
+            sage: f.scalar_lmult(y)                                                     # needs sage.combinat
             PolyDict with representation {(2, 3): y*x}
+
             sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
             sage: f.scalar_lmult(-2)
             PolyDict with representation {(1, 2): -6, (2, 1): -8, (2, 3): -4}
-            sage: f.scalar_lmult(RIF(-1,1))
+            sage: f.scalar_lmult(RIF(-1,1))                                             # needs sage.rings.real_interval_field
             PolyDict with representation {(1, 2): 0.?e1, (2, 1): 0.?e1, (2, 3): 0.?e1}
         """
         cdef dict v = {}
@@ -1122,15 +1141,15 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import ETuple, PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
-            sage: f.term_lmult(ETuple((1, 2)), y)                                       # optional - sage.groups
+
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.combinat
+            sage: f = PolyDict({(2, 3): x})                                             # needs sage.combinat
+            sage: f.term_lmult(ETuple((1, 2)), y)                                       # needs sage.combinat
             PolyDict with representation {(3, 5): y*x}
 
             sage: f = PolyDict({(2,3): 2, (1,2): 3, (2,1): 4})
             sage: f.term_lmult(ETuple((1, 2)), -2)
             PolyDict with representation {(2, 4): -6, (3, 3): -8, (3, 5): -4}
-
         """
         cdef dict v = {}
         for e, c in self.__repn.items():
@@ -1151,15 +1170,15 @@ cdef class PolyDict:
         EXAMPLES::
 
             sage: from sage.rings.polynomial.polydict import ETuple, PolyDict
-            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # optional - sage.groups
-            sage: f = PolyDict({(2, 3): x})                                             # optional - sage.groups
-            sage: f.term_rmult(ETuple((1, 2)), y)                                       # optional - sage.groups
+
+            sage: x, y = FreeMonoid(2, 'x, y').gens()  # a strange object to live in a polydict, but non-commutative!   # needs sage.combinat
+            sage: f = PolyDict({(2, 3): x})                                             # needs sage.combinat
+            sage: f.term_rmult(ETuple((1, 2)), y)                                       # needs sage.combinat
             PolyDict with representation {(3, 5): x*y}
 
             sage: f = PolyDict({(2, 3): 2, (1, 2): 3, (2, 1): 4})
             sage: f.term_rmult(ETuple((1, 2)), -2)
             PolyDict with representation {(2, 4): -6, (3, 3): -8, (3, 5): -4}
-
         """
         cdef dict v = {}
         for e, c in self.__repn.items():
@@ -1208,7 +1227,7 @@ cdef class PolyDict:
 
     def derivative(self, PolyDict x):
         r"""
-        Return the derivative of ``self`` with respect to ``x``
+        Return the derivative of ``self`` with respect to ``x``.
 
         EXAMPLES::
 
@@ -1255,7 +1274,7 @@ cdef class PolyDict:
 
     def integral(self, PolyDict x):
         r"""
-        Return the integral of ``self`` with respect to ``x``
+        Return the integral of ``self`` with respect to ``x``.
 
         EXAMPLES::
 
@@ -1310,7 +1329,7 @@ cdef class PolyDict:
 
     def min_exp(self):
         """
-        Returns an ETuple containing the minimum exponents appearing.  If
+        Return an ETuple containing the minimum exponents appearing.  If
         there are no terms at all in the PolyDict, it returns None.
 
         The nvars parameter is necessary because a PolyDict doesn't know it
@@ -1336,7 +1355,7 @@ cdef class PolyDict:
 
     def max_exp(self):
         """
-        Returns an ETuple containing the maximum exponents appearing.  If
+        Return an ETuple containing the maximum exponents appearing.  If
         there are no terms at all in the PolyDict, it returns None.
 
         The nvars parameter is necessary because a PolyDict doesn't know it
@@ -1360,7 +1379,7 @@ cdef class PolyDict:
         else:
             return None
 
-cdef inline bint dual_etuple_iter(ETuple self, ETuple other, size_t *ind1, size_t *ind2, size_t *index, int *exp1, int *exp2):
+cdef inline bint dual_etuple_iter(ETuple self, ETuple other, size_t *ind1, size_t *ind2, size_t *index, int *exp1, int *exp2) noexcept:
     """
     This function is a crucial helper function for a number of methods of
     the ETuple class.
@@ -1424,8 +1443,8 @@ cdef class ETuple:
     """
     cdef ETuple _new(self):
         """
-        Quickly creates a new initialized ETuple with the
-        same length as self.
+        Quickly create a new initialized ETuple with the
+        same length as ``self``.
         """
         cdef type t = type(self)
         cdef ETuple x = <ETuple>t.__new__(t)
@@ -1503,7 +1522,7 @@ cdef class ETuple:
 
     def __bool__(self):
         r"""
-        Return whether self is nonzero.
+        Return whether ``self`` is nonzero.
 
         TESTS::
 
@@ -1521,9 +1540,9 @@ cdef class ETuple:
 
     def __add__(ETuple self, ETuple other):
         """
-        x.__add__(n) <==> x+n
+        ``x.__add__(n) <==> x+n``.
 
-        concatenates two ETuples
+        Concatenate two ETuples.
 
         EXAMPLES::
 
@@ -1546,7 +1565,7 @@ cdef class ETuple:
 
     def __mul__(ETuple self, factor):
         """
-        x.__mul__(n) <==> x*n
+        ``x.__mul__(n) <==> x*n``.
 
         EXAMPLES::
 
@@ -1609,7 +1628,7 @@ cdef class ETuple:
         else:
             return self.get_exp(i)
 
-    cdef size_t get_position(self, size_t i, size_t start, size_t end):
+    cdef size_t get_position(self, size_t i, size_t start, size_t end) noexcept:
         r"""
         Return where to insert ``i`` in the data between ``start`` and ``end``.
         """
@@ -1634,7 +1653,7 @@ cdef class ETuple:
                 left = mid
         return right
 
-    cdef int get_exp(self, size_t i):
+    cdef int get_exp(self, size_t i) noexcept:
         """
         Return the exponent for the ``i``-th variable.
         """
@@ -1657,7 +1676,7 @@ cdef class ETuple:
 
     def __len__(self):
         """
-        x.__len__() <==> len(x)
+        ``x.__len__() <==> len(x)``.
 
         EXAMPLES::
 
@@ -1670,7 +1689,7 @@ cdef class ETuple:
 
     def __contains__(self, elem):
         """
-        x.__contains__(n) <==> n in x
+        ``x.__contains__(n) <==> n in x``.
 
         EXAMPLES::
 
@@ -1772,7 +1791,7 @@ cdef class ETuple:
 
     def __iter__(self):
         """
-        x.__iter__() <==> iter(x)
+        ``x.__iter__() <==> iter(x)``.
 
         TESTS::
 
@@ -1781,7 +1800,7 @@ cdef class ETuple:
             sage: list(e)
             [4, 0, 0, 2, 0]
 
-        Check that :trac:`28178` is fixed::
+        Check that :issue:`28178` is fixed::
 
             sage: it = iter(e)
             sage: iter(it) is it
@@ -1837,7 +1856,7 @@ cdef class ETuple:
 
     # additional methods
 
-    cpdef int unweighted_degree(self) except *:
+    cdef int _unweighted_degree(self) except *:
         r"""
         Return the sum of entries.
 
@@ -1855,6 +1874,20 @@ cdef class ETuple:
             degree += self._data[2 * i + 1]
         return degree
 
+    cpdef int unweighted_degree(self) except *:
+        r"""
+        Return the sum of entries.
+
+        EXAMPLES::
+
+             sage: from sage.rings.polynomial.polydict import ETuple
+             sage: ETuple([1, 1, 0, 2, 0]).unweighted_degree()
+             4
+             sage: ETuple([-1, 1]).unweighted_degree()
+             0
+        """
+        return self._unweighted_degree()
+
     @cython.boundscheck(False)
     @cython.wraparound(False)
     cpdef int weighted_degree(self, tuple w) except *:
@@ -1863,7 +1896,7 @@ cdef class ETuple:
 
         INPUT:
 
-        - ``w`` -- tuple of non-negative integers
+        - ``w`` -- tuple of nonnegative integers
 
         EXAMPLES::
 
@@ -1895,7 +1928,7 @@ cdef class ETuple:
         """
         Return the degree of ``self`` divided by its gcd with ``other``.
 
-        It amounts to counting the non-negative entries of
+        It amounts to counting the nonnegative entries of
         ``self.esub(other)``.
         """
         cdef size_t ind1 = 0    # both ind1 and ind2 will be increased in double steps.
@@ -1934,7 +1967,7 @@ cdef class ETuple:
         INPUT:
 
         - ``other`` -- an :class:`~sage.rings.polynomial.polydict.ETuple`
-        - ``w`` -- tuple of non-negative integers.
+        - ``w`` -- tuple of nonnegative integers
         """
         if len(w) != self._length:
             raise ValueError('w must be of the same length as the ETuple')
@@ -1979,8 +2012,9 @@ cdef class ETuple:
             sage: e.eadd(f)
             (1, 1, 3)
 
-        Verify that :trac:`6428` has been addressed::
+        Verify that :issue:`6428` has been addressed::
 
+            sage: # needs sage.libs.singular
             sage: R.<y, z> = Frac(QQ['x'])[]
             sage: type(y)
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
@@ -2043,7 +2077,7 @@ cdef class ETuple:
 
         TESTS:
 
-        Test segmentation faults occurring as described in :trac:`34000`::
+        Test segmentation faults occurring as described in :issue:`34000`::
 
             sage: ETuple([0, 1, 1]).eadd_p(1, 0)
             (1, 1, 1)
@@ -2195,7 +2229,7 @@ cdef class ETuple:
         cdef size_t ind
         cdef ETuple result = <ETuple>self._new()
         if factor == 0:
-            result._nonzero = 0  # all zero, no non-zero entries!
+            result._nonzero = 0  # all zero, no nonzero entries!
             result._data = <int*>sig_malloc(sizeof(int) * result._nonzero * 2)
         else:
             result._nonzero = self._nonzero
@@ -2410,7 +2444,7 @@ cdef class ETuple:
         """
         Return division of ``self`` by the variable with index ``pos``.
 
-        If ``self[pos] == 0`` then a ``ArithmeticError`` is raised. Otherwise,
+        If ``self[pos] == 0`` then a :exc:`ArithmeticError` is raised. Otherwise,
         an :class:`~sage.rings.polynomial.polydict.ETuple` is returned that is
         zero in position ``pos`` and coincides with ``self`` in the other
         positions.
@@ -2494,7 +2528,7 @@ cdef class ETuple:
 
         return True
 
-    cpdef bint is_constant(self):
+    cpdef bint is_constant(self) noexcept:
         """
         Return if all exponents are zero in the tuple.
 
@@ -2535,11 +2569,11 @@ cdef class ETuple:
 
     cpdef list nonzero_positions(self, bint sort=False):
         """
-        Return the positions of non-zero exponents in the tuple.
+        Return the positions of nonzero exponents in the tuple.
 
         INPUT:
 
-        - ``sort`` -- (default: ``False``) if ``True`` a sorted list is
+        - ``sort`` -- boolean (default: ``False``); if ``True`` a sorted list is
           returned; if ``False`` an unsorted list is returned
 
         EXAMPLES::
@@ -2554,8 +2588,8 @@ cdef class ETuple:
 
     cpdef common_nonzero_positions(self, ETuple other, bint sort=False):
         """
-        Returns an optionally sorted list of non zero positions either
-        in self or other, i.e. the only positions that need to be
+        Return an optionally sorted list of nonzero positions either
+        in ``self`` or other, i.e. the only positions that need to be
         considered for any vector operation.
 
         EXAMPLES::
@@ -2577,12 +2611,12 @@ cdef class ETuple:
 
     cpdef list nonzero_values(self, bint sort=True):
         """
-        Return the non-zero values of the tuple.
+        Return the nonzero values of the tuple.
 
         INPUT:
 
-        - ``sort`` -- (default: ``True``) if ``True`` the values are sorted
-          by their indices; otherwise the values are returned unsorted
+        - ``sort`` -- boolean (default: ``True``); if ``True`` the values are
+          sorted by their indices. Otherwise the values are returned unsorted.
 
         EXAMPLES::
 

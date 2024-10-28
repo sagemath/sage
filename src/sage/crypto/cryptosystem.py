@@ -1,10 +1,13 @@
+# sage.doctest: needs sage.combinat
 r"""
 Cryptosystems
 
 This module contains base classes for various cryptosystems, including
 symmetric key and public-key cryptosystems. The classes defined in this
 module should not be called directly. It is the responsibility of child
-classes to implement specific cryptosystems. Take for example the
+classes to implement specific cryptosystems.
+
+Take for example the
 Hill or matrix cryptosystem as implemented in
 :class:`HillCryptosystem <sage.crypto.classical.HillCryptosystem>`. It is a
 symmetric key cipher so
@@ -26,22 +29,21 @@ diagram shows the inheritance relationship of particular cryptosystems::
     | + VigenereCryptosystem
     + PublicKeyCryptosystem
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-import sage.structure.parent_old as parent_old
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.sets.set import Set_generic
 
-class Cryptosystem(parent_old.Parent, Set_generic):
+
+class Cryptosystem(Set_generic):
     r"""
     A base cryptosystem class. This is meant to be extended by other
     specialized child classes that implement specific cryptosystems.
+
     A cryptosystem is a pair of maps
 
     .. MATH::
@@ -76,15 +78,15 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
     INPUT:
 
-    - ``plaintext_space`` -- the plaintext alphabet.
+    - ``plaintext_space`` -- the plaintext alphabet
 
-    - ``ciphertext_space`` -- the ciphertext alphabet.
+    - ``ciphertext_space`` -- the ciphertext alphabet
 
-    - ``key_space`` -- the key alphabet.
+    - ``key_space`` -- the key alphabet
 
-    - ``block_length`` -- (default: 1) the block length.
+    - ``block_length`` -- (default: 1) the block length
 
-    - ``period`` -- (default: ``None``) the period.
+    - ``period`` -- (default: ``None``) the period
 
     EXAMPLES:
 
@@ -96,7 +98,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
         Substitution cryptosystem on Free hexadecimal string monoid
         sage: HillCryptosystem(BinaryStrings(), 3)
         Hill cryptosystem on Free binary string monoid of block length 3
-        sage: TranspositionCryptosystem(OctalStrings(), 5)
+        sage: TranspositionCryptosystem(OctalStrings(), 5)                              # needs sage.groups
         Transposition cryptosystem on Free octal string monoid of block length 5
         sage: VigenereCryptosystem(Radix64Strings(), 7)
         Vigenere cryptosystem on Free radix 64 string monoid of period 7
@@ -109,15 +111,15 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
         INPUT:
 
-        - ``plaintext_space`` -- the plaintext alphabet.
+        - ``plaintext_space`` -- the plaintext alphabet
 
-        - ``ciphertext_space`` -- the ciphertext alphabet.
+        - ``ciphertext_space`` -- the ciphertext alphabet
 
-        - ``key_space`` -- the key alphabet.
+        - ``key_space`` -- the key alphabet
 
-        - ``block_length`` -- (default: 1) the block length.
+        - ``block_length`` -- (default: 1) the block length
 
-        - ``period`` -- (default: ``None``) the period.
+        - ``period`` -- (default: ``None``) the period
 
         EXAMPLES:
 
@@ -129,7 +131,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             Substitution cryptosystem on Free hexadecimal string monoid
             sage: HillCryptosystem(BinaryStrings(), 3)
             Hill cryptosystem on Free binary string monoid of block length 3
-            sage: TranspositionCryptosystem(OctalStrings(), 5)
+            sage: TranspositionCryptosystem(OctalStrings(), 5)                          # needs sage.groups
             Transposition cryptosystem on Free octal string monoid of block length 5
             sage: VigenereCryptosystem(Radix64Strings(), 7)
             Vigenere cryptosystem on Free radix 64 string monoid of period 7
@@ -142,7 +144,9 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
     def __eq__(self, right):
         r"""
-        Comparing ``self`` with ``right``. Two ``Cryptosystem`` objects
+        Comparing ``self`` with ``right``.
+
+        Two ``Cryptosystem`` objects
         are the same if they satisfy all of these conditions:
 
         - share the same type
@@ -154,7 +158,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
         INPUT:
 
-        - ``right`` -- a ``Cryptosystem`` object.
+        - ``right`` -- a ``Cryptosystem`` object
 
         EXAMPLES:
 
@@ -172,9 +176,9 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             sage: hill2 = HillCryptosystem(AlphabeticStrings(), 4)
             sage: hill1 == hill2
             True
-            sage: tran1 = TranspositionCryptosystem(HexadecimalStrings(), 5)
-            sage: tran2 = TranspositionCryptosystem(HexadecimalStrings(), 5)
-            sage: tran1 == tran2
+            sage: tran1 = TranspositionCryptosystem(HexadecimalStrings(), 5)            # needs sage.groups
+            sage: tran2 = TranspositionCryptosystem(HexadecimalStrings(), 5)            # needs sage.groups
+            sage: tran1 == tran2                                                        # needs sage.groups
             True
             sage: vig1 = VigenereCryptosystem(AlphabeticStrings(), 7)
             sage: vig2 = VigenereCryptosystem(AlphabeticStrings(), 7)
@@ -195,9 +199,9 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             sage: hill2 = HillCryptosystem(Radix64Strings(), 5)
             sage: hill1 == hill2
             False
-            sage: tran1 = TranspositionCryptosystem(Radix64Strings(), 3)
-            sage: tran2 = TranspositionCryptosystem(HexadecimalStrings(), 3)
-            sage: tran1 == tran2
+            sage: tran1 = TranspositionCryptosystem(Radix64Strings(), 3)                # needs sage.groups
+            sage: tran2 = TranspositionCryptosystem(HexadecimalStrings(), 3)            # needs sage.groups
+            sage: tran1 == tran2                                                        # needs sage.groups
             False
             sage: vig1 = VigenereCryptosystem(AlphabeticStrings(), 7)
             sage: vig2 = VigenereCryptosystem(Radix64Strings(), 7)
@@ -225,7 +229,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             Free hexadecimal string monoid
             sage: HillCryptosystem(BinaryStrings(), 3).plaintext_space()
             Free binary string monoid
-            sage: TranspositionCryptosystem(OctalStrings(), 5).plaintext_space()
+            sage: TranspositionCryptosystem(OctalStrings(), 5).plaintext_space()        # needs sage.groups
             Free octal string monoid
             sage: VigenereCryptosystem(Radix64Strings(), 7).plaintext_space()
             Free radix 64 string monoid
@@ -248,7 +252,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             Free hexadecimal string monoid
             sage: HillCryptosystem(BinaryStrings(), 3).cipher_domain()
             Free binary string monoid
-            sage: TranspositionCryptosystem(OctalStrings(), 5).cipher_domain()
+            sage: TranspositionCryptosystem(OctalStrings(), 5).cipher_domain()          # needs sage.groups
             Free octal string monoid
             sage: VigenereCryptosystem(Radix64Strings(), 7).cipher_domain()
             Free radix 64 string monoid
@@ -269,7 +273,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             Free hexadecimal string monoid
             sage: HillCryptosystem(BinaryStrings(), 3).ciphertext_space()
             Free binary string monoid
-            sage: TranspositionCryptosystem(OctalStrings(), 5).ciphertext_space()
+            sage: TranspositionCryptosystem(OctalStrings(), 5).ciphertext_space()       # needs sage.groups
             Free octal string monoid
             sage: VigenereCryptosystem(Radix64Strings(), 7).ciphertext_space()
             Free radix 64 string monoid
@@ -292,7 +296,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             Free hexadecimal string monoid
             sage: HillCryptosystem(BinaryStrings(), 3).cipher_codomain()
             Free binary string monoid
-            sage: TranspositionCryptosystem(OctalStrings(), 5).cipher_codomain()
+            sage: TranspositionCryptosystem(OctalStrings(), 5).cipher_codomain()        # needs sage.groups
             Free octal string monoid
             sage: VigenereCryptosystem(Radix64Strings(), 7).cipher_codomain()
             Free radix 64 string monoid
@@ -313,7 +317,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             Free hexadecimal string monoid
             sage: HillCryptosystem(BinaryStrings(), 3).key_space()
             Full MatrixSpace of 3 by 3 dense matrices over Ring of integers modulo 2
-            sage: TranspositionCryptosystem(OctalStrings(), 5).key_space()
+            sage: TranspositionCryptosystem(OctalStrings(), 5).key_space()              # needs sage.groups
             Symmetric group of order 5! as a permutation group
             sage: VigenereCryptosystem(Radix64Strings(), 7).key_space()
             Free radix 64 string monoid
@@ -322,7 +326,9 @@ class Cryptosystem(parent_old.Parent, Set_generic):
 
     def block_length(self):
         r"""
-        Return the block length of this cryptosystem. For some cryptosystems
+        Return the block length of this cryptosystem.
+
+        For some cryptosystems
         this is not relevant, in which case the block length defaults to 1.
 
         EXAMPLES:
@@ -335,7 +341,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
             1
             sage: HillCryptosystem(BinaryStrings(), 3).block_length()
             3
-            sage: TranspositionCryptosystem(OctalStrings(), 5).block_length()
+            sage: TranspositionCryptosystem(OctalStrings(), 5).block_length()           # needs sage.groups
             5
             sage: VigenereCryptosystem(Radix64Strings(), 7).block_length()
             1
@@ -346,6 +352,7 @@ class Cryptosystem(parent_old.Parent, Set_generic):
         if self._period is None:
             raise TypeError("Argument has no associated period.")
         return self._period
+
 
 class SymmetricKeyCryptosystem(Cryptosystem):
     r"""
@@ -371,6 +378,7 @@ class SymmetricKeyCryptosystem(Cryptosystem):
             64
         """
         return self._cipher_domain.ngens()
+
 
 class PublicKeyCryptosystem(Cryptosystem):
     r"""

@@ -1,3 +1,0 @@
-if [ "$UNAME" = "CYGWIN" ]; then
-    cd src && sdh_pip_install .
-fi

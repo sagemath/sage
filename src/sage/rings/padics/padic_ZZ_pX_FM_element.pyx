@@ -4,6 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
+# sage.doctest: needs sage.rings.padics
 r"""
 `p`-adic ``ZZ_pX`` FM Element
 
@@ -15,7 +16,7 @@ For the parent class see ``padic_extension_leaves.pyx``.
 The underlying implementation is through NTL's ``ZZ_pX`` class.  Each
 element contains the following data:
 
-- ``value`` (``ZZ_pX_c``) -- An ntl ``ZZ_pX`` storing the value.  The
+- ``value`` (``ZZ_pX_c``) -- an ntl ``ZZ_pX`` storing the value.  The
   variable `x` is the uniformizer in the case of Eisenstein extensions.
   This ``ZZ_pX`` is created with global ntl modulus determined by the
   parent's precision cap and shared among all elements.
@@ -26,9 +27,9 @@ element contains the following data:
 
   * ``prime_pow.deg`` -- the degree of the extension
 
-  * ``prime_pow.e``   -- the ramification index
+  * ``prime_pow.e`` -- the ramification index
 
-  * ``prime_pow.f``   -- the inertia degree
+  * ``prime_pow.f`` -- the inertia degree
 
   * ``prime_pow.prec_cap`` -- the unramified precision cap: for
     Eisenstein extensions this is the smallest power of `p` that is
@@ -55,7 +56,7 @@ element contains the following data:
     ``prime_pow.restore_top_context`` -- restores the given context
 
   * ``prime_pow.get_modulus``, ``get_modulus_capdiv``,
-    ``get_top_modulus`` -- Returns a ``ZZ_pX_Modulus_c*`` pointing to
+    ``get_top_modulus`` -- returns a ``ZZ_pX_Modulus_c*`` pointing to
     a polynomial modulus defined modulo `p^n` (appropriately divided
     by ``prime_pow.e`` in the capdiv case).
 
@@ -65,7 +66,7 @@ An Eisenstein extension::
 
     sage: R = ZpFM(5,5)
     sage: S.<x> = R[]
-    sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+    sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
     sage: W.<w> = R.ext(f); W
     5-adic Eisenstein Extension Ring in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5
     sage: z = (1+w)^5; z
@@ -83,6 +84,7 @@ An Eisenstein extension::
 
 An unramified extension::
 
+    sage: # needs sage.libs.flint
     sage: g = x^3 + 3*x + 3
     sage: A.<a> = R.ext(g)
     sage: z = (1+a)^5; z
@@ -96,6 +98,7 @@ An unramified extension::
 
 Different printing modes::
 
+    sage: # needs sage.libs.flint
     sage: R = ZpFM(5, print_mode='digits'); S.<x> = R[]; f = x^5 + 75*x^3 - 15*x^2 + 125*x -5; W.<w> = R.ext(f)
     sage: z = (1+w)^5; repr(z)
     '...4110403113210310442221311242000111011201102002023303214332011214403232013144001400444441030421100001'
@@ -142,14 +145,14 @@ from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.rings.rational cimport Rational
 from sage.libs.pari.all import pari_gen
 from sage.interfaces.abc import GpElement
-from sage.rings.finite_rings.integer_mod import is_IntegerMod
+from sage.rings.finite_rings.integer_mod import IntegerMod_abstract
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 
 cdef class pAdicZZpXFMElement(pAdicZZpXElement):
     def __init__(self, parent, x, absprec=None, relprec=None, empty=False):
         r"""
-        Creates an element of a fixed modulus, unramified or
+        Create an element of a fixed modulus, unramified or
         eisenstein extension of `\ZZ_p` or `\QQ_p`.
 
         INPUT:
@@ -157,7 +160,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         - ``parent`` -- either an ``EisensteinRingFixedMod`` or
           ``UnramifiedRingFixedMod``
 
-        - ``x`` -- an integer, rational, `p`-adic element, polynomial,
+        - ``x`` -- integer, rational, `p`-adic element, polynomial,
           list, integer_mod, pari int/frac/poly_t/pol_mod, an
           ``ntl_ZZ_pX``, an ``ntl_ZZX``, an ``ntl_ZZ``, or an
           ``ntl_ZZ_p``
@@ -173,31 +176,30 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: z = (1+w)^5; z # indirect doctest
+            sage: z = (1+w)^5; z  # indirect doctest
             1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
 
         TESTS:
 
-        Check that :trac:`3865` is fixed::
+        Check that :issue:`3865` is fixed::
 
             sage: W(gp('2 + O(5^2)'))
             2
 
-        Check that :trac:`13612` has been fixed::
+        Check that :issue:`13612` has been fixed::
 
+            sage: # needs sage.libs.flint
             sage: R = ZpFM(3)
             sage: S.<a> = R[]
-            sage: W.<a> = R.extension(a^2+1)
+            sage: W.<a> = R.extension(a^2 + 1)
             sage: W(W.residue_field().zero())
             0
-
         """
         pAdicZZpXElement.__init__(self, parent)
         if empty:
             return
-        cdef mpz_t tmp
         cdef ZZ_c tmp_z
         cdef Integer tmp_Int
         cdef Py_ssize_t i
@@ -230,7 +232,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 x = L
             else:
                 raise TypeError("unsupported coercion from pari: only p-adics, integers, rationals, polynomials and pol_mods allowed")
-        elif is_IntegerMod(x):
+        elif isinstance(x, IntegerMod_abstract):
             if (<Integer>x.modulus())._is_power_of(<Integer>parent.prime()):
                 x = x.lift()
             else:
@@ -241,7 +243,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             poly = x.polynomial().list()
             x = sum([poly[i].lift() * (z ** i) for i in range(len(poly))], parent.zero())
         elif isinstance(x, ntl_ZZ_p):
-            ctx_prec = ZZ_remove(tmp_z, (<ntl_ZZ>x.modulus()).x, self.prime_pow.pow_ZZ_tmp(1)[0])
+            ZZ_remove(tmp_z, (<ntl_ZZ>x.modulus()).x, self.prime_pow.pow_ZZ_tmp(1)[0])
             if ZZ_IsOne(tmp_z):
                 x = x.lift()
                 tmp_Int = Integer.__new__(Integer)
@@ -280,15 +282,15 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef int _set_from_mpz(self, mpz_t x) except -1:
         """
-        Sets ``self`` from an ``mpz_t``.
+        Set ``self`` from an ``mpz_t``.
 
         EXAMPLES::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: W(70) # indirect doctest
+            sage: W(70)  # indirect doctest
             4*w^5 + 3*w^7 + w^9 + 2*w^10 + 2*w^11 + w^13 + 3*w^16 + w^17 + w^18 + 4*w^20 + 4*w^21 + w^22 + 2*w^23
         """
         self.prime_pow.restore_top_context()
@@ -304,15 +306,15 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef int _set_from_mpq(self, mpq_t x) except -1:
         """
-        Sets ``self`` from an ``mpq_t``.
+        Set ``self`` from an ``mpq_t``.
 
         EXAMPLES::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: z = W(70/3); z # indirect doctest
+            sage: z = W(70/3); z  # indirect doctest
             3*w^5 + w^7 + 2*w^9 + 2*w^10 + 4*w^11 + w^12 + 2*w^13 + 3*w^15 + 2*w^16
              + 3*w^17 + w^18 + 3*w^19 + 3*w^20 + 2*w^21 + 2*w^22 + 3*w^23 + 4*w^24
             sage: z * 3
@@ -338,15 +340,15 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef int _set_from_ZZ_pX(self, ZZ_pX_c* poly, ntl_ZZ_pContext_class ctx) except -1:
         """
-        Sets ``self`` from a ``ZZ_pX_c``.
+        Set ``self`` from a ``ZZ_pX_c``.
 
         EXAMPLES::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: z = W(ntl.ZZ_pX([4,1,16],5^2)); z # indirect doctest
+            sage: z = W(ntl.ZZ_pX([4,1,16],5^2)); z  # indirect doctest
             4 + w + w^2 + 3*w^7 + w^9 + 2*w^11 + 4*w^13 + 3*w^14 + 2*w^15 + w^16
              + 3*w^18 + 2*w^19 + 4*w^20 + 4*w^21 + 2*w^22 + 2*w^23 + 4*w^24
             sage: z._ntl_rep()
@@ -358,16 +360,16 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef int _set_from_ZZX(self, ZZX_c poly) except -1:
         """
-        Sets ``self`` from a ``ZZX`` with relative precision bounded
+        Set ``self`` from a ``ZZX`` with relative precision bounded
         by ``relprec`` and absolute precision bounded by ``absprec``.
 
         EXAMPLES::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: z = W(ntl.ZZX([4,1,16])); z # indirect doctest
+            sage: z = W(ntl.ZZX([4,1,16])); z  # indirect doctest
             4 + w + w^2 + 3*w^7 + w^9 + 2*w^11 + 4*w^13 + 3*w^14 + 2*w^15 + w^16
              + 3*w^18 + 2*w^19 + 4*w^20 + 4*w^21 + 2*w^22 + 2*w^23 + 4*w^24
             sage: z._ntl_rep()
@@ -378,13 +380,13 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
-        Tests if ``self`` is an inexact zero.
+        Test if ``self`` is an inexact zero.
 
         EXAMPLES::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = W(0)
             sage: z._is_inexact_zero()
@@ -404,10 +406,10 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = (1 + w)^5 - 1
-            sage: loads(dumps(z)) == z #indirect doctest
+            sage: loads(dumps(z)) == z  # indirect doctest
             True
         """
         self.prime_pow.restore_top_context()
@@ -424,9 +426,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: w^5 + 1 # indirect doctest
+            sage: w^5 + 1  # indirect doctest
             1 + w^5
         """
         self.prime_pow.restore_top_context()
@@ -443,9 +445,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: w == 1 # indirect doctest
+            sage: w == 1  # indirect doctest
             False
             sage: y = 1 + w
             sage: z = 1 + w + w^27
@@ -474,16 +476,16 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         Return the inverse of ``self``, as long as ``self`` is a unit.
 
-        If ``self`` is not a unit, raises a ``ValueError``.
+        If ``self`` is not a unit, raises a :exc:`ValueError`.
 
         EXAMPLES::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = (1 + w)^5
-            sage: y = ~z; y # indirect doctest
+            sage: y = ~z; y  # indirect doctest
             1 + 4*w^5 + 4*w^6 + 3*w^7 + w^8 + 2*w^10 + w^11 + w^12 + 2*w^14 + 3*w^16
              + 3*w^17 + 4*w^18 + 4*w^19 + 2*w^20 + 2*w^21 + 4*w^22 + 3*w^23 + 3*w^24
             sage: y.parent()
@@ -515,12 +517,12 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = (1 + w)^5
             sage: z
             1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
-            sage: z << 17 # indirect doctest
+            sage: z << 17  # indirect doctest
             w^17 + w^22 + w^23 + 2*w^24
             sage: z << (-1)
             w^4 + w^5 + 2*w^6 + 4*w^7 + 3*w^9 + w^11 + 4*w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^19 + w^20 + 4*w^23 + 4*w^24
@@ -547,12 +549,12 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = (1 + w)^5
             sage: z
             1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
-            sage: z << 17 # indirect doctest
+            sage: z << 17  # indirect doctest
             w^17 + w^22 + w^23 + 2*w^24
             sage: z << (-1)
             w^4 + w^5 + 2*w^6 + 4*w^7 + 3*w^9 + w^11 + 4*w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^19 + w^20 + 4*w^23 + 4*w^24
@@ -570,7 +572,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         Divide ``self`` by the uniformizer raised to the power ``n``.
 
-        Throws away the non-positive part of the series expansion.
+        Throws away the nonpositive part of the series expansion.
         The top digits will be garbage.  If ``n`` is negative, left
         shifts by ``-n``.
 
@@ -578,10 +580,10 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5,print_mode='digits')
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = (1 + w)^5
-            sage: for m in range(26): '...' + repr(z >> m)[len(repr(z >> m)) - 25 + m:] # indirect doctest
+            sage: for m in range(26): '...' + repr(z >> m)[len(repr(z >> m)) - 25 + m:]  # indirect doctest
             '...4001400444441030421100001'
             '...400140044444103042110000'
             '...40014004444410304211000'
@@ -613,12 +615,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         if n < 0:
             return self._lshift_c(-n)
-        elif n == 0:
+        if n == 0:
             return self
         cdef pAdicZZpXFMElement ans = self._new_c()
-        cdef Py_ssize_t i
-        cdef long topcut, rem
-        cdef ntl_ZZ holder
         if n < self.prime_pow.ram_prec_cap:
             if self.prime_pow.e == 1:
                 ZZ_pX_right_pshift(ans.value, self.value, self.prime_pow.pow_ZZ_tmp(n)[0], self.prime_pow.get_top_context().x)
@@ -631,7 +630,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         Divide ``self`` by the uniformizer raised to the power ``n``.
 
-        Throws away the non-positive part of the series expansion.
+        Throws away the nonpositive part of the series expansion.
         The top digits will be garbage.  If ``n`` is negative, left
         shifts by ``-n``.
 
@@ -639,13 +638,13 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = (1 + w)^5
             sage: z
             1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14
              + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
-            sage: z >> (6) # indirect doctest
+            sage: z >> (6)  # indirect doctest
             1 + 2*w + 4*w^2 + 3*w^4 + w^6 + 4*w^7 + 4*w^8 + 4*w^9 + 4*w^10 + 4*w^11
              + 4*w^14 + w^15 + 4*w^18 + 4*w^19 + 2*w^20 + 3*w^21 + 2*w^22 + 3*w^24
             sage: z >> (-4)
@@ -662,18 +661,18 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cpdef _neg_(self):
         """
-        Returns ``-self``.
+        Return ``-self``.
 
         EXAMPLES::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = (1 + w)^5; z
             1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14
              + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
-            sage: -z # indirect doctest
+            sage: -z  # indirect doctest
             4 + 3*w^5 + 4*w^6 + w^7 + w^8 + w^9 + w^10 + w^11 + 2*w^12 + 4*w^13
              + 4*w^15 + 3*w^16 + w^17 + 2*w^18 + 3*w^19 + 2*w^21 + 4*w^23 + 4*w^24
             sage: y = z + (-z); y
@@ -687,15 +686,15 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def __pow__(pAdicZZpXFMElement self, right, m): # m ignored
         """
-        Computes ``self`` ^ ``right``.
+        Compute ``self`` ^ ``right``.
 
         EXAMPLES::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: (1 + w)^5 # indirect doctest
+            sage: (1 + w)^5  # indirect doctest
             1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14
              + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
             sage: (1 + w)^-5
@@ -704,11 +703,11 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         TESTS:
 
-        We define ``0^0`` to be unity, :trac:`13786`::
+        We define ``0^0`` to be unity, :issue:`13786`::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: type(W(0))
             <class 'sage.rings.padics.padic_ZZ_pX_FM_element.pAdicZZpXFMElement'>
@@ -721,11 +720,10 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: type(W(0)^0) == type(W(0))
             True
-
         """
         if not isinstance(right, Integer):
             right = Integer(right)
@@ -759,9 +757,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: (4*w^5 + 3*w^7 + w^9 + 2*w^10 + 2*w^11) - 69 # indirect doctest
+            sage: (4*w^5 + 3*w^7 + w^9 + 2*w^10 + 2*w^11) - 69  # indirect doctest
             1 + 4*w^13 + 2*w^16 + 4*w^17 + 3*w^18 + 4*w^20 + 4*w^22
             sage: -69 + (4*w^5 + 3*w^7 + w^9 + 2*w^10 + 2*w^11)
             1 + 4*w^13 + 2*w^16 + 4*w^17 + 3*w^18 + 4*w^20 + 4*w^22
@@ -778,11 +776,11 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = W(329)
             sage: b = W(111)
-            sage: a*b #indirect doctest
+            sage: a*b  # indirect doctest
             4 + 3*w^5 + w^7 + 2*w^9 + 4*w^11 + 3*w^12 + 2*w^13 + w^14 + 2*w^15
              + 3*w^16 + 4*w^17 + 4*w^18 + 2*w^19 + 2*w^21 + 4*w^22 + 2*w^23 + w^24
             sage: a * 0
@@ -802,11 +800,11 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = W(329)
             sage: b = W(111)
-            sage: a - b #indirect doctest
+            sage: a - b  # indirect doctest
             3 + 3*w^5 + w^7 + 2*w^9 + 3*w^10 + 4*w^11 + 2*w^13 + 2*w^14 + w^15
              + 4*w^16 + 2*w^18 + 3*w^19 + 2*w^20 + 3*w^21 + w^22 + w^24
             sage: W(218)
@@ -819,17 +817,17 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cpdef _div_(self, _right):
         """
-        Returns the quotient of ``self`` by ``right``.
+        Return the quotient of ``self`` by ``right``.
 
-        If ``right`` is not a unit, raises a ``ValueError``.
+        If ``right`` is not a unit, raises a :exc:`ValueError`.
 
         EXAMPLES::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: W(125) / W(14) #indirect doctest
+            sage: W(125) / W(14)  # indirect doctest
             4*w^15 + 4*w^17 + w^19 + w^20 + w^23 + 2*w^24
             sage: 1 / W(14) == ~W(14)
             True
@@ -838,12 +836,11 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             ...
             ValueError: cannot invert non-unit
 
-        We check that :trac:`11403` has been resolved::
+        We check that :issue:`11403` has been resolved::
 
             sage: R.<t> = Zq(8,2,'fixed-mod')
             sage: 1/(t+t^2)
             (t + 1) + t^2*2
-
         """
         cdef pAdicZZpXFMElement right = <pAdicZZpXFMElement>_right
         if right.valuation_c() > 0:
@@ -867,7 +864,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: b = W(45); b
             4*w^5 + 3*w^7 + w^9 + w^10 + 2*w^11 + w^12 + w^13 + 3*w^14 + w^16
@@ -892,7 +889,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: O(w^189).is_zero()
             True
@@ -930,16 +927,14 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer
+        - ``absprec`` -- integer
 
-        OUTPUT:
-
-        A new element truncated modulo `\pi^{\mbox{absprec}}`.
+        OUTPUT: a new element truncated modulo `\pi^{\mbox{absprec}}`
 
         EXAMPLES::
 
-            sage: R=Zp(7,4,'fixed-mod')
-            sage: a = R(1+7+7^2)
+            sage: R = Zp(7,4,'fixed-mod')
+            sage: a = R(1 + 7 + 7^2)
             sage: a.add_bigoh(1)
             1
         """
@@ -975,7 +970,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         EXAMPLES::
 
-            sage: ZZ(ZqFM(125,names='a')(-1)) #indirect doctest
+            sage: # needs sage.libs.flint
+            sage: ZZ(ZqFM(125,names='a')(-1))  # indirect doctest
             95367431640624
             sage: R = ZpFM(5); S.<x> = ZZ[]; f = x^5 + 25*x^3 - 5; W.<w> = R.ext(f)
             sage: ZZ(W(-1))
@@ -1015,10 +1011,10 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = (3+w)^7
-            sage: a.matrix_mod_pn()
+            sage: a.matrix_mod_pn()                                                     # needs sage.geometry.polyhedron
             [2757  333 1068  725 2510]
             [  50 1507  483  318  725]
             [ 500   50 3007 2358  318]
@@ -1034,9 +1030,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef ZZ_pX_Modulus_c* m = self.prime_pow.get_top_modulus()
         cdef ZZ_pX_c x
         ZZ_pX_SetX(x)
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i
         zero = int(0)
-        for i from 0 <= i < n:
+        for i in range(n):
             curlist = cur.list()
             L.extend(curlist + [zero]*(n - len(curlist)))
             ZZ_pX_MulMod_pre(cur.x, cur.x, x, m[0])
@@ -1082,7 +1078,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpCR(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: ((1+2*w)^5).norm()
             1 + 5^2 + O(5^5)
@@ -1114,7 +1110,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpCR(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = (2+3*w)^7
             sage: b = (6+w^3)^5
@@ -1148,7 +1144,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = 72 + 4*w^2; b = 17 + 9*w + w^3; c = a + b
             sage: c._ntl_rep()
@@ -1173,7 +1169,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: W.<w> = ZpFM(5).extension(x^3-5)
+            sage: W.<w> = ZpFM(5).extension(x^3 - 5)
             sage: (1 + w)._polynomial_list()
             [1, 1]
             sage: (1 + w + O(w^11))._polynomial_list(pad=True)
@@ -1209,7 +1205,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         S = R[var]
         return S(self._polynomial_list())
 
-    cdef ZZ_p_c _const_term(self):
+    cdef ZZ_p_c _const_term(self) noexcept:
         """
         Return the constant term of ``self.unit``.
 
@@ -1221,10 +1217,10 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = W(566)
-            sage: a._const_term_test() #indirect doctest
+            sage: a._const_term_test()  # indirect doctest
             566
         """
         return ZZ_pX_ConstTerm(self.value)
@@ -1241,7 +1237,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = W(47); b = W(47 + 25)
             sage: a.is_equal_to(b)
@@ -1254,7 +1250,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
 #    def lift(self):
 #        """
-#        Returns an element of a number field defined by the same polynomial as self's parent that is congruent to self modulo an appropriate ideal.
+#        Returns an element of a number field defined by the same polynomial as
+#        ``self``'s parent that is congruent to self modulo an appropriate ideal.
 
 #        Not currently implemented.
 #        """
@@ -1268,7 +1265,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: w.lift_to_precision(10000)
             w
@@ -1307,14 +1304,14 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         INPUT:
 
-        - ``n`` -- integer (default ``None``); if given, returns the
+        - ``n`` -- integer (default: ``None``); if given, returns the
           corresponding entry in the expansion
 
         EXAMPLES::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: y = W(775); y
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + w^20 + 2*w^21 + 3*w^22 + w^23 + w^24
@@ -1325,6 +1322,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: w^10 - w^12 + 2*w^14 + w^15 + 2*w^16 + w^18 + 2*w^19 + w^20 + w^21 - w^22 - w^23 + 2*w^24
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + w^20 + 2*w^21 + 3*w^22 + w^23 + w^24
             sage: g = x^3 + 3*x + 3
+
+            sage: # needs sage.libs.flint
             sage: A.<a> = R.ext(g)
             sage: y = 75 + 45*a + 1200*a^2; y
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4
@@ -1341,14 +1340,13 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: list(A(0,4).expansion())
             []
 
-        Check that :trac:`25879` has been resolved::
+        Check that :issue:`25879` has been resolved::
 
             sage: K = ZpCA(3,5)
             sage: R.<a> = K[]
             sage: L.<a> = K.extension(a^2 - 3)
             sage: a.residue()
             0
-
         """
         if lift_mode == 'teichmuller':
             zero = self.parent()(0)
@@ -1384,7 +1382,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def teichmuller_expansion(self, n = None):
         r"""
-        Return a list `[a_0, a_1, \ldots, a_n]` such that
+        Return a list `[a_0, a_1, \ldots, a_n]` such that.
 
         - `a_i^q = a_i`
         - ``self.unit_part()`` = `\sum_{i = 0}^n a_i \pi^i`, where `\pi` is a
@@ -1392,11 +1390,12 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         INPUT:
 
-        - ``n`` -- integer (default ``None``); f given, returns the corresponding
+        - ``n`` -- integer (default: ``None``); if given, returns the corresponding
           entry in the expansion
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: R.<a> = ZqFM(5^4,4)
             sage: E = a.teichmuller_expansion(); E
             5-adic expansion of a (teichmuller)
@@ -1443,7 +1442,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef long ordp = self.valuation_c()
         cdef long rp = self.prime_pow.ram_prec_cap - ordp
         cdef long goal
-        if n is not None: goal = self.ram_prec_cap - n
+        if n is not None:
+            goal = self.ram_prec_cap - n
         cdef pAdicZZpXFMElement v
         if n is None:
             L = []
@@ -1454,15 +1454,18 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         else:
             v = self._new_c()
         cdef pAdicZZpXFMElement u = self.unit_part()
-        if u is self: u = self.__copy__()
+        if u is self:
+            u = self.__copy__()
         while u.valuation_c() < rp:
-            if n is None: v = self._new_c()
+            if n is None:
+                v = self._new_c()
             self.prime_pow.teichmuller_set_c(&v.value, &u.value, self.prime_pow.ram_prec_cap)
             if n is None:
                 L.append(v)
             elif rp == goal:
                 return v
-            if rp == 1: break
+            if rp == 1:
+                break
             ZZ_pX_sub(u.value, u.value, v.value)
             rp -= 1
             if self.prime_pow.e == 1:
@@ -1488,13 +1491,15 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
-            sage: y = W.teichmuller(3); y #indirect doctest
+            sage: y = W.teichmuller(3); y  # indirect doctest
             3 + 3*w^5 + w^7 + 2*w^9 + 2*w^10 + 4*w^11 + w^12 + 2*w^13 + 3*w^15
              + 2*w^16 + 3*w^17 + w^18 + 3*w^19 + 3*w^20 + 2*w^21 + 2*w^22 + 3*w^23 + 4*w^24
             sage: y^5 == y
             True
+
+            sage: # needs sage.libs.flint
             sage: g = x^3 + 3*x + 3
             sage: A.<a> = R.ext(g)
             sage: b = A.teichmuller(1 + 2*a - a^2); b
@@ -1510,8 +1515,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 #     def multiplicative_order(self):
 #         """
 #         Returns the multiplicative order of self, ie the smallest
-#         positive n so that there is an exact p-adic element congruent
-#         to self modulo self's precision that is an nth root of unity.
+#         positive `n` so that there is an exact `p`-adic element congruent
+#         to self modulo ``self``'s precision that is an `n`-th root of unity.
 
 #         Note: unlike the case for Qp and Zp, it is possible to have
 #         non-teichmuller elements with finite orders.  This can happen
@@ -1520,12 +1525,10 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
 #         INPUT:
 
-#             - self -- a p-adic element
-#             - prec -- an integer
+#         - ``self`` -- a `p`-adic element
+#         - ``prec`` -- integer
 
-#         OUTPUT:
-
-#             - integer -- the multiplicative order of self
+#         OUTPUT: integer; the multiplicative order of self
 #         """
 #         raise NotImplementedError
 
@@ -1546,7 +1549,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = W(75); a
             3*w^10 + 2*w^12 + w^14 + w^16 + w^17 + 3*w^18 + 3*w^19 + 2*w^21 + 3*w^22 + 3*w^23
@@ -1573,7 +1576,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = W(75); a
             3*w^10 + 2*w^12 + w^14 + w^16 + w^17 + 3*w^18 + 3*w^19 + 2*w^21 + 3*w^22 + 3*w^23
@@ -1607,7 +1610,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = W(75); a
             3*w^10 + 2*w^12 + w^14 + w^16 + w^17 + 3*w^18 + 3*w^19 + 2*w^21 + 3*w^22 + 3*w^23
@@ -1629,7 +1632,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         return self._rshift_c(self.valuation_c())
 
-    cdef long valuation_c(self):
+    cdef long valuation_c(self) noexcept:
         """
         Return the valuation of ``self``.
 
@@ -1637,7 +1640,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: a = W(75); a
             3*w^10 + 2*w^12 + w^14 + w^16 + w^17 + 3*w^18 + 3*w^19 + 2*w^21 + 3*w^22 + 3*w^23
@@ -1691,23 +1694,25 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
-            sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+            sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: W.<w> = R.ext(f)
             sage: y = W(775); y
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + w^20 + 2*w^21 + 3*w^22 + w^23 + w^24
-            sage: (y>>9).expansion() #indirect doctest
+            sage: (y>>9).expansion()  # indirect doctest
             [0, 1, 0, 4, 0, 2, 1, 2, 4, 1, 0, 1, 2, 3, 1, 1, 4, 1, 2, 4, 1, 0, 0, 3]
-            sage: (y>>9).expansion(lift_mode='smallest') #indirect doctest
+            sage: (y>>9).expansion(lift_mode='smallest')  # indirect doctest
             [0, 1, 0, -1, 0, 2, 1, 2, 0, 1, 2, 1, 1, -1, -1, 2, -2, 0, -2, -2, -2, 0, -2, -2, 2]
             sage: w^10 - w^12 + 2*w^14 + w^15 + 2*w^16 + w^18 + 2*w^19 + w^20 + w^21 - w^22 - w^23 + 2*w^24
             w^10 + 4*w^12 + 2*w^14 + w^15 + 2*w^16 + 4*w^17 + w^18 + w^20 + 2*w^21 + 3*w^22 + w^23 + w^24
             sage: g = x^3 + 3*x + 3
+
+            sage: # needs sage.libs.flint
             sage: A.<a> = R.ext(g)
             sage: y = 75 + 45*a + 1200*a^2; y
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4
-            sage: list(y.expansion()) #indirect doctest
+            sage: list(y.expansion())  # indirect doctest
             [[], [0, 4], [3, 1, 3], [0, 0, 4], [0, 0, 1]]
-            sage: list(y.expansion(lift_mode='smallest')) #indirect doctest
+            sage: list(y.expansion(lift_mode='smallest'))  # indirect doctest
             [[], [0, -1], [-2, 2, -2], [1], [0, 0, 2]]
             sage: 5*((-2*5 + 25) + (-1 + 2*5)*a + (-2*5 + 2*125)*a^2)
             4*a*5 + (3*a^2 + a + 3)*5^2 + 4*a^2*5^3 + a^2*5^4
@@ -1724,10 +1729,10 @@ def make_ZZpXFMElement(parent, f):
 
         sage: R = ZpFM(5,5)
         sage: S.<x> = R[]
-        sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
+        sage: f = x^5 + 75*x^3 - 15*x^2 + 125*x - 5
         sage: W.<w> = R.ext(f)
         sage: z = (1 + w)^5 - 1
-        sage: loads(dumps(z)) == z # indirect doctest
+        sage: loads(dumps(z)) == z  # indirect doctest
         True
     """
     return pAdicZZpXFMElement(parent, f)

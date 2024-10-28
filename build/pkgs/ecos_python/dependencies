@@ -1,4 +1,4 @@
-$(PYTHON) numpy scipy | $(PYTHON_TOOLCHAIN)
+ numpy scipy | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

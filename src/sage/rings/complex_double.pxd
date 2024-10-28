@@ -1,7 +1,6 @@
 from sage.libs.gsl.types cimport gsl_complex
 
 cimport sage.structure.element
-cimport sage.rings.ring
 cimport sage.rings.abc
 
 

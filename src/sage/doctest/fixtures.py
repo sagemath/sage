@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Fixtures to help testing functionality
 
@@ -80,9 +81,9 @@ def reproducible_repr(val):
         frozenset(['a', 'b', 'c', 'd'])
         sage: print(reproducible_repr([1, frozenset("cab"), set("bar"), 0]))
         [1, frozenset(['a', 'b', 'c']), set(['a', 'b', 'r']), 0]
-        sage: print(reproducible_repr({3.0:"three","2":"two",1:"one"}))
+        sage: print(reproducible_repr({3.0: "three", "2": "two", 1: "one"}))            # optional - sage.rings.real_mpfr
         {'2': 'two', 1: 'one', 3.00000000000000: 'three'}
-        sage: print(reproducible_repr("foo\nbar")) # demonstrate default case
+        sage: print(reproducible_repr("foo\nbar"))  # demonstrate default case
         'foo\nbar'
     """
 
@@ -111,7 +112,7 @@ def reproducible_repr(val):
     return repr(val)
 
 
-class AttributeAccessTracerHelper():
+class AttributeAccessTracerHelper:
 
     def __init__(self, delegate, prefix="  ", reads=True):
         r"""
@@ -124,13 +125,11 @@ class AttributeAccessTracerHelper():
 
         INPUT:
 
-        - ``delegate`` -- the actual object to be proxied.
+        - ``delegate`` -- the actual object to be proxied
 
-        - ``prefix`` -- (default: ``"  "``)
-          string to prepend to each printed output.
+        - ``prefix`` -- (default: ``"  "``) string to prepend to each printed output
 
-        - ``reads`` -- (default: ``True``)
-          whether to trace read access as well.
+        - ``reads`` -- (default: ``True``) whether to trace read access as well
 
         EXAMPLES::
 
@@ -224,7 +223,7 @@ class AttributeAccessTracerHelper():
         setattr(self.delegate, name, val)
 
 
-class AttributeAccessTracerProxy():
+class AttributeAccessTracerProxy:
 
     def __init__(self, delegate, **kwds):
         r"""
@@ -237,13 +236,13 @@ class AttributeAccessTracerProxy():
 
         INPUT:
 
-        - ``delegate`` -- the actual object to be proxied.
+        - ``delegate`` -- the actual object to be proxied
 
         - ``prefix`` -- (default: ``"  "``)
-          string to prepend to each printed output.
+          string to prepend to each printed output
 
         - ``reads`` -- (default: ``True``)
-          whether to trace read access as well.
+          whether to trace read access as well
 
         EXAMPLES::
 
@@ -331,15 +330,15 @@ def trace_method(obj, meth, **kwds):
 
     INPUT:
 
-    - ``obj`` -- the object containing the method.
+    - ``obj`` -- the object containing the method
 
-    - ``meth`` -- the name of the method to be traced.
+    - ``meth`` -- the name of the method to be traced
 
     - ``prefix`` -- (default: ``"  "``)
-      string to prepend to each printed output.
+      string to prepend to each printed output
 
     - ``reads`` -- (default: ``True``)
-      whether to trace read access as well.
+      whether to trace read access as well
 
     EXAMPLES::
 

@@ -187,7 +187,6 @@ AC_DEFUN([_AX_BOOST_BASE_RUNDETECT],[
     AC_LANG_POP([C++])
 
 
-
     dnl if we found no boost with system layout we search for boost libraries
     dnl built and installed without the --layout=system option or for a staged(not installed) version
     if test "x$succeeded" != "xyes" ; then

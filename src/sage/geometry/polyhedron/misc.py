@@ -17,20 +17,18 @@ def _to_space_separated_string(l, base_ring=None):
 
     INPUT:
 
-    - ``l`` -- anything iterable.
+    - ``l`` -- anything iterable
 
     - ``base_ring`` -- ring (default: ``None``); convert this ring, if given
 
-    OUTPUT:
-
-    String.
+    OUTPUT: string
 
     EXAMPLES::
 
         sage: import sage.geometry.polyhedron.misc as P
         sage: P._to_space_separated_string([2,3])
         '2 3'
-        sage: P._to_space_separated_string([2, 1/5], RDF)                               # optional - sage.rings.real_double
+        sage: P._to_space_separated_string([2, 1/5], RDF)                               # needs sage.rings.real_double
         '2.0 0.2'
     """
     if base_ring:
@@ -66,11 +64,9 @@ def _make_listlist(x):
 
     INPUT:
 
-    - ``x`` -- ``None`` or an iterable of iterables.
+    - ``x`` -- ``None`` or an iterable of iterables
 
-    OUTPUT:
-
-    A list of lists.
+    OUTPUT: list of lists
 
     EXAMPLES::
 
@@ -91,7 +87,7 @@ def _common_length_of(l1, l2=None, l3=None):
     """
     The arguments are containers or ``None``. The function applies
     ``len()`` to each element, and returns the common length. If the
-    length differs, ``ValueError`` is raised. Used to check arguments.
+    length differs, :exc:`ValueError` is raised. Used to check arguments.
 
     OUTPUT:
 

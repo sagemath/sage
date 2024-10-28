@@ -1,2 +1,2 @@
-"pkgconfig(ncurses)"
-"pkgconfig(ncursesw)"
+pkgconfig(ncurses)
+pkgconfig(ncursesw)

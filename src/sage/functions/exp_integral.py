@@ -33,7 +33,6 @@ AUTHORS:
     Implementation of :meth:`exp_int` (from sage/functions/special.py).
     Implementation of :meth:`exponential_integral_1` (from
     sage/functions/transcendental.py).
-
 """
 
 # ****************************************************************************
@@ -46,20 +45,28 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-from sage.symbolic.function import BuiltinFunction
-from sage.symbolic.expression import Expression
-from sage.structure.all import parent
-from sage.misc.latex import latex
-from sage.libs.mpmath import utils as mpmath_utils
-mpmath_utils_call = mpmath_utils.call # eliminate some overhead in _evalf_
-
-from sage.rings.real_mpfr import RealField
-from sage.rings.integer_ring import ZZ
-from sage.functions.log import exp, log
-from sage.functions.trig import sin, cos
-from sage.functions.hyperbolic import sinh, cosh
 import math
+
+from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import Expression, parent
+from sage.symbolic.function import BuiltinFunction
+
+lazy_import('sage.functions.log', ['exp', 'log'])
+lazy_import('sage.functions.trig', ['sin', 'cos'])
+lazy_import('sage.functions.hyperbolic', ['sinh', 'cosh'])
+
+lazy_import('sage.misc.latex', 'latex')
+lazy_import('sage.rings.real_mpfr', 'RealField')
+
+lazy_import('sage.symbolic.ring', 'SR')
+
+lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
+lazy_import('mpmath',
+            ['chi', 'ci', 'e1', 'ei', 'expint', 'ei', 'li', 'shi', 'si'],
+            as_=['_mpmath_chi', '_mpmath_ci', '_mpmath_e1', '_mpmath_ei', '_mpmath_expint',
+                 '_mpmath_ei', '_mpmath_li', '_mpmath_shi', '_mpmath_si'])
 
 
 class Function_exp_integral_e(BuiltinFunction):
@@ -79,61 +86,60 @@ class Function_exp_integral_e(BuiltinFunction):
 
     Numerical evaluation is handled using mpmath::
 
-        sage: N(exp_integral_e(1,1))
+        sage: N(exp_integral_e(1, 1))                                                   # needs sage.symbolic
         0.219383934395520
-        sage: exp_integral_e(1, RealField(100)(1))
+        sage: exp_integral_e(1, RealField(100)(1))                                      # needs sage.symbolic
         0.21938393439552027367716377546
 
     We can compare this to PARI's evaluation of
     :meth:`exponential_integral_1`::
 
-        sage: N(exponential_integral_1(1))
+        sage: N(exponential_integral_1(1))                                              # needs sage.symbolic
         0.219383934395520
 
     We can verify one case of [AS1964]_ 5.1.45, i.e.
     `E_n(z) = z^{n-1}\Gamma(1-n,z)`::
 
-        sage: N(exp_integral_e(2, 3+I))
+        sage: N(exp_integral_e(2, 3+I))                                                 # needs sage.symbolic
         0.00354575823814662 - 0.00973200528288687*I
-        sage: N((3+I)*gamma(-1, 3+I))
+        sage: N((3+I)*gamma(-1, 3+I))                                                   # needs sage.symbolic
         0.00354575823814662 - 0.00973200528288687*I
 
     Maxima returns the following improper integral as a multiple of
     ``exp_integral_e(1,1)``::
 
-        sage: uu = integral(e^(-x)*log(x+1),x,0,oo)
-        sage: uu
+        sage: uu = integral(e^(-x)*log(x+1), x, 0, oo); uu                              # needs sage.symbolic
         e*exp_integral_e(1, 1)
-        sage: uu.n(digits=30)
+        sage: uu.n(digits=30)                                                           # needs sage.symbolic
         0.596347362323194074341078499369
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
+        sage: # needs sage.symbolic
         sage: x = var('x')
         sage: f = exp_integral_e(2,x)
         sage: f.diff(x)
         -exp_integral_e(1, x)
-
         sage: f.integrate(x)
         -exp_integral_e(3, x)
-
-        sage: f = exp_integral_e(-1,x)
+        sage: f = exp_integral_e(-1, x)
         sage: f.integrate(x)
         Ei(-x) - gamma(-1, x)
 
     Some special values of ``exp_integral_e`` can be simplified.
     [AS1964]_ 5.1.23::
 
-        sage: exp_integral_e(0,x)
+        sage: exp_integral_e(0, x)                                                      # needs sage.symbolic
         e^(-x)/x
 
     [AS1964]_ 5.1.24::
 
-        sage: exp_integral_e(6,0)
+        sage: # needs sage.symbolic
+        sage: exp_integral_e(6, 0)
         1/5
         sage: nn = var('nn')
         sage: assume(nn > 1)
-        sage: f = exp_integral_e(nn,0)
+        sage: f = exp_integral_e(nn, 0)
         sage: f.simplify()
         1/(nn - 1)
 
@@ -142,7 +148,6 @@ class Function_exp_integral_e(BuiltinFunction):
 
     Numerical evaluation is handled using mpmath, but symbolics are handled
     by Sage and Maxima.
-
     """
     def __init__(self):
         """
@@ -150,11 +155,10 @@ class Function_exp_integral_e(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: exp_integral_e(1, 0)
+            sage: exp_integral_e(1, 0)                                                  # needs sage.symbolic
             exp_integral_e(1, 0)
-            sage: exp_integral_e(1, x)._sympy_()
+            sage: exp_integral_e(1, x)._sympy_()                                        # needs sage.symbolic
             expint(1, x)
-
         """
         BuiltinFunction.__init__(self, "exp_integral_e", nargs=2,
                                  conversions=dict(maxima='expintegral_e',
@@ -164,18 +168,18 @@ class Function_exp_integral_e(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: exp_integral_e(1.0, x)
+            sage: exp_integral_e(1.0, x)                                                # needs sage.symbolic
             exp_integral_e(1.00000000000000, x)
-            sage: exp_integral_e(x, 1.0)
+            sage: exp_integral_e(x, 1.0)                                                # needs sage.symbolic
             exp_integral_e(x, 1.00000000000000)
-            sage: exp_integral_e(3, 0)
+            sage: exp_integral_e(3, 0)                                                  # needs mpmath
             1/2
 
         TESTS:
 
-        Check that Python ints work (:trac:`14766`)::
+        Check that Python ints work (:issue:`14766`)::
 
-            sage: exp_integral_e(int(3), 0)
+            sage: exp_integral_e(int(3), 0)                                             # needs mpmath
             1/2
         """
         z_zero = False
@@ -211,15 +215,14 @@ class Function_exp_integral_e(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: exp_integral_e(1.0, 1.0)
+            sage: exp_integral_e(1.0, 1.0)                                              # needs mpmath
             0.219383934395520
-            sage: N(exp_integral_e(1, 1+I))
+            sage: N(exp_integral_e(1, 1+I))                                             # needs sage.symbolic
             0.000281624451981418 - 0.179324535039359*I
-            sage: exp_integral_e(1, RealField(100)(1))
+            sage: exp_integral_e(1, RealField(100)(1))                                  # needs sage.rings.real_mpfr
             0.21938393439552027367716377546
         """
-        import mpmath
-        return mpmath_utils.call(mpmath.expint, n, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_expint, n, z, parent=parent)
 
     def _print_latex_(self, n, z):
         r"""
@@ -227,7 +230,7 @@ class Function_exp_integral_e(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: latex(exp_integral_e(1, -x - 1))
+            sage: latex(exp_integral_e(1, -x - 1))                                      # needs sage.symbolic
             E_{1}\left(-x - 1\right)
         """
         return r"E_{{{}}}\left({}\right)".format(latex(n), latex(z))
@@ -240,12 +243,12 @@ class Function_exp_integral_e(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x = var('x')
-            sage: f = exp_integral_e(2,x)
+            sage: f = exp_integral_e(2, x)
             sage: f.diff(x)
             -exp_integral_e(1, x)
-
-            sage: f = exp_integral_e(2,sqrt(x))
+            sage: f = exp_integral_e(2, sqrt(x))
             sage: f.diff(x)
             -1/2*exp_integral_e(1, sqrt(x))/sqrt(x)
         """
@@ -269,33 +272,33 @@ class Function_exp_integral_e1(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: exp_integral_e1(x)
+        sage: exp_integral_e1(x)                                                        # needs sage.symbolic
         exp_integral_e1(x)
-        sage: exp_integral_e1(1.0)
+        sage: exp_integral_e1(1.0)                                                      # needs mpmath
         0.219383934395520
 
     Numerical evaluation is handled using mpmath::
 
-        sage: N(exp_integral_e1(1))
+        sage: N(exp_integral_e1(1))                                                     # needs sage.symbolic
         0.219383934395520
-        sage: exp_integral_e1(RealField(100)(1))
+        sage: exp_integral_e1(RealField(100)(1))                                        # needs sage.rings.real_mpfr
         0.21938393439552027367716377546
 
     We can compare this to PARI's evaluation of
     :meth:`exponential_integral_1`::
 
-        sage: N(exp_integral_e1(2.0))
+        sage: N(exp_integral_e1(2.0))                                                   # needs mpmath
         0.0489005107080611
-        sage: N(exponential_integral_1(2.0))
+        sage: N(exponential_integral_1(2.0))                                            # needs sage.rings.real_mpfr
         0.0489005107080611
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
+        sage: # needs sage.symbolic
         sage: x = var('x')
         sage: f = exp_integral_e1(x)
         sage: f.diff(x)
         -e^(-x)/x
-
         sage: f.integrate(x)
         -exp_integral_e(2, x)
 
@@ -303,7 +306,6 @@ class Function_exp_integral_e1(BuiltinFunction):
 
     Numerical evaluation is handled using mpmath, but symbolics are handled
     by Sage and Maxima.
-
     """
     def __init__(self):
         """
@@ -311,11 +313,10 @@ class Function_exp_integral_e1(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: exp_integral_e1(1)
+            sage: exp_integral_e1(1)                                                    # needs sage.symbolic
             exp_integral_e1(1)
-            sage: exp_integral_e1(x)._sympy_()
+            sage: exp_integral_e1(x)._sympy_()                                          # needs sympy sage.symbolic
             expint(1, x)
-
         """
         BuiltinFunction.__init__(self, "exp_integral_e1", nargs=1,
                                  conversions=dict(maxima='expintegral_e1',
@@ -325,14 +326,12 @@ class Function_exp_integral_e1(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: N(exp_integral_e1(1+I))
+            sage: N(exp_integral_e1(1+I))                                               # needs sage.symbolic
             0.000281624451981418 - 0.179324535039359*I
-            sage: exp_integral_e1(RealField(200)(0.5))
+            sage: exp_integral_e1(RealField(200)(0.5))                                  # needs sage.rings.real_mpfr
             0.55977359477616081174679593931508523522684689031635351524829
-
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.e1, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_e1, z, parent=parent)
 
     def _print_latex_(self, z):
         r"""
@@ -340,7 +339,7 @@ class Function_exp_integral_e1(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: latex(exp_integral_e1(2))
+            sage: latex(exp_integral_e1(2))                                             # needs sage.symbolic
             E_{1}\left(2\right)
         """
         return r"E_{{1}}\left({}\right)".format(latex(z))
@@ -353,15 +352,14 @@ class Function_exp_integral_e1(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x = var('x')
             sage: f = exp_integral_e1(x)
             sage: f.diff(x)
             -e^(-x)/x
-
             sage: f = exp_integral_e1(x^2)
             sage: f.diff(x)
             -2*e^(-x^2)/x
-
         """
         return -exp(-z)/z
 
@@ -383,22 +381,22 @@ class Function_log_integral(BuiltinFunction):
 
     Numerical evaluation for real and complex arguments is handled using mpmath::
 
-        sage: N(log_integral(3))
+        sage: N(log_integral(3))                                                        # needs sage.symbolic
         2.16358859466719
-        sage: N(log_integral(3), digits=30)
+        sage: N(log_integral(3), digits=30)                                             # needs sage.symbolic
         2.16358859466719197287692236735
-        sage: log_integral(ComplexField(100)(3+I))
+        sage: log_integral(ComplexField(100)(3+I))                                      # needs sage.symbolic
         2.2879892769816826157078450911 + 0.87232935488528370139883806779*I
-        sage: log_integral(0)
+        sage: log_integral(0)                                                           # needs mpmath
         0
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
+        sage: # needs sage.symbolic
         sage: x = var('x')
         sage: f = log_integral(x)
         sage: f.diff(x)
         1/log(x)
-
         sage: f.integrate(x)
         x*log_integral(x) - Ei(2*log(x))
 
@@ -406,7 +404,7 @@ class Function_log_integral(BuiltinFunction):
     1,925,320,391,606,803,968,923 many prime numbers less than 1e23. The
     value of ``log_integral(1e23)`` is very close to this::
 
-        sage: log_integral(1e23)
+        sage: log_integral(1e23)                                                        # needs mpmath
         1.92532039161405e21
 
     ALGORITHM:
@@ -420,8 +418,6 @@ class Function_log_integral(BuiltinFunction):
     - mpmath documentation: `logarithmic-integral`_
 
     .. _`logarithmic-integral`: http://mpmath.org/doc/current/functions/expintegrals.html#logarithmic-integral
-
-
     """
     def __init__(self):
         r"""
@@ -429,18 +425,18 @@ class Function_log_integral(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: log_integral(3)
+            sage: log_integral(3)                                                       # needs sage.symbolic
             log_integral(3)
-            sage: log_integral(x)._sympy_()
+            sage: log_integral(x)._sympy_()                                             # needs sympy sage.symbolic
             li(x)
-            sage: log_integral(x)._fricas_init_()
+            sage: log_integral(x)._fricas_init_()                                       # needs sage.symbolic
             'li(x)'
 
         TESTS:
 
-        Verify that :trac:`28917` is fixed::
+        Verify that :issue:`28917` is fixed::
 
-            sage: latex(log_integral(x))
+            sage: latex(log_integral(x))                                                # needs sage.symbolic
             \operatorname{log\_integral}\left(x\right)
         """
         BuiltinFunction.__init__(self, "log_integral", nargs=1,
@@ -453,14 +449,13 @@ class Function_log_integral(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: z = var('z')
-            sage: log_integral(z)
+            sage: z = var('z')                                                          # needs sage.symbolic
+            sage: log_integral(z)                                                       # needs sage.symbolic
             log_integral(z)
-            sage: log_integral(3.0)
+            sage: log_integral(3.0)                                                     # needs mpmath
             2.16358859466719
-            sage: log_integral(0)
+            sage: log_integral(0)                                                       # needs mpmath
             0
-
         """
         # Special case z = 0
         if isinstance(z, Expression):
@@ -473,14 +468,12 @@ class Function_log_integral(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: N(log_integral(1e6))
+            sage: N(log_integral(1e6))                                                  # needs mpmath
             78627.5491594622
-            sage: log_integral(RealField(200)(1e6))
+            sage: log_integral(RealField(200)(1e6))                                     # needs sage.rings.real_mpfr
             78627.549159462181919862910747947261161321874382421767074759
-
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.li, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_li, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -488,15 +481,14 @@ class Function_log_integral(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x = var('x')
             sage: f = log_integral(x)
             sage: f.diff(x)
             1/log(x)
-
             sage: f = log_integral(x^2)
             sage: f.diff(x)
             2*x/log(x^2)
-
         """
         return 1/log(z)
 
@@ -537,13 +529,13 @@ class Function_log_integral_offset(BuiltinFunction):
 
     So we have::
 
-        sage: li(4.5)-li(2.0)-Li(4.5)
+        sage: li(4.5) - li(2.0) - Li(4.5)                                               # needs mpmath
         0.000000000000000
 
     `\operatorname{Li}(x)` is extended to complex arguments `z`
     by analytic continuation (see [AS1964]_ 5.1.3)::
 
-        sage: Li(6.6+5.4*I)
+        sage: Li(6.6 + 5.4*I)                                                           # needs sage.symbolic
         3.97032201503632 + 2.62311237593572*I
 
     The function `\operatorname{Li}` is an approximation for the number of
@@ -570,6 +562,7 @@ class Function_log_integral_offset(BuiltinFunction):
 
     Numerical evaluation for real and complex arguments is handled using mpmath::
 
+        sage: # needs sage.symbolic
         sage: N(log_integral_offset(3))
         1.11842481454970
         sage: N(log_integral_offset(3), digits=30)
@@ -578,7 +571,7 @@ class Function_log_integral_offset(BuiltinFunction):
         1.2428254968641898308632562019 + 0.87232935488528370139883806779*I
         sage: log_integral_offset(2)
         0
-        sage: for n in range(1,7):
+        sage: for n in range(1,7):                                                      # needs primecountpy
         ....:  print('%-10s%-10s%-20s'%(10^n, prime_pi(10^n), N(Li(10^n))))
         10        4         5.12043572466980
         100       25        29.0809778039621
@@ -591,20 +584,21 @@ class Function_log_integral_offset(BuiltinFunction):
     There are 1,925,320,391,606,803,968,923 prime numbers less than 1e23.
     The value of ``log_integral_offset(1e23)`` is very close to this::
 
-        sage: log_integral_offset(1e23)
+        sage: log_integral_offset(1e23)                                                 # needs mpmath
         1.92532039161405e21
 
     Symbolic derivatives are handled by Sage and integration by Maxima::
 
+        sage: # needs sage.symbolic
         sage: x = var('x')
         sage: f = log_integral_offset(x)
         sage: f.diff(x)
         1/log(x)
         sage: f.integrate(x)
         -x*log_integral(2) + x*log_integral(x) - Ei(2*log(x))
-        sage: Li(x).integrate(x,2.0,4.5).n(digits=10)
+        sage: Li(x).integrate(x, 2.0, 4.5).n(digits=10)
         3.186411697
-        sage: N(f.integrate(x,2.0,3.0))   # abs tol 1e-15
+        sage: N(f.integrate(x, 2.0, 3.0))   # abs tol 1e-15
         0.601621785860587
 
     ALGORITHM:
@@ -626,18 +620,17 @@ class Function_log_integral_offset(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: log_integral_offset(3)
+            sage: log_integral_offset(3)                                                # needs sage.symbolic
             log_integral(3) - log_integral(2)
-            sage: log_integral_offset(x, hold=True)._sympy_()
+            sage: log_integral_offset(x, hold=True)._sympy_()                           # needs sympy sage.symbolic
             Li(x)
 
         TESTS:
 
-        Verify that the problem described in :trac:`28917` no longer appears here::
+        Verify that the problem described in :issue:`28917` no longer appears here::
 
             sage: latex(log_integral_offset)
             \operatorname{log\_integral\_offset}
-
         """
         BuiltinFunction.__init__(self, "log_integral_offset", nargs=1,
                                  latex_name=r'\operatorname{log\_integral\_offset}',
@@ -647,18 +640,16 @@ class Function_log_integral_offset(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: z = var('z')
-            sage: log_integral_offset(z)
+            sage: z = var('z')                                                          # needs sage.symbolic
+            sage: log_integral_offset(z)                                                # needs sage.symbolic
             -log_integral(2) + log_integral(z)
-            sage: log_integral_offset(3.0)
+            sage: log_integral_offset(3.0)                                              # needs mpmath
             1.11842481454970
-            sage: log_integral_offset(2)
+            sage: log_integral_offset(2)                                                # needs mpmath
             0
-
         """
         if z == 2:
-            import sage.symbolic.ring
-            return sage.symbolic.ring.SR(0)
+            return SR(0)
         return li(z)-li(2)
         # If we return:(li(z)-li(2)) we get correct symbolic integration.
         # But on definite integration it returns x.xxxx-li(2).
@@ -667,16 +658,14 @@ class Function_log_integral_offset(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: N(log_integral_offset(1e6))
+            sage: N(log_integral_offset(1e6))                                           # needs mpmath
             78626.5039956821
-            sage: log_integral_offset(RealField(200)(1e6))
+            sage: log_integral_offset(RealField(200)(1e6))                              # needs sage.rings.real_mpfr
             78626.503995682064427078066159058066548185351766843615873183
-            sage: li(4.5)-li(2.0)-Li(4.5)
+            sage: li(4.5) - li(2.0) - Li(4.5)                                           # needs mpmath
             0.000000000000000
-
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.li, z, offset=True, parent=parent)
+        return _mpmath_utils_call(_mpmath_li, z, offset=True, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -684,11 +673,11 @@ class Function_log_integral_offset(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x = var('x')
             sage: f = log_integral_offset(x)
             sage: f.diff(x)
             1/log(x)
-
             sage: f = log_integral_offset(x^2)
             sage: f.diff(x)
             2*x/log(x^2)
@@ -713,56 +702,55 @@ class Function_sin_integral(BuiltinFunction):
 
     Numerical evaluation for real and complex arguments is handled using mpmath::
 
-        sage: sin_integral(0)
+        sage: sin_integral(0)                                                           # needs mpmath
         0
-        sage: sin_integral(0.0)
+        sage: sin_integral(0.0)                                                         # needs mpmath
         0.000000000000000
-        sage: sin_integral(3.0)
+        sage: sin_integral(3.0)                                                         # needs mpmath
         1.84865252799947
-        sage: N(sin_integral(3), digits=30)
+        sage: N(sin_integral(3), digits=30)                                             # needs sage.symbolic
         1.84865252799946825639773025111
-        sage: sin_integral(ComplexField(100)(3+I))
+        sage: sin_integral(ComplexField(100)(3+I))                                      # needs sage.symbolic
         2.0277151656451253616038525998 + 0.015210926166954211913653130271*I
 
     The alias ``Si`` can be used instead of ``sin_integral``::
 
-        sage: Si(3.0)
+        sage: Si(3.0)                                                                   # needs mpmath
         1.84865252799947
 
     The limit of `\operatorname{Si}(z)` as `z \to \infty` is `\pi/2`::
 
-        sage: N(sin_integral(1e23))
+        sage: N(sin_integral(1e23))                                                     # needs mpmath
         1.57079632679490
-        sage: N(pi/2)
+        sage: N(pi/2)                                                                   # needs sage.symbolic
         1.57079632679490
 
     At 200 bits of precision `\operatorname{Si}(10^{23})` agrees with `\pi/2` up to
     `10^{-24}`::
 
-        sage: sin_integral(RealField(200)(1e23))
+        sage: sin_integral(RealField(200)(1e23))                                        # needs sage.rings.real_mpfr
         1.5707963267948966192313288218697837425815368604836679189519
-        sage: N(pi/2, prec=200)
+        sage: N(pi/2, prec=200)                                                         # needs sage.symbolic
         1.5707963267948966192313216916397514420985846996875529104875
 
     The exponential sine integral is analytic everywhere::
 
-        sage: sin_integral(-1.0)
+        sage: sin_integral(-1.0)                                                        # needs mpmath
         -0.946083070367183
-        sage: sin_integral(-2.0)
+        sage: sin_integral(-2.0)                                                        # needs mpmath
         -1.60541297680269
-        sage: sin_integral(-1e23)
+        sage: sin_integral(-1e23)                                                       # needs mpmath
         -1.57079632679490
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
+        sage: # needs sage.symbolic
         sage: x = var('x')
         sage: f = sin_integral(x)
         sage: f.diff(x)
         sin(x)/x
-
         sage: f.integrate(x)
         x*sin_integral(x) + cos(x)
-
         sage: integrate(sin(x)/x, x)
         -1/2*I*Ei(I*x) + 1/2*I*Ei(-I*x)
 
@@ -772,19 +760,20 @@ class Function_sin_integral(BuiltinFunction):
     \operatorname{Ei}(ix) - \pi/2`, which are both anti-derivatives of
     `\sin(x)/x`, at some random positive real numbers::
 
-        sage: f(x) = 1/2*I*Ei(-I*x) - 1/2*I*Ei(I*x) - pi/2
-        sage: g(x) = sin_integral(x)
-        sage: R = [ abs(RDF.random_element()) for i in range(100) ]
-        sage: all(abs(f(x) - g(x)) < 1e-10 for x in R)
+        sage: f(x) = 1/2*I*Ei(-I*x) - 1/2*I*Ei(I*x) - pi/2                              # needs sage.symbolic
+        sage: g(x) = sin_integral(x)                                                    # needs sage.symbolic
+        sage: R = [abs(RDF.random_element()) for i in range(100)]
+        sage: all(abs(f(x) - g(x)) < 1e-10 for x in R)                                  # needs sage.symbolic
         True
 
     The Nielsen spiral is the parametric plot of (Si(t), Ci(t))::
 
-        sage: x=var('x')
+        sage: # needs sage.symbolic
+        sage: x = var('x')
         sage: f(x) = sin_integral(x)
         sage: g(x) = cos_integral(x)
-        sage: P = parametric_plot([f, g], (x, 0.5 ,20))
-        sage: show(P, frame=True, axes=False)
+        sage: P = parametric_plot([f, g], (x, 0.5 ,20))                                 # needs sage.plot
+        sage: show(P, frame=True, axes=False)                                           # needs sage.plot
 
     ALGORITHM:
 
@@ -797,7 +786,6 @@ class Function_sin_integral(BuiltinFunction):
     - mpmath documentation: `si`_
 
     .. _`si`: http://mpmath.org/doc/current/functions/expintegrals.html#si
-
     """
     def __init__(self):
         """
@@ -805,13 +793,14 @@ class Function_sin_integral(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: sin_integral(1)
             sin_integral(1)
-            sage: sin_integral(x)._sympy_()
+            sage: sin_integral(x)._sympy_()                                             # needs sympy
             Si(x)
             sage: sin_integral(x)._fricas_init_()
             'Si(x)'
-            sage: sin_integral(x)._giac_()
+            sage: sin_integral(x)._giac_()                                              # needs giac
             Si(sageVARx)
         """
         BuiltinFunction.__init__(self, "sin_integral", nargs=1,
@@ -824,14 +813,13 @@ class Function_sin_integral(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: z = var('z')
-            sage: sin_integral(z)
+            sage: z = var('z')                                                          # needs sage.symbolic
+            sage: sin_integral(z)                                                       # needs sage.symbolic
             sin_integral(z)
-            sage: sin_integral(3.0)
+            sage: sin_integral(3.0)                                                     # needs mpmath
             1.84865252799947
-            sage: sin_integral(0)
+            sage: sin_integral(0)                                                       # needs mpmath
             0
-
         """
         if isinstance(z, Expression):
             if z.is_trivial_zero():
@@ -845,29 +833,28 @@ class Function_sin_integral(BuiltinFunction):
 
         The limit `\operatorname{Si}(z)` as `z \to \infty`  is `\pi/2`::
 
-            sage: N(sin_integral(1e23) - pi/2)
+            sage: N(sin_integral(1e23) - pi/2)                                          # needs sage.symbolic
             0.000000000000000
 
         At 200 bits of precision `\operatorname{Si}(10^{23})` agrees with `\pi/2` up to
         `10^{-24}`::
 
-            sage: sin_integral(RealField(200)(1e23))
+            sage: sin_integral(RealField(200)(1e23))                                    # needs sage.rings.real_mpfr
             1.5707963267948966192313288218697837425815368604836679189519
-            sage: N(pi/2, prec=200)
+            sage: N(pi/2, prec=200)                                                     # needs sage.symbolic
             1.5707963267948966192313216916397514420985846996875529104875
 
         The exponential sine integral is analytic everywhere, even on the
         negative real axis::
 
-            sage: sin_integral(-1.0)
+            sage: sin_integral(-1.0)                                                    # needs mpmath
             -0.946083070367183
-            sage: sin_integral(-2.0)
+            sage: sin_integral(-2.0)                                                    # needs mpmath
             -1.60541297680269
-            sage: sin_integral(-1e23)
+            sage: sin_integral(-1e23)                                                   # needs mpmath
             -1.57079632679490
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.si, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_si, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -877,15 +864,14 @@ class Function_sin_integral(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x = var('x')
             sage: f = sin_integral(x)
             sage: f.diff(x)
             sin(x)/x
-
             sage: f = sin_integral(x^2)
             sage: f.diff(x)
             2*sin(x^2)/x
-
         """
         return sin(z)/z
 
@@ -906,62 +892,63 @@ class Function_cos_integral(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: z = var('z')
-        sage: cos_integral(z)
+        sage: z = var('z')                                                              # needs sage.symbolic
+        sage: cos_integral(z)                                                           # needs sage.symbolic
         cos_integral(z)
-        sage: cos_integral(3.0)
+        sage: cos_integral(3.0)                                                         # needs mpmath
         0.119629786008000
-        sage: cos_integral(0)
+        sage: cos_integral(0)                                                           # needs sage.symbolic
         cos_integral(0)
-        sage: N(cos_integral(0))
+        sage: N(cos_integral(0))                                                        # needs mpmath
         -infinity
 
     Numerical evaluation for real and complex arguments is handled using mpmath::
 
-        sage: cos_integral(3.0)
+        sage: cos_integral(3.0)                                                         # needs mpmath
         0.119629786008000
 
     The alias ``Ci`` can be used instead of ``cos_integral``::
 
-        sage: Ci(3.0)
+        sage: Ci(3.0)                                                                   # needs mpmath
         0.119629786008000
 
     Compare ``cos_integral(3.0)`` to the definition of the value using
     numerical integration::
 
-        sage: a = numerical_integral((cos(x)-1)/x, 0, 3)[0]
-        sage: abs(N(euler_gamma + log(3)) + a - N(cos_integral(3.0))) < 1e-14
+        sage: a = numerical_integral((cos(x)-1)/x, 0, 3)[0]                             # needs sage.symbolic
+        sage: abs(N(euler_gamma + log(3)) + a - N(cos_integral(3.0))) < 1e-14           # needs sage.symbolic
         True
 
     Arbitrary precision and complex arguments are handled::
 
-        sage: N(cos_integral(3), digits=30)
+        sage: N(cos_integral(3), digits=30)                                             # needs sage.symbolic
         0.119629786008000327626472281177
-        sage: cos_integral(ComplexField(100)(3+I))
+        sage: cos_integral(ComplexField(100)(3+I))                                      # needs sage.symbolic
         0.078134230477495714401983633057 - 0.37814733904787920181190368789*I
 
     The limit `\operatorname{Ci}(z)` as `z \to \infty` is zero::
 
-        sage: N(cos_integral(1e23))
+        sage: N(cos_integral(1e23))                                                     # needs mpmath
         -3.24053937643003e-24
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
+        sage: # needs sage.symbolic
         sage: x = var('x')
         sage: f = cos_integral(x)
         sage: f.diff(x)
         cos(x)/x
-
         sage: f.integrate(x)
         x*cos_integral(x) - sin(x)
 
     The Nielsen spiral is the parametric plot of (Si(t), Ci(t))::
 
-        sage: t=var('t')
+        sage: # needs sage.symbolic
+        sage: t = var('t')
         sage: f(t) = sin_integral(t)
         sage: g(t) = cos_integral(t)
-        sage: P = parametric_plot([f, g], (t, 0.5 ,20))
-        sage: show(P, frame=True, axes=False)
+        sage: P = parametric_plot([f, g], (t, 0.5 ,20))                                 # needs sage.plot
+        sage: show(P, frame=True, axes=False)                                           # needs sage.plot
 
     ALGORITHM:
 
@@ -974,7 +961,6 @@ class Function_cos_integral(BuiltinFunction):
     - mpmath documentation: `ci`_
 
     .. _`ci`: http://mpmath.org/doc/current/functions/expintegrals.html#ci
-
     """
     def __init__(self):
         """
@@ -982,13 +968,14 @@ class Function_cos_integral(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: cos_integral(1)
             cos_integral(1)
-            sage: cos_integral(x)._sympy_()
+            sage: cos_integral(x)._sympy_()                                             # needs sympy
             Ci(x)
             sage: cos_integral(x)._fricas_init_()
             'Ci(x)'
-            sage: cos_integral(x)._giac_()
+            sage: cos_integral(x)._giac_()                                              # needs giac
             Ci(sageVARx)
         """
         BuiltinFunction.__init__(self, "cos_integral", nargs=1,
@@ -1001,16 +988,14 @@ class Function_cos_integral(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: N(cos_integral(1e23)) < 1e-20
+            sage: N(cos_integral(1e23)) < 1e-20                                         # needs mpmath
             True
-            sage: N(cos_integral(10^-10), digits=30)
+            sage: N(cos_integral(10^-10), digits=30)                                    # needs sage.symbolic
             -22.4486352650389239795759024568
-            sage: cos_integral(ComplexField(100)(I))
+            sage: cos_integral(ComplexField(100)(I))                                    # needs sage.symbolic
             0.83786694098020824089467857943 + 1.5707963267948966192313216916*I
-
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.ci, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_ci, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1018,15 +1003,14 @@ class Function_cos_integral(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x = var('x')
             sage: f = cos_integral(x)
             sage: f.diff(x)
             cos(x)/x
-
             sage: f = cos_integral(x^2)
             sage: f.diff(x)
             2*cos(x^2)/x
-
         """
         return cos(z)/z
 
@@ -1048,45 +1032,45 @@ class Function_sinh_integral(BuiltinFunction):
 
     Numerical evaluation for real and complex arguments is handled using mpmath::
 
-        sage: sinh_integral(3.0)
+        sage: sinh_integral(3.0)                                                        # needs mpmath
         4.97344047585981
-        sage: sinh_integral(1.0)
+        sage: sinh_integral(1.0)                                                        # needs mpmath
         1.05725087537573
-        sage: sinh_integral(-1.0)
+        sage: sinh_integral(-1.0)                                                       # needs mpmath
         -1.05725087537573
 
     The alias ``Shi`` can be used instead of ``sinh_integral``::
 
-        sage: Shi(3.0)
+        sage: Shi(3.0)                                                                  # needs mpmath
         4.97344047585981
 
     Compare ``sinh_integral(3.0)`` to the definition of the value using
     numerical integration::
 
-        sage: a = numerical_integral(sinh(x)/x, 0, 3)[0]
-        sage: abs(a - N(sinh_integral(3))) < 1e-14
+        sage: a = numerical_integral(sinh(x)/x, 0, 3)[0]                                # needs sage.symbolic
+        sage: abs(a - N(sinh_integral(3))) < 1e-14                                      # needs sage.symbolic
         True
 
     Arbitrary precision and complex arguments are handled::
 
-        sage: N(sinh_integral(3), digits=30)
+        sage: N(sinh_integral(3), digits=30)                                            # needs sage.symbolic
         4.97344047585980679771041838252
-        sage: sinh_integral(ComplexField(100)(3+I))
+        sage: sinh_integral(ComplexField(100)(3+I))                                     # needs sage.symbolic
         3.9134623660329374406788354078 + 3.0427678212908839256360163759*I
 
     The limit `\operatorname{Shi}(z)` as `z \to \infty` is `\infty`::
 
-        sage: N(sinh_integral(Infinity))
+        sage: N(sinh_integral(Infinity))                                                # needs mpmath
         +infinity
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
-        sage: x = var('x')
-        sage: f = sinh_integral(x)
-        sage: f.diff(x)
+        sage: x = var('x')                                                              # needs sage.symbolic
+        sage: f = sinh_integral(x)                                                      # needs sage.symbolic
+        sage: f.diff(x)                                                                 # needs sage.symbolic
         sinh(x)/x
 
-        sage: f.integrate(x)
+        sage: f.integrate(x)                                                            # needs sage.symbolic
         x*sinh_integral(x) - cosh(x)
 
     Note that due to some problems with the way Maxima handles these
@@ -1094,11 +1078,11 @@ class Function_sinh_integral(BuiltinFunction):
     results (typically when using inexact endpoints) due to
     inconsistent branching::
 
-        sage: integrate(sinh_integral(x), x, 0, 1/2)
+        sage: integrate(sinh_integral(x), x, 0, 1/2)                                    # needs sage.symbolic
         -cosh(1/2) + 1/2*sinh_integral(1/2) + 1
-        sage: integrate(sinh_integral(x), x, 0, 1/2).n() # correct
+        sage: integrate(sinh_integral(x), x, 0, 1/2).n()  # correct                     # needs sage.symbolic
         0.125872409703453
-        sage: integrate(sinh_integral(x), x, 0, 0.5).n() # fixed in maxima 5.29.1
+        sage: integrate(sinh_integral(x), x, 0, 0.5).n()  # fixed in maxima 5.29.1      # needs sage.symbolic
         0.125872409703453
 
     ALGORITHM:
@@ -1112,7 +1096,6 @@ class Function_sinh_integral(BuiltinFunction):
     - mpmath documentation: `shi`_
 
     .. _`shi`: http://mpmath.org/doc/current/functions/expintegrals.html#shi
-
     """
     def __init__(self):
         """
@@ -1120,11 +1103,10 @@ class Function_sinh_integral(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: sinh_integral(1)
+            sage: sinh_integral(1)                                                      # needs sage.symbolic
             sinh_integral(1)
-            sage: sinh_integral(x)._sympy_()
+            sage: sinh_integral(x)._sympy_()                                            # needs sympy sage.symbolic
             Shi(x)
-
         """
         BuiltinFunction.__init__(self, "sinh_integral", nargs=1,
                                  latex_name=r'\operatorname{Shi}',
@@ -1136,14 +1118,13 @@ class Function_sinh_integral(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: z = var('z')
-            sage: sinh_integral(z)
+            sage: z = var('z')                                                          # needs sage.symbolic
+            sage: sinh_integral(z)                                                      # needs sage.symbolic
             sinh_integral(z)
-            sage: sinh_integral(3.0)
+            sage: sinh_integral(3.0)                                                    # needs mpmath
             4.97344047585981
-            sage: sinh_integral(0)
+            sage: sinh_integral(0)                                                      # needs mpmath
             0
-
         """
         # special case: z = 0
         if isinstance(z, Expression):
@@ -1156,14 +1137,12 @@ class Function_sinh_integral(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: N(sinh_integral(10^-10), digits=30)
+            sage: N(sinh_integral(10^-10), digits=30)                                   # needs sage.symbolic
             1.00000000000000000000055555556e-10
-            sage: sinh_integral(ComplexField(100)(I))
+            sage: sinh_integral(ComplexField(100)(I))                                   # needs sage.symbolic
             0.94608307036718301494135331382*I
-
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.shi, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_shi, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1171,15 +1150,14 @@ class Function_sinh_integral(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x = var('x')
             sage: f = sinh_integral(x)
             sage: f.diff(x)
             sinh(x)/x
-
             sage: f = sinh_integral(ln(x))
             sage: f.diff(x)
             1/2*(x^2 - 1)/(x^2*log(x))
-
         """
         return sinh(z)/z
 
@@ -1199,54 +1177,54 @@ class Function_cosh_integral(BuiltinFunction):
 
     EXAMPLES::
 
-        sage: z = var('z')
-        sage: cosh_integral(z)
+        sage: z = var('z')                                                              # needs sage.symbolic
+        sage: cosh_integral(z)                                                          # needs sage.symbolic
         cosh_integral(z)
-        sage: cosh_integral(3.0)
+        sage: cosh_integral(3.0)                                                        # needs mpmath
         4.96039209476561
 
     Numerical evaluation for real and complex arguments is handled using mpmath::
 
-        sage: cosh_integral(1.0)
+        sage: cosh_integral(1.0)                                                        # needs mpmath
         0.837866940980208
 
     The alias ``Chi`` can be used instead of ``cosh_integral``::
 
-        sage: Chi(1.0)
+        sage: Chi(1.0)                                                                  # needs mpmath
         0.837866940980208
 
     Here is an example from the mpmath documentation::
 
-        sage: f(x) = cosh_integral(x)
-        sage: find_root(f, 0.1, 1.0)
+        sage: f(x) = cosh_integral(x)                                                   # needs sage.symbolic
+        sage: find_root(f, 0.1, 1.0)                                                    # needs scipy sage.symbolic
         0.523822571389...
 
     Compare ``cosh_integral(3.0)`` to the definition of the value using
     numerical integration::
 
-        sage: a = numerical_integral((cosh(x)-1)/x, 0, 3)[0]
-        sage: abs(N(euler_gamma + log(3)) + a - N(cosh_integral(3.0))) < 1e-14
+        sage: a = numerical_integral((cosh(x)-1)/x, 0, 3)[0]                            # needs sage.symbolic
+        sage: abs(N(euler_gamma + log(3)) + a - N(cosh_integral(3.0))) < 1e-14          # needs sage.symbolic
         True
 
     Arbitrary precision and complex arguments are handled::
 
-        sage: N(cosh_integral(3), digits=30)
+        sage: N(cosh_integral(3), digits=30)                                            # needs sage.symbolic
         4.96039209476560976029791763669
-        sage: cosh_integral(ComplexField(100)(3+I))
+        sage: cosh_integral(ComplexField(100)(3+I))                                     # needs sage.symbolic
         3.9096723099686417127843516794 + 3.0547519627014217273323873274*I
 
     The limit of `\operatorname{Chi}(z)` as `z \to \infty` is `\infty`::
 
-        sage: N(cosh_integral(Infinity))
+        sage: N(cosh_integral(Infinity))                                                # needs mpmath
         +infinity
 
     Symbolic derivatives and integrals are handled by Sage and Maxima::
 
+        sage: # needs sage.symbolic
         sage: x = var('x')
         sage: f = cosh_integral(x)
         sage: f.diff(x)
         cosh(x)/x
-
         sage: f.integrate(x)
         x*cosh_integral(x) - sinh(x)
 
@@ -1261,7 +1239,6 @@ class Function_cosh_integral(BuiltinFunction):
     - mpmath documentation: `chi`_
 
     .. _`chi`: http://mpmath.org/doc/current/functions/expintegrals.html#chi
-
     """
     def __init__(self):
         """
@@ -1269,11 +1246,10 @@ class Function_cosh_integral(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: cosh_integral(1)
+            sage: cosh_integral(1)                                                      # needs sage.symbolic
             cosh_integral(1)
-            sage: cosh_integral(x)._sympy_()
+            sage: cosh_integral(x)._sympy_()                                            # needs sage.symbolic
             Chi(x)
-
         """
         BuiltinFunction.__init__(self, "cosh_integral", nargs=1,
                                  latex_name=r'\operatorname{Chi}',
@@ -1285,14 +1261,12 @@ class Function_cosh_integral(BuiltinFunction):
         """
         EXAMPLES::
 
-            sage: N(cosh_integral(10^-10), digits=30)
+            sage: N(cosh_integral(10^-10), digits=30)                                   # needs sage.symbolic
             -22.4486352650389239795709024568
-            sage: cosh_integral(ComplexField(100)(I))
+            sage: cosh_integral(ComplexField(100)(I))                                   # needs sage.symbolic
             0.33740392290096813466264620389 + 1.5707963267948966192313216916*I
-
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.chi, z, parent=parent)
+        return _mpmath_utils_call(_mpmath_chi, z, parent=parent)
 
     def _derivative_(self, z, diff_param=None):
         r"""
@@ -1300,15 +1274,14 @@ class Function_cosh_integral(BuiltinFunction):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: x = var('x')
             sage: f = cosh_integral(x)
             sage: f.diff(x)
             cosh(x)/x
-
             sage: f = cosh_integral(ln(x))
             sage: f.diff(x)
             1/2*(x^2 + 1)/(x^2*log(x))
-
         """
         return cosh(z)/z
 
@@ -1339,39 +1312,42 @@ class Function_exp_integral(BuiltinFunction):
 
     EXAMPLES::
 
+        sage: # needs sage.symbolic
         sage: Ei(10)
         Ei(10)
         sage: Ei(I)
         Ei(I)
         sage: Ei(3+I)
         Ei(I + 3)
-        sage: Ei(1.3)
-        2.72139888023202
         sage: Ei(10r)
         Ei(10)
-        sage: Ei(1.3r)
+
+        sage: Ei(1.3)                                                                   # needs mpmath
+        2.72139888023202
+        sage: Ei(1.3r)                                                                  # needs mpmath
         2.7213988802320235
 
     The branch cut for this function is along the negative real axis::
 
-        sage: Ei(-3 + 0.1*I)
+        sage: Ei(-3 + 0.1*I)                                                            # needs sage.symbolic
         -0.0129379427181693 + 3.13993830250942*I
-        sage: Ei(-3 - 0.1*I)
+        sage: Ei(-3 - 0.1*I)                                                            # needs sage.symbolic
         -0.0129379427181693 - 3.13993830250942*I
 
     The precision for the result is deduced from the precision of the
     input. Convert the input to a higher precision explicitly if a
     result with higher precision is desired::
 
-        sage: Ei(RealField(300)(1.1))
+        sage: Ei(RealField(300)(1.1))                                                   # needs sage.rings.real_mpfr
         2.16737827956340282358378734233807621497112737591639704719499002090327541763352339357795426
 
     ALGORITHM: Uses mpmath.
 
     TESTS:
 
-    Show that the evaluation and limit issue in :trac:`13271` is fixed::
+    Show that the evaluation and limit issue in :issue:`13271` is fixed::
 
+        sage: # needs sage.symbolic
         sage: var('Z')
         Z
         sage: (Ei(-Z)).limit(Z=oo)
@@ -1385,9 +1361,9 @@ class Function_exp_integral(BuiltinFunction):
         """
         TESTS::
 
-            sage: Ei(10)
+            sage: Ei(10)                                                                # needs sage.symbolic
             Ei(10)
-            sage: Ei(x)._sympy_()
+            sage: Ei(x)._sympy_()                                                       # needs sympy sage.symbolic
             Ei(x)
         """
         BuiltinFunction.__init__(self, "Ei",
@@ -1399,6 +1375,7 @@ class Function_exp_integral(BuiltinFunction):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: Ei(10).n()
             2492.22897624188
             sage: Ei(20).n()
@@ -1408,13 +1385,13 @@ class Function_exp_integral(BuiltinFunction):
             sage: Ei(3+I).n()
             7.82313467600158 + 6.09751978399231*I
         """
-        import mpmath
-        return mpmath_utils_call(mpmath.ei, x, parent=parent)
+        return _mpmath_utils_call(_mpmath_ei, x, parent=parent)
 
     def _derivative_(self, x, diff_param=None):
         """
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: Ei(x).diff(x)
             e^x/x
             sage: Ei(x).diff(x).subs(x=1)
@@ -1434,7 +1411,7 @@ Ei = exp_integral_ei = Function_exp_integral()
 # moved here from sage/functions/transcendental.py
 def exponential_integral_1(x, n=0):
     r"""
-    Returns the exponential integral `E_1(x)`. If the optional
+    Return the exponential integral `E_1(x)`. If the optional
     argument `n` is given, computes list of the first
     `n` values of the exponential integral
     `E_1(x m)`.
@@ -1452,8 +1429,7 @@ def exponential_integral_1(x, n=0):
     - ``n`` -- (default: 0) a nonnegative integer; if
       nonzero, then return a list of values ``E_1(x*m)`` for m =
       1,2,3,...,n. This is useful, e.g., when computing derivatives of
-      L-functions.
-
+      `L`-functions.
 
     OUTPUT:
 
@@ -1463,27 +1439,29 @@ def exponential_integral_1(x, n=0):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.pari sage.rings.real_mpfr
         sage: exponential_integral_1(2)
         0.0489005107080611
         sage: exponential_integral_1(2, 4)  # abs tol 1e-18
         [0.0489005107080611, 0.00377935240984891, 0.000360082452162659, 0.0000376656228439245]
         sage: exponential_integral_1(40, 5)
-        [0.000000000000000, 2.22854325868847e-37, 6.33732515501151e-55, 2.02336191509997e-72, 6.88522610630764e-90]
-        sage: exponential_integral_1(0)
-        +Infinity
-        sage: r = exponential_integral_1(RealField(150)(1))
-        sage: r
+        [0.000000000000000, 2.22854325868847e-37, 6.33732515501151e-55,
+         2.02336191509997e-72, 6.88522610630764e-90]
+        sage: r = exponential_integral_1(RealField(150)(1)); r
         0.21938393439552027367716377546012164903104729
         sage: parent(r)
         Real Field with 150 bits of precision
         sage: exponential_integral_1(RealField(150)(100))
         3.6835977616820321802351926205081189876552201e-46
 
+        sage: exponential_integral_1(0)
+        +Infinity
+
     TESTS:
 
     The relative error for a single value should be less than 1 ulp::
 
-        sage: for prec in [20..1000]:  # long time (22s on sage.math, 2013)
+        sage: for prec in [20..1000]:           # long time (22s on sage.math, 2013), needs sage.libs.pari
         ....:     R = RealField(prec)
         ....:     S = RealField(prec+64)
         ....:     for t in range(8):  # Try 8 values for each precision
@@ -1497,7 +1475,7 @@ def exponential_integral_1(x, n=0):
     The absolute error for a vector should be less than `2^{-p} c`, where
     `p` is the precision in bits of `x` and `c = 2` ``max(1, exponential_integral_1(x))``::
 
-        sage: for prec in [20..128]:  # long time (15s on sage.math, 2013)
+        sage: for prec in [20..128]:            # long time (15s on sage.math, 2013), needs sage.libs.pari
         ....:     R = RealField(prec)
         ....:     S = RealField(prec+64)
         ....:     a = R.random_element(-15,10).exp()
@@ -1510,7 +1488,7 @@ def exponential_integral_1(x, n=0):
         ....:         if e >= c:
         ....:             print("exponential_integral_1(%s, %s)[%s] with precision %s has error of %s >= %s"%(a, n, i, prec, e, c))
 
-    ALGORITHM: use the PARI C-library function ``eint1``.
+    ALGORITHM: use the PARI C-library function :pari:`eint1`.
 
     REFERENCE:
 
@@ -1519,7 +1497,6 @@ def exponential_integral_1(x, n=0):
     """
     if isinstance(x, Expression):
         if x.is_trivial_zero():
-            from sage.rings.infinity import Infinity
             return Infinity
         else:
             raise NotImplementedError("Use the symbolic exponential integral " +
@@ -1527,7 +1504,6 @@ def exponential_integral_1(x, n=0):
 
     # x == 0  =>  return Infinity
     if not x:
-        from sage.rings.infinity import Infinity
         return Infinity
 
     # Figure out output precision

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Witt symmetric functions
 """
@@ -5,6 +6,7 @@ Witt symmetric functions
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
 #                     2013 Darij Grinberg <darijgrinberg@gmail.com>
+#                     2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -18,7 +20,10 @@ Witt symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from . import multiplicative
-from sage.matrix.constructor import matrix
+from sage.arith.misc import divisors
+from sage.combinat.integer_lists.invlex import IntegerListsLex
+from sage.combinat.partitions import ZS1_iterator
+from sage.misc.cachefunc import cached_method
 
 
 class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_multiplicative):
@@ -90,19 +95,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
     INPUT:
 
-    - ``Sym`` -- an instance of the ring of the symmetric functions.
-    - ``coerce_h`` -- (default: ``True``) a boolean that determines
-      whether the transition maps between the Witt basis and the
-      complete homogeneous basis will be cached and registered as
-      coercions.
-    - ``coerce_e`` -- (default: ``False``) a boolean that determines
-      whether the transition maps between the Witt basis and the
-      elementary symmetric basis will be cached and registered as
-      coercions.
-    - ``coerce_p`` -- (default: ``False``) a boolean that determines
-      whether the transition maps between the Witt basis and the
-      powersum basis will be cached and registered as coercions (or
-      conversions, if the base ring is not a `\QQ`-algebra).
+    - ``Sym`` -- an instance of the ring of the symmetric functions
 
     REFERENCES:
 
@@ -202,591 +195,51 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
     The following holds for all odd `i` and is easily proven by
     induction::
 
-        sage: all( w([i]).antipode() == -w([i]) for i in range(1, 10, 2) )
+        sage: all(w([i]).antipode() == -w([i]) for i in range(1, 10, 2))
         True
 
     The Witt basis does not allow for simple expressions for
     comultiplication and antipode in general (this is related to the
     fact that the sum of two Witt vectors isn't easily described in
-    terms of the components). Therefore, most computations with Witt
-    symmetric functions, as well as conversions and coercions, pass
-    through the complete homogeneous symmetric functions by default.
-    However, one can also use the elementary symmetric functions
-    instead, or (if the base ring is a `\QQ`-algebra) the powersum
-    symmetric functions. This is what the optional keyword variables
-    ``coerce_e``, ``coerce_h`` and ``coerce_p`` are for. These
-    variables do not affect the results of the (non-underscored)
-    methods of ``self``, but they affect the speed of the computations
-    (the more of these variables are set to ``True``, the
-    faster these are) and the size of the cache (the more of
-    these variables are set to ``True``, the bigger the cache). Let us
-    check that the results are the same no matter to what the
-    variables are set::
-
-        sage: Sym = SymmetricFunctions(QQ)
-        sage: p = Sym.p()
-        sage: wh = Sym.w()
-        sage: we = Sym.w(coerce_h=False, coerce_e=True)
-        sage: wp = Sym.w(coerce_h=False, coerce_p=True)
-        sage: all( p(wh(lam)) == p(we(lam)) == p(wp(lam)) for lam in Partitions(4) )
-        True
-        sage: all ( wh(p(lam)).monomial_coefficients()
-        ....:       == we(p(lam)).monomial_coefficients()
-        ....:       == wp(p(lam)).monomial_coefficients() for lam in Partitions(4) )
-        True
-
-    TESTS:
-
-    Let us check that all the above computations work with a
-    non-default setting as well::
-
-        sage: Sym = SymmetricFunctions(QQ)
-        sage: w = Sym.w(coerce_h=False, coerce_p=True)
-        sage: e = Sym.e()
-        sage: h = Sym.h()
-        sage: p = Sym.p()
-        sage: s = Sym.s()
-        sage: m = Sym.m()
-
-        sage: p(w([1]))
-        p[1]
-        sage: m(w([1]))
-        m[1]
-        sage: e(w([1]))
-        e[1]
-        sage: h(w([1]))
-        h[1]
-        sage: s(w([1]))
-        s[1]
-
-        sage: p(w([2]))
-        -1/2*p[1, 1] + 1/2*p[2]
-        sage: m(w([2]))
-        -m[1, 1]
-        sage: e(w([2]))
-        -e[2]
-        sage: h(w([2]))
-        -h[1, 1] + h[2]
-        sage: s(w([2]))
-        -s[1, 1]
-
-        sage: p(w([3]))
-        -1/3*p[1, 1, 1] + 1/3*p[3]
-        sage: m(w([3]))
-        -2*m[1, 1, 1] - m[2, 1]
-        sage: e(w([3]))
-        -e[2, 1] + e[3]
-        sage: h(w([3]))
-        -h[2, 1] + h[3]
-        sage: s(w([3]))
-        -s[2, 1]
-
-        sage: Sym = SymmetricFunctions(ZZ)
-        sage: w = Sym.w()
-        sage: e = Sym.e()
-        sage: h = Sym.h()
-        sage: s = Sym.s()
-        sage: m = Sym.m()
-        sage: p = Sym.p()
-        sage: m(w([4]))
-        -9*m[1, 1, 1, 1] - 4*m[2, 1, 1] - 2*m[2, 2] - m[3, 1]
-        sage: e(w([4]))
-        -e[2, 1, 1] + e[3, 1] - e[4]
-        sage: h(w([4]))
-        -h[1, 1, 1, 1] + 2*h[2, 1, 1] - h[2, 2] - h[3, 1] + h[4]
-        sage: s(w([4]))
-        -s[1, 1, 1, 1] - s[2, 1, 1] - s[2, 2] - s[3, 1]
-
-        sage: w(h[3])
-        w[1, 1, 1] + w[2, 1] + w[3]
-        sage: w(e[3])
-        -w[2, 1] + w[3]
-        sage: w(m[2,1])
-        2*w[2, 1] - 3*w[3]
-        sage: w(p[3])
-        w[1, 1, 1] + 3*w[3]
-
-        sage: w([1]).antipode()
-        -w[1]
-        sage: w([2]).antipode()
-        -w[1, 1] - w[2]
-        sage: all( w([i]).antipode() == -w([i]) for i in range(1, 10, 2) )
-        True
-
-    Another non-default setting::
-
-        sage: Sym = SymmetricFunctions(QQ)
-        sage: w = Sym.w(coerce_h=False, coerce_e=True)
-        sage: e = Sym.e()
-        sage: h = Sym.h()
-        sage: p = Sym.p()
-        sage: s = Sym.s()
-        sage: m = Sym.m()
-
-        sage: p(w([1]))
-        p[1]
-        sage: m(w([1]))
-        m[1]
-        sage: e(w([1]))
-        e[1]
-        sage: h(w([1]))
-        h[1]
-        sage: s(w([1]))
-        s[1]
-
-        sage: p(w([2]))
-        -1/2*p[1, 1] + 1/2*p[2]
-        sage: m(w([2]))
-        -m[1, 1]
-        sage: e(w([2]))
-        -e[2]
-        sage: h(w([2]))
-        -h[1, 1] + h[2]
-        sage: s(w([2]))
-        -s[1, 1]
-
-        sage: p(w([3]))
-        -1/3*p[1, 1, 1] + 1/3*p[3]
-        sage: m(w([3]))
-        -2*m[1, 1, 1] - m[2, 1]
-        sage: e(w([3]))
-        -e[2, 1] + e[3]
-        sage: h(w([3]))
-        -h[2, 1] + h[3]
-        sage: s(w([3]))
-        -s[2, 1]
-
-        sage: Sym = SymmetricFunctions(ZZ)
-        sage: w = Sym.w()
-        sage: e = Sym.e()
-        sage: h = Sym.h()
-        sage: s = Sym.s()
-        sage: m = Sym.m()
-        sage: p = Sym.p()
-        sage: m(w([4]))
-        -9*m[1, 1, 1, 1] - 4*m[2, 1, 1] - 2*m[2, 2] - m[3, 1]
-        sage: e(w([4]))
-        -e[2, 1, 1] + e[3, 1] - e[4]
-        sage: h(w([4]))
-        -h[1, 1, 1, 1] + 2*h[2, 1, 1] - h[2, 2] - h[3, 1] + h[4]
-        sage: s(w([4]))
-        -s[1, 1, 1, 1] - s[2, 1, 1] - s[2, 2] - s[3, 1]
-        sage: [type(coeff) for a, coeff in h(w([4]))]
-        [<class 'sage.rings.integer.Integer'>,
-         <class 'sage.rings.integer.Integer'>,
-         <class 'sage.rings.integer.Integer'>,
-         <class 'sage.rings.integer.Integer'>,
-         <class 'sage.rings.integer.Integer'>]
-
-        sage: w(h[3])
-        w[1, 1, 1] + w[2, 1] + w[3]
-        sage: w(e[3])
-        -w[2, 1] + w[3]
-        sage: w(m[2,1])
-        2*w[2, 1] - 3*w[3]
-        sage: w(p[3])
-        w[1, 1, 1] + 3*w[3]
-
-        sage: w([1]).antipode()
-        -w[1]
-        sage: w([2]).antipode()
-        -w[1, 1] - w[2]
-        sage: all( w([i]).antipode() == -w([i]) for i in range(1, 10, 2) )
-        ....:      #this holds for all odd i and is easily proven by induction
-        True
+    terms of the components). Therefore, a number of computations with
+    Witt symmetric functions pass through the complete homogeneous
+    symmetric functions by default.
     """
-
-    def __init__(self, Sym, coerce_h=True, coerce_e=False, coerce_p=False):
-        """
+    def __init__(self, Sym):
+        r"""
         Initialize ``self``.
 
         TESTS::
 
             sage: w = SymmetricFunctions(QQ).w()
             sage: TestSuite(w).run(skip=['_test_associativity', '_test_distributivity', '_test_prod'])
-            sage: TestSuite(w).run(elements = [w[1,1]+w[2], w[1]+2*w[1,1]])
+            sage: TestSuite(w).run(elements=[w[1,1]+w[2], w[1]+2*w[1,1]])
         """
-        self._coerce_h = coerce_h
-        self._coerce_e = coerce_e
-        self._coerce_p = coerce_p
         multiplicative.SymmetricFunctionAlgebra_multiplicative.__init__(self, Sym, "Witt", 'w')
 
-    def _precompute_cache(self, n, to_self_cache, from_self_cache, transition_matrices, inverse_transition_matrices, to_self_gen_function):
-        """
-        Compute the transition matrices between ``self`` and another
-        multiplicative homogeneous basis in the homogeneous components of
-        degree `n`.
+        self._h = Sym.h()
+        self.register_coercion(self._h._module_morphism(self._h_to_w_on_basis, codomain=self))
+        self._h.register_coercion(self._module_morphism(self._w_to_h_on_basis, codomain=self._h))
 
-        The results are not returned, but rather stored in the caches.
+        self._e = Sym.e()
+        self.register_coercion(self._e._module_morphism(self._e_to_w_on_basis, codomain=self))
+        self._e.register_coercion(self._module_morphism(self._w_to_e_on_basis, codomain=self._e))
 
-        This assumes that the transition matrices in all degrees smaller
-        than `n` have already been computed and cached!
+        self._p = Sym.p()
+        self.register_coercion(self._p._module_morphism(self._p_to_w_on_basis, codomain=self))
+        self._p.register_coercion(self._module_morphism(self._w_to_p_on_basis, codomain=self._p))
 
-        INPUT:
-
-        - ``n`` -- nonnegative integer
-        - ``to_self_cache`` -- a cache which stores the coordinates of
-          the elements of the other basis with respect to the
-          basis ``self``
-        - ``from_self_cache`` -- a cache which stores the coordinates
-          of the elements of ``self`` with respect to the other
-          basis
-        - ``transition_matrices`` -- a cache for transition matrices
-          which contain the coordinates of the elements of the other
-          basis with respect to ``self``
-        - ``inverse_transition_matrices`` -- a cache for transition
-          matrices which contain the coordinates of the elements of
-          ``self`` with respect to the other basis
-        - ``to_self_gen_function`` -- a function which takes a
-          positive integer `n` and returns the element of the other
-          basis corresponding to the partition `[n]` expanded with
-          respect to the Witt basis ``self`` (as an element of
-          ``self``, not as a dictionary)
-
-        Examples for usage of this function are the ``_precompute_h``,
-        ``_precompute_e`` and ``_precompute_p`` methods of this class.
-
-        EXAMPLES:
-
-        The examples below demonstrate how the caches are built
-        step by step using the ``_precompute_cache`` method. In order
-        not to influence the outcome of other doctests, we make sure
-        not to use the caches internally used by this class, but
-        rather to create new caches::
-
-            sage: Sym = SymmetricFunctions(QQ)
-            sage: w = Sym.w()
-            sage: toy_to_self_cache = {}
-            sage: toy_from_self_cache = {}
-            sage: toy_transition_matrices = {}
-            sage: toy_inverse_transition_matrices = {}
-            sage: l = lambda c: [ (i[0],[j for j in sorted(i[1].items())]) for i in sorted(c.items())]
-            sage: l(toy_to_self_cache)
-            []
-            sage: def toy_gen_function(n):
-            ....:     if n > 1:
-            ....:         return w(Partition([n])) + n * w(Partition([n-1,1]))
-            ....:     return w(Partition([n]))
-            sage: w._precompute_cache(0, toy_to_self_cache,
-            ....:                        toy_from_self_cache,
-            ....:                        toy_transition_matrices,
-            ....:                        toy_inverse_transition_matrices,
-            ....:                        toy_gen_function)
-            sage: l(toy_to_self_cache)
-            [([], [([], 1)])]
-            sage: w._precompute_cache(1, toy_to_self_cache,
-            ....:                        toy_from_self_cache,
-            ....:                        toy_transition_matrices,
-            ....:                        toy_inverse_transition_matrices,
-            ....:                        toy_gen_function)
-            sage: l(toy_to_self_cache)
-            [([], [([], 1)]), ([1], [([1], 1)])]
-            sage: w._precompute_cache(2, toy_to_self_cache,
-            ....:                        toy_from_self_cache,
-            ....:                        toy_transition_matrices,
-            ....:                        toy_inverse_transition_matrices,
-            ....:                        toy_gen_function)
-            sage: l(toy_to_self_cache)
-            [([], [([], 1)]),
-             ([1], [([1], 1)]),
-             ([1, 1], [([1, 1], 1)]),
-             ([2], [([1, 1], 2), ([2], 1)])]
-            sage: toy_transition_matrices[2]
-            [1 2]
-            [0 1]
-            sage: toy_inverse_transition_matrices[2]
-            [ 1 -2]
-            [ 0  1]
-            sage: sorted(toy_transition_matrices)
-            [0, 1, 2]
-        """
-        # Much of this code is adapted from dual.py
-        base_ring = self.base_ring()
-        zero = base_ring.zero()
-
-        from sage.combinat.partition import Partition, Partitions_n
-
-        # Handle the n == 0 case separately
-        if n == 0:
-            part = Partition([])
-            one = base_ring.one()
-            to_self_cache[ part ] = { part: one }
-            from_self_cache[ part ] = { part: one }
-            transition_matrices[n] = matrix(base_ring, [[one]])
-            inverse_transition_matrices[n] = matrix(base_ring, [[one]])
-            return
-
-        partitions_n = Partitions_n(n).list()
-
-        # The other basis will be called B from now on.
-
-        # This contains the data for the transition matrix from the
-        # basis B to the Witt basis self.
-        transition_matrix_n = matrix(base_ring, len(partitions_n), len(partitions_n))
-
-        # This first section calculates how the basis elements of the
-        # basis B are expressed in terms of the Witt basis ``self``.
-
-        # For every partition p of size n, expand B[p] in terms of
-        # the Witt basis self using multiplicativity and
-        # to_self_gen_function.
-        i = 0
-        for s_part in partitions_n:
-            # s_mcs will be self(B[s_part])._monomial_coefficients
-            s_mcs = {}
-
-            # We need to compute the coordinates of B[s_part] in the Witt basis.
-            hsp_in_w_basis = self.one()
-            for p in s_part:
-                hsp_in_w_basis *= to_self_gen_function(p)
-            # Now, hsp_in_w_basis is B[s_part] expanded in the Witt
-            # basis self (this is the same as the coercion self(B[s_part]).
-            j = 0
-            for p_part in partitions_n:
-
-                if p_part in hsp_in_w_basis._monomial_coefficients:
-                    sp = hsp_in_w_basis._monomial_coefficients[p_part]
-                    s_mcs[p_part] = sp
-                    transition_matrix_n[i,j] = sp
-
-                j += 1
-
-            to_self_cache[ s_part ] = s_mcs
-            i += 1
-
-        # Save the transition matrix
-        transition_matrices[n] = transition_matrix_n
-
-        # This second section calculates how the basis elements of
-        # self expand in terms of the basis B.  We do this by
-        # computing the inverse of the matrix transition_matrix_n
-        # obtained above.
-        # TODO: Possibly this can be sped up by using properties
-        # of this matrix (e. g., it being triangular in most standard cases).
-        # Are there significantly faster ways to invert a triangular
-        # matrix (compared to the usual matrix inversion algorithms)?
-        inverse_transition = (~transition_matrix_n).change_ring(base_ring)
-        # Note that we don't simply write
-        # "inverse_transition = ~transition_matrix_n" because that
-        # tends to cast the entries of the matrix into a quotient
-        # field even if this is unnecessary.
-
-        # TODO: This still looks fragile when the base ring is weird!
-        # Possibly work over ZZ in this method?
-
-        for i in range(len(partitions_n)):
-            d_mcs = {}
-            for j in range(len(partitions_n)):
-                if inverse_transition[i,j] != zero:
-                    d_mcs[ partitions_n[j] ] = inverse_transition[i,j]
-
-            from_self_cache[ partitions_n[i] ] = d_mcs
-
-        inverse_transition_matrices[n] = inverse_transition
-
-    def _precompute_h(self, n):
-        """
-        Compute the transition matrices between ``self`` and the complete
-        homogeneous basis in the homogeneous components of degree `n`
-        (and in those of smaller degree, if not already computed).
-        The result is not returned, but rather stored in the cache.
-
-        This assumes that the ``coerce_h`` keyword has been set to
-        ``True`` in the initialization of ``self`` (otherwise the cache
-        does not exist).
-
-        INPUT:
-
-        - ``n`` -- nonnegative integer
-
-        EXAMPLES:
-
-        The examples below demonstrate how the caches of ``w`` are built
-        step by step using the ``_precompute_h`` method. Thus they rely on
-        an untouched Witt symmetric basis that hasn't already seen some
-        of its cache filled by other computations. We obtain such a basis
-        by choosing a ground ring unlikely to appear elsewhere::
-
-            sage: Sym = SymmetricFunctions(ZZ['hell', 'yeah'])
-            sage: w = Sym.Witt()
-            sage: l = lambda c: [ (i[0],[j for j in sorted(i[1].items())]) for i in sorted(c.items())]
-            sage: l(w._h_to_self_cache)
-            []
-            sage: w._precompute_h(0)
-            sage: l(w._h_to_self_cache)
-            [([], [([], 1)])]
-            sage: w._precompute_h(1)
-            sage: l(w._h_to_self_cache)
-            [([], [([], 1)]), ([1], [([1], 1)])]
-            sage: w._precompute_h(2)
-            sage: l(w._h_to_self_cache)
-            [([], [([], 1)]),
-             ([1], [([1], 1)]),
-             ([1, 1], [([1, 1], 1)]),
-             ([2], [([1, 1], 1), ([2], 1)])]
-            sage: w._h_transition_matrices[2]
-            [1 1]
-            [0 1]
-            sage: w._h_inverse_transition_matrices[2]
-            [ 1 -1]
-            [ 0  1]
-            sage: sorted(w._h_transition_matrices)
-            [0, 1, 2]
-        """
-        l = len(self._h_transition_matrices)
-        if l <= n:
-            from sage.combinat.partition import Partitions_n
-            from sage.misc.cachefunc import cached_function
-
-            @cached_function
-            def wsum(m):     # expansion of h_m in w-basis, for m > 0
-                return self._from_dict({lam: 1 for lam in Partitions_n(m)})
-            for i in range(l, n + 1):
-                self._precompute_cache(i, self._h_to_self_cache,
-                                       self._h_from_self_cache,
-                                       self._h_transition_matrices,
-                                       self._h_inverse_transition_matrices,
-                                       wsum)
-
-    def _precompute_e(self, n):
-        """
-        Compute the transition matrices between ``self`` and the elementary
-        symmetric basis in the homogeneous components of degree `n`
-        (and in those of smaller degree, if not already computed).
-        The result is not returned, but rather stored in the cache.
-
-        This assumes that the ``coerce_e`` keyword has been set to
-        ``True`` in the initialization of ``self`` (otherwise the cache
-        does not exist).
-
-        INPUT:
-
-        - ``n`` -- nonnegative integer
-
-        EXAMPLES:
-
-        The examples below demonstrate how the caches of ``w`` are built
-        step by step using the ``_precompute_e`` method. Thus they rely on
-        an untouched Witt symmetric basis that hasn't already seen some
-        of its cache filled by other computations. We obtain such a basis
-        by choosing a ground ring unlikely to appear elsewhere::
-
-            sage: Sym = SymmetricFunctions(ZZ['hell', 'yeah'])
-            sage: w = Sym.Witt(coerce_e=True)
-            sage: l = lambda c: [ (i[0],[j for j in sorted(i[1].items())]) for i in sorted(c.items())]
-            sage: l(w._e_to_self_cache)
-            []
-            sage: w._precompute_e(0)
-            sage: l(w._e_to_self_cache)
-            [([], [([], 1)])]
-            sage: w._precompute_e(1)
-            sage: l(w._e_to_self_cache)
-            [([], [([], 1)]), ([1], [([1], 1)])]
-            sage: w._precompute_e(2)
-            sage: l(w._e_to_self_cache)
-            [([], [([], 1)]),
-             ([1], [([1], 1)]),
-             ([1, 1], [([1, 1], 1)]),
-             ([2], [([2], -1)])]
-            sage: w._e_transition_matrices[2]
-            [-1  0]
-            [ 0  1]
-            sage: w._e_inverse_transition_matrices[2]
-            [-1  0]
-            [ 0  1]
-        """
-        l = len(self._e_transition_matrices)
-        if l <= n:
-            from sage.combinat.partition import Partitions
-            from sage.misc.cachefunc import cached_function
-
-            @cached_function
-            def wsum_e(m):     # expansion of e_m in w-basis, for m > 0
-                return self._from_dict({lam: (-1 if (m + len(lam)) % 2 == 1 else 1)
-                                        for lam in Partitions(m, max_slope=-1)})
-            for i in range(l, n + 1):
-                self._precompute_cache(i, self._e_to_self_cache,
-                                       self._e_from_self_cache,
-                                       self._e_transition_matrices,
-                                       self._e_inverse_transition_matrices,
-                                       wsum_e)
-
-    def _precompute_p(self, n):
-        """
-        Compute the transition matrices between ``self`` and the powersum
-        basis in the homogeneous components of degree `n`
-        (and in those of smaller degree, if not already computed).
-        The result is not returned, but rather stored in the cache.
-
-        This assumes that the ``coerce_p`` keyword has been set to
-        ``True`` in the initialization of ``self`` (otherwise the cache
-        does not exist).
-
-        INPUT:
-
-        - ``n`` -- nonnegative integer
-
-        EXAMPLES:
-
-        The examples below demonstrate how the caches of ``w`` are built
-        step by step using the ``_precompute_p`` method. Thus they rely on
-        an untouched Witt symmetric basis that hasn't already seen some
-        of its cache filled by other computations. We obtain such a basis
-        by choosing a ground ring unlikely to appear elsewhere::
-
-            sage: Sym = SymmetricFunctions(QQ['hell', 'yeah'])
-            sage: w = Sym.Witt(coerce_h=False, coerce_e=True, coerce_p=True)
-            sage: l = lambda c: [ (i[0],[j for j in sorted(i[1].items())]) for i in sorted(c.items())]
-            sage: l(w._p_to_self_cache)
-            []
-            sage: w._precompute_p(0)
-            sage: l(w._p_to_self_cache)
-            [([], [([], 1)])]
-            sage: w._precompute_p(1)
-            sage: l(w._p_to_self_cache)
-            [([], [([], 1)]), ([1], [([1], 1)])]
-            sage: w._precompute_p(2)
-            sage: l(w._p_to_self_cache)
-            [([], [([], 1)]), ([1], [([1], 1)]), ([1, 1], [([1, 1], 1)]), ([2], [([1, 1], 1), ([2], 2)])]
-            sage: w._p_transition_matrices[2]
-            [2 1]
-            [0 1]
-            sage: w._p_inverse_transition_matrices[2]
-            [ 1/2 -1/2]
-            [   0    1]
-        """
-        l = len(self._p_transition_matrices)
-        if l <= n:
-            from sage.arith.misc import divisors
-            from sage.combinat.partition import Partition
-            from sage.misc.cachefunc import cached_function
-
-            @cached_function
-            def wsum_p(m):     # expansion of p_m in w-basis, for m > 0
-                return self._from_dict({Partition([d] * (m // d)): d
-                                        for d in divisors(m)})
-            for i in range(l, n + 1):
-                self._precompute_cache(i, self._p_to_self_cache,
-                                       self._p_from_self_cache,
-                                       self._p_transition_matrices,
-                                       self._p_inverse_transition_matrices,
-                                       wsum_p)
-
+    @cached_method
     def _h_to_w_on_basis(self, lam):
         r"""
         Return the complete homogeneous symmetric function ``h[lam]``
         expanded in the Witt basis, where ``lam`` is a partition.
 
-        This assumes that the ``coerce_h`` keyword has been set to ``True`` in
-        the initialization of ``self`` (otherwise the cache does not exist).
-
         INPUT:
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - the expansion of ``h[lam]`` in the Witt basis ``self``
+        OUTPUT: the expansion of ``h[lam]`` in the Witt basis ``self``
 
         EXAMPLES::
 
@@ -796,21 +249,27 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             sage: w._h_to_w_on_basis(Partition([]))
             w[]
             sage: w._h_to_w_on_basis(Partition([4,2,1]))
-            w[1, 1, 1, 1, 1, 1, 1] + 2*w[2, 1, 1, 1, 1, 1] + 2*w[2, 2, 1, 1, 1] + w[2, 2, 2, 1] + w[3, 1, 1, 1, 1] + w[3, 2, 1, 1] + w[4, 1, 1, 1] + w[4, 2, 1]
+            w[1, 1, 1, 1, 1, 1, 1] + 2*w[2, 1, 1, 1, 1, 1] + 2*w[2, 2, 1, 1, 1]
+             + w[2, 2, 2, 1] + w[3, 1, 1, 1, 1] + w[3, 2, 1, 1]
+             + w[4, 1, 1, 1] + w[4, 2, 1]
             sage: h(w._h_to_w_on_basis(Partition([3,1]))) == h[3,1]
             True
         """
-        n = sum(lam)
-        self._precompute_h(n)
-        return self._from_dict(self._h_to_self_cache[lam])
+        if not lam:
+            return self.one()
+        P = self._indices
+        if len(lam) == 1:
+            one = self.base_ring().one()
+            n = lam[0]
+            return self.element_class(self, {P(mu): one for mu in ZS1_iterator(n)})
+        # Multiply by the smallest part to minimize the number of products
+        return self._h_to_w_on_basis(P(lam[:-1])) * self._h_to_w_on_basis(P([lam[-1]]))
 
+    @cached_method
     def _w_to_h_on_basis(self, lam):
         r"""
         Return the Witt symmetric function ``w[lam]``  expanded in the
         complete homogeneous basis, where ``lam`` is a partition.
-
-        This assumes that the ``coerce_h`` keyword has been set to ``True`` in
-        the initialization of ``self`` (otherwise the cache does not exist).
 
         INPUT:
 
@@ -829,35 +288,41 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             sage: w._w_to_h_on_basis(Partition([]))
             h[]
             sage: w._w_to_h_on_basis(Partition([4,2,1]))
-            h[1, 1, 1, 1, 1, 1, 1] - 3*h[2, 1, 1, 1, 1, 1] + 3*h[2, 2, 1, 1, 1] - h[2, 2, 2, 1] + h[3, 1, 1, 1, 1] - h[3, 2, 1, 1] - h[4, 1, 1, 1] + h[4, 2, 1]
+            h[1, 1, 1, 1, 1, 1, 1] - 3*h[2, 1, 1, 1, 1, 1] + 3*h[2, 2, 1, 1, 1]
+             - h[2, 2, 2, 1] + h[3, 1, 1, 1, 1] - h[3, 2, 1, 1]
+             - h[4, 1, 1, 1] + h[4, 2, 1]
             sage: w(w._w_to_h_on_basis(Partition([3,1]))) == w[3,1]
             True
         """
-        n = sum(lam)
-        self._precompute_h(n)
-        return self._h._from_dict(self._h_from_self_cache[lam])
+        if not lam:
+            return self._h.one()
+        P = self._indices
+        if len(lam) == 1:
+            R = self.base_ring()
+            n = lam[0]
+            it = ZS1_iterator(n)
+            next(it)  # skip the first partition, which is [n]
+            return self._h[n] - self._h.sum(self._w_to_h_on_basis(P(mu)) for mu in it)
+        # Multiply by the smallest part to minimize the number of products
+        return self._w_to_h_on_basis(P(lam[:-1])) * self._w_to_h_on_basis(P([lam[-1]]))
 
+    @cached_method
     def _e_to_w_on_basis(self, lam):
         r"""
         Return the elementary symmetric function ``e[lam]`` expanded in
         the Witt basis, where ``lam`` is a partition.
 
-        This assumes that the ``coerce_e`` keyword has been set to ``True`` in
-        the initialization of ``self`` (otherwise the cache does not exist).
-
         INPUT:
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - the expansion of ``e[lam]`` in the Witt basis ``self``
+        OUTPUT: the expansion of ``e[lam]`` in the Witt basis ``self``
 
         EXAMPLES::
 
             sage: Sym = SymmetricFunctions(QQ)
             sage: e = Sym.elementary()
-            sage: w = Sym.w(coerce_e=True)
+            sage: w = Sym.w()
             sage: w._e_to_w_on_basis(Partition([]))
             w[]
             sage: w._e_to_w_on_basis(Partition([4,2,1]))
@@ -865,18 +330,23 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             sage: e(w._e_to_w_on_basis(Partition([3,1]))) == e[3,1]
             True
         """
-        n = sum(lam)
-        self._precompute_e(n)
-        return self._from_dict(self._e_to_self_cache[lam])
+        if not lam:
+            return self.one()
+        P = self._indices
+        if len(lam) == 1:
+            R = self.base_ring()
+            n = lam[0]
+            index_set = IntegerListsLex(n, min_part=1, max_slope=-1, element_constructor=P)
+            return self.element_class(self, {mu: R((-1)**(n-len(mu))) for mu in index_set})
+        # Multiply by the smallest part to minimize the number of products
+        return self._e_to_w_on_basis(P(lam[:-1])) * self._e_to_w_on_basis(P([lam[-1]]))
 
+    @cached_method
     def _w_to_e_on_basis(self, lam):
         r"""
         Return the Witt symmetric function ``w[lam]``
         expanded in the elementary symmetric basis, where
         ``lam`` is a partition.
-
-        This assumes that the ``coerce_e`` keyword has been set to ``True`` in
-        the initialization of ``self`` (otherwise the cache does not exist).
 
         INPUT:
 
@@ -891,7 +361,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
             sage: Sym = SymmetricFunctions(QQ)
             sage: e = Sym.elementary()
-            sage: w = Sym.w(coerce_e=True)
+            sage: w = Sym.w()
             sage: w._w_to_e_on_basis(Partition([]))
             e[]
             sage: w._w_to_e_on_basis(Partition([4,2,1]))
@@ -899,42 +369,54 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             sage: w(w._w_to_e_on_basis(Partition([3,1]))) == w[3,1]
             True
         """
-        n = sum(lam)
-        self._precompute_e(n)
-        return self._e._from_dict(self._e_from_self_cache[lam])
+        if not lam:
+            return self._e.one()
+        P = self._indices
+        if len(lam) == 1:
+            R = self.base_ring()
+            n = lam[0]
+            index_set = IntegerListsLex(n, min_part=1, min_length=2, max_slope=-1, element_constructor=P)
+            return R((-1)**(n-1)) * self._e[n] + self._e.linear_combination((self._w_to_e_on_basis(mu), R((-1)**len(mu)))
+                                                                            for mu in index_set)
+        # Multiply by the smallest part to minimize the number of products
+        return self._w_to_e_on_basis(P(lam[:-1])) * self._w_to_e_on_basis(P([lam[-1]]))
 
+    @cached_method
     def _p_to_w_on_basis(self, lam):
         r"""
         Return the powersum symmetric function ``p[lam]`` expanded in
         the Witt basis, where ``lam`` is a partition.
 
-        This assumes that the ``coerce_p`` keyword has been set to ``True`` in
-        the initialization of ``self`` (otherwise the cache does not exist).
-
         INPUT:
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - the expansion of ``p[lam]`` in the Witt basis ``self``
+        OUTPUT: the expansion of ``p[lam]`` in the Witt basis ``self``
 
         EXAMPLES::
 
             sage: Sym = SymmetricFunctions(QQ)
             sage: p = Sym.power()
-            sage: w = Sym.w(coerce_p=True)
+            sage: w = Sym.w()
             sage: w._p_to_w_on_basis(Partition([]))
             w[]
             sage: w._p_to_w_on_basis(Partition([4,2,1]))
-            w[1, 1, 1, 1, 1, 1, 1] + 2*w[2, 1, 1, 1, 1, 1] + 2*w[2, 2, 1, 1, 1] + 4*w[2, 2, 2, 1] + 4*w[4, 1, 1, 1] + 8*w[4, 2, 1]
+            w[1, 1, 1, 1, 1, 1, 1] + 2*w[2, 1, 1, 1, 1, 1] + 2*w[2, 2, 1, 1, 1]
+             + 4*w[2, 2, 2, 1] + 4*w[4, 1, 1, 1] + 8*w[4, 2, 1]
             sage: p(w._p_to_w_on_basis(Partition([3,1]))) == p[3,1]
             True
         """
-        n = sum(lam)
-        self._precompute_p(n)
-        return self._from_dict(self._p_to_self_cache[lam])
+        if not lam:
+            return self.one()
+        P = self._indices
+        if len(lam) == 1:
+            R = self.base_ring()
+            n = lam[0]
+            return self.element_class(self, {P([d] * (n // d)): R(d) for d in divisors(n)})
+        # Multiply by the smallest part to minimize the number of products
+        return self._p_to_w_on_basis(P(lam[:-1])) * self._p_to_w_on_basis(P([lam[-1]]))
 
+    @cached_method
     def _w_to_p_on_basis(self, lam):
         r"""
         Return the Witt symmetric function ``w[lam]`` expanded in the
@@ -956,231 +438,26 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
             sage: Sym = SymmetricFunctions(QQ)
             sage: p = Sym.power()
-            sage: w = Sym.w(coerce_p=True)
+            sage: w = Sym.w()
             sage: w._w_to_p_on_basis(Partition([]))
             p[]
             sage: w._w_to_p_on_basis(Partition([4,2,1]))
-            3/16*p[1, 1, 1, 1, 1, 1, 1] - 5/16*p[2, 1, 1, 1, 1, 1] + 3/16*p[2, 2, 1, 1, 1] - 1/16*p[2, 2, 2, 1] - 1/8*p[4, 1, 1, 1] + 1/8*p[4, 2, 1]
+            3/16*p[1, 1, 1, 1, 1, 1, 1] - 5/16*p[2, 1, 1, 1, 1, 1]
+             + 3/16*p[2, 2, 1, 1, 1] - 1/16*p[2, 2, 2, 1]
+             - 1/8*p[4, 1, 1, 1] + 1/8*p[4, 2, 1]
             sage: w(w._w_to_p_on_basis(Partition([3,1]))) == w[3,1]
             True
         """
-        n = sum(lam)
-        self._precompute_p(n)
-        return self._p._from_dict(self._p_from_self_cache[lam])
-
-    def __init_extra__(self):
-        """
-        Sets up caches for the transition maps to other bases, and registers
-        them as coercions.
-
-        EXAMPLES::
-
-            sage: Sym = SymmetricFunctions(QQ) # indirect doctest
-            sage: h = Sym.h(); w = Sym.w()
-
-            sage: phi = h.coerce_map_from(w); phi
-            Generic morphism:
-              From: Symmetric Functions over Rational Field in the Witt basis
-              To:   Symmetric Functions over Rational Field in the homogeneous basis
-            sage: phi(w.an_element()) == h(w.an_element())
-            True
-            sage: e = Sym.e(); w2 = Sym.w(coerce_e=True)
-            sage: psi = e.coerce_map_from(w2); psi
-            Generic morphism:
-              From: Symmetric Functions over Rational Field in the Witt basis
-              To:   Symmetric Functions over Rational Field in the elementary basis
-            sage: psi(w2.an_element()) == e(w2.an_element())
-            True
-        """
-
-        #category = sage.categories.all.ModulesWithBasis(self.base_ring())
-
-        # Set up coercions and conversions with appropriate other bases.
-        # self._p, self._e and self._h will be the powersum basis, the elementary
-        # symmetric basis and the complete homogeneous basis (over the same base
-        # ring as self), respectively (but they are only set if the respective
-        # arguments ``coerce_p``, ``coerce_e`` and ``coerce_h`` are True).
-        # self._friendly will be the one available basis which makes computations
-        # the easiest.
-
-        self._friendly = None
-
-        if self._coerce_p:
-            self._p = self.realization_of().p()
-            # Set up the cache for conversion from the Witt basis
-            # to the powersum basis.
-
-            # cache for the coordinates of the elements
-            # of the powersum basis with respect to the Witt basis
-            self._p_to_self_cache = {}
-            # cache for the coordinates of the elements
-            # of the Witt basis with respect to the powersum basis
-            self._p_from_self_cache = {}
-            # cache for transition matrices which contain the coordinates of
-            # the elements of the powersum basis with respect to the Witt basis
-            self._p_transition_matrices = {}
-            # cache for transition matrices which contain the coordinates of
-            # the elements of the Witt basis with respect to the powersum basis
-            self._p_inverse_transition_matrices = {}
-
-            self.register_coercion(self._p._module_morphism(self._p_to_w_on_basis, codomain=self))
-            from sage.rings.rational_field import RationalField
-            if self.base_ring().has_coerce_map_from(RationalField):
-                self._p.register_coercion(self._module_morphism(self._w_to_p_on_basis, codomain=self._p))
-                self._friendly = self._p
-            else:
-                # self._w_to_p_on_basis is a partial map at best
-                self._p.register_conversion(self._module_morphism(self._w_to_p_on_basis, codomain=self._p))
-                if (not self._coerce_e) and (not self._coerce_h):
-                    # ensure that self has coercion at least to one other basis,
-                    # or else coercion-based computations will fail
-                    self._coerce_h = True
-        elif (not self._coerce_e) and (not self._coerce_h):
-            self._coerce_h = True     # at least one coercion is needed!
-
-        if self._coerce_h:
-            self._h = self.realization_of().h()
-            # Set up the cache for conversion from the Witt basis to the complete
-            # homogeneous basis. (This is the conversion that is used by default.)
-
-            # cache for the coordinates of the elements
-            # of the homogeneous basis with respect to the Witt basis
-            self._h_to_self_cache = {}
-            # cache for the coordinates of the elements
-            # of the Witt basis with respect to the homogeneous basis
-            self._h_from_self_cache = {}
-            # cache for transition matrices which contain the coordinates of
-            # the elements of the homogeneous basis with respect to the Witt basis
-            self._h_transition_matrices = {}
-            # cache for transition matrices which contain the coordinates of
-            # the elements of the Witt basis with respect to the homogeneous basis
-            self._h_inverse_transition_matrices = {}
-            self.register_coercion(self._h._module_morphism(self._h_to_w_on_basis, codomain=self))
-            self._h.register_coercion(self._module_morphism(self._w_to_h_on_basis, codomain=self._h))
-            if self._friendly is None:
-                self._friendly = self._h
-
-        if self._coerce_e:
-            self._e = self.realization_of().e()
-            # Set up the cache for conversion from the Witt basis to the elementary
-            # symmetric basis.
-
-            # cache for the coordinates of the elements
-            # of the elementary basis with respect to the Witt basis
-            self._e_to_self_cache = {}
-            # cache for the coordinates of the elements
-            # of the Witt basis with respect to the elementary basis
-            self._e_from_self_cache = {}
-            # cache for transition matrices which contain the coordinates of
-            # the elements of the elementary basis with respect to the Witt basis
-            self._e_transition_matrices = {}
-            # cache for transition matrices which contain the coordinates of
-            # the elements of the Witt basis with respect to the elementary basis
-            self._e_inverse_transition_matrices = {}
-            self.register_coercion(self._e._module_morphism(self._e_to_w_on_basis, codomain=self))
-            self._e.register_coercion(self._module_morphism(self._w_to_e_on_basis, codomain=self._e))
-            if self._friendly is None:
-                self._friendly = self._e
-
-    def from_other_uncached(self, u):
-        r"""
-        Return an element ``u`` of another basis of the ring of
-        symmetric functions, expanded in the Witt basis ``self``.
-        The result is the same as ``self(u)``, but the
-        ``from_other_uncached`` method does not precompute a
-        cache with transition matrices. Thus,
-        ``from_other_uncached`` is faster when ``u`` is sparse.
-
-        INPUT:
-
-        - ``u`` -- an element of ``self.realization_of()``
-
-        OUTPUT:
-
-        - the expansion of ``u`` in the Witt basis ``self``
-
-        EXAMPLES::
-
-            sage: Sym = SymmetricFunctions(QQ)
-            sage: p = Sym.p()
-            sage: w = Sym.w()
-            sage: a = p([3,2]) - p([4,1]) + 27 * p([3])
-            sage: w.from_other_uncached(a) == w(a)
-            True
-
-        Here's a verification of an obvious fact that would take
-        long with regular coercion::
-
-            sage: fouc = w.from_other_uncached
-            sage: fouc(p([15]))
-            w[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] + 3*w[3, 3, 3, 3, 3] + 5*w[5, 5, 5] + 15*w[15]
-            sage: fouc(p([15])) * fouc(p([14])) == fouc(p([15, 14]))
-            True
-
-        Other bases::
-
-            sage: e = Sym.e()
-            sage: h = Sym.h()
-            sage: s = Sym.s()
-            sage: all( fouc(e(lam)) == w(e(lam)) for lam in Partitions(5) )
-            True
-            sage: all( fouc(h(lam)) == w(h(lam)) for lam in Partitions(5) )
-            True
-            sage: all( fouc(p(lam)) == w(p(lam)) for lam in Partitions(5) )
-            True
-            sage: all( fouc(s(lam)) == w(s(lam)) for lam in Partitions(5) )
-            True
-        """
-        parent_name = u.parent().basis_name()
-        from sage.misc.cachefunc import cached_function
-
-        if parent_name == "homogeneous":
-            from sage.combinat.partition import Partitions_n
-
-            @cached_function
-            def wsum(m):     # expansion of h_m in w-basis, for m > 0
-                return self._from_dict({lam: 1 for lam in Partitions_n(m)})
-            result = self.zero()
-            for lam, a in u.monomial_coefficients().items():
-                product = self.one()
-                for i in lam:
-                    product *= wsum(i)
-                result += a * product
-            return result
-
-        if parent_name == "powersum":
-            from sage.arith.misc import divisors
-            from sage.combinat.partition import Partition
-
-            @cached_function
-            def wsum_p(m):     # expansion of p_m in w-basis, for m > 0
-                return self._from_dict({Partition([d] * (m // d)): d
-                                        for d in divisors(m)})
-            result = self.zero()
-            for lam, a in u.monomial_coefficients().items():
-                product = self.one()
-                for i in lam:
-                    product *= wsum_p(i)
-                result += a * product
-            return result
-
-        # Coerce u into elementary symmetric basis.
-        if parent_name != "elementary":
-            u = u.parent().realization_of().elementary()(u)
-
-        from sage.combinat.partition import Partitions
-
-        @cached_function
-        def wsum_e(m):     # expansion of e_m in w-basis, for m > 0
-            return self._from_dict({lam: (-1 if (m + len(lam)) % 2 else 1)
-                                    for lam in Partitions(m, max_slope=-1)})
-        result = self.zero()
-        for lam, a in u.monomial_coefficients().items():
-            product = self.one()
-            for i in lam:
-                product *= wsum_e(i)
-            result += a * product
-        return result
+        if not lam:
+            return self._p.one()
+        P = self._indices
+        if len(lam) == 1:
+            R = self.base_ring()
+            n = lam[0]
+            return ~R(n) * self._p[n] - self._p.linear_combination((self._w_to_p_on_basis(P([d] * (n // d))), R(d) / R(n))
+                                                                   for d in divisors(n) if d != n)
+        # Multiply by the smallest part to minimize the number of products
+        return self._w_to_p_on_basis(P(lam[:-1])) * self._w_to_p_on_basis(P([lam[-1]]))
 
     def coproduct(self, elt):
         r"""
@@ -1192,8 +469,8 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
         OUTPUT:
 
-        - The coproduct acting on ``elt``; the result is an element of the
-          tensor squared of the basis ``self``
+        The coproduct acting on ``elt``; the result is an element of the
+        tensor squared of the basis ``self``.
 
         EXAMPLES::
 
@@ -1206,35 +483,10 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             w[] # w[2, 1] - w[1] # w[1, 1] + w[1] # w[2] - w[1, 1] # w[1] + w[2] # w[1] + w[2, 1] # w[]
             sage: w.coproduct(w[2,1])
             w[] # w[2, 1] - w[1] # w[1, 1] + w[1] # w[2] - w[1, 1] # w[1] + w[2] # w[1] + w[2, 1] # w[]
-
-        TESTS:
-
-        The same, but with other settings::
-
-            sage: w = SymmetricFunctions(QQ).w(coerce_h=False, coerce_e=True)
-            sage: w[2].coproduct()
-            w[] # w[2] - w[1] # w[1] + w[2] # w[]
-            sage: w.coproduct(w[2])
-            w[] # w[2] - w[1] # w[1] + w[2] # w[]
-            sage: w[2,1].coproduct()
-            w[] # w[2, 1] - w[1] # w[1, 1] + w[1] # w[2] - w[1, 1] # w[1] + w[2] # w[1] + w[2, 1] # w[]
-            sage: w.coproduct(w[2,1])
-            w[] # w[2, 1] - w[1] # w[1, 1] + w[1] # w[2] - w[1, 1] # w[1] + w[2] # w[1] + w[2, 1] # w[]
-
-            sage: w = SymmetricFunctions(QQ).w(coerce_h=False, coerce_p=True)
-            sage: w[2].coproduct()
-            w[] # w[2] - w[1] # w[1] + w[2] # w[]
-            sage: w.coproduct(w[2])
-            w[] # w[2] - w[1] # w[1] + w[2] # w[]
-            sage: w[2,1].coproduct()
-            w[] # w[2, 1] - w[1] # w[1, 1] + w[1] # w[2] - w[1, 1] # w[1] + w[2] # w[1] + w[2, 1] # w[]
-            sage: w.coproduct(w[2,1])
-            w[] # w[2, 1] - w[1] # w[1, 1] + w[1] # w[2] - w[1, 1] # w[1] + w[2] # w[1] + w[2, 1] # w[]
         """
         from sage.categories.tensor import tensor
-        friendly = self._friendly
-        return self.tensor_square().sum(coeff * tensor([self(friendly[x]), self(friendly[y])])
-                                        for ((x,y), coeff) in friendly(elt).coproduct())
+        return self.tensor_square().sum(coeff * tensor([self(self._h[x]), self(self._h[y])])
+                                        for ((x,y), coeff) in self._h(elt).coproduct())
 
     def verschiebung(self, n):
         r"""
@@ -1303,12 +555,12 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
         OUTPUT:
 
-        The result of applying the `n`-th Verschiebung operator (on the ring of
-        symmetric functions) to ``self``.
+        The result of applying the `n`-th Verschiebung operator (on the
+        ring of symmetric functions) to ``self``.
 
         EXAMPLES::
 
@@ -1335,10 +587,134 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             True
         """
         parent = self.parent()
-        w_coords_of_self = self.monomial_coefficients().items()
-        from sage.combinat.partition import Partition
-        dct = {Partition([i // n for i in lam]): coeff
+        w_coords_of_self = self._monomial_coefficients.items()
+        P = self._indices
+        dct = {P([i // n for i in lam]): coeff
                for lam, coeff in w_coords_of_self
                if all(i % n == 0 for i in lam)}
-        result_in_w_basis = parent._from_dict(dct)
-        return result_in_w_basis
+        return parent._from_dict(dct)
+
+    def _omega_on_basis(self, lam):
+        r"""
+        Return the omega involution on the basis element indexed
+        by ``lam``.
+
+        ALGORITHM:
+
+        We use that `\omega` is an algebra involution to split the
+        computation into the even and odd parts. It is easy to prove
+        that `\omega w_i = w_i` for odd `i > 0`. For the even parts,
+        we convert to the `h` basis and pull back from the `e` basis.
+
+        EXAMPLES::
+
+            sage: w = SymmetricFunctions(QQ).w()
+            sage: w._omega_on_basis([2])
+            -w[1, 1] - w[2]
+            sage: w._omega_on_basis([3])
+            w[3]
+            sage: w._omega_on_basis([2,2])
+            w[1, 1, 1, 1] + 2*w[2, 1, 1] + w[2, 2]
+            sage: w._omega_on_basis([329,125,2,2,1,1,1,1,1])
+            w[329, 125, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+             + 2*w[329, 125, 2, 1, 1, 1, 1, 1, 1, 1]
+             + w[329, 125, 2, 2, 1, 1, 1, 1, 1]
+            sage: w._omega_on_basis([])
+            w[]
+        """
+        lam_even = []
+        lam_odd = []
+        for i in lam:
+            if i % 2:
+                lam_odd.append(i)
+            else:
+                lam_even.append(i)
+        if not lam_even:
+            if not lam_odd:
+                return self.one()
+            return self.monomial(self._indices(lam_odd))
+        ret_even = self._omega_even(self._indices(lam_even))
+        if not lam_odd:
+            return ret_even
+        return ret_even * self.monomial(self._indices(lam_odd))
+
+    @cached_method
+    def _omega_even(self, lam_even):
+        r"""
+        Return the omega involution on the basis element given by
+        a partition with only even parts.
+
+        EXAMPLES::
+
+            sage: w = SymmetricFunctions(QQ).w()
+            sage: P = w.indices()
+            sage: Sw422 = w._omega_even(P([4,2,2])); Sw422
+            -w[1, 1, 1, 1, 1, 1, 1, 1] - 3*w[2, 1, 1, 1, 1, 1, 1]
+             - 4*w[2, 2, 1, 1, 1, 1] - 3*w[2, 2, 2, 1, 1] - w[2, 2, 2, 2]
+             - w[4, 1, 1, 1, 1] - 2*w[4, 2, 1, 1] - w[4, 2, 2]
+            sage: Sw2 = w._omega_even(P([2])); Sw2
+            -w[1, 1] - w[2]
+            sage: Sw4 = w._omega_even(P([4])); Sw4
+            -w[1, 1, 1, 1] - w[2, 1, 1] - w[2, 2] - w[4]
+            sage: Sw422 == Sw4 * Sw2^2
+            True
+        """
+        dct = self._h(self.monomial(lam_even)).monomial_coefficients(copy=False)
+        eelt = self._e.element_class(self._e, dict(dct.items()))
+        return self(eelt)
+
+    class Element(multiplicative.SymmetricFunctionAlgebra_multiplicative.Element):
+        def omega(self):
+            r"""
+            Return the image of ``self`` under the omega automorphism.
+
+            The *omega automorphism* is defined to be the unique algebra
+            endomorphism `\omega` of the ring of symmetric functions that
+            satisfies `\omega(e_k) = h_k` for all positive integers `k`
+            (where `e_k` stands for the `k`-th elementary symmetric
+            function, and `h_k` stands for the `k`-th complete homogeneous
+            symmetric function). It furthermore is a Hopf algebra
+            endomorphism and an involution, and it is also known as the
+            *omega involution*. It sends the power-sum symmetric function
+            `p_k` to `(-1)^{k-1} p_k` for every positive integer `k`.
+
+            The images of some bases under the omega automorphism are given by
+
+            .. MATH::
+
+                \omega(e_{\lambda}) = h_{\lambda}, \qquad
+                \omega(h_{\lambda}) = e_{\lambda}, \qquad
+                \omega(p_{\lambda}) = (-1)^{|\lambda| - \ell(\lambda)}
+                p_{\lambda}, \qquad
+                \omega(s_{\lambda}) = s_{\lambda^{\prime}},
+
+            where `\lambda` is any partition, where `\ell(\lambda)` denotes
+            the length (:meth:`~sage.combinat.partition.Partition.length`)
+            of the partition `\lambda`, where `\lambda^{\prime}` denotes the
+            conjugate partition
+            (:meth:`~sage.combinat.partition.Partition.conjugate`) of
+            `\lambda`, and where the usual notations for bases are used
+            (`e` = elementary, `h` = complete homogeneous, `p` = powersum,
+            `s` = Schur).
+
+            :meth:`omega_involution` is a synonym for the :meth:`omega`
+            method.
+
+            EXAMPLES::
+
+                sage: Sym = SymmetricFunctions(QQ)
+                sage: w = Sym.w()
+                sage: a = w([4,3,1,1]); a
+                w[4, 3, 1, 1]
+                sage: a.omega()
+                -w[3, 1, 1, 1, 1, 1, 1] - w[3, 2, 1, 1, 1, 1]
+                 - w[3, 2, 2, 1, 1] - w[4, 3, 1, 1]
+
+                sage: h = Sym.h()
+                sage: all(w(h(w[la]).omega()) == w[la].omega()
+                ....:     for n in range(6) for la in Partitions(n))
+                True
+            """
+            P = self.parent()
+            return P.linear_combination((P._omega_on_basis(lam), coeff)
+                                        for lam, coeff in self._monomial_coefficients.items())

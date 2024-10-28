@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 Animated plots
 
@@ -8,7 +8,7 @@ Images are produced by calling the ``save_image`` method on each input
 object, creating a sequence of PNG files.
 These are then assembled to various target formats using different
 tools.
-In particular, the ``convert`` program from ImageMagick_ can be used to
+In particular, the ``magick/convert`` program from ImageMagick_ can be used to
 generate an animated GIF file.
 FFmpeg_ (with the command line program ``ffmpeg``) provides support for
 various video formats, but also an alternative method of generating
@@ -20,7 +20,7 @@ alternative which works without any extra dependencies.
 
     Note that ``ImageMagick`` and ``FFmpeg`` are not included with Sage, and
     must be installed by the user.  On unix systems, type ``which
-    convert`` at a command prompt to see if ``convert`` (part of the
+    magick`` at a command prompt to see if ``magick`` (part of the
     ``ImageMagick`` suite) is installed.  If it is, you will be given its
     location.  Similarly, you can check for ``ffmpeg`` with ``which
     ffmpeg``.  See the websites of ImageMagick_ or FFmpeg_ for
@@ -31,7 +31,8 @@ EXAMPLES:
 The sine function::
 
     sage: x = SR.var("x")
-    sage: sines = [plot(c*sin(x), (-2*pi,2*pi), color=Color(c,0,0), ymin=-1, ymax=1) for c in sxrange(0,1,.2)]
+    sage: sines = [plot(c*sin(x), (-2*pi,2*pi), color=Color(c,0,0), ymin=-1, ymax=1)
+    ....:          for c in sxrange(0,1,.2)]
     sage: a = animate(sines)
     sage: print(a)
     Animation with 5 frames
@@ -48,15 +49,20 @@ Animate as an APNG_::
 
 An animated :class:`sage.plot.multigraphics.GraphicsArray` of rotating ellipses::
 
-    sage: E = animate((graphics_array([[ellipse((0,0),a,b,angle=t,xmin=-3,xmax=3)+circle((0,0),3,color='blue') for a in range(1,3)] for b in range(2,4)]) for t in sxrange(0,pi/4,.15)))
+    sage: E = animate((graphics_array([[ellipse((0,0), a, b, angle=t, xmin=-3, xmax=3)
+    ....:                                + circle((0,0), 3, color='blue')
+    ....:                               for a in range(1,3)]
+    ....:                              for b in range(2,4)])
+    ....:              for t in sxrange(0, pi/4, .15)))
     sage: str(E)    # animations produced from a generator do not have a known length
     'Animation with unknown number of frames'
     sage: E.show()                  # long time  # optional -- ImageMagick
 
 A simple animation of a circle shooting up to the right::
 
-    sage: c = animate([circle((i,i), 1-1/(i+1), hue=i/10) for i in srange(0,2,0.2)],
-    ....:               xmin=0,ymin=0,xmax=2,ymax=2,figsize=[2,2])
+    sage: c = animate([circle((i,i), 1 - 1/(i+1), hue=i/10)
+    ....:              for i in srange(0, 2, 0.2)],
+    ....:             xmin=0, ymin=0, xmax=2, ymax=2, figsize=[2,2])
     sage: c.show()                  # long time  # optional -- ImageMagick
 
 
@@ -64,8 +70,11 @@ Animations of 3d objects::
 
     sage: s,t = SR.var("s,t")
     sage: def sphere_and_plane(x):
-    ....:     return sphere((0,0,0),1,color='red',opacity=.5)+parametric_plot3d([t,x,s],(s,-1,1),(t,-1,1),color='green',opacity=.7)
-    sage: sp = animate([sphere_and_plane(x) for x in sxrange(-1,1,.3)])
+    ....:     return (sphere((0,0,0), 1, color='red', opacity=.5)
+    ....:              + parametric_plot3d([t,x,s], (s,-1,1), (t,-1,1),
+    ....:                                  color='green', opacity=.7))
+    sage: sp = animate([sphere_and_plane(x)
+    ....:               for x in sxrange(-1, 1, .3)])
     sage: sp[0]      # first frame
     Graphics3d Object
     sage: sp[-1]     # last frame
@@ -74,9 +83,12 @@ Animations of 3d objects::
 
     sage: (x,y,z) = SR.var("x,y,z")
     sage: def frame(t):
-    ....:     return implicit_plot3d((x^2 + y^2 + z^2), (x, -2, 2), (y, -2, 2), (z, -2, 2), plot_points=60, contour=[1,3,5], region=lambda x,y,z: x<=t or y>=t or z<=t)
-    sage: a = animate([frame(t) for t in srange(.01,1.5,.2)])
-    sage: a[0]       # long time
+    ....:     return implicit_plot3d((x^2 + y^2 + z^2),
+    ....:                            (x, -2, 2), (y, -2, 2), (z, -2, 2),
+    ....:                            plot_points=60, contour=[1,3,5],
+    ....:                            region=lambda x,y,z: x<=t or y>=t or z<=t)
+    sage: a = animate([frame(t) for t in srange(.01, 1.5, .2)])
+    sage: a[0]                      # long time
     Graphics3d Object
     sage: a.show()                  # long time  # optional -- ImageMagick
 
@@ -86,7 +98,7 @@ method :meth:`sage.plot.animate.Animation.make_image`.  This is
 illustrated by the following example::
 
     sage: t = SR.var("t")
-    sage: a = animate((sin(c*pi*t) for c in sxrange(1,2,.2)))
+    sage: a = animate((sin(c*pi*t) for c in sxrange(1, 2, .2)))
     sage: a.show()                  # long time  # optional -- ImageMagick
 
 
@@ -104,7 +116,6 @@ REFERENCES:
 - `FFmpeg <https://www.ffmpeg.org>`_
 - `APNG <https://wiki.mozilla.org/APNG_Specification>`_
 - `browsers which support it <https://caniuse.com/#feat=apng>`_
-
 """
 
 ############################################################################
@@ -135,12 +146,13 @@ def animate(frames, **kwds):
     EXAMPLES::
 
         sage: t = SR.var("t")
-        sage: a = animate((cos(c*pi*t) for c in sxrange(1,2,.2)))
+        sage: a = animate((cos(c*pi*t) for c in sxrange(1, 2, .2)))
         sage: a.show()              # long time  # optional -- ImageMagick
 
     See also :mod:`sage.plot.animate` for more examples.
     """
     return Animation(frames, **kwds)
+
 
 class Animation(WithEqualityById, SageObject):
     r"""
@@ -148,23 +160,21 @@ class Animation(WithEqualityById, SageObject):
 
     INPUT:
 
-
-    - ``v`` - iterable of Sage objects. These should preferably be
-      graphics objects, but if they aren't then :meth:`make_image` is
+    - ``v`` -- iterable of Sage objects; these should preferably be
+      graphics objects, but if they aren't, then :meth:`make_image` is
       called on them.
 
-    - ``xmin, xmax, ymin, ymax`` - the ranges of the x and y axes.
+    - ``xmin``, ``xmax``, ``ymin``, ``ymax`` -- the ranges of the x and y axes
 
-    - ``**kwds`` - all additional inputs are passed onto the rendering
-      command. E.g., use figsize to adjust the resolution and aspect
+    - ``**kwds`` -- all additional inputs are passed onto the rendering
+      command. E.g., use ``figsize`` to adjust the resolution and aspect
       ratio.
-
 
     EXAMPLES::
 
         sage: x = SR.var("x")
-        sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.3)],
-        ....:                xmin=0, xmax=2*pi, figsize=[2,1])
+        sage: a = animate([sin(x + float(k)) for k in srange(0, 2*pi, 0.3)],
+        ....:             xmin=0, xmax=2*pi, figsize=[2,1])
         sage: print(a)
         Animation with 21 frames
         sage: print(a[:5])
@@ -174,7 +184,7 @@ class Animation(WithEqualityById, SageObject):
 
     The :meth:`show` method takes arguments to specify the
     delay between frames (measured in hundredths of a second, default
-    value 20) and the number of iterations (default value 0, which
+    value 20) and the number of iterations (default: 0, which
     means to iterate forever). To iterate 4 times with half a second
     between each frame::
 
@@ -185,22 +195,22 @@ class Animation(WithEqualityById, SageObject):
         sage: step = 0.1
         sage: L = Graphics()
         sage: v = []
-        sage: for i in srange(0,1,step):
-        ....:       L += line([(i,i^2),(i+step,(i+step)^2)], rgbcolor=(1,0,0), thickness=2)
-        ....:       v.append(L)
+        sage: for i in srange(0, 1, step):
+        ....:     L += line([(i,i^2),(i+step,(i+step)^2)], rgbcolor=(1,0,0), thickness=2)
+        ....:     v.append(L)
         sage: a = animate(v, xmin=0, ymin=0)
         sage: a.show()              # long time  # optional -- ImageMagick
         sage: show(L)
 
     TESTS:
 
-    This illustrates that :trac:`2066` is fixed (setting axes
+    This illustrates that :issue:`2066` is fixed (setting axes
     ranges when an endpoint is 0)::
 
         sage: animate([plot(sin, -1,1)], xmin=0, ymin=0)._kwds['xmin']
         0
 
-    We check that :trac:`7981` is fixed::
+    We check that :issue:`7981` is fixed::
 
         sage: x = SR.var("x")
         sage: a = animate([plot(sin(x + float(k)), (0, 2*pi), ymin=-5, ymax=5)
@@ -245,7 +255,7 @@ class Animation(WithEqualityById, SageObject):
 
     def _combine_kwds(self, *kwds_tuple):
         """
-        Returns a dictionary which is a combination of the all the
+        Return a dictionary which is a combination of the all the
         dictionaries in kwds_tuple. This also does the appropriate thing
         for taking the mins and maxes of all of the x/y mins/maxes.
 
@@ -258,7 +268,7 @@ class Animation(WithEqualityById, SageObject):
             sage: list(sorted(kwds.items()))
             [('a', 1), ('b', 3), ('xmax', 5), ('xmin', 0)]
 
-        Test that the bug reported in :trac:`12107` has been fixed::
+        Test that the bug reported in :issue:`12107` has been fixed::
 
             sage: kwds3 = {}
             sage: kwds4 = {'b':3, 'xmin':0, 'xmax':4}
@@ -316,7 +326,7 @@ class Animation(WithEqualityById, SageObject):
             num = len(self)
         except TypeError:
             num = "unknown number of"
-        return "Animation with %s frames"%num
+        return "Animation with %s frames" % num
 
     def __add__(self, other):
         """
@@ -395,7 +405,7 @@ class Animation(WithEqualityById, SageObject):
 
     def __len__(self):
         """
-        Length of self
+        Length of ``self``.
 
         EXAMPLES::
 
@@ -427,7 +437,9 @@ class Animation(WithEqualityById, SageObject):
             sage: t = SR.var("t")
             sage: x = lambda t: cos(t)
             sage: y = lambda n,t: sin(t)/n
-            sage: B = MyAnimation([([x(t), y(i+1,t)],(t,0,1), {'color':Color((1,0,i/4)), 'aspect_ratio':1, 'ymax':1}) for i in range(4)])
+            sage: B = MyAnimation([([x(t), y(i+1,t)], (t,0,1),
+            ....:                   {'color':Color((1,0,i/4)), 'aspect_ratio':1, 'ymax':1})
+            ....:                  for i in range(4)])
 
             sage: d = B.png(); v = os.listdir(d); v.sort(); v  # long time
             ['00000000.png', '00000001.png', '00000002.png', '00000003.png']
@@ -436,15 +448,16 @@ class Animation(WithEqualityById, SageObject):
             sage: class MyAnimation(Animation):
             ....:    def make_image(self, frame, filename, **kwds):
             ....:        G = frame.plot()
-            ....:        G.set_axes_range(floor(G.xmin()),ceil(G.xmax()),floor(G.ymin()),ceil(G.ymax()))
+            ....:        G.set_axes_range(floor(G.xmin()), ceil(G.xmax()),
+            ....:                         floor(G.ymin()), ceil(G.ymax()))
             ....:        G.save_image(filename, **kwds)
 
-            sage: B = MyAnimation([graphs.CompleteGraph(n) for n in range(7,11)], figsize=5)
+            sage: B = MyAnimation([graphs.CompleteGraph(n)
+            ....:                  for n in range(7,11)], figsize=5)
             sage: d = B.png()
             sage: v = os.listdir(d); v.sort(); v
             ['00000000.png', '00000001.png', '00000002.png', '00000003.png']
             sage: B.show()  # not tested
-
         """
         p = plot.plot(frame, **kwds)
         p.save_image(filename)
@@ -461,13 +474,10 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        - ``dir`` -- Directory in which to store frames.  Default
-          ``None``; in this case, a temporary directory will be
-          created for storing the frames.
+        - ``dir`` -- (default: ``None``) directory in which to store frames; in
+          this case, a temporary directory will be created for storing the frames
 
-        OUTPUT:
-
-        Absolute path to the directory containing the PNG images
+        OUTPUT: absolute path to the directory containing the PNG images
 
         EXAMPLES::
 
@@ -484,7 +494,7 @@ class Animation(WithEqualityById, SageObject):
             dir = tmp_dir()
         i = 0
         for frame in self._frames:
-            filename = '%s/%08d.png'%(dir,i)
+            filename = '%s/%08d.png' % (dir,i)
             try:
                 save_image = frame.save_image
             except AttributeError:
@@ -503,29 +513,30 @@ class Animation(WithEqualityById, SageObject):
         The frames must be acceptable inputs for
         :class:`sage.plot.multigraphics.GraphicsArray`.
 
-
         EXAMPLES::
 
+            sage: # needs sage.schemes
             sage: E = EllipticCurve('37a')
-            sage: v = [E.change_ring(GF(p)).plot(pointsize=30) for p in [97, 101, 103]]
+            sage: v = [E.change_ring(GF(p)).plot(pointsize=30)
+            ....:      for p in [97, 101, 103]]
             sage: a = animate(v, xmin=0, ymin=0, axes=False)
             sage: print(a)
             Animation with 3 frames
-            sage: a.show()  # optional -- ImageMagick
+            sage: a.show()                      # optional -- ImageMagick
 
         Modify the default arrangement of array::
 
-            sage: g = a.graphics_array(); print(g)
+            sage: g = a.graphics_array(); print(g)                                      # needs sage.schemes
             Graphics Array of size 1 x 3
-            sage: g.show(figsize=[6,3])
+            sage: g.show(figsize=[6,3])                                                 # needs sage.schemes
 
         Specify different arrangement of array and save it with a given file name::
 
-            sage: g = a.graphics_array(ncols=2); print(g)
+            sage: g = a.graphics_array(ncols=2); print(g)                               # needs sage.schemes
             Graphics Array of size 2 x 2
-            sage: f = tmp_filename(ext='.png'); print(f)
+            sage: f = tmp_filename(ext='.png'); print(f)                                # needs sage.schemes
             ...png
-            sage: g.save(f)
+            sage: g.save(f)                                                             # needs sage.schemes
 
         Frames can be specified as a generator too; it is internally converted to a list::
 
@@ -541,38 +552,38 @@ class Animation(WithEqualityById, SageObject):
         nrows, rem = divmod(n,ncols)
         if rem > 0:
             nrows += 1
-        return plot.graphics_array(frame_list, nrows,  ncols)
+        return plot.graphics_array(frame_list, nrows, ncols)
 
     def gif(self, delay=20, savefile=None, iterations=0, show_path=False,
             use_ffmpeg=False):
         r"""
-        Returns an animated gif composed from rendering the graphics
-        objects in self.
+        Return an animated gif composed from rendering the graphics
+        objects in ``self``.
 
         This method will only work if either (a) the ImageMagick
-        software suite is installed, i.e., you have the ``convert``
+        software suite is installed, i.e., you have the ``magick/convert``
         command or (b) ``ffmpeg`` is installed.  See the web sites of
         ImageMagick_ and FFmpeg_ for more details.  By default, this
-        produces the gif using ``convert`` if it is present.  If this
-        can't find ``convert`` or if ``use_ffmpeg`` is True, then it
+        produces the gif using Imagemagick if it is present.  If this
+        can't find ImageMagick or if ``use_ffmpeg`` is True, then it
         uses ``ffmpeg`` instead.
 
         INPUT:
 
-        -  ``delay`` - (default: 20) delay in hundredths of a
-           second between frames
+        - ``delay`` -- (default: 20) delay in hundredths of a
+          second between frames
 
-        -  ``savefile`` - file that the animated gif gets saved
-           to
+        - ``savefile`` -- file that the animated gif gets saved
+          to
 
-        -  ``iterations`` - integer (default: 0); number of
-           iterations of animation. If 0, loop forever.
+        - ``iterations`` -- integer (default: 0); number of
+          iterations of animation. If 0, loop forever.
 
-        -  ``show_path`` - boolean (default: False); if True,
-           print the path to the saved file
+        - ``show_path`` -- boolean (default: ``False``); if True,
+          print the path to the saved file
 
-        - ``use_ffmpeg`` - boolean (default: False); if True, use
-          'ffmpeg' by default instead of 'convert'.
+        - ``use_ffmpeg`` -- boolean (default: ``False``); if ``True``, use
+          'ffmpeg' by default instead of ImageMagick
 
         If ``savefile`` is not specified: in notebook mode, display the
         animation; otherwise, save it to a default file name.
@@ -580,16 +591,21 @@ class Animation(WithEqualityById, SageObject):
         EXAMPLES::
 
             sage: x = SR.var("x")
-            sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.7)],
+            sage: a = animate([sin(x + float(k))
+            ....:              for k in srange(0,2*pi,0.7)],
             ....:             xmin=0, xmax=2*pi, ymin=-1, ymax=1, figsize=[2,1])
             sage: td = tmp_dir()
             sage: a.gif()              # not tested
-            sage: a.gif(savefile=td + 'my_animation.gif', delay=35, iterations=3)             # long time  # optional -- ImageMagick
-            sage: with open(td + 'my_animation.gif', 'rb') as f: print(b'GIF8' in f.read())   # long time  # optional -- ImageMagick
+            sage: a.gif(savefile=td + 'my_animation.gif',               # long time  # optional -- ImageMagick
+            ....:       delay=35, iterations=3)
+            sage: with open(td + 'my_animation.gif', 'rb') as f:        # long time  # optional -- ImageMagick
+            ....:     print(b'GIF8' in f.read())
             True
-            sage: a.gif(savefile=td + 'my_animation.gif', show_path=True)                     # long time  # optional -- ImageMagick
+            sage: a.gif(savefile=td + 'my_animation.gif',               # long time  # optional -- ImageMagick
+            ....:       show_path=True)
             Animation saved to .../my_animation.gif.
-            sage: a.gif(savefile=td + 'my_animation_2.gif', show_path=True, use_ffmpeg=True)  # long time  # optional -- ffmpeg
+            sage: a.gif(savefile=td + 'my_animation_2.gif',             # long time  # optional -- FFmpeg
+            ....:       show_path=True, use_ffmpeg=True)
             Animation saved to .../my_animation_2.gif.
 
         .. NOTE::
@@ -629,12 +645,12 @@ class Animation(WithEqualityById, SageObject):
         the frames in ``self``.
 
         This method will only work if ``imagemagick`` is installed (command
-        ``convert``). See https://www.imagemagick.org for information
+        ``magick`` or ``convert``). See https://www.imagemagick.org for information
         about ``imagemagick``.
 
         INPUT:
 
-        - ``savefile`` -- file that the mpeg gets saved to.
+        - ``savefile`` -- file that the mpeg gets saved to
 
         .. warning::
 
@@ -643,10 +659,10 @@ class Animation(WithEqualityById, SageObject):
         - ``show_path`` -- boolean (default: ``False``); if ``True``,
           print the path to the saved file
 
-        - ``delay`` - (default: 20) delay in hundredths of a
-           second between frames
+        - ``delay`` -- (default: 20) delay in hundredths of a
+          second between frames
 
-        - ``iterations`` - integer (default: 0); number of iterations
+        - ``iterations`` -- integer (default: 0); number of iterations
           of animation. If 0, loop forever.
 
         If ``savefile`` is not specified: in notebook mode, display
@@ -668,12 +684,11 @@ class Animation(WithEqualityById, SageObject):
            like this::
 
               FeatureNotPresentError: imagemagick is not available.
-              Executable 'convert' not found on PATH.
+              Executable 'magick' not found on PATH.
               Further installation instructions might be available at
               https://www.imagemagick.org/.
-
         """
-        from sage.features.imagemagick import ImageMagick
+        from sage.features.imagemagick import ImageMagick, Magick
         ImageMagick().require()
 
         if not savefile:
@@ -684,7 +699,7 @@ class Animation(WithEqualityById, SageObject):
 
         # running the command
         directory = self.png()
-        cmd = ['convert', '-dispose', 'Background',
+        cmd = [Magick().executable, '-dispose', 'Background',
                 '-delay', '%s' % int(delay), '-loop', '%s' % int(iterations),
                 '*.png', savefile]
         from subprocess import run
@@ -693,13 +708,13 @@ class Animation(WithEqualityById, SageObject):
         # If a problem with the command occurs, print the log before
         # raising an error (more verbose than result.check_returncode())
         if result.returncode:
-            print('Command "{}" returned non-zero exit status "{}" '
+            print('Command "{}" returned nonzero exit status "{}" '
                   '(with stderr "{}" and stdout "{}").'.format(result.args,
                                         result.returncode,
                                         result.stderr.strip(),
                                         result.stdout.strip()))
             raise OSError("Error: Cannot generate GIF animation. "
-                    "The convert command (ImageMagick) is present but does "
+                    "The magick/convert command (ImageMagick) is present but does "
                     "not seem to be functional. Verify that the objects "
                     "passed to the animate command can be saved in PNG "
                     "image format. "
@@ -710,7 +725,7 @@ class Animation(WithEqualityById, SageObject):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -783,13 +798,13 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``delay`` -- (default: 20) delay in hundredths of a
-           second between frames.
+        - ``delay`` -- (default: 20) delay in hundredths of a
+          second between frames
 
-        -  ``iterations`` -- integer (default: 0); number of
-           iterations of animation. If 0, loop forever.
+        - ``iterations`` -- integer (default: 0); number of
+          iterations of animation. If 0, loop forever.
 
-        - ``format`` - (default: gif) format to use for output.
+        - ``format`` -- (default: gif) format to use for output.
           Currently supported formats are: gif,
           ogg, webm, mp4, flash, matroska, avi, wmv, quicktime.
 
@@ -803,15 +818,16 @@ class Animation(WithEqualityById, SageObject):
            Currently this is done using an animated gif, though this
            could change in the future. This requires that either
            ffmpeg or the ImageMagick suite (in particular, the
-           ``convert`` command) is installed.
+           ``magick/convert`` command) is installed.
 
         See also the :meth:`ffmpeg` method.
 
         EXAMPLES::
 
             sage: x = SR.var("x")
-            sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.7)],
-            ....:                xmin=0, xmax=2*pi, figsize=[2,1])
+            sage: a = animate([sin(x + float(k))
+            ....:              for k in srange(0,2*pi,0.7)],
+            ....:             xmin=0, xmax=2*pi, figsize=[2,1])
             sage: a.show()                              # long time  # optional -- ImageMagick
 
         The preceding will loop the animation forever. If you want to show
@@ -825,18 +841,20 @@ class Animation(WithEqualityById, SageObject):
 
         You can also make use of the HTML5 video element in the Sage Notebook::
 
-            sage: a.show(format="ogg")                  # long time  # optional -- ffmpeg
-            sage: a.show(format="webm")                 # long time  # optional -- ffmpeg
-            sage: a.show(format="mp4")                  # long time  # optional -- ffmpeg
-            sage: a.show(format="webm", iterations=1)   # long time  # optional -- ffmpeg
+            sage: # long time, optional -- FFmpeg
+            sage: a.show(format='ogg')
+            sage: a.show(format='webm')
+            sage: a.show(format='mp4')
+            sage: a.show(format='webm', iterations=1)
 
         Other backends may support other file formats as well::
 
-            sage: a.show(format="flash")                # long time  # optional -- ffmpeg
-            sage: a.show(format="matroska")             # long time  # optional -- ffmpeg
-            sage: a.show(format="avi")                  # long time  # optional -- ffmpeg
-            sage: a.show(format="wmv")                  # long time  # optional -- ffmpeg
-            sage: a.show(format="quicktime")            # long time  # optional -- ffmpeg
+            sage: # long time, optional -- FFmpeg
+            sage: a.show(format='flash')
+            sage: a.show(format='matroska')
+            sage: a.show(format='avi')
+            sage: a.show(format='wmv')
+            sage: a.show(format='quicktime')
 
         TESTS:
 
@@ -878,7 +896,7 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        - ``savefile`` -- file that the mpeg gets saved to.
+        - ``savefile`` -- file that the mpeg gets saved to
 
         .. warning::
 
@@ -887,7 +905,7 @@ class Animation(WithEqualityById, SageObject):
         - ``show_path`` -- boolean (default: ``False``); if ``True``,
           print the path to the saved file
 
-        - ``output_format`` - string (default: ``None``); format and
+        - ``output_format`` -- string (default: ``None``); format and
           suffix to use for the video.  This may be ``'mpg'``, ``'mpeg'``,
           ``'avi'``, ``'gif'``, or any other format that ``ffmpeg`` can handle.
           If this is ``None`` and the user specifies ``savefile`` with a
@@ -896,20 +914,20 @@ class Animation(WithEqualityById, SageObject):
           is specified or if the suffix cannot be determined, ``'mpg'`` is
           used.
 
-        - ``ffmpeg_options`` - string (default: ``''``); this string is
-          passed directly to ffmpeg.
+        - ``ffmpeg_options`` -- string (default: ``''``); this string is
+          passed directly to ffmpeg
 
-        - ``delay`` - integer (default: ``None``); delay in hundredths of a
+        - ``delay`` -- integer (default: ``None``); delay in hundredths of a
           second between frames.  The framerate is 100/delay.
           This is not supported for mpeg files: for mpegs, the frame
           rate is always 25 fps.
 
-        - ``iterations`` - integer (default: 0); number of iterations
+        - ``iterations`` -- integer (default: 0); number of iterations
           of animation. If 0, loop forever.  This is only supported
           for animated gif output and requires ``ffmpeg`` version 0.9 or
           later.  For older versions, set ``iterations=None``.
 
-        - ``pix_fmt`` - string (default: 'rgb24'); used only for gif
+        - ``pix_fmt`` -- string (default: ``'rgb24'``); used only for gif
           output.  Different values such as 'rgb8' or 'pal8' may be
           necessary depending on how ffmpeg was installed.  Set
           ``pix_fmt=None`` to disable this option.
@@ -922,13 +940,14 @@ class Animation(WithEqualityById, SageObject):
         EXAMPLES::
 
             sage: x = SR.var("x")
-            sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.7)],
+            sage: a = animate([sin(x + float(k))
+            ....:              for k in srange(0, 2*pi, 0.7)],
             ....:             xmin=0, xmax=2*pi, ymin=-1, ymax=1, figsize=[2,1])
             sage: td = tmp_dir()
-            sage: a.ffmpeg(savefile=td + 'new.mpg')                  # long time  # optional -- ffmpeg
-            sage: a.ffmpeg(savefile=td + 'new.avi')                  # long time  # optional -- ffmpeg
-            sage: a.ffmpeg(savefile=td + 'new.gif')                  # long time  # optional -- ffmpeg
-            sage: a.ffmpeg(savefile=td + 'new.mpg', show_path=True)  # long time  # optional -- ffmpeg
+            sage: a.ffmpeg(savefile=td + 'new.mpg')                  # long time  # optional -- FFmpeg
+            sage: a.ffmpeg(savefile=td + 'new.avi')                  # long time  # optional -- FFmpeg
+            sage: a.ffmpeg(savefile=td + 'new.gif')                  # long time  # optional -- FFmpeg
+            sage: a.ffmpeg(savefile=td + 'new.mpg', show_path=True)  # long time  # optional -- FFmpeg
             Animation saved to .../new.mpg.
 
         .. NOTE::
@@ -942,7 +961,7 @@ class Animation(WithEqualityById, SageObject):
 
         TESTS::
 
-            sage: a.ffmpeg(output_format='gif',delay=30,iterations=5)  # long time  # optional -- ffmpeg
+            sage: a.ffmpeg(output_format='gif',delay=30,iterations=5)  # long time  # optional -- FFmpeg
         """
         from sage.features.ffmpeg import FFmpeg
         FFmpeg().require()
@@ -974,7 +993,7 @@ class Animation(WithEqualityById, SageObject):
             # -loop_output option can be added with the
             # ffmpeg_options argument.
             if iterations is not None:
-                loop_cmd = '-loop {0} '.format(iterations)
+                loop_cmd = f'-loop {iterations} '
             else:
                 loop_cmd = ''
             # A pix_fmt value is required for some but not all
@@ -982,10 +1001,10 @@ class Animation(WithEqualityById, SageObject):
             # prevent sage from adding this option, and it may be
             # controlled separately through ffmpeg_options.
             if pix_fmt is not None:
-                pix_fmt_cmd = '-pix_fmt {0} '.format(pix_fmt)
+                pix_fmt_cmd = f'-pix_fmt {pix_fmt} '
             else:
                 pix_fmt_cmd = ''
-            ffmpeg_options += ' {0}{1}'.format(pix_fmt_cmd,loop_cmd)
+            ffmpeg_options += f' {pix_fmt_cmd}{loop_cmd}'
         if delay is not None and output_format != '.mpeg' and output_format != '.mpg':
             early_options += ' -r %s ' % int(100/delay)
         savefile = os.path.abspath(savefile)
@@ -997,8 +1016,9 @@ class Animation(WithEqualityById, SageObject):
         # afterwards.  Hence 'early_options' and 'ffmpeg_options'
         # The `-nostdin` is needed to avoid the command to hang, see
         # https://stackoverflow.com/questions/16523746/ffmpeg-hangs-when-run-in-background
-        cmd = 'cd %s; ffmpeg -nostdin -y -f image2 %s -i %s %s %s' % (
-            shlex.quote(pngdir), early_options, shlex.quote(pngs), ffmpeg_options, shlex.quote(savefile))
+        cmd = 'cd {}; {} -nostdin -y -f image2 {} -i {} {} {}'.format(
+            shlex.quote(pngdir), shlex.quote(FFmpeg().absolute_filename()),
+            early_options, shlex.quote(pngs), ffmpeg_options, shlex.quote(savefile))
         from subprocess import check_call, CalledProcessError, PIPE
         try:
             if sage.misc.verbose.get_verbose() > 0:
@@ -1016,8 +1036,8 @@ class Animation(WithEqualityById, SageObject):
 
     def apng(self, savefile=None, show_path=False, delay=20, iterations=0):
         r"""
-        Creates an animated PNG composed from rendering the graphics
-        objects in self. Return the absolute path to that file.
+        Create an animated PNG composed from rendering the graphics
+        objects in ``self``. Return the absolute path to that file.
 
         Notice that not all web browsers are capable of displaying APNG
         files, though they should still present the first frame of the
@@ -1027,23 +1047,24 @@ class Animation(WithEqualityById, SageObject):
 
         Input:
 
-        -  ``delay`` - (default: 20) delay in hundredths of a
-           second between frames
+        - ``delay`` -- (default: 20) delay in hundredths of a
+          second between frames
 
-        -  ``savefile`` - file that the animated gif gets saved
-           to
+        - ``savefile`` -- file that the animated gif gets saved
+          to
 
-        -  ``iterations`` - integer (default: 0); number of
-           iterations of animation. If 0, loop forever.
+        - ``iterations`` -- integer (default: 0); number of
+          iterations of animation. If 0, loop forever.
 
-        -  ``show_path`` - boolean (default: False); if True,
-           print the path to the saved file
+        - ``show_path`` -- boolean (default: ``False``); if True,
+          print the path to the saved file
 
         EXAMPLES::
 
             sage: x = SR.var("x")
-            sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.7)],
-            ....:                xmin=0, xmax=2*pi, figsize=[2,1])
+            sage: a = animate([sin(x + float(k))
+            ....:              for k in srange(0,2*pi,0.7)],
+            ....:             xmin=0, xmax=2*pi, figsize=[2,1])
             sage: dir = tmp_dir()
             sage: a.apng(show_path=True)  # long time
             Animation saved to ....png.
@@ -1053,7 +1074,8 @@ class Animation(WithEqualityById, SageObject):
 
         If the individual frames have different sizes, an error will be raised::
 
-            sage: a = animate([plot(sin(x), (x, 0, k)) for k in range(1,4)],
+            sage: a = animate([plot(sin(x), (x, 0, k))
+            ....:              for k in range(1,4)],
             ....:             ymin=-1, ymax=1, aspect_ratio=1, figsize=[2,1])
             sage: a.apng()  # long time
             Traceback (most recent call last):
@@ -1065,7 +1087,6 @@ class Animation(WithEqualityById, SageObject):
             sage: a = animate([])
             sage: a.apng(show_path=True)
             Animation saved to file ....png.
-
         """
         pngdir = self.png()
         if savefile is None:
@@ -1086,16 +1107,15 @@ class Animation(WithEqualityById, SageObject):
 
         INPUT:
 
-        -  ``filename`` - (default: None) name of save file
+        - ``filename`` -- (default: ``None``) name of save file
 
-        -  ``show_path`` - boolean (default: False); if True,
-           print the path to the saved file
+        - ``show_path`` -- boolean (default: ``False``); if True,
+          print the path to the saved file
 
-        - ``use_ffmpeg`` - boolean (default: False); if True, use
-          'ffmpeg' by default instead of 'convert' when creating GIF
-          files.
+        - ``use_ffmpeg`` -- boolean (default: ``False``); if ``True``, use
+          'ffmpeg' by default instead of ImageMagick when creating GIF files
 
-        If filename is None, then in notebook mode, display the
+        If filename is ``None``, then in notebook mode, display the
         animation; otherwise, save the animation to a GIF file. If
         filename ends in '.html', save an :meth:`interactive` version of
         the animation to an HTML file that uses the Three.js viewer.  If
@@ -1111,14 +1131,15 @@ class Animation(WithEqualityById, SageObject):
         EXAMPLES::
 
             sage: x = SR.var("x")
-            sage: a = animate([sin(x + float(k)) for k in srange(0,2*pi,0.7)],
+            sage: a = animate([sin(x + float(k))
+            ....:              for k in srange(0, 2*pi, 0.7)],
             ....:             xmin=0, xmax=2*pi, ymin=-1, ymax=1, figsize=[2,1])
             sage: td = tmp_dir()
             sage: a.save()         # not tested
             sage: a.save(td + 'wave.gif')                   # long time  # optional -- ImageMagick
             sage: a.save(td + 'wave.gif', show_path=True)   # long time  # optional -- ImageMagick
             Animation saved to file .../wave.gif.
-            sage: a.save(td + 'wave.avi', show_path=True)   # long time  # optional -- ffmpeg
+            sage: a.save(td + 'wave.avi', show_path=True)   # long time  # optional -- FFmpeg
             Animation saved to file .../wave.avi.
             sage: a.save(td + 'wave0.sobj')
             sage: a.save(td + 'wave1.sobj', show_path=True)
@@ -1130,24 +1151,25 @@ class Animation(WithEqualityById, SageObject):
         TESTS:
 
         Ensure that we can pass delay and iteration count to the saved
-        GIF image (see :trac:`18176`)::
+        GIF image (see :issue:`18176`)::
 
-            sage: a.save(td + 'wave.gif')                   # long time  # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f:    # long time  # optional -- ImageMagick
+            sage: # long time, optional -- ImageMagick
+            sage: a.save(td + 'wave.gif')
+            sage: with open(td + 'wave.gif', 'rb') as f:
             ....:     print(b'GIF8' in f.read())
             True
-            sage: with open(td + 'wave.gif', 'rb') as f:    # long time  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f:
             ....:     print(b'!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())
             True
-            sage: a.save(td + 'wave.gif', delay=35)         # long time  # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f:    # long time  # optional -- ImageMagick
+            sage: a.save(td + 'wave.gif', delay=35)
+            sage: with open(td + 'wave.gif', 'rb') as f:
             ....:     print(b'GIF8' in f.read())
             True
-            sage: a.save(td + 'wave.gif', iterations=3)     # long time  # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f:    # long time  # optional -- ImageMagick
+            sage: a.save(td + 'wave.gif', iterations=3)
+            sage: with open(td + 'wave.gif', 'rb') as f:
             ....:     print(b'!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())
             False
-            sage: with open(td + 'wave.gif', 'rb') as f:    # long time  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f:
             ....:      check1 = b'!\xff\x0bNETSCAPE2.0\x03\x01\x02\x00\x00'
             ....:      check2 = b'!\xff\x0bNETSCAPE2.0\x03\x01\x03\x00\x00'
             ....:      data = f.read()
@@ -1187,14 +1209,13 @@ class Animation(WithEqualityById, SageObject):
           viewer are: ``animate``, ``animation_controls``, ``auto_play``,
           ``delay``, and ``loop``.
 
-        OUTPUT:
-
-        A 3D graphics object which, by default, will use the Three.js viewer.
+        OUTPUT: a 3D graphics object which, by default, will use the Three.js viewer
 
         EXAMPLES::
 
             sage: x = SR.var("x")
-            sage: frames = [point3d((sin(x), cos(x), x)) for x in (0, pi/16, .., 2*pi)]
+            sage: frames = [point3d((sin(x), cos(x), x))
+            ....:           for x in (0, pi/16, .., 2*pi)]
             sage: animate(frames).interactive(online=True)
             Graphics3d Object
 
@@ -1208,7 +1229,6 @@ class Animation(WithEqualityById, SageObject):
         .. SEEALSO::
 
             :ref:`threejs_viewer`
-
         """
         from sage.plot.plot3d.base import Graphics3d, KeyframeAnimationGroup
         # Attempt to convert frames to Graphics3d objects.
@@ -1223,7 +1243,7 @@ class Animation(WithEqualityById, SageObject):
                     except (AttributeError, TypeError):
                         frame = None
                 if not isinstance(frame, Graphics3d):
-                    raise TypeError("Could not convert frame {} to Graphics3d".format(i))
+                    raise TypeError(f"Could not convert frame {i} to Graphics3d")
             g3d_frames.append(frame)
         # Give preference to this method's keyword arguments over those provided
         # to animate or the constructor.
@@ -1234,9 +1254,9 @@ class Animation(WithEqualityById, SageObject):
         return KeyframeAnimationGroup(g3d_frames, **kwds)
 
 
-class APngAssembler():
+class APngAssembler:
     r"""
-    Builds an APNG_ (Animated PNG) from a sequence of PNG files.
+    Build an APNG_ (Animated PNG) from a sequence of PNG files.
     This is used by the :meth:`sage.plot.animate.Animation.apng` method.
 
     This code is quite simple; it does little more than copying chunks
@@ -1245,16 +1265,16 @@ class APngAssembler():
 
     INPUT:
 
-        - ``out`` -- a file opened for binary writing to which the data
-          will be written
+    - ``out`` -- a file opened for binary writing to which the data
+      will be written
 
-        - ``num_frames`` -- the number of frames in the animation
+    - ``num_frames`` -- the number of frames in the animation
 
-        - ``num_plays`` -- how often to iterate, 0 means infinitely
+    - ``num_plays`` -- how often to iterate, 0 means infinitely
 
-        - ``delay`` -- numerator of the delay fraction in seconds
+    - ``delay`` -- numerator of the delay fraction in seconds
 
-        - ``delay_denominator`` -- denominator of the delay in seconds
+    - ``delay_denominator`` -- denominator of the delay in seconds
 
     EXAMPLES::
 
@@ -1291,12 +1311,12 @@ class APngAssembler():
         self.num_plays = num_plays
         self.default_delay_numerator = delay
         self.default_delay_denominator = delay_denominator
-        self._matchref = dict()
+        self._matchref = {}
         self.out.write(self.magic)
 
     def add_frame(self, pngfile, delay=None, delay_denominator=None):
         r"""
-        Adds a single frame to the APNG file.
+        Add a single frame to the APNG file.
 
         INPUT:
 
@@ -1327,7 +1347,6 @@ class APngAssembler():
             Traceback (most recent call last):
             ...
             RuntimeError: Already reached the declared number of frames
-
         """
         if self._idx == self.num_frames:
             raise RuntimeError("Already reached the declared number of frames")
@@ -1346,7 +1365,7 @@ class APngAssembler():
 
     def set_default(self, pngfile):
         r"""
-        Adds a default image for the APNG file.
+        Add a default image for the APNG file.
 
         This image is used as a fallback in case some application does
         not understand the APNG format.  This method must be called
@@ -1377,7 +1396,6 @@ class APngAssembler():
             Traceback (most recent call last):
             ...
             RuntimeError: Already reached the declared number of frames
-
         """
         if self._idx != 0:
             raise RuntimeError("Default image must precede all animation frames")
@@ -1418,7 +1436,7 @@ class APngAssembler():
         """
         with open(pngfile, 'rb') as png:
             if png.read(8) != self.magic:
-                raise ValueError("{} is not a PNG file".format(pngfile))
+                raise ValueError(f"{pngfile} is not a PNG file")
             while True:
                 chead = png.read(8)
                 if len(chead) == 0:
@@ -1435,7 +1453,7 @@ class APngAssembler():
                         self._copy()
                     else:
                         if cdata != ref:
-                            raise ValueError("Chunk {} mismatch".format(utype))
+                            raise ValueError(f"Chunk {utype} mismatch")
                 met = ("_first_" if self._first else "_next_") + utype
                 try:
                     met = getattr(self, met)
@@ -1617,7 +1635,7 @@ class APngAssembler():
 
     def _chunk(self, ctype, cdata):
         r"""
-        Write a new (or modified) chunk of data
+        Write a new (or modified) chunk of data.
 
         TESTS::
 
@@ -1684,10 +1702,10 @@ class APngAssembler():
 
         INPUT:
 
-        - ``name``: The name of the file content.
+        - ``name`` -- the name of the file content.
 
-        - ``asFile``: Whether to return a binary string of the named data
-                      or the path of a file containing that data.
+        - ``asFile`` -- whether to return a binary string of the named data
+          or the path of a file containing that data
 
         EXAMPLES::
 
@@ -1745,7 +1763,7 @@ class APngAssembler():
         d = cls._hex2bin(data[name])
         if asFile:
             from sage.misc.temporary_file import tmp_filename
-            fn = tmp_filename(ext=".png")
+            fn = tmp_filename(ext='.png')
             with open(fn, 'wb') as f:
                 f.write(d)
             return fn

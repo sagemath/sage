@@ -23,6 +23,7 @@ from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.schemes.projective.projective_space import ProjectiveSpace
 
+
 class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_projective):
     r"""
     Construct an algebraic subscheme of a product of projective spaces.
@@ -38,10 +39,10 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
     INPUT:
 
     - ``A`` -- ambient :class:`Product of Projective Spaces
-      <sage.schemes.product_projective.space.ProductProjectiveSpaces_ring>`.
+      <sage.schemes.product_projective.space.ProductProjectiveSpaces_ring>`
 
     - ``polynomials`` -- single polynomial, ideal or iterable of
-      defining multi-homogeneous polynomials.
+      defining multi-homogeneous polynomials
 
     EXAMPLES::
 
@@ -70,11 +71,9 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         INPUT:
 
         - ``PP`` -- (default: ``None``) ambient image projective space;
-          this is constructed if it is not given.
+          this is constructed if it is not given
 
-        OUTPUT:
-
-        Hom from this subscheme to the appropriate subscheme of projective space
+        OUTPUT: hom from this subscheme to the appropriate subscheme of projective space
 
         EXAMPLES::
 
@@ -84,14 +83,14 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: Q = ((-u*w - v^2)*x^2 + ((-w^2 - u*w + (-u*v - u^2))*y + (-w^2 - u*v)*z)*x
             ....:      + ((-w^2 - u*w - u^2)*y^2 + (-u*w - v^2)*z*y + (-w^2 + (-v - u)*w)*z^2))
             sage: W = X.subscheme([L,Q])
-            sage: phi = W.segre_embedding(P)
-            sage: phi.codomain().ambient_space() == P
+            sage: phi = W.segre_embedding(P)                                            # needs sage.libs.singular
+            sage: phi.codomain().ambient_space() == P                                   # needs sage.libs.singular
             True
 
         ::
 
-            sage: PP.<x,y,u,v,s,t> = ProductProjectiveSpaces([1, 1, 1], CC)
-            sage: PP.subscheme([]).segre_embedding()
+            sage: PP.<x,y,u,v,s,t> = ProductProjectiveSpaces([1, 1, 1], CC)             # needs sage.rings.real_mpfr
+            sage: PP.subscheme([]).segre_embedding()                                    # needs sage.libs.singular sage.rings.real_mpfr
             Scheme morphism:
               From: Closed subscheme of Product of projective spaces P^1 x P^1 x P^1
                     over Complex Field with 53 bits of precision defined by:
@@ -107,7 +106,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         ::
 
             sage: PP.<x,y,z,u,v,s,t> = ProductProjectiveSpaces([2, 1, 1], ZZ)
-            sage: PP.subscheme([x^3, u - v, s^2 - t^2]).segre_embedding()
+            sage: PP.subscheme([x^3, u - v, s^2 - t^2]).segre_embedding()               # needs sage.libs.singular
             Scheme morphism:
               From: Closed subscheme of Product of projective spaces P^2 x P^1 x P^1
                     over Integer Ring defined by:
@@ -161,7 +160,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             Y = PS.subscheme(L)
         else:
             if PP.dimension_relative() != M:
-                raise ValueError("projective space %s must be dimension %s")%(PP, M)
+                raise ValueError("projective space %s must be dimension %s") % (PP, M)
             S = PP.coordinate_ring()
             psi = R.hom([0]*k + list(S.gens()), S)
             L = [psi(l) for l in L]
@@ -186,7 +185,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         r"""
         Return the dimension of the algebraic subscheme.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -195,33 +194,33 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: Q = ((-u*w - v^2)*x^2 + ((-w^2 - u*w + (-u*v - u^2))*y + (-w^2 - u*v)*z)*x
             ....:      + ((-w^2 - u*w - u^2)*y^2 + (-u*w - v^2)*z*y + (-w^2 + (-v - u)*w)*z^2))
             sage: W = X.subscheme([L, Q])
-            sage: W.dimension()
+            sage: W.dimension()                                                         # needs sage.libs.singular
             2
 
         ::
 
             sage: PP.<x,y,z,u,v,s,t> = ProductProjectiveSpaces([2, 1, 1], QQ)
             sage: X = PP.subscheme([x^3, x^5 + y^5, z^6, x*u - v*y, s^2 - t^2])
-            sage: X.dimension()
+            sage: X.dimension()                                                         # needs sage.libs.singular
             -1
 
         ::
 
-            sage: PP = ProductProjectiveSpaces([2, 1, 3], CC, 't')
-            sage: PP.subscheme([]).dimension()
+            sage: PP = ProductProjectiveSpaces([2, 1, 3], CC, 't')                      # needs sage.rings.real_mpfr
+            sage: PP.subscheme([]).dimension()                                          # needs sage.libs.singular sage.rings.real_mpfr
             6
 
         ::
 
             sage: PP = ProductProjectiveSpaces([1, 3, 1], ZZ, 't')
-            sage: PP.subscheme([]).dimension()
+            sage: PP.subscheme([]).dimension()                                          # needs sage.libs.singular
             5
 
         ::
 
-            sage: PP.<x,y,u,v,s,t> = ProductProjectiveSpaces([1,1,1], CC)
-            sage: X = PP.subscheme([x^2 - y^2, u - v, s^2 - t^2])
-            sage: X.dimension()
+            sage: PP.<x,y,u,v,s,t> = ProductProjectiveSpaces([1,1,1], CC)               # needs sage.rings.real_mpfr
+            sage: X = PP.subscheme([x^2 - y^2, u - v, s^2 - t^2])                       # needs sage.libs.singular sage.rings.real_mpfr
+            sage: X.dimension()                                                         # needs sage.libs.singular sage.rings.real_mpfr
             0
         """
         try:
@@ -263,14 +262,15 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
     def affine_patch(self, I, return_embedding=False):
         r"""
-        Return the `I^{th}` affine patch of this projective scheme
+        Return the `I`-th affine patch of this projective scheme
         where `I` is a multi-index.
 
         INPUT:
 
-        - ``I`` -- a list or tuple of positive integers
+        - ``I`` -- list or tuple of positive integers
 
-        - ``return_embedding`` -- Boolean, if true the projective embedding is also returned
+        - ``return_embedding`` -- boolean; if ``True`` the projective embedding
+          is also returned
 
         OUTPUT:
 
@@ -300,11 +300,11 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         PP = self.ambient_space()
         N = PP.dimension_relative_components()
         if len(I) != len(N):
-            raise ValueError('The argument I=%s must have %s entries'%(I,len(N)))
+            raise ValueError('The argument I=%s must have %s entries' % (I,len(N)))
         I = tuple([int(i) for i in I])   # implicit type checking
         for i in range(len(I)):
             if I[i] < 0 or I[i] > N[i]:
-                raise ValueError("Argument i (= %s) must be between 0 and %s."%(I[i], N[i]))
+                raise ValueError("Argument i (= %s) must be between 0 and %s." % (I[i], N[i]))
         #see if we've already created this affine patch
         try:
             if return_embedding:
@@ -336,18 +336,19 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
     def intersection_multiplicity(self, X, P):
         r"""
-        Return the intersection multiplicity of this subscheme and the subscheme ``X`` at the point ``P``.
+        Return the intersection multiplicity of this subscheme and the
+        subscheme ``X`` at the point ``P``.
 
-        This uses the intersection_multiplicity function for affine subschemes on affine patches of this subscheme
-        and ``X`` that contain ``P``.
+        This uses the intersection_multiplicity function for affine subschemes
+        on affine patches of this subscheme and ``X`` that contain ``P``.
 
         INPUT:
 
-        - ``X`` -- subscheme in the same ambient space as this subscheme.
+        - ``X`` -- subscheme in the same ambient space as this subscheme
 
-        - ``P`` -- a point in the intersection of this subscheme with ``X``.
+        - ``P`` -- a point in the intersection of this subscheme with ``X``
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES:
 
@@ -356,20 +357,21 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: PP.<x,y,u,v> = ProductProjectiveSpaces(QQ, [1, 1])
             sage: G = PP.subscheme([(x^2 + 1/4*y^2)*v - y^2*u])
             sage: D = PP.subscheme([x*v - y*u])
-            sage: sorted(G.intersection(D).rational_points())
+            sage: sorted(G.intersection(D).rational_points())                           # needs sage.libs.singular
             [(1/2 : 1 , 1/2 : 1), (1 : 0 , 1 : 0)]
             sage: Q = PP([1/2,1,1/2,1])
-            sage: G.intersection_multiplicity(D, Q)
+            sage: G.intersection_multiplicity(D, Q)                                     # needs sage.libs.singular
             2
 
         ::
 
-            sage: F.<a> = GF(4)                                                         # optional - sage.rings.finite_rings
-            sage: PP.<x,y,z,u,v,w> = ProductProjectiveSpaces(F, [2, 2])                 # optional - sage.rings.finite_rings
-            sage: X = PP.subscheme([z^5 + 3*x*y^4 + 8*y^5, u^2 - v^2])                  # optional - sage.rings.finite_rings
-            sage: Y = PP.subscheme([x^6 + z^6, w*z - v*y])                              # optional - sage.rings.finite_rings
-            sage: Q = PP([a,a+1,1,a,a,1])                                               # optional - sage.rings.finite_rings
-            sage: X.intersection_multiplicity(Y, Q)                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(4)
+            sage: PP.<x,y,z,u,v,w> = ProductProjectiveSpaces(F, [2, 2])
+            sage: X = PP.subscheme([z^5 + 3*x*y^4 + 8*y^5, u^2 - v^2])
+            sage: Y = PP.subscheme([x^6 + z^6, w*z - v*y])
+            sage: Q = PP([a,a+1,1,a,a,1])
+            sage: X.intersection_multiplicity(Y, Q)                                     # needs sage.libs.singular
             16
 
         ::
@@ -378,7 +380,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: X = PP.subscheme([x^2*u^3 + y*z*u*v^2, x - y])
             sage: Y = PP.subscheme([u^3 - w^3, x*v - y*w, z^3*w^2 - y^3*u*v])
             sage: Q = PP([0,0,1,0,1,0])
-            sage: X.intersection_multiplicity(Y, Q)
+            sage: X.intersection_multiplicity(Y, Q)                                     # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             TypeError: the intersection of this subscheme and (=Closed subscheme of Affine Space of dimension 4
@@ -388,7 +390,7 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
         try:
             PP(P)
         except TypeError:
-            raise TypeError("(=%s) must be a point in the ambient space of this subscheme and (=%s)"%(P,X))
+            raise TypeError("(=%s) must be a point in the ambient space of this subscheme and (=%s)" % (P,X))
         # find an affine chart of the ambient space of this subscheme that contains P
         indices = []
         aff_pt = []
@@ -415,30 +417,30 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
 
         INPUT:
 
-        - ``P`` -- a point on this subscheme.
+        - ``P`` -- a point on this subscheme
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
             sage: PP.<x,y,z,w> = ProductProjectiveSpaces(QQ, [1, 1])
             sage: X = PP.subscheme([x^4*z^3 - y^4*w^3])
             sage: Q1 = PP([1,1,1,1])
-            sage: X.multiplicity(Q1)
+            sage: X.multiplicity(Q1)                                                    # needs sage.libs.singular
             1
             sage: Q2 = PP([0,1,1,0])
-            sage: X.multiplicity(Q2)
+            sage: X.multiplicity(Q2)                                                    # needs sage.libs.singular
             3
 
         ::
 
-            sage: PP.<x,y,z,w,u> = ProductProjectiveSpaces(GF(11), [1,2])               # optional - sage.rings.finite_rings
-            sage: X = PP.subscheme([x^7*u - y^7*z, u^6*x^2 - w^3*z^3*x*y - w^6*y^2])    # optional - sage.rings.finite_rings
-            sage: Q1 = PP([1,0,10,1,0])                                                 # optional - sage.rings.finite_rings
-            sage: X.multiplicity(Q1)                                                    # optional - sage.rings.finite_rings
+            sage: PP.<x,y,z,w,u> = ProductProjectiveSpaces(GF(11), [1,2])
+            sage: X = PP.subscheme([x^7*u - y^7*z, u^6*x^2 - w^3*z^3*x*y - w^6*y^2])
+            sage: Q1 = PP([1,0,10,1,0])
+            sage: X.multiplicity(Q1)                                                    # needs sage.libs.singular sage.rings.finite_rings
             1
-            sage: Q2 = PP([1,0,1,0,0])                                                  # optional - sage.rings.finite_rings
-            sage: X.multiplicity(Q2)                                                    # optional - sage.rings.finite_rings
+            sage: Q2 = PP([1,0,1,0,0])
+            sage: X.multiplicity(Q2)                                                    # needs sage.libs.singular sage.rings.finite_rings
             4
         """
         PP = self.ambient_space()

@@ -44,7 +44,8 @@ def is_mutation_finite(M, nr_of_checks=None):
 
     INPUT:
 
-    - ``nr_of_checks`` -- (default: ``None``) number of mutations applied. Standard is 500*(number of vertices of self).
+    - ``nr_of_checks`` -- number of mutations applied (default: ``None``);
+      standard is 500*(number of vertices of self)
 
     ALGORITHM:
 
@@ -55,17 +56,18 @@ def is_mutation_finite(M, nr_of_checks=None):
 
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 
-        sage: Q = ClusterQuiver(['A',10])
+        sage: Q = ClusterQuiver(['A',10])                                               # needs sage.modules
         sage: M = Q.b_matrix()                                                          # needs sage.modules
         sage: is_mutation_finite(M)                                                     # needs sage.modules
         (True, None)
 
+        sage: # needs sage.modules
         sage: Q = ClusterQuiver([(0,1),(1,2),(2,3),(3,4),(4,5),(5,6),(6,7),(7,8),(2,9)])
-        sage: M = Q.b_matrix()                                                          # needs sage.modules
-        sage: is_mutation_finite(M)  # random                                           # needs sage.modules
+        sage: M = Q.b_matrix()
+        sage: is_mutation_finite(M)  # random
         (False, [9, 6, 9, 8, 9, 4, 0, 4, 5, 2, 1, 0, 1, 0, 7, 1, 9, 2, 5, 7, 8, 6, 3, 0, 2, 5, 4, 2, 6, 9, 2, 7, 3, 5, 3, 7, 9, 5, 9, 0, 2, 7, 9, 2, 4, 2, 1, 6, 9, 4, 3, 5, 0, 8, 2, 9, 5, 3, 7, 0, 1, 8, 3, 7, 2, 7, 3, 4, 8, 0, 4, 9, 5, 2, 8, 4, 8, 1, 7, 8, 9, 1, 5, 0, 8, 7, 4, 8, 9, 8, 0, 7, 4, 7, 1, 2, 8, 6, 1, 3, 9, 3, 9, 1, 3, 2, 4, 9, 5, 1, 2, 9, 4, 8, 5, 3, 4, 6, 8, 9, 2, 5, 9, 4, 6, 2, 1, 4, 9, 6, 0, 9, 8, 0, 4, 7, 9, 2, 1, 6])
 
-    Check that :trac:`19495` is fixed::
+    Check that :issue:`19495` is fixed::
 
         sage: dg = DiGraph(); dg.add_vertex(0); S = ClusterSeed(dg); S                  # needs sage.modules
         A seed for a cluster algebra of rank 1
@@ -100,6 +102,7 @@ def _triangles(dg):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _triangles
         sage: Q = ClusterQuiver(['A',3])
         sage: _triangles(Q.digraph())
@@ -147,13 +150,14 @@ def _triangles(dg):
     return trians
 
 
-def _all_induced_cycles_iter( dg ):
+def _all_induced_cycles_iter(dg):
     """
     Return an iterator for all induced oriented cycles of length
     greater than or equal to 4 in the digraph ``dg``.
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _all_induced_cycles_iter
         sage: Q = ClusterQuiver(['A',[6,0],1]); Q
         Quiver on 6 vertices of type ['D', 6]
@@ -220,6 +224,7 @@ def _reset_dg(dg, vertices, dict_in_out, del_vertices):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _reset_dg
         sage: dg = ClusterQuiver(['A',[2,2],1]).digraph(); dg
         Digraph on 4 vertices
@@ -311,7 +316,7 @@ def _check_special_BC_cases(dg, n, check_letter_list, check_twist_list,
                 if conn_vert_list:
                     conn_verts = list(set(dg).difference(conn_verts))
             if mut_type._letter == hope_letter and not mut_type._twist and conn_vert.issubset(conn_verts):
-                if len(check_letter)>1:
+                if len(check_letter) > 1:
                     check_twist = 1
                 if check_twist:
                     n -= 1
@@ -326,6 +331,7 @@ def _connected_mutation_type(dg):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _connected_mutation_type
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
         sage: dg = ClusterQuiver(['A',3]).digraph(); _connected_mutation_type( dg )
@@ -351,9 +357,9 @@ def _connected_mutation_type(dg):
     for edge in edges:
         label = edge[2]
         if label not in [(1,-1),(2,-2),(1,-2),(2,-1),(4,-1),(1,-4)]:
-    # _false_return(i) is a simple function that simply returns 'unknown'.  For debugging purposes, it
-    # can also output 'DEBUG: error i' if desired.
-    # this command is used many times in this code, something times without the argument i.
+            # _false_return(i) is a simple function that simply returns 'unknown'.  For debugging purposes, it
+            # can also output 'DEBUG: error i' if desired.
+            # this command is used many times in this code, something times without the argument i.
             return _false_return(2)
         elif label == (2,-2):
             dg.set_edge_label( edge[0], edge[1], 1 )
@@ -804,9 +810,9 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
     INPUT:
 
-    - ``ret_conn_vert`` -- boolean (default: ``False``). If ``True``,
+    - ``ret_conn_vert`` -- boolean (default: ``False``); if ``True``,
       returns 'connecting vertices', technical information that is
-      used in the algorithm.
+      used in the algorithm
 
     A brief description of the algorithm::
 
@@ -820,15 +826,14 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _connected_mutation_type_AAtildeD
         sage: Q = ClusterQuiver(['A',[7,0],1]); Q.mutate([0,1,4])
         sage: _connected_mutation_type_AAtildeD(Q.digraph(),ret_conn_vert=True)
         [['D', 7], [0, 4]]
-
         sage: Q2 = ClusterQuiver(['A',[5,2],1]); Q2.mutate([4,5])
         sage: _connected_mutation_type_AAtildeD(Q2.digraph() )
         ['A', [2, 5], 1]
-
         sage: Q3 = ClusterQuiver(['E',6]); Q3.mutate([5,2,1])
         sage: _connected_mutation_type_AAtildeD(Q3.digraph(),ret_conn_vert=True)
         'unknown'
@@ -892,9 +897,9 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
                 # Exception 1 case (4-cycle):
                 edges = sg.edges(sort=True, labels=False)
-                if not (c1[0],c1[1]) in edges and not (c1[1],c1[0]) in edges and sg.is_isomorphic( exception_graph1 ):
-                    dg_tmp = DiGraph( dg )
-                    dg_tmp.delete_vertices( c1 )
+                if (c1[0], c1[1]) not in edges and (c1[1], c1[0]) not in edges and sg.is_isomorphic(exception_graph1):
+                    dg_tmp = DiGraph(dg)
+                    dg_tmp.delete_vertices(c1)
 
                     components = dg_tmp.connected_components(sort=False)
                     # if not len(components) == 2:
@@ -1019,17 +1024,17 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
         multiple_trian_edges = list(set(multiple_trian_edges))
 
         # test that there at most three edges appearing in exactly two oriented triangles
-        count = len( multiple_trian_edges )
+        count = len(multiple_trian_edges)
         if count >= 4:
             return _false_return(321)
         # if two edges appearing in exactly two oriented triangles, test that the two edges together
         # determine a unique triangle
         elif count > 1:
-            test_triangles = []
-            for edge in multiple_trian_edges:
-                test_triangles.append([ tuple(trian) for trian in oriented_trians if edge in trian ])
-            unique_triangle = set(test_triangles[0]).intersection( *test_triangles[1:] )
-            if len( unique_triangle ) != 1:
+            test_triangles = [[tuple(trian) for trian in oriented_trians
+                               if edge in trian]
+                              for edge in multiple_trian_edges]
+            unique_triangle = set.intersection(*map(set, test_triangles))
+            if len(unique_triangle) != 1:
                 return _false_return(19)
             else:
                 # if a long_cycle had previously been found, this unique oriented triangle is a second long_cycle, a contradiction.
@@ -1041,7 +1046,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
         # if one edge appearing in exactly two oriented triangles, test that it is not a double-edge and then
         # test that either the third or fourth vertices (from the oriented triangles) is of degree 2.
         # Then initializes the long_cycle as this triangle including the degree 2 vertex, as long as no other long_cycles.
-        elif count == 1 and not dg.has_multiple_edges() and not multiple_trian_edges[0] in dg.multiple_edges():
+        elif count == 1 and not dg.has_multiple_edges() and multiple_trian_edges[0] not in dg.multiple_edges():
             multiple_trian_edge = multiple_trian_edges[0]
             neighbors = list(set(dg.neighbors( multiple_trian_edge[0] )).intersection(dg.neighbors( multiple_trian_edge[1] )))
             if dg.degree( neighbors[0] ) == 2:
@@ -1081,13 +1086,13 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                     if len( in_neighbors ) == 1:
                         in_neighbors.extend(in_neighbors)
 
-                    if not (in_neighbors[0],v) in oriented_trian_edges:
+                    if (in_neighbors[0], v) not in oriented_trian_edges:
                         return _false_return(24)
-                    elif not (in_neighbors[1],v) in oriented_trian_edges:
+                    elif (in_neighbors[1], v) not in oriented_trian_edges:
                         return _false_return(25)
-                    elif not (v,out_neighbors[0]) in oriented_trian_edges:
+                    elif (v, out_neighbors[0]) not in oriented_trian_edges:
                         return _false_return(26)
-                    elif not (v,out_neighbors[1]) in oriented_trian_edges:
+                    elif (v, out_neighbors[1]) not in oriented_trian_edges:
                         return _false_return(27)
 
             # if a vertex has valency 3 than 2 of its neighboring edges must be contained in an oriented triangle and the remaining must not
@@ -1106,14 +1111,14 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                                 return _false_return(30)
                             if not long_cycle[1] == QuiverMutationType(['D',n]):
                                 return _false_return(31)
-                            if not (v,out_neighbors[0]) in long_cycle[0] and not (v,out_neighbors[1]) in long_cycle[0]:
+                            if (v, out_neighbors[0]) not in long_cycle[0] and (v, out_neighbors[1]) not in long_cycle[0]:
                                 return _false_return(32)
                         if (v,out_neighbors[0]) not in oriented_trian_edges and (v,out_neighbors[1]) not in oriented_trian_edges:
                             return _false_return(33)
                 elif w[0] == 2:
                     in_neighbors = dg.neighbors_in( v )
                     out_neighbors = dg.neighbors_out( v )
-                    if not (v,out_neighbors[0]) in oriented_trian_edges:
+                    if (v, out_neighbors[0]) not in oriented_trian_edges:
                         return _false_return(34)
                     elif len( in_neighbors ) == 1:
                         if (in_neighbors[0],v) not in oriented_trian_edges:
@@ -1124,9 +1129,9 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                                 return _false_return(36)
                             if not long_cycle[1] == QuiverMutationType(['D',n]):
                                 return _false_return(37)
-                            if not (in_neighbors[0],v) in long_cycle[0] and not (in_neighbors[1],v) in long_cycle[0]:
+                            if (in_neighbors[0], v) not in long_cycle[0] and (in_neighbors[1], v) not in long_cycle[0]:
                                 return _false_return(38)
-                        if (in_neighbors[0],v) not in oriented_trian_edges and (in_neighbors[1],v) not in oriented_trian_edges:
+                        if (in_neighbors[0], v) not in oriented_trian_edges and (in_neighbors[1], v) not in oriented_trian_edges:
                             return _false_return(39)
                 else:
                     return _false_return(40)
@@ -1241,7 +1246,7 @@ def load_data(n, user=True):
 
     INPUT:
 
-    - ``user`` -- boolean (default: ``True``) whether to look at user
+    - ``user`` -- boolean (default: ``True``); whether to look at user
       data. If not, only consider the optional package.
 
     EXAMPLES::
@@ -1295,7 +1300,7 @@ def load_data(n, user=True):
     return data
 
 
-def _mutation_type_from_data( n, dig6, compute_if_necessary=True ):
+def _mutation_type_from_data(n, dig6, compute_if_necessary=True):
     r"""
     Return the mutation type from the given dig6 data by looking into
     the precomputed mutation types
@@ -1305,6 +1310,7 @@ def _mutation_type_from_data( n, dig6, compute_if_necessary=True ):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.combinat.cluster_algebra_quiver.mutation_class import _digraph_to_dig6
         sage: from sage.combinat.cluster_algebra_quiver.mutation_type import _mutation_type_from_data
         sage: from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
@@ -1331,10 +1337,10 @@ def _mutation_type_from_data( n, dig6, compute_if_necessary=True ):
 
 def _mutation_type_test(n):
     """
-    Tests all quivers (of the given types) of rank n to check that
+    Test all quivers (of the given types) of rank n to check that
     mutation_type() works.
 
-    Affine type D does not return True since this test is not implemented.
+    Affine type D does not return ``True`` since this test is not implemented.
 
     EXAMPLES::
 
@@ -1413,10 +1419,10 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
 
     INPUT:
 
-    - ``mt`` something that can be turned into a QuiverMutationType
-    - ``k`` (integer) the number of tests performed for each quiver of rank ``n``
-    - ``mut_class`` is given, this mutation class is used
-    - ``nr_mut`` (integer, default:5) the number of mutations performed before
+    - ``mt`` something that can be turned into a ``QuiverMutationType``
+    - ``k`` -- integer; the number of tests performed for each quiver of rank ``n``
+    - ``mut_class`` -- if given, this mutation class is used
+    - ``nr_mut`` -- integer (default: 5); the number of mutations performed before
       testing
 
     The idea of this random test is to start with a mutation type
@@ -1501,15 +1507,15 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
                     dg = dg_new
 
 
-def _random_multi_tests( n, k, nr_mut=5 ):
+def _random_multi_tests(n, k, nr_mut=5):
     """
     Provide multiple random tests to find bugs in the mutation type methods.
 
     INPUT:
 
-    - ``n`` (integer) -- the rank of the mutation types to test
-    - ``k`` (integer) -- the number of tests performed for each quiver of rank ``n``
-    - ``nr_mut`` (integer, default:5) -- the number of mutations performed before testing
+    - ``n`` -- integer; the rank of the mutation types to test
+    - ``k`` -- integer; the number of tests performed for each quiver of rank ``n``
+    - ``nr_mut`` -- integer (default: 5); the number of mutations performed before testing
 
     TESTS::
 

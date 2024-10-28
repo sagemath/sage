@@ -1,4 +1,3 @@
-# coding: utf-8
 r"""
 Solution of polynomial systems using msolve
 
@@ -8,7 +7,7 @@ based on Gröbner bases.
 This module provide implementations of some operations on polynomial ideals
 based on msolve.
 
-Note that the `optional package msolve <../spkg/msolve.html>`_ must be installed.
+Note that the :ref:`optional package msolve <spkg_msolve>` must be installed.
 
 .. SEEALSO::
 
@@ -64,7 +63,7 @@ def _run_msolve(ideal, options):
 
     return msolve_out.stdout
 
-def groebner_basis_degrevlex(ideal):
+def groebner_basis_degrevlex(ideal, proof=True):
     r"""
     Compute a degrevlex Gröbner basis using msolve
 
@@ -85,25 +84,27 @@ def groebner_basis_degrevlex(ideal):
         [c^4 + 38*c^3 - 6*c^2 - 6*c, 30*c^3 + 32*c^2 + b - 14*c,
         a + 2*b + 2*c - 1]
 
-    TESTS::
-
-        sage: R.<foo, bar> = PolynomialRing(GF(536870909), 2)
-        sage: I = Ideal([ foo^2 - 1, bar^2 - 1 ])
-        sage: I.groebner_basis(algorithm='msolve') # optional - msolve
-        [bar^2 - 1, foo^2 - 1]
+    Gröbner bases over the rationals require `proof=False`::
 
         sage: R.<x, y> = PolynomialRing(QQ, 2)
         sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
         sage: I.groebner_basis(algorithm='msolve') # optional - msolve
         Traceback (most recent call last):
         ...
-        NotImplementedError: unsupported base field: Rational Field
+        ValueError: msolve relies on heuristics; please use proof=False
+        sage: I.groebner_basis(algorithm='msolve', proof=False) # optional - msolve
+        [x*y - 1, x^2 + y^2 - 4*x - 2*y + 4, y^3 - 2*y^2 + x + 4*y - 4]
+
+    TESTS::
+
+        sage: R.<foo, bar> = PolynomialRing(GF(536870909), 2)
+        sage: I = Ideal([ foo^2 - 1, bar^2 - 1 ])
+        sage: I.groebner_basis(algorithm='msolve') # optional - msolve
+        [bar^2 - 1, foo^2 - 1]
     """
 
-    base = ideal.base_ring()
-    if not (isinstance(base, FiniteField) and base.is_prime_field() and
-            base.characteristic() < 2**31):
-        raise NotImplementedError(f"unsupported base field: {base}")
+    if ideal.base_ring() is QQ and sage.structure.proof.proof.get_flag(proof, "polynomial"):
+            raise ValueError("msolve relies on heuristics; please use proof=False")
 
     drlpolring = ideal.ring().change_ring(order='degrevlex')
     msolve_out = _run_msolve(ideal, ["-g", "2"])
@@ -135,18 +136,18 @@ def variety(ideal, ring, *, proof=True):
         sage: R.<x, y> = PolynomialRing(GF(p), 2, order='lex')
         sage: I = Ideal([ x*y - 1, (x-2)^2 + (y-1)^2 - 1])
 
-        sage: sorted(I.variety(algorithm="msolve", proof=False), key=str) # optional - msolve
+        sage: sorted(I.variety(algorithm='msolve', proof=False), key=str) # optional - msolve
         [{x: 1, y: 1}, {x: 267525699, y: 473946006}]
 
         sage: K.<a> = GF(p^2)
-        sage: sorted(I.variety(K, algorithm="msolve", proof=False), key=str) # optional - msolve
+        sage: sorted(I.variety(K, algorithm='msolve', proof=False), key=str) # optional - msolve
         [{x: 1, y: 1},
          {x: 118750849*a + 194048031, y: 510295713*a + 18174854},
          {x: 267525699, y: 473946006},
          {x: 418120060*a + 75297182, y: 26575196*a + 44750050}]
 
         sage: R.<x, y> = PolynomialRing(GF(2147483659), 2, order='lex')
-        sage: ideal([x, y]).variety(algorithm="msolve", proof=False)
+        sage: ideal([x, y]).variety(algorithm='msolve', proof=False)
         Traceback (most recent call last):
         ...
         NotImplementedError: unsupported base field: Finite Field of size 2147483659

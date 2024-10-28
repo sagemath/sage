@@ -15,60 +15,65 @@ to install any special Sage packages.
 
 EXAMPLES::
 
-    sage: scilab.eval('2+2')                 # optional - scilab
+    sage: # optional - scilab
+    sage: scilab.eval('2+2')
     'ans  =\n \n    4.'
-    sage: scilab('2+2')                      # optional - scilab
+    sage: scilab('2+2')
     4.
-    sage: a = scilab(10)                     # optional - scilab
-    sage: a**10                              # optional - scilab
+    sage: a = scilab(10)
+    sage: a**10
     1.000D+10
 
 Tutorial based the MATLAB interface tutorial:
 
 EXAMPLES::
 
-    sage: scilab('4+10')                     # optional - scilab
+    sage: # optional - scilab
+    sage: scilab('4+10')
     14.
-    sage: scilab('date')                     # optional - scilab; random output
+    sage: scilab('date')
     15-Feb-2010
-    sage: scilab('5*10 + 6')                 # optional - scilab
+    sage: scilab('5*10 + 6')
     56.
-    sage: scilab('(6+6)/3')                  # optional - scilab
+    sage: scilab('(6+6)/3')
     4.
-    sage: scilab('9')^2                      # optional - scilab
+    sage: scilab('9')^2
     81.
-    sage: a = scilab(10); b = scilab(20); c = scilab(30)    # optional - scilab
-    sage: avg = (a+b+c)/3                    # optional - scilab
-    sage: avg                                # optional - scilab
+    sage: a = scilab(10); b = scilab(20); c = scilab(30)
+    sage: avg = (a+b+c)/3
+    sage: avg
     20.
-    sage: parent(avg)                        # optional - scilab
+    sage: parent(avg)
     Scilab
 
-    sage: my_scalar = scilab('3.1415')       # optional - scilab
-    sage: my_scalar                          # optional - scilab
+    sage: # optional - scilab
+    sage: my_scalar = scilab('3.1415')
+    sage: my_scalar
     3.1415
-    sage: my_vector1 = scilab('[1,5,7]')     # optional - scilab
-    sage: my_vector1                         # optional - scilab
+    sage: my_vector1 = scilab('[1,5,7]')
+    sage: my_vector1
     1.    5.    7.
-    sage: my_vector2 = scilab('[1;5;7]')     # optional - scilab
-    sage: my_vector2                         # optional - scilab
+    sage: my_vector2 = scilab('[1;5;7]')
+    sage: my_vector2
     1.
     5.
     7.
-    sage: my_vector1 * my_vector2            # optional - scilab
+    sage: my_vector1 * my_vector2
     75.
 
-    sage: row_vector1 = scilab('[1 2 3]')             # optional - scilab
-    sage: row_vector2 = scilab('[3 2 1]')             # optional - scilab
-    sage: matrix_from_row_vec = scilab('[%s; %s]'%(row_vector1.name(), row_vector2.name()))     # optional - scilab
-    sage: matrix_from_row_vec                            # optional - scilab
+    sage: # optional - scilab
+    sage: row_vector1 = scilab('[1 2 3]')
+    sage: row_vector2 = scilab('[3 2 1]')
+    sage: matrix_from_row_vec = scilab('[%s; %s]'%(row_vector1.name(), row_vector2.name()))
+    sage: matrix_from_row_vec
     1.    2.    3.
     3.    2.    1.
 
-    sage: column_vector1 = scilab('[1;3]')               # optional - scilab
-    sage: column_vector2 = scilab('[2;8]')               # optional - scilab
-    sage: matrix_from_col_vec = scilab('[%s %s]'%(column_vector1.name(), column_vector2.name()))                                    # optional - scilab
-    sage: matrix_from_col_vec                            # optional - scilab
+    sage: # optional - scilab
+    sage: column_vector1 = scilab('[1;3]')
+    sage: column_vector2 = scilab('[2;8]')
+    sage: matrix_from_col_vec = scilab('[%s %s]'%(column_vector1.name(), column_vector2.name()))
+    sage: matrix_from_col_vec
     1.    2.
     3.    8.
 
@@ -90,12 +95,13 @@ EXAMPLES::
     sage: tm                                            # optional - scilab
     0.5    2.5    4.5    6.5    8.5
 
-    sage: my_vector1 = scilab('[1,5,7]')                # optional - scilab
-    sage: my_vector1(1)                                 # optional - scilab
+    sage: # optional - scilab
+    sage: my_vector1 = scilab('[1,5,7]')
+    sage: my_vector1(1)
     1.
-    sage: my_vector1(2)                                 # optional - scilab
+    sage: my_vector1(2)
     5.
-    sage: my_vector1(3)                                 # optional - scilab
+    sage: my_vector1(3)
     7.
 
 Matrix indexing works as follows::
@@ -113,15 +119,16 @@ One can also use square brackets::
 Setting using parenthesis cannot work (because of how the Python
 language works).  Use square brackets or the set function::
 
-    sage: my_matrix = scilab('[8, 12, 19; 7, 3, 2; 12, 4, 23; 8, 1, 1]')    # optional - scilab
-    sage: my_matrix.set(2,3, 1999)                          # optional - scilab
-    sage: my_matrix                                         # optional - scilab
+    sage: # optional - scilab
+    sage: my_matrix = scilab('[8, 12, 19; 7, 3, 2; 12, 4, 23; 8, 1, 1]')
+    sage: my_matrix.set(2,3, 1999)
+    sage: my_matrix
            8.         12.         19.
            7.          3.       1999.
           12.          4.         23.
            8.          1.          1.
-    sage: my_matrix[2,3] = -126                             # optional - scilab
-    sage: my_matrix                                         # optional - scilab
+    sage: my_matrix[2,3] = -126
+    sage: my_matrix
            8.         12.         19.
            7.          3.      - 126.
           12.          4.         23.
@@ -129,49 +136,50 @@ language works).  Use square brackets or the set function::
 
 TESTS::
 
-    sage: M = scilab(x)                                     # optional - scilab
+    sage: # optional - scilab
+    sage: M = scilab(x)
     Traceback (most recent call last):
     ...
     TypeError: ..._interface_init_() takes exactly one argument (0 given)
-    sage: M = scilab(matrix(3,range(9))); M                 # optional - scilab
+    sage: M = scilab(matrix(3,range(9))); M
         0.    1.    2.
         3.    4.    5.
         6.    7.    8.
-    sage: M(10)                                             # optional - scilab
+    sage: M(10)
     Traceback (most recent call last):
     ...
     TypeError: Error executing code in Scilab
     ...
     Invalid index.
-    sage: M[10]                                             # optional - scilab
+    sage: M[10]
     Traceback (most recent call last):
     ...
     TypeError: Error executing code in Scilab
     ...
     Invalid index.
-    sage: M(4,2)                                            # optional - scilab
+    sage: M(4,2)
     Traceback (most recent call last):
     ...
     TypeError: Error executing code in Scilab
     ...
     Invalid index.
-    sage: M[2,4]                                            # optional - scilab
+    sage: M[2,4]
     Traceback (most recent call last):
     ...
     TypeError: Error executing code in Scilab
     ...
     Invalid index.
-    sage: M(9) = x                                          # optional - scilab
+    sage: M(9) = x
     Traceback (most recent call last):
     ...
     SyntaxError: can...t assign to function call (..., line 1)
 
 AUTHORS:
 
-   -- Ronan Paixao (2008-11-26), based on the MATLAB tutorial by
-      William Stein (2006-10-11)
+- Ronan Paixao (2008-11-26), based on the MATLAB tutorial by
+  William Stein (2006-10-11)
 """
-##############################################################################
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2008 Ronan Paixao <ronanpaixao@yahoo.com.br>
 #
@@ -184,8 +192,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-##############################################################################
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 
@@ -199,19 +207,20 @@ class Scilab(Expect):
 
     EXAMPLES::
 
-        sage: a = scilab('[ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]')    # optional - scilab
-        sage: b = scilab('[ 1; 3; 13]')                         # optional - scilab
-        sage: c = a * b                                         # optional - scilab
-        sage: print(c)                                          # optional - scilab
+        sage: # optional - scilab
+        sage: a = scilab('[ 1, 1, 2; 3, 5, 8; 13, 21, 33 ]')
+        sage: b = scilab('[ 1; 3; 13]')
+        sage: c = a * b
+        sage: print(c)
           30.
           122.
           505.
     """
     def __init__(self, maxread=None, script_subdirectory=None,
-                 logfile=None, server=None,server_tmpdir=None,
+                 logfile=None, server=None, server_tmpdir=None,
                  seed=None):
         """
-        Initializes the Scilab class.
+        Initialize the Scilab class.
 
         EXAMPLES::
 
@@ -240,11 +249,12 @@ class Scilab(Expect):
 
         EXAMPLES::
 
-            sage: from sage.interfaces.scilab import Scilab # optional - scilab
-            sage: s = Scilab() # optional - scilab
-            sage: s.set_seed(1) # optional - scilab
+            sage: # optional - scilab
+            sage: from sage.interfaces.scilab import Scilab
+            sage: s = Scilab()
+            sage: s.set_seed(1)
             1
-            sage: [s.rand() for i in range(5)] # optional - scilab
+            sage: [s.rand() for i in range(5)]
             [
             <BLANKLINE>
                  0.6040239,
@@ -265,7 +275,7 @@ class Scilab(Expect):
 
     def _quit_string(self):
         """
-        Returns the string used to quit the pexpect interface.
+        Return the string used to quit the pexpect interface.
 
         EXAMPLES::
 
@@ -315,12 +325,12 @@ class Scilab(Expect):
             sage: scilab.eval("d=44")                   # optional - scilab
             'd  =\n \n    44.'
         """
-        s = Expect.eval(self, command, **kwds).replace("\x1b[?1l\x1b>","").strip()
-        return s
+        s = Expect.eval(self, command, **kwds)
+        return s.replace("\x1b[?1l\x1b>", "").strip()
 
     def whos(self, name=None, typ=None):
         """
-        Returns information about current objects.
+        Return information about current objects.
         Arguments:
         nam: first characters of selected names
         typ: name of selected Scilab variable type
@@ -349,14 +359,14 @@ class Scilab(Expect):
             sage: scilab.get('a')               # optional - scilab
             '\n \n    123.'
         """
-        cmd = '%s=%s;'%(var,value)
+        cmd = '%s=%s;' % (var, value)
         out = self.eval(cmd)
         if out.find("error") != -1:
-            raise TypeError("Error executing code in Scilab\nCODE:\n\t%s\nScilab ERROR:\n\t%s"%(cmd, out))
+            raise TypeError("Error executing code in Scilab\nCODE:\n\t%s\nScilab ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
         """
-        Get the value of the variable var.
+        Get the value of the variable ``var``.
 
         EXAMPLES::
 
@@ -365,7 +375,7 @@ class Scilab(Expect):
             sage: scilab.get('b')                       # optional - scilab
             '\n \n    124.'
         """
-        s = self.eval('%s'%var)
+        s = self.eval(f'{var}')
         i = s.find('=')
         return s[i+1:]
 
@@ -376,13 +386,12 @@ class Scilab(Expect):
         EXAMPLES::
 
             sage: scilab.console()          # optional - scilab; not tested
-
         """
         scilab_console()
 
     def version(self):
         """
-        Returns the version of the Scilab software used.
+        Return the version of the Scilab software used.
 
         EXAMPLES::
 
@@ -396,10 +405,10 @@ class Scilab(Expect):
         Return a Scilab matrix from a Sage matrix.
 
         INPUT:
-            A Sage matrix with entries in the rationals or reals.
 
-        OUTPUT:
-            A string that evaluates to an Scilab matrix.
+        - ``A`` -- Sage matrix with entries in the rationals or reals
+
+        OUTPUT: string that evaluates to a Scilab matrix
 
         EXAMPLES::
 
@@ -407,13 +416,13 @@ class Scilab(Expect):
             sage: A = M33([1,2,3,4,5,6,7,8,0])          # optional - scilab
             sage: scilab.sage2scilab_matrix_string(A)   # optional - scilab
             '[1, 2, 3; 4, 5, 6; 7, 8, 0]'
-
         """
-        return str(A.rows()).replace('), (', '; ').replace('(', '').replace(')','')
+        s = str(A.rows())
+        return s.replace('), (', '; ').replace('(', '').replace(')', '')
 
     def _object_class(self):
         """
-        Returns the class of the object.
+        Return the class of the object.
 
         EXAMPLES::
 
@@ -433,12 +442,13 @@ class ScilabElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: M = scilab('[1,2,3;4,5,6;7,8,9]')     # optional - scilab
-            sage: M[1]                                  # optional - scilab
+            sage: # optional - scilab
+            sage: M = scilab('[1,2,3;4,5,6;7,8,9]')
+            sage: M[1]
             1.
-            sage: M[7]                                  # optional - scilab
+            sage: M[7]
             3.
-            sage: M[3,2]                                # optional - scilab
+            sage: M[3,2]
             8.
         """
         if isinstance(n, tuple):
@@ -449,18 +459,19 @@ class ScilabElement(ExpectElement):
 
     def __setitem__(self, n, value):
         """
-        Sets an element of a matrix.
+        Set an element of a matrix.
 
         EXAMPLES::
 
-            sage: M = scilab('[1,2,3;4,5,6;7,8,9]')     # optional - scilab
-            sage: M[6] = 0                              # optional - scilab
-            sage: M                                     # optional - scilab
+            sage: # optional - scilab
+            sage: M = scilab('[1,2,3;4,5,6;7,8,9]')
+            sage: M[6] = 0
+            sage: M
             1.    2.    3.
             4.    5.    6.
             7.    0.    9.
-            sage: M[3,2] = 10                           # optional - scilab
-            sage: M                                     # optional - scilab
+            sage: M[3,2] = 10
+            sage: M
             1.    2.    3.
             4.    5.    6.
             7.    10.    9.
@@ -477,12 +488,13 @@ class ScilabElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: A = scilab('[1,2;3,4]')       # optional - scilab
-            sage: matrix(ZZ, A)                 # optional - scilab
+            sage: # optional - scilab
+            sage: A = scilab('[1,2;3,4]')
+            sage: matrix(ZZ, A)
             [1 2]
             [3 4]
-            sage: A = scilab('[1,2;3,4.5]')     # optional - scilab
-            sage: matrix(RR, A)                 # optional - scilab
+            sage: A = scilab('[1,2;3,4.5]')
+            sage: matrix(RR, A)
             [1.00000000000000 2.00000000000000]
             [3.00000000000000 4.50000000000000]
         """
@@ -509,7 +521,8 @@ class ScilabElement(ExpectElement):
         """
         P = self._check_valid()
         z = P(x)
-        P.eval('%s(%s,%s) = %s'%(self.name(), i, j, z.name()))
+        P.eval('%s(%s,%s) = %s' % (self.name(), i, j, z.name()))
+
 
 # An instance
 scilab = Scilab()
@@ -522,7 +535,7 @@ def scilab_console():
 
     EXAMPLES::
 
-        sage: from sage.interfaces.scilab import scilab_console # optional - scilab
+        sage: from sage.interfaces.scilab import scilab_console  # optional - scilab
         sage: scilab_console()                               # optional - scilab; not tested
                 ___________________________________________
                                scilab-5.0.3
@@ -556,7 +569,7 @@ def scilab_version():
 
     EXAMPLES::
 
-        sage: from sage.interfaces.scilab import scilab_version # optional - scilab
+        sage: from sage.interfaces.scilab import scilab_version  # optional - scilab
         sage: scilab_version()    # optional - scilab
         'scilab-...'
     """

@@ -6,7 +6,7 @@ cdef class PowComputer_class(SageObject):
     cdef Integer prime
     cdef Integer p2 # floor(p/2)
     cdef bint in_field
-    cdef int __allocated
+    cdef int _allocated
     cdef public object _prec_type
 
     cdef long ram_prec_cap # = prec_cap * e
@@ -23,7 +23,7 @@ cdef class PowComputer_class(SageObject):
     cdef unsigned long prec_cap
 
     cdef Integer pow_Integer(self, long n)
-    cdef mpz_srcptr pow_mpz_t_top(self)
+    cdef mpz_srcptr pow_mpz_t_top(self) noexcept
     cdef mpz_srcptr pow_mpz_t_tmp(self, long n) except NULL
     cdef mpz_t temp_m
 

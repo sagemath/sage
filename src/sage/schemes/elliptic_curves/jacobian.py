@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Construct elliptic curves as Jacobians
 
@@ -63,9 +62,9 @@ def Jacobian(X, **kwds):
     INPUT:
 
     - ``X`` -- polynomial, algebraic variety, or anything else that
-      has a Jacobian elliptic curve.
+      has a Jacobian elliptic curve
 
-    - ``kwds`` -- optional keyword arguments.
+    - ``kwds`` -- optional keyword arguments
 
     The input ``X`` can be one of the following:
 
@@ -100,7 +99,7 @@ def Jacobian(X, **kwds):
     """
     try:
         return X.jacobian(**kwds)
-    except AttributeError:
+    except (AttributeError, TypeError):
         pass
 
     morphism = kwds.pop('morphism', False)
@@ -112,20 +111,20 @@ def Jacobian(X, **kwds):
         else:
             return Jacobian_of_equation(X, **kwds)
 
-    from sage.schemes.generic.scheme import is_Scheme
-    if is_Scheme(X) and X.dimension() == 1:
+    from sage.schemes.generic.scheme import Scheme
+    if isinstance(X, Scheme) and X.dimension() == 1:
         return Jacobian_of_curve(X, morphism=morphism, **kwds)
 
 
 def Jacobian_of_curve(curve, morphism=False):
     """
-    Return the Jacobian of a genus-one curve
+    Return the Jacobian of a genus-one curve.
 
     INPUT:
 
-    - ``curve`` -- a one-dimensional algebraic variety of genus one.
+    - ``curve`` -- a one-dimensional algebraic variety of genus one
 
-    OUTPUT: Its Jacobian elliptic curve.
+    OUTPUT: its Jacobian elliptic curve
 
     EXAMPLES::
 
@@ -156,7 +155,7 @@ def Jacobian_of_equation(polynomial, variables=None, curve=None):
     INPUT:
 
     - ``F`` -- a polynomial defining a plane curve of genus one. May
-      be homogeneous or inhomogeneous.
+      be homogeneous or inhomogeneous
 
     - ``variables`` -- list of two or three variables or ``None``
       (default). The inhomogeneous or homogeneous coordinates. By

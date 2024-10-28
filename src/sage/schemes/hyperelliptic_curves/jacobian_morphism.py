@@ -36,42 +36,42 @@ Jacobian has complex multiplication.
 
 ::
 
-    sage: x = GF(37)['x'].gen()                                                         # optional - sage.rings.finite_rings
-    sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x); H              # optional - sage.rings.finite_rings
+    sage: x = GF(37)['x'].gen()
+    sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x); H
     Hyperelliptic Curve over Finite Field of size 37 defined
      by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
 
 At this time, Jacobians of hyperelliptic curves are handled
 differently than elliptic curves::
 
-    sage: J = H.jacobian(); J                                                           # optional - sage.rings.finite_rings
+    sage: J = H.jacobian(); J
     Jacobian of Hyperelliptic Curve over Finite Field of size 37 defined
      by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
-    sage: J = J(J.base_ring()); J                                                       # optional - sage.rings.finite_rings
+    sage: J = J(J.base_ring()); J
     Set of rational points of Jacobian of Hyperelliptic Curve over Finite Field
      of size 37 defined by y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
 
 Points on the Jacobian are represented by Mumford's polynomials.
 First we find a couple of points on the curve::
 
-    sage: P1 = H.lift_x(2); P1                                                          # optional - sage.rings.finite_rings
+    sage: P1 = H.lift_x(2); P1
     (2 : 11 : 1)
-    sage: Q1 = H.lift_x(10); Q1                                                         # optional - sage.rings.finite_rings
+    sage: Q1 = H.lift_x(10); Q1
     (10 : 18 : 1)
 
 Observe that 2 and 10 are the roots of the polynomials in x,
 respectively::
 
-    sage: P = J(P1); P                                                                  # optional - sage.rings.finite_rings
+    sage: P = J(P1); P
     (x + 35, y + 26)
-    sage: Q = J(Q1); Q                                                                  # optional - sage.rings.finite_rings
+    sage: Q = J(Q1); Q
     (x + 27, y + 19)
 
 ::
 
-    sage: P + Q                                                                         # optional - sage.rings.finite_rings
+    sage: P + Q
     (x^2 + 25*x + 20, y + 13*x)
-    sage: (x^2 + 25*x + 20).roots(multiplicities=False)                                 # optional - sage.rings.finite_rings
+    sage: (x^2 + 25*x + 20).roots(multiplicities=False)
     [10, 2]
 
 Frobenius satisfies
@@ -85,24 +85,24 @@ on the Jacobian of this reduction and the order of the Jacobian is
 
 ::
 
-    sage: 1904*P                                                                        # optional - sage.rings.finite_rings
+    sage: 1904*P
     (1)
-    sage: 34*P == 0                                                                     # optional - sage.rings.finite_rings
+    sage: 34*P == 0
     True
-    sage: 35*P == P                                                                     # optional - sage.rings.finite_rings
+    sage: 35*P == P
     True
-    sage: 33*P == -P                                                                    # optional - sage.rings.finite_rings
+    sage: 33*P == -P
     True
 
 ::
 
-    sage: Q*1904                                                                        # optional - sage.rings.finite_rings
+    sage: Q*1904
     (1)
-    sage: Q*238 == 0                                                                    # optional - sage.rings.finite_rings
+    sage: Q*238 == 0
     True
-    sage: Q*239 == Q                                                                    # optional - sage.rings.finite_rings
+    sage: Q*239 == Q
     True
-    sage: Q*237 == -Q                                                                   # optional - sage.rings.finite_rings
+    sage: Q*237 == -Q
     True
 """
 
@@ -187,11 +187,11 @@ def cantor_reduction(a, b, f, h, genus):
     The next point is not 2-torsion::
 
         sage: P = J(H.lift_x(-1)); P
-        (x + 1, y - 1)
+        (x + 1, y)
         sage: 2 * J(H.lift_x(-1)) # indirect doctest
-        (x^2 + 2*x + 1, y - 3*x - 4)
+        (x^2 + 2*x + 1, y + 4*x + 4)
         sage: 3 * J(H.lift_x(-1)) # indirect doctest
-        (x^2 - 487*x - 324, y - 10754*x - 7146)
+        (x^2 - 487*x - 324, y + 10755*x + 7146)
     """
     assert a.degree() < 2*genus+1
     assert b.degree() < a.degree()
@@ -209,6 +209,7 @@ def cantor_reduction(a, b, f, h, genus):
     if a.degree() > genus:
         return cantor_reduction(a, b, f, h, genus)
     return (a, b)
+
 
 def cantor_composition_simple(D1,D2,f,genus):
     r"""
@@ -230,23 +231,24 @@ def cantor_composition_simple(D1,D2,f,genus):
 
     ::
 
-        sage: F.<a> = NumberField(x^2 - 2, 'a')                                         # optional - sage.rings.number_field
-        sage: J = H.jacobian()(F); J                                                    # optional - sage.rings.number_field
+        sage: F.<a> = NumberField(x^2 - 2, 'a')                                         # needs sage.rings.number_field
+        sage: J = H.jacobian()(F); J                                                    # needs sage.rings.number_field
         Set of rational points of Jacobian of Hyperelliptic Curve over
          Number Field in a with defining polynomial x^2 - 2 defined by y^2 = x^5 + x
 
     ::
 
-        sage: P = J(H.lift_x(F(1))); P                                                  # optional - sage.rings.number_field
-        (x - 1, y - a)
-        sage: Q = J(H.lift_x(F(0))); Q                                                  # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: P = J(H.lift_x(F(1))); P
+        (x - 1, y + a)
+        sage: Q = J(H.lift_x(F(0))); Q
         (x, y)
-        sage: 2*P + 2*Q # indirect doctest                                              # optional - sage.rings.number_field
-        (x^2 - 2*x + 1, y - 3/2*a*x + 1/2*a)
-        sage: 2*(P + Q) # indirect doctest                                              # optional - sage.rings.number_field
-        (x^2 - 2*x + 1, y - 3/2*a*x + 1/2*a)
-        sage: 3*P # indirect doctest                                                    # optional - sage.rings.number_field
-        (x^2 - 25/32*x + 49/32, y - 45/256*a*x - 315/256*a)
+        sage: 2*P + 2*Q # indirect doctest
+        (x^2 - 2*x + 1, y + 3/2*a*x - 1/2*a)
+        sage: 2*(P + Q) # indirect doctest
+        (x^2 - 2*x + 1, y + 3/2*a*x - 1/2*a)
+        sage: 3*P # indirect doctest
+        (x^2 - 25/32*x + 49/32, y + 45/256*a*x + 315/256*a)
     """
     a1, b1 = D1
     a2, b2 = D2
@@ -264,60 +266,62 @@ def cantor_composition_simple(D1,D2,f,genus):
             d, l, h3 = d0.xgcd(b1 + b2)
             a = (a1*a2) // (d**2)
             b = ((b2 + l*h2*(b1-b2)*(a2 // d)) + h3*((f - b2**2) // d)) % (a)
-    a =a.monic()
+    a = a.monic()
     return (a, b)
+
 
 def cantor_composition(D1,D2,f,h,genus):
     r"""
     EXAMPLES::
 
-        sage: F.<a> = GF(7^2, 'a')                                                      # optional - sage.rings.finite_rings
-        sage: x = F['x'].gen()                                                          # optional - sage.rings.finite_rings
-        sage: f = x^7 + x^2 + a                                                         # optional - sage.rings.finite_rings
-        sage: H = HyperellipticCurve(f, 2*x); H                                         # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: F.<a> = GF(7^2, 'a')
+        sage: x = F['x'].gen()
+        sage: f = x^7 + x^2 + a
+        sage: H = HyperellipticCurve(f, 2*x); H
         Hyperelliptic Curve over Finite Field in a of size 7^2
          defined by y^2 + 2*x*y = x^7 + x^2 + a
-        sage: J = H.jacobian()(F); J                                                    # optional - sage.rings.finite_rings
+        sage: J = H.jacobian()(F); J
         Set of rational points of Jacobian of Hyperelliptic Curve over
          Finite Field in a of size 7^2 defined by y^2 + 2*x*y = x^7 + x^2 + a
 
     ::
 
-        sage: Q = J(H.lift_x(F(1))); Q                                                  # optional - sage.rings.finite_rings
-        (x + 6, y + 2*a + 2)
-        sage: 10*Q  # indirect doctest                                                  # optional - sage.rings.finite_rings
-        (x^3 + (3*a + 1)*x^2 + (2*a + 5)*x + a + 5,
-         y + (4*a + 5)*x^2 + (a + 1)*x + 6*a + 3)
-        sage: 7*8297*Q                                                                  # optional - sage.rings.finite_rings
+        sage: Q = J(H.lift_x(F(1))); Q                                                  # needs sage.rings.finite_rings
+        (x + 6, y + 5*a)
+        sage: 10*Q  # indirect doctest                                                  # needs sage.rings.finite_rings
+        (x^3 + (3*a + 1)*x^2 + (2*a + 5)*x + a + 5, y + (3*a + 2)*x^2 + (6*a + 1)*x + a + 4)
+        sage: 7*8297*Q                                                                  # needs sage.rings.finite_rings
         (1)
 
     ::
 
-        sage: Q = J(H.lift_x(F(a+1))); Q                                                # optional - sage.rings.finite_rings
-        (x + 6*a + 6, y + 2*a)
-        sage: 7*8297*Q # indirect doctest                                               # optional - sage.rings.finite_rings
+        sage: Q = J(H.lift_x(F(a+1))); Q                                                # needs sage.rings.finite_rings
+        (x + 6*a + 6, y + 2)
+        sage: 7*8297*Q  # indirect doctest                                              # needs sage.rings.finite_rings
         (1)
 
         A test over a prime field:
 
-        sage: F = GF(next_prime(10^30))                                                 # optional - sage.rings.finite_rings
-        sage: x = F['x'].gen()                                                          # optional - sage.rings.finite_rings
-        sage: f = x^7 + x^2 + 1                                                         # optional - sage.rings.finite_rings
-        sage: H = HyperellipticCurve(f, 2*x); H                                         # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: F = GF(next_prime(10^30))
+        sage: x = F['x'].gen()
+        sage: f = x^7 + x^2 + 1
+        sage: H = HyperellipticCurve(f, 2*x); H
         Hyperelliptic Curve over Finite Field of size 1000000000000000000000000000057
          defined by y^2 + 2*x*y = x^7 + x^2 + 1
-        sage: J = H.jacobian()(F); J                                                    # optional - sage.rings.finite_rings
+        sage: J = H.jacobian()(F); J
         Set of rational points of Jacobian of Hyperelliptic Curve
          over Finite Field of size 1000000000000000000000000000057
          defined by y^2 + 2*x*y = x^7 + x^2 + 1
-        sage: Q = J(H.lift_x(F(1))); Q                                                  # optional - sage.rings.finite_rings
+        sage: Q = J(H.lift_x(F(1))); Q
         (x + 1000000000000000000000000000056, y + 1000000000000000000000000000056)
-        sage: 10*Q  # indirect doctest                                                  # optional - sage.rings.finite_rings
+        sage: 10*Q  # indirect doctest
         (x^3 + 150296037169838934997145567227*x^2
              + 377701248971234560956743242408*x + 509456150352486043408603286615,
          y + 514451014495791237681619598519*x^2
            + 875375621665039398768235387900*x + 861429240012590886251910326876)
-        sage: 7*8297*Q                                                                  # optional - sage.rings.finite_rings
+        sage: 7*8297*Q
         (x^3 + 35410976139548567549919839063*x^2
              + 26230404235226464545886889960*x + 681571430588959705539385624700,
          y + 999722365017286747841221441793*x^2
@@ -359,11 +363,10 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         INPUT:
 
-        - parent -- the parent Homset
-        - polys -- Mumford's `u` and `v` polynomials
-        - check (default: ``True``) -- if ``True``, ensure that
-          polynomials define a divisor on the appropriate curve and are
-          reduced
+        - ``parent`` -- the parent Homset
+        - ``polys`` -- Mumford's `u` and `v` polynomials
+        - ``check`` -- boolean (default: ``True``); if ``True``, ensure that
+          polynomials define a divisor on the appropriate curve and are reduced
 
         .. warning::
 
@@ -371,22 +374,22 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         EXAMPLES::
 
-            sage: x = GF(37)['x'].gen()                                                 # optional - sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)         # optional - sage.rings.finite_rings
-            sage: J = H.jacobian()(GF(37));  J                                          # optional - sage.rings.finite_rings
+            sage: x = GF(37)['x'].gen()
+            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)
+            sage: J = H.jacobian()(GF(37));  J
             Set of rational points of Jacobian of Hyperelliptic Curve over
              Finite Field of size 37 defined by
             y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
 
         ::
 
-            sage: P1 = J(H.lift_x(2)); P1 # indirect doctest                            # optional - sage.rings.finite_rings
+            sage: P1 = J(H.lift_x(2)); P1  # indirect doctest
             (x + 35, y + 26)
-            sage: P1.parent()                                                           # optional - sage.rings.finite_rings
+            sage: P1.parent()
             Set of rational points of Jacobian of Hyperelliptic Curve over
              Finite Field of size 37 defined by
             y^2 = x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x
-            sage: type(P1)                                                              # optional - sage.rings.finite_rings
+            sage: type(P1)
             <class 'sage.schemes.hyperelliptic_curves.jacobian_morphism.JacobianMorphism_divisor_class_field'>
         """
         SchemeMorphism.__init__(self, parent)
@@ -394,8 +397,8 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             C = parent.curve()
             f, h = C.hyperelliptic_polynomials()
             a, b = polys
-            if not (b**2 + h*b - f)%a == 0:
-                raise ValueError("Argument polys (= %s) must be divisor on curve %s."%(
+            if not (b**2 + h*b - f) % a == 0:
+                raise ValueError("Argument polys (= %s) must be divisor on curve %s." % (
                     polys, C))
             genus = C.genus()
             if a.degree() > genus:
@@ -408,16 +411,17 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         TESTS::
 
-            sage: F.<a> = GF(7^2, 'a')                                                  # optional - sage.rings.finite_rings
-            sage: x = F['x'].gen()                                                      # optional - sage.rings.finite_rings
-            sage: f = x^7 + x^2 + a                                                     # optional - sage.rings.finite_rings
-            sage: H = HyperellipticCurve(f, 2*x)                                        # optional - sage.rings.finite_rings
-            sage: J = H.jacobian()(F)                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(7^2, 'a')
+            sage: x = F['x'].gen()
+            sage: f = x^7 + x^2 + a
+            sage: H = HyperellipticCurve(f, 2*x)
+            sage: J = H.jacobian()(F)
 
         ::
 
-            sage: Q = J(H.lift_x(F(1))); Q # indirect doctest                           # optional - sage.rings.finite_rings
-            (x + 6, y + 2*a + 2)
+            sage: Q = J(H.lift_x(F(1))); Q  # indirect doctest                          # needs sage.rings.finite_rings
+            (x + 6, y + 5*a)
         """
         a, b = self.__polys
         P = self.parent()._printing_ring
@@ -431,20 +435,21 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         EXAMPLES::
 
-            sage: F.<a> = GF(7^2, 'a')                                                  # optional - sage.rings.finite_rings
-            sage: x = F['x'].gen()                                                      # optional - sage.rings.finite_rings
-            sage: f = x^7 + x^2 + a                                                     # optional - sage.rings.finite_rings
-            sage: H = HyperellipticCurve(f, 2*x)                                        # optional - sage.rings.finite_rings
-            sage: J = H.jacobian()(F)                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(7^2, 'a')
+            sage: x = F['x'].gen()
+            sage: f = x^7 + x^2 + a
+            sage: H = HyperellipticCurve(f, 2*x)
+            sage: J = H.jacobian()(F)
 
         ::
 
-            sage: Q = J(0); Q # indirect doctest                                        # optional - sage.rings.finite_rings
+            sage: Q = J(0); Q  # indirect doctest                                       # needs sage.rings.finite_rings
             (1)
-            sage: Q = J(H.lift_x(F(1))); Q # indirect doctest                           # optional - sage.rings.finite_rings
-            (x + 6, y + 2*a + 2)
-            sage: Q + Q # indirect doctest                                              # optional - sage.rings.finite_rings
-            (x^2 + 5*x + 1, y + 3*a*x + 6*a + 2)
+            sage: Q = J(H.lift_x(F(1))); Q  # indirect doctest                          # needs sage.rings.finite_rings
+            (x + 6, y + 5*a)
+            sage: Q + Q  # indirect doctest                                             # needs sage.rings.finite_rings
+            (x^2 + 5*x + 1, y + (4*a + 2)*x + a + 5)
         """
         if self.is_zero():
             return "(1)"
@@ -457,23 +462,24 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         EXAMPLES::
 
-            sage: F.<alpha> = GF(7^2)                                                   # optional - sage.rings.finite_rings
-            sage: x = F['x'].gen()                                                      # optional - sage.rings.finite_rings
-            sage: f = x^7 + x^2 + alpha                                                 # optional - sage.rings.finite_rings
-            sage: H = HyperellipticCurve(f, 2*x)                                        # optional - sage.rings.finite_rings
-            sage: J = H.jacobian()(F)                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: F.<alpha> = GF(7^2)
+            sage: x = F['x'].gen()
+            sage: f = x^7 + x^2 + alpha
+            sage: H = HyperellipticCurve(f, 2*x)
+            sage: J = H.jacobian()(F)
 
         ::
 
-            sage: Q = J(0); print(latex(Q)) # indirect doctest                          # optional - sage.rings.finite_rings
+            sage: Q = J(0); print(latex(Q))  # indirect doctest                         # needs sage.rings.finite_rings
             \left(1\right)
-            sage: Q = J(H.lift_x(F(1))); print(latex(Q)) # indirect doctest             # optional - sage.rings.finite_rings
-            \left(x + 6, y + 2 \alpha + 2\right)
+            sage: Q = J(H.lift_x(F(1))); print(latex(Q))  # indirect doctest            # needs sage.rings.finite_rings
+            \left(x + 6, y + 5 \alpha\right)
 
         ::
 
-            sage: print(latex(Q + Q))                                                   # optional - sage.rings.finite_rings
-            \left(x^{2} + 5 x + 1, y + 3 \alpha x + 6 \alpha + 2\right)
+            sage: print(latex(Q + Q))                                                   # needs sage.rings.finite_rings
+            \left(x^{2} + 5 x + 1, y + \left(4 \alpha + 2\right) x + \alpha + 5\right)
         """
         if self.is_zero():
             return "\\left(1\\right)"
@@ -484,114 +490,185 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         r"""
         Return the scheme this morphism maps to; or, where this divisor lives.
 
-        .. warning::
+        .. WARNING::
 
-           Although a pointset is defined over a specific field, the
-           scheme returned may be over a different (usually smaller)
-           field.  The example below demonstrates this: the pointset
-           is determined over a number field of absolute degree 2 but
-           the scheme returned is defined over the rationals.
+            Although a pointset is defined over a specific field, the
+            scheme returned may be over a different (usually smaller)
+            field.  The example below demonstrates this: the pointset
+            is determined over a number field of absolute degree 2 but
+            the scheme returned is defined over the rationals.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = QQ['x'].gen()
             sage: f = x^5 + x
             sage: H = HyperellipticCurve(f)
-            sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # optional - sage.rings.number_field
-            sage: J = H.jacobian()(F); J                                                # optional - sage.rings.number_field
+            sage: F.<a> = NumberField(x^2 - 2, 'a')
+            sage: J = H.jacobian()(F); J
             Set of rational points of Jacobian of Hyperelliptic Curve
              over Number Field in a with defining polynomial x^2 - 2
              defined by y^2 = x^5 + x
-
-        ::
-
-            sage: P = J(H.lift_x(F(1)))                                                 # optional - sage.rings.number_field
-            sage: P.scheme()                                                            # optional - sage.rings.number_field
+            sage: P = J(H.lift_x(F(1)))
+            sage: P.scheme()
             Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x
         """
         return self.codomain()
 
+    def point_of_jacobian_of_curve(self):
+        r"""
+        Return the point in the Jacobian of the curve.
+
+        The Jacobian is the one attached to the projective curve
+        corresponding to this hyperelliptic curve.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(GF(11))
+            sage: f = x^6 + x + 1
+            sage: H = HyperellipticCurve(f)
+            sage: J = H.jacobian()
+            sage: D = J(H.lift_x(1))
+            sage: D  # divisor in Mumford representation
+            (x + 10, y + 6)
+            sage: jacobian_order = sum(H.frobenius_polynomial())
+            sage: jacobian_order
+            234
+            sage: p = D.point_of_jacobian_of_curve(); p
+            [Place (1/x0, 1/x0^3*x1 + 1)
+             + Place (x0 + 10, x1 + 6)]
+            sage: p  # Jacobian point represented by an effective divisor
+            [Place (1/x0, 1/x0^3*x1 + 1)
+             + Place (x0 + 10, x1 + 6)]
+            sage: p.order()
+            39
+            sage: 234*p == 0
+            True
+            sage: G = p.parent()
+            sage: G
+            Group of rational points of Jacobian over Finite Field of size 11 (Hess model)
+            sage: J = G.parent()
+            sage: J
+            Jacobian of Projective Plane Curve over Finite Field of size 11
+             defined by x0^6 + x0^5*x1 + x1^6 - x0^4*x2^2 (Hess model)
+            sage: C = J.curve()
+            sage: C
+            Projective Plane Curve over Finite Field of size 11
+             defined by x0^6 + x0^5*x1 + x1^6 - x0^4*x2^2
+            sage: C.affine_patch(0) == H.affine_patch(2)
+            True
+        """
+        from sage.schemes.curves.constructor import Curve
+        C = self.parent().curve()
+        P = C.ambient_space()  # projective plane
+        x0, x1, x2 = P.gens()
+
+        # X is the curve positioned in the ambient space
+        # such that x1 = x and x2 = y
+        X = Curve(C.defining_ideal().gens(), P)
+        X = X.affine_patch(2).projective_closure()
+
+        u0, v0 = list(self)
+        u1 = u0.subs(x1).homogenize(x0)
+        v1 = (x2 - v0.subs(x1)).homogenize(x0)
+        u2 = u1/x0**u1.degree()
+        v2 = v1/x0**v1.degree()
+        u = X.function(u2)
+        v = X.function(v2)
+
+        F = X.function_field()
+        O = F.maximal_order()
+        D = O.ideal([u,v]).divisor()
+
+        Pinf = F.places_infinite()[0]
+        assert Pinf.degree() == 1, "no rational point at infinity"
+
+        J = X.jacobian(model='hess', base_div=F.genus()*Pinf)
+        G = J.group(self.base_ring())
+        return G(D - D.degree()*Pinf)
+
     def __list__(self):
         r"""
         Return a list `(a(x), b(x))` of the polynomials giving the
-        Mumford representation of self.
+        Mumford representation of ``self``.
 
         TESTS::
 
             sage: x = QQ['x'].gen()
             sage: f = x^5 + x
             sage: H = HyperellipticCurve(f)
-            sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # optional - sage.rings.number_field
-            sage: J = H.jacobian()(F); J                                                # optional - sage.rings.number_field
+            sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # needs sage.rings.number_field
+            sage: J = H.jacobian()(F); J                                                # needs sage.rings.number_field
             Set of rational points of Jacobian of Hyperelliptic Curve
              over Number Field in a with defining polynomial x^2 - 2
              defined by y^2 = x^5 + x
 
         ::
 
-            sage: P = J(H.lift_x(F(1)))                                                 # optional - sage.rings.number_field
-            sage: list(P)  # indirect doctest                                           # optional - sage.rings.number_field
-            [x - 1, a]
+            sage: P = J(H.lift_x(F(1)))                                                 # needs sage.rings.number_field
+            sage: list(P)  # indirect doctest                                           # needs sage.rings.number_field
+            [x - 1, -a]
         """
         return list(self.__polys)
 
     def __tuple__(self):
         r"""
         Return a tuple `(a(x), b(x))` of the polynomials giving the
-        Mumford representation of self.
+        Mumford representation of ``self``.
 
         TESTS::
 
             sage: x = QQ['x'].gen()
             sage: f = x^5 + x
             sage: H = HyperellipticCurve(f)
-            sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # optional - sage.rings.number_field
-            sage: J = H.jacobian()(F); J                                                # optional - sage.rings.number_field
+            sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # needs sage.rings.number_field
+            sage: J = H.jacobian()(F); J                                                # needs sage.rings.number_field
             Set of rational points of Jacobian of Hyperelliptic Curve
              over Number Field in a with defining polynomial x^2 - 2
              defined by y^2 = x^5 + x
 
         ::
 
-            sage: P = J(H.lift_x(F(1)))                                                 # optional - sage.rings.number_field
-            sage: tuple(P)  # indirect doctest                                          # optional - sage.rings.number_field
-            (x - 1, a)
+            sage: P = J(H.lift_x(F(1)))                                                 # needs sage.rings.number_field
+            sage: tuple(P)  # indirect doctest                                          # needs sage.rings.number_field
+            (x - 1, -a)
         """
         return tuple(self.__polys)
 
     def __getitem__(self, n):
         r"""
         Return the `n`-th item of the pair `(a(x), b(x))`
-        of polynomials giving the Mumford representation of self.
+        of polynomials giving the Mumford representation of ``self``.
 
         TESTS::
 
             sage: x = QQ['x'].gen()
             sage: f = x^5 + x
             sage: H = HyperellipticCurve(f)
-            sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # optional - sage.rings.number_field
-            sage: J = H.jacobian()(F); J                                                # optional - sage.rings.number_field
+            sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # needs sage.rings.number_field
+            sage: J = H.jacobian()(F); J                                                # needs sage.rings.number_field
             Set of rational points of Jacobian of Hyperelliptic Curve
              over Number Field in a with defining polynomial x^2 - 2
              defined by y^2 = x^5 + x
 
         ::
 
-            sage: P = J(H.lift_x(F(1)))                                                 # optional - sage.rings.number_field
-            sage: P[0] # indirect doctest                                               # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = J(H.lift_x(F(1)))
+            sage: P[0] # indirect doctest
             x - 1
-            sage: P[1] # indirect doctest                                               # optional - sage.rings.number_field
-            a
-            sage: P[-1] # indirect doctest                                              # optional - sage.rings.number_field
-            a
-            sage: P[:1] # indirect doctest                                              # optional - sage.rings.number_field
+            sage: P[1] # indirect doctest
+            -a
+            sage: P[-1] # indirect doctest
+            -a
+            sage: P[:1] # indirect doctest
             [x - 1]
         """
         return list(self.__polys)[n]
 
     def _richcmp_(self, other, op):
         r"""
-        Compare self and other.
+        Compare ``self`` and ``other``.
 
         TESTS::
 
@@ -653,17 +730,17 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         EXAMPLES::
 
-            sage: x = GF(37)['x'].gen()                                                 # optional - sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)         # optional - sage.rings.finite_rings
-            sage: J = H.jacobian()(GF(37))                                              # optional - sage.rings.finite_rings
+            sage: x = GF(37)['x'].gen()
+            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)
+            sage: J = H.jacobian()(GF(37))
 
         ::
 
-            sage: P1 = J(H.lift_x(2)); P1                                               # optional - sage.rings.finite_rings
+            sage: P1 = J(H.lift_x(2)); P1
             (x + 35, y + 26)
-            sage: P1 == 0 # indirect doctest                                            # optional - sage.rings.finite_rings
+            sage: P1 == 0  # indirect doctest
             False
-            sage: P1 - P1 == 0 # indirect doctest                                       # optional - sage.rings.finite_rings
+            sage: P1 - P1 == 0  # indirect doctest
             True
         """
         return self.__polys[0] != 1
@@ -674,45 +751,45 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         EXAMPLES::
 
-            sage: x = GF(37)['x'].gen()                                                 # optional - sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)         # optional - sage.rings.finite_rings
-            sage: J = H.jacobian()(GF(37))                                              # optional - sage.rings.finite_rings
-            sage: P1 = J(H.lift_x(2)); P1                                               # optional - sage.rings.finite_rings
+            sage: x = GF(37)['x'].gen()
+            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)
+            sage: J = H.jacobian()(GF(37))
+            sage: P1 = J(H.lift_x(2)); P1
             (x + 35, y + 26)
-            sage: - P1  # indirect doctest                                              # optional - sage.rings.finite_rings
+            sage: - P1  # indirect doctest
             (x + 35, y + 11)
-            sage: P1 + (-P1)  # indirect doctest                                        # optional - sage.rings.finite_rings
+            sage: P1 + (-P1)  # indirect doctest
             (1)
 
         ::
 
-            sage: H2 = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x, x)     # optional - sage.rings.finite_rings
-            sage: J2 = H2.jacobian()(GF(37))                                            # optional - sage.rings.finite_rings
-            sage: P2 = J2(H2.lift_x(2)); P2                                             # optional - sage.rings.finite_rings
-            (x + 35, y + 15)
-            sage: - P2  # indirect doctest                                              # optional - sage.rings.finite_rings
+            sage: H2 = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x, x)
+            sage: J2 = H2.jacobian()(GF(37))
+            sage: P2 = J2(H2.lift_x(2)); P2
             (x + 35, y + 24)
-            sage: P2 + (-P2)  # indirect doctest                                        # optional - sage.rings.finite_rings
+            sage: - P2  # indirect doctest
+            (x + 35, y + 15)
+            sage: P2 + (-P2)  # indirect doctest
             (1)
 
         TESTS:
 
-        The following was fixed in :trac:`14264`::
+        The following was fixed in :issue:`14264`::
 
+            sage: # needs sage.rings.number_field
             sage: P.<x> = QQ[]
             sage: f = x^5 - x + 1; h = x
             sage: C = HyperellipticCurve(f, h, 'u,v')
             sage: J = C.jacobian()
-            sage: K.<t> = NumberField(x^2 - 2)                                          # optional - sage.rings.number_field
-            sage: R.<x> = K[]                                                           # optional - sage.rings.number_field
-            sage: Q = J(K)([x^2 - t, R(1)])                                             # optional - sage.rings.number_field
-            sage: Q                                                                     # optional - sage.rings.number_field
+            sage: K.<t> = NumberField(x^2 - 2)
+            sage: R.<x> = K[]
+            sage: Q = J(K)([x^2 - t, R(1)])
+            sage: Q
             (u^2 - t, v - 1)
-            sage: -Q                                                                    # optional - sage.rings.number_field
+            sage: -Q
             (u^2 - t, v + u + 1)
-            sage: Q + (-Q)  # indirect doctest                                          # optional - sage.rings.number_field
+            sage: Q + (-Q)  # indirect doctest
             (1)
-
         """
         if self.is_zero():
             return self
@@ -733,19 +810,19 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
     def _add_(self,other):
         r"""
-        Return a Mumford representative of the divisor self + other.
+        Return a Mumford representative of the divisor ``self + other``.
 
         EXAMPLES::
 
-            sage: x = GF(37)['x'].gen()                                                 # optional - sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)         # optional - sage.rings.finite_rings
-            sage: J = H.jacobian()(GF(37))                                              # optional - sage.rings.finite_rings
+            sage: x = GF(37)['x'].gen()
+            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)
+            sage: J = H.jacobian()(GF(37))
 
         ::
 
-            sage: P1 = J(H.lift_x(2)); P1                                               # optional - sage.rings.finite_rings
+            sage: P1 = J(H.lift_x(2)); P1
             (x + 35, y + 26)
-            sage: P1 + P1 # indirect doctest                                            # optional - sage.rings.finite_rings
+            sage: P1 + P1  # indirect doctest
             (x^2 + 33*x + 4, y + 13*x)
         """
         X = self.parent()
@@ -764,34 +841,34 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
     def _sub_(self, other):
         r"""
-        Return a Mumford representative of the divisor self - other.
+        Return a Mumford representative of the divisor ``self - other``.
 
         EXAMPLES::
 
-            sage: x = GF(37)['x'].gen()                                                 # optional - sage.rings.finite_rings
-            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)         # optional - sage.rings.finite_rings
-            sage: J = H.jacobian()(GF(37))                                              # optional - sage.rings.finite_rings
+            sage: x = GF(37)['x'].gen()
+            sage: H = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x)
+            sage: J = H.jacobian()(GF(37))
 
         ::
 
-            sage: P1 = J(H.lift_x(2)); P1                                               # optional - sage.rings.finite_rings
+            sage: P1 = J(H.lift_x(2)); P1
             (x + 35, y + 26)
-            sage: P1 - P1 # indirect doctest                                            # optional - sage.rings.finite_rings
+            sage: P1 - P1  # indirect doctest
             (1)
 
         ::
 
-            sage: P2 = J(H.lift_x(4)); P2                                               # optional - sage.rings.finite_rings
+            sage: P2 = J(H.lift_x(4)); P2
             (x + 33, y + 34)
 
         Observe that the `x`-coordinates are the same but the
         `y`-coordinates differ::
 
-            sage: P1 - P2 # indirect doctest                                            # optional - sage.rings.finite_rings
+            sage: P1 - P2  # indirect doctest
             (x^2 + 31*x + 8, y + 7*x + 12)
-            sage: P1 + P2 # indirect doctest                                            # optional - sage.rings.finite_rings
+            sage: P1 + P2  # indirect doctest
             (x^2 + 31*x + 8, y + 4*x + 18)
-            sage: (P1 - P2) - (P1 + P2) + 2*P2 # indirect doctest                       # optional - sage.rings.finite_rings
+            sage: (P1 - P2) - (P1 + P2) + 2*P2  # indirect doctest
             (1)
         """
         return self + (-other)

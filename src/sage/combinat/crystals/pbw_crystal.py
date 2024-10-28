@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 `\mathcal{B}(\infty)` Crystal Of PBW Monomials
 
@@ -89,7 +89,7 @@ class PBWCrystalElement(Element):
         lusztig_datum = list(pbw_datum.lusztig_datum)
         al = self.parent()._pbw_datum_parent._root_list_from(self.parent()._default_word)
         from sage.misc.latex import latex
-        ret_str = ' '.join("f_{%s}%s"%(latex(al[i]), "^{%s}"%latex(exp) if exp > 1 else "")
+        ret_str = ' '.join("f_{%s}%s" % (latex(al[i]), "^{%s}" % latex(exp) if exp > 1 else "")
                            for i, exp in enumerate(lusztig_datum) if exp)
         if ret_str == '':
             return '1'

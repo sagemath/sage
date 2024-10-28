@@ -102,11 +102,12 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
+from sage.misc.cachefunc import cached_method
 
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
 
-class Stream():
+class Stream:
     """
     Abstract base class for all streams.
 
@@ -132,7 +133,6 @@ class Stream():
         However, keep in mind that (trivially) this initialization
         code is not executed if ``_approximate_order`` is set to a
         value before it is accessed.
-
     """
     def __init__(self, true_order):
         """
@@ -178,7 +178,6 @@ class Stream():
             False
             sage: CS != Stream(-2)
             False
-
         """
         return False
 
@@ -198,6 +197,21 @@ class Stream():
         """
         return False
 
+    def is_uninitialized(self):
+        r"""
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        The default implementation is ``False``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_zero
+            sage: zero = Stream_zero()
+            sage: zero.is_uninitialized()
+            False
+        """
+        return False
+
 
 class Stream_inexact(Stream):
     """
@@ -211,7 +225,7 @@ class Stream_inexact(Stream):
     - ``is_sparse`` -- boolean; whether the implementation of the stream is sparse
     - ``true_order`` -- boolean; if the approximate order is the actual order
 
-    If the cache is dense, it begins with the first non-zero term.
+    If the cache is dense, it begins with the first nonzero term.
     """
     def __init__(self, is_sparse, true_order):
         """
@@ -304,7 +318,7 @@ class Stream_inexact(Stream):
 
         INPUT:
 
-        - ``d`` -- a dictionary that needs to be unpickled
+        - ``d`` -- dictionary that needs to be unpickled
 
         EXAMPLES::
 
@@ -325,7 +339,7 @@ class Stream_inexact(Stream):
 
     def __getitem__(self, n):
         """
-        Return the `n`-th coefficient of ``self``.
+        Return the ``n``-th coefficient of ``self``.
 
         INPUT:
 
@@ -530,12 +544,14 @@ class Stream_inexact(Stream):
             True
             sage: g != f
             True
-
         """
         # TODO: more cases, in particular mixed implementations,
         # could be detected
         if not isinstance(other, Stream_inexact):
-            return False
+            return (other != self)
+
+        if self.is_uninitialized() != other.is_uninitialized():
+            return True
 
         if self._is_sparse and other._is_sparse:
             for i in self._cache:
@@ -564,7 +580,7 @@ class Stream_exact(Stream):
 
     INPUT:
 
-    - ``initial_values`` -- a list of initial values
+    - ``initial_values`` -- list of initial values
     - ``is_sparse`` -- boolean; specifies whether the stream is sparse
     - ``order`` -- integer (default: 0); determining the degree
       of the first element of ``initial_values``
@@ -578,7 +594,6 @@ class Stream_exact(Stream):
         The convention for ``order`` is different to the one in
         :class:`sage.rings.lazy_series_ring.LazySeriesRing`, where
         the input is shifted to have the prescribed order.
-
     """
     def __init__(self, initial_coefficients, constant=None, degree=None, order=None):
         """
@@ -590,7 +605,7 @@ class Stream_exact(Stream):
             sage: Stream_exact([])
             Traceback (most recent call last):
             ...
-            AssertionError: Stream_exact should only be used for non-zero streams
+            AssertionError: Stream_exact should only be used for nonzero streams
 
             sage: s = Stream_exact([0, 0, 1, 0, 0])
             sage: s._initial_coefficients, s._approximate_order, s._degree, s._true_order
@@ -658,7 +673,7 @@ class Stream_exact(Stream):
                 if order + len(initial_coefficients) == self._degree:
                     # Strip off the constant values at the end
                     for w in reversed(initial_coefficients):
-                        if w != self._constant:
+                        if not (w == self._constant):
                             break
                         initial_coefficients.pop()
                         self._degree -= 1
@@ -673,7 +688,7 @@ class Stream_exact(Stream):
             order = self._degree
             self._initial_coefficients = tuple()
 
-        assert self._initial_coefficients or self._constant, "Stream_exact should only be used for non-zero streams"
+        assert self._initial_coefficients or self._constant, "Stream_exact should only be used for nonzero streams"
 
         super().__init__(True)
         self._approximate_order = order
@@ -739,7 +754,6 @@ class Stream_exact(Stream):
             sage: s = Stream_exact([1])
             sage: s.order()
             0
-
         """
         return self._approximate_order
 
@@ -792,7 +806,6 @@ class Stream_exact(Stream):
             sage: t = Stream_exact([2], order=-1, degree=5, constant=1)
             sage: s == t
             False
-
         """
         return (isinstance(other, type(self))
                 and self._degree == other._degree
@@ -805,7 +818,7 @@ class Stream_exact(Stream):
         Return whether ``self`` and ``other`` are known to be different.
 
         The argument ``other`` may be exact or inexact, but is
-        assumed to be non-zero.
+        assumed to be nonzero.
 
         INPUT:
 
@@ -836,13 +849,17 @@ class Stream_exact(Stream):
             [0, 0, 0, 2, 1, 1, 1, 1]
             sage: [f[i] for i in range(-3, 5)]
             [0, 0, 0, 2, 1, 1, 1, 1]
-
         """
         if isinstance(other, type(self)):
             return (self._degree != other._degree
                     or self._approximate_order != other._approximate_order
                     or self._initial_coefficients != other._initial_coefficients
                     or self._constant != other._constant)
+        if other.is_uninitialized():
+            return True
+        if isinstance(other, Stream_zero):
+            # We are assumed to be nonzero
+            return True
         # if other is not exact, we can at least compare with the
         # elements in its cache
         if other._is_sparse:
@@ -914,7 +931,6 @@ class Stream_iterator(Stream_inexact):
         sage: f = Stream_iterator(iter(NonNegativeIntegers()), 1)
         sage: [f[i] for i in range(10)]
         [0, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-
     """
     def __init__(self, iter, approximate_order, true_order=False):
         """
@@ -924,7 +940,7 @@ class Stream_iterator(Stream_inexact):
 
             sage: from sage.data_structures.stream import Stream_iterator
             sage: f = Stream_iterator(iter(NonNegativeIntegers()), 0)
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
         """
         self.iterate_coefficients = lambda: iter
         super().__init__(False, true_order)
@@ -942,6 +958,11 @@ class Stream_function(Stream_inexact):
     - ``is_sparse`` -- boolean; specifies whether the stream is sparse
     - ``approximate_order`` -- integer; a lower bound for the order
       of the stream
+
+    .. NOTE::
+
+        We assume for equality that ``function`` is a function in the
+        mathematical sense.
 
     EXAMPLES::
 
@@ -969,11 +990,217 @@ class Stream_function(Stream_inexact):
 
             sage: from sage.data_structures.stream import Stream_function
             sage: f = Stream_function(lambda n: 1, False, 1)
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
         """
         self.get_coefficient = function
         super().__init__(is_sparse, true_order)
         self._approximate_order = approximate_order
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: f = Stream_function(lambda n: n, True, 0)
+            sage: g = Stream_function(lambda n: 1, False, 1)
+            sage: hash(f) == hash(g)
+            True
+        """
+        # We don't hash the function as it might not be hashable.
+        return hash(type(self))
+
+    def __eq__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: fun = lambda n: n
+            sage: f = Stream_function(fun, True, 0)
+            sage: g = Stream_function(fun, False, 0)
+            sage: h = Stream_function(lambda n: n, False, 0)
+            sage: f == g
+            True
+            sage: f == h
+            False
+        """
+        return isinstance(other, type(self)) and self.get_coefficient == other.get_coefficient
+
+
+class Stream_taylor(Stream_inexact):
+    r"""
+    Class that returns a stream for the Taylor series of a function.
+
+    INPUT:
+
+    - ``function`` -- a function that has a ``derivative`` method and takes
+      a single input
+    - ``is_sparse`` -- boolean; specifies whether the stream is sparse
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import Stream_taylor
+        sage: g(x) = sin(x)
+        sage: f = Stream_taylor(g, False)
+        sage: f[3]
+        -1/6
+        sage: [f[i] for i in range(10)]
+        [0, 1, 0, -1/6, 0, 1/120, 0, -1/5040, 0, 1/362880]
+
+        sage: g(y) = cos(y)
+        sage: f = Stream_taylor(g, False)
+        sage: n = f.iterate_coefficients()
+        sage: [next(n) for _ in range(10)]
+        [1, 0, -1/2, 0, 1/24, 0, -1/720, 0, 1/40320, 0]
+
+        sage: g(z) = 1 / (1 - 2*z)
+        sage: f = Stream_taylor(g, True)
+        sage: [f[i] for i in range(4)]
+        [1, 2, 4, 8]
+    """
+    def __init__(self, function, is_sparse):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: f = Stream_taylor(polygen(QQ, 'x')^3, False)
+            sage: TestSuite(f).run(skip='_test_pickling')
+        """
+        from sage.symbolic.ring import SR
+        from sage.structure.element import parent
+        if parent(function) is SR:
+            self._is_symbolic = True
+            if function.number_of_arguments() != 1:
+                raise NotImplementedError("the function can only take a single input")
+            self._arg = function.arguments()[0]
+        else:
+            self._is_symbolic = False
+        self._func = function
+        super().__init__(is_sparse, False)
+        self._approximate_order = 0
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: x = polygen(QQ, 'x')
+            sage: f = Stream_taylor(x^3 + x - 2, True)
+            sage: g = Stream_taylor(x^3 + x - 2, False)
+            sage: hash(f) == hash(g)
+            True
+        """
+        # We don't hash the function as it might not be hashable.
+        return hash(type(self))
+
+    def __eq__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: x = polygen(QQ, 'x')
+            sage: fun = x^2
+            sage: f = Stream_taylor(x^2, True)
+            sage: g = Stream_taylor(x^2, False)
+            sage: h = Stream_taylor((x^3 + x^2) / (x + 1), False)
+            sage: f == g
+            True
+            sage: f == h
+            True
+
+            sage: F(y) = cos(y)^2 + sin(y)^2 + y
+            sage: G(y) = y + 1
+            sage: f = Stream_taylor(F, True)
+            sage: g = Stream_taylor(G, False)
+            sage: f == g
+            True
+        """
+        # The bool call is needed when the functions are in SR
+        return isinstance(other, type(self)) and bool(self._func == other._func)
+
+    def get_coefficient(self, n):
+        r"""
+        Return the ``n``-th coefficient of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer; the degree for the coefficient
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: g(x) = exp(x)
+            sage: f = Stream_taylor(g, True)
+            sage: f.get_coefficient(5)
+            1/120
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: y = SR.var('y')
+            sage: f = Stream_taylor(sin(y), True)
+            sage: f.get_coefficient(0)
+            0
+            sage: f.get_coefficient(5)
+            1/120
+        """
+        if n == 0:
+            if self._is_symbolic:
+                return self._func.subs({self._arg: ZZ.zero()})
+            return self._func(ZZ.zero())
+
+        from sage.functions.other import factorial
+        if self._is_symbolic:
+            num = self._func.derivative(n).subs({self._arg: ZZ.zero()})
+        else:
+            num = self._func.derivative(n)(ZZ.zero())
+        return num / factorial(n)
+
+    def iterate_coefficients(self):
+        r"""
+        A generator for the coefficients of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_taylor
+            sage: x = polygen(QQ, 'x')
+            sage: f = Stream_taylor(x^3, False)
+            sage: it = f.iterate_coefficients()
+            sage: [next(it) for _ in range(10)]
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+
+            sage: y = SR.var('y')
+            sage: f = Stream_taylor(y^3, False)
+            sage: it = f.iterate_coefficients()
+            sage: [next(it) for _ in range(10)]
+            [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+        """
+        cur = self._func
+        n = 0
+        denom = 1
+        while True:
+            if self._is_symbolic:
+                yield cur({self._arg: ZZ.zero()}) / denom
+            else:
+                yield cur(ZZ.zero()) / denom
+            cur = cur.derivative()
+            n += 1
+            denom *= n
 
 
 class Stream_uninitialized(Stream_inexact):
@@ -989,7 +1216,7 @@ class Stream_uninitialized(Stream_inexact):
 
     .. TODO::
 
-        shouldn't instances of this class share the cache with its
+        Should instances of this class share the cache with its
         ``_target``?
 
     EXAMPLES::
@@ -1002,7 +1229,6 @@ class Stream_uninitialized(Stream_inexact):
         sage: C._target = one
         sage: C[4]
         0
-
     """
     def __init__(self, approximate_order, true_order=False):
         """
@@ -1012,13 +1238,14 @@ class Stream_uninitialized(Stream_inexact):
 
             sage: from sage.data_structures.stream import Stream_uninitialized
             sage: C = Stream_uninitialized(0)
-            sage: TestSuite(C).run(skip="_test_pickling")
+            sage: TestSuite(C).run(skip='_test_pickling')
         """
         self._target = None
         if approximate_order is None:
             raise ValueError("the valuation must be specified for undefined series")
         super().__init__(False, true_order)
         self._approximate_order = approximate_order
+        self._initializing = False
 
     def iterate_coefficients(self):
         """
@@ -1041,6 +1268,36 @@ class Stream_uninitialized(Stream_inexact):
             yield self._target[n]
             n += 1
 
+    def is_uninitialized(self):
+        """
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized
+            sage: C = Stream_uninitialized(0)
+            sage: C.is_uninitialized()
+            True
+
+        A more subtle uninitialized series::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: T = L.undefined(1)
+            sage: D = L.undefined(0)
+            sage: T.define(z * exp(T) * D)
+            sage: T._coeff_stream.is_uninitialized()
+            True
+        """
+        if self._target is None:
+            return True
+        if self._initializing:
+            return False
+        # We implement semaphore-like behavior for coupled (undefined) series
+        self._initializing = True
+        result = self._target.is_uninitialized()
+        self._initializing = False
+        return result
+
 
 class Stream_unary(Stream_inexact):
     r"""
@@ -1049,6 +1306,9 @@ class Stream_unary(Stream_inexact):
     INPUT:
 
     - ``series`` -- :class:`Stream` the operator acts on
+    - ``is_sparse`` -- boolean
+    - ``true_order`` -- boolean (default: ``False``); if the approximate order
+      is the actual order
 
     EXAMPLES::
 
@@ -1061,8 +1321,7 @@ class Stream_unary(Stream_inexact):
         sage: [g[i] for i in range(10)]
         [0, 4, 8, 12, 16, 20, 24, 28, 32, 36]
     """
-
-    def __init__(self, series, is_sparse):
+    def __init__(self, series, is_sparse, true_order=False):
         """
         Initialize ``self``.
 
@@ -1077,7 +1336,7 @@ class Stream_unary(Stream_inexact):
             sage: TestSuite(g).run()
         """
         self._series = series
-        super().__init__(is_sparse, False)
+        super().__init__(is_sparse, true_order)
 
     def __hash__(self):
         """
@@ -1117,6 +1376,20 @@ class Stream_unary(Stream_inexact):
         """
         return isinstance(other, type(self)) and self._series == other._series
 
+    def is_uninitialized(self):
+        """
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_unary
+            sage: C = Stream_uninitialized(0)
+            sage: M = Stream_unary(C, True)
+            sage: M.is_uninitialized()
+            True
+        """
+        return self._series.is_uninitialized()
+
 
 class Stream_binary(Stream_inexact):
     """
@@ -1139,7 +1412,6 @@ class Stream_binary(Stream_inexact):
         sage: [h[i] for i in range(10)]
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     """
-
     def __init__(self, left, right, is_sparse):
         """
         Initialize ``self``.
@@ -1204,6 +1476,24 @@ class Stream_binary(Stream_inexact):
         if not isinstance(other, type(self)):
             return False
         return self._left == other._left and self._right == other._right
+
+    def is_uninitialized(self):
+        """
+        Return ``True`` if ``self`` is an uninitialized stream.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_sub, Stream_function
+            sage: C = Stream_uninitialized(0)
+            sage: F = Stream_function(lambda n: n, True, 0)
+            sage: B = Stream_sub(F, C, True)
+            sage: B.is_uninitialized()
+            True
+            sage: Bp = Stream_sub(F, F, True)
+            sage: Bp.is_uninitialized()
+            False
+        """
+        return self._left.is_uninitialized() or self._right.is_uninitialized()
 
 
 class Stream_binaryCommutative(Stream_binary):
@@ -1282,7 +1572,6 @@ class Stream_zero(Stream):
         sage: s[5]
         0
     """
-
     def __init__(self):
         """
         Initialize ``self``.
@@ -1292,7 +1581,6 @@ class Stream_zero(Stream):
             sage: from sage.data_structures.stream import Stream_zero
             sage: s = Stream_zero()
             sage: TestSuite(s).run()
-
         """
         super().__init__(True)
         self._approximate_order = infinity
@@ -1344,6 +1632,33 @@ class Stream_zero(Stream):
             True
         """
         return self is other or isinstance(other, Stream_zero)
+
+    def __ne__(self, other):
+        """
+        Return whether ``self`` and ``other`` are known to be different.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_zero, Stream_function
+            sage: Stream_zero() != Stream_zero()
+            False
+            sage: f = Stream_function(lambda n: 2*n, True, 0)
+            sage: Stream_zero() != f
+            False
+            sage: f[0]
+            0
+            sage: Stream_zero() != f
+            False
+            sage: f[1]
+            2
+            sage: Stream_zero() != f
+            True
+        """
+        return self is not other and not isinstance(other, Stream_zero) and other.is_nonzero()
 
     def __hash__(self):
         """
@@ -1545,13 +1860,10 @@ class Stream_cauchy_mul(Stream_binary):
             sage: [h.get_coefficient(i) for i in range(10)]
             [0, 0, 1, 6, 20, 50, 105, 196, 336, 540]
         """
-        c = ZZ.zero()
-        for k in range(self._left._approximate_order,
-                       n - self._right._approximate_order + 1):
-            val = self._left[k]
-            if val:
-                c += val * self._right[n-k]
-        return c
+        return sum(l * self._right[n - k]
+                   for k in range(self._left._approximate_order,
+                                  n - self._right._approximate_order + 1)
+                   if (l := self._left[k]))
 
     def is_nonzero(self):
         r"""
@@ -1572,6 +1884,14 @@ class Stream_cauchy_mul(Stream_binary):
             True
         """
         return self._left.is_nonzero() and self._right.is_nonzero()
+
+
+class Stream_cauchy_mul_commutative(Stream_cauchy_mul, Stream_binaryCommutative):
+    """
+    Operator for multiplication of two coefficient streams using the
+    Cauchy product for commutative multiplication of coefficients.
+    """
+    pass
 
 
 class Stream_dirichlet_convolve(Stream_binary):
@@ -1644,123 +1964,10 @@ class Stream_dirichlet_convolve(Stream_binary):
             sage: [h[i] for i in range(1, 10)]
             [1, 3, 4, 7, 6, 12, 8, 15, 13]
         """
-        c = ZZ.zero()
-        for k in divisors(n):
-            if k < self._left._approximate_order or n // k < self._right._approximate_order:
-                continue
-            val = self._left[k]
-            if val:
-                c += val * self._right[n//k]
-        return c
-
-
-class Stream_dirichlet_invert(Stream_unary):
-    r"""
-    Operator for inverse with respect to Dirichlet convolution of the stream.
-
-    INPUT:
-
-    - ``series`` -- a :class:`Stream`
-
-    EXAMPLES::
-
-        sage: from sage.data_structures.stream import (Stream_dirichlet_invert, Stream_function)
-        sage: f = Stream_function(lambda n: 1, True, 1)
-        sage: g = Stream_dirichlet_invert(f, True)
-        sage: [g[i] for i in range(10)]
-        [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
-        sage: [moebius(i) for i in range(10)]
-        [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
-    """
-    def __init__(self, series, is_sparse):
-        """
-        Initialize.
-
-        TESTS::
-
-            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
-            sage: f = Stream_exact([0, 0], constant=1)
-            sage: g = Stream_dirichlet_invert(f, True)
-            sage: g[1]
-            Traceback (most recent call last):
-            ...
-            ZeroDivisionError: the Dirichlet inverse only exists if the coefficient with index 1 is non-zero
-        """
-        super().__init__(series, is_sparse)
-        self._zero = ZZ.zero()
-
-    @lazy_attribute
-    def _approximate_order(self):
-        """
-        Compute and return the approximate order of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import Stream_function, Stream_dirichlet_invert
-            sage: f = Stream_function(lambda n: n, True, 1)
-            sage: h = Stream_dirichlet_invert(f, True)
-            sage: h._approximate_order
-            1
-            sage: [h[i] for i in range(5)]
-            [0, -2, -8, -12, -48]
-        """
-        # this is the true order, but we want to check first
-        if self._series._approximate_order > 1:
-            raise ZeroDivisionError("the Dirichlet inverse only exists if the "
-                                    "coefficient with index 1 is non-zero")
-        self._true_order = True
-        return 1
-
-    @lazy_attribute
-    def _ainv(self):
-        """
-        The inverse of the leading coefficient.
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
-            sage: f = Stream_exact([0, 3], constant=2)
-            sage: g = Stream_dirichlet_invert(f, True)
-            sage: g._ainv
-            1/3
-
-            sage: f = Stream_exact([Zmod(6)(5)], constant=2, order=1)
-            sage: g = Stream_dirichlet_invert(f, True)
-            sage: g._ainv
-            5
-        """
-        try:
-            return ~self._series[1]
-        except TypeError:
-            return self._series[1].inverse_of_unit()
-
-    def get_coefficient(self, n):
-        """
-        Return the ``n``-th coefficient of ``self``.
-
-        INPUT:
-
-        - ``n`` -- integer; the degree for the coefficient
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
-            sage: f = Stream_exact([0, 3], constant=2)
-            sage: g = Stream_dirichlet_invert(f, True)
-            sage: g.get_coefficient(6)
-            2/27
-            sage: [g[i] for i in range(8)]
-            [0, 1/3, -2/9, -2/9, -2/27, -2/9, 2/27, -2/9]
-        """
-        if n == 1:
-            return self._ainv
-        c = self._zero
-        for k in divisors(n):
-            if k < n:
-                val = self._series[n//k]
-                if val:
-                    c += self[k] * val
-        return -c * self._ainv
+        return sum(l * self._right[n//k] for k in divisors(n)
+                   if (k >= self._left._approximate_order
+                       and n // k >= self._right._approximate_order
+                       and (l := self._left[k])))
 
 
 class Stream_cauchy_compose(Stream_binary):
@@ -1860,19 +2067,23 @@ class Stream_cauchy_compose(Stream_binary):
         fv = self._left._approximate_order
         gv = self._right._approximate_order
         if n < 0:
-            return sum(f_coeff_i * self._neg_powers[-i][n]
-                       for i in range(fv, n // gv + 1)
-                       if (f_coeff_i := self._left[i]))
+            return sum(l * self._neg_powers[-k][n]
+                       for k in range(fv, n // gv + 1)
+                       if (l := self._left[k]))
         # n > 0
         while len(self._pos_powers) <= n // gv:
             # TODO: possibly we always want a dense cache here?
-            self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1], self._right, self._is_sparse))
-        ret = sum(f_coeff_i * self._neg_powers[-i][n] for i in range(fv, 0)
-                  if (f_coeff_i := self._left[i]))
-        if n == 0:
+            self._pos_powers.append(Stream_cauchy_mul(self._pos_powers[-1],
+                                                      self._right,
+                                                      self._is_sparse))
+        ret = sum(l * self._neg_powers[-k][n] for k in range(fv, 0)
+                  if (l := self._left[k]))
+
+        if not n:
             ret += self._left[0]
-        return ret + sum(f_coeff_i * self._pos_powers[i][n] for i in range(1, n // gv + 1)
-                         if (f_coeff_i := self._left[i]))
+
+        return ret + sum(l * self._pos_powers[k][n] for k in range(1, n // gv + 1)
+                         if (l := self._left[k]))
 
 
 class Stream_plethysm(Stream_binary):
@@ -1886,17 +2097,18 @@ class Stream_plethysm(Stream_binary):
 
     - ``f`` -- a :class:`Stream`
     - ``g`` -- a :class:`Stream` with positive order, unless ``f`` is
-      of :class:`Stream_exact`.
+      of :class:`Stream_exact`
     - ``p`` -- the ring of powersum symmetric functions containing ``g``
-    - ``ring`` (optional, default ``None``) -- the ring the result
+    - ``ring`` -- (default: ``None``) the ring the result
       should be in, by default ``p``
-    - ``include`` -- a list of variables to be treated as degree one
+    - ``include`` -- list of variables to be treated as degree one
       elements instead of the default degree one elements
-    - ``exclude`` -- a list of variables to be excluded from the
+    - ``exclude`` -- list of variables to be excluded from the
       default degree one elements
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
         sage: s = SymmetricFunctions(QQ).s()
         sage: p = SymmetricFunctions(QQ).p()
@@ -1920,6 +2132,7 @@ class Stream_plethysm(Stream_binary):
     This class also handles the plethysm of an exact stream with a
     stream of order `0`::
 
+        sage: # needs sage.modules
         sage: from sage.data_structures.stream import Stream_exact
         sage: f = Stream_exact([s[1]], order=1)
         sage: g = Stream_function(lambda n: s[n], True, 0)
@@ -1931,6 +2144,7 @@ class Stream_plethysm(Stream_binary):
 
     Check corner cases::
 
+        sage: # needs sage.modules
         sage: f0 = Stream_exact([p([])])
         sage: f1 = Stream_exact([p[1]], order=1)
         sage: f2 = Stream_exact([p[2]], order=2 )
@@ -1944,23 +2158,25 @@ class Stream_plethysm(Stream_binary):
 
     Check that degree one elements are treated in the correct way::
 
+        sage: # needs sage.modules
         sage: R.<a1,a2,a11,b1,b21,b111> = QQ[]; p = SymmetricFunctions(R).p()
         sage: f_s = a1*p[1] + a2*p[2] + a11*p[1,1]
         sage: g_s = b1*p[1] + b21*p[2,1] + b111*p[1,1,1]
         sage: r_s = f_s(g_s)
-        sage: f = Stream_exact([f_s.restrict_degree(k) for k in range(f_s.degree()+1)])
-        sage: g = Stream_exact([g_s.restrict_degree(k) for k in range(g_s.degree()+1)])
+        sage: f = Stream_exact([f_s.restrict_degree(k)
+        ....:                   for k in range(f_s.degree()+1)])
+        sage: g = Stream_exact([g_s.restrict_degree(k)
+        ....:                   for k in range(g_s.degree()+1)])
         sage: r = Stream_plethysm(f, g, True, p)
         sage: r_s == sum(r[n] for n in range(2*(r_s.degree()+1)))
         True
 
-        sage: r_s - f_s(g_s, include=[])
+        sage: r_s - f_s(g_s, include=[])                                                # needs sage.modules
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
 
-        sage: r2 = Stream_plethysm(f, g, True, p, include=[])
-        sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))
+        sage: r2 = Stream_plethysm(f, g, True, p, include=[])                           # needs sage.modules
+        sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))                       # needs sage.modules
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
-
     """
     def __init__(self, f, g, is_sparse, p, ring=None, include=None, exclude=None):
         r"""
@@ -1968,6 +2184,7 @@ class Stream_plethysm(Stream_binary):
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
@@ -1989,7 +2206,7 @@ class Stream_plethysm(Stream_binary):
             self._basis = ring
         self._p = p
         g = Stream_map_coefficients(g, lambda x: p(x), is_sparse)
-        self._powers = [g]  # a cache for the powers of g
+        self._powers = [g]  # a cache for the powers of g in the powersum basis
         R = self._basis.base_ring()
         self._degree_one = _variables_recursive(R, include=include, exclude=exclude)
 
@@ -2009,6 +2226,7 @@ class Stream_plethysm(Stream_binary):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
             sage: p = SymmetricFunctions(QQ).p()
             sage: f = Stream_function(lambda n: p[n], True, 1)
@@ -2035,6 +2253,7 @@ class Stream_plethysm(Stream_binary):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.data_structures.stream import Stream_function, Stream_plethysm
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
@@ -2054,26 +2273,25 @@ class Stream_plethysm(Stream_binary):
         if not n:  # special case of 0
             if self._right[0]:
                 assert self._degree_f is not None, "the plethysm with a lazy symmetric function of valuation 0 is defined only for symmetric functions of finite support"
+                K = self._degree_f
+            else:
+                K = 1
+        else:
+            K = n + 1
 
-                return sum((c * self.compute_product(n, la)
-                            for k in range(self._left._approximate_order, self._degree_f)
-                            if self._left[k]
-                            for la, c in self._left[k]),
-                           self._basis.zero())
-
-        res = sum((c * self.compute_product(n, la)
-                   for k in range(self._left._approximate_order, n+1)
-                   if self._left[k]
-                   for la, c in self._left[k]),
-                  self._basis.zero())
-        return res
+        return sum((c * self.compute_product(n, la)
+                    for k in range(self._left._approximate_order, K)
+                    if self._left[k] # necessary, because it might be int(0)
+                    for la, c in self._left[k]),
+                   self._basis.zero())
 
     def compute_product(self, n, la):
         r"""
-        Compute the product ``c * p[la](self._right)`` in degree ``n``.
+        Compute the product ``p[la](self._right)`` in degree ``n``.
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.data_structures.stream import Stream_plethysm, Stream_exact, Stream_function, Stream_zero
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
@@ -2086,21 +2304,26 @@ class Stream_plethysm(Stream_binary):
             sage: A == p[2, 1](s[2] + s[3]).homogeneous_component(7)
             True
 
+            sage: # needs sage.modules
             sage: p2 = tensor([p, p])
             sage: f = Stream_exact([1]) # irrelevant for this test
-            sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]]) for k in range(n+1)), True, 1)
+            sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])
+            ....:                                   for k in range(n+1)), True, 1)
             sage: h = Stream_plethysm(f, g, True, p2)
             sage: A = h.compute_product(7, Partition([2, 1]))
             sage: B = p[2, 1](sum(g[n] for n in range(7)))
-            sage: B = p2.element_class(p2, {m: c for m, c in B if sum(mu.size() for mu in m) == 7})
+            sage: B = p2.element_class(p2, {m: c for m, c in B
+            ....:                           if sum(mu.size() for mu in m) == 7})
             sage: A == B
             True
 
+            sage: # needs sage.modules
             sage: f = Stream_exact([1]) # irrelevant for this test
             sage: g = Stream_function(lambda n: s[n], True, 0)
             sage: h = Stream_plethysm(f, g, True, p)
             sage: B = p[2, 2, 1](sum(p(s[i]) for i in range(7)))
-            sage: all(h.compute_product(k, Partition([2, 2, 1])) == B.restrict_degree(k) for k in range(7))
+            sage: all(h.compute_product(k, Partition([2, 2, 1]))
+            ....:      == B.restrict_degree(k) for k in range(7))
             True
         """
         # This is the approximate order of the result
@@ -2118,22 +2341,35 @@ class Stream_plethysm(Stream_binary):
         wgt.reverse()
         exp.reverse()
         for k in wt_int_vec_iter(n - ret_approx_order, wgt):
-            # TODO: it may make a big difference here if the
-            #   approximate order would be updated.
-            # The test below is based on not removing the fixed block
-            #if any(d < self._right._approximate_order * m
-            #       for m, d in zip(exp, k)):
-            #    continue
-            ret += prod(self.stretched_power_restrict_degree(i, m, rao * m + d)
-                        for i, m, d in zip(wgt, exp, k))
+            # prod does not short-cut zero, therefore
+            # ret += prod(self.stretched_power_restrict_degree(i, m, rao * m + d)
+            #             for i, m, d in zip(wgt, exp, k))
+            # is expensive
+            lf = []
+            for i, m, d in zip(wgt, exp, k):
+                f = self.stretched_power_restrict_degree(i, m, rao * m + d)
+                if not f:
+                    break
+                lf.append(f)
+            else:
+                ret += prod(lf)
+
         return ret
 
+    @cached_method
     def stretched_power_restrict_degree(self, i, m, d):
         r"""
-        Return the degree ``d*i`` part of ``p([i]*m)(g)``.
+        Return the degree ``d*i`` part of ``p([i]*m)(g)`` in
+        terms of ``self._basis``.
+
+        INPUT:
+
+        - ``i``, ``m`` -- positive integers
+        - ``d`` -- integer
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.data_structures.stream import Stream_plethysm, Stream_exact, Stream_function, Stream_zero
             sage: s = SymmetricFunctions(QQ).s()
             sage: p = SymmetricFunctions(QQ).p()
@@ -2144,50 +2380,57 @@ class Stream_plethysm(Stream_binary):
             sage: A == p[2,2,2](s[2] + s[3]).homogeneous_component(12)
             True
 
+            sage: # needs sage.modules
             sage: p2 = tensor([p, p])
             sage: f = Stream_exact([1]) # irrelevant for this test
-            sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]]) for k in range(n+1)), True, 1)
+            sage: g = Stream_function(lambda n: sum(tensor([p[k], p[n-k]])
+            ....:                                   for k in range(n+1)), True, 1)
             sage: h = Stream_plethysm(f, g, True, p2)
             sage: A = h.stretched_power_restrict_degree(2, 3, 6)
-            sage: B = p[2,2,2](sum(g[n] for n in range(7)))  # long time
-            sage: B = p2.element_class(p2, {m: c for m, c in B if sum(mu.size() for mu in m) == 12})  # long time
-            sage: A == B  # long time
+            sage: B = p[2,2,2](sum(g[n] for n in range(7)))     # long time
+            sage: B = p2.element_class(p2, {m: c for m, c in B  # long time
+            ....:                           if sum(mu.size() for mu in m) == 12})
+            sage: A == B                        # long time
             True
         """
+        # TODO: we should do lazy binary powering here
         while len(self._powers) < m:
             # TODO: possibly we always want a dense cache here?
-            self._powers.append(Stream_cauchy_mul(self._powers[-1], self._powers[0], self._is_sparse))
+            self._powers.append(Stream_cauchy_mul(self._powers[-1],
+                                                  self._powers[0],
+                                                  self._is_sparse))
         power_d = self._powers[m-1][d]
         # we have to check power_d for zero because it might be an
         # integer and not a symmetric function
         if power_d:
+            # _raise_variables(c, i, self._degree_one) cannot vanish
+            # because i is positive and c is nonzero
             if self._tensor_power is None:
-                terms = {mon.stretch(i): raised_c for mon, c in power_d
-                         if (raised_c := _raise_variables(c, i, self._degree_one))}
+                terms = {mon.stretch(i):
+                         _raise_variables(c, i, self._degree_one)
+                         for mon, c in power_d}
             else:
-                terms = {tuple((mu.stretch(i) for mu in mon)): raised_c
-                         for mon, c in power_d
-                         if (raised_c := _raise_variables(c, i, self._degree_one))}
-            return self._p.element_class(self._p, terms)
+                terms = {tuple(mu.stretch(i) for mu in mon):
+                         _raise_variables(c, i, self._degree_one)
+                         for mon, c in power_d}
+            return self._basis(self._p.element_class(self._p, terms))
 
-        return self._p.zero()
+        return self._basis.zero()
 
 
 #####################################################################
 # Unary operations
 
-class Stream_scalar(Stream_inexact):
+class Stream_scalar(Stream_unary):
     """
     Base class for operators multiplying a coefficient stream by a
     scalar.
 
-    .. TODO::
+    INPUT:
 
-        This does not inherit from :class:`Stream_unary`, because of
-        the extra argument ``scalar``.  However, we could also
-        override :meth:`Stream_unary.hash`,
-        :meth:`Stream_unary.__eq__`.  Would this be any better?
-
+    - ``series`` -- a :class:`Stream`
+    - ``scalar`` -- a nonzero, non-one scalar
+    - ``is_sparse`` -- boolean
     """
     def __init__(self, series, scalar, is_sparse):
         """
@@ -2199,10 +2442,10 @@ class Stream_scalar(Stream_inexact):
             sage: f = Stream_function(lambda n: -1, True, 0)
             sage: g = Stream_rmul(f, 3, True)
         """
-        self._series = series
         self._scalar = scalar
         assert scalar, "the scalar must not be equal to 0"
-        super().__init__(is_sparse, series._true_order)
+        assert scalar != 1, "the scalar must not be equal to 1"
+        super().__init__(series, is_sparse, series._true_order)
 
     @lazy_attribute
     def _approximate_order(self):
@@ -2294,10 +2537,11 @@ class Stream_rmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a scalar
+    - ``scalar`` -- a nonzero, non-one scalar
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.data_structures.stream import (Stream_rmul, Stream_function)
         sage: W = algebras.DifferentialWeyl(QQ, names=('x',))
         sage: x, dx = W.gens()
@@ -2335,10 +2579,11 @@ class Stream_lmul(Stream_scalar):
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``scalar`` -- a scalar
+    - ``scalar`` -- a nonzero, non-one scalar
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.data_structures.stream import (Stream_lmul, Stream_function)
         sage: W = algebras.DifferentialWeyl(QQ, names=('x',))
         sage: x, dx = W.gens()
@@ -2470,7 +2715,8 @@ class Stream_cauchy_invert(Stream_unary):
     - ``approximate_order`` -- ``None``, or a lower bound on the
       order of the resulting stream
 
-    Instances of this class are always dense.
+    Instances of this class are always dense, because of mathematical
+    necessities.
 
     EXAMPLES::
 
@@ -2479,7 +2725,6 @@ class Stream_cauchy_invert(Stream_unary):
         sage: g = Stream_cauchy_invert(f)
         sage: [g[i] for i in range(10)]
         [-1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
     """
     def __init__(self, series, approximate_order=None):
         """
@@ -2594,7 +2839,114 @@ class Stream_cauchy_invert(Stream_unary):
         return True
 
 
-class Stream_map_coefficients(Stream_inexact):
+class Stream_dirichlet_invert(Stream_unary):
+    r"""
+    Operator for inverse with respect to Dirichlet convolution of the stream.
+
+    INPUT:
+
+    - ``series`` -- a :class:`Stream`
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import (Stream_dirichlet_invert, Stream_function)
+        sage: f = Stream_function(lambda n: 1, True, 1)
+        sage: g = Stream_dirichlet_invert(f, True)
+        sage: [g[i] for i in range(10)]
+        [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
+        sage: [moebius(i) for i in range(10)]                                           # needs sage.libs.pari
+        [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
+    """
+    def __init__(self, series, is_sparse):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
+            sage: f = Stream_exact([0, 0], constant=1)
+            sage: g = Stream_dirichlet_invert(f, True)
+            sage: g[1]
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: the Dirichlet inverse only exists if the coefficient with index 1 is nonzero
+        """
+        super().__init__(series, is_sparse)
+        self._zero = ZZ.zero()
+
+    @lazy_attribute
+    def _approximate_order(self):
+        """
+        Compute and return the approximate order of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_dirichlet_invert
+            sage: f = Stream_function(lambda n: n, True, 1)
+            sage: h = Stream_dirichlet_invert(f, True)
+            sage: h._approximate_order
+            1
+            sage: [h[i] for i in range(5)]
+            [0, -2, -8, -12, -48]
+        """
+        # this is the true order, but we want to check first
+        if self._series._approximate_order > 1:
+            raise ZeroDivisionError("the Dirichlet inverse only exists if the "
+                                    "coefficient with index 1 is nonzero")
+        self._true_order = True
+        return 1
+
+    @lazy_attribute
+    def _ainv(self):
+        """
+        The inverse of the leading coefficient.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
+            sage: f = Stream_exact([0, 3], constant=2)
+            sage: g = Stream_dirichlet_invert(f, True)
+            sage: g._ainv
+            1/3
+
+            sage: f = Stream_exact([Zmod(6)(5)], constant=2, order=1)
+            sage: g = Stream_dirichlet_invert(f, True)
+            sage: g._ainv
+            5
+        """
+        try:
+            return ~self._series[1]
+        except TypeError:
+            return self._series[1].inverse_of_unit()
+
+    def get_coefficient(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer; the degree for the coefficient
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
+            sage: f = Stream_exact([0, 3], constant=2)
+            sage: g = Stream_dirichlet_invert(f, True)
+            sage: g.get_coefficient(6)
+            2/27
+            sage: [g[i] for i in range(8)]
+            [0, 1/3, -2/9, -2/9, -2/27, -2/9, 2/27, -2/9]
+        """
+        if n == 1:
+            return self._ainv
+        # TODO: isn't self[k] * l and l * self[k] the same here?
+        c = sum(self[k] * l for k in divisors(n)
+                if (k < n
+                    and (l := self._series[n // k])))
+        return -c * self._ainv
+
+
+class Stream_map_coefficients(Stream_unary):
     r"""
     The stream with ``function`` applied to each nonzero coefficient
     of ``series``.
@@ -2604,6 +2956,11 @@ class Stream_map_coefficients(Stream_inexact):
     - ``series`` -- a :class:`Stream`
     - ``function`` -- a function that modifies the elements of the stream
 
+    .. NOTE::
+
+        We assume for equality that ``function`` is a function in the
+        mathematical sense.
+
     EXAMPLES::
 
         sage: from sage.data_structures.stream import (Stream_map_coefficients, Stream_function)
@@ -2611,7 +2968,6 @@ class Stream_map_coefficients(Stream_inexact):
         sage: g = Stream_map_coefficients(f, lambda n: -n, True)
         sage: [g[i] for i in range(10)]
         [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-
     """
     def __init__(self, series, function, is_sparse, approximate_order=None, true_order=False):
         """
@@ -2622,11 +2978,10 @@ class Stream_map_coefficients(Stream_inexact):
             sage: from sage.data_structures.stream import (Stream_map_coefficients, Stream_function)
             sage: f = Stream_function(lambda n: -1, True, 0)
             sage: g = Stream_map_coefficients(f, lambda n: n + 1, True)
-            sage: TestSuite(g).run(skip="_test_pickling")
+            sage: TestSuite(g).run(skip='_test_pickling')
         """
         self._function = function
-        self._series = series
-        super().__init__(is_sparse, true_order)
+        super().__init__(series, is_sparse, true_order)
         if approximate_order is not None:
             self._approximate_order = approximate_order
 
@@ -2717,14 +3072,14 @@ class Stream_map_coefficients(Stream_inexact):
 
 class Stream_shift(Stream):
     """
-    Operator for shifting a nonzero, nonexact stream.
+    Operator for shifting a nonzero, non-exact stream.
 
     Instances of this class share the cache with its input stream.
 
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``shift`` -- an integer
+    - ``shift`` -- integer
     """
     def __init__(self, series, shift):
         """
@@ -2736,7 +3091,7 @@ class Stream_shift(Stream):
             sage: from sage.data_structures.stream import Stream_function
             sage: h = Stream_function(lambda n: n, True, -5)
             sage: M = Stream_shift(h, 2)
-            sage: TestSuite(M).run(skip="_test_pickling")
+            sage: TestSuite(M).run(skip='_test_pickling')
         """
         self._series = series
         self._shift = shift
@@ -2789,7 +3144,7 @@ class Stream_shift(Stream):
             sage: [M[i] for i in range(6)]
             [0, 0, 0, 1, 2, 3]
         """
-        return self._series[n-self._shift]
+        return self._series[n - self._shift]
 
     def __hash__(self):
         """
@@ -2826,7 +3181,8 @@ class Stream_shift(Stream):
             sage: M2 == Stream_shift(F, 2)
             True
         """
-        return (isinstance(other, type(self)) and self._shift == other._shift
+        return (isinstance(other, type(self))
+                and self._shift == other._shift
                 and self._series == other._series)
 
     def is_nonzero(self):
@@ -2846,10 +3202,24 @@ class Stream_shift(Stream):
         """
         return self._series.is_nonzero()
 
+    def is_uninitialized(self):
+        """
+        Return ``True`` if ``self`` is an uninitialized stream.
 
-class Stream_truncated(Stream_inexact):
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_shift
+            sage: C = Stream_uninitialized(0)
+            sage: S = Stream_shift(C, 5)
+            sage: S.is_uninitialized()
+            True
+        """
+        return self._series.is_uninitialized()
+
+
+class Stream_truncated(Stream_unary):
     """
-    Operator for shifting a nonzero, nonexact stream that has
+    Operator for shifting a nonzero, non-exact stream that has
     been shifted below its minimal valuation.
 
     Instances of this class share the cache with its input stream.
@@ -2857,8 +3227,8 @@ class Stream_truncated(Stream_inexact):
     INPUT:
 
     - ``series`` -- a :class:`Stream_inexact`
-    - ``shift`` -- an integer
-    - ``minimal_valuation`` -- an integer; this is also the approximate order
+    - ``shift`` -- integer
+    - ``minimal_valuation`` -- integer; this is also the approximate order
     """
     def __init__(self, series, shift, minimal_valuation):
         """
@@ -2869,9 +3239,9 @@ class Stream_truncated(Stream_inexact):
             sage: from sage.data_structures.stream import Stream_function, Stream_truncated
             sage: def fun(n): return 1 if ZZ(n).is_power_of(2) else 0
             sage: s = Stream_truncated(Stream_function(fun, True, 0), -5, 0)
-            sage: TestSuite(s).run(skip="_test_pickling")
+            sage: TestSuite(s).run(skip='_test_pickling')
             sage: s = Stream_truncated(Stream_function(fun, False, 0), -5, 0)
-            sage: TestSuite(s).run(skip="_test_pickling")
+            sage: TestSuite(s).run(skip='_test_pickling')
 
         Verify that we have used the cache to see if we can get the
         true order at initialization::
@@ -2897,9 +3267,8 @@ class Stream_truncated(Stream_inexact):
             sage: s._approximate_order
             3
         """
-        super().__init__(series._is_sparse, False)
+        super().__init__(series, series._is_sparse, False)
         assert isinstance(series, Stream_inexact)
-        self._series = series
         # We share self._series._cache but not self._series._approximate order
         # self._approximate_order cannot be updated by self._series.__getitem__
         self._cache = series._cache
@@ -3096,14 +3465,15 @@ class Stream_truncated(Stream_inexact):
         return any(self._cache[start:])
 
 
-class Stream_derivative(Stream_inexact):
+class Stream_derivative(Stream_unary):
     """
-    Operator for taking derivatives of a stream.
+    Operator for taking derivatives of a non-exact stream.
 
     INPUT:
 
     - ``series`` -- a :class:`Stream`
-    - ``shift`` -- a positive integer
+    - ``shift`` -- positive integer
+    - ``is_sparse`` -- boolean
     """
     def __init__(self, series, shift, is_sparse):
         """
@@ -3116,9 +3486,8 @@ class Stream_derivative(Stream_inexact):
             sage: f2 = Stream_derivative(f, 2, True)
             sage: TestSuite(f2).run()
         """
-        self._series = series
         self._shift = shift
-        super().__init__(is_sparse, False)
+        super().__init__(series, is_sparse, False)
 
     @lazy_attribute
     def _approximate_order(self):
@@ -3162,7 +3531,7 @@ class Stream_derivative(Stream_inexact):
             sage: [f2[i] for i in range(-1, 4)]
             [0, 2, 6, 12, 20]
         """
-        return (prod(n+k for k in range(1, self._shift + 1))
+        return (ZZ.prod(range(n + 1, n + self._shift + 1))
                 * self._series[n + self._shift])
 
     def __hash__(self):
@@ -3180,7 +3549,6 @@ class Stream_derivative(Stream_inexact):
             True
             sage: hash(f) == hash(g)
             False
-
         """
         return hash((type(self), self._series, self._shift))
 
@@ -3204,7 +3572,8 @@ class Stream_derivative(Stream_inexact):
             sage: f == Stream_derivative(a, 1, True)
             True
         """
-        return (isinstance(other, type(self)) and self._shift == other._shift
+        return (isinstance(other, type(self))
+                and self._shift == other._shift
                 and self._series == other._series)
 
     def is_nonzero(self):
@@ -3222,3 +3591,458 @@ class Stream_derivative(Stream_inexact):
             True
         """
         return self._series.is_nonzero()
+
+
+class Stream_integral(Stream_unary):
+    """
+    Operator for taking integrals of a non-exact stream.
+
+    INPUT:
+
+    - ``series`` -- a :class:`Stream`
+    - ``integration_constants`` -- list of integration constants
+    - ``is_sparse`` -- boolean
+    """
+    def __init__(self, series, integration_constants, is_sparse):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_exact, Stream_integral
+            sage: f = Stream_exact([1, 2, 3])
+            sage: f2 = Stream_integral(f, [-2], True)
+            sage: TestSuite(f2).run()
+        """
+        self._shift = len(integration_constants)
+        self._integration_constants = tuple(integration_constants)
+        super().__init__(series, is_sparse, False)
+
+    @lazy_attribute
+    def _approximate_order(self):
+        """
+        Compute and return the approximate order of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_integral
+            sage: f = Stream_function(lambda n: (n+1)*(n+2), True, 2)
+            sage: h = Stream_integral(f, [0, 0], True)
+            sage: h._approximate_order
+            0
+            sage: [h[i] for i in range(10)]
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
+            sage: h._approximate_order
+            4
+        """
+        # this is generally not the true order
+        return min(self._series._approximate_order + self._shift, 0)
+
+    def get_coefficient(self, n):
+        r"""
+        Return the ``n``-th coefficient of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_integral
+            sage: f = Stream_function(lambda n: n + 1, True, -3)
+            sage: [f[i] for i in range(-3, 4)]
+            [-2, -1, 0, 1, 2, 3, 4]
+            sage: f2 = Stream_integral(f, [0], True)
+            sage: [f2.get_coefficient(i) for i in range(-3, 5)]
+            [0, 1, 1, 0, 1, 1, 1, 1]
+
+            sage: f = Stream_function(lambda n: (n + 1)*(n+2), True, 2)
+            sage: [f[i] for i in range(-1, 4)]
+            [0, 0, 0, 12, 20]
+            sage: f2 = Stream_integral(f, [-1, -1, -1], True)
+            sage: [f2.get_coefficient(i) for i in range(-1, 7)]
+            [0, -1, -1, -1/2, 0, 0, 1/5, 1/6]
+        """
+        if 0 <= n < self._shift:
+            return (self._integration_constants[n] / ZZ.prod(range(2, n + 1)))
+        return (self._series[n - self._shift] /
+                ZZ.prod(range(n - self._shift + 1, n + 1)))
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_integral
+            sage: a = Stream_function(lambda n: 2*n, False, 1)
+            sage: f = Stream_integral(a, [0, 1], True)
+            sage: g = Stream_integral(a, [0, 2], True)
+            sage: hash(f) == hash(f)
+            True
+            sage: hash(f) == hash(g)
+            False
+        """
+        return hash((type(self), self._series, self._integration_constants))
+
+    def __eq__(self, other):
+        """
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_integral
+            sage: a = Stream_function(lambda n: 2*n, False, 1)
+            sage: f = Stream_integral(a, [1], True)
+            sage: g = Stream_integral(a, [2], True)
+            sage: f == g
+            False
+            sage: f == Stream_integral(a, [1], True)
+            True
+        """
+        return (isinstance(other, type(self))
+                and self._integration_constants == other._integration_constants
+                and self._series == other._series)
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_integral
+            sage: f = Stream_function(lambda n: 2*n, True, 1)
+            sage: f[1]
+            2
+            sage: f.is_nonzero()
+            True
+            sage: Stream_integral(f, [0], True).is_nonzero()
+            True
+            sage: f = Stream_function(lambda n: 0, False, 1)
+            sage: Stream_integral(f, [0, 0, 0], False).is_nonzero()
+            False
+            sage: Stream_integral(f, [0, 2], False).is_nonzero()
+            True
+        """
+        return self._series.is_nonzero() or any(self._integration_constants)
+
+
+class Stream_infinite_operator(Stream):
+    r"""
+    Stream defined by applying an operator an infinite number of times.
+
+    The ``iterator`` returns elements `s_i` to compute an infinite operator.
+    The valuation of `s_i` is weakly increasing as we iterate over `I` and
+    there are only finitely many terms with any fixed valuation.
+    In particular, this *assumes* the result is nonzero.
+
+    .. WARNING::
+
+        This does not check that the input is valid.
+
+    INPUT:
+
+    - ``iterator`` -- the iterator for the factors
+    """
+    def __init__(self, iterator):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+        """
+        self._op_iter = iterator
+        self._cur = None
+        self._cur_order = -infinity
+        super().__init__(False)
+
+    @lazy_attribute
+    def _approximate_order(self):
+        r"""
+        Compute and return the approximate order of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum, Stream_infinite_product
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f._approximate_order
+            1
+            sage: it = (t^n for n in PositiveIntegers())
+            sage: f = Stream_infinite_product(it)
+            sage: f._approximate_order
+            0
+            sage: it = (t^(n-10) for n in PositiveIntegers())
+            sage: f = Stream_infinite_product(it)
+            sage: f._approximate_order
+            -45
+        """
+        if self._cur is None:
+            self._advance()
+        while self._cur_order <= 0:
+            self._advance()
+        return self._cur._coeff_stream._approximate_order
+
+    def _advance(self):
+        r"""
+        Advance the iterator so that the approximate order increases
+        by at least one.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (n * t^n for n in range(10))
+            sage: f = Stream_infinite_sum(it)
+            sage: f._cur is None
+            True
+            sage: f._advance()
+            sage: f._cur
+            t + 2*t^2
+            sage: f._cur_order
+            2
+            sage: for _ in range(20):
+            ....:     f._advance()
+            sage: f._cur
+            t + 2*t^2 + 3*t^3 + 4*t^4 + 5*t^5 + 6*t^6 + 7*t^7 + 8*t^8 + 9*t^9
+            sage: f._cur_order
+            +Infinity
+
+            sage: it = (t^(n//3) / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f._advance()
+            sage: f._cur
+            2 + 3*t + 3*t^2 + 3*t^3 + O(t^4)
+            sage: f._advance()
+            sage: f._cur
+            2 + 5*t + 6*t^2 + 6*t^3 + 6*t^4 + O(t^5)
+        """
+        if self._cur is None:
+            temp = next(self._op_iter)
+            if isinstance(temp._coeff_stream, Stream_zero):
+                self._advance()
+                return
+            self.initial(temp)
+            self._cur_order = temp._coeff_stream._approximate_order
+
+        order = self._cur_order
+        while order == self._cur_order:
+            try:
+                next_factor = next(self._op_iter)
+            except StopIteration:
+                self._cur_order = infinity
+                return
+            if isinstance(next_factor._coeff_stream, Stream_zero):
+                continue
+            coeff_stream = next_factor._coeff_stream
+            while coeff_stream._approximate_order < order:
+                # This check also updates the next_factor._approximate_order
+                if coeff_stream[coeff_stream._approximate_order]:
+                    order = coeff_stream._approximate_order
+                    raise ValueError(f"invalid product computation with invalid order {order} < {self._cur_order}")
+            self.apply_operator(next_factor)
+            order = coeff_stream._approximate_order
+            # We check to see if we need to increment the order
+            if order == self._cur_order and not coeff_stream[order]:
+                order += 1
+        self._cur_order = order
+
+    def __getitem__(self, n):
+        r"""
+        Return the ``n``-th coefficient of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f[2]
+            2
+            sage: f[5]
+            5
+        """
+        while n >= self._cur_order:
+            self._advance()
+        return self._cur[n]
+
+    def order(self):
+        r"""
+        Return the order of ``self``, which is the minimum index ``n`` such
+        that ``self[n]`` is nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^(5+n) / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f.order()
+            6
+        """
+        return self._approximate_order
+
+    def __hash__(self):
+        r"""
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: hash(f) == hash((type(f), f._op_iter))
+            True
+        """
+        return hash((type(self), self._op_iter))
+
+    def __ne__(self, other):
+        r"""
+        Return whether ``self`` and ``other`` are known to be equal.
+
+        INPUT:
+
+        - ``other`` -- a stream
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: itf = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(itf)
+            sage: itg = (t^(2*n-1) / (1 - t) for n in PositiveIntegers())
+            sage: g = Stream_infinite_sum(itg)
+            sage: f != g
+            False
+            sage: f[10]
+            10
+            sage: g[10]
+            5
+            sage: f != g
+            True
+        """
+        if not isinstance(other, type(self)):
+            return True
+        ao = min(self._approximate_order, other._approximate_order)
+        if any(self[i] != other[i] for i in range(ao, min(self._cur_order, other._cur_order))):
+            return True
+        return False
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if this stream is known
+        to be nonzero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f.is_nonzero()
+            True
+        """
+        return True
+
+
+class Stream_infinite_sum(Stream_infinite_operator):
+    r"""
+    Stream defined by an infinite sum.
+
+    The ``iterator`` returns elements `s_i` to compute the product
+    `\sum_{i \in I} s_i`. See :class:`Stream_infinite_operator`
+    for restrictions on the `s_i`.
+
+    INPUT:
+
+    - ``iterator`` -- the iterator for the factors
+    """
+    def initial(self, obj):
+        r"""
+        Set the initial data.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f._cur is None
+            True
+            sage: f._advance()  # indirect doctest
+            sage: f._cur
+            t + 2*t^2 + 2*t^3 + 2*t^4 + O(t^5)
+        """
+        self._cur = obj
+
+    def apply_operator(self, next_obj):
+        r"""
+        Apply the operator to ``next_obj``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_sum
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^(n//2) / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_sum(it)
+            sage: f._advance()
+            sage: f._advance()  # indirect doctest
+            sage: f._cur
+            1 + 3*t + 4*t^2 + 4*t^3 + 4*t^4 + O(t^5)
+        """
+        self._cur += next_obj
+
+
+class Stream_infinite_product(Stream_infinite_operator):
+    r"""
+    Stream defined by an infinite product.
+
+    The ``iterator`` returns elements `p_i` to compute the product
+    `\prod_{i \in I} (1 + p_i)`. See :class:`Stream_infinite_operator`
+    for restrictions on the `p_i`.
+
+    INPUT:
+
+    - ``iterator`` -- the iterator for the factors
+    """
+    def initial(self, obj):
+        r"""
+        Set the initial data.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_product(it)
+            sage: f._cur is None
+            True
+            sage: f._advance()  # indirect doctest
+            sage: f._cur
+            1 + t + 2*t^2 + 3*t^3 + 4*t^4 + 5*t^5 + 6*t^6 + O(t^7)
+        """
+        self._cur = obj + 1
+
+    def apply_operator(self, next_obj):
+        r"""
+        Apply the operator to ``next_obj``.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_infinite_product
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: it = (t^n / (1 - t) for n in PositiveIntegers())
+            sage: f = Stream_infinite_product(it)
+            sage: f._advance()
+            sage: f._advance()  # indirect doctest
+            sage: f._cur
+            1 + t + 2*t^2 + 4*t^3 + 6*t^4 + 9*t^5 + 13*t^6 + O(t^7)
+        """
+        self._cur = self._cur + self._cur * next_obj

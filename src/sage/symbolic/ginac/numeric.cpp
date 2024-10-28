@@ -67,20 +67,12 @@
 #include "archive.h"
 #include "tostring.h"
 #include "utils.h"
+#include "../../cpython/pycore_long.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-register"
 #include "factory/factory.h"
 #pragma clang diagnostic pop
-
-#ifdef PYNAC_HAVE_LIBGIAC
-#undef _POSIX_C_SOURCE
-#undef _XOPEN_SOURCE
-
-#include <giac/global.h>
-#include <giac/gausspol.h>
-#include <giac/fraction.h>
-#endif
 
 //#define Logging_refctr
 #if defined(Logging_refctr)
@@ -176,12 +168,7 @@ inline void py_error(const char* errmsg) {
                         "pyerror() called but no error occurred!");
 }
 
-#if PY_MAJOR_VERSION < 3
-#define PyNumber_TrueDivide PyNumber_Divide
-
-#else
 #define PyString_FromString PyUnicode_FromString
-#endif
 
 // The following variable gets changed to true once
 // this library has been imported by the Python
@@ -209,9 +196,9 @@ PyObject* RR_get()
 {
         static PyObject* ptr = nullptr;
         if (ptr == nullptr) {
-                PyObject* m = PyImport_ImportModule("sage.rings.all");
+                PyObject* m = PyImport_ImportModule("sage.rings.real_mpfr");
                 if (m == nullptr)
-                        py_error("Error importing sage.rings.all");
+                        py_error("Error importing sage.rings.real_mpfr");
                 ptr = PyObject_GetAttrString(m, "RR");
                 if (ptr == nullptr)
                         py_error("Error getting RR attribute");
@@ -225,13 +212,10 @@ PyObject* CC_get()
         static PyObject* ptr = nullptr;
         if (ptr)
                 return ptr;
-        PyObject* m = PyImport_ImportModule("sage.rings.all");
+        PyObject* m = PyImport_ImportModule("sage.rings.cc");
         if (m == nullptr)
-                py_error("Error importing sage.rings.all");
-        ptr = PyObject_GetAttrString(m, "ComplexField");
-        if (ptr == nullptr)
-                py_error("Error getting ComplexField attribute");
-        ptr = PyObject_CallObject(ptr, NULL);
+                py_error("Error importing sage.rings.cc");
+        ptr = PyObject_GetAttrString(m, "CC");
         if (ptr == nullptr)
                 py_error("Error getting CC attribute");
         Py_INCREF(ptr);
@@ -310,9 +294,9 @@ int precision(const GiNaC::numeric& num, PyObject*& a_parent) {
 }
 
 PyObject* CBF(int res) {
-        PyObject* m = PyImport_ImportModule("sage.rings.all");
+        PyObject* m = PyImport_ImportModule("sage.rings.complex_arb");
         if (m == nullptr)
-                py_error("Error importing arb");
+                py_error("Error importing sage.rings.complex_arb");
         PyObject* f = PyObject_GetAttrString(m, "ComplexBallField");
         if (f == nullptr)
                 py_error("Error getting ComplexBallField attribute");
@@ -392,9 +376,9 @@ PyObject* CallBallMethod1Arg(PyObject* field, const char* meth, const GiNaC::num
 }
 
 PyObject* CoerceBall(PyObject* ball, int prec) {
-        PyObject* m = PyImport_ImportModule("sage.rings.all");
+        PyObject* m = PyImport_ImportModule("sage.rings.complex_mpfr");
         if (m == nullptr)
-                py_error("Error importing sage.rings.all");
+                py_error("Error importing sage.rings.complex_mpfr");
         PyObject* f = PyObject_GetAttrString(m, "ComplexField");
         if (f == nullptr)
                 py_error("Error getting ComplexField attribute");
@@ -494,15 +478,9 @@ static PyObject* py_tuple_from_numvector(const std::vector<numeric>& vec)
 // class numeric
 ///////////////////////////////////////////////////////////////////////////////
 
-#if PY_MAJOR_VERSION < 3
-PyObject* ZERO = PyInt_FromLong(0); // todo: never freed
-PyObject* ONE = PyInt_FromLong(1); // todo: never freed
-PyObject* TWO = PyInt_FromLong(2); // todo: never freed
-#else
 PyObject* ZERO = PyLong_FromLong(0); // todo: never freed
 PyObject* ONE = PyLong_FromLong(1); // todo: never freed
 PyObject* TWO = PyLong_FromLong(2); // todo: never freed
-#endif
 
 std::ostream& operator<<(std::ostream& os, const numeric& s) {
         switch (s.t) {
@@ -720,18 +698,12 @@ static long _mpq_pythonhash(mpq_t the_rat)
 // Initialize an mpz_t from a Python long integer
 static void _mpz_set_pylong(mpz_t z, PyLongObject* l)
 {
-    Py_ssize_t pylong_size = Py_SIZE(l);
-    int sign = 1;
-
-    if (pylong_size < 0) {
-        pylong_size = -pylong_size;
-        sign = -1;
-    }
+    Py_ssize_t pylong_size = _PyLong_DigitCount(l);
 
     mpz_import(z, pylong_size, -1, sizeof(digit), 0,
-               8*sizeof(digit) - PyLong_SHIFT, l->ob_digit);
+               8*sizeof(digit) - PyLong_SHIFT, ob_digit(l));
 
-    if (sign < 0)
+    if (_PyLong_IsNegative(l))
         mpz_neg(z, z);
 }
 
@@ -814,16 +786,6 @@ void set_from(Type& t, Value& v, long& hash, mpq_t bigrat)
 numeric::numeric(PyObject* o, bool force_py) : basic(&numeric::tinfo_static) {
         if (o == nullptr) py_error("Error");
         if (not force_py) {
-#if PY_MAJOR_VERSION < 3
-                if (PyInt_Check(o)) {
-                        t = LONG;
-                        v._long = PyInt_AsLong(o);
-                        hash = (v._long==-1) ? -2 : v._long;
-                        setflag(status_flags::evaluated | status_flags::expanded);
-                        Py_DECREF(o);
-                        return;
-                } 
-#endif
                 if (PyLong_Check(o)) {
                     t = MPZ;
                     mpz_init(v._bigint);
@@ -1536,31 +1498,6 @@ const numeric numeric::div(const numeric &other) const {
                 return bigrat;
         }
         case PYOBJECT:
-#if PY_MAJOR_VERSION < 3
-                if (PyObject_Compare(other.v._pyobject, ONE) == 0
-                and py_funcs.py_is_integer(other.v._pyobject) != 0) {
-                        return *this;
-                }
-                if (PyInt_Check(v._pyobject)) {
-                        if (PyInt_Check(other.v._pyobject)) {
-                                // This branch happens at startup.
-                                PyObject *o = PyNumber_TrueDivide(Integer(PyInt_AsLong(v._pyobject)),
-                                Integer(PyInt_AsLong(other.v._pyobject)));
-                                // I don't 100% understand why I have to incref this,
-                                // but if I don't, Sage crashes on exit.
-                                Py_INCREF(o);
-                                return o;
-                        }
-                        if (PyLong_Check(other.v._pyobject)) {
-                                PyObject *d = py_funcs.
-                                        py_integer_from_python_obj(other.v._pyobject);
-                                PyObject *ans = PyNumber_TrueDivide(v._pyobject,
-                                                d);
-                                Py_DECREF(d);
-                                return ans;
-                        }
-                }
-#endif
                 if (PyLong_Check(v._pyobject)) {
                         PyObject *n = py_funcs.
                                 py_integer_from_python_obj(v._pyobject);
@@ -1575,6 +1512,62 @@ const numeric numeric::div(const numeric &other) const {
                 stub("invalid type: operator/() type not handled");
         }
 }
+
+
+// Compute `a^b` as an integer, where a is an integer. Assign to ``res``` if it is integral, or return ``false``.
+// The nonnegative real root is taken for even denominators. To be used inside numeric::integer_rational_power,
+// to handle the special case of integral ``a``.
+bool integer_rational_power_of_mpz(
+        numeric& res,
+        const numeric& a,
+        const numeric& b
+) {
+        if (a.t != MPZ)
+                throw std::runtime_error("integer_rational_power_of_mpz: bad input");
+        mpz_t z;
+        mpz_init(z);
+        mpz_set_ui(z, 0);
+        int sgn = mpz_sgn(a.v._bigint);
+        if (mpz_cmp_ui(a.v._bigint, 1) == 0
+            or mpz_cmp_ui(mpq_numref(b.v._bigrat), 0) == 0)
+                mpz_set_ui(z, 1);
+        else if (sgn == 0) {
+                res = *_num0_p;
+                mpz_clear(z);
+                return true;
+        }
+        else if (sgn < 0 and mpz_cmp_ui(mpq_denref(b.v._bigrat), 1)) {
+                mpz_clear(z);
+                return false;
+        } else {
+                if (not mpz_fits_ulong_p(mpq_numref(b.v._bigrat))
+                    or not mpz_fits_ulong_p(mpq_denref(b.v._bigrat))) {
+                        // too big to take roots/powers
+                        mpz_clear(z);
+                        return false;
+                }
+                if (mpz_cmp_ui(mpq_denref(b.v._bigrat), 2) == 0) {
+                        if (mpz_perfect_square_p(a.v._bigint)) {
+                                mpz_sqrt(z, a.v._bigint);
+                        } else {
+                                mpz_clear(z);
+                                return false;
+                        }
+                }
+                else {
+                        bool exact = mpz_root(z, a.v._bigint,
+                                              mpz_get_ui(mpq_denref(b.v._bigrat)));
+                        if (not exact) {
+                                mpz_clear(z);
+                                return false;
+                        }
+                }
+                mpz_pow_ui(z, z, mpz_get_ui(mpq_numref(b.v._bigrat)));
+        }
+        res = numeric(z);   // transfers ownership, no mpz_clear
+        return true;
+}
+
 
 // Compute `a^b` as an integer, if it is integral, or return ``false``.
 // The nonnegative real root is taken for even denominators.
@@ -1598,13 +1591,12 @@ bool numeric::integer_rational_power(numeric& res,
                 if (a.v._long < 0
                     and mpz_cmp_ui(mpq_denref(b.v._bigrat), 1))
                         return false;
-                long z;
                 if (not mpz_fits_ulong_p(mpq_numref(b.v._bigrat))
                     or not mpz_fits_ulong_p(mpq_denref(b.v._bigrat)))
                 // too big to take roots/powers
                         return false;
                 if (b.is_equal(*_num1_2_p)) {
-                        z = std::lround(std::sqrt(a.v._long));
+                        long z = std::lround(std::sqrt(a.v._long));
                         if (a.v._long == z*z) {
                                 res = numeric(z);
                                 return true;
@@ -1613,43 +1605,10 @@ bool numeric::integer_rational_power(numeric& res,
                 }
                 return integer_rational_power(res, a.to_bigint(), b);
         }
-        if (a.t != MPZ)
-                throw std::runtime_error("integer_rational_power: bad input");
-        int sgn = mpz_sgn(a.v._bigint);
-        mpz_t z;
-        mpz_init(z);
-        mpz_set_ui(z, 0);
-        if (mpz_cmp_ui(a.v._bigint, 1) == 0
-            or mpz_cmp_ui(mpq_numref(b.v._bigrat), 0) == 0)
-                mpz_set_ui(z, 1);
-        else if (sgn == 0) {
-                res = *_num0_p;
-                return true;
-        }
-        else if (sgn < 0 and mpz_cmp_ui(mpq_denref(b.v._bigrat), 1))
-                return false;
-        else {
-                if (not mpz_fits_ulong_p(mpq_numref(b.v._bigrat))
-                    or not mpz_fits_ulong_p(mpq_denref(b.v._bigrat)))
-                // too big to take roots/powers
-                        return false;
-                if (mpz_cmp_ui(mpq_denref(b.v._bigrat), 2) == 0) {
-                        if (mpz_perfect_square_p(a.v._bigint))
-                                mpz_sqrt(z, a.v._bigint);
-                        else
-                                return false;
-                }
-                else {
-                        bool exact = mpz_root(z, a.v._bigint,
-                                        mpz_get_ui(mpq_denref(b.v._bigrat)));
-                        if (not exact)
-                                return false;
-                }
-                mpz_pow_ui(z, z, mpz_get_ui(mpq_numref(b.v._bigrat)));
-        }
-        res = numeric(z);
-        return true;
+        // otherwise: a is integer
+        return integer_rational_power_of_mpz(res, a, b);
 }
+
 
 // for a^b return c,d such that a^b = c*d^b
 // only for MPZ/MPQ base and MPQ exponent
@@ -1847,17 +1806,6 @@ const ex numeric::power(const numeric &exponent) const {
 
         // any PyObjects castable to long are casted
         if (exponent.t == PYOBJECT) {
-#if PY_MAJOR_VERSION < 3
-                if (PyInt_Check(exponent.v._pyobject)) {
-                        long si = PyInt_AsLong(exponent.v._pyobject);
-                        if (si == -1 and PyErr_Occurred())
-                                PyErr_Clear();
-                        else {
-                                expo.t = MPZ;
-                                mpz_set_si(expo.v._bigint, si);
-                        }
-                } else
-#endif
                 if (PyLong_Check(exponent.v._pyobject)) {
                         expo.t = MPZ;
                         _mpz_set_pylong(expo.v._bigint,
@@ -2484,49 +2432,6 @@ numeric & operator/=(numeric & lh, const numeric & rh)
                 return lh;
         case PYOBJECT: {
                 PyObject *p = lh.v._pyobject;
-#if PY_MAJOR_VERSION < 3
-                {
-                        if (PyInt_Check(p)) {
-                                if (PyInt_Check(rh.v._pyobject)) {
-                                        // This branch happens at startup.
-                                        lh.v._pyobject = PyNumber_TrueDivide(Integer(PyInt_AsLong(p)),
-                                        Integer(PyInt_AsLong(rh.v._pyobject)));
-                                        // I don't 100% understand why I have to incref this,
-                                        // but if I don't, Sage crashes on exit.
-                                        if (lh.v._pyobject == nullptr) {
-                                                lh.v._pyobject = p;
-                                                py_error("numeric operator/=");
-                                        }
-                                        lh.hash = PyObject_Hash(lh.v._pyobject);
-                                        Py_DECREF(p);
-                                        return lh;
-                                }
-                                if (PyLong_Check(rh.v._pyobject)) {
-                                        PyObject *d = py_funcs.py_integer_from_python_obj(rh.v._pyobject);
-                                        lh.v._pyobject = PyNumber_TrueDivide(p, d);
-                                        if (lh.v._pyobject == nullptr) {
-                                                lh.v._pyobject = p;
-                                                py_error("numeric operator/=");
-                                        }
-                                        lh.hash = PyObject_Hash(lh.v._pyobject);
-                                        Py_DECREF(d);
-                                        Py_DECREF(p);
-                                        return lh;
-                                }
-                        } else if (PyLong_Check(p)) {
-                                PyObject *n = py_funcs.py_integer_from_python_obj(p);
-                                lh.v._pyobject = PyNumber_TrueDivide(n, rh.v._pyobject);
-                                if (lh.v._pyobject == nullptr) {
-                                        lh.v._pyobject = p;
-                                        py_error("numeric operator/=");
-                                }
-                                lh.hash = PyObject_Hash(lh.v._pyobject);
-                                Py_DECREF(n);
-                                Py_DECREF(p);
-                                return lh;
-                        }
-                }
-#else
                 {
                         if (PyLong_Check(p)) {
                                 PyObject *n = py_funcs.py_integer_from_python_obj(p);
@@ -2541,7 +2446,7 @@ numeric & operator/=(numeric & lh, const numeric & rh)
                                 return lh;
                         }
                 }
-#endif
+
                 lh.v._pyobject = PyNumber_TrueDivide(p, rh.v._pyobject);
                 if (lh.v._pyobject == nullptr) {
                         lh.v._pyobject = p;
@@ -3343,33 +3248,6 @@ void numeric::canonicalize()
                 }
         }
 }
-
-#ifdef PYNAC_HAVE_LIBGIAC
-giac::gen* numeric::to_giacgen(giac::context* cptr) const
-{
-        if (t == LONG)
-                return new giac::gen(v._long);
-        if (t == MPZ) {
-                mpz_t bigint;
-                mpz_init_set(bigint, v._bigint);
-                auto ret = new giac::gen(bigint);
-                mpz_clear(bigint);
-                return ret;
-        }
-        if (t == MPQ) {
-                mpz_t bigint;
-                mpz_init_set(bigint, mpq_numref(v._bigrat));
-                giac::gen gn(bigint);
-                mpz_set(bigint, mpq_denref(v._bigrat));
-                giac::gen gd(bigint);
-                giac::Tfraction<giac::gen> frac(gn, gd);
-                mpz_clear(bigint);
-                return new giac::gen(frac);
-        }
-        else
-                return nullptr;
-}
-#endif
 
 CanonicalForm numeric::to_canonical() const
 {

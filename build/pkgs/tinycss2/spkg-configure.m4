@@ -1,0 +1,3 @@
+SAGE_SPKG_CONFIGURE([tinycss2], [
+  SAGE_PYTHON_PACKAGE_CHECK([tinycss2])
+])

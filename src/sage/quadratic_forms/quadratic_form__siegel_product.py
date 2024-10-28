@@ -1,15 +1,15 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: needs sage.libs.pari
 """
 Siegel Products
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.misc import (bernoulli,
                              fundamental_discriminant,
@@ -21,16 +21,17 @@ from sage.quadratic_forms.special_values import QuadraticBernoulliNumber
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
-#/*!  \brief Computes the product of all local densities for comparison with independently computed Eisenstein coefficients.
+# /*!  \brief Computes the product of all local densities for comparison with independently computed Eisenstein coefficients.
 # *
 # *  \todo We fixed the generic factors to compensate for using the matrix of 2Q, but we need to document this better! =)
 # */
 
-#/////////////////////////////////////////////////////////////////
-#///
-#/////////////////////////////////////////////////////////////////
+# /////////////////////////////////////////////////////////////////
+# ///
+# /////////////////////////////////////////////////////////////////
 
-#mpq_class Matrix_mpz::siegel_product(mpz_class u) const {
+# mpq_class Matrix_mpz::siegel_product(mpz_class u) const {
+
 
 def siegel_product(self, u):
     """
@@ -96,12 +97,13 @@ def siegel_product(self, u):
     verbose(" u = " + str(u) + "\n")
 
     # Make the odd generic factors
-    if ((n % 2) == 1):
-        m = (n-1) // 2
+    if n % 2:
+        m = (n - 1) // 2
         d1 = fundamental_discriminant(((-1)**m) * 2*d * u)     # Replaced d by 2d here to compensate for the determinant
-        f = abs(d1)                                            # gaining an odd power of 2 by using the matrix of 2Q instead
-                                                               # of the matrix of Q.
-                                                               #  --> Old d1 = CoreDiscriminant((mpz_class(-1)^m) * d * u);
+        f = abs(d1)
+        # gaining an odd power of 2 by using the matrix of 2Q instead
+        # of the matrix of Q.
+        #  --> Old d1 = CoreDiscriminant((mpz_class(-1)^m) * d * u);
 
         # Make the ratio of factorials factor: [(2m)! / m!] * prod_{i=1}^m (2*i-1)
         factor1 = 1
@@ -124,15 +126,15 @@ def siegel_product(self, u):
         f = abs(d1)
 
         # DIAGNOSTIC
-        #cout << " mpz_class(-1)^m = " << (mpz_class(-1)^m) << " and d = " << d << endl;
-        #cout << " f = " << f << " and d1 = " << d1 << endl;
+        # cout << " mpz_class(-1)^m = " << (mpz_class(-1)^m) << " and d = " << d << endl;
+        # cout << " f = " << f << " and d1 = " << d1 << endl;
 
         genericfactor = m / QQ(sqrt(f*d)) \
             * ((u/2) ** (m-1)) * (f ** m) \
             / abs(QuadraticBernoulliNumber(m, d1)) \
             * (2 ** m)                                               # This last factor compensates for using the matrix of 2*Q
 
-    ##return genericfactor
+    # return genericfactor
 
     # Omit the generic factors in S and compute them separately
     omit = 1
@@ -141,9 +143,9 @@ def siegel_product(self, u):
     S_divisors = prime_divisors(S)
 
     # DIAGNOSTIC
-    #cout << "\n S is " << S << endl;
-    #cout << " The Prime divisors of S are :";
-    #PrintV(S_divisors);
+    # cout << "\n S is " << S << endl;
+    # cout << " The Prime divisors of S are :";
+    # PrintV(S_divisors);
 
     for p in S_divisors:
         Q_normal = self.local_normal_form(p)
@@ -158,36 +160,36 @@ def siegel_product(self, u):
         verbose(" Q_normal is \n" + str(Q_normal) + "\n")
         verbose(" Q_normal = \n" + str(Q_normal))
         verbose(" p = " + str(p) + "\n")
-        verbose(" u = " +str(u) + "\n")
+        verbose(" u = " + str(u) + "\n")
         verbose(" include = " + str(include) + "\n")
 
         include *= Q_normal.local_density(p, u)
 
         # DIAGNOSTIC
-        #cout << " Including the p = " << p << " factor: " << local_density(Q_normal, p, u) << endl;
+        # cout << " Including the p = " << p << " factor: " << local_density(Q_normal, p, u) << endl;
 
         # DIAGNOSTIC
         verbose("    ---  Exiting loop \n")
 
-    #// ****************  Important *******************
-    #// Additional fix (only included for n=4) to deal
-    #// with the power of 2 introduced at the real place
-    #// by working with Q instead of 2*Q.  This needs to
-    #// be done for all other n as well...
-    #/*
-    #if (n==4)
+    # // ****************  Important *******************
+    # // Additional fix (only included for n=4) to deal
+    # // with the power of 2 introduced at the real place
+    # // by working with Q instead of 2*Q.  This needs to
+    # // be done for all other n as well...
+    # /*
+    # if (n==4)
     #  genericfactor = 4 * genericfactor;
-    #*/
+    # */
 
     # DIAGNOSTIC
-    #cout << endl;
-    #cout << " generic factor = " << genericfactor << endl;
-    #cout << " omit = " << omit << endl;
-    #cout << " include = " << include << endl;
-    #cout << endl;
+    # cout << endl;
+    # cout << " generic factor = " << genericfactor << endl;
+    # cout << " omit = " << omit << endl;
+    # cout << " include = " << include << endl;
+    # cout << endl;
 
     # DIAGNOSTIC
-    #//  cout << "siegel_product Break 3. " << endl;
+    # //  cout << "siegel_product Break 3. " << endl;
 
     # Return the final factor (and divide by 2 if n=2)
     if n == 2:

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.rings.finite_rings
 """
 Stream Cryptosystems
 """
@@ -24,6 +25,7 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 
 IntegerModRing = IntegerModFactory("IntegerModRing")
 
+
 class LFSRCryptosystem(SymmetricKeyCryptosystem):
     """
     Linear feedback shift register cryptosystem class
@@ -32,9 +34,9 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         """
         Create a linear feedback shift cryptosystem.
 
-        INPUT: A string monoid over a binary alphabet.
+        INPUT:
 
-        OUTPUT:
+        - ``field`` -- (default: ``None``) string monoid over a binary alphabet
 
         EXAMPLES::
 
@@ -67,7 +69,9 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         """
         Create a LFSR cipher.
 
-        INPUT: A polynomial and initial state of the LFSR.
+        INPUT:
+
+        - ``key`` -- a polynomial and initial state of the LFSR
         """
         if not isinstance(key, (list, tuple)) and len(key) == 2:
             raise TypeError("Argument key (= %s) must be a list of tuple of length 2" % key)
@@ -98,6 +102,7 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
         except Exception:
             raise TypeError("Argument M = %s does not encode in the cipher domain" % M)
 
+
 class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
     """
     Shrinking generator cryptosystem class
@@ -106,9 +111,9 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
         """
         Create a shrinking generator cryptosystem.
 
-        INPUT: A string monoid over a binary alphabet.
+        INPUT:
 
-        OUTPUT:
+        - ``field`` -- (default: ``None``) string monoid over a binary alphabet
 
         EXAMPLES::
 
@@ -128,10 +133,12 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
         """
         Create a Shrinking generator cipher.
 
-        INPUT: A list or tuple consisting of two LFSR ciphers (e1,e2).
+        INPUT:
 
-        OUTPUT: The shrinking generator cipher with key stream generator e1
-        and decimating cipher e2.
+        - ``key`` -- list or tuple consisting of two LFSR ciphers (e1,e2)
+
+        OUTPUT: the shrinking generator cipher with key stream generator e1
+        and decimating cipher e2
         """
         if not isinstance(key, (list, tuple)) and len(key) == 2:
             raise TypeError("Argument key (= %s) must be a list of tuple of length 2" % key)
@@ -160,6 +167,7 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
         except Exception:
             raise TypeError("Argument M = %s does not encode in the cipher domain" % M)
 
+
 def blum_blum_shub(length, seed=None, p=None, q=None,
                    lbound=None, ubound=None, ntries=100):
     r"""
@@ -171,7 +179,7 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
     INPUT:
 
     - ``length`` -- positive integer; the number of bits in the output
-      pseudorandom bit sequence.
+      pseudorandom bit sequence
 
     - ``seed`` -- (default: ``None``) if `p` and `q` are Blum primes, then
       ``seed`` is a quadratic residue in the multiplicative group
@@ -206,9 +214,7 @@ def blum_blum_shub(length, seed=None, p=None, q=None,
       perform that many attempts at generating a random Blum prime. This
       might or might not result in a Blum prime.
 
-    OUTPUT:
-
-    - A pseudorandom bit sequence whose length is specified by ``length``.
+    OUTPUT: a pseudorandom bit sequence whose length is specified by ``length``
 
     Here is a common use case for this function. If you want this
     function to use pre-computed values for `p` and `q`, you should pass

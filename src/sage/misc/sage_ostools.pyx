@@ -1,4 +1,3 @@
-# distutils: libraries = CYGWIN_SQLITE3_LIBS
 """
 Miscellaneous operating system functions
 """
@@ -17,13 +16,13 @@ def have_program(program, path=None):
 
     INPUT:
 
-    - ``program`` - a string, the name of the program to check.
+    - ``program`` -- string, the name of the program to check
 
-    - ``path`` - string or None. Paths to search for ``program``,
+    - ``path`` -- string or ``None``. Paths to search for ``program``,
       separated by ``os.pathsep``. If ``None``, use the :envvar:`PATH`
       environment variable.
 
-    OUTPUT: bool
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -86,7 +85,7 @@ cdef file_and_fd(x, int* fd):
     If ``x`` is a file, return ``x`` and set ``*fd`` to its file
     descriptor. If ``x`` is an integer, return ``None`` and set
     ``*fd`` to ``x``. Otherwise, set ``*fd = -1`` and raise a
-    ``TypeError``.
+    :exc:`TypeError`.
     """
     fd[0] = -1
     try:
@@ -117,7 +116,7 @@ cdef class redirection:
 
     - ``dest`` -- where the source file should be redirected to
 
-    - ``close`` -- (boolean, default: ``True``) whether to close the
+    - ``close`` -- boolean (default: ``True``); whether to close the
       destination file upon exiting the context. This is only supported
       if ``dest`` is a Python file.
 
@@ -304,44 +303,3 @@ cdef class redirection:
             if self.close_dest:
                 self.dest_file.close()
                 self.dest_fd = -1
-
-
-IF PY_PLATFORM == 'cygwin':
-    from libc.stddef cimport wchar_t
-
-    cdef extern from "Windows.h":
-        int SetDllDirectoryW(wchar_t* lpPathName)
-
-    cdef extern from "sqlite3.h":
-        int sqlite3_initialize()
-
-    def fix_for_ticket_30157():
-        """
-        Cygwin-only workaround for an issue caused by the sqlite3 library.
-
-        See :trac:`30157`.
-
-        The issue here is that when the sqlite3 library is first initialized
-        it modifies Windows' default DLL search path order, which can possibly
-        break the correct search path for subsequent DLL loads.
-
-        This workaround ensures that the sqlite3 library is initialized very
-        early on (this does not add any significant overhead) and then
-        immediately undoes its deleterious effects.  In particular, calling
-        SetDllDirectoryW(NULL) restores the default DLL search path.
-
-        To be clear, there's no reason sqlite3 needs this to function
-        correctly; it's just a poorly-considered hack that attempted to work
-        around a problem that doesn't affect us.
-
-        Returns 0 if it succeeeds or a non-zero value if not.
-        """
-
-        ret = sqlite3_initialize()
-
-        if ret != 0:
-            # Library initialization failed for some reason
-            return ret
-
-        # SetDllDirectory returns 1 if it succeeds.
-        return not SetDllDirectoryW(NULL)

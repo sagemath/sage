@@ -14,19 +14,20 @@ matrix morphisms.
 
 EXAMPLES::
 
-    sage: S = simplicial_complexes.Sphere(1); S                                         # optional - sage.graphs
+    sage: # needs sage.graphs
+    sage: S = simplicial_complexes.Sphere(1); S
     Minimal triangulation of the 1-sphere
-    sage: C = S.chain_complex()                                                         # optional - sage.graphs
-    sage: C.differential()                                                              # optional - sage.graphs
+    sage: C = S.chain_complex()
+    sage: C.differential()
     {0: [], 1: [-1 -1  0]
      [ 1  0 -1]
      [ 0  1  1], 2: []}
     sage: f = {0: zero_matrix(ZZ,3,3), 1: zero_matrix(ZZ,3,3)}
-    sage: G = Hom(C, C)                                                                 # optional - sage.graphs
-    sage: x = G(f); x                                                                   # optional - sage.graphs
+    sage: G = Hom(C, C)
+    sage: x = G(f); x
     Chain complex endomorphism of
      Chain complex with at most 2 nonzero terms over Integer Ring
-    sage: x._matrix_dictionary                                                          # optional - sage.graphs
+    sage: x._matrix_dictionary
     {0: [0 0 0]
         [0 0 0]
         [0 0 0],
@@ -63,21 +64,30 @@ def is_ChainComplexMorphism(x):
 
     EXAMPLES::
 
+        sage: # needs sage.graphs
         sage: from sage.homology.chain_complex_morphism import is_ChainComplexMorphism
-        sage: S = simplicial_complexes.Sphere(14)                                       # optional - sage.graphs
-        sage: H = Hom(S,S)                                                              # optional - sage.graphs
-        sage: i = H.identity()  # long time (8s on sage.math, 2011)                     # optional - sage.graphs
-        sage: S = simplicial_complexes.Sphere(6)                                        # optional - sage.graphs
-        sage: H = Hom(S,S)                                                              # optional - sage.graphs
-        sage: i = H.identity()                                                          # optional - sage.graphs
-        sage: x = i.associated_chain_complex_morphism()                                 # optional - sage.graphs
-        sage: x # indirect doctest                                                      # optional - sage.graphs
+        sage: S = simplicial_complexes.Sphere(14)
+        sage: H = Hom(S,S)
+        sage: i = H.identity()                  # long time (8s on sage.math, 2011)
+        sage: S = simplicial_complexes.Sphere(6)
+        sage: H = Hom(S,S)
+        sage: i = H.identity()
+        sage: x = i.associated_chain_complex_morphism()
+        sage: x # indirect doctest
         Chain complex morphism:
           From: Chain complex with at most 7 nonzero terms over Integer Ring
           To: Chain complex with at most 7 nonzero terms over Integer Ring
-        sage: is_ChainComplexMorphism(x)                                                # optional - sage.graphs
+        sage: is_ChainComplexMorphism(x)
+        doctest:warning...
+        DeprecationWarning: The function is_ChainComplexMorphism is deprecated;
+        use 'isinstance(..., ChainComplexMorphism)' instead.
+        See https://github.com/sagemath/sage/issues/38103 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38103,
+                "The function is_ChainComplexMorphism is deprecated; "
+                "use 'isinstance(..., ChainComplexMorphism)' instead.")
     return isinstance(x, ChainComplexMorphism)
 
 
@@ -91,21 +101,22 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = simplicial_complexes.Sphere(1); S                                 # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S = simplicial_complexes.Sphere(1); S
             Minimal triangulation of the 1-sphere
-            sage: C = S.chain_complex()                                                 # optional - sage.graphs
-            sage: C.differential()                                                      # optional - sage.graphs
+            sage: C = S.chain_complex()
+            sage: C.differential()
             {0: [],
              1: [-1 -1  0]
                 [ 1  0 -1]
                 [ 0  1  1],
              2: []}
             sage: f = {0:zero_matrix(ZZ,3,3),1:zero_matrix(ZZ,3,3)}
-            sage: G = Hom(C,C)                                                          # optional - sage.graphs
-            sage: x = G(f); x                                                           # optional - sage.graphs
+            sage: G = Hom(C,C)
+            sage: x = G(f); x
             Chain complex endomorphism of
              Chain complex with at most 2 nonzero terms over Integer Ring
-            sage: x._matrix_dictionary                                                  # optional - sage.graphs
+            sage: x._matrix_dictionary
             {0: [0 0 0]
                 [0 0 0]
                 [0 0 0],
@@ -113,12 +124,13 @@ class ChainComplexMorphism(Morphism):
                 [0 0 0]
                 [0 0 0]}
 
-        Check that the bug in :trac:`13220` has been fixed::
+        Check that the bug in :issue:`13220` has been fixed::
 
-            sage: X = simplicial_complexes.Simplex(1)                                   # optional - sage.graphs
-            sage: Y = simplicial_complexes.Simplex(0)                                   # optional - sage.graphs
-            sage: g = Hom(X,Y)({0: 0, 1: 0})                                            # optional - sage.graphs
-            sage: g.associated_chain_complex_morphism()                                 # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: X = simplicial_complexes.Simplex(1)
+            sage: Y = simplicial_complexes.Simplex(0)
+            sage: g = Hom(X,Y)({0: 0, 1: 0})
+            sage: g.associated_chain_complex_morphism()
             Chain complex morphism:
               From: Chain complex with at most 2 nonzero terms over Integer Ring
               To: Chain complex with at most 1 nonzero terms over Integer Ring
@@ -234,7 +246,7 @@ class ChainComplexMorphism(Morphism):
 
         INPUT:
 
-        - ``deg`` -- (optional, default ``None``) the degree
+        - ``deg`` -- (default: ``None``) the degree
 
         EXAMPLES::
 
@@ -266,24 +278,25 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: X = simplicial_complexes.Simplex(1)                                   # optional - sage.graphs
-            sage: Y = simplicial_complexes.Simplex(0)                                   # optional - sage.graphs
-            sage: g = Hom(X,Y)({0:0, 1:0})                                              # optional - sage.graphs
-            sage: f = g.associated_chain_complex_morphism()                             # optional - sage.graphs
-            sage: f.in_degree(0)                                                        # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: X = simplicial_complexes.Simplex(1)
+            sage: Y = simplicial_complexes.Simplex(0)
+            sage: g = Hom(X,Y)({0:0, 1:0})
+            sage: f = g.associated_chain_complex_morphism()
+            sage: f.in_degree(0)
             [1 1]
-            sage: f.dual()                                                              # optional - sage.graphs
+            sage: f.dual()
             Chain complex morphism:
               From: Chain complex with at most 1 nonzero terms over Integer Ring
                 To: Chain complex with at most 2 nonzero terms over Integer Ring
-            sage: f.dual().in_degree(0)                                                 # optional - sage.graphs
+            sage: f.dual().in_degree(0)
             [1]
             [1]
-            sage: ascii_art(f.domain())                                                 # optional - sage.graphs
+            sage: ascii_art(f.domain())
                         [-1]
                         [ 1]
              0 <-- C_0 <----- C_1 <-- 0
-            sage: ascii_art(f.dual().codomain())                                        # optional - sage.graphs
+            sage: ascii_art(f.dual().codomain())
                         [-1  1]
              0 <-- C_1 <-------- C_0 <-- 0
         """
@@ -297,12 +310,13 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = simplicial_complexes.Sphere(2)                                    # optional - sage.graphs
-            sage: H = Hom(S,S)                                                          # optional - sage.graphs
-            sage: i = H.identity()                                                      # optional - sage.graphs
-            sage: x = i.associated_chain_complex_morphism()                             # optional - sage.graphs
-            sage: w = -x                                                                # optional - sage.graphs
-            sage: w._matrix_dictionary                                                  # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S = simplicial_complexes.Sphere(2)
+            sage: H = Hom(S,S)
+            sage: i = H.identity()
+            sage: x = i.associated_chain_complex_morphism()
+            sage: w = -x
+            sage: w._matrix_dictionary
             {0: [-1  0  0  0]
                 [ 0 -1  0  0]
                 [ 0  0 -1  0]
@@ -317,7 +331,6 @@ class ChainComplexMorphism(Morphism):
                 [ 0 -1  0  0]
                 [ 0  0 -1  0]
                 [ 0  0  0 -1]}
-
         """
         f = dict()
         for i in self._matrix_dictionary.keys():
@@ -330,12 +343,13 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = simplicial_complexes.Sphere(2)                                    # optional - sage.graphs
-            sage: H = Hom(S,S)                                                          # optional - sage.graphs
-            sage: i = H.identity()                                                      # optional - sage.graphs
-            sage: x = i.associated_chain_complex_morphism()                             # optional - sage.graphs
-            sage: z = x+x                                                               # optional - sage.graphs
-            sage: z._matrix_dictionary                                                  # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S = simplicial_complexes.Sphere(2)
+            sage: H = Hom(S,S)
+            sage: i = H.identity()
+            sage: x = i.associated_chain_complex_morphism()
+            sage: z = x+x
+            sage: z._matrix_dictionary
             {0: [2 0 0 0]
                 [0 2 0 0]
                 [0 0 2 0]
@@ -365,12 +379,13 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = simplicial_complexes.Sphere(2)                                    # optional - sage.graphs
-            sage: H = Hom(S,S)                                                          # optional - sage.graphs
-            sage: i = H.identity()                                                      # optional - sage.graphs
-            sage: x = i.associated_chain_complex_morphism()                             # optional - sage.graphs
-            sage: y = x*2                                                               # optional - sage.graphs
-            sage: y._matrix_dictionary                                                  # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S = simplicial_complexes.Sphere(2)
+            sage: H = Hom(S,S)
+            sage: i = H.identity()
+            sage: x = i.associated_chain_complex_morphism()
+            sage: y = x*2
+            sage: y._matrix_dictionary
             {0: [2 0 0 0]
                 [0 2 0 0]
                 [0 0 2 0]
@@ -385,8 +400,8 @@ class ChainComplexMorphism(Morphism):
                 [0 2 0 0]
                 [0 0 2 0]
                 [0 0 0 2]}
-            sage: z = y*y                                                               # optional - sage.graphs
-            sage: z._matrix_dictionary                                                  # optional - sage.graphs
+            sage: z = y*y
+            sage: z._matrix_dictionary
             {0: [4 0 0 0]
                 [0 4 0 0]
                 [0 0 4 0]
@@ -405,7 +420,7 @@ class ChainComplexMorphism(Morphism):
         TESTS:
 
         Make sure that the product is taken in the correct order
-        (``self * x``, not ``x * self`` -- see :trac:`19065`)::
+        (``self * x``, not ``x * self`` -- see :issue:`19065`)::
 
             sage: C = ChainComplex({0: zero_matrix(ZZ, 0, 2)})
             sage: D = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
@@ -414,8 +429,8 @@ class ChainComplexMorphism(Morphism):
             sage: (f*g).in_degree(0)
             [2]
 
-        Before :trac:`19065`, the following multiplication produced a
-        ``KeyError`` because `f` was not explicitly defined in degree 2::
+        Before :issue:`19065`, the following multiplication produced a
+        :exc:`KeyError` because `f` was not explicitly defined in degree 2::
 
             sage: C0 = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
             sage: C1 = ChainComplex({1: zero_matrix(ZZ, 0, 1)})
@@ -451,13 +466,14 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = simplicial_complexes.Sphere(2)                                    # optional - sage.graphs
-            sage: H = Hom(S,S)                                                          # optional - sage.graphs
-            sage: i = H.identity()                                                      # optional - sage.graphs
-            sage: x = i.associated_chain_complex_morphism()                             # optional - sage.graphs
-            sage: 2*x == x*2                                                            # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S = simplicial_complexes.Sphere(2)
+            sage: H = Hom(S,S)
+            sage: i = H.identity()
+            sage: x = i.associated_chain_complex_morphism()
+            sage: 2*x == x*2
             True
-            sage: 3*x == x*2                                                            # optional - sage.graphs
+            sage: 3*x == x*2
             False
         """
         try:
@@ -475,12 +491,13 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = simplicial_complexes.Sphere(2)                                    # optional - sage.graphs
-            sage: H = Hom(S,S)                                                          # optional - sage.graphs
-            sage: i = H.identity()                                                      # optional - sage.graphs
-            sage: x = i.associated_chain_complex_morphism()                             # optional - sage.graphs
-            sage: y = x - x                                                             # optional - sage.graphs
-            sage: y._matrix_dictionary                                                  # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S = simplicial_complexes.Sphere(2)
+            sage: H = Hom(S,S)
+            sage: i = H.identity()
+            sage: x = i.associated_chain_complex_morphism()
+            sage: y = x - x
+            sage: y._matrix_dictionary
             {0: [0 0 0 0]
             [0 0 0 0]
             [0 0 0 0]
@@ -504,18 +521,19 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = SimplicialComplex(is_mutable=False)                               # optional - sage.graphs
-            sage: H = Hom(S,S)                                                          # optional - sage.graphs
-            sage: i = H.identity()                                                      # optional - sage.graphs
-            sage: x = i.associated_chain_complex_morphism(); x                          # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S = SimplicialComplex(is_mutable=False)
+            sage: H = Hom(S,S)
+            sage: i = H.identity()
+            sage: x = i.associated_chain_complex_morphism(); x
             Chain complex morphism:
               From: Trivial chain complex over Integer Ring
               To: Trivial chain complex over Integer Ring
-            sage: f = x._matrix_dictionary                                              # optional - sage.graphs
-            sage: C = S.chain_complex()                                                 # optional - sage.graphs
-            sage: G = Hom(C,C)                                                          # optional - sage.graphs
-            sage: y = G(f)                                                              # optional - sage.graphs
-            sage: x == y                                                                # optional - sage.graphs
+            sage: f = x._matrix_dictionary
+            sage: C = S.chain_complex()
+            sage: G = Hom(C,C)
+            sage: y = G(f)
+            sage: x == y
             True
         """
         return isinstance(x, ChainComplexMorphism) \
@@ -529,11 +547,12 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S = SimplicialComplex(is_mutable=False)                               # optional - sage.graphs
-            sage: H = Hom(S,S)                                                          # optional - sage.graphs
-            sage: i = H.identity()                                                      # optional - sage.graphs
-            sage: x = i.associated_chain_complex_morphism()                             # optional - sage.graphs
-            sage: x.is_identity()                                                       # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S = SimplicialComplex(is_mutable=False)
+            sage: H = Hom(S,S)
+            sage: i = H.identity()
+            sage: x = i.associated_chain_complex_morphism()
+            sage: x.is_identity()
             True
         """
         return self.to_matrix().is_one()
@@ -544,17 +563,19 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S1 = simplicial_complexes.Sphere(1)                                   # optional - sage.graphs
-            sage: H = Hom(S1, S1)                                                       # optional - sage.graphs
-            sage: flip = H({0:0, 1:2, 2:1})                                             # optional - sage.graphs
-            sage: flip.associated_chain_complex_morphism().is_surjective()              # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S1 = simplicial_complexes.Sphere(1)
+            sage: H = Hom(S1, S1)
+            sage: flip = H({0:0, 1:2, 2:1})
+            sage: flip.associated_chain_complex_morphism().is_surjective()
             True
 
-            sage: pt = simplicial_complexes.Simplex(0)                                  # optional - sage.graphs
-            sage: inclusion = Hom(pt, S1)({0:2})                                        # optional - sage.graphs
-            sage: inclusion.associated_chain_complex_morphism().is_surjective()         # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: pt = simplicial_complexes.Simplex(0)
+            sage: inclusion = Hom(pt, S1)({0:2})
+            sage: inclusion.associated_chain_complex_morphism().is_surjective()
             False
-            sage: inclusion.associated_chain_complex_morphism(cochain=True).is_surjective()     # optional - sage.graphs
+            sage: inclusion.associated_chain_complex_morphism(cochain=True).is_surjective()
             True
         """
         m = self.to_matrix()
@@ -566,17 +587,19 @@ class ChainComplexMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: S1 = simplicial_complexes.Sphere(1)                                   # optional - sage.graphs
-            sage: H = Hom(S1, S1)                                                       # optional - sage.graphs
-            sage: flip = H({0:0, 1:2, 2:1})                                             # optional - sage.graphs
-            sage: flip.associated_chain_complex_morphism().is_injective()               # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: S1 = simplicial_complexes.Sphere(1)
+            sage: H = Hom(S1, S1)
+            sage: flip = H({0:0, 1:2, 2:1})
+            sage: flip.associated_chain_complex_morphism().is_injective()
             True
 
-            sage: pt = simplicial_complexes.Simplex(0)                                  # optional - sage.graphs
-            sage: inclusion = Hom(pt, S1)({0:2})                                        # optional - sage.graphs
-            sage: inclusion.associated_chain_complex_morphism().is_injective()          # optional - sage.graphs
+            sage: # needs sage.graphs
+            sage: pt = simplicial_complexes.Simplex(0)
+            sage: inclusion = Hom(pt, S1)({0:2})
+            sage: inclusion.associated_chain_complex_morphism().is_injective()
             True
-            sage: inclusion.associated_chain_complex_morphism(cochain=True).is_injective()      # optional - sage.graphs
+            sage: inclusion.associated_chain_complex_morphism(cochain=True).is_injective()
             False
         """
         return self.to_matrix().right_nullity() == 0

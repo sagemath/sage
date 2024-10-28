@@ -1,11 +1,11 @@
-from .types cimport ZZ_pContext_c
-from .ntl_ZZ cimport ntl_ZZ
-from .types cimport ZZ_c
+from sage.libs.ntl.types cimport ZZ_pContext_c
+from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
+from sage.libs.ntl.types cimport ZZ_c
 
 
 cdef class ntl_ZZ_pContext_class():
     cdef ZZ_pContext_c x
-    cdef void restore_c(self)
+    cdef void restore_c(self) noexcept
     cdef ntl_ZZ p
     cdef double p_bits
     cdef object __weakref__

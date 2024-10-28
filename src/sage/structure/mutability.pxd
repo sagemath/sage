@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Mutability -- Pyrex Implementation
 """
@@ -16,5 +17,5 @@ cdef class Mutability:
     cdef public bint _is_immutable
     cpdef _require_mutable(self)
     cpdef _require_immutable(self)
-    cpdef bint is_immutable(self)
-    cpdef bint is_mutable(self)
+    cpdef bint is_immutable(self) noexcept
+    cpdef bint is_mutable(self) noexcept

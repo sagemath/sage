@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # distutils: language = c++
 """
 Dancing Links internal pyx code
@@ -67,7 +66,7 @@ There is also a method ``reinitialize`` to reinitialize the algorithm::
     sage: x.get_solution()
     [0, 1]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Carlo Hamalainen <carlo.hamalainen@gmail.com>
 #       Copyright (C) 2015-2018 Sébastien Labbé <slabqc@gmail.com>
 #
@@ -75,8 +74,8 @@ There is also a method ``reinitialize`` to reinitialize the algorithm::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport PyObject_RichCompare
 from libcpp.vector cimport vector
@@ -140,20 +139,19 @@ cdef class dancing_linksWrapper:
         TESTS:
 
         The following example would crash in Sage's debug version
-        from :trac:`13864` prior to the fix from :trac:`13882`::
+        from :issue:`13864` prior to the fix from :issue:`13882`::
 
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: x = dlx_solver([])
             sage: x.get_solution()
             []
-
         """
         self._rows = [row for row in rows]
         self._initialize()
 
     def _initialize(self):
         r"""
-        Initialization of the search algorithm
+        Initialization of the search algorithm.
 
         This adds the rows to the instance of dancing_links. This method is
         used by `__init__` and `reinitialize` methods and should not be
@@ -174,7 +172,6 @@ cdef class dancing_linksWrapper:
             sage: x.reinitialize()             # indirect doctest
             sage: x.get_solution() if x.search() else None
             [0, 1]
-
         """
         cdef vector[int] v
         cdef vector[vector[int]] vv
@@ -191,7 +188,7 @@ cdef class dancing_linksWrapper:
 
     def reinitialize(self):
         r"""
-        Reinitialization of the search algorithm
+        Reinitialization of the search algorithm.
 
         This recreates an empty ``dancing_links`` object and adds the rows to
         the instance of ``dancing_links.``
@@ -227,7 +224,6 @@ cdef class dancing_linksWrapper:
             sage: x.get_solution() if x.search() else None
             [4, 5]
             sage: x.get_solution() if x.search() else None
-
         """
         sig_on()
         self._x = dancing_links()
@@ -379,7 +375,7 @@ cdef class dancing_linksWrapper:
 
         TESTS:
 
-        Test that :trac:`11814` is fixed::
+        Test that :issue:`11814` is fixed::
 
             sage: dlx_solver([]).search()
             0
@@ -411,11 +407,9 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``indices`` -- list, row indices to be found in the solution
+        - ``indices`` -- list; row indices to be found in the solution
 
-        OUTPUT:
-
-            dancing links solver
+        OUTPUT: dancing links solver
 
         EXAMPLES::
 
@@ -427,7 +421,7 @@ cdef class dancing_linksWrapper:
             sage: sorted(map(sorted, d.solutions_iterator()))
             [[0, 1], [2, 3], [4, 5]]
 
-        To impose that the 0th row is part of the solution, the rows of the new
+        To impose that the `0`-th row is part of the solution, the rows of the new
         problem are::
 
             sage: d_using_0 = d.restrict([0])
@@ -444,7 +438,7 @@ cdef class dancing_linksWrapper:
             sage: d.restrict([2]).rows()
             [[0, 1, 2], [3, 4, 5], [0, 1, 6], [2, 3, 4, 5], [0], [1, 2, 3, 4, 5]]
 
-        This method allows to find solutions where the 0th row is part of a
+        This method allows to find solutions where the `0`-th row is part of a
         solution::
 
             sage: sorted(map(sorted, d.restrict([0]).solutions_iterator()))
@@ -459,7 +453,7 @@ cdef class dancing_linksWrapper:
             sage: sorted(map(sorted, d.restrict([3]).solutions_iterator()))
             [[2, 3]]
 
-        Here there are no solution using both 0th and 3rd row::
+        Here there are no solutions using both 0th and 3rd row::
 
             sage: list(d.restrict([0,3]).solutions_iterator())
             []
@@ -489,12 +483,10 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``column`` -- integer, the column used to split the problem into
+        - ``column`` -- integer; the column used to split the problem into
           independent subproblems
 
-        OUTPUT:
-
-            dict where keys are row numbers and values are dlx solvers
+        OUTPUT: dict where keys are row numbers and values are dlx solvers
 
         EXAMPLES::
 
@@ -531,7 +523,7 @@ cdef class dancing_linksWrapper:
             ValueError: column(=6) must be in range(ncols) where ncols=6
 
         This use to take a lot of time and memory. Not anymore since
-        :trac:`24315`::
+        :issue:`24315`::
 
             sage: S = Subsets(range(11))
             sage: rows = map(list, S)
@@ -563,7 +555,7 @@ cdef class dancing_linksWrapper:
         TESTS:
 
         The algorithm is automatically reinitialized if needed, for example
-        when iterating the solutions a second time (:trac:`25125`)::
+        when iterating the solutions a second time (:issue:`25125`)::
 
             sage: sorted(map(sorted, d.solutions_iterator()))
             [[0, 1], [2, 3], [4, 5]]
@@ -583,18 +575,16 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``ncpus`` -- integer (default: ``None``), maximal number of
+        - ``ncpus`` -- integer (default: ``None``); maximal number of
           subprocesses to use at the same time. If ``None``, it detects the
           number of effective CPUs in the system using
           :func:`sage.parallel.ncpus.ncpus()`.
           If ``ncpus=1``, the first solution is searched serially.
-        - ``column`` -- integer (default: ``None``), the column used to split
+        - ``column`` -- integer (default: ``None``); the column used to split
           the problem (see :meth:`restrict`). If ``None``, a random column
           is chosen. This argument is ignored if ``ncpus=1``.
 
-        OUTPUT:
-
-        list of rows or ``None`` if no solution is found
+        OUTPUT: list of rows or ``None`` if no solution is found
 
         .. NOTE::
 
@@ -686,16 +676,14 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``ncpus`` -- integer (default: ``None``), maximal number of
+        - ``ncpus`` -- integer (default: ``None``); maximal number of
           subprocesses to use at the same time. If ``None``, it detects the
           number of effective CPUs in the system using
           :func:`sage.parallel.ncpus.ncpus()`.
-        - ``column`` -- integer (default: ``None``), the column used to split
+        - ``column`` -- integer (default: ``None``); the column used to split
           the problem, if ``None`` a random column is chosen
 
-        OUTPUT:
-
-            list of solutions
+        OUTPUT: list of solutions
 
         EXAMPLES::
 
@@ -803,19 +791,17 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``ncpus`` -- integer (default: ``None``), maximal number of
+        - ``ncpus`` -- integer (default: ``None``); maximal number of
           subprocesses to use at the same time. If ``ncpus>1`` the dancing
           links problem is split into independent subproblems to allow
           parallel computation. If ``None``, it detects the number of
           effective CPUs in the system using
           :func:`sage.parallel.ncpus.ncpus()`.
-        - ``column`` -- integer (default: ``None``), the column used to split
+        - ``column`` -- integer (default: ``None``); the column used to split
           the problem, if ``None`` a random column is chosen (this argument
           is ignored if ``ncpus`` is ``1``)
 
-        OUTPUT:
-
-        integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -846,7 +832,7 @@ cdef class dancing_linksWrapper:
         TESTS:
 
         The algorithm is automatically reinitialized if needed, for example
-        when counting the number of solutions a second time (:trac:`25125`)::
+        when counting the number of solutions a second time (:issue:`25125`)::
 
             sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
             sage: x = dlx_solver(rows)
@@ -911,22 +897,19 @@ cdef class dancing_linksWrapper:
           possible values include ``'picosat'``, ``'cryptominisat'``,
           ``'LP'``, ``'glucose'``, ``'glucose-syrup'``.
 
-        OUTPUT:
-
-        SAT solver instance
+        OUTPUT: SAT solver instance
 
         EXAMPLES::
 
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2], [0,2], [1], [3]]
             sage: x = dlx_solver(rows)
-            sage: s = x.to_sat_solver()
+            sage: s = x.to_sat_solver()                                                 # needs sage.sat
 
         Using some optional SAT solvers::
 
-            sage: x.to_sat_solver('cryptominisat')          # optional - pycryptosat
+            sage: x.to_sat_solver('cryptominisat')      # optional - pycryptosat        # needs sage.sat
             CryptoMiniSat solver: 4 variables, 7 clauses.
-
         """
         from sage.sat.solvers.satsolver import SAT
         s = SAT(solver)
@@ -961,9 +944,7 @@ cdef class dancing_linksWrapper:
           possible values include ``'picosat'``, ``'cryptominisat'``,
           ``'LP'``, ``'glucose'``, ``'glucose-syrup'``.
 
-        OUTPUT:
-
-        list of rows or ``None`` if no solution is found
+        OUTPUT: list of rows or ``None`` if no solution is found
 
         .. NOTE::
 
@@ -979,20 +960,20 @@ cdef class dancing_linksWrapper:
             sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
             sage: d = dlx_solver(rows)
             sage: solutions = [[0,1], [2,3], [4,5]]
-            sage: d.one_solution_using_sat_solver() in solutions
+            sage: d.one_solution_using_sat_solver() in solutions                        # needs sage.sat
             True
 
         Using optional solvers::
 
-            sage: s = d.one_solution_using_sat_solver('glucose') # optional - glucose
-            sage: s in solutions                                 # optional - glucose
+            sage: s = d.one_solution_using_sat_solver('glucose')                # optional - glucose, needs sage.sat
+            sage: s in solutions                                                # optional - glucose, needs sage.sat
             True
 
         When no solution is found::
 
             sage: rows = [[0,1,2], [2,3,4,5], [0,1,2,3]]
             sage: d = dlx_solver(rows)
-            sage: d.one_solution_using_sat_solver() is None
+            sage: d.one_solution_using_sat_solver() is None                             # needs sage.sat
             True
         """
         sat_solver = self.to_sat_solver(solver)
@@ -1011,10 +992,10 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``solver`` -- string or ``None`` (default: ``None``), possible
+        - ``solver`` -- string or ``None`` (default: ``None``); possible
           values include ``'GLPK'``, ``'GLPK/exact'``, ``'Coin'``,
           ``'CPLEX'``, ``'Gurobi'``, ``'CVXOPT'``, ``'PPL'``,
-          ``'InteractiveLP'``.
+          ``'InteractiveLP'``
 
         OUTPUT:
 
@@ -1026,16 +1007,16 @@ cdef class dancing_linksWrapper:
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: rows = [[0,1,2], [0,2], [1], [3]]
             sage: d = dlx_solver(rows)
-            sage: p,x = d.to_milp()
-            sage: p
+            sage: p,x = d.to_milp()                                                     # needs sage.numerical.mip
+            sage: p                                                                     # needs sage.numerical.mip
             Boolean Program (no objective, 4 variables, ... constraints)
-            sage: x
+            sage: x                                                                     # needs sage.numerical.mip
             MIPVariable with 4 binary components
 
-        In the reduction, the boolean variable x_i is True if and only if
-        the i-th row is in the solution::
+        In the reduction, the boolean variable `x_i` is ``True`` if and only if
+        the `i`-th row is in the solution::
 
-            sage: p.show()
+            sage: p.show()                                                              # needs sage.numerical.mip
             Maximization:
             <BLANKLINE>
             <BLANKLINE>
@@ -1052,10 +1033,9 @@ cdef class dancing_linksWrapper:
 
         Using some optional MILP solvers::
 
-            sage: d.to_milp('gurobi')   # optional - gurobi sage_numerical_backends_gurobi
+            sage: d.to_milp('gurobi')           # optional - gurobi sage_numerical_backends_gurobi, needs sage.numerical.mip
             (Boolean Program (no objective, 4 variables, 4 constraints),
              MIPVariable with 4 binary components)
-
         """
         from sage.numerical.mip import MixedIntegerLinearProgram
         p = MixedIntegerLinearProgram(solver=solver)
@@ -1083,14 +1063,12 @@ cdef class dancing_linksWrapper:
 
         INPUT:
 
-        - ``solver`` -- string or ``None`` (default: ``None``), possible
+        - ``solver`` -- string or ``None`` (default: ``None``); possible
           values include ``'GLPK'``, ``'GLPK/exact'``, ``'Coin'``,
           ``'CPLEX'``, ``'Gurobi'``, ``'CVXOPT'``, ``'PPL'``,
-          ``'InteractiveLP'``.
+          ``'InteractiveLP'``
 
-        OUTPUT:
-
-        list of rows or ``None`` if no solution is found
+        OUTPUT: list of rows or ``None`` if no solution is found
 
         .. NOTE::
 
@@ -1106,20 +1084,21 @@ cdef class dancing_linksWrapper:
             sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
             sage: d = dlx_solver(rows)
             sage: solutions = [[0,1], [2,3], [4,5]]
-            sage: d.one_solution_using_milp_solver() in solutions
+            sage: d.one_solution_using_milp_solver() in solutions                       # needs sage.numerical.mip
             True
 
         Using optional solvers::
 
-            sage: s = d.one_solution_using_milp_solver('gurobi') # optional - gurobi sage_numerical_backends_gurobi
-            sage: s in solutions                                 # optional - gurobi sage_numerical_backends_gurobi
+            sage: # optional - gurobi sage_numerical_backends_gurobi, needs sage.numerical.mip
+            sage: s = d.one_solution_using_milp_solver('gurobi')
+            sage: s in solutions
             True
 
         When no solution is found::
 
             sage: rows = [[0,1,2], [2,3,4,5], [0,1,2,3]]
             sage: d = dlx_solver(rows)
-            sage: d.one_solution_using_milp_solver() is None
+            sage: d.one_solution_using_milp_solver() is None                            # needs sage.numerical.mip
             True
         """
         from sage.numerical.mip import MIPSolverException

@@ -1,1 +1,1 @@
-"pkgconfig(mpfr)"
+pkgconfig(mpfr)

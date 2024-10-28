@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Monoids
 """
@@ -66,10 +67,10 @@ class Monoids(CategoryWithAxiom):
         sage: x^0, x^1, x^2, x^3, x^4, x^5
         ('', 'aa', 'aaaa', 'aaaaaa', 'aaaaaaaa', 'aaaaaaaaaa')
 
-    Check for :trac:`31212`::
+    Check for :issue:`31212`::
 
         sage: R = IntegerModRing(15)
-        sage: R.submonoid([R.one()]).list()                                             # optional - sage.groups
+        sage: R.submonoid([R.one()]).list()                                             # needs sage.combinat
         [1]
     """
     _base_category_class_and_axiom = (Semigroups, "Unital")
@@ -93,16 +94,16 @@ class Monoids(CategoryWithAxiom):
         - ``index_set`` -- (optional) an index set for the generators; if
           an integer, then this represents `\{0, 1, \ldots, n-1\}`
 
-        - ``names`` -- a string or list/tuple/iterable of strings
+        - ``names`` -- string or list/tuple/iterable of strings
           (default: ``'x'``); the generator names or name prefix
 
         EXAMPLES::
 
-            sage: Monoids.free(index_set=ZZ)                                            # optional - sage.groups
+            sage: Monoids.free(index_set=ZZ)                                            # needs sage.combinat
             Free monoid indexed by Integer Ring
-            sage: Monoids().free(ZZ)                                                    # optional - sage.groups
+            sage: Monoids().free(ZZ)                                                    # needs sage.combinat
             Free monoid indexed by Integer Ring
-            sage: F.<x,y,z> = Monoids().free(); F                                       # optional - sage.groups
+            sage: F.<x,y,z> = Monoids().free(); F                                       # needs sage.combinat
             Free monoid indexed by {'x', 'y', 'z'}
         """
         if names is not None:
@@ -130,8 +131,8 @@ class Monoids(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: M = Monoids().free([1,2,3])                                       # optional - sage.groups
-                sage: M.semigroup_generators()                                          # optional - sage.groups
+                sage: M = Monoids().free([1,2,3])                                       # needs sage.combinat
+                sage: M.semigroup_generators()                                          # needs sage.combinat
                 Family (1, F[1], F[2], F[3])
             """
             G = self.monoid_generators()
@@ -147,7 +148,7 @@ class Monoids(CategoryWithAxiom):
 
             INPUT:
 
-            - ``args`` -- a list (or iterable) of elements of ``self``
+            - ``args`` -- list (or iterable) of elements of ``self``
 
             Returns the product of the elements in ``args``, as an element of
             ``self``.
@@ -212,22 +213,22 @@ class Monoids(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: R = IntegerModRing(15)
-                sage: M = R.submonoid([R(3), R(5)]); M                                  # optional - sage.groups
+                sage: M = R.submonoid([R(3), R(5)]); M                                  # needs sage.combinat
                 A submonoid of (Ring of integers modulo 15) with 2 generators
-                sage: M.list()                                                          # optional - sage.groups
+                sage: M.list()                                                          # needs sage.combinat
                 [1, 3, 5, 9, 0, 10, 12, 6]
 
             Not the presence of the unit, unlike in::
 
-                sage: S = R.subsemigroup([R(3), R(5)]); S                               # optional - sage.groups
+                sage: S = R.subsemigroup([R(3), R(5)]); S                               # needs sage.combinat
                 A subsemigroup of (Ring of integers modulo 15) with 2 generators
-                sage: S.list()                                                          # optional - sage.groups
+                sage: S.list()                                                          # needs sage.combinat
                 [3, 5, 9, 0, 10, 12, 6]
 
             This method is really a shorthand for subsemigroup::
 
-                sage: M2 = R.subsemigroup([R(3), R(5)], one=R.one())                    # optional - sage.groups
-                sage: M2 is M                                                           # optional - sage.groups
+                sage: M2 = R.subsemigroup([R(3), R(5)], one=R.one())                    # needs sage.combinat
+                sage: M2 is M                                                           # needs sage.combinat
                 True
             """
             return self.subsemigroup(generators, one=self.one())
@@ -245,11 +246,12 @@ class Monoids(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: G = FreeGroup(2)                                                  # optional - sage.groups
-                sage: x0, x1 = G.group_generators()                                     # optional - sage.groups
-                sage: c1 = cartesian_product([x0, x1])                                  # optional - sage.groups
-                sage: c2 = cartesian_product([x1, x0])                                  # optional - sage.groups
-                sage: c1._div_(c2)                                                      # optional - sage.groups
+                sage: # needs sage.groups
+                sage: G = FreeGroup(2)
+                sage: x0, x1 = G.group_generators()
+                sage: c1 = cartesian_product([x0, x1])
+                sage: c2 = cartesian_product([x1, x0])
+                sage: c1._div_(c2)
                 (x0*x1^-1, x1*x0^-1)
 
             With this default implementation, division will fail as
@@ -267,7 +269,7 @@ class Monoids(CategoryWithAxiom):
 
             TESTS::
 
-                sage: c1._div_.__module__                                               # optional - sage.groups
+                sage: c1._div_.__module__                                               # needs sage.groups
                 'sage.categories.monoids'
             """
             return left * ~right
@@ -290,11 +292,11 @@ class Monoids(CategoryWithAxiom):
 
         def _pow_int(self, n):
             r"""
-            Return ``self`` to the `n^{th}` power.
+            Return ``self`` to the `n`-th power.
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             EXAMPLES::
 
@@ -306,11 +308,11 @@ class Monoids(CategoryWithAxiom):
 
         def _pow_naive(self, n):
             r"""
-            Return ``self`` to the `n^{th}` power (naive implementation).
+            Return ``self`` to the `n`-th power (naive implementation).
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             This naive implementation does not use binary
             exponentiation; there are cases where this is actually
@@ -336,8 +338,8 @@ class Monoids(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: A = Matrix([[1, 1], [-1, 0]])                                     # optional - sage.modules
-                sage: A.powers(6)                                                       # optional - sage.modules
+                sage: A = Matrix([[1, 1], [-1, 0]])                                     # needs sage.modules
+                sage: A.powers(6)                                                       # needs sage.modules
                 [
                 [1 0]  [ 1  1]  [ 0  1]  [-1  0]  [-1 -1]  [ 0 -1]
                 [0 1], [-1  0], [-1 -1], [ 0 -1], [ 1  0], [ 1  1]
@@ -363,8 +365,8 @@ class Monoids(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: A = Matrix([[1, 0], [1, 1]])                                      # optional - sage.modules
-                sage: ~A                                                                # optional - sage.modules
+                sage: A = Matrix([[1, 0], [1, 1]])                                      # needs sage.modules
+                sage: ~A                                                                # needs sage.modules
                 [ 1 0]
                 [-1 1]
             """
@@ -377,9 +379,11 @@ class Monoids(CategoryWithAxiom):
             This is an alias for inversion, which can also be invoked
             by ``~x`` for an element ``x``.
 
+            Nota Bene: Element classes should implement ``__invert__`` only.
+
             EXAMPLES::
 
-                sage: AA(sqrt(~2)).inverse()                                            # optional - sage.symbolic sage.rings.number_field
+                sage: AA(sqrt(~2)).inverse()                                            # needs sage.rings.number_field sage.symbolic
                 1.414213562373095?
             """
             # Nota Bene: Element classes should implement ``__invert__`` only.
@@ -407,16 +411,16 @@ class Monoids(CategoryWithAxiom):
             - ``index_set`` -- (optional) an index set for the generators; if
               an integer, then this represents `\{0, 1, \ldots, n-1\}`
 
-            - ``names`` -- a string or list/tuple/iterable of strings
+            - ``names`` -- string or list/tuple/iterable of strings
               (default: ``'x'``); the generator names or name prefix
 
             EXAMPLES::
 
-                sage: Monoids.Commutative.free(index_set=ZZ)                            # optional - sage.groups
+                sage: Monoids.Commutative.free(index_set=ZZ)                            # needs sage.combinat
                 Free abelian monoid indexed by Integer Ring
-                sage: Monoids().Commutative().free(ZZ)                                  # optional - sage.groups
+                sage: Monoids().Commutative().free(ZZ)                                  # needs sage.combinat
                 Free abelian monoid indexed by Integer Ring
-                sage: F.<x,y,z> = Monoids().Commutative().free(); F                     # optional - sage.groups
+                sage: F.<x,y,z> = Monoids().Commutative().free(); F                     # needs sage.combinat
                 Free abelian monoid indexed by {'x', 'y', 'z'}
             """
             if names is not None:
@@ -447,18 +451,18 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: A = Sets().WithRealizations().example(); A                    # optional - sage.combinat sage.modules
+                    sage: A = Sets().WithRealizations().example(); A                    # needs sage.modules
                     The subset algebra of {1, 2, 3} over Rational Field
-                    sage: A.one.__module__                                              # optional - sage.combinat sage.modules
+                    sage: A.one.__module__                                              # needs sage.modules
                     'sage.categories.monoids'
-                    sage: A.one()                                                       # optional - sage.combinat sage.modules
+                    sage: A.one()                                                       # needs sage.modules
                     F[{}]
 
                 TESTS::
 
-                    sage: A.one() is A.a_realization().one()                            # optional - sage.combinat sage.modules
+                    sage: A.one() is A.a_realization().one()                            # needs sage.modules
                     True
-                    sage: A._test_one()                                                 # optional - sage.combinat sage.modules
+                    sage: A._test_one()                                                 # needs sage.modules
                 """
                 return self.a_realization().one()
 
@@ -468,7 +472,7 @@ class Monoids(CategoryWithAxiom):
 
             def one(self):
                 """
-                Returns the multiplicative unit of this monoid,
+                Return the multiplicative unit of this monoid,
                 obtained by retracting that of the ambient monoid.
 
                 EXAMPLES::
@@ -510,12 +514,13 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: A = Monoids().example().algebra(ZZ)                           # optional - sage.modules
-                    sage: A.one_basis()                                                 # optional - sage.modules
+                    sage: # needs sage.modules
+                    sage: A = Monoids().example().algebra(ZZ)
+                    sage: A.one_basis()
                     ''
-                    sage: A.one()                                                       # optional - sage.modules
+                    sage: A.one()
                     B['']
-                    sage: A(3)                                                          # optional - sage.modules
+                    sage: A(3)
                     3*B['']
                 """
                 return self.basis().keys().one()
@@ -542,7 +547,7 @@ class Monoids(CategoryWithAxiom):
                     the free monoid generated by ('a', 'b', 'c', 'd')
                     sage: M.monoid_generators()
                     Finite family {'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd'}
-                    sage: M.algebra(ZZ).algebra_generators()                            # optional - sage.modules
+                    sage: M.algebra(ZZ).algebra_generators()                            # needs sage.modules
                     Finite family {'a': B['a'], 'b': B['b'], 'c': B['c'], 'd': B['d']}
 
                     sage: Z12 = Monoids().Finite().example(); Z12
@@ -552,21 +557,21 @@ class Monoids(CategoryWithAxiom):
                     Traceback (most recent call last):
                     ...
                     AttributeError: 'IntegerModMonoid_with_category' object
-                    has no attribute 'monoid_generators'
+                    has no attribute 'monoid_generators'...
                     sage: Z12.semigroup_generators()
                     Family (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-                    sage: Z12.algebra(QQ).algebra_generators()                          # optional - sage.modules
+                    sage: Z12.algebra(QQ).algebra_generators()                          # needs sage.modules
                     Family (B[0], B[1], B[2], B[3], B[4], B[5], B[6], B[7], B[8], B[9], B[10], B[11])
 
 
-                    sage: A10 = AlternatingGroup(10)                                    # optional - sage.groups
-                    sage: GroupAlgebras(QQ).example(A10).algebra_generators()           # optional - sage.groups sage.modules
-                    Family ((8,9,10), (1,2,3,4,5,6,7,8,9))
+                    sage: A10 = AlternatingGroup(10)                                    # needs sage.groups
+                    sage: GroupAlgebras(QQ).example(A10).algebra_generators()           # needs sage.groups sage.modules
+                    Family ((1,2,3,4,5,6,7,8,9), (8,9,10))
 
-                    sage: A = DihedralGroup(3).algebra(QQ); A                           # optional - sage.groups sage.modules
+                    sage: A = DihedralGroup(3).algebra(QQ); A                           # needs sage.groups sage.modules
                     Algebra of Dihedral group of order 6 as a permutation group
                      over Rational Field
-                    sage: A.algebra_generators()                                        # optional - sage.groups sage.modules
+                    sage: A.algebra_generators()                                        # needs sage.groups sage.modules
                     Family ((1,2,3), (1,3))
                 """
                 monoid = self.basis().keys()
@@ -584,16 +589,16 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: SG4 = SymmetricGroupAlgebra(ZZ,4)                             # optional - sage.groups sage.modules
-                    sage: SG4(1).is_central()                                           # optional - sage.groups sage.modules
+                    sage: SG4 = SymmetricGroupAlgebra(ZZ,4)                             # needs sage.groups sage.modules
+                    sage: SG4(1).is_central()                                           # needs sage.groups sage.modules
                     True
-                    sage: SG4(Permutation([1,3,2,4])).is_central()                      # optional - sage.groups sage.modules
+                    sage: SG4(Permutation([1,3,2,4])).is_central()                      # needs sage.groups sage.modules
                     False
 
-                    sage: A = GroupAlgebras(QQ).example(); A                            # optional - sage.groups sage.modules
+                    sage: A = GroupAlgebras(QQ).example(); A                            # needs sage.groups sage.modules
                     Algebra of Dihedral group of order 8
                      as a permutation group over Rational Field
-                    sage: sum(A.basis()).is_central()                                   # optional - sage.groups sage.modules
+                    sage: sum(A.basis()).is_central()                                   # needs sage.groups sage.modules
                     True
                 """
                 return all(i * self == self * i
@@ -631,19 +636,20 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: M = Monoids.free([1, 2, 3])                                   # optional - sage.groups
-                    sage: N = Monoids.free(['a', 'b'])                                  # optional - sage.groups
-                    sage: C = cartesian_product([M, N])                                 # optional - sage.groups
-                    sage: C.monoid_generators()                                         # optional - sage.groups
+                    sage: # needs sage.combinat sage.groups
+                    sage: M = Monoids.free([1, 2, 3])
+                    sage: N = Monoids.free(['a', 'b'])
+                    sage: C = cartesian_product([M, N])
+                    sage: C.monoid_generators()
                     Family ((F[1], 1), (F[2], 1), (F[3], 1),
                             (1, F['a']), (1, F['b']))
 
                 An example with an infinitely generated group (a better output
                 is needed)::
 
-                    sage: N = Monoids.free(ZZ)                                          # optional - sage.groups
-                    sage: C = cartesian_product([M, N])                                 # optional - sage.groups
-                    sage: C.monoid_generators()                                         # optional - sage.groups
+                    sage: N = Monoids.free(ZZ)                                          # needs sage.combinat
+                    sage: C = cartesian_product([M, N])                                 # needs sage.combinat sage.groups
+                    sage: C.monoid_generators()                                         # needs sage.combinat sage.groups
                     Lazy family (gen(i))_{i in The Cartesian product of (...)}
                 """
                 F = self.cartesian_factors()
@@ -671,7 +677,7 @@ class Monoids(CategoryWithAxiom):
                 gens_prod = cartesian_product([Family(M.monoid_generators(),
                                                       lambda g: (i, g))
                                                for i, M in enumerate(F)])
-                return Family(gens_prod, lift, name="gen")
+                return Family(gens_prod, lift, name='gen')
 
         class ElementMethods:
             def multiplicative_order(self):
@@ -680,10 +686,11 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: G1 = SymmetricGroup(3)                                        # optional - sage.groups sage.modules
-                    sage: G2 = SL(2, 3)                                                 # optional - sage.groups sage.modules
-                    sage: G = cartesian_product([G1, G2])                               # optional - sage.groups sage.modules
-                    sage: G((G1.gen(0), G2.gen(1))).multiplicative_order()              # optional - sage.groups sage.modules
+                    sage: # needs sage.groups sage.modules
+                    sage: G1 = SymmetricGroup(3)
+                    sage: G2 = SL(2, 3)
+                    sage: G = cartesian_product([G1, G2])
+                    sage: G((G1.gen(0), G2.gen(1))).multiplicative_order()
                     12
                 """
                 from sage.rings.infinity import Infinity
@@ -700,10 +707,11 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: a1 = Permutation((4,2,1,3))                                   # optional - sage.groups sage.modules
-                    sage: a2 = SL(2, 3)([2,1,1,1])                                      # optional - sage.groups sage.modules
-                    sage: h = cartesian_product([a1, a2])                               # optional - sage.groups sage.modules
-                    sage: ~h                                                            # optional - sage.groups sage.modules
+                    sage: # needs sage.groups sage.modules
+                    sage: a1 = Permutation((4,2,1,3))
+                    sage: a2 = SL(2, 3)([2,1,1,1])
+                    sage: h = cartesian_product([a1, a2])
+                    sage: ~h
                     ([2, 4, 1, 3], [1 2]
                     [2 2])
                 """

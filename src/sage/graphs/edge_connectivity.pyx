@@ -86,7 +86,7 @@ cdef class GabowEdgeConnectivity:
 
     TESTS:
 
-    :trac:`32169`::
+    :issue:`32169`::
 
         sage: dig6_string = r'[E_S?_hKIH@eos[BSg???Q@FShGC?hTHUGM?IPug?'
         sage: dig6_string += r'JOEYCdOzdkQGo@ADA@AAg?GAQW?'
@@ -447,12 +447,12 @@ cdef class GabowEdgeConnectivity:
 
         return True
 
-    cdef void increase_memory_for_new_tree(self, int tree):
+    cdef void increase_memory_for_new_tree(self, int tree) noexcept:
         """
         Allocate data structure for the new tree/forest.
 
         This method also initializes data structures for this tree index. Data
-        structures for a given tree index are allocatated only once.
+        structures for a given tree index are allocated only once.
 
         INPUT:
 
@@ -495,7 +495,7 @@ cdef class GabowEdgeConnectivity:
         self.L_roots[tree] = self.UNUSED
         self.tree_flag[tree] = False
 
-    cdef void compute_dfs_tree(self):
+    cdef void compute_dfs_tree(self) noexcept:
         r"""
         Find a DFS spanning forest of `G \backslash T`.
 
@@ -530,7 +530,7 @@ cdef class GabowEdgeConnectivity:
                 # Each call of find_dfs_tree creates an f-tree
                 self.num_start_f_trees += 1
 
-    cdef void find_dfs_tree(self, int r):
+    cdef void find_dfs_tree(self, int r) noexcept:
         r"""
         Find more vertices of the f-tree rooted at `r`.
 
@@ -577,7 +577,7 @@ cdef class GabowEdgeConnectivity:
                 # We are done with u. We pop.
                 t -= 1
 
-    cdef void find_dfs_tree_rec(self, int u, int r):
+    cdef void find_dfs_tree_rec(self, int u, int r) noexcept:
         r"""
         Find more vertices of the f-tree rooted at `r`.
 
@@ -609,7 +609,7 @@ cdef class GabowEdgeConnectivity:
                 # recursively find more vertices and grow the subtree rooted at r
                 self.find_dfs_tree_rec(v, r)
 
-    cdef int choose_root(self):
+    cdef int choose_root(self) noexcept:
         """
         Return the root of an active f_tree, or INT_MAX if none exists.
 
@@ -694,7 +694,7 @@ cdef class GabowEdgeConnectivity:
             return True
         return False
 
-    cdef void join(self, int e_id):
+    cdef void join(self, int e_id) noexcept:
         """
         Assign edge e_id to current tree.
 
@@ -864,7 +864,7 @@ cdef class GabowEdgeConnectivity:
 
         return self.label_A_path(e_id)
 
-    cdef bint is_joining_edge(self, int e_id):
+    cdef bint is_joining_edge(self, int e_id) noexcept:
         """
         Check if edge e_id is joining.
 
@@ -879,7 +879,7 @@ cdef class GabowEdgeConnectivity:
         cdef int root_y = self.root[self.my_to[e_id]]
         return (root_x != root_y) and (root_x == self.augmenting_root or root_y == self.augmenting_root)
 
-    cdef int label_A_path(self, int e_id):
+    cdef int label_A_path(self, int e_id) noexcept:
         """
         Labels the incident unused edges as the label_A_step of the algorithm
 
@@ -913,7 +913,7 @@ cdef class GabowEdgeConnectivity:
 
         return INT_MAX
 
-    cdef bint label_step(self, int e_id, int e_label):
+    cdef bint label_step(self, int e_id, int e_label) noexcept:
         """
         Label edge e_id with e_label and check whether edge e_id is joining.
 
@@ -935,7 +935,7 @@ cdef class GabowEdgeConnectivity:
         # The roots are different. Check whether one of them is on the f_tree
         return root_x == self.augmenting_root or root_y == self.augmenting_root
 
-    cdef bint any_unused_is_unlabeled(self, int x):
+    cdef bint any_unused_is_unlabeled(self, int x) noexcept:
         """
         Check if each unused edge directed to x is unlabeled
 
@@ -955,7 +955,7 @@ cdef class GabowEdgeConnectivity:
 
         return True
 
-    cdef void augmentation_algorithm(self):
+    cdef void augmentation_algorithm(self) noexcept:
         """
         Trace the path of the found joining edges
 
@@ -972,7 +972,7 @@ cdef class GabowEdgeConnectivity:
             self.joining_edges.pop()
             self.trace_back(e_id, e_state)
 
-    cdef void trace_back(self, int e_id, int e_state):
+    cdef void trace_back(self, int e_id, int e_state) noexcept:
         """
         Trace the path of a joining edge and transfer the edges to the
         appropriate tree Ti.
@@ -984,9 +984,6 @@ cdef class GabowEdgeConnectivity:
             sage: GabowEdgeConnectivity(D).edge_connectivity()
             4
         """
-        # Target x and source y of joining edge e_id
-        cdef int x = self.my_to[e_id]
-        cdef int y = self.my_from[e_id]
         # Previous state (tree Ti or unused) of an edge
         cdef int previous_state = self.FIRSTEDGE
 
@@ -1085,7 +1082,7 @@ cdef class GabowEdgeConnectivity:
             if j != self.root_vertex:
                 self.forests[j] = True
 
-    cdef void update_parents_depths(self, int tree):
+    cdef void update_parents_depths(self, int tree) noexcept:
         """
         Update parents, depths, and, if current_tree is k, the vertex labels to
         the root of each f_tree.
@@ -1115,7 +1112,7 @@ cdef class GabowEdgeConnectivity:
                     self.update_parents_dfs(tree, v)
                 self.root[i] = self.root[v]
 
-    cdef void update_parents_dfs(self, int tree, int x):
+    cdef void update_parents_dfs(self, int tree, int x) noexcept:
         """
         Helper method for ``update_parents_depths``.
 
@@ -1157,7 +1154,7 @@ cdef class GabowEdgeConnectivity:
                     self.my_parent_edge_id[tree][v] = e_id
                     self.my_depth[tree][v] = depth
 
-    cdef void save_current_k_intersection(self):
+    cdef void save_current_k_intersection(self) noexcept:
         """
         Save the current k-intersection.
 
@@ -1196,7 +1193,6 @@ cdef class GabowEdgeConnectivity:
             return self.ec
         raise ValueError("the value of the edge connectivity has not been "
                          "properly computed. This may result from an interruption")
-
 
     #
     # Packing arborescences

@@ -111,8 +111,9 @@ def find_replacements(location, package_regex=None, verbose=False):
 
     EXAMPLES::
 
+        sage: # needs SAGE_SRC
         sage: from sage.misc.replace_dot_all import *
-        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage/plot/arc.py')
+        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage', 'plot', 'arc.py')
         sage: find_replacements(location, package_regex='sage[.]plot[.]all', verbose=True)
         [[..., ..., 'from sage.plot.graphics import Graphics']]
     """
@@ -122,7 +123,7 @@ def find_replacements(location, package_regex=None, verbose=False):
     pattern = re.compile(regex)
     replacements = []
     global log_messages, interesting_examples
-    with open(location, "r") as fp:
+    with open(location) as fp:
         skip_line = False
         lines = fp.readlines()  # read all lines using readline()
         row_index = 0
@@ -282,11 +283,10 @@ def process_line(location, line, replacements, row_index, verbose=False):
     - ``line`` -- a source code line
     - ``replacements`` -- the array output from :func:`find_replacements`
     - ``row_index`` -- the line number where ``import`` appears
-    - ``verbose`` -- if True, issue print statements when interesting examples are found
+    - ``verbose`` -- if ``True``, issue print statements when interesting
+      examples are found
 
-    OUTPUT:
-
-    an array ``[new_line, replacements]`` with entries
+    OUTPUT: an array ``[new_line, replacements]`` with entries
 
     - ``new_line`` -- the modified import statement (possibly now on several lines)
     - ``replacements`` -- just returns the original replacements with its index 0 element removed if ``replacements`` is nonempty
@@ -295,10 +295,11 @@ def process_line(location, line, replacements, row_index, verbose=False):
 
     Replacing the first line which needs a replacement in the source file with filepath ``src/sage/plot/arc.py``::
 
+        sage: # needs SAGE_SRC
         sage: from sage.misc.replace_dot_all import *
-        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage/plot/arc.py')
+        sage: location = os.path.join(sage.env.SAGE_SRC, 'sage', 'plot', 'arc.py')
         sage: replacements = find_replacements(location, package_regex='sage[.]plot[.]all', verbose=True); replacements
-        [[471, 24, 'from sage.plot.graphics import Graphics']]
+        [[477, 24, 'from sage.plot.graphics import Graphics']]
         sage: with open(location, "r") as file:
         ....:     lines = file.readlines()
         sage: row_index, col_number, *_ = replacements[0]
@@ -346,7 +347,7 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
     - ``location`` -- a file path
     - ``package_regex`` -- (default: :obj:`default_package_regex`) a regular expression matching
       the ``sage.PAC.KAGE.all`` package names from which we do not want to import.
-    - ``verbose`` -- if True, issue print statements when interesting examples are found
+    - ``verbose`` -- if ``True``, issue print statements when interesting examples are found
     - ``output`` -- a file path; if ``None``, overwrite the file given by ``location``
 
     EXAMPLES::
@@ -364,9 +365,9 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
         ....:             print(line.strip())
         from sage.plot.point import point2d
         from sage.plot.line import line
-        """
+    """
     replacements = find_replacements(location, package_regex, verbose)
-    with open(location, "r") as file:
+    with open(location) as file:
         lines = file.readlines()
     replaced_content = ""
     row_index = 0  # keeps track of the line number
@@ -385,7 +386,8 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
         write_file.write(replaced_content)  # overwriting the old file contents with the new/replaced content
 
 
-def walkdir_replace_dot_all(dir, file_regex=r'.*[.](py|pyx|pxi)$', package_regex=None, verbose=False):
+def walkdir_replace_dot_all(dir, file_regex=r'.*[.](py|pyx|pxi)$', package_regex=None, verbose=False, *,
+                            excluded_file_regex=r'auto-methods|replace_dot_all'):
     r"""
     Replace ``import`` statements in the files in directory ``dir`` matching the regex pattern ``file_regex``.
 
@@ -395,23 +397,25 @@ def walkdir_replace_dot_all(dir, file_regex=r'.*[.](py|pyx|pxi)$', package_regex
     - ``file_regex`` -- a regular expression matching the file names to process
     - ``package_regex`` -- (default: :obj:`default_package_regex`) a regular expression matching
       the ``sage.PAC.KAGE.all`` package names from which we do not want to import.
-    - ``verbose`` -- if True, print statements when interesting examples are found
+    - ``verbose`` -- if ``True``, print statements when interesting examples are found
+    - ``excluded_file_regex`` -- a regular expression matching the file names to exclude
 
     EXAMPLES::
 
+        sage: # needs SAGE_SRC
         sage: from sage.misc.replace_dot_all import *
         sage: walkdir_replace_dot_all(os.path.join(sage.env.SAGE_SRC, 'sage'))  # not tested
     """
     global numberFiles, numberFilesMatchingRegex
     file_regex = re.compile(file_regex)
+    excluded_file_regex = re.compile(excluded_file_regex)
     for root, dirs, files in os.walk(dir, topdown=False):
         for name in files:
             numberFiles += 1
-            if file_regex.search(name):
+            if file_regex.search(name) and not excluded_file_regex.search(name):
                 numberFilesMatchingRegex += 1
                 location = os.path.join(root, name)
-                if location.find('replace_dot_all') == -1:  # to avoid changing anything in this file itself
-                    make_replacements_in_file(location, package_regex, verbose)
+                make_replacements_in_file(location, package_regex, verbose)
 
 
 # ******************************************************** EXECUTES MAIN FUNCTION **********************************************************************
@@ -452,8 +456,8 @@ if __name__ == "__main__":
     finally:
         # Print report also when interrupted
         if verbosity:
-            log_messages = sorted(log_messages.rstrip().split('\n'))
-            for i, message in enumerate(log_messages, start=1):
+            log_messages_split = sorted(log_messages.rstrip().split('\n'))
+            for i, message in enumerate(log_messages_split, start=1):
                 # add index to each line
                 print(f'{i}. {message.rstrip()}')
         report = 'REPORT:\n'

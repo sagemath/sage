@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Free Fermions Super Lie Conformal Algebra.
 
@@ -34,16 +35,17 @@ AUTHORS:
 
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 
+
 class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""
     The Free Fermions Super Lie conformal algebra.
 
     INPUT:
 
-    - ``R``: a commutative ring.
-    - ``ngens``: a positive Integer (default ``1``); the number of
-      non-central generators of this Lie conformal algebra.
-    - ``gram_matrix``: a symmetric square matrix with coefficients
+    - ``R`` -- a commutative ring
+    - ``ngens`` -- a positive Integer (default: ``1``); the number of
+      non-central generators of this Lie conformal algebra
+    - ``gram_matrix`` -- a symmetric square matrix with coefficients
       in ``R`` (default: ``identity_matrix(ngens)``); the Gram
       matrix of the inner product
 
@@ -83,7 +85,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
                  index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         TESTS::
 
@@ -111,7 +113,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
         latex_names = None
 
         if (names is None) and (index_set is None):
-            if ngens==1:
+            if ngens == 1:
                 names = 'psi'
             else:
                 names = 'psi_'
@@ -123,7 +125,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
         names,index_set = standardize_names_index_set(names=names,
                                                       index_set=index_set,
                                                       ngens=ngens)
-        fermiondict = { (i,j): {0: {('K',0): gram_matrix[index_set.rank(i),
+        fermiondict = {(i,j): {0: {('K', 0): gram_matrix[index_set.rank(i),
                     index_set.rank(j)]}} for i in index_set for j in index_set}
 
         from sage.rings.rational_field import QQ

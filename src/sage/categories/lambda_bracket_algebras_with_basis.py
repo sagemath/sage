@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Lambda Bracket Algebras With Basis
 
@@ -19,13 +20,14 @@ AUTHORS:
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.graded_modules import GradedModulesCategory
 
+
 class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
     The category of Lambda bracket algebras with basis.
 
     EXAMPLES::
 
-        sage: LieConformalAlgebras(QQbar).WithBasis()                                   # optional - sage.rings.number_field
+        sage: LieConformalAlgebras(QQbar).WithBasis()                                   # needs sage.rings.number_field
         Category of Lie conformal algebras with basis over Algebraic Field
     """
     class ElementMethods:
@@ -36,14 +38,15 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                       # optional - sage.combinat sage.modules
-                sage: V.inject_variables()                                              # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)
+                sage: V.inject_variables()
                 Defining L, G, C
-                sage: G.T(3).index()                                                    # optional - sage.combinat sage.modules
+                sage: G.T(3).index()
                 ('G', 3)
-                sage: v = V.an_element(); v                                             # optional - sage.combinat sage.modules
+                sage: v = V.an_element(); v
                 L + G + C
-                sage: v.index()                                                         # optional - sage.combinat sage.modules
+                sage: v.index()
                 Traceback (most recent call last):
                 ...
                 ValueError: index can only be computed for monomials, got L + G + C
@@ -63,14 +66,15 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
         EXAMPLES::
 
-            sage: C = LieConformalAlgebras(QQbar)                                      # optional - sage.rings.number_field
-            sage: C1 = C.WithBasis().FinitelyGenerated(); C1                           # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: C = LieConformalAlgebras(QQbar)
+            sage: C1 = C.WithBasis().FinitelyGenerated(); C1
             Category of finitely generated Lie conformal algebras with basis
              over Algebraic Field
-            sage: C2 = C.FinitelyGenerated().WithBasis(); C2                           # optional - sage.rings.number_field
+            sage: C2 = C.FinitelyGenerated().WithBasis(); C2
             Category of finitely generated Lie conformal algebras with basis
              over Algebraic Field
-            sage: C1 is C2                                                             # optional - sage.rings.number_field
+            sage: C1 is C2
             True
         """
         class Graded(GradedModulesCategory):
@@ -80,8 +84,8 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: C = LieConformalAlgebras(QQbar)                                  # optional - sage.rings.number_field
-                sage: C.WithBasis().FinitelyGenerated().Graded()                       # optional - sage.rings.number_field
+                sage: C = LieConformalAlgebras(QQbar)                                   # needs sage.rings.number_field
+                sage: C.WithBasis().FinitelyGenerated().Graded()                        # needs sage.rings.number_field
                 Category of H-graded finitely generated Lie conformal algebras
                  with basis over Algebraic Field
             """
@@ -94,8 +98,8 @@ class LambdaBracketAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                     EXAMPLES::
 
-                        sage: V = lie_conformal_algebras.Virasoro(QQ)                   # optional - sage.combinat sage.modules
-                        sage: V.degree_on_basis(('L', 2))                               # optional - sage.combinat sage.modules
+                        sage: V = lie_conformal_algebras.Virasoro(QQ)                   # needs sage.combinat sage.modules
+                        sage: V.degree_on_basis(('L', 2))                               # needs sage.combinat sage.modules
                         4
                     """
                     if m[0] in self._central_elements:

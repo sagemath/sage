@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Sage's IPython Configuration
 
@@ -7,11 +8,11 @@ We check that Sage stdin can be piped in even if stdout is a tty; In that case
 the IPython simple prompt is being used::
 
     sage: cmd = 'print([sys.stdin.isatty(), sys.stdout.isatty()])'
-    sage: import pexpect
-    sage: output = pexpect.run(
+    sage: import pexpect                                                                # needs pexpect
+    sage: output = pexpect.run(                                                         # needs pexpect
     ....:     'bash -c \'echo "{0}" | sage\''.format(cmd),
     ....: ).decode('utf-8', 'surrogateescape')
-    sage: 'sage: [False, True]' in output
+    sage: 'sage: [False, True]' in output                                               # needs pexpect
     True
 """
 
@@ -36,11 +37,11 @@ from sage.repl.prompts import SagePrompts
 SAGE_EXTENSION = 'sage'
 
 
-class SageIpythonConfiguration():
+class SageIpythonConfiguration:
 
     def _doctest_mode(self):
         """
-        Whether we are in doctest mode
+        Whether we are in doctest mode.
 
         This returns ``True`` during doctests.
 
@@ -55,7 +56,7 @@ class SageIpythonConfiguration():
 
     def _allow_ansi(self):
         """
-        Whether to allow ANSI escape sequences
+        Whether to allow ANSI escape sequences.
 
         This returns ``False`` during doctests to avoid ANSI escape
         sequences.
@@ -70,7 +71,7 @@ class SageIpythonConfiguration():
 
     def colors(self):
         """
-        Return the IPython color palette
+        Return the IPython color palette.
 
         This returns ``'NoColor'`` during doctests to avoid ANSI escape
         sequences.
@@ -88,7 +89,7 @@ class SageIpythonConfiguration():
 
     def simple_prompt(self):
         """
-        Return whether to use the simple prompt
+        Return whether to use the simple prompt.
 
         This returns ``True`` during doctests to avoid ANSI escape sequences.
 
@@ -102,7 +103,7 @@ class SageIpythonConfiguration():
 
     def term_title(self):
         """
-        Return whether to set the terminal title
+        Return whether to set the terminal title.
 
         This returns false during doctests to avoid ANSI escape sequences.
 
@@ -116,7 +117,7 @@ class SageIpythonConfiguration():
 
     def default(self):
         """
-        Return a new default configuration object
+        Return a new default configuration object.
 
         EXAMPLES::
 
@@ -133,7 +134,7 @@ class SageIpythonConfiguration():
         # TerminalInteractiveShell (note: in fact some configs like term_title
         # only apply to the latter, but we can still use the same config for
         # both for simplicity's sake; see Issue #28289)
-        InteractiveShell=Config(
+        InteractiveShell = Config(
             prompts_class=SagePrompts,
             ast_node_interactivity='all',
             colors=self.colors(),
@@ -165,7 +166,7 @@ class SageIpythonConfiguration():
 
     def copy(self):
         """
-        Return a copy of the current configuration
+        Return a copy of the current configuration.
 
         EXAMPLES::
 

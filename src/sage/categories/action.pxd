@@ -1,7 +1,8 @@
+# sage_setup: distribution = sagemath-objects
 from sage.structure.element cimport Element
-from .morphism cimport Morphism
-from .map cimport Map
-from .functor cimport Functor
+from sage.categories.morphism cimport Morphism
+from sage.categories.map cimport Map
+from sage.categories.functor cimport Functor
 
 cdef class Action(Functor):
     cdef readonly G

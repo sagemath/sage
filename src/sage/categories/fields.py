@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 Fields
 """
@@ -19,6 +19,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.category_singleton import Category_contains_method_by_parent_class
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.division_rings import DivisionRings
+from sage.categories.noetherian_rings import NoetherianRings
 
 from sage.structure.element import coerce_binop
 
@@ -26,7 +27,7 @@ from sage.structure.element import coerce_binop
 class Fields(CategoryWithAxiom):
     """
     The category of (commutative) fields, i.e. commutative rings where
-    all non-zero elements have multiplicative inverses
+    all nonzero elements have multiplicative inverses
 
     EXAMPLES::
 
@@ -34,14 +35,16 @@ class Fields(CategoryWithAxiom):
         sage: K
         Category of fields
         sage: Fields().super_categories()
-        [Category of euclidean domains, Category of division rings]
+        [Category of euclidean domains,
+         Category of division rings,
+         Category of noetherian rings]
 
         sage: K(IntegerRing())
         Rational Field
-        sage: K(PolynomialRing(GF(3), 'x'))                                             # optional - sage.rings.finite_rings
+        sage: K(PolynomialRing(GF(3), 'x'))
         Fraction Field of Univariate Polynomial Ring in x over
         Finite Field of size 3
-        sage: K(RealField())
+        sage: K(RealField())                                                            # needs sage.rings.real_mpfr
         Real Field with 53 bits of precision
 
     TESTS::
@@ -55,16 +58,15 @@ class Fields(CategoryWithAxiom):
         EXAMPLES::
 
             sage: Fields().extra_super_categories()
-            [Category of euclidean domains]
-
+            [Category of euclidean domains, Category of noetherian rings]
         """
-        return [EuclideanDomains()]
+        return [EuclideanDomains(), NoetherianRings()]
 
     def __contains__(self, x):
         """
         EXAMPLES::
 
-            sage: GF(4, "a") in Fields()                                                # optional - sage.rings.finite_rings
+            sage: GF(4, "a") in Fields()                                                # needs sage.rings.finite_rings
             True
             sage: QQ in Fields()
             True
@@ -81,47 +83,52 @@ class Fields(CategoryWithAxiom):
 
         Caveat: this should eventually be fixed::
 
-            sage: gap.Rationals in Fields()                                             # optional - sage.libs.gap
+            sage: gap.Rationals in Fields()                                             # needs sage.libs.gap
             False
 
         typically by implementing the method :meth:`category`
         appropriately for Gap objects::
 
-            sage: GR = gap.Rationals                                                    # optional - sage.libs.gap
-            sage: GR.category = lambda: Fields()                                        # optional - sage.libs.gap
-            sage: GR in Fields()                                                        # optional - sage.libs.gap
+            sage: GR = gap.Rationals                                                    # needs sage.libs.gap
+            sage: GR.category = lambda: Fields()                                        # needs sage.libs.gap
+            sage: GR in Fields()                                                        # needs sage.libs.gap
             True
 
-        The following tests against a memory leak fixed in :trac:`13370`. In order
+        The following tests against a memory leak fixed in :issue:`13370`. In order
         to prevent non-deterministic deallocation of fields that have been created
         in other doctests, we introduced a strong reference to all previously created
-        uncollected objects in :trac:`19244`. ::
+        uncollected objects in :issue:`19244`. ::
 
+            sage: # needs sage.libs.pari
             sage: import gc
             sage: _ = gc.collect()
-            sage: permstore = [X for X in gc.get_objects() if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]
+            sage: permstore = [X for X in gc.get_objects()
+            ....:              if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]
             sage: n = len(permstore)
-            sage: for i in prime_range(100):                                            # optional - sage.libs.pari
+            sage: for i in prime_range(100):
             ....:     R = ZZ.quotient(i)
             ....:     t = R in Fields()
 
         First, we show that there are now more quotient rings in cache than before::
 
-            sage: len([X for X in gc.get_objects() if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]) > n
+            sage: # needs sage.libs.pari
+            sage: len([X for X in gc.get_objects()
+            ....:      if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]) > n
             True
 
         When we delete the last quotient ring created in the loop and then do a garbage
         collection, all newly created rings vanish::
 
+            sage: # needs sage.libs.pari
             sage: del R
             sage: _ = gc.collect()
-            sage: len([X for X in gc.get_objects() if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]) - n
+            sage: len([X for X in gc.get_objects()
+            ....:      if isinstance(X, sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic)]) - n
             0
-
         """
-        import sage.rings.ring
+        from sage.rings.ring import _is_Field
         try:
-            return self._contains_helper(x) or sage.rings.ring._is_Field(x)
+            return self._contains_helper(x) or _is_Field(x)
         except Exception:
             return False
 
@@ -139,25 +146,25 @@ class Fields(CategoryWithAxiom):
 
         TESTS::
 
+            sage: # needs sage.libs.pari
             sage: P.<x> = QQ[]
-            sage: Q = P.quotient(x^2 + 2)                                               # optional - sage.libs.pari
-            sage: Q.category()                                                          # optional - sage.libs.pari
+            sage: Q = P.quotient(x^2 + 2)
+            sage: Q.category()
             Category of commutative no zero divisors quotients of algebras
              over (number fields and quotient fields and metric spaces)
             sage: F = Fields()
-            sage: F._contains_helper(Q)                                                 # optional - sage.libs.pari
+            sage: F._contains_helper(Q)
             False
-            sage: Q in F  # This changes the category!                                  # optional - sage.libs.pari
+            sage: Q in F  # This changes the category!
             True
-            sage: F._contains_helper(Q)                                                 # optional - sage.libs.pari
+            sage: F._contains_helper(Q)
             True
-
         """
         return Category_contains_method_by_parent_class(cls())
 
     def _call_(self, x):
         """
-        Construct a field from the data in ``x``
+        Construct a field from the data in ``x``.
 
         EXAMPLES::
 
@@ -165,20 +172,22 @@ class Fields(CategoryWithAxiom):
             sage: K
             Category of fields
             sage: Fields().super_categories()
-            [Category of euclidean domains, Category of division rings]
+            [Category of euclidean domains,
+             Category of division rings,
+             Category of noetherian rings]
 
-            sage: K(IntegerRing()) # indirect doctest
+            sage: K(IntegerRing())  # indirect doctest
             Rational Field
-            sage: K(PolynomialRing(GF(3), 'x')) # indirect doctest                      # optional - sage.rings.finite_rings
+            sage: K(PolynomialRing(GF(3), 'x'))  # indirect doctest
             Fraction Field of Univariate Polynomial Ring in x over
             Finite Field of size 3
-            sage: K(RealField())
+            sage: K(RealField())                                                        # needs sage.rings.real_mpfr
             Real Field with 53 bits of precision
         """
         try:
             return x.fraction_field()
         except AttributeError:
-            raise TypeError("unable to associate a field to %s"%x)
+            raise TypeError("unable to associate a field to %s" % x)
 
     Finite = LazyImport('sage.categories.finite_fields', 'FiniteFields', at_startup=True)
 
@@ -186,7 +195,7 @@ class Fields(CategoryWithAxiom):
 
         def is_field( self, proof=True ):
             r"""
-            Returns True as ``self`` is a field.
+            Return ``True`` as ``self`` is a field.
 
             EXAMPLES::
 
@@ -207,11 +216,11 @@ class Fields(CategoryWithAxiom):
 
                 sage: QQ.is_integrally_closed()
                 True
-                sage: QQbar.is_integrally_closed()                                      # optional - sage.rings.number_field
+                sage: QQbar.is_integrally_closed()                                      # needs sage.rings.number_field
                 True
-                sage: Z5 = GF(5); Z5                                                    # optional - sage.rings.finite_rings
+                sage: Z5 = GF(5); Z5
                 Finite Field of size 5
-                sage: Z5.is_integrally_closed()                                         # optional - sage.rings.finite_rings
+                sage: Z5.is_integrally_closed()
                 True
             """
             return True
@@ -231,14 +240,15 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: R.<x> = QQbar[]                                                   # optional - sage.rings.number_field
-                sage: QQbar._gcd_univariate_polynomial(2*x, 2*x^2)                      # optional - sage.rings.number_field
+                sage: R.<x> = QQbar[]                                                   # needs sage.rings.number_field
+                sage: QQbar._gcd_univariate_polynomial(2*x, 2*x^2)                      # needs sage.rings.number_field
                 x
 
             TESTS::
 
-                sage: fields = [RR, CC]
-                sage: fields.append(QQbar)                                              # optional - sage.rings.number_field
+                sage: fields = []
+                sage: fields += [RR, CC]                                                # needs sage.rings.real_mpfr
+                sage: fields.append(QQbar)                                              # needs sage.rings.number_field
                 sage: for A in fields:
                 ....:     g = A._gcd_univariate_polynomial
                 ....:     R.<x> = A[]
@@ -248,10 +258,11 @@ class Fields(CategoryWithAxiom):
                 ....:            g(2*x, z) == x and
                 ....:            g(z, z) == z)
 
+                sage: # needs sage.rings.real_mpfr
                 sage: R.<x> = RR[]
-                sage: (x^3).gcd(x^5+1)
+                sage: (x^3).gcd(x^5 + 1)
                 1.00000000000000
-                sage: (x^3).gcd(x^5+x^2)
+                sage: (x^3).gcd(x^5 + x^2)
                 x^2
                 sage: f = (x+3)^2 * (x-1)
                 sage: g = (x+3)^5
@@ -261,15 +272,17 @@ class Fields(CategoryWithAxiom):
             The following example illustrates the fact that for inexact
             base rings, the returned gcd is often 1 due to rounding::
 
+                sage: # needs sage.rings.real_mpfr
                 sage: f = (x+RR.pi())^2 * (x-1)
                 sage: g = (x+RR.pi())^5
                 sage: f.gcd(g)
                 1.00000000000000
 
-            Check :trac:`23012`::
+            Check :issue:`23012`::
 
+                sage: # needs sage.libs.pari
                 sage: R.<x> = QQ[]
-                sage: Q = R.quotient(x^2-1)   # Not a field
+                sage: Q = R.quotient(x^2 - 1)   # Not a field
                 sage: P.<x> = Q[]
                 sage: def always_True(*args, **kwds): return True
                 sage: Q.is_field = always_True
@@ -332,8 +345,9 @@ class Fields(CategoryWithAxiom):
 
             TESTS::
 
-                sage: fields = [RR, CC]
-                sage: fields.append(QQbar)                                              # optional - sage.rings.number_field
+                sage: fields = []
+                sage: fields += [RR, CC]                                                # needs sage.rings.real_mpfr
+                sage: fields.append(QQbar)                                              # needs sage.rings.number_field
                 sage: for A in fields:
                 ....:     g = A._xgcd_univariate_polynomial
                 ....:     R.<x> = A[]
@@ -352,8 +366,9 @@ class Fields(CategoryWithAxiom):
                 x^2 + 2
 
             We check that the behavior of xgcd with zero elements is
-            compatible with gcd (:trac:`17671`)::
+            compatible with gcd (:issue:`17671`)::
 
+                sage: # needs sage.rings.number_field
                 sage: R.<x> = QQbar[]
                 sage: zero = R.zero()
                 sage: zero.xgcd(2*x)
@@ -392,11 +407,10 @@ class Fields(CategoryWithAxiom):
 
                 sage: QQ.is_perfect()
                 True
-                sage: GF(2).is_perfect()                                                # optional - sage.rings.finite_rings
+                sage: GF(2).is_perfect()
                 True
-                sage: FunctionField(GF(2), 'x').is_perfect()                            # optional - sage.rings.finite_rings
+                sage: FunctionField(GF(2), 'x').is_perfect()
                 False
-
             """
             if self.characteristic() == 0:
                 return True
@@ -435,7 +449,7 @@ class Fields(CategoryWithAxiom):
 
         def fraction_field(self):
             r"""
-            Returns the *fraction field* of ``self``, which is ``self``.
+            Return the *fraction field* of ``self``, which is ``self``.
 
             EXAMPLES::
 
@@ -453,7 +467,7 @@ class Fields(CategoryWithAxiom):
 
             INPUT:
 
-            - ``f`` -- a univariate non-zero polynomial over this field
+            - ``f`` -- a univariate nonzero polynomial over this field
 
             ALGORITHM: For rings of characteristic zero, we use the algorithm
             described in [Yun1976]_. Other fields may provide their own
@@ -468,11 +482,11 @@ class Fields(CategoryWithAxiom):
                 sage: p = 37 * (x-2/3)^2
                 sage: p.squarefree_decomposition()
                 (37) * (x - 2/3)^2
-                sage: x = polygen(GF(3))                                                # optional - sage.rings.finite_rings
-                sage: x.squarefree_decomposition()                                      # optional - sage.rings.finite_rings
+                sage: x = polygen(GF(3))
+                sage: x.squarefree_decomposition()
                 x
-                sage: f = QQbar['x'](1)                                                 # optional - sage.rings.number_field
-                sage: f.squarefree_decomposition()                                      # optional - sage.rings.number_field
+                sage: f = QQbar['x'](1)                                                 # needs sage.rings.number_field
+                sage: f.squarefree_decomposition()                                      # needs sage.rings.number_field
                 1
             """
             from sage.structure.factorization import Factorization
@@ -488,19 +502,14 @@ class Fields(CategoryWithAxiom):
                 cur = cur.gcd(cur.derivative())
                 f.append(cur)
 
-            g = []
-            for i in range(len(f) - 1):
-                g.append(f[i] // f[i+1])
-
-            a = []
-            for i in range(len(g) - 1):
-                a.append(g[i] // g[i+1])
+            g = [f[i] // f[i + 1] for i in range(len(f) - 1)]
+            a = [g[i] // g[i + 1] for i in range(len(g) - 1)]
             a.append(g[-1])
 
             unit = f[-1]
             for i in range(len(a)):
                 if a[i].degree() > 0:
-                    factors.append((a[i], i+1))
+                    factors.append((a[i], i + 1))
                 else:
                     unit = unit * a[i].constant_coefficient() ** (i + 1)
 
@@ -508,7 +517,7 @@ class Fields(CategoryWithAxiom):
 
         def vector_space(self, *args, **kwds):
             r"""
-            Gives an isomorphism of this field with a vector space over a subfield.
+            Give an isomorphism of this field with a vector space over a subfield.
 
             This method is an alias for ``free_module``, which may have more documentation.
 
@@ -529,10 +538,11 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: K.<a> = Qq(125)                                                   # optional - sage.rings.padics
-                sage: V, fr, to = K.vector_space()                                      # optional - sage.rings.padics
-                sage: v = V([1, 2, 3])                                                  # optional - sage.rings.padics
-                sage: fr(v, 7)                                                          # optional - sage.rings.padics
+                sage: # needs sage.rings.padics
+                sage: K.<a> = Qq(125)
+                sage: V, fr, to = K.vector_space()
+                sage: v = V([1, 2, 3])
+                sage: fr(v, 7)
                 (3*a^2 + 2*a + 1) + O(5^7)
             """
             return self.free_module(*args, **kwds)
@@ -540,7 +550,7 @@ class Fields(CategoryWithAxiom):
     class ElementMethods:
         def euclidean_degree(self):
             r"""
-            Return the degree of this element as an element of an Euclidean
+            Return the degree of this element as an element of a Euclidean
             domain.
 
             In a field, this returns 0 for all but the zero element (for
@@ -577,7 +587,7 @@ class Fields(CategoryWithAxiom):
 
         def is_unit( self ):
             r"""
-            Returns True if ``self`` has a multiplicative inverse.
+            Return ``True`` if ``self`` has a multiplicative inverse.
 
             EXAMPLES::
 
@@ -605,33 +615,33 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: K = GF(5)                                                         # optional - sage.rings.finite_rings
-                sage: K(2).gcd(K(1))                                                    # optional - sage.rings.finite_rings
+                sage: K = GF(5)
+                sage: K(2).gcd(K(1))
                 1
-                sage: K(0).gcd(K(0))                                                    # optional - sage.rings.finite_rings
+                sage: K(0).gcd(K(0))
                 0
-                sage: all(x.gcd(y) == (0 if x == 0 and y == 0 else 1)                   # optional - sage.rings.finite_rings
+                sage: all(x.gcd(y) == (0 if x == 0 and y == 0 else 1)
                 ....:     for x in K for y in K)
                 True
 
             For field of characteristic zero, the gcd of integers is considered
             as if they were elements of the integer ring::
 
-                sage: gcd(15.0,12.0)
+                sage: gcd(15.0,12.0)                                                    # needs sage.rings.real_mpfr
                 3.00000000000000
 
             But for other floating point numbers, the gcd is just `0.0` or `1.0`::
 
-                sage: gcd(3.2, 2.18)
+                sage: gcd(3.2, 2.18)                                                    # needs sage.rings.real_mpfr
                 1.00000000000000
 
-                sage: gcd(0.0, 0.0)
+                sage: gcd(0.0, 0.0)                                                     # needs sage.rings.real_mpfr
                 0.000000000000000
 
             AUTHOR:
 
-            - Simon King (2011-02) -- :trac:`10771`
-            - Vincent Delecroix (2015) -- :trac:`17671`
+            - Simon King (2011-02) -- :issue:`10771`
+            - Vincent Delecroix (2015) -- :issue:`17671`
             """
             P = self.parent()
             try:
@@ -663,29 +673,29 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: GF(2)(1).lcm(GF(2)(0))                                            # optional - sage.rings.finite_rings
+                sage: GF(2)(1).lcm(GF(2)(0))
                 0
-                sage: GF(2)(1).lcm(GF(2)(1))                                            # optional - sage.rings.finite_rings
+                sage: GF(2)(1).lcm(GF(2)(1))
                 1
 
             For field of characteristic zero, the lcm of integers is considered
             as if they were elements of the integer ring::
 
-                sage: lcm(15.0,12.0)
+                sage: lcm(15.0, 12.0)                                                   # needs sage.rings.real_mpfr
                 60.0000000000000
 
             But for others floating point numbers, it is just `0.0` or `1.0`::
 
-                sage: lcm(3.2, 2.18)
+                sage: lcm(3.2, 2.18)                                                    # needs sage.rings.real_mpfr
                 1.00000000000000
 
-                sage: lcm(0.0, 0.0)
+                sage: lcm(0.0, 0.0)                                                     # needs sage.rings.real_mpfr
                 0.000000000000000
 
             AUTHOR:
 
-            - Simon King (2011-02) -- :trac:`10771`
-            - Vincent Delecroix (2015) -- :trac:`17671`
+            - Simon King (2011-02) -- :issue:`10771`
+            - Vincent Delecroix (2015) -- :issue:`17671`
             """
             P = self.parent()
             try:
@@ -726,28 +736,28 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: K = GF(5)                                                         # optional - sage.rings.finite_rings
-                sage: K(2).xgcd(K(1))                                                   # optional - sage.rings.finite_rings
+                sage: K = GF(5)
+                sage: K(2).xgcd(K(1))
                 (1, 3, 0)
-                sage: K(0).xgcd(K(4))                                                   # optional - sage.rings.finite_rings
+                sage: K(0).xgcd(K(4))
                 (1, 0, 4)
-                sage: K(1).xgcd(K(1))                                                   # optional - sage.rings.finite_rings
+                sage: K(1).xgcd(K(1))
                 (1, 1, 0)
-                sage: GF(5)(0).xgcd(GF(5)(0))                                           # optional - sage.rings.finite_rings
+                sage: GF(5)(0).xgcd(GF(5)(0))
                 (0, 0, 0)
 
-            The xgcd of non-zero floating point numbers will be a triple of
+            The xgcd of nonzero floating point numbers will be a triple of
             floating points. But if the input are two integral floating points
             the result is a floating point version of the standard gcd on
             `\ZZ`::
 
-                sage: xgcd(12.0, 8.0)
+                sage: xgcd(12.0, 8.0)                                                   # needs sage.rings.real_mpfr
                 (4.00000000000000, 1.00000000000000, -1.00000000000000)
 
-                sage: xgcd(3.1, 2.98714)
+                sage: xgcd(3.1, 2.98714)                                                # needs sage.rings.real_mpfr
                 (1.00000000000000, 0.322580645161290, 0.000000000000000)
 
-                sage: xgcd(0.0, 1.1)
+                sage: xgcd(0.0, 1.1)                                                    # needs sage.rings.real_mpfr
                 (1.00000000000000, 0.000000000000000, 0.909090909090909)
             """
             P = self.parent()
@@ -777,10 +787,10 @@ class Fields(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: x = GF(7)(5)                                                      # optional - sage.rings.finite_rings
-                sage: x.factor()                                                        # optional - sage.rings.finite_rings
+                sage: x = GF(7)(5)
+                sage: x.factor()
                 5
-                sage: RR(0).factor()
+                sage: RR(0).factor()                                                    # needs sage.rings.real_mpfr
                 Traceback (most recent call last):
                 ...
                 ArithmeticError: factorization of 0.000000000000000 is not defined
@@ -797,11 +807,11 @@ class Fields(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: x = polygen(ZZ, 'x')
-                sage: NumberField(x^7+2, 'a')(2).inverse_of_unit()                      # optional - sage.rings.number_field
+                sage: NumberField(x^7 + 2, 'a')(2).inverse_of_unit()                    # needs sage.rings.number_field
                 1/2
 
             Trying to invert the zero element typically raises a
-            ``ZeroDivisionError``::
+            :exc:`ZeroDivisionError`::
 
                 sage: QQ(0).inverse_of_unit()
                 Traceback (most recent call last):

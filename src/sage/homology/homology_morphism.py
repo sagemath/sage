@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs          (because all doctests use the catalog simplicial_complexes)
+# sage.doctest: needs sage.graphs          (because all doctests use the catalog simplicial_complexes)
 r"""
 Induced morphisms on homology
 
@@ -51,12 +51,12 @@ class InducedHomologyMorphism(Morphism):
     INPUT:
 
     - ``map`` -- the map of simplicial complexes
-    - ``base_ring`` -- a field (optional, default ``QQ``)
-    - ``cohomology`` -- boolean (optional, default ``False``). If
+    - ``base_ring`` -- a field (default: ``QQ``)
+    - ``cohomology`` -- boolean (default: ``False``); if
       ``True``, return the induced map in cohomology rather than
-      homology.
+      homology
 
-    .. note::
+    .. NOTE::
 
         This is not intended to be used directly by the user, but instead
         via the method
@@ -135,10 +135,10 @@ class InducedHomologyMorphism(Morphism):
         INPUT:
 
         - ``map`` -- the map of simplicial complexes
-        - ``base_ring`` -- a field (optional, default ``QQ``)
-        - ``cohomology`` -- boolean (optional, default ``False``). If
+        - ``base_ring`` -- a field (default: ``QQ``)
+        - ``cohomology`` -- boolean (default: ``False``); if
           ``True``, return the induced map in cohomology rather than
-          homology.
+          homology
 
         EXAMPLES::
 
@@ -198,7 +198,7 @@ class InducedHomologyMorphism(Morphism):
             sage: id = H.identity()
             sage: id.induced_homology_morphism(QQ).base_ring()
             Rational Field
-            sage: id.induced_homology_morphism(GF(13)).base_ring()                      # optional - sage.rings.finite_rings
+            sage: id.induced_homology_morphism(GF(13)).base_ring()
             Finite Field of size 13
         """
         return self._base_ring
@@ -213,7 +213,7 @@ class InducedHomologyMorphism(Morphism):
 
         INPUT:
 
-        - ``deg`` -- (optional, default ``None``) the degree
+        - ``deg`` -- (default: ``None``) the degree
 
         EXAMPLES::
 
@@ -312,7 +312,7 @@ class InducedHomologyMorphism(Morphism):
             sage: g = Hom(S1, K)({0: 0, 1:0, 2:0})
             sage: f.induced_homology_morphism(QQ) == g.induced_homology_morphism(QQ)
             True
-            sage: f.induced_homology_morphism(QQ) == g.induced_homology_morphism(GF(2))     # optional - sage.rings.finite_rings
+            sage: f.induced_homology_morphism(QQ) == g.induced_homology_morphism(GF(2))
             False
             sage: id = Hom(K, K).identity()   # different domain
             sage: f.induced_homology_morphism(QQ) == id.induced_homology_morphism(QQ)

@@ -27,7 +27,7 @@ class SymplecticMatrixGroup_gap(SymplecticMatrixGroup_generic, NamedMatrixGroup_
 
     EXAMPLES::
 
-        sage: Sp(2,4)
+        sage: Sp(2,4)                                                                   # needs sage.rings.finite_rings
         Symplectic Group of degree 2 over Finite Field in a of size 2^2
 
         sage: latex(Sp(4,5))
@@ -35,7 +35,7 @@ class SymplecticMatrixGroup_gap(SymplecticMatrixGroup_generic, NamedMatrixGroup_
 
     TESTS:
 
-    Check that :trac:`20867` is fixed::
+    Check that :issue:`20867` is fixed::
 
         sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
         sage: G = Sp(4,3)
@@ -48,7 +48,7 @@ class SymplecticMatrixGroup_gap(SymplecticMatrixGroup_generic, NamedMatrixGroup_
         """
         Return the quadratic form preserved by the symplectic group.
 
-        OUTPUT: A matrix.
+        OUTPUT: a matrix
 
         EXAMPLES::
 

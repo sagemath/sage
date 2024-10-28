@@ -22,7 +22,7 @@ from sage.rings.infinity import Infinity
 # We assume that H is square
 cpdef hessenbergize_cdvf(Matrix_generic_dense H):
     r"""
-    Replace `H` with an Hessenberg form of it.
+    Replace `H` with a Hessenberg form of it.
 
     .. NOTE::
 
@@ -35,7 +35,8 @@ cpdef hessenbergize_cdvf(Matrix_generic_dense H):
 
     TESTS::
 
-        sage: K = Qp(5, print_mode="digits", prec=5)
+        sage: # needs sage.rings.padics
+        sage: K = Qp(5, print_mode='digits', prec=5)
         sage: H = matrix(K, 3, 3, range(9))
         sage: H
         [        0  ...00001  ...00002]
@@ -49,14 +50,16 @@ cpdef hessenbergize_cdvf(Matrix_generic_dense H):
 
     ::
 
-        sage: M = random_matrix(K, 6, 6)
-        sage: M.charpoly()[0] == M.determinant()
+        sage: M = random_matrix(K, 6, 6)                                                # needs sage.rings.padics
+        sage: M.charpoly()[0] == M.determinant()                                        # needs sage.rings.padics
         True
 
-    We check that :trac:`31753` is resolved::
+    We check that :issue:`31753` is resolved::
 
         sage: R.<t> = GF(5)[[]]
-        sage: M = matrix(3, 3, [ 1, t + O(t^3), t^2, 1 + t + O(t^3), 2 + t^2, 3 + 2*t + O(t^3), t - t^2, 2*t, 1 + t ])
+        sage: M = matrix(3, 3, [ 1, t + O(t^3), t^2,
+        ....:                    1 + t + O(t^3), 2 + t^2, 3 + 2*t + O(t^3),
+        ....:                    t - t^2, 2*t, 1 + t ])
         sage: M.charpoly()
         x^3 + (1 + 4*t + 4*t^2 + O(t^3))*x^2 + (t + 2*t^2 + O(t^3))*x + 3 + 2*t^2 + O(t^3)
     """

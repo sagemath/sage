@@ -1,6 +1,11 @@
---- a/extensions/rend/Rend_Sample.cc.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/rend/Rend_Sample.cc	2018-08-29 20:07:27.087257552 -0600
-@@ -40,11 +40,6 @@ Rend_Sample_1DS::Rend_Sample_1DS(Word C,
+Description: Fix abstract base classes with non-virtual destructors.
+Origin: https://src.fedoraproject.org/rpms/qepcad-B/blob/91dd25b/f/qepcad-B-destructor.patch
+Forwarded: https://github.com/chriswestbrown/qepcad/pull/2
+Last-Update: 2021-06-23
+
+--- a/extensions/rend/Rend_Sample.cc
++++ b/extensions/rend/Rend_Sample.cc
+@@ -40,11 +40,6 @@
  }
  
  
@@ -12,7 +17,7 @@
  /*************************************************************
   **  Refines I to 2^k or less, and returns binary rational 
   **  middle of interval.
-@@ -112,13 +107,6 @@ Rend_Sample_1DO::Rend_Sample_1DO(Rend_Ce
+@@ -112,13 +107,6 @@
    L.W = NIL;
  }
  
@@ -26,7 +31,7 @@
  Word Rend_Sample_1DO::coordinate(int k)
  {
    Word e,j1,j2,J,kp = k;
-@@ -178,11 +166,6 @@ Rend_Sample_2DS::Rend_Sample_2DS(Word C)
+@@ -178,11 +166,6 @@
  }
  
  
@@ -38,7 +43,7 @@
  /*************************************************************
   **  Refines I to 2^k or less, and returns binary rational 
   **  lower endpoint.
-@@ -237,11 +220,6 @@ Rend_Sample_2DC::Rend_Sample_2DC(Word C,
+@@ -237,11 +220,6 @@
  
  }
  
@@ -50,7 +55,7 @@
  Word Rend_Sample_2DC::coordinate(int k)
  {
    return L.W;
-@@ -265,11 +243,6 @@ Rend_Sample_BR::Rend_Sample_BR(Word a)
+@@ -265,11 +243,6 @@
    N.W = a;
  }
  
@@ -62,9 +67,9 @@
  Word Rend_Sample_BR::coordinate(int k)
  {
    return N.W;
---- a/extensions/rend/Rend_Sample.h.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/rend/Rend_Sample.h	2018-08-29 20:07:27.087257552 -0600
-@@ -32,7 +32,7 @@ class Rend_Sample
+--- a/extensions/rend/Rend_Sample.h
++++ b/extensions/rend/Rend_Sample.h
+@@ -32,7 +32,7 @@
    virtual Word coordinate(int k) = 0; 
    virtual Word round(int k,int roundup)
      { return this -> coordinate(k); }
@@ -73,7 +78,7 @@
  };
  
  class Rend_Sample_1DS : public Rend_Sample
-@@ -49,7 +49,6 @@ private:
+@@ -49,7 +49,6 @@
    gcmemloc A,I;
  public:
    Rend_Sample_1DS(Word C, Word P);
@@ -81,7 +86,7 @@
    virtual Word coordinate(int k);
    virtual Word round(int k, int roundup);
    Word weakcompare(Word R);
-@@ -66,7 +65,6 @@ public:
+@@ -66,7 +65,6 @@
    gcmemloc L;
  public:
    Rend_Sample_1DO(Rend_Cell *dad);
@@ -89,7 +94,7 @@
    virtual Word coordinate(int k);
      
  };
-@@ -86,7 +84,6 @@ private:
+@@ -86,7 +84,6 @@
    gcmemloc A,I;
  public:
    Rend_Sample_2DS(Word C);
@@ -97,7 +102,7 @@
    virtual Word coordinate(int k);
      
  };
-@@ -101,7 +98,6 @@ public:
+@@ -101,7 +98,6 @@
    gcmemloc L;
  public:
    Rend_Sample_2DC(Word C,Word P);
@@ -105,7 +110,7 @@
    virtual Word coordinate(int k);
    void add_point(Word p);
    void clear_points();
-@@ -116,7 +112,6 @@ private:
+@@ -116,7 +112,6 @@
    gcmemloc N;
  public:
    Rend_Sample_BR(Word a);
@@ -113,9 +118,9 @@
    virtual Word coordinate(int k);    
  };
  
---- a/plot2d/plot.cc.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/plot2d/plot.cc	2018-08-29 20:07:27.086257553 -0600
-@@ -37,6 +37,7 @@ class CADELT
+--- a/plot2d/plot.cc
++++ b/plot2d/plot.cc
+@@ -37,6 +37,7 @@
  public:
    virtual bool read(istream &in) = 0;
    virtual void glRend(const CADColors &C) = 0;

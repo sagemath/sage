@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Distributive Magmas and Additive Magmas
 """
@@ -68,7 +69,7 @@ class DistributiveMagmasAndAdditiveMagmas(CategoryWithAxiom):
             However, the elements tested can be customized with the
             ``elements`` keyword argument::
 
-                sage: CC._test_distributivity(elements=[CC(0),CC(1),CC(3),CC(I)])
+                sage: CC._test_distributivity(elements=[CC(0),CC(1),CC(3),CC(I)])       # needs sage.symbolic
 
             See the documentation for :class:`TestSuite` for more information.
             """

@@ -1,9 +1,12 @@
+# sage_setup: distribution = sagemath-repl
+# sage.doctest: needs sage.libs.flint sage.modular
 """
 This file contains a bunch of tests extracted from the published book
 'Modular Forms: a Computational Approach' by William Stein, AMS 2007.
 
 TESTS::
 
+    sage: # needs sage.libs.gap
     sage: G = SL(2,ZZ); G
     Special Linear Group of degree 2 over Integer Ring
     sage: S, T = G.gens()
@@ -13,6 +16,7 @@ TESTS::
     sage: T
     [1 1]
     [0 1]
+
     sage: delta_qexp(6)
     q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
     sage: bernoulli(12)

@@ -12,8 +12,7 @@ A ``binary_matrix_t`` structure contains:
 - ``mp_bitcnt_t n_rows`` -- number of rows
 
 - ``bitset_t * rows`` -- ``rows[i]`` points toward a block of type ``bitset_t``
-  containing the bits of row `i`.
-
+  containing the bits of row `i`
 """
 
 from sage.data_structures.bitset_base cimport *
@@ -61,7 +60,7 @@ cdef inline int binary_matrix_realloc(binary_matrix_t m, mp_bitcnt_t n_rows, mp_
     m.n_cols = n_cols
     m.n_rows = n_rows
 
-cdef inline void binary_matrix_free(binary_matrix_t m):
+cdef inline void binary_matrix_free(binary_matrix_t m) noexcept:
     r"""
     Free the memory allocated by the matrix
     """
@@ -71,7 +70,7 @@ cdef inline void binary_matrix_free(binary_matrix_t m):
         bitset_free(m.rows[i])
     sig_free(m.rows)
 
-cdef inline void binary_matrix_copy(binary_matrix_t dst, binary_matrix_t src):
+cdef inline void binary_matrix_copy(binary_matrix_t dst, binary_matrix_t src) noexcept:
     """
     Copy the binary matrix src over to the binary matrix dst, overwriting dst.
 
@@ -81,7 +80,7 @@ cdef inline void binary_matrix_copy(binary_matrix_t dst, binary_matrix_t src):
     for i in range(dst.n_rows):
         bitset_copy(dst.rows[i], src.rows[i])
 
-cdef inline void binary_matrix_fill(binary_matrix_t m, bint bit):
+cdef inline void binary_matrix_fill(binary_matrix_t m, bint bit) noexcept:
     r"""
     Fill the whole matrix with a bit
     """
@@ -94,7 +93,7 @@ cdef inline void binary_matrix_fill(binary_matrix_t m, bint bit):
         for i in range(m.n_rows):
             bitset_clear(m.rows[i])
 
-cdef inline void binary_matrix_complement(binary_matrix_t m):
+cdef inline void binary_matrix_complement(binary_matrix_t m) noexcept:
     r"""
     Complement all of the matrix' bits.
     """
@@ -102,25 +101,25 @@ cdef inline void binary_matrix_complement(binary_matrix_t m):
     for i in range(m.n_rows):
         bitset_complement(m.rows[i], m.rows[i])
 
-cdef inline void binary_matrix_set1(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt_t col):
+cdef inline void binary_matrix_set1(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt_t col) noexcept:
     r"""
     Set an entry to 1
     """
     bitset_add(m.rows[row], col)
 
-cdef inline void binary_matrix_set0(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt_t col):
+cdef inline void binary_matrix_set0(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt_t col) noexcept:
     r"""
     Set an entry to 0
     """
     bitset_discard(m.rows[row], col)
 
-cdef inline void binary_matrix_set(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt_t col, bint value):
+cdef inline void binary_matrix_set(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt_t col, bint value) noexcept:
     r"""
     Set an entry
     """
     bitset_set_to(m.rows[row],col,value)
 
-cdef inline bint binary_matrix_get(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt_t col):
+cdef inline bint binary_matrix_get(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt_t col) noexcept:
     r"""
     Return the value of a given entry
     """

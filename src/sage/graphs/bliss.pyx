@@ -65,10 +65,10 @@ cdef extern from "bliss_cpp/bliss_find_automorphisms.h":
     void bliss_find_automorphisms(Graph*, void (*)(void*, unsigned int, const unsigned int*), void*, Stats&)
     void bliss_find_automorphisms(Digraph*, void (*)(void*, unsigned int, const unsigned int*), void*, Stats&)
 
-cdef int encoding_numbits(int n):
+cdef int encoding_numbits(int n) noexcept:
     r"""
-    Return the number of bits needed to encode the ``n`` numbers from ``1`` to ``n``. In
-    other words, the last bit set in ``n``.
+    Return the number of bits needed to encode the `n` numbers from `1` to
+    `n`. In other words, the last bit set in `n`.
     """
     if n <= 0:
         return 0
@@ -79,7 +79,7 @@ cdef int encoding_numbits(int n):
     return i
 
 
-cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
+cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut) noexcept:
     r"""
     Function called each time a new generator of the automorphism group is
     found.
@@ -93,7 +93,7 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
       a Python object which is a pair ``(list_of_current_generators,
       vert_to_integer_labelling)``.
 
-    - ``n`` -- ``int``; number of points in the graph
+    - ``n`` -- integer; number of points in the graph
 
     - ``aut`` -- ``int *``; an automorphism of the graph
     """
@@ -102,7 +102,6 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
     cdef int cur = 0
     cdef list perm = []
     cdef bint* done = <bint*> check_calloc(n, sizeof(bint))
-    cdef int i
 
     gens, int_to_vertex, N = <object>user_param
 
@@ -129,7 +128,7 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
 # constructing bliss graphs from edge lists
 #####################################################
 
-cdef Graph *bliss_graph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels, partition):
+cdef Graph *bliss_graph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels, partition) noexcept:
     r"""
     Return a bliss graph from the input data
 
@@ -158,17 +157,17 @@ cdef Graph *bliss_graph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels,
 
     INPUT:
 
-    - ``Vnr`` -- ``int``; number of vertices, such that the vertices are `0,
+    - ``Vnr`` -- integer; number of vertices, such that the vertices are `0,
       \ldots, Vnr-1`
 
-    - ``Lnr`` -- ``int``; number of labels, such that the labels are `0, \ldots,
+    - ``Lnr`` -- integer; number of labels, such that the labels are `0, \ldots,
       Lnr-1`
 
-    - ``Vout`` -- ``list``; the list of vertices of outgoing edges
+    - ``Vout`` -- list; the list of vertices of outgoing edges
 
-    - ``Vin`` -- ``list``; the list of vertices of ingoing edges
+    - ``Vin`` -- list; the list of vertices of ingoing edges
 
-    - ``labels`` -- ``list``; the list of edge labels
+    - ``labels`` -- list; the list of edge labels
 
     - ``partition`` -- an ordered partition of the vertex set
     """
@@ -220,7 +219,7 @@ cdef Graph *bliss_graph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels,
 
     return g
 
-cdef Digraph *bliss_digraph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels, partition):
+cdef Digraph *bliss_digraph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels, partition) noexcept:
     r"""
     Return a bliss digraph from the input data
 
@@ -235,17 +234,17 @@ cdef Digraph *bliss_digraph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, lab
 
     INPUT:
 
-    - ``Vnr`` -- ``int``; number of vertices, such that the vertices are `0,
+    - ``Vnr`` -- integer; number of vertices, such that the vertices are `0,
       \ldots, Vnr-1`
 
-    - ``Lnr`` -- ``int``; number of labels, such that the labels are `0, \ldots,
+    - ``Lnr`` -- integer; number of labels, such that the labels are `0, \ldots,
       Lnr-1`
 
-    - ``Vout`` -- ``list``; the list of vertices of outgoing edges
+    - ``Vout`` -- list; the list of vertices of outgoing edges
 
-    - ``Vin`` -- ``list``; the list of vertices of ingoing edges
+    - ``Vin`` -- list; the list of vertices of ingoing edges
 
-    - ``labels`` -- ``list``; the list of edge labels
+    - ``labels`` -- list; the list of edge labels
 
     - ``partition`` -- a partition of the vertex set
     """
@@ -301,25 +300,25 @@ cdef Digraph *bliss_digraph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, lab
 #####################################################
 
 cdef canonical_form_from_edge_list(int Vnr, list Vout, list Vin, int Lnr=1, list labels=[],
-                                   list partition=None, bint directed=False, bint certificate=False):
+                                   list partition=None, bint directed=False, bint certificate=False) noexcept:
     r"""
     Return an unsorted list of labelled edges of a canonical form.
 
     INPUT:
 
-    - ``Vnr`` -- ``int``; number of vertices, such that the vertices are `0,
+    - ``Vnr`` -- integer; number of vertices, such that the vertices are `0,
       \ldots, Vnr-1`
 
-    - ``Vout`` -- ``list``; the list of vertices of outgoing edges
+    - ``Vout`` -- list; the list of vertices of outgoing edges
 
-    - ``Vin`` -- ``list``; the list of vertices of ingoing edges
+    - ``Vin`` -- list; the list of vertices of ingoing edges
 
-    - ``Lnr`` -- ``int`` (default: 1); number of labels, such that the labels
+    - ``Lnr`` -- integer (default: 1); number of labels, such that the labels
       are `0, \ldots, Lnr-1`
 
-    - ``labels`` -- ``list`` (default: ``[]``); the list of edge labels
+    - ``labels`` -- list (default: ``[]``); the list of edge labels
 
-    - ``partition`` -- ``list`` (default: ``None``); a partition of the vertex
+    - ``partition`` -- list (default: ``None``); a partition of the vertex
       set
 
     - ``directed`` -- boolean (default: ``False``); whether the edges are
@@ -375,11 +374,10 @@ cdef canonical_form_from_edge_list(int Vnr, list Vout, list Vin, int Lnr=1, list
 
     if certificate:
         return new_edges, relabel
-    else:
-        return new_edges
+    return new_edges
 
 
-cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True, certificate=False):
+cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True, certificate=False) noexcept:
     r"""
     Return a canonical label for the given (di)graph.
 
@@ -391,16 +389,17 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     - ``G`` -- a Sage (Di)Graph
 
-    - ``partition`` -- ``list`` (default: ``None``); a partition of the vertices
+    - ``partition`` -- list (default: ``None``); a partition of the vertices
       of ``G`` into color classes
 
     - ``return_graph`` -- boolean (default: ``False``); whether to return the
       canonical graph of ``G`` or its set of edges
 
     - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider
-      edge labels. The edge labels are assumed to be hashable and sortable. If
-      this is not the case (ie a ``TypeError`` is raised), the algorithm will
-      consider the string representations of the labels instead of the labels.
+      edge labels. The edge labels are assumed to be hashable and
+      sortable. If this is not the case (ie a :exc:`TypeError` is
+      raised), the algorithm will consider the string representations
+      of the labels instead of the labels.
 
     - ``certificate`` -- boolean (default: ``False``); when set to ``True``,
       returns the labeling of G into a canonical graph
@@ -451,7 +450,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         sage: 0 in g_[0]                                                    # optional - bliss
         True
 
-    Check that parameter ``use_edge_labels`` can be used (:trac:`27571`)::
+    Check that parameter ``use_edge_labels`` can be used (:issue:`27571`)::
 
         sage: g = Graph({1: {2: 'a'}})
         sage: canonical_form(g, use_edge_labels=True)                       # optional - bliss
@@ -459,7 +458,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         sage: canonical_form(g, use_edge_labels=False)                      # optional - bliss
         [(1, 0, None)]
 
-    Check that :trac:`28531` is fixed::
+    Check that :issue:`28531` is fixed::
 
         sage: from itertools import product, permutations
         sage: edges_list = [[(0,1), (1,2)],
@@ -480,27 +479,27 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         sage: # needs sage.modules
         sage: g1 = Graph([(0, 1, matrix(ZZ, 2)), (0, 2, RDF.pi()), (1, 2, 'a')])
         sage: g2 = Graph([(1, 2, matrix(ZZ, 2)), (2, 0, RDF.pi()), (0, 1, 'a')])
-        sage: g1can = canonical_form(g1, use_edge_labels=True)  # optional - bliss
-        sage: g2can = canonical_form(g2, use_edge_labels=True)  # optional - bliss
-        sage: g1can == g2can                    # optional - bliss
+        sage: g1can = canonical_form(g1, use_edge_labels=True)              # optional - bliss
+        sage: g2can = canonical_form(g2, use_edge_labels=True)              # optional - bliss
+        sage: g1can == g2can                                                # optional - bliss
         True
 
-    Check that :trac:`32395` is fixed::
+    Check that :issue:`32395` is fixed::
 
         sage: g = Graph([[0, 2]])  # 1 is not a vertex!
-        sage: g.canonical_label(partition=[[0], [1], [2]], algorithm="bliss")  # optional - bliss
+        sage: g.canonical_label(partition=[[0], [1], [2]], algorithm='bliss')  # optional - bliss
         Traceback (most recent call last):
         ...
         ValueError: vertex 1 of the partition is not a vertex of the graph
-        sage: g.canonical_label(partition=[[0], [0, 2]], algorithm="bliss")  # optional - bliss
+        sage: g.canonical_label(partition=[[0], [0, 2]], algorithm='bliss')  # optional - bliss
         Traceback (most recent call last):
         ...
         ValueError: vertex 0 can appear only once in the partition
-        sage: g.canonical_label(partition=[[0, 0], [2]], algorithm="bliss")  # optional - bliss
+        sage: g.canonical_label(partition=[[0, 0], [2]], algorithm='bliss')  # optional - bliss
         Traceback (most recent call last):
         ...
         ValueError: vertex 0 can appear only once in the partition
-        sage: g.canonical_label(partition=[[0]], algorithm="bliss")  # optional - bliss
+        sage: g.canonical_label(partition=[[0]], algorithm='bliss')  # optional - bliss
         Traceback (most recent call last):
         ...
         ValueError: some vertices of the graph are not in the partition
@@ -512,7 +511,6 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     cdef bint directed = G.is_directed()
 
-    cdef int labInd
     cdef list Vout = []
     cdef list Vin = []
     cdef list labels = []
@@ -582,7 +580,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 
     if return_graph:
         if directed:
-            from sage.graphs.graph import DiGraph
+            from sage.graphs.digraph import DiGraph
             H = DiGraph(new_edges, loops=G.allows_loops(), multiedges=G.allows_multiple_edges())
         else:
             from sage.graphs.graph import Graph
@@ -600,27 +598,27 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
 #####################################################
 
 cdef automorphism_group_gens_from_edge_list(int Vnr, Vout, Vin, int Lnr=1, labels=[],
-                                            int2vert=[], partition=None, bint directed=False):
+                                            int2vert=[], partition=None, bint directed=False) noexcept:
     r"""
     Return an unsorted list of labelled edges of a canonical form.
 
     INPUT:
 
-    - ``Vnr`` -- ``int``; number of vertices, such that the vertices are `0,
+    - ``Vnr`` -- integer; number of vertices, such that the vertices are `0,
       \ldots, Vnr-1`
 
-    - ``Vout`` -- ``list``; the list of vertices of outgoing edges
+    - ``Vout`` -- list; the list of vertices of outgoing edges
 
-    - ``Vin`` -- ``list``; the list of vertices of ingoing edges
+    - ``Vin`` -- list; the list of vertices of ingoing edges
 
-    - ``Lnr`` -- ``int`` (default: 1); number of labels, such that the labels
+    - ``Lnr`` -- integer (default: 1); number of labels, such that the labels
       are `0, \ldots, Lnr-1`
 
-    - ``labels`` -- ``list`` (default: ``[]``); the list of edge labels
+    - ``labels`` -- list (default: ``[]``); the list of edge labels
 
-    - ``int2vert`` -- ``list`` (default: ``[]``); ordering of the vertices
+    - ``int2vert`` -- list (default: ``[]``); ordering of the vertices
 
-    - ``partition`` -- ``list`` (default: ``None``); a partition of the vertex
+    - ``partition`` -- list (default: ``None``); a partition of the vertex
       set
 
     - ``directed`` -- boolean (default: ``False``); whether the edges are
@@ -651,7 +649,7 @@ cdef automorphism_group_gens_from_edge_list(int Vnr, Vout, Vin, int Lnr=1, label
 
     return [[cyc for cyc in gen if cyc[0] is not None] for gen in gens]
 
-cpdef automorphism_group(G, partition=None, use_edge_labels=True):
+cpdef automorphism_group(G, partition=None, use_edge_labels=True) noexcept:
     """
     Return the automorphism group of the given (di)graph.
 
@@ -666,12 +664,12 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
 
     - ``G`` -- a Sage graph
 
-    - ``partition`` -- ``list``(default: ``None``); a partition of the vertices
+    - ``partition`` -- list (default: ``None``); a partition of the vertices
       of ``G`` into color classes. Defaults to ``None``, which is equivalent to
       a partition of size 1.
 
-    - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider edge
-      labels
+    - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider
+      edge labels
 
     EXAMPLES::
 
@@ -687,9 +685,9 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
         sage: automorphism_group(D).cardinality()
         2
 
-    Observe that the order 12 is given by permuting the first three vertices, or the last two
-    in the case of a graph, while only the latter two are possible in the case of a directed
-    graph.
+    Observe that the order 12 is given by permuting the first three vertices, or
+    the last two in the case of a graph, while only the latter two are possible
+    in the case of a directed graph.
 
     Partitioning the vertices into classes::
 
@@ -701,24 +699,23 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
         2
         sage: automorphism_group(G,partition=[[0],[1,2],[3,4]]).cardinality()
         4
-
-        sage: automorphism_group(G,partition=[[1,2],[0,3],[4]]).cardinality()   # optional - bliss
+        sage: automorphism_group(G,partition=[[1,2],[0,3],[4]]).cardinality()
         2
 
     Partitioning the edges into classes::
 
-        sage: G = Graph(graphs.CompleteMultipartiteGraph([8, 2]), sparse=True)  # optional - bliss
-        sage: for i,j in G.edges(labels=False, sort=False):                     # optional - bliss
+        sage: # optional - bliss
+        sage: G = Graph(graphs.CompleteMultipartiteGraph([8, 2]), sparse=True)
+        sage: for i,j in G.edges(labels=False, sort=False):
         ....:     if 0 <= i < 3:
         ....:         G.set_edge_label(i, j, "A")
         ....:     if 3 <= i < 6:
         ....:         G.set_edge_label(i, j, "B")
         ....:     if 6 <= i < 8:
         ....:         G.set_edge_label(i, j, "C")
-
-        sage: factor(automorphism_group(G).cardinality())                       # optional - bliss
+        sage: factor(automorphism_group(G).cardinality())
         2^4 * 3^2
-        sage: automorphism_group(G,[[0],[1],[2,3],[4,5],[6,7],[8],[9]]).cardinality()   # optional - bliss
+        sage: automorphism_group(G,[[0],[1],[2,3],[4,5],[6,7],[8],[9]]).cardinality()
         4
 
     TESTS::
@@ -735,9 +732,9 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
         sage: automorphism_group(G, partition=p).is_isomorphic(A)
         True
 
-        sage: G = graphs.CompleteMultipartiteGraph([5,7,11])
+        sage: G = graphs.CompleteMultipartiteGraph([5, 7, 11])
         sage: B = automorphism_group(G)                                         # optional - bliss
-        sage: B.cardinality() == prod(factorial(n) for n in [5,7,11])           # optional - bliss
+        sage: B.cardinality() == prod(factorial(n) for n in [5, 7, 11])         # optional - bliss
         True
 
         sage: # optional - bliss
@@ -749,11 +746,14 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
         ....:         G.set_edge_label(i, j, "B")
         ....:     if 6 <= i < 8:
         ....:         G.set_edge_label(i, j, "C")
-        sage: automorphism_group(G).cardinality() == prod( factorial(n) for n in [3,3,2,8,8,5,2] )
+        sage: card = automorphism_group(G).cardinality()
+        sage: card == prod(factorial(n) for n in [3, 3, 2, 8, 8, 5, 2])
         True
-        sage: automorphism_group(G, use_edge_labels=False).cardinality() == prod( factorial(n) for n in [8,8,8,5,3] )
+        sage: card = automorphism_group(G, use_edge_labels=False).cardinality()
+        sage: card == prod(factorial(n) for n in [8, 8, 8, 5, 3])
         True
-        sage: automorphism_group(G,[[0 .. 7],[8 .. 11],[12 .. 28]]).cardinality() == prod( factorial(n) for n in [3,3,2,4,4,8,5] )
+        sage: card = automorphism_group(G, [[0 .. 7], [8 .. 11] ,[12 .. 28]]).cardinality()
+        sage: card == prod(factorial(n) for n in [3, 3, 2, 4, 4, 8, 5])
         True
 
         sage: # optional - bliss
@@ -764,35 +764,34 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
         sage: G.add_edges((i,j,"D") for i in range(9,14) for j in range(14,20))
         sage: A = automorphism_group(G)
         sage: print(A.gens())               # random
-        [(9,13), (18,19), (17,18), (16,17), (15,16), (14,15), (12,9), (11,12),
-         (10,11), (7,8), (6,7), (5,6), (3,4), (2,3), (0,1)]
+        ((12,13), (11,12), (10,11), (9,10), (7,8), (6,7), (5,6), (3,4),
+         (2,3), (1,0), (18,19), (17,18), (16,17), (15,16), (14,15))
         sage: A.cardinality() == prod(factorial(n) for n in [2,3,4,5,6])
         True
 
-        sage: alpha = "abcdefghijklmnopqrstuvwxyz"
-
         sage: # optional - bliss
         sage: G = Graph()
+        sage: alpha = "abcdefghijklmnopqrstuvwxyz"
         sage: G.add_edges((alpha[i],alpha[j],"A") for i in range(0, 2) for j in range(14,20))
         sage: G.add_edges((alpha[i],alpha[j],"B") for i in range(2, 5) for j in range(14,20))
         sage: G.add_edges((alpha[i],alpha[j],"C") for i in range(5, 9) for j in range(14,20))
         sage: G.add_edges((alpha[i],alpha[j],"D") for i in range(9,14) for j in range(14,20))
         sage: A = automorphism_group(G)
         sage: print(A.gens())
-        [('r','t'), ('s','r'), ('p','s'), ('q','p'), ('o','q'), ('l','n'),
-         ('m','l'), ('j','m'), ('k','j'), ('i','h'), ('f','i'), ('g','f'),
-         ('e','d'), ('c','e'), ('a','b')]
-        sage: A.cardinality() == prod(factorial(n) for n in [2,3,4,5,6])
+        (('m','n'), ('l','m'), ('k','l'), ('j','k'), ('h','i'),
+         ('g','h'), ('f','g'), ('d','e'), ('c','d'), ('s','t'),
+         ('r','s'), ('q','r'), ('p','q'), ('o','p'), ('a','b'))
+        sage: A.cardinality() == prod(factorial(n) for n in [2, 3, 4, 5, 6])
         True
 
         sage: # optional - bliss
         sage: gg = graphs.CompleteGraph(5)
         sage: gg.allow_loops(True)
-        sage: gg.add_edge(0,0)
-        sage: gg.add_edge(1,1)
+        sage: gg.add_edge(0, 0)
+        sage: gg.add_edge(1, 1)
         sage: automorphism_group(gg).cardinality()
         12
-        sage: automorphism_group(gg,[[0],[1,2,3,4]]).cardinality()
+        sage: automorphism_group(gg, [[0], [1, 2, 3, 4]]).cardinality()
         6
     """
     # We need this to convert the numbers from <unsigned int> to
@@ -848,7 +847,7 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
 # old direct interactions graphs <-> bliss graphs
 #####################################################
 
-cdef Graph *bliss_graph(G, partition, vert2int, int2vert):
+cdef Graph *bliss_graph(G, partition, vert2int, int2vert) noexcept:
     r"""
     Return a bliss copy of a graph G
 
@@ -856,9 +855,9 @@ cdef Graph *bliss_graph(G, partition, vert2int, int2vert):
 
     - ``G`` -- a Sage Graph
 
-    - ``partition`` -- ``list``; a partition of the vertex set
+    - ``partition`` -- list; a partition of the vertex set
 
-    - ``vert2int, int2vert`` -- a empty ``dict`` and a empty ``list``; the
+    - ``vert2int, int2vert`` -- a empty ``dict`` and a empty list; the
       entries of the dictionary are later set to record the labeling of our
       graph. They are taken as arguments to avoid technicalities of returning
       Python objects in Cython functions.
@@ -882,7 +881,7 @@ cdef Graph *bliss_graph(G, partition, vert2int, int2vert):
     return g
 
 
-cdef Digraph *bliss_digraph(G, partition, vert2int, int2vert):
+cdef Digraph *bliss_digraph(G, partition, vert2int, int2vert) noexcept:
     r"""
     Return a bliss copy of a digraph G
 
@@ -890,9 +889,9 @@ cdef Digraph *bliss_digraph(G, partition, vert2int, int2vert):
 
     - ``G`` -- a Sage DiGraph
 
-    - ``partition`` -- ``list``; a partition of the vertex set
+    - ``partition`` -- list; a partition of the vertex set
 
-    - ``vert2int, int2vert`` -- a empty ``dict`` and a empty ``list``; the
+    - ``vert2int, int2vert`` -- a empty ``dict`` and a empty list; the
       entries of the dictionary are later set to record the labeling of our
       graph. They are taken as arguments to avoid technicalities of returning
       Python objects in Cython functions.

@@ -1,18 +1,18 @@
 """
 Library interface to Embeddable Common Lisp (ECL)
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Nils Bruin <nbruin@sfu.ca>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-#This version of the library interface prefers to convert ECL integers and
-#rationals to Sage types Integer and Rational. These parts could easily be
-#adapted to work with pure Python types.
+# This version of the library interface prefers to convert ECL integers and
+# rationals to Sage types Integer and Rational. These parts could easily be
+# adapted to work with pure Python types.
 
 from libc.stdlib cimport abort
 from libc.signal cimport SIGINT, SIGBUS, SIGFPE, SIGSEGV
@@ -26,22 +26,22 @@ from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from cpython.object cimport Py_EQ, Py_NE
 
-#it would be preferrable to let bint_symbolp wrap an efficient macro
-#but the macro provided in object.h doesn't seem to work
-cdef bint bint_symbolp(cl_object obj):
+# it would be preferable to let bint_symbolp wrap an efficient macro
+# but the macro provided in object.h doesn't seem to work
+cdef bint bint_symbolp(cl_object obj) noexcept:
     return not(cl_symbolp(obj) == ECL_NIL)
 
-#these type predicates are only provided in "cl_*" form, so we wrap them
-#with the proper type cast.
+# these type predicates are only provided in "cl_*" form, so we wrap them
+# with the proper type cast.
 
-cdef bint bint_numberp(cl_object obj):
+cdef bint bint_numberp(cl_object obj) noexcept:
     return not(cl_numberp(obj) == ECL_NIL)
-cdef bint bint_integerp(cl_object obj):
+cdef bint bint_integerp(cl_object obj) noexcept:
     return not(cl_integerp(obj) == ECL_NIL)
-cdef bint bint_rationalp(cl_object obj):
+cdef bint bint_rationalp(cl_object obj) noexcept:
     return not(cl_rationalp(obj) == ECL_NIL)
 
-cdef bint bint_base_string_p(cl_object obj):
+cdef bint bint_base_string_p(cl_object obj) noexcept:
     return not(si_base_string_p(obj) == ECL_NIL)
 
 cdef extern from "eclsig.h":
@@ -60,7 +60,7 @@ cdef extern from "eclsig.h":
     cl_object safe_cl_eval(cl_object *error, cl_object form)
 
 
-cdef cl_object string_to_object(char * s):
+cdef cl_object string_to_object(char * s) noexcept:
     return ecl_read_from_cstring(s)
 
 # We need to keep a list of objects bound to python, to protect them from being
@@ -77,24 +77,24 @@ cdef cl_object string_to_object(char * s):
 # chained in a "free list" for quick allocation (and if the free list is empty
 # upon allocating a node, the array needs to be extended)
 
-cdef cl_object insert_node_after(cl_object node,cl_object value):
-    cdef cl_object next,newnode
+cdef cl_object insert_node_after(cl_object node, cl_object value) noexcept:
+    cdef cl_object next, newnode
 
-    next=cl_cadr(node)
-    newnode=cl_cons(value,cl_cons(next,node))
-    cl_rplaca(cl_cdr(node),newnode)
+    next = cl_cadr(node)
+    newnode = cl_cons(value, cl_cons(next, node))
+    cl_rplaca(cl_cdr(node), newnode)
     if next != ECL_NIL:
-        cl_rplacd(cl_cdr(next),newnode)
+        cl_rplacd(cl_cdr(next), newnode)
     return newnode
 
-cdef void remove_node(cl_object node):
+cdef void remove_node(cl_object node) noexcept:
     cdef cl_object next, prev
-    next=cl_cadr(node)
-    prev=cl_cddr(node)
+    next = cl_cadr(node)
+    prev = cl_cddr(node)
     if next != ECL_NIL:
-        cl_rplacd(cl_cdr(next),prev)
+        cl_rplacd(cl_cdr(next), prev)
     if prev != ECL_NIL:
-        cl_rplaca(cl_cdr(prev),next)
+        cl_rplaca(cl_cdr(prev), next)
 
 # our global list of pointers. This will be a pointer to a sentinel node,
 # after which all new nodes can be inserted. list_of_object gets initialised
@@ -102,13 +102,15 @@ cdef void remove_node(cl_object node):
 
 cdef cl_object list_of_objects
 
-cdef cl_object read_from_string_clobj  #our own error catching reader
+cdef cl_object read_from_string_clobj  # our own error catching reader
 cdef cl_object make_unicode_string_clobj
 cdef cl_object unicode_string_codepoints_clobj
 
 cdef bint ecl_has_booted = 0
 
-cdef char *argv = "sage" #we need a dummy argv for cl_boot (we just don't give any parameters)
+cdef char *argv = "sage"
+# we need a dummy argv for cl_boot (we just don't give any parameters)
+
 
 # ECL signal handling
 
@@ -135,9 +137,10 @@ def test_sigint_before_ecl_sig_on():
     # We should never get here.
     abort()
 
+
 def test_ecl_options():
     """
-    Print an overview of the ECL options
+    Print an overview of the ECL options.
 
     TESTS::
 
@@ -214,6 +217,7 @@ def test_ecl_options():
     print('ECL_OPT_SET_GMP_MEMORY_FUNCTIONS = {0}'.format(
         ecl_get_option(ECL_OPT_SET_GMP_MEMORY_FUNCTIONS)))
 
+
 def init_ecl():
     r"""
     Internal function to initialize ecl. Do not call.
@@ -253,23 +257,23 @@ def init_ecl():
     for i in range(1, 32):
         sigaction(i, NULL, &sage_action[i])
 
-    #initialize ECL
+    # initialize ECL
     ecl_set_option(ECL_OPT_SIGNAL_HANDLING_THREAD, 0)
     safe_cl_boot(1, &argv)
 
-    #save signal handler from ECL
+    # save signal handler from ECL
     sigaction(SIGINT, NULL, &ecl_sigint_handler)
     sigaction(SIGBUS, NULL, &ecl_sigbus_handler)
     sigaction(SIGFPE, NULL, &ecl_sigfpe_handler)
     sigaction(SIGSEGV, NULL, &ecl_sigsegv_handler)
 
-    #and put the Sage signal handlers back
-    for i in range(1,32):
+    # and put the Sage signal handlers back
+    for i in range(1, 32):
         sigaction(i, &sage_action[i], NULL)
 
-    #initialise list of objects and bind to global variable
+    # initialise list of objects and bind to global variable
     # *SAGE-LIST-OF-OBJECTS* to make it rooted in the reachable tree for the GC
-    list_of_objects=cl_cons(ECL_NIL,cl_cons(ECL_NIL,ECL_NIL))
+    list_of_objects=cl_cons(ECL_NIL, cl_cons(ECL_NIL, ECL_NIL))
     cl_set(string_to_object(b"*SAGE-LIST-OF-OBJECTS*"), list_of_objects)
 
     # We define our own error catching eval, apply and funcall/
@@ -277,12 +281,13 @@ def init_ecl():
     # ever turn out to be a bottle neck, it should be easy to properly
     # compile them.
 
-    read_from_string_clobj=cl_eval(string_to_object(b"(symbol-function 'read-from-string)"))
+    read_from_string_clobj = cl_eval(string_to_object(b"(symbol-function 'read-from-string)"))
 
-    conditions_to_handle_clobj=ecl_list1(ecl_make_symbol(b"SERIOUS-CONDITION", b"COMMON-LISP"))
-    insert_node_after(list_of_objects,conditions_to_handle_clobj)
+    conditions_to_handle_clobj = ecl_list1(ecl_make_symbol(b"SERIOUS-CONDITION", b"COMMON-LISP"))
+    insert_node_after(list_of_objects, conditions_to_handle_clobj)
 
     ecl_has_booted = 1
+
 
 cdef ecl_string_to_python(cl_object s):
     if bint_base_string_p(s):
@@ -342,7 +347,7 @@ cdef cl_object ecl_safe_apply(cl_object func, cl_object args) except NULL:
     cdef cl_object ret, error = NULL
 
     ecl_sig_on()
-    ret = safe_cl_apply(&error,func,args)
+    ret = safe_cl_apply(&error, func, args)
     ecl_sig_off()
 
     if error != NULL:
@@ -357,8 +362,9 @@ cdef cl_object ecl_safe_apply(cl_object func, cl_object args) except NULL:
 cdef cl_object ecl_safe_read_string(char * s) except NULL:
     cdef cl_object o
     o = ecl_cstring_to_base_string_or_nil(s)
-    o = ecl_safe_funcall(read_from_string_clobj,o)
+    o = ecl_safe_funcall(read_from_string_clobj, o)
     return o
+
 
 def shutdown_ecl():
     r"""
@@ -375,11 +381,12 @@ def shutdown_ecl():
     """
     cl_shutdown()
 
-#this prints the objects that sage wants the GC to keep track of.
-#these should be all non-immediate EclObject wrapped objects
+
+# this prints the objects that sage wants the GC to keep track of.
+# these should be all non-immediate EclObject wrapped objects
 def print_objects():
     r"""
-    Print GC-protection list
+    Print GC-protection list.
 
     Diagnostic function. ECL objects that are bound to Python objects need to
     be protected from being garbage collected. We do this by including them
@@ -411,6 +418,7 @@ def print_objects():
         if c == ECL_NIL:
             break
 
+
 cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
     # conversion of a python object into an ecl object
     # most conversions are straightforward. Noteworthy are:
@@ -420,9 +428,9 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
     #            otherwise creates a simple-string
 
     cdef bytes s
-    cdef cl_object L, ptr, o
+    cdef cl_object L, o
 
-    if isinstance(pyobj,bool):
+    if isinstance(pyobj, bool):
         if pyobj:
             return ECL_T
         else:
@@ -451,7 +459,7 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
         else:
             return o
     elif isinstance(pyobj, bytes):
-        s=<bytes>pyobj
+        s = <bytes>pyobj
         if read_strings:
             return ecl_safe_read_string(s)
         else:
@@ -460,16 +468,16 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
         if pyobj >= MOST_NEGATIVE_FIXNUM and pyobj <= MOST_POSITIVE_FIXNUM:
             return ecl_make_integer(pyobj)
         else:
-            return ecl_bignum_from_mpz( (<Integer>pyobj).value )
+            return ecl_bignum_from_mpz((<Integer>pyobj).value)
     elif isinstance(pyobj, Rational):
         return ecl_make_ratio(
-                python_to_ecl( (<Rational>pyobj).numerator(),   read_strings ),
-                python_to_ecl( (<Rational>pyobj).denominator(), read_strings ))
+            python_to_ecl((<Rational>pyobj).numerator(), read_strings),
+            python_to_ecl((<Rational>pyobj).denominator(), read_strings))
     elif isinstance(pyobj, EclObject):
         return (<EclObject>pyobj).obj
     elif isinstance(pyobj, list):
         L = ECL_NIL
-        for i in range(len(pyobj)-1,-1,-1):
+        for i in range(len(pyobj) - 1, -1, -1):
             L = cl_cons(python_to_ecl(pyobj[i], read_strings), L)
         return L
     elif isinstance(pyobj, tuple):
@@ -477,7 +485,7 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
             return ECL_NIL
         else:
             L = python_to_ecl(pyobj[-1], read_strings)
-            for i in range(len(pyobj)-2,-1,-1):
+            for i in range(len(pyobj) - 2, -1, -1):
                 L = cl_cons(python_to_ecl(pyobj[i], read_strings), L)
             return L
     else:
@@ -524,12 +532,12 @@ cdef ecl_to_python(cl_object o):
         s = cl_write_to_string(1, o)
         return ecl_string_to_python(s)
 
-#Maxima's BFLOAT multiprecision float type can be read with:
-#def bfloat_to_python(e):
-#  prec=Integer(str(e.car().cddr().car()))
-#  mant=Integer(str(e.cdr().car()))
-#  exp=Integer(str(e.cddr().car()))
-#  return 2^(exp-prec)*mant
+# Maxima's BFLOAT multiprecision float type can be read with:
+# def bfloat_to_python(e):
+#   prec=Integer(str(e.car().cddr().car()))
+#   mant=Integer(str(e.cdr().car()))
+#   exp=Integer(str(e.cddr().car()))
+#   return 2^(exp-prec)*mant
 
 cdef class EclObject:
     r"""
@@ -563,15 +571,15 @@ cdef class EclObject:
     Floats in Python are IEEE double, which LISP has as well. However,
     the printing of floating point types in LISP depends on settings::
 
-        sage: a = EclObject(float(10^40))
+        sage: a = EclObject(float(1.234e40))
         sage: ecl_eval("(setf *read-default-float-format* 'single-float)")
         <ECL: SINGLE-FLOAT>
         sage: a
-        <ECL: 1.d40>
+        <ECL: 1.234d40>
         sage: ecl_eval("(setf *read-default-float-format* 'double-float)")
         <ECL: DOUBLE-FLOAT>
         sage: a
-        <ECL: 1.e40>
+        <ECL: 1.234e40>
 
     Tuples are translated to dotted lists::
 
@@ -614,15 +622,15 @@ cdef class EclObject:
 
     EclObjects translate to themselves, so one can mix::
 
-        sage: EclObject([1,2,EclObject([3])])
+        sage: EclObject([1,2, EclObject([3])])
         <ECL: (1 2 (3))>
 
     Calling an EclObject translates into the appropriate LISP ``apply``,
     where the argument is transformed into an EclObject itself, so one can
     flexibly apply LISP functions::
 
-        sage: car=EclObject("car")
-        sage: cdr=EclObject("cdr")
+        sage: car = EclObject("car")
+        sage: cdr = EclObject("cdr")
         sage: car(cdr([1,2,3]))
         <ECL: 2>
 
@@ -658,22 +666,21 @@ cdef class EclObject:
 
         sage: EclObject('"Mαξιμα"')
         <ECL: "Mαξιμα">
-
     """
-    cdef cl_object obj   #the wrapped object
-    cdef cl_object node  #linked list pointer: car(node) == obj
+    cdef cl_object obj   # the wrapped object
+    cdef cl_object node  # linked list pointer: car(node) == obj
 
-    cdef void set_obj(EclObject self, cl_object o):
+    cdef void set_obj(EclObject self, cl_object o) noexcept:
         if self.node:
             remove_node(self.node)
-            self.node=NULL
-        self.obj=o
+            self.node = NULL
+        self.obj = o
         if not(bint_fixnump(o) or bint_characterp(o) or bint_nullp(o)):
-            self.node=insert_node_after(list_of_objects,o)
+            self.node=insert_node_after(list_of_objects, o)
 
     def __init__(self, *args):
         r"""
-        Create an EclObject
+        Create an EclObject.
 
         See EclObject for full documentation.
 
@@ -682,7 +689,6 @@ cdef class EclObject:
             sage: from sage.libs.ecl import *
             sage: EclObject([None,true,false])
             <ECL: (NIL T NIL)>
-
         """
         if not args:
             return
@@ -695,7 +701,7 @@ cdef class EclObject:
 
     def __reduce__(self):
         r"""
-        This is used for pickling. Not implemented
+        This is used for pickling. Not implemented.
 
         Ecl does not natively support serialization of its objects, so the
         python wrapper class EclObject does not support pickling. There are
@@ -724,16 +730,15 @@ cdef class EclObject:
         EXAMPLES::
 
             sage: from sage.libs.ecl import *
-            sage: L=EclObject([1,2,("three",'"four"')])
+            sage: L = EclObject([1,2,("three",'"four"')])
             sage: L.python()
             [1, 2, ('THREE', '"four"')]
-
         """
         return ecl_to_python(self.obj)
 
     def __dealloc__(self):
         r"""
-        Deallocate EclObject
+        Deallocate EclObject.
 
         It is important to remove the GC preventing reference to the object upon
         deletion of the wrapper.
@@ -743,7 +748,6 @@ cdef class EclObject:
             sage: from sage.libs.ecl import *
             sage: L=EclObject("symbol")
             sage: del L
-
         """
         if self.node:
             remove_node(self.node)
@@ -761,9 +765,8 @@ cdef class EclObject:
             sage: L=EclObject("symbol")
             sage: repr(L)
             '<ECL: SYMBOL>'
-
         """
-        return "<ECL: "+str(self)+">"
+        return "<ECL: " + str(self) + ">"
 
     def __str__(self):
         r"""
@@ -778,7 +781,6 @@ cdef class EclObject:
             sage: L=EclObject("symbol")
             sage: str(L)
             'SYMBOL'
-
         """
         cdef cl_object s
         s = cl_write_to_string(1, self.obj)
@@ -786,7 +788,7 @@ cdef class EclObject:
 
     def __hash__(self):
         r"""
-        Return a hash value of the object
+        Return a hash value of the object.
 
         Returns the hash value returned by SXHASH, which is a routine that is
         specified in Common Lisp. According to the specification, lisp objects that
@@ -810,13 +812,12 @@ cdef class EclObject:
             <ECL: (1 . 3)>
             sage: hash(L) #random
             140404060
-
         """
         return ecl_fixint(cl_sxhash(self.obj))
 
     def __call__(self, *args):
         r"""
-        Apply self to arguments.
+        Apply ``self`` to arguments.
 
         EXAMPLES::
 
@@ -824,10 +825,9 @@ cdef class EclObject:
             sage: sqr=EclObject("(lambda (x) (* x x))").eval()
             sage: sqr(10)
             <ECL: 100>
-
         """
         lispargs = EclObject(list(args))
-        return ecl_wrap(ecl_safe_apply(self.obj,(<EclObject>lispargs).obj))
+        return ecl_wrap(ecl_safe_apply(self.obj, (<EclObject>lispargs).obj))
 
     def __richcmp__(left, right, int op):
         r"""
@@ -853,25 +853,25 @@ cdef class EclObject:
             <ECL: T>
         """
         if op == Py_EQ:
-            if not(isinstance(left,EclObject) and isinstance(right,EclObject)):
+            if not(isinstance(left, EclObject) and isinstance(right, EclObject)):
                 return False
             else:
-                return bint_equal((<EclObject>left).obj,(<EclObject>right).obj)
+                return bint_equal((<EclObject>left).obj, (<EclObject>right).obj)
         elif op == Py_NE:
-            if not(isinstance(left,EclObject) and isinstance(right,EclObject)):
+            if not(isinstance(left, EclObject) and isinstance(right, EclObject)):
                 return True
             else:
-                return not(bint_equal((<EclObject>left).obj,(<EclObject>right).obj))
+                return not(bint_equal((<EclObject>left).obj, (<EclObject>right).obj))
 
-        #Common lisp only seems to be able to compare numeric and string types
-        #and does not have generic routines for doing that.
-        #we could dispatch based on type here, but that seems
-        #inappropriate for an *interface*.
+        # Common lisp only seems to be able to compare numeric and string types
+        # and does not have generic routines for doing that.
+        # we could dispatch based on type here, but that seems
+        # inappropriate for an *interface*.
         raise NotImplementedError("EclObjects can only be compared for equality")
 
     def __iter__(self):
         r"""
-        Implements the iterator protocol for EclObject.
+        Implement the iterator protocol for EclObject.
 
         EclObject implements the iterator protocol for lists. This means
         one can use an EclObject in the context where an iterator is
@@ -918,13 +918,12 @@ cdef class EclObject:
             Traceback (most recent call last):
             ...
             TypeError: ECL object is not iterable
-
         """
         return EclListIterator(self)
 
     def eval(self):
         r"""
-        Evaluate object as an S-Expression
+        Evaluate object as an S-Expression.
 
         EXAMPLES::
 
@@ -934,7 +933,6 @@ cdef class EclObject:
             <ECL: (+ 1 2)>
             sage: S.eval()
             <ECL: 3>
-
         """
         cdef cl_object o
         o=ecl_safe_eval(self.obj)
@@ -942,9 +940,9 @@ cdef class EclObject:
             raise RuntimeError("ECL runtime error")
         return ecl_wrap(o)
 
-    def cons(self,EclObject d):
+    def cons(self, EclObject d):
         r"""
-        apply cons to self and argument and return the result.
+        Apply cons to ``self`` and argument and return the result.
 
         EXAMPLES::
 
@@ -953,11 +951,10 @@ cdef class EclObject:
             sage: b=EclObject(2)
             sage: a.cons(b)
             <ECL: (1 . 2)>
-
         """
-        return ecl_wrap(cl_cons(self.obj,d.obj))
+        return ecl_wrap(cl_cons(self.obj, d.obj))
 
-    def rplaca(self,EclObject d):
+    def rplaca(self, EclObject d):
         r"""
         Destructively replace car(self) with d.
 
@@ -971,14 +968,12 @@ cdef class EclObject:
             sage: L.rplaca(a)
             sage: L
             <ECL: (3 . 2)>
-
         """
         if not(bint_consp(self.obj)):
             raise TypeError("rplaca can only be applied to a cons")
         cl_rplaca(self.obj, d.obj)
 
-
-    def rplacd(self,EclObject d):
+    def rplacd(self, EclObject d):
         r"""
         Destructively replace cdr(self) with d.
 
@@ -992,7 +987,6 @@ cdef class EclObject:
             sage: L.rplacd(a)
             sage: L
             <ECL: (1 . 3)>
-
         """
         if not(bint_consp(self.obj)):
             raise TypeError("rplacd can only be applied to a cons")
@@ -1000,7 +994,7 @@ cdef class EclObject:
 
     def car(self):
         r"""
-        Return the car of self
+        Return the car of ``self``.
 
         EXAMPLES::
 
@@ -1025,7 +1019,7 @@ cdef class EclObject:
 
     def cdr(self):
         r"""
-        Return the cdr of self
+        Return the cdr of ``self``.
 
         EXAMPLES::
 
@@ -1050,7 +1044,7 @@ cdef class EclObject:
 
     def caar(self):
         r"""
-        Return the caar of self
+        Return the caar of ``self``.
 
         EXAMPLES::
 
@@ -1075,7 +1069,7 @@ cdef class EclObject:
 
     def cadr(self):
         r"""
-        Return the cadr of self
+        Return the cadr of ``self``.
 
         EXAMPLES::
 
@@ -1100,7 +1094,7 @@ cdef class EclObject:
 
     def cdar(self):
         r"""
-        Return the cdar of self
+        Return the cdar of ``self``.
 
         EXAMPLES::
 
@@ -1125,7 +1119,7 @@ cdef class EclObject:
 
     def cddr(self):
         r"""
-        Return the cddr of self
+        Return the cddr of ``self``.
 
         EXAMPLES::
 
@@ -1150,7 +1144,7 @@ cdef class EclObject:
 
     def fixnump(self):
         r"""
-        Return True if self is a fixnum, False otherwise
+        Return ``True`` if ``self`` is a fixnum, ``False`` otherwise.
 
         EXAMPLES::
 
@@ -1159,13 +1153,12 @@ cdef class EclObject:
             True
             sage: EclObject(2**200).fixnump()
             False
-
         """
         return bint_fixnump(self.obj)
 
     def characterp(self):
         r"""
-        Return True if self is a character, False otherwise
+        Return ``True`` if ``self`` is a character, ``False`` otherwise.
 
         Strings are not characters
 
@@ -1174,13 +1167,12 @@ cdef class EclObject:
             sage: from sage.libs.ecl import *
             sage: EclObject('"a"').characterp()
             False
-
         """
         return bint_characterp(self.obj)
 
     def nullp(self):
         r"""
-        Return True if self is NIL, False otherwise
+        Return ``True`` if ``self`` is NIL, ``False`` otherwise.
 
         EXAMPLES::
 
@@ -1194,7 +1186,7 @@ cdef class EclObject:
 
     def listp(self):
         r"""
-        Return True if self is a list, False otherwise. NIL is a list.
+        Return ``True`` if ``self`` is a list, ``False`` otherwise. NIL is a list.
 
         EXAMPLES::
 
@@ -1208,7 +1200,7 @@ cdef class EclObject:
 
     def consp(self):
         r"""
-        Return True if self is a cons, False otherwise. NIL is not a cons.
+        Return ``True`` if ``self`` is a cons, ``False`` otherwise. NIL is not a cons.
 
         EXAMPLES::
 
@@ -1222,7 +1214,7 @@ cdef class EclObject:
 
     def atomp(self):
         r"""
-        Return True if self is atomic, False otherwise.
+        Return ``True`` if ``self`` is atomic, ``False`` otherwise.
 
         EXAMPLES::
 
@@ -1231,13 +1223,12 @@ cdef class EclObject:
             True
             sage: EclObject([[]]).atomp()
             False
-
         """
         return bint_atomp(self.obj)
 
     def symbolp(self):
         r"""
-        Return True if self is a symbol, False otherwise.
+        Return ``True`` if ``self`` is a symbol, ``False`` otherwise.
 
         EXAMPLES::
 
@@ -1246,7 +1237,6 @@ cdef class EclObject:
             True
             sage: EclObject([[]]).symbolp()
             False
-
         """
         return bint_symbolp(self.obj)
 
@@ -1272,13 +1262,12 @@ cdef class EclListIterator:
         Traceback (most recent call last):
         ...
         TypeError: ECL object is not iterable
-
     """
     cdef EclObject current
 
     def __init__(EclListIterator self, EclObject o):
         r"""
-        Initialize EclListIterator
+        Initialize EclListIterator.
 
         EXAMPLES::
 
@@ -1286,7 +1275,6 @@ cdef class EclListIterator:
             sage: I=EclListIterator(EclObject("(1 2 3)"))
             sage: type(I)
             <class 'sage.libs.ecl.EclListIterator'>
-
         """
         if not o.listp():
             raise TypeError("ECL object is not iterable")
@@ -1294,7 +1282,7 @@ cdef class EclListIterator:
 
     def __iter__(EclListIterator self):
         r"""
-        Return self
+        Return ``self``.
 
         It seems standard that iterators return themselves if asked to produce
         an iterator.
@@ -1305,13 +1293,12 @@ cdef class EclListIterator:
             sage: I=EclListIterator(EclObject("(1 2 3)"))
             sage: id(I) == id(I.__iter__())
             True
-
         """
         return self
 
     def __next__(EclListIterator self):
         r"""
-        Get next element from iterator
+        Get next element from iterator.
 
         EXAMPLES::
 
@@ -1327,7 +1314,6 @@ cdef class EclListIterator:
             Traceback (most recent call last):
             ...
             StopIteration
-
         """
 
         if self.current.nullp():
@@ -1340,16 +1326,16 @@ cdef class EclListIterator:
             self.current = ecl_wrap(ECL_NIL)
         return r
 
-#input: a cl-object. Output: EclObject wrapping that.
+# input: a cl-object. Output: EclObject wrapping that.
 cdef EclObject ecl_wrap(cl_object o):
     cdef EclObject obj = EclObject.__new__(EclObject)
     obj.set_obj(o)
     return obj
 
-#convenience routine to more easily evaluate strings
+# convenience routine to more easily evaluate strings
 cpdef EclObject ecl_eval(str s):
     r"""
-    Read and evaluate string in Lisp and return the result
+    Read and evaluate string in Lisp and return the result.
 
     EXAMPLES::
 
@@ -1367,10 +1353,9 @@ cpdef EclObject ecl_eval(str s):
         <ECL: DOUBLE-STRUCK-NUMBER>
         sage: _(4711)
         <ECL: "𝟜𝟟𝟙𝟙">
-
     """
     cdef cl_object o
-    o=ecl_safe_eval(python_to_ecl(s, True))
+    o = ecl_safe_eval(python_to_ecl(s, True))
     return ecl_wrap(o)
 
 init_ecl()

@@ -8,6 +8,12 @@ VERSION = "@PACKAGE_VERSION@"
 # to it.
 SAGE_LOCAL = "@prefix@"
 SAGE_ROOT = "@SAGE_ROOT@"
+SAGE_SHARE = "@SAGE_SHARE@"
+
+# The semicolon-separated list of GAP root paths. This is the list of
+# locations that are searched for GAP packages. This is passed directly
+# to GAP via the -l flag.
+GAP_ROOT_PATHS = "@GAP_ROOT_PATHS@".replace('${prefix}', SAGE_LOCAL)
 
 # The path to the standalone maxima executable.
 MAXIMA = "@SAGE_MAXIMA@".replace('${prefix}', SAGE_LOCAL)
@@ -19,8 +25,6 @@ MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace('${prefix}', SAGE_LOCAL)
 # Delete this line if your ECL can load Kenzo without further prodding.
 KENZO_FAS = "@SAGE_KENZO_FAS@".replace('${prefix}', SAGE_LOCAL)
 
-ARB_LIBRARY = "@SAGE_ARB_LIBRARY@"
-
 NTL_INCDIR = "@NTL_INCDIR@"
 NTL_LIBDIR = "@NTL_LIBDIR@"
 
@@ -28,6 +32,8 @@ NTL_LIBDIR = "@NTL_LIBDIR@"
 ECL_CONFIG = "@SAGE_ECL_CONFIG@".replace('${prefix}', SAGE_LOCAL)
 
 SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
+
+SAGE_ECMBIN = "@SAGE_ECMBIN@"
 
 # Names or paths of the 4ti2 executables
 FOURTITWO_HILBERT = "@FOURTITWO_HILBERT@"
@@ -50,7 +56,7 @@ SAGE_ARCHFLAGS = "@SAGE_ARCHFLAGS@"
 SAGE_PKG_CONFIG_PATH = "@SAGE_PKG_CONFIG_PATH@".replace('$SAGE_LOCAL', SAGE_LOCAL)
 
 # Used in sage.repl.ipython_kernel.install
-MATHJAX_DIR = SAGE_LOCAL + "/share/mathjax"
+MATHJAX_DIR = "@SAGE_MATHJAX_DIR@".replace('${prefix}', SAGE_LOCAL)
 THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
 
 # OpenMP flags, if available.

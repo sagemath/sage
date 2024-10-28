@@ -61,25 +61,25 @@ def _format_function_call(fn_name, *v, **k):
         sage: _format_function_call('foo', 17, hellooooo='goodbyeeee')
         "foo(17, hellooooo='goodbyeeee')"
     """
-    args = [ repr(a) for a in v ] + [ "%s=%r" % (arg, val) for arg, val in sorted(k.items()) ]
+    args = [repr(a) for a in v] + ["%s=%r" % (arg, val) for arg, val in sorted(k.items())]
     return "{}({})".format(fn_name, ", ".join(args))
 
 
 #########################################################################
 class Polyhedron_normaliz(Polyhedron_base_number_field):
     """
-    Polyhedra with normaliz
+    Polyhedra with normaliz.
 
     INPUT:
 
     - ``parent`` -- :class:`~sage.geometry.polyhedron.parent.Polyhedra`
       the parent
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``; the
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``; the
       V-representation of the polyhedron; if ``None``, the polyhedron
       is determined by the H-representation
 
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``; the
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``; the
       H-representation of the polyhedron; if ``None``, the polyhedron
       is determined by the V-representation
 
@@ -156,7 +156,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
     Algebraic polyhedra::
 
-        sage: P = Polyhedron(vertices=[[1], [sqrt(2)]],                                 # optional - sage.rings.number_field sage.symbolic
+        sage: P = Polyhedron(vertices=[[1], [sqrt(2)]],                                 # needs sage.rings.number_field sage.symbolic
         ....:                backend='normaliz', verbose=True)
         # ----8<---- Equivalent Normaliz input file ----8<----
         amb_space 1
@@ -168,13 +168,13 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
          (a) 1
         # ----8<-------------------8<-------------------8<----
         # Calling PyNormaliz.NmzCone(cone=[], number_field=['a^2 - 2', 'a', '[1.414213562373095 +/- 2.99e-16]'], subspace=[], vertices=[[1, 1], [[[0, 1], [1, 1]], 1]])
-        sage: P                                                                         # optional - sage.rings.number_field sage.symbolic
+        sage: P                                                                         # needs sage.rings.number_field sage.symbolic
         A 1-dimensional polyhedron in (Symbolic Ring)^1 defined as
          the convex hull of 2 vertices
-        sage: P.vertices()                                                              # optional - sage.rings.number_field sage.symbolic
+        sage: P.vertices()                                                              # needs sage.rings.number_field sage.symbolic
         (A vertex at (1), A vertex at (sqrt(2)))
 
-        sage: P = polytopes.icosahedron(exact=True,                                     # optional - sage.rings.number_field
+        sage: P = polytopes.icosahedron(exact=True,                                     # needs sage.rings.number_field
         ....:                           backend='normaliz'); P
         A 3-dimensional polyhedron in
          (Number Field in sqrt5 with defining polynomial x^2 - 5
@@ -182,7 +182,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
          defined as the convex hull of 12 vertices
 
         sage: x = polygen(ZZ)
-        sage: P = Polyhedron(vertices=[[sqrt(2)],                                       # optional - sage.rings.number_field sage.symbolic
+        sage: P = Polyhedron(vertices=[[sqrt(2)],                                       # needs sage.rings.number_field sage.symbolic
         ....:                          [AA.polynomial_root(x^3 - 2, RIF(0,3))]],
         ....:                backend='normaliz', verbose=True)
         # ----8<---- Equivalent Normaliz input file ----8<----
@@ -195,16 +195,15 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
          (a^2) 1
         # ----8<-------------------8<-------------------8<----
         # Calling PyNormaliz.NmzCone(cone=[], number_field=['a^6 - 2', 'a', '[1.122462048309373 +/- 5.38e-16]'], subspace=[], vertices=[[[[0, 1], [0, 1], [0, 1], [1, 1], [0, 1], [0, 1]], 1], [[[0, 1], [0, 1], [1, 1], [0, 1], [0, 1], [0, 1]], 1]])
-        sage: P                                                                         # optional - sage.rings.number_field sage.symbolic
+        sage: P                                                                         # needs sage.rings.number_field sage.symbolic
         A 1-dimensional polyhedron in (Symbolic Ring)^1 defined as
          the convex hull of 2 vertices
-        sage: P.vertices()                                                              # optional - sage.rings.number_field sage.symbolic
+        sage: P.vertices()                                                              # needs sage.rings.number_field sage.symbolic
         (A vertex at (2^(1/3)), A vertex at (sqrt(2)))
-
     """
     def __init__(self, parent, Vrep, Hrep, normaliz_cone=None, normaliz_data=None, internal_base_ring=None, **kwds):
         """
-        Initializes the polyhedron.
+        Initialize the polyhedron.
 
         See :class:`Polyhedron_normaliz` for a description of the input
         data.
@@ -248,23 +247,24 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             ...
             NormalizError: Some error in the normaliz input data detected: Unknown ConeProperty...
 
-            sage: x = polygen(QQ, 'x')                                                  # optional - sage.rings.number_field
-            sage: K.<a> = NumberField(x^3 - 3, embedding=AA(3)**(1/3))                  # optional - sage.rings.number_field
-            sage: p = Polyhedron(vertices=[(0, 0), (1, 1), (a, 3), (-1, a**2)],         # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: x = polygen(QQ, 'x')
+            sage: K.<a> = NumberField(x^3 - 3, embedding=AA(3)**(1/3))
+            sage: p = Polyhedron(vertices=[(0, 0), (1, 1), (a, 3), (-1, a**2)],
             ....:                rays=[(-1,-a)], backend='normaliz')
-            sage: sorted(p._nmz_result(p._normaliz_cone, 'VerticesOfPolyhedron'))       # optional - sage.rings.number_field
+            sage: sorted(p._nmz_result(p._normaliz_cone, 'VerticesOfPolyhedron'))
             [[-1, a^2, 1], [1, 1, 1], [a, 3, 1]]
-            sage: triangulation_generators = p._nmz_result(p._normaliz_cone,            # optional - sage.rings.number_field
+            sage: triangulation_generators = p._nmz_result(p._normaliz_cone,
             ....:                                          'Triangulation')[1]
-            sage: sorted(triangulation_generators)                                      # optional - sage.rings.number_field
+            sage: sorted(triangulation_generators)
             [[-a^2, -3, 0], [-1, a^2, 1], [0, 0, 1], [1, 1, 1], [a, 3, 1]]
-            sage: p._nmz_result(p._normaliz_cone, 'AffineDim') == 2                     # optional - sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'AffineDim') == 2
             True
-            sage: p._nmz_result(p._normaliz_cone, 'EmbeddingDim') == 3                  # optional - sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'EmbeddingDim') == 3
             True
-            sage: p._nmz_result(p._normaliz_cone, 'ExtremeRays')                        # optional - sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'ExtremeRays')
             [[-1/3*a^2, -1, 0]]
-            sage: p._nmz_result(p._normaliz_cone, 'MaximalSubspace')                    # optional - sage.rings.number_field
+            sage: p._nmz_result(p._normaliz_cone, 'MaximalSubspace')
             []
         """
         def rational_handler(list):
@@ -309,7 +309,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS::
 
-            sage: K.<sqrt2> = QuadraticField(2)                                         # optional - sage.rings.number_field
+            sage: K.<sqrt2> = QuadraticField(2)                                         # needs sage.rings.number_field
             sage: from sage.geometry.polyhedron.backend_normaliz import Polyhedron_normaliz as Pn
             sage: Pn._convert_to_pynormaliz(17)
             17
@@ -321,37 +321,38 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             [[28, 5]]
             sage: Pn._convert_to_pynormaliz(28901824309821093821093812093810928309183091832091/5234573685674784567853456543456456786543456765)
             [[28901824309821093821093812093810928309183091832091, 5234573685674784567853456543456456786543456765]]
-            sage: Pn._convert_to_pynormaliz(7 + sqrt2)                                  # optional - sage.rings.number_field
+            sage: Pn._convert_to_pynormaliz(7 + sqrt2)                                  # needs sage.rings.number_field
             [[7, 1], [1, 1]]
-            sage: Pn._convert_to_pynormaliz(7/2 + sqrt2)                                # optional - sage.rings.number_field
+            sage: Pn._convert_to_pynormaliz(7/2 + sqrt2)                                # needs sage.rings.number_field
             [[7, 2], [1, 1]]
             sage: Pn._convert_to_pynormaliz([[1, 2], (3, 4)])
             [[1, 2], [3, 4]]
 
-        Check that :trac:`29836` is fixed::
+        Check that :issue:`29836` is fixed::
 
             sage: P = polytopes.simplex(backend='normaliz')
-            sage: K.<sqrt2> = QuadraticField(2)                                         # optional - sage.rings.number_field
-            sage: P.dilation(sqrt2)                                                     # optional - sage.rings.number_field
+            sage: K.<sqrt2> = QuadraticField(2)                                         # needs sage.rings.number_field
+            sage: P.dilation(sqrt2)                                                     # needs sage.rings.number_field
             A 3-dimensional polyhedron in
              (Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.41...)^4
              defined as the convex hull of 4 vertices
         """
         def _QQ_pair(x):
             x = QQ(x)
-            return [ int(x.numerator()), int(x.denominator())]
+            return [int(x.numerator()), int(x.denominator())]
         from sage.rings.rational import Rational
         from types import GeneratorType
         if isinstance(x, (list, tuple, GeneratorType)):
-            return [ Polyhedron_normaliz._convert_to_pynormaliz(y) for y in x ]
+            return [Polyhedron_normaliz._convert_to_pynormaliz(y) for y in x]
         try:
             return int(ZZ(x))
         except TypeError:
-            if isinstance(x, Rational):
-                return [ _QQ_pair(x) ]    # need extra brackets to distinguish from quadratic numberfield element
-            else:
-                # number field
-                return [ _QQ_pair(c) for c in x.list() ]
+            pass
+
+        if isinstance(x, Rational):
+            return [_QQ_pair(x)]  # need extra brackets to distinguish from quadratic numberfield element
+        # number field
+        return [_QQ_pair(c) for c in x.list()]
 
     def _init_from_normaliz_data(self, data, internal_base_ring=None, verbose=False):
         """
@@ -367,17 +368,17 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             [[0, -1, 2], [0, 2, -1]]
 
             sage: from sage.geometry.polyhedron.backend_normaliz import Polyhedron_normaliz
-            sage: from sage.rings.qqbar import AA                                       # optional - sage.rings.number_field
-            sage: from sage.rings.number_field.number_field import QuadraticField       # optional - sage.rings.number_field
+            sage: from sage.rings.qqbar import AA                                       # needs sage.rings.number_field
+            sage: from sage.rings.number_field.number_field import QuadraticField       # needs sage.rings.number_field
             sage: data = {'number_field': ['a^2 - 2', 'a', '[1.4 +/- 0.1]'],
             ....: 'inhom_inequalities': [[-1, 2, 0], [0, 0, 1], [2, -1, 0]]}
             sage: from sage.geometry.polyhedron.parent import Polyhedra_normaliz
-            sage: parent = Polyhedra_normaliz(AA, 2, 'normaliz')                        # optional - sage.rings.number_field
-            sage: Polyhedron_normaliz(parent, None, None,             # indirect doctest, optional - sage.rings.number_field
+            sage: parent = Polyhedra_normaliz(AA, 2, 'normaliz')                        # needs sage.rings.number_field
+            sage: Polyhedron_normaliz(parent, None, None,                               # needs sage.rings.number_field
             ....:                     normaliz_data=data,
             ....:                     internal_base_ring=QuadraticField(2))
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 1 vertex and 2 rays
-            sage: _.inequalities_list()                                                 # optional - sage.rings.number_field
+            sage: _.inequalities_list()                                                 # needs sage.rings.number_field
             [[0, -1/2, 1], [0, 2, -1]]
         """
         if internal_base_ring is None:
@@ -418,68 +419,62 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         assert cone, "{} did not return a cone".format(_format_function_call('PyNormaliz.NmzCone', **data))
         return cone
 
-    def _is_zero(self, x):
+    def _is_zero(self, x) -> bool:
         """
         Test whether ``x`` is zero.
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
-            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)                     # optional - sage.rings.number_field sage.symbolic
-            sage: p._is_zero(0)                                                         # optional - sage.rings.number_field sage.symbolic
+            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)                     # needs sage.rings.number_field sage.symbolic
+            sage: p._is_zero(0)                                                         # needs sage.rings.number_field sage.symbolic
             True
-            sage: p._is_zero(1/100000)                                                  # optional - sage.rings.number_field sage.symbolic
+            sage: p._is_zero(1/100000)                                                  # needs sage.rings.number_field sage.symbolic
             False
         """
         return x == 0
 
-    def _is_nonneg(self, x):
+    def _is_nonneg(self, x) -> bool:
         """
         Test whether ``x`` is nonnegative.
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
-            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)                     # optional - sage.rings.number_field sage.symbolic
-            sage: p._is_nonneg(1)                                                       # optional - sage.rings.number_field sage.symbolic
+            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)                     # needs sage.rings.number_field sage.symbolic
+            sage: p._is_nonneg(1)                                                       # needs sage.rings.number_field sage.symbolic
             True
-            sage: p._is_nonneg(-1/100000)                                               # optional - sage.rings.number_field sage.symbolic
+            sage: p._is_nonneg(-1/100000)                                               # needs sage.rings.number_field sage.symbolic
             False
         """
         return x >= 0
 
-    def _is_positive(self, x):
+    def _is_positive(self, x) -> bool:
         """
         Test whether ``x`` is positive.
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
-            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)                     # optional - sage.rings.number_field sage.symbolic
-            sage: p._is_positive(1)                                                     # optional - sage.rings.number_field sage.symbolic
+            sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)                     # needs sage.rings.number_field sage.symbolic
+            sage: p._is_positive(1)                                                     # needs sage.rings.number_field sage.symbolic
             True
-            sage: p._is_positive(0)                                                     # optional - sage.rings.number_field sage.symbolic
+            sage: p._is_positive(0)                                                     # needs sage.rings.number_field sage.symbolic
             False
         """
         return x > 0
@@ -516,17 +511,17 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             nmz_vertices = []
             for v in vertices:
                 d = LCM_list([denominator(v_i) for v_i in v])
-                dv = [ d * v_i for v_i in v ]
+                dv = [d * v_i for v_i in v]
                 nmz_vertices.append(dv + [d])
             nmz_rays = []
             for r in rays:
                 d = LCM_list([denominator(r_i) for r_i in r])
-                dr = [ d * r_i for r_i in r ]
+                dr = [d * r_i for r_i in r]
                 nmz_rays.append(dr)
             nmz_lines = []
             for l in lines:
                 d = LCM_list([denominator(l_i) for l_i in l])
-                dl = [ d * l_i for l_i in l ]
+                dl = [d * l_i for l_i in l]
                 nmz_lines.append(dl)
             return nmz_vertices, nmz_rays, nmz_lines
 
@@ -586,52 +581,45 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS::
 
-            sage: K.<a> = QuadraticField(2)                                             # optional - sage.rings.number_field
-            sage: p = Polyhedron(ieqs=[(1, a, 0)], backend='normaliz')                  # optional - sage.rings.number_field
-            sage: p & p == p                                                            # optional - sage.rings.number_field
+            sage: K.<a> = QuadraticField(2)                                             # needs sage.rings.number_field
+            sage: p = Polyhedron(ieqs=[(1, a, 0)], backend='normaliz')                  # needs sage.rings.number_field
+            sage: p & p == p                                                            # needs sage.rings.number_field
             True
 
-        Check that :trac:`30248` is fixed, that maps as input works::
+        Check that :issue:`30248` is fixed, that maps as input works::
 
-            sage: q = Polyhedron(backend='normaliz', base_ring=AA,                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: q = Polyhedron(backend='normaliz', base_ring=AA,
             ....:                rays=[(0, 0, 1), (0, 1, -1), (1, 0, -1)])
             sage: def make_new_Hrep(h):
             ....:     return tuple(x if i == 0 else -1*x
             ....:                  for i, x in enumerate(h._vector))
-            sage: new_inequalities = map(make_new_Hrep, q.inequality_generator())       # optional - sage.rings.number_field
-            sage: new_equations = map(make_new_Hrep, q.equation_generator())            # optional - sage.rings.number_field
-            sage: parent = q.parent()                                                   # optional - sage.rings.number_field
-            sage: new_q = parent.element_class(parent, None,                            # optional - sage.rings.number_field
+            sage: new_inequalities = map(make_new_Hrep, q.inequality_generator())
+            sage: new_equations = map(make_new_Hrep, q.equation_generator())
+            sage: parent = q.parent()
+            sage: new_q = parent.element_class(parent, None,
             ....:                              [new_inequalities, new_equations])
-            sage: new_q                                                                 # optional - sage.rings.number_field
+            sage: new_q
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 1 vertex and 3 rays
         """
 
         def nmz_ieqs_eqns_NF(ieqs, eqns):
-            nmz_ieqs = []
-            for ieq in ieqs:
-                b = ieq[0]
-                A = ieq[1:]
-                nmz_ieqs.append(list(A) + [b])
-            nmz_eqns = []
-            for eqn in eqns:
-                b = eqn[0]
-                A = eqn[1:]
-                nmz_eqns.append(list(A) + [b])
+            nmz_ieqs = [list(ieq[1:]) + [ieq[0]] for ieq in ieqs]
+            nmz_eqns = [list(eqn[1:]) + [eqn[0]] for eqn in eqns]
             return nmz_ieqs, nmz_eqns
 
         def nmz_ieqs_eqns_QQ(ieqs, eqns):
             nmz_ieqs = []
             for ieq in ieqs:
                 d = LCM_list([denominator(ieq_i) for ieq_i in ieq])
-                dieq = [ ZZ(d * ieq_i) for ieq_i in ieq ]
+                dieq = [ZZ(d * ieq_i) for ieq_i in ieq]
                 b = dieq[0]
                 A = dieq[1:]
                 nmz_ieqs.append(A + [b])
             nmz_eqns = []
             for eqn in eqns:
                 d = LCM_list([denominator(eqn_i) for eqn_i in eqn])
-                deqn = [ ZZ(d * eqn_i) for eqn_i in eqn ]
+                deqn = [ZZ(d * eqn_i) for eqn_i in eqn]
                 b = deqn[0]
                 A = deqn[1:]
                 nmz_eqns.append(A + [b])
@@ -736,7 +724,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             ....:                for arg in args)
             sage: test_poly(polytopes.simplex(backend='normaliz'))
             True
-            sage: test_poly(polytopes.dodecahedron(backend='normaliz'))                 # optional - sage.rings.number_field
+            sage: test_poly(polytopes.dodecahedron(backend='normaliz'))                 # needs sage.rings.number_field
             True
             sage: test_poly(Polyhedron(vertices=[[1,0], [0,1]], rays=[[1,1]],
             ....:                      backend='normaliz'))
@@ -771,7 +759,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             ...
             ValueError: the specification of this method has changed; please specify the lines as well
 
-        Check that :trac:`30891` is fixed::
+        Check that :issue:`30891` is fixed::
 
             sage: p = Polyhedron(vertices=[(-3,-3), (3,0), (3,3), (0,3)],
             ....:                backend='normaliz')
@@ -796,30 +784,30 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             nmz_vertices = []
             for v in vertices:
                 d = LCM_list([denominator(v_i) for v_i in v])
-                dv = [ d * v_i for v_i in v ]
+                dv = [d * v_i for v_i in v]
                 nmz_vertices.append(dv + [d])
             nmz_rays = []
             for r in rays:
                 d = LCM_list([denominator(r_i) for r_i in r])
-                dr = [ d * r_i for r_i in r ]
+                dr = [d * r_i for r_i in r]
                 nmz_rays.append(dr + [0])
             nmz_lines = []
             for l in lines:
                 d = LCM_list([denominator(l_i) for l_i in l])
-                dl = [ d * l_i for l_i in l ]
+                dl = [d * l_i for l_i in l]
                 nmz_lines.append(dl + [0])
 
             nmz_ieqs = []
             for ieq in ieqs:
                 d = LCM_list([denominator(ieq_i) for ieq_i in ieq])
-                dieq = [ ZZ(d * ieq_i) for ieq_i in ieq ]
+                dieq = [ZZ(d * ieq_i) for ieq_i in ieq]
                 b = dieq[0]
                 A = dieq[1:]
                 nmz_ieqs.append(A + [b])
 
             from sage.matrix.constructor import Matrix
             lattice = Matrix(ZZ, nmz_vertices + nmz_rays + nmz_lines).saturation()
-            nmz_lattice = [[x for x in y] for y in lattice]
+            nmz_lattice = [list(y) for y in lattice]
 
             if Matrix(ZZ, nmz_vertices + nmz_rays).rank() == Matrix(ZZ, nmz_rays).rank() + 1:
                 # The recession cone is full-dimensional.
@@ -833,9 +821,9 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             return nmz_vertices + nmz_rays, nmz_lines, nmz_lattice, nmz_ieqs
 
         def rays_subspace_lattice_ieqs_NF(vertices, rays, lines, ieqs):
-            nmz_vertices = [ list(v) + [1] for v in vertices ]
-            nmz_rays = [ list(r) + [0] for r in rays ]
-            nmz_lines = [ list(l) + [1] for l in lines ]
+            nmz_vertices = [list(v) + [1] for v in vertices]
+            nmz_rays = [list(r) + [0] for r in rays]
+            nmz_lines = [list(l) + [1] for l in lines]
 
             nmz_ieqs = []
             for ieq in ieqs:
@@ -845,7 +833,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
             from sage.matrix.constructor import Matrix
             lattice = Matrix(nmz_vertices + nmz_rays + nmz_lines).row_space().basis()
-            nmz_lattice = [[x for x in y] for y in lattice]
+            nmz_lattice = [list(y) for y in lattice]
 
             if Matrix(nmz_vertices + nmz_rays).rank() == Matrix(nmz_rays).rank() + 1:
                 # The recession cone is full-dimensional.
@@ -979,7 +967,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
     def _init_empty_polyhedron(self):
         r"""
-        Initializes an empty polyhedron.
+        Initialize an empty polyhedron.
 
         TESTS::
 
@@ -1002,7 +990,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
     @classmethod
     def _from_normaliz_cone(cls, parent, normaliz_cone, internal_base_ring=None):
         r"""
-        Initializes a polyhedron from a PyNormaliz wrapper of a normaliz cone.
+        Initialize a polyhedron from a PyNormaliz wrapper of a normaliz cone.
 
         TESTS::
 
@@ -1013,7 +1001,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         return cls(parent, None, None, normaliz_cone=normaliz_cone, internal_base_ring=internal_base_ring)
 
     @staticmethod
-    def _number_field_triple(internal_base_ring):
+    def _number_field_triple(internal_base_ring) -> list:
         r"""
         Construct the PyNormaliz triple that describes ``internal_base_ring``.
 
@@ -1022,7 +1010,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: from sage.geometry.polyhedron.backend_normaliz import Polyhedron_normaliz as Pn
             sage: Pn._number_field_triple(QQ) is None
             True
-            sage: Pn._number_field_triple(QuadraticField(5))                            # optional - sage.rings.number_field
+            sage: Pn._number_field_triple(QuadraticField(5))                            # needs sage.rings.number_field
             ['a^2 - 5', 'a', '[2.236067977499789 +/- 8.06e-16]']
         """
         R = internal_base_ring
@@ -1043,9 +1031,9 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         INPUT:
 
-        - ``data`` -- a dictionary
+        - ``data`` -- dictionary
 
-        - ``verbose`` -- a boolean (default: ``False``)
+        - ``verbose`` -- boolean (default: ``False``)
 
         TESTS::
 
@@ -1062,13 +1050,11 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         assert cone, "NmzCone(**{}) did not return a cone".format(data)
         return cone
 
-    def _get_nmzcone_data(self):
+    def _get_nmzcone_data(self) -> dict:
         r"""
         Get the data necessary to reproduce the normaliz cone.
 
-        OUTPUT:
-
-        - ``data`` -- a dictionary.
+        OUTPUT: ``data`` -- dictionary
 
         TESTS:
 
@@ -1098,13 +1084,11 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         ineqs = self._nmz_result(self._normaliz_cone, "SupportHyperplanes")
         eqs = self._nmz_result(self._normaliz_cone, "Equations")
 
-        data = {'vertices': vertices,
+        return {'vertices': vertices,
                 'cone': rays,
                 'subspace': lines,
                 'inhom_equations': eqs,
                 'inhom_inequalities': ineqs}
-
-        return data
 
     def _normaliz_format(self, data, file_output=None):
         r"""
@@ -1112,9 +1096,9 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         INPUT:
 
-        - ``data`` -- a dictionary of PyNormaliz cone input properties
+        - ``data`` -- dictionary of PyNormaliz cone input properties
 
-        - ``file_output`` (string; optional) -- a filename to which the
+        - ``file_output`` -- string (optional); a filename to which the
           representation should be written. If set to ``None`` (default),
           representation is returned as a string.
 
@@ -1147,8 +1131,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
                         s += ' ' + format_number(x)
                     s += '\n'
                 return s
-            else:
-                return '{} {}\n'.format(key, value)
+            return '{} {}\n'.format(key, value)
 
         def format_number_field_data(nf_triple):
             min_poly, gen, emb = nf_triple
@@ -1163,9 +1146,8 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         for key, value in sorted(data.items()):
             s += format_field(key, value)
         if file_output is not None:
-            in_file = open(file_output, 'w')
-            in_file.write(s)
-            in_file.close()
+            with open(file_output, 'w') as in_file:
+                in_file.write(s)
         else:
             return s
 
@@ -1271,14 +1253,15 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: P2 == P
             True
 
-            sage: P = polytopes.dodecahedron(backend='normaliz')                        # optional - sage.rings.number_field
-            sage: P1 = loads(dumps(P))                                                  # optional - sage.rings.number_field
-            sage: P2 = Polyhedron_normaliz(P1.parent(), None, None, P1._normaliz_cone,  # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P = polytopes.dodecahedron(backend='normaliz')
+            sage: P1 = loads(dumps(P))
+            sage: P2 = Polyhedron_normaliz(P1.parent(), None, None, P1._normaliz_cone,
             ....:                          internal_base_ring=P1._internal_base_ring)
-            sage: P == P2                                                               # optional - sage.rings.number_field
+            sage: P == P2
             True
 
-        Test that :trac:`31820` is fixed::
+        Test that :issue:`31820` is fixed::
 
             sage: P = polytopes.cube(backend='normaliz')
             sage: v = P.Vrepresentation()[0]
@@ -1325,7 +1308,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: P = Polyhedron(ieqs=[[1, 0, 2], [3, 0, -2], [3, 2, -2]],
             ....:                backend='normaliz')
             sage: PI = P.integral_hull()
-            sage: P.plot(color='yellow') + PI.plot(color='green')                       # optional - sage.plot
+            sage: P.plot(color='yellow') + PI.plot(color='green')                       # needs sage.plot
             Graphics object consisting of 10 graphics primitives
             sage: PI.Vrepresentation()
             (A vertex at (-1, 0),
@@ -1355,13 +1338,13 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         return self.parent().element_class._from_normaliz_cone(parent=self.parent(),
                                                                normaliz_cone=cone)
 
-    def _h_star_vector_normaliz(self):
+    def _h_star_vector_normaliz(self) -> list:
         r"""
         Return the `h^*`-vector of the lattice polytope.
 
         INPUT:
 
-        - ``self`` -- A lattice polytope with backend ``'normaliz'``.
+        - ``self`` -- a lattice polytope with backend ``'normaliz'``
 
         OUTPUT:
 
@@ -1383,7 +1366,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS:
 
-        Check that :trac:`33847` is fixed::
+        Check that :issue:`33847` is fixed::
 
             sage: L = [[1, 0, 0, 0, 0, 0], [1, 1, 0, 0, 0, 0], [1, 0, 1, 0, 0, 0],
             ....:      [1, 0, 0, 1, 0, 0], [1, 0, 0, 0, 1, 0], [1, 0, 0, 1, 2, 3]]
@@ -1395,7 +1378,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
     def _volume_normaliz(self, measure='euclidean'):
         r"""
-        Computes the volume of a polytope using normaliz.
+        Compute the volume of a polytope using normaliz.
 
         INPUT:
 
@@ -1451,10 +1434,10 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS:
 
-        Check that :trac:`28872` is fixed::
+        Check that :issue:`28872` is fixed::
 
-            sage: P = polytopes.dodecahedron(backend='normaliz')                        # optional - sage.rings.number_field
-            sage: P.volume(measure='induced_lattice')                                   # optional - sage.rings.number_field
+            sage: P = polytopes.dodecahedron(backend='normaliz')                        # needs sage.rings.number_field
+            sage: P.volume(measure='induced_lattice')                                   # needs sage.rings.number_field
             -1056*sqrt5 + 2400
 
         Some sanity checks that the ambient volume works correctly::
@@ -1466,12 +1449,12 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: s._volume_normaliz(measure='ambient')
             0
 
-            sage: P = polytopes.regular_polygon(3, backend='normaliz')                  # optional - sage.rings.number_field
-            sage: P._volume_normaliz('ambient') == P.volume(engine='internal')          # optional - sage.rings.number_field
+            sage: P = polytopes.regular_polygon(3, backend='normaliz')                  # needs sage.rings.number_field
+            sage: P._volume_normaliz('ambient') == P.volume(engine='internal')          # needs sage.rings.number_field
             True
 
-            sage: P = polytopes.dodecahedron(backend='normaliz')                        # optional - sage.rings.number_field
-            sage: P._volume_normaliz('ambient') == P.volume(engine='internal')          # optional - sage.rings.number_field
+            sage: P = polytopes.dodecahedron(backend='normaliz')                        # needs sage.rings.number_field
+            sage: P._volume_normaliz('ambient') == P.volume(engine='internal')          # needs sage.rings.number_field
             True
 
             sage: P = Polyhedron(rays=[[1]], backend='normaliz')
@@ -1482,12 +1465,13 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         assert cone
         if measure == 'euclidean':
             return self._nmz_result(cone, 'EuclideanVolume')
-        elif measure == 'induced_lattice':
+
+        if measure == 'induced_lattice':
             if self._internal_base_ring in (ZZ, QQ):
                 return self._nmz_result(cone, 'Volume')
-            else:
-                return self._nmz_result(cone, 'RenfVolume')
-        elif measure == 'ambient':
+            return self._nmz_result(cone, 'RenfVolume')
+
+        if measure == 'ambient':
             if self.dim() < self.ambient_dim():
                 return self.base_ring().zero()
             if not self.is_compact():
@@ -1497,8 +1481,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             from sage.arith.misc import factorial
             return self._volume_normaliz('induced_lattice') / factorial(self.dim())
 
-        else:
-            raise TypeError("the measure should be `ambient`, `euclidean`, or `induced_lattice`")
+        raise TypeError("the measure should be `ambient`, `euclidean`, or `induced_lattice`")
 
     def _triangulate_normaliz(self):
         r"""
@@ -1545,7 +1528,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS:
 
-        Check that :trac:`30531` is fixed::
+        Check that :issue:`30531` is fixed::
 
             sage: P = polytopes.cube(backend='normaliz')*AA(2).sqrt()
             sage: P._triangulate_normaliz()
@@ -1631,8 +1614,8 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 
@@ -1655,9 +1638,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A rational function.
+        OUTPUT: a rational function
 
         EXAMPLES::
 
@@ -1723,17 +1704,14 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         # 3) a shifting of the generating function.
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        from sage.rings.fraction_field import FractionField
-        poly_ring = FractionField(PolynomialRing(ZZ, variable))
+        poly_ring = PolynomialRing(ZZ, variable).fraction_field()
         t = poly_ring.gens()[0]
         es = sum([e[0][i] * t**i for i in range(len(e[0]))])
         for expo in range(len(e[1])):
             es = es / (1 - t**e[1][expo])
 
         # The shift:
-        es = es * t**e[2]
-
-        return es
+        return es * t**e[2]
 
     def _ehrhart_quasipolynomial_normaliz(self, variable='t'):
         r"""
@@ -1748,9 +1726,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A polynomial or tuple of polynomials.
+        OUTPUT: a polynomial or tuple of polynomials
 
         EXAMPLES::
 
@@ -1799,12 +1775,12 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             # It is a polynomial
             es = sum([e[0][i] * t**i for i in range(len(e[0]))])
             return es / ZZ(e[1])
-        else:
-            # It is a quasipolynomial
-            polynomials = []
-            for p in e[:-1]:
-                es = sum([p[i] * t**i for i in range(len(p))]) / ZZ(e[-1])
-                polynomials += [es]
+
+        # It is a quasipolynomial
+        polynomials = []
+        for p in e[:-1]:
+            es = sum([p[i] * t**i for i in range(len(p))]) / ZZ(e[-1])
+            polynomials += [es]
 
         return tuple(polynomials)
 
@@ -1821,9 +1797,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         - ``variable`` -- string (default: ``'t'``)
 
-        OUTPUT:
-
-        A rational function.
+        OUTPUT: a rational function
 
         EXAMPLES::
 
@@ -1892,19 +1866,16 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         h = self._nmz_result(new_cone, "HilbertSeries")
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        from sage.rings.fraction_field import FractionField
-        poly_ring = FractionField(PolynomialRing(ZZ, variable))
+        poly_ring = PolynomialRing(ZZ, variable).fraction_field()
         t = poly_ring.gens()[0]
         hs = sum([h[0][i] * t**i for i in range(len(h[0]))])
         for expo in range(len(h[1])):
             hs = hs / (1 - t**h[1][expo])
 
         # The shift:
-        hs = hs * t**h[2]
+        return hs * t**h[2]
 
-        return hs
-
-    def integral_points(self, threshold=10000):
+    def integral_points(self, threshold=10000) -> tuple:
         r"""
         Return the integral points in the polyhedron.
 
@@ -1919,7 +1890,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         OUTPUT:
 
         The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a ``ValueError`` is raised.
+        polyhedron is not compact, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -1976,9 +1947,9 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             sage: pts1 = P.integral_points()
             sage: all(P.contains(p) for p in pts1)
             True
-            sage: pts2 = LatticePolytope(v).points()                    # optional - palp
+            sage: pts2 = LatticePolytope(v).points()                                    # needs palp
             sage: for p in pts1: p.set_immutable()
-            sage: set(pts1) == set(pts2)                                # optional - palp
+            sage: set(pts1) == set(pts2)                                                # needs palp
             True
 
             sage: timeit('Polyhedron(v, backend='normaliz').integral_points()')  # not tested - random
@@ -1988,7 +1959,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         TESTS:
 
-        Test some trivial cases (see :trac:`17937`):
+        Test some trivial cases (see :issue:`17937`):
 
         Empty polyhedron in 1 dimension::
 
@@ -2020,7 +1991,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             sage: P.integral_points()
             ((),)
 
-        A polytope with no integral points (:trac:`22938`)::
+        A polytope with no integral points (:issue:`22938`)::
 
             sage: ieqs = [[1, 2, -1, 0], [0, -1, 2, -1], [0, 0, -1, 2],
             ....:         [0, -1, 0, 0], [0, 0, -1, 0],  [0, 0, 0, -1],
@@ -2034,7 +2005,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             sage: P.integral_points()
             ()
 
-        Check the polytopes from :trac:`22984`::
+        Check the polytopes from :issue:`22984`::
 
             sage: base = [[0, 2, 0, -1, 0, 0, 0, 0, 0],
             ....:         [0, 0, 2, 0, -1, 0, 0, 0, 0],
@@ -2135,7 +2106,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         Return the integral points generators of the polyhedron.
 
         Every integral point in the polyhedron can be written as a (unique)
-        non-negative linear combination of integral points contained in the three
+        nonnegative linear combination of integral points contained in the three
         defining parts of the polyhedron: the integral points (the compact
         part), the recession cone, and the lineality space.
 
@@ -2230,7 +2201,6 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         There are several output options to see the intermediary outputs of the
         function.
 
-
         EXAMPLES:
 
         The `H^*`-polynomial of the standard `d-1` dimensional simplex
@@ -2238,16 +2208,17 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         is equal to 1 = `\chi_{trivial}` (Prop 6.1 [Stap2011]_).
         Here is the computation for the 3-dimensional standard simplex::
 
+            sage: # needs sage.groups
             sage: S = polytopes.simplex(3, backend='normaliz'); S
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 4 vertices
-            sage: G = S.restricted_automorphism_group(output='permutation')             # optional - sage.groups
-            sage: G.is_isomorphic(SymmetricGroup(4))                                    # optional - sage.groups
+            sage: G = S.restricted_automorphism_group(output='permutation')
+            sage: G.is_isomorphic(SymmetricGroup(4))
             True
-            sage: len(G)                                                                # optional - sage.groups
+            sage: len(G)
             24
-            sage: Hstar = S._Hstar_function_normaliz(G); Hstar                          # optional - sage.groups
+            sage: Hstar = S._Hstar_function_normaliz(G); Hstar
             chi_4
-            sage: G.character_table()                                                   # optional - sage.groups
+            sage: G.character_table()
             [ 1 -1  1  1 -1]
             [ 3 -1  0 -1  1]
             [ 2  0 -1  2  0]
@@ -2259,29 +2230,30 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         `\pm(0,0,1),\pm(1,0,1), \pm(0,1,1), \pm(1,1,1)` and let
         G = `\Zmod{2}` act on P as follows::
 
+            sage: # needs sage.groups
             sage: P = Polyhedron(vertices=[[0,0,1], [0,0,-1], [1,0,1], [-1,0,-1],
             ....:                          [0,1,1], [0,-1,-1], [1,1,1], [-1,-1,-1]],
             ....:                backend='normaliz')
-            sage: K = P.restricted_automorphism_group(output='permutation')             # optional - sage.groups
-            sage: G = K.subgroup(gens=[K([(0,2),(1,3),(4,6),(5,7)])])                   # optional - sage.groups
-            sage: conj_reps = G.conjugacy_classes_representatives()                     # optional - sage.groups
-            sage: Dict = P.permutations_to_matrices(conj_reps, acting_group=G)          # optional - sage.groups
-            sage: list(Dict.keys())[0]                                                  # optional - sage.groups
+            sage: K = P.restricted_automorphism_group(output='permutation')
+            sage: G = K.subgroup(gens=[K([(0,2),(1,3),(4,6),(5,7)])])
+            sage: conj_reps = G.conjugacy_classes_representatives()
+            sage: Dict = P.permutations_to_matrices(conj_reps, acting_group=G)
+            sage: list(Dict.keys())[0]
             (0,2)(1,3)(4,6)(5,7)
-            sage: list(Dict.values())[0]                                                # optional - sage.groups
+            sage: list(Dict.values())[0]
             [-1  0  1  0]
             [ 0  1  0  0]
             [ 0  0  1  0]
             [ 0  0  0  1]
-            sage: len(G)                                                                # optional - sage.groups
+            sage: len(G)
             2
-            sage: G.character_table()                                                   # optional - sage.groups
+            sage: G.character_table()
             [ 1  1]
             [ 1 -1]
 
         Then we calculate the rational function `H^*(t)`::
 
-            sage: Hst = P._Hstar_function_normaliz(G); Hst                              # optional - sage.groups
+            sage: Hst = P._Hstar_function_normaliz(G); Hst                              # needs sage.groups
             (chi_0*t^4 + (3*chi_0 + 3*chi_1)*t^3
               + (8*chi_0 + 2*chi_1)*t^2 + (3*chi_0 + 3*chi_1)*t + chi_0)/(t + 1)
 
@@ -2289,7 +2261,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         ``'Hstar_as_lin_comb'``. The first coordinate is the coefficient of the
         trivial character; the second is the coefficient of the sign character::
 
-            sage: lin = P._Hstar_function_normaliz(G, output='Hstar_as_lin_comb'); lin  # optional - sage.groups
+            sage: lin = P._Hstar_function_normaliz(G, output='Hstar_as_lin_comb'); lin  # needs sage.groups
             ((t^4 + 3*t^3 + 8*t^2 + 3*t + 1)/(t + 1), (3*t^3 + 2*t^2 + 3*t)/(t + 1))
         """
         from sage.groups.conjugacy_classes import ConjugacyClassGAP
@@ -2328,7 +2300,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         # A check on whether the character table has permuted columns
         tbl = G_perm_gap.CharacterTable()
         perm = tbl.IdentificationOfConjugacyClasses()
-        ident_perm = [i for i in range(1, 1 + n_classes)]
+        ident_perm = list(range(1, 1 + n_classes))
         assert perm == ident_perm, "The conjugacy classes don't match with the character table"
 
         # Create fixed subpolytopes and their Ehrhart series
@@ -2337,39 +2309,39 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         list_es = [fix_polys[g].ehrhart_series() for g in conj_reps]
 
         # get the list of the denominators det([Id - rho (t)])
-        Ring = PolynomialRing(QQbar, 't')
+        ring = PolynomialRing(QQbar, 't')
         det_vector = list()
         dim = group_dict[G_perm.gens()[0]].dimensions()[0]
-        t = Ring.gens()[0]
-        ts_matrix = t * identity_matrix(Ring, dim)
-        identity = identity_matrix(Ring, dim)
+        t = ring.gens()[0]
+        ts_matrix = t * identity_matrix(ring, dim)
+        identity = identity_matrix(ring, dim)
 
         # ix the determinant if polytope isn't full dimensional
         codim = self.ambient_dim() - self.dim()
         for perm in conj_reps:
             mat = group_dict[perm]
-            mat = mat.change_ring(Ring)
-            new_matrix = identity - mat*ts_matrix
-            det = (1-t)**-codim*(new_matrix.determinant())
+            mat = mat.change_ring(ring)
+            new_matrix = identity - mat * ts_matrix
+            det = (1 - t)**-codim * (new_matrix.determinant())
             det_vector.append(det)
 
-        FF = Ring.fraction_field()
-        initial_result = vector(FF, [a*b for a, b in zip(det_vector, list_es)])
+        FF = ring.fraction_field()
+        initial_result = vector(FF, [a * b for a, b in zip(det_vector, list_es)])
         Char = char_initial.change_ring(FF)
         new_result = Char.solve_left(initial_result)
 
         new_new_result = self._Hstar_as_rat_fct(new_result)
         if output is None:
             return new_new_result
-        elif output == 'e_series_list':
+        if output == 'e_series_list':
             return list_es
-        elif output == 'determinant_vec':
+        if output == 'determinant_vec':
             return det_vector
-        elif output == 'Hstar_as_lin_comb':
+        if output == 'Hstar_as_lin_comb':
             return new_result
-        elif output == 'prod_det_es':
+        if output == 'prod_det_es':
             return initial_result
-        elif output == 'complete':
+        if output == 'complete':
             results_dictionary = {}
             results_dictionary['Hstar'] = new_new_result
             results_dictionary['Hstar_as_lin_comb'] = new_result
@@ -2386,7 +2358,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         INPUT:
 
-        - ``initial_Hstar`` -- a vector of rational functions in `t`.
+        - ``initial_Hstar`` -- a vector of rational functions in `t`
 
         OUTPUT:
 
@@ -2400,14 +2372,14 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
             sage: simplex = Polyhedron(vertices=[[0,0,0], [1,0,0],
             ....:                                [0,1,0], [0,0,1]], backend='normaliz')
-            sage: Hstar = simplex.Hstar_function(); Hstar  # indirect doctest           # optional - sage.rings.number_field
+            sage: Hstar = simplex.Hstar_function(); Hstar  # indirect doctest           # needs sage.rings.number_field
             chi_4
 
         The polynomial is `\chi_4 \cdot t^0`. We can see which irreducible
         representation `\chi_4` corresponds to by looking at the character table::
 
-            sage: G = simplex.restricted_automorphism_group(output='permutation')       # optional - sage.groups
-            sage: char = G.character_table(); char                                      # optional - sage.groups
+            sage: G = simplex.restricted_automorphism_group(output='permutation')       # needs sage.groups
+            sage: char = G.character_table(); char                                      # needs sage.groups
             [ 1 -1  1  1 -1]
             [ 3 -1  0 -1  1]
             [ 2  0 -1  2  0]
@@ -2421,14 +2393,14 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
             sage: square = Polyhedron(vertices=[[1,1], [-1,1], [-1,-1], [1,-1]],
             ....:                     backend='normaliz')
-            sage: Hstar = square.Hstar_function(); Hstar                                # optional - sage.rings.number_field
+            sage: Hstar = square.Hstar_function(); Hstar                                # needs sage.rings.number_field
             chi_0*t^2 + (2*chi_0 + chi_2 + chi_3 + chi_4)*t + chi_0
 
         Plugging in the values from the first column of the character table below
         yields the `h^*`-polynomial of the square, `t^2+6t+1`::
 
-            sage: G = square.restricted_automorphism_group(output='permutation')        # optional - sage.groups
-            sage: G.character_table()                                                   # optional - sage.groups
+            sage: G = square.restricted_automorphism_group(output='permutation')        # needs sage.groups
+            sage: G.character_table()                                                   # needs sage.groups
             [ 1  1  1  1  1]
             [ 1 -1 -1  1  1]
             [ 1 -1  1 -1  1]
@@ -2437,12 +2409,11 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.qqbar import QQbar
-        chi_vars = ','.join('chi_{}'.format(i) for i in range(len(initial_Hstar)))
+        chi_vars = ','.join(f'chi_{i}' for i in range(len(initial_Hstar)))
         Chi_ring = PolynomialRing(QQbar, chi_vars)
         virtual_ring = PolynomialRing(Chi_ring, initial_Hstar.base_ring().gens())
         fraction_virtual_ring = virtual_ring.fraction_field()
-        new_result = initial_Hstar.change_ring(fraction_virtual_ring)*vector(fraction_virtual_ring, Chi_ring.gens())
-        return new_result
+        return initial_Hstar.change_ring(fraction_virtual_ring) * vector(fraction_virtual_ring, Chi_ring.gens())
 
     def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb):
         r"""
@@ -2454,51 +2425,51 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
         the coefficients of the irreducible representations in the expression
-        of `\rho` are non-negative integers.
+        of `\rho` are nonnegative integers.
 
         INPUT:
 
         - ``Hstar`` -- a rational function in `t` with coefficients in the ring
-          of class functions.
+          of class functions
 
         - ``Hstar_as_lin_comb`` -- vector. The coefficients of the irreducible
           representations of the acting group in the expression of ``Hstar`` as
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT:
-
-        Boolean. Whether the ``Hstar`` series is effective.
+        OUTPUT: boolean; whether the ``Hstar`` series is effective
 
         EXAMPLES:
 
         The `H^*` series of the two-dimensional permutahedron under the action
         of the symmetric group is effective::
 
+            sage: # needs sage.groups
             sage: p3 = polytopes.permutahedron(3, backend='normaliz')
-            sage: G = p3.restricted_automorphism_group(output='permutation')            # optional - sage.groups
-            sage: reflection12 = G([(0,2),(1,4),(3,5)])                                 # optional - sage.groups
-            sage: reflection23 = G([(0,1),(2,3),(4,5)])                                 # optional - sage.groups
-            sage: S3 = G.subgroup(gens=[reflection12, reflection23])                    # optional - sage.groups
-            sage: S3.is_isomorphic(SymmetricGroup(3))                                   # optional - sage.groups
+            sage: G = p3.restricted_automorphism_group(output='permutation')
+            sage: reflection12 = G([(0,2),(1,4),(3,5)])
+            sage: reflection23 = G([(0,1),(2,3),(4,5)])
+            sage: S3 = G.subgroup(gens=[reflection12, reflection23])
+            sage: S3.is_isomorphic(SymmetricGroup(3))
             True
-            sage: Hstar = p3.Hstar_function(S3)                                         # optional - sage.groups sage.rings.number_field
-            sage: Hlin  = p3.Hstar_function(S3, output='Hstar_as_lin_comb')             # optional - sage.groups sage.rings.number_field
-            sage: p3._is_effective_normaliz(Hstar, Hlin)                                # optional - sage.groups sage.rings.number_field
+            sage: Hstar = p3.Hstar_function(S3)                                         # needs sage.rings.number_field
+            sage: Hlin  = p3.Hstar_function(S3, output='Hstar_as_lin_comb')             # needs sage.rings.number_field
+            sage: p3._is_effective_normaliz(Hstar, Hlin)                                # needs sage.rings.number_field
             True
 
         If the `H^*`-series is not polynomial, then it is not effective::
 
+            sage: # needs sage.groups
             sage: P = Polyhedron(vertices=[[0,0,1], [0,0,-1], [1,0,1], [-1,0,-1],
             ....:                          [0,1,1], [0,-1,-1], [1,1,1], [-1,-1,-1]],
             ....:                backend='normaliz')
-            sage: G = P.restricted_automorphism_group(output='permutation')             # optional - sage.groups
-            sage: H = G.subgroup(gens = [G([(0,2),(1,3),(4,6),(5,7)])])                 # optional - sage.groups
-            sage: Hstar = P.Hstar_function(H); Hstar                                    # optional - sage.groups sage.rings.number_field
+            sage: G = P.restricted_automorphism_group(output='permutation')
+            sage: H = G.subgroup(gens = [G([(0,2),(1,3),(4,6),(5,7)])])
+            sage: Hstar = P.Hstar_function(H); Hstar                                    # needs sage.rings.number_field
             (chi_0*t^4 + (3*chi_0 + 3*chi_1)*t^3
               + (8*chi_0 + 2*chi_1)*t^2 + (3*chi_0 + 3*chi_1)*t + chi_0)/(t + 1)
-            sage: Hstar_lin = P.Hstar_function(H, output='Hstar_as_lin_comb')           # optional - sage.groups sage.rings.number_field
-            sage: P._is_effective_normaliz(Hstar, Hstar_lin)                            # optional - sage.groups sage.rings.number_field
+            sage: Hstar_lin = P.Hstar_function(H, output='Hstar_as_lin_comb')           # needs sage.rings.number_field
+            sage: P._is_effective_normaliz(Hstar, Hstar_lin)                            # needs sage.rings.number_field
             False
         """
         if not Hstar.denominator().is_unit():
@@ -2518,8 +2489,8 @@ class Polyhedron_ZZ_normaliz(Polyhedron_QQ_normaliz, Polyhedron_ZZ):
 
     INPUT:
 
-    - ``Vrep`` -- a list ``[vertices, rays, lines]`` or ``None``
-    - ``Hrep`` -- a list ``[ieqs, eqns]`` or ``None``
+    - ``Vrep`` -- list ``[vertices, rays, lines]`` or ``None``
+    - ``Hrep`` -- list ``[ieqs, eqns]`` or ``None``
 
     EXAMPLES::
 

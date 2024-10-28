@@ -27,7 +27,7 @@ cdef extern from "sirocco.h":
     double* homotopyPath_comps(int degree, double *_coef, double _y0R, double _y0I, int nothercomps, int *degreescomps, double *_coefscomps)
 
 
-cpdef list[list] contpath_mp(int deg, list values, RealNumber y0r, RealNumber y0i, int prec):
+cpdef list[list] contpath_mp(int deg, list values, RealNumber y0r, RealNumber y0i, int prec) noexcept:
     """
     Mimics :func:`contpath`, but with the following differences:
 
@@ -45,7 +45,6 @@ cpdef list[list] contpath_mp(int deg, list values, RealNumber y0r, RealNumber y0
         [(0.000000000000000, 0.000000000000000, 0.000000000000000),
          (0.500000000000000, -0.250000000000000, 0.000000000000000),
          (1.00000000000000, -1.00000000000000, 0.000000000000000)]
-
     """
     cdef mpfr_t* cvalues = <mpfr_t*> check_allocarray(len(values), sizeof(mpfr_t))
     cdef mpfr_t* rop
@@ -88,7 +87,7 @@ cpdef list[list] contpath_mp(int deg, list values, RealNumber y0r, RealNumber y0
     free(rop)
     return l
 
-cpdef list[list] contpath_mp_comps(int deg, list values, RealNumber y0r, RealNumber y0i, int prec, list otherdegs, list othercoefs):
+cpdef list[list] contpath_mp_comps(int deg, list values, RealNumber y0r, RealNumber y0i, int prec, list otherdegs, list othercoefs) noexcept:
     """
     Mimics :func:`contpath`, but with the following differences:
 
@@ -113,7 +112,6 @@ cpdef list[list] contpath_mp_comps(int deg, list values, RealNumber y0r, RealNum
          (0.750000000000000, -0.562500000000000, 0.000000000000000),
          (0.875000000000000, -0.765625000000000, 0.000000000000000),
          (1.00000000000000, -1.00000000000000, 0.000000000000000)]
-
     """
 
     cdef mpfr_t* cvalues = <mpfr_t*> check_allocarray(len(values), sizeof(mpfr_t))
@@ -167,7 +165,7 @@ cpdef list[list] contpath_mp_comps(int deg, list values, RealNumber y0r, RealNum
     return l
 
 
-cpdef list[list] contpath(int deg, list values, double y0r, double y0i):
+cpdef list[list] contpath(int deg, list values, double y0r, double y0i) noexcept:
     """
     INPUT:
 
@@ -199,7 +197,6 @@ cpdef list[list] contpath(int deg, list values, double y0r, double y0i):
          (0.3535533905932738, -0.12500000000000003, 0.0),
          (0.7071067811865476, -0.5000000000000001, 0.0),
          (1.0, -1.0, 0.0)]
-
     """
     cdef double* rop
     cdef double* c_values = <double*> check_allocarray(len(values), sizeof(double))
@@ -222,7 +219,7 @@ cpdef list[list] contpath(int deg, list values, double y0r, double y0i):
     free(c_values)
     return l
 
-cpdef list[list] contpath_comps(int deg, list values, double y0r, double y0i, list otherdegrees, list othercoefs):
+cpdef list[list] contpath_comps(int deg, list values, double y0r, double y0i, list otherdegrees, list othercoefs) noexcept:
     """
     INPUT:
 
@@ -260,7 +257,6 @@ cpdef list[list] contpath_comps(int deg, list values, double y0r, double y0i, li
          (0.75, -0.5625, 0.0),
          (0.875, -0.765625, 0.0),
          (1.0, -1.0, 0.0)]
-
     """
     cdef double* rop
     cdef double* c_values = <double*> check_allocarray(len(values), sizeof(double))

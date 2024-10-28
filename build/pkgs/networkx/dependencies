@@ -1,4 +1,4 @@
-$(PYTHON) decorator | $(PYTHON_TOOLCHAIN) scipy
+ | $(PYTHON_TOOLCHAIN) scipy $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

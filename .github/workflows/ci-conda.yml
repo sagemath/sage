@@ -7,8 +7,6 @@ on:
     branches:
       - 'public/build/**-runci'
   pull_request:
-    types:
-      - labeled
   workflow_dispatch:
     # Allow to run manually
 
@@ -21,57 +19,58 @@ jobs:
   test:
     name: Conda
     runs-on: ${{ matrix.os }}
-    
-    # Run on push, workflow dispatch and when certain labels are added 
-    if: |
-      github.event.action != 'labeled' ||
-      github.event.label.name == 'c: packages: optional' || 
-      github.event.label.name == 'c: packages: standard' || 
-      github.event.label.name == 's: run conda ci'
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python: ['3.9', '3.10', '3.11']
+        # On pushes to tags or branches, test the whole matrix.
+        os: >-
+          ${{ github.event_name == 'pull_request'
+                && fromJson('["ubuntu-latest"]')
+                || fromJson('["ubuntu-latest", "macos-latest", "macos-13"]') }}
+        python: >-
+          ${{ github.event_name == 'pull_request'
+                && fromJson('["3.9"]')
+                || fromJson('["3.9", "3.10", "3.11"]') }}
         # Optional environment is disabled for now as its not yet working
         # environment: [environment, environment-optional]
         conda-env: [environment]
+        # On pull requests, only test two jobs:
+        # Ubuntu with Python 3.9, macOS (arm64) with Python 3.11.
+        # Build & Test currently uses Python 3.10 (on ubuntu-jammy).
+        # Together, they cover the supported minor Python versions.
+        include: >-
+          ${{ github.event_name == 'pull_request'
+                && fromJson('[{"os": "macos-latest", "python": "3.11", "conda-env": "environment"}]')
+                || fromJson('[]') }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Check for Miniconda
-        id: check_conda
-        run: echo ::set-output name=installed::$CONDA
-
-      # Miniconda is installed by default in the ubuntu-latest, however not in the act-image to run it locally
-      - name: Install Miniconda
-        if: steps.check_conda.outputs.installed == ''
+      - name: Merge CI fixes from sagemath/sage
         run: |
-          wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh -O ~/miniconda.sh
-          bash ~/miniconda.sh -b -p $HOME/miniconda
-          echo "CONDA=$HOME/miniconda" >> $GITHUB_ENV
-
-      - name: Create conda environment files
-        run: ./bootstrap-conda
+          .ci/merge-fixes.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
       - name: Cache conda packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/conda_pkgs_dir
           key:
-            ${{ runner.os }}-conda-${{ hashFiles('src/environment.yml') }}
+            ${{ runner.os }}-conda-${{ hashFiles('src/environment-3.11.yml') }}
 
-      - name: Setup Conda
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python }}
-          mamba-version: "*"
-          channels: conda-forge,defaults
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
           channel-priority: true
-          activate-environment: sage-build
-          environment-file: src/${{ matrix.conda-env }}.yml
+          activate-environment: sage
+          environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
 
       - name: Print Conda environment
         shell: bash -l {0}
@@ -79,28 +78,20 @@ jobs:
           conda info
           conda list
 
-      - name: Configure
+      - name: Bootstrap
         shell: bash -l {0}
         continue-on-error: true
         run: |
           ./bootstrap
-          echo "::add-matcher::.github/workflows/configure-systempackage-problem-matcher.json"
-          ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt --exclude rpy2); do echo --with-system-$pkg=force; done)
-          echo "::remove-matcher owner=configure-system-package-warning::"
-          echo "::remove-matcher owner=configure-system-package-error::"
-
-          # Manually install ptyprocess for now, until https://github.com/sagemath/sage/issues/32147 is fixed
-          pip install --no-build-isolation -v -v ptyprocess==0.5.1
 
       - name: Build
         shell: bash -l {0}
         run: |
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda.
-          pip install --no-build-isolation --no-deps -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
-          pip install --no-build-isolation --no-deps -v -v -e ./src
+          pip install --no-build-isolation --no-deps --config-settings editable_mode=compat -v -v -e ./src
         env:
-          SAGE_NUM_THREADS: 2
-        
+          SAGE_NUM_THREADS: 5
+
       - name: Verify dependencies
         if: success() || failure()
         shell: bash -l {0}
@@ -109,7 +100,7 @@ jobs:
       - name: Test
         if: success() || failure()
         shell: bash -l {0}
-        run: ./sage -t --all -p0
+        run: ./sage -t --all --baseline-stats-path=.github/workflows/ci-conda-known-test-failures.json -p0
 
       - name: Print logs
         if: always()

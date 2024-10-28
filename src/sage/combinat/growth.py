@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Growth diagrams and dual graded graphs
 
@@ -27,7 +27,7 @@ A guided tour
 
 Growth diagrams, invented by Sergey Fomin [Fom1994]_, [Fom1995]_,
 provide a vast generalization of the Robinson-Schensted-Knuth (RSK)
-correspondence between matrices with non-negative integer entries and
+correspondence between matrices with nonnegative integer entries and
 pairs of semistandard Young tableaux of the same shape.
 
 The main fact is that many correspondences similar to RSK can be
@@ -127,7 +127,7 @@ Invocation
 
 In general, growth diagrams are defined for `0-1`-fillings of
 arbitrary skew shapes.  In the case of the Robinson-Schensted-Knuth
-correspondence, even arbitrary non-negative integers are allowed.  In
+correspondence, even arbitrary nonnegative integers are allowed.  In
 other cases, entries may be either zero or an `r`-th root of unity -
 for example, :class:`~sage.combinat.growth.RuleDomino` insertion is
 defined for signed permutations, that is, `r=2`.  Traditionally, words
@@ -138,7 +138,7 @@ The most general possibility is to pass a dictionary of coordinates
 to (signed) entries, where zeros can be omitted.  In this case, when
 the parameter ``shape`` is not explicitly specified, it is assumed
 to be the minimal rectangle containing the origin and all coordinates
-with non-zero entries.
+with nonzero entries.
 
 For example, consider the following generalized permutation::
 
@@ -183,8 +183,8 @@ As an important example, consider the Stanley-Sundaram correspondence
 between oscillating tableaux and (partial) perfect matchings.
 Perfect matchings of `\{1, \ldots, 2r\}` are in bijection with
 `0-1`-fillings of a triangular shape with `2r-1` rows, such that for
-each `k` there is either exactly one non-zero entry in row `k` or
-exactly one non-zero entry in column `2r-k`.  Explicitly, if `(i,j)`
+each `k` there is either exactly one nonzero entry in row `k` or
+exactly one nonzero entry in column `2r-k`.  Explicitly, if `(i,j)`
 is a pair in the perfect matching, the entry in column `i-1` and row
 `2r-j` equals `1`.  For example::
 
@@ -339,7 +339,7 @@ graded graphs, it is supported by our framework.
 
 For illustration, let us implement a growth diagram class with the
 backward rule only.  Suppose that the vertices of the graph are the
-non-negative integers, the rank is given by the integer itself, and
+nonnegative integers, the rank is given by the integer itself, and
 the backward rule is `(y, z, x) \mapsto (\min(x,y), 0)` if `y = z`
 or `x = z` and `(y, z, x) \mapsto (\min(x,y), 1)` otherwise.
 
@@ -371,7 +371,7 @@ compute the labels belonging to a filling::
     sage: GrowthDiagram(RulePascal(), [3,1,2])
     Traceback (most recent call last):
     ...
-    AttributeError: 'RulePascal' object has no attribute 'forward_rule'
+    AttributeError: 'RulePascal' object has no attribute 'forward_rule'...
 
 We now re-implement the rule where we provide the dual graded graphs::
 
@@ -476,7 +476,6 @@ from itertools import zip_longest
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.combinat.posets.posets import Poset
 from sage.combinat.words.word import Word
 from sage.combinat.words.words import Words
 from sage.combinat.binary_tree import BinaryTree, BinaryTrees, LabelledBinaryTree
@@ -487,7 +486,10 @@ from sage.combinat.skew_tableau import SkewTableau
 from sage.combinat.core import Core, Cores
 from sage.combinat.k_tableau import WeakTableau, StrongTableau
 from sage.combinat.shifted_primed_tableau import ShiftedPrimedTableau
-from sage.graphs.digraph import DiGraph
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.combinat.posets.posets', 'Poset')
 
 
 def _make_partition(l):
@@ -515,7 +517,7 @@ class GrowthDiagram(SageObject):
     Growth diagrams were introduced by Sergey Fomin [Fom1994]_,
     [Fom1995]_ and provide a vast generalization of the
     Robinson-Schensted-Knuth (RSK) correspondence between matrices
-    with non-negative integer entries and pairs of semistandard Young
+    with nonnegative integer entries and pairs of semistandard Young
     tableaux of the same shape.
 
     A growth diagram is based on the notion of *dual graded graphs*,
@@ -619,8 +621,8 @@ class GrowthDiagram(SageObject):
 
     Passing the permutation matrix instead gives the same result::
 
-        sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())
-        sage: ascii_art([G.P_symbol(), G.Q_symbol()])
+        sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())                                # needs sage.modules
+        sage: ascii_art([G.P_symbol(), G.Q_symbol()])                                   # needs sage.modules
         [   1  2  3    1  3  4 ]
         [   4      ,   2       ]
 
@@ -911,12 +913,11 @@ class GrowthDiagram(SageObject):
             sage: G.P_chain()
             [word: , word: 1, word: 11, word: 111, word: 1011]
 
-        Check that :trac:`25631` is fixed::
+        Check that :issue:`25631` is fixed::
 
             sage: BinaryWord = GrowthDiagram.rules.BinaryWord()
             sage: BinaryWord(filling = {}).P_chain()
             [word: ]
-
         """
         if not self.is_rectangular():
             raise ValueError("the P symbol is only defined for rectangular shapes")
@@ -941,12 +942,11 @@ class GrowthDiagram(SageObject):
             sage: G.Q_chain()
             [word: , word: 1, word: 10, word: 101, word: 1011]
 
-        Check that :trac:`25631` is fixed::
+        Check that :issue:`25631` is fixed::
 
             sage: BinaryWord = GrowthDiagram.rules.BinaryWord()
             sage: BinaryWord(filling = {}).Q_chain()
             [word: ]
-
         """
         if not self.is_rectangular():
             raise ValueError("the Q symbol is only defined for rectangular shapes")
@@ -1049,7 +1049,7 @@ class GrowthDiagram(SageObject):
                 w2.extend([j+1]*v)
             else:
                 raise ValueError("can only convert fillings with"
-                                 " non-negative entries to words")
+                                 " nonnegative entries to words")
         return (w1, w2)
 
     def __iter__(self):
@@ -1128,7 +1128,7 @@ class GrowthDiagram(SageObject):
             sage: G1 == G2
             False
         """
-        return (type(self) == type(other) and
+        return (type(self) is type(other) and
                 self.rule == other.rule and
                 self._lambda == other._lambda and
                 self._mu == other._mu and
@@ -1358,10 +1358,10 @@ class GrowthDiagram(SageObject):
 
         ``filling`` is a matrix::
 
-            sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())  # indirect doctest
-            sage: G._filling
+            sage: G = GrowthDiagram(RuleRSK, pi.to_matrix())  # indirect doctest        # needs sage.modules
+            sage: G._filling                                                            # needs sage.modules
             {(0, 1): 1, (1, 2): 1, (2, 0): 1, (3, 5): 1, (4, 3): 1, (5, 4): 1}
-            sage: G.shape()
+            sage: G.shape()                                                             # needs sage.modules
             [6, 6, 6, 6, 6, 6] / []
 
         ``filling`` is a permutation::
@@ -1390,7 +1390,8 @@ class GrowthDiagram(SageObject):
 
         ``filling`` is a list of lists and shape is given::
 
-            sage: G = GrowthDiagram(RuleRSK, [[1,0,1],[0,1]], shape=SkewPartition([[3,2],[1]]))  # indirect doctest
+            sage: G = GrowthDiagram(RuleRSK, [[1,0,1],[0,1]],                                    # indirect doctest
+            ....:                   shape=SkewPartition([[3,2],[1]]))
             sage: G._filling
             {(0, 0): 1, (1, 1): 1, (2, 0): 1}
             sage: G.shape()
@@ -1622,9 +1623,9 @@ class Rule(UniqueRepresentation):
 
     - ``r`` -- (default: 1) the parameter in the equation `DU - UD = rI`
 
-    - ``has_multiple_edges`` -- (default: ``False``) if the dual
+    - ``has_multiple_edges`` -- boolean (default: ``False``); if the dual
       graded graph has multiple edges and therefore edges are
-      triples consisting of two vertices and a label.
+      triples consisting of two vertices and a label
 
     - ``zero_edge`` -- (default: 0) the zero label of the
       edges of the graphs used for degenerate edges.  It is
@@ -1633,12 +1634,12 @@ class Rule(UniqueRepresentation):
     Subclasses may provide the following methods:
 
     - ``normalize_vertex`` -- a function that converts its input to a
-      vertex.
+      vertex
 
-    - ``vertices`` -- a function that takes a non-negative integer
-      as input and returns the list of vertices on this rank.
+    - ``vertices`` -- a function that takes a nonnegative integer
+      as input and returns the list of vertices on this rank
 
-    - ``rank`` -- the rank function of the dual graded graphs.
+    - ``rank`` -- the rank function of the dual graded graphs
 
     - ``forward_rule`` -- a function with input ``(y, t, x,
       content)`` or ``(y, e, t, f, x, content)`` if
@@ -1749,7 +1750,7 @@ class Rule(UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` -- a positive integer specifying which rank of
+        - ``n`` -- positive integer specifying which rank of
           the graph to test
 
         EXAMPLES:
@@ -2028,13 +2029,13 @@ class RuleShiftedShapes(Rule):
                 .  4'
                    5
             sage: Shifted = GrowthDiagram.rules.ShiftedShapes()
-            sage: labels = [mu if is_even(i) else 0 for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
+            sage: labels = [mu if is_even(i) else 0
+            ....:           for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
             sage: G = Shifted({(1,2):1, (2,1):1}, shape=[5,5,5,5,5], labels=labels)
             sage: G.P_symbol().pp()
              .  .  .  .  2
                 .  .  1  3
                    .  4  5
-
         """
         chain = P_chain[::2]
         shape = chain[-1]
@@ -2080,13 +2081,13 @@ class RuleShiftedShapes(Rule):
                 .  4'
                    5
             sage: Shifted = GrowthDiagram.rules.ShiftedShapes()
-            sage: labels = [mu if is_even(i) else 0 for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
+            sage: labels = [mu if is_even(i) else 0
+            ....:           for i, mu in enumerate(T.to_chain()[::-1])] + U.to_chain()[1:]
             sage: G = Shifted({(1,2):1, (2,1):1}, shape=[5,5,5,5,5], labels=labels)
             sage: G.Q_symbol().pp()
              .  .  .  .  2
                 .  .  1  4'
                    .  3' 5'
-
         """
         chain = Q_chain
         shape = chain[-1]
@@ -2116,8 +2117,8 @@ class RuleShiftedShapes(Rule):
 
         INPUT:
 
-        - ``y, e, t, f, x`` -- a path of three partitions and two
-          colors from a cell in a growth diagram, labelled as::
+        - ``y``, ``e``, ``t``, ``f``, ``x`` -- a path of three partitions and
+          two colors from a cell in a growth diagram, labelled as::
 
               t f x
               e
@@ -2160,7 +2161,6 @@ class RuleShiftedShapes(Rule):
 
             sage: Shifted.forward_rule([3], 0, [2], 3, [3], 0)
             (3, [4], 0)
-
         """
         if e != 0:
             raise ValueError("the P-graph should not be colored")
@@ -2216,8 +2216,8 @@ class RuleShiftedShapes(Rule):
 
         INPUT:
 
-        - ``y, g, z, h, x`` -- a path of three partitions and two
-          colors from a cell in a growth diagram, labelled as::
+        - ``y``, ``g``, ``z``, ``h``, ``x`` -- a path of three partitions and
+          two colors from a cell in a growth diagram, labelled as::
 
                   x
                   h
@@ -2509,8 +2509,8 @@ class RuleLLMS(Rule):
 
         INPUT:
 
-        - ``y, e, t, f, x`` -- a path of three partitions and two
-          colors from a cell in a growth diagram, labelled as::
+        - ``y``, ``e``, ``t``, ``f``, ``x`` -- a path of three partitions and
+          two colors from a cell in a growth diagram, labelled as::
 
               t f x
               e
@@ -2783,7 +2783,7 @@ class RuleBinaryWord(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three binary words from a cell in a growth
+        - ``y``, ``t``, ``x`` -- three binary words from a cell in a growth
           diagram, labelled as::
 
               t x
@@ -2845,7 +2845,7 @@ class RuleBinaryWord(Rule):
 
         See [Fom1995]_ Lemma 4.6.1, page 40.
 
-        - ``y, z, x`` -- three binary words from a cell in a growth diagram,
+        - ``y``, ``z``, ``x`` -- three binary words from a cell in a growth diagram,
           labelled as::
 
                 x
@@ -3199,7 +3199,7 @@ class RuleSylvester(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three binary trees from a cell in a growth
+        - ``y``, ``t``, ``x`` -- three binary trees from a cell in a growth
           diagram, labelled as::
 
               t x
@@ -3207,9 +3207,7 @@ class RuleSylvester(Rule):
 
         - ``content`` -- `0` or `1`; the content of the cell
 
-        OUTPUT:
-
-        The fourth binary tree ``z``.
+        OUTPUT: the fourth binary tree ``z``
 
         EXAMPLES::
 
@@ -3322,7 +3320,7 @@ class RuleSylvester(Rule):
 
         INPUT:
 
-        - ``y, z, x`` -- three binary trees from a cell in a growth
+        - ``y``, ``z``, ``x`` -- three binary trees from a cell in a growth
           diagram, labelled as::
 
                 x
@@ -3515,7 +3513,7 @@ class RuleYoungFibonacci(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three Fibonacci words from a
+        - ``y``, ``t``, ``x`` -- three Fibonacci words from a
           cell in a growth diagram, labelled as::
 
               t x
@@ -3523,9 +3521,7 @@ class RuleYoungFibonacci(Rule):
 
         - ``content`` -- `0` or `1`; the content of the cell
 
-        OUTPUT:
-
-        The fourth Fibonacci word.
+        OUTPUT: the fourth Fibonacci word
 
         EXAMPLES::
 
@@ -3571,7 +3567,7 @@ class RuleYoungFibonacci(Rule):
 
         See [Fom1995]_ Lemma 4.4.1, page 35.
 
-        - ``y, z, x`` -- three Fibonacci words from a cell in a
+        - ``y``, ``z``, ``x`` -- three Fibonacci words from a cell in a
           growth diagram, labelled as::
 
                 x
@@ -3705,7 +3701,7 @@ class RuleRSK(RulePartitions):
         Partitions of the integer 3
 
     The local rules implemented provide the RSK correspondence
-    between matrices with non-negative integer entries and pairs of
+    between matrices with nonnegative integer entries and pairs of
     semistandard tableaux, the
     :meth:`~sage.combinat.growth.RulePartitions.P_symbol` and the
     :meth:`~sage.combinat.growth.RulePartitions.Q_symbol`.  For
@@ -3759,13 +3755,13 @@ class RuleRSK(RulePartitions):
 
         INPUT:
 
-        - ``y, t, x`` -- three partitions from a cell in a
+        - ``y``, ``t``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               t x
               y
 
-        - ``content`` -- a non-negative integer; the content of the cell
+        - ``content`` -- nonnegative integer; the content of the cell
 
         OUTPUT:
 
@@ -3814,7 +3810,7 @@ class RuleRSK(RulePartitions):
 
         INPUT:
 
-        - ``y, z, x`` -- three partitions from a cell in a
+        - ``y``, ``z``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               x
@@ -3870,7 +3866,7 @@ class RuleBurge(RulePartitions):
         Partitions of the integer 3
 
     The local rules implemented provide Burge's correspondence
-    between matrices with non-negative integer entries and pairs of
+    between matrices with nonnegative integer entries and pairs of
     semistandard tableaux, the
     :meth:`~sage.combinat.growth.RulePartitions.P_symbol` and the
     :meth:`~sage.combinat.growth.RulePartitions.Q_symbol`.  For
@@ -3911,17 +3907,15 @@ class RuleBurge(RulePartitions):
 
         INPUT:
 
-        - ``y, t, x`` -- three  from a cell in a growth diagram,
+        - ``y``, ``t``, ``x`` -- three  from a cell in a growth diagram,
           labelled as::
 
               t x
               y
 
-        - ``content`` -- a non-negative integer; the content of the cell
+        - ``content`` -- nonnegative integer; the content of the cell
 
-        OUTPUT:
-
-        The fourth partition according to the Burge correspondence.
+        OUTPUT: the fourth partition according to the Burge correspondence
 
         EXAMPLES::
 
@@ -3960,7 +3954,7 @@ class RuleBurge(RulePartitions):
 
         INPUT:
 
-        - ``y, z, x`` -- three partitions from a cell in a
+        - ``y``, ``z``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               x
@@ -4204,7 +4198,7 @@ class RuleDomino(Rule):
 
         INPUT:
 
-        - ``y, t, x`` -- three partitions from a cell in a
+        - ``y``, ``t``, ``x`` -- three partitions from a cell in a
           growth diagram, labelled as::
 
               t x
@@ -4212,9 +4206,7 @@ class RuleDomino(Rule):
 
         - ``content`` -- `-1`, `0` or `1`; the content of the cell
 
-        OUTPUT:
-
-        The fourth partition according to domino insertion.
+        OUTPUT: the fourth partition according to domino insertion
 
         EXAMPLES::
 
@@ -4342,7 +4334,7 @@ class RuleDomino(Rule):
 #####################################################################
 
 
-class Rules():
+class Rules:
     """
     Catalog of rules for growth diagrams.
     """

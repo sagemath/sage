@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Lie Conformal Algebras
 
@@ -59,8 +60,7 @@ operation (called the `\lambda`-bracket) `L\otimes L \rightarrow L[\lambda]`
 .. NOTE::
 
     In the literature arbitrary gradings are allowed. In this
-    implementation we only support non-negative rational gradings.
-
+    implementation we only support nonnegative rational gradings.
 
 EXAMPLES:
 
@@ -125,10 +125,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .category_types import Category_over_base_ring
-from sage.misc.cachefunc import cached_method
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.lambda_bracket_algebras import LambdaBracketAlgebras
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+
 
 class LieConformalAlgebras(Category_over_base_ring):
     r"""
@@ -152,16 +153,16 @@ class LieConformalAlgebras(Category_over_base_ring):
 
     Some subcategories::
 
-        sage: LieConformalAlgebras(QQbar).FinitelyGenerated().WithBasis()               # optional - sage.rings.number_field
+        sage: LieConformalAlgebras(QQbar).FinitelyGenerated().WithBasis()               # needs sage.rings.number_field
         Category of finitely generated Lie conformal algebras with basis
          over Algebraic Field
 
     In addition we support functorial constructions ``Graded`` and
     ``Super``. These functors commute::
 
-        sage: CGS = LieConformalAlgebras(AA).Graded().Super(); CGS                      # optional - sage.rings.number_field
+        sage: CGS = LieConformalAlgebras(AA).Graded().Super(); CGS                      # needs sage.rings.number_field
         Category of H-graded super Lie conformal algebras over Algebraic Real Field
-        sage: CGS is LieConformalAlgebras(AA).Super().Graded()                          # optional - sage.rings.number_field
+        sage: CGS is LieConformalAlgebras(AA).Super().Graded()                          # needs sage.rings.number_field
         True
 
     That is, we only consider gradings on super Lie conformal algebras
@@ -169,7 +170,7 @@ class LieConformalAlgebras(Category_over_base_ring):
 
     The base ring needs to be a commutative ring::
 
-        sage: LieConformalAlgebras(QuaternionAlgebra(2))                                # optional - sage.combinat sage.modules
+        sage: LieConformalAlgebras(QuaternionAlgebra(2))                                # needs sage.combinat sage.modules
         Traceback (most recent call last):
         ValueError: base must be a commutative ring
         got Quaternion Algebra (-1, -1) with base ring Rational Field
@@ -185,12 +186,12 @@ class LieConformalAlgebras(Category_over_base_ring):
             sage: C.super_categories()
             [Category of Lambda bracket algebras over Rational Field]
             sage: C = LieConformalAlgebras(QQ).FinitelyGenerated(); C
-            Category of finitely generated lie conformal algebras over Rational Field
+            Category of finitely generated Lie conformal algebras over Rational Field
             sage: C.super_categories()
             [Category of finitely generated lambda bracket algebras over Rational Field,
              Category of Lie conformal algebras over Rational Field]
             sage: C.all_super_categories()
-            [Category of finitely generated lie conformal algebras over Rational Field,
+            [Category of finitely generated Lie conformal algebras over Rational Field,
              Category of finitely generated lambda bracket algebras over Rational Field,
              Category of Lie conformal algebras over Rational Field,
              Category of Lambda bracket algebras over Rational Field,
@@ -221,11 +222,12 @@ class LieConformalAlgebras(Category_over_base_ring):
 
         EXAMPLES::
 
-            sage: LieConformalAlgebras(QQ).example()                                    # optional - sage.combinat sage.modules
+            sage: LieConformalAlgebras(QQ).example()                                    # needs sage.combinat sage.modules
             The Virasoro Lie conformal algebra over Rational Field
         """
-        from sage.algebras.lie_conformal_algebras.virasoro_lie_conformal_algebra\
-                                            import VirasoroLieConformalAlgebra
+        from sage.algebras.lie_conformal_algebras.virasoro_lie_conformal_algebra import (
+            VirasoroLieConformalAlgebra,
+        )
         return VirasoroLieConformalAlgebra(self.base_ring())
 
     def _repr_object_names(self):
@@ -254,27 +256,28 @@ class LieConformalAlgebras(Category_over_base_ring):
             By default, this method tests only the elements returned by
             ``self.some_elements()``::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'B2')                                   # optional - sage.combinat sage.modules
-                sage: V._test_jacobi()      # long time (6 seconds)                                 # optional - sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'B2')                       # needs sage.combinat sage.modules
+                sage: V._test_jacobi()          # long time (6 seconds)                 # needs sage.combinat sage.modules
 
             It works for super Lie conformal algebras too::
 
-                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                                   # optional - sage.combinat sage.modules
-                sage: V._test_jacobi()                                                              # optional - sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.NeveuSchwarz(QQ)                       # needs sage.combinat sage.modules
+                sage: V._test_jacobi()                                                  # needs sage.combinat sage.modules
 
             We can use specific elements by passing the ``elements``
             keyword argument::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1', names=('e', 'h', 'f'))            # optional - sage.combinat sage.modules
-                sage: V.inject_variables()                                                          # optional - sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1',                       # needs sage.combinat sage.modules
+                ....:                                   names=('e', 'h', 'f'))
+                sage: V.inject_variables()                                              # needs sage.combinat sage.modules
                 Defining e, h, f, K
-                sage: V._test_jacobi(elements=(e, 2*f+h, 3*h))                                      # optional - sage.combinat sage.modules
+                sage: V._test_jacobi(elements=(e, 2*f+h, 3*h))                          # needs sage.combinat sage.modules
 
             TESTS::
 
                 sage: wrongdict = {('a', 'a'): {0: {('b', 0): 1}}, ('b', 'a'): {0: {('a', 0): 1}}}
-                sage: V = LieConformalAlgebra(QQ, wrongdict, names=('a', 'b'), parity=(1, 0))       # optional - sage.combinat sage.modules
-                sage: V._test_jacobi()                                                              # optional - sage.combinat sage.modules
+                sage: V = LieConformalAlgebra(QQ, wrongdict, names=('a', 'b'), parity=(1, 0))       # needs sage.combinat sage.modules
+                sage: V._test_jacobi()                                                              # needs sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 AssertionError: {(0, 0): -3*a} != {}
@@ -283,8 +286,8 @@ class LieConformalAlgebras(Category_over_base_ring):
             """
             tester = self._tester(**options)
             S = tester.some_elements()
-            from sage.misc.misc import some_tuples
             from sage.arith.misc import binomial
+            from sage.misc.misc import some_tuples
             pz = tester._instance.zero()
             for x,y,z in some_tuples(S, 3, tester._max_runs):
                 brxy = x.bracket(y)
@@ -325,10 +328,10 @@ class LieConformalAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: R = lie_conformal_algebras.NeveuSchwarz(QQ)                       # optional - sage.combinat sage.modules
-                sage: R.inject_variables()                                              # optional - sage.combinat sage.modules
+                sage: R = lie_conformal_algebras.NeveuSchwarz(QQ)                       # needs sage.combinat sage.modules
+                sage: R.inject_variables()                                              # needs sage.combinat sage.modules
                 Defining L, G, C
-                sage: G.is_even_odd()                                                   # optional - sage.combinat sage.modules
+                sage: G.is_even_odd()                                                   # needs sage.combinat sage.modules
                 1
             """
             return 0

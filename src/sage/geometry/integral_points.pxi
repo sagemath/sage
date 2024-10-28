@@ -119,7 +119,7 @@ cpdef tuple parallelotope_points(spanning_points, lattice):
         sage: parallelotope_points(c.rays(), c.lattice())
         (N(0, 0), N(1, 1))
 
-    A ``ValueError`` is raised if the ``spanning_points`` are not
+    A :exc:`ValueError` is raised if the ``spanning_points`` are not
     linearly independent::
 
         sage: rays = list(map(ToricLattice(2), [(1,1)]*2))
@@ -151,11 +151,9 @@ cpdef tuple ray_matrix_normal_form(R):
     INPUT:
 
     - ``R`` -- `\ZZ`-matrix whose columns are the rays spanning the
-      parallelotope.
+      parallelotope
 
-    OUTPUT:
-
-    A tuple containing ``e``, ``d``, and ``VDinv``.
+    OUTPUT: a tuple containing ``e``, ``d``, and ``VDinv``
 
     EXAMPLES::
 
@@ -175,7 +173,6 @@ cpdef tuple ray_matrix_normal_form(R):
     return (e, d, VDinv)
 
 
-
 # The optimized version avoids constructing new matrices, vectors, and lattice points
 cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
                                            MatrixClass R, lattice,
@@ -187,7 +184,7 @@ cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
 
     See :meth:`parallelotope_points` for ``e``, ``d``, ``VDinv``, ``R``, ``lattice``.
 
-    - ``A``, ``b``: Either both ``None`` or a vector and number. If
+    - ``A``, ``b`` -- either both ``None`` or a vector and number. If
       present, only the parallelotope points satisfying `A x \leq b`
       are returned.
 
@@ -240,7 +237,6 @@ cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
     if A is None:
         assert(len(gens) == d)
     return tuple(gens)
-
 
 
 ##############################################################################
@@ -340,7 +336,6 @@ cdef translate_points(v_list, VectorClass delta):
             v[i] -= delta.get_unsafe(i)
 
 
-
 ##############################################################################
 # For points with "small" coordinates (that is, fitting into a small
 # rectangular bounding box) it is faster to naively enumerate the
@@ -355,23 +350,23 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     INPUT:
 
-    - ``box_min`` -- A list of integers. The minimal value for each
-      coordinate of the rectangular bounding box.
+    - ``box_min`` -- list of integers; the minimal value for each
+      coordinate of the rectangular bounding box
 
-    - ``box_max`` -- A list of integers. The maximal value for each
-      coordinate of the rectangular bounding box.
+    - ``box_max`` -- list of integers; the maximal value for each
+      coordinate of the rectangular bounding box
 
-    - ``polyhedron`` -- A
+    - ``polyhedron`` -- a
       :class:`~sage.geometry.polyhedron.base.Polyhedron_base`, a PPL
-      :class:`~ppl.polyhedron.C_Polyhedron`, or ``None`` (default).
+      :class:`~ppl.polyhedron.C_Polyhedron`, or ``None`` (default)
 
-    - ``count_only`` -- Boolean (default: ``False``). Whether to
+    - ``count_only`` -- boolean (default: ``False``); whether to
       return only the total number of vertices, and not their
       coordinates. Enabling this option speeds up the
       enumeration. Cannot be combined with the ``return_saturated``
       option.
 
-    - ``return_saturated`` -- Boolean (default: ``False``. Whether to
+    - ``return_saturated`` -- boolean (default: ``False``); whether to
       also return which inequalities are saturated for each point of
       the polyhedron. Enabling this slows down the enumeration. Cannot
       be combined with the ``count_only`` option.
@@ -474,8 +469,8 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Long ints and non-integral polyhedra are explicitly allowed::
 
-        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)                  # optional - sage.symbolic
-        sage: len(rectangular_box_points([-100], [100], polytope))                      # optional - sage.symbolic
+        sage: polytope = Polyhedron([[1], [10*pi.n()]], base_ring=RDF)                  # needs sage.symbolic
+        sage: len(rectangular_box_points([-100], [100], polytope))                      # needs sage.symbolic
         31
 
         sage: halfplane = Polyhedron(ieqs=[(-1,1,0)])
@@ -488,15 +483,16 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     Using a PPL polyhedron::
 
-        sage: from ppl import Variable, Generator_System, C_Polyhedron, point           # optional - pplpy
-        sage: gs = Generator_System()                                                   # optional - pplpy
-        sage: x = Variable(0); y = Variable(1); z = Variable(2)                         # optional - pplpy
-        sage: gs.insert(point(0*x + 1*y + 0*z))                                         # optional - pplpy
-        sage: gs.insert(point(0*x + 1*y + 3*z))                                         # optional - pplpy
-        sage: gs.insert(point(3*x + 1*y + 0*z))                                         # optional - pplpy
-        sage: gs.insert(point(3*x + 1*y + 3*z))                                         # optional - pplpy
-        sage: poly = C_Polyhedron(gs)                                                   # optional - pplpy
-        sage: rectangular_box_points([0]*3, [3]*3, poly)                                # optional - pplpy
+        sage: # needs pplpy
+        sage: from ppl import Variable, Generator_System, C_Polyhedron, point
+        sage: gs = Generator_System()
+        sage: x = Variable(0); y = Variable(1); z = Variable(2)
+        sage: gs.insert(point(0*x + 1*y + 0*z))
+        sage: gs.insert(point(0*x + 1*y + 3*z))
+        sage: gs.insert(point(3*x + 1*y + 0*z))
+        sage: gs.insert(point(3*x + 1*y + 3*z))
+        sage: poly = C_Polyhedron(gs)
+        sage: rectangular_box_points([0]*3, [3]*3, poly)
         ((0, 1, 0), (0, 1, 1), (0, 1, 2), (0, 1, 3), (1, 1, 0), (1, 1, 1), (1, 1, 2), (1, 1, 3),
          (2, 1, 0), (2, 1, 1), (2, 1, 2), (2, 1, 3), (3, 1, 0), (3, 1, 1), (3, 1, 2), (3, 1, 3))
 
@@ -521,7 +517,7 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     TESTS:
 
-    Check that this can be interrupted, see :trac:`20781`::
+    Check that this can be interrupted, see :issue:`20781`::
 
         sage: ieqs = [(-1, -1, -1, -1, -1, -1, -1, -1, -1),
         ....:         (0, -1, 0, 0, 0, 0, 0, 0, 0),
@@ -544,13 +540,13 @@ cpdef rectangular_box_points(list box_min, list box_max,
     assert not (count_only and return_saturated)
     cdef int d = len(box_min)
     cdef int i, j
-    cdef list diameter = sorted([ (box_max[i]-box_min[i], i) for i in range(d) ],
+    cdef list diameter = sorted([(box_max[i]-box_min[i], i) for i in range(d)],
                                 reverse=True)
     cdef list diameter_value = [x[0] for x in diameter]
     cdef list diameter_index = [x[1] for x in diameter]
 
     # Construct the inverse permutation
-    cdef list orig_perm = list(xrange(len(diameter_index)))
+    cdef list orig_perm = list(range(len(diameter_index)))
     for i, j in enumerate(diameter_index):
         orig_perm[j] = i
 
@@ -597,20 +593,18 @@ cdef loop_over_rectangular_box_points(list box_min, list box_max,
 
     INPUT:
 
-    - ``box_min``, ``box_max`` -- the bounding box.
+    - ``box_min``, ``box_max`` -- the bounding box
 
     - ``inequalities`` -- a :class:`InequalityCollection` containing
-      the inequalities defining the polyhedron.
+      the inequalities defining the polyhedron
 
-    - ``d`` -- the ambient space dimension.
+    - ``d`` -- the ambient space dimension
 
     - ``count_only`` -- whether to only return the total number of
-      lattice points.
+      lattice points
 
-    OUTPUT:
-
-    The integral points in the bounding box satisfying all
-    inequalities.
+    OUTPUT: the integral points in the bounding box satisfying all
+    inequalities
     """
     cdef int inc
     cdef Integer i_min, i_max
@@ -660,7 +654,6 @@ cdef loop_over_rectangular_box_points(list box_min, list box_max,
                 break
         if inc > 1:
             inequalities.prepare_next_to_inner_loop(p)
-
 
 
 cdef loop_over_rectangular_box_points_saturated(list box_min, list box_max,
@@ -732,14 +725,12 @@ cdef class Inequality_generic:
 
     - ``b`` -- element
 
-    OUTPUT:
-
-    Inequality `A x + b \geq 0`.
+    OUTPUT: inequality `A x + b \geq 0`
 
     EXAMPLES::
 
         sage: from sage.geometry.integral_points import Inequality_generic
-        sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                          # optional - sage.symbolic
+        sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                          # needs sage.symbolic
         generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
     """
 
@@ -752,7 +743,7 @@ cdef class Inequality_generic:
 
     def __cinit__(self, list A, b, int index=-1):
         """
-        The Cython constructor
+        The Cython constructor.
 
         INPUT:
 
@@ -761,7 +752,7 @@ cdef class Inequality_generic:
         EXAMPLES::
 
             sage: from sage.geometry.integral_points import Inequality_generic
-            sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                      # optional - sage.symbolic
+            sage: Inequality_generic([2 * pi, sqrt(3), 7/2], -5.5)                      # needs sage.symbolic
             generic: (2*pi, sqrt(3), 7/2) x + -5.50000000000000 >= 0
         """
         self.A = A
@@ -774,9 +765,7 @@ cdef class Inequality_generic:
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -814,9 +803,7 @@ cdef class Inequality_generic:
         r"""
         Test the inequality, using the cached value from :meth:`prepare_inner_loop`
 
-        OUTPUT:
-
-        Boolean. Whether the inequality is not satisfied.
+        OUTPUT: boolean; whether the inequality is not satisfied
         """
         return inner_loop_variable * self.coeff + self.cache < 0
 
@@ -826,7 +813,7 @@ cdef class Inequality_generic:
 
         OUTPUT:
 
-        Boolean. Given the inequality `Ax + b \geq 0`, this method
+        boolean. Given the inequality `Ax + b \geq 0`, this method
         returns whether the equality `Ax + b = 0` is satisfied.
         """
         return inner_loop_variable * self.coeff + self.cache == 0
@@ -852,9 +839,9 @@ cdef class Inequality_int:
 
     OUTPUT:
 
-    Inequality `A x + b \geq 0`. A ``OverflowError`` is raised if a
+    Inequality `A x + b \geq 0`. A :exc:`OverflowError` is raised if a
     machine integer is not long enough to hold the results. A
-    ``ValueError`` is raised if some of the input is not integral.
+    :exc:`ValueError` is raised if some of the input is not integral.
 
     EXAMPLES::
 
@@ -884,13 +871,12 @@ cdef class Inequality_int:
 
     TESTS:
 
-    Check that :trac:`21993` is fixed::
+    Check that :issue:`21993` is fixed::
 
         sage: Inequality_int([18560500, -89466500], 108027, [178933, 37121])
         Traceback (most recent call last):
         ...
         OverflowError: ...
-
     """
     cdef int A[INEQ_INT_MAX_DIM]
     cdef int b
@@ -911,7 +897,7 @@ cdef class Inequality_int:
 
     def __cinit__(self, list A, b, list max_abs_coordinates, int index=-1):
         """
-        The Cython constructor
+        The Cython constructor.
 
         See :class:`Inequality_int` for input.
 
@@ -940,9 +926,7 @@ cdef class Inequality_int:
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -951,7 +935,7 @@ cdef class Inequality_int:
             'integer: (2, 3, 7) x + -5 >= 0'
         """
         s = 'integer: ('
-        s += ', '.join([str(self.A[i]) for i in range(self.dim)])
+        s += ', '.join(str(self.A[i]) for i in range(self.dim))
         s += ') x + ' + str(self.b) + ' >= 0'
         return s
 
@@ -978,12 +962,11 @@ cdef class Inequality_int:
         else:
             self.cache = self.cache_next
 
-    cdef bint is_not_satisfied(Inequality_int self, int inner_loop_variable):
+    cdef bint is_not_satisfied(Inequality_int self, int inner_loop_variable) noexcept:
         return inner_loop_variable * self.coeff + self.cache < 0
 
-    cdef bint is_equality(Inequality_int self, int inner_loop_variable):
+    cdef bint is_equality(Inequality_int self, int inner_loop_variable) noexcept:
         return inner_loop_variable * self.coeff + self.cache == 0
-
 
 
 cdef class InequalityCollection:
@@ -992,13 +975,13 @@ cdef class InequalityCollection:
 
     INPUT:
 
-    - ``polyhedron`` -- a polyhedron defining the inequalities.
+    - ``polyhedron`` -- a polyhedron defining the inequalities
 
-    - ``permutation`` -- list; a 0-based permutation of the coordinates.
-      Will be used to permute the coordinates of the inequality.
+    - ``permutation`` -- list; a 0-based permutation of the coordinates
+      Will be used to permute the coordinates of the inequality
 
     - ``box_min``, ``box_max`` -- the (not permuted) minimal and maximal
-      coordinates of the bounding box. Used for bounds checking.
+      coordinates of the bounding box; used for bounds checking
 
     EXAMPLES::
 
@@ -1035,9 +1018,7 @@ cdef class InequalityCollection:
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1091,7 +1072,7 @@ cdef class InequalityCollection:
 
     def __cinit__(self, polyhedron, list permutation, box_min, box_max):
         """
-        The Cython constructor
+        The Cython constructor.
 
         See the class documentation for the description of the arguments.
 
@@ -1125,22 +1106,23 @@ cdef class InequalityCollection:
     cdef _cinit_from_PPL(self, list max_abs_coordinates, list permutation,
                          polyhedron):
         """
-        Initialize the inequalities from a PPL C_Polyhedron
+        Initialize the inequalities from a PPL C_Polyhedron.
 
         See __cinit__ for a description of the arguments.
 
         EXAMPLES::
 
-            sage: from ppl import Variable, Generator_System, C_Polyhedron, point       # optional - pplpy
-            sage: gs = Generator_System()                                               # optional - pplpy
-            sage: x = Variable(0); y = Variable(1); z = Variable(2)                     # optional - pplpy
-            sage: gs.insert(point(0*x + 0*y + 1*z))                                     # optional - pplpy
-            sage: gs.insert(point(0*x + 3*y + 1*z))                                     # optional - pplpy
-            sage: gs.insert(point(3*x + 0*y + 1*z))                                     # optional - pplpy
-            sage: gs.insert(point(3*x + 3*y + 1*z))                                     # optional - pplpy
-            sage: poly = C_Polyhedron(gs)                                               # optional - pplpy
-            sage: from sage.geometry.integral_points import InequalityCollection        # optional - pplpy
-            sage: InequalityCollection(poly, [0,2,1], [0]*3, [3]*3 )                    # optional - pplpy
+            sage: # needs pplpy
+            sage: from ppl import Variable, Generator_System, C_Polyhedron, point
+            sage: gs = Generator_System()
+            sage: x = Variable(0); y = Variable(1); z = Variable(2)
+            sage: gs.insert(point(0*x + 0*y + 1*z))
+            sage: gs.insert(point(0*x + 3*y + 1*z))
+            sage: gs.insert(point(3*x + 0*y + 1*z))
+            sage: gs.insert(point(3*x + 3*y + 1*z))
+            sage: poly = C_Polyhedron(gs)
+            sage: from sage.geometry.integral_points import InequalityCollection
+            sage: InequalityCollection(poly, [0,2,1], [0]*3, [3]*3 )
             The collection of inequalities
             integer: (0, 1, 0) x + -1 >= 0
             integer: (0, -1, 0) x + 1 >= 0
@@ -1173,7 +1155,7 @@ cdef class InequalityCollection:
     cdef _cinit_from_Polyhedron(self, list max_abs_coordinates,
                                 list permutation, polyhedron):
         """
-        Initialize the inequalities from a Sage Polyhedron
+        Initialize the inequalities from a Sage Polyhedron.
 
         See __cinit__ for a description of the arguments.
 
@@ -1188,11 +1170,11 @@ cdef class InequalityCollection:
 
         TESTS:
 
-        Check that :trac:`21037` is fixed::
+        Check that :issue:`21037` is fixed::
 
             sage: P = Polyhedron(vertices=((0, 0), (17,3)))
-            sage: P += 1/1000*polytopes.regular_polygon(5)                              # optional - sage.rings.number_field
-            sage: P.integral_points()                                                   # optional - sage.rings.number_field
+            sage: P += 1/1000*polytopes.regular_polygon(5)                              # needs sage.rings.number_field
+            sage: P.integral_points()                                                   # needs sage.rings.number_field
             ((0, 0), (17, 3))
         """
         cdef list A
@@ -1241,7 +1223,7 @@ cdef class InequalityCollection:
         INPUT:
 
         - ``p`` -- the point coordinates. Only ``p[2:]`` coordinates
-          are potentially used by this method.
+          are potentially used by this method
 
         EXAMPLES::
 
@@ -1280,7 +1262,7 @@ cdef class InequalityCollection:
         INPUT:
 
         - ``p`` -- the coordinates of the point to loop over. Only the
-          ``p[1:]`` entries are used.
+          ``p[1:]`` entries are used
 
         EXAMPLES::
 
@@ -1306,8 +1288,8 @@ cdef class InequalityCollection:
 
         INPUT:
 
-        - ``i`` -- Integer. The :class:`Inequality_int` to swap to the
-          beginning of the list of integral inequalities.
+        - ``i`` -- integer; the :class:`Inequality_int` to swap to the
+          beginning of the list of integral inequalities
 
         EXAMPLES::
 
@@ -1343,12 +1325,10 @@ cdef class InequalityCollection:
 
         INPUT:
 
-        - ``inner_loop_variable`` -- Integer. the 0-th coordinate of
-          the lattice point.
+        - ``inner_loop_variable`` -- integer; the 0th coordinate of
+          the lattice point
 
-        OUTPUT:
-
-        Boolean. Whether the lattice point is in the polyhedron.
+        OUTPUT: boolean; whether the lattice point is in the polyhedron
 
         EXAMPLES::
 
@@ -1382,8 +1362,8 @@ cdef class InequalityCollection:
 
         INPUT:
 
-        - ``inner_loop_variable`` -- Integer. the 0-th coordinate of
-          the lattice point.
+        - ``inner_loop_variable`` -- integer; the 0th coordinate of
+          the lattice point
 
         OUTPUT:
 
@@ -1418,7 +1398,6 @@ cdef class InequalityCollection:
             if (<Inequality_generic>ineq).is_equality(inner_loop_variable):
                 result.append( (<Inequality_generic>ineq).index )
         return frozenset(result)
-
 
 
 cpdef print_cache(InequalityCollection inequality_collection):

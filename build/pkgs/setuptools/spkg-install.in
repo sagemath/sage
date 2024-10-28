@@ -1,5 +1,0 @@
-cd src
-# Use --single-version-externally-managed to prevent setuptools from installing itself with easy_install
-python3 setup.py --no-user-cfg install \
-            --single-version-externally-managed --root="$SAGE_DESTDIR" || \
-        sdh_die "Error building / installing setuptools for Python ${vers}"

@@ -1,6 +1,6 @@
 cd src
 
-# Use newer version of config.guess and config.sub (see Trac #23710)
+# Use newer version of config.guess and config.sub (see Issue #23710)
 cp "$SAGE_ROOT"/config/config.* .
 
 export CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"

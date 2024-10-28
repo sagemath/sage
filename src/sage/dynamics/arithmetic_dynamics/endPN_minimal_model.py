@@ -22,6 +22,9 @@ REFERENCES: [BM2012]_, [Mol2015]_
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from copy import copy
+
+from sage.arith.misc import gcd
 from sage.functions.hyperbolic import cosh
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
@@ -33,9 +36,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.binary_form_reduce import covariant_z0, epsinv
 from sage.rings.rational_field import QQ
 from sage.schemes.affine.affine_space import AffineSpace
-from sage.symbolic.constants import e
-from sage.arith.misc import gcd
-from copy import copy
+
 
 def bCheck(c, v, p, b):
     r"""
@@ -47,16 +48,16 @@ def bCheck(c, v, p, b):
 
     INPUT:
 
-    - ``c`` -- a list of polynomials in `b`. See v for their use
+    - ``c`` -- list of polynomials in `b`. See v for their use
 
-    - ``v`` -- a list of rational numbers, where we are considering the inequalities
+    - ``v`` -- list of rational numbers, where we are considering the inequalities
       `ord_p(c[i]) > v[i]`
 
     - ``p`` -- a prime
 
     - ``b`` -- local variable
 
-    OUTPUT: ``bval`` -- Integer, lower bound in Theorem 3.3.5
+    OUTPUT: ``bval`` -- integer; lower bound in Theorem 3.3.5
 
     EXAMPLES::
 
@@ -87,9 +88,9 @@ def scale(c, v, p):
 
     INPUT:
 
-    - ``c`` -- an integer polynomial
+    - ``c`` -- integer polynomial
 
-    - ``v`` -- an integer - the bound on the exponent from blift
+    - ``v`` -- integer; the bound on the exponent from :func:`blift`
 
     - ``p`` -- a prime
 
@@ -128,9 +129,9 @@ def blift(LF, Li, p, k, S=None, all_orbits=False):
 
     INPUT:
 
-    - ``LF`` -- a list of integer polynomials in one variable (the normalized coefficients)
+    - ``LF`` -- list of integer polynomials in one variable (the normalized coefficients)
 
-    - ``Li`` -- an integer, the bound on coefficients
+    - ``Li`` -- integer; the bound on coefficients
 
     - ``p`` -- a prime
 
@@ -151,8 +152,8 @@ def blift(LF, Li, p, k, S=None, all_orbits=False):
 
         sage: R.<b> = PolynomialRing(QQ)
         sage: from sage.dynamics.arithmetic_dynamics.endPN_minimal_model import blift
-        sage: blift([8*b^3 + 12*b^2 + 6*b + 1, 48*b^2 + 483*b + 117, 72*b + 1341,\
-        ....: -24*b^2 + 411*b + 99, -144*b + 1233, -216*b], 2, 3, 2)
+        sage: blift([8*b^3 + 12*b^2 + 6*b + 1, 48*b^2 + 483*b + 117, 72*b + 1341,
+        ....:        -24*b^2 + 411*b + 99, -144*b + 1233, -216*b], 2, 3, 2)
         [[True, 4]]
     """
 
@@ -219,20 +220,18 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
 
     - ``vp`` -- dynamical system on the projective line
 
-    - ``D`` -- a list of primes, in case one only wants to check minimality
+    - ``D`` -- list of primes, in case one only wants to check minimality
       at those specific primes
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the `PGL_2` transformation to conjugate
       this map to the calculated models
 
-    - ``quick`` -- a boolean value. If true the algorithm terminates once
+    - ``quick`` -- boolean value. If true the algorithm terminates once
       algorithm determines F/G is not minimal, otherwise algorithm only
       terminates once a minimal model has been found
 
-    OUTPUT:
-
-    - ``newvp`` -- dynamical system on the projective line
+    OUTPUT: ``newvp`` -- dynamical system on the projective line
 
     - ``conj`` -- linear fractional transformation which conjugates ``vp`` to ``newvp``
 
@@ -244,8 +243,7 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
         sage: affine_minimal(vp, True)
         (
         Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (X : Y) to
-                    (X^2 + Y^2 : X*Y)
+              Defn: Defined on coordinates by sending (X : Y) to (X^2 + Y^2 : X*Y)
         ,
         [3 0]
         [0 1]
@@ -273,7 +271,7 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
     #If the valuation of a prime in the resultant is small enough, we can say the
     #map is affine minimal at that prime without using the local minimality loop. See
     #Theorem 3.2.2 in [Molnar, M.Sc. thesis]
-    if d%2 == 0:
+    if d % 2 == 0:
         g = d
     else:
         g = 2*d
@@ -330,18 +328,18 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
 
 def Min(Fun, p, ubRes, conj, all_orbits=False):
     r"""
-    Local loop for Affine_minimal, where we check minimality at the prime p.
+    Local loop for :func:`affine_minimal`, where we check minimality at the prime `p`.
 
-    First we bound the possible k in our transformations A = zp^k + b.
+    First we bound the possible `k` in our transformations `A = zp^k + b`.
     See Theorems 3.3.2 and 3.3.3 in [Molnar]_.
 
     INPUT:
 
     - ``Fun`` -- a dynamical system on projective space
 
-    - ``p`` - a prime
+    - ``p`` -- a prime
 
-    - ``ubRes`` -- integer, the upper bound needed for Th. 3.3.3 in [Molnar]_
+    - ``ubRes`` -- integer; the upper bound needed for Th. 3.3.3 in [Molnar]_
 
     - ``conj`` -- a 2x2 matrix keeping track of the conjugation
 
@@ -357,7 +355,8 @@ def Min(Fun, p, ubRes, conj, all_orbits=False):
     EXAMPLES::
 
         sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-        sage: f = DynamicalSystem_projective([149*x^2 + 39*x*y + y^2, -8*x^2 + 137*x*y + 33*y^2])
+        sage: f = DynamicalSystem_projective([149*x^2 + 39*x*y + y^2,
+        ....:                                 -8*x^2 + 137*x*y + 33*y^2])
         sage: from sage.dynamics.arithmetic_dynamics.endPN_minimal_model import Min
         sage: Min(f, 3, -27000000, matrix(QQ,[[1, 0],[0, 1]]))
         [
@@ -490,11 +489,11 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
 
     - ``vp`` -- a minimal model of a dynamical system on the projective line
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the ``PGL_2`` transformation to conjugate ``vp``
       to the calculated minimal model
 
-    - ``D`` -- a list of primes, in case one only wants to check minimality
+    - ``D`` -- list of primes, in case one only wants to check minimality
       at those specific primes
 
     OUTPUT:
@@ -591,7 +590,7 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
     for M in all_M:
         new_map = mp.conjugate(M)
         new_map.normalize_coordinates()
-        if not [new_map, M] in all_maps:
+        if [new_map, M] not in all_maps:
             all_maps.append([new_map, M])
 
     #Split into conjugacy classes
@@ -636,11 +635,11 @@ def HS_minimal(f, return_transformation=False, D=None):
 
     - ``f`` -- dynamical system on the projective line with minimal resultant
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the `PGL_2` transformation to conjugate
       this map to the calculated models
 
-    - ``D`` -- a list of primes, in case one only wants to check minimality
+    - ``D`` -- list of primes, in case one only wants to check minimality
       at those specific primes
 
     OUTPUT:
@@ -732,7 +731,7 @@ def HS_all_minimal_p(p, f, m=None, return_transformation=False):
 
     - ``m`` -- (optional) `2 \times 2` matrix associated with ``f``
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the ``PGL_2`` transformation to conjugate ``vp``
       to the calculated minimal model
 
@@ -827,11 +826,11 @@ def HS_all_minimal(f, return_transformation=False, D=None):
 
     - ``f`` -- dynamical system on the projective line with minimal resultant
 
-    - ``return_transformation`` -- (default: ``False``) boolean; this
+    - ``return_transformation`` -- boolean (default: ``False``); this
       signals a return of the ``PGL_2`` transformation to conjugate ``vp``
       to the calculated minimal model
 
-    - ``D`` -- a list of primes, in case one only wants to check minimality
+    - ``D`` -- list of primes, in case one only wants to check minimality
       at those specific primes
 
     OUTPUT:
@@ -913,7 +912,7 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
 
     This defines the maximum possible distance from `j` to the `z_0` covariant
     of the associated binary form `F` in the hyperbolic 3-space
-    for which the map `f`` could have smaller coefficients.
+    for which the map `f` could have smaller coefficients.
 
     INPUT:
 
@@ -922,12 +921,12 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
 
     - ``f`` -- a dynamical system on `P^1`
 
-    - ``m`` - positive integer. the period used to create ``F``
+    - ``m`` -- positive integer. the period used to create ``F``
 
     - ``dynatomic`` -- boolean. whether ``F`` is the periodic points or the
       formal periodic points of period ``m`` for ``f``
 
-    - ``prec``-- positive integer. precision to use in CC
+    - ``prec`` -- positive integer. precision to use in CC
 
     - ``emb`` -- embedding into CC
 
@@ -941,6 +940,8 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
         sage: get_bound_dynamical(f.dynatomic_polynomial(1), f)
         35.5546923182219
     """
+    from sage.symbolic.constants import e
+
     def coshdelta(z):
         #The cosh of the hyperbolic distance from z = t+uj to j
         return (z.norm() + 1)/(2*z.imag())
@@ -981,7 +982,7 @@ def get_bound_dynamical(F, f, m=1, dynatomic=True, prec=53, emb=None):
 
 def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorithm='HS', check_minimal=True):
     r"""
-    Determine the poly with smallest coefficients in `SL(2,\ZZ)` orbit of ``F``
+    Determine the poly with smallest coefficients in `SL(2,\ZZ)` orbit of ``F``.
 
     Smallest is in the sense of global height.
     The method is the algorithm in Hutz-Stoll [HS2018]_.
@@ -998,10 +999,10 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
     - ``dynatomic`` -- boolean. whether ``F`` is the periodic points or the
       formal periodic points of period ``m`` for ``f``
 
-    - ``start_n`` - positive integer. the period used to start trying to
+    - ``start_n`` -- positive integer. the period used to start trying to
       create associate binary form ``F``
 
-    - ``prec``-- positive integer. precision to use in CC
+    - ``prec`` -- positive integer. precision to use in CC
 
     - ``emb`` -- embedding into CC
 
@@ -1010,7 +1011,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
       properties of the map are utilized to choose how to compute minimal
       orbit representatives
 
-    - ``check_minimal`` -- (default: True), boolean, whether to check
+    - ``check_minimal`` -- (default: ``True``), boolean, whether to check
       if this map is a minimal model
 
     OUTPUT: pair [dynamical system, matrix]
@@ -1020,7 +1021,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         sage: from sage.dynamics.arithmetic_dynamics.endPN_minimal_model import smallest_dynamical
         sage: P.<x,y> = ProjectiveSpace(QQ,1)
         sage: f = DynamicalSystem([50*x^2 + 795*x*y + 2120*y^2, 265*x^2 + 106*y^2])
-        sage: smallest_dynamical(f)  #long time
+        sage: smallest_dynamical(f)  # long time
         [
         Dynamical System of Projective Space of dimension 1 over Rational Field
           Defn: Defined on coordinates by sending (x : y) to
@@ -1030,6 +1031,8 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         [0 1]
         ]
     """
+    from sage.symbolic.constants import e
+
     def insert_item(pts, item, index):
         # binary insertion to maintain list of points left to consider
         N = len(pts)
@@ -1092,9 +1095,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         red_g = f.conjugate(M*MG)
         if G != pts_poly:
             R2 = get_bound_dynamical(G, red_g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
-            if R2 < R:
-                # use the better bound
-                R = R2
+            R = min(R2, R)
         red_g.normalize_coordinates()
         if red_g.global_height(prec=prec) == 0:
             return [red_g, M*MG]
@@ -1106,7 +1107,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
         rep = 2*CC.gen(0)
         from math import isnan
         if isnan(v0.abs()):
-            raise ValueError("invalid covariant: %s"%v0)
+            raise ValueError("invalid covariant: %s" % v0)
 
         # get orbit
         S = matrix(ZZ,2,2,[0,-1,1,0])
@@ -1131,8 +1132,7 @@ def smallest_dynamical(f, dynatomic=True, start_n=1, prec=53, emb=None, algorith
                 if new_size == 1:  # early exit
                     return [current_min[1], current_min[4]]
                 new_R = get_bound_dynamical(G, g, m=n, dynatomic=dynatomic, prec=prec, emb=emb)
-                if new_R < R:
-                    R = new_R
+                R = min(new_R, R)
 
             # add new points to check
             if label != 1 and min((rep+1).norm(), (rep-1).norm()) >= 1: # don't undo S

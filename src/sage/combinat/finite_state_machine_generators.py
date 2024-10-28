@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 Common Automata and Transducers (Finite State Machines Generators)
 
@@ -39,19 +39,19 @@ of :ref:`examples <finite_state_machine_examples>`.
     :widths: 30, 70
     :delim: |
 
-    :meth:`~TransducerGenerators.Identity` | Returns a transducer realizing the identity map.
-    :meth:`~TransducerGenerators.abs` | Returns a transducer realizing absolute value.
-    :meth:`~TransducerGenerators.map` | Returns a transducer realizing a function.
-    :meth:`~TransducerGenerators.operator` | Returns a transducer realizing a binary operation.
-    :meth:`~TransducerGenerators.all` | Returns a transducer realizing logical ``and``.
-    :meth:`~TransducerGenerators.any` | Returns a transducer realizing logical ``or``.
-    :meth:`~TransducerGenerators.add` | Returns a transducer realizing addition.
-    :meth:`~TransducerGenerators.sub` | Returns a transducer realizing subtraction.
-    :meth:`~TransducerGenerators.CountSubblockOccurrences` | Returns a transducer counting the occurrences of a subblock.
-    :meth:`~TransducerGenerators.Wait` | Returns a transducer writing ``False`` until first (or k-th) true input is read.
-    :meth:`~TransducerGenerators.weight` | Returns a transducer realizing the Hamming weight.
-    :meth:`~TransducerGenerators.GrayCode` | Returns a transducer realizing binary Gray code.
-    :meth:`~TransducerGenerators.Recursion` | Returns a transducer defined by recursions.
+    :meth:`~TransducerGenerators.Identity` | Return a transducer realizing the identity map.
+    :meth:`~TransducerGenerators.abs` | Return a transducer realizing absolute value.
+    :meth:`~TransducerGenerators.map` | Return a transducer realizing a function.
+    :meth:`~TransducerGenerators.operator` | Return a transducer realizing a binary operation.
+    :meth:`~TransducerGenerators.all` | Return a transducer realizing logical ``and``.
+    :meth:`~TransducerGenerators.any` | Return a transducer realizing logical ``or``.
+    :meth:`~TransducerGenerators.add` | Return a transducer realizing addition.
+    :meth:`~TransducerGenerators.sub` | Return a transducer realizing subtraction.
+    :meth:`~TransducerGenerators.CountSubblockOccurrences` | Return a transducer counting the occurrences of a subblock.
+    :meth:`~TransducerGenerators.Wait` | Return a transducer writing ``False`` until first (or `k`-th) true input is read.
+    :meth:`~TransducerGenerators.weight` | Return a transducer realizing the Hamming weight.
+    :meth:`~TransducerGenerators.GrayCode` | Return a transducer realizing binary Gray code.
+    :meth:`~TransducerGenerators.Recursion` | Return a transducer defined by recursions.
 
 AUTHORS:
 
@@ -60,13 +60,13 @@ AUTHORS:
 - Daniel Krenn (2014-04-15): improved common docstring during review
 - Clemens Heuberger, Daniel Krenn, Sara Kropf (2014-04-16--2014-05-02):
   A couple of improvements. Details see
-  :trac:`16141`, :trac:`16142`, :trac:`16143`, :trac:`16186`.
+  :issue:`16141`, :issue:`16142`, :issue:`16143`, :issue:`16186`.
 - Sara Kropf (2014-04-29): weight transducer
 - Clemens Heuberger, Daniel Krenn (2014-07-18): transducers Wait, all,
   any
 - Clemens Heuberger (2014-08-10): transducer Recursion
 - Clemens Heuberger (2015-07-31): automaton word
-- Daniel Krenn (2015-09-14): cleanup :trac:`18227`
+- Daniel Krenn (2015-09-14): cleanup :issue:`18227`
 
 ACKNOWLEDGEMENT:
 
@@ -75,7 +75,6 @@ ACKNOWLEDGEMENT:
 
 Functions and methods
 ---------------------
-
 """
 # ****************************************************************************
 #       Copyright (C) 2014--2015 Clemens Heuberger <clemens.heuberger@aau.at>
@@ -97,7 +96,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-class AutomatonGenerators():
+class AutomatonGenerators:
     r"""
     A collection of constructors for several common automata.
 
@@ -121,11 +120,9 @@ class AutomatonGenerators():
 
         INPUT:
 
-        - ``input_alphabet`` -- a list, the input alphabet
+        - ``input_alphabet`` -- list; the input alphabet
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -156,11 +153,9 @@ class AutomatonGenerators():
 
         INPUT:
 
-        - ``input_alphabet`` -- a list, the input alphabet
+        - ``input_alphabet`` -- list; the input alphabet
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -198,12 +193,9 @@ class AutomatonGenerators():
 
         INPUT:
 
-        - ``input_alphabet`` -- (default: ``None``) an iterable
-          or ``None``.
+        - ``input_alphabet`` -- iterable or ``None`` (default: ``None``)
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -229,14 +221,12 @@ class AutomatonGenerators():
 
         INPUT:
 
-        - ``word`` -- an iterable.
+        - ``word`` -- an iterable
 
-        - ``input_alphabet`` -- a list or ``None``. If ``None``,
-          then the letters occurring in the word are used.
+        - ``input_alphabet`` -- list or ``None``; if ``None``,
+          then the letters occurring in the word are used
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -269,8 +259,8 @@ class AutomatonGenerators():
 
         TESTS::
 
-            sage: from sage.rings.integer import is_Integer
-            sage: all(is_Integer(s.label()) for s in A.states())
+            sage: from sage.rings.integer import Integer
+            sage: all(isinstance(s.label(), Integer) for s in A.states())
             True
         """
         letters = list(word)
@@ -289,15 +279,13 @@ class AutomatonGenerators():
 
         INPUT:
 
-        - ``word`` -- a list (or other iterable) of letters, the
-          word we are looking for.
+        - ``word`` -- list (or other iterable) of letters; the
+          word we are looking for
 
-        - ``input_alphabet`` -- a list or other iterable, the input
-          alphabet.
+        - ``input_alphabet`` -- list or other iterable; the input
+          alphabet
 
-        OUTPUT:
-
-        An :class:`~Automaton`.
+        OUTPUT: an :class:`~Automaton`
 
         EXAMPLES::
 
@@ -346,7 +334,7 @@ class AutomatonGenerators():
             final_states=[word])
 
 
-class TransducerGenerators():
+class TransducerGenerators:
     r"""
     A collection of constructors for several common transducers.
 
@@ -371,16 +359,14 @@ class TransducerGenerators():
 
     def Identity(self, input_alphabet):
         """
-        Returns the identity transducer realizing the identity map.
+        Return the identity transducer realizing the identity map.
 
         INPUT:
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
-        OUTPUT:
-
-        A transducer mapping each word over ``input_alphabet`` to
-        itself.
+        OUTPUT: a transducer mapping each word over ``input_alphabet`` to
+        itself
 
         EXAMPLES::
 
@@ -398,7 +384,6 @@ class TransducerGenerators():
             [0, 1]
             sage: T([0, 1, 0, 1, 1])
             [0, 1, 0, 1, 1]
-
         """
         return Transducer(
             [(0, 0, d, d) for d in input_alphabet],
@@ -409,14 +394,14 @@ class TransducerGenerators():
 
     def CountSubblockOccurrences(self, block, input_alphabet):
         r"""
-        Returns a transducer counting the number of (possibly
+        Return a transducer counting the number of (possibly
         overlapping) occurrences of a block in the input.
 
         INPUT:
 
-        - ``block`` -- a list (or other iterable) of letters.
+        - ``block`` -- list (or other iterable) of letters
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -534,10 +519,10 @@ class TransducerGenerators():
 
         INPUT:
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
-        - ``threshold`` -- a positive integer specifying how many
-          occurrences of ``True`` inputs are waited for.
+        - ``threshold`` -- positive integer specifying how many
+          occurrences of ``True`` inputs are waited for
 
         OUTPUT:
 
@@ -577,9 +562,9 @@ class TransducerGenerators():
 
         INPUT:
 
-        - ``f`` -- function to realize.
+        - ``f`` -- function to realize
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -617,19 +602,19 @@ class TransducerGenerators():
 
     def operator(self, operator, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes an operation
+        Return a transducer which realizes an operation
         on tuples over the given input alphabet.
 
         INPUT:
 
-        - ``operator`` -- operator to realize. It is a function which
+        - ``operator`` -- operator to realize; it is a function which
           takes ``number_of_operands`` input arguments (each out of
-          ``input_alphabet``).
+          ``input_alphabet``)
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) it specifies the number
-          of input arguments the operator takes.
+          of input arguments the operator takes
 
         OUTPUT:
 
@@ -643,7 +628,7 @@ class TransducerGenerators():
         EXAMPLES:
 
         The following binary transducer realizes component-wise
-        addition (this transducer is also available as :meth:`.add`)::
+        addition (this transducer is also available as :meth:`add`)::
 
             sage: import operator
             sage: T = transducers.operator(operator.add, [0, 1])
@@ -699,15 +684,15 @@ class TransducerGenerators():
 
     def all(self, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes logical ``and`` over the given
+        Return a transducer which realizes logical ``and`` over the given
         input alphabet.
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) specifies the number
-          of input arguments for the ``and`` operation.
+          of input arguments for the ``and`` operation
 
         OUTPUT:
 
@@ -750,15 +735,15 @@ class TransducerGenerators():
 
     def any(self, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes logical ``or`` over the given
+        Return a transducer which realizes logical ``or`` over the given
         input alphabet.
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) specifies the number
-          of input arguments for the ``or`` operation.
+          of input arguments for the ``or`` operation
 
         OUTPUT:
 
@@ -801,15 +786,15 @@ class TransducerGenerators():
 
     def add(self, input_alphabet, number_of_operands=2):
         r"""
-        Returns a transducer which realizes addition on pairs over the
+        Return a transducer which realizes addition on pairs over the
         given input alphabet.
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``number_of_operands`` -- (default: `2`) it specifies the number
-          of input arguments the operator takes.
+          of input arguments the operator takes
 
         OUTPUT:
 
@@ -855,12 +840,12 @@ class TransducerGenerators():
 
     def sub(self, input_alphabet):
         r"""
-        Returns a transducer which realizes subtraction on pairs over
+        Return a transducer which realizes subtraction on pairs over
         the given input alphabet.
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -894,12 +879,12 @@ class TransducerGenerators():
 
     def weight(self, input_alphabet, zero=0):
         r"""
-        Returns a transducer which realizes the Hamming weight of the input
+        Return a transducer which realizes the Hamming weight of the input
         over the given input alphabet.
 
         INPUT:
 
-        - ``input_alphabet`` -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         - ``zero`` -- the zero symbol in the alphabet used
 
@@ -907,7 +892,7 @@ class TransducerGenerators():
 
         A transducer mapping `i_0\ldots i_k` to `(i_0\neq 0)\ldots(i_k\neq 0)`.
 
-        The Hamming weight is defined as the number of non-zero digits in the
+        The Hamming weight is defined as the number of nonzero digits in the
         input sequence over the alphabet ``input_alphabet`` (see
         :wikipedia:`Hamming_weight`). The output sequence of the transducer is
         a unary encoding of the Hamming weight. Thus the sum of the output
@@ -960,12 +945,12 @@ class TransducerGenerators():
 
     def abs(self, input_alphabet):
         r"""
-        Returns a transducer which realizes the letter-wise
+        Return a transducer which realizes the letter-wise
         absolute value of an input word over the given input alphabet.
 
         INPUT:
 
-        - ``input_alphabet``  -- a list or other iterable.
+        - ``input_alphabet`` -- list or other iterable
 
         OUTPUT:
 
@@ -988,22 +973,15 @@ class TransducerGenerators():
             [0]
             sage: T([-1, -1, 0, 1])
             [1, 1, 0, 1]
-
         """
         return self.map(abs, input_alphabet)
 
     def GrayCode(self):
         """
-        Returns a transducer converting the standard binary
+        Return a transducer converting the standard binary
         expansion to Gray code.
 
-        INPUT:
-
-        Nothing.
-
-        OUTPUT:
-
-        A transducer.
+        OUTPUT: a transducer
 
         Cf. the :wikipedia:`Gray_code` for a description of the Gray code.
 
@@ -1053,24 +1031,24 @@ class TransducerGenerators():
 
         INPUT:
 
-        - ``equation`` -- An equation of the form
+        - ``equation`` -- an equation of the form
 
           - ``f(base^K * n + r) == f(base^k * n + s) + t`` for some
             integers ``0 <= k < K``, ``r`` and some ``t``---valid for
             all ``n`` such that the arguments on both sides are
-            non-negative---
+            nonnegative---
 
           or the form
 
           - ``f(r) == t`` for some integer ``r`` and some ``t``.
 
-        - ``base`` -- see :meth:`~Recursion`.
+        - ``base`` -- see :meth:`~Recursion`
 
-        - ``function`` -- see :meth:`~Recursion`.
+        - ``function`` -- see :meth:`~Recursion`
 
-        - ``var`` -- see :meth:`~Recursion`.
+        - ``var`` -- see :meth:`~Recursion`
 
-        - ``output_rings`` -- see :meth:`~Recursion`.
+        - ``output_rings`` -- see :meth:`~Recursion`
 
         OUTPUT:
 
@@ -1079,15 +1057,16 @@ class TransducerGenerators():
 
         EXAMPLES::
 
-            sage: var('n')                                                              # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: var('n')
             n
-            sage: function('f')                                                         # optional - sage.symbolic
+            sage: function('f')
             f
-            sage: transducers._parse_recursion_equation_(                               # optional - sage.symbolic
+            sage: transducers._parse_recursion_equation_(
             ....:     f(8*n + 7) == f(2*n + 3) + 5,
             ....:     2, f, n)
             RecursionRule(K=3, r=7, k=1, s=3, t=[5])
-            sage: transducers._parse_recursion_equation_(                               # optional - sage.symbolic
+            sage: transducers._parse_recursion_equation_(
             ....:     f(42) == 5,
             ....:     2, f, n)
             {42: [5]}
@@ -1096,14 +1075,14 @@ class TransducerGenerators():
 
             The following tests check that the equations are well-formed::
 
-                sage: transducers._parse_recursion_equation_(f(4*n + 1), 2, f, n)       # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(4*n + 1), 2, f, n)       # needs sage.symbolic
                 Traceback (most recent call last):
                 ...
                 ValueError: f(4*n + 1) is not an equation with ==.
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(n) + 1 == f(2*n),        # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(n) + 1 == f(2*n),        # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1111,7 +1090,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(2*n, 5) == 3,            # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(2*n, 5) == 3,            # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1119,7 +1098,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(1/n) == f(n) + 3,        # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(1/n) == f(n) + 3,        # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1127,7 +1106,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(n^2 + 5) == 3,           # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(n^2 + 5) == 3,           # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1135,7 +1114,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(3*n + 5) == f(n) + 7,    # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(3*n + 5) == f(n) + 7,    # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1143,7 +1122,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(n + 5) == f(n) + 7,      # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(n + 5) == f(n) + 7,      # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1151,7 +1130,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(                           # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(                           # needs sage.symbolic
                 ....:     f(2*n + 1) == f(n + 1) + f(n) + 2,
                 ....:     2, f, n)
                 Traceback (most recent call last):
@@ -1161,7 +1140,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(2*n + 1) == sin(n) + 2,  # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(2*n + 1) == sin(n) + 2,  # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1170,7 +1149,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(                           # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(                           # needs sage.symbolic
                 ....:     f(2*n + 1) == f(n) + n + 2,
                 ....:     2, f, n)
                 Traceback (most recent call last):
@@ -1179,7 +1158,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(2*n + 1) == sin(n),      # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(2*n + 1) == sin(n),      # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1187,7 +1166,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(2*n + 1) == f(n, 2),     # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(2*n + 1) == f(n, 2),     # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1195,7 +1174,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(2*n + 1) == f(1/n),      # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(2*n + 1) == f(1/n),      # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1203,7 +1182,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(2*n + 1) == f(n^2 + 5),  # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(2*n + 1) == f(n^2 + 5),  # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1211,7 +1190,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(2*n + 1) == f(3*n + 5),  # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(2*n + 1) == f(3*n + 5),  # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1219,7 +1198,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(                           # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(                           # needs sage.symbolic
                 ....:     f(2*n + 1) == f((1/2)*n + 5),
                 ....:     QQ(2), f, n)
                 Traceback (most recent call last):
@@ -1228,7 +1207,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers._parse_recursion_equation_(f(2*n + 1) == f(2*n + 5),  # optional - sage.symbolic
+                sage: transducers._parse_recursion_equation_(f(2*n + 1) == f(2*n + 5),  # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1373,7 +1352,7 @@ class TransducerGenerators():
           - ``f(base^K * n + r) == f(base^k * n + s) + t`` for some
             integers ``0 <= k < K``, ``r`` and some ``t``---valid for
             all ``n`` such that the arguments on both sides are
-            non-negative---
+            nonnegative---
 
           or the form
 
@@ -1384,12 +1363,12 @@ class TransducerGenerators():
           ``r``, ``k``, ``s``, ``t`` as above or a tuple ``(r, t)``.
           Note that ``t`` *must* be a list in this case.
 
-        - ``base`` -- base of the digit expansion.
+        - ``base`` -- base of the digit expansion
 
         - ``function`` -- symbolic function ``f`` occurring in the
-          recursions.
+          recursions
 
-        - ``var`` -- symbolic variable.
+        - ``var`` -- symbolic variable
 
         - ``input_alphabet`` -- (default: ``None``) a list of digits
           to be used as the input alphabet. If ``None`` and the base
@@ -1405,9 +1384,9 @@ class TransducerGenerators():
 
         - ``is_zero`` -- (default: ``None``) a callable. The recursion
           relations are only well-posed if there is no cycle with
-          non-zero output and input consisting of zeros. This parameter
+          nonzero output and input consisting of zeros. This parameter
           is used to determine whether the output of such a cycle is
-          non-zero. By default, the output must evaluate to ``False`` as
+          nonzero. By default, the output must evaluate to ``False`` as
           a boolean.
 
         - ``output_rings`` -- (default: ``[ZZ, QQ]``) a list of
@@ -1416,9 +1395,7 @@ class TransducerGenerators():
           contained in any ring, they remain in whatever ring they are
           after parsing the recursions, typically the symbolic ring.
 
-        OUTPUT:
-
-        A transducer ``T``.
+        OUTPUT: a transducer ``T``
 
         The transducer is constructed such that ``T(expansion) == f(n)``
         if ``expansion`` is the digit expansion of ``n`` to the base
@@ -1434,17 +1411,18 @@ class TransducerGenerators():
         -   The following example computes the Hamming weight of the
             ternary expansion of integers. ::
 
-                sage: function('f')                                                     # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: function('f')
                 f
-                sage: var('n')                                                          # optional - sage.symbolic
+                sage: var('n')
                 n
-                sage: T = transducers.Recursion([                                       # optional - sage.symbolic
+                sage: T = transducers.Recursion([
                 ....:     f(3*n + 1) == f(n) + 1,
                 ....:     f(3*n + 2) == f(n) + 1,
                 ....:     f(3*n) == f(n),
                 ....:     f(0) == 0],
                 ....:     3, f, n)
-                sage: T.transitions()                                                   # optional - sage.symbolic
+                sage: T.transitions()
                 [Transition from (0, 0) to (0, 0): 0|-,
                  Transition from (0, 0) to (0, 0): 1|1,
                  Transition from (0, 0) to (0, 0): 2|1]
@@ -1452,13 +1430,14 @@ class TransducerGenerators():
             To illustrate what this transducer does, we consider the
             example of `n=601`::
 
-                sage: ternary_expansion = 601.digits(base=3)                            # optional - sage.symbolic
-                sage: ternary_expansion                                                 # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: ternary_expansion = 601.digits(base=3)
+                sage: ternary_expansion
                 [1, 2, 0, 1, 1, 2]
-                sage: weight_sequence = T(ternary_expansion)                            # optional - sage.symbolic
-                sage: weight_sequence                                                   # optional - sage.symbolic
+                sage: weight_sequence = T(ternary_expansion)
+                sage: weight_sequence
                 [1, 1, 1, 1, 1]
-                sage: sum(weight_sequence)                                              # optional - sage.symbolic
+                sage: sum(weight_sequence)
                 5
 
             Note that the digit zero does not show up in the output because
@@ -1468,24 +1447,25 @@ class TransducerGenerators():
         -   The following example computes the Hamming weight of the
             non-adjacent form, cf. the :wikipedia:`Non-adjacent_form`. ::
 
-                sage: function('f')                                                     # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: function('f')
                 f
-                sage: var('n')                                                          # optional - sage.symbolic
+                sage: var('n')
                 n
-                sage: T = transducers.Recursion([                                       # optional - sage.symbolic
+                sage: T = transducers.Recursion([
                 ....:     f(4*n + 1) == f(n) + 1,
                 ....:     f(4*n - 1) == f(n) + 1,
                 ....:     f(2*n) == f(n),
                 ....:     f(0) == 0],
                 ....:     2, f, n)
-                sage: T.transitions()                                                   # optional - sage.symbolic
+                sage: T.transitions()
                 [Transition from (0, 0) to (0, 0): 0|-,
                  Transition from (0, 0) to (1, 1): 1|-,
                  Transition from (1, 1) to (0, 0): 0|1,
                  Transition from (1, 1) to (1, 0): 1|1,
                  Transition from (1, 0) to (1, 1): 0|-,
                  Transition from (1, 0) to (1, 0): 1|-]
-                sage: [(s.label(), s.final_word_out)                                    # optional - sage.symbolic
+                sage: [(s.label(), s.final_word_out)
                 ....:  for s in T.iter_final_states()]
                 [((0, 0), []),
                  ((1, 1), [1]),
@@ -1507,12 +1487,12 @@ class TransducerGenerators():
                 sage: binary_expansion = 29.digits(base=2)
                 sage: binary_expansion
                 [1, 0, 1, 1, 1]
-                sage: T(binary_expansion)                                               # optional - sage.symbolic
+                sage: T(binary_expansion)                                               # needs sage.symbolic
                 [1, 1, 1]
-                sage: sum(T(binary_expansion))                                          # optional - sage.symbolic
+                sage: sum(T(binary_expansion))                                          # needs sage.symbolic
                 3
 
-            Indeed, the given non-adjacent form has three non-zero
+            Indeed, the given non-adjacent form has three nonzero
             digits.
 
         -   The following example computes the non-adjacent form from the
@@ -1535,11 +1515,12 @@ class TransducerGenerators():
             the point of view of this method---is a contradicting recursion.
             We override this by the parameter ``is_zero``. ::
 
-                sage: var('n')                                                          # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: var('n')
                 n
-                sage: function('f w')                                                   # optional - sage.symbolic
+                sage: function('f w')
                 (f, w)
-                sage: T = transducers.Recursion([                                       # optional - sage.symbolic
+                sage: T = transducers.Recursion([
                 ....:      f(2*n) == f(n) + w(0),
                 ....:      f(4*n + 1) == f(n) + w(1, 0),
                 ....:      f(4*n - 1) == f(n) + w(-1, 0),
@@ -1547,14 +1528,14 @@ class TransducerGenerators():
                 ....:      2, f, n,
                 ....:      word_function=w,
                 ....:      is_zero=lambda x: sum(x).is_zero())
-                sage: T.transitions()                                                   # optional - sage.symbolic
+                sage: T.transitions()
                 [Transition from (0, 0) to (0, 0): 0|0,
                  Transition from (0, 0) to (1, 1): 1|-,
                  Transition from (1, 1) to (0, 0): 0|1,0,
                  Transition from (1, 1) to (1, 0): 1|-1,0,
                  Transition from (1, 0) to (1, 1): 0|-,
                  Transition from (1, 0) to (1, 0): 1|0]
-                sage: for s in T.iter_states():                                         # optional - sage.symbolic
+                sage: for s in T.iter_states():
                 ....:     print("{} {}".format(s, s.final_word_out))
                 (0, 0) []
                 (1, 1) [1, 0]
@@ -1562,7 +1543,7 @@ class TransducerGenerators():
 
             We again consider the example of `n=29`::
 
-                sage: T(29.digits(base=2))                                              # optional - sage.symbolic
+                sage: T(29.digits(base=2))                                              # needs sage.symbolic
                 [1, 0, -1, 0, 0, 1, 0]
 
             The same transducer can also be entered bypassing the
@@ -1576,22 +1557,23 @@ class TransducerGenerators():
                 ....:       (0, [])],
                 ....:       2,
                 ....:       is_zero=lambda x: sum(x).is_zero())
-                sage: TR == T                                                           # optional - sage.symbolic
+                sage: TR == T                                                           # needs sage.symbolic
                 True
 
         -   Here is an artificial example where some of the `s` are
             negative::
 
-                sage: function('f')                                                     # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: function('f')
                 f
-                sage: var('n')                                                          # optional - sage.symbolic
+                sage: var('n')
                 n
-                sage: T = transducers.Recursion([                                       # optional - sage.symbolic
+                sage: T = transducers.Recursion([
                 ....:     f(2*n + 1) == f(n-1) + 1,
                 ....:     f(2*n) == f(n),
                 ....:     f(1) == 1,
                 ....:     f(0) == 0], 2, f, n)
-                sage: T.transitions()                                                   # optional - sage.symbolic
+                sage: T.transitions()
                 [Transition from (0, 0) to (0, 0): 0|-,
                  Transition from (0, 0) to (1, 1): 1|-,
                  Transition from (1, 1) to (-1, 1): 0|1,
@@ -1602,7 +1584,7 @@ class TransducerGenerators():
                  Transition from (-1, 2) to (0, 0): 1|1,
                  Transition from (1, 2) to (-1, 2): 0|1,
                  Transition from (1, 2) to (1, 2): 1|1]
-                sage: [(s.label(), s.final_word_out)                                    # optional - sage.symbolic
+                sage: [(s.label(), s.final_word_out)
                 ....:  for s in T.iter_final_states()]
                 [((0, 0), []),
                  ((1, 1), [1]),
@@ -1613,7 +1595,8 @@ class TransducerGenerators():
         -   Abelian complexity of the paperfolding sequence
             (cf. [HKP2015]_, Example 2.8)::
 
-                sage: T = transducers.Recursion([                                       # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: T = transducers.Recursion([
                 ....:     f(4*n) == f(2*n),
                 ....:     f(4*n+2) == f(2*n+1)+1,
                 ....:     f(16*n+1) == f(8*n+1),
@@ -1623,7 +1606,7 @@ class TransducerGenerators():
                 ....:     f(1) == 2, f(0) == 0]
                 ....:     + [f(16*n+jj) == f(2*n+1)+2 for jj in [3,7,9,13]],
                 ....:     2, f, n)
-                sage: T.transitions()                                                   # optional - sage.symbolic
+                sage: T.transitions()
                 [Transition from (0, 0) to (0, 1): 0|-,
                  Transition from (0, 0) to (1, 1): 1|-,
                  Transition from (0, 1) to (0, 1): 0|-,
@@ -1644,7 +1627,7 @@ class TransducerGenerators():
                  Transition from (7, 3) to (2, 1): 1|1,
                  Transition from (2, 1) to (1, 1): 0|1,
                  Transition from (2, 1) to (2, 1): 1|-]
-                sage: for s in T.iter_states():                                         # optional - sage.symbolic
+                sage: for s in T.iter_states():
                 ....:     print("{} {}".format(s, s.final_word_out))
                 (0, 0) []
                 (0, 1) []
@@ -1656,52 +1639,53 @@ class TransducerGenerators():
                 (3, 3) [2, 2]
                 (7, 3) [2, 2]
                 (2, 1) [1, 2]
-                sage: list(sum(T(n.bits())) for n in srange(1, 21))                     # optional - sage.symbolic
+                sage: list(sum(T(n.bits())) for n in srange(1, 21))
                 [2, 3, 4, 3, 4, 5, 4, 3, 4, 5, 6, 5, 4, 5, 4, 3, 4, 5, 6, 5]
 
         -   We now demonstrate the use of the ``output_rings``
             parameter.  If no ``output_rings`` are specified, the
             output labels are converted into ``ZZ``::
 
-                sage: function('f')                                                     # optional - sage.symbolic
+                sage: # needs sage.symbolic
+                sage: function('f')
                 f
-                sage: var('n')                                                          # optional - sage.symbolic
+                sage: var('n')
                 n
-                sage: T = transducers.Recursion([                                       # optional - sage.symbolic
+                sage: T = transducers.Recursion([
                 ....:     f(2*n + 1) == f(n) + 1,
                 ....:     f(2*n) == f(n),
                 ....:     f(0) == 2],
                 ....:     2, f, n)
-                sage: for t in T.transitions():                                         # optional - sage.symbolic
+                sage: for t in T.transitions():
                 ....:     print([x.parent() for x in t.word_out])
                 []
                 [Integer Ring]
-                sage: [x.parent() for x in T.states()[0].final_word_out]                # optional - sage.symbolic
+                sage: [x.parent() for x in T.states()[0].final_word_out]
                 [Integer Ring]
 
             In contrast, if ``output_rings`` is set to the empty list, the
             results are not converted::
 
-                sage: T = transducers.Recursion([                                       # optional - sage.symbolic
+                sage: T = transducers.Recursion([                                       # needs sage.symbolic
                 ....:     f(2*n + 1) == f(n) + 1,
                 ....:     f(2*n) == f(n),
                 ....:     f(0) == 2],
                 ....:     2, f, n, output_rings=[])
-                sage: for t in T.transitions():                                         # optional - sage.symbolic
+                sage: for t in T.transitions():                                         # needs sage.symbolic
                 ....:     print([x.parent() for x in t.word_out])
                 []
                 [Symbolic Ring]
-                sage: [x.parent() for x in T.states()[0].final_word_out]                # optional - sage.symbolic
+                sage: [x.parent() for x in T.states()[0].final_word_out]                # needs sage.symbolic
                 [Symbolic Ring]
 
             Finally, we use a somewhat questionable conversion::
 
-                sage: T = transducers.Recursion([                                       # optional - sage.rings.finite_rings sage.symbolic
+                sage: T = transducers.Recursion([                                       # needs sage.rings.finite_rings sage.symbolic
                 ....:     f(2*n + 1) == f(n) + 1,
                 ....:     f(2*n) == f(n),
                 ....:     f(0) == 0],
                 ....:     2, f, n, output_rings=[GF(5)])
-                sage: for t in T.transitions():                                         # optional - sage.rings.finite_rings sage.symbolic
+                sage: for t in T.transitions():                                         # needs sage.rings.finite_rings sage.symbolic
                 ....:     print([x.parent() for x in t.word_out])
                 []
                 [Finite Field of size 5]
@@ -1728,11 +1712,11 @@ class TransducerGenerators():
             The following tests fail due to missing or superfluous recursions
             or initial conditions. ::
 
-                sage: var('n')                                                          # optional - sage.symbolic
+                sage: var('n')                                                          # needs sage.symbolic
                 n
-                sage: function('f')                                                     # optional - sage.symbolic
+                sage: function('f')                                                     # needs sage.symbolic
                 f
-                sage: transducers.Recursion([f(2*n) == f(n)],                           # optional - sage.symbolic
+                sage: transducers.Recursion([f(2*n) == f(n)],                           # needs sage.symbolic
                 ....:     2, f, n)
                 Traceback (most recent call last):
                 ...
@@ -1741,7 +1725,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers.Recursion([f(2*n + 1) == f(n),                        # optional - sage.symbolic
+                sage: transducers.Recursion([f(2*n + 1) == f(n),                        # needs sage.symbolic
                 ....:                        f(4*n) == f(2*n) + 1,
                 ....:                        f(2*n) == f(n) + 1],
                 ....:                       2, f, n)
@@ -1751,7 +1735,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers.Recursion([f(2*n + 1) == f(n) + 1,                    # optional - sage.symbolic
+                sage: transducers.Recursion([f(2*n + 1) == f(n) + 1,                    # needs sage.symbolic
                 ....:                        f(2*n) == f(n),
                 ....:                        f(0) == 0,
                 ....:                        f(42) == 42], 2, f, n)
@@ -1761,7 +1745,7 @@ class TransducerGenerators():
 
             ::
 
-                sage: transducers.Recursion([f(2*n + 1) == f(n) + 1,                    # optional - sage.symbolic
+                sage: transducers.Recursion([f(2*n + 1) == f(n) + 1,                    # needs sage.symbolic
                 ....:                        f(2*n) == f(n - 2) + 4,
                 ....:                        f(0) == 0], 2, f, n)
                 Traceback (most recent call last):
@@ -1771,7 +1755,7 @@ class TransducerGenerators():
             Here is an example of a transducer with a conflicting rule
             (it cannot hold for `n = 0`)::
 
-                sage: T = transducers.Recursion([                                       # optional - sage.symbolic
+                sage: T = transducers.Recursion([                                       # needs sage.symbolic
                 ....:     f(2*n + 1) == f(n - 1),
                 ....:     f(2*n) == f(n) + 1,
                 ....:     f(1) == 1,
@@ -1849,13 +1833,13 @@ class TransducerGenerators():
 
             INPUT:
 
-            - ``carry`` -- integer.
+            - ``carry`` -- integer
 
-            - ``level`` -- integer.
+            - ``level`` -- integer
 
-            - ``force_nonnegative_target`` -- boolean. If ``True``, only
-              recursion transitions leading to a non-negative carry are
-              returned.
+            - ``force_nonnegative_target`` -- boolean; if ``True``, only
+              recursion transitions leading to a nonnegative carry are
+              returned
 
             OUTPUT:
 
@@ -1888,13 +1872,13 @@ class TransducerGenerators():
 
             INPUT:
 
-            - ``carry`` -- integer.
+            - ``carry`` -- integer
 
-            - ``level`` -- integer.
+            - ``level`` -- integer
 
-            - ``force_nonnegative_target`` -- boolean. If ``True``, only
-              recursion transitions leading to a non-negative carry are
-              allowed.
+            - ``force_nonnegative_target`` -- boolean; if ``True``, only
+              recursion transitions leading to a nonnegative carry are
+              allowed
 
             OUTPUT:
 
@@ -1921,7 +1905,7 @@ class TransducerGenerators():
             carry += input * base**level
             level += 1
             # We now may proceed along recursion transitions
-            # as long as the carries stay non-negative.
+            # as long as the carries stay nonnegative.
             ((carry, level), new_output) = recursion_transitions(
                 carry, level, True)
             return ((carry, level), output + new_output)
@@ -1936,7 +1920,7 @@ class TransducerGenerators():
 
             INPUT:
 
-            - ``n`` -- integer.
+            - ``n`` -- integer
 
             OUTPUT:
 

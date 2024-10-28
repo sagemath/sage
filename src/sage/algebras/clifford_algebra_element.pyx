@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 """
 Clifford algebra elements
 
@@ -89,7 +90,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
             sage: 0*x
             0
 
-        :trac:`34707`::
+        :issue:`34707`::
 
             sage: Q = QuadraticForm(QQ, 2, [0,5,0])
             sage: C.<p,q> = CliffordAlgebra(Q)
@@ -712,7 +713,7 @@ cdef class ExteriorAlgebraElement(CliffordAlgebraElement):
 
         INPUT:
 
-        - ``I`` -- a list of exterior algebra elements or an ideal
+        - ``I`` -- list of exterior algebra elements or an ideal
         - ``left`` -- boolean; if reduce as a left ideal (``True``)
           or right ideal (``False``), ignored if ``I`` is an ideal
 
@@ -944,6 +945,7 @@ cdef class CohomologyRAAGElement(CliffordAlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.groups
             sage: C4 = graphs.CycleGraph(4)
             sage: A = groups.misc.RightAngledArtin(C4)
             sage: H = A.cohomology()

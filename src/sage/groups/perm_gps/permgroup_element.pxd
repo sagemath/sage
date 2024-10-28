@@ -18,11 +18,12 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
     cpdef _set_permutation_group_element(self, PermutationGroupElement p, bint convert)
 
     cpdef _mul_(self, other)
+    cpdef PermutationGroupElement _transpose_left(self, j, k)
     cpdef PermutationGroupElement _generate_new(self, list new_list)
     cpdef PermutationGroupElement _generate_new_GAP(self, old)
     cpdef _gap_list(self)
     cpdef domain(self)
-    cdef public __custom_name
+    cdef public _SageObject__custom_name
     cpdef list _act_on_list_on_position(self, list x)
     cpdef ClonableIntArray _act_on_array_on_position(self, ClonableIntArray x)
     cpdef ETuple _act_on_etuple_on_position(self, ETuple x)

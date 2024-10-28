@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.number_field
+# sage.doctest: needs sage.rings.number_field
 """
 QQbar decorators
 
@@ -56,8 +56,9 @@ def handle_AA_and_QQbar(func):
             sage: return_base_ring(ideal(y,z))
             Rational Field
 
-        Check that :trac:`29468` is fixed::
+        Check that :issue:`29468` is fixed::
 
+            sage: # needs sage.libs.singular
             sage: J = QQbar['x,y'].ideal('x^2 - y')
             sage: type(J.groebner_basis())
             <class 'sage.rings.polynomial.multi_polynomial_sequence.PolynomialSequence_generic'>
@@ -85,13 +86,13 @@ def handle_AA_and_QQbar(func):
         from sage.misc.flatten import flatten
         from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.polynomial.multi_polynomial import MPolynomial
-        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, is_PolynomialSequence
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, PolynomialSequence_generic
         from sage.rings.ideal import Ideal, Ideal_generic
         from sage.rings.abc import AlgebraicField_common
 
         if not any(isinstance(a, (Polynomial, MPolynomial, Ideal_generic))
                    and isinstance(a.base_ring(), AlgebraicField_common)
-                   or is_PolynomialSequence(a)
+                   or isinstance(a, PolynomialSequence_generic)
                    and isinstance(a.ring().base_ring(), AlgebraicField_common) for a in args):
             return func(*args, **kwds)
 
@@ -122,7 +123,7 @@ def handle_AA_and_QQbar(func):
                 return item.map_coefficients(elem_dict.__getitem__, new_base_ring=numfield)
             elif isinstance(item, MPolynomial):
                 return item.map_coefficients(elem_dict.__getitem__, new_base_ring=numfield)
-            elif is_PolynomialSequence(item):
+            elif isinstance(item, PolynomialSequence_generic):
                 return PolynomialSequence(map(forward_map, item),
                                           immutable=item.is_immutable())
             elif isinstance(item, list):
@@ -143,7 +144,7 @@ def handle_AA_and_QQbar(func):
                 return item.map_coefficients(morphism)
             elif isinstance(item, MPolynomial):
                 return item.map_coefficients(morphism)
-            elif is_PolynomialSequence(item):
+            elif isinstance(item, PolynomialSequence_generic):
                 return PolynomialSequence(map(reverse_map, item),
                                           immutable=item.is_immutable())
             elif isinstance(item, list):

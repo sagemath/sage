@@ -1,15 +1,15 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari
 r"""
 Congruence subgroup `\Gamma_1(N)`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.misc.cachefunc import cached_method
@@ -23,12 +23,15 @@ from sage.modular.dirichlet import DirichletGroup
 
 def is_Gamma1(x):
     """
-    Return True if x is a congruence subgroup of type Gamma1.
+    Return ``True`` if x is a congruence subgroup of type Gamma1.
 
     EXAMPLES::
 
         sage: from sage.modular.arithgroup.all import is_Gamma1
         sage: is_Gamma1(SL2Z)
+        doctest:warning...
+        DeprecationWarning: The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         False
         sage: is_Gamma1(Gamma1(13))
         True
@@ -39,12 +42,15 @@ def is_Gamma1(x):
         sage: is_Gamma1(GammaH(12, [5]))
         False
     """
-    #from congroup_sl2z import is_SL2Z
-    #return (isinstance(x, Gamma1_class) or is_SL2Z(x))
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.")
+    # from congroup_sl2z import is_SL2Z
+    # return (isinstance(x, Gamma1_class) or is_SL2Z(x))
     return isinstance(x, Gamma1_class)
 
 
 _gamma1_cache = {}
+
 
 def Gamma1_constructor(N):
     r"""
@@ -110,18 +116,18 @@ class Gamma1_class(GammaH_class):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
             sage: Gamma1(133)._repr_()
             'Congruence Subgroup Gamma1(133)'
         """
-        return "Congruence Subgroup Gamma1(%s)"%self.level()
+        return "Congruence Subgroup Gamma1(%s)" % self.level()
 
     def __reduce__(self):
         """
-        Used for pickling self.
+        Used for pickling ``self``.
 
         EXAMPLES::
 
@@ -132,7 +138,7 @@ class Gamma1_class(GammaH_class):
 
     def _latex_(self):
         r"""
-        Return the \LaTeX representation of self.
+        Return the \LaTeX representation of ``self``.
 
         EXAMPLES::
 
@@ -141,11 +147,11 @@ class Gamma1_class(GammaH_class):
             sage: latex(Gamma1(3))
             \Gamma_1(3)
         """
-        return "\\Gamma_1(%s)"%self.level()
+        return "\\Gamma_1(%s)" % self.level()
 
     def is_even(self):
         """
-        Return True precisely if this subgroup contains the matrix -1.
+        Return ``True`` precisely if this subgroup contains the matrix -1.
 
         EXAMPLES::
 
@@ -160,7 +166,7 @@ class Gamma1_class(GammaH_class):
 
     def is_subgroup(self, right):
         """
-        Return True if self is a subgroup of right.
+        Return ``True`` if ``self`` is a subgroup of ``right``.
 
         EXAMPLES::
 
@@ -181,27 +187,27 @@ class Gamma1_class(GammaH_class):
         """
         if right.level() == 1:
             return True
-        if is_GammaH(right):
+        if isinstance(right, GammaH_class):
             return self.level() % right.level() == 0
         else:
             raise NotImplementedError
 
     @cached_method
-    def generators(self, algorithm="farey"):
+    def generators(self, algorithm='farey'):
         r"""
         Return generators for this congruence subgroup. The result is cached.
 
         INPUT:
 
-        - ``algorithm`` (string): either ``farey`` (default) or
-          ``todd-coxeter``.
+        - ``algorithm`` -- string; either ``'farey'`` (default) or
+          ``'todd-coxeter'``
 
-        If ``algorithm`` is set to ``"farey"``, then the generators will be
+        If ``algorithm`` is set to ``'farey'``, then the generators will be
         calculated using Farey symbols, which will always return a *minimal*
         generating set. See :mod:`~sage.modular.arithgroup.farey_symbol` for
         more information.
 
-        If ``algorithm`` is set to ``"todd-coxeter"``, a simpler algorithm
+        If ``algorithm`` is set to ``'todd-coxeter'``, a simpler algorithm
         based on Todd-Coxeter enumeration will be used. This tends to return
         far larger sets of generators.
 
@@ -212,7 +218,7 @@ class Gamma1_class(GammaH_class):
             [1 1]  [ 1 -1]
             [0 1], [ 3 -2]
             ]
-            sage: Gamma1(3).generators(algorithm="todd-coxeter")
+            sage: Gamma1(3).generators(algorithm='todd-coxeter')
             [
             [1 1]  [-2  1]  [1 1]  [ 1 -1]  [1 0]  [1 1]  [-5  2]  [ 1  0]
             [0 1], [-3  1], [0 1], [ 0  1], [3 1], [0 1], [12 -5], [-3  1],
@@ -221,9 +227,9 @@ class Gamma1_class(GammaH_class):
             [ 3 -2], [ 3 -2], [ 9 -2], [-12   7]
             ]
         """
-        if algorithm=="farey":
+        if algorithm == "farey":
             return self.farey_symbol().generators()
-        elif algorithm=="todd-coxeter":
+        elif algorithm == "todd-coxeter":
             from sage.modular.modsym.g1list import G1list
             from .congroup import generators_helper
             level = self.level()
@@ -253,7 +259,7 @@ class Gamma1_class(GammaH_class):
         """
         N = self.level()
         # don't need to check d == 1 mod N as this is automatic from det
-        return ((a%N == 1) and (c%N == 0))
+        return ((a % N == 1) and (c % N == 0))
 
     def nu2(self):
         r"""
@@ -315,7 +321,7 @@ class Gamma1_class(GammaH_class):
 
     def index(self):
         r"""
-        Return the index of self in the full modular group. This is given by the formula
+        Return the index of ``self`` in the full modular group. This is given by the formula
 
         .. MATH::
 
@@ -334,93 +340,95 @@ class Gamma1_class(GammaH_class):
     # Dimension formulas for Gamma1, accepting a Dirichlet character as an argument. #
     ##################################################################################
 
-    def dimension_modular_forms(self, k=2, eps=None, algorithm="CohenOesterle"):
+    def dimension_modular_forms(self, k=2, eps=None, algorithm='CohenOesterle'):
         r"""
-        Return the dimension of the space of modular forms for self, or the
+        Return the dimension of the space of modular forms for ``self``, or the
         dimension of the subspace corresponding to the given character if one
         is supplied.
 
         INPUT:
 
-        - ``k`` - an integer (default: 2), the weight.
+        - ``k`` -- integer (default: 2); the weight
 
-        - ``eps`` - either None or a Dirichlet character modulo N, where N is
-          the level of this group. If this is None, then the dimension of the
+        - ``eps`` -- either ``None`` or a Dirichlet character modulo N, where N is
+          the level of this group. If this is ``None``, then the dimension of the
           whole space is returned; otherwise, the dimension of the subspace of
           forms of character eps.
 
-        - ``algorithm`` -- either "CohenOesterle" (the default) or "Quer". This
-          specifies the method to use in the case of nontrivial character:
-          either the Cohen--Oesterle formula as described in Stein's book, or
-          by Möbius inversion using the subgroups GammaH (a method due to
-          Jordi Quer).
+        - ``algorithm`` -- either ``'CohenOesterle'`` (the default) or
+          ``'Quer'``. This specifies the method to use in the case of
+          nontrivial character: either the Cohen--Oesterle formula as described
+          in Stein's book, or by Möbius inversion using the subgroups GammaH (a
+          method due to Jordi Quer).
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(3)
             sage: eps = DirichletGroup(7*43,K).0^2
             sage: G = Gamma1(7*43)
-
             sage: G.dimension_modular_forms(2, eps)
             32
-            sage: G.dimension_modular_forms(2, eps, algorithm="Quer")
+            sage: G.dimension_modular_forms(2, eps, algorithm='Quer')
             32
 
         TESTS:
 
-        Check that :trac:`18436` is fixed::
+        Check that :issue:`18436` is fixed::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 + x + 1)
             sage: G = DirichletGroup(13, base_ring=K)
             sage: Gamma1(13).dimension_modular_forms(2, G[1])
             3
-            sage: Gamma1(13).dimension_modular_forms(2, G[1], algorithm="Quer")
+            sage: Gamma1(13).dimension_modular_forms(2, G[1], algorithm='Quer')
             3
             sage: Gamma1(39).dimension_modular_forms(2, G[1])
             7
-            sage: Gamma1(39).dimension_modular_forms(2, G[1], algorithm="Quer")
+            sage: Gamma1(39).dimension_modular_forms(2, G[1], algorithm='Quer')
             7
         """
         return self.dimension_cusp_forms(k, eps, algorithm) + self.dimension_eis(k, eps, algorithm)
 
-    def dimension_cusp_forms(self, k=2, eps=None, algorithm="CohenOesterle"):
+    def dimension_cusp_forms(self, k=2, eps=None, algorithm='CohenOesterle'):
         r"""
-        Return the dimension of the space of cusp forms for self, or the
+        Return the dimension of the space of cusp forms for ``self``, or the
         dimension of the subspace corresponding to the given character if one
         is supplied.
 
         INPUT:
 
-        - ``k`` - an integer (default: 2), the weight.
+        - ``k`` -- integer (default: 2); the weight
 
-        - ``eps`` - either None or a Dirichlet character modulo N, where N is
-          the level of this group. If this is None, then the dimension of the
+        - ``eps`` -- either ``None`` or a Dirichlet character modulo N, where N is
+          the level of this group. If this is ``None``, then the dimension of the
           whole space is returned; otherwise, the dimension of the subspace of
           forms of character eps.
 
-        - ``algorithm`` -- either "CohenOesterle" (the default) or "Quer". This
-          specifies the method to use in the case of nontrivial character:
-          either the Cohen--Oesterle formula as described in Stein's book, or
-          by Möbius inversion using the subgroups GammaH (a method due to Jordi
-          Quer). Ignored for weight 1.
+        - ``algorithm`` -- either ``'CohenOesterle'`` (the default) or
+          ``'Quer'``. This specifies the method to use in the case of nontrivial
+          character: either the Cohen--Oesterle formula as described in Stein's
+          book, or by Möbius inversion using the subgroups GammaH (a method due
+          to Jordi Quer). Ignored for weight 1.
 
         EXAMPLES:
 
         We compute the same dimension in two different ways ::
 
+            sage: # needs sage.rings.number_field
             sage: K = CyclotomicField(3)
             sage: eps = DirichletGroup(7*43,K).0^2
             sage: G = Gamma1(7*43)
 
         Via Cohen--Oesterle::
 
-            sage: Gamma1(7*43).dimension_cusp_forms(2, eps)
+            sage: Gamma1(7*43).dimension_cusp_forms(2, eps)                             # needs sage.rings.number_field
             28
 
         Via Quer's method::
 
-            sage: Gamma1(7*43).dimension_cusp_forms(2, eps, algorithm="Quer")
+            sage: Gamma1(7*43).dimension_cusp_forms(2, eps, algorithm='Quer')           # needs sage.rings.number_field
             28
 
         Some more examples::
@@ -459,7 +467,7 @@ class Gamma1_class(GammaH_class):
         if eps.is_trivial():
             return Gamma0(N).dimension_cusp_forms(k)
 
-        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k%2) == 0 and eps.is_odd()):
+        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k % 2) == 0 and eps.is_odd()):
             return ZZ(0)
 
         if k == 1:
@@ -480,10 +488,10 @@ class Gamma1_class(GammaH_class):
             from sage.modular.dims import CohenOesterle
             return ZZ( K(Gamma0(N).index() * (k-1)/ZZ(12)) + CohenOesterle(eps,k) )
 
-        else: #algorithm not in ["CohenOesterle", "Quer"]:
+        else:  # algorithm not in ["CohenOesterle", "Quer"]:
             raise ValueError("Unrecognised algorithm in dimension_cusp_forms")
 
-    def dimension_eis(self, k=2, eps=None, algorithm="CohenOesterle"):
+    def dimension_eis(self, k=2, eps=None, algorithm='CohenOesterle'):
         r"""
         Return the dimension of the space of Eisenstein series forms for self,
         or the dimension of the subspace corresponding to the given character
@@ -491,18 +499,18 @@ class Gamma1_class(GammaH_class):
 
         INPUT:
 
-        - ``k`` - an integer (default: 2), the weight.
+        - ``k`` -- integer (default: 2); the weight
 
-        - ``eps`` - either None or a Dirichlet character modulo N, where N is
-          the level of this group. If this is None, then the dimension of the
+        - ``eps`` -- either ``None`` or a Dirichlet character modulo N, where N is
+          the level of this group. If this is ``None``, then the dimension of the
           whole space is returned; otherwise, the dimension of the subspace of
           Eisenstein series of character eps.
 
-        - ``algorithm`` -- either "CohenOesterle" (the default) or "Quer". This
-          specifies the method to use in the case of nontrivial character:
-          either the Cohen--Oesterle formula as described in Stein's book, or
-          by Möbius inversion using the subgroups GammaH (a method due to
-          Jordi Quer).
+        - ``algorithm`` -- either ``'CohenOesterle'`` (the default) or
+          ``'Quer'``. This specifies the method to use in the case of nontrivial
+          character: either the Cohen--Oesterle formula as described in Stein's
+          book, or by Möbius inversion using the subgroups GammaH (a method due
+          to Jordi Quer).
 
         AUTHORS:
 
@@ -518,14 +526,14 @@ class Gamma1_class(GammaH_class):
 
             sage: [Gamma1(36).dimension_eis(1,eps) for eps in DirichletGroup(36)]
             [0, 4, 3, 0, 0, 2, 6, 0, 0, 2, 3, 0]
-            sage: [Gamma1(36).dimension_eis(1,eps,algorithm="Quer") for eps in DirichletGroup(36)]
+            sage: [Gamma1(36).dimension_eis(1,eps,algorithm='Quer') for eps in DirichletGroup(36)]
             [0, 4, 3, 0, 0, 2, 6, 0, 0, 2, 3, 0]
 
         So do these::
 
             sage: [Gamma1(48).dimension_eis(3,eps) for eps in DirichletGroup(48)]
             [0, 12, 0, 4, 0, 8, 0, 4, 12, 0, 4, 0, 8, 0, 4, 0]
-            sage: [Gamma1(48).dimension_eis(3,eps,algorithm="Quer") for eps in DirichletGroup(48)]
+            sage: [Gamma1(48).dimension_eis(3,eps,algorithm='Quer') for eps in DirichletGroup(48)]
             [0, 12, 0, 4, 0, 8, 0, 4, 12, 0, 4, 0, 8, 0, 4, 0]
         """
         from .all import Gamma0
@@ -543,7 +551,7 @@ class Gamma1_class(GammaH_class):
             return Gamma0(N).dimension_eis(k)
 
         # Note case of k = 0 and trivial character already dealt with separately, so k <= 0 here is valid:
-        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k%2) == 0 and eps.is_odd()):
+        if (k <= 0) or ((k % 2) == 1 and eps.is_even()) or ((k % 2) == 0 and eps.is_odd()):
             return ZZ(0)
 
         if algorithm == "Quer":
@@ -566,27 +574,27 @@ class Gamma1_class(GammaH_class):
             else:
                 return alpha - self.dimension_cusp_forms(k, eps)
 
-        else: #algorithm not in ["CohenOesterle", "Quer"]:
+        else:  # algorithm not in ["CohenOesterle", "Quer"]:
             raise ValueError("Unrecognised algorithm in dimension_eis")
 
-    def dimension_new_cusp_forms(self, k=2, eps=None, p=0, algorithm="CohenOesterle"):
+    def dimension_new_cusp_forms(self, k=2, eps=None, p=0, algorithm='CohenOesterle'):
         r"""
         Dimension of the new subspace (or `p`-new subspace) of cusp forms of
         weight `k` and character `\varepsilon`.
 
         INPUT:
 
-        - ``k`` - an integer (default: 2)
+        - ``k`` -- integer (default: 2)
 
-        - ``eps`` - a Dirichlet character
+        - ``eps`` -- a Dirichlet character
 
-        -  ``p`` - a prime (default: 0); just the `p`-new subspace if given
+        - ``p`` -- a prime (default: 0); just the `p`-new subspace if given
 
-        - ``algorithm`` - either "CohenOesterle" (the default) or "Quer". This
-          specifies the method to use in the case of nontrivial character:
-          either the Cohen--Oesterle formula as described in Stein's book, or
-          by Möbius inversion using the subgroups GammaH (a method due to
-          Jordi Quer).
+        - ``algorithm`` -- either ``'CohenOesterle'`` (the default) or
+          ``'Quer'``. This specifies the method to use in the case of nontrivial
+          character: either the Cohen--Oesterle formula as described in Stein's
+          book, or by Möbius inversion using the subgroups GammaH (a method due
+          to Jordi Quer).
 
         EXAMPLES::
 
@@ -616,13 +624,12 @@ class Gamma1_class(GammaH_class):
             11
             sage: [Gamma1(33).dimension_new_cusp_forms(k, G.1) for k in [2..4]]
             [0, 4, 0]
-            sage: [Gamma1(33).dimension_new_cusp_forms(k, G.1, algorithm="Quer") for k in [2..4]]
+            sage: [Gamma1(33).dimension_new_cusp_forms(k, G.1, algorithm='Quer') for k in [2..4]]
             [0, 4, 0]
             sage: [Gamma1(33).dimension_new_cusp_forms(k, G.1^2) for k in [2..4]]
             [2, 0, 6]
             sage: [Gamma1(33).dimension_new_cusp_forms(k, G.1^2, p=3) for k in [2..4]]
             [2, 0, 6]
-
         """
 
         if eps is None:
@@ -637,7 +644,7 @@ class Gamma1_class(GammaH_class):
 
         from .congroup_gammaH import mumu
 
-        if p == 0 or N%p != 0 or eps.conductor().valuation(p) == N.valuation(p):
+        if p == 0 or N % p != 0 or eps.conductor().valuation(p) == N.valuation(p):
             D = [eps.conductor()*d for d in divisors(N//eps.conductor())]
             return sum([Gamma1_constructor(M).dimension_cusp_forms(k, eps.restrict(M), algorithm)*mumu(N//M) for M in D])
         eps_p = eps.restrict(N//p)

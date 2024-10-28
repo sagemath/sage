@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Super Hopf algebras with basis
 """
@@ -18,11 +19,11 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
     EXAMPLES::
 
         sage: C = HopfAlgebras(ZZ).WithBasis().Super(); C
-        Category of super hopf algebras with basis over Integer Ring
+        Category of super Hopf algebras with basis over Integer Ring
         sage: sorted(C.super_categories(), key=str)
-        [Category of super algebras with basis over Integer Ring,
-         Category of super coalgebras with basis over Integer Ring,
-         Category of super hopf algebras over Integer Ring]
+        [Category of super Hopf algebras over Integer Ring,
+         Category of super algebras with basis over Integer Ring,
+         Category of super coalgebras with basis over Integer Ring]
 
     TESTS::
 
@@ -42,15 +43,15 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
             EXAMPLES::
 
-                sage: A = SteenrodAlgebra(7)                                            # optional - sage.combinat sage.modules
-                sage: a = A.an_element()                                                # optional - sage.combinat sage.modules
-                sage: a, A.antipode(a)                                                  # optional - sage.combinat sage.modules
+                sage: A = SteenrodAlgebra(7)                                            # needs sage.combinat sage.modules
+                sage: a = A.an_element()                                                # needs sage.combinat sage.modules
+                sage: a, A.antipode(a)                                                  # needs sage.combinat sage.modules
                 (6 Q_1 Q_3 P(2,1), Q_1 Q_3 P(2,1))
 
             TESTS::
 
-                sage: E.<x,y> = ExteriorAlgebra(QQ)                                     # optional - sage.combinat sage.modules
-                sage: [b.antipode() for b in E.basis()]                                 # optional - sage.combinat sage.modules
+                sage: E.<x,y> = ExteriorAlgebra(QQ)                                     # needs sage.modules
+                sage: [b.antipode() for b in E.basis()]                                 # needs sage.modules
                 [1, -x, -y, x*y]
             """
             if self.antipode_on_basis is not NotImplemented:
@@ -88,8 +89,8 @@ class SuperHopfAlgebrasWithBasis(SuperModulesCategory):
 
             TESTS::
 
-                sage: A = SteenrodAlgebra(7)                                            # optional - sage.combinat sage.modules
-                sage: A._test_antipode()  # long time                                   # optional - sage.combinat sage.modules
+                sage: A = SteenrodAlgebra(7)                                            # needs sage.combinat sage.modules
+                sage: A._test_antipode()        # long time                             # needs sage.combinat sage.modules
             """
             tester = self._tester(**options)
 

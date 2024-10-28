@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 r"""
 Dense vectors using a NumPy backend.
 
@@ -28,7 +29,7 @@ AUTHORS:
 
 cimport numpy
 import numpy
-from .free_module_element import FreeModuleElement
+from sage.modules.free_module_element import FreeModuleElement
 
 # This is for the NumPy C API (the PyArray... functions) to work
 numpy.import_array()
@@ -52,7 +53,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
     def __cinit__(self, parent, entries, coerce=True, copy=True):
         """
-        Set up a new vector
+        Set up a new vector.
 
         EXAMPLES::
 
@@ -69,7 +70,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
     cdef Vector_numpy_dense _new(self, numpy.ndarray vector_numpy):
         """
-        Return a new vector with same parent as self.
+        Return a new vector with same parent as ``self``.
         """
         cdef Vector_numpy_dense v
         v = self.__class__.__new__(self.__class__,self._parent,None,None,None)
@@ -100,21 +101,21 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         self._vector_numpy = numpy.PyArray_SimpleNew(1, dims, self._numpy_dtypeint)
         return
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         """
-        Return True (i.e., 1) if self is dense.
+        Return ``True`` (i.e., 1) if ``self`` is dense.
         """
         return 1
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         """
-        Return True (i.e., 1) if self is sparse.
+        Return ``True`` (i.e., 1) if ``self`` is sparse.
         """
         return 0
 
     def __copy__(self, copy=True):
         """
-        Return a copy of the vector
+        Return a copy of the vector.
 
         EXAMPLES::
 
@@ -150,7 +151,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
             (0.0, 0.0, 0.0, 0.0)
             sage: vector(RDF, 4)
             (0.0, 0.0, 0.0, 0.0)
-            sage: vector(CDF, [CDF(1+I)*j for j in range(4)])
+            sage: vector(CDF, [CDF(1+I)*j for j in range(4)])                           # needs sage.symbolic
             (0.0, 1.0 + 1.0*I, 2.0 + 2.0*I, 3.0 + 3.0*I)
             sage: vector(RDF, 4, range(4))
             (0.0, 1.0, 2.0, 3.0)
@@ -163,7 +164,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
             sage: V.element_class(V, 0)
             (0.0, 0.0)
         """
-        cdef Py_ssize_t i,j
+        cdef Py_ssize_t i
         if isinstance(entries,(tuple, list)):
             if len(entries)!=self._degree:
                     raise TypeError("entries has wrong length")
@@ -210,13 +211,13 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         """
         EXAMPLES::
 
-            sage: v = vector(CDF, [1,CDF(3,2), -1]); v
+            sage: v = vector(CDF, [1, CDF(3,2), -1]); v
             (1.0, 3.0 + 2.0*I, -1.0)
             sage: v[1] = 2
-            sage: v[-1] = I
-            sage: v
+            sage: v[-1] = I                                                             # needs sage.symbolic
+            sage: v                                                                     # needs sage.symbolic
             (1.0, 2.0, 1.0*I)
-            sage: v[1:3] = [1, 1]; v
+            sage: v[1:3] = [1, 1]; v                                                    # needs sage.symbolic
             (1.0, 1.0, 1.0)
         """
         # We assume that Py_ssize_t is the same as npy_intp
@@ -228,7 +229,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         status = numpy.PyArray_SETITEM(self._vector_numpy,
                         numpy.PyArray_GETPTR1(self._vector_numpy, i),
                         self._python_dtype(value))
-        #TODO: Throw an error if status == -1
+        # TODO: Throw an error if status == -1
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
@@ -265,8 +266,9 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
         INPUT:
 
-        - ``dtype`` -- if specified, the `numpy dtype <http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html>`_
-                       of the returned array.
+        - ``dtype`` -- if specified, the `numpy dtype
+          <http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html>`_ of
+          the returned array
 
         EXAMPLES::
 

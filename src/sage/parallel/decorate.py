@@ -51,7 +51,7 @@ def normalize_input(a):
         return ((a,), {})
 
 
-class Parallel():
+class Parallel:
     r"""
     Create a ``parallel``-decorated function.
     This is the object created by :func:`parallel`.
@@ -99,16 +99,14 @@ class Parallel():
 
         - ``f`` -- Python callable object or function
 
-        OUTPUT:
-
-        - Decorated version of ``f``
+        OUTPUT: decorated version of ``f``
 
         EXAMPLES::
 
             sage: from sage.parallel.decorate import Parallel
             sage: p = Parallel()
-            sage: f = x^2-1
-            sage: p(f)
+            sage: f = x^2 - 1                                                           # needs sage.symbolic
+            sage: p(f)                                                                  # needs sage.symbolic
             <sage.parallel.decorate.ParallelFunction object at ...>
 
             sage: P = sage.parallel.decorate.Parallel()
@@ -121,7 +119,7 @@ class Parallel():
 
 
 @instancedoc
-class ParallelFunction():
+class ParallelFunction:
     """
     Class which parallelizes a function or class method.
     This is typically accessed indirectly through
@@ -129,7 +127,7 @@ class ParallelFunction():
     """
     def __init__(self, parallel, func):
         """
-        .. note::
+        .. NOTE::
 
             This is typically accessed indirectly through
             :meth:`Parallel.__call__`.
@@ -137,10 +135,9 @@ class ParallelFunction():
         INPUT:
 
         - ``parallel`` -- a :class:`Parallel` object which controls
-          how the parallel execution will be done.
+          how the parallel execution will be done
 
         - ``func`` -- Python callable object or function
-
         """
         self.parallel = parallel
         self.func = func
@@ -170,9 +167,9 @@ class ParallelFunction():
         Implement part of the descriptor protocol for
         :class:`ParallelFunction` objects.
 
-        .. note::
+        .. NOTE::
 
-            This is the key to fixing :trac:`11461`.
+            This is the key to fixing :issue:`11461`.
 
         EXAMPLES:
 
@@ -228,7 +225,7 @@ class ParallelFunction():
 
     def _sage_argspec_(self):
         """
-        Returns the argument specification for this object, which is
+        Return the argument specification for this object, which is
         just the argument specification for the underlying function.
         See :mod:`sage.misc.sageinspect` for more information on
         this convention.
@@ -249,7 +246,7 @@ class ParallelFunction():
 
     def _sage_src_(self):
         """
-        Returns the source code for this object, which is just the
+        Return the source code for this object, which is just the
         source code for the underlying function.  See
         :mod:`sage.misc.sageinspect` for more information on this
         convention.
@@ -269,7 +266,7 @@ class ParallelFunction():
 
     def _instancedoc_(self):
         r"""
-        Returns the docstring for this object, which is just the
+        Return the docstring for this object, which is just the
         docstring for the underlying function.  See
         :mod:`sage.misc.sageinspect` for more information on this
         convention.
@@ -304,20 +301,19 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 
     INPUT:
 
-     - ``p_iter`` -- parallel iterator function or string:
-            - ``'fork'``            -- (default) use a new forked subprocess for each input
-            - ``'multiprocessing'`` -- use multiprocessing library
-            - ``'reference'``       -- use a fake serial reference implementation
-     - ``ncpus`` -- integer, maximal number of subprocesses to use at the same time
-     - ``timeout`` -- number of seconds until each subprocess is killed (only supported
-       by 'fork'; zero means not at all)
+    - ``p_iter`` -- parallel iterator function or string:
+      - ``'fork'`` -- (default) use a new forked subprocess for each input
+      - ``'multiprocessing'`` -- use multiprocessing library
+      - ``'reference'`` -- use a fake serial reference implementation
+    - ``ncpus`` -- integer; maximal number of subprocesses to use at the same time
+    - ``timeout`` -- number of seconds until each subprocess is killed (only supported
+      by ``'fork'``; zero means not at all)
 
     .. warning::
 
          If you use anything but ``'fork'`` above, then a whole new
          subprocess is spawned, so none of your local state (variables,
          certain functions, etc.) is available.
-
 
     EXAMPLES:
 
@@ -342,7 +338,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 
         sage: @parallel(ncpus=3, timeout=10)
         ....: def fac(n): return factor(2^n-1)
-        sage: for X, Y in sorted(list(fac([101,119,151,197,209]))): print((X,Y))
+        sage: for X, Y in sorted(list(fac([101,119,151,197,209]))): print((X,Y))        # needs sage.libs.pari
         (((101,), {}), 7432339208719 * 341117531003194129)
         (((119,), {}), 127 * 239 * 20231 * 131071 * 62983048367 * 131105292137)
         (((151,), {}), 18121 * 55871 * 165799 * 2332951 * 7289088383388253664437433)
@@ -426,7 +422,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 #   def f(...): ...
 ###################################################################
 
-class Fork():
+class Fork:
     """
     A ``fork`` decorator class.
     """
@@ -436,7 +432,7 @@ class Fork():
 
         - ``timeout`` -- (default: 0) kill the subprocess after it has run this
           many seconds (wall time), or if ``timeout`` is zero, do not kill it.
-        - ``verbose`` -- (default: ``False``) whether to print anything about
+        - ``verbose`` -- boolean (default: ``False``); whether to print anything about
           what the decorator does (e.g., killing the subprocess)
 
         EXAMPLES::
@@ -455,9 +451,7 @@ class Fork():
 
         - ``f`` -- a function
 
-        OUTPUT:
-
-        - A decorated function.
+        OUTPUT: a decorated function
 
         EXAMPLES::
 
@@ -488,7 +482,7 @@ def fork(f=None, timeout=0, verbose=False):
     - ``f`` -- a function
     - ``timeout`` -- (default: 0) if positive, kill the subprocess after
       this many seconds (wall time)
-    - ``verbose`` -- (default: ``False``) whether to print anything
+    - ``verbose`` -- boolean (default: ``False``); whether to print anything
       about what the decorator does (e.g., killing the subprocess)
 
     .. warning::
@@ -522,8 +516,6 @@ def fork(f=None, timeout=0, verbose=False):
 
         sage: @fork(timeout=0.1, verbose=True)
         ....: def g(n, m): return factorial(n).ndigits() + m
-        sage: g(5, m=5)
-        8
         sage: g(10^7, m=5)
         Killing subprocess ... with input ((10000000,), {'m': 5}) which took too long
         'NO DATA (timed out)'
@@ -531,6 +523,7 @@ def fork(f=None, timeout=0, verbose=False):
     We illustrate that the state of the pexpect interface is not altered by
     forked functions (they get their own new pexpect interfaces!)::
 
+        sage: # needs sage.libs.pari
         sage: gp.eval('a = 5')
         '5'
         sage: @fork()
@@ -545,21 +538,21 @@ def fork(f=None, timeout=0, verbose=False):
     We illustrate that the forked function has its own pexpect
     interface::
 
-        sage: gp.eval('a = 15')
+        sage: gp.eval('a = 15')                                                         # needs sage.libs.pari
         '15'
         sage: @fork()
         ....: def g(): return gp.eval('a')
-        sage: g()
+        sage: g()                                                                       # needs sage.libs.pari
         'a'
 
     We illustrate that segfaulting subprocesses are no trouble at all::
 
-        sage: cython('def f(): print(<char*>0)')                            # optional - sage.misc.cython
+        sage: cython('def f(): print(<char*>0)')                                        # needs sage.misc.cython
         sage: @fork
         ....: def g():
         ....:     os.environ["CYSIGNALS_CRASH_NDEBUG"]="yes" # skip enhanced backtrace (it is slow)
         ....:     f()
-        sage: print("this works"); g()                                      # optional - sage.misc.cython
+        sage: print("this works"); g()                                                  # needs sage.misc.cython
         this works...
         <BLANKLINE>
         ------------------------------------------------------------------------

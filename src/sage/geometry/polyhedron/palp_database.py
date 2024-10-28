@@ -5,7 +5,7 @@ Access the PALP database(s) of reflexive lattice polytopes
 EXAMPLES::
 
     sage: from sage.geometry.polyhedron.palp_database import PALPreader
-    sage: for lp in PALPreader(2):
+    sage: for lp in PALPreader(2):                                                      # needs sage.graphs
     ....:     cone = Cone([(1,r[0],r[1]) for r in lp.vertices()])
     ....:     fan = Fan([cone])
     ....:     X = ToricVariety(fan)
@@ -36,6 +36,7 @@ from subprocess import Popen, PIPE
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from sage.features.palp import PalpExecutable
+from sage.features.databases import DatabaseReflexivePolytopes
 
 from sage.interfaces.process import terminate
 
@@ -47,10 +48,9 @@ class PALPreader(SageObject):
     """
     Read PALP database of polytopes.
 
-
     INPUT:
 
-    - ``dim`` -- integer. The dimension of the polyhedra
+    - ``dim`` -- integer; the dimension of the polyhedra
 
     - ``data_basename`` -- string or ``None`` (default). The directory
       and database base filename (PALP usually uses ``'zzdb'``) name
@@ -95,7 +95,7 @@ class PALPreader(SageObject):
 
     def __init__(self, dim, data_basename=None, output='Polyhedron'):
         """
-        The Python constructor
+        The Python constructor.
 
         See :class:`PALPreader` for documentation.
 
@@ -108,9 +108,10 @@ class PALPreader(SageObject):
         if data_basename is not None:
             self._data_basename = data_basename
         else:
-            from sage.env import POLYTOPE_DATA_DIR
-            self._data_basename = os.path.join(POLYTOPE_DATA_DIR,
-                                               'Full{}d'.format(dim), 'zzdb')
+            db = DatabaseReflexivePolytopes()
+            self._data_basename = os.path.join(
+                    os.path.dirname(db.absolute_filename()),
+                    f'Full{dim}d', 'zzdb')
             info = self._data_basename + '.info'
             if not os.path.exists(info):
                 raise ValueError('Cannot find PALP database: {}'.format(info))
@@ -123,9 +124,7 @@ class PALPreader(SageObject):
         """
         Open PALP.
 
-        OUTPUT:
-
-        A PALP subprocess.
+        OUTPUT: a PALP subprocess
 
         EXAMPLES::
 
@@ -142,9 +141,7 @@ class PALPreader(SageObject):
         r"""
         Read vertex data from the PALP output pipe.
 
-        OUTPUT:
-
-        A list of lists.
+        OUTPUT: list of lists
 
         EXAMPLES::
 
@@ -166,9 +163,7 @@ class PALPreader(SageObject):
         r"""
         Read vertex data from the PALP output pipe.
 
-        OUTPUT:
-
-        A list of lists.
+        OUTPUT: list of lists
 
         EXAMPLES::
 
@@ -192,11 +187,9 @@ class PALPreader(SageObject):
         INPUT:
 
         - ``start``, ``stop``, ``step`` -- integers specifying the
-          range to iterate over.
+          range to iterate over
 
-        OUTPUT:
-
-        A generator for vertex data as a list of lists.
+        OUTPUT: a generator for vertex data as a list of lists
 
         EXAMPLES::
 
@@ -244,11 +237,9 @@ class PALPreader(SageObject):
         INPUT:
 
         - ``start``, ``stop``, ``step`` -- integers specifying the
-          range to iterate over.
+          range to iterate over
 
-        OUTPUT:
-
-        A generator for lattice polyhedra.
+        OUTPUT: a generator for lattice polyhedra
 
         EXAMPLES::
 
@@ -270,11 +261,9 @@ class PALPreader(SageObject):
         INPUT:
 
         - ``start``, ``stop``, ``step`` -- integers specifying the
-          range to iterate over.
+          range to iterate over
 
-        OUTPUT:
-
-        A generator for PPL-based lattice polyhedra.
+        OUTPUT: a generator for PPL-based lattice polyhedra
 
         EXAMPLES::
 
@@ -294,11 +283,9 @@ class PALPreader(SageObject):
         INPUT:
 
         - ``start``, ``stop``, ``step`` -- integers specifying the
-          range to iterate over.
+          range to iterate over
 
-        OUTPUT:
-
-        A generator for PPL-based lattice polyhedra.
+        OUTPUT: a generator for PPL-based lattice polyhedra
 
         EXAMPLES::
 
@@ -324,11 +311,9 @@ class PALPreader(SageObject):
 
         INPUT:
 
-        - ``output`` -- as in the :class:`PALPreader` constructor.
+        - ``output`` -- as in the :class:`PALPreader` constructor
 
-        OUTPUT:
-
-        A function generating lattice polytopes in the specified output format.
+        OUTPUT: a function generating lattice polytopes in the specified output format
 
         EXAMPLES::
 
@@ -358,9 +343,7 @@ class PALPreader(SageObject):
         """
         Iterate over all polytopes.
 
-        OUTPUT:
-
-        An iterator for all polytopes.
+        OUTPUT: an iterator for all polytopes
 
         TESTS::
 
@@ -403,8 +386,8 @@ class Reflexive4dHodge(PALPreader):
 
     INPUT:
 
-    - ``h11``, ``h21`` -- Integers. The Hodge numbers of the reflexive
-      polytopes to list.
+    - ``h11``, ``h21`` -- integer; the Hodge numbers of the reflexive
+      polytopes to list
 
     Any additional keyword arguments are passed to
     :class:`PALPreader`.
@@ -431,9 +414,8 @@ class Reflexive4dHodge(PALPreader):
         """
         dim = 4
         if data_basename is None:
-            from sage.env import POLYTOPE_DATA_DIR
-            data_basename = os.path.join(POLYTOPE_DATA_DIR,
-                                         'Hodge4d', 'all')
+            db = DatabaseReflexivePolytopes('polytopes_db_4d')
+            data_basename = os.path.join(db.absolute_filename(), 'all')
             info = data_basename + '.vinfo'
             if not os.path.exists(info):
                 raise ValueError(
@@ -448,9 +430,7 @@ class Reflexive4dHodge(PALPreader):
         """
         Open PALP.
 
-        OUTPUT:
-
-        A PALP subprocess.
+        OUTPUT: a PALP subprocess
 
         EXAMPLES::
 

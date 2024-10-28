@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Bimodules
 """
@@ -19,9 +20,11 @@ from sage.categories.rings import Rings
 _Rings = Rings()
 
 #?class Bimodules(Category_over_base_rng, Category_over_base_rng):
+
+
 class Bimodules(CategoryWithParameters):
     """
-    The category of `(R,S)`-bimodules
+    The category of `(R,S)`-bimodules.
 
     For `R` and `S` rings, a `(R,S)`-bimodule `X` is a left `R`-module
     and right `S`-module such that the left and right actions commute:
@@ -37,28 +40,30 @@ class Bimodules(CategoryWithParameters):
 
     def __init__(self, left_base, right_base, name=None):
         """
+        The ``name`` parameter is ignored.
+
         EXAMPLES::
 
             sage: C = Bimodules(QQ, ZZ)
             sage: TestSuite(C).run()
         """
-        if not ( left_base in Rings() or
-                 (isinstance(left_base, Category)
-                  and left_base.is_subcategory(Rings())) ):
+        if not (left_base in Rings() or
+                (isinstance(left_base, Category)
+                 and left_base.is_subcategory(Rings()))):
             raise ValueError("the left base must be a ring or a subcategory of Rings()")
-        if not ( right_base in Rings() or
-                 (isinstance(right_base, Category)
-                  and right_base.is_subcategory(Rings())) ):
+        if not (right_base in Rings() or
+                (isinstance(right_base, Category)
+                 and right_base.is_subcategory(Rings()))):
             raise ValueError("the right base must be a ring or a subcategory of Rings()")
         self._left_base_ring = left_base
         self._right_base_ring = right_base
-        Category.__init__(self, name)
+        Category.__init__(self)
 
     def _make_named_class_key(self, name):
         r"""
         Return what the element/parent/... classes depend on.
 
-        Since :trac:`11935`, the element and parent classes of a
+        Since :issue:`11935`, the element and parent classes of a
         bimodule only depend on the categories of the left and right
         base ring.
 
@@ -73,14 +78,18 @@ class Bimodules(CategoryWithParameters):
             (Join of Category of number fields
                  and Category of quotient fields
                  and Category of metric spaces,
-             Join of Category of euclidean domains
+             Join of Category of Dedekind domains
+                 and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
 
 
             sage: Bimodules(Fields(), ZZ)._make_named_class_key('element_class')
             (Category of fields,
-             Join of Category of euclidean domains
+             Join of Category of Dedekind domains
+             and Category of euclidean domains
+             and Category of noetherian rings
              and Category of infinite enumerated sets
              and Category of metric spaces)
 
@@ -93,7 +102,7 @@ class Bimodules(CategoryWithParameters):
             sage: Bimodules(Fields(), Rings())._make_named_class_key('element_class')
             (Category of fields, Category of rings)
         """
-        return (self._left_base_ring  if isinstance(self._left_base_ring,  Category) else self._left_base_ring.category(),
+        return (self._left_base_ring if isinstance(self._left_base_ring, Category) else self._left_base_ring.category(),
                 self._right_base_ring if isinstance(self._right_base_ring, Category) else self._right_base_ring.category())
 
     @classmethod
@@ -103,7 +112,7 @@ class Bimodules(CategoryWithParameters):
 
         EXAMPLES::
 
-            sage: Bimodules.an_instance()
+            sage: Bimodules.an_instance()                                               # needs sage.rings.real_mpfr
             Category of bimodules over Rational Field on the left and Real Field with 53 bits of precision on the right
         """
         from sage.rings.rational_field import QQ
@@ -118,7 +127,7 @@ class Bimodules(CategoryWithParameters):
             Category of bimodules over Rational Field on the left and Integer Ring on the right
         """
         return "bimodules over %s on the left and %s on the right" \
-            %(self._left_base_ring, self._right_base_ring)
+            % (self._left_base_ring, self._right_base_ring)
 
     def left_base_ring(self):
         """
@@ -144,7 +153,7 @@ class Bimodules(CategoryWithParameters):
         """
         return self._right_base_ring
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -154,9 +163,9 @@ class Bimodules(CategoryWithParameters):
             {\mathbf{Bimodules}}_{\Bold{Q}, \Bold{Z}}
         """
         from sage.misc.latex import latex
-        return "{{{0}}}_{{{1}, {2}}}".format(Category._latex_(self),
-                                             latex(self._left_base_ring),
-                                             latex(self._right_base_ring))
+        return "{{{}}}_{{{}, {}}}".format(Category._latex_(self),
+                                          latex(self._left_base_ring),
+                                          latex(self._right_base_ring))
 
     def super_categories(self):
         """

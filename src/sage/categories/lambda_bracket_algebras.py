@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Lambda Bracket Algebras
 
@@ -16,13 +17,14 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .category_types import Category_over_base_ring
-from sage.misc.abstract_method import abstract_method
-from sage.categories.modules import Modules
-from sage.structure.element import coerce_binop
-from sage.misc.cachefunc import cached_method
+from sage.categories.category_types import Category_over_base_ring
 from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.modules import Modules
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+from sage.structure.element import coerce_binop
+
 _CommutativeRings = CommutativeRings()
 
 
@@ -32,20 +34,19 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
     This is an abstract base category for Lie conformal algebras and
     super Lie conformal algebras.
-
     """
     @staticmethod
     def __classcall_private__(cls, R, check=True):
         r"""
         INPUT:
 
-        - `R` -- a commutative ring
-        - ``check`` -- a boolean (default: ``True``); whether to check
+        - ``R`` -- a commutative ring
+        - ``check`` -- boolean (default: ``True``); whether to check
           that `R` is a commutative ring
 
         EXAMPLES::
 
-            sage: LieConformalAlgebras(QuaternionAlgebra(2))                            # optional - sage.combinat sage.modules
+            sage: LieConformalAlgebras(QuaternionAlgebra(2))                            # needs sage.combinat sage.modules
             Traceback (most recent call last):
             ValueError: base must be a commutative ring
             got Quaternion Algebra (-1, -1) with base ring Rational Field
@@ -53,7 +54,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             Category of Lie conformal algebras over Integer Ring
         """
         if check:
-            if not (R in _CommutativeRings):
+            if R not in _CommutativeRings:
                     raise ValueError("base must be a commutative ring got {}".format(R))
         return super().__classcall__(cls, R)
 
@@ -91,7 +92,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: LieConformalAlgebras(QQ).FinitelyGenerated()
-                Category of finitely generated lie conformal algebras over Rational Field
+                Category of finitely generated Lie conformal algebras over Rational Field
             """
             return self._with_axiom("FinitelyGeneratedAsLambdaBracketAlgebra")
 
@@ -102,7 +103,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
             EXAMPLES::
 
                 sage: LieConformalAlgebras(QQ).FinitelyGenerated()
-                Category of finitely generated lie conformal algebras over Rational Field
+                Category of finitely generated Lie conformal algebras over Rational Field
             """
             return self._with_axiom("FinitelyGeneratedAsLambdaBracketAlgebra")
 
@@ -118,8 +119,8 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: Vir = lie_conformal_algebras.Virasoro(QQ)                         # optional - sage.combinat sage.modules
-                sage: Vir.ideal()                                                       # optional - sage.combinat sage.modules
+                sage: Vir = lie_conformal_algebras.Virasoro(QQ)                         # needs sage.combinat sage.modules
+                sage: Vir.ideal()                                                       # needs sage.combinat sage.modules
                 Traceback (most recent call last):
                 ...
                 NotImplementedError: ideals of Lie Conformal algebras are not implemented yet
@@ -138,21 +139,22 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
             The brackets of the Virasoro Lie conformal algebra::
 
-                sage: Vir = lie_conformal_algebras.Virasoro(QQ); L = Vir.0              # optional - sage.combinat sage.modules
-                sage: L.bracket(L)                                                      # optional - sage.combinat sage.modules
+                sage: Vir = lie_conformal_algebras.Virasoro(QQ); L = Vir.0              # needs sage.combinat sage.modules
+                sage: L.bracket(L)                                                      # needs sage.combinat sage.modules
                 {0: TL, 1: 2*L, 3: 1/2*C}
-                sage: L.bracket(L.T())                                                  # optional - sage.combinat sage.modules
+                sage: L.bracket(L.T())                                                  # needs sage.combinat sage.modules
                 {0: 2*T^(2)L, 1: 3*TL, 2: 4*L, 4: 2*C}
 
             Now with a current algebra::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')                       # optional - sage.combinat sage.modules
-                sage: V.gens()                                                          # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')
+                sage: V.gens()
                 (B[alpha[1]], B[alphacheck[1]], B[-alpha[1]], B['K'])
-                sage: E = V.0; H = V.1; F = V.2                                         # optional - sage.combinat sage.modules
-                sage: H.bracket(H)                                                      # optional - sage.combinat sage.modules
+                sage: E = V.0; H = V.1; F = V.2
+                sage: H.bracket(H)
                 {1: 2*B['K']}
-                sage: E.bracket(F)                                                      # optional - sage.combinat sage.modules
+                sage: E.bracket(F)
                 {0: B[alphacheck[1]], 1: B['K']}
             """
             return self._bracket_(rhs)
@@ -171,21 +173,22 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
             The brackets of the Virasoro Lie conformal Algebra::
 
-                sage: Vir = lie_conformal_algebras.Virasoro(QQ); L = Vir.0              # optional - sage.combinat sage.modules
-                sage: L._bracket_(L)                                                    # optional - sage.combinat sage.modules
+                sage: Vir = lie_conformal_algebras.Virasoro(QQ); L = Vir.0              # needs sage.combinat sage.modules
+                sage: L._bracket_(L)                                                    # needs sage.combinat sage.modules
                 {0: TL, 1: 2*L, 3: 1/2*C}
-                sage: L._bracket_(L.T())                                                # optional - sage.combinat sage.modules
+                sage: L._bracket_(L.T())                                                # needs sage.combinat sage.modules
                 {0: 2*T^(2)L, 1: 3*TL, 2: 4*L, 4: 2*C}
 
             Now with a current algebra::
 
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')                       # optional - sage.combinat sage.modules
-                sage: V.gens()                                                          # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')
+                sage: V.gens()
                 (B[alpha[1]], B[alphacheck[1]], B[-alpha[1]], B['K'])
-                sage: E = V.0; H = V.1; F = V.2                                         # optional - sage.combinat sage.modules
-                sage: H._bracket_(H)                                                    # optional - sage.combinat sage.modules
+                sage: E = V.0; H = V.1; F = V.2
+                sage: H._bracket_(H)
                 {1: 2*B['K']}
-                sage: E._bracket_(F)                                                    # optional - sage.combinat sage.modules
+                sage: E._bracket_(F)
                 {0: B[alphacheck[1]], 1: B['K']}
             """
 
@@ -196,16 +199,17 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: Vir = lie_conformal_algebras.Virasoro(QQ); L = Vir.0              # optional - sage.combinat sage.modules
-                sage: L.nproduct(L, 3)                                                  # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: Vir = lie_conformal_algebras.Virasoro(QQ); L = Vir.0
+                sage: L.nproduct(L, 3)
                 1/2*C
-                sage: L.nproduct(L.T(), 0)                                              # optional - sage.combinat sage.modules
+                sage: L.nproduct(L.T(), 0)
                 2*T^(2)L
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')                       # optional - sage.combinat sage.modules
-                sage: E = V.0; H = V.1; F = V.2                                         # optional - sage.combinat sage.modules
-                sage: E.nproduct(H, 0) == - 2*E                                         # optional - sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')
+                sage: E = V.0; H = V.1; F = V.2
+                sage: E.nproduct(H, 0) == - 2*E
                 True
-                sage: E.nproduct(F, 1)                                                  # optional - sage.combinat sage.modules
+                sage: E.nproduct(F, 1)
                 B['K']
             """
             return self._nproduct_(rhs,n)
@@ -221,16 +225,17 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: Vir = lie_conformal_algebras.Virasoro(QQ); L = Vir.0              # optional - sage.combinat sage.modules
-                sage: L._nproduct_(L, 3)                                                # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: Vir = lie_conformal_algebras.Virasoro(QQ); L = Vir.0
+                sage: L._nproduct_(L, 3)
                 1/2*C
-                sage: L._nproduct_(L.T(), 0)                                            # optional - sage.combinat sage.modules
+                sage: L._nproduct_(L.T(), 0)
                 2*T^(2)L
-                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')                       # optional - sage.combinat sage.modules
-                sage: E = V.0; H = V.1; F = V.2                                         # optional - sage.combinat sage.modules
-                sage: E._nproduct_(H, 0) == - 2*E                                       # optional - sage.combinat sage.modules
+                sage: V = lie_conformal_algebras.Affine(QQ, 'A1')
+                sage: E = V.0; H = V.1; F = V.2
+                sage: E._nproduct_(H, 0) == - 2*E
                 True
-                sage: E._nproduct_(F, 1)                                                # optional - sage.combinat sage.modules
+                sage: E._nproduct_(F, 1)
                 B['K']
             """
             if n >= 0:
@@ -245,7 +250,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
             INPUT:
 
-            - ``n`` -- integer (default:``1``); how many times
+            - ``n`` -- integer (default: `1`); how many times
               to apply `T` to this element
 
             OUTPUT:
@@ -255,14 +260,15 @@ class LambdaBracketAlgebras(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: Vir = lie_conformal_algebras.Virasoro(QQ)                         # optional - sage.combinat sage.modules
-                sage: Vir.inject_variables()                                            # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: Vir = lie_conformal_algebras.Virasoro(QQ)
+                sage: Vir.inject_variables()
                 Defining L, C
-                sage: L.T()                                                             # optional - sage.combinat sage.modules
+                sage: L.T()
                 TL
-                sage: L.T(3)                                                            # optional - sage.combinat sage.modules
+                sage: L.T(3)
                 6*T^(3)L
-                sage: C.T()                                                             # optional - sage.combinat sage.modules
+                sage: C.T()
                 0
             """
 

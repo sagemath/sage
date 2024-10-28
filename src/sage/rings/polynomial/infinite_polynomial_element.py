@@ -48,14 +48,14 @@ underlying *classical* polynomial. This holds, e.g., when applying the
 There is a permutation action on Infinite Polynomial Rings by
 permuting the indices of the variables::
 
-    sage: P = Permutation(((4,5),(2,3)))                                                # optional - sage.combinat
-    sage: c^P                                                                           # optional - sage.combinat
+    sage: P = Permutation(((4,5),(2,3)))
+    sage: c^P
     x_2^3 + x_2*y_5 - 2*y_5^4
 
 Note that ``P(0)==0``, and thus variables of index zero are invariant
 under the permutation action.  More generally, if ``P`` is any
-callable object that accepts non-negative integers as input and
-returns non-negative integers, then ``c^P`` means to apply ``P`` to
+callable object that accepts nonnegative integers as input and
+returns nonnegative integers, then ``c^P`` means to apply ``P`` to
 the variable indices occurring in ``c``.
 
 If you want to substitute variables you can use the standard polynomial
@@ -82,7 +82,6 @@ finite polynomial rings are merged with infinite polynomial rings::
     Infinite polynomial ring in b, c over Infinite polynomial ring in a over Integer Ring
     sage: 1/2*b_1*a[4] + c[3]
     1/2*a_4*b_1 + c_3
-
 """
 
 # ****************************************************************************
@@ -122,8 +121,8 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     INPUT:
 
-    - ``A`` -- an Infinite Polynomial Ring.
-    - ``p`` -- a *classical* polynomial that can be interpreted in ``A``.
+    - ``A`` -- an Infinite Polynomial Ring
+    - ``p`` -- a *classical* polynomial that can be interpreted in ``A``
 
     ASSUMPTIONS:
 
@@ -176,7 +175,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         sage: Y(a)
         alpha_2^2 + alpha_1^2
-
     """
 
     @staticmethod
@@ -255,7 +253,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: a = x[1] + x[2]
             sage: a == loads(dumps(a))
             True
-
         """
 
         # Despite the above comment, it can still happen that p is in
@@ -299,24 +296,23 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         EXAMPLES::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(7))                               # optional - sage.rings.finite_rings
-            sage: p = x[2]*y[1] + 3*y[0]                                                # optional - sage.rings.finite_rings
-            sage: p                                                                     # optional - sage.rings.finite_rings
+            sage: X.<x,y> = InfinitePolynomialRing(GF(7))
+            sage: p = x[2]*y[1] + 3*y[0]
+            sage: p
             x_2*y_1 + 3*y_0
-            sage: p.polynomial()                                                        # optional - sage.rings.finite_rings
+            sage: p.polynomial()
             x_2*y_1 + 3*y_0
-            sage: p.polynomial().parent()                                               # optional - sage.rings.finite_rings
+            sage: p.polynomial().parent()
             Multivariate Polynomial Ring in x_2, x_1, x_0, y_2, y_1, y_0
              over Finite Field of size 7
-            sage: p.parent()                                                            # optional - sage.rings.finite_rings
+            sage: p.parent()
             Infinite polynomial ring in x, y over Finite Field of size 7
-
         """
         return self._p
 
     def _getAttributeNames(self):
         """
-        This method implements tab completion, see :trac:`6854`.
+        This method implements tab completion, see :issue:`6854`.
 
         EXAMPLES::
 
@@ -334,7 +330,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     def __dir__(self):
         """
-        This method implements tab completion, see :trac:`6854`.
+        This method implements tab completion, see :issue:`6854`.
 
         TESTS::
 
@@ -371,7 +367,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: latex(alpha[3]*alpha[2]^2) # indirect doctest
             \alpha_{3} \alpha_{2}^{2}
 
-        Related with issues :trac:`6854` and :trac:`7580`, the attribute
+        Related with issues :issue:`6854` and :issue:`7580`, the attribute
         ``__methods__`` is treated in a special way, which
         makes introspection and tab completion work::
 
@@ -385,7 +381,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
              'p.content_ideal']
             sage: 'constant_coefficient' in dir(p) # indirect doctest
             True
-
         """
         if s == '__members__':
             return dir(self._p)
@@ -406,9 +401,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         - ``fixed`` -- (optional) ``dict`` with ``{variable: value}`` pairs
         - ``**kwargs`` -- named parameters
 
-        OUTPUT:
-
-        the resulting substitution
+        OUTPUT: the resulting substitution
 
         EXAMPLES::
 
@@ -440,13 +433,14 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         The substitution can also handle matrices::
 
-            sage: M = matrix([[1,0], [0,2]])                                            # optional - sage.modules
-            sage: N = matrix([[0,3], [4,0]])                                            # optional - sage.modules
-            sage: g = x[0]^2 + 3*x[1]                                                   # optional - sage.modules
-            sage: g.subs({'x_0': M})                                                    # optional - sage.modules
+            sage: # needs sage.modules
+            sage: M = matrix([[1,0], [0,2]])
+            sage: N = matrix([[0,3], [4,0]])
+            sage: g = x[0]^2 + 3*x[1]
+            sage: g.subs({'x_0': M})
             [3*x_1 + 1         0]
             [        0 3*x_1 + 4]
-            sage: g.subs({x[0]: M, x[1]: N})                                            # optional - sage.modules
+            sage: g.subs({x[0]: M, x[1]: N})
             [ 1  9]
             [12  4]
 
@@ -464,6 +458,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         TESTS::
 
+            sage: # needs sage.modules
             sage: g.subs(fixed=x[0], x_1=N)
             Traceback (most recent call last):
             ...
@@ -491,7 +486,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: p = x[100]*y[1]^3*x[1]^2 + 2*x[10]*y[30]
             sage: p.ring()
             Infinite polynomial ring in x, y over Integer Ring
-
         """
         return self.parent()
 
@@ -514,7 +508,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: (1 + a[2]).is_unit()
             False
 
-        Check that :trac:`22454` is fixed::
+        Check that :issue:`22454` is fixed::
 
             sage: _.<x> = InfinitePolynomialRing(Zmod(4))
             sage: (1 + 2*x[0]).is_unit()
@@ -540,10 +534,10 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         EXAMPLES::
 
-            sage: R.<x> = InfinitePolynomialRing(QQbar)                                 # optional - sage.rings.number_field
-            sage: (x[0] + x[1]).is_nilpotent()                                          # optional - sage.rings.number_field
+            sage: R.<x> = InfinitePolynomialRing(QQbar)                                 # needs sage.rings.number_field
+            sage: (x[0] + x[1]).is_nilpotent()                                          # needs sage.rings.number_field
             False
-            sage: R(0).is_nilpotent()                                                   # optional - sage.rings.number_field
+            sage: R(0).is_nilpotent()                                                   # needs sage.rings.number_field
             True
             sage: _.<x> = InfinitePolynomialRing(Zmod(4))
             sage: (2*x[0]).is_nilpotent()
@@ -557,6 +551,41 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             True
         """
         return self._p.is_nilpotent()
+
+    def numerator(self):
+        r"""
+        Return a numerator of ``self``, computed as ``self * self.denominator()``.
+
+        .. WARNING::
+
+           This is not the numerator of the rational function
+           defined by ``self``, which would always be ``self`` since it is a
+           polynomial.
+
+        EXAMPLES::
+
+            sage: X.<x> = InfinitePolynomialRing(QQ)
+            sage: p = 2/3*x[1] + 4/9*x[2] - 2*x[1]*x[3]
+            sage: num = p.numerator(); num
+            -18*x_3*x_1 + 4*x_2 + 6*x_1
+
+        TESTS::
+
+            sage: num.parent()
+            Infinite polynomial ring in x over Rational Field
+
+        Check that :issue:`37756` is fixed::
+
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: P.<x,y> = QQ[]
+            sage: FF = P.fraction_field()
+            sage: FF(a[0])
+            Traceback (most recent call last):
+            ...
+            TypeError: Could not find a mapping of the passed element to this ring.
+        """
+        P = self.parent()
+        return InfinitePolynomial(P, self._p.numerator())
 
     @cached_method
     def variables(self):
@@ -573,11 +602,70 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             (x_1,)
             sage: X(1).variables()
             ()
-
         """
         if hasattr(self._p, 'variables'):
-            return tuple(self._p.variables())
+            P = self.parent()
+            return tuple(InfinitePolynomial(P, v) for v in self._p.variables())
         return ()
+
+    def monomials(self):
+        """
+        Return the list of monomials in ``self``.
+
+        The returned list is decreasingly ordered by the term ordering of
+        ``self.parent()``.
+
+        EXAMPLES::
+
+            sage: X.<x> = InfinitePolynomialRing(QQ)
+            sage: p = x[1]^3 + x[2] - 2*x[1]*x[3]
+            sage: p.monomials()
+            [x_3*x_1, x_2, x_1^3]
+
+            sage: X.<x> = InfinitePolynomialRing(QQ, order='deglex')
+            sage: p = x[1]^3 + x[2] - 2*x[1]*x[3]
+            sage: p.monomials()
+            [x_1^3, x_3*x_1, x_2]
+        """
+        P = self.parent()
+        return [InfinitePolynomial(P, m) for m in self._p.monomials()]
+
+    def monomial_coefficient(self, mon):
+        """
+        Return the base ring element that is the coefficient of ``mon``
+        in ``self``.
+
+        This function contrasts with the function :meth:`coefficient`,
+        which returns the coefficient of a monomial viewing this
+        polynomial in a polynomial ring over a base ring having fewer
+        variables.
+
+        INPUT:
+
+        - ``mon`` -- a monomial in the parent of ``self``
+
+        OUTPUT: coefficient in base ring
+
+        .. SEEALSO::
+
+            For coefficients in a base ring of fewer variables,
+            look at :meth:`coefficient`.
+
+        EXAMPLES::
+
+            sage: X.<x> = InfinitePolynomialRing(QQ)
+            sage: f = 2*x[0]*x[2] + 3*x[1]^2
+            sage: c = f.monomial_coefficient(x[1]^2); c
+            3
+            sage: c.parent()
+            Rational Field
+
+            sage: c = f.coefficient(x[2]); c
+            2*x_0
+            sage: c.parent()
+            Infinite polynomial ring in x over Rational Field
+        """
+        return self._p.monomial_coefficient(mon._p)
 
     @cached_method
     def max_index(self):
@@ -604,7 +692,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: R.<alpha,beta> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: R.from_base_ring(4)   # indirect doctest
             4
-
         """
         return type(self)(self.parent(), left * self._p)
 
@@ -615,7 +702,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: R.<alpha,beta> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: alpha[3]*4   # indirect doctest
             4*alpha_3
-
         """
         return type(self)(self.parent(), self._p * right)
 
@@ -641,7 +727,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: q.parent()
             Infinite polynomial ring in x over Rational Field
 
-        Division by a non-zero element::
+        Division by a nonzero element::
 
             sage: R.<x> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: 1/x[1]
@@ -656,7 +742,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: z = 1/(x[2]*(x[1]+x[2]))+1/(x[1]*(x[1]+x[2]))
             sage: z.parent()
             Fraction Field of Infinite polynomial ring in x over Rational Field
-            sage: factor(z)                                                             # optional - sage.libs.singular
+            sage: factor(z)                                                             # needs sage.libs.singular
             x_1^-1 * x_2^-1
         """
         if not x.variables():
@@ -704,7 +790,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: p = 2*x[10]*y[30] + x[10]*y[1]^3*x[1]^2
             sage: p.lm()
             x_10*x_1^2*y_1^3
-
         """
         if hasattr(self._p, 'lm'):
             return InfinitePolynomial(self.parent(), self._p.lm())
@@ -726,7 +811,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: p = 2*x[10]*y[30] + 3*x[10]*y[1]^3*x[1]^2
             sage: p.lc()
             3
-
         """
         if hasattr(self._p, 'lc'):
             return self._p.lc()
@@ -746,7 +830,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: p = 2*x[10]*y[30] + 3*x[10]*y[1]^3*x[1]^2
             sage: p.lt()
             3*x_10*x_1^2*y_1^3
-
         """
         if hasattr(self._p, 'lt'):
             return InfinitePolynomial(self.parent(), self._p.lt())
@@ -766,7 +849,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: p = 2*x[10]*y[30] + 3*x[10]*y[1]^3*x[1]^2
             sage: p.tail()
             2*x_10*y_30
-
         """
         return self-self.lt()
 
@@ -786,7 +868,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: p = x[1]*y[100] + x[50]*y[1000]
             sage: p.squeezed()
             x_2*y_4 + x_1*y_3
-
         """
         Indices = set([0] + [Integer(str(Y).split('_')[1])
                              for Y in self.variables()])
@@ -801,9 +882,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         """
         Leading exponents sorted by index and generator.
 
-        OUTPUT:
-
-        ``D`` -- a dictionary whose keys are the occurring variable indices.
+        OUTPUT: ``D``; dictionary whose keys are the occurring variable indices
 
         ``D[s]`` is a list ``[i_1,...,i_n]``, where ``i_j`` gives the
         exponent of ``self.parent().gen(j)[s]`` in the leading
@@ -831,7 +910,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: p = a[12]^3*a[2]^7*a[4] + a[4]*a[2]
             sage: sorted(p.footprint().items())
             [(2, [7]), (4, [1]), (12, [3])]
-
         """
         if not self._has_footprint:
             PARENT = self.parent()
@@ -864,11 +942,11 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         INPUT:
 
-        ``self``, ``other`` -- two Infinite Polynomials
+        - ``self``, ``other`` -- two Infinite Polynomials
 
         ASSUMPTION:
 
-        Both Infinite Polynomials are non-zero.
+        Both Infinite Polynomials are nonzero.
 
         OUTPUT:
 
@@ -896,13 +974,12 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: X.<x,y> = InfinitePolynomialRing(QQ)
             sage: (x[2]*x[1]).symmetric_cancellation_order(x[2]^2)
             (None, 1, 1)
-            sage: (x[2]*x[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])              # optional - sage.combinat
+            sage: (x[2]*x[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])
             (-1, [2, 3, 1], y_1)
-            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])         # optional - sage.combinat
+            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[1])
             (None, 1, 1)
-            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[2])         # optional - sage.combinat
+            sage: (x[2]*x[1]*y[1]).symmetric_cancellation_order(x[2]*x[3]*y[2])
             (-1, [2, 3, 1], 1)
-
         """
         PARENT = self.parent()
         other = PARENT(other)
@@ -914,16 +991,14 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             return (0, 1, self.lc() / other.lc())
         if self.lm() < other.lm():
             rawcmp = -1
-            Fsmall = dict([[k[0], [e for e in k[1]]]
-                           for k in self.footprint().items()])
-            Fbig = dict([[k[0], [e for e in k[1]]]
-                         for k in other.footprint().items()])
+            Fsmall = {k: list(v) for k, v in self.footprint().items()}
+            Fbig = {k: list(v) for k, v in other.footprint().items()}
             ltsmall = slt
             ltbig = olt
         else:
             rawcmp = 1
-            Fbig = dict([[k[0], [e for e in k[1]]] for k in self.footprint().items()])
-            Fsmall = dict([[k[0], [e for e in k[1]]] for k in other.footprint().items()])
+            Fbig = {k: list(v) for k, v in self.footprint().items()}
+            Fsmall = {k: list(v) for k, v in other.footprint().items()}
             ltbig = slt
             ltsmall = olt
         # Case 1: one of the Infinite Polynomials is scalar.
@@ -951,10 +1026,10 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         for i in Lsmall:  # i is a shift of the smaller polynomial
             j += 1
             ExpoSmall = Fsmall[i]
-            while (j < lenBig):
+            while j < lenBig:
                 found = False
                 if Lbig[j] >= i:
-                    ExpoBigSave = [e for e in Fbig[Lbig[j]]]
+                    ExpoBigSave = list(Fbig[Lbig[j]])
                     ExpoBig = Fbig[Lbig[j]]
                     found = True
                     for k in gens:
@@ -986,7 +1061,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     def coefficient(self, monomial):
         """
-        Returns the coefficient of a monomial in this polynomial.
+        Return the coefficient of a monomial in this polynomial.
 
         INPUT:
 
@@ -1014,44 +1089,43 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
             sage: a.coefficient({x[0]:1, x[1]:1})
             2
-
         """
+        P = self.parent()
         if self._p == 0:
-            res = 0
-        elif isinstance(monomial, self.__class__):
-            if not (self.parent().has_coerce_map_from(monomial.parent())):
-                res = 0
+            return P.zero()
+        if isinstance(monomial, self.__class__):
+            if not P.has_coerce_map_from(monomial.parent()):
+                return P.zero()
+            if hasattr(self._p, 'variables'):
+                VarList = [str(X) for X in self._p.variables()]
             else:
-                if hasattr(self._p, 'variables'):
-                    VarList = [str(X) for X in self._p.variables()]
-                else:
-                    VarList = []
-                if hasattr(monomial._p, 'variables'):
-                    VarList.extend([str(X) for X in monomial._p.variables()])
-                VarList = list(set(VarList))
-                VarList.sort(key=self.parent().varname_key, reverse=True)
-                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-                if len(VarList) == 1:
-                    # 'xx' is guaranteed to be no variable
-                    # name of monomial, since coercions
-                    # were tested before
-                    R = PolynomialRing(self._p.base_ring(), VarList + ['xx'], order=self.parent()._order)
+                VarList = []
+            if hasattr(monomial._p, 'variables'):
+                VarList.extend([str(X) for X in monomial._p.variables()])
+            VarList = list(set(VarList))
+            VarList.sort(key=P.varname_key, reverse=True)
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            if len(VarList) == 1:
+                # 'xx' is guaranteed to be no variable
+                # name of monomial, since coercions
+                # were tested before
+                R = PolynomialRing(self._p.base_ring(), VarList + ['xx'], order=P._order)
+                S = PolynomialRing(self._p.base_ring(), VarList, order=P._order)
+                res = S(R(self._p).coefficient(R(monomial._p)))
+                return InfinitePolynomial(P, res)
 
-                    res = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)(R(self._p).coefficient(R(monomial._p)))
-                else:
-                    R = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)
-                    res = R(self._p).coefficient(R(monomial._p))
-        elif isinstance(monomial, dict):
+            R = PolynomialRing(self._p.base_ring(), VarList, order=P._order)
+            res = R(self._p).coefficient(R(monomial._p))
+            return InfinitePolynomial(P, res)
+
+        if isinstance(monomial, dict):
             if monomial:
                 I = iter(monomial)
                 K = next(I)
                 del monomial[K]
-                res = self.coefficient(K).coefficient(monomial)
-            else:
-                return self
-        else:
-            raise TypeError("Objects of type %s have no coefficients in InfinitePolynomials" % (type(monomial)))
-        return self.parent()(res)
+                return self.coefficient(K).coefficient(monomial)
+            return self
+        raise TypeError("Objects of type %s have no coefficients in InfinitePolynomials" % (type(monomial)))
 
     # Essentials for Buchberger
     def reduce(self, I, tailreduce=False, report=None):
@@ -1061,16 +1135,14 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         INPUT:
 
         - ``I`` -- a :class:`~sage.rings.polynomial.symmetric_ideal.SymmetricIdeal` or a list
-          of Infinite Polynomials.
-        - ``tailreduce`` -- (bool, default ``False``) *Tail reduction* is performed if this
+          of Infinite Polynomials
+        - ``tailreduce`` -- boolean (default: ``False``); *tail reduction* is performed if this
           parameter is ``True``.
-        - ``report`` -- (object, default ``None``) If not ``None``, some information on the
+        - ``report`` -- object (default: ``None``); if not ``None``, some information on the
           progress of computation is printed, since reduction of huge polynomials may take
-          a long time.
+          a long time
 
-        OUTPUT:
-
-        Symmetrical reduction of ``self`` with respect to ``I``, possibly with tail reduction.
+        OUTPUT: symmetrical reduction of ``self`` with respect to ``I``, possibly with tail reduction
 
         THEORY:
 
@@ -1097,7 +1169,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         reduction. However, reduction by ``y[1]*x[2]^2`` works, since
         one can change variable index 1 into 2 and 2 into 3::
 
-            sage: p.reduce([y[1]*x[2]^2])
+            sage: p.reduce([y[1]*x[2]^2])                                               # needs sage.libs.singular
             y_3*y_1^2
 
         The next example shows that tail reduction is not done, unless
@@ -1107,13 +1179,13 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: I = (y[3])*X
             sage: p.reduce(I)
             x_3^3*y_2 + y_3*y_1^2
-            sage: p.reduce(I, tailreduce=True)
+            sage: p.reduce(I, tailreduce=True)                                          # needs sage.libs.singular
             x_3^3*y_2
 
         Last, we demonstrate the ``report`` option::
 
             sage: p = x[1]^2 + y[2]^2 + x[1]*x[2]*y[3] + x[1]*y[4]
-            sage: p.reduce(I, tailreduce=True, report=True)
+            sage: p.reduce(I, tailreduce=True, report=True)                             # needs sage.libs.singular
             :T[2]:>
             >
             x_1^2 + y_2^2
@@ -1124,7 +1196,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         the reduction process is finished (there could only be several
         non-trivial rounds if `I` was generated by more than one
         polynomial).
-
         """
         from sage.rings.polynomial.symmetric_reduction import SymmetricReductionStrategy
         if hasattr(I, 'gens'):
@@ -1142,11 +1213,10 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         INPUT:
 
-        ``k`` -- an integer.
+        - ``k`` -- integer
 
-        OUTPUT:
-
-        Replace `v_n` with `v_{n\cdot k}` for all generators `v_\ast` occurring in self.
+        OUTPUT: replace `v_n` with `v_{n\cdot k}` for all generators `v_\ast`
+        occurring in ``self``
 
         EXAMPLES::
 
@@ -1172,7 +1242,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: a = x[2] + x[3]
             sage: a.stretch(2000)
             x_6000 + x_4000
-
         """
         def P(n):
             return k*n
@@ -1196,7 +1265,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     def gcd(self, x):
         """
-        computes the greatest common divisor
+        Compute the greatest common divisor.
 
         EXAMPLES::
 
@@ -1220,7 +1289,7 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
     INPUT:
 
     - ``A`` -- an Infinite Polynomial Ring in sparse implementation
-    - ``p`` -- a *classical* polynomial that can be interpreted in ``A``.
+    - ``p`` -- a *classical* polynomial that can be interpreted in ``A``
 
     Of course, one should not directly invoke this class, but rather
     construct elements of ``A`` in the usual way.
@@ -1238,7 +1307,6 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
         sage: p.polynomial().parent()
         Multivariate Polynomial Ring in b_100, b_0, c_4, c_0
          over Univariate Polynomial Ring in a over Rational Field
-
     """
 
     def __call__(self, *args, **kwargs):
@@ -1258,8 +1326,8 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             sage: a(x_1=x[100])
             x_100 + x_0
 
-            sage: M = matrix([[1,1], [2,0]])                                            # optional - sage.modules
-            sage: a(x_1=M)                                                              # optional - sage.modules
+            sage: M = matrix([[1,1], [2,0]])                                            # needs sage.modules
+            sage: a(x_1=M)                                                              # needs sage.modules
             [x_0 + 1       1]
             [      2     x_0]
         """
@@ -1333,7 +1401,6 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             sage: X.<x> = InfinitePolynomialRing(ZZ)
             sage: x[2]*x[1] # indirect doctest
             x_2*x_1
-
         """
         try:
             return InfinitePolynomial_sparse(self.parent(), self._p * x._p)
@@ -1357,7 +1424,6 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: x[2] - x[1] # indirect doctest
             x_2 - x_1
-
         """
         try:
             return InfinitePolynomial_sparse(self.parent(), self._p - x._p)
@@ -1376,12 +1442,12 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
 
     def __pow__(self, n):
         """
-        Exponentiation by an integer, or action by a callable object
+        Exponentiation by an integer, or action by a callable object.
 
         NOTE:
 
-        The callable object must accept non-negative integers as input
-        and return non-negative integers. Typical use case is a
+        The callable object must accept nonnegative integers as input
+        and return nonnegative integers. Typical use case is a
         permutation, that will result in the corresponding permutation
         of variables.
 
@@ -1389,10 +1455,9 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
 
             sage: X.<x,y> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: p = x[10]*y[2] + 2*x[1]*y[3]
-            sage: P = Permutation(((1,2),(3,4,5)))                                      # optional - sage.combinat
-            sage: p^P # indirect doctest                                                # optional - sage.combinat
+            sage: P = Permutation(((1,2),(3,4,5)))
+            sage: p^P # indirect doctest
             x_10*y_1 + 2*x_2*y_4
-
         """
         P = self.parent()
         if callable(n):
@@ -1436,7 +1501,7 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
 
         NOTE:
 
-        Let x and y be generators of the parent of self. We only consider
+        Let x and y be generators of the parent of ``self``. We only consider
         monomial orderings in which x[m] > y[n] iff x appears earlier in the
         list of generators than y, or x==y and m>n
 
@@ -1480,12 +1545,11 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
 
         An example in which a previous version had failed::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='sparse')                   # optional - sage.rings.finite_rings
-            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')                                                                      # optional - sage.rings.finite_rings
-            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')                                                                      # optional - sage.rings.finite_rings
-            sage: p < q # indirect doctest                                                                              # optional - sage.rings.finite_rings
+            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='sparse')
+            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')
+            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')
+            sage: p < q
             False
-
         """
         # We can assume that self.parent() is x.parent(),
         # but of course the underlying polynomial rings
@@ -1521,11 +1585,10 @@ class InfinitePolynomial_dense(InfinitePolynomial):
     INPUT:
 
     - ``A`` -- an Infinite Polynomial Ring in dense implementation
-    - ``p`` -- a *classical* polynomial that can be interpreted in ``A``.
+    - ``p`` -- a *classical* polynomial that can be interpreted in ``A``
 
     Of course, one should not directly invoke this class, but rather
     construct elements of ``A`` in the usual way.
-
     """
 
     def __call__(self, *args, **kwargs):
@@ -1545,7 +1608,6 @@ class InfinitePolynomial_dense(InfinitePolynomial):
 
             sage: a(x_1=x[100])
             x_100 + x_0
-
         """
         # Replace any InfinitePolynomials by their underlying polynomials
         for kw in kwargs:
@@ -1583,12 +1645,11 @@ class InfinitePolynomial_dense(InfinitePolynomial):
 
         An example in which a previous version had failed::
 
-            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='dense')                    # optional - sage.rings.finite_rings
-            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')                                                                      # optional - sage.rings.finite_rings
-            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')                                                                      # optional - sage.rings.finite_rings
-            sage: p < q                                                                                                 # optional - sage.rings.finite_rings
+            sage: X.<x,y> = InfinitePolynomialRing(GF(3), order='degrevlex', implementation='dense')
+            sage: p = Y('x_3*x_0^2 + x_0*y_3*y_0')
+            sage: q = Y('x_1*x_0^2 + x_0*y_1*y_0')
+            sage: p < q
             False
-
         """
         # We can assume that self and x belong to the same ring.
         # We can not assume yet that self._p and
@@ -1613,7 +1674,6 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: x[1] + x[2] # indirect doctest
             x_2 + x_1
-
         """
         P = self.parent()
         self._p = P._P(self._p)
@@ -1627,7 +1687,6 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: x[2]*x[1] # indirect doctest
             x_2*x_1
-
         """
         P = self.parent()
         self._p = P._P(self._p)
@@ -1641,7 +1700,6 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: x[2] - x[1] # indirect doctest
             x_2 - x_1
-
         """
         P = self.parent()
         self._p = P._P(self._p)
@@ -1650,12 +1708,12 @@ class InfinitePolynomial_dense(InfinitePolynomial):
 
     def __pow__(self, n):
         """
-        Exponentiation by an integer, or action by a callable object
+        Exponentiation by an integer, or action by a callable object.
 
         NOTE:
 
-        The callable object must accept non-negative integers as input
-        and return non-negative integers. Typical use case is a
+        The callable object must accept nonnegative integers as input
+        and return nonnegative integers. Typical use case is a
         permutation, that will result in the corresponding permutation
         of variables.
 
@@ -1665,10 +1723,9 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             sage: x[10]^3
             x_10^3
             sage: p = x[10]*y[2] + 2*x[1]*y[3]
-            sage: P = Permutation(((1,2),(3,4,5)))                                      # optional - sage.combinat
-            sage: p^P                                                                   # optional - sage.combinat
+            sage: P = Permutation(((1,2),(3,4,5)))
+            sage: p^P
             x_10*y_1 + 2*x_2*y_4
-
         """
         P = self.parent()
         if callable(n):

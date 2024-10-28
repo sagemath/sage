@@ -164,26 +164,29 @@ AUTHOR:
 - Jonathan Kliem (2019-04)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Jonathan Kliem <jonathan.kliem@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cython.parallel cimport prange, threadid
 from cysignals.memory cimport check_allocarray, sig_free
+from cysignals.signals cimport sig_check
 from memory_allocator cimport MemoryAllocator
 
-from cysignals.signals      cimport sig_check
-from .conversions           cimport bit_rep_to_Vrep_list
-from .base                  cimport CombinatorialPolyhedron
+from sage.misc.lazy_import import LazyImport
 
-from sage.geometry.polyhedron.face import combinatorial_face_to_polyhedral_face, PolyhedronFace
-from .face_list_data_structure cimport *
+from sage.geometry.polyhedron.combinatorial_polyhedron.base cimport CombinatorialPolyhedron
+from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport bit_rep_to_Vrep_list
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport *
+
+combinatorial_face_to_polyhedral_face = LazyImport('sage.geometry.polyhedron.face', 'combinatorial_face_to_polyhedral_face')
+PolyhedronFace = LazyImport('sage.geometry.polyhedron.face', 'PolyhedronFace')
 
 
 cdef extern from "Python.h":
@@ -207,13 +210,13 @@ cdef class FaceIterator_base(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(4)                     # optional - sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                     # optional - sage.combinat
-            sage: it = C.face_generator() # indirect doctest              # optional - sage.combinat
+            sage: P = polytopes.permutahedron(4)
+            sage: C = CombinatorialPolyhedron(P)
+            sage: it = C.face_generator() # indirect doctest
 
             sage: f_vector = [1, 0, 0, 0, 1]
-            sage: for face in it: f_vector[face.dimension()+1] += 1  # optional - sage.combinat
-            sage: print ('f_vector of permutahedron(4): ', f_vector) # optional - sage.combinat
+            sage: for face in it: f_vector[face.dimension()+1] += 1
+            sage: print ('f_vector of permutahedron(4): ', f_vector)
             f_vector of permutahedron(4):  [1, 24, 36, 14, 1]
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator).run()
@@ -244,7 +247,6 @@ cdef class FaceIterator_base(SageObject):
         if dual and not C.is_bounded():
             raise ValueError("cannot iterate over dual of unbounded Polyedron")
         cdef int i
-        cdef size_t j
 
         self.dual = dual
         self.structure.dual = dual
@@ -351,7 +353,7 @@ cdef class FaceIterator_base(SageObject):
             sage: FaceIterator_base(2)  # indirect doctest
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'combinatorial_polyhedron'
+            AttributeError: 'sage.rings.integer.Integer' object has no attribute 'combinatorial_polyhedron'...
         """
         cdef int i
         sig_free(self.structure.atom_rep)
@@ -637,17 +639,18 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: P = polytopes.dodecahedron()                       # optional - sage.rings.number_field
-            sage: it = P.face_generator()                            # optional - sage.rings.number_field
-            sage: _ = next(it), next(it)                             # optional - sage.rings.number_field
-            sage: next(it).ambient_V_indices()                       # optional - sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
+            sage: P = polytopes.dodecahedron()
+            sage: it = P.face_generator()
+            sage: _ = next(it), next(it)
+            sage: next(it).ambient_V_indices()
             (15, 16, 17, 18, 19)
-            sage: it.meet_of_Hrep(9,11)                              # optional - sage.rings.number_field
+            sage: it.meet_of_Hrep(9,11)
             Traceback (most recent call last):
             ...
             ValueError: please reset the face iterator
-            sage: it.reset()                                         # optional - sage.rings.number_field
-            sage: it.meet_of_Hrep(9,11).ambient_H_indices()          # optional - sage.rings.number_field
+            sage: it.reset()
+            sage: it.meet_of_Hrep(9,11).ambient_H_indices()
             (9, 11)
 
         TESTS:
@@ -722,17 +725,18 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: P = polytopes.dodecahedron()                       # optional - sage.rings.number_field
-            sage: it = P.face_generator()                            # optional - sage.rings.number_field
-            sage: _ = next(it), next(it)                             # optional - sage.rings.number_field
-            sage: next(it).ambient_V_indices()                       # optional - sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
+            sage: P = polytopes.dodecahedron()
+            sage: it = P.face_generator()
+            sage: _ = next(it), next(it)
+            sage: next(it).ambient_V_indices()
             (15, 16, 17, 18, 19)
-            sage: it.join_of_Vrep(1,10)                              # optional - sage.rings.number_field
+            sage: it.join_of_Vrep(1,10)
             Traceback (most recent call last):
             ...
             ValueError: please reset the face iterator
-            sage: it.reset()                                         # optional - sage.rings.number_field
-            sage: it.join_of_Vrep(1,10).ambient_V_indices()          # optional - sage.rings.number_field
+            sage: it.reset()
+            sage: it.join_of_Vrep(1,10).ambient_V_indices()
             (1, 10)
 
         In the case of an unbounded polyhedron, we try to make sense of the input::
@@ -846,9 +850,10 @@ cdef class FaceIterator_base(SageObject):
 
         The face iterator must not have the output dimension specified::
 
-            sage: P = polytopes.dodecahedron()                       # optional - sage.rings.number_field
-            sage: it = P.face_generator(2)                           # optional - sage.rings.number_field
-            sage: it._meet_of_coatoms(1,2)                           # optional - sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
+            sage: P = polytopes.dodecahedron()
+            sage: it = P.face_generator(2)
+            sage: it._meet_of_coatoms(1,2)
             Traceback (most recent call last):
             ...
             ValueError: face iterator must not have the output dimension specified
@@ -955,24 +960,26 @@ cdef class FaceIterator_base(SageObject):
 
         If the iterator has already been used, it must be reset before::
 
-            sage: P = polytopes.dodecahedron()                       # optional - sage.rings.number_field
-            sage: it = P.face_generator()                            # optional - sage.rings.number_field
-            sage: _ = next(it), next(it)                             # optional - sage.rings.number_field
-            sage: next(it).ambient_V_indices()                       # optional - sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
+            sage: P = polytopes.dodecahedron()
+            sage: it = P.face_generator()
+            sage: _ = next(it), next(it)
+            sage: next(it).ambient_V_indices()
             (15, 16, 17, 18, 19)
-            sage: it._join_of_atoms(1,10)                            # optional - sage.rings.number_field
+            sage: it._join_of_atoms(1,10)
             Traceback (most recent call last):
             ...
             ValueError: please reset the face iterator
-            sage: it.reset()                                         # optional - sage.rings.number_field
-            sage: it._join_of_atoms(1,10).ambient_V_indices()        # optional - sage.rings.number_field
+            sage: it.reset()
+            sage: it._join_of_atoms(1,10).ambient_V_indices()
             (1, 10)
 
         The face iterator must not have the output dimension specified::
 
-            sage: P = polytopes.dodecahedron()                       # optional - sage.rings.number_field
-            sage: it = P.face_generator(2)                           # optional - sage.rings.number_field
-            sage: it._join_of_atoms(1,2)                             # optional - sage.rings.number_field
+            sage: # needs sage.groups sage.rings.number_field
+            sage: P = polytopes.dodecahedron()
+            sage: it = P.face_generator(2)
+            sage: it._join_of_atoms(1,2)
             Traceback (most recent call last):
             ...
             ValueError: face iterator must not have the output dimension specified
@@ -1184,7 +1191,7 @@ cdef class FaceIterator_base(SageObject):
         cdef size_t yet_to_visit = self.structure.yet_to_visit
 
         if unlikely(yet_to_visit >= faces[0].n_faces
-                or not faces_are_identical(faces[0].faces[yet_to_visit], self.structure.face)):
+                    or not faces_are_identical(faces[0].faces[yet_to_visit], self.structure.face)):
             raise ValueError("iterator is not set to the correct face")
 
         swap_faces(faces[0].faces[yet_to_visit], faces[0].faces[faces[0].n_faces - 1])
@@ -1289,7 +1296,7 @@ cdef class FaceIterator_base(SageObject):
             self.structure.current_dimension = -1
             return 0
 
-        cdef int d = self.next_dimension()
+        self.next_dimension()
         while self.structure.current_dimension != self.structure.dimension:
             if face_issubset(face, self.structure.face):
                 if face_issubset(self.structure.face, face):
@@ -1299,7 +1306,7 @@ cdef class FaceIterator_base(SageObject):
                 # The face is not a subface/supface of the current face.
                 self.ignore_subsets()
 
-            d = self.next_dimension()
+            self.next_dimension()
 
         raise ValueError("the face appears to be incorrect")
 
@@ -1574,12 +1581,12 @@ cdef class FaceIterator(FaceIterator_base):
         r"""
         EXAMPLES::
 
-            sage: P = polytopes.associahedron(['A',3])               # optional - sage.combinat
-            sage: C = CombinatorialPolyhedron(P)                     # optional - sage.combinat
-            sage: C.face_generator()                                 # optional - sage.combinat
+            sage: P = polytopes.associahedron(['A',3])                                  # needs sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                        # needs sage.combinat
+            sage: C.face_generator()                                                    # needs sage.combinat
             Iterator over the proper faces of a 3-dimensional combinatorial polyhedron
 
-            sage: C.face_generator(1)                                # optional - sage.combinat
+            sage: C.face_generator(1)                                                   # needs sage.combinat
             Iterator over the 1-faces of a 3-dimensional combinatorial polyhedron
         """
         if self.structure.output_dimension != -2:
@@ -1845,11 +1852,11 @@ cdef class FaceIterator_geom(FaceIterator_base):
         r"""
         EXAMPLES::
 
-            sage: P = polytopes.associahedron(['A',3])               # optional - sage.combinat
-            sage: P.face_generator()                                 # optional - sage.combinat
+            sage: P = polytopes.associahedron(['A',3])                                  # needs sage.combinat
+            sage: P.face_generator()                                                    # needs sage.combinat
             Iterator over the faces of a 3-dimensional polyhedron in QQ^3
 
-            sage: P.face_generator(1)                                # optional - sage.combinat
+            sage: P.face_generator(1)                                                   # needs sage.combinat
             Iterator over the 1-faces of a 3-dimensional polyhedron in QQ^3
         """
         if self._requested_dim is not None:
@@ -1878,7 +1885,7 @@ cdef class FaceIterator_geom(FaceIterator_base):
         if unlikely(self._trivial_faces):
             if self._trivial_faces == -1:
                 raise StopIteration
-            if self._trivial_faces in (2,4):  # Return the polyhedron.
+            if self._trivial_faces in (2, 4):  # Return the polyhedron.
                 if self._trivial_faces == 2:
                     self._trivial_faces = 1  # Return the empty face next.
                 else:
@@ -1918,7 +1925,7 @@ cdef class FaceIterator_geom(FaceIterator_base):
 
 # Nogil definitions of crucial functions.
 
-cdef inline int next_dimension(iter_t structure, size_t parallelization_depth=0) nogil except -1:
+cdef inline int next_dimension(iter_t structure, size_t parallelization_depth=0) except -1 nogil:
     r"""
     See :meth:`FaceIterator.next_dimension`.
 
@@ -1932,7 +1939,7 @@ cdef inline int next_dimension(iter_t structure, size_t parallelization_depth=0)
     structure._index += 1
     return structure.current_dimension
 
-cdef inline int next_face_loop(iter_t structure) nogil except -1:
+cdef inline int next_face_loop(iter_t structure) except -1 nogil:
     r"""
     See :meth:`FaceIterator.next_face_loop`.
     """
@@ -1940,7 +1947,8 @@ cdef inline int next_face_loop(iter_t structure) nogil except -1:
         # The function is not supposed to be called,
         # just prevent it from crashing.
         # Actually raising an error here results in a bad branch prediction.
-        return -1
+        # But return -1 results in a crash with python 3.12
+        raise StopIteration
 
     # Getting ``[faces, n_faces, n_visited_all]`` according to dimension.
     cdef face_list_t* faces = &structure.new_faces[structure.current_dimension]
@@ -2017,7 +2025,7 @@ cdef inline int next_face_loop(iter_t structure) nogil except -1:
         structure.first_time[structure.current_dimension] = True
         return 0
 
-cdef inline size_t n_atom_rep(iter_t structure) nogil except -1:
+cdef inline size_t n_atom_rep(iter_t structure) except -1 nogil:
     r"""
     See :meth:`FaceIterator.n_atom_rep`.
     """
@@ -2070,30 +2078,29 @@ cdef int parallel_f_vector(iter_t* structures, size_t num_threads, size_t parall
     if num_threads == 0:
         num_threads = 1
 
-    cdef size_t thread_id
     cdef MemoryAllocator mem = MemoryAllocator()
 
     # Setting up for each thread some storage space.
     cdef parallel_f_t* parallel_structs = \
-            <parallel_f_t*> mem.allocarray(num_threads, sizeof(parallel_f_t))
+        <parallel_f_t*> mem.allocarray(num_threads, sizeof(parallel_f_t))
 
     for i in range(num_threads):
         # Partial f-vectors.
         parallel_structs[i].f_vector = \
-                <size_t*> mem.calloc(dim+2, sizeof(size_t))
+            <size_t*> mem.calloc(dim+2, sizeof(size_t))
         parallel_structs[i].current_job_id = \
-                <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
+            <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
 
         # Keeping back of the original number of faces allows faster starting the next job.
         parallel_structs[i].original_n_faces = \
-                <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
+            <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
         parallel_structs[i].original_n_faces[0] = \
-                structures[0].new_faces[dim - 1].n_faces
+            structures[0].new_faces[dim - 1].n_faces
 
         parallel_structs[i].original_n_visited_all = \
-                <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
+            <size_t*> mem.calloc(parallelization_depth+1, sizeof(size_t))
         parallel_structs[i].original_n_visited_all[0] = \
-                structures[0].visited_all[dim - 1].n_faces
+            structures[0].visited_all[dim - 1].n_faces
 
     for i in prange(n_jobs, schedule='dynamic', chunksize=1,
                     num_threads=num_threads, nogil=True):
@@ -2108,7 +2115,7 @@ cdef int parallel_f_vector(iter_t* structures, size_t num_threads, size_t parall
             f_vector[j] += parallel_structs[i].f_vector[j]
 
 cdef int _parallel_f_vector(iter_t structure, size_t parallelization_depth,
-                            parallel_f_t parallel_struct, size_t job_id) nogil except -1:
+                            parallel_f_t parallel_struct, size_t job_id) except -1 nogil:
     """
     Set up a job and then visit all faces.
     """
@@ -2123,7 +2130,7 @@ cdef int _parallel_f_vector(iter_t structure, size_t parallelization_depth,
 
 cdef inline int prepare_face_iterator_for_partial_job(
         iter_t structure, size_t parallelization_depth,
-        parallel_f_t parallel_struct, size_t job_id) nogil except -1:
+        parallel_f_t parallel_struct, size_t job_id) except -1 nogil:
     """
     Set ``structure`` according to ``job_id``.
 
@@ -2133,7 +2140,7 @@ cdef inline int prepare_face_iterator_for_partial_job(
     The first digit determines which facet to visit.
     The next digit determines which facet of the facet should be visited.
 
-    OUTPUT: ``1`` if the job exists and ``0`` otherwise.
+    OUTPUT: ``1`` if the job exists and ``0`` otherwise
 
     In addition, the first job treating a face will "visit" this face
     and increase the corresponding entry of the f-vector.
@@ -2149,9 +2156,9 @@ cdef inline int prepare_face_iterator_for_partial_job(
 
         # Recover all faces.
         structure.new_faces[d].n_faces = \
-                parallel_struct.original_n_faces[current_depth -1]
+            parallel_struct.original_n_faces[current_depth -1]
         structure.visited_all[d].n_faces = \
-                parallel_struct.original_n_visited_all[current_depth -1]
+            parallel_struct.original_n_visited_all[current_depth -1]
         structure.first_time[d] = True
         structure.yet_to_visit = 0  # just to be on the safe side
 
@@ -2166,7 +2173,6 @@ cdef inline int prepare_face_iterator_for_partial_job(
     cdef size_t n_coatoms = structure.n_coatoms
     cdef size_t job_id_c
     cdef size_t i
-    cdef size_t diff
     cdef size_t new_faces_counter
 
     for current_depth in range(1, parallelization_depth + 1):
@@ -2252,7 +2258,7 @@ cdef inline int prepare_face_iterator_for_partial_job(
 
     return 1
 
-cdef inline size_t get_digit(size_t job_id, size_t pos, size_t padto, size_t base) nogil:
+cdef inline size_t get_digit(size_t job_id, size_t pos, size_t padto, size_t base) noexcept nogil:
     """
     Get the digit ``pos`` of ``job_id`` with base ``base``
     padding the number of digits to ``pad_to``.

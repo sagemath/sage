@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Isomorphic Objects Functorial Construction
 
@@ -15,6 +16,7 @@ AUTHORS:
 from sage.categories.category import Category
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
+
 class IsomorphicObjectsCategory(RegressiveCovariantConstructionCategory):
 
     _functor_category = "IsomorphicObjects"
@@ -22,7 +24,7 @@ class IsomorphicObjectsCategory(RegressiveCovariantConstructionCategory):
     @classmethod
     def default_super_categories(cls, category):
         """
-        Returns the default super categories of ``category.IsomorphicObjects()``
+        Return the default super categories of ``category.IsomorphicObjects()``.
 
         Mathematical meaning: if `A` is the image of `B` by an
         isomorphism in the category `C`, then `A` is both a subobject
@@ -30,8 +32,8 @@ class IsomorphicObjectsCategory(RegressiveCovariantConstructionCategory):
 
         INPUT:
 
-         - ``cls`` -- the class ``IsomorphicObjectsCategory``
-         - ``category`` -- a category `Cat`
+        - ``cls`` -- the class ``IsomorphicObjectsCategory``
+        - ``category`` -- a category `Cat`
 
         OUTPUT: a (join) category
 

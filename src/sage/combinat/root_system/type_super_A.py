@@ -43,7 +43,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: R = RootSystem(['A', [4,2]])
             sage: AL = R.ambient_space(); AL
             Ambient space of the Root system of type ['A', [4, 2]]
-            sage: TestSuite(AL).run(skip="_test_norm_of_simple_roots")
+            sage: TestSuite(AL).run(skip='_test_norm_of_simple_roots')
         """
         ct = root_system.cartan_type()
         if index_set is None:
@@ -378,7 +378,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         def has_descent(self, i, positive=False):
             """
             Test if ``self`` has a descent at position `i`, that is
-            if ``self`` is on the strict negative side of the `i^{th}`
+            if ``self`` is on the strict negative side of the `i`-th
             simple reflection hyperplane.
 
             If ``positive`` is ``True``, tests if it is on the strict
@@ -599,37 +599,36 @@ class CartanType(SuperCartanType_standard):
 
         EXAMPLES::
 
-            sage: a = CartanType(['A', [4,2]]).dynkin_diagram()
-            sage: a
+            sage: a = CartanType(['A', [4,2]]).dynkin_diagram(); a                      # needs sage.graphs
             O---O---O---O---X---O---O
             -4  -3  -2  -1  0   1   2
             A4|2
-            sage: a.edges(sort=True)
+            sage: a.edges(sort=True)                                                    # needs sage.graphs
             [(-4, -3, 1), (-3, -4, 1), (-3, -2, 1), (-2, -3, 1),
              (-2, -1, 1), (-1, -2, 1), (-1, 0, 1), (0, -1, 1),
              (0, 1, 1), (1, 0, -1), (1, 2, 1), (2, 1, 1)]
 
         TESTS::
 
-            sage: a = DynkinDiagram(['A', [0,0]]); a
+            sage: a = DynkinDiagram(['A', [0,0]]); a                                    # needs sage.graphs
             X
             0
             A0|0
-            sage: a.vertices(sort=False), a.edges(sort=False)
+            sage: a.vertices(sort=False), a.edges(sort=False)                           # needs sage.graphs
             ([0], [])
 
-            sage: a = DynkinDiagram(['A', [1,0]]); a
+            sage: a = DynkinDiagram(['A', [1,0]]); a                                    # needs sage.graphs
             O---X
             -1  0
             A1|0
-            sage: a.vertices(sort=True), a.edges(sort=True)
+            sage: a.vertices(sort=True), a.edges(sort=True)                             # needs sage.graphs
             ([-1, 0], [(-1, 0, 1), (0, -1, 1)])
 
-            sage: a = DynkinDiagram(['A', [0,1]]); a
+            sage: a = DynkinDiagram(['A', [0,1]]); a                                    # needs sage.graphs
             X---O
             0   1
             A0|1
-            sage: a.vertices(sort=True), a.edges(sort=True)
+            sage: a.vertices(sort=True), a.edges(sort=True)                             # needs sage.graphs
             ([0, 1], [(0, 1, 1), (1, 0, -1)])
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -652,7 +651,7 @@ class CartanType(SuperCartanType_standard):
         EXAMPLES::
 
             sage: ct = CartanType(['A', [2,3]])
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # needs sage.graphs
             [ 2 -1  0  0  0  0]
             [-1  2 -1  0  0  0]
             [ 0 -1  0  1  0  0]
@@ -663,16 +662,16 @@ class CartanType(SuperCartanType_standard):
         TESTS::
 
             sage: ct = CartanType(['A', [0,0]])
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # needs sage.graphs
             [0]
 
             sage: ct = CartanType(['A', [1,0]])
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # needs sage.graphs
             [ 2 -1]
             [-1  0]
 
             sage: ct = CartanType(['A', [0,1]])
-            sage: ct.cartan_matrix()
+            sage: ct.cartan_matrix()                                                    # needs sage.graphs
             [ 0  1]
             [-1  2]
         """
@@ -696,14 +695,14 @@ class CartanType(SuperCartanType_standard):
         EXAMPLES::
 
             sage: ct = CartanType(['A', [1,2]])
-            sage: ct.dynkin_diagram()
+            sage: ct.dynkin_diagram()                                                   # needs sage.graphs
             O---X---O---O
             -1  0   1   2
             A1|2
-            sage: f={1:2,2:1,0:0,-1:-1}
+            sage: f = {1:2, 2:1, 0:0, -1:-1}
             sage: ct.relabel(f)
             ['A', [1, 2]] relabelled by {-1: -1, 0: 0, 1: 2, 2: 1}
-            sage: ct.relabel(f).dynkin_diagram()
+            sage: ct.relabel(f).dynkin_diagram()                                        # needs sage.graphs
             O---X---O---O
             -1  0   2   1
             A1|2 relabelled by {-1: -1, 0: 0, 1: 2, 2: 1}
@@ -711,7 +710,7 @@ class CartanType(SuperCartanType_standard):
         from . import type_relabel
         return type_relabel.CartanType(self, relabelling)
 
-    def _latex_draw_node(self, x, y, label, position="below=4pt"):
+    def _latex_draw_node(self, x, y, label, position='below=4pt'):
         r"""
         Draw (possibly marked [crossed out]) circular node ``i`` at the
         position ``(x,y)`` with node label ``label`` .
@@ -738,7 +737,7 @@ class CartanType(SuperCartanType_standard):
                                     x+.17, y-.17, x-.17, y+.17)
         return ret
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -776,6 +775,8 @@ class CartanType(SuperCartanType_standard):
             \draw[-,thick] (0.17 cm, 0.17 cm) -- (-0.17 cm, -0.17 cm);
             \draw[-,thick] (0.17 cm, -0.17 cm) -- (-0.17 cm, 0.17 cm);
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
         if self.n + self.m > 1:
@@ -785,7 +786,7 @@ class CartanType(SuperCartanType_standard):
         return ret + "".join(node((self.m+i)*node_dist, 0, label(i))
                              for i in self.index_set())
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the Dynkin diagram.
 
@@ -813,6 +814,8 @@ class CartanType(SuperCartanType_standard):
             O---O---O---O---O---X
             -5  -4  -3  -2  -1  0
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = lambda i: 'O'
         ret = "---".join(node(label(i)) for i in range(1,self.m+1))

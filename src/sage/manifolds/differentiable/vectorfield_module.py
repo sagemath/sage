@@ -17,14 +17,13 @@ parallelizable. Accordingly, there are two classes for vector field modules:
 AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
-- Travis Scrimshaw (2016): structure of Lie algebroid (:trac:`20771`)
+- Travis Scrimshaw (2016): structure of Lie algebroid (:issue:`20771`)
 
 REFERENCES:
 
 - [KN1963]_
 - [Lee2013]_
 - [ONe1983]_
-
 """
 
 # ******************************************************************************
@@ -193,7 +192,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
     The conversion map is actually the restriction of vector fields defined
     on `M` to `U`.
-
     """
     Element = VectorField
 
@@ -224,7 +222,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         In the above test suite, _test_elements is skipped because of the
         _test_pickling error of the elements (to be fixed in class
         TensorField)
-
         """
         self._domain = domain
         name = "X(" + domain._name
@@ -267,7 +264,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
     def _element_constructor_(self, comp=[], frame=None, name=None,
                               latex_name=None):
         r"""
-        Construct an element of the module
+        Construct an element of the module.
 
         TESTS::
 
@@ -282,7 +279,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             v = -x ∂/∂x + y ∂/∂y
             sage: XM(0) is XM.zero()
             True
-
         """
         try:
             if comp.is_trivial_zero():
@@ -319,7 +315,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XM = M.vector_field_module()
             sage: XM._an_element_()
             Vector field on the 2-dimensional differentiable manifold M
-
         """
         resu = self.element_class(self)
         for oc in self._domain.open_covers(trivial=False):
@@ -333,7 +328,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
     def _coerce_map_from_(self, other):
         r"""
-        Determine whether coercion to self exists from other parent.
+        Determine whether coercion to ``self`` exists from other parent.
 
         TESTS::
 
@@ -345,7 +340,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             False
             sage: XU._coerce_map_from_(XM)
             True
-
         """
         if isinstance(other, (VectorFieldModule, VectorFieldFreeModule)):
             return self._domain.is_subset(other._domain) and \
@@ -370,7 +364,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XM  # indirect doctest
             Module X(M) of vector fields on the 2-dimensional differentiable
              manifold M
-
         """
         description = "Module "
         if self._name is not None:
@@ -395,7 +388,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             '\\mathfrak{X}\\left(M\\right)'
             sage: latex(XM)  # indirect doctest
             \mathfrak{X}\left(M\right)
-
         """
         if self._latex_name is None:
             return r"\text{" + str(self) + r"}"
@@ -427,7 +419,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XU = U.vector_field_module(dest_map=Phi)
             sage: XU.domain()
             2-dimensional differentiable manifold U
-
         """
         return self._domain
 
@@ -457,7 +448,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XU = U.vector_field_module(dest_map=Phi)
             sage: XU.ambient_domain()
             5-dimensional differentiable manifold M
-
         """
         return self._ambient_domain
 
@@ -505,7 +495,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XU.destination_map()
             Differentiable map Phi from the 2-dimensional differentiable
              manifold U to the 5-dimensional differentiable manifold M
-
         """
         return self._dest_map
 
@@ -515,9 +504,9 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
         INPUT:
 
-        - ``k`` -- non-negative integer; the contravariant rank,
+        - ``k`` -- nonnegative integer; the contravariant rank,
           the tensor type being `(k,l)`
-        - ``l`` -- non-negative integer; the covariant rank,
+        - ``l`` -- nonnegative integer; the covariant rank,
           the tensor type being `(k,l)`
 
         OUTPUT:
@@ -553,7 +542,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         See
         :class:`~sage.manifolds.differentiable.tensorfield_module.TensorFieldModule`
         for more examples and documentation.
-
         """
         if sym or antisym:
             raise NotImplementedError
@@ -578,7 +566,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
         INPUT:
 
-        - ``p`` -- non-negative integer
+        - ``p`` -- nonnegative integer
 
         OUTPUT:
 
@@ -611,7 +599,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
             :class:`~sage.manifolds.differentiable.multivector_module.MultivectorModule`
             for more examples and documentation.
-
         """
         try:
             return self._exterior_powers[p]
@@ -638,7 +625,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
         INPUT:
 
-        - ``p`` -- non-negative integer
+        - ``p`` -- nonnegative integer
 
         OUTPUT:
 
@@ -669,7 +656,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
             :class:`~sage.manifolds.differentiable.diff_form_module.DiffFormModule`
             for more examples and documentation.
-
         """
         try:
             return self._dual_exterior_powers[p]
@@ -694,7 +680,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XM.dual()
             Module Omega^1(M) of 1-forms on the 2-dimensional differentiable
              manifold M
-
         """
         return self.dual_exterior_power(1)
 
@@ -726,7 +711,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
             :class:`~sage.manifolds.differentiable.automorphismfield_group.AutomorphismFieldGroup`
             for more examples and documentation.
-
         """
         if self._general_linear_group is None:
             from sage.manifolds.differentiable.automorphismfield_group import \
@@ -784,7 +768,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
             :class:`~sage.manifolds.differentiable.tensorfield.TensorField`
             for more examples and documentation.
-
         """
         from sage.manifolds.differentiable.automorphismfield import \
                                                        AutomorphismField
@@ -825,7 +808,8 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
     def tensor(self, *args, **kwds):
         r"""
-        Construct a tensor field on the domain of ``self`` or a tensor product of ``self`` with other modules.
+        Construct a tensor field on the domain of ``self`` or a tensor product
+        of ``self`` with other modules.
 
         If ``args`` consist of other parents, just delegate to :meth:`tensor_product`.
 
@@ -885,7 +869,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XM.tensor(XM).tensor(XM.dual().tensor(XM.dual()))
             Traceback (most recent call last):
             ...
-            AttributeError: 'TensorFieldModule_with_category' object has no attribute '_basis_sym'
+            AttributeError: 'TensorFieldModule_with_category' object has no attribute '_basis_sym'...
 
         .. SEEALSO::
 
@@ -943,7 +927,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
             :class:`~sage.manifolds.differentiable.multivectorfield.MultivectorField`
             for more examples and documentation.
-
         """
         if degree == 0:
             return self._domain.scalar_field(name=name, latex_name=latex_name)
@@ -997,7 +980,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
             :class:`~sage.manifolds.differentiable.diff_form.DiffForm`
             for more examples and documentation.
-
         """
         if degree == 0:
             return self._domain.scalar_field(name=name, latex_name=latex_name)
@@ -1037,7 +1019,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
             :class:`~sage.manifolds.differentiable.diff_form.DiffForm`
             for more examples and documentation.
-
         """
         return self.dual_exterior_power(1).element_class(self, 1,
                                        name=name, latex_name=latex_name)
@@ -1077,7 +1058,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
             :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismField`
             for more examples and documentation.
-
         """
         return self.general_linear_group().element_class(self,
                                        name=name, latex_name=latex_name)
@@ -1115,7 +1095,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: one = Id.copy('1'); one
             Field of tangent-space automorphisms 1 on the 2-dimensional
              differentiable manifold M
-
         """
         return self.general_linear_group().one()
 
@@ -1132,7 +1111,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XM.zero()
             Vector field zero on the 2-dimensional differentiable
              manifold M
-
         """
         zero = self.element_class(self, name='zero', latex_name='0')
         for frame in self._domain._frames:
@@ -1154,8 +1132,8 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
         INPUT:
 
-        - ``name`` -- (string) name given to the metric
-        - ``signature`` -- (integer; default: ``None``) signature `S` of the
+        - ``name`` -- string; name given to the metric
+        - ``signature`` -- integer (default: ``None``); signature `S` of the
           metric: `S = n_+ - n_-`, where `n_+` (resp. `n_-`) is the number of
           positive terms (resp. number of negative terms) in any diagonal
           writing of the metric components; if ``signature`` is not provided,
@@ -1182,21 +1160,20 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
 
             :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetric`
             for more documentation.
-
         """
         # signature:
         ndim = self._ambient_domain.dimension()
         try:
             for elt in signature:
-                if (elt<0) or (not isinstance(elt, (int, Integer))):
+                if (elt < 0) or (not isinstance(elt, (int, Integer))):
                     raise ValueError("{} must be a positive integer".format(elt))
                 if elt > ndim:
                     raise ValueError("{} must be less than {}".format(elt,ndim))
                 sign = signature[0]+signature[1]+signature[2]
-                if sign!=ndim:
-                    raise ValueError("{} is different from the dimension".format(sign)+
+                if sign != ndim:
+                    raise ValueError("{} is different from the dimension".format(sign) +
                                         " of the manifold, who is {}".format(ndim))
-            if signature[2]!=0:
+            if signature[2] != 0:
                 from sage.manifolds.differentiable.metric import DegenerateMetric
                 return DegenerateMetric(self, name, signature=signature,
                                         latex_name=latex_name)
@@ -1205,8 +1182,8 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         if signature is None:
             signature = (ndim,0)
         if isinstance(signature, (Integer, int)):
-            if (signature+ndim)%2 == 1:
-                if ndim%2 == 0:
+            if (signature+ndim) % 2 == 1:
+                if ndim % 2 == 0:
                     raise ValueError("the metric signature must be even")
                 else:
                     raise ValueError("the metric signature must be odd")
@@ -1236,7 +1213,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: omega
             Symplectic form omega on the 2-sphere S^2 of radius 1 smoothly
              embedded in the Euclidean space E^3
-
         """
         from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 
@@ -1262,7 +1238,6 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: varpi = XM.poisson_tensor(name='varpi', latex_name=r'\varpi')
             sage: varpi
             2-vector field varpi on the 2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3
-
         """
         from sage.manifolds.differentiable.poisson_tensor import PoissonTensorField
 
@@ -1517,7 +1492,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
     The Sage test suite for modules is passed::
 
         sage: TestSuite(XM).run()
-
     """
 
     Element = VectorFieldParal
@@ -1539,7 +1513,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             sage: XM is M.vector_field_module()
             True
             sage: TestSuite(XM).run()
-
         """
         from sage.manifolds.differentiable.scalarfield import DiffScalarField
         self._domain = domain
@@ -1620,7 +1593,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             v = -y ∂/∂x + x ∂/∂y
             sage: XM(0) is XM.zero()
             True
-
         """
         try:
             if comp.is_trivial_zero():
@@ -1661,7 +1633,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             False
             sage: XU._coerce_map_from_(XM)
             True
-
         """
         if isinstance(other, (VectorFieldModule, VectorFieldFreeModule)):
             return (self._domain.is_subset(other._domain)
@@ -1689,7 +1660,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             sage: XM  # indirect doctest
             Free module X(M) of vector fields on the 2-dimensional
              differentiable manifold M
-
         """
         description = "Free module "
         if self._name is not None:
@@ -1729,7 +1699,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             sage: XU = U.vector_field_module(dest_map=Phi)
             sage: XU.domain()
             2-dimensional differentiable manifold U
-
         """
         return self._domain
 
@@ -1761,7 +1730,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             sage: XU = U.vector_field_module(dest_map=Phi)
             sage: XU.ambient_domain()
             3-dimensional differentiable manifold M
-
         """
         return self._ambient_domain
 
@@ -1810,7 +1778,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             sage: XU.destination_map()
             Differentiable map Phi from the 2-dimensional differentiable
              manifold U to the 3-dimensional differentiable manifold M
-
         """
         return self._dest_map
 
@@ -1821,9 +1788,9 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
         INPUT:
 
-        - ``k`` -- non-negative integer; the contravariant rank,
+        - ``k`` -- nonnegative integer; the contravariant rank,
           the tensor type being `(k, l)`
-        - ``l`` -- non-negative integer; the covariant rank,
+        - ``l`` -- nonnegative integer; the covariant rank,
           the tensor type being `(k, l)`
 
         OUTPUT:
@@ -1861,7 +1828,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
             :class:`~sage.manifolds.differentiable.tensorfield_module.TensorFieldFreeModule`
             for more examples and documentation.
-
         """
         if sym or antisym:
             raise NotImplementedError
@@ -1891,7 +1857,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
         INPUT:
 
-        - ``p`` -- non-negative integer
+        - ``p`` -- nonnegative integer
 
         OUTPUT:
 
@@ -1925,7 +1891,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
             :class:`~sage.manifolds.differentiable.multivector_module.MultivectorFreeModule`
             for more examples and documentation.
-
         """
         try:
             return self._exterior_powers[p]
@@ -1953,7 +1918,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
         INPUT:
 
-        - ``p`` -- non-negative integer
+        - ``p`` -- nonnegative integer
 
         OUTPUT:
 
@@ -1984,7 +1949,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
             :class:`~sage.manifolds.differentiable.diff_form_module.DiffFormFreeModule`
             for more examples and documentation.
-
         """
         try:
             return self._dual_exterior_powers[p]
@@ -2031,7 +1995,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
             :class:`~sage.manifolds.differentiable.automorphismfield_group.AutomorphismFieldParalGroup`
             for more examples and documentation.
-
         """
         from sage.manifolds.differentiable.automorphismfield_group import \
                                                     AutomorphismFieldParalGroup
@@ -2094,7 +2057,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
         See :class:`~sage.manifolds.differentiable.vectorframe.VectorFrame`
         for more examples and documentation.
-
         """
         from sage.manifolds.differentiable.vectorframe import VectorFrame
         if symbol is None:
@@ -2174,7 +2136,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         See
         :class:`~sage.manifolds.differentiable.tensorfield_paral.TensorFieldParal`
         for more examples and documentation.
-
         """
         from sage.manifolds.differentiable.automorphismfield import (
                               AutomorphismField, AutomorphismFieldParal)
@@ -2265,7 +2226,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
              manifold M
             sage: t.display()
             t = (x + 1) dx⊗dx - y dx⊗dy + x*y dy⊗dx + (-y^2 + 2) dy⊗dy
-
         """
         from sage.tensor.modules.comp import (CompWithSym, CompFullyAntiSym)
 
@@ -2301,10 +2261,10 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             if isinstance(comp, CompWithSym):
                 resu._sym = comp._sym
                 resu._antisym = comp._antisym
-        #
+
         # 2/ Tensor components set to comp:
         resu._components[comp._frame] = comp
-        #
+
         return resu
 
     def sym_bilinear_form(self, name=None, latex_name=None):
@@ -2343,7 +2303,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
             :class:`~sage.manifolds.differentiable.tensorfield_paral.TensorFieldParal`
             for more examples and documentation.
-
         """
         return self.tensor((0,2), name=name, latex_name=latex_name,
                            sym=(0,1))
@@ -2361,8 +2320,8 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
         INPUT:
 
-        - ``name`` -- (string) name given to the metric
-        - ``signature`` -- (integer; default: ``None``) signature `S` of the
+        - ``name`` -- string; name given to the metric
+        - ``signature`` -- integer (default: ``None``); signature `S` of the
           metric: `S = n_+ - n_-`, where `n_+` (resp. `n_-`) is the number of
           positive terms (resp. number of negative terms) in any diagonal
           writing of the metric components; if ``signature`` is not provided,
@@ -2390,18 +2349,17 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
             :class:`~sage.manifolds.differentiable.metric.PseudoRiemannianMetricParal`
             for more documentation.
-
         """
         ndim = self._ambient_domain.dimension()
         try:
             for elt in signature:
-                if (elt<0) or (not isinstance(elt, (int, Integer))):
+                if (elt < 0) or (not isinstance(elt, (int, Integer))):
                     raise ValueError("{} must be a positive integer".format(elt))
             sign = signature[0]+signature[1]+signature[2]
-            if sign!=ndim:
-                raise ValueError("{} is different from the dimension".format(sign)+
+            if sign != ndim:
+                raise ValueError("{} is different from the dimension".format(sign) +
                                         " of the manifold, who is {}".format(ndim))
-            if signature[2]!=0:
+            if signature[2] != 0:
                 from sage.manifolds.differentiable.metric import DegenerateMetricParal
                 return DegenerateMetricParal(self, name, signature=signature,
                                              latex_name=latex_name)
@@ -2410,8 +2368,8 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         if signature is None:
             signature = (ndim,0)
         if isinstance(signature, (Integer, int)):
-            if (signature+ndim)%2 == 1:
-                if ndim%2 == 0:
+            if (signature+ndim) % 2 == 1:
+                if ndim % 2 == 0:
                     raise ValueError("the metric signature must be even")
                 else:
                     raise ValueError("the metric signature must be odd")

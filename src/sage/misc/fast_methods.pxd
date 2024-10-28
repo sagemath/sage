@@ -1,10 +1,11 @@
+# sage_setup: distribution = sagemath-objects
 cdef extern from "Python.h":
     cdef size_t SIZEOF_VOID_P
 
 cdef class FastHashable_class:
     cdef Py_ssize_t _hash
 
-cdef inline long hash_by_id(void * p):
+cdef inline long hash_by_id(void * p) noexcept:
     r"""
     This function is a copy paste from the default Python hash function.
     """

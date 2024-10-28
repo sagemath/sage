@@ -8,8 +8,8 @@ from cpython.number cimport *
 from cpython.ref cimport *
 
 cimport sage.matrix.matrix_dense as matrix_dense
-from . import matrix_dense
-from .args cimport MatrixArgs_init
+from sage.matrix import matrix_dense
+from sage.matrix.args cimport MatrixArgs_init
 
 cimport sage.matrix.matrix as matrix
 
@@ -61,17 +61,18 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         TESTS:
 
-        We check that the problem related to :trac:`9049` is not an issue any
+        We check that the problem related to :issue:`9049` is not an issue any
         more::
 
-            sage: S.<t>=PolynomialRing(QQ)
-            sage: F.<q>=QQ.extension(t^4+1)
-            sage: R.<x,y>=PolynomialRing(F)
+            sage: # needs sage.rings.number_field
+            sage: S.<t> = PolynomialRing(QQ)
+            sage: F.<q> = QQ.extension(t^4 + 1)
+            sage: R.<x,y> = PolynomialRing(F)
             sage: M = MatrixSpace(R, 1, 2)
             sage: from sage.matrix.matrix_generic_dense import Matrix_generic_dense
             sage: Matrix_generic_dense(M, (x, y), True, True)
@@ -97,7 +98,6 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries[i*self._ncols + j]
-
 
     def _reverse_unsafe(self):
         r"""
@@ -151,8 +151,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def __copy__(self):
         """
-        Creates a copy of self, which may be changed without altering
-        self.
+        Create a copy of self, which may be changed without altering
+        ``self``.
 
         EXAMPLES::
 
@@ -214,7 +214,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
+            sage: # needs sage.combinat
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
             sage: a._add_(b)
@@ -237,7 +238,8 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         EXAMPLES::
 
-            sage: R.<x,y> = FreeAlgebra(QQ,2)
+            sage: # needs sage.combinat
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
             sage: a = matrix(R, 2, 2, [1,2,x*y,y*x])
             sage: b = matrix(R, 2, 2, [1,2,y*x,y*x])
             sage: a._sub_(b)
@@ -328,7 +330,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     def _list(self):
         """
-        Return reference to list of entries of self.  For internal use
+        Return reference to list of entries of ``self``.  For internal use
         only, since this circumvents immutability.
 
         EXAMPLES::

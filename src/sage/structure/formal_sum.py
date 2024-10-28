@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage_setup: distribution = sagemath-objects
 """
 Formal sums
 
@@ -15,10 +15,11 @@ AUTHORS:
    added. FormalSums now derives from UniqueRepresentation.
 
 FUNCTIONS:
-    - ``FormalSums(ring)`` -- create the module of formal finite sums with
-                          coefficients in the given ring.
 
-    - ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum
+- ``FormalSums(ring)`` -- create the module of formal finite sums with
+  coefficients in the given ring
+
+- ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum
 
 EXAMPLES::
 
@@ -89,11 +90,16 @@ class FormalSum(ModuleElement):
 
         - ``x`` -- object
         - ``parent`` -- FormalSums(R) module (default: FormalSums(ZZ))
-        - ``check`` -- bool (default: ``True``) if ``False``, might not coerce
-          coefficients into base ring, which can speed
-          up constructing a formal sum.
-        - ``reduce`` -- reduce (default: ``True``) if ``False``, do not
+        - ``check`` -- boolean (default: ``True``); if ``False``, might not coerce
+          coefficients into base ring, which can speed up constructing a formal sum
+        - ``reduce`` -- boolean (default: ``True``); if ``False``, do not
           combine common terms
+
+        .. WARNING::
+
+            Setting ``reduce`` to ``False`` can cause issues when comparing
+            equal sums where terms are not combined in the same way (e.g.
+            `2x + 3x` and `4x + 1x` will compare as not equal).
 
         EXAMPLES::
 
@@ -104,25 +110,26 @@ class FormalSum(ModuleElement):
             sage: a.reduce()
             sage: a
             4*2/3 - 5*7
-            sage: FormalSum([(1, 2/3), (3, 2/3), (-5, 7)], parent=FormalSums(GF(5)))    # optional - sage.rings.finite_rings
+            sage: FormalSum([(1, 2/3), (3, 2/3), (-5, 7)], parent=FormalSums(GF(5)))
             4*2/3
 
         Notice below that the coefficient 5 doesn't get reduced modulo 5::
 
-            sage: FormalSum([(1, 2/3), (3, 2/3), (-5, 7)], parent=FormalSums(GF(5)),    # optional - sage.rings.finite_rings
+            sage: FormalSum([(1, 2/3), (3, 2/3), (-5, 7)], parent=FormalSums(GF(5)),
             ....:           check=False)
             4*2/3 - 5*7
 
         Make sure we first reduce before checking coefficient types::
 
-            sage: x,y = var('x, y')                                                     # optional - sage.symbolic
-            sage: FormalSum([(1/2,x), (2,y)], FormalSums(QQ))                           # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: x,y = var('x, y')
+            sage: FormalSum([(1/2,x), (2,y)], FormalSums(QQ))
             1/2*x + 2*y
-            sage: FormalSum([(1/2,x), (2,y)], FormalSums(ZZ))                           # optional - sage.symbolic
+            sage: FormalSum([(1/2,x), (2,y)], FormalSums(ZZ))
             Traceback (most recent call last):
             ...
             TypeError: no conversion of this rational to integer
-            sage: FormalSum([(1/2,x), (1/2,x), (2,y)], FormalSums(ZZ))                  # optional - sage.symbolic
+            sage: FormalSum([(1/2,x), (1/2,x), (2,y)], FormalSums(ZZ))
             x + 2*y
         """
         if x == 0:
@@ -139,7 +146,7 @@ class FormalSum(ModuleElement):
             try:
                 self._data = [(k(t[0]), t[1]) for t in self._data]
             except (IndexError, KeyError) as msg:
-                raise TypeError("%s\nInvalid formal sum"%msg)
+                raise TypeError("%s\nInvalid formal sum" % msg)
 
     def __iter__(self):
         """
@@ -195,7 +202,7 @@ class FormalSum(ModuleElement):
         r"""
         EXAMPLES::
 
-            sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))
+            sage: latex(FormalSum([(1,2), (5, 8/9), (-3, 7)]))                          # needs sage.rings.real_mpfr
             2 + 5\cdot \frac{8}{9} - 3\cdot 7
         """
         from sage.misc.latex import repr_lincomb
@@ -229,8 +236,19 @@ class FormalSum(ModuleElement):
             True
             sage: a == 0          # 0 is coerced into a.parent()(0)
             False
+
+        TESTS::
+
+            sage: a = FormalSum([(1, 3), (2, 5)])
+            sage: b = FormalSum([(2, 5), (1, 3)])
+            sage: a == b
+            True
+            sage: b == a
+            True
         """
-        return richcmp(self._data, other._data, op)
+        self_data = [(c, x) for (x, c) in sorted(self._data, key=str)]
+        other_data = [(c, x) for (x, c) in sorted(other._data, key=str)]
+        return richcmp(self_data, other_data, op)
 
     def _neg_(self):
         """
@@ -311,18 +329,18 @@ class FormalSums(UniqueRepresentation, Module):
         Abelian Group of all Formal Finite Sums over Integer Ring
         sage: FormalSums(ZZ)
         Abelian Group of all Formal Finite Sums over Integer Ring
-        sage: FormalSums(GF(7))                                                         # optional - sage.rings.finite_rings
+        sage: FormalSums(GF(7))
         Abelian Group of all Formal Finite Sums over Finite Field of size 7
-        sage: FormalSums(ZZ[sqrt(2)])                                                   # optional - sage.symbolic sage.rings.number_field
-        Abelian Group of all Formal Finite Sums over Order in Number Field in sqrt2
+        sage: FormalSums(ZZ[sqrt(2)])                                                   # needs sage.rings.number_field sage.symbolic
+        Abelian Group of all Formal Finite Sums over
+         Maximal Order generated by sqrt2 in Number Field in sqrt2
          with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
-        sage: FormalSums(GF(9,'a'))                                                     # optional - sage.rings.finite_rings
+        sage: FormalSums(GF(9,'a'))                                                     # needs sage.rings.finite_rings
         Abelian Group of all Formal Finite Sums over Finite Field in a of size 3^2
 
     TESTS::
 
         sage: TestSuite(FormalSums(QQ)).run()
-
     """
     Element = FormalSum
 
@@ -342,24 +360,24 @@ class FormalSums(UniqueRepresentation, Module):
         """
         EXAMPLES::
 
-            sage: FormalSums(GF(7))                                                     # optional - sage.rings.finite_rings
+            sage: FormalSums(GF(7))
             Abelian Group of all Formal Finite Sums over Finite Field of size 7
-            sage: FormalSums(GF(7))._repr_()                                            # optional - sage.rings.finite_rings
+            sage: FormalSums(GF(7))._repr_()
             'Abelian Group of all Formal Finite Sums over Finite Field of size 7'
         """
-        return "Abelian Group of all Formal Finite Sums over %s"%self.base_ring()
+        return "Abelian Group of all Formal Finite Sums over %s" % self.base_ring()
 
     def _element_constructor_(self, x, check=True, reduce=True):
         """
-        Make a formal sum in self from x.
+        Make a formal sum in ``self`` from x.
 
         INPUT:
 
         - ``x`` -- formal sum, list or number
 
-        - ``check`` -- bool (default: True)
+        - ``check`` -- boolean (default: ``True``)
 
-        - ``reduce`` -- bool (default: True); whether to combine terms
+        - ``reduce`` -- boolean (default: ``True``); whether to combine terms
 
         EXAMPLES::
 
@@ -382,7 +400,7 @@ class FormalSums(UniqueRepresentation, Module):
 
     def _coerce_map_from_(self, X):
         r"""
-        Return whether there is a coercion from ``X``
+        Return whether there is a coercion from ``X``.
 
         EXAMPLES::
 
@@ -404,12 +422,12 @@ class FormalSums(UniqueRepresentation, Module):
         """
         EXAMPLES::
 
-            sage: F7 = FormalSums(ZZ).base_extend(GF(7)); F7                            # optional - sage.rings.finite_rings
+            sage: F7 = FormalSums(ZZ).base_extend(GF(7)); F7
             Abelian Group of all Formal Finite Sums over Finite Field of size 7
 
-        The following tests against a bug that was fixed at :trac:`18795`::
+        The following tests against a bug that was fixed at :issue:`18795`::
 
-            sage: isinstance(F7, F7.category().parent_class)                            # optional - sage.rings.finite_rings
+            sage: isinstance(F7, F7.category().parent_class)
             True
         """
         if self.base_ring().has_coerce_map_from(R):
@@ -421,7 +439,7 @@ class FormalSums(UniqueRepresentation, Module):
         """
         EXAMPLES::
 
-            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest
+            sage: A = FormalSums(RR);  A.get_action(RR)     # indirect doctest          # needs sage.rings.real_mpfr
             Right scalar multiplication by Real Field with 53 bits of precision
              on Abelian Group of all Formal Finite Sums over Real Field with 53 bits of precision
 

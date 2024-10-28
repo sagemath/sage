@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Conductor and reduction types for genus 2 curves
 
@@ -10,7 +9,7 @@ AUTHORS:
 - William Stein (2006-03-05): wrote Sage interface to genus2reduction
 
 - Jeroen Demeyer (2014-09-17): replace genus2reduction program by PARI
-  library call (:trac:`15808`)
+  library call (:issue:`15808`)
 
 ACKNOWLEDGMENT: (From Liu's website:) Many thanks to Henri Cohen who started
 writing this program. After this program is available, many people pointed out
@@ -160,17 +159,17 @@ class ReductionData(SageObject):
         if self.Q == 0:
             yterm = ''
         else:
-            yterm = '+ (%s)*y '%self.Q
+            yterm = '+ (%s)*y ' % self.Q
 
         s = 'Reduction data about this proper smooth genus 2 curve:\n'
-        s += '\ty^2 %s= %s\n'%(yterm, self.P)
+        s += '\ty^2 %s= %s\n' % (yterm, self.P)
         if self.Qmin:
-            s += 'A Minimal Equation:\n\ty^2 + (%s)y = %s\n'%(self.Qmin, self.Pmin)
+            s += 'A Minimal Equation:\n\ty^2 + (%s)y = %s\n' % (self.Qmin, self.Pmin)
         else:
-            s += 'A Minimal Equation:\n\ty^2 = %s\n'%self.Pmin
-        s += 'Minimal Discriminant: %s\n'%self.minimal_disc
-        s += 'Conductor: %s\n'%self.conductor
-        s += 'Local Data:\n%s'%self._local_data_str()
+            s += 'A Minimal Equation:\n\ty^2 = %s\n' % self.Pmin
+        s += 'Minimal Discriminant: %s\n' % self.minimal_disc
+        s += 'Conductor: %s\n' % self.conductor
+        s += 'Local Data:\n%s' % self._local_data_str()
         return s
 
     def _local_data_str(self):
@@ -178,7 +177,7 @@ class ReductionData(SageObject):
         D = self.local_data
         K = sorted(D.keys())
         for p in K:
-            s += 'p=%s\n%s\n'%(p, D[p])
+            s += 'p=%s\n%s\n' % (p, D[p])
         s = '\t' + '\n\t'.join(s.strip().split('\n'))
         return s
 
@@ -193,7 +192,7 @@ def divisors_to_string(divs):
 
     - ``divs`` -- a (possibly empty) list of numbers
 
-    OUTPUT: a string representation of these numbers
+    OUTPUT: string representation of these numbers
 
     EXAMPLES::
 
@@ -217,7 +216,7 @@ def divisors_to_string(divs):
             # Next divisor is different or we are done? Print current one
             if s:
                 s += "x"
-            s += "(%s)"%divs[i]
+            s += "(%s)" % divs[i]
             if n > 1:
                 s += "^%s" % n
             n = 0
@@ -312,8 +311,6 @@ class Genus2reduction(SageObject):
 
                    y^2 + (x^3-x^2-1)y = x^2 - x.
 
-
-
     We have::
 
         sage: genus2reduction(x^3-x^2-1, x^2 - x)
@@ -399,7 +396,7 @@ class Genus2reduction(SageObject):
                     (potential) stable reduction:  (II), j=57
                     reduction at p: [I{2-0-0}] page 170, (2), f=1
 
-        Verify that we fix :trac:`5573`::
+        Verify that we fix :issue:`5573`::
 
             sage: genus2reduction(x^3 + x^2 + x,-2*x^5 + 3*x^4 - x^3 - x^2 - 6*x - 2)
             Reduction data about this proper smooth genus 2 curve:
@@ -456,6 +453,7 @@ class Genus2reduction(SageObject):
 
     def __reduce__(self):
         return _reduce_load_genus2reduction, tuple([])
+
 
 # An instance
 genus2reduction = Genus2reduction()

@@ -1,3 +1,4 @@
+# sage.doctest: needs lrcalc_python
 r"""
 Littlewood-Richardson tableaux
 
@@ -55,7 +56,7 @@ class LittlewoodRichardsonTableau(SemistandardTableau):
     @staticmethod
     def __classcall_private__(cls, t, weight):
         r"""
-        Implements the shortcut ``LittlewoodRichardsonTableau(t, weight)`` to
+        Implement the shortcut ``LittlewoodRichardsonTableau(t, weight)`` to
         ``LittlewoodRichardsonTableaux(shape , weight)(t)``
         where ``shape`` is the shape of the tableau.
 
@@ -174,11 +175,11 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
         weight = tuple(Partition(a) for a in weight)
         if shape.size() != sum(a.size() for a in weight):
             raise ValueError("the sizes of shapes and sequence of weights do not match")
-        return super(LittlewoodRichardsonTableaux, cls).__classcall__(cls, shape, weight)
+        return super().__classcall__(cls, shape, weight)
 
     def __init__(self, shape, weight):
         r"""
-        Initializes the parent class of Littlewood-Richardson tableaux.
+        Initialize the parent class of Littlewood-Richardson tableaux.
 
         INPUT:
 
@@ -193,7 +194,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
         self._shape = shape
         self._weight = weight
         self._heights = [a.length() for a in self._weight]
-        super(LittlewoodRichardsonTableaux, self).__init__(category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -304,5 +305,5 @@ def _tableau_join(t1, t2, shift=0):
         sage: _tableau_join([[1,2]],[[None,None,2],[3]],shift=5)
         [[1, 2, 7], [8]]
     """
-    return [[e1 for e1 in row1] + [e2+shift for e2 in row2 if e2 is not None]
+    return [list(row1) + [e2+shift for e2 in row2 if e2 is not None]
             for (row1, row2) in zip_longest(t1, t2, fillvalue=[])]

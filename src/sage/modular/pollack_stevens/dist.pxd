@@ -7,8 +7,8 @@ from sage.rings.padics.pow_computer cimport PowComputer_class
 cdef class Dist(ModuleElement):
     cpdef normalize(self, include_zeroth_moment=*)
     cdef long ordp
-    cpdef long _ord_p(self)
-    cdef long _relprec(self)
+    cpdef long _ord_p(self) noexcept
+    cdef long _relprec(self) noexcept
     cdef _unscaled_moment(self, long i)
 
 cdef class Dist_vector(Dist):

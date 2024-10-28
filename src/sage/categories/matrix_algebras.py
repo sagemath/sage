@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Matrix algebras
 """
@@ -10,8 +11,9 @@ Matrix algebras
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from .category_types import Category_over_base_ring
-from .algebras import Algebras
+from sage.categories.algebras import Algebras
+from sage.categories.category_types import Category_over_base_ring
+
 
 class MatrixAlgebras(Category_over_base_ring):
     """

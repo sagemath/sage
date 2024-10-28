@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # distutils: libraries = m4rie M4RI_LIBRARIES m
 # distutils: library_dirs = M4RI_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR
@@ -70,7 +69,6 @@ Test hashing::
 REFERENCES:
 
 - [BB2009]_
-
 """
 
 #*****************************************************************************
@@ -95,7 +93,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
-from .args cimport SparseEntry, MatrixArgs_init
+from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 
 from sage.libs.m4ri cimport m4ri_word, mzd_copy
 from sage.libs.m4rie cimport *
@@ -128,7 +126,7 @@ cdef class M4RIE_finite_field:
         if self.ff:
             gf2e_free(self.ff)
 
-cdef m4ri_word poly_to_word(f):
+cdef m4ri_word poly_to_word(f) noexcept:
     return f.to_integer()
 
 
@@ -137,7 +135,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         INPUT:
 
-        - ``alloc`` - if ``True`` the matrix is allocated first (default: ``True``)
+        - ``alloc`` -- if ``True`` the matrix is allocated first (default: ``True``)
 
         EXAMPLES::
 
@@ -207,7 +205,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         - ``copy`` -- ignored (for backwards compatibility)
 
-        - ``coerce`` -- if False, assume without checking that the
+        - ``coerce`` -- if ``False``, assume without checking that the
           entries lie in the base ring
 
         EXAMPLES::
@@ -234,12 +232,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         """
-        A[i,j] = value without bound checks
+        A[i,j] = value without bound checks.
 
         INPUT:
-        - ``i`` - row index
-        - ``j`` - column index
-        - ``value`` - a finite field element (not checked but assumed)
+
+        - ``i`` -- row index
+        - ``j`` -- column index
+        - ``value`` -- a finite field element (not checked but assumed)
 
         EXAMPLES::
 
@@ -264,8 +263,9 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         Get A[i,j] without bound checks.
 
         INPUT:
-        - ``i`` - row index
-        - ``j`` - column index
+
+        - ``i`` -- row index
+        - ``j`` -- column index
 
         EXAMPLES::
 
@@ -299,12 +299,12 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         return mzed_read_elem(self._entries, i, j) == self._zero_word
 
     cpdef _add_(self, right):
-        """
-        Return A+B
+        r"""
+        Return ``A+B``.
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -386,14 +386,14 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         return ans
 
     cdef _matrix_times_matrix_(self, Matrix right):
-        """
-        Return A*B
+        r"""
+        Return ``A*B``.
 
         Uses the M4RIE machinery to decide which function to call.
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -443,12 +443,12 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         finite field is small, there is a very high chance that
         ``e * B[j]`` is computed more than once for any ``e`` in the finite
         field. Instead, we compute all possible
-        multiples of ``B[j]`` and re-use this data in the inner loop.
+        multiples of ``B[j]`` and reuse this data in the inner loop.
         This is what is called a "Newton-John" table in M4RIE.
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -502,7 +502,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -545,8 +545,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``right`` - a matrix
-        - ``cutoff`` - row or column dimension to switch over to
+        - ``right`` -- a matrix
+        - ``cutoff`` -- row or column dimension to switch over to
           Newton-John multiplication (default: 64)
 
         EXAMPLES::
@@ -598,7 +598,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``right`` - an element of the base field
+        - ``right`` -- an element of the base field
 
         EXAMPLES::
 
@@ -709,14 +709,12 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        -  ``density`` - float; proportion (roughly) to be considered for
-           changes
-        -  ``nonzero`` - Bool (default: ``False``); whether the new entries
-           are forced to be non-zero
+        - ``density`` -- float; proportion (roughly) to be considered for
+          changes
+        - ``nonzero`` -- boolean (default: ``False``); whether the new entries
+          are forced to be nonzero
 
-        OUTPUT:
-
-        -  None, the matrix is modified in-place
+        OUTPUT: none, the matrix is modified in-place
 
         EXAMPLES::
 
@@ -804,7 +802,6 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef m4ri_word mask = (1<<(self._parent.base_ring().degree())) - 1
 
         cdef randstate rstate = current_randstate()
-        K = self._parent.base_ring()
 
         if self._ncols == 0 or self._nrows == 0:
             return
@@ -858,13 +855,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``algorithm`` - one of the following
-          - ``heuristic`` - let M4RIE decide (default)
-          - ``newton_john`` - use newton_john table based algorithm
-          - ``ple`` - use PLE decomposition
-          - ``naive`` - use naive cubic Gaussian elimination (M4RIE implementation)
-          - ``builtin`` - use naive cubic Gaussian elimination (Sage implementation)
-        - ``reduced`` - if ``True`` return reduced echelon form. No
+        - ``algorithm`` -- one of the following
+          - ``heuristic`` -- let M4RIE decide (default)
+          - ``newton_john`` -- use newton_john table based algorithm
+          - ``ple`` -- use PLE decomposition
+          - ``naive`` -- use naive cubic Gaussian elimination (M4RIE implementation)
+          - ``builtin`` -- use naive cubic Gaussian elimination (Sage implementation)
+        - ``reduced`` -- if ``True`` return reduced echelon form. No
           guarantee is given that the matrix is *not* reduced if
           ``False`` (default: ``True``)
 
@@ -898,7 +895,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             self.cache('pivots', [])
             return self
 
-        cdef int k, n, full
+        cdef int full
 
         full = int(reduced)
 
@@ -930,7 +927,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sig_off()
 
         elif algorithm == 'builtin':
-            self._echelon_in_place(algorithm="classical")
+            self._echelon_in_place(algorithm='classical')
 
         else:
             raise ValueError("No algorithm '%s'."%algorithm)
@@ -979,7 +976,6 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [1 0 0]
             [0 1 0]
             [0 0 1]
-
         """
         cdef Matrix_gf2e_dense A
         A = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent, 0, 0, 0)
@@ -996,13 +992,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
     cdef rescale_row_c(self, Py_ssize_t row, multiple, Py_ssize_t start_col):
         """
-        Return ``multiple * self[row][start_col:]``
+        Return ``multiple * self[row][start_col:]``.
 
         INPUT:
 
-        - ``row`` - row index for row to rescale
-        - ``multiple`` - finite field element to scale by
-        - ``start_col`` - only start at this column index.
+        - ``row`` -- row index for row to rescale
+        - ``multiple`` -- finite field element to scale by
+        - ``start_col`` -- only start at this column index
 
         EXAMPLES::
 
@@ -1034,17 +1030,16 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef m4ri_word x = poly_to_word(multiple)
         mzed_rescale_row(self._entries, row, start_col, x)
 
-
-    cdef add_multiple_of_row_c(self,  Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col):
+    cdef add_multiple_of_row_c(self, Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col):
         """
         Compute ``self[row_to][start_col:] += multiple * self[row_from][start_col:]``.
 
         INPUT:
 
-        - ``row_to`` - row index of source
-        - ``row_from`` - row index of destination
-        - ``multiple`` -  finite field element
-        - ``start_col`` - only start at this column index
+        - ``row_to`` -- row index of source
+        - ``row_from`` -- row index of destination
+        - ``multiple`` -- finite field element
+        - ``start_col`` -- only start at this column index
 
         EXAMPLES::
 
@@ -1068,15 +1063,14 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef m4ri_word x = poly_to_word(multiple)
         mzed_add_multiple_of_row(self._entries, row_to, self._entries, row_from, x, start_col)
 
-
     cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2):
         """
         Swap rows ``row1`` and ``row2``.
 
         INPUT:
 
-        - ``row1`` - row index
-        - ``row2`` - row index
+        - ``row1`` -- row index
+        - ``row2`` -- row index
 
         EXAMPLES::
 
@@ -1099,8 +1093,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``col1`` - column index
-        - ``col2`` - column index
+        - ``col1`` -- column index
+        - ``col2`` -- column index
 
         EXAMPLES::
 
@@ -1131,13 +1125,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         mzed_col_swap(self._entries, col1, col2)
 
-    def augment(self, Matrix_gf2e_dense right):
+    def augment(self, right):
         """
         Augments ``self`` with ``right``.
 
         INPUT:
 
-        - ``right`` - a matrix
+        - ``right`` -- a matrix
 
         EXAMPLES::
 
@@ -1173,21 +1167,50 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: N = Matrix(K, 0, 1, 0)
             sage: M.augment(N)
             []
+
+            sage: A = matrix(K, 3, range(12))
+            sage: B = vector(QQ, [2,5/7,1.2]) # see issue: 38448
+            sage: A.augment(B).ncols()
+            5
+
+            sage: B = vector([])
+            sage: A.augment(B) == A
+            True
         """
+        cdef Matrix_gf2e_dense _right
         cdef Matrix_gf2e_dense A
 
-        if self._nrows != right._nrows:
+        if not isinstance(right, Matrix_gf2e_dense):
+            # See issue: #36761 - Allow Vectors to be augmented
+            if hasattr(right, '_vector_'):
+                rsize = len(right)
+                if rsize==0:
+                    return self.__copy__()
+                if self._nrows != rsize:
+                    raise TypeError("Both numbers of rows must match.")
+                if self.base_ring() is not right.base_ring():
+                    right = right.change_ring(self.base_ring())
+                from sage.matrix.matrix_space import MatrixSpace
+                M = MatrixSpace(self.base_ring(), nrows=rsize, ncols=1)
+                _right = <Matrix_gf2e_dense>(M(right))
+            else:
+                raise TypeError("a matrix must be augmented with another matrix, "
+                    "or a vector")
+        else:
+            _right = <Matrix_gf2e_dense>right
+
+        if self._nrows != _right._nrows:
             raise TypeError("Both numbers of rows must match.")
 
         if self._ncols == 0:
-            return right.__copy__()
-        if right._ncols == 0:
+            return _right.__copy__()
+        if _right._ncols == 0:
             return self.__copy__()
 
-        A = self.new_matrix(ncols = self._ncols + right._ncols)
+        A = self.new_matrix(ncols = self._ncols + _right._ncols)
         if self._nrows == 0:
             return A
-        A._entries = mzed_concat(A._entries, self._entries, right._entries)
+        A._entries = mzed_concat(A._entries, self._entries, _right._entries)
         return A
 
     cdef _stack_impl(self, bottom):
@@ -1233,7 +1256,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: M.stack(N)
             []
 
-        Check that we can stack a vector (:trac:`31708`)::
+        Check that we can stack a vector (:issue:`31708`)::
 
             sage: R.<a> = GF(2^3)
             sage: M = matrix(R, [[1,1],[0,a+1]])
@@ -1287,7 +1310,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
              sage: A[1:200,1:200] == A.submatrix(1,1,199,199)
              True
 
-        TESTS for handling of default arguments (:trac:`18761`)::
+        TESTS for handling of default arguments (:issue:`18761`)::
 
              sage: A.submatrix(17,15) == A.submatrix(17,15,183,185)
              True
@@ -1328,7 +1351,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         EXAMPLES::
 
             sage: K.<a> = GF(2^4)
-            sage: A = random_matrix(K, 10, 10, algorithm="unimodular")
+            sage: A = random_matrix(K, 10, 10, algorithm='unimodular')
             sage: A.rank()
             10
             sage: A = matrix(K, 10, 0)
@@ -1360,7 +1383,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: f(*s) == A
             True
 
-        See :trac:`21669`::
+        See :issue:`21669`::
 
             sage: all(f(*s) == B
             ....:     for r,c in [(0,0),(0,1),(1,0)]
@@ -1450,7 +1473,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         INPUT:
 
-        - ``C`` - a list of matrices over GF(2)
+        - ``C`` -- list of matrices over GF(2)
 
         EXAMPLES::
 
@@ -1532,7 +1555,7 @@ def unpickle_matrix_gf2e_dense_v0(Matrix_mod2_dense a, base_ring, nrows, ncols):
         sage: f(*s) == A
         True
 
-    We can still unpickle pickles from before :trac:`19240`::
+    We can still unpickle pickles from before :issue:`19240`::
 
         sage: old_pickle = b'x\x9c\x85RKo\xd3@\x10\xae\xdd$$\xdb&\xe5U\x1e-\x8f\xc2\xc9\x12RD#$\xce\xa0\xb4\x80\x07\xa2\xca\xc2\x07\x0e\xd5\xe2:\x1b\xdb\x8acg\x1c\xa7J\x85*!\xa4\x90\xe6\x07p\xe0\xc4\x01q\xe5\xc4\x19\xf5\xd0?\xc1\x81\xdf\x80\xb8q\x0b\xb3\x8eMS\xa1\x82V;;\xb3\xdf\xce\xf7\xcd\x8e\xe6\xb5j\xf7,GT;V\x1cy\x83\xf4\xe0\x9d\xb0Y\x13\xbc)\x82\x9e`\xfd\xa0\xeb\xd9m_\xf0\xbf1\xbe{\x97\xa1\xa2\x9d\xc6\xf0\x0f\x82,\x7f\x9d\xa1\xaa\x81\n\xb9m\x9c\xd7\xf4\xf1d2\x81-h\xc0#(\x03\x83\x15\xdas\xc9*\xc3\x13x\x0cu0\xd28\x97\x9e*(0\x9f\xfa\x1b\xd0\xd2\x7fH\x82\xb5\xf4\xa2@TO\xe19\x01I\xac\x136\x991\x9f\xa4\xf9&\xcd\x07i\xbe\xcb\xd4ib\t\xba\xa4\xf6\x02zIT\xd1\x8f2(u\x15\xfd\x9d<\xee@\x05V\xd3\x94E*\xb0\x0e\x0fH\xad\xa8\xbf\x97\xa0\r\x03\xfd\xf0\xb8\x1aU\xff\x92\x90\xe8?\xa5\xd6\x814_\xa5\xf9(\xcd\xafc\xe99\xe2\xd9\xa0\x06\xd4\xf5\xcf\xf2\xf2!\xbc\xd4\xdf\x90#\xc0\x8f\r\xccM\x1b\xdd\x8b\xa3\xbe\x1d\xf7#QmYv\x1cF{\xcc\x11\x81\x88<\x9b\xa71\xcf:\xce0\xaf\x9d\x96\xe3\x87a\xbb\xdf\xe5\x8e\x1f\xeeX>\xc3\x82\xb9\xb0\xe9\x05^,6=\xe17\xf1\xcc\xd0\xc0"u\xb0d\xe6wDl\xdd\x1fa)e\x8a\xbc\xc0\xe9U\xbd \x16\x8e\x88X\xc7j\x0b\x9e\x05\xc8L\xe5\x1e%.\x98\x8a5\xc4\xc5\xd9\xf7\xdd\xd0\xdf\x0b\xc2\x8eg\xf93.wZ\xb5\xc1\x94B\xf8\xa2#\x82\x98a\xf9\xffY\x12\xe3v\x18L\xff\x14Fl\xeb\x0ff\x10\xc4\xb0\xa2\xb9y\xcd-\xba%\xcd\xa5\x8ajT\xd1\x92\xa9\x0c\x86x\xb6a\xe6h\xf8\x02<g\xaa\xaf\xf6\xdd%\x89\xae\x13z\xfe \xc6\x0b\xfb1^4p\x99\x1e6\xc6\xd4\xebK\xdbx\xf9\xc4\x8f[Iw\xf8\x89\xef\xcbQf\xcfh\xe3\x95\x8c\xebj&\xb9\xe2.\x8f\x0c\\ui\x89\xf1x\xf4\xd6\xc0kf\xc1\xf1v\xad(\xc4\xeb\x89~\xfa\xf0\x06\xa8\xa4\x7f\x93\xf4\xd7\x0c\xbcE#\xad\x92\xfc\xed\xeao\xefX\\\x03'
         sage: loads(old_pickle)

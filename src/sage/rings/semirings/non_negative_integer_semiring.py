@@ -1,21 +1,22 @@
 r"""
 Non Negative Integer Semiring
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010  Nicolas Borie <nicolas.borie at math.u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.categories.semirings import Semirings
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.sets.family import Family
 
+
 class NonNegativeIntegerSemiring(NonNegativeIntegers):
     r"""
-    A class for the semiring of the non negative integers
+    A class for the semiring of the nonnegative integers.
 
     This parent inherits from the infinite enumerated set of non
     negative integers and endows it with its natural semiring
@@ -37,15 +38,15 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
 
     Here is a piece of the Cayley graph for the multiplicative structure::
 
-        sage: G = NN.cayley_graph(elements=range(9), generators=[0,1,2,3,5,7])          # optional - sage.graphs
-        sage: G                                                                         # optional - sage.graphs
+        sage: G = NN.cayley_graph(elements=range(9), generators=[0,1,2,3,5,7])          # needs sage.graphs
+        sage: G                                                                         # needs sage.graphs
         Looped multi-digraph on 9 vertices
-        sage: G.plot()                                                                  # optional - sage.graphs
+        sage: G.plot()                                                                  # needs sage.graphs sage.plot
         Graphics object consisting of 48 graphics primitives
 
     This is the Hasse diagram of the divisibility order on ``NN``.
 
-        sage: Poset(NN.cayley_graph(elements=[1..12], generators=[2,3,5,7,11])).show()  # optional - sage.combinat sage.graphs
+        sage: Poset(NN.cayley_graph(elements=[1..12], generators=[2,3,5,7,11])).show()  # needs sage.combinat sage.graphs sage.plot
 
     Note: as for :class:`NonNegativeIntegers
     <sage.sets.non_negative_integers.NonNegativeIntegers>`, ``NN`` is
@@ -58,7 +59,6 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
         Integer Ring
         sage: x+3
         18
-
     """
     def __init__(self):
         r"""
@@ -70,9 +70,10 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
             Category of facade infinite enumerated commutative semirings
             sage: TestSuite(NN).run()
         """
-        NonNegativeIntegers.__init__(self, category=(Semirings().Commutative(), InfiniteEnumeratedSets()) )
+        NonNegativeIntegers.__init__(self, category=(Semirings().Commutative(),
+                                                     InfiniteEnumeratedSets()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -83,7 +84,7 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
 
     def additive_semigroup_generators(self):
         r"""
-        Returns the additive semigroup generators of ``self``.
+        Return the additive semigroup generators of ``self``.
 
         EXAMPLES::
 
@@ -100,5 +101,6 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
             '\\Bold{N}'
         """
         return '\\Bold{N}'
+
 
 NN = NonNegativeIntegerSemiring()

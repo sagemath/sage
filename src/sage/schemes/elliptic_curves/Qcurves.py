@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Testing whether elliptic curves over number fields are `\QQ`-curves
 
@@ -33,15 +32,15 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
 
     INPUT:
 
-    - ``E`` (elliptic curve) -- an elliptic curve over a number field.
+    - ``E`` -- elliptic curve over a number field
 
-    - ``maxp`` (int, default 100): bound on primes used for checking
+    - ``maxp`` -- integer (default: 100); bound on primes used for checking
       necessary local conditions.  The result will not depend on this,
       but using a larger value may return ``False`` faster.
 
-    - ``certificate`` (bool, default ``False``): if ``True`` then a
+    - ``certificate`` -- boolean (default: ``False``); if ``True`` then a
       second value is returned giving a certificate for the
-      `\QQ`-curve property.
+      `\QQ`-curve property
 
     OUTPUT:
 
@@ -83,7 +82,7 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
     the conductor norm.
 
     3. For all primes `p\mid N` check that the valuations of `j` at
-    all `P\mid p` are either all negative or all non-negative; if not,
+    all `P\mid p` are either all negative or all nonnegative; if not,
     return ``False``.
 
     4. For `p\le maxp`, `p\not\mid N`, check that either `E` is
@@ -130,10 +129,10 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
 
         sage: from sage.schemes.elliptic_curves.Qcurves import is_Q_curve
         sage: R.<x> = PolynomialRing(QQ)
-        sage: K.<a> = NumberField(R([3, 0, -5, 0, 1]))                                  # optional - sage.rings.number_field
-        sage: E = EllipticCurve([K([-3,-4,1,1]), K([4,-1,-1,0]), K([-2,0,1,0]),         # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(R([3, 0, -5, 0, 1]))                                  # needs sage.rings.number_field
+        sage: E = EllipticCurve([K([-3,-4,1,1]), K([4,-1,-1,0]), K([-2,0,1,0]),         # needs sage.rings.number_field
         ....:                    K([-621,778,138,-178]), K([9509,2046,-24728,10380])])
-        sage: is_Q_curve(E, certificate=True, verbose=True)                             # optional - sage.rings.number_field
+        sage: is_Q_curve(E, certificate=True, verbose=True)                             # needs sage.rings.number_field
         Checking whether Elliptic Curve defined by y^2 + (a^3+a^2-4*a-3)*x*y + (a^2-2)*y = x^3 + (-a^2-a+4)*x^2 + (-178*a^3+138*a^2+778*a-621)*x + (10380*a^3-24728*a^2+2046*a+9509) over Number Field in a with defining polynomial x^4 - 5*x^2 + 3 is a Q-curve
         No: inconsistency at the 2 primes dividing 3
         - potentially multiplicative: [True, False]
@@ -143,10 +142,10 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
     primes is consistent, but the local test at good primes above `13`
     is not::
 
-        sage: K.<a> = NumberField(R([-10, 0, 1]))                                       # optional - sage.rings.number_field
-        sage: E = EllipticCurve([K([0,1]), K([-1,-1]), K([0,0]),                        # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(R([-10, 0, 1]))                                       # needs sage.rings.number_field
+        sage: E = EllipticCurve([K([0,1]), K([-1,-1]), K([0,0]),                        # needs sage.rings.number_field
         ....:                    K([-236,40]), K([-1840,464])])
-        sage: is_Q_curve(E, certificate=True, verbose=True)                             # optional - sage.rings.number_field
+        sage: is_Q_curve(E, certificate=True, verbose=True)                             # needs sage.rings.number_field
         Checking whether Elliptic Curve defined by y^2 + a*x*y = x^3 + (-a-1)*x^2 + (40*a-236)*x + (464*a-1840) over Number Field in a with defining polynomial x^2 - 10 is a Q-curve
         Applying local tests at good primes above p<=100
         No: inconsistency at the 2 ordinary primes dividing 13
@@ -158,9 +157,9 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
 
         sage: from sage.schemes.elliptic_curves.Qcurves import is_Q_curve
         sage: R.<x> = PolynomialRing(QQ)
-        sage: K.<a> = NumberField(R([-1, -1, 1]))                                       # optional - sage.rings.number_field
-        sage: E = EllipticCurve([K([1,0]), K([-1,0]), K([0,1]), K([0,-2]), K([0,1])])
-        sage: is_Q_curve(E, certificate=True, verbose=True)                             # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(R([-1, -1, 1]))                                       # needs sage.rings.number_field
+        sage: E = EllipticCurve([K([1,0]), K([-1,0]), K([0,1]), K([0,-2]), K([0,1])])   # needs sage.rings.number_field
+        sage: is_Q_curve(E, certificate=True, verbose=True)                             # needs sage.rings.number_field
         Checking whether Elliptic Curve defined by y^2 + x*y + a*y = x^3 + (-1)*x^2 + (-2*a)*x + a over Number Field in a with defining polynomial x^2 - x - 1 is a Q-curve
         Yes: E is CM (discriminant -15)
         (True, {'CM': -15})
@@ -170,14 +169,15 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
     in fact there is an isogenous curve with rational `j`, so we have
     a so-called rational `\QQ`-curve::
 
-        sage: K.<a> = NumberField(R([1, 0, -4, 0, 1]))                                  # optional - sage.rings.number_field
-        sage: E = EllipticCurve([K([-2,-4,1,1]), K([0,1,0,0]), K([0,1,0,0]),            # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: K.<a> = NumberField(R([1, 0, -4, 0, 1]))
+        sage: E = EllipticCurve([K([-2,-4,1,1]), K([0,1,0,0]), K([0,1,0,0]),
         ....:                    K([-4780,9170,1265,-2463]),
         ....:                    K([163923,-316598,-43876,84852])])
-        sage: flag, cert = is_Q_curve(E, certificate=True)                              # optional - sage.rings.number_field
-        sage: flag                                                                      # optional - sage.rings.number_field
+        sage: flag, cert = is_Q_curve(E, certificate=True)
+        sage: flag
         True
-        sage: cert                                                                      # optional - sage.rings.number_field
+        sage: cert
         {'CM': 0, 'N': 1, 'core_degs': [1], 'core_poly': x - 85184/3, 'r': 0, 'rho': 0}
 
     Over the same field, a so-called strict `\QQ`-curve which is not
@@ -187,23 +187,24 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
     quadratic conjugate `j`-invariants in `\QQ(\sqrt{3})` (but which
     are not base-changes from the quadratic subfield)::
 
-        sage: E = EllipticCurve([K([0,-3,0,1]), K([1,4,0,-1]), K([0,0,0,0]),            # optional - sage.rings.number_field
+        sage: # needs sage.rings.number_field
+        sage: E = EllipticCurve([K([0,-3,0,1]), K([1,4,0,-1]), K([0,0,0,0]),
         ....:                    K([-2,-16,0,4]), K([-19,-32,4,8])])
-        sage: flag, cert = is_Q_curve(E, certificate=True)                              # optional - sage.rings.number_field
-        sage: flag                                                                      # optional - sage.rings.number_field
+        sage: flag, cert = is_Q_curve(E, certificate=True)
+        sage: flag
         True
-        sage: cert                                                                      # optional - sage.rings.number_field
+        sage: cert
         {'CM': 0,
-        'N': 2,
-        'core_degs': [1, 2],
-        'core_poly': x^2 - 840064*x + 1593413632,
-        'r': 1,
-        'rho': 1}
+         'N': 2,
+         'core_degs': [1, 2],
+         'core_poly': x^2 - 840064*x + 1593413632,
+         'r': 1,
+         'rho': 1}
 
     TESTS::
 
-        sage: E = EllipticCurve([GF(5)(t) for t in [2,3,5,7,11]])                       # optional - sage.rings.finite_rings
-        sage: is_Q_curve(E)                                                             # optional - sage.rings.finite_rings
+        sage: E = EllipticCurve([GF(5)(t) for t in [2,3,5,7,11]])
+        sage: is_Q_curve(E)
         Traceback (most recent call last):
         ...
         TypeError: Elliptic Curve defined by ... must be an elliptic curve
@@ -401,13 +402,13 @@ def Step4Test(E, B, oldB=0, verbose=False):
 
     INPUT:
 
-    - `E` (elliptic curve): an elliptic curve defined over a number field
+    - ``E`` -- elliptic curve defined over a number field
 
-    - `B` (integer): upper bound on primes to test
+    - ``B`` -- integer; upper bound on primes to test
 
-    - ``oldB`` (integer, default 0): lower bound on primes to test
+    - ``oldB`` -- integer (default: 0); lower bound on primes to test
 
-    - ``verbose`` (boolean, default ``False``): verbosity flag
+    - ``verbose`` -- boolean (default: ``False``); verbosity flag
 
     OUTPUT:
 
@@ -431,10 +432,10 @@ def Step4Test(E, B, oldB=0, verbose=False):
 
         sage: from sage.schemes.elliptic_curves.Qcurves import Step4Test
         sage: R.<x> = PolynomialRing(QQ)
-        sage: K.<a> = NumberField(R([3, 0, -5, 0, 1]))                                  # optional - sage.rings.number_field
-        sage: E = EllipticCurve([K([-3,-4,1,1]), K([4,-1,-1,0]), K([-2,0,1,0]),         # optional - sage.rings.number_field
+        sage: K.<a> = NumberField(R([3, 0, -5, 0, 1]))                                  # needs sage.rings.number_field
+        sage: E = EllipticCurve([K([-3,-4,1,1]), K([4,-1,-1,0]), K([-2,0,1,0]),         # needs sage.rings.number_field
         ....:                    K([-621,778,138,-178]), K([9509,2046,-24728,10380])])
-        sage: Step4Test(E, 100, verbose=True)                                           # optional - sage.rings.number_field
+        sage: Step4Test(E, 100, verbose=True)                                           # needs sage.rings.number_field
         No: inconsistency at the 2 ordinary primes dividing 13
         - Frobenius discriminants mod squares: [-3, -1]
         (False, 13)
@@ -444,11 +445,11 @@ def Step4Test(E, B, oldB=0, verbose=False):
 
         sage: from sage.schemes.elliptic_curves.Qcurves import Step4Test
         sage: R.<x> = PolynomialRing(QQ)
-        sage: K.<a> = NumberField(R([-3, 0, 9, 0, -6, 0, 1]))                           # optional - sage.rings.number_field
-        sage: E = EllipticCurve([K([1,-3,0,1,0,0]), K([5,-3,-6,1,1,0]),
+        sage: K.<a> = NumberField(R([-3, 0, 9, 0, -6, 0, 1]))                           # needs sage.rings.number_field
+        sage: E = EllipticCurve([K([1,-3,0,1,0,0]), K([5,-3,-6,1,1,0]),                 # needs sage.rings.number_field
         ....:                    K([1,-3,0,1,0,0]), K([-139,-129,331,277,-76,-63]),
         ....:                    K([2466,1898,-5916,-4582,1361,1055])])
-        sage: Step4Test(E, 100, verbose=True)
+        sage: Step4Test(E, 100, verbose=True)                                           # needs sage.rings.number_field
         (True, 0)
     """
     from sage.arith.misc import primes
@@ -495,9 +496,9 @@ def conjugacy_test(jlist, verbose=False):
 
     INPUT:
 
-    - ``jlist`` (list): a list of algebraic numbers in the same field
+    - ``jlist`` -- list of algebraic numbers in the same field
 
-    - ``verbose`` (boolean, default ``False``): verbosity flag
+    - ``verbose`` -- boolean (default: ``False``); verbosity flag
 
     OUTPUT:
 
@@ -506,32 +507,33 @@ def conjugacy_test(jlist, verbose=False):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: from sage.schemes.elliptic_curves.Qcurves import conjugacy_test
         sage: conjugacy_test([3])
         [x - 3]
-        sage: K.<a> = QuadraticField(2)                                                 # optional - sage.rings.number_field
-        sage: conjugacy_test([K(3), a])                                                 # optional - sage.rings.number_field
+        sage: K.<a> = QuadraticField(2)
+        sage: conjugacy_test([K(3), a])
         [x - 3]
-        sage: conjugacy_test([K(3), 3 + a])                                             # optional - sage.rings.number_field
+        sage: conjugacy_test([K(3), 3 + a])
         [x - 3]
-        sage: conjugacy_test([3 + a])                                                   # optional - sage.rings.number_field
+        sage: conjugacy_test([3 + a])
         []
-        sage: conjugacy_test([3 + a, 3 - a])                                            # optional - sage.rings.number_field
+        sage: conjugacy_test([3 + a, 3 - a])
         [x^2 - 6*x + 7]
-        sage: x = polygen(QQ)                                                           # optional - sage.rings.number_field
+        sage: x = polygen(QQ)
         sage: f = x^3 - 3
-        sage: K.<a> = f.splitting_field()                                               # optional - sage.rings.number_field
-        sage: js = f.roots(K, multiplicities=False)                                     # optional - sage.rings.number_field
-        sage: conjugacy_test(js)                                                        # optional - sage.rings.number_field
+        sage: K.<a> = f.splitting_field()
+        sage: js = f.roots(K, multiplicities=False)
+        sage: conjugacy_test(js)
         []
-        sage: f = x^4 - 3                                                               # optional - sage.rings.number_field
-        sage: K.<a> = NumberField(f)                                                    # optional - sage.rings.number_field
-        sage: js = f.roots(K, multiplicities=False)                                     # optional - sage.rings.number_field
-        sage: conjugacy_test(js)                                                        # optional - sage.rings.number_field
+        sage: f = x^4 - 3
+        sage: K.<a> = NumberField(f)
+        sage: js = f.roots(K, multiplicities=False)
+        sage: conjugacy_test(js)
         []
-        sage: K.<a> = f.splitting_field()                                               # optional - sage.rings.number_field
-        sage: js = f.roots(K, multiplicities=False)                                     # optional - sage.rings.number_field
-        sage: conjugacy_test(js)                                                        # optional - sage.rings.number_field
+        sage: K.<a> = f.splitting_field()
+        sage: js = f.roots(K, multiplicities=False)
+        sage: conjugacy_test(js)
         [x^4 - 3]
     """
     from sage.sets.set import Set

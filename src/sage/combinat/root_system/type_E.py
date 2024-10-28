@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Root system data for type E
 """
@@ -41,7 +40,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             sage: e = RootSystem(['E',8]).ambient_space()
             sage: [e.weyl_dimension(v) for v in e.fundamental_weights()]
             [3875, 147250, 6696000, 6899079264, 146325270, 2450240, 30380, 248]
-           """
+        """
         v = ZZ(1)/ZZ(2)
         self.rank = root_system.cartan_type().rank()
         ambient_space.AmbientSpace.__init__(self, root_system, baseRing)
@@ -375,7 +374,6 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (1/2, 1/2, 1/2, 1/2, 1/2, 1/2, -1/2, -1/2)]
             sage: e.rho()
             (0, 1, 2, 3, 4, 5, 6, 23)
-
         """
         v = ZZ(1)/ZZ(2)
         # Note that
@@ -384,18 +382,18 @@ class AmbientSpace(ambient_space.AmbientSpace):
                 self.PosRoots = ( [ self.root(i,j) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
                                   [ self.root(i,j,p1=1) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
                                   [ v*(self.root(7)-self.root(6)-self.root(5)+self.root(0,1,2,3,4,p1=p1,p2=p2,p3=p3,p4=p4,p5=p5))
-                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] if (p1+p2+p3+p4+p5)%2 == 0 ])
+                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] if (p1+p2+p3+p4+p5) % 2 == 0 ])
             elif self.rank == 7:
                 self.PosRoots = ( [ self.root(i,j) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
                                   [ self.root(i,j,p1=1) for i in range(self.rank-1) for j in range(i+1,self.rank-1) ] +
                                   [ self.root(6,7,p1=1) ] +
                                   [ v*(self.root(7)-self.root(6)+self.root(0,1,2,3,4,5,p1=p1,p2=p2,p3=p3,p4=p4,p5=p5,p6=p6))
-                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] for p6 in [0,1] if (p1+p2+p3+p4+p5+p6)%2 == 1 ])
+                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] for p6 in [0,1] if (p1+p2+p3+p4+p5+p6) % 2 == 1 ])
             elif self.rank == 8:
                 self.PosRoots = ( [ self.root(i,j) for i in range(self.rank) for j in range(i+1,self.rank) ] +
                                   [ self.root(i,j,p1=1) for i in range(self.rank) for j in range(i+1,self.rank) ] +
                                   [ v*(self.root(7)+self.root(0,1,2,3,4,5,6,p1=p1,p2=p2,p3=p3,p4=p4,p5=p5,p6=p6,p7=p7))
-                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] for p6 in [0,1] for p7 in [0,1] if (p1+p2+p3+p4+p5+p6+p7)%2 == 0 ])
+                                    for p1 in [0,1] for p2 in [0,1] for p3 in [0,1] for p4 in [0,1] for p5 in [0,1] for p6 in [0,1] for p7 in [0,1] if (p1+p2+p3+p4+p5+p6+p7) % 2 == 0 ])
 
         return self.PosRoots
 
@@ -526,12 +524,12 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type E.
+        Return a Dynkin diagram for type E.
 
         EXAMPLES::
 
-            sage: e = CartanType(['E',6]).dynkin_diagram()
-            sage: e
+            sage: # needs sage.graphs
+            sage: e = CartanType(['E',6]).dynkin_diagram(); e
                     O 2
                     |
                     |
@@ -539,9 +537,9 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             1   3   4   5   6
             E6
             sage: e.edges(sort=True)
-            [(1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1), (4, 2, 1), (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1), (6, 5, 1)]
-            sage: e = CartanType(['E',7]).dynkin_diagram()
-            sage: e
+            [(1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1), (4, 2, 1),
+             (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1), (6, 5, 1)]
+            sage: e = CartanType(['E',7]).dynkin_diagram(); e
                     O 2
                     |
                     |
@@ -552,8 +550,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             [(1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1), (4, 2, 1),
              (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1), (6, 5, 1),
              (6, 7, 1), (7, 6, 1)]
-            sage: e = CartanType(['E',8]).dynkin_diagram()
-            sage: e
+            sage: e = CartanType(['E',8]).dynkin_diagram(); e
                     O 2
                     |
                     |
@@ -564,7 +561,6 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             [(1, 3, 1), (2, 4, 1), (3, 1, 1), (3, 4, 1), (4, 2, 1),
              (4, 3, 1), (4, 5, 1), (5, 4, 1), (5, 6, 1), (6, 5, 1),
              (6, 7, 1), (7, 6, 1), (7, 8, 1), (8, 7, 1)]
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         g = DynkinDiagram_class(self)
@@ -574,7 +570,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             g.add_edge(i, i+1)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -592,17 +588,19 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             \draw[fill=white] (4 cm, 2 cm) circle (.25cm) node[right=3pt]{$2$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
-        ret = "\\draw (0 cm,0) -- (%s cm,0);\n"%((self.n-2)*node_dist)
-        ret += "\\draw (%s cm, 0 cm) -- +(0,%s cm);\n"%(2*node_dist, node_dist)
+        ret = "\\draw (0 cm,0) -- (%s cm,0);\n" % ((self.n-2)*node_dist)
+        ret += "\\draw (%s cm, 0 cm) -- +(0,%s cm);\n" % (2*node_dist, node_dist)
         ret += node(0, 0, label(1))
         for i in range(1, self.n-1):
             ret += node(i*node_dist, 0, label(i+2))
         ret += node(2*node_dist, node_dist, label(2), 'right=3pt')
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return a ascii art representation of the extended Dynkin diagram.
 
@@ -627,6 +625,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             O---O---O---O---O---O---O
             2   4   5   6   7   8   9
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         labels = [label(i) for i in [1,3,4,5,6] + list(range(7, self.n+1))] # We exclude 2 because of the special case
@@ -636,4 +636,5 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_E', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_E',
+                           'ambient_space', AmbientSpace)

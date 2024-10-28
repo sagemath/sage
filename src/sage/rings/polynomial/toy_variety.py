@@ -42,11 +42,9 @@ def is_triangular(B) -> bool:
 
     INPUT:
 
-    - ``B`` -- a list/tuple of polynomials or a multivariate polynomial ideal
+    - ``B`` -- list/tuple of polynomials or a multivariate polynomial ideal
 
-    OUTPUT:
-
-    ``True`` if the basis is triangular; ``False`` otherwise.
+    OUTPUT: ``True`` if the basis is triangular; ``False`` otherwise
 
     EXAMPLES::
 
@@ -90,17 +88,15 @@ def coefficient_matrix(polys):
 
     INPUT:
 
-    - ``polys`` -- a list/tuple of polynomials
+    - ``polys`` -- list/tuple of polynomials
 
-    OUTPUT:
-
-    A matrix ``M`` of the coefficients of ``polys``
+    OUTPUT: a matrix ``M`` of the coefficients of ``polys``
 
     EXAMPLES::
 
         sage: from sage.rings.polynomial.toy_variety import coefficient_matrix
         sage: R.<x,y> = PolynomialRing(QQ)
-        sage: coefficient_matrix([x^2 + 1, y^2 + 1, x*y + 1])                           # optional - sage.modules
+        sage: coefficient_matrix([x^2 + 1, y^2 + 1, x*y + 1])                           # needs sage.modules
         [1 0 0 1]
         [0 0 1 1]
         [0 1 0 1]
@@ -120,7 +116,10 @@ def coefficient_matrix(polys):
     M = matrix(R, len(polys), len(mons))
     for i in range(len(polys)):
         imons = polys[i].monomials()
-        icoeffs = polys[i].coefficients()
+        if polys[0].parent().ngens() == 1:
+            icoeffs = polys[i].coefficients()[::-1]
+        else:
+            icoeffs = polys[i].coefficients()
         for j in range(len(imons)):
             M[i, mons.index(imons[j])] = icoeffs[j]
     return M
@@ -146,7 +145,7 @@ def is_linearly_dependent(polys) -> bool:
 
     INPUT:
 
-    - ``polys`` -- a list/tuple of polynomials
+    - ``polys`` -- list/tuple of polynomials
 
     OUTPUT:
 
@@ -159,13 +158,20 @@ def is_linearly_dependent(polys) -> bool:
         sage: R.<x,y> = PolynomialRing(QQ)
         sage: B = [x^2 + 1, y^2 + 1, x*y + 1]
         sage: p = 3*B[0] - 2*B[1] + B[2]
-        sage: is_linearly_dependent(B + [p])                                            # optional - sage.modules
+        sage: is_linearly_dependent(B + [p])                                            # needs sage.modules
         True
-        sage: p = x*B[0]                                                                # optional - sage.modules
-        sage: is_linearly_dependent(B + [p])                                            # optional - sage.modules
+        sage: p = x*B[0]
+        sage: is_linearly_dependent(B + [p])                                            # needs sage.modules
         False
-        sage: is_linearly_dependent([])                                                 # optional - sage.modules
+        sage: is_linearly_dependent([])
         False
+        sage: R.<x> = PolynomialRing(QQ)
+        sage: B = [x^147 + x^99,
+        ....:      2*x^123 + x^75,
+        ....:      x^147 + 2*x^123 + 2*x^75,
+        ....:      2*x^147 + x^99 + x^75]
+        sage: is_linearly_dependent(B)
+        True
     """
     if not polys:
         return False
@@ -194,7 +200,7 @@ def linear_representation(p, polys):
     INPUT:
 
     - ``p`` -- a polynomial
-    - ``polys`` -- a list/tuple of polynomials
+    - ``polys`` -- list/tuple of polynomials
 
     OUTPUT:
 
@@ -203,11 +209,12 @@ def linear_representation(p, polys):
 
     EXAMPLES::
 
+        sage: # needs sage.modules sage.rings.finite_rings
         sage: from sage.rings.polynomial.toy_variety import linear_representation
-        sage: R.<x,y> = PolynomialRing(GF(32003))                                       # optional - sage.rings.finite_rings
-        sage: B = [x^2 + 1, y^2 + 1, x*y + 1]                                           # optional - sage.rings.finite_rings
-        sage: p = 3*B[0] - 2*B[1] + B[2]                                                # optional - sage.rings.finite_rings
-        sage: linear_representation(p, B)                                               # optional - sage.rings.finite_rings
+        sage: R.<x,y> = PolynomialRing(GF(32003))
+        sage: B = [x^2 + 1, y^2 + 1, x*y + 1]
+        sage: p = 3*B[0] - 2*B[1] + B[2]
+        sage: linear_representation(p, B)
         [3, 32001, 1]
     """
     from sage.matrix.constructor import diagonal_matrix
@@ -231,24 +238,23 @@ def triangular_factorization(B, n=-1):
 
     INPUT:
 
-    - ``B`` -- a list/tuple of polynomials or a multivariate polynomial ideal
+    - ``B`` -- list/tuple of polynomials or a multivariate polynomial ideal
     - ``n`` -- the recursion parameter (default: ``-1``)
 
-    OUTPUT:
-
-    A list ``T`` of triangular sets ``T_0``, ``T_1``, etc.
+    OUTPUT: list ``T`` of triangular sets ``T_0``, ``T_1``, etc.
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(0)
         sage: from sage.rings.polynomial.toy_variety import triangular_factorization
-        sage: R.<x,y,z> = PolynomialRing(GF(32003))                                     # optional - sage.rings.finite_rings
-        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3                                              # optional - sage.rings.finite_rings
-        sage: p2 = z^2 - z                                                              # optional - sage.rings.finite_rings
-        sage: p3 = (x-2)^2*(y-1)^3                                                      # optional - sage.rings.finite_rings
-        sage: I = R.ideal(p1,p2,p3)                                                     # optional - sage.rings.finite_rings
-        sage: triangular_factorization(I.groebner_basis())                              # optional - sage.rings.finite_rings
+        sage: R.<x,y,z> = PolynomialRing(GF(32003))
+        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3
+        sage: p2 = z^2 - z
+        sage: p3 = (x-2)^2*(y-1)^3
+        sage: I = R.ideal(p1,p2,p3)
+        sage: triangular_factorization(I.groebner_basis())                              # needs sage.libs.singular
         [[x^2 - 4*x + 4, y, z],
          [x^5 - 3*x^4 + 3*x^3 - x^2, y - 1, z],
          [x^2 - 4*x + 4, y, z - 1],
@@ -287,8 +293,7 @@ def triangular_factorization(B, n=-1):
         # now add the current factor q of p to the factorization
         for each in T:
             each.append(q)
-        for each in T:
-            family.append(each)
+        family.extend(T)
     return family
 
 
@@ -309,20 +314,21 @@ def elim_pol(B, n=-1):
 
     INPUT:
 
-    - ``B`` -- a list/tuple of polynomials or a multivariate polynomial ideal
+    - ``B`` -- list/tuple of polynomials or a multivariate polynomial ideal
     - ``n`` -- the variable to check (see above) (default: ``-1``)
 
     EXAMPLES::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.misc.verbose import set_verbose
         sage: set_verbose(0)
         sage: from sage.rings.polynomial.toy_variety import elim_pol
-        sage: R.<x,y,z> = PolynomialRing(GF(32003))                                     # optional - sage.rings.finite_rings
-        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3                                              # optional - sage.rings.finite_rings
-        sage: p2 = z^2 - z                                                              # optional - sage.rings.finite_rings
-        sage: p3 = (x-2)^2*(y-1)^3                                                      # optional - sage.rings.finite_rings
-        sage: I = R.ideal(p1,p2,p3)                                                     # optional - sage.rings.finite_rings
-        sage: elim_pol(I.groebner_basis())                                              # optional - sage.rings.finite_rings
+        sage: R.<x,y,z> = PolynomialRing(GF(32003))
+        sage: p1 = x^2*(x-1)^3*y^2*(z-3)^3
+        sage: p2 = z^2 - z
+        sage: p3 = (x-2)^2*(y-1)^3
+        sage: I = R.ideal(p1,p2,p3)
+        sage: elim_pol(I.groebner_basis())                                              # needs sage.libs.singular
         z^2 - z
     """
     # type checking in a probably vain attempt to avoid stupid errors

@@ -25,6 +25,7 @@ from datetime import datetime, timedelta
 from subprocess import check_output, CalledProcessError
 
 datetime_format = '%Y-%m-%dT%H:%M:%SZ'
+default_bot = 'github-actions'
 
 
 class Action(Enum):
@@ -42,21 +43,41 @@ class Action(Enum):
     converted_to_draft = 'converted_to_draft'
     submitted = 'submitted'
 
+class AuthorAssociation(Enum):
+    r"""
+    Enum for GitHub ``authorAssociation``.
+    """
+    def is_valid(self):
+        r"""
+        Return whether ``self`` has valid permissions.
+        """
+        c = self.__class__
+        return self in [c.collaborator, c.member, c.owner]
+
+    collaborator = 'COLLABORATOR' # Author has been invited to collaborate on the repository.
+    contributor = 'CONTRIBUTOR' # Author has previously committed to the repository.
+    first_timer = 'FIRST_TIMER' # Author has not previously committed to GitHub.
+    first_time_contributor = 'FIRST_TIME_CONTRIBUTOR' # Author has not previously committed to the repository.
+    mannequin = 'MANNEQUIN' # Author is a placeholder for an unclaimed user.
+    member = 'MEMBER' # Author is a member of the organization that owns the repository.
+    none = 'NONE' # Author has no association with the repository.
+    owner = 'OWNER' # Author is the owner of the repository.
+
 class RevState(Enum):
     r"""
     Enum for GitHub event ``review_state``.
     """
-    commented = 'commented'
-    approved = 'approved'
-    changes_requested = 'changes_requested'
+    def is_proper(self):
+        r"""
+        Return whether ``self`` is a proper review state.
+        """
+        c = self.__class__
+        return self in [c.changes_requested, c.approved]
 
-class ReviewDecision(Enum):
-    r"""
-    Enum for ``gh pr view`` results for ``reviewDecision``.
-    """
+    commented = 'COMMENTED'
     changes_requested = 'CHANGES_REQUESTED'
     approved = 'APPROVED'
-    unclear = 'COMMENTED'
+    dismissed = 'DISMISSED'
 
 class Priority(Enum):
     r"""
@@ -68,9 +89,9 @@ class Priority(Enum):
     minor = 'p: minor /4'
     trivial = 'p: trivial /5'
 
-class State(Enum):
+class Status(Enum):
     r"""
-    Enum for state labels.
+    Enum for status labels.
     """
     positive_review = 's: positive review'
     needs_work = 's: needs work'
@@ -90,7 +111,7 @@ def selection_list(label):
     r"""
     Return the selection list to which ``label`` belongs to.
     """
-    for sel_list in [Priority, State, Resolution]:
+    for sel_list in [Priority, Status, Resolution]:
         for item in sel_list:
             if label == item.value:
                 return sel_list
@@ -108,22 +129,33 @@ class GhLabelSynchronizer:
         self._url = url
         self._actor = actor
         self._warning_prefix = 'Label Sync Warning:'
+        self._hint_prefix = 'Label Sync Hint:'
         self._labels = None
         self._author = None
         self._draft = None
         self._open = None
         self._review_decision = None
         self._reviews = None
+        self._reviews_from_rest_api = None
+        self._review_requests = None
         self._commits = None
         self._commit_date = None
+        self._bot_login = None
+        self._gh_version = None
 
-        number = os.path.basename(url)
+        s = url.split('/')
+        self._owner = s[3]
+        self._repo = s[4]
+        self._number = os.path.basename(url)
+
         self._pr = True
-        self._issue = 'pull request #%s' % number
+        self._issue = 'pull request #%s' % self._number
         if url.rfind('issue') != -1:
-            self._issue = 'issue #%s' % number
+            self._issue = 'issue #%s' % self._number
             self._pr = False
         info('Create label handler for %s and actor %s' % (self._issue, self._actor))
+
+        self.bot_login()
         self.clean_warnings()
 
     # -------------------------------------------------------------------------
@@ -198,6 +230,47 @@ class GhLabelSynchronizer:
         info('Issue %s is draft %s' % (self._issue, self._draft))
         return self._draft
 
+    def bot_login(self):
+        r"""
+        Return the login name of the bot.
+        """
+        if self._bot_login:
+            return self._bot_login
+        from subprocess import run
+        cmd = 'gh version'
+        capt = run(cmd, shell=True, capture_output=True)
+        self._gh_version = str(capt.stdout).split('\\n')[0]
+        info('version: %s' % self._gh_version)
+        cmd = 'gh auth status'
+        capt = run(cmd, shell=True, capture_output=True)
+        errtxt = str(capt.stderr)
+        outtxt = str(capt.stdout)
+        debug('auth status err: %s' % errtxt)
+        debug('auth status out: %s' % outtxt)
+        def read_login(txt, position_mark):
+            for t in txt:
+                for p in position_mark:
+                    # the output text has changed from as to account
+                    # around version 2.40.0
+                    l = t.split()
+                    if p in l:
+                        return l[l.index(p)+1]
+        self._bot_login = read_login([errtxt, outtxt], ['account', 'as'])
+        if not self._bot_login:
+            self._bot_login = default_bot
+            warning('Bot is unknown')
+            return self._bot_login
+        if self._bot_login.endswith('[bot]'):
+            self._bot_login = self._bot_login.split('[bot]')[0]
+        info('Bot is %s' % self._bot_login)
+        return self._bot_login
+
+    def is_this_bot(self, login):
+        r"""
+        Check whether login is the bot itself.
+        """
+        return login.startswith(self.bot_login())
+
     def is_auth_team_member(self, login):
         r"""
         Return ``True`` if the user with given login belongs to an authorized
@@ -224,9 +297,43 @@ class GhLabelSynchronizer:
 
     def actor_authorized(self):
         r"""
-        Return ``True`` if the actor belongs to an authorized team.
+        Return ``True`` if the actor has sufficient permissions.
         """
-        return self.is_auth_team_member(self._actor)
+        if self.is_this_bot(default_bot):
+            # since the default bot is not a member of the SageMath
+            # organization it cannot test membership for private members.
+            # Therefore, we check here for public organization membership.
+            rev = self.get_latest_review()
+            if not rev:
+                return False
+
+            if rev['author']['login'] == self._actor:
+                ass = rev['authorAssociation']
+                info('Actor %s has association %s' % (self._actor, ass))
+                return AuthorAssociation(ass).is_valid()
+            info('Actor %s did not create latest review' % self._actor)
+            return False
+        else:
+            return self.is_auth_team_member(self._actor)
+
+    def query_multi_pages(self, path_args, since=None):
+        r"""
+        Query data from REST api from multiple pages.
+        """
+        per_page = 100
+        if since:
+            query = '-f per_page=%s -f page={} -f since=%s' % (per_page, since.strftime(datetime_format))
+        else:
+            query = '-f per_page=%s -f page={}' % per_page
+        page = 1
+        results = []
+        while True:
+            results_page = self.rest_api(path_args, query=query.format(page))
+            results += results_page
+            if len(results_page) < per_page:
+                break
+            page += 1
+        return results
 
     def clean_warnings(self):
         r"""
@@ -235,22 +342,10 @@ class GhLabelSynchronizer:
         """
         warning_lifetime = timedelta(minutes=5)
         time_frame = timedelta(minutes=730) # timedelta to search for comments including 10 minutes overlap with cron-cycle
-        per_page = 100
         today = datetime.today()
         since = today - time_frame
-        query = '-F per_page=%s -F page={} -f since=%s' % (per_page, since.strftime(datetime_format))
-        s = self._url.split('/')
-        owner = s[3]
-        repo = s[4]
-        path_args = '/repos/%s/%s/issues/comments' % (owner, repo)
-        page = 1
-        comments = []
-        while True:
-            comments_page = self.rest_api(path_args, query=query.format(page))
-            comments += comments_page
-            if len(comments_page) < per_page:
-                break
-            page += 1
+        path_args = '/repos/%s/%s/issues/comments' % (self._owner, self._repo)
+        comments = self.query_multi_pages(path_args, since=since)
 
         info('Cleaning warning comments since %s (total found %s)' % (since, len(comments)))
 
@@ -260,12 +355,17 @@ class GhLabelSynchronizer:
             comment_id = c['id']
             issue = c['issue_url'].split('/').pop()
             created_at = c['created_at']
-            if login.startswith('github-actions'):
-                debug('github-actions comment %s created at %s on issue %s found' % (comment_id, created_at, issue))
+            if self.is_this_bot(login):
+                debug('%s comment %s created at %s on issue %s found' % (self.bot_login(), comment_id, created_at, issue))
+                prefix = None
                 if body.startswith(self._warning_prefix):
+                    prefix = self._warning_prefix
+                if body.startswith(self._hint_prefix):
+                    prefix = self._hint_prefix
+                if prefix:
                     created = datetime.strptime(created_at, datetime_format)
                     lifetime = today - created
-                    debug('github-actions %s %s is %s old' % (self._warning_prefix, comment_id, lifetime))
+                    debug('%s %s %s is %s old' % (self.bot_login(), prefix, comment_id, lifetime))
                     if lifetime > warning_lifetime:
                         try:
                             self.rest_api('%s/%s' % (path_args, comment_id), method='DELETE')
@@ -311,23 +411,18 @@ class GhLabelSynchronizer:
         info('Commits until %s for %s: %s' % (self._commit_date, self._issue, self._commits))
         return self._commits
 
-    def get_review_decision(self):
+    def get_review_requests(self):
         r"""
-        Return the reviewDecision of the PR.
+        Return the list of review request of the PR.
         """
         if not self.is_pull_request():
             return None
 
-        if self._review_decision is not None:
-            return self._review_decision
+        if self._review_requests is None:
+            self._review_requests = self.view('reviewRequests')
+            debug('Review requests for %s: %s' % (self._issue, self._review_requests))
 
-        data = self.view('reviewDecision')
-        if data:
-            self._review_decision = ReviewDecision(data)
-        else:
-            self._review_decision = ReviewDecision.unclear
-        info('Review decision for %s: %s' % (self._issue, self._review_decision.value))
-        return self._review_decision
+        return self._review_requests
 
     def get_reviews(self, complete=False):
         r"""
@@ -349,11 +444,33 @@ class GhLabelSynchronizer:
             self.get_commits()
 
         date = self._commit_date
-        no_rev = ReviewDecision.unclear.value
+        unproper_rev = RevState.commented.value
         new_revs = [rev for rev in self._reviews if rev['submittedAt'] > date]
-        proper_new_revs = [rev for rev in new_revs if rev['state'] != no_rev]
+        proper_new_revs = [rev for rev in new_revs if rev['state'] != unproper_rev]
         info('Proper reviews after %s for %s: %s' % (date, self._issue, proper_new_revs))
         return proper_new_revs
+
+    def get_latest_review(self, complete=False):
+        r"""
+        Return the latest review of the PR. Per default only those proper reviews
+        are considered which have been submitted after the most recent commit. Use
+        keyword ``complete`` to get the latest of all.
+        """
+        revs = self.get_reviews(complete=complete)
+        if not revs:
+            return
+        res = revs[0]
+        max_date = res['submittedAt']
+        for rev in revs:
+            cur_date = rev['submittedAt']
+            if cur_date > max_date:
+                max_date = cur_date
+                res = rev
+        fill_in = ''
+        if not complete:
+            fill_in = ' proper'
+        info('PR %s had latest%s review at %s: %s' % (self._issue, fill_in, max_date, res))
+        return res
 
     def active_partners(self, item):
         r"""
@@ -366,47 +483,60 @@ class GhLabelSynchronizer:
         return partners
 
     # -------------------------------------------------------------------------
-    # methods to validate the issue state
+    # methods to validate the issue status
     # -------------------------------------------------------------------------
-    def review_comment_to_state(self):
+    def review_comment_to_status(self):
         r"""
-        Return a State label if the most recent review comment
+        Return a status label if the most recent review comment
         starts with its value.
         """
-        revs = self.get_reviews(complete=True)
-        date = max(rev['submittedAt'] for rev in revs)
+        rev = self.get_latest_review(complete=True)
+        ass = AuthorAssociation(rev['authorAssociation'])
+        for status in Status:
+            body = rev['body']
+            if body.startswith(status.value):
+                info('Latest review comment contains status label %s' % status)
+                return status, ass
+        return None, ass
 
-        for rev in revs:
-            if rev['submittedAt'] == date:
-                for stat in State:
-                    body = rev['body']
-                    if body.startswith(stat.value):
-                        return stat
-        return None
+    def review_by_actor(self):
+        r"""
+        Return ``True`` if the actor authored the latest review directly or indirectly.
+        """
+        rev = self.get_latest_review()
+        if not rev:
+            # no proper review since most recent commit.
+            return False
+        answer = False
+        auth = rev['author']['login']
+        if self._actor == auth:
+            answer = True
+        if self.is_this_bot(auth):
+            if rev['body'].find(self._actor) > 0:
+                answer = True
+        if answer:
+            node_id = rev['id']
+            info('Ignore actor\'s review %s' % node_id)
+            self.dismiss_bot_reviews('@%s reverted decision.' % self._actor, node_id=node_id)
+        return answer
+
+    def check_review_decision(self, rev_decision):
+        r"""
+        Return ``True`` if the latest proper review of the PR has the
+        given decision.
+        """
+        rev = self.get_latest_review()
+        if not rev:
+            # no proper review since most recent commit.
+            return False
+        return rev['state'] == rev_decision.value
 
     def needs_work_valid(self):
         r"""
         Return ``True`` if the PR needs work. This is the case if
-        there are reviews more recent than any commit and the review
-        decision requests changes or if there is any review reqesting
-        changes.
+        the latest proper review request changes.
         """
-        revs = self.get_reviews()
-        if not revs:
-            # no proper review since most recent commit.
-            return False
-
-        ch_req = ReviewDecision.changes_requested
-        rev_dec =  self.get_review_decision()
-        if rev_dec:
-            if rev_dec == ch_req:
-               info('PR %s needs work (by decision)' % self._issue)
-               return True
-            else:
-               info('PR %s doesn\'t need work (by decision)' % self._issue)
-               return False
-
-        if any(rev['state'] == ch_req.value for rev in revs):
+        if self.check_review_decision(RevState.changes_requested):
             info('PR %s needs work' % self._issue)
             return True
         info('PR %s doesn\'t need work' % self._issue)
@@ -414,27 +544,10 @@ class GhLabelSynchronizer:
 
     def positive_review_valid(self):
         r"""
-        Return ``True`` if the PR has positive review. This is the
-        case if there are reviews more recent than any commit and the
-        review decision is approved or if there is any approved review
-        but no changes requesting one.
+        Return ``True`` if the PR is positively reviewed. This is the case if
+        the latest proper review is approved.
         """
-        revs = self.get_reviews()
-        if not revs:
-            # no proper review since most recent commit.
-            return False
-
-        appr = ReviewDecision.approved
-        rev_dec =  self.get_review_decision()
-        if rev_dec:
-            if rev_dec == appr:
-                info('PR %s has positve review (by decision)' % self._issue)
-                return True
-            else:
-                info('PR %s doesn\'t have positve review (by decision)' % self._issue)
-                return False
-
-        if all(rev['state'] == appr.value for rev in revs):
+        if self.check_review_decision(RevState.approved):
             info('PR %s has positve review' % self._issue)
             return True
         info('PR %s doesn\'t have positve review' % self._issue)
@@ -447,6 +560,10 @@ class GhLabelSynchronizer:
         """
         if self.is_draft():
             return False
+
+        if self.review_by_actor():
+            info('PR %s needs review (because of actor review)' % self._issue)
+            return True
 
         if self.needs_work_valid():
             info('PR %s already under review (needs work)' % self._issue)
@@ -463,19 +580,13 @@ class GhLabelSynchronizer:
         r"""
         Return if the actor has permission to approve this PR.
         """
-        revs = self.get_reviews(complete=True)
-        if not any(rev['authorAssociation'] in ('MEMBER', 'OWNER') for rev in revs):
-            info('PR %s can\'t be approved because of missing member review' % (self._issue))
-            return False
-
         revs = self.get_reviews()
-        revs = [rev for rev in revs if rev['author']['login'] != self._actor]
-        ch_req = ReviewDecision.changes_requested
+        revs = [rev for rev in revs if not self.review_by_actor()]
+        ch_req = RevState.changes_requested
         if any(rev['state'] == ch_req.value for rev in revs):
             info('PR %s can\'t be approved by %s since others reqest changes' % (self._issue, self._actor))
             return False
-
-        return self.actor_valid()
+        return True
 
     def actor_valid(self):
         r"""
@@ -488,19 +599,26 @@ class GhLabelSynchronizer:
             return True
 
         revs = self.get_reviews()
-        revs = [rev for rev in revs if rev['author']['login'] != 'github-actions']
+        revs = [rev for rev in revs if not self.is_this_bot(rev['author']['login'])]
         if not revs:
             info('PR %s can\'t be approved by the author %s since no other person reviewed it' % (self._issue, self._actor))
             return False
 
         coms = self.get_commits()
-        authors = sum(com['authors'] for com in coms)
-        authors = [auth for auth in authors if not auth['login'] in (self._actor, 'github-actions')]
+        authors = []
+        for com in coms:
+            for auth in com['authors']:
+                login = auth['login']
+                if login not in authors:
+                    if not self.is_this_bot(login) and login != author:
+                        debug('PR %s has recent commit by %s' % (self._issue, login))
+                        authors.append(login)
+
         if not authors:
             info('PR %s can\'t be approved by the author %s since no other person commited to it' % (self._issue, self._actor))
             return False
 
-        info('PR %s can be approved by the author %s as co-author' % (self._issue, self._actor))
+        info('PR %s can be approved by the author %s as co-author' % (self._issue, author))
         return True
 
     # -------------------------------------------------------------------------
@@ -513,7 +631,10 @@ class GhLabelSynchronizer:
         issue = 'issue'
         if self._pr:
             issue = 'pr'
-        cmd_str = 'gh %s %s %s %s "%s"' % (issue, cmd, self._url, option, arg)
+        if arg:
+            cmd_str = 'gh %s %s %s %s "%s"' % (issue, cmd, self._url, option, arg)
+        else:
+            cmd_str = 'gh %s %s %s %s' % (issue, cmd, self._url, option)
         debug('Execute command: %s' % cmd_str)
         ex_code = os.system(cmd_str)
         if ex_code:
@@ -531,25 +652,69 @@ class GhLabelSynchronizer:
         """
         self.gh_cmd('ready', '', '')
 
-    def review(self, arg, text):
+    def review(self, arg, text=None):
         r"""
         Perform a system call to ``gh`` to review a PR.
         """
-        self.gh_cmd('review', arg, '-b \"%s\"' % text)
+        if text:
+            self.gh_cmd('review', arg, '-b \"%s\"' % text)
+        else:
+            self.gh_cmd('review', arg, '')
 
     def approve(self):
         r"""
         Approve the PR by the actor.
         """
-        self.review('--approve', '%s approved this PR' % self._actor)
+        self.review('--approve')
         info('PR %s approved by %s' % (self._issue, self._actor))
 
     def request_changes(self):
         r"""
         Request changes for this PR by the actor.
         """
-        self.review('--request-changes', '%s requested changes for this PR' % self._actor)
+        self.review('--request-changes', '@%s requested changes for this PR' % self._actor)
         info('Changes requested for PR %s by %s' % (self._issue, self._actor))
+
+    def dismiss_bot_reviews(self, message, node_id=None, state=None, actor=None):
+        r"""
+        Dismiss all reviews of the bot matching the given features (``node_id``, ...).
+        """
+        path_args = '/repos/%s/%s/pulls/%s/reviews' % (self._owner, self._repo, self._number)
+        if not self._reviews_from_rest_api:
+            # since the reviews queried with `gh pr view` don't contain the id
+            # we need to obtain them form REST api.
+            self._reviews_from_rest_api = self.query_multi_pages(path_args)
+        reviews = self._reviews_from_rest_api
+
+        options = '-f message=\"%s\" -f event=\"DISMISS\"' % message
+        for rev in reviews:
+            rev_login = rev['user']['login']
+            rev_id = rev['id']
+            rev_node_id = rev['node_id']
+            rev_state = RevState(rev['state'])
+
+            if not self.is_this_bot(rev_login):
+                continue
+            if not rev_state.is_proper():
+                continue
+
+            debug('Bot review with node_id %s has id %s' % (rev_node_id, rev_id))
+            if node_id:
+                if rev_node_id != node_id:
+                    continue
+            if state:
+                if rev_state != state:
+                    continue
+            if actor:
+                if not rev['body'].find(actor):
+                    continue
+            path_args_dismiss = '%s/%s/dismissals' % (path_args, rev_id)
+            try:
+                self.rest_api(path_args_dismiss, method='PUT', query=options)
+                info('Review %s (node_id %s, state %s) on PR %s dismissed' % (rev_id, rev_node_id, rev_state, self._issue))
+            except CalledProcessError:
+                # the comment may have been deleted by a bot running in parallel
+                info('Review %s (node_id %s, state %s) on PR %s cannot be dismissed' % (rev_id, rev_node_id, rev_state, self._issue))
 
     def review_comment(self, text):
         r"""
@@ -571,11 +736,17 @@ class GhLabelSynchronizer:
         """
         self.add_comment('%s %s' % (self._warning_prefix, text))
 
+    def add_hint(self, text):
+        r"""
+        Perform a system call to ``gh`` to add a hint to an issue or PR.
+        """
+        self.add_comment('%s %s' % (self._hint_prefix, text))
+
     def add_label(self, label):
         r"""
         Add the given label to the issue or PR.
         """
-        if not label in self.get_labels():
+        if label not in self.get_labels():
             self.edit(label, '--add-label')
             info('Add label to %s: %s' % (self._issue, label))
 
@@ -606,29 +777,35 @@ class GhLabelSynchronizer:
 
     def reject_label_addition(self, item):
         r"""
-        Post a comment that the given label can not be added and select
-        a corresponding other one.
+        Post a comment that the given label can not be added and remove
+        it again.
         """
-        if not self.is_pull_request():
-            self.add_warning('Label *%s* can not be added to an issue. Please use it on the corresponding PR' % item.value)
-        elif item is State.needs_review:
-            self.add_warning('Label *%s* can not be added, since there are unresolved reviews' % item.value)
-        else:
-            self.add_warning('Label *%s* can not be added. Please use the GitHub review functionality' % item.value)
-        self.remove_label(item.value)
+        if item is Status.positive_review:
+            self.add_warning('Label *%s* cannot be added by the author of the PR.' % item.value)
+            self.remove_label(item.value)
         return
 
-    def reject_label_removal(self, item):
+    def warning_about_label_addition(self, item):
         r"""
-        Post a comment that the given label can not be removed and select
-        a corresponding other one.
+        Post a comment that the given label my be incorrect.
         """
-        if type(item) == State:
-            sel_list = 'state'
+        if not self.is_pull_request():
+            self.add_warning('Label *%s* is not suitable for an issue. Please use it on the corresponding PR.' % item.value)
+        elif item is Status.needs_review:
+            self.add_warning('Label *%s* may be incorrect, since there are unresolved reviews.' % item.value)
+        else:
+            self.add_warning('Label *%s* does not match the state of GitHub\'s review system.' % item.value)
+        return
+
+    def hint_about_label_removal(self, item):
+        r"""
+        Post a comment that the given label must not be removed any more.
+        """
+        if type(item) == Status:
+            sel_list = 'status'
         else:
             sel_list = 'priority'
-        self.add_warning('Label *%s* can not be removed. Please add the %s-label which should replace it' % (item.value, sel_list))
-        self.add_label(item.value)
+        self.add_hint('You don\'t need to remove %s labels any more. You\'d better just add the label which replaces it.' % sel_list)
         return
 
     # -------------------------------------------------------------------------
@@ -637,7 +814,7 @@ class GhLabelSynchronizer:
     def on_label_add(self, label):
         r"""
         Check if the given label belongs to a selection list. If so, remove
-        all other labels of that list. In case of a state label reviews are
+        all other labels of that list. In case of a status label reviews are
         booked accordingly.
         """
         sel_list = selection_list(label)
@@ -657,13 +834,13 @@ class GhLabelSynchronizer:
                 warning('Label %s of %s not found!' % (label, self._issue))
             return
 
-        if sel_list is State:
+        if sel_list is Status:
             if not self.is_pull_request():
-                if item != State.needs_info:
-                    self.reject_label_addition(item)
+                if item != Status.needs_info:
+                    self.warning_about_label_addition(item)
                     return
 
-            if item == State.needs_review:
+            if item == Status.needs_review:
                 if self.needs_review_valid():
                     # here we come for example after a sequence:
                     # needs review -> needs info -> needs review
@@ -671,10 +848,10 @@ class GhLabelSynchronizer:
                 elif self.is_draft():
                     self.mark_as_ready()
                 else:
-                    self.reject_label_addition(item)
+                    self.warning_about_label_addition(item)
                     return
 
-            if item == State.needs_work:
+            if item == Status.needs_work:
                 if self.needs_work_valid():
                     # here we come for example after a sequence:
                     # needs work -> needs info -> needs work
@@ -682,18 +859,21 @@ class GhLabelSynchronizer:
                 elif not self.is_draft():
                     self.request_changes()
                 else:
-                    self.reject_label_addition(item)
+                    self.warning_about_label_addition(item)
                     return
 
-            if item == State.positive_review:
+            if item == Status.positive_review:
                 if self.positive_review_valid():
                     # here we come for example after a sequence:
                     # positive review -> needs info -> positive review
                     pass
+                elif not self.actor_valid():
+                    self.reject_label_addition(item)
+                    return
                 elif self.approve_allowed():
                     self.approve()
                 else:
-                    self.reject_label_addition(item)
+                    self.warning_about_label_addition(item)
                     return
 
         if sel_list is Resolution:
@@ -705,22 +885,25 @@ class GhLabelSynchronizer:
 
     def on_label_removal(self, label):
         r"""
-        Check if the given label belongs to a selection list. If so, the
-        removement is rejected and a comment is posted to instead add a
-        replacement for ``label`` from the list. Exceptions are State labels
-        on issues and State.needs_info on a PR.
+        Check if the given label belongs to a selection list. If so, a comment
+        is posted to instead add a replacement for ``label`` from the list.
+        Exceptions are status labels on issues and Status.needs_info on a PR.
         """
         sel_list = selection_list(label)
         if not sel_list:
             return
 
         item = sel_list(label)
-        if sel_list is State:
+
+        if len(self.active_partners(item)) > 0:
+            return
+
+        if sel_list is Status:
             if self.is_pull_request():
-                if item != State.needs_info:
-                    self.reject_label_removal(item)
+                if item != Status.needs_info:
+                    self.hint_about_label_removal(item)
         elif sel_list is Priority:
-            self.reject_label_removal(item)
+            self.hint_about_label_removal(item)
         return
 
     def on_review_comment(self):
@@ -731,10 +914,21 @@ class GhLabelSynchronizer:
         have permission to add labels (i.e. aren't a member of the
         Triage team).
         """
-        rev_state = self.review_comment_to_state()
-        if rev_state in (State.needs_info, State.needs_review):
-            self.select_label(rev_state)
-            self.run(Action.labeled, label=rev_state.value)
+        status, ass = self.review_comment_to_status()
+        if ass is AuthorAssociation.owner:
+            if status is Status.positive_review:
+                # allow the repository owner to approve his own PR for testing
+                # the bot
+                info('Owner approves PR %s for testing the bot' % self._issue)
+                self.dismiss_bot_reviews('@%s approved the PR.' % self._actor, state=RevState.changes_requested, actor=self._actor)
+                self.approve()
+        elif ass.is_valid() or ass is Author.Assoziation.contributor:
+            if status in (Status.needs_info, Status.needs_review):
+                # allow contributors who are not Triage members to set
+                # these labels
+                info('Simulate label addition of %s for %s' % (label, self._issue))
+                self.select_label(status)
+                self.run(Action.labeled, label=status.value)
             
     def remove_all_labels_of_sel_list(self, sel_list):
         r"""
@@ -749,12 +943,16 @@ class GhLabelSynchronizer:
         """
         self.reset_view() # this is just needed for run_tests
 
+        if self.is_this_bot(self._actor):
+            info('Trigger %s of the bot %s is ignored' % (action, self._actor))
+            return
+
         if action is Action.opened and self.is_pull_request():
             if not self.is_draft():
-                self.add_default_label(State.needs_review)
+                self.add_default_label(Status.needs_review)
 
         if action in (Action.closed, Action.reopened, Action.converted_to_draft):
-            self.remove_all_labels_of_sel_list(State)
+            self.remove_all_labels_of_sel_list(Status)
 
         if action is Action.labeled:
             self.on_label_add(label)
@@ -763,21 +961,27 @@ class GhLabelSynchronizer:
             self.on_label_removal(label)
 
         if action in (Action.ready_for_review, Action.synchronize):
+            self.dismiss_bot_reviews('New changes ready for review.')
             if self.needs_review_valid():
-                self.select_label(State.needs_review)
+                self.select_label(Status.needs_review)
 
         if action is Action.review_requested:
-            self.select_label(State.needs_review)
+            self.select_label(Status.needs_review)
 
         if action is Action.submitted:
-            rev_state = RevState(rev_state)
+            rev_state = RevState(rev_state.upper())
             if rev_state is RevState.approved:
-                if self.actor_authorized() and self.positive_review_valid():
-                    self.select_label(State.positive_review)
+                self.dismiss_bot_reviews('@%s approved the PR.' % self._actor, state=RevState.changes_requested, actor=self._actor)
+                rev_req = self.get_review_requests()
+                if rev_req:
+                    info('Waiting on pending review requests: %s' % rev_req)
+                elif self.actor_authorized() and self.positive_review_valid():
+                    self.select_label(Status.positive_review)
 
             if rev_state is RevState.changes_requested:
+                self.dismiss_bot_reviews('@%s requested changes.' % self._actor, state=RevState.approved)
                 if self.needs_work_valid():
-                    self.select_label(State.needs_work)
+                    self.select_label(Status.needs_work)
 
             if rev_state is RevState.commented:
                 self.on_review_comment()
@@ -796,12 +1000,12 @@ class GhLabelSynchronizer:
         for action in Action:
             self.add_comment('Test action %s' % action.value)
             if action in (Action.labeled, Action.unlabeled):
-                for stat in State:
+                for status in Status:
                     if action is Action.labeled:
-                        self.add_label(stat.value)
+                        self.add_label(status.value)
                     else:
-                        self.remove_label(stat.value)
-                    self.run(action, label=stat.value)
+                        self.remove_label(status.value)
+                    self.run(action, label=status.value)
                 for prio in Priority:
                     if action is Action.labeled:
                         self.add_label(prio.value)
@@ -813,17 +1017,17 @@ class GhLabelSynchronizer:
                     self.add_label(res.value)
                     self.run(action, label=prio.value)
             elif action == Action.submitted and self.is_pull_request():
-                for rev_stat in RevState:
-                    if rev_stat is RevState.approved:
+                for rev_state in RevState:
+                    if rev_state is RevState.approved:
                         self.approve()
-                        self.run(action, rev_state=rev_stat.value)
-                    elif rev_stat is RevState.changes_requested:
+                        self.run(action, rev_state=rev_state.value)
+                    elif rev_state is RevState.changes_requested:
                         self.request_changes()
-                        self.run(action, rev_state=rev_stat.value)
-                    elif rev_stat is RevState.commented:
-                        for stat in State:
-                            self.review_comment(stat.value)
-                            self.run(action, rev_state=rev_stat.value)
+                        self.run(action, rev_state=rev_state.value)
+                    elif rev_state is RevState.commented:
+                        for status in Status:
+                            self.review_comment(status.value)
+                            self.run(action, rev_state=rev_state.value)
             elif self.is_pull_request():
                 self.run(action)
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.rings.number_field
 r"""
 Right-Angled Artin Groups
 
@@ -13,18 +13,15 @@ AUTHORS:
 - Travis Scrimshaw (2018-02-05): Made compatible with
   :class:`~sage.groups.artin.ArtinGroup`
 """
-
-#****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013,2018 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.libs.gap.element import GapElement
 
 from sage.misc.cachefunc import cached_method
@@ -38,10 +35,12 @@ from sage.combinat.root_system.coxeter_group import CoxeterGroup
 
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.fields import Fields
+from sage.categories.groups import Groups
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.algebras.clifford_algebra_element import CohomologyRAAGElement
 from sage.typeset.ascii_art import ascii_art
 from sage.typeset.unicode_art import unicode_art
+
 
 class RightAngledArtinGroup(ArtinGroup):
     r"""
@@ -91,7 +90,7 @@ class RightAngledArtinGroup(ArtinGroup):
     INPUT:
 
     - ``G`` -- a graph
-    - ``names`` -- a string or a list of generator names
+    - ``names`` -- string or list of generator names
 
     EXAMPLES::
 
@@ -186,23 +185,26 @@ class RightAngledArtinGroup(ArtinGroup):
 
             sage: G = RightAngledArtinGroup(graphs.CycleGraph(5))
             sage: TestSuite(G).run()
+            sage: G.category()
+            Category of infinite groups
         """
         self._graph = G
         F = FreeGroup(names=names)
         CG = Graph(G).complement()  # Make sure it's mutable
         CG.relabel()  # Standardize the labels
-        cm = [[-1]*CG.num_verts() for _ in range(CG.num_verts())]
+        cm = [[-1] * CG.num_verts() for _ in range(CG.num_verts())]
         for i in range(CG.num_verts()):
             cm[i][i] = 1
-        for u,v in CG.edge_iterator(labels=False):
+        for u, v in CG.edge_iterator(labels=False):
             cm[u][v] = 2
             cm[v][u] = 2
         self._coxeter_group = CoxeterGroup(CoxeterMatrix(cm, index_set=G.vertices(sort=True)))
         rels = tuple(F([i + 1, j + 1, -i - 1, -j - 1])
                      for i, j in CG.edge_iterator(labels=False))  # +/- 1 for indexing
-        FinitelyPresentedGroup.__init__(self, F, rels)
+        FinitelyPresentedGroup.__init__(self, F, rels,
+                                        category=Groups().Infinite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -226,7 +228,7 @@ class RightAngledArtinGroup(ArtinGroup):
         """
         return self.element_class(self, ([i, 1],))
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -310,8 +312,9 @@ class RightAngledArtinGroup(ArtinGroup):
 
     def _normal_form(self, word):
         """
-        Return the normal form of the word ``word``. Helper function for
-        creating elements.
+        Return the normal form of the word ``word``.
+
+        Helper function for creating elements.
 
         EXAMPLES::
 
@@ -435,16 +438,16 @@ class RightAngledArtinGroup(ArtinGroup):
                         mult += 1
                     else:
                         if j < 0:
-                            data.append([-j-1, -mult])
+                            data.append([-j - 1, -mult])
                         else:
-                            data.append([j-1, mult])
+                            data.append([j - 1, mult])
                         j = i
                         mult = 1
                 if j is not None:
                     if j < 0:
-                        data.append([-j-1, -mult])
+                        data.append([-j - 1, -mult])
                     else:
-                        data.append([j-1, mult])
+                        data.append([j - 1, mult])
                 self._data = tuple(data)
             else:
                 self._data = lst
@@ -472,7 +475,7 @@ class RightAngledArtinGroup(ArtinGroup):
             V = P._graph.vertices(sort=True)
             return (P, ([[V[i], p] for i, p in self._data],))
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 
@@ -499,12 +502,11 @@ class RightAngledArtinGroup(ArtinGroup):
             def to_str(name, p):
                 if p == 1:
                     return "{}".format(name)
-                else:
-                    return "{}^{}".format(name, p)
+                return "{}^{}".format(name, p)
 
             return '*'.join(to_str(v[i], p) for i, p in self._data)
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a LaTeX representation of ``self``.
 
@@ -603,7 +605,7 @@ class RightAngledArtinGroup(ArtinGroup):
             lst = [[x[0], -x[1]] for x in reversed(self._data)]
             return self.__class__(P, P._normal_form(lst))
 
-        def _richcmp_(self, other, op):
+        def _richcmp_(self, other, op) -> bool:
             """
             Compare ``self`` and ``other``.
 
@@ -626,6 +628,7 @@ class RightAngledArtinGroup(ArtinGroup):
                 True
             """
             return richcmp(self._data, other._data, op)
+
 
 class CohomologyRAAG(CombinatorialFreeModule):
     r"""
@@ -652,6 +655,11 @@ class CohomologyRAAG(CombinatorialFreeModule):
             sage: A = groups.misc.RightAngledArtin(C4)
             sage: H = A.cohomology()
             sage: TestSuite(H).run()
+
+            sage: A.cohomology(ZZ)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented with coefficients in a field
         """
         if R not in Fields():
             raise NotImplementedError("only implemented with coefficients in a field")
@@ -666,7 +674,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, indices, category=cat, prefix='H')
         self._assign_names(names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -680,10 +688,9 @@ class CohomologyRAAG(CombinatorialFreeModule):
         """
         return "Cohomology ring of {} with coefficients in {}".format(self._group, self.base_ring())
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         """
-        Return a string representation of the basis element indexed by
-        ``m``.
+        Return a string representation of the basis element indexed by ``m``.
 
         EXAMPLES::
 
@@ -743,8 +750,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
 
     def _latex_term(self, m):
         r"""
-        Return a `\LaTeX` representation of the basis element indexed
-        by ``m``.
+        Return a `\LaTeX` representation of the basis element indexed by ``m``.
 
         EXAMPLES::
 
@@ -807,11 +813,11 @@ class CohomologyRAAG(CombinatorialFreeModule):
             Finite family {0: e0, 1: e1, 2: e2, 3: e3}
         """
         V = self._group._graph.vertices(True)
-        d = {x: self.gen(i) for i,x in enumerate(V)}
+        d = {x: self.gen(i) for i, x in enumerate(V)}
         from sage.sets.family import Family
         return Family(V, lambda x: d[x])
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` (as an algebra).
 

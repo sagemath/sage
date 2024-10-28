@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 An element in an indexed free module
 
@@ -15,7 +14,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.structure.element cimport parent
@@ -27,11 +26,12 @@ from sage.misc.superseded import deprecation
 from sage.typeset.ascii_art import AsciiArt, empty_ascii_art, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, empty_unicode_art, unicode_art
 from sage.data_structures.blas_dict cimport add, negate, scal, axpy
+from sage.categories.modules import _Fields
 
 
 cdef class IndexedFreeModuleElement(ModuleElement):
     r"""
-    Element class for :class:`~sage.combinat.free_module.CombinatorialFreeModule`
+    Element class for :class:`~sage.combinat.free_module.CombinatorialFreeModule`.
 
     TESTS::
 
@@ -77,9 +77,9 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: [i for i in sorted(f)]
             [('a', 1), ('c', 3)]
 
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: a = s([2,1]) + s([3])
-            sage: [i for i in sorted(a)]
+            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
+            sage: a = s([2,1]) + s([3])                                                 # needs sage.combinat
+            sage: [i for i in sorted(a)]                                                # needs sage.combinat
             [([2, 1], 1), ([3], 1)]
         """
         return iter(self._monomial_coefficients.items())
@@ -102,6 +102,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: 'b' in f
             False
 
+            sage: # needs sage.combinat
             sage: s = SymmetricFunctions(QQ).schur()
             sage: a = s([2,1]) + s([3])
             sage: Partition([2,1]) in a
@@ -128,6 +129,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: hash(f) == hash(B['a'] + 4*B['c'])
             False
 
+            sage: # needs sage.combinat
             sage: F = RootSystem(['A',2]).ambient_space()
             sage: f = F.simple_root(0)
             sage: hash(f) == hash(F.simple_root(0))
@@ -143,7 +145,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         .. TODO::
 
             It would be desirable to make the hash value depend on the
-            hash value of the parent. See :trac:`15959`.
+            hash value of the parent. See :issue:`15959`.
         """
         if not self._hash_set:
             self._hash = hash(frozenset(self._monomial_coefficients.items()))
@@ -166,7 +168,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         r"""
         For unpickling old ``CombinatorialFreeModuleElement`` classes.
 
-        See :trac:`22632` and ``register_unpickle_override`` below.
+        See :issue:`22632` and ``register_unpickle_override`` below.
 
         EXAMPLES::
 
@@ -233,10 +235,10 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
-          represented by a dictionary ``d``, then make a copy of ``d``;
-          if ``False``, then this can cause undesired behavior by
-          mutating ``d``
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
+          represented by a dictionary ``d``, then make a copy of ``d``.
+          If ``False``, then this can cause undesired behavior by
+          mutating ``d``.
 
         EXAMPLES::
 
@@ -259,6 +261,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
+            sage: # needs sage.combinat
             sage: s = SymmetricFunctions(QQ).schur()
             sage: a = s([2,1])+2*s([3,2])
             sage: d = a.monomial_coefficients()
@@ -339,9 +342,10 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                             strip_one = True)
 
     def _ascii_art_(self):
-        """
+        r"""
         TESTS::
 
+            sage: # needs sage.combinat
             sage: M = QuasiSymmetricFunctions(QQ).M()
             sage: ascii_art(M[1,3]**2)  # indirect doctest
             4*M      + 2*M       + 2*M      + 2*M       + 2*M       + M
@@ -358,6 +362,25 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                *      *       **
                *      *       *
                *
+
+        We can get the ascii art when there is no ``one_basis`` method
+        (and the basis keys do not compare with ``None``)::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E2 = L.exterior_power(2)
+            sage: ascii_art(E2.an_element())
+            2*()/\(5,6,7) + 2*()/\(5,7,6) + 3*()/\(1,2)(3,4)
+
+        We can also get the ascii art when ``one_basis``
+        is ``NotImplemented``::
+
+            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+            sage: C = TL.cellular_basis()
+            sage: ascii_art(list(C.basis())[0])
+            C
+             (     .-. .-. .-. .-.   .-. .-. .-. .-. )
+             ( 0,  o o o o o o o o,  o o o o o o o o )
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -374,10 +397,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
+        one_basis = None
         try:
-            one_basis = self.parent().one_basis()
-        except AttributeError:
-            one_basis = None
+            if self._parent.one_basis is not NotImplemented:
+                one_basis = self._parent.one_basis()
+        except (AttributeError, NotImplementedError, ValueError, TypeError):
+            pass
 
         for monomial, c in terms:
             b = repr_monomial(monomial) # PCR
@@ -390,7 +415,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                     elif coeff == "-1":
                         coeff = "-"
                     elif b._l > 0:
-                        if len(coeff) > 0 and monomial == one_basis and strip_one:
+                        if one_basis is not None and len(coeff) > 0 and monomial == one_basis and strip_one:
                             b = empty_ascii_art # ""
                         else:
                             b = AsciiArt([scalar_mult]) + b
@@ -416,11 +441,11 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             return s
 
     def _unicode_art_(self):
-        """
+        r"""
         TESTS::
 
-            sage: M = QuasiSymmetricFunctions(QQ).M()
-            sage: unicode_art(M[1,1]**2)  # indirect doctest
+            sage: M = QuasiSymmetricFunctions(QQ).M()                                   # needs sage.combinat
+            sage: unicode_art(M[1,1]**2)  # indirect doctest                            # needs sage.combinat
             6*M   + 2*M    + 2*M    + 2*M    + M
                ┌┐      ┌┬┐       ┌┐       ┌┐     ┌┬┐
                ├┤      ├┼┘      ┌┼┤       ├┤    ┌┼┼┘
@@ -428,10 +453,29 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                ├┤      └┘       └┘       └┴┘
                └┘
 
-        The following test failed before :trac:`26850`::
+        The following test failed before :issue:`26850`::
 
-            sage: unicode_art([M.zero()])  # indirect doctest
+            sage: unicode_art([M.zero()])  # indirect doctest                           # needs sage.combinat
             [ 0 ]
+
+        We can get the unicode art when there is no ``one_basis`` method
+        (and the basis keys do not compare with ``None``)::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E2 = L.exterior_power(2)
+            sage: unicode_art(E2.an_element())
+            2*()∧(5,6,7) + 2*()∧(5,7,6) + 3*()∧(1,2)(3,4)
+
+        We can also get the unicode art when ``one_basis``
+        is ``NotImplemented``::
+
+            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+            sage: C = TL.cellular_basis()
+            sage: unicode_art(list(C.basis())[0])
+            C
+             ⎛     ╭─╮ ╭─╮ ╭─╮ ╭─╮   ╭─╮ ╭─╮ ╭─╮ ╭─╮ ⎞
+             ⎝ 0,  ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬,  ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⎠
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -448,10 +492,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
+        one_basis = None
         try:
-            one_basis = self.parent().one_basis()
-        except AttributeError:
-            one_basis = None
+            if self._parent.one_basis is not NotImplemented:
+                one_basis = self._parent.one_basis()
+        except (AttributeError, NotImplementedError, ValueError, TypeError):
+            pass
 
         for (monomial, c) in terms:
             b = repr_monomial(monomial)  # PCR
@@ -464,7 +510,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                     elif coeff == "-1":
                         coeff = "-"
                     elif b._l > 0:
-                        if len(coeff) > 0 and monomial == one_basis and strip_one:
+                        if one_basis is not None and len(coeff) > 0 and monomial == one_basis and strip_one:
                             b = empty_unicode_art  # ""
                         else:
                             b = UnicodeArt([scalar_mult]) + b
@@ -501,9 +547,9 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
-            sage: QS3 = SymmetricGroupAlgebra(QQ,3)
-            sage: a = 2 + QS3([2,1,3])
-            sage: latex(a) #indirect doctest
+            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.combinat
+            sage: a = 2 + QS3([2,1,3])                                                  # needs sage.combinat
+            sage: latex(a)  #indirect doctest                                           # needs sage.combinat
             2 [1, 2, 3] + [2, 1, 3]
 
        ::
@@ -563,6 +609,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
+            sage: # needs sage.combinat
             sage: s = SymmetricFunctions(QQ).schur()
             sage: a = s([2,1])
             sage: b = s([1,1,1])
@@ -590,6 +637,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             Traceback (most recent call last):
             ...
             TypeError: do not know how to make x (= 0) an element of self (=Free module generated by {1, 2, 3} over Rational Field)
+
+            sage: # needs sage.combinat
             sage: F = AlgebrasWithBasis(QQ).example()
             sage: F.one() == 1
             True
@@ -600,10 +649,10 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: int(2) == 2 * F.one()
             True
 
-            sage: S = SymmetricFunctions(QQ); s = S.s(); p = S.p()
-            sage: p[2] == s[2] - s[1, 1]
+            sage: S = SymmetricFunctions(QQ); s = S.s(); p = S.p()                      # needs sage.combinat
+            sage: p[2] == s[2] - s[1, 1]                                                # needs sage.combinat
             True
-            sage: p[2] == s[2]
+            sage: p[2] == s[2]                                                          # needs sage.combinat
             False
 
         This feature is disputable, in particular since it can make
@@ -611,8 +660,9 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         Equality testing can be a bit tricky when the order of terms
         can vary because their indices are incomparable with
-        ``cmp``. The following test did fail before :trac:`12489` ::
+        ``cmp``. The following test did fail before :issue:`12489` ::
 
+            sage: # needs sage.combinat
             sage: F = CombinatorialFreeModule(QQ, Subsets([1,2,3]))
             sage: x = F.an_element()
             sage: (x+F.zero()).terms()  # random
@@ -625,7 +675,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         TESTS::
 
             sage: TestSuite(F1).run()
-            sage: TestSuite(F).run()
+            sage: TestSuite(F).run()                                                    # needs sage.combinat
         """
         cdef IndexedFreeModuleElement elt = <IndexedFreeModuleElement> other
 
@@ -653,6 +703,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
+            sage: # needs sage.combinat
             sage: s = SymmetricFunctions(QQ).schur()
             sage: s([2,1]) + s([5,4]) # indirect doctest
             s[2, 1] + s[5, 4]
@@ -676,8 +727,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: -s([2,1]) # indirect doctest
+            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
+            sage: -s([2,1])  # indirect doctest                                         # needs sage.combinat
             -s[2, 1]
         """
         return type(self)(self._parent, negate(self._monomial_coefficients))
@@ -693,8 +744,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         ::
 
-            sage: s = SymmetricFunctions(QQ).schur()
-            sage: s([2,1]) - s([5,4]) # indirect doctest
+            sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
+            sage: s([2,1]) - s([5,4])  # indirect doctest                               # needs sage.combinat
             s[2, 1] - s[5, 4]
         """
         return type(self)(self._parent,
@@ -708,6 +759,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: p = Partition([2,1])
             sage: q = Partition([1,1,1])
             sage: s = SymmetricFunctions(QQ).schur()
@@ -734,7 +786,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         - ``new_base_ring`` -- a ring (default: ``None``)
         - ``order`` -- (optional) an ordering of the support of ``self``
-        - ``sparse`` -- (default: ``False``) whether to return a sparse
+        - ``sparse`` -- boolean (default: ``False``); whether to return a sparse
           vector or a dense vector
 
         OUTPUT: a :func:`FreeModule` vector
@@ -765,6 +817,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         More examples::
 
+            sage: # needs sage.combinat
             sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
             sage: a = 2*QS3([1,2,3]) + 4*QS3([3,2,1])
             sage: a._vector_()
@@ -781,12 +834,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         If ``new_base_ring`` is specified, then a vector over
         ``new_base_ring`` is returned::
 
-            sage: a._vector_(RDF)
+            sage: a._vector_(RDF)                                                       # needs sage.combinat
             (2.0, 0.0, 0.0, 0.0, 0.0, 4.0)
 
         .. NOTE::
 
-            :trac:`13406`: the current implementation has been optimized, at
+            :issue:`13406`: the current implementation has been optimized, at
             the price of breaking the encapsulation for FreeModule
             elements creation, with the following use case as metric,
             on a 2008' Macbook Pro::
@@ -856,7 +909,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             None
 
         This also works when a coercion of the coefficient is needed, for
-        example with polynomials or fraction fields (:trac:`8832`)::
+        example with polynomials or fraction fields (:issue:`8832`)::
 
             sage: P.<q> = QQ['q']
             sage: V = CombinatorialFreeModule(P, Permutations())
@@ -864,6 +917,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: (3/2)*el
             3/2*B[[3, 1, 2]]
 
+            sage: # needs sage.combinat
             sage: P.<q> = QQ['q']
             sage: F = FractionField(P)
             sage: V = CombinatorialFreeModule(F, Words())
@@ -946,6 +1000,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand type(s) for /: 'str' and 'CombinatorialFreeModule_with_category.element_class'
+
+            sage: L = LazyPowerSeriesRing(QQ, 't')
+            sage: t = L.gen()
+            sage: F = algebras.Free(L, ['A', 'B'])
+            sage: A, B = F.gens()
+            sage: f = t*A + t**2*B/2
         """
         if not isinstance(left, IndexedFreeModuleElement):
             return NotImplemented
@@ -954,7 +1014,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         F = self._parent
         B = self.base_ring()
         D = self._monomial_coefficients
-        if not B.is_field():
+        if B not in _Fields:
             return type(self)(F, {k: c._divide_if_possible(x)
                                   for k, c in D.items()})
 
@@ -975,7 +1035,8 @@ def _unpickle_element(C, d):
     """
     return C._from_dict(d, coerce=False, remove_zeros=False)
 
-# Handle old CombinatorialFreeModuleElement pickles, see trac #22632
+
+# Handle old CombinatorialFreeModuleElement pickles, see Issue #22632
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.combinat.free_module",
                            "CombinatorialFreeModuleElement",

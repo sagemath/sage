@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 """
 Classical Ciphers
 """
@@ -8,9 +9,12 @@ Classical Ciphers
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .cipher import SymmetricKeyCipher
+from sage.misc.lazy_import import lazy_import
 from sage.monoids.string_monoid_element import StringMonoidElement
-from sage.modules.free_module import FreeModule
+
+lazy_import('sage.modules.free_module', 'FreeModule')
+
+from .cipher import SymmetricKeyCipher
 
 
 class AffineCipher(SymmetricKeyCipher):
@@ -29,9 +33,9 @@ class AffineCipher(SymmetricKeyCipher):
 
         INPUT:
 
-        - ``parent`` -- an ``AffineCryptosystem`` object.
+        - ``parent`` -- an ``AffineCryptosystem`` object
 
-        - ``key`` -- a secret key. Let `N` be the size of the cipher domain.
+        - ``key`` -- a secret key; let `N` be the size of the cipher domain.
           A key of this affine cipher is an ordered pair
           `(a, b) \in \ZZ_N \times \ZZ_N` such that `\gcd(a, N) = 1`.
 
@@ -54,12 +58,10 @@ class AffineCipher(SymmetricKeyCipher):
 
         INPUT:
 
-        - ``other`` -- another object to compare with.
+        - ``other`` -- another object to compare with
 
-        OUTPUT:
-
-        - ``True`` if ``self`` and ``other`` are the same ``AffineCipher``
-          object; ``False`` otherwise.
+        OUTPUT: ``True`` if ``self`` and ``other`` are the same
+        ``AffineCipher`` object; ``False`` otherwise
 
         EXAMPLES::
 
@@ -85,15 +87,13 @@ class AffineCipher(SymmetricKeyCipher):
           behaviour is that the plaintext and ciphertext alphabets are the
           same alphabet.
 
-        - ``algorithm`` -- (default ``"encrypt"``) whether to use the
-          encryption or decryption algorithm on ``M``. The flag ``"encrypt"``
-          signifies using the encryption algorithm, while ``"decrypt"``
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to use the
+          encryption or decryption algorithm on ``M``. The flag ``'encrypt'``
+          signifies using the encryption algorithm, while ``'decrypt'``
           signifies using the decryption algorithm. The only acceptable
-          values for ``algorithm`` are: ``"encrypt"`` and ``"decrypt"``.
+          values for ``algorithm`` are: ``'encrypt'`` and ``'decrypt'``.
 
-        OUTPUT:
-
-        - The ciphertext or plaintext corresponding to ``M``.
+        OUTPUT: the ciphertext or plaintext corresponding to ``M``
 
         EXAMPLES::
 
@@ -152,6 +152,7 @@ class AffineCipher(SymmetricKeyCipher):
         # as the alphabet used for the plaintext and ciphertext spaces.
         return "Affine cipher on %s" % self.parent().cipher_domain()
 
+
 class HillCipher(SymmetricKeyCipher):
     """
     Hill cipher class
@@ -160,17 +161,14 @@ class HillCipher(SymmetricKeyCipher):
         """
         Create a Hill cipher.
 
-        INPUT: Parent and key
-
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S,3)
-            sage: E
+            sage: E = HillCryptosystem(S,3); E
             Hill cryptosystem on Free alphabetic string monoid on A-Z of block length 3
             sage: M = E.key_space()
-            sage: A = M([[1,0,1],[0,1,1],[2,2,3]])
-            sage: A
+            sage: A = M([[1,0,1],[0,1,1],[2,2,3]]); A
             [1 0 1]
             [0 1 1]
             [2 2 3]
@@ -182,8 +180,8 @@ class HillCipher(SymmetricKeyCipher):
         TESTS::
 
             sage: S = AlphabeticStrings()
-            sage: E = HillCryptosystem(S,3)
-            sage: E == loads(dumps(E))
+            sage: E = HillCryptosystem(S,3)                                             # needs sage.modules
+            sage: E == loads(dumps(E))                                                  # needs sage.modules
             True
         """
         # TODO: some type checking that the key is an invertible matrix?
@@ -216,6 +214,7 @@ class HillCipher(SymmetricKeyCipher):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: H = HillCryptosystem(AlphabeticStrings(), 3)
             sage: M = MatrixSpace(IntegerModRing(26), 3, 3)
             sage: A = M([[1,0,1], [0,1,1], [2,2,3]])
@@ -233,6 +232,7 @@ class HillCipher(SymmetricKeyCipher):
             raise ValueError("Argument\n\n%s\n\nmust be an invertible cipher." % self)
         return E(B)
 
+
 class ShiftCipher(SymmetricKeyCipher):
     r"""
     Shift cipher class. This is the class that does the actual work of
@@ -249,9 +249,9 @@ class ShiftCipher(SymmetricKeyCipher):
 
         INPUT:
 
-        - ``parent`` -- a ``ShiftCryptosystem`` object.
+        - ``parent`` -- a ``ShiftCryptosystem`` object
 
-        - ``key`` -- a secret key.
+        - ``key`` -- a secret key
 
         EXAMPLES::
 
@@ -278,12 +278,10 @@ class ShiftCipher(SymmetricKeyCipher):
 
         INPUT:
 
-        - ``other`` -- another object to compare with.
+        - ``other`` -- another object to compare with
 
-        OUTPUT:
-
-        - ``True`` if ``self`` and ``other`` are the same ``ShiftCipher``
-          object; ``False`` otherwise.
+        OUTPUT: ``True`` if ``self`` and ``other`` are the same ``ShiftCipher``
+        object; ``False`` otherwise.
 
         EXAMPLES::
 
@@ -311,9 +309,7 @@ class ShiftCipher(SymmetricKeyCipher):
           behaviour is that the plaintext and ciphertext alphabets are the
           same alphabet.
 
-        OUTPUT:
-
-        - The ciphertext or plaintext corresponding to ``M``.
+        OUTPUT: the ciphertext or plaintext corresponding to ``M``
 
         EXAMPLES:
 
@@ -379,6 +375,7 @@ class ShiftCipher(SymmetricKeyCipher):
         # as the alphabet used for the plaintext and ciphertext spaces.
         return "Shift cipher on %s" % self.parent().cipher_domain()
 
+
 class SubstitutionCipher(SymmetricKeyCipher):
     """
     Substitution cipher class
@@ -386,8 +383,6 @@ class SubstitutionCipher(SymmetricKeyCipher):
     def __init__(self, parent, key):
         """
         Create a substitution cipher.
-
-        INPUT: Parent and key
 
         EXAMPLES::
 
@@ -454,6 +449,7 @@ class SubstitutionCipher(SymmetricKeyCipher):
         K = E.inverse_key(self.key())
         return E(K)
 
+
 class TranspositionCipher(SymmetricKeyCipher):
     """
     Transition cipher class
@@ -462,16 +458,14 @@ class TranspositionCipher(SymmetricKeyCipher):
         """
         Create a transposition cipher.
 
-        INPUT: Parent and key
-
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: S = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(S,14)
-            sage: E
-            Transposition cryptosystem on Free alphabetic string monoid on A-Z of block length 14
-            sage: K = [ 14-i for i in range(14) ]
-            sage: K
+            sage: E = TranspositionCryptosystem(S,14); E
+            Transposition cryptosystem on
+             Free alphabetic string monoid on A-Z of block length 14
+            sage: K = [ 14-i for i in range(14) ]; K
             [14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
             sage: e = E(K)
             sage: m = S("THECATINTHEHAT")
@@ -480,11 +474,11 @@ class TranspositionCipher(SymmetricKeyCipher):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: S = AlphabeticStrings()
             sage: E = TranspositionCryptosystem(S,15)
             sage: m = S("THECATANDTHEHAT")
-            sage: G = E.key_space()
-            sage: G
+            sage: G = E.key_space(); G
             Symmetric group of order 15! as a permutation group
             sage: g = G([ 3, 2, 1, 6, 5, 4, 9, 8, 7, 12, 11, 10, 15, 14, 13 ])
             sage: e = E(g)
@@ -494,8 +488,8 @@ class TranspositionCipher(SymmetricKeyCipher):
         TESTS::
 
             sage: S = AlphabeticStrings()
-            sage: E = TranspositionCryptosystem(S,14)
-            sage: E == loads(dumps(E))
+            sage: E = TranspositionCryptosystem(S,14)                                   # needs sage.groups
+            sage: E == loads(dumps(E))                                                  # needs sage.groups
             True
         """
         n = parent.block_length()
@@ -503,7 +497,7 @@ class TranspositionCipher(SymmetricKeyCipher):
             raise ValueError("key (= %s) must have block length %s" % (key, n))
         SymmetricKeyCipher.__init__(self, parent, key)
 
-    def __call__(self, M, mode="ECB"):
+    def __call__(self, M, mode='ECB'):
         S = self.domain() # = plaintext_space = ciphertext_space
         if not isinstance(M, StringMonoidElement) and M.parent() == S:
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)
@@ -512,7 +506,7 @@ class TranspositionCipher(SymmetricKeyCipher):
         g = self.key()
         N = len(M)
         m = self.parent().block_length()
-        if not N%m == 0:
+        if not N % m == 0:
             raise TypeError("Argument M (= %s) must be a string of length k*%s." % (M, m))
         Melt = M._element_list # this uses the internal structure of string monoids
         # Caution: this is parsed as an outer loop in k and an inner loop in i:
@@ -526,6 +520,7 @@ class TranspositionCipher(SymmetricKeyCipher):
         K = E.inverse_key(self.key())
         return E(K)
 
+
 class VigenereCipher(SymmetricKeyCipher):
     """
     Vigenere cipher class
@@ -533,8 +528,6 @@ class VigenereCipher(SymmetricKeyCipher):
     def __init__(self, parent, key):
         """
         Create a Vigenere cipher.
-
-        INPUT: Parent and key
 
         EXAMPLES::
 
@@ -555,7 +548,7 @@ class VigenereCipher(SymmetricKeyCipher):
         """
         SymmetricKeyCipher.__init__(self, parent, key)
 
-    def __call__(self, M, mode="ECB"):
+    def __call__(self, M, mode='ECB'):
         S = self.domain() # = plaintext_space = ciphertext_space
         if not isinstance(M, StringMonoidElement) and M.parent() == S:
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)
@@ -567,7 +560,7 @@ class VigenereCipher(SymmetricKeyCipher):
         # This uses the internal structure of string monoids
         Melt = M._element_list
         Kelt = K._element_list
-        return S([ (Melt[i]+Kelt[i%m])%n for i in range(len(M)) ])
+        return S([ (Melt[i]+Kelt[i % m]) % n for i in range(len(M)) ])
 
     def inverse(self):
         E = self.parent()

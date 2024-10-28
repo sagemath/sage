@@ -2,7 +2,7 @@
 Cremona matrices
 """
 
-from ..eclib cimport scalar, addscalar
+from sage.libs.eclib cimport scalar, addscalar
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
@@ -151,7 +151,7 @@ cdef class Matrix:
 
     def add_scalar(self, scalar s):
         """
-        Return new matrix obtained by adding s to each diagonal entry of self.
+        Return new matrix obtained by adding `s` to each diagonal entry of ``self``.
 
         EXAMPLES::
 
@@ -193,7 +193,7 @@ cdef class Matrix:
 
         INPUT:
 
-        - ``sparse`` -- (default: True) whether the return matrix has
+        - ``sparse`` -- boolean (default: ``True``); whether the return matrix has
           a sparse representation
 
         EXAMPLES::

@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 r"""
 The matrix monoid `\Sigma_0(N)`.
 
 This stands for a monoid of matrices over `\ZZ`, `\QQ`, `\ZZ_p`, or `\QQ_p`,
-depending on an integer `N \ge 1`. This class exists in order to act on p-adic
+depending on an integer `N \ge 1`. This class exists in order to act on `p`-adic
 distribution spaces.
 
 Over `\QQ` or `\ZZ`, it is the monoid of matrices `2\times2` matrices
@@ -89,9 +88,7 @@ class _default_adjuster(Sigma0ActionAdjuster):
 
     - ``g`` -- a `2 \times 2` matrix
 
-    OUTPUT:
-
-    - a 4-tuple consisting of the entries of the matrix
+    OUTPUT: a 4-tuple consisting of the entries of the matrix
 
     EXAMPLES::
 
@@ -109,18 +106,20 @@ class _default_adjuster(Sigma0ActionAdjuster):
         """
         return tuple(g.list())
 
+
 class Sigma0_factory(UniqueFactory):
     r"""
     Create the monoid of non-singular matrices, upper triangular mod `N`.
 
     INPUT:
 
-    - ``N`` (integer) -- the level (should be strictly positive)
+    - ``N`` -- integer; the level (should be strictly positive)
     - ``base_ring`` (commutative ring, default `\ZZ`) -- the base
       ring (normally `\ZZ` or a `p`-adic ring)
-    - ``adjuster`` -- None, or a callable which takes a `2 \times 2` matrix and returns
-      a 4-tuple of integers. This is supplied in order to support differing
-      conventions for the action of `2 \times 2` matrices on distributions.
+    - ``adjuster`` -- ``None``, or a callable which takes a `2 \times 2` matrix
+      and returns a 4-tuple of integers. This is supplied in order to support
+      differing conventions for the action of `2 \times 2` matrices on
+      distributions.
 
     EXAMPLES::
 
@@ -161,6 +160,7 @@ class Sigma0_factory(UniqueFactory):
             Monoid Sigma0(3) with coefficients in Integer Ring
         """
         return Sigma0_class(*key)
+
 
 Sigma0 = Sigma0_factory('sage.modular.pollack_stevens.sigma0.Sigma0')
 
@@ -213,7 +213,7 @@ class Sigma0Element(MonoidElement):
 
     def det(self):
         r"""
-        Return the determinant of this matrix, which is (by assumption) non-zero.
+        Return the determinant of this matrix, which is (by assumption) nonzero.
 
         EXAMPLES::
 
@@ -266,7 +266,7 @@ class Sigma0Element(MonoidElement):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -279,7 +279,8 @@ class Sigma0Element(MonoidElement):
 
     def matrix(self):
         r"""
-        Return self as a matrix (forgetting the additional data that it is in Sigma0(N)).
+        Return ``self`` as a matrix (forgetting the additional data that it is
+        in ``Sigma0(N)``).
 
         EXAMPLES::
 
@@ -412,7 +413,7 @@ class Sigma0_class(Parent):
 
     def _an_element_(self):
         r"""
-        Return an element of self. This is implemented in a rather dumb way.
+        Return an element of ``self``. This is implemented in a rather dumb way.
 
         EXAMPLES::
 
@@ -478,14 +479,14 @@ class Sigma0_class(Parent):
 
     def _element_constructor_(self, x, check=True):
         r"""
-        Construct an element of self from x.
+        Construct an element of ``self`` from x.
 
         INPUT:
 
         - ``x`` -- something that one can make into a matrix over the
           appropriate base ring
-        - ``check`` (boolean, default True) -- if True, then check that this
-          matrix actually satisfies the conditions.
+        - ``check`` -- boolean (default: ``True``); if ``True``, then check
+          that this matrix actually satisfies the conditions
 
         EXAMPLES::
 

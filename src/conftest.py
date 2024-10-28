@@ -1,5 +1,4 @@
 # pyright: strict
-
 """Configuration and fixtures for pytest.
 
 This file configures pytest and provides some global fixtures.
@@ -22,8 +21,7 @@ from _pytest.doctest import (
     _patch_unwrap_mock_aware,
     get_optionflags,
 )
-from _pytest.pathlib import import_path, ImportMode
-
+from _pytest.pathlib import ImportMode, import_path
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
 
 
@@ -90,6 +88,7 @@ class SageDoctestModule(DoctestModule):
                     self.path,
                     mode=ImportMode.importlib,
                     root=self.config.rootpath,
+                    consider_namespace_packages=True,
                 )
             except ImportError:
                 if self.config.getvalue("doctest_ignore_import_errors"):
@@ -98,7 +97,7 @@ class SageDoctestModule(DoctestModule):
                     raise
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()
-        optionflags = get_optionflags(self)
+        optionflags = get_optionflags(self.config)
         runner = _get_runner(
             verbose=False,
             optionflags=optionflags,
@@ -141,9 +140,27 @@ def pytest_collect_file(
         # hit this here if someone explicitly runs `pytest some_file.pyx`.
         return IgnoreCollector.from_parent(parent)
     elif file_path.suffix == ".py":
-        if parent.config.option.doctestmodules:
+        if parent.config.option.doctest:
+            if file_path.name == "__main__.py":
+                # We don't allow tests to be defined in __main__.py files (because their import will fail).
+                return IgnoreCollector.from_parent(parent)
+            if file_path.name == "postprocess.py" and file_path.parent.name == "nbconvert":
+                # This is an executable file.
+                return IgnoreCollector.from_parent(parent)
             return SageDoctestModule.from_parent(parent, path=file_path)
 
+
+def pytest_addoption(parser):
+    # Add a command line option to run doctests
+    # (we don't use the built-in --doctest-modules option because then doctests are collected twice)
+    group = parser.getgroup("collect")
+    group.addoption(
+        "--doctest",
+        action="store_true",
+        default=False,
+        help="Run doctests in all .py modules",
+        dest="doctest",
+    )
 
 @pytest.fixture(autouse=True, scope="session")
 def add_imports(doctest_namespace: dict[str, Any]):

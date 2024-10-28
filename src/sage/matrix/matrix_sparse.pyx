@@ -15,9 +15,9 @@ from cysignals.signals cimport sig_check
 
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix0 as matrix0
+from sage.categories.rings import Rings
 from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
-from sage.rings.ring import is_Ring
 
 from cpython cimport *
 from cpython.object cimport Py_EQ, Py_NE
@@ -27,10 +27,10 @@ import sage.matrix.matrix_space
 
 cdef class Matrix_sparse(matrix.Matrix):
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 1
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 0
 
     def change_ring(self, ring):
@@ -62,7 +62,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [2.00000000000000*x  -2.00000000000000]
             [-------------------------------------]
         """
-        if not is_Ring(ring):
+        if ring not in Rings():
             raise TypeError("input must be a ring")
         if ring is self._base_ring:
             if self._is_immutable:
@@ -228,7 +228,7 @@ cdef class Matrix_sparse(matrix.Matrix):
     def _multiply_classical_with_cache(Matrix_sparse left, Matrix_sparse right):
         """
         This function computes the locations of the end of the rows/columns
-        in the non-zero entries list once O(rows+cols) time and space, then
+        in the nonzero entries list once O(rows+cols) time and space, then
         uses these values in the inner loops. For large matrices this can
         be a 2x or more speedup, but the matrices can no longer be
         arbitrarily large as the runtime and space requirements are no
@@ -307,12 +307,10 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         INPUT:
 
-        - `right` -- a ring element which must already be in the basering
-          of ``self`` (no coercion done here).
+        - ``right`` -- a ring element which must already be in the base ring
+          of ``self`` (no coercion done here)
 
-        OUTPUT:
-
-        the matrix ``self * right``
+        OUTPUT: the matrix ``self * right``
 
         EXAMPLES::
 
@@ -349,9 +347,8 @@ cdef class Matrix_sparse(matrix.Matrix):
             r = get_ij(nz, k, 0)
             c = get_ij(nz, k, 1)
             entry = self.get_unsafe(r,c)*right
-            M.set_unsafe(r,c,entry)
+            M.set_unsafe(r, c, entry)
         return M
-
 
     cdef bint _will_use_strassen(self, matrix0.Matrix right) except -2:
         # never use Strassen for sparse matrix multiply
@@ -363,10 +360,10 @@ cdef class Matrix_sparse(matrix.Matrix):
         return data, version
 
     def _unpickle_generic(self, data, int version):
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         if version == -1:
-            for ij, x in data.iteritems():
-                self.set_unsafe(ij[0], ij[1], x)
+            for (i, j), x in data.iteritems():
+                self.set_unsafe(i, j, x)
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
@@ -473,7 +470,6 @@ cdef class Matrix_sparse(matrix.Matrix):
             A.subdivide(list(reversed([self._ncols - t for t in col_divs])),
                             list(reversed([self._nrows - t for t in row_divs])))
         return A
-
 
     def _reverse_unsafe(self):
         r"""
@@ -641,7 +637,8 @@ cdef class Matrix_sparse(matrix.Matrix):
             [3 4 0]
             [1 2 3]
             sage: m.apply_morphism(phi).parent()
-            Full MatrixSpace of 3 by 3 sparse matrices over Finite Field of size 5
+            Full MatrixSpace of 3 by 3 sparse matrices
+             over Finite Field of size 5
         """
         R = phi.codomain()
         M = sage.matrix.matrix_space.MatrixSpace(R, self._nrows,
@@ -660,9 +657,9 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         - ``phi`` -- arbitrary Python function or callable object
 
-        -  ``R`` -- (optional) ring
+        - ``R`` -- (optional) ring
 
-        - ``sparse`` -- (optional, default ``True``) whether to return
+        - ``sparse`` -- boolean (default: ``True``); whether to return
           a sparse or a dense matrix
 
         OUTPUT: a matrix over ``R``
@@ -670,34 +667,38 @@ cdef class Matrix_sparse(matrix.Matrix):
         EXAMPLES::
 
             sage: m = matrix(ZZ, 10000, {(1,2): 17}, sparse=True)
+
+            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: f = lambda x: k(x)
             sage: n = m.apply_map(f)
             sage: n.parent()
-            Full MatrixSpace of 10000 by 10000 sparse matrices over Finite Field in a of size 3^2
-            sage: n[1,2]
+            Full MatrixSpace of 10000 by 10000 sparse matrices
+             over Finite Field in a of size 3^2
+            sage: n[1, 2]
             2
 
         An example where the codomain is explicitly specified.
 
         ::
 
-            sage: n = m.apply_map(lambda x:x%3, GF(3))
+            sage: n = m.apply_map(lambda x: x%3, GF(3))
             sage: n.parent()
-            Full MatrixSpace of 10000 by 10000 sparse matrices over Finite Field of size 3
-            sage: n[1,2]
+            Full MatrixSpace of 10000 by 10000 sparse matrices
+             over Finite Field of size 3
+            sage: n[1, 2]
             2
 
         If we did not specify the codomain, the resulting matrix in the
         above case ends up over `\ZZ` again::
 
-            sage: n = m.apply_map(lambda x:x%3)
+            sage: n = m.apply_map(lambda x: x%3)
             sage: n.parent()
             Full MatrixSpace of 10000 by 10000 sparse matrices over Integer Ring
-            sage: n[1,2]
+            sage: n[1, 2]
             2
 
-        If self is subdivided, the result will be as well::
+        If ``self`` is subdivided, the result will be as well::
 
             sage: m = matrix(2, 2, [0, 0, 3, 0])
             sage: m.subdivide(None, 1); m
@@ -707,7 +708,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [0|0]
             [9|0]
 
-        If the map sends zero to a non-zero value, then it may be useful to
+        If the map sends zero to a nonzero value, then it may be useful to
         get the result as a dense matrix.
 
         ::
@@ -741,7 +742,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [  1 1/2]
             [1/3 1/4]
 
-        Test subdivisions when phi maps 0 to non-zero::
+        Test subdivisions when phi maps 0 to nonzero::
 
             sage: m = matrix(2, 2, [0, 0, 3, 0])
             sage: m.subdivide(None, 1); m
@@ -752,7 +753,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [4|1]
 
         When applying a map to a sparse zero matrix, the codomain is determined
-        from the image of zero (:trac:`29214`)::
+        from the image of zero (:issue:`29214`)::
 
             sage: matrix(RR, 2, 2, sparse=True).apply_map(floor).base_ring() is ZZ
             True
@@ -805,8 +806,8 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         EXAMPLES::
 
-            sage: m = matrix(2, [x^i for i in range(4)], sparse=True)
-            sage: m._derivative(x)
+            sage: m = matrix(2, [x^i for i in range(4)], sparse=True)                   # needs sage.symbolic
+            sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
         """
@@ -922,19 +923,18 @@ cdef class Matrix_sparse(matrix.Matrix):
         if not isinstance(columns, (list, tuple)):
             columns = list(columns)
 
-        cdef Py_ssize_t nrows, ncols,k,r,i,j
+        cdef Py_ssize_t nrows, ncols, k, i, j
 
-        r = 0
         ncols = PyList_GET_SIZE(columns)
         nrows = PyList_GET_SIZE(rows)
         cdef Matrix_sparse A = self.new_matrix(nrows = nrows, ncols = ncols)
 
-        tmp = [el for el in columns if el >= 0 and el < self._ncols]
+        tmp = [el for el in columns if 0 <= el < self._ncols]
         columns = tmp
         if ncols != PyList_GET_SIZE(columns):
             raise IndexError("column index out of range")
 
-        tmp = [el for el in rows if el >= 0 and el < self._nrows]
+        tmp = [el for el in rows if 0 <= el < self._nrows]
         rows = tmp
         if nrows != PyList_GET_SIZE(rows):
             raise IndexError("row index out of range")
@@ -958,7 +958,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             i = get_ij(nz, k, 0)
             j = get_ij(nz, k, 1)
             if i in row_map and j in col_map:
-                entry = self.get_unsafe(i,j)
+                entry = self.get_unsafe(i, j)
                 for new_row in row_map[i]:
                     for new_col in col_map[j]:
                         A.set_unsafe(new_row, new_col, entry)
@@ -1006,7 +1006,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         TESTS:
 
-        One can stack matrices over different rings (:trac:`16399`). ::
+        One can stack matrices over different rings (:issue:`16399`). ::
 
             sage: M = Matrix(ZZ, 2, 3, range(6), sparse=True)
             sage: N = Matrix(QQ, 1, 3, [10,11,12], sparse=True)
@@ -1083,7 +1083,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         TESTS:
 
-        Verify that :trac:`12689` is fixed::
+        Verify that :issue:`12689` is fixed::
 
             sage: A = identity_matrix(QQ, 2, sparse=True)
             sage: B = identity_matrix(ZZ, 2, sparse=True)
@@ -1121,7 +1121,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         INPUT:
 
-        -  ``v`` -- a free module element
+        - ``v`` -- a free module element
 
         OUTPUT: the vector times matrix product ``v*A``
 
@@ -1172,10 +1172,11 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: (m * v).parent() is m.column(0).parent()
             True
 
-        Check that the bug in :trac:`13854` has been fixed::
+        Check that the bug in :issue:`13854` has been fixed::
 
+            sage: # needs sage.combinat sage.libs.singular
             sage: A.<x,y> = FreeAlgebra(QQ, 2)
-            sage: P.<x,y> = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
+            sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')
             sage: M = Matrix([[x]], sparse=True)
             sage: w = vector([y])
             doctest:...: UserWarning: You are constructing a free module
@@ -1205,6 +1206,6 @@ cdef class Matrix_sparse(matrix.Matrix):
 @cython.wraparound(False)
 # Return v[i][j] where v is a list of tuples.
 # No checking is done, make sure you feed it valid input!
-cdef inline Py_ssize_t get_ij(v, Py_ssize_t i, Py_ssize_t j):
+cdef inline Py_ssize_t get_ij(v, Py_ssize_t i, Py_ssize_t j) noexcept:
     t = (<list>v)[i]
     return (<tuple>t)[j]

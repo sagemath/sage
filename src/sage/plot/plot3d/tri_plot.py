@@ -25,6 +25,7 @@ from sage.plot.colors import hue
 from math import sqrt
 import random
 
+
 class Triangle:
     """
     A graphical triangle class.
@@ -50,7 +51,7 @@ class Triangle:
 
     def str(self):
         """
-        Returns a string representation of an instance of the Triangle
+        Return a string representation of an instance of the Triangle
         class of the form
 
             a b c color
@@ -64,7 +65,7 @@ class Triangle:
             sage: print(tri.str())
             [0, 0, 0] [-1, 2, 3] [0, 2, 0] 0
         """
-        return "%s %s %s %s"%(self._a, self._b, self._c, self._color)
+        return f"{self._a} {self._b} {self._c} {self._color}"
 
     def set_color(self, color):
         """
@@ -84,7 +85,7 @@ class Triangle:
 
     def get_vertices(self):
         """
-        Returns a tuple of vertex coordinates of the triangle.
+        Return a tuple of vertex coordinates of the triangle.
 
         TESTS::
 
@@ -94,6 +95,7 @@ class Triangle:
             ([0, 0, 0], [-1, 2, 3], [0, 2, 1])
         """
         return (self._a, self._b, self._c)
+
 
 class SmoothTriangle(Triangle):
     """
@@ -121,7 +123,7 @@ class SmoothTriangle(Triangle):
 
     def str(self):
         """
-        Returns a string representation of the SmoothTriangle of the form
+        Return a string representation of the SmoothTriangle of the form.
 
             a b c color da db dc
 
@@ -135,11 +137,11 @@ class SmoothTriangle(Triangle):
             sage: print(t.str())
             [1, 2, 3] [2, 3, 4] [0, 0, 0] 0 [0, 0, 1] [0, 1, 0] [1, 0, 0]
         """
-        return "%s %s %s %s %s %s %s"%(self._a, self._b, self._c, self._color, self._da, self._db, self._dc)
+        return "{} {} {} {} {} {} {}".format(self._a, self._b, self._c, self._color, self._da, self._db, self._dc)
 
     def get_normals(self):
         """
-        Returns the normals to vertices a, b, and c.
+        Return the normals to vertices a, b, and c.
 
         TESTS::
 
@@ -219,7 +221,7 @@ class TriangleFactory:
 
 class TrianglePlot:
     """
-    Recursively plots a function of two variables by building squares of 4 triangles, checking at
+    Recursively plot a function of two variables by building squares of 4 triangles, checking at
     every stage whether or not each square should be split into four more squares.  This way,
     more planar areas get fewer triangles, and areas with higher curvature get more triangles.
     """
@@ -412,45 +414,45 @@ class TrianglePlot:
             self.interface(0, sw.top, sw.top_c, nw.bottom, nw.bottom_c)
             self.interface(0, se.top, se.top_c, ne.bottom, ne.bottom_c)
 
-            #get the boundary information about the subsquares
-            left     = sw.left     + nw.left[1:]
-            left_c   = sw.left_c   + nw.left_c
-            right    = se.right    + ne.right[1:]
-            right_c  = se.right_c  + ne.right_c
-            top      = nw.top      + ne.top[1:]
-            top_c    = nw.top_c    + ne.top_c
-            bottom   = sw.bottom   + se.bottom[1:]
+            # get the boundary information about the subsquares
+            left = sw.left + nw.left[1:]
+            left_c = sw.left_c + nw.left_c
+            right = se.right + ne.right[1:]
+            right_c = se.right_c + ne.right_c
+            top = nw.top + ne.top[1:]
+            top_c = nw.top_c + ne.top_c
+            bottom = sw.bottom + se.bottom[1:]
             bottom_c = sw.bottom_c + se.bottom_c
 
         else:
             # just build the square we're in
             if self._g is None:
-                sw = [(min_x,min_y,sw_z[0])]
-                nw = [(min_x,max_y,nw_z[0])]
-                se = [(max_x,min_y,se_z[0])]
-                ne = [(max_x,max_y,ne_z[0])]
-                c  = [[(mid_x,mid_y,mid_z[0])]]
+                sw = [(min_x, min_y, sw_z[0])]
+                nw = [(min_x, max_y, nw_z[0])]
+                se = [(max_x, min_y, se_z[0])]
+                ne = [(max_x, max_y, ne_z[0])]
+                c = [[(mid_x, mid_y, mid_z[0])]]
             else:
-                sw = [(min_x,min_y,sw_z[0]),sw_z[1]]
-                nw = [(min_x,max_y,nw_z[0]),nw_z[1]]
-                se = [(max_x,min_y,se_z[0]),se_z[1]]
-                ne = [(max_x,max_y,ne_z[0]),ne_z[1]]
-                c  = [[(mid_x,mid_y,mid_z[0]),mid_z[1]]]
+                sw = [(min_x, min_y, sw_z[0]), sw_z[1]]
+                nw = [(min_x, max_y, nw_z[0]), nw_z[1]]
+                se = [(max_x, min_y, se_z[0]), se_z[1]]
+                ne = [(max_x, max_y, ne_z[0]), ne_z[1]]
+                c = [[(mid_x, mid_y, mid_z[0]), mid_z[1]]]
 
-            left     = [sw,nw]
-            left_c   = c
-            top      = [nw,ne]
-            top_c    = c
-            right    = [se,ne]
-            right_c  = c
-            bottom   = [sw,se]
+            left = [sw, nw]
+            left_c = c
+            top = [nw, ne]
+            top_c = c
+            right = [se, ne]
+            right_c = c
+            bottom = [sw, se]
             bottom_c = c
 
         return PlotBlock(left, left_c, top, top_c, right, right_c, bottom, bottom_c)
 
     def interface(self, n, p, p_c, q, q_c):
         """
-        Takes a pair of lists of points, and compares the (n)th coordinate, and
+        Take a pair of lists of points, and compares the (n)th coordinate, and
         "zips" the lists together into one.  The "centers", supplied in p_c and
         q_c are matched up such that the lists describe triangles whose sides
         are "perfectly" aligned.  This algorithm assumes that p and q start and
@@ -465,9 +467,9 @@ class TrianglePlot:
             sage: t._objects[-1].get_vertices()
             ((-1/4, 0, 1/16), (-1/4, 1/4, 1/8), (-3/8, 1/8, 3/16))
         """
-        m   = [p[0]] # a sorted union of p and q
-        mpc = [p_c[0]] # centers from p_c corresponding to m
-        mqc = [q_c[0]] # centers from q_c corresponding to m
+        m = [p[0]]      # a sorted union of p and q
+        mpc = [p_c[0]]  # centers from p_c corresponding to m
+        mqc = [q_c[0]]  # centers from q_c corresponding to m
 
         i = 1
         j = 1

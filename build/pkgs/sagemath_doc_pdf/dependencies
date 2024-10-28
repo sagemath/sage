@@ -1,1 +1,1 @@
-sagemath_doc_html texlive
+sagemath_doc_html texlive texlive_luatex free_fonts xindy

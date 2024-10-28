@@ -1,4 +1,4 @@
-from .hom_finite_field cimport (SectionFiniteFieldHomomorphism_generic,
+from sage.rings.finite_rings.hom_finite_field cimport (SectionFiniteFieldHomomorphism_generic,
     FiniteFieldHomomorphism_generic, FrobeniusEndomorphism_finite_field)
 
 

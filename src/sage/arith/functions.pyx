@@ -28,9 +28,9 @@ def lcm(a, b=None):
 
     INPUT:
 
-    - ``a,b`` -- two elements of a ring with lcm or
+    - ``a``, ``b`` -- two elements of a ring with lcm or
 
-    - ``a`` -- a list or tuple of elements of a ring with lcm
+    - ``a`` -- list; tuple or iterable of elements of a ring with lcm
 
     OUTPUT:
 
@@ -39,23 +39,23 @@ def lcm(a, b=None):
 
     EXAMPLES::
 
-        sage: lcm(97,100)
+        sage: lcm(97, 100)
         9700
-        sage: LCM(97,100)
+        sage: LCM(97, 100)
         9700
-        sage: LCM(0,2)
+        sage: LCM(0, 2)
         0
-        sage: LCM(-3,-5)
+        sage: LCM(-3, -5)
         15
         sage: LCM([1,2,3,4,5])
         60
-        sage: v = LCM(range(1,10000))   # *very* fast!
+        sage: v = LCM(range(1, 10000))   # *very* fast!
         sage: len(str(v))
         4349
 
     TESTS:
 
-    The following tests against a bug that was fixed in :trac:`10771`::
+    The following tests against a bug that was fixed in :issue:`10771`::
 
         sage: lcm(4/1,2)
         4
@@ -70,39 +70,39 @@ def lcm(a, b=None):
         sage: parent(lcm([1/p,q]))
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
 
-    Make sure we try `\QQ` and not merely `\ZZ` (:trac:`13014`)::
+    Make sure we try `\QQ` and not merely `\ZZ` (:issue:`13014`)::
 
-        sage: bool(lcm(2/5, 3/7) == lcm(SR(2/5), SR(3/7)))                              # optional - sage.symbolic
+        sage: bool(lcm(2/5, 3/7) == lcm(SR(2/5), SR(3/7)))                              # needs sage.symbolic
         True
 
     Make sure that the lcm of Expressions stays symbolic::
 
         sage: parent(lcm(2, 4))
         Integer Ring
-        sage: parent(lcm(SR(2), 4))                                                     # optional - sage.symbolic
+        sage: parent(lcm(SR(2), 4))                                                     # needs sage.symbolic
         Symbolic Ring
-        sage: parent(lcm(2, SR(4)))                                                     # optional - sage.symbolic
+        sage: parent(lcm(2, SR(4)))                                                     # needs sage.symbolic
         Symbolic Ring
-        sage: parent(lcm(SR(2), SR(4)))                                                 # optional - sage.symbolic
+        sage: parent(lcm(SR(2), SR(4)))                                                 # needs sage.symbolic
         Symbolic Ring
 
     Verify that objects without lcm methods but which can't be
     coerced to `\ZZ` or `\QQ` raise an error::
 
-        sage: F.<x,y> = FreeMonoid(2)                                                   # optional - sage.groups
-        sage: lcm(x,y)                                                                  # optional - sage.groups
+        sage: F.<x,y> = FreeMonoid(2)                                                   # needs sage.groups
+        sage: lcm(x,y)                                                                  # needs sage.groups
         Traceback (most recent call last):
         ...
         TypeError: unable to find lcm of x and y
 
-    Check rational and integers (:trac:`17852`)::
+    Check rational and integers (:issue:`17852`)::
 
         sage: lcm(1/2, 4)
         4
         sage: lcm(4, 1/2)
         4
 
-    Check that we do not mutate the list (:trac:`22630`)::
+    Check that we do not mutate the list (:issue:`22630`)::
 
         sage: L = [int(1), int(2)]
         sage: lcm(L)
@@ -135,7 +135,7 @@ cpdef LCM_list(v):
 
     INPUT:
 
-    -  ``v`` -- an iterable
+    - ``v`` -- an iterable
 
     OUTPUT: integer
 

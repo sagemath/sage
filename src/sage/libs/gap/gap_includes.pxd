@@ -74,6 +74,8 @@ cdef extern from "gap/libgap-api.h" nogil:
     bint GAP_IsSmallInt(Obj)
     Obj GAP_NewObjIntFromInt(Int val)
     Int GAP_ValueInt(Obj)
+    Int GAP_SizeInt(Obj)
+    UInt* GAP_AddrInt(Obj)
 
     bint GAP_IsList(Obj lst)
     UInt GAP_LenList(Obj lst)
@@ -144,3 +146,18 @@ cdef extern from "gap/stringobj.h" nogil:
     bint IS_STRING(Obj obj)
     bint IsStringConv(Obj obj)
     Obj NEW_STRING(Int)
+
+
+cdef extern from "<structmember.h>" nogil:
+    """
+    /* Hack: Cython 3.0 automatically includes <structmember.h>, which
+     * defines several macros that collides with enum definitions in
+     * gap/objects.h. We need to include the header explicitly and
+     * undefine these macros.
+     */
+    #undef T_INT
+    #undef T_STRING
+    #undef T_CHAR
+    #undef T_BOOL
+    """
+    pass

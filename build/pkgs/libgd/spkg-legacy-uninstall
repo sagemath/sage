@@ -1,5 +1,0 @@
-#! /usr/bin/env bash
-# Critical to get rid of old versions, since they will break the install, since
-# at some point one of the libraries accidently links against what's in SAGE_LOCAL,
-# instead of what is in the build directory!
-rm "$SAGE_LOCAL"/lib/libgd.*

@@ -109,7 +109,7 @@ cdef class FastDigraph:
                 print(((self.graph[i] >> j) & 1), end="")
             print("")
 
-cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S):
+cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S) noexcept:
     r"""
     Return the cardinality of `N^+(S)\S`.
 
@@ -117,7 +117,7 @@ cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S):
 
     - ``g`` -- a FastDigraph
 
-    - ``S`` -- an integer describing the set
+    - ``S`` -- integer describing the set
 
     EXAMPLES::
 
@@ -139,7 +139,7 @@ cdef inline int compute_out_neighborhood_cardinality(FastDigraph g, int S):
     tmp &= (~S)
     return popcount32(tmp)
 
-cdef inline int popcount32(int i):
+cdef inline int popcount32(int i) noexcept:
     r"""
     Return the number of '1' bits in a 32-bits integer.
 
@@ -184,7 +184,7 @@ def test_popcount():
         i += 1
 
 
-cdef inline int slow_popcount32(int i):
+cdef inline int slow_popcount32(int i) noexcept:
     """
     Return the number of '1' bits in a 32-bits integer.
 

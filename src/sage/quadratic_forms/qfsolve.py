@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari
+# sage.doctest: needs sage.libs.pari
 """
 Solving quadratic equations
 
@@ -11,12 +11,12 @@ AUTHORS:
 - Nick Alexander (Sage interface)
 
 - Jeroen Demeyer (2014-09-23): use PARI instead of GP scripts,
-  return vectors instead of tuples (:trac:`16997`).
+  return vectors instead of tuples (:issue:`16997`).
 
 - Tyler Gaona (2015-11-14): added the `solve` method
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander
 #       Copyright (C) 2014 Jeroen Demeyer
 #
@@ -24,8 +24,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -80,6 +80,7 @@ def qfsolve(G):
         return vector(QQ, ret)
     return ZZ(ret)
 
+
 def qfparam(G, sol):
     r"""
     Parametrize the conic defined by the matrix `G`.
@@ -128,11 +129,11 @@ def solve(self, c=0):
 
     - ``c`` -- (default: 0) a rational number
 
-    OUTPUT: A non-zero vector `x` satisfying ``self(x) == c``.
+    OUTPUT: a nonzero vector `x` satisfying ``self(x) == c``
 
     ALGORITHM:
 
-    Uses PARI's :pari:`qfsolve`. Algorithm described by Jeroen Demeyer; see comments on :trac:`19112`
+    Uses PARI's :pari:`qfsolve`. Algorithm described by Jeroen Demeyer; see comments on :issue:`19112`
 
     EXAMPLES::
 
@@ -212,7 +213,7 @@ def solve(self, c=0):
     if not c:
         x = qfsolve(M)
         if isinstance(x, Integer):
-            raise ArithmeticError("no solution found (local obstruction at {})".format(x))
+            raise ArithmeticError(f"no solution found (local obstruction at {x})")
         return x
 
     # If c != 0, define a new quadratic form Q = self - c*z^2
@@ -220,14 +221,14 @@ def solve(self, c=0):
     N = Matrix(self.base_ring(), d+1, d+1)
     for i in range(d):
         for j in range(d):
-            N[i,j] = M[i,j]
-    N[d,d] = -c
+            N[i, j] = M[i, j]
+    N[d, d] = -c
 
     # Find a solution x to Q(x) = 0, using qfsolve()
     x = qfsolve(N)
     # Raise an error if qfsolve() doesn't find a solution
     if isinstance(x, Integer):
-        raise ArithmeticError("no solution found (local obstruction at {})".format(x))
+        raise ArithmeticError(f"no solution found (local obstruction at {x})")
 
     # Let z be the last term of x, and remove z from x
     z = x[-1]

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Coerce actions
 """
@@ -14,14 +15,14 @@ Coerce actions
 
 import operator
 
-from cpython.int cimport *
+from cpython.long cimport *
 from cpython.number cimport *
 from cysignals.signals cimport sig_check
 
-from .coerce cimport coercion_model
-from .element cimport parent, Element, ModuleElement
-from .parent cimport Parent
-from .coerce_exceptions import CoercionException
+from sage.structure.coerce cimport coercion_model
+from sage.structure.element cimport parent, Element, ModuleElement
+from sage.structure.parent cimport Parent
+from sage.structure.coerce_exceptions import CoercionException
 from sage.categories.action cimport InverseAction, PrecomposedAction
 from sage.arith.long cimport integer_check_long
 
@@ -53,25 +54,25 @@ cdef class GenericAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
-            sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)         # optional - sage.modular sage.modules
+            sage: from sage.structure.coerce_actions import ActedUponAction, GenericAction
+            sage: M = MatrixSpace(ZZ, 2)                                                # needs sage.modules
+            sage: ActedUponAction(M, Cusps, True)                                       # needs sage.modular sage.modules
             Left action
              by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
              on Set P^1(QQ) of all cusps
 
             sage: Z6 = Zmod(6)
-            sage: sage.structure.coerce_actions.GenericAction(QQ, Z6, True)
+            sage: GenericAction(QQ, Z6, True)
             Traceback (most recent call last):
             ...
             NotImplementedError: action for <class 'sage.structure.coerce_actions.GenericAction'> not implemented
 
         This will break if we tried to use it::
 
-            sage: sage.structure.coerce_actions.GenericAction(QQ, Z6, True, check=False)
+            sage: GenericAction(QQ, Z6, True, check=False)
             Left action by Rational Field on Ring of integers modulo 6
-
         """
         Action.__init__(self, G, S, is_left, operator.mul)
         if check:
@@ -82,7 +83,7 @@ cdef class GenericAction(Action):
 
     def codomain(self):
         """
-        Returns the "codomain" of this action, i.e. the Parent in which the
+        Return the "codomain" of this action, i.e. the Parent in which the
         result elements live. Typically, this should be the same as the
         acted upon set.
 
@@ -91,20 +92,20 @@ cdef class GenericAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains, for
         otherwise they could be garbage collected, giving rise to random
-        errors (see :trac:`18157`). ::
+        errors (see :issue:`18157`). ::
 
 
-            sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # optional - sage.modular sage.modules
-            sage: A.codomain()                                                          # optional - sage.modular sage.modules
+            sage: M = MatrixSpace(ZZ, 2)                                                # needs sage.modules
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # needs sage.modular sage.modules
+            sage: A.codomain()                                                          # needs sage.modular sage.modules
             Set P^1(QQ) of all cusps
 
-            sage: S3 = SymmetricGroup(3)                                                # optional - sage.groups
-            sage: QQxyz = QQ['x,y,z']                                                   # optional - sage.groups
-            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)       # optional - sage.groups
-            sage: A.codomain()                                                          # optional - sage.groups
+            sage: # needs sage.groups
+            sage: S3 = SymmetricGroup(3)
+            sage: QQxyz = QQ['x,y,z']
+            sage: A = sage.structure.coerce_actions.ActOnAction(S3, QQxyz, False)
+            sage: A.codomain()
             Multivariate Polynomial Ring in x, y, z over Rational Field
-
         """
         if self._codomain is None:
             self._codomain = parent(self.act(an_element(self.G),
@@ -120,15 +121,15 @@ cdef class ActOnAction(GenericAction):
         """
         TESTS::
 
-            sage: G = SymmetricGroup(3)                                                 # optional - sage.groups
-            sage: R.<x,y,z> = QQ[]                                                      # optional - sage.groups
-            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)            # optional - sage.groups
-            sage: A(x^2 + y - z, G((1,2)))                                              # optional - sage.groups
+            sage: # needs sage.groups
+            sage: G = SymmetricGroup(3)
+            sage: R.<x,y,z> = QQ[]
+            sage: A = sage.structure.coerce_actions.ActOnAction(G, R, False)
+            sage: A(x^2 + y - z, G((1,2)))
             y^2 + x - z
-            sage: A(x+2*y+3*z, G((1,3,2)))                                              # optional - sage.groups
+            sage: A(x + 2*y + 3*z, G((1,3,2)))
             2*x + 3*y + z
-
-            sage: type(A)                                                               # optional - sage.groups
+            sage: type(A)
             <... 'sage.structure.coerce_actions.ActOnAction'>
         """
         return (<Element>g)._act_on_(x, self._is_left)
@@ -142,14 +143,14 @@ cdef class ActedUponAction(GenericAction):
         """
         TESTS::
 
-            sage: M = MatrixSpace(ZZ, 2)                                                # optional - sage.modules
-            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)     # optional - sage.modular sage.modules
-            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                           # optional - sage.modular sage.modules
+            sage: # needs sage.modular sage.modules
+            sage: M = MatrixSpace(ZZ, 2)
+            sage: A = sage.structure.coerce_actions.ActedUponAction(M, Cusps, True)
+            sage: A.act(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))
             Infinity
-            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))                               # optional - sage.modular sage.modules
+            sage: A(matrix(ZZ, 2, [1,0,2,-1]), Cusp(1,2))
             Infinity
-
-            sage: type(A)                                                               # optional - sage.modular sage.modules
+            sage: type(A)
             <... 'sage.structure.coerce_actions.ActedUponAction'>
         """
         return (<Element>x)._acted_upon_(g, not self._is_left)
@@ -164,27 +165,28 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
     Note that coerce actions should only be used inside of the coercion
     model. For this test, we need to strongly reference the domains,
     for otherwise they could be garbage collected, giving rise to
-    random errors (see :trac:`18157`). ::
+    random errors (see :issue:`18157`). ::
 
         sage: from sage.structure.coerce_actions import detect_element_action
         sage: ZZx = ZZ['x']
-        sage: M = MatrixSpace(ZZ,2)
+        sage: M = MatrixSpace(ZZ, 2)                                                    # needs sage.modules
         sage: detect_element_action(ZZx, ZZ, False)
-        Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+        Left scalar multiplication by Integer Ring
+         on Univariate Polynomial Ring in x over Integer Ring
         sage: detect_element_action(ZZx, QQ, True)
         Right scalar multiplication by Rational Field
          on Univariate Polynomial Ring in x over Integer Ring
-        sage: detect_element_action(Cusps, M, False)                                    # optional - sage.modular sage.modules
+        sage: detect_element_action(Cusps, M, False)                                    # needs sage.modular sage.modules
         Left action by Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
          on Set P^1(QQ) of all cusps
-        sage: detect_element_action(Cusps, M, True),                                    # optional - sage.modular sage.modules
+        sage: detect_element_action(Cusps, M, True),                                    # needs sage.modular sage.modules
         (None,)
         sage: detect_element_action(ZZ, QQ, True),
         (None,)
 
     TESTS:
 
-    This test checks that the issue in :trac:`7718` has been fixed::
+    This test checks that the issue in :issue:`7718` has been fixed::
 
         sage: class MyParent(Parent):
         ....:     def an_element(self):
@@ -249,12 +251,12 @@ cdef class ModuleAction(Action):
 
     INPUT:
 
-    - ``G`` -- the actor, an instance of :class:`~sage.structure.parent.Parent`.
-    - ``S`` -- the object that is acted upon.
-    - ``g`` -- optional, an element of ``G``.
-    - ``a`` -- optional, an element of ``S``.
-    - ``check`` -- if True (default), then there will be no consistency tests
-      performed on sample elements.
+    - ``G`` -- the actor, an instance of :class:`~sage.structure.parent.Parent`
+    - ``S`` -- the object that is acted upon
+    - ``g`` -- (optional) an element of ``G``
+    - ``a`` -- (optional) an element of ``S``
+    - ``check`` -- if ``True`` (default), then there will be no consistency tests
+      performed on sample elements
 
     NOTE:
 
@@ -262,7 +264,7 @@ cdef class ModuleAction(Action):
     :meth:`~sage.structure.parent.Parent.an_element`, which relies on the
     implementation of an ``_an_element_()`` method. This is not always
     available. But usually, the action is only needed when one already
-    *has* two elements. Hence, by :trac:`14249`, the coercion model will
+    *has* two elements. Hence, by :issue:`14249`, the coercion model will
     pass these two elements to the :class:`ModuleAction` constructor.
 
     The actual action is implemented by the ``_rmul_`` or ``_lmul_``
@@ -271,7 +273,6 @@ cdef class ModuleAction(Action):
     assumption that the inputs lie exactly in the base ring and may
     segfault otherwise. Thus we handle all possible base extensions
     manually here.
-
     """
     def __init__(self, G, S, g=None, a=None, check=True):
         """
@@ -284,7 +285,7 @@ cdef class ModuleAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
 
             sage: from sage.structure.coerce_actions import LeftModuleAction
@@ -299,10 +300,11 @@ cdef class ModuleAction(Action):
             sage: LeftModuleAction(QQ, ZZx)
             Left scalar multiplication by Rational Field on Univariate Polynomial Ring in x over Integer Ring
             sage: LeftModuleAction(QQ, ZZxy)
-            Left scalar multiplication by Rational Field on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring
+            Left scalar multiplication by Rational Field
+             on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring
 
         The following tests against a problem that was relevant during work on
-        :trac:`9944`::
+        :issue:`9944`::
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: S.<x> = PolynomialRing(ZZ, sparse=True)
@@ -311,6 +313,22 @@ cdef class ModuleAction(Action):
             sage: 1/S.0
             1/x
 
+        If there is a coercion from ``G`` to ``S``, we do not create
+        the module action of ``G`` on the pushout of ``G`` and ``S``::
+
+            sage: G = PolynomialRing(QQ, "x")
+            sage: S = PolynomialRing(MatrixSpace(QQ, 2), "x")
+            sage: G.gen() * S.gen()
+            [1 0]
+            [0 1]*x^2
+
+        Contrast the previous example with the following, where we
+        have no coercion from ``G`` to ``S``::
+
+            sage: S = PolynomialRing(MatrixSpace(QQ, 2), "y")
+            sage: G.gen() * S.gen()
+            [x 0]
+            [0 x]*y
         """
         Action.__init__(self, G, S, not isinstance(self, RightModuleAction), operator.mul)
         if not isinstance(G, Parent):
@@ -326,6 +344,8 @@ cdef class ModuleAction(Action):
             # first we try the easy case of coercing G to the base ring of S
             self.connecting = base._internal_coerce_map_from(G)
             if self.connecting is None:
+                if S._internal_coerce_map_from(G) is not None:
+                    raise CoercionException("Best viewed as standard coercion multiplication.")
                 # otherwise, we try and find a base extension
                 from sage.categories.pushout import pushout
                 # this may raise a type error, which we propagate
@@ -375,7 +395,7 @@ cdef class ModuleAction(Action):
 
         TESTS:
 
-        Check that this action can be pickled (:trac:`29031`)::
+        Check that this action can be pickled (:issue:`29031`)::
 
             sage: A = ZZ['x'].get_action(QQ, self_on_left=False, op=operator.mul)
             sage: loads(dumps(A)) is not None
@@ -392,20 +412,21 @@ cdef class ModuleAction(Action):
         Note that coerce actions should only be used inside of the
         coercion model. For this test, we need to strongly reference the
         domains, for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import LeftModuleAction, RightModuleAction
             sage: ZZx = ZZ['x']
             sage: A = LeftModuleAction(ZZ, ZZx); A
-            Left scalar multiplication by Integer Ring on Univariate Polynomial Ring in x over Integer Ring
+            Left scalar multiplication by Integer Ring
+             on Univariate Polynomial Ring in x over Integer Ring
             sage: A._repr_name_()
             'scalar multiplication'
 
             sage: GF5 = GF(5)
             sage: GF5t = GF5[['t']]
             sage: RightModuleAction(GF5, GF5t)
-            Right scalar multiplication by Finite Field of size 5 on Power Series Ring in t over Finite Field of size 5
-
+            Right scalar multiplication by Finite Field of size 5
+             on Power Series Ring in t over Finite Field of size 5
         """
         return "scalar multiplication"
 
@@ -418,7 +439,7 @@ cdef class ModuleAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import LeftModuleAction
             sage: ZZxyz = ZZ['x,y,z']
@@ -439,7 +460,7 @@ cdef class ModuleAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import LeftModuleAction
             sage: ZZxyz = ZZ['x,y,z']
@@ -456,7 +477,7 @@ cdef class ModuleAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains, for
         otherwise they could be garbage collected, giving rise to random
-        errors (see :trac:`18157`). ::
+        errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import RightModuleAction
 
@@ -487,7 +508,8 @@ cdef class ModuleAction(Action):
 
             sage: GF5x = GF(5)['x']
             sage: A = ~RightModuleAction(ZZ, GF5x); A
-            Right inverse action by Finite Field of size 5 on Univariate Polynomial Ring in x over Finite Field of size 5
+            Right inverse action by Finite Field of size 5
+            on Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -496,7 +518,8 @@ cdef class ModuleAction(Action):
 
             sage: GF5xy = GF5x['y']
             sage: A = ~RightModuleAction(ZZ, GF5xy); A
-            Right inverse action by Finite Field of size 5 on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Finite Field of size 5
+            Right inverse action by Finite Field of size 5
+            on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Finite Field of size 5
             with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Finite Field of size 5
@@ -518,8 +541,9 @@ cdef class ModuleAction(Action):
 
         TESTS:
 
-        See :trac:`19521`::
+        See :issue:`19521`::
 
+            sage: # needs sage.symbolic
             sage: Q.<y> = SR.subring(no_variables=True)[[]]
             sage: (y / 1).parent()
             Power Series Ring in y over Symbolic Constants Subring
@@ -527,7 +551,8 @@ cdef class ModuleAction(Action):
             sage: cm = sage.structure.element.get_coercion_model()
             sage: cm.explain(x, 1, operator.truediv)
             Action discovered.
-                Right inverse action by Symbolic Constants Subring on Univariate Polynomial Ring in x over Symbolic Constants Subring
+                Right inverse action by Symbolic Constants Subring
+                 on Univariate Polynomial Ring in x over Symbolic Constants Subring
                 with precomposition on right by Conversion via _symbolic_ method map:
                   From: Integer Ring
                   To:   Symbolic Constants Subring
@@ -591,7 +616,7 @@ cdef class LeftModuleAction(ModuleAction):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import LeftModuleAction
             sage: R.<x> = QQ['x']
@@ -628,7 +653,7 @@ cdef class RightModuleAction(ModuleAction):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import RightModuleAction
             sage: R.<x> = QQ['x']
@@ -679,11 +704,11 @@ cdef class IntegerAction(Action):
 
         TESTS:
 
-        Check that this action can be pickled (:trac:`29031`)::
+        Check that this action can be pickled (:issue:`29031`)::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: act = IntegerMulAction(ZZ, CDF)
-            sage: loads(dumps(act)) is not None
+            sage: act = IntegerMulAction(ZZ, CDF)                                       # needs sage.rings.complex_double
+            sage: loads(dumps(act)) is not None                                         # needs sage.rings.complex_double
             True
         """
         # All base classes must take the signature
@@ -695,8 +720,8 @@ cdef class IntegerAction(Action):
         EXAMPLES::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
-            sage: act = IntegerMulAction(ZZ, CDF)
-            sage: ~act
+            sage: act = IntegerMulAction(ZZ, CDF)                                       # needs sage.rings.complex_double
+            sage: ~act                                                                  # needs sage.rings.complex_double
             Traceback (most recent call last):
             ...
             TypeError: actions by ZZ cannot be inverted
@@ -744,7 +769,7 @@ cdef class IntegerMulAction(IntegerAction):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the field
         ``GF(101)``, for otherwise it could be garbage collected, giving rise
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
             sage: GF101 = GF(101)
@@ -765,16 +790,18 @@ cdef class IntegerMulAction(IntegerAction):
             sage: act(49, 1/49) == 49*RR(1/49)
             False
 
-        This used to hang before :trac:`17844`::
+        This used to hang before :issue:`17844`::
 
-            sage: E = EllipticCurve(GF(5), [4,0])
-            sage: P = E.random_element()
-            sage: (-2^63)*P
+            sage: E = EllipticCurve(GF(5), [4,0])                                       # needs sage.schemes
+            sage: P = E.random_element()                                                # needs sage.schemes
+            sage: (-2^63)*P                                                             # needs sage.schemes
             (0 : 1 : 0)
 
         Check that large multiplications can be interrupted::
 
-            sage: alarm(0.001); 2^(10^7) * P
+            sage: # needs sage.schemes
+            sage: P = E([2,1,1])
+            sage: alarm(0.001); 2^(10^8) * P
             Traceback (most recent call last):
             ...
             AlarmInterrupt
@@ -782,6 +809,7 @@ cdef class IntegerMulAction(IntegerAction):
         Verify that cysignals correctly detects that the above
         exception has been handled::
 
+            sage: # needs sage.schemes
             sage: from cysignals.tests import print_sig_occurred
             sage: print_sig_occurred()
             No current exception
@@ -801,12 +829,13 @@ cdef class IntegerMulAction(IntegerAction):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the field
         ``GF(5)``, for otherwise it could be garbage collected, giving rise
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
             sage: GF5 = GF(5)
             sage: IntegerMulAction(ZZ, GF5)
-            Left Integer Multiplication by Integer Ring on Finite Field of size 5
+            Left Integer Multiplication by Integer Ring
+            on Finite Field of size 5
         """
         return "Integer Multiplication"
 
@@ -844,18 +873,18 @@ cdef class IntegerPowAction(IntegerAction):
         Traceback (most recent call last):
         ...
         ValueError: powering must be a right action
-        sage: IntegerPowAction(ZZ, QQ^3)
+        sage: IntegerPowAction(ZZ, QQ^3)                                                # needs sage.modules
         Traceback (most recent call last):
         ...
         TypeError: no integer powering action defined on Vector space of dimension 3 over Rational Field
 
     ::
 
-        sage: var('x,y')
+        sage: var('x,y')                                                                # needs sage.symbolic
         (x, y)
-        sage: RDF('-2.3')^(x+y^3+sin(x))
+        sage: RDF('-2.3')^(x+y^3+sin(x))                                                # needs sage.symbolic
         (-2.3)^(y^3 + x + sin(x))
-        sage: RDF('-2.3')^x
+        sage: RDF('-2.3')^x                                                             # needs sage.symbolic
         (-2.3)^x
     """
     def __init__(self, Z, M, is_left=False, m=None):

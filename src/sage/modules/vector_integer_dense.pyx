@@ -7,7 +7,7 @@ AUTHOR:
 
 EXAMPLES::
 
-    sage: v = vector(ZZ,[1,2,3,4,5])
+    sage: v = vector(ZZ, [1,2,3,4,5])
     sage: v
     (1, 2, 3, 4, 5)
     sage: 3*v
@@ -65,9 +65,9 @@ cimport sage.modules.free_module_element as free_module_element
 from sage.libs.gmp.mpz cimport *
 
 cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 1
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 0
 
     def __copy__(self):
@@ -196,7 +196,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy``, ignored optional argument.
+        - ``copy`` -- ignored optional argument
 
         EXAMPLES::
 
@@ -223,7 +223,6 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         for i in range(self._degree):
             mpz_add(z._entries[i], self._entries[i], r._entries[i])
         return z
-
 
     cpdef _sub_(self, right):
         cdef Vector_integer_dense z, r
@@ -308,16 +307,16 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - singular -- \Singular interface instance (default: None)
+        - ``singular`` -- \Singular interface instance (default: ``None``)
 
         EXAMPLES::
 
             sage: A = random_matrix(ZZ,1,3)
             sage: v = A.row(0)
-            sage: vs = singular(v)
-            sage: vs._repr_() == '{},\n{},\n{}'.format(*v)
+            sage: vs = singular(v)                                                      # needs sage.libs.singular
+            sage: vs._repr_() == '{},\n{},\n{}'.format(*v)                              # needs sage.libs.singular
             True
-            sage: vs.type()
+            sage: vs.type()                                                             # needs sage.libs.singular
             'intvec'
         """
         if singular is None:
@@ -330,6 +329,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         from sage.interfaces.singular import SingularElement
         return SingularElement(singular, 'foobar', name, True)
+
 
 def unpickle_v0(parent, entries, degree):
     # If you think you want to change this function, don't.
@@ -345,6 +345,7 @@ def unpickle_v0(parent, entries, degree):
         z = Integer(entries[i])
         mpz_set(v._entries[i], z.value)
     return v
+
 
 def unpickle_v1(parent, entries, degree, is_mutable):
     cdef Vector_integer_dense v

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Fully packed loops
 
@@ -65,6 +66,9 @@ def _make_color_list(n, colors=None, color_map=None, randomize=False):
     r"""
     TESTS::
 
+        sage: import numpy as np
+        sage: if int(np.version.short_version[0]) > 1:
+        ....:     np.set_printoptions(legacy="1.25")
         sage: from sage.combinat.fully_packed_loop import _make_color_list
         sage: _make_color_list(5)
         sage: _make_color_list(5, ['blue', 'red'])
@@ -127,37 +131,37 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl.link_pattern()
         [(1, 4), (2, 3), (5, 6)]
         sage: fpl
-                |         |
-                |         |
-                + -- +    +
-                     |    |
-                     |    |
-             -- +    +    + --
-                |    |
-                |    |
-                +    + -- +
-                |         |
-                |         |
+           │         │
+           │         │
+           + ── +    +
+                │    │
+                │    │
+        ── +    +    + ──
+           │    │
+           │    │
+           +    + ── +
+           │         │
+           │         │
         sage: B = AlternatingSignMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         sage: fplb = FullyPackedLoop(B)
         sage: fplb.link_pattern()
         [(1, 6), (2, 5), (3, 4)]
         sage: fplb
-                |         |
-                |         |
-                +    + -- +
-                |    |
-                |    |
-             -- +    +    + --
-                     |    |
-                     |    |
-                + -- +    +
-                |         |
-                |         |
+           │         │
+           │         │
+           +    + ── +
+           │    │
+           │    │
+        ── +    +    + ──
+                │    │
+                │    │
+           + ── +    +
+           │         │
+           │         │
 
     The class also has a plot method::
 
-        sage: fpl.plot()                                                                # optional - sage.plot
+        sage: fpl.plot()                                                                # needs sage.plot
         Graphics object consisting of 3 graphics primitives
 
     which gives:
@@ -187,17 +191,17 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             V    V    V
         sage: fpl = FullyPackedLoop(S)
         sage: fpl
-            |         |
-            |         |
-            + -- +    +
-                 |    |
-                 |    |
-         -- +    +    + --
-            |    |
-            |    |
-            +    + -- +
-            |         |
-            |         |
+           │         │
+           │         │
+           + ── +    +
+                │    │
+                │    │
+        ── +    +    + ──
+           │    │
+           │    │
+           +    + ── +
+           │         │
+           │         │
 
     Once we have a fully packed loop we can obtain the corresponding alternating sign matrix::
 
@@ -214,20 +218,20 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl.link_pattern()
         [(1, 2), (3, 6), (4, 5), (7, 8)]
         sage: fpl
-            |         |
-            |         |
-            + -- + -- +    + --
-                           |
-                           |
-         -- +    + -- + -- +
-            |    |
-            |    |
-            +    +    + -- + --
-            |    |    |
-            |    |    |
-         -- +    +    + -- +
-                 |         |
-                 |         |
+           │         │
+           │         │
+           + ── + ── +    + ──
+                          │
+                          │
+        ── +    + ── + ── +
+           │    │
+           │    │
+           +    +    + ── + ──
+           │    │    │
+           │    │    │
+        ── +    +    + ── +
+                │         │
+                │         │
 
         sage: m = AlternatingSignMatrix([[0,0,1,0,0,0],
         ....:                            [1,0,-1,0,1,0],
@@ -239,26 +243,26 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl.link_pattern()
         [(1, 12), (2, 7), (3, 4), (5, 6), (8, 9), (10, 11)]
         sage: fpl
-            |         |         |
-            |         |         |
-            + -- +    +    + -- +    + --
-                 |    |    |         |
-                 |    |    |         |
-         -- + -- +    +    + -- + -- +
-                      |
-                      |
-            + -- +    + -- + -- +    + --
-            |    |              |    |
-            |    |              |    |
-         -- +    +    + -- +    +    +
-                 |    |    |    |    |
-                 |    |    |    |    |
-            + -- +    + -- +    +    + --
-            |                   |
-            |                   |
-         -- +    + -- + -- +    + -- +
-                 |         |         |
-                 |         |         |
+           │         │         │
+           │         │         │
+           + ── +    +    + ── +    + ──
+                │    │    │         │
+                │    │    │         │
+        ── + ── +    +    + ── + ── +
+                     │
+                     │
+           + ── +    + ── + ── +    + ──
+           │    │              │    │
+           │    │              │    │
+        ── +    +    + ── +    +    +
+                │    │    │    │    │
+                │    │    │    │    │
+           + ── +    + ── +    +    + ──
+           │                   │
+           │                   │
+        ── +    + ── + ── +    + ── +
+                │         │         │
+                │         │         │
 
         sage: m = AlternatingSignMatrix([[0,1,0,0,0,0,0],
         ....:                            [1,-1,0,0,1,0,0],
@@ -271,29 +275,29 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: fpl.link_pattern()
         [(1, 2), (3, 4), (5, 6), (7, 8), (9, 14), (10, 11), (12, 13)]
         sage: fpl
-            |         |         |         |
-            |         |         |         |
-            + -- + -- +    + -- +    + -- +
-                           |         |
-                           |         |
-         -- + -- + -- +    + -- + -- +    + --
-                      |                   |
-                      |                   |
-            + -- +    + -- + -- +    + -- +
-            |    |              |    |
-            |    |              |    |
-         -- +    +    + -- +    +    +    + --
-                 |    |    |    |    |    |
-                 |    |    |    |    |    |
-            + -- +    + -- +    +    + -- +
-            |                   |
-            |                   |
-         -- +    + -- + -- +    +    + -- + --
-                 |         |    |    |
-                 |         |    |    |
-            + -- +    + -- +    +    + -- +
-            |         |         |         |
-            |         |         |         |
+           │         │         │         │
+           │         │         │         │
+           + ── + ── +    + ── +    + ── +
+                          │         │
+                          │         │
+        ── + ── + ── +    + ── + ── +    + ──
+                     │                   │
+                     │                   │
+           + ── +    + ── + ── +    + ── +
+           │    │              │    │
+           │    │              │    │
+        ── +    +    + ── +    +    +    + ──
+                │    │    │    │    │    │
+                │    │    │    │    │    │
+           + ── +    + ── +    +    + ── +
+           │                   │
+           │                   │
+        ── +    + ── + ── +    +    + ── + ──
+                │         │    │    │
+                │         │    │    │
+           + ── +    + ── +    +    + ── +
+           │         │         │         │
+           │         │         │         │
 
     Gyration on an alternating sign matrix/fully packed loop ``fpl``
     of the link pattern corresponding to ``fpl``::
@@ -353,34 +357,34 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: A = AlternatingSignMatrix([[0, 0, 1], [0, 1, 0], [1, 0, 0]])
         sage: fpl = FullyPackedLoop(A)
         sage: fpl
-            |         |
-            |         |
-            + -- +    +
-                 |    |
-                 |    |
-         -- +    +    + --
-            |    |
-            |    |
-            +    + -- +
-            |         |
-            |         |
+            │         │
+            │         │
+            + ── +    +
+                 │    │
+                 │    │
+         ── +    +    + ──
+            │    │
+            │    │
+            +    + ── +
+            │         │
+            │         │
         sage: FullyPackedLoops(3)(A) == fpl
         True
 
     We can also input a matrix::
 
         sage: FullyPackedLoop([[0, 0, 1], [0, 1, 0], [1, 0, 0]])
-            |         |
-            |         |
-            + -- +    +
-                 |    |
-                 |    |
-         -- +    +    + --
-            |    |
-            |    |
-            +    + -- +
-            |         |
-            |         |
+            │         │
+            │         │
+            + ── +    +
+                 │    │
+                 │    │
+         ── +    +    + ──
+            │    │
+            │    │
+            +    + ── +
+            │         │
+            │         │
         sage: FullyPackedLoop([[0, 0, 1], [0, 1, 0], [1, 0, 0]]) ==\
         ....: FullyPackedLoops(3)([[0, 0, 1], [0, 1, 0], [1, 0, 0]])
         True
@@ -390,17 +394,17 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         sage: S = SixVertexModel(3, boundary_conditions='ice').from_alternating_sign_matrix(A)
         sage: fpl = FullyPackedLoop(S)
         sage: fpl
-            |         |
-            |         |
-            + -- +    +
-                 |    |
-                 |    |
-         -- +    +    + --
-            |    |
-            |    |
-            +    + -- +
-            |         |
-            |         |
+            │         │
+            │         │
+            + ── +    +
+                 │    │
+                 │    │
+         ── +    +    + ──
+            │    │
+            │    │
+            +    + ── +
+            │         │
+            │         │
 
         sage: FullyPackedLoops(3)(S) == FullyPackedLoop(S)
         True
@@ -423,14 +427,14 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             V    V
 
         sage: FullyPackedLoop([[3,1],[5,3]])
-            |
-            |
-            +    + --
-            |    |
-            |    |
-         -- +    +
-                 |
-                 |
+            │
+            │
+            +    + ──
+            │    │
+            │    │
+         ── +    +
+                 │
+                 │
 
         sage: FullyPackedLoops(2)([[3,1],[5,3]]) == FullyPackedLoop([[3,1],[5,3]])
         True
@@ -490,34 +494,34 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: A = AlternatingSignMatrix([[1, 0, 0],[0, 1, 0],[0, 0, 1]])
             sage: FullyPackedLoop(A)
-                |         |
-                |         |
-                +    + -- +
-                |    |
-                |    |
-             -- +    +    + --
-                     |    |
-                     |    |
-                + -- +    +
-                |         |
-                |         |
+               │         │
+               │         │
+               +    + ── +
+               │    │
+               │    │
+            ── +    +    + ──
+                    │    │
+                    │    │
+               + ── +    +
+               │         │
+               │         │
 
             sage: SVM = SixVertexModel(4, boundary_conditions='ice')[0]
             sage: FullyPackedLoop(SVM)
-                |         |
-                |         |
-                +    + -- +    + --
-                |    |         |
-                |    |         |
-             -- +    +    + -- +
-                     |    |
-                     |    |
-                + -- +    +    + --
-                |         |    |
-                |         |    |
-             -- +    + -- +    +
-                     |         |
-                     |         |
+               │         │
+               │         │
+               +    + ── +    + ──
+               │    │         │
+               │    │         │
+            ── +    +    + ── +
+                    │    │
+                    │    │
+               + ── +    +    + ──
+               │         │    │
+               │         │    │
+            ── +    + ── +    +
+                    │         │
+                    │         │
         """
         if isinstance(generator, AlternatingSignMatrix):
             SVM = generator.to_six_vertex_model()
@@ -555,7 +559,6 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: A = AlternatingSignMatrix([[0, 0, 1], [0, 1, 0], [1, 0, 0]])
             sage: fpl = FullyPackedLoop(A)
             sage: TestSuite(fpl).run()
-
         """
         if isinstance(generator, AlternatingSignMatrix):
             self._six_vertex_model = generator.to_six_vertex_model()
@@ -573,61 +576,57 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: A = AlternatingSignMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
             sage: fpl = FullyPackedLoop(A)
             sage: fpl
-                |         |
-                |         |
-                +    + -- +
-                |    |
-                |    |
-             -- +    +    + --
-                     |    |
-                     |    |
-                + -- +    +
-                |         |
-                |         |
+               │         │
+               │         │
+               +    + ── +
+               │    │
+               │    │
+            ── +    +    + ──
+                    │    │
+                    │    │
+               + ── +    +
+               │         │
+               │         │
 
             sage: A = AlternatingSignMatrix([[0,1,0,0],[0,0,1,0],[1,-1,0,1],[0,1,0,0]])
             sage: S = SixVertexModel(4, boundary_conditions='ice').from_alternating_sign_matrix(A)
             sage: fpl = FullyPackedLoop(S)
             sage: fpl
-                |         |
-                |         |
-                + -- + -- +    + --
-                               |
-                               |
-             -- +    + -- + -- +
-                |    |
-                |    |
-                +    +    + -- + --
-                |    |    |
-                |    |    |
-             -- +    +    + -- +
-                     |         |
-                     |         |
-
+               │         │
+               │         │
+               + ── + ── +    + ──
+                              │
+                              │
+            ── +    + ── + ── +
+               │    │
+               │    │
+               +    +    + ── + ──
+               │    │    │
+               │    │    │
+            ── +    +    + ── +
+                    │         │
+                    │         │
         """
         # List are in the order of URDL
         # One set of rules for how to draw around even vertex, one set of rules for odd vertex
         n = len(self._six_vertex_model) - 1
-        ascii1 = [[r'     ', ' -', r'     ', '- '],  # LR
-                 [r'  |  ', '  ', r'     ', '- '],  # LU
-                 [r'     ', '  ', r'  |  ', '- '],  # LD
-                 [r'  |  ', '  ', r'  |  ', '  '],  # UD
-                 [r'  |  ', ' -', r'     ', '  '],  # UR
-                 [r'     ', ' -', r'  |  ', '  ']]  # RD
+        ascii1 = [[r'     ', ' ─', r'     ', '─ '],  # LR
+                 [r'  │  ', '  ', r'     ', '─ '],  # LU
+                 [r'     ', '  ', r'  │  ', '─ '],  # LD
+                 [r'  │  ', '  ', r'  │  ', '  '],  # UD
+                 [r'  │  ', ' ─', r'     ', '  '],  # UR
+                 [r'     ', ' ─', r'  │  ', '  ']]  # RD
 
-        ascii2 = [[r'  |  ', '  ', r'  |  ', '  '],  # LR
-                 [r'     ', ' -', r'  |  ', '  '],  # LU
-                 [r'  |  ', ' -', r'     ', '  '],  # LD
-                 [r'     ', ' -', r'     ', '- '],  # UD
-                 [r'     ', '  ', r'  |  ', '- '],  # UR
-                 [r'  |  ', '  ', r'     ', '- ']]  # RD
+        ascii2 = [[r'  │  ', '  ', r'  │  ', '  '],  # LR
+                 [r'     ', ' ─', r'  │  ', '  '],  # LU
+                 [r'  │  ', ' ─', r'     ', '  '],  # LD
+                 [r'     ', ' ─', r'     ', '─ '],  # UD
+                 [r'     ', '  ', r'  │  ', '─ '],  # UR
+                 [r'  │  ', '  ', r'     ', '─ ']]  # RD
         ret = '  '
         # Do the top line
         for i, entry in enumerate(self._six_vertex_model[0]):
-            if i % 2 == 0:
-                ret += '  |  '
-            else:
-                ret += '     '
+            ret += '     ' if i % 2 else '  │  '
 
         plus_sign = '+'
 
@@ -636,17 +635,17 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             ret += '\n  '
             # Do the top row
             for i, entry in enumerate(row):
-                if (i + j) % 2 == 0:
+                if not (i + j) % 2:
                     ret += ascii1[entry][0]
                 else:
                     ret += ascii2[entry][0]
             ret += '\n'
 
             # Do the left-most entry
-            if j % 2 == 0:
+            if not j % 2:
                 ret += '  '
             else:
-                ret += ' -'
+                ret += ' ─'
 
             # Do the middle row
             for i, entry in enumerate(row):
@@ -656,15 +655,15 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
                     ret += ascii2[entry][3] + plus_sign + ascii2[entry][1]
 
             # Do the right-most entry
-            if (j+n) % 2 == 0:
+            if not (j + n) % 2:
                 ret += '  '
             else:
-                ret += '- '
+                ret += '─ '
 
             # Do the bottom row
             ret += '\n  '
             for i, entry in enumerate(row):
-                if (i + j) % 2 == 0:
+                if not (i + j) % 2:
                     ret += ascii1[entry][2]
                 else:
                     ret += ascii2[entry][2]
@@ -672,10 +671,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         # Do the bottom line
         ret += '\n  '
         for i, entry in enumerate(self._six_vertex_model[-1]):
-            if (i+n+1) % 2 == 0:
-                ret += '     '
-            else:
-                ret += '  |  '
+            ret += '  │  ' if (i + n + 1) % 2 else '     '
 
         return ret
 
@@ -749,24 +745,22 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        - ``link``, ``loop`` - (boolean, default ``True``) whether to plot the links
+        - ``link``, ``loop`` -- boolean (default: ``True``); whether to plot the links
           or the loops
 
-        - ``color``, ``link_color``, ``loop_color`` - (optional, a string or a
-          RGB triple)
+        - ``color``, ``link_color``, ``loop_color`` -- (optional) string or RGB triple
 
-        - ``colors``, ``link_colors``, ``loop_colors`` - (optional, list) a list of
-          colors
+        - ``colors``, ``link_colors``, ``loop_colors`` -- (optional) list of colors
 
-        - ``color_map``, ``link_color_map``, ``loop_color_map`` - (string,
+        - ``color_map``, ``link_color_map``, ``loop_color_map`` -- (string,
           optional) a name of a matplotlib color map for the link or the loop
 
-        - ``link_color_randomize`` - (boolean, default ``False``) when
+        - ``link_color_randomize`` -- boolean (default: ``False``); when
           ``link_colors`` or ``link_color_map`` is specified it randomizes
           its order. Setting this option to ``True`` makes it unlikely to
           have two neighboring links with the same color.
 
-        - ``loop_fill`` - (boolean, optional) whether to fill the interior of the loops
+        - ``loop_fill`` -- (boolean, optional) whether to fill the interior of the loops
 
         EXAMPLES:
 
@@ -781,7 +775,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: fpl.plot()                                                            # optional - sage.plot
+            sage: fpl.plot()                                                            # needs sage.plot
             Graphics object consisting of 3 graphics primitives
 
         The resulting graphics is as follows
@@ -798,7 +792,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: A = AlternatingSignMatrix([[0, 1, 0], [1, -1, 1], [0, 1, 0]])
             sage: fpl = FullyPackedLoop(A)
-            sage: fpl.plot(link_color_map='rainbow')                                    # optional - sage.plot
+            sage: fpl.plot(link_color_map='rainbow')                                    # needs sage.plot
             Graphics object consisting of 3 graphics primitives
 
         .. PLOT::
@@ -811,9 +805,9 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
 
         You can plot the 42 fully packed loops of size `4 \times 4` using::
 
-            sage: G = [fpl.plot(link_color_map='winter', loop_color='black')            # optional - sage.plot
+            sage: G = [fpl.plot(link_color_map='winter', loop_color='black')            # needs sage.plot
             ....:      for fpl in FullyPackedLoops(4)]
-            sage: graphics_array(G, 7, 6)                                               # optional - sage.plot
+            sage: graphics_array(G, 7, 6)                                               # needs sage.plot
             Graphics Array of size 7 x 6
 
         .. PLOT::
@@ -834,7 +828,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             ....: 00000000+-0000+00000000000000+0000000000"
             sage: a = matrix(20, [{'0':0, '+':1, '-': -1}[i] for i in s])
             sage: fpl = FullyPackedLoop(a)
-            sage: fpl.plot(loop_fill=True, loop_color_map='rainbow')                    # optional - sage.plot
+            sage: fpl.plot(loop_fill=True, loop_color_map='rainbow')                    # needs sage.plot
             Graphics object consisting of 27 graphics primitives
 
         .. PLOT::
@@ -1195,17 +1189,17 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
             sage: B = AlternatingSignMatrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
             sage: fpl = FullyPackedLoop(B)
             sage: fpl
-                |         |
-                |         |
-                +    + -- +
-                |    |
-                |    |
-             -- +    +    + --
-                     |    |
-                     |    |
-                + -- +    +
-                |         |
-                |         |
+               │         │
+               │         │
+               +    + ── +
+               │    │
+               │    │
+            ── +    +    + ──
+                    │    │
+                    │    │
+               + ── +    +
+               │         │
+               │         │
             sage: fpl.six_vertex_model()
                 ^    ^    ^
                 |    |    |
@@ -1327,20 +1321,20 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
             sage: A = AlternatingSignMatrix(M)
             sage: elt = FullyPackedLoop(A)
             sage: FPL = FPLs(elt); FPL
-                |         |
-                |         |
-                +    + -- +    + --
-                |    |         |
-                |    |         |
-             -- +    +    + -- +
-                     |    |
-                     |    |
-                + -- +    +    + --
-                |         |    |
-                |         |    |
-             -- +    + -- +    +
-                     |         |
-                     |         |
+               │         │
+               │         │
+               +    + ── +    + ──
+               │    │         │
+               │    │         │
+            ── +    +    + ── +
+                    │    │
+                    │    │
+               + ── +    +    + ──
+               │         │    │
+               │         │    │
+            ── +    + ── +    +
+                    │         │
+                    │         │
 
             sage: FPLs(A) == FPL
             True
@@ -1356,14 +1350,14 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
 
             sage: FPL = FullyPackedLoops(2)
             sage: FPL([[3,1],[5,3]])
-                |
-                |
-                +    + --
-                |    |
-                |    |
-             -- +    +
-                     |
-                     |
+               │
+               │
+               +    + ──
+               │    │
+               │    │
+            ── +    +
+                    │
+                    │
         """
         if isinstance(generator, AlternatingSignMatrix):
             SVM = generator.to_six_vertex_model()
@@ -1421,17 +1415,17 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
 
             sage: FPLs = FullyPackedLoops(3)
             sage: FPLs.an_element()
-                |         |
-                |         |
-                +    + -- +
-                |    |
-                |    |
-             -- +    +    + --
-                     |    |
-                     |    |
-                + -- +    +
-                |         |
-                |         |
+               │         │
+               │         │
+               +    + ── +
+               │    │
+               │    │
+            ── +    +    + ──
+                    │    │
+                    │    │
+               + ── +    +
+               │         │
+               │         │
         """
         # ASM = AlternatingSignMatrix(matrix.identity(self._n))
         # SVM = ASM.to_six_vertex_model()

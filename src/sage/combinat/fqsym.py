@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Free Quasi-symmetric functions
 
@@ -20,15 +20,17 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.realizations import Category_realization_of_parent
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.permutation import Permutations, Permutation
-from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
-from sage.combinat.words.word import Word
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+from sage.combinat.words.word import Word
+
+lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
 
 
 class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
@@ -53,7 +55,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         CombinatorialFreeModule.__init__(self, alg.base_ring(),
                                          Permutations(),
                                          category=FQSymBases(alg),
-                                         bracket="", prefix=self._prefix)
+                                         bracket='', prefix=self._prefix)
 
     def _coerce_map_from_(self, R):
         r"""
@@ -798,9 +800,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the F basis
+            OUTPUT: an element of the F basis
 
             TESTS::
 
@@ -830,9 +830,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the G basis
+            OUTPUT: an element of the G basis
 
             TESTS::
 
@@ -909,10 +907,10 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             F = self.realization_of().F()
             phi = F.module_morphism(self._F_to_M_on_basis, codomain=self,
-                                    unitriangular="lower")
+                                    unitriangular='lower')
             phi.register_as_coercion()
             phi_i = self.module_morphism(self._M_to_F_on_basis, codomain=F,
-                                         unitriangular="lower")
+                                         unitriangular='lower')
             phi_i.register_as_coercion()
 
         def _element_constructor_(self, x):
@@ -1016,9 +1014,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the M basis
+            OUTPUT: an element of the M basis
 
             TESTS::
 
@@ -1045,9 +1041,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             - ``w`` -- a permutation
 
-            OUTPUT:
-
-            - An element of the F basis
+            OUTPUT: an element of the F basis
 
             ALGORITHM:
 
@@ -1236,7 +1230,7 @@ class FQSymBases(Category_realization_of_parent):
 
     def __init__(self, base):
         r"""
-        Initialize the bases of an `FQSym`
+        Initialize the bases of an `FQSym`.
 
         INPUT:
 
@@ -1276,10 +1270,10 @@ class FQSymBases(Category_realization_of_parent):
             sage: bases = FQSymBases(FQSym)
             sage: bases.super_categories()
             [Category of realizations of Free Quasi-symmetric functions over Integer Ring,
-             Join of Category of realizations of hopf algebras over Integer Ring
+             Join of Category of realizations of Hopf algebras over Integer Ring
                and Category of graded algebras over Integer Ring
                and Category of graded coalgebras over Integer Ring,
-             Category of graded connected hopf algebras with basis over Integer Ring]
+             Category of graded connected Hopf algebras with basis over Integer Ring]
         """
         R = self.base().base_ring()
         return [self.base().Realizations(),

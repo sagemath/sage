@@ -10,7 +10,7 @@ Comprehensive Module List
 
     and copy pasting the result back there.
 
-.. TODO:: See :trac:`17421` for desirable improvements.
+.. TODO:: See :issue:`17421` for desirable improvements.
 
 .. toctree::
     :maxdepth: 1
@@ -93,6 +93,7 @@ Comprehensive Module List
     sage/combinat/designs/resolvable_bibd
     sage/combinat/designs/group_divisible_designs
     sage/combinat/designs/block_design
+    sage/combinat/designs/covering_array
     sage/combinat/designs/covering_design
     sage/combinat/designs/database
     sage/combinat/designs/design_catalog

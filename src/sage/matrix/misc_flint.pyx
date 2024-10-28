@@ -13,8 +13,8 @@ from sage.libs.flint.fmpz cimport fmpz_set_mpz, fmpz_one
 from sage.rings.integer cimport Integer
 from sage.rings.rational_field import QQ
 
-from .matrix_integer_dense cimport Matrix_integer_dense
-from .matrix_rational_dense cimport Matrix_rational_dense
+from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
+from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 
 
 def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer N):
@@ -27,7 +27,7 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
     INPUT:
 
     - ``A`` -- matrix
-    - ``N`` -- an integer
+    - ``N`` -- integer
 
     EXAMPLES::
 
@@ -40,7 +40,7 @@ def matrix_integer_dense_rational_reconstruction(Matrix_integer_dense A, Integer
 
     TESTS:
 
-    Check that :trac:`9345` is fixed::
+    Check that :issue:`9345` is fixed::
 
         sage: A = random_matrix(ZZ, 3)
         sage: matrix_integer_dense_rational_reconstruction(A, 0)

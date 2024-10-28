@@ -17,11 +17,11 @@ file gives the function signatures.
 - :meth:`cadd` -- addition
 - :meth:`creduce` -- reduce modulo a power of the maximal ideal
 - :meth:`creduce_small` -- reduce modulo a power of the maximal ideal,
-                          assuming only a single addition/subtraction.
+  assuming only a single addition/subtraction
 - :meth:`cremove` -- extract the maximum power of the uniformizer
-  dividing this element.
+  dividing this element
 - :meth:`cvaluation` -- return the maximum power of the uniformizer
-  dividing this element.
+  dividing this element
 - :meth:`cisunit` -- returns whether this element has valuation zero
 - :meth:`cshift` -- multiplies by a power of the uniformizer
 - :meth:`cshift_notrunc` -- multiplies by a power of the uniformizer,
@@ -42,7 +42,7 @@ file gives the function signatures.
 - :meth:`chash` -- hashing
 - :meth:`cexpansion_next` -- gets the next digit in the series expansion
 - :meth:`cexpansion_getitem` -- gets a specified digit in the series expansion
-- :meth:`ccoefficients` -- a list of coefficients as elements of the base ring
+- :meth:`ccoefficients` -- list of coefficients as elements of the base ring
 - :meth:`cteichmuller` -- Teichmuller lifting
 - :meth:`cconv` -- conversion from other types in Sage
 - :meth:`cconv_mpz_t` -- conversion from mpz_t, separated for speed and
@@ -83,8 +83,8 @@ cdef inline int cconstruct(celement value, PowComputer_class prime_pow) except -
 
     INPUT:
 
-    - ``unit`` -- an ``celement`` to be initialized.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``unit`` -- an ``celement`` to be initialized
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
@@ -94,8 +94,8 @@ cdef inline int cdestruct(celement value, PowComputer_class prime_pow) except -1
 
     INPUT:
 
-    - ``unit`` -- an ``celement`` to be cleared.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``unit`` -- an ``celement`` to be cleared
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
@@ -105,12 +105,12 @@ cdef inline int ccmp(celement a, celement b, long prec, bint reduce_a, bint redu
 
     INPUT:
 
-    - ``a`` -- an ``celement``.
-    - ``b`` -- an ``celement``.
-    - ``prec`` -- a long, the precision of the comparison.
-    - ``reduce_a`` -- a bint, whether ``a`` needs to be reduced.
-    - ``reduce_b`` -- a bint, whether ``b`` needs to be reduced.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``a`` -- an ``celement``
+    - ``b`` -- an ``celement``
+    - ``prec`` -- a long, the precision of the comparison
+    - ``reduce_a`` -- a bint, whether ``a`` needs to be reduced
+    - ``reduce_b`` -- a bint, whether ``b`` needs to be reduced
+    - ``prime_pow`` -- the PowComputer for the ring
 
     OUTPUT:
 
@@ -130,10 +130,10 @@ cdef inline int cneg(celement out, celement a, long prec, PowComputer_class prim
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the negation.
-    - ``a`` -- an ``celement`` to be negated.
-    - ``prec`` -- a long, the precision: ignored.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- an ``celement`` to store the negation
+    - ``a`` -- an ``celement`` to be negated
+    - ``prec`` -- a long, the precision: ignored
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
@@ -145,11 +145,11 @@ cdef inline int cadd(celement out, celement a, celement b, long prec, PowCompute
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the sum.
-    - ``a`` -- an ``celement``, the first summand.
-    - ``b`` -- an ``celement``, the second summand.
-    - ``prec`` -- a long, the precision: ignored.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- an ``celement`` to store the sum
+    - ``a`` -- an ``celement``, the first summand
+    - ``b`` -- an ``celement``, the second summand
+    - ``prec`` -- a long, the precision: ignored
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
@@ -159,14 +159,12 @@ cdef inline bint creduce(celement out, celement a, long prec, PowComputer_class 
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the reduction.
-    - ``a`` -- the element to be reduced.
-    - ``prec`` -- a long, the precision to reduce modulo.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- an ``celement`` to store the reduction
+    - ``a`` -- the element to be reduced
+    - ``prec`` -- a long, the precision to reduce modulo
+    - ``prime_pow`` -- the PowComputer for the ring
 
-    OUTPUT:
-
-    - returns True if the reduction is zero; False otherwise.
+    OUTPUT: returns ``True`` if the reduction is zero; ``False`` otherwise
     """
     pass
 
@@ -180,14 +178,14 @@ cdef inline bint creduce_small(celement out, celement a, long prec, PowComputer_
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the reduction.
-    - ``a`` -- the element to be reduced.
-    - ``prec`` -- a long, the precision to reduce modulo.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- an ``celement`` to store the reduction
+    - ``a`` -- the element to be reduced
+    - ``prec`` -- a long, the precision to reduce modulo
+    - ``prime_pow`` -- the PowComputer for the ring
 
     OUTPUT:
 
-    - returns True if the reduction is zero; False otherwise.
+    - returns ``True`` if the reduction is zero; ``False`` otherwise.
     """
     pass
 
@@ -197,10 +195,10 @@ cdef inline long cremove(celement out, celement a, long prec, PowComputer_class 
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the unit.
-    - ``a`` -- the element whose valuation and unit are desired.
-    - ``prec`` -- a long, used if `a = 0`.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- an ``celement`` to store the unit
+    - ``a`` -- the element whose valuation and unit are desired
+    - ``prec`` -- a long, used if `a = 0`
+    - ``prime_pow`` -- the PowComputer for the ring
     - ``reduce_relative`` -- a bint: whether the final result
       should be reduced at precision ``prec`` (case ``False``)
       or ``prec - valuation`` (case ``True``)
@@ -214,7 +212,7 @@ cdef inline long cremove(celement out, celement a, long prec, PowComputer_class 
 
 cdef inline long cvaluation(celement a, long prec, PowComputer_class prime_pow) except -1:
     """
-    Returns the maximum power of the uniformizer dividing this
+    Return the maximum power of the uniformizer dividing this
     element.
 
     This function differs from :meth:`cremove` in that the unit is
@@ -222,9 +220,9 @@ cdef inline long cvaluation(celement a, long prec, PowComputer_class prime_pow) 
 
     INPUT:
 
-    - ``a`` -- the element whose valuation is desired.
-    - ``prec`` -- a long, used if `a = 0`.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``a`` -- the element whose valuation is desired
+    - ``prec`` -- a long, used if `a = 0`
+    - ``prime_pow`` -- the PowComputer for the ring
 
     OUTPUT:
 
@@ -235,53 +233,51 @@ cdef inline long cvaluation(celement a, long prec, PowComputer_class prime_pow) 
 
 cdef inline bint cisunit(celement a, PowComputer_class prime_pow) except -1:
     """
-    Returns whether this element has valuation zero.
+    Return whether this element has valuation zero.
 
     INPUT:
 
-    - ``a`` -- the element to test.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``a`` -- the element to test
+    - ``prime_pow`` -- the PowComputer for the ring
 
-    OUTPUT:
-
-    - returns True if `a` has valuation 0, and False otherwise.
+    OUTPUT: returns ``True`` if `a` has valuation 0, and ``False`` otherwise
     """
     pass
 
 cdef inline int cshift(celement out, celement rem, celement a, long n, long prec, PowComputer_class prime_pow, bint reduce_afterward) except -1:
     """
-    Multiplies by a power of the uniformizer.
+    Multiply by a power of the uniformizer.
 
     INPUT:
 
     - ``out`` -- an ``celement`` to store the result.  If `n >= 0`
-      then out will be set to `a * p^n`.
+      then out will be set to `a * p^n`
       If `n < 0`, out will be set to `a // p^-n`.
     - ``rem`` -- a ``celement`` to store the remainder, when `n < 0`
-    - ``a`` -- the element to shift.
-    - ``n`` -- long, the amount to shift by.
-    - ``prec`` -- long, a precision modulo which to reduce.
-    - ``prime_pow`` -- the PowComputer for the ring.
-    - ``reduce_afterward`` -- whether to reduce afterward.
+    - ``a`` -- the element to shift
+    - ``n`` -- long, the amount to shift by
+    - ``prec`` -- long, a precision modulo which to reduce
+    - ``prime_pow`` -- the PowComputer for the ring
+    - ``reduce_afterward`` -- whether to reduce afterward
     """
     pass
 
 cdef inline int cshift_notrunc(celement out, celement a, long n, long prec, PowComputer_class prime_pow, bint reduce_afterward) except -1:
     """
-    Multiplies by a power of the uniformizer, assuming that the
+    Multiply by a power of the uniformizer, assuming that the
     valuation of a is at least -n.
 
     INPUT:
 
     - ``out`` -- an ``celement`` to store the result.  If `n >= 0`
-      then out will be set to `a * p^n`.
+      then out will be set to `a * p^n`
       If `n < 0`, out will be set to `a // p^-n`.
     - ``a`` -- the element to shift.  Assumes that the valuation of a
       is at least -n.
-    - ``n`` -- long, the amount to shift by.
-    - ``prec`` -- long, a precision modulo which to reduce.
-    - ``prime_pow`` -- the PowComputer for the ring.
-    - ``reduce_afterward`` -- whether to reduce afterward.
+    - ``n`` -- long, the amount to shift by
+    - ``prec`` -- long, a precision modulo which to reduce
+    - ``prime_pow`` -- the PowComputer for the ring
+    - ``reduce_afterward`` -- whether to reduce afterward
     """
     pass
 
@@ -293,11 +289,11 @@ cdef inline int csub(celement out, celement a, celement b, long prec, PowCompute
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the difference.
-    - ``a`` -- an ``celement``, the first input.
-    - ``b`` -- an ``celement``, the second input.
-    - ``prec`` -- a long, the precision: ignored.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- an ``celement`` to store the difference
+    - ``a`` -- an ``celement``, the first input
+    - ``b`` -- an ``celement``, the second input
+    - ``prec`` -- a long, the precision: ignored
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
@@ -309,10 +305,10 @@ cdef inline int cinvert(celement out, celement a, long prec, PowComputer_class p
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the inverse.
-    - ``a`` -- an ``celement``, the element to be inverted.
-    - ``prec`` -- a long, the precision.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- an ``celement`` to store the inverse
+    - ``a`` -- an ``celement``, the element to be inverted
+    - ``prec`` -- a long, the precision
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
@@ -324,11 +320,11 @@ cdef inline int cmul(celement out, celement a, celement b, long prec, PowCompute
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the product.
-    - ``a`` -- an ``celement``, the first input.
-    - ``b`` -- an ``celement``, the second input.
-    - ``prec`` -- a long, the precision: ignored.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- an ``celement`` to store the product
+    - ``a`` -- an ``celement``, the first input
+    - ``b`` -- an ``celement``, the second input
+    - ``prec`` -- a long, the precision: ignored
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
@@ -341,63 +337,63 @@ cdef inline int cdivunit(celement out, celement a, celement b, long prec, PowCom
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the quotient.
-    - ``a`` -- an ``celement``, the first input.
-    - ``b`` -- an ``celement``, the second input.
-    - ``prec`` -- a long, the precision.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- an ``celement`` to store the quotient
+    - ``a`` -- an ``celement``, the first input
+    - ``b`` -- an ``celement``, the second input
+    - ``prec`` -- a long, the precision
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
 cdef inline int csetone(celement out, PowComputer_class prime_pow) except -1:
     """
-    Sets to 1.
+    Set to 1.
 
     INPUT:
 
-    - ``out`` -- the ``celement`` in which to store 1.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- the ``celement`` in which to store 1
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
 cdef inline int csetzero(celement out, PowComputer_class prime_pow) except -1:
     """
-    Sets to 0.
+    Set to 0.
 
     INPUT:
 
-    - ``out`` -- the ``celement`` in which to store 0.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- the ``celement`` in which to store 0
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
 cdef inline bint cisone(celement a, PowComputer_class prime_pow) except -1:
     """
-    Returns whether this element is equal to 1.
+    Return whether this element is equal to 1.
 
     INPUT:
 
-    - ``a`` -- the element to test.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``a`` -- the element to test
+    - ``prime_pow`` -- the PowComputer for the ring
 
     OUTPUT:
 
-    - returns True if `a = 1`, and False otherwise.
+    - returns ``True`` if `a = 1`, and ``False`` otherwise.
     """
     pass
 
 cdef inline bint ciszero(celement a, PowComputer_class prime_pow) except -1:
     """
-    Returns whether this element is equal to 0.
+    Return whether this element is equal to 0.
 
     INPUT:
 
-    - ``a`` -- the element to test.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``a`` -- the element to test
+    - ``prime_pow`` -- the PowComputer for the ring
 
     OUTPUT:
 
-    - returns True if `a = 0`, and False otherwise.
+    - returns ``True`` if `a = 0`, and ``False`` otherwise.
     """
     pass
 
@@ -407,11 +403,11 @@ cdef inline int cpow(celement out, celement a, mpz_t n, long prec, PowComputer_c
 
     INPUT:
 
-    - ``out`` -- the ``celement`` in which to store the result.
-    - ``a`` -- the base.
-    - ``n`` -- an ``mpz_t``, the exponent.
-    - ``prec`` -- a long, the working absolute precision.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- the ``celement`` in which to store the result
+    - ``a`` -- the base
+    - ``n`` -- an ``mpz_t``, the exponent
+    - ``prec`` -- a long, the working absolute precision
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
@@ -421,9 +417,9 @@ cdef inline int ccopy(celement out, celement a, PowComputer_class prime_pow) exc
 
     INPUT:
 
-    - ``out`` -- the ``celement`` to store the result.
-    - ``a`` -- the element to copy.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- the ``celement`` to store the result
+    - ``a`` -- the element to copy
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
@@ -433,8 +429,8 @@ cdef inline cpickle(celement a, PowComputer_class prime_pow):
 
     INPUT:
 
-    - ``a`` the element to pickle.
-    - ``prime_pow`` the PowComputer for the ring.
+    - ``a`` -- the element to pickle
+    - ``prime_pow`` the PowComputer for the ring
 
     OUTPUT:
 
@@ -448,9 +444,9 @@ cdef inline int cunpickle(celement out, x, PowComputer_class prime_pow) except -
 
     INPUT:
 
-    - ``out`` -- the ``celement`` in which to store the result.
-    - ``x`` -- the result of :meth:`cpickle`.
-    - ``prime_pow`` -- the PowComputer for the ring.
+    - ``out`` -- the ``celement`` in which to store the result
+    - ``x`` -- the result of :meth:`cpickle`
+    - ``prime_pow`` -- the PowComputer for the ring
     """
     pass
 
@@ -460,37 +456,37 @@ cdef inline long chash(celement a, long ordp, long prec, PowComputer_class prime
 
     INPUT:
 
-    - ``a`` -- an ``celement`` storing the underlying element to hash.
-    - ``ordp`` -- a long storing the valuation.
-    - ``prec`` -- a long storing the precision.
-    - ``prime_pow`` -- a PowComputer for the ring.
+    - ``a`` -- an ``celement`` storing the underlying element to hash
+    - ``ordp`` -- a long storing the valuation
+    - ``prec`` -- a long storing the precision
+    - ``prime_pow`` -- a PowComputer for the ring
     """
     pass
 
 # the expansion_mode enum is defined in padic_template_element_header.pxi
 cdef inline cexpansion_next(celement value, expansion_mode mode, long curpower, PowComputer_ prime_pow):
-    """
+    r"""
     Return the next digit in a `\pi`-adic expansion of ``value``.
 
     INPUT:
 
-    - ``value`` -- the `\pi`-adic element whose expansion is desired.
+    - ``value`` -- the `\pi`-adic element whose expansion is desired
     - ``mode`` -- either ``simple_mode`` or ``smallest_mode``
     - ``curpower`` -- the current power of `\pi` for which the coefficient
-      is being found.  Only used in ``smallest_mode``.
-    - ``prime_pow`` -- A ``PowComputer`` holding `\pi`-adic data.
+      is being found.  Only used in ``smallest_mode``
+    - ``prime_pow`` -- a ``PowComputer`` holding `\pi`-adic data
     """
     pass
 
 cdef inline cexpansion_getitem(celement value, long m, PowComputer_ prime_pow):
-    """
-    Return the `m`th `\pi`-adic digit in the ``simple_mode`` expansion.
+    r"""
+    Return the `m`-th `\pi`-adic digit in the ``simple_mode`` expansion.
 
     INPUT:
 
-    - ``value`` -- the `\pi`-adic element whose expansion is desired.
-    - ``m`` -- a non-negative integer: which entry in the `\pi`-adic expansion to return.
-    - ``prime_pow`` -- A ``PowComputer`` holding `\pi`-adic data.
+    - ``value`` -- the `\pi`-adic element whose expansion is desired
+    - ``m`` -- nonnegative integer: which entry in the `\pi`-adic expansion to return
+    - ``prime_pow`` -- a ``PowComputer`` holding `\pi`-adic data
     """
     pass
 
@@ -504,25 +500,24 @@ cdef list ccoefficients(celement x, long valshift, PowComputer_class prime_pow):
 
     INPUT:
 
-    - ``x`` -- a ``celement`` giving the underlying `p`-adic element, or possibly its unit part.
-    - ``valshift`` -- a long giving the power of the uniformizer to shift `x` by.
+    - ``x`` -- a ``celement`` giving the underlying `p`-adic element, or possibly its unit part
+    - ``valshift`` -- a long giving the power of the uniformizer to shift `x` by
     - ``prec`` -- a long, the (relative) precision desired, used in rational reconstruction
     - ``prime_pow`` -- the ``PowComputer`` of the ring
     """
     pass
 
 cdef int cteichmuller(celement out, celement value, long prec, PowComputer_class prime_pow) except -1:
-    """
+    r"""
     Teichmuller lifting.
 
     INPUT:
 
     - ``out`` -- an ``celement`` which is set to a `q-1` root of unity
-                 congruent to `value` mod `\pi`; or 0 if `a \equiv 0
-                 \pmod{\pi}`.
-    - ``value`` -- an ``celement``, the element mod `\pi` to lift.
-    - ``prec`` -- a long, the precision to which to lift.
-    - ``prime_pow`` -- the ``PowComputer`` of the ring.
+      congruent to `value` mod `\pi`; or 0 if `a \equiv 0 \pmod{\pi}`
+    - ``value`` -- an ``celement``, the element mod `\pi` to lift
+    - ``prec`` -- a long, the precision to which to lift
+    - ``prime_pow`` -- the ``PowComputer`` of the ring
     """
     pass
 
@@ -532,13 +527,13 @@ cdef int cconv(celement out, x, long prec, long valshift, PowComputer_class prim
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the output.
-    - ``x`` -- a Sage element that can be converted to a `p`-adic element.
+    - ``out`` -- an ``celement`` to store the output
+    - ``x`` -- a Sage element that can be converted to a `p`-adic element
     - ``prec`` -- a long, giving the precision desired: absolute if
-                  `valshift = 0`, relative if `valshift > 0`.
+      `valshift = 0`, relative if `valshift > 0`
     - ``valshift`` -- the power of the uniformizer to divide by before
-      storing the result in ``out``.
-    - ``prime_pow`` -- a PowComputer for the ring.
+      storing the result in ``out``
+    - ``prime_pow`` -- a PowComputer for the ring
     """
     pass
 
@@ -549,14 +544,14 @@ cdef inline long cconv_mpz_t(celement out, mpz_t x, long prec, bint absolute, Po
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the output.
-    - ``x`` -- an ``mpz_t`` giving the integer to be converted.
+    - ``out`` -- an ``celement`` to store the output
+    - ``x`` -- an ``mpz_t`` giving the integer to be converted
     - ``prec`` -- a long, giving the precision desired: absolute or
-                  relative depending on the ``absolute`` input.
+      relative depending on the ``absolute`` input
     - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if True then
-                      just reduces ``x`` modulo the precision.
-    - ``prime_pow`` -- a PowComputer for the ring.
+      it, storing the unit in ``out``; if ``True`` then just reduces ``x``
+      modulo the precision
+    - ``prime_pow`` -- a PowComputer for the ring
 
     OUTPUT:
 
@@ -567,15 +562,15 @@ cdef inline long cconv_mpz_t(celement out, mpz_t x, long prec, bint absolute, Po
 
 cdef inline int cconv_mpz_t_out(mpz_t out, celement x, long valshift, long prec, PowComputer_class prime_pow) except -1:
     """
-    Converts the underlying `p`-adic element into an integer if
+    Convert the underlying `p`-adic element into an integer if
     possible.
 
     - ``out`` -- stores the resulting integer as an integer between 0
-                 and `p^{prec + valshift}`.
-    - ``x`` -- an ``celement`` giving the underlying `p`-adic element.
-    - ``valshift`` -- a long giving the power of `p` to shift `x` by.
-    -` ``prec`` -- a long, the precision of ``x``: currently not used.
-    - ``prime_pow`` -- a PowComputer for the ring.
+      and `p^{prec + valshift}`
+    - ``x`` -- an ``celement`` giving the underlying `p`-adic element
+    - ``valshift`` -- a long giving the power of `p` to shift `x` by
+    -` ``prec`` -- a long, the precision of ``x``: currently not used
+    - ``prime_pow`` -- a PowComputer for the ring
     """
     pass
 
@@ -586,14 +581,14 @@ cdef inline long cconv_mpq_t(celement out, mpq_t x, long prec, bint absolute, Po
 
     INPUT:
 
-    - ``out`` -- an ``celement`` to store the output.
-    - ``x`` -- an ``mpq_t`` giving the rational to be converted.
+    - ``out`` -- an ``celement`` to store the output
+    - ``x`` -- an ``mpq_t`` giving the rational to be converted
     - ``prec`` -- a long, giving the precision desired: absolute or
-                  relative depending on the ``absolute`` input.
+      relative depending on the ``absolute`` input
     - ``absolute`` -- if False then extracts the valuation and returns
-                      it, storing the unit in ``out``; if True then
-                      just reduces ``x`` modulo the precision.
-    - ``prime_pow`` -- a PowComputer for the ring.
+      it, storing the unit in ``out``; if ``True`` then just reduces ``x``
+      modulo the precision
+    - ``prime_pow`` -- a PowComputer for the ring
 
     OUTPUT:
 
@@ -604,16 +599,16 @@ cdef inline long cconv_mpq_t(celement out, mpq_t x, long prec, bint absolute, Po
 
 cdef inline int cconv_mpq_t_out(mpq_t out, celement x, long valshift, long prec, PowComputer_class prime_pow) except -1:
     """
-    Converts the underlying `p`-adic element into a rational.
+    Convert the underlying `p`-adic element into a rational.
 
     - ``out`` -- gives a rational approximating the input.  Currently
-                 uses rational reconstruction but may change in the
-                 future to use a more naive method.
-    - ``x`` -- an ``celement`` giving the underlying `p`-adic element.
-    - ``valshift`` -- a long giving the power of the uniformizer to shift `x` by.
-    -` ``prec`` -- a long, the precision of ``x``, used in rational
-                   reconstruction.
-    - ``prime_pow`` -- a PowComputer for the ring.
+      uses rational reconstruction but may change in the future to use a more
+      naive method
+    - ``x`` -- an ``celement`` giving the underlying `p`-adic element
+    - ``valshift`` -- a long giving the power of the uniformizer to shift `x` by
+    - ``prec`` -- a long, the precision of ``x``, used in rational
+      reconstruction
+    - ``prime_pow`` -- a PowComputer for the ring
     """
     pass
 

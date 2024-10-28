@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: needs sage.modules
 r"""
 Ring of Laurent Polynomials (base class)
 
@@ -25,9 +25,10 @@ AUTHORS:
 
 
 from sage.rings.infinity import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
-
+from sage.combinat.integer_vector import IntegerVectors
 
 class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     """
@@ -36,16 +37,17 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     EXAMPLES:
 
     This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-    Since :trac:`11900`, it is also initialised as such::
+    Since :issue:`11900`, it is also initialised as such::
 
         sage: R.<x1,x2> = LaurentPolynomialRing(QQ)
         sage: R.category()
         Join of Category of unique factorization domains
+            and Category of algebras with basis
+                over (number fields and quotient fields and metric spaces)
             and Category of commutative algebras
                 over (number fields and quotient fields and metric spaces)
             and Category of infinite sets
         sage: TestSuite(R).run()
-
     """
     def __init__(self, R):
         """
@@ -61,6 +63,13 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         self._one_element = self.element_class(self, R.one())
         CommutativeRing.__init__(self, R.base_ring(), names=names,
                                  category=R.category())
+        ernames = []
+        for n in names:
+            ernames.append(n)
+            ernames.append(n + "inv")
+        ER = PolynomialRing(R.base_ring(), ernames)
+        self._extended_ring = ER
+        self._extended_ring_ideal = ER.ideal([ER.gen(2*i)*ER.gen(2*i+1)-1 for i in range(self._n)])
 
     def ngens(self):
         """
@@ -77,7 +86,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def gen(self, i=0):
         r"""
-        Returns the `i^{th}` generator of self.  If i is not specified, then
+        Return the `i`-th generator of ``self``.  If `i` is not specified, then
         the first generator will be returned.
 
         EXAMPLES::
@@ -111,11 +120,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         INPUT:
 
-        - ``depth`` -- an integer or :mod:`Infinity <sage.rings.infinity>`.
+        - ``depth`` -- integer or :mod:`Infinity <sage.rings.infinity>`
 
-        OUTPUT:
-
-        A tuple of strings.
+        OUTPUT: a tuple of strings
 
         EXAMPLES::
 
@@ -139,14 +146,14 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def is_integral_domain(self, proof=True):
         """
-        Return ``True`` if self is an integral domain.
+        Return ``True`` if ``self`` is an integral domain.
 
         EXAMPLES::
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').is_integral_domain()
             True
 
-        The following used to fail; see :trac:`7530`::
+        The following used to fail; see :issue:`7530`::
 
             sage: L = LaurentPolynomialRing(ZZ, 'X')
             sage: L['Y']
@@ -157,16 +164,14 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def is_noetherian(self):
         """
-        Return ``True`` if self is Noetherian.
+        Return ``True`` if ``self`` is Noetherian.
 
         EXAMPLES::
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').is_noetherian()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
+            True
         """
-        raise NotImplementedError
+        return self.base_ring().is_noetherian()
 
     def construction(self):
         """
@@ -177,7 +182,6 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: LaurentPolynomialRing(QQ, 2, 'x,y').construction()
             (LaurentPolynomialFunctor,
              Univariate Laurent Polynomial Ring in x over Rational Field)
-
         """
         from sage.categories.pushout import LaurentPolynomialFunctor
         from .laurent_polynomial_ring import LaurentPolynomialRing
@@ -212,6 +216,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: 1 / g
             -x^-1 + 1 + O(x^19)
 
+            sage: # needs sage.combinat
             sage: PP = P.completion(x, prec=oo); PP
             Lazy Laurent Series Ring in x over Rational Field
             sage: g = 1 / PP(f); g
@@ -221,7 +226,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         TESTS:
 
-        Check that the precision is taken into account (:trac:`24431`)::
+        Check that the precision is taken into account (:issue:`24431`)::
 
             sage: L = LaurentPolynomialRing(QQ, 'x')
             sage: L.completion('x', 100).default_prec()
@@ -267,7 +272,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
               To:   Multivariate Laurent Polynomial Ring in x, y over Rational Field
 
         Let us check that coercion between Laurent Polynomials over
-        different base rings works (:trac:`15345`)::
+        different base rings works (:issue:`15345`)::
 
             sage: R = LaurentPolynomialRing(ZZ, 'x')
             sage: T = LaurentPolynomialRing(QQ, 'x')
@@ -302,7 +307,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: P == R
             False
         """
-        if type(self) != type(right):
+        if type(self) is not type(right):
             return False
         return self._R == right._R
 
@@ -375,7 +380,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         TESTS:
 
-        check that :trac:`26421` is fixed::
+        check that :issue:`26421` is fixed::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = PolynomialRing(R)
@@ -390,15 +395,16 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: T.<t> = ZZ[]
-            sage: K.<i> = NumberField(t^2 + 1)                                                      # optional - sage.rings.number_field
-            sage: L.<x,y> = LaurentPolynomialRing(K)                                                # optional - sage.rings.number_field
-            sage: L._is_valid_homomorphism_(K, (K(1/2), K(3/2)))                                    # optional - sage.rings.number_field
+            sage: K.<i> = NumberField(t^2 + 1)
+            sage: L.<x,y> = LaurentPolynomialRing(K)
+            sage: L._is_valid_homomorphism_(K, (K(1/2), K(3/2)))
             True
-            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()                                                    # optional - sage.rings.padics
-            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2))) # no coercion                   # optional - sage.rings.padics
+            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()                                                    # needs sage.rings.padics
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)))  # no coercion                  # needs sage.rings.padics
             False
-            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))           # optional - sage.rings.padics
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))           # needs sage.rings.padics
             True
         """
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
@@ -413,13 +419,12 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def term_order(self):
         """
-        Returns the term order of self.
+        Return the term order of ``self``.
 
         EXAMPLES::
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').term_order()
             Degree reverse lexicographic term order
-
         """
         return self._R.term_order()
 
@@ -429,7 +434,6 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').is_finite()
             False
-
         """
         return False
 
@@ -444,7 +448,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def polynomial_ring(self):
         """
-        Returns the polynomial ring associated with self.
+        Return the polynomial ring associated with ``self``.
 
         EXAMPLES::
 
@@ -457,15 +461,14 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def characteristic(self):
         """
-        Returns the characteristic of the base ring.
+        Return the characteristic of the base ring.
 
         EXAMPLES::
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').characteristic()
             0
-            sage: LaurentPolynomialRing(GF(3), 2, 'x').characteristic()                 # optional - sage.libs.pari
+            sage: LaurentPolynomialRing(GF(3), 2, 'x').characteristic()
             3
-
         """
         return self.base_ring().characteristic()
 
@@ -480,16 +483,164 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         raise NotImplementedError
 
-    def random_element(self, low_degree=-2, high_degree=2, terms=5, choose_degree=False,*args, **kwds):
+    def random_element(self, min_valuation=-2, max_degree=2, *args, **kwds):
         """
+        Return a random polynomial with degree at most ``max_degree`` and
+        lowest valuation at least ``min_valuation``.
+
+        Uses the random sampling from the base polynomial ring then divides out
+        by a monomial to ensure correct ``max_degree`` and ``min_valuation``.
+
+        INPUT:
+
+        - ``min_valuation`` -- integer (default: `-2`); the
+          minimal allowed valuation of the polynomial
+
+        - ``max_degree`` -- integer (default: `2`); the
+          maximal allowed degree of the polynomial
+
+        - ``*args``, ``**kwds`` -- passed to the random element generator of the
+          base polynomial ring and base ring itself
+
         EXAMPLES::
 
-            sage: LaurentPolynomialRing(QQ, 2, 'x').random_element()
+            sage: L.<x> = LaurentPolynomialRing(QQ)
+            sage: f = L.random_element()
+            sage: f.degree() <= 2
+            True
+            sage: f.valuation() >= -2
+            True
+            sage: f.parent() is L
+            True
+
+        ::
+
+            sage: L = LaurentPolynomialRing(ZZ, 2, 'x')
+            sage: f = L.random_element(10, 20)
+            sage: f.degree() <= 20
+            True
+            sage: f.valuation() >= 10
+            True
+            sage: f.parent() is L
+            True
+
+        ::
+
+            sage: L = LaurentPolynomialRing(GF(13), 3, 'x')
+            sage: f = L.random_element(-10, -1)
+            sage: f.degree() <= -1
+            True
+            sage: f.valuation() >= -10
+            True
+            sage: f.parent() is L
+            True
+
+        ::
+
+            sage: L.<x, y> = LaurentPolynomialRing(RR)
+            sage: f = L.random_element()
+            sage: f.degree() <= 2
+            True
+            sage: f.valuation() >= -2
+            True
+            sage: f.parent() is L
+            True
+
+        ::
+
+            sage: L = LaurentPolynomialRing(QQbar, 5, 'x')
+            sage: f = L.random_element(-1, 1)
+            sage: f = L.random_element(-1, 1)
+            sage: f.degree() <= 1
+            True
+            sage: f.valuation() >= -1
+            True
+            sage: f.parent() is L
+            True
+
+        TESTS:
+
+        Ensure everything works for the multivariate case with only
+        one generator::
+
+            sage: L = LaurentPolynomialRing(ZZ, 1, 'x')
+            sage: f = L.random_element(10, 20)
+            sage: f.degree() <= 20
+            True
+            sage: f.valuation() >= 10
+            True
+            sage: f.parent() is L
+            True
+
+        Test for constructions which use multivariate polynomial rings::
+
+            sage: rings = [RR, QQ, ZZ, GF(13), GF(7^3)]
+            sage: for ring in rings:
+            ....:     d = randint(1, 6)
+            ....:     t = randint(5, 20)
+            ....:     L = LaurentPolynomialRing(ring, d, 'x')
+            ....:     for _ in range(100):
+            ....:         n, m = randint(-10, 10), randint(-10, 10)
+            ....:         if n > m:
+            ....:             n, m = m, n
+            ....:         f = L.random_element(n, m, terms=t)
+            ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
+            ....:         assert len(list(f)) <= t
+            ....:         assert f.degree() <= m
+            ....:         assert f.valuation() >= n
+
+        Test for constructions which use univariate polynomial rings::
+
+            sage: rings = [RR, QQ, ZZ, GF(13), GF(7^3)]
+            sage: for ring in rings:
+            ....:     L.<x> = LaurentPolynomialRing(ring)
+            ....:     for _ in range(100):
+            ....:         n, m = randint(-10, 10), randint(-10, 10)
+            ....:         if n > m:
+            ....:             n, m = m, n
+            ....:         f = L.random_element(n, m)
+            ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
+            ....:         for x in L.gens():
+            ....:             assert f.degree() <= m
+            ....:             assert f.valuation() >= n
+
+        The ``max_degree`` must be greater than or equal to ``min_valuation``::
+
+            sage: L.<x> = LaurentPolynomialRing(QQ)
+            sage: f = L.random_element(1, -1)
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            ValueError: `max_degree` must be greater than or equal to `min_valuation`
         """
-        raise NotImplementedError
+        # Ensure the degree parameters are sensible
+        if max_degree < min_valuation:
+            raise ValueError("`max_degree` must be greater than or equal to `min_valuation`")
+
+        # Sample a polynomial in the base ring of degree `max_degree - min_valuation`
+        abs_deg = (max_degree - min_valuation)
+        f_rand = self._R.random_element(degree=abs_deg, *args, **kwds)
+
+        # Cast this polynomial back the ``self``
+        f = self(f_rand)
+
+        # For the univariate case we simply shift by x**min_valuation
+        if self._n == 1:
+            # When there is one generator we either have a univariate class
+            # and can shift by min_valuation
+            try:
+                return f.shift(min_valuation)
+            # Or we have a multivariate class with one variable, which does not
+            # have the shift method
+            except AttributeError:
+                return f * self.gen() ** min_valuation
+
+        # For the multivariate case, we sample a single monomial of degree
+        # exactly min_valuation and then use this to shift the polynomial
+        # into the correct bounds
+        s = self.monomial(*IntegerVectors(abs(min_valuation), self._n).random_element())
+        if min_valuation < 0:
+            s = ~s
+        return f * s
 
     def is_exact(self):
         """
@@ -518,8 +669,8 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: P.<x> = LaurentPolynomialRing(QQ, 1)
             sage: P
             Multivariate Laurent Polynomial Ring in x over Rational Field
-            sage: K.<i> = CyclotomicField(4)                                                        # optional - sage.rings.number_field
-            sage: P.change_ring(K)                                                                  # optional - sage.rings.number_field
+            sage: K.<i> = CyclotomicField(4)                                                        # needs sage.rings.number_field
+            sage: P.change_ring(K)                                                                  # needs sage.rings.number_field
             Multivariate Laurent Polynomial Ring in x over
              Cyclotomic Field of order 4 and degree 2
         """

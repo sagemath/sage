@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Weierstrass `\wp`-function for elliptic curves
 
@@ -36,8 +35,7 @@ AUTHORS:
 - Chris Wuthrich 11/09: major restructuring
 
 - Jeroen Demeyer (2014-03-06): code clean up, fix characteristic bound
-  for quadratic algorithm (see :trac:`15855`)
-
+  for quadratic algorithm (see :issue:`15855`)
 """
 
 #*****************************************************************************
@@ -56,6 +54,7 @@ from sage.rings.power_series_ring import PowerSeriesRing
 # Note: Part of the documentation is replicated in ell_field.py for
 # users' convenience. Make sure to keep the two copies synchronized.
 
+
 def weierstrass_p(E, prec=20, algorithm=None):
     r"""
     Compute the Weierstrass `\wp`-function on an elliptic curve.
@@ -66,9 +65,9 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
     - ``prec`` -- precision
 
-    - ``algorithm`` -- string or ``None`` (default: ``None``):
-      a choice of algorithm among ``"pari"``, ``"fast"``, ``"quadratic"``;
-      or ``None`` to let this function determine the best algorithm to use.
+    - ``algorithm`` -- string or ``None`` (default: ``None``);
+      a choice of algorithm among ``'pari'``, ``'fast'``, ``'quadratic'``,
+      or ``None`` to let this function determine the best algorithm to use
 
     OUTPUT:
 
@@ -91,34 +90,34 @@ def weierstrass_p(E, prec=20, algorithm=None):
         sage: E.weierstrass_p(prec=8, algorithm='quadratic')
         z^-2 + 31/15*z^2 + 2501/756*z^4 + 961/675*z^6 + O(z^8)
 
-        sage: k = GF(11)                                                                # optional - sage.rings.finite_rings
-        sage: E = EllipticCurve(k, [1,1])                                               # optional - sage.rings.finite_rings
-        sage: E.weierstrass_p(prec=6, algorithm='fast')                                 # optional - sage.rings.finite_rings
+        sage: k = GF(11)
+        sage: E = EllipticCurve(k, [1,1])
+        sage: E.weierstrass_p(prec=6, algorithm='fast')
         z^-2 + 2*z^2 + 3*z^4 + O(z^6)
-        sage: E.weierstrass_p(prec=7, algorithm='fast')                                 # optional - sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=7, algorithm='fast')
         Traceback (most recent call last):
         ...
         ValueError: for computing the Weierstrass p-function via the fast algorithm,
         the characteristic (11) of the underlying field must be greater than prec + 4 = 11
-        sage: E.weierstrass_p(prec=8)                                                   # optional - sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=8)
         z^-2 + 2*z^2 + 3*z^4 + 5*z^6 + O(z^8)
-        sage: E.weierstrass_p(prec=8, algorithm='quadratic')                            # optional - sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=8, algorithm='quadratic')
         z^-2 + 2*z^2 + 3*z^4 + 5*z^6 + O(z^8)
-        sage: E.weierstrass_p(prec=8, algorithm='pari')                                 # optional - sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=8, algorithm='pari')
         z^-2 + 2*z^2 + 3*z^4 + 5*z^6 + O(z^8)
-        sage: E.weierstrass_p(prec=9)                                                   # optional - sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=9)
         Traceback (most recent call last):
         ...
         NotImplementedError: currently no algorithms for computing the Weierstrass
         p-function for that characteristic / precision pair is implemented.
         Lower the precision below char(k) - 2
-        sage: E.weierstrass_p(prec=9, algorithm="quadratic")                            # optional - sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=9, algorithm='quadratic')
         Traceback (most recent call last):
         ...
         ValueError: for computing the Weierstrass p-function via the quadratic
         algorithm, the characteristic (11) of the underlying field must be greater
         than prec + 2 = 11
-        sage: E.weierstrass_p(prec=9, algorithm='pari')                                 # optional - sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=9, algorithm='pari')
         Traceback (most recent call last):
         ...
         ValueError: for computing the Weierstrass p-function via pari, the
@@ -126,7 +125,7 @@ def weierstrass_p(E, prec=20, algorithm=None):
 
     TESTS::
 
-        sage: E.weierstrass_p(prec=4, algorithm='foo')                                  # optional - sage.rings.finite_rings
+        sage: E.weierstrass_p(prec=4, algorithm='foo')
         Traceback (most recent call last):
         ...
         ValueError: unknown algorithm for computing the Weierstrass p-function
@@ -167,9 +166,10 @@ def weierstrass_p(E, prec=20, algorithm=None):
     u = E.isomorphism_to(Esh).u
     return wp(z*u) * u**2
 
+
 def compute_wp_pari(E,prec):
     r"""
-    Computes the Weierstrass `\wp`-function with the ``ellwp`` function
+    Compute the Weierstrass `\wp`-function with the ``ellwp`` function
     from PARI.
 
     EXAMPLES::
@@ -208,7 +208,7 @@ def compute_wp_quadratic(k, A, B, prec):
     - ``k`` -- the field of definition of the curve
     - ``A`` -- and
     - ``B`` -- the coefficients of the elliptic curve
-    - ``prec`` -- the precision to which we compute the series.
+    - ``prec`` -- the precision to which we compute the series
 
     OUTPUT:
 
@@ -224,13 +224,13 @@ def compute_wp_quadratic(k, A, B, prec):
         sage: E.weierstrass_p(prec=10, algorithm='quadratic')
         z^-2 - 7/5*z^2 + 49/75*z^6 + O(z^10)
 
-        sage: E = EllipticCurve(GF(103), [1,2])                                         # optional - sage.rings.finite_rings
-        sage: E.weierstrass_p(algorithm='quadratic')                                    # optional - sage.rings.finite_rings
+        sage: E = EllipticCurve(GF(103), [1,2])
+        sage: E.weierstrass_p(algorithm='quadratic')
         z^-2 + 41*z^2 + 88*z^4 + 11*z^6 + 57*z^8 + 55*z^10 + 73*z^12
          + 11*z^14 + 17*z^16 + 50*z^18 + O(z^20)
 
         sage: from sage.schemes.elliptic_curves.ell_wp import compute_wp_quadratic
-        sage: compute_wp_quadratic(E.base_ring(), E.a4(), E.a6(), prec=10)              # optional - sage.rings.finite_rings
+        sage: compute_wp_quadratic(E.base_ring(), E.a4(), E.a6(), prec=10)
         z^-2 + 41*z^2 + 88*z^4 + 11*z^6 + 57*z^8 + O(z^10)
     """
     m = (prec + 1)//2
@@ -253,9 +253,10 @@ def compute_wp_quadratic(k, A, B, prec):
 
     return pe(Z**2).add_bigoh(prec)
 
+
 def compute_wp_fast(k, A, B, m):
     r"""
-    Computes the Weierstrass function of an elliptic curve defined by short Weierstrass model:
+    Compute the Weierstrass function of an elliptic curve defined by short Weierstrass model:
     `y^2 = x^3 + Ax + B`. It does this with as fast as polynomial of degree `m` can be multiplied
     together in the base ring, i.e. `O(M(n))` in the notation of [BMSS2006]_.
 
@@ -266,11 +267,9 @@ def compute_wp_fast(k, A, B, m):
     - ``k`` -- the base field of the curve
     - ``A`` -- and
     - ``B`` -- as the coefficients of the short Weierstrass model `y^2 = x^3 +Ax +B`, and
-    - ``m`` -- the precision to which the function is computed to.
+    - ``m`` -- the precision to which the function is computed to
 
-    OUTPUT:
-
-    the Weierstrass `\wp` function as a Laurent series to precision `m`.
+    OUTPUT: the Weierstrass `\wp` function as a Laurent series to precision `m`
 
     ALGORITHM:
 
@@ -283,8 +282,8 @@ def compute_wp_fast(k, A, B, m):
         sage: compute_wp_fast(QQ, 1, 8, 7)
         z^-2 - 1/5*z^2 - 8/7*z^4 + 1/75*z^6 + O(z^7)
 
-        sage: k = GF(37)                                                                # optional - sage.rings.finite_rings
-        sage: compute_wp_fast(k, k(1), k(8), 5)                                         # optional - sage.rings.finite_rings
+        sage: k = GF(37)
+        sage: compute_wp_fast(k, k(1), k(8), 5)
         z^-2 + 22*z^2 + 20*z^4 + O(z^5)
     """
     R = PowerSeriesRing(k,'z',default_prec=m+5)
@@ -320,7 +319,7 @@ def compute_wp_fast(k, A, B, m):
 
 def solve_linear_differential_system(a, b, c, alpha):
     r"""
-    Solves a system of linear differential equations: `af' + bf = c` and `f'(0) = \alpha`
+    Solve a system of linear differential equations: `af' + bf = c` and `f'(0) = \alpha`
     where `a`, `b`, and `c` are power series in one variable and `\alpha` is a constant in the coefficient ring.
 
     ALGORITHM:
@@ -330,15 +329,15 @@ def solve_linear_differential_system(a, b, c, alpha):
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.ell_wp import solve_linear_differential_system
-        sage: k = GF(17)                                                                # optional - sage.rings.finite_rings
-        sage: R.<x> = PowerSeriesRing(k)                                                # optional - sage.rings.finite_rings
-        sage: a = 1 + x + O(x^7); b = x + O(x^7); c = 1 + x^3 + O(x^7); alpha = k(3)    # optional - sage.rings.finite_rings
-        sage: f = solve_linear_differential_system(a, b, c, alpha)                      # optional - sage.rings.finite_rings
-        sage: f                                                                         # optional - sage.rings.finite_rings
+        sage: k = GF(17)
+        sage: R.<x> = PowerSeriesRing(k)
+        sage: a = 1 + x + O(x^7); b = x + O(x^7); c = 1 + x^3 + O(x^7); alpha = k(3)
+        sage: f = solve_linear_differential_system(a, b, c, alpha)
+        sage: f
         3 + x + 15*x^2 + x^3 + 10*x^5 + 3*x^6 + 13*x^7 + O(x^8)
-        sage: a*f.derivative() + b*f - c                                                # optional - sage.rings.finite_rings
+        sage: a*f.derivative() + b*f - c
         O(x^7)
-        sage: f(0) == alpha                                                             # optional - sage.rings.finite_rings
+        sage: f(0) == alpha
         True
     """
     a_recip = 1 / a

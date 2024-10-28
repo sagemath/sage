@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite semigroups
 """
@@ -62,7 +63,7 @@ class FiniteSemigroups(CategoryWithAxiom):
     class ParentMethods:
         def idempotents(self):
             r"""
-            Returns the idempotents of the semigroup
+            Return the idempotents of the semigroup.
 
             EXAMPLES::
 
@@ -75,7 +76,7 @@ class FiniteSemigroups(CategoryWithAxiom):
         @cached_method
         def j_classes(self):
             r"""
-            Returns the `J`-classes of the semigroup.
+            Return the `J`-classes of the semigroup.
 
             Two elements `u` and `v` of a monoid are in the same `J`-class
             if `u` divides `v` and `v` divides `u`.
@@ -87,25 +88,23 @@ class FiniteSemigroups(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: S = FiniteSemigroups().example(alphabet=('a','b', 'c'))
-                sage: sorted(map(sorted, S.j_classes()))                                # optional - sage.graphs
+                sage: sorted(map(sorted, S.j_classes()))                                # needs sage.graphs
                 [['a'], ['ab', 'ba'], ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'],
                  ['ac', 'ca'], ['b'], ['bc', 'cb'], ['c']]
             """
-            return self.cayley_graph(side="twosided", simple=True).strongly_connected_components()
+            return self.cayley_graph(side='twosided', simple=True).strongly_connected_components()
 
         @cached_method
         def j_classes_of_idempotents(self):
             r"""
-            Returns all the idempotents of self, grouped by J-class.
+            Return all the idempotents of self, grouped by J-class.
 
-            OUTPUT:
-
-             a list of lists.
+            OUTPUT: list of lists
 
             EXAMPLES::
 
                 sage: S = FiniteSemigroups().example(alphabet=('a','b', 'c'))
-                sage: sorted(map(sorted, S.j_classes_of_idempotents()))                 # optional - sage.graphs
+                sage: sorted(map(sorted, S.j_classes_of_idempotents()))                 # needs sage.graphs
                 [['a'], ['ab', 'ba'], ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'],
                  ['ac', 'ca'], ['b'], ['bc', 'cb'], ['c']]
             """
@@ -114,7 +113,7 @@ class FiniteSemigroups(CategoryWithAxiom):
         @cached_method
         def j_transversal_of_idempotents(self):
             r"""
-            Returns a list of one idempotent per regular J-class
+            Return a list of one idempotent per regular J-class.
 
             EXAMPLES::
 
@@ -123,7 +122,7 @@ class FiniteSemigroups(CategoryWithAxiom):
             The chosen elements depend on the order of each `J`-class,
             and that order is random when using Python 3. ::
 
-                sage: sorted(S.j_transversal_of_idempotents()) # random                 # optional - sage.graphs
+                sage: sorted(S.j_transversal_of_idempotents())  # random                # needs sage.graphs
                 ['a', 'ab', 'abc', 'ac', 'b', 'c', 'cb']
             """
             def first_idempotent(l):

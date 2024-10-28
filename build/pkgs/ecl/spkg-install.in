@@ -1,12 +1,5 @@
 cd src
 
-if [ "$UNAME" = "CYGWIN" ]; then
-    # Some of ECL's sources rely on GNU-isms that are allowed by default on
-    # most glibcs, but not in newlib; https://github.com/sagemath/sage/issues/25057
-    CFLAGS="$CFLAGS -D_GNU_SOURCE"
-    CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE"
-fi
-
 export CFLAGS
 export CXXFLAGS
 export LDFLAGS
@@ -26,7 +19,7 @@ echo "configure scripts and/or makefiles might override these later"
 echo ""
 
 
-# Use newer version of config.guess and config.sub (see Trac #19732)
+# Use newer version of config.guess and config.sub (see Issue #19732)
 cp "$SAGE_ROOT"/config/config.* src
 
 if [ x"$SAGE_SPKG_INSTALL_DOCS" != xyes ] ; then
@@ -45,19 +38,3 @@ exec </dev/null
 
 sdh_make
 sdh_make_install
-
-# Create symbolic link to lib/ecl-version directory.
-# Also create a symbolic link lib/ecl/ecl -> include/ecl.
-# This is important when the Sage install is moved, see Trac #14662.
-cd "$SAGE_DESTDIR$SAGE_LOCAL/lib/" && rm -f ecl && ln -s ecl-* ecl
-if [ $? -ne 0 ]; then
-    echo >&2 "Error - Failed to create symbolic link to ECL library"
-    echo >&2 "directory ... exiting"
-    exit 1
-fi
-cd "$SAGE_DESTDIR$SAGE_LOCAL/lib/ecl" && rm -f ecl && ln -s ../../include/ecl ecl
-if [ $? -ne 0 ]; then
-    echo >&2 "Error - Failed to create symbolic link to ECL include"
-    echo >&2 "directory ... exiting"
-    exit 1
-fi

@@ -3,7 +3,7 @@ Extra functions for quadratic forms
 """
 
 from sage.matrix.constructor import matrix
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.arith.misc import legendre_symbol
 from sage.rings.integer_ring import ZZ
 
@@ -13,7 +13,7 @@ def is_triangular_number(n, return_value=False):
     Return whether ``n`` is a triangular number.
 
     A *triangular number* is a number of the form `k(k+1)/2` for some
-    non-negative integer `n`. See :wikipedia:`Triangular_number`. The sequence
+    nonnegative integer `n`. See :wikipedia:`Triangular_number`. The sequence
     of triangular number is references as A000217 in the Online encyclopedia of
     integer sequences (OEIS).
 
@@ -22,11 +22,11 @@ def is_triangular_number(n, return_value=False):
 
     INPUT:
 
-    - ``n`` - an integer
+    - ``n`` -- integer
 
-    - ``return_value`` - a boolean set to ``False`` by default. If set to
+    - ``return_value`` -- boolean (default: ``False``); if set to
       ``True`` the function returns a pair made of a boolean and the value `v`
-      such that `v(v+1)/2 = n`.
+      such that `v(v+1)/2 = n`
 
     EXAMPLES::
 
@@ -85,11 +85,9 @@ def extend_to_primitive(A_input):
 
     INPUT:
 
-    a matrix, or a list of length n vectors (in the same space)
+    - ``A_input`` -- a matrix or a list of length n vectors (in the same space)
 
-    OUTPUT:
-
-    a square matrix, or a list of n vectors (resp.)
+    OUTPUT: a square matrix or a list of n vectors (resp.)
 
     EXAMPLES::
 
@@ -103,7 +101,7 @@ def extend_to_primitive(A_input):
         [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
     """
     # Deal with a list of vectors
-    if not is_Matrix(A_input):
+    if not isinstance(A_input, Matrix):
         A = matrix(A_input)      # Make a matrix A with the given rows.
         vec_output_flag = True
     else:
@@ -151,7 +149,7 @@ def least_quadratic_nonresidue(p):
 
         sage: least_quadratic_nonresidue(5)
         2
-        sage: [least_quadratic_nonresidue(p) for p in prime_range(3, 100)]              # optional - sage.libs.pari
+        sage: [least_quadratic_nonresidue(p) for p in prime_range(3, 100)]              # needs sage.libs.pari
         [2, 2, 3, 2, 2, 3, 2, 5, 2, 3, 2, 3, 2, 5, 2, 2, 2, 2, 7, 5, 3, 2, 3, 5]
 
     TESTS:

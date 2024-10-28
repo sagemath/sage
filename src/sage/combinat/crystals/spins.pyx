@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Spin Crystals
 
@@ -73,7 +73,7 @@ def CrystalOfSpins(ct):
 
     INPUT:
 
-    -  ``['B', n]`` - A Cartan type `B_n`.
+    - ``['B', n]`` -- a Cartan type `B_n`
 
     EXAMPLES::
 
@@ -113,7 +113,7 @@ def CrystalOfSpinsPlus(ct):
 
     INPUT:
 
-    -  ``['D', n]`` - A Cartan type `D_n`.
+    - ``['D', n]`` -- a Cartan type `D_n`
 
     EXAMPLES::
 
@@ -146,7 +146,7 @@ def CrystalOfSpinsMinus(ct):
 
     INPUT:
 
-    -  ``['D', n]`` - A Cartan type `D_n`.
+    - ``['D', n]`` -- a Cartan type `D_n`
 
     EXAMPLES::
 
@@ -494,7 +494,7 @@ cdef class Spin(Element):
 
     def _latex_(self):
         r"""
-        Gives the latex output of a spin column.
+        Give the latex output of a spin column.
 
         EXAMPLES::
 
@@ -600,7 +600,7 @@ cdef class Spin_crystal_type_B_element(Spin):
             return self._new_c(ret)
         return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -617,7 +617,7 @@ cdef class Spin_crystal_type_B_element(Spin):
             return self._value[i-1]
         return self._value[i-1] and not self._value[i]
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 
@@ -720,7 +720,7 @@ cdef class Spin_crystal_type_D_element(Spin):
             return self._new_c(ret)
         return None
 
-    cpdef int epsilon(self, int i):
+    cpdef int epsilon(self, int i) noexcept:
         r"""
         Return `\varepsilon_i` of ``self``.
 
@@ -737,7 +737,7 @@ cdef class Spin_crystal_type_D_element(Spin):
             return self._value[i-1] and self._value[i-2]
         return self._value[i-1] and not self._value[i]
 
-    cpdef int phi(self, int i):
+    cpdef int phi(self, int i) noexcept:
         r"""
         Return `\varphi_i` of ``self``.
 

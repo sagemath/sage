@@ -153,7 +153,7 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
         - :meth:`sage.graphs.generic_graph.GenericGraph.cartesian_product`
 
         - :mod:`~sage.graphs.graph_decompositions.graph_products` -- a module on
-          graph products.
+          graph products
 
     .. NOTE::
 
@@ -204,13 +204,13 @@ def is_cartesian_product(g, certificate=False, relabeling=False):
 
     TESTS:
 
-    Wagner's Graph (:trac:`13599`)::
+    Wagner's Graph (:issue:`13599`)::
 
         sage: g = graphs.WagnerGraph()                                                  # needs networkx
         sage: g.is_cartesian_product()                                                  # needs networkx
         False
 
-    Empty and one-element graph (:trac:`19546`)::
+    Empty and one-element graph (:issue:`19546`)::
 
         sage: Graph().is_cartesian_product()
         False
@@ -397,12 +397,12 @@ def rooted_product(G, H, root=None):
         sage: G = graphs.RandomGNP(20, .3)
         sage: P = graphs.PathGraph(2)
         sage: R = G.rooted_product(P)
-        sage: len(R.dominating_set()) == G.order()
+        sage: len(R.dominating_set()) == G.order()                                      # needs sage.numerical.mip
         True
         sage: G = digraphs.RandomDirectedGNP(20, .3)
         sage: P = digraphs.Path(2)
         sage: R = G.rooted_product(P)
-        sage: len(R.dominating_set()) == G.order()
+        sage: len(R.dominating_set()) == G.order()                                      # needs sage.numerical.mip
         True
 
     The rooted product of two graphs is a subgraph of the cartesian product of

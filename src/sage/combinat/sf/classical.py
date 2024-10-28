@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Classical symmetric functions
 """
@@ -17,8 +18,8 @@ Classical symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.rings.integer import Integer
-from sage.rings.integer_ring import IntegerRing
-from sage.rings.rational_field import RationalField
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.combinat.partition import _Partitions
 
 
@@ -28,9 +29,6 @@ from . import llt
 from . import macdonald
 from . import jack
 from . import orthotriang
-
-ZZ = IntegerRing()
-QQ = RationalField()
 
 translate = {'monomial':'MONOMIAL', 'homogeneous':'HOMSYM', 'powersum':'POWSYM', 'elementary':'ELMSYM', 'Schur':'SCHUR'}
 
@@ -49,7 +47,7 @@ def init():
         sage: sage.combinat.sf.classical.conversion_functions[('Schur', 'powersum')]
         <built-in function t_SCHUR_POWSYM_symmetrica>
 
-    The following checks if the bug described in :trac:`15312` is fixed. ::
+    The following checks if the bug described in :issue:`15312` is fixed. ::
 
         sage: change = sage.combinat.sf.classical.conversion_functions[('powersum', 'Schur')]
         sage: hideme = change({Partition([1]*47):ZZ(1)}) # long time
@@ -113,7 +111,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         TESTS:
 
         Check that non-Schur bases raise an error when given skew partitions
-        (:trac:`19218`)::
+        (:issue:`19218`)::
 
             sage: e = SymmetricFunctions(QQ).e()
             sage: e([[2,1],[1]])
@@ -121,7 +119,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
             ...
             TypeError: do not know how to make x (= [[2, 1], [1]]) an element of self
 
-        Check that :trac:`34576` is fixed::
+        Check that :issue:`34576` is fixed::
 
             sage: s = SymmetricFunctions(ZZ).s()
             sage: f = s(0/2); f
@@ -157,7 +155,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         ##############
         # Dual bases #
         ##############
-        elif sfa.is_SymmetricFunction(x) and hasattr(x, 'dual'):
+        elif isinstance(x, sfa.SymmetricFunctionAlgebra_generic.Element) and hasattr(x, 'dual'):
             # Check to see if it is the dual of some other basis
             # If it is, try to coerce its corresponding element
             # in the other basis

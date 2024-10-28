@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Special Methods for Classes
 
@@ -79,7 +80,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
     TESTS::
 
-        sage: PerfectMatchings(2).list()
+        sage: PerfectMatchings(2).list()                                                # needs sage.combinat
         [[(1, 2)]]
 
     .. NOTE::
@@ -118,7 +119,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
     def _set_classcall(cls, function):
         r"""
-        Change dynamically the classcall function for this class
+        Change dynamically the classcall function for this class.
 
         EXAMPLES::
 
@@ -271,12 +272,12 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         The benefit, compared with using a wrapper function, is that the
         user interface has a single handle for the class::
 
-            sage: x = Partition([3,2,2])
-            sage: isinstance(x, Partition)          # todo: not implemented
+            sage: x = Partition([3,2,2])                                                # needs sage.combinat
+            sage: isinstance(x, Partition)      # not implemented                       # needs sage.combinat
 
         instead of::
 
-            sage: isinstance(x, sage.combinat.partition.Partition)
+            sage: isinstance(x, sage.combinat.partition.Partition)                      # needs sage.combinat
             True
 
         Another difference is that ``__classcall__`` is inherited by
@@ -399,7 +400,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
     def __contains__(cls, x):
         r"""
-        This method implements membership testing for a class
+        This method implements membership testing for a class.
 
         Let ``cls`` be a class in :class:`ClasscallMetaclass`, and consider
         a call of the form::
@@ -448,14 +449,14 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
 def typecall(pytype cls, *args, **kwds):
     r"""
-    Object construction
+    Object construction.
 
     This is a faster equivalent to ``type.__call__(cls, <some arguments>)``.
 
     INPUT:
 
-    - ``cls`` -- the class used for constructing the instance. It must be
-      a builtin type or a new style class (inheriting from :class:`object`).
+    - ``cls`` -- the class used for constructing the instance; it must be
+      a builtin type or a new style class (inheriting from :class:`object`)
 
     EXAMPLES::
 

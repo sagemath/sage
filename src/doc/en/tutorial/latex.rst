@@ -1,71 +1,99 @@
-*********************************
+***********************
 Sage, LaTeX and Friends
-*********************************
+***********************
 
 Sage and the LaTeX dialect of TeX have an intensely synergistic relationship.
 This section aims to introduce the variety of interactions, beginning with the
 most basic and proceeding to the more unusual.
 
-Overview
-========
+Basic Use
+=========
 
-It may be easiest to understand the various uses of LaTeX with a
-brief overview of the mechanics of the three principal methods
-employed by Sage.
-
-    #. Every "object" in Sage is required to have a LaTeX representation.  You
-       can access this representation by executing ``latex(foo)`` where
-       ``foo`` is some object in Sage.  The output is a string that should
-       render a reasonably accurate representation of ``foo`` when used in
-       TeX's math-mode (for example, when enclosed between a pair of single
-       dollar signs). Some examples of this follow below.
-
-       In this way, Sage can be used effectively for constructing portions of
-       a LaTeX document: create or compute an object in Sage, print ``latex()``
-       of the object and cut/paste it into your document.
-
-    #. The Jupyter notebook interface uses `MathJax <http://www.mathjax.org>`_
-       to render mathematics cleanly in a web browser. You can start this
-       automatic rendering by executing ``%display latex`` (and stop by
-       executing ``%display plain``).
-
-       MathJax is an open source JavaScript display engine for mathematics that
-       works in all modern browsers.  It is able to render a large, but not
-       totally complete, subset of TeX.  It has no support for things like
-       complicated tables, sectioning or document management, as it is oriented
-       towards accurately rendering "snippets" of TeX. Seemingly automatic
-       rendering of math in the notebook is provided by converting the
-       ``latex()`` representation of an object (as described above) into a form
-       of HTML palatable to MathJax.
-
-    #. A system-wide installation of LaTeX can be employed.  Sage includes
-       almost everything you need to build and use Sage, but a significant
-       exception is TeX itself.  So in these situations you need to have
-       TeX installed, along with some associated conversion utilities, to
-       utilize the full power.
-
-Here we demonstrate some basic uses of the ``latex()`` function. ::
+Every "object" in Sage is required to have a LaTeX representation.  You can
+access this representation by executing ``latex(foo)`` where ``foo`` is some
+object in Sage.  The output is a string that should render a reasonably
+accurate representation of ``foo`` when used in TeX's math-mode (for example,
+when enclosed between a pair of single dollar signs). Some examples of this
+follow below. ::
 
     sage: var('z')
     z
     sage: latex(z^12)
     z^{12}
-    sage: latex(integrate(z^4, z))
-    \frac{1}{5} \, z^{5}
+    sage: latex(sqrt(z^2 + 1/2))
+    \sqrt{z^{2} + \frac{1}{2}}
     sage: latex('a string')
     \text{\texttt{a{ }string}}
     sage: latex(QQ)
     \Bold{Q}
+    sage: latex(ZZ['x'])
+    \Bold{Z}[x]
     sage: latex(matrix(QQ, 2, 3, [[2,4,6],[-1,-1,-1]]))
     \left(\begin{array}{rrr}
     2 & 4 & 6 \\
     -1 & -1 & -1
     \end{array}\right)
 
-Basic MathJax functionality is largely automatic in the notebook, but we can
-partially demonstrate this support with the ``MathJax`` class.  The object of
-this class converts a Sage object to its LaTeX representation and then wraps it
-in HTML.  ::
+In this way, Sage can be used effectively for constructing portions of
+a LaTeX document: create or compute an object in Sage, do ``latex(foo)``
+of the object ``foo`` and cut/paste the LaTeX string into your document.
+
+The command ``view(foo)`` will show the rendered LaTeX
+representation of ``foo``. In the background, the command runs ``latex(foo)``
+and incorporates the LaTeX string into a simple LaTeX document, processes that
+document with the system-wide TeX installation, and finally an appropriate
+viewer will be called to display the output.
+
+In the Jupyter notebook, you can see the rendered LaTeX representation of the
+output of the entered commands automatically. You can start this
+automatic rendering by executing ``%display latex`` (and stop by executing
+``%display plain``).
+
+.. ONLY:: html and feature_jupyter_sphinx
+
+    Thus, in the Jupyter notebook, you get
+
+    .. JUPYTER-EXECUTE::
+
+        %display latex
+        var('z')
+        z^12
+
+    .. JUPYTER-EXECUTE::
+
+        sqrt(z^2 + 1/2)
+
+    .. JUPYTER-EXECUTE::
+
+        'a string'
+
+    .. JUPYTER-EXECUTE::
+
+        QQ
+
+    .. JUPYTER-EXECUTE::
+
+        ZZ['x']
+
+    .. JUPYTER-EXECUTE::
+
+        matrix(QQ, 2, 3, [[2,4,6],[-1,-1,-1]])
+
+    .. JUPYTER-EXECUTE::
+
+        %display plain
+
+The Jupyter notebook uses `MathJax <http://www.mathjax.org>`_ to render
+mathematics cleanly in a web browser. MathJax is an open source JavaScript
+display engine for mathematics that works in all modern browsers.  It is able
+to render a large, but not totally complete, subset of LaTeX.  It has no
+support for things like complicated tables, sectioning or document management,
+as it is oriented towards accurately rendering math snippets of LaTeX.
+
+The automatic LaTeX rendering in the Jupyter notebook (with ``%display latex``
+on) is internally done via the :class:`sage.misc.html.MathJax` class. The
+object of this class converts a Sage object through ``latex()`` to a form of
+HTML palatable to MathJax and then wraps it in HTML.  ::
 
     sage: from sage.misc.html import MathJax
     sage: mj = MathJax()
@@ -73,28 +101,22 @@ in HTML.  ::
     z
     sage: mj(z^12)
     <html>\[z^{12}\]</html>
+    sage: mj(sqrt(z^2 + 1/2))
+    <html>\[\sqrt{z^{2} + \frac{1}{2}}\]</html>
+    sage: mj('a string')
+    <html>\[\verb|a|\verb| |\verb|string|\]</html>
     sage: mj(QQ)
     <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}\]</html>
     sage: mj(ZZ['x'])
     <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}[x]\]</html>
-    sage: mj(integrate(z^4, z))
-    <html>\[\frac{1}{5} \, z^{5}\]</html>
+    sage: mj(matrix(QQ, 2, 3, [[2,4,6],[-1,-1,-1]]))
+    <html>\[\left(\begin{array}{rrr}
+    2 & 4 & 6 \\
+    -1 & -1 & -1
+    \end{array}\right)\]</html>
 
-Basic Use
-=========
+This is useful to know if you need to understand the LaTeX rendering of a Sage object.
 
-As indicated in the overview, the simplest way to exploit Sage's support of
-LaTeX is to use the ``latex()`` function to create legitimate LaTeX code to
-represent mathematical objects.  These strings can then be incorporated into
-standalone LaTeX documents.
-
-At the other extreme is the ``view()`` command. The command ``view(foo)`` will
-create the LaTeX representation of ``foo``, incorporate this into a simple
-LaTeX document, and then process that document with your system-wide TeX
-installation.  Finally, the appropriate viewer will be called to display the
-output from the TeX command.  Which version of TeX is used, and therefore the
-nature of the output and associated viewer, can be customized (see
-:ref:`sec-custom-processing`).
 
 .. _sec-custom-generation:
 
@@ -152,30 +174,74 @@ done in written work.  This is accomplished by redefining the
     <html>\[\newcommand{\Bold}[1]{\mathbb{#1}}\Bold{Q}\]</html>
     sage: latex.blackboard_bold(False)
 
-It is possible to take advantage of the extensible nature of TeX by adding in
-new macros and new packages.  First, individual macros can be added so that
-they are used when MathJax interprets a snippet of TeX in the notebook.  ::
+.. ONLY:: html
 
+    In the Jupyter notebook,
+
+    .. JUPYTER-EXECUTE::
+
+        %display latex
+        QQ
+
+    .. JUPYTER-EXECUTE::
+
+        latex.blackboard_bold(True)
+        QQ
+
+    .. JUPYTER-EXECUTE::
+
+        latex.blackboard_bold(False)
+        %display plain
+
+It is possible to take advantage of the extensible nature of LaTeX by adding in
+new macros. Individual macros can be added so that they are used when MathJax
+interprets a LaTeX snippet. ::
+
+    sage: latex.add_macro(r"\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}")
     sage: latex.extra_macros()
-    ''
-    sage: latex.add_macro("\\newcommand{\\foo}{bar}")
-    sage: latex.extra_macros()
-    '\\newcommand{\\foo}{bar}'
+    '\\newcommand{\\sqrt}[1]{(#1)^\\frac{1}{2}}'
     sage: var('x y')
     (x, y)
-    sage: latex(x+y)
-    x + y
+    sage: latex(sqrt(x+y))
+    \sqrt{x + y}
     sage: from sage.misc.html import MathJax
     sage: mj = MathJax()
-    sage: mj(x+y)
-    <html>\[\newcommand{\foo}{bar}x + y\]</html>
+    sage: mj(sqrt(x + y))
+    <html>\[\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}\sqrt{x + y}\]</html>
+    sage: latex.extra_macros('')
 
-Additional macros added this way will also be used in the event that the
-system-wide version of TeX is called on something larger than MathJax can
-handle.  The command ``latex_extra_preamble`` is used to build the preamble of
-a complete LaTeX document, so the following illustrates how this is
-accomplished. As usual note the need for the double-backslashes in the Python
-strings.  ::
+.. ONLY:: html
+
+    In the Jupyter notebook,
+
+    .. JUPYTER-EXECUTE::
+
+        %display latex
+        var('x y')
+        sqrt(x + y)
+
+    .. JUPYTER-EXECUTE::
+
+        latex.add_macro(r"\newcommand{\sqrt}[1]{(#1)^\frac{1}{2}}")
+        sqrt(x + y)
+
+    .. JUPYTER-EXECUTE::
+
+        latex.extra_macros('')
+        %display plain
+
+
+.. _sec-custom-processing:
+
+Customizing LaTeX Processing
+============================
+
+The system-wide TeX is called to process a complete LaTeX document, such as
+when you ``view(foo)``, where ``foo`` is a complicated Sage object, too
+complicated for ``MathJax`` to handle.  The command ``latex_extra_preamble`` is
+used to build the preamble of the complete LaTeX document, so the following
+illustrates how this is accomplished. As usual note the need for the
+double-backslashes in the Python strings.  ::
 
     sage: latex.extra_macros('')
     sage: latex.extra_preamble('')
@@ -229,38 +295,40 @@ package that presumably does not exist. ::
     sage: latex.extra_preamble()
     '\\usepackage{foo-bar-unchecked}'
 
-.. _sec-custom-processing:
+Which dialect of TeX is used, and therefore the nature of the output and
+associated viewer, can also be customized.
 
-Customizing LaTeX Processing
-============================
+.. NOTE::
 
-It is also possible to control which variant of TeX is used for system-wide
-invocations, thus also influencing the nature of the output.
+    Sage includes almost everything you need to build and use Sage, but a
+    significant exception is TeX itself. So in the following situations you
+    need to have a full TeX system installed, along with some associated
+    conversion utilities. Many versions of Linux have packages based on
+    TeXLive, for macOS there is MacTeX and for Windows there is MiKTeX.
 
 The ``latex.engine()`` command can be used to control if the system-wide
-executables ``latex``, ``pdflatex`` or ``xelatex`` are employed for more
-complicated LaTeX expressions.  When ``view()`` is called and the engine is set
-to ``latex``, a dvi file is produced and Sage will use a dvi viewer (like xdvi)
-to display the result.  In contrast, using ``view()`` when the engine is set to
-``pdflatex`` will produce a PDF as the result and Sage will call your system's
-utility for displaying PDF files (acrobat, okular, evince, etc.).
+executables ``latex``, ``pdflatex`` or ``xelatex`` are employed. When
+``view()`` is called and the engine is set to ``latex``, a dvi file is produced
+and Sage will use a dvi viewer (like xdvi) to display the result.  In contrast,
+using ``view()`` when the engine is set to ``pdflatex`` will produce a PDF as
+the result and Sage will call your system's utility for displaying PDF files
+(acrobat, okular, evince, etc.).
 
-For a concrete example of how complicated LaTeX expressions can be processed,
-see the example in the next section (:ref:`sec-tkz-graph`) for using the LaTeX
-``tkz-graph`` package to produce high-quality renderings of combinatorial
-graphs.  For other examples, there are some pre-packaged test cases.  To use
-these, it is necessary to import the ``sage.misc.latex.latex_examples`` object,
-which is an instance of the ``sage.misc.latex.LatexExamples`` class, as
-illustrated below.  This class currently has examples of commutative diagrams,
-combinatorial graphs, knot theory and pstricks, which respectively exercise the
-following packages: xy, tkz-graph, xypic, pstricks.  After the import, use
-tab-completion on ``latex_examples`` to see the pre-packaged examples.  Calling
-each example will give you back some explanation about what is required to make
-the example render properly.  To actually see the examples, it is necessary to
-use ``view()`` (once the preamble, engine, etc are all set properly).  ::
+For your exercises with these facilities, there are some pre-packaged examples.
+To use these, it is necessary to import the ``sage.misc.latex.latex_examples``
+object, which is an instance of the :class:`sage.misc.latex.LatexExamples`
+class, as illustrated below.  This class currently has examples of commutative
+diagrams, combinatorial graphs, knot theory and pstricks, which respectively
+exercise the following packages: xy, tkz-graph, xypic, pstricks.  After the
+import, use tab-completion on ``latex_examples`` to see the pre-packaged
+examples.  Calling each example will give you back some explanation about what
+is required to make the example render properly.  To actually see the examples,
+it is necessary to use ``view(foo)`` (once the preamble, engine, etc are all set
+properly).  ::
 
     sage: from sage.misc.latex import latex_examples
-    sage: latex_examples.diagram()
+    sage: foo = latex_examples.diagram()
+    sage: foo
     LaTeX example for testing display of a commutative diagram produced
     by xypic.
     <BLANKLINE>
@@ -269,63 +337,47 @@ use ``view()`` (once the preamble, engine, etc are all set properly).  ::
     and try viewing again. You should get a picture (a part of the diagram arising
     from a filtered chain complex).
 
-.. _sec-tkz-graph:
+For an example of how complicated LaTeX expressions can be processed, let us see the
+example of combinatorial graphs, that use ``tkz-graph`` LaTeX package.
 
-An Example: Combinatorial Graphs with tkz-graph
-===============================================
+.. NOTE::
 
-High-quality illustrations of combinatorial graphs (henceforth just "graphs")
-are possible with the ``tkz-graph`` package.  This package is built on top of
-the ``tikz`` front-end to the ``pgf`` library.  So all of these components need
-to be part of a system-wide TeX installation, and it may be possible that these
-components may not be at their most current versions as packaged in some TeX
-implementations. So for best results, it could be necessary or advisable to
-install these as part of your personal texmf tree.  Creating, maintaining and
-customizing a system-wide or personal TeX installation is beyond the scope of
-this document, but it should be easy to find instructions.  The necessary files
-are listed in :ref:`sec-system-wide-tex`.
+    ``tkz-graph`` LaTeX package is built on top of the ``tikz`` front-end to
+    the ``pgf`` library.  Rendering combinatorial graphs requires the ``pgf``
+    library, and the files ``tkz-graph.sty`` and ``tkz-berge.sty``. It is
+    highly likely that they are already part of your system-wide TeX
+    installation. Even if not, it should be easy to find instructions to
+    install them.
 
-Thus, to start we need to insure that the relevant packages are included by
-adding them to the preamble of the eventual LaTeX document.  The images of
-graphs do not form properly when a dvi file is used as an intermediate format,
-so it is best to set the latex engine to the ``pdflatex`` executable.  At this
-point a command like ``view(graphs.CompleteGraph(4))`` should produce a PDF
-with an appropriate image of the complete graph `K_4`.
+First, we ensure that the relevant packages are included by adding them to the
+preamble of the LaTeX document. ::
+
+    sage: latex.extra_preamble('\\usepackage{tikz}\n\\usepackage{tkz-graph}\n'
+    ....:                      '\\usepackage{tkz-berge}\n\\usetikzlibrary{arrows,shapes}')
+
+The images of graphs do not form properly when a dvi file is used as an
+intermediate format, so it is best to set the latex engine to the ``pdflatex``
+executable::
+
+    sage: latex.engine('pdflatex')
+
+At this point a command like ``view(graphs.CompleteGraph(4))`` should produce a
+PDF with an appropriate image of the complete graph `K_4`.
+
+Actually the preliminary steps could be omitted as the preamble is
+automatically set up properly for graphs and ``pdflatex`` is the default LaTeX
+engine in Sage. Try the command again after restarting Sage.
 
 Note that there is a variety of options to affect how a graph is rendered in
-LaTeX via ``tkz-graph``, which is again outside the scope of this section, see
-the section of the Reference manual titled "LaTeX Options for Graphs" for
-instructions and details.
+LaTeX via ``tkz-graph``, which is outside the scope of this section. See the
+section :ref:`sage.graphs.graph_latex` of the Reference Manual for instructions
+and details.
 
-.. _sec-system-wide-tex:
-
-A Fully Capable TeX Installation
-================================
-
-Many of the more advanced features of the integration of TeX with Sage requires
-a system-wide installation of TeX.  Many versions of Linux have base TeX
-packages based on TeX Live, for macOS there is TeXShop and for Windows there is
-MiKTeX.  The ``convert`` utility is part of the `ImageMagick
-<http://www.imagemagick.org/>`_ suite (which should be a package or an easy
-download), and the three programs ``dvipng``, ``ps2pdf``, and ``dvips`` may be
-included with your TeX distribution.  The first two may also be obtained,
-respectively, from http://sourceforge.net/projects/dvipng/ and as part of
-`Ghostscript <http://www.ghostscript.com/>`_.
-
-Rendering combinatorial graphs requires a recent version of the PGF library,
-the file ``tkz-graph.sty`` from https://www.ctan.org/pkg/tkz-graph, and the
-files ``tkz-arith.sty`` and perhaps ``tkz-berge.sty`` from
-https://www.ctan.org/pkg/tkz-berge.
 
 SageTeX
 =======
 
-SageTeX is a program available to further integrate TeX and Sage. A concise
-description of SageTeX is that it is a collection of TeX macros that allow a
-LaTeX document to include instructions to have Sage compute various objects
-and/or format objects using the ``latex()`` support built into Sage.  So as an
-intermediate step of compiling a LaTeX document, all of the computational and
-LaTeX-formatting features of Sage can be handled automatically.  As an example,
-a mathematics examination can maintain a correct correspondence between
-questions and answers by using SageTeX to have Sage compute one from the other.
+SageTeX is a program available to further integrate TeX and Sage. It is a
+collection of TeX macros that allow a LaTeX document to include instructions to
+have Sage compute various objects and format objects using the ``latex()``.
 See :ref:`sec-sagetex` for more information.

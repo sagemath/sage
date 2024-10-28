@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Homomorphisms of rings
 
@@ -33,34 +32,35 @@ EXAMPLES:
 
 Reduction to finite field::
 
-    sage: H = Hom(ZZ, GF(9, 'a'))                                                       # optional - sage.rings.finite_rings
-    sage: phi = H([1])                                                                  # optional - sage.rings.finite_rings
-    sage: phi(5)                                                                        # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: H = Hom(ZZ, GF(9, 'a'))
+    sage: phi = H([1])
+    sage: phi(5)
     2
-    sage: psi = H([4])                                                                  # optional - sage.rings.finite_rings
-    sage: psi(5)                                                                        # optional - sage.rings.finite_rings
+    sage: psi = H([4])
+    sage: psi(5)
     2
 
 Map from single variable polynomial ring::
 
     sage: R.<x> = ZZ[]
-    sage: phi = R.hom([2], GF(5))                                                       # optional - sage.rings.finite_rings
-    sage: phi                                                                           # optional - sage.rings.finite_rings
+    sage: phi = R.hom([2], GF(5)); phi
     Ring morphism:
       From: Univariate Polynomial Ring in x over Integer Ring
       To:   Finite Field of size 5
       Defn: x |--> 2
-    sage: phi(x + 12)                                                                   # optional - sage.rings.finite_rings
+    sage: phi(x + 12)
     4
 
 Identity map on the real numbers::
 
+    sage: # needs sage.rings.real_mpfr
     sage: f = RR.hom([RR(1)]); f
     Ring endomorphism of Real Field with 53 bits of precision
       Defn: 1.00000000000000 |--> 1.00000000000000
     sage: f(2.5)
     2.50000000000000
-    sage: f = RR.hom( [2.0] )
+    sage: f = RR.hom([2.0])
     Traceback (most recent call last):
     ...
     ValueError: relations do not all (canonically) map to 0
@@ -70,8 +70,8 @@ Homomorphism from one precision of field to another.
 
 From smaller to bigger doesn't make sense::
 
-    sage: R200 = RealField(200)
-    sage: f = RR.hom( R200 )
+    sage: R200 = RealField(200)                                                         # needs sage.rings.real_mpfr
+    sage: f = RR.hom( R200 )                                                            # needs sage.rings.real_mpfr
     Traceback (most recent call last):
     ...
     TypeError: natural coercion morphism from Real Field with 53 bits of precision
@@ -79,14 +79,15 @@ From smaller to bigger doesn't make sense::
 
 From bigger to small does::
 
-    sage: f = RR.hom( RealField(15) )
-    sage: f(2.5)
+    sage: f = RR.hom(RealField(15))                                                     # needs sage.rings.real_mpfr
+    sage: f(2.5)                                                                        # needs sage.rings.real_mpfr
     2.500
-    sage: f(RR.pi())
+    sage: f(RR.pi())                                                                    # needs sage.rings.real_mpfr
     3.142
 
 Inclusion map from the reals to the complexes::
 
+    sage: # needs sage.rings.real_mpfr
     sage: i = RR.hom([CC(1)]); i
     Ring morphism:
       From: Real Field with 53 bits of precision
@@ -97,21 +98,21 @@ Inclusion map from the reals to the complexes::
 
 A map from a multivariate polynomial ring to itself::
 
-    sage: R.<x,y,z> = PolynomialRing(QQ,3)
-    sage: phi = R.hom([y,z,x^2]); phi
+    sage: R.<x,y,z> = PolynomialRing(QQ, 3)
+    sage: phi = R.hom([y, z, x^2]); phi
     Ring endomorphism of Multivariate Polynomial Ring in x, y, z over Rational Field
       Defn: x |--> y
             y |--> z
             z |--> x^2
-    sage: phi(x+y+z)
+    sage: phi(x + y + z)
     x^2 + y + z
 
 An endomorphism of a quotient of a multi-variate polynomial ring::
 
+    sage: # needs sage.libs.singular
     sage: R.<x,y> = PolynomialRing(QQ)
     sage: S.<a,b> = quo(R, ideal(1 + y^2))
-    sage: phi = S.hom([a^2, -b])
-    sage: phi
+    sage: phi = S.hom([a^2, -b]); phi
     Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y
      over Rational Field by the ideal (y^2 + 1)
       Defn: a |--> a^2
@@ -125,8 +126,7 @@ The reduction map from the integers to the integers modulo 8, viewed as
 a quotient ring::
 
     sage: R = ZZ.quo(8*ZZ)
-    sage: pi = R.cover()
-    sage: pi
+    sage: pi = R.cover(); pi
     Ring morphism:
       From: Integer Ring
       To:   Ring of integers modulo 8
@@ -147,28 +147,28 @@ a quotient ring::
 
 Inclusion of ``GF(2)`` into ``GF(4,'a')``::
 
-    sage: k = GF(2)                                                                     # optional - sage.rings.finite_rings
-    sage: i = k.hom(GF(4, 'a'))                                                         # optional - sage.rings.finite_rings
-    sage: i                                                                             # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: k = GF(2)
+    sage: i = k.hom(GF(4, 'a'))
+    sage: i
     Ring morphism:
       From: Finite Field of size 2
       To:   Finite Field in a of size 2^2
       Defn: 1 |--> 1
-    sage: i(0)                                                                          # optional - sage.rings.finite_rings
+    sage: i(0)
     0
-    sage: a = i(1); a.parent()                                                          # optional - sage.rings.finite_rings
+    sage: a = i(1); a.parent()
     Finite Field in a of size 2^2
 
 We next compose the inclusion with reduction from the integers to
 ``GF(2)``::
 
-    sage: pi = ZZ.hom(k)                                                                # optional - sage.rings.finite_rings
-    sage: pi                                                                            # optional - sage.rings.finite_rings
+    sage: # needs sage.rings.finite_rings
+    sage: pi = ZZ.hom(k); pi
     Natural morphism:
       From: Integer Ring
       To:   Finite Field of size 2
-    sage: f = i * pi                                                                    # optional - sage.rings.finite_rings
-    sage: f                                                                             # optional - sage.rings.finite_rings
+    sage: f = i * pi; f
     Composite map:
       From: Integer Ring
       To:   Finite Field in a of size 2^2
@@ -180,25 +180,27 @@ We next compose the inclusion with reduction from the integers to
               From: Finite Field of size 2
               To:   Finite Field in a of size 2^2
               Defn: 1 |--> 1
-    sage: a = f(5); a                                                                   # optional - sage.rings.finite_rings
+    sage: a = f(5); a
     1
-    sage: a.parent()                                                                    # optional - sage.rings.finite_rings
+    sage: a.parent()
     Finite Field in a of size 2^2
 
 Inclusion from `\QQ` to the 3-adic field::
 
-    sage: phi = QQ.hom(Qp(3, print_mode='series'))                                      # optional - sage.rings.padics
-    sage: phi                                                                           # optional - sage.rings.padics
+    sage: # needs sage.rings.padics
+    sage: phi = QQ.hom(Qp(3, print_mode='series'))
+    sage: phi
     Ring morphism:
       From: Rational Field
       To:   3-adic Field with capped relative precision 20
-    sage: phi.codomain()                                                                # optional - sage.rings.padics
+    sage: phi.codomain()
     3-adic Field with capped relative precision 20
-    sage: phi(394)                                                                      # optional - sage.rings.padics
+    sage: phi(394)
     1 + 2*3 + 3^2 + 2*3^3 + 3^4 + 3^5 + O(3^20)
 
 An automorphism of a quotient of a univariate polynomial ring::
 
+    sage: # needs sage.libs.pari
     sage: R.<x> = PolynomialRing(QQ)
     sage: S.<sqrt2> = R.quo(x^2 - 2)
     sage: sqrt2^2
@@ -211,12 +213,13 @@ An automorphism of a quotient of a univariate polynomial ring::
 
 Note that Sage verifies that the morphism is valid::
 
-    sage: (1 - sqrt2)^2
+    sage: (1 - sqrt2)^2                                                                 # needs sage.libs.pari
     -2*sqrt2 + 3
-    sage: c = S.hom([1-sqrt2])    # this is not valid
+    sage: c = S.hom([1 - sqrt2])    # this is not valid                                 # needs sage.libs.pari
     Traceback (most recent call last):
     ...
-    ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
+    ValueError: relations do not all (canonically) map to 0
+    under map determined by images of generators
 
 Endomorphism of power series ring::
 
@@ -232,19 +235,19 @@ Endomorphism of power series ring::
 
 Frobenius on a power series ring over a finite field::
 
-    sage: R.<t> = PowerSeriesRing(GF(5))                                                # optional - sage.rings.finite_rings
-    sage: f = R.hom([t^5]); f                                                           # optional - sage.rings.finite_rings
+    sage: R.<t> = PowerSeriesRing(GF(5))
+    sage: f = R.hom([t^5]); f
     Ring endomorphism of Power Series Ring in t over Finite Field of size 5
       Defn: t |--> t^5
-    sage: a = 2 + t + 3*t^2 + 4*t^3 + O(t^4)                                            # optional - sage.rings.finite_rings
-    sage: b = 1 + t + 2*t^2 + t^3 + O(t^5)                                              # optional - sage.rings.finite_rings
-    sage: f(a)                                                                          # optional - sage.rings.finite_rings
+    sage: a = 2 + t + 3*t^2 + 4*t^3 + O(t^4)
+    sage: b = 1 + t + 2*t^2 + t^3 + O(t^5)
+    sage: f(a)
     2 + t^5 + 3*t^10 + 4*t^15 + O(t^20)
-    sage: f(b)                                                                          # optional - sage.rings.finite_rings
+    sage: f(b)
     1 + t^5 + 2*t^10 + t^15 + O(t^25)
-    sage: f(a*b)                                                                        # optional - sage.rings.finite_rings
+    sage: f(a*b)
     2 + 3*t^5 + 3*t^10 + t^15 + O(t^20)
-    sage: f(a)*f(b)                                                                     # optional - sage.rings.finite_rings
+    sage: f(a)*f(b)
     2 + 3*t^5 + 3*t^10 + t^15 + O(t^20)
 
 Homomorphism of Laurent series ring::
@@ -270,14 +273,17 @@ positive::
     sage: R.hom([1/t])
     Traceback (most recent call last):
     ...
-    ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
+    ValueError: relations do not all (canonically) map to 0
+    under map determined by images of generators
     sage: R.hom([1])
     Traceback (most recent call last):
     ...
-    ValueError: relations do not all (canonically) map to 0 under map determined by images of generators
+    ValueError: relations do not all (canonically) map to 0
+    under map determined by images of generators
 
 Complex conjugation on cyclotomic fields::
 
+    sage: # needs sage.rings.number_field
     sage: K.<zeta7> = CyclotomicField(7)
     sage: c = K.hom([1/zeta7]); c
     Ring endomorphism of Cyclotomic Field of order 7 and degree 6
@@ -293,6 +299,7 @@ Complex conjugation on cyclotomic fields::
 
 Embedding a number field into the reals::
 
+    sage: # needs sage.rings.number_field
     sage: R.<x> = PolynomialRing(QQ)
     sage: K.<beta> = NumberField(x^3 - 2)
     sage: alpha = RR(2)^(1/3); alpha
@@ -311,7 +318,7 @@ Embedding a number field into the reals::
 
 An example from Jim Carlson::
 
-    sage: K = QQ # by the way :-)
+    sage: K = QQ  # by the way :-)
     sage: R.<a,b,c,d> = K[]; R
     Multivariate Polynomial Ring in a, b, c, d over Rational Field
     sage: S.<u> = K[]; S
@@ -324,9 +331,9 @@ An example from Jim Carlson::
             b |--> 0
             c |--> 0
             d |--> u
-    sage: f(a+b+c+d)
+    sage: f(a + b + c + d)
     u
-    sage: f( (a+b+c+d)^2 )
+    sage: f((a+b+c+d)^2)
     u^2
 
 TESTS::
@@ -337,51 +344,52 @@ TESTS::
 
 ::
 
-    sage: K.<zeta7> = CyclotomicField(7)                                                # optional - sage.rings.number_field
-    sage: c = K.hom([1/zeta7])                                                          # optional - sage.rings.number_field
-    sage: c == loads(dumps(c))                                                          # optional - sage.rings.number_field
+    sage: # needs sage.rings.number_field
+    sage: K.<zeta7> = CyclotomicField(7)
+    sage: c = K.hom([1/zeta7])
+    sage: c == loads(dumps(c))
     True
 
 ::
 
-    sage: R.<t> = PowerSeriesRing(GF(5))                                                # optional - sage.rings.finite_rings
-    sage: f = R.hom([t^5])                                                              # optional - sage.rings.finite_rings
-    sage: f == loads(dumps(f))                                                          # optional - sage.rings.finite_rings
+    sage: R.<t> = PowerSeriesRing(GF(5))
+    sage: f = R.hom([t^5])
+    sage: f == loads(dumps(f))
     True
 
 We define the identity map in many possible ways. These should all
 compare equal::
 
-    sage: k = GF(2)                                                                     # optional - sage.rings.finite_rings
-    sage: R.<x> = k[]                                                                   # optional - sage.rings.finite_rings
-    sage: F4.<a> = R.quo(x^2+x+1)                                                       # optional - sage.rings.finite_rings
-    sage: H = End(F4)                                                                   # optional - sage.rings.finite_rings
-
+    sage: # needs sage.rings.finite_rings
+    sage: k = GF(2)
+    sage: R.<x> = k[]
+    sage: F4.<a> = R.quo(x^2 + x + 1)
+    sage: H = End(F4)
     sage: from sage.rings.morphism import *
-    sage: phi1 = H.identity(); phi1                                                     # optional - sage.rings.finite_rings
+    sage: phi1 = H.identity(); phi1
     Identity endomorphism of Univariate Quotient Polynomial Ring in a
      over Finite Field of size 2 with modulus x^2 + x + 1
-    sage: phi2 = H([a]); phi2                                                           # optional - sage.rings.finite_rings
+    sage: phi2 = H([a]); phi2
     Ring endomorphism of Univariate Quotient Polynomial Ring in a
      over Finite Field of size 2 with modulus x^2 + x + 1
       Defn: a |--> a
-    sage: phi3 = RingHomomorphism_from_base(H, R.hom([x])); phi3                        # optional - sage.rings.finite_rings
+    sage: phi3 = RingHomomorphism_from_base(H, R.hom([x])); phi3                        # needs sage.libs.ntl
     Ring endomorphism of Univariate Quotient Polynomial Ring in a
      over Finite Field of size 2 with modulus x^2 + x + 1
       Defn: Induced from base ring by
             Ring endomorphism of Univariate Polynomial Ring in x
              over Finite Field of size 2 (using GF2X)
               Defn: x |--> x
-    sage: phi4 = RingHomomorphism_cover(H); phi4                                        # optional - sage.rings.finite_rings
+    sage: phi4 = RingHomomorphism_cover(H); phi4
     Ring endomorphism of Univariate Quotient Polynomial Ring in a
      over Finite Field of size 2 with modulus x^2 + x + 1
       Defn: Natural quotient map
-    sage: phi5 = F4.frobenius_endomorphism() ^ 2; phi5                                  # optional - sage.rings.finite_rings
+    sage: phi5 = F4.frobenius_endomorphism() ^ 2; phi5
     Frobenius endomorphism x |--> x^(2^2) of
      Univariate Quotient Polynomial Ring in a
      over Finite Field of size 2 with modulus x^2 + x + 1
-    sage: maps = [phi1, phi2, phi3, phi4, phi5]                                         # optional - sage.rings.finite_rings
-    sage: for f in maps:                                                                # optional - sage.rings.finite_rings
+    sage: maps = [phi1, phi2, phi3, phi4, phi5]                                         # needs sage.libs.ntl
+    sage: for f in maps:                                                                # needs sage.libs.ntl
     ....:     for g in maps:
     ....:         if f != g:
     ....:             print("{} != {}".format(f, g))
@@ -397,33 +405,11 @@ compare equal::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import ideal
+from sage.rings import ideal
 import sage.structure.all
 from sage.structure.richcmp cimport (richcmp, rich_to_bool)
 from sage.misc.cachefunc import cached_method
-
-
-def is_RingHomomorphism(phi):
-    """
-    Return ``True`` if ``phi`` is of type :class:`RingHomomorphism`.
-
-    EXAMPLES::
-
-        sage: f = Zmod(8).cover()
-        sage: sage.rings.morphism.is_RingHomomorphism(f)
-        doctest:warning
-        ...
-        DeprecationWarning: is_RingHomomorphism() should not be used anymore. Check whether the category_for() your morphism is a subcategory of Rings() instead.
-        See https://github.com/sagemath/sage/issues/23204 for details.
-        True
-        sage: sage.rings.morphism.is_RingHomomorphism(2/3)
-        False
-    """
-    sage.misc.superseded.deprecation(23204, "is_RingHomomorphism() should not be used anymore. Check whether the category_for() your morphism is a subcategory of Rings() instead.")
-    # We use the category framework to determine whether something is a ring homomorphism.
-    from sage.categories.map import Map
-    from sage.categories.rings import Rings
-    return isinstance(phi, Map) and phi.category_for().is_subcategory(Rings())
+from sage.categories.facade_sets import FacadeSets
 
 
 cdef class RingMap(Morphism):
@@ -467,27 +453,28 @@ cdef class RingMap_lift(RingMap):
     EXAMPLES::
 
         sage: R.<x,y> = QQ[]
-        sage: S.<xbar,ybar> = R.quo( (x^2 + y^2, y) )                                   # optional - sage.libs.singular
-        sage: S.lift()                                                                  # optional - sage.libs.singular
+        sage: S.<xbar,ybar> = R.quo( (x^2 + y^2, y) )                                   # needs sage.libs.singular
+        sage: S.lift()                                                                  # needs sage.libs.singular
         Set-theoretic ring morphism:
           From: Quotient of Multivariate Polynomial Ring in x, y
                  over Rational Field by the ideal (x^2 + y^2, y)
           To:   Multivariate Polynomial Ring in x, y over Rational Field
           Defn: Choice of lifting map
-        sage: S.lift() == 0                                                             # optional - sage.libs.singular
+        sage: S.lift() == 0                                                             # needs sage.libs.singular
         False
 
-    Since :trac:`11068`, it is possible to create
+    Since :issue:`11068`, it is possible to create
     quotient rings of non-commutative rings by two-sided
     ideals. It was needed to modify :class:`RingMap_lift`
     so that rings can be accepted that are no instances
     of :class:`sage.rings.ring.Ring`, as in the following
     example::
 
-        sage: MS = MatrixSpace(GF(5), 2, 2)                                             # optional - sage.modules sage.rings.finite_rings
-        sage: I = MS * [MS.0*MS.1, MS.2+MS.3] * MS                                      # optional - sage.modules sage.rings.finite_rings
-        sage: Q = MS.quo(I)                                                             # optional - sage.modules sage.rings.finite_rings
-        sage: Q.0*Q.1   # indirect doctest                                              # optional - sage.modules sage.rings.finite_rings
+        sage: # needs sage.modules sage.rings.finite_rings
+        sage: MS = MatrixSpace(GF(5), 2, 2)
+        sage: I = MS * [MS.0*MS.1, MS.2+MS.3] * MS
+        sage: Q = MS.quo(I)
+        sage: Q.0*Q.1   # indirect doctest
         [0 1]
         [0 0]
     """
@@ -507,9 +494,9 @@ cdef class RingMap_lift(RingMap):
 
         An invalid example::
 
-            sage: GF9.<one, a> = GaussianIntegers().quotient(3)                         # optional - sage.rings.number_field
-            sage: from sage.rings.morphism import RingMap_lift                          # optional - sage.rings.number_field
-            sage: RingMap_lift(GF9, ZZ)                                                 # optional - sage.rings.number_field
+            sage: GF9.<one, a> = GaussianIntegers().quotient(3)                         # needs sage.rings.number_field
+            sage: from sage.rings.morphism import RingMap_lift
+            sage: RingMap_lift(GF9, ZZ)                                                 # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion from Number Field in I
@@ -578,7 +565,7 @@ cdef class RingMap_lift(RingMap):
             sage: f == g
             False
 
-        Verify that :trac:`5758` has been fixed::
+        Verify that :issue:`5758` has been fixed::
 
             sage: Zmod(8).lift() == 1
             False
@@ -652,18 +639,17 @@ cdef class RingHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: f = ZZ.hom(Zp(3)); f                                                  # optional - sage.rings.padics
+            sage: f = ZZ.hom(Zp(3)); f                                                  # needs sage.rings.padics
             Ring morphism:
               From: Integer Ring
               To:   3-adic Ring with capped relative precision 20
 
         TESTS::
 
-            sage: isinstance(f, sage.rings.morphism.RingHomomorphism)                   # optional - sage.rings.padics
+            sage: isinstance(f, sage.rings.morphism.RingHomomorphism)                   # needs sage.rings.padics
             True
-
         """
-        from .homset import RingHomset_generic
+        from sage.rings.homset import RingHomset_generic
         if not isinstance(parent, RingHomset_generic):
             raise TypeError("parent must be a ring homset")
         RingMap.__init__(self, parent)
@@ -674,9 +660,8 @@ cdef class RingHomomorphism(RingMap):
 
         TESTS::
 
-            sage: ZZ.hom(Zp(3))._repr_type()                                            # optional - sage.rings.padics
+            sage: ZZ.hom(Zp(3))._repr_type()                                            # needs sage.rings.padics
             'Ring'
-
         """
         return "Ring"
 
@@ -691,9 +676,7 @@ cdef class RingHomomorphism(RingMap):
 
         - ``lift`` -- a ring map
 
-        OUTPUT:
-
-        Changes the state of ``self``.
+        OUTPUT: changes the state of ``self``
 
         EXAMPLES::
 
@@ -704,7 +687,6 @@ cdef class RingHomomorphism(RingMap):
               From: Ring of integers modulo 3
               To:   Integer Ring
               Defn: Choice of lifting map
-
         """
         if lift.domain() != self.codomain():
             raise TypeError("lift must have correct domain")
@@ -787,17 +769,17 @@ cdef class RingHomomorphism(RingMap):
         result has the type of a homomorphism between its domain and
         codomain::
 
-            sage: C = CyclotomicField(24)                                               # optional - sage.rings.number_field
-            sage: f = End(C)[1]                                                         # optional - sage.rings.number_field
-            sage: type(f*f) == type(f)                                                  # optional - sage.rings.number_field
+            sage: C = CyclotomicField(24)                                               # needs sage.rings.number_field
+            sage: f = End(C)[1]                                                         # needs sage.rings.number_field
+            sage: type(f*f) == type(f)                                                  # needs sage.rings.number_field
             True
 
         An example where the domain of ``right`` is a relative number field::
 
             sage: PQ.<X> = QQ[]
-            sage: K.<a, b> = NumberField([X^2 - 2, X^2 - 3])                            # optional - sage.rings.number_field
-            sage: e, u, v, w = End(K)                                                   # optional - sage.rings.number_field
-            sage: u*v                                                                   # optional - sage.rings.number_field
+            sage: K.<a, b> = NumberField([X^2 - 2, X^2 - 3])                            # needs sage.rings.number_field
+            sage: e, u, v, w = End(K)                                                   # needs sage.rings.number_field
+            sage: u*v                                                                   # needs sage.rings.number_field
             Relative number field endomorphism of
              Number Field in a with defining polynomial X^2 - 2 over its base field
               Defn: a |--> -a
@@ -822,21 +804,22 @@ cdef class RingHomomorphism(RingMap):
 
         We check that composition works when there is a base map::
 
+            sage: # needs sage.rings.finite_rings
             sage: R.<x> = ZZ[]
-            sage: K.<a> = GF(7^2)                                                       # optional - sage.rings.finite_rings
-            sage: L.<u> = K.extension(x^3 - 3)                                          # optional - sage.rings.finite_rings
-            sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())               # optional - sage.rings.finite_rings
-            sage: phi                                                                   # optional - sage.rings.finite_rings
+            sage: K.<a> = GF(7^2)
+            sage: L.<u> = K.extension(x^3 - 3)
+            sage: phi = L.hom([u^7], base_map=K.frobenius_endomorphism())
+            sage: phi
             Ring endomorphism of Univariate Quotient Polynomial Ring in u
              over Finite Field in a of size 7^2 with modulus u^3 + 4
               Defn: u |--> 2*u
                     with map of base ring
-            sage: psi = phi^3; psi                                                      # optional - sage.rings.finite_rings
+            sage: psi = phi^3; psi
             Ring endomorphism of Univariate Quotient Polynomial Ring in u
              over Finite Field in a of size 7^2 with modulus u^3 + 4
               Defn: u |--> u
                     with map of base ring
-            sage: psi(a) == phi(phi(phi(a)))                                            # optional - sage.rings.finite_rings
+            sage: psi(a) == phi(phi(phi(a)))
             True
 
         It also works when the image of the base map is not contained within the base ring of the codomain::
@@ -900,17 +883,17 @@ cdef class RingHomomorphism(RingMap):
 
     def pushforward(self, I):
         """
-        Returns the pushforward of the ideal `I` under this ring
+        Return the pushforward of the ideal `I` under this ring
         homomorphism.
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2, y^2]); f = S.cover()          # optional - sage.libs.singular
-            sage: f.pushforward(R.ideal([x, 3*x + x*y + y^2]))                          # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2, y^2]); f = S.cover()          # needs sage.libs.singular
+            sage: f.pushforward(R.ideal([x, 3*x + x*y + y^2]))                          # needs sage.libs.singular
             Ideal (xx, xx*yy + 3*xx) of Quotient of Multivariate Polynomial Ring
              in x, y over Rational Field by the ideal (x^2, y^2)
         """
-        if not ideal.is_Ideal(I):
+        if not isinstance(I, ideal.Ideal_generic):
             raise TypeError("I must be an ideal")
         R = self.codomain()
         return R.ideal([self(y) for y in I.gens()])
@@ -939,18 +922,18 @@ cdef class RingHomomorphism(RingMap):
             sage: S.<u,v> = QQ[]
             sage: f = R.hom([u^2, u*v, v^2], S)
             sage: I = S.ideal([u^6, u^5*v, u^4*v^2, u^3*v^3])
-            sage: J = f.inverse_image(I); J                                             # optional - sage.libs.singular
+            sage: J = f.inverse_image(I); J                                             # needs sage.libs.singular
             Ideal (y^2 - x*z, x*y*z, x^2*z, x^2*y, x^3)
             of Multivariate Polynomial Ring in x, y, z over Rational Field
-            sage: f(J) == I                                                             # optional - sage.libs.singular
+            sage: f(J) == I                                                             # needs sage.libs.singular
             True
 
         Under the above homomorphism, there exists an inverse image for
         every element that only involves monomials of even degree::
 
-            sage: [f.inverse_image(p) for p in [u^2, u^4, u*v + u^3*v^3]]               # optional - sage.libs.singular
+            sage: [f.inverse_image(p) for p in [u^2, u^4, u*v + u^3*v^3]]               # needs sage.libs.singular
             [x, x^2, x*y*z + y]
-            sage: f.inverse_image(u*v^2)                                                # optional - sage.libs.singular
+            sage: f.inverse_image(u*v^2)                                                # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: element u*v^2 does not have preimage
@@ -958,27 +941,29 @@ cdef class RingHomomorphism(RingMap):
         The image of the inverse image ideal can be strictly smaller than the
         original ideal::
 
-            sage: S.<u,v> = QQ['u,v'].quotient('v^2 - 2')                               # optional - sage.libs.singular
-            sage: f = QuadraticField(2).hom([v], S)                                     # optional - sage.libs.singular sage.rings.number_field
-            sage: I = S.ideal(u + v)                                                    # optional - sage.libs.singular sage.rings.number_field
-            sage: J = f.inverse_image(I)                                                # optional - sage.libs.singular sage.rings.number_field
-            sage: J.is_zero()                                                           # optional - sage.libs.singular sage.rings.number_field
+            sage: # needs sage.libs.singular sage.rings.number_field
+            sage: S.<u,v> = QQ['u,v'].quotient('v^2 - 2')
+            sage: f = QuadraticField(2).hom([v], S)
+            sage: I = S.ideal(u + v)
+            sage: J = f.inverse_image(I)
+            sage: J.is_zero()
             True
-            sage: f(J) < I                                                              # optional - sage.libs.singular sage.rings.number_field
+            sage: f(J) < I
             True
 
         Fractional ideals are not yet fully supported::
 
-            sage: K.<a> = NumberField(QQ['x']('x^2+2'))                                 # optional - sage.rings.number_field
-            sage: f = K.hom([-a], K)                                                    # optional - sage.rings.number_field
-            sage: I = K.ideal([a + 1])                                                  # optional - sage.rings.number_field
-            sage: f.inverse_image(I)                                                    # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = NumberField(QQ['x']('x^2+2'))
+            sage: f = K.hom([-a], K)
+            sage: I = K.ideal([a + 1])
+            sage: f.inverse_image(I)                                                    # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             NotImplementedError: inverse image not implemented...
-            sage: f.inverse_image(K.ideal(0)).is_zero()                                 # optional - sage.rings.number_field
+            sage: f.inverse_image(K.ideal(0)).is_zero()                                 # needs sage.libs.singular
             True
-            sage: f.inverse()(I)                                                        # optional - sage.rings.number_field
+            sage: f.inverse()(I)                                                        # needs sage.rings.padics
             Fractional ideal (-a + 1)
 
         ALGORITHM:
@@ -992,7 +977,7 @@ cdef class RingHomomorphism(RingMap):
 
         TESTS::
 
-            sage: ZZ.hom(Zp(2)).inverse_image(ZZ.ideal(2))                              # optional - sage.rings.padics
+            sage: ZZ.hom(Zp(2)).inverse_image(ZZ.ideal(2))                              # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             ValueError: not an ideal or element in codomain 2-adic Ring
@@ -1000,7 +985,7 @@ cdef class RingHomomorphism(RingMap):
 
         ::
 
-            sage: ZZ.hom(Zp(2)).inverse_image(Zp(2).ideal(2))                           # optional - sage.rings.padics
+            sage: ZZ.hom(Zp(2)).inverse_image(Zp(2).ideal(2))                           # needs sage.rings.padics
             Traceback (most recent call last):
             ...
             NotImplementedError: base rings must be equal
@@ -1020,37 +1005,38 @@ cdef class RingHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
-            sage: f = R.hom([x, QQbar(i) * x + y^2], R)                                 # optional - sage.rings.number_field
-            sage: I = R.ideal(y^3)                                                      # optional - sage.rings.number_field
-            sage: J = f._inverse_image_ideal(I); J                                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field sage.symbolic
+            sage: R.<x,y> = QQbar[]
+            sage: f = R.hom([x, QQbar(i) * x + y^2], R)
+            sage: I = R.ideal(y^3)
+            sage: J = f._inverse_image_ideal(I); J
             Ideal (x^2 + 2*I*x*y - y^2)
              of Multivariate Polynomial Ring in x, y over Algebraic Field
-            sage: f(J) <= I                                                             # optional - sage.rings.number_field
+            sage: f(J) <= I
             True
 
         TESTS:
 
-        Check that :trac:`31367` is fixed::
+        Check that :issue:`31367` is fixed::
 
             sage: A.<t> = QQ[]
-            sage: B.<x,y> = QQ['x,y'].quotient('y')                                     # optional - sage.libs.singular
-            sage: f = A.hom([x], B)                                                     # optional - sage.libs.singular
-            sage: f.kernel()                                                            # optional - sage.libs.singular
+            sage: B.<x,y> = QQ['x,y'].quotient('y')                                     # needs sage.libs.singular
+            sage: f = A.hom([x], B)                                                     # needs sage.libs.singular
+            sage: f.kernel()                                                            # needs sage.libs.singular
             Principal ideal (0) of Univariate Polynomial Ring in t over Rational Field
 
         ::
 
             sage: A.<t,u> = QQ[]
-            sage: B.<x,y,z> = QQ['x,y,z'].quotient('z')                                 # optional - sage.libs.singular
-            sage: f = A.hom([x, y], B)                                                  # optional - sage.libs.singular
-            sage: f.kernel()                                                            # optional - sage.libs.singular
+            sage: B.<x,y,z> = QQ['x,y,z'].quotient('z')                                 # needs sage.libs.singular
+            sage: f = A.hom([x, y], B)                                                  # needs sage.libs.singular
+            sage: f.kernel()                                                            # needs sage.libs.singular
             Ideal (0) of Multivariate Polynomial Ring in t, u over Rational Field
         """
-        from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-        from .quotient_ring import is_QuotientRing
-        from .polynomial.multi_polynomial_ring import is_MPolynomialRing
-        from .polynomial.polynomial_ring import is_PolynomialRing
+        from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+        from sage.rings.quotient_ring import QuotientRing_nc
+        from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         B = self.codomain()
         graph, from_B, to_A = self._graph_ideal()
         Q = graph.ring()
@@ -1059,14 +1045,14 @@ cdef class RingHomomorphism(RingMap):
             # avoid adding the 0-ideal to the graph ideal in order to benefit
             # from a cached Gröbner basis
             graph_I = graph
-        elif (is_MPolynomialRing(B) or is_PolynomialRing(B)
-              or is_QuotientRing(B) or is_PolynomialQuotientRing(B)):
+        elif (isinstance(B, MPolynomialRing_base) or isinstance(B, PolynomialRing_general)
+              or isinstance(B, QuotientRing_nc) or isinstance(B, PolynomialQuotientRing_generic)):
             graph_I = graph + from_B(I)
         else:
-            # non-zero fractional ideals of number fields not yet supported
+            # nonzero fractional ideals of number fields not yet supported
             raise NotImplementedError("inverse image not implemented "
                                       "for ideals in %s" % B)
-        if is_QuotientRing(Q):
+        if isinstance(Q, QuotientRing_nc):
             # elimination_ideal does not work with quotient rings, so
             # switch to the cover ring
             gens_B_lifted = Q.cover_ring().gens()[:B.ngens()]
@@ -1086,36 +1072,38 @@ cdef class RingHomomorphism(RingMap):
 
         A degenerate case::
 
-            sage: R.<x,y> = QQ['x,y'].quotient(1)                                       # optional - sage.libs.singular
-            sage: f = R.hom([y, x], R)                                                  # optional - sage.libs.singular
-            sage: f.inverse_image(x), f.inverse_image(y)  # indirect doctest            # optional - sage.libs.singular
+            sage: R.<x,y> = QQ['x,y'].quotient(1)                                       # needs sage.libs.singular
+            sage: f = R.hom([y, x], R)                                                  # needs sage.libs.singular
+            sage: f.inverse_image(x), f.inverse_image(y)  # indirect doctest            # needs sage.libs.singular
             (0, 0)
 
         Check cases involving quotient rings in which a generator is constant
-        (:trac:`31178`)::
+        (:issue:`31178`)::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]
-            sage: B.<c,d> = R.quotient(R.ideal(x))                                      # optional - sage.libs.singular
-            sage: g = R.hom([d^2, d^3], B)                                              # optional - sage.libs.singular
-            sage: g.inverse_image(d)                                                    # optional - sage.libs.singular
+            sage: B.<c,d> = R.quotient(R.ideal(x))
+            sage: g = R.hom([d^2, d^3], B)
+            sage: g.inverse_image(d)
             Traceback (most recent call last):
             ...
             ValueError: element d does not have preimage
-            sage: g.inverse_image(d^2)                                                  # optional - sage.libs.singular
+            sage: g.inverse_image(d^2)
             x
-            sage: g.inverse_image(d^3)                                                  # optional - sage.libs.singular
+            sage: g.inverse_image(d^3)
             y
-            sage: A.<a,b> = R.quotient(R.ideal(y^2 - x^3))                              # optional - sage.libs.singular
-            sage: h = A.hom([d^2, d^3], B)                                              # optional - sage.libs.singular
-            sage: h.inverse_image(d^2)                                                  # optional - sage.libs.singular
+            sage: A.<a,b> = R.quotient(R.ideal(y^2 - x^3))
+            sage: h = A.hom([d^2, d^3], B)
+            sage: h.inverse_image(d^2)
             a
 
-        Check that quotient rings are handled correctly (:trac:`33217`)::
+        Check that quotient rings are handled correctly (:issue:`33217`)::
 
-            sage: A.<x,y,z> = QQ['X,Y,Z'].quotient('X^2+Y^2+Z^2-1')                     # optional - sage.libs.singular
-            sage: B.<t,u,v,w> = QQ['T,U,V,W'].quotient(['T^2+U^2-1', 'V^2+W^2-1'])      # optional - sage.libs.singular
-            sage: psi = A.hom([v*u, w*u, t], B)                                         # optional - sage.libs.singular
-            sage: psi.inverse_image(t^2) == z^2                                         # optional - sage.libs.singular
+            sage: # needs sage.libs.singular
+            sage: A.<x,y,z> = QQ['X,Y,Z'].quotient('X^2+Y^2+Z^2-1')
+            sage: B.<t,u,v,w> = QQ['T,U,V,W'].quotient(['T^2+U^2-1', 'V^2+W^2-1'])
+            sage: psi = A.hom([v*u, w*u, t], B)
+            sage: psi.inverse_image(t^2) == z^2
             True
         """
         graph, from_B, to_A = self._graph_ideal()
@@ -1135,7 +1123,7 @@ cdef class RingHomomorphism(RingMap):
             sage: A.<x,y> = QQ[]
             sage: B.<t> = QQ[]
             sage: f = A.hom([t^4, t^3 - t^2], B)
-            sage: f.kernel()                                                            # optional - sage.libs.singular
+            sage: f.kernel()                                                            # needs sage.libs.singular
             Ideal (y^4 - x^3 + 4*x^2*y - 2*x*y^2 + x^2)
             of Multivariate Polynomial Ring in x, y over Rational Field
 
@@ -1144,18 +1132,18 @@ cdef class RingHomomorphism(RingMap):
             sage: A.<a,b,c,d> = QQ[]
             sage: B.<u,v> = QQ[]
             sage: f = A.hom([u^3, u^2*v, u*v^2, v^3], B)
-            sage: f.kernel() == A.ideal(matrix.hankel([a, b, c], [d]).minors(2))        # optional - sage.libs.singular
+            sage: f.kernel() == A.ideal(matrix.hankel([a, b, c], [d]).minors(2))        # needs sage.libs.singular
             True
-            sage: Q = A.quotient(f.kernel())                                            # optional - sage.libs.singular
-            sage: Q.hom(f.im_gens(), B).is_injective()                                  # optional - sage.libs.singular
+            sage: Q = A.quotient(f.kernel())                                            # needs sage.libs.singular
+            sage: Q.hom(f.im_gens(), B).is_injective()                                  # needs sage.libs.singular
             True
 
         The Steiner-Roman surface::
 
             sage: R.<x,y,z> = QQ[]
-            sage: S = R.quotient(x^2 + y^2 + z^2 - 1)                                   # optional - sage.libs.singular
-            sage: f = R.hom([x*y, x*z, y*z], S)                                         # optional - sage.libs.singular
-            sage: f.kernel()                                                            # optional - sage.libs.singular
+            sage: S = R.quotient(x^2 + y^2 + z^2 - 1)
+            sage: f = R.hom([x*y, x*z, y*z], S)                                         # needs sage.libs.singular
+            sage: f.kernel()                                                            # needs sage.libs.singular
             Ideal (x^2*y^2 + x^2*z^2 + y^2*z^2 - x*y*z)
              of Multivariate Polynomial Ring in x, y, z over Rational Field
 
@@ -1163,30 +1151,31 @@ cdef class RingHomomorphism(RingMap):
 
         The results are cached::
 
-            sage: f.kernel() is f.kernel()                                              # optional - sage.libs.singular
+            sage: f.kernel() is f.kernel()                                              # needs sage.libs.singular
             True
 
         A degenerate case::
 
             sage: R.<x,y> = QQ[]
-            sage: f = R.hom([0, 0], R.quotient(1))                                      # optional - sage.libs.singular
-            sage: f.kernel().is_one()                                                   # optional - sage.libs.singular
+            sage: f = R.hom([0, 0], R.quotient(1))                                      # needs sage.libs.singular
+            sage: f.kernel().is_one()                                                   # needs sage.libs.singular
             True
 
         ::
 
-            sage: K.<sqrt2> = QuadraticField(2)                                         # optional - sage.rings.number_field
-            sage: K.hom([-sqrt2], K).kernel().is_zero()                                 # optional - sage.rings.number_field
+            sage: K.<sqrt2> = QuadraticField(2)                                         # needs sage.rings.number_field
+            sage: K.hom([-sqrt2], K).kernel().is_zero()                                 # needs sage.libs.singular sage.rings.number_field
             True
 
         ::
 
-            sage: A.<a> = QuadraticField(2)                                             # optional - sage.rings.number_field
-            sage: B.<b> = A.extension(A['b']('b^2-3'))                                  # optional - sage.rings.number_field
-            sage: C.<c> = B.absolute_field()                                            # optional - sage.rings.number_field
-            sage: A.hom([B(a)], C).kernel().is_zero()                                   # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: A.<a> = QuadraticField(2)
+            sage: B.<b> = A.extension(A['b']('b^2-3'))
+            sage: C.<c> = B.absolute_field()
+            sage: A.hom([B(a)], C).kernel().is_zero()                                   # needs sage.libs.singular
             True
-            sage: A.hom([a], B).kernel()                                                # optional - sage.rings.number_field
+            sage: A.hom([a], B).kernel()
             Traceback (most recent call last):
             ...
             NotImplementedError: base rings must be equal
@@ -1261,38 +1250,40 @@ cdef class RingHomomorphism(RingMap):
         Ideals in quotient rings over ``QQbar`` do not support reduction yet,
         so the graph is constructed in the ambient ring instead::
 
-            sage: A.<z,w> = QQbar['z,w'].quotient('z*w - 1')                            # optional - sage.rings.number_field
-            sage: B.<x,y> = QQbar['x,y'].quotient('2*x^2 + y^2 - 1')                    # optional - sage.rings.number_field
-            sage: f = A.hom([QQbar(2).sqrt()*x + QQbar(I)*y,                            # optional - sage.rings.number_field
+            sage: # needs sage.libs.singular sage.rings.number_field
+            sage: A.<z,w> = QQbar['z,w'].quotient('z*w - 1')
+            sage: B.<x,y> = QQbar['x,y'].quotient('2*x^2 + y^2 - 1')
+            sage: f = A.hom([QQbar(2).sqrt()*x + QQbar(I)*y,
             ....:            QQbar(2).sqrt()*x - QQbar(I)*y], B)
-            sage: f._graph_ideal()[0]                                                   # optional - sage.rings.number_field
+            sage: f._graph_ideal()[0]
             Ideal (z*w - 1, 2*x^2 + y^2 - 1,
             1.414213562373095?*x + I*y - z,
             1.414213562373095?*x + (-I)*y - w)
             of Multivariate Polynomial Ring in x, y, z, w over Algebraic Field
-            sage: f.inverse()(f(z)), f.inverse()(f(w))                                  # optional - sage.rings.number_field
+            sage: f.inverse()(f(z)), f.inverse()(f(w))
             (z, w)
 
         Non-trivial base maps are not supported::
 
-            sage: K.<a> = QuadraticField(2)                                             # optional - sage.rings.number_field
-            sage: R.<x,y> = K[]                                                         # optional - sage.rings.number_field
-            sage: f = R.hom([x, a*x + y], R, base_map=K.hom([-a], K))                   # optional - sage.rings.number_field
-            sage: f._graph_ideal()                                                      # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<a> = QuadraticField(2)
+            sage: R.<x,y> = K[]
+            sage: f = R.hom([x, a*x + y], R, base_map=K.hom([-a], K))
+            sage: f._graph_ideal()
             Traceback (most recent call last):
             ...
             NotImplementedError: base map must be trivial
 
-        Non-commutative rings are not supported (:trac:`32824`)::
+        Non-commutative rings are not supported (:issue:`32824`)::
 
-            sage: A = GradedCommutativeAlgebra(QQ, 'x,y,z')                             # optional - sage.combinat sage.modules
-            sage: A.hom(A.gens(), A).kernel()                                           # optional - sage.combinat sage.modules
+            sage: A = GradedCommutativeAlgebra(QQ, 'x,y,z')                             # needs sage.combinat sage.modules
+            sage: A.hom(A.gens(), A).kernel()                                           # needs sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError: rings are not commutative
         """
-        from .quotient_ring import is_QuotientRing
-        from .ideal import Ideal_generic
+        from sage.rings.quotient_ring import QuotientRing_nc
+        from sage.rings.ideal import Ideal_generic
         A = self.domain()
         B = self.codomain()
         if not (A.is_commutative() and B.is_commutative()):
@@ -1310,7 +1301,7 @@ cdef class RingHomomorphism(RingMap):
         A_to_Q = A.hom(Q.gens()[B.ngens():], Q, check=False)
         B_to_Q = B.hom(Q.gens()[:B.ngens()], Q, check=False)
         graph = Q.ideal([B_to_Q(self(x)) - A_to_Q(x) for x in A.gens()])
-        R = Q.cover_ring() if is_QuotientRing(Q) else Q
+        R = Q.cover_ring() if isinstance(Q, QuotientRing_nc) else Q
         R_to_A = R.hom(tuple([0] * B.ngens()) + A.gens(), A, check=False)
         Q_to_A = R_to_A if R is Q else R_to_A * Q.lifting_map()
 
@@ -1332,7 +1323,7 @@ cdef class RingHomomorphism(RingMap):
         """
         Return the inverse of this ring homomorphism if it exists.
 
-        Raises a ``ZeroDivisionError`` if the inverse does not exist.
+        Raises a :exc:`ZeroDivisionError` if the inverse does not exist.
 
         ALGORITHM:
 
@@ -1343,24 +1334,25 @@ cdef class RingHomomorphism(RingMap):
 
             sage: R.<t> = QQ[]
             sage: f = R.hom([2*t - 1], R)
-            sage: f.inverse()                                                           # optional - sage.libs.singular
+            sage: f.inverse()                                                           # needs sage.libs.singular
             Ring endomorphism of Univariate Polynomial Ring in t over Rational Field
               Defn: t |--> 1/2*t + 1/2
 
         The following non-linear homomorphism is not invertible, but it induces
         an isomorphism on a quotient ring::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y,z> = QQ[]
             sage: f = R.hom([y*z, x*z, x*y], R)
-            sage: f.inverse()                                                           # optional - sage.libs.singular
+            sage: f.inverse()
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ring homomorphism not surjective
-            sage: f.is_injective()                                                      # optional - sage.libs.singular
+            sage: f.is_injective()
             True
-            sage: Q.<x,y,z> = R.quotient(x*y*z - 1)                                     # optional - sage.libs.singular
-            sage: g = Q.hom([y*z, x*z, x*y], Q)                                         # optional - sage.libs.singular
-            sage: g.inverse()                                                           # optional - sage.libs.singular
+            sage: Q.<x,y,z> = R.quotient(x*y*z - 1)
+            sage: g = Q.hom([y*z, x*z, x*y], Q)
+            sage: g.inverse()
             Ring endomorphism of Quotient of Multivariate Polynomial Ring
             in x, y, z over Rational Field by the ideal (x*y*z - 1)
               Defn: x |--> y*z
@@ -1371,24 +1363,24 @@ cdef class RingHomomorphism(RingMap):
 
             sage: S.<x,y> = ZZ[]
             sage: f = S.hom([x + 2*y, x + 3*y], S)
-            sage: f.inverse()                                                           # optional - sage.libs.singular
+            sage: f.inverse()                                                           # needs sage.libs.singular
             Ring endomorphism of Multivariate Polynomial Ring in x, y over Integer Ring
               Defn: x |--> 3*x - 2*y
                     y |--> -x + y
-            sage: (f.inverse() * f).is_identity()                                       # optional - sage.libs.singular
+            sage: (f.inverse() * f).is_identity()                                       # needs sage.libs.singular
             True
 
         The following homomorphism is invertible over the rationals, but not
         over the integers::
 
             sage: g = S.hom([x + y, x - y - 2], S)
-            sage: g.inverse()                                                           # optional - sage.libs.singular
+            sage: g.inverse()                                                           # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ring homomorphism not surjective
             sage: R.<x,y> = QQ[x,y]
             sage: h = R.hom([x + y, x - y - 2], R)
-            sage: (h.inverse() * h).is_identity()                                       # optional - sage.libs.singular
+            sage: (h.inverse() * h).is_identity()                                       # needs sage.libs.singular
             True
 
         This example by M. Nagata is a wild automorphism::
@@ -1396,13 +1388,13 @@ cdef class RingHomomorphism(RingMap):
             sage: R.<x,y,z> = QQ[]
             sage: sigma = R.hom([x - 2*y*(z*x+y^2) - z*(z*x+y^2)^2,
             ....:                y + z*(z*x+y^2), z], R)
-            sage: tau = sigma.inverse(); tau                                            # optional - sage.libs.singular
+            sage: tau = sigma.inverse(); tau                                            # needs sage.libs.singular
             Ring endomorphism of Multivariate Polynomial Ring in x, y, z over
             Rational Field
               Defn: x |--> -y^4*z - 2*x*y^2*z^2 - x^2*z^3 + 2*y^3 + 2*x*y*z + x
                     y |--> -y^2*z - x*z^2 + y
                     z |--> z
-            sage: (tau * sigma).is_identity()                                           # optional - sage.libs.singular
+            sage: (tau * sigma).is_identity()                                           # needs sage.libs.singular
             True
 
         We compute the triangular automorphism that converts moments to
@@ -1424,83 +1416,88 @@ cdef class RingHomomorphism(RingMap):
              x1^3 + 3*x1*x2 + x3,
              x1^4 + 6*x1^2*x2 + 3*x2^2 + 4*x1*x3 + x4,
              x1^5 + 10*x1^3*x2 + 15*x1*x2^2 + 10*x1^2*x3 + 10*x2*x3 + 5*x1*x4 + x5]
-            sage: all(p.is_homogeneous() for p in phi.im_gens())
+            sage: all(p.is_homogeneous() for p in phi.im_gens())                        # needs sage.libs.singular
             True
-            sage: phi.inverse().im_gens()[:5]                                           # optional - sage.libs.singular
+            sage: phi.inverse().im_gens()[:5]                                           # needs sage.libs.singular
             [x1,
              -x1^2 + x2,
              2*x1^3 - 3*x1*x2 + x3,
              -6*x1^4 + 12*x1^2*x2 - 3*x2^2 - 4*x1*x3 + x4,
              24*x1^5 - 60*x1^3*x2 + 30*x1*x2^2 + 20*x1^2*x3 - 10*x2*x3 - 5*x1*x4 + x5]
-            sage: (phi.inverse() * phi).is_identity()                                   # optional - sage.libs.singular
+            sage: (phi.inverse() * phi).is_identity()                                   # needs sage.libs.singular
             True
 
         Automorphisms of number fields as well as Galois fields are supported::
 
-            sage: K.<zeta7> = CyclotomicField(7)                                        # optional - sage.rings.number_field
-            sage: c = K.hom([1/zeta7])                                                  # optional - sage.rings.number_field
-            sage: (c.inverse() * c).is_identity()                                       # optional - sage.rings.number_field
+            sage: K.<zeta7> = CyclotomicField(7)                                        # needs sage.rings.number_field
+            sage: c = K.hom([1/zeta7])                                                  # needs sage.rings.number_field
+            sage: (c.inverse() * c).is_identity()                                       # needs sage.libs.singular sage.rings.number_field
             True
-            sage: F.<t> = GF(7^3)                                                       # optional - sage.rings.finite_rings
-            sage: f = F.hom(t^7, F)                                                     # optional - sage.rings.finite_rings
-            sage: (f.inverse() * f).is_identity()                                       # optional - sage.rings.finite_rings
+
+            sage: F.<t> = GF(7^3)                                                       # needs sage.rings.finite_rings
+            sage: f = F.hom(t^7, F)                                                     # needs sage.rings.finite_rings
+            sage: (f.inverse() * f).is_identity()                                       # needs sage.libs.singular sage.rings.finite_rings
             True
 
         An isomorphism between the algebraic torus and the circle over a number
         field::
 
-            sage: K.<i> = QuadraticField(-1)                                            # optional - sage.rings.number_field
-            sage: A.<z,w> = K['z,w'].quotient('z*w - 1')                                # optional - sage.rings.number_field
-            sage: B.<x,y> = K['x,y'].quotient('x^2 + y^2 - 1')                          # optional - sage.rings.number_field
-            sage: f = A.hom([x + i*y, x - i*y], B)                                      # optional - sage.rings.number_field
-            sage: g = f.inverse()                                                       # optional - sage.rings.number_field
-            sage: g.morphism_from_cover().im_gens()                                     # optional - sage.rings.number_field
+            sage: # needs sage.libs.singular sage.rings.number_field
+            sage: K.<i> = QuadraticField(-1)
+            sage: A.<z,w> = K['z,w'].quotient('z*w - 1')
+            sage: B.<x,y> = K['x,y'].quotient('x^2 + y^2 - 1')
+            sage: f = A.hom([x + i*y, x - i*y], B)
+            sage: g = f.inverse()
+            sage: g.morphism_from_cover().im_gens()
             [1/2*z + 1/2*w, (-1/2*i)*z + (1/2*i)*w]
-            sage: all(g(f(z)) == z for z in A.gens())                                   # optional - sage.rings.number_field
+            sage: all(g(f(z)) == z for z in A.gens())
             True
 
         TESTS:
 
         Morphisms involving quotient rings::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]
-            sage: S.<s,u,t> = QQ['s,u,t'].quotient('u-t^2')                             # optional - sage.libs.singular
-            sage: f = R.hom([s, -t], S)                                                 # optional - sage.libs.singular
-            sage: (f.inverse() * f).is_identity()                                       # optional - sage.libs.singular
+            sage: S.<s,u,t> = QQ['s,u,t'].quotient('u-t^2')
+            sage: f = R.hom([s, -t], S)
+            sage: (f.inverse() * f).is_identity()
             True
-            sage: Q.<v,w> = R.quotient(x - y^2)                                         # optional - sage.libs.singular
-            sage: g = Q.hom([v, -w], Q)                                                 # optional - sage.libs.singular
-            sage: g.inverse()(g(v)) == v and g.inverse()(g(w)) == w                     # optional - sage.libs.singular
+            sage: Q.<v,w> = R.quotient(x - y^2)
+            sage: g = Q.hom([v, -w], Q)
+            sage: g.inverse()(g(v)) == v and g.inverse()(g(w)) == w
             True
             sage: S.<z> = QQ[]
-            sage: h = Q.hom([z^2, -z], S)                                               # optional - sage.libs.singular
-            sage: h.inverse()(h(v)) == v and h.inverse()(h(w)) == w                     # optional - sage.libs.singular
+            sage: h = Q.hom([z^2, -z], S)
+            sage: h.inverse()(h(v)) == v and h.inverse()(h(w)) == w
             True
 
         Morphisms between number fields and quotient rings::
 
-            sage: K.<sqrt2> = QuadraticField(2)                                         # optional - sage.rings.number_field
-            sage: f = K.hom([-sqrt2], K.polynomial_quotient_ring())                     # optional - sage.rings.number_field
-            sage: (f.inverse() * f).is_identity()                                       # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: K.<sqrt2> = QuadraticField(2)
+            sage: f = K.hom([-sqrt2], K.polynomial_quotient_ring())
+            sage: (f.inverse() * f).is_identity()
             True
-            sage: g = K.polynomial_quotient_ring().hom([-sqrt2], K)                     # optional - sage.rings.number_field
-            sage: (g.inverse() * g).is_identity()                                       # optional - sage.rings.number_field
+            sage: g = K.polynomial_quotient_ring().hom([-sqrt2], K)
+            sage: (g.inverse() * g).is_identity()
             True
 
         Morphisms involving Galois fields::
 
-            sage: A.<t> = GF(7^3)                                                       # optional - sage.rings.finite_rings
-            sage: R = A.polynomial_ring().quotient(A.polynomial())                      # optional - sage.rings.finite_rings
-            sage: g = A.hom(R.gens(), R)                                                # optional - sage.rings.finite_rings
-            sage: (g.inverse() * g).is_identity()                                       # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<t> = GF(7^3)
+            sage: R = A.polynomial_ring().quotient(A.polynomial())
+            sage: g = A.hom(R.gens(), R)
+            sage: (g.inverse() * g).is_identity()                                       # needs sage.libs.singular
             True
-            sage: B.<T>, f = A.extension(3, map=True)                                   # optional - sage.rings.finite_rings
-            sage: f.inverse()                                                           # optional - sage.rings.finite_rings
+            sage: B.<T>, f = A.extension(3, map=True)
+            sage: f.inverse()
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ring homomorphism not surjective
-            sage: B.<T>, f = A.extension(1, map=True)                                   # optional - sage.rings.finite_rings
-            sage: f.inverse()                                                           # optional - sage.rings.finite_rings
+            sage: B.<T>, f = A.extension(1, map=True)
+            sage: f.inverse()
             Ring morphism:
               From: Finite Field in T of size 7^3
               To:   Finite Field in t of size 7^3
@@ -1508,9 +1505,10 @@ cdef class RingHomomorphism(RingMap):
 
         Non-injective homomorphisms::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]
             sage: S.<a,b,c> = QQ[]
-            sage: S.hom([x, y, 0], R).inverse()                                         # optional - sage.libs.singular
+            sage: S.hom([x, y, 0], R).inverse()
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ring homomorphism not injective
@@ -1519,50 +1517,50 @@ cdef class RingHomomorphism(RingMap):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ring homomorphism not injective
-            sage: Q.<u,v> = R.quotient([x^5, y^4])                                      # optional - sage.libs.singular
-            sage: R.hom([u, v], Q).inverse()                                            # optional - sage.libs.singular
+            sage: Q.<u,v> = R.quotient([x^5, y^4])
+            sage: R.hom([u, v], Q).inverse()
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ring homomorphism not injective
-            sage: Q.cover().inverse()                                                   # optional - sage.libs.singular
+            sage: Q.cover().inverse()
             Traceback (most recent call last):
             ...
             ZeroDivisionError: ring homomorphism not injective
 
         Univariate quotient rings::
 
-            sage: R.<t> = QQ['t'].quotient('t^5')
+            sage: R.<t> = QQ['t'].quotient('t^5')                                       # needs sage.libs.pari
             sage: f = R.hom([2*t], R)
-            sage: (f.inverse() * f).is_identity()
+            sage: (f.inverse() * f).is_identity()                                       # needs sage.libs.singular
             True
 
         A homomorphism over ``QQbar``::
 
-            sage: R.<x,y> = QQbar[]                                                     # optional - sage.rings.number_field
-            sage: f = R.hom([x + QQbar(I)*y^2, -y], R)                                  # optional - sage.rings.number_field
-            sage: (f.inverse() * f).is_identity()                                       # optional - sage.rings.number_field
+            sage: R.<x,y> = QQbar[]                                                     # needs sage.rings.number_field
+            sage: f = R.hom([x + QQbar(I)*y^2, -y], R)                                  # needs sage.rings.number_field
+            sage: (f.inverse() * f).is_identity()                                       # needs sage.rings.number_field
             True
 
         Check that results are cached::
 
-            sage: R.<x,y> = GF(823)[]                                                   # optional - sage.rings.finite_rings
-            sage: f = R.hom([x, y+x^2], R)                                              # optional - sage.rings.finite_rings
-            sage: f.inverse() is f.inverse()                                            # optional - sage.rings.finite_rings
+            sage: R.<x,y> = GF(823)[]
+            sage: f = R.hom([x, y + x^2], R)
+            sage: f.inverse() is f.inverse()                                            # needs sage.libs.singular
             True
 
         Some subclasses of ring homomorphisms are not supported::
 
             sage: from sage.rings.morphism import FrobeniusEndomorphism_generic
-            sage: K.<u> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: FrobeniusEndomorphism_generic(K).inverse()                            # optional - sage.rings.finite_rings
+            sage: K.<u> = PowerSeriesRing(GF(5))
+            sage: FrobeniusEndomorphism_generic(K).inverse()
             Traceback (most recent call last):
             ...
             NotImplementedError
 
         ::
 
-            sage: R.<x,y> = LaurentPolynomialRing(QQ)
-            sage: R.hom([y, x], R).inverse()
+            sage: R.<x,y> = LaurentPolynomialRing(QQ)                                   # needs sage.modules
+            sage: R.hom([y, x], R).inverse()                                            # needs sage.libs.singular sage.modules
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -1581,11 +1579,11 @@ cdef class RingHomomorphism(RingMap):
 
             sage: R.<x,y> = QQ[]
             sage: f = R.hom([x + 123*y^2, y], R)
-            sage: f._graph_ideal()[0].groebner_basis.is_in_cache()                      # optional - sage.libs.singular
+            sage: f._graph_ideal()[0].groebner_basis.is_in_cache()
             False
-            sage: f.is_injective()                                                      # optional - sage.libs.singular
+            sage: f.is_injective()                                                      # needs sage.libs.singular
             True
-            sage: f._graph_ideal()[0].groebner_basis.is_in_cache()                      # optional - sage.libs.singular
+            sage: f._graph_ideal()[0].groebner_basis.is_in_cache()                      # needs sage.libs.singular
             True
         """
         if not self.is_injective():
@@ -1605,9 +1603,9 @@ cdef class RingHomomorphism(RingMap):
 
         EXAMPLES::
 
-            sage: R.<x,y> = GF(17)[]                                                    # optional - sage.rings.finite_rings
-            sage: f = R.hom([3*x, y + x^2 + x^3], R)                                    # optional - sage.rings.finite_rings
-            sage: (f * ~f).is_identity()                                                # optional - sage.rings.finite_rings
+            sage: R.<x,y> = GF(17)[]
+            sage: f = R.hom([3*x, y + x^2 + x^3], R)
+            sage: (f * ~f).is_identity()                                                # needs sage.libs.singular
             True
         """
         return self.inverse()
@@ -1619,10 +1617,10 @@ cdef class RingHomomorphism(RingMap):
         EXAMPLES::
 
             sage: R.<x,y,z> = QQ[]
-            sage: R.hom([y*z, x*z, x*y], R).is_surjective()                             # optional - sage.libs.singular
+            sage: R.hom([y*z, x*z, x*y], R).is_surjective()                             # needs sage.libs.singular
             False
-            sage: Q.<x,y,z> = R.quotient(x*y*z - 1)                                     # optional - sage.libs.singular
-            sage: R.hom([y*z, x*z, x*y], Q).is_surjective()                             # optional - sage.libs.singular
+            sage: Q.<x,y,z> = R.quotient(x*y*z - 1)                                     # needs sage.libs.singular
+            sage: R.hom([y*z, x*z, x*y], Q).is_surjective()                             # needs sage.libs.singular
             True
 
         ALGORITHM:
@@ -1643,10 +1641,10 @@ cdef class RingHomomorphism(RingMap):
         EXAMPLES::
 
             sage: R.<x,y,z> = QQ[]
-            sage: R.hom([y*z, x*z, x*y], R).is_invertible()                             # optional - sage.libs.singular
+            sage: R.hom([y*z, x*z, x*y], R).is_invertible()                             # needs sage.libs.singular
             False
-            sage: Q.<x,y,z> = R.quotient(x*y*z - 1)                                     # optional - sage.libs.singular
-            sage: Q.hom([y*z, x*z, x*y], Q).is_invertible()                             # optional - sage.libs.singular
+            sage: Q.<x,y,z> = R.quotient(x*y*z - 1)                                     # needs sage.libs.singular
+            sage: Q.hom([y*z, x*z, x*y], Q).is_invertible()                             # needs sage.libs.singular
             True
 
         ALGORITHM:
@@ -1654,120 +1652,6 @@ cdef class RingHomomorphism(RingMap):
         By default, this requires the computation of a Gröbner basis.
         """
         return self.is_injective() and self.is_surjective()
-
-
-cdef class RingHomomorphism_coercion(RingHomomorphism):
-    r"""
-    A ring homomorphism that is a coercion.
-
-    .. WARNING::
-
-        This class is obsolete. Set the category of your morphism to a
-        subcategory of ``Rings`` instead.
-
-    TESTS:
-
-        sage: from sage.rings.morphism import RingHomomorphism_coercion
-        sage: parent = Hom(ZZ,ZZ)
-        sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
-        doctest:warning
-        ...
-        DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.
-        See https://github.com/sagemath/sage/issues/23204 for details.
-        sage: TestSuite(f).run()
-
-    """
-    def __init__(self, parent, check=True):
-        r"""
-        TESTS:
-
-            sage: from sage.rings.morphism import RingHomomorphism_coercion
-            sage: parent = Hom(ZZ,ZZ)
-            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
-            doctest:warning
-            ...
-            DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.
-            See https://github.com/sagemath/sage/issues/23204 for details.
-            sage: isinstance(f, RingHomomorphism_coercion)
-            True
-
-        """
-        sage.misc.superseded.deprecation(23204, "Set the category of your morphism to a subcategory of Rings instead.")
-
-        RingHomomorphism.__init__(self, parent)
-        # putting in check allows us to define subclasses of RingHomomorphism_coercion that implement _coerce_map_from
-        if check and not self.codomain().has_coerce_map_from(self.domain()):
-            raise TypeError("Natural coercion morphism from %s to %s not defined."%(self.domain(), self.codomain()))
-
-    def _repr_type(self):
-        """
-        Used internally when printing this.
-
-        EXAMPLES::
-
-            sage: from sage.rings.morphism import RingHomomorphism_coercion
-            sage: parent = Hom(ZZ,ZZ)
-            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
-            sage: f._repr_type()
-            'Ring Coercion'
-
-        """
-        return "Ring Coercion"
-
-    cpdef _richcmp_(self, other, int op):
-        """
-        Compare a ring coercion morphism ``self`` to ``other``.
-
-        Ring coercion morphisms never compare equal to any other data type. If
-        other is a ring coercion morphism, the parents of ``self`` and
-        ``other`` are compared.
-
-        EXAMPLES::
-
-            sage: from sage.rings.morphism import RingHomomorphism_coercion
-            sage: parent = Hom(ZZ,ZZ)
-            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
-            sage: f == f
-            True
-            sage: f != f
-            False
-        """
-        if not isinstance(other, RingHomomorphism_coercion):
-            # Generic comparison
-            return RingMap._richcmp_(self, other, op)
-        # Two coercion maps with the same parent must be equal
-        return rich_to_bool(op, 0)
-
-    def __hash__(self):
-        """
-        Return the hash of this morphism.
-
-        TESTS::
-
-            sage: from sage.rings.morphism import RingHomomorphism_coercion
-            sage: parent = Hom(ZZ,ZZ)
-            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
-            sage: g = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
-            sage: hash(f) == hash(g)
-            True
-
-        """
-        return hash((self.domain(), self.codomain()))
-
-    cpdef Element _call_(self, x):
-        """
-        Evaluate this coercion morphism at ``x``.
-
-        EXAMPLES::
-
-            sage: from sage.rings.morphism import RingHomomorphism_coercion
-            sage: parent = Hom(ZZ,ZZ)
-            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
-            sage: f(0)
-            0
-
-        """
-        return self.codomain().coerce(x)
 
 
 cdef class RingHomomorphism_im_gens(RingHomomorphism):
@@ -1788,12 +1672,12 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
 
         Here's another example where the domain isn't free::
 
-            sage: S.<xx,yy> = R.quotient(x - y)                                         # optional - sage.libs.singular
-            sage: phi = S.hom([xx + 1, xx + 1])                                         # optional - sage.libs.singular
+            sage: S.<xx,yy> = R.quotient(x - y)                                         # needs sage.libs.singular
+            sage: phi = S.hom([xx + 1, xx + 1])                                         # needs sage.libs.singular
 
         Note that one has to specify valid images::
 
-            sage: phi = S.hom([xx + 1, xx - 1])                                         # optional - sage.libs.singular
+            sage: phi = S.hom([xx + 1, xx - 1])                                         # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: relations do not all (canonically) map to 0
@@ -1801,12 +1685,13 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
 
         You can give a map of the base ring::
 
+            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
-            sage: cc = K.hom([-i])                                                      # optional - sage.rings.number_field
-            sage: R.<t> = K[]                                                           # optional - sage.rings.number_field
-            sage: z = 1 + i*t + (3+4*i)*t^2                                             # optional - sage.rings.number_field
-            sage: z._im_gens_(R, [t^2], base_map=cc)                                    # optional - sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: R.<t> = K[]
+            sage: z = 1 + i*t + (3+4*i)*t^2
+            sage: z._im_gens_(R, [t^2], base_map=cc)
             (-4*i + 3)*t^4 - i*t^2 + 1
 
         The base map's codomain is extended to the whole codomain::
@@ -1826,8 +1711,8 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         speed up creation of a homomorphism::
 
             sage: R.<x,y> = QQ[]
-            sage: S.<xx,yy> = R.quotient(x - y)                                         # optional - sage.libs.singular
-            sage: phi = S.hom([xx + 1, xx - 1], check=False)                            # optional - sage.libs.singular
+            sage: S.<xx,yy> = R.quotient(x - y)                                         # needs sage.libs.singular
+            sage: phi = S.hom([xx + 1, xx - 1], check=False)                            # needs sage.libs.singular
             Traceback (most recent call last):
             ...
             ValueError: relations do not all (canonically) map to 0
@@ -1889,21 +1774,22 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<x> = ZZ[]
-            sage: K.<i> = NumberField(x^2 + 1)                                          # optional - sage.rings.number_field
-            sage: cc = K.hom([-i])                                                      # optional - sage.rings.number_field
-            sage: S.<y> = K[]                                                           # optional - sage.rings.number_field
-            sage: phi = S.hom([y^2], base_map=cc)                                       # optional - sage.rings.number_field
-            sage: phi                                                                   # optional - sage.rings.number_field
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: cc = K.hom([-i])
+            sage: S.<y> = K[]
+            sage: phi = S.hom([y^2], base_map=cc)
+            sage: phi
             Ring endomorphism of Univariate Polynomial Ring in y
              over Number Field in i with defining polynomial x^2 + 1
               Defn: y |--> y^2
                     with map of base ring
-            sage: phi(y)                                                                # optional - sage.rings.number_field
+            sage: phi(y)
             y^2
-            sage: phi(i*y)                                                              # optional - sage.rings.number_field
+            sage: phi(i*y)
             -i*y^2
-            sage: phi.base_map()                                                        # optional - sage.rings.number_field
+            sage: phi.base_map()
             Composite map:
               From: Number Field in i with defining polynomial x^2 + 1
               To:   Univariate Polynomial Ring in y over Number Field in i
@@ -1965,55 +1851,57 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
 
         A single variate quotient over `\QQ`::
 
+            sage: # needs sage.libs.pari
             sage: R.<x> = QQ[]
-            sage: Q.<a> = R.quotient(x^2 + x + 1)                                       # optional - sage.libs.pari
-            sage: f1 = R.hom([a])                                                       # optional - sage.libs.pari
-            sage: f2 = R.hom([a + a^2 + a + 1])                                         # optional - sage.libs.pari
-            sage: f1 == f2                                                              # optional - sage.libs.pari
+            sage: Q.<a> = R.quotient(x^2 + x + 1)
+            sage: f1 = R.hom([a])
+            sage: f2 = R.hom([a + a^2 + a + 1])
+            sage: f1 == f2
             True
-            sage: f1 == R.hom([a^2])                                                    # optional - sage.libs.pari
+            sage: f1 == R.hom([a^2])
             False
-            sage: f1(x^3 + x)                                                           # optional - sage.libs.pari
+            sage: f1(x^3 + x)
             a + 1
-            sage: f2(x^3 + x)                                                           # optional - sage.libs.pari
+            sage: f2(x^3 + x)
             a + 1
 
         TESTS::
 
-            sage: loads(dumps(f2)) == f2                                                # optional - sage.libs.pari
+            sage: loads(dumps(f2)) == f2                                                # needs sage.libs.pari
             True
 
         ::
 
-            sage: R.<x,y> = QQ[]; f = R.hom([x, x + y]); g = R.hom([y, x])              # optional - sage.libs.pari
-            sage: f == g             # indirect doctest                                 # optional - sage.libs.pari
+            sage: R.<x,y> = QQ[]; f = R.hom([x, x + y]); g = R.hom([y, x])
+            sage: f == g             # indirect doctest
             False
 
         EXAMPLES:
 
         A multivariate quotient over a finite field::
 
-            sage: R.<x,y> = GF(7)[]                                                     # optional - sage.rings.finite_rings
-            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])                      # optional - sage.rings.finite_rings
-            sage: f1 = R.hom([a, b])                                                    # optional - sage.rings.finite_rings
-            sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])                        # optional - sage.rings.finite_rings
-            sage: f1 == f2                                                              # optional - sage.rings.finite_rings
+            sage: # needs sage.libs.singular
+            sage: R.<x,y> = GF(7)[]
+            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
+            sage: f1 = R.hom([a, b])
+            sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])
+            sage: f1 == f2
             True
-            sage: f1 == R.hom([b, a])                                                   # optional - sage.rings.finite_rings
+            sage: f1 == R.hom([b, a])
             False
-            sage: x^3 + x + y^2                                                         # optional - sage.rings.finite_rings
+            sage: x^3 + x + y^2
             x^3 + y^2 + x
-            sage: f1(x^3 + x + y^2)                                                     # optional - sage.rings.finite_rings
+            sage: f1(x^3 + x + y^2)
             a - b
-            sage: f2(x^3 + x + y^2)                                                     # optional - sage.rings.finite_rings
+            sage: f2(x^3 + x + y^2)
             a - b
 
         TESTS::
 
-            sage: loads(dumps(f2)) == f2                                                # optional - sage.rings.finite_rings
+            sage: loads(dumps(f2)) == f2                                                # needs sage.libs.pari
             True
 
-        This was fixed in :trac:`24277`::
+        This was fixed in :issue:`24277`::
 
             sage: H = End(QQ)
             sage: H(1) == H.identity()
@@ -2058,6 +1946,8 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             y |--> x + y
         """
         D = self.domain()
+        if D in FacadeSets():
+            D, = D.facade_for()
         ig = self._im_gens
         s = '\n'.join('{} |--> {}'.format(D.gen(i), ig[i])
                        for i in range(D.ngens()))
@@ -2119,12 +2009,13 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
     Similarly, we can construct the induced homomorphism on a matrix ring over
     our polynomial rings::
 
-        sage: MR = MatrixSpace(R, 2, 2)                                                 # optional - sage.modules
-        sage: MS = MatrixSpace(S, 2, 2)                                                 # optional - sage.modules
-        sage: M = MR([x^2 + 1/7*x*y - y^2, -1/2*y^2 + 2*y + 1/6,                        # optional - sage.modules
+        sage: # needs sage.modules
+        sage: MR = MatrixSpace(R, 2, 2)
+        sage: MS = MatrixSpace(S, 2, 2)
+        sage: M = MR([x^2 + 1/7*x*y - y^2, -1/2*y^2 + 2*y + 1/6,
         ....:         4*x^2 - 14*x, 1/2*y^2 + 13/4*x - 2/11*y])
-        sage: Mf = MR.hom(f, MS)                                                        # optional - sage.modules
-        sage: Mf                                                                        # optional - sage.modules
+        sage: Mf = MR.hom(f, MS)
+        sage: Mf
         Ring morphism:
           From: Full MatrixSpace of 2 by 2 dense matrices
                 over Multivariate Polynomial Ring in x, y over Rational Field
@@ -2136,19 +2027,20 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
                   To:   Univariate Polynomial Ring in z over Rational Field
                   Defn: x |--> 2*z
                         y |--> 3*z
-        sage: Mf(M)                                                                     # optional - sage.modules
+        sage: Mf(M)
         [           -29/7*z^2 -9/2*z^2 + 6*z + 1/6]
         [       16*z^2 - 28*z   9/2*z^2 + 131/22*z]
 
     The construction of induced homomorphisms is recursive, and so we have::
 
-        sage: MPR = MatrixSpace(PR, 2)                                                  # optional - sage.modules
-        sage: MPS = MatrixSpace(PS, 2)                                                  # optional - sage.modules
-        sage: M = MPR([(-x + y)*t^2 + 58*t - 3*x^2 + x*y,                               # optional - sage.modules
+        sage: # needs sage.modules
+        sage: MPR = MatrixSpace(PR, 2)
+        sage: MPS = MatrixSpace(PS, 2)
+        sage: M = MPR([(-x + y)*t^2 + 58*t - 3*x^2 + x*y,
         ....:          (- 1/7*x*y - 1/40*x)*t^2 + (5*x^2 + y^2)*t + 2*y,
         ....:          (- 1/3*y + 1)*t^2 + 1/3*x*y + y^2 + 5/2*y + 1/4,
         ....:          (x + 6*y + 1)*t^2])
-        sage: MPf = MPR.hom(f, MPS); MPf                                                # optional - sage.modules
+        sage: MPf = MPR.hom(f, MPS); MPf
         Ring morphism:
           From: Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial
                 Ring in t over Multivariate Polynomial Ring in x, y over Rational Field
@@ -2166,7 +2058,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
                           To:   Univariate Polynomial Ring in z over Rational Field
                           Defn: x |--> 2*z
                                 y |--> 3*z
-        sage: MPf(M)                                                                    # optional - sage.modules
+        sage: MPf(M)
         [                    z*t^2 + 58*t - 6*z^2 (-6/7*z^2 - 1/20*z)*t^2 + 29*z^2*t + 6*z]
         [    (-z + 1)*t^2 + 11*z^2 + 15/2*z + 1/4                           (20*z + 1)*t^2]
     """
@@ -2179,9 +2071,9 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
             sage: from sage.rings.morphism import RingHomomorphism_from_base
             sage: R.<x> = ZZ[]
             sage: f = R.hom([2*x], R)
-            sage: P = MatrixSpace(R, 2).Hom(MatrixSpace(R, 2))                          # optional - sage.modules
-            sage: g = RingHomomorphism_from_base(P, f)                                  # optional - sage.modules
-            sage: g                                                                     # optional - sage.modules
+            sage: P = MatrixSpace(R, 2).Hom(MatrixSpace(R, 2))                          # needs sage.modules
+            sage: g = RingHomomorphism_from_base(P, f)                                  # needs sage.modules
+            sage: g                                                                     # needs sage.modules
             Ring endomorphism of Full MatrixSpace of 2 by 2 dense matrices
              over Univariate Polynomial Ring in x over Integer Ring
               Defn: Induced from base ring by
@@ -2192,8 +2084,8 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         codomain are constructed in a compatible way. So, the following
         results in an error::
 
-            sage: P = MatrixSpace(R, 2).Hom(R['t'])                                     # optional - sage.modules
-            sage: g = RingHomomorphism_from_base(P, f)                                  # optional - sage.modules
+            sage: P = MatrixSpace(R, 2).Hom(R['t'])                                     # needs sage.modules
+            sage: g = RingHomomorphism_from_base(P, f)                                  # needs sage.modules
             Traceback (most recent call last):
             ...
             ValueError: domain (Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Integer Ring)
@@ -2215,13 +2107,14 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: R.<x,y> = QQ[]
             sage: S.<z> = QQ[]
             sage: f = R.hom([2*z, 3*z], S)
-            sage: MR = MatrixSpace(R, 2)                                                # optional - sage.modules
-            sage: MS = MatrixSpace(S, 2)                                                # optional - sage.modules
-            sage: g = MR.hom(f, MS)                                                     # optional - sage.modules
-            sage: g.underlying_map() == f                                               # optional - sage.modules
+            sage: MR = MatrixSpace(R, 2)
+            sage: MS = MatrixSpace(S, 2)
+            sage: g = MR.hom(f, MS)
+            sage: g.underlying_map() == f
             True
         """
         return self._underlying
@@ -2294,20 +2187,21 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         A multivariate polynomial ring over a single variate quotient over
         `\QQ`::
 
+            sage: # needs sage.libs.pari sage.libs.singular sage.modules
             sage: R.<x> = QQ[]
-            sage: Q.<a> = R.quotient(x^2 + x + 1)                                       # optional - sage.libs.pari sage.modules
-            sage: f1 = R.hom([a])                                                       # optional - sage.libs.pari sage.libs.singular sage.modules
-            sage: f2 = R.hom([a + a^2 + a + 1])                                         # optional - sage.libs.pari sage.libs.singular sage.modules
-            sage: PR.<s,t> = R[]                                                        # optional - sage.libs.pari sage.libs.singular sage.modules
-            sage: PQ = Q['s','t']                                                       # optional - sage.libs.pari sage.libs.singular sage.modules
-            sage: f1P = PR.hom(f1,PQ)                                                   # optional - sage.libs.pari sage.libs.singular sage.modules
-            sage: f2P = PR.hom(f2,PQ)                                                   # optional - sage.libs.pari sage.libs.singular sage.modules
-            sage: f1P == f2P                                                            # optional - sage.libs.pari sage.libs.singular sage.modules
+            sage: Q.<a> = R.quotient(x^2 + x + 1)
+            sage: f1 = R.hom([a])
+            sage: f2 = R.hom([a + a^2 + a + 1])
+            sage: PR.<s,t> = R[]
+            sage: PQ = Q['s','t']
+            sage: f1P = PR.hom(f1,PQ)
+            sage: f2P = PR.hom(f2,PQ)
+            sage: f1P == f2P
             True
 
         TESTS::
 
-            sage: f1P == loads(dumps(f1P))                                              # optional - sage.libs.pari sage.libs.singular sage.modules
+            sage: f1P == loads(dumps(f1P))                                              # needs sage.libs.pari sage.libs.singular sage.modules
             True
 
             sage: R.<x,y> = QQ[]; f = R.hom([x, x + y]); g = R.hom([y, x])
@@ -2320,20 +2214,21 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
         A matrix ring over a multivariate quotient over a finite field::
 
-            sage: R.<x,y> = GF(7)[]                                                     # optional - sage.rings.finite_rings
-            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])                      # optional - sage.rings.finite_rings
-            sage: f1 = R.hom([a, b])                                                    # optional - sage.rings.finite_rings
-            sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])                        # optional - sage.rings.finite_rings
-            sage: MR = MatrixSpace(R, 2)                                                # optional - sage.rings.finite_rings sage.modules
-            sage: MQ = MatrixSpace(Q, 2)                                                # optional - sage.rings.finite_rings sage.modules
-            sage: f1M = MR.hom(f1, MQ)                                                  # optional - sage.rings.finite_rings sage.modules
-            sage: f2M = MR.hom(f2, MQ)                                                  # optional - sage.rings.finite_rings sage.modules
-            sage: f1M == f2M                                                            # optional - sage.rings.finite_rings sage.modules
+            sage: # needs sage.libs.singular sage.modules
+            sage: R.<x,y> = GF(7)[]
+            sage: Q.<a,b> = R.quotient([x^2 + x + 1, y^2 + y + 1])
+            sage: f1 = R.hom([a, b])
+            sage: f2 = R.hom([a + a^2 + a + 1, b + b^2 + b + 1])
+            sage: MR = MatrixSpace(R, 2)
+            sage: MQ = MatrixSpace(Q, 2)
+            sage: f1M = MR.hom(f1, MQ)
+            sage: f2M = MR.hom(f2, MQ)
+            sage: f1M == f2M
             True
 
         TESTS::
 
-            sage: f1M == loads(dumps(f1M))                                              # optional - sage.rings.finite_rings sage.modules
+            sage: f1M == loads(dumps(f1M))                                              # needs sage.libs.singular sage.modules
             True
         """
         if not isinstance(other, RingHomomorphism_from_base):
@@ -2354,9 +2249,9 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
             sage: R1.<x,y> = ZZ[]
             sage: f = R1.hom([x + y, x - y])
-            sage: R2 = MatrixSpace(FractionField(R1)['t'], 2)                           # optional - sage.modules
-            sage: g = R2.hom(f, R2)                                                     # optional - sage.modules
-            sage: g         #indirect doctest                                           # optional - sage.modules
+            sage: R2 = MatrixSpace(FractionField(R1)['t'], 2)                           # needs sage.modules
+            sage: g = R2.hom(f, R2)                                                     # needs sage.modules
+            sage: g         # indirect doctest                                          # needs sage.modules
             Ring endomorphism of Full MatrixSpace of 2 by 2 dense matrices
              over Univariate Polynomial Ring in t over Fraction Field of Multivariate Polynomial Ring in x, y over Integer Ring
               Defn: Induced from base ring by
@@ -2382,7 +2277,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         """
         P = self.codomain()
         try:
-            return P(dict([(a, self._underlying(b)) for a,b in x.dict().items()]))
+            return P({a: self._underlying(b) for a, b in x.monomial_coefficients().items()})
         except Exception:
             pass
         try:
@@ -2404,11 +2299,11 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
 
             sage: R.<x,y> = QQ[]
             sage: S.<a,b> = QQ[]
-            sage: f = R.hom([a + b, a - b], S)                                          # optional - sage.libs.singular
+            sage: f = R.hom([a + b, a - b], S)
             sage: PR.<t> = R[]
             sage: PS = S['t']
-            sage: Pf = PR.hom(f, PS)                                                    # optional - sage.libs.singular
-            sage: Pf.inverse()                                                          # optional - sage.libs.singular
+            sage: Pf = PR.hom(f, PS)
+            sage: Pf.inverse()                                                          # needs sage.libs.singular
             Ring morphism:
               From: Univariate Polynomial Ring in t over Multivariate
                     Polynomial Ring in a, b over Rational Field
@@ -2420,7 +2315,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
                       To:   Multivariate Polynomial Ring in x, y over Rational Field
                       Defn: a |--> 1/2*x + 1/2*y
                             b |--> 1/2*x - 1/2*y
-            sage: Pf.inverse()(Pf(x*t^2 + y*t))                                         # optional - sage.libs.singular
+            sage: Pf.inverse()(Pf(x*t^2 + y*t))                                         # needs sage.libs.singular
             x*t^2 + y*t
         """
         return self.parent().reversed()(self._underlying.inverse())
@@ -2434,8 +2329,8 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
 
         sage: S.<x> = QQ[]
         sage: f = S.hom([x^2])
-        sage: g = f.extend_to_fraction_field()                                          # optional - sage.libs.singular
-        sage: type(g)                                                                   # optional - sage.libs.singular
+        sage: g = f.extend_to_fraction_field()                                          # needs sage.libs.singular
+        sage: type(g)                                                                   # needs sage.libs.singular
         <class 'sage.rings.morphism.RingHomomorphism_from_fraction_field'>
     """
     def __init__(self, parent, morphism):
@@ -2444,11 +2339,12 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: A.<a> = ZZ.extension(x^2 - 2)                                         # optional - sage.rings.number_field
-            sage: f = A.coerce_map_from(ZZ)                                             # optional - sage.rings.number_field
-            sage: g = f.extend_to_fraction_field()   # indirect doctest                 # optional - sage.rings.number_field
-            sage: g                                                                     # optional - sage.rings.number_field
+            sage: A.<a> = ZZ.extension(x^2 - 2)
+            sage: f = A.coerce_map_from(ZZ)
+            sage: g = f.extend_to_fraction_field()   # indirect doctest
+            sage: g
             Ring morphism:
               From: Rational Field
               To:   Number Field in a with defining polynomial x^2 - 2
@@ -2463,11 +2359,11 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
         EXAMPLES::
 
             sage: S.<x> = QQ[]
-            sage: f = S.hom([x^2]).extend_to_fraction_field()                           # optional - sage.libs.singular
-            sage: f                                                                     # optional - sage.libs.singular
+            sage: f = S.hom([x^2]).extend_to_fraction_field()                           # needs sage.libs.singular
+            sage: f                                                                     # needs sage.libs.singular
             Ring endomorphism of Fraction Field of Univariate Polynomial Ring in x over Rational Field
               Defn: x |--> x^2
-            sage: f._repr_defn()                                                        # optional - sage.libs.singular
+            sage: f._repr_defn()                                                        # needs sage.libs.singular
             'x |--> x^2'
         """
         return self._morphism._repr_defn()
@@ -2483,10 +2379,10 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
         EXAMPLES::
 
             sage: S.<x> = QQ[]
-            sage: f = S.hom([x + 1]).extend_to_fraction_field()                         # optional - sage.libs.singular
-            sage: f(1/x)                                                                # optional - sage.libs.singular
+            sage: f = S.hom([x + 1]).extend_to_fraction_field()                         # needs sage.libs.singular
+            sage: f(1/x)                                                                # needs sage.libs.singular
             1/(x + 1)
-            sage: f(1/(x-1))                                                            # optional - sage.libs.singular
+            sage: f(1/(x-1))                                                            # needs sage.libs.singular
             1/x
         """
         return self._morphism(x.numerator()) / self._morphism(x.denominator())
@@ -2497,13 +2393,14 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
 
         TESTS::
 
+            sage: # needs sage.libs.singular
             sage: S.<x> = QQ[]
-            sage: f = S.hom([x + 1]).extend_to_fraction_field()                         # optional - sage.libs.singular
+            sage: f = S.hom([x + 1]).extend_to_fraction_field()
 
-            sage: g = copy(f)    # indirect doctest                                     # optional - sage.libs.singular
-            sage: f == g                                                                # optional - sage.libs.singular
+            sage: g = copy(f)    # indirect doctest                                     # needs sage.libs.singular
+            sage: f == g                                                                # needs sage.libs.singular
             True
-            sage: f is g                                                                # optional - sage.libs.singular
+            sage: f is g                                                                # needs sage.libs.singular
             False
         """
         self._morphism = _slots['_morphism']
@@ -2516,8 +2413,8 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
         TESTS::
 
             sage: S.<x> = QQ[]
-            sage: f = S.hom([x + 1]).extend_to_fraction_field()                         # optional - sage.libs.singular
-            sage: loads(dumps(f)) == f                                                  # optional - sage.libs.singular
+            sage: f = S.hom([x + 1]).extend_to_fraction_field()                         # needs sage.libs.singular
+            sage: loads(dumps(f)) == f                                                  # needs sage.libs.singular
             True
         """
         slots = RingHomomorphism._extra_slots(self)
@@ -2533,8 +2430,8 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
 
             sage: S.<x> = QQ[]
             sage: f = S.hom([2*x - 1])
-            sage: g = f.extend_to_fraction_field()                                      # optional - sage.libs.singular
-            sage: g.inverse()                                                           # optional - sage.libs.singular
+            sage: g = f.extend_to_fraction_field()                                      # needs sage.libs.singular
+            sage: g.inverse()                                                           # needs sage.libs.singular
             Ring endomorphism of Fraction Field of Univariate Polynomial Ring
              in x over Rational Field
               Defn: x |--> 1/2*x + 1/2
@@ -2549,14 +2446,14 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
     EXAMPLES::
 
         sage: R.<x,y> = PolynomialRing(QQ, 2)
-        sage: S.<a,b> = R.quo(x^2 + y^2)                                                # optional - sage.libs.singular
-        sage: phi = S.cover(); phi                                                      # optional - sage.libs.singular
+        sage: S.<a,b> = R.quo(x^2 + y^2)                                                # needs sage.libs.singular
+        sage: phi = S.cover(); phi                                                      # needs sage.libs.singular
         Ring morphism:
           From: Multivariate Polynomial Ring in x, y over Rational Field
           To:   Quotient of Multivariate Polynomial Ring in x, y over Rational Field
                 by the ideal (x^2 + y^2)
           Defn: Natural quotient map
-        sage: phi(x + y)                                                                # optional - sage.libs.singular
+        sage: phi(x + y)                                                                # needs sage.libs.singular
         a + b
     """
     def __init__(self, parent):
@@ -2593,7 +2490,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
 
         We verify that calling directly raises the expected error
         (just coercing into the codomain), but calling with __call__
-        (the second call below) gives a TypeError since 1/2 can't be
+        (the second call below) gives a :exc:`TypeError` since 1/2 cannot be
         coerced into the domain. ::
 
             sage: f._call_(1/2)
@@ -2641,12 +2538,13 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ, 2)
-            sage: S.<a,b> = R.quo(x^2 + y^2)                                            # optional - sage.libs.singular
-            sage: phi = S.cover()                                                       # optional - sage.libs.singular
-            sage: phi == loads(dumps(phi))                                              # optional - sage.libs.singular
+            sage: S.<a,b> = R.quo(x^2 + y^2)
+            sage: phi = S.cover()
+            sage: phi == loads(dumps(phi))
             True
-            sage: phi == R.quo(x^2 + y^3).cover()                                       # optional - sage.libs.singular
+            sage: phi == R.quo(x^2 + y^3).cover()
             False
         """
         if not isinstance(other, RingHomomorphism_cover):
@@ -2661,14 +2559,15 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
 
         TESTS::
 
+            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ, 2)
-            sage: S.<a,b> = R.quo(x^2 + y^2)                                            # optional - sage.libs.singular
-            sage: phi = S.cover()                                                       # optional - sage.libs.singular
-            sage: type(phi)                                                             # optional - sage.libs.singular
+            sage: S.<a,b> = R.quo(x^2 + y^2)
+            sage: phi = S.cover()
+            sage: type(phi)
             <class 'sage.rings.morphism.RingHomomorphism_cover'>
-            sage: hash(phi) == hash(phi)                                                # optional - sage.libs.singular
+            sage: hash(phi) == hash(phi)
             True
-            sage: {phi: 1}[phi]                                                         # optional - sage.libs.singular
+            sage: {phi: 1}[phi]
             1
         """
         return hash((self.domain(), self.codomain()))
@@ -2683,12 +2582,13 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ['x,y'].quotient('x^2 * y^2')                             # optional - sage.libs.singular
-            sage: R.cover().inverse_image(R.ideal(x^3, y^3 + 1))                        # optional - sage.libs.singular
+            sage: # needs sage.libs.singular
+            sage: R.<x,y> = QQ['x,y'].quotient('x^2 * y^2')
+            sage: R.cover().inverse_image(R.ideal(x^3, y^3 + 1))
             Ideal (x^2*y^2, x^3, y^3 + 1) of Multivariate Polynomial Ring
             in x, y over Rational Field
-            sage: S.<u,v> = QQbar['u,v'].quotient('u^4 - 1')                            # optional - sage.libs.singular
-            sage: S.cover().inverse_image(S.ideal(u^2 - 1))                             # optional - sage.libs.singular
+            sage: S.<u,v> = QQbar['u,v'].quotient('u^4 - 1')
+            sage: S.cover().inverse_image(S.ideal(u^2 - 1))
             Ideal (u^4 - 1, u^2 - 1) of Multivariate Polynomial Ring in u, v
             over Algebraic Field
         """
@@ -2703,8 +2603,8 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: Q.<u,v> = QQ['x,y'].quotient('x + y')                                 # optional - sage.libs.singular
-            sage: Q.cover().inverse_image(u)                                            # optional - sage.libs.singular
+            sage: Q.<u,v> = QQ['x,y'].quotient('x + y')                                 # needs sage.libs.singular
+            sage: Q.cover().inverse_image(u)                                            # needs sage.libs.singular
             -y
         """
         return b.lift()
@@ -2716,10 +2616,10 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
     INPUT:
 
-    -  ``parent`` -- a ring homset ``Hom(R,S)``
+    - ``parent`` -- a ring homset ``Hom(R,S)``
 
-    -  ``phi`` -- a ring homomorphism ``C --> S``, where ``C`` is the
-       domain of ``R.cover()``
+    - ``phi`` -- a ring homomorphism ``C --> S``, where ``C`` is the
+      domain of ``R.cover()``
 
     OUTPUT: a ring homomorphism
 
@@ -2732,24 +2632,25 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.singular
         sage: R.<x, y, z> = PolynomialRing(QQ, 3)
-        sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)                                      # optional - sage.libs.singular
-        sage: phi = S.hom([b, c, a]); phi                                               # optional - sage.libs.singular
+        sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
+        sage: phi = S.hom([b, c, a]); phi
         Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y, z
          over Rational Field by the ideal (x^3 + y^3 + z^3)
           Defn: a |--> b
                 b |--> c
                 c |--> a
-        sage: phi(a + b + c)                                                            # optional - sage.libs.singular
+        sage: phi(a + b + c)
         a + b + c
-        sage: loads(dumps(phi)) == phi                                                  # optional - sage.libs.singular
+        sage: loads(dumps(phi)) == phi
         True
 
     Validity of the homomorphism is determined, when possible, and a
-    ``TypeError`` is raised if there is no homomorphism sending the
+    :exc:`TypeError` is raised if there is no homomorphism sending the
     generators to the given images::
 
-        sage: S.hom([b^2, c^2, a^2])                                                    # optional - sage.libs.singular
+        sage: S.hom([b^2, c^2, a^2])                                                    # needs sage.libs.singular
         Traceback (most recent call last):
         ...
         ValueError: relations do not all (canonically) map to 0
@@ -2761,7 +2662,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2,y^2]); S.hom([yy,xx])          # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2,y^2]); S.hom([yy,xx])          # needs sage.libs.singular
             Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y
              over Rational Field by the ideal (x^2, y^2)
               Defn: xx |--> yy
@@ -2788,24 +2689,24 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<x, y, z> = PolynomialRing(QQ, 3)
-            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)                                  # optional - sage.libs.singular
-            sage: phi = S.hom([b, c, a]); phi                                           # optional - sage.libs.singular
+            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
+            sage: phi = S.hom([b, c, a]); phi
             Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y, z
              over Rational Field by the ideal (x^3 + y^3 + z^3)
               Defn: a |--> b
                     b |--> c
                     c |--> a
-            sage: phi(a + b + c)                                                        # optional - sage.libs.singular
+            sage: phi(a + b + c)
             a + b + c
-            sage: psi = copy(phi)    # indirect doctest                                 # optional - sage.libs.singular
-            sage: psi == phi                                                            # optional - sage.libs.singular
+            sage: psi = copy(phi)    # indirect doctest
+            sage: psi == phi
             True
-            sage: psi is phi                                                            # optional - sage.libs.singular
+            sage: psi is phi
             False
-            sage: psi(a) == phi(a)                                                      # optional - sage.libs.singular
+            sage: psi(a) == phi(a)
             True
-
         """
         self.phi = _slots['phi']
         RingHomomorphism._update_slots(self, _slots)
@@ -2816,22 +2717,23 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.singular
             sage: R.<x, y, z> = PolynomialRing(QQ, 3)
-            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)                                  # optional - sage.libs.singular
-            sage: phi = S.hom([b, c, a]); phi                                           # optional - sage.libs.singular
+            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
+            sage: phi = S.hom([b, c, a]); phi
             Ring endomorphism of Quotient of Multivariate Polynomial Ring in x, y, z
              over Rational Field by the ideal (x^3 + y^3 + z^3)
               Defn: a |--> b
                     b |--> c
                     c |--> a
-            sage: phi(a + b + c)                                                        # optional - sage.libs.singular
+            sage: phi(a + b + c)
             a + b + c
-            sage: psi = copy(phi)    # indirect doctest                                 # optional - sage.libs.singular
-            sage: psi == phi                                                            # optional - sage.libs.singular
+            sage: psi = copy(phi)    # indirect doctest
+            sage: psi == phi
             True
-            sage: psi is phi                                                            # optional - sage.libs.singular
+            sage: psi is phi
             False
-            sage: psi(a) == phi(a)                                                      # optional - sage.libs.singular
+            sage: psi(a) == phi(a)
             True
         """
         slots = RingHomomorphism._extra_slots(self)
@@ -2845,8 +2747,8 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2, y^2]); f = S.hom([yy,xx])     # optional - sage.libs.singular
-            sage: f._phi()                                                              # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2, y^2]); f = S.hom([yy,xx])     # needs sage.libs.singular
+            sage: f._phi()                                                              # needs sage.libs.singular
             Ring morphism:
               From: Multivariate Polynomial Ring in x, y over Rational Field
               To:   Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2, y^2)
@@ -2862,8 +2764,8 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2, y^2])                         # optional - sage.libs.singular
-            sage: S.hom([yy,xx]).morphism_from_cover()                                  # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2, y^2])                         # needs sage.libs.singular
+            sage: S.hom([yy,xx]).morphism_from_cover()                                  # needs sage.libs.singular
             Ring morphism:
               From: Multivariate Polynomial Ring in x, y over Rational Field
               To:   Quotient of Multivariate Polynomial Ring in x, y
@@ -2879,14 +2781,15 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: R.<x, y, z> = PolynomialRing(GF(19), 3)                               # optional - sage.rings.finite_rings
-            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)                                  # optional - sage.rings.finite_rings
-            sage: phi = S.hom([b, c, a])                                                # optional - sage.rings.finite_rings
-            sage: psi = S.hom([c, b, a])                                                # optional - sage.rings.finite_rings
-            sage: f = S.hom([b, c, a + a^3 + b^3 + c^3])                                # optional - sage.rings.finite_rings
-            sage: phi == psi                                                            # optional - sage.rings.finite_rings
+            sage: # needs sage.libs.singular
+            sage: R.<x, y, z> = PolynomialRing(GF(19), 3)
+            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
+            sage: phi = S.hom([b, c, a])
+            sage: psi = S.hom([c, b, a])
+            sage: f = S.hom([b, c, a + a^3 + b^3 + c^3])
+            sage: phi == psi
             False
-            sage: phi == f                                                              # optional - sage.rings.finite_rings
+            sage: phi == f
             True
         """
         if not isinstance(other, RingHomomorphism_from_quotient):
@@ -2903,14 +2806,15 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: R.<x, y, z> = PolynomialRing(GF(19), 3)                               # optional - sage.rings.finite_rings
-            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)                                  # optional - sage.rings.finite_rings
-            sage: phi = S.hom([b, c, a])                                                # optional - sage.rings.finite_rings
-            sage: type(phi)                                                             # optional - sage.rings.finite_rings
+            sage: # needs sage.libs.singular
+            sage: R.<x, y, z> = PolynomialRing(GF(19), 3)
+            sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
+            sage: phi = S.hom([b, c, a])
+            sage: type(phi)
             <class 'sage.rings.morphism.RingHomomorphism_from_quotient'>
-            sage: hash(phi) == hash(phi)                                                # optional - sage.rings.finite_rings
+            sage: hash(phi) == hash(phi)
             True
-            sage: {phi: 1}[phi]                                                         # optional - sage.rings.finite_rings
+            sage: {phi: 1}[phi]
             1
         """
         return hash(self.phi)
@@ -2921,9 +2825,9 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2,y^2])                          # optional - sage.libs.singular
-            sage: f = S.hom([yy, xx])                                                   # optional - sage.libs.singular
-            sage: print(f._repr_defn())                                                 # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2,y^2])                          # needs sage.libs.singular
+            sage: f = S.hom([yy, xx])                                                   # needs sage.libs.singular
+            sage: print(f._repr_defn())                                                 # needs sage.libs.singular
             xx |--> yy
             yy |--> xx
         """
@@ -2938,8 +2842,8 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2, y^2]); f = S.hom([yy, xx])    # optional - sage.libs.singular
-            sage: f(3*x + (1/2)*y)   # indirect doctest                                 # optional - sage.libs.singular
+            sage: R.<x,y> = QQ[]; S.<xx,yy> = R.quo([x^2, y^2]); f = S.hom([yy, xx])    # needs sage.libs.singular
+            sage: f(3*x + (1/2)*y)   # indirect doctest                                 # needs sage.libs.singular
             1/2*xx + 3*yy
         """
         return self.phi(self.lift(x))
@@ -2954,9 +2858,9 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         """
         INPUT:
 
-        -  ``domain`` -- a ring
+        - ``domain`` -- a ring
 
-        -  ``n`` -- a nonnegative integer (default: 1)
+        - ``n`` -- nonnegative integer (default: 1)
 
         OUTPUT:
 
@@ -2966,15 +2870,15 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         TESTS::
 
             sage: from sage.rings.morphism import FrobeniusEndomorphism_generic
-            sage: K.<u> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: FrobeniusEndomorphism_generic(K)                                      # optional - sage.rings.finite_rings
+            sage: K.<u> = PowerSeriesRing(GF(5))
+            sage: FrobeniusEndomorphism_generic(K)
             Frobenius endomorphism x |--> x^5 of Power Series Ring in u
              over Finite Field of size 5
-            sage: FrobeniusEndomorphism_generic(K, 2)                                   # optional - sage.rings.finite_rings
+            sage: FrobeniusEndomorphism_generic(K, 2)
             Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
              over Finite Field of size 5
         """
-        from .ring import CommutativeRing
+        from sage.rings.ring import CommutativeRing
         from sage.categories.homset import Hom
         if not isinstance(domain, CommutativeRing):
             raise TypeError("The base ring must be a commutative ring")
@@ -2999,10 +2903,11 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K = Frac(GF(5)['T'])                                                  # optional - sage.rings.finite_rings
-            sage: phi = K.frobenius_endomorphism()                                      # optional - sage.rings.finite_rings
-            sage: psi = copy(phi)                                                       # optional - sage.rings.finite_rings
-            sage: phi == psi                                                            # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K = Frac(GF(5)['T'])
+            sage: phi = K.frobenius_endomorphism()
+            sage: psi = copy(phi)
+            sage: phi == psi
             True
         """
         self._p = _slots['_domain'].characteristic()
@@ -3019,16 +2924,16 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K = Frac(GF(25)['T'])                                                 # optional - sage.rings.finite_rings
-            sage: phi = K.frobenius_endomorphism(2)                                     # optional - sage.rings.finite_rings
-            sage: phi                                                                   # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K = Frac(GF(25)['T'])
+            sage: phi = K.frobenius_endomorphism(2)
+            sage: phi
             Frobenius endomorphism x |--> x^(5^2) of Fraction Field of
              Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
-
-            sage: psi = loads(dumps(phi)); psi                                          # optional - sage.rings.finite_rings
+            sage: psi = loads(dumps(phi)); psi
             Frobenius endomorphism x |--> x^(5^2) of Fraction Field of
              Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
-            sage: phi == psi                                                            # optional - sage.rings.finite_rings
+            sage: phi == psi
             True
         """
         slots = RingHomomorphism._extra_slots(self)
@@ -3041,12 +2946,12 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: Frob = K.frobenius_endomorphism(); Frob                               # optional - sage.rings.finite_rings
+            sage: K.<u> = PowerSeriesRing(GF(5))
+            sage: Frob = K.frobenius_endomorphism(); Frob
             Frobenius endomorphism x |--> x^5 of Power Series Ring in u
              over Finite Field of size 5
 
-            sage: Frob._repr_()                                                         # optional - sage.rings.finite_rings
+            sage: Frob._repr_()
             'Frobenius endomorphism x |--> x^5 of Power Series Ring in u
              over Finite Field of size 5'
         """
@@ -3065,11 +2970,12 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: Frob = K.frobenius_endomorphism()                                     # optional - sage.rings.finite_rings
-            sage: Frob._repr_short()                                                    # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<u> = PowerSeriesRing(GF(5))
+            sage: Frob = K.frobenius_endomorphism()
+            sage: Frob._repr_short()
             'Frob'
-            sage: (Frob^2)._repr_short()                                                # optional - sage.rings.finite_rings
+            sage: (Frob^2)._repr_short()
             'Frob^2'
         """
         if self._power == 0:
@@ -3086,9 +2992,9 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: Frob = K.frobenius_endomorphism(2)                                    # optional - sage.rings.finite_rings
-            sage: Frob._latex_()                                                        # optional - sage.rings.finite_rings
+            sage: K.<u> = PowerSeriesRing(GF(5))
+            sage: Frob = K.frobenius_endomorphism(2)
+            sage: Frob._latex_()
             '\\verb"Frob"^{2}'
         """
         if self._power == 0:
@@ -3103,11 +3009,12 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         """
         TESTS::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: Frob = K.frobenius_endomorphism()                                     # optional - sage.rings.finite_rings
-            sage: Frob(u)                                                               # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<u> = PowerSeriesRing(GF(5))
+            sage: Frob = K.frobenius_endomorphism()
+            sage: Frob(u)
             u^5
-            sage: (Frob^2)(1 + u)                                                       # optional - sage.rings.finite_rings
+            sage: (Frob^2)(1 + u)
             1 + u^25
         """
         return x ** self._q
@@ -3120,11 +3027,12 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: Frob = K.frobenius_endomorphism()                                     # optional - sage.rings.finite_rings
-            sage: Frob.power()                                                          # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<u> = PowerSeriesRing(GF(5))
+            sage: Frob = K.frobenius_endomorphism()
+            sage: Frob.power()
             1
-            sage: (Frob^9).power()                                                      # optional - sage.rings.finite_rings
+            sage: (Frob^9).power()
             9
         """
         return self._power
@@ -3135,11 +3043,11 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: Frob = K.frobenius_endomorphism(); Frob                               # optional - sage.rings.finite_rings
+            sage: K.<u> = PowerSeriesRing(GF(5))
+            sage: Frob = K.frobenius_endomorphism(); Frob
             Frobenius endomorphism x |--> x^5 of Power Series Ring in u
              over Finite Field of size 5
-            sage: Frob^2                                                                # optional - sage.rings.finite_rings
+            sage: Frob^2
             Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
              over Finite Field of size 5
         """
@@ -3147,18 +3055,19 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
 
     def _composition(self, right):
         """
-        Return self o right.
+        Return ``self`` o ``right``.
 
         EXAMPLES::
 
-            sage: K.<u> = PowerSeriesRing(GF(5))                                        # optional - sage.rings.finite_rings
-            sage: f = K.frobenius_endomorphism(); f                                     # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: K.<u> = PowerSeriesRing(GF(5))
+            sage: f = K.frobenius_endomorphism(); f
             Frobenius endomorphism x |--> x^5 of Power Series Ring in u
              over Finite Field of size 5
-            sage: g = K.frobenius_endomorphism(2); g                                    # optional - sage.rings.finite_rings
+            sage: g = K.frobenius_endomorphism(2); g
             Frobenius endomorphism x |--> x^(5^2) of Power Series Ring in u
              over Finite Field of size 5
-            sage: f * g                                                                 # optional - sage.rings.finite_rings
+            sage: f * g
             Frobenius endomorphism x |--> x^(5^3) of Power Series Ring in u
              over Finite Field of size 5
         """
@@ -3198,17 +3107,18 @@ def _tensor_product_ring(B, A):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.singular
         sage: from sage.rings.morphism import _tensor_product_ring
         sage: R.<x,y> = QQ[]
-        sage: S.<u,v> = R.quotient(x^2 + y^2)                                           # optional - sage.libs.singular
-        sage: Q = _tensor_product_ring(S, R); Q                                         # optional - sage.libs.singular
+        sage: S.<u,v> = R.quotient(x^2 + y^2)
+        sage: Q = _tensor_product_ring(S, R); Q
         Quotient of Multivariate Polynomial Ring in u, v, x, y over
         Rational Field by the ideal (u^2 + v^2)
-        sage: Q.term_order()                                                            # optional - sage.libs.singular
+        sage: Q.term_order()
         Block term order with blocks:
         (Degree reverse lexicographic term order of length 2,
          Degree reverse lexicographic term order of length 2)
-        sage: _tensor_product_ring(R, R)                                                # optional - sage.libs.singular
+        sage: _tensor_product_ring(R, R)
         Multivariate Polynomial Ring in y0, y1, x0, x1 over Rational Field
 
     TESTS:
@@ -3216,19 +3126,19 @@ def _tensor_product_ring(B, A):
     Local orderings are not supported::
 
         sage: R = PolynomialRing(QQ, 'x,y', order='negdeglex')
-        sage: _tensor_product_ring(R, R)
+        sage: _tensor_product_ring(R, R)                                                # needs sage.libs.singular
         Traceback (most recent call last):
         ...
         ValueError: term ordering must be global
     """
-    from .finite_rings.finite_field_base import FiniteField
-    from .number_field.number_field_base import NumberField
-    from .polynomial.multi_polynomial_ring import is_MPolynomialRing
-    from .polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
-    from .polynomial.polynomial_ring import is_PolynomialRing
-    from .polynomial.polynomial_ring_constructor import PolynomialRing
-    from .polynomial.term_order import TermOrder
-    from .quotient_ring import is_QuotientRing
+    from sage.rings.finite_rings.finite_field_base import FiniteField
+    from sage.rings.number_field.number_field_base import NumberField
+    from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
+    from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
+    from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+    from sage.rings.polynomial.term_order import TermOrder
+    from sage.rings.quotient_ring import QuotientRing_nc
 
     if set(B.variable_names()).isdisjoint(A.variable_names()):
         names = B.variable_names() + A.variable_names()
@@ -3238,7 +3148,7 @@ def _tensor_product_ring(B, A):
 
     def term_order(A):
         # univariate rings do not have a term order
-        if (is_PolynomialRing(A) or is_PolynomialQuotientRing(A)
+        if (isinstance(A, PolynomialRing_general) or isinstance(A, PolynomialQuotientRing_generic)
             or (isinstance(A, (NumberField, FiniteField))
                 and not A.is_prime_field())):
             return TermOrder('lex', 1)
@@ -3254,12 +3164,12 @@ def _tensor_product_ring(B, A):
                        order=term_order(B) + term_order(A))
 
     def relations(A, R_gens_A):
-        if is_MPolynomialRing(A) or is_PolynomialRing(A):
+        if isinstance(A, MPolynomialRing_base) or isinstance(A, PolynomialRing_general):
             return []
-        elif is_PolynomialQuotientRing(A):
+        elif isinstance(A, PolynomialQuotientRing_generic):
             to_R = A.ambient().hom(R_gens_A, R, check=False)
             return [to_R(A.modulus())]
-        elif is_QuotientRing(A):
+        elif isinstance(A, QuotientRing_nc):
             to_R = A.ambient().hom(R_gens_A, R, check=False)
             return list(to_R(A.defining_ideal()).gens())
         elif (isinstance(A, (NumberField, FiniteField))

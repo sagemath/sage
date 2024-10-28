@@ -29,32 +29,32 @@ cdef class GenericBackend (SageObject):
     cpdef best_known_objective_bound(self)
     cpdef get_relative_objective_gap(self)
     cpdef get_variable_value(self, int variable)
-    cpdef bint is_maximization(self)
+    cpdef bint is_maximization(self) noexcept
     cpdef write_lp(self, name)
     cpdef write_mps(self, name, int modern)
     cpdef row(self, int i)
-    cpdef int ncols(self)
-    cpdef int nrows(self)
-    cpdef bint is_variable_binary(self, int)
-    cpdef bint is_variable_integer(self, int)
-    cpdef bint is_variable_continuous(self, int)
-    cpdef problem_name(self, name = *)
+    cpdef int ncols(self) noexcept
+    cpdef int nrows(self) noexcept
+    cpdef bint is_variable_binary(self, int) noexcept
+    cpdef bint is_variable_integer(self, int) noexcept
+    cpdef bint is_variable_continuous(self, int) noexcept
+    cpdef problem_name(self, name=*)
     cpdef row_bounds(self, int index)
     cpdef col_bounds(self, int index)
     cpdef row_name(self, int index)
     cpdef col_name(self, int index)
-    cpdef variable_upper_bound(self, int index, value = *)
-    cpdef variable_lower_bound(self, int index, value = *)
+    cpdef variable_upper_bound(self, int index, value=*)
+    cpdef variable_lower_bound(self, int index, value=*)
     cpdef solver_parameter(self, name, value=*)
     cpdef zero(self)
     cpdef base_ring(self)
     cpdef __copy__(self)
     cpdef copy(self)
-    cpdef bint is_variable_basic(self, int index)
-    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index)
-    cpdef bint is_slack_variable_basic(self, int index)
-    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index)
+    cpdef bint is_variable_basic(self, int index) noexcept
+    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index) noexcept
+    cpdef bint is_slack_variable_basic(self, int index) noexcept
+    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index) noexcept
 
     cdef object obj_constant_term
 
-cpdef GenericBackend get_solver(constraint_generation = ?, solver = ?, base_ring = ?)
+cpdef GenericBackend get_solver(constraint_generation=?, solver=?, base_ring=?)

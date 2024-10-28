@@ -8,7 +8,6 @@ AUTHOR:
 
 - Josh Kantor (2006-10-07)  - initial version
 - David Joyner (2006-10-09) - minor changes to docstrings and examples.
-
 """
 
 # ****************************************************************************
@@ -29,7 +28,7 @@ def WaveletTransform(n, wavelet_type, wavelet_k):
 
     INPUT:
 
-    - ``n`` --  a power of 2
+    - ``n`` -- a power of 2
     - ``T`` -- the data in the GSLDoubleArray must be real
     - ``wavelet_type`` -- the name of the type of wavelet, valid choices are:
 
@@ -147,7 +146,7 @@ cdef class DiscreteWaveletTransform(GSLDoubleArray):
             x_min = 0
         if xmax is None:
             x_max = self.n
-        for i from x_min <= i < x_max:
+        for i in range(x_min, x_max):
             x = self.data[i]
             if i > 0:
                 v.append(point([(i, x)], hue=(1, 1, 1), **args))

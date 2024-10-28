@@ -1,14 +1,15 @@
 cimport cython
 from sage.data_structures.list_of_pairs cimport ListOfPairs
 from sage.structure.sage_object         cimport SageObject
-from .face_iterator                     cimport FaceIterator, CombinatorialFace
-from .list_of_faces                     cimport ListOfFaces
-from .face_data_structure               cimport face_t
-from .polyhedron_face_lattice           cimport PolyhedronFaceLattice
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator                     cimport FaceIterator, CombinatorialFace
+from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces                     cimport ListOfFaces
+from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure               cimport face_t
+from sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice           cimport PolyhedronFaceLattice
+
 
 @cython.final
 cdef class CombinatorialPolyhedron(SageObject):
-    cdef public dict __cached_methods
+    cdef public dict _cached_methods
 
     # Do not assume any of those attributes to be initialized, use the corresponding methods instead.
     cdef tuple _Vrep                       # the names of VRep, if they exist
@@ -33,10 +34,9 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef tuple Vrep(self)
     cdef tuple facet_names(self)
     cdef tuple equations(self)
-    cdef tuple equalities(self)
-    cdef unsigned int n_Vrepresentation(self)
-    cdef unsigned int n_Hrepresentation(self)
-    cdef bint is_bounded(self)
+    cdef unsigned int n_Vrepresentation(self) noexcept
+    cdef unsigned int n_Hrepresentation(self) noexcept
+    cdef bint is_bounded(self) noexcept
     cdef ListOfFaces bitrep_facets(self)
     cdef ListOfFaces bitrep_Vrep(self)
     cdef tuple far_face_tuple(self)

@@ -16,7 +16,7 @@ AUTHOR:
 # to make sure the function get_cparent is found since it is used in
 # 'polynomial_template.pxi'.
 
-cdef inline cparent get_cparent(parent):
+cdef inline cparent get_cparent(parent) noexcept:
     return 0
 
 # first we include the definitions
@@ -53,7 +53,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             sage: x^3 + x^2 + 1
             x^3 + x^2 + 1
 
-        We check that the bug noted at :trac:`12724` is fixed::
+        We check that the bug noted at :issue:`12724` is fixed::
 
             sage: R.<x> = Zmod(2)[]
             sage: R([2^80])
@@ -256,6 +256,12 @@ cdef class Polynomial_GF2X(Polynomial_template):
         verbose("Res %5.3f s"%cputime(t),level=1)
         return res
 
+    # Other polynomials have compose_mod as methods following the naming of
+    # NTL/Flint bindings but the above method predates these. We expose
+    # compose_mod here so all polynomial ring elements which support this can
+    # use either name
+    compose_mod = modular_composition
+
     @cached_method
     def is_irreducible(self):
         r"""
@@ -277,7 +283,6 @@ cdef class Polynomial_GF2X(Polynomial_template):
             False
             sage: f.is_irreducible.cache
             False
-
         """
         return 0 != GF2X_IterIrredTest(self.x)
 
@@ -310,6 +315,7 @@ def GF2X_BuildIrred_list(n):
     GF2X_BuildIrred(f, int(n))
     return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
 
+
 def GF2X_BuildSparseIrred_list(n):
     """
     Return the list of coefficients of an irreducible polynomial of
@@ -329,6 +335,7 @@ def GF2X_BuildSparseIrred_list(n):
     GF2 = FiniteField(2)
     GF2X_BuildSparseIrred(f, int(n))
     return [GF2(not GF2_IsZero(GF2X_coeff(f, i))) for i in range(n + 1)]
+
 
 def GF2X_BuildRandomIrred_list(n):
     """

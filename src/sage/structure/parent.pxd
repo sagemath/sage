@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
     # Flags, see below
     cdef int flags
-    cdef inline bint get_flag(self, int flag):
+    cdef inline bint get_flag(self, int flag) noexcept:
         return self.flags & flag
 
     cpdef register_coercion(self, mor)

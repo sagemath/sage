@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Rigged Partitions
 
@@ -6,7 +7,7 @@ configuration class. This is an internal class used by the rigged
 configurations and KR tableaux during the bijection, and is not to be used by
 the end-user.
 
-We hold the partitions as an 1-dim array of positive integers where each
+We hold the partitions as a 1-dim array of positive integers where each
 value corresponds to the length of the row. This is the shape of the
 partition which can be accessed by the regular index.
 
@@ -359,13 +360,11 @@ cdef class RiggedPartition(SageObject):
 
         INPUT:
 
-        - ``end_column`` -- The index of the column to end at
+        - ``end_column`` -- the index of the column to end at
 
-        - ``t`` -- The scaling factor
+        - ``t`` -- the scaling factor
 
-        OUTPUT:
-
-        - The number of cells
+        OUTPUT: the number of cells
 
         EXAMPLES::
 
@@ -404,12 +403,10 @@ cdef class RiggedPartition(SageObject):
 
         INPUT:
 
-        - ``max_width`` -- The maximum width (i.e. row length) that we can
+        - ``max_width`` -- the maximum width (i.e. row length) that we can
           insert the cell at
 
-        OUTPUT:
-
-        - The width of the row we inserted at.
+        OUTPUT: the width of the row we inserted at
 
         EXAMPLES::
 
@@ -561,7 +558,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
 
         INPUT:
 
-        - ``half_width_boxes`` -- (Default: ``True``) Display the partition
+        - ``half_width_boxes`` -- (default: ``True``) display the partition
           using half width boxes
 
         EXAMPLES::
@@ -610,7 +607,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
 
         INPUT:
 
-        - ``half_width_boxes`` -- (default: ``True``) display the partition
+        - ``half_width_boxes`` -- boolean (default: ``True``); display the partition
           using half width boxes
 
         EXAMPLES::

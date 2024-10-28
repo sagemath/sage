@@ -1,10 +1,10 @@
-typing_extensions: Backported and Experimental Type Hints for Python 3.5+
+typing_extensions: Backported and Experimental Type Hints for Python 3.8+
 =========================================================================
 
 Description
 -----------
 
-Backported and Experimental Type Hints for Python 3.5+
+Backported and Experimental Type Hints for Python 3.8+
 
 License
 -------

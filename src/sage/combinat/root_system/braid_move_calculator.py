@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 """
 Braid Move Calculator
 
@@ -18,7 +19,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 
 
-class BraidMoveCalculator():
+class BraidMoveCalculator:
     """
     Helper class to compute braid moves.
     """
@@ -32,7 +33,7 @@ class BraidMoveCalculator():
             sage: from sage.combinat.root_system.braid_move_calculator import BraidMoveCalculator
             sage: W = CoxeterGroup(['C',3])
             sage: B = BraidMoveCalculator(W)
-            sage: TestSuite(B).run(skip="_test_pickling")
+            sage: TestSuite(B).run(skip='_test_pickling')
         """
         self.coxeter_matrix = coxeter_group.coxeter_matrix()
 

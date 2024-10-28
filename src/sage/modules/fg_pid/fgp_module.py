@@ -35,7 +35,6 @@ to `M_1=V_1/W_1` by giving a morphism from the optimized representation `V_0'`
 of `M_0` to `V_1` that sends `W_0` into `W_1`.
 
 
-
 The following TUTORIAL illustrates several of the above points.
 
 First we create free modules `V_0` and `W_0` and the quotient module `M_0`.
@@ -211,9 +210,10 @@ AUTHOR:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
 from sage.modules.module import Module
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.structure.all import parent
 from sage.structure.sequence import Sequence
 from .fgp_element import DEBUG, FGP_Element
@@ -238,14 +238,12 @@ def FGP_Module(V, W, check=True):
 
     - ``W`` -- a free `R`-submodule of `V`
 
-    - ``check`` -- bool (default: ``True``); if ``True``, more checks
-      on correctness are performed; in particular, we check the data
+    - ``check`` -- boolean (default: ``True``); if ``True``, more checks
+      on correctness are performed. In particular, we check the data
       types of ``V`` and ``W``, and that `W` is a submodule of `V`
       with the same base ring.
 
-    OUTPUT:
-
-    - the quotient `V/W` as a finitely generated `R`-module
+    OUTPUT: the quotient `V/W` as a finitely generated `R`-module
 
     EXAMPLES::
 
@@ -279,10 +277,16 @@ def is_FGP_Module(x):
         sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ)
         sage: W = V.span([2*V.0 + 4*V.1, 9*V.0 + 12*V.1, 4*V.2]); Q = V/W
         sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(V)
+        doctest:warning...
+        DeprecationWarning: the function is_FGP_Module is deprecated;
+        use 'isinstance(..., FGP_Module_class)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         False
         sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(Q)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FGP_Module is deprecated; use 'isinstance(..., FGP_Module_class)' instead")
     return isinstance(x, FGP_Module_class)
 
 
@@ -296,7 +300,7 @@ class FGP_Module_class(Module):
 
     - ``W`` -- an `R`-submodule of `V`
 
-    - ``check`` -- bool (default: ``True``)
+    - ``check`` -- boolean (default: ``True``)
 
     EXAMPLES::
 
@@ -318,7 +322,7 @@ class FGP_Module_class(Module):
 
     TESTS:
 
-    Make sure that the problems in :trac:`7516` are fixed::
+    Make sure that the problems in :issue:`7516` are fixed::
 
         sage: V = FreeModule(QQ, 2)
         sage: W = V.submodule([V([1,1])])
@@ -340,8 +344,8 @@ class FGP_Module_class(Module):
 
         - ``W`` -- an `R`-submodule of `V`
 
-        - ``check`` -- bool (default: ``True``); if ``True``, more checks on
-          correctness are performed; in particular, we check the data types of
+        - ``check`` -- boolean (default: ``True``); if ``True``, more checks on
+          correctness are performed. In particular, we check the data types of
           ``V`` and ``W``, and that `W` is a submodule of `V` with the same
           base ring `R`.
 
@@ -355,9 +359,9 @@ class FGP_Module_class(Module):
             <class 'sage.modules.fg_pid.fgp_module.FGP_Module_class_with_category'>
         """
         if check:
-            if not is_FreeModule(V):
+            if not isinstance(V, FreeModule_generic):
                 raise TypeError("V must be a FreeModule")
-            if not is_FreeModule(W):
+            if not isinstance(W, FreeModule_generic):
                 raise TypeError("W must be a FreeModule")
             if not W.is_submodule(V):
                 raise ValueError("W must be a submodule of V")
@@ -385,11 +389,9 @@ class FGP_Module_class(Module):
 
         - ``W`` -- an `R`-submodule of `V`
 
-        - ``check`` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
-        OUTPUT:
-
-        The quotient `V/W`.
+        OUTPUT: the quotient `V/W`
 
         EXAMPLES::
 
@@ -410,9 +412,7 @@ class FGP_Module_class(Module):
 
         - ``S`` -- anything
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -440,7 +440,7 @@ class FGP_Module_class(Module):
             sage: Q._coerce_map_from_(V.scale(2))
             True
         """
-        if is_FGP_Module(S):
+        if isinstance(S, FGP_Module_class):
             return S.has_canonical_map_to(self)
         return self._V.has_coerce_map_from(S)
 
@@ -451,7 +451,8 @@ class FGP_Module_class(Module):
         INPUT:
 
         - ``other`` -- an element of the base ring
-        - ``switch_sides`` -- (default: ``False``) left or right multiplication
+        - ``switch_sides`` -- boolean (default: ``False``); left or right
+          multiplication
 
         EXAMPLES::
 
@@ -499,8 +500,8 @@ class FGP_Module_class(Module):
             sage: Q/Q
             Finitely generated module V/W over Integer Ring with invariants ()
         """
-        if not is_FGP_Module(other):
-            if is_FreeModule(other):
+        if not isinstance(other, FGP_Module_class):
+            if isinstance(other, FreeModule_generic):
                 other = other / other.zero_submodule()
             else:
                 raise TypeError("other must be an FGP module")
@@ -524,13 +525,13 @@ class FGP_Module_class(Module):
             sage: Q == V/V.zero_submodule()
             False
         """
-        if not is_FGP_Module(other):
+        if not isinstance(other, FGP_Module_class):
             return False
         return self._V == other._V and self._W == other._W
 
     def __ne__(self, other):
         """
-        True iff ``self`` is not equal to ``other``.
+        Return ``True`` iff ``self`` is not equal to ``other``.
 
         This may not be needed for modules created using the function
         :func:`FGP_Module`, since those have uniqueness built into
@@ -540,11 +541,11 @@ class FGP_Module_class(Module):
         True, it may be the case that ``M != N`` may also return True.
         In particular, for derived classes whose ``__init__`` methods just
         call the ``__init__`` method for this class need this.  See
-        :trac:`9940` for illustrations.
+        :issue:`9940` for illustrations.
 
         EXAMPLES:
 
-        Make sure that the problems in :trac:`9940` are fixed::
+        Make sure that the problems in :issue:`9940` are fixed::
 
             sage: G = AdditiveAbelianGroup([0,0])
             sage: H = AdditiveAbelianGroup([0,0])
@@ -570,7 +571,7 @@ class FGP_Module_class(Module):
 
     def __lt__(self, other):
         """
-        True iff ``self`` is a proper submodule of ``other``.
+        Return ``True`` iff ``self`` is a proper submodule of ``other``.
 
         EXAMPLES::
 
@@ -588,7 +589,7 @@ class FGP_Module_class(Module):
 
     def __gt__(self, other):
         """
-        True iff ``other`` is a proper submodule of ``self``.
+        Return ``True`` iff ``other`` is a proper submodule of ``self``.
 
         EXAMPLES::
 
@@ -606,7 +607,7 @@ class FGP_Module_class(Module):
 
     def __ge__(self, other):
         """
-        True iff ``other`` is a submodule of ``self``.
+        Return ``True`` iff ``other`` is a submodule of ``self``.
 
         EXAMPLES::
 
@@ -635,7 +636,7 @@ class FGP_Module_class(Module):
             space and try to put into `V`.  If ``x`` is in ``self`` already,
             just return ``x``.
 
-        - `check` -- bool (default: ``True``)
+        - ``check`` -- boolean (default: ``True``)
 
         .. SEEALSO:: :meth:`linear_combination_of_smith_form_gens`
 
@@ -667,7 +668,6 @@ class FGP_Module_class(Module):
             sage: X = ZZ**2 / span([[3,0], [0,2]], ZZ)
             sage: X.linear_combination_of_smith_form_gens([1])
             (1)
-
         """
         try:
             x = self.optimized()[0].V().linear_combination_of_basis(x)
@@ -701,7 +701,7 @@ class FGP_Module_class(Module):
         try:
             self(x)
             return True
-        except TypeError:
+        except (TypeError, ValueError):
             return False
 
     def submodule(self, x):
@@ -744,7 +744,7 @@ class FGP_Module_class(Module):
             ...
             ValueError: x.V() must be contained in self's V.
         """
-        if is_FGP_Module(x):
+        if isinstance(x, FGP_Module_class):
             if not x._W.is_submodule(self._W):
                 raise ValueError("x.W() must be contained in self's W.")
 
@@ -758,7 +758,7 @@ class FGP_Module_class(Module):
             raise TypeError("x must be a list, tuple, or FGP module")
 
         x = Sequence(x)
-        if is_FGP_Module(x.universe()):
+        if isinstance(x.universe(), FGP_Module_class):
             # TODO: possibly inefficient in some cases
             x = [self(v).lift() for v in x]
         V = self._V.submodule(x) + self._W
@@ -788,9 +788,8 @@ class FGP_Module_class(Module):
             True
             sage: Q.has_canonical_map_to(A)
             False
-
         """
-        if not is_FGP_Module(A):
+        if not isinstance(A, FGP_Module_class):
             return False
         if self.cardinality() == 0 and self.base_ring() == A.base_ring():
             return True
@@ -850,7 +849,6 @@ class FGP_Module_class(Module):
             [1/2   0   0]
             [  0   1   0]
             [  0   0   1]
-
         """
         return self._V
 
@@ -943,7 +941,7 @@ class FGP_Module_class(Module):
         """
         Return matrices `S`, `U`, and `V` such that `S = U*R*V`, and `S` is in
         Smith normal form, and `R` is the relative matrix that defines
-        self.
+        ``self``.
 
         See :meth:`_relative_matrix`.
 
@@ -980,14 +978,14 @@ class FGP_Module_class(Module):
         r"""
         Return the diagonal entries of the Smith form of the relative
         matrix that defines ``self`` (see :meth:`._relative_matrix`)
-        padded with zeros, excluding 1's by default.   Thus if ``v`` is the
-        list of integers returned, then self is abstractly isomorphic to
+        padded with zeros, excluding 1s by default.   Thus if ``v`` is the
+        list of integers returned, then ``self`` is abstractly isomorphic to
         the product of cyclic groups `\ZZ/n\ZZ` where `n` is in ``v``.
 
         INPUT:
 
-        - ``include_ones`` -- bool (default: ``False``); if ``True``, also
-          include 1's in the output list.
+        - ``include_ones`` -- boolean (default: ``False``); if ``True``, also
+          include 1s in the output list
 
         EXAMPLES::
 
@@ -1005,7 +1003,6 @@ class FGP_Module_class(Module):
             (0,)
             sage: Q.invariants(include_ones=True)
             (1, 1, 0)
-
         """
         D, _, _ = self._smith_form()
 
@@ -1016,7 +1013,7 @@ class FGP_Module_class(Module):
         self.invariants.set_cache(w, False)
         return self.invariants(include_ones)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return tuple of elements `g_0,...,g_n` of ``self`` such that the module generated by
         the `g_i` is isomorphic to the direct sum of `R/e_i R`, where `e_i` are the
@@ -1077,14 +1074,12 @@ class FGP_Module_class(Module):
 
         To go in the other direction, use :meth:`smith_to_gens`.
 
-        OUTPUT:
-
-        - a matrix over the base ring
+        OUTPUT: a matrix over the base ring
 
         EXAMPLES::
 
             sage: L2 = IntegralLattice(3 * matrix([[-2,0,0], [0,1,0], [0,0,-4]]))
-            sage: D = L2.discriminant_group().normal_form(); D                          # optional - sage.libs.pari sage.rings.padics
+            sage: D = L2.discriminant_group().normal_form(); D                          # needs sage.libs.pari sage.rings.padics
             Finite quadratic module over Integer Ring with invariants (3, 6, 12)
             Gram matrix of the quadratic form with values in Q/Z:
             [1/2   0   0   0   0]
@@ -1092,13 +1087,13 @@ class FGP_Module_class(Module):
             [  0   0 1/3   0   0]
             [  0   0   0 1/3   0]
             [  0   0   0   0 2/3]
-            sage: D.gens_to_smith()                                                     # optional - sage.libs.pari sage.rings.padics
+            sage: D.gens_to_smith()                                                     # needs sage.libs.pari sage.rings.padics
             [0 3 0]
             [0 0 3]
             [0 4 0]
             [1 2 0]
             [0 0 4]
-            sage: T = D.gens_to_smith() * D.smith_to_gens(); T                          # optional - sage.libs.pari sage.rings.padics
+            sage: T = D.gens_to_smith() * D.smith_to_gens(); T                          # needs sage.libs.pari sage.rings.padics
             [ 3  0  3  0  0]
             [ 0 33  0  0  3]
             [ 4  0  4  0  0]
@@ -1107,9 +1102,9 @@ class FGP_Module_class(Module):
 
         The matrix `T` now satisfies a certain congruence::
 
-            sage: for i in range(T.nrows()):                                            # optional - sage.libs.pari sage.rings.padics
+            sage: for i in range(T.nrows()):                                            # needs sage.libs.pari sage.rings.padics
             ....:     T[:,i] = T[:,i] % D.gens()[i].order()
-            sage: T                                                                     # optional - sage.libs.pari sage.rings.padics
+            sage: T                                                                     # needs sage.libs.pari sage.rings.padics
             [1 0 0 0 0]
             [0 1 0 0 0]
             [0 0 1 0 0]
@@ -1128,14 +1123,12 @@ class FGP_Module_class(Module):
 
         To go in the other direction, use :meth:`gens_to_smith`.
 
-        OUTPUT:
-
-        - a matrix over the base ring
+        OUTPUT: a matrix over the base ring
 
         EXAMPLES::
 
             sage: L2 = IntegralLattice(3 * matrix([[-2,0,0], [0,1,0], [0,0,-4]]))
-            sage: D = L2.discriminant_group().normal_form(); D                          # optional - sage.libs.pari sage.rings.padics
+            sage: D = L2.discriminant_group().normal_form(); D                          # needs sage.libs.pari sage.rings.padics
             Finite quadratic module over Integer Ring with invariants (3, 6, 12)
             Gram matrix of the quadratic form with values in Q/Z:
             [1/2   0   0   0   0]
@@ -1143,33 +1136,33 @@ class FGP_Module_class(Module):
             [  0   0 1/3   0   0]
             [  0   0   0 1/3   0]
             [  0   0   0   0 2/3]
-            sage: D.smith_to_gens()                                                     # optional - sage.libs.pari sage.rings.padics
+            sage: D.smith_to_gens()                                                     # needs sage.libs.pari sage.rings.padics
             [ 0  0  1  1  0]
             [ 1  0  1  0  0]
             [ 0 11  0  0  1]
-            sage: T = D.smith_to_gens() * D.gens_to_smith(); T                          # optional - sage.libs.pari sage.rings.padics
+            sage: T = D.smith_to_gens() * D.gens_to_smith(); T                          # needs sage.libs.pari sage.rings.padics
             [ 1  6  0]
             [ 0  7  0]
             [ 0  0 37]
 
         This matrix satisfies the congruence::
 
-            sage: for i in range(T.ncols()):                                            # optional - sage.libs.pari sage.rings.padics
+            sage: for i in range(T.ncols()):                                            # needs sage.libs.pari sage.rings.padics
             ....:     T[:, i] = T[:, i] % D.smith_form_gens()[i].order()
-            sage: T                                                                     # optional - sage.libs.pari sage.rings.padics
+            sage: T                                                                     # needs sage.libs.pari sage.rings.padics
             [1 0 0]
             [0 1 0]
             [0 0 1]
 
         We create some element of our FGP module::
 
-            sage: x = D.linear_combination_of_smith_form_gens((1,2,3)); x               # optional - sage.libs.pari sage.rings.padics
+            sage: x = D.linear_combination_of_smith_form_gens((1,2,3)); x               # needs sage.libs.pari sage.rings.padics
             (1, 2, 3)
 
         and want to know some (it is not unique) linear combination
         of the user defined generators that is ``x``::
 
-            sage: x.vector() * D.smith_to_gens()                                        # optional - sage.libs.pari sage.rings.padics
+            sage: x.vector() * D.smith_to_gens()                                        # needs sage.libs.pari sage.rings.padics
             (2, 33, 3, 1, 3)
         """
         if self.base_ring() != ZZ:
@@ -1197,7 +1190,7 @@ class FGP_Module_class(Module):
 
         - ``x`` -- element of ``self``
 
-        - ``reduce`` -- (default: ``False``); if ``True``,
+        - ``reduce`` -- (default: ``False``) if ``True``,
           reduce coefficients modulo invariants; this is
           ignored if the base ring is not `\ZZ`
 
@@ -1228,17 +1221,17 @@ class FGP_Module_class(Module):
 
         In our generators::
 
-            sage: v = D.gens_vector(x); v
+            sage: v = D.gens_vector(x); v                                               # needs sage.libs.pari
             (2, 9, 3, 1, 33)
 
         The output can be further reduced::
 
-            sage: D.gens_vector(x, reduce=True)
+            sage: D.gens_vector(x, reduce=True)                                         # needs sage.libs.pari
             (0, 1, 0, 1, 0)
 
         Let us check::
 
-            sage: x == sum(v[i]*D.gen(i) for i in range(len(D.gens())))
+            sage: x == sum(v[i]*D.gen(i) for i in range(len(D.gens())))                 # needs sage.libs.pari
             True
         """
         x = self(x)
@@ -1260,9 +1253,9 @@ class FGP_Module_class(Module):
 
         - ``x`` -- element of ``self``
 
-        - ``reduce`` -- (default: False); if ``True``, reduce
+        - ``reduce`` -- (default: ``False``) if ``True``, reduce
           coefficients modulo invariants; this is
-          ignored if the base ring is not ``ZZ``.
+          ignored if the base ring is not ``ZZ``
 
         OUTPUT:
 
@@ -1497,9 +1490,8 @@ class FGP_Module_class(Module):
 
         INPUT:
 
-        - ``im_gens`` -- a list of the images of ``self.gens()`` in some
+        - ``im_gens`` -- list of the images of ``self.gens()`` in some
           `R`-module
-
 
         EXAMPLES::
 
@@ -1597,7 +1589,7 @@ class FGP_Module_class(Module):
                 N = codomain
                 im_gens = Sequence(im_gens, universe=N)
 
-        if is_FreeModule(N):
+        if isinstance(N, FreeModule_generic):
             # If im_smith_gens are not in an R-module, but are in a Free-module,
             # then we quotient out by the 0 submodule and get an R-module.
             N = FGP_Module(N, N.zero_submodule(), check=DEBUG)
@@ -1622,7 +1614,7 @@ class FGP_Module_class(Module):
 
         INPUT:
 
-        - ``im_gens`` - a Sequence object giving the images of ``self.gens()``,
+        - ``im_gens`` -- a Sequence object giving the images of ``self.gens()``,
           whose universe is some fixed finitely generated `R`-module
 
         EXAMPLES::
@@ -1644,7 +1636,6 @@ class FGP_Module_class(Module):
             Morphism from module over Integer Ring with invariants (3,)
                        to module with invariants (3,)
               that sends the generators to [(1), (1)]
-
         """
         m = self.ngens()
         A = ZZ**m
@@ -1723,7 +1714,7 @@ class FGP_Module_class(Module):
             Category of modules over Integer Ring
 
         The category is correctly adjusted when constructing Hom sets
-        with more general codomains (see :trac:`16402`)::
+        with more general codomains (see :issue:`16402`)::
 
             sage: V = ZZ^2
             sage: W = V.quotient(V.span([[1, 1]]))
@@ -1734,7 +1725,6 @@ class FGP_Module_class(Module):
                 in Category of commutative additive groups
             sage: type(H)
             <class 'sage.categories.homset.Homset_with_category'>
-
         """
         if isinstance(N, FGP_Module_class):
             return FGP_Homset(self, N)
@@ -1805,7 +1795,7 @@ class FGP_Module_class(Module):
             sage: list(V/W)
             [(0), (1)]
         """
-        return [e for e in self]
+        return list(self)
 
     def __iter__(self):
         """
@@ -1823,7 +1813,7 @@ class FGP_Module_class(Module):
             sage: len(z)
             24
 
-        We test that the trivial module is handled correctly (:trac:`6561`)::
+        We test that the trivial module is handled correctly (:issue:`6561`)::
 
             sage: A = (ZZ**1)/(ZZ**1); list(A) == [A(0)]
             True
@@ -1835,8 +1825,7 @@ class FGP_Module_class(Module):
             raise NotImplementedError("currently self must be finite to iterate over")
         B = self.optimized()[0].V().basis_matrix()
         V = self.base_ring()**B.nrows()
-        from sage.misc.mrange import cartesian_product_iterator
-        for a in cartesian_product_iterator([range(k) for k in v]):
+        for a in product(*[range(k) for k in v]):
             b = V(a) * B
             yield self(b)
 
@@ -1867,6 +1856,8 @@ class FGP_Module_class(Module):
             sage: T2 = A2 / B2
             sage: t1 = T1.an_element()
             sage: t2 = T2.an_element()
+
+            sage: # needs sage.libs.flint (o/w infinite recursion)
             sage: t1 + t2
             (1, 1)
         """
@@ -1912,7 +1903,7 @@ class FGP_Module_class(Module):
             sage: Q.annihilator()
             Principal ideal (0) of Integer Ring
 
-        We check that :trac:`22720` is resolved::
+        We check that :issue:`22720` is resolved::
 
             sage: H = AdditiveAbelianGroup([])
             sage: H.annihilator()
@@ -1993,7 +1984,8 @@ def random_fgp_module(n, R=ZZ, finite=False):
 
     - ``R`` -- base ring (default: ``ZZ``)
 
-    - ``finite`` -- bool (default: ``True``); if True, make the random module finite
+    - ``finite`` -- boolean (default: ``True``); if ``True``, make the random
+      module finite
 
     EXAMPLES::
 
@@ -2045,7 +2037,7 @@ def random_fgp_morphism_0(*args, **kwds):
         sage: mor = fgp.random_fgp_morphism_0(4)
         sage: mor.domain() == mor.codomain()
         True
-        sage: fgp.is_FGP_Module(mor.domain())
+        sage: isinstance(mor.domain(), fgp.FGP_Module_class)
         True
 
     Each generator is sent to a random multiple of itself::
@@ -2068,8 +2060,10 @@ def _test_morphism_0(*args, **kwds):
         sage: set_random_seed(s); v = [fgp._test_morphism_0(1) for _ in range(30)]
         sage: set_random_seed(s); v = [fgp._test_morphism_0(2) for _ in range(30)]
         sage: set_random_seed(s); v = [fgp._test_morphism_0(3) for _ in range(10)]
+
+        sage: # needs sage.libs.flint (o/w timeout)
         sage: set_random_seed(s); v = [fgp._test_morphism_0(i) for i in range(1,20)]
-        sage: set_random_seed(s); v = [fgp._test_morphism_0(4) for _ in range(50)]    # long time
+        sage: set_random_seed(s); v = [fgp._test_morphism_0(4) for _ in range(50)]  # long time
     """
     phi = random_fgp_morphism_0(*args, **kwds)
     K = phi.kernel()

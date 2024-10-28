@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Generic structures for linear codes over the rank metric
 
@@ -112,8 +112,8 @@ TESTS::
 # ****************************************************************************
 
 from sage.categories.fields import Fields
-from sage.matrix.constructor import Matrix
-from sage.structure.element import is_Matrix, is_Vector
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix, Vector
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import Infinity
 
@@ -142,8 +142,8 @@ def to_matrix_representation(v, sub_field=None, basis=None):
 
     - ``v`` -- a vector over some field `\GF{q^m}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`. If not
-      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, given that `q = p^s`, let
@@ -166,7 +166,7 @@ def to_matrix_representation(v, sub_field=None, basis=None):
         ...
         TypeError: Input must be a vector
     """
-    if not is_Vector(v):
+    if not isinstance(v, Vector):
         raise TypeError("Input must be a vector")
     base_field = v.base_ring()
     if not sub_field:
@@ -174,7 +174,8 @@ def to_matrix_representation(v, sub_field=None, basis=None):
     n = v.length()
     m = base_field.degree()//sub_field.degree()
     extension, to_big_field, from_big_field = base_field.vector_space(sub_field, basis, map=True)
-    return Matrix(sub_field, m, n, lambda i, j: from_big_field(v[j])[i])
+    return matrix(sub_field, m, n, lambda i, j: from_big_field(v[j])[i])
+
 
 def from_matrix_representation(w, base_field=None, basis=None):
     r"""
@@ -214,16 +215,15 @@ def from_matrix_representation(w, base_field=None, basis=None):
         ...
         TypeError: Input must be a matrix
     """
-    if not is_Matrix(w):
+    if not isinstance(w, Matrix):
         raise TypeError("Input must be a matrix")
     sub_field = w.base_ring()
     if not base_field:
         base_field = sub_field.extension(w.nrows())
-    v = []
     extension, to_big_field, from_big_field = base_field.vector_space(sub_field, basis, map=True)
-    for i in range(w.ncols()):
-        v.append(to_big_field(w.column(i)))
+    v = [to_big_field(w.column(i)) for i in range(w.ncols())]
     return vector(v)
+
 
 def rank_weight(c, sub_field=None, basis=None):
     r"""
@@ -236,8 +236,8 @@ def rank_weight(c, sub_field=None, basis=None):
 
     - ``c`` -- a vector over some field `\GF{q^m}`; or a matrix over `\GF{q}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`. If not
-      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, given that `q = p^s`, let
@@ -252,9 +252,10 @@ def rank_weight(c, sub_field=None, basis=None):
         sage: rank_weight(a, GF(4))
         2
     """
-    if is_Vector(c):
+    if isinstance(c, Vector):
         c = to_matrix_representation(c, sub_field, basis)
     return c.rank()
+
 
 def rank_distance(a, b, sub_field=None, basis=None):
     r"""
@@ -273,8 +274,8 @@ def rank_distance(a, b, sub_field=None, basis=None):
 
     - ``b`` -- a vector over some field `\GF{q^m}`
 
-    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`. If not
-      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`.
+    - ``sub_field`` -- (default: ``None``) a sub field of `\GF{q^m}`; if not
+      specified, it is the prime subfield `\GF{p}` of `\GF{q^m}`
 
     - ``basis`` -- (default: ``None``) a basis of `\GF{q^m}` as a vector space over
       ``sub_field``. If not specified, given that `q = p^s`, let
@@ -310,7 +311,7 @@ def rank_distance(a, b, sub_field=None, basis=None):
     """
     if not (a.base_ring() == b.base_ring()):
         raise ValueError("The base field of {} and {} has to be the same".format(a, b))
-    if not (is_Vector(a) and is_Vector(b)):
+    if not (isinstance(a, Vector) and isinstance(b, Vector)):
         raise TypeError("Both inputs have to be vectors")
     if not len(a) == len(b):
         raise ValueError("The length of {} and {} has to be the same".format(a, b))
@@ -707,7 +708,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
                 from sage.matrix.constructor import matrix
                 generator = matrix(base_field, gen_basis)
                 if generator.nrows() == 0:
-                    raise ValueError("this linear code contains no non-zero vector")
+                    raise ValueError("this linear code contains no nonzero vector")
         except AttributeError:
             # Assume input is an AbstractLinearRankMetricCode, extract its generator matrix
             generator = generator.generator_matrix()
@@ -731,9 +732,9 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         R = self.base_field()
         S = self.sub_field()
         if R and S in Fields():
-            return "[%s, %s] linear rank metric code over GF(%s)/GF(%s)"%(self.length(), self.dimension(), R.cardinality(), S.cardinality())
+            return "[%s, %s] linear rank metric code over GF(%s)/GF(%s)" % (self.length(), self.dimension(), R.cardinality(), S.cardinality())
         else:
-            return "[%s, %s] linear rank metric code over %s/%s"%(self.length(), self.dimension(), R, S)
+            return "[%s, %s] linear rank metric code over %s/%s" % (self.length(), self.dimension(), R, S)
 
     def _latex_(self):
         r"""
@@ -760,7 +761,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
           will be returned if default value is kept.
 
         - ``kwargs`` -- all additional arguments are forwarded to the construction of the
-          encoder that is used.
+          encoder that is used
 
         EXAMPLES::
 
@@ -791,7 +792,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
 
         INPUT:
 
-        - ``code`` -- A code associated to this decoder
+        - ``code`` -- a code associated to this decoder
 
         EXAMPLES::
 
@@ -855,9 +856,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
 
         - ``r`` -- a codeword of ``self``
 
-        OUTPUT:
-
-        - a vector of ``self``'s message space
+        OUTPUT: a vector of ``self``'s message space
 
         EXAMPLES::
 
@@ -891,7 +890,8 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
             sage: D.decoding_radius()
             1
         """
-        return (self.code().minimum_distance()-1) // 2
+        return (self.code().minimum_distance() - 1) // 2
+
 
 ####################### registration ###############################
 

@@ -14,8 +14,8 @@ EXAMPLES:
 
 In most cases, this module is used indirectly, e.g. ::
 
-    sage: fan = toric_varieties.dP6().fan()                                     # optional - palp
-    sage: fan.plot()                                                            # optional - palp sage.plot
+    sage: fan = toric_varieties.dP6().fan()                                             # needs palp sage.graphs
+    sage: fan.plot()                                                                    # needs palp sage.graphs sage.plot
     Graphics object consisting of 31 graphics primitives
 
 You may change default plotting options as follows::
@@ -25,12 +25,12 @@ You may change default plotting options as follows::
     sage: toric_plotter.options(show_rays=False)
     sage: toric_plotter.options("show_rays")
     False
-    sage: fan.plot()                                                            # optional - palp sage.plot
+    sage: fan.plot()                                                                    # needs palp sage.graphs sage.plot
     Graphics object consisting of 19 graphics primitives
     sage: toric_plotter.reset_options()
     sage: toric_plotter.options("show_rays")
     True
-    sage: fan.plot()                                                            # optional - palp sage.plot
+    sage: fan.plot()                                                                    # needs palp sage.graphs sage.plot
     Graphics object consisting of 31 graphics primitives
 """
 
@@ -49,10 +49,10 @@ You may change default plotting options as follows::
 from copy import copy
 from math import pi
 
-from sage.functions.all import arccos, arctan2, ceil, floor
+from sage.arith.misc import integer_ceil as ceil, integer_floor as floor
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.modules.free_module_element import vector
 from sage.misc.lazy_import import lazy_import
+from sage.modules.free_module_element import vector
 lazy_import("sage.plot.all", ["Color", "Graphics",
                               "arrow", "disk", "line", "point",
                               "polygon", "rainbow", "text"])
@@ -116,17 +116,15 @@ class ToricPlotter(SageObject):
 
     - ``all_options`` -- a :class:`dictionary <dict>`, containing any of the
       options related to toric objects (see :func:`options`) and any other
-      options that will be passed to lower level plotting functions;
+      options that will be passed to lower level plotting functions
 
-    - ``dimension`` -- an integer (1, 2, or 3), dimension of toric objects to
-      be plotted;
+    - ``dimension`` -- integer (1, 2, or 3); dimension of toric objects to
+      be plotted
 
-    - ``generators`` -- (optional) a list of ray generators, see examples for
-      a detailed explanation of this argument.
+    - ``generators`` -- (optional) a list of ray generators; see examples for
+      a detailed explanation of this argument
 
-    OUTPUT:
-
-    - a toric plotter.
+    OUTPUT: a toric plotter
 
     EXAMPLES:
 
@@ -134,10 +132,10 @@ class ToricPlotter(SageObject):
     directly. Instead, use plotting method of the object which you want to
     plot, e.g. ::
 
-        sage: fan = toric_varieties.dP6().fan()                                 # optional - palp
-        sage: fan.plot()                                                        # optional - palp sage.plot
+        sage: fan = toric_varieties.dP6().fan()                                         # needs palp sage.graphs
+        sage: fan.plot()                                                                # needs palp sage.graphs sage.plot
         Graphics object consisting of 31 graphics primitives
-        sage: print(fan.plot())                                                 # optional - palp sage.plot
+        sage: print(fan.plot())                                                         # needs palp sage.graphs sage.plot
         Graphics object consisting of 31 graphics primitives
 
     If you do want to create your own plotting function for some toric
@@ -163,24 +161,25 @@ class ToricPlotter(SageObject):
     For example, the plot from the previous example can be obtained as
     follows::
 
+        sage: # needs palp sage.graphs sage.plot
         sage: from sage.geometry.toric_plotter import ToricPlotter
         sage: options = dict()  # use default for everything
-        sage: tp = ToricPlotter(options, fan.lattice().degree())                # optional - palp
-        sage: tp.include_points(fan.rays())                                     # optional - palp
-        sage: tp.adjust_options()                                               # optional - palp
-        sage: tp.set_rays(fan.rays())                                           # optional - palp
-        sage: result = tp.plot_lattice()                                        # optional - palp sage.plot
-        sage: result += tp.plot_rays()                                          # optional - palp sage.plot
-        sage: result += tp.plot_generators()                                    # optional - palp sage.plot
-        sage: result += tp.plot_walls(fan(2))                                   # optional - palp sage.plot
-        sage: result                                                            # optional - palp sage.plot
+        sage: tp = ToricPlotter(options, fan.lattice().degree())
+        sage: tp.include_points(fan.rays())
+        sage: tp.adjust_options()
+        sage: tp.set_rays(fan.rays())
+        sage: result = tp.plot_lattice()
+        sage: result += tp.plot_rays()
+        sage: result += tp.plot_generators()
+        sage: result += tp.plot_walls(fan(2))
+        sage: result
         Graphics object consisting of 31 graphics primitives
 
     In most situations it is only necessary to include generators of rays, in
     this case they can be passed to the constructor as an optional argument.
     In the example above, the toric plotter can be completely set up using ::
 
-        sage: tp = ToricPlotter(options, fan.lattice().degree(), fan.rays())    # optional - palp
+        sage: tp = ToricPlotter(options, fan.lattice().degree(), fan.rays())            # needs palp sage.graphs sage.plot
 
     All options are exposed as attributes of toric plotters and can be modified
     after constructions, however you will have to manually call
@@ -247,11 +246,9 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``other`` -- anything.
+        - ``other`` -- anything
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is equal to ``other``, ``False`` otherwise.
+        OUTPUT: ``True`` if ``self`` is equal to ``other``, ``False`` otherwise
 
         TESTS::
 
@@ -272,9 +269,7 @@ class ToricPlotter(SageObject):
         that were not specified by the user, based on the other options. See
         :class:`ToricPlotter` for a detailed example.
 
-        OUTPUT:
-
-        - none.
+        OUTPUT: none
 
         TESTS::
 
@@ -306,14 +301,12 @@ class ToricPlotter(SageObject):
         for key in ["xmin", "ymin", "zmin"]:
             if round or sd[key] is None:
                 sd[key] = - r
-            if sd[key] > - 0.5:
-                sd[key] = - 0.5
+            sd[key] = min(sd[key], - 0.5)
             sd[key] = RDF(sd[key])
         for key in ["xmax", "ymax", "zmax"]:
             if round or sd[key] is None:
                 sd[key] = r
-            if sd[key] < 0.5:
-                sd[key] = 0.5
+            sd[key] = max(sd[key], 0.5)
             sd[key] = RDF(sd[key])
         if self.show_lattice is None:
             self.show_lattice = (r <= 5) if d <= 2 else r <= 3
@@ -324,15 +317,13 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``points`` -- a list of points;
+        - ``points`` -- list of points
 
-        - ``force`` -- boolean (default: ``False``). by default, only bounds
+        - ``force`` -- boolean (default: ``False``); by default, only bounds
           that were not set before will be chosen to include ``points``. Use
           ``force=True`` if you don't mind increasing existing bounding box.
 
-        OUTPUT:
-
-        - none.
+        OUTPUT: none
 
         EXAMPLES::
 
@@ -381,15 +372,13 @@ class ToricPlotter(SageObject):
         Ray generators must be specified during construction or using
         :meth:`set_rays` before calling this method.
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, [(3,4)])
-            sage: tp.plot_generators()                                                  # optional - sage.plot
+            sage: tp.plot_generators()                                                  # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         generators = self.generators
@@ -403,7 +392,7 @@ class ToricPlotter(SageObject):
         thickness = self.generator_thickness
         zorder = self.generator_zorder
         for generator, ray, color in zip(generators, self.rays, colors):
-            if ray.norm() < generator.norm():
+            if ray.dot_product(ray) < generator.dot_product(generator):
                 result += line([origin, ray],
                                color=color, thickness=thickness,
                                zorder=zorder, **extra_options)
@@ -428,19 +417,17 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``labels`` -- a string or a list of strings;
+        - ``labels`` -- string or list of strings
 
-        - ``positions`` -- a list of points.
+        - ``positions`` -- list of points
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
-            sage: tp.plot_labels("u", [(1.5,0)])                                        # optional - sage.plot
+            sage: tp.plot_labels("u", [(1.5,0)])                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         result = Graphics()
@@ -465,16 +452,14 @@ class ToricPlotter(SageObject):
         r"""
         Plot the lattice (i.e. its points in the cut-off bounds of ``self``).
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
             sage: tp.adjust_options()
-            sage: tp.plot_lattice()                                                     # optional - sage.plot
+            sage: tp.plot_lattice()                                                     # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         if not self.show_lattice:
@@ -495,7 +480,7 @@ class ToricPlotter(SageObject):
                       for z in range(ceil(self.zmin), floor(self.zmax) + 1))
         if self.mode == "round":
             r = 1.01 * self.radius # To make sure integer values work OK.
-            points = (pt for pt in points if vector(pt).norm() <= r)
+            points = (pt for pt in points if vector(pt).dot_product(vector(pt)) <= r)
         f = self.lattice_filter
         if f is not None:
             points = (pt for pt in points if f(pt))
@@ -507,18 +492,16 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``points`` -- a list of points.
+        - ``points`` -- list of points
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
             sage: tp.adjust_options()
-            sage: tp.plot_points([(1,0), (0,1)])                                        # optional - sage.plot
+            sage: tp.plot_points([(1,0), (0,1)])                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         return point(points, color=self.point_color, size=self.point_size,
@@ -534,15 +517,13 @@ class ToricPlotter(SageObject):
         Ray generators must be specified during construction or using
         :meth:`set_rays` before calling this method.
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, [(3,4)])
-            sage: tp.plot_ray_labels()                                                  # optional - sage.plot
+            sage: tp.plot_ray_labels()                                                  # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         return self.plot_labels(self.ray_label,
@@ -555,15 +536,13 @@ class ToricPlotter(SageObject):
         Ray generators must be specified during construction or using
         :meth:`set_rays` before calling this method.
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, [(3,4)])
-            sage: tp.plot_rays()                                                        # optional - sage.plot
+            sage: tp.plot_rays()                                                        # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         result = Graphics()
@@ -594,25 +573,23 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``walls`` -- a list of 2-d cones.
+        - ``walls`` -- list of 2-d cones
 
-        OUTPUT:
-
-        - a plot.
+        OUTPUT: a plot
 
         EXAMPLES::
 
             sage: quadrant = Cone([(1,0), (0,1)])
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2, quadrant.rays())
-            sage: tp.plot_walls([quadrant])                                             # optional - sage.plot
+            sage: tp.plot_walls([quadrant])                                             # needs sage.plot
             Graphics object consisting of 2 graphics primitives
 
         Let's also check that the truncating polyhedron is functioning
         correctly::
 
             sage: tp = ToricPlotter({"mode": "box"}, 2, quadrant.rays())
-            sage: tp.plot_walls([quadrant])                                             # optional - sage.plot
+            sage: tp.plot_walls([quadrant])                                             # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         result = Graphics()
@@ -691,23 +668,21 @@ class ToricPlotter(SageObject):
 
         INPUT:
 
-        - ``generators`` - a list of primitive non-zero ray generators.
+        - ``generators`` -- list of primitive nonzero ray generators
 
-        OUTPUT:
-
-        - none.
+        OUTPUT: none
 
         EXAMPLES::
 
             sage: from sage.geometry.toric_plotter import ToricPlotter
             sage: tp = ToricPlotter(dict(), 2)
             sage: tp.adjust_options()
-            sage: tp.plot_rays()                                                        # optional - sage.plot
+            sage: tp.plot_rays()                                                        # needs sage.plot
             Traceback (most recent call last):
             ...
-            AttributeError: 'ToricPlotter' object has no attribute 'rays'
+            AttributeError: 'ToricPlotter' object has no attribute 'rays'...
             sage: tp.set_rays([(0,1)])
-            sage: tp.plot_rays()                                                        # optional - sage.plot
+            sage: tp.plot_rays()                                                        # needs sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         d = self.dimension
@@ -741,11 +716,9 @@ def _unrecognized_option(option):
 
     INPUT:
 
-    - ``option`` -- a string.
+    - ``option`` -- string
 
-    OUTPUT:
-
-    - none, a ``KeyError`` exception is raised.
+    OUTPUT: none, a :exc:`KeyError` exception is raised
 
     TESTS::
 
@@ -769,11 +742,9 @@ def color_list(color, n):
     - ``color`` -- anything specifying a :class:`Color`, a list of such
       specifications, or the string "rainbow";
 
-    - ``n`` - an integer.
+    - ``n`` -- integer
 
-    OUTPUT:
-
-    - a list of ``n`` colors.
+    OUTPUT: list of ``n`` colors
 
     If ``color`` specified a single color, it is repeated ``n`` times. If it
     was a list of ``n`` colors, it is returned without changes. If it was
@@ -781,21 +752,22 @@ def color_list(color, n):
 
     EXAMPLES::
 
+        sage: # needs sage.plot
         sage: from sage.geometry.toric_plotter import color_list
-        sage: color_list("grey", 1)                                                     # optional - sage.plot
+        sage: color_list("grey", 1)
         [RGB color (0.5019607843137255, 0.5019607843137255, 0.5019607843137255)]
-        sage: len(color_list("grey", 3))                                                # optional - sage.plot
+        sage: len(color_list("grey", 3))
         3
-        sage: L = color_list("rainbow", 3)                                              # optional - sage.plot
-        sage: L                                                                         # optional - sage.plot
+        sage: L = color_list("rainbow", 3)
+        sage: L
         [RGB color (1.0, 0.0, 0.0),
          RGB color (0.0, 1.0, 0.0),
          RGB color (0.0, 0.0, 1.0)]
-        sage: color_list(L, 3)                                                          # optional - sage.plot
+        sage: color_list(L, 3)
         [RGB color (1.0, 0.0, 0.0),
          RGB color (0.0, 1.0, 0.0),
          RGB color (0.0, 0.0, 1.0)]
-        sage: color_list(L, 4)                                                          # optional - sage.plot
+        sage: color_list(L, 4)
         Traceback (most recent call last):
         ...
         ValueError: expected 4 colors, got 3!
@@ -820,19 +792,17 @@ def label_list(label, n, math_mode, index_set=None):
 
     INPUT:
 
-    - ``label`` -- ``None``, a string, or a list of string;
+    - ``label`` -- ``None``, a string, or a list of string
 
-    - ``n`` - an integer;
+    - ``n`` -- integer
 
-    - ``math_mode`` -- boolean, if ``True``, will produce LaTeX expressions
-      for labels;
+    - ``math_mode`` -- boolean; if ``True``, will produce LaTeX expressions
+      for labels
 
-    - ``index_set`` -- a list of integers (default: ``range(n)``) that will be
-      used as subscripts for labels.
+    - ``index_set`` -- list of integers (default: ``range(n)``) that will be
+      used as subscripts for labels
 
-    OUTPUT:
-
-    - a list of ``n`` labels.
+    OUTPUT: list of ``n`` labels
 
     If ``label`` was a list of ``n`` entries, it is returned without changes.
     If ``label`` is ``None``, a list of ``n`` ``None``'s is returned. If
@@ -884,7 +854,7 @@ def options(option=None, **kwds):
 
     OR:
 
-    - ``option`` -- a string, name of the option whose value you wish to get;
+    - ``option`` -- string, name of the option whose value you wish to get;
 
     OR:
 
@@ -971,31 +941,31 @@ def options(option=None, **kwds):
     - ``wall_alpha`` -- a number between 0 and 1, the alpha-value for walls
       (determining their transparency);
 
-    - ``point_size`` -- an integer, the size of lattice points;
+    - ``point_size`` -- integer; the size of lattice points
 
-    - ``ray_thickness`` -- an integer, the thickness of rays;
+    - ``ray_thickness`` -- integer; the thickness of rays
 
-    - ``generator_thickness`` -- an integer, the thickness of generators;
+    - ``generator_thickness`` -- integer; the thickness of generators
 
-    - ``font_size`` -- an integer, the size of font used for labels;
+    - ``font_size`` -- integer; the size of font used for labels
 
-    - ``ray_label`` -- a string or a list of strings used for ray labels; use
-      ``None`` to hide labels;
+    - ``ray_label`` -- string or list of strings used for ray labels; use
+      ``None`` to hide labels
 
-    - ``wall_label`` -- a string or a list of strings used for wall labels; use
-      ``None`` to hide labels;
+    - ``wall_label`` -- string or list of strings used for wall labels; use
+      ``None`` to hide labels
 
     - ``radius`` -- a positive number, the radius of the cut-off region for
-      "round" mode;
+      "round" mode
 
     - ``xmin``, ``xmax``, ``ymin``, ``ymax``, ``zmin``, ``zmax`` -- numbers
       determining the cut-off region for "box" mode. Note that you cannot
       exclude the origin - if you try to do so, bounds will be automatically
-      expanded to include it;
+      expanded to include it.
 
     - ``lattice_filter`` -- a callable, taking as an argument a lattice point
       and returning ``True`` if this point should be included on the plot
-      (useful, e.g. for plotting sublattices);
+      (useful, e.g. for plotting sublattices)
 
     - ``wall_zorder``, ``ray_zorder``, ``generator_zorder``, ``point_zorder``,
       ``label_zorder`` -- integers, z-orders for different classes of objects.
@@ -1020,12 +990,12 @@ def options(option=None, **kwds):
     The following line will make all subsequent toric plotting commands to draw
     "rainbows" from walls::
 
-        sage: toric_plotter.options(wall_color="rainbow")
+        sage: toric_plotter.options(wall_color='rainbow')
 
     If you prefer a less colorful output (e.g. if you need black-and-white
     illustrations for a paper), you can use something like this::
 
-        sage: toric_plotter.options(wall_color="grey")
+        sage: toric_plotter.options(wall_color='grey')
     """
     global _options
     if option is None and not kwds:
@@ -1050,9 +1020,7 @@ def reset_options():
     r"""
     Reset options for plots of toric geometry objects.
 
-    OUTPUT:
-
-    - none.
+    OUTPUT: none
 
     EXAMPLES::
 
@@ -1094,23 +1062,23 @@ def sector(ray1, ray2, **extra_options):
     INPUT:
 
     - ``ray1``, ``ray2`` -- rays in 2- or 3-dimensional space of the same
-      length;
+      length
 
-    - ``extra_options`` -- a dictionary of options that should be passed to
-      lower level plotting functions.
+    - ``extra_options`` -- dictionary of options that should be passed to
+      lower level plotting functions
 
-    OUTPUT:
-
-    - a plot.
+    OUTPUT: a plot
 
     EXAMPLES::
 
         sage: from sage.geometry.toric_plotter import sector
-        sage: sector((1,0), (0,1))
+        sage: sector((1,0), (0,1))                                                      # needs sage.symbolic
         Graphics object consisting of 1 graphics primitive
-        sage: sector((3,2,1), (1,2,3))
+        sage: sector((3,2,1), (1,2,3))                                                  # needs sage.plot
         Graphics3d Object
     """
+    from sage.functions.all import arccos, arctan2
+
     ray1 = vector(RDF, ray1)
     ray2 = vector(RDF, ray2)
     r = ray1.norm()

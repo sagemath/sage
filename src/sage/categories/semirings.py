@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Semirngs
 """
@@ -9,7 +10,8 @@ Semirngs
 #******************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
-from .magmas_and_additive_magmas import MagmasAndAdditiveMagmas
+from sage.categories.magmas_and_additive_magmas import MagmasAndAdditiveMagmas
+
 
 class Semirings(CategoryWithAxiom):
     """

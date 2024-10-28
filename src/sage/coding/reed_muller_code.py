@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Reed-Muller code
 
@@ -50,7 +50,7 @@ def _binomial_sum(n, k):
 
     INPUT:
 
-    - ``n, k`` - integers
+    - ``n``, ``k`` -- integers
 
     EXAMPLES::
 
@@ -79,13 +79,13 @@ def _multivariate_polynomial_interpolation(evaluation, order, polynomial_ring):
 
     INPUT:
 
-    - ``evaluation`` -- A vector or a list of evaluation of the polynomial at all the points.
+    - ``evaluation`` -- a vector or a list of evaluation of the polynomial at all the points
 
-    - ``num_of_var`` -- The number of variables used in the polynomial to interpolate
+    - ``num_of_var`` -- the number of variables used in the polynomial to interpolate
 
-    - ``order`` -- The degree of the polynomial to interpolate
+    - ``order`` -- the degree of the polynomial to interpolate
 
-    - ``polynomial_ring`` -- The Polynomial Ring the polynomial in question is from
+    - ``polynomial_ring`` -- the Polynomial Ring the polynomial in question is from
 
     EXAMPLES::
 
@@ -143,12 +143,12 @@ def ReedMullerCode(base_field, order, num_of_var):
 
     INPUT:
 
-    - ``base_field`` -- The finite field `F` over which the code is built.
+    - ``base_field`` -- the finite field `F` over which the code is built
 
-    - ``order`` -- The order of the Reed-Muller Code, which is the maximum
-      degree of the polynomial to be used in the code.
+    - ``order`` -- the order of the Reed-Muller Code, which is the maximum
+      degree of the polynomial to be used in the code
 
-    - ``num_of_var`` -- The number of variables used in polynomial.
+    - ``num_of_var`` -- the number of variables used in polynomial
 
     .. WARNING::
 
@@ -205,12 +205,12 @@ class QAryReedMullerCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``base_field`` -- A finite field, which is the base field of the code.
+    - ``base_field`` -- a finite field, which is the base field of the code
 
-    - ``order`` -- The order of the Reed-Muller Code, i.e., the maximum degree
-      of the polynomial to be used in the code.
+    - ``order`` -- the order of the Reed-Muller Code, i.e., the maximum degree
+      of the polynomial to be used in the code
 
-    - ``num_of_var`` -- The number of variables used in polynomial.
+    - ``num_of_var`` -- the number of variables used in polynomial
 
     .. WARNING::
 
@@ -258,9 +258,9 @@ class QAryReedMullerCode(AbstractLinearCode):
         # input sanitization
         if base_field not in FiniteFields():
             raise ValueError("the input `base_field` must be a FiniteField")
-        if not(isinstance(order, (Integer, int))):
+        if not isinstance(order, (Integer, int)):
             raise ValueError("The order of the code must be an integer")
-        if not(isinstance(num_of_var, (Integer, int))):
+        if not isinstance(num_of_var, (Integer, int)):
             raise ValueError("The number of variables must be an integer")
         q = base_field.cardinality()
         if order >= q:
@@ -354,7 +354,7 @@ class QAryReedMullerCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between Reed-Muller Code objects.
+        Test equality between Reed-Muller Code objects.
 
         EXAMPLES::
 
@@ -389,10 +389,10 @@ class BinaryReedMullerCode(AbstractLinearCode):
 
     INPUT:
 
-    - ``order`` -- The order of the Reed-Muller Code, i.e., the maximum degree
-      of the polynomial to be used in the code.
+    - ``order`` -- the order of the Reed-Muller Code, i.e., the maximum degree
+      of the polynomial to be used in the code
 
-    - ``num_of_var`` -- The number of variables used in the polynomial.
+    - ``num_of_var`` -- the number of variables used in the polynomial
 
     EXAMPLES:
 
@@ -425,9 +425,9 @@ class BinaryReedMullerCode(AbstractLinearCode):
             ValueError: The order of the code must be an integer
         """
         # input sanitization
-        if not(isinstance(order, (Integer, int))):
+        if not isinstance(order, (Integer, int)):
             raise ValueError("The order of the code must be an integer")
-        if not(isinstance(num_of_var, (Integer, int))):
+        if not isinstance(num_of_var, (Integer, int)):
             raise ValueError("The number of variables must be an integer")
         if (num_of_var < order):
             raise ValueError(
@@ -508,7 +508,7 @@ class BinaryReedMullerCode(AbstractLinearCode):
 
     def __eq__(self, other):
         r"""
-        Tests equality between Reed-Muller Code objects.
+        Test equality between Reed-Muller Code objects.
 
         EXAMPLES::
 
@@ -548,7 +548,7 @@ class ReedMullerVectorEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder.
+    - ``code`` -- the associated code of this encoder
 
     EXAMPLES::
 
@@ -623,7 +623,7 @@ class ReedMullerVectorEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between ReedMullerVectorEncoder objects.
+        Test equality between ReedMullerVectorEncoder objects.
 
         EXAMPLES::
 
@@ -642,7 +642,7 @@ class ReedMullerVectorEncoder(Encoder):
     @cached_method
     def generator_matrix(self):
         r"""
-        Return a generator matrix of ``self``
+        Return a generator matrix of ``self``.
 
         EXAMPLES::
 
@@ -717,11 +717,11 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     INPUT:
 
-    - ``code`` -- The associated code of this encoder.
+    - ``code`` -- the associated code of this encoder
 
-    - ``polynomial_ring`` -- (default:``None``) The polynomial ring from which
-      the message is chosen.  If this is set to ``None``, a polynomial ring in
-      `x` will be built from the code parameters.
+    - ``polynomial_ring`` -- (default: ``None``) the polynomial ring from which
+      the message is chosen;  if this is set to ``None``, a polynomial ring in
+      `x` will be built from the code parameters
 
     EXAMPLES::
 
@@ -822,7 +822,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     def __eq__(self, other):
         r"""
-        Tests equality between ReedMullerVectorEncoder objects.
+        Test equality between ReedMullerVectorEncoder objects.
 
         EXAMPLES::
 
@@ -836,20 +836,18 @@ class ReedMullerPolynomialEncoder(Encoder):
             False
         """
         return isinstance(other, ReedMullerPolynomialEncoder) \
-               and self.code() == other.code()
+            and self.code() == other.code()
 
     def encode(self, p):
         r"""
-        Transforms the polynomial ``p`` into a codeword of :meth:`code`.
+        Transform the polynomial ``p`` into a codeword of :meth:`code`.
 
         INPUT:
 
-        - ``p`` -- A polynomial from the message space of ``self`` of degree
-          less than ``self.code().order()``.
+        - ``p`` -- a polynomial from the message space of ``self`` of degree
+          less than ``self.code().order()``
 
-        OUTPUT:
-
-        - A codeword in associated code of ``self``
+        OUTPUT: a codeword in associated code of ``self``
 
         EXAMPLES::
 
@@ -902,11 +900,11 @@ class ReedMullerPolynomialEncoder(Encoder):
 
         INPUT:
 
-        - ``c`` -- A codeword of :meth:`code`.
+        - ``c`` -- a codeword of :meth:`code`
 
         OUTPUT:
 
-        - An polynomial of degree less than ``self.code().order()``.
+        - A polynomial of degree less than ``self.code().order()``.
 
         EXAMPLES::
 
@@ -931,7 +929,6 @@ class ReedMullerPolynomialEncoder(Encoder):
             -x0*x1 - x1^2 + x0 + 1
             sage: E.encode(p) == c
             False
-
         """
         return _multivariate_polynomial_interpolation(
             c,
@@ -940,7 +937,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     def message_space(self):
         r"""
-        Return the message space of ``self``
+        Return the message space of ``self``.
 
         EXAMPLES::
 
@@ -954,7 +951,7 @@ class ReedMullerPolynomialEncoder(Encoder):
 
     def polynomial_ring(self):
         r"""
-        Return the polynomial ring associated with ``self``
+        Return the polynomial ring associated with ``self``.
 
         EXAMPLES::
 
@@ -984,7 +981,7 @@ class ReedMullerPolynomialEncoder(Encoder):
         return ((code.base_field())**code.number_of_variables()).list()
 
 
-####################### registration ###############################
+# --------------- registration --------------
 
 QAryReedMullerCode._registered_encoders["EvaluationVector"] = ReedMullerVectorEncoder
 QAryReedMullerCode._registered_encoders["EvaluationPolynomial"] = ReedMullerPolynomialEncoder

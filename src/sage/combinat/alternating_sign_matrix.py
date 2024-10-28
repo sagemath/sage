@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Alternating Sign Matrices
 
@@ -45,15 +45,17 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import zero_vector
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.arith.misc import factorial
 from sage.rings.integer import Integer
-from sage.combinat.posets.lattices import LatticePoset
 from sage.combinat.gelfand_tsetlin_patterns import GelfandTsetlinPatternsTopRow
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.combinat.non_decreasing_parking_function import NonDecreasingParkingFunction
 from sage.combinat.permutation import Permutation
 from sage.combinat.six_vertex_model import SquareIceModel
+
+lazy_import('sage.combinat.posets.lattices', 'LatticePoset')
 
 
 def _inplace_height_function_gyration(hf):
@@ -82,7 +84,7 @@ class AlternatingSignMatrix(Element,
     An alternating sign matrix.
 
     An alternating sign matrix is a square matrix of `0`'s, `1`'s and `-1`'s
-    such that the sum of each row and column is `1` and the non-zero
+    such that the sum of each row and column is `1` and the nonzero
     entries in each row and column alternate in sign.
 
     These were introduced in [MRR1983]_.
@@ -106,7 +108,7 @@ class AlternatingSignMatrix(Element,
 
         TESTS:
 
-        Check that :trac:`22032` is fixed::
+        Check that :issue:`22032` is fixed::
 
             sage: AlternatingSignMatrix([])
             []
@@ -517,18 +519,17 @@ class AlternatingSignMatrix(Element,
             sage: asm = AlternatingSignMatrix([[1,0,0],[0,1,0],[0,0,1]])
             sage: fpl = asm.to_fully_packed_loop()
             sage: fpl
-                |         |
-                |         |
-                +    + -- +
-                |    |
-                |    |
-             -- +    +    + --
-                     |    |
-                     |    |
-                + -- +    +
-                |         |
-                |         |
-
+                │         │
+                │         │
+                +    + ── +
+                │    │
+                │    │
+             ── +    +    + ──
+                     │    │
+                     │    │
+                + ── +    +
+                │         │
+                │         │
         """
         from sage.combinat.fully_packed_loop import FullyPackedLoop
         return FullyPackedLoop(self)
@@ -693,7 +694,7 @@ class AlternatingSignMatrix(Element,
 
         Given an `n \times n` alternating sign matrix `A`, there are as many
         ASM's of size `n+1` compatible with `A` as 2 raised to the power of
-        the number of 1's in `A` [EKLP1992]_.
+        the number of 1s in `A` [EKLP1992]_.
 
         EXAMPLES::
 
@@ -775,7 +776,6 @@ class AlternatingSignMatrix(Element,
             [1 0]
             [0 1]
             ]
-
         """
         n = self.parent()._n
         M = AlternatingSignMatrices(n-1)
@@ -823,7 +823,7 @@ class AlternatingSignMatrix(Element,
 
         INPUT:
 
-        - ``algorithm`` - either ``'last_diagonal'`` or ``'link_pattern'``
+        - ``algorithm`` -- either ``'last_diagonal'`` or ``'link_pattern'``
 
         EXAMPLES::
 
@@ -944,7 +944,7 @@ class AlternatingSignMatrix(Element,
             [[1, 1, 2], [2, 3], [3]]
             sage: parent(t)
             Semistandard tableaux
-            """
+        """
         from sage.combinat.tableau import SemistandardTableau
         mt = self.to_monotone_triangle()
         ssyt = [[0]*(len(mt) - j) for j in range(len(mt))]
@@ -1018,14 +1018,14 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
 
     An alternating sign matrix of size `n` is an `n \times n` matrix of `0`'s,
     `1`'s and `-1`'s such that the sum of each row and column is `1` and the
-    non-zero entries in each row and column alternate in sign.
+    nonzero entries in each row and column alternate in sign.
 
     Alternating sign matrices of size `n` are in bijection with
     :class:`monotone triangles <MonotoneTriangles>` with `n` rows.
 
     INPUT:
 
-    - `n` -- an integer, the size of the matrices.
+    - ``n`` -- integer; the size of the matrices
 
     EXAMPLES:
 
@@ -1545,7 +1545,6 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             [0 0 1]  [0 1 0]
             [1 0 0], [1 0 0]
             )
-
         """
         return iter(self._lattice_initializer()[1])
 
@@ -1560,7 +1559,6 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             sage: L = A.lattice()
             sage: L
             Finite lattice containing 7 elements
-
         """
         return LatticePoset(self._lattice_initializer(), cover_relations=True,
                             check=False)
@@ -1633,7 +1631,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
 
     INPUT:
 
-    - ``n`` -- The number of rows in the monotone triangles
+    - ``n`` -- the number of rows in the monotone triangles
 
     EXAMPLES:
 
@@ -1821,9 +1819,8 @@ class ContreTableaux(Parent, metaclass=ClasscallMetaclass):
             sage: C = ContreTableaux(4)
             sage: type(C)
             <class 'sage.combinat.alternating_sign_matrix.ContreTableaux_n'>
-
         """
-        assert(isinstance(n, (int, Integer)))
+        assert isinstance(n, (int, Integer))
         return ContreTableaux_n(n, **kwds)
 
 
@@ -1909,8 +1906,7 @@ class ContreTableaux_n(ContreTableaux):
              [[1, 2, 3], [2, 3], [2]],
              [[1, 2, 3], [2, 3], [3]]]
         """
-        for z in self._iterator_rec(self.n):
-            yield z
+        yield from self._iterator_rec(self.n)
 
 
 def _next_column_iterator(previous_column, height, i=None):
@@ -1983,9 +1979,8 @@ class TruncatedStaircases(Parent, metaclass=ClasscallMetaclass):
             sage: T = TruncatedStaircases(4, [2,3])
             sage: type(T)
             <class 'sage.combinat.alternating_sign_matrix.TruncatedStaircases_nlastcolumn'>
-
         """
-        assert(isinstance(n, (int, Integer)))
+        assert isinstance(n, (int, Integer))
         return TruncatedStaircases_nlastcolumn(n, last_column, **kwds)
 
 

@@ -25,7 +25,9 @@ import sage.libs.ntl.all as ntl
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
 from sage.libs.flint.nmod_poly cimport *
+from sage.libs.flint.nmod_poly_factor cimport *
 from sage.libs.flint.ulong_extras cimport *
 
 from cypari2.paridecl cimport (GEN, cgetg, t_POL, set_gel, gel, stoi, lg,
@@ -38,7 +40,7 @@ from sage.libs.pari.convert_gmp cimport _new_GEN_from_mpz_t
 DEF N_RES_CLASSES_BSD = 10
 
 
-cdef unsigned long valuation(mpz_t a, mpz_t p):
+cdef unsigned long valuation(mpz_t a, mpz_t p) noexcept:
     """
     Return the number of times p divides a.
     """
@@ -85,9 +87,9 @@ def test_valuation(a, p):
     return valuation(A.value, P.value)
 
 
-cdef int padic_square(mpz_t a, mpz_t p):
+cdef int padic_square(mpz_t a, mpz_t p) noexcept:
     """
-    Test if a is a p-adic square.
+    Test if a is a `p`-adic square.
     """
     cdef unsigned long v
     cdef mpz_t aa
@@ -130,9 +132,9 @@ def test_padic_square(a, p):
 
 
 cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
-                mpz_t x, mpz_t p, unsigned long nu):
+                mpz_t x, mpz_t p, unsigned long nu) noexcept:
     """
-    Implements Lemma 6 of BSD's "Notes on elliptic curves, I" for odd p.
+    Implement Lemma 6 of BSD's "Notes on elliptic curves, I" for odd `p`.
 
     Returns -1 for insoluble, 0 for undecided, +1 for soluble.
     """
@@ -180,9 +182,9 @@ cdef int lemma6(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
 
 cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
-                mpz_t x, mpz_t p, unsigned long nu):
+                mpz_t x, mpz_t p, unsigned long nu) noexcept:
     """
-    Implements Lemma 7 of BSD's "Notes on elliptic curves, I" for p=2.
+    Implement Lemma 7 of BSD's "Notes on elliptic curves, I" for `p=2`.
 
     Returns -1 for insoluble, 0 for undecided, +1 for soluble.
     """
@@ -202,7 +204,7 @@ cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
     if padic_square(g_of_x, p):
         mpz_clear(g_of_x)
-        return +1 # soluble
+        return +1  # soluble
 
     mpz_init_set(g_prime_of_x, x)
     mpz_mul(g_prime_of_x, a, x)
@@ -233,8 +235,8 @@ cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             elif lambd+1 == mu+nu and (lambd & 1) == 0:
                 result = 1  # soluble
             elif lambd+2 == mu+nu and (lambd & 1) == 0 and g_of_x_odd_part_mod_4 == 1:
-                result = 1 # soluble
-        else: # nu <= mu
+                result = 1  # soluble
+        else:  # nu <= mu
             if lambd >= 2*nu:
                 result = 0  # undecided
             elif lambd+2 == 2*nu and g_of_x_odd_part_mod_4==1:
@@ -246,7 +248,7 @@ cdef int lemma7(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 
 
 cdef int Zp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
-                        mpz_t x_k, mpz_t p, unsigned long k):
+                        mpz_t x_k, mpz_t p, unsigned long k) noexcept:
     """
     Uses the approach of BSD's "Notes on elliptic curves, I" to test for
     solubility of y^2 == ax^4 + bx^3 + cx^2 + dx + e over Zp, with
@@ -283,7 +285,7 @@ cdef int Zp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
                             mpz_t pp, unsigned long pp_ui,
                             nmod_poly_factor_t f_factzn, nmod_poly_t f,
-                            fmpz_poly_t f1, fmpz_poly_t linear):
+                            fmpz_poly_t f1, fmpz_poly_t linear) noexcept:
     """
     Uses the approach of Algorithm 5.3.1 of Siksek's thesis to test for
     solubility of y^2 == ax^4 + bx^3 + cx^2 + dx + e over Zp.
@@ -333,7 +335,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         nmod_poly_set_coeff_ui(f, 4, mpz_fdiv_ui(a, pp_ui))
 
         result = 0
-        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0 # reset data struct
+        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0  # reset data struct
         qq = nmod_poly_factor(f_factzn, f)
         for i in range(f_factzn.num):
             if f_factzn.exp[i]&1:
@@ -350,7 +352,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             for j in range(f_factzn.exp[i]>>1):
                 nmod_poly_mul(f, f, &f_factzn.p[i])
 
-        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0 # reset data struct
+        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0  # reset data struct
         nmod_poly_factor(f_factzn, f)
         has_roots = 0
         j = 0
@@ -369,13 +371,13 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         mpz_init(ddd)
         mpz_init(eee)
 
-        if i == 0: # g == 1
+        if i == 0:  # g == 1
             mpz_set(aaa, a)
             mpz_set(bbb, b)
             mpz_set(ccc, c)
             mpz_set(ddd, d)
             mpz_sub_ui(eee, e, qq)
-        elif i == 1: # g == x + rr
+        elif i == 1:  # g == x + rr
             mpz_set(aaa, a)
             mpz_set(bbb, b)
             mpz_sub_ui(ccc, c, qq)
@@ -385,7 +387,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_sub_ui(ddd, ddd, ss*2)
             mpz_set(eee,e)
             mpz_sub_ui(eee, eee, ss*rr)
-        elif i == 2: # g == x^2 + rr*x + ss
+        elif i == 2:  # g == x^2 + rr*x + ss
             mpz_sub_ui(aaa, a, qq)
             rr = nmod_poly_get_coeff_ui(f, 1)
             mpz_init(tt)
@@ -468,7 +470,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         nmod_poly_set_coeff_ui(f, 2, mpz_fdiv_ui(c, pp_ui))
         nmod_poly_set_coeff_ui(f, 3, mpz_fdiv_ui(b, pp_ui))
         nmod_poly_set_coeff_ui(f, 4, mpz_fdiv_ui(a, pp_ui))
-        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0 # reset data struct
+        (<nmod_poly_factor_struct *>f_factzn)[0].num = 0  # reset data struct
         nmod_poly_factor(f_factzn, f)
         has_roots = 0
         has_single_roots = 0
@@ -523,7 +525,7 @@ cdef bint Zp_soluble_siksek(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         return result
 
 cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t pp,
-                                    fmpz_poly_t f1, fmpz_poly_t linear):
+                                    fmpz_poly_t f1, fmpz_poly_t linear) noexcept:
     """
     Uses the approach of Algorithm 5.3.1 of Siksek's thesis to test for
     solubility of y^2 == ax^4 + bx^3 + cx^2 + dx + e over Zp.
@@ -617,13 +619,13 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         mpz_init(ddd)
         mpz_init(eee)
 
-        if i == 0: # g == 1
+        if i == 0:  # g == 1
             mpz_set(aaa, a)
             mpz_set(bbb, b)
             mpz_set(ccc, c)
             mpz_set(ddd, d)
             mpz_sub(eee, e, qq)
-        elif i == 1: # g == x + rr
+        elif i == 1:  # g == x + rr
             mpz_set(aaa, a)
             mpz_set(bbb, b)
             mpz_sub(ccc, c, qq)
@@ -637,7 +639,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
             mpz_mul(ss, ss, rr)
             mpz_sub(eee, eee, ss)
             mpz_divexact(ss, ss, rr)
-        elif i == 2: # g == x^2 + rr*x + ss
+        elif i == 2:  # g == x^2 + rr*x + ss
             mpz_sub(aaa, a, qq)
             A = Integer(f[1])
             mpz_set(rr, A.value)
@@ -790,7 +792,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
 cdef bint Qp_soluble_siksek(mpz_t A, mpz_t B, mpz_t C, mpz_t D, mpz_t E,
                             mpz_t p, unsigned long P,
                             nmod_poly_factor_t f_factzn, fmpz_poly_t f1,
-                            fmpz_poly_t linear):
+                            fmpz_poly_t linear) noexcept:
     """
     Uses Samir Siksek's thesis results to determine whether the quartic is
     locally soluble at p.
@@ -829,7 +831,7 @@ cdef bint Qp_soluble_siksek(mpz_t A, mpz_t B, mpz_t C, mpz_t D, mpz_t E,
 
 
 cdef bint Qp_soluble_siksek_large_p(mpz_t A, mpz_t B, mpz_t C, mpz_t D, mpz_t E,
-                                    mpz_t p, fmpz_poly_t f1, fmpz_poly_t linear):
+                                    mpz_t p, fmpz_poly_t f1, fmpz_poly_t linear) noexcept:
     """
     Uses Samir Siksek's thesis results to determine whether the quartic is
     locally soluble at p, when p is bigger than wordsize, and we can't use
@@ -863,7 +865,7 @@ cdef bint Qp_soluble_siksek_large_p(mpz_t A, mpz_t B, mpz_t C, mpz_t D, mpz_t E,
     mpz_clear(e)
     return result
 
-cdef bint Qp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p):
+cdef bint Qp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p) noexcept:
     """
     Uses the original test of Birch and Swinnerton-Dyer to test for local
     solubility of the quartic at p.
@@ -880,7 +882,7 @@ cdef bint Qp_soluble_BSD(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p):
     mpz_clear(zero)
     return result
 
-cdef bint Qp_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p):
+cdef bint Qp_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e, mpz_t p) noexcept:
     """
     Try the BSD approach for a few residue classes and if no solution is found,
     switch to Siksek to try to prove insolubility.
@@ -946,7 +948,7 @@ def test_qpls(a, b, c, d, e, p):
 
 cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e) except -1:
     """
-    Returns whether the quartic has local solutions at all primes p.
+    Return whether the quartic has local solutions at all primes `p`.
     """
     cdef Integer A, B, C, D, E, Delta,p
     cdef mpz_t mpz_2
@@ -1151,14 +1153,16 @@ def two_descent_by_two_isogeny(E,
         sage: n1, n2, n1_prime, n2_prime = two_descent_by_two_isogeny(E)
         sage: log(n1,2) + log(n1_prime,2) - 2 # the rank
         1
+
+        sage: # needs sage.symbolic
         sage: x,y = var('x,y')
         sage: E = EllipticCurve(y^2 == x^3 + x^2 - 25*x + 39)
         sage: n1, n2, n1_prime, n2_prime = two_descent_by_two_isogeny(E)
-        sage: log(n1,2) + log(n1_prime,2) - 2 # the rank
+        sage: log(n1,2) + log(n1_prime,2) - 2  # the rank
         2
         sage: E = EllipticCurve(y^2 + x*y + y == x^3 - 131*x + 558)
         sage: n1, n2, n1_prime, n2_prime = two_descent_by_two_isogeny(E)
-        sage: log(n1,2) + log(n1_prime,2) - 2 # the rank
+        sage: log(n1,2) + log(n1_prime,2) - 2  # the rank
         3
 
     Using the verbosity option::

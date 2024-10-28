@@ -49,10 +49,10 @@ cdef class BinaryMatrix(LeanMatrix):
     cdef bitset_t _temp
 
     cdef inline long row_len(self, long i) except -1   # Not a Sage matrix operation
-    cdef inline bint row_inner_product(self, long i, long j)   # Not a Sage matrix operation
+    cdef inline bint row_inner_product(self, long i, long j) noexcept   # Not a Sage matrix operation
 
-    cdef inline bint get(self, long x, long y)   # Not a Sage matrix operation
-    cdef inline void set(self, long x, long y)   # Not a Sage matrix operation
+    cdef inline bint get(self, long x, long y) noexcept   # Not a Sage matrix operation
+    cdef inline void set(self, long x, long y) noexcept   # Not a Sage matrix operation
 
     cdef inline list row_sum(self, object L)   # Not a Sage matrix operation
     cdef inline list row_union(self, object L)   # Not a Sage matrix operation
@@ -73,15 +73,15 @@ cdef class TernaryMatrix(LeanMatrix):
     cdef bitset_t *_M1    # _M1[i] = negative support of row i
     cdef bitset_t _s, _t, _u    # registers
 
-    cdef inline long get(self, long r, long c)   # Not a Sage matrix operation
+    cdef inline long get(self, long r, long c) noexcept   # Not a Sage matrix operation
     cdef inline int set(self, long r, long c, x) except -1   # Not a Sage matrix operation
 
-    cdef bint _is_negative(self, long r, long c)
+    cdef bint _is_negative(self, long r, long c) noexcept
 
-    cdef inline long row_len(self, long i)   # Not a Sage matrix operation
-    cdef inline long row_inner_product(self, long i, long j)   # Not a Sage matrix operation
-    cdef void row_subs(self, long x, long y)   # Not a Sage matrix operation
-    cdef void _row_negate(self, long x)
+    cdef inline long row_len(self, long i) noexcept   # Not a Sage matrix operation
+    cdef inline long row_inner_product(self, long i, long j) noexcept   # Not a Sage matrix operation
+    cdef void row_subs(self, long x, long y) noexcept   # Not a Sage matrix operation
+    cdef void _row_negate(self, long x) noexcept
     cdef matrix_from_rows_and_columns_reordered(self, rows, columns)
 
 cdef class QuaternaryMatrix(LeanMatrix):
@@ -97,14 +97,14 @@ cdef class QuaternaryMatrix(LeanMatrix):
     cdef inline row_inner_product(self, long i, long j)   # Not a Sage matrix operation
     cdef inline int _row_div(self, long x, object s) except -1
     cdef matrix_from_rows_and_columns_reordered(self, rows, columns)
-    cdef void conjugate(self)   # Not a Sage matrix operation
+    cdef void conjugate(self) noexcept   # Not a Sage matrix operation
 
 
 cdef class PlusMinusOneMatrix(LeanMatrix):
     cdef int* _entries
 
-    cdef inline int get(self, long r, long c)   # Not a Sage matrix operation
-    cdef inline void set(self, long r, long c, int x)   # Not a Sage matrix operation
+    cdef inline int get(self, long r, long c) noexcept   # Not a Sage matrix operation
+    cdef inline void set(self, long r, long c, int x) noexcept   # Not a Sage matrix operation
 
     cdef inline long row_len(self, long i) except -1   # Not a Sage matrix operation
     cdef inline row_inner_product(self, long i, long j)   # Not a Sage matrix operation
@@ -112,8 +112,8 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
 cdef class RationalMatrix(LeanMatrix):
     cdef mpq_t* _entries
 
-    cdef inline long index(self, long r, long c)   # Not a Sage matrix operation
-    cdef inline void set(self, long r, long c, mpq_t x)   # Not a Sage matrix operation
+    cdef inline long index(self, long r, long c) noexcept   # Not a Sage matrix operation
+    cdef inline void set(self, long r, long c, mpq_t x) noexcept   # Not a Sage matrix operation
 
     cdef inline long row_len(self, long i) except -1   # Not a Sage matrix operation
     cdef inline row_inner_product(self, long i, long j)   # Not a Sage matrix operation

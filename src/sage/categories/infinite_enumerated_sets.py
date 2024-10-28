@@ -1,24 +1,25 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Infinite Enumerated Sets
 
 AUTHORS:
 
  - Florent Hivert (2009-11): initial revision.
-
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 
+
 class InfiniteEnumeratedSets(CategoryWithAxiom):
     """
-    The category of infinite enumerated sets
+    The category of infinite enumerated sets.
 
     An infinite enumerated sets is a countable set together with a
     canonical enumeration of its elements.
@@ -99,9 +100,9 @@ class InfiniteEnumeratedSets(CategoryWithAxiom):
 
             For infinite enumerated sets:
 
-            * :meth:`.cardinality` is supposed to return `infinity`
+            * :meth:`.cardinality` is supposed to return ``infinity``
 
-            * :meth:`.list` is supposed to raise a ``NotImplementedError``.
+            * :meth:`.list` is supposed to raise a :exc:`NotImplementedError`.
 
             EXAMPLES::
 

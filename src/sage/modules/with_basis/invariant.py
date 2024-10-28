@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Invariant modules
 """
@@ -21,6 +22,7 @@ from sage.categories.finitely_generated_semigroups import FinitelyGeneratedSemig
 from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 from sage.sets.family import Family
 from sage.matrix.constructor import Matrix
+from sage.libs.gap.libgap import libgap
 
 
 class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
@@ -255,7 +257,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
 
         # Give the intersection of kernels of the map `s*x-x` to determine when
         # `s*x = x` for all generators `s` of `S`
-        basis = M.annihilator_basis(S.gens(), action=_invariant_map, side="left")
+        basis = M.annihilator_basis(S.gens(), action=_invariant_map, side='left')
 
         super().__init__(Family(basis),
                          support_order=M._compute_support_order(basis),
@@ -308,9 +310,9 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
             M = M._module
         return f"({self._semigroup})-invariant submodule of {M}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
-        Return a latex representaion of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -798,27 +800,24 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: type(T)
             <class 'sage.modules.with_basis.invariant.FiniteDimensionalInvariantModule_with_category'>
 
-        Check the ``ValueError``::
+        Check the :exc:`ValueError`::
 
-            sage: from sage.groups.class_function import ClassFunction_libgap
-            sage: chi = ClassFunction_libgap(G, chi)
-            sage: T = M.twisted_invariant_module(G, chi, action_on_basis=action)
+            sage: T = M.twisted_invariant_module(G, "ichigo", action_on_basis=action)
             Traceback (most recent call last):
             ...
             ValueError: chi must be a list/tuple or a class function of the group G
         """
+        from sage.groups.class_function import ClassFunction, ClassFunction_libgap
 
-        from sage.groups.class_function import ClassFunction, ClassFunction_gap
-
-        if isinstance(chi,(list,tuple)):
-            chi = ClassFunction(G, chi)
-        elif not isinstance(chi, ClassFunction_gap):
+        if isinstance(chi, (list, tuple)):
+            chi = ClassFunction(G, libgap(chi))
+        elif not isinstance(chi, ClassFunction_libgap):
             raise ValueError("chi must be a list/tuple or a class function of the group G")
 
         try:
-            is_trivial = all(chi(conj.an_element()) == 1 for conj in G.conjugacy_classes())
-        except AttributeError: # to handle ReflectionGroups
-            is_trivial = all(chi(G(list(conj)[0])) == 1 for conj in G.conjugacy_classes().values())
+            is_trivial = all(chi(next(iter(conj))) == 1 for conj in G.conjugacy_classes())
+        except AttributeError:  # to handle ReflectionGroups
+            is_trivial = all(chi(G(next(iter(conj)))) == 1 for conj in G.conjugacy_classes())
 
         if is_trivial:
             action_on_basis = kwargs.pop('action_on_basis', None)
@@ -884,11 +883,11 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         else:
             raise ValueError("side must either be 'left' or 'right'")
 
-        proj_matrix = Matrix(M.dimension()) #initialize the zero-matrix
+        proj_matrix = Matrix(M.dimension())  # initialize the zero-matrix
         for g in self._group:
-            proj_matrix += self._chi(g)*Matrix((self.__sided_action__(g,b)).to_vector() for b in M.basis())
+            proj_matrix += self._chi(g)*Matrix((self.__sided_action__(g, b)).to_vector() for b in M.basis())
 
-        n = self._chi(self._group.identity()) # chi(1) is the dimension
+        n = self._chi(self._group.identity())  # chi(1) is the dimension
         g = self._group.order()
 
         self._projection_matrix = (n/g)*proj_matrix
@@ -906,7 +905,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
 
         basis = M.annihilator_basis(M.basis(),
                                     action=proj_difference,
-                                    side="left")
+                                    side='left')
 
         super().__init__(Family(basis),
                          support_order=M._compute_support_order(basis),
@@ -961,7 +960,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         """
         return self.retract(self.project_ambient(x))
 
-    def project_ambient(self,x):
+    def project_ambient(self, x):
         r"""
         Project ``x`` in the ambient representation onto the submodule of the
         ambient representation to which ``self`` is isomorphic as a module.
@@ -1006,7 +1005,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: G.rename(); M.rename()  # reset names
         """
         if (isinstance(self._ambient, Representation)
-            and x.parent() is self._ambient._module):
+                and x.parent() is self._ambient._module):
             x = self._ambient._element_constructor_(x)
         return self._project_ambient(x)
 

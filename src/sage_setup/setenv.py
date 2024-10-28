@@ -45,5 +45,4 @@ def setenv():
     # not done: PATH prepend of SAGE_SRC/bin, SAGE_ROOT/build/bin
     # not done: MACOSX_DEPLOYMENT_TARGET
     # not done: PATH prepend for ccache & CCACHE_BASEDIR
-    # not done: Cygwin LD_LIBRARY_PATH
     # not done: OPENBLAS_NUM_THREADS

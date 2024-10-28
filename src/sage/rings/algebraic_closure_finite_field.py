@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Algebraic closures of finite fields
 
@@ -52,7 +52,6 @@ AUTHORS:
 - Peter Bruin (August 2013): initial version
 
 - Vincent Delecroix (November 2013): additional methods
-
 """
 
 from sage.misc.abstract_method import abstract_method
@@ -75,7 +74,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         z2
         sage: type(F.gen(2))
         <class 'sage.rings.algebraic_closure_finite_field.AlgebraicClosureFiniteField_pseudo_conway_with_category.element_class'>
-
     """
     def __init__(self, parent, value):
         """
@@ -89,7 +87,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             The ``_test_pickling`` test has to be skipped because
             there is no coercion map between the parents of ``x``
             and ``loads(dumps(x))``.
-
         """
         if isinstance(value, Element) and isinstance(value.parent(), FiniteField):
             n = value.parent().degree()
@@ -138,7 +135,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: X.extend([z3, z3**2, z3*z4])
             sage: assert len(X) == len(set(hash(x) for x in X))
 
-        Check that :trac:`19956` is fixed::
+        Check that :issue:`19956` is fixed::
 
             sage: R.<x,y> = GF(2).algebraic_closure()[]
             sage: x.resultant(y)
@@ -163,7 +160,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: F = GF(3).algebraic_closure()
             sage: F._repr_()
             'Algebraic closure of Finite Field of size 3'
-
         """
         return self._value._repr_()
 
@@ -202,7 +198,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: F = GF(3).algebraic_closure()
             sage: F.gen(2) + F.gen(3)
             z6^5 + 2*z6^4 + 2*z6^3 + z6^2 + 2*z6 + 1
-
         """
         F = self.parent()
         x, y = F._to_common_subfield(self, right)
@@ -217,7 +212,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: F = GF(3).algebraic_closure()
             sage: F.gen(2) - F.gen(3)
             z6^4 + 2*z6^3 + z6^2 + 2*z6
-
         """
         F = self.parent()
         x, y = F._to_common_subfield(self, right)
@@ -232,7 +226,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: F = GF(3).algebraic_closure()
             sage: F.gen(2) * F.gen(3)
             z6^5 + 2*z6^4 + z6^2 + 2
-
         """
         F = self.parent()
         x, y = F._to_common_subfield(self, right)
@@ -247,7 +240,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: F = GF(3).algebraic_closure()
             sage: F.gen(2) / F.gen(3)
             z6^5 + 2*z6^4 + z6^3 + 1
-
         """
         F = self.parent()
         x, y = F._to_common_subfield(self, right)
@@ -283,7 +275,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
               From: Finite Field of size 3
               To:   Finite Field in z3 of size 3^3
               Defn: 1 |--> 1
-
         """
         F = self.parent()
         l = self._level
@@ -305,7 +296,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             z6^5 + 2*z6^4 + 2*z6^3 + z6^2 + 2*z6 + 2
             sage: latex(s)
             z_{6}^{5} + 2 z_{6}^{4} + 2 z_{6}^{3} + z_{6}^{2} + 2 z_{6} + 2
-
         """
         return self._value._latex_()
 
@@ -319,7 +309,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: F = GF(11).algebraic_closure()
             sage: F.gen(3).minpoly()
             x^3 + 2*x + 9
-
         """
         return self._value.minpoly()
 
@@ -336,7 +325,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: F = GF(3).algebraic_closure()
             sage: F.gen(2).is_square()
             True
-
         """
         return True
 
@@ -385,7 +373,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         .. TODO::
 
             This function could probably be made faster.
-
         """
         from sage.rings.integer import Integer
         F = self.parent()
@@ -415,7 +402,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             16806
             sage: (K.gen(1) + K.gen(2) + K.gen(3)).multiplicative_order()
             7353
-
         """
         return self._value.multiplicative_order()
 
@@ -437,7 +423,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             t3^2 + t3 + 1
             sage: s.pth_power(3).parent() is K
             True
-
         """
         return self.__class__(self.parent(), self._value.pth_power(k))
 
@@ -459,7 +444,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             t3^2 + t3 + 1
             sage: s.pth_root(2).parent() is K
             True
-
         """
         return self.__class__(self.parent(), self._value.pth_root(k))
 
@@ -469,8 +453,8 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
 
         INPUT:
 
-        - ``minimal`` -- boolean (default: ``False``).  If ``True``,
-          always return the smallest subfield containing ``self``.
+        - ``minimal`` -- boolean (default: ``False``); if ``True``,
+          always return the smallest subfield containing ``self``
 
         OUTPUT:
 
@@ -501,7 +485,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             Finite Field of size 3
 
         This also works when the element has to be converted between
-        two non-trivial finite subfields (see :trac:`16509`)::
+        two non-trivial finite subfields (see :issue:`16509`)::
 
             sage: K = GF(5).algebraic_closure()
             sage: z = K.gen(5) - K.gen(5) + K.gen(2)
@@ -534,7 +518,6 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
               Defn: z2 |--> z4^3 + z4^2 + z4 + 3
             sage: f(b)
             z4^3 + z4^2 + z4 + 4
-
         """
         Fbar = self.parent()
         x = self._value
@@ -591,7 +574,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         if self is other:
             return True
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         return ((self.base_ring(), self.variable_name(), self.category()) ==
                 (other.base_ring(), other.variable_name(), other.category()))
@@ -622,7 +605,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F = AlgebraicClosureFiniteField(GF(p), 'z')
             sage: F.characteristic() == p
             True
-
         """
         return self.base_ring().characteristic()
 
@@ -645,7 +627,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             Traceback (most recent call last):
             ...
             ValueError: no conversion defined between different algebraic closures
-
         """
         if isinstance(x, self.element_class):
             if x.parent() is not self:
@@ -664,7 +645,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F = GF(7).algebraic_closure()
             sage: F.has_coerce_map_from(Integers())
             True
-
         """
         if other is self:
             return True
@@ -683,7 +663,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F = AlgebraicClosureFiniteField(GF(5), 'z')
             sage: F._repr_()
             'Algebraic closure of Finite Field of size 5'
-
         """
         return 'Algebraic closure of %s' % self.base_ring()
 
@@ -711,7 +690,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             Finite Field in z6 of size 3^6
             sage: y.parent()
             Finite Field in z6 of size 3^6
-
         """
         if x._level == y._level:
             return x._value, y._value
@@ -754,7 +732,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             Traceback (most recent call last):
             ...
             NotImplementedError: <abstract method _get_im_gen at ...>
-
         """
 
     def _subfield(self, n):
@@ -766,7 +743,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F = GF(3).algebraic_closure()
             sage: F._subfield(4)
             Finite Field in z4 of size 3^4
-
         """
         if n == 1:
             return self.base_ring()
@@ -798,7 +774,6 @@ class AlgebraicClosureFiniteField_generic(Field):
                From: Finite Field in z4 of size 3^4
                To:   Algebraic closure of Finite Field of size 3
                Defn: z4 |--> z4)
-
         """
         Fn = self._subfield(n)
         return Fn, Fn.hom( (self.gen(n),), check=False)
@@ -821,7 +796,6 @@ class AlgebraicClosureFiniteField_generic(Field):
               From: Finite Field in z2 of size 3^2
               To:   Finite Field in z4 of size 3^4
               Defn: z2 |--> 2*z4^3 + 2*z4^2 + 1
-
         """
         if m.divides(n):
             # check=False is required to avoid "coercion hell": an
@@ -841,7 +815,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField
             sage: AlgebraicClosureFiniteField(GF(5), 'z').ngens()
             +Infinity
-
         """
         from sage.rings.infinity import Infinity
         return Infinity
@@ -856,7 +829,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F = AlgebraicClosureFiniteField(GF(5), 'z')
             sage: F.gen(2)
             z2
-
         """
         F = self._subfield(n)
         return self(F.gen())
@@ -893,7 +865,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F = AlgebraicClosureFiniteField(GF(5), 'z')
             sage: F._first_ngens(3)
             (1, z2, z3)
-
         """
         return tuple(self.gen(i + 1) for i in range(n))
 
@@ -909,7 +880,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F = AlgebraicClosureFiniteField(GF(5), 'z')
             sage: F.algebraic_closure() is F
             True
-
         """
         return self
 
@@ -921,7 +891,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F = AlgebraicClosureFiniteField(GF(5), 'w')
             sage: F.an_element()  # indirect doctest
             w2
-
         """
         return self.gen(2)
 
@@ -934,7 +903,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: F = GF(7).algebraic_closure()
             sage: F.some_elements()
             (1, z2, z3 + 1)
-
         """
         return (self(1), self.gen(2), 1+self.gen(3))
 
@@ -963,7 +931,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             ....:     p = R.random_element(degree=randint(2,8))
             ....:     for r in p.roots(K, multiplicities=False):
             ....:         assert p(r).is_zero(), "r={} is not a root of p={}".format(r,p)
-
         """
         from sage.arith.functions import lcm
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -1014,7 +981,6 @@ class AlgebraicClosureFiniteField_generic(Field):
             sage: for d in range(10):
             ....:     p = R.random_element(degree=randint(2,8))
             ....:     assert p.factor().prod() == p, "error in the factorization of p={}".format(p)
-
         """
         from sage.structure.factorization import Factorization
         R = p.parent()
@@ -1046,7 +1012,6 @@ class AlgebraicClosureFiniteField_pseudo_conway(WithEqualityById, AlgebraicClosu
         sage: F5 = GF(5).algebraic_closure()
         sage: F3 == F5
         False
-
     """
     def __init__(self, base_ring, name, category=None, lattice=None, use_database=True):
         """
@@ -1057,18 +1022,18 @@ class AlgebraicClosureFiniteField_pseudo_conway(WithEqualityById, AlgebraicClosu
           accepted.
 
         - ``name`` -- prefix to use for generators of the finite
-          subfields.
+          subfields
 
         - ``category`` -- if provided, specifies the category in which
-          this algebraic closure will be placed.
+          this algebraic closure will be placed
 
         - ``lattice`` -- :class:`~sage.rings.finite_rings.conway_polynomials.PseudoConwayPolynomialLattice`
-          (default: None).  If provided, use this pseudo-Conway
+          (default: ``None``); if provided, use this pseudo-Conway
           polynomial lattice to construct an algebraic closure.
 
-        - ``use_database`` -- boolean.  If True (default), use actual
+        - ``use_database`` -- boolean.  If ``True`` (default), use actual
           Conway polynomials whenever they are available in the
-          database.  If False, always compute pseudo-Conway
+          database.  If ``False``, always compute pseudo-Conway
           polynomials from scratch.
 
         TESTS::
@@ -1099,7 +1064,6 @@ class AlgebraicClosureFiniteField_pseudo_conway(WithEqualityById, AlgebraicClosu
             be made to compare equal, and ``_test_elements`` has to be
             skipped for the reason described in
             :meth:`AlgebraicClosureFiniteFieldElement.__init__`.
-
         """
         if not (isinstance(base_ring, FiniteField) and base_ring.is_prime_field()):
             raise NotImplementedError('algebraic closures of finite fields are only implemented for prime fields')
@@ -1123,7 +1087,6 @@ class AlgebraicClosureFiniteField_pseudo_conway(WithEqualityById, AlgebraicClosu
             sage: F = AlgebraicClosureFiniteField_pseudo_conway(GF(5), 'z')
             sage: F._get_polynomial(1)
             x + 3
-
         """
         return self._pseudo_conway_lattice.polynomial(n)
 
@@ -1138,7 +1101,6 @@ class AlgebraicClosureFiniteField_pseudo_conway(WithEqualityById, AlgebraicClosu
             sage: F = AlgebraicClosureFiniteField_pseudo_conway(GF(5), 'z')
             sage: F._get_im_gen(2, 4)
             z4^3 + z4^2 + z4 + 3
-
         """
         p = self.characteristic()
         if m == 1:
@@ -1178,7 +1140,6 @@ def AlgebraicClosureFiniteField(base_ring, name, category=None, implementation=N
 
     This is to ensure that the result of comparing two instances
     cannot change with time.
-
     """
     if category is None:
         from sage.categories.fields import Fields

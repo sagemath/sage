@@ -64,18 +64,10 @@ cdef class EdgesView:
     - ``ignore_direction`` -- boolean (default: ``False``); only applies to
       directed graphs. If ``True``, searches across edges in either direction.
 
-    - ``sort`` -- boolean (default: ``None``); whether to sort edges
-
-      - if ``None``, sort edges according to the default ordering and give a
-        deprecation warning as sorting will be set to ``False`` by default in
-        the future
-
-      - if ``True``, edges are sorted according the ordering specified with
-        parameter ``key``
-
-      - if ``False``, edges are not sorted. This is the fastest and less memory
-        consuming method for iterating over edges. This will become the default
-        behavior in the future.
+    - ``sort`` -- boolean (default: ``False``); whether to sort edges according
+      the ordering specified with parameter ``key``. If ``False`` (default),
+      edges are not sorted. This is the fastest and less memory consuming method
+      for iterating over edges.
 
     - ``key`` -- a function (default: ``None``); a function that takes an edge
       (a pair or a triple, according to the ``labels`` keyword) as its one
@@ -212,7 +204,7 @@ cdef class EdgesView:
         sage: G.has_edge(1, 0)
         False
 
-    We can consider only the edges between two specifed sets of vertices::
+    We can consider only the edges between two specified sets of vertices::
 
         sage: G = Graph([(0, 1), (1, 2)])
         sage: E = EdgesView(G, vertices=[0], vertices2=[1], labels=False)
@@ -350,7 +342,7 @@ cdef class EdgesView:
 
     def __init__(self, G, vertices=None, vertices2=None, labels=True,
                  ignore_direction=False,
-                 sort=None, key=None, sort_vertices=True):
+                 sort=False, key=None, sort_vertices=True):
         """
         Construction of this :class:`EdgesView`.
 
@@ -420,8 +412,7 @@ cdef class EdgesView:
             if self._graph._directed and self._ignore_direction:
                 return 2 * self._graph.size()
             return self._graph.size()
-        else:
-            return sum(1 for _ in self)
+        return sum(1 for _ in self)
 
     def __repr__(self):
         """
@@ -573,7 +564,7 @@ cdef class EdgesView:
             sage: G == E
             False
 
-        Check that :trac:`29180` is fixed::
+        Check that :issue:`29180` is fixed::
 
             sage: G = graphs.CycleGraph(4)
             sage: E = graphs.EmptyGraph()
@@ -654,20 +645,20 @@ cdef class EdgesView:
                 return (self._graph._backend.has_edge(u, v, label)
                         or self._graph._backend.has_edge(v, u, label))
             return self._graph._backend.has_edge(u, v, label)
-        else:
-            if u not in self._vertex_set2 and v not in self._vertex_set2:
+
+        if u not in self._vertex_set2 and v not in self._vertex_set2:
+            return False
+        if (self._vertex_set is not None
+                and u not in self._vertex_set and v not in self._vertex_set):
+            return False
+        if self._graph._directed:
+            if self._ignore_direction:
+                return (self._graph._backend.has_edge(u, v, label)
+                        or self._graph._backend.has_edge(v, u, label))
+            elif ((self._vertex_set is not None and u not in self._vertex_set)
+                  or v not in self._vertex_set2):
                 return False
-            if (self._vertex_set is not None
-                    and u not in self._vertex_set and v not in self._vertex_set):
-                return False
-            if self._graph._directed:
-                if self._ignore_direction:
-                    return (self._graph._backend.has_edge(u, v, label)
-                            or self._graph._backend.has_edge(v, u, label))
-                elif ((self._vertex_set is not None and u not in self._vertex_set)
-                          or v not in self._vertex_set2):
-                    return False
-            return self._graph._backend.has_edge(u, v, label)
+        return self._graph._backend.has_edge(u, v, label)
 
     def __getitem__(self, i):
         r"""
@@ -711,11 +702,10 @@ cdef class EdgesView:
                 return list(self)[i]
         elif i < 0:
             return list(self)[i]
-        else:
-            try:
-                return next(islice(self, i, i + 1, 1))
-            except StopIteration:
-                raise IndexError('index out of range')
+        try:
+            return next(islice(self, i, i + 1, 1))
+        except StopIteration:
+            raise IndexError('index out of range')
 
     def __add__(left, right):
         """
@@ -726,7 +716,7 @@ cdef class EdgesView:
 
         INPUT:
 
-        - ``left,right`` -- :class:`EdgesView` or list of edges
+        - ``left``, ``right`` -- :class:`EdgesView` or list of edges
 
         EXAMPLES::
 
@@ -799,6 +789,5 @@ cdef class EdgesView:
         """
         if isinstance(left, EdgesView):
             return list(left) * right
-        else:
-            # Case __rmul__
-            return list(right) * left
+        # Case __rmul__
+        return list(right) * left

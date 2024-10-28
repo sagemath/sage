@@ -10,7 +10,7 @@ cdef class CompiledPolynomialFunction:
 
     cdef object _parse_structure(CompiledPolynomialFunction)
     cdef generic_pd _get_gap(CompiledPolynomialFunction, BinaryTree, int)
-    cdef void _fill_gaps_binary(CompiledPolynomialFunction, BinaryTree)
+    cdef void _fill_gaps_binary(CompiledPolynomialFunction, BinaryTree) noexcept
     cdef object eval(CompiledPolynomialFunction, object)
 
 cdef class generic_pd:
@@ -19,11 +19,11 @@ cdef class generic_pd:
     cdef int label
     cdef int eval(self, vars, coeffs) except -2
     cdef generic_pd nodummies(generic_pd)
-    cdef void reset(self)
+    cdef void reset(self) noexcept
 
 cdef class dummy_pd(generic_pd):
     cdef generic_pd link
-    cdef void fill(dummy_pd self, generic_pd link)
+    cdef void fill(dummy_pd self, generic_pd link) noexcept
 
 cdef class var_pd(generic_pd):
     cdef int index
@@ -56,9 +56,3 @@ cdef class mul_pd(binary_pd):
 
 cdef class abc_pd(binary_pd):
     cdef int index
-
-
-
-
-
-

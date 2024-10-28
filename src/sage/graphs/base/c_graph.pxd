@@ -6,7 +6,7 @@
 #**************************************************************************
 
 from sage.data_structures.bitset cimport bitset_t
-from .graph_backends cimport GenericGraphBackend
+from sage.graphs.base.graph_backends cimport GenericGraphBackend
 from libc.stdint cimport uint32_t
 
 cdef class CGraph:
@@ -23,7 +23,7 @@ cdef class CGraph:
     cpdef bint has_vertex(self, int n) except -1
     cpdef check_vertex(self, int n)
     cpdef del_vertex(self, int v)
-    cpdef int current_allocation(self)
+    cpdef int current_allocation(self) noexcept
     cpdef list verts(self)
     cpdef add_vertices(self, verts)
     cdef int del_vertex_unsafe(self, int) except -1
@@ -56,10 +56,10 @@ cdef class CGraph:
     cdef int arc_label_unsafe(self, int, int) except -1
     cdef int all_arcs_unsafe(self, int, int, int *, int) except -1
 
-    cpdef int arc_label(self, int u, int v)
+    cpdef int arc_label(self, int u, int v) noexcept
     cpdef list all_arcs(self, int u, int v)
     cpdef del_arc_label(self, int u, int v, int l)
-    cpdef bint has_arc_label(self, int u, int v, int l)
+    cpdef bint has_arc_label(self, int u, int v, int l) noexcept
 
     ###################################
     # Neighbor Functions
@@ -98,7 +98,7 @@ cdef class CGraphBackend(GenericGraphBackend):
     cpdef add_edge(self, object u, object v, object l, bint directed)
     cpdef del_edge(self, object u, object v, object l, bint directed)
     cdef bint _has_labeled_edge_unsafe(self, int, int, object) except -1
-    cdef bint _delete_edge_before_adding(self)
+    cdef bint _delete_edge_before_adding(self) noexcept
     cdef int new_edge_label(self, object l) except -1
     cdef int free_edge_label(self, int l_int) except -1
     cdef int _use_edge_iterator_on_subgraph(self, CGraphBackend other, object vertices, const int modus) except -1

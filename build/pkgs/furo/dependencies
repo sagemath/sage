@@ -1,4 +1,4 @@
-$(PYTHON) beautifulsoup4 sphinx pygments sphinx_basic_ng | $(PYTHON_TOOLCHAIN)
+ beautifulsoup4 sphinx pygments sphinx_basic_ng | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

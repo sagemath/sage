@@ -81,6 +81,7 @@ __append_to_doc(
      "HouseXGraph",
      "LadderGraph",
      "LollipopGraph",
+     "MoebiusLadderGraph",
      "PathGraph",
      "StarGraph",
      "TadpoleGraph",
@@ -113,6 +114,7 @@ __append_to_doc(
      "cocliques_HoffmannSingleton",
      "ConwaySmith_for_3S7",
      "CoxeterGraph",
+     "CubeplexGraph",
      "DesarguesGraph",
      "DejterGraph",
      "distance_3_doubly_truncated_Golay_code_graph",
@@ -172,6 +174,7 @@ __append_to_doc(
      "MeredithGraph",
      "MoebiusKantorGraph",
      "MoserSpindle",
+     "MurtyGraph",
      "NauruGraph",
      "PappusGraph",
      "PoussinGraph",
@@ -188,12 +191,14 @@ __append_to_doc(
      "SzekeresSnarkGraph",
      "ThomsenGraph",
      "TietzeGraph",
+     "TricornGraph",
      "TruncatedIcosidodecahedralGraph",
      "TruncatedTetrahedralGraph",
      "TruncatedWittGraph",
      "Tutte12Cage",
      "TutteCoxeterGraph",
      "TutteGraph",
+     "TwinplexGraph",
      "U42Graph216",
      "U42Graph540",
      "WagnerGraph",
@@ -228,10 +233,12 @@ __append_to_doc(
      "BalancedTree",
      "BarbellGraph",
      "BilinearFormsGraph",
+     "BiwheelGraph",
      "BubbleSortGraph",
      "CaiFurerImmermanGraph",
      "chang_graphs",
      "CirculantGraph",
+     "cographs",
      "cospectral_graphs",
      "CubeGraph",
      "CubeConnectedCycle",
@@ -284,8 +291,10 @@ __append_to_doc(
      "SierpinskiGasketGraph",
      "SquaredSkewHadamardMatrixGraph",
      "SwitchedSquaredSkewHadamardMatrixGraph",
+     "StaircaseGraph",
      "strongly_regular_graph",
      "trees",
+     "TruncatedBiwheelGraph",
      "nauty_gentreeg",
      "triangulations",
      "TuranGraph",
@@ -361,8 +370,11 @@ __append_to_doc(
      "RandomHolmeKim",
      "RandomChordalGraph",
      "RandomIntervalGraph",
+     "RandomKTree",
+     "RandomPartialKTree",
      "RandomLobster",
      "RandomNewmanWattsStrogatz",
+     "RandomProperIntervalGraph",
      "RandomRegular",
      "RandomShell",
      "RandomToleranceGraph",
@@ -452,6 +464,11 @@ AUTHORS:
 
 - Marco Cognetta (2016-03-03): added TuranGraph
 
+- Janmenjaya Panda (2024-05-26): added MoebiusLadderGraph
+
+- Janmenjaya Panda (2024-06-09): added StaircaseGraph, BiwheelGraph and
+  TruncatedBiwheelGraph
+
 
 Functions and methods
 ---------------------
@@ -475,7 +492,7 @@ Functions and methods
 from . import graph
 
 
-class GraphGenerators():
+class GraphGenerators:
     r"""
     A class consisting of constructors for several common graphs, as well as
     orderly generation of isomorphism class representatives. See the
@@ -508,7 +525,7 @@ class GraphGenerators():
     INPUT:
 
     - ``vertices`` -- a natural number or ``None`` to infinitely generate
-      bigger and bigger graphs.
+      bigger and bigger graphs
 
     - ``property`` -- (default: ``lambda x: True``) any property to be
       tested on graphs before generation, but note that in general the
@@ -543,20 +560,20 @@ class GraphGenerators():
         not hold, then all the graphs generated will satisfy the property,
         but there will be some missing.
 
-    - ``size`` -- (default: ``None``) the size of the graph to be generated.
+    - ``size`` -- (default: ``None``) the size of the graph to be generated
 
-    - ``degree_sequence`` -- (default: ``None``) a sequence of non-negative integers,
+    - ``degree_sequence`` -- (default: ``None``) a sequence of nonnegative integers,
       or ``None``. If specified, the generated graphs will have these
       integers for degrees. In this case, property and size are both
       ignored.
 
-    - ``loops`` -- (default: ``False``) whether to allow loops in the graph
-      or not.
+    - ``loops`` -- boolean (default: ``False``); whether to allow loops in the graph
+      or not
 
-    - ``sparse`` -- (default: ``True``); whether to use a sparse or dense data
+    - ``sparse`` -- (default: ``True``) whether to use a sparse or dense data
       structure. See the documentation of :class:`~sage.graphs.graph.Graph`.
 
-    - ``copy`` (boolean) -- If set to ``True`` (default)
+    - ``copy`` -- boolean; if set to ``True`` (default)
       this method makes copies of the graphs before returning
       them. If set to ``False`` the method returns the graph it
       is working on. The second alternative is faster, but modifying
@@ -606,7 +623,7 @@ class GraphGenerators():
         sage: L = list(graphs(5, lambda G: G.size() <= 4))
         sage: len(L)
         14
-        sage: graphs_list.show_graphs(L) # long time
+        sage: graphs_list.show_graphs(L)        # long time                             # needs sage.plot
 
     Generate all graphs with up to 5 vertices and up to 4 edges.
 
@@ -615,7 +632,7 @@ class GraphGenerators():
         sage: L = list(graphs(5, lambda G: G.size() <= 4, augment='vertices'))
         sage: len(L)
         31
-        sage: graphs_list.show_graphs(L)              # long time
+        sage: graphs_list.show_graphs(L)        # long time                             # needs sage.plot
 
     Generate all graphs with degree at most 2, up to 6 vertices.
 
@@ -709,7 +726,7 @@ class GraphGenerators():
         (10, 19)
 
     Make sure that the graphs are really independent and the generator
-    survives repeated vertex removal (:trac:`8458`)::
+    survives repeated vertex removal (:issue:`8458`)::
 
         sage: for G in graphs(3):
         ....:     G.delete_vertex(0)
@@ -732,7 +749,7 @@ class GraphGenerators():
     def __call__(self, vertices=None, property=None, augment='edges', size=None,
                  degree_sequence=None, loops=False, sparse=True, copy=True):
         """
-        Accesses the generator of isomorphism class representatives.
+        Access the generator of isomorphism class representatives.
         Iterates over distinct, exhaustive representatives. See the docstring
         of this class for full documentation.
 
@@ -849,13 +866,13 @@ class GraphGenerators():
         else:
             raise NotImplementedError
 
-    def nauty_geng(self, options="", debug=False):
+    def nauty_geng(self, options='', debug=False):
         r"""
         Return a generator which creates graphs from nauty's geng program.
 
         INPUT:
 
-        - ``options`` -- string (default: ``""``); a string passed to ``geng``
+        - ``options`` -- string (default: ``''``); a string passed to ``geng``
           as if it was run at a system command line. At a minimum, you *must*
           pass the number of vertices you desire.  Sage expects the graphs to be
           in nauty's "graph6" format, do not set an option to change this
@@ -959,7 +976,7 @@ class GraphGenerators():
 
         TESTS:
 
-        Wrong input, ``"-c3"`` instead of ``"-c 3"`` (:trac:`14068`)::
+        Wrong input, ``"-c3"`` instead of ``"-c 3"`` (:issue:`14068`)::
 
             sage: list(graphs.nauty_geng("-c3", debug=False))
             Traceback (most recent call last):
@@ -992,14 +1009,14 @@ class GraphGenerators():
             G = graph.Graph(s[:-1], format='graph6')
             yield G
 
-    def nauty_genbg(self, options="", debug=False):
+    def nauty_genbg(self, options='', debug=False):
         r"""
-        Return a generator which creates bipartite graphs from nauty's ``genbg``
+        Return a generator which creates bipartite graphs from nauty's ``genbgL``
         program.
 
         INPUT:
 
-        - ``options`` -- string (default: ``""``); a string passed to ``genbg``
+        - ``options`` -- string (default: ``""``); a string passed to ``genbgL``
           as if it was run at a system command line. At a minimum, you *must*
           pass the number of vertices you desire in each side. Sage expects the
           bipartite graphs to be in nauty's "graph6" format, do not set an
@@ -1012,12 +1029,12 @@ class GraphGenerators():
           the program with some information on the arguments, while a line
           beginning with ">E" indicates an error with the input.
 
-        The possible options, obtained as output of ``genbg --help``::
+        The possible options, obtained as output of ``genbgL --help``::
 
                 n1       : the number of vertices in the first class.
-                           We must have n1=1..24.
+                           We must have n1=1..30.
                 n2       : the number of vertices in the second class.
-                           We must have n2=0..32 and n1+n2=1..32.
+                           We must have n2=0..64 and n1+n2=1..64.
             mine:maxe    : <int>:<int> a range for the number of edges
                             <int>:0 means '<int> or more' except in the case 0:0
               res/mod    : only generate subset res out of subsets 0..mod-1
@@ -1045,8 +1062,8 @@ class GraphGenerators():
                 -v       : display counts by number of edges to stderr
                 -l       : canonically label output graphs
 
-        Options which cause ``genbg`` to use an output format different than the
-        ``graph6`` format are not listed above (``-s``, ``-a``) as they will
+        Options which cause ``genbgL`` to use an output format different than
+        the ``graph6`` format are not listed above (``-s``, ``-a``) as they will
         confuse the creation of a Sage graph. Option ``-q`` which suppress
         auxiliary output (except from ``-v``) should never be used as we are
         unable to recover the partition of the vertices of the bipartite graph
@@ -1100,16 +1117,16 @@ class GraphGenerators():
             sage: len(list(gen))
             17
 
-        The ``debug`` switch can be used to examine ``genbg``'s reaction to the
+        The ``debug`` switch can be used to examine ``genbgL``'s reaction to the
         input in the ``options`` string. A message starting with ">A" indicates
         success and a message starting with ">E" indicates a failure::
 
             sage: gen = graphs.nauty_genbg("2 3", debug=True)
             sage: print(next(gen))
-            >A ...genbg n=2+3 e=0:6 d=0:0 D=3:2
+            >A ...genbg... n=2+3 e=0:6 d=0:0 D=3:2
             sage: gen = graphs.nauty_genbg("-c2 3", debug=True)
             sage: next(gen)
-            '>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
+            '>E Usage: ...genbg... [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
 
         Check that the partition of the bipartite graph is consistent::
 
@@ -1128,34 +1145,35 @@ class GraphGenerators():
             ...
             ValueError: wrong format of parameter options
             sage: list(graphs.nauty_genbg("-c1 2", debug=True))
-            ['>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
+            ['>E Usage: ...genbg... [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
             sage: list(graphs.nauty_genbg("-c 1 2", debug=True))
-            ['>A ...genbg n=1+2 e=2:2 d=1:1 D=2:1 c\n', Bipartite graph on 3 vertices]
+            ['>A ...genbg... n=1+2 e=2:2 d=1:1 D=2:1 c...\n', Bipartite graph on 3 vertices]
 
-        We must have n1=1..24, n2=0..32 and n1+n2=1..32 (:trac:`34179`)::
+        We must have n1=1..30, n2=0..64 and n1+n2=1..64 (:issue:`34179`,
+        :issue:`38618`)::
 
-            sage: next(graphs.nauty_genbg("25 1", debug=False))
+            sage: next(graphs.nauty_genbg("31 1", debug=False))
             Traceback (most recent call last):
             ...
             ValueError: wrong format of parameter options
-            sage: next(graphs.nauty_genbg("25 1", debug=True))
-            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
-            sage: next(graphs.nauty_genbg("24 9", debug=True))
-            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
-            sage: next(graphs.nauty_genbg("1 31", debug=False))
-            Bipartite graph on 32 vertices
-            sage: next(graphs.nauty_genbg("1 32", debug=True))
-            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
-            sage: next(graphs.nauty_genbg("0 32", debug=True))
-            '>E ...genbg: must have n1=1..24, n1+n2=1..32...
+            sage: next(graphs.nauty_genbg("31 1", debug=True))
+            '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
+            sage: next(graphs.nauty_genbg("30 40", debug=True))
+            '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
+            sage: next(graphs.nauty_genbg("1 63", debug=False))
+            Bipartite graph on 64 vertices
+            sage: next(graphs.nauty_genbg("1 64", debug=True))
+            '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
+            sage: next(graphs.nauty_genbg("0 2", debug=True))
+            '>E ...genbg...: must have n1=1..30, n1+n2=1..64...
             sage: next(graphs.nauty_genbg("2 0", debug=False))
             Bipartite graph on 2 vertices
             sage: next(graphs.nauty_genbg("2 -1", debug=True))
-            '>E Usage: ...genbg [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
+            '>E Usage: ...genbg... [-c -ugs -vq -lzF] [-Z#] [-D#] [-A] [-d#|-d#:#] [-D#|-D#:#] n1 n2...
         """
         import shlex
         from sage.features.nauty import NautyExecutable
-        genbg_path = NautyExecutable("genbg").absolute_filename()
+        genbg_path = NautyExecutable("genbgL").absolute_filename()
         sp = subprocess.Popen(shlex.quote(genbg_path) + " {0}".format(options), shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE, close_fds=True,
@@ -1171,7 +1189,7 @@ class GraphGenerators():
             for s in msg.split(' '):
                 if s.startswith('n='):
                     from sage.rings.integer import Integer
-                    n1, n2 = [Integer(t) for t in s[2:].split('+') if t.isdigit()]
+                    n1, n2 = (Integer(t) for t in s[2:].split('+') if t.isdigit())
                     partition = [set(range(n1)), set(range(n1, n1 + n2))]
                     break
             else:
@@ -1187,12 +1205,127 @@ class GraphGenerators():
             try:
                 s = next(gen)
             except StopIteration:
-                # Exhausted list of bipartite graphs from nauty genbg
+                # Exhausted list of bipartite graphs from nauty genbgL
                 return
             G = BipartiteGraph(s[:-1], format='graph6', partition=partition)
             yield G
 
-    def cospectral_graphs(self, vertices, matrix_function=lambda g: g.adjacency_matrix(), graphs=None):
+    def nauty_genktreeg(self, options='', debug=False):
+        r"""
+        Return a generator which creates all `k`-trees using nauty..
+
+        A `k`-tree is an undirected graph formed by starting with a complete
+        graph on `k + 1` vertices and then repeatedly add vertices in such a
+        way that each added vertex `v` has exactly `k` neighbors `U` such that,
+        together, the `k + 1` vertices formed by `v` and `U` form a clique.
+        See the :wikipedia:`K-tree` for more details.
+
+        INPUT:
+
+        - ``options`` -- string (default: ``""``); a string passed to
+          ``genktreeg`` as if it was run at a system command line. At a minimum,
+          you *must* pass the number of vertices you desire. Sage expects the
+          graphs to be in nauty's "graph6" format, do not set an option to
+          change this default or results will be unpredictable.
+
+        - ``debug`` -- boolean (default: ``False``); if ``True`` the first line
+          of ``genktreeg``'s output to standard error is captured and the first
+          call to the generator's ``next()`` function will return this line as a
+          string. A line leading with ">A" indicates a successful initiation of
+          the program with some information on the arguments, while a line
+          beginning with ">E" indicates an error with the input.
+
+        The possible options, obtained as output of ``genktreeg --help``::
+
+                 n       : the number of vertices
+                -k<int>  : the value of `k`(default: 2)
+              res/mod    : only generate subset res out of subsets 0..mod-1
+                -l       : canonically label output graphs
+
+        Options which cause ``genktreeg`` to use an output format different than
+        the graph6 format are not listed above (-u, -s, -h) as they will confuse
+        the creation of a Sage graph. The res/mod option can be useful when
+        using the output in a routine run several times in parallel.
+
+        OUTPUT:
+
+        A generator which will produce the graphs as Sage graphs.
+        These will be simple graphs: no loops, no multiple edges, no
+        directed edges.
+
+        EXAMPLES:
+
+        A `k`-tree is a maximal graph with treewidth `k`::
+
+            sage: # needs nauty
+            sage: gen = graphs.nauty_genktreeg("10 -k4")
+            sage: G = next(gen); G
+            Graph on 10 vertices
+            sage: G.treewidth()
+            4
+
+        A list of all 2-trees with 6, 7 and 8 vertices. This agrees with
+        :oeis:`A054581`::
+
+            sage: # needs nauty
+            sage: gen = graphs.nauty_genktreeg("6")
+            sage: len(list(gen))
+            5
+            sage: gen = graphs.nauty_genktreeg("7")
+            sage: len(list(gen))
+            12
+            sage: gen = graphs.nauty_genktreeg("8")
+            sage: len(list(gen))
+            39
+
+        The ``debug`` switch can be used to examine ``geng``'s reaction to the
+        input in the ``options`` string.  We illustrate success.  (A failure
+        will be a string beginning with ">E".)  Passing the "-q" switch to
+        ``geng`` will suppress the indicator of a successful initiation, and so
+        the first returned value might be an empty string if ``debug`` is
+        ``True``::
+
+            sage: gen = graphs.nauty_genktreeg("7", debug=True)                         # needs nauty
+            sage: print(next(gen))                                                      # needs nauty
+            >A ...genktreeg k=2 n=7
+
+        TESTS:
+
+        Wrong input::
+
+            sage: # needs nauty
+            sage: list(graphs.nauty_genktreeg("4 -k5", debug=True))
+            ['>E genktreeg: n cannot be less than k\n']
+            sage: list(graphs.nauty_genktreeg("10 -k 4", debug=True))
+            ['>E genktreeg -k: missing argument value\n']
+            sage: list(graphs.nauty_genktreeg("-c3", debug=False))
+            Traceback (most recent call last):
+            ...
+            ValueError: wrong format of parameter option
+        """
+        import shlex
+        from sage.features.nauty import NautyExecutable
+        geng_path = NautyExecutable("genktreeg").absolute_filename()
+        sp = subprocess.Popen(shlex.quote(geng_path) + " {0}".format(options), shell=True,
+                              stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, close_fds=True,
+                              encoding='latin-1')
+        msg = sp.stderr.readline()
+        if debug:
+            yield msg
+        elif msg.startswith('>E'):
+            raise ValueError('wrong format of parameter option')
+        gen = sp.stdout
+        while True:
+            try:
+                s = next(gen)
+            except StopIteration:
+                # Exhausted list of graphs from nauty geng
+                return
+            G = graph.Graph(s[:-1], format='graph6')
+            yield G
+
+    def cospectral_graphs(self, vertices, matrix_function=None, graphs=None):
         r"""
         Find all sets of graphs on ``vertices`` vertices (with
         possible restrictions) which are cospectral with respect to a
@@ -1200,22 +1333,22 @@ class GraphGenerators():
 
         INPUT:
 
-        - ``vertices`` - The number of vertices in the graphs to be tested
+        - ``vertices`` -- the number of vertices in the graphs to be tested
 
-        - ``matrix_function`` - A function taking a graph and giving back
+        - ``matrix_function`` -- a function taking a graph and giving back
           a matrix.  This defaults to the adjacency matrix.  The spectra
           examined are the spectra of these matrices.
 
-        - ``graphs`` - One of three things:
+        - ``graphs`` -- one of three things:
 
-           - ``None`` (default) - test all graphs having ``vertices``
+           - ``None`` -- default; test all graphs having ``vertices``
              vertices
 
            - a function taking a graph and returning ``True`` or ``False``
              - test only the graphs on ``vertices`` vertices for which
              the function returns ``True``
 
-           - a list of graphs (or other iterable object) - these graphs
+           - a list of graphs (or other iterable object) -- these graphs
              are tested for cospectral sets.  In this case,
              ``vertices`` is ignored.
 
@@ -1280,7 +1413,7 @@ class GraphGenerators():
             ....:   for i in range(g.order()):
             ....:       A.rescale_row(i, 1 / len(A.nonzero_positions_in_row(i)))
             ....:   return A
-            sage: g = graphs.cospectral_graphs(5, matrix_function=DinverseA,            # needs sage.modules
+            sage: g = graphs.cospectral_graphs(5, matrix_function=DinverseA,            # needs sage.libs.pari sage.modules
             ....:                              graphs=lambda g: min(g.degree()) > 0)
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)       # needs sage.modules
             [['Dlg', 'Ds_']]
@@ -1288,6 +1421,9 @@ class GraphGenerators():
             ....:   == g[0][1].laplacian_matrix(normalized=True).charpoly())
             True
         """
+        if matrix_function is None:
+            matrix_function = lambda g: g.adjacency_matrix()
+
         from sage.graphs.graph_generators import graphs as graph_gen
         if graphs is None:
             graph_list = graph_gen(vertices, property=lambda _: True)
@@ -1311,7 +1447,7 @@ class GraphGenerators():
 
     def _read_planar_code(self, code_input):
         r"""
-        Returns a generator for the plane graphs in planar code format in
+        Return a generator for the plane graphs in planar code format in
         the file code_input (see [BM2016]_).
 
         A file with planar code starts with a header ``>>planar_code<<``.
@@ -1326,7 +1462,7 @@ class GraphGenerators():
 
         INPUT:
 
-        - ``code_input`` - a file containing valid planar code data.
+        - ``code_input`` -- a file containing valid planar code data
 
         OUTPUT:
 
@@ -1411,22 +1547,22 @@ class GraphGenerators():
                     has_loops = True
             G = graph.Graph(edges_g, loops=has_loops)
 
-            if not(G.has_multiple_edges() or has_loops):
+            if not (G.has_multiple_edges() or has_loops):
                 embed_g = {i + 1: di for i, di in enumerate(g)}
                 G.set_embedding(embed_g)
-            yield(G)
+            yield G
 
     def fullerenes(self, order, ipr=False):
         r"""
-        Returns a generator which creates fullerene graphs using
+        Return a generator which creates fullerene graphs using
         the buckygen generator (see [BGM2012]_).
 
         INPUT:
 
-        - ``order`` - a positive even integer smaller than or equal to 254.
-          This specifies the number of vertices in the generated fullerenes.
+        - ``order`` -- a positive even integer smaller than or equal to 254
+          This specifies the number of vertices in the generated fullerenes
 
-        - ``ipr`` - default: ``False`` - if ``True`` only fullerenes that
+        - ``ipr`` -- (default: ``False``) if ``True`` only fullerenes that
           satisfy the Isolated Pentagon Rule are generated. This means that
           no pentagonal faces share an edge.
 
@@ -1447,17 +1583,17 @@ class GraphGenerators():
         There are 1812 isomers of `\textrm{C}_{60}`, i.e., 1812 fullerene graphs
         on 60 vertices::
 
-            sage: gen = graphs.fullerenes(60)  # optional buckygen
-            sage: len(list(gen))  # optional buckygen
+            sage: gen = graphs.fullerenes(60)  # optional - buckygen
+            sage: len(list(gen))               # optional - buckygen
             1812
 
         However, there is only one IPR fullerene graph on 60 vertices: the famous
         Buckminster Fullerene::
 
-            sage: gen = graphs.fullerenes(60, ipr=True)  # optional buckygen
-            sage: next(gen)  # optional buckygen
+            sage: gen = graphs.fullerenes(60, ipr=True)  # optional - buckygen
+            sage: next(gen)                              # optional - buckygen
             Graph on 60 vertices
-            sage: next(gen)  # optional buckygen
+            sage: next(gen)                              # optional - buckygen
             Traceback (most recent call last):
             ...
             StopIteration
@@ -1496,7 +1632,7 @@ class GraphGenerators():
         """
         # number of vertices should be positive
         if order < 0:
-            raise ValueError("number of vertices should be non-negative")
+            raise ValueError("number of vertices should be nonnegative")
 
         # buckygen can only output fullerenes on up to 254 vertices
         if order > 254:
@@ -1521,23 +1657,22 @@ class GraphGenerators():
 
         sp.stdout.reconfigure(newline='')
 
-        for G in graphs._read_planar_code(sp.stdout):
-            yield(G)
+        yield from graphs._read_planar_code(sp.stdout)
 
     def fusenes(self, hexagon_count, benzenoids=False):
         r"""
-        Returns a generator which creates fusenes and benzenoids using
+        Return a generator which creates fusenes and benzenoids using
         the benzene generator (see [BCH2002]_). Fusenes are planar
         polycyclic hydrocarbons with all bounded faces hexagons. Benzenoids
         are fusenes that are subgraphs of the hexagonal lattice.
 
         INPUT:
 
-        - ``hexagon_count`` - a positive integer smaller than or equal to 30.
-          This specifies the number of hexagons in the generated benzenoids.
+        - ``hexagon_count`` -- positive integer smaller than or equal to 30;
+          this specifies the number of hexagons in the generated benzenoids
 
-        - ``benzenoids`` - default: ``False`` - if ``True`` only benzenoids are
-          generated.
+        - ``benzenoids`` -- (default: ``False``) if ``True`` only benzenoids are
+          generated
 
         OUTPUT:
 
@@ -1555,30 +1690,30 @@ class GraphGenerators():
 
         There is a unique fusene with 2 hexagons::
 
-            sage: gen = graphs.fusenes(2)  # optional benzene
-            sage: len(list(gen))  # optional benzene
+            sage: gen = graphs.fusenes(2)  # optional - benzene
+            sage: len(list(gen))           # optional - benzene
             1
 
         This fusene is naphthalene (`\textrm{C}_{10}\textrm{H}_{8}`).
         In the fusene graph the H-atoms are not stored, so this is
         a graph on just 10 vertices::
 
-            sage: gen = graphs.fusenes(2)  # optional benzene
-            sage: next(gen)  # optional benzene
+            sage: gen = graphs.fusenes(2)  # optional - benzene
+            sage: next(gen)                # optional - benzene
             Graph on 10 vertices
-            sage: next(gen)  # optional benzene
+            sage: next(gen)                # optional - benzene
             Traceback (most recent call last):
             ...
             StopIteration
 
         There are 6505 benzenoids with 9 hexagons::
 
-            sage: gen = graphs.fusenes(9, benzenoids=True)  # optional benzene
-            sage: len(list(gen))  # optional benzene
+            sage: gen = graphs.fusenes(9, benzenoids=True)  # optional - benzene
+            sage: len(list(gen))                            # optional - benzene
             6505
         """
         if hexagon_count < 0:
-            raise ValueError("number of hexagons should be non-negative")
+            raise ValueError("number of hexagons should be nonnegative")
 
         # benzene is only built for fusenes with up to 30 hexagons
         if hexagon_count > 30:
@@ -1593,7 +1728,7 @@ class GraphGenerators():
             g = {1: [6, 2], 2: [1, 3], 3: [2, 4], 4: [3, 5], 5: [4, 6], 6: [5, 1]}
             G = graph.Graph(g)
             G.set_embedding(g)
-            yield(G)
+            yield G
             return
 
         from sage.features.graph_generators import Benzene
@@ -1611,7 +1746,7 @@ class GraphGenerators():
         sp.stdout.reconfigure(newline='')
 
         for G in graphs._read_planar_code(sp.stdout):
-            yield(G)
+            yield G
 
     def plantri_gen(self, options=""):
         r"""
@@ -1758,7 +1893,7 @@ class GraphGenerators():
         An overview of the number of quadrangulations on up to 12 vertices. This
         agrees with :oeis:`A113201`::
 
-            sage: for i in range(4, 13):                        # optional plantri
+            sage: for i in range(4, 13):                        # optional - plantri
             ....:     cmd = '-qm2c2 {}'.format(i)
             ....:     L = len(list(graphs.plantri_gen(cmd)))
             ....:     print("{:2d}   {:3d}".format(i, L))
@@ -1776,9 +1911,9 @@ class GraphGenerators():
 
         Wrong input, ``"-c=3"`` instead of ``"-c3"``::
 
-            sage: list(graphs.plantri_gen("6 -c3"))  # optional plantri
+            sage: list(graphs.plantri_gen("6 -c3"))  # optional - plantri
             [Graph on 6 vertices, Graph on 6 vertices]
-            sage: list(graphs.plantri_gen("6 -c=3"))  # optional plantri
+            sage: list(graphs.plantri_gen("6 -c=3"))  # optional - plantri
             Traceback (most recent call last):
             ...
             AttributeError: invalid options '6 -c=3'
@@ -1797,8 +1932,7 @@ class GraphGenerators():
         sp.stdout.reconfigure(newline='')
 
         try:
-            for G in graphs._read_planar_code(sp.stdout):
-                yield(G)
+            yield from graphs._read_planar_code(sp.stdout)
         except AssertionError:
             raise AttributeError("invalid options '{}'".format(options))
 
@@ -1823,24 +1957,24 @@ class GraphGenerators():
 
         INPUT:
 
-        - ``order`` - a positive integer smaller than or equal to 64.
-          This specifies the number of vertices in the generated graphs.
+        - ``order`` -- positive integer smaller than or equal to 64;
+          this specifies the number of vertices in the generated graphs
 
-        - ``minimum_degree`` - default: ``None`` - a value `\geq 1` and `\leq
+        - ``minimum_degree`` -- (default: ``None``) a value `\geq 1` and `\leq
           5`, or ``None``. This specifies the minimum degree of the generated
           graphs. If this is ``None`` and the order is 1, then this is set to
           0. If this is ``None`` and the minimum connectivity is specified, then
           this is set to the same value as the minimum connectivity.  If the
           minimum connectivity is also equal to ``None``, then this is set to 1.
 
-        - ``minimum_connectivity`` - default: ``None`` - a value `\geq 1`
+        - ``minimum_connectivity`` -- (default: ``None``) a value `\geq 1`
           and `\leq 3`, or ``None``. This specifies the minimum connectivity of the
           generated graphs. If this is ``None`` and the minimum degree is
           specified, then this is set to the minimum of the minimum degree
           and 3. If the minimum degree is also equal to ``None``, then this
           is set to 1.
 
-        - ``exact_connectivity`` - default: ``False`` - if ``True`` only
+        - ``exact_connectivity`` -- (default: ``False``) if ``True`` only
           graphs with exactly the specified connectivity will be generated.
           This option cannot be used with ``minimum_connectivity=3``, or if
           the minimum connectivity is not explicitly set.
@@ -1854,12 +1988,12 @@ class GraphGenerators():
         - ``maximum_face_size`` -- integer (default: ``None``); upper bound on
           the size of a face and so on the maximum degree of the dual graph
 
-        - ``only_bipartite`` - default: ``False`` - if ``True`` only bipartite
+        - ``only_bipartite`` -- (default: ``False``) if ``True`` only bipartite
           graphs will be generated. This option cannot be used for graphs with
           a minimum degree larger than 3.
 
-        - ``dual`` - default: ``False`` - if ``True`` return instead the
-          planar duals of the generated graphs.
+        - ``dual`` -- (default: ``False``) if ``True`` return instead the
+          planar duals of the generated graphs
 
         OUTPUT:
 
@@ -1878,20 +2012,20 @@ class GraphGenerators():
 
         There are 6 planar graphs on 4 vertices::
 
-            sage: gen = graphs.planar_graphs(4)  # optional plantri
-            sage: len(list(gen))  # optional plantri
+            sage: gen = graphs.planar_graphs(4)  # optional - plantri
+            sage: len(list(gen))                 # optional - plantri
             6
 
         Three of these planar graphs are bipartite::
 
-            sage: gen = graphs.planar_graphs(4, only_bipartite=True)  # optional plantri
-            sage: len(list(gen))  # optional plantri
+            sage: gen = graphs.planar_graphs(4, only_bipartite=True)  # optional - plantri
+            sage: len(list(gen))                                      # optional - plantri
             3
 
         Setting ``dual=True`` gives the planar dual graphs::
 
-            sage: gen = graphs.planar_graphs(4, dual=True)  # optional plantri
-            sage: [u for u in list(gen)]  # optional plantri
+            sage: gen = graphs.planar_graphs(4, dual=True)  # optional - plantri
+            sage: [u for u in list(gen)]                    # optional - plantri
             [Graph on 4 vertices,
             Multi-graph on 3 vertices,
             Multi-graph on 2 vertices,
@@ -1902,8 +2036,8 @@ class GraphGenerators():
         The cycle of length 4 is the only 2-connected bipartite planar graph
         on 4 vertices::
 
-            sage: l = list(graphs.planar_graphs(4, minimum_connectivity=2, only_bipartite=True))  # optional plantri
-            sage: l[0].get_embedding()  # optional plantri
+            sage: l = list(graphs.planar_graphs(4, minimum_connectivity=2, only_bipartite=True))  # optional - plantri
+            sage: l[0].get_embedding()                                                            # optional - plantri
             {1: [2, 3],
              2: [1, 4],
              3: [1, 4],
@@ -1912,9 +2046,9 @@ class GraphGenerators():
         There is one planar graph with one vertex. This graph obviously has
         minimum degree equal to 0::
 
-            sage: list(graphs.planar_graphs(1))  # optional plantri
+            sage: list(graphs.planar_graphs(1))                    # optional - plantri
             [Graph on 1 vertex]
-            sage: list(graphs.planar_graphs(1, minimum_degree=1))  # optional plantri
+            sage: list(graphs.planar_graphs(1, minimum_degree=1))  # optional - plantri
             []
 
         Specifying lower and upper bounds on the number of edges::
@@ -1931,9 +2065,9 @@ class GraphGenerators():
 
         Specifying the maximum size of a face::
 
-            sage: len(list(graphs.planar_graphs(4, maximum_face_size=3)))  # optional plantri
+            sage: len(list(graphs.planar_graphs(4, maximum_face_size=3)))  # optional - plantri
             1
-            sage: len(list(graphs.planar_graphs(4, maximum_face_size=4)))  # optional plantri
+            sage: len(list(graphs.planar_graphs(4, maximum_face_size=4)))  # optional - plantri
             3
 
         TESTS:
@@ -1950,7 +2084,7 @@ class GraphGenerators():
             True
         """
         if order < 0:
-            raise ValueError("number of vertices should be non-negative")
+            raise ValueError("number of vertices should be nonnegative")
 
         # plantri can only output general planar graphs on up to 64 vertices
         if order > 64:
@@ -2028,7 +2162,7 @@ class GraphGenerators():
             if minimum_degree == 0:
                 G = graph.Graph(1)
                 G.set_embedding({0: []})
-                yield(G)
+                yield G
             return
 
         cmd = '-p{}m{}c{}{}{} {} {} {}'
@@ -2052,34 +2186,34 @@ class GraphGenerators():
 
         INPUT:
 
-        - ``order`` - a positive integer smaller than or equal to 64.
-          This specifies the number of vertices in the generated triangulations.
+        - ``order`` -- positive integer smaller than or equal to 64;
+          this specifies the number of vertices in the generated triangulations
 
-        - ``minimum_degree`` - default: ``None`` - a value `\geq 3` and `\leq 5`,
+        - ``minimum_degree`` -- (default: ``None``) a value `\geq 3` and `\leq 5`,
           or ``None``. This specifies the minimum degree of the generated
           triangulations. If this is ``None`` and the minimum connectivity
           is specified, then this is set to the same value as the minimum
           connectivity. If the minimum connectivity is also equal to ``None``,
           then this is set to 3.
 
-        - ``minimum_connectivity`` - default: ``None`` - a value `\geq 3` and
+        - ``minimum_connectivity`` -- (default: ``None``) a value `\geq 3` and
           `\leq 5`, or ``None``. This specifies the minimum connectivity of the
           generated triangulations. If this is ``None`` and the minimum degree
           is specified, then this is set to the minimum of the minimum degree
           and 3. If the minimum degree is also equal to ``None``, then this is
           set to 3.
 
-        - ``exact_connectivity`` - default: ``False`` - if ``True`` only
+        - ``exact_connectivity`` -- (default: ``False``) if ``True`` only
           triangulations with exactly the specified connectivity will be generated.
           This option cannot be used with ``minimum_connectivity=3``, or if
           the minimum connectivity is not explicitly set.
 
-        - ``only_eulerian`` - default: ``False`` - if ``True`` only Eulerian
+        - ``only_eulerian`` -- (default: ``False``) if ``True`` only Eulerian
           triangulations will be generated. This option cannot be used if the
           minimum degree is explicitly set to anything else than 4.
 
-        - ``dual`` - default: ``False`` - if ``True`` return instead the
-          planar duals of the generated graphs.
+        - ``dual`` -- (default: ``False``) if ``True`` return instead the
+          planar duals of the generated graphs
 
         OUTPUT:
 
@@ -2101,28 +2235,34 @@ class GraphGenerators():
         The unique planar embedding of the `K_4` is the only planar triangulations
         on 4 vertices::
 
-            sage: gen = graphs.triangulations(4)    # optional plantri
-            sage: [g.get_embedding() for g in gen]  # optional plantri
+            sage: gen = graphs.triangulations(4)    # optional - plantri
+            sage: [g.get_embedding() for g in gen]  # optional - plantri
             [{1: [2, 3, 4], 2: [1, 4, 3], 3: [1, 2, 4], 4: [1, 3, 2]}]
 
         but, of course, this graph is not Eulerian::
 
-            sage: gen = graphs.triangulations(4, only_eulerian=True)  # optional plantri
-            sage: len(list(gen))                                      # optional plantri
+            sage: gen = graphs.triangulations(4, only_eulerian=True)  # optional - plantri
+            sage: len(list(gen))                                      # optional - plantri
             0
 
         The unique Eulerian triangulation on 6 vertices is isomorphic to the octahedral
         graph. ::
 
-            sage: gen = graphs.triangulations(6, only_eulerian=True)  # optional plantri
-            sage: g = next(gen)                                       # optional plantri
-            sage: g.is_isomorphic(graphs.OctahedralGraph())           # optional plantri
+            sage: gen = graphs.triangulations(6, only_eulerian=True)  # optional - plantri
+            sage: g = next(gen)                                       # optional - plantri
+            sage: g.is_isomorphic(graphs.OctahedralGraph())           # optional - plantri
             True
+
+        The minimum degree of a triangulation is 3, so the method can not output
+        a triangle::
+
+            sage: list(graphs.triangulations(3))                      # optional - plantri
+            []
 
         An overview of the number of 5-connected triangulations on up to 22 vertices. This
         agrees with :oeis:`A081621`::
 
-            sage: for i in range(12, 23):                                             # optional plantri
+            sage: for i in range(12, 23):                                             # optional - plantri
             ....:     L = len(list(graphs.triangulations(i, minimum_connectivity=5)))
             ....:     print("{}   {:3d}".format(i,L))
             12     1
@@ -2139,7 +2279,8 @@ class GraphGenerators():
 
         The minimum connectivity can be at most the minimum degree::
 
-            sage: gen = next(graphs.triangulations(10, minimum_degree=3, minimum_connectivity=5))  # optional plantri
+            sage: gen = next(graphs.triangulations(10, minimum_degree=3,     # optional - plantri
+            ....:                                  minimum_connectivity=5))
             Traceback (most recent call last):
             ...
             ValueError: Minimum connectivity can be at most the minimum degree.
@@ -2147,23 +2288,27 @@ class GraphGenerators():
         There are 5 triangulations with 9 vertices and minimum degree equal to 4
         that are 3-connected, but only one of them is not 4-connected::
 
-            sage: len([g for g in graphs.triangulations(9, minimum_degree=4, minimum_connectivity=3)]) # optional plantri
+            sage: len([g for g in graphs.triangulations(9, minimum_degree=4,        # optional - plantri
+            ....:                                       minimum_connectivity=3)])
             5
-            sage: len([g for g in graphs.triangulations(9, minimum_degree=4, minimum_connectivity=3, exact_connectivity=True)]) # optional plantri
+            sage: len([g for g in graphs.triangulations(9, minimum_degree=4,        # optional - plantri
+            ....:                                       minimum_connectivity=3,
+            ....:                                       exact_connectivity=True)])
             1
 
         Setting ``dual=True`` gives the planar dual graphs::
 
-            sage: [len(g) for g in graphs.triangulations(9, minimum_degree=4, minimum_connectivity=3, dual=True)]  # optional plantri
+            sage: [len(g) for g in graphs.triangulations(9, minimum_degree=4,       # optional plantri
+            ....:                                        minimum_connectivity=3, dual=True)]
             [14, 14, 14, 14, 14]
 
         TESTS::
 
-            sage: [g.size() for g in graphs.triangulations(6, minimum_connectivity=3)] # optional plantri
+            sage: [g.size() for g in graphs.triangulations(6, minimum_connectivity=3)]  # optional - plantri
             [12, 12]
         """
         if order < 0:
-            raise ValueError("number of vertices should be non-negative")
+            raise ValueError("number of vertices should be nonnegative")
 
         # plantri can only output planar triangulations on up to 64 vertices
         if order > 64:
@@ -2227,17 +2372,17 @@ class GraphGenerators():
 
         INPUT:
 
-        - ``order`` - a positive integer smaller than or equal to 64.
-          This specifies the number of vertices in the generated quadrangulations.
+        - ``order`` -- positive integer smaller than or equal to 64;
+          this specifies the number of vertices in the generated quadrangulations
 
-        - ``minimum_degree`` - default: ``None`` - a value `\geq 2` and `\leq
+        - ``minimum_degree`` -- (default: ``None``) a value `\geq 2` and `\leq
           3`, or ``None``. This specifies the minimum degree of the generated
           quadrangulations. If this is ``None`` and the minimum connectivity is
           specified, then this is set to the same value as the minimum
           connectivity. If the minimum connectivity is also equal to ``None``,
           then this is set to 2.
 
-        - ``minimum_connectivity`` - default: ``None`` - a value `\geq 2` and
+        - ``minimum_connectivity`` -- (default: ``None``) a value `\geq 2` and
           `\leq 3`, or ``None``. This specifies the minimum connectivity of the
           generated quadrangulations. If this is ``None`` and the option
           ``no_nonfacial_quadrangles`` is set to ``True``, then this is set to
@@ -2245,12 +2390,12 @@ class GraphGenerators():
           then this is set to the minimum degree. If the minimum degree is also
           equal to ``None``, then this is set to 3.
 
-        - ``no_nonfacial_quadrangles`` - default: ``False`` - if ``True`` only
+        - ``no_nonfacial_quadrangles`` -- (default: ``False``) if ``True`` only
           quadrangulations with no non-facial quadrangles are generated. This
           option cannot be used if ``minimum_connectivity`` is set to 2.
 
-        - ``dual`` - default: ``False`` - if ``True`` return instead the
-          planar duals of the generated graphs.
+        - ``dual`` -- (default: ``False``) if ``True`` return instead the
+          planar duals of the generated graphs
 
         OUTPUT:
 
@@ -2281,7 +2426,7 @@ class GraphGenerators():
         An overview of the number of quadrangulations on up to 12 vertices. This
         agrees with :oeis:`A113201`::
 
-            sage: for i in range(4,13):                          # optional plantri
+            sage: for i in range(4,13):                          # optional - plantri
             ....:     L =  len(list(graphs.quadrangulations(i)))
             ....:     print("{:2d}   {:3d}".format(i,L))
              4     1
@@ -2297,16 +2442,16 @@ class GraphGenerators():
         There are 2 planar quadrangulation on 12 vertices that do not have a
         non-facial quadrangle::
 
-            sage: len([g for g in graphs.quadrangulations(12, no_nonfacial_quadrangles=True)])  # optional plantri
+            sage: len([g for g in graphs.quadrangulations(12, no_nonfacial_quadrangles=True)])  # optional - plantri
             2
 
         Setting ``dual=True`` gives the planar dual graphs::
 
-            sage: [len(g) for g in graphs.quadrangulations(12, no_nonfacial_quadrangles=True, dual=True)]  # optional plantri
+            sage: [len(g) for g in graphs.quadrangulations(12, no_nonfacial_quadrangles=True, dual=True)]  # optional - plantri
             [10, 10]
         """
         if order < 0:
-            raise ValueError("number of vertices should be non-negative")
+            raise ValueError("number of vertices should be nonnegative")
 
         # plantri can only output planar quadrangulations on up to 64 vertices
         if order > 64:
@@ -2375,6 +2520,7 @@ class GraphGenerators():
     HouseGraph = staticmethod(basic.HouseGraph)
     HouseXGraph = staticmethod(basic.HouseXGraph)
     LadderGraph = staticmethod(basic.LadderGraph)
+    MoebiusLadderGraph = staticmethod(basic.MoebiusLadderGraph)
     PathGraph = staticmethod(basic.PathGraph)
     StarGraph = staticmethod(basic.StarGraph)
     Toroidal6RegularGrid2dGraph = staticmethod(basic.Toroidal6RegularGrid2dGraph)
@@ -2401,6 +2547,7 @@ class GraphGenerators():
     cocliques_HoffmannSingleton = staticmethod(distance_regular.cocliques_HoffmannSingleton)
     ConwaySmith_for_3S7 = staticmethod(distance_regular.ConwaySmith_for_3S7)
     CoxeterGraph = staticmethod(smallgraphs.CoxeterGraph)
+    CubeplexGraph = staticmethod(smallgraphs.CubeplexGraph)
     DejterGraph = staticmethod(smallgraphs.DejterGraph)
     DesarguesGraph = staticmethod(smallgraphs.DesarguesGraph)
     distance_3_doubly_truncated_Golay_code_graph = staticmethod(distance_regular.distance_3_doubly_truncated_Golay_code_graph)
@@ -2461,6 +2608,7 @@ class GraphGenerators():
     MeredithGraph = staticmethod(smallgraphs.MeredithGraph)
     MoebiusKantorGraph = staticmethod(smallgraphs.MoebiusKantorGraph)
     MoserSpindle = staticmethod(smallgraphs.MoserSpindle)
+    MurtyGraph = staticmethod(smallgraphs.MurtyGraph)
     NauruGraph = staticmethod(smallgraphs.NauruGraph)
     PappusGraph = staticmethod(smallgraphs.PappusGraph)
     PoussinGraph = staticmethod(smallgraphs.PoussinGraph)
@@ -2477,12 +2625,14 @@ class GraphGenerators():
     SzekeresSnarkGraph = staticmethod(smallgraphs.SzekeresSnarkGraph)
     ThomsenGraph = staticmethod(smallgraphs.ThomsenGraph)
     TietzeGraph = staticmethod(smallgraphs.TietzeGraph)
+    TricornGraph = staticmethod(smallgraphs.TricornGraph)
     Tutte12Cage = staticmethod(smallgraphs.Tutte12Cage)
     TruncatedIcosidodecahedralGraph = staticmethod(smallgraphs.TruncatedIcosidodecahedralGraph)
     TruncatedTetrahedralGraph = staticmethod(smallgraphs.TruncatedTetrahedralGraph)
     TruncatedWittGraph = staticmethod(distance_regular.TruncatedWittGraph)
     TutteCoxeterGraph = staticmethod(smallgraphs.TutteCoxeterGraph)
     TutteGraph = staticmethod(smallgraphs.TutteGraph)
+    TwinplexGraph = staticmethod(smallgraphs.TwinplexGraph)
     U42Graph216 = staticmethod(smallgraphs.U42Graph216)
     U42Graph540 = staticmethod(smallgraphs.U42Graph540)
     WagnerGraph = staticmethod(smallgraphs.WagnerGraph)
@@ -2503,6 +2653,7 @@ class GraphGenerators():
 ###########################################################################
 # Families
 ###########################################################################
+    from . import cographs as cographs_module
     from .generators import families
     from . import strongly_regular_db
     AlternatingFormsGraph = staticmethod(distance_regular.AlternatingFormsGraph)
@@ -2510,10 +2661,12 @@ class GraphGenerators():
     BalancedTree = staticmethod(families.BalancedTree)
     BarbellGraph = staticmethod(families.BarbellGraph)
     BilinearFormsGraph = staticmethod(distance_regular.BilinearFormsGraph)
+    BiwheelGraph = staticmethod(families.BiwheelGraph)
     BubbleSortGraph = staticmethod(families.BubbleSortGraph)
     CaiFurerImmermanGraph = staticmethod(families.CaiFurerImmermanGraph)
     chang_graphs = staticmethod(families.chang_graphs)
     CirculantGraph = staticmethod(families.CirculantGraph)
+    cographs = staticmethod(cographs_module.cographs)
     CubeGraph = staticmethod(families.CubeGraph)
     CubeConnectedCycle = staticmethod(families.CubeConnectedCycle)
     DipoleGraph = staticmethod(families.DipoleGraph)
@@ -2563,10 +2716,12 @@ class GraphGenerators():
     SierpinskiGasketGraph = staticmethod(families.SierpinskiGasketGraph)
     SquaredSkewHadamardMatrixGraph = staticmethod(families.SquaredSkewHadamardMatrixGraph)
     SwitchedSquaredSkewHadamardMatrixGraph = staticmethod(families.SwitchedSquaredSkewHadamardMatrixGraph)
+    StaircaseGraph = staticmethod(families.StaircaseGraph)
     strongly_regular_graph = staticmethod(strongly_regular_db.strongly_regular_graph)
     TabacjnGraph = staticmethod(families.TabacjnGraph)
     TadpoleGraph = staticmethod(families.TadpoleGraph)
     trees = staticmethod(families.trees)
+    TruncatedBiwheelGraph = staticmethod(families.TruncatedBiwheelGraph)
     nauty_gentreeg = staticmethod(families.nauty_gentreeg)
     TuranGraph = staticmethod(families.TuranGraph)
     UstimenkoGraph = staticmethod(distance_regular.UstimenkoGraph)
@@ -2632,8 +2787,11 @@ class GraphGenerators():
     RandomIntervalGraph = staticmethod(random.RandomIntervalGraph)
     RandomLobster = staticmethod(random.RandomLobster)
     RandomNewmanWattsStrogatz = staticmethod(random.RandomNewmanWattsStrogatz)
+    RandomProperIntervalGraph = staticmethod(random.RandomProperIntervalGraph)
     RandomRegular = staticmethod(random.RandomRegular)
     RandomShell = staticmethod(random.RandomShell)
+    RandomKTree = staticmethod(random.RandomKTree)
+    RandomPartialKTree = staticmethod(random.RandomPartialKTree)
     RandomToleranceGraph = staticmethod(random.RandomToleranceGraph)
     RandomTreePowerlaw = staticmethod(random.RandomTreePowerlaw)
     RandomTree = staticmethod(random.RandomTree)
@@ -2668,19 +2826,15 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
 
     INPUT:
 
+    - ``g`` -- current position on the tree
 
-    -  ``g`` - current position on the tree.
+    - ``aut_gens`` -- list of generators of Aut(g), in list notation
 
-    -  ``aut_gens`` - list of generators of Aut(g), in
-       list notation.
+    - ``max_verts`` -- when to retreat
 
-    -  ``max_verts`` - when to retreat.
+    - ``property`` -- check before traversing below g
 
-    -  ``property`` - check before traversing below g.
-
-    -  ``degree_sequence`` - specify a degree sequence to try to
-       obtain.
-
+    - ``degree_sequence`` -- specify a degree sequence to try to obtain
 
     EXAMPLES::
 
@@ -2860,14 +3014,11 @@ def canaug_traverse_edge(g, aut_gens, property, dig=False, loops=False, sparse=T
 
     INPUT:
 
+    - ``g`` -- current position on the tree
 
-    -  ``g`` - current position on the tree.
+    - ``aut_gens`` -- list of generators of Aut(g), in list notation
 
-    -  ``aut_gens`` - list of generators of Aut(g), in
-       list notation.
-
-    -  ``property`` - check before traversing below g.
-
+    - ``property`` -- check before traversing below g
 
     EXAMPLES::
 

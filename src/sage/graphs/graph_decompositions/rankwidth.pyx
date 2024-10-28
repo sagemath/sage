@@ -200,7 +200,7 @@ def rank_decomposition(G, verbose=False):
     return (rank_width, g)
 
 
-cdef int sage_graph_to_matrix(G):
+cdef int sage_graph_to_matrix(G) noexcept:
     r"""
     Convert the given Sage graph as an adjacency matrix.
     """
@@ -235,11 +235,11 @@ cdef int sage_graph_to_matrix(G):
     return 0
 
 
-cdef uint_fast32_t bitmask(int i):
+cdef uint_fast32_t bitmask(int i) noexcept:
     return (1ul << i)
 
 
-cdef void set_am(int i, int j, int val):
+cdef void set_am(int i, int j, int val) noexcept:
     r"""
     Set/Unset an arc between vertices i and j
 
@@ -255,7 +255,7 @@ cdef void set_am(int i, int j, int val):
         adjacency_matrix[j] |= bitmask(i)
 
 
-cdef void print_rank_dec(subset_t s, int l):
+cdef void print_rank_dec(subset_t s, int l) noexcept:
     r"""
     Print the current rank decomposition as a text
 

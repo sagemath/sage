@@ -7,7 +7,7 @@ by direct method not relying on factorisation.
 
 AUTHORS:
 
-- Vincent Delecroix (2014): first implementation (:trac:`16374`)
+- Vincent Delecroix (2014): first implementation (:issue:`16374`)
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>
@@ -22,9 +22,9 @@ from libc.math cimport sqrt
 from cysignals.signals cimport sig_on, sig_off
 
 cimport sage.rings.integer as integer
-from . import integer
+from sage.rings import integer
 
-cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
+cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]) noexcept:
     r"""
     Return ``1`` if ``n`` is a sum of two squares and ``0`` otherwise.
 
@@ -94,7 +94,7 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]):
     return 0
 
 
-cdef int three_squares_c(uint_fast32_t n, uint_fast32_t res[3]):
+cdef int three_squares_c(uint_fast32_t n, uint_fast32_t res[3]) noexcept:
     r"""
     Return `1` if `n` is a sum of three squares and `0` otherwise.
 
@@ -130,12 +130,13 @@ cdef int three_squares_c(uint_fast32_t n, uint_fast32_t res[3]):
 
     return 1
 
+
 def two_squares_pyx(uint32_t n):
     r"""
-    Return a pair of non-negative integers ``(i,j)`` such that `i^2 + j^2 = n`.
+    Return a pair of nonnegative integers ``(i,j)`` such that `i^2 + j^2 = n`.
 
-    If ``n`` is not a sum of two squares, a ``ValueError`` is raised. The input
-    must be lesser than `2^{32}=4294967296`, otherwise an ``OverflowError`` is
+    If ``n`` is not a sum of two squares, a :exc:`ValueError` is raised. The input
+    must be less than `2^{32}=4294967296`, otherwise an :exc:`OverflowError` is
     raised.
 
     .. SEEALSO::
@@ -166,7 +167,7 @@ def two_squares_pyx(uint32_t n):
     TESTS::
 
         sage: s = lambda t: sum(i^2 for i in t)
-        sage: for ij in Subsets(Subsets(45000, 15).random_element(), 2):                # optional - sage.combinat
+        sage: for ij in Subsets(Subsets(45000, 15).random_element(), 2):
         ....:     if s(two_squares_pyx(s(ij))) != s(ij):
         ....:         print("hey")
 
@@ -184,14 +185,15 @@ def two_squares_pyx(uint32_t n):
         return (integer.smallInteger(i[0]), integer.smallInteger(i[1]))
     sig_off()
 
-    raise ValueError("%d is not a sum of 2 squares"%n)
+    raise ValueError("%d is not a sum of 2 squares" % n)
+
 
 def is_sum_of_two_squares_pyx(uint32_t n):
     r"""
     Return ``True`` if ``n`` is a sum of two squares and ``False`` otherwise.
 
     The input must be smaller than `2^{32} = 4294967296`, otherwise an
-    ``OverflowError`` is raised.
+    :exc:`OverflowError` is raised.
 
     EXAMPLES::
 
@@ -214,13 +216,15 @@ def is_sum_of_two_squares_pyx(uint32_t n):
         sig_off()
         return False
 
+
 def three_squares_pyx(uint32_t n):
     r"""
-    If ``n`` is a sum of three squares return a 3-tuple ``(i,j,k)`` of Sage integers
-    such that `i^2 + j^2 + k^2 = n` and `i \leq j \leq k`. Otherwise raise a ``ValueError``.
+    If ``n`` is a sum of three squares return a 3-tuple ``(i,j,k)`` of Sage
+    integers such that `i^2 + j^2 + k^2 = n` and `i \leq j \leq k`. Otherwise
+    raise a :exc:`ValueError`.
 
-    The input must be lesser than `2^{32}=4294967296`, otherwise an
-    ``OverflowError`` is raised.
+    The input must be less than `2^{32}=4294967296`, otherwise an
+    :exc:`OverflowError` is raised.
 
     EXAMPLES::
 
@@ -254,7 +258,7 @@ def three_squares_pyx(uint32_t n):
     TESTS::
 
         sage: s = lambda t: sum(i^2 for i in t)
-        sage: for ijk in Subsets(Subsets(35000,15).random_element(),3):                 # optional - sage.combinat
+        sage: for ijk in Subsets(Subsets(35000,15).random_element(),3):
         ....:     if s(three_squares_pyx(s(ijk))) != s(ijk):
         ....:         print("hey")
     """
@@ -266,15 +270,16 @@ def three_squares_pyx(uint32_t n):
         return (integer.smallInteger(i[0]), integer.smallInteger(i[1]), integer.smallInteger(i[2]))
     sig_off()
 
-    raise ValueError("%d is not a sum of 3 squares"%n)
+    raise ValueError("%d is not a sum of 3 squares" % n)
+
 
 def four_squares_pyx(uint32_t n):
     r"""
-    Return a 4-tuple of non-negative integers ``(i,j,k,l)`` such that `i^2 + j^2
+    Return a 4-tuple of nonnegative integers ``(i,j,k,l)`` such that `i^2 + j^2
     + k^2 + l^2 = n` and `i \leq j \leq k \leq l`.
 
-    The input must be lesser than `2^{32}=4294967296`, otherwise an
-    ``OverflowError`` is raised.
+    The input must be less than `2^{32}=4294967296`, otherwise an
+    :exc:`OverflowError` is raised.
 
     .. SEEALSO::
 

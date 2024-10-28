@@ -4,7 +4,7 @@ Catalog of designs
 This module gathers all designs that can be reached through
 ``designs.<tab>``. Example with the Witt design on 24 points::
 
-    sage: designs.WittDesign(24) # optional - gap_packages
+    sage: designs.WittDesign(24)                                # optional - gap_package_design
     Incidence structure with 24 points and 759 blocks
 
 Or a Steiner Triple System on 19 points::
@@ -72,7 +72,7 @@ which queries the LJCR.
 REFERENCES:
 
 .. [1] La Jolla Covering Repository,
-  https://math.ccrwest.org/cover.html
+  https://dmgordon.org/cover
 """
 from sage.misc.lazy_import import lazy_import
 

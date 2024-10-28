@@ -23,15 +23,15 @@ We can change our assignment of values by modifying the dictionary::
     sage: booleval.eval_formula(t, d)
     False
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Chris Gorecki <chris.k.gorecki@gmail.com>
 #       Copyright (C) 2013 Paul Scurek <scurek86@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from . import logicparser
 
@@ -45,14 +45,12 @@ def eval_formula(tree, vdict):
 
     INPUT:
 
-    - ``tree`` -- a list of three elements corresponding to a branch of a
+    - ``tree`` -- list of three elements corresponding to a branch of a
       parse tree
 
-    - ``vdict`` -- a dictionary containing variable keys and boolean values
+    - ``vdict`` -- dictionary containing variable keys and boolean values
 
-    OUTPUT:
-
-    The result of the evaluation as a boolean value.
+    OUTPUT: the result of the evaluation as a boolean value
 
     EXAMPLES:
 
@@ -72,8 +70,8 @@ def eval_formula(tree, vdict):
     """
     global __vars
     __vars = vdict
-    b = logicparser.apply_func(tree, eval_f)
-    return b
+    return logicparser.apply_func(tree, eval_f)
+
 
 def eval_f(tree):
     r"""
@@ -81,12 +79,10 @@ def eval_f(tree):
 
     INPUT:
 
-    - ``tree`` -- a list of three elements corresponding to a branch of a
+    - ``tree`` -- list of three elements corresponding to a branch of a
       parse tree
 
-    OUTPUT:
-
-    The result of the evaluation as a boolean value.
+    OUTPUT: the result of the evaluation as a boolean value
 
     EXAMPLES:
 
@@ -104,21 +100,20 @@ def eval_f(tree):
     """
     return eval_op(tree[0], tree[1], tree[2])
 
+
 def eval_op(op, lv, rv):
     r"""
     Evaluate ``lv`` and ``rv`` according to the operator ``op``.
 
     INPUT:
 
-    - ``op`` -- a string or character representing a boolean operator
+    - ``op`` -- string or character representing a boolean operator
 
-    - ``lv`` -- a boolean or variable
+    - ``lv`` -- boolean or variable
 
-    - ``rv`` -- a boolean or variable
+    - ``rv`` -- boolean or variable
 
-    OUTPUT:
-
-    The evaluation of ``lv op rv`` as a boolean value.
+    OUTPUT: the evaluation of ``lv op rv`` as a boolean value
 
     EXAMPLES:
 

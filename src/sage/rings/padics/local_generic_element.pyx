@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.padics
+# sage.doctest: needs sage.rings.padics
 """
 Local Generic Element
 
@@ -34,20 +34,20 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     cpdef _div_(self, right):
         r"""
-        Returns the quotient of ``self`` by ``right``.
+        Return the quotient of ``self`` by ``right``.
 
         INPUT:
 
-        - ``self`` -- a `p`-adic element.
+        - ``self`` -- a `p`-adic element
 
-        - ``right`` -- a `p`-adic element distinguishable from zero.
-          In a fixed-modulus ring, this element must be a unit.
+        - ``right`` -- a `p`-adic element distinguishable from zero;
+          in a fixed-modulus ring, this element must be a unit
 
         EXAMPLES::
 
             sage: R = Zp(7, 4, 'capped-rel', 'series'); R(3)/R(5)
             2 + 4*7 + 5*7^2 + 2*7^3 + O(7^4)
-            sage: R(2/3) / R(1/3) #indirect doctest
+            sage: R(2/3) / R(1/3)  # indirect doctest
             2 + O(7^4)
             sage: R(49) / R(7)
             7 + O(7^5)
@@ -63,11 +63,9 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def inverse_of_unit(self):
         r"""
-        Returns the inverse of ``self`` if ``self`` is a unit.
+        Return the inverse of ``self`` if ``self`` is a unit.
 
-        OUTPUT:
-
-            - an element in the same ring as ``self``
+        OUTPUT: an element in the same ring as ``self``
 
         EXAMPLES::
 
@@ -77,7 +75,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: b = a.inverse_of_unit(); b
             2 + 3 + 3^2 + 3^3 + 3^4 + O(3^5)
 
-        A ``ZeroDivisionError`` is raised if an element has no inverse in the
+        A :exc:`ZeroDivisionError` is raised if an element has no inverse in the
         ring::
 
             sage: R(3).inverse_of_unit()
@@ -112,7 +110,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         TESTS:
 
-        Test that this works for all kinds of p-adic base elements::
+        Test that this works for all kinds of `p`-adic base elements::
 
             sage: ZpCA(3,5)(2).inverse_of_unit()
             2 + 3 + 3^2 + 3^3 + 3^4 + O(3^5)
@@ -127,44 +125,42 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Over unramified extensions::
 
-            sage: R = ZpCA(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
-            sage: t.inverse_of_unit()
-            2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
 
+            sage: # needs sage.libs.ntl
             sage: R = ZpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
             sage: t.inverse_of_unit()
             2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
-
-            sage: R = ZpFM(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
-            sage: t.inverse_of_unit()
-            2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4
-
-            sage: R = ZpFP(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
-            sage: t.inverse_of_unit()
-            2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4
-
             sage: R = QpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
             sage: t.inverse_of_unit()
             2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
 
+            sage: # needs sage.libs.flint
+            sage: R = ZpCA(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
+            sage: t.inverse_of_unit()
+            2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4 + O(3^5)
+            sage: R = ZpFM(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
+            sage: t.inverse_of_unit()
+            2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4
+            sage: R = ZpFP(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 + 1 )
+            sage: t.inverse_of_unit()
+            2*t + 2*t*3 + 2*t*3^2 + 2*t*3^3 + 2*t*3^4
+
+
         Over Eisenstein extensions::
 
+            sage: # needs sage.libs.ntl
             sage: R = ZpCA(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
             sage: (t - 1).inverse_of_unit()
             2 + 2*t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + t^9 + O(t^10)
-
             sage: R = ZpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
             sage: (t - 1).inverse_of_unit()
             2 + 2*t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + t^9 + O(t^10)
-
             sage: R = ZpFM(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
             sage: (t - 1).inverse_of_unit()
             2 + 2*t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + t^9
-
             sage: R = QpCR(3,5); S.<t> = R[]; W.<t> = R.extension( t^2 - 3 )
             sage: (t - 1).inverse_of_unit()
             2 + 2*t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + t^9 + O(t^10)
-
         """
         if not self.is_unit():
             raise ZeroDivisionError(f"inverse of {self} does not exist")
@@ -173,7 +169,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
     def __iter__(self):
         """
         Local elements should not be iterable, so this method correspondingly
-        raises a ``TypeError``.
+        raises a :exc:`TypeError`.
 
         .. NOTE::
 
@@ -186,7 +182,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             iterable.
 
             There doesn't seem to be an obvious behaviour that iteration over
-            such elements should produce, so it is disabled; see :trac:`13592`.
+            such elements should produce, so it is disabled; see :issue:`13592`.
 
         TESTS::
 
@@ -195,13 +191,12 @@ cdef class LocalGenericElement(CommutativeRingElement):
             Traceback (most recent call last):
             ...
             TypeError: this local element is not iterable
-
         """
         raise TypeError("this local element is not iterable")
 
     def slice(self, i, j, k = 1, lift_mode='simple'):
         r"""
-        Returns the sum of the `pi^{i + l \cdot k}` terms of the series
+        Return the sum of the `pi^{i + l \cdot k}` terms of the series
         expansion of this element, where pi is the uniformizer,
         for `i + l \cdot k` between ``i`` and ``j-1`` inclusive, and
         nonnegative integers `l`. Behaves analogously to the slice
@@ -209,11 +204,11 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         INPUT:
 
-        - ``i`` -- an integer; if set to ``None``, the sum will start with the
-          first non-zero term of the series.
+        - ``i`` -- integer; if set to ``None``, the sum will start with the
+          first nonzero term of the series
 
-        - ``j`` -- an integer; if set to ``None`` or `\infty`, this method
-          behaves as if it was set to the absolute precision of this element.
+        - ``j`` -- integer; if set to ``None`` or `\infty`, this method
+          behaves as if it was set to the absolute precision of this element
 
         - ``k`` -- (default: 1) a positive integer
 
@@ -301,9 +296,10 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Test that slices also work over eisenstein extensions::
 
+            sage: # needs sage.libs.ntl
             sage: F = Qp(5)
             sage: H.<x> = F[]
-            sage: T.<t> = F.extension(x^2-5)
+            sage: T.<t> = F.extension(x^2 - 5)
             sage: a = T(3*t^-2 + 1 + 4*t + 2*t^2)
             sage: a.slice(0, 1)
             1 + O(t)
@@ -314,9 +310,10 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Test that slices also work over unramified extensions::
 
+            sage: # needs sage.libs.ntl
             sage: F = Qp(5)
             sage: H.<x> = F[]
-            sage: T.<t> = F.extension(x^2-2)
+            sage: T.<t> = F.extension(x^2 - 2)
             sage: a = T(3*5^-1 + 1 + (3*t + 4)*5^2)
             sage: a.slice(0, 1)
             1 + O(5)
@@ -327,9 +324,10 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         Test that slices also work over 2-step extensions (unramified followed by eisenstein)::
 
+            sage: # needs sage.libs.ntl
             sage: F = Qp(5)
             sage: H.<x> = F[]
-            sage: T.<t> = F.extension(x^2-3)
+            sage: T.<t> = F.extension(x^2 - 3)
             sage: D.<y> = T[]
             sage: W.<w> = T.extension((4*5^-2 + 2*5^-1 + 4 + (2*t + 2)*5 + 3*t*5^3 + 4*5^4 + 3*5^5 + (2*t + 2)*5^8 + (4*t + 3)*5^9 + 2*t*5^10 + (3*t + 3)*5^11 + (3*t + 1)*5^12 + (3*t + 2)*5^13 + 4*5^14 + (2*t + 4)*5^15 + (4*t + 1)*5^16 + (t + 1)*5^17 + O(5^18))*y^2 + (t + 2*t*5 + t*5^2 + 4*t*5^3 + (2*t + 4)*5^4 + (3*t + 4)*5^5 + (t + 1)*5^6 + t*5^7 + (2*t + 4)*5^8 + 3*5^9 + 2*5^10 + 5^12 + (4*t + 2)*5^13 + 5^14 + 5^15 + 3*t*5^16 + (t + 2)*5^17 + 4*5^18 + (3*t + 1)*5^19 + O(5^20))*y + (2*t + 2)*5^-1 + 3 + 5 + t*5^2 + (4*t + 2)*5^3 + (4*t + 1)*5^4 + (3*t + 4)*5^5 + (4*t + 4)*5^6 + (3*t + 2)*5^7 + (4*t + 4)*5^8 + 3*5^9 + (t + 3)*5^10 + (4*t + 3)*5^11 + 5^12 + (2*t + 2)*5^14 + 4*t*5^15 + (2*t + 2)*5^16 + (4*t + 4)*5^17 + O(5^18))
             sage: a = W(3*w^-36 + (2*t + 2)*w^-23)
@@ -338,7 +336,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: a.slice(0, 1)
             O(w)
 
-        Verify that :trac:`14106` has been fixed::
+        Verify that :issue:`14106` has been fixed::
 
             sage: R = Zp(5,7)
             sage: a = R(300)
@@ -349,13 +347,12 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: a.slice(None, 5, None)
             2*5^2 + 2*5^3 + O(5^5)
 
-        Verify that :trac:`30695` has been fixed::
+        Verify that :issue:`30695` has been fixed::
 
-            sage: F=Qp(3)
-            sage: a=F(0)
+            sage: F = Qp(3)
+            sage: a = F(0)
             sage: a.slice(0,None)
             0
-
         """
         if k is None:
             k = 1
@@ -378,7 +375,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             start -= self.valuation()
             stop -= self.valuation()
 
-        # make sure that start and stop are non-negative
+        # make sure that start and stop are nonnegative
         if start<0:
             i += -start # fix the value of ppow below
             start = 0
@@ -394,8 +391,9 @@ cdef class LocalGenericElement(CommutativeRingElement):
         unramified_generator = self.parent()(self.parent().residue_field().gen()).lift_to_precision()
         for c in islice(self.expansion(lift_mode=lift_mode), int(start), int(stop), int(k)):
             genpow = 1
-            if not isinstance(c, list): c = [c] # relevant for the case of base-rings, or one-step
-                                                # eisenstein extensions
+            if not isinstance(c, list):
+                c = [c]  # relevant for the case of base-rings, or one-step
+                # Eisenstein extensions
             for d in c:
                 ans += d * genpow * ppow
                 genpow *= unramified_generator
@@ -409,12 +407,12 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def _latex_(self):
         r"""
-        Return a latex representation of self.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
             sage: R = Zp(5); a = R(17)
-            sage: latex(a) #indirect doctest
+            sage: latex(a)  # indirect doctest
             2 + 3 \cdot 5 + O(5^{20})
         """
         # TODO: add a bunch more documentation of latexing elements
@@ -434,13 +432,13 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     cpdef _sub_(self, right):
         r"""
-        Returns the difference between ``self`` and ``right``.
+        Return the difference between ``self`` and ``right``.
 
         EXAMPLES::
 
             sage: R = Zp(7, 4, 'capped-rel', 'series'); a = R(12); b = R(5); a - b
             7 + O(7^4)
-            sage: R(4/3) - R(1/3) #indirect doctest
+            sage: R(4/3) - R(1/3)  # indirect doctest
             1 + O(7^4)
         """
         # this doctest doesn't actually test this function, since _sub_ is overridden.
@@ -453,7 +451,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         INPUT:
 
-        - ``absprec`` -- an integer or positive infinity
+        - ``absprec`` -- integer or positive infinity
 
         EXAMPLES::
 
@@ -505,12 +503,12 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: R(0).add_bigoh(infinity)
             0
 
-        Check that :trac:`23464` has been resolved::
+        Check that :issue:`23464` has been resolved::
 
-            sage: R.<pi> = Qp(7).extension(x^3 - 7)
-            sage: (pi^93).add_bigoh(-10)
+            sage: x = polygen(QQ)
+            sage: R.<pi> = Qp(7).extension(x^3 - 7)                                     # needs sage.libs.ntl
+            sage: (pi^93).add_bigoh(-10)                                                # needs sage.libs.ntl sage.symbolic
             O(pi^-10)
-
         """
         parent = self.parent()
         if absprec >= self.precision_absolute():
@@ -527,15 +525,13 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def is_integral(self):
         """
-        Returns whether self is an integral element.
+        Return whether ``self`` is an integral element.
 
         INPUT:
 
         - ``self`` -- a local ring element
 
-        OUTPUT:
-
-        - boolean -- whether ``self`` is an integral element.
+        OUTPUT: boolean; whether ``self`` is an integral element
 
         EXAMPLES::
 
@@ -552,15 +548,14 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def is_padic_unit(self):
         """
-        Returns whether self is a `p`-adic unit. That is, whether it has zero valuation.
+        Return whether ``self`` is a `p`-adic unit. That is, whether it has
+        zero valuation.
 
         INPUT:
 
         - ``self`` -- a local ring element
 
-        OUTPUT:
-
-        - boolean -- whether ``self`` is a unit
+        OUTPUT: boolean; whether ``self`` is a unit
 
         EXAMPLES::
 
@@ -602,22 +597,20 @@ cdef class LocalGenericElement(CommutativeRingElement):
             False
             sage: K(1/9).is_padic_unit()
             False
-            sage: Qq(3^2,5,names='a')(3).is_padic_unit()
+            sage: Qq(3^2,5,names='a')(3).is_padic_unit()                                # needs sage.libs.ntl
             False
         """
         return self.valuation() == 0
 
     def is_unit(self):
         """
-        Returns whether self is a unit
+        Return whether ``self`` is a unit.
 
         INPUT:
 
         - ``self`` -- a local ring element
 
-        OUTPUT:
-
-        - boolean -- whether ``self`` is a unit
+        OUTPUT: boolean; whether ``self`` is a unit
 
         .. NOTE::
 
@@ -638,7 +631,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             True
             sage: R(3).is_unit()
             False
-            sage: Qp(5,5)(5).is_unit() # Note that 5 is invertible in `QQ_5`, even if it has positive valuation!
+            sage: Qp(5,5)(5).is_unit()  # Note that 5 is invertible in `QQ_5`, even if it has positive valuation!
             True
             sage: Qp(5,5)(5).is_padic_unit()
             False
@@ -669,7 +662,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             True
             sage: K(1/9).is_unit()
             True
-            sage: Qq(3^2,5,names='a')(3).is_unit()
+            sage: Qq(3^2,5,names='a')(3).is_unit()                                      # needs sage.libs.ntl
             True
             sage: R(0,0).is_unit()
             False
@@ -718,24 +711,22 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         INPUT:
 
-        - ``self`` -- a `p`-adic element.
+        - ``self`` -- a `p`-adic element
 
-        - ``extend`` -- a boolean (default: ``True``); if ``True``, return a
+        - ``extend`` -- boolean (default: ``True``); if ``True``, return a
           square root in an extension if necessary; if ``False`` and no root
-          exists in the given ring or field, raise a ValueError.
+          exists in the given ring or field, raise a :exc:`ValueError`.
 
-        - ``all`` -- a boolean (default: ``False``); if ``True``, return a
-          list of all square roots.
+        - ``all`` -- boolean (default: ``False``); if ``True``, return a
+          list of all square roots
 
-        - ``algorithm`` -- ``"pari"``, ``"sage"`` or ``None`` (default:
+        - ``algorithm`` -- ``'pari'``, ``'sage'`` or ``None`` (default:
           ``None``); Sage provides an implementation for any extension of
           `Q_p` whereas only square roots over `Q_p` is implemented in Pari;
-          the default is ``"pari"`` if the ground field is `Q_p`, ``"sage"``
+          the default is ``'pari'`` if the ground field is `Q_p`, ``'sage'``
           otherwise.
 
-        OUTPUT:
-
-        The square root or the list of all square roots of this element.
+        OUTPUT: the square root or the list of all square roots of this element
 
         .. NOTE::
 
@@ -771,21 +762,22 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: sqrt(R2(4))
             2 + O(2^20)
 
-            sage: R.<t> = Zq(2^10, 10)
-            sage: u = 1 + 8*t
-            sage: sqrt(u)
-            1 + t*2^2 + t^2*2^3 + t^2*2^4 + (t^4 + t^3 + t^2)*2^5 + (t^4 + t^2)*2^6 + (t^5 + t^2)*2^7 + (t^6 + t^5 + t^4 + t^2)*2^8 + O(2^9)
+            sage: R.<t> = Zq(2^10, 10)                                                  # needs sage.libs.ntl
+            sage: u = 1 + 8*t                                                           # needs sage.libs.ntl
+            sage: sqrt(u)                                                               # needs sage.libs.ntl
+            1 + t*2^2 + t^2*2^3 + t^2*2^4 + (t^4 + t^3 + t^2)*2^5 + (t^4 + t^2)*2^6
+              + (t^5 + t^2)*2^7 + (t^6 + t^5 + t^4 + t^2)*2^8 + O(2^9)
 
             sage: R.<a> = Zp(2).extension(x^3 - 2)
             sage: u = R(1 + a^4 + a^5 + a^7 + a^8, 10); u
             1 + a^4 + a^5 + a^7 + a^8 + O(a^10)
-            sage: v = sqrt(u); v
+            sage: v = sqrt(u); v                                                        # needs sage.libs.ntl
             1 + a^2 + a^4 + a^6 + O(a^7)
 
         However, observe that the precision increases to its original value
         when we recompute the square of the square root::
 
-            sage: v^2
+            sage: v^2                                                                   # needs sage.libs.ntl
             1 + a^4 + a^5 + a^7 + a^8 + O(a^10)
 
         If the input does not have enough precision in order to determine if
@@ -834,23 +826,21 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def normalized_valuation(self):
         r"""
-        Returns the normalized valuation of this local ring element,
+        Return the normalized valuation of this local ring element,
         i.e., the valuation divided by the absolute ramification index.
 
         INPUT:
 
-        ``self`` -- a local ring element.
+        - ``self`` -- a local ring element
 
-        OUTPUT:
-
-        rational -- the normalized valuation of ``self``.
+        OUTPUT: rational; the normalized valuation of ``self``
 
         EXAMPLES::
 
             sage: Q7 = Qp(7)
-            sage: R.<x> = Q7[]
-            sage: F.<z> = Q7.ext(x^3+7*x+7)
-            sage: z.normalized_valuation()
+            sage: R.<x> = Q7[]                                                          # needs sage.libs.ntl
+            sage: F.<z> = Q7.ext(x^3+7*x+7)                                             # needs sage.libs.ntl
+            sage: z.normalized_valuation()                                              # needs sage.libs.ntl
             1/3
         """
         F = self.parent()
@@ -858,17 +848,15 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def _min_valuation(self):
         r"""
-        Returns the valuation of this local ring element.
+        Return the valuation of this local ring element.
 
         This function only differs from valuation for relaxed elements.
 
         INPUT:
 
-        - ``self`` -- a local ring element.
+        - ``self`` -- a local ring element
 
-        OUTPUT:
-
-        - integer -- the valuation of ``self``.
+        OUTPUT: integer; the valuation of ``self``
 
         EXAMPLES::
 
@@ -882,7 +870,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
     def euclidean_degree(self):
         r"""
-        Return the degree of this element as an element of an Euclidean domain.
+        Return the degree of this element as an element of a Euclidean domain.
 
         EXAMPLES:
 
@@ -928,9 +916,9 @@ cdef class LocalGenericElement(CommutativeRingElement):
         INPUT:
 
         - ``other`` -- an element in the same ring
-        - ``integral`` -- if True, use integral-style remainders even when the parent is a field.
-          Namely, the remainder will have no terms in its p-adic expansion above
-          the valuation of ``other``.
+        - ``integral`` -- if ``True``, use integral-style remainders even when
+          the parent is a field. Namely, the remainder will have no terms in
+          its `p`-adic expansion above the valuation of ``other``.
 
         EXAMPLES::
 
@@ -971,7 +959,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
             sage: x = Zp(3, 5).zero()
             sage: x._test_trivial_powers()
-
         """
         tester = self._tester(**options)
 
@@ -992,7 +979,6 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
             sage: x = Zp(3, 5).zero()
             sage: x._test_expansion()
-
         """
         tester = self._tester(**options)
 

@@ -1,10 +1,11 @@
+# sage.doctest: optional - numpy
 r"""
 Dense complex double vectors using a NumPy backend
 
 EXAMPLES::
 
-    sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)])
-    sage: v
+    sage: # needs sage.symbolic
+    sage: v = vector(CDF, [(1,-1), (2,pi), (3,5)]); v
     (1.0 - 1.0*I, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
     sage: type(v)
     <class 'sage.modules.vector_complex_double_dense.Vector_complex_double_dense'>
@@ -54,10 +55,9 @@ cdef class Vector_complex_double_dense(Vector_double_dense):
 
     EXAMPLES::
 
-        sage: v = vector(CDF,[(1,-1), (2,pi), (3,5)])
-        sage: v
+        sage: v = vector(CDF, [(1,-1), (2,pi), (3,5)]); v                               # needs sage.symbolic
         (1.0 - 1.0*I, 2.0 + 3.141592653589793*I, 3.0 + 5.0*I)
-        sage: v*v  # rel tol 1e-15
+        sage: v*v  # rel tol 1e-15                                                      # needs sage.symbolic
         -21.86960440108936 + 40.56637061435917*I
     """
     def __cinit__(self, parent, entries, coerce=True, copy=True):
@@ -71,7 +71,7 @@ cdef class Vector_complex_double_dense(Vector_double_dense):
 
     def __reduce__(self):
         """
-        Pickling
+        Pickling.
 
         EXAMPLES::
 
@@ -96,6 +96,7 @@ def unpickle_v0(parent, entries, degree):
         True
     """
     return unpickle_v1(parent, entries, degree)
+
 
 def unpickle_v1(parent, entries, degree, is_mutable=None):
     """

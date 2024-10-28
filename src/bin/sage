@@ -193,28 +193,12 @@ if [ "$1" = '--nodotsage' ]; then
     exit $status
 fi
 
-# Check for '--patchbot' before sourcing sage-env: patchbot needs
-# an unclobbered environment before testing unsafe tickets.
-if [ "$1" = '-patchbot' -o "$1" = "--patchbot" ]; then
-    shift
-    # We ask the Python from Sage where the patchbot is installed.
-    # We set PYTHONPATH to that directory such that the system Python
-    # should also find the sage_patchbot package.
-    cmd='import sage_patchbot as p; import os; print(os.path.dirname(p.__path__[0]))'
-    export PYTHONPATH=`"$SAGE_ROOT/sage" --python3 -c "$cmd"`
-    if [ -z "$PYTHONPATH" ]; then
-        # Something went wrong, assume that the patchbot is not installed
-        echo >&2 "Error: cannot find installation path for sage_patchbot"
-        echo >&2 "See https://wiki.sagemath.org/buildbot for instructions"
-        exit 1
-    fi
+# build_sage, sage -b, sage -br, etc. could also be moved to
+# build/bin/sage-site. See #29111; but OTOH #34627.
 
-    shopt -s execfail  # Do not exit if "exec" fails
-    exec python3 -m sage_patchbot.patchbot "$@"
-    echo >&2 "Error: cannot find a suitable Python 3 program."
-    echo >&2 "The SageMath patchbot requires a system Python 3 installation."
-    exit 127
-fi
+build_sage() {
+    ( cd "$SAGE_ROOT" && make sagelib-no-deps ) || exit $?
+}
 
 # Check for '-i' etc. before sourcing sage-env: running "make"
 # should be run outside of the Sage shell.
@@ -228,6 +212,28 @@ case "$1" in
         fi
         echo >&2 "Error: unknown option: $1"
         exit 1
+        ;;
+    -b)
+        build_sage
+        exit 0
+        ;;
+    -br|--br)
+        build_sage
+        shift; set -- -r "$@"  # delegate to handling of "-r" below, after sourcing sage-env
+        ;;
+    -bn|--build-and-notebook)
+        build_sage
+        shift; set -- -n "$@"  # delegate to handling of "-n" below, after sourcing sage-env
+        ;;
+    -ba)
+        ( cd "$SAGE_ROOT" && make sagelib-clean )
+        build_sage
+        exit 0
+        ;;
+    -bt*)
+        build_sage
+        switch_without_b=-${1#-b}
+        shift; set -- $switch_without_b "$@"  # delegate to handling of "-t...." below, after sourcing sage-env
         ;;
 esac
 
@@ -287,7 +293,7 @@ sage_setup() {
         echo >&2 '************************************************************************'
         echo >&2 'It seems that you are attempting to run Sage from an unpacked source'
         echo >&2 'tarball, but you have not compiled it yet (or maybe the build has not'
-        echo >&2 'finished). You should run `make` in the Sage root directory first.'
+        echo >&2 'finished). You should run `make` in the SAGE_ROOT directory first.'
         echo >&2 'If you did not intend to build Sage from source, you should download'
         echo >&2 'a binary tarball instead. Read README.txt for more information.'
         echo >&2 '************************************************************************'
@@ -422,7 +428,7 @@ usage_advanced() {
         echo "     --initial        -- only show the first failure per block"
         echo "     --debug          -- drop into PDB after an unexpected error"
         echo "     --failed         -- only test files that failed last test"
-        echo "     --warn-long [timeout] -- warning if doctest is slow"
+        echo "     --warn-long [timeout] -- warn if tests take too much CPU time"
         echo "     --only-errors    -- only output failures, not successes"
         echo "     --gc=GC          -- control garbarge collection (ALWAYS:"
         echo "                         collect garbage before every test; NEVER:"
@@ -453,8 +459,8 @@ usage_advanced() {
     if [ -n "$SAGE_SRC" -a -f "$SAGE_SRC/tox.ini" ]; then
         echo "  --tox [options] <files|dirs> -- general entry point for testing"
         echo "                                  and linting of the Sage library"
-        echo "     -e <envlist>     -- run specific test environments"
-        echo "                         (default: run all except full pycodestyle)"
+        echo "     -e <envlist>     -- run specific test environments; default:"
+        echo "                         $(echo $(tox -c "$SAGE_SRC" --listenvs 2>/dev/null) | sed 's/ /,/g;')"
         tox -c "$SAGE_SRC" --listenvs-all -v 2>/dev/null | sed -n '/->/s/^/        /;s/(/\
                                   (/;s/->/   --/p;'
         echo "     -p auto          -- run test environments in parallel"
@@ -482,10 +488,13 @@ usage_advanced() {
         echo "  --fixdoctests file.py"
         echo "                      -- Run doctests and replace output of failing doctests"
         echo "                         with actual output."
-        echo "  --fiximports <files|dir>"
+        echo "  --fiximports <files|dirs>"
         echo "                      -- Replace imports from sage.PAC.KAGE.all by specific"
         echo "                         imports when sage.PAC.KAGE is an implicit namespace"
         echo "                         package"
+        echo "  --fixdistributions <files|dirs>"
+        echo "                      -- Check or update '# sage_setup: distribution'"
+        echo "                         directives in source files"
     fi
     echo "  --sh [...]         -- run a shell with Sage environment variables"
     echo "                        as they are set in the runtime of Sage"
@@ -625,7 +634,9 @@ fi
 
 if [ "$1" = '-gap' -o "$1" = '--gap' ]; then
     shift
-    exec gap "$@"
+    # Use "-A" to avoid warnings about missing packages. The gap
+    # interface and libgap within sage both already do this.
+    exec gap -A "$@"
 fi
 
 if [ "$1" = '-gap3' -o "$1" = '--gap3' ]; then
@@ -860,12 +871,6 @@ fi
 # The notebook, grep, building Sage, testing Sage
 #####################################################################
 
-# build_sage, sage -b, sage -br, etc. could be moved to
-# build/bin/sage-site. See #29111.
-
-build_sage() {
-    ( cd "$SAGE_ROOT/build/make" && ./install sagelib-no-deps ) || exit $?
-}
 
 if [[ "$1" =~ ^--notebook=.* || "$1" =~ ^-n=.* || "$1" =~ ^-notebook=.* ]] ; then
     sage-cleaner &>/dev/null &
@@ -900,34 +905,9 @@ if [ -n "$SAGE_SRC" -a -d "$SAGE_SRC" ]; then
     fi
 fi
 
-if [ "$1" = '-b' ]; then
-    build_sage
-    exit $?
-fi
-
-if [ "$1" = '-br' -o "$1" = "--br" ]; then
-    build_sage
-    interactive_sage
-fi
-
 if [ "$1" = '-r' ]; then
     shift
     interactive_sage
-fi
-
-if [ "$1" = '-ba-force' -o "$1" = '--ba-force' ]; then
-    echo
-    echo "WARNING: 'sage --ba-force' is deprecated; use 'sage -ba' instead."
-    echo
-    ( cd "$SAGE_ROOT/build/make" && make sagelib-clean )
-    build_sage
-    exit $?
-fi
-
-if [ "$1" = '-ba' ]; then
-    ( cd "$SAGE_ROOT/build/make" && make sagelib-clean )
-    build_sage
-    exit $?
 fi
 
 exec-runtests() {
@@ -936,11 +916,8 @@ exec-runtests() {
     exec sage-runtests "$@"
 }
 
-if [ "$1" = '-t' -o "$1" = '-bt' -o "$1" = '-tp' -o "$1" = '-btp' ]; then
-    if [ "$1" = '-bt' -o "$1" = '-btp' ]; then
-        build_sage
-    fi
-    if [ "$1" = '-tp' -o "$1" = '-btp' ]; then
+if [ "$1" = '-t' -o "$1" = '-tp' ]; then
+    if [ "$1" = '-tp' ]; then
         shift
         exec-runtests -p "$@"
     else
@@ -949,10 +926,7 @@ if [ "$1" = '-t' -o "$1" = '-bt' -o "$1" = '-tp' -o "$1" = '-btp' ]; then
     fi
 fi
 
-if [ "$1" = '-tnew' -o "$1" = '-btnew' ]; then
-    if [ "$1" = '-btnew' ]; then
-        build_sage
-    fi
+if [ "$1" = '-tnew' ]; then
     shift
     exec-runtests --new "$@"
 fi
@@ -986,6 +960,11 @@ if [ "$1" = '-fiximports' -o "$1" = '--fiximports' ]; then
     exec sage-python -m sage.misc.replace_dot_all "$@"
 fi
 
+if [ "$1" = '-fixdistributions' -o "$1" = '--fixdistributions' ]; then
+    shift
+    exec sage-python -m sage.misc.package_dir "$@"
+fi
+
 if [ "$1" = '-tox' -o "$1" = '--tox' ]; then
     shift
     if [ -n "$SAGE_SRC" -a -f "$SAGE_SRC/tox.ini" ]; then
@@ -993,6 +972,7 @@ if [ "$1" = '-tox' -o "$1" = '--tox' ]; then
             exec tox -c "$SAGE_SRC" "$@"
         else
             echo "Run 'sage -i tox' to install"
+            exit 1
         fi
     else
         echo >&2 "error: Sage source directory or tox.ini not available"
@@ -1008,12 +988,13 @@ if [ "$1" = '-pytest' -o "$1" = '--pytest' ]; then
             for a in $*; do
                 case $a in
                     -*) ;;
-                    *)  exec pytest --rootdir="$SAGE_SRC" --doctest-modules "$@"
+                    *)  exec pytest --rootdir="$SAGE_SRC" --doctest "$@"
                 esac
             done
-            exec pytest --rootdir="$SAGE_SRC" --doctest-modules "$@" "$SAGE_SRC"
+            exec pytest --rootdir="$SAGE_SRC" --doctest "$@" "$SAGE_SRC"
         else
             echo "Run 'sage -i pytest' to install"
+            exit 1
         fi
     else
         echo >&2 "error: Sage source directory or tox.ini not available"

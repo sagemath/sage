@@ -1,5 +1,9 @@
-from sage.rings.padics.padic_valuation import pAdicValuation
-from sage.rings.function_field.valuation import FunctionFieldValuation
-from .gauss_valuation import GaussValuation
-from .trivial_valuation import TrivialDiscretePseudoValuation, TrivialPseudoValuation, TrivialValuation
-from .limit_valuation import LimitValuation
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.padics.padic_valuation', 'pAdicValuation')
+lazy_import('sage.rings.function_field.valuation', 'FunctionFieldValuation')
+lazy_import('sage.rings.valuation.gauss_valuation', 'GaussValuation')
+lazy_import('sage.rings.valuation.trivial_valuation', ['TrivialDiscretePseudoValuation', 'TrivialPseudoValuation', 'TrivialValuation'])
+lazy_import('sage.rings.valuation.limit_valuation', 'LimitValuation')
+
+del lazy_import

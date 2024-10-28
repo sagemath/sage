@@ -44,15 +44,15 @@ lists of integer exponents.
     sage: x.list()
     [7, 2, 0, 1, 1]
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.category_object import normalize_names
@@ -71,11 +71,9 @@ class FreeAbelianMonoidFactory(UniqueFactory):
 
     INPUT:
 
+    - ``n`` -- integer
 
-    -  ``n`` - integer
-
-    -  ``names`` - names of generators
-
+    - ``names`` -- names of generators
 
     OUTPUT: free abelian monoid
 
@@ -116,7 +114,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
     Return a free abelian monoid on `n` generators or with the generators
     indexed by a set `I`.
 
-    We construct free abelian monoids by specifing either:
+    We construct free abelian monoids by specifying either:
 
     - the number of generators and/or the names of the generators
     - the indexing set for the generators (this ignores the other two inputs)
@@ -126,11 +124,9 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
     - ``index_set`` -- an indexing set for the generators; if an integer,
       then this becomes `\{0, 1, \ldots, n-1\}`
 
-    -  ``names`` -- names of generators
+    - ``names`` -- names of generators
 
-    OUTPUT:
-
-    A free abelian monoid.
+    OUTPUT: a free abelian monoid
 
     EXAMPLES::
 
@@ -141,7 +137,7 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
         sage: FreeAbelianMonoid(names='x,y')
         Free abelian monoid on 2 generators (x, y)
     """
-    if isinstance(index_set, str): # Swap args (this works if names is None as well)
+    if isinstance(index_set, str):  # Swap args (this works if names is None as well)
         names, index_set = index_set, names
 
     if index_set is None and names is not None:
@@ -163,12 +159,16 @@ def FreeAbelianMonoid(index_set=None, names=None, **kwds):
 
 def is_FreeAbelianMonoid(x):
     """
-    Return True if `x` is a free abelian monoid.
+    Return ``True`` if `x` is a free abelian monoid.
 
     EXAMPLES::
 
         sage: from sage.monoids.free_abelian_monoid import is_FreeAbelianMonoid
         sage: is_FreeAbelianMonoid(5)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeAbelianMonoid is deprecated;
+        use 'isinstance(..., FreeAbelianMonoid_class)' instead
+        See https://github.com/sagemath/sage/issues/37897 for details.
         False
         sage: is_FreeAbelianMonoid(FreeAbelianMonoid(7,'a'))
         True
@@ -177,7 +177,10 @@ def is_FreeAbelianMonoid(x):
         sage: is_FreeAbelianMonoid(FreeMonoid(0,''))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37897, "the function is_FreeAbelianMonoid is deprecated; use 'isinstance(..., FreeAbelianMonoid_class)' instead")
     return isinstance(x, FreeAbelianMonoid_class)
+
 
 class FreeAbelianMonoid_class(Parent):
     """
@@ -204,7 +207,7 @@ class FreeAbelianMonoid_class(Parent):
 
     def __repr__(self):
         n = self.__ngens
-        return "Free abelian monoid on %s generators %s"%(n,self.gens())
+        return f"Free abelian monoid on {n} generators {self.gens()}"
 
     def __call__(self, x):
         """
@@ -224,7 +227,7 @@ class FreeAbelianMonoid_class(Parent):
 
     def __contains__(self, x):
         """
-        Return True if `x` is an element of this abelian monoid.
+        Return ``True`` if `x` is an element of this abelian monoid.
 
         EXAMPLES::
 
@@ -265,12 +268,12 @@ class FreeAbelianMonoid_class(Parent):
         n = self.__ngens
         if i < 0 or not i < n:
             raise IndexError(f"argument i (= {i}) must be between 0 and {n-1}")
-        x = [ 0 for j in range(n) ]
+        x = [0 for j in range(n)]
         x[int(i)] = 1
         return self.element_class(self, x)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -280,7 +283,7 @@ class FreeAbelianMonoid_class(Parent):
             sage: F.gens()
             (a0, a1, a2, a3, a4)
         """
-        return tuple([self.gen(i) for i in range(self.__ngens)])
+        return tuple(self.gen(i) for i in range(self.__ngens))
 
     def ngens(self):
         """

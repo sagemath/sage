@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.flint
+# sage.doctest: needs sage.libs.flint
 r"""
 Integer factorization using FLINT
 
@@ -20,6 +20,7 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_set_mpz
 from sage.libs.flint.fmpz_factor cimport *
+from sage.libs.flint.fmpz_factor_sage cimport *
 from sage.rings.integer cimport Integer
 
 
@@ -33,7 +34,7 @@ def factor_using_flint(Integer n):
 
     INPUT:
 
-    - ``n`` -- a nonzero sage Integer; the number to factor.
+    - ``n`` -- a nonzero sage Integer; the number to factor
 
     OUTPUT:
 

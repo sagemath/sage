@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.combinat
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.combinat
 r"""
 Examples of filtered modules with basis
 """
@@ -34,7 +35,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: A = ModulesWithBasis(QQ).Filtered().example()
+          sage: A = ModulesWithBasis(QQ).Filtered().example()                           # needs sage.modules
 
     - If the algebra is called ``A``, then its basis function is
       stored as ``A.basis``.  Thus the function can be used to
@@ -44,7 +45,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: [m for m in A.basis(4)]
+          sage: [m for m in A.basis(4)]                                                 # needs sage.modules
           [P[4], P[3, 1], P[2, 2], P[2, 1, 1], P[1, 1, 1, 1]]
 
     - For dealing with basis elements: :meth:`degree_on_basis`, and
@@ -58,9 +59,9 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: A.degree_on_basis(Partition([4,3]))
+          sage: A.degree_on_basis(Partition([4,3]))                                     # needs sage.modules
           7
-          sage: A._repr_term(Partition([4,3]))
+          sage: A._repr_term(Partition([4,3]))                                          # needs sage.modules
           'P[4, 3]'
 
     - There is a class for elements, which inherits from
@@ -74,20 +75,20 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
       ::
 
-          sage: p = A.monomial(Partition([3,2,1])); p
+          sage: p = A.monomial(Partition([3,2,1])); p                                   # needs sage.modules
           P[3, 2, 1]
-          sage: p.is_homogeneous()
+          sage: p.is_homogeneous()                                                      # needs sage.modules
           True
-          sage: p.degree()
+          sage: p.degree()                                                              # needs sage.modules
           6
     """
     def __init__(self, base_ring):
         """
         EXAMPLES::
 
-            sage: A = ModulesWithBasis(QQ).Filtered().example(); A
+            sage: A = ModulesWithBasis(QQ).Filtered().example(); A                      # needs sage.modules
             An example of a filtered module with basis: the free module on partitions over Rational Field
-            sage: TestSuite(A).run()
+            sage: TestSuite(A).run()                                                    # needs sage.modules
         """
         CombinatorialFreeModule.__init__(self, base_ring, Partitions(),
                                          category=FilteredModulesWithBasis(base_ring))
@@ -107,10 +108,11 @@ class FilteredPartitionModule(CombinatorialFreeModule):
         - ``t`` -- the index of an element of the basis of this module,
           i.e. a partition
 
-        OUTPUT: an integer, the degree of the corresponding basis element
+        OUTPUT: integer; the degree of the corresponding basis element
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: A = ModulesWithBasis(QQ).Filtered().example()
             sage: A.degree_on_basis(Partition((2,1)))
             3
@@ -127,7 +129,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: ModulesWithBasis(QQ).Filtered().example()  # indirect doctest
+            sage: ModulesWithBasis(QQ).Filtered().example()  # indirect doctest         # needs sage.modules
             An example of a filtered module with basis: the free module on partitions over Rational Field
         """
         return "An example of a filtered module with basis: the free module on partitions over %s" % self.base_ring()
@@ -142,10 +144,11 @@ class FilteredPartitionModule(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: A = ModulesWithBasis(QQ).Filtered().example()
-            sage: A._repr_term(Partition((4,2,1)))
+            sage: A = ModulesWithBasis(QQ).Filtered().example()                         # needs sage.modules
+            sage: A._repr_term(Partition((4,2,1)))                                      # needs sage.modules
             'P[4, 2, 1]'
         """
         return 'P' + t._repr_()
+
 
 Example = FilteredPartitionModule

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Canonical forms and automorphisms for linear codes over finite fields
 
@@ -80,13 +81,13 @@ columns do share the same coloring::
 
 We can also restrict the group action to linear isometries::
 
-    sage: P = LinearCodeAutGroupCanLabel(C, algorithm_type="linear")
+    sage: P = LinearCodeAutGroupCanLabel(C, algorithm_type='linear')
     sage: P.get_autom_order() == GL(3, GF(4, 'a')).order()
     True
 
 and to the action of the symmetric group only::
 
-    sage: P = LinearCodeAutGroupCanLabel(C, algorithm_type="permutational")
+    sage: P = LinearCodeAutGroupCanLabel(C, algorithm_type='permutational')
     sage: P.get_autom_order() == C.permutation_automorphism_group().order()
     True
 """
@@ -129,6 +130,7 @@ def _cyclic_shift(n, p):
         x[p[i - 1]] = p[i] + 1
     x[p[len(p) - 1]] = p[0] + 1
     return Permutation(x)
+
 
 class LinearCodeAutGroupCanLabel:
     r"""
@@ -182,18 +184,18 @@ class LinearCodeAutGroupCanLabel:
         True
     """
 
-    def __init__(self, C, P=None, algorithm_type="semilinear"):
+    def __init__(self, C, P=None, algorithm_type='semilinear'):
         """
-        see :class:`LinearCodeAutGroupCanLabel`
+        See :class:`LinearCodeAutGroupCanLabel`.
 
         INPUT:
 
         - ``C`` -- a linear code
 
-        - ``P`` (optional) -- a coloring of the coordinates i.e. a partition
+        - ``P`` -- (optional) a coloring of the coordinates i.e. a partition
           (list of disjoint lists) of [0 , ..., C.length()-1 ]
 
-        - ``algorithm_type`` (optional) -- which defines the acting group, either
+        - ``algorithm_type`` -- (optional) defines the acting group, either
 
             * ``permutational``
 
@@ -211,7 +213,7 @@ class LinearCodeAutGroupCanLabel:
             [0 1 0 1 0 1 1]
             [0 0 1 1 1 1 0]
             sage: P2 = LinearCodeAutGroupCanLabel(C, P=[[0,3,5],[1,2,4,6]],
-            ....:      algorithm_type="permutational")
+            ....:      algorithm_type='permutational')
             sage: P2.get_canonical_form().generator_matrix()
             [1 1 1 0 0 0 1]
             [0 1 0 1 1 0 1]
@@ -292,7 +294,7 @@ class LinearCodeAutGroupCanLabel:
 
             # this command allows you some advanced debugging
             # it prints the backtrack tree -> must be activated when installing
-            # pr._latex_view(title="MyTitle") #this will provide you some visual representation of what is going on
+            # pr._latex_view(title='MyTitle') #this will provide you some visual representation of what is going on
 
             can_transp = pr.get_transporter()
             can_col_set = pr.get_canonical_form().columns()
@@ -377,7 +379,6 @@ class LinearCodeAutGroupCanLabel:
             normalization_inverse, z, [pos2P[x] for x in z], zero_column_case=True)
         self._full_autom_order *= a
 
-
         for i in range(len(col2P)):
             if len(col2P[i]) > 1:
                 A, a = self._compute_trivial_automs(normalization,
@@ -404,19 +405,19 @@ class LinearCodeAutGroupCanLabel:
 
         - ``normalization_inverse`` -- the inverse of ``normalization``
 
-        - ``col2pos`` -- a list of disjoint indices in ``range(n)``
+        - ``col2pos`` -- list of disjoint indices in ``range(n)``
 
         - ``col2P`` -- an increasing list of integers, with
           ``len(col2P) == len(col2pos)`` with ``col2P[i] == col2P[j]`` if and
           only if the indices ``col2pos[i]`` and ``col2pos[j]`` are in the
           same partition
 
-        - ``zero_column_case`` (boolean) -- set to ``True`` iff we are dealing
+        - ``zero_column_case`` -- boolean; set to ``True`` iff we are dealing
           with the zero column
 
         OUTPUT:
 
-        - a list of generators in `S`
+        - list of generators in `S`
 
         - the order of this group
 
@@ -477,7 +478,7 @@ class LinearCodeAutGroupCanLabel:
 
         INPUT:
 
-        - ``gens`` -- a list of semimonomial transformation group elements of length `m`
+        - ``gens`` -- list of semimonomial transformation group elements of length `m`
 
         - ``normalization`` -- a semimonomial transformation of length `n`
 
@@ -581,7 +582,6 @@ class LinearCodeAutGroupCanLabel:
             168
         """
         return self._full_autom_order
-
 
     def get_PGammaL_gens(self):
         r"""

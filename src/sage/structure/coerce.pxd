@@ -1,11 +1,12 @@
-from .parent cimport Parent
-from .coerce_dict cimport TripleDict
+# sage_setup: distribution = sagemath-objects
+from sage.structure.parent cimport Parent
+from sage.structure.coerce_dict cimport TripleDict
 
 cpdef py_scalar_parent(py_type)
 cpdef py_scalar_to_element(py)
 cpdef bint parent_is_integers(P) except -1
-cpdef bint is_numpy_type(t)
-cpdef bint is_mpmath_type(t)
+cpdef bint is_numpy_type(t) noexcept
+cpdef bint is_mpmath_type(t) noexcept
 
 
 cdef class CoercionModel:

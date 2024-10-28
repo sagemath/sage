@@ -32,6 +32,7 @@ from collections import defaultdict
 
 from sage.structure.sage_object import SageObject
 
+
 ###########################################################################
 #
 # Helper functions
@@ -44,7 +45,7 @@ def frequency_table(string):
 
     INPUT:
 
-    - ``string`` -- a string of symbols over some alphabet.
+    - ``string`` -- string of symbols over some alphabet
 
     OUTPUT:
 
@@ -107,7 +108,7 @@ class Huffman(SageObject):
       - A dictionary that associates to each symbol of an alphabet a numeric
         value. If we consider the frequency of each alphabetic symbol, then
         ``source`` is considered as the frequency table of the alphabet with
-        each numeric (non-negative integer) value being the number of
+        each numeric (nonnegative integer) value being the number of
         occurrences of a symbol. The numeric values can also represent weights
         of the symbols. In that case, the numeric values are not necessarily
         integers, but can be real numbers.
@@ -235,7 +236,7 @@ class Huffman(SageObject):
 
         Feeding anything else than a string or a dictionary::
 
-            sage: Huffman(Graph())                                                      # optional - sage.graphs
+            sage: Huffman(Graph())                                                      # needs sage.graphs
             Traceback (most recent call last):
             ...
             ValueError: Input must be either a string or a dictionary.
@@ -257,7 +258,7 @@ class Huffman(SageObject):
 
     def _build_code_from_tree(self, tree, d, prefix):
         r"""
-        Builds the Huffman code corresponding to a given tree and prefix.
+        Build the Huffman code corresponding to a given tree and prefix.
 
         INPUT:
 
@@ -265,7 +266,7 @@ class Huffman(SageObject):
 
         - ``d`` -- the dictionary to fill
 
-        - ``prefix`` (string) -- binary string which is the prefix
+        - ``prefix`` -- string; binary string which is the prefix
           of any element of the tree
 
         EXAMPLES::
@@ -291,15 +292,15 @@ class Huffman(SageObject):
 
     def _build_code(self, dic):
         r"""
-        Constructs a Huffman code corresponding to an alphabet with the given
+        Construct a Huffman code corresponding to an alphabet with the given
         weight table.
 
         INPUT:
 
-        - ``dic`` -- a dictionary that associates to each symbol of an alphabet
+        - ``dic`` -- dictionary that associates to each symbol of an alphabet
           a numeric value. If we consider the frequency of each alphabetic
           symbol, then ``dic`` is considered as the frequency table of the
-          alphabet with each numeric (non-negative integer) value being the
+          alphabet with each numeric (nonnegative integer) value being the
           number of occurrences of a symbol. The numeric values can also
           represent weights of the symbols. In that case, the numeric values
           are not necessarily integers, but can be real numbers. In general,
@@ -366,9 +367,9 @@ class Huffman(SageObject):
         # Build the binary tree of a Huffman code, where the root of the tree
         # is associated with the empty string.
         self._build_code_from_tree(self._tree, d, prefix="")
-        self._index = dict((i, s) for i, (s, w) in enumerate(symbols))
-        self._character_to_code = dict(
-            (s, d[i]) for i, (s, w) in enumerate(symbols))
+        self._index = {i: s for i, (s, w) in enumerate(symbols)}
+        self._character_to_code = {
+            s: d[i] for i, (s, w) in enumerate(symbols)}
 
     def encode(self, string):
         r"""
@@ -376,11 +377,9 @@ class Huffman(SageObject):
 
         INPUT:
 
-        - ``string`` -- a string of symbols over an alphabet.
+        - ``string`` -- string of symbols over an alphabet
 
-        OUTPUT:
-
-        - A Huffman encoding of ``string``.
+        OUTPUT: a Huffman encoding of ``string``
 
         EXAMPLES:
 
@@ -395,7 +394,7 @@ class Huffman(SageObject):
             'Sage is my most favorite general purpose computer algebra system'
         """
         if self._character_to_code:
-            return "".join((self._character_to_code[x] for x in string))
+            return "".join(self._character_to_code[x] for x in string)
 
     def decode(self, string):
         r"""
@@ -403,11 +402,9 @@ class Huffman(SageObject):
 
         INPUT:
 
-        - ``string`` -- a string of Huffman encodings.
+        - ``string`` -- string of Huffman encodings
 
-        OUTPUT:
-
-        - The Huffman decoding of ``string``.
+        OUTPUT: the Huffman decoding of ``string``
 
         EXAMPLES:
 
@@ -452,15 +449,13 @@ class Huffman(SageObject):
 
     def encoding_table(self):
         r"""
-        Returns the current encoding table.
+        Return the current encoding table.
 
         INPUT:
 
         - None.
 
-        OUTPUT:
-
-        - A dictionary associating an alphabetic symbol to a Huffman encoding.
+        OUTPUT: a dictionary associating an alphabetic symbol to a Huffman encoding
 
         EXAMPLES::
 
@@ -495,24 +490,22 @@ class Huffman(SageObject):
 
     def tree(self):
         r"""
-        Returns the Huffman tree corresponding to the current encoding.
+        Return the Huffman tree corresponding to the current encoding.
 
         INPUT:
 
         - None.
 
-        OUTPUT:
-
-        - The binary tree representing a Huffman code.
+        OUTPUT: the binary tree representing a Huffman code
 
         EXAMPLES::
 
             sage: from sage.coding.source_coding.huffman import Huffman
             sage: str = "Sage is my most favorite general purpose computer algebra system"
             sage: h = Huffman(str)
-            sage: T = h.tree(); T                                                       # optional - sage.graphs
+            sage: T = h.tree(); T                                                       # needs sage.graphs
             Digraph on 39 vertices
-            sage: T.show(figsize=[20,20])                                               # optional - sage.graphs sage.plot
+            sage: T.show(figsize=[20,20])                                               # needs sage.graphs sage.plot
             <BLANKLINE>
         """
         from sage.graphs.digraph import DiGraph
@@ -520,31 +513,29 @@ class Huffman(SageObject):
         g.add_edges(self._generate_edges(self._tree))
         return g
 
-    def _generate_edges(self, tree, parent="", bit=""):
+    def _generate_edges(self, tree, parent='', bit=''):
         """
         Generate the edges of the given Huffman tree.
 
         INPUT:
 
-        - ``tree`` -- a Huffman binary tree.
+        - ``tree`` -- a Huffman binary tree
 
         - ``parent`` -- (default: empty string) a parent vertex with exactly
-          two children.
+          two children
 
         - ``bit`` -- (default: empty string) the bit signifying either the
-          left or right branch. The bit "0" denotes the left branch and "1"
-          denotes the right branch.
+          left or right branch; the bit '0' denotes the left branch and '1'
+          denotes the right branch
 
-        OUTPUT:
-
-        - An edge list of the Huffman binary tree.
+        OUTPUT: an edge list of the Huffman binary tree
 
         EXAMPLES::
 
             sage: from sage.coding.source_coding.huffman import Huffman
             sage: H = Huffman("Sage")
-            sage: T = H.tree()                                                          # optional - sage.graphs
-            sage: T.edges(sort=True, labels=None)  # indirect doctest                   # optional - sage.graphs
+            sage: T = H.tree()                                                          # needs sage.graphs
+            sage: T.edges(sort=True, labels=None)  # indirect doctest                   # needs sage.graphs
             [('0', 'S: 00'), ('0', 'a: 01'), ('1', 'e: 10'), ('1', 'g: 11'), ('root', '0'), ('root', '1')]
         """
         if parent == "":
@@ -553,8 +544,8 @@ class Huffman(SageObject):
             u = parent
         s = "".join([parent, bit])
         try:
-            left = self._generate_edges(tree[0], parent=s, bit="0")
-            right = self._generate_edges(tree[1], parent=s, bit="1")
+            left = self._generate_edges(tree[0], parent=s, bit='0')
+            right = self._generate_edges(tree[1], parent=s, bit='1')
             L = [(u, s)] if s != "" else []
             return left + right + L
         except TypeError:

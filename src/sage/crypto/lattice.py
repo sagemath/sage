@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules
 """
 Hard Lattice Generator
 
@@ -21,7 +22,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+
 
 def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
                 quotient=None, dual=False, ntl=False, lattice=False):
@@ -35,35 +37,42 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     INPUT:
 
     - ``type`` -- one of the following strings
-        - ``'modular'`` (default) -- A class of lattices for which
-          asymptotic worst-case to average-case connections hold. For
-          more refer to [Aj1996]_.
-        - ``'random'`` -- Special case of modular (n=1). A dense class
-          of lattice used for testing basis reduction algorithms
-          proposed by Goldstein and Mayer [GM2002]_.
-        - ``'ideal'`` -- Special case of modular. Allows for a more
-          compact representation proposed by [LM2006]_.
-        - ``'cyclotomic'`` -- Special case of ideal. Allows for
-          efficient processing proposed by [LM2006]_.
-    - ``n`` -- Determinant size, primal:`det(L) = q^n`, dual:`det(L) = q^{m-n}`.
+
+      - ``'modular'`` -- default; a class of lattices for which
+        asymptotic worst-case to average-case connections hold. For
+        more refer to [Aj1996]_
+      - ``'random'`` -- special case of modular (n=1); a dense class
+        of lattice used for testing basis reduction algorithms
+        proposed by Goldstein and Mayer [GM2002]_
+      - ``'ideal'`` -- special case of modular; allows for a more
+        compact representation proposed by [LM2006]_
+      - ``'cyclotomic'`` -- special case of ideal; allows for
+        efficient processing proposed by [LM2006]_
+
+    - ``n`` -- determinant size, primal: `det(L) = q^n`, dual: `det(L) = q^{m-n}`.
       For ideal lattices this is also the degree of the quotient polynomial.
-    - ``m`` -- Lattice dimension, `L \subseteq Z^m`.
-    - ``q`` -- Coefficient size, `q-Z^m \subseteq L`.
-    - ``seed`` -- Randomness seed.
-    - ``quotient`` -- For the type ideal, this determines the quotient
-      polynomial. Ignored for all other types.
-    - ``dual`` -- Set this flag if you want a basis for `q-dual(L)`, for example
-      for Regev's LWE bases [Reg2005]_.
-    - ``ntl`` -- Set this flag if you want the lattice basis in NTL readable
-      format.
-    - ``lattice`` -- Set this flag if you want a
+
+    - ``m`` -- lattice dimension, `L \subseteq Z^m`
+
+    - ``q`` -- coefficient size, `q-Z^m \subseteq L`
+
+    - ``seed`` -- randomness seed
+
+    - ``quotient`` -- for the type ``'ideal'``, this determines the quotient
+      polynomial. Ignored for all other types
+
+    - ``dual`` -- set this flag if you want a basis for `q-dual(L)`, for example
+      for Regev's LWE bases [Reg2005]_
+
+    - ``ntl`` -- set this flag if you want the lattice basis in NTL readable
+      format
+
+    - ``lattice`` -- set this flag if you want a
       :class:`FreeModule_submodule_with_basis_integer` object instead
-      of an integer matrix representing the basis.
+      of an integer matrix representing the basis
 
-    OUTPUT:
-
-    ``B`` a unique size-reduced triangular (primal: lower_left,
-    dual: lower_right) basis of row vectors for the lattice in question.
+    OUTPUT: ``B`` a unique size-reduced triangular (primal: lower_left,
+    dual: lower_right) basis of row vectors for the lattice in question
 
     EXAMPLES:
 
@@ -95,42 +104,42 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         [ 3082     0     0     0     0     0     0     0     1     0]
         [-4580     0     0     0     0     0     0     0     0     1]
 
-    Ideal bases with quotient x^n-1, m=2*n are NTRU bases::
+    Ideal bases with quotient `x^n-1`, `m=2*n` are NTRU bases::
 
-        sage: sage.crypto.gen_lattice(type='ideal', seed=42, quotient=x^4-1)
+        sage: sage.crypto.gen_lattice(type='ideal', seed=42, quotient=x^4 - 1)          # needs sage.symbolic
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [-2 -3 -3  4  1  0  0  0]
-        [ 4 -2 -3 -3  0  1  0  0]
-        [-3  4 -2 -3  0  0  1  0]
-        [-3 -3  4 -2  0  0  0  1]
+        [-3 -3 -2  4  1  0  0  0]
+        [ 4 -3 -3 -2  0  1  0  0]
+        [-2  4 -3 -3  0  0  1  0]
+        [-3 -2  4 -3  0  0  0  1]
 
     Ideal bases also work with polynomials::
 
         sage: R.<t> = PolynomialRing(ZZ)
-        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=t^4-1)
+        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=t^4 - 1)        # needs sage.libs.pari
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [ 1  4 -3  3  1  0  0  0]
-        [ 3  1  4 -3  0  1  0  0]
-        [-3  3  1  4  0  0  1  0]
-        [ 4 -3  3  1  0  0  0  1]
+        [-3  4  1  4  1  0  0  0]
+        [ 4 -3  4  1  0  1  0  0]
+        [ 1  4 -3  4  0  0  1  0]
+        [ 4  1  4 -3  0  0  0  1]
 
     Cyclotomic bases with n=2^k are SWIFFT bases::
 
-        sage: sage.crypto.gen_lattice(type='cyclotomic', seed=42)
+        sage: sage.crypto.gen_lattice(type='cyclotomic', seed=42)                       # needs sage.libs.pari
         [11  0  0  0  0  0  0  0]
         [ 0 11  0  0  0  0  0  0]
         [ 0  0 11  0  0  0  0  0]
         [ 0  0  0 11  0  0  0  0]
-        [-2 -3 -3  4  1  0  0  0]
-        [-4 -2 -3 -3  0  1  0  0]
-        [ 3 -4 -2 -3  0  0  1  0]
-        [ 3  3 -4 -2  0  0  0  1]
+        [-3 -3 -2  4  1  0  0  0]
+        [-4 -3 -3 -2  0  1  0  0]
+        [ 2 -4 -3 -3  0  0  1  0]
+        [ 3  2 -4 -3  0  0  0  1]
 
     Dual modular bases are related to Regev's famous public-key
     encryption [Reg2005]_::
@@ -149,9 +158,9 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     Relation of primal and dual bases::
 
-        sage: B_primal=sage.crypto.gen_lattice(m=10, q=11, seed=42)
-        sage: B_dual=sage.crypto.gen_lattice(m=10, q=11, seed=42, dual=True)
-        sage: B_dual_alt=transpose(11*B_primal.inverse()).change_ring(ZZ)
+        sage: B_primal = sage.crypto.gen_lattice(m=10, q=11, seed=42)
+        sage: B_dual = sage.crypto.gen_lattice(m=10, q=11, seed=42, dual=True)
+        sage: B_dual_alt = transpose(11*B_primal.inverse()).change_ring(ZZ)
         sage: B_dual_alt.hermite_form() == B_dual.hermite_form()
         True
 
@@ -159,11 +168,11 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
     Test some bad quotient polynomials::
 
-        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=cos(x))
+        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=cos(x))         # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: self must be a numeric expression
-        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=x^23-1)
+        sage: sage.crypto.gen_lattice(type='ideal', seed=1234, quotient=x^23-1)         # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: ideal basis requires n = quotient.degree()
@@ -201,7 +210,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         [-4 -3 2 -5 0 0 0 0 0 1]
         ]
 
-        sage: sage.crypto.gen_lattice(m=10, q=11, seed=42, lattice=True)
+        sage: sage.crypto.gen_lattice(m=10, q=11, seed=42, lattice=True)                # needs fpylll
         Free module of degree 10 and rank 10 over Integer Ring
         User basis matrix:
         [ 0  0  1  1  0 -1 -1 -1  1  0]
@@ -218,7 +227,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
     from sage.matrix.constructor import identity_matrix, block_matrix
     from sage.matrix.matrix_space import MatrixSpace
-    from sage.rings.integer_ring import IntegerRing
+    from sage.rings.integer_ring import ZZ
     if seed is not None:
         from sage.misc.randstate import set_random_seed
         set_random_seed(seed)
@@ -227,7 +236,6 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
         if n != 1:
             raise ValueError('random bases require n = 1')
 
-    ZZ = IntegerRing()
     ZZ_q = IntegerModRing(q)
     A = identity_matrix(ZZ_q, n)
 
@@ -245,7 +253,7 @@ def gen_lattice(type='modular', n=4, m=8, q=11, seed=None,
 
         P = quotient.parent()
         # P should be a univariate polynomial ring over ZZ_q
-        if not is_PolynomialRing(P):
+        if not isinstance(P, PolynomialRing_general):
             raise TypeError("quotient should be a univariate polynomial")
         assert P.base_ring() is ZZ_q
 

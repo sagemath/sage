@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Monomial symmetric functions
 """
@@ -29,7 +30,7 @@ from sage.arith.misc import multinomial, factorial, binomial
 class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, Sym):
         """
-        A class for methods related to monomial symmetric functions
+        A class for methods related to monomial symmetric functions.
 
         INPUT:
 
@@ -48,7 +49,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
     def _dual_basis_default(self):
         """
-        Return the default dual basis to ``self`` when no scalar product is specified
+        Return the default dual basis to ``self`` when no scalar product is specified.
 
         This method returns the dual basis of the monomial basis with
         respect to the standard scalar product, which is the
@@ -79,7 +80,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         Return the product of ``left`` and ``right``.
 
         - ``left``, ``right`` -- symmetric functions written in the
-          monomial basis ``self``.
+          monomial basis ``self``
 
         OUTPUT:
 
@@ -134,21 +135,25 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         return self._from_dict(z_elt)
 
     def from_polynomial(self, f, check=True):
-        """
-        Return the symmetric function in the monomial basis corresponding to the polynomial ``f``.
+        r"""
+        Return the symmetric function in the monomial basis corresponding
+        to the polynomial ``f``.
 
         INPUT:
 
         - ``self`` -- a monomial symmetric function basis
-        - ``f`` -- a polynomial in finitely many variables over the same base ring as ``self``.
-          It is assumed that this polynomial is symmetric.
-        - ``check`` -- boolean (default: ``True``), checks whether the polynomial is indeed symmetric
+        - ``f`` -- a polynomial in finitely many variables over the
+          same base ring as ``self``; it is assumed that this
+          polynomial is symmetric
+        - ``check`` -- boolean (default: ``True``); checks whether
+          the polynomial is indeed symmetric
 
         OUTPUT:
 
-        - This function converts a symmetric polynomial `f` in a polynomial ring in finitely
-          many variables to a symmetric function in the monomial
-          basis of the ring of symmetric functions over the same base ring.
+        - This function converts a symmetric polynomial `f` in a
+          polynomial ring in finitely many variables to a symmetric
+          function in the monomial basis of the ring of symmetric
+          functions over the same base ring.
 
         EXAMPLES::
 
@@ -172,19 +177,20 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             sage: f = (2*m[2,1]+m[1,1]+3*m[3]).expand(3)
             sage: m.from_polynomial(f)
             m[1, 1] + 2*m[2, 1] + 3*m[3]
+
         """
         assert self.base_ring() == f.base_ring()
         if check and not f.is_symmetric():
-            raise ValueError("%s is not a symmetric polynomial"%f)
+            raise ValueError("%s is not a symmetric polynomial" % f)
         out = self._from_dict({_Partitions.element_class(_Partitions, list(e)): c
-                               for (e,c) in f.dict().items()
+                               for e, c in f.monomial_coefficients().items()
                                if all(e[i+1] <= e[i] for i in range(len(e)-1))},
                               remove_zeros=False)
         return out
 
     def from_polynomial_exp(self, p):
         r"""
-        Conversion from polynomial in exponential notation
+        Conversion from polynomial in exponential notation.
 
         INPUT:
 
@@ -278,7 +284,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             - ``alphabet`` -- (default: ``'x'``) a variable for the expansion
 
@@ -334,12 +340,12 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
             INPUT:
 
-            - ``n`` (default: ``infinity``) -- a nonnegative integer or
+            - ``n`` -- (default: ``infinity``) a nonnegative integer or
               ``infinity``, specifying whether to compute the principal
               specialization of order ``n`` or the stable principal
               specialization.
 
-            - ``q`` (default: ``None``) -- the value to use for `q`; the
+            - ``q`` -- (default: ``None``) the value to use for `q`; the
               default is to create a ring of polynomials in ``q``
               (or a field of rational functions in ``q``) over the
               given coefficient ring.
@@ -365,14 +371,13 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
                 q^7 + q^6 + q^5 + q^3 + q^2 + q
 
                 sage: x = 5*m[2] + 3*m[1] + 1
-                sage: x.principal_specialization(3, q=var("q"))                         # optional - sage.symbolic
+                sage: x.principal_specialization(3, q=var("q"))                         # needs sage.symbolic
                 -10*(q^3 - 1)*q/(q - 1) + 5*(q^3 - 1)^2/(q - 1)^2 + 3*(q^3 - 1)/(q - 1) + 1
 
             TESTS::
 
                 sage: m.zero().principal_specialization(3)
                 0
-
             """
             if q == 1:
                 if n == infinity:
@@ -432,12 +437,12 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
             INPUT:
 
-            - ``t`` (default: ``None``) -- the value to use for `t`;
-              the default is to create a ring of polynomials in ``t``.
+            - ``t`` -- (default: ``None``) the value to use for `t`;
+              the default is to create a ring of polynomials in ``t``
 
-            - ``q`` (default: `1`) -- the value to use for `q`.  If
+            - ``q`` -- (default: `1`) the value to use for `q`;  if
               ``q`` is ``None``, then a ring (or fraction field) of
-              polynomials in ``q`` is created.
+              polynomials in ``q`` is created
 
             EXAMPLES::
 
@@ -451,14 +456,13 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
             We also support the `q`-exponential_specialization::
 
-                sage: factor(m[3].exponential_specialization(q=var("q"), t=var("t")))   # optional - sage.symbolic
+                sage: factor(m[3].exponential_specialization(q=var("q"), t=var("t")))   # needs sage.symbolic
                 (q - 1)^2*t^3/(q^2 + q + 1)
 
             TESTS::
 
                 sage: m.zero().exponential_specialization()
                 0
-
             """
             def get_variable(ring, name):
                 try:

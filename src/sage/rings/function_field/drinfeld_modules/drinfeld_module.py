@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Drinfeld modules
 
@@ -30,7 +30,6 @@ from sage.arith.misc import gcd
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Hom
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
 from sage.misc.lazy_import import lazy_import
@@ -46,8 +45,6 @@ from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
-lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
-
 
 class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
@@ -128,7 +125,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     - ``gen`` -- the generator of the Drinfeld module; as a list of
       coefficients or an Ore polynomial
 
-    - ``name`` (default: ``'t'``) -- the name of the Ore polynomial ring
+    - ``name`` -- (default: ``'t'``) the name of the Ore polynomial ring
       generator
 
     .. RUBRIC:: Construction
@@ -526,7 +523,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     def __classcall_private__(cls, function_ring, gen, name='t'):
         """
         Check input validity and return a ``DrinfeldModule`` or
-        ``FiniteDrinfeldModule`` object accordingly.
+        ``DrinfeldModule_finite`` object accordingly.
 
         INPUT:
 
@@ -536,29 +533,27 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         - ``gen`` -- the generator of the Drinfeld module; as a list of
           coefficients or an Ore polynomial
 
-        - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
+        - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
           ring gen
 
-        OUTPUT:
-
-        A DrinfeldModule or FiniteDrinfeldModule.
+        OUTPUT: a DrinfeldModule or DrinfeldModule_finite
 
         TESTS::
 
-            sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
+            sage: from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
             sage: Fq = GF(25)
             sage: A.<T> = Fq[]
             sage: K.<z12> = Fq.extension(6)
             sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-            sage: isinstance(phi, FiniteDrinfeldModule)
+            sage: isinstance(phi, DrinfeldModule_finite)
             True
 
         ::
 
             sage: K = Frac(A)
             sage: phi = DrinfeldModule(A, [K(T), 1])
-            sage: isinstance(psi, FiniteDrinfeldModule)
+            sage: isinstance(psi, DrinfeldModule_finite)
             False
         """
 
@@ -624,10 +619,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if gen.degree() <= 0:
             raise ValueError('generator must have positive degree')
 
-        # Instantiate the appropriate class
+        # Instantiate the appropriate class:
         if base_field.is_finite():
-            from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
-            return FiniteDrinfeldModule(gen, category)
+            from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+            return DrinfeldModule_finite(gen, category)
+        if not category._characteristic:
+            from .charzero_drinfeld_module import DrinfeldModule_charzero
+            return DrinfeldModule_charzero(gen, category)
         return cls.__classcall__(cls, gen, category)
 
     def __init__(self, gen, category):
@@ -645,7 +643,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         - ``gen`` -- the generator of the Drinfeld module; as a list of
           coefficients or an Ore polynomial
 
-        - ``name`` (default: ``'t'``) -- the name of the Ore polynomial
+        - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
           ring gen
 
         TESTS::
@@ -759,27 +757,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         from sage.rings.function_field.drinfeld_modules.homset import DrinfeldModuleHomset
         return DrinfeldModuleHomset(self, other, category)
 
-    def _check_rank_two(self):
-        r"""
-        Raise ``NotImplementedError`` if the rank is not two.
-
-        TESTS::
-
-            sage: Fq = GF(25)
-            sage: A.<T> = Fq[]
-            sage: K.<z12> = Fq.extension(6)
-            sage: p_root = 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
-            sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
-            sage: phi._check_rank_two()
-            sage: phi = DrinfeldModule(A, [p_root, 1])
-            sage: phi._check_rank_two()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: rank must be 2
-        """
-        if self.rank() != 2:
-            raise NotImplementedError('rank must be 2')
-
     def _latex_(self):
         r"""
         Return a LaTeX representation of the Drinfeld module.
@@ -804,8 +781,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             \phi
             sage: phi.reset_name()
         """
-        if hasattr(self, '__custom_name'):
-            return latex_variable_name(getattr(self, '__custom_name'))
+        if self.get_custom_name() is not None:
+            return latex_variable_name(self.get_custom_name())
         else:
             return f'\\phi: {latex(self._function_ring.gen())} \\mapsto ' \
                    f'{latex(self._gen)}'
@@ -914,15 +891,15 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``coeff_indices`` (list or tuple, or NoneType; default:
-          ``None``) -- indices of the Drinfeld module generator
+        - ``coeff_indices`` -- list or tuple, or NoneType (default:
+          ``None``); indices of the Drinfeld module generator
           coefficients to be considered in the computation. If the
           parameter is ``None`` (default), all the coefficients are
           involved.
 
-        - ``nonzero`` (boolean, default: ``False``) -- if this flag
+        - ``nonzero``-- boolean (default: ``False``); if this flag
           is set to ``True``, then only the parameters for which the
-          corresponding basic `j`-invariant is nonzero are returned.
+          corresponding basic `j`-invariant is nonzero are returned
 
         .. WARNING::
 
@@ -1091,9 +1068,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``nonzero`` (boolean, default: ``False``) -- if this flag
+        - ``nonzero``-- boolean (default: ``False``); if this flag
           is set to ``True``, then only the parameters for which the
-          corresponding basic `j`-invariant is nonzero are returned.
+          corresponding basic `j`-invariant is nonzero are returned
 
         .. WARNING::
 
@@ -1145,7 +1122,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer
+        - ``n`` -- nonnegative integer
 
         OUTPUT: an element in the base codomain
 
@@ -1184,7 +1161,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``sparse`` -- a boolean
+        - ``sparse`` -- boolean
 
         EXAMPLES::
 
@@ -1217,134 +1194,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         return self._gen.coefficients(sparse=sparse)
 
-    @cached_method
-    def _compute_coefficient_exp(self, k):
-        r"""
-        Return the `q^k`-th coefficient of the exponential of this Drinfeld module.
-
-        INPUT:
-
-        - ``k`` (integer) -- the index of the coefficient
-
-        TESTS::
-
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, 1])
-            sage: q = A.base_ring().cardinality()
-            sage: phi._compute_coefficient_exp(0)
-            1
-            sage: phi._compute_coefficient_exp(1)
-            1/(T^2 + T)
-            sage: phi._compute_coefficient_exp(2)
-            1/(T^8 + T^6 + T^5 + T^3)
-            sage: phi._compute_coefficient_exp(3)
-            1/(T^24 + T^20 + T^18 + T^17 + T^14 + T^13 + T^11 + T^7)
-        """
-        k = ZZ(k)
-        if k.is_zero():
-            return self._base.one()
-        q = self._Fq.cardinality()
-        c = self._base.zero()
-        for i in range(k):
-            j = k - i
-            c += self._compute_coefficient_exp(i)*self._compute_coefficient_log(j)**(q**i)
-        return -c
-
-    def exponential(self, name='z'):
-        r"""
-        Return the exponential of this Drinfeld module.
-
-        Note that the exponential is only defined when the
-        `\mathbb{F}_q[T]`-characteristic is zero.
-
-        INPUT:
-
-        - ``name`` (string, default: ``'z'``) -- the name of the
-          generator of the lazy power series ring.
-
-        OUTPUT:
-
-        A lazy power series over the base field.
-
-        EXAMPLES::
-
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, 1])
-            sage: q = A.base_ring().cardinality()
-            sage: exp = phi.exponential(); exp
-            z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
-
-        The exponential is returned as a lazy power series, meaning that
-        any of its coefficients can be computed on demands::
-
-            sage: exp[2^4]
-            1/(T^64 + T^56 + T^52 + ... + T^27 + T^23 + T^15)
-            sage: exp[2^5]
-            1/(T^160 + T^144 + T^136 + ... + T^55 + T^47 + T^31)
-
-        Example in higher rank::
-
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
-            sage: exp = phi.exponential(); exp
-            z + ((T/(T^4+4))*z^5) + O(z^8)
-
-        The exponential is the compositional inverse of the logarithm
-        (see :meth:`logarithm`)::
-
-            sage: log = phi.logarithm(); log
-            z + ((4*T/(T^4+4))*z^5) + O(z^8)
-            sage: exp.compose(log)
-            z + O(z^8)
-            sage: log.compose(exp)
-            z + O(z^8)
-
-        ::
-
-            sage: Fq.<w> = GF(3)
-            sage: A = Fq['T']
-            sage: phi = DrinfeldModule(A, [w, 1])
-            sage: phi.exponential()
-            Traceback (most recent call last):
-            ...
-            ValueError: characteristic must be zero (=T + 2)
-
-        TESTS::
-
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, 1])
-            sage: exp = phi.exponential()
-            sage: exp[2] == 1/(T**q - T)  # expected value
-            True
-            sage: exp[2^2] == 1/((T**(q**2) - T)*(T**q - T)**q)  # expected value
-            True
-            sage: exp[2^3] == 1/((T**(q**3) - T)*(T**(q**2) - T)**q*(T**q - T)**(q**2))  # expected value
-            True
-
-        REFERENCE:
-
-        See section 4.6 of [Gos1998]_ for the definition of the
-        exponential.
-        """
-        if self.category()._characteristic:
-            raise ValueError(f"characteristic must be zero (={self.characteristic()})")
-        L = LazyPowerSeriesRing(self._base, name)
-        zero = self._base.zero()
-        q = self._Fq.cardinality()
-
-        def coeff_exp(k):
-            # Return the k-th coefficient of the exponential.
-            k = ZZ(k)
-            if k.is_power_of(q):
-                return self._compute_coefficient_exp(k.log(q))
-            else:
-                return zero
-        return L(coeff_exp, valuation=1)
-
     def gen(self):
         r"""
         Return the generator of the Drinfeld module.
@@ -1364,7 +1213,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     def height(self):
         r"""
         Return the height of the Drinfeld module if the function field
-        characteristic is a prime ideal; raise ValueError otherwise.
+        characteristic is a prime ideal; raise :exc:`ValueError` otherwise.
 
         The height of a Drinfeld module is defined when the function
         field characteristic is a prime ideal. In our case, this ideal
@@ -1422,7 +1271,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             NotImplementedError: height not implemented in this case
-
         """
         try:
             if self.characteristic().is_zero():
@@ -1441,9 +1289,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         INPUT:
 
-        - ``absolutely`` -- a boolean (default: ``False``); if ``True``,
+        - ``absolutely`` -- a boolean (default: ``False``); if ``False``,
           check the existence of an isomorphism defined on the base
-          field; if ``False``, check over an algebraic closure.
+          field. If ``True``, check over an algebraic closure.
 
         EXAMPLES::
 
@@ -1472,6 +1320,18 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
             sage: phi = DrinfeldModule(A, [z, 1])
             sage: psi = DrinfeldModule(A, [z, z])
+            sage: phi.is_isomorphic(psi)
+            False
+            sage: phi.is_isomorphic(psi, absolutely=True)
+            True
+
+        In particular, two Drinfeld modules may have the same
+        `j`-invariant, while not being isomorphic on the base field::
+
+            sage: phi = DrinfeldModule(A, [z, 0, 1])
+            sage: psi = DrinfeldModule(A, [z, 0, z])
+            sage: phi.j_invariant() == psi.j_invariant()
+            True
             sage: phi.is_isomorphic(psi)
             False
             sage: phi.is_isomorphic(psi, absolutely=True)
@@ -1601,8 +1461,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: psi.is_finite()
             False
         """
-        from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import FiniteDrinfeldModule
-        return isinstance(self, FiniteDrinfeldModule)
+        from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
+        return isinstance(self, DrinfeldModule_finite)
 
     def j_invariant(self, parameter=None, check=True):
         r"""
@@ -1617,7 +1477,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         .. MATH::
 
             j_{k_1, \ldots, k_n}^{d_1, \ldots, d_n, d_r}(\phi)
-            := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
+            := \frac{1}{g_r^{d_r}}\prod_{i = 1}^n g_{k_i}^{d_i}
 
         where `1\leqslant k_1 < k_2 < \ldots < k_n \leqslant r - 1` and
         the integers `d_i` satisfy the *weight-0 condition*:
@@ -1638,10 +1498,30 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         :meth:`basic_j_invariant_parameters` for computing the list of
         all basic `j`-invariant parameters.
 
+        .. NOTE::
+
+            In [Pap2023]_, Papikian follows a slightly different
+            convention:
+
+            - His `j`-invariants (see Definition 3.8.7) correspond to
+              our basic `j`-invariants, as defined above.
+            - His *basic* `j`-invariant (see Example 3.8.10) correspond
+              to our `j_k`-invariants, as implemented in
+              :meth:`jk_invariants`.
+
+            We chose to follow Potemine's convention, as he introduced
+            those objects in [Pot1998]_. Theorem 2.2 of [Pot1998]_ or
+            Theorem 3.8.11 of [Pap2023]_ assert that two Drinfeld
+            `\mathbb F_q[T]`-modules over `K` are isomorphic over the
+            separable closure of `K` if and only if their basic
+            `j`-invariants (as implemented here) coincide for any
+            well-defined couple of tuples `((k_1, k_2, \ldots, k_n),
+            (d_1, d_2, \ldots, d_n, d_r))`, .
+
         INPUT:
 
-        - ``parameter`` (tuple or list, integer or NoneType; default:
-          ``None``) -- the `j`-invariant parameter:
+        - ``parameter`` -- tuple or list, integer or NoneType (default:
+          ``None``); the `j`-invariant parameter:
 
           - If ``parameter`` is a list or a tuple, then it must be of
             the form:
@@ -1658,16 +1538,11 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             `j`-invariant, that is the `j`-invariant for the parameter
             `((1,), (q+1, 1))`.
 
-        - ``check`` (bool, default: ``True``) -- if this flag is set to
+        - ``check`` -- boolean (default: ``True``); if this flag is set to
           ``False`` then the code will not check if the given parameter
           is valid and satisfy the weight-0 condition.
 
-        OUTPUT: the `j`-invariant of ``self`` for the given parameter.
-
-        REFERENCE:
-
-        The notion of basic `j`-invariant was introduced by Potemine in
-        [Pot1998]_.
+        OUTPUT: the `j`-invariant of ``self`` for the given parameter
 
         EXAMPLES::
 
@@ -1856,13 +1731,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         `1 \leqslant k \leqslant r-1` and the values are the
         corresponding `j_k`-invariants
 
-        Recall that the `j_k`-invariant of self is defined by:
+        Recall that the `j_k`-invariant of ``self`` is defined by:
 
         .. MATH::
 
             j_k := \frac{g_k^{(q^r - 1)/(\mathrm{gcd}(k, r) - 1)}}{g_r^{(q^k - 1)/(\mathrm{gcd}(k, r) - 1)}}
 
-        where `g_i` is the `i`-th coefficient of the generator of self.
+        where `g_i` is the `i`-th coefficient of the generator of ``self``.
 
         EXAMPLES::
 
@@ -1888,119 +1763,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         """
         r = self._gen.degree()  # rank of self
         return {k: self.j_invariant(k) for k in range(1, r)}
-
-    @cached_method
-    def _compute_coefficient_log(self, k):
-        r"""
-        Return the `q^k`-th coefficient of the logarithm of this Drinfeld module.
-
-        TESTS::
-
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, 1])
-            sage: q = A.base_ring().cardinality()
-            sage: phi._compute_coefficient_log(0)
-            1
-            sage: phi._compute_coefficient_log(1)
-            1/(T^2 + T)
-            sage: phi._compute_coefficient_log(2)
-            1/(T^6 + T^5 + T^3 + T^2)
-            sage: phi._compute_coefficient_log(3)
-            1/(T^14 + T^13 + T^11 + T^10 + T^7 + T^6 + T^4 + T^3)
-        """
-        k = ZZ(k)
-        if k.is_zero():
-            return self._base.one()
-        r = self._gen.degree()
-        T = self._gen[0]
-        q = self._Fq.cardinality()
-        c = self._base.zero()
-        for i in range(k):
-            j = k - i
-            if j < r + 1:
-                c += self._compute_coefficient_log(i)*self._gen[j]**(q**i)
-        return c/(T - T**(q**k))
-
-    def logarithm(self, name='z'):
-        r"""
-        Return the logarithm of the given Drinfeld module.
-
-        By definition, the logarithm is the compositional inverse of the
-        exponential (see :meth:`exponential`). Note that the logarithm
-        is only defined when the `\mathbb{F}_q[T]`-characteristic is
-        zero.
-
-        INPUT:
-
-        - ``name`` (string, default: ``'z'``) -- the name of the
-          generator of the lazy power series ring.
-
-        OUTPUT:
-
-        A lazy power series over the base field.
-
-        EXAMPLES::
-
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, 1])
-            sage: log = phi.logarithm(); log
-            z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^8)
-
-        The logarithm is returned as a lazy power series, meaning that
-        any of its coefficients can be computed on demands::
-
-            sage: log[2^4]
-            1/(T^30 + T^29 + T^27 + ... + T^7 + T^5 + T^4)
-            sage: log[2^5]
-            1/(T^62 + T^61 + T^59 + ... + T^8 + T^6 + T^5)
-
-        Example in higher rank::
-
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
-            sage: phi.logarithm()
-            z + ((4*T/(T^4+4))*z^5) + O(z^8)
-
-        TESTS::
-
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
-            sage: phi = DrinfeldModule(A, [T, 1])
-            sage: q = 2
-            sage: log[2] == -1/((T**q - T))  # expected value
-            True
-            sage: log[2**2] == 1/((T**q - T)*(T**(q**2) - T))  # expected value
-            True
-            sage: log[2**3] == -1/((T**q - T)*(T**(q**2) - T)*(T**(q**3) - T))  # expected value
-            True
-
-        ::
-
-            sage: Fq.<w> = GF(3)
-            sage: A = Fq['T']
-            sage: phi = DrinfeldModule(A, [w, 1])
-            sage: phi.logarithm()
-            Traceback (most recent call last):
-            ...
-            ValueError: characteristic must be zero (=T + 2)
-        """
-        if self.category()._characteristic:
-            raise ValueError(f"characteristic must be zero (={self.characteristic()})")
-        L = LazyPowerSeriesRing(self._base, name)
-        zero = self._base.zero()
-        q = self._Fq.cardinality()
-
-        def coeff_log(k):
-            # Return the k-th coefficient of the logarithm
-            k = ZZ(k)
-            if k.is_power_of(q):
-                return self._compute_coefficient_log(k.log(q))
-            else:
-                return self._base.zero()
-        return L(coeff_log, valuation=1)
 
     def morphism(self):
         r"""
@@ -2058,7 +1820,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         In our case, the rank is the degree of the generator.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2255,7 +2017,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             ValueError: Ore polynomial does not define a morphism
-
         """
         # When `x` is in the function ring (or something that coerces to it):
         if self.function_ring().has_coerce_map_from(x.parent()):
@@ -2292,7 +2053,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
             sage: phi
             Drinfeld module defined by T |--> z*t^3 + t^2 + z
-            sage: phi.hom(T)
+            sage: phi.hom(T)  # indirect doctest
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: z*t^3 + t^2 + z
 
@@ -2301,7 +2062,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.hom(T^2 + 1)
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: z^2*t^6 + (3*z^2 + z + 1)*t^5 + t^4 + 2*z^2*t^3 + (3*z^2 + z + 1)*t^2 + z^2 + 1
-
         """
         if not self.function_ring().has_coerce_map_from(x.parent()):
             raise ValueError("%s is not element of the function ring" % x)

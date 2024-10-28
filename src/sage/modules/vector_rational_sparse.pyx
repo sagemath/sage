@@ -47,7 +47,7 @@ cdef int mpq_vector_init(mpq_vector* v, Py_ssize_t degree, Py_ssize_t num_nonzer
     v.num_nonzero = num_nonzero
     v.degree = degree
 
-cdef void mpq_vector_clear(mpq_vector* v):
+cdef void mpq_vector_clear(mpq_vector* v) noexcept:
     cdef Py_ssize_t i
     if v.entries == NULL:
         return
@@ -61,7 +61,7 @@ cdef void mpq_vector_clear(mpq_vector* v):
     sig_free(v.entries)
     sig_free(v.positions)
 
-cdef Py_ssize_t mpq_binary_search0(mpq_t* v, Py_ssize_t n, mpq_t x):
+cdef Py_ssize_t mpq_binary_search0(mpq_t* v, Py_ssize_t n, mpq_t x) noexcept:
     """
     Find the position of the rational x in the array v, which has length n.
     Returns -1 if x is not in the array v.
@@ -86,7 +86,7 @@ cdef Py_ssize_t mpq_binary_search0(mpq_t* v, Py_ssize_t n, mpq_t x):
             return k
     return -1
 
-cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* ins):
+cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* ins) noexcept:
     """
     Find the position of the integer x in the array v, which has length n.
     Returns -1 if x is not in the array v, and in this case ins is
@@ -94,12 +94,15 @@ cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* i
     obtain an ordered array.
 
     INPUT:
-       v -- array of mpq_t  (rational)
-       n -- integer (length of array v)
-       x -- mpq_t  (rational)
+
+    - ``v`` -- array of mpq_t  (rational)
+    - ``n`` -- integer (length of array v)
+    - ``x`` -- mpq_t  (rational)
+
     OUTPUT:
-       position of x (as an Py_ssize_t)
-       ins -- (call be pointer), the insertion point if x is not found.
+
+    position of x (as an Py_ssize_t)
+    ins -- (call be pointer), the insertion point if x is not found.
     """
     cdef Py_ssize_t i, j, k, c
     if n == 0:
@@ -133,11 +136,11 @@ cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* i
 
 cdef int mpq_vector_get_entry(mpq_t ans, mpq_vector* v, Py_ssize_t n) except -1:
     """
-    Returns the n-th entry of the sparse vector v.  This
-    would be v[n] in Python syntax.
+    Return the n-th entry of the sparse vector v.  This
+    would be ``v[n]`` in Python syntax.
 
-    The return is done using the pointer ans, which is to an mpq_t
-    that *must* have been initialized using mpq_init.
+    The return is done using the pointer ``ans``, which is to an ``mpq_t``
+    that *must* have been initialized using ``mpq_init``.
     """
     if n >= v.degree:
         raise IndexError("Index must be between 0 and %s." % (v.degree - 1))
@@ -149,7 +152,7 @@ cdef int mpq_vector_get_entry(mpq_t ans, mpq_vector* v, Py_ssize_t n) except -1:
     mpq_set(ans, v.entries[m])
     return 0
 
-cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n):
+cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n) noexcept:
     """
     Return if the ``n``-th entry of the sparse vector ``v`` is zero.
 
@@ -160,7 +163,7 @@ cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n):
 
 cdef object mpq_vector_to_list(mpq_vector* v):
     """
-    Returns a Python list of 2-tuples (i,x), where x=v[i] runs
+    Return a Python list of 2-tuples (i,x), where ``x=v[i]`` runs
     through the nonzero elements of x, in order.
     """
     cdef object X
@@ -177,12 +180,11 @@ cdef object mpq_vector_to_list(mpq_vector* v):
 cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
     """
     Set the n-th component of the sparse vector v equal to x.
-    This would be v[n] = x in Python syntax.
+    This would be ``v[n] = x`` in Python syntax.
     """
     if n >= v.degree or n < 0:
         raise IndexError("Index must be between 0 and the degree minus 1.")
     cdef Py_ssize_t i, m, ins
-    cdef Py_ssize_t m2, ins2
     cdef Py_ssize_t *pos
     cdef mpq_t *e
 
@@ -201,7 +203,7 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
             e = v.entries
             pos = v.positions
             allocate_mpq_vector(v, v.num_nonzero - 1)
-            for i from 0 <= i < m:
+            for i in range(m):
                 # v.entries[i] = e[i]
                 mpq_set(v.entries[i], e[i])
                 v.positions[i] = pos[i]
@@ -230,7 +232,7 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
         e = v.entries
         pos = v.positions
         allocate_mpq_vector(v, v.num_nonzero)
-        for i from 0 <= i < ins:
+        for i in range(ins):
             # v.entries[i] = e[i]
             mpq_set(v.entries[i], e[i])
             mpq_clear(e[i])
@@ -246,13 +248,12 @@ cdef int mpq_vector_set_entry(mpq_vector* v, Py_ssize_t n, mpq_t x) except -1:
         sig_free(pos)
 
 
-
 cdef mpq_t mpq_set_tmp
 mpq_init(mpq_set_tmp)
 cdef int mpq_vector_set_entry_str(mpq_vector* v, Py_ssize_t n, char *x_str) except -1:
     """
     Set the n-th component of the sparse vector v equal to x.
-    This would be v[n] = x in Python syntax.
+    This would be ``v[n] = x`` in Python syntax.
     """
     mpq_set_str(mpq_set_tmp, x_str, 0)
     mpq_vector_set_entry(v, n, mpq_set_tmp)
@@ -395,7 +396,7 @@ cdef int mpq_vector_scalar_multiply(mpq_vector* v, mpq_vector* w, mpq_t scalar) 
             v.positions[i] = w.positions[i]
         return 0
 
-cdef int mpq_vector_cmp(mpq_vector* v, mpq_vector* w):
+cdef int mpq_vector_cmp(mpq_vector* v, mpq_vector* w) noexcept:
     if v.degree < w.degree:
         return -1
     elif v.degree > w.degree:

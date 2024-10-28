@@ -79,16 +79,16 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
 
     def coxeter_diagram(self):
         """
-        Returns the Coxeter matrix for this type.
+        Return the Coxeter matrix for this type.
 
         EXAMPLES::
 
             sage: ct = CartanType(['I', 4])
-            sage: ct.coxeter_diagram()
+            sage: ct.coxeter_diagram()                                                  # needs sage.graphs
             Graph on 2 vertices
-            sage: ct.coxeter_diagram().edges(sort=True)
+            sage: ct.coxeter_diagram().edges(sort=True)                                 # needs sage.graphs
             [(1, 2, 4)]
-            sage: ct.coxeter_matrix()
+            sage: ct.coxeter_matrix()                                                   # needs sage.graphs
             [1 4]
             [4 1]
         """

@@ -1,7 +1,8 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Hom spaces between Hecke modules
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,28 +14,33 @@ Hom spaces between Hecke modules
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.categories.homset import HomsetWithBase
 from .morphism import HeckeModuleMorphism_matrix
-from .module import is_HeckeModule
+from .module import HeckeModule_generic
 
 
 def is_HeckeModuleHomspace(x):
     r"""
-    Return True if x is a space of homomorphisms in the category of Hecke modules.
+    Return ``True`` if x is a space of homomorphisms in the category of Hecke modules.
 
     EXAMPLES::
 
         sage: M = ModularForms(Gamma0(7), 4)
         sage: sage.modular.hecke.homspace.is_HeckeModuleHomspace(Hom(M, M))
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeModuleHomspace is deprecated;
+        use 'isinstance(..., HeckeModuleHomspace)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: sage.modular.hecke.homspace.is_HeckeModuleHomspace(Hom(M, QQ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeModuleHomspace is deprecated; use 'isinstance(..., HeckeModuleHomspace)' instead")
     return isinstance(x, HeckeModuleHomspace)
 
 
@@ -66,7 +72,7 @@ class HeckeModuleHomspace(HomsetWithBase):
             sage: H = M.Hom(M)
             sage: TestSuite(H).run(skip='_test_elements')
         """
-        if not is_HeckeModule(X) or not is_HeckeModule(Y):
+        if not isinstance(X, HeckeModule_generic) or not isinstance(Y, HeckeModule_generic):
             raise TypeError("X and Y must be Hecke modules")
         if X.base_ring() != Y.base_ring():
             raise TypeError("X and Y must have the same base ring")
@@ -100,29 +106,29 @@ class HeckeModuleHomspace(HomsetWithBase):
             [ -7   0   0]
             [  0   1 240]
             [  0   0 343]
-            Domain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
+            Domain:   Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             Codomain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             sage: H(H(M.hecke_operator(7)))
             Hecke module morphism T_7 defined by the matrix
             [ -7   0   0]
             [  0   1 240]
             [  0   0 343]
-            Domain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
+            Domain:   Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             Codomain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             sage: H(matrix(QQ, 3, srange(9)))
             Hecke module morphism defined by the matrix
             [0 1 2]
             [3 4 5]
             [6 7 8]
-            Domain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
+            Domain:   Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             Codomain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
 
         TESTS:
 
         Make sure that the element is created correctly when the codomain is
-        not the full module (related to :trac:`21497`)::
+        not the full module (related to :issue:`21497`)::
 
-            sage: M = ModularSymbols(Gamma0(3),weight=22,sign=1)
+            sage: M = ModularSymbols(Gamma0(3), weight=22, sign=1)
             sage: S = M.cuspidal_subspace()
             sage: H = S.Hom(S)
             sage: H(S.gens())
@@ -133,7 +139,7 @@ class HeckeModuleHomspace(HomsetWithBase):
             [0 0 0 1 0 0]
             [0 0 0 0 1 0]
             [0 0 0 0 0 1]
-            Domain: Modular Symbols subspace of dimension 6 of Modular Symbols space ...
+            Domain:   Modular Symbols subspace of dimension 6 of Modular Symbols space ...
             Codomain: Modular Symbols subspace of dimension 6 of Modular Symbols space ...
 
             sage: H.zero() in H
@@ -182,13 +188,14 @@ class HeckeModuleHomspace(HomsetWithBase):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.flint
             sage: M = ModularSymbols(Gamma0(2), weight=12, sign=1)
             sage: S = M.cuspidal_subspace()
             sage: S.Hom(S).an_element()
             Hecke module morphism defined by the matrix
             [      260 -2108/135]
             [     4860      -284]
-            Domain: Modular Symbols subspace of dimension 2 of Modular Symbols space ...
+            Domain:   Modular Symbols subspace of dimension 2 of Modular Symbols space ...
             Codomain: Modular Symbols subspace of dimension 2 of Modular Symbols space ...
         """
         if self.domain() != self.codomain():

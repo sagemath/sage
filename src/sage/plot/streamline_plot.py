@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Streamline plots
 """
@@ -55,7 +56,6 @@ class StreamlinePlot(GraphicPrimitive):
             sage: x, y = var('x y')
             sage: P = streamline_plot((sin(x), cos(y)), (x,-3,3), (y,-3,3))
             sage: Q = loads(dumps(P))
-
         """
         self.xpos_array = xpos_array
         self.ypos_array = ypos_array
@@ -65,11 +65,14 @@ class StreamlinePlot(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data.
+        Return a dictionary with the bounding box data.
 
         EXAMPLES::
 
             sage: x, y = var('x y')
+            sage: import numpy  # to ensure numpy 2.0 compatibility
+            sage: if int(numpy.version.short_version[0]) > 1:
+            ....:     numpy.set_printoptions(legacy="1.25")
             sage: d = streamline_plot((.01*x, x+y), (x,10,20), (y,10,20))[0].get_minmax_data()
             sage: d['xmin']
             10.0
@@ -81,7 +84,7 @@ class StreamlinePlot(GraphicPrimitive):
 
     def _allowed_options(self):
         """
-        Returns a dictionary with allowed options for StreamlinePlot.
+        Return a dictionary with allowed options for ``StreamlinePlot``.
 
         EXAMPLES::
 
@@ -123,7 +126,6 @@ class StreamlinePlot(GraphicPrimitive):
                 zorder         The layer level in which to draw
             <BLANKLINE>
             20
-
         """
         return "StreamlinePlot defined by a {} x {} vector grid".format(
                self._options['plot_points'], self._options['plot_points'])
@@ -199,7 +201,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
 
     We increase the density of the plot::
 
-        sage: streamline_plot((y, (cos(x)-2) * sin(x)), (x,-pi,pi), (y,-pi,pi), density=2)
+        sage: streamline_plot((y, (cos(x)-2) * sin(x)),
+        ....:                 (x,-pi,pi), (y,-pi,pi), density=2)
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -211,7 +214,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
     We ignore function values that are infinite or NaN::
 
         sage: x, y = var('x y')
-        sage: streamline_plot((-x/sqrt(x^2+y^2), -y/sqrt(x^2+y^2)), (x,-10,10), (y,-10,10))
+        sage: streamline_plot((-x/sqrt(x^2+y^2), -y/sqrt(x^2+y^2)),
+        ....:                 (x,-10,10), (y,-10,10))
         Graphics object consisting of 1 graphics primitive
 
     .. PLOT::
@@ -225,7 +229,7 @@ def streamline_plot(f_g, xrange, yrange, **options):
 
         sage: streamline_plot((x, y), (x,-2,2), (y,-2,2), xmax=10)
         Graphics object consisting of 1 graphics primitive
-        sage: streamline_plot((x, y), (x,-2,2), (y,-2,2)).show(xmax=10) # These are equivalent
+        sage: streamline_plot((x, y), (x,-2,2), (y,-2,2)).show(xmax=10)  # These are equivalent
 
     .. PLOT::
 
@@ -248,7 +252,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
     We choose some particular points the streamlines pass through::
 
         sage: pts = [[1, 1], [-2, 2], [1, -3/2]]
-        sage: g = streamline_plot((x + y) / sqrt(x^2 + y^2), (x,-3,3), (y,-3,3), start_points=pts)
+        sage: g = streamline_plot((x + y) / sqrt(x^2 + y^2),
+        ....:                     (x,-3,3), (y,-3,3), start_points=pts)
         sage: g += point(pts, color='red')
         sage: g
         Graphics object consisting of 2 graphics primitives
@@ -266,7 +271,6 @@ def streamline_plot(f_g, xrange, yrange, **options):
         Streamlines currently pass close to ``start_points`` but do
         not necessarily pass directly through them. That is part of
         the behavior of matplotlib, not an error on your part.
-
     """
     # Parse the function input
     if isinstance(f_g, (list, tuple)):
@@ -292,9 +296,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
     else:
         options['density'] = float(options['density'])
 
-    xpos_array, ypos_array, xvec_array, yvec_array = [], [], [], []
-    for x in xsrange(*ranges[0], include_endpoint=True):
-        xpos_array.append(x)
+    ypos_array, xvec_array, yvec_array = [], [], []
+    xpos_array = list(xsrange(*ranges[0], include_endpoint=True))
     for y in xsrange(*ranges[1], include_endpoint=True):
         ypos_array.append(y)
         xvec_row, yvec_row = [], []

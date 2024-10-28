@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Finite fields
 
@@ -8,11 +8,11 @@ Sage for several sizes of primes `p`. These implementations
 are
 
 
--  ``sage.rings.finite_rings.integer_mod.IntegerMod_int``,
+- ``sage.rings.finite_rings.integer_mod.IntegerMod_int``,
 
--  ``sage.rings.finite_rings.integer_mod.IntegerMod_int64``, and
+- ``sage.rings.finite_rings.integer_mod.IntegerMod_int64``, and
 
--  ``sage.rings.finite_rings.integer_mod.IntegerMod_gmp``.
+- ``sage.rings.finite_rings.integer_mod.IntegerMod_gmp``.
 
 
 Small extension fields of cardinality `< 2^{16}` are
@@ -73,7 +73,7 @@ EXAMPLES::
 
 ::
 
-    sage: k = GF(5^2,'c'); type(k)
+    sage: k = GF(5^2,'c'); type(k)                                                      # needs sage.libs.linbox
     <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
 
 One can also give the cardinality `q=p^n` as the tuple `(p,n)`::
@@ -83,7 +83,7 @@ One can also give the cardinality `q=p^n` as the tuple `(p,n)`::
 
 ::
 
-    sage: k = GF(2^16,'c'); type(k)
+    sage: k = GF(2^16,'c'); type(k)                                                     # needs sage.libs.ntl
     <class 'sage.rings.finite_rings.finite_field_ntl_gf2e.FiniteField_ntl_gf2e_with_category'>
 
 ::
@@ -125,6 +125,7 @@ We output the base rings of several finite fields.
 
 ::
 
+    sage: # needs sage.libs.linbox
     sage: k = GF(9,'alpha'); type(k)
     <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
     sage: k.base_ring()
@@ -189,6 +190,12 @@ try:
 except ImportError:
     FiniteField_givaro = None
 
+try:
+    from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
+except ImportError:
+    FiniteField_ntl_gf2e = None
+
+
 from sage.structure.factory import UniqueFactory
 
 
@@ -222,16 +229,15 @@ class FiniteFieldFactory(UniqueFactory):
     - ``impl`` -- (optional) a string specifying the implementation of
       the finite field. Possible values are:
 
-      - ``'modn'`` -- ring of integers modulo `p` (only for prime
-        fields).
+      - ``'modn'`` -- ring of integers modulo `p` (only for prime fields)
 
       - ``'givaro'`` -- Givaro, which uses Zech logs (only for fields
-        of at most 65521 elements).
+        of at most 65521 elements)
 
-      - ``'ntl'`` -- NTL using GF2X (only in characteristic 2).
+      - ``'ntl'`` -- NTL using GF2X (only in characteristic 2)
 
       - ``'pari'`` or ``'pari_ffelt'`` -- PARI's ``FFELT`` type (only
-        for extension fields).
+        for extension fields)
 
     - ``elem_cache`` -- (default: order < 500) cache all elements to
       avoid creation time; ignored unless ``impl='givaro'``
@@ -251,8 +257,8 @@ class FiniteFieldFactory(UniqueFactory):
     - ``check_irreducible`` -- verify that the polynomial modulus is
       irreducible
 
-    - ``proof`` -- bool (default: ``True``): if ``True``, use provable
-      primality test; otherwise only use pseudoprimality test.
+    - ``proof`` -- boolean (default: ``True``); if ``True``, use provable
+      primality test; otherwise only use pseudoprimality test
 
     ALIAS: You can also use ``GF`` instead of ``FiniteField`` -- they
     are identical.
@@ -272,7 +278,7 @@ class FiniteFieldFactory(UniqueFactory):
     .. NOTE::
 
         Magma only supports ``proof=False`` for making finite fields,
-        so falsely appears to be faster than Sage -- see :trac:`10975`.
+        so falsely appears to be faster than Sage -- see :issue:`10975`.
 
     ::
 
@@ -297,7 +303,7 @@ class FiniteFieldFactory(UniqueFactory):
         7105427357601001858711242675781
         sage: a.is_square()
         True
-        sage: K.<b> = GF(5^45, modulus="primitive")
+        sage: K.<b> = GF(5^45, modulus='primitive')
         sage: b.multiplicative_order()
         28421709430404007434844970703124
 
@@ -351,7 +357,7 @@ class FiniteFieldFactory(UniqueFactory):
     change how Sage computes in this field, but it will change the
     result of the :meth:`modulus` and :meth:`gen` methods::
 
-        sage: k.<a> = GF(5, modulus="primitive")
+        sage: k.<a> = GF(5, modulus='primitive')
         sage: k.modulus()
         x + 3
         sage: a
@@ -437,13 +443,13 @@ class FiniteFieldFactory(UniqueFactory):
     Using pseudo-Conway polynomials is slow for highly
     composite extension degrees::
 
-        sage: k = GF(3^120) # long time -- about 3 seconds
-        sage: GF(3^40).gen().minimal_polynomial()(k.gen()^((3^120-1)/(3^40-1))) # long time because of previous line
+        sage: k = GF(3^120)  # long time (about 3 seconds)
+        sage: GF(3^40).gen().minimal_polynomial()(k.gen()^((3^120-1)/(3^40-1)))  # long time (because of previous line)
         0
 
-    Before :trac:`17569`, the boolean keyword argument ``conway``
+    Before :issue:`17569`, the boolean keyword argument ``conway``
     was required when creating finite fields without a variable
-    name.  This keyword argument is now removed (:trac:`21433`).
+    name.  This keyword argument is now removed (:issue:`21433`).
     You can still pass in ``prefix`` as an argument, which has the
     effect of changing the variable name of the algebraic closure::
 
@@ -456,15 +462,15 @@ class FiniteFieldFactory(UniqueFactory):
 
     TESTS:
 
-    Check that :trac:`16934` has been fixed::
+    Check that :issue:`16934` has been fixed::
 
-        sage: k1.<a> = GF(17^14, impl="pari")
+        sage: k1.<a> = GF(17^14, impl='pari')
         sage: _ = a/2
-        sage: k2.<a> = GF(17^14, impl="pari")
+        sage: k2.<a> = GF(17^14, impl='pari')
         sage: k1 is k2
         True
 
-    Check that :trac:`21433` has been fixed::
+    Check that :issue:`21433` has been fixed::
 
         sage: K = GF(5^2)
         sage: L = GF(5^4)
@@ -472,12 +478,12 @@ class FiniteFieldFactory(UniqueFactory):
         sage: pushout(K,L) is L
         True
 
-    Check that :trac:`25182` has been fixed::
+    Check that :issue:`25182` has been fixed::
 
         sage: GF(next_prime(2^63)^6)
         Finite Field in z6 of size 9223372036854775837^6
 
-    Check that :trac:`31547` has been fixed::
+    Check that :issue:`31547` has been fixed::
 
         sage: q=2**152
         sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')
@@ -502,12 +508,12 @@ class FiniteFieldFactory(UniqueFactory):
         """
         EXAMPLES::
 
-            sage: GF.create_key_and_extra_args(9, 'a')
+            sage: GF.create_key_and_extra_args(9, 'a')                                  # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
         The order `q` can also be given as a pair `(p,n)`::
 
-            sage: GF.create_key_and_extra_args((3, 2), 'a')
+            sage: GF.create_key_and_extra_args((3, 2), 'a')                             # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
         We do not take invalid keyword arguments and raise a value error
@@ -521,28 +527,28 @@ class FiniteFieldFactory(UniqueFactory):
         Moreover, ``repr`` and ``elem_cache`` are ignored when not
         using givaro::
 
-            sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', repr='poly')
+            sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', repr='poly')        # needs sage.libs.ntl
             ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
-            sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', elem_cache=False)
+            sage: GF.create_key_and_extra_args(16, 'a', impl='ntl', elem_cache=False)   # needs sage.libs.ntl
             ((16, ('a',), x^4 + x + 1, 'ntl', 2, 4, True, None, None, None, True, True), {})
-            sage: GF(16, impl='ntl') is GF(16, impl='ntl', repr='foo')
+            sage: GF(16, impl='ntl') is GF(16, impl='ntl', repr='foo')                  # needs sage.libs.ntl
             True
 
         We handle extra arguments for the givaro finite field and
         create unique objects for their defaults::
 
-            sage: GF(25, impl='givaro') is GF(25, impl='givaro', repr='poly')
+            sage: GF(25, impl='givaro') is GF(25, impl='givaro', repr='poly')           # needs sage.libs.linbox
             True
-            sage: GF(25, impl='givaro') is GF(25, impl='givaro', elem_cache=True)
+            sage: GF(25, impl='givaro') is GF(25, impl='givaro', elem_cache=True)       # needs sage.libs.linbox
             True
-            sage: GF(625, impl='givaro') is GF(625, impl='givaro', elem_cache=False)
+            sage: GF(625, impl='givaro') is GF(625, impl='givaro', elem_cache=False)    # needs sage.libs.linbox
             True
 
         We explicitly take ``structure``, ``implementation`` and ``prec`` attributes
         for compatibility with :class:`~sage.categories.pushout.AlgebraicExtensionFunctor`
-        but we ignore them as they are not used, see :trac:`21433`::
+        but we ignore them as they are not used, see :issue:`21433`::
 
-            sage: GF.create_key_and_extra_args(9, 'a', structure=None)
+            sage: GF.create_key_and_extra_args(9, 'a', structure=None)                  # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})
 
         TESTS::
@@ -619,9 +625,9 @@ class FiniteFieldFactory(UniqueFactory):
                 name = normalize_names(1, name)
 
                 if impl is None:
-                    if order < zech_log_bound:
+                    if order < zech_log_bound and FiniteField_givaro is not None:
                         impl = 'givaro'
-                    elif p == 2:
+                    elif p == 2 and FiniteField_ntl_gf2e is not None:
                         impl = 'ntl'
                     else:
                         impl = 'pari_ffelt'
@@ -678,8 +684,8 @@ class FiniteFieldFactory(UniqueFactory):
         We try to create finite fields with various implementations::
 
             sage: k = GF(2, impl='modn')
-            sage: k = GF(2, impl='givaro')
-            sage: k = GF(2, impl='ntl')
+            sage: k = GF(2, impl='givaro')                                              # needs sage.libs.linbox
+            sage: k = GF(2, impl='ntl')                                                 # needs sage.libs.ntl
             sage: k = GF(2, impl='pari')
             Traceback (most recent call last):
             ...
@@ -692,18 +698,18 @@ class FiniteFieldFactory(UniqueFactory):
             Traceback (most recent call last):
             ...
             ValueError: the 'modn' implementation requires a prime order
-            sage: k.<a> = GF(2^15, impl='givaro')
-            sage: k.<a> = GF(2^15, impl='ntl')
+            sage: k.<a> = GF(2^15, impl='givaro')                                       # needs sage.libs.linbox
+            sage: k.<a> = GF(2^15, impl='ntl')                                          # needs sage.libs.ntl
             sage: k.<a> = GF(2^15, impl='pari')
             sage: k.<a> = GF(3^60, impl='modn')
             Traceback (most recent call last):
             ...
             ValueError: the 'modn' implementation requires a prime order
-            sage: k.<a> = GF(3^60, impl='givaro')
+            sage: k.<a> = GF(3^60, impl='givaro')                                       # needs sage.libs.linbox
             Traceback (most recent call last):
             ...
             ValueError: q must be < 2^16
-            sage: k.<a> = GF(3^60, impl='ntl')
+            sage: k.<a> = GF(3^60, impl='ntl')                                          # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             ValueError: q must be a 2-power
@@ -772,7 +778,6 @@ class FiniteFieldFactory(UniqueFactory):
                 if impl == 'givaro':
                     K = FiniteField_givaro(order, name, modulus, repr, elem_cache)
                 elif impl == 'ntl':
-                    from .finite_field_ntl_gf2e import FiniteField_ntl_gf2e
                     K = FiniteField_ntl_gf2e(order, name, modulus)
                 elif impl == 'pari_ffelt' or impl == 'pari':
                     from .finite_field_pari_ffelt import FiniteField_pari_ffelt

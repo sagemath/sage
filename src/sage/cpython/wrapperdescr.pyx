@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Slot wrappers
 
@@ -30,7 +31,7 @@ Pure Python classes have normal methods, not slot wrappers::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from .string import bytes_to_str
+from sage.cpython.string import bytes_to_str
 
 
 def wrapperdescr_call(slotwrapper, self, *args, **kwds):
@@ -43,13 +44,13 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
 
     INPUT:
 
-    - ``slotwrapper`` -- a slot wrapper (for example ``int.__add__``).
+    - ``slotwrapper`` -- a slot wrapper (for example ``int.__add__``)
 
     - ``self`` -- the first positional argument. Normally, this should
       be of the correct type (an ``int`` when calling ``int.__add__``).
       However, this check is skipped: you can pass an arbitrary object.
 
-    - ``*args``, ``**kwds`` -- further arguments.
+    - ``*args``, ``**kwds`` -- further arguments
 
     .. WARNING::
 
@@ -68,8 +69,9 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
         54
         sage: wrapperdescr_call(Element.__mul__, 7/5, 9)
         63/5
-        sage: from sage.numerical.mip import MixedIntegerLinearProgram
-        sage: wrapperdescr_call(type.__call__, MixedIntegerLinearProgram, maximization=False)
+        sage: from sage.numerical.mip import MixedIntegerLinearProgram                  # needs sage.numerical.mip
+        sage: wrapperdescr_call(type.__call__,                                          # needs sage.numerical.mip
+        ....:                   MixedIntegerLinearProgram, maximization=False)
         Mixed Integer Program (no objective, 0 variables, 0 constraints)
 
     TESTS::

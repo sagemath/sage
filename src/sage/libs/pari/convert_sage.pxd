@@ -11,5 +11,5 @@ cpdef Gen new_gen_from_rational(Rational self)
 
 cpdef pari_is_prime(Integer p)
 cpdef pari_is_prime_power(Integer q, bint get_data)
-cpdef unsigned long pari_maxprime()
+cpdef unsigned long pari_maxprime() noexcept
 cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=*)

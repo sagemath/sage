@@ -1,6 +1,23 @@
---- a/extensions/adj2d/truthbytop/BOUNDARY2D.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/adj2d/truthbytop/BOUNDARY2D.c	2018-08-29 20:07:50.511232206 -0600
-@@ -106,7 +106,7 @@ Step6: /* Split cell list by dimension.
+Description: Add parentheses to disambiguate mixed boolean operators.
+Origin: https://src.fedoraproject.org/rpms/qepcad-B/blob/60ceecd/f/qepcad-B-parens.patch
+Forwarded: https://github.com/chriswestbrown/qepcad/pull/2
+Last-Update: 2021-06-23
+
+--- a/extensions/adj2d/truthbytop/BOUNDARY2D.c
++++ b/extensions/adj2d/truthbytop/BOUNDARY2D.c
+@@ -38,9 +38,9 @@
+       while(S_c != NIL && RED(S_c) != NIL)
+       {
+ 	Word c1 = FIRST(S_c), c2 = SECOND(S_c), c3 = THIRD(S_c);
+-	if (LELTI(c1,TRUTH) == TRUE && LELTI(c3,TRUTH) == FALSE
++	if ((LELTI(c1,TRUTH) == TRUE && LELTI(c3,TRUTH) == FALSE)
+ 	    ||
+-	    LELTI(c1,TRUTH) == FALSE && LELTI(c3,TRUTH) == TRUE)
++	    (LELTI(c1,TRUTH) == FALSE && LELTI(c3,TRUTH) == TRUE))
+ 	{
+ 	  SLELTI(c2,TRUTH,TRUE);
+ 	  SLELTI(c2,HOWTV,TOPINF);
+@@ -106,7 +106,7 @@
         tc++;
       else
         fc++; }
@@ -9,9 +26,9 @@
       GNEWLABEL(v,TRUE,G);
     else
       GNEWLABEL(v,FALSE,G); }
---- a/extensions/lift2D/IBPRRIOAP.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/lift2D/IBPRRIOAP.c	2018-08-29 20:07:50.510232207 -0600
-@@ -95,7 +95,7 @@ Step3: /* Isolate the roots of B(alpha,y
+--- a/extensions/lift2D/IBPRRIOAP.c
++++ b/extensions/lift2D/IBPRRIOAP.c
+@@ -95,7 +95,7 @@
  	  goto Return; }
  	
  	/* get trend of first root */
@@ -20,9 +37,9 @@
  	  t1 = -1;
  	else
  	  t1 = 1;
---- a/extensions/lift2D/modIBPRRIOAP.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/extensions/lift2D/modIBPRRIOAP.c	2018-08-29 20:07:50.510232207 -0600
-@@ -97,7 +97,7 @@ Step3: /* Isolate the roots of B(alpha,y
+--- a/extensions/lift2D/modIBPRRIOAP.c
++++ b/extensions/lift2D/modIBPRRIOAP.c
+@@ -97,7 +97,7 @@
  	  goto Return; }
  	
  	/* get trend of first root */
@@ -31,9 +48,9 @@
  	  t1 = -1;
  	else
  	  t1 = 1;
---- a/source/db/convenientstreams.h.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/db/convenientstreams.h	2018-08-29 20:07:50.511232206 -0600
-@@ -31,7 +31,7 @@ public:
+--- a/source/db/convenientstreams.h
++++ b/source/db/convenientstreams.h
+@@ -31,7 +31,7 @@
      string s = "";
      char c = in.get(); 
      if (opt == skipleadingws) 
@@ -42,20 +59,29 @@
      // States  : 0 = normal, 1 = in comment, 2 = just read a backslash
      int state = 0;
      do {
---- a/source/db/SINGULAR.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/db/SINGULAR.c	2018-08-29 20:07:50.511232206 -0600
-@@ -58,7 +58,7 @@ void SingularServer::reportStats(ostream
+@@ -44,7 +44,7 @@
+       if (state == 0 && c == '\\') { state = 2; continue; }
+       s += c;
+       state = 0;
+-    }while(c = in.get());
++    }while((c = in.get()));
+     str(s);
+   }
+ };
+--- a/source/db/SINGULAR.c
++++ b/source/db/SINGULAR.c
+@@ -58,7 +58,7 @@
  
  char peekNonWS(istream &in) 
  { 
 -  char c; while((c = in.peek()) && c == ' ' || c == '\t' || c == '\n') in.get(); return c; 
-+  char c; while(c = in.peek() && (c == ' ' || c == '\t' || c == '\n')) in.get(); return c; 
++  char c; while((c = in.peek()) && (c == ' ' || c == '\t' || c == '\n')) in.get(); return c; 
  }
  
  
---- a/source/proj/GROUPSAMEPJ.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/proj/GROUPSAMEPJ.c	2018-08-29 20:07:50.511232206 -0600
-@@ -46,7 +46,7 @@ BDigit PRJPNTEQUAL(Word A, Word B)
+--- a/source/proj/GROUPSAMEPJ.c
++++ b/source/proj/GROUPSAMEPJ.c
+@@ -46,7 +46,7 @@
      Word KR = LIST2(SECOND(aK),LIST2(1,1));
      Word sL = AFSIGN(aM,aI,AFPEMV(1,aM,G,KL));
      Word sR = AFSIGN(aM,aI,AFPEMV(1,aM,G,KR));
@@ -64,7 +90,7 @@
    }
  
    /* One primitive, the other not */
-@@ -75,10 +75,10 @@ Step1: /* Group. */
+@@ -75,10 +75,10 @@
  	 {
             ADV(Jt,&J2,&Jt);
             Jt2 = LELTI(J2,PO_POLY);
@@ -79,9 +105,9 @@
  	   {
               SLELTI(J2,PO_PARENT,CONC(LELTI(J2,PO_PARENT),LELTI(J1,PO_PARENT)));
               t = 1;
---- a/source/proj/PROJMCECmod.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/proj/PROJMCECmod.c	2018-08-29 20:07:50.511232206 -0600
-@@ -67,7 +67,7 @@ Step1: /* Obtain coefficients. */
+--- a/source/proj/PROJMCECmod.c
++++ b/source/proj/PROJMCECmod.c
+@@ -67,7 +67,7 @@
  	   t = 1; }
  	 
  	 /* If r = 2 OR r-1 is in free variable space, the leading coefficient is always enough! */
@@ -90,7 +116,7 @@
  	     || (experimentalExtensionFlag && qfrCheckNonNullified(r,Ap1,GVNA.W,GVNQFF.W,GVVL.W))
  	     )
  	   t = 0;
-@@ -101,7 +101,7 @@ Step1: /* Obtain coefficients. */
+@@ -101,7 +101,7 @@
  	     tf = tf || (Q == FULLDE || Q == FULLDA);
  	     
  	     /* Test 3: in free variable space when the PCMZERROR option is used */
@@ -99,9 +125,9 @@
  
  	     /* Test 4: has no common zero with the system of all other coefficients */
  	     if (!tf)
---- a/source/proj/PROJMCmod.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/proj/PROJMCmod.c	2018-08-29 20:07:50.511232206 -0600
-@@ -57,7 +57,7 @@ Step1: /* Obtain coefficients. */
+--- a/source/proj/PROJMCmod.c
++++ b/source/proj/PROJMCmod.c
+@@ -57,7 +57,7 @@
  	   t = 1; }
  	 
  	 /* If r = 2 OR r-1 is in free variable space, the leading coefficient is always enough! */
@@ -110,7 +136,7 @@
  	     || (experimentalExtensionFlag && qfrCheckNonNullified(r,Ap1,GVNA.W,GVNQFF.W,GVVL.W))
  	     )
  	   t = 0;
-@@ -91,7 +91,7 @@ Step1: /* Obtain coefficients. */
+@@ -91,7 +91,7 @@
  	     tf = tf || (Q == FULLDE || Q == FULLDA);
  	     
  	     /* Test 3: in free variable space when the PCMZERROR option is used */
@@ -119,9 +145,9 @@
  
  	     /* Test 4: has no common zero with the system of all other coefficients */
  	     if (!tf)
---- a/source/ticad/INITPCAD.c.orig	2018-01-25 14:25:22.000000000 -0700
-+++ b/source/ticad/INITPCAD.c	2018-08-29 20:07:50.511232206 -0600
-@@ -14,7 +14,7 @@ Word QepcadCls::INITPCAD()
+--- a/source/ticad/INITPCAD.c
++++ b/source/ticad/INITPCAD.c
+@@ -14,7 +14,7 @@
         Word D, tv;
  
  Step0: /* Determine truth value! */

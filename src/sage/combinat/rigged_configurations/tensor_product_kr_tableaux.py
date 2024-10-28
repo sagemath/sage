@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Tensor Product of Kirillov-Reshetikhin Tableaux
 
@@ -132,8 +133,7 @@ class HighestWeightTensorKRT(UniqueRepresentation):
         if self._cache is None:
             self._cache = tuple([x.to_tensor_product_of_kirillov_reshetikhin_tableaux()
                                  for x in self.tp_krt.rigged_configurations().module_generators])
-        for x in self._cache:
-            yield x
+        yield from self._cache
 
     def __repr__(self):
         """
@@ -295,7 +295,7 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
 
         # Standardize B input into a tuple of tuples
         B = tuple(tuple(dim) for dim in B)
-        return super(TensorProductOfKirillovReshetikhinTableaux, cls).__classcall__(cls, cartan_type, B)
+        return super().__classcall__(cls, cartan_type, B)
 
     def __init__(self, cartan_type, B):
         r"""
@@ -492,7 +492,7 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
                 elif isinstance(B, KirillovReshetikhinTableaux):
                     dims.append([B._r, B._s])
             return TensorProductOfKirillovReshetikhinTableaux(ct, dims)
-        return super(TensorProductOfKirillovReshetikhinTableaux, self).tensor(*crystals, **options)
+        return super().tensor(*crystals, **options)
 
 
 TensorProductOfKirillovReshetikhinTableaux.Element = TensorProductOfKirillovReshetikhinTableauxElement

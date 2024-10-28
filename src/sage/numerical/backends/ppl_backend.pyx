@@ -1,3 +1,4 @@
+# sage.doctest: optional - pplpy
 """
 PPL Backend
 
@@ -6,7 +7,7 @@ AUTHORS:
 - Risan (2012-02): initial implementation
 
 - Jeroen Demeyer (2014-08-04) allow rational coefficients for
-  constraints and objective function (:trac:`16755`)
+  constraints and objective function (:issue:`16755`)
 """
 
 # ****************************************************************************
@@ -23,12 +24,11 @@ from sage.numerical.mip import MIPSolverException
 from ppl import MIP_Problem, Variable, Variables_Set, Linear_Expression
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from .generic_backend cimport GenericBackend
+from sage.numerical.backends.generic_backend cimport GenericBackend
 from copy import copy
 
 
 cdef class PPLBackend(GenericBackend):
-
     """
     MIP Backend that uses the exact MIP solver from the Parma Polyhedra Library.
     """
@@ -51,7 +51,7 @@ cdef class PPLBackend(GenericBackend):
 
     def __cinit__(self, maximization = True, base_ring = None):
         """
-        Constructor
+        Constructor.
 
         EXAMPLES::
 
@@ -61,7 +61,7 @@ cdef class PPLBackend(GenericBackend):
 
         Raise an error if a ``base_ring`` is requested that is not supported::
 
-            sage: p = MixedIntegerLinearProgram(solver = "PPL", base_ring=AA)
+            sage: p = MixedIntegerLinearProgram(solver='PPL', base_ring=AA)             # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: The PPL backend only supports rational data.
@@ -99,7 +99,7 @@ cdef class PPLBackend(GenericBackend):
 
     cpdef __copy__(self):
         """
-        Returns a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -137,7 +137,7 @@ cdef class PPLBackend(GenericBackend):
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver="PPL")
+            sage: p = get_solver(solver='PPL')
             sage: p.base_ring()
             Rational Field
             sage: type(p.zero())
@@ -207,7 +207,7 @@ cdef class PPLBackend(GenericBackend):
 
         - ``e`` -- a linear expression (type ``Linear_Expression``)
 
-        - ``denom`` -- a positive integer
+        - ``denom`` -- positive integer
 
         - ``lower``, ``upper`` -- a rational number or ``None``, where
           ``None`` means that there is no constraint
@@ -216,7 +216,7 @@ cdef class PPLBackend(GenericBackend):
 
         Create a linear system with only equalities as constraints::
 
-            sage: p = MixedIntegerLinearProgram(solver="PPL")
+            sage: p = MixedIntegerLinearProgram(solver='PPL')
             sage: x = p.new_variable(nonnegative=False)
             sage: n = 40
             sage: v = random_vector(QQ, n)
@@ -227,7 +227,6 @@ cdef class PPLBackend(GenericBackend):
             ....:     p.add_constraint(lhs == rhs)
             sage: p.solve()  # long time
             0
-
         """
         if lower == upper:
             if lower is not None:
@@ -256,17 +255,17 @@ cdef class PPLBackend(GenericBackend):
 
         - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``)
 
-        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``)
 
         - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0)
 
-        - ``name`` -- an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``)
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
@@ -327,17 +326,17 @@ cdef class PPLBackend(GenericBackend):
 
         - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` -- ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``)
 
-        - ``integer`` -- ``True`` if the variable is integral (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``)
 
-        - ``obj`` -- (optional) coefficient of all variables in the objective function (default: 0)
+        - ``obj`` -- coefficient of all variables in the objective function (default: 0)
 
-        - ``names`` -- optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
-        OUTPUT: The index of the variable created last.
+        OUTPUT: the index of the variable created last
 
         EXAMPLES::
 
@@ -383,9 +382,9 @@ cdef class PPLBackend(GenericBackend):
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``vtype`` (integer) :
+        - ``vtype`` -- integer:
 
             *  1  Integer
             *  0  Binary
@@ -436,7 +435,7 @@ cdef class PPLBackend(GenericBackend):
 
         INPUT:
 
-        - ``sense`` (integer) :
+        - ``sense`` -- integer:
 
             * +1 => Maximization
             * -1 => Minimization
@@ -463,9 +462,9 @@ cdef class PPLBackend(GenericBackend):
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``coeff`` (integer) -- its coefficient
+        - ``coeff`` -- integer; its coefficient
 
         EXAMPLES::
 
@@ -490,12 +489,12 @@ cdef class PPLBackend(GenericBackend):
 
         INPUT:
 
-        - ``coeff`` -- a list of real values, whose ith element is the
-          coefficient of the ith variable in the objective function.
+        - ``coeff`` -- list of real values, whose i-th element is the
+          coefficient of the i-th variable in the objective function
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(solver="PPL")
+            sage: p = MixedIntegerLinearProgram(solver='PPL')
             sage: x = p.new_variable(nonnegative=True)
             sage: p.add_constraint(x[0]*5 + x[1]/11 <= 6)
             sage: p.set_objective(x[0])
@@ -555,7 +554,7 @@ cdef class PPLBackend(GenericBackend):
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(solver="PPL")
+            sage: p = MixedIntegerLinearProgram(solver='PPL')
             sage: x = p.new_variable(nonnegative=True)
             sage: p.add_constraint(x[0]/2 + x[1]/3 <= 2/5)
             sage: p.set_objective(x[1])
@@ -599,15 +598,15 @@ cdef class PPLBackend(GenericBackend):
 
         INPUT:
 
-        - ``indices`` (list of integers) -- this list contains the
+        - ``indices`` -- list of integers; this list contains the
           indices of the constraints in which the variable's
           coefficient is nonzero
 
-        - ``coeffs`` (list of real values) -- associates a coefficient
+        - ``coeffs`` -- list of real values; associates a coefficient
           to the variable in each of the constraints in which it
-          appears. Namely, the ith entry of ``coeffs`` corresponds to
+          appears. Namely, the i-th entry of ``coeffs`` corresponds to
           the coefficient of the variable in the constraint
-          represented by the ith entry in ``indices``.
+          represented by the i-th entry in ``indices``.
 
         .. NOTE::
 
@@ -643,7 +642,7 @@ cdef class PPLBackend(GenericBackend):
 
         INPUT:
 
-        - ``number`` (integer) -- the number of constraints to add.
+        - ``number`` -- integer; the number of constraints to add
 
         - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
@@ -737,7 +736,7 @@ cdef class PPLBackend(GenericBackend):
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(solver="PPL")
+            sage: p = MixedIntegerLinearProgram(solver='PPL')
             sage: x = p.new_variable(nonnegative=True)
             sage: p.add_constraint(5/13*x[0] + x[1]/2 == 8/7)
             sage: p.set_objective(5/13*x[0] + x[1]/2)
@@ -790,7 +789,7 @@ cdef class PPLBackend(GenericBackend):
         g = self.mip.optimizing_point()
         return Integer(g.coefficient(Variable(variable))) / Integer(g.divisor())
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
@@ -807,7 +806,7 @@ cdef class PPLBackend(GenericBackend):
         """
         return len(self.objective_function)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
@@ -823,7 +822,7 @@ cdef class PPLBackend(GenericBackend):
         """
         return len(self.Matrix)
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
@@ -844,11 +843,11 @@ cdef class PPLBackend(GenericBackend):
 
     cpdef problem_name(self, name=None):
         """
-        Return or define the problem's name
+        Return or define the problem's name.
 
         INPUT:
 
-        - ``name`` (``str``) -- the problem's name. When set to
+        - ``name`` -- string; the problem's name. When set to
           ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
@@ -865,11 +864,11 @@ cdef class PPLBackend(GenericBackend):
 
     cpdef row(self, int i):
         """
-        Return a row
+        Return a row.
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -904,7 +903,7 @@ cdef class PPLBackend(GenericBackend):
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -932,7 +931,7 @@ cdef class PPLBackend(GenericBackend):
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id.
+        - ``index`` -- integer; the variable's id
 
         OUTPUT:
 
@@ -954,14 +953,13 @@ cdef class PPLBackend(GenericBackend):
         """
         return (self.col_lower_bound[index], self.col_upper_bound[index])
 
-
-    cpdef bint is_variable_binary(self, int index):
+    cpdef bint is_variable_binary(self, int index) noexcept:
         """
         Test whether the given variable is of binary type.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -976,13 +974,13 @@ cdef class PPLBackend(GenericBackend):
         """
         return index in self.integer_variables and self.col_bounds(index) == (0, 1)
 
-    cpdef bint is_variable_integer(self, int index):
+    cpdef bint is_variable_integer(self, int index) noexcept:
         """
         Test whether the given variable is of integer type.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -997,13 +995,13 @@ cdef class PPLBackend(GenericBackend):
         """
         return index in self.integer_variables and self.col_bounds(index) != (0, 1)
 
-    cpdef bint is_variable_continuous(self, int index):
+    cpdef bint is_variable_continuous(self, int index) noexcept:
         """
         Test whether the given variable is of continuous/real type.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
@@ -1020,11 +1018,11 @@ cdef class PPLBackend(GenericBackend):
 
     cpdef row_name(self, int index):
         """
-        Return the ``index`` th row name
+        Return the ``index``-th row name.
 
         INPUT:
 
-        - ``index`` (integer) -- the row's id
+        - ``index`` -- integer; the row's id
 
         EXAMPLES::
 
@@ -1040,14 +1038,14 @@ cdef class PPLBackend(GenericBackend):
 
     cpdef col_name(self, int index):
         """
-        Return the ``index`` th col name
+        Return the ``index``-th col name.
 
         INPUT:
 
-        - ``index`` (integer) -- the col's id
+        - ``index`` -- integer; the col's id
 
-        - ``name`` (``char *``) -- its name. When set to ``NULL``
-          (default), the method returns the current name.
+        - ``name`` -- (``char *``) its name; when set to ``NULL``
+          (default), the method returns the current name
 
         EXAMPLES::
 
@@ -1062,13 +1060,13 @@ cdef class PPLBackend(GenericBackend):
             return self.col_name_var[index]
         return "x_" + repr(index)
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
-        Return or define the upper bound on a variable
+        Return or define the upper bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not upper bound. When set to ``False``
@@ -1094,13 +1092,13 @@ cdef class PPLBackend(GenericBackend):
         else:
             return self.col_upper_bound[index]
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
-        Return or define the lower bound on a variable
+        Return or define the lower bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not lower bound. When set to ``False``

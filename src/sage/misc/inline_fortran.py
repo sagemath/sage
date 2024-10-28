@@ -65,8 +65,8 @@ class InlineFortran:
     def __init__(self, globals=None):
         # globals=None means: use user globals from REPL
         self.globs = globals
-        self.library_paths=[]
-        self.libraries=[]
+        self.library_paths = []
+        self.libraries = []
         self.verbose = False
 
     def __repr__(self):
@@ -77,20 +77,20 @@ class InlineFortran:
 
     def eval(self, x, globals=None, locals=None):
         """
-        Compile fortran code ``x`` and adds the functions in it to
-        ``globals``.
+        Compile fortran code ``x`` and adds the functions in it to ``globals``.
 
         INPUT:
 
-        - ``x`` -- Fortran code
+        - ``x`` -- fortran code
 
-        - ``globals`` -- a dict to which to add the functions from the
+        - ``globals`` -- dictionary to which to add the functions from the
           fortran module
 
         - ``locals`` -- ignored
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: code = '''
             ....: C FILE: FIB1.F
             ....:       SUBROUTINE FIB(A,N)
@@ -190,15 +190,11 @@ class InlineFortran:
         finally:
             os.chdir(old_cwd)
 
-            if sys.platform != 'cygwin':
-                # Do not delete temporary DLLs on Cygwin; this will cause
-                # future forks of this process to fail.  Instead temporary DLLs
-                # will be cleaned up upon process exit
-                try:
-                    shutil.rmtree(mytmpdir)
-                except OSError:
-                    # This can fail for example over NFS
-                    pass
+            try:
+                shutil.rmtree(mytmpdir)
+            except OSError:
+                # This can fail for example over NFS
+                pass
 
         for k, x in mod.__dict__.items():
             if k[0] != '_':

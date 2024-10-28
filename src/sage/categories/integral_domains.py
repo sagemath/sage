@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Integral domains
 """
@@ -19,7 +20,7 @@ lazy_import('sage.categories.fields', 'Fields')
 
 class IntegralDomains(CategoryWithAxiom):
     """
-    The category of integral domains
+    The category of integral domains.
 
     An integral domain is commutative ring with no zero divisors, or
     equivalently a commutative domain.
@@ -45,7 +46,7 @@ class IntegralDomains(CategoryWithAxiom):
         """
         EXAMPLES::
 
-            sage: GF(4, "a") in IntegralDomains()                                       # optional - sage.rings.finite_rings
+            sage: GF(4, "a") in IntegralDomains()                                       # needs sage.rings.finite_rings
             True
             sage: QQ in IntegralDomains()
             True
@@ -103,15 +104,20 @@ class IntegralDomains(CategoryWithAxiom):
 
             EXAMPLES::
 
+                sage: ZZ.is_integral_domain()
+                True
                 sage: QQ.is_integral_domain()
                 True
                 sage: Parent(QQ, category=IntegralDomains()).is_integral_domain()
                 True
 
-                sage: L.<z> = LazyLaurentSeriesRing(QQ)                                 # optional - sage.combinat
-                sage: L.is_integral_domain()                                            # optional - sage.combinat
+                sage: L.<z> = LazyLaurentSeriesRing(QQ)                                 # needs sage.combinat
+                sage: L.is_integral_domain()                                            # needs sage.combinat
                 True
-                sage: L.is_integral_domain(proof=True)                                  # optional - sage.combinat
+                sage: L.is_integral_domain(proof=True)                                  # needs sage.combinat
+                True
+
+                sage: ZZ['x'].is_integral_domain()
                 True
             """
             return True
@@ -124,7 +130,6 @@ class IntegralDomains(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: ZZ._test_fraction_field()
-
             """
             tester = self._tester(**options)
             try:

@@ -55,7 +55,7 @@ cdef class TreeIterator:
 
     def __init__(self, int vertices):
         r"""
-        Initializes an iterator over all trees with `n` vertices.
+        Initialize an iterator over all trees with `n` vertices.
 
         EXAMPLES::
 
@@ -93,7 +93,7 @@ cdef class TreeIterator:
 
     def __iter__(self):
         r"""
-        Returns an iterator over all the trees with `n` vertices.
+        Return an iterator over all the trees with `n` vertices.
 
         EXAMPLES::
 
@@ -106,7 +106,7 @@ cdef class TreeIterator:
 
     def __next__(self):
         r"""
-        Returns the next tree with `n` vertices
+        Return the next tree with `n` vertices.
 
         EXAMPLES::
 
@@ -119,7 +119,7 @@ cdef class TreeIterator:
         TESTS:
 
         This used to be broken for trees with no vertices
-        and was fixed in :trac:`13719` ::
+        and was fixed in :issue:`13719` ::
 
             sage: from sage.graphs.trees import TreeIterator
             sage: T = TreeIterator(0)
@@ -157,7 +157,7 @@ cdef class TreeIterator:
 
         return G
 
-    cdef int generate_first_level_sequence(self):
+    cdef int generate_first_level_sequence(self) noexcept:
         r"""
         Generates the level sequence representing the first tree with `n` vertices
         """
@@ -193,7 +193,7 @@ cdef class TreeIterator:
 
         return 0
 
-    cdef int generate_next_level_sequence(self):
+    cdef int generate_next_level_sequence(self) noexcept:
         r"""
         Generates the level sequence representing the next tree with `n` vertices
         """

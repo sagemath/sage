@@ -1,17 +1,17 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-environment
 """
 Temporary file handling
 
 AUTHORS:
 
 - Volker Braun, Jeroen Demeyer (2012-10-18): move these functions here
-  from sage/misc/misc.py and make them secure, see :trac:`13579`.
+  from sage/misc/misc.py and make them secure, see :issue:`13579`.
 
 - Jeroen Demeyer (2013-03-17): add :class:`atomic_write`,
-  see :trac:`14292`.
+  see :issue:`14292`.
 
 - Sebastian Oehms (2021-08-07): add :class:`atomic_dir`,
-  see :trac:`32344`
+  see :issue:`32344`
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun@stp.dias.ie>
@@ -23,17 +23,16 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import io
+import atexit
 import os
 import tempfile
-
-import atexit
+from typing import IO
 
 # Until tmp_dir() and tmp_filename() are removed, we use this directory
 # as the parent for all temporary files & directories created by them.
 # This lets us clean up after those two functions when sage exits normally
 # using an atexit hook
-TMP_DIR_FILENAME_BASE=tempfile.TemporaryDirectory()
+TMP_DIR_FILENAME_BASE = tempfile.TemporaryDirectory()
 atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 
 
@@ -41,7 +40,7 @@ atexit.register(lambda: TMP_DIR_FILENAME_BASE.cleanup())
 # temporary directory
 #################################################################
 
-def tmp_dir(name="dir_", ext=""):
+def tmp_dir(name='dir_', ext='') -> str:
     r"""
     Create and return a temporary directory in
     ``$HOME/.sage/temp/hostname/pid/``
@@ -50,9 +49,9 @@ def tmp_dir(name="dir_", ext=""):
 
     INPUT:
 
-    - ``name`` -- (default: ``"dir_"``) A prefix for the directory name.
+    - ``name`` -- (default: ``'dir_'``) a prefix for the directory name
 
-    - ``ext`` -- (default: ``""``) A suffix for the directory name.
+    - ``ext`` -- (default: ``''``) a suffix for the directory name
 
     OUTPUT:
 
@@ -84,7 +83,7 @@ def tmp_dir(name="dir_", ext=""):
 # temporary filename
 #################################################################
 
-def tmp_filename(name="tmp_", ext=""):
+def tmp_filename(name='tmp_', ext='') -> str:
     r"""
     Create and return a temporary file in
     ``$HOME/.sage/temp/hostname/pid/``
@@ -94,22 +93,20 @@ def tmp_filename(name="tmp_", ext=""):
     .. warning::
 
         If you need a particular file extension always use
-        ``tmp_filename(ext=".foo")``, this will ensure that the file
+        ``tmp_filename(ext='.foo')``, this will ensure that the file
         does not yet exist. If you were to use
         ``tmp_filename()+".foo"``, then you might overwrite an
         existing file!
 
     INPUT:
 
-    - ``name`` -- (default: ``"tmp_"``) A prefix for the file name.
+    - ``name`` -- (default: ``'tmp_'``) a prefix for the file name
 
-    - ``ext`` -- (default: ``""``) A suffix for the file name. If you
+    - ``ext`` -- (default: ``''``) a suffix for the file name. If you
       want a filename extension in the usual sense, this should start
       with a dot.
 
-    OUTPUT:
-
-    The absolute path of the temporary file created.
+    OUTPUT: the absolute path of the temporary file created
 
     EXAMPLES::
 
@@ -135,7 +132,7 @@ def tmp_filename(name="tmp_", ext=""):
 #################################################################
 # write to a temporary file and move it in place
 #################################################################
-class atomic_write():
+class atomic_write:
     """
     Write to a given file using a temporary file and then rename it
     to the target file. This renaming should be atomic on modern
@@ -150,10 +147,10 @@ class atomic_write():
 
     INPUT:
 
-    - ``target_filename`` -- the name of the file to be written.
-      Normally, the contents of this file will be overwritten.
+    - ``target_filename`` -- the name of the file to be written
+      Normally, the contents of this file will be overwritten
 
-    - ``append`` -- (boolean, default: False) if True and
+    - ``append`` -- boolean (default: ``False``); if ``True`` and
       ``target_filename`` is an existing file, then copy the current
       contents of ``target_filename`` to the temporary file when
       entering the ``with`` statement. Otherwise, the temporary file is
@@ -165,12 +162,13 @@ class atomic_write():
       mode bits of the file were changed manually). (Not to be confused with
       the file opening mode.)
 
-    - ``binary`` -- (boolean, default: True on Python 2, False on Python 3) the
-      underlying file is opened in binary mode.  If False then it is opened in
-      text mode and an encoding with which to write the file may be supplied.
+    - ``binary`` -- boolean (default: ``False``);
+      the underlying file is opened in binary mode.  If ``False`` then it is
+      opened in text mode and an encoding with which to write the file may be
+      supplied.
 
     - ``**kwargs`` -- additional keyword arguments passed to the underlying
-      `io.open` call.
+      `io.open` call
 
     EXAMPLES::
 
@@ -300,7 +298,7 @@ class atomic_write():
         False
     """
     def __init__(self, target_filename, append=False, mode=0o666,
-                 binary=None, **kwargs):
+                 binary=False, **kwargs) -> None:
         """
         TESTS::
 
@@ -321,13 +319,11 @@ class atomic_write():
         os.umask(umask)
         self.mode = mode & (~umask)
 
-        # 'binary' mode is the default on Python 2, whereas 'text' mode is the
-        # default on Python 3--this reflects consistent handling of the default
-        # str type on the two platforms
-        self.binary = False if binary is None else binary
+        # 'text' mode is the default on Python 3
+        self.binary = binary
         self.kwargs = kwargs
 
-    def __enter__(self):
+    def __enter__(self) -> IO:
         """
         Create and return a temporary file in ``self.tmpdir`` (normally
         the same directory as the target file).
@@ -335,7 +331,7 @@ class atomic_write():
         If ``self.append``, then copy the current contents of
         ``self.target`` to the temporary file.
 
-        OUTPUT: a file returned by :func:`tempfile.NamedTemporaryFile`.
+        OUTPUT: a file returned by :func:`tempfile.NamedTemporaryFile`
 
         TESTS::
 
@@ -353,7 +349,7 @@ class atomic_write():
         wmode = 'w+' + ('b' if self.binary else '')
 
         try:
-            self.tempfile = io.open(name, wmode, **self.kwargs)
+            self.tempfile = open(name, wmode, **self.kwargs)
         except Exception:
             # Some invalid arguments were passed to io.open
             os.unlink(name)
@@ -364,16 +360,16 @@ class atomic_write():
         os.chmod(name, self.mode)
         if self.append:
             try:
-                with io.open(self.target, rmode, **self.kwargs) as f:
+                with open(self.target, rmode, **self.kwargs) as f:
                     r = f.read()
-            except IOError:
+            except OSError:
                 pass
             else:
                 self.tempfile.write(r)
 
         return self.tempfile
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """
         If the ``with`` block was successful, move the temporary file
         to the target file. Otherwise, delete the temporary file.
@@ -414,7 +410,9 @@ class atomic_write():
 #################################################################
 # write to a temporary directory and move it in place
 #################################################################
-class atomic_dir():
+
+
+class atomic_dir:
     """
     Write to a given directory using a temporary directory and then rename it
     to the target directory. This is for creating a directory whose contents
@@ -427,8 +425,8 @@ class atomic_dir():
 
     INPUT:
 
-    - ``target_directory`` -- the name of the directory to be written.
-      If it exists then the previous contents will be kept.
+    - ``target_directory`` -- the name of the directory to be written;
+      if it exists then the previous contents will be kept
 
     EXAMPLES::
 
@@ -456,7 +454,7 @@ class atomic_dir():
         ....:     h.read()
         'Second'
     """
-    def __init__(self, target_directory):
+    def __init__(self, target_directory) -> None:
         r"""
         TESTS::
 
@@ -477,7 +475,7 @@ class atomic_dir():
         Create and return a temporary directory in ``self.tmpdir`` (normally
         the same directory as the target file).
 
-        OUTPUT: a directory returned by :func:`tempfile.TemporaryDirectory`.
+        OUTPUT: a directory returned by :func:`tempfile.TemporaryDirectory`
 
         TESTS::
 
@@ -491,7 +489,7 @@ class atomic_dir():
         self.tempname = os.path.abspath(tdir.name)
         return tdir
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """
         If the ``with`` block was successful, move the temporary directory
         to the target directory. Otherwise, delete the temporary directory.
@@ -517,7 +515,8 @@ class atomic_dir():
             try:
                 os.rename(self.tempname, self.target)
             except OSError:
-                # Race: Another thread or process must have created the directory
+                # Race: Another thread or process must have created
+                # the directory
                 pass
         else:
             # Failure: delete temporary file
@@ -525,7 +524,9 @@ class atomic_dir():
 
 
 _spyx_tmp = None
-def spyx_tmp():
+
+
+def spyx_tmp() -> str:
     r"""
     The temporary directory used to store pyx files.
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Free Pre-Lie Algebras
 
@@ -15,6 +15,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import product
 
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.categories.lie_algebras import LieAlgebras
@@ -26,6 +27,7 @@ from sage.categories.rings import Rings
 from sage.categories.functor import Functor
 
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.words.alphabet import Alphabet
 from sage.combinat.rooted_tree import (RootedTrees, RootedTree,
                                        LabelledRootedTrees,
@@ -34,6 +36,7 @@ from sage.combinat.grossman_larson_algebras import GrossmanLarsonAlgebra, ROOT
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
+from sage.functions.other import factorial
 
 from sage.sets.family import Family
 from sage.structure.coerce_exceptions import CoercionException
@@ -224,7 +227,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         cat = MagmaticAlgebras(R).WithBasis().Graded() & LieAlgebras(R).WithBasis().Graded()
         CombinatorialFreeModule.__init__(self, R, Trees,
-                                         latex_prefix="",
+                                         latex_prefix='',
                                          sorting_key=key,
                                          category=cat)
 
@@ -260,7 +263,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             sage: enum = EnumeratedSets().Infinite().example()
             sage: algebras.FreePreLie(QQ, enum)  # indirect doctest
             Free PreLie algebra on generators indexed by An example of an
-            infinite enumerated set: the non negative integers
+            infinite enumerated set: the nonnegative integers
             over Rational Field
         """
         n = self.algebra_generators().cardinality()
@@ -286,7 +289,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -334,7 +337,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - `R` -- a ring
+        - ``R`` -- a ring
 
         EXAMPLES::
 
@@ -345,7 +348,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         """
         return FreePreLieAlgebra(R, names=self.variable_names())
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self`` (as an algebra).
 
@@ -530,6 +533,135 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
                                                            codomain=self),
                                      position=1)
 
+    def corolla(self, x, y, n, N):
+        """
+        Return the corolla obtained with ``x`` as root and ``y`` as leaves.
+
+        INPUT:
+
+        - ``x``, ``y`` -- two elements
+        - ``n`` -- integer; width of the corolla
+        - ``N`` -- integer; truncation order (up to order ``N`` included)
+
+        OUTPUT:
+
+        the sum over all possible ways to graft ``n`` copies of ``y``
+        on top of ``x`` (with at most ``N`` vertices in total)
+
+        This operation can be defined by induction starting from the
+        pre-Lie product.
+
+        EXAMPLES::
+
+            sage: A = algebras.FreePreLie(QQ)
+            sage: a = A.gen(0)
+            sage: b = A.corolla(a,a,1,4); b
+            B[[[]]]
+            sage: A.corolla(b,b,2,7)
+            B[[[[[]], [[]]]]] + 2*B[[[[]], [[[]]]]] + B[[[], [[]], [[]]]]
+
+            sage: A = algebras.FreePreLie(QQ, 'o')
+            sage: a = A.gen(0)
+            sage: b = A.corolla(a,a,1,4)
+
+            sage: A = algebras.FreePreLie(QQ,'ab')
+            sage: a, b = A.gens()
+            sage: A.corolla(a,b,1,4)
+            B[a[b[]]]
+            sage: A.corolla(b,a,3,4)
+            B[b[a[], a[], a[]]]
+
+            sage: A.corolla(a+b,a+b,2,4)
+            B[a[a[], a[]]] + 2*B[a[a[], b[]]] + B[a[b[], b[]]] + B[b[a[], a[]]] +
+            2*B[b[a[], b[]]] + B[b[b[], b[]]]
+
+        TESTS::
+
+            sage: A = algebras.FreePreLie(QQ,'ab')
+            sage: a, b = A.gens()
+            sage: A.corolla(a,A.zero(),2,2)
+            0
+        """
+        if not x or not y:
+            return self.zero()
+
+        basering = self.base_ring()
+        vx = x.valuation()
+        vy = y.valuation()
+        min_deg = vy * n + vx
+        if min_deg > N:
+            return self.zero()
+
+        try:
+            self.gen(0).support()[0].label()
+            labels = True
+        except AttributeError:
+            labels = False
+
+        deg_x = x.maximal_degree()
+        deg_y = y.maximal_degree()
+        max_x = min(deg_x, N - n * vy)
+        max_y = min(deg_y, N - vx - (n - 1) * vy)
+        xx = x.truncate(max_x + 1)
+        yy = y.truncate(max_y + 1)
+
+        y_homog = {i: list(yy.homogeneous_component(i))
+                   for i in range(vy, max_y + 1)}
+        resu = self.zero()
+        for k in range(min_deg, N + 1):   # total degree of (x ; y, y, y, y)
+            for mx, coef_x in xx:
+                dx = mx.node_number()
+                step = self.zero()
+                for pi in IntegerVectors(k - dx, n, min_part=vy, max_part=max_y):
+                    for ly in product(*[y_homog[part] for part in pi]):
+                        coef_y = basering.prod(mc[1] for mc in ly)
+                        arbres_y = [mc[0] for mc in ly]
+                        step += coef_y * self.sum(self(t)
+                                                  for t in corolla_gen(mx, arbres_y, labels))
+                resu += coef_x * step
+        return resu
+
+    def group_product(self, x, y, n, N=10):
+        r"""
+        Return the truncated group product of ``x`` and ``y``.
+
+        This is a weighted sum of all corollas with up to ``n`` leaves, with
+        ``x`` as root and ``y`` as leaves.
+
+        The result is computed up to order ``N`` (included).
+
+        When considered with infinitely many terms and infinite precision,
+        this is an analogue of the Baker-Campbell-Hausdorff formula: it
+        defines an associative product on the completed free pre-Lie algebra.
+
+        INPUT:
+
+        - ``x``, ``y`` -- two elements
+        - ``n`` -- integer; the maximal width of corollas
+        - ``N`` -- integer (default: 10); truncation order
+
+        EXAMPLES:
+
+        In the free pre-Lie algebra with one generator::
+
+            sage: PL = algebras.FreePreLie(QQ)
+            sage: a = PL.gen(0)
+            sage: PL.group_product(a, a, 3, 3)
+            B[[]] + B[[[]]] + 1/2*B[[[], []]]
+
+        In the free pre-Lie algebra with several generators::
+
+            sage: PL = algebras.FreePreLie(QQ,'@O')
+            sage: a, b = PL.gens()
+            sage: PL.group_product(a, b, 3, 3)
+            B[@[]] + B[@[O[]]] + 1/2*B[@[O[], O[]]]
+            sage: PL.group_product(a, b, 3, 10)
+            B[@[]] + B[@[O[]]] + 1/2*B[@[O[], O[]]] + 1/6*B[@[O[], O[], O[]]]
+        """
+        br = self.base_ring()
+        return x + self.sum(self.corolla(x, y, i, N) * ~br(factorial(i))
+                            for i in range(1, n + 1))
+
     def _element_constructor_(self, x):
         r"""
         Convert ``x`` into ``self``.
@@ -584,7 +716,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         The things that coerce into ``self`` are
 
         - free pre-Lie algebras whose set `E` of labels is
-          a subset of the corresponding self of ``set`, and whose base
+          a subset of the corresponding ``self`` of ``set``, and whose base
           ring has a coercion map into ``self.base_ring()``
 
         EXAMPLES::
@@ -702,6 +834,40 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             data = {LRT([x], ROOT): cf
                     for x, cf in self.monomial_coefficients(copy=False).items()}
             return UEA.element_class(UEA, data)
+
+        def valuation(self):
+            """
+            Return the valuation of ``self``.
+
+            EXAMPLES::
+
+                sage: a = algebras.FreePreLie(QQ).gen(0)
+                sage: a.valuation()
+                1
+                sage: (a*a).valuation()
+                2
+
+                sage: a, b = algebras.FreePreLie(QQ,'ab').gens()
+                sage: (a+b).valuation()
+                1
+                sage: (a*b).valuation()
+                2
+                sage: (a*b+a).valuation()
+                1
+
+            TESTS::
+
+                sage: z = algebras.FreePreLie(QQ).zero()
+                sage: z.valuation()
+                +Infinity
+            """
+            if self == self.parent().zero():
+                return Infinity
+            i = 0
+            while True:
+                i += 1
+                if self.homogeneous_component(i):
+                    return i
 
 
 class PreLieFunctor(ConstructionFunctor):
@@ -857,14 +1023,12 @@ class PreLieFunctor(ConstructionFunctor):
                 return self
             ret = list(self.vars)
             cur_vars = set(ret)
-            for v in other.vars:
-                if v not in cur_vars:
-                    ret.append(v)
+            ret.extend(v for v in other.vars if v not in cur_vars)
             return PreLieFunctor(Alphabet(ret))
-        else:
-            return None
 
-    def _repr_(self):
+        return None
+
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -872,3 +1036,106 @@ class PreLieFunctor(ConstructionFunctor):
             PreLie[x,y,z,t]
         """
         return "PreLie[%s]" % ','.join(self.vars)
+
+
+def tree_from_sortkey(ch, labels=True):
+    r"""
+    Transform a list of ``(valence, label)`` into a tree and a remainder.
+
+    This is like an inverse of the ``sort_key`` method.
+
+    INPUT:
+
+    - ``ch`` -- list of pairs ``(integer, label)``
+    - ``labels`` -- boolean (default: ``True``); whether to use labelled trees
+
+    OUTPUT:
+
+    a pair ``(tree, remainder of the input)``
+
+    EXAMPLES::
+
+        sage: from sage.combinat.free_prelie_algebra import tree_from_sortkey
+        sage: a = algebras.FreePreLie(QQ).gen(0)
+        sage: t = (a*a*a*a).support()
+        sage: all(tree_from_sortkey(u.sort_key(), False)[0] == u for u in t)
+        True
+
+        sage: a, b = algebras.FreePreLie(QQ,'ab').gens()
+        sage: t = (a*b*a*b).support()
+        sage: all(tree_from_sortkey(u.sort_key())[0] == u for u in t)
+        True
+    """
+    if labels:
+        Trees = LabelledRootedTrees()
+        width, label = ch[0]
+    else:
+        Trees = RootedTrees()
+        width = ch[0]
+
+    remainder = ch[1:]
+    if width == 0:
+        if labels:
+            return (Trees([], label), remainder)
+        return (Trees([]), remainder)
+
+    branches = {}
+    for i in range(width):
+        tree, remainder = tree_from_sortkey(remainder, labels=labels)
+        branches[i] = tree
+
+    if labels:
+        return (Trees(branches.values(), label), remainder)
+    return (Trees(branches.values()), remainder)
+
+
+def corolla_gen(tx, list_ty, labels=True):
+    """
+    Yield the terms in the corolla with given bottom tree and top trees.
+
+    These are the possible terms in the simultaneous grafting of the
+    top trees on vertices of the bottom tree.
+
+    INPUT:
+
+    - ``tx`` -- a tree
+    - ``list_ty`` -- list of trees
+
+    EXAMPLES::
+
+        sage: from sage.combinat.free_prelie_algebra import corolla_gen
+        sage: a = algebras.FreePreLie(QQ).gen(0)
+        sage: ta = a.support()[0]
+        sage: list(corolla_gen(ta,[ta],False))
+        [[[]]]
+
+        sage: a, b = algebras.FreePreLie(QQ,'ab').gens()
+        sage: ta = a.support()[0]
+        sage: tb = b.support()[0]
+        sage: ab = (a*b).support()[0]
+        sage: list(corolla_gen(ta,[tb]))
+        [a[b[]]]
+        sage: list(corolla_gen(tb,[ta,ta]))
+        [b[a[], a[]]]
+        sage: list(corolla_gen(ab,[ab,ta]))
+        [a[a[], b[], a[b[]]], a[a[b[]], b[a[]]], a[a[], b[a[b[]]]],
+        a[b[a[], a[b[]]]]]
+    """
+    n = len(list_ty)
+    zx = tx.sort_key()
+    nx = len(zx)
+    liste_zy = [t.sort_key() for t in list_ty]
+    for list_pos in product(range(nx), repeat=n):
+        new_zx = tuple(zx)
+        data = zip(list_pos, liste_zy)
+        sorted_data = sorted(data, reverse=True)
+        for pos_t in sorted_data:
+            if labels:
+                idx, lbl = new_zx[pos_t[0]]
+                new_zx = (new_zx[:pos_t[0]] + ((idx + 1, lbl),) +
+                          pos_t[1] + new_zx[pos_t[0] + 1:])
+            else:
+                idx = new_zx[pos_t[0]]
+                new_zx = (new_zx[:pos_t[0]] + (idx + 1,) +
+                          pos_t[1] + new_zx[pos_t[0] + 1:])
+        yield tree_from_sortkey(new_zx, labels=labels)[0]

@@ -26,8 +26,8 @@ Projective, over `\QQ`::
 Projective over a finite field::
 
     sage: from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
-    sage: E = EllipticCurve('72').change_ring(GF(19))                                               # optional - sage.rings.finite_rings
-    sage: enum_projective_finite_field(E)                                                           # optional - sage.rings.finite_rings
+    sage: E = EllipticCurve('72').change_ring(GF(19))                                   # needs sage.schemes
+    sage: enum_projective_finite_field(E)                                               # needs sage.schemes
     [(0 : 1 : 0), (1 : 0 : 1), (3 : 0 : 1), (4 : 9 : 1), (4 : 10 : 1),
      (6 : 6 : 1), (6 : 13 : 1), (7 : 6 : 1), (7 : 13 : 1), (9 : 4 : 1),
      (9 : 15 : 1), (12 : 8 : 1), (12 : 11 : 1), (13 : 8 : 1), (13 : 11 : 1),
@@ -45,29 +45,32 @@ AUTHORS:
 - Raghukul Raman <raghukul.raman01@gmail.com> (2018): Added sieve algorithm
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein, David Kohel, John Cremona, Charlie Turner
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
+from itertools import product
 
 from sage.arith.misc import gcd, next_prime, previous_prime, crt
 from sage.arith.srange import srange
-from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.mrange import cartesian_product_iterator
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.misc.mrange import xmrange
-from sage.schemes.generic.scheme import is_Scheme
+from sage.schemes.generic.scheme import Scheme
 from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
-from sage.matrix.constructor import matrix
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer_ring import ZZ
+from sage.schemes.generic.scheme import is_Scheme
+
+lazy_import('sage.matrix.constructor', 'matrix')
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def enum_projective_rational_field(X, B):
@@ -77,14 +80,14 @@ def enum_projective_rational_field(X, B):
 
     INPUT:
 
-    - ``X`` -  a scheme or set of abstract rational points of a scheme.
+    - ``X`` -- a scheme or set of abstract rational points of a scheme
 
-    - ``B`` -  a positive integer bound.
+    - ``B`` -- a positive integer bound
 
     OUTPUT:
 
-    - a list containing the projective points of ``X`` of height up to ``B``,
-      sorted.
+    A list containing the projective points of ``X`` of height up to ``B``,
+    sorted.
 
     EXAMPLES::
 
@@ -129,18 +132,18 @@ def enum_projective_rational_field(X, B):
 
     - John Cremona and Charlie Turner (06-2010)
     """
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if is_Scheme(X):
-        if not is_ProjectiveSpace(X.ambient_space()):
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProjectiveSpace_ring):
             raise TypeError("ambient space must be projective space over the rational field")
         X = X(X.base_ring())
-    elif not is_ProjectiveSpace(X.codomain().ambient_space()):
+    elif not isinstance(X.codomain().ambient_space(), ProjectiveSpace_ring):
         raise TypeError("codomain must be projective space over the rational field")
 
     n = X.codomain().ambient_space().ngens()
     zero = (0,) * n
     pts = []
-    for c in cartesian_product_iterator([srange(-B,B+1) for _ in range(n)]):
+    for c in product(*[srange(-B, B + 1) for _ in range(n)]):
         if gcd(c) == 1 and c > zero:
             try:
                 pts.append(X(c))
@@ -168,51 +171,50 @@ def enum_projective_number_field(X, **kwds):
     This is an implementation of the revised algorithm (Algorithm 4) in
     [DK2013]_. Algorithm 5 is used for imaginary quadratic fields.
 
-    INPUT:
+    INPUT: keyword arguments:
 
-    kwds:
+    - ``bound`` -- a real number
 
-    - ``bound`` - a real number
+    - ``tolerance`` -- a rational number in (0,1] used in Doyle-Krumm
+      algorithm-4
 
-    - ``tolerance`` - a rational number in (0,1] used in doyle-krumm algorithm-4
+    - ``precision`` -- the precision to use for computing the elements of
+      bounded height of number fields
 
-    - ``precision`` - the precision to use for computing the elements of bounded height of number fields.
-
-    OUTPUT:
-
-     - a list containing the projective points of ``X`` of absolute height up to ``B``,
-       sorted.
+    OUTPUT: a sorted list containing the projective points of ``X`` of absolute
+    height up to ``B``
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_number_field
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^3 - 5, 'v')                                                         # optional - sage.rings.number_field
-        sage: P.<x,y,z> = ProjectiveSpace(K, 2)                                                     # optional - sage.rings.number_field
-        sage: X = P.subscheme([x - y])                                                              # optional - sage.rings.number_field
-        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)                      # optional - sage.rings.number_field
+        sage: K = NumberField(u^3 - 5, 'v')
+        sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+        sage: X = P.subscheme([x - y])
+        sage: enum_projective_number_field(X(K), bound=RR(5^(1/3)), prec=2^10)          # needs sage.symbolic
         [(0 : 0 : 1), (1 : 1 : 0), (-1 : -1 : 1), (1 : 1 : 1)]
 
     ::
 
+        sage: # needs sage.rings.number_field
         sage: u = QQ['u'].0
-        sage: K = NumberField(u^2 + 3, 'v')                                                         # optional - sage.rings.number_field
-        sage: A.<x,y> = ProjectiveSpace(K, 1)                                                       # optional - sage.rings.number_field
-        sage: X = A.subscheme(x - y)                                                                # optional - sage.rings.number_field
-        sage: from sage.schemes.projective.projective_rational_point import enum_projective_number_field
-        sage: enum_projective_number_field(X, bound=2)                                              # optional - sage.rings.number_field
+        sage: K = NumberField(u^2 + 3, 'v')
+        sage: A.<x,y> = ProjectiveSpace(K, 1)
+        sage: X = A.subscheme(x - y)
+        sage: enum_projective_number_field(X, bound=2)
         [(1 : 1)]
     """
     B = kwds.pop('bound')
     tol = kwds.pop('tolerance', 1e-2)
     prec = kwds.pop('precision', 53)
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if is_Scheme(X):
-        if (not is_ProjectiveSpace(X.ambient_space())):
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProjectiveSpace_ring):
             raise TypeError("ambient space must be projective space over a number field")
         X = X(X.base_ring())
     else:
-        if (not is_ProjectiveSpace(X.codomain().ambient_space())):
+        if not isinstance(X.codomain().ambient_space(), ProjectiveSpace_ring):
             raise TypeError("codomain must be projective space over a number field")
 
     R = X.codomain().ambient_space()
@@ -234,39 +236,40 @@ def enum_projective_finite_field(X):
 
     INPUT:
 
-    - ``X`` -  a scheme defined over a finite field or a set of abstract
-      rational points of such a scheme.
+    - ``X`` -- a scheme defined over a finite field or a set of abstract
+      rational points of such a scheme
 
     OUTPUT:
 
-    - a list containing the projective points of ``X`` over the finite field,
-      sorted.
+    A list containing the projective points of ``X`` over the finite field,
+    sorted.
 
     EXAMPLES::
 
-        sage: F = GF(53)                                                                            # optional - sage.rings.finite_rings
-        sage: P.<X,Y,Z> = ProjectiveSpace(2, F)                                                     # optional - sage.rings.finite_rings
         sage: from sage.schemes.projective.projective_rational_point import enum_projective_finite_field
-        sage: len(enum_projective_finite_field(P(F)))                                               # optional - sage.rings.finite_rings
+        sage: F = GF(53)
+        sage: P.<X,Y,Z> = ProjectiveSpace(2, F)
+        sage: len(enum_projective_finite_field(P(F)))
         2863
         sage: 53^2 + 53 + 1
         2863
 
     ::
 
-        sage: F = GF(9, 'a')                                                                        # optional - sage.rings.finite_rings
-        sage: P.<X,Y,Z> = ProjectiveSpace(2,F)                                                      # optional - sage.rings.finite_rings
-        sage: C = Curve(X^3 - Y^3 + Z^2*Y)                                                          # optional - sage.rings.finite_rings
-        sage: enum_projective_finite_field(C(F))                                                    # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: F = GF(9, 'a')
+        sage: P.<X,Y,Z> = ProjectiveSpace(2,F)
+        sage: C = Curve(X^3 - Y^3 + Z^2*Y)                                              # needs sage.schemes
+        sage: enum_projective_finite_field(C(F))                                        # needs sage.schemes
         [(0 : 0 : 1), (0 : 1 : 1), (0 : 2 : 1), (1 : 1 : 0), (a + 1 : 2*a : 1),
          (a + 1 : 2*a + 1 : 1), (a + 1 : 2*a + 2 : 1), (2*a + 2 : a : 1),
          (2*a + 2 : a + 1 : 1), (2*a + 2 : a + 2 : 1)]
 
     ::
 
-        sage: F = GF(5)                                                                             # optional - sage.rings.finite_rings
-        sage: P2F.<X,Y,Z> = ProjectiveSpace(2, F)                                                   # optional - sage.rings.finite_rings
-        sage: enum_projective_finite_field(P2F)                                                     # optional - sage.rings.finite_rings
+        sage: F = GF(5)
+        sage: P2F.<X,Y,Z> = ProjectiveSpace(2, F)
+        sage: enum_projective_finite_field(P2F)
         [(0 : 0 : 1), (0 : 1 : 0), (0 : 1 : 1), (0 : 2 : 1), (0 : 3 : 1), (0 : 4 : 1),
          (1 : 0 : 0), (1 : 0 : 1), (1 : 1 : 0), (1 : 1 : 1), (1 : 2 : 1), (1 : 3 : 1),
          (1 : 4 : 1), (2 : 0 : 1), (2 : 1 : 0), (2 : 1 : 1), (2 : 2 : 1), (2 : 3 : 1),
@@ -286,21 +289,21 @@ def enum_projective_finite_field(X):
 
     - John Cremona and Charlie Turner (06-2010).
     """
-    from sage.schemes.projective.projective_space import is_ProjectiveSpace
-    if is_Scheme(X):
-        if not is_ProjectiveSpace(X.ambient_space()):
+    from sage.schemes.projective.projective_space import ProjectiveSpace_ring
+    if isinstance(X, Scheme):
+        if not isinstance(X.ambient_space(), ProjectiveSpace_ring):
             raise TypeError("ambient space must be projective space over a finite")
         X = X(X.base_ring())
-    elif not is_ProjectiveSpace(X.codomain().ambient_space()):
+    elif not isinstance(X.codomain().ambient_space(), ProjectiveSpace_ring):
         raise TypeError("codomain must be projective space over a finite field")
 
-    n = X.codomain().ambient_space().ngens()-1
+    n = X.codomain().ambient_space().ngens() - 1
     F = X.value_ring()
     pts = []
-    for k in range(n+1):
-        for c in cartesian_product_iterator([F for _ in range(k)]):
+    for k in range(n + 1):
+        for c in product(*[F for _ in range(k)]):
             try:
-                pts.append(X(list(c)+[1]+[0]*(n-k)))
+                pts.append(X(list(c) + [1] + [0] * (n - k)))
             except TypeError:
                 pass
     pts.sort()
@@ -309,7 +312,7 @@ def enum_projective_finite_field(X):
 
 def sieve(X, bound):
     r"""
-    Returns the list of all projective, rational points on scheme ``X`` of
+    Return the list of all projective, rational points on scheme ``X`` of
     height up to ``bound``.
 
     Height of a projective point `X = (x_1, x_2,\dots, x_n)` is given by
@@ -330,33 +333,41 @@ def sieve(X, bound):
 
     INPUT:
 
-    - ``X`` - a scheme with ambient space defined over projective space
+    - ``X`` -- a scheme with ambient space defined over projective space
 
-    - ``bound`` - a positive integer bound
+    - ``bound`` -- positive integer bound
 
     OUTPUT:
 
-    - a list containing the projective rational points of ``X`` of height
-      up to ``bound``, sorted
+    A list containing the projective rational points of ``X`` of height
+    up to ``bound``, sorted
 
     EXAMPLES::
 
         sage: from sage.schemes.projective.projective_rational_point import sieve
         sage: P.<x,y,z,q> = ProjectiveSpace(QQ, 3)
         sage: Y = P.subscheme([x^2 - 3^2*y^2 + z*q, x + z + 4*q])
-        sage: sorted(sieve(Y, 12))  # long time
+        sage: sorted(sieve(Y, 12))              # long time                             # needs sage.libs.singular
         [(-4 : -4/3 : 0 : 1), (-4 : 4/3 : 0 : 1),
          (-1 : -1/3 : 1 : 0), (-1 : 1/3 : 1 : 0)]
 
     ::
 
         sage: from sage.schemes.projective.projective_rational_point import sieve
-        sage: E = EllipticCurve('37a')
-        sage: sorted(sieve(E, 14))  # long time
-        [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1),
-         (0 : 0 : 1), (0 : 1 : 0), (1/4 : -5/8 : 1),
-         (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
-         (2 : -3 : 1), (2 : 2 : 1), (6 : 14 : 1)]
+        sage: E = EllipticCurve('37a')                                                  # needs sage.schemes
+        sage: sorted(sieve(E, 14))              # long time                             # needs sage.libs.singular sage.schemes
+        [(0 : 1 : 0),
+         (-1 : -1 : 1),
+         (-1 : 0 : 1),
+         (0 : -1 : 1),
+         (0 : 0 : 1),
+         (1/4 : -5/8 : 1),
+         (1/4 : -3/8 : 1),
+         (1 : -1 : 1),
+         (1 : 0 : 1),
+         (2 : -3 : 1),
+         (2 : 2 : 1),
+         (6 : 14 : 1)]
 
     TESTS:
 
@@ -365,7 +376,7 @@ def sieve(X, bound):
         sage: from sage.schemes.projective.projective_rational_point import sieve
         sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
         sage: X = P.subscheme(3*x - 3/2*y)
-        sage: sieve(X, 3)
+        sage: sieve(X, 3)                                                               # needs sage.libs.singular
         [(-1 : -2 : 1), (-1/2 : -1 : 1), (-1/3 : -2/3 : 1), (0 : 0 : 1),
          (1/3 : 2/3 : 1), (1/2 : 1 : 0), (1/2 : 1 : 1), (1 : 2 : 1)]
     """
@@ -389,7 +400,7 @@ def sieve(X, bound):
 
     def sufficient_primes(x):
         r"""
-        Returns a list of primes whose product is > `x`
+        Return a list of primes whose product is > `x`.
         """
         small_primes = [2,3]
         prod_primes = 6
@@ -411,7 +422,7 @@ def sieve(X, bound):
         where alpha is product of all primes, and P_max is largest prime in list.
         """
 
-        M = dict() # stores optimal list of primes, corresponding to list size
+        M = {}  # stores optimal list of primes, corresponding to list size
         small_primes = sufficient_primes(B)
         max_length = len(small_primes)
         M[max_length] = small_primes

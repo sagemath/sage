@@ -26,7 +26,7 @@ from sage.structure.richcmp import richcmp
 class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
     def __invert__(self):
         r"""
-        Return the inverse of an isomorphism of absolute number fields
+        Return the inverse of an isomorphism of absolute number fields.
 
         EXAMPLES::
 
@@ -88,16 +88,16 @@ class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
     def preimage(self, y):
         r"""
         Compute a preimage of `y` in the domain, provided one exists.
-        Raises a :class:`ValueError` if `y` has no preimage.
+        Raises a :exc:`ValueError` if `y` has no preimage.
 
         INPUT:
 
-        - ``y`` -- an element of the codomain of ``self``.
+        - ``y`` -- an element of the codomain of ``self``
 
         OUTPUT:
 
         Returns the preimage of `y` in the domain, if one exists.
-        Raises a :class:`ValueError` if `y` has no preimage.
+        Raises a :exc:`ValueError` if `y` has no preimage.
 
         EXAMPLES::
 
@@ -114,6 +114,7 @@ class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
 
         ::
 
+            sage: # needs sage.libs.linbox
             sage: F.<b> = QuadraticField(23)
             sage: G.<a> = F.extension(x^3 + 5)
             sage: f = F.embeddings(G)[0]
@@ -220,7 +221,7 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
     def _richcmp_(self, other, op):
         """
-        Compare
+        Compare.
 
         EXAMPLES::
 
@@ -268,8 +269,3 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
 
 class CyclotomicFieldHomomorphism_im_gens(NumberFieldHomomorphism_im_gens):
     pass
-
-
-lazy_import('sage.rings.number_field.homset',
-            ('NumberFieldHomset', 'RelativeNumberFieldHomset', 'CyclotomicFieldHomset'),
-            deprecation=29010)

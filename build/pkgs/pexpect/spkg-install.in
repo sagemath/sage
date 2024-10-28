@@ -1,8 +1,2 @@
 cd src
-
 sdh_pip_install .
-
-if [ $? -ne 0 ]; then
-    echo "Error installing pexpect"
-    exit 1
-fi

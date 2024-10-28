@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Parallel computations using RecursivelyEnumeratedSet and Map-Reduce
 
@@ -184,8 +183,8 @@ Second, you need the information necessary to describe a
 
   Compare::
 
-      sage: from sage.combinat.q_analogues import q_factorial
-      sage: q_factorial(5)
+      sage: from sage.combinat.q_analogues import q_factorial                           # needs sage.combinat
+      sage: q_factorial(5)                                                              # needs sage.combinat
       q^10 + 4*q^9 + 9*q^8 + 15*q^7 + 20*q^6 + 22*q^5 + 20*q^4 + 15*q^3 + 9*q^2 + 4*q + 1
 
 * **Listing the objects.** One can also compute the list of objects in a
@@ -293,8 +292,9 @@ It is possible to profile a map/reduce computation. First we create a
 The profiling is activated by the ``profile`` parameter. The value provided
 should be a prefix (including a possible directory) for the profile dump::
 
-    sage: prof = tmp_dir('RESetMR_profile') + 'profcomp'
-    sage: res = S.run(profile=prof)  # random
+    sage: import tempfile
+    sage: d = tempfile.TemporaryDirectory(prefix='RESetMR_profile')
+    sage: res = S.run(profile=d.name)  # random
     [RESetMapReduceWorker-1:58] (20:00:41.444) Profiling in
     /home/user/.sage/temp/.../32414/RESetMR_profilewRCRAx/profcomp1
     ...
@@ -309,7 +309,7 @@ In this example, the profiles have been dumped in files such as
 :class:`cProfile.Profile` for more details::
 
     sage: import cProfile, pstats
-    sage: st = pstats.Stats(prof+'0')
+    sage: st = pstats.Stats(d.name+'0')
     sage: st.strip_dirs().sort_stats('cumulative').print_stats()  # random
     ...
        Ordered by: cumulative time
@@ -319,6 +319,11 @@ In this example, the profiles have been dumped in files such as
         11968    0.151    0.000    0.223    0.000 map_reduce.py:1292(walk_branch_locally)
     ...
     <pstats.Stats instance at 0x7fedea40c6c8>
+
+Like a good neighbor we clean up our temporary directory as soon as
+possible::
+
+    sage: d.cleanup()
 
 .. SEEALSO::
 
@@ -341,7 +346,7 @@ warning messages to the console.
     `Logging facility for Python <https://docs.python.org/2/library/logging.html>`_
     for more detail on logging and log system configuration.
 
-.. note::
+.. NOTE::
 
     Calls to logger which involve printing the node are commented out in the
     code, because the printing (to a string) of the node can be very time
@@ -388,16 +393,16 @@ Here is a description of the attributes of the **master** relevant to the
 map-reduce protocol:
 
 - ``_results`` -- a :class:`~multiprocessing.queues.SimpleQueue` where
-  the master gathers the results sent by the workers.
+  the master gathers the results sent by the workers
 - ``_active_tasks`` -- a :class:`~multiprocessing.Semaphore` recording
-  the number of active tasks.  The work is complete when it reaches 0.
+  the number of active tasks; the work is complete when it reaches 0
 - ``_done`` -- a :class:`~multiprocessing.Lock` which ensures that
-  shutdown is done only once.
+  shutdown is done only once
 - ``_aborted`` -- a :func:`~multiprocessing.Value` storing a shared
   :class:`ctypes.c_bool` which is ``True`` if the computation was aborted
-  before all workers ran out of work.
-- ``_workers`` -- a list of :class:`RESetMapReduceWorker` objects.
-  Each worker is identified by its position in this list.
+  before all workers ran out of work
+- ``_workers`` -- list of :class:`RESetMapReduceWorker` objects
+  Each worker is identified by its position in this list
 
 Each **worker** is a process (:class:`RESetMapReduceWorker` inherits from
 :class:`~multiprocessing.Process`) which contains:
@@ -408,11 +413,11 @@ Each **worker** is a process (:class:`RESetMapReduceWorker` inherits from
   worker. It is used as a stack by the worker. Thiefs steal from the bottom of
   this queue.
 - ``worker._request`` -- a :class:`~multiprocessing.queues.SimpleQueue` storing
-  steal request submitted to ``worker``.
+  steal request submitted to ``worker``
 - ``worker._read_task``, ``worker._write_task`` -- a
-  :class:`~multiprocessing.queues.Pipe` used to transfer node during steal.
+  :class:`~multiprocessing.queues.Pipe` used to transfer node during steal
 - ``worker._thief`` -- a :class:`~threading.Thread` which is in charge of
-  stealing from ``worker._todo``.
+  stealing from ``worker._todo``
 
 Here is a schematic of the architecture:
 
@@ -510,7 +515,7 @@ Yes! Here they are:
 
 - :class:`RESetMPExample` -- a simple basic example
 - :class:`RESetParallelIterator` -- a more advanced example using non standard
-  communication configuration.
+  communication configuration
 
 Tests
 -----
@@ -542,17 +547,17 @@ Classes and methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import copy
-import sys
-import random
-import queue
 import ctypes
 import logging
 import multiprocessing as mp
+import queue
+import random
+import sys
 from collections import deque
 from threading import Thread
 
-from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet  # _generic
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet  # _generic
 
 logger = logging.getLogger(__name__)
 logger.__doc__ = ("""
@@ -586,8 +591,7 @@ def proc_number(max_proc=None):
 
     INPUT:
 
-    - ``max_proc`` -- an upper bound on the number of processes or
-      ``None``.
+    - ``max_proc`` -- an upper bound on the number of processes or ``None``
 
     EXAMPLES::
 
@@ -624,7 +628,7 @@ class AbortError(Exception):
     pass
 
 
-class ActiveTaskCounterDarwin():
+class ActiveTaskCounterDarwin:
     r"""
     Handling the number of active tasks.
 
@@ -639,7 +643,7 @@ class ActiveTaskCounterDarwin():
 
             sage: from sage.parallel.map_reduce import ActiveTaskCounterDarwin as ATC
             sage: t = ATC(4)
-            sage: TestSuite(t).run(skip="_test_pickling", verbose=True)
+            sage: TestSuite(t).run(skip='_test_pickling', verbose=True)
             running ._test_new() . . . pass
         """
         self._active_tasks = mp.Value(ctypes.c_int, task_number)
@@ -737,7 +741,7 @@ class ActiveTaskCounterDarwin():
             self._active_tasks.value = 0
 
 
-class ActiveTaskCounterPosix():
+class ActiveTaskCounterPosix:
     r"""
     Handling the number of active tasks.
 
@@ -745,7 +749,7 @@ class ActiveTaskCounterPosix():
     computation process. This is the standard implementation on POSIX
     compliant OSes. We essentially wrap a semaphore.
 
-    .. note::
+    .. NOTE::
 
         A legitimate question is whether there is a need in keeping the two
         implementations. I ran the following experiment on my machine::
@@ -773,7 +777,7 @@ class ActiveTaskCounterPosix():
 
             sage: from sage.parallel.map_reduce import ActiveTaskCounter as ATC
             sage: t = ATC(4)
-            sage: TestSuite(t).run(skip="_test_pickling", verbose=True)
+            sage: TestSuite(t).run(skip='_test_pickling', verbose=True)
             running ._test_new() . . . pass
         """
         self._active_tasks = mp.Semaphore(task_number)
@@ -880,7 +884,7 @@ ActiveTaskCounter = (ActiveTaskCounterDarwin if sys.platform == 'darwin'
 # ActiveTaskCounter = ActiveTaskCounterDarwin  # to debug Darwin implementation
 
 
-class RESetMapReduce():
+class RESetMapReduce:
     r"""
     Map-Reduce on recursively enumerated sets.
 
@@ -892,7 +896,7 @@ class RESetMapReduce():
 
     - or a triple ``roots, children, post_process`` as follows
 
-      - ``roots=r`` -- The root of the enumeration
+      - ``roots=r`` -- the root of the enumeration
       - ``children=c`` -- a function iterating through children nodes,
         given a parent node
       - ``post_process=p`` -- a post-processing function
@@ -903,9 +907,9 @@ class RESetMapReduce():
 
     Description of the map/reduce operation:
 
-    - ``map_function=f`` -- (default to ``None``)
-    - ``reduce_function=red`` -- (default to ``None``)
-    - ``reduce_init=init`` -- (default to ``None``)
+    - ``map_function=f`` -- (default: ``None``)
+    - ``reduce_function=red`` -- (default: ``None``)
+    - ``reduce_init=init`` -- (default: ``None``)
 
     .. SEEALSO::
 
@@ -980,11 +984,9 @@ class RESetMapReduce():
         r"""
         Return the roots of ``self``.
 
-        OUTPUT:
+        OUTPUT: an iterable of nodes
 
-        An iterable of nodes.
-
-        .. note:: This should be overloaded in applications.
+        .. NOTE:: This should be overloaded in applications.
 
         EXAMPLES::
 
@@ -1003,11 +1005,9 @@ class RESetMapReduce():
 
         - ``o`` -- a node
 
-        OUTPUT:
+        OUTPUT: by default ``1``
 
-        By default ``1``.
-
-        .. note:: This should be overloaded in applications.
+        .. NOTE:: This should be overloaded in applications.
 
         EXAMPLES::
 
@@ -1018,7 +1018,7 @@ class RESetMapReduce():
             sage: S = RESetMapReduce(map_function = lambda x: 3*x + 5)
             sage: S.map_function(7)
             26
-         """
+        """
         return 1
 
     def reduce_function(self, a, b):
@@ -1029,11 +1029,9 @@ class RESetMapReduce():
 
         - ``a``, ``b`` -- two values to be reduced
 
-        OUTPUT:
+        OUTPUT: by default the sum of ``a`` and ``b``
 
-        By default the sum of ``a`` and ``b``.
-
-        .. note:: This should be overloaded in applications.
+        .. NOTE:: This should be overloaded in applications.
 
         EXAMPLES::
 
@@ -1058,7 +1056,7 @@ class RESetMapReduce():
         With the default post-processing function, which is the identity function,
         this returns ``a`` itself.
 
-        .. note:: This should be overloaded in applications.
+        .. NOTE:: This should be overloaded in applications.
 
         EXAMPLES::
 
@@ -1078,7 +1076,7 @@ class RESetMapReduce():
         r"""
         Return the initial element for a reduction.
 
-        .. note:: This should be overloaded in applications.
+        .. NOTE:: This should be overloaded in applications.
 
         TESTS::
 
@@ -1098,8 +1096,8 @@ class RESetMapReduce():
 
         INPUT:
 
-        - ``max_proc`` -- (integer) an upper bound on the number of
-          worker processes.
+        - ``max_proc`` -- integer; an upper bound on the number of
+          worker processes
 
         - ``reduce_locally`` -- whether the workers should reduce locally
           their work or sends results to the master as soon as possible.
@@ -1120,7 +1118,7 @@ class RESetMapReduce():
         self._active_tasks = ActiveTaskCounter(self._nprocess)
         self._done = mp.Lock()
         # We use lock=False here, as a compromise, to avoid deadlocking when a
-        # subprocess holding a lock is terminated. (:trac:`33236`)
+        # subprocess holding a lock is terminated. (:issue:`33236`)
         self._aborted = mp.Value(ctypes.c_bool, False, lock=False)
         sys.stdout.flush()
         sys.stderr.flush()
@@ -1138,21 +1136,12 @@ class RESetMapReduce():
             sage: from sage.parallel.map_reduce import RESetMapReduce
             sage: def children(x):
             ....:     print(f"Starting: {x}", flush=True)
-            ....:     sleep(float(0.5))
-            ....:     print(f"Finished: {x}", flush=True)
             ....:     return []
             sage: S = RESetMapReduce(roots=[1, 2], children=children)
             sage: S.setup_workers(2)
-            sage: S.start_workers(); sleep(float(0.4))
+            sage: S.start_workers(); sleep(float(5))  # long time
             Starting: ...
             Starting: ...
-            sage: [w.is_alive() for w in S._workers]
-            [True, True]
-            sage: sleep(float(1.5))
-            Finished: ...
-            Finished: ...
-            sage: [not w.is_alive() for w in S._workers]
-            [True, True]
 
         Cleanup::
 
@@ -1234,7 +1223,7 @@ class RESetMapReduce():
             sage: S.print_communication_statistics()
             Traceback (most recent call last):
             ...
-            AttributeError: 'RESetMPExample' object has no attribute '_stats'
+            AttributeError: 'RESetMPExample' object has no attribute '_stats'...
 
             sage: S.finish()
 
@@ -1392,9 +1381,7 @@ class RESetMapReduce():
         r"""
         Return a random worker.
 
-        OUTPUT:
-
-        A worker for ``self`` chosen at random.
+        OUTPUT: a worker for ``self`` chosen at random
 
         EXAMPLES::
 
@@ -1428,7 +1415,7 @@ class RESetMapReduce():
           maximum number of worker processors to use. The actual number
           is also bounded by the value of the environment variable
           ``SAGE_NUM_THREADS`` (the number of cores by default).
-        - ``reduce_locally`` -- See :class:`RESetMapReduceWorker` (default: ``True``)
+        - ``reduce_locally`` -- see :class:`RESetMapReduceWorker` (default: ``True``)
         - ``timeout`` -- a timeout on the computation (default: ``None``)
         - ``profile`` -- directory/filename prefix for profiling, or ``None``
           for no profiling (default: ``None``)
@@ -1500,9 +1487,7 @@ class RESetMapReduce():
             sage: S.run()  # indirect doctest
             720*x^6 + 120*x^5 + 24*x^4 + 6*x^3 + 2*x^2 + x + 1
         """
-        res = []
-        for i in range(self._nprocess):
-            res.append(tuple(self._workers[i]._stats))
+        res = [tuple(self._workers[i]._stats) for i in range(self._nprocess)]
         self._stats = res
 
     def print_communication_statistics(self, blocksize=16):
@@ -1567,9 +1552,9 @@ class RESetMapReduceWorker(mp.Process):
     INPUT:
 
     - ``mapred`` -- the instance of :class:`RESetMapReduce` for which
-      this process is working.
+      this process is working
 
-    - ``iproc`` -- the id of this worker.
+    - ``iproc`` -- the id of this worker
 
     - ``reduce_locally`` -- when reducing the results. Three possible values
       are supported:
@@ -1642,9 +1627,7 @@ class RESetMapReduceWorker(mp.Process):
         r"""
         Steal some node from another worker.
 
-        OUTPUT:
-
-        A node stolen from another worker chosen at random.
+        OUTPUT: a node stolen from another worker chosen at random
 
         EXAMPLES::
 
@@ -1653,14 +1636,14 @@ class RESetMapReduceWorker(mp.Process):
             sage: EX = RESetMPExample(maxl=6)
             sage: EX.setup_workers(2)
 
+            sage: # known bug (Issue #27537)
             sage: w0, w1 = EX._workers
             sage: w0._todo.append(42)
-            sage: thief0 = Thread(target = w0._thief, name="Thief")
-            sage: thief0.start()  # known bug (Issue #27537)
-
-            sage: w1.steal()  # known bug (Issue #27537)
+            sage: thief0 = Thread(target = w0._thief, name='Thief')
+            sage: thief0.start()
+            sage: w1.steal()
             42
-            sage: w0._todo  # known bug (Issue #27537)
+            sage: w0._todo
             deque([])
         """
         self._mapred._signal_task_done()
@@ -1713,7 +1696,7 @@ class RESetMapReduceWorker(mp.Process):
             PROFILER.runcall(self.run_myself)
 
             output = profile + str(self._iproc)
-            logger.warn(f"Profiling in {output} ...")
+            logger.warning(f"Profiling in {output} ...")
             PROFILER.dump_stats(output)
         else:
             self.run_myself()
@@ -1750,7 +1733,7 @@ class RESetMapReduceWorker(mp.Process):
         self._stats[0] = 0
         self._stats[3] = 0
         logger.debug("Launching thief")
-        self._thief = Thread(target=self._thief, name="Thief")
+        self._thief = Thread(target=self._thief, name='Thief')
         self._thief.start()
         self._res = reduce_init()
 
@@ -1780,7 +1763,7 @@ class RESetMapReduceWorker(mp.Process):
         r"""
         Send results to the MapReduce process.
 
-        Send the result stored in ``self._res`` to the master an reinitialize it to
+        Send the result stored in ``self._res`` to the master and reinitialize it to
         ``master.reduce_init``.
 
         EXAMPLES::
@@ -1807,11 +1790,9 @@ class RESetMapReduceWorker(mp.Process):
 
         INPUT:
 
-        - ``node`` -- the root of the subtree explored.
+        - ``node`` -- the root of the subtree explored
 
-        OUTPUT:
-
-        Nothing, the result are stored in ``self._res``.
+        OUTPUT: nothing, the result are stored in ``self._res``
 
         This is where the actual work is performed.
 
@@ -1864,7 +1845,7 @@ class RESetMPExample(RESetMapReduce):
 
     INPUT:
 
-    - ``maxl`` -- the maximum size of permutations generated (default to `9`).
+    - ``maxl`` -- the maximum size of permutations generated (default: `9`)
 
     This computes the generating series of permutations counted by their size
     up to size ``maxl``.
@@ -1878,7 +1859,6 @@ class RESetMPExample(RESetMapReduce):
         + 24*x^4 + 6*x^3 + 2*x^2 + x + 1
 
     .. SEEALSO:: This is an example of :class:`RESetMapReduce`
-
     """
     def __init__(self, maxl=9):
         r"""
@@ -1889,8 +1869,8 @@ class RESetMPExample(RESetMapReduce):
             <sage.parallel.map_reduce.RESetMPExample object at 0x...>
         """
         RESetMapReduce.__init__(self)
-        from sage.rings.polynomial.polynomial_ring import polygen
         from sage.rings.integer_ring import ZZ
+        from sage.rings.polynomial.polynomial_ring import polygen
         self.x = polygen(ZZ, 'x')
         self.maxl = maxl
 
@@ -1912,7 +1892,7 @@ class RESetMPExample(RESetMapReduce):
 
         INPUT:
 
-        - ``l`` -- a list containing a permutation
+        - ``l`` -- list containing a permutation
 
         OUTPUT:
 
@@ -1933,7 +1913,7 @@ class RESetMPExample(RESetMapReduce):
 
         INPUT:
 
-        - ``l`` -- a list containing a permutation
+        - ``l`` -- list containing a permutation
 
         OUTPUT:
 

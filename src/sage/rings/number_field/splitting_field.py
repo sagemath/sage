@@ -3,9 +3,8 @@ Splitting fields of polynomials over number fields
 
 AUTHORS:
 
-- Jeroen Demeyer (2014-01-02): initial version for :trac:`2217`
-
-- Jeroen Demeyer (2014-01-03): add ``abort_degree`` argument, :trac:`15626`
+- Jeroen Demeyer (2014-01-02): initial version for :issue:`2217`
+- Jeroen Demeyer (2014-01-03): added ``abort_degree`` argument, :issue:`15626`
 """
 
 #*****************************************************************************
@@ -22,7 +21,7 @@ from sage.rings.integer import Integer
 from sage.arith.misc import factorial
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import RationalField, is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.libs.pari.all import pari, PariError
 
 
@@ -91,7 +90,7 @@ class SplittingData:
 
     def poldegree(self):
         """
-        Return the degree of ``self.pol``
+        Return the degree of ``self.pol``.
 
         EXAMPLES::
 
@@ -109,7 +108,7 @@ class SplittingData:
             sage: print(SplittingData(pari("polcyclo(24)"), 2))
             SplittingData(x^8 - x^4 + 1, 2)
         """
-        return "SplittingData(%s, %s)"%(self.pol, self.dm)
+        return "SplittingData(%s, %s)" % (self.pol, self.dm)
 
     def _repr_tuple(self):
         """
@@ -133,7 +132,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     - ``name`` -- a variable name for the number field
 
-    - ``map`` -- (default: ``False``) also return an embedding of
+    - ``map`` -- boolean (default: ``False``); also return an embedding of
       ``poly`` into the resulting field. Note that computing this
       embedding might be expensive.
 
@@ -145,14 +144,14 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
       if it can be determined that the absolute degree of the splitting
       field is strictly larger than ``abort_degree``.
 
-    - ``simplify`` -- (default: ``True``) during the algorithm, try
+    - ``simplify`` -- boolean (default: ``True``); during the algorithm, try
       to find a simpler defining polynomial for the intermediate
-      number fields using PARI's ``polred()``.  This usually speeds
+      number fields using PARI's ``polredbest()``.  This usually speeds
       up the computation but can also considerably slow it down.
       Try and see what works best in the given situation.
 
-    - ``simplify_all`` -- (default: ``False``) If ``True``, simplify
-      intermediate fields and also the resulting number field.
+    - ``simplify_all`` -- boolean (default: ``False``); if ``True``, simplify
+      intermediate fields and also the resulting number field
 
     OUTPUT:
 
@@ -164,22 +163,37 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
         sage: R.<x> = PolynomialRing(QQ)
         sage: K.<a> = (x^3 + 2).splitting_field(); K
-        Number Field in a with defining polynomial x^6 + 3*x^5 + 6*x^4 + 11*x^3 + 12*x^2 - 3*x + 1
+        Number Field in a with defining polynomial
+         x^6 + 3*x^5 + 6*x^4 + 11*x^3 + 12*x^2 - 3*x + 1
         sage: K.<a> = (x^3 - 3*x + 1).splitting_field(); K
         Number Field in a with defining polynomial x^3 - 3*x + 1
 
     The ``simplify`` and ``simplify_all`` flags usually yield
     fields defined by polynomials with smaller coefficients.
-    By default, ``simplify`` is True and ``simplify_all`` is False.
+    By default, ``simplify`` is ``True`` and ``simplify_all`` is ``False``.
 
     ::
 
         sage: (x^4 - x + 1).splitting_field('a', simplify=False)
-        Number Field in a with defining polynomial x^24 - 2780*x^22 + 2*x^21 + 3527512*x^20 - 2876*x^19 - 2701391985*x^18 + 945948*x^17 + 1390511639677*x^16 + 736757420*x^15 - 506816498313560*x^14 - 822702898220*x^13 + 134120588299548463*x^12 + 362240696528256*x^11 - 25964582366880639486*x^10 - 91743672243419990*x^9 + 3649429473447308439427*x^8 + 14310332927134072336*x^7 - 363192569823568746892571*x^6 - 1353403793640477725898*x^5 + 24293393281774560140427565*x^4 + 70673814899934142357628*x^3 - 980621447508959243128437933*x^2 - 1539841440617805445432660*x + 18065914012013502602456565991
+        Number Field in a with defining polynomial
+         x^24 - 2780*x^22 + 2*x^21 + 3527512*x^20 - 2876*x^19 - 2701391985*x^18 + 945948*x^17
+          + 1390511639677*x^16 + 736757420*x^15 - 506816498313560*x^14 - 822702898220*x^13
+          + 134120588299548463*x^12 + 362240696528256*x^11 - 25964582366880639486*x^10
+          - 91743672243419990*x^9 + 3649429473447308439427*x^8 + 14310332927134072336*x^7
+          - 363192569823568746892571*x^6 - 1353403793640477725898*x^5
+          + 24293393281774560140427565*x^4 + 70673814899934142357628*x^3
+          - 980621447508959243128437933*x^2 - 1539841440617805445432660*x
+          + 18065914012013502602456565991
         sage: (x^4 - x + 1).splitting_field('a', simplify=True)
-        Number Field in a with defining polynomial x^24 + 8*x^23 - 32*x^22 - 310*x^21 + 540*x^20 + 4688*x^19 - 6813*x^18 - 32380*x^17 + 49525*x^16 + 102460*x^15 - 129944*x^14 - 287884*x^13 + 372727*x^12 + 150624*x^11 - 110530*x^10 - 566926*x^9 + 1062759*x^8 - 779940*x^7 + 863493*x^6 - 1623578*x^5 + 1759513*x^4 - 955624*x^3 + 459975*x^2 - 141948*x + 53919
+        Number Field in a with defining polynomial
+         x^24 + 8*x^23 - 32*x^22 - 310*x^21 + 540*x^20 + 4688*x^19 - 6813*x^18 - 32380*x^17
+          + 49525*x^16 + 102460*x^15 - 129944*x^14 - 287884*x^13 + 372727*x^12 + 150624*x^11
+          - 110530*x^10 - 566926*x^9 + 1062759*x^8 - 779940*x^7 + 863493*x^6 - 1623578*x^5
+          + 1759513*x^4 - 955624*x^3 + 459975*x^2 - 141948*x + 53919
         sage: (x^4 - x + 1).splitting_field('a', simplify_all=True)
-        Number Field in a with defining polynomial x^24 - 3*x^23 + 2*x^22 - x^20 + 4*x^19 + 32*x^18 - 35*x^17 - 92*x^16 + 49*x^15 + 163*x^14 - 15*x^13 - 194*x^12 - 15*x^11 + 163*x^10 + 49*x^9 - 92*x^8 - 35*x^7 + 32*x^6 + 4*x^5 - x^4 + 2*x^2 - 3*x + 1
+        Number Field in a with defining polynomial x^24 - 3*x^23 + 2*x^22 - x^20 + 4*x^19
+         + 32*x^18 - 35*x^17 - 92*x^16 + 49*x^15 + 163*x^14 - 15*x^13 - 194*x^12 - 15*x^11
+         + 163*x^10 + 49*x^9 - 92*x^8 - 35*x^7 + 32*x^6 + 4*x^5 - x^4 + 2*x^2 - 3*x + 1
 
     Reducible polynomials also work::
 
@@ -208,7 +222,10 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
         sage: (x^4 - x + 1).splitting_field('a', simplify_all=True, map=True)[1]
         Ring morphism:
           From: Rational Field
-          To:   Number Field in a with defining polynomial x^24 - 3*x^23 + 2*x^22 - x^20 + 4*x^19 + 32*x^18 - 35*x^17 - 92*x^16 + 49*x^15 + 163*x^14 - 15*x^13 - 194*x^12 - 15*x^11 + 163*x^10 + 49*x^9 - 92*x^8 - 35*x^7 + 32*x^6 + 4*x^5 - x^4 + 2*x^2 - 3*x + 1
+          To:   Number Field in a with defining polynomial
+                x^24 - 3*x^23 + 2*x^22 - x^20 + 4*x^19 + 32*x^18 - 35*x^17 - 92*x^16
+                + 49*x^15 + 163*x^14 - 15*x^13 - 194*x^12 - 15*x^11 + 163*x^10 + 49*x^9
+                - 92*x^8 - 35*x^7 + 32*x^6 + 4*x^5 - x^4 + 2*x^2 - 3*x + 1
           Defn: 1 |--> 1
 
     We can enable verbose messages::
@@ -242,13 +259,22 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
         Number Field in x with defining polynomial x^8 + 24*x^6 + 608*x^4 + 9792*x^2 + 53824
         sage: C4pol = x^4 + x^3 + x^2 + x + 1
         sage: C4pol.splitting_field('x')
-        Number Field in x with defining polynomial x^8 - x^7 - 2*x^6 + 5*x^5 + x^4 + 15*x^3 - 18*x^2 - 27*x + 81
+        Number Field in x with defining polynomial
+         x^8 - x^7 - 2*x^6 + 5*x^5 + x^4 + 15*x^3 - 18*x^2 - 27*x + 81
         sage: D8pol = x^4 - 2
         sage: D8pol.splitting_field('x')
-        Number Field in x with defining polynomial x^16 + 8*x^15 + 68*x^14 + 336*x^13 + 1514*x^12 + 5080*x^11 + 14912*x^10 + 35048*x^9 + 64959*x^8 + 93416*x^7 + 88216*x^6 + 41608*x^5 - 25586*x^4 - 60048*x^3 - 16628*x^2 + 12008*x + 34961
+        Number Field in x with defining polynomial
+         x^16 + 8*x^15 + 68*x^14 + 336*x^13 + 1514*x^12 + 5080*x^11 + 14912*x^10
+          + 35048*x^9 + 64959*x^8 + 93416*x^7 + 88216*x^6 + 41608*x^5 - 25586*x^4
+          - 60048*x^3 - 16628*x^2 + 12008*x + 34961
         sage: A4pol = x^4 - 4*x^3 + 14*x^2 - 28*x + 21
         sage: A4pol.splitting_field('x')
-        Number Field in x with defining polynomial x^24 - 20*x^23 + 290*x^22 - 3048*x^21 + 26147*x^20 - 186132*x^19 + 1130626*x^18 - 5913784*x^17 + 26899345*x^16 - 106792132*x^15 + 371066538*x^14 - 1127792656*x^13 + 2991524876*x^12 - 6888328132*x^11 + 13655960064*x^10 - 23000783036*x^9 + 32244796382*x^8 - 36347834476*x^7 + 30850889884*x^6 - 16707053128*x^5 + 1896946429*x^4 + 4832907884*x^3 - 3038258802*x^2 - 200383596*x + 593179173
+        Number Field in x with defining polynomial
+         x^24 - 20*x^23 + 290*x^22 - 3048*x^21 + 26147*x^20 - 186132*x^19 + 1130626*x^18
+          - 5913784*x^17 + 26899345*x^16 - 106792132*x^15 + 371066538*x^14 - 1127792656*x^13
+          + 2991524876*x^12 - 6888328132*x^11 + 13655960064*x^10 - 23000783036*x^9
+          + 32244796382*x^8 - 36347834476*x^7 + 30850889884*x^6 - 16707053128*x^5
+          + 1896946429*x^4 + 4832907884*x^3 - 3038258802*x^2 - 200383596*x + 593179173
         sage: S4pol = x^4 + x + 1
         sage: S4pol.splitting_field('x')
         Number Field in x with defining polynomial x^48 ...
@@ -258,7 +284,9 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
         sage: R.<x> = PolynomialRing(QQ)
         sage: pol15 = chebyshev_T(31, x) - 1    # 2^30*(x-1)*minpoly(cos(2*pi/31))^2
         sage: pol15.splitting_field('a')
-        Number Field in a with defining polynomial x^15 - x^14 - 14*x^13 + 13*x^12 + 78*x^11 - 66*x^10 - 220*x^9 + 165*x^8 + 330*x^7 - 210*x^6 - 252*x^5 + 126*x^4 + 84*x^3 - 28*x^2 - 8*x + 1
+        Number Field in a with defining polynomial
+         x^15 - x^14 - 14*x^13 + 13*x^12 + 78*x^11 - 66*x^10 - 220*x^9 + 165*x^8
+          + 330*x^7 - 210*x^6 - 252*x^5 + 126*x^4 + 84*x^3 - 28*x^2 - 8*x + 1
         sage: pol48 = x^6 - 4*x^4 + 12*x^2 - 12
         sage: pol48.splitting_field('a')
         Number Field in a with defining polynomial x^48 ...
@@ -269,7 +297,9 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
     for relative extensions::
 
         sage: pol15.splitting_field('a', degree_multiple=15)
-        Number Field in a with defining polynomial x^15 + x^14 - 14*x^13 - 13*x^12 + 78*x^11 + 66*x^10 - 220*x^9 - 165*x^8 + 330*x^7 + 210*x^6 - 252*x^5 - 126*x^4 + 84*x^3 + 28*x^2 - 8*x - 1
+        Number Field in a with defining polynomial
+         x^15 + x^14 - 14*x^13 - 13*x^12 + 78*x^11 + 66*x^10 - 220*x^9 - 165*x^8
+          + 330*x^7 + 210*x^6 - 252*x^5 - 126*x^4 + 84*x^3 + 28*x^2 - 8*x - 1
 
     A value for ``degree_multiple`` which isn't actually a
     multiple of the absolute degree of the splitting field can
@@ -297,10 +327,14 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
         Number Field in x with defining polynomial x^5 + x^4 - 4*x^3 - 3*x^2 + 3*x + 1
         sage: D10pol = x^5 - x^4 - 5*x^3 + 4*x^2 + 3*x - 1
         sage: D10pol.splitting_field('x')
-        Number Field in x with defining polynomial x^10 - 28*x^8 + 216*x^6 - 681*x^4 + 902*x^2 - 401
+        Number Field in x with defining polynomial
+         x^10 - 28*x^8 + 216*x^6 - 681*x^4 + 902*x^2 - 401
         sage: AGL_1_5pol = x^5 - 2
         sage: AGL_1_5pol.splitting_field('x')
-        Number Field in x with defining polynomial x^20 + 10*x^19 + 55*x^18 + 210*x^17 + 595*x^16 + 1300*x^15 + 2250*x^14 + 3130*x^13 + 3585*x^12 + 3500*x^11 + 2965*x^10 + 2250*x^9 + 1625*x^8 + 1150*x^7 + 750*x^6 + 400*x^5 + 275*x^4 + 100*x^3 + 75*x^2 + 25
+        Number Field in x with defining polynomial
+         x^20 + 10*x^19 + 55*x^18 + 210*x^17 + 595*x^16 + 1300*x^15 + 2250*x^14
+          + 3130*x^13 + 3585*x^12 + 3500*x^11 + 2965*x^10 + 2250*x^9 + 1625*x^8
+          + 1150*x^7 + 750*x^6 + 400*x^5 + 275*x^4 + 100*x^3 + 75*x^2 + 25
         sage: A5pol = x^5 - x^4 + 2*x^2 - 2*x + 2
         sage: A5pol.splitting_field('x')
         Number Field in x with defining polynomial x^60 ...
@@ -309,11 +343,11 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
     fields of too large degree (this can be used to check whether the
     splitting field has small degree)::
 
-        sage: (x^5+x+3).splitting_field('b', abort_degree=119)
+        sage: (x^5 + x + 3).splitting_field('b', abort_degree=119)
         Traceback (most recent call last):
         ...
         SplittingFieldAbort: degree of splitting field equals 120
-        sage: (x^10+x+3).splitting_field('b', abort_degree=60)  # long time (10s on sage.math, 2014)
+        sage: (x^10 + x + 3).splitting_field('b', abort_degree=60)  # long time (10s on sage.math, 2014)
         Traceback (most recent call last):
         ...
         SplittingFieldAbort: degree of splitting field is a multiple of 180
@@ -324,7 +358,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
         sage: from sage.rings.number_field.splitting_field import SplittingFieldAbort
         sage: try:  # long time (4s on sage.math, 2014)
-        ....:     (x^8+x+1).splitting_field('b', abort_degree=60, simplify=False)
+        ....:     (x^8 + x + 1).splitting_field('b', abort_degree=60, simplify=False)
         ....: except SplittingFieldAbort as e:
         ....:     print(e.degree_divisor)
         ....:     print(e.degree_multiple)
@@ -348,7 +382,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
     # Kpol = PARI polynomial in y defining the extension found so far
     F = poly.base_ring()
-    if is_RationalField(F):
+    if isinstance(F, RationalField):
         Kpol = pari("'y")
     else:
         Kpol = F.pari_polynomial("y")
@@ -356,7 +390,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
     # (only needed if map=True)
     if map:
         Fgen = F.gen().__pari__()
-    verbose("Starting field: %s"%Kpol)
+    verbose("Starting field: %s" % Kpol)
 
     # L and Lred are lists of SplittingData.
     # L contains polynomials which are irreducible over K,
@@ -380,7 +414,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
             raise SplittingFieldAbort(absolute_degree * rel_degree_divisor, degree_multiple)
 
         # First, factor polynomials in Lred and store the result in L
-        verbose("SplittingData to factor: %s"%[s._repr_tuple() for s in Lred])
+        verbose("SplittingData to factor: %s" % [s._repr_tuple() for s in Lred])
         t = cputime()
         for splitting in Lred:
             m = splitting.dm.gcd(degree_multiple).gcd(factorial(splitting.poldegree()))
@@ -420,7 +454,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
                     # Compute cubic resolvent
                     a0, a1, a2, a3, a4 = (q/q.pollead()).Vecrev()
                     assert a4 == 1
-                    cubicpol = pari([4*a0*a2 - a1*a1 -a0*a3*a3, a1*a3 - 4*a0, -a2, 1]).Polrev()
+                    cubicpol = pari([4*a0*a2 - a1*a1 - a0*a3*a3, a1*a3 - 4*a0, -a2, 1]).Polrev()
                     cubicfactors = Kpol.nffactor(cubicpol)[0]
                     if len(cubicfactors) == 1:    # A4 or S4
                         # After adding a root of the cubic resolvent,
@@ -470,8 +504,8 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
         # Sort according to degree to handle low degrees first
         L.sort(key=lambda x: x.key())
-        verbose("SplittingData to handle: %s"%[s._repr_tuple() for s in L])
-        verbose("Bounds for absolute degree: [%s, %s]"%(degree_divisor,degree_multiple))
+        verbose("SplittingData to handle: %s" % [s._repr_tuple() for s in L])
+        verbose("Bounds for absolute degree: [%s, %s]" % (degree_divisor,degree_multiple))
 
         # Check consistency
         if degree_multiple % degree_divisor != 0:
@@ -490,7 +524,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
         # Add a root of f = L[0] to construct the field N = K[x]/f(x)
         splitting = L[0]
         f = splitting.pol
-        verbose("Handling polynomial %s"%(f.lift()), level=2)
+        verbose("Handling polynomial %s" % (f.lift()), level=2)
         t = cputime()
         Npol, KtoN, k = Kpol.rnfequation(f, flag=1)
 
@@ -512,13 +546,11 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
 
         if simplify_all or (simplify and not finished):
             # Find a simpler defining polynomial Lpol for Mpol
-            verbose("New field before simplifying: %s"%Mpol, t)
+            verbose("New field before simplifying: %s" % Mpol, t)
             t = cputime()
-            M = Mpol.polred(flag=3)
-            n = len(M[0])-1
-            Lpol = M[1][n].change_variable_name("y")
-            LtoM = M[0][n].change_variable_name("y").Mod(Mpol.change_variable_name("y"))
-            MtoL = LtoM.modreverse()
+            M = Mpol.polredbest(1)
+            Lpol = M[0].change_variable_name("y")
+            MtoL = M[1].lift().change_variable_name("y").Mod(Lpol)
         else:
             # Lpol = Mpol
             Lpol = Mpol.change_variable_name("y")
@@ -527,7 +559,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
         NtoL = MtoL/Mdiv
         KtoL = KtoN.lift().subst("x", NtoL).Mod(Lpol)
         Kpol = Lpol   # New Kpol (for next iteration)
-        verbose("New field: %s"%Kpol, t)
+        verbose("New field: %s" % Kpol, t)
         if map:
             t = cputime()
             Fgen = Fgen.lift().subst("y", KtoL)

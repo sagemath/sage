@@ -13,7 +13,6 @@ This module currently implements the canonical ring homomorphism from
 AUTHORS:
 
 - Peter Bruin (March 2014): initial version
-
 """
 
 from sage.rings.morphism cimport RingHomomorphism_from_base
@@ -34,7 +33,6 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
                 Natural morphism:
                   From: Integer Ring
                   To:   Rational Field
-
     """
     cpdef Element _call_(self, x):
         """
@@ -55,13 +53,12 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: g = QQ.hom(RR)
             sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)
             sage: G(A.gen()^1000000)
-            1.00000000000000*x^1000000
-
+            1.0...*x^1000000
         """
         P = self.codomain()
         f = self.underlying_map()
         if P.is_sparse():
-            return P({a: f(b) for a, b in x.dict().iteritems()})
+            return P({a: f(b) for a, b in x.monomial_coefficients().items()})
         else:
             return P([f(b) for b in x])
 
@@ -73,25 +70,26 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
 
             sage: from sage.rings.polynomial.polynomial_ring_homomorphism import PolynomialRingHomomorphism_from_base
             sage: R.<x> = ZZ[]
-            sage: S = GF(5)['x']                                                        # optional - sage.rings.finite_rings
-            sage: f = ZZ.hom(GF(5))                                                     # optional - sage.rings.finite_rings
-            sage: F = PolynomialRingHomomorphism_from_base(R.Hom(S), f)                 # optional - sage.rings.finite_rings
-            sage: F(2 * x, check=True)                                                  # optional - sage.rings.finite_rings
+            sage: S = GF(5)['x']
+            sage: f = ZZ.hom(GF(5))
+            sage: F = PolynomialRingHomomorphism_from_base(R.Hom(S), f)
+            sage: F(2 * x, check=True)
             2*x
 
-            sage: k = GF(49, 'z')                                                       # optional - sage.rings.finite_rings
-            sage: A = PolynomialRing(GF(7), 'x', sparse=True)                           # optional - sage.rings.finite_rings
-            sage: B = PolynomialRing(k, 'x', sparse=True)                               # optional - sage.rings.finite_rings
-            sage: g = GF(7).hom(k)                                                      # optional - sage.rings.finite_rings
-            sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)                 # optional - sage.rings.finite_rings
-            sage: G(A.gen()^1000000, True, construct=False)                             # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k = GF(49, 'z')
+            sage: A = PolynomialRing(GF(7), 'x', sparse=True)
+            sage: B = PolynomialRing(k, 'x', sparse=True)
+            sage: g = GF(7).hom(k)
+            sage: G = PolynomialRingHomomorphism_from_base(A.Hom(B), g)
+            sage: G(A.gen()^1000000, True, construct=False)
             x^1000000
-
         """
         P = self.codomain()
         f = self.underlying_map()
         if P.is_sparse():
-            return P({a: f(b) for a, b in x.dict().iteritems()}, *args, **kwds)
+            return P({a: f(b) for a, b in x.monomial_coefficients().items()},
+                     *args, **kwds)
         else:
             return P([f(b) for b in x], *args, **kwds)
 
@@ -105,7 +103,6 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: S.<x> = QQ[]
             sage: R.hom(S).is_injective()
             True
-
         """
         return self.underlying_map().is_injective()
 
@@ -119,6 +116,5 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
             sage: S.<x> = Zmod(2)[]
             sage: R.hom(S).is_surjective()
             True
-
         """
         return self.underlying_map().is_surjective()

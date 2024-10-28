@@ -20,9 +20,7 @@ def easy_linear_polynomials(p):
     res = []
     if p.deg() >= 2:
         if p.vars_as_monomial().deg() > 8:
-            opp = p + 1
-            for q in easy_linear_factors(opp):
-                res.append(q + 1)
+            res.extend(q + 1 for q in easy_linear_factors(p + 1))
         else:
             res = easy_linear_polynomials_via_interpolation(p)
     return res

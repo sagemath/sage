@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Integrated Curves and Geodesics in Manifolds
 
@@ -41,11 +40,13 @@ corresponding affine parameter::
 Numerically integrate the geodesic (see :meth:`~IntegratedCurve.solve` for
 all possible options, including the choice of the numerical algorithm)::
 
-    sage: sol = c.solve()
+    sage: sol = c.solve()                                                               # needs scipy
 
 Plot the geodesic after interpolating the solution ``sol``::
 
     sage: interp = c.interpolate()
+
+    sage: # needs sage.plot
     sage: graph = c.plot_integrated()
     sage: p_plot = p.plot(size=30, label_offset=-0.07, fontsize=20)
     sage: v_plot = v.plot(label_offset=0.05, fontsize=20)
@@ -94,7 +95,6 @@ AUTHORS:
 - Karim Van Aelst (2017): initial version
 - Florentin Jaffredo (2018): integration over multiple charts, use of
   ``fast_callable`` to improve the computation speed
-
 """
 
 # **********************************************************************
@@ -116,11 +116,14 @@ from sage.manifolds.differentiable.tangent_vector import TangentVector
 from sage.calculus.interpolation import Spline
 from sage.misc.decorators import options
 from sage.misc.functional import numerical_approx
+from sage.misc.lazy_import import lazy_import
 from sage.arith.srange import srange
 from sage.ext.fast_callable import fast_callable
 from sage.symbolic.ring import SR
-from scipy.integrate import ode
 from random import shuffle
+
+lazy_import('scipy.integrate', 'ode')
+
 
 class IntegratedCurve(DifferentiableCurve):
     r"""
@@ -227,7 +230,7 @@ class IntegratedCurve(DifferentiableCurve):
     Generate a solution of the system and an interpolation of this
     solution::
 
-        sage: sol = c.solve(step=0.2,
+        sage: sol = c.solve(step=0.2,                                                   # needs scipy
         ....:         parameters_values={B_0:1, m:1, q:1, L:10, T:1},
         ....:         solution_key='carac time 1', verbose=True)
         Performing numerical integration with method 'odeint'...
@@ -239,7 +242,7 @@ class IntegratedCurve(DifferentiableCurve):
         The resulting list of points was associated with the key
          'carac time 1' (if this key already referred to a former
          numerical solution, such a solution was erased).
-        sage: interp = c.interpolate(solution_key='carac time 1',
+        sage: interp = c.interpolate(solution_key='carac time 1',                       # needs scipy
         ....:                interpolation_key='interp 1', verbose=True)
         Performing cubic spline interpolation by default...
         Interpolation completed and associated with the key 'interp 1'
@@ -249,6 +252,7 @@ class IntegratedCurve(DifferentiableCurve):
     Such an interpolation is required to evaluate the curve and the
     vector tangent to the curve for any value of the curve parameter::
 
+        sage: # needs scipy
         sage: p = c(1.9, verbose=True)
         Evaluating point coordinates from the interpolation associated
          with the key 'interp 1' by default...
@@ -268,7 +272,7 @@ class IntegratedCurve(DifferentiableCurve):
     Plotting a numerical solution (with or without its tangent vector
     field) also requires the solution to be interpolated at least once::
 
-        sage: c_plot_2d_1 = c.plot_integrated(ambient_coords=[x1, x2],
+        sage: c_plot_2d_1 = c.plot_integrated(ambient_coords=[x1, x2],                  # needs scipy
         ....:               interpolation_key='interp 1', thickness=2.5,
         ....:               display_tangent=True, plot_points=200,
         ....:               plot_points_tangent=10, scale=0.5,
@@ -277,7 +281,7 @@ class IntegratedCurve(DifferentiableCurve):
         A tiny final offset equal to 0.000251256281407035 was introduced
          for the last point in order to safely compute it from the
          interpolation.
-        sage: c_plot_2d_1
+        sage: c_plot_2d_1                                                               # needs scipy sage.plot
         Graphics object consisting of 11 graphics primitives
 
     .. PLOT::
@@ -307,22 +311,23 @@ class IntegratedCurve(DifferentiableCurve):
     An instance of :class:`IntegratedCurve` may store several numerical
     solutions and interpolations::
 
+        sage: # needs scipy
         sage: sol = c.solve(step=0.2,
         ....:         parameters_values={B_0:1, m:1, q:1, L:10, T:100},
         ....:         solution_key='carac time 100')
         sage: interp = c.interpolate(solution_key='carac time 100',
         ....:                            interpolation_key='interp 100')
-        sage: c_plot_3d_100 = c.plot_integrated(interpolation_key='interp 100',
+        sage: c_plot_3d_100 = c.plot_integrated(interpolation_key='interp 100',         # needs sage.plot
         ....:                   thickness=2.5, display_tangent=True,
         ....:                   plot_points=200, plot_points_tangent=10,
         ....:                   scale=0.5, color='green',
         ....:                   color_tangent='orange')
-        sage: c_plot_3d_1 = c.plot_integrated(interpolation_key='interp 1',
+        sage: c_plot_3d_1 = c.plot_integrated(interpolation_key='interp 1',             # needs sage.plot
         ....:                   thickness=2.5, display_tangent=True,
         ....:                   plot_points=200, plot_points_tangent=10,
         ....:                   scale=0.5, color='blue',
         ....:                   color_tangent='red')
-        sage: c_plot_3d_1 + c_plot_3d_100
+        sage: c_plot_3d_1 + c_plot_3d_100                                               # needs sage.plot
         Graphics3d Object
 
     .. PLOT::
@@ -356,7 +361,6 @@ class IntegratedCurve(DifferentiableCurve):
                             color_tangent='orange')
         graph = c_plot_3d_1 + c_plot_3d_100
         sphinx_plot(graph)
-
     """
 
     def __init__(self, parent, equations_rhs, velocities,
@@ -410,7 +414,7 @@ class IntegratedCurve(DifferentiableCurve):
              manifold M
             sage: TestSuite(c).run()
 
-        Check that :trac:`28669` is fixed::
+        Check that :issue:`28669` is fixed::
 
             sage: E.<r,phi> = EuclideanSpace(coordinates='polar')
             sage: p = E((1, 0))  # the initial point
@@ -418,7 +422,6 @@ class IntegratedCurve(DifferentiableCurve):
             sage: t = var('t')
             sage: c = E.integrated_geodesic(E.metric(), (t, 0, 10), v); c
             Integrated geodesic in the Euclidean plane E^2
-
         """
         from sage.symbolic.ring import SR
 
@@ -523,7 +526,7 @@ class IntegratedCurve(DifferentiableCurve):
         # extract all the variables appearing in the initial tangent
         # vector components:
         initial_coord_basis = chart.frame().at(initial_pt)
-        initial_tgt_vec_comps=initial_tangent_vector[initial_coord_basis,:]
+        initial_tgt_vec_comps = initial_tangent_vector[initial_coord_basis,:]
         for comp in initial_tgt_vec_comps:
             if isinstance(comp, Expression):
                 parameters = parameters.union(comp.variables())
@@ -628,7 +631,6 @@ class IntegratedCurve(DifferentiableCurve):
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c'); c
             Integrated curve c in the 3-dimensional differentiable
              manifold M
-
         """
 
         description = "Integrated curve "
@@ -676,7 +678,6 @@ class IntegratedCurve(DifferentiableCurve):
             sage: loads(dumps(c))
             Integrated curve c in the 3-dimensional differentiable
              manifold M
-
         """
         return (type(self), (self.parent(), self._equations_rhs,
                 self._velocities, self._curve_parameter,
@@ -691,12 +692,10 @@ class IntegratedCurve(DifferentiableCurve):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) prints a detailed
+        - ``verbose`` -- boolean (default: ``False``); prints a detailed
           description of the curve
 
-        OUTPUT:
-
-        - list containing
+        OUTPUT: list containing
 
           * the equations
           * the initial conditions
@@ -739,7 +738,6 @@ class IntegratedCurve(DifferentiableCurve):
             sage: sys_mute = c.system()
             sage: sys_mute == sys
             True
-
         """
 
         v0 = self._initial_tangent_vector
@@ -777,7 +775,7 @@ class IntegratedCurve(DifferentiableCurve):
 
             description += "Initial tangent vector: {} ".format(v0)
             description += "with components "
-            description +="{}".format(initial_tgt_vec_comps)
+            description += "{}".format(initial_tgt_vec_comps)
             description += " with respect to {}\n\n".format(chart)
 
             for coord_func,velocity in zip(chart[:],self._velocities):
@@ -807,7 +805,7 @@ class IntegratedCurve(DifferentiableCurve):
         zero, although the parameter range may not contain zero.
         Yet, assuming that it does, values of the coordinates functions
         at such zero initial parameter value are denoted by the name of
-        the coordinate function followed by the string ``"_0"``.
+        the coordinate function followed by the string ``'_0'``.
 
         OUTPUT:
 
@@ -857,7 +855,6 @@ class IntegratedCurve(DifferentiableCurve):
              (B_0*q*x2_0 + Dx1_0*m*cos(B_0*q*t/m) +
               Dx2_0*m*sin(B_0*q*t/m) - Dx1_0*m)/(B_0*q),
              Dx3_0*t + x3_0)
-
         """
 
         from sage.calculus.var import function
@@ -885,7 +882,7 @@ class IntegratedCurve(DifferentiableCurve):
             des[i] = diff(y[i],par) == des[i]
             for j in range(dim):
                 coord = self._chart[:][j] # important to use '[:]' on
-                # 'chart' to avoid problems due to non zero starting
+                # 'chart' to avoid problems due to nonzero starting
                 # index (i0)
                 veloc = self._velocities[j]
                 des[dim+i] = des[dim+i].substitute({coord: y[j]})
@@ -898,7 +895,7 @@ class IntegratedCurve(DifferentiableCurve):
         y_ics_second_half = []
         for i in range(dim):
             coord = self._chart[:][i] # important to use '[:]'
-            # on 'chart' to avoid problems due to non zero
+            # on 'chart' to avoid problems due to nonzero
             # starting index (i0)
             veloc = self._velocities[i]
             str_var_coord = "{}_0".format(coord)
@@ -941,8 +938,8 @@ class IntegratedCurve(DifferentiableCurve):
         - ``method`` -- (default: ``'odeint'``) numerical scheme to
           use for the integration of the curve; available algorithms are:
 
-          * ``'odeint'`` - makes use of
-            `scipy.integrate.odeint <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html>`_
+          * ``'odeint'`` -- makes use of
+            :func:`scipy:scipy.integrate.odeint`
             via Sage solver
             :func:`~sage.calculus.desolvers.desolve_odeint`; ``odeint`` invokes
             the LSODA algorithm of the
@@ -950,27 +947,27 @@ class IntegratedCurve(DifferentiableCurve):
             automatically selects between implicit Adams method (for non-stiff
             problems) and a method based on backward differentiation formulas
             (BDF) (for stiff problems).
-          * ``'rk4_maxima'`` - 4th order classical Runge-Kutta, which
+          * ``'rk4_maxima'`` -- 4th order classical Runge-Kutta, which
             makes use of Maxima's dynamics package via Sage solver
             :func:`~sage.calculus.desolvers.desolve_system_rk4` (quite slow)
-          * ``'dopri5'`` - Dormand-Prince Runge-Kutta of order (4)5 provided by
-            `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_
-          * ``'dop853'`` - Dormand-Prince Runge-Kutta of order 8(5,3) provided by
-            `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_
+          * ``'dopri5'`` -- Dormand-Prince Runge-Kutta of order (4)5 provided by
+            :obj:`scipy:scipy.integrate.ode`
+          * ``'dop853'`` -- Dormand-Prince Runge-Kutta of order 8(5,3) provided by
+            :obj:`scipy:scipy.integrate.ode`
 
           and those provided by ``GSL`` via Sage class
           :class:`~sage.calculus.ode.ode_solver`:
 
-          * ``'rk2'`` - embedded Runge-Kutta (2,3)
-          * ``'rk4'`` - 4th order classical Runge-Kutta
-          * ``'rkf45'`` - Runge-Kutta-Felhberg (4,5)
-          * ``'rkck'`` - embedded Runge-Kutta-Cash-Karp (4,5)
-          * ``'rk8pd'`` - Runge-Kutta Prince-Dormand (8,9)
-          * ``'rk2imp'`` - implicit 2nd order Runge-Kutta at Gaussian points
-          * ``'rk4imp'`` - implicit 4th order Runge-Kutta at Gaussian points
-          * ``'gear1'`` - `M=1` implicit Gear
-          * ``'gear2'`` - `M=2` implicit Gear
-          * ``'bsimp'`` - implicit Bulirsch-Stoer (requires Jacobian)
+          * ``'rk2'`` -- embedded Runge-Kutta (2,3)
+          * ``'rk4'`` -- 4th order classical Runge-Kutta
+          * ``'rkf45'`` -- Runge-Kutta-Felhberg (4,5)
+          * ``'rkck'`` -- embedded Runge-Kutta-Cash-Karp (4,5)
+          * ``'rk8pd'`` -- Runge-Kutta Prince-Dormand (8,9)
+          * ``'rk2imp'`` -- implicit 2nd order Runge-Kutta at Gaussian points
+          * ``'rk4imp'`` -- implicit 4th order Runge-Kutta at Gaussian points
+          * ``'gear1'`` -- `M=1` implicit Gear
+          * ``'gear2'`` -- `M=2` implicit Gear
+          * ``'bsimp'`` -- implicit Bulirsch-Stoer (requires Jacobian)
 
         - ``solution_key`` -- (default: ``None``) key which the
           resulting numerical solution will be associated to; a default
@@ -978,14 +975,12 @@ class IntegratedCurve(DifferentiableCurve):
         - ``parameters_values`` -- (default: ``None``) list of numerical
           values of the parameters present in the system defining the
           curve, to be substituted in the equations before integration
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the computation in progress
         - ``**control_param`` -- extra control parameters to be passed to the
           chosen solver; see the example with ``rtol`` and ``atol`` below
 
-        OUTPUT:
-
-        - list of the numerical points of the computed solution
+        OUTPUT: list of the numerical points of the computed solution
 
         EXAMPLES:
 
@@ -1001,7 +996,7 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
-            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},
+            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},         # needs scipy
             ....:               verbose=True)
             Performing numerical integration with method 'odeint'...
             Resulting list of points will be associated with the key
@@ -1017,44 +1012,43 @@ class IntegratedCurve(DifferentiableCurve):
 
         The first 3 points of the solution, in the form ``[t, x1, x2, x3]``::
 
-            sage: sol[:3]  # abs tol 1e-12
+            sage: sol[:3]  # abs tol 1e-12                                              # needs scipy
             [[0.0, 0.0, 0.0, 0.0],
              [0.05, 0.04999999218759271, -2.083327338392213e-05, 0.05],
              [0.1, 0.09999975001847655, -0.00016666146190783666, 0.1]]
 
         The default is ``verbose=False``::
 
-            sage: sol_mute = c.solve(parameters_values={B_0:1, m:1, q:1,
+            sage: sol_mute = c.solve(parameters_values={B_0:1, m:1, q:1,                # needs scipy
             ....:                                       L:10, T:1})
-            sage: sol_mute == sol
+            sage: sol_mute == sol                                                       # needs scipy
             True
 
         Specifying the relative and absolute error tolerance parameters to
         be used in :func:`~sage.calculus.desolvers.desolve_odeint`::
 
-            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},
+            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},         # needs scipy
             ....:               rtol=1e-12, atol=1e-12)
 
         Using a numerical method different from the default one::
 
-            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},
+            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},         # needs scipy
             ....:               method='rk8pd')
 
 
         TESTS::
 
-            sage: sol = c.solve(parameters_values={m:1, q:1, L:10, T:1})
+            sage: sol = c.solve(parameters_values={m:1, q:1, L:10, T:1})                # needs scipy
             Traceback (most recent call last):
             ...
             ValueError: numerical values should be provided for each of
              the parameters [B_0, L, T, m, q]
-            sage: sol = c.solve(method='my method',
+            sage: sol = c.solve(method='my method',                                     # needs scipy
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
             Traceback (most recent call last):
             ...
             ValueError: no available method of integration referred to
              as 'my method'
-
         """
         from sage.symbolic.ring import SR
 
@@ -1072,7 +1066,7 @@ class IntegratedCurve(DifferentiableCurve):
         t_min = self.domain().lower_bound()
         t_max = self.domain().upper_bound()
 
-        eqns_num = [eq for eq in self._equations_rhs]
+        eqns_num = list(self._equations_rhs)
         # 'self._equations_rhs' needs not to be modified ever, because we
         # want to keep track of the most general form of the equations
         # defining self, since those may contain parameters (which, for
@@ -1313,7 +1307,7 @@ class IntegratedCurve(DifferentiableCurve):
                             for j in range(dim):
                                 coord = chart[:][j] # important to use
                                 # '[:]' on 'chart' to avoid problems due
-                                # to non zero starting index (i0)
+                                # to nonzero starting index (i0)
                                 vel = self._velocities[j]
                                 AUX = eqns_num[i].derivative(coord)
                                 AUX2 = eqns_num[i].derivative(vel)
@@ -1322,7 +1316,7 @@ class IntegratedCurve(DifferentiableCurve):
                                 for k in range(dim):
                                     coordin = chart[:][k] # important to
                                     # use '[:]' on 'chart' to avoid
-                                    # problems due to non zero starting
+                                    # problems due to nonzero starting
                                     # index (i0)
                                     veloc = self._velocities[k]
                                     AUX = AUX.substitute({coordin: y[k]})
@@ -1341,7 +1335,7 @@ class IntegratedCurve(DifferentiableCurve):
                             for m in range(dim):
                                 coordin = chart[:][m] # important to use
                                 # '[:]' on 'chart' to avoid problems due
-                                # to non zero starting index (i0)
+                                # to nonzero starting index (i0)
                                 veloc = self._velocities[m]
                                 AUX3 = AUX3.substitute({coordin: y[m]})
                                 AUX3 = AUX3.substitute({veloc: y[dim+m]})
@@ -1397,9 +1391,9 @@ class IntegratedCurve(DifferentiableCurve):
                              "to {}) is out ".format(sol[n][0]) +
                              "of the chart domain; a curve with a " +
                              "smaller maximal value of the curve " +
-                             "parameter, or a smaller initial tangent "+
-                             "vector, might be considered. You can also try "+
-                             "'solve_across_charts' in order not to be "+
+                             "parameter, or a smaller initial tangent " +
+                             "vector, might be considered. You can also try " +
+                             "'solve_across_charts' in order not to be " +
                              "confined to a single chart")
         else:
             self._solutions[solution_key] = coords_sol
@@ -1418,8 +1412,8 @@ class IntegratedCurve(DifferentiableCurve):
         Integrate the curve numerically over the domain of integration, with
         the ability to switch chart mid-integration.
 
-        The only supported solver is
-        `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_, because it supports basic event handling, needed to detect when the
+        The only supported solver is :obj:`scipy:scipy.integrate.ode`,
+        because it supports basic event handling, needed to detect when the
         curve is reaching the frontier of the chart. This is an adaptive step
         solver. So the ``step`` is not the step of integration but instead the
         step used to peak at the current chart, and switch if needed.
@@ -1439,14 +1433,12 @@ class IntegratedCurve(DifferentiableCurve):
         - ``parameters_values`` -- (default: ``None``) list of numerical
           values of the parameters present in the system defining the
           curve, to be substituted in the equations before integration
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the computation in progress
         - ``**control_param`` -- extra control parameters to be passed to the
           solver
 
-        OUTPUT:
-
-        - list of the numerical points of the computed solution
+        OUTPUT: list of the numerical points of the computed solution
 
         EXAMPLES:
 
@@ -1465,7 +1457,7 @@ class IntegratedCurve(DifferentiableCurve):
         charts `P` en `C` (for "Polar" and "Cartesian") and their transition
         maps::
 
-            sage: M = Manifold(2, 'M', structure="Riemannian")
+            sage: M = Manifold(2, 'M', structure='Riemannian')
             sage: C.<x,y> = M.chart(coord_restrictions=lambda x,y: x**2+y**2 < 3**2)
             sage: P.<r,th> = M.chart(coord_restrictions=lambda r, th: r > 2)
             sage: P_to_C = P.transition_map(C,(r*cos(th), r*sin(th)))
@@ -1489,9 +1481,9 @@ class IntegratedCurve(DifferentiableCurve):
         mapping::
 
             sage: phi = M.diff_map(M, {(C,C): [x, y], (P,C): [r*cos(th), r*sin(th)]})
-            sage: fig = P.plot(number_values=9, chart=C, mapping=phi,
+            sage: fig = P.plot(number_values=9, chart=C, mapping=phi,                   # needs sage.plot
             ....:              color='grey', ranges= {r:(2, 6), th:(0,2*pi)})
-            sage: fig += C.plot(number_values=13, chart=C, mapping=phi,
+            sage: fig += C.plot(number_values=13, chart=C, mapping=phi,                 # needs sage.plot
             ....:               color='grey', ranges= {x:(-3, 3), y:(-3, 3)})
 
         There is a clear non-empty intersection between the two
@@ -1518,8 +1510,8 @@ class IntegratedCurve(DifferentiableCurve):
 
         The integration is done as usual, but using the method
         :meth:`solve_across_charts` instead of :meth:`solve`. This forces the
-        use of ``scipy.integrate.ode`` as the solver, because of event handling
-        support.
+        use of :obj:`scipy:scipy.integrate.ode` as the solver, because of event
+        handling support.
 
         The argument ``verbose=True`` will cause the solver to write a small
         message each time it is switching chart::
@@ -1559,14 +1551,14 @@ class IntegratedCurve(DifferentiableCurve):
         :meth:`plot_integrated` again on each part.
         Finally, ``color`` can be a list, which will be cycled through::
 
-            sage: fig += c.plot_integrated(mapping=phi, color=["green","red"],
+            sage: fig += c.plot_integrated(mapping=phi, color=["green","red"],          # needs sage.plot
             ....: thickness=3, plot_points=100, across_charts=True)
-            sage: fig
+            sage: fig                                                                   # needs sage.plot
             Graphics object consisting of 43 graphics primitives
 
         .. PLOT::
 
-            M = Manifold(2, 'M', structure="Riemannian")
+            M = Manifold(2, 'M', structure='Riemannian')
             C= M.chart(names = ("x", "y"), coord_restrictions=lambda x,y: x**2+y**2 < 3**2)
             x, y = C[:]
             P = M.chart(names = ("r", "th"), coord_restrictions=lambda r,th: r > 2)
@@ -1592,7 +1584,6 @@ class IntegratedCurve(DifferentiableCurve):
             fig += c.plot_integrated(mapping=phi, color=["green","red"],
                         thickness=3, plot_points=100, across_charts=True)
             sphinx_plot(fig)
-
         """
         import numpy as np
 
@@ -1835,12 +1826,10 @@ class IntegratedCurve(DifferentiableCurve):
         - ``solution_key`` -- (default: ``None``) key which the
           requested numerical solution is associated to; a default
           value is chosen if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the solution returned
 
-        OUTPUT:
-
-        - list of the numerical points of the solution requested
+        OUTPUT: list of the numerical points of the solution requested
 
         EXAMPLES:
 
@@ -1856,6 +1845,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve(solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
             sage: sol_bis = c.solution(verbose=True)
@@ -1907,12 +1898,10 @@ class IntegratedCurve(DifferentiableCurve):
         - ``interpolation_key`` -- (default: ``None``) key which the
           resulting interpolation will be associated to ; a default
           value is given if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the interpolation in progress
 
-        OUTPUT:
-
-        - built interpolation object
+        OUTPUT: built interpolation object
 
         EXAMPLES:
 
@@ -1928,6 +1917,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
@@ -1962,7 +1953,6 @@ class IntegratedCurve(DifferentiableCurve):
             ...
             ValueError: no available method of interpolation referred to
              as 'my method'
-
         """
         if solution_key is None:
             if 'odeint' in self._solutions:
@@ -1994,7 +1984,7 @@ class IntegratedCurve(DifferentiableCurve):
                       "with the key '{}' ".format(interpolation_key) +
                       "by default.")
 
-        if method=='cubic spline':
+        if method == 'cubic spline':
             self._interpolations[interpolation_key] = []
             dim = self.codomain().dim()
             if not isinstance(self._solutions[solution_key][0], tuple):
@@ -2002,7 +1992,7 @@ class IntegratedCurve(DifferentiableCurve):
                     coordinate_curve = []
                     for point in self._solutions[solution_key]:
                         coordinate_curve += [[point[0], point[i+1]]]
-                    self._interpolations[interpolation_key]+=[Spline(coordinate_curve)]
+                    self._interpolations[interpolation_key] += [Spline(coordinate_curve)]
             else:   # case multi charts
                 j = 0
                 for chart, sol in self._solutions[solution_key]:
@@ -2014,7 +2004,7 @@ class IntegratedCurve(DifferentiableCurve):
                         interp_chart += [Spline(coordinate_curve)]
                     self._interpolations[interpolation_key] += [(chart, interp_chart)]
                     self._interpolations[interpolation_key+"_chart_"+str(j)] = interp_chart
-                    j+=1
+                    j += 1
         else:
             raise ValueError("no available method of interpolation " +
                              "referred to as '{}'".format(method))
@@ -2036,12 +2026,10 @@ class IntegratedCurve(DifferentiableCurve):
         - ``interpolation_key`` -- (default: ``None``) key which the
           requested interpolation is associated to; a default
           value is chosen if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the interpolation object returned
 
-        OUTPUT:
-
-        - requested interpolation object
+        OUTPUT: requested interpolation object
 
         EXAMPLES:
 
@@ -2057,6 +2045,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
@@ -2079,7 +2069,6 @@ class IntegratedCurve(DifferentiableCurve):
             ...
             ValueError: no existing key 'my interp' referring to any
              interpolation
-
         """
 
         if interpolation_key is None:
@@ -2111,7 +2100,7 @@ class IntegratedCurve(DifferentiableCurve):
         - ``interpolation_key`` -- (default: ``None``) key which the
           interpolation requested to compute the point is associated to;
           a default value is chosen if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the interpolation used
 
         OUTPUT:
@@ -2131,6 +2120,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
@@ -2147,7 +2138,6 @@ class IntegratedCurve(DifferentiableCurve):
              associated with the key 'interp_T1' by default...
             sage: p.coordinates()     # abs tol 1e-12
             (1.060743337877276, -0.21538352256822146, 1.1)
-
         """
 
         if interpolation_key is None:
@@ -2191,7 +2181,7 @@ class IntegratedCurve(DifferentiableCurve):
         - ``interpolation_key`` -- (default: ``None``) key which the
           interpolation requested to compute the tangent vector is
           associated to; a default value is chosen if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the interpolation used
 
         OUTPUT:
@@ -2213,6 +2203,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
@@ -2240,7 +2232,6 @@ class IntegratedCurve(DifferentiableCurve):
             ...
             ValueError: no existing key 'my interp' referring to any
              interpolation
-
         """
         if interpolation_key is None:
             if 'cubic spline' in self._interpolations:
@@ -2264,7 +2255,7 @@ class IntegratedCurve(DifferentiableCurve):
             # contain lists of instances of the Spline class
             raise TypeError("unexpected type of interpolation object")
 
-        interpolated_coordinates=[coordinate_curve_spline(t)
+        interpolated_coordinates = [coordinate_curve_spline(t)
                        for coordinate_curve_spline in interpolation]
         M = self.codomain()
         p = M.point(interpolated_coordinates, chart=self._chart, name=None)
@@ -2299,9 +2290,9 @@ class IntegratedCurve(DifferentiableCurve):
         - ``interpolation_key`` -- (default: ``None``) key associated to
           the interpolation object used for the plot; a default value
           is chosen if none is provided
-        - ``verbose`` -- (default: ``False``) prints information about
+        - ``verbose`` -- boolean (default: ``False``); prints information about
           the interpolation object used and the plotting in progress
-        - ``display_tangent`` -- (default: ``False``) determines whether
+        - ``display_tangent`` -- boolean (default: ``False``); determines whether
           some tangent vectors should also be plotted
         - ``color_tangent`` -- (default: ``blue``) color of the tangent
           vectors when these are plotted
@@ -2327,6 +2318,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,6), v, name='c')
+
+            sage: # needs scipy
             sage: sol = c.solve()
             sage: interp = c.interpolate()
             sage: c_plot_2d = c.plot_integrated(ambient_coords=[x1, x2],
@@ -2362,7 +2355,6 @@ class IntegratedCurve(DifferentiableCurve):
                             plot_points_tangent=10, scale=0.5,
                             color='blue', color_tangent='red')
             sphinx_plot(c_plot_2d_1)
-
         """
         from sage.manifolds.chart import RealChart
 
@@ -2456,7 +2448,7 @@ class IntegratedCurve(DifferentiableCurve):
         if ambient_coords is None:
             ambient_coords = chart[:]  # all chart coordinates are used
         n_pc = len(ambient_coords)
-        if n_pc != 2 and n_pc !=3:
+        if n_pc != 2 and n_pc != 3:
             raise ValueError("the number of coordinates involved in " +
                              "the plot must be either 2 or 3, " +
                              "not {}".format(n_pc))
@@ -2493,7 +2485,7 @@ class IntegratedCurve(DifferentiableCurve):
                              "tuple/list of 2 elements")
         else:
             p = prange #'p' declared only for the line below to be shorter
-            if p[0]<param_min or p[0]>param_max or p[1]<param_min or p[1]>param_max:
+            if p[0] < param_min or p[0] > param_max or p[1] < param_min or p[1] > param_max:
                 raise ValueError("parameter range should be a " +
                                  "subinterval of the curve domain " +
                                  "({})".format(self.domain()))
@@ -2534,8 +2526,8 @@ class IntegratedCurve(DifferentiableCurve):
                     t = param_min + 0.01*dt
                     if verbose:
                         print("A tiny initial offset equal to " +
-                              "{} ".format(0.01*dt)+
-                              "was introduced for the first point "+
+                              "{} ".format(0.01*dt) +
+                              "was introduced for the first point " +
                               "only, in order to safely compute " +
                               "it from the interpolation.")
 
@@ -2552,8 +2544,8 @@ class IntegratedCurve(DifferentiableCurve):
                     t = param_max - 0.01*dt
                     if verbose:
                         print("A tiny final offset equal to " +
-                              "{} ".format(0.01*dt)+
-                              "was introduced for the last point "+
+                              "{} ".format(0.01*dt) +
+                              "was introduced for the last point " +
                               "in order to safely compute " +
                               "it from the interpolation.")
 
@@ -2572,7 +2564,7 @@ class IntegratedCurve(DifferentiableCurve):
                 from sage.plot.plot3d.shapes import arrow3d
 
                 scale = kwds.pop('scale')
-                plot_points_tangent=kwds.pop('plot_points_tangent')
+                plot_points_tangent = kwds.pop('plot_points_tangent')
                 width_tangent = kwds.pop('width_tangent')
 
                 plot_vectors = Graphics()
@@ -2594,8 +2586,8 @@ class IntegratedCurve(DifferentiableCurve):
                         t = param_min + 0.01*dt
                         if verbose:
                             print("A tiny initial offset equal to " +
-                                  "{} ".format(0.01*dt)+
-                                  "was introduced for the first point "+
+                                  "{} ".format(0.01*dt) +
+                                  "was introduced for the first point " +
                                   "only, in order to safely compute " +
                                   "it from the interpolation.")
 
@@ -2613,8 +2605,8 @@ class IntegratedCurve(DifferentiableCurve):
                         t = param_max - 0.01*dt
                         if verbose:
                             print("A tiny final offset equal to " +
-                                  "{} ".format(0.01*dt)+
-                                  "was introduced for the last point "+
+                                  "{} ".format(0.01*dt) +
+                                  "was introduced for the last point " +
                                   "in order to safely compute " +
                                   "it from the interpolation.")
 
@@ -2679,7 +2671,7 @@ class IntegratedCurve(DifferentiableCurve):
                         # to be shorter
                         transf[pc] = AUX.expr()[jpc]
                         AUX2 = transf[pc].variables() # idem
-                        required_coords=required_coords.union(AUX2)
+                        required_coords = required_coords.union(AUX2)
                     break
             else:
                 raise ValueError("no expression has been found for " +
@@ -2716,8 +2708,8 @@ class IntegratedCurve(DifferentiableCurve):
                     t = param_min + 0.01*dt
                     if verbose:
                         print("A tiny initial offset equal to " +
-                              "{} ".format(0.01*dt)+
-                              "was introduced for the first point "+
+                              "{} ".format(0.01*dt) +
+                              "was introduced for the first point " +
                               "only, in order to safely compute " +
                               "it from the interpolation.")
 
@@ -2734,8 +2726,8 @@ class IntegratedCurve(DifferentiableCurve):
                     t = param_max - 0.01*dt
                     if verbose:
                         print("A tiny final offset equal to " +
-                              "{} ".format(0.01*dt)+
-                              "was introduced for the last point "+
+                              "{} ".format(0.01*dt) +
+                              "was introduced for the last point " +
                               "in order to safely compute " +
                               "it from the interpolation.")
 
@@ -2745,11 +2737,11 @@ class IntegratedCurve(DifferentiableCurve):
                 xp = [fastf[j](*arg) for j in range(len(ambient_coords))]
                 plot_curve.append(xp)
 
-                if k==0 and t > tmin:
+                if k == 0 and t > tmin:
                     # in case an initial offset was earlier added to
                     # 'tmin' in order to avoid errors, it is now needed
                     # to cancel this offset for the next steps
-                    t=tmin
+                    t = tmin
 
                 t += dt
 
@@ -2787,8 +2779,8 @@ class IntegratedCurve(DifferentiableCurve):
                         t = param_min + 0.01*dt
                         if verbose:
                             print("A tiny initial offset equal to " +
-                                  "{} ".format(0.01*dt)+
-                                  "was introduced for the first point "+
+                                  "{} ".format(0.01*dt) +
+                                  "was introduced for the first point " +
                                   "only, in order to safely compute " +
                                   "it from the interpolation.")
 
@@ -2806,8 +2798,8 @@ class IntegratedCurve(DifferentiableCurve):
                         t = param_max - 0.01*dt
                         if verbose:
                             print("A tiny final offset equal to " +
-                                  "{} ".format(0.01*dt)+
-                                  "was introduced for the last point "+
+                                  "{} ".format(0.01*dt) +
+                                  "was introduced for the last point " +
                                   "in order to safely compute " +
                                   "it from the interpolation.")
 
@@ -2826,13 +2818,13 @@ class IntegratedCurve(DifferentiableCurve):
                         AUX = AUX.substitute(required_coords_values)
                         # 'AUX' only used for the lines of code to
                         # be shorter
-                        xp+=[numerical_approx(AUX)]
+                        xp += [numerical_approx(AUX)]
 
                         pushed_comp = 0
                         for coord in transf[pc].variables():
                             D = Dpc_Dcoord[pc][coord]
                             D = D.substitute(required_coords_values)
-                            D=numerical_approx(D)
+                            D = numerical_approx(D)
                             pushed_comp += Dcoord_Dt[coord] * D
 
                         pushed_vec += [pushed_comp]
@@ -2857,7 +2849,7 @@ class IntegratedCurve(DifferentiableCurve):
                         # in case an initial offset was earlier added to
                         # 'tmin' in order to avoid errors, it is now needed
                         # to cancel this offset for the next steps
-                        t=tmin
+                        t = tmin
 
                     t += dt
                 return plot_vectors + DifferentiableCurve._graphics(self,
@@ -2871,6 +2863,7 @@ class IntegratedCurve(DifferentiableCurve):
                              ambient_coords, thickness=thickness,
                              aspect_ratio=aspect_ratio, color=color,
                              style=style, label_axes=label_axes)
+
 
 class IntegratedAutoparallelCurve(IntegratedCurve):
     r"""
@@ -3156,7 +3149,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
     The vectors tangent to such a curve make an angle different from 0
     or `\pi/2` with the lines of latitude and longitude.
     Then, compute a curve such that both components of its initial
-    tangent vectors are non zero::
+    tangent vectors are nonzero::
 
         sage: sol = c.solve(solution_key='sol-angle',
         ....:  parameters_values={tmin:0,tmax:2,th0:pi/4,ph0:0.1,v_th0:1,v_ph0:8})
@@ -3386,7 +3379,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
         graph = graph3D_embedded_angle_curve + graph3D_embedded_loxo
         graph += graph3D_embedded_polar_coords
         sphinx_plot(graph)
-
     """
 
     def __init__(self, parent, affine_connection, curve_parameter,
@@ -3411,7 +3403,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
             Integrated autoparallel curve c in the 3-dimensional
              differentiable manifold M
             sage: TestSuite(c).run()
-
         """
 
         # setting the chart to gain access to the coordinate functions
@@ -3493,7 +3484,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
             ....:                                          name='c') ; c
             Integrated autoparallel curve c in the 3-dimensional
              differentiable manifold M
-
         """
 
         description = "Integrated autoparallel curve "
@@ -3539,7 +3529,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
 
             sage: loads(dumps(c))
             Integrated autoparallel curve c in the 3-dimensional differentiable manifold M
-
         """
 
         return (type(self), (self.parent(), self._affine_connection,
@@ -3555,7 +3544,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) prints a detailed
+        - ``verbose`` -- boolean (default: ``False``); prints a detailed
           description of the curve
 
         OUTPUT:
@@ -3604,7 +3593,6 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
             sage: sys_bis = c.system()
             sage: sys_bis == sys
             True
-
         """
 
         v0 = self._initial_tangent_vector
@@ -3644,7 +3632,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
 
             description += "Initial tangent vector: {} ".format(v0)
             description += "with components "
-            description +="{}".format(initial_tgt_vec_comps)
+            description += "{}".format(initial_tgt_vec_comps)
             description += " with respect to {}\n\n".format(chart)
 
             for coord_func,velocity in zip(chart[:],self._velocities):
@@ -3660,6 +3648,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
             print(description)
 
         return [self._equations_rhs, v0, chart]
+
 
 class IntegratedGeodesic(IntegratedAutoparallelCurve):
     r"""
@@ -3756,6 +3745,7 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
     Solve, interpolate and prepare the plot for the solutions
     corresponding to the three initial conditions previously set::
 
+        sage: # needs scipy sage.plot
         sage: graph3D_embedded_geods = Graphics()
         sage: for key in dict_params:
         ....:     sol = c.solve(solution_key='sol-'+key,
@@ -3770,6 +3760,7 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
     Plot the resulting geodesics on the grid of polar coordinates lines
     on `\mathbb{S}^{2}` and check that these are great circles::
 
+        sage: # needs scipy sage.plot
         sage: graph3D_embedded_polar_coords = polar.plot(chart=cart,
         ....:                          mapping=euclid_embedding,
         ....:                          number_values=15, color='yellow')
@@ -3811,7 +3802,6 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
                                        number_values=15, color='yellow')
         graph = graph3D_embedded_geods + graph3D_embedded_polar_coords
         sphinx_plot(graph)
-
     """
 
     def __init__(self, parent, metric, curve_parameter,
@@ -3836,7 +3826,6 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
             Integrated geodesic c in the 2-dimensional Riemannian
              manifold S^2
             sage: TestSuite(c).run()
-
         """
 
         affine_connection = metric.connection()
@@ -3871,7 +3860,6 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
             sage: c = S2.integrated_geodesic(g, (t,0,pi), v, name='c'); c
             Integrated geodesic c in the 2-dimensional Riemannian
              manifold S^2
-
         """
 
         description = "Integrated geodesic "
@@ -3917,7 +3905,6 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
             sage: loads(dumps(c))
             Integrated geodesic c in the 2-dimensional Riemannian manifold S^2
-
         """
 
         return (type(self), (self.parent(), self._metric,
@@ -3932,12 +3919,10 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
         INPUT:
 
-        - ``verbose`` -- (default: ``False``) prints a detailed
+        - ``verbose`` -- boolean (default: ``False``); prints a detailed
           description of the curve
 
-        OUTPUT:
-
-        - list containing
+        OUTPUT: list containing
 
           * the equations
           * the initial equations
@@ -3980,7 +3965,6 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
             sage: sys_bis = c.system()
             sage: sys_bis == sys
             True
-
         """
 
         v0 = self._initial_tangent_vector
@@ -4020,7 +4004,7 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
             description += "Initial tangent vector: {} ".format(v0)
             description += "with components "
-            description +="{}".format(initial_tgt_vec_comps)
+            description += "{}".format(initial_tgt_vec_comps)
             description += " with respect to {}\n\n".format(chart)
 
             for coord_func,velocity in zip(chart[:],self._velocities):

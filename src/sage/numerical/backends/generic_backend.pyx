@@ -3,7 +3,7 @@ Generic Backend for LP solvers
 
 This class only lists the methods that should be defined by any
 interface with a LP Solver. All these methods immediately raise
-``NotImplementedError`` exceptions when called, and are obviously
+:exc:`NotImplementedError` exceptions when called, and are obviously
 meant to be replaced by the solver-specific method. This file can also
 be used as a template to create a new interface : one would only need
 to replace the occurrences of ``"Nonexistent_LP_solver"`` by the
@@ -16,7 +16,6 @@ AUTHORS:
 - Nathann Cohen (2010-10)      : initial implementation
 - Risan (2012-02)              : extension for PPL backend
 - Ingolfur Edvardsson (2014-06): extension for CVXOPT backend
-
 """
 
 #*****************************************************************************
@@ -51,45 +50,46 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` - ``True`` if the variable is continuous (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is continuous (default: ``True``)
 
-        - ``integer`` - ``True`` if the variable is integral (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is integral (default: ``False``)
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default: ``None``)
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")    # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                           # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                    # optional - Nonexistent_LP_solver
+            sage: p.add_variable()
             0
-            sage: p.ncols()                                           # optional - Nonexistent_LP_solver
+            sage: p.ncols()
             1
-            sage: p.add_variable(binary=True)                         # optional - Nonexistent_LP_solver
+            sage: p.add_variable(binary=True)
             1
-            sage: p.add_variable(lower_bound=-2.0, integer=True)      # optional - Nonexistent_LP_solver
+            sage: p.add_variable(lower_bound=-2.0, integer=True)
             2
-            sage: p.add_variable(continuous=True, integer=True)       # optional - Nonexistent_LP_solver
+            sage: p.add_variable(continuous=True, integer=True)
             Traceback (most recent call last):
             ...
             ValueError: ...
-            sage: p.add_variable(name='x',obj=1.0)                    # optional - Nonexistent_LP_solver
+            sage: p.add_variable(name='x', obj=1.0)
             3
-            sage: p.col_name(3)                                       # optional - Nonexistent_LP_solver
+            sage: p.col_name(3)
             'x'
-            sage: p.objective_coefficient(3)                          # optional - Nonexistent_LP_solver
+            sage: p.objective_coefficient(3)
             1.0
         """
         raise NotImplementedError()
@@ -103,48 +103,50 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``n`` - the number of new variables (must be > 0)
+        - ``n`` -- the number of new variables (must be > 0)
 
-        - ``lower_bound`` - the lower bound of the variable (default: 0)
+        - ``lower_bound`` -- the lower bound of the variable (default: 0)
 
-        - ``upper_bound`` - the upper bound of the variable (default: ``None``)
+        - ``upper_bound`` -- the upper bound of the variable (default: ``None``)
 
-        - ``binary`` - ``True`` if the variable is binary (default: ``False``).
+        - ``binary`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``continuous`` - ``True`` if the variable is binary (default: ``True``).
+        - ``continuous`` -- ``True`` if the variable is binary (default: ``True``)
 
-        - ``integer`` - ``True`` if the variable is binary (default: ``False``).
+        - ``integer`` -- ``True`` if the variable is binary (default: ``False``)
 
-        - ``obj`` - (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` - optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
-        OUTPUT: The index of the variable created last.
+        OUTPUT: the index of the variable created last
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")    # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                           # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.add_variables(5)                                  # optional - Nonexistent_LP_solver
+            sage: p.add_variables(5)
             4
-            sage: p.ncols()                                           # optional - Nonexistent_LP_solver
+            sage: p.ncols()
             5
-            sage: p.add_variables(2, lower_bound=-2.0, integer=True, names=['a','b']) # optional - Nonexistent_LP_solver
+            sage: p.add_variables(2, lower_bound=-2.0, integer=True, names=['a','b'])
             6
 
         TESTS:
 
         Check that arguments are used::
 
-            sage: p.col_bounds(5) # tol 1e-8, optional - Nonexistent_LP_solver
+            sage: # optional - nonexistent_lp_solver
+            sage: p.col_bounds(5)               # tol 1e-8
             (-2.0, None)
-            sage: p.is_variable_integer(5)   # optional - Nonexistent_LP_solver
+            sage: p.is_variable_integer(5)
             True
-            sage: p.col_name(5)              # optional - Nonexistent_LP_solver
+            sage: p.col_name(5)
             'a'
-            sage: p.objective_coefficient(5) # tol 1e-8, optional - Nonexistent_LP_solver
+            sage: p.objective_coefficient(5)    # tol 1e-8
             42.0
         """
         cdef int i
@@ -166,7 +168,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_variables(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_linear_constraints`.
+        Run tests on the method :meth:`add_linear_constraints`.
 
         TESTS::
 
@@ -177,7 +179,7 @@ cdef class GenericBackend:
             ...
             NotImplementedError
 
-        Flush any stray output -- see :trac:`28622`::
+        Flush any stray output -- see :issue:`28622`::
 
             sage: sys.stdout.flush()
             ...
@@ -209,28 +211,29 @@ cdef class GenericBackend:
 
     cpdef  set_variable_type(self, int variable, int vtype):
         """
-        Set the type of a variable
+        Set the type of a variable.
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``vtype`` (integer) :
+        - ``vtype`` -- integer:
 
-            *  1  Integer
-            *  0  Binary
-            *  -1  Continuous
+          *  `1`  Integer
+          *  `0`  Binary
+          *  `-1`  Continuous
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")   # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                        # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                  # optional - Nonexistent_LP_solver
+            sage: p.add_variable()
             0
-            sage: p.set_variable_type(0,1)                          # optional - Nonexistent_LP_solver
-            sage: p.is_variable_integer(0)                          # optional - Nonexistent_LP_solver
+            sage: p.set_variable_type(0,1)
+            sage: p.is_variable_integer(0)
             True
         """
         raise NotImplementedError()
@@ -241,19 +244,20 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``sense`` (integer) :
+        - ``sense`` -- integer:
 
             * +1 => Maximization
             * -1 => Minimization
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.is_maximization()                              # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.is_maximization()
             True
-            sage: p.set_sense(-1)                              # optional - Nonexistent_LP_solver
-            sage: p.is_maximization()                              # optional - Nonexistent_LP_solver
+            sage: p.set_sense(-1)
+            sage: p.is_maximization()
             False
         """
         raise NotImplementedError()
@@ -269,7 +273,6 @@ cdef class GenericBackend:
             sage: p = GenericBackend()
             sage: p._test_sense()                              # optional - Nonexistent_LP_solver
             Exception NotImplementedError ...
-
         """
         p = cls()                         # fresh instance of the backend
         if tester is None:
@@ -287,40 +290,43 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``coeff`` (double) -- its coefficient
+        - ``coeff`` -- double; its coefficient
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variable()                                 # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variable()
             0
-            sage: p.objective_coefficient(0)                         # optional - Nonexistent_LP_solver
+            sage: p.objective_coefficient(0)
             0.0
-            sage: p.objective_coefficient(0,2)                       # optional - Nonexistent_LP_solver
-            sage: p.objective_coefficient(0)                         # optional - Nonexistent_LP_solver
+            sage: p.objective_coefficient(0,2)
+            sage: p.objective_coefficient(0)
             2.0
         """
         raise NotImplementedError()
 
     cpdef objective_constant_term(self, d=None):
         """
-        Set or get the constant term in the objective function
+        Set or get the constant term in the objective function.
 
         INPUT:
 
-        - ``d`` (double) -- its coefficient.  If `None` (default), return the current value.
+        - ``d`` -- double; its coefficient.  If ``None`` (default), return the
+          current value.
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.objective_constant_term()                        # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.objective_constant_term()
             0.0
-            sage: p.objective_constant_term(42)                      # optional - Nonexistent_LP_solver
-            sage: p.objective_constant_term()                        # optional - Nonexistent_LP_solver
+            sage: p.objective_constant_term(42)
+            sage: p.objective_constant_term()
             42.0
         """
         if d is None:
@@ -328,52 +334,55 @@ cdef class GenericBackend:
         else:
             self.obj_constant_term = d
 
-    cpdef set_objective(self, list coeff, d = 0.0):
+    cpdef set_objective(self, list coeff, d=0.0):
         """
         Set the objective function.
 
         INPUT:
 
-        - ``coeff`` -- a list of real values, whose i-th element is the
-          coefficient of the i-th variable in the objective function.
+        - ``coeff`` -- list of real values, whose i-th element is the
+          coefficient of the i-th variable in the objective function
 
-        - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
+        - ``d`` -- double; the constant term in the linear function (set to `0`
+          by default)
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")    # optional - Nonexistent_LP_solver
-            sage: p.add_variables(5)                                 # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(5)
             4
-            sage: p.set_objective([1, 1, 2, 1, 3])                   # optional - Nonexistent_LP_solver
-            sage: [p.objective_coefficient(x) for x in range(5)]  # optional - Nonexistent_LP_solver
+            sage: p.set_objective([1, 1, 2, 1, 3])
+            sage: [p.objective_coefficient(x) for x in range(5)]
             [1.0, 1.0, 2.0, 1.0, 3.0]
 
         Constants in the objective function are respected::
 
-            sage: p = MixedIntegerLinearProgram(solver='Nonexistent_LP_solver') # optional - Nonexistent_LP_solver
-            sage: x,y = p[0], p[1]                              # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(2*x + 3*y, max = 6)          # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(3*x + 2*y, max = 6)          # optional - Nonexistent_LP_solver
-            sage: p.set_objective(x + y + 7)                    # optional - Nonexistent_LP_solver
-            sage: p.set_integer(x); p.set_integer(y)            # optional - Nonexistent_LP_solver
-            sage: p.solve()                                     # optional - Nonexistent_LP_solver
+            sage: # optional - nonexistent_lp_solver
+            sage: p = MixedIntegerLinearProgram(solver='Nonexistent_LP_solver')
+            sage: x,y = p[0], p[1]
+            sage: p.add_constraint(2*x + 3*y, max=6)
+            sage: p.add_constraint(3*x + 2*y, max=6)
+            sage: p.set_objective(x + y + 7)
+            sage: p.set_integer(x); p.set_integer(y)
+            sage: p.solve()
             9.0
         """
         raise NotImplementedError()
 
     cpdef set_verbosity(self, int level):
         """
-        Set the log (verbosity) level
+        Set the log (verbosity) level.
 
         INPUT:
 
-        - ``level`` (integer) -- From 0 (no verbosity) to 3.
+        - ``level`` -- integer; from 0 (no verbosity) to 3
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
             sage: p.set_verbosity(2)                                # optional - Nonexistent_LP_solver
         """
         raise NotImplementedError()
@@ -384,23 +393,24 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``i`` -- index of the constraint to remove.
+        - ``i`` -- index of the constraint to remove
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: v = p.new_variable(nonnegative=True)         # optional - Nonexistent_LP_solver
-            sage: x,y = v[0], v[1]                             # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(2*x + 3*y, max = 6)         # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(3*x + 2*y, max = 6)         # optional - Nonexistent_LP_solver
-            sage: p.set_objective(x + y + 7)                   # optional - Nonexistent_LP_solver
-            sage: p.set_integer(x); p.set_integer(y)           # optional - Nonexistent_LP_solver
-            sage: p.solve()                                    # optional - Nonexistent_LP_solver
+            sage: # optional - nonexistent_lp_solver
+            sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver")
+            sage: v = p.new_variable(nonnegative=True)
+            sage: x,y = v[0], v[1]
+            sage: p.add_constraint(2*x + 3*y, max=6)
+            sage: p.add_constraint(3*x + 2*y, max=6)
+            sage: p.set_objective(x + y + 7)
+            sage: p.set_integer(x); p.set_integer(y)
+            sage: p.solve()
             9.0
-            sage: p.remove_constraint(0)                       # optional - Nonexistent_LP_solver
-            sage: p.solve()                                    # optional - Nonexistent_LP_solver
+            sage: p.remove_constraint(0)
+            sage: p.solve()
             10.0
-            sage: p.get_values([x,y])                          # optional - Nonexistent_LP_solver
+            sage: p.get_values([x,y])
             [0.0, 3.0]
         """
         raise NotImplementedError()
@@ -411,19 +421,22 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``constraints`` -- an iterable containing the indices of the rows to remove.
+        - ``constraints`` -- an iterable containing the indices of the rows to remove
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")   # optional - Nonexistent_LP_solver
-            sage: p.add_variables(2)                                 # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(2)
             1
-            sage: p.add_linear_constraint([(0, 2), (1, 3)], None, 6) # optional - Nonexistent_LP_solver
-            sage: p.add_linear_constraint([(0, 3), (1, 2)], None, 6) # optional - Nonexistent_LP_solver
-            sage: p.remove_constraints([0, 1])                       # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint([(0, 2), (1, 3)], None, 6)
+            sage: p.add_linear_constraint([(0, 3), (1, 2)], None, 6)
+            sage: p.remove_constraints([0, 1])
         """
-        if type(constraints) == int: self.remove_constraint(constraints)
+        if isinstance(constraints, int):
+            self.remove_constraint(constraints)
+            return
 
         cdef int last = self.nrows() + 1
 
@@ -443,26 +456,27 @@ cdef class GenericBackend:
           value (element of :meth:`base_ring`).
 
         - ``lower_bound`` -- element of :meth:`base_ring` or
-          ``None``. The lower bound.
+          ``None``; the lower bound
 
         - ``upper_bound`` -- element of :meth:`base_ring` or
-          ``None``. The upper bound.
+          ``None``; the upper bound
 
-        - ``name`` -- string or ``None``. Optional name for this row.
+        - ``name`` -- string or ``None``; optional name for this row
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")             # optional - Nonexistent_LP_solver
-            sage: p.add_variables(5)                                           # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint( zip(range(5), range(5)), 2.0, 2.0)  # optional - Nonexistent_LP_solver
-            sage: p.row(0)                                                     # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint( zip(range(5), range(5)), 2.0, 2.0)
+            sage: p.row(0)
             ([0, 1, 2, 3, 4], [0.0, 1.0, 2.0, 3.0, 4.0])
-            sage: p.row_bounds(0)                                              # optional - Nonexistent_LP_solver
+            sage: p.row_bounds(0)
             (2.0, 2.0)
-            sage: p.add_linear_constraint( zip(range(5), range(5)), 1.0, 1.0, name='foo') # optional - Nonexistent_LP_solver
-            sage: p.row_name(1)                                                           # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint( zip(range(5), range(5)), 1.0, 1.0, name='foo')
+            sage: p.row_name(1)
             'foo'
         """
         raise NotImplementedError('add_linear_constraint')
@@ -480,32 +494,33 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``degree`` -- integer. The vector degree, that is, the
-          number of new scalar constraints.
+        - ``degree`` -- integer; the vector degree, that is, the
+          number of new scalar constraints
 
         - ``coefficients`` -- an iterable of pairs ``(i, v)``. In each
           pair, ``i`` is a variable index (integer) and ``v`` is a
           vector (real and of length ``degree``).
 
-        - ``lower_bound`` -- either a vector or ``None``. The
-          component-wise lower bound.
+        - ``lower_bound`` -- either a vector or ``None``; the
+          component-wise lower bound
 
-        - ``upper_bound`` -- either a vector or ``None``. The
-          component-wise upper bound.
+        - ``upper_bound`` -- either a vector or ``None``; the
+          component-wise upper bound
 
-        - ``name`` -- string or ``None``. An optional name for all new
-          rows.
+        - ``name`` -- string or ``None``; an optional name for all new
+          rows
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
             sage: coeffs = ([0, vector([1, 2])], [1, vector([2, 3])])
             sage: upper = vector([5, 5])
             sage: lower = vector([0, 0])
-            sage: p.add_variables(2)  # optional - Nonexistent_LP_solver
+            sage: p.add_variables(2)
             1
-            sage: p.add_linear_constraint_vector(2, coeffs, lower, upper, 'foo')  # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint_vector(2, coeffs, lower, upper, 'foo')
         """
         for d in range(degree):
             coefficients_d = []
@@ -518,7 +533,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_linear_constraint_vector(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_linear_constraint_vector`.
+        Run tests on the method :meth:`add_linear_constraint_vector`.
 
         TESTS::
 
@@ -552,11 +567,11 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``indices`` (list of integers) -- this list contains the
+        - ``indices`` -- list of integers; this list contains the
           indices of the constraints in which the variable's
           coefficient is nonzero
 
-        - ``coeffs`` (list of real values) -- associates a coefficient
+        - ``coeffs`` -- list of real values; associates a coefficient
           to the variable in each of the constraints in which it
           appears. Namely, the i-th entry of ``coeffs`` corresponds to
           the coefficient of the variable in the constraint
@@ -569,15 +584,16 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                       # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.nrows()                                       # optional - Nonexistent_LP_solver
+            sage: p.nrows()
             0
-            sage: p.add_linear_constraints(5, 0, None)            # optional - Nonexistent_LP_solver
-            sage: p.add_col(list(range(5)), list(range(5)))                   # optional - Nonexistent_LP_solver
-            sage: p.nrows()                                       # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraints(5, 0, None)
+            sage: p.add_col(list(range(5)), list(range(5)))
+            sage: p.nrows()
             5
         """
         raise NotImplementedError()
@@ -585,7 +601,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_col(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_col`
+        Run tests on the method :meth:`add_col`.
 
         TESTS::
 
@@ -595,7 +611,6 @@ cdef class GenericBackend:
             Traceback (most recent call last):
             ...
             NotImplementedError: ...
-
         """
         p = cls()                         # fresh instance of the backend
         if tester is None:
@@ -612,24 +627,25 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``number`` (integer) -- the number of constraints to add.
+        - ``number`` -- integer; the number of constraints to add
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``names`` - an optional list of names (default: ``None``)
+        - ``names`` -- an optional list of names (default: ``None``)
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")   # optional - Nonexistent_LP_solver
-            sage: p.add_variables(5)                                # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(5)
             5
-            sage: p.add_linear_constraints(5, None, 2)          # optional - Nonexistent_LP_solver
-            sage: p.row(4)                                      # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraints(5, None, 2)
+            sage: p.row(4)
             ([], [])
-            sage: p.row_bounds(4)                               # optional - Nonexistent_LP_solver
+            sage: p.row_bounds(4)
             (None, 2.0)
         """
         cdef int i
@@ -639,7 +655,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_add_linear_constraints(cls, tester=None, **options):
         """
-        Run tests on the method :meth:`.add_linear_constraints`.
+        Run tests on the method :meth:`add_linear_constraints`.
 
         TESTS::
 
@@ -650,7 +666,7 @@ cdef class GenericBackend:
             ...
             NotImplementedError...
 
-        Flush any stray output -- see :trac:`28622`::
+        Flush any stray output -- see :issue:`28622`::
 
             sage: sys.stdout.flush()
             ...
@@ -686,14 +702,15 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.add_linear_constraints(5, 0, None)             # optional - Nonexistent_LP_solver
-            sage: p.add_col(list(range(5)), list(range(5)))                    # optional - Nonexistent_LP_solver
-            sage: p.solve()                                        # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_linear_constraints(5, 0, None)
+            sage: p.add_col(list(range(5)), list(range(5)))
+            sage: p.solve()
             0
-            sage: p.objective_coefficient(0,1)                 # optional - Nonexistent_LP_solver
-            sage: p.solve()                                        # optional - Nonexistent_LP_solver
+            sage: p.objective_coefficient(0,1)
+            sage: p.solve()
             Traceback (most recent call last):
             ...
             MIPSolverException: ...
@@ -721,7 +738,7 @@ cdef class GenericBackend:
             tester = p._tester(**options)
         # From doctest of GenericBackend.solve:
         tester.assertIsNone(p.add_linear_constraints(5, 0, None))
-        tester.assertIsNone(p.add_col(list(xrange(5)), list(xrange(5))))
+        tester.assertIsNone(p.add_col(list(range(5)), list(range(5))))
         tester.assertEqual(p.solve(), 0)
         tester.assertIsNone(p.objective_coefficient(0,1))
         from sage.numerical.mip import MIPSolverException
@@ -739,19 +756,20 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.add_variables(2)                               # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(2)
             1
-            sage: p.add_linear_constraint([(0,1), (1,2)], None, 3) # optional - Nonexistent_LP_solver
-            sage: p.set_objective([2, 5])                          # optional - Nonexistent_LP_solver
-            sage: p.solve()                                        # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint([(0,1), (1,2)], None, 3)
+            sage: p.set_objective([2, 5])
+            sage: p.solve()
             0
-            sage: p.get_objective_value()                          # optional - Nonexistent_LP_solver
+            sage: p.get_objective_value()
             7.5
-            sage: p.get_variable_value(0)                          # optional - Nonexistent_LP_solver
+            sage: p.get_variable_value(0)
             0.0
-            sage: p.get_variable_value(1)                          # optional - Nonexistent_LP_solver
+            sage: p.get_variable_value(1)
             1.5
         """
 
@@ -774,21 +792,21 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: b = p.new_variable(binary=True)                      # optional - Nonexistent_LP_solver
-            sage: for u,v in graphs.CycleGraph(5).edges(labels=False): # optional - Nonexistent_LP_solver
+            sage: # optional - nonexistent_lp_solver
+            sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver")
+            sage: b = p.new_variable(binary=True)
+            sage: for u,v in graphs.CycleGraph(5).edges(labels=False):
             ....:     p.add_constraint(b[u]+b[v]<=1)
-            sage: p.set_objective(p.sum(b[x] for x in range(5)))       # optional - Nonexistent_LP_solver
-            sage: p.solve()                                            # optional - Nonexistent_LP_solver
+            sage: p.set_objective(p.sum(b[x] for x in range(5)))
+            sage: p.solve()
             2.0
-            sage: pb = p.get_backend()                                 # optional - Nonexistent_LP_solver
-            sage: pb.get_objective_value()                             # optional - Nonexistent_LP_solver
+            sage: pb = p.get_backend()
+            sage: pb.get_objective_value()
             2.0
-            sage: pb.best_known_objective_bound()                      # optional - Nonexistent_LP_solver
+            sage: pb.best_known_objective_bound()
             2.0
         """
         raise NotImplementedError()
-
 
     cpdef get_relative_objective_gap(self):
         r"""
@@ -809,21 +827,21 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: b = p.new_variable(binary=True)                      # optional - Nonexistent_LP_solver
-            sage: for u,v in graphs.CycleGraph(5).edges(labels=False): # optional - Nonexistent_LP_solver
+            sage: # optional - nonexistent_lp_solver
+            sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver")
+            sage: b = p.new_variable(binary=True)
+            sage: for u,v in graphs.CycleGraph(5).edges(labels=False):
             ....:     p.add_constraint(b[u]+b[v]<=1)
-            sage: p.set_objective(p.sum(b[x] for x in range(5)))       # optional - Nonexistent_LP_solver
-            sage: p.solve()                                            # optional - Nonexistent_LP_solver
+            sage: p.set_objective(p.sum(b[x] for x in range(5)))
+            sage: p.solve()
             2.0
-            sage: pb = p.get_backend()                                 # optional - Nonexistent_LP_solver
-            sage: pb.get_objective_value()                             # optional - Nonexistent_LP_solver
+            sage: pb = p.get_backend()
+            sage: pb.get_objective_value()
             2.0
-            sage: pb.get_relative_objective_gap()                      # optional - Nonexistent_LP_solver
+            sage: pb.get_relative_objective_gap()
             0.0
         """
         raise NotImplementedError()
-
 
     cpdef get_variable_value(self, int variable):
         """
@@ -835,37 +853,39 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.add_variables(2)                              # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(2)
             1
-            sage: p.add_linear_constraint([(0,1), (1, 2)], None, 3) # optional - Nonexistent_LP_solver
-            sage: p.set_objective([2, 5])                         # optional - Nonexistent_LP_solver
-            sage: p.solve()                                       # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint([(0,1), (1, 2)], None, 3)
+            sage: p.set_objective([2, 5])
+            sage: p.solve()
             0
-            sage: p.get_objective_value()                         # optional - Nonexistent_LP_solver
+            sage: p.get_objective_value()
             7.5
-            sage: p.get_variable_value(0)                         # optional - Nonexistent_LP_solver
+            sage: p.get_variable_value(0)
             0.0
-            sage: p.get_variable_value(1)                         # optional - Nonexistent_LP_solver
+            sage: p.get_variable_value(1)
             1.5
         """
 
         raise NotImplementedError()
 
-    cpdef int ncols(self):
+    cpdef int ncols(self) noexcept:
         """
         Return the number of columns/variables.
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                       # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.add_variables(2)                               # optional - Nonexistent_LP_solver
+            sage: p.add_variables(2)
             1
-            sage: p.ncols()                                       # optional - Nonexistent_LP_solver
+            sage: p.ncols()
             2
         """
 
@@ -879,52 +899,54 @@ cdef class GenericBackend:
         p = self
         tester.assertGreaterEqual(self.ncols(), 0)
 
-    cpdef int nrows(self):
+    cpdef int nrows(self) noexcept:
         """
         Return the number of rows/constraints.
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.nrows()                                        # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.nrows()
             0
-            sage: p.add_linear_constraints(2, 2.0, None)         # optional - Nonexistent_LP_solver
-            sage: p.nrows()                                      # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraints(2, 2.0, None)
+            sage: p.nrows()
             2
         """
 
         raise NotImplementedError()
 
-    cpdef bint is_maximization(self):
+    cpdef bint is_maximization(self) noexcept:
         """
         Test whether the problem is a maximization
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: p.is_maximization()                             # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.is_maximization()
             True
-            sage: p.set_sense(-1)                             # optional - Nonexistent_LP_solver
-            sage: p.is_maximization()                             # optional - Nonexistent_LP_solver
+            sage: p.set_sense(-1)
+            sage: p.is_maximization()
             False
         """
         raise NotImplementedError()
 
     cpdef problem_name(self, name=None):
         """
-        Return or define the problem's name
+        Return or define the problem's name.
 
         INPUT:
 
-        - ``name`` (``str``) -- the problem's name. When set to
+        - ``name`` -- string; the problem's name. When set to
           ``None`` (default), the method returns the problem's name.
 
         EXAMPLES::
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")   # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")   # optional - Nonexistent_LP_solver
             sage: p.problem_name("There once was a french fry") # optional - Nonexistent_LP_solver
             sage: print(p.problem_name())                       # optional - Nonexistent_LP_solver
             There once was a french fry
@@ -934,61 +956,63 @@ cdef class GenericBackend:
 
     cpdef write_lp(self, name):
         """
-        Write the problem to a ``.lp`` file
+        Write the problem to a ``.lp`` file.
 
         INPUT:
 
-        - ``filename`` (string)
+        - ``filename`` -- string
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variables(2)                               # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(2)
             2
-            sage: p.add_linear_constraint([(0, 1], (1, 2)], None, 3) # optional - Nonexistent_LP_solver
-            sage: p.set_objective([2, 5])                          # optional - Nonexistent_LP_solver
-            sage: from tempfile import NamedTemporaryFile  # optional - Nonexistent_LP_solver
-            sage: with NamedTemporaryFile(suffix=".lp") as f:  # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint([(0, 1], (1, 2)], None, 3)
+            sage: p.set_objective([2, 5])
+            sage: from tempfile import NamedTemporaryFile
+            sage: with NamedTemporaryFile(suffix='.lp') as f:
             ....:     p.write_lp(f.name)
         """
         raise NotImplementedError()
 
     cpdef write_mps(self, name, int modern):
         """
-        Write the problem to a ``.mps`` file
+        Write the problem to a ``.mps`` file.
 
         INPUT:
 
-        - ``filename`` (string)
+        - ``filename`` -- string
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variables(2)                               # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(2)
             2
-            sage: p.add_linear_constraint([(0, 1), (1, 2)], None, 3) # optional - Nonexistent_LP_solver
-            sage: p.set_objective([2, 5])                          # optional - Nonexistent_LP_solver
-            sage: from tempfile import NamedTemporaryFile  # optional - Nonexistent_LP_solver
-            sage: with NamedTemporaryFile(suffix=".lp") as f:  # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint([(0, 1), (1, 2)], None, 3)
+            sage: p.set_objective([2, 5])
+            sage: from tempfile import NamedTemporaryFile
+            sage: with NamedTemporaryFile(suffix='.lp') as f:
             ....:     p.write_lp(f.name)
-
         """
         raise NotImplementedError()
 
     cpdef copy(self):
         """
-        Returns a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = MixedIntegerLinearProgram(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: b = p.new_variable() # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(b[1] + b[2] <= 6) # optional - Nonexistent_LP_solver
-            sage: p.set_objective(b[1] + b[2]) # optional - Nonexistent_LP_solver
-            sage: copy(p).solve() # optional - Nonexistent_LP_solver
+            sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver")
+            sage: b = p.new_variable()
+            sage: p.add_constraint(b[1] + b[2] <= 6)
+            sage: p.set_objective(b[1] + b[2])
+            sage: copy(p).solve()
             6.0
         """
         return self.__copy__()
@@ -996,19 +1020,20 @@ cdef class GenericBackend:
     # Override this method in backends.
     cpdef __copy__(self):
         """
-        Returns a copy of self.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = MixedIntegerLinearProgram(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: b = p.new_variable() # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(b[1] + b[2] <= 6) # optional - Nonexistent_LP_solver
-            sage: p.set_objective(b[1] + b[2]) # optional - Nonexistent_LP_solver
-            sage: cp = copy(p.get_backend()) # optional - Nonexistent_LP_solver
-            sage: cp.solve() # optional - Nonexistent_LP_solver
+            sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver")
+            sage: b = p.new_variable()
+            sage: p.add_constraint(b[1] + b[2] <= 6)
+            sage: p.set_objective(b[1] + b[2])
+            sage: cp = copy(p.get_backend())
+            sage: cp.solve()
             0
-            sage: cp.get_objective_value() # optional - Nonexistent_LP_solver
+            sage: cp.get_objective_value()
             6.0
         """
         raise NotImplementedError()
@@ -1019,26 +1044,27 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = MixedIntegerLinearProgram(solver = "Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: b = p.new_variable() # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(b[1] + b[2] <= 6) # optional - Nonexistent_LP_solver
-            sage: p.set_objective(b[1] + b[2]) # optional - Nonexistent_LP_solver
-            sage: cp = deepcopy(p.get_backend()) # optional - Nonexistent_LP_solver
-            sage: cp.solve() # optional - Nonexistent_LP_solver
+            sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver")
+            sage: b = p.new_variable()
+            sage: p.add_constraint(b[1] + b[2] <= 6)
+            sage: p.set_objective(b[1] + b[2])
+            sage: cp = deepcopy(p.get_backend())
+            sage: cp.solve()
             0
-            sage: cp.get_objective_value() # optional - Nonexistent_LP_solver
+            sage: cp.get_objective_value()
             6.0
         """
         return self.__copy__()
 
     cpdef row(self, int i):
         """
-        Return a row
+        Return a row.
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -1049,14 +1075,15 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variables(5)                               # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2) # optional - Nonexistent_LP_solver
-            sage: p.row(0)                                     # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint(zip(range(5), range(5)), 2, 2)
+            sage: p.row(0)
             ([4, 3, 2, 1], [4.0, 3.0, 2.0, 1.0]) ## FIXME: Why backwards?
-            sage: p.row_bounds(0)                              # optional - Nonexistent_LP_solver
+            sage: p.row_bounds(0)
             (2.0, 2.0)
         """
         raise NotImplementedError()
@@ -1067,7 +1094,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -1077,14 +1104,15 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variables(5)                               # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variables(5)
             4
-            sage: p.add_linear_constraint(list(range(5)), list(range(5)), 2, 2) # optional - Nonexistent_LP_solver
-            sage: p.row(0)                                     # optional - Nonexistent_LP_solver
+            sage: p.add_linear_constraint(list(range(5)), list(range(5)), 2, 2)
+            sage: p.row(0)
             ([4, 3, 2, 1], [4.0, 3.0, 2.0, 1.0]) ## FIXME: Why backwards?
-            sage: p.row_bounds(0)                              # optional - Nonexistent_LP_solver
+            sage: p.row_bounds(0)
             (2.0, 2.0)
         """
         raise NotImplementedError()
@@ -1095,7 +1123,7 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id.
+        - ``index`` -- integer; the variable's id
 
         OUTPUT:
 
@@ -1105,125 +1133,128 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variable()                                 # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variable()
             0
-            sage: p.col_bounds(0)                              # optional - Nonexistent_LP_solver
+            sage: p.col_bounds(0)
             (0.0, None)
-            sage: p.variable_upper_bound(0, 5)                 # optional - Nonexistent_LP_solver
-            sage: p.col_bounds(0)                              # optional - Nonexistent_LP_solver
+            sage: p.variable_upper_bound(0, 5)
+            sage: p.col_bounds(0)
             (0.0, 5.0)
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_binary(self, int index):
+    cpdef bint is_variable_binary(self, int index) noexcept:
         """
         Test whether the given variable is of binary type.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                       # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                 # optional - Nonexistent_LP_solver
+            sage: p.add_variable()
             0
-            sage: p.set_variable_type(0,0)                         # optional - Nonexistent_LP_solver
-            sage: p.is_variable_binary(0)                          # optional - Nonexistent_LP_solver
+            sage: p.set_variable_type(0,0)
+            sage: p.is_variable_binary(0)
             True
-
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_integer(self, int index):
+    cpdef bint is_variable_integer(self, int index) noexcept:
         """
         Test whether the given variable is of integer type.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                       # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                 # optional - Nonexistent_LP_solver
+            sage: p.add_variable()
             0
-            sage: p.set_variable_type(0,1)                         # optional - Nonexistent_LP_solver
-            sage: p.is_variable_integer(0)                         # optional - Nonexistent_LP_solver
+            sage: p.set_variable_type(0,1)
+            sage: p.is_variable_integer(0)
             True
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_continuous(self, int index):
+    cpdef bint is_variable_continuous(self, int index) noexcept:
         """
         Test whether the given variable is of continuous/real type.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.ncols()                                       # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.ncols()
             0
-            sage: p.add_variable()                                 # optional - Nonexistent_LP_solver
+            sage: p.add_variable()
             0
-            sage: p.is_variable_continuous(0)                      # optional - Nonexistent_LP_solver
+            sage: p.is_variable_continuous(0)
             True
-            sage: p.set_variable_type(0,1)                         # optional - Nonexistent_LP_solver
-            sage: p.is_variable_continuous(0)                      # optional - Nonexistent_LP_solver
+            sage: p.set_variable_type(0,1)
+            sage: p.is_variable_continuous(0)
             False
-
         """
         raise NotImplementedError()
 
     cpdef row_name(self, int index):
         """
-        Return the ``index`` th row name
+        Return the ``index``-th row name.
 
         INPUT:
 
-        - ``index`` (integer) -- the row's id
+        - ``index`` -- integer; the row's id
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_linear_constraints(1, 2, None, names=['Empty constraint 1'])  # optional - Nonexistent_LP_solver
-            sage: p.row_name(0)                                     # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_linear_constraints(1, 2, None, names=['Empty constraint 1'])
+            sage: p.row_name(0)
             'Empty constraint 1'
-
         """
         raise NotImplementedError()
 
     cpdef col_name(self, int index):
         """
-        Return the ``index``-th column name
+        Return the ``index``-th column name.
 
         INPUT:
 
-        - ``index`` (integer) -- the column id
+        - ``index`` -- integer; the column id
 
-        - ``name`` (``char *``) -- its name. When set to ``NULL``
-          (default), the method returns the current name.
+        - ``name`` -- (``char *``) its name; when set to ``NULL``
+          (default), the method returns the current name
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variable(name="I am a variable")            # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variable(name="I am a variable")
             1
-            sage: p.col_name(0)                                     # optional - Nonexistent_LP_solver
+            sage: p.col_name(0)
             'I am a variable'
         """
         raise NotImplementedError()
@@ -1276,7 +1307,6 @@ cdef class GenericBackend:
         cp = copy(self)
         self._do_test_problem_data(tester, cp)
 
-
     def _test_copy_does_not_share_data(self, **options):
         """
         Test whether copy makes an independent copy of the backend.
@@ -1288,8 +1318,8 @@ cdef class GenericBackend:
         del cp
         self._do_test_problem_data(tester, cpcp)
 
-
     # TODO: We should have a more systematic way of generating MIPs for testing.
+
     @classmethod
     def _test_copy_some_mips(cls, tester=None, **options):
         p = cls()                         # fresh instance of the backend
@@ -1299,7 +1329,7 @@ cdef class GenericBackend:
         p.add_linear_constraints(5, 0, None)
         try:
             # p.add_col(range(5), range(5))     -- bad test because COIN sparsifies the 0s away on copy
-            p.add_col(list(xrange(5)), list(xrange(1, 6)))
+            p.add_col(list(range(5)), list(range(1, 6)))
         except NotImplementedError:
             # Gurobi does not implement add_col
             pass
@@ -1309,13 +1339,13 @@ cdef class GenericBackend:
         p._test_copy(**options)
         p._test_copy_does_not_share_data(**options)
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
-        Return or define the upper bound on a variable
+        Return or define the upper bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not upper bound. When set to ``False``
@@ -1323,25 +1353,26 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variable()                                 # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variable()
             0
-            sage: p.col_bounds(0)                              # optional - Nonexistent_LP_solver
+            sage: p.col_bounds(0)
             (0.0, None)
-            sage: p.variable_upper_bound(0, 5)                 # optional - Nonexistent_LP_solver
-            sage: p.col_bounds(0)                              # optional - Nonexistent_LP_solver
+            sage: p.variable_upper_bound(0, 5)
+            sage: p.col_bounds(0)
             (0.0, 5.0)
         """
         raise NotImplementedError()
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
-        Return or define the lower bound on a variable
+        Return or define the lower bound on a variable.
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         - ``value`` -- real value, or ``None`` to mean that the
           variable has not lower bound. When set to ``False``
@@ -1349,28 +1380,29 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.add_variable()                                 # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.add_variable()
             0
-            sage: p.col_bounds(0)                              # optional - Nonexistent_LP_solver
+            sage: p.col_bounds(0)
             (0.0, None)
-            sage: p.variable_lower_bound(0, 5)                 # optional - Nonexistent_LP_solver
-            sage: p.col_bounds(0)                              # optional - Nonexistent_LP_solver
+            sage: p.variable_lower_bound(0, 5)
+            sage: p.col_bounds(0)
             (5.0, None)
         """
         raise NotImplementedError()
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value=None):
         """
-        Return or define a solver parameter
+        Return or define a solver parameter.
 
         INPUT:
 
-        - ``name`` (string) -- the parameter
+        - ``name`` -- string; the parameter
 
         - ``value`` -- the parameter's value if it is to be defined,
-          or ``None`` (default) to obtain its current value.
+          or ``None`` (default) to obtain its current value
 
         .. NOTE::
 
@@ -1379,15 +1411,16 @@ cdef class GenericBackend:
 
         EXAMPLES::
 
+            sage: # optional - nonexistent_lp_solver
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: p = get_solver(solver = "Nonexistent_LP_solver")  # optional - Nonexistent_LP_solver
-            sage: p.solver_parameter("timelimit")                   # optional - Nonexistent_LP_solver
-            sage: p.solver_parameter("timelimit", 60)               # optional - Nonexistent_LP_solver
-            sage: p.solver_parameter("timelimit")                   # optional - Nonexistent_LP_solver
+            sage: p = get_solver(solver="Nonexistent_LP_solver")
+            sage: p.solver_parameter("timelimit")
+            sage: p.solver_parameter("timelimit", 60)
+            sage: p.solver_parameter("timelimit")
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_basic(self, int index):
+    cpdef bint is_variable_basic(self, int index) noexcept:
         """
         Test whether the given variable is basic.
 
@@ -1396,28 +1429,29 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(maximization=True,\
-                                                solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: x = p.new_variable(nonnegative=True)           # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(-x[0] + x[1] <= 2)            # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)    # optional - Nonexistent_LP_solver
-            sage: p.set_objective(5.5 * x[0] - 3 * x[1])         # optional - Nonexistent_LP_solver
-            sage: b = p.get_backend()                            # optional - Nonexistent_LP_solver
+            sage: # optional - nonexistent_lp_solver
+            sage: p = MixedIntegerLinearProgram(maximization=True,
+            ....:                               solver="Nonexistent_LP_solver")
+            sage: x = p.new_variable(nonnegative=True)
+            sage: p.add_constraint(-x[0] + x[1] <= 2)
+            sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)
+            sage: p.set_objective(5.5 * x[0] - 3 * x[1])
+            sage: b = p.get_backend()
             sage: # Backend-specific commands to instruct solver to use simplex method here
-            sage: b.solve()                                      # optional - Nonexistent_LP_solver
+            sage: b.solve()
             0
-            sage: b.is_variable_basic(0)                         # optional - Nonexistent_LP_solver
+            sage: b.is_variable_basic(0)
             True
-            sage: b.is_variable_basic(1)                         # optional - Nonexistent_LP_solver
+            sage: b.is_variable_basic(1)
             False
         """
         raise NotImplementedError()
 
-    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index):
+    cpdef bint is_variable_nonbasic_at_lower_bound(self, int index) noexcept:
         """
         Test whether the given variable is nonbasic at lower bound.
 
@@ -1426,28 +1460,29 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(maximization=True,\
-                                                solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: x = p.new_variable(nonnegative=True)           # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(-x[0] + x[1] <= 2)            # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)    # optional - Nonexistent_LP_solver
-            sage: p.set_objective(5.5 * x[0] - 3 * x[1])         # optional - Nonexistent_LP_solver
-            sage: b = p.get_backend()                            # optional - Nonexistent_LP_solver
+            sage: # optional - nonexistent_lp_solver
+            sage: p = MixedIntegerLinearProgram(maximization=True,
+            ....:                               solver="Nonexistent_LP_solver")
+            sage: x = p.new_variable(nonnegative=True)
+            sage: p.add_constraint(-x[0] + x[1] <= 2)
+            sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)
+            sage: p.set_objective(5.5 * x[0] - 3 * x[1])
+            sage: b = p.get_backend()
             sage: # Backend-specific commands to instruct solver to use simplex method here
-            sage: b.solve()                                      # optional - Nonexistent_LP_solver
+            sage: b.solve()
             0
-            sage: b.is_variable_nonbasic_at_lower_bound(0)       # optional - Nonexistent_LP_solver
+            sage: b.is_variable_nonbasic_at_lower_bound(0)
             False
-            sage: b.is_variable_nonbasic_at_lower_bound(1)       # optional - Nonexistent_LP_solver
+            sage: b.is_variable_nonbasic_at_lower_bound(1)
             True
         """
         raise NotImplementedError()
 
-    cpdef bint is_slack_variable_basic(self, int index):
+    cpdef bint is_slack_variable_basic(self, int index) noexcept:
         """
         Test whether the slack variable of the given row is basic.
 
@@ -1456,28 +1491,29 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(maximization=True,\
-                                                solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: x = p.new_variable(nonnegative=True)           # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(-x[0] + x[1] <= 2)            # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)    # optional - Nonexistent_LP_solver
-            sage: p.set_objective(5.5 * x[0] - 3 * x[1])         # optional - Nonexistent_LP_solver
-            sage: b = p.get_backend()                            # optional - Nonexistent_LP_solver
+            sage: # optional - nonexistent_lp_solver
+            sage: p = MixedIntegerLinearProgram(maximization=True,
+            ....:                               solver="Nonexistent_LP_solver")
+            sage: x = p.new_variable(nonnegative=True)
+            sage: p.add_constraint(-x[0] + x[1] <= 2)
+            sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)
+            sage: p.set_objective(5.5 * x[0] - 3 * x[1])
+            sage: b = p.get_backend()
             sage: # Backend-specific commands to instruct solver to use simplex method here
-            sage: b.solve()                                      # optional - Nonexistent_LP_solver
+            sage: b.solve()
             0
-            sage: b.is_slack_variable_basic(0)                   # optional - Nonexistent_LP_solver
+            sage: b.is_slack_variable_basic(0)
             True
-            sage: b.is_slack_variable_basic(1)                   # optional - Nonexistent_LP_solver
+            sage: b.is_slack_variable_basic(1)
             False
         """
         raise NotImplementedError()
 
-    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index):
+    cpdef bint is_slack_variable_nonbasic_at_lower_bound(self, int index) noexcept:
         """
         Test whether the given variable is nonbasic at lower bound.
 
@@ -1486,23 +1522,24 @@ cdef class GenericBackend:
 
         INPUT:
 
-        - ``index`` (integer) -- the variable's id
+        - ``index`` -- integer; the variable's id
 
         EXAMPLES::
 
-            sage: p = MixedIntegerLinearProgram(maximization=True,\
-                                                solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
-            sage: x = p.new_variable(nonnegative=True)           # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(-x[0] + x[1] <= 2)            # optional - Nonexistent_LP_solver
-            sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)    # optional - Nonexistent_LP_solver
-            sage: p.set_objective(5.5 * x[0] - 3 * x[1])         # optional - Nonexistent_LP_solver
-            sage: b = p.get_backend()                            # optional - Nonexistent_LP_solver
+            sage: # optional - nonexistent_lp_solver
+            sage: p = MixedIntegerLinearProgram(maximization=True,
+            ....:                               solver="Nonexistent_LP_solver")
+            sage: x = p.new_variable(nonnegative=True)
+            sage: p.add_constraint(-x[0] + x[1] <= 2)
+            sage: p.add_constraint(8 * x[0] + 2 * x[1] <= 17)
+            sage: p.set_objective(5.5 * x[0] - 3 * x[1])
+            sage: b = p.get_backend()
             sage: # Backend-specific commands to instruct solver to use simplex method here
-            sage: b.solve()                                      # optional - Nonexistent_LP_solver
+            sage: b.solve()
             0
-            sage: b.is_slack_variable_nonbasic_at_lower_bound(0) # optional - Nonexistent_LP_solver
+            sage: b.is_slack_variable_nonbasic_at_lower_bound(0)
             False
-            sage: b.is_slack_variable_nonbasic_at_lower_bound(1) # optional - Nonexistent_LP_solver
+            sage: b.is_slack_variable_nonbasic_at_lower_bound(1)
             True
         """
         raise NotImplementedError()
@@ -1510,7 +1547,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_solve_trac_18572(cls, tester=None, **options):
         """
-        Run tests regarding :trac:`18572`::
+        Run tests regarding :issue:`18572`::
 
         TESTS::
 
@@ -1520,7 +1557,6 @@ cdef class GenericBackend:
             Traceback (most recent call last):
             ...
             NotImplementedError
-
         """
         p = cls()                         # fresh instance of the backend
         if tester is None:
@@ -1542,30 +1578,32 @@ cdef class GenericBackend:
         tester.assertAlmostEqual(p.get_variable_value(0), 0.666666666667)
         tester.assertAlmostEqual(p.get_variable_value(1), 0.333333333333)
 
+
 default_solver = None
+
 
 def default_mip_solver(solver=None):
     """
-    Returns/sets the default MILP solver used by Sage
+    Return/set the default MILP solver used by Sage.
 
     INPUT:
 
     - ``solver`` -- one of the following:
 
-        - a string indicating one of the available solvers
-          (see :class:`MixedIntegerLinearProgram`);
+      - a string indicating one of the available solvers
+        (see :class:`MixedIntegerLinearProgram`);
 
-        - a callable (typically a subclass of
-          :class:`sage.numerical.backends.generic_backend.GenericBackend`);
+      - a callable (typically a subclass of
+        :class:`sage.numerical.backends.generic_backend.GenericBackend`);
 
-        - ``None`` (default), in which case the current default solver
-          is returned; this is either a string or a callable.
+      - ``None`` -- (default) in which case the current default solver
+        is returned; this is either a string or a callable
 
     OUTPUT:
 
     This function returns the current default solver's name if ``solver = None``
     (default). Otherwise, it sets the default solver to the one given. If this
-    solver does not exist, or is not available, a ``ValueError`` exception is
+    solver does not exist, or is not available, a :exc:`ValueError` exception is
     raised.
 
     EXAMPLES::
@@ -1677,32 +1715,33 @@ def default_mip_solver(solver=None):
     else:
         raise ValueError("'solver' should be set to 'GLPK', 'Coin', 'CPLEX', 'CVXOPT', 'CVXPY', 'Gurobi', 'PPL', 'SCIP', 'InteractiveLP', a callable, or None.")
 
-cpdef GenericBackend get_solver(constraint_generation = False, solver = None, base_ring = None):
+
+cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_ring=None):
     """
-    Return a solver according to the given preferences
+    Return a solver according to the given preferences.
 
     INPUT:
 
     - ``solver`` -- one of the following:
 
-        - a string indicating one of the available solvers
-          (see :class:`MixedIntegerLinearProgram`);
+      - a string indicating one of the available solvers
+        (see :class:`MixedIntegerLinearProgram`);
 
-        - ``None`` (default), in which case the default solver is used
-          (see :func:`default_mip_solver`);
+      - ``None`` -- (default) in which case the default solver is used
+        (see :func:`default_mip_solver`);
 
-        - or a callable (such as a class), in which case it is called,
-          and its result is returned.
+      - or a callable (such as a class), in which case it is called,
+        and its result is returned.
 
-    - ``base_ring`` -- If not ``None``, request a solver that works over this
-        (ordered) field.  If ``base_ring`` is not a field, its fraction field
-        is used.
+    - ``base_ring`` -- if not ``None``, request a solver that works over this
+      (ordered) field.  If ``base_ring`` is not a field, its fraction field
+      is used.
 
-        For example, is ``base_ring=ZZ`` is provided, the solver will work over
-        the rational numbers.  This is unrelated to whether variables are
-        constrained to be integers or not.
+      For example, is ``base_ring=ZZ`` is provided, the solver will work over
+      the rational numbers.  This is unrelated to whether variables are
+      constrained to be integers or not.
 
-    - ``constraint_generation`` -- Only used when ``solver=None``.
+    - ``constraint_generation`` -- only used when ``solver=None``:
 
       - When set to ``True``, after solving the ``MixedIntegerLinearProgram``,
         it is possible to add a constraint, and then solve it again.
@@ -1713,7 +1752,7 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
     .. SEEALSO::
 
-        - :func:`default_mip_solver` -- Returns/Sets the default MIP solver.
+        - :func:`default_mip_solver` -- returns/sets the default MIP solver
 
     EXAMPLES::
 
@@ -1728,21 +1767,23 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         <...sage.numerical.backends.ppl_backend.PPLBackend...>
         sage: p.base_ring()
         Rational Field
-        sage: p = get_solver(base_ring=AA); p                                         # optional - sage.rings.number_field
+        sage: p = get_solver(base_ring=AA); p                                           # needs sage.rings.number_field
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()                                                           # optional - sage.rings.number_field
+        sage: p.base_ring()                                                             # needs sage.rings.number_field
         Algebraic Real Field
-        sage: d = polytopes.dodecahedron()                                            # optional - sage.rings.number_field
-        sage: p = get_solver(base_ring=d.base_ring()); p                              # optional - sage.rings.number_field
+
+        sage: # needs sage.groups sage.rings.number_field
+        sage: d = polytopes.dodecahedron()
+        sage: p = get_solver(base_ring=d.base_ring()); p
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()                                                           # optional - sage.rings.number_field
+        sage: p.base_ring()
         Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-        sage: p = get_solver(solver='InteractiveLP', base_ring=QQ); p                 # optional - sage.rings.number_field
+        sage: p = get_solver(solver='InteractiveLP', base_ring=QQ); p
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()                                                           # optional - sage.rings.number_field
+        sage: p.base_ring()
         Rational Field
 
-    Passing a callable as the 'solver'::
+    Passing a callable as the ``solver``::
 
         sage: from sage.numerical.backends.glpk_backend import GLPKBackend
         sage: p = get_solver(solver=GLPKBackend); p
@@ -1752,15 +1793,15 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
 
         sage: def glpk_exact_solver():
         ....:     from sage.numerical.backends.generic_backend import get_solver
-        ....:     b = get_solver(solver="GLPK")
-        ....:     b.solver_parameter("simplex_or_intopt", "exact_simplex_only")
+        ....:     b = get_solver(solver='GLPK')
+        ....:     b.solver_parameter('simplex_or_intopt', 'exact_simplex_only')
         ....:     return b
         sage: codes.bounds.delsarte_bound_additive_hamming_space(11,3,4,solver=glpk_exact_solver) # long time
         8
 
     TESTS:
 
-    Test that it works when the default solver is a callable, see :trac:`28914`::
+    Test that it works when the default solver is a callable, see :issue:`28914`::
 
         sage: old_default = default_mip_solver()
         sage: from sage.numerical.backends.glpk_backend import GLPKBackend
@@ -1769,7 +1810,6 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         sage: M.get_backend()
         <...GLPKBackend...>
         sage: default_mip_solver(old_default)
-
     """
     if solver is None:
 

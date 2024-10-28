@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Univariate skew polynomials
 
@@ -90,6 +91,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -132,7 +134,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         INPUT:
 
-        - ``exp`` -- an integer
+        - ``exp`` -- integer
 
         - ``modulus`` -- a skew polynomial in the same ring as ``self``
 
@@ -152,6 +154,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -161,18 +164,17 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             x^5 + (2*t^2 + 4)*x^4 + (t^2 + 2)*x^3 + 2*x^2 + (4*t^2 + 2)*x + 2*t^2 + 4*t + 4
             sage: b == a * a * a * a * a
             True
-
             sage: modulus = x^3 + t*x^2 + (t+3)*x - 2
             sage: br = a.right_power_mod(5, modulus); br
             (t + 1)*x^2 + (2*t^2 + t + 1)*x + 2*t^2 + 4*t + 2
             sage: br == b % modulus
             True
-
             sage: a.right_power_mod(100, modulus)
             (2*t^2 + 3)*x^2 + (t^2 + 4*t + 2)*x + t^2 + 2*t + 1
 
         Negative exponents are supported:
 
+            sage: # needs sage.rings.finite_rings
             sage: a^(-5)
             (x^5 + (2*t^2 + 4)*x^4 + (t^2 + 2)*x^3 + 2*x^2 + (4*t^2 + 2)*x + 2*t^2 + 4*t + 4)^(-1)
             sage: b * a^(-5)
@@ -180,7 +182,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         However, they cannot be combined with modulus::
 
-            sage: a.right_power_mod(-10, modulus)
+            sage: a.right_power_mod(-10, modulus)                                       # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: modulus cannot be combined with negative exponent
@@ -245,6 +247,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -273,9 +276,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         - ``eval_pt`` -- element of the base ring of ``self``
 
-        OUTPUT:
-
-        The operator evaluation of ``self`` at ``eval_pt``.
+        OUTPUT: the operator evaluation of ``self`` at ``eval_pt``
 
         .. TODO::
 
@@ -317,6 +318,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: T.<x> = k['x',Frob]
@@ -335,12 +337,11 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         - ``eval_pt`` -- element of the base ring of ``self``
 
-        OUTPUT:
-
-        The value of the polynomial at the point specified by the argument.
+        OUTPUT: the value of the polynomial at the point specified by the argument
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: T.<x> = k['x',Frob]
@@ -383,7 +384,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         INPUT:
 
-        - `n` -- an integer, the power of conjugation
+        - ``n`` -- integer; the power of conjugation
 
         EXAMPLES::
 
@@ -403,10 +404,12 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
             sage: b = a.conjugate(-1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: inverse not implemented for morphisms of Fraction Field of Univariate Polynomial Ring in t over Rational Field
+            NotImplementedError: inverse not implemented for morphisms of
+            Fraction Field of Univariate Polynomial Ring in t over Rational Field
 
         Here is a working example::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: T.<y> = k['y',Frob]
@@ -427,9 +430,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         - ``eval_pts`` -- list of points at which ``self`` is to be evaluated
 
-        OUTPUT:
-
-        List of values of ``self`` at the ``eval_pts``.
+        OUTPUT: list of values of ``self`` at the ``eval_pts``
 
         .. TODO::
 
@@ -441,6 +442,7 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -560,12 +562,13 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
         r = self._new_c(coeffs, parent, 0)
         return r
 
-    cdef void _inplace_rmul(self, SkewPolynomial_generic_dense right):
+    cdef void _inplace_rmul(self, SkewPolynomial_generic_dense right) noexcept:
         r"""
         Replace ``self`` by ``self*right`` (only for internal use).
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]
@@ -596,12 +599,13 @@ cdef class SkewPolynomial_generic_dense(OrePolynomial_generic_dense):
                     sum += x[i] * parent.twisting_morphism(i)(y[k-i])
                 x[k] = sum
 
-    cdef void _inplace_pow(self, Py_ssize_t n):
+    cdef void _inplace_pow(self, Py_ssize_t n) noexcept:
         r"""
         Replace ``self`` by ``self**n`` (only for internal use).
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings
             sage: k.<t> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S.<x> = k['x',Frob]

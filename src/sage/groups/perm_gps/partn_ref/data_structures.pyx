@@ -13,7 +13,6 @@ REFERENCES:
         Theory of Computing, pp. 345–354. May 1989.
     [3] Seress, Akos. Permutation Group Algorithms. Cambridge University Press,
         2003.
-
 """
 
 #*****************************************************************************
@@ -40,12 +39,11 @@ from sage.arith.misc import is_prime as n_is_prime
 
 # OrbitPartition (OP)
 
-cdef inline OrbitPartition *OP_new(int n):
+cdef inline OrbitPartition *OP_new(int n) noexcept:
     """
-    Allocate and return a pointer to a new OrbitPartition of degree n. Returns a
+    Allocate and return a pointer to a new OrbitPartition of degree n. Return a
     null pointer in the case of an allocation failure.
     """
-    cdef int i
     cdef OrbitPartition *OP = <OrbitPartition *> \
                                 sig_malloc(sizeof(OrbitPartition))
     cdef int *int_array = <int *> sig_malloc( 4*n * sizeof(int) )
@@ -62,7 +60,7 @@ cdef inline OrbitPartition *OP_new(int n):
     OP_clear(OP)
     return OP
 
-cdef inline void OP_dealloc(OrbitPartition *OP):
+cdef inline void OP_dealloc(OrbitPartition *OP) noexcept:
     if OP is not NULL:
         sig_free(OP.parent)
         sig_free(OP)
@@ -73,11 +71,12 @@ cdef OP_string(OrbitPartition *OP):
     """
     cdef i,j
     s = ""
-    for i from 0 <= i < OP.degree:
+    for i in range(OP.degree):
         s += " "
         j = OP_find(OP, i)
-        s += "%d -> %d"%(i, j)
+        s += "%d -> %d" % (i, j)
     return s
+
 
 def OP_represent(int n, merges, perm):
     """
@@ -122,7 +121,6 @@ def OP_represent(int n, merges, perm):
         8 -> 8, root: size=1, mcr=8, rank=0
         Deallocating OrbitPartition.
         Done.
-
     """
     cdef int i
     print("Allocating OrbitPartition...")
@@ -133,7 +131,7 @@ def OP_represent(int n, merges, perm):
     print("Allocation passed.")
     print("Checking that each element reports itself as its root.")
     good = True
-    for i from 0 <= i < n:
+    for i in range(n):
         if not OP_find(OP, i) == i:
             print("Failed at i = %d!" % i)
             good = False
@@ -145,7 +143,7 @@ def OP_represent(int n, merges, perm):
         print("Merged %d and %d." % (i, j))
     print("Done merging.")
     print("Finding:")
-    for i from 0 <= i < n:
+    for i in range(n):
         j = OP_find(OP, i)
         s = "%d -> %d"%(i, j)
         if i == j:
@@ -159,13 +157,13 @@ def OP_represent(int n, merges, perm):
         OP_dealloc(OP)
         return
     print("Allocation passed.")
-    for i from 0 <= i < n:
+    for i in range(n):
         gamma[i] = perm[i]
     print("Merging permutation: %s" % perm)
     OP_merge_list_perm(OP, gamma)
     print("Done merging.")
     print("Finding:")
-    for i from 0 <= i < n:
+    for i in range(n):
         j = OP_find(OP, i)
         s = "%d -> %d"%(i, j)
         if i == j:
@@ -180,12 +178,11 @@ def OP_represent(int n, merges, perm):
 
 # PartitionStack (PS)
 
-cdef inline PartitionStack *PS_new(int n, bint unit_partition):
+cdef inline PartitionStack *PS_new(int n, bint unit_partition) noexcept:
     """
-    Allocate and return a pointer to a new PartitionStack of degree n. Returns a
+    Allocate and return a pointer to a new PartitionStack of degree n. Return a
     null pointer in the case of an allocation failure.
     """
-    cdef int i
     cdef PartitionStack *PS = <PartitionStack *> \
                                 sig_malloc(sizeof(PartitionStack))
     cdef int *int_array = <int *> sig_malloc( 2*n * sizeof(int) )
@@ -201,24 +198,24 @@ cdef inline PartitionStack *PS_new(int n, bint unit_partition):
         PS_unit_partition(PS)
     return PS
 
-cdef void PS_unit_partition(PartitionStack *PS):
+cdef void PS_unit_partition(PartitionStack *PS) noexcept:
     """
     Set partition stack to a single partition with a single cell.
     """
     cdef int i, n = PS.degree
     PS.depth = 0
-    for i from 0 <= i < n-1:
+    for i in range(n - 1):
         PS.entries[i] = i
         PS.levels[i] = n
-    PS.entries[n-1] = n-1
+    PS.entries[n-1] = n - 1
     PS.levels[n-1] = -1
 
-cdef inline PartitionStack *PS_copy(PartitionStack *PS):
+cdef inline PartitionStack *PS_copy(PartitionStack *PS) noexcept:
     """
-    Allocate and return a pointer to a copy of PartitionStack PS. Returns a null
+    Allocate and return a pointer to a copy of PartitionStack PS. Return a null
     pointer in the case of an allocation failure.
     """
-    cdef int i, n = PS.degree
+    cdef int n = PS.degree
 
     cdef PartitionStack *PS2 = <PartitionStack *> \
                                 sig_malloc(sizeof(PartitionStack))
@@ -232,25 +229,25 @@ cdef inline PartitionStack *PS_copy(PartitionStack *PS):
     PS_copy_from_to(PS, PS2)
     return PS2
 
-cdef inline void PS_dealloc(PartitionStack *PS):
+cdef inline void PS_dealloc(PartitionStack *PS) noexcept:
     if PS is not NULL:
         sig_free(PS.entries)
         sig_free(PS)
 
-cdef PartitionStack *PS_from_list(list L):
+cdef PartitionStack *PS_from_list(list L) noexcept:
     """
-    Allocate and return a pointer to a PartitionStack representing L. Returns a
+    Allocate and return a pointer to a PartitionStack representing L. Return a
     null pointer in the case of an allocation failure.
     """
     cdef int cell, i, num_cells = len(L), cur_start = 0, cur_len, n = 0
-    for cell from 0 <= cell < num_cells:
+    for cell in range(num_cells):
         n += len(L[cell])
     cdef PartitionStack *PS = PS_new(n, 0)
     if PS is NULL:
         return NULL
-    for cell from 0 <= cell < num_cells:
+    for cell in range(num_cells):
         cur_len = len(L[cell])
-        for i from 0 <= i < cur_len:
+        for i in range(cur_len):
             PS.entries[cur_start + i] = L[cell][i]
             PS.levels[cur_start + i] = n
         PS_move_min_to_front(PS, cur_start, cur_start+cur_len-1)
@@ -267,7 +264,7 @@ cdef PS_print(PartitionStack *PS):
     Print a visual representation of PS.
     """
     cdef int i
-    for i from 0 <= i <= PS.depth:
+    for i in range(PS.depth + 1):
         PS_print_partition(PS, i)
 
 cdef PS_print_partition(PartitionStack *PS, int k):
@@ -275,7 +272,7 @@ cdef PS_print_partition(PartitionStack *PS, int k):
     Print the partition at depth k.
     """
     s = '('
-    for i from 0 <= i < PS.degree:
+    for i in range(PS.degree):
         s += str(PS.entries[i])
         if PS.levels[i] <= k:
             s += '|'
@@ -284,11 +281,11 @@ cdef PS_print_partition(PartitionStack *PS, int k):
     s = s[:-1] + ')'
     print(s)
 
-cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL):
+cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL) noexcept:
     """
     Find the first occurrence of the smallest cell of size greater than one,
     which is admissible (checked by the function ``test_allowance``).
-    Its entries are stored to b and its minimum element is returned.
+    Its entries are stored to `b` and its minimum element is returned.
     """
     cdef int i = 0, j = 0, location = 0, n = PS.degree
     bitset_zero(b)
@@ -319,7 +316,7 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL)
     return PS.entries[location]
 
 
-cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr):
+cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr) noexcept:
     """
     Suppose a cell ``C`` was split into ``a`` components at ``PS.level``.
     Set the rows of the matrix ``nonsingletons_ptr`` to the first
@@ -327,7 +324,6 @@ cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr):
     Return the number of rows of ``nonsingletons_ptr``.
     """
     cdef int beg=0, end, n = PS.degree, count=0, i, n_1 = n-1
-    cdef bint non_unit_partition = False
     cdef bitset_t scratch
     bitset_init(scratch, n)
     cdef bitset_t* nonsingletons = nonsingletons_ptr[0]
@@ -340,7 +336,7 @@ cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr):
         if end != n:
             if PS.levels[end] == PS.depth:
                 bitset_zero(scratch)
-                for i from beg <= i <= end:
+                for i in range(beg, end + 1):
                     bitset_set(scratch, PS.entries[i])
                 count +=1
                 nonsingletons = <bitset_t*> sig_realloc(nonsingletons, count * sizeof(bitset_t))
@@ -368,7 +364,7 @@ cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x) except -1:
     """
     cdef int i, location, n = PS.degree
     bitset_zero(b)
-    for i from 0 <= i < n:
+    for i in range(n):
         if PS.entries[i] == x:
             location = i
             break
@@ -386,7 +382,7 @@ cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x) except -1:
 
 cdef list PS_singletons(PartitionStack * part):
     """
-    Return the list of all singletons in the PartitionStack.
+    Return the list of all singletons in the ``PartitionStack``.
     """
     cdef list l = []
     cdef int i
@@ -399,6 +395,7 @@ cdef list PS_singletons(PartitionStack * part):
             l.append(i)
 
     return l
+
 
 def PS_represent(partition, splits):
     """
@@ -457,7 +454,6 @@ def PS_represent(partition, splits):
         0100000000
         Deallocating PartitionStacks.
         Done.
-
     """
     cdef int i, n = sum([len(cell) for cell in partition])
     cdef int *gamma
@@ -472,7 +468,7 @@ def PS_represent(partition, splits):
     PS_print(PS)
     print("Checking that entries are in order and correct level.")
     good = True
-    for i from 0 <= i < n-1:
+    for i in range(n - 1):
         if not (PS.entries[i] == i and PS.levels[i] == n):
             print("Failed at i = %d!" % i)
             print(PS.entries[i], PS.levels[i], i, n)
@@ -487,11 +483,11 @@ def PS_represent(partition, splits):
         print("Everything seems in order, deallocating.")
     PS_dealloc(PS)
     print("Deallocated.")
-    print("Creating PartitionStack from partition %s."%partition)
+    print("Creating PartitionStack from partition %s." % partition)
     PS = PS_from_list(partition)
     print("PartitionStack's data:")
-    print("entries -> %s"%[PS.entries[i] for i from 0 <= i < n])
-    print("levels -> %s"%[PS.levels[i] for i from 0 <= i < n])
+    print("entries -> %s"%[PS.entries[i] for i in range(n)])
+    print("levels -> %s"%[PS.levels[i] for i in range(n)])
     print("depth = %d, degree = %d" % (PS.depth,PS.degree))
     PS_print(PS)
     print("Checking PS_is_discrete:")
@@ -499,7 +495,7 @@ def PS_represent(partition, splits):
     print("Checking PS_num_cells:")
     print(PS_num_cells(PS))
     print("Checking PS_is_mcr, min cell reps are:")
-    L = [PS.entries[i] for i from 0 <= i < n if PS_is_mcr(PS, i)]
+    L = [PS.entries[i] for i in range(n) if PS_is_mcr(PS, i)]
     print(L)
     print("Checking PS_is_fixed, fixed elements are:")
     print([PS.entries[l] for l in L if PS_is_fixed(PS, l)])
@@ -508,7 +504,7 @@ def PS_represent(partition, splits):
     PS_print(PS2)
     print("Checking for consistency.")
     good = True
-    for i from 0 <= i < n:
+    for i in range(n):
         if PS.entries[i] != PS2.entries[i] or PS.levels[i] != PS2.levels[i]:
             print("Failed at i = %d!"%i)
             good = False
@@ -527,7 +523,7 @@ def PS_represent(partition, splits):
     print("Getting permutation from PS2->PS:")
     gamma = <int *> sig_malloc(n * sizeof(int))
     PS_get_perm_from(PS, PS2, gamma)
-    print([gamma[i] for i from 0 <= i < n])
+    print([gamma[i] for i in range(n)])
     sig_free(gamma)
     print("Finding first smallest:")
     bitset_init(b, n)
@@ -553,18 +549,14 @@ cdef enum:
     default_num_gens = 8
     default_num_bits = 64
 
-cdef StabilizerChain *SC_new(int n, bint init_gens=True):
+cdef StabilizerChain *SC_new(int n, bint init_gens=True) noexcept:
     """
-    Allocate and return a pointer to a new StabilizerChain of degree n. Returns
+    Allocate and return a pointer to a new StabilizerChain of degree n. Return
     a null pointer in the case of an allocation failure.
     """
     cdef int i
     cdef StabilizerChain *SC = <StabilizerChain *> \
                                 sig_calloc(1, sizeof(StabilizerChain))
-    cdef int *array1
-    cdef int *array2
-    cdef int *array3
-    cdef bint mem_err = 0
     if SC is NULL:
         return NULL
     SC.degree = n
@@ -609,7 +601,7 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True):
     SC.base_orbits  = int_ptrs + 2*n
     SC.parents      = int_ptrs + 3*n
     SC.labels       = int_ptrs + 4*n
-    for i from 0 <= i < n:
+    for i in range(n):
         SC.base_orbits[i] = int_array
         SC.parents[i]     = int_array +   n
         SC.labels[i]      = int_array + 2*n
@@ -617,7 +609,7 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True):
 
     # second level allocations
     if init_gens:
-        for i from 0 <= i < n:
+        for i in range(n):
             SC.array_size[i] = default_num_gens
             SC.generators[i]   = <int *> sig_malloc( default_num_gens*n * sizeof(int) )
             SC.gen_inverses[i] = <int *> sig_malloc( default_num_gens*n * sizeof(int) )
@@ -627,21 +619,21 @@ cdef StabilizerChain *SC_new(int n, bint init_gens=True):
 
     return SC
 
-cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size):
+cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size) noexcept:
     """
     Reallocate generator array at level `level` to size `size`.
 
-    Returns 1 in case of an allocation failure.
+    Return 1 in case of an allocation failure.
     """
     cdef int *temp
     cdef int n = SC.degree
 
-    temp = <int *> sig_realloc( SC.generators[level],   n * size * sizeof(int) )
+    temp = <int *> sig_realloc(SC.generators[level], n * size * sizeof(int))
     if temp is NULL:
         return 1
     SC.generators[level] = temp
 
-    temp = <int *> sig_realloc( SC.gen_inverses[level], n * size * sizeof(int) )
+    temp = <int *> sig_realloc(SC.gen_inverses[level], n * size * sizeof(int))
     if temp is NULL:
         return 1
     SC.gen_inverses[level] = temp
@@ -649,12 +641,12 @@ cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size):
     SC.array_size[level] = size
     return 0
 
-cdef inline void SC_dealloc(StabilizerChain *SC):
+cdef inline void SC_dealloc(StabilizerChain *SC) noexcept:
     cdef int i, n
     if SC is not NULL:
         n =  SC.degree
         if SC.generators is not NULL:
-            for i from 0 <= i < n:
+            for i in range(n):
                 sig_free(SC.generators[i])
                 sig_free(SC.gen_inverses[i])
         sig_free(SC.generators) # frees int_ptrs
@@ -664,40 +656,40 @@ cdef inline void SC_dealloc(StabilizerChain *SC):
         OP_dealloc(SC.OP_scratch)
         sig_free(SC)
 
-cdef StabilizerChain *SC_symmetric_group(int n):
+cdef StabilizerChain *SC_symmetric_group(int n) noexcept:
     """
-    Returns a stabilizer chain for the symmetric group on {0, 1, ..., n-1}.
+    Return a stabilizer chain for the symmetric group on {0, 1, ..., n-1}.
 
-    Returns NULL in the case of an allocation failure.
+    Return ``NULL`` in the case of an allocation failure.
     """
     cdef int i, j, b
     cdef StabilizerChain *SC = SC_new(n, False)
     if SC is NULL:
         return NULL
     SC.base_size = n-1
-    for i from 0 <= i < n-1:
+    for i in range(n - 1):
         SC.array_size[i] = n-i-1
     SC.array_size[n-1] = default_num_gens
-    for i from 0 <= i < n:
+    for i in range(n):
         SC.generators[i]   = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         SC.gen_inverses[i] = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         if SC.generators[i] is NULL or SC.gen_inverses[i] is NULL:
             SC_dealloc(SC)
             return NULL
     cdef int *id_perm = SC.perm_scratch
-    for i from 0 <= i < n:
+    for i in range(n):
         id_perm[i] = i
-    for i from 0 <= i < n-1:
+    for i in range(n - 1):
         b = i
         SC.orbit_sizes[i] = n-i
         SC.num_gens[i] = n-i-1
-        for j from 0 <= j < i:
+        for j in range(i):
             SC.parents[i][j] = -1
-        for j from 0 <= j < n-i:
+        for j in range(n - i):
             SC.base_orbits[i][j] = i+j
             SC.parents[i][i+j] = b
             SC.labels[i][i+j] = j
-        for j from 0 <= j < n-i-1:
+        for j in range(n - i - 1):
             #j-th generator sends i+j+1 to b
             memcpy(SC.generators[i] + n*j, id_perm, n * sizeof(int) )
             SC.generators[i][n*j + i+j+1] = b
@@ -705,42 +697,42 @@ cdef StabilizerChain *SC_symmetric_group(int n):
             memcpy(SC.gen_inverses[i] + n*j, SC.generators[i] + n*j, n * sizeof(int) )
     return SC
 
-cdef StabilizerChain *SC_alternating_group(int n):
+cdef StabilizerChain *SC_alternating_group(int n) noexcept:
     """
-    Returns a stabilizer chain for the alternating group on {0, 1, ..., n-1}.
+    Return a stabilizer chain for the alternating group on {0, 1, ..., n-1}.
 
-    Returns NULL in the case of an allocation failure.
+    Return ``NULL`` in the case of an allocation failure.
     """
     cdef int i, j, b
     cdef StabilizerChain *SC = SC_new(n, False)
     if SC is NULL:
         return NULL
     SC.base_size = n-2
-    for i from 0 <= i < n-2:
+    for i in range(n - 2):
         SC.array_size[i] = n-i-1
     SC.array_size[n-2] = default_num_gens
     SC.array_size[n-1] = default_num_gens
-    for i from 0 <= i < n:
+    for i in range(n):
         SC.generators[i]   = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         SC.gen_inverses[i] = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         if SC.generators[i] is NULL or SC.gen_inverses[i] is NULL:
             SC_dealloc(SC)
             return NULL
     cdef int *id_perm = SC.perm_scratch
-    for i from 0 <= i < n:
+    for i in range(n):
         id_perm[i] = i
-    for i from 0 <= i < n-2:
+    for i in range(n - 2):
         b = i
         SC.orbit_sizes[i] = n-i
         SC.num_gens[i] = n-i-2
-        for j from 0 <= j < i:
+        for j in range(i):
             SC.parents[i][j] = -1
-        for j from 0 <= j < n-i:
+        for j in range(n - i):
             SC.base_orbits[i][j] = i+j
             SC.parents[i][i+j] = b
             SC.labels[i][i+j] = j
         SC.labels[i][n-1] = -(n-i-2)
-        for j from 0 <= j < n-i-2:
+        for j in range(n - i - 2):
             #j-th generator sends i+j+1 to b, i+j+2 to i+j+1, and b to i+j+2
             memcpy(SC.generators[i] + n*j, id_perm, n * sizeof(int) )
             SC.generators[i][n*j + i+j+1] = b
@@ -749,12 +741,12 @@ cdef StabilizerChain *SC_alternating_group(int n):
             SC_invert_perm(SC.gen_inverses[i] + n*j, SC.generators[i] + n*j, n)
     return SC
 
-cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size):
+cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size) noexcept:
     """
     If size is larger than current allocation, double the size of the bitsets
     until it is not.
 
-    Returns 1 in case of an allocation failure.
+    Return 1 in case of an allocation failure.
     """
     cdef unsigned long size_old = SC.gen_used.size
     if size <= size_old:
@@ -762,7 +754,6 @@ cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size):
     cdef unsigned long new_size = size_old
     while new_size < size:
         new_size *= 2
-    cdef unsigned long limbs_old = SC.gen_used.limbs
     cdef long limbs = (new_size - 1)/(8*sizeof(unsigned long)) + 1
     cdef mp_limb_t *tmp = <mp_limb_t*> sig_realloc(SC.gen_used.bits, limbs * sizeof(mp_limb_t))
     if tmp is not NULL:
@@ -784,25 +775,25 @@ cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size):
     memset(SC.gen_is_id.bits + (size_old >> index_shift) + 1, 0, (limbs - (size_old >> index_shift) - 1) * sizeof(unsigned long))
     return 0
 
-cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level):
+cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level) noexcept:
     """
-    Creates a copy of the first `level` levels of SC. Must have 0 < level.
+    Create a copy of the first `level` levels of SC. Must have 0 < level.
 
-    Returns a null pointer in case of allocation failure.
+    Return a null pointer in case of allocation failure.
     """
     cdef int i, n = SC.degree
     cdef StabilizerChain *SCC = SC_new(n, False)
     if SCC is NULL:
         return NULL
     level = min(level, SC.base_size)
-    for i from 0 <= i < level:
+    for i in range(level):
         SCC.generators[i]   = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         SCC.gen_inverses[i] = <int *> sig_malloc( SC.array_size[i]*n * sizeof(int) )
         if SCC.generators[i] is NULL or SCC.gen_inverses[i] is NULL:
             SC_dealloc(SCC)
             return NULL
         SCC.array_size[i] = SC.array_size[i]
-    for i from level <= i < n:
+    for i in range(level, n):
         SCC.generators[i]   = <int *> sig_malloc( default_num_gens*n * sizeof(int) )
         SCC.gen_inverses[i] = <int *> sig_malloc( default_num_gens*n * sizeof(int) )
         if SCC.generators[i] is NULL or SCC.gen_inverses[i] is NULL:
@@ -812,17 +803,17 @@ cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level):
     SC_copy_nomalloc(SCC, SC, level) # no chance for memory error here...
     return SCC
 
-cdef int SC_copy_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level):
+cdef int SC_copy_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level) noexcept:
     cdef int i, n = SC.degree
     level = min(level, SC.base_size)
     SC_dest.base_size = level
     memcpy(SC_dest.orbit_sizes, SC.orbit_sizes, 2*n * sizeof(int) ) # copies orbit_sizes, num_gens
     memcpy(SC_dest.base_orbits[0], SC.base_orbits[0], 3*n*n * sizeof(int) ) # copies base_orbits, parents, labels
-    for i from 0 <= i < level:
+    for i in range(level):
         if SC.num_gens[i] > SC_dest.array_size[i]:
             if SC_realloc_gens(SC_dest, i, max(SC.num_gens[i], 2*SC_dest.array_size[i])):
                 return 1
-        memcpy(SC_dest.generators[i],   SC.generators[i],   SC.num_gens[i]*n * sizeof(int) )
+        memcpy(SC_dest.generators[i], SC.generators[i], SC.num_gens[i]*n * sizeof(int) )
         memcpy(SC_dest.gen_inverses[i], SC.gen_inverses[i], SC.num_gens[i]*n * sizeof(int) )
     return 0
 
@@ -830,19 +821,24 @@ cdef SC_print_level(StabilizerChain *SC, int level):
     cdef int i, j, n = SC.degree
     if level < SC.base_size:
         print('/ level {}'.format(level))
-        print('| orbit   {}'.format([SC.base_orbits[level][i] for i from 0 <= i < SC.orbit_sizes[level]]))
-        print('| parents {}'.format([SC.parents       [level][i] for i from 0 <= i < n]))
-        print('| labels  {}'.format([SC.labels        [level][i] for i from 0 <= i < n]))
+        print('| orbit   {}'.format([SC.base_orbits[level][i]
+                                     for i in range(SC.orbit_sizes[level])]))
+        print('| parents {}'.format([SC.parents[level][i] for i in range(n)]))
+        print('| labels  {}'.format([SC.labels[level][i] for i in range(n)]))
         print('|')
-        print('| generators  {}'.format([[SC.generators  [level][n*i + j] for j from 0 <= j < n] for i from 0 <= i < SC.num_gens[level]]))
-        print(r'\ inverses    {}'.format([[SC.gen_inverses[level][n*i + j] for j from 0 <= j < n] for i from 0 <= i < SC.num_gens[level]]))
+        print('| generators  {}'.format([[SC.generators[level][n*i + j]
+                                          for j in range(n)]
+                                         for i in range(SC.num_gens[level])]))
+        print(r'\ inverses    {}'.format([[SC.gen_inverses[level][n*i + j]
+                                           for j in range(n)]
+                                          for i in range(SC.num_gens[level])]))
     else:
         print('/ level {}'.format(level))
         print('|')
         print(r'\ base_size {}'.format(SC.base_size))
 
 
-cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len):
+cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len) noexcept:
     """
     Create a new stabilizer chain whose base starts with the given base, and
     which represents the same permutation group. Original StabilizerChain is
@@ -850,7 +846,7 @@ cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len):
 
     Use SC_cleanup to remove redundant base points.
 
-    Returns a null pointer in case of an allocation failure.
+    Return a null pointer in case of an allocation failure.
     """
     cdef StabilizerChain *NEW = SC_new(SC.degree)
     if NEW is NULL:
@@ -860,17 +856,17 @@ cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len):
         return NULL
     return NEW
 
-cdef int SC_new_base_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int *base, int base_len):
-    cdef int i, n = SC.degree
+cdef int SC_new_base_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int *base, int base_len) noexcept:
+    cdef int i
     SC_dest.base_size = 0
-    for i from 0 <= i < base_len:
+    for i in range(base_len):
         SC_add_base_point(SC_dest, base[i])
     if SC_update(SC_dest, SC, 0):
         SC_dealloc(SC_dest)
         return 1
     return 0
 
-cdef int SC_update(StabilizerChain *dest, StabilizerChain *source, int level):
+cdef int SC_update(StabilizerChain *dest, StabilizerChain *source, int level) noexcept:
     cdef mpz_t src_order, dst_order
     cdef int *perm = dest.perm_scratch
     mpz_init(src_order)
@@ -887,14 +883,14 @@ cdef int SC_update(StabilizerChain *dest, StabilizerChain *source, int level):
                 break
             i += 1
         else:
-            for b from 0 <= b < dest.degree:
+            for b in range(dest.degree):
                 if perm[b] != b:
                     break
             else:
                 continue
             SC_add_base_point(dest, b)
         first_moved = i
-        for i from level <= i <= first_moved:
+        for i in range(level, first_moved + 1):
             if SC_insert_and_sift(dest, i, perm, 1, 0): # don't sift!
                 mpz_clear(dst_order)
                 mpz_clear(src_order)
@@ -904,14 +900,14 @@ cdef int SC_update(StabilizerChain *dest, StabilizerChain *source, int level):
     mpz_clear(dst_order)
     return 0
 
-cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p):
+cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p) noexcept:
     """
     Insert the point ``p`` as a base point on level ``level``. Return a new
     StabilizerChain with this new base. Original StabilizerChain is unmodified.
 
     Use SC_cleanup to remove redundant base points.
 
-    Returns a null pointer in case of an allocation failure.
+    Return a null pointer in case of an allocation failure.
     """
     cdef int i, b, n = SC.degree
     cdef StabilizerChain *NEW
@@ -922,7 +918,7 @@ cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p
     if NEW is NULL:
         return NULL
     SC_add_base_point(NEW, p)
-    for i from level <= i < SC.base_size:
+    for i in range(level, SC.base_size):
         b = SC.base_orbits[i][0]
         if b != p:
             SC_add_base_point(NEW, b)
@@ -931,11 +927,11 @@ cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p
         return NULL
     return NEW
 
-cdef int SC_insert_base_point_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level, int p):
-    cdef int i, b, n = SC.degree
+cdef int SC_insert_base_point_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int level, int p) noexcept:
+    cdef int i, b
     SC_copy_nomalloc(SC_dest, SC, level)
     SC_add_base_point(SC_dest, p)
-    for i from level <= i < SC.base_size:
+    for i in range(level, SC.base_size):
         b = SC.base_orbits[i][0]
         if b != p:
             SC_add_base_point(SC_dest, b)
@@ -943,7 +939,7 @@ cdef int SC_insert_base_point_nomalloc(StabilizerChain *SC_dest, StabilizerChain
         return 1
     return 0
 
-cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x):
+cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x) noexcept:
     """
     Return values:
     0 - No errors.
@@ -951,13 +947,13 @@ cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x):
     """
     cdef int *gen
     cdef int *gen_inv
-    cdef int i, b, gen_index, error, n = SC.degree
+    cdef int i, b, gen_index, n = SC.degree
 
     # make sure we have room for the new generator:
     if SC.array_size[level] == SC.num_gens[level]:
         if SC_realloc_gens(SC, level, 2*SC.array_size[level]):
             return 1
-    cdef int *new_gen     = SC.generators  [level] + n*SC.num_gens[level]
+    cdef int *new_gen = SC.generators[level] + n*SC.num_gens[level]
     cdef int *new_gen_inv = SC.gen_inverses[level] + n*SC.num_gens[level]
 
     # new generator is perm^(-1) * (path from x to base) (left to right composition)
@@ -968,7 +964,7 @@ cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x):
 
     # now that we have our generators, regenerate the tree, breadth-first
     b = SC.base_orbits[level][0]
-    for i from 0 <= i < n:
+    for i in range(n):
         SC.parents[level][i] = -1
     SC.parents[level][b] = b
     i = 0
@@ -979,12 +975,12 @@ cdef int SC_re_tree(StabilizerChain *SC, int level, int *perm, int x):
             gen_inv = SC.gen_inverses[level] + n*gen_index
             SC_scan(SC, level, x, gen_index, gen_inv, 1)
         for gen_index from 0 <= gen_index < SC.num_gens[level]:
-            gen     = SC.generators  [level] + n*gen_index
+            gen = SC.generators[level] + n*gen_index
             SC_scan(SC, level, x, gen_index, gen, -1)
         i += 1
     return 0
 
-cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens, int *new_gens):
+cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens, int *new_gens) noexcept:
     """
     Apply Schreier's subgroup lemma[1] as follows. Given a level, a point x, and
     a generator s, find the coset traversal element r coming from x.
@@ -997,7 +993,7 @@ cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens,
     num_gens - how many of these there are
     new_gens - space of size at least num_gens*n for the sifted perms to go
 
-    Returns 1 in case of an allocation failure.
+    Return 1 in case of an allocation failure.
     """
     cdef int n = SC.degree
     if num_gens == 0:
@@ -1022,7 +1018,6 @@ cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens,
     cdef int y, b = SC.base_orbits[level][0]
     cdef int *perm
     cdef int *perm_rep_inv = temp
-    cdef int j
     for i from 0 <= i < num_gens:
         perm = new_gens + n*i # this is now rs
         y = perm[b]
@@ -1031,10 +1026,9 @@ cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens,
         SC_mult_perms(perm, perm, perm_rep_inv, n)
     return SC_insert(SC, level+1, new_gens, num_gens)
 
-cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_perms, bint sift):
+cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_perms, bint sift) noexcept:
     cdef int i, j, b, n = SC.degree
     cdef int perm_gen_index
-    cdef int max_orbit_size, max_orbit_place
     if sift:
         if SC_realloc_bitsets(SC, num_perms):
             return 1
@@ -1060,13 +1054,11 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
 
     # Record the old orbit elements and the old generators (see sifting phase)
     cdef int old_num_gens = SC.num_gens[level]
-    cdef int old_num_points = SC.orbit_sizes[level]
 
     # Add new points to the tree:
     cdef int x
     cdef int *perm
     cdef int start_over = 1
-    cdef int error
     cdef int re_treed = 0
     while start_over:
         start_over = 0
@@ -1141,7 +1133,7 @@ cdef int SC_insert_and_sift(StabilizerChain *SC, int level, int *pi, int num_per
             section += 1
     return 0
 
-cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t support):
+cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t support) noexcept:
     """
     Test whether the group generated by the input permutations is a giant, i.e.,
     the alternating or symmetric group.
@@ -1149,8 +1141,8 @@ cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t suppor
     If the group is not a giant, this routine will return False. This could also
     indicate an allocation failure.
 
-    If the group is a giant, this routine will return True with approximate
-    probability p. It will set `support' to the support of the group in this
+    If the group is a giant, this routine will return ``True`` with approximate
+    probability ``p``. It will set `support' to the support of the group in this
     case. Use bitset_len to get the size of support.
 
     The bitset `support' must be initialized. Must have 0 <= p < 1.
@@ -1216,6 +1208,7 @@ cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t suppor
     sig_free(perm)
     return False
 
+
 def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, bint test_contains):
     """
     Test that the permutation group generated by list perms in L of degree n
@@ -1224,6 +1217,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
 
     TESTS::
 
+        sage: # needs sage.groups
         sage: from sage.groups.perm_gps.partn_ref.data_structures import SC_test_list_perms
         sage: limit = 10^7
         sage: def test_Sn_on_m_points(n, m, gap, contains):
@@ -1234,7 +1228,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     test_Sn_on_m_points(i,i,1,0)
         sage: for i in range(2,9):
         ....:     test_Sn_on_m_points(i,i,0,1)
-        sage: for i in range(2,9):           # long time
+        sage: for i in range(2,9):              # long time
         ....:     test_Sn_on_m_points(i,i,1,1)
         sage: test_Sn_on_m_points(8,8,1,1)
         sage: def test_stab_chain_fns_1(n, gap, contains):
@@ -1258,7 +1252,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     test_stab_chain_fns_2(n, 1, 0)
         sage: for n in range(2,11):
         ....:     test_stab_chain_fns_2(n, 0, 1)
-        sage: for n in range(2,11):            # long time
+        sage: for n in range(2,11):             # long time
         ....:     test_stab_chain_fns_2(n, 1, 1)
         sage: test_stab_chain_fns_2(11, 1, 1)
         sage: def test_stab_chain_fns_3(n, gap, contains):
@@ -1269,7 +1263,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     test_stab_chain_fns_3(n, 1, 0)
         sage: for n in range(2,20):
         ....:     test_stab_chain_fns_3(n, 0, 1)
-        sage: for n in range(2,14):            # long time
+        sage: for n in range(2,14):             # long time
         ....:     test_stab_chain_fns_3(n, 1, 1)
         sage: test_stab_chain_fns_3(20, 1, 1)
         sage: def test_stab_chain_fns_4(n, g, gap, contains):
@@ -1279,19 +1273,19 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:         shuffle(perm)
         ....:         perms.append(perm)
         ....:     SC_test_list_perms(perms, n, limit, gap, 0, contains)
-        sage: for n in range(4,9):                # long time
+        sage: for n in range(4,9):              # long time
         ....:     test_stab_chain_fns_4(n, 1, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 3, 1, 0)
-        sage: for n in range(4,9):  # not tested, known bug (see :trac:`32187`)
+        sage: for n in range(4,9):              # known bug (see :issue:`32187`), not tested
         ....:     test_stab_chain_fns_4(n, 1, 0, 1)
         ....:     for j in range(6):
         ....:         test_stab_chain_fns_4(n, 2, 0, 1)
         ....:     test_stab_chain_fns_4(n, 3, 0, 1)
-        sage: for n in range(4,8):                # long time
+        sage: for n in range(4,8):              # long time
         ....:     test_stab_chain_fns_4(n, 1, 1, 1)
         ....:     test_stab_chain_fns_4(n, 2, 1, 1)
         ....:     test_stab_chain_fns_4(n, 2, 1, 1)
@@ -1307,12 +1301,12 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     shuffle(perm2)
         ....:     perm2 = list(range(m)) + perm2
         ....:     SC_test_list_perms([perm1, perm2], n, limit, gap, 0, contains)
-        sage: for n in [4..9]:                     # long time
+        sage: for n in [4..9]:                  # long time
         ....:     for _ in range(2):
         ....:         test_stab_chain_fns_5(n, 1, 0)
-        sage: for n in [4..8]:                     # long time
+        sage: for n in [4..8]:                  # long time
         ....:     test_stab_chain_fns_5(n, 0, 1)
-        sage: for n in [4..9]:                     # long time
+        sage: for n in [4..9]:                  # long time
         ....:     test_stab_chain_fns_5(n, 1, 1)
         sage: def random_perm(x):
         ....:     shuffle(x)
@@ -1323,7 +1317,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:         perm = sum([random_perm(list(range(i*(n//m),min(n,(i+1)*(n//m))))) for i in range(m)], [])
         ....:         perms.append(perm)
         ....:     SC_test_list_perms(perms, m*(n//m), limit, gap, 0, contains)
-        sage: for m in range(2,9):                         # long time
+        sage: for m in range(2,9):              # long time
         ....:     for n in range(m,3*m):
         ....:         for k in range(1,3):
         ....:             test_stab_chain_fns_6(m,n,k, 1, 0)
@@ -1353,12 +1347,11 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         sage: for n in [6..30]:
         ....:     test_stab_chain_fns_7(n, 1, 0, 1)
         ....:     test_stab_chain_fns_7(n, 0, 0, 1)
-        sage: for n in [6..14]:                   # long time
+        sage: for n in [6..14]:                 # long time
         ....:     test_stab_chain_fns_7(n, 1, 1, 1)
         ....:     test_stab_chain_fns_7(n, 0, 1, 1)
         sage: test_stab_chain_fns_7(20, 1, 1, 1)
         sage: test_stab_chain_fns_7(20, 0, 1, 1)
-
     """
     if gap:
         from sage.groups.perm_gps.permgroup import PermutationGroup
@@ -1570,7 +1563,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
                         print('element {}'.format(permy))
                         print('GAP says it is an element, SC_contains(modify=1) does not')
                         raise AssertionError
-                    permy = list(xrange(1, n + 1))
+                    permy = list(range(1, n + 1))
                     shuffle(permy)
                     gap_says = (PermutationGroupElement(permy) in G)
                     for j from 0 <= j < n:
@@ -1618,18 +1611,19 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         SC_dealloc(SCCC)
         SC_dealloc(SC_nb)
 
+
 # Functions
 
-cdef int sort_by_function(PartitionStack *PS, int start, int *degrees):
+cdef int sort_by_function(PartitionStack *PS, int start, int *degrees) noexcept:
     """
     A simple counting sort, given the degrees of vertices to a certain cell.
 
     INPUT:
-    PS -- the partition stack to be checked
-    start -- beginning index of the cell to be sorted
-    degrees -- the values to be sorted by, must have extra scratch space for a
-        total of 3*n+1
 
+    - ``PS`` -- the partition stack to be checked
+    - ``start`` -- beginning index of the cell to be sorted
+    - ``degrees`` -- the values to be sorted by, must have extra scratch space for a
+      total of `3*n+1`
     """
     cdef int n = PS.degree
     cdef int i, j, max, max_location
@@ -1664,7 +1658,7 @@ cdef int sort_by_function(PartitionStack *PS, int start, int *degrees):
         j += 1
     return max_location
 
-cdef int refine_by_orbits(PartitionStack *PS, StabilizerChain *SC, int *perm_stack, int *cells_to_refine_by, int *ctrb_len):
+cdef int refine_by_orbits(PartitionStack *PS, StabilizerChain *SC, int *perm_stack, int *cells_to_refine_by, int *ctrb_len) noexcept:
     """
     Given a stabilizer chain SC, refine the partition stack PS so that each cell
     contains elements from at most one orbit, and sort the refined cells by
@@ -1705,7 +1699,7 @@ cdef int refine_by_orbits(PartitionStack *PS, StabilizerChain *SC, int *perm_sta
     return invariant
 
 cdef int compute_relabeling(StabilizerChain *group, StabilizerChain *scratch_group,
-    int *permutation, int *relabeling):
+    int *permutation, int *relabeling) noexcept:
     """
     Technically, compute the INVERSE of the relabeling
     """

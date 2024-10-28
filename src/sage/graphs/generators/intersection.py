@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Intersection graphs
 
@@ -32,7 +31,7 @@ def IntervalGraph(intervals, points_ordered=False):
 
     INPUT:
 
-    - ``intervals`` -- the list of pairs `(a_i,b_i)` defining the graph.
+    - ``intervals`` -- the list of pairs `(a_i,b_i)` defining the graph
 
     - ``points_ordered`` -- states whether every interval `(a_i,b_i)` of
       `intervals` satisfies `a_i<b_i`. If satisfied then setting
@@ -166,11 +165,11 @@ def PermutationGraph(second_permutation, first_permutation=None):
 
     - ``second_permutation`` -- the unique permutation/list defining the graph,
       or the second of the two (if the graph is to be built from two
-      permutations/lists).
+      permutations/lists)
 
-    - ``first_permutation`` (optional) -- the first of the two
+    - ``first_permutation`` -- (optional) the first of the two
       permutations/lists from which the graph should be built, if it is to be
-      built from two permutations/lists.
+      built from two permutations/lists
 
       When ``first_permutation is None`` (default), it is set to be equal to
       ``sorted(second_permutation)``, which yields the expected ordering when
@@ -293,7 +292,7 @@ def ToleranceGraph(tolrep):
     INPUT:
 
     - ``tolrep`` -- list of triples `(l_i,r_i,t_i)` where `(l_i,r_i)` denotes a
-      closed interval on the real line and `t_i` a positive value.
+      closed interval on the real line and `t_i` a positive value
 
     .. NOTE::
 
@@ -409,11 +408,11 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
 
     INPUT:
 
-    - ``k,n`` (integers)
+    - ``k``, ``n`` -- integers
 
-    - ``OA`` -- An orthogonal array. If set to ``None`` (default) then
+    - ``OA`` -- an orthogonal array; if set to ``None`` (default) then
       :func:`~sage.combinat.designs.orthogonal_arrays.orthogonal_array` is
-      called to compute an `OA(k,n)`.
+      called to compute an `OA(k,n)`
 
     EXAMPLES::
 
@@ -464,20 +463,20 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
 
     But nevertheless isospectral::
 
-        sage: g0.spectrum()                                                             # needs sage.modules
+        sage: g0.spectrum()                                                             # needs sage.modules sage.rings.number_field
         [9, 1, 1, 1, 1, 1, 1, 1, 1, 1, -3, -3, -3, -3, -3, -3]
-        sage: g1.spectrum()                                                             # needs sage.modules
+        sage: g1.spectrum()                                                             # needs sage.modules sage.rings.number_field
         [9, 1, 1, 1, 1, 1, 1, 1, 1, 1, -3, -3, -3, -3, -3, -3]
 
     Note that the graph ``g0`` is actually isomorphic to the affine polar graph
     `VO^+(4,2)`::
 
-        sage: graphs.AffineOrthogonalPolarGraph(4,2,'+').is_isomorphic(g0)              # needs sage.modules
+        sage: graphs.AffineOrthogonalPolarGraph(4,2,'+').is_isomorphic(g0)              # needs sage.libs.gap sage.modules
         True
 
     TESTS::
 
-        sage: G = graphs.OrthogonalArrayBlockGraph(4,6)                                 # needs sage.modules
+        sage: G = graphs.OrthogonalArrayBlockGraph(4,6)                                 # needs sage.modules sage.schemes
         Traceback (most recent call last):
         ...
         NotImplementedError: I don't know how to build an OA(4,6)!
@@ -517,7 +516,7 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
 
 def IntersectionGraph(S):
     r"""
-    Return the intersection graph of the family `S`
+    Return the intersection graph of the family `S`.
 
     The intersection graph of a family `S` is a graph `G` with `V(G)=S` such
     that two elements `s_1,s_2\in S` are adjacent in `G` if and only if `s_1\cap
@@ -525,7 +524,7 @@ def IntersectionGraph(S):
 
     INPUT:
 
-    - ``S`` -- a list of sets/tuples/iterables
+    - ``S`` -- list of sets/tuples/iterables
 
         .. NOTE::
 

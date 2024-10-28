@@ -223,8 +223,8 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
 
         INPUT:
 
-        ``i`` -- a positive integer
-        ``j`` -- a positive integer weakly greater than ``i``
+        - ``i`` -- positive integer
+        - ``j`` -- positive integer weakly greater than `i`
 
         EXAMPLES::
 
@@ -389,7 +389,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         EXAMPLES::
 
             sage: s = path_tableaux.DyckPath([0,1,2,3,2,3,2,1,0])
-            sage: s.dual_equivalence_graph().adjacency_matrix()
+            sage: s.dual_equivalence_graph().adjacency_matrix()                         # needs sage.graphs sage.modules
             [0 1 1 1 0 1 0 1 1 0 0 0 0 0]
             [1 0 1 1 1 1 1 0 1 0 0 1 1 0]
             [1 1 0 1 1 1 0 1 0 1 1 1 0 0]
@@ -405,7 +405,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             [0 1 0 1 1 1 0 1 1 1 1 1 0 1]
             [0 0 0 0 1 0 1 0 0 1 1 1 1 0]
             sage: s = path_tableaux.DyckPath([0,1,2,3,2,1,0])
-            sage: s.dual_equivalence_graph().edges(sort=True)
+            sage: s.dual_equivalence_graph().edges(sort=True)                           # needs sage.graphs
             [([0, 1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 2, 1, 0], '4,7'),
              ([0, 1, 0, 1, 0, 1, 0], [0, 1, 2, 1, 0, 1, 0], '2,5'),
              ([0, 1, 0, 1, 0, 1, 0], [0, 1, 2, 1, 2, 1, 0], '2,7'),
@@ -508,7 +508,7 @@ class CylindricalDiagram(SageObject):
 
     def _repr_(self):
         r"""
-        Return a string representation of ``self``
+        Return a string representation of ``self``.
 
         TESTS::
 
@@ -576,7 +576,7 @@ class CylindricalDiagram(SageObject):
 
     def _latex_(self):
         r"""
-        Return a `\LaTeX` representation of ``self``
+        Return a `\LaTeX` representation of ``self``.
 
         EXAMPLES::
 
@@ -603,7 +603,6 @@ class CylindricalDiagram(SageObject):
              &  &  &  &  & 0 & 1 & \frac{2}{3} & 1 & 1 & 1 & 0\\
              &  &  &  &  &  & 0 & 1 & 3 & 4 & 5 & 1 & 0
              \end{array}
-
         """
         D = self.diagram
         m = len(D[-1])
@@ -626,7 +625,7 @@ class CylindricalDiagram(SageObject):
 
     def _ascii_art_(self):
         r"""
-        Return an ascii art representation of ``self``
+        Return an ascii art representation of ``self``.
 
         TESTS::
 
@@ -661,7 +660,7 @@ class CylindricalDiagram(SageObject):
 
     def _unicode_art_(self):
         r"""
-        Return a unicode art representation of ``self``
+        Return a unicode art representation of ``self``.
 
         TESTS::
 

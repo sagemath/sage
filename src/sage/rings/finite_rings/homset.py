@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 """
 Homset for finite fields
 
@@ -152,13 +153,13 @@ class FiniteFieldHomset(RingHomset_generic):
         D = self.domain()
         C = self.codomain()
         if C == D:
-            return "Automorphism group of %s"%D
+            return "Automorphism group of %s" % D
         else:
-            return "Set of field embeddings from %s to %s"%(D, C)
+            return "Set of field embeddings from %s to %s" % (D, C)
 
     def is_aut(self):
         """
-        Check if ``self`` is an automorphism
+        Check if ``self`` is an automorphism.
 
         EXAMPLES::
 
@@ -232,7 +233,7 @@ class FiniteFieldHomset(RingHomset_generic):
         Between isomorphic fields with different moduli::
 
             sage: k1 = GF(1009)
-            sage: k2 = GF(1009, modulus="primitive")
+            sage: k2 = GF(1009, modulus='primitive')
             sage: Hom(k1, k2).list()
             [
             Ring morphism:
@@ -248,8 +249,8 @@ class FiniteFieldHomset(RingHomset_generic):
               Defn: 11 |--> 11
             ]
 
-            sage: k1.<a> = GF(1009^2, modulus="first_lexicographic")
-            sage: k2.<b> = GF(1009^2, modulus="conway")
+            sage: k1.<a> = GF(1009^2, modulus='first_lexicographic')
+            sage: k2.<b> = GF(1009^2, modulus='conway')
             sage: Hom(k1, k2).list()
             [
             Ring morphism:
@@ -264,7 +265,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         TESTS:
 
-        Check that :trac:`11390` is fixed::
+        Check that :issue:`11390` is fixed::
 
             sage: K = GF(1<<16,'a'); L = GF(1<<32,'b')
             sage: K.Hom(L)[0]
@@ -333,7 +334,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         TESTS::
 
-            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()
+            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()  # random
             Ring morphism:
               From: Finite Field in a of size 3^3
               To:   Finite Field in b of size 3^6
@@ -346,8 +347,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         .. TODO::
 
-            Use a more sophisticated algorithm; see also :trac:`8751`.
-
+            Use a more sophisticated algorithm; see also :issue:`8751`.
         """
         K = self.domain()
         L = self.codomain()

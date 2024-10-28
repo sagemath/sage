@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs
 """
 Catalog of simplicial complexes
 
@@ -54,14 +54,14 @@ You can also get a list by typing ``simplicial_complexes.`` and hitting the
 EXAMPLES::
 
     sage: S = simplicial_complexes.Sphere(2) # the 2-sphere
-    sage: S.homology()
+    sage: S.homology()                                                                  # needs sage.modules
     {0: 0, 1: 0, 2: Z}
     sage: simplicial_complexes.SurfaceOfGenus(3)
     Triangulation of an orientable surface of genus 3
     sage: M4 = simplicial_complexes.MooreSpace(4)
-    sage: M4.homology()
+    sage: M4.homology()                                                                 # needs sage.modules
     {0: 0, 1: C4, 2: 0}
-    sage: simplicial_complexes.MatchingComplex(6).homology()
+    sage: simplicial_complexes.MatchingComplex(6).homology()                            # needs sage.modules
     {0: 0, 1: Z^16, 2: 0}
 """
 

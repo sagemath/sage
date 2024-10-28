@@ -18,7 +18,6 @@ written by Peter Dobcsanyi [Do2009]_ peter@designtheory.org.
 
 Functions
 ---------
-
 """
 
 ###########################################################################
@@ -467,6 +466,7 @@ v2_b2_k2_icgsa = \
 </list_of_designs>
 """
 
+
 def dump_to_tmpfile(s):
     """
     Utility function to dump a string to a temporary file.
@@ -483,6 +483,7 @@ def dump_to_tmpfile(s):
     f.write(v2_b2_k2_icgsa)
     f.close()
     return file_loc
+
 
 def check_dtrs_protocols(input_name, input_pv):
     """
@@ -506,6 +507,7 @@ def check_dtrs_protocols(input_name, input_pv):
     if ppv_major != ipv_major or int(ppv_minor) < int(ipv_minor):
         msg = ('''Incompatible dtrs_protocols: program: %s %s: %s''' % (program_pv, input_name, input_pv))
         raise RuntimeError(msg)
+
 
 def open_extrep_file(fname):
     """
@@ -534,6 +536,7 @@ def open_extrep_file(fname):
         else:
             f = open(fname, 'rb')
     return f
+
 
 def open_extrep_url(url):
     """
@@ -565,9 +568,11 @@ def open_extrep_url(url):
     else:
         return f.read()
 
+
 pattern_integer = re.compile(r'\d+$')
 pattern_decimal = re.compile(r'-?\d+\.\d+$')
 pattern_rational = re.compile(r'-?\d+/\d+$')
+
 
 def _encode_attribute(string):
     """
@@ -600,7 +605,8 @@ def _encode_attribute(string):
     else:
         return string
 
-class XTree():
+
+class XTree:
     '''
     A lazy class to wrap a rooted tree representing an XML document.
     The tree's nodes are tuples of the structure:
@@ -611,7 +617,7 @@ class XTree():
 
     - ``t.attribute`` -- attribute named
     - ``t.child`` -- first child named
-    - ``t[i]`` -- i-th child
+    - ``t[i]`` -- `i`-th child
     - ``for child in t:`` -- iterate over ``t``'s children
     - ``len(t)`` -- number of ``t``'s children
 
@@ -773,7 +779,8 @@ class XTree():
 
         return len(self.xt_children)
 
-class XTreeProcessor():
+
+class XTreeProcessor:
     '''
     An incremental event-driven parser for ext-rep documents.
     The processing stages:
@@ -862,11 +869,11 @@ class XTreeProcessor():
             check_dtrs_protocols('source', attrs['dtrs_protocol'])
             if self.list_of_designs_start_proc:
                 self.list_of_designs_start_proc(attrs)
-            #self.outf.write('<%s' % name)
-            #pp_attributes(self.outf, attrs, indent='', precision_stack=[])
-            #self.outf.write('>\n')
+            # self.outf.write('<%s' % name)
+            # pp_attributes(self.outf, attrs, indent='', precision_stack=[])
+            # self.outf.write('>\n')
         elif name == 'designs':
-            pass # self.outf.write(' <%s>\n' % name)
+            pass  # self.outf.write(' <%s>\n' % name)
         if self.in_item:
             for k, v in attrs.items():
                 attrs[k] = _encode_attribute(v)
@@ -909,7 +916,7 @@ class XTreeProcessor():
                     if name == 'block' or name == 'permutation' \
                        or name == 'preimage' or name == 'ksubset' \
                        or name == 'cycle_type' or name == 'row':
-                       # these enclose lists of numbers
+                        # these enclose lists of numbers
                         children.append(ps)
                     else:
                         # the rest is a single number
@@ -921,20 +928,20 @@ class XTreeProcessor():
                     self.block_design_proc(self.current_node[2][0])
                 if self.save_designs:
                     init_bd = XTree(self.current_node[2][0])
-                    self.list_of_designs.append((init_bd.v, [b for b in init_bd.blocks]))
-                #print_subxt(self.current_node[2][0], level=2, outf=self.outf)
+                    self.list_of_designs.append((init_bd.v, list(init_bd.blocks)))
+                # print_subxt(self.current_node[2][0], level=2, outf=self.outf)
                 self._init()
             elif name == 'info':
                 if self.info_proc:
                     self.info_proc(self.current_node[2][0])
-                #print_subxt(self.current_node[2][0], level=1, outf=self.outf)
+                # print_subxt(self.current_node[2][0], level=1, outf=self.outf)
                 self._init()
         else:
             if name == 'designs':
                 if self.designs_end_proc:
                     self.designs_end_proc()
-                #self.outf.write(' ')
-            #self.outf.write('</%s>\n' % name)
+                # self.outf.write(' ')
+            # self.outf.write('</%s>\n' % name)
 
     def _char_data(self, data):
         """
@@ -955,9 +962,8 @@ class XTreeProcessor():
              {'b': 26, 'id': 't2-v13-b26-r6-k3-L1-0', 'v': 13},
              ['[ DESIGN-1.1, GRAPE-4.2, GAPDoc-0.9999, GAP-4.4.3]'])
         """
-
         if self.in_item:
-            #@ this stripping may distort char data in the <info> subtree
+            # @ this stripping may distort char data in the <info> subtree
             # if they are not bracketed in some way.
             data = data.strip()
             if data:
@@ -1029,6 +1035,7 @@ def designs_from_XML(fname):
     f.close()
 
     return proc.list_of_designs
+
 
 def designs_from_XML_url(url):
     """

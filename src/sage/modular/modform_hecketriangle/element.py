@@ -1,10 +1,10 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Elements of Hecke modular forms spaces
 
 AUTHORS:
 
 - Jonas Jermann (2013): initial version
-
 """
 
 # ****************************************************************************
@@ -30,10 +30,10 @@ class FormsElement(FormsRingElement):
 
         INPUT:
 
-        - ``parent``     -- a modular form space
+        - ``parent`` -- a modular form space
 
-        - ``rat``        -- a rational function which corresponds to a
-                            modular form in the modular form space
+        - ``rat`` -- a rational function which corresponds to a
+          modular form in the modular form space
 
         OUTPUT:
 
@@ -182,24 +182,24 @@ class FormsElement(FormsRingElement):
 
     def lseries(self, num_prec=None, max_imaginary_part=0, max_asymp_coeffs=40):
         r"""
-        Return the L-series of ``self`` if ``self`` is modular and holomorphic.
+        Return the `L`-series of ``self`` if ``self`` is modular and holomorphic.
 
         This relies on the (pari) based function ``Dokchitser``.
 
         INPUT:
 
-        - ``num_prec``           -- An integer denoting the to-be-used numerical precision.
-                                    If integer ``num_prec=None`` (default) the default
-                                    numerical precision of the parent of ``self`` is used.
+        - ``num_prec`` -- integer denoting the to-be-used numerical precision.
+          If integer ``num_prec=None`` (default) the default
+          numerical precision of the parent of ``self`` is used.
 
-        - ``max_imaginary_part`` -- A real number (default: 0), indicating up to which
-                                    imaginary part the L-series is going to be studied.
+        - ``max_imaginary_part`` -- a real number (default: 0), indicating up
+          to which imaginary part the `L`-series is going to be studied
 
-        - ``max_asymp_coeffs``   -- An integer (default: 40).
+        - ``max_asymp_coeffs`` -- integer (default: 40)
 
         OUTPUT:
 
-        An interface to Tim Dokchitser's program for computing L-series, namely
+        An interface to Tim Dokchitser's program for computing `L`-series, namely
         the series given by the Fourier coefficients of ``self``.
 
         EXAMPLES::
@@ -260,16 +260,17 @@ class FormsElement(FormsRingElement):
             sage: L(10).n(53)
             -13.0290184579...
 
-            sage: f = (ModularForms(n=17, k=24).Delta()^2)    # long time
-            sage: L = f.lseries()    # long time
-            sage: L.check_functional_equation() < 2^(-50)    # long time
+            sage: # long time
+            sage: f = (ModularForms(n=17, k=24).Delta()^2)
+            sage: L = f.lseries()
+            sage: L.check_functional_equation() < 2^(-50)
             True
-            sage: L.taylor_series(12, 3)    # long time
+            sage: L.taylor_series(12, 3)
             0.000683924755280... - 0.000875942285963...*z + 0.000647618966023...*z^2 + O(z^3)
-            sage: coeffs = f.q_expansion_vector(min_exp=0, max_exp=20, fix_d=True)    # long time
-            sage: sum([coeffs[k]*k^(-30) for k in range(1,len(coeffs))]).n(53)    # long time
+            sage: coeffs = f.q_expansion_vector(min_exp=0, max_exp=20, fix_d=True)
+            sage: sum([coeffs[k]*k^(-30) for k in range(1,len(coeffs))]).n(53)
             9.31562890589...e-10
-            sage: L(30).n(53)    # long time
+            sage: L(30).n(53)
             9.31562890589...e-10
 
             sage: f = ModularForms(n=infinity, k=2, ep=-1).f_i()
@@ -335,7 +336,7 @@ class FormsElement(FormsRingElement):
 
         # num_coeffs = L.num_coeffs()
         num_coeffs = L.num_coeffs(1.2)
-        coeff_vector = [coeff for coeff in self.q_expansion_vector(min_exp=0, max_exp=num_coeffs + 1, fix_d=True)]
+        coeff_vector = list(self.q_expansion_vector(min_exp=0, max_exp=num_coeffs + 1, fix_d=True))
         pari_precode = "coeff = {};".format(coeff_vector)
 
         L.init_coeffs(v="coeff[k+1]", pari_precode=pari_precode,

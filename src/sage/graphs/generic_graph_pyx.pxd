@@ -17,7 +17,7 @@ cdef class GenericGraph_pyx(SageObject):
 cdef class SubgraphSearch:
     cdef int ng
     cdef int nh
-    cdef (bint) (*is_admissible) (int, int *, int *)
+    cdef (bint) (*is_admissible) (int, int *, int *) noexcept
     cdef DenseGraph g
     cdef DenseGraph h
     cdef int *busy

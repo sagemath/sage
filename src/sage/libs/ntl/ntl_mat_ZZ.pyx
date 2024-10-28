@@ -30,7 +30,7 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from cpython.object cimport PyObject_RichCompare
 
-from .ntl_ZZ import unpickle_class_args
+from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 
 cdef inline ntl_ZZ make_ZZ(ZZ_c* x):
     cdef ntl_ZZ y
@@ -106,7 +106,6 @@ cdef class ntl_mat_ZZ():
                     tmp = ntl_ZZ(v[i*ncols+j])
                     mat_ZZ_setitem(&self.x, i, j, &tmp.x)
 
-
     def __reduce__(self):
         """
         EXAMPLES::
@@ -130,7 +129,7 @@ cdef class ntl_mat_ZZ():
 
     def __repr__(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -164,7 +163,7 @@ cdef class ntl_mat_ZZ():
 
     def __sub__(ntl_mat_ZZ self, other):
         """
-        Return self - other.
+        Return ``self - other``.
 
         EXAMPLES::
 
@@ -187,7 +186,7 @@ cdef class ntl_mat_ZZ():
 
     def __add__(ntl_mat_ZZ self, other):
         """
-        Return self + other.
+        Return ``self + other``.
 
         EXAMPLES::
 
@@ -210,7 +209,7 @@ cdef class ntl_mat_ZZ():
 
     def __richcmp__(ntl_mat_ZZ self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -238,7 +237,7 @@ cdef class ntl_mat_ZZ():
 
     def __pow__(ntl_mat_ZZ self, long e, ignored):
         """
-        Return self to the e power.
+        Return ``self`` to the e power.
 
         EXAMPLES::
 
@@ -270,7 +269,7 @@ cdef class ntl_mat_ZZ():
 
     def nrows(self):
         """
-        Return the number of rows in self.
+        Return the number of rows in ``self``.
 
         EXAMPLES::
 
@@ -282,7 +281,7 @@ cdef class ntl_mat_ZZ():
 
     def ncols(self):
         """
-        Return the number of columns in self.
+        Return the number of columns in ``self``.
 
         EXAMPLES::
 
@@ -363,7 +362,7 @@ cdef class ntl_mat_ZZ():
 
     def determinant(self, deterministic=True):
         """
-        Return the determinant of self.
+        Return the determinant of ``self``.
 
         EXAMPLES::
 
@@ -393,7 +392,7 @@ cdef class ntl_mat_ZZ():
 
         - W is lower triangular,
         - the diagonal entries are positive,
-        - any entry below the diagonal is a non-negative number
+        - any entry below the diagonal is a nonnegative number
           strictly less than the diagonal entry in its column.
 
         This is implemented using the algorithm of [P. Domich,
@@ -492,11 +491,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -562,11 +562,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -632,11 +633,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -702,11 +704,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -772,11 +775,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -842,11 +846,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -912,11 +917,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -982,11 +988,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1052,11 +1059,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1122,11 +1130,12 @@ cdef class ntl_mat_ZZ():
         precision uniformly throughout.
 
         INPUT:
-            U -- optional permutation matrix (see LLL, default: None)
-            delta -- reduction parameter (default: 0.99)
-            BlockSize -- see above (default: 10)
-            prune -- see above (default: 0)
-            verbose -- print verbose output (default: False)
+
+        - ``U`` -- permutation matrix (see LLL, default: ``None``)
+        - ``delta`` -- reduction parameter (default: 0.99)
+        - ``BlockSize`` -- see above (default: 10)
+        - ``prune`` -- see above (default: 0)
+        - ``verbose`` -- print verbose output (default: ``False``)
 
         EXAMPLES::
 
@@ -1167,21 +1176,21 @@ cdef class ntl_mat_ZZ():
 
     def LLL(self, a=3, b=4, return_U=False, verbose=False):
         r"""
-        Performs LLL reduction of self (puts \code{self} in an LLL form).
+        Perform LLL reduction of ``self`` (puts \code{self} in an LLL form).
 
         \code{self} is an `m x n` matrix, viewed as `m` rows of
         `n`-vectors.  `m` may be less than, equal to, or greater than `n`,
-        and the rows need not be linearly independent. self is
+        and the rows need not be linearly independent. ``self`` is
         transformed into an LLL-reduced basis, and the return value is
-        the rank r of self so as det2 (see below).  The first `m-r` rows
-        of self are zero.
+        the rank r of ``self`` so as det2 (see below).  The first `m-r` rows
+        of ``self`` are zero.
 
         More specifically, elementary row transformations are
-        performed on \code{self} so that the non-zero rows of
+        performed on \code{self} so that the nonzero rows of
         new-\code{self} form an LLL-reduced basis for the lattice
         spanned by the rows of old-\code{self}.  The default reduction
         parameter is `\delta=3/4`, which means that the squared length
-        of the first non-zero basis vector is no more than `2^{r-1}`
+        of the first nonzero basis vector is no more than `2^{r-1}`
         times that of the shortest vector in the lattice.
 
         det2 is calculated as the \emph{square} of the determinant of
@@ -1197,7 +1206,7 @@ cdef class ntl_mat_ZZ():
         The parameters a and b allow an arbitrary reduction parameter
         `\delta=a/b`, where `1/4 < a/b \leq 1`, where a and b are positive
         integers.  For a basis reduced with parameter delta, the
-        squared length of the first non-zero basis vector is no more
+        squared length of the first nonzero basis vector is no more
         than `1/(delta-1/4)^{r-1}` times that of the shortest vector in
         the lattice.
 
@@ -1206,16 +1215,17 @@ cdef class ntl_mat_ZZ():
         Theory, Springer, 1993]
 
         INPUT:
-           a        -- parameter a as described above (default: 3)
-           b        -- parameter b as described above (default: 4)
-           return_U -- return U as described above
-           verbose  -- if True NTL will produce some verbatim messages on
-                       what's going on internally (default: False)
+
+        - ``a`` -- parameter a as described above (default: 3)
+        - ``b`` -- parameter b as described above (default: 4)
+        - ``return_U`` -- return U as described above
+        - ``verbose`` -- if ``True`` NTL will produce some verbatim messages on
+          what's going on internally (default: ``False``)
 
         OUTPUT:
-            (rank,det2,[U]) where rank,det2, and U are as described
-            above and U is an optional return value if return_U is
-            True.
+
+        (rank,det2,[U]) where rank,det2, and U are as described
+        above and U is an optional return value if return_U is ``True``.
 
         EXAMPLES::
 
@@ -1261,9 +1271,9 @@ cdef class ntl_mat_ZZ():
             rank = int(mat_ZZ_LLL(&det2,&self.x,int(a),int(b),int(verbose)))
             return rank, make_ZZ_sig_off(det2)
 
-    def LLL_FP(self, delta=0.75 , return_U=False, verbose=False):
+    def LLL_FP(self, delta=0.75, return_U=False, verbose=False):
         r"""
-        Performs approximate LLL reduction of \code{self} (puts
+        Perform approximate LLL reduction of \code{self} (puts
         \code{self} in an LLL form) subject to the following
         conditions:
 
@@ -1295,14 +1305,16 @@ cdef class ntl_mat_ZZ():
         status report is also printed every once in a while.
 
         INPUT:
-           delta    -- as described above (0.5 <= delta < 1.0) (default: 0.75)
-           return_U -- return U as described above
-           verbose  -- if True NTL will produce some verbatim messages on
-                       what's going on internally (default: False)
+
+        - ``delta`` -- as described above (0.5 <= delta < 1.0) (default: 0.75)
+        - ``return_U`` -- return U as described above
+        - ``verbose`` -- if ``True`` NTL will produce some verbatim messages on
+          what's going on internally (default: ``False``)
 
         OUTPUT:
-            (rank,[U]) where rank and U are as described above and U
-            is an optional return value if return_U is True.
+
+        (rank,[U]) where rank and U are as described above and U
+        is an optional return value if ``return_U`` is ``True``.
 
         EXAMPLES::
 
@@ -1350,7 +1362,7 @@ cdef class ntl_mat_ZZ():
 
     def LLL_QP(self, delta, return_U=False, verbose=False):
         r"""
-        Performs the same reduction as \code{self.LLL_FP} using the
+        Perform the same reduction as \code{self.LLL_FP} using the
         same calling conventions but with quad float precision.
 
         EXAMPLES::
@@ -1374,7 +1386,7 @@ cdef class ntl_mat_ZZ():
 
     def LLL_XD(self, delta, return_U=False, verbose=False):
         r"""
-        Performs the same reduction as \code{self.LLL_FP} using the
+        Perform the same reduction as \code{self.LLL_FP} using the
         same calling conventions but with extended exponent double
         precision.
 
@@ -1399,7 +1411,7 @@ cdef class ntl_mat_ZZ():
 
     def LLL_RR(self, delta, return_U=False, verbose=False):
         r"""
-        Performs the same reduction as \code{self.LLL_FP} using the
+        Perform the same reduction as \code{self.LLL_FP} using the
         same calling conventions but with arbitrary precision floating
         point numbers.
 
@@ -1430,7 +1442,7 @@ cdef class ntl_mat_ZZ():
 
     def G_LLL_FP(self, delta, return_U=False, verbose=False):
         r"""
-        Performs the same reduction as self.LLL_FP using the same
+        Perform the same reduction as self.LLL_FP using the same
         calling conventions but uses the Givens Orthogonalization.
 
         Givens Orthogonalization.  This is a bit slower, but generally
@@ -1454,7 +1466,7 @@ cdef class ntl_mat_ZZ():
 
     def G_LLL_QP(self, delta, return_U=False, verbose=False):
         r"""
-        Performs the same reduction as self.G_LLL_FP using the same
+        Perform the same reduction as self.G_LLL_FP using the same
         calling conventions but with quad float precision.
         """
         cdef ntl_mat_ZZ U
@@ -1472,7 +1484,7 @@ cdef class ntl_mat_ZZ():
 
     def G_LLL_XD(self, delta, return_U=False, verbose=False):
         r"""
-        Performs the same reduction as self.G_LLL_FP using the same
+        Perform the same reduction as self.G_LLL_FP using the same
         calling conventions but with extended exponent double
         precision.
         """
@@ -1491,7 +1503,7 @@ cdef class ntl_mat_ZZ():
 
     def G_LLL_RR(self, delta, return_U=False, verbose=False):
         r"""
-        Performs the same reduction as self.G_LLL_FP using the same
+        Perform the same reduction as self.G_LLL_FP using the same
         calling conventions but with arbitrary precision floating
         point numbers.
         """

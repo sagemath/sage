@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Pieri Factors
 """
@@ -13,6 +14,7 @@ Pieri Factors
 from sage.misc.cachefunc import cached_method
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.call import attrcall
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
@@ -24,9 +26,10 @@ from sage.arith.misc import binomial
 import sage.combinat.ranker
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
 from sage.combinat.root_system.root_system import RootSystem
-from sage.combinat.root_system.dynkin_diagram import DynkinDiagram
 from sage.combinat.root_system.weyl_group import WeylGroup
-from sage.graphs.digraph import DiGraph
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.combinat.root_system.dynkin_diagram', 'DynkinDiagram')
 
 
 class PieriFactors(UniqueRepresentation, Parent):
@@ -548,9 +551,9 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         r"""
         INPUT:
 
-         - ``W`` -- a Weyl group of affine type `A`
-         - ``min_length``, ``max_length`` -- non negative integers
-         - ``min_support``, ``max_support`` -- subsets of the index set of `W`
+        - ``W`` -- a Weyl group of affine type `A`
+        - ``min_length``, ``max_length`` -- nonnegative integers
+        - ``min_support``, ``max_support`` -- subsets of the index set of `W`
 
         EXAMPLES::
 
@@ -601,7 +604,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
         INPUT:
 
-         - ``length`` -- a non-negative integer
+        - ``length`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -649,7 +652,6 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             sage: W.pieri_factors()._test_maximal_elements(verbose = True)
             sage: W.pieri_factors(min_length = 1)._test_maximal_elements(verbose = True)
             Strict subset of the Pieri factors; skipping test
-
         """
         tester = self._tester(**options)
         index_set = self.W.index_set()
@@ -697,7 +699,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         if len(support) < len(red):  # There should be no repetitions
             return False
 
-        if not(self._min_length <= len(support) and
+        if not (self._min_length <= len(support) and
                len(support) <= self._max_length and
                self._min_support.issubset(support) and
                support.issubset(self._max_support)):
@@ -728,7 +730,6 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             [1, 0, 5, 4, 3]
             sage: W.pieri_factors()[[0,1,2,3,4]].reduced_word()
             [4, 3, 2, 1, 0]
-
         """
         index_set = sorted(self.W.index_set())
         support = sorted(support)
@@ -752,7 +753,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             sage: WeylGroup(["A", 3, 1]).pieri_factors().cardinality()
             15
         """
-        if self._min_length == len(self._min_support) and self._max_length == len(self._max_support) -1:
+        if self._min_length == len(self._min_support) and self._max_length == len(self._max_support) - 1:
             return Integer(2**(len(self._extra_support)) - 1)
         else:
             return self.generating_series(weight=ConstantFunction(1))
@@ -889,7 +890,7 @@ class PieriFactors_type_C_affine(PieriFactors_affine_type):
         # The algorithm="delete" is a workaround when the set of
         # vertices is empty, in which case subgraph tries another
         # method which turns out to currently fail with Dynkin diagrams
-        return DiGraph(DynkinDiagram(w.parent().cartan_type())).subgraph(set(w.reduced_word()), algorithm="delete").connected_components_number()
+        return DiGraph(DynkinDiagram(w.parent().cartan_type())).subgraph(set(w.reduced_word()), algorithm='delete').connected_components_number()
 
 
 class PieriFactors_type_B_affine(PieriFactors_affine_type):
@@ -998,7 +999,7 @@ class PieriFactors_type_B_affine(PieriFactors_affine_type):
             support_complement = set(ct.index_set()).difference(support).difference(set([0, 1]))
         else:
             support_complement = set(ct.index_set()).difference(support).difference(set([0]))
-        return DiGraph(DynkinDiagram(ct)).subgraph(support_complement, algorithm="delete").connected_components_number() - 1
+        return DiGraph(DynkinDiagram(ct)).subgraph(support_complement, algorithm='delete').connected_components_number() - 1
 
 
 class PieriFactors_type_D_affine(PieriFactors_affine_type):

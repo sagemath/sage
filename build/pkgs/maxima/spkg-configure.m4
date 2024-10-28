@@ -24,6 +24,13 @@ SAGE_SPKG_CONFIGURE([maxima], [
       AS_IF([ecl --eval "(require 'maxima)" --eval "(quit)" \
                >&AS_MESSAGE_LOG_FD 2>&AS_MESSAGE_LOG_FD], [
         AC_MSG_RESULT(yes)
+        dnl check also for the Maxima help - needed by Sage
+        AC_MSG_CHECKING([if maxima help is working])
+	maxima_help_ok=`echo ? ? | ${SAGE_MAXIMA} 2>&1 | grep Details\:`
+	AS_IF([test x$maxima_help_ok = x], [AC_MSG_RESULT(yes)], [
+               AC_MSG_RESULT(no)
+               sage_spkg_install_maxima=yes
+        ])
       ], [
         AC_MSG_RESULT(no)
         sage_spkg_install_maxima=yes

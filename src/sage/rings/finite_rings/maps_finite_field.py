@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 """
 Structure maps for finite fields
 
@@ -6,7 +7,6 @@ This module provides classes for isomorphisms between finite fields and vector s
 AUTHORS:
 
 - Kwankyu Lee (2017-11-07): initial version
-
 """
 
 #*****************************************************************************
@@ -40,7 +40,6 @@ class FiniteFieldVectorSpaceIsomorphism(Morphism):
             Isomorphism:
               From: Vector space of dimension 1 over Finite Field in z4 of size 2^4
               To:   Finite Field in z4 of size 2^4
-
         """
         s = "Isomorphism:"
         s += "\n  From: {}".format(self.domain())

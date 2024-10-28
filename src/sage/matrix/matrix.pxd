@@ -1,1 +1,1 @@
-from .matrix2 cimport Matrix
+from sage.matrix.matrix2 cimport Matrix

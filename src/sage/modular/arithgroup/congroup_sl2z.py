@@ -3,8 +3,7 @@ The modular group `\SL_2(\ZZ)`
 
 AUTHORS:
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
-
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
 """
 
 ################################################################################
@@ -30,17 +29,23 @@ from .arithgroup_element import ArithmeticSubgroupElement
 
 def is_SL2Z(x):
     r"""
-    Return True if x is the modular group `\SL_2(\ZZ)`.
+    Return ``True`` if x is the modular group `\SL_2(\ZZ)`.
 
     EXAMPLES::
 
         sage: from sage.modular.arithgroup.all import is_SL2Z
         sage: is_SL2Z(SL2Z)
+        doctest:warning...
+        DeprecationWarning: The function is_SL2Z is deprecated; use 'isinstance(..., SL2Z_class)' instead.
+        See https://github.com/sagemath/sage/issues/38035 for details.
         True
         sage: is_SL2Z(Gamma0(6))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38035, "The function is_SL2Z is deprecated; use 'isinstance(..., SL2Z_class)' instead.")
     return isinstance(x, SL2Z_class)
+
 
 class SL2Z_class(Gamma0_class):
     r"""
@@ -83,7 +88,7 @@ class SL2Z_class(Gamma0_class):
 
     def __reduce__(self):
         """
-        Used for pickling self.
+        Used for pickling ``self``.
 
         EXAMPLES::
 
@@ -94,8 +99,8 @@ class SL2Z_class(Gamma0_class):
 
     def _element_constructor_(self, x, check=True):
         r"""
-        Create an element of self from x, which must be something that can be
-        coerced into a 2x2 integer matrix. If check=True (the default), check
+        Create an element of ``self`` from x, which must be something that can be
+        coerced into a 2x2 integer matrix. If ``check=True`` (the default), check
         that x really has determinant 1.
 
         EXAMPLES::
@@ -126,7 +131,7 @@ class SL2Z_class(Gamma0_class):
 
     def _repr_(self):
         """
-        Return the string representation of self.
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -137,7 +142,7 @@ class SL2Z_class(Gamma0_class):
 
     def _latex_(self):
         r"""
-        Return the \LaTeX representation of self.
+        Return the \LaTeX representation of ``self``.
 
         EXAMPLES::
 
@@ -146,11 +151,11 @@ class SL2Z_class(Gamma0_class):
             sage: latex(SL2Z)
             \mbox{\rm SL}_2(\Bold{Z})
         """
-        return "\\mbox{\\rm SL}_2(%s)"%(ZZ._latex_())
+        return "\\mbox{\\rm SL}_2(%s)" % (ZZ._latex_())
 
     def is_subgroup(self, right):
         """
-        Return True if self is a subgroup of right.
+        Return ``True`` if ``self`` is a subgroup of ``right``.
 
         EXAMPLES::
 
@@ -166,7 +171,7 @@ class SL2Z_class(Gamma0_class):
     def reduce_cusp(self, c):
         r"""
         Return the unique reduced cusp equivalent to c under the
-        action of self. Always returns Infinity, since there is only
+        action of ``self``. Always returns Infinity, since there is only
         one equivalence class of cusps for `SL_2(Z)`.
 
         EXAMPLES::
@@ -179,7 +184,7 @@ class SL2Z_class(Gamma0_class):
     def random_element(self, bound=100, *args, **kwds):
         r"""
         Return a random element of `\SL_2(\ZZ)` with entries whose
-        absolute value is strictly less than bound (default 100).
+        absolute value is strictly less than bound (default: 100).
         Additional arguments and keywords are passed to the random_element
         method of ZZ.
 
@@ -246,9 +251,10 @@ class SL2Z_class(Gamma0_class):
 
 SL2Z = SL2Z_class()
 
+
 def _SL2Z_ref():
     """
-    Return SL2Z. (Used for pickling SL2Z.)
+    Return SL2Z. (Used for pickling SL2Z.).
 
     EXAMPLES::
 

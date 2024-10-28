@@ -1,5 +1,5 @@
 r"""
-Unit and S-unit groups of Number Fields
+Units and `S`-unit groups of number fields
 
 EXAMPLES::
 
@@ -235,7 +235,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         INPUT:
 
         - ``number_field`` -- a number field
-        - ``proof`` -- boolean (default ``True``): proof flag
+        - ``proof`` -- boolean (default: ``True``); proof flag
         - ``S`` -- tuple of prime ideals, or an ideal, or a single
           ideal or element from which an ideal can be constructed, in
           which case the support is used.  If ``None``, the global unit
@@ -279,7 +279,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`);
+        polynomials are supported (:issue:`252`);
         the representation depends on the PARI version::
 
             sage: K.<a> = NumberField(7/9*x^3 + 7/3*x^2 - 56*x + 123)
@@ -294,8 +294,9 @@ class UnitGroup(AbelianGroupWithValues_class):
             True
 
         Conversion from unit group to a number field and back
-        gives the right results (:trac:`25874`)::
+        gives the right results (:issue:`25874`)::
 
+            sage: # needs sage.libs.linbox
             sage: K = QuadraticField(-3).composite_fields(QuadraticField(2))[0]
             sage: U = K.unit_group()
             sage: tuple(U(K(u)) for u in U.gens()) == U.gens()
@@ -304,6 +305,12 @@ class UnitGroup(AbelianGroupWithValues_class):
             sage: tuple(US(K(u)) for u in US.gens()) == US.gens()
             True
 
+        Bug :issue:`36386` (pari stack overflow while expanding units)::
+
+            sage: d = 12936642
+            sage: K = QuadraticField(d)
+            sage: K.unit_group(proof=False)
+            Unit group with structure C2 x Z of Number Field in a with defining polynomial x^2 - 12936642 with a = 3596.754370262167?
         """
         proof = get_flag(proof, "number_field")
         K = number_field
@@ -321,12 +328,12 @@ class UnitGroup(AbelianGroupWithValues_class):
                 try:
                     S = tuple(K.ideal(S).prime_factors())
                 except (NameError, TypeError, ValueError):
-                    raise ValueError("Cannot make a set of primes from %s"%(S,))
+                    raise ValueError("Cannot make a set of primes from %s" % (S,))
             else:
                 try:
                     S = tuple(K.ideal(P) for P in S)
                 except (NameError, TypeError, ValueError):
-                    raise ValueError("Cannot make a set of primes from %s"%(S,))
+                    raise ValueError("Cannot make a set of primes from %s" % (S,))
                 if not all(P.is_prime() for P in S):
                     raise ValueError("Not all elements of %s are prime ideals" % (S,))
             self.__S = S
@@ -339,20 +346,20 @@ class UnitGroup(AbelianGroupWithValues_class):
         # compute the additional S-unit generators:
         if S:
             self.__S_unit_data = pK.bnfunits(pS)
+            # TODO: converting the factored matrix representation of bnfunits into polynomial
+            # form is a *big* waste of time
+            su = [pK.nfbasistoalg(pK.nffactorback(z)) for z in self.__S_unit_data[0][0:len(S)]]
+            su = [K(u, check=False) for u in su]
         else:
-            self.__S_unit_data = pK.bnfunits()
-        # TODO: converting the factored matrix representation of bnfunits into polynomial
-        # form is a *big* waste of time
-        su_fu_tu = [pK.nfbasistoalg(pK.nffactorback(z)) for z in self.__S_unit_data[0]]
+            su = []
 
-        self.__nfu = len(pK.bnf_get_fu())           # number of fundamental units
-        self.__nsu = len(su_fu_tu) - self.__nfu - 1 # number of S-units
-        self.__ntu = pK.bnf_get_tu()[0]             # order of torsion
+        self.__nfu = len(fu)            # number of fundamental units
+        self.__nsu = len(su)            # number of S-units
+        self.__ntu = pK.bnf_get_tu()[0] # order of torsion
         self.__rank = self.__nfu + self.__nsu
 
-        # Move the torsion unit first, then fundamental units then S-units
-        gens = [K(u, check=False) for u in su_fu_tu]
-        gens = [gens[-1]] + gens[self.__nsu:-1] + gens[:self.__nsu]
+        # Put the torsion unit first, then fundamental units then S-units
+        gens = [K(pK.bnf_get_tu()[1], check=False)] + fu + su
 
         # Construct the abstract group:
         gens_orders = tuple([ZZ(self.__ntu)]+[ZZ(0)]*(self.__rank))
@@ -360,14 +367,14 @@ class UnitGroup(AbelianGroupWithValues_class):
 
     def _element_constructor_(self, u):
         """
-        Returns the abstract group element corresponding to the unit u.
+        Return the abstract group element corresponding to the unit u.
 
         INPUT:
 
-        - ``u`` -- Any object from which an element of the unit group's number
+        - ``u`` -- any object from which an element of the unit group's number
           field `K` may be constructed; an error is raised if an element of `K`
           cannot be constructed from u, or if the element constructed is not a
-          unit.
+          unit
 
         EXAMPLES::
 
@@ -398,14 +405,14 @@ class UnitGroup(AbelianGroupWithValues_class):
         try:
             u = K(u)
         except TypeError:
-            raise ValueError("%s is not an element of %s"%(u,K))
+            raise ValueError("%s is not an element of %s" % (u,K))
         if self.__S:
             m = pK.bnfisunit(pari(u), self.__S_unit_data).mattranspose()
             if m.ncols() == 0:
-                raise ValueError("%s is not an S-unit"%u)
+                raise ValueError("%s is not an S-unit" % u)
         else:
             if not u.is_integral() or u.norm().abs() != 1:
-                raise ValueError("%s is not a unit"%u)
+                raise ValueError("%s is not a unit" % u)
             m = pK.bnfisunit(pari(u)).mattranspose()
 
         # convert column matrix to a list:
@@ -448,11 +455,11 @@ class UnitGroup(AbelianGroupWithValues_class):
              with S = (Fractional ideal (a),)
         """
         if self.__S:
-            return 'S-unit group with structure %s of %s with S = %s'%(
+            return 'S-unit group with structure %s of %s with S = %s' % (
                 self._group_notation(self.gens_orders()),
                 self.number_field(),
                 self.primes())
-        return 'Unit group with structure %s of %s'%(
+        return 'Unit group with structure %s of %s' % (
             self._group_notation(self.gens_orders()),
             self.number_field())
 
@@ -506,7 +513,7 @@ class UnitGroup(AbelianGroupWithValues_class):
 
     def zeta_order(self):
         """
-        Returns the order of the torsion part of the unit group.
+        Return the order of the torsion part of the unit group.
 
         EXAMPLES::
 
@@ -555,13 +562,12 @@ class UnitGroup(AbelianGroupWithValues_class):
             ValueError: n (=3) does not divide order of generator
             sage: U.zeta(3, all=True)
             []
-
         """
         N = self.__ntu
         K = self.number_field()
         n = ZZ(n)
         if n <= 0:
-            raise ValueError("n (=%s) must be positive"%n)
+            raise ValueError("n (=%s) must be positive" % n)
         if n == 1:
             if all:
                 return [K(1)]
@@ -582,7 +588,7 @@ class UnitGroup(AbelianGroupWithValues_class):
             if all:
                 return []
             else:
-                raise ValueError("n (=%s) does not divide order of generator"%n)
+                raise ValueError("n (=%s) does not divide order of generator" % n)
 
     def number_field(self):
         """
@@ -622,13 +628,13 @@ class UnitGroup(AbelianGroupWithValues_class):
 
         INPUT:
 
-        - ``u`` -- Any object from which an element of the unit group's number
+        - ``u`` -- any object from which an element of the unit group's number
           field `K` may be constructed; an error is raised if an element of `K`
           cannot be constructed from `u`, or if the element constructed is not a
-          unit.
+          unit
 
-        OUTPUT: a list of integers giving the exponents of `u` with
-        respect to the unit group's basis.
+        OUTPUT: list of integers giving the exponents of `u` with
+        respect to the unit group's basis
 
         EXAMPLES::
 
@@ -669,12 +675,12 @@ class UnitGroup(AbelianGroupWithValues_class):
 
         INPUT:
 
-        - ``u`` -- Any object from which an element of the unit
+        - ``u`` -- any object from which an element of the unit
           group's number field `K` may be constructed; an error is
           raised if an element of `K` cannot be constructed from `u`, or
           if the element constructed is not a unit.
 
-        OUTPUT: a list of integers giving the exponents of `u` with
+        OUTPUT: list of integers giving the exponents of `u` with
         respect to the unit group's basis.
 
         EXAMPLES::

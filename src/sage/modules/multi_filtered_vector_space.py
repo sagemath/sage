@@ -59,12 +59,12 @@ def MultiFilteredVectorSpace(arg, base_ring=None, check=True):
       integer. The latter is interpreted as the vector space
       dimension, and the indexing set of the filtrations is empty.
 
-    - ``base_ring`` -- a field (optional, default ``'None'``). The
+    - ``base_ring`` -- a field (default: ``'None'``). The
       base field of the vector space. Must be a field. If not
       specified, the base field is derived from the filtrations.
 
-    - ``check`` -- boolean (optional; default: ``True``). Whether
-      to perform consistency checks.
+    - ``check`` -- boolean (default: ``True``); whether
+      to perform consistency checks
 
     EXAMPLES::
 
@@ -77,7 +77,7 @@ def MultiFilteredVectorSpace(arg, base_ring=None, check=True):
         Filtrations
             1: QQ^2 >=  0   >=  0   >= 0
             2: QQ^2 >= QQ^2 >= QQ^2 >= 0
-   """
+    """
     if arg in ZZ:
         dim = ZZ(arg)
         filtration = {}
@@ -110,15 +110,14 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``base_ring`` -- a ring. the base ring.
+        - ``base_ring`` -- the base ring
 
-        - ``dim`` -- integer. The dimension of the ambient vector space.
+        - ``dim`` -- integer; the dimension of the ambient vector space
 
-        - ``filtrations`` -- a dictionary whose values are
-          filtrations.
+        - ``filtrations`` -- dictionary whose values are filtrations
 
-        - ``check`` -- boolean (optional). Whether to perform
-          additional consistency checks.
+        - ``check`` -- boolean (default: ``True``); whether to perform
+          additional consistency checks
 
         EXAMPLES::
 
@@ -142,9 +141,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return the allowed indices for the different filtrations.
 
-        OUTPUT:
-
-        Set.
+        OUTPUT: set
 
         EXAMPLES::
 
@@ -163,7 +160,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``base_ring`` -- a ring. The new base ring.
+        - ``base_ring`` -- the new base ring
 
         OUTPUT:
 
@@ -199,9 +196,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return the ambient (unfiltered) vector space.
 
-        OUTPUT:
-
-        A vector space.
+        OUTPUT: a vector space
 
         EXAMPLES::
 
@@ -218,10 +213,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return whether the multi-filtration is constant.
 
-        OUTPUT:
-
-        Boolean. Whether the each filtration is constant, see
-        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_constant`.
+        OUTPUT: boolean; whether the each filtration is constant, see
+        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_constant`
 
         EXAMPLES::
 
@@ -243,10 +236,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         A filtration `\{F_d\}` in an ambient vector space `V` is
         exhaustive if `\cup F_d = V`. See also :meth:`is_separating`.
 
-        OUTPUT:
-
-        Boolean. Whether each filtration is constant, see
-        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_exhaustive`.
+        OUTPUT: boolean; whether each filtration is constant, see
+        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_exhaustive`
 
         EXAMPLES::
 
@@ -265,10 +256,8 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         A filtration `\{F_d\}` in an ambient vector space `V` is
         exhaustive if `\cap F_d = 0`. See also :meth:`is_exhaustive`.
 
-        OUTPUT:
-
-        Boolean. Whether each filtration is separating, see
-        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_separating`.
+        OUTPUT: boolean; whether each filtration is separating, see
+        :meth:`~sage.modules.filtered_vector_space.FilteredVectorSpace_class.is_separating`
 
         EXAMPLES::
 
@@ -355,9 +344,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return the filtration indexed by ``key``.
 
-        OUTPUT:
-
-        A filtered vector space.
+        OUTPUT: a filtered vector space
 
         EXAMPLES::
 
@@ -375,10 +362,10 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``key`` -- an element of the :meth:`index_set`. Specifies
-          which filtration.
+        - ``key`` -- an element of the :meth:`index_set`; specifies
+          which filtration
 
-        - ``d`` -- Integer. The desired degree of the filtration.
+        - ``d`` -- integer; the desired degree of the filtration
 
         OUTPUT:
 
@@ -404,10 +391,10 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``key`` -- an element of the :meth:`index_set`. Specifies
-          which filtration.
+        - ``key`` -- an element of the :meth:`index_set`; specifies
+          which filtration
 
-        - ``d`` -- Integer. The desired degree of the filtration.
+        - ``d`` -- integer; the desired degree of the filtration
 
         OUTPUT:
 
@@ -434,9 +421,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         r"""
         Return as string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -490,7 +475,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             sage: V == MultiFilteredVectorSpace({'a':F1, 'b':F2})
             False
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         return self._filt == other._filt
 
@@ -517,7 +502,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         INPUT:
 
         - ``other`` -- a multi-filtered vector space with the same
-          :meth:`index_set`.
+          :meth:`index_set`
 
         OUTPUT:
 
@@ -558,7 +543,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
         INPUT:
 
         - ``other`` -- a multi-filtered vector space with the same
-          :meth:`index_set`.
+          :meth:`index_set`
 
         OUTPUT:
 
@@ -599,8 +584,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``n`` -- integer. Exterior product of how many copies of
-          ``self``.
+        - ``n`` -- integer; exterior product of how many copies of ``self``
 
         OUTPUT:
 
@@ -629,8 +613,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``n`` -- integer. Symmetric product of how many copies of
-          ``self``.
+        - ``n`` -- integer; symmetric product of how many copies of ``self``
 
         OUTPUT:
 
@@ -699,11 +682,11 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
 
     def random_deformation(self, epsilon=None):
         """
-        Return a random deformation
+        Return a random deformation.
 
         INPUT:
 
-        - ``epsilon`` -- a number in the base ring.
+        - ``epsilon`` -- a number in the base ring
 
         OUTPUT:
 

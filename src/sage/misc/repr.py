@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Repr formatting support
 """
@@ -11,20 +12,18 @@ def coeff_repr(c, is_latex=False):
 
     - ``c`` -- a coefficient (i.e., an element of a ring)
 
-    OUTPUT:
-
-    A string
+    OUTPUT: string
 
     EXAMPLES::
 
         sage: from sage.misc.repr import coeff_repr
         sage: coeff_repr(QQ(1/2))
         '1/2'
-        sage: coeff_repr(-x^2)
+        sage: coeff_repr(-x^2)                                                          # needs sage.symbolic
         '(-x^2)'
         sage: coeff_repr(QQ(1/2), is_latex=True)
         '\\frac{1}{2}'
-        sage: coeff_repr(-x^2, is_latex=True)
+        sage: coeff_repr(-x^2, is_latex=True)                                           # needs sage.symbolic
         '\\left(-x^{2}\\right)'
     """
     if not is_latex:
@@ -46,7 +45,7 @@ def coeff_repr(c, is_latex=False):
     return s
 
 
-def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
+def repr_lincomb(terms, is_latex=False, scalar_mult='*', strip_one=False,
                  repr_monomial=None, latex_scalar_mult=None):
     """
     Compute a string representation of a linear combination of some
@@ -56,14 +55,10 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
 
     - ``terms`` -- list of terms, as pairs (support, coefficient)
     - ``is_latex`` -- whether to produce latex (default: ``False``)
-    - ``scalar_mult`` -- string representing the multiplication (default:``'*'``)
+    - ``scalar_mult`` -- string representing the multiplication (default: ``'*'``)
     - ``latex_scalar_mult`` -- latex string representing the multiplication
       (default: a space if ``scalar_mult`` is ``'*'``; otherwise ``scalar_mult``)
     - ``coeffs`` -- for backward compatibility
-
-    OUTPUT:
-
-    -  ``str`` - a string
 
     EXAMPLES::
 
@@ -129,14 +124,15 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
 
     TESTS:
 
-    Verify that :trac:`31672` is fixed::
+    Verify that :issue:`31672` is fixed::
 
+        sage: # needs sage.symbolic
         sage: alpha = var("alpha")
         sage: repr_lincomb([(x, alpha)], is_latex=True)
         '\\alpha x'
         sage: A.<psi> = PolynomialRing(QQ)
-        sage: B.<t> = FreeAlgebra(A)
-        sage: (psi * t)._latex_()
+        sage: B.<t> = FreeAlgebra(A)                                                    # needs sage.combinat sage.modules
+        sage: (psi * t)._latex_()                                                       # needs sage.combinat sage.modules
         '\\psi t'
     """
     # Setting scalar_mult: symbol used for scalar multiplication

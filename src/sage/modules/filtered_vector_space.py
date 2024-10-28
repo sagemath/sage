@@ -83,17 +83,17 @@ degree::
 Any field can be used as the vector space base. For example a finite
 field::
 
-    sage: F.<a> = GF(5^3)
-    sage: r1 = (a, 0, F(5));  r1
+    sage: F.<a> = GF(5^3)                                                               # needs sage.rings.finite_rings
+    sage: r1 = (a, 0, F(5));  r1                                                        # needs sage.rings.finite_rings
     (a, 0, 0)
-    sage: FilteredVectorSpace([r1, r2, r3], {0:[0,1], oo:[1]}, base_ring=F)
+    sage: FilteredVectorSpace([r1, r2, r3], {0:[0,1], oo:[1]}, base_ring=F)             # needs sage.rings.finite_rings
     GF(125)^2 >= GF(125)^1 in GF(125)^3
 
 Or the algebraic field::
 
-    sage: r1 = (1, 0, 1+QQbar(I));  r1
+    sage: r1 = (1, 0, 1+QQbar(I));  r1                                                  # needs sage.rings.number_field
     (1, 0, I + 1)
-    sage: FilteredVectorSpace([r1, r2, r3], {0:[0,1], oo:[1]}, base_ring=QQbar)
+    sage: FilteredVectorSpace([r1, r2, r3], {0:[0,1], oo:[1]}, base_ring=QQbar)         # needs sage.rings.number_field
     Vector space of dimension 2 over Algebraic Field
     >= Vector space of dimension 1 over Algebraic Field
     in Vector space of dimension 3 over Algebraic Field
@@ -107,17 +107,22 @@ Or the algebraic field::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
+from itertools import product
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_double import RDF
-from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
 from sage.rings.infinity import InfinityRing, infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
+
+try:
+    from sage.rings.real_mpfr import RR
+except ImportError:
+    RR = None
 
 
 def is_FilteredVectorSpace(X):
@@ -128,21 +133,25 @@ def is_FilteredVectorSpace(X):
 
     INPUT:
 
-    - ``X`` -- anything.
+    - ``X`` -- anything
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
         sage: from sage.modules.filtered_vector_space import is_FilteredVectorSpace
         sage: V = FilteredVectorSpace(2, 1)
         sage: is_FilteredVectorSpace(V)
+        doctest:warning...:
+        DeprecationWarning: the function is_FilteredVectorSpace is deprecated;
+        use 'isinstance(..., FilteredVectorSpace_class)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
         sage: is_FilteredVectorSpace('ceci n\'est pas une pipe')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FilteredVectorSpace is deprecated; use 'isinstance(..., FilteredVectorSpace_class)' instead")
     return isinstance(X, FilteredVectorSpace_class)
 
 
@@ -172,7 +181,7 @@ def FilteredVectorSpace(arg1, arg2=None, base_ring=QQ, check=True):
 
     In addition, the following keyword arguments are supported:
 
-    - ``base_ring`` -- a field (optional, default `\QQ`). The base
+    - ``base_ring`` -- a field (default: `\QQ`). The base
       field of the vector space. Must be a field.
 
     EXAMPLES:
@@ -209,14 +218,11 @@ def FilteredVectorSpace(arg1, arg2=None, base_ring=QQ, check=True):
 
 def normalize_degree(deg):
     """
-    Normalized the degree
+    Normalize the degree.
 
-    - ``deg`` -- something that defines the degree (either integer or
-      infinity).
+    - ``deg`` -- something that defines the degree (either integer or infinity)
 
-    OUTPUT:
-
-    Plus/minus infinity or a Sage integer.
+    OUTPUT: plus/minus infinity or a Sage integer
 
     EXAMPLES::
 
@@ -244,10 +250,10 @@ def construct_from_dim_degree(dim, max_degree, base_ring, check):
 
     INPUT:
 
-    - ``dim`` -- integer. The dimension.
+    - ``dim`` -- integer; the dimension
 
-    - ``max_degree`` -- integer or infinity. The maximal degree where
-      the vector subspace of the filtration is still the entire space.
+    - ``max_degree`` -- integer or infinity; the maximal degree where
+      the vector subspace of the filtration is still the entire space
 
     EXAMPLES::
 
@@ -292,7 +298,7 @@ def construct_from_generators(filtration, base_ring, check):
 
     INPUT:
 
-    - ``filtration`` -- a dictionary of filtration steps. Each
+    - ``filtration`` -- dictionary of filtration steps. Each
       filtration step is a pair consisting of an integer degree and a
       list/tuple/iterable of vector space generators. The integer
       ``degree`` stipulates that all filtration steps of degree higher
@@ -331,11 +337,11 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
 
     INPUT:
 
-    - ``generators`` -- a list/tuple/iterable of vectors, or something
+    - ``generators`` -- list/tuple/iterable of vectors, or something
       convertible to them. The generators spanning various
       subspaces.
 
-    - ``filtration`` -- a list or iterable of filtration steps. Each
+    - ``filtration`` -- list or iterable of filtration steps. Each
       filtration step is a pair ``(degree, ray_indices)``. The
       ``ray_indices`` are a list or iterable of ray indices, which
       span a subspace of the vector space. The integer ``degree``
@@ -397,24 +403,24 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
     def __init__(self, base_ring, dim, generators, filtration, check=True):
         r"""
-        A descending filtration of a vector space
+        A descending filtration of a vector space.
 
         INPUT:
 
-        - ``base_ring`` -- a field. The base field of the ambient vector space.
+        - ``base_ring`` -- a field; the base field of the ambient vector space
 
-        - ``dim`` -- integer. The dimension of the ambient vector space.
+        - ``dim`` -- integer; the dimension of the ambient vector space
 
         - ``generators`` -- tuple of generators for the ambient vector
           space. These will be used to span the subspaces of the
           filtration.
 
-        - ``filtration`` -- a dictionary of filtration steps in ray
+        - ``filtration`` -- dictionary of filtration steps in ray
           index notation. See
           :func:`construct_from_generators_indices` for details.
 
-        - ``check`` -- boolean (optional; default: ``True``). Whether
-          to perform consistency checks.
+        - ``check`` -- boolean (default: ``True``); whether
+          to perform consistency checks
 
         TESTS::
 
@@ -460,7 +466,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         indices = set(filtration.pop(infinity, []))
         V = make_subspace(indices)
         filtered_subspaces = [(infinity, V)]
-        for deg in reversed(sorted(filtration.keys())):
+        for deg in sorted(filtration.keys(), reverse=True):
             next_V = V
             indices.update(filtration[deg])
             V = make_subspace(indices)
@@ -478,7 +484,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``base_ring`` -- a ring. The new base ring.
+        - ``base_ring`` -- the new base ring
 
         OUTPUT:
 
@@ -500,9 +506,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return the ambient (unfiltered) vector space.
 
-        OUTPUT:
-
-        A vector space.
+        OUTPUT: a vector space
 
         EXAMPLES::
 
@@ -517,10 +521,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         """
         Return whether the filtration is constant.
 
-        OUTPUT:
-
-        Boolean. Whether the filtered vector spaces are identical in
-        all degrees.
+        OUTPUT: boolean; whether the filtered vector spaces are identical in
+        all degrees
 
         EXAMPLES::
 
@@ -549,9 +551,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         A filtration `\{F_d\}` in an ambient vector space `V` is
         exhaustive if `\cup F_d = V`. See also :meth:`is_separating`.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -574,9 +574,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         A filtration `\{F_d\}` in an ambient vector space `V` is
         exhaustive if `\cap F_d = 0`. See also :meth:`is_exhaustive`.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -679,7 +677,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``d`` -- Integer. The desired degree of the filtration.
+        - ``d`` -- integer; the desired degree of the filtration
 
         OUTPUT:
 
@@ -716,11 +714,9 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``d`` -- integer. The degree.
+        - ``d`` -- integer; the degree
 
-        OUTPUT:
-
-        The quotient `G_d = F_d / F_{d+1}`.
+        OUTPUT: the quotient `G_d = F_d / F_{d+1}`
 
         EXAMPLES::
 
@@ -770,13 +766,13 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
     def _repr_field_name(self):
         """
-        Return an abbreviated field name as string
+        Return an abbreviated field name as string.
 
         .. NOTE: This should rather be a method of fields and rings.
 
         RAISES:
 
-        ``NotImplementedError``: The field does not have an
+        :exc:`NotImplementedError`: The field does not have an
         abbreviated name defined.
 
         EXAMPLES::
@@ -784,11 +780,11 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: FilteredVectorSpace(2, base_ring=QQ)._repr_field_name()
             'QQ'
 
-            sage: F.<a> = GF(9)
-            sage: FilteredVectorSpace(2, base_ring=F)._repr_field_name()
+            sage: F.<a> = GF(9)                                                         # needs sage.rings.finite_rings
+            sage: FilteredVectorSpace(2, base_ring=F)._repr_field_name()                # needs sage.rings.finite_rings
             'GF(9)'
 
-            sage: FilteredVectorSpace(2, base_ring=AA)._repr_field_name()
+            sage: FilteredVectorSpace(2, base_ring=AA)._repr_field_name()               # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -801,21 +797,19 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             return 'RR'
         from sage.categories.finite_fields import FiniteFields
         if self.base_ring() in FiniteFields():
-            return 'GF({0})'.format(len(self.base_ring()))
+            return 'GF({})'.format(len(self.base_ring()))
         else:
             raise NotImplementedError()
 
     def _repr_vector_space(self, dim):
         """
-        Return a string representation of the vector space of given dimension
+        Return a string representation of the vector space of given dimension.
 
         INPUT:
 
-        - ``dim`` -- integer.
+        - ``dim`` -- integer
 
-        OUTPUT:
-
-        String representation of the vector space of dimension ``dim``.
+        OUTPUT: string representation of the vector space of dimension ``dim``
 
         EXAMPLES::
 
@@ -825,8 +819,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: F3 = FilteredVectorSpace(3, base_ring=GF(3))
             sage: F3._repr_vector_space(1234)
             'GF(3)^1234'
-            sage: F3 = FilteredVectorSpace(3, base_ring=AA)
-            sage: F3._repr_vector_space(1234)
+            sage: F3 = FilteredVectorSpace(3, base_ring=AA)                             # needs sage.rings.number_field
+            sage: F3._repr_vector_space(1234)                                           # needs sage.rings.number_field
             'Vector space of dimension 1234 over Algebraic Real Field'
         """
         if dim == 0:
@@ -838,14 +832,14 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
     def _repr_degrees(self, min_deg, max_deg):
         """
-        Return a string representation
+        Return a string representation.
 
         This method is like :meth:`_repr_` except that the user can
         select the range of degrees to be shown in the output.
 
         INPUT:
 
-        - ``min_deg``, ``max_deg`` -- two integers.
+        - ``min_deg``, ``max_deg`` -- two integers
 
         EXAMPLES::
 
@@ -865,9 +859,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
         r"""
         Return as string representation of ``self``.
 
-        OUTPUT:
-
-        A string.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -882,7 +874,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             QQ^1 >= 0 in QQ^2
             sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=GF(3))
             GF(3)^2 >= GF(3)^1 >= GF(3)^1 >= 0
-            sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=AA)
+            sage: FilteredVectorSpace({1:[(1,0), (-1,1)], 3:[(1,0)]}, base_ring=AA)     # needs sage.rings.number_field
             Vector space of dimension 2 over Algebraic Real Field
             >= Vector space of dimension 1 over Algebraic Real Field
             >= Vector space of dimension 1 over Algebraic Real Field >= 0
@@ -918,18 +910,19 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         TESTS::
 
+            sage: # needs sage.geometry.polyhedron sage.schemes
             sage: P = toric_varieties.P2()
             sage: T_P = P.sheaves.tangent_bundle()
             sage: O_P = P.sheaves.trivial_bundle(1)
             sage: S1 = T_P + O_P
             sage: S2 = O_P + T_P
-            sage: S1._filt[0].is_isomorphic(S2._filt[0])  # known bug
+            sage: S1._filt[0].is_isomorphic(S2._filt[0])        # known bug
             True
 
             sage: FilteredVectorSpace(2, base_ring=QQ) == FilteredVectorSpace(2, base_ring=GF(5))
             False
         """
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         if self.base_ring() != other.base_ring():
             return False
@@ -970,11 +963,9 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``other`` -- a filtered vector space.
+        - ``other`` -- a filtered vector space
 
-        OUTPUT:
-
-        The direct sum as a filtered vector space.
+        OUTPUT: the direct sum as a filtered vector space
 
         EXAMPLES::
 
@@ -996,7 +987,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: v = [(1,0), (0,1)]
             sage: F1 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=QQ)
             sage: F2 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=RDF)
-            sage: F1 + F2
+            sage: F1 + F2                                                               # needs scipy
             RDF^4 >= RDF^2 >= 0
         """
         from sage.structure.element import get_coercion_model
@@ -1032,7 +1023,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``other`` -- a filtered vector space.
+        - ``other`` -- a filtered vector space
 
         OUTPUT:
 
@@ -1061,7 +1052,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             sage: v = [(1,0), (0,1)]
             sage: F1 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=QQ)
             sage: F2 = FilteredVectorSpace(v, {0:[0], 1:[1]}, base_ring=RDF)
-            sage: F1 * F2
+            sage: F1 * F2                                                               # needs scipy
             RDF^4 >= RDF^3 >= RDF^1 >= 0
         """
         V = self
@@ -1095,7 +1086,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``n`` -- integer. the number of factors of ``self``.
+        - ``n`` -- integer; the number of factors of ``self``
 
         - ``operation`` -- string. See
           :class:`~sage.modules.tensor_operations.TensorOperation` for
@@ -1107,7 +1098,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             QQ^2 >= QQ^1 >= 0
             sage: F._power_operation(2, 'symmetric')
             QQ^3 >= QQ^2 >= QQ^1 >= 0
-            sage: F._power_operation(2, 'antisymmetric')
+            sage: F._power_operation(2, 'antisymmetric')                                # needs sage.groups
             QQ^1 >= 0
         """
         from sage.modules.tensor_operations import VectorCollection, TensorOperation
@@ -1117,11 +1108,10 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         iters = [self.support()] * n
         filtration = {}
-        from sage.categories.cartesian_product import cartesian_product
-        for degrees in cartesian_product(iters):
+        for degrees in product(*iters):
             deg = sum(degrees)
             filt_deg = filtration.get(deg, set())
-            for i in cartesian_product([indices.get(d) for d in degrees]):
+            for i in product(*[indices.get(d) for d in degrees]):
                 pow_i = T.index_map(*i)
                 if pow_i is not None:
                     filt_deg.add(pow_i)
@@ -1134,8 +1124,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``n`` -- integer. Exterior product of how many copies of
-          ``self``.
+        - ``n`` -- integer; exterior product of how many copies of ``self``
 
         OUTPUT:
 
@@ -1145,6 +1134,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         EXAMPLES::
 
+            sage: # needs sage.groups
             sage: F = FilteredVectorSpace(1, 1) + FilteredVectorSpace(1, 2);  F
             QQ^2 >= QQ^1 >= 0
             sage: F.exterior_power(1)
@@ -1166,8 +1156,8 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
         INPUT:
 
-        - ``n`` -- integer. Symmetric product of how many copies of
-          ``self``.
+        - ``n`` -- integer; symmetric product of how many copies of
+          ``self``
 
         OUTPUT:
 
@@ -1236,11 +1226,11 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
 
     def random_deformation(self, epsilon=None):
         """
-        Return a random deformation
+        Return a random deformation.
 
         INPUT:
 
-        - ``epsilon`` -- a number in the base ring.
+        - ``epsilon`` -- a number in the base ring
 
         OUTPUT:
 

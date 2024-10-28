@@ -1,3 +1,5 @@
+# sage.doctest: needs sage.rings.complex_double
+
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gsl.complex cimport *
@@ -19,13 +21,13 @@ cpdef ComplexDoubleElement pari_to_cdf(Gen g):
 
     TESTS:
 
-    Check that we handle PARI errors gracefully, see :trac:`17329`::
+    Check that we handle PARI errors gracefully, see :issue:`17329`::
 
         sage: CDF(-151.386325246 + 992.34771962*I).zeta()
         Traceback (most recent call last):
         ...
         PariError: overflow in t_REAL->double conversion
-        sage: CDF(pari(x^2 + 5))
+        sage: CDF(pari(x^2 + 5))                                                        # needs sage.symbolic
         Traceback (most recent call last):
         ...
         PariError: incorrect type in gtofp (t_POL)

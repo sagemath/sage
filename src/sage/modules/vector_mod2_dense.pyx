@@ -65,7 +65,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         y._init(self._degree, self._parent)
         return y
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         """
         EXAMPLES::
 
@@ -75,7 +75,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         return 1
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         """
         EXAMPLES::
 
@@ -155,7 +155,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         TESTS:
 
-        Check that issue :trac:`8601` is fixed::
+        Check that issue :issue:`8601` is fixed::
 
             sage: VS = VectorSpace(GF(2), 3)
             sage: VS((-1,-2,-3))
@@ -166,7 +166,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: V([1,-3])
             (1, 1)
 
-        Check integer overflow prior to :trac:`21746`::
+        Check integer overflow prior to :issue:`21746`::
 
             sage: VS = VectorSpace(GF(2),1)
             sage: VS([2**64])
@@ -289,7 +289,6 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         mzd_write_bit(self._entries, 0, i, value)
 
-
     def __reduce__(self):
         """
         EXAMPLES::
@@ -332,7 +331,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             mzd_add(z._entries, self._entries, (<Vector_mod2_dense>right)._entries)
         return z
 
-    cpdef int hamming_weight(self):
+    cpdef int hamming_weight(self) noexcept:
         """
         Return the number of positions ``i`` such that ``self[i] != 0``.
 
@@ -347,7 +346,6 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         for i from 0 <= i < self._entries.width:
             res += Integer(row[i]).popcount()
         return res
-
 
     cpdef _dot_product_(self, Vector right):
         """
@@ -443,12 +441,9 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: e * 2 == 0
             True
         """
-        cdef IntegerMod_int a
-
         if left:
             return self.__copy__()
-        else:
-            return self._new_c()
+        return self._new_c()
 
     cpdef _neg_(self):
         """
@@ -467,7 +462,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy`` - always ``True``
+        - ``copy`` -- always ``True``
 
         EXAMPLES::
 
@@ -488,6 +483,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             v[i] = switch[mzd_read_bit(self._entries, 0, i)]
         return v
 
+
 def unpickle_v0(parent, entries, degree, is_immutable):
     """
     EXAMPLES::
@@ -503,7 +499,7 @@ def unpickle_v0(parent, entries, degree, is_immutable):
     v._init(degree, parent)
     cdef int xi
 
-    for i from 0 <= i < degree:
+    for i in range(degree):
         if isinstance(entries[i], (IntegerMod_int, int, Integer)):
             xi = entries[i]
             mzd_write_bit(v._entries, 0, i, xi%2)

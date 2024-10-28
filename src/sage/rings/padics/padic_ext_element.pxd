@@ -34,4 +34,4 @@ cdef class pAdicExtElement(pAdicGenericElement):
 
     cdef ext_p_list(self, bint pos)
     cdef ext_p_list_precs(self, bint pos, long prec)
-    cdef ZZ_p_c _const_term(self)
+    cdef ZZ_p_c _const_term(self) noexcept

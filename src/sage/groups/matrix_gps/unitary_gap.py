@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Unitary Groups `GU(n,q)` and `SU(n,q)` with GAP
 """
@@ -27,7 +28,7 @@ class UnitaryMatrixGroup_gap(UnitaryMatrixGroup_generic, NamedMatrixGroup_gap, F
 
     TESTS:
 
-    Check that :trac:`20867` is fixed::
+    Check that :issue:`20867` is fixed::
 
         sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
         sage: G = GU(3,3)
@@ -40,9 +41,7 @@ class UnitaryMatrixGroup_gap(UnitaryMatrixGroup_generic, NamedMatrixGroup_gap, F
         """
         Return the hermitian form preserved by the unitary group.
 
-        OUTPUT:
-
-        A square matrix describing the bilinear form
+        OUTPUT: a square matrix describing the bilinear form
 
         EXAMPLES::
 

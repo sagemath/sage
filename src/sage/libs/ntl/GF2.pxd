@@ -1,4 +1,4 @@
-from .types cimport GF2_c
+from sage.libs.ntl.types cimport GF2_c
 
 
 cdef extern from "ntlwrap.h":

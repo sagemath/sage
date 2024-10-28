@@ -77,9 +77,9 @@ like a symbol. Setting ``nargs=0`` allows any number of arguments::
     ....:     def _eval_(self, *args):
     ....:         pass
     sage: f = Test1()
-    sage: f()
+    sage: f()                                                                           # needs sage.symbolic
     test()
-    sage: f(1,2,3)*f(1,2,3)
+    sage: f(1,2,3)*f(1,2,3)                                                             # needs sage.symbolic
     test(1, 2, 3)^2
 
 In the following the ``sin`` function of ``CBF(0)`` is called because with
@@ -97,20 +97,19 @@ is attempted, and after that ``sin()`` which succeeds::
     sage: f = Test2()
     sage: f(0)
     5
-    sage: f(0, hold=True)
+    sage: f(0, hold=True)                                                               # needs sage.symbolic
     my_sin(0)
-    sage: f(0, hold=True).n()
+    sage: f(0, hold=True).n()                                                           # needs sage.rings.real_mpfr
     3.50000000000000
-    sage: f(CBF(0))
+    sage: f(CBF(0))                                                                     # needs sage.libs.flint
     0
 
-    sage: latex(f(0, hold=True))
+    sage: latex(f(0, hold=True))                                                        # needs sage.symbolic
     \SIN\left(0\right)
     sage: f(1,2)
     Traceback (most recent call last):
     ...
     TypeError: Symbolic function my_sin takes exactly 1 arguments (2 given)
-
 """
 
 # ****************************************************************************
@@ -141,17 +140,23 @@ is attempted, and after that ``sin()`` which succeeds::
 from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element, parent, Expression
 from sage.misc.lazy_attribute import lazy_attribute
-from .expression import (
-    call_registered_function, find_registered_function, register_or_update_function,
-    get_sfunction_from_hash
-)
-from .expression import get_sfunction_from_serial as get_sfunction_from_serial
 
 from sage.structure.coerce cimport (coercion_model,
         py_scalar_to_element, is_numpy_type, is_mpmath_type)
 from sage.structure.richcmp cimport richcmp
 
 from sage.misc.fpickle import pickle_function, unpickle_function
+
+from sage.symbolic.symbols import symbol_table, register_symbol
+
+try:
+    from sage.symbolic.expression import (
+        call_registered_function, find_registered_function, register_or_update_function,
+        get_sfunction_from_hash, get_sfunction_from_serial as get_sfunction_from_serial
+    )
+except ImportError:
+    register_or_update_function = None
+
 
 # List of functions which ginac allows us to define custom behavior for.
 # Changing the order of this list could cause problems unpickling old pickles.
@@ -176,32 +181,34 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: f = function('f', nargs=1, conjugate_func=lambda self,x: 2r*x) # indirect doctest
-            sage: f(2)
+            sage: f = function('f', nargs=1,  # indirect doctest                        # needs sage.symbolic
+            ....:              conjugate_func=lambda self, x: 2r*x)
+            sage: f(2)                                                                  # needs sage.symbolic
             f(2)
-            sage: f(2).conjugate()
+            sage: f(2).conjugate()                                                      # needs sage.symbolic
             4
 
         TESTS::
 
             # eval_func raises exception
             sage: def ef(self, x): raise RuntimeError("foo")
-            sage: bar = function("bar", nargs=1, eval_func=ef)
-            sage: bar(x)
+            sage: bar = function("bar", nargs=1, eval_func=ef)                          # needs sage.symbolic
+            sage: bar(x)                                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
             RuntimeError: foo
 
             # eval_func returns non coercible
             sage: def ef(self, x): return ZZ
-            sage: bar = function("bar", nargs=1, eval_func=ef)
-            sage: bar(x)
+            sage: bar = function("bar", nargs=1, eval_func=ef)                          # needs sage.symbolic
+            sage: bar(x)                                                                # needs sage.symbolic
             Traceback (most recent call last):
             ...
-            TypeError: function did not return a symbolic expression or an element that can be coerced into a symbolic expression
+            TypeError: function did not return a symbolic expression
+            or an element that can be coerced into a symbolic expression
 
             # eval_func is not callable
-            sage: bar = function("bar", nargs=1, eval_func=5)
+            sage: bar = function("bar", nargs=1, eval_func=5)                           # needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: eval_func parameter must be callable
@@ -230,13 +237,11 @@ cdef class Function(SageObject):
                     callable(getattr(self, real_fname)):
                 raise ValueError(real_fname + " parameter must be callable")
 
-        if not self._is_registered():
-            self._register_function()
+        symbol_table['functions'][self._name] = self
 
-            from .expression import symbol_table, register_symbol
-
-            symbol_table['functions'][self._name] = self
-
+        if register_or_update_function:  # Symbolic subsystem present
+            if not self._is_registered():
+                self._register_function()
             register_symbol(self, self._conversions)
 
     cdef _is_registered(self):
@@ -251,17 +256,17 @@ cdef class Function(SageObject):
 
         TESTS:
 
-        After :trac:`9240`, pickling and unpickling of symbolic
+        After :issue:`9240`, pickling and unpickling of symbolic
         functions was broken. We check here that this is fixed
-        (:trac:`11919`)::
+        (:issue:`11919`)::
 
+            sage: # needs sage.symbolic
             sage: f = function('f')(x)
             sage: s = dumps(f)
             sage: loads(s)
             f(x)
             sage: deepcopy(f)
             f(x)
-
         """
         self._serial = register_or_update_function(self, self._name, self._latex_name,
                                                    self._nargs, self._evalf_params_first,
@@ -281,9 +286,9 @@ cdef class Function(SageObject):
 
         TESTS::
 
-            sage: coth(5)  # indirect doctest
+            sage: coth(5)  # indirect doctest                                           # needs sage.symbolic
             coth(5)
-            sage: coth(0.5)
+            sage: coth(0.5)                                                             # needs sage.rings.real_mpfr
             2.16395341373865
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class Test(BuiltinFunction):
@@ -300,15 +305,15 @@ cdef class Function(SageObject):
             ....:         else:
             ....:             return
             sage: test = Test()
-            sage: test(1.3, 4)
+            sage: test(1.3, 4)                                                          # needs sage.rings.real_mpfr
             2.30000000000000
-            sage: test(pi, 4)
+            sage: test(pi, 4)                                                           # needs sage.symbolic
             test(pi, 4)
-            sage: test(2, x)
+            sage: test(2, x)                                                            # needs sage.symbolic
             3
-            sage: test(2., 4)
+            sage: test(2., 4)                                                           # needs sage.rings.real_mpfr
             3.00000000000000
-            sage: test(1 + 1.0*I, 2)
+            sage: test(1 + 1.0*I, 2)                                                    # needs sage.symbolic
             2.00000000000000 + 1.00000000000000*I
             sage: class Test2(BuiltinFunction):
             ....:     def __init__(self):
@@ -322,9 +327,9 @@ cdef class Function(SageObject):
             ....:         else:
             ....:             return 3
             sage: test2 = Test2()
-            sage: test2(1.3)
+            sage: test2(1.3)                                                            # needs sage.rings.real_mpfr
             0.500000000000000
-            sage: test2(pi)
+            sage: test2(pi)                                                             # needs sage.symbolic
             3
         """
         # If any of the inputs is numerical and none is symbolic,
@@ -342,10 +347,10 @@ cdef class Function(SageObject):
         """
         EXAMPLES::
 
-            sage: f = function('f', nargs=1, conjugate_func=lambda self,x: 2r*x)
-            sage: f.__hash__() #random
+            sage: f = function('f', nargs=1, conjugate_func=lambda self, x: 2r*x)       # needs sage.symbolic
+            sage: f.__hash__()    # random                                              # needs sage.symbolic
             -2224334885124003860
-            sage: hash(f(2)) #random
+            sage: hash(f(2))      # random                                              # needs sage.symbolic
             4168614485
         """
         return hash(self._name)*(self._nargs+1)*self._serial
@@ -354,7 +359,7 @@ cdef class Function(SageObject):
         """
         EXAMPLES::
 
-            sage: foo = function("foo", nargs=2); foo
+            sage: foo = function("foo", nargs=2); foo                                   # needs sage.symbolic
             foo
         """
         return self._name
@@ -383,14 +388,14 @@ cdef class Function(SageObject):
         """
         TESTS::
 
+            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: foo == foo
             True
             sage: foo == 2
             False
-            sage: foo(1,2).operator() == foo
+            sage: foo(1, 2).operator() == foo
             True
-
         """
         try:
             return richcmp((<Function>self)._serial,
@@ -402,56 +407,55 @@ cdef class Function(SageObject):
         """
         Evaluates this function at the given arguments.
 
-        We coerce the arguments into symbolic expressions if coerce=True, then
+        We coerce the arguments into symbolic expressions if ``coerce=True``, then
         call the Pynac evaluation method, which in turn passes the arguments to
         a custom automatic evaluation method if ``_eval_()`` is defined.
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: x,y,z = var("x y z")
-            sage: foo(x,y)
+            sage: foo(x, y)
             foo(x, y)
-
             sage: foo(y)
             Traceback (most recent call last):
             ...
             TypeError: Symbolic function foo takes exactly 2 arguments (1 given)
-
             sage: bar = function("bar")
             sage: bar(x)
             bar(x)
-            sage: bar(x,y)
+            sage: bar(x, y)
             bar(x, y)
 
         The `hold` argument prevents automatic evaluation of the function::
 
-            sage: exp(log(x))
+            sage: exp(log(x))                                                           # needs sage.symbolic
             x
-            sage: exp(log(x), hold=True)
+            sage: exp(log(x), hold=True)                                                # needs sage.symbolic
             e^log(x)
 
         We can also handle numpy types::
 
-            sage: import numpy
-            sage: sin(numpy.arange(5))
+            sage: import numpy                                                          # needs numpy
+            sage: sin(numpy.arange(5))                                                  # needs numpy
             array([ 0.        ,  0.84147098,  0.90929743,  0.14112001, -0.7568025 ])
 
         Symbolic functions evaluate non-exact input numerically, and return
         symbolic expressions on exact input, or if any input is symbolic::
 
-            sage: arctan(1)
+            sage: arctan(1)                                                             # needs sage.symbolic
             1/4*pi
-            sage: arctan(float(1))
+            sage: arctan(float(1))                                                      # needs sage.rings.complex_double
             0.7853981633974483
-            sage: type(lambert_w(SR(0)))
+            sage: type(lambert_w(SR(0)))                                                # needs sage.symbolic
             <class 'sage.symbolic.expression.Expression'>
 
         Precision of the result depends on the precision of the input::
 
-            sage: arctan(RR(1))
+            sage: arctan(RR(1))                                                         # needs sage.rings.real_mpfr
             0.785398163397448
-            sage: arctan(RealField(100)(1))
+            sage: arctan(RealField(100)(1))                                             # needs sage.rings.real_mpfr
             0.78539816339744830961566084582
 
         Return types for non-exact input depends on the input type::
@@ -466,29 +470,31 @@ cdef class Function(SageObject):
 
         Test coercion::
 
-            sage: bar(ZZ)
+            sage: bar(ZZ)                                                               # needs sage.symbolic
             Traceback (most recent call last):
             ...
             TypeError: cannot coerce arguments: ...
-            sage: exp(QQbar(I))
+            sage: exp(QQbar(I))                                                         # needs sage.rings.number_field sage.symbolic
             e^I
 
         For functions with single argument, if coercion fails we try to call
         a method with the name of the function on the object::
 
-            sage: M = matrix(SR, 2, 2, [x, 0, 0, I*pi])
-            sage: exp(M)
+            sage: M = matrix(SR, 2, 2, [x, 0, 0, I*pi])                                 # needs sage.modules sage.symbolic
+            sage: exp(M)                                                                # needs sage.modules sage.symbolic
             [e^x   0]
             [  0  -1]
 
-        Make sure we can pass mpmath arguments (:trac:`13608`)::
+        Make sure we can pass mpmath arguments (:issue:`13608`)::
 
-            sage: import mpmath
-            sage: with mpmath.workprec(128): sin(mpmath.mpc('0.5', '1.2'))
-            mpc(real='0.86807452059118713192871150787046523179886', imag='1.3246769633571289324095313649562791720086')
+            sage: import mpmath                                                         # needs mpmath
+            sage: with mpmath.workprec(128): sin(mpmath.mpc('0.5', '1.2'))              # needs mpmath
+            mpc(real='0.86807452059118713192871150787046523179886',
+                imag='1.3246769633571289324095313649562791720086')
 
-        Check that :trac:`10133` is fixed::
+        Check that :issue:`10133` is fixed::
 
+            sage: # needs sage.symbolic
             sage: out = sin(0)
             sage: out, parent(out)
             (0, Integer Ring)
@@ -502,8 +508,9 @@ cdef class Function(SageObject):
             sage: (out, parent(out))
             (0, Integer Ring)
 
-        Check that ``real_part`` and ``imag_part`` still works after :trac:`21216`::
+        Check that ``real_part`` and ``imag_part`` still works after :issue:`21216`::
 
+            sage: # needs numpy sage.symbolic
             sage: import numpy
             sage: a = numpy.array([1+2*I, -2-3*I], dtype=complex)
             sage: real_part(a)
@@ -516,11 +523,9 @@ cdef class Function(SageObject):
 
         # if the given input is a symbolic expression, we don't convert it back
         # to a numeric type at the end
-        from .ring import SR
-        if any(parent(arg) is SR for arg in args):
-            symbolic_input = True
-        else:
-            symbolic_input = False
+        symbolic_input = any(isinstance(arg, Expression) for arg in args)
+
+        from sage.symbolic.ring import SR
 
         if coerce:
             try:
@@ -545,7 +550,7 @@ cdef class Function(SageObject):
                     raise TypeError("arguments must be symbolic expressions")
 
         return call_registered_function(self._serial, self._nargs, args, hold,
-                                    not symbolic_input, SR)
+                                        not symbolic_input, SR)
 
     def name(self):
         """
@@ -553,8 +558,8 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: foo = function("foo", nargs=2)
-            sage: foo.name()
+            sage: foo = function("foo", nargs=2)                                        # needs sage.symbolic
+            sage: foo.name()                                                            # needs sage.symbolic
             'foo'
         """
         return self._name
@@ -565,12 +570,12 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: foo.number_of_arguments()
             2
-            sage: foo(x,x)
+            sage: foo(x, x)
             foo(x, x)
-
             sage: foo(x)
             Traceback (most recent call last):
             ...
@@ -595,15 +600,15 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: sin.default_variable()
+            sage: sin.default_variable()                                                # needs sage.symbolic
             x
         """
-        from .ring import SR
+        from sage.symbolic.ring import SR
         return SR.var('x')
 
     def _is_numerical(self, x):
         """
-        Return True if `x` is a numerical object.
+        Return ``True`` if `x` is a numerical object.
 
         This is used to determine whether to call the :meth:`_evalf_`
         method instead of the :meth:`_eval_` method.
@@ -615,14 +620,15 @@ cdef class Function(SageObject):
 
             sage: [sin._is_numerical(a) for a in [5., 5.4r]]
             [True, True]
-            sage: [sin._is_numerical(a) for a in [5, pi]]
+            sage: [sin._is_numerical(a) for a in [5, pi]]                               # needs sage.symbolic
             [False, False]
-            sage: [sin._is_numerical(R(1)) for R in [RIF, CIF, RBF, CBF]]
+            sage: [sin._is_numerical(R(1)) for R in [RIF, CIF, RBF, CBF]]               # needs sage.libs.flint
             [False, False, False, False]
 
         The following calls used to yield incorrect results because intervals
         were considered numerical by this method::
 
+            sage: # needs sage.libs.flint
             sage: b = RBF(3/2, 1e-10)
             sage: airy_ai(b)
             airy_ai([1.500000000 +/- 1.01e-10])
@@ -633,24 +639,25 @@ cdef class Function(SageObject):
             sage: hurwitz_zeta(1/2, b)
             hurwitz_zeta(1/2, [1.500000000 +/- 1.01e-10])
 
-            sage: iv = RIF(1, 1.0001)
-            sage: airy_ai(iv)
+            sage: iv = RIF(1, 1.0001)                                                   # needs sage.rings.real_interval_field
+
+            sage: airy_ai(iv)                                                           # needs sage.rings.real_interval_field
             airy_ai(1.0001?)
-            sage: airy_ai(CIF(iv))
+            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field sage.rings.real_interval_field
             airy_ai(1.0001?)
         """
         if isinstance(x, (float, complex)):
             return True
         if isinstance(x, Element):
-            parent = (<Element>x)._parent
-            return hasattr(parent, 'precision') and parent._is_numerical()
+            xparent = (<Element>x)._parent
+            return hasattr(xparent, 'precision') and xparent._is_numerical()
         return False
 
     def _interface_init_(self, I=None):
         """
         EXAMPLES::
 
-             sage: sin._interface_init_(maxima)
+             sage: sin._interface_init_(maxima)                                         # needs sage.symbolic
              'sin'
         """
         if I is None:
@@ -665,7 +672,7 @@ cdef class Function(SageObject):
              'Sin'
              sage: exp._mathematica_init_()
              'Exp'
-             sage: (exp(x) + sin(x) + tan(x))._mathematica_init_()
+             sage: (exp(x) + sin(x) + tan(x))._mathematica_init_()                      # needs sage.symbolic
              '(Exp[x])+(Sin[x])+(Tan[x])'
         """
         s = self._conversions.get('mathematica', None)
@@ -681,7 +688,7 @@ cdef class Function(SageObject):
             sage: g = SymbolicFunction('g', conversions=dict(sympy='gg'))
             sage: g._sympy_init_()
             'gg'
-            sage: g(x)._sympy_()
+            sage: g(x)._sympy_()                                                        # needs sage.symbolic
             gg(x)
         """
         return self._conversions.get('sympy', self._name)
@@ -691,9 +698,9 @@ cdef class Function(SageObject):
         """
         EXAMPLES::
 
-            sage: cos._sympy_()
+            sage: cos._sympy_()                                                         # needs sympy
             cos
-            sage: _(0)
+            sage: _(0)                                                                  # needs sympy
             1
         """
         f = self._sympy_init_()
@@ -742,16 +749,17 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: import numpy
             sage: a = numpy.arange(5)
             sage: csc(a)
             doctest:...: RuntimeWarning: divide by zero encountered in ...divide
             array([        inf,  1.18839511,  1.09975017,  7.0861674 , -1.32134871])
-
             sage: factorial(a)
             Traceback (most recent call last):
             ...
-            NotImplementedError: The Function factorial does not support numpy arrays as arguments
+            NotImplementedError: The Function factorial does
+            not support numpy arrays as arguments
         """
         raise NotImplementedError("The Function %s does not support numpy arrays as arguments" % self.name())
 
@@ -769,8 +777,8 @@ cdef class Function(SageObject):
         implementation, using sage reals instead of mpmath ones. This
         might change when aliases for these functions are established::
 
-            sage: import mpmath
-            sage: with mpmath.workprec(128): arcsin(mpmath.mpf('0.5'))
+            sage: import mpmath                                                         # needs mpmath
+            sage: with mpmath.workprec(128): arcsin(mpmath.mpf('0.5'))                  # needs mpmath
             mpf('0.52359877559829887307710723054658381403157')
 
         TESTS:
@@ -779,6 +787,7 @@ cdef class Function(SageObject):
         not using mpmath, we have to create a custom function which
         will certainly never get created in mpmath. ::
 
+            sage: # needs mpmath
             sage: import mpmath
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class NoMpmathFn(BuiltinFunction):
@@ -794,7 +803,6 @@ cdef class Function(SageObject):
             sage: with mpmath.workprec(64): noMpmathFn(sqrt(mpmath.mpf('2')))
             123
             sage: del mpmath.noMpmathFn
-
         """
         import mpmath
         from sage.libs.mpmath.utils import mpmath_to_sage, sage_to_mpmath
@@ -805,6 +813,7 @@ cdef class Function(SageObject):
         res = self(*args)
         res = sage_to_mpmath(res, prec)
         return res
+
 
 cdef class GinacFunction(BuiltinFunction):
     """
@@ -824,12 +833,12 @@ cdef class GinacFunction(BuiltinFunction):
         TESTS::
 
             sage: from sage.functions.trig import Function_sin
-            sage: s = Function_sin() # indirect doctest
-            sage: s(0)
+            sage: s = Function_sin()  # indirect doctest
+            sage: s(0)                                                                  # needs sage.symbolic
             0
-            sage: s(pi)
+            sage: s(pi)                                                                 # needs sage.symbolic
             0
-            sage: s(pi/2)
+            sage: s(pi/2)                                                               # needs sage.symbolic
             1
         """
         self._ginac_name = ginac_name
@@ -873,8 +882,8 @@ cdef class BuiltinFunction(Function):
         TESTS::
 
             sage: from sage.functions.trig import Function_cot
-            sage: c = Function_cot() # indirect doctest
-            sage: c(pi/2)
+            sage: c = Function_cot()  # indirect doctest
+            sage: c(pi/2)                                                               # needs sage.symbolic
             0
         """
         self._preserved_arg = preserved_arg
@@ -924,7 +933,7 @@ cdef class BuiltinFunction(Function):
 
         EXAMPLES::
 
-            sage: exp(5)
+            sage: exp(5)                                                                # needs sage.symbolic
             e^5
             sage: gamma(15)
             87178291200
@@ -944,16 +953,20 @@ cdef class BuiltinFunction(Function):
             (1.5430806348152437-0j)
             sage: assert type(_) is complex
 
+            sage: # needs mpmath
             sage: import mpmath
             sage: cos(mpmath.mpf('1.321412'))
             mpf('0.24680737898640387')
             sage: cos(mpmath.mpc(1,1))
             mpc(real='0.83373002513114902', imag='-0.98889770576286506')
 
-            sage: import numpy
-            sage: sin(numpy.int32(0))
+            sage: import numpy                                                          # needs numpy
+            sage: if int(numpy.version.short_version[0]) > 1:                           # needs numpy
+            ....:     numpy.set_printoptions(legacy="1.25")                             # needs numpy
+
+            sage: sin(numpy.int32(0))                                                   # needs numpy
             0.0
-            sage: type(_)
+            sage: type(_)                                                               # needs numpy
             <class 'numpy.float64'>
 
         TESTS::
@@ -1039,13 +1052,13 @@ cdef class BuiltinFunction(Function):
             if (self._preserved_arg
                     and isinstance(args[self._preserved_arg-1], Element)):
                 arg_parent = parent(args[self._preserved_arg-1])
-                from .ring import SR
+                from sage.symbolic.ring import SR
                 if arg_parent is SR:
                     return res
                 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
                 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict_domain
-                if (isinstance(arg_parent, PolynomialRing_commutative)
-                    or isinstance(arg_parent, MPolynomialRing_polydict_domain)):
+                if isinstance(arg_parent, (PolynomialRing_commutative,
+                                           MPolynomialRing_polydict_domain)):
                     try:
                         return SR(res).polynomial(ring=arg_parent)
                     except TypeError:
@@ -1076,22 +1089,22 @@ cdef class BuiltinFunction(Function):
         """
         TESTS:
 
-        Check if :trac:`13586` is fixed::
+        Check if :issue:`13586` is fixed::
 
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class AFunction(BuiltinFunction):
             ....:       def __init__(self, name, exp=1):
-            ....:           self.exponent=exp
+            ....:           self.exponent = exp
             ....:           BuiltinFunction.__init__(self, name, nargs=1)
             ....:       def _eval_(self, arg):
             ....:               return arg**self.exponent
             sage: p2 = AFunction('p2', 2)
-            sage: p2(x)
+            sage: p2(x)                                                                 # needs sage.symbolic
             x^2
             sage: p3 = AFunction('p3', 3)
-            sage: p3(x)
+            sage: p3(x)                                                                 # needs sage.symbolic
             x^3
-            sage: loads(dumps(cot)) == cot    # trac #15138
+            sage: loads(dumps(cot)) == cot  # Issue #15138
             True
         """
         # check if already defined
@@ -1132,7 +1145,7 @@ cdef class BuiltinFunction(Function):
             (<class 'sage.functions.trig.Function_cot'>, ())
 
             sage: f = loads(dumps(cot)) #indirect doctest
-            sage: f(pi/2)
+            sage: f(pi/2)                                                               # needs sage.symbolic
             0
         """
         return self.__class__, tuple()
@@ -1179,11 +1192,11 @@ cdef class SymbolicFunction(Function):
             sage: foo = my_function()
             sage: foo
             foo
-            sage: foo(2,3)
+            sage: foo(2, 3)                                                             # needs sage.symbolic
             foo(2, 3)
-            sage: foo(2,3).n()
+            sage: foo(2, 3).n()                                                         # needs sage.rings.real_mpfr
             12.0000000000000
-            sage: foo(2,3).conjugate()
+            sage: foo(2, 3).conjugate()                                                 # needs sage.symbolic
             2
         """
         self.__hinit = False
@@ -1209,8 +1222,8 @@ cdef class SymbolicFunction(Function):
             slist = [self._nargs, self._name, str(self._latex_name),
                     self._evalf_params_first]
             for fname in sfunctions_funcs:
-                real_fname = '_%s_'%fname
-                if hasattr(self, '%s'%real_fname):
+                real_fname = '_%s_' % fname
+                if hasattr(self, '%s' % real_fname):
                     slist.append(hash(getattr(self, real_fname).__code__))
                 else:
                     slist.append(' ')
@@ -1222,13 +1235,13 @@ cdef class SymbolicFunction(Function):
         """
         TESTS::
 
-            sage: foo = function("foo", nargs=2)
-            sage: hash(foo)      # random output
+            sage: foo = function("foo", nargs=2)                                        # needs sage.symbolic
+            sage: hash(foo)      # random output                                        # needs sage.symbolic
             -6859868030555295348
 
             sage: def ev(self, x): return 2*x
-            sage: foo = function("foo", nargs=2, eval_func = ev)
-            sage: hash(foo)      # random output
+            sage: foo = function("foo", nargs=2, eval_func=ev)                          # needs sage.symbolic
+            sage: hash(foo)      # random output                                        # needs sage.symbolic
             -6859868030555295348
         """
         return self._serial*self._hash_()
@@ -1268,35 +1281,41 @@ cdef class SymbolicFunction(Function):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: foo.__getstate__()
-            (2, 'foo', 2, None, {}, True, [None, None, None, None, None, None, None, None, None, None, None])
+            (2, 'foo', 2, None, {}, True,
+             [None, None, None, None, None, None, None, None, None, None, None])
             sage: t = loads(dumps(foo))
             sage: t == foo
             True
             sage: var('x,y')
             (x, y)
-            sage: t(x,y)
+            sage: t(x, y)
             foo(x, y)
 
             sage: def ev(self, x,y): return 2*x
-            sage: foo = function("foo", nargs=2, eval_func = ev)
-            sage: foo.__getstate__()
-            (2, 'foo', 2, None, {}, True, [..., None, None, None, None, None, None, None, None, None, None])
+            sage: foo = function("foo", nargs=2, eval_func=ev)                          # needs sage.symbolic
+            sage: foo.__getstate__()                                                    # needs sage.symbolic
+            (2, 'foo', 2, None, {}, True,
+             [..., None, None, None, None, None, None, None, None, None, None])
 
+            sage: # needs sage.symbolic
             sage: u = loads(dumps(foo))
             sage: u == foo
             True
             sage: t == u
             False
-            sage: u(y,x)
+            sage: u(y, x)
             2*y
 
             sage: def evalf_f(self, x, **kwds): return int(6)
-            sage: foo = function("foo", nargs=1, evalf_func=evalf_f)
-            sage: foo.__getstate__()
-            (2, 'foo', 1, None, {}, True, [None, ..., None, None, None, None, None, None, None, None, None])
+            sage: foo = function("foo", nargs=1, evalf_func=evalf_f)                    # needs sage.symbolic
+            sage: foo.__getstate__()                                                    # needs sage.symbolic
+            (2, 'foo', 1, None, {}, True,
+             [None, ..., None, None, None, None, None, None, None, None, None])
 
+            sage: # needs sage.symbolic
             sage: v = loads(dumps(foo))
             sage: v == foo
             True
@@ -1309,11 +1328,11 @@ cdef class SymbolicFunction(Function):
 
         Test pickling expressions with symbolic functions::
 
-            sage: u = loads(dumps(foo(x)^2 + foo(y) + x^y)); u
+            sage: u = loads(dumps(foo(x)^2 + foo(y) + x^y)); u                          # needs sage.symbolic
             foo(x)^2 + x^y + foo(y)
-            sage: u.subs(y=0)
+            sage: u.subs(y=0)                                                           # needs sage.symbolic
             foo(x)^2 + foo(0) + 1
-            sage: u.subs(y=0).n()
+            sage: u.subs(y=0).n()                                                       # needs sage.symbolic
             43.0000000000000
         """
         return (2, self._name, self._nargs, self._latex_name, self._conversions,
@@ -1330,6 +1349,7 @@ cdef class SymbolicFunction(Function):
 
         TESTS::
 
+            sage: # needs sage.symbolic
             sage: var('x,y')
             (x, y)
             sage: foo = function("foo", nargs=2)
@@ -1338,23 +1358,24 @@ cdef class SymbolicFunction(Function):
 
         ::
 
-            sage: g = function('g', nargs=1, conjugate_func=lambda y,x: 2*x)
+            sage: # needs sage.symbolic
+            sage: g = function('g', nargs=1, conjugate_func=lambda y, x: 2*x)
             sage: st = g.__getstate__()
             sage: f = function('f')
             sage: f(x)
             f(x)
-            sage: f(x).conjugate() # no special conjugate method
+            sage: f(x).conjugate()      # no special conjugate method
             conjugate(f(x))
             sage: f.__setstate__(st)
-            sage: f(x+1).conjugate() # now there is a special method
+            sage: f(x + 1).conjugate()  # now there is a special method
             2*x + 2
 
         Note that the other direction doesn't work here, since ``foo._hash_()``
         hash already been initialized.::
 
-            sage: bar
+            sage: bar                                                                   # needs sage.symbolic
             foo
-            sage: bar(x,y)
+            sage: bar(x, y)                                                             # needs sage.symbolic
             foo(x, y)
         """
         # check input
@@ -1376,7 +1397,7 @@ cdef class SymbolicFunction(Function):
 
         for pickle, fname in zip(function_pickles, sfunctions_funcs):
             if pickle:
-                real_fname = '_%s_'%fname
+                real_fname = '_%s_' % fname
                 setattr(self, real_fname, unpickle_function(pickle))
 
         SymbolicFunction.__init__(self, name, nargs, latex_name,

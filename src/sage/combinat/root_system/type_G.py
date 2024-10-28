@@ -32,18 +32,19 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
     By default, this ambient space uses the barycentric projection for plotting::
 
+        sage: # needs sage.symbolic
         sage: L = RootSystem(["G",2]).ambient_space()
         sage: e = L.basis()
-        sage: L._plot_projection(e[0])                                                  # optional - sage.symbolic
+        sage: L._plot_projection(e[0])
         (1/2, 989/1142)
-        sage: L._plot_projection(e[1])                                                  # optional - sage.symbolic
+        sage: L._plot_projection(e[1])
         (-1, 0)
-        sage: L._plot_projection(e[2])                                                  # optional - sage.symbolic
+        sage: L._plot_projection(e[2])
         (1/2, -989/1142)
         sage: L = RootSystem(["A",3]).ambient_space()
         sage: l = L.an_element(); l
         (2, 2, 3, 0)
-        sage: L._plot_projection(l)                                                     # optional - sage.symbolic
+        sage: L._plot_projection(l)
         (0, -1121/1189, 7/3)
 
     .. SEEALSO::
@@ -73,7 +74,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
 
             sage: CartanType(['G',2]).root_system().ambient_space().simple_roots()
             Finite family {1: (0, 1, -1), 2: (1, -2, 1)}
-         """
+        """
         return self.monomial(1)-self.monomial(2) if i == 1 else self.monomial(0)-2*self.monomial(1)+self.monomial(2)
 
     def positive_roots(self):
@@ -181,17 +182,16 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
     def dynkin_diagram(self):
         """
-        Returns a Dynkin diagram for type G.
+        Return a Dynkin diagram for type G.
 
         EXAMPLES::
 
-            sage: g = CartanType(['G',2]).dynkin_diagram()
-            sage: g
+            sage: g = CartanType(['G',2]).dynkin_diagram(); g                           # needs sage.graphs
               3
             O=<=O
             1   2
             G2
-            sage: g.edges(sort=True)
+            sage: g.edges(sort=True)                                                    # needs sage.graphs
             [(1, 2, 1), (2, 1, 3)]
         """
         from .dynkin_diagram import DynkinDiagram_class
@@ -200,7 +200,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         g.set_edge_label(2,1,3)
         return g
 
-    def _latex_dynkin_diagram(self, label=lambda i: i, node=None, node_dist=2, dual=False):
+    def _latex_dynkin_diagram(self, label=None, node=None, node_dist=2, dual=False):
         r"""
         Return a latex representation of the Dynkin diagram.
 
@@ -215,11 +215,13 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             \draw[fill=white] (2 cm, 0 cm) circle (.25cm) node[below=4pt]{$2$};
             <BLANKLINE>
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._latex_draw_node
-        ret = "\\draw (0,0) -- (%s cm,0);\n"%node_dist
-        ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n"%node_dist
-        ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n"%node_dist
+        ret = "\\draw (0,0) -- (%s cm,0);\n" % node_dist
+        ret += "\\draw (0, 0.15 cm) -- +(%s cm,0);\n" % node_dist
+        ret += "\\draw (0, -0.15 cm) -- +(%s cm,0);\n" % node_dist
         if dual:
             ret += self._latex_draw_arrow_tip(0.5*node_dist+0.2, 0, 0)
         else:
@@ -228,7 +230,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         ret += node(node_dist, 0, label(2))
         return ret
 
-    def ascii_art(self, label=lambda i: i, node=None):
+    def ascii_art(self, label=None, node=None):
         """
         Return an ascii art representation of the Dynkin diagram.
 
@@ -239,6 +241,8 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O=<=O
             3   4
         """
+        if label is None:
+            label = lambda i: i
         if node is None:
             node = self._ascii_art_node
         ret = "  3\n{}=<={}\n".format(node(label(1)), node(label(2)))
@@ -256,18 +260,18 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             sage: G2.dual()
             ['G', 2] relabelled by {1: 2, 2: 1}
 
-            sage: G2.dynkin_diagram()
+            sage: G2.dynkin_diagram()                                                   # needs sage.graphs
               3
             O=<=O
             1   2
             G2
-            sage: G2.dual().dynkin_diagram()
+            sage: G2.dual().dynkin_diagram()                                            # needs sage.graphs
               3
             O=<=O
             2   1
             G2 relabelled by {1: 2, 2: 1}
         """
-        return self.relabel({1:2, 2:1})
+        return self.relabel({1: 2, 2: 1})
 
     def _default_folded_cartan_type(self):
         """
@@ -284,4 +288,5 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_G', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_G',
+                           'ambient_space', AmbientSpace)

@@ -1,18 +1,17 @@
 """
 Binary trees
 
-Implements a binary tree in Cython.
+This implements a binary tree in Cython.
 
 AUTHORS:
 
 - Tom Boothby (2007-02-15).  Initial version free for any use (public domain).
 """
-
 from cysignals.memory cimport sig_malloc, sig_free
 
 from cpython.ref cimport PyObject, Py_INCREF, Py_XDECREF
 
-cdef binary_tree_node *BinaryTreeNode(int key, object value):
+cdef binary_tree_node *BinaryTreeNode(int key, object value) noexcept:
     cdef binary_tree_node *t
     t = <binary_tree_node *>sig_malloc(sizeof(binary_tree_node))
     t.key = key
@@ -22,18 +21,18 @@ cdef binary_tree_node *BinaryTreeNode(int key, object value):
     t.value = <void *>value
     return t
 
-cdef void free_binary_tree_node(binary_tree_node *self):
+cdef void free_binary_tree_node(binary_tree_node *self) noexcept:
     Py_XDECREF(<PyObject *>self.value)
     sig_free(self)
 
-cdef inline void binary_tree_dealloc(binary_tree_node *self):
+cdef inline void binary_tree_dealloc(binary_tree_node *self) noexcept:
     if self != NULL:
         binary_tree_dealloc(self.left)
         binary_tree_dealloc(self.right)
         free_binary_tree_node(self)
 
 
-cdef void binary_tree_insert(binary_tree_node *self, int key, object value):
+cdef void binary_tree_insert(binary_tree_node *self, int key, object value) noexcept:
     if self.key == key:
         return
     elif self.key > key:
@@ -82,7 +81,7 @@ cdef object binary_tree_delete(binary_tree_node *self, int key):
         else:
             return binary_tree_delete(self.right, key)
 
-cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self):
+cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *left
     cdef binary_tree_node *cur
     if self.left == NULL:
@@ -99,8 +98,7 @@ cdef binary_tree_node *binary_tree_left_excise(binary_tree_node *self):
     return left
 
 
-
-cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self):
+cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *right
     cdef binary_tree_node *cur
     if self.right == NULL:
@@ -117,7 +115,7 @@ cdef binary_tree_node *binary_tree_right_excise(binary_tree_node *self):
     return right
 
 
-cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self):
+cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self) noexcept:
     cdef binary_tree_node *cur
     cdef int right
     # We have a pointer we're about to free.  Chances are, we'll never
@@ -129,14 +127,14 @@ cdef binary_tree_node *binary_tree_head_excise(binary_tree_node *self):
     if self.left == NULL:
         return self.right
     if right:
-        #move right branch to left, return left
+        # move right branch to left, return left
         cur = self.left
         while cur.right != NULL:
             cur = cur.right
         cur.right = self.right
         cur = self.left
     else:
-        #move left branch to right, return right
+        # move left branch to right, return right
         cur = self.right
         while cur.left != NULL:
             cur = cur.left
@@ -179,18 +177,18 @@ cdef object binary_tree_list(binary_tree_node *cur, int behavior):
     return arry
 
 
-
 cdef class BinaryTree:
     """
     A simple binary tree with integer keys.
     """
     def __cinit__(BinaryTree self):
         self.head = NULL
+
     def __dealloc__(BinaryTree self):
         """
         TESTS:
 
-        We test that :trac:`18897` is fixed::
+        We test that :issue:`18897` is fixed::
 
             sage: def test():
             ....:     from sage.rings.polynomial.polynomial_compiled import CompiledPolynomialFunction
@@ -206,14 +204,17 @@ cdef class BinaryTree:
             ....:     return [(k,v) for (k,v) in post.items() if v>10]
             sage: test()   # indirect doctest
             []
-
         """
         binary_tree_dealloc(self.head)
 
-    def insert(BinaryTree self, object key, object value = None):
+    def insert(BinaryTree self, object key, object value=None):
         """
-        Inserts a key-value pair into the BinaryTree.  Duplicate keys are ignored.
-        The first parameter, key, should be an int, or coercible (one-to-one) into an int.
+        Insert a key-value pair into the BinaryTree.
+
+        Duplicate keys are ignored.
+
+        The first parameter, key, should be an int, or coercible (one-to-one)
+        into an int.
 
         EXAMPLES::
 
@@ -234,9 +235,10 @@ cdef class BinaryTree:
             self.head = BinaryTreeNode(ckey, value)
         else:
             binary_tree_insert(self.head, ckey, value)
+
     def delete(BinaryTree self, int key):
         """
-        Removes a the node corresponding to key, and returns the value
+        Remove a the node corresponding to key, and return the value
         associated with it.
 
         EXAMPLES::
@@ -277,28 +279,28 @@ cdef class BinaryTree:
             return r
         else:
             return binary_tree_delete(self.head, key)
+
     def get(BinaryTree self, int key):
         """
-        Returns the value associated with the key given.
+        Return the value associated with the key given.
 
         EXAMPLES::
 
             sage: from sage.misc.binary_tree import BinaryTree
             sage: t = BinaryTree()
-            sage: t.insert(0,Matrix([[0,0],[1,1]]))
-            sage: t.insert(0,1)
-            sage: t.get(0)
+            sage: t.insert(0, Matrix([[0,0], [1,1]]))                                   # needs sage.modules
+            sage: t.insert(0, 1)
+            sage: t.get(0)                                                              # needs sage.modules
             [0 0]
             [1 1]
         """
         if self.head == NULL:
             return None
-        else:
-            return binary_tree_get(self.head, key)
+        return binary_tree_get(self.head, key)
+
     def contains(BinaryTree self, int key):
         """
-        Returns True if a node with the given key exists
-        in the tree, and False otherwise.
+        Return whether a node with the given key exists in the tree.
 
         EXAMPLES::
 
@@ -306,20 +308,17 @@ cdef class BinaryTree:
             sage: t = BinaryTree()
             sage: t.contains(1)
             False
-            sage: t.insert(1,1)
+            sage: t.insert(1, 1)
             sage: t.contains(1)
             True
         """
         if self.head == NULL:
             return False
-        else:
-            if binary_tree_get(self.head, key) is not None:
-                return True
-            else:
-                return False
+        return binary_tree_get(self.head, key) is not None
+
     def get_max(BinaryTree self):
         """
-        Returns the value of the node with the maximal key value.
+        Return the value of the node with the maximal key value.
         """
         cdef binary_tree_node *cur
         if self.head == NULL:
@@ -328,9 +327,10 @@ cdef class BinaryTree:
         while cur.right != NULL:
             cur = cur.right
         return <object>cur.value
+
     def get_min(BinaryTree self):
         """
-        Returns the value of the node with the minimal key value.
+        Return the value of the node with the minimal key value.
         """
         cdef binary_tree_node *cur
         if self.head == NULL:
@@ -339,10 +339,11 @@ cdef class BinaryTree:
         while cur.left != NULL:
             cur = cur.left
         return <object>cur.value
+
     def pop_max(BinaryTree self):
         """
-        Returns the value of the node with the maximal key value,
-        and removes that node from the tree.
+        Return the value of the node with the maximal key value,
+        and remove that node from the tree.
 
         EXAMPLES::
 
@@ -379,10 +380,11 @@ cdef class BinaryTree:
         max = <object>cur.right.value
         cur.right = binary_tree_right_excise(cur.right)
         return max
+
     def pop_min(BinaryTree self):
         """
-        Returns the value of the node with the minimal key value,
-        and removes that node from the tree.
+        Return the value of the node with the minimal key value,
+        and remove that node from the tree.
 
         EXAMPLES::
 
@@ -422,7 +424,7 @@ cdef class BinaryTree:
 
     def is_empty(BinaryTree self):
         """
-        Returns True if the tree has no nodes.
+        Return whether the tree has no nodes.
 
         EXAMPLES::
 
@@ -436,9 +438,11 @@ cdef class BinaryTree:
         """
         return self.head == NULL
 
-    def keys(BinaryTree self, order="inorder"):
+    def keys(BinaryTree self, order='inorder'):
         """
-        Returns the keys sorted according to "order" parameter, which can be one of
+        Return the keys sorted according to "order" parameter.
+
+        The order can be one of
         "inorder", "preorder", or "postorder"
         """
         if self.head == NULL:
@@ -453,9 +457,11 @@ cdef class BinaryTree:
 
         return binary_tree_list(self.head, LIST_KEYS + o)
 
-    def values(BinaryTree self, order="inorder"):
+    def values(BinaryTree self, order='inorder'):
         """
-        Returns the keys sorted according to "order" parameter, which can be one of
+        Return the keys sorted according to "order" parameter.
+
+        The order can be one of
         "inorder", "preorder", or "postorder"
         """
         if self.head == NULL:
@@ -473,13 +479,12 @@ cdef class BinaryTree:
     def _headkey_(BinaryTree self):
         """
         Used by the stress tester.  Don't think a user would care.
+
         Email tom if you care what the headkey is.
         """
         if self.head == NULL:
             return 0
-        else:
-            return self.head.key
-
+        return self.head.key
 
 
 class Test:
@@ -488,11 +493,13 @@ class Test:
 
     def binary_tree(self, values = 100, cycles = 100000):
         """
-        Performs a sequence of random operations, given random inputs
-        to stress test the binary tree structure.  This was useful during
-        development to find memory leaks / segfaults.  Cycles should be
-        at least 100 times as large as values, or the delete, contains,
-        and get methods won't hit very often.
+        Perform a sequence of random operations, given random inputs
+        to stress test the binary tree structure.
+
+        This was useful during development to find memory leaks /
+        segfaults.  Cycles should be at least 100 times as large as
+        values, or the delete, contains, and get methods won't hit
+        very often.
 
         INPUT:
 
@@ -509,7 +516,7 @@ class Test:
         for i in range(cycles):
             r = randint(0, 8)
             s = randint(0, values)
-            if r==1:
+            if r == 1:
                 t.insert(s)
             elif r == 2:
                 t.delete(t._headkey_())

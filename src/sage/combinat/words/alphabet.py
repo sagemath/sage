@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Alphabet
 
@@ -15,11 +14,11 @@ EXAMPLES::
     {'a', 'b'}
     sage: build_alphabet([0,1,2])
     {0, 1, 2}
-    sage: build_alphabet(name="PP")
+    sage: build_alphabet(name='PP')
     Positive integers
-    sage: build_alphabet(name="NN")
+    sage: build_alphabet(name='NN')
     Non negative integers
-    sage: build_alphabet(name="lower")
+    sage: build_alphabet(name='lower')
     {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
 """
 # ****************************************************************************
@@ -32,15 +31,14 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
+import collections.abc
+
 from sage.categories.sets_cat import Sets
-
-from sage.sets.totally_ordered_finite_set import TotallyOrderedFiniteSet
-from sage.sets.family import Family
-
-from sage.rings.integer import Integer
 from sage.rings.infinity import Infinity
-
+from sage.rings.integer import Integer
+from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.sets.totally_ordered_finite_set import TotallyOrderedFiniteSet
 
 
 set_of_letters = {
@@ -82,8 +80,8 @@ def build_alphabet(data=None, names=None, name=None):
       punctuation'`` represents the union of the two alphabets ``'lower'`` and
       ``'punctuation'``.
 
-      Alternatively, ``name`` can be set to ``"positive integers"`` (or
-      ``"PP"``) or ``"natural numbers"`` (or ``"NN"``).
+      Alternatively, ``name`` can be set to ``'positive integers'`` (or
+      ``'PP'``) or ``'natural numbers'`` (or ``'NN'``).
 
       ``name`` cannot be combined with ``data``.
 
@@ -126,7 +124,7 @@ def build_alphabet(data=None, names=None, name=None):
 
         sage: build_alphabet(name="positive integers")
         Positive integers
-        sage: build_alphabet(name="PP")
+        sage: build_alphabet(name='PP')
         Positive integers
         sage: build_alphabet(name="natural numbers")
         Non negative integers
@@ -138,9 +136,9 @@ def build_alphabet(data=None, names=None, name=None):
     'decimal', 'hexadecimal', 'radix64' which refer to standard set of
     characters. Theses names may be combined by separating them by a space::
 
-        sage: build_alphabet(name="lower")
+        sage: build_alphabet(name='lower')
         {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
-        sage: build_alphabet(name="hexadecimal")
+        sage: build_alphabet(name='hexadecimal')
         {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'}
         sage: build_alphabet(name="decimal punctuation")
         {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ' ', ',', '.', ';', ':', '!', '?'}
@@ -185,7 +183,7 @@ def build_alphabet(data=None, names=None, name=None):
 
     TESTS::
 
-        sage: Alphabet(3, name="punctuation")
+        sage: Alphabet(3, name='punctuation')
         Traceback (most recent call last):
         ...
         ValueError: name cannot be specified with any other argument
@@ -193,15 +191,15 @@ def build_alphabet(data=None, names=None, name=None):
         Traceback (most recent call last):
         ...
         ValueError: invalid value for names
-        sage: Alphabet(8, x)                                                            # optional - sage.symbolic
+        sage: Alphabet(8, x)                                                            # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: invalid value for names
-        sage: Alphabet(name=x, names="punctuation")                                     # optional - sage.symbolic
+        sage: Alphabet(name=x, names='punctuation')                                     # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: name cannot be specified with any other argument
-        sage: Alphabet(x)                                                               # optional - sage.symbolic
+        sage: Alphabet(x)                                                               # needs sage.symbolic
         Traceback (most recent call last):
         ...
         ValueError: unable to construct an alphabet from the given parameters
@@ -222,7 +220,7 @@ def build_alphabet(data=None, names=None, name=None):
             return IntegerRange(Integer(data))
         if isinstance(names, str):
             return TotallyOrderedFiniteSet([names + '%d' % i for i in range(data)])
-        if len(names) == data:
+        if isinstance(names, collections.abc.Sequence) and len(names) == data:
             return TotallyOrderedFiniteSet(names)
         raise ValueError("invalid value for names")
 

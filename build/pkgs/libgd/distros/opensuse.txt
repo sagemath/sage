@@ -1,2 +1,2 @@
 gd
-"pkgconfig(gdlib)"
+pkgconfig(gdlib)

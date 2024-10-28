@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Standalone LaTeX Document class and TikzPicture
 
@@ -174,7 +173,7 @@ Instead, you may save a pdf of the tikzpicture into a file of your choice
 
 Opening the image in a viewer can be turned off::
 
-    sage: _ = t1.pdf(view=False)                # long time (2s), optional - latex      # needs sage.geometry.polyhedron sage.plot
+    sage: _ = t1.pdf(view=False)                # long time (2s), optional - latex, needs sage.geometry.polyhedron sage.plot
 
 The same can be done with png format (translated from pdf with convert
 command which needs the installation of imagemagick)::
@@ -248,21 +247,21 @@ class Standalone(SageObject):
 
     INPUT:
 
-    - ``content`` -- string, the content to be added in the document
+    - ``content`` -- string; the content to be added in the document
       between lines ``r'\begin{document}'`` and ``r'\end{document}'``
-    - ``document_class_options`` -- list of strings (default: ``[]``),
+    - ``document_class_options`` -- list of strings (default: ``[]``);
       latex document class standalone options. Such options appear on the
       line ``\documentclass[...]{standalone}`` between the brackets.
-    - ``standalone_config`` -- list of strings (default: ``[]``),
+    - ``standalone_config`` -- list of strings (default: ``[]``);
       standalone configuration options. Such options are defined with
-      ``\standaloneconfig{...}``
-    - ``usepackage`` -- list of strings (default: ``[]``), latex packages.
-    - ``macros`` -- list of strings (default: ``[]``), stuff you need for the picture.
-    - ``use_sage_preamble`` -- bool (default: ``False``), whether to include sage
+      ``\standaloneconfig{...}``.
+    - ``usepackage`` -- list of strings (default: ``[]``); latex packages
+    - ``macros`` -- list of strings (default: ``[]``); stuff you need for the picture
+    - ``use_sage_preamble`` -- boolean (default: ``False``); whether to include sage
       latex preamble and sage latex macros, that is, the content of
       :func:`sage.misc.latex.extra_preamble()`,
       :func:`sage.misc.latex.extra_macros()` and
-      :func:`sage.misc.latex_macros.sage_latex_macros()`.
+      :func:`sage.misc.latex_macros.sage_latex_macros()`
 
     EXAMPLES::
 
@@ -288,11 +287,10 @@ class Standalone(SageObject):
         \section{Intro}
         Test
         \end{document}
-
     """
     def __init__(self, content, document_class_options=None,
-            standalone_config=None, usepackage=None, macros=None,
-            use_sage_preamble=False):
+                 standalone_config=None, usepackage=None, macros=None,
+                 use_sage_preamble=False):
         r"""
         See :class:`Standalone` for full information.
 
@@ -338,10 +336,10 @@ class Standalone(SageObject):
             lines.append(r"\documentclass[{}]{{standalone}}".format(options))
         else:
             lines.append(r"\documentclass{standalone}")
-        for config in self._standalone_config:
-            lines.append(r"\standaloneconfig{{{}}}".format(config))
-        for package in self._usepackage:
-            lines.append(r"\usepackage{{{}}}".format(package))
+        lines.extend(r"\standaloneconfig{{{}}}".format(config)
+                     for config in self._standalone_config)
+        lines.extend(r"\usepackage{{{}}}".format(package)
+                     for package in self._usepackage)
         lines.extend(self._macros)
         return lines
 
@@ -402,7 +400,6 @@ class Standalone(SageObject):
             \draw(19,-.5) -- (19,.5);
             \end{tikzpicture}
             \end{document}
-
         """
         lines = self._latex_file_header_lines()
         lines.append(r"\begin{document}")
@@ -422,7 +419,7 @@ class Standalone(SageObject):
 
     def _rich_repr_(self, display_manager, **kwds):
         r"""
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -485,7 +482,7 @@ class Standalone(SageObject):
 
     def __str__(self):
         r"""
-        Return the complete string of the standalone document class file
+        Return the complete string of the standalone document class file.
 
         EXAMPLES::
 
@@ -514,7 +511,7 @@ class Standalone(SageObject):
 
     def content(self):
         r"""
-        Return the content of the standalone document class file
+        Return the content of the standalone document class file.
 
         EXAMPLES::
 
@@ -537,7 +534,7 @@ class Standalone(SageObject):
 
     def add_document_class_option(self, option):
         r"""
-        Add a document class option
+        Add a document class option.
 
         INPUT:
 
@@ -558,7 +555,7 @@ class Standalone(SageObject):
 
     def add_standalone_config(self, config):
         r"""
-        Add a standalone config
+        Add a standalone config.
 
         INPUT:
 
@@ -575,13 +572,12 @@ class Standalone(SageObject):
             \begin{document}
             Hello World
             \end{document}
-
         """
         self._standalone_config.append(config)
 
     def add_usepackage(self, package):
         r"""
-        Add a ``usepackage`` line
+        Add a ``usepackage`` line.
 
         INPUT:
 
@@ -598,13 +594,12 @@ class Standalone(SageObject):
             \begin{document}
             Hello World
             \end{document}
-
         """
         self._usepackage.append(package)
 
     def add_macro(self, macro):
         r"""
-        Add a macro
+        Add a macro.
 
         INPUT:
 
@@ -621,7 +616,6 @@ class Standalone(SageObject):
             \begin{document}
             Hello World
             \end{document}
-
         """
         self._macros.append(macro)
 
@@ -631,20 +625,18 @@ class Standalone(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string (default: ``None``), the output filename.
+        - ``filename`` -- string (default: ``None``); the output filename.
           If ``None``, it saves the file in a temporary directory.
 
-        - ``view`` -- bool (default:``True``), whether to open the file in a
+        - ``view`` -- boolean (default: ``True``); whether to open the file in a
           pdf viewer. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
-        - ``program`` -- string (default:``None``) ``'pdflatex'`` or
+        - ``program`` -- string (default: ``None``); ``'pdflatex'`` or
           ``'lualatex'``. If ``None``, it uses ``'lualatex'`` if it is
           available, otherwise ``'pdflatex'``.
 
-        OUTPUT:
-
-        string, path to pdf file
+        OUTPUT: string, path to pdf file
 
         EXAMPLES::
 
@@ -684,8 +676,7 @@ class Standalone(SageObject):
             Traceback (most recent call last):
             ...
             CalledProcessError: Command '['...latex', '-interaction=nonstopmode',
-            'tikz_...tex']' returned non-zero exit status 1.
-
+            'tikz_...tex']' returned nonzero exit status 1.
         """
         from sage.features.latex import lualatex, pdflatex
 
@@ -720,7 +711,7 @@ class Standalone(SageObject):
         if result.returncode != 0:
             print("Command \n"
                   "   '{}'\n"
-                  "returned non-zero exit status {}.\n"
+                  "returned nonzero exit status {}.\n"
                   "Here is the content of the stderr:{}\n"
                   "Here is the content of the stdout:"
                   "{}\n".format(' '.join(result.args),
@@ -757,18 +748,16 @@ class Standalone(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string (default: ``None``), the output filename.
-          If ``None``, it saves the file in a temporary directory.
+        - ``filename`` -- string (default: ``None``); the output filename.
+          If ``None``, it saves the file in a temporary directory
 
-        - ``view`` -- bool (default:``True``), whether to open the file in a
+        - ``view`` -- boolean (default: ``True``); whether to open the file in a
           dvi viewer. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
-        - ``program`` -- string (default:``'latex'``), ``'latex'``
+        - ``program`` -- string (default: ``'latex'``); ``'latex'``
 
-        OUTPUT:
-
-        string, path to dvi file
+        OUTPUT: string, path to dvi file
 
         EXAMPLES::
 
@@ -808,16 +797,15 @@ class Standalone(SageObject):
             Traceback (most recent call last):
             ...
             CalledProcessError: Command '['latex', '-interaction=nonstopmode',
-            'tikz_...tex']' returned non-zero exit status 1.
+            'tikz_...tex']' returned nonzero exit status 1.
 
         We test the behavior when a wrong value is provided::
 
             sage: t = Standalone('Hello World')
-            sage: _ = t.dvi(program='lates')
+            sage: _ = t.dvi(program='farniente')
             Traceback (most recent call last):
             ...
-            ValueError: program(=lates) should be latex
-
+            ValueError: program(=farniente) should be latex
         """
         from sage.features.latex import latex
 
@@ -847,7 +835,7 @@ class Standalone(SageObject):
         if result.returncode != 0:
             print("Command \n"
                   "   '{}'\n"
-                  "returned non-zero exit status {}.\n"
+                  "returned nonzero exit status {}.\n"
                   "Here is the content of the stderr:{}\n"
                   "Here is the content of the stdout:"
                   "{}\n".format(' '.join(result.args),
@@ -884,19 +872,17 @@ class Standalone(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string (default:``None``), the output filename.
+        - ``filename`` -- string (default: ``None``); the output filename.
           If ``None``, it saves the file in a temporary directory.
 
-        - ``density`` -- integer, (default: ``150``), horizontal and vertical
+        - ``density`` -- integer (default: ``150``); horizontal and vertical
           density of the image
 
-        - ``view`` -- bool (default:``True``), whether to open the file in a
+        - ``view`` -- boolean (default: ``True``); whether to open the file in a
           png viewer. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
-        OUTPUT:
-
-        string, path to png file
+        OUTPUT: string, path to png file
 
         EXAMPLES::
 
@@ -918,7 +904,6 @@ class Standalone(SageObject):
             sage: path_to_file = t.png(filename)    # long time (1s)    # optional - latex imagemagick
             sage: path_to_file[-4:]                 # long time (fast)  # optional - latex imagemagick
             '.png'
-
         """
         from sage.features.imagemagick import ImageMagick
         ImageMagick().require()
@@ -937,7 +922,7 @@ class Standalone(SageObject):
         if result.returncode != 0:
             print("Command \n"
                   "   '{}'\n"
-                  "returned non-zero exit status {}.\n"
+                  "returned nonzero exit status {}.\n"
                   "Here is the content of the stderr:{}\n"
                   "Here is the content of the stdout:"
                   "{}\n".format(' '.join(result.args),
@@ -973,19 +958,17 @@ class Standalone(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string (default:``None``), the output filename.
+        - ``filename`` -- string (default: ``None``); the output filename.
           If ``None``, it saves the file in a temporary directory.
 
-        - ``view`` -- bool (default:``True``), whether to open the file in
+        - ``view`` -- boolean (default: ``True``); whether to open the file in
           a browser. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
-        - ``program`` -- string (default:``'pdftocairo'``) ``'pdftocairo'`` or
-          ``'pdf2svg'``.
+        - ``program`` -- string (default: ``'pdftocairo'``); ``'pdftocairo'`` or
+          ``'pdf2svg'``
 
-        OUTPUT:
-
-        string, path to svg file
+        OUTPUT: string, path to svg file
 
         EXAMPLES::
 
@@ -1012,7 +995,6 @@ class Standalone(SageObject):
             ....:                      program='pdftocairo')
             sage: path_to_file[-4:]                         # long time (fast)  # optional - latex pdftocairo
             '.svg'
-
         """
         # set the temporary filenames
         temp_filename_pdf = self.pdf(filename=None, view=False)
@@ -1030,7 +1012,7 @@ class Standalone(SageObject):
             cmd = ['pdf2svg', temp_filename_pdf, temp_filename_svg]
         else:
             raise ValueError("program(={}) should be 'pdftocairo' or"
-                    " 'pdf2svg'".format(program))
+                             " 'pdf2svg'".format(program))
 
         # convert to svg
         result = run(cmd, capture_output=True, text=True)
@@ -1039,7 +1021,7 @@ class Standalone(SageObject):
         if result.returncode != 0:
             print("Command \n"
                   "   '{}'\n"
-                  "returned non-zero exit status {}.\n"
+                  "returned nonzero exit status {}.\n"
                   "Here is the content of the stderr:{}\n"
                   "Here is the content of the stdout:"
                   "{}\n".format(' '.join(result.args),
@@ -1075,19 +1057,17 @@ class Standalone(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string (default:``None``), the output filename.
-          If ``None``, it saves the file in a temporary directory.
+        - ``filename`` -- string (default: ``None``); the output filename.
+          If ``None``, it saves the file in a temporary directory
 
-        - ``view`` -- bool (default:``True``), whether to open the file in
+        - ``view`` -- boolean (default: ``True``); whether to open the file in
           a browser. This option is ignored and automatically set to
           ``False`` if ``filename`` is not ``None``.
 
-        - ``program`` -- string (default:``'dvips'``),
+        - ``program`` -- string (default: ``'dvips'``);
           ``'pdftocairo'`` or ``'dvips'``
 
-        OUTPUT:
-
-        string, path to eps file
+        OUTPUT: string, path to eps file
 
         EXAMPLES::
 
@@ -1124,7 +1104,6 @@ class Standalone(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: program(=convert) should be 'pdftocairo' or 'dvips'
-
         """
 
         if program == 'pdftocairo':
@@ -1147,7 +1126,7 @@ class Standalone(SageObject):
             cmd = ['dvips', '-E', '-o', temp_filename_eps, temp_filename_dvi]
         else:
             raise ValueError("program(={}) should be 'pdftocairo' or"
-                    " 'dvips'".format(program))
+                             " 'dvips'".format(program))
 
         # convert to eps
         result = run(cmd, capture_output=True, text=True)
@@ -1156,7 +1135,7 @@ class Standalone(SageObject):
         if result.returncode != 0:
             print("Command \n"
                   "   '{}'\n"
-                  "returned non-zero exit status {}.\n"
+                  "returned nonzero exit status {}.\n"
                   "Here is the content of the stderr:{}\n"
                   "Here is the content of the stdout:"
                   "{}\n".format(' '.join(result.args),
@@ -1192,15 +1171,13 @@ class Standalone(SageObject):
 
         INPUT:
 
-        - ``filename`` -- string (default:``None``), the output filename.
+        - ``filename`` -- string (default: ``None``); the output filename.
           If ``None``, it saves the file in a temporary directory.
-        - ``content_only`` -- bool (default:``False``) whether to include
+        - ``content_only`` -- boolean (default: ``False``); whether to include
           the header latex part. If ``True``, it prints only the
           content to the file.
 
-        OUTPUT:
-
-        string, path to tex file
+        OUTPUT: string, path to tex file
 
         EXAMPLES::
 
@@ -1224,7 +1201,6 @@ class Standalone(SageObject):
             sage: path_to_file = t.tex(filename)
             sage: path_to_file[-4:]
             '.tex'
-
         """
         if filename is None:
             from sage.misc.temporary_file import tmp_filename
@@ -1269,9 +1245,7 @@ class Standalone(SageObject):
 
         All other keyword arguments will be passed to the plotter.
 
-        OUTPUT:
-
-        - ``None``
+        OUTPUT: none
 
         .. NOTE::
 
@@ -1290,7 +1264,6 @@ class Standalone(SageObject):
             sage: t.save(filename)                          # long time (1s)    # optional - latex
             sage: filename = tmp_filename('temp','.eps')
             sage: t.save(filename)                          # long time (1s)    # optional - latex dvips
-
         """
         ext = os.path.splitext(filename)[1].lower()
         if ext == '' or ext == '.sobj':
@@ -1309,6 +1282,7 @@ class Standalone(SageObject):
             raise ValueError("allowed file extensions for images are "
                              ".pdf, .png, .svg, .eps, .dvi!")
 
+
 class TikzPicture(Standalone):
     r"""
     A TikzPicture embedded in a LaTeX standalone document class.
@@ -1317,18 +1291,18 @@ class TikzPicture(Standalone):
 
     - ``content`` -- string, tikzpicture code starting with ``r'\begin{tikzpicture}'``
       and ending with ``r'\end{tikzpicture}'``
-    - ``standalone_config`` -- list of strings (default: ``[]``),
-      latex document class standalone configuration options.
-    - ``usepackage`` -- list of strings (default: ``[]``), latex
-      packages.
-    - ``usetikzlibrary`` -- list of strings (default: ``[]``), tikz libraries
-      to use.
-    - ``macros`` -- list of strings (default: ``[]``), stuff you need for the picture.
-    - ``use_sage_preamble`` -- bool (default: ``False``), whether to include sage
+    - ``standalone_config`` -- list of strings (default: ``[]``);
+      latex document class standalone configuration options
+    - ``usepackage`` -- list of strings (default: ``[]``); latex
+      packages
+    - ``usetikzlibrary`` -- list of strings (default: ``[]``); tikz libraries
+      to use
+    - ``macros`` -- list of strings (default: ``[]``); stuff you need for the picture
+    - ``use_sage_preamble`` -- boolean (default: ``False``); whether to include sage
       latex preamble and sage latex macros, that is, the content of
       :func:`sage.misc.latex.extra_preamble()`,
       :func:`sage.misc.latex.extra_macros()` and
-      :func:`sage.misc.latex_macros.sage_latex_macros()`.
+      :func:`sage.misc.latex_macros.sage_latex_macros()`
 
     EXAMPLES:
 
@@ -1422,7 +1396,7 @@ class TikzPicture(Standalone):
 
     def add_usetikzlibrary(self, library):
         r"""
-        Add a ``usetikzlibrary`` line
+        Add a ``usetikzlibrary`` line.
 
         INPUT:
 
@@ -1442,7 +1416,6 @@ class TikzPicture(Standalone):
             \draw (0,0) -- (1,1);
             \end{tikzpicture}
             \end{document}
-
         """
         self._usetikzlibrary.append(library)
 
@@ -1459,9 +1432,9 @@ class TikzPicture(Standalone):
         INPUT:
 
         - ``dotdata`` -- dot format string
-        - ``prog`` -- string (default: ``'dot'``) the program used for the
+        - ``prog`` -- string (default: ``'dot'``); the program used for the
           layout corresponding to one of the software of the graphviz
-          suite: 'dot', 'neato', 'twopi', 'circo' or 'fdp'.
+          suite: ``'dot'``, ``'neato'``, ``'twopi'``, ``'circo'`` or ``'fdp'``
 
         EXAMPLES::
 
@@ -1494,7 +1467,6 @@ class TikzPicture(Standalone):
             sage: dotdata = G.graphviz_string(labels='latex')
             sage: tikz = TikzPicture.from_dot_string(dotdata)   # long time (3s), optional - dot2tex graphviz
             sage: _ = tikz.pdf()      # not tested
-
         """
         from sage.features import PythonModule
         PythonModule("dot2tex").require()
@@ -1531,23 +1503,23 @@ class TikzPicture(Standalone):
         INPUT:
 
         - ``graph`` -- graph
-        - ``merge_multiedges`` -- bool (default: ``True``), if the graph
+        - ``merge_multiedges`` -- boolean (default: ``True``); if the graph
           has multiple edges, whether to merge the multiedges into one
           single edge
-        - ``merge_label_function`` -- function (default:``tuple``), a
+        - ``merge_label_function`` -- function (default: ``tuple``); a
           function to apply to each list of labels to be merged. It is
           ignored if ``merge_multiedges`` is not ``True`` or if the graph
           has no multiple edges.
 
         Other inputs are used for latex drawing with dot2tex and graphviz:
 
-        - ``prog`` -- string (default: ``'dot'``) the program used for the
+        - ``prog`` -- string (default: ``'dot'``); the program used for the
           layout corresponding to one of the software of the graphviz
-          suite: 'dot', 'neato', 'twopi', 'circo' or 'fdp'.
-        - ``edge_labels`` -- bool (default: ``True``)
-        - ``color_by_label`` -- bool (default: ``False``)
+          suite: ``'dot'``, ``'neato'``, ``'twopi'``, ``'circo'`` or ``'fdp'``
+        - ``edge_labels`` -- boolean (default: ``True``)
+        - ``color_by_label`` -- boolean (default: ``False``)
         - ``rankdir`` -- string (default: ``'down'``)
-        - ``subgraph_clusters`` -- (default: []) a list of lists of
+        - ``subgraph_clusters`` -- (default: ``[]``) a list of lists of
           vertices, if supported by the layout engine, nodes belonging to
           the same cluster subgraph are drawn together, with the entire
           drawing of the cluster contained within a bounding rectangle.
@@ -1596,7 +1568,7 @@ class TikzPicture(Standalone):
             sage: _ = tikz.pdf()      # not tested
 
         Using subgraphs clusters (broken when using labels, see
-        :trac:`22070`)::
+        :issue:`22070`)::
 
             sage: S = FiniteSetMaps(5)
             sage: I = S((0,1,2,3,4))
@@ -1633,7 +1605,6 @@ class TikzPicture(Standalone):
             ....:     return options
             sage: tikz = TikzPicture.from_graph(G, edge_options=edge_options)   # optional - dot2tex graphviz
             sage: _ = tikz.pdf()      # not tested
-
         """
         from sage.features.latex import pdflatex
         pdflatex().require()
@@ -1656,8 +1627,8 @@ class TikzPicture(Standalone):
                 from sage.graphs.graph import Graph
                 graph = Graph(edges, format='list_of_edges', loops=loops)
 
-        options = dict(format='dot2tex', edge_labels=True,
-                       color_by_label=False, prog='dot', rankdir='down')
+        options = {'format': 'dot2tex', 'edge_labels': True,
+                   'color_by_label': False, 'prog': 'dot', 'rankdir': 'down'}
         options.update(kwds)
 
         graph.latex_options().set_options(**options)
@@ -1667,7 +1638,7 @@ class TikzPicture(Standalone):
     @classmethod
     @experimental(issue_number=20343)
     def from_graph_with_pos(cls, graph, scale=1, merge_multiedges=True,
-            merge_label_function=tuple):
+                            merge_label_function=tuple):
         r"""
         Convert a graph with positions defined for vertices to a tikzpicture.
 
@@ -1679,11 +1650,11 @@ class TikzPicture(Standalone):
         INPUT:
 
         - ``graph`` -- graph (with predefined positions)
-        - ``scale`` -- number (default:``1``), tikzpicture scale
-        - ``merge_multiedges`` -- bool (default: ``True``), if the graph
+        - ``scale`` -- number (default: ``1``); tikzpicture scale
+        - ``merge_multiedges`` -- boolean (default: ``True``); if the graph
           has multiple edges, whether to merge the multiedges into one
           single edge
-        - ``merge_label_function`` -- function (default:``tuple``), a
+        - ``merge_label_function`` -- function (default: ``tuple``); a
           function to apply to each list of labels to be merged. It is
           ignored if ``merge_multiedges`` is not ``True`` or if the graph
           has no multiple edges.
@@ -1813,11 +1784,11 @@ class TikzPicture(Standalone):
         INPUT:
 
         - ``poset`` -- poset
-        - ``prog`` -- string (default: ``'dot'``) the program used for the
+        - ``prog`` -- string (default: ``'dot'``); the program used for the
           layout corresponding to one of the software of the graphviz
-          suite: 'dot', 'neato', 'twopi', 'circo' or 'fdp'.
-        - ``edge_labels`` -- bool (default: ``True``)
-        - ``color_by_label`` -- bool (default: ``False``)
+          suite: ``'dot'``, ``'neato'``, ``'twopi'``, ``'circo'`` or ``'fdp'``
+        - ``edge_labels`` -- boolean (default: ``True``)
+        - ``color_by_label`` -- boolean (default: ``False``)
         - ``rankdir`` -- string (default: ``'down'``)
 
         EXAMPLES::

@@ -1,6 +1,6 @@
 # We can probably get away with only having the mpz_binary_searches in here.
 # I'm too scared to get rid of it at 2am though.
-cdef Py_ssize_t binary_search(Py_ssize_t* v, Py_ssize_t n, Py_ssize_t x, Py_ssize_t* ins):
+cdef Py_ssize_t binary_search(Py_ssize_t* v, Py_ssize_t n, Py_ssize_t x, Py_ssize_t* ins) noexcept:
     """
     Find the position of the integer x in the array v, which has length n.
 
@@ -38,7 +38,7 @@ cdef Py_ssize_t binary_search(Py_ssize_t* v, Py_ssize_t n, Py_ssize_t x, Py_ssiz
     return -1
 
 
-cdef Py_ssize_t binary_search0(Py_ssize_t* v, Py_ssize_t n, Py_ssize_t x):
+cdef Py_ssize_t binary_search0(Py_ssize_t* v, Py_ssize_t n, Py_ssize_t x) noexcept:
     """
     Find the position of the int x in the array v, which has length n.
 

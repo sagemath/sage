@@ -57,7 +57,7 @@ def get_systems(cmd):
 
     INPUT:
 
-    - ``cmd`` -- a string to run
+    - ``cmd`` -- string to run
 
     .. WARNING::
 
@@ -71,9 +71,9 @@ def get_systems(cmd):
         sage: from sage.misc.citation import get_systems
         sage: get_systems('print("hello")')  # random (may print warning)
         []
-        sage: integrate(x^2, x)  # Priming coercion model
+        sage: integrate(x^2, x)  # Priming coercion model                               # needs sage.symbolic
         1/3*x^3
-        sage: get_systems('integrate(x^2, x)')
+        sage: get_systems('integrate(x^2, x)')                                          # needs sage.symbolic
         ['Maxima', 'ginac']
         sage: R.<x,y,z> = QQ[]
         sage: I = R.ideal(x^2+y^2, z^2+y)
@@ -143,7 +143,7 @@ cdef extern from *:
         """
 
 
-cpdef inline bint cython_profile_enabled():
+cpdef inline bint cython_profile_enabled() noexcept:
     """
     Return whether Cython profiling is enabled.
 

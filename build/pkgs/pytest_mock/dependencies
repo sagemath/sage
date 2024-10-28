@@ -1,4 +1,4 @@
-$(PYTHON) pytest packaging attrs pluggy tomli py pyparsing | $(PYTHON_TOOLCHAIN)
+pytest | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

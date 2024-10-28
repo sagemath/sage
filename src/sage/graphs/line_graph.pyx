@@ -22,7 +22,7 @@ Author:
 
 - David Coudert (10-2018), use maximal cliques iterator in :meth:`root_graph`,
   and use :meth:`root_graph` instead of forbidden subgraph search in
-  :meth:`is_line_graph` (:trac:`26444`).
+  :meth:`is_line_graph` (:issue:`26444`).
 
 Definition
 -----------
@@ -134,7 +134,7 @@ def is_line_graph(g, certificate=False):
 
     INPUT:
 
-    - ``certificate`` (boolean) -- whether to return a certificate along with
+    - ``certificate`` -- boolean; whether to return a certificate along with
       the boolean result. Here is what happens when ``certificate = True``:
 
       - If the graph is not a line graph, the method returns a pair ``(b,
@@ -206,7 +206,7 @@ def is_line_graph(g, certificate=False):
         sage: g.line_graph().is_isomorphic(gl)                                          # needs sage.modules
         True
 
-    Verify that :trac:`29740` is fixed::
+    Verify that :issue:`29740` is fixed::
 
         sage: g = Graph('O{e[{}^~z`MDZBZBkXzE^')
         sage: g.is_line_graph()
@@ -232,15 +232,13 @@ def is_line_graph(g, certificate=False):
             R, isom = root_graph(g)
             if certificate:
                 return True, R, isom
-            else:
-                return True
+            return True
         except ValueError as VE:
             if str(VE) == "this graph is not a line graph !":
                 # g is not a line graph
                 if certificate:
                     return False, get_certificate(g)
-                else:
-                    return False
+                return False
             raise VE
 
     # g is not connected, so we apply the above procedure to each connected
@@ -256,15 +254,13 @@ def is_line_graph(g, certificate=False):
                 # gg is not a line graph
                 if certificate:
                     return False, get_certificate(gg)
-                else:
-                    return False
+                return False
             raise VE
 
     if certificate:
         _, isom = g.is_isomorphic(R.line_graph(labels=False), certificate=True)
         return True, R, isom
-    else:
-        return True
+    return True
 
 
 def line_graph(g, labels=True):
@@ -297,12 +293,12 @@ def line_graph(g, labels=True):
 
     .. SEEALSO::
 
-        - The :mod:`line_graph <sage.graphs.line_graph>` module.
+        - The :mod:`line_graph <sage.graphs.line_graph>` module
 
         - :meth:`~sage.graphs.graph_generators.GraphGenerators.line_graph_forbidden_subgraphs`
-          -- the forbidden subgraphs of a line graph.
+          -- the forbidden subgraphs of a line graph
 
-        - :meth:`~Graph.is_line_graph` -- tests whether a graph is a line graph.
+        - :meth:`~Graph.is_line_graph` -- tests whether a graph is a line graph
 
     EXAMPLES::
 
@@ -344,7 +340,7 @@ def line_graph(g, labels=True):
 
     TESTS:
 
-    :trac:`13787`::
+    :issue:`13787`::
 
         sage: g = graphs.KneserGraph(7,1)
         sage: C = graphs.CompleteGraph(7)
@@ -366,54 +362,52 @@ def line_graph(g, labels=True):
             G.add_edges((e, f) for e in g.incoming_edge_iterator(v, labels=labels)
                         for f in g.outgoing_edge_iterator(v, labels=labels))
         return G
-    else:
-        from sage.graphs.graph import Graph
-        G = Graph()
 
-        # We must sort the edges' endpoints so that (1,2,None) is seen as the
-        # same edge as (2,1,None).
-        #
-        # We do so by comparing hashes, just in case all the natural order (<)
-        # on vertices would not be a total order (for instance when vertices are
-        # sets). If two adjacent vertices have the same hash, then we store the
-        # pair in the dictionary of conflicts
+    from sage.graphs.graph import Graph
+    G = Graph()
 
-        # 1) List of vertices in the line graph
+    # We must sort the edges' endpoints so that (1,2,None) is seen as the
+    # same edge as (2,1,None).
+    #
+    # We do so by comparing hashes, just in case all the natural order (<)
+    # on vertices would not be a total order (for instance when vertices are
+    # sets). If two adjacent vertices have the same hash, then we store the
+    # pair in the dictionary of conflicts
 
-        for e in g.edge_iterator(labels=labels):
+    # 1) List of vertices in the line graph
+    for e in g.edge_iterator(labels=labels):
+        if hash(e[0]) < hash(e[1]):
+            elist.append(e)
+        elif hash(e[0]) > hash(e[1]):
+            elist.append((e[1], e[0]) + e[2:])
+        else:
+            # Settle the conflict arbitrarily
+            conflicts[e] = e
+            conflicts[(e[1], e[0]) + e[2:]] = e
+            elist.append(e)
+
+    G.add_vertices(elist)
+
+    # 2) adjacencies in the line graph
+    for v in g:
+        elist = []
+
+        # Add the edge to the list, according to hashes, as previously
+        for e in g.edge_iterator(v, labels=labels):
             if hash(e[0]) < hash(e[1]):
                 elist.append(e)
             elif hash(e[0]) > hash(e[1]):
                 elist.append((e[1], e[0]) + e[2:])
             else:
-                # Settle the conflict arbitrarily
-                conflicts[e] = e
-                conflicts[(e[1], e[0]) + e[2:]] = e
-                elist.append(e)
+                elist.append(conflicts[e])
 
-        G.add_vertices(elist)
+        # All pairs of elements in elist are edges of the line graph
+        while elist:
+            x = elist.pop()
+            for y in elist:
+                G.add_edge(x, y)
 
-        # 2) adjacencies in the line graph
-        for v in g:
-            elist = []
-
-            # Add the edge to the list, according to hashes, as previously
-            for e in g.edge_iterator(v, labels=labels):
-                if hash(e[0]) < hash(e[1]):
-                    elist.append(e)
-                elif hash(e[0]) > hash(e[1]):
-                    elist.append((e[1], e[0]) + e[2:])
-                else:
-                    elist.append(conflicts[e])
-
-            # All pairs of elements in elist are edges of the
-            # line graph
-            while elist:
-                x = elist.pop()
-                for y in elist:
-                    G.add_edge(x, y)
-
-        return G
+    return G
 
 
 def root_graph(g, verbose=False):
@@ -427,7 +421,7 @@ def root_graph(g, verbose=False):
     - ``g`` -- a graph
 
     - ``verbose`` -- boolean (default: ``False``); display some information
-      about what is happening inside of the algorithm.
+      about what is happening inside of the algorithm
 
     .. WARNING::
 
@@ -629,5 +623,4 @@ def root_graph(g, verbose=False):
     is_isom, isom = g.is_isomorphic(R.line_graph(labels=False), certificate=True)
     if is_isom:
         return R, isom
-    else:
-        raise ValueError(not_line_graph)
+    raise ValueError(not_line_graph)

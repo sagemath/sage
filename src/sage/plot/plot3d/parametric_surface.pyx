@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.symbolic
 r"""
 Parametric surface
 
@@ -41,18 +41,17 @@ EXAMPLES::
     sphinx_plot(MoebiusStrip(1,.2))
 
 
-
 By default, the surface is colored with one single color. ::
 
     sage: P = ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)),
-    ....:  color="red")
+    ....:  color='red')
     sage: P.show()
 
 .. PLOT::
 
     from sage.plot.plot3d.parametric_surface import ParametricSurface
     def f(x,y): return x+y, sin(x)*sin(y), x*y
-    sphinx_plot(ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)), color="red"))
+    sphinx_plot(ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)), color='red'))
 
 One can instead provide a coloring function and a colormap::
 
@@ -122,14 +121,14 @@ from math import cos, sin
 from sage.rings.real_double import RDF
 
 from sage.plot.colors import check_color_data
-from .base import RenderParams
-from .transform cimport point_c, face_c
+from sage.plot.plot3d.base import RenderParams
+from sage.plot.plot3d.transform cimport point_c, face_c
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 
 include "point_c.pxi"
 
 
-cdef inline bint smash_edge(point_c* vs, face_c* f, int a, int b):
+cdef inline bint smash_edge(point_c* vs, face_c* f, int a, int b) noexcept:
     if point_c_eq(vs[f.vertices[a]], vs[f.vertices[b]]):
         f.vertices[b] = f.vertices[a]
         f.n -= 1
@@ -146,15 +145,15 @@ cdef class ParametricSurface(IndexFaceSet):
 
     INPUT:
 
-    - ``f`` - (default: ``None``) The defining function. Either a tuple of
+    - ``f`` -- (default: ``None``) the defining function. Either a tuple of
       three functions, or a single function which returns a tuple, taking
       two python floats as input. To subclass, pass ``None`` for ``f`` and
       override ``eval_c`` or ``eval`` instead.
 
-    - ``domain`` - (default: ``None``) A tuple of two lists, defining the
+    - ``domain`` -- (default: ``None``) a tuple of two lists, defining the
       grid of `u,v` values. If ``None``, this will be calculated automatically.
 
-    - ``color`` - (default: ``None``) A pair `(h,c)` where `h` is
+    - ``color`` -- (default: ``None``) a pair `(h,c)` where `h` is
       a function with values in `[0,1]` and `c` is a colormap. The
       color of a point `p` is then defined as the composition
       `c(h(p))`
@@ -190,7 +189,7 @@ cdef class ParametricSurface(IndexFaceSet):
         ....:     return (x,y,z)
         sage: v = srange(float(0),float((3/2)*pi),float(0.1))
         sage: S = ParametricSurface(f, (srange(float(0),float(pi),float(0.1)),
-        ....:                srange(float(-1),float(1),float(0.1))), color="blue")
+        ....:                srange(float(-1),float(1),float(0.1))), color='blue')
         sage: show(S)
 
     .. PLOT::
@@ -204,7 +203,7 @@ cdef class ParametricSurface(IndexFaceSet):
             return (x,y,z)
         from sage.plot.plot3d.parametric_surface import ParametricSurface
         v = srange(float(0),float((3/2)*pi),float(0.1))
-        sphinx_plot(ParametricSurface(f, (srange(float(0),float(pi),float(0.1)),srange(float(-1),float(1),float(0.1))), color="blue"))
+        sphinx_plot(ParametricSurface(f, (srange(float(0),float(pi),float(0.1)),srange(float(-1),float(1),float(0.1))), color='blue'))
 
     A colored example using the ``color`` keyword::
 
@@ -357,7 +356,7 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: print(s[0][:100])
             {"vertices":[{"x":-2,"y":-2,"z":0},{"x":-2,"y":-1.89744,"z":0.399737},{"x":-1.89744,"y":-1.89744,"z"
 
-        One test for :trac:`22688`::
+        One test for :issue:`22688`::
 
             sage: P = spherical_plot3d(sqrt(x-pi/2),(x,0,pi),(y,0,2*pi))
             sage: s = P.json_repr(P.default_render_params())
@@ -384,7 +383,6 @@ cdef class ParametricSurface(IndexFaceSet):
                'vertices': [{'x': -2.0, 'y': -2.0, 'z': 0.0},
                 ...
                 {'x': 2.0, 'y': 2.0, 'z': 0.0}]})]
-
         """
         self.triangulate(render_params)
         return IndexFaceSet.threejs_repr(self, render_params)
@@ -468,7 +466,8 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
             sage: M = MoebiusStrip(7,3,2)
             sage: M.bounding_box()
-            ((-10.0, -7.53907349250478..., -2.9940801852848145), (10.0, 7.53907349250478..., 2.9940801852848145))
+            ((-10.0, -7.53907349250478..., -2.9940801852848145),
+             (10.0, 7.53907349250478..., 2.9940801852848145))
         """
         # We must triangulate before computing the bounding box; otherwise
         # we'll get an empty bounding box, as the bounding box is computed
@@ -493,7 +492,7 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: def f(x,y): return x+y, sin(x)*sin(y), x*y                        # indirect doctests
             sage: P = ParametricSurface(f, (srange(0,10,0.1), srange(-5,5.0,0.1)))  # indirect doctests
             sage: P.show()                                                          # indirect doctests
-            sage: S = MoebiusStrip(1,.2)                                             # indirect doctests
+            sage: S = MoebiusStrip(1, .2)                                           # indirect doctests
             sage: S.show()                                                          # indirect doctests
         """
         cdef double u, v
@@ -658,10 +657,10 @@ cdef class ParametricSurface(IndexFaceSet):
 
         We branch outside the loops for efficiency. The options for self.f are:
 
-        - ``None`` -- call self.eval_c() or self.eval()
-                        (One of these is presumably overridden.)
-        - tuple -- split into fx, fy, fz and call each separately
-        - callable -- call f(u,v)
+        - ``None`` -- call ``self.eval_c()`` or ``self.eval()``
+          (One of these is presumably overridden.)
+        - ``tuple`` -- split into fx, fy, fz and call each separately
+        - ``callable`` -- call f(u,v)
 
         In addition, branches are taken for efficient calling of fast callables
         """
@@ -777,14 +776,13 @@ cdef class ParametricSurface(IndexFaceSet):
         """
         Draw a 3D plot of this graphics object, which just returns this
         object since this is already a 3D graphics object.
-        Needed to support PLOT in doctrings, see :trac:`17498`
+        Needed to support PLOT in doctrings, see :issue:`17498`
 
         EXAMPLES::
 
             sage: S = parametric_plot3d( (sin, cos, lambda u: u/10), (0, 20))
             sage: S.plot() is S
             True
-
         """
         return self
 
@@ -833,7 +831,6 @@ class MoebiusStrip(ParametricSurface):
             Graphics3d Object
             sage: O = MoebiusStrip(5,1,plot_points=200,color='red'); O # keywords get passed to plot3d
             Graphics3d Object
-
         """
         ParametricSurface.__init__(self, **kwds)
         self.r = float(r)
@@ -848,9 +845,9 @@ class MoebiusStrip(ParametricSurface):
 
         INPUT:
 
-        -  ``ds`` -- A number, typically coming from a RenderParams object,
-           which helps determine the increment for the `v` range for the
-           MoebiusStrip object.
+        - ``ds`` -- a number, typically coming from a RenderParams object,
+          which helps determine the increment for the `v` range for the
+          MoebiusStrip object
 
         EXAMPLES::
 

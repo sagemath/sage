@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.pari sage.rings.number_field
 r"""
 Modular forms with character
 
@@ -6,12 +6,16 @@ EXAMPLES::
 
     sage: eps = DirichletGroup(13).0
     sage: M = ModularForms(eps^2, 2); M
-    Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
+    Modular Forms space of dimension 3, character [zeta6] and weight 2 over
+     Cyclotomic Field of order 6 and degree 2
 
     sage: S = M.cuspidal_submodule(); S
-    Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
+    Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3,
+     character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
     sage: S.modular_symbols()
-    Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 4 and level 13, weight 2, character [zeta6], sign 0, over Cyclotomic Field of order 6 and degree 2
+    Modular Symbols subspace of dimension 2 of
+     Modular Symbols space of dimension 4 and level 13, weight 2, character [zeta6],
+      sign 0, over Cyclotomic Field of order 6 and degree 2
 
 We create a spaces associated to Dirichlet characters of modulus 225::
 
@@ -53,10 +57,12 @@ of `q`-expansions has not been computed yet).
 
     sage: M.eisenstein_submodule()
     Eisenstein subspace of dimension 8 of Modular Forms space of
-    dimension 484, character [1, zeta20] and weight 17 over Cyclotomic Field of order 20 and degree 8
+    dimension 484, character [1, zeta20] and weight 17 over
+    Cyclotomic Field of order 20 and degree 8
 
     sage: M.cuspidal_submodule()
-    Cuspidal subspace of dimension 476 of Modular Forms space of dimension 484, character [1, zeta20] and weight 17 over Cyclotomic Field of order 20 and degree 8
+    Cuspidal subspace of dimension 476 of Modular Forms space of dimension 484,
+    character [1, zeta20] and weight 17 over Cyclotomic Field of order 20 and degree 8
 
 TESTS::
 
@@ -75,7 +81,7 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #########################################################################
 
-import sage.rings.all as rings
+from sage.rings.integer import Integer
 
 import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
@@ -88,6 +94,7 @@ from . import ambient_R
 from . import cuspidal_submodule
 from . import eisenstein_submodule
 
+
 class ModularFormsAmbient_eps(ModularFormsAmbient):
     """
     A space of modular forms with character.
@@ -96,7 +103,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         """
         Create an ambient modular forms space with character.
 
-        .. note::
+        .. NOTE::
 
            The base ring must be of characteristic 0.  The ambient_R
            Python module is used for computing in characteristic p,
@@ -104,23 +111,24 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
         INPUT:
 
-        - ``weight`` - int
+        - ``weight`` -- integer
 
-        - ``character`` - dirichlet.DirichletCharacter
+        - ``character`` -- dirichlet.DirichletCharacter
 
-        - ``base_ring`` - base field
+        - ``base_ring`` -- base field
 
         EXAMPLES::
 
             sage: m = ModularForms(DirichletGroup(11).0,3); m
-            Modular Forms space of dimension 3, character [zeta10] and weight 3 over Cyclotomic Field of order 10 and degree 4
+            Modular Forms space of dimension 3, character [zeta10] and weight 3 over
+             Cyclotomic Field of order 10 and degree 4
             sage: type(m)
             <class 'sage.modular.modform.ambient_eps.ModularFormsAmbient_eps_with_category'>
         """
-        if not dirichlet.is_DirichletCharacter(character):
-            raise TypeError("character (=%s) must be a Dirichlet character"%character)
+        if not isinstance(character, dirichlet.DirichletCharacter):
+            raise TypeError("character (=%s) must be a Dirichlet character" % character)
         if base_ring is None:
-            base_ring=character.base_ring()
+            base_ring = character.base_ring()
         if character.base_ring() != base_ring:
             character = character.change_ring(base_ring)
         if base_ring.characteristic() != 0:
@@ -152,10 +160,10 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             Modforms of level 8
         """
         if self._eis_only:
-            return "Modular Forms space of character %s and weight %s over %s" %(
+            return "Modular Forms space of character %s and weight %s over %s" % (
                         self.character()._repr_short_(), self.weight(), self.base_ring())
         else:
-            return "Modular Forms space of dimension %s, character %s and weight %s over %s"%(
+            return "Modular Forms space of dimension %s, character %s and weight %s over %s" % (
             self.dimension(), self.character()._repr_short_(), self.weight(), self.base_ring())
 
     @cached_method
@@ -167,9 +175,11 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
 
             sage: eps = DirichletGroup(4).0
             sage: M = ModularForms(eps, 5); M
-            Modular Forms space of dimension 3, character [-1] and weight 5 over Rational Field
+            Modular Forms space of dimension 3, character [-1] and weight 5
+             over Rational Field
             sage: M.cuspidal_submodule()
-            Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3, character [-1] and weight 5 over Rational Field
+            Cuspidal subspace of dimension 1 of Modular Forms space of dimension 3,
+             character [-1] and weight 5 over Rational Field
         """
         if self.weight() > 1:
             return cuspidal_submodule.CuspidalSubmodule_eps(self)
@@ -185,9 +195,11 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         EXAMPLES::
 
             sage: m = ModularForms(DirichletGroup(13).0^2,2); m
-            Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
+            Modular Forms space of dimension 3, character [zeta6] and weight 2 over
+             Cyclotomic Field of order 6 and degree 2
             sage: m.change_ring(CyclotomicField(12))
-            Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 12 and degree 4
+            Modular Forms space of dimension 3, character [zeta6] and weight 2 over
+             Cyclotomic Field of order 12 and degree 4
 
         It must be possible to change the ring of the underlying Dirichlet character::
 
@@ -200,7 +212,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             return self
         return ambient_R.ModularFormsAmbient_R(self, base_ring=base_ring)
 
-    @cached_method(key=lambda self, sign: rings.Integer(sign)) # convert sign to an Integer before looking this up in the cache
+    @cached_method(key=lambda self, sign: Integer(sign)) # convert sign to an Integer before looking this up in the cache
     def modular_symbols(self, sign=0):
         """
         Return corresponding space of modular symbols with given sign.
@@ -210,17 +222,20 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             sage: eps = DirichletGroup(13).0
             sage: M = ModularForms(eps^2, 2)
             sage: M.modular_symbols()
-            Modular Symbols space of dimension 4 and level 13, weight 2, character [zeta6], sign 0, over Cyclotomic Field of order 6 and degree 2
+            Modular Symbols space of dimension 4 and level 13, weight 2,
+             character [zeta6], sign 0, over Cyclotomic Field of order 6 and degree 2
             sage: M.modular_symbols(1)
-            Modular Symbols space of dimension 3 and level 13, weight 2, character [zeta6], sign 1, over Cyclotomic Field of order 6 and degree 2
+            Modular Symbols space of dimension 3 and level 13, weight 2,
+             character [zeta6], sign 1, over Cyclotomic Field of order 6 and degree 2
             sage: M.modular_symbols(-1)
-            Modular Symbols space of dimension 1 and level 13, weight 2, character [zeta6], sign -1, over Cyclotomic Field of order 6 and degree 2
+            Modular Symbols space of dimension 1 and level 13, weight 2,
+             character [zeta6], sign -1, over Cyclotomic Field of order 6 and degree 2
             sage: M.modular_symbols(2)
             Traceback (most recent call last):
             ...
             ValueError: sign must be -1, 0, or 1
         """
-        sign = rings.Integer(sign)
+        sign = Integer(sign)
         return modsym.ModularSymbols(self.character(),
                                      weight=self.weight(),
                                      sign=sign,
@@ -236,31 +251,35 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         EXAMPLES::
 
             sage: m = ModularForms(DirichletGroup(13).0^2,2); m
-            Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
+            Modular Forms space of dimension 3, character [zeta6] and weight 2 over
+             Cyclotomic Field of order 6 and degree 2
             sage: m.eisenstein_submodule()
-            Eisenstein subspace of dimension 2 of Modular Forms space of dimension 3, character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
+            Eisenstein subspace of dimension 2 of Modular Forms space of dimension 3,
+             character [zeta6] and weight 2 over Cyclotomic Field of order 6 and degree 2
         """
         return eisenstein_submodule.EisensteinSubmodule_eps(self)
 
     def hecke_module_of_level(self, N):
         r"""
-        Return the Hecke module of level N corresponding to self, which is the
-        domain or codomain of a degeneracy map from self. Here N must be either
-        a divisor or a multiple of the level of self, and a multiple of the
-        conductor of the character of self.
+        Return the Hecke module of level N corresponding to ``self``, which is the
+        domain or codomain of a degeneracy map from ``self``. Here N must be either
+        a divisor or a multiple of the level of ``self``, and a multiple of the
+        conductor of the character of ``self``.
 
         EXAMPLES::
 
             sage: M = ModularForms(DirichletGroup(15).0, 3); M.character().conductor()
             3
             sage: M.hecke_module_of_level(3)
-            Modular Forms space of dimension 2, character [-1] and weight 3 over Rational Field
+            Modular Forms space of dimension 2, character [-1] and weight 3
+             over Rational Field
             sage: M.hecke_module_of_level(5)
             Traceback (most recent call last):
             ...
             ValueError: conductor(=3) must divide M(=5)
             sage: M.hecke_module_of_level(30)
-            Modular Forms space of dimension 16, character [-1, 1] and weight 3 over Rational Field
+            Modular Forms space of dimension 16, character [-1, 1] and weight 3
+             over Rational Field
         """
         from . import constructor
         if N % self.level() == 0:

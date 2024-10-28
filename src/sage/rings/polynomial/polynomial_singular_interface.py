@@ -10,13 +10,12 @@ AUTHORS:
 
 TESTS::
 
-    sage: R = PolynomialRing(GF(2**8,'a'), 10, 'x', order='invlex')                     # optional - sage.rings.finite_rings
-    sage: R == loads(dumps(R))                                                          # optional - sage.rings.finite_rings
+    sage: R = PolynomialRing(GF(2**8,'a'), 10, 'x', order='invlex')                     # needs sage.rings.finite_rings
+    sage: R == loads(dumps(R))                                                          # needs sage.rings.finite_rings
     True
-    sage: P.<a,b> = PolynomialRing(GF(7), 2)                                            # optional - sage.rings.finite_rings
-    sage: f = (a^3 + 2*b^2*a)^7; f                                                      # optional - sage.rings.finite_rings
+    sage: P.<a,b> = PolynomialRing(GF(7), 2)
+    sage: f = (a^3 + 2*b^2*a)^7; f
     a^21 + 2*a^7*b^14
-
 """
 #################################################################
 #
@@ -41,14 +40,14 @@ import sage.rings.fraction_field
 import sage.rings.abc
 import sage.rings.number_field as number_field
 
-from sage.interfaces.singular import singular
-from sage.rings.rational_field import is_RationalField
+from sage.rings.rational_field import RationalField
 from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
 
 import sage.rings.finite_rings.finite_field_constructor
+
 
 def _do_singular_init_(singular, base_ring, char, _vars, order):
     r"""
@@ -61,7 +60,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
     TESTS::
 
         sage: from sage.rings.polynomial.polynomial_singular_interface import _do_singular_init_
-        sage: _do_singular_init_(singular, ZZ, 0, 'X', 'dp')                            # optional - sage.libs.singular
+        sage: _do_singular_init_(singular, ZZ, 0, 'X', 'dp')                            # needs sage.libs.singular
         (polynomial ring, over a domain, global ordering
          // coefficients: ZZ
          // number of vars : 1
@@ -75,7 +74,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
     if base_ring is ZZ:
         return make_ring("(ZZ)"), None
 
-    if sage.rings.rational_field.is_RationalField(base_ring):
+    if isinstance(base_ring, sage.rings.rational_field.RationalField):
         return make_ring("(QQ)"), None
 
     elif isinstance(base_ring, sage.rings.abc.RealField):
@@ -137,7 +136,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
         return R, minpoly
 
-    elif sage.rings.fraction_field.is_FractionField(base_ring):
+    elif isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
         if base_ring.ngens() == 1:
             gens = str(base_ring.gen())
         else:
@@ -163,7 +162,7 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
             return singular(f"std(ideal({base_ring.__minpoly}))", type='qring'), None
 
-    elif isinstance(base_ring, sage.rings.function_field.function_field_rational.RationalFunctionField) \
+    elif isinstance(base_ring, RationalFunctionField) \
             and base_ring.constant_field().is_prime_field():
         gen = str(base_ring.gen())
         return make_ring(f"({base_ring.characteristic()},{gen})"), None
@@ -173,13 +172,13 @@ def _do_singular_init_(singular, base_ring, char, _vars, order):
 
 class PolynomialRing_singular_repr:
     """
-    Implements methods to convert polynomial rings to Singular.
+    Implement methods to convert polynomial rings to Singular.
 
     This class is a base class for all univariate and multivariate
     polynomial rings which support conversion from and to Singular
     rings.
     """
-    def _singular_(self, singular=singular):
+    def _singular_(self, singular=None):
         r"""
         Return a Singular ring for this polynomial ring.
 
@@ -188,14 +187,14 @@ class PolynomialRing_singular_repr:
 
         INPUT:
 
-        - ``singular`` - Singular instance
+        - ``singular`` -- Singular instance
 
         OUTPUT: Singular ring matching this ring
 
         EXAMPLES::
 
-            sage: R.<x,y> = PolynomialRing(CC)
-            sage: singular(R)
+            sage: R.<x,y> = PolynomialRing(CC)                                          # needs sage.rings.real_mpfr
+            sage: singular(R)                                                           # needs sage.libs.singular sage.rings.real_mpfr
             polynomial ring, over a field, global ordering
             // coefficients: real[I](complex:15 digits, additional 0 digits)/(I^2+1)
             // number of vars : 2
@@ -203,8 +202,8 @@ class PolynomialRing_singular_repr:
             //                  : names    x y
             //        block   2 : ordering C
 
-            sage: R.<x,y> = PolynomialRing(RealField(100))
-            sage: singular(R)
+            sage: R.<x,y> = PolynomialRing(RealField(100))                              # needs sage.rings.real_mpfr
+            sage: singular(R)                                                           # needs sage.libs.singular sage.rings.real_mpfr
             polynomial ring, over a field, global ordering
             // coefficients: Float()
             // number of vars : 2
@@ -213,8 +212,8 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: w = polygen(ZZ, 'w')
-            sage: R.<x> = PolynomialRing(NumberField(w^2 + 1, 's'))                     # optional - sage.rings.number_field
-            sage: singular(R)                                                           # optional - sage.rings.number_field
+            sage: R.<x> = PolynomialRing(NumberField(w^2 + 1, 's'))                     # needs sage.rings.number_field
+            sage: singular(R)                                                           # needs sage.libs.singular sage.rings.number_field
             polynomial ring, over a field, global ordering
             //   coefficients: QQ[s]/(s^2+1)
             //   number of vars : 1
@@ -222,8 +221,8 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(GF(127), 'x', implementation="singular")           # optional - sage.rings.finite_rings
-            sage: singular(R)                                                           # optional - sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(127), 'x', implementation='singular')           # needs sage.libs.singular
+            sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 1
@@ -231,8 +230,8 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(QQ, 'x', implementation="singular")
-            sage: singular(R)
+            sage: R = PolynomialRing(QQ, 'x', implementation='singular')                # needs sage.libs.singular
+            sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
             //   number of vars : 1
@@ -241,7 +240,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = PolynomialRing(QQ,'x')
-            sage: singular(R)
+            sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
             //   number of vars : 1
@@ -249,8 +248,8 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: R = PolynomialRing(GF(127), 'x')                                      # optional - sage.rings.finite_rings
-            sage: singular(R)                                                           # optional - sage.rings.finite_rings
+            sage: R = PolynomialRing(GF(127), 'x')
+            sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 1
@@ -259,7 +258,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = Frac(ZZ['a,b'])['x,y']
-            sage: singular(R)
+            sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ(a, b)
             //   number of vars : 2
@@ -269,7 +268,7 @@ class PolynomialRing_singular_repr:
 
 
             sage: R = IntegerModRing(1024)['x,y']
-            sage: singular(R)
+            sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a ring (with zero-divisors), global ordering
             //   coefficients: ZZ/(2^10)
             //   number of vars : 2
@@ -278,7 +277,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = IntegerModRing(15)['x,y']
-            sage: singular(R)
+            sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a ring (with zero-divisors), global ordering
             //   coefficients: ZZ/...(15)
             //   number of vars : 2
@@ -287,7 +286,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = ZZ['x,y']
-            sage: singular(R)
+            sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a domain, global ordering
             //   coefficients: ZZ
             //   number of vars : 2
@@ -296,7 +295,7 @@ class PolynomialRing_singular_repr:
             //        block   2 : ordering C
 
             sage: R = ZZ['x']
-            sage: singular(R)
+            sage: singular(R)                                                           # needs sage.libs.singular
             polynomial ring, over a domain, global ordering
             // coefficients: ZZ
             // number of vars : 1
@@ -304,11 +303,12 @@ class PolynomialRing_singular_repr:
             //                  : names    x
             //        block   2 : ordering C
 
-            sage: k.<a> = FiniteField(25)                                               # optional - sage.rings.finite_rings
-            sage: R = k['x']                                                            # optional - sage.rings.finite_rings
-            sage: K = R.fraction_field()                                                # optional - sage.rings.finite_rings
-            sage: S = K['y']                                                            # optional - sage.rings.finite_rings
-            sage: singular(S)                                                           # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = FiniteField(25)
+            sage: R = k['x']
+            sage: K = R.fraction_field()
+            sage: S = K['y']
+            sage: singular(S)                                                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/5(x)
             //   number of vars : 2
@@ -326,9 +326,11 @@ class PolynomialRing_singular_repr:
             - Singular represents precision of floating point numbers base 10
               while Sage represents floating point precision base 2.
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         try:
             R = self.__singular
-            if not (R.parent() is singular):
+            if R.parent() is not singular:
                 raise ValueError
             R._check_valid()
             if self.base_ring() is ZZ or self.base_ring().is_prime_field():
@@ -343,13 +345,13 @@ class PolynomialRing_singular_repr:
         except (AttributeError, ValueError):
             return self._singular_init_(singular)
 
-    def _singular_init_(self, singular=singular):
+    def _singular_init_(self, singular=None):
         """
         Return a newly created Singular ring matching this ring.
 
         EXAMPLES::
 
-            sage: PolynomialRing(QQ,'u_ba')._singular_init_()                           # optional - sage.libs.singular
+            sage: PolynomialRing(QQ,'u_ba')._singular_init_()                           # needs sage.libs.singular
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
             //   number of vars : 1
@@ -368,6 +370,9 @@ class PolynomialRing_singular_repr:
         else:
             _vars = str(self.gens())
             order = self.term_order().singular_str()
+
+        if singular is None:
+            from sage.interfaces.singular import singular
 
         self.__singular, self.__minpoly = _do_singular_init_(singular, self.base_ring(), self.characteristic(), _vars, order)
 
@@ -396,26 +401,28 @@ def can_convert_to_singular(R):
 
     TESTS:
 
-    Avoid non absolute number fields (see :trac:`23535`)::
+    Avoid non absolute number fields (see :issue:`23535`)::
 
         sage: x = polygen(ZZ, 'x')
-        sage: K.<a,b> = NumberField([x^2 - 2, x^2 - 5])                                 # optional - sage.rings.number_field
-        sage: can_convert_to_singular(K['s,t'])                                         # optional - sage.rings.number_field
+        sage: K.<a,b> = NumberField([x^2 - 2, x^2 - 5])                                 # needs sage.rings.number_field
+        sage: can_convert_to_singular(K['s,t'])                                         # needs sage.rings.number_field
         False
 
-    Check for :trac:`33319`::
+    Check for :issue:`33319`::
 
-        sage: R.<x,y> = GF((2^31-1)^3)[]                                                # optional - sage.rings.finite_rings
-        sage: R._has_singular                                                           # optional - sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings
+        sage: R.<x,y> = GF((2^31-1)^3)[]
+        sage: R._has_singular
         True
-        sage: R.<x,y> = GF((2^31+11)^2)[]                                               # optional - sage.rings.finite_rings
-        sage: R._has_singular                                                           # optional - sage.rings.finite_rings
+        sage: R.<x,y> = GF((2^31+11)^2)[]
+        sage: R._has_singular
         False
-        sage: R.<x,y> = GF(10^20 - 11)[]                                                # optional - sage.rings.finite_rings
-        sage: R._has_singular                                                           # optional - sage.rings.finite_rings
+        sage: R.<x,y> = GF(10^20 - 11)[]
+        sage: R._has_singular
         True
-        sage: R.<x,y> = Zmod(10^20 + 1)[]                                               # optional - sage.libs.pari
-        sage: R._has_singular                                                           # optional - sage.libs.pari
+
+        sage: R.<x,y> = Zmod(10^20 + 1)[]
+        sage: R._has_singular
         True
     """
     if R.ngens() == 0:
@@ -423,7 +430,7 @@ def can_convert_to_singular(R):
 
     base_ring = R.base_ring()
     if (base_ring is ZZ
-        or is_RationalField(base_ring)
+        or isinstance(base_ring, RationalField)
         or isinstance(base_ring, (sage.rings.abc.IntegerModRing,
                                   sage.rings.abc.RealField, sage.rings.abc.ComplexField,
                                   sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))):
@@ -432,7 +439,7 @@ def can_convert_to_singular(R):
         return base_ring.characteristic() <= 2147483647
     elif isinstance(base_ring, NumberField):
         return base_ring.is_absolute()
-    elif sage.rings.fraction_field.is_FractionField(base_ring):
+    elif isinstance(base_ring, sage.rings.fraction_field.FractionField_generic):
         B = base_ring.base_ring()
         return (B.is_prime_field() or B is ZZ
                 or (isinstance(B, FiniteField) and B.characteristic() <= 2147483647))
@@ -444,7 +451,7 @@ def can_convert_to_singular(R):
 
 class Polynomial_singular_repr:
     """
-    Implements coercion of polynomials to Singular polynomials.
+    Implement coercion of polynomials to Singular polynomials.
 
     This class is a base class for all (univariate and multivariate)
     polynomial classes which support conversion from and to
@@ -453,46 +460,53 @@ class Polynomial_singular_repr:
     Due to the incompatibility of Python extension classes and multiple inheritance,
     this just defers to module-level functions.
     """
-    def _singular_(self, singular=singular):
+    def _singular_(self, singular=None):
+        if singular is None:
+            from sage.interfaces.singular import singular
         return _singular_func(self, singular)
 
-    def _singular_init_func(self, singular=singular):
+    def _singular_init_func(self, singular=None):
+        if singular is None:
+            from sage.interfaces.singular import singular
         return _singular_init_func(self, singular)
 
 
-def _singular_func(self, singular=singular):
+def _singular_func(self, singular=None):
     """
     Return Singular polynomial matching this polynomial.
 
     INPUT:
 
-    - ``singular`` - Singular instance to use.
+    - ``singular`` -- Singular instance to use
 
     EXAMPLES::
 
-        sage: P.<a,b> = PolynomialRing(GF(7), 2)                                        # optional - sage.rings.finite_rings
-        sage: f = (a^3 + 2*b^2*a)^7; f                                                  # optional - sage.rings.finite_rings
+        sage: # needs sage.libs.singular
+        sage: P.<a,b> = PolynomialRing(GF(7), 2)
+        sage: f = (a^3 + 2*b^2*a)^7; f
         a^21 + 2*a^7*b^14
-        sage: h = f._singular_(); h                                                     # optional - sage.rings.finite_rings
+        sage: h = f._singular_(); h
         a^21+2*a^7*b^14
-        sage: P(h)                                                                      # optional - sage.rings.finite_rings
+        sage: P(h)
         a^21 + 2*a^7*b^14
-        sage: P(h^20) == f^20                                                           # optional - sage.rings.finite_rings
+        sage: P(h^20) == f^20
         True
 
-        sage: R.<x> = PolynomialRing(GF(7))                                             # optional - sage.rings.finite_rings
-        sage: f = (x^3 + 2*x^2*x)^7                                                     # optional - sage.rings.finite_rings
-        sage: f                                                                         # optional - sage.rings.finite_rings
+        sage: # needs sage.libs.singular
+        sage: R.<x> = PolynomialRing(GF(7))
+        sage: f = (x^3 + 2*x^2*x)^7
+        sage: f
         3*x^21
-        sage: h = f._singular_(); h                                                     # optional - sage.rings.finite_rings
+        sage: h = f._singular_(); h
         3*x^21
-        sage: R(h)                                                                      # optional - sage.rings.finite_rings
+        sage: R(h)
         3*x^21
-        sage: R(h^20) == f^20                                                           # optional - sage.rings.finite_rings
+        sage: R(h^20) == f^20
         True
     """
+    if singular is None:
+        from sage.interfaces.singular import singular
     self.parent()._singular_(singular).set_ring()  # this is expensive
-
     try:
         self.__singular._check_valid()
         if self.__singular.parent() is singular:
@@ -502,13 +516,15 @@ def _singular_func(self, singular=singular):
     return _singular_init_func(self, singular)
 
 
-def _singular_init_func(self, singular=singular):
+def _singular_init_func(self, singular=None):
     """
     Return corresponding Singular polynomial but enforce that a new
     instance is created in the Singular interpreter.
 
     Use ``self._singular_()`` instead.
     """
+    if singular is None:
+        from sage.interfaces.singular import singular
     self.parent()._singular_(singular).set_ring()  # this is expensive
     self.__singular = singular(str(self))
     return self.__singular

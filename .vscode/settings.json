@@ -8,13 +8,15 @@
         "src/**/*.so": true
     },
     "search.exclude": {
-        "build/pkgs/sagemath_categories/src": true,
-        "build/pkgs/sagemath_objects/src": true,
-        "build/pkgs/sagelib/src": true,
-        "pkgs/sage-conf_pypi/sage_root/build": true,
-        "pkgs/sagemath-categories/sage": true,
-        "pkgs/sagemath-objects/sage": true,
-        "pkgs/sagemath-standard/sage": true
+        // Exclude symbolic links into SAGE_ROOT/pkgs/
+        "build/pkgs/*/src": true,
+        // Exclude symbolic links into SAGE_ROOT/src/
+        "pkgs/sage-conf_conda/sage_root": true,
+        "pkgs/sage-conf_pypi/sage_root": true,
+        "pkgs/sage-docbuild/sage_docbuild": true,
+        "pkgs/sage-setup/sage_setup": true,
+        "pkgs/sagemath-*/sage": true,
+        "pkgs/sagemath-*/sage_setup": true
     },
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
@@ -23,16 +25,12 @@
         "--doctest-modules"
     ],
     "python.testing.unittestEnabled": false,
-    "python.linting.pycodestyleEnabled": true,
-    "python.linting.enabled": true,
-    // The following pycodestyle arguments are the same as the pycodestyle-minimal
-    // tox environnment, see the file SAGE_ROOT/src/tox.ini
-    "python.linting.pycodestyleArgs": ["--select= E111,E21,E222,E227,E25,E271,E303,E306,E401,E502,E701,E702,E703,E71,E72,W291,W293,W391,W605"],
     "cSpell.words": [
         "furo",
         "Conda",
         "sagemath",
         "Cython"
     ],
-    "editor.formatOnType": true
+    "editor.formatOnType": true,
+    "esbonio.sphinx.confDir": ""
 }

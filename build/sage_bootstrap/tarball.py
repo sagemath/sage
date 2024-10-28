@@ -4,7 +4,9 @@ Third-Party Tarballs
 """
 
 # ****************************************************************************
-#       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2014-2015 Volker Braun <vbraun.name@gmail.com>
+#                     2017      Jeroen Demeyer
+#                     2020      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -117,18 +119,23 @@ class Tarball(object):
         import hashlib
         return self._compute_hash(hashlib.sha1())
 
-    def _compute_md5(self):
+    def _compute_sha256(self):
         import hashlib
-        return self._compute_hash(hashlib.md5())
+        return self._compute_hash(hashlib.sha256())
 
-    def _compute_cksum(self):
-        from sage_bootstrap.cksum import CksumAlgorithm
-        return self._compute_hash(CksumAlgorithm())
-
-    def checksum_verifies(self):
+    def checksum_verifies(self, force_sha256=False):
         """
         Test whether the checksum of the downloaded file is correct.
         """
+        if self.package.sha256:
+            sha256 = self._compute_sha256()
+            if sha256 != self.package.sha256:
+                return False
+        elif force_sha256:
+            log.warning('sha256 not available for {0}'.format(self.package.name))
+            return False
+        else:
+            log.warning('sha256 not available for {0}, using sha1'.format(self.package.name))
         sha1 = self._compute_sha1()
         return sha1 == self.package.sha1
 
@@ -153,13 +160,16 @@ class Tarball(object):
             else:
                 # Garbage in the upstream directory? Ignore it.
                 # Don't delete it because maybe somebody just forgot to
-                # update the checksum (Trac #23972).
+                # update the checksum (Issue #23972).
                 log.warning('Invalid checksum; ignoring cached file {destination}'
                             .format(destination=destination))
         successful_download = False
         log.info('Attempting to download package {0} from mirrors'.format(self.filename))
         for mirror in MirrorList():
-            url = mirror + '/'.join(['spkg', 'upstream', self.package.name, self.filename])
+            url = mirror.replace('${SPKG}', self.package.name)
+            if not url.endswith('/'):
+                url += '/'
+            url += self.filename
             log.info(url)
             try:
                 Download(url, destination).run()

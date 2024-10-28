@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 r"""
 Basic graphs
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
-
 """
 # ****************************************************************************
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
@@ -43,7 +41,7 @@ def BullGraph():
 
         sage: g = graphs.BullGraph(); g
         Bull graph: Graph on 5 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     The bull graph has 5 vertices and 5 edges. Its radius is 2, its
     diameter 3, and its girth 3. The bull graph is planar with chromatic
@@ -66,10 +64,13 @@ def BullGraph():
     `x` is a variable, `A` the adjacency matrix of the graph, and `I`
     the identity matrix of the same dimensions as `A`::
 
+        sage: # needs sage.libs.flint
         sage: chrompoly = g.chromatic_polynomial()
         sage: x = chrompoly.parent()('x')
         sage: x * (x - 2) * (x - 1)^3 == chrompoly
         True
+
+        sage: # needs sage.libs.flint sage.modules
         sage: charpoly = g.characteristic_polynomial()
         sage: M = g.adjacency_matrix(); M
         [0 1 1 0 0]
@@ -79,7 +80,7 @@ def BullGraph():
         [0 0 1 0 0]
         sage: Id = identity_matrix(ZZ, M.nrows())
         sage: D = x*Id - M
-        sage: D.determinant() == charpoly
+        sage: D.determinant() == charpoly                                               # needs sage.symbolic
         True
         sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly
         True
@@ -100,7 +101,7 @@ def ButterflyGraph():
 
     .. SEEALSO::
 
-        - :meth:`GraphGenerators.FriendshipGraph`
+        - :meth:`~sage.graphs.graph_generators.GraphGenerators.FriendshipGraph`
 
     EXAMPLES:
 
@@ -108,7 +109,7 @@ def ButterflyGraph():
 
         sage: G = graphs.ButterflyGraph(); G
         Butterfly graph: Graph on 5 vertices
-        sage: G.show()  # long time
+        sage: G.show()                          # long time                             # needs sage.plot
         sage: G.is_planar()
         True
         sage: G.order()
@@ -160,7 +161,7 @@ def CircularLadderGraph(n):
     displayed as an inner and outer cycle pair, with the first `n` nodes drawn
     on the inner circle. The first (0) node is drawn at the top of the
     inner-circle, moving clockwise after that. The outer circle is drawn with
-    the `(n+1)`th node at the top, then counterclockwise as well.
+    the `(n+1)`-th node at the top, then counterclockwise as well.
     When `n == 2`, we rotate the outer circle by an angle of `\pi/8` to ensure
     that all edges are visible (otherwise the 4 vertices of the graph would be
     placed on a single line).
@@ -170,7 +171,7 @@ def CircularLadderGraph(n):
     Construct and show a circular ladder graph with 26 nodes::
 
         sage: g = graphs.CircularLadderGraph(13)
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     Create several circular ladder graphs in a Sage graphics array::
 
@@ -212,7 +213,7 @@ def ClawGraph():
 
     Show a Claw graph::
 
-        sage: (graphs.ClawGraph()).show()  # long time
+        sage: (graphs.ClawGraph()).show()       # long time                             # needs sage.plot
 
     Inspect a Claw graph::
 
@@ -397,18 +398,31 @@ def CompleteGraph(n):
         G.set_pos({0: (0, 0)})
     else:
         G._circle_embedding(list(range(n)), angle=pi/2)
-    G.add_edges(((i, j) for i in range(n) for j in range(i + 1, n)))
+    G.add_edges((i, j) for i in range(n) for j in range(i + 1, n))
     return G
 
+
 def CorrelationGraph(seqs, alpha, include_anticorrelation):
-    """
-    Constructs and returns a correlation graph with a node corresponding to each sequence in `seqs`.
+    r"""
+    Return a correlation graph with a node per sequence in ``seqs``.
 
-    Edges are added between nodes where the corresponding sequences have a correlation coeffecient greater than alpha.
+    Edges are added between nodes where the corresponding sequences have a
+    correlation coefficient greater than alpha.
 
-    If include_anticorrelation is true, then edges are also added between nodes with correlation coeffecient less than -alpha.
+    If ``include_anticorrelation`` is ``True``, then edges are also added
+    between nodes with correlation coefficient less than ``-alpha``.
 
-    EXAMPLES:
+    INPUT:
+
+    - ``seqs`` -- list of sequences, that is a list of lists
+
+    - ``alpha`` -- float; threshold on the correlation coefficient between two
+      sequences for adding an edge
+
+    - ``include_anticorrelation`` -- boolean; whether to add edges between nodes
+      with correlation coefficient less than ``-alpha`` or not
+
+    EXAMPLES::
 
         sage: # needs numpy
         sage: from sage.graphs.generators.basic import CorrelationGraph
@@ -422,24 +436,24 @@ def CorrelationGraph(seqs, alpha, include_anticorrelation):
         [(0, 0, None), (0, 1, None), (1, 1, None), (2, 2, None)]
         sage: CG3.edges(sort=False)
         [(0, 0, None), (0, 1, None), (0, 2, None), (1, 1, None), (1, 2, None), (2, 2, None)]
-
     """
     from numpy import corrcoef
     from sage.matrix.constructor import Matrix
 
-    # compute pairwise correlation coeffecients
+    # compute pairwise correlation coefficients
     corrs = corrcoef(seqs)
 
     # compare against alpha to get adjacency matrix
     if include_anticorrelation:
-        boolean_adjacency_matrix = abs(corrs)>=alpha
+        boolean_adjacency_matrix = abs(corrs) >= alpha
     else:
-        boolean_adjacency_matrix = corrs>=alpha
+        boolean_adjacency_matrix = corrs >= alpha
 
     adjacency_matrix = Matrix(boolean_adjacency_matrix.astype(int))
 
     # call graph constructor
-    return Graph(adjacency_matrix, format="adjacency_matrix", name="Correlation Graph")
+    return Graph(adjacency_matrix, format='adjacency_matrix', name="Correlation Graph")
+
 
 def CompleteBipartiteGraph(p, q, set_position=True):
     r"""
@@ -451,9 +465,9 @@ def CompleteBipartiteGraph(p, q, set_position=True):
 
     INPUT:
 
-    - ``p,q`` -- number of vertices in each side
+    - ``p``, ``q`` -- number of vertices in each side
 
-    - ``set_position`` -- boolean (default ``True``); if set to ``True``, we
+    - ``set_position`` -- boolean (default: ``True``); if set to ``True``, we
       assign positions to the vertices so that the set of cardinality `p` is
       on the line `y=1` and the set of cardinality `q` is on the line `y=0`.
 
@@ -500,7 +514,7 @@ def CompleteBipartiteGraph(p, q, set_position=True):
     Notice here how the spring-layout tends to center the nodes of `n1`::
 
         sage: spring_med.show()                 # long time                             # needs networkx
-        sage: posdict_med.show()  # long time
+        sage: posdict_med.show()                # long time                             # needs sage.plot
 
     View many complete bipartite graphs with a Sage Graphics Array, with this
     constructor (i.e., the position dictionary filled)::
@@ -535,14 +549,14 @@ def CompleteBipartiteGraph(p, q, set_position=True):
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
 
-    :trac:`12155`::
+    :issue:`12155`::
 
         sage: graphs.CompleteBipartiteGraph(5,6).complement()
         complement(Complete bipartite graph of order 5+6): Graph on 11 vertices
 
     TESTS:
 
-    Prevent negative dimensions (:trac:`18530`)::
+    Prevent negative dimensions (:issue:`18530`)::
 
         sage: graphs.CompleteBipartiteGraph(-1,1)
         Traceback (most recent call last):
@@ -577,7 +591,7 @@ def CompleteMultipartiteGraph(L):
 
     INPUT:
 
-    - ``L`` -- a list of integers; the respective sizes of the components
+    - ``L`` -- list of integers; the respective sizes of the components
 
     PLOTTING: Produce a layout of the vertices so that vertices in the same
     vertex set are adjacent and clearly separated from vertices in other vertex
@@ -659,7 +673,7 @@ def DiamondGraph():
     Construct and show a diamond graph::
 
         sage: g = graphs.DiamondGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (1, 0), 3: (0, -1)}
     edges = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]
@@ -681,7 +695,7 @@ def GemGraph():
     Construct and show a gem graph::
 
         sage: g = graphs.GemGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (0.5, 0), 1: (0, 0.75), 2: (0.25, 1), 3: (0.75, 1), 4: (1, 0.75)}
     edges = [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (2, 3), (3, 4)]
@@ -703,7 +717,7 @@ def ForkGraph():
     Construct and show a fork graph::
 
         sage: g = graphs.ForkGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (0, 0), 1: (1, 0), 2: (0, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 2), (2, 3), (3, 1), (2, 4)]
@@ -723,7 +737,7 @@ def DartGraph():
     Construct and show a dart graph::
 
         sage: g = graphs.DartGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (0, 1), 1: (-1, 0), 2: (1, 0), 3: (0, -1), 4: (0, 0)}
     edges = [(0, 1), (0, 2), (1, 4), (2, 4), (0, 4), (3, 4)]
@@ -748,7 +762,7 @@ def EmptyGraph():
         sage: empty1 = graphs.EmptyGraph()
         sage: empty1.add_vertex()
         0
-        sage: empty1.show()  # long time
+        sage: empty1.show()                     # long time                             # needs sage.plot
 
     Use for loops to build a graph from an empty graph::
 
@@ -764,7 +778,7 @@ def EmptyGraph():
         ....:     empty2.add_edge(i,i+1)  # add edges {[0:1],[1:2],[2:3]}
         sage: for i in range(1, 4):
         ....:     empty2.add_edge(4,i)  # add edges {[1:4],[2:4],[3:4]}
-        sage: empty2.show()  # long time
+        sage: empty2.show()                     # long time                             # needs sage.plot
     """
     return Graph(sparse=True)
 
@@ -826,7 +840,7 @@ def Toroidal6RegularGrid2dGraph(p, q):
 
     INPUT:
 
-    - ``p, q`` -- integers (see above)
+    - ``p``, ``q`` -- integers
 
     EXAMPLES:
 
@@ -857,7 +871,6 @@ def Toroidal6RegularGrid2dGraph(p, q):
         ...
         ValueError: parameters p and q must be integers larger than 3
     """
-
     if p <= 3 or q <= 3:
         raise ValueError("parameters p and q must be integers larger than 3")
 
@@ -880,7 +893,7 @@ def Grid2dGraph(p, q, set_positions=True):
 
     INPUT:
 
-    - ``p`` and ``q`` -- two positive integers
+    - ``p``, ``q`` -- two positive integers
 
     - ``set_positions`` -- boolean (default: ``True``); whether to set the
       position of the nodes
@@ -896,7 +909,7 @@ def Grid2dGraph(p, q, set_positions=True):
     Construct and show a grid 2d graph Rows = `5`, Columns = `7`::
 
         sage: g = graphs.Grid2dGraph(5,7)
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     TESTS:
 
@@ -941,8 +954,8 @@ def GridGraph(dim_list):
 
     INPUT:
 
-    - ``dim_list`` -- a list of integers representing the number of nodes to
-       extend in each dimension
+    - ``dim_list`` -- list of integers representing the number of nodes to
+      extend in each dimension
 
     PLOTTING: When plotting, this graph will use the default spring-layout
     algorithm, unless a position dictionary is specified.
@@ -950,14 +963,14 @@ def GridGraph(dim_list):
     EXAMPLES::
 
         sage: G = graphs.GridGraph([2,3,4])
-        sage: G.show()  # long time
+        sage: G.show()                          # long time                             # needs sage.plot
 
     ::
 
         sage: C = graphs.CubeGraph(4)
         sage: G = graphs.GridGraph([2,2,2,2])
-        sage: C.show()  # long time
-        sage: G.show()  # long time
+        sage: C.show()                          # long time                             # needs sage.plot
+        sage: G.show()                          # long time                             # needs sage.plot
 
     TESTS:
 
@@ -1064,7 +1077,7 @@ def HouseGraph():
     Construct and show a house graph::
 
         sage: g = graphs.HouseGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (-1, 0), 1: (1, 0), 2: (-1, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 1), (0, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
@@ -1092,7 +1105,7 @@ def HouseXGraph():
     Construct and show a house X graph::
 
         sage: g = graphs.HouseXGraph()
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
     """
     pos_dict = {0: (-1, 0), 1: (1, 0), 2: (-1, 1), 3: (1, 1), 4: (0, 2)}
     edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3), (2, 4), (3, 4)]
@@ -1116,7 +1129,7 @@ def LadderGraph(n):
     Construct and show a ladder graph with 14 nodes::
 
         sage: g = graphs.LadderGraph(7)
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     Create several ladder graphs in a Sage graphics array::
 
@@ -1143,6 +1156,90 @@ def LadderGraph(n):
     G = Graph(2 * n, pos=pos_dict, name="Ladder graph")
     G.add_path(list(range(n)))
     G.add_path(list(range(n, 2 * n)))
+    G.add_edges((i, i + n) for i in range(n))
+    return G
+
+
+def MoebiusLadderGraph(n):
+    r"""
+    Return a Möbius ladder graph with `2n` nodes
+
+    A Möbius ladder graph of order `2n` is a ladder graph of the same order
+    that is connected at the ends with a single twist, i.e., a ladder graph
+    bent around so that top meets bottom with a single twist. Alternatively,
+    it can be described as a single cycle graph (of order `2n`) with the
+    addition of edges (called `rungs`) joining the antipodal pairs of nodes.
+    Also, note that the Möbius ladder graph ``graphs.MoebiusLadderGraph(n)`` is
+    precisely the same graph as the circulant graph
+    ``graphs.CirculantGraph(2 * n, [1, n])``.
+
+    PLOTTING:
+
+    Upon construction, the position dictionary is filled to override the
+    spring-layout algorithm. By convention, each Möbius ladder graph will be
+    displayed with the first (0) node at the top, with the rest following in a
+    counterclockwise manner.
+
+    INPUT:
+
+    - ``n`` -- a nonnegative integer; number of nodes is `2n`
+
+    OUTPUT:
+
+    - ``G`` -- a Möbius ladder graph of order `2n`; note that a
+      :exc:`ValueError` is returned if `n < 0`
+
+    EXAMPLES:
+
+    Construct and show a Möbius ladder graph with 26 nodes::
+
+        sage: g = graphs.MoebiusLadderGraph(13)
+        sage: g.show()                          # long time                             # needs sage.plot
+
+    Create several Möbius ladder graphs in a Sage graphics array::
+
+        sage: # needs sage.plots
+        sage: g = []
+        sage: j = []
+        sage: for i in range(9):
+        ....:    k = graphs.MoebiusLadderGraph(i+3)
+        ....:    g.append(k)
+        sage: for i in range(3):
+        ....:    n = []
+        ....:    for m in range(3):
+        ....:        n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
+        ....:    j.append(n)
+        sage: G = graphics_array(j)
+        sage: G.show()                          # long time
+
+    TESTS:
+
+    The input parameter must be a nonnegative integer::
+
+        sage: G = graphs.MoebiusLadderGraph(-1)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameter n must be a nonnegative integer
+
+    REFERENCES:
+
+    - :wikipedia:`Möbius_ladder`
+
+    .. SEEALSO::
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.LadderGraph`,
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.CircularLadderGraph`,
+        :meth:`~sage.graphs.graph_generators.GraphGenerators.CirculantGraph`
+
+    AUTHORS:
+
+    - Janmenjaya Panda (2024-05-26)
+    """
+    if n < 0:
+        raise ValueError("parameter n must be a nonnegative integer")
+
+    G = Graph(2 * n, name="Moebius ladder graph")
+    G._circle_embedding(list(range(2 * n)), angle=pi/2)
+    G.add_cycle(list(range(2 * n)))
     G.add_edges((i, i + n) for i in range(n))
     return G
 
@@ -1179,26 +1276,26 @@ def PathGraph(n, pos=None):
     ::
 
         sage: p = graphs.PathGraph(10)
-        sage: p.show()  # long time
+        sage: p.show()                          # long time                             # needs sage.plot
 
     'circle': `10 < n < 41`
 
     ::
 
         sage: q = graphs.PathGraph(25)
-        sage: q.show()  # long time
+        sage: q.show()                          # long time                             # needs sage.plot
 
     'line': `n \geq 41`
 
     ::
 
         sage: r = graphs.PathGraph(55)
-        sage: r.show()  # long time
+        sage: r.show()                          # long time                             # needs sage.plot
 
     Override the default drawing::
 
         sage: s = graphs.PathGraph(5,'circle')
-        sage: s.show()  # long time
+        sage: s.show()                          # long time                             # needs sage.plot
     """
     G = Graph(n, name="Path graph")
 
@@ -1324,7 +1421,7 @@ def StarGraph(n):
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
     """
-    G = Graph({0: list(range(1, n + 1))}, name="Star graph", format="dict_of_lists")
+    G = Graph({0: list(range(1, n + 1))}, name="Star graph", format='dict_of_lists')
     G.set_pos({0: (0, 0)})
     G._circle_embedding(list(range(1, n + 1)), angle=pi/2)
     return G

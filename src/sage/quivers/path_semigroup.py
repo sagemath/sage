@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
 Path Semigroups
 """
@@ -96,7 +95,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - a :class:`~sage.graphs.digraph.DiGraph`.
+        - ``Q`` -- a :class:`~sage.graphs.digraph.DiGraph`
 
         TESTS::
 
@@ -122,7 +121,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - a :class:`~sage.graphs.digraph.DiGraph`.
+        - ``Q`` -- a :class:`~sage.graphs.digraph.DiGraph`
 
         EXAMPLES:
 
@@ -269,7 +268,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
     def _element_constructor_(self, data, check=True):
         """
-        The accepted data are
+        The accepted data are:
 
         - the integer ``1``, which returns the first idempotent,
         - a list, whose only item is a tuple ``(v,v)`` for a vertex ``v``,
@@ -295,8 +294,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: Q(P(['c','d']))
             c*d
 
-        A ``TypeError`` or a ``ValueError`` is raised appropriately if the input
-        is wrong::
+        A :exc:`TypeError` or a :exc:`ValueError` is raised appropriately
+        if the input is wrong::
 
             sage: G = DiGraph([(0,0,'a'), (0,1,'b'), (1,0,'c')], loops=True)
             sage: P = G.path_semigroup()
@@ -363,7 +362,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             path = []
         else:  # a list of edges
             if any(len(x) != 3 for x in data):
-                x = next((x for x in data if len(x) != 3))
+                x = next(x for x in data if len(x) != 3)
                 raise ValueError("each edge must be a triple, got {}".format(x))
             start = data[0][0]
             end = data[-1][1]
@@ -468,7 +467,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         return self.gens()[i]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of generators.
 
@@ -487,7 +486,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         return self.idempotents() + self.arrows()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         This partial semigroup is finite if and only if the underlying
         quiver is acyclic.
@@ -600,7 +599,6 @@ class PathSemigroup(UniqueRepresentation, Parent):
             c*b*d
             a*d*c*a
             a*d*c*b
-
         """
         d = 0
         length_d_available = True
@@ -618,8 +616,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``d`` -- an integer, the path length
-        - ``v`` -- a vertex, start point of the paths
+        - ``d`` -- integer; the path length
+        - ``v`` -- a vertex; start point of the paths
 
         EXAMPLES::
 
@@ -660,7 +658,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         # iterate over length d paths starting at vertex v
         if not d >= 0:
-            raise ValueError("path length must be a non-negative integer")
+            raise ValueError("path length must be a nonnegative integer")
         if v not in self._quiver:
             raise ValueError("the starting point {} is not a vertex of the underlying quiver".format(v))
         if not d:
@@ -676,8 +674,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``d`` -- an integer, the path length
-        - ``v`` -- a vertex, end point of the paths
+        - ``d`` -- integer; the path length
+        - ``v`` -- a vertex; end point of the paths
 
         EXAMPLES::
 
@@ -694,7 +692,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         # iterate over length d paths ending at vertex v
         if not d >= 0:
-            raise ValueError("path length must be a non-negative integer")
+            raise ValueError("path length must be a nonnegative integer")
         if v not in self._quiver:
             raise ValueError("the starting point {} is not a vertex of the underlying quiver".format(v))
         if not d:
@@ -740,7 +738,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         return self._quiver.reverse().path_semigroup()
 
-    def algebra(self, k, order="negdegrevlex"):
+    def algebra(self, k, order='negdegrevlex'):
         """
         Return the path algebra of the underlying quiver.
 
@@ -748,9 +746,9 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         - ``k`` -- a commutative ring
 
-        - ``order`` -- optional string, one of "negdegrevlex" (default),
-          "degrevlex", "negdeglex" or "deglex", defining the monomial order to
-          be used.
+        - ``order`` -- (optional) string, one of ``'negdegrevlex'`` (default),
+          ``'degrevlex'``, ``'negdeglex'`` or ``'deglex'``, defining the
+          monomial order to be used
 
         .. NOTE::
 
@@ -766,9 +764,9 @@ class PathSemigroup(UniqueRepresentation, Parent):
         Now some example with different monomial orderings::
 
             sage: P1 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'))
-            sage: P2 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="degrevlex")
-            sage: P3 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="negdeglex")
-            sage: P4 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order="deglex")
+            sage: P2 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='degrevlex')
+            sage: P3 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='negdeglex')
+            sage: P4 = DiGraph({1:{1:['x','y','z']}}).path_semigroup().algebra(GF(25,'t'), order='deglex')
             sage: P1.order_string()
             'negdegrevlex'
             sage: sage_eval('(x+2*z+1)^3', P1.gens_dict())
@@ -779,7 +777,6 @@ class PathSemigroup(UniqueRepresentation, Parent):
             e_1 + z + 3*x + 2*z*z + z*x + x*z + 3*x*x + 3*z*z*z + 4*z*z*x + 4*z*x*z + 2*z*x*x + 4*x*z*z + 2*x*z*x + 2*x*x*z + x*x*x
             sage: sage_eval('(x+2*z+1)^3', P4.gens_dict())
             3*z*z*z + 4*z*z*x + 4*z*x*z + 2*z*x*x + 4*x*z*z + 2*x*z*x + 2*x*x*z + x*x*x + 2*z*z + z*x + x*z + 3*x*x + z + 3*x + e_1
-
         """
         from sage.quivers.algebra import PathAlgebra
         return PathAlgebra(k, self, order)
@@ -818,14 +815,12 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `k` -- ring, the base ring of the representation
+        - ``k`` -- the base ring of the representation
 
-        - ``vertex`` -- integer, a vertex of the quiver
+        - ``vertex`` -- integer; a vertex of the quiver
 
-        OUTPUT:
-
-        - :class:`~sage.quivers.representation.QuiverRep`, the simple module
-          at ``vertex`` with base ring `k`
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep`; the simple
+        module at ``vertex`` with base ring `k`
 
         EXAMPLES::
 
@@ -862,14 +857,12 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `k` -- ring, the base ring of the representation
+        - ``k`` -- the base ring of the representation
 
-        - ``vertex`` -- integer, a vertex of the quiver
+        - ``vertex`` -- integer; a vertex of the quiver
 
-        OUTPUT:
-
-        - :class:`~sage.quivers.representation.QuiverRep`, the indecomposable
-          projective module at ``vertex`` with base ring `k`
+        OUTPUT: :class:`~sage.quivers.representation.QuiverRep`, the
+        indecomposable projective module at ``vertex`` with base ring `k`
 
         EXAMPLES::
 
@@ -902,9 +895,9 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - `k` -- ring, the base ring of the representation
+        - ``k`` -- the base ring of the representation
 
-        - ``vertex`` -- integer, a vertex of the quiver
+        - ``vertex`` -- integer; a vertex of the quiver
 
         OUTPUT:
 
@@ -940,7 +933,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``k`` -- ring, the base ring of the representation.
+        - ``k`` -- ring; the base ring of the representation
 
         OUTPUT:
 
@@ -1017,9 +1010,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
           vertex of the paths in the output; if ``None`` is given then
           the terminal vertex is arbitrary
 
-        OUTPUT:
-
-        - list of paths, excluding the invalid path
+        OUTPUT: list of paths, excluding the invalid path
 
         .. TODO::
 
@@ -1079,7 +1070,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             ...
             ValueError: the end vertex 4 is not a vertex of the quiver
 
-        If the underlying quiver is cyclic, a ``ValueError``
+        If the underlying quiver is cyclic, a :exc:`ValueError`
         is raised::
 
             sage: Q = DiGraph({1:{2:['a','b'], 3:['c']}, 3:{1:['d']}})

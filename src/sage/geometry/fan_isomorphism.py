@@ -29,19 +29,17 @@ def fan_isomorphic_necessary_conditions(fan1, fan2):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
-    OUTPUT:
-
-    Boolean. ``False`` if the two fans cannot be isomorphic. ``True``
+    OUTPUT: boolean; ``False`` if the two fans cannot be isomorphic. ``True``
     if the two fans may be isomorphic.
 
     EXAMPLES::
 
-        sage: fan1 = toric_varieties.P2().fan()                                 # optional - palp
-        sage: fan2 = toric_varieties.dP8().fan()                                # optional - palp
+        sage: fan1 = toric_varieties.P2().fan()                                         # needs palp sage.graphs
+        sage: fan2 = toric_varieties.dP8().fan()                                        # needs palp sage.graphs
         sage: from sage.geometry.fan_isomorphism import fan_isomorphic_necessary_conditions
-        sage: fan_isomorphic_necessary_conditions(fan1, fan2)                   # optional - palp
+        sage: fan_isomorphic_necessary_conditions(fan1, fan2)                           # needs palp sage.graphs
         False
     """
     if fan1.lattice_dim() != fan2.lattice_dim():
@@ -69,7 +67,7 @@ def fan_isomorphism_generator(fan1, fan2):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
     OUTPUT:
 
@@ -78,9 +76,9 @@ def fan_isomorphism_generator(fan1, fan2):
 
     EXAMPLES::
 
-        sage: fan = toric_varieties.P2().fan()                                  # optional - palp
+        sage: fan = toric_varieties.P2().fan()                                          # needs palp sage.graphs
         sage: from sage.geometry.fan_isomorphism import fan_isomorphism_generator
-        sage: sorted(fan_isomorphism_generator(fan, fan))                       # optional - palp
+        sage: sorted(fan_isomorphism_generator(fan, fan))                               # needs palp sage.graphs
         [
         [-1 -1]  [-1 -1]  [ 0  1]  [0 1]  [ 1  0]  [1 0]
         [ 0  1], [ 1  0], [-1 -1], [1 0], [-1 -1], [0 1]
@@ -93,7 +91,7 @@ def fan_isomorphism_generator(fan1, fan2):
         ....:             Cone([m1*vector([-1,-14]), m1*vector([-100, -5])])])
         sage: fan2 = Fan([Cone([m2*vector([23, 14]), m2*vector([   3,100])]),
         ....:             Cone([m2*vector([-1,-14]), m2*vector([-100, -5])])])
-        sage: sorted(fan_isomorphism_generator(fan1, fan2))
+        sage: sorted(fan_isomorphism_generator(fan1, fan2))                             # needs sage.graphs
         [
         [-12  1 -5]
         [ -4  0 -1]
@@ -111,24 +109,24 @@ def fan_isomorphism_generator(fan1, fan2):
         ....:             Cone([m1*vector([1,1]), m1*vector([0,1])])])
         sage: fan2 = Fan([Cone([m2*vector([1,0]), m2*vector([1,1])]),
         ....:             Cone([m2*vector([1,1]), m2*vector([0,1])])])
-        sage: sorted(fan_isomorphism_generator(fan0, fan0))
+        sage: sorted(fan_isomorphism_generator(fan0, fan0))                             # needs sage.graphs
         [
         [0 1]  [1 0]
         [1 0], [0 1]
         ]
-        sage: sorted(fan_isomorphism_generator(fan1, fan1))
+        sage: sorted(fan_isomorphism_generator(fan1, fan1))                             # needs sage.graphs
         [
         [ -3 -20  28]  [1 0 0]
         [ -1  -4   7]  [0 1 0]
         [ -1  -5   8], [0 0 1]
         ]
-        sage: sorted(fan_isomorphism_generator(fan1, fan2))
+        sage: sorted(fan_isomorphism_generator(fan1, fan2))                             # needs sage.graphs
         [
         [-24  -3   7]  [-12   1  -5]
         [ -7  -1   2]  [ -4   0  -1]
         [ -8  -1   2], [ -5   0  -1]
         ]
-        sage: sorted(fan_isomorphism_generator(fan2, fan1))
+        sage: sorted(fan_isomorphism_generator(fan2, fan1))                             # needs sage.graphs
         [
         [  0   1  -1]  [ 0  1 -1]
         [  1 -13   8]  [ 2 -8  1]
@@ -193,16 +191,16 @@ def find_isomorphism(fan1, fan2, check=False):
 
     INPUT:
 
-    - ``fan1``, ``fan2`` -- two fans.
+    - ``fan1``, ``fan2`` -- two fans
 
-    - ``check`` -- boolean (default: False). Passed to the fan
+    - ``check`` -- boolean (default: ``False``); passed to the fan
       morphism constructor, see
-      :func:`~sage.geometry.fan_morphism.FanMorphism`.
+      :func:`~sage.geometry.fan_morphism.FanMorphism`
 
     OUTPUT:
 
     A fan isomorphism. If the fans are not isomorphic, a
-    :class:`FanNotIsomorphicError` is raised.
+    :exc:`FanNotIsomorphicError` is raised.
 
     EXAMPLES::
 
@@ -216,14 +214,14 @@ def find_isomorphism(fan1, fan2, check=False):
         sage: fan2 = Fan(cones, [vector(r)*m for r in rays])
 
         sage: from sage.geometry.fan_isomorphism import find_isomorphism
-        sage: find_isomorphism(fan1, fan2, check=True)                                  # optional - sage.graphs
+        sage: find_isomorphism(fan1, fan2, check=True)                                  # needs sage.graphs
         Fan morphism defined by the matrix
         [-2  3]
         [ 1 -1]
         Domain fan: Rational polyhedral fan in 2-d lattice N
         Codomain fan: Rational polyhedral fan in 2-d lattice N
 
-        sage: find_isomorphism(fan1, toric_varieties.P2().fan())                # optional - palp
+        sage: find_isomorphism(fan1, toric_varieties.P2().fan())                        # needs palp sage.graphs
         Traceback (most recent call last):
         ...
         FanNotIsomorphicError
@@ -232,7 +230,7 @@ def find_isomorphism(fan1, fan2, check=False):
         ....:            rays=[(-1,-1,0),(-1,-1,3),(-1,1,-1),(-1,3,-1),(0,2,-1),(1,-1,1)])
         sage: fan2 = Fan(cones=[[0,2,3,5],[0,1,4,5],[0,1,2],[3,4,5]],
         ....:            rays=[(-1,-1,-1),(-1,-1,0),(-1,1,-1),(0,2,-1),(1,-1,1),(3,-1,-1)])
-        sage: fan1.is_isomorphic(fan2)
+        sage: fan1.is_isomorphic(fan2)                                                  # needs sage.graphs
         True
     """
     generator = fan_isomorphism_generator(fan1, fan2)
@@ -251,7 +249,7 @@ def fan_2d_cyclically_ordered_rays(fan):
 
     INPUT:
 
-    - ``fan`` -- a 2-dimensional fan.
+    - ``fan`` -- a 2-dimensional fan
 
     OUTPUT:
 
@@ -302,7 +300,7 @@ def fan_2d_echelon_forms(fan):
 
     INPUT:
 
-    - ``fan`` -- a fan.
+    - ``fan`` -- a fan
 
     OUTPUT:
 
@@ -311,14 +309,14 @@ def fan_2d_echelon_forms(fan):
 
     EXAMPLES::
 
-        sage: fan = toric_varieties.P2().fan()                                  # optional - palp
+        sage: fan = toric_varieties.P2().fan()                                          # needs palp sage.graphs
         sage: from sage.geometry.fan_isomorphism import fan_2d_echelon_forms
-        sage: fan_2d_echelon_forms(fan)                                         # optional - palp
+        sage: fan_2d_echelon_forms(fan)                                                 # needs palp sage.graphs
         frozenset({[ 1  0 -1]
                    [ 0  1 -1]})
 
-        sage: fan = toric_varieties.dP7().fan()                                 # optional - palp
-        sage: sorted(fan_2d_echelon_forms(fan))                                 # optional - palp
+        sage: fan = toric_varieties.dP7().fan()                                         # needs palp sage.graphs
+        sage: sorted(fan_2d_echelon_forms(fan))                                         # needs palp sage.graphs
         [
         [ 1  0 -1 -1  0]  [ 1  0 -1 -1  0]  [ 1  0 -1 -1  1]  [ 1  0 -1  0  1]
         [ 0  1  0 -1 -1], [ 0  1  1  0 -1], [ 0  1  1  0 -1], [ 0  1  0 -1 -1],
@@ -334,10 +332,10 @@ def fan_2d_echelon_forms(fan):
         sage: fan1 = Fan(cones, rays)
         sage: from sage.geometry.fan_isomorphism import fan_2d_echelon_form, fan_2d_echelon_forms
         sage: echelon_forms = fan_2d_echelon_forms(fan1)
-        sage: S4 = CyclicPermutationGroup(4)
+        sage: S4 = CyclicPermutationGroup(4)                                            # needs sage.groups
         sage: rays.reverse()
         sage: cones = [(3,1), (1,2), (2,0), (0,3)]
-        sage: for i in range(100):
+        sage: for i in range(100):                                                      # needs sage.groups
         ....:     m = random_matrix(ZZ,2,2)
         ....:     if abs(det(m)) != 1: continue
         ....:     perm = S4.random_element()
@@ -346,7 +344,7 @@ def fan_2d_echelon_forms(fan):
         ....:     fan2 = Fan(perm_cones, rays=[m*vector(r) for r in perm_rays])
         ....:     assert fan_2d_echelon_form(fan2) in echelon_forms
 
-    The trivial case was fixed in :trac:`18613`::
+    The trivial case was fixed in :issue:`18613`::
 
         sage: fan = Fan([], lattice=ToricLattice(2))
         sage: fan_2d_echelon_forms(fan)
@@ -373,7 +371,7 @@ def fan_2d_echelon_form(fan):
 
     INPUT:
 
-    - ``fan`` -- a fan.
+    - ``fan`` -- a fan
 
     OUTPUT:
 
@@ -382,9 +380,9 @@ def fan_2d_echelon_form(fan):
 
     EXAMPLES::
 
-        sage: fan = toric_varieties.P2().fan()                                  # optional - palp
+        sage: fan = toric_varieties.P2().fan()                                          # needs palp sage.graphs
         sage: from sage.geometry.fan_isomorphism import fan_2d_echelon_form
-        sage: fan_2d_echelon_form(fan)                                          # optional - palp
+        sage: fan_2d_echelon_form(fan)                                                  # needs palp sage.graphs
         [ 1  0 -1]
         [ 0  1 -1]
     """

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs
 r"""
 Finite Delta-complexes
 
@@ -14,7 +14,7 @@ and Zilber [EZ1950]_, although they called them "semi-simplicial complexes".
 
 A `\Delta`-complex is a generalization of a :mod:`simplicial complex
 <sage.homology.simplicial_complex>`; a `\Delta`-complex `X` consists
-of sets `X_n` for each non-negative integer `n`, the elements of which
+of sets `X_n` for each nonnegative integer `n`, the elements of which
 are called *n-simplices*, along with *face maps* between these sets of
 simplices: for each `n` and for all `0 \leq i \leq n`, there are
 functions `d_i` from `X_n` to `X_{n-1}`, with `d_i(s)` equal to the
@@ -40,7 +40,7 @@ triangles, 21 edges, and 7 vertices, while there is a `\Delta`-complex
 representation of a torus using only 2 triangles, 3 edges, and 1
 vertex.
 
-.. note::
+.. NOTE::
 
    This class derives from
    :class:`~sage.homology.cell_complex.GenericCellComplex`, and so
@@ -54,20 +54,25 @@ from sage.topology.cell_complex import GenericCellComplex
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
-from sage.matrix.constructor import matrix
 from .simplicial_complex import Simplex, lattice_paths, SimplicialComplex
 from sage.arith.misc import binomial
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.matrix.constructor', 'matrix')
 
 
 class DeltaComplex(GenericCellComplex):
     r"""
     Define a `\Delta`-complex.
 
-    :param data: see below for a description of the options
-    :param check_validity: If True, check that the simplicial identities hold.
-    :type check_validity: boolean; optional, default True
-    :return: a `\Delta`-complex
+    INPUT:
+
+    - ``data`` -- see below for a description of the options
+    - ``check_validity`` -- boolean (default: ``True``); if ``True``, check
+      that the simplicial identities hold
+
+    OUTPUT: a `\Delta`-complex
 
     Use ``data`` to define a `\Delta`-complex.  It may be in any of
     three forms:
@@ -75,16 +80,15 @@ class DeltaComplex(GenericCellComplex):
     - ``data`` may be a dictionary indexed by simplices.  The value
       associated to a d-simplex `S` can be any of:
 
-      - a list or tuple of (d-1)-simplices, where the ith entry is the
-        ith face of S, given as a simplex,
+      - a list or tuple of (d-1)-simplices, where the i-th entry is the
+        i-th face of S, given as a simplex,
 
-      - another d-simplex `T`, in which case the ith face of `S` is
-        declared to be the same as the ith face of `T`: `S` and `T`
+      - another d-simplex `T`, in which case the i-th face of `S` is
+        declared to be the same as the i-th face of `T`: `S` and `T`
         are glued along their entire boundary,
 
-      - None or True or False or anything other than the previous two
-        options, in which case the faces are just the ordinary faces
-        of `S`.
+      - ``None`` or ``True`` or ``False`` or anything other than the previous two
+        options, in which case the faces are just the ordinary faces of `S`.
 
       For example, consider the following::
 
@@ -105,7 +109,7 @@ class DeltaComplex(GenericCellComplex):
 
       Let's compute its homology, and also compare it to the simplicial version::
 
-        sage: S5.homology()
+        sage: S5.homology()                                                             # needs sage.modules
         {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: Z}
         sage: S5.f_vector()  # number of simplices in each dimension
         [1, 6, 15, 20, 15, 6, 2]
@@ -126,7 +130,7 @@ class DeltaComplex(GenericCellComplex):
         ....:        Simplex(0): ()}
         sage: T = DeltaComplex(torus_dict); T
         Delta complex with 1 vertex and 7 simplices
-        sage: T.cohomology(base_ring=QQ)
+        sage: T.cohomology(base_ring=QQ)                                                # needs sage.modules
         {0: Vector space of dimension 0 over Rational Field,
          1: Vector space of dimension 2 over Rational Field,
          2: Vector space of dimension 1 over Rational Field}
@@ -137,8 +141,8 @@ class DeltaComplex(GenericCellComplex):
       by omitting the lowest numbered vertex, etc., and so the
       boundary consists of the edges ``[1,2]``, ``[0,2]``, and
       ``[0,1]``, in that order.  The boundary of the second is, on the
-      one hand, computed the same way: the nth face is obtained by
-      omitting the nth vertex.  On the other hand, the boundary is
+      one hand, computed the same way: the n-th face is obtained by
+      omitting the n-th vertex.  On the other hand, the boundary is
       explicitly declared to be edges ``[0,1]``, ``[0,2]``, and
       ``[1,2]``, in that order.  This glues the second triangle to the
       first in the prescribed way.  The three edges each start and end
@@ -146,10 +150,10 @@ class DeltaComplex(GenericCellComplex):
 
       .. image:: ../../media/torus_labelled.png
 
-    - ``data`` may be nested lists or tuples.  The nth entry in the
+    - ``data`` may be nested lists or tuples.  The n-th entry in the
       list is a list of the n-simplices in the complex, and each
-      n-simplex is encoded as a list, the ith entry of which is its
-      ith face.  Each face is represented by an integer, giving its
+      n-simplex is encoded as a list, the i-th entry of which is its
+      i-th face.  Each face is represented by an integer, giving its
       index in the list of (n-1)-faces.  For example, consider this::
 
         sage: P = DeltaComplex( [ [(), ()],  [(1,0), (1,0), (0,0)],
@@ -177,9 +181,9 @@ class DeltaComplex(GenericCellComplex):
 
       ::
 
-        sage: P.homology(1)
+        sage: P.homology(1)                                                             # needs sage.modules
         C2
-        sage: P.cohomology(2)
+        sage: P.cohomology(2)                                                           # needs sage.modules
         C2
 
       Closely related to this form for ``data`` is ``X.cells()``
@@ -244,7 +248,7 @@ class DeltaComplex(GenericCellComplex):
 
             sage: X = DeltaComplex({Simplex(3):True, Simplex(range(1,5)): Simplex(3), Simplex(range(2,6)): Simplex(3)}); X  # indirect doctest
             Delta complex with 4 vertices and 18 simplices
-            sage: X.homology()
+            sage: X.homology()                                                          # needs sage.modules
             {0: 0, 1: 0, 2: 0, 3: Z x Z}
             sage: X == loads(dumps(X))
             True
@@ -365,7 +369,7 @@ class DeltaComplex(GenericCellComplex):
                     for j in range(d+1):
                         if not all(faces[s[j]][i] == faces[s[i]][j-1] for i in range(j)):
                             msg = "simplicial identity d_i d_j = d_{j-1} d_i fails"
-                            msg += " for j=%s, in dimension %s" % (j, d)
+                            msg += " for j={}, in dimension {}".format(j, d)
                             raise ValueError(msg)
         # self._cells_dict: dictionary indexed by dimension d: for
         # each d, have list or tuple of simplices, and for each
@@ -390,10 +394,12 @@ class DeltaComplex(GenericCellComplex):
         r"""
         Create a subcomplex.
 
-        :param data: a dictionary indexed by dimension or a list (or
+        INPUT:
+
+        - ``data`` -- dictionary indexed by dimension or a list (or
           tuple); in either case, data[n] should be the list (or tuple
           or set) of the indices of the simplices to be included in
-          the subcomplex.
+          the subcomplex
 
         This automatically includes all faces of the simplices in
         ``data``, so you only have to specify the simplices which are
@@ -403,7 +409,7 @@ class DeltaComplex(GenericCellComplex):
 
             sage: X = delta_complexes.Torus()
             sage: A = X.subcomplex({2: [0]})  # one of the triangles of X
-            sage: X.homology(subcomplex=A)
+            sage: X.homology(subcomplex=A)                                              # needs sage.modules
             {0: 0, 1: 0, 2: Z}
 
         In the following, ``line`` is a line segment and ``ends`` is
@@ -416,7 +422,7 @@ class DeltaComplex(GenericCellComplex):
             sage: ends = line.subcomplex({0: (0, 1)})
             sage: ends.cells()
             {-1: ((),), 0: ((), ())}
-            sage: line.homology(subcomplex=ends)
+            sage: line.homology(subcomplex=ends)                                        # needs sage.modules
             {0: 0, 1: Z}
         """
         if isinstance(data, (list, tuple)):
@@ -451,7 +457,7 @@ class DeltaComplex(GenericCellComplex):
             try:
                 cells_to_add = set(new_data[d-1])  # begin to populate the (d-1)-cells
             except KeyError:
-                cells_to_add = set([])
+                cells_to_add = set()
             for x in d_cells:
                 if d+1 in new_dict:
                     old = new_dict[d+1]
@@ -513,14 +519,15 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The cells of this `\Delta`-complex.
 
-        :param subcomplex: a subcomplex of this complex
-        :type subcomplex: optional, default None
+        INPUT:
+
+        - ``subcomplex`` -- a subcomplex of this complex (default: ``None``)
 
         The cells of this `\Delta`-complex, in the form of a dictionary:
         the keys are integers, representing dimension, and the value
         associated to an integer d is the list of d-cells.  Each
-        d-cell is further represented by a list, the ith entry of
-        which gives the index of its ith face in the list of
+        d-cell is further represented by a list, the i-th entry of
+        which gives the index of its i-th face in the list of
         (d-1)-cells.
 
         If the optional argument ``subcomplex`` is present, then
@@ -571,33 +578,29 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The chain complex associated to this `\Delta`-complex.
 
-        :param dimensions: if None, compute the chain complex in all
-           dimensions.  If a list or tuple of integers, compute the
-           chain complex in those dimensions, setting the chain groups
-           in all other dimensions to zero.  NOT IMPLEMENTED YET: this
-           function always returns the entire chain complex
-        :param base_ring: commutative ring
-        :type base_ring: optional, default ZZ
-        :param subcomplex: a subcomplex of this simplicial complex.
-           Compute the chain complex relative to this subcomplex.
-        :type subcomplex: optional, default empty
-        :param augmented: If True, return the augmented chain complex
-           (that is, include a class in dimension `-1` corresponding
-           to the empty cell).  This is ignored if ``dimensions`` is
-           specified or if ``subcomplex`` is nonempty.
-        :type augmented: boolean; optional, default False
-        :param cochain: If True, return the cochain complex (that is,
-           the dual of the chain complex).
-        :type cochain: boolean; optional, default False
-        :param verbose: If True, print some messages as the chain
-           complex is computed.
-        :type verbose: boolean; optional, default False
-        :param check: If True, make sure that the chain complex
-           is actually a chain complex: the differentials are
-           composable and their product is zero.
-        :type check: boolean; optional, default False
+        INPUT:
 
-        .. note::
+        - ``dimensions`` -- if ``None``, compute the chain complex in all
+          dimensions.  If a list or tuple of integers, compute the
+          chain complex in those dimensions, setting the chain groups
+          in all other dimensions to zero.  NOT IMPLEMENTED YET: this
+          function always returns the entire chain complex
+        - ``base_ring`` -- commutative ring (default: ``ZZ``)
+        - ``subcomplex`` -- a subcomplex of this simplicial complex (default:
+          empty). Compute the chain complex relative to this subcomplex.
+        - ``augmented`` -- boolean (default: ``False``); if ``True``, return the
+          augmented chain complex (that is, include a class in dimension `-1`
+          corresponding to the empty cell).  This is ignored if ``dimensions``
+          is specified or if ``subcomplex`` is nonempty.
+        - ``cochain`` -- boolean (default: ``False``); if ``True``, return the
+          cochain complex (that is, the dual of the chain complex)
+        - ``verbose`` -- boolean (default: ``False``); if ``True``, print some
+          messages as the chain complex is computed
+        - ``check`` -- boolean (default: ``False``); if ``True``, make sure that
+          the chain complex is actually a chain complex: the differentials are
+          composable and their product is zero
+
+        .. NOTE::
 
            If subcomplex is nonempty, then the argument ``augmented``
            has no effect: the chain complex relative to a nonempty
@@ -605,6 +608,7 @@ class DeltaComplex(GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: circle = delta_complexes.Sphere(1)
             sage: circle.chain_complex()
             Chain complex with at most 2 nonzero terms over Integer Ring
@@ -706,7 +710,7 @@ class DeltaComplex(GenericCellComplex):
         - ``dim_left`` -- integer between 0 and one more than the
           dimension of this simplex
 
-        OUTPUT: a list containing just the triple ``(1, left,
+        OUTPUT: list containing just the triple ``(1, left,
         right)``, where ``left`` and ``right`` are the two cells
         described above, each given as pairs ``(idx, tuple)``.
 
@@ -739,8 +743,7 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The n-skeleton of this `\Delta`-complex.
 
-        :param n: dimension
-        :type n: non-negative integer
+        - ``n`` -- nonnegative integer; dimension
 
         EXAMPLES::
 
@@ -749,16 +752,13 @@ class DeltaComplex(GenericCellComplex):
             Delta complex with 4 vertices and 11 simplices
             sage: S3.n_skeleton(1).dimension()
             1
-            sage: S3.n_skeleton(1).homology()
+            sage: S3.n_skeleton(1).homology()                                           # needs sage.modules
             {0: 0, 1: Z x Z x Z}
         """
         if n >= self.dimension():
             return self
-        else:
-            data = []
-            for d in range(n+1):
-                data.append(self._cells_dict[d])
-            return DeltaComplex(data)
+        data = [self._cells_dict[d] for d in range(n + 1)]
+        return DeltaComplex(data)
 
     def graph(self):
         r"""
@@ -788,15 +788,17 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The join of this `\Delta`-complex with another one.
 
-        :param other: another `\Delta`-complex (the right-hand
-           factor)
-        :return: the join ``self * other``
+        INPUT:
+
+        - ``other`` -- another `\Delta`-complex (the right-hand factor)
+
+        OUTPUT: the join ``self * other``
 
         The join of two `\Delta`-complexes `S` and `T` is the
         `\Delta`-complex `S*T` with simplices of the form `[v_0, ...,
         v_k, w_0, ..., w_n]` for all simplices `[v_0, ..., v_k]` in
         `S` and `[w_0, ..., w_n]` in `T`.  The faces are computed
-        accordingly: the ith face of such a simplex is either `(d_i S)
+        accordingly: the i-th face of such a simplex is either `(d_i S)
         * T` if `i \leq k`, or `S * (d_{i-k-1} T)` if `i > k`.
 
         EXAMPLES::
@@ -811,14 +813,14 @@ class DeltaComplex(GenericCellComplex):
             sage: K = delta_complexes.KleinBottle()
             sage: T_simp = simplicial_complexes.Torus()
             sage: K_simp = simplicial_complexes.KleinBottle()
-            sage: T.join(K).homology()[3] == T_simp.join(K_simp).homology()[3] # long time (3 seconds)
+            sage: T.join(K).homology()[3] == T_simp.join(K_simp).homology()[3]  # long time (3 seconds), needs sage.modules
             True
 
         The notation '*' may be used, as well::
 
             sage: S1 = delta_complexes.Sphere(1)
             sage: X = S1 * S1    # X is a 3-sphere
-            sage: X.homology()
+            sage: X.homology()                                                          # needs sage.modules
             {0: 0, 1: 0, 2: 0, 3: Z}
         """
         data = []
@@ -893,7 +895,7 @@ class DeltaComplex(GenericCellComplex):
             sage: K = delta_complexes.KleinBottle()
             sage: K.cone()
             Delta complex with 2 vertices and 14 simplices
-            sage: K.cone().homology()
+            sage: K.cone().homology()                                                   # needs sage.modules
             {0: 0, 1: 0, 2: 0, 3: 0}
         """
         return self.join(delta_complexes.Simplex(0))
@@ -902,8 +904,7 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The suspension of this `\Delta`-complex.
 
-        :param n: suspend this many times.
-        :type n: positive integer; optional, default 1
+        - ``n`` -- positive integer (default: 1); suspend this many times
 
         The suspension is the complex formed by adding two new
         vertices `S_0` and `S_1` and simplices of the form `[S_0, v_0,
@@ -916,11 +917,11 @@ class DeltaComplex(GenericCellComplex):
 
             sage: S = delta_complexes.Sphere(0)
             sage: S3 = S.suspension(3)  # the 3-sphere
-            sage: S3.homology()
+            sage: S3.homology()                                                         # needs sage.modules
             {0: 0, 1: 0, 2: 0, 3: Z}
         """
         if n < 0:
-            raise ValueError("n must be non-negative")
+            raise ValueError("n must be nonnegative")
         if n == 0:
             return self
         if n == 1:
@@ -931,11 +932,13 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The product of this `\Delta`-complex with another one.
 
-        :param other: another `\Delta`-complex (the right-hand
-           factor)
-        :return: the product ``self x other``
+        INPUT:
 
-        .. warning::
+        - ``other`` -- another `\Delta`-complex (the right-hand factor)
+
+        OUTPUT: the product ``self x other``
+
+        .. WARNING::
 
            If ``X`` and ``Y`` are `\Delta`-complexes, then ``X*Y``
            returns their join, not their product.
@@ -944,22 +947,25 @@ class DeltaComplex(GenericCellComplex):
 
             sage: K = delta_complexes.KleinBottle()
             sage: X = K.product(K)
-            sage: X.homology(1)                                                         # optional - sage.modules
+
+            sage: # needs sage.modules
+            sage: X.homology(1)
             Z x Z x C2 x C2
-            sage: X.homology(2)                                                         # optional - sage.modules
+            sage: X.homology(2)
             Z x C2 x C2 x C2
-            sage: X.homology(3)                                                         # optional - sage.modules
+            sage: X.homology(3)
             C2
-            sage: X.homology(4)                                                         # optional - sage.modules
+            sage: X.homology(4)
             0
-            sage: X.homology(base_ring=GF(2))                                           # optional - sage.modules sage.rings.finite_rings
+            sage: X.homology(base_ring=GF(2))
             {0: Vector space of dimension 0 over Finite Field of size 2,
              1: Vector space of dimension 4 over Finite Field of size 2,
              2: Vector space of dimension 6 over Finite Field of size 2,
              3: Vector space of dimension 4 over Finite Field of size 2,
              4: Vector space of dimension 1 over Finite Field of size 2}
+
             sage: S1 = delta_complexes.Sphere(1)
-            sage: K.product(S1).homology() == S1.product(K).homology()                  # optional - sage.modules
+            sage: K.product(S1).homology() == S1.product(K).homology()                  # needs sage.modules
             True
             sage: S1.product(S1) == delta_complexes.Torus()
             True
@@ -1057,13 +1063,15 @@ class DeltaComplex(GenericCellComplex):
         r"""
         The disjoint union of this `\Delta`-complex with another one.
 
-        :param right: the other `\Delta`-complex (the right-hand factor)
+        INPUT:
+
+        - ``right`` -- the other `\Delta`-complex (the right-hand factor)
 
         EXAMPLES::
 
             sage: S1 = delta_complexes.Sphere(1)
             sage: S2 = delta_complexes.Sphere(2)
-            sage: S1.disjoint_union(S2).homology()                                      # optional - sage.modules
+            sage: S1.disjoint_union(S2).homology()                                      # needs sage.modules
             {0: Z, 1: Z, 2: Z}
         """
         dim = max(self.dimension(), right.dimension())
@@ -1084,9 +1092,9 @@ class DeltaComplex(GenericCellComplex):
         The wedge (one-point union) of this `\Delta`-complex with
         another one.
 
-        :param right: the other `\Delta`-complex (the right-hand factor)
+        - ``right`` -- the other `\Delta`-complex (the right-hand factor)
 
-        .. note::
+        .. NOTE::
 
             This operation is not well-defined if ``self`` or
             ``other`` is not path-connected.
@@ -1095,35 +1103,34 @@ class DeltaComplex(GenericCellComplex):
 
             sage: S1 = delta_complexes.Sphere(1)
             sage: S2 = delta_complexes.Sphere(2)
-            sage: S1.wedge(S2).homology()                                               # optional - sage.modules
+            sage: S1.wedge(S2).homology()                                               # needs sage.modules
             {0: 0, 1: Z, 2: Z}
         """
         data = self.disjoint_union(right).cells()
         left_verts = len(self.n_cells(0))
-        translate = {}
-        for i in range(left_verts):
-            translate[i] = i
+        translate = {i: i for i in range(left_verts)}
         translate[left_verts] = 0
         for i in range(left_verts + 1, left_verts + len(right.n_cells(0))):
-            translate[i] = i-1
+            translate[i] = i - 1
         data[0] = data[0][:-1]
-        edges = []
-        for e in data[1]:
-            edges.append([translate[a] for a in e])
+        edges = [[translate[a] for a in e] for e in data[1]]
         data[1] = edges
         return DeltaComplex(data)
 
     def connected_sum(self, other):
         r"""
-        Return the connected sum of self with other.
+        Return the connected sum of ``self`` with ``other``.
 
-        :param other: another `\Delta`-complex
-        :return: the connected sum ``self # other``
+        INPUT:
+
+        - ``other`` -- another `\Delta`-complex
+
+        OUTPUT: the connected sum ``self # other``
 
         .. warning::
 
-           This does not check that self and other are manifolds.  It
-           doesn't even check that their facets all have the same
+           This does not check that ``self`` and ``other`` are manifolds.
+           It doesn't even check that their facets all have the same
            dimension.  It just chooses top-dimensional simplices from
            each complex, checks that they have the same dimension,
            removes them, and glues the remaining pieces together.
@@ -1144,16 +1151,17 @@ class DeltaComplex(GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: T = delta_complexes.Torus()
             sage: S2 = delta_complexes.Sphere(2)
-            sage: T.connected_sum(S2).cohomology() == T.cohomology()                    # optional - sage.modules
+            sage: T.connected_sum(S2).cohomology() == T.cohomology()
             True
             sage: RP2 = delta_complexes.RealProjectivePlane()
-            sage: T.connected_sum(RP2).homology(1)                                      # optional - sage.modules
+            sage: T.connected_sum(RP2).homology(1)
             Z x Z x C2
-            sage: T.connected_sum(RP2).homology(2)                                      # optional - sage.modules
+            sage: T.connected_sum(RP2).homology(2)
             0
-            sage: RP2.connected_sum(RP2).connected_sum(RP2).homology(1)                 # optional - sage.modules
+            sage: RP2.connected_sum(RP2).connected_sum(RP2).homology(1)
             Z x Z x C2
         """
         if not self.dimension() == other.dimension():
@@ -1219,9 +1227,12 @@ class DeltaComplex(GenericCellComplex):
         top-dimensional simplices) of the simplex to subdivide.  If
         not present, subdivide the last entry in this list.
 
-        :param idx: index specifying which simplex to subdivide
-        :type idx: integer; optional, default -1
-        :return: `\Delta`-complex with one simplex subdivided.
+        INPUT:
+
+        - ``idx`` -- integer (default: -1); index specifying which simplex to
+          subdivide
+
+        OUTPUT: `\Delta`-complex with one simplex subdivided
 
         *Elementary subdivision* of a simplex means replacing that
         simplex with the cone on its boundary.  That is, given a
@@ -1272,7 +1283,7 @@ class DeltaComplex(GenericCellComplex):
             Delta complex with 2 vertices and 13 simplices
             sage: X.elementary_subdivision()
             Delta complex with 3 vertices and 19 simplices
-            sage: X.homology() == T.homology()                                          # optional - sage.modules
+            sage: X.homology() == T.homology()                                          # needs sage.modules
             True
         """
         pi = self._epi_from_standard_simplex(idx=idx)
@@ -1331,12 +1342,15 @@ class DeltaComplex(GenericCellComplex):
 
         This is used by :meth:`elementary_subdivision`.
 
-        :param idx: index specifying which simplex to examine
-        :type idx: integer; optional, default -1
-        :return: boolean, True if the boundary of the simplex has any
-          identifications
-        :param dim: dimension of simplex to consider
-        :type dim: integer; optional, default = dim of complex
+        INPUT:
+
+        - ``idx`` -- integer (default: -1); index specifying which simplex to
+          examine
+        - ``dim`` -- integer (default: dimension of complex); dimension of simplex
+          to consider
+
+        OUTPUT: boolean; whether the boundary of the simplex has any
+        identifications
 
         Suppose that the dimension is `d`. The map is given by a
         dictionary indexed by dimension: in dimension `i`, its value
@@ -1367,17 +1381,17 @@ class DeltaComplex(GenericCellComplex):
         """
         if dim is None:
             dim = self.dimension()
-        # the output is easier to read if the entries are non-negative.
+        # the output is easier to read if the entries are nonnegative.
         if idx == -1:
             idx = len(self.n_cells(dim)) - 1
         simplex = SimplicialComplex([Simplex(dim)]).delta_complex(sort_simplices=True)
         simplex_cells = simplex.cells()
         self_cells = self.cells()
         if dim > 0:
-            map = {dim: {tuple(simplex_cells[dim][0]): idx}}
+            mapping = {dim: {tuple(simplex_cells[dim][0]): idx}}
         else:
-            map = {dim: {(0,): idx}}
-        faces_dict = map[dim]
+            mapping = {dim: {(0,): idx}}
+        faces_dict = mapping[dim]
         for n in range(dim, 0, -1):
             n_cells = faces_dict
             faces_dict = {}
@@ -1393,12 +1407,12 @@ class DeltaComplex(GenericCellComplex):
                 for j in one_cell:
                     if j not in faces_dict:
                         faces_dict[j] = one_cell[j]
-            map[n-1] = faces_dict
-        return map
+            mapping[n-1] = faces_dict
+        return mapping
 
     def _is_glued(self, idx=-1, dim=None):
         r"""
-        ``True`` if there is any gluing along the boundary of a
+        Return ``True`` if there is any gluing along the boundary of a
         top-dimensional simplex in this `\Delta`-complex.
 
         If the optional argument ``idx`` is present, it specifies
@@ -1410,12 +1424,15 @@ class DeltaComplex(GenericCellComplex):
 
         This is used by :meth:`connected_sum`.
 
-        :param idx: index specifying which simplex to examine
-        :type idx: integer; optional, default -1
-        :return: boolean, True if the boundary of the simplex has any
-          identifications
-        :param dim: dimension of simplex to consider
-        :type dim: integer; optional, default = dim of complex
+        INPUT:
+
+        - ``idx`` -- integer (default: -1); index specifying which simplex to
+          examine
+        - ``dim`` -- integer (default: dimension of complex); dimension of simplex
+          to consider
+
+        OUTPUT: boolean; whether the boundary of the simplex has any
+        identifications
 
         EXAMPLES::
 
@@ -1437,7 +1454,7 @@ class DeltaComplex(GenericCellComplex):
         while not_glued and i > 0:
             # count the (i-1) cells and compare to (n+1) choose i.
             old_faces = i_faces
-            i_faces = set([])
+            i_faces = set()
             all_cells = self.n_cells(i)
             for face in old_faces:
                 i_faces.update(all_cells[face])
@@ -1453,7 +1470,7 @@ class DeltaComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: T = delta_complexes.Torus()
-            sage: T.face_poset()                                                        # optional - sage.combinat sage.graphs
+            sage: T.face_poset()
             Finite poset containing 6 elements
         """
         from sage.combinat.posets.posets import Poset
@@ -1465,7 +1482,7 @@ class DeltaComplex(GenericCellComplex):
         for n in range(dim, 0, -1):
             idx = 0
             for s in self.n_cells(n):
-                covers[(n, idx)] = list(set([(n-1, i) for i in s]))
+                covers[(n, idx)] = list({(n-1, i) for i in s})
                 idx += 1
         # deal with vertices separately: they have no covers (in the
         # dual poset).
@@ -1499,8 +1516,8 @@ class DeltaComplex(GenericCellComplex):
         INPUT:
 
         - ``n`` -- integer
-        - ``base_ring`` -- ring (optional, default `\ZZ`)
-        - ``cochains`` -- boolean (optional, default ``False``); if
+        - ``base_ring`` -- ring (default: `\ZZ`)
+        - ``cochains`` -- boolean (default: ``False``); if
           ``True``, return cochains instead
 
         Since the list of `n`-cells for a `\Delta`-complex may have
@@ -1517,11 +1534,12 @@ class DeltaComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: T = delta_complexes.Torus()
-            sage: T.n_chains(1, QQ)
-            Free module generated by {(0, (0, 0)), (1, (0, 0)), (2, (0, 0))} over Rational Field
-            sage: list(T.n_chains(1, QQ, cochains=False).basis())
+            sage: T.n_chains(1, QQ)                                                     # needs sage.modules
+            Free module generated by {(0, (0, 0)), (1, (0, 0)), (2, (0, 0))}
+             over Rational Field
+            sage: list(T.n_chains(1, QQ, cochains=False).basis())                       # needs sage.modules
             [(0, (0, 0)), (1, (0, 0)), (2, (0, 0))]
-            sage: list(T.n_chains(1, QQ, cochains=True).basis())
+            sage: list(T.n_chains(1, QQ, cochains=True).basis())                        # needs sage.modules
             [\chi_(0, (0, 0)), \chi_(1, (0, 0)), \chi_(2, (0, 0))]
         """
         from sage.homology.chains import Chains, Cochains
@@ -1550,8 +1568,7 @@ class DeltaComplex(GenericCellComplex):
 
         INPUT:
 
-        - ``base_ring`` - coefficient ring (optional, default
-          ``QQ``). Must be a field.
+        - ``base_ring`` -- coefficient ring (default: ``QQ``); must be a field
 
         Denote by `C` the chain complex associated to this
         `\Delta`-complex. The algebraic topological model is a chain complex
@@ -1580,15 +1597,16 @@ class DeltaComplex(GenericCellComplex):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: RP2 = delta_complexes.RealProjectivePlane()
-            sage: phi, M = RP2.algebraic_topological_model(GF(2))                       # optional - sage.rings.finite_rings
-            sage: M.homology()                                                          # optional - sage.modules sage.rings.finite_rings
+            sage: phi, M = RP2.algebraic_topological_model(GF(2))
+            sage: M.homology()
             {0: Vector space of dimension 1 over Finite Field of size 2,
              1: Vector space of dimension 1 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
             sage: T = delta_complexes.Torus()
             sage: phi, M = T.algebraic_topological_model(QQ)
-            sage: M.homology()                                                          # optional - sage.modules
+            sage: M.homology()
             {0: Vector space of dimension 1 over Rational Field,
              1: Vector space of dimension 2 over Rational Field,
              2: Vector space of dimension 1 over Rational Field}
@@ -1613,7 +1631,7 @@ class DeltaComplex(GenericCellComplex):
         return ('Delta', 'simplex', 'simplices')
 
 
-class DeltaComplexExamples():
+class DeltaComplexExamples:
     r"""
     Some examples of `\Delta`-complexes.
 
@@ -1632,7 +1650,7 @@ class DeltaComplexExamples():
         sage: S = delta_complexes.Sphere(6) # the 6-sphere
         sage: S.dimension()
         6
-        sage: S.cohomology(6)
+        sage: S.cohomology(6)                                                           # needs sage.modules
         Z
         sage: delta_complexes.Torus() == delta_complexes.Sphere(3)
         False
@@ -1645,11 +1663,13 @@ class DeltaComplexExamples():
         except in dimension 1, in which case it is a single 1-simplex
         starting and ending at the same vertex.
 
-        :param n: dimension of the sphere
+        INPUT:
+
+        - ``n`` -- dimension of the sphere
 
         EXAMPLES::
 
-            sage: delta_complexes.Sphere(4).cohomology(4, base_ring=GF(3))              # optional - sage.modules sage.rings.finite_rings
+            sage: delta_complexes.Sphere(4).cohomology(4, base_ring=GF(3))              # needs sage.modules
             Vector space of dimension 1 over Finite Field of size 3
         """
         if n == 1:
@@ -1665,7 +1685,7 @@ class DeltaComplexExamples():
 
         EXAMPLES::
 
-            sage: delta_complexes.Torus().homology(1)
+            sage: delta_complexes.Torus().homology(1)                                   # needs sage.modules sage.rings.finite_rings
             Z x Z
         """
         return DeltaComplex((((),), ((0, 0), (0, 0), (0, 0)),
@@ -1680,14 +1700,15 @@ class DeltaComplexExamples():
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: P = delta_complexes.RealProjectivePlane()
-            sage: P.cohomology(1)                                                       # optional - sage.modules
+            sage: P.cohomology(1)
             0
-            sage: P.cohomology(2)                                                       # optional - sage.modules
+            sage: P.cohomology(2)
             C2
-            sage: P.cohomology(dim=1, base_ring=GF(2))                                  # optional - sage.modules sage.rings.finite_rings
+            sage: P.cohomology(dim=1, base_ring=GF(2))
             Vector space of dimension 1 over Finite Field of size 2
-            sage: P.cohomology(dim=2, base_ring=GF(2))                                  # optional - sage.modules sage.rings.finite_rings
+            sage: P.cohomology(dim=2, base_ring=GF(2))
             Vector space of dimension 1 over Finite Field of size 2
         """
         return DeltaComplex((((), ()), ((1, 0), (1, 0), (0, 0)),
@@ -1726,10 +1747,11 @@ class DeltaComplexExamples():
         r"""
         A surface of genus g as a `\Delta`-complex.
 
-        :param g: the genus
-        :type g: non-negative integer
-        :param orientable: whether the surface should be orientable
-        :type orientable: bool, optional, default ``True``
+        INPUT:
+
+        - ``g`` -- nonnegative integer; the genus
+        - ``orientable`` -- boolean (default: ``True``); whether the surface
+          should be orientable
 
         In the orientable case, return a sphere if `g` is zero, and
         otherwise return a `g`-fold connected sum of a torus with
@@ -1743,9 +1765,9 @@ class DeltaComplexExamples():
 
             sage: delta_complexes.SurfaceOfGenus(1, orientable=False)
             Delta complex with 2 vertices and 8 simplices
-            sage: delta_complexes.SurfaceOfGenus(3, orientable=False).homology(1)       # optional - sage.modules
+            sage: delta_complexes.SurfaceOfGenus(3, orientable=False).homology(1)       # needs sage.modules
             Z x Z x C2
-            sage: delta_complexes.SurfaceOfGenus(3, orientable=False).homology(2)       # optional - sage.modules
+            sage: delta_complexes.SurfaceOfGenus(3, orientable=False).homology(2)       # needs sage.modules
             0
 
         Compare to simplicial complexes::
@@ -1756,15 +1778,15 @@ class DeltaComplexExamples():
             sage: simpl_g4 = simplicial_complexes.SurfaceOfGenus(4)
             sage: simpl_g4.f_vector()
             [1, 19, 75, 50]
-            sage: delta_g4.homology() == simpl_g4.homology()                            # optional - sage.modules
+            sage: delta_g4.homology() == simpl_g4.homology()                            # needs sage.modules
             True
         """
         try:
             g = Integer(g)
         except TypeError:
-            raise ValueError("genus must be a non-negative integer")
+            raise ValueError("genus must be a nonnegative integer")
         if g < 0:
-            raise ValueError("genus must be a non-negative integer")
+            raise ValueError("genus must be a nonnegative integer")
         if g == 0:
             if not orientable:
                 raise ValueError("no non-orientable surface of genus zero")

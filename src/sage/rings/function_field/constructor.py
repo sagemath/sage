@@ -22,7 +22,6 @@ AUTHORS:
 
 - Julian Rueth (2011-09-14): replaced ``@cached_function`` with
   ``UniqueFactory``
-
 """
 
 # ****************************************************************************
@@ -86,7 +85,7 @@ class FunctionFieldFactory(UniqueFactory):
             sage: K.<x> = FunctionField(QQ) # indirect doctest
         """
         if not isinstance(names, tuple):
-            names=(names,)
+            names = (names,)
         return (F, names)
 
     def create_object(self, version, key,**extra_args):
@@ -111,7 +110,9 @@ class FunctionFieldFactory(UniqueFactory):
             from .function_field_rational import RationalFunctionField
             return RationalFunctionField(key[0], names=key[1])
 
-FunctionField=FunctionFieldFactory("sage.rings.function_field.constructor.FunctionField")
+
+FunctionField = FunctionFieldFactory("sage.rings.function_field.constructor.FunctionField")
+
 
 class FunctionFieldExtensionFactory(UniqueFactory):
     """
@@ -132,7 +133,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
     EXAMPLES::
 
         sage: K.<x> = FunctionField(QQ)
-        sage: R.<y>=K[]
+        sage: R.<y> = K[]
         sage: y2 = y*1
         sage: y2 is y
         False
@@ -150,27 +151,27 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<w> = K.extension(x - y^2) # indirect doctest                       # needs sage.rings.function_field
+            sage: L.<w> = K.extension(x - y^2)  # indirect doctest                      # needs sage.rings.function_field
 
         TESTS:
 
-        Verify that :trac:`16530` has been resolved::
+        Verify that :issue:`16530` has been resolved::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)                                          # needs sage.rings.function_field
-            sage: R.<z> = L[]                                                           # needs sage.rings.function_field
-            sage: M.<z> = L.extension(z - 1)                                            # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: R.<z> = L[]
+            sage: M.<z> = L.extension(z - 1)
             sage: R.<z> = K[]
-            sage: N.<z> = K.extension(z - 1)                                            # needs sage.rings.function_field
-            sage: M is N                                                                # needs sage.rings.function_field
+            sage: N.<z> = K.extension(z - 1)
+            sage: M is N
             False
-
         """
         if names is None:
-            names=polynomial.variable_name()
+            names = polynomial.variable_name()
         if not isinstance(names,tuple):
-            names=(names,)
+            names = (names,)
         return (polynomial,names,polynomial.base_ring())
 
     def create_object(self,version,key,**extra_args):
@@ -182,9 +183,9 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<w> = K.extension(x - y^2) # indirect doctest                       # needs sage.rings.function_field
+            sage: L.<w> = K.extension(x - y^2)   # indirect doctest                     # needs sage.rings.function_field
             sage: y2 = y*1
-            sage: M.<w> = K.extension(x - y2^2) # indirect doctest                      # needs sage.rings.function_field
+            sage: M.<w> = K.extension(x - y2^2)  # indirect doctest                     # needs sage.rings.function_field
             sage: L is M                                                                # needs sage.rings.function_field
             True
         """
@@ -209,6 +210,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
                 else:
                     return function_field_polymod.FunctionField_char_zero(f, names)
         return function_field_polymod.FunctionField_polymod(f, names)
+
 
 FunctionFieldExtension = FunctionFieldExtensionFactory(
     "sage.rings.function_field.constructor.FunctionFieldExtension")

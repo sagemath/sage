@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of package systems ``sage_spkg``, ``conda``, ``pip``, ``debian``, ``fedora`` etc.
 """
@@ -73,11 +74,11 @@ class PackageSystem(Feature):
         system = self.name
         try:
             proc = run(f'sage-get-system-packages {system} {spkgs}',
-                       shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True, check=True)
+                       shell=True, capture_output=True, text=True, check=True)
             system_packages = proc.stdout.strip()
             print_sys = f'sage-print-system-package-command {system} --verbose --sudo --prompt="{prompt}"'
             command = f'{print_sys} update && {print_sys} install {system_packages}'
-            proc = run(command, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True, check=True)
+            proc = run(command, shell=True, capture_output=True, text=True, check=True)
             command = proc.stdout.strip()
             if command:
                 lines.append(f'To install {feature} using the {system} package manager, you can try to run:')

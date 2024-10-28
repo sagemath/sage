@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Skew Tableaux
 
@@ -7,11 +6,11 @@ AUTHORS:
 - Mike Hansen: Initial version
 - Travis Scrimshaw, Arthur Lubovsky (2013-02-11):
   Factored out ``CombinatorialClass``
-- Trevor K. Karn (2022-08-03): added `backward_slide`
+- Trevor K. Karn (2022-08-03): added ``backward_slide``
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
-#       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
+#       Copyright (C) 2013 Travis Scrimshaw <tcscrims at gmail.com>
 #       Copyright (C) 2013 Arthur Lubovsky
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -27,6 +26,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.sets_cat import Sets
@@ -38,7 +38,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.misc import factorial
 from sage.rings.infinity import PlusInfinity
-from sage.matrix.special import zero_matrix
 
 from sage.structure.list_clone import ClonableList
 from sage.combinat.partition import Partition
@@ -49,6 +48,9 @@ from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.words.words import Words
 
 from sage.misc.persist import register_unpickle_override
+
+lazy_import('sage.matrix.special', 'zero_matrix')
+lazy_import('sage.groups.perm_gps.permgroup', 'PermutationGroup')
 
 
 class SkewTableau(ClonableList,
@@ -110,7 +112,7 @@ class SkewTableau(ClonableList,
             sage: st = SkewTableau([[None,1,1],[None,2],[4]])
             sage: TestSuite(st).run()
 
-        A skew tableau is immutable, see :trac:`15862`::
+        A skew tableau is immutable, see :issue:`15862`::
 
             sage: T = SkewTableau([[None,2],[2]])
             sage: t0 = T[0]
@@ -150,9 +152,7 @@ class SkewTableau(ClonableList,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -187,9 +187,7 @@ class SkewTableau(ClonableList,
 
         - ``other`` -- the element that ``self`` is compared to
 
-        OUTPUT:
-
-        A boolean.
+        OUTPUT: boolean
 
         TESTS::
 
@@ -205,7 +203,7 @@ class SkewTableau(ClonableList,
 
         EXAMPLES:
 
-        Check that :trac:`35137` is fixed::
+        Check that :issue:`35137` is fixed::
 
             sage: t = SkewTableau([[None,1,2]])
             sage: hash(t) == hash(tuple(t))
@@ -605,7 +603,7 @@ class SkewTableau(ClonableList,
             sage: by_word(t) == t.weight()
             True
             sage: SST = SemistandardTableaux(shape=[3,1,1])
-            sage: all(by_word(t) == SkewTableau(t).weight() for t in SST)
+            sage: all(by_word(t) == SkewTableau(t).weight() for t in SST)               # needs sage.modules
             True
         """
         if (not self) or all(c is None for row in self for c in row):
@@ -686,7 +684,7 @@ class SkewTableau(ClonableList,
 
     def to_tableau(self):
         """
-        Returns a tableau with the same filling. This only works if the
+        Return a tableau with the same filling. This only works if the
         inner shape of the skew tableau has size zero.
 
         EXAMPLES::
@@ -1067,9 +1065,9 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``algorithm`` -- optional: if set to ``'jdt'``, rectifies by jeu de
+        - ``algorithm`` -- (optional) if set to ``'jdt'``, rectifies by jeu de
           taquin; if set to ``'schensted'``, rectifies by Schensted insertion
-          of the reading word; otherwise, guesses which will be faster.
+          of the reading word. Otherwise, guesses which will be faster.
 
         EXAMPLES::
 
@@ -1108,10 +1106,11 @@ class SkewTableau(ClonableList,
 
         if algorithm == 'jdt':
             rect = self
-            for i in range(mu_size):
+            for _ in range(mu_size):
                 rect = rect.slide()
         elif algorithm == 'schensted':
-            w = [x for row in reversed(self) for x in row if x is not None]
+            w = [x for row in reversed(self) for x in row
+                 if x is not None]
             rect = Tableau([]).insert_word(w)
         else:
             raise ValueError("algorithm must be 'jdt', 'schensted', or None")
@@ -1133,9 +1132,83 @@ class SkewTableau(ClonableList,
             [[None, None, 3], [None, 1, 3], [2, 2]]
             sage: st.to_list() == stlist
             True
-
         """
         return [list(row) for row in self]
+
+    def row_stabilizer(self):
+        """
+        Return the :func:`PermutationGroup` corresponding to the row stabilizer of
+        ``self``.
+
+        This assumes that every integer from `1` to the size of ``self``
+        appears exactly once in ``self``.
+
+        EXAMPLES::
+
+            sage: # needs sage.groups
+            sage: rs = SkewTableau([[None,1,2,3],[4,5]]).row_stabilizer()
+            sage: rs.order() == factorial(3) * factorial(2)
+            True
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in rs
+            True
+            sage: PermutationGroupElement([(1,4)]) in rs
+            False
+            sage: rs = SkewTableau([[None,1,2],[3]]).row_stabilizer()
+            sage: PermutationGroupElement([(1,2),(3,)]) in rs
+            True
+            sage: rs.one().domain()
+            [1, 2, 3]
+            sage: rs = SkewTableau([[None,None,1],[None,2],[3]]).row_stabilizer()
+            sage: rs.order()
+            1
+            sage: rs = SkewTableau([[None,None,2,4,5],[1,3]]).row_stabilizer()
+            sage: rs.order()
+            12
+            sage: rs = SkewTableau([]).row_stabilizer()
+            sage: rs.order()
+            1
+        """
+        # Ensure that the permutations involve all elements of the
+        # tableau, by including the identity permutation on the set [1..k].
+        k = self.size()
+        gens = [list(range(1, k + 1))]
+        gens.extend((row[j], row[j + 1])
+                    for row in self
+                    for j in range(len(row) - 1)
+                    if row[j] is not None)
+        return PermutationGroup(gens)
+
+    def column_stabilizer(self):
+        """
+        Return the :func:`PermutationGroup` corresponding to the column stabilizer
+        of ``self``.
+
+        This assumes that every integer from `1` to the size of ``self``
+        appears exactly once in ``self``.
+
+        EXAMPLES::
+
+            sage: # needs sage.groups
+            sage: cs = SkewTableau([[None,2,3],[1,5],[4]]).column_stabilizer()
+            sage: cs.order() == factorial(2) * factorial(2)
+            True
+            sage: PermutationGroupElement([(1,3,2),(4,5)]) in cs
+            False
+            sage: PermutationGroupElement([(1,4)]) in cs
+            True
+        """
+        # Ensure that the permutations involve all elements of the
+        # tableau, by including the identity permutation on the set [1..k].
+        k = self.size()
+        gens = [list(range(1, k + 1))]
+        ell = len(self)
+        while ell > 1:
+            ell -= 1
+            for i, val in enumerate(self[ell]):
+                top_neighbor = self[ell-1][i]
+                if top_neighbor is not None:
+                    gens.append((val, top_neighbor))
+        return PermutationGroup(gens)
 
     def shuffle(self, t2):
         r"""
@@ -1275,8 +1348,8 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``check`` -- (Default: ``True``) Check to make sure ``self`` is
-          semistandard. Set to ``False`` to avoid this check.
+        - ``check`` -- (default: ``True``) check to make sure ``self`` is
+          semistandard; set to ``False`` to avoid this check
 
         EXAMPLES::
 
@@ -1287,8 +1360,9 @@ class SkewTableau(ClonableList,
         Standard skew tableaux are fixed under standardization::
 
             sage: p = Partition([4,3,3,2])
-            sage: q = Partitions(3).random_element()
-            sage: all((t == t.standardization() for t in StandardSkewTableaux([p, q])))
+            sage: q = Partitions(3).random_element()                                    # needs sage.libs.flint
+            sage: all(t == t.standardization()                                          # needs sage.libs.flint
+            ....:     for t in StandardSkewTableaux([p, q]))
             True
 
         The reading word of the standardization is the
@@ -1341,17 +1415,17 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``k`` -- an integer
+        - ``k`` -- integer
 
-        - ``rows`` -- (Default ``None``) When set to ``None``, the method
+        - ``rows`` -- (default: ``None``) when set to ``None``, the method
           computes the `k`-th Bender--Knuth involution as defined above.
           When an iterable, this computes the composition of the `k`-th
           Bender--Knuth switches at row `i` over all `i` in ``rows``. When set
           to an integer `i`, the method computes the `k`-th Bender--Knuth
           switch at row `i`. Note the indexing of the rows starts with `1`.
 
-        - ``check`` -- (Default: ``True``) Check to make sure ``self`` is
-          semistandard. Set to ``False`` to avoid this check.
+        - ``check`` -- (default: ``True``) check to make sure ``self`` is
+          semistandard; set to ``False`` to avoid this check
 
         OUTPUT:
 
@@ -1607,8 +1681,8 @@ class SkewTableau(ClonableList,
 
         INPUT:
 
-        - ``check_input`` -- (default: ``True``) whether or not to check
-          that ``self`` indeed has ribbon shape
+        - ``check_input`` -- boolean (default: ``True``); whether or not to
+          check that ``self`` indeed has ribbon shape
 
         EXAMPLES::
 
@@ -1703,12 +1777,10 @@ class SkewTableau(ClonableList,
             sage: s.cells()
             [(0, 1), (0, 2), (1, 0), (2, 0)]
         """
-        res = []
-        for i in range(len(self)):
-            for j in range(len(self[i])):
-                if self[i][j] is not None:
-                    res.append((i, j))
-        return res
+        return [(i, j)
+                for i, selfi in enumerate(self)
+                for j in range(len(selfi))
+                if selfi[j] is not None]
 
     def cells_containing(self, i):
         r"""
@@ -1754,7 +1826,7 @@ class SkewTableau(ClonableList,
 
     def is_k_tableau(self, k):
         r"""
-        Checks whether ``self`` is a valid skew weak `k`-tableau.
+        Check whether ``self`` is a valid skew weak `k`-tableau.
 
         EXAMPLES::
 
@@ -1842,7 +1914,7 @@ class SkewTableaux(UniqueRepresentation, Parent):
 
     def __contains__(self, x):
         """
-        Checks if ``x`` is a skew tableau.
+        Check if ``x`` is a skew tableau.
 
         EXAMPLES::
 
@@ -1876,12 +1948,11 @@ class SkewTableaux(UniqueRepresentation, Parent):
             sage: SkewTableaux().from_expr([[1,1],[[5],[3,4],[1,2]]])
             [[None, 1, 2], [None, 3, 4], [5]]
         """
-        skp = []
         outer = expr[1]
         inner = expr[0] + [0] * (len(outer) - len(expr[0]))
 
-        for i in range(len(outer)):
-            skp.append([None] * (inner[i]) + outer[-(i + 1)])
+        skp = [[None] * (inner[i]) + outer[-(i + 1)]
+               for i in range(len(outer))]
 
         return self.element_class(self, skp)
 
@@ -1950,11 +2021,12 @@ class StandardSkewTableaux(SkewTableaux):
 
         sage: S = StandardSkewTableaux(2); S
         Standard skew tableaux of size 2
-        sage: S.cardinality()                                                           # optional - sage.modules
+        sage: S.cardinality()                                                           # needs sage.modules
         4
 
     ::
 
+        sage: # needs sage.graphs sage.modules
         sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()
         [[[None, 2, 3], [None, 4], [1]],
          [[None, 1, 2], [None, 3], [4]],
@@ -2015,7 +2087,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
         EXAMPLES::
 
             sage: s = StandardSkewTableaux()
-            sage: TestSuite(s).run()                                                    # optional - sage.graphs
+            sage: TestSuite(s).run()                                                    # needs sage.graphs
         """
         StandardSkewTableaux.__init__(self, category=InfiniteEnumeratedSets())
 
@@ -2036,8 +2108,9 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.modules
             sage: it = StandardSkewTableaux().__iter__()
-            sage: [next(it) for x in range(10)]                                         # optional - sage.graphs
+            sage: [next(it) for x in range(10)]
             [[],
              [[1]],
              [[1, 2]], [[1], [2]], [[None, 2], [1]], [[None, 1], [2]],
@@ -2059,8 +2132,9 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
         """
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.modules
             sage: S = StandardSkewTableaux(3)
-            sage: TestSuite(S).run()                                                    # optional - sage.graphs
+            sage: TestSuite(S).run()
         """
         self.n = n
         StandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
@@ -2078,13 +2152,14 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
         """
         EXAMPLES::
 
-            sage: StandardSkewTableaux(1).cardinality()                                 # optional - sage.modules
+            sage: # needs sage.modules
+            sage: StandardSkewTableaux(1).cardinality()
             1
-            sage: StandardSkewTableaux(2).cardinality()                                 # optional - sage.modules
+            sage: StandardSkewTableaux(2).cardinality()
             4
-            sage: StandardSkewTableaux(3).cardinality()                                 # optional - sage.modules
+            sage: StandardSkewTableaux(3).cardinality()
             24
-            sage: StandardSkewTableaux(4).cardinality()                                 # optional - sage.modules
+            sage: StandardSkewTableaux(4).cardinality()
             194
         """
         count = 0
@@ -2101,10 +2176,10 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
 
         EXAMPLES::
 
-            sage: StandardSkewTableaux(2).list()                                        # optional - sage.graphs
+            sage: # needs sage.graphs sage.modules
+            sage: StandardSkewTableaux(2).list()
             [[[1, 2]], [[1], [2]], [[None, 2], [1]], [[None, 1], [2]]]
-
-            sage: StandardSkewTableaux(3).list()                                        # optional - sage.graphs
+            sage: StandardSkewTableaux(3).list()
             [[[1, 2, 3]],
              [[1, 2], [3]], [[1, 3], [2]],
              [[None, 2, 3], [1]], [[None, 1, 2], [3]], [[None, 1, 3], [2]],
@@ -2148,8 +2223,9 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
         """
         TESTS::
 
+            sage: # needs sage.graphs sage.modules
             sage: S = StandardSkewTableaux([[3, 2, 1], [1, 1]])
-            sage: TestSuite(S).run()                                                    # optional - sage.graphs sage.modules
+            sage: TestSuite(S).run()
         """
         self.skp = skp
         StandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
@@ -2173,7 +2249,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
 
         EXAMPLES::
 
-            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).cardinality()               # optional - sage.modules
+            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).cardinality()               # needs sage.modules
             8
         """
         outer, inner = self.skp
@@ -2200,7 +2276,8 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
 
         EXAMPLES::
 
-            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()                      # optional - sage.graphs
+            sage: # needs sage.graphs sage.modules
+            sage: StandardSkewTableaux([[3, 2, 1], [1, 1]]).list()
             [[[None, 2, 3], [None, 4], [1]],
              [[None, 1, 2], [None, 3], [4]],
              [[None, 1, 2], [None, 4], [3]],
@@ -2210,7 +2287,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
              [[None, 1, 3], [None, 2], [4]],
              [[None, 2, 4], [None, 3], [1]]]
         """
-        dag = self.skp.to_dag(format="tuple")
+        dag = self.skp.to_dag(format='tuple')
         le_list = list(dag.topological_sort_generator())
 
         empty = [[None] * row_length for row_length in self.skp.outer()]
@@ -2596,9 +2673,9 @@ class SemistandardSkewTableaux_shape(SemistandardSkewTableaux):
 
     INPUT:
 
-    - ``p`` -- A skew partition
+    - ``p`` -- a skew partition
 
-    - ``max_entry`` -- The max entry; defaults to the size of ``p``.
+    - ``max_entry`` -- the max entry; defaults to the size of ``p``
 
     .. WARNING::
 

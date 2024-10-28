@@ -7,6 +7,20 @@ Description
 Several "official" and "undeposited" GAP packages available from
 https://www.gap-system.org/Packages/packages.html
 
+Installing this SPKG will install the corresponding GAP packages, but
+before you can use them in Sage, they still have to be loaded into
+either the GAP interface or libgap::
+
+  sage: gap.eval('LoadPackage("Grape")')  # optional - gap_packages
+  'true'
+  sage: libgap.LoadPackage("Grape")       # optional - gap_packages
+  true
+
+Those correspond to::
+
+  gap> LoadPackage("Grape");
+
+within the GAP interface and libgap, respectively.
 
 Upstream Contact
 ----------------

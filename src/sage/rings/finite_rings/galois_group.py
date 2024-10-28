@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Galois groups of Finite Fields
 """
@@ -65,11 +66,11 @@ class GaloisGroup_GF(GaloisGroup_cyc):
 
             sage: TestSuite(GF(9).galois_group()).run()
         """
-        GaloisGroup_cyc.__init__(self, field, (field.degree(),), gen_names="Frob")
+        GaloisGroup_cyc.__init__(self, field, (field.degree(),), gen_names='Frob')
 
     def _repr_(self):
         r"""
-        String representation of this Galois group
+        String representation of this Galois group.
 
         EXAMPLES::
 
@@ -109,7 +110,7 @@ class GaloisGroup_GF(GaloisGroup_cyc):
             Frob^2
             sage: G(G.gens()[0])
             Frob
-            sage: G([(1,3,2)])
+            sage: G([(1,3,2)])                                                          # needs sage.libs.gap
             Frob^2
             sage: G(k.hom(k.gen()^3, k))
             Frob

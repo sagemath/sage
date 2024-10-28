@@ -23,41 +23,42 @@ EXAMPLES:
 
 Consider Katsura-6 with respect to a ``degrevlex`` ordering. ::
 
+    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: from sage.rings.polynomial.toy_buchberger import *
-    sage: P.<a,b,c,e,f,g,h,i,j,k> = PolynomialRing(GF(32003))                           # optional - sage.rings.finite_rings
-    sage: I = sage.rings.ideal.Katsura(P, 6)                                            # optional - sage.rings.finite_rings
-
-    sage: g1 = buchberger(I)                                                            # optional - sage.rings.finite_rings
-    sage: g2 = buchberger_improved(I)                                                   # optional - sage.rings.finite_rings
-    sage: g3 = I.groebner_basis()                                                       # optional - sage.rings.finite_rings
+    sage: P.<a,b,c,e,f,g,h,i,j,k> = PolynomialRing(GF(32003))
+    sage: I = sage.rings.ideal.Katsura(P, 6)
+    sage: g1 = buchberger(I)
+    sage: g2 = buchberger_improved(I)
+    sage: g3 = I.groebner_basis()
 
 All algorithms actually compute a Groebner basis::
 
-    sage: Ideal(g1).basis_is_groebner()                                                 # optional - sage.rings.finite_rings
+    sage: # needs sage.libs.singular sage.rings.finite_rings
+    sage: Ideal(g1).basis_is_groebner()
     True
-    sage: Ideal(g2).basis_is_groebner()                                                 # optional - sage.rings.finite_rings
+    sage: Ideal(g2).basis_is_groebner()
     True
-    sage: Ideal(g3).basis_is_groebner()                                                 # optional - sage.rings.finite_rings
+    sage: Ideal(g3).basis_is_groebner()
     True
 
 The results are correct::
 
-    sage: Ideal(g1) == Ideal(g2) == Ideal(g3)                                           # optional - sage.rings.finite_rings
+    sage: # needs sage.libs.singular sage.rings.finite_rings
+    sage: Ideal(g1) == Ideal(g2) == Ideal(g3)
     True
 
 If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 
+    sage: # needs sage.libs.singular sage.rings.finite_rings
     sage: from sage.misc.verbose import set_verbose
     sage: set_verbose(1)
-    sage: P.<a,b,c> = PolynomialRing(GF(127))                                           # optional - sage.rings.finite_rings
-    sage: I = sage.rings.ideal.Katsura(P)                                               # optional - sage.rings.finite_rings
+    sage: P.<a,b,c> = PolynomialRing(GF(127))
+    sage: I = sage.rings.ideal.Katsura(P)
     // sage... ideal
-
-    sage: I                                                                             # optional - sage.rings.finite_rings
+    sage: I
     Ideal (a + 2*b + 2*c - 1, a^2 + 2*b^2 + 2*c^2 - a, 2*a*b + 2*b*c - b)
      of Multivariate Polynomial Ring in a, b, c over Finite Field of size 127
-
-    sage: buchberger(I)  # random                                                       # optional - sage.rings.finite_rings
+    sage: buchberger(I)  # random
     (a + 2*b + 2*c - 1, a^2 + 2*b^2 + 2*c^2 - a) => -2*b^2 - 6*b*c - 6*c^2 + b + 2*c
     G: set([a + 2*b + 2*c - 1, 2*a*b + 2*b*c - b, a^2 + 2*b^2 + 2*c^2 - a, -2*b^2 - 6*b*c - 6*c^2 + b + 2*c])
     <BLANKLINE>
@@ -118,17 +119,19 @@ If ``get_verbose()`` is `\ge 1`, a protocol is provided::
 The original Buchberger algorithm performs 15 useless reductions to
 zero for this example::
 
-    sage: gb = buchberger(I)                                                            # optional - sage.rings.finite_rings
+    sage: # needs sage.libs.singular sage.rings.finite_rings
+    sage: gb = buchberger(I)
     ...
     15 reductions to zero.
 
 The 'improved' Buchberger algorithm in contrast only performs 1 reduction to
 zero::
 
-    sage: gb = buchberger_improved(I)                                                   # optional - sage.rings.finite_rings
+    sage: # needs sage.libs.singular sage.rings.finite_rings
+    sage: gb = buchberger_improved(I)
     ...
     1 reductions to zero.
-    sage: sorted(gb)                                                                    # optional - sage.rings.finite_rings
+    sage: sorted(gb)
     [a + 2*b + 2*c - 1, b*c + 52*c^2 + 38*b + 25*c,
      b^2 - 26*c^2 - 51*b + 51*c, c^3 + 22*c^2 - 55*b + 49*c]
 
@@ -137,7 +140,6 @@ AUTHORS:
 - Martin Albrecht (2007-05-24): initial version
 
 - Marshall Hampton (2009-07-08): some doctest additions
-
 """
 
 from sage.misc.verbose import get_verbose
@@ -155,7 +157,7 @@ def spol(f, g):
 
     INPUT:
 
-    -  ``f, g`` -- polynomials
+    - ``f``, ``g`` -- polynomials
 
     OUTPUT: the S-polynomial of f and g
 
@@ -193,10 +195,10 @@ def buchberger(F):
         sage: R.<x,y,z> = PolynomialRing(QQ)
         sage: I = R.ideal([x^2 - z - 1, z^2 - y - 1, x*y^2 - x - 1])
         sage: set_verbose(0)
-        sage: gb = buchberger(I)                                                        # optional - sage.libs.singular
-        sage: gb.is_groebner()                                                          # optional - sage.libs.singular
+        sage: gb = buchberger(I)                                                        # needs sage.libs.singular
+        sage: gb.is_groebner()                                                          # needs sage.libs.singular
         True
-        sage: gb.ideal() == I                                                           # optional - sage.libs.singular
+        sage: gb.ideal() == I                                                           # needs sage.libs.singular
         True
     """
     G = set(F.gens())
@@ -251,7 +253,7 @@ def buchberger_improved(F):
         sage: from sage.rings.polynomial.toy_buchberger import buchberger_improved
         sage: R.<x,y,z> = PolynomialRing(QQ)
         sage: set_verbose(0)
-        sage: sorted(buchberger_improved(R.ideal([x^4 - y - z, x*y*z - 1])))            # optional - sage.libs.singular
+        sage: sorted(buchberger_improved(R.ideal([x^4 - y - z, x*y*z - 1])))            # needs sage.libs.singular
         [x*y*z - 1, x^3 - y^2*z - y*z^2, y^3*z^2 + y^2*z^3 - x^2]
     """
     F = inter_reduction(F.gens())
@@ -299,7 +301,7 @@ def update(G, B, h):
 
     - ``G`` -- an intermediate Groebner basis
 
-    - ``B`` -- a set of critical pairs
+    - ``B`` -- set of critical pairs
 
     - ``h`` -- a polynomial
 
@@ -376,7 +378,7 @@ def select(P):
 
     INPUT:
 
-    - ``P`` -- a list of critical pairs
+    - ``P`` -- list of critical pairs
 
     OUTPUT: an element of P
 
@@ -399,7 +401,7 @@ def inter_reduction(Q):
 
     INPUT:
 
-    - ``Q`` -- a set of polynomials
+    - ``Q`` -- set of polynomials
 
     OUTPUT:
 
@@ -421,10 +423,10 @@ def inter_reduction(Q):
     ::
 
         sage: P.<x,y> = QQ[]
-        sage: reduced = inter_reduction(set([x^2 - 5*y^2, x^3]))                        # optional - sage.libs.singular
-        sage: reduced == set([x*y^2, x^2 - 5*y^2])                                      # optional - sage.libs.singular
+        sage: reduced = inter_reduction(set([x^2 - 5*y^2, x^3]))                        # needs sage.libs.singular
+        sage: reduced == set([x*y^2, x^2 - 5*y^2])                                      # needs sage.libs.singular
         True
-        sage: reduced == inter_reduction(set([2*(x^2 - 5*y^2), x^3]))                   # optional - sage.libs.singular
+        sage: reduced == inter_reduction(set([2*(x^2 - 5*y^2), x^3]))                   # needs sage.libs.singular
         True
     """
     if not Q:
