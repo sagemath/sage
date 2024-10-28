@@ -103,11 +103,11 @@ def update_conda(source_dir: Path) -> None:
 
 
 def get_dependencies(pyproject_toml: Path) -> list[str]:
-    graystull_config = Configuration("sagemath")
+    grayskull_config = Configuration("sagemath")
     pyproject_metadata = merge_setup_toml_metadata(
         {}, get_all_toml_info(pyproject_toml)
     )
-    requirements = extract_requirements(pyproject_metadata, graystull_config, {})
+    requirements = extract_requirements(pyproject_metadata, grayskull_config, {})
     all_requirements = (
         requirements.get("build", [])
         + requirements.get("host", [])
@@ -139,7 +139,7 @@ def get_dependencies(pyproject_toml: Path) -> list[str]:
         req.replace("lrcalc", "python-lrcalc") for req in python_requirements
     ]
     all_requirements += normalize_requirements_list(
-        python_requirements, graystull_config
+        python_requirements, grayskull_config
     )
     all_requirements.remove("<{ pin_compatible('numpy') }}")
 
