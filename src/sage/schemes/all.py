@@ -2,7 +2,7 @@
 all.py -- export of schemes to Sage
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #
 #   Sage: Open Source Mathematical Software
 #
@@ -17,31 +17,31 @@ all.py -- export of schemes to Sage
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from .jacobians.all import *
+from sage.schemes.jacobians.all import *
 
-from .hyperelliptic_curves.all import *
+from sage.schemes.hyperelliptic_curves.all import *
 
-from .curves.all import *
+from sage.schemes.curves.all import *
 
-from .plane_conics.all import *
+from sage.schemes.plane_conics.all import *
 
-from .elliptic_curves.all import *
+from sage.schemes.elliptic_curves.all import *
 
-from .plane_quartics.all import *
+from sage.schemes.plane_quartics.all import *
 
-from .generic.all import *
+from sage.schemes.generic.all import *
 
-from .toric.all import *
+from sage.schemes.toric.all import *
 
-from .affine.all import *
+from sage.schemes.affine.all import *
 
-from .projective.all import *
+from sage.schemes.projective.all import *
 
-from .product_projective.all import *
+from sage.schemes.product_projective.all import *
 
-from .cyclic_covers.all import *
+from sage.schemes.cyclic_covers.all import *
 
-from .berkovich.all import *
+from sage.schemes.berkovich.all import *

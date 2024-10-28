@@ -28,6 +28,7 @@ We create `\mathrm{Hom}(\ZZ^3, \ZZ^2)` and compute a basis. ::
        to Ambient free module of rank 2 over the principal ideal domain Integer Ring
        in Category of finite dimensional modules with basis over
           (Dedekind domains and euclidean domains
+           and noetherian rings
            and infinite enumerated sets and metric spaces)
     sage: B = H.basis()
     sage: len(B)
@@ -75,7 +76,7 @@ See :issue:`13321`::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.categories.homset
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -96,6 +97,10 @@ def is_FreeModuleHomspace(x):
         sage: type(H)
         <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
         sage: sage.modules.free_module_homspace.is_FreeModuleHomspace(H)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeModuleHomspace is deprecated;
+        use 'isinstance(..., FreeModuleHomspace)' instead
+        See https://github.com/sagemath/sage/issues/37924 for details.
         True
 
         sage: K = Hom(QQ^3, ZZ^2)
@@ -119,6 +124,8 @@ def is_FreeModuleHomspace(x):
         sage: sage.modules.free_module_homspace.is_FreeModuleHomspace('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FreeModuleHomspace is deprecated; use 'isinstance(..., FreeModuleHomspace)' instead")
     return isinstance(x, FreeModuleHomspace)
 
 
@@ -127,11 +134,11 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
         r"""
         INPUT:
 
-        - A -- either a matrix or a list/tuple of images of generators,
-          or a function returning elements of the codomain for elements of the domain.
-        - check -- bool (default: ``True``)
-        - the keyword ``side`` can be assigned the values ``"left"`` or
-          ``"right"``. It corresponds to the side of vectors relative to the matrix.
+        - ``A`` -- either a matrix or a list/tuple of images of generators,
+          or a function returning elements of the codomain for elements of the domain
+        - ``check`` -- boolean (default: ``True``)
+        - the keyword ``side`` can be assigned the values ``'left'`` or
+          ``'right'``. It corresponds to the side of vectors relative to the matrix.
 
         If A is a matrix, then it is the matrix of this linear
         transformation, with respect to the basis for the domain and
@@ -195,7 +202,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
         """
         from . import free_module_morphism
         side = kwds.get("side", "left")
-        if not is_Matrix(A):
+        if not isinstance(A, Matrix):
             # Compute the matrix of the morphism that sends the
             # generators of the domain to the elements of A.
             C = self.codomain()
@@ -220,11 +227,12 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
         return free_module_morphism.FreeModuleMorphism(self, A, side)
 
     @cached_method
-    def zero(self, side="left"):
+    def zero(self, side='left'):
         """
         INPUT:
 
-        - side -- side of the vectors acted on by the matrix  (default: ``left``)
+        - ``side`` -- side of the vectors acted on by the matrix
+          (default: ``'left'``)
 
         EXAMPLES::
 
@@ -265,18 +273,17 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
         return self(lambda x: self.codomain().zero(), side=side)
 
     @cached_method
-    def _matrix_space(self, side="left"):
+    def _matrix_space(self, side='left'):
         """
         INPUT:
 
-        - side -- side of the vectors acted on by the matrix  (default: ``left``)
+        - ``side`` -- side of the vectors acted on by the matrix
+          (default: ``'left'``)
 
         Return underlying matrix space that contains the matrices that define
         the homomorphisms in this free module homspace.
 
-        OUTPUT:
-
-        - matrix space
+        OUTPUT: matrix space
 
         EXAMPLES::
 
@@ -293,17 +300,16 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             return MatrixSpace(R, self.codomain().rank(), self.domain().rank())
 
     @cached_method
-    def basis(self, side="left"):
+    def basis(self, side='left'):
         """
         Return a basis for this space of free module homomorphisms.
 
         INPUT:
 
-        - side -- side of the vectors acted on by the matrix  (default: ``left``)
+        - ``side`` -- side of the vectors acted on by the matrix
+          (default: ``'left'``)
 
-        OUTPUT:
-
-        - tuple
+        OUTPUT: tuple
 
         EXAMPLES::
 
@@ -333,13 +339,14 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
         B = M.basis()
         return tuple([self(x, side=side) for x in B])
 
-    def identity(self, side="left"):
+    def identity(self, side='left'):
         r"""
         Return identity morphism in an endomorphism ring.
 
         INPUT:
 
-        - side -- side of the vectors acted on by the matrix  (default: ``left``)
+        - ``side`` -- side of the vectors acted on by the matrix
+          (default: ``'left'``)
 
         EXAMPLES::
 

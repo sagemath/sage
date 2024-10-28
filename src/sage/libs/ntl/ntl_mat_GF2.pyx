@@ -55,9 +55,9 @@ cdef class ntl_mat_GF2():
 
         INPUT:
 
-        - nrows -- number of rows
-        - ncols -- number of columns
-        - v     -- either a list or a matrix over GF(2^x)
+        - ``nrows`` -- number of rows
+        - ``ncols`` -- number of columns
+        - ``v`` -- either a list or a matrix over GF(2^x)
 
         EXAMPLES::
 
@@ -89,9 +89,9 @@ cdef class ntl_mat_GF2():
         cdef Py_ssize_t i, j
         cdef GF2_c _elem
 
-        from sage.structure.element import is_Matrix
+        from sage.structure.element import Matrix
 
-        if is_Matrix(nrows):
+        if isinstance(nrows, Matrix):
             _nrows = nrows.nrows()
             _ncols = nrows.ncols()
             v = nrows
@@ -244,7 +244,7 @@ cdef class ntl_mat_GF2():
 
     def __richcmp__(ntl_mat_GF2 self, other, int op):
         """
-        Compare self to other.
+        Compare ``self`` to ``other``.
 
         EXAMPLES::
 
@@ -409,7 +409,7 @@ cdef class ntl_mat_GF2():
             [0 0 0 0 0 0 0 0 0 0]
             ]
 
-        ``Abar`` is in row echolon form now::
+        ``Abar`` is in row echelon form now::
 
             sage: first_nonzero_indices = [Abar._sage_().row(i).nonzero_positions()[0] for i in range(A.rank())]
             sage: all(first_nonzero_indices[i] < first_nonzero_indices[i+1] for i in range(A.rank()-1))
@@ -470,8 +470,8 @@ cdef class ntl_mat_GF2():
             True
         """
         from sage.rings.finite_rings.finite_field_constructor import FiniteField
-        from sage.matrix.constructor import Matrix
-        m =  Matrix(FiniteField(2),self.x.NumRows(),self.x.NumCols())
+        from sage.matrix.constructor import matrix
+        m = matrix(FiniteField(2),self.x.NumRows(),self.x.NumCols())
 
         cdef Py_ssize_t i, j
 
@@ -522,7 +522,7 @@ cdef class ntl_mat_GF2():
 
     def IsIdent(self, n = -1):
         """
-        test if this matrix is the n x n identity matrix.
+        Test if this matrix is the n x n identity matrix.
 
         EXAMPLES::
 
@@ -542,7 +542,7 @@ cdef class ntl_mat_GF2():
 
     def IsDiag(self, long n, ntl_GF2 d):
         """
-        test if X is an  n x n diagonal matrix with d on diagonal.
+        Test if X is an  n x n diagonal matrix with d on diagonal.
 
         EXAMPLES::
 
@@ -573,7 +573,7 @@ cdef class ntl_mat_GF2():
             sage: A_image.row_space() == Abar_image.row_space()
             True
 
-        X is in row echolon form::
+        X is in row echelon form::
 
             sage: first_nonzero_indices = [row.nonzero_positions()[0] for row in Abar_image.rows()]
             sage: all(first_nonzero_indices[i] < first_nonzero_indices[i+1] for i in range(Abar_image.nrows() - 1))
@@ -587,7 +587,7 @@ cdef class ntl_mat_GF2():
 
     def kernel(self):
         """
-        Computes a basis for the kernel of the map x -> x*A. where x
+        Compute a basis for the kernel of the map x -> x*A. where x
         is a row vector.
 
         EXAMPLES::

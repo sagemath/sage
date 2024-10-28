@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 An element in an indexed free module
 
@@ -32,7 +31,7 @@ from sage.categories.modules import _Fields
 
 cdef class IndexedFreeModuleElement(ModuleElement):
     r"""
-    Element class for :class:`~sage.combinat.free_module.CombinatorialFreeModule`
+    Element class for :class:`~sage.combinat.free_module.CombinatorialFreeModule`.
 
     TESTS::
 
@@ -236,10 +235,10 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         INPUT:
 
-        - ``copy`` -- (default: ``True``) if ``self`` is internally
-          represented by a dictionary ``d``, then make a copy of ``d``;
-          if ``False``, then this can cause undesired behavior by
-          mutating ``d``
+        - ``copy`` -- boolean (default: ``True``); if ``self`` is internally
+          represented by a dictionary ``d``, then make a copy of ``d``.
+          If ``False``, then this can cause undesired behavior by
+          mutating ``d``.
 
         EXAMPLES::
 
@@ -787,7 +786,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         - ``new_base_ring`` -- a ring (default: ``None``)
         - ``order`` -- (optional) an ordering of the support of ``self``
-        - ``sparse`` -- (default: ``False``) whether to return a sparse
+        - ``sparse`` -- boolean (default: ``False``); whether to return a sparse
           vector or a dense vector
 
         OUTPUT: a :func:`FreeModule` vector
@@ -1035,6 +1034,7 @@ def _unpickle_element(C, d):
         -2*B[1] - 12*B[3]
     """
     return C._from_dict(d, coerce=False, remove_zeros=False)
+
 
 # Handle old CombinatorialFreeModuleElement pickles, see Issue #22632
 from sage.misc.persist import register_unpickle_override

@@ -67,7 +67,6 @@ AUTHORS:
 
 - Thierry Monteil (2012-02-10): deprecated dead code and update related doc and
   tests.
-
 """
 
 # ****************************************************************************
@@ -110,7 +109,9 @@ class SloaneEncyclopediaClass:
 
     def __repr__(self):
         """
-        String representation of this database. OUTPUT: str
+        String representation of this database.
+
+        OUTPUT: string
         """
         return "Local copy of Sloane Online Encyclopedia of Integer Sequences"
 
@@ -125,11 +126,11 @@ class SloaneEncyclopediaClass:
     def __getitem__(self, N):
         """
         Return sequence N in the encyclopedia. If sequence N does not
-        exist, return [].
+        exist, return ``[]``.
 
         INPUT:
 
-        -  ``N`` -- int
+        - ``N`` -- integer
 
         OUTPUT: list
         """
@@ -156,9 +157,9 @@ class SloaneEncyclopediaClass:
 
         INPUT:
 
-        -  ``seq`` -- list
+        - ``seq`` -- list
 
-        -  ``maxresults`` -- int
+        - ``maxresults`` -- integer
 
         OUTPUT: list of 2-tuples (i, v), where v is a sequence with seq as
         a subsequence.
@@ -176,24 +177,24 @@ class SloaneEncyclopediaClass:
 
         return answer
 
-    def install(self, oeis_url="https://oeis.org/stripped.gz",
-                names_url="https://oeis.org/names.gz", overwrite=False):
+    def install(self, oeis_url='https://oeis.org/stripped.gz',
+                names_url='https://oeis.org/names.gz', overwrite=False):
         """
         Download and install the online encyclopedia, raising an IOError if
         either step fails.
 
         INPUT:
 
-        - ``oeis_url`` - string (default: "https://oeis.org...")
-          The URL of the stripped.gz encyclopedia file.
+        - ``oeis_url`` -- string (default: ``'https://oeis.org...'``)
+          The URL of the stripped.gz encyclopedia file
 
-        - ``names_url`` - string (default: "https://oeis.org...")
+        - ``names_url`` -- string (default: ``'https://oeis.org...'``)
           The URL of the names.gz encyclopedia file.  If you do not want to
           download this file, set names_url=None.
 
-        - ``overwrite`` - boolean (default: False) If the encyclopedia is
+        - ``overwrite`` -- boolean (default: ``False``); if the encyclopedia is
           already installed and overwrite=True, download and install the latest
-          version over the installed one.
+          version over the installed one
         """
         # See if the encyclopedia already exists
         if not overwrite and os.path.exists(self.__file__):
@@ -227,14 +228,14 @@ class SloaneEncyclopediaClass:
 
         INPUT:
 
-        - ``stripped_file`` - string. The name of the stripped.gz OEIS file.
+        - ``stripped_file`` -- string; the name of the stripped.gz OEIS file
 
-        - ``names_file`` - string.  The name of the names.gz OEIS file, or
-          None if the user does not want it installed.
+        - ``names_file`` -- string; the name of the names.gz OEIS file, or
+          None if the user does not want it installed
 
-        - ``overwrite`` - boolean (default: False) If the encyclopedia is
-          already installed and overwrite=True, install 'filename' over the
-          old encyclopedia.
+        - ``overwrite`` -- boolean (default: ``False``); if the encyclopedia is
+          already installed and ``overwrite=True``, install 'filename' over the
+          old encyclopedia
         """
         if not overwrite and os.path.exists(self.__file__):
             raise OSError("Sloane encyclopedia is already installed")
@@ -308,11 +309,11 @@ class SloaneEncyclopediaClass:
         Return the name of sequence ``N`` in the encyclopedia.
 
         If sequence ``N`` does not exist, return ``''``.  If the names
-        database is not installed, raise an :class:`IOError`.
+        database is not installed, raise an :exc:`IOError`.
 
         INPUT:
 
-        - ``N`` -- int
+        - ``N`` -- integer
 
         OUTPUT: string
 
@@ -353,9 +354,9 @@ def copy_gz_file(gz_source, bz_destination):
 
     INPUT:
 
-    - ``gz_source`` -- string. The name of the gzipped file.
+    - ``gz_source`` -- string; the name of the gzipped file
 
-    - ``bz_destination`` -- string.  The name of the newly compressed file.
+    - ``bz_destination`` -- string; the name of the newly compressed file
     """
     import gzip
 

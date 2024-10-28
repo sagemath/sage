@@ -13,6 +13,7 @@ Curves
    sage/schemes/curves/constructor
    sage/schemes/curves/curve
    sage/schemes/curves/affine_curve
+   sage/schemes/curves/plane_curve_arrangement
    sage/schemes/curves/projective_curve
    sage/schemes/curves/point
    sage/schemes/curves/closed_point

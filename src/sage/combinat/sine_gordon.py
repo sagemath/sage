@@ -66,7 +66,7 @@ lazy_import("sage.plot.line", "line")
 
 class SineGordonYsystem(SageObject):
     r"""
-    A class to model a (reduced) sine-Gordon Y-system
+    A class to model a (reduced) sine-Gordon Y-system.
 
     Note that the generations, together with all integer tuples, in this
     implementation are numbered from 0 while in [NS]_ they are numbered from 1
@@ -447,17 +447,17 @@ class SineGordonYsystem(SageObject):
 
         INPUT:
 
-        - ``radius`` - the radius of the disk; by default the length of
+        - ``radius`` -- the radius of the disk; by default the length of
           the circle is the number of vertices
-        - ``points_color`` - the color of the vertices; default 'black'
-        - ``points_size`` - the size of the vertices; default 7
-        - ``triangulation_color`` - the color of the arcs; default 'black'
-        - ``triangulation_thickness`` - the thickness of the arcs; default 0.5
-        - ``shading_color`` - the color of the shading used on neuter
+        - ``points_color`` -- the color of the vertices; default 'black'
+        - ``points_size`` -- the size of the vertices; default 7
+        - ``triangulation_color`` -- the color of the arcs; default 'black'
+        - ``triangulation_thickness`` -- the thickness of the arcs; default 0.5
+        - ``shading_color`` -- the color of the shading used on neuter
           intervals; default 'lightgray'
-        - ``reflections_color`` - the color of the reflection axes; default
+        - ``reflections_color`` -- the color of the reflection axes; default
           'blue'
-        - ``reflections_thickness`` - the thickness of the reflection axes;
+        - ``reflections_thickness`` -- the thickness of the reflection axes;
           default 1
 
         EXAMPLES::

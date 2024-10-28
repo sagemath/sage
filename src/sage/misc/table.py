@@ -23,19 +23,19 @@ class table(SageObject):
 
     INPUT:
 
-    - ``rows`` (default ``None``) - a list of lists (or list of tuples,
-      etc.), containing the data to be displayed.
-    - ``columns`` (default ``None``) - a list of lists (etc.), containing
+    - ``rows`` -- (default: ``None``) list of lists (or list of tuples,
+      etc.), containing the data to be displayed
+    - ``columns`` -- (default: ``None``) list of lists (etc.), containing
       the data to be displayed, but stored as columns. Set either ``rows``
       or ``columns``, but not both.
-    - ``header_row`` (default ``False``) - if ``True``, first row is
-      highlighted.
-    - ``header_column`` (default ``False``) - if ``True``, first column is
-      highlighted.
-    - ``frame`` (default ``False``) - if ``True``, put a box around each
-      cell.
-    - ``align`` (default 'left') - the alignment of each entry: either
-      'left', 'center', or 'right'
+    - ``header_row`` -- (default: ``False``) if ``True``, first row is
+      highlighted
+    - ``header_column`` -- (default: ``False``) if ``True``, first column is
+      highlighted
+    - ``frame`` -- (default: ``False``) if ``True``, put a box around each
+      cell
+    - ``align`` -- (default: ``'left'``) the alignment of each entry: either
+      ``'left'``, ``'center'``, or ``'right'``
 
     EXAMPLES::
 
@@ -314,11 +314,11 @@ class table(SageObject):
 
         INPUT:
 
-        - ``header_row`` - if True, first row is highlighted.
-        - ``header_column`` - if True, first column is highlighted.
-        - ``frame`` - if True, put a box around each cell.
-        - ``align`` - the alignment of each entry: either 'left',
-          'center', or 'right'
+        - ``header_row`` -- if ``True``, first row is highlighted
+        - ``header_column`` -- if ``True``, first column is highlighted
+        - ``frame`` -- if ``True``, put a box around each cell
+        - ``align`` -- the alignment of each entry: either ``'left'``,
+          ``'center'``, or ``'right'``
 
         EXAMPLES::
 
@@ -476,7 +476,7 @@ class table(SageObject):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -575,9 +575,7 @@ class table(SageObject):
         dollar signs are not automatically added, so tables can
         include both plain text and mathematics.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -656,9 +654,7 @@ class table(SageObject):
         visible effect in the Sage notebook, depending on the version
         of the notebook.
 
-        OUTPUT:
-
-        A :class:`~sage.misc.html.HtmlFragment` instance.
+        OUTPUT: :class:`~sage.misc.html.HtmlFragment`
 
         EXAMPLES::
 
@@ -770,24 +766,22 @@ class table(SageObject):
 
     def _html_table_row(self, file, row, header=False):
         r"""
-        Write table row
+        Write table row.
 
         Helper method used by the :meth:`_html_` method.
 
         INPUT:
 
-        - ``file`` -- file-like object. The table row data will be
-          written to it.
+        - ``file`` -- file-like object; the table row data will be
+          written to it
 
-        - ``row`` -- a list with the same number of entries as each row
-          of the table.
+        - ``row`` -- list with the same number of entries as each row
+          of the table
 
-        - ``header`` -- bool (default False). If True, treat this as a
-          header row, using ``<th>`` instead of ``<td>``.
+        - ``header`` -- boolean (default: ``False``); if ``True``, treat this
+          as a header row, using ``<th>`` instead of ``<td>``
 
-        OUTPUT:
-
-        This method returns nothing. All output is written to ``file``.
+        OUTPUT: this method returns nothing; all output is written to ``file``
 
         Strings are written verbatim unless they seem to be LaTeX
         code, in which case they are enclosed in a ``script`` tag

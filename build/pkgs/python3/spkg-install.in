@@ -20,11 +20,7 @@ cd src
 sdh_make_install -i -j1
 
 echo "Installing valgrind suppression file..."
-if [ "$PKG_BASE" = "python2" ]; then
-    SUPP_FILENAME="python.supp"
-else
-    SUPP_FILENAME="${PKG_BASE}.supp"
-fi
+SUPP_FILENAME="python3.supp"
 sdh_install -T Misc/valgrind-python.supp "$SAGE_LOCAL/lib/valgrind/$SUPP_FILENAME"
 
 if [ "$UNAME" = "Linux" ]; then
@@ -42,14 +38,9 @@ else
 fi
 
 PYTHON_VERSION=$($PYTHON -c 'import sys; print("%d.%d" % sys.version_info[:2])')
-if [ "$PKG_BASE" = "python2" ]; then
-    PYTHON_LDVERSION="$PYTHON_VERSION"
-    PYTHON_CONFIG_DIR="$SAGE_LOCAL/lib/python${PYTHON_VERSION}/config"
-else
-    PYTHON_ABIFLAGS=$($PYTHON -c 'import sys; print(sys.abiflags)')
-    PYTHON_LDVERSION="$PYTHON_VERSION$PYTHON_ABIFLAGS"
-    PYTHON_CONFIG_DIR="$SAGE_LOCAL/lib/python${PYTHON_VERSION}/config-${PYTHON_LDVERSION}"
-fi
+PYTHON_ABIFLAGS=$($PYTHON -c 'import sys; print(sys.abiflags)')
+PYTHON_LDVERSION="$PYTHON_VERSION$PYTHON_ABIFLAGS"
+PYTHON_CONFIG_DIR="$SAGE_LOCAL/lib/python${PYTHON_VERSION}/config-${PYTHON_LDVERSION}"
 
 # On OS X with XCode 4, the presence of
 # $SAGE_LOCAL/lib/python3.x/config/libpython3.x.a causes problems with

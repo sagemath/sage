@@ -52,12 +52,12 @@ setenv()
 
 from sage_setup.command.sage_build_cython import sage_build_cython
 from sage_setup.command.sage_build_ext import sage_build_ext
-from sage_setup.command.sage_install import sage_develop, sage_install_and_clean
+from sage_setup.command.sage_install import sage_develop, sage_install
 
 cmdclass = dict(build_cython=sage_build_cython,
                 build_ext=sage_build_ext,
                 develop=sage_develop,
-                install=sage_install_and_clean)
+                install=sage_install)
 
 #########################################################
 ### Discovering Sources
@@ -72,12 +72,11 @@ if any(x in sys.argv
 # TODO: This should be quiet by default
 print("Discovering Python/Cython source code....")
 t = time.time()
-from sage.misc.package import is_package_installed_and_updated
-distributions = ['']
-optional_packages_with_extensions = os.environ.get('SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS', '').split(',')
-distributions += ['sagemath-{}'.format(pkg)
-                  for pkg in optional_packages_with_extensions
-                  if is_package_installed_and_updated(pkg)]
+distributions = ['sagemath-categories',
+                 'sagemath-environment',
+                 'sagemath-objects',
+                 'sagemath-repl',
+                 '']
 log.warn('distributions = {0}'.format(distributions))
 from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(

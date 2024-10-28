@@ -79,7 +79,6 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
     - :class:`groups.misc.AdditiveCyclic <sage.rings.finite_rings.integer_mod_ring.IntegerModFactory>`
     - :func:`groups.misc.Free <sage.groups.free_group.FreeGroup>`
     - :func:`groups.misc.SemimonomialTransformation <sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialTransformationGroup>`
-
 """
 
 # Implementation notes:

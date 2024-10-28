@@ -40,9 +40,9 @@ class Function_gamma(GinacFunction):
         EXAMPLES::
 
             sage: from sage.functions.gamma import gamma1
-            sage: gamma1(CDF(0.5, 14))                                                  # needs sage.libs.pari
+            sage: gamma1(CDF(0.5, 14))                                                  # needs sage.libs.pari sage.rings.complex_double
             -4.0537030780372815e-10 - 5.773299834553605e-10*I
-            sage: gamma1(CDF(I))                                                        # needs sage.libs.pari sage.symbolic
+            sage: gamma1(CDF(I))                                                        # needs sage.libs.pari sage.rings.complex_double sage.symbolic
             -0.15494982830181067 - 0.49801566811835607*I
 
         Recall that `\Gamma(n)` is `n-1` factorial::
@@ -99,7 +99,7 @@ class Function_gamma(GinacFunction):
             1*x^(-2) + (-2*euler_gamma)*x^(-1)
             + (2*euler_gamma^2 + 1/6*pi^2) + Order(x)
 
-        To prevent automatic evaluation use the ``hold`` argument::
+        To prevent automatic evaluation, use the ``hold`` argument::
 
             sage: gamma1(1/2, hold=True)                                                # needs sage.symbolic
             gamma(1/2)
@@ -138,9 +138,9 @@ class Function_gamma(GinacFunction):
             Infinity
             sage: (-1.).gamma()                                                         # needs sage.rings.real_mpfr
             NaN
-            sage: CC(-1).gamma()                                                        # needs sage.libs.pari
+            sage: CC(-1).gamma()                                                        # needs sage.libs.pari sage.rings.real_mpfr
             Infinity
-            sage: RDF(-1).gamma()
+            sage: RDF(-1).gamma()                                                       # needs sage.rings.real_mpfr
             NaN
             sage: CDF(-1).gamma()                                                       # needs sage.libs.pari sage.rings.complex_double
             Infinity
@@ -359,7 +359,7 @@ class Function_gamma_inc(BuiltinFunction):
 
             sage: var('t')                                                              # needs sage.symbolic
             t
-            sage: integrate(-exp(-x)*x^(t-1), x, algorithm="fricas")            # optional - fricas, needs sage.symbolic
+            sage: integrate(-exp(-x)*x^(t-1), x, algorithm='fricas')            # optional - fricas, needs sage.symbolic
             gamma(t, x)
 
         .. SEEALSO::
@@ -691,9 +691,9 @@ def gamma(a, *args, **kwds):
 
     ::
 
-        sage: gamma(CDF(I))                                                             # needs sage.libs.pari sage.symbolic
+        sage: gamma(CDF(I))                                                             # needs sage.libs.pari sage.rings.complex_double sage.symbolic
         -0.15494982830181067 - 0.49801566811835607*I
-        sage: gamma(CDF(0.5, 14))                                                       # needs sage.libs.pari
+        sage: gamma(CDF(0.5, 14))                                                       # needs sage.libs.pari sage.rings.complex_double
         -4.0537030780372815e-10 - 5.773299834553605e-10*I
 
     Use ``numerical_approx`` to get higher precision from
@@ -721,7 +721,8 @@ def gamma(a, *args, **kwds):
         sage: gamma(i)                                                                  # needs sage.rings.number_field sage.symbolic
         Traceback (most recent call last):
         ...
-        TypeError: cannot coerce arguments: no canonical coercion from Number Field in i with defining polynomial x^2 + 1 to Symbolic Ring
+        TypeError: cannot coerce arguments: no canonical coercion
+        from Number Field in i with defining polynomial x^2 + 1 to Symbolic Ring
 
     .. SEEALSO::
 
@@ -815,7 +816,7 @@ class Function_psi1(GinacFunction):
 class Function_psi2(GinacFunction):
     def __init__(self):
         r"""
-        Derivatives of the digamma function `\psi(x)`. T
+        Derivatives of the digamma function `\psi(x)`.
 
         EXAMPLES::
 
@@ -978,7 +979,7 @@ class Function_beta(GinacFunction):
 
         GiNaC is used to compute `\operatorname{B}(p,q)`.  However, complex inputs
         are not yet handled in general.  When GiNaC raises an error on
-        such inputs, we raise a NotImplementedError.
+        such inputs, we raise a :exc:`NotImplementedError`.
 
         If either input is 1, GiNaC returns the reciprocal of the
         other.  In other cases, GiNaC uses one of the following
@@ -1004,10 +1005,9 @@ class Function_beta(GinacFunction):
 
         INPUT:
 
-        -  ``p`` - number or symbolic expression
+        - ``p`` -- number or symbolic expression
 
-        -  ``q`` - number or symbolic expression
-
+        - ``q`` -- number or symbolic expression
 
         OUTPUT: number or symbolic expression (if input is symbolic)
 
@@ -1016,18 +1016,18 @@ class Function_beta(GinacFunction):
             sage: # needs sage.symbolic
             sage: beta(3, 2)
             1/12
-            sage: beta(3,1)
+            sage: beta(3, 1)
             1/3
             sage: beta(1/2, 1/2)
             beta(1/2, 1/2)
-            sage: beta(-1,1)
+            sage: beta(-1, 1)
             -1
-            sage: beta(-1/2,-1/2)
+            sage: beta(-1/2, -1/2)
             0
             sage: ex = beta(x/2, 3)
             sage: set(ex.operands()) == set([1/2*x, 3])
             True
-            sage: beta(.5,.5)
+            sage: beta(.5, .5)
             3.14159265358979
             sage: beta(1, 2.0+I)
             0.400000000000000 - 0.200000000000000*I

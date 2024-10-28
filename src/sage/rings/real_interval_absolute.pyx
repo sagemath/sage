@@ -14,7 +14,7 @@ from sage.rings.integer cimport Integer
 import sage.rings.abc
 
 from sage.structure.parent cimport Parent
-from sage.structure.element cimport parent
+from sage.structure.element cimport parent as parent_of
 
 from sage.rings.real_mpfr import RR_min_prec
 from sage.rings.real_mpfi import RealIntervalField, RealIntervalFieldElement
@@ -61,6 +61,7 @@ cpdef inline Integer shift_ceil(Integer x, long shift):
     mpz_cdiv_q_2exp(z.value, x.value, shift)
     return z
 
+
 class Factory(UniqueFactory):
     def create_key(self, prec):
         """
@@ -86,8 +87,10 @@ class Factory(UniqueFactory):
         """
         return RealIntervalAbsoluteField_class(prec)
 
+
 RealIntervalAbsoluteField = Factory('sage.rings.real_interval_absolute.RealIntervalAbsoluteField')
 RealIntervalAbsoluteField.__doc__ = RealIntervalAbsoluteField_class.__doc__
+
 
 cdef class RealIntervalAbsoluteField_class(Field):
     """
@@ -209,7 +212,7 @@ cdef class RealIntervalAbsoluteField_class(Field):
 
     def absprec(self):
         """
-        Returns the absolute precision of self.
+        Return the absolute precision of ``self``.
 
         EXAMPLES::
 
@@ -239,7 +242,7 @@ cdef inline shift_left(value, shift):
 cdef class RealIntervalAbsoluteElement(FieldElement):
 
     # This could be optimized by letting these be raw mpz_t.
-    cdef Integer _mantissa # left endpoint
+    cdef Integer _mantissa  # left endpoint
     cdef Integer _diameter
 
     def __init__(self, RealIntervalAbsoluteField_class parent, value):
@@ -420,7 +423,7 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
             sage: RIF(a)
             0.3333333333333334?
         """
-        return R(self._mantissa, self._mantissa+self._diameter) >> (<RealIntervalAbsoluteField_class>self._parent)._absprec
+        return R(self._mantissa, self._mantissa + self._diameter) >> (<RealIntervalAbsoluteField_class>self._parent)._absprec
 
     cpdef long mpfi_prec(self) noexcept:
         """
@@ -757,12 +760,12 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
             return None if neg is None else -neg
         if type(x) in (int, Integer):
             return self._new_c(self._mantissa * x, self._diameter * x)
-        P = parent(x)
+        P = parent_of(x)
         if isinstance(P, Parent):
             if P.is_exact():
                 left = (self._mantissa * x).floor()
                 right = ((self._mantissa + self._diameter) * x).ceil()
-                return self._new_c(left, right-left)
+                return self._new_c(left, right - left)
             elif isinstance(x, RealIntervalFieldElement):
                 if x.contains_zero() or self.contains_zero():
                     return self * RealIntervalAbsoluteElement(self._parent, (x.lower(), x.upper()))
@@ -773,7 +776,7 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
                 else:
                     left = (self._mantissa * x.upper()).floor()
                     right = ((self._mantissa + self._diameter) * x.lower()).ceil()
-                return self._new_c(left, right-left)
+                return self._new_c(left, right - left)
 
     def __invert__(self):
         """
@@ -821,7 +824,7 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
         mpz_init_set_ui(scaling_factor, 1)
         try:
             mpz_set_ui(scaling_factor, 1)
-            mpz_mul_2exp(scaling_factor, scaling_factor, 2*absprec)
+            mpz_mul_2exp(scaling_factor, scaling_factor, 2 * absprec)
             # Use diameter as temp value for right endpoint...
             mpz_add(diameter.value, self._mantissa.value, self._diameter.value)
             mpz_fdiv_q(mantissa.value, scaling_factor, diameter.value)
@@ -963,8 +966,7 @@ cdef class RealIntervalAbsoluteElement(FieldElement):
         import math
         cdef double height
         base_height = max(abs(base.lower()), abs(base.upper()))
-        midpoint = base.upper()
-        height = (math.log(base_height)/math.log(2))
+        height = math.log(base_height) / math.log(2)
         height *= <double>(exponent.midpoint() if isinstance(exponent, RealIntervalAbsoluteElement) else exponent)
         relprec = max(<long>height + parent._absprec, 10)
         RIF = RealIntervalField(relprec)

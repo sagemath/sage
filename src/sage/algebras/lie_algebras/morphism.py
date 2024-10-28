@@ -25,6 +25,8 @@ from sage.matrix.constructor import matrix
 from itertools import combinations
 
 # TODO: Refactor out common functionality with RingHomomorphism_im_gens
+
+
 class LieAlgebraHomomorphism_im_gens(Morphism):
     r"""
     A homomorphism of Lie algebras.
@@ -361,6 +363,7 @@ class LieAlgebraHomset(Homset):
 
     _an_element_ = zero
 
+
 class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
     r"""
     A morphism between two Lie algebras defined by images of a
@@ -382,7 +385,7 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
       Note that if base_map is nontrivial then the result will
       not be a morphism in the category of Lie algebras over
       the base ring.
-    - ``check`` -- (default: ``True``) boolean; if ``False`` the
+    - ``check`` -- boolean (default: ``True``); if ``False`` the
       values  on the Lie brackets implied by ``on_generators`` will
       not be checked for contradictory values
 

@@ -16,6 +16,7 @@ Ciphers
 
 from sage.structure.element import Element
 
+
 class Cipher(Element):
     """
     Cipher class
@@ -23,10 +24,6 @@ class Cipher(Element):
     def __init__(self, parent, key):
         """
         Create a cipher.
-
-        INPUT: Parent and key
-
-        EXAMPLES: None yet
         """
         Element.__init__(self, parent)
         self._key = key
@@ -56,19 +53,17 @@ class Cipher(Element):
     def codomain(self):
         return self.parent().cipher_codomain()
 
+
 class SymmetricKeyCipher(Cipher):
     """
     Symmetric key cipher class
     """
     def __init__(self, parent, key):
         """
-        Create a symmetric cipher
-
-        INPUT: Parent and key
-
-        EXAMPLES: None yet
+        Create a symmetric cipher.
         """
         Cipher.__init__(self, parent, key)
+
 
 class PublicKeyCipher(Cipher):
     """
@@ -76,11 +71,7 @@ class PublicKeyCipher(Cipher):
     """
     def __init__(self, parent, key, public=True):
         """
-        Create a public key cipher
-
-        INPUT: Parent and key
-
-        EXAMPLES: None yet
+        Create a public key cipher.
         """
         Cipher.__init__(self, parent, key)
         self._public = public

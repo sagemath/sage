@@ -1,5 +1,5 @@
 """
-p-adic Flat Polynomials
+`p`-adic Flat Polynomials
 """
 
 # ****************************************************************************
@@ -31,7 +31,7 @@ class Polynomial_padic_flat(Polynomial_generic_dense, Polynomial_padic):
             Polynomial_generic_dense.__init__(self, parent, x, check, is_gen, construct)
             return
         R = parent.base_ring()
-        if sage.rings.fraction_field_element.is_FractionFieldElement(x):
+        if isinstance(x, sage.rings.fraction_field_element.FractionFieldElement):
             if x.denominator() != 1:
                 raise TypeError("denominator must be 1")
             else:

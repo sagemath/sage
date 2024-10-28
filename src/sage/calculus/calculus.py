@@ -385,10 +385,10 @@ Ensure that :issue:`8624` is fixed::
     2*pi
 
 Ensure that :issue:`25626` is fixed. As the form of the answer is dependent of
-the giac version, we simplify it (see :issue:`34037`). ::
+the giac version, we simplify it (see :issue:`34037`)::
 
     sage: t = SR.var('t')
-    sage: integrate(exp(t)/(t + 1)^2, t, algorithm="giac").full_simplify()
+    sage: integrate(exp(t)/(t + 1)^2, t, algorithm='giac').full_simplify()
     ((t + 1)*Ei(t + 1) - e^(t + 1))/(t*e + e)
 
 Check if maxima has redundant variables defined after initialization,
@@ -407,7 +407,7 @@ To check that :issue:`14821` is fixed::
     0.6321205588285577
     sage: result = integral(exp(-300.0/(-0.064*x+14.0)),x,0.0,120.0)
     ...
-    sage: result
+    sage: result  # abs tol 1e-10
     4.62770039817000e-9
 
 To check that :issue:`27092` is fixed::
@@ -468,7 +468,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
       - ``'sympy'`` -- use SymPy
 
-    - ``hold`` -- (default: ``False``) if ``True``, don't evaluate
+    - ``hold`` -- boolean (default: ``False``); if ``True``, don't evaluate
 
     EXAMPLES::
 
@@ -568,6 +568,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
 
     An example of this summation with Giac::
 
+        sage: # needs giac
         sage: symbolic_sum(1/(1+k^2), k, -oo, oo, algorithm='giac').factor()
         pi*(e^(2*pi) + 1)/((e^pi + 1)*(e^pi - 1))
 
@@ -609,7 +610,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
         sage: sum (n^3 * x^n, n, 0, infinity)
         (x^3 + 4*x^2 + x)/(x^4 - 4*x^3 + 6*x^2 - 4*x + 1)
 
-    .. note::
+    .. NOTE::
 
        Sage can currently only understand a subset of the output of Maxima,
        Maple and Mathematica, so even if the chosen backend can perform
@@ -700,9 +701,7 @@ def nintegral(ex, x, a, b,
     - ``maximum_num_subintervals`` -- (default: 200)
       maximal number of subintervals
 
-    OUTPUT:
-
-    - float: approximation to the integral
+    OUTPUT: float; approximation to the integral
 
     - float: estimated absolute error of the
       approximation
@@ -845,13 +844,13 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
       - ``'maxima'`` -- use Maxima (the default)
 
-      - ``'giac'`` -- use Giac
+      - ``'giac'`` -- use Giac (optional)
 
       - ``'sympy'`` -- use SymPy
 
       - ``'mathematica'`` -- (optional) use Mathematica
 
-    - ``hold`` - (default: ``False``) if ``True``, don't evaluate
+    - ``hold`` -- boolean (default: ``False``); if ``True``, don't evaluate
 
     EXAMPLES::
 
@@ -880,7 +879,6 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
 
         sage: symbolic_product(-x^2,x,1,n)
         (-1)^n*factorial(n)^2
-
     """
     if not (isinstance(v, Expression) and v.is_symbol()):
         if isinstance(v, str):
@@ -941,7 +939,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
     INPUT:
 
-    - ``var`` -- polynomial variable name (default 'x')
+    - ``var`` -- polynomial variable name (default: ``'x'``)
 
     - ``algorithm`` -- ``'algebraic'`` or ``'numerical'`` (default
       both, but with numerical first)
@@ -952,7 +950,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
     - ``degree`` -- the expected algebraic degree
 
     - ``epsilon`` -- return without error as long as
-      f(self) epsilon, in the case that the result cannot be proven.
+      f(self) epsilon, in the case that the result cannot be proven
 
       All of the above parameters are optional, with epsilon=0, ``bits`` and
       ``degree`` tested up to 1000 and 24 by default respectively. The
@@ -960,16 +958,15 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
       explicitly. The algebraic algorithm ignores the last three
       parameters.
 
-
-    OUTPUT: The minimal polynomial of ``self``. If the numerical algorithm
+    OUTPUT: the minimal polynomial of ``self``. If the numerical algorithm
     is used, then it is proved symbolically when ``epsilon=0`` (default).
 
     If the minimal polynomial could not be found, two distinct kinds of
     errors are raised. If no reasonable candidate was found with the
-    given ``bits``/``degree`` parameters, a :class:`ValueError` will be
+    given ``bits``/``degree`` parameters, a :exc:`ValueError` will be
     raised. If a reasonable candidate was found but (perhaps due to
     limits in the underlying symbolic package) was unable to be proved
-    correct, a :class:`NotImplementedError` will be raised.
+    correct, a :exc:`NotImplementedError` will be raised.
 
     ALGORITHM: Two distinct algorithms are used, depending on the
     algorithm parameter. By default, the numerical algorithm is
@@ -988,11 +985,11 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
     minpoly `f`. If `f(\mathtt{self})`,
     evaluated to a higher precision, is close enough to 0 then evaluate
     `f(\mathtt{self})` symbolically, attempting to prove
-    vanishing. If this fails, and ``epsilon`` is non-zero,
+    vanishing. If this fails, and ``epsilon`` is nonzero,
     return `f` if and only if
     `f(\mathtt{self}) < \mathtt{epsilon}`.
-    Otherwise raise a :class:`ValueError` (if no suitable
-    candidate was found) or a :class:`NotImplementedError` (if a
+    Otherwise raise a :exc:`ValueError` (if no suitable
+    candidate was found) or a :exc:`NotImplementedError` (if a
     likely candidate was found but could not be proved correct).
 
     EXAMPLES: First some simple examples::
@@ -1103,7 +1100,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
         ...
         ValueError: Could not find minimal polynomial (1000 bits, degree 24).
 
-    .. note::
+    .. NOTE::
 
        Of course, failure to produce a minimal polynomial does not
        necessarily indicate that this number is transcendental.
@@ -1171,18 +1168,18 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
     INPUT:
 
-    - ``dir`` -- (default: ``None``); may have the value
+    - ``dir`` -- (default: ``None``) may have the value
       ``'plus'`` (or ``'+'`` or ``'right'`` or ``'above'``) for a limit from above,
       ``'minus'`` (or ``'-'`` or ``'left'`` or ``'below'``) for a limit from below, or may be omitted
       (implying a two-sided limit is to be computed).
 
-    - ``taylor`` -- (default: ``False``); if ``True``, use Taylor
+    - ``taylor`` -- (default: ``False``) if ``True``, use Taylor
       series, which allows more limits to be computed (but may also
       crash in some obscure cases due to bugs in Maxima).
 
-    - ``**argv`` - 1 named parameter
+    - ``**argv`` -- 1 named parameter
 
-    .. note::
+    .. NOTE::
 
         The output may also use ``und`` (undefined), ``ind``
         (indefinite but bounded), and ``infinity`` (complex
@@ -1300,7 +1297,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
     With the standard package Giac::
 
-        sage: from sage.libs.giac.giac import libgiac     # random
+        sage: # needs sage.libs.giac
         sage: (exp(-x)/(2+sin(x))).limit(x=oo, algorithm='giac')
         0
         sage: limit(e^(-1/x), x=0, dir='right', algorithm='giac')
@@ -1497,7 +1494,7 @@ def mma_free_limit(expression, v, a, dir=None):
     - ``expression`` -- symbolic expression
     - ``v`` -- variable
     - ``a`` -- value where the variable goes to
-    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (optional, default: ``None``)
+    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (default: ``None``)
 
     EXAMPLES::
 
@@ -1568,7 +1565,7 @@ def laplace(ex, t, s, algorithm='maxima'):
 
       - ``'sympy'`` -- use SymPy
 
-      - ``'giac'`` -- use Giac
+      - ``'giac'`` -- use Giac (optional)
 
     .. NOTE::
 
@@ -1642,7 +1639,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         sage: p1 = plot(xt, 0, 1/2, rgbcolor=(1,0,0))                                   # needs sage.plot
         sage: p2 = plot(yt, 0, 1/2, rgbcolor=(0,1,0))                                   # needs sage.plot
         sage: import tempfile
-        sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                     # needs sage.plot
+        sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:                     # needs sage.plot
         ....:     (p1 + p2).save(f.name)
 
     Another example::
@@ -1672,7 +1669,7 @@ def laplace(ex, t, s, algorithm='maxima'):
         (0, True)
         sage: F        # random - sympy <1.9 includes undefined heaviside(0) in answer
         1
-        sage: laplace(dirac_delta(t), t, s, algorithm='giac')
+        sage: laplace(dirac_delta(t), t, s, algorithm='giac')  # needs giac
         1
 
     Heaviside step function can be handled with different interfaces.
@@ -1681,8 +1678,9 @@ def laplace(ex, t, s, algorithm='maxima'):
         sage: laplace(heaviside(t-1), t, s)
         e^(-s)/s
 
-    Try with giac::
+    Try with giac, if it is installed::
 
+        sage: # needs giac
         sage: laplace(heaviside(t-1), t, s, algorithm='giac')
         e^(-s)/s
 
@@ -1695,6 +1693,7 @@ def laplace(ex, t, s, algorithm='maxima'):
 
     Testing Giac::
 
+        sage: # needs giac
         sage: var('t, s')
         (t, s)
         sage: laplace(5*cos(3*t-2)*heaviside(t-2), t, s, algorithm='giac')
@@ -1703,13 +1702,14 @@ def laplace(ex, t, s, algorithm='maxima'):
     Check unevaluated expression from Giac (it is locale-dependent, see
     :issue:`22833`)::
 
-        sage: var('n')
-        n
+        sage: # needs giac
+        sage: n = SR.var('n')
         sage: laplace(t^n, t, s, algorithm='giac')
         laplace(t^n, t, s)
 
     Testing SymPy::
 
+        sage: n = SR.var('n')
         sage: F, a, cond = laplace(t^n, t, s, algorithm='sympy')
         sage: a, cond
         (0, re(n) > -1)
@@ -1810,7 +1810,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
       - ``'sympy'`` -- use SymPy
 
-      - ``'giac'`` -- use Giac
+      - ``'giac'`` -- use Giac (optional)
 
     .. SEEALSO::
 
@@ -1847,11 +1847,13 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     The same instance with Giac::
 
+        sage: # needs giac
         sage: inverse_laplace(1/s^2*exp(-s), s, t, algorithm='giac')
         (t - 1)*heaviside(t - 1)
 
     Transform a rational expression::
 
+        sage: # needs giac
         sage: inverse_laplace((2*s^2*exp(-2*s) - exp(-s))/(s^3+1), s, t,
         ....:                 algorithm='giac')
         -1/3*(sqrt(3)*e^(1/2*t - 1/2)*sin(1/2*sqrt(3)*(t - 1))
@@ -1868,7 +1870,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
         dirac_delta(t)
         sage: inverse_laplace(1, s, t, algorithm='sympy')
         dirac_delta(t)
-        sage: inverse_laplace(1, s, t, algorithm='giac')
+        sage: inverse_laplace(1, s, t, algorithm='giac')  # needs giac
         dirac_delta(t)
 
     TESTS:
@@ -1882,6 +1884,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     Testing Giac::
 
+        sage: # needs giac
         sage: inverse_laplace(exp(-s)/s, s, t, algorithm='giac')
         heaviside(t - 1)
 
@@ -1892,12 +1895,14 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     Testing unevaluated expression from Giac::
 
-        sage: n = var('n')
+        sage: # needs giac
+        sage: n = SR.var('n')
         sage: inverse_laplace(1/s^n, s, t, algorithm='giac')
         ilt(1/(s^n), t, s)
 
     Try with Maxima::
 
+        sage: n = SR.var('n')
         sage: inverse_laplace(1/s^n, s, t, algorithm='maxima')
         ilt(1/(s^n), s, t)
 
@@ -1913,6 +1918,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
 
     Testing the same with Giac::
 
+        sage: # needs giac
         sage: inverse_laplace(cos(s), s, t, algorithm='giac')
         ilt(cos(s), t, s)
     """
@@ -2019,7 +2025,6 @@ def at(ex, *args, **kwds):
         sage: from sage.calculus.calculus import at
         sage: at(int(1), x=1)
         1
-
     """
     if not isinstance(ex, (Expression, Function)):
         ex = SR(ex)
@@ -2114,7 +2119,7 @@ def dummy_inverse_laplace(*args):
 
 def dummy_pochhammer(*args):
     """
-    This function is called to create formal wrappers of Pochhammer symbols
+    This function is called to create formal wrappers of Pochhammer symbols.
 
     EXAMPLES::
 
@@ -2148,7 +2153,6 @@ def _laplace_latex_(self, *args):
         '\\mathcal{L}\\left(f\\left(t\\right), t, s\\right)'
         sage: latex(laplace(f, t, s))
         \mathcal{L}\left(f\left(t\right), t, s\right)
-
     """
     return "\\mathcal{L}\\left(%s\\right)" % (', '.join(latex(x) for x in args))
 
@@ -2236,13 +2240,13 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
 
     INPUT:
 
-    - ``x`` -- a string
+    - ``x`` -- string
 
-    - ``equals_sub`` -- (default: ``False``) if ``True``, replace
+    - ``equals_sub`` -- boolean (default: ``False``); if ``True``, replace
       '=' by '==' in self
 
     - ``maxima`` -- (default: the calculus package's copy of
-      Maxima) the Maxima interpreter to use.
+      Maxima) the Maxima interpreter to use
 
     EXAMPLES::
 
@@ -2429,7 +2433,7 @@ def mapped_opts(v):
 
     - ``v`` -- an object
 
-    OUTPUT: a string.
+    OUTPUT: string
 
     The main use of this is to turn Python bools into lower case
     strings.
@@ -2478,13 +2482,18 @@ def _find_var(name, interface=None):
 
     EXAMPLES::
 
-        sage: y = var('y')
+        sage: y = SR.var('y')
         sage: sage.calculus.calculus._find_var('y')
         y
         sage: sage.calculus.calculus._find_var('I')
         I
         sage: sage.calculus.calculus._find_var(repr(maxima(y)), interface='maxima')
         y
+
+    ::
+
+        sage: # needs giac
+        sage: y = SR.var('y')
         sage: sage.calculus.calculus._find_var(repr(giac(y)), interface='giac')
         y
     """
@@ -2560,13 +2569,13 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
 
     INPUT:
 
-    - ``s`` -- a string
+    - ``s`` -- string
 
     - ``syms`` -- (default: ``{}``) dictionary of
       strings to be regarded as symbols or functions;
       keys are pairs (string, number of arguments)
 
-    - ``accept_sequence`` -- (default: ``False``) controls whether
+    - ``accept_sequence`` -- boolean (default: ``False``); controls whether
       to allow a (possibly nested) set of lists and tuples
       as input
 
@@ -2591,6 +2600,7 @@ def symbolic_expression_from_string(s, syms=None, accept_sequence=False, *, pars
 
     The Giac interface uses a different parser (:issue:`30133`)::
 
+        sage: # needs giac
         sage: from sage.calculus.calculus import SR_parser_giac
         sage: symbolic_expression_from_string(repr(giac(SR.var('e'))), parser=SR_parser_giac)
         e

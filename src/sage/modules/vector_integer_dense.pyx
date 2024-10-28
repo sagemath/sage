@@ -196,7 +196,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - ``copy``, ignored optional argument.
+        - ``copy`` -- ignored optional argument
 
         EXAMPLES::
 
@@ -223,7 +223,6 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         for i in range(self._degree):
             mpz_add(z._entries[i], self._entries[i], r._entries[i])
         return z
-
 
     cpdef _sub_(self, right):
         cdef Vector_integer_dense z, r
@@ -308,7 +307,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
         INPUT:
 
-        - singular -- \Singular interface instance (default: None)
+        - ``singular`` -- \Singular interface instance (default: ``None``)
 
         EXAMPLES::
 

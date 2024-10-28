@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 r"""
 Base class for objects of a category
@@ -64,11 +65,13 @@ from sage.structure.dynamic_class import DynamicMetaclass
 
 
 cpdef inline check_default_category(default_category, category):
-    ## The resulting category is guaranteed to be
-    ## a sub-category of the default.
+    """
+    The resulting category is guaranteed to be
+    a sub-category of the default.
+    """
     if category is None:
         return default_category
-    return default_category.join([default_category,category])
+    return default_category.join([default_category, category])
 
 
 cdef class CategoryObject(SageObject):
@@ -81,11 +84,11 @@ cdef class CategoryObject(SageObject):
 
         INPUT:
 
-        - ``category`` -- The category this object belongs to. If this object
+        - ``category`` -- the category this object belongs to; if this object
           belongs to multiple categories, those can be passed as a tuple
-        - ``base`` -- If this object has another object that should be
+        - ``base`` -- if this object has another object that should be
           considered a base in its primary category, you can include that base
-          here.
+          here
 
         EXAMPLES::
 
@@ -212,6 +215,7 @@ cdef class CategoryObject(SageObject):
             sage: ZZ.categories()
             [Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces,
              Category of Dedekind domains,
@@ -220,7 +224,7 @@ cdef class CategoryObject(SageObject):
              Category of unique factorization domains,
              Category of gcd domains,
              Category of integral domains,
-             Category of domains,
+             Category of domains, ...
              Category of commutative rings, ...
              Category of monoids, ...,
              Category of commutative additive groups, ...,
@@ -234,7 +238,7 @@ cdef class CategoryObject(SageObject):
         Return the underlying class (class without the attached
         categories) of the given object.
 
-        OUTPUT: A class
+        OUTPUT: a class
 
         EXAMPLES::
 
@@ -425,7 +429,6 @@ cdef class CategoryObject(SageObject):
         This can only be done once because objects with generators
         are immutable, and is typically done during creation of the object.
 
-
         EXAMPLES:
         When we create this polynomial ring, self._assign_names is called by the constructor::
 
@@ -486,7 +489,7 @@ cdef class CategoryObject(SageObject):
         """
         Return the first variable name.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -517,7 +520,6 @@ cdef class CategoryObject(SageObject):
             sage: a     #indirect doctest
             [1 0]
             [0 0]
-
         """
         # old = self._names, self._latex_names
         # We cannot assume that self *has* _latex_variable_names.
@@ -542,7 +544,7 @@ cdef class CategoryObject(SageObject):
         Thus, e.g., if the generators of ``self`` are labeled
         'a', 'b', and 'c', then after calling this method the
         variables a, b, and c in the current scope will be set
-        equal to the generators of self.
+        equal to the generators of ``self``.
 
         NOTE: If Foo is a constructor for a Sage object with generators, and
         Foo is defined in Cython, then it would typically call
@@ -666,7 +668,7 @@ cdef class CategoryObject(SageObject):
 
     def latex_variable_names(self):
         """
-        Returns the list of variable names suitable for latex output.
+        Return the list of variable names suitable for latex output.
 
         All ``_SOMETHING`` substrings are replaced by ``_{SOMETHING}``
         recursively so that subscripts of subscripts work.
@@ -769,7 +771,7 @@ cdef class CategoryObject(SageObject):
             sage: h1 = hash(bla)
             sage: h1  # random
             -5279516879544852222
-            sage: bla.rename("toto")
+            sage: bla.rename('toto')
             sage: h2 = hash(bla)
             sage: h2  # random
             -5279516879544852222
@@ -909,7 +911,6 @@ cdef class CategoryObject(SageObject):
             sage: F = GF(9,'a')                                                         # needs sage.rings.finite_rings
             sage: dir(F)                                                                # needs sage.rings.finite_rings
             [..., '__class__', ..., '_test_pickling', ..., 'extension', ...]
-
         """
         return dir_with_other_class(self, self.category().parent_class)
 
@@ -920,7 +921,7 @@ cpdef normalize_names(Py_ssize_t ngens, names):
 
     INPUT:
 
-    - ``ngens`` -- integer: number of generators. The value ``ngens=-1``
+    - ``ngens`` -- integer; number of generators. The value ``ngens=-1``
       means that the number of generators is unknown a priori.
 
     - ``names`` -- any of the following:
@@ -933,7 +934,7 @@ cpdef normalize_names(Py_ssize_t ngens, names):
 
       - a string of single character names, such as 'xyz'
 
-    OUTPUT: a tuple of ``ngens`` strings to be used as variable names.
+    OUTPUT: a tuple of ``ngens`` strings to be used as variable names
 
     EXAMPLES::
 

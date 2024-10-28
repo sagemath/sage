@@ -20,8 +20,8 @@ from sage.misc.binary_tree cimport BinaryTree
 
 cdef class CompiledPolynomialFunction:
     """
-    Builds a reasonably optimized directed acyclic graph representation
-    for a given polynomial.  A CompiledPolynomialFunction is callable from
+    Build a reasonably optimized directed acyclic graph representation
+    for a given polynomial.  A ``CompiledPolynomialFunction`` is callable from
     python, though it is a little faster to call the eval function from
     pyrex.
 
@@ -95,7 +95,6 @@ cdef class CompiledPolynomialFunction:
           forthcoming) requires the gaps to considered in order, and adds
           additional dummies as it goes.  Hence, the gaps are put into a
           binary tree.
-
         """
         cdef generic_pd max_gap, dag
         cdef BinaryTree gaps
@@ -232,8 +231,6 @@ cdef class CompiledPolynomialFunction:
 
         The r == 0 case in step 3 is equivalent to binary exponentiation.
         """
-
-
         cdef int m,n,k,r,half
         cdef generic_pd T,N,H
         cdef dummy_pd M
@@ -266,7 +263,6 @@ cdef class CompiledPolynomialFunction:
                     M.fill(mul_pd(self._get_gap(gaps, n*(k-1)), N))
 
             T = gaps.pop_max()
-
 
 
 ########################################################
@@ -329,8 +325,6 @@ cdef class CompiledPolynomialFunction:
 #    nodummies: recursively evict dummies, replacing them
 #               with the non-dummy nodes that they
 #               reference.
-
-
 
 
 # These inline functions are called wherever a node gets
@@ -456,7 +450,6 @@ cdef class pow_pd(unary_pd):
 
     def __repr__(self):
         return "(%s^%s)" % (self.left, self.exponent)
-
 
 
 cdef class binary_pd(generic_pd):

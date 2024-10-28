@@ -146,7 +146,6 @@ AUTHORS:
 
 - Niles Johnson (07/2010): initial code
 - Simon King (08/2012): Use category and coercion framework, :issue:`13412`
-
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Niles Johnson <nilesj@gmail.com>
@@ -155,14 +154,17 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.lazy_import import lazy_import
+from sage.rings.finite_rings.integer_mod_ring import Zmod
+from sage.rings.infinity import infinity, InfinityElement
+from sage.rings.integer import Integer
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.power_series_ring_element import PowerSeries
 from sage.structure.richcmp import richcmp
 
-from sage.rings.finite_rings.integer_mod_ring import Zmod
-from sage.rings.infinity import infinity, is_Infinite
-from sage.rings.integer import Integer
-from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
-from sage.rings.power_series_ring import is_PowerSeriesRing
-from sage.rings.power_series_ring_element import PowerSeries
+lazy_import('sage.rings.lazy_series_ring', 'LazyPowerSeriesRing')
+lazy_import('sage.rings.multi_power_series_ring', 'MPowerSeriesRing_generic')
+lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing_generic')
 
 
 def is_MPowerSeries(f):
@@ -175,8 +177,14 @@ def is_MPowerSeries(f):
         sage: from sage.rings.multi_power_series_ring_element import is_MPowerSeries
         sage: M = PowerSeriesRing(ZZ,4,'v')
         sage: is_PowerSeries(M.random_element(10))
+        doctest:warning...
+        DeprecationWarning: The function is_PowerSeries is deprecated; use 'isinstance(..., PowerSeries)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
         sage: is_MPowerSeries(M.random_element(10))
+        doctest:warning...
+        DeprecationWarning: The function is_MPowerSeries is deprecated; use 'isinstance(..., MPowerSeries)' instead.
+        See https://github.com/sagemath/sage/issues/38266 for details.
         True
         sage: T.<v> = PowerSeriesRing(RR)
         sage: is_MPowerSeries(1 - v + v^2 +O(v^3))
@@ -184,6 +192,10 @@ def is_MPowerSeries(f):
         sage: is_PowerSeries(1 - v + v^2 +O(v^3))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(38266,
+                "The function is_MPowerSeries is deprecated; "
+                "use 'isinstance(..., MPowerSeries)' instead.")
     return isinstance(f, MPowerSeries)
 
 
@@ -224,20 +236,22 @@ class MPowerSeries(PowerSeries):
 
     INPUT:
 
-    - ``parent`` -- A multivariate power series.
+    - ``parent`` -- a multivariate power series
 
-    - ``x`` -- The element (default: 0).  This can be another
+    - ``x`` -- the element (default: 0).  This can be another
       :class:`MPowerSeries` object, or an element of one of the following:
 
       - the background univariate power series ring
       - the foreground polynomial ring
       - a ring that coerces to one of the above two
 
-    - ``prec`` -- (default: ``infinity``) The precision
+    - ``prec`` -- (default: ``infinity``) the precision
 
-    - ``is_gen`` -- (default: ``False``) Is this element one of the generators?
+    - ``is_gen`` -- boolean (default: ``False``); whether this element is one
+      of the generators
 
-    - ``check`` -- (default: ``False``) Needed by univariate power series class
+    - ``check`` -- boolean (default: ``False``); needed by univariate power
+      series class
 
     EXAMPLES:
 
@@ -347,7 +361,6 @@ class MPowerSeries(PowerSeries):
             sage: b = B(d) # test coercion from univariate power series ring
             sage: b in B
             True
-
         """
         PowerSeries.__init__(self, parent, prec, is_gen=is_gen)
         self._PowerSeries__is_gen = is_gen
@@ -365,12 +378,11 @@ class MPowerSeries(PowerSeries):
 
         # test whether x coerces to background univariate
         # power series ring of parent
-        from sage.rings.multi_power_series_ring import is_MPowerSeriesRing
-        if is_PowerSeriesRing(xparent) or is_MPowerSeriesRing(xparent):
+        if isinstance(xparent, (PowerSeriesRing_generic, MPowerSeriesRing_generic, LazyPowerSeriesRing)):
             # x is either a multivariate or univariate power series
             #
             # test whether x coerces directly to designated parent
-            if is_MPowerSeries(x):
+            if isinstance(x, MPowerSeries):
                 try:
                     self._bg_value = parent._bg_ps_ring(x._bg_value)
                 except TypeError:
@@ -394,7 +406,7 @@ class MPowerSeries(PowerSeries):
                 self._bg_value = parent._send_to_bg(x).add_bigoh(prec)
 
         # test whether x coerces to underlying polynomial ring of parent
-        elif is_PolynomialRing(xparent):
+        elif isinstance(xparent, PolynomialRing_general):
             self._bg_value = parent._send_to_bg(x).add_bigoh(prec)
 
         else:
@@ -555,7 +567,7 @@ class MPowerSeries(PowerSeries):
         base_map = kwds.get('base_map')
         if base_map is None:
             base_map = lambda t: t
-        for m, c in self.dict().items():
+        for m, c in self.monomial_coefficients().items():
             y += base_map(c)*prod([x[i]**m[i] for i in range(n) if m[i] != 0])
         if self.prec() == infinity:
             return y
@@ -635,7 +647,7 @@ class MPowerSeries(PowerSeries):
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
-        Returns the image of this series under the map that sends the
+        Return the image of this series under the map that sends the
         generators to ``im_gens``. This is used internally for computing
         homomorphisms.
 
@@ -1087,7 +1099,7 @@ class MPowerSeries(PowerSeries):
             return self.change_ring(Zmod(other))
         raise NotImplementedError("Mod on multivariate power series ring elements not defined except modulo an integer.")
 
-    def dict(self):
+    def monomial_coefficients(self):
         """
         Return underlying dictionary with keys the exponents and values the
         coefficients of this power series.
@@ -1104,6 +1116,14 @@ class MPowerSeries(PowerSeries):
             sage: m = 2/3*t0*t1^15*t3^48 - t0^15*t1^21*t2^28*t3^5
             sage: m2 = 1/2*t0^12*t1^29*t2^46*t3^6 - 1/4*t0^39*t1^5*t2^23*t3^30 + M.O(100)
             sage: s = m + m2
+            sage: s.monomial_coefficients()
+            {(1, 15, 0, 48): 2/3,
+             (12, 29, 46, 6): 1/2,
+             (15, 21, 28, 5): -1,
+             (39, 5, 23, 30): -1/4}
+
+        ``dict`` is an alias::
+
             sage: s.dict()
             {(1, 15, 0, 48): 2/3,
              (12, 29, 46, 6): 1/2,
@@ -1112,8 +1132,10 @@ class MPowerSeries(PowerSeries):
         """
         out_dict = {}
         for j in self._bg_value.coefficients():
-            out_dict.update(j.dict())
+            out_dict.update(j.monomial_coefficients())
         return out_dict
+
+    dict = monomial_coefficients
 
     def polynomial(self):
         """
@@ -1212,7 +1234,7 @@ class MPowerSeries(PowerSeries):
             True
         """
         if self.is_sparse():
-            return self.dict()
+            return self.monomial_coefficients()
         tmp = {}
         for j in self._bg_value.coefficients():
             for m in j.monomials():
@@ -1411,7 +1433,7 @@ class MPowerSeries(PowerSeries):
             if self._bg_value == 0:
                 return infinity
 
-            # at this stage, self is probably a non-zero
+            # at this stage, self is probably a nonzero
             # element of the base ring
             for a in range(len(self._bg_value.list())):
                 if self._bg_value.list()[a] != 0:
@@ -1621,7 +1643,7 @@ class MPowerSeries(PowerSeries):
         .. warning:: Coefficient division.
 
             If the base ring is not a field (e.g. `ZZ`), or if it has a
-            non-zero characteristic, (e.g. `ZZ/3ZZ`), integration is not
+            nonzero characteristic, (e.g. `ZZ/3ZZ`), integration is not
             always possible while staying with the same base ring. In the
             first case, Sage will report that it has not been able to
             coerce some coefficient to the base ring::
@@ -1645,7 +1667,7 @@ class MPowerSeries(PowerSeries):
                 sage: f.integral(b)
                 b^2 + O(a, b)^6
 
-            In non-zero characteristic, Sage will report that a zero division
+            In nonzero characteristic, Sage will report that a zero division
             occurred ::
 
                 sage: T.<a,b> = PowerSeriesRing(Zmod(3), 2)
@@ -1715,12 +1737,12 @@ class MPowerSeries(PowerSeries):
         xxe = xx.exponents()[0]
         pos = [i for i, c in enumerate(xxe) if c != 0][0]  # get the position of the variable
         res = {mon.eadd(xxe): R(co / (mon[pos]+1))
-               for mon, co in self.dict().items()}
+               for mon, co in self.monomial_coefficients().items()}
         return P( res ).add_bigoh(self.prec()+1)
 
     def ogf(self):
         """
-        Method from univariate power series not yet implemented
+        Method from univariate power series not yet implemented.
 
         TESTS::
 
@@ -1735,7 +1757,7 @@ class MPowerSeries(PowerSeries):
 
     def egf(self):
         """
-        Method from univariate power series not yet implemented
+        Method from univariate power series not yet implemented.
 
         TESTS::
 
@@ -1750,7 +1772,7 @@ class MPowerSeries(PowerSeries):
 
     def __pari__(self):
         """
-        Method from univariate power series not yet implemented
+        Method from univariate power series not yet implemented.
 
         TESTS::
 
@@ -1883,8 +1905,8 @@ class MPowerSeries(PowerSeries):
 
         INPUT:
 
-        - ``prec`` -- Integer or ``infinity``. The degree to truncate
-          the result to.
+        - ``prec`` -- integer or ``infinity``; the degree to truncate
+          the result to
 
         OUTPUT:
 
@@ -1957,7 +1979,7 @@ class MPowerSeries(PowerSeries):
         assert (val >= 1)
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         n_inv_factorial = R.base_ring().one()
         x_pow_n = Rbg.one()
@@ -1978,8 +2000,8 @@ class MPowerSeries(PowerSeries):
 
         INPUT:
 
-        - ``prec`` -- Integer or ``infinity``. The degree to truncate
-          the result to.
+        - ``prec`` -- integer or ``infinity``; the degree to truncate
+          the result to
 
         OUTPUT:
 
@@ -2034,14 +2056,14 @@ class MPowerSeries(PowerSeries):
             sage: a.log(prec=10)
             Traceback (most recent call last):
             ...
-            ValueError: Can only take formal power series for non-zero constant term.
+            ValueError: Can only take formal power series for nonzero constant term.
         """
         R = self.parent()
         Rbg = R._bg_power_series_ring
 
         c = self.constant_coefficient()
         if c.is_zero():
-            raise ValueError('Can only take formal power series for non-zero constant term.')
+            raise ValueError('Can only take formal power series for nonzero constant term.')
         if c.is_one():
             log_c = self.base_ring().zero()
         else:
@@ -2054,7 +2076,7 @@ class MPowerSeries(PowerSeries):
         assert (val >= 1)
 
         prec = min(prec, self.prec())
-        if is_Infinite(prec):
+        if isinstance(prec, InfinityElement):
             prec = R.default_prec()
         x_pow_n = Rbg.one()
         log_x = Rbg.zero().add_bigoh(prec)
@@ -2083,7 +2105,7 @@ class MPowerSeries(PowerSeries):
         raise NotImplementedError("laurent_series not defined for multivariate power series.")
 
 
-class MO():
+class MO:
     """
     Object representing a zero element with given precision.
 

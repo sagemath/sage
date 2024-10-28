@@ -7,12 +7,12 @@ symbolics.
 
 The main objects which are exported from this module are:
 
- * :meth:`erf <Function_erf>` -- The error function
- * :meth:`erfc <Function_erfc>` -- The complementary error function
- * :meth:`erfi <Function_erfi>` -- The imaginary error function
- * :meth:`erfinv <Function_erfinv>` -- The inverse error function
- * :meth:`fresnel_sin <Function_Fresnel_sin>` -- The Fresnel integral `S(x)`
- * :meth:`fresnel_cos <Function_Fresnel_cos>` -- The Fresnel integral `C(x)`
+ * :meth:`erf <Function_erf>` -- the error function
+ * :meth:`erfc <Function_erfc>` -- the complementary error function
+ * :meth:`erfi <Function_erfi>` -- the imaginary error function
+ * :meth:`erfinv <Function_erfinv>` -- the inverse error function
+ * :meth:`fresnel_sin <Function_Fresnel_sin>` -- the Fresnel integral `S(x)`
+ * :meth:`fresnel_cos <Function_Fresnel_cos>` -- the Fresnel integral `C(x)`
 
 AUTHORS:
 
@@ -265,7 +265,7 @@ class Function_erf(BuiltinFunction):
 
             sage: gp.set_real_precision(59)  # random                                   # needs sage.libs.pari
             38
-            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200))                   # needs sage.libs.pari
+            sage: print(gp.eval("1 - erfc(1)")); print(erf(1).n(200))                   # needs mpmath sage.libs.pari
             0.84270079294971486934122063508260925929606699796630290845994
             0.84270079294971486934122063508260925929606699796630290845994
 
@@ -383,7 +383,6 @@ class Function_erfi(BuiltinFunction):
 
             sage: erfi(x).diff(x)                                                       # needs sage.symbolic
             2*e^(x^2)/sqrt(pi)
-
         """
         return 2*exp(x**2)/sqrt(pi)
 
@@ -421,7 +420,6 @@ class Function_erfc(BuiltinFunction):
 
             sage: erfc(x)._fricas_()                                            # optional - fricas, needs sage.symbolic
             - erf(x) + 1
-
     """
     def __init__(self):
         r"""

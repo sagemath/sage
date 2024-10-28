@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Quotients Functorial Construction
 
@@ -15,6 +16,7 @@ AUTHORS:
 from sage.categories.category import Category
 from sage.categories.covariant_functorial_construction import RegressiveCovariantConstructionCategory
 
+
 class QuotientsCategory(RegressiveCovariantConstructionCategory):
 
     _functor_category = "Quotients"
@@ -22,7 +24,7 @@ class QuotientsCategory(RegressiveCovariantConstructionCategory):
     @classmethod
     def default_super_categories(cls, category):
         """
-        Returns the default super categories of ``category.Quotients()``
+        Return the default super categories of ``category.Quotients()``.
 
         Mathematical meaning: if `A` is a quotient of `B` in the
         category `C`, then `A` is also a subquotient of `B` in the
@@ -30,8 +32,8 @@ class QuotientsCategory(RegressiveCovariantConstructionCategory):
 
         INPUT:
 
-         - ``cls`` -- the class ``QuotientsCategory``
-         - ``category`` -- a category `Cat`
+        - ``cls`` -- the class ``QuotientsCategory``
+        - ``category`` -- a category `Cat`
 
         OUTPUT: a (join) category
 
