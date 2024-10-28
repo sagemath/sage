@@ -133,7 +133,7 @@ foreach name, pyx : extension_data_cpp
       cysignals,
       gmp,
       gsl,
-      singular,
+      singular_factory,
     ],
   )
 endforeach

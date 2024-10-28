@@ -117,6 +117,12 @@ mpfi = cc.find_library('mpfi', required: not is_windows, disabler: true)
 # Test for common.h header that was added in 4.12 as a indirect version check
 gap = cc.find_library('gap', has_headers: ['gap/common.h'], required: not is_windows, disabler: true)
 singular = dependency('Singular', required: not is_windows, disabler: true)
+if singular.is_found()
+  factory = singular
+else
+  singular_proj = subproject('factory')
+  singular_factory = singular_proj.get_variable('factory_dep')
+endif
 maxima = find_program('maxima', required: not is_windows, disabler: true)
 # Cannot be found via pkg-config
 ntl = cc.find_library('ntl', required: not is_windows, disabler: true)
