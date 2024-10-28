@@ -921,8 +921,6 @@ class Rings(CategoryWithAxiom):
                         break
                     elif isinstance(first, (list, tuple, GeneratorType)):
                         gens = first
-                    elif isinstance(first, Parent) and self.has_coerce_map_from(first):
-                        gens = first.gens()  # we have a ring as argument
                     else:
                         break
 
