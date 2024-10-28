@@ -68,10 +68,10 @@ def update_conda(source_dir: Path) -> None:
 
                 env_file = source_dir / f"environment{tag}-{python}.yml"
                 write_env_file(env_file, pinned_dependencies)
-                lock_file = (
-                    source_dir / f"environment{tag}-{python}-{platform_value}"
+                lock_file = source_dir / f"environment{tag}-{python}-{platform_value}"
+                lock_file_gen = (
+                    source_dir / f"environment{tag}-{python}-{platform_value}.yml"
                 )
-                lock_file_gen = source_dir / f"environment{tag}-{python}-{platform_value}.yml"
                 print(
                     f"Updating lock file for {env_file} at {lock_file_gen}", flush=True
                 )
@@ -94,7 +94,7 @@ def update_conda(source_dir: Path) -> None:
                     ],
                     check=True,
                 )
-                
+
                 # Add conda env name to lock file at beginning
                 with open(lock_file_gen, "r+") as f:
                     content = f.read()
@@ -123,37 +123,33 @@ def get_dependencies(pyproject_toml: Path) -> list[str]:
     all_requirements.append("cxx-compiler")
 
     # Correct pypi name for some packages
-    python_requirements = pyproject_metadata.get("install_requires", [])
+    python_requirements = set(pyproject_metadata.get("install_requires", []))
     # Specify concrete packages for some packages not yet in grayskull
-    # TODO: It seems to be a bug that these external.dependencies are added to install_requires by grayskull
     python_requirements.remove("pkg:generic/tachyon")
-    python_requirements.append("tachyon")
+    python_requirements.add("tachyon")
     python_requirements.remove("pkg:generic/sagemath-elliptic-curves")
-    python_requirements.append("sagemath-db-elliptic-curves")
+    python_requirements.add("sagemath-db-elliptic-curves")
     python_requirements.remove("pkg:generic/sagemath-polytopes-db")
-    python_requirements.append("sagemath-db-polytopes")
-    python_requirements.remove("pkg:generic/sagemath-graphs")
-    python_requirements.append("sagemath-db-graphs")
+    python_requirements.add("sagemath-db-polytopes")
+    python_requirements.discard("pkg:generic/sagemath-graphs")
+    python_requirements.add("sagemath-db-graphs")
+    python_requirements.remove("memory_allocator")
+    python_requirements.add("memory-allocator")
     # Following can be removed once https://github.com/regro/cf-scripts/pull/2176 is used in grayskull
-    python_requirements = [
+    python_requirements = {
         req.replace("lrcalc", "python-lrcalc") for req in python_requirements
-    ]
+    }
     all_requirements += normalize_requirements_list(
         python_requirements, grayskull_config
     )
     all_requirements.remove("<{ pin_compatible('numpy') }}")
-
-    # Add version constraints for some packages (not yet supported by grayskull/PEP 725)
-    all_requirements.remove("c-compiler")
-    all_requirements.append("c-compiler <=1.6")
-    all_requirements.remove("cxx-compiler")
-    all_requirements.append("cxx-compiler <=1.6")
+    all_requirements.remove("memory_allocator")
     return all_requirements
 
 
 def get_dev_dependencies(pyproject_toml: Path) -> list[str]:
     pyproject = tomllib.load(pyproject_toml)
-    dependency_groups = pyproject["dependency-groups"]
+    dependency_groups = pyproject.get("dependency-groups", {})
     dev_dependencies = dependency_groups.get("test", []) + dependency_groups.get(
         "docs", []
     )
