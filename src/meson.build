@@ -17,23 +17,18 @@ print(numpy.get_include())
 ).stdout().strip()
 numpy = declare_dependency(include_directories: inc_numpy)
 
-if is_windows
-  # Not yet available on Windows
-  cysignals = disabler()
-else
-  inc_cysignals = run_command(
-    py,
-    [
-      '-c',
-      '''
-  import cysignals
-  print(cysignals.__file__.replace('__init__.py', ''))
-      '''.strip(),
-    ],
-    check: false,
-  ).stdout().strip()
-  cysignals = declare_dependency(include_directories: inc_cysignals)
-endif
+inc_cysignals = run_command(
+  py,
+  [
+    '-c',
+    '''
+import cysignals
+print(cysignals.__file__.replace('__init__.py', ''))
+    '''.strip(),
+  ],
+  check: false,
+).stdout().strip()
+cysignals = declare_dependency(include_directories: inc_cysignals)
 
 inc_gmpy2 = run_command(
   py,
