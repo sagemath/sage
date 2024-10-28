@@ -242,7 +242,7 @@ jobs:
           # The following command checks that all modules can be imported.
           # The output also includes a long list of modules together with the number of tests in each module.
           # This can be ignored.
-          ./sage -python -m pip install pytest-xdist
+          ./sage -python -m pip install -r requirements/test-requirements.txt
           ./sage -python -m pytest -c tox.ini -qq --doctest --collect-only || true
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
@@ -453,7 +453,7 @@ jobs:
           rm -rf /sage/.coverage
           ln -s $(pwd)/.coverage /sage/
           cd /sage
-          ./sage -python -m pip install coverage
+          ./sage -python -m pip install -r requirements/test-requirements.txt
           ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --force-lib --long -p4 --format github --random-seed=286735480429121101562228604801325644303 ${{ matrix.tests }}
         shell: sh .ci/docker-exec-script.sh BUILD . {0}
 
