@@ -123,7 +123,7 @@ extension_data = {
 
 foreach name, pyx : extension_data
   deps = [py_dep, cysignals, gmp]
-  elif name == 'complex_arb'
+  if name == 'complex_arb'
     deps += [flint, mpfi]
   elif name == 'complex_conversion'
     deps += [gsl, mpfr]
