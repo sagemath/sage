@@ -253,7 +253,7 @@ class FunctionHeaviside(GinacFunction):
             H\left(x\right)
             sage: heaviside(x)._sympy_()                                                # needs sympy
             Heaviside(x)
-            sage: heaviside(x)._giac_()                                                 # needs sage.libs.giac
+            sage: heaviside(x)._giac_()                                                 # needs giac
             Heaviside(sageVARx)
             sage: h(x) = heaviside(x)
             sage: h(pi).numerical_approx()
@@ -413,7 +413,7 @@ class FunctionSignum(BuiltinFunction):
         sign(x)
         sage: sgn(x)._fricas_init_()                                                    # needs sage.symbolic
         '(x+->abs(x)/x)(x)'
-        sage: sgn(x)._giac_()                                                           # needs sage.libs.giac sage.symbolic
+        sage: sgn(x)._giac_()                                                           # needs giac sage.symbolic
         sign(sageVARx)
 
     Test for :issue:`31085`::
