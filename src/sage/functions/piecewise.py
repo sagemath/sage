@@ -233,7 +233,7 @@ class PiecewiseFunction(BuiltinFunction):
                     return subs_map.apply_to(func, 0)
             raise ValueError(f'point {point} is not in the domain')
 
-        raise ValueError('substition not allowed')
+        raise ValueError('substitution not allowed')
 
     @staticmethod
     def in_operands(ex):
@@ -319,7 +319,7 @@ class PiecewiseFunction(BuiltinFunction):
                           for domain, func in parameters],
                          var=variable)
 
-    class EvaluationMethods():
+    class EvaluationMethods:
 
         def __pow__(self, parameters, variable, n):
             """
@@ -1470,16 +1470,18 @@ class PiecewiseFunction(BuiltinFunction):
 
             EXAMPLES::
 
+                sage: # needs giac
                 sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
-                sage: f = ex._giac_(); f                                                # needs sage.libs.giac
+                sage: f = ex._giac_(); f
                 piecewise(((sageVARx>0) and (1>sageVARx)),pi,((sageVARx>=1) and (2>=sageVARx)),sageVARx)
-                sage: f.diff(x)                                                         # needs sage.libs.giac
+                sage: f.diff(x)
                 piecewise(((sageVARx>0) and (1>sageVARx)),0,((sageVARx>=1) and (2>=sageVARx)),1)
 
-                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])           # needs sage.libs.giac
-                sage: g = ex._giac_(); g                                                # needs sage.libs.giac
+                sage: # needs giac
+                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])
+                sage: g = ex._giac_(); g
                 piecewise(((sageVARx>-100) and ((-2)>sageVARx)),1/sageVARx,sageVARx>1,cos(sageVARx))
-                sage: g.diff(x)                                                         # needs sage.libs.giac
+                sage: g.diff(x)
                 piecewise(((sageVARx>-100) and ((-2)>sageVARx)),-1/sageVARx^2,sageVARx>1,-sin(sageVARx))
 
             TESTS::

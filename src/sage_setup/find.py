@@ -343,6 +343,92 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
 
     return data_files
 
+def installed_files_by_module(site_packages, modules=('sage',)):
+    """
+    Find all currently installed files
+
+    INPUT:
+
+    - ``site_packages`` -- string. The root Python path where the Sage
+      library is being installed. If the path doesn't exist, returns
+      an empty dictionary.
+
+    - ``modules`` -- list/tuple/iterable of strings (default:
+      ``('sage',)``). The top-level directory name(s) in
+      ``site_packages``.
+
+    OUTPUT:
+
+    A dictionary whose keys are module names (``'sage.module.foo'``)
+    and values are list of corresponding file names
+    ``['sage/module/foo.py', 'sage/module/foo.pyc']`` relative to
+    ``site_packages``.
+
+    EXAMPLES::
+
+        sage: site_packages = os.path.dirname(os.path.dirname(os.path.dirname(sage.cpython.__file__)))
+        sage: from sage_setup.find import installed_files_by_module
+        sage: files_by_module = installed_files_by_module(site_packages)
+        sage: (f,) = files_by_module['sage.structure.sage_object']; f
+        'sage/structure/sage_object...'
+        sage: (f1, f2) = sorted(files_by_module['sage.structure'])
+        sage: f1
+        'sage/structure/__init__.py'
+        sage: f2
+        'sage/structure/....pyc'
+
+    This takes about 30ms with warm cache::
+
+        sage: timeit('installed_files_by_module(site_packages)',       # random output
+        ....:        number=1, repeat=1)
+        1 loops, best of 1: 29.6 ms per loop
+    """
+
+    module_files = defaultdict(set)
+    module_exts = get_extensions()
+
+    def add(module, filename, dirpath):
+        # Find the longest extension that matches the filename
+        best_ext = ''
+
+        for ext in module_exts:
+            if filename.endswith(ext) and len(ext) > len(best_ext):
+                best_ext = ext
+
+        if not best_ext:
+            return
+
+        base = filename[:-len(best_ext)]
+        filename = os.path.join(dirpath, filename)
+
+        if base != '__init__':
+            module += '.' + base
+
+        module_files[module].add(filename)
+
+        cache_filename = importlib.util.cache_from_source(filename)
+        if os.path.exists(cache_filename):
+            module_files[module].add(cache_filename)
+
+    cwd = os.getcwd()
+    try:
+        os.chdir(site_packages)
+    except OSError:
+        return module_files
+    try:
+        for module in modules:
+            for dirpath, dirnames, filenames in os.walk(module):
+                module_dir = '.'.join(dirpath.split(os.path.sep))
+
+                if os.path.basename(dirpath) == '__pycache__':
+                    continue
+
+                for filename in filenames:
+                    add(module_dir, filename, dirpath)
+    finally:
+        os.chdir(cwd)
+    return module_files
+
 
 def get_extensions(type=None):
     """

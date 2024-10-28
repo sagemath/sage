@@ -685,7 +685,7 @@ cdef class CoercionModel:
             sage: cm.record_exceptions()
             sage: cm._test_exception_stack()
             sage: cm.exception_stack()
-            ['Traceback (most recent call last):\n  File "sage/structure/coerce.pyx", line ...TypeError: just a test']
+            ['Traceback (most recent call last):\n  File "...coerce.pyx", line ...TypeError: just a test']
             sage: cm.record_exceptions(False)
             sage: cm._test_exception_stack()
             sage: cm.exception_stack()
@@ -713,7 +713,7 @@ cdef class CoercionModel:
             []
             sage: cm._test_exception_stack()
             sage: cm.exception_stack()
-            ['Traceback (most recent call last):\n  File "sage/structure/coerce.pyx", line ...TypeError: just a test']
+            ['Traceback (most recent call last):\n  File "...coerce.pyx", line ...TypeError: just a test']
 
         The function _test_exception_stack is executing the following code::
 
@@ -743,7 +743,7 @@ cdef class CoercionModel:
             []
             sage: cm._test_exception_stack()
             sage: cm.exception_stack()
-            ['Traceback (most recent call last):\n  File "sage/structure/coerce.pyx", line ...TypeError: just a test']
+            ['Traceback (most recent call last):\n  File "...coerce.pyx", line ...TypeError: just a test']
         """
         try:
             raise TypeError("just a test")

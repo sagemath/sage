@@ -1158,7 +1158,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
     @cached_method
     def ngens(self):
         """
-        Return the number of variables, i.e. 2 or 3, kept for completness.
+        Return the number of variables, i.e. 2 or 3, kept for completeness.
 
         OUTPUT: integer, 2 or 3, depending if the arrangement is projective or affine
 

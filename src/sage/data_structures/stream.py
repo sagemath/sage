@@ -107,7 +107,7 @@ from sage.misc.cachefunc import cached_method
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
 
-class Stream():
+class Stream:
     """
     Abstract base class for all streams.
 
@@ -2410,7 +2410,7 @@ class Stream_plethysm(Stream_binary):
                          _raise_variables(c, i, self._degree_one)
                          for mon, c in power_d}
             else:
-                terms = {tuple((mu.stretch(i) for mu in mon)):
+                terms = {tuple(mu.stretch(i) for mu in mon):
                          _raise_variables(c, i, self._degree_one)
                          for mon, c in power_d}
             return self._basis(self._p.element_class(self._p, terms))
