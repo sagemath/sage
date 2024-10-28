@@ -192,7 +192,7 @@ class ChowRingIdeal_nonaug(ChowRingIdeal):
             I_{M} + J_{M} of matroid \text{\texttt{Matroid{ }of{ }rank{ }2{ }on{ }4{ }elements{ }with{ }3{ }bases}}
         """
         from sage.misc.latex import latex
-        return 'I_{M} + J_{M} of matroid '.format(latex(self._matroid))
+        return 'I_{M} + J_{M} of matroid ' + latex(self._matroid)
 
     def groebner_basis(self, algorithm='', *args, **kwargs):
         r"""
@@ -605,7 +605,7 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
             I_{af} of matroid \text{\texttt{Graphic{ }matroid{ }of{ }rank{ }2{ }on{ }3{ }elements}}
         """
         from sage.misc.latex import latex
-        return 'I_{af} of matroid '.format(latex(self._matroid))
+        return 'I_{{af}}({}) of matroid '.format(latex(self._matroid))
 
     def groebner_basis(self, algorithm='', *args, **kwargs):
         """
