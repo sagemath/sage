@@ -31,6 +31,7 @@ from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.integer_ring import ZZ
 
+
 class QuasiModularFormsElement(ModuleElement):
     r"""
     A quasimodular forms ring element. Such an element is described by
@@ -142,11 +143,11 @@ class QuasiModularFormsElement(ModuleElement):
             sage: E2.q_expansion(prec=10)
             1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 - 288*q^6 - 192*q^7 - 360*q^8 - 312*q^9 + O(q^10)
         """
-        E2 = eisenstein_series_qexp(2, prec=prec, K=self.base_ring(), normalization='constant') #normalization -> to force integer coefficients
+        E2 = eisenstein_series_qexp(2, prec=prec, K=self.base_ring(), normalization='constant')  # normalization -> to force integer coefficients
         coefficients = self._polynomial.coefficients(sparse=False)
-        return sum(f.q_expansion(prec=prec)*E2**idx for idx, f in enumerate(coefficients))
+        return sum(f.q_expansion(prec=prec) * E2**idx for idx, f in enumerate(coefficients))
 
-    qexp = q_expansion # alias
+    qexp = q_expansion  # alias
 
     def _repr_(self):
         r"""

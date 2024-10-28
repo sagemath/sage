@@ -590,7 +590,7 @@ def BM_all_minimal(vp, return_transformation=False, D=None):
     for M in all_M:
         new_map = mp.conjugate(M)
         new_map.normalize_coordinates()
-        if not [new_map, M] in all_maps:
+        if [new_map, M] not in all_maps:
             all_maps.append([new_map, M])
 
     #Split into conjugacy classes

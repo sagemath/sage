@@ -4002,16 +4002,17 @@ def _finite_lattices(n):
     TESTS::
 
         sage: from sage.databases.findstat import _finite_lattices
-        sage: [L.cover_relations() for L in _finite_lattices(4)]
-        [[['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']],
-         [['bottom', 0], [0, 1], [1, 'top']]]
+        sage: sorted((L.cover_relations() for L in _finite_lattices(4)),
+        ....:        key=len)
+        [[['bottom', 0], [0, 1], [1, 'top']],
+         [['bottom', 0], ['bottom', 1], [0, 'top'], [1, 'top']]]
     """
     if n <= 2:
         for P in Posets(n):
             if P.is_lattice():
                 yield LatticePoset(P)
     else:
-        for P in Posets(n-2):
+        for P in Posets(n - 2):
             Q = P.with_bounds()
             if Q.is_lattice():
                 yield LatticePoset(Q)
@@ -4351,7 +4352,7 @@ class FindStatCollection(Element,
                 g = (x for x in self._sageconstructor_overridden
                      if self.element_level(x) == level)
 
-        return lazy_list(((x, function(x)) for x in g))
+        return lazy_list((x, function(x)) for x in g)
 
     def id(self):
         r"""

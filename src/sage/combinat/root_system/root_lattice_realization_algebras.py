@@ -121,7 +121,7 @@ class Algebras(AlgebrasCategory):
             """
             L = self.basis().keys()
             return self.sum_of_terms((L.from_vector(vector(t)), c)
-                                     for (t,c) in p.dict().items())
+                                     for t, c in p.monomial_coefficients().items())
 
         @cached_method
         def divided_difference_on_basis(self, weight, i):
