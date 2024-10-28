@@ -1,4 +1,4 @@
-anyio argon2_cffi jinja2 jupyter_client jupyter_core jupyter_events jupyter_server_terminals nbconvert nbformat overrides platformdirs prometheus_client pyzmq send2trash terminado tornado traitlets websocket_client | $(PYTHON_TOOLCHAIN) $(PYTHON)
+anyio argon2_cffi jinja2 jupyter_client jupyter_core jupyter_events jupyter_server_terminals nbconvert nbformat overrides packaging prometheus_client pyzmq send2trash terminado tornado traitlets websocket_client | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
