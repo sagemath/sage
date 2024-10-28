@@ -762,6 +762,22 @@ class PermutationGroup_generic(FiniteGroup):
         g = ', '.join([g._gap_cycle_string() for g in self.gens()])
         return 'PermutationGroup<%s | %s>' % (self.degree(), g)
 
+    def __hash__(self):
+        r"""
+        Return a hash value for ``self``.
+
+        TESTS::
+
+            sage: G = PermutationGroup([(1,2,3), (1,3)])
+            sage: G == SymmetricGroup(3)
+            True
+            sage: G.gens() == SymmetricGroup(3).gens()
+            False
+            sage: G in set([SymmetricGroup(3)])
+            True
+        """
+        return hash(self.cardinality())
+
     def __richcmp__(self, right, op):
         """
         Compare ``self`` and ``right``.
