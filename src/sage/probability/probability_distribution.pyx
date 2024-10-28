@@ -40,7 +40,8 @@ REFERENCES:
 # ****************************************************************************
 from cysignals.memory cimport sig_malloc, sig_free
 
-from sage.libs.gsl.all cimport *
+from sage.libs.gsl.rng cimport * 
+from sage.libs.gsl.random cimport *
 import sage.misc.prandom as random
 import sage.rings.real_double
 from sage.modules.free_module_element import vector
